@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.1
 
+* fix NOTIFY_FAXMASTER within notify (30 Dec 2004)
 * improve tiff2pdf and use it more (29 Dec 2004)
 * fix 300 dpi support for some receivers (28 Dec 2004)
 * cause faxsetup to double-check and fix attachment encoding

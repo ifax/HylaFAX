@@ -144,7 +144,7 @@ adjustNotifyFaxMaster()
 		"done"|blocked|removed|killed)
 		    NOTIFY_FAXMASTER=no;;
                 *)
-                    if (match "$faxstatus" "Busy signal|No answer|No carrier") ; then
+                    if (match "$faxstatus" "Busy signal") || (match "$faxstatus" "No answer") || (match "$faxstatus" "No carrier"); then
                         NOTIFY_FAXMASTER=no
                     else 
                         NOTIFY_FAXMASTER=yes
@@ -486,9 +486,9 @@ match()
 #  look for substring in fullsting.  substring can be a regular expression or plain string
 #  if the substring is found anywhere in the full string, true(0) is returned.
 {
-    FULLSTR=$1
-    SUBSTR=$2
-    echo $FULLSTR | $GREP -i $SUBSTR > /dev/null 2>&1
+    FULLSTR="$1"
+    SUBSTR="$2"
+    echo "$FULLSTR" | $GREP -i "$SUBSTR" > /dev/null 2>&1
     if [ $? -eq 0 ] ; then
         return 0
     else
