@@ -1,6 +1,13 @@
 #! /bin/sh
 #	$Id$
 #
+# chkconfig: 12345 97 05
+# description: HylaFAX(tm) is a sophisticated enterprise-strength fax
+#              package for class 1 and 2 fax modems on unix systems.
+#              This init script is the preferred way to start HylaFAX,
+#              but does not, by default, activate any modems. Consult
+#              the faxgetty(8) and faxmodem(8) man pages for more info.
+#
 # @WARNING@
 #
 # HylaFAX Facsimile Software
@@ -63,7 +70,7 @@ if [ -z $FAXQ_SERVER ]; then
     FAXQ_SERVER=1
 fi
 
-IS_ON=/etc/chkconfig		# NB: chkconfig is IRIX-specific
+IS_ON=/etc/chkconfig		# NB: chkconfig is IRIX- and Linux-specific
 FAXQ=$SBIN/faxq
 HFAXD=$LIBEXEC/hfaxd
 FAXQUIT=$SBIN/faxquit
@@ -117,7 +124,7 @@ case $1 in
             if test $HFAXD_SERVER -eq 1 ; then
 	        $HFAXD -i $FAXPORT
             fi
-            $ECHO " hfaxd (w/ compatibility & SNPP)\c"
+            $ECHO " hfaxd (without old protocol or SNPP support)\c"
 	    $ECHO "."
 	fi
 	;;
