@@ -17,7 +17,7 @@ f none @LIBEXEC@/textfmt=../util/textfmt 0755 @SYSUID@ @SYSGID@
 f none @LIBEXEC@/faxgetty=../faxd/faxgetty 0755 @SYSUID@ @SYSGID@
 f none @LIBEXEC@/faxsend=../faxd/faxsend 0755 @SYSUID@ @SYSGID@
 f none @LIBEXEC@/pagesend=../faxd/pagesend 0755 @SYSUID@ @SYSGID@
-f none @LIBEXEC@/hfaxd=../hfaxd/hfaxd 4755 root @SYSGID@
+f none @LIBEXEC@/hfaxd=../hfaxd/hfaxd 0755 root @SYSGID@
 f none @LIBEXEC@/lockname=../etc/lockname 0755 @SYSUID@ @SYSGID@
 f none @LIBEXEC@/ondelay=../etc/ondelay 0755 @SYSUID@ @SYSGID@
 d man @MANDIR@ ? ? ?

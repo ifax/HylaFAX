@@ -1698,7 +1698,7 @@ EOF
         fi
     fi
     if [ -f $INETDCONF -a $HFAXD_SERVER = no ]; then
-	E="hylafax	stream	tcp	nowait	$FAX	$DIR_LIBEXEC/hfaxd	hfaxd -I"
+	E="hylafax	stream	tcp	nowait	root	$DIR_LIBEXEC/hfaxd	hfaxd -I"
 	editInetdConf()
 	{
 	    ed - $INETDCONF<<EOF
