@@ -1967,11 +1967,15 @@ if onServer; then
 
 	PROMPTS=/tmp/faxpr$$
 	JUNK="$JUNK $PROMPTS"
-	$RM $PROMPTS
+	$RM -rf $PROMPTS
 
 	while true; do
 	    if [ "$ok" != skip ]; then
-		test -f $PROMPTS || compilePrompts>$PROMPTS<<EOF
+		test -f $PROMPTS || (
+		${NOCLOBBER_ON}
+		> $PROMPTS || exit 1
+		${NOCLOBBER_OFF}
+		compilePrompts>$PROMPTS<<EOF
 #	CountryCode		Country code
 #	AreaCode		Area code
 #	LongDistancePrefix	Long distance dialing prefix

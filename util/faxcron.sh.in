@@ -68,8 +68,13 @@ RM="$RM -f"
 TEE=tee
 UPDATE="date +'%D %H:%M' >$LAST"
 
-JUNK=/tmp/faxjunk$$		# temp file used multiple times
-AWKTMP=/tmp/faxawk$$		# temp file for awk program
+# security
+TMPDIR=/tmp/.faxcron.sh$$
+rm -rf $TMPDIR
+mkdir $TMPDIR || exit 1
+
+JUNK=$TMPDIR/faxjunk$$         # temp file used multiple times
+AWKTMP=$TMPDIR/faxawk$$                # temp file for awk program
 
 while [ x"$1" != x"" ] ; do
     case $1 in
@@ -85,7 +90,7 @@ while [ x"$1" != x"" ] ; do
     shift
 done
 
-trap "$RM \$AWKTMP \$JUNK; exit 1" 0 1 2 15
+trap "$RM \$AWKTMP \$JUNK; $RM -rf $TMPDIR; exit 1" 0 1 2 15
 
 
 test -z "$LASTRUN" && LASTRUN=`$CAT $LAST 2>/dev/null`
@@ -280,7 +285,7 @@ END		{ nsorted = 0;
 EOF
 $AWK -f $AWKTMP -v LASTRUN="$LASTRUN" TRANSCRIPT="\
     LOGFILE=log/%s;\
-    TMP=/tmp/faxlog\$\$;\
+    TMP=$TMPDIR/faxlog\$\$;\
     if [ -f \$LOGFILE ]; then\
 	$SED -n -e '/%s %s %s.*SESSION BEGIN/,/SESSION END/p' \$LOGFILE |\
 	$SED -e '/start.*timer/d'\

@@ -186,6 +186,8 @@ MKDIR
 MKFIFO
 MV
 MV_F
+NOCLOBBER_OFF
+NOCLOBBER_ON
 PAGESIZE
 PATHGETTY	PATH_GETTY
 PATHVGETTY	PATH_VGETTY
@@ -1291,6 +1293,14 @@ if [ -z "$SCRIPT_SH" ]; then
     SCRIPT_SH=/bin/sh
 else
     Note "Using $SCRIPT_SH to process command scripts."
+# Security stuff
+    case $SCRIPT_SH in
+	*/sh)	;;
+	*/ksh)	NOCLOBBER_ON='"set -o noclobber"'
+		NOCLOBBER_OFF='"set +o noclobber"' ;;
+	*/bash)	NOCLOBBER_ON='"set -o noclobber"'
+		NOCLOBBER_OFF='"set +o noclobber"' ;;
+    esac
 fi
 
 makeDefs()

@@ -75,7 +75,6 @@ HTMLFILES=\
     html/setup-advanced.html			\
     html/setup-client.html			\
     html/source.html				\
-    html/survey.html				\
     html/toc.html				\
     html/troubleshooting.html			\
     html/upgrade4.0.html			\
@@ -120,8 +119,6 @@ HTMLFILES=\
     html/install-source.html			\
     html/modems.html				\
     html/namechange.html			\
-    html/survey-help.html			\
-    html/survey-query.html			\
     html/version.html				\
     html/ftpmail-help.html			\
     html/v2.3beta036special.html		\
@@ -157,7 +154,6 @@ HTMLFILES=\
     html/tools/man2html.c			\
     html/tools/unquote.c			\
     html/tools/manpage.sh.in			\
-    html/tools/faxsurvey.sh.in			\
     ${NULL}
 #
 # Files that are makeup the HylaFAX

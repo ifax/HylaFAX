@@ -85,9 +85,15 @@ if [ "$euid" != "root" ]; then
     exit 1
 fi
 
+# security
+TMPDIR=/tmp/.faxaddmodem$$
+umask 077
+rm -rf $TMPDIR
+mkdir $TMPDIR || exit 1
+
 SH=$SCRIPT_SH			# shell for use below
 CPATH=$SPOOL/etc/config		# prefix of configuration file
-OUT=/tmp/addmodem$$		# temp file in which modem output is recorded
+OUT=$TMPDIR/addmodem$$         # temp file in which modem output is recorded
 SVR4UULCKN=$LIBEXEC/lockname	# SVR4 UUCP lock name construction program
 ONDELAY=$LIBEXEC/ondelay	# prgm to open devices blocking on carrier
 CAT="$CAT -u"			# something to do unbuffered reads and writes
@@ -219,7 +225,7 @@ while [ -z "$TTY" -o ! -c /dev/$TTY ]; do
 done
 
 JUNK="$OUT"
-trap "$RMCMD \$JUNK; exit 1" 0 1 2 15
+trap "$RMCMD \$JUNK; $RMCMD -r $TMPDIR; exit 1" 0 1 2 15
 
 if [ ! -d $UUCP_LOCKDIR ]; then
     cat<<EOF
@@ -656,7 +662,7 @@ isNotOK()
 # Prompt user for server-related configuration parameters
 # and do consistency checking on what we get.
 #
-PROMPTS=/tmp/faxpr$$
+PROMPTS=$TMPDIR/faxpr$$
 JUNK="$JUNK $PROMPTS"
 while isNotOK $ok; do
     if [ "$ok" != skip ]; then
@@ -835,12 +841,11 @@ while [ -z "$RESULT" ]; do
 	echo ""
 	echo "Hmm, something seems to be hung, check your modem eh?"
      done)& nagpid=$!
-    trap "$RMCMD \$JUNK; kill $nagpid \$catpid; exit 1" 0 1 2 15
-
+    trap "$RMCMD \$JUNK; $RMCMD -r $TMPDIR; kill $nagpid \$catpid; exit 1" 0 1 2 15
     SendToModem "AT+FCLASS=?" 			# ask for class support
 
     kill $nagpid
-    trap "$RMCMD \$JUNK; test \"\$catpid\" && kill \$catpid; exit 1" 0 1 2 15
+    trap "$RMCMD \$JUNK; $RMCMD -r $TMPDIR; test \"\$catpid\" && kill \$catpid; exit 1" 0 1 2 15
     sleep 1
 
     RESULT=`tr -ds '\015' '\012' < $OUT | tail -1`
@@ -1705,7 +1710,7 @@ while isNotOK $ok; do
     prompt "Are these ok [yes]?"; read ok
 done
 verifyModemRate
-TMPSED=/tmp/faxsed$$; JUNK="$JUNK $TMPSED"
+TMPSED=$TMPDIR/faxsed$$; JUNK="$JUNK $TMPSED"
 (echoServerSedCommands; echoModemSedCommands)>$TMPSED
 
 #

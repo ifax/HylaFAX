@@ -34,6 +34,9 @@
 # DATE:		@DATE@
 # TARGET:	@TARGET@
 #
+# security
+NOCLOBBER_ON=@NOCLOBBER_ON@
+NOCLOBBER_OFF=@NOCLOBBER_OFF@
 
 #
 # probemodem [tty]
@@ -76,6 +79,12 @@ OUT=/tmp/probemodem$$		# temp file in which modem output is recorded
 SVR4UULCKN=$LIBEXEC/lockname	# SVR4 UUCP lock name construction program
 ONDELAY=$LIBEXEC/ondelay	# prgm to open devices blocking on carrier
 CAT="$CAT -u"			# something to do unbuffered reads and writes
+
+# security
+rm -rf $OUT
+${NOCLOBBER_ON}
+> $OUT || exit 1
+${NOCLOBBER_OFF}
 
 while [ -z "$TTY" -o ! -c /dev/$TTY ]; do
     if [ "$TTY" != "" ]; then

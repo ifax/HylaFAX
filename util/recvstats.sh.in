@@ -26,6 +26,9 @@
 # LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
 # OF THIS SOFTWARE.
 #
+# security
+NOCLOBBER_ON=@NOCLOBBER_ON@
+NOCLOBBER_OFF=@NOCLOBBER_OFF@
 
 #
 # Print Statistics about Received Facsimile.
@@ -119,6 +122,12 @@ esac
 #
 tmpAwk=/tmp/xferfax$$
 trap "rm -f $tmpAwk; exit 1" 0 1 2 15
+
+# security
+rm -rf $tmpAwk
+${NOCLOBBER_ON}
+> $tmpAwk || exit 1
+${NOCLOBBER_OFF}
 
 ($CAT<<'EOF'
 #
