@@ -432,7 +432,8 @@ ModemServer::setupModem()
 	 * Reset the modem in case some other program
 	 * went in and messed with the configuration.
 	 */
-	modem->reset();
+        if( !modem->reset() )
+            return (false);
     /*
      * Most modem-related parameters are dealt with
      * in the modem driver.  The speaker volume is
