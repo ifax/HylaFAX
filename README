@@ -2,7 +2,7 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.1.5
+The HylaFAX development team is pleased to announce our 4.1.6
 patch-level release!  The release represents many hours of work and
 testing by developers and contributors, and our thanks goes to all who
 participate and provide feedback.
@@ -16,59 +16,35 @@ further resources regarding HylaFAX.
 
                           *   NEW FEATURES   *
 
-* sendfax warns when -d options are used poorly
-* NSF recognition on sending for virtually all US, UK, and Japan codes
-* DSO versioning follows HylaFAX
-* additional modem support for various USR, Digi, and Lucent/Agere modems
-* faxqclean now has a "force archiving" option
-* faxanswer supports Caller-ID now when faxgetty is running
-* removed support for Solaris DSOs and various other Solaris bugfixes
-* new Class1MsgRecvHack, Class1ResponseWaitCmd, and RingExtended config
-  options
-* probemodem options to send one command and not kill faxgetty
-* improve the select bug workaround
-* faxq triggers LOCKWAIT explicitly when initiating faxsend
-* faxgetty polls for lockfiles while RUNNING
-* fix broken facsimile polling when in Class 1
+* added new edit-faxcover script
+* added various enhancements to faxsetup
+* default libtiff v3.6 compatibility
+* added NOTIFY_FAXMASTER and ENCODING parameters for FaxDispatch
+* added 2D-MMR support for Class 2 modems that support it
+* added RingTimeout, ModemRingResponse, CIDNumberAnswerLength, and
+  CIDNameAnswerLength modem config parameters
+* support for MultiTech MT5634ZDXb and MT5634ZBA-DID
+* added subaddressing specification capability to sendfax
+* numerous bugfixes (several significant) and build cleanups
 
                          *   KNOWN ISSUES   *
 
-* HylaFAX corrupts images received in 2D-MMR (patch available).
 * Specific support for fax class 1.0 is not yet implemented.
 * A low-priority job can block a high priority job to the same destination.
+* Newer versions of awk produce odd xferfaxstats output (use --nomap).
 ** Please refer to HylaFAX Bugzilla for a detailed list of issues.
 
                        *   INCOMPATIBILITIES   *
 
-* faxinfo from older installations of HylaFAX will not give correct 
-  output when run against newly received fax image files.  faxinfo from 
-  4.1.3 and later can read both newly received and older fax image files.
 * HylaFAX source needs to be extracted and built on a case-sensitive
   filesystem.  Users with case-insensitive filesystems, such as those with
   Mac OS X HFS, will need to mount a new filesystem (i.e. UFS) for this
-  purpose.
-* The popular faxrcvd-mail scripts have been deprecated by FILETYPE use in 
-  FaxDispatch, and unchanged, will not work with faxgetty in 4.1.3 and later.
-  See 'man faxrcvd' for details.
+  purpose.  A patch is available which makes this unnecessary.
 
                       *   WHO SHOULD UPGRADE?   *
 
-Anyone running the short-lived 4.1.4 release of HylaFAX should consider this
-a mandatory upgrade. A race condition in the lockfile polling code could lead
-to a non-responsive faxgetty in some circumstances.
-
-A large number of security fixes were included in the 4.1.3 release of
-HylaFAX which make it very important to upgrade to 4.1.3 or newer. If you
-are not already running 4.1.3, this 4.1.5 release is a recommended
-upgrade.
-
-Anyone already running 4.1.3 on Solaris should also upgrade, since a number
-of Solaris-specific issues were addressed in this release.
-
-Users who find that their modem status does not always return to idle after
-sending a fax, such as those with low-level select bugs or those running
-RedHat Linux 7.3, should upgrade.
-
+A large number of mission-critical bugs are fixed in 4.1.6 (see CHANGES).
+Upgrading is recommended for all users.
 
                      *   HYLAFAX BINARY PACKAGES   *
 
