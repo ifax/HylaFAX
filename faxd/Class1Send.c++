@@ -788,13 +788,26 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, fxS
 	    u_char* bp = dp;
 	    u_char* ep = dp+totdata;
 	    u_long w = 0xffffff;
+
+            /*
+             * Immediately copy leading EOL into the fill buffer,
+             * because it has not to be padded. Note that leading
+             * EOL is not byte-aligned, and so we also copy 4 bits
+             * if image data. But that's OK, and may only lead to
+             * adding one extra zero-fill byte to the first image
+             * row.
+             */
+            *fp++ = *bp++;
+            *fp++ = *bp++;
 	    do {
 		u_char* bol = bp;
+                bool foundEOL;
 		do {
 		    w = (w<<8) | *bp++;
-		} while (!EOLcode(w) && bp < ep);
+                    foundEOL = EOLcode(w);
+                } while (!foundEOL && bp < ep);
 		/*
-		 * We're either at an EOL code or at the end of data.
+                 * We're either after an EOL code or at the end of data.
 		 * If necessary, insert zero-fill before the last byte
 		 * in the EOL code so that we comply with the
 		 * negotiated min-scanline time.
@@ -815,9 +828,18 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, fxS
 		fp += lineLen;
 		if (lineLen < minLen) {		// must zero-fill
 		    u_int zeroLen = minLen - lineLen;
-		    memset(fp-1, 0, zeroLen);	// zero padding
-		    fp += zeroLen;
-		    fp[-1] = bp[-1];		// last byte in EOL
+                    if( foundEOL ){
+                        memset(fp-1, 0, zeroLen);   // zero padding
+                        fp += zeroLen;
+                        fp[-1] = bp[-1];            // last byte in EOL
+                    }
+                    else {
+                        /*
+                         * Last line does not contain EOL
+                         */
+                        memset(fp, 0, zeroLen);     // zero padding
+                        fp += zeroLen;
+                    }
 		}
 	    } while (bp < ep);
 	    /*
