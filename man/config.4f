@@ -100,10 +100,10 @@ of their value.
 The first part lists items specific to the operation of each
 server, while the second part has items related to the
 servicing of the modem.
-Parameters marked with a \(dg are used only
+Parameters marked with a \(S1 are used only
 by the \*(Fx scheduler process and should appear only in the file named
 .BR config .
-Parameters marked with a \(dd are used by both the scheduler and
+Parameters marked with a \(S2 are used by both the scheduler and
 the per-device applications and so should appear in all appropriate
 configuration files (i.e. 
 .B config
@@ -118,54 +118,54 @@ More detailed information about each item is given following the table.
 AdaptiveAnswer	boolean	\s-1No\s+1	enable adaptive answer of inbound calls
 AnswerRotary	string	\s-1Any\s+1	alternatives for answering calls
 AnswerBias	integer	\-	bias to apply to successful rotary answer 
-AreaCode\(dd	string	\-	local area code
+AreaCode\(S2	string	\-	local area code
 CIDName	string	\-	Caller \s-1ID\s+1 name pattern string
 CIDNumber	string	\-	Caller \s-1ID\s+1 number pattern string
 ClocalAsRoot	boolean	\s-1No\s+1	set \s-1CLOCAL\s+1 using root \s-1UID\s+1
-ContCoverCmd\(dg	string	\s-1bin/mkcover\s+1	continuation cover page generation script
-ContCoverPage\(dg	string	\-	continuation cover page template filename
-CountryCode\(dd	string	\-	local country code
-DestControls\(dg	string	\-	per-destination controls file
+ContCoverCmd\(S1	string	\s-1bin/mkcover\s+1	continuation cover page generation script
+ContCoverPage\(S1	string	\-	continuation cover page template filename
+CountryCode\(S2	string	\-	local country code
+DestControls\(S1	string	\-	per-destination controls file
 DeviceMode	octal	\s-10600\s+1	protection mode to use for modem device
-DialStringRules\(dd	string	\-	dial string rules file
+DialStringRules\(S2	string	\-	dial string rules file
 FAXNumber	string	\-	facsimile modem phone number
 FaxRcvdCmd	string	\s-1bin/faxrcvd\s+1	notification script for received facsimile
 GettyArgs	string	\-	arguments passed to getty program
-InternationalPrefix\(dd	string	\-	dialing prefix for international calls
+InternationalPrefix\(S2	string	\-	dialing prefix for international calls
 JobReqBusy	integer	\s-1180\s+1	requeue interval for \s-1BUSY\s+1 dial result
 JobReqDataConn	integer	\s-1300\s+1	requeue interval for data connection dial result
 JobReqNoAnswer	integer	\s-1300\s+1	requeue interval for \s-1NO ANSWER\s+1 dial result
 JobReqNoCarrier	integer	\s-1300\s+1	requeue interval for \s-1NO CARRIER\s+1 dial result
 JobReqNoFCon	integer	\s-1300\s+1	requeue interval for carrier without \s-1+FCON\s+1 dial result
-JobReqOther\(dd	integer	\s-1300\s+1	requeue interval for ``other'' problems
+JobReqOther\(S2	integer	\s-1300\s+1	requeue interval for ``other'' problems
 JobReqProto	integer	\s-160\s+1	requeue interval after fax protocol error
 LockDataCalls	boolean	\s-1Yes\s+1	lock modem for the duration of an inbound data call
 LockVoiceCalls	boolean	\s-1Yes\s+1	lock modem for the duration of an inbound voice call
-LogFacility\(dd	string	\s-1daemon\s+1	\fIsyslog\fP facility name for ServerTracing messages
+LogFacility\(S2	string	\s-1daemon\s+1	\fIsyslog\fP facility name for ServerTracing messages
 LogFileMode	octal	\s-10600\s+1	protection mode to use for session log files
 LocalIdentifier	string	\-	local station identification string
 LongDistancePrefix	string	\-	dialing prefix for long distance calls
-MaxConcurrentJobs\(dg	integer	\s-11\s+1	max concurrent jobs to process for a destination
+MaxConcurrentJobs\(S1	integer	\s-11\s+1	max concurrent jobs to process for a destination
 MaxConsecutiveBadLines	integer	\s-15\s+1	max consecutive bad rows for \s-1OK\s+1 page quality
-MaxDials\(dg	integer	\s-112\s+1	max phone calls to make to transmit a job
+MaxDials\(S1	integer	\s-112\s+1	max phone calls to make to transmit a job
 MaxRecvPages	integer	\s-1\fIunlimited\fP\s+1	max pages to permit in a receive
-MaxSendPages\(dg	integer	\s-1\fIunlimited\fP\s+1	max pages to permit in a send
+MaxSendPages\(S1	integer	\s-1\fIunlimited\fP\s+1	max pages to permit in a send
 MaxSetupAttempts	integer	\s-12\s+1	max attempts to initialize a modem
-MaxTries\(dg	integer	\s-13\s+1	max attempts to transmit a job
-ModemGroup\(dg	string	\-	define a name for a set of modems
+MaxTries\(S1	integer	\s-13\s+1	max attempts to transmit a job
+ModemGroup\(S1	string	\-	define a name for a set of modems
 ModemPriority	integer	255	scheduling priority for outbound jobs
 ModemReadyState	string	\s-1R\s+1	``ready state'' sent by \fIfaxgetty\fP
 NoCarrierRetrys	integer	\s-11\s+1	number of times to retry dialing on ``\s-2NO CARRIER\s0''
-NotifyCmd\(dd	string	\s-1bin/notify\s+1	user notification command script
-PageChop\(dg	string	\s-1last\s+1	control automatic truncation of trailing whitespace
-PageChopThreshold\(dg	float	\s-13.0\s+1	whitespace truncation threshold (inches)
-PCL2FaxCmd\(dg	string	\s-1bin/pcl2fax\s+1	PCL \s-1RIP\s+1 command script
+NotifyCmd\(S2	string	\s-1bin/notify\s+1	user notification command script
+PageChop\(S1	string	\s-1last\s+1	control automatic truncation of trailing whitespace
+PageChopThreshold\(S1	float	\s-13.0\s+1	whitespace truncation threshold (inches)
+PCL2FaxCmd\(S1	string	\s-1bin/pcl2fax\s+1	PCL \s-1RIP\s+1 command script
 PercentGoodLines	integer	\s-195\s+1	percentage of good rows for \s-1OK\s+1 page quality
-PollLockWait\(dd	integer	\s-130\s+1	polling interval when in ``lock wait'' state (secs)
+PollLockWait\(S2	integer	\s-130\s+1	polling interval when in ``lock wait'' state (secs)
 PollModemWait	integer	\s-130\s+1	polling interval when in ``modem wait'' state (secs)
 PollRcvdCmd	string	\s-1bin/pollrcvd\s+1	delivery script for facsimile received by polling
-PostScriptTimeout\(dg	integer	\s-1300\s+1	timeout on \*(Ps interpreter runs (secs)
-PS2FaxCmd\(dg	string	\s-1bin/ps2fax\s+1	\*(Ps \s-1RIP\s+1 command script
+PostScriptTimeout\(S1	integer	\s-1300\s+1	timeout on \*(Ps interpreter runs (secs)
+PS2FaxCmd\(S1	string	\s-1bin/ps2fax\s+1	\*(Ps \s-1RIP\s+1 command script
 QualifyCID	string	\-	file of Caller-ID patterns for checking inbound calls
 QualifyTSI	string	\-	file of \s-1TSI\s+1 patterns for qualifying senders
 RecvDataFormat	string	\s-1adaptive\s+1	format for received facsimile data
@@ -175,23 +175,23 @@ RingFax	string	\-	distinctive ring fax call identifier
 RingsBeforeAnswer	integer	\s-10\s+1	rings to wait before answering phone
 RingVoice	string	\-	distinctive ring voice call identifier
 RTNHandlingMethod	string	\s-1Retransmit\s+1	RTN signal handling method	
-SendFaxCmd\(dg	string	\s-1bin/faxsend\s+1	fax transmit command script
-SendPageCmd\(dg	string	\s-1bin/pagesend\s+1	pager transmit command script
-SendUUCPCmd\(dg	string	\s-1bin/uucpsend\s+1	\s-1UUCP\s+1 transmit command script
-ServerTracing\(dd	integer	\s-11\s+1	non-session server tracing
-SessionTracing\(dd	integer	\s-11\s+1	send and receive session tracing
+SendFaxCmd\(S1	string	\s-1bin/faxsend\s+1	fax transmit command script
+SendPageCmd\(S1	string	\s-1bin/pagesend\s+1	pager transmit command script
+SendUUCPCmd\(S1	string	\s-1bin/uucpsend\s+1	\s-1UUCP\s+1 transmit command script
+ServerTracing\(S2	integer	\s-11\s+1	non-session server tracing
+SessionTracing\(S2	integer	\s-11\s+1	send and receive session tracing
 SpeakerVolume	string	\s-1Quiet\s+1	volume level for modem speaker
 TagLineFont	string	\-	tag line font filename
 TagLineFormat	string	\s-1\fIsee below\fP\s+1	tag line format string
-TIFF2FaxCmd\(dg	string	\s-1bin/tiff2fax\s+1	\s-1TIFF\s+1 converter command script
-TimeOfDay\(dg	string	\s-1Any\s+1	default time-of-day restrictions
-Use2D\(dg	boolean	\s-1Yes\s+1	restrict/permit use of 2D-encoded fax data
-UUCPLockMode\(dd	octal	\s-10600\s+1	protection mode for \s-1UUCP\s+1 lock files
-UUCPLockDir\(dd	string	\s-1\fIsee below\fP\s+1	\s-1UUCP\s+1 lockfile directory
-UUCPLockTimeout\(dd	integer	\s-130\s+1	time before removing stale \s-1UUCP\s+1 lockfile
-UUCPLockType\(dd	string	\s-1\fIsee below\fP\s+1	\s-1UUCP\s+1 lockfile type
+TIFF2FaxCmd\(S1	string	\s-1bin/tiff2fax\s+1	\s-1TIFF\s+1 converter command script
+TimeOfDay\(S1	string	\s-1Any\s+1	default time-of-day restrictions
+Use2D\(S1	boolean	\s-1Yes\s+1	restrict/permit use of 2D-encoded fax data
+UUCPLockMode\(S2	octal	\s-10600\s+1	protection mode for \s-1UUCP\s+1 lock files
+UUCPLockDir\(S2	string	\s-1\fIsee below\fP\s+1	\s-1UUCP\s+1 lockfile directory
+UUCPLockTimeout\(S2	integer	\s-130\s+1	time before removing stale \s-1UUCP\s+1 lockfile
+UUCPLockType\(S2	string	\s-1\fIsee below\fP\s+1	\s-1UUCP\s+1 lockfile type
 VGettyArgs	string	\-	arguments passed to voice getty program
-WedgedCmd\(dg	string	\s-1bin/wedged\s+1	command to run when modem is wedged
+WedgedCmd\(S1	string	\s-1bin/wedged\s+1	command to run when modem is wedged
 .sp .5
 ModemAnswerCmd	string	\s-1ATA\s+1	command for answering phone
 ModemAnswerDataBeginCmd	string	\-	command for start of answered data call
@@ -431,7 +431,7 @@ is ``fax data'' and
 is 1, then after each successful inbound call, the
 next call will be answered as data.
 .TP
-.B AreaCode\(dd
+.B AreaCode\(S2
 The local area code in which the facsimile modem resides.
 This value is passed to the dial string rules that are
 used, for example,
@@ -483,13 +483,13 @@ disallows manipulation of
 .SM CLOCAL
 by anyone but the super-user).
 .TP
-.B ContCoverCmd\(dg
+.B ContCoverCmd\(S1
 The command to invoke to generate a continuation cover page; see
 .B ContCoverPage
 and
 .IR mkcover (1M).
 .TP
-.B ContCoverPage\(dg
+.B ContCoverPage\(S1
 A template file to use in creating
 .IR "continuation cover pages" .
 If this parameter is non-null, then the server will pass the
@@ -504,7 +504,7 @@ will not generate continuation cover pages.
 The specified pathname must be relative to the top of the fax server's
 spooling area.
 .TP
-.B CountryCode\(dd
+.B CountryCode\(S2
 The local country code in which the facsimile modem resides.
 As for
 .BR AreaCode ,
@@ -512,7 +512,7 @@ this value is passed to the dial string rules for use in
 formulating canonical phone numbers for dialing (among
 other things.)
 .TP
-.B DestControls\(dg
+.B DestControls\(S1
 An optional file containing rules for controlling
 parameters on a per-destination basis; see
 .IR destctrls (4F)
@@ -552,7 +552,7 @@ can access the modem.
 See also
 .IR chmod (2).
 .TP
-.B DialStringRules\(dd
+.B DialStringRules\(S2
 The pathname of the file that holds the rules for processing
 user-specified dial strings; c.f.
 .IR dialrules (4F).
@@ -585,7 +585,7 @@ are used to generate the transmitted
 and
 .SM TSI.
 .TP
-.B InternationalPrefix\(dd
+.B InternationalPrefix\(S2
 The string to use to place an international phone call.
 In the United States, this is ``011''.
 This string is passed to the dial string rules.
@@ -612,7 +612,7 @@ dialing attempt failed because the initial facsimile protocol
 handshake failed (i.e. no ``\s-1+FCON:\s+1'' result was received
 from a Class 2/2.0 modem).
 .TP
-.B JobReqOther\(dd
+.B JobReqOther\(S2
 The delay in seconds to wait before retrying a job that
 failed for a reason not already covered by one of the
 .B Job*
@@ -685,7 +685,7 @@ an outbound program may sneak in and take control of the modem
 after the inbound call has been accepted, but before the voice getty
 program has started up and installed it's own lockfile.
 .TP
-.B LogFacility\(dd
+.B LogFacility\(S2
 The symbolic name for the 
 .IR syslog (3)
 facility to use when logging error messages and
@@ -708,11 +708,11 @@ value may be set, for example, to 0644.
 See also
 .IR chmod (2).
 .TP
-.B LongDistancePrefix\(dd
+.B LongDistancePrefix\(S2
 The string to use to place a long distance phone call.
 In the United States, this is ``1''.
 .TP
-.B MaxConcurrentJobs\(dg
+.B MaxConcurrentJobs\(S1
 The default value to use for the maximum number of jobs for the
 same destination that are processed concurrently.
 Note that each job is processed with a separate phone call;
@@ -732,7 +732,7 @@ the quality of received facsimile.
 See also
 .BR PercentGoodLines .
 .TP
-.B MaxDials\(dg
+.B MaxDials\(S1
 The default value for the maximum number of times the server will
 place a call for an outbound job.
 This value may be overridden by rules in the
@@ -745,7 +745,7 @@ See also
 The maximum number of pages the server will accept in a received
 facsimile before it aborts the session.
 .TP
-.B MaxSendPages\(dg
+.B MaxSendPages\(S1
 The default value for the maximum number of pages the server will
 permit in a transmitted facsimile.
 Outbound jobs that exceed this limit are rejected.
@@ -757,7 +757,7 @@ file.
 The maximum number of times a \*(Fx server program will attempt
 to initialize a modem before considering it ``\fIwedged\fP''.
 .TP
-.B MaxTries\(dg
+.B MaxTries\(S1
 The default value for the maximum number of times the server will
 attempt to communicate with a remote site.
 Note that for a call to be counted against this limit, carrier must
@@ -772,7 +772,7 @@ file.
 See also
 .BR MaxDials .
 .TP
-.B ModemGroup\(dg
+.B ModemGroup\(S1
 Define a logical name for a set of modem devices.
 This parameter can be used to define a name that clients can use
 to refer to a collection of modems.
@@ -833,11 +833,11 @@ program or by setting this configuration parameter with the
 .IR faxconfig (1M)
 program.
 .TP
-.B NotifyCmd\(dd
+.B NotifyCmd\(S2
 The command to invoke to notify a client of a job status change; see
 .IR notify (1M).
 .TP
-.B PageChop\(dg
+.B PageChop\(S1
 Whether or not to automatically truncate trailing whitespace on
 pages of outbound facsimile (when possible).
 If page chopping is enabled, then pages with at least
@@ -848,13 +848,13 @@ The possible values are: ``last'' to enable chopping of the last
 page of each document, ``all'' to enable chopping of all pages, or
 ``none'' to disable page chopping.
 .TP
-.B PageChopThreshold\(dg
+.B PageChopThreshold\(S1
 The minimum amount of trailing whitespace that must be present
 on a page before page chopping will be attempted; see 
 .BR PageChop .
 Note that this value is specified in inches.
 .TP
-.B PCL2FaxCmd\(dg
+.B PCL2FaxCmd\(S1
 The command to invoke to convert a HP-PCL document submitted
 for transmission to
 .SM TIFF/F,
@@ -881,7 +881,7 @@ The time (in seconds) to wait between checks
 for a modem to become ready for use.
 Modem polling occurs when a modem fails to reset cleanly.
 .TP
-.B PS2FaxCmd\(dg
+.B PS2FaxCmd\(S1
 The command to invoke to convert a \*(Ps document submitted
 for transmission to
 .SM TIFF/F,
@@ -1011,21 +1011,21 @@ remote to decide what to do (accept our decision or hang up). Thus one page will
 (or will not) be missed but we have a chance to successfully send all other pages.
 This behaviour can be activated by ``Ignore'' value.
 .TP
-.B SendFaxCmd\(dg
+.B SendFaxCmd\(S1
 The command to use to process outbound facsimile jobs; see
 .IR faxsend (1M).
 .TP
-.B SendPageCmd\(dg
+.B SendPageCmd\(S1
 The command to use to process outbound pager jobs; see
 .IR pagesend (1M).
 .TP
-.B SendUUCPCmd\(dg
+.B SendUUCPCmd\(S1
 The command to use to process outbound 
 .SM UUCP
 jobs.
 This parameter is not currently used, it is for future development.
 .TP
-.B ServerTracing\(dd
+.B ServerTracing\(S2
 A number that controls the generation of tracing
 information by a server when not actively sending or
 receiving facsimile.
@@ -1084,7 +1084,7 @@ See
 .IR log (4F)
 for a description of the logged messages.
 .TP
-.B SessionTracing\(dd
+.B SessionTracing\(S2
 A number that controls the generation of tracing information
 by a server while sending or receiving facsimile.
 The number is interpreted identically to
@@ -1167,14 +1167,14 @@ The default tag line format string is ``From %%n|%c|Page %%p of %%t''.
 See also
 .BR TagLineFont .
 .TP
-.B TIFF2FaxCmd\(dg
+.B TIFF2FaxCmd\(S1
 The command to invoke to convert a TIFF submitted
 for transmission to
 .SM TIFF/F,
 suitable for transmission; see
 .IR tiff2fax (1M).
 .TP
-.B TimeOfDay\(dg
+.B TimeOfDay\(S1
 The default time-of-day restrictions to apply to outbound jobs.
 Outbound jobs will be processed only during the specified time.
 Any jobs submitted outside this time period will be held until
@@ -1211,28 +1211,28 @@ This value may be overridden by rules in the
 .B DestControls
 file.
 .TP
-.B Use2D\(dg
+.B Use2D\(S1
 Control the use of 2D-encoded data for transmitted facsimile.
 .TP
-.B UUCPLockMode\(dd
+.B UUCPLockMode\(S2
 The file protection mode that should be used when creating
 .SM UUCP
 lockfiles.
 Note that this value is given in octal.
 .TP
-.B UUCPLockDir\(dd
+.B UUCPLockDir\(S2
 The pathname of the directory in which
 .SM UUCP
 lockfiles are to be created.
 .TP
-.B UUCPLockTimeout\(dd
+.B UUCPLockTimeout\(S2
 The time in seconds to wait before removing a \fIstale\fP
 .SM UUCP
 lockfile (i.e. a lockfile whose owner does not appear to exist).
 If this value is set to 0, then the fax server will never
 remove a stale lockfile.
 .TP
-.B UUCPLockType\(dd
+.B UUCPLockType\(S2
 A string that specifies the type of
 .SM UUCP
 lockfile to create.
@@ -1275,7 +1275,7 @@ Note that in addition to the specified command line arguments, the
 program is invoked with its standard input, output, and error
 descriptors directed to the controlling tty device.
 .TP
-.B WedgedCmd\(dg
+.B WedgedCmd\(S1
 The command to invoke when a modem is deemed ``\fIwedged\fP''; see
 .IR wedged (1M).
 .SH "MODEM-ORIENTED CONFIGURATION PARAMETERS"

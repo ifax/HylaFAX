@@ -106,25 +106,25 @@ The
 .I hfaxd
 server currently recognizes the following protocol requests; case
 is not distinguished.
-Entries marked with a \(dg can be used only when the client has
+Entries marked with a \(S1 can be used only when the client has
 established administrative privileges with \s-1ADMIN\s+1.
 .PP
 .nf
-.ta \w'DISABLE\(dg        'u
+.ta \w'DISABLE\(S1        'u
 \fBRequest	Description\fP
 ABOR	abort previous command
 ACCT	specify account (ignored)
 ADMIN	specify password for administrative privileges
 ALLO	allocate storage (vacuously)
-ANSWER\(dg	request that call be answered
+ANSWER\(S1	request that call be answered
 APPE	append to a file
 CDUP	change to parent of current working directory
 CHMOD	change mode of a file
-CHOWN\(dg	change owner of a file
+CHOWN\(S1	change owner of a file
 CWD	change working directory
 DELE	delete a file
-DISABLE\(dg	disable outbound use of modem
-ENABLE\(dg	enable outbound use of modem
+DISABLE\(S1	disable outbound use of modem
+ENABLE\(S1	enable outbound use of modem
 HELP	give help information
 FILEFMT	specify/query format for returning file status
 FORM	specify data transfer \fIformat\fP
@@ -185,13 +185,13 @@ The following non-standard or experimental commands are supported
 through the \s-1SITE\s+1 request.
 .PP
 .nf
-.ta \w'ADDMODEM\(dg        'u
+.ta \w'ADDMODEM\(S1        'u
 \fBRequest	Description\fP
-ADDMODEM\(dg	add/configure new modem for use
-ADDUSER\(dg	add client access control entry
-CONFIG\(dg	send configuration parameter setting to server
-DELMODEM\(dg	deconfigure/remove modem
-DELUSER\(dg	remove client access control entry
+ADDMODEM\(S1	add/configure new modem for use
+ADDUSER\(S1	add client access control entry
+CONFIG\(S1	send configuration parameter setting to server
+DELMODEM\(S1	deconfigure/remove modem
+DELUSER\(S1	remove client access control entry
 TRIGGER	register realtime event trigger
 HELP	give help information, e.g., SITE HELP
 .fi
@@ -239,7 +239,7 @@ The
 .I hfaxd
 server currently recognizes the \s-1SNPP\s+1
 protocol requests listed below.
-Requests marked with a \(dg are non-standard extensions to
+Requests marked with a \(S1 are non-standard extensions to
 .SM RFC
 1861 that may be added to
 .SM SNPP
@@ -249,10 +249,10 @@ first four characters of requests are used in identifying
 commands.
 .PP
 .nf
-.ta \w'ABOR\(dg        'u
+.ta \w'ABOR\(S1        'u
 \fBRequest	Description\fP
 2WAY	preface a 2-way transaction
-ABOR\(dg	abort previous command
+ABOR\(S1	abort previous command
 ACKR	set read acknowledgement handling for subsequent requests
 ALER	set the alter-level for subsequent requests
 CALL	set the caller-ID for subsequent requests
@@ -274,8 +274,8 @@ QUIT	terminate session
 RESE	reset server state
 RTYP	set the reply type code for subsequent requests
 SEND	send message(s)
-SITE\(dg	site-specific commands (see next section)
-STAT\(dg	return server status
+SITE\(S1	site-specific commands (see next section)
+STAT\(S1	return server status
 SUBJ	set the message text for subsequent requests
 .fi
 .PP
