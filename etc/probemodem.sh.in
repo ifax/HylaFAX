@@ -516,7 +516,7 @@ if [ "$RESULT" = "OK" ]; then
     # Class 1.0 = 4; Class 2.1 = 5;   
 
     RESPONSE="`echo $RESPONSE | $SED -e 's/[()]//g' \
-	-e 's/2.0/3/g' -e 's/1.0/4/g' -e 's/2.1/5/g'`";
+	-e 's/2\.0/3/g' -e 's/1\.0/4/g' -e 's/2\.1/5/g'`";
     MODEMCLASSES="";
     for CLASS in 1 2 3 4 5; do
 	if [ "`echo $RESPONSE | $GREP $CLASS`" != "" ]; then
