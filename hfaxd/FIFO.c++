@@ -72,6 +72,8 @@ HylaFAXServer::FIFOInput(int fd)
     char buf[2048];
     int cc;
     while ((cc = Sys::read(fd, buf, sizeof (buf)-1)) > 0) {
+	if (cc == sizeof(buf)-1)
+	    logWarning("FIFO Read full: %d", cc);
 	buf[cc] = '\0';
 	char* bp = &buf[0];
 	do {
@@ -82,13 +84,40 @@ HylaFAXServer::FIFOInput(int fd)
 		 * Setup the unpacking work and dispatch it.
 		 */
 		TriggerMsgHeader h;
-		memcpy(&h, bp, sizeof (h));		// copy to align fields
-		if (&buf[cc]-bp < h.length) {
-		    // XXX need more data to complete msg/should not happen
+		int left = &buf[cc]-bp;
+		bool needy = false;
+		if (left < sizeof(TriggerMsgHeader))
+		{
+		    needy = true;
+		} else
+		{
+		    memcpy(&h, bp, sizeof (h));		// copy to align fields
+		    if (left < h.length)
+			needy = true;
+		}
+		if (needy)
+		{
+		    /*
+		     * Handle the case where the buffer was read full.  This means that
+		     * we have a "partial" message at the end of buf, and the rest in
+		     * the FIFO.
+		     *
+		     * buf[n] is NEVER read from the file, it's always 1-past.  If we
+		     * have reached buf[n], we know we are past the read data.
+		     *
+		     * We have (left) bytes of the message at the end of the buf.
+		     * We move them to the front, and read as much more as we can to
+		     * fill buf back up, leaving it in the same state as if this was
+		     * the initial read.
+		     */
+		    memmove(buf, bp, left);
+		    cc = Sys::read(fd, buf+left, (sizeof(buf)-1) - left) + left;
+		    buf[cc] = '\0';
+		    bp = &buf[0];
 		} else {
 		    triggerEvent(h, bp+sizeof (h));
+		    bp += h.length;
 		}
-		bp += h.length;
 	    } else {
 		/*
 		 * Break up '\0'-separated records and strip
@@ -96,6 +125,29 @@ HylaFAXServer::FIFOInput(int fd)
 		 * works (i.e. echo appends a '\n' character).
 		 */
 		char* cp = strchr(bp, '\0');
+
+		/*
+		 * Handle the case where the buffer was read full.  This means that
+		 * we have a "partial" message at the end of buf, and the rest in
+		 * the FIFO.
+		 *
+		 * buf[n] is NEVER read from the file, it's always 1-past.  If we
+		 * have reached buf[n], we know we are past the read data.
+		 *
+		 * We have (cp - bp) bytes of the message at the end of the buf.
+		 * We move them to the front, and read as much more as we can to
+		 * fill buf back up, leaving it in the same state as if this was
+		 * the initial read.
+		 */
+		if (cp == &buf[sizeof(buf)-1])
+		{
+		    memmove(buf, bp, cp-bp);
+		    cc = Sys::read(fd, buf+(cp-bp), (sizeof(buf)-1) - (cp-bp)) + (cp-bp);
+		    buf[cc] = '\0';
+		    bp = &buf[0];
+		    cp = strchr(bp, '\0');
+		}
+
 		if (cp > bp) {
 		    if (cp[-1] == '\n') {
 			cp[-1] = '\0';

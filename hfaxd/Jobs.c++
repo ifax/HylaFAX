@@ -1093,6 +1093,21 @@ HylaFAXServer::findJob(const char* jobid, fxStr& emsg)
 	if (!checkJobState(job))
 	    emsg = "job deleted by another party";
     } else {
+	/*
+	 * We can only afford a certain amount of space,
+	 * unfortunately, there is no "bright" way to remove jobs
+	 * Ideally we'ld have an "aging" method, so the LRU job
+	 * would be the one deleted...
+	 */
+	if (jobs.size() > 10)
+	{
+	    JobDictIter iter(jobs);
+	    job = iter.value();
+	    logError("Removing: %s", (const char*)job->jobid);
+	    jobs.remove(job->jobid);
+	    delete job;
+	}
+
 	job = findJobOnDisk(jobid, emsg);
 	if (job)
 	    jobs[job->jobid] = job;

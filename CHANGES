@@ -2,6 +2,9 @@
 
 Changelog for HylaFAX 4.2.1
 
+* limit hfaxd jobs cache size (23 Nov 2004)
+* fix hfaxd ABOR command and trigger (23 Nov 2004)
+* fix error when hfaxd FIFO fills (23 Nov 2004)
 * document -age option for recvstats/xferfaxstats (23 Nov 2004)
 * add coversheet information into the q-file (23 Nov 2004)
 * fix documentation regarding DesiredEC (23 Nov 2004)

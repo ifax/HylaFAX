@@ -75,7 +75,8 @@ HylaFAXServer::triggerCmd(const char* fmt ...)
 		 */
 		for (;;)
 		    Dispatcher::instance().dispatch();
-	    }
+	    } else
+		perror_reply(426, "Data connection", errno);
 	    state &= ~S_TRANSFER;
 	    (void) cancelTrigger(emsg);
 	} else

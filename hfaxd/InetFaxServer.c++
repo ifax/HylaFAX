@@ -289,7 +289,7 @@ InetFaxServer::handleUrgentData(void)
     if (!getCmdLine(line, sizeof (line))) {
         reply(221, "You could at least say goodbye.");
         dologout(0);
-    } else if (strcasecmp(line, "ABOR\r\n") == 0) {
+    } else if (strcasecmp(line, "ABOR\n") == 0) {
 	/*
 	 * Abort the operation in progress.  Two reply
 	 * codes are sent on the control channel; one
@@ -299,7 +299,7 @@ InetFaxServer::handleUrgentData(void)
         reply(426, "Operation aborted. Data connection closed.");
         reply(226, "Abort successful");
         longjmp(urgcatch, 1);		// XXX potential memory leak
-    } else if (strcasecmp(line, "STAT\r\n") == 0) {
+    } else if (strcasecmp(line, "STAT\n") == 0) {
         if (file_size != (off_t) -1)
             reply(213, "Status: %lu of %lu bytes transferred",
                   byte_count, file_size);
