@@ -1399,14 +1399,14 @@ Besides arranging for hfaxd to get started up when a server machine
 is booted, it is necessary
 to specify which client machines and users can have access to a HylaFAX
 server machine.
-This is specified by the contents of the <B>etc/hosts</B> file in
+This is specified by the contents of the <B>etc/hosts.hfaxd</B> file in
 the HylaFAX spooling area on the server machine.
 The contents of this file is specified in the
-<A HREF="@CGIPATH@/manpage?hosts">hosts</A>
+<A HREF="@CGIPATH@/manpage?hosts.hfaxd">hosts.hfaxd</A>
 manual page.
-The default <B>etc/hosts</B> file that comes with HylaFAX permits anyone
+The default <B>etc/hosts.hfaxd</B> file that comes with HylaFAX permits anyone
 to have access through the <I>localhost</I> network interface; i.e. the
-hosts file contains:
+hosts.hfaxd file contains:
 
 <UL><TT>
 <PRE>localhost
@@ -1424,7 +1424,7 @@ somewhat awkward.
 <TABLE BORDER=0>
 <TR>
 <TD><IMG SRC=icons/warning_icon.gif HSPACE=8></TD>
-<TD><EM>The <B>etc/hosts</B> file must be owned by the fax user and
+<TD><EM>The <B>etc/hosts.hfaxd</B> file must be owned by the fax user and
 be mode 0600 or hfaxd will not permit client access.</EM></TD>
 </TR>
 </TABLE>

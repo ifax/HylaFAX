@@ -323,7 +323,7 @@ directive while
 .SH "CLIENT ACCESS CONTROL"
 .I hfaxd
 controls client access according to the information in the file
-.BR etc/hosts .
+.BR etc/hosts.hfaxd .
 This file defines the set of users and machines that may receive
 service and, optionally, defines password challenges to use in
 authenticating clients.
@@ -332,7 +332,7 @@ challenge.
 Access may also be restricted based on the host machine that a
 request for service originates from.
 Consult
-.IR hosts (4F)
+.IR hosts.hfaxd (4F)
 for information on the format and content of this file.
 The \s-1SITE ADDUSER\s+1
 protocol request is provided for adding new users to a server
@@ -415,7 +415,7 @@ RcvFmt	string	\s-1\fIsee below\fP\s+1	format string for received facsimile statu
 RetryTimeMap	string	\s-1\fIsee below\fP\s+1	mapping from service level to job retry time (\s-1SNPP\s+1)
 ServerTracing	integer	\s-11\s+1	server tracing control vector
 ShutdownFile	string	\s-1/etc/shutdown\s+1	name of shutdown control file
-UserAccessFile	string	\s-1/etc/hosts\s+1	name of access control file
+UserAccessFile	string	\s-1/etc/hosts.hfaxd\s+1	name of access control file
 XferLogFile	string	\s-1/etc/clientlog\s+1	name of file for logging client data transfers
 .fi
 .PP
@@ -762,7 +762,7 @@ of the spooling area).
 .B UserAccessFile
 The absolute pathname of the user access control file;
 see
-.IR hosts (4F)
+.IR hosts.hfaxd (4F)
 for information on the format and content of this file.
 (Note that absolute pathnames are relative to the root
 of the spooling area).
@@ -869,7 +869,7 @@ ${SPOOL}/log	for server log files
 ${SPOOL}/client	for \s-1FIFO\s+1 files used in communicating with \fIfaxq\fP
 ${SPOOL}/status	for server status information
 ${SPOOL}/config.\fIdevice\fP	for returning server status
-${SPOOL}/etc/hosts	host access control list
+${SPOOL}/etc/hosts.hfaxd	host access control list
 ${SPOOL}/etc/shutdown	server shutdown control
 ${SPOOL}/etc/pagermap	\s-1SNPP\s+1 pager ID mapping file
 .fi
@@ -884,6 +884,6 @@ To be filled in.
 .IR faxq (1M),
 .IR syslog (3)
 .IR hylafax (4F),
-.IR hosts (4F),
+.IR hosts.hfaxd (4F),
 .IR status (4F),
 .IR shutdown (4F),

@@ -136,11 +136,11 @@
 
 /*
  * Client access to services on the server machine is controlled
- * by information in the ``hosts'' file.  This is actually a
+ * by information in the ``hosts.hfaxd'' file.  This is actually a
  * minsomer; the file has much more information than host names
  * (but it used to only have host-related information).
  */
-#define	FAX_PERMFILE	FAX_ETCDIR "/hosts"
+#define	FAX_PERMFILE	FAX_ETCDIR "/hosts.hfaxd"
 
 /*
  * Server processes write various status information to files

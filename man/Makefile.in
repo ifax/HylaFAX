@@ -98,7 +98,7 @@ MANSFILE=sman.files/hylafax.4f	\
 	sman.files/config.4f	\
 	sman.files/destctrls.4f	\
 	sman.files/dialrules.4f	\
-	sman.files/hosts.4f	\
+	sman.files/hosts.hfaxd.4f	\
 	sman.files/info.4f	\
 	sman.files/log.4f	\
 	sman.files/pagermap.4f	\
@@ -183,7 +183,7 @@ sman.files/cid.4f::	${SRCDIR}/cid.4f;	${MANCVT}
 sman.files/config.4f::	${SRCDIR}/config.4f;	${MANCVT}
 sman.files/destctrls.4f:: ${SRCDIR}/destctrls.4f; ${MANCVT}
 sman.files/dialrules.4f:: ${SRCDIR}/dialrules.4f; ${MANCVT}
-sman.files/hosts.4f::	${SRCDIR}/hosts.4f;	${MANCVT}
+sman.files/hosts.hfaxd.4f::	${SRCDIR}/hosts.hfaxd.4f;	${MANCVT}
 sman.files/info.4f::	${SRCDIR}/info.4f;	${MANCVT}
 sman.files/log.4f::	${SRCDIR}/log.4f;	${MANCVT}
 sman.files/pagermap.4f::${SRCDIR}/pagermap.4f;	${MANCVT}

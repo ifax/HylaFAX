@@ -80,7 +80,7 @@ f man @MANDIR@/man4/cid.4=../man/sman.files/cid.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/config.4=../man/sman.files/config.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/destctrls.4=../man/sman.files/destctrls.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/dialrules.4=../man/sman.files/dialrules.4f 0444 @SYSUID@ @SYSGID@
-f man @MANDIR@/man4/hosts.4=../man/sman.files/hosts.4f 0444 @SYSUID@ @SYSGID@
+f man @MANDIR@/man4/hosts.hfaxd.4=../man/sman.files/hosts.hfaxd.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/hylafax.4=../man/sman.files/hylafax.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/info.4=../man/sman.files/info.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/log.4=../man/sman.files/log.4f 0444 @SYSUID@ @SYSGID@
@@ -178,7 +178,7 @@ d none @SPOOL@/etc 0755 @FAXUID@ @FAXGID@
 f none @SPOOL@/etc/dpsprinter.ps=../@SRCDIR@/util/dpsprinter.ps 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/etc/cover.templ=../@SRCDIR@/util/cover.templ 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/etc/xferfaxlog=../etc/xferfaxlog 0644 @FAXUID@ @FAXGID@
-f none @SPOOL@/etc/hosts=../etc/hosts 0600 @FAXUID@ @FAXGID@
+f none @SPOOL@/etc/hosts.hfaxd=../etc/hosts 0600 @FAXUID@ @FAXGID@
 f none @SPOOL@/etc/dialrules=../@SRCDIR@/etc/dialrules 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/etc/dialrules.sf-ba=../@SRCDIR@/etc/dialrules.sf-ba 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/etc/dialrules.europe=../@SRCDIR@/etc/dialrules.europe 0444 @SYSUID@ @SYSGID@

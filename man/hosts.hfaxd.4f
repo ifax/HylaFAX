@@ -29,12 +29,12 @@
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .TH HOSTS 4F "January 18, 1996"
 .SH NAME
-hosts \- \*(Fx client access control list
+hosts.hfaxd \- \*(Fx client access control list
 .SH DESCRIPTION
 The 
 .SM ASCII
 file
-.B etc/hosts
+.B etc/hosts.hfaxd
 in the \*(Fx spooling area specifies the
 hosts and users that are permitted to access services through the
 .IR hfaxd (1M)
@@ -130,7 +130,7 @@ The encrypted password for this user to gain administrative privileges.
 If this field is empty (null) then the user is not permitted to have
 administrative privileges.
 .SH EXAMPLE
-The following is a sample hosts file.
+The following is a sample hosts.hfaxd file.
 Note that the first entry that matches
 is taken, so more-specific entries should be placed first.
 .sp .3

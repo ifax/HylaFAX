@@ -278,7 +278,7 @@ If you are able to establish a network connection to
 the hfaxd server process then access control problems are
 either due to incorrect installation of the server software or
 misconfigured permissions on the server machine.
-Client access is defined by the contents of the <B>etc/hosts</B> file
+Client access is defined by the contents of the <B>etc/hosts.hfaxd</B> file
 located in the HylaFAX spooling area on the server machine.
 This file must exist and <EM>must not be publicly readable</EM>
 or access will be denied to all clients.
@@ -287,7 +287,7 @@ or access will be denied to all clients.
 <TABLE BORDER=0>
 <TR>
 <TD><IMG SRC="icons/warning_icon.gif" HSPACE=8></TD>
-<TD><EM>Beware of the protection on the <B>etc/hosts</B> file when
+<TD><EM>Beware of the protection on the <B>etc/hosts.hfaxd</B> file when
 upgrading from HylaFAX 3.0.  Previous versions of HylaFAX
 did not care if the file was publicly readable
 so it probably is.</EM></TD>
@@ -311,7 +311,7 @@ separately by HylaFAX and is independent of the normal system operation.
 Beware that hfaxd stores this ID as the group ID of files that are
 created on a HylaFAX server on behalf of a client.
 The fax user ID assigned to a client is defined by the information
-in the <B>etc/hosts</B> file; consult the manual page for more details.
+in the <B>etc/hosts.hfaxd</B> file; consult the manual page for more details.
 You can also find the user ID for a particular user by
 logging in with telnet and issuing a <TT>STAT</TT> request:
 
@@ -355,7 +355,7 @@ measures.
 The existing password facilities use the same 
 <A HREF="@CGIPATH@/manpage?crypt">crypt</A>
 function the system login facilities use and encrypted passwords
-are stored in the <B>etc/hosts</B> file in a format that is compatible
+are stored in the <B>etc/hosts.hfaxd</B> file in a format that is compatible
 with most systems' password files.
 This means that client passwords can be copied from a password file
 if desired (though this is obviously discouraged).
@@ -377,9 +377,9 @@ password file.</EM></TD>
 <P>
 If a client is prompted for a password when contacting the server
 then it means the client is setup with a password in the
-<B>etc/hosts</B> file.
+<B>etc/hosts.hfaxd</B> file.
 Read the 
-<A HREF="@CGIPATH@/manpage?hosts">hosts</A>
+<A HREF="@CGIPATH@/manpage?hosts.hfaxd">hosts</A>
 manual page carefully to understand the format for this file.
 
 <P>

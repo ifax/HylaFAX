@@ -45,7 +45,7 @@ VPATH	= ../@SRCDIR@/etc
 DIALRULES=dialrules \
 	dialrules.sf-ba \
 	dialrules.europe
-TARGETS	= config.fax hosts xferfaxlog lockname ondelay
+TARGETS	= config.fax hosts.hfaxd xferfaxlog lockname ondelay
 
 default all::
 	@${MAKE} targets
@@ -54,9 +54,9 @@ targets: ${TARGETS}
 
 @MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
 
-hosts:
-	${ECHO} "localhost" >hosts
-	${ECHO} "127.0.0.1" >>hosts
+hosts.hfaxd:
+	${ECHO} "localhost" >hosts.hfaxd
+	${ECHO} "127.0.0.1" >>hosts.hfaxd
 xferfaxlog:
 	${ECHO} >xferfaxlog
 config.fax:
@@ -79,7 +79,7 @@ install: default
 	done
 	${PUTSERVER} -F ${SBIN} -m 755 -src probemodem.sh -O probemodem
 	${PUTSAMPLE} -F ${SPOOL}/etc -m 644 -o xferfaxlog
-	${PUTSAMPLE} -F ${SPOOL}/etc -m 600 -o hosts
+	${PUTSAMPLE} -F ${SPOOL}/etc -m 600 -o hosts.hfaxd
 	for i in ${DIALRULES}; do \
 	    ${PUTSERVER} -F ${SPOOL}/etc -m 444 -src ${SRCDIR}/$$i \
 		-idb "config(update)" -O $$i; \

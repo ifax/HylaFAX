@@ -257,7 +257,7 @@ by its canonical phone number.
 The remote job submission facility includes host and user
 access control.
 The file
-.B etc/hosts
+.B etc/hosts.hfaxd
 must be present and list those hosts and users that are
 permitted to queue jobs for transmission or do other operations
 that alter the status of a job.
@@ -265,7 +265,7 @@ Note that it is necessary to include the ``local host''
 definition (usually 127.0.0.1) if local submission
 is to be permitted.
 For more information consult
-.IR hosts (4F).
+.IR hosts.hfaxd (4F).
 .PP
 There are a number of controls on outbound calls that can be
 specified using the
@@ -667,7 +667,7 @@ docq/doc*	documents available for transmission
 etc/setup.cache	server setup file created by \fIfaxsetup\fP
 etc/cid	caller id access control list
 etc/config.<devid>	configuration data for <devid>
-etc/hosts	hosts that may submit jobs for transmission
+etc/hosts.hfaxd	hosts that may submit jobs for transmission
 etc/tsi	fax machine receive access control list
 etc/xferfaxlog	log of facsimile sent and received
 info/*	data base of remote fax machine capabilities
@@ -699,7 +699,7 @@ archive/*	database of archived jobs
 .IR config (4F),
 .IR dialrules (4F),
 .IR doneq (4F),
-.IR hosts (4F),
+.IR hosts.hfaxd (4F),
 .IR info (4F),
 .IR log (4F),
 .IR tsi (4F),

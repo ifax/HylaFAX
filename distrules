@@ -612,7 +612,7 @@ MANPAGES=\
 	man/faxstate.1m				\
 	man/faxwatch.1m				\
 	man/hfaxd.1m				\
-	man/hosts.4f				\
+	man/hosts.hfaxd.4f			\
 	man/hylafax.1				\
 	man/hylafax.4f				\
 	man/info.4f				\

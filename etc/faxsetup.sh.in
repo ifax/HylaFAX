@@ -1571,7 +1571,7 @@ if onServer; then
     # Verify existence, permission and ownership of sensitive files.
     # XXX there are other files too 
     #
-    HOSTS=$DIR_SPOOL/etc/hosts
+    HOSTS=$DIR_SPOOL/etc/hosts.hfaxd
     test -f $HOSTS || {
 	cat<<EOF
 
@@ -1581,7 +1581,7 @@ The file $1 does not exist or is not a regular file.
 This file specifies which clients are permitted to use the HylaFAX
 server.  The file will be initialized so that local clients are
 provided service.  Consult the HTML documentation and the manual
-page hosts(4F) for more information on setting up this file.
+page hosts.hfaxd(4F) for more information on setting up this file.
 
 EOF
 	$RM $HOSTS
