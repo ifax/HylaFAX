@@ -1590,7 +1590,7 @@ faxQueueApp::submitJob(Job& job, FaxRequest& req, fxBool checkState)
 	timeoutJob(job, req);
 	return (FALSE);
     }
-    if (!Modem::modemExists(req.modem) && !ModemClass::find(req.modem)) {
+    if (!Modem::modemExists(req.modem) && !ModemGroup::find(req.modem)) {
 	rejectSubmission(job, req,
 	    "REJECT: Requested modem " | req.modem | " is not registered");
 	return (FALSE);
@@ -2675,8 +2675,8 @@ faxQueueApp::setupConfig()
     use2D = TRUE;			// ok to use 2D data
     uucpLockMode = UUCP_LOCKMODE;
     delete dialRules, dialRules = NULL;
-    ModemClass::reset();		// clear+add ``any modem'' class
-    ModemClass::set(MODEM_ANY, new RegEx(".*"));
+    ModemGroup::reset();		// clear+add ``any modem'' class
+    ModemGroup::set(MODEM_ANY, new RegEx(".*"));
     pageChop = FaxRequest::chop_last;
     pageChopThreshold = 3.0;		// minimum of 3" of white space
 }
@@ -2781,7 +2781,7 @@ faxQueueApp::setConfigItem(const char* tag, const char* value)
 	use2D = getBoolean(value);
     else if (streq(tag, "uucplockmode"))
 	uucpLockMode = (mode_t) strtol(value, 0, 8);
-    else if (streq(tag, "modemclass")) {
+    else if (streq(tag, "modemgroup")) {
 	const char* cp;
 	for (cp = value; *cp && *cp != ':'; cp++)
 	    ;
@@ -2797,7 +2797,7 @@ faxQueueApp::setConfigItem(const char* tag, const char* value)
 		    configError("Bad pattern for modem class \"%s\": %s: " | emsg,
 			(const char*) name, re->pattern());
 		} else
-		    ModemClass::set(name, re);
+		    ModemGroup::set(name, re);
 	    } else
 		configError("No regular expression for modem class");
 	} else

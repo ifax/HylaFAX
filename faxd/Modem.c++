@@ -34,10 +34,10 @@
 #include "Dispatcher.h"
 #include "config.h"
 
-RegExDict* ModemClass::classes =  NULL;	// modem classes
+RegExDict* ModemGroup::classes =  NULL;	// modem classes
 
 RegEx*
-ModemClass::find(const char* name)
+ModemGroup::find(const char* name)
 {
     if (classes == NULL)
 	return (NULL);
@@ -46,13 +46,13 @@ ModemClass::find(const char* name)
 }
 
 void
-ModemClass::reset()
+ModemGroup::reset()
 {
     delete classes, classes = NULL;
 }
 
 void
-ModemClass::set(const fxStr& name, RegEx* re)
+ModemGroup::set(const fxStr& name, RegEx* re)
 {
     if (classes == NULL)
 	classes = new RegExDict;
@@ -138,7 +138,7 @@ Modem::isCapable(const Job& job) const
 Modem*
 Modem::findModem(const Job& job)
 {
-    RegEx* c = ModemClass::find(job.device);
+    RegEx* c = ModemGroup::find(job.device);
     if (c) {
 	/*
 	 * Job is assigned to a class of modems; search

@@ -660,7 +660,7 @@ EOF
     defaultMaxDials=12
     defaultMaxSendPages=0xffffffff
     defaultMaxTries=3
-    defaultModemClass=
+    defaultModemGroup=
     defaultPostScriptTimeout=180
     defaultPS2FaxCmd=\"bin/ps2fax\"
     defaultSendFaxCmd=\"bin/faxsend\"
@@ -1860,7 +1860,7 @@ OptionalSchedulerParameters="
     MaxDials
     MaxSendPages
     MaxTries
-    ModemClass
+    ModemGroup
     PostScriptTimeout
     PS2FaxCmd
     SendFaxCmd
@@ -1982,7 +1982,7 @@ C#	PostScriptTimeout	\
 	Timeout when converting PostScript documents (secs)
 C#	MaxConcurrentJobs	\
 	Maximum number of concurrent jobs to a destination
-S	ModemClass		Define a class of modems
+S	ModemGroup		Define a group of modems
 S	TimeOfDay		Time of day restrictions for outbound jobs
 S	DestControls		\
 	Pathname of destination controls file (relative to $DIR_SPOOL)

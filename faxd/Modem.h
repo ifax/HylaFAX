@@ -40,7 +40,7 @@ class RegExDict;
 class fxStackBuffer;
 class Modem;
 
-class ModemClass {
+class ModemGroup {
 private:
     static RegExDict* classes;	// registered modem classes
 public:
