@@ -365,7 +365,7 @@ function setupDateTimeStuff()
 #
 function cvtTime(s)
 {
-    mon = Months[substr(s, 0, 3)];
+    mon = Months[substr(s, 1, 3)];
     yday = substr(s, 5, 2) - 1;
     for (i = 0; i < mon; i++)
 	yday += daysInMonth[i];
