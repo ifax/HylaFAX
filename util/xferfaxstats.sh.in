@@ -86,7 +86,7 @@ case $SORTKEY in
 	$2 == "SEND" && NF == 13 { acct($7, $8, $11, $12, getBR($10), getDF($10), $13); }
 	$2 == "SEND" && NF == 14 { acct($7, $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 16 { acct($7, $8, $11, $13, getBR($10), getDF($10), $14); }
-	$2 == "SEND" && NF == 17 { acct($7, $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 17 { acct($7 " (" $17 ")", $8, $11, $13, getBR($10), getDF($10), $14); }
 	'
     KEYTITLE="Sender"
     ;;
@@ -337,6 +337,11 @@ function qsort(a, l, r) {
 }
 
 function cleanup(s)
+# remove special characters from the string s and return the results
+# the first arg of gsub is a regex to be substituted (removed in this
+# case) from the string s
+#  remove double quotes, leading spaces at the beginning
+#  of the string any spaces followed at the end of the string
 {
     gsub("\"", "", s);
     gsub("^ +", "", s);
