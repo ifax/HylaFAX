@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.1
 
+* fix/implement desireddf in faxsend and faxq (29 Oct 2004)
 * fix the filetype output for JPARM DOCUMENTS (14 Oct 2004)
 * add SHIELDED_DTMF option for CIDNumber (7 Oct 2004)
 * add Class1Resolutions, deprecate Class1ExtendedRes (20 Sep 2004)
