@@ -96,7 +96,7 @@ HylaFAXServer.o:
 incdepend:
 
 install: default
-	${INSTALL} -F ${LIBEXEC} -u root -m 4755 \
+	${INSTALL} -F ${LIBEXEC} -u root -m 755 \
 	    -idb ${PRODUCT}.sw.server -O hfaxd
 	${INSTALL} -F ${LIBDATA} -m 644 -idb ${PRODUCT}.sw.server \
 	    -idb "config(noupdate)" -src ${SRCDIR}/hfaxd.conf -O hfaxd.conf
