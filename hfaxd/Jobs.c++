@@ -98,13 +98,17 @@ static const struct {
     { T_CHOPTHRESH,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_CLIENT,		A_RUSR|A_RADM|A_WADM|A_ROTH },
     { T_COMMID,		A_RUSR|A_RADM|A_ROTH },
+    { T_COMMENTS,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_COVER,		A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_DATAFORMAT,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_DIALSTRING,	A_RUSR|A_WUSR|A_RADM|A_WADM },
     { T_DOCUMENT,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_DONEOP,		A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_EXTERNAL,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
+    { T_FROM_COMPANY,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
+    { T_FROM_LOCATION,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_FROM_USER,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
+    { T_FROM_VOICE,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_GROUPID,	A_RUSR|A_RADM|A_ROTH },
     { T_JOBID,		A_RUSR|A_RADM|A_ROTH },
     { T_JOBINFO,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
@@ -126,6 +130,7 @@ static const struct {
     { T_PAGEWIDTH,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_PASSWD,		A_RUSR|A_WUSR|A_RADM|A_WADM },
     { T_POLL,		A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
+    { T_REGARDING,	A_RUSR|A_MUSR|A_RADM|A_WADM|A_ROTH },
     { T_RETRYTIME,	A_RUSR|A_MUSR|A_RADM|A_WADM|A_ROTH },
     { T_SCHEDPRI,	A_RUSR|A_MUSR|A_RADM|A_WADM|A_ROTH },
     { T_SENDTIME,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
@@ -139,6 +144,7 @@ static const struct {
     { T_TO_COMPANY,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_TO_LOCATION,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_TO_USER,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
+    { T_TO_VOICE,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_USE_CONTCOVER,	A_RUSR|A_RADM|A_WADM|A_ROTH },
     { T_USE_ECM,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_USE_TAGLINE,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
@@ -185,7 +191,11 @@ static struct {
     { T_TO_USER,	&Job::receiver },
     { T_TO_COMPANY,	&Job::company },
     { T_TO_LOCATION,	&Job::location },
+    { T_TO_VOICE,	&Job::voice },
     { T_FROM_USER,	&Job::sender },
+    { T_FROM_COMPANY,	&Job::fromcompany },
+    { T_FROM_LOCATION,	&Job::fromlocation },
+    { T_FROM_VOICE,	&Job::fromvoice },
     { T_PASSWD,		&Job::passwd },
     { T_CLIENT,		&Job::client },
     { T_TAGLINE,	&Job::tagline },
@@ -197,6 +207,8 @@ static struct {
     { T_STATUS,		&Job::notice },
     { T_DONEOP,		&Job::doneop },
     { T_COMMID,		&Job::commid },
+    { T_REGARDING,	&Job::regarding },
+    { T_COMMENTS,	&Job::comments },
 };
 static struct {
     Token	t;
@@ -830,6 +842,12 @@ HylaFAXServer::initDefaultJob(void)
     defJob.receiver	= "";
     defJob.company	= "";
     defJob.location	= "";
+    defJob.voice	= "";
+    defJob.fromcompany	= "";
+    defJob.fromlocation	= "";
+    defJob.fromvoice	= "";
+    defJob.regarding	= "";
+    defJob.comments	= "";
     defJob.client	= remotehost;
     defJob.tagline	= "";
     defJob.doneop	= "default";
@@ -911,6 +929,12 @@ HylaFAXServer::newJob(fxStr& emsg)
     job->receiver = curJob->receiver;
     job->company = curJob->company;
     job->location = curJob->location;
+    job->voice = curJob->voice;
+    job->fromcompany = curJob->fromcompany;
+    job->fromlocation = curJob->fromlocation;
+    job->fromvoice = curJob->fromvoice;
+    job->regarding = curJob->regarding;
+    job->comments = curJob->comments;
     job->jobtype = curJob->jobtype;
     job->tagline = curJob->tagline;
     job->client = remotehost;

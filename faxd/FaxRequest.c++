@@ -96,6 +96,12 @@ FaxRequest::stringval FaxRequest::strvals[] = {
     { "receiver",	&FaxRequest::receiver },
     { "company",	&FaxRequest::company },
     { "location",	&FaxRequest::location },
+    { "voice",		&FaxRequest::voice },
+    { "fromcompany",	&FaxRequest::fromcompany },
+    { "fromlocation",	&FaxRequest::fromlocation },
+    { "fromvoice",	&FaxRequest::fromvoice },
+    { "regarding",	&FaxRequest::regarding },
+    { "comments",	&FaxRequest::comments },
     { "cover",		&FaxRequest::cover },
     { "client",		&FaxRequest::client },
     { "owner",		&FaxRequest::owner },
@@ -258,6 +264,10 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_RECEIVER:	receiver = tag; break;
 	case H_COMPANY:		company = tag; break;
 	case H_LOCATION:	location = tag; break;
+	case H_VOICE:		voice = tag; break;
+	case H_FROMLOCATION:	fromlocation = tag; break;
+	case H_FROMVOICE:	fromvoice = tag; break;
+	case H_REGARDING:	regarding = tag; break;
 	case H_COVER:		cover = tag; break;
 	case H_CLIENT:		client = tag; break;
 	case H_OWNER:		owner = tag; break;
@@ -273,8 +283,18 @@ FaxRequest::readQFile(bool& rejectJob)
 	    break;
 	case H_SUBADDR:		subaddr = tag; break;
 	case H_PASSWD:		passwd = tag; break;
-	case H_STATE:		state = tag[0] - '0'; break;
-	case H_NPAGES:		npages = atoi(tag); break;
+	case H_STATE:			// NB: comments collides
+	    if (cmd[0] == 's')
+		state = tag[0] - '0';
+	    else
+		comments = tag;
+	    break;
+	case H_NPAGES:
+	    if (cmd[0] == 'n')
+		npages = atoi(tag);
+	    else
+		fromcompany = tag;
+	    break;
 	case H_TOTPAGES:	totpages = atoi(tag); break;
 	case H_NTRIES:			// NB: maxtries collides
 	    if (cmd[0] == 'n')

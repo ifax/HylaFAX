@@ -81,6 +81,12 @@ main()
     hash("receiver");
     hash("company");
     hash("location");
+    hash("voice");
+    hash("fromcompany");
+    hash("fromlocation");
+    hash("fromvoice");
+    hash("regarding");
+    hash("comments");
     hash("cover");
     hash("client");
     hash("owner");

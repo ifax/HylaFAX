@@ -122,7 +122,7 @@ static const tab parmtab[] = {
 { "BEGST",        T_BEGST,	  false, true, "[ANY|scanline-time]" },
 { "CHOPTHRESHOLD",T_CHOPTHRESH,	  false, true, "[inches]" },
 { "CLIENT",       T_CLIENT,	  false, true, "[<string>]" },
-{ "COMMENTS",     T_COMMENTS,	  false,false, "[<string>]" },
+{ "COMMENTS",     T_COMMENTS,	  false, true, "[<string>]" },
 { "COMMID",       T_COMMID,	  false, true, "(communication identifier)" },
 { "COVER",        T_COVER,	  false, true, "path-name" },
 { "DATAFORMAT",   T_DATAFORMAT,	  false, true, "[ANY|G31D|G32D|G4]" },
@@ -130,10 +130,10 @@ static const tab parmtab[] = {
 { "DOCUMENT",     T_DOCUMENT,	  false, true, "path-name" },
 { "DONEOP",       T_DONEOP,	  false, true, "[<string>]" },
 { "EXTERNAL",     T_EXTERNAL,	  false, true, "[<string>]" },
-{ "FROMCOMPANY",  T_FROM_COMPANY, false,false, "[<string>]" },
-{ "FROMLOCATION", T_FROM_LOCATION,false,false, "[<string>]" },
+{ "FROMCOMPANY",  T_FROM_COMPANY, false, true, "[<string>]" },
+{ "FROMLOCATION", T_FROM_LOCATION,false, true, "[<string>]" },
 { "FROMUSER",     T_FROM_USER,	  false, true, "[<string>]" },
-{ "FROMVOICE",    T_FROM_VOICE,	  false,false, "[<string>]" },
+{ "FROMVOICE",    T_FROM_VOICE,	  false, true, "[<string>]" },
 { "GROUPID",      T_GROUPID,	  false, true, "(job group identifier)" },
 { "HRES",         T_HRES,	  false,false, "[dots-per-inch]" },
 { "JOBID",        T_JOBID,	  false, true, "(job identifier)" },
@@ -156,7 +156,7 @@ static const tab parmtab[] = {
 { "PAGEWIDTH",    T_PAGEWIDTH,	  false, true, "[millimeters]" },
 { "PASSWD",       T_PASSWD,	  false, true, "[<string>]" },
 { "POLL",         T_POLL,	  false, true, "selector [passwd]" },
-{ "REGARDING",    T_REGARDING,	  false,false, "[<string>]" },
+{ "REGARDING",    T_REGARDING,	  false, true, "[<string>]" },
 { "RETRYTIME",    T_RETRYTIME,	  false, true, "[HHSS]" },
 { "SCHEDPRI",     T_SCHEDPRI,	  false, true, "[<number>]" },
 { "SENDTIME",     T_SENDTIME,	  false, true, "[NOW|YYYYMMDDHHSS]" },
@@ -170,7 +170,7 @@ static const tab parmtab[] = {
 { "TOTPAGES",     T_TOTPAGES,	  false, true, "[<number>]" },
 { "TOTTRIES",     T_TOTTRIES,	  false, true, "[<number>]" },
 { "TOUSER",       T_TO_USER,	  false, true, "[<string>]" },
-{ "TOVOICE",      T_TO_VOICE,	  false,false, "[<string>]" },
+{ "TOVOICE",      T_TO_VOICE,	  false, true, "[<string>]" },
 { "USECONTCOVER", T_USE_CONTCOVER,false, true, "[YES|NO]" },
 { "USEXVRES",     T_USE_XVRES,	  false, true, "[YES|NO]" },
 { "USEECM",       T_USE_ECM,	  false, true, "[YES|NO]" },
@@ -1091,7 +1091,11 @@ HylaFAXServer::param_cmd(Token t)
     case T_TO_USER:
     case T_TO_LOCATION:
     case T_TO_COMPANY:
+    case T_TO_VOICE:
     case T_FROM_USER:
+    case T_FROM_LOCATION:
+    case T_FROM_COMPANY:
+    case T_FROM_VOICE:
     case T_USRKEY:
     case T_PASSWD:
     case T_CLIENT:
@@ -1105,6 +1109,8 @@ HylaFAXServer::param_cmd(Token t)
     case T_STATUS:
     case T_DONEOP:
     case T_COMMID:
+    case T_REGARDING:
+    case T_COMMENTS:
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
 	    return (true);

@@ -148,6 +148,12 @@ public:
     fxStr	receiver;	// receiver's identity for cover page generation
     fxStr	company;	// receiver's company for cover page generation
     fxStr	location;	// receiver's location for cover page generation
+    fxStr	voice;		// receiver's voice number for cover page generation
+    fxStr	fromcompany;	// sender's company for cover page generation
+    fxStr	fromlocation;	// sender's location for cover page generation
+    fxStr	fromvoice;	// sender's voice number for cover page generation
+    fxStr	regarding;	// regarding subject for cover page generation
+    fxStr	comments;	// comments for cover page generation
     fxStr	cover;		// continuation cover page filename
     fxStr	client;		// identity of machine that submitted job
     fxStr	sigrate;	// negotiated signalling rate
