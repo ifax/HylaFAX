@@ -1406,14 +1406,21 @@ faxQueueApp::sendJobDone(Job& job, int status)
 		: (requeueInterval>>1) + (random()%requeueInterval));
 	}
 	/*
-	 * Bump the job priority so the retry will get processed
-	 * before new jobs.  We bound the priority to keep it within
-	 * a fixed ``range'' around it's starting priority.  This
-	 * is intended to keep jobs in different ``classifications''
-	 * from conflicting (e.g. raising a bulk-style fax up into
-	 * the priority range of a non-bulk-style fax).
+	 * Bump the job priority if is not bulk-style in which case
+	 * we dip the job job priority.  This is intended to prevent
+	 * non-bulk faxes from becoming buried by new jobs which
+	 * could prevent a timely retry.  However, it is also intended
+	 * to allow all bulk faxes to be attempted before retrying
+	 * any that could not complete on the first attempt.  This 
+	 * aids in timely delivery of bulk faxes as a group rather than
+	 * preoccupation with individual jobs as is the case with 
+	 * non-bulk style jobs.  We bound the priority to keep it
+	 * within a fixed "range" around it's starting priority.  This
+	 * is intended to keep "normal" and "high" priority jobs
+	 * from conflicting.
 	 */
-	if (JOBHASH(job.pri-1) == JOBHASH(req->usrpri))
+	if (job.pri != 255 && job.pri > 190) job.pri++;
+	else if (JOBHASH(job.pri-1) == JOBHASH(req->usrpri))
 	    job.pri--; 
 	job.state = (req->tts > now) ?
 	    FaxRequest::state_sleeping : FaxRequest::state_ready;

@@ -548,10 +548,10 @@ This priority can be changed at any time the job is not actively
 being processed using the
 .IR faxalter (${MANNUM1_8})
 program.
-A job's scheduling priority may also be raised by
+A job's scheduling priority may also be altered by
 .I faxq
 in response to certain scheduling events (e.g. after a failed
-attempt to send the priority may be raised).
+attempt to send).
 .PP
 Modems are assigned to outbound jobs if they are deemed ready
 for use.

@@ -444,9 +444,14 @@ to subsequent jobs.
 A priority is an integer value in the range [0-255].
 Lower values result in higher priority processing.
 By default, each job is assigned 127 for an initial scheduling priority.
-A job's priority is raised (numerically lowered) for each
+If a job's priority is greater than bulk faxes then the
+job's priority is raised (numerically lowered) for each
 failed attempt to transmit so that retransmit attempts
 are done ahead of newly submitted jobs.
+In the case of bulk faxes (numerically higher than 190), then the
+job's priority is lowered (numerically raised) for each failed
+attempt to transmit so that the whole of the bulk-queued jobs
+will be attempted before any are retried.
 The
 .I priority
 may also be specified as one of the following symbolic names:
@@ -457,7 +462,7 @@ or
 .I bulk
 or
 .I junk
-(207),
+(191),
 .I high
 (63).
 .TP 12
