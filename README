@@ -30,7 +30,7 @@ HylaFAX is a trademark of Silicon Graphics
 This note is basically just a placeholder.  The real documentation is
 located online at the HylaFAX home page:
 
-    http://www.vix.com/hylafax/
+    http://www.hylafax.org/
 
 The online documentation includes the full contents of the
 documentation as well as an FAQ, archives of the HylaFAX/flexfax
@@ -58,11 +58,11 @@ Installation Synopsis
 Follow the directions in the online documentation.  The main material
 on configuring, building, and installing the software is given in:
 
-    http://www.vix.com/hylafax/building.html
+    http://www.hylafax.org/building.html
 
 Server setup information is found at:
 
-    http://www.vix.com/hylafax/setup.html
+    http://www.hylafax.org/setup.html
 
 The documentation is extensive and designed to be used when installing
 the software.  There is also an FAQ that covers (or should cover)
@@ -252,7 +252,7 @@ line "help" will return a list of the commands understood by the
 mailing list management software.  You can also find information on
 subscribing to the mailing list at:
 
-    http://www.vix.com/hylafax/mailing-lists.html
+    http://www.hylafax.org/mailing-lists.html
 
 Submissions to the mailing list (including bug reports) should be
 directed to:
@@ -278,10 +278,3 @@ include the single line "subscribe" in the body of the message.  Note
 that there is no need to subscribe to both mailing lists; postings to
 the announcement list are automatically fed to the normal flexfax list.
 
-If you have not previously done so, please submit the survey form at
-
-    http://www.vix.com/hylafax/survey.html
-
-This form provides me with information on the modems and systems that
-HylaFAX is being used with.  The information is just to help me diagnose
-problems; all information is kept strictly private.
