@@ -59,7 +59,7 @@ AFM=auto
 GETTY=auto
 HTML=no
 PS=auto
-SYSVINIT=auto
+SYSVINIT=
 SGI2FAX=auto
 PORT=auto
 LIBMALLOC=auto
@@ -3225,13 +3225,16 @@ if [ -z "$INSTALL" ]; then
     esac
 fi
 
-if [ "$SYSVINIT" = auto ]; then
-    if test -d /etc/rc0.d -a -d /etc/rc2.d -a -d /etc/init.d; then
-	SYSVINIT=yes
-	Note "Looks like a SysV-style init is used, enabling installation of startup code."
-    else
-	SYSVINIT=no
-    fi
+if [ -z "$SYSVINIT" ]; then
+    # XXX The DIRS list needs to be more comprehensive
+    DIRS="/etc/init.d /etc/rc.d/init.d /sbin/init.d"
+    for i in $DIRS; do
+	if test -d $i; then
+	    SYSVINIT=$i/hylafax
+	    Note "Looks like a SysV-style init is used, enabling installation of startup code."
+	    break;
+	fi
+    done
 fi
 
 Note "Done selecting programs."

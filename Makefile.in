@@ -294,11 +294,7 @@ install: makeDirs makeDevices
 	else \
 	    true; \
 	fi
-	@if [ "@SYSVINIT@" = yes ]; then \
-	    ${ECHO} "= "etc; cd etc; ${MAKE} installSysVInit; \
-	else \
-	    true; \
-	fi
+	@${ECHO} "= "etc; cd etc; ${MAKE} installSysVInit; \
 	@if [ "@AFM@" = yes ]; then \
 	    ${ECHO} "= "afm; cd afm; ${MAKE} install; \
 	else \

@@ -56,6 +56,13 @@ EOF
 }
 . $SPOOL/etc/setup.cache
 
+if [ -z $HFAXD_SERVER ]; then
+    HFAXD_SERVER=1
+fi
+if [ -z $FAXQ_SERVER ]; then
+    FAXQ_SERVER=1
+fi
+
 IS_ON=/etc/chkconfig		# NB: chkconfig is IRIX-specific
 FAXQ=$SBIN/faxq
 HFAXD=$LIBEXEC/hfaxd
@@ -69,7 +76,7 @@ if test ! -x $IS_ON ; then
 fi
 
 if $IS_ON verbose ; then
-    ECHO=echo
+    ECHO="echo -e"
 else		# For a quiet startup and shutdown
     ECHO=:
 fi
@@ -104,9 +111,13 @@ case $1 in
 	    killall -15 faxq
 	    killall -15 hfaxd
 	    $ECHO "HylaFAX:\c"
-	    $FAXQ; $ECHO " faxq\c"
-	    $HFAXD -i $FAXPORT -o 4557 -s $SNPPPORT
-		$ECHO " hfaxd (w/ compatibility & SNPP)\c"
+            if test $FAXQ_SERVER -eq 1 ; then
+	        $FAXQ; $ECHO " faxq\c"
+            fi
+            if test $HFAXD_SERVER -eq 1 ; then
+	        $HFAXD -i $FAXPORT
+            fi
+            $ECHO " hfaxd (w/ compatibility & SNPP)\c"
 	    $ECHO "."
 	fi
 	;;
@@ -115,7 +126,13 @@ case $1 in
 	$FAXQUIT >/dev/null 2>&1
 	killall -15 hfaxd
 	;;
+'start_msg')
+	$ECHO "Starting HylaFAX Servers."
+	;;
+'stop_msg')
+	$ECHO "Stopping HylaFAX Servers."
+	;;
 *)
-	echo "usage: /etc/init.d/hylafax {start|stop}"
+	$ECHO "usage: hylafax {start|stop|start_msg|stop_msg}"
 	;;
 esac

@@ -46,7 +46,6 @@
 #GETTY="auto"			# type of getty support (auto|BSD|SysV)
 #HTML="no"			# install HTML documentation (yes|no)
 #PS="auto"			# PostScript support to use (auto|gs|dps|imp)
-#SYSVINIT="auto"		# install SysV-style init support (auto|yes|no)
 #SGI2FAX="auto"			# configure SGI image support (auto|yes|no)
 #DPS="no"			# install SGI DPS-based RIP (yes|no)
 #GS="no"			# install Ghostscript RIP (yes|no)
@@ -102,6 +101,7 @@
 #PATH_DPSRIP="/var/spool/fax/bin/ps2fax.exe"	# pathname of DPS-based RIP
 #PATH_IMPRIP="/usr/lib/print/psrip"	# pathname of Impressario 2.1 RIP
 #MANSCHEME="sysv-source-cat-strip"	# manual page installation scheme
+#SYSVINIT=		                # location SysV init script 
 
 # SVR4 packaging stuff
 #PKG_ARCH=				# ARCH variable in pkginfo file
