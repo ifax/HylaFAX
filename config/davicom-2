@@ -1,0 +1,29 @@
+# $Id$
+#
+# prototype config file for Davicom DM336P PnP modem.
+# AT command set available at:
+# http://www.davicom.com.tw/download/modem/dm336p/DM336P-AT%20COMMAND-P04-050997.pdf
+#
+
+#
+# CONFIG: CLASS2:DAVICOM-*-*
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+
+ModemType:		Class2
+ModemRate:		19200
+ModemFlowControl:	rtscts
+ModemNoFlowCmd:		AT&K0
+ModemSoftFlowCmd:	AT&K4
+ModemHardFlowCmd:	AT&K3
+
+Class2APQueryCmd:	none		# not available
+Class2BUGCmd:		none		# not available
+Class2CQQueryCmd:	!(0),(0)	# no copy quality checking
+Class2TBCCmd:		none		# not available
+Class2SPLCmd:		none		# not available
+
+	# The modem reports 2-D support, but ERROR when setting it
+Class2DCCQueryCmd:	!(0,1),(0-5),(0-2),(0-2),0,0,0,(0-7)
