@@ -1,4 +1,18 @@
 %!PS-Adobe-2.0 EPSF-2.0
+%%EndComments
+/orig-line1 (HylaFAX) def
+/orig-line2 (http://www.hylafax.org) def
+/orig-line3 (change these lines) def
+/orig-line4 (to suit your needs) def
+/orig-line5 () def
+/orig-line6 () def
+/orig-line7 () def
+/orig-line8 () def
+/orig-line9 () def
+/orig-line10 () def
+%%EndProlog
+%%Trailer
+%!PS-Adobe-2.0 EPSF-2.0
 %%BoundingBox: 21 3 588 788
 %%Title: 
 %%CreationDate: 11:05 AM January  4, 1993
@@ -37,6 +51,12 @@
     dup where {
 	pop
 	load dup nullstring ne {S} {pop} ifelse
+    } {pop} ifelse
+} bind def
+/AL {
+    dup where {
+	pop
+	load dup nullstring ne {S 0 -20 translate} {pop} ifelse
     } {pop} ifelse
 } bind def
 /M  { moveto } bind def /S { show  } bind def
@@ -157,6 +177,25 @@ newpath
 11.9999 3.00039 M -8.00007 787 L 618 787 L 618 3.00039 L
 closepath clip newpath
 /Helvetica-SHOWISO findfont 14 scalefont setfont
+
+/drawtext {
+gsave
+ /Helvetica-Bold-SHOWISO findfont 18 scalefont setfont
+ 10 765 translate
+ 0 0 M /orig-line1 AL
+ 0 0 M /orig-line2 AL
+ 0 0 M /orig-line3 AL
+ 0 0 M /orig-line4 AL
+ 0 0 M /orig-line5 AL
+ 0 0 M /orig-line6 AL
+ 0 0 M /orig-line7 AL
+ 0 0 M /orig-line8 AL
+ 0 0 M /orig-line9 AL
+ 0 0 M /orig-line10 AL
+grestore
+} def
+
+drawtext
 
 0 0 0 setrgbcolor
 /Helvetica-Bold-SHOWISO findfont 24 scalefont setfont
