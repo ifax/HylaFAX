@@ -934,9 +934,13 @@ Class1Modem::recvECMFrame(HDLCFrame& frame)
     // look for the last sync flag (possibly the previous one)
 
     // some senders use this as the time to do framing so we must wait longer than T.4 A.3.1 implies
-    startTimeout(60000);				// just to prevent hanging
+    time_t start = Sys::now();
     while (bit != 1 && bit != EOF && !didBlockEnd()) {	// flag begins with zero, address begins with one
 	do {
+	    if ((unsigned) Sys::now()-start >= 300) {	// 5 minutes of synchronization is too much
+		protoTrace("Timeout waiting for the last synchronization flag");
+		return false;
+	    }
 	    if (bit == 0 || ones > 6) ones = 0;
 	    bit = getModemBit(0);
 	    if (bit == 1) ones++;
@@ -944,7 +948,6 @@ Class1Modem::recvECMFrame(HDLCFrame& frame)
 	ones = 0;
 	bit = getModemBit(0);
     }
-    stopTimeout("waiting for the last synchronization flag");
 
     // receive the frame, strip stuffed zero-bits, and look for end flag
 
@@ -952,7 +955,7 @@ Class1Modem::recvECMFrame(HDLCFrame& frame)
     u_short bitpos = 7;
     u_int byte = (bit << bitpos);
     bool rcpframe = false;
-    time_t start = Sys::now();
+    start = Sys::now();
     do {
 	if ((unsigned) Sys::now()-start >= 3) {
 	    protoTrace("Timeout receiving HDLC frame");
@@ -1030,15 +1033,18 @@ Class1Modem::endECMBlock()
     if (didBlockEnd()) return (true);	// some erroniously re-use bytes
 
     int c = getLastByte();		// some erroniously re-use bits	
-    startTimeout(2500);			// just to prevent hanging
+    time_t start = Sys::now();
     do {
+	if ((unsigned) Sys::now()-start >= 60) {	// 60 seconds of garbage after RCP is too much
+	    protoTrace("Timeout waiting for DLE+ETX");
+	    return false;
+	}
 	if (c == DLE) {
 	    c = getModemChar(0);
 	    if (c == ETX || c == EOF)
 		break;
 	}
     } while ((c = getModemChar(0)) != EOF);
-    stopTimeout("waiting for DLE+ETX");
     if (c == EOF) return (false);
     else return (true);
 }
