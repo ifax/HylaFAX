@@ -3,7 +3,7 @@ $Id$
                            *   ANNOUNCE   *
 
 The HylaFAX development team is pleased to announce our 4.2.1
-feature release!  As always, our sincerest thanks go to all who
+patch level release!  As always, our sincerest thanks go to all who
 participate and provide feedback.
 
                                *   *   *
@@ -15,6 +15,7 @@ further resources regarding HylaFAX.
 
                           *   NEW FEATURES   *
 
+* hfaxd security fix for hosts.hfaxd entries without passwords
 * support for gcc v3.3 and libtiff v3.7
 * fax batching support
 * numerous other enhancements and bugfixes (see CHANGES)
@@ -32,17 +33,8 @@ further resources regarding HylaFAX.
 
                       *   WHO SHOULD UPGRADE?   *
 
-Everyone should consider upgrading to this 4.2.1 release as soon as
-possible. While every attempt has been made to retain backwards
-compatibility with the 4.1.x series, it's possible that assumptions
-your local installation depends upon may no longer be true. Whenever
-possible, test test test before upgrading a production server!!
-
-HylaFAX-4.2.1 will be of particular benefit to anyone running their
-modems in Class 1 due to the addition of native ECM and V.34 support
-(useful features that were previously available only in the
-notoriously buggy Class 2 firmware of modem manufacturers).
-
+For security reasons, everyone should consider upgrading to this 4.2.1
+release as soon as possible.
 
                      *   HYLAFAX BINARY PACKAGES   *
 

@@ -1,6 +1,6 @@
 #	$Id$	
 
-Changelog for HylaFAX 4.2.1
+Changelog for HylaFAX 4.2.1 - January 11, 2005
 
 * fix CAN-2004-1182: hfaxd client/server authentication
   vulnerability (10 Jan 2005)
