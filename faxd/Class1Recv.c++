@@ -792,6 +792,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		     * writes will overwrite the previous data.
 		     */
 		    messageReceived = true;	// expect DCS next
+		    signalRcvd = 0;
 		}
 		break;
 	    case FCF_DCN:			// DCN
