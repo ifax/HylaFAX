@@ -194,6 +194,10 @@ The
 .IR faxcron (${MANNUM1_8})
 script, for example, periodically purges unlocked entries in this
 directory that have not been accessed in 30 days.
+.PP
+Restricting the capabilities used with a particular machine to a value
+other than those that are mandatory can cause documents to be sent
+outside of an acceptable range for the receiver.
 .SH "SEE ALSO"
 .IR faxcron (${MANNUM1_8}),
 .IR faxq (${MANNUM1_8}),

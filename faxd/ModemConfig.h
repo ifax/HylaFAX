@@ -139,6 +139,7 @@ public:
     u_int	class1ECMFrameSize;	// ECM frame size for transmission
     bool	class1ECMSupport;	// support T.30-A ECM
     bool	class1ECMDoCTC;		// continue to correct
+    bool	class1ExtendedRes;	// support for extended resolutions
     bool	class1TCFRecvHack;	// deliberately look for V.21 disconnect
     bool	class1ValidateV21Frames;// check received FCS values in V.21
 					// for class 2 and 2.0:

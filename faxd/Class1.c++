@@ -156,7 +156,11 @@ Class1Modem::setupModem()
     for (i = 1; i < NCAPS; i++)
 	if (xmitCaps[i].ok)
 	    modemParams.br |= BIT(xmitCaps[i].br);
-    modemParams.vr = VR_ALL;
+    if (conf.class1ExtendedRes) {
+	modemParams.vr = VR_ALL;
+    } else {
+	modemParams.vr = VR_NORMAL | VR_FINE;
+    }
     modemParams.wd = BIT(WD_1728) | BIT(WD_2048) | BIT(WD_2432);
     modemParams.ln = LN_ALL;
     modemParams.df = BIT(DF_1DMH) | BIT(DF_2DMR);
@@ -1117,11 +1121,6 @@ Class1Modem::modemXINFO() const
 	| DIS_SEP			// support for selected polling frame
 	| DIS_SUB			// support for subaddressing frame
 	| DIS_PWD			// support for pwd frames
-	| DIS_200X400			// additional resolutions
-	| DIS_300X300
-	| DIS_400X400
-	| DIS_METRES			// announce support for both metric
-	| DIS_INCHRES			// and inch-based resolutions.
 	;
 }
 

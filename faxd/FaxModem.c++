@@ -556,6 +556,13 @@ FaxModem::modemXINFO() const
 	  ((modemParams.df & BIT(DF_2DMRUNCOMP)) ? DIS_2DUNCOMP : 0)
 	| ((modemParams.df & BIT(DF_2DMMR)) ? DIS_G4COMP : 0)
 	| ((modemParams.ec & BIT(EC_ENABLE)) ? DIS_ECMODE : 0)
+	| ((modemParams.vr & VR_R8) ? DIS_200X400 | DIS_METRES : 0)
+	| ((modemParams.vr & VR_R16) ? DIS_400X400 | DIS_METRES : 0)
+	| ((modemParams.vr & VR_200X100) ? DIS_INCHRES : 0)
+	| ((modemParams.vr & VR_200X200) ? DIS_INCHRES : 0)
+	| ((modemParams.vr & VR_200X400) ? DIS_200X400 | DIS_INCHRES : 0)
+	| ((modemParams.vr & VR_300X300) ? DIS_300X300 | DIS_INCHRES : 0)
+	| ((modemParams.vr & VR_R16) ? DIS_400X400 | DIS_INCHRES : 0)	// avoiding VR_400X400
 	;
 }
 

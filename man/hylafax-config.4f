@@ -260,6 +260,7 @@ Class1Cmd	string	\s-1AT+FCLASS=1\s+1	Class 1: command to enter class 1
 Class1ECMSupport	boolean	\s-1Yes\s+1	Class 1: enable T.30-A ECM support
 Class1ECMDoCTC	boolean	\s-1Yes\s+1	Class 1: to perform CTC in ECM protocol
 Class1ECMFrameSize	integer	\s-1256\s+1	Class 1: image frame size in ECM protocol
+Class1ExtendedRes	boolean	\s-1Yes\s+1	Class 1: enable extended resolution support
 Class1HFLOCmd	string	\-	Class 1: command to set hardware flow control
 Class1FrameOverhead	integer	\s-14\s+1	Class 1: extra bytes in a received \s-1HDLC\s+1 frame
 Class1NFLOCmd	string	\-	Class 1: command to set no flow control
@@ -2031,6 +2032,9 @@ attempts at the current bitrate.
 .B Class1ECMFrameSize
 The size in bytes of image frames to transmit during ECM protocol.
 The only acceptable values are 64 and 256.
+.TP
+.B Class1ExtendedRes
+Whether or not to support resolutions other than normal and fine.
 .TP
 .B Class1FrameOverhead
 The number of extraneous bytes in

@@ -232,7 +232,8 @@ ModemConfig::setupConfig()
     class2RTFCC		= false;		// real-time fax comp. conv.
     class2UseHex	= false;		// historical behavior
     class2UseLineCount	= false;		// don't trust firmware decoders
-    class1ECMSupport	= true;			// "safe" behavior until our ECM matures
+    class1ECMSupport	= true;			// support for ECM
+    class1ExtendedRes	= true;			// support for extended resolutions
     class1ECMDoCTC	= true;			// continue to correct through all bitrates
     class1TCFRecvHack	= false;		// historical behavior
     class1ValidateV21Frames = false;		// assume the modem does this
@@ -567,6 +568,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class1ECMSupport = getBoolean(value);
     else if (streq(tag, "class1ecmdoctc"))
 	class1ECMDoCTC = getBoolean(value);
+    else if (streq(tag, "class1extendedres"))
+	class1ExtendedRes = getBoolean(value);
     else if (streq(tag, "class1tcfrecvhack"))
 	class1TCFRecvHack = getBoolean(value);
     else if (streq(tag, "class1validatev21frames"))
