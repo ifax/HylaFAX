@@ -29,11 +29,11 @@
  * HylaFAX Application Support.
  */
 #include "Str.h"
-#include "Syslog.h"
+#include "SystemLog.h"
 #include "Dispatcher.h"
 #include <stdarg.h>
 
-class faxApp : public Syslog {
+class faxApp : public SystemLog {
 private:
     static fxStr getopts;		// main arguments
 

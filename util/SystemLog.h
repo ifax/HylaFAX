@@ -23,17 +23,18 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
-#ifndef _Syslog_
-#define	_Syslog_
+#ifndef _SystemLog_
+#define	_SystemLog_
 /*
- * Syslog Support.
+ * SystemLog Support.
  */
 #include <stdarg.h>
 extern "C" {
 #include <syslog.h>
 }
 
-struct Syslog {
+class SystemLog {
+public:
     static int	facility;		// syslog facility
     static const char* appName;		// app name for syslog messages
 
@@ -43,7 +44,7 @@ struct Syslog {
     static void setLogFacility(const char* facility);
     static int getLogFacility(void);
 };
-inline int Syslog::getLogFacility(void)		{ return facility; }
+inline int SystemLog::getLogFacility(void)		{ return facility; }
 
 extern	void logError(const char* fmt ...);
 extern	void logInfo(const char* fmt ...);
@@ -55,4 +56,4 @@ extern	void vlogInfo(const char* fmt, va_list ap);
 extern	void vlogNotice(const char* fmt, va_list ap);
 extern	void vlogDebug(const char* fmt, va_list ap);
 extern	void vlogWarning(const char* fmt, va_list ap);
-#endif /* _Syslog_ */
+#endif /* _SystemLog_ */

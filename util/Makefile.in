@@ -59,7 +59,7 @@ C++FILES=Array.c++ \
 	Dispatcher.c++ \
 	IOHandler.c++ \
 	Sys.c++ \
-	Syslog.c++ \
+	SystemLog.c++ \
 	Timeout.c++ \
 	Fatal.c++ \
 	\

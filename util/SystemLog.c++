@@ -25,7 +25,7 @@
  */
 #include "port.h"
 #include "config.h"
-#include "Syslog.h"
+#include "SystemLog.h"
 
 /*
  * Logging and error routines.
@@ -33,32 +33,32 @@
 
 extern	"C" int cvtFacility(const char*, int*);
 
-int	Syslog::facility = LOG_DAEMON;
-const char* Syslog::appName = "FaxApp";		// generic, override
+int	SystemLog::facility = LOG_DAEMON;
+const char* SystemLog::appName = "FaxApp";		// generic, override
 
 void
-Syslog::setupLogging(const char* name)
+SystemLog::setupLogging(const char* name)
 {
     appName = name;
     openlog(name, LOG_PID|LOG_ODELAY, facility);
 }
 void
-Syslog::setupLogging(void)
+SystemLog::setupLogging(void)
 {
     // NB: LOG_NDELAY 'cuz of chroot done by hfaxd
     openlog(appName, LOG_PID|LOG_NDELAY, facility);
 }
-void Syslog::closeLogging(void) { closelog(); }
+void SystemLog::closeLogging(void) { closelog(); }
 
 void
-Syslog::setLogFacility(const char* fac)
+SystemLog::setLogFacility(const char* fac)
 {
     if (!cvtFacility(fac, &facility))
 	logError("Unknown syslog facility name \"%s\"", fac);
 }
 
 void vlogInfo(const char* fmt, va_list ap)
-    { vsyslog(LOG_INFO|Syslog::getLogFacility(), fmt, ap); }
+    { vsyslog(LOG_INFO|SystemLog::getLogFacility(), fmt, ap); }
 void
 logInfo(const char* fmt ...)
 {
@@ -69,7 +69,7 @@ logInfo(const char* fmt ...)
 }
 
 void vlogError(const char* fmt, va_list ap)
-    { vsyslog(LOG_ERR|Syslog::getLogFacility(), fmt, ap); }
+    { vsyslog(LOG_ERR|SystemLog::getLogFacility(), fmt, ap); }
 void
 logError(const char* fmt ...)
 {
@@ -80,7 +80,7 @@ logError(const char* fmt ...)
 }
 
 void vlogNotice(const char* fmt, va_list ap)
-    { vsyslog(LOG_NOTICE|Syslog::getLogFacility(), fmt, ap); }
+    { vsyslog(LOG_NOTICE|SystemLog::getLogFacility(), fmt, ap); }
 void
 logNotice(const char* fmt ...)
 {
@@ -91,7 +91,7 @@ logNotice(const char* fmt ...)
 }
 
 void vlogDebug(const char* fmt, va_list ap)
-    { vsyslog(LOG_DEBUG|Syslog::getLogFacility(), fmt, ap); }
+    { vsyslog(LOG_DEBUG|SystemLog::getLogFacility(), fmt, ap); }
 void
 logDebug(const char* fmt ...)
 {
@@ -102,7 +102,7 @@ logDebug(const char* fmt ...)
 }
 
 void vlogWarning(const char* fmt, va_list ap)
-    { vsyslog(LOG_WARNING|Syslog::getLogFacility(), fmt, ap); }
+    { vsyslog(LOG_WARNING|SystemLog::getLogFacility(), fmt, ap); }
 void
 logWarning(const char* fmt ...)
 {

@@ -36,7 +36,7 @@
 #include "FileCache.h"
 #include "Trace.h"
 #include "Trigger.h"
-#include "Syslog.h"
+#include "SystemLog.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -150,7 +150,7 @@ extern const char* fmtTime(time_t t);
 /*
  * An instance of a fax server process.
  */
-class HylaFAXServer : public Syslog, public FaxConfig, public IOHandler {
+class HylaFAXServer : public SystemLog, public FaxConfig, public IOHandler {
 public:
     struct stringtag {
         const char*	 name;
