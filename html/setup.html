@@ -1263,17 +1263,20 @@ Consult the section on
 ``<A HREF="setup-advanced.html#AdaptiveAnswer">Adaptive Answer Support</A>''
 in the next chapter for help on configuring adaptive-answer support.
 
-<P>
-Setting up the <TT>GettyArgs</TT> parameter requires an
-understanding of how to automatically startup the system getty program.
-HylaFAX will invoke the getty program when a data call is
-recognized and set up the standard input, output, and error
-descriptors to point to the appropriate tty device.
-The getty program should not reopen or reinitialize the modem
-before doing its work.
-Some getty programs are incapable of this and are unsuitable
-for use with HylaFAX.
-The parameters passed to the getty program must also identify the
+<p> Setting up the <tt>GettyArgs</tt> parameter requires an understanding 
+ of how to automatically startup the system getty program. HylaFAX will invoke 
+ the getty program when a data call is recognized and set up the
+program's standard 
+input, output, and error descriptors to point to the appropriate tty device. 
+ A lock file for the device will be created. &nbsp;Since a 
+modem connection has already been made, carrier detect is asserted. &nbsp;The 
+getty program should not reopen or reinitialize the modem before doing its 
+work. In particular, it should not lower the DTR line, which usually causes 
+a modem reset. &nbsp;Some getty programs are incapable of this and are unsuitable
+  for use with HylaFAX (e.g., getty_ps, rev 2.0.7g or higher). <br>
+   </p>
+     
+<p>The parameters passed to the getty program must also identify the
 speed to use to communicate with the local modem.
 Some getty programs want to automatically detect this rate based
 on the <TT>CONNECT</TT> message that a modem sends to the host
@@ -1316,6 +1319,26 @@ h|std.38400|38400-baud:sp#38400:<BR>
 
 (Note that as before, the ``<TT>%s</TT>'' is replaced by the speed
 for host-modem communication.)
+
+<p>For the <b>mgetty</b> program, <tt>GettyArgs</tt> should be:</p>
+   
+<ul>
+     <tt> GettyArgs:       "-b -r -s %s %l"</tt>     
+</ul>
+and the <b>/etc/mgetty+sendfax/mgetty.config</b> file must contain port
+specific instructions to avoid toggling the DTR line during 
+initialization:<br>
+     
+<ul>
+     <tt> port ttyS0<br>
+  toggle-dtr n</tt>  
+</ul>
+    
+<p> For the <b>agetty</b> program, <tt>GettyArgs</tt> should be:  </p>
+     
+<ul>
+     <tt> GettyArgs:	"-h - %s" </tt>   
+</ul>
 
 <H2><A NAME="HFaxd"><P><HR WIDTH="65%" ALIGN=right>Setting up Client Access</A></H2>
 

@@ -3694,11 +3694,11 @@ if [ -z "$PATH_GETTY" ]; then
 	#
 	PATH_GETTY=`findFile ttymon /usr/lib/saf:/usr/libexec:/sbin:$PATH`
 	test -z "$PATH_GETTY" && \
-	    PATH_GETTY=`findApp getty /usr/libexec:/sbin:$PATH`
-	test -z "$PATH_GETTY" && \
 	    PATH_GETTY=`findApp agetty /usr/libexec:/sbin:$PATH`
 	test -z "$PATH_GETTY" && \
 	    PATH_GETTY=`findApp mgetty /usr/libexec:/sbin:$PATH`
+	test -z "$PATH_GETTY" && \
+	    PATH_GETTY=`findApp getty /usr/libexec:/sbin:$PATH`
 	if [ -z "$PATH_GETTY" ]; then
 	    PATH_GETTY=/etc/getty
 	    Note ""

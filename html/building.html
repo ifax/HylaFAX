@@ -2196,6 +2196,12 @@ To workaround this problem either correct the include file
 On Caldera eServer 2.3.1 you may need to add the following line
 to your <B>config.local</B> file.<br>
 LIBTIFF="-ltiff -ljpeg -lz"
+</p>
+<p>The <b>agetty</b> is recommended for handling incoming data connections,
+with <tt>GettyArgs &nbsp;"-h - %s"</tt>. &nbsp;The <b>getty_ps</b>, rev 2.0.7g
+or higher, does not work, since it closes and reopens the terminal device
+on startup, causing the modem to reset and drop the connection.<br>
+</p>
 
 <A NAME="IRIX"><H3>IRIX Guidance</H3></A>
 
