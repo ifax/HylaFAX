@@ -422,7 +422,7 @@ if [ -s $JUNK ]; then
 /Received/	{ date = $2;
 		  for (i = 3; i <= NF; i++)
 		      date = date ":" $i;
-		  printf "    %-16.16s %21.21s %2d %8s%s\n", \
+		  printf "    %-18.18s %21.21s %2d %8s%s\n", \
 			file, sender, pages, quality, date;
 		}
 '
