@@ -89,7 +89,7 @@ printJob(const TriggerMsgHeader& h, const char* data)
 	printf(
 	      "JOB " | job.jobid
 	    | " (dest " | job.dest
-	    | fxStr::format(" pri %u", job.pri)
+	    | (const char*)fxStr::format(" pri %u", job.pri)
 	    | " tts " | strTime(job.tts - now)
 	    | " killtime " | strTime(job.killtime - now)
 	    | "): ");
@@ -294,30 +294,31 @@ doProtocol(const char* trigger)
 {
     fd_set rd, wr, ex;
     int fd, n;
-    char msg[256];
 
-    sprintf(fifoName, "client/%u", getpid());
+    fxStr fn = fxStr::format("client/%u", getpid());
+    fxAssert(fn.length() >= sizeof(fifoName), "trigtest::doProtocol overrun!");
+    strcpy(fifoName, (const char*) fn);
     if (Sys::mkfifo(fifoName, 0666) < 0 && errno != EEXIST) {
-	perror("mkfifo");
-	exit(-1);
+        perror("mkfifo");
+        exit(-1);
     }
     signal(SIGINT, sigINT);
     signal(SIGTERM, sigINT);
     signal(SIGPIPE, SIG_IGN);
     fd = openFIFO(fifoName, CONFIG_OPENFIFO);
     if (fd < 0) {
-	unlink(fifoName);
-	exit(-1);
+        unlink(fifoName);
+        exit(-1);
     }
-    sprintf(msg, "T%s:N%s", fifoName, trigger);
-    send(msg, strlen(msg)+1);
+    fxStr msg = fxStr::format("T%s:N%s", fifoName, trigger);
+    send((const char*)msg, msg.length() + 1);
     for (;;) {
-	FD_ZERO(&rd);
+        FD_ZERO(&rd);
 	    FD_SET(fd, &rd);
 	    FD_SET(fileno(stdin), &rd);
-	FD_ZERO(&wr);
-	FD_ZERO(&ex);
-	n = select(FD_SETSIZE, &rd, &wr, &ex, 0);
+        FD_ZERO(&wr);
+        FD_ZERO(&ex);
+        n = select(FD_SETSIZE, &rd, &wr, &ex, 0);
 	if (n < 0) {
 	    perror("select");
 	    break;
@@ -344,7 +345,7 @@ doProtocol(const char* trigger)
 				if (strncmp(bp, "HELLO", 5) == 0) {
 				    printTime(Sys::now());
 				    printf(" HELLO: (Server startup)\n");
-				    send(msg, strlen(msg)+1);
+				    send((const char*)msg, msg.length() + 1);
 				} else if (bp[0] == 'T') {
 				    printTime(Sys::now());
 				    if (bp[1] == '!')

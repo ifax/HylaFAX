@@ -230,14 +230,13 @@ faxApp::vsendQueuer(const char* fmt, va_list ap)
 	if (fcntl(faxqfifo, F_SETFL, fcntl(faxqfifo, F_GETFL, 0) &~ O_NDELAY) < 0)
 	    logError("fcntl: %m");
     }
-    char msg[4096];
-    vsprintf(msg, fmt, ap); //XXX buffer overrun ???
-    u_int len = strlen(msg)+1;
-    if (Sys::write(faxqfifo, msg, len) != len) {
+    fxStr msg = fxStr::vformat(fmt, ap);
+    u_int len = msg.length() + 1;
+    if (Sys::write(faxqfifo, (const char*)msg, len) != len) {
 	if (errno == EBADF || errno == EPIPE)		// reader expired
 	    Sys::close(faxqfifo), faxqfifo = -1;
 	else
-	    logError("FIFO write failed: %m");
+	    logError("FIFO write failed: %m"); 
 	return (false);
     } else
 	return (true);
@@ -262,8 +261,7 @@ faxApp::sendQueuer(const char* fmt ...)
 bool
 faxApp::sendModemStatus(const char* devid, const char* fmt0 ...)
 {
-    char fmt[2*1024];
-    sprintf(fmt, "+%s:%s", devid, fmt0);
+    fxStr fmt = fxStr::format("+%s:%s", devid, fmt0);
     va_list ap;
     va_start(ap, fmt0);
     bool ok = vsendQueuer(fmt, ap);
@@ -277,8 +275,7 @@ faxApp::sendModemStatus(const char* devid, const char* fmt0 ...)
 bool
 faxApp::sendJobStatus(const char* jobid, const char* fmt0 ...)
 {
-    char fmt[2*1024];
-    sprintf(fmt, "*%s:%s", jobid, fmt0);
+    fxStr fmt = fxStr::format("*%s:%s", jobid, fmt0);
     va_list ap;
     va_start(ap, fmt0);
     bool ok = vsendQueuer(fmt, ap);
@@ -292,8 +289,7 @@ faxApp::sendJobStatus(const char* jobid, const char* fmt0 ...)
 bool
 faxApp::sendRecvStatus(const char* devid, const char* fmt0 ...)
 {
-    char fmt[2*1024];
-    sprintf(fmt, "@%s:%s", devid, fmt0);
+    fxStr fmt = fxStr::format("@%s:%s", devid, fmt0);
     va_list ap;
     va_start(ap, fmt0);
     bool ok = vsendQueuer(fmt, ap);

@@ -138,18 +138,20 @@ FaxServer::getRecvFile(fxStr& qfile, fxStr& emsg)
 	 * is active; then update the sequence
 	 * number file to reflect the allocation.
 	 */
-	(void) flock(ftmp, LOCK_EX|LOCK_NB);
-	sprintf(line, "%u", seqnum);
-	(void) lseek(fseqf, 0, SEEK_SET);
-	if (Sys::write(fseqf, line, strlen(line)) != strlen(line) ||
-		ftruncate(fseqf,strlen(line))) {
-	    emsg = fxStr::format("error updating %s: %s",
-		FAX_RECVSEQF, strerror(errno));
-	    Sys::unlink(qfile);
-	    Sys::close(ftmp), ftmp = -1;
-	}
-    } else
-	emsg = "failed to find unused filename";
+        (void) flock(ftmp, LOCK_EX|LOCK_NB);
+        fxStr snum = fxStr::format("%u", seqnum);
+        int len = snum.length();
+        (void) lseek(fseqf, 0, SEEK_SET);
+        if (Sys::write(fseqf, (const char*)snum, len) != len ||
+                ftruncate(fseqf, len)) {
+            emsg = fxStr::format("error updating %s: %s",
+                FAX_RECVSEQF, strerror(errno));
+            Sys::unlink(qfile);
+            Sys::close(ftmp), ftmp = -1;
+        }
+    } else {
+        emsg = "failed to find unused filename";
+    }
     Sys::close(fseqf);			// NB: implicit unlock
     return (ftmp);
 }

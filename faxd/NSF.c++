@@ -163,9 +163,7 @@ void NSF::loadRawData( const u_char* rawData, int size, const u_char* revTab )
     u_char *end = p+size;
     for( ; p < end; p++ ){
         *p = revTab[*p];
-        char buf[10];
-        sprintf( buf, "%02X ", *p );
-        hexNsf.append(buf);
+        hexNsf.append(fxStr::format("%02X ", *p));
     }
     // remove trailing space
     hexNsf.resize( hexNsf.length() - 1 );

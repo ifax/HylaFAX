@@ -680,8 +680,7 @@ FaxRequest::insertFax(u_int ix, const fxStr& file)
 void
 FaxRequest::error(const char* fmt0 ...)
 {
-    char fmt[128];
-    sprintf(fmt, "%s: line %u: %s", (const char*) qfile, (u_int) lineno, fmt0);
+    fxStr fmt = fxStr::format("%s: line %u: %s", (const char*) qfile, (u_int) lineno, fmt0);
     va_list ap;
     va_start(ap, fmt0);
     vlogError(fmt, ap);

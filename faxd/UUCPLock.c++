@@ -166,8 +166,9 @@ UUCPLock::create()
      * We create a separate file and link it to
      * the destination to avoid a race condition.
      */
-    char buff[128];
-    sprintf(buff, "%s/TM.faxXXXXXX", (const char*)file.head(file.nextR(file.length(), '/')));
+    fxStr templ = file.head(file.nextR(file.length(), '/'));
+    templ.append("/TM.faxXXXXXX");
+    char* buff = strcpy(new char[templ.length() + 1], templ);
     int fd = Sys::mkstemp(buff);
     if (fd >= 0) {
 	writeData(fd);
@@ -186,6 +187,7 @@ UUCPLock::create()
 	locked = (Sys::link(buff, file) == 0);
 	Sys::unlink(buff);
     }
+    delete [] buff;
     return (locked);
 }
 
@@ -308,9 +310,7 @@ void
 AsciiUUCPLock::setPID(pid_t pid)
 {
     // XXX should this be %d or %ld? depends on pid_t
-    char buff[128];
-    sprintf(buff, "%*d\n", UUCP_PIDDIGITS, pid);
-    data = buff;
+    data = fxStr::format("%*d\n", UUCP_PIDDIGITS, pid);
 }
 
 bool

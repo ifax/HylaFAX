@@ -969,10 +969,10 @@ faxQueueApp::convertDocument(Job& job,
 	 *   -m <maxpages>	max pages to generate
 	 *   -1|-2		1d or 2d encoding
 	 */
-	char rbuf[20]; sprintf(rbuf, "%u", params.verticalRes());
-	char wbuf[20]; sprintf(wbuf, "%u", params.pageWidth());
-	char lbuf[20]; sprintf(lbuf, "%d", params.pageLength());
-	char mbuf[20]; sprintf(mbuf, "%u", dci.getMaxSendPages());
+	fxStr rbuf = fxStr::format("%u", params.verticalRes());
+	fxStr wbuf = fxStr::format("%u", params.pageWidth());
+	fxStr lbuf = fxStr::format("%d", params.pageLength());
+	fxStr mbuf = fxStr::format("%u", dci.getMaxSendPages());
 	const char* argv[30];
 	int ac = 0;
 	switch (req.op) {
@@ -981,10 +981,10 @@ faxQueueApp::convertDocument(Job& job,
 	case FaxRequest::send_tiff:	  argv[ac++] = tiff2faxCmd; break;
 	}
 	argv[ac++] = "-o"; argv[ac++] = outFile;
-	argv[ac++] = "-r"; argv[ac++] = rbuf;
-	argv[ac++] = "-w"; argv[ac++] = wbuf;
-	argv[ac++] = "-l"; argv[ac++] = lbuf;
-	argv[ac++] = "-m"; argv[ac++] = mbuf;
+	argv[ac++] = "-r"; argv[ac++] = (const char*)rbuf;
+	argv[ac++] = "-w"; argv[ac++] = (const char*)wbuf;
+	argv[ac++] = "-l"; argv[ac++] = (const char*)lbuf;
+	argv[ac++] = "-m"; argv[ac++] = (const char*)mbuf;
 	argv[ac++] = params.df == DF_1DMR ? "-1" : "-2";
 	argv[ac++] = req.item;
 	argv[ac] = NULL;

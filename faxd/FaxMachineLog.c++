@@ -73,11 +73,11 @@ FaxMachineLog::vlog(const char* fmt0, va_list ap)
    if (fd == -1)
 	return;
     int oerrno = errno;			// save errno on entry
-    char buf[16*1024];
+    char buf[1024];
     timeval tv;
     (void) gettimeofday(&tv, 0);
     strftime(buf, sizeof (buf), "%h %d %T", localtime((time_t*) &tv.tv_sec));
-    sprintf(buf+strlen(buf), ".%02u: [%5d]: ", tv.tv_usec / 10000, pid);
+    fxStr s = buf | fxStr::format(".%02u: [%5d]: ", tv.tv_usec / 10000, pid);
     /*
      * Copy format string into a local buffer so
      * that we can substitute for %m, a la syslog.
@@ -96,6 +96,6 @@ FaxMachineLog::vlog(const char* fmt0, va_list ap)
 	fmt.put(fp[0]);
     }
     fmt.put('\n'); fmt.put('\0');
-    vsprintf(buf+strlen(buf), (const char*) fmt, ap);
-    (void) Sys::write(fd, buf, strlen(buf));
+    s.append(fxStr::vformat((const char*) fmt, ap));
+    (void) Sys::write(fd, (const char*)s, s.length());
 }

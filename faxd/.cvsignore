@@ -5,6 +5,7 @@ faxgetty
 faxq
 faxqclean
 faxsend
+hash.h
 Makedepend
 Makefile
 mkhash

@@ -133,7 +133,7 @@ public:
     ~Job();
 
     static Job* getJobByID(const fxStr& jobid);
-    static const char* jobStatusName(const JobStatus);
+    static fxStr jobStatusName(const JobStatus);
 
     void startKillTimer(long sec);
     void stopKillTimer();

@@ -149,7 +149,7 @@ Job::startSend(pid_t p)
     Dispatcher::instance().startChild(pid = p, &sendHandler);
 }
 
-const char*
+fxStr
 Job::jobStatusName(const JobStatus status)
 {
     static const char* names[] = {
@@ -170,11 +170,10 @@ Job::jobStatusName(const JobStatus status)
     };
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
     if ((u_int) status >= N(names)) {
-	static char s[30];
-	sprintf(s, "status_%u", (u_int) status);
-	return (s);
-    } else
-	return (names[status]);
+        return fxStr::format("status_%u", (u_int) status);
+    } else {
+        return fxStr(names[status]);
+    }
 }
 #undef N
 

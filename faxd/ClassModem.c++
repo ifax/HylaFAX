@@ -171,12 +171,12 @@ CallStatus
 ClassModem::dial(const char* number, fxStr& emsg)
 {
     protoTrace("DIAL %s", number);
-    char buf[256];
-    sprintf(buf, (const char*) conf.dialCmd, number);
+    fxStr buf = fxStr::format((const char*) conf.dialCmd, number);
     emsg = "";
     CallStatus cs = (atCmd(buf, AT_NOTHING) ? dialResponse(emsg) : FAILURE);
-    if (cs != OK && emsg == "")
-	emsg = callStatus[cs];
+    if (cs != OK && emsg == "") {
+        emsg = callStatus[cs];
+    }
     return (cs);
 }
 
