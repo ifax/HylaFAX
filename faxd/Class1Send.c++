@@ -1039,14 +1039,15 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		// we intentionally do not send the FCS bytes as the DCE regenerates them
 		// send fcount frames separated by <DLE><ETX>
 		buf[0] = DLE; buf[1] = ETX;
-		for (u_short v34frame = 0; v34frame < fcount; v34frame++) {
+		u_short v34frame;
+		for (v34frame = 0; v34frame < fcount; v34frame++) {
 		    if (!putModemDLEData(ecmStuffedBlock, frameSize + 4, bitrev, getDataTimeout()))
 			return (false);
 		    if (!putModemData(buf, 2)) return (false);
 		    ecmStuffedBlock += (frameSize + 6);
 		}
 		// send 3 RCP frames separated by <DLE><ETX>
-		for (u_short v34frame = 0; v34frame < 3; v34frame++) {
+		for (v34frame = 0; v34frame < 3; v34frame++) {
 		    if (!putModemDLEData(ecmStuffedBlock, 3, bitrev, getDataTimeout()))
 			return (false);
 		    if (!putModemData(buf, 2)) return (false);

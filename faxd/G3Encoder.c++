@@ -259,6 +259,15 @@ G3Encoder::find1span(const u_char* bp, int bs, int be)
 }
 
 /*
+ * Write a code to the output stream.
+ */
+inline void
+G3Encoder::putcode(const tableentry& te)
+{
+    putBits(te.code, te.length);
+}
+
+/*
  * Return the offset of the next bit in the range
  * [bs..be] that is different from the specified
  * color.  The end, be, is returned if no such bit
@@ -365,15 +374,6 @@ G3Encoder::encoderCleanup()
     }
     if (bit != 8)					// flush partial byte
 	flushBits();
-}
-
-/*
- * Write a code to the output stream.
- */
-inline void
-G3Encoder::putcode(const tableentry& te)
-{
-    putBits(te.code, te.length);
 }
 
 /*
