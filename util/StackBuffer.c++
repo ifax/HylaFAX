@@ -104,9 +104,7 @@ fxStackBuffer::put(const fxStr& s)
 void
 fxStackBuffer::vput(const char* fmt, va_list ap)
 {
-    char buf[8*1024];
-    vsprintf(buf, fmt, ap);
-    put(buf);
+    put(fxStr::format(fmt, ap));
 }
 
 void

@@ -316,14 +316,16 @@ faxMailApp::run(int argc, char** argv)
 	 * Redirect formatted output to a temp
 	 * file and setup delivery of the file.
 	 */
-    char tmpl[128];
-    sprintf(tmpl, "%s/faxmail.XXXXXX", _PATH_TMP);
-	int fd = Sys::mkstemp(tmpl);
+    const char* templ = _PATH_TMP "/faxmail.XXXXXX";
+    char* buff = new char[strlen(templ) + 1];
+    strcpy(buff, templ);
+    int fd = Sys::mkstemp(buff);
 	if (fd < 0) {
-        fxFatal("Cannot create temp file %s", (const char*) tmpl);
+        fxFatal("Cannot create temp file %s", (const char*) buff);
     }
-	tmps.append(tmpl);
-	client->addFile(tmpl);
+	tmps.append(buff);
+	client->addFile(buff);
+    delete[] buff;
 	beginFormatting(fdopen(fd, "w"));
     } else
 	beginFormatting(stdout);	// NB: sets up page info
@@ -594,10 +596,12 @@ faxMailApp::copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile)
 {
     int ftmp;
     if (tmpFile == "") {
-        char buff[128];
-        snprintf(buff, sizeof(buff) - 1, "%s/faxmail.XXXXXX", _PATH_TMP);
+        const char* templ = _PATH_TMP "/faxmail.XXXXXX";
+        char* buff = new char[strlen(templ) + 1];
+        strcpy(buff, templ);
         ftmp = Sys::mkstemp(buff);
         tmpFile = buff;
+        delete[] buff;
         tmps.append(tmpFile);
     } else {
         ftmp = Sys::open(tmpFile, O_WRONLY|O_APPEND);

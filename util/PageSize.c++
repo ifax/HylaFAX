@@ -71,8 +71,9 @@ PageSizeInfo::skipws(char*& cp,
 PageInfoArray*
 PageSizeInfo::readPageInfoFile()
 {
-    char file[1024];
-    sprintf(file, "%s/%s", FAX_LIBDATA, FAX_PAGESIZES);
+    fxStr file = FAX_LIBDATA;
+    file.append("/");
+    file.append(FAX_PAGESIZES);
     PageInfoArray* info = new PageInfoArray;
     FILE* fp = fopen(file, "r");
     u_int lineno = 0;
@@ -125,7 +126,7 @@ PageSizeInfo::readPageInfoFile()
     } else {
 	fprintf(stderr,
     "Warning, no page size database file \"%s\", using builtin default.\n",
-	    file);
+	    (const char*)file);
 	PageInfo pi;
 	pi.name = strdup("default");
 	pi.abbr = strdup("NA-LET");

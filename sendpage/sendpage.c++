@@ -274,7 +274,7 @@ static void
 vfatal(FILE* fd, const char* fmt, va_list ap)
 {
     vfprintf(fd, fmt, ap);
-    va_end(ap);
+    va_end(ap); //???
     fputs(".\n", fd);
     sigDone(0);
 }

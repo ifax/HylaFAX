@@ -637,9 +637,9 @@ SNPPClient::vcommand(const char* fmt, va_list ap)
 	if (strncasecmp("LOGI", fmt, 4) == 0)
 	    traceServer("-> LOGI XXXX");
 	else {
-	    char buf[128];
-	    sprintf(buf, "-> %s", fmt);
-	    vtraceServer(buf, ap);
+        fxStr f("-> ");
+        f.append(fmt);
+	    vtraceServer(f, ap);
 	}
     }
     if (fdOut == NULL) {

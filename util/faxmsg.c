@@ -40,10 +40,11 @@ fatal(char* fmt, ...)
     va_list ap;
     va_start(ap, fmt);
     if (isatty(fileno(stderr))) {
-	vfprintf(stderr, fmt, ap);
-	putc('\n', stderr);
-    } else
-	vsyslog(LOG_ERR, fmt, ap);
+        vfprintf(stderr, fmt, ap);
+        putc('\n', stderr);
+    } else {
+        vsyslog(LOG_ERR, fmt, ap);
+    }
     va_end(ap);
     exit(-1);
 }

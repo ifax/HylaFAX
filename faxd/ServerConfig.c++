@@ -371,22 +371,18 @@ ServerConfig::readPatterns(FILE* fp, RegExArray*& pats, fxBoolArray*& accept)
 static void
 tiffErrorHandler(const char* module, const char* fmt0, va_list ap)
 {
-    char fmt[128];
-    if (module != NULL)
-	sprintf(fmt, "%s: Warning, %s.", module, fmt0);
-    else
-	sprintf(fmt, "Warning, %s.", fmt0);
+    fxStr fmt = (module != NULL) ?
+        fxStr::format("%s: Warnings, %s.", module, fmt0)
+        : fxStr::format("Warnings, %s.", fmt0);
     vlogError(fmt, ap);
 }
 
 static void
 tiffWarningHandler(const char* module, const char* fmt0, va_list ap)
 {
-    char fmt[128];
-    if (module != NULL)
-	sprintf(fmt, "%s: Warning, %s.", module, fmt0);
-    else
-	sprintf(fmt, "Warning, %s.", fmt0);
+    fxStr fmt = (module != NULL) ?
+        fxStr::format("%s: Warnings, %s.", module, fmt0)
+        : fxStr::format("Warnings, %s.", fmt0);
     vlogWarning(fmt, ap);
 }
 

@@ -231,7 +231,7 @@ faxApp::vsendQueuer(const char* fmt, va_list ap)
 	    logError("fcntl: %m");
     }
     char msg[4096];
-    vsprintf(msg, fmt, ap);
+    vsprintf(msg, fmt, ap); //XXX buffer overrun ???
     u_int len = strlen(msg)+1;
     if (Sys::write(faxqfifo, msg, len) != len) {
 	if (errno == EBADF || errno == EPIPE)		// reader expired

@@ -351,12 +351,11 @@ OldProtocolServer::cvtTime(const char* spec, const struct tm* ref, const char* w
 void
 OldProtocolServer::vsendClient(const char* tag, const char* fmt, va_list ap)
 {
-    char buf[2048];
-    sprintf(buf, "%s:", tag);
-    vsprintf(strchr(buf,'\0'), fmt, ap);
-    fprintf(stdout, "%s\n", buf);
-    if (TRACE(PROTOCOL))
-	logDebug("%s", buf);
+    fxStr s = fxStr::format("%s:", tag) | fxStr::vformat(fmt, ap);
+    fprintf(stdout, "%s\n", (const char*)s);
+    if (TRACE(PROTOCOL)) {
+        logDebug("%s", (const char*)s);
+    }
 }
 
 void

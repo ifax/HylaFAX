@@ -622,9 +622,9 @@ FaxClient::vcommand(const char* fmt, va_list ap)
         } else if (strncasecmp("ADMIN ", fmt, 6) == 0) {
             traceServer("-> ADMIN XXXX");
         } else {
-            char buf[128];
-            sprintf(buf, "-> %s", fmt);
-            vtraceServer(buf, ap);
+            fxStr s("-> ");
+            s.append(fmt);
+            vtraceServer(s, ap);
         }
     }
     if (fdOut == NULL) {

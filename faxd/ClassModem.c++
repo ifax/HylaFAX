@@ -528,7 +528,7 @@ ClassModem::pause(u_int ms)
     (void) select(0, 0, 0, 0, &tv);
 }
 
-static void
+void
 ClassModem::setupDefault(fxStr& s, const fxStr& configured, const char* def)
 {
     if (configured == "")

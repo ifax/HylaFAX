@@ -231,4 +231,5 @@ Getty::fatal(const char* fmt ...)
     va_start(ap, fmt);
     vlogError(fmt, ap);
     hangup();
+    va_end(ap);
 }
