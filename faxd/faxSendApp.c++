@@ -317,7 +317,7 @@ faxSendApp::notifyPollRecvd(FaxRequest& req, const FaxRecvInfo& ri)
      );
     traceServer("RECV POLL: %s", (const char*) cmd);
     setProcessPriority(BASE);			// lower priority
-    runCmd(cmd, true);
+    runCmd(cmd, true, this);
     setProcessPriority(state);			// restore previous priority
 }
 

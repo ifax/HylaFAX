@@ -373,7 +373,7 @@ const fxStr faxApp::enquote	= "\"";
  * from address.
  */
 bool
-faxApp::runCmd(const char* cmd, bool changeIDs)
+faxApp::runCmd(const char* cmd, bool changeIDs, IOHandler* waiter)
 {
     pid_t pid = fork();
     switch (pid) {
@@ -388,12 +388,16 @@ faxApp::runCmd(const char* cmd, bool changeIDs)
 	logError("Can not fork for \"%s\"", cmd);
 	return (false);
     default:
+	if (waiter == NULL)
 	{ int status = 0;
 	  Sys::waitpid(pid, status);
 	  if (status != 0) {
 	    logError("Bad exit status %#o for \'%s\'", status, cmd);
 	    return (false);
 	  }
+	} else
+	{
+	    Dispatcher::instance().startChild(pid, waiter);
 	}
 	return (true);
     }

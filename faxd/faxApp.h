@@ -30,6 +30,7 @@
  */
 #include "Str.h"
 #include "Syslog.h"
+#include "Dispatcher.h"
 #include <stdarg.h>
 
 class faxApp : public Syslog {
@@ -78,7 +79,7 @@ public:
     static const fxStr quote;
     static const fxStr enquote;
 
-    bool runCmd(const char* cmd, bool changeIDs = false);
+    bool runCmd(const char* cmd, bool changeIDs = false, IOHandler* waiter = NULL);
 };
 inline bool faxApp::isRunning(void) const	{ return running; }
 

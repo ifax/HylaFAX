@@ -2583,7 +2583,7 @@ faxQueueApp::notifyModemWedged(Modem& modem)
 	| quote |                  dev | enquote
     );
     traceServer("MODEM WEDGED: %s", (const char*) cmd);
-    runCmd(cmd, true);
+    runCmd(cmd, true, this);
 }
 
 void
@@ -3042,7 +3042,7 @@ faxQueueApp::notifySender(Job& job, JobStatus why, const char* duration)
 	cmd.append(buf);
     }
     traceServer("NOTIFY: %s", (const char*) cmd);
-    runCmd(cmd, true);
+    runCmd(cmd, true, this);
 }
 
 void
@@ -3133,6 +3133,12 @@ faxQueueApp::jobError(const Job& job, const char* fmt ...)
     va_start(ap, fmt);
     vlogError("JOB " | job.jobid | ": " | fmt, ap);
     va_end(ap);
+}
+
+void faxQueueApp::childStatus(pid_t pid, int status)
+{
+    // We don't do anything here - nothing to act on.
+    traceServer("NOTIFY exit status: %#o (%u)", status, pid);
 }
 
 static void

@@ -171,6 +171,7 @@ private:
     void	stopTimeout(const char* whichdir);
     const fxStr& pickCmd(const FaxRequest& req);
 // FIFO-related stuff
+    void	childStatus(pid_t, int);	// Dispatcher hook
     int		inputReady(int);		// Dispatcher hook
     void	openFIFOs();
     void	closeFIFOs();

@@ -731,7 +731,7 @@ faxGettyApp::notifyRecvDone(const FaxRecvInfo& ri, const CallerID& cid)
     );
     traceServer("RECV FAX: %s", (const char*) cmd);
     setProcessPriority(BASE);			// lower priority
-    runCmd(cmd, true);
+    runCmd(cmd, true, this);
     setProcessPriority(state);			// restore priority
 }
 
