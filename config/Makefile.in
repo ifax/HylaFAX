@@ -80,6 +80,7 @@ CONFIGFILES=class1 \
 	telebit-t3000 \
     telebit-qblazer \
 	telebit-wb \
+	topic \
 	tricom2842 \
 	uds-fastalk \
     umc92144 \
