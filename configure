@@ -660,6 +660,7 @@ relativize()
 {
     echo `(for i do
 	case "$i" in
+	-Wl*)			echo "$i" ;;
 	/*|-l*|-l[$]{DEPTH}/*)	echo "$i" ;;
 	-L|-L/*|-L[$]{DEPTH}/*)	echo "$i" ;;
 	-I|-I/*|-I[$]{DEPTH}/*)	echo "$i" ;;
@@ -2454,6 +2455,8 @@ BuildPortDotH()
         *-hpux11*)  # this is really broken, has a defined 
                     # socklen_t but does *not* use it
                 echo "#define CONFIG_HPUX_SOCKLEN_T_BRAINDAMAGE";;
+	*-osf4.0*)  # This clears up problems on Alpha, too...
+		echo "#define CONFIG_HPUX_SOCKLEN_T_BRAINDAMAGE";;
         *sysv4.2uw2*)	CONFIG_SOCKARGLENTYPE=size_t;;
         *-univel-*)	CONFIG_SOCKARGLENTYPE=size_t;;
         *-UnixWare*)	CONFIG_SOCKARGLENTYPE=size_t;;
@@ -2819,9 +2822,10 @@ BuildPortDotH()
 	if CheckForIncludeFile utmpx.h; then
 	    case $TARGET in
 	    *-hpux10.20*)	UTMP=utmp;;
-	    *-hpux11*)	UTMP=utmp;;
-	    *-aix4*)	UTMP=utmp;;
-        *-linux*)	UTMP=utmp;;
+	    *-hpux11*)		UTMP=utmp;;
+	    *-aix4*)		UTMP=utmp;;
+	    *-dec-osf4.0*)	UTMP=utmp;;
+	    *-linux*)		UTMP=utmp;;
 	    *)			UTMP=utmpx;;
 	    esac
 	else
@@ -3438,6 +3442,7 @@ if [ -z "$DIR_SYSVINIT" ]; then
     case $TARGET in
 	*-sunos*)	DIR_SYSVINITS="$DIR_SYSVINITS $DIR_SBIN";;
 	*-hpux*)	DIR_SYSVINITS="/sbin/init.d $DIR_SYSVINITS";;
+	*-dec-osf4.0*)	DIR_SYSVINITS="/sbin/init.d $DIR_SYSVINITS";;
 	*)		;;
     esac
     DIR_SYSVINIT=
