@@ -365,7 +365,7 @@ faxQCleanApp::expungeCruft(void)
 		l=l-6;
 		base=(char *)malloc(sl+1);
 		strncpy(base, &file[5], sl);
-		base[sl+1]=0;
+		base[sl]=0;
 
 		bool        got_match = false;
 		DIR        *dir1 = Sys::opendir(docDir);
