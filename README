@@ -15,7 +15,8 @@ further resources regarding HylaFAX.
 
                           *   NEW FEATURES   *
 
-* hfaxd security fix for hosts.hfaxd entries without passwords
+* hfaxd security fix for hosts.hfaxd entries without
+  passwords (CAN-2004-1182)
 * support for gcc v3.3 and libtiff v3.7
 * fax batching support
 * numerous other enhancements and bugfixes (see CHANGES)
