@@ -33,20 +33,23 @@ HylaFAX since the project was moved to hylafax.org (November 1998):
 
 Alvaro Aguilera      Andre Albsmeier      a.pogoda@web.de
 Ronald Appelfelder   Heinz-Ado Arnolds    Jay Ashworth
-Charly Baker         Toki Barron          Stephan Bauer
-Dmitry Bely          Thomas Biege         David Birnbaum
-Trevor Blackwell     Marc Boucher         Yves Carlier
+Chris Bainbridge     Charly Baker         Toki Barron
+Stephan Bauer        Dmitry Bely          Thomas Biege
+David Birnbaum       Trevor Blackwell     Siegfried Bosch
+Marc Boucher         Glen Burkhardt       Yves Carlier
 Ed Casas             Jonathon Chen        Robert Colquhoun
 Ken Cornetet         Seth Cuaiklin        Albert DeKnuydt
 Paul Eggert          John Florian         Patrice Fournier
-Vyacheslav Frolov    Sascha Herrmann      Carsten Hoeger
-Lee Howard           John Interrante      Damiam Ivereigh
-Bernard Jech         Nico Kadel-Garcia    Sean Kamath
-Jonathan Kamens      Dimitry Ketov        Steffan Klipsch
-Hannu Koivisto       Ken Lalonde          Rob Leadbeater
-Guillaume Legoupil   Greg Luck            Pierluigi Mangani
-Campbell McKilligan  Seth Mos             Darren Nickerson
-Giulio Orsero        John Perkins         John Patrick Poet
+Vyacheslav Frolov    John Gilman          Sascha Herrmann
+Carsten Hoeger       Lee Howard           John Interrante
+Damiam Ivereigh      Bernard Jech         Nico Kadel-Garcia
+Sean Kamath          Jonathan Kamens      Dimitry Ketov
+Steffan Klipsch      Hannu Koivisto       Arjen de Korte
+Ken Lalonde          Rob Leadbeater       Guillaume Legoupil
+Greg Luck            Pierluigi Mangani    Campbell McKilligan
+John Miller          Aldo Mini            Seth Mos
+Darren Nickerson     Giulio Orsero        John Perkins
+Frank Peters         Vu Pham              John Patrick Poet
 Harald Pollack       Bernd Proissl        Matthew Rice
 Tim Rice             Daniel Robbins       Michael Salzmann
 Sven Schmidt         John Sellens         Simon <iahnl@iah.nl>
@@ -54,8 +57,8 @@ Vilmos Soti          Alan Sparks          Andy Sparrow
 Iain Stevenson       Marius Strobl        Daryl Thachuk
 Steve Tuckner        Aidan Van Dyk        Norbert Warmuth
 Phil Watkinson       James Werkowski      Chas Williams
-John Williams        Steve Williams       Bill Young
-Bruce Young
+John Williams        Steve Williams       John Wolfe
+Bill Young           Bruce Young
 
 We appreciate and recognize the upstreamed contributions from these 
 distributions:
