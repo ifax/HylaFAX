@@ -218,7 +218,7 @@ PORT
 PORTFUNCS
 PROTOTYPES
 PSPACKAGE	PS
-PWD
+PWDCMD
 RANLIB
 REGEX
 REGEXINC
@@ -3388,8 +3388,7 @@ test "$MV"	|| MV=`findAppDef mv $PATH mv`
 test "$RMCMD"	|| RMCMD=`findAppDef rm $PATH rm`
 test "$SORT"	|| SORT=`findAppDef sort $PATH sort`
 test "$STRIP"	|| STRIP=`findAppDef strip $PATH strip`
-# NB: can't test $PWD 'cuz it's a shell variable
-PWD=`findApp pwd $PATH`	   || PWD=pwd
+test "$PWDCMD"	|| PWDCMD=`findAppDef pwd $PATH pwd`
 
 #
 # Test/verify we know how to create FIFO special files.

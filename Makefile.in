@@ -317,7 +317,7 @@ package::
 product::
 	test -d dist || ${MKDIR} dist
 	${RM} -f dist/rawidb
-	SRC=`${PWD}` RAWIDB=`${PWD}`/dist/rawidb ${MAKE} install
+	SRC=`${PWDCMD}` RAWIDB=`${PWDCMD}`/dist/rawidb ${MAKE} install
 	${RM} -f dist/idb
 	${SORT} -u +4 dist/rawidb > dist/idb
 	${GENDIST} -v -dist dist -idb dist/idb -sbase `pwd` -spec ${SRCDIR}/dist/hylafax.spec
