@@ -146,7 +146,9 @@ void NSF::decode()
 {
     for( const NSFData* p = KnownNSF; p->vendorId; p++ ){
         if( !memcmp( p->vendorId, &nsf[0], p->vendorIdSize ) ){
-            vendor = p->vendorName;
+            if (p->vendorName != 0) {
+                vendor = p->vendorName;
+            }
             if( p->knownModels ){
                 for( const ModelData* pp = p->knownModels; pp->modelId; pp++ )
                     if( !memcmp( pp->modelId, &nsf[p->modelIdPos], p->modelIdSize ) )
