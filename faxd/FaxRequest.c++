@@ -59,7 +59,7 @@ FaxRequest::reset(void)
     pagewidth = pagelength = resolution = 0;
     npages = totpages = 0;
     ntries = ndials = 0;
-    minsp = BR_2400;
+    minbr = BR_2400;
     desiredbr = BR_33600;
     desiredst = ST_0MS;
     desiredec = EC_ENABLE256;
@@ -124,7 +124,7 @@ FaxRequest::shortval FaxRequest::shortvals[] = {
     { "pagelength",	&FaxRequest::pagelength },
     { "priority",	&FaxRequest::usrpri },
     { "schedpri",	&FaxRequest::pri },
-    { "minsp",		&FaxRequest::minsp },
+    { "minbr",		&FaxRequest::minbr },
     { "desiredbr",	&FaxRequest::desiredbr },
     { "desiredst",	&FaxRequest::desiredst },
     { "desiredec",	&FaxRequest::desiredec },
@@ -290,7 +290,6 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_PAGELENGTH:	pagelength = atoi(tag); break;
 	case H_PRIORITY:	usrpri = atoi(tag); break;
 	case H_SCHEDPRI:	pri = atoi(tag); break;
-	case H_MINSP:		minsp = atoi(tag); break;
 	case H_DESIREDBR:	desiredbr = atoi(tag); break;
 	case H_DESIREDST:	desiredst = tag[0] - '0'; break;
 	case H_DESIREDEC:	desiredec = tag[0] - '0'; break;
@@ -326,7 +325,11 @@ FaxRequest::readQFile(bool& rejectJob)
 	    break;
 
 	case H_RETURNED:	status = (FaxSendStatus) atoi(tag); break;
-	case H_POLL:		addItem(send_poll, tag); break;
+	case H_POLL:		// H_MINBR collides
+	    if (cmd[1] == 'm')
+		minbr = atoi(tag);
+	    else
+		addItem(send_poll, tag); break;
 	case H_FAX:		addItem(send_fax, tag); break;
 	case H_PDF:
 	    if (cmd[0] == '!')
@@ -391,7 +394,7 @@ FaxRequest::readQFile(bool& rejectJob)
 			       "owner"
 	);
     }
-    if (minsp > BR_33600)	minsp = BR_33600;
+    if (minbr > BR_33600)	minbr = BR_33600;
     if (desiredbr > BR_33600)	desiredbr = BR_33600;
     if (desiredst > ST_40MS)	desiredst = ST_40MS;
     if (desiredec > EC_ECLFULL)	desiredec = EC_ECLFULL;

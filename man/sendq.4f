@@ -80,7 +80,7 @@ cover	string	continuation coverpage file
 data	string	unprocessed document of indeterminate type
 !data	string	processed document of indeterminate type
 dataformat	string	data format used to transmit a facsimile
-desiredbr	integer	desired transmit speed
+desiredbr	integer	desired maximum transmit speed
 desireddf	integer	desired page data format
 desiredec	integer	desired use of Error Correction Mode (\s-1ECM\s+1)
 desiredst	integer	desired minimum scanline time
@@ -97,7 +97,7 @@ location	string	receiver's location
 mailaddr	string	email address of sender
 maxdials	integer	max number of times to dial
 maxtries	integer	max number of attempts to send job
-minsp	integer	minimum required transmit speed
+minbr	integer	minimum required transmit speed
 modem	string	outgoing modem to use
 ndials	integer	number of consecutive failed attempts to place call
 notify	string	email notification specification

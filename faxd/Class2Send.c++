@@ -56,7 +56,7 @@ Class2Modem::sendSetup(FaxRequest& req, const Class2Params& dis, fxStr& emsg)
     }
     if (minsp != BR_2400 && !class2Cmd(minspCmd, minsp)) {
 	emsg = fxStr::format("Unable to restrict minimum transmit speed to %s",
-	    Class2Params::bitRateNames[req.minsp], cmdFailed);
+	    Class2Params::bitRateNames[req.minbr], cmdFailed);
 	return (false);
     }
     if (conf.class2DDISCmd != "") {

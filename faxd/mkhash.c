@@ -105,7 +105,7 @@ main()
     hash("pagelength");
     hash("priority");
     hash("schedpri");
-    hash("minsp");
+    hash("minbr");
     hash("desiredbr");
     hash("desiredst");
     hash("desiredec");

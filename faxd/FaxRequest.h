@@ -121,8 +121,8 @@ public:
     u_short	resolution;	// desired vertical resolution (lpi) (normal/fine)
     u_short	usrpri;		// user-requested scheduling priority
     u_short	pri;		// current scheduling priority
-    u_short	minsp;		// minimum acceptable signalling rate
-    u_short	desiredbr;	// desired signalling rate
+    u_short	minbr;		// minimum acceptable signalling rate
+    u_short	desiredbr;	// maximum desired signalling rate
     u_short	desiredst;	// desired min-scanline-time
     u_short	desiredec;	// enable use of ECM if available
     u_short	desireddf;	// desired data format

@@ -214,7 +214,7 @@ static struct {
     { T_PAGELENGTH,	&Job::pagelength },
     { T_VRES,		&Job::resolution },
     { T_SCHEDPRI,	&Job::usrpri },
-    { T_MINBR,		&Job::minsp },
+    { T_MINBR,		&Job::minbr },
     { T_BEGBR,		&Job::desiredbr },
     { T_BEGST,		&Job::desiredst },
 };
@@ -805,7 +805,7 @@ HylaFAXServer::initDefaultJob(void)
     defJob.pagelength	= 0;
     defJob.resolution	= FAX_DEFVRES;
     defJob.usrpri	= FAX_DEFPRIORITY;
-    defJob.minsp	= BR_2400;
+    defJob.minbr	= BR_2400;
     defJob.desiredbr	= BR_33600;
     defJob.desiredst	= ST_0MS;
     defJob.desiredec	= EC_ENABLE256;
@@ -888,7 +888,7 @@ HylaFAXServer::newJob(fxStr& emsg)
     job->pagelength = curJob->pagelength;
     job->resolution = curJob->resolution;
     job->usrpri = curJob->usrpri;
-    job->minsp = curJob->minsp;
+    job->minbr = curJob->minbr;
     job->desiredbr = curJob->desiredbr;
     job->desiredst = curJob->desiredst;
     job->desiredec = curJob->desiredec;
@@ -1566,7 +1566,7 @@ static const char jformat[] = {
     'c',		// N (desiredtl as symbol)
     'c',		// O (useccover as symbol)
     's',		// P (npages & total pages)
-    'u',		// Q (minsp)
+    'u',		// Q (minbr)
     's',		// R (receiver)
     's',		// S (sender)
     's',		// T (tottries & maxtries)
@@ -1714,7 +1714,7 @@ HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
 		fprintf(fd, fspec, (const char*)fxStr::format("%2u:%-2u", job.npages, job.totpages));
 		break;
 	    case 'Q':
-		fprintf(fd, fspec, job.minsp);
+		fprintf(fd, fspec, job.minbr);
 		break;
 	    case 'R':
 		fprintf(fd, fspec, (const char*) job.receiver);
