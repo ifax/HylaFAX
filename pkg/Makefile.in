@@ -21,9 +21,12 @@ NULL	=
 ECHO	= echo
 
 all default:
-	@if test ! -f copyright ; then \
-		ln ../COPYRIGHT copyright ; \
-	fi
+	-if test ! -L copyright ; then \
+		ln -s $(VPATH)/../COPYRIGHT copyright ; \
+	fi ; \
+	for i in README depend make.links preremove proto.local ; do	\
+		[ -f $$i ]  ||  cp $(VPATH)/$$i . ;			\
+	done 
 
 BINARIES=\
 	../faxalter/faxalter \
@@ -95,6 +98,7 @@ clean:
 	@RM@ -f core*
 
 clobber distclean: clean
+	@RM@ -f copyright
 	@RM@ -f cpkginfo
 	@RM@ -f cproto.stub
 	@RM@ -f crequest

@@ -110,6 +110,7 @@ dirs::
 	else \
 	    true; \
 	fi
+	@${ECHO} "= "pkg; cd pkg; ${MAKE}
 depend::
 	@if [ "@PORT@" = yes ]; then \
 	    ${ECHO} "= "port; cd port; ${MAKE} depend; \
