@@ -1314,8 +1314,8 @@ runMake()
 CheckForCXXRuntime()
 {
 cat>t.c++<<EOF
-#include "new.h"
-int main(){ int* a = new int; *a = 0; delete a; return 0;}
+#include "iostream.h"
+int main(){ cout << "Hello World!" << endl; return 0;}
 EOF
     runMake t "t:; \${C++F} \${C++FILE} t.c++${MAKECXXOVERRIDE}"
 }
@@ -1329,28 +1329,17 @@ Compilation of the following test program failed:
 ----------------------------------------------------------
 EOF
     cat t.c++ 1>&2
-    if [ $ISGXX = yes ]; then
 	cat 1>&2 <<EOF
 ----------------------------------------------------------
 
-Usually this is because you do not have libg++ installed on your system
-or you have installed it in a non-standard location.  If you do not
-have libg++ installed, then you must install it.  If libg++ is
-installed in a non-standard location, then you should configure the
-compiler so that it will automatically be found.
+Usually this is because you do not have a standard C++ library
+installed on your system or you have installed it in a non-standard
+location.  If you do not have a C++ library installed, then you must
+install it.  If it is installed in a non-standard location, then you
+should configure the compiler so that it will automatically be found.
 
+(For recent gcc releases this is libstdc++, for older gcc - libg++)
 EOF
-    else
-	cat 1>&2 <<EOF
-----------------------------------------------------------
-
-Usually this is because you do not have the library that provides these
-runtime routines.  It may also be caused by your runtime libraries
-being in a non-standard location that is not automatically searched for
-by your compiler.
-
-EOF
-    fi
     boom
 }
 
