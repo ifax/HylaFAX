@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.0
 
+* fix end of page signals and padding (23 Jul 2004)
 * prevent internationalization from interfering with build (22 Jul 2004)
 * restrict faxq to prepare only single-strip TIFF data (29 Jun 2004)
 * only use normal and fine resolutions when not using XVRes (28 Jun 2004)
