@@ -126,18 +126,19 @@ InetFaxServer::open(void)
 static const char*
 topDomain(const fxStr& h)
 {
-    char* maybe = NULL;
     int dots = 0;
     u_int l = h.length();
+
+    if(l <= 0) return(NULL);  // out early
+
     for (;;) {
 	l = h.nextR(l, '.');
 	if (l == 0)
-	    break;
+	    return (&h[0]);  // return whole string
 	if (++dots == 2)
 	    return (&h[l]);
-	maybe = &h[l];
+	l -=1;    //back over the dot
     }
-    return (maybe);
 }
 
 /*
