@@ -5,7 +5,7 @@ Changelog for HylaFAX 4.2.1
 * fix faxsend to retrain after receiving RTP (9 Sep 2004)
 * fix tiffcheck unit comparison error (1 Sep 2004)
 * fix misconfirmation of some ECM faxes (30 Aug 2004)
-* add fax batching support to faxq (30 Aug 2004)
+* add fax batching support to faxq (30 Aug, 9 Sep 2004)
 * ignore garbage after sending TCF data (26 Aug 2004)
 * fix truncation of filenames in faxcron (26 Aug 2004)
 * add configure support for libtiff 3.7 (25 Aug 2004)

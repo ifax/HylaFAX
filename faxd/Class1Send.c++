@@ -137,8 +137,13 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
 	waitForDCEChannel(true);		// expect control channel
 
     bool framerecvd = false;
-    if (batched & BATCH_FIRST)
+    if (batched & BATCH_FIRST)			// receive carrier raised
 	framerecvd = recvRawFrame(frame);
+    else {					// receive carrier not raised
+	// The receiver will allow T2 to elapse intentionally here.
+	// To keep recvFrame from timing out we double our wait.
+	framerecvd = recvFrame(frame, conf.t2Timer * 2);
+    }
 
     for (;;) {
 	if (framerecvd) {
@@ -200,7 +205,7 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
 	 * are received.  Using +FTS may be better than looping,
 	 * but many modems won't support that.
 	 */
-	pause(200);
+	if (!useV34) pause(200);
 	/*
 	 * Wait up to T1 for a valid DIS.
 	 */

@@ -2089,6 +2089,13 @@ faxQueueApp::runScheduler()
 	for (u_int i = 0; i < NQHASH; i++) {
 	    for (JobIter iter(runqs[i]); iter.notDone(); iter++) {
 		Job& job = iter;
+		if (job.bprev != NULL) {
+		    /*
+		     * The batching sub-loop below already allocated this job to a batch.
+		     * Thus, this loop's copy of the run queue is incorrect.
+		     */
+		    break;
+		}
 		fxAssert(job.tts <= Sys::now(), "Sleeping job on run queue");
 		fxAssert(job.modem == NULL, "Job on run queue holding modem");
 
