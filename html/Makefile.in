@@ -72,9 +72,6 @@ HTML_DOCS=${SRCDIR}/acknowledge.html		\
     ${SRCDIR}/setup-client.html			\
     ${SRCDIR}/setup.html			\
     ${SRCDIR}/source.html			\
-    ${SRCDIR}/survey-help.html			\
-    ${SRCDIR}/survey.html			\
-    ${SRCDIR}/survey-query.html			\
     ${SRCDIR}/toc.html				\
     ${SRCDIR}/troubleshooting.html		\
     ${SRCDIR}/upgrade4.0.html			\

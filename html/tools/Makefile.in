@@ -40,7 +40,6 @@ TARGETS=\
 	unquote		\
 	man2html	\
 	manpage.sh	\
-	faxsurvey.sh	\
 	${NULL}
 
 default all::
@@ -67,4 +66,3 @@ install: default
 	    -idb hylafax.html.cgi -dir ${CGIBIN}
 	${PUTBIN} -m 555 -O man2html unquote
 	${PUTBIN} -m 555 -O -src manpage.sh -idb "config(suggest)" manpage
-	${PUTBIN} -m 555 -O -src faxsurvey.sh faxsurvey
