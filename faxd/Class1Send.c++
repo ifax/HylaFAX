@@ -129,14 +129,14 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg)
 	    if (frame.isOK()) {
 		switch (frame.getRawFCF()) {
 		case FCF_DIS:
+		    hasDoc = (dis & DIS_T4XMTR) != 0;// documents to poll?
 		    if ((dis&DIS_T4RCVR) == 0) {
 			emsg = "Remote has no T.4 receiver capability";
 			protoTrace(emsg);
-		    	return (send_failed);
-		    } else {
-			hasDoc = (dis & DIS_T4XMTR) != 0;// documents to poll?
-			return (send_ok);
+		    	if (! hasDoc)	// don't die if we can poll
+			    return (send_failed);
 		    }
+		    return (send_ok);
 		case FCF_DTC:				// NB: don't handle DTC
 		    emsg = "DTC received when expecting DIS (not supported)";
 		    break;
