@@ -544,14 +544,15 @@ HylaFAXServer::getSequenceNumber(const char* filename, u_int count, fxStr& emsg)
             filename, line);
         seqnum = 1;
     }
-    sprintf(line, "%u", NEXTSEQNUM(seqnum+count));
+    fxStr line2 = fxStr::format("%u", NEXTSEQNUM(seqnum+count));
     lseek(fd, 0, SEEK_SET);
-    if (Sys::write(fd, line, strlen(line)) != strlen(line) ||
-		ftruncate(fd,strlen(line))) {
-	emsg = fxStr::format(
-	    "Unable update sequence number file %s; write failed.", filename);
-	logError("%s: Problem updating sequence number file", filename);
-	return ((u_int) -1);
+    int len = line2.length();
+    if (Sys::write(fd, (const char*)line2, len) != len ||
+            ftruncate(fd, len)) {
+        emsg = fxStr::format(
+            "Unable update sequence number file %s; write failed.", filename);
+        logError("%s: Problem updating sequence number file", filename);
+        return ((u_int) -1);
     }
     Sys::close(fd);			// NB: implicit unlock
     return (seqnum);

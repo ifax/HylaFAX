@@ -377,23 +377,29 @@ void
 HylaFAXServer::setFileOwner(const char* file)
 {
     if (IS(CHECKGID)) {				// auto-detect how GID handled
-	struct stat sb;
-	if (!FileCache::lookup(file, sb))
-	    fatal("setFileOwner called for non-existent file (check)");
-	if (sb.st_gid != (gid_t) uid)
-	    state |= S_SETGID;			// not set, must force it
-	else
-	    state &= ~S_SETGID;			// set by OS, no work to do
-	logInfo("Filesystem has %s-style file creation semantics.",
-	    IS(SETGID) ? "BSD" : "SysV");
-	state &= ~S_CHECKGID;
+        struct stat sb;
+        if (!FileCache::lookup(file, sb)) {
+            fatal("setFileOwner called for non-existent file (check)");
+        }
+        if (sb.st_gid != (gid_t) uid) {
+            state |= S_SETGID;			// not set, must force it
+        } else {
+            state &= ~S_SETGID;			// set by OS, no work to do
+        }
+        if (TRACE(SERVER)) {
+            logInfo("Filesystem has %s-style file creation semantics.",
+                IS(SETGID) ? "BSD" : "SysV");
+        }
+        state &= ~S_CHECKGID;
     }
     if (IS(SETGID)) {
-	struct stat sb;
-	if (!FileCache::lookup(file, sb))
-	    fatal("setFileOwner called for non-existent file (set)");
-	if (!FileCache::chown(file, sb.st_uid, (gid_t) uid))
-	    logError("%s: chown: %s", file, strerror(errno));
+        struct stat sb;
+        if (!FileCache::lookup(file, sb)) {
+            fatal("setFileOwner called for non-existent file (set)");
+        }
+        if (!FileCache::chown(file, sb.st_uid, (gid_t) uid)) {
+            logError("%s: chown: %s", file, strerror(errno));
+        }
     }
 }
 

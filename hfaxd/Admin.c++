@@ -129,43 +129,47 @@ HylaFAXServer::shutCmd(const struct tm& when, const char* reason)
 {
     logcmd(T_SHUT, "%.24s %s", asctime(&when), reason);
     if (shutdownFile == "") {
-	reply(503, "Null configured shutdown filename; something is hosed.");
-	return;
+        reply(503, "Null configured shutdown filename; something is hosed.");
+        return;
     }
     const char* msg = "Shutdown failed; ";
-    char templ[128];
-    sprintf(templ, "/%s/shutXXXXXX", FAX_TMPDIR);
-    int fd = Sys::mkstemp(templ);
+
+    const char* templ = FAX_TMPDIR "/shutXXXXXX";
+    char* buff = strcpy(new char[strlen(templ) + 1], templ);
+
+    int fd = Sys::mkstemp(buff);
+    fxStr tfile = buff;
+    delete [] buff;
     if (fd < 0) {
-	reply(550, "%serror creating temp file %s: %s.", msg,
-	    (const char*) templ, strerror(errno));
-	return;
+        reply(550, "%serror creating temp file %s: %s.", msg,
+            (const char*) tfile, strerror(errno));
+        return;
     }
     FILE* fp = fdopen(fd, "w");
     if (fp) {
-	fprintf(fp, "%d %d %d %d %d 5 1\n"
-	    , when.tm_year+1900
-	    , when.tm_mon
-	    , when.tm_mday
-	    , when.tm_hour
-	    , when.tm_min
-	);
-	fprintf(fp, "\n%s\n\n", reason);
-	if (fclose(fp) != 0) {
-	    reply(450, "%sI/O error writing %s.", msg, (const char*) templ);
-	    (void) Sys::unlink(templ);
-	} else if (Sys::rename(templ, fixPathname(shutdownFile)) < 0) {
-	    reply(550, "%srename %s.", msg, strerror(errno));
-	} else {
-	    reply(200, "System shutdown scheduled for %.24s.",
-		asctime(&when));
-	    return;
-	}
+        fprintf(fp, "%d %d %d %d %d 5 1\n"
+            , when.tm_year+1900
+            , when.tm_mon
+            , when.tm_mday
+            , when.tm_hour
+            , when.tm_min
+        );
+        fprintf(fp, "\n%s\n\n", reason);
+        if (fclose(fp) != 0) {
+            reply(450, "%sI/O error writing %s.", msg, (const char*) tfile);
+            (void) Sys::unlink(tfile);
+        } else if (Sys::rename(tfile, fixPathname(shutdownFile)) < 0) {
+            reply(550, "%srename %s.", msg, strerror(errno));
+        } else {
+            reply(200, "System shutdown scheduled for %.24s.",
+        	asctime(&when));
+            return;
+        }
     } else {
-	reply(550, "%serror opening file: %s", msg, strerror(errno));
-	Sys::close(fd);
+        reply(550, "%serror opening file: %s", msg, strerror(errno));
+        Sys::close(fd);
     }
-    (void) Sys::unlink(templ);
+    (void) Sys::unlink(tfile);
 }
 
 void

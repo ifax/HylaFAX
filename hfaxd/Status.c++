@@ -249,7 +249,6 @@ HylaFAXServer::Mprintf(FILE* fd, const char* fmt, const ModemConfig& config)
 	    fp[0] = mformat[c-'a'];	// printf format string
 	    fp[1] = '\0';
 	    switch (c) {
-	    char tmpbuf[20];
 	    case 'h':
 		fprintf(fd, fspec, (const char*) hostname);
 		break;
@@ -263,21 +262,26 @@ HylaFAXServer::Mprintf(FILE* fd, const char* fmt, const ModemConfig& config)
 		fprintf(fd, fspec, (const char*) config.FAXNumber);
 		break;
 	    case 'r':
-		if (config.maxRecvPages == (u_int) -1)
-		    strcpy(tmpbuf, "INF");
-		else
-		    sprintf(tmpbuf, "%u", config.maxRecvPages);
+        /* 
+        * this is not used for some reason ie -1 represents infinite
+		* if (config.maxRecvPages == (u_int) -1) {
+		*    tmp = "INF";
+		* } else {
+		*    tmp = fxStr::format("%u", config.maxRecvPages);
+        * }
+        */
 		fprintf(fd, fspec, config.maxRecvPages);
 		break;
 	    case 's':
 		fprintf(fd, fspec, (const char*) config.status);
 		break;
-	    case 't':
-		sprintf(tmpbuf, "%05x:%05x",
-		    config.tracingLevel&0xfffff,
-		    config.logTracingLevel&0xfffff);
-		fprintf(fd, fspec, tmpbuf);
-		break;
+            case 't': {
+		            fxStr tmp = fxStr::format("%05x:%05x",
+                        config.tracingLevel&0xfffff,
+                        config.logTracingLevel&0xfffff);
+                    fprintf(fd, fspec, (const char*)tmp);
+                }
+		        break;
 	    case 'v':
 		fprintf(fd, fspec, " QLMH"[config.speakerVolume]);
 		break;

@@ -355,12 +355,14 @@ HylaFAXServer::findUser(FILE* db, const char* user, u_int& newuid)
 bool
 HylaFAXServer::addUser(FILE* db, const char* user, u_int uid, const char* upass, const char* apass)
 {
-    char templ[128];
-    sprintf(templ, "/%s/uaddXXXXXX", FAX_TMPDIR);
-    int fd = Sys::mkstemp(templ);
+    const char* templ = "/" FAX_TMPDIR "/uaddXXXXXX";
+    char* buff = strcpy(new char[strlen(templ) + 1], templ);
+    int fd = Sys::mkstemp(buff);
+    fxStr tfile = buff;
+    delete [] buff;
     if (fd < 0) {
 	reply(550, "Error creating temp file %s: %s.",
-	    (const char*) templ, strerror(errno));
+	    (const char*) tfile, strerror(errno));
 	return (false);
     }
     rewind(db);
@@ -370,7 +372,7 @@ HylaFAXServer::addUser(FILE* db, const char* user, u_int uid, const char* upass,
 	if (Sys::write(fd, buf, cc) != cc) {
 	    perror_reply(550, "Write error", errno);
 	    Sys::close(fd);
-	    (void) Sys::unlink(templ);
+	    (void) Sys::unlink(tfile);
 	    return (false);
 	}
     fxStr line;
@@ -383,13 +385,13 @@ HylaFAXServer::addUser(FILE* db, const char* user, u_int uid, const char* upass,
     if (Sys::write(fd, line, line.length()) != line.length()) {
 	perror_reply(550, "Write error", errno);
 	Sys::close(fd);
-	(void) Sys::unlink(templ);
+	(void) Sys::unlink(tfile);
 	return (false);
     }
     Sys::close(fd);
-    if (Sys::rename(templ, fixPathname(userAccessFile)) < 0) {
+    if (Sys::rename(tfile, fixPathname(userAccessFile)) < 0) {
 	perror_reply(550, "Rename of temp file failed", errno);
-	(void) Sys::unlink(templ);
+	(void) Sys::unlink(tfile);
 	return (false);
     }
     return (true);
@@ -423,14 +425,16 @@ HylaFAXServer::addUserCmd(const char* user, const char* up, const char* ap)
 bool
 HylaFAXServer::deleteUser(FILE* db, const char* user)
 {
-    char templ[128];
-    sprintf(templ, "/%s/udelXXXXXX", FAX_TMPDIR);
-    int fd = Sys::mkstemp(templ);
+    const char* templ = "/" FAX_TMPDIR "/udelXXXXXX";
+    char* buff = strcpy(new char[strlen(templ) + 1], templ);
+    int fd = Sys::mkstemp(buff);
+    fxStr tfile = buff;
+    delete [] buff;
     FILE* ftmp;
     if (fd < 0 || (ftmp = fdopen(fd, "w")) == NULL) {
-	reply(550, "Error creating temp file %s: %s.",
-	    (const char*) templ, strerror(errno));
-	return (false);
+        reply(550, "Error creating temp file %s: %s.",
+	        (const char*)tfile, strerror(errno));
+        return (false);
     }
     /*
      * Scan the existing file for the specified user
@@ -461,13 +465,14 @@ HylaFAXServer::deleteUser(FILE* db, const char* user)
     if (found) {
 	if (ioError)
 	    perror_reply(550, "I/O error", errno);
-	else if (Sys::rename(templ, fixPathname(userAccessFile)) < 0)
+	else if (Sys::rename(tfile, fixPathname(userAccessFile)) < 0)
 	    perror_reply(550, "Rename of temp file failed", errno);
-	else
+	else {
 	    return (true);
+        }
     } else
 	reply(500, "User %s not found in access file.", user);
-    (void) Sys::unlink(templ);
+    (void) Sys::unlink(tfile);
     return (false);
 }
 

@@ -1634,8 +1634,7 @@ HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
 	    }
 	    fp[0] = jformat[c-'A'];	// printf format string
 	    fp[1] = '\0';
-	    switch (c) {
-	    char tmpbuf[20];		// for multi-item formatting
+            switch (c) {
 	    case 'A':
 		fprintf(fd, fspec, (const char*) job.subaddr);
 		break;
@@ -1646,8 +1645,7 @@ HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
 		fprintf(fd, fspec, (const char*) job.company);
 		break;
 	    case 'D':
-		sprintf(tmpbuf, "%2u:%-2u", job.totdials, job.maxdials);
-		fprintf(fd, fspec, tmpbuf);
+		fprintf(fd, fspec, (const char*)fxStr::format("%2u:%-2u", job.totdials, job.maxdials));
 		break;
 	    case 'E':
 		fprintf(fd, fspec, job.desiredbr);
@@ -1683,8 +1681,7 @@ HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
 		fprintf(fd, fspec, "N "[job.useccover]);
 		break;
 	    case 'P':
-		sprintf(tmpbuf, "%2u:%-2u", job.npages, job.totpages);
-		fprintf(fd, fspec, tmpbuf);
+		fprintf(fd, fspec, (const char*)fxStr::format("%2u:%-2u", job.npages, job.totpages));
 		break;
 	    case 'Q':
 		fprintf(fd, fspec, job.minsp);
@@ -1696,12 +1693,10 @@ HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
 		fprintf(fd, fspec, (const char*) job.sender);
 		break;
 	    case 'T':
-		sprintf(tmpbuf, "%2u:%-2u", job.tottries, job.maxtries);
-		fprintf(fd, fspec, tmpbuf);
+		fprintf(fd, fspec, (const char*)fxStr::format("%2u:%-2u", job.tottries, job.maxtries));
 		break;
 	    case 'U':
-		sprintf(tmpbuf, "%.1f", job.chopthreshold);
-		fprintf(fd, fspec, tmpbuf);
+		fprintf(fd, fspec, (const char*)fxStr::format("%.1f", job.chopthreshold));
 		break;
 	    case 'V':
 		fprintf(fd, fspec, (const char*) job.doneop);
