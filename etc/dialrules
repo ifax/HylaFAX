@@ -3,7 +3,7 @@
 ! HylaFAX (tm) Dialing String Processing Rules.
 !
 ! This file describes how to process user-specified dialing strings
-! to create three items:
+! to create two items:
 !
 ! CanonicalNumber: a unique string that is derived from all dialing
 ! strings to the same destination phone number.  This string is used
@@ -12,10 +12,6 @@
 ! DialString: the string passed to the modem for use in dialing the
 ! telephone.  This string should be void of any characters that might
 ! confuse the modem.
-!
-! DisplayNumber: the external, displayable, form of a number that
-! does not include private information which should not be displayed
-! to clients.
 !
 Area=${AreaCode}		! local area code
 Country=${CountryCode}		! local country code
@@ -64,9 +60,3 @@ DialString := [
 ^[+]${Country}		= ${LDPrefix}		! long distance call
 ^[+]			= ${IDPrefix}		! international call
 ]
-!
-! Strip private information from the dial string which should not be
-! displayed to clients.  By default, DisplayNumber is not set.
-!
-! DisplayNumber := [
-! ]

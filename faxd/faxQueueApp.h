@@ -152,7 +152,6 @@ private:
     void	configTrace(const char* fmt, ...);
     void	setDialRules(const char* name);
     fxStr	canonicalizePhoneNumber(const fxStr& ds);
-    fxStr	externalizePhoneNumber(const fxStr& ds);
 // modem support
     void	scanForModems();
     bool	assignModem(Job& job, const DestControlInfo&);
