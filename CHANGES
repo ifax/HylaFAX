@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.0
 
+* limit fax retrains to allowed moments (28 Jun 2004)
 * change DynamicLocalID to DynamicConfig (22 Jun 2004)
 * fix V.17 fallbacks after the CTC/CTR exchange (21 Jun 2004)
 * tune setting of -rpath when linking on linux (21 Jun 2004)
