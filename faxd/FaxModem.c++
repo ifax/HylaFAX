@@ -381,7 +381,7 @@ FaxModem::getBestDataFormat() const
 u_int
 FaxModem::getBestECM() const
 {
-    return bestBit(modemParams.ec, EC_DISABLE, EC_ECLFULL);
+    return bestBit(modemParams.ec, EC_ECLFULL, EC_DISABLE);
 }
 
 /*
