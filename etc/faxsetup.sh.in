@@ -2057,7 +2057,7 @@ if onServer; then
     FAXD="`findproc faxd`"
     if [ "$FAXD" ]; then
 	echo ""
-	echo "You seem to be running FlexFAX (there are faxd processes)."
+	echo "You seem to be running HylaFAX (there are faxd processes)."
 	prompt "Is it ok to terminate these processes ($FAXD) [yes]?"; read x
 	if isOK "$x"; then
 	    if kill $FAXD; then
