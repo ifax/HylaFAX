@@ -45,7 +45,7 @@ main(int argc, char** argv)
     int fd;
     int i;
     int len1, len2;
-    int skip;
+    int skip, skpchr;
     char* hostfile = FAX_SPOOLDIR "/" FAX_PERMFILE;
     char buff[256];
     char newhostfile[256];
@@ -77,10 +77,15 @@ main(int argc, char** argv)
     }
     while (fgets(buff, sizeof(buff), hf)) {
         skip = 0;
+	skpchr = 0;
         for (i = optind; i < argc; i++) {
-            len1 = strcspn(buff, ":\n");
+            len1 = strcspn(buff, ":\n@$");
             len2 = strlen(argv[i]);
-            if (len1 == len2 && !strncmp(buff, argv[i], len1)) {
+	    if (strspn(buff, "^") > 0) {
+		skpchr = 1;
+		len1--;
+	    }
+            if (len1 == len2 && !strncmp(buff+skpchr, argv[i], len1)) {
                 skip = 1;
                 break;
             } 
