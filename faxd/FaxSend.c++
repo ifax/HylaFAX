@@ -145,7 +145,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
      * doing any fax-specific operations such as
      * requesting polling.
      */
-    if (!modem->faxService(!clientInfo.getHasV34Trouble())) {
+    if (!modem->faxService(!clientInfo.getHasV34Trouble() && dis.ec != EC_DISABLE)) {
 	sendFailed(fax, send_failed, "Unable to configure modem for fax use");
 	return;
     }
