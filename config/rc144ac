@@ -73,5 +73,5 @@ ModemAnswerFaxBeginCmd:	"<19200><xon>"	# modem switches on fax receive
 # Caller ID configuration setup for Supra.
 #
 #QualifyCID:		etc/cid		# CID access control list file
-#CIDNumber:		"NMBR = "	# pattern string for phone number info
-#CIDName:		"NAME = "	# pattern string for identity info
+#CallIDPattern:		"NMBR = "	# pattern string for phone number info
+#CallIDPattern:		"NAME = "	# pattern string for identity info

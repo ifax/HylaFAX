@@ -15,10 +15,7 @@ further resources regarding HylaFAX.
 
                           *   NEW FEATURES   *
 
-* hfaxd security fix for hosts.hfaxd entries without
-  passwords (CAN-2004-1182)
-* support for gcc v3.3 and libtiff v3.7
-* fax batching support
+* faxgetty can now utilize more than two call identification tags
 * numerous other enhancements and bugfixes (see CHANGES)
 
                          *   KNOWN ISSUES   *
@@ -28,6 +25,12 @@ further resources regarding HylaFAX.
 
                        *   INCOMPATIBILITIES   *
 
+* Some of the CallID changes in this release required some reordering of
+  the command-line parameters with which the DynamicConfig scripts were
+  called.
+* TIFFs received prior to upgrading to this release will display their
+  CIDName and CIDNumber information reversed (CallID2, CallID1) when
+  examined with faxinfo.
 * libtiff-3.6.1 is fatally flawed when dealing with Group 3 images.  
   Don't use it as-is.  
   See: http://bugs.hylafax.org/bugzilla/show_bug.cgi?id=500

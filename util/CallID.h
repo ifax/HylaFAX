@@ -1,7 +1,6 @@
 /*	$Id$ */
 /*
- * Copyright (c) 1990-1996 Sam Leffler
- * Copyright (c) 1991-1996 Silicon Graphics, Inc.
+ * Copyright (c) 2004 iFAX Solutions Inc.
  * HylaFAX is a trademark of Silicon Graphics
  *
  * Permission to use, copy, modify, distribute, and sell this software and 
@@ -23,30 +22,34 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
-#ifndef _FaxAcctInfo_
-#define	_FaxAcctInfo_
+#ifndef _CallID_
+#define	_CallID_
 
-#include "Types.h"
-#include "CallID.h"
-#include <time.h>
+#include "StrArray.h"
 
-struct FaxAcctInfo {
-    const char* jobid;		// system-assigned job identifier
-    const char* jobtag;		// user-specified job tag (optional)
-    const char*	user;		// sender/receiver identity
-    time_t	start;		// starting time
-    time_t	duration;	// job duration (seconds)
-    time_t	conntime;	// connect time (seconds)
-    const char*	commid;		// communication identifer
-    const char*	device;		// modem device
-    const char*	dest;		// receiver phone number
-    const char*	csi;		// remote csi
-    u_int	npages;		// pages successfully sent/rcvd
-    u_int	params;		// encoded transfer parameters
-    const char*	status;		// status info (optional)
-    CallID	callid;		// call identification
-    const char* owner;		// job owner (uid)
+class CallID : public fxObj {
+public:
+    fxStrArray	_id;		// file containing data
 
-    bool record(const char* cmd);
+    CallID (int howmany = 0);
+    ~CallID (void);
+
+    void operator= (const CallID&);
+    void resize(int i);
+
+    size_t makeString(fxStr&);
+
+    fxStr& operator [](int i);
+    const char* id (int i) const;
+    int length (int i) const;
+
+    bool isEmpty (void) const;
+
+    size_t size(void) const;
+
+    static const int NUMBER=0;
+    static const int NAME=1;
+
 };
-#endif /* _FaxAcctInfo_ */
+
+#endif /* _CallID_ */

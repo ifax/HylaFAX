@@ -71,7 +71,7 @@ private:
     time_t	lastCIDModTime;		// last mod time of CID patterns file
     REArray*	cidPats;		// recv cid patterns
     fxBoolArray* acceptCID;		// accept/reject matched cid
-    CallerID	received_cid;		// non-null received CNID
+    CallID	received_callid;	// non-null received CNID
     fxStr	gettyArgs;		// getty arguments
     fxStr	vgettyArgs;		// voice getty arguments
     fxStr	egettyArgs;		// extern getty arguments
@@ -110,19 +110,19 @@ private:
     void	discardModem(bool dropDTR);
 // inbound call handling
     bool	isCIDOk(const fxStr& cid);
-    bool	processCall(CallType ctype, fxStr& emsg, const CallerID& cid);
+    bool	processCall(CallType ctype, fxStr& emsg, const CallID& callid);
     CallType	runGetty(const char* what,
 		    Getty* (*newgetty)(const fxStr&, const fxStr&),
 		    const char* args, fxStr &emsg,
-                    bool keepLock, const CallerID& cid, 
+                    bool keepLock, const CallID& callid, 
 		    bool keepModem = false);
     void	setRingsBeforeAnswer(int rings);
     void	listenBegin();
     void	listenForRing();
     void	answerPhoneCmd(AnswerType, const char* dialnumber = NULL);
-    void	answerPhone(AnswerType, CallType, const CallerID& cid, const char* dialnumber = NULL);
+    void	answerPhone(AnswerType, CallType, const CallID& callid, const char* dialnumber = NULL);
     void	answerCleanup();
-    bool	answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const CallerID& cid, const char* dialnumber = NULL);
+    bool	answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const CallID& callid, const char* dialnumber = NULL);
 
     friend void AnswerTimeoutHandler::timerExpired(long, long);
 // miscellaneous stuff
@@ -136,10 +136,10 @@ private:
 // notification interfaces used by FaxServer
     void	notifyModemReady();
     void	notifyModemWedged();
-    void	notifyRecvBegun(const FaxRecvInfo&);
-    void	notifyPageRecvd(TIFF* tif, const FaxRecvInfo&, int ppm);
-    void	notifyDocumentRecvd(const FaxRecvInfo&);
-    void	notifyRecvDone(const FaxRecvInfo&);
+    void	notifyRecvBegun(FaxRecvInfo&);
+    void	notifyPageRecvd(TIFF* tif, FaxRecvInfo&, int ppm);
+    void	notifyDocumentRecvd(FaxRecvInfo&);
+    void	notifyRecvDone(FaxRecvInfo&);
 public:
     faxGettyApp(const fxStr& device, const fxStr& devID);
     ~faxGettyApp();

@@ -67,7 +67,6 @@ ModemDialCmd:		ATDT%s		# T for tone dialing
 # Caller ID configuration setup; add AT*ID1 to ModemResetCmds
 # to enable functionality (when supported by the local Telco).
 #
-#QualifyCID:		etc/cid		# CID access control list file
-#CIDNumber:		"CALLER NUMBER: " # pattern string for phone number info
-#CIDName:		"CALLER NAME: "	# pattern string for identity info
+#CallIDPattern:		"CALLER NUMBER: " # pattern string for phone number info
+#CallIDPattern:		"CALLER NAME: "	# pattern string for identity info
 #

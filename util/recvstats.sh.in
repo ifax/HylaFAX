@@ -91,18 +91,21 @@ case $SORTKEY in
 	$2 == "RECV" && NF == 14 { acct($9, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "RECV" && NF == 16 { acct($9, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 17 { acct($9, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
+	$2 == "RECV" && NF == 18 { acct($9, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	'
     ;;
 -cidname)
     AWKRULES='
 	$2 == "RECV" && NF == 16 { acct($15, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 17 { acct($15, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
+	$2 == "RECV" && NF == 18 { acct($15, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	'
     ;;
 -cidnumber)
     AWKRULES='
 	$2 == "RECV" && NF == 16 { acct($16, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 17 { acct($16, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
+	$2 == "RECV" && NF == 18 { acct($16, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	'
     ;;
 -dest*)
@@ -113,6 +116,7 @@ case $SORTKEY in
 	$2 == "RECV" && NF == 14 { acct($8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "RECV" && NF == 16 { acct($8, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 17 { acct($8, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
+	$2 == "RECV" && NF == 18 { acct($8, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	'
     ;;
 -speed|-rate)
@@ -124,6 +128,7 @@ case $SORTKEY in
 	$2 == "RECV" && NF == 14 { acct(getBR($10), $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "RECV" && NF == 16 { acct(getBR($10), $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 17 { acct(getBR($10), $11, $13, getBR($10), getDF($10), $14, $15, $16); }
+	$2 == "RECV" && NF == 18 { acct(getBR($10), $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	'
     ;;
 -format)
@@ -135,6 +140,7 @@ case $SORTKEY in
 	$2 == "RECV" && NF == 14 { acct(getDF($10), $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "RECV" && NF == 16 { acct(getDF($10), $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 17 { acct(getDF($10), $11, $13, getBR($10), getDF($10), $14, $15, $16); }
+	$2 == "RECV" && NF == 18 { acct(getDF($10), $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	'
     ;;
 esac

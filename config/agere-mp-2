@@ -30,7 +30,6 @@ Class2HexNSF:		false
 Class2DCCQueryCmd:	"!(0-1),(0-5),(0-2),(0-2),(0-1),(0),(0),(0-7)"
 
 # If your line supports Caller-ID, you may want to uncomment this...
-# QualifyCID:		etc/cid		# you must create this file
 # ModemResetCmds:	AT+VCID=1
-# CIDNumber:		"NMBR="
-# CIDName:		"NAME="
+# CallIDPattern:	"NMBR="
+# CallIDPattern:	"NAME="

@@ -50,12 +50,11 @@ ModemDialCmd:		AT+FCC=1,,,,,,,,0;DT%s
 # Class2Cmd:		AT+FCLASS=2.1;+FRY=4
 
 # If your line supports Caller-ID, you may want to uncomment this...
-# QualifyCID:		etc/cid		# you must create this file
 # ModemResetCmds:	AT+VCID=1
-# CIDNumber:		"NMBR="
-# CIDName:		"NAME="
+# CallIDPattern:	"NMBR="
+# CallIDPattern:	"NAME="
 
 # Or with the MT5634ZBA-DID you'll probably need something like...
 # ModemReadyCmds:	AT*DS1*DD0*DF1*DN4	# enable DTMF-DID, wink-start, 4 digits
-# CIDNumber:		"DTMF"		# format of AT*DF1
-# CIDNumberAnswerLength:	4	# four DTMF-DID digits then ATA
+# CallIDPattern:	"DTMF"		# format of AT*DF1
+# CallIDAnswerLength:	4		# four DTMF-DID digits then ATA

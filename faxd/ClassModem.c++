@@ -1296,7 +1296,7 @@ ClassModem::hangup()
 }
 
 bool
-ClassModem::waitForRings(u_short rings, CallType& type, CallerID& cid)
+ClassModem::waitForRings(u_short rings, CallType& type, CallID& callid)
 {
     bool gotring = false;
     u_int i = 0, count = 0;
@@ -1316,22 +1316,19 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallerID& cid)
 	        if (count++ == 0) break;         //discard initial DROFF code if present
 	        incadence[i++] = -atoi(rbuf + conf.dringOff.length());
 	        break;
-	    }
-	    else if (conf.dringOn.length() && strneq(conf.dringOn, rbuf, conf.dringOn.length())) {
+	    } else if (conf.dringOn.length() && strneq(conf.dringOn, rbuf, conf.dringOn.length())) {
 	        ++count;
 	        incadence[i++] = atoi(rbuf + conf.dringOn.length());
 	        break;
-	    }
-	    else {
+	    } else {
 		if (conf.ringExtended.length() && strneq(rbuf, conf.ringExtended, conf.ringExtended.length()))	// extended RING
 		    gotring = true;
-		conf.parseCID(rbuf, cid);
+		conf.parseCallID(rbuf, callid);
 		/* DID modems may send DID data in lieu of RING */
-		if ((cid.name.length() >= conf.cidNameAnswerLength &&
-		     conf.cidNameAnswerLength > 0) ||
-		    (cid.number.length() >= conf.cidNumberAnswerLength &&
-		     conf.cidNumberAnswerLength > 0))
-		    gotring = true;
+		for (int i = 0; i < conf.idConfig.length(); i++) {
+		    if (conf.idConfig[i].answerlength && callid.length(i) >= conf.idConfig[i].answerlength)
+			gotring = true;
+		}
 		break;
 	    }
 	    /* fall thru... */
@@ -1343,32 +1340,37 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallerID& cid)
 		atCmd(conf.ringResponse, AT_NOTHING);
 		ATResponse r;
 		time_t ringstart = Sys::now();
-		bool cidwasempty = cid.number.length() == 0 || cid.name.length() == 0;
+		bool callidwasempty = true;
+		for (int i = 0; callidwasempty && i < callid.size(); i++)
+		    if (callid.length(i) )
+			callidwasempty = false;
 		do {
 		    r = atResponse(rbuf, 3000);
-		    if (r == AT_OTHER && cidwasempty) {
+		    if (r == AT_OTHER && callidwasempty) {
 			/*
 			 * Perhaps a modem will repeat CID/DID info for us
 			 * with AT+VRID if we missed it before.
 			 */
-			conf.parseCID(rbuf, cid);
+			conf.parseCallID(rbuf, callid);
 		    }
 		} while (r != AT_OK && (Sys::now()-ringstart < 3));
-		if (conf.cidNumber == "SHIELDED_DTMF") {	// retrieve DID, e.g. via voice DTMF
-		    ringstart = Sys::now();
-		    do {
-			int c = server.getModemChar(5000);
-			if (c == 0x10) c = server.getModemChar(5000);
-			if (c == 0x23 || c == 0x2A || (c >= 0x30 && c <= 0x39)) {
-			    // a DTMF digit was received...
-			    protoTrace("MODEM HEARD DTMF: %c", c);
-			    cid.number.append(fxStr::format("%c", c));
-			}
-		    } while (cid.number.length() < conf.cidNumberAnswerLength && (Sys::now()-ringstart < 10));
-		    u_char buf[2];
-		    buf[0] = DLE; buf[1] = ETX;
-		    if (!putModem(buf, 2, 3000))
-			return (false);
+		for (int i = 0 ; i < conf.idConfig.length(); i++) {
+		    if (conf.idConfig[i].pattern == "SHIELDED_DTMF") {	// retrieve DID, e.g. via voice DTMF
+			ringstart = Sys::now();
+			do {
+			    int c = server.getModemChar(5000);
+			    if (c == 0x10) c = server.getModemChar(5000);
+			    if (c == 0x23 || c == 0x2A || (c >= 0x30 && c <= 0x39)) {
+				// a DTMF digit was received...
+				protoTrace("MODEM HEARD DTMF: %c", c);
+				callid[i].append(fxStr::format("%c", c));
+			    }
+			} while (callid.length(i) < conf.idConfig[i].answerlength && (Sys::now()-ringstart < 10));
+			u_char buf[2];
+			buf[0] = DLE; buf[1] = ETX;
+			if (!putModem(buf, 2, 3000))
+			    return (false);
+		    }
 		}
 	    }
 	    if (conf.dringOn.length()) {              // Compare with all distinctive ring cadences

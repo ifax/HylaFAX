@@ -39,8 +39,7 @@ FaxRecvInfo::FaxRecvInfo(const FaxRecvInfo& other)
     , subaddr(other.subaddr)
     , params(other.params)
     , reason(other.reason)
-    , cidname(other.cidname)
-    , cidnumber(other.cidnumber)
+    , callid(other.callid)
 {
     npages = other.npages;
     time = other.time;
@@ -48,9 +47,14 @@ FaxRecvInfo::FaxRecvInfo(const FaxRecvInfo& other)
 FaxRecvInfo::~FaxRecvInfo() {}
 
 fxStr
-FaxRecvInfo::encode() const
+FaxRecvInfo::encode()
 {
-    return fxStr::format("%x,%x,%x,%s,%s,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\""
+    fxStr callid_formatted;
+    for (int i = 0; i < callid.size(); i++) {
+	if (i) callid_formatted.append("\",\"");
+        callid_formatted.append(callid[i]);
+    }
+    return fxStr::format("%x,%x,%x,%s,%s,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\""
 	, time
 	, npages
 	, params.encode()
@@ -60,8 +64,7 @@ FaxRecvInfo::encode() const
 	, (const char*) passwd
 	, (const char*) subaddr
 	, (const char*) reason
-	, (const char*) cidname
-	, (const char*) cidnumber
+	, (const char*) callid_formatted
     );
 }
 
@@ -98,7 +101,7 @@ FaxRecvInfo::decode(const char* cp)
     cp = strchr(cp+1, '"');
     if (cp == NULL || cp[1] != ',' || cp[2] != '"')
 	return (false);
-    reason = cp+3;			// +1 for "/+1 for ,/+1 for "
+    subaddr = cp+3;			// +1 for "/+1 for ,/+1 for "
     subaddr.resize(subaddr.next(0,'"'));
     cp = strchr(cp+1, '"');
     if (cp == NULL || cp[1] != ',' || cp[2] != '"')
@@ -108,12 +111,12 @@ FaxRecvInfo::decode(const char* cp)
     cp = strchr(cp+1, '"');
     if (cp == NULL || cp[1] != ',' || cp[2] != '"')
 	return (false);
-    reason = cp+3;			// +1 for "/+1 for ,/+1 for "
-    cidname.resize(cidname.next(0,'"'));
-    cp = strchr(cp+1, '"');
-    if (cp == NULL || cp[1] != ',' || cp[2] != '"')
-	return (false);
-    reason = cp+3;			// +1 for "/+1 for ,/+1 for "
-    cidnumber.resize(cidnumber.next(0,'"'));
+    u_int i = 0;
+    while (cp+2 != '\0') {
+	callid[i] = cp+3;		// +1 for "/+1 for ,/+1 for "
+	if (*cp == '\"') break;
+	callid[i].resize(callid[i].next(0,'"'));
+	i++;
+    }
     return (true);
 }

@@ -138,30 +138,25 @@ HylaFAXServer::getRecvDocStatus(RecvInfo& ri)
 #endif
     char* cp;
     ri.sender = "";
-    ri.cidname = "";
-    ri.cidnumber = "";
+    CallID empty_callid;
+    ri.callid = empty_callid;
     if (TIFFGetField(tif, TIFFTAG_IMAGEDESCRIPTION, &cp)) {
 	while (cp[0] != '\0' && cp[0] != '\n') {	// sender 
 	    ri.sender.append(cp[0]);
 	    cp++;
 	}
-	if (cp[0] == '\n') {
-	    cp++;
-	    while (cp[0] != '\0' && cp[0] != '\n') {   // cidname
-		ri.cidname.append(cp[0]);
-		cp++;
-	    }
-	}
-	if (cp[0] == '\n') {
-	    cp++;
-	    while (cp[0] != '\0' && cp[0] != '\n') {   // cidnumber
-		ri.cidnumber.append(cp[0]);
-		cp++;
-	    }
-	}
 	sanitize(ri.sender);
-	sanitize(ri.cidname);
-	sanitize(ri.cidnumber);
+	u_int i = 0;
+	while (cp[0] == '\n') {
+	    cp++;
+	    ri.callid.resize(i);
+	    while (cp[0] != '\0' && cp[0] != '\n') {
+		ri.callid[i].append(cp[0]);
+		cp++;
+	    }
+	    sanitize(ri.callid[i]);
+	    i++;
+	}
     } else
 	ri.sender = "<unknown>";
 #ifdef TIFFTAG_FAXSUBADDRESS
@@ -407,10 +402,10 @@ HylaFAXServer::Rprintf(FILE* fd, const char* fmt,
 		fprintf(fd, fspec, fmtTime(ri.time));
 		break;
 	    case 'i':
-		fprintf(fd, fspec, (const char*) ri.cidname);
+		fprintf(fd, fspec, ri.callid.size() > CallID::NAME ? (const char*) ri.callid.id(CallID::NAME) : "");
 		break;
 	    case 'j':
-		fprintf(fd, fspec, (const char*) ri.cidnumber);
+		fprintf(fd, fspec, ri.callid.size() > CallID::NUMBER ? (const char*) ri.callid.id(CallID::NUMBER) : "");
 		break;
 	    case 'l':
 		fprintf(fd, fspec, ri.params.pageLength());

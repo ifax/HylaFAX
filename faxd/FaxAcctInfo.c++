@@ -36,7 +36,7 @@ extern	const char* fmtTime(time_t);
  * Record an activity in the transfer log file.
  */
 bool
-FaxAcctInfo::record(const char* cmd) const
+FaxAcctInfo::record(const char* cmd)
 {
     bool ok = false;
     int fd = Sys::open(FAX_XFERLOG, O_RDWR|O_CREAT|O_APPEND, 0644);
@@ -70,9 +70,15 @@ FaxAcctInfo::record(const char* cmd) const
 	record.fput("\t%s", fmtTime(duration));	// $12 = duration
 	record.fput("\t%s", fmtTime(conntime));	// $13 = conntime
 	record.fput("\t\"%s\"", status);	// $14 = status
-	record.fput("\t\"%s\"", cidname);	// $15 = CIDName
-	record.fput("\t\"%s\"", cidnumber);	// $16 = CIDNumber
-	record.fput("\t\"%s\"", owner);		// $17 = owner
+	record.fput("\t\"%s\"", callid.size() > CallID::NAME ? (const char*) callid[1] : "");	// $15 = CallID2/CIDName
+	record.fput("\t\"%s\"", callid.size() > CallID::NUMBER ? (const char*) callid[0] : "");	// $16 = CallID1/CIDNumber
+	fxStr callid_formatted = "";
+	for (int i = 2; i < callid.size(); i++) {
+	    if (i > 2) callid_formatted.append("::");
+	    callid_formatted.append(callid[i]);
+	}
+	record.fput("\t\"%s\"", (const char*) callid_formatted);	// $17 = CallID3 -> CallIDn
+	record.fput("\t\"%s\"", owner);		// $18 = owner
 	record.put('\n');
 	flock(fd, LOCK_EX);
 	ok = (Sys::write(fd, record, record.getLength()) == (ssize_t)record.getLength());

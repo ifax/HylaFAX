@@ -31,7 +31,7 @@
 # faxrcvd file devID commID error-msg
 #
 if [ $# -lt 4 ]; then
-    echo "Usage: $0 file devID commID error-msg CIDNumber CIDName "
+    echo "Usage: $0 file devID commID error-msg [ callID-1 [ callID-2 [ ... [ callID-n ] ] ] ]"
     exit 1
 fi
 
@@ -97,12 +97,18 @@ SENDTO=
 HOSTNAME=`hostname`			# XXX no good way to find FQDN
 PORT=4559				# XXX no good way to lookup service
 
-FILE="$1"
-DEVICE="$2"
-COMMID="$3"
-MSG="$4"
-CIDNUMBER="$5"
-CIDNAME="$6"
+FILE="$1"; shift;
+DEVICE="$1"; shift;
+COMMID="$1"; shift;
+MSG="$1"; shift;
+COUNT=1
+while [ "$1" != "" ]; do
+    eval CALLID$COUNT="$1"
+    shift
+    COUNT=`expr $COUNT + 1`
+done
+CIDNUMBER="$CALLID1"
+CIDNAME="$CALLID2"
 
 FILENAME=`echo $FILE | $SED -e 's/\.tif//' -e 's/recvq\///'`
 SENDER="`$INFO $FILE | $AWK -F: '/Sender/ { print $2 }' 2>$ERRORSTO | $SED 's/^.//'`"

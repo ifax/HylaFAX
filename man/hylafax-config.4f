@@ -120,10 +120,12 @@ AdminGroup	string	\s-1faxadmin\s+1	System user group for administration (if PAM 
 AnswerRotary	string	\s-1Any\s+1	alternatives for answering calls
 AnswerBias	integer	\-	bias to apply to successful rotary answer 
 AreaCode\(S2	string	\-	local area code
-CIDName	string	\-	Caller \s-1ID\s+1 or DNIS name pattern string
-CIDNameAnswerLength	integer	\s-10\s+1	answer call when CIDName received
-CIDNumber	string	\-	Caller \s-1ID\s+1 or DNIS number pattern string
-CIDNumberAnswerLength	integer	\s-10\s+1	answer call when CIDNumber received
+CallIDAnswerLength	integer	\-	answer call when CallIDPattern received
+CallIDPattern	strint	\-	call identification pattern string
+CIDName	string	\-	equivalent to CallIDPattern (2)
+CIDNameAnswerLength	integer	\s-10\s+1	equivalent to CallIDAnswerLength (2)
+CIDNumber	string	\-	equivalent to CallIDPattern (1)
+CIDNumberAnswerLength	integer	\s-10\s+1	equivalent to CallIDAnswerLength (1)
 ClocalAsRoot	boolean	\s-1No\s+1	set \s-1CLOCAL\s+1 using root \s-1UID\s+1
 ContCoverCmd\(S1	string	\s-1bin/mkcover\s+1	continuation cover page generation script
 ContCoverPage\(S1	string	\-	continuation cover page template filename
@@ -493,68 +495,39 @@ to formulate canonical phone numbers for dialing (see
 .B DialStringRules
 below.)
 .TP
-.B CIDName
-A string that identifies the caller's identity in any Caller-ID
-status messages or the called identity in any DNIS messages.
+.B CallIDPattern
+A string that identifies the caller's identity in any call
+identification messages provided by the modem (such as Caller*ID or DNIS/DID).
 The specified string is compared against any
 unrecognized status messages received from the modem before
 .B ModemAnswerCmd
 is sent to the modem.
 If there is a match, then the remainder
-of the message is returned as the ``caller name''.
+of the message is returned as
+.B CallIDn
+where n corresponds to the n'th instance that this
+.B CallIDPattern
+is from the top in the modem configuration file.
 For example, for the ZyXEL U-1496 this parameter would be set to
-``\s-1CALLER NAME:\s+1 '' (note the trailing space).
-If more than one message matches, then the message remainders are 
+.nf
+\s-1CallIDPattern: ``CALLER NAME: ''\s+1 (note the trailing space).
+.fi
+If more than one message matches between instances of "RING" messages, then the message remainders are 
 concatenated.
-See also
-.B CIDNumber
-and
-.BR QualifyCID .
-.TP
-.B CIDNameAnswerLength
-An integer indicating the minimum number of characters in
-.B CIDName
-to be received when
-.B ModemAnswerCmd
-is sent to the modem irrespective of any
-.B RingsBeforeAnswer
-value greater than zero.  This allows the answering of calls
-which deliver CID/DID data but not RINGs.
-A value of zero for
-.B CidNameAnswerLength
-disables this feature.
-.TP
-.B CIDNumber
-A string that identifies the caller's phone number in any Caller-ID
-status messages or the called number in any DNIS messages.
-The specified string is compared against any
-unrecognized status messages received from the modem before
-.B ModemAnswerCmd
-is sent to the modem.
-If there is a match, then the remainder
-of the message is returned as the phone number of the caller.
-For example, for the ZyXEL U-1496 this parameter would be set to
-``\s-1CALLER NUMBER:\s+1 ''.
-If more than one message matches, then the message remainders are 
-concatenated.
-See also
-.B CIDName
-and
-.BR QualifyCID .
 
 The special
-.B CIDNumber
+.B CallID
 value of "SHIELDED_DTMF" is used in conjunction with
 .B ModemRingResponse
 and
-.B CIDNumberAnswerLength.
+.B CallIDAnswerLength.
 After executing
 .B ModemRingResponse,
 HylaFAX will expect
 DTMF data (usually DLE-shielded) for
-.B CIDNumber
+.B CallIDn
 until
-.B CIDNumberAnswerLength
+.B CallIDAnswerLength
 is reached.  Note that if the modem is in voice mode to hear these
 DTMF digits, then it must be returned to fax mode in the
 .B ModemAnswerCmd.
@@ -562,26 +535,65 @@ DTMF digits, then it must be returned to fax mode in the
 For example, the following settings will cause HylaFAX to enter
 voice mode and go off-hook when a RING is detected.  It will then
 expect four DTMF digits (presumably for routing), and then it will
-return to fax mode and answer the call.
+pause for 100 ms before returning to fax mode and answering the call.
 .nf
 
   ModemRingResponse:     AT+FCLASS=8;H1
-  CIDNumber:             SHIELDED_DTMF
-  CIDNumberAnswerLength: 4
-  ModemAnswerCmd:        AT+FCLASS=1;A
+  CallIDPattern:         SHIELDED_DTMF
+  CallIDAnswerLength:    4
+  ModemAnswerCmd:        <delay:100>AT+FCLASS=1;A
+
 .fi
+Multiple entries of
+.B CallIDPattern
+are used together in one modem configuration file in order to capture multiple
+.B CallID
+responses.  For example, the following settings would capture "NDID" responses
+from the modem as CallID1, "NMBR" responses from the modem as CallID2, "NAME"
+responses as CallID3, and it would trigger
+.B ModemAnswerCmd
+whenever CallID1 or CallID2 were longer than 7 or 10 characters, respectively.
+.nf
+
+  CallIDPattern:         "NDID="
+  CallIDAnswerLength:    7
+  CallIDPattern:         "NMBR="
+  CallIDAnswerLength:    10
+  CallIDPattern:         "NAME="
+
+.fi
+Note that this example is only given as an example, and probably would cause unexpected
+results.  Because pattern-matching ends when
+.B ModemAnswerCmd
+is sent to the modem, if "NDID", "NMBR", and "NAME" responses came from the modem in
+that order, and the "NDID" response was at least 7 characters long, then
+.B ModemAnswerCmd
+would be sent to the modem immediately following the "NDID" response, and the "NMBR" and
+"NAME" responses would be ignored.  Generally only one
+.B CallIDAnswerLength
+item should be in a modem configuration file.
 .TP
-.B CIDNumberAnswerLength
-An integer indicating the minimum number of characters in
-.B CIDNumber
+.B CallIDAnswerLength
+An integer indicating the minimum number of characters in a
+.B CallID
+matching the previous
+.B CallIDPattern
 to be received when
 .B ModemAnswerCmd
 is sent to the modem irrespective of any
 .B RingsBeforeAnswer
 value greater than zero.  This allows the answering of calls
 which deliver CID/DID data but not RINGs.
+For example,
+.nf
+\s-1CallIDAnswerLength: ``7''\s+1
+.fi
+would cause the call to be answered
+when
+.B CallID2
+reached a length of seven digits.
 A value of zero for
-.B CidNumberAnswerLength
+.B CallIDAnswerLength
 disables this feature.
 .TP
 .B ClocalAsRoot
@@ -738,9 +750,9 @@ and
 The pathname of the optional shell script, e.g. ``etc/localid'', that 
 makes dynamic configuration changes, i.e., to 
 .B LocalIdentifier,
-based on CIDName, CIDNumber, and device ID.  The script is passed those
-three values as the first, second, and third parameters ($1, $2, $3), 
-respectively when answering an incoming call.  The script can then 
+based on and device ID and call identification.  The script is passed those
+values as the parameters ($1 = device id, $2 = CallID1, $3 = CallID2, $4 = CallID3, ...), 
+when answering an incoming call.  The script can then 
 perform local processing as desired to send on standard output the 
 configuration items to change in a ``parameter:value'' format, i.e.
 ``LocalIdentifier: +1.800.555.1212''.  If there are multiple parameters
@@ -1137,30 +1149,29 @@ see
 .IR ps2fax (${MANNUM1_8}).
 .TP
 .B QualifyCID
-A string that specifies whether or not \fICaller-ID information\fP
-and/or \fIDNIS information\fP
+A string that specifies whether or not \fIcall identification information\fP
 should be checked against an access control list before accepting
 an inbound call.
 If 
 .B QualifyCID
-is non-null and there is Caller-ID or DNIS service,
-then only calls with data matching numbers identified
+is non-null and there is call identification service,
+then only calls with 
+.B CallID1
+data matching identifications
 in the file specified by this string (typically \fBetc/cid\fP)
 will be accepted; see
 .IR cid (${MANNUM4_5}).
 If
 .B QualifyCID
 is not specified in the configuration file, or the value is
-null, then all incoming calls will be answered.
-Note that Caller-ID screening and DNIS routing are only available when this
+null, then all incoming calls will be answerable.
+Note that call identification screening is only available when this
 service is enabled on the phone line and the modem is capable of
-presenting Caller-ID status or DNIS data information to the host.
+presenting that information to the host.
 The
-.B CIDNumber
-and
-.B CIDName
+.B CallIDPattern
 parameters must also be setup to reflect the manner in which
-the modem returns Caller-ID status or DNIS data information to the host.
+the modem returns call identification information to the host.
 .TP
 .B QualifyPWD
 A string that specifies whether or not the identity of 

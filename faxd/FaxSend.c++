@@ -381,7 +381,7 @@ FaxServer::sendPoll(FaxRequest& fax, bool remoteHasDoc)
 	fax.status = (pollFaxPhaseB(freq.addr, freq.item, docs, fax.notice) ?
 	    send_done : send_retry);
 	for (u_int j = 0; j < docs.length(); j++) {
-	    const FaxRecvInfo& ri = docs[j];
+	    FaxRecvInfo& ri = docs[j];
 	    if (ri.npages > 0) {
 		Sys::chmod(ri.qfile, recvFileMode);
 		notifyPollRecvd(fax, ri);

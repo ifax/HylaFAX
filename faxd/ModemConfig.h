@@ -31,6 +31,23 @@
 #include "FaxConfig.h"
 #include "FaxModem.h"
 
+#include "Array.h"
+
+class id_config
+{
+    public:
+	fxStr	pattern;
+	int	answerlength;
+
+	int compare (const id_config* n) const
+	{
+	    return ::compare(pattern, n->pattern);
+	}
+
+};
+
+fxDECLARE_ObjArray(IDConfArray, id_config);
+
 struct ModemConfig : public FaxConfig {
 private:
     BaudRate	getRate(const char*);
@@ -57,6 +74,8 @@ protected:
     virtual void configError(const char* fmt, ...) = 0;
     virtual void configTrace(const char* fmt, ...) = 0;
     fxStr parseATCmd(const char*);
+
+    u_int	callidIndex;		// call id index
 public:
     fxStr	type;			// modem type
     fxStr	resetCmds;		// extra modem reset commands for start of initialization
@@ -105,11 +124,8 @@ public:
     fxStr	dringOn;		// pattern for distinctive ring silence interval
     fxStr	dringOff;		// pattern for distinctive ring ring interval
     bool	noAnswerVoice;		// leave voice calls unanswered
-					// caller id
-    fxStr	cidName;		// pattern for name info
-    fxStr	cidNumber;		// pattern for number info
-    u_int	cidNameAnswerLength;	// answer when CID received
-    u_int	cidNumberAnswerLength;	// answer when CID received
+					// call identification
+    IDConfArray	idConfig;		// pattern for ID info
 					// protocol timers
     u_int	t1Timer;		// T.30 T1 timer (ms)
     u_int	t2Timer;		// T.30 T2 timer (ms)
@@ -221,7 +237,7 @@ public:
 
         virtual ~ModemConfig();
 
-    void parseCID(const char*, CallerID&) const;
+    void parseCallID(const char*, CallID&) const;
     const fxStr& getFlowCmd(FlowControl) const;
     void parseDR(const char*);
     void processDRString(char*, const u_int);

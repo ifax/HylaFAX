@@ -42,7 +42,7 @@
  */
 
 bool
-FaxServer::recvFax(const CallerID& cid, fxStr& emsg)
+FaxServer::recvFax(const CallID& callid, fxStr& emsg)
 {
     traceProtocol("RECV FAX: begin");
 
@@ -59,8 +59,7 @@ FaxServer::recvFax(const CallerID& cid, fxStr& emsg)
      * after recvBegin can cause part of the first page to
      * be lost.)
      */
-    info.cidname = cid.name;
-    info.cidnumber = cid.number;
+    info.callid = callid;
     TIFF* tif = setupForRecv(info, docs, emsg);
     if (tif) {
 	recvPages = 0;			// total count of received pages
@@ -110,7 +109,7 @@ FaxServer::recvFax(const CallerID& cid, fxStr& emsg)
      * cause timing problems).
      */
     for (u_int i = 0, n = docs.length(); i < n; i++) {
-	const FaxRecvInfo& ri = docs[i];
+	FaxRecvInfo& ri = docs[i];
 	if (ri.npages == 0)
 	    Sys::unlink(ri.qfile);
 	else
@@ -258,9 +257,10 @@ bool
 FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
 {
     fxStr id = info.sender;
-    if (info.cidname.length() || info.cidnumber.length()) id.append("\n" | info.cidname);
-    if (info.cidnumber.length()) id.append("\n" | info.cidnumber);
-
+    for (int i = 0; i < info.callid.size(); i++) {
+	id.append('\n');
+	id.append(info.callid[i]);
+    }
     do {
 	if (++recvPages > maxRecvPages) {
 	    emsg = "Maximum receive page count exceeded, job terminated";
@@ -303,7 +303,7 @@ FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
 }
 
 void
-FaxServer::notifyRecvBegun(const FaxRecvInfo&)
+FaxServer::notifyRecvBegun(FaxRecvInfo&)
 {
 }
 
@@ -311,7 +311,7 @@ FaxServer::notifyRecvBegun(const FaxRecvInfo&)
  * Handle notification that a page has been received.
  */
 void
-FaxServer::notifyPageRecvd(TIFF*, const FaxRecvInfo& ri, int)
+FaxServer::notifyPageRecvd(TIFF*, FaxRecvInfo& ri, int)
 {
     traceServer("RECV FAX (%s): from %s, page %u in %s, %s, %s, %s, %s"
 	, (const char*) ri.commid
@@ -329,7 +329,7 @@ FaxServer::notifyPageRecvd(TIFF*, const FaxRecvInfo& ri, int)
  * Handle notification that a document has been received.
  */
 void
-FaxServer::notifyDocumentRecvd(const FaxRecvInfo& ri)
+FaxServer::notifyDocumentRecvd(FaxRecvInfo& ri)
 {
     traceServer("RECV FAX (%s): %s from %s, route to %s, %u pages in %s"
 	, (const char*) ri.commid
@@ -345,7 +345,7 @@ FaxServer::notifyDocumentRecvd(const FaxRecvInfo& ri)
  * Handle final actions associated with a document being received.
  */
 void
-FaxServer::notifyRecvDone(const FaxRecvInfo& ri)
+FaxServer::notifyRecvDone(FaxRecvInfo& ri)
 {
     if (ri.reason != "")
 	traceServer("RECV FAX (%s): session with %s terminated abnormally: %s"

@@ -158,7 +158,7 @@ protected:
     bool	setInputBuffering(bool on);
     bool	modemStopOutput();
 // modem driver interfaces
-    bool	modemWaitForRings(u_short rings, CallType&, CallerID&);
+    bool	modemWaitForRings(u_short rings, CallType&, CallID&);
     CallType	modemAnswerCall(AnswerType, fxStr&, const char* dialnumber = NULL);
     void	modemAnswerCallCmd(CallType);
     void	modemFlushInput();

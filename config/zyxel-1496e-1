@@ -97,8 +97,7 @@ Class1FrameOverhead:	2		# 6.14 firmware does not include FCS
 #
 # Caller ID configuration setup.
 #
-#QualifyCID:		etc/cid		# CID access control list file
-#CIDNumber:		"CALLER NUMBER: " # pattern string for phone number info
-#CIDName:		"CALLER NAME: "	# pattern string for identity info
+#CallIDPattern:		"CALLER NUMBER: " # pattern string for phone number info
+#CallIDPattern:		"CALLER NAME: "	# pattern string for identity info
 #
 PagerSetupCmds:		AT&K0&N15	# use V.22 at 1200 bps (PageNet)

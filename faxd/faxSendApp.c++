@@ -196,8 +196,8 @@ faxSendApp::send(const char* filenames)
 		    ai.jobtag = req->jobtag;
 		    ai.user = req->mailaddr;
 		    ai.csi = info.getCSI();
-		    ai.cidname = "";
-		    ai.cidnumber = "";
+		    CallID empty_callid;
+		    ai.callid = empty_callid;
 		    ai.owner = req->owner;
 		    if (req->status == send_done)
 			ai.status = "";
@@ -341,7 +341,7 @@ faxSendApp::notifyDocumentSent(FaxRequest& req, u_int fi)
  * result of a poll request.
  */
 void
-faxSendApp::notifyPollRecvd(FaxRequest& req, const FaxRecvInfo& ri)
+faxSendApp::notifyPollRecvd(FaxRequest& req, FaxRecvInfo& ri)
 {
     (void) sendJobStatus(req.jobid, "p%s", (const char*) ri.encode());
 
@@ -361,8 +361,8 @@ faxSendApp::notifyPollRecvd(FaxRequest& req, const FaxRecvInfo& ri)
     ai.status = ri.reason;
     ai.jobid = req.jobid;
     ai.jobtag = req.jobtag;
-    ai.cidname = "";
-    ai.cidnumber = "";
+    CallID empty_callid;
+    ai.callid = empty_callid;
     if (!ai.record("POLL"))
 	logError("Error writing POLL accounting record, dest=%s",
 	    (const char*) ai.dest);

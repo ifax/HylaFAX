@@ -31,6 +31,7 @@
  */
 #include "Str.h"
 #include "Class2Params.h"
+#include "CallID.h"
 
 class FaxRecvInfo : public fxObj {
 public:
@@ -43,14 +44,13 @@ public:
     u_int	time;		// time on the phone
     Class2Params params;	// transfer parameters
     fxStr	reason;		// reason for failure (if not null)
-    fxStr	cidname;	// caller id name
-    fxStr	cidnumber;	// caller id number
+    CallID	callid;		// call identification
 
     FaxRecvInfo();
     FaxRecvInfo(const FaxRecvInfo& other);
     ~FaxRecvInfo();
 
-    fxStr encode() const;
+    fxStr encode();
     bool decode(const char*);
 };
 #endif /* _FaxRecvInfo_ */

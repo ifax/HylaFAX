@@ -36,8 +36,15 @@ faxrcvd \- \*(Fx notification script for received facsimile
 .I devid
 .I commid
 .I error-msg
-.I cidnumber
-.I cidname
+[
+.I callid-1
+[
+.I callid-2
+[
+.I ...
+[
+.I callid-n
+] ] ] ]
 .SH DESCRIPTION
 .B bin/faxrcvd
 is the command script invoked by the facsimile server whenever
@@ -63,17 +70,8 @@ the communication identifier for the inbound call.
 an error message that is non-null if an error was encountered
 during the receive operation.
 .TP
-.B cidnumber
-the value of
-.B CIDNumber
-when using
-.B QualifyCID
-.TP
-.B cidname
-the value of
-.B CIDName
-when using
-.B QualifyCID
+.B callid
+the value of various identification indicators from the call
 .SH NOTES
 This script can route facsimile directly to the intended receipient.
 To do this create a shell script
@@ -108,14 +106,17 @@ Note that you must match any embedded white space.
 The facsimile will be sent as a MIME-encoded PostScript document
 as default.
 .TP
+.I CALLIDn
+is equivalent to the nth call identification parameter
+.TP
 .I CIDNAME
 is equivalent to
-.B CIDName
+.B CALLID2
 above.
 .TP
 .I CIDNUMBER
 is equivalent to
-.B CIDNumber
+.B CALLID1
 above.
 .TP
 .I DEVICE

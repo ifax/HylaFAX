@@ -30,6 +30,7 @@
  */
 #include <stdarg.h>
 #include "Str.h"
+#include "CallID.h"
 
 class ModemServer;
 class ModemConfig;
@@ -54,11 +55,6 @@ typedef struct {
     CallStatus	status;		// resultant call status
     CallType	type;		// resultant call type
 } AnswerMsg;
-
-typedef struct {
-    fxStr	number;		// caller's phone number
-    fxStr	name;		// caller's identity
-} CallerID;
 
 /*
  * AT command escape codes.  Command strings specified in the
@@ -330,7 +326,7 @@ public:
      * with recvAbort available to abort a receive
      * at any time in this procedure.
      */
-    virtual bool waitForRings(u_short rings, CallType&, CallerID&);
+    virtual bool waitForRings(u_short rings, CallType&, CallID&);
     virtual CallType answerCall(AnswerType, fxStr& emsg, const char* dialnumber = NULL);
     virtual void answerCallCmd(CallType);
 };

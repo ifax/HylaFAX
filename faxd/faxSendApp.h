@@ -75,7 +75,7 @@ private:
     void	notifyConnected(const FaxRequest&);
     void	notifyPageSent(FaxRequest& req, const char* filename);
     void	notifyDocumentSent(FaxRequest&, u_int fileIndex);
-    void	notifyPollRecvd(FaxRequest&, const FaxRecvInfo&);
+    void	notifyPollRecvd(FaxRequest&, FaxRecvInfo&);
     void	notifyPollDone(FaxRequest&, u_int pollIndex);
 public:
     faxSendApp(const fxStr& device, const fxStr& devID);

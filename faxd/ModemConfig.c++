@@ -164,8 +164,6 @@ static struct {
 { "ringfax",			&ModemConfig::ringFax },
 { "ringvoice",			&ModemConfig::ringVoice },
 { "ringextended",		&ModemConfig::ringExtended },
-{ "cidname",			&ModemConfig::cidName },
-{ "cidnumber",			&ModemConfig::cidNumber },
 { "dringon",			&ModemConfig::dringOn  },
 { "dringoff",			&ModemConfig::dringOff  },
 };
@@ -193,8 +191,6 @@ static struct {
 { "faxt1timer",			&ModemConfig::t1Timer,		     TIMER_T1 },
 { "faxt2timer",			&ModemConfig::t2Timer,		     TIMER_T2 },
 { "faxt4timer",			&ModemConfig::t4Timer,		     TIMER_T4 },
-{ "cidnumberanswerlength",	&ModemConfig::cidNumberAnswerLength, 0 },
-{ "cidnameanswerlength",	&ModemConfig::cidNameAnswerLength,   0 },
 { "modemdialresponsetimeout",	&ModemConfig::dialResponseTimeout,   3*60*1000},
 { "modemanswerresponsetimeout",	&ModemConfig::answerResponseTimeout, 3*60*1000},
 { "modempagestarttimeout",	&ModemConfig::pageStartTimeout,	     3*60*1000},
@@ -257,6 +253,9 @@ ModemConfig::setupConfig()
     saveUnconfirmedPages = true;		// keep unconfirmed pages
     softRTFCC		= true;			// real-time fax comp. conv. (software)
     noAnswerVoice	= false;		// answer voice calls
+
+    idConfig.resize(0);
+    callidIndex		= (u_int) -1;
 }
 
 void
@@ -558,12 +557,14 @@ ModemConfig::getRTNHandling(const char* cp)
 }
 
 void
-ModemConfig::parseCID(const char* rbuf, CallerID& cid) const
+ModemConfig::parseCallID(const char* rbuf, CallID& callid) const
 {
-    if (cidName.length() && strneq(rbuf, cidName, cidName.length()))
-	cid.name = cid.name | rbuf+cidName.length();
-    if (cidNumber.length() && strneq(rbuf, cidNumber, cidNumber.length()))
-	cid.number = cid.number | rbuf+cidNumber.length();
+    for (size_t i = 0; i < idConfig.length(); i++) {
+	fxAssert(i < callid.size(), "Miss matched Call ID Size with parsing");
+	const fxStr& pat = idConfig[i].pattern;
+	if (pat.length() && strneq(rbuf, pat, pat.length()))
+	    callid[i].append(rbuf+pat.length());
+    }
 }
 
 void
@@ -678,8 +679,42 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	saveUnconfirmedPages = getBoolean(value);
     else if (streq(tag, "distinctiverings"))
     	parseDR(value);
-    else
+    else if (streq(tag, "callidpattern") || streq(tag, "callidanswerlength") ) {
+	if (tag[6] == 'p') callidIndex++;	// only increment on instances of "Pattern"
+	if (idConfig.length() < callidIndex+1 && callidIndex != (u_int) -1)
+	    idConfig.resize(callidIndex+1);
+	if (tag[6] == 'p') {
+	    idConfig[callidIndex].pattern = value;
+	    configTrace("CallID[%d].pattern = \"%s\"", callidIndex,
+		    (const char*)idConfig[callidIndex].pattern);
+	} else {
+	    if (callidIndex != (u_int) -1) {
+		idConfig[callidIndex].answerlength = atoi(value);
+		configTrace("CallID[%d].answerlength = %d", callidIndex,
+		    idConfig[callidIndex].answerlength);
+	    } else
+		configError("No index for Call ID Answer Length");
+	}
+    } else if (streq(tag, "cidnumber")) {
+	if (idConfig.length() < CallID::NUMBER+1)
+	    idConfig.resize(CallID::NUMBER+1);
+	idConfig[CallID::NUMBER].pattern = value;
+    } else if (streq(tag, "cidname")) {
+	if (idConfig.length() < CallID::NAME+1)
+	    idConfig.resize(CallID::NAME+1);
+	idConfig[CallID::NAME].pattern = value;
+    } else if (streq(tag, "cidnumberanswerlength")) {
+	if (idConfig.length() < CallID::NUMBER+1)
+	    idConfig.resize(CallID::NUMBER+1);
+	idConfig[CallID::NUMBER].answerlength = getNumber(value);
+    } else if (streq(tag, "cidnameanswerlength")) {
+	if (idConfig.length() < CallID::NAME+1)
+	    idConfig.resize(CallID::NAME+1);
+	idConfig[CallID::NAME].answerlength = getNumber(value);
+    } else
 	return (false);
     return (true);
 }
 #undef N
+
+fxIMPLEMENT_ObjArray(IDConfArray, id_config);

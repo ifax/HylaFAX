@@ -33,9 +33,8 @@ ModemRevQueryCmd:	AT+FREV?
 #
 #ModemResetCmds:	"AT#CID=10"	# enable ANI/DNIS reporting
 #RingsBeforeAnswer:	2		# collect info between two RINGs
-#QualifyCID:		etc/cid		# CID access control list file
-#CIDNumber:		"NMBR = "	# pattern string for calling number
-#CIDName:		"NDID = "	# pattern string for called number
+#CallIDPattern:		"NMBR = "	# pattern string for calling number
+#CallIDPattern:		"NDID = "	# pattern string for called number
 
 #
 # T.38 dial modifiers

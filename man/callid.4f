@@ -27,9 +27,9 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH CID ${MANNUM4_5} "May 28, 2001"
+.TH CallID ${MANNUM4_5} "May 28, 2001"
 .SH NAME
-cid \- Caller-ID and DNIS access control list
+callid \- Call identification access control list
 .SH DESCRIPTION
 The \*(Fx configuration parameter
 .B QualifyCID
@@ -43,9 +43,9 @@ Caller-ID or DNIS service, and
 .B QualifyCID
 is non-null, then only the calls identified by
 strings matching 
-.B CIDNumber
+.B CIDNumber (CallID1)
 in the file 
-(typically \fBetc/cid\fP) will be answered.
+(typically \fBetc/callid\fP) will be answered.
 .PP
 Patterns are specified one per line and must conform to the
 regular expressions syntax specified by
@@ -64,7 +64,7 @@ otherwise regular expressions identify clients whose calls
 should be
 .IR accepted .
 The order of patterns in a
-.SM CID
+.SM CallID
 file is important.
 When a call is to be answered, the 
 .I faxgetty
@@ -106,29 +106,26 @@ matches the following phone number strings:
 Finally, note that regular expressions can be used to specify
 many numbers with one pattern.
 .SH NOTES
-In the case of Caller-ID, the caller's identity, and in the case
-of DNIS, the called number, 
-is recognized by using the
-.B CIDNumber
+The
+.B CIDNumber (CallID1)
 configuration parameter described in
-.IR hylafax-config (${MANNUM4_5}).
+.IR hylafax-config (${MANNUM4_5})
+is used to store call identification information.
 This parameter must be present in the per-modem configuration
-file for Caller-ID or DNIS screening or routing to function properly.
+file for call identification screening to function properly.
 If 
 .B QualifyCID
 is defined, but no
-.B CIDNumber
+.B CIDNumber (CallID1)
 is specified, then no match will occur and all
 incoming calls will be ignored.
 .PP
-Caller-ID data is only sent once by the telco, and the timing of
-its arrival varies upon the telco and the type of line.  If
+Call identification data is only sent once by the telco or PBX, and the timing of
+its arrival varies upon the telco or PBX and the type of line.  If
 \*(Fx is configured to answer via
 .B RingsBeforeAnswer
-prior to the arrival of the caller-ID data, then all
-.B CIDNumber
-and
-.B CIDName
+prior to the arrival of the data, then all
+.B CallID
 values will be null.  For example, on US analog lines, caller-ID
 data is usually sent between RINGs 1 and 2.  In this situation,
 .B RingsBeforeAnswer

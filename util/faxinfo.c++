@@ -34,6 +34,7 @@
 
 #include "PageSize.h"
 #include "Class2Params.h"
+#include "CallID.h"
 
 #include "port.h"
 
@@ -141,31 +142,25 @@ main(int argc, char** argv)
     }
 #endif
     fxStr sender = "";
-    fxStr cidname = "";
-    fxStr cidnumber = "";
+    CallID callid;
     char* cp;
     if (TIFFGetField(tif, TIFFTAG_IMAGEDESCRIPTION, &cp)) {
 	while (cp[0] != '\0' && cp[0] != '\n') {	// sender
 	    sender.append(cp[0]);
 	    cp++;
 	}
-	if (cp[0] == '\n') {
-	    cp++;
-	    while (cp[0] != '\0' && cp[0] != '\n') {	// cidname
-		cidname.append(cp[0]);
-		cp++;
-	    }
-	}
-	if (cp[0] == '\n') {
-	    cp++;
-	    while (cp[0] != '\0' && cp[0] != '\n') {	// cidnumber
-		cidnumber.append(cp[0]);
-		cp++;
-	    }
-	}
 	sanitize(sender);
-	sanitize(cidname);
-	sanitize(cidnumber);
+	u_int i = 0;
+	while (cp[0] == '\n') {
+	    cp++;
+	    callid.resize(i+1);
+	    while (cp[0] != '\0' && cp[0] != '\n') {
+		callid[i].append(cp[0]);
+		cp++;
+	    }
+	    sanitize(callid[i]);
+	    i++;
+	}
     } else
 	sender = "<unknown>";
     printf("%11s %s\n", "Sender:", (const char*) sender);
@@ -237,9 +232,9 @@ main(int argc, char** argv)
     printf("%11s %s\n", "SignalRate:", params.bitRateName());
     printf("%11s %s\n", "DataFormat:", params.dataFormatName());
     printf("%11s %s\n", "ErrCorrect:", params.ec == EC_DISABLE ? "No" : "Yes");
-    if (cidname != "")
-	printf("%11s %s\n", "CIDName:", (const char*) cidname);
-    if (cidnumber != "")
-	printf("%11s %s\n", "CIDNumber:", (const char*) cidnumber);
+    for (u_int i = 0; i < callid.size(); i++) {
+	// formatting will mess up if i gets bigger than one digit
+	printf("%9s%u: %s\n", "CallID", i+1, (const char*) callid.id(i));
+    }
     return (0);
 }
