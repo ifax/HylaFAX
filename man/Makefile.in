@@ -123,7 +123,7 @@ MANSED=${SED}\
 	-e 's;\$${SBIN};${SBIN};g' \
 	-e 's;\$${LIBDATA};${LIBDATA};g' \
 	-e 's;\$${LIBEXEC};${LIBEXEC};g' \
-	-e 's;\$${AFMDIR};${AFMDIR};g' ${MANSEDLOCAL}
+	-e 's;\$${FONTPATH};${FONTPATH};g' ${MANSEDLOCAL}
 
 default all targets:: ${TARGETS}
 

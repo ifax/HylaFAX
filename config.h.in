@@ -218,12 +218,21 @@
 #endif
 
 /*
- * The default pathname for the Adobe Font Metric files
+ * The default pathname for the Fontmap(s) file
  * is compiled into util/TextFmt.o but can be overridden
  * through configuration files.
  */
-#ifndef _PATH_AFMDIR
-#define	_PATH_AFMDIR	"@AFMDIR@"	/* directory with AFM files */
+#ifndef _PATH_FONTMAP
+#define	_PATH_FONTMAP	"@FONTMAP@"	/* location of Fontmap(s) */
+#endif
+
+/*
+ * The default pathname for the location of the fonts
+ * is compiled into util/TextFmt.o but can be overridden
+ * through configuration files.
+ */
+#ifndef _PATH_AFM
+#define	_PATH_AFM	"@FONTPATH@"	/* location of Fonts */
 #endif
 
 /*

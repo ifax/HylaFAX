@@ -438,7 +438,7 @@ AutoCoverPage	boolean	\s-1Yes\s+1	automatically generate cover page
 BoldFont	string	\s-1Helvetica-Bold\s+1	font for setting header tags
 Columns	integer	\s-11\s+1	number of columns in formatted output
 DigestDivider	string	\-	multipart/digest divider \*(Ps command
-FontDir	string	\s-1\fIsee below\fP\s+1	directory for font metric files
+FontPath	string	\s-1\fIsee below\fP\s+1	directory for font metric files
 GaudyHeaders	boolean	\s-1No\s+1	enable/disable gaudy page headers
 Headers	string	\s-1\fIsee below\fP\s+1	headers to retain in envelope
 ISO8859	boolean	\s-1Yes\s+1	use ISO 8859-1 character encoding
@@ -516,9 +516,9 @@ mark of some sort.
 Dividers are expected to use no more vertical space on the
 output page than a line of text.
 .TP 15
-.B FontDir
-The directory where Adobe Font Metric (\s-1AFM\s+1) files are
-located; by default ${AFMDIR}.
+.B FontPath
+The path where Adobe Font Metric (\s-1AFM\s+1) files are
+located; by default ${FONTPATH}.
 .TP 15
 .B GaudyHeaders
 Control whether or not to use a gaudy-style page header.
@@ -675,7 +675,7 @@ ${LIBDATA}/hyla.conf	system-wide configuration file
 ${LIBDATA}/faxmail.conf	system-wide configuration file
 ${LIBDATA}/sendfax.conf	system-wide configuration file for direct delivery
 ${LIBEXEC}/faxmail	hierarchy for external \s-1MIME\s+1 converters
-${AFMDIR}	for font metrics
+${FONTPATH}	for font metrics
 /usr/tmp/faxmailXXXXXX	temporary files
 .fi
 .SH "SEE ALSO"

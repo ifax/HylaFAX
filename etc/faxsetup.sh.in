@@ -79,7 +79,7 @@ VERSION="@VERSION@"		# configured version
 DATE="@DATE@"			# data software was configured
 TARGET="@TARGET@"		# configured target
 
-DIR_AFM=@AFMDIR@		# directory for Adobe Font Metric files
+PATH_AFM=@FONTPATH@		# directory for Adobe Font Metric files
 DIR_BIN=@BIN@			# directory for client applications
 DIR_LIBDATA=@LIBDATA@		# directory for client data files
 DIR_LIBEXEC=@LIBEXEC@		# directory where servers are located
@@ -111,7 +111,7 @@ POSIXLY_CORRECT=1; export POSIXLY_CORRECT		# disable GNU extensions
 # (but some confusion within this script).
 #
 VARS="SCRIPT_SH
-AFMDIR		DIR_AFM
+FONTPATH		PATH_AFM
 AWK
 BIN		DIR_BIN
 CAT
@@ -1081,54 +1081,53 @@ fi
 # Installation of Adobe Font Metric files
 #
 if onClient; then
-    if [ -d $DIR_AFM ]; then
-	if [ ! -f $DIR_AFM/Courier ] && [ ! -f $DIR_AFM/Courier.afm ]; then
+    FDIRS=`echo $PATH_AFM | sed "s/:/ /g"`
+    MATCH=
+    for FDIR in $FDIRS; do
+    if [ -d $FDIR ]; then
+	cd $FDIR
+	if [ -n "`ls | grep '.afm'`" ] || [ -f Courier ]; then
+		MATCH=$FDIR
+		break
+	fi
+    else
+	cat >&4 <<EOF
+
+
+Warning: $FDIR does not exist or is not a directory!
+
+The directory $FDIR does not exist or this file is not a directory.
+This is the directory where the HylaFAX client applications expect to
+locate font metric information to use in formatting ASCII text for
+submission as facsimile.  Without this information HylaFAX may generate
+illegible facsimile from ASCII text.
+
+EOF
+    fi
+    done
+    if [ -z "$MATCH" ];then
 	    cat >&4 <<EOF
 
 
 Warning: Font metric information files were not found!
 
 The font metric information file for the Courier font was not found in
-the $DIR_AFM directory.  This means that client HylaFAX applications 
+the $PATH_AFM path.  This means that client HylaFAX applications 
 that use this information to format ASCII text for submission as fax will
 use incorrect information and generate potentially illegible facsimile.
 
 If font metric information is present on your system in a directory other
-than $DIR_AFM then you can setup a symbolic link to the appropriate
+than $PATH_AFM then you can setup a symbolic link to the appropriate
 directory or you can specify the appropriate pathname in the configuration
 file $DIR_LIBDATA/hyla.conf with a line of the form:
 
-FontDir:	someplace_unexpected
+FontPath:	someplace_unexpected
 
 If you do not have the font metric information files loaded on your system
 system you can obtain them by public FTP from the place where you obtained
 the HylaFAX software or from the master FTP site at ftp.sgi.com.
 EOF
-	fi
-    else
-	cat >&4 <<EOF
-
-
-Warning: $DIR_AFM does not exist or is not a directory!
-
-The directory $DIR_AFM does not exist or this file is not a directory.
-This is the directory where the HylaFAX client applications expect to
-locate font metric information to use in formatting ASCII text for
-submission as facsimile.  Without this information HylaFAX may generate
-illegible facsimile from ASCII text.
-
-If font metric information is present on your system in a directory other
-than $DIR_AFM then you can setup a symbolic link to the appropriate
-directory or you can specify the appropriate pathname in the configuration
-file $DIR_LIBDATA/hyla.conf with a line of the form:
-
-FontDir:	someplace_unexpected
-
-If you do not have the font metric information files loaded on your system
-system you can obtain them by public FTP from the place where you obtained
-the HylaFAX software or from the master FTP site at ftp.sgi.com.
-EOF
-    fi
+     fi
 fi
 
 #

@@ -124,7 +124,6 @@ WARNING
 ZLIBINC"
 
 VAR2="AFM
-AFMDIR		DIR_AFM
 AWK
 BIN		DIR_BIN
 CAT
@@ -151,6 +150,8 @@ ECHO
 FAXGID
 FAXUID
 FILLORDER
+FONTMAP
+FONTPATH	PATH_AFM
 GETTY
 GREP
 GSRIP 		PATH_GSRIP
@@ -3430,39 +3431,6 @@ else
     Note "Looks like UUCP lock files go in $DIR_LOCKS."
 fi
 
-#
-# Location of Adobe Font Metric files.
-#
-if [ -z "$DIR_AFM" ]; then
-    DIR_AFMS="
-	/usr/lib/afm
-	/usr/local/lib/afm
-	/usr/local/share/ghostscript/fonts
-	/usr/local/lib/ghostscript/fonts
-	/usr/gnu/lib/ghostscript/fonts
-	/opt/gnu/lib/ghostscript/fonts
-	/usr/lib/ghostscript/fonts
-	/usr/lib/gnu/ghostscript/fonts
-    "
-    case $TARGET in
-    *-irix*)	DIR_AFMS="/usr/lib/DPS/AFM $DIR_AFMS";;
-    *-bsdi*)	DIR_AFMS="/usr/contrib/lib/flexfax/afm $DIR_AFMS";;
-    *-sunos*)	DIR_AFMS="/usr/openwin/lib/fonts/afm $DIR_AFMS";;
-    esac
-    DIR_AFM=
-    for i in $DIR_AFMS; do
-	test -d $i && { DIR_AFM=$i; break; }
-    done
-fi
-if [ -z "$DIR_AFM" ]; then
-    # put it where ghostscript normally puts things
-    DIR_AFM=/usr/local/lib/ghostscript/fonts
-    Note "WARNING, could not locate a directory with font metric information,"
-    Note "guessing that font metric information goes in $DIR_AFM."
-else
-    Note "Looks like font metric information goes in $DIR_AFM."
-fi
-
 bitchExecutable()
 {
     echo ""
@@ -3545,6 +3513,79 @@ Note "Looks like the $PS imager package should be used."
 PickRIP
 Note "Looks like $PATH_PSRIP is the PostScript RIP to use."
 CheckRIP
+
+#
+# Ghostscript Fontmap File
+#
+
+getGSFonts()
+{
+	if [ ! "$PS" = gs -a -n $PATH_PSRIP ];then
+		return 1
+	fi
+	$PATH_PSRIP -h | awk -F '[ ]' '
+		BEGIN { start = 0; }
+		/Search path:/ { start = 1 }
+		{
+			if (start == 1) {
+				if ($1 == "") {
+					gsub(" ","")
+					gsub("^[.]","")
+					gsub("^:","")
+					printf "%s", $0
+				} else if ($1 != "Search") start = 0
+			}
+		}	
+	'
+	return 0
+}
+
+if [ -z "$FONTMAP" ]; then
+	FONTMAP=`getGSFonts`
+	if [ -n "$FONTMAP" ]; then
+		AFM="no"
+	fi
+fi
+Note "Setting the Fontmap path to $FONTMAP"
+
+#
+# Location of Adobe Font Metric files.
+#
+if [ -z "$PATH_AFM" ]; then
+    # if the fontmap path is available use that
+    # else just guess
+    if [ -n "$FONTMAP" ]; then
+	PATH_AFM=$FONTMAP
+    else
+        DIR_AFMS="
+	    /usr/lib/afm
+	    /usr/local/lib/afm
+	    /usr/local/share/ghostscript/fonts
+	    /usr/local/lib/ghostscript/fonts
+	    /usr/gnu/lib/ghostscript/fonts
+	    /opt/gnu/lib/ghostscript/fonts
+	    /usr/lib/ghostscript/fonts
+	    /usr/lib/gnu/ghostscript/fonts
+        "
+        case $TARGET in
+        *-irix*)	DIR_AFMS="/usr/lib/DPS/AFM $DIR_AFMS";;
+        *-bsdi*)	DIR_AFMS="/usr/contrib/lib/flexfax/afm $DIR_AFMS";;
+        *-sunos*)	DIR_AFMS="/usr/openwin/lib/fonts/afm $DIR_AFMS";;
+        esac
+        PATH_AFM=
+        for i in $DIR_AFMS; do
+	    test -d $i && { PATH_AFM=$i; break; }
+        done
+    fi
+fi
+if [ -z "$PATH_AFM" ]; then
+    # put it where ghostscript normally puts things
+    PATH_AFM=/usr/local/lib/ghostscript/fonts
+    Note "WARNING, could not locate a directory with font metric information,"
+    Note "guessing that font metric information goes in $PATH_AFM."
+else
+    Note "Looks like font metric information goes in $PATH_AFM."
+fi
 
 #
 # Setup manual page-related stuff.
@@ -3877,18 +3918,19 @@ HylaFAX configuration parameters are:
 [ 5] Directory for manual pages:        $DIR_MAN
 [ 6] Directory for HTML documentation:  $DIR_HTML
 [ 7] Directory for spooling:            $DIR_SPOOL
-[ 8] Directory for font metrics:        $DIR_AFM
-[ 9] Directory for uucp lock files:     $DIR_LOCKS
-[10] Uucp lock file scheme:             $LOCKS
-[11] PostScript imager package:         $PS
-[12] PostScript imager program:         $PATH_PSRIP
-[13] Manual page installation scheme:   $MANSCHEME
-[14] Default page size:                 $PAGESIZE
-[15] Default vertical res (lpi):        $DEFVRES
-[16] Location of getty program:         $PATH_GETTY
-[17] Location of voice getty program:   $PATH_VGETTY
-[18] Location of sendmail program:      $PATH_SENDMAIL
-[19] Location of TIFF tools:            $TIFFBIN
+[ 8] Path for fontmap files:            $FONTMAP
+[ 9] Path for font metrics:             $PATH_AFM
+[10] Directory for uucp lock files:     $DIR_LOCKS
+[11] Uucp lock file scheme:             $LOCKS
+[12] PostScript imager package:         $PS
+[13] PostScript imager program:         $PATH_PSRIP
+[14] Manual page installation scheme:   $MANSCHEME
+[15] Default page size:                 $PAGESIZE
+[16] Default vertical res (lpi):        $DEFVRES
+[17] Location of getty program:         $PATH_GETTY
+[18] Location of voice getty program:   $PATH_VGETTY
+[19] Location of sendmail program:      $PATH_SENDMAIL
+[20] Location of TIFF tools:            $TIFFBIN
 
 EOF
 }
@@ -3917,15 +3959,18 @@ promptForParameter()
     7)	promptForNonNullStringParameter "$DIR_SPOOL" \
 	    "Directory to setup server spooling area";	DIR_SPOOL="$param"
 	;;
-    8)	promptForNonNullStringParameter "$DIR_AFM" \
-	    "Directory to find Adobe font metrics";	DIR_AFM="$param"
+    8)	promptForNonNullStringParameter "$FONTMAP" \
+	    "Path for gs Fontmap files";	FONTMAP="$param"
 	;;
-    9)	promptForNonNullStringParameter "$DIR_LOCKS" \
+    9)	promptForNonNullStringParameter "$PATH_AFM" \
+	    "Path for font metric files";	PATH_AFM="$param"
+	;;
+    10)	promptForNonNullStringParameter "$DIR_LOCKS" \
 	    "Directory for uucp lock files";		DIR_LOCKS="$param"
 	;;
-    10)	promptForUUCPLockScheme;;
-    11)	promptForImagerPackage; PickRIP; CheckRIP;;
-    12)	promptForNonNullStringParameter "$PATH_PSRIP" \
+    11)	promptForUUCPLockScheme;;
+    12)	promptForImagerPackage; PickRIP; CheckRIP;;
+    13)	promptForNonNullStringParameter "$PATH_PSRIP" \
 	    "PostScript imager program";		PATH_PSRIP="$param"
 	case "$PS" in
 	dps)	PATH_DPSRIP=$PATH_PSRIP;;
@@ -3933,19 +3978,19 @@ promptForParameter()
 	gs)	PATH_GSRIP=$PATH_PSRIP;;
 	esac
 	;;
-    13)	promptForManPageScheme;;
-    14)	promptForPageSize $SRCDIR/util/pagesizes.in;;
-    15)	promptForVRes;;
-    16)	promptForNonNullStringParameter "$PATH_GETTY" \
+    14)	promptForManPageScheme;;
+    15)	promptForPageSize $SRCDIR/util/pagesizes.in;;
+    16)	promptForVRes;;
+    17)	promptForNonNullStringParameter "$PATH_GETTY" \
 	    "Location of getty program";		PATH_GETTY="$param"
 	;;
-    17) promptForNonNullStringParameter "$PATH_VGETTY" \
+    18) promptForNonNullStringParameter "$PATH_VGETTY" \
 	    "Location of vgetty program";	        PATH_VGETTY="$param"
 	;;
-    18)	promptForNonNullStringParameter "$PATH_SENDMAIL" \
+    19)	promptForNonNullStringParameter "$PATH_SENDMAIL" \
 	    "Location of sendmail program";		PATH_SENDMAIL="$param"
 	;;
-    19) promptForNonNullStringParameter "$TIFFBIN" \
+    20) promptForNonNullStringParameter "$TIFFBIN" \
 	    "Location of TIFF tools";			TIFFBIN="$param"
     esac
 }
@@ -3959,7 +4004,7 @@ if [ $QUIET = no ]; then
     ok=skip
     while [ "$ok" != y ] && [ "$ok" != yes ]; do
 	if [ "$ok" != skip ]; then
-	    for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19; do
+	    for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
 		promptForParameter $i;
 	    done
 	fi
@@ -3969,7 +4014,7 @@ if [ $QUIET = no ]; then
 	prompt "Are these ok [yes]?"; read ok
 	test -z "$ok" && ok=yes
 	case "$ok" in
-	[1-9]|1[0-9])	promptForParameter $ok;;
+	[1-9]|1[0-9]|20)	promptForParameter $ok;;
 	[yY]*|[nN]*)	continue;;
 	?*)
 	    echo ""
@@ -4065,7 +4110,7 @@ if [ $IMP = yes ]; then
     }
 fi
 if [ "$AFM" = auto ]; then
-    if [ ! -f $DIR_AFM/Courier -a ! -f $DIR_AFM/Courier.afm ]; then
+    if [ ! -f $PATH_AFM/Courier -a ! -f $PATH_AFM/Courier.afm ]; then
 	Note ""
 	Note "WARNING, no font metric files appear to be installed on your system, enabling"
 	Note "installation of the default set of metric files included with this software."

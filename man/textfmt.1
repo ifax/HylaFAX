@@ -54,7 +54,7 @@ will read from standard input.
 .PP
 By default,
 .I textfmt
-will generate an output document that is formtted with a single
+will generate an output document that is formatted with a single
 vertical column of text, set in a 10 point fixed width font, and
 with a simple page header that consists of the file name, last
 modification date, and the page number.
@@ -91,6 +91,10 @@ encoding in the generated \*(Ps.
 .BI \-f " font"
 Set text using the \*(Ps font named
 .IR font .
+.TP
+.BI \-F " fontdir(s)"
+.IR Path(s)
+to \s-1afm\s+1 font files.
 .TP
 .B \-G
 Use a gaudy-style page header.
@@ -172,11 +176,11 @@ Configuration files follow the conventions described in
 The following configuration parameters are recognized:
 .sp .5
 .nf
-.ta \w'TextLineHeight    'u +\w'boolean    'u +\w'\s-1\fIsee below\fP\s+1    'u
 \fBTag	Type	Default	Description\fP
 Columns	integer	\s-11\s+1	number of columns in formatted output
-FontDir	string	\s-1\fIsee below\fP\s+1	directory for font metric files
 GaudyHeaders	boolean	\s-1No\s+1	enable/disable guady page headers
+FontMap       string  \s-1\fIsee below\fP\s+1 location of ghostscript Fontmap file
+FontPath      string  \s-1\fIsee below\fP\s+1 directory for font metric files
 ISO8859	boolean	\s-1Yes\s+1	use ISO 8859-1 character encoding
 LineWrap	boolean	\s-1Yes\s+1	wrap/truncate text lines
 Orientation	string	\s-1portrait\s+1	orientation of text on page
@@ -225,9 +229,21 @@ The number of columns to set text in.
 .B \-m
 option.)
 .TP 15
-.B FontDir
-The directory where Adobe Font Metric (\s-1AFM\s+1) files are
-located; by default ${AFMDIR}.
+.B FontMap
+The directory or directories where the ghostscript Fontmap file(s)
+are located; multiple paths are seperated by a colon (":"). The
+Fontmap table allows the translation of the descriptive name of the
+font (as used by the
+.IR TextFont
+parameter) to the ghostscript font filenames. Setting the value to ""
+(zero length string) disables this translation and provides functionality
+with RIPs other than ghostscript.
+.TP 15
+.B FontPath
+The path where Adobe Font Metric (\s-1AFM\s+1) files are
+located; by default ${FONTPATH}. (Equivalent to the
+.B \-F
+option.)
 .TP 15
 .B GaudyHeaders
 Control whether or not to use a gaudy-style page header.
@@ -315,7 +331,7 @@ Set the output page width in inches (in inches).
 Set the tab stop distance; in characters.
 .TP 15
 .B TextFont
-Set the name of font to use for setting text.
+Set the descriptive name of font to use for setting text.
 (Equivalent to the
 .B \-f
 option.)
@@ -349,7 +365,7 @@ program written by Don Beebe.
 ${LIBDATA}/hyla.conf	system-wide configuration file
 ~/.hylarc	per-user configuration file
 ${LIBDATA}/pagesizes	page size database
-${AFMDIR}	font metric files
+${FONTPATH}   font metric files
 .fi
 .SH "SEE ALSO"
 .IR hylafax (1),

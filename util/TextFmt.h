@@ -35,12 +35,14 @@ typedef long TextCoord;		// local coordinates
 
 class TextFont {
 private:
+    enum { maxaliases = 10 };		// max no of aliases to find a font
     fxStr	family;			// font family name
     fxStr	setproc;		// PostScript setfont procedure
     fxStr	showproc;		// PostScript show procedure
     TextCoord	widths[256];		// width table
 
-    static fxStr fontDir;		// directory for metric files
+    static fxStr fontMap;		// location of Fontmap file
+    static fxStr fontPath;		// path for afm files
     static u_int fontID;		// font identifier number
 
     friend class TextFmt;
@@ -48,6 +50,7 @@ private:
     void loadFixedMetrics(TextCoord w);
     FILE* openAFMFile(fxStr& pathname);
     fxBool getAFMLine(FILE* fp, char* buf, int bsize);
+    static fxBool decodeFontName(const char*, fxStr&, fxStr&);
 public:
     TextFont(const char*);
     ~TextFont();
@@ -211,6 +214,7 @@ public:
     const TextFont* getFont(const char* name) const;
     void setFont(TextFont*);
     void setFont(const char*);
+    void setFontPath(const char*);
 
     void hrMove(TextCoord);
     TextCoord getXOff(void) const;

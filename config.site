@@ -59,7 +59,6 @@
 #
 # Directory parameters.
 #
-#DIR_AFM="/usr/lib/DPS/AFM"		# directory for AFM files
 #DIR_BIN="/usr/local/bin"		# directory for client apps
 #DIR_LIBDATA="/usr/lib/fax"		# directory for client data
 #DIR_LIBEXEC="/usr/lib/fax"		# directory for libraries&hidden apps
@@ -67,6 +66,8 @@
 #DIR_SPOOL="/var/spool/fax"		# directory for spooling area
 #DIR_SBIN="/var/spool/fax/bin"		# directory for system apps
 #DIR_LOCKS="/usr/spool/locks"		# directory for UUCP lock files
+#FONTMAP="/usr/share/ghostscript/3.33"	# directorys containing Fontmap files
+#PATH_AFM="/usr/lib/DPS/AFM"		# directorys for AFM files
 
 #
 # HTML-specific parameters; only used when the

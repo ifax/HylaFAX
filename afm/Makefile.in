@@ -99,8 +99,8 @@ targets: ${TARGETS}
 
 install: default ${AFMFILES}
 	${INSTALL} -u ${SYSUSER} -g ${SYSGROUP} -m ${DIRMODE}		\
-	    -idb hylafax.sw.afm -dir ${AFMDIR}
+	    -idb hylafax.sw.afm -dir ${FONTPATH}
 	for i in ${AFMFILES}; do \
-	    ${INSTALL} -F ${AFMDIR} -m 444 -idb ${PRODUCT}.sw.afm \
+	    ${INSTALL} -F ${FONTPATH} -m 444 -idb ${PRODUCT}.sw.afm \
 		-src ${SRCDIR}/$$i -O `echo $$i | ${SED} s/\.afm//`; \
 	done

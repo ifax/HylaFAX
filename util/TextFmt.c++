@@ -141,6 +141,7 @@ TextFmt::getFont(const char* name) const
 
 void TextFmt::setFont(TextFont* f)		{ curFont = f; }
 void TextFmt::setFont(const char* name)		{ curFont = (*fonts)[name]; }	
+void TextFmt::setFontPath(const char* path)	{ TextFont::fontPath = path; }	
 
 void TextFmt::setOutputFile(FILE* f)		{ output = f; }
 void TextFmt::setNumberOfColumns(u_int n)	{ numcol = n; }
@@ -1117,8 +1118,10 @@ TextFmt::setConfigItem(const char* tag, const char* value)
 	setTextLineHeight(inch(value));
     else if (streq(tag, "tabstop"))
 	tabStop = getNumber(value);
-    else if (streq(tag, "fontdir"))		// XXX
-	TextFont::fontDir = value;
+    else if (streq(tag, "fontmap"))		// XXX
+	TextFont::fontMap = value;
+    else if (streq(tag, "fontpath"))
+	setFontPath(value);
     else
 	return (FALSE);
     return (TRUE);
@@ -1126,7 +1129,8 @@ TextFmt::setConfigItem(const char* tag, const char* value)
 
 #define	NCHARS	(sizeof (widths) / sizeof (widths[0]))
 
-fxStr TextFont::fontDir = _PATH_AFMDIR;
+fxStr TextFont::fontMap = _PATH_FONTMAP;
+fxStr TextFont::fontPath = _PATH_AFM;
 u_int TextFont::fontID = 0;
 
 TextFont::TextFont(const char* cp) : family(cp)
@@ -1138,32 +1142,113 @@ TextFont::TextFont(const char* cp) : family(cp)
 TextFont::~TextFont() {}
 
 fxBool
+TextFont::decodeFontName(const char* name, fxStr& filename, fxStr& emsg)
+{
+    struct stat junk;
+    fxStr path = fontMap;
+    u_int index = path.next(0, ':');
+    while (index > 0) {
+        fxStr fontMapFile = path.head(index) | "/" | "Fontmap";
+        path.remove(0, index);
+        if (path.length() > 0) path.remove(0, 1);
+        FILE* fd = Sys::fopen(fontMapFile, "r");
+        if (fd != NULL && fontMapFile[0] == '/') {
+            fxStr key = name;
+            char buf[1024];
+	    int aliascount = maxaliases;
+            while (fgets(buf, sizeof(buf), fd) != NULL &&
+		aliascount > 0) {
+                int len = strcspn(buf, "%\n");
+                if (len == strlen(buf)) {
+	            emsg = fxStr::format(
+	                "Warning:%s - line too long.", (const char*)fontMapFile);
+	                break;
+                }
+	        if (len == 0) continue;
+                *(buf + len) = '\0';
+                char* tmp = buf + strcspn(buf, ") \t");
+                *tmp++ = '\0';
+                tmp += strspn(tmp, " \t");
+                if (strcmp(key, buf + 1) == 0) {
+                    //match - now ensure it is the last one in the file
+		    // for gs compatibility
+                    *(tmp + strcspn(tmp, ") \t;")) = '\0';
+                    fxStr val = tmp;
+                    while (fgets(buf, sizeof(buf), fd) != NULL) {
+                        len = strcspn(buf, "%\n");
+                        *(buf + len) = '\0';
+                        if (len == strlen(buf)) {
+	                    emsg = fxStr::format(
+		                "Warning: %s - line too long.", (const char*) fontMapFile);
+	                    break;
+                        }
+			if (len == 0) continue;
+	                tmp = buf + strcspn(buf, ") \t");
+		        *tmp++ = '\0';
+                        tmp += strspn(tmp, " \t");
+                        if (strcmp(key, buf + 1) == 0) {
+                            *(tmp + strcspn(tmp, ") \t;")) = '\0';
+                            val = tmp;
+			}
+		    }
+                    if (val[0] == '/') {
+		        //alias
+	                aliascount--;
+			val.remove(0);
+		        key = val;
+	        	fseek(fd, 0L, SEEK_SET);
+                    } else {
+                        //real file
+                        fclose(fd);
+			val.remove(0);
+			int pos = val.next(0, '.');
+			val.remove(pos, val.length() - pos);
+			val.append(".afm");
+			//move through dirs looking for font
+			fxStr fpath = fontPath;
+                        int index2 = fpath.next(0, ':');
+                        filename = fpath.head(index2) | "/" | val;
+                        fpath.remove(0, index2);
+    			if (fpath.length() > 0) fpath.remove(0, 1);
+			while (stat(filename, &junk) != 0 && index2 > 0) {
+                            index2 = fpath.next(0, ':');
+                            filename = fpath.head(index2) | "/" | val;
+                            fpath.remove(0, index2);
+    			    if (fpath.length() > 0) fpath.remove(0, 1);
+			}
+			fxBool result = stat(filename, &junk) ? FALSE : TRUE;
+			if (!result)
+	                    emsg = fxStr::format(
+			        "Warning: %s invalid Fontmap entry - no filename present", (const char*)val);
+                        return result;
+                    }
+                }
+            }
+            fclose(fd);
+        }
+        index = path.next(0, ':');
+    }
+    //decoding using fontmap has failed
+    //now try plain filename with/without afm extension
+    path = fontPath;
+    index = path.next(0, ':');
+    while (index > 0) {
+        filename = path.head(index) | "/" | name | ".afm";
+        path.remove(0, index);
+        if (path.length() > 0) path.remove(0, 1);
+        if (stat(filename, &junk) == 0) return TRUE;
+	filename.resize(filename.length()-4);	// strip ``.afm''
+        if (stat(filename, &junk) == 0) return TRUE;
+        index = path.next(0, ':');
+    }
+    return FALSE;
+}
+
+fxBool
 TextFont::findFont(const char* name)
 {
-    fxBool ok = FALSE;
-    DIR* dir = Sys::opendir(fontDir);
-    if (dir) {
-	int len = strlen(name);
-	dirent* dp;
-	while ((dp = readdir(dir)) != NULL) {
-	    int l = strlen(dp->d_name);		// XXX should d_namlen
-	    if (l < len)
-		continue;
-	    if (strcasecmp(name, dp->d_name) == 0) {
-		ok = TRUE;
-		break;
-	    }
-	    // check for .afm suffix
-	    if (l-4 != len || strcmp(&dp->d_name[len], ".afm"))
-		continue;
-	    if (strncasecmp(name, dp->d_name, len) == 0) {
-		ok = TRUE;
-		break;
-	    }
-	}
-	closedir(dir);
-    }
-    return (ok);
+    fxStr myname, emsg;
+    return decodeFontName(name, myname, emsg);
 }
 
 static const char* defISOFont = "\
@@ -1257,15 +1342,14 @@ TextFont::getAFMLine(FILE* fp, char* buf, int bsize)
 }
 
 FILE*
-TextFont::openAFMFile(fxStr& fontPath)
+TextFont::openAFMFile(fxStr& fontpath)
 {
-    fontPath = fontDir | "/" | family | ".afm";
-    FILE* fd = Sys::fopen(fontPath, "r");
-    if (fd == NULL && errno == ENOENT) {
-	fontPath.resize(fontPath.length()-4);	// strip ``.afm''
-	fd = Sys::fopen(fontPath, "r");
-    }
-    return (fd);
+    fxStr emsg;
+    if (!decodeFontName(family, fontpath, emsg)) {
+	fprintf(stderr,emsg);
+        return NULL;
+    } 
+    return Sys::fopen(fontpath, "r");
 }
 
 fxBool
