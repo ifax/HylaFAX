@@ -43,7 +43,7 @@
 #
 ModemType:		Class2.0	# use class 2.0 interface
 ModemRate:		19200		# DCE-DTE communication rate
-ModemFlowControl:	rtscts		# XON/XOFF flow control assumed
+ModemFlowControl:	rtscts		# hardware flow control
 #
 ModemNoFlowCmd:		AT&H0&I0&R1	# setup modem for no flow control
 ModemHardFlowCmd:	AT&H1&I0&R2	# setup modem for hardware flow control

@@ -48,7 +48,7 @@
 #
 ModemType:		Class1		# use class 1 interface
 ModemRate:		19200		# rate for DCE-DTE communication
-ModemFlowControl:	xonxoff		# hardware flow control
+ModemFlowControl:	xonxoff		# software flow control
 #
 ModemSetupDTRCmd:	ATS13=1&D2	# setup so DTR drop resets modem
 ModemSetupDCDCmd:	AT&C1		# setup so DCD reflects carrier (or not)
