@@ -218,6 +218,7 @@ faxGettyApp::listenForRing()
 
     CallerID cid;
     CallType ctype = ClassModem::CALLTYPE_UNKNOWN;
+again:
     if (modemWaitForRings(1, ctype, cid)) {
 	if (cid.number != "" || cid.name != "") {
 	    received_cid = cid;	// CNID is only sent once.  Store it
@@ -230,6 +231,8 @@ faxGettyApp::listenForRing()
 	++ringsHeard;
 	if (ringsBeforeAnswer && ringsHeard >= ringsBeforeAnswer)
 	    answerPhone(ClassModem::ANSTYPE_ANY, ctype, received_cid);
+	else if (isModemInput())
+	    goto again;
 	else
 	    // NB: 10 second timeout should be plenty
 	    Dispatcher::instance().startTimer(10, 0, &answerHandler);

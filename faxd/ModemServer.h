@@ -134,6 +134,7 @@ protected:
     void	timerExpired(long, long);
     int		getModemLine(char buf[], u_int bufSize, long ms = 0);
     int		getModemChar(long ms = 0);
+    bool	isModemInput() const;
     void	flushModemInput();
     bool	putModem(const void* data, int n, long ms = 0);
     bool	putModem1(const void* data, int n, long ms = 0);
@@ -215,4 +216,7 @@ inline const fxStr& ModemServer::getModemDeviceID() const
 inline const fxStr& ModemServer::getModemNumber() const
     { return FAXNumber; }
 inline const fxStr& ModemServer::getCommID() const	{ return commid; }
+inline bool ModemServer::isModemInput() const
+    { return rcvNext < rcvCC; }
+
 #endif /* _ModemServer_ */
