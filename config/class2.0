@@ -101,6 +101,7 @@ ModemType:		Class2.0	# use this to supply a hint
 #ModemResultCodesCmd:	ATQ0		# enable result codes
 #ModemOnHookCmd:		ATH0		# place phone on hook (hangup)
 #ModemSoftResetCmd:	ATZ		# do soft reset of modem
+#ModemSoftResetCmdDelay:	3000	# pause after soft reset
 #ModemWaitTimeCmd:	ATS7=60		# wait 60 seconds for carrier
 #ModemCommaPauseTimeCmd:	ATS8=2		# comma pause time is 2 seconds
 #ModemRecvFillOrder:	LSB2MSB		# bit order of received facsimile

@@ -1340,6 +1340,7 @@ ModemParameters="
     ModemSetupDTRCmd
     ModemSoftFlowCmd
     ModemSoftResetCmd
+    ModemSoftResetCmdDelay
     ModemVerboseResultsCmd
     ModemWaitForConnect
     ModemWaitTimeCmd
@@ -1596,6 +1597,7 @@ AT	ModemSetupDTRCmd	Command for setting up DTR handling
 AT	ModemSoftFlowCmd	\
 	Command for setting DCE-DTE software flow control
 AT	ModemSoftResetCmd	Command for doing a soft reset
+#	ModemSoftResetCmdDelay	Time in ms to pause after a soft reset
 AT	ModemVerboseResultsCmd	Command for enabling verbose result codes
 B	ModemWaitForConnect	\
 	Force server to wait for \"CONNECT\" response on answer

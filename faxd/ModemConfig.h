@@ -77,6 +77,7 @@ public:
     fxStr	resultCodesCmd;		// cmd for enabling result codes
     fxStr	onHookCmd;		// cmd for placing phone ``on hook''
     fxStr	softResetCmd;		// cmd for doing soft reset
+    u_int	softResetCmdDelay;	// time in ms to pause after soft reset
     fxStr	waitTimeCmd;		// cmd for setting carrier wait time
     fxStr	pauseTimeCmd;		// cmd for setting "," pause time
     fxStr	mfrQueryCmd;		// cmd for getting modem manufacturer

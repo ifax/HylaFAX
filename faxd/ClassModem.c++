@@ -655,6 +655,14 @@ ClassModem::reset(long ms)
     if ( true != atCmd(conf.softResetCmd, AT_OK, 30*1000) ) {
         return false;
     }
+
+    /*
+     * Some modems require a pause after ATZ before they can
+     * accept any more commands although they have already
+     * replied OK to the ATZ command.
+     */
+    pause(conf.softResetCmdDelay);
+
     if ( true != atCmd(conf.resetCmds, AT_OK, ms) ) {
         return false;
     }
