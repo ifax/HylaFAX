@@ -1234,12 +1234,13 @@ EOF
 	appMisConfigured $PATH_PSRIP
     fi
     #
-    # Force bin/ps2fax to point to the appropriate script.
+    # Force bin/ps2fax and bin/pdf2fax to point to the appropriate scripts.
     #
     Note ""
     Note "Make $DIR_SPOOL/bin/ps2fax a link to $DIR_SPOOL/bin/ps2fax.$PS."
     Note ""
     $RM bin/ps2fax
+    $RM bin/pdf2fax
     if [ -n "$LN_S" ]; then
 	$LN $LN_S ps2fax.$PS bin/ps2fax;
 	if [ $PS = gs ]; then
