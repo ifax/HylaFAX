@@ -387,8 +387,8 @@ parseMultiplier(const char* cp, struct tm& at, fxStr& emsg)
 	at.tm_yday += DAYSPERWEEK*v;
     else if (streq(cp, "month", 5)) {
 	at.tm_mon += v;
-	while (at.tm_mon >= 11)
-	    at.tm_mon -= 11, at.tm_year++;
+	while (at.tm_mon >= 12)
+	    at.tm_mon -= 12, at.tm_year++;
 	adjustYDay(at);
     } else if (streq(cp, "year", 4))
 	at.tm_year += v;
