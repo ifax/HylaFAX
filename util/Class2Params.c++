@@ -243,8 +243,8 @@ Class2Params::setFromDIS(u_int dis, u_int xinfo)
 	vr |= VR_200X100;
 	if (dis & DIS_7MMVRES) vr |= VR_200X200;
 	if (xinfo & DIS_200X400) vr |= VR_200X400;
-	if (xinfo & DIS_300X300) vr |= VR_300X300;
     }
+    if (xinfo & DIS_300X300) vr |= VR_300X300;
     /*
      * Beware that some modems (e.g. the Supra) indicate they
      * support the V.17 bit rates, but not the normal V.27+V.29
