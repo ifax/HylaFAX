@@ -717,6 +717,7 @@ faxGettyApp::notifyDocumentRecvd(const FaxRecvInfo& ri)
     ai.jobtag = "";
     ai.cidname = ri.cidname;
     ai.cidnumber = ri.cidnumber;
+    ai.owner = "";
     if (!ai.record("RECV"))
 	logError("Error writing RECV accounting record, dest=%s",
 	    (const char*) ai.dest);

@@ -166,6 +166,7 @@ faxSendApp::send(const char* filename)
 		ai.csi = info.getCSI();
 		ai.cidname = "";
 		ai.cidnumber = "";
+		ai.owner = req->owner;
 		if (req->status == send_done)
 		    ai.status = "";
 		else

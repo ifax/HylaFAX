@@ -141,6 +141,7 @@ pageSendApp::send(const char* filename)
 		    ai.params = 0;
 		    ai.cidname = "";
 		    ai.cidnumber = "";
+		    ai.owner = req->owner;
 		    if (req->status == send_done)
 			ai.status = "";
 		    else

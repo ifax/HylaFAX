@@ -45,6 +45,7 @@ struct FaxAcctInfo {
     const char*	status;		// status info (optional)
     const char*	cidname;	// caller id name
     const char*	cidnumber;	// caller id number
+    const char* owner;		// job owner (uid)
 
     bool record(const char* cmd) const;
 };

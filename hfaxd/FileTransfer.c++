@@ -76,7 +76,7 @@ HylaFAXServer::logTransfer(const char* direction,
     if (xferfaxtime == 0)
 	xferfaxtime++;
     const char* filename = strrchr(pathname, '/');
-    fxStr msg(fxStr::format("%.24s %lu %s %lu %s/%s %s %s\n"
+    fxStr msg(fxStr::format("%.24s\t%lu\t%s\t%lu\t%s/%s\t%s\t%s\n"
 	, ctime(&now)
 	, (u_long) xferfaxtime
 	, (const char*) remotehost
