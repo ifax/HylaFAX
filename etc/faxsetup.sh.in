@@ -319,7 +319,7 @@ Note()
 
 capture()
 {
-    (eval "set -x; $*") >&5 2>&1
+    (eval "set -x; $*") > /dev/null 2>&1
     return
 }  
 
