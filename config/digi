@@ -15,3 +15,9 @@
 # END-SERVER
 
 ModemType:		Class1		# use this to supply a hint
+
+# If your line supports Caller-ID, you may want to uncomment this...
+# QualifyCID:		etc/cid		# you must create this file
+# ModemResetCmds:	"AT#CID=1"
+# CIDNumber:		"NMBR="
+# CIDName:		"NAME="

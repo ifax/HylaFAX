@@ -39,7 +39,6 @@
 # CONFIG:CLASS1:LT V.92 1.0 MT5634ZBA*:.*:.*: Manufacturer=MultiTech Model=MT5634ZBA
 # CONFIG:CLASS1:LT V.90 1.0 ISI5634PCI*:.*:.*: Manufacturer=MultiTech Model=ISI5634PCI
 # CONFIG:CLASS1:LT V.92 1.0 ISI5634PCI*:.*:.*: Manufacturer=MultiTech Model=ISI5634PCI
-# CONFIG:CLASS1:AT&T 33.6 Data/14.4 Fax*:.*:.*: Manufacturer="AT&T" Model=Lucent
 # CONFIG:CLASS1:Zoom V.90 PCI*:.*:.*: Manufacturer=Zoom Model=2920
 # CONFIG:CLASS1:Zoom V.90 USB*:.*:.*: Manufacturer=Zoom Model=2980
 #
@@ -48,3 +47,10 @@
 
 ModemType:		Class1		# use this to supply a hint
 Class1TCFRecvHack:	yes		# avoid +FCERROR before TCF
+Class1MsgRecvHackCmd:	AT+FRS=1	# avoid +FCERROR before image
+
+# If your line supports Caller-ID, you may want to uncomment this...
+# QualifyCID:		etc/cid		# you must create this file
+# ModemResetCmds:	AT+VCID=1
+# CIDNumber:		"NMBR="
+# CIDName:		"NAME="

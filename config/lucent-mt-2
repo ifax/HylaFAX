@@ -30,3 +30,9 @@ Class2BUGCmd:		none		# not available
 Class2NFLOCmd:		AT+FLO=0
 Class2SFLOCmd:		AT+FLO=1
 Class2HFLOCmd:		AT+FLO=2
+
+# If your line supports Caller-ID, you may want to uncomment this...
+# QualifyCID:		etc/cid		# you must create this file
+# ModemResetCmds:	AT+VCID=1
+# CIDNumber:		"NMBR="
+# CIDName:		"NAME="

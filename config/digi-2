@@ -23,5 +23,11 @@ ModemHardFlowCmd:	AT&K3
 
 Class2APQueryCmd:	none		# not available
 
+# If your line supports Caller-ID, you may want to uncomment this...
+# QualifyCID:		etc/cid		# you must create this file
+# ModemResetCmds:	"AT#CID=1"
+# CIDNumber:		"NMBR="
+# CIDName:		"NAME="
+
 # unfortunately, HylaFAX can't currently receive in MMR
 ModemAnswerCmd:		AT+FCC=,,,,1;A

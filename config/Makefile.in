@@ -70,6 +70,7 @@ CONFIGFILES=class1 \
 	hayes \
 	intel-400e \
 	lucent \
+	lucent-isa \
 	lucent-mt-2 \
 	lucent-mt-20 \
 	lucent-mt-21 \
