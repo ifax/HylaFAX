@@ -927,17 +927,10 @@ CCtested=; ISGXX=no
 capture cat dummy.C
 if [ -z "${CXX:-}" ]; then
     CXXCOMPILER=
-    #
-    # If the C compiler is GNU gcc and no C++ compiler
-    # was specified then assume gcc is to be used also
-    # for C++ compilations.
-    #
-    if [ $ISGCC = yes -a -z "$CXX" ]; then
-	CXX=$i
-    fi
-    for i in $CXX gcc g++ CC NCC DCC gcc2 xlC; do
-	CCtested="$CCtested $i"
-	checkCompiler $i && break
+	CXXCOMPILERS="g++ gcc CC NCC DCC gcc2 xlC"
+    for i in $CXXCOMPILERS; do
+	    CCtested="$CCtested $i"
+	    checkCompiler $i && break
     done
 else
     CCtested="$CCtested $CXX"

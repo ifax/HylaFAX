@@ -194,7 +194,7 @@ clobber::
 	    true; \
 	fi
 	@if [ "@ZLIB@" = yes ]; then \
-	    ${ECHO} "= "zlib; cd zlib; ${MAKE} clobber; \
+	    ${ECHO} "= "zlib; cd zlib; ${MAKE} distclean; \
 	else \
 	    true; \
 	fi
