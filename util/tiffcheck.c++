@@ -173,16 +173,18 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
 	    "client is incapable of receiving 2DMR data.\n");
 	status |= REFORMAT;
     }
-#ifdef notdef
     /*
-     * NB: these are optimizations; the server can handle
-     *     images that have multiple strips and/or have an
-     *     MSB2LSB fill order.
+     * FaxSend can handle multistrip MH and MR images (not MMR),
+     * but not if the strips are not in sequential order.
      */
     if (TIFFNumberOfStrips(tif) != 1) {
 	emsg.append("Document should be reformatted as a single strip.\n");
 	status |= REFORMAT;
     }
+#ifdef notdef
+    /*
+     * The server can handle images that have an MSB2LSB fill order.
+     */
     uint16 fill;
     (void) TIFFGetFieldDefaulted(tif, TIFFTAG_FILLORDER, &fill);
     if (fill != FILLORDER_LSB2MSB) {
