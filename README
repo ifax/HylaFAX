@@ -1,76 +1,145 @@
 $Id$
 
-HylaFAX, Version 4.1 (beta)
-------------------------------
+                           *   ANNOUNCE   *
 
-This note is basically just a placeholder.  The real documentation is
-located online at the HylaFAX home page:
+The HylaFAX development team is pleased to announce our much-anticipated 
+4.1 release!  The 4.1 release has been almost two years in the making, and 
+is the first non-"beta" release since 4.0pl2.  The 4.1 release represents 
+countless hours of work and testing by developers and contributors, and 
+our thanks goes to all who participate and provide feedback.
 
-    http://www.hylafax.org/
+                               *   *   *
 
-The online documentation includes the full contents of the
-documentation as well as an HOWTO, FAQ, archives of the HylaFAX mailing 
-list, and associated modem-related documentation.  Preformatted
-copies of this documentation and the reference manual pages are also
-available by public FTP at ftp://ftp.hylafax.org/doc.
+This document is intended to describe the significant differences
+between hylafax-4.1 and hylafax-4.0pl2, point out any known
+incompatibilites and issues, and provide the reader with directions to
+further resources regarding HylaFAX.
 
-You will find a subset of the online documentation in the html
-subdirectory.  Beware however that timely information is usually more
-up to date online than in the materials in the html directory.
-You can view the HTML documentation in place and/or configure it for
-local installation through the configure script.
+                          *   NEW FEATURES   *
+
+* faxadduser and faxdeluser utilities aid in etc/hosts.hfaxd management
+* greater default compatibility with more modems through prototype 
+  configuration file enhancements
+* BreakIntoCommentX faxcover function
+* greater default compilation compatibility with various operating systems 
+  and platforms
+* documentation enhancements, updates, and corrections
+* functionality for decoding received Non-Standard-Frames (NSF)
+* compatibility with libtiff-3.5
+* allow use of "none" in five config options 
+* security enhancements and fixes
+* faxq now load-balances modems with equal priority 
+* added "Modem" option to DestControls for outbound routing
+* RTNHandlingMethod, ModemDTRDropDelay, and Class1SwitchingDelay config 
+  options
+* numerous fixes to both Class 1 and Class 2/2.0 fax protocol
+* numerous fixes and enhancments to faxsetup, faxaddmodem, and other 
+  scripts
+** please refer to CHANGES for a detailed list of code changes
+
+                         *   KNOWN ISSUES   *
+
+* MaxSendPages and JobReqOther do not work as documented or at all.
+* Specific support for fax classes 1.0 and 2.1 are not yet implemented.
+* The faxcover documentation discusses various "from" dictionary options 
+  as well as commentX dictionary options.  Neither of these are available, 
+  but there is CommentsX functionality, which is undocumented.
+* Server-based fax archival support is still unimplemented (although 
+  documented).
+* When running in Class 2/2.0, NSF can be parsed incorrectly.
+* When running in Class 1, receipt of EOM is mishandled.
+* Glare is not handled (RING while initializing a modem).
+* faxqclean can, under the right circumstances, delete documents which are 
+  still in use.
+* configure can complain about libtiff problems when the error is really 
+  with zlib
+** Please refer to HylaFAX Bugzilla for a detailed list of issues.
+
+                       *   INCOMPATIBILITIES   *
+
+* The default spool directory has changed from /var/spool/fax/ to 
+  /var/spool/hylafax/  Take caution to note this change!!!  If you desire 
+  to compile HylaFAX using the old spool directory:
+
+            ./configure --with-DIR_SPOOL=/var/spool/fax
+
+* HylaFAX 4.1 will not compile with gcc-3.0 or Mac OS-X.  Minor 
+  issues still remain when compiling on Solaris or Unixware.  (Look to CVS 
+  for progress on this.)
+* The ModemClass config option has been completely replaced by the 
+  ModemGroup option.  Functionality is identical.
+* Changes to faxcover may require some changes to faxcover template files.  
+  If using BreakIntoLines, the syntax has changed from:
+
+     <comments> <line-width> <line-changing-proc> BreakIntoLines -
+                                to
+     <line-width> <line-height> <x> <y> <comments> BreakIntoLines -
+
+  If the faxcover used the commentX parameters, you will need to add the 
+  following function call before using the commentX parameters: 
+
+     <maxlines> <comments> BreakIntoCommentX - 
+
+* Other name changes have occurred:
+
+     xferstats		--> xferfaxstats
+     xferlog		--> xferfaxlog
+     etc/hosts		--> etc/hosts.hfaxd
+     /var/spool/fax	--> /var/spool/hylafax
+     config (manpage)	--> hylafax-config
+     info (manpage)	--> hylafax-info
+     log (manpage)	--> hylafax-log
+     shutdown (manpage)	--> hylafax-shutdown
+
+* Font metrics are now gone.  The textfmt program can now directly read 
+  Ghostscript fontmap files and thus find the corresponding afm files 
+  included in the ghostscript fonts package.
+
+                  *   HYLAFAX BINARY PACKAGES   *
+
+Binary packages for some operating systems and platforms are available.  
+Please see ftp://ftp.hylafax.org/binary/ and 
+http://www.hylafax.org/howto/install.html#ss2.3.3  If you are able and 
+willing to produce a binary package of HylaFAX for general distribution, 
+then you are invited to join hylafax-devel@hylafax.org and solicit your 
+binary package.
+
+                          *   SUPPORT   *
+
+HylaFAX has numerous support resources available.  The user is encouraged 
+to utilize the manpage documentation before turning to other support 
+arenas.  However, if other support is desired, or if you would like to 
+actively take part in the HylaFAX community, you are invited to:
+
+  * join and participate in a HylaFAX mailing list
+    See: http://www.hylafax.org/mailing-lists.html
+
+    When corresponding about this software, please always specify:
+    - what version of HylaFAX you have,
+    - what system you're running on (if it is Linux please name the
+      distribution)
+    - if the problem is modem-related, identify it and the firmware rev
+    For example: "HylaFAX v4.0pl2 under RedHat Linux 4.2 with gcc 2.7.2;
+    ZyXEL 1496E with 6.11a firmware."
+
+  * read the on-line documentation and resources
+    See: http://www.hylafax.org and http://www.hylafax.org/howto
+
+  * review HylaFAX CVS
+    See: http://www.hylafax.org/cvs.html
+
+  * report confirmed bugs, feature requests, and submit patches
+    See: http://bugs.hylafax.org/bugzilla
 
 
-This note has the following sections:
 
-    Installation Synopsis
-    HylaFAX Mailing List and Where To Send Bugs
-    Use and Copyright
+Thanks,
 
+  The HylaFAX development team
 
-Installation Synopsis
----------------------
-Follow the directions in the online documentation.  The main material
-on configuring, building, and installing the software is given in:
+-------------------------------------------------------------------
 
-    http://www.hylafax.org/building.html
-
-Server setup information is found at:
-
-    http://www.hylafax.org/setup.html
-
-The documentation is extensive and designed to be used when installing
-the software.  There is also an FAQ that covers (or should cover)
-common problems.
-
-The basic procedure is:
-
-    <unpack source code>
-    % ./configure
-    % make
-    % su			# NB: must be root to setup software
-    # make install
-    # faxsetup
-
-If this does not work and the problem is not clear, then you will
-need to look at the documentation and/or the code.
-
-There is documentation!  There is GOBS of documentation.  The HTML
-materials present information needed to build+setup the software; the
-manual pages act as a reference guide.  There are manual pages for all
-the programs and for all the files and directories that you may be
-curious about.  Of course there is also source code for everything, but
-this should (hopefully) not be needed.  A useful introduction to the
-client applications is given in the hylafax-client manpage.  If you want 
-to learn how the server and spooling system work, look first at the 
-hylafax-server manpage.  Remember however that the manual pages are for 
-reference; the HTML documentation is designed to be more introductory in 
-nature and should usually be consulted first when you're looking for 
-general guidance.
-
-The HylaFAX mailing lists (described below) are the place to send your
-comments and problems.  For mailing list administration, see
-http://lists.hylafax.org/cgi-bin/lsg2.cgi
+And now, a note from HylaFAX's original author ;-)
 
 Silicon Graphics has seen fit to allow me to give this work away.  It
 is free.  There is no support or guarantee of any sort as to its
@@ -84,50 +153,6 @@ else has a copyright on).  If you want to refer to this software use
 ``HylaFAX (tm)'' and be sure to honor the Silicon Graphics trademark.
 
 	Sam Leffler
-
-
-HylaFAX Mailing List and Where To Send Bugs
----------------------------------------------------------------
-A mailing list for users of this software is accessible through
-hylafax.org.  If you want to join this mailing list or have a 
-list-related request such as getting your name removed from it, see 
-
-    http://lists.hylafax.org/cgi-bin/lsg2.cgi
-
-You can also find information on subscribing to the mailing list at:
-
-    http://www.hylafax.org/mailing-lists.html
-
-Submissions to the mailing list (including bug reports) should be
-directed to:
-
-    hylafax-users@hylafax.org
-
-Note that the mailing list has many people on it.  Please take this
-into consideration when posting notes to it; i.e. avoid posting large
-trace logs and the such.  Also, when corresponding about this software
-please always specify:
-
-- what version of HylaFAX you have,
-- what system you're running on (if it is Linux please name the distribution),
-  and,
-- if the problem is modem-related, identify it and the firmware rev
-
-For example: "HylaFAX v4.0pl2 under RedHat Linux 4.2 with gcc 2.7.2;
-ZyXEL 1496E with 6.11a firmware."
-
-Please submit a copy of your patches and bug reports at 
-http://bugs.hylafax.org/bugzilla/
-
-The mailing list is archived at : http://www.hylafax.org/archive/
-
-If you find the hylafax-users mailing list to have too much traffic for
-you, there is also an announcements-only mailing list called
-hylafax-announce.  This can be subscribed to in the same manner as the
-other lists at http://lists.hylafax.org/cgi-bin/lsg2.cgi  Note that there
-is no need to subscribe to both mailing lists; postings to the
-announcement list automatically fed to the hylafax-users list.
-
 
 Use and Copyright
 -----------------

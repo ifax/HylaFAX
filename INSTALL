@@ -1,0 +1,59 @@
+$Id$	
+
+This note is basically just a placeholder.  The real documentation is
+located online at the HylaFAX home page:
+
+    http://www.hylafax.org/
+
+The online documentation includes the full contents of the
+documentation as well as an HOWTO, FAQ, archives of the HylaFAX mailing 
+list, and associated modem-related documentation.
+
+You will find a subset of the online documentation in the html
+subdirectory.  Beware however that timely information is usually more
+up to date online than in the materials in the html directory.
+You can view the HTML documentation in place and/or configure it for
+local installation through the configure script.
+
+Installation Synopsis
+---------------------
+Follow the directions in the online documentation.  The main material
+on configuring, building, and installing the software is given in:
+
+    http://www.hylafax.org/building.html
+
+Server setup information is found at:
+
+    http://www.hylafax.org/setup.html
+
+The documentation is extensive and designed to be used when installing
+the software.  There is also an FAQ that covers (or should cover)
+common problems.
+
+The basic procedure is:
+
+    <unpack source code>
+    % ./configure
+    % make
+    % su			# NB: must be root to setup software
+    # make install
+    # faxsetup
+
+If this does not work and the problem is not clear, then you will
+need to look at the documentation and/or the code.
+
+There is documentation!  There is GOBS of documentation.  The HTML
+materials present information needed to build+setup the software; the
+manual pages act as a reference guide.  There are manual pages for all
+the programs and for all the files and directories that you may be
+curious about.  Of course there is also source code for everything, but
+this should (hopefully) not be needed.  A useful introduction to the
+client applications is given in the hylafax-client manpage.  If you want 
+to learn how the server and spooling system work, look first at the 
+hylafax-server manpage.  Remember however that the manual pages are for 
+reference; the HTML documentation is designed to be more introductory in 
+nature and should usually be consulted first when you're looking for 
+general guidance.
+
+See the README for details on where to turn if you've done all of this
+and still need help!
