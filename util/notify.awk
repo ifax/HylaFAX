@@ -173,7 +173,7 @@ BEGIN		{ nfiles = 0;
 /^external/	{ number = $2; }		# override unprocessed number
 /^sender/	{ sender = $2; }
 /^mailaddr/	{ mailaddr = $2; }
-/^jobtag/	{ jobtag = $2; }
+/^jobtag/	{ jobtag = $0; sub("jobtag:", "", jobtag); }
 /^jobtype/	{ jobType = $2; }
 /^status/	{ status = $0; sub("status:", "", status);
 		  if (status ~ /\\$/) {
