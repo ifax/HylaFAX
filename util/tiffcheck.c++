@@ -93,12 +93,6 @@ main(int argc, char* argv[])
     int status;
     fxStr emsg;
     TIFF* tif = TIFFOpen(argv[optind], "r");
-
-    /*
-     * Suppress libtiff warning messages from becoming fatal.
-     */
-    TIFFErrorHandler whandler = TIFFSetWarningHandler(NULL);
-
     if (tif) {
 	status = OK;
 	do {
