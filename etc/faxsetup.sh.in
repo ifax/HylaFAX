@@ -69,7 +69,7 @@ SED=@SED@			# sed for use below
 TTYCMD=@TTYCMD@			# tty for error output
 UUENCODE=@UUENCODE@		# uuencode command to dump in setup.cache
 
-FAX=fax				# identity of the fax user
+FAX=@FAXUID@			# identity of the fax user
 SERVICES=/etc/services		# location of services database
 INETDCONF=/usr/etc/inetd.conf	# default location of inetd configuration file
 ALIASES=/usr/lib/aliases	# default location of mail aliases database file
@@ -1536,30 +1536,6 @@ faxGID=`grep "^$PROTOGID:" $GROUP | cut -d: -f3`
 if [ -z "$faxGID" ]; then faxGID=$defPROTOGID; fi
 
 #
-# Change the password file entry for the fax user.
-#
-fixupFaxUser()
-{
-    emsg1=`modifyPasswd $FAX $faxUID $faxGID $DIR_SPOOL 2>&1`
-    case $? in
-    0)	echo "Done, the \"$FAX\" user should now have the correct $1.";;
-    *) cat <<-EOF
-
-	FATAL ERROR: Command failed!
-
-	The modify password command failed with the message:
-
-	"$emsg1"
-
-	HylaFAX will not work correctly until the proper $1 is set up.
-
-	EOF
-	boom
-	;;
-    esac
-}
-
-#
 # Add a fax user to the password file and lock the
 # entry so that noone can login as the user.
 #
@@ -1640,26 +1616,6 @@ if onServer; then
 	prompt "HylaFAX needs this to work properly, add it [yes]?"
 	read x
 	isOK $x && addFaxUser
-    elif [ "$x" != "$faxUID" ]; then
-	echo ""
-	echo ""
-	echo "It looks like you have a \"$FAX\" user in the password file,"
-	echo "but with a uid different than the uid for uucp.  You probably"
-	echo "have old fax software installed.  In order for this software"
-	echo "to work properly, the fax user uid must be the same as uucp."
-	prompt "Is it ok to change the password entry for \"$FAX\" [yes]?"
-	read x;
-	isOK $x && fixupFaxUser "user id"
-    elif [ `grep "^$FAX:" $PASSWD | cut -d: -f$PARAMLOC` != $DIR_SPOOL ]; then
-	echo ""
-	echo ""
-	echo "It looks like you have a \"$FAX\" user in the password file,"
-	echo "but with a home directory different than what is currently"
-	echo "configured.  This is not a serious matter, but should be"
-	echo "corrected."
-	prompt "Is it ok to change the home directory for \"$FAX\" [yes]?"
-	read x;
-	isOK $x && fixupFaxUser "home directory"
     fi
     machdepPasswdWork
 

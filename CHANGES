@@ -2,6 +2,9 @@
 
 Changelog for HylaFAX 4.2.1
 
+* remove need to have separate "fax" user (22 Dec 2004)
+* fix parsing of AT+FCLASS=? response within faxaddmodem
+  and probemodem (21 Dec 2004)
 * improve multi-line handling within notify (20 Dec 2004)
 * improve trap handling in faxaddmodem/probemodem (17 Dec 2004)
 * fix hfaxd from rejecting jobs scheduled for the past while
