@@ -1355,7 +1355,7 @@ makeDefs()
     $RM confsed2; dumpvars "$VAR2" | sort>confsed2
     unset POSIXLY_CORRECT
     $RM xdefs; sed -f confsed1 $SRCDIR/defs.in | sed -f confsed2 >$1
-    export POSIXLY_CORRECT=1
+    POSIXLY_CORRECT=1 ; export POSIXLY_CORRECT
 }
 
 # NB: save original values for use in checks below
@@ -4530,7 +4530,7 @@ SedConfigFiles()
 	    #
 	    unset POSIXLY_CORRECT
 	    $RM $F.new; $SED -f confsed1 $SRCDIR/$F.in | $SED -f confsed2 > $F.new
-	    export POSIXLY_CORRECT=1
+	    POSIXLY_CORRECT=1 ; export POSIXLY_CORRECT
 	    $RM confx; $SED '/DATE:/d' $F.new >confx
 	    $RM confy; $SED '/DATE:/d' $F >confy 2>/dev/null
 	    if cmp -s confx confy >/dev/null 2>&1; then
@@ -4543,10 +4543,10 @@ SedConfigFiles()
 	    Note "Creating $F from $SRCDIR/$F.in"
 	    unset POSIXLY_CORRECT
 	    if $SED -f confsed1 $SRCDIR/$F.in  | $SED -f confsed2 >$F.new; then
-		export POSIXLY_CORRECT=1
+		POSIXLY_CORRECT=1 ; export POSIXLY_CORRECT
 		$RM $F; $MV $F.new $F; $CHMOD 444 $F
 	    else
-		export POSIXLY_CORRECT=1
+		POSIXLY_CORRECT=1 ; export POSIXLY_CORRECT
 		cat 1>&2 <<EOF
 Help, there was a problem crafting $F from $F.in.
 The command:
