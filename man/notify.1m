@@ -36,7 +36,6 @@ notify \- \*(Fx user notification script
 .I qfile
 .I why
 .I jobtime
-.I commid
 [
 .I nextTry
 ]
@@ -79,10 +78,6 @@ to the sender.
 .B jobtime
 the total transmission time of a successful job or the connect
 time of a failed request (passed as a string).
-.TP
-.B commid
-the communication identifier of the \*(Fx process that processed the
-job (used for locating communication transcripts).
 .TP
 .B nextTry
 the time (passed as a string) at which the next attempt will be
