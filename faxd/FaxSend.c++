@@ -664,18 +664,18 @@ FaxServer::sendSetupParams1(TIFF* tif,
     }
     if (!modem->supportsPageWidth((u_int) w, params.vr)) {
 	static const double widths[8] = {
-	    1728*rf,	// 1728 in 215 mm line
-	    2048*rf,	// 2048 in 255 mm line
-	    2432*rf,	// 2432 in 303 mm line
-	    1216*rf,	// 1216 in 151 mm line
-	    864*rf,	// 864 in 107 mm line
+	    1728,	// 1728 in 215 mm line
+	    2048,	// 2048 in 255 mm line
+	    2432,	// 2432 in 303 mm line
+	    1216,	// 1216 in 151 mm line
+	    864,	// 864 in 107 mm line
 	    0,
 	    0,
 	    0,
 	};
 	emsg = fxStr::format("Modem does not support document page width"
 		", max page width %u pixels, image width %lu pixels",
-		widths[modem->getBestPageWidth()&7], w);
+		widths[modem->getBestPageWidth()&7]*rf, w);
 	return (send_reformat);
     }
     // NB: only common values
