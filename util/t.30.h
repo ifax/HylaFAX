@@ -145,13 +145,27 @@
 #define	DIS_G4COMP	(0x02<<24)	// T.6 compression supported
 // bit 0x01 indicates an extension byte follows
 
-// 2nd extension byte (alternative paper width capabilities)
+// The meaning of the 2nd extension byte changed after the 1993 recommendation.
+// If DIS_IGNOLD is set, then the 1993 definitions can be understood, otherwise
+// the current definitions should be understood.
+
+// 2nd extension byte - 1993 meaning - (alternative paper width capabilities)
 #define	DIS_IGNOLD	(0x80<<16)	// ignore old paper widths in byte 3
 #define	DIS_1216	(0x40<<16)	// 1216 pixels in 151 mm scanline
 #define	DIS_864		(0x20<<16)	// 864 pixels in 107 mm scanline
 #define	DIS_1728L	(0x10<<16)	// 1728 pixels in 151 mm scanline
 #define	DIS_1728H	(0x08<<16)	// 1728 pixels in 107 mm scanline
 // bits 0x04 and 0x02 are reserved
+// bit 0x01 indicates an extension byte follows
+
+// 2nd extension byte - current meaning
+// bit 0x80 is not valid and must be unset
+#define	DIS_MULTSEP	(0x40<<16)	// multiple selective polling capability
+#define	DIS_POLLSUB	(0x20<<16)	// polled subaddress
+#define	DIS_T43		(0x10<<16)	// T.43 coding
+#define	DIS_INTERLV	(0x08<<16)	// plane interleave
+#define	DIS_VOICE	(0x04<<16)	// voice coding - G.726
+#define	DIS_VOICEXT	(0x02<<16)	// extended voice coding
 // bit 0x01 indicates an extension byte follows
 
 // 3rd extension byte (alternative resolution capabilities)

@@ -1117,10 +1117,6 @@ Class1Modem::modemXINFO() const
 	| DIS_SEP			// support for selected polling frame
 	| DIS_SUB			// support for subaddressing frame
 	| DIS_PWD			// support for pwd frames
-	| DIS_1216			// additional page widths
-	| DIS_864
-	| DIS_1728H
-	| DIS_1728L
 	| DIS_200X400			// additional resolutions
 	| DIS_300X300
 	| DIS_400X400
