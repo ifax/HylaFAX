@@ -659,7 +659,7 @@ faxGettyApp::notifyModemWedged()
 void
 faxGettyApp::notifyRecvBegun(const FaxRecvInfo& ri)
 {
-    (void) sendRecvStatus(getModemDeviceID(), "S" | ri.encode());
+    (void) sendRecvStatus(getModemDeviceID(), "S%s", (const char*) ri.encode());
 
     FaxServer::notifyRecvBegun(ri);
 }
@@ -670,7 +670,7 @@ faxGettyApp::notifyRecvBegun(const FaxRecvInfo& ri)
 void
 faxGettyApp::notifyPageRecvd(TIFF* tif, const FaxRecvInfo& ri, int ppm)
 {
-    (void) sendRecvStatus(getModemDeviceID(), "P" | ri.encode());
+    (void) sendRecvStatus(getModemDeviceID(), "P%s", (const char*) ri.encode());
 
     FaxServer::notifyPageRecvd(tif, ri, ppm);
 
@@ -683,7 +683,7 @@ faxGettyApp::notifyPageRecvd(TIFF* tif, const FaxRecvInfo& ri, int ppm)
 void
 faxGettyApp::notifyDocumentRecvd(const FaxRecvInfo& ri)
 {
-    (void) sendRecvStatus(getModemDeviceID(), "D" | ri.encode());
+    (void) sendRecvStatus(getModemDeviceID(), "D%s", (const char*) ri.encode());
 
     FaxServer::notifyDocumentRecvd(ri);
 
