@@ -583,6 +583,10 @@ FaxModem::tracePPM(const char* dir, u_int ppm)
 	protoTrace("%s DCS (command signal)", dir);
 	return;
     }
+    if ((ppm & 0x7F) == FCF_TSI) {
+	protoTrace("%s TSI (sender id)", dir);
+	return;
+    }
     static const char* ppmNames[16] = {
 	"NULL (more blocks, same page)",		// PPS-NULL
 	"EOM (more documents)",				// FCF_EOM
