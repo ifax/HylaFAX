@@ -391,7 +391,7 @@ faxApp::runCmd(const char* cmd, bool changeIDs)
 	{ int status = 0;
 	  Sys::waitpid(pid, status);
 	  if (status != 0) {
-	    logError("Bad exit status %#o for \"%s\"", status, cmd);
+	    logError("Bad exit status %#o for \'%s\'", status, cmd);
 	    return (false);
 	  }
 	}
