@@ -41,6 +41,7 @@ case `basename $0` in
 		echo "Making symbolic links for man pages \n in ${MAN_DIR}"
 		for j in `ls man`
 		do
+			[ -d ${MAN_DIR}/$j ]  ||  mkdir ${MAN_DIR}/$j
 			for i in `ls man/$j`
 			do
 				[ ! -f ${MAN_DIR}/${j}/${i} ] && ln -s `pwd`/man/${j}/${i} ${MAN_DIR}/${j}/${i}

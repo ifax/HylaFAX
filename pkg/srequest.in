@@ -8,11 +8,6 @@ then
         CLASSES="$CLASSES man"
 fi
 
-if [ "@AFM@" = yes ]
-then
-        CLASSES="$CLASSES fonts"
-fi
-
 if [ "@HTML@" = yes ]
 then
 # determine if html man pages should be installed

@@ -1,4 +1,7 @@
 # Makefile for zlib
+#
+# @WARNING@
+#
 # Copyright (C) 1995-1998 Jean-loup Gailly.
 # For conditions of distribution and use, see copyright notice in zlib.h 
 
@@ -11,6 +14,12 @@
 #    make install
 # To install in $HOME instead of /usr/local, use:
 #    make install prefix=$HOME
+
+# VERSION:  @VERSION@
+# DATE:     @DATE@
+# TARGET:   @TARGET@
+# CCOMPILER:    @CCOMPILER@
+# CXXCOMPILER:  @CXXCOMPILER@
 
 DEPTH=..
 @MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@

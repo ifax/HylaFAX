@@ -10,6 +10,24 @@
 if test -d @SPOOL@/recvq
 then
 	echo "\n\nRun @SBIN@/faxsetup\n"
+	cat >/tmp/root.crontab <<EOF
+#	crontab(1)
+# (minutes) (hour) (day of the month) (month of the year) (day of the week)
+# faxqclean - HylaFAX queue cleaner process
+0   0    *    *    *   @SBIN@/faxqclean
+EOF
+
+	cat >/tmp/uucp.crontab <<EOF
+#	crontab(1)
+# (minutes) (hour) (day of the month) (month of the year) (day of the week)
+# faxcron - HylaFAX routine maintenance script
+25   23    *    *    0   sh @SBIN@/faxcron -rcv 20 | mailx -s "Fax Reports" FaxMaster
+EOF
+
+	echo "See sample crontab(1) entries for root and fax (uucp)"
+	echo "/tmp/root.crontab"
+	echo "/tmp/uucp.crontab"
+
 else
 	echo "\n\nRun @SBIN@/faxsetup -client\n"
 fi
