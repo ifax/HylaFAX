@@ -925,6 +925,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	ecmBlock[ecmBlockPos++] = ecmFrame[i];
     ecmFramePos = 0;
     if (frameNumber == 256 || lastframe) {
+	fxAssert(frameNumber <= 256, "Invalid frameNumber value.");
 	ecmBlockPos = 0;
 	bool lastblock = lastframe;
 
@@ -1644,7 +1645,7 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
     }
 
     bool rc = true;
-    ecmBlockPos = ecmFramePos = ecmBitPos = ecmOnes = ecmByte = 0;
+    frameNumber = ecmBlockPos = ecmFramePos = ecmBitPos = ecmOnes = ecmByte = 0;
     protoTrace("SEND begin page");
 
     tstrip_t nstrips = TIFFNumberOfStrips(tif);
