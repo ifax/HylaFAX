@@ -1,4 +1,4 @@
-# $Id$
+# $Id: performance-rts
 #
 # HylaFAX Facsimile Software
 #
@@ -26,23 +26,13 @@
 # OF THIS SOFTWARE.
 #
 
+# Configuration for using the Class 1 command interface
+# with a Performance modem
 #
-# Configuration for a Rockwell AC/K56-based Class 2 modem.
-# based upon work of Mark J. Bailey, Jonathan Mau and Glenn Burkhardt.
-#    Multitech MT5600ZDX
-#    Diamond Multimedia SupraExpress 56e PRO
-#    Zoom Telephonics 56Kx
-# (and others)
+# RTS/CTS flow control is used default.
 #
-# This configuration file sets up the modem to run at 38.4 for
-# sending and for receiving.  XON/XOFF is used for flow control
-# which also works for data connections.  Adaptive answer support
-# is reliable, but to use it you must also enable ModemWaitForConnect
-# to force the server to skip intermediate status messages and
-# wait for the "CONNECT" message.
-#
-# CONFIG: CLASS2: Rockwell-MultiModemZDXV-*
-# CONFIG: CLASS2: ROCKWELL-AC/K56-*
+# CONFIG:CLASS1:33600:.*:RTSCTS: Manufacturer=Performance Model=33600
+# CONFIG:CLASS1:33600:.*:DEFAULT: Manufacturer=Performance Model=33600
 #
 # BEGIN-SERVER
 # END-SERVER
@@ -50,19 +40,7 @@
 # Modem-related stuff: should reflect modem command interface
 # and hardware connection/cabling (e.g. flow control).
 #
-ModemType:		Class2		# use class 2 interface
-ModemRate:		38400
-ModemFlowControl:	xonxoff		# default
-ModemWaitForConnect:	yes		# wait for CONNECT on answer
-#
-#ModemResetCmds:	AT&F2		# what you want for a Supra
-ModemNoFlowCmd:		AT&K		# disable flow control cmd
-ModemHardFlowCmd:	AT&K3		# hardware flow control cmd
-ModemSoftFlowCmd:	AT&K4		# software flow control cmd
-ModemSetupDTRCmd:	AT&D3		# DTR off causes modem to reset
-ModemSetupDCDCmd:	AT&C1		# DCD follows carrier
-ModemSetupAACmd:	AT+FCLASS=0;+FAA=1 # enable in class 0
-#
-ModemSendFillOrder:	LSB2MSB		# as expected
-ModemRecvFillOrder:	MSB2LSB		# opposite of what makes sense
-Class2RecvDataTrigger:	"\022"		# a la 2388-B
+ModemType:		Class1		# use class 1 interface
+ModemRate:		38400		# rate for DCE-DTE communication
+ModemFlowControl:	rtscts		# hardware flow control assumed
+ModemSetupAACmd:	AT+FCLASS=0	# leave modem idling in Class 0
