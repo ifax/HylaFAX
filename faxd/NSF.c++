@@ -1,3 +1,4 @@
+/* $Id$ */
 /* 
  * This file does not exist in the original Hylafax distribution.
  * Created by Dmitry Bely, April 2000
@@ -47,7 +48,7 @@ struct NSFData {
     const ModelData* knownModels;
 };
 
-NSFData::vendorIdSize = 3; // Country & provider code (T.35)
+const int NSFData::vendorIdSize = 3; // Country & provider code (T.35)
 
 static const ModelData Panasonic0E[] =
 {{"\x00\x00\x00\x96", "KX-F90" },

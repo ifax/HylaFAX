@@ -1,3 +1,4 @@
+/* $Id$ */
 /* 
  * This file does not exist in the original Hylafax distribution.
  * Created by Dmitry Bely, April 2000
