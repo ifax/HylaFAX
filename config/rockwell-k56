@@ -41,7 +41,7 @@
 # to force the server to skip intermediate status messages and
 # wait for the "CONNECT" message.
 #
-# CONFIG: CLASS2: Rockwell-MultiModemZDXV-*
+# CONFIG: CLASS2: Rockwell-MultiModemZDX*-*
 # CONFIG: CLASS2: ROCKWELL-AC/K56*-*
 # CONFIG: CLASS2: CONEXANT-V90-*
 #

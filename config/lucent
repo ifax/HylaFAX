@@ -27,8 +27,9 @@
 #
 
 #
-# prototype config for Lucent LT Winmodem using ltmodem.o driver
-# (strangely, works well with all default Class 1 configs)
+# prototype config for Lucent LT Winmodem using ltmodem.o driver,
+# as well as many other Lucent chipset modems.
+# (They work well with all default Class 1 configs.)
 #
 
 # CONFIG:CLASS1:LT V.90 Data+Fax Modem Version 5.78:.*:.*: Manufacturer=Lucent Model='LT Winmodem'
@@ -37,6 +38,7 @@
 # CONFIG:CLASS1:LT V.90 1.0 MT5634ZPX-PCI Internal Data/Fax/Voice Modem Version 8.19c:.*:.*: Manufacturer=MultiTech Model=MT5634ZPX-PCI
 # CONFIG:CLASS1:LT V.90 1.0 MT5634ZBA Serial Data/Fax Modem Version 8.19d:.*:.*: Manufacturer=MultiTech Model=MT5634ZBA
 # CONFIG:CLASS1:AT&T 33.6 Data/14.4 Fax + Voice Modem Version 5.03d:.*:.*: Manufacturer="AT&T" Model=Lucent
+# CONFIG:CLASS1:Zoom V.90 PCI I030100gV -H Z207:.*:.*: Manufacturer=Zoom Model=2920
 #
 # BEGIN-SERVER
 # END-SERVER
