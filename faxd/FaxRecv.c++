@@ -74,7 +74,6 @@ FaxServer::recvFax(const CallerID& cid)
 	    if (!modem->recvEnd(emsg))
 		traceProtocol("RECV FAX: %s", (const char*) emsg);
 	} else {
-	    modem->trainingFailed();		// wait until after QualifyTSI
 	    traceProtocol("RECV FAX: %s", (const char*) emsg);
 	    TIFFClose(tif);
 	}
@@ -215,12 +214,12 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 		emsg = "Permission denied (unacceptable client TSI)";
 		info.time = (u_int) getFileTransferTime();
 		info.reason = emsg;
+		docs[docs.length()-1] = info;
 		notifyDocumentRecvd(info);
 		TIFFClose(tif);
 		return (false);
 	    }
 	}
-	modem->trainingSucceeded();		// wait until after QualifyTSI
 	setServerStatus("Receiving from \"%s\"", (const char*) info.sender);
 	recvOK = recvFaxPhaseD(tif, info, ppm, emsg);
 	TIFFClose(tif);

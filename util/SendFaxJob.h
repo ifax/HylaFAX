@@ -86,6 +86,10 @@ private:
     fxStr	company;		// rec. company identity for cover page
     fxStr	comments;		// comments for cover page
     fxStr	regarding;		// regarding info for cover page
+    fxStr	fromlocation;		// rec. from location for cover page
+    fxStr	fromfax;		// rec. from fax for cover page
+    fxStr	fromvoice;		// rec. from voice for cover page
+    fxStr	fromcompany;		// rec. from company for cover page
 
     bool	sendTagLine;		// if true, use custom tagline format
     fxStr	killTime;		// job's time to be killed
@@ -202,6 +206,14 @@ public:
     const fxStr& getCoverComments() const;
     void setCoverVoiceNumber(const char*);// receipient's voice number
     const fxStr& getCoverVoiceNumber() const;
+    void setCoverFromLocation(const char*);// sender's location
+    const fxStr& getCoverFromLocation() const;
+    void setCoverFromFax(const char*);	// sender's fax number
+    const fxStr& getCoverFromFax() const;
+    void setCoverFromVoice(const char*);// sender's voice number
+    const fxStr& getCoverFromVoice() const;
+    void setCoverFromCompany(const char*);// sender's company
+    const fxStr& getCoverFromCompany() const;
     u_int getTotalPages() const;	// counted pages (for cover sheet)
 
     /*
@@ -275,6 +287,10 @@ inline const fxStr& SendFaxJob::getCoverCompany() const	{ return company; }
 inline const fxStr& SendFaxJob::getCoverRegarding() const{ return regarding; }
 inline const fxStr& SendFaxJob::getCoverComments() const{ return comments; }
 inline const fxStr& SendFaxJob::getCoverVoiceNumber() const{ return voicenumber; }
+inline const fxStr& SendFaxJob::getCoverFromLocation() const{ return fromlocation; }
+inline const fxStr& SendFaxJob::getCoverFromFax() const	{ return fromfax; }
+inline const fxStr& SendFaxJob::getCoverFromVoice() const{ return fromvoice; }
+inline const fxStr& SendFaxJob::getCoverFromCompany() const{ return fromcompany; }
 inline float SendFaxJob::getPageWidth() const		{ return pageWidth; }
 inline float SendFaxJob::getPageLength() const		{ return pageLength; }
 inline const fxStr& SendFaxJob::getPageSize() const	{ return pageSize; }

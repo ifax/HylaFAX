@@ -28,7 +28,7 @@
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
-.TH FAXCOVER 1 "November 14, 1996"
+.TH FAXCOVER 1 "January 06, 2001"
 .SH NAME
 faxcover \- generate a \*(Ps cover page for an outgoing facsimile
 .SH SYNOPSIS
@@ -70,22 +70,25 @@ symbols are defined:
 \fIto-voice-number\fP	person's voice phone number	\fIfrom-voice-number\fP	sender's voice phone number
 \fIto-fax-number\fP	destination fax phone number	\fIfrom-fax-number\fP	sender's fax phone number
 \fIcomments\fP	unbroken comment string	\fIcommentsX\fP	\fI\s-1X\s+1\fP'th line of comments
-\fIregarding\fP	Re: subject	\fIpage-count\fP	# pages other than cover page
-\fIpageWidth\fP	page width in millimeters	\fItodays-date\fP	current date and time
-\fIpageLength\fP	page length in millimeters
+\fIregarding\fP	Re: subject	\fICommentX\fP	similar to \fIcommentsX\fP
+\fIpageWidth\fP	page width in millimeters	\fIpage-count\fP	# pages other than cover page
+\fIpageLength\fP	page length in millimeters	\fItodays-date\fP	current date and time
 .fi
 .PP
 If the
 .I comments
-string is longer than 35 characters, it
-is broken, on word boundaries, into multiple \*(Ps strings
+string is longer than
+.I maxlencomments
+characters, it is broken, on word boundaries or instances of ``\\n\'\', into multiple \*(Ps strings
 .I comments\s-1X\s+1
 where
 .I \s-1X\s+1
 is the line number; e.g.
 .I comments2
 for the second line of comments.
-By default
+Long substrings without whitespace which exceed
+.I maxlencomments
+are also broken. By default
 .I faxcover
 will generate 20
 .I comments\s-1X\s+1
@@ -93,6 +96,27 @@ strings, emitting null string values for empty lines.
 This number can be changed with the
 .B \-m
 option; see below.
+.I maxlencomments
+is changed with the
+.B \-z
+option; see below.
+.PP
+Note that use of
+.I commentsX
+with non-fixed-width fonts can lead to spatial problems where characters
+run off the edge of the generated cover page.  In such cases, use of
+.I BreakIntoLines
+(see below) may be a more suitable approach.
+.PP
+.I CommentX
+is similar to
+.I commentsX
+except that its values are created only by breaking
+.I comments
+on instances of ``\\n\'\' and not otherwise.
+.I maxlines
+does not affect
+.I CommentX
 .PP
 .I faxcover
 also emits a \*(Ps procedure for breaking comment strings into
@@ -190,10 +214,25 @@ Use
 .I location
 for the geographic location of the destination company.
 .TP 12
+.BI \-L " location"
+Use
+.I location
+for the geographic location of the sender's company.
+.TP 12
+.BI \-m " maxlines"
+indicates the maximum number of
+.I commentsX
+lines to generate.
+.TP 12
 .BI \-n " number"
 Use
 .I number
 for the destination fax machine number.
+.TP 12
+.BI \-N " number"
+Use
+.I number
+for the sender's fax machine number.
 .TP 12
 .BI \-p " count"
 Use
@@ -262,27 +301,43 @@ Use
 .I number
 for the receiver's voice phone number.
 .TP 12
+.BI \-V " number"
+Use
+.I number
+for the sender's voice phone number.
+.TP 12
 .BI \-x " company"
 Use
 .I company
 for the destination company name.
+.TP 12
+.BI \-X " company"
+Use
+.I company
+for the sender's company name.
+.TP 12
+.BI \-z " maxlencomments"
+indicates the maximum length in number of characters allowed in a
+.I commentsX
+string.
 .SH DIAGNOSTICS
 Complaints about not being able to locate a template file.
 .SH FILES
 .ta \w'${LIBDATA}/faxcover.ps    'u
 ~/.faxdb	personal fax number database
 .br
+~/.hylarc	per-user configuration file
+.br
+${LIBDATA}/hyla.conf	system-wide configuration file
+.br
 ${LIBDATA}/faxcover.ps	default cover page template
 .br
 ${LIBDATA}/pagesizes	page size database
 .SH BUGS
-Information not supplied on the command line is
-currently obtained from the
-.I ~/.faxdb
-file.
 .I faxcover
-should read configuration parameters from the standard \*(Fx
-configuration files.
+should be able to determine the appropriate length of
+.I commentsX
+strings by using font metric information.
 .SH "SEE ALSO"
 .IR hylafax-client (1),
 .IR sendfax (1)

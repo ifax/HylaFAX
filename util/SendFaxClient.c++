@@ -216,6 +216,10 @@ SendFaxClient::makeCoverPage(const SendFaxJob& job, fxStr& file, fxStr& emsg)
 	addarg(av, ac, "-t", job.getCoverName());
 	addarg(av, ac, "-v", job.getCoverVoiceNumber());
 	addarg(av, ac, "-x", job.getCoverCompany());
+	addarg(av, ac, "-L", job.getCoverFromLocation());
+	addarg(av, ac, "-N", job.getCoverFromFax());
+	addarg(av, ac, "-V", job.getCoverFromVoice());
+	addarg(av, ac, "-X", job.getCoverFromCompany());
 	fxStr pages;
 	if (totalPages > 0) {
 	    pages = fxStr::format("%u", totalPages);

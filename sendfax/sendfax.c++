@@ -86,7 +86,7 @@ sendFaxApp::run(int argc, char** argv)
     int verbose = 0;
     SendFaxJob& proto = getProtoJob();
     db = new FaxDB(tildeExpand(dbName));
-    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:P:r:s:t:T:V:x:y:12lmnpvwDENR")) != -1)
+    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:P:r:s:t:T:U:V:W:x:X:y:Y:12lmnpvwDENR")) != -1)
     switch (c) {
     case '1':			// restrict to 1D-encoded data
         proto.setDesiredDF(0);
@@ -172,6 +172,9 @@ sendFaxApp::run(int argc, char** argv)
     case 'T':			// times to dial telephone
         proto.setMaxDials(atoi(optarg));
         break;
+    case 'U':			// cover page: sender's voice number
+	proto.setCoverFromVoice(optarg);
+	break;
     case 'v':			// verbose mode
         verbose++;
         setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
@@ -184,12 +187,21 @@ sendFaxApp::run(int argc, char** argv)
     case 'w':			// wait for job to complete
         waitForJob = true;
         break;
+    case 'W':			// cover page: sender's fax number
+	proto.setCoverFromFax(optarg);
+	break;
     case 'x':			// cover page: to's company
         proto.setCoverCompany(optarg);
         break;
+    case 'X':			// cover page: sender's company
+	proto.setCoverFromCompany(optarg);
+	break;
     case 'y':			// cover page: to's location
         proto.setCoverLocation(optarg);
         break;
+    case 'Y':			// cover page: sender's location
+	proto.setCoverFromLocation(optarg);
+	break;
     case '?':
         usage();
         /*NOTREACHED*/

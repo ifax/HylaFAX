@@ -28,7 +28,7 @@
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
-.TH SENDFAX 1 "June 21, 1996"
+.TH SENDFAX 1 "January 06, 2001"
 .SH NAME
 sendfax \- submit a facsimile job for transmission
 .SH SYNOPSIS
@@ -550,6 +550,13 @@ Make no more than
 calls in attempting to send the facsimile.  By default, HylaFAX will 
 redial 12 times before killing a job.
 .TP 12
+.BI \-U " voice-no"
+Pass
+.I voice-no
+to the
+.IR faxcover (1)
+program as the sender's voice number.
+.TP 12
 .BI \-V " voice-no"
 Pass
 .I voice-no
@@ -562,6 +569,13 @@ Wait for the job to complete before ending the sendfax session.
 If this option is used, the sendfax process will not terminate until
 the job is completed.
 .TP 12
+.BI \-W " fax-no"
+Pass
+.I fax-no
+to the
+.IR faxcover (1)
+program as the sender's fax number.
+.TP 12
 .BI \-x " company"
 Pass
 .I company
@@ -569,12 +583,26 @@ to the
 .IR faxcover (1)
 program as the destination company name.
 .TP 12
+.BI \-X " company"
+Pass
+.I company
+to the
+.IR faxcover (1)
+program as the sender's company name.
+.TP 12
 .BI \-y " location"
 Pass
 .I location
 to the
 .IR faxcover (1)
 program as the destination company's location.
+.TP 12
+.BI \-Y " location"
+Pass
+.I location
+to the
+.IR faxcover (1)
+program as the sender's company location.
 .TP 12
 .B \-v
 Print information on the standard output
@@ -600,7 +628,8 @@ in that order, with later-read settings superceding any
 that may have been previously read.
 Configuration files follow the conventions described in
 .IR hylafax-client (1).
-The following configuration parameters are recognized:
+The following configuration parameters are recognized.
+Parameters marked with \(S1 are not available in ${LIBDATA}/hfaxd.conf :
 .sp .5
 .nf
 .ta \w'AutoCoverPage    'u +\w'boolean    'u +\w'\s-1\fIsee below\fP\s+1    'u
@@ -609,11 +638,15 @@ AutoCoverPage	boolean	\s-1Yes\s+1	automatically generate cover page
 ChopThreshold	float	\s-13.0\s+1	page chopping threshold
 CoverCmd	string	\s-1\fIsee below\fP\s+1	pathname of cover sheet program
 Cover-Comments	string	\-	cover page comments string
-Cover-Company	string	\-	cover page company name string
-Cover-Location	string	\-	cover page company location string
+Cover-Company\(S1	string	\-	cover page to-company name string
+Cover-Location\(S1	string	\-	cover page to-company location string
 Cover-Regarding	string	\-	cover page regarding string
 Cover-Template	string	\-	cover page template filename
-Cover-Voice	string	\-	cover page voice number string
+Cover-Voice\(S1	string	\-	cover page to-voice number string
+Cover-From-Company\(S1	string	\-	cover page from-company string
+Cover-From-Location\(S1	string	\-	cover page from-location string
+Cover-From-Voice\(S1	string	\-	cover page from-voice number string
+Cover-From-Fax\(S1	string	\-	cover page from-fax number string
 DateFormat	string	\-	cover page date format string
 DesiredEC	boolean	\-	desired use of \s-1ECM\s+1
 DesiredMST	string	\-	desired minimum scanling time to use
@@ -671,11 +704,11 @@ The comments string to pass to the cover sheet program when
 auto-generating cover pages.
 .TP 16
 .B Cover-Company
-The company name string to pass to the cover sheet program when
+The to-company name string to pass to the cover sheet program when
 auto-generating cover pages.
 .TP 16
 .B Cover-Location
-The company location string to pass to the cover sheet program when
+The to-company location string to pass to the cover sheet program when
 auto-generating cover pages.
 .TP 16
 .B Cover-Regarding
@@ -687,7 +720,23 @@ The absolute pathname of a cover sheet template file to use
 in auto-generating cover pages.
 .TP 16
 .B Cover-Voice
-The voice number string to pass to the cover sheet program when
+The to-voice number string to pass to the cover sheet program when
+auto-generating cover pages.
+.TP 16
+.B Cover-From-Company
+The from-company name string to pass to the cover sheet program
+when auto-generating cover pages.
+.TP 16
+.B Cover-From-Location
+The from-location string to pass to the cover sheet program when
+auto-generating cover pages.
+.TP 16
+.B Cover-From-Voice
+The from-voice number string to pass to the cover sheet program when
+auto-generating cover pages.
+.TP 16
+.B Cover-From-Fax
+The from-fax number string to pass to the cover sheet program when
 auto-generating cover pages.
 .TP 16
 .B DateFormat

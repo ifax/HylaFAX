@@ -45,6 +45,10 @@ private:
     fxStr	toVoiceNumber;	// to's voice number
     fxStr	toLocation;	// to's geographical location
     fxStr	toCompany;	// to's company/institution
+    fxStr	fromFaxNumber;	// sender's fax number
+    fxStr	fromVoiceNumber;	// sender's voice number
+    fxStr	fromLocation;	// sender's geographical location
+    fxStr	fromCompany;	// sender's company/institution
     fxStr	regarding;	// fax is regarding...
     fxStr	comments;	// general comments
     fxStr	sender;		// sender's identity
@@ -53,6 +57,7 @@ private:
     float	pageWidth;	// page width (mm)
     float	pageLength;	// page length (mm)
     int		maxcomments;	// max # of comment lines
+    int		maxlencomments; // max length of comment lines
 
     static const char* prologue;
 
@@ -81,6 +86,7 @@ faxCoverApp::faxCoverApp()
 {
     db = 0;
     maxcomments = 20;
+    maxlencomments = 35;
 }
 
 faxCoverApp::~faxCoverApp()
@@ -103,7 +109,7 @@ faxCoverApp::initialize(int argc, char** argv)
 	cover = cp;
 
     setupPageSize("default");
-    while ((c = getopt(argc, argv, "C:D:n:t:f:c:p:l:m:r:s:v:x:")) != -1)
+    while ((c = getopt(argc, argv, "C:D:L:N:V:X:n:t:f:c:p:l:m:z:r:s:v:x:")) != -1)
 	switch (c) {
 	case 's':			// page size
 	    setupPageSize(optarg);
@@ -114,8 +120,23 @@ faxCoverApp::initialize(int argc, char** argv)
 	case 'D':			// date format string
 	    dateFmt = optarg;
 	    break;
+	case 'L':			// sender's geographic location
+	    fromLocation = optarg;
+	    break;
+	case 'N':			// sender's fax number
+	    fromFaxNumber = optarg;
+	    break;
+	case 'V':			// sender's voice number
+	    fromVoiceNumber = optarg;
+	    break;
+	case 'X':			// sender's company/institution
+	    fromCompany = optarg;
+	    break;
 	case 'm':			// max # comment lines
 	    maxcomments = atoi(optarg);
+	    break;
+	case 'z':			// max length comment lines
+	    maxlencomments = atoi(optarg);
 	    break;
 	case 'n':			// fax number
 	    toFaxNumber = optarg;
@@ -181,11 +202,16 @@ faxCoverApp::usage()
 	" [-p #pages]"
 	" [-l to-location]"
 	" [-m maxcomments]"
+	" [-z maxlencomments]"
 	" [-r regarding]"
 	" [-v to-voice-number]"
 	" [-x to-company]"
 	" [-C template-file]"
 	" [-D date-format]"
+	" [-L from-location]"
+	" [-N from-fax-number]"
+	" [-V from-voice-number]"
+	" [-X from-company]"
 	" [-s pagesize]"
 	" -f from"
 	" -n fax-number"
@@ -235,6 +261,51 @@ const char* faxCoverApp::prologue = "\
     -1 1 { cbuf exch 7 exch 48 add put cbuf cvn exch def } for\n\
     1 add exch 1 exch { cbuf exch 7 exch 48 add put cbuf cvn () def } for\n\
 } def\n\
+/XtoCommentsX {\n\
+% <X> XtoCommentsX <commentsX>\n\
+    3 string cvs (comments) dup length dup 4 1 roll\n\
+    2 index length add string dup 0 4 -1 roll\n\
+    putinterval dup 4 -2 roll putinterval\n\
+} def\n\
+/BreakIntoCommentsX {\n\
+% <maxlines> <text> BreakIntoCommentsX -\n\
+    exch 1 1 3 2 roll\n\
+    { XtoCommentsX cvn () def } for\n\
+    dup length string copy 0 1 index 0 4 1 roll\n\
+    {   linebreak 0 get eq {\n\
+            exch dup 0 3 index getinterval 4 -1 roll 1 add dup 5 1 roll\n\
+            XtoCommentsX cvn exch def dup length 2 index sub 1 sub\n\
+            2 index 1 add exch getinterval exch pop 0\n\
+        }{ 1 add } ifelse\n\
+        dup MaxLenComments gt {\n\
+            exch MaxLenComments 1 sub -1 0 {\n\
+                2 copy get wordbreak 0 get eq {\n\
+                    mark 4 1 roll\n\
+                    {   2 copy 1 add 1 index length 1 index 1 add sub\n\
+                        getinterval 5 -1 roll search { 3 -2 roll pop pop } if\n\
+                        length MaxLenComments gt { 4 -1 roll exec\n\
+                        }{ false } ifelse\n\
+                    }\n\
+                    { true }\n\
+                    5 1 roll linebreak 1 index wordbreak 7 3 roll exec\n\
+                    counttomark 1 add 4 roll cleartomark { pop exit } if\n\
+                    2 copy 1 add 0 exch getinterval 5 -1 roll\n\
+                    1 add dup 6 1 roll XtoCommentsX cvn exch def\n\
+                    2 copy 1 add 1 index length 1 index sub getinterval\n\
+                    3 -1 roll pop 3 -2 roll 1 add sub exch exit\n\
+                } if\n\
+                pop\n\
+            } for\n\
+            exch dup MaxLenComments gt {\n\
+                pop dup 0 MaxLenComments getinterval 3 -1 roll\n\
+                1 add dup 4 1 roll XtoCommentsX cvn exch def\n\
+                dup length MaxLenComments sub\n\
+                MaxLenComments exch getinterval 1\n\
+            } if\n\
+        }if\n\
+    } forall\n\
+    pop exch 1 add XtoCommentsX cvn exch def\n\
+} def\n\
 ";
 
 void
@@ -263,7 +334,7 @@ faxCoverApp::makeCoverSheet()
     printf("%%%%Pages: 1 +1\n");
     printf("%%%%EndComments\n");
     printf("%%%%BeginProlog\n");
-    printf("100 dict begin\n");
+    printf("%i dict begin\n", maxcomments*2 + 80);
     printf("%s", prologue);
     emitToDefs(toName, toName != "" ? db->find(toName) : (FaxDBRecord*) NULL);
     printf("/pageWidth %.2f def\n", pageWidth);
@@ -273,7 +344,10 @@ faxCoverApp::makeCoverSheet()
     emitDateDefs();
     coverDef("regarding", regarding);
     emitCommentDefs();
-    printf("%i comments BreakIntoCommentX", maxcomments);
+    printf("/MaxComments %i def\n", maxcomments);
+    printf("MaxComments comments BreakIntoCommentX\n");
+    printf("/MaxLenComments %i def\n", maxlencomments);
+    printf("MaxComments comments BreakIntoCommentsX\n");
     printf("%%%%EndProlog\n");
     printf("%%%%Page: \"1\" 1\n");
     // copy prototype cover page
@@ -282,7 +356,7 @@ faxCoverApp::makeCoverSheet()
     while ((n = read(fd, buf, sizeof (buf))) > 0) 
 	fwrite(buf, n, 1, stdout);
     Sys::close(fd);
-    printf("end\n");
+    printf("\nend\n");
 }
 
 void
@@ -313,11 +387,6 @@ faxCoverApp::emitToDefs(const char* to, FaxDBRecord* rec)
 void
 faxCoverApp::emitFromDefs(FaxDBRecord* rec)
 {
-    fxStr fromCompany;
-    fxStr fromLocation;
-    fxStr fromFaxNumber;
-    fxStr fromVoiceNumber;
-
     if (rec) {
 	fromCompany = rec->find("Company");
 	fromLocation = rec->find("Location");

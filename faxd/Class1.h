@@ -64,6 +64,7 @@ protected:
     bool	recvdDCN;		// received DCN frame
     bool	messageReceived;	// expect/don't expect message carrier
     u_int	lastPPM;		// last PPM during receive
+    bool	sendCFR;		// received TCF was not confirmed
 
     static const u_int modemPFMCodes[8];// map T.30 FCF to Class 2 PFM
     static const u_int modemPPMCodes[8];// map T.30 FCF to Class 2 PPM
@@ -167,8 +168,6 @@ public:
     bool	recvPage(TIFF*, int& ppm, fxStr& emsg);
     bool	recvEnd(fxStr& emsg);
     void	recvAbort();
-    void	trainingSucceeded();
-    void	trainingFailed();
 
 // polling support
     bool	requestToPoll(fxStr&);

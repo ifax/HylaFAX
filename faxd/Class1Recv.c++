@@ -86,6 +86,7 @@ Class1Modem::recvBegin(fxStr& emsg)
     messageReceived = false;			// expect message carrier
     recvdDCN = false;				// haven't seen DCN
     lastPPM = FCF_DCN;				// anything will do
+    sendCFR = false;				// TCF was not received
 
     return FaxModem::recvBegin(emsg) && recvIdentification(
 	0, fxStr::null,
@@ -163,6 +164,7 @@ Class1Modem::recvIdentification(
 			if (frame.getFCF() == FCF_DCN) {
 			    emsg = "RSPREC error/got DCN";
 			    recvdDCN = true;
+				return (false);
 			} else			// XXX DTC/DIS not handled
 			    emsg = "RSPREC invalid response received";
 			break;
@@ -301,31 +303,24 @@ Class1Modem::recvTraining()
 	}
 	(void) waitFor(AT_NOCARRIER);	// wait for message carrier to drop
     }
+    /*
+     * Send training response; we follow the spec
+     * by delaying 75ms before switching carriers.
+     */
+    pause(conf.class1TCFResponseDelay);
+    if (ok) {
+	/*
+	 * Send CFR later so that we can cancel
+	 * session by DCN if it's needed. 
+	 */
+	sendCFR = true;
+	protoTrace("TRAINING succeeded");
+    } else {
+	transmitFrame(FCF_FTT|FCF_RCVR);
+	sendCFR = false;
+	protoTrace("TRAINING failed");
+    }
     return (ok);
-}
-
-/*
- * Send training response (success); we follow the spec
- * by delaying 75ms before switching carriers.
- */
-void
-Class1Modem::trainingSucceeded()
-{
-    pause(conf.class1TCFResponseDelay);
-    transmitFrame(FCF_CFR|FCF_RCVR);
-    protoTrace("TRAINING succeeded");
-}
-
-/*
- * Send training response (failure); we follow the spec
- * by delaying 75ms before switching carriers.
- */
-void
-Class1Modem::trainingFailed()
-{
-    pause(conf.class1TCFResponseDelay);
-    transmitFrame(FCF_FTT|FCF_RCVR);
-    protoTrace("TRAINING failed");
 }
 
 /*
@@ -367,6 +362,10 @@ top:
     do {
 	u_int timer = conf.t2Timer;
 	if (!messageReceived) {
+	    if (sendCFR ) {
+		transmitFrame(FCF_CFR|FCF_RCVR);
+		sendCFR = false;
+	    }
 	    /*
 	     * Look for message carrier and receive Phase C data.
 	     */
@@ -467,8 +466,6 @@ top:
 		    && recvDCSFrames(frame)
 		    && recvTraining()
 		);
-		if (messageReceived) trainingFailed();
-		else trainingSucceeded();
 		break;
 	    case FCF_MPS:			// MPS
 	    case FCF_EOM:			// EOM
@@ -566,10 +563,8 @@ top:
 	 * timeout, we need to achieve CONNECT first, just
 	 * as we did following ATA back in the beginning.
 	 */
-	if (atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 0) == AT_CONNECT && recvBegin(emsg)) {
-	    trainingSucceeded();
+	if (atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 0) == AT_CONNECT && recvBegin(emsg))
 	    goto top;
-	} else trainingFailed();
     } else
 	emsg = "T.30 T2 timeout, expected page not received";
     return (false);

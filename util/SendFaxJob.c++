@@ -64,6 +64,10 @@ SendFaxJob::SendFaxJob(const SendFaxJob& other)
     , sendTime(other.sendTime)
     , tagline(other.tagline)
     , pageSize(other.pageSize)
+    , fromlocation(other.fromlocation)
+    , fromfax(other.fromfax)
+    , fromvoice(other.fromvoice)
+    , fromcompany(other.fromcompany)
 {
     notify = other.notify;
     autoCover = other.autoCover;
@@ -110,6 +114,10 @@ const SendFaxJob::SFJ_stringtag SendFaxJob::strings[] = {
 { "cover-company",	&SendFaxJob::company,		NULL },
 { "cover-location",	&SendFaxJob::location,		NULL },
 { "cover-voice",	&SendFaxJob::voicenumber,	NULL },
+{ "cover-from-location",	&SendFaxJob::fromlocation,	NULL },
+{ "cover-from-fax",	&SendFaxJob::fromfax,		NULL },
+{ "cover-from-voice",	&SendFaxJob::fromvoice,		NULL },
+{ "cover-from-company",	&SendFaxJob::fromcompany,	NULL },
 };
 const SendFaxJob::SFJ_numbertag SendFaxJob::numbers[] = {
 { "maxtries",		&SendFaxJob::maxRetries,	FAX_RETRIES },
@@ -299,6 +307,10 @@ void SendFaxJob::setCoverCompany(const char* s)		{ company = s; }
 void SendFaxJob::setCoverComments(const char* s)	{ comments = s; }
 void SendFaxJob::setCoverRegarding(const char* s)	{ regarding = s; }
 void SendFaxJob::setCoverVoiceNumber(const char* s)	{ voicenumber = s; }
+void SendFaxJob::setCoverFromLocation(const char* s)	{ fromlocation = s; }
+void SendFaxJob::setCoverFromFax(const char* s)		{ fromfax = s; }
+void SendFaxJob::setCoverFromVoice(const char* s)	{ fromvoice = s; }
+void SendFaxJob::setCoverFromCompany(const char* s)	{ fromcompany = s; }
 
 bool
 SendFaxJob::setPageSize(const char* name)
