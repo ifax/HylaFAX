@@ -934,8 +934,9 @@ Class1Modem::parseQuery(const char* cp, Class1Cap caps[])
 	int r = v;
 	if (cp[0] == '-') {				// <low>-<high>
 	    cp++;
-	    if (!isdigit(cp[0]))
+	    if (!isdigit(cp[0])) {
 		return (false);
+	    }
 	    r = 0;
 	    do {
 		r = r*10 + (cp[0] - '0');
