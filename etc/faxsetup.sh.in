@@ -1611,7 +1611,7 @@ isOK()
 
 if onServer; then
     x=`grep "^$FAX:" $PASSWD | cut -d: -f3`
-    if [ "$PASSWD" == "/etc/master.passwd" ]; then
+    if [ "$PASSWD" = "/etc/master.passwd" ]; then
 	PARAMLOC=9;
     else
 	PARAMLOC=6;
