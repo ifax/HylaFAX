@@ -2284,7 +2284,7 @@ EOF
         header_ver=0
         lib_ver=""
 	eval `./a.out | \
-	    sed -n -e 's/header_ver=\([0-9]\+\) lib_ver=.*Version *\([0-9]*\.[0-9]\).*/\
+	    sed -n -e 's/header_ver=\([0-9][0-9]*\) lib_ver=.*Version *\([0-9][0-9]*\.[0-9]\).*/\
                        header_ver=\1;lib_ver=\2/p'`
 	Note "  Found tiffio.h version ${header_ver}"
 	Note "  Found libtiff version ${lib_ver}"
@@ -3571,7 +3571,7 @@ if [ -z "$DIR_LOCKS" ]; then
     "
     case $TARGET in
     *-aix*)     LOCKDIRS="/etc/locks $LOCKDIRS";;
-    *-linux*)   LOCKDIRS="/var/lock $LOCKDIRS";;
+    *-linux*)   LOCKDIRS="/var/lock/uucp /var/lock $LOCKDIRS";;
     *-sco*)     LOCKDIRS="/usr/spool/uucp $LOCKDIRS";;
     esac
     DIR_LOCKS=
