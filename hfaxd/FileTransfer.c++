@@ -556,7 +556,7 @@ HylaFAXServer::storeUniqueCmd(bool isTemp)
 	} else
 	    perror_reply(553, filename, errno);
     } else
-	reply(553, emsg);
+	reply(553, "%s", (const char*)emsg);
 }
 
 /*

@@ -172,7 +172,6 @@ static const tab parmtab[] = {
 { "TOUSER",       T_TO_USER,	  false, true, "[<string>]" },
 { "TOVOICE",      T_TO_VOICE,	  false,false, "[<string>]" },
 { "USECONTCOVER", T_USE_CONTCOVER,false, true, "[YES|NO]" },
-{ "USEXVRES",     T_USE_XVRES,	  false, true, "[YES|NO]" },
 { "USEECM",       T_USE_ECM,	  false, true, "[YES|NO]" },
 { "USETAGLINE",   T_USE_TAGLINE,  false, true, "[YES|NO]" },
 { "USRKEY",       T_USRKEY,	  false, true, "[<string>]" },
@@ -405,7 +404,7 @@ HylaFAXServer::cmd(Token t)
 	}
 	break;
     case T_PORT:			// port for data transfer
-	if (SPACE() && hostPort() && CRLF()) {
+	if (SP() && hostPort() && CRLF()) {
 	    portCmd();
 	    return (true);
 	}
@@ -551,7 +550,7 @@ HylaFAXServer::cmd(Token t)
 	}
 	break;
     case T_CHMOD:			// set file protection
-	if (SPACE() && STRING(s, "filename") && SPACE() && NUMBER(n)) {
+	if (SP() && STRING(s, "filename") && SP() && NUMBER(n)) {
 	    chmodCmd(s, (u_int) n);
 	    return (true);
 	}
@@ -783,7 +782,7 @@ HylaFAXServer::cmd(Token t)
 	    if (checkJobState(curJob))
 		jstatCmd(*curJob);
 	    return (true);
-	} else if (SPACE() && getToken(T_STRING, "parameter name")) {
+	} else if (SP() && getToken(T_STRING, "parameter name")) {
 	    tokenBody.raisecase();
 	    const tab* p = lookup(parmtab, N(parmtab), tokenBody);
 	    if (p == NULL) {
@@ -796,7 +795,7 @@ HylaFAXServer::cmd(Token t)
 	}
 	break;
     case T_JGPARM:			// set/query job group parameter
-	if (SPACE() && getToken(T_STRING, "parameter name")) {
+	if (SP() && getToken(T_STRING, "parameter name")) {
 	    tokenBody.raisecase();
 	    const tab* p = lookup(parmtab, N(parmtab), tokenBody);
 	    if (p == NULL) {
@@ -809,7 +808,7 @@ HylaFAXServer::cmd(Token t)
 	}
 	break;
     case T_SITE:			// site-specific command
-	if (SPACE() && getToken(T_STRING, "site command")) {
+	if (SP() && getToken(T_STRING, "site command")) {
 	    tokenBody.raisecase();
 	    const tab* p = lookup(sitetab, N(sitetab), tokenBody);
 	    if (p == NULL) {
@@ -822,7 +821,7 @@ HylaFAXServer::cmd(Token t)
 	}
 	break;
     case T_ANSWER:			// answer phone on specific line
-	if (checkadmin(T_ANSWER) && SPACE() && STRING(s, "modem")) {
+	if (checkadmin(T_ANSWER) && SP() && STRING(s, "modem")) {
 	    fxStr how;
 	    if (opt_CRLF())
 		how = "any";
@@ -833,7 +832,7 @@ HylaFAXServer::cmd(Token t)
 	}
 	break;
     case T_CHOWN:			// assign file ownership
-	if (checkadmin(T_CHOWN) && SPACE() && STRING(s, "filename")) {
+	if (checkadmin(T_CHOWN) && SP() && STRING(s, "filename")) {
 	    fxStr who;
 	    if (string_param(who, "user")) {
 		chownCmd(s, who);
@@ -842,11 +841,11 @@ HylaFAXServer::cmd(Token t)
 	}
 	break;
     case T_DISABLE:			// disable outbound-usage of modem
-	if (checkadmin(T_DISABLE) && SPACE() && STRING(s, "modem")) {
+	if (checkadmin(T_DISABLE) && SP() && STRING(s, "modem")) {
 	    fxStr reason;
 	    if (opt_CRLF())
 		reason = "<unspecified reason>";
-	    else if (!SPACE() || !multi_STRING(reason))
+	    else if (!SP() || !multi_STRING(reason))
 		break;
 	    disableModemCmd(s, reason);
 	    return (true);
@@ -859,11 +858,11 @@ HylaFAXServer::cmd(Token t)
 	}
 	break;
     case T_SHUT:			// shutdown server
-	if (checkadmin(T_SHUT) && SPACE() && STRING(s, "shutdown-time")) {
+	if (checkadmin(T_SHUT) && SP() && STRING(s, "shutdown-time")) {
 	    fxStr reason;
 	    if (opt_CRLF())
 		reason = "<unspecified reason>";
-	    else if (!SPACE() || !multi_STRING(reason))
+	    else if (!SP() || !multi_STRING(reason))
 		break;
 	    const char* cp = s;
 	    if (s.length() == 3 && strcasecmp(cp, "NOW") == 0) {
@@ -915,12 +914,12 @@ HylaFAXServer::site_cmd(Token t)
 
     switch (t) {
     case T_ADDUSER:
-	if (checkadmin(T_ADDUSER) && SPACE() && STRING(s, "user-spec")) {
+	if (checkadmin(T_ADDUSER) && SP() && STRING(s, "user-spec")) {
 	    fxStr pass;
 	    if (opt_CRLF()) {
 		addUserCmd(s, "", "");
 		return (true);
-	    } else if (SPACE() && STRING(pass, "password")) {
+	    } else if (SP() && STRING(pass, "password")) {
 		fxStr apass;
 		if (opt_CRLF()) {
 		    addUserCmd(s, pass, "");
@@ -951,12 +950,12 @@ HylaFAXServer::site_cmd(Token t)
 	}
 	break;
     case T_CONFIG:
-	if (checkadmin(T_CONFIG) && SPACE() && STRING(s, "modem")) {
+	if (checkadmin(T_CONFIG) && SP() && STRING(s, "modem")) {
 	    fxStr config;
 	    if (opt_CRLF()) {
 		configQueryCmd(s);
 		return (true);
-	    } else if (SPACE() && multi_STRING(config)) {
+	    } else if (SP() && multi_STRING(config)) {
 		configCmd(s, config);
 		return (true);
 	    }
@@ -964,7 +963,7 @@ HylaFAXServer::site_cmd(Token t)
 	break;
     case T_TRIGGER:
 	if (string_param(s, "trigger-spec")) {
-	    logcmd(t, s);
+	    logcmd(t, "%s", (const char*)s);
 	    triggerCmd("%s", (const char*) s);
 	    return (true);
 	}
@@ -997,7 +996,7 @@ HylaFAXServer::param_cmd(Token t)
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
 	    return (true);
-	} else if (SPACE() && getToken(T_STRING, "time specification")) {
+	} else if (SP() && getToken(T_STRING, "time specification")) {
 	    tokenBody.raisecase();
 	    if (tokenBody == "NOW") {
 		if (CRLF() && setJobParameter(*curJob, t, (time_t) 0)) {
@@ -1108,7 +1107,7 @@ HylaFAXServer::param_cmd(Token t)
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
 	    return (true);
-	} else if (SPACE() && multi_STRING(s) && CRLF() &&
+	} else if (SP() && multi_STRING(s) && CRLF() &&
 	  setJobParameter(*curJob, t, s)) {
 	    reply(213, "%s set to \"%s\".", parmToken(t), (const char*) s);
 	    return (true);
@@ -1117,16 +1116,6 @@ HylaFAXServer::param_cmd(Token t)
     case T_USE_ECM:
     case T_USE_TAGLINE:
     case T_USE_CONTCOVER:
-	if (opt_CRLF()) {
-	    replyJobParamValue(*curJob, 213, t);
-	    return (true);
-	} else if (boolean_param(b) &&
-	  setJobParameter(*curJob, t, b)) {
-	    reply(213, "%s set to %s.", parmToken(t), b ? "YES" : "NO");
-	    return (true);
-	}
-	break;
-    case T_USE_XVRES:
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
 	    return (true);
@@ -1168,12 +1157,12 @@ HylaFAXServer::param_cmd(Token t)
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
 	    return (true);
-	} else if (SPACE() && STRING(s, "polling selector")) {
+	} else if (SP() && STRING(s, "polling selector")) {
 	    fxStr pwd;
 	    if (opt_CRLF()) {
 		addPollOp(*curJob, s, "");	// sep but no pwd
 		return (true);
-	    } else if (SPACE() && pwd_param(pwd) && CRLF()) {
+	    } else if (SP() && pwd_param(pwd) && CRLF()) {
 		addPollOp(*curJob, s, pwd);	// sep & pwd
 		return (true);
 	    }
@@ -1200,7 +1189,7 @@ HylaFAXServer::param_cmd(Token t)
 bool
 HylaFAXServer::string_param(fxStr& s, const char* what)
 {
-    return SPACE() && STRING(s, what) && CRLF();
+    return SP() && STRING(s, what) && CRLF();
 }
 
 /*
@@ -1209,7 +1198,7 @@ HylaFAXServer::string_param(fxStr& s, const char* what)
 bool
 HylaFAXServer::number_param(long& n)
 {
-    return SPACE() && NUMBER(n) && CRLF();
+    return SP() && NUMBER(n) && CRLF();
 }
 
 /*
@@ -1218,7 +1207,7 @@ HylaFAXServer::number_param(long& n)
 bool
 HylaFAXServer::boolean_param(bool& b)
 {
-    return SPACE() && BOOLEAN(b) && CRLF();
+    return SP() && BOOLEAN(b) && CRLF();
 }
 
 /*
@@ -1227,7 +1216,7 @@ HylaFAXServer::boolean_param(bool& b)
 bool
 HylaFAXServer::timespec_param(int ndigits, time_t& t)
 {
-    return SPACE() && TIMESPEC(ndigits, t) && CRLF();
+    return SP() && TIMESPEC(ndigits, t) && CRLF();
 }
 
 /*
@@ -1236,7 +1225,7 @@ HylaFAXServer::timespec_param(int ndigits, time_t& t)
 bool
 HylaFAXServer::pathname_param(fxStr& s)
 {
-    return SPACE() && pathname(s) && CRLF();
+    return SP() && pathname(s) && CRLF();
 }
 
 /*
@@ -1248,7 +1237,7 @@ HylaFAXServer::job_param(fxStr& jid)
     if (opt_CRLF()) {
 	jid = curJob->jobid;
 	return (true);
-    } else if (SPACE() && STRING(jid, "job identifer") && CRLF()) {
+    } else if (SP() && STRING(jid, "job identifer") && CRLF()) {
 	jid.lowercase();
 	return (true);
     }
@@ -1264,7 +1253,7 @@ HylaFAXServer::jgrp_param(fxStr& jgid)
     if (opt_CRLF()) {
 	jgid = curJob->groupid;
 	return (true);
-    } else if (SPACE() && STRING(jgid, "job group identifier") && CRLF()) {
+    } else if (SP() && STRING(jgid, "job group identifier") && CRLF()) {
 	jgid.lowercase();
 	return (true);
     }
@@ -1365,7 +1354,7 @@ HylaFAXServer::getToken(Token wanted, const char* expected)
 	return (true);
 }
 
-bool HylaFAXServer::SPACE()		{ return getToken(T_SP, "<SP>"); }
+bool HylaFAXServer::SP()		{ return getToken(T_SP, "<SP>"); }
 bool HylaFAXServer::COMMA()		{ return getToken(T_COMMA, "\",\""); }
 bool HylaFAXServer::CRLF()		{ return getToken(T_CRLF, "<CRLF>"); }
 bool HylaFAXServer::opt_CRLF()	{ return checkToken(T_CRLF); }

@@ -566,7 +566,7 @@ SNPPServer::cmd(Token t)
 	}
 	break;
     case T_HOLDUNTIL:			// set time to send
-	if (SPACE() && SNPPTime(tv)) {
+	if (SP() && SNPPTime(tv)) {
 	    if (opt_CRLF()) {
 		holdCmd(tv);
 		return (true);
@@ -592,7 +592,7 @@ SNPPServer::cmd(Token t)
 	}
 	break;
     case T_LOGIN:			// login as user
-	if (SPACE() && STRING(s, "login-ID")) {
+	if (SP() && STRING(s, "login-ID")) {
 	    fxStr pwd;
 	    if (opt_CRLF()) {
 		logcmd(t, (const char*) s);
@@ -606,14 +606,14 @@ SNPPServer::cmd(Token t)
 	}
 	break;
     case T_MESSAGE:			// specify 1-line message data
-	if (SPACE() && multi_STRING(s) && CRLF()) {
+	if (SP() && multi_STRING(s) && CRLF()) {
 	    logcmd(t, "%s", (const char*) s);
 	    messageCmd(s);
 	    return (true);
 	}
 	break;
     case T_PAGER:			// specify destination pager ID
-	if (SPACE() && STRING(s, "pager-ID")) {
+	if (SP() && STRING(s, "pager-ID")) {
 	    fxStr pwd;
 	    if (opt_CRLF()) {
 		logcmd(t, "%s", (const char*) s);
@@ -654,7 +654,7 @@ SNPPServer::cmd(Token t)
 	}
 	break;
     case T_SITE:			// site-specific command
-	if (SPACE() && getToken(T_STRING, "site command")) {
+	if (SP() && getToken(T_STRING, "site command")) {
 	    tokenBody.raisecase();
 	    const tab* p = lookup(sitetab, N(sitetab), tokenBody);
 	    if (p == NULL) {
@@ -674,7 +674,7 @@ SNPPServer::cmd(Token t)
 	}
 	break;
     case T_SUBJECT:			// message subject
-	if (SPACE() && multi_STRING(s) && CRLF()) {
+	if (SP() && multi_STRING(s) && CRLF()) {
 	    logcmd(t, "%s", (const char*) s);
 	    subjectCmd(s);
 	    return (true);
@@ -737,7 +737,7 @@ SNPPServer::site_cmd(Token t)
     case T_MODEM:
     case T_NOTIFY:
     case T_NOTIFYADDR:
-	if (SPACE() && multi_STRING(s) && CRLF() && setJobParameter(defJob, t, s)) {
+	if (SP() && multi_STRING(s) && CRLF() && setJobParameter(defJob, t, s)) {
 	    logcmd(t, "%s", (const char*) s);
 	    reply(250, "%s set to \"%s\".", parmToken(t), (const char*) s);
 	    return (true);
@@ -849,7 +849,7 @@ SNPPServer::dataCmd(void)
 	fxStr emsg;
 	u_int seqnum = getDocumentNumbers(1, emsg);
 	if (seqnum == (u_int) -1) {
-	    reply(554, emsg);
+	    reply(554, "%s", (const char*)emsg);
 	    return;
 	}
 	msgFile = fxStr::format("/%s/doc%u.page", FAX_TMPDIR, seqnum);
@@ -1053,7 +1053,7 @@ SNPPServer::messageCmd(const char* msg)
 	fxStr emsg;
 	u_int seqnum = getDocumentNumbers(1, emsg);
 	if (seqnum == (u_int) -1) {
-	    reply(554, emsg);
+	    reply(554, "%s", (const char*)emsg);
 	    return;
 	}
 	msgFile = fxStr::format("/%s/doc%u.page", FAX_TMPDIR, seqnum);
