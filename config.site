@@ -61,7 +61,7 @@
 #DIR_LIBEXEC="/usr/lib/fax"		# directory for libraries&hidden apps
 #DIR_MAN="/usr/local/man"		# directory for manual pages
 #DIR_SPOOL="/var/spool/hylafax"		# directory for spooling area
-#DIR_SBIN="/var/spool/fax/bin"		# directory for system apps
+#DIR_SBIN="/var/spool/hylafax/bin"		# directory for system apps
 #DIR_LOCKS="/usr/spool/locks"		# directory for UUCP lock files
 #FONTMAP="/usr/share/ghostscript/3.33"	# directorys containing Fontmap files
 #PATH_AFM="/usr/lib/DPS/AFM"		# directorys for AFM files
@@ -96,7 +96,7 @@
 #PATH_EGETTY="/bin/egetty"		# pathname of external getty program
 #PATH_SENDMAIL="/usr/lib/sendmail"	# pathname of suitable sendmail program
 #PATH_GSRIP="/usr/local/bin/gs"		# pathname of Ghostscript-based RIP
-#PATH_DPSRIP="/var/spool/fax/bin/ps2fax.exe"	# pathname of DPS-based RIP
+#PATH_DPSRIP="/var/spool/hylafax/bin/ps2fax.exe" # pathname of DPS-based RIP
 #PATH_IMPRIP="/usr/lib/print/psrip"	# pathname of Impressario 2.1 RIP
 #MANSCHEME="sysv-source-cat-strip"	# manual page installation scheme
 #SYSVINIT="auto"		# install SysV-style init support (auto|yes|no)

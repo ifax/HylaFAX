@@ -194,4 +194,7 @@ install: installClient
 # These targets are created during the configuration procedure.
 #
 clobberconfig:
-	-${RM} -f pagesizes xferfaxstats.sh recvstats.sh faxcron.sh
+	-${RM} -f pagesizes xferfaxstats.sh recvstats.sh faxcron.sh \
+		faxrcvd.sh mkcover.sh notify.sh pcl2fax.sh pollrcvd.sh \
+		ps2fax.dps.sh ps2fax.gs.sh ps2fax.imp.sh tiff2fax.sh \
+		wedged.sh

@@ -5,6 +5,8 @@ May 29, 2001
 	[faxd/ModemServer.c++] add additional reset to ModemServer::setupModem
 	sugested by Bernd Proissl <lists@proissl.de>
   (tim) [configure] back out HP fixes. (oops)
+  (tim) [util/Makefile.in] fix clobberconfig:
+	[config.site] change spool/fax to spool/hylafax (missed one, thanks Lee)
 
 May 27, 2001
  (tim) [pkg/Makefile.in make.links make_proto.sh.in cproto.stub.in
