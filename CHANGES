@@ -21,7 +21,8 @@ Changelog for HylaFAX 4.2.1
 * add SHIELDED_DTMF option for CIDNumber (7 Oct 2004)
 * add Class1Resolutions, deprecate Class1ExtendedRes (20 Sep 2004)
 * fix a bug in notify when the job is killed (15 Sep 2004)
-* initialize supplementary groups when switching uid (13 Sep 2004)
+* initialize supplementary groups when switching
+  uid (13 Sep, 8 Dec 2004)
 * fix faxsend to retrain after receiving RTP (9 Sep 2004)
 * fix tiffcheck unit comparison error (1 Sep 2004)
 * fix misconfirmation of some ECM faxes (30 Aug 2004)

@@ -30,6 +30,8 @@
 #include <math.h>
 #include <limits.h>
 #include <sys/file.h>
+#include <grp.h>
+#include <unistd.h>
 
 #include "Sys.h"
 
@@ -634,10 +636,21 @@ faxGettyApp::runGetty(
 	     * parent retakes ownership of the lock file (see below).
 	     */
 	    modemLock->setOwner(getpid());
-	if (setegid(getgid()) < 0)
-	    traceServer("runGetty::setegid: %m");
-	if (seteuid(getuid()) < 0)
-	    traceServer("runGetty::seteuid (child): %m");
+	{
+	  setpwent();
+
+	  uid_t uid = getuid();
+	  gid_t gid = getgid();
+	  const struct passwd *pwd = getpwuid(uid);
+	  if (initgroups(pwd->pw_name, gid) != 0)
+	      traceServer("runGetty::initgroups: %m");
+	  if (setegid(gid) < 0)
+	      traceServer("runGetty::setegid: %m");
+	  if (seteuid(uid) < 0)
+	      traceServer("runGetty::seteuid (child): %m");
+
+	  endpwent();
+	}
 	getty->run(getModemFd(), parentIsInit);
 	_exit(127);
 	/*NOTREACHED*/
