@@ -110,7 +110,7 @@ main(int argc, char* argv[])
 	if (verbose)
 	    printf("input = \"%s\"\n", line);
 	if ((cp = strchr(line, '('))) {
-	    char* ep = strchr(cp, ')');
+	    char* ep = strrchr(cp, ')');
 	    if (ep)
 		*ep = '\0';
 	    fxStr set(line, cp-line);
