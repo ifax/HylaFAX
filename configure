@@ -1855,9 +1855,9 @@ EmitConfigurationDefinitions()
 	echo "#define CONFIG_GETOPTPROTO"
     fi
     test "$CONFIG_BADSELECTPROTO" || {		# int* vs. fd_set*
+	case $TARGET in
 	*-hpux10.20*)	CONFIG_BADSELECTPROTO=no;;
 	*-hpux11*)	CONFIG_BADSELECTPROTO=no;;
-	case $TARGET in
 	*-hpux*)	CONFIG_BADSELECTPROTO=yes;;
 	*)		CONFIG_BADSELECTPROTO=no;;
 	esac

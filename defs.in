@@ -215,8 +215,8 @@ CINCS		= ${VCINCS} ${LCINCS} ${GCINCS}
 
 GCOPTS		= @GCOPTS@ ${OPTIMIZER} @PROTOTYPES@
 GCDEFS		= @ANSICPP@
-GCINCS		= -I. -I${DEPTH} -I${SRCDIR} \
-		    -I${DEPTH}/${TOPSRCDIR}/util -I${TIFFINC} -I${REGEXINC}
+GCINCS		= -I. -I${DEPTH} -I${REGEXINC} -I${SRCDIR} \
+		    -I${DEPTH}/${TOPSRCDIR}/util -I${TIFFINC}
 #
 # C++ flags are decomposed using the same hierarchy as C flags.
 #
@@ -231,8 +231,8 @@ C++DEFS		= ${VC++DEFS} ${LC++DEFS} ${GC++DEFS}
 C++INCS		= ${VC++INCS} ${LC++INCS} ${GC++INCS}
 
 GC++OPTS	= @GCXXOPTS@ ${OPTIMIZER}
-GC++INCS	= -I. -I${DEPTH} -I${SRCDIR} \
-		    -I${DEPTH}/${TOPSRCDIR}/util -I${TIFFINC} -I${REGEXINC}
+GC++INCS	= -I. -I${DEPTH} -I${REGEXINC} -I${SRCDIR} \
+		    -I${DEPTH}/${TOPSRCDIR}/util -I${TIFFINC}
 GC++DEFS	= @ANSICXXPP@
 
 #
