@@ -9,12 +9,13 @@
 # for each device and refer to the symlink.  Otherwise various HylaFAX 
 # functions will fail.
 
-# CONFIG:CLASS1:Digi RAS modem:.*:.*: Manufacturer=Digi Model=AccelePort
+# CONFIG:CLASS1:Digi RAS modem*:.*:.*: Manufacturer=Digi Model=AccelePort
 #
 # BEGIN-SERVER
 # END-SERVER
 
 ModemType:		Class1		# use this to supply a hint
+ModemFlowControl:	rtscts		# seems to work better than xonxoff
 
 # If your line supports Caller-ID, you may want to uncomment this...
 # QualifyCID:		etc/cid		# you must create this file
