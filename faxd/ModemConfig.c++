@@ -442,6 +442,7 @@ ModemConfig::parseATCmd(const char* cp)
 	}
 	cmd.remove(pos, epos-pos);
 	cmd.insert((char*) ecode, pos, 2);
+	pos += 2;	// don't try parsing our newly inserted ecode
     }
     return (cmd);
 }

@@ -507,6 +507,7 @@ FaxModem::isQualityOK(const Class2Params& params)
 	    return (false);
 	}
     }
+    if (recvEOLCount == 0) return (false);	// don't label null data as "good"
     return (true);
 }
 

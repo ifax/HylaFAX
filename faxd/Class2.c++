@@ -549,6 +549,7 @@ Class2Modem::waitFor(ATResponse wanted, long ms)
 	case AT_NOANSWER:
 	case AT_RING:
 	    modemTrace("MODEM %s", ATresponses[response]);
+	case AT_OK:
 	    return (false);
 	case AT_FHNG:
 	    // return hangup status, but try to wait for requested response

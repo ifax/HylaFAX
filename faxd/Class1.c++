@@ -1038,6 +1038,7 @@ Class1Modem::waitFor(ATResponse wanted, long ms)
 	    /* fall thru... */
 	case AT_OTHER:
 	case AT_FCERROR:
+	case AT_OK:
 	    return (false);
 	}
     }

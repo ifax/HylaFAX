@@ -426,6 +426,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
     time_t t2end = 0;
     signalRcvd = 0;
     sentERR = false;
+    prevPage = false;
 
     do {
 	u_int timer = conf.t2Timer;
@@ -434,64 +435,65 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		transmitFrame(FCF_CFR|FCF_RCVR);
 		sendCFR = false;
 	    }
-	    /*
-	     * Look for message carrier and receive Phase C data.
-	     */
-	    setInputBuffering(true);
-	    if (flowControl == FLOW_XONXOFF)
-		(void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
-
-	    /*
-	     * Same reasoning here as before receiving TCF.  In practice,
-	     * however, we can't follow Class1TCFRecvHack because it
-	     * apparently takes too much time to drop the V.21 carrier.  
-	     * So, our approach is much like Class1SwitchingCmd.
-	     */
-	    if (!atCmd(conf.class1MsgRecvHackCmd, AT_OK)) {
-		emsg = "Failure to receive silence.";
-		return (false);
-	    }
-
-	    /*
-	     * Set high speed carrier & start receive.  If the
-	     * negotiated modulation technique includes short
-	     * training, then we use it here (it's used for all
-	     * high speed carrier traffic other than the TCF).
-	     *
-	     * Timing here is very critical.  It is more "tricky" than timing
-	     * for AT+FRM for TCF because unlike with TCF, where the direction
-	     * of communication doesn't change, here it does change because 
-	     * we just sent CFR but now have to do AT+FRM.  In practice, if we 
-	     * issue AT+FRM after the sender does AT+FTM then we'll get +FCERROR.
-	     * Using Class1MsgRecvHackCmd often only complicates the problem.
-	     * If the modem doesn't drop its transmission carrier (OK response
-	     * following CFR) quickly enough, then we'll see more +FCERROR.
-	     */
-	    fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
-	    u_short attempts = 0;
+	    pageGood = false;
+	    recvSetupTIFF(tif, group3opts, FILLORDER_LSB2MSB, id);
 	    ATResponse rmResponse = AT_NOTHING;
-	    while ((rmResponse == AT_NOTHING || rmResponse == AT_FCERROR) && attempts++ < 20) {
-		(void) atCmd(rmCmd, AT_NOTHING);
-		rmResponse = atResponse(rbuf, conf.t2Timer);
-	    }
-	    if (rmResponse == AT_CONNECT) {
-		/*
-		 * The message carrier was recognized;
-		 * receive the Phase C data.
-		 */
-		protoTrace("RECV: begin page");
-		recvSetupTIFF(tif, group3opts, FILLORDER_LSB2MSB, id);
+	    if (params.ec != EC_DISABLE) {
 		pageGood = recvPageData(tif, emsg);
-		protoTrace("RECV: end page");
-		if (!wasTimeout()) {
+		messageReceived = true;
+		prevPage = true;
+	    } else {
+		/*
+		 * Look for message carrier and receive Phase C data.
+		 */
+		setInputBuffering(true);
+		if (flowControl == FLOW_XONXOFF)
+		    (void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
+
+		/*
+		 * Same reasoning here as before receiving TCF.  In practice,
+		 * however, we can't follow Class1TCFRecvHack because it
+		 * apparently takes too much time to drop the V.21 carrier.  
+		 * So, our approach is much like Class1SwitchingCmd.
+		 */
+		if (!atCmd(conf.class1MsgRecvHackCmd, AT_OK)) {
+		    emsg = "Failure to receive silence.";
+		    return (false);
+		}
+		/*
+		 * Set high speed carrier & start receive.  If the
+		 * negotiated modulation technique includes short
+		 * training, then we use it here (it's used for all
+		 * high speed carrier traffic other than the TCF).
+		 *
+		 * Timing here is very critical.  It is more "tricky" than timing
+		 * for AT+FRM for TCF because unlike with TCF, where the direction
+		 * of communication doesn't change, here it does change because 
+		 * we just sent CFR but now have to do AT+FRM.  In practice, if we 
+		 * issue AT+FRM after the sender does AT+FTM then we'll get +FCERROR.
+		 * Using Class1MsgRecvHackCmd often only complicates the problem.
+		 * If the modem doesn't drop its transmission carrier (OK response
+		 * following CFR) quickly enough, then we'll see more +FCERROR.
+		 */
+		fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
+		u_short attempts = 0;
+		while ((rmResponse == AT_NOTHING || rmResponse == AT_FCERROR) && attempts++ < 20) {
+		    (void) atCmd(rmCmd, AT_NOTHING);
+		    rmResponse = atResponse(rbuf, conf.t2Timer);
+		}
+		if (rmResponse == AT_CONNECT) {
 		    /*
-		     * The data was received correctly, wait
-		     * for the modem to signal carrier drop.
+		     * The message carrier was recognized;
+		     * receive the Phase C data.
 		     */
-		    if (signalRcvd != 0) {
-			messageReceived = true;
-			prevPage = true;
-		    } else {
+		    protoTrace("RECV: begin page");
+		    pageGood = recvPageData(tif, emsg);
+		    protoTrace("RECV: end page");
+		    if (!wasTimeout()) {
+			/*
+			 * The data was received correctly, wait
+			 * for the modem to signal carrier drop.
+			 */
 			messageReceived = waitFor(AT_NOCARRIER, 2*1000);
 			if (messageReceived)
 			    prevPage = true;
@@ -513,16 +515,21 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		     *   AT+FRM request.
 		     * o otherwise, there may have been a timeout receiving
 		     *   the message data, or there was a timeout waiting
-		     *   for the carrier to drop.  Anything unexpected causes
-		     *   us abort the receive to avoid looping.
-		     * The only case that we don't abort on is that we found
-		     * the wrong carrier, which means that there is an HDLC
-		     * frame waiting for us--in which case it should get
-		     * picked up below.
+		     *   for the carrier to drop.
 		     */
-		    if (wasTimeout()) {
-			abortReceive();		// return to command state
+		    if (!wasTimeout()) {
+			/*
+			 * We found the wrong carrier, which means that there
+			 * is an HDLC frame waiting for us--in which case it
+			 * should get picked up below.
+			 */
+			break;
 		    }
+		    /*
+		     * The timeout expired - thus we missed the carrier either
+		     * raising or dropping.
+		     */
+		    abortReceive();		// return to command state
 		    break;
 		} else {
 		    /*
@@ -584,31 +591,11 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	    case FCF_MPS:			// MPS
 	    case FCF_EOM:			// EOM
 	    case FCF_EOP:			// EOP
-		if (!prevPage && signalRcvd == 0) {
-		    /*
-		     * Post page message, but no previous page
-		     * was received.  According to T.30 we should
-		     * send DCN (as we do below with PRI-PPM),
-		     * but to be more friendly, we'll force RTN
-		     * instead.  (Non-ECM only)
-		     */
-		    prevPage = true;
-		    pageGood = false;
-		}
 	    case FCF_PRI_MPS:			// PRI-MPS
 	    case FCF_PRI_EOM:			// PRI-EOM
 	    case FCF_PRI_EOP:			// PRI-EOP
 		if (prevPage && !pageGood) recvResetPage(tif);
 		if (signalRcvd == 0) tracePPM("RECV recv", lastPPM);
-		if (!prevPage) {
-		    /*
-		     * Post page message, but no previous page
-		     * was received--this violates the protocol.
-		     */
-		    emsg = "COMREC invalid response received";
-		    return (false);
-		}
-
 		/*
 		 * As recommended in T.31 Appendix II.1, we try to
 		 * prevent the rapid switching of the direction of 
@@ -731,6 +718,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
     u_char* block = (u_char*) malloc(frameSize*256);	// 256 frames per block - totalling 16/64KB
     fxAssert(block != NULL, "ECM procedure error (receive block).");
     bool lastblock = false;
+    bool pagedataseen = false;
     u_short seq = 1;					// sequence code for the first block
 
     do {
@@ -748,6 +736,31 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 	    signalRcvd = 0;
 	    rcpcnt = 0;
 	    bool dataseen = false;
+	    setInputBuffering(true);
+	    if (flowControl == FLOW_XONXOFF)
+		(void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
+	    if (!atCmd(conf.class1MsgRecvHackCmd, AT_OK)) {
+		emsg = "Failure to receive silence.";
+		return (false);
+	    }
+	    fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
+	    u_short attempts = 0;
+	    ATResponse response = AT_NOTHING;
+	    while ((response == AT_NOTHING || response == AT_FCERROR) && attempts++ < 20) {
+		(void) atCmd(rmCmd, AT_NOTHING);
+		response = atResponse(rbuf, conf.t2Timer);
+	    }
+	    if (response != AT_CONNECT) {
+		emsg = "Failed to properly detect high-speed data carrier.";
+		if (conf.saveUnconfirmedPages && pagedataseen) {
+		    protoTrace("RECV keeping unconfirmed page");
+		    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+		    prevPage = true;
+		}
+		free(block);
+		if (wasTimeout()) abortReceive();	// return to command mode
+		return (false);
+	    }
 	    if (syncECMFrame()) {
 		time_t start = Sys::now();
 		do {
@@ -755,6 +768,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    if (recvECMFrame(frame)) {
 			if (frame[2] == 0x60) {		// FCF is FCD
 			    dataseen = true;
+			    pagedataseen = true;
 			    rcpcnt = 0;			// reset RCP counter
 			    fnum = frameRev[frame[3]];	// T.4 A.3.6.1 says LSB2MSB
 			    protoTrace("RECV received frame number %u", fnum);
@@ -791,10 +805,10 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		setInputBuffering(false);
 		bool gotpps = false;
 		HDLCFrame ppsframe(conf.class1FrameOverhead);
-		int recvFrameCount = 20;
+		u_short recvFrameCount = 0;
 		do {
 		    gotpps = recvFrame(ppsframe, conf.t2Timer);
-		} while (!wasTimeout() && !gotpps && recvFrameCount--);
+		} while (!gotpps && !wasTimeout() && ++recvFrameCount < 20);
 		if (gotpps) {
 		    tracePPM("RECV recv", ppsframe.getFCF());
 		    if (ppsframe.getLength() > 5) {
@@ -820,7 +834,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			// requisite pause before sending response (PPR/MCF)
 			if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
 			    emsg = "Failure to receive silence.";
-			    if (conf.saveUnconfirmedPages && fcount) {
+			    if (conf.saveUnconfirmedPages && pagedataseen) {
 				protoTrace("RECV keeping unconfirmed page");
 				writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
 				prevPage = true;
@@ -854,7 +868,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    // requisite pause before sending response (CTR)
 					    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
 						emsg = "Failure to receive silence.";
-						if (conf.saveUnconfirmedPages && fcount) {
+						if (conf.saveUnconfirmedPages && pagedataseen) {
 						    protoTrace("RECV keeping unconfirmed page");
 						    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
 						    prevPage = true;
@@ -883,7 +897,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						    break;
 						default:
 						    emsg = "COMREC invalid response to repeated PPR received";
-						    if (conf.saveUnconfirmedPages && fcount) {
+						    if (conf.saveUnconfirmedPages && pagedataseen) {
 							protoTrace("RECV keeping unconfirmed page");
 							writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
 							prevPage = true;
@@ -894,7 +908,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    // requisite pause before sending response (ERR)
 					    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
 						emsg = "Failure to receive silence.";
-						if (conf.saveUnconfirmedPages && fcount) {
+						if (conf.saveUnconfirmedPages && pagedataseen) {
 						    protoTrace("RECV keeping unconfirmed page");
 						    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
 						    prevPage = true;
@@ -908,7 +922,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    break;
 					default:
 					    emsg = "COMREC invalid response to repeated PPR received";
-					    if (conf.saveUnconfirmedPages && fcount) {
+					    if (conf.saveUnconfirmedPages && pagedataseen) {
 						protoTrace("RECV keeping unconfirmed page");
 						writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
 						prevPage = true;
@@ -918,7 +932,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    }
 				} else {
 				    emsg = "T.30 T2 timeout, expected signal not received";
-				    if (conf.saveUnconfirmedPages && fcount) {
+				    if (conf.saveUnconfirmedPages && pagedataseen) {
 					protoTrace("RECV keeping unconfirmed page");
 					writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
 					prevPage = true;
@@ -944,7 +958,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    break;
 				default:
 				    emsg = "COMREC invalid post-page signal received";
-				    if (conf.saveUnconfirmedPages && fcount) {
+				    if (conf.saveUnconfirmedPages && pagedataseen) {
 					protoTrace("RECV keeping unconfirmed page");
 					writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
 					prevPage = true;
@@ -955,7 +969,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			}
 		    } else {
 			emsg = "COMREC invalid response received (expected PPS)";
-			if (conf.saveUnconfirmedPages && fcount) {
+			if (conf.saveUnconfirmedPages && pagedataseen) {
 			    protoTrace("RECV keeping unconfirmed page");
 			    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
 			    prevPage = true;
@@ -965,7 +979,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    }
 		} else {
 		    emsg = "T.30 T2 timeout, expected signal not received";
-		    if (conf.saveUnconfirmedPages && fcount) {
+		    if (conf.saveUnconfirmedPages && pagedataseen) {
 			protoTrace("RECV keeping unconfirmed page");
 			writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
 			prevPage = true;
@@ -985,66 +999,22 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    return(false);
 		}
 	    }
-	    if (! blockgood) {		// back to high-speed carrier
-		setInputBuffering(true);
-		if (flowControl == FLOW_XONXOFF)
-		    (void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
-		fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
-		u_short attempts = 0;
-		ATResponse response = AT_NOTHING;
-		while ((response == AT_NOTHING || response == AT_FCERROR) && attempts++ < 20) {
-		    (void) atCmd(rmCmd, AT_NOTHING);
-		    response = atResponse(rbuf, conf.t2Timer);
-		}
-		if (response != AT_CONNECT) {
-		    emsg = "Failed to properly detect high-speed data carrier.";
-		    if (conf.saveUnconfirmedPages && fcount) {
-			protoTrace("RECV keeping unconfirmed page");
-			writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-			prevPage = true;
-		    }
-		    free(block);
-		    return (false);
-		}
-	    }
 	} while (! blockgood);
 
 	u_int cc = fcount * frameSize;
 	if (lastblock) {
 	    // trim zero padding
-	    while (block[cc - 1] == 0) cc--;
+	    while (cc > 0 && block[cc - 1] == 0) cc--;
 	}
 	// write the block to file
 	if (lastblock) seq |= 2;			// seq code for the last block
 	writeECMData(tif, block, cc, params, seq);
 	seq = 0;					// seq code for in-between blocks
 
-	if (! lastblock) {		// back to high-speed carrier
-	    if (!sentERR) {
-		// confirm block received as good
-		(void) transmitFrame(FCF_MCF|FCF_RCVR);
-		tracePPR("RECV send", FCF_MCF);
-	    }
-	    setInputBuffering(true);
-	    if (flowControl == FLOW_XONXOFF)
-		(void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
-	    fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
-	    u_short attempts = 0;
-	    ATResponse response = AT_NOTHING;
-	    while ((response == AT_NOTHING || response == AT_FCERROR) && attempts++ < 20) {
-		(void) atCmd(rmCmd, AT_NOTHING);
-		response = atResponse(rbuf, conf.t2Timer);
-	    }
-	    if (response != AT_CONNECT) {
-		emsg = "Failed to properly detect high-speed data carrier.";
-		if (conf.saveUnconfirmedPages && fcount) {
-		    protoTrace("RECV keeping unconfirmed page");
-		    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-		    prevPage = true;
-		}
-		free(block);
-		return (false);
-	    }
+	if (!lastblock && !sentERR) {
+	    // confirm block received as good
+	    (void) transmitFrame(FCF_MCF|FCF_RCVR);
+	    tracePPR("RECV send", FCF_MCF);
 	}
     } while (! lastblock);
 
