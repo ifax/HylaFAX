@@ -363,7 +363,6 @@ faxQCleanApp::expungeCruft(void)
 		// Check to make sure we don't delete a file with a ';'
 		// suffix, when the PS.jobid version of the file still
 		// exists.
-//		string      base(&file[5], (l -= 6));
 		char        *base;
 		int         sl=l-6;
 		l=l-6;
@@ -380,11 +379,7 @@ faxQCleanApp::expungeCruft(void)
 			continue;
 		}
 		for(dirent *dp1 = readdir(dir1); dp1; dp1 = readdir(dir1)) {
-		    if(trace)
-		    printf("    Compare \"%s\" to \"%s\". (l=%d, dp1->d_name[l]=%c\n",
-			dp1->d_name, base, l, dp1->d_name[l]);
 		    if(strlen(dp1->d_name) > l && dp1->d_name[l] == '.' &&
-//			    base == string(dp1->d_name, l)) {
 		           ( strncmp(base, dp1->d_name, l) == 0)) {
 			// Found match
 			if(trace)
