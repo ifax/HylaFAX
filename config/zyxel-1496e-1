@@ -35,6 +35,7 @@
 # the tty port by default.
 #
 # CONFIG:CLASS1:1496:.*:.*: Manufacturer=ZyXEL Model=U1496
+# CONFIG:CLASS1:33603:.*:.*: Manufacturer=ZyXEL Model=U336S
 #
 # BEGIN-SERVER
 # END-SERVER
