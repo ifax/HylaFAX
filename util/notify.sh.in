@@ -64,14 +64,23 @@ JTIME=$3
 NEXT=${4:-'??:??'}
 
 ENCODING=base64
-MIMENCODE=mimencode
-TTYCMD=tty
-GREP=grep
-AWK=awk
-TEE=tee
 
 . etc/setup.cache
 
+local_seq() {
+	if [ $1 -gt $2 ]; then
+		return
+	fi
+	COUNT=$1
+	while [ $COUNT -le $2 ]
+	do
+		echo $COUNT
+		COUNT=`expr $COUNT + 1`
+
+	done
+}
+
+FILE=file
 INFO=$SBIN/faxinfo
 TIFFINFO=tiffinfo
 FAX2PS=$TIFFBIN/fax2ps
@@ -87,6 +96,7 @@ NOTIFY_FAXMASTER=never
 RETURNFILETYPE=
 MIMEBOUNDARY="NextPart$$"
 RETURNTECHINFO=yes
+
 case $WHY in
     failed|requeued|poll_rejected|poll_no_document|poll_failed)
 	RETURNTRANSCRIPT=yes;;
@@ -126,7 +136,7 @@ adjustNotifyFaxMaster()
             case $WHY in
                 timedout|rejected|format_failed|no_formatter|poll_rejected|poll_no_document)
 		    NOTIFY_FAXMASTER=yes;;
-		done|blocked|removed|killed)
+		"done"|blocked|removed|killed)
 		    NOTIFY_FAXMASTER=no;;
                 *)
                     if (match "$faxstatus" "Busy signal|No answer|No carrier") ; then
@@ -154,7 +164,7 @@ setCustomValues()
 
 parseQfile()
 {
-    QFILEVARS=`($AWK -F: ' 
+    eval `($AWK -F: ' 
     function p(varname,val)
     {
         # print out variable name and value so we can eval it in the shell
@@ -211,27 +221,20 @@ parseQfile()
     /^totdials/    { p("totdials", $2); }
     /^tottries/    { p("tottries", $2); }
     /^client/    { p("client", $2); }
-    /^[!]*post/    { arrayfileloc="files["nfiles++"]"; p(arrayfileloc, $4); }
-    /^[!]*tiff/    { p("files["nfiles++"]", $4); }
-    /^[!]*pdf/    { p("files["nfiles++"]", $4); }
-    /^[!]*pcl/    { p("files[nfiles++]", $4); }
-    /^page:/    { p("pins[npins++]", $4); }
-    /^[!]page:/    { p("pagernum", $4); }
-    /^data:/    { p("files[nfiles++]", $4); }
+    /^[!]*post/    { p("files_"++nfiles, $4); }
+    /^[!]*tiff/    { p("files_"++nfiles, $4); }
+    /^[!]*pdf/    { p("files_"++nfiles, $4); }
+    /^[!]*pcl/    { p("files_"++nfiles, $4); }
+    /^page:/    { p("pins_"++npins, $4); }
+    /^data:/    { p("files_"++nfiles, $4); }
     /^poll/        { p("poll", " -p"); }
-    END { p("nfiles", nfiles); } ' $QFILE )`
+    END { p("nfiles", nfiles); p("npins", npins) } ' $QFILE )`
 
-    OIFS=$IFS;IFS=$'\012'  # set IFS to newline to parse the awk output
-    for ASSIGNVAR in $(echo ${QFILEVARS} )
-    do
-        eval ${ASSIGNVAR} 
-    done
-    IFS=$OIFS  # reset IFS back
 }
 
 returnFaxImage()
 # output a mime encoded set of file attachments with mime headers
-# for each file listed in the files[] array, make sure that it is 
+# for each file listed in the files_XX set, make sure that it is 
 # a valid, non zero file.  Then test the file format of the source
 # file we are encoding that is is a known file type that we can 
 # convert from.  Out put to standard out the appropriate mime header.
@@ -242,38 +245,41 @@ returnFaxImage()
 # A ReturnFomat=original reutns the file in its original format.
 # Supported file formats of the source are "tiff", "pdf" and "ps" 
 {
-   local RETURNFORMAT=$1
+   RETURNFORMAT=$1
    if [ $nfiles -gt 0 ] ; then
-       for (( i=0; i<$nfiles; i++ )) ; do 
-        if [ -s ${files[$i]} ] ; then # file is > 0 size
-            FROMFMT=`fileType ${files[$i]}`
-            case "$FROMFMT" in ("ps" | "tif" | "pdf" ) # test we know the source format
+    for i in `local_seq 1 $nfiles`; do 
+        name="files_$i"
+	eval filename=`echo "$"$name`
+
+	if [ -s $filename ] ; then # file is > 0 size
+	    FROMFMT=`fileType $filename`
+            case "$FROMFMT" in "ps" | "tif" | "pdf" ) # test we know the source format
                 if [ "$RETURNFORMAT" = "tif" ] ; then
                     ENCODEDFILENAME="$number-$i.tif"
                     putMimeImageTIFHeader "$ENCODEDFILENAME"
-                    putTifEncodedImage "${files[$i]}" "$FROMFMT"
+		    putTifEncodedImage "$filename" "$FROMFMT"
                 elif [ "$RETURNFORMAT" = "pdf" ] ; then
                     ENCODEDFILENAME="$number-$i.pdf"
                     putMimeAppPDFHeader "$ENCODEDFILENAME"
-                    putPdfEncodedImage "${files[$i]}" "$FROMFMT"
+		    putPdfEncodedImage "$filename" "$FROMFMT"
                 elif [ "$RETURNFORMAT" = "ps" ] ; then
                     ENCODEDFILENAME="$number-$i.ps"
                     putMimeAppPSHeader "$ENCODEDFILENAME"
-                    putPsEncodedImage "${files[$i]}" "$FROMFMT"
+		    putPsEncodedImage "$filename" "$FROMFMT"
                 elif [ "$RETURNFORMAT" = "original" ] ; then
                     ENCODEDFILENAME="$number-$i.$FROMFMT"
                     case "$FROMFMT" in
                     "tif")
                         putMimeImageTIFHeader "$ENCODEDFILENAME"
-                        putTifEncodedImage "${files[$i]}" "$FROMFMT"
+			putTifEncodedImage "$filename" "$FROMFMT"
                         ;;
                     "ps")
                         putMimeAppPSHeader "$ENCODEDFILENAME"
-                        putPsEncodedImage "${files[$i]}" "$FROMFMT"
+			putPsEncodedImage "$filename" "$FROMFMT"
                         ;;
                     "pdf")
                         putMimeAppPDFHeader "$ENCODEDFILENAME"
-                        putPdfEncodedImage "${files[$i]}" "$FROMFMT"
+			putPdfEncodedImage "$filename" "$FROMFMT"
                         ;;
                     esac
                 fi
@@ -288,9 +294,9 @@ putPdfEncodedImage()
 # Convert the source file from the CONVERTFROM type into a pdf file and 
 # then do a mimeEndode of the file
 {
-    local SOURCEFILE=$1
-    local CONVERTFROM=$2
-    local OUTFILE="tmp/conv2pdf$$.out" ;
+    SOURCEFILE=$1
+    CONVERTFROM=$2
+    OUTFILE="tmp/conv2pdf$$.out" ;
     if [ "$CONVERTFROM" = "pdf" ] ; then
         mimeEncode "$SOURCEFILE"
         return # all done here
@@ -310,15 +316,15 @@ putPsEncodedImage()
 # Convert the source file from the CONVERTFROM type into a ps file and 
 # then do a mimeEndode of the file
 {
-    local SOURCEFILE=$1
-    local CONVERTFROM=$2
-    local OUTFILE="tmp/conv2ps$$.out" ;
+    SOURCEFILE=$1
+    CONVERTFROM=$2
+    OUTFILE="tmp/conv2ps$$.out" ;
     if [ "$CONVERTFROM" = "ps" ] ; then
         mimeEncode "$SOURCEFILE"
         return # all done here
     elif [ "$CONVERTFROM" = "tif" ] ; then
         #  tiff2ps -a for all pages, 
-        CONVERTCMD="$TIFF2PS -a  $SOURCEFILE | $TEE $OUTFILE" 
+        CONVERTCMD="$TIFF2PS -a  $SOURCEFILE > $OUTFILE" 
     elif [ "$CONVERTFROM" = "pdf" ] ; then
         CONVERTCMD="$PDF2PS $SOURCEFILE $OUTFILE" 
     else
@@ -333,9 +339,9 @@ putTifEncodedImage()
 # Convert the source file from the CONVERTFROM type into a tif file and 
 # then do a mimeEndode of the file
 {
-    local SOURCEFILE=$1
-    local CONVERTFROM=$2
-    local OUTFILE="tmp/conv2tif$$.out" ;
+    SOURCEFILE=$1
+    CONVERTFROM=$2
+    OUTFILE="tmp/conv2tif$$.out" ;
     if [ $CONVERTFROM = "tif" ] ; then 
         mimeEncode "$SOURCEFILE"
         return # all done here
@@ -390,13 +396,12 @@ putMimeAppPDFHeader()
 # filename is just the name of the file for mime header encoding and is what is
 # shown as the name of the attahced file.
 {
-    local FILENAME=$1
     echo ""
     echo "--$MIMEBOUNDARY"
-    echo "Content-Type: application/pdf; name=\"$FILENAME\""
+    echo "Content-Type: application/pdf; name=\"$1\""
     echo "Content-Description: FAX document"
     echo "Content-Transfer-Encoding: $ENCODING"
-    echo "Content-Disposition: attachment; filename=\"$FILENAME\""
+    echo "Content-Disposition: attachment; filename=\"$1\""
     echo ""
 }
 
@@ -406,13 +411,12 @@ putMimeAppPSHeader()
 # filename is just the name of the file for mime header encoding and is what is
 # shown as the name of the attahced file.
 {
-    local FILENAME=$1
     echo ""
     echo "--$MIMEBOUNDARY"
-    echo "Content-Type: application/postscript; name=\"$FILENAME\""
+    echo "Content-Type: application/postscript; name=\"$1\""
     echo "Content-Description: FAX document"
     echo "Content-Transfer-Encoding: $ENCODING"
-    echo "Content-Disposition: attachment; filename=\"$FILENAME\""
+    echo "Content-Disposition: attachment; filename=\"$1\""
     echo ""
 }
 
@@ -422,35 +426,37 @@ putMimeImageTIFHeader()
 # filename is just the name of the file for mime header encoding and is what is
 # shown as the name of the attahced file.
 {
-    local FILENAME=$1
     echo ""
     echo "--$MIMEBOUNDARY"
-    echo "Content-Type: image/tiff; name=\"$FILENAME\""
+    echo "Content-Type: image/tiff; name=\"$1\""
     echo "Content-Description: FAX document"
     echo "Content-Transfer-Encoding: $ENCODING"
-    echo "Content-Disposition: attachment; filename=\"$FILENAME\""
+    echo "Content-Disposition: attachment; filename=\"$1\""
     echo ""
 }
 
 mimeEncode()
 # out put a mime encoded form of the given file
 {
-    local FILENAME=$1
-    if [ ! -e "$FILENAME" ] ; then
+    FILENAME=$1
+    if [ ! -f "$FILENAME" ] ; then
         return # cannot do much more without a file
     fi
     if [ -x "$MIMENCODE" ]; then
         $MIMENCODE $FILENAME 2>$ERRORSTO
     elif [ -x "$UUENCODE" ]; then
         if [ "$ENCODING" = "base64" ]; then
-            $UUENCODE -m $FILENAME $FILENAME | $GREP -E -v "^begin|^====$" 2>$ERRORSTO
+            $UUENCODE -m $FILENAME $FILENAME \
+	    	| $GREP -v "^begin" \
+		| $GREP -v "^====$" \
+		2>$ERRORSTO
         else
-            $UUENCODE $FILENAME $FILENAME | $GREP -E -v "^begin|^====$" 2>$ERRORSTO
+            $UUENCODE $FILENAME $FILENAME 2>$ERRORSTO
         fi
     else
-    # Do not use "-x" for backward compatibility; even if it fails
-    # this is last chance to encode data, so there's nothing to lose.
-    $MIMENCODE $FILENAME 2>$ERRORSTO
+	# Do not use "-x" for backward compatibility; even if it fails
+	# this is last chance to encode data, so there's nothing to lose.
+	$MIMENCODE $FILENAME 2>$ERRORSTO
     fi
 }
 
@@ -465,9 +471,8 @@ printItem()
 
 printBanner()
 {
-    local BANNER=$1
     echo ""
-    echo "    ---- $BANNER ----"
+    echo "    ---- $1 ----"
     echo ""
 }
 
@@ -477,7 +482,7 @@ match()
 {
     FULLSTR=$1
     SUBSTR=$2
-    echo $FULLSTR | $GREP -E $SUBSTR > $ERRORSTO 2>&1
+    echo $FULLSTR | $GREP -i $SUBSTR > /dev/null 2>&1
     if [ $? -eq 0 ] ; then
         return 0
     else
@@ -489,10 +494,9 @@ fileType()
 # determine the type of file passed using the unix 'file' command
 # with the '-i' option (mime type output)
 {
-    local FILENAME=$1
-    if [ -e "$FILENAME" ] ; then
-        set - `file -i "$FILENAME"`
-        FILETYPE=$*
+    FILENAME=$1
+    if [ -f "$FILENAME" ] ; then
+	FILETYPE=`$FILE $FILENAME`
         if (match "$FILETYPE" "postscript") ; then 
             echo "ps"
         elif (match "$FILETYPE" "tiff") ; then 
@@ -510,7 +514,7 @@ fileType()
 docType()
 # determine the type of file based on the file extension of the file name
 {
-    local FILENAME=$1
+    FILENAME=$1
     if (match $FILENAME "\.cover$") ; then 
         echo "PostScript cover page"
     elif (match $FILENAME "\.ps$") ; then 
@@ -549,7 +553,7 @@ returnToSender()
         printItem "%.0f (mm)" "Page Length" "$pagelength"
         printItem "%.0f (lpi)" "Resolution" "$resolution"
     fi
-    if [ -n $faxstatus ] ; then faxstatus="  (nothing available)" ; fi
+    if [ -z "$faxstatus" ] ; then faxstatus="  (nothing available)" ; fi
     printItem "%s" "Status" "$faxstatus"
     printItem "%u (exchanges with remote device)" "Dialogs" "$tottries"
     printItem "%u (consecutive failed calls to destination)" "Dials" "$ndials"
@@ -567,24 +571,28 @@ returnToSender()
             echo "removed using the faxrm command; consult faxrm(1) for information."
             echo ""
             printf "%-20s %8s %s\n" "Filename" "Size" "Type"
-            for (( i=0; i<$nfiles; i++ )) ; do 
-                if [ -e ${files[$i]} ] ; then
-                    set - `wc -c "${files[$i]}"`
+	    for i in `local_seq 1 $nfiles`; do
+                name="files_$i"
+                eval filename=`echo "$"$name`
+		if [ -f $filename ] ; then
+			set - `wc -c "$filename"`
                     FILESIZE=$1
-                    printf "%-20s %8d %s\n" "${files[$i]}" "$FILESIZE" "`docType ${files[$i]}`"
+		    printf "%-20s %8d %s\n" "$filename" "$FILESIZE" "`docType $filename`"
                 fi
             done
         fi
     elif [ "$jobtype" = "pager" ] ; then
         if [ $npins -ne 0 ] ; then
             printBanner "Unsent pages submitted for transmission"
-            for (( i=0; i<$npins; i++ )) ; do 
-                printf "%15s\n" "PIN " $pins[i]
+	    for i in `local_seq 1 $npins`; do
+                name="files_$i"
+		eval pin=`echo "$"$name`
+                printf "%15s\n" "PIN " $pin
             done
         fi
-        if [ $nfiles -ne 0 -a -s ${files[0]} ] ; then
+        if [ $nfiles -ne 0 -a -s $files_0 ] ; then
             printBanner "Message text"
-            cat ${files[0]}
+            cat $files_0
         fi
     fi
 }
@@ -609,20 +617,18 @@ returnTranscript()
 
 printStatus()
 {
-    local STATUSSTRING=$1
-    if [ -z "$STATUSSTRING" ] ; then # 0 string len
+    if [ -z "$1" ] ; then # 0 string len
         echo "<no reason recorded>"
     else
-        echo $STATUSSTRING
+        echo $1
     fi
 }
 
 putHeaders()
 {
-    local SUBJECT=$1
     putMimeSetup
     echo "To: $mailaddr"
-    echo "Subject: $SUBJECT"
+    echo "Subject: $1"
     putMimeTextHeader
     printf "Your $jobtype job to $number"
 }
@@ -664,7 +670,7 @@ setCustomValues
 # possibly in the q file.
 adjustNotifyFaxMaster 
 
-(if [ -z $jobtag ] ; then
+(if [ -z "$jobtag" ] ; then
     jobtag="$jobtype job $jobid"
 fi
 if [ "$doneop" = "default" ] ; then
@@ -802,7 +808,7 @@ echo "--$MIMEBOUNDARY--"
 
 if [ "$NOTIFY_FAXMASTER" = "yes" ]; then
     (
-	if [ -z $jobtag ] ; then
+	if [ -z "$jobtag" ] ; then
 	    jobtag="$jobtype job $jobid"
 	fi
 	echo "To: $TOADDR"
