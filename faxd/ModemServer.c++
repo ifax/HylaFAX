@@ -731,7 +731,7 @@ ModemServer::timerExpired(long, long)
 	 * If a lockfile exists, go to LOCKWAIT
 	 */
 	if (canLockModem()) {
-	    Dispatcher::instance().startTimer(timeout, pollLockWait, this);
+	    Dispatcher::instance().startTimer(pollLockWait, 0, this);
 	} else {
 	    changeState(LOCKWAIT, pollLockWait);
 	}
