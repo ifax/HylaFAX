@@ -114,7 +114,8 @@ private:
     CallType	runGetty(const char* what,
 		    Getty* (*newgetty)(const fxStr&, const fxStr&),
 		    const char* args, fxStr &emsg,
-		    bool keepLock, bool keepModem = false);
+                    bool keepLock, const CallerID& cid, 
+		    bool keepModem = false);
     void	setRingsBeforeAnswer(int rings);
     void	listenBegin();
     void	listenForRing();

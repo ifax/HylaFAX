@@ -166,6 +166,8 @@ static struct {
 { "ringextended",		&ModemConfig::ringExtended },
 { "cidname",			&ModemConfig::cidName },
 { "cidnumber",			&ModemConfig::cidNumber },
+{ "dringon",			&ModemConfig::dringOn  },
+{ "dringoff",			&ModemConfig::dringOff  },
 };
 static struct {
     const char*		 name;
@@ -226,6 +228,13 @@ ModemConfig::setupConfig()
     for (i = N(numbers)-1; i >= 0; i--)
 	(*this).*numbers[i].p = numbers[i].def;
 
+    for (i=0; i < 5; ++i) {
+    	distinctiveRings[i].type = ClassModem::CALLTYPE_UNKNOWN;
+	for (u_int j=0; j < 5; ++j)
+	    distinctiveRings[i].cadence[j] = 0;
+	distinctiveRings[i].magsqrd = 0;
+    }
+
     flowControl         = ClassModem::FLOW_XONXOFF;// software flow control
     maxRate		= ClassModem::BR19200;	// reasonable for most modems
     minSpeed		= BR_2400;		// minimum transmit speed
@@ -247,6 +256,7 @@ ModemConfig::setupConfig()
     rtnHandling         = FaxModem::RTN_RETRANSMIT; // retransmit until MCF/MPS
     saveUnconfirmedPages = true;		// keep unconfirmed pages
     softRTFCC		= true;			// real-time fax comp. conv. (software)
+    noAnswerVoice	= false;		// answer voice calls
 }
 
 void
@@ -556,6 +566,53 @@ ModemConfig::parseCID(const char* rbuf, CallerID& cid) const
 	cid.number = cid.number | rbuf+cidNumber.length();
 }
 
+void
+ModemConfig::parseDR(const char* cin)
+{
+    if (strlen(cin) < 3) return;
+    char buf[2048];
+    strncpy(buf, cin, sizeof (buf));
+    char* cp = buf;
+    u_int i = 0;
+    char* cp1 = cp;
+    while (*cp++) {
+    	if (*cp == ',') {
+		*cp = '\0';                     // Nuke the ','
+		processDRString(cp1, i++);
+		cp1 = ++cp;
+	}
+    }
+    processDRString(cp1, i);
+    NoDRings = i + 1;
+}
+
+void
+ModemConfig::processDRString(char* cp, const u_int i)
+{
+    if (*cp == 'V')
+    	distinctiveRings[i].type = ClassModem::CALLTYPE_VOICE;
+    else if (*cp == 'F')
+    	distinctiveRings[i].type = ClassModem::CALLTYPE_FAX;
+    else if (*cp == 'D')
+    	distinctiveRings[i].type = ClassModem::CALLTYPE_DATA;
+
+    u_int j = 0;
+    char *cp1 = cp += 2;
+    while (*cp++) {
+    	if (*cp == ':') {
+	    *cp = '\0';                             // Nuke the ':'
+    	    distinctiveRings[i].cadence[j++] = atoi(cp1);
+	    cp1 = ++cp;
+	}
+    }
+    distinctiveRings[i].cadence[j] =  atoi(cp1);
+
+    double sum = 0;
+    for ( u_int k=0; k < 5; ++k ) 
+        sum += distinctiveRings[i].cadence[k]*distinctiveRings[i].cadence[k];
+    distinctiveRings[i].magsqrd = sum;
+}
+
 bool
 ModemConfig::setConfigItem(const char* tag, const char* value)
 {
@@ -609,10 +666,14 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class2UseLineCount = getBoolean(value);
     else if (streq(tag, "class2rtfcc"))
 	class2RTFCC = getBoolean(value);
+    else if (streq(tag, "noanswervoice"))
+	noAnswerVoice = getBoolean(value);
     else if (streq(tag, "modemsoftrtfcc"))
 	softRTFCC = getBoolean(value);
     else if (streq(tag, "saveunconfirmedpages"))
 	saveUnconfirmedPages = getBoolean(value);
+    else if (streq(tag, "distinctiverings"))
+    	parseDR(value);
     else
 	return (false);
     return (true);

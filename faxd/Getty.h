@@ -44,6 +44,8 @@ private:
     fxStr	argbuf;			// stash for argv strings
     fxStr	tzVar;			// TZ environment variable
     fxStr	langVar;		// LANG environment variable
+    fxStr       nambuf;
+    fxStr       numbuf;
 protected:
     Getty(const char* program, const fxStr& line, const fxStr& speed);
 
@@ -52,8 +54,8 @@ protected:
     virtual void fatal(const char* fmt ...);
 public:
     virtual ~Getty();
-
-    void setupArgv(const char* args);	// setup arguments for getty process
+					// setup arguments for getty process
+    void setupArgv(const char* args, const fxStr&, const fxStr&);
 					// run getty process
     virtual void run(int fd, bool parentIsInit);
     virtual bool wait(int& status, bool block = false);

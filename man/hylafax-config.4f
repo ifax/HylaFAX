@@ -131,6 +131,9 @@ CountryCode\(S2	string	\-	local country code
 DestControls\(S1	string	\-	per-destination controls file
 DeviceMode	octal	\s-10600\s+1	protection mode to use for modem device
 DialStringRules\(S2	string	\-	dial string rules file
+DistinctiveRings	string	\-	configuration for distinctive ring cadences
+DRingOff	string	\-	distinctive ring ``off'' cadence indicator
+DRingOn	string	\-	distinctive ring ``on'' cadence indicator
 DynamicConfig	string	\-	script for dynamic receive configuration
 FAXNumber	string	\-	facsimile modem phone number
 FaxRcvdCmd	string	\s-1bin/faxrcvd\s+1	notification script for received facsimile
@@ -162,6 +165,7 @@ ModemPriority	integer	255	scheduling priority for outbound jobs
 ModemReadyState	string	\s-1R\s+1	``ready state'' sent by \fIfaxgetty\fP
 ModemRingResponse	string	\-	command to respond after hearing RING
 ModemRingsBeforeResponse	integer	\s-10\s+1	the number of rings before ModemRingResponse
+NoAnswerVoice	boolean	\s-1false\s+1	disable the answering of voice-indicated calls
 NoCarrierRetrys	integer	\s-11\s+1	number of times to retry dialing on ``\s-2NO CARRIER\s0''
 NotifyCmd\(S2	string	\s-1bin/notify\s+1	user notification command script
 PageChop\(S1	string	\s-1last\s+1	control automatic truncation of trailing whitespace
@@ -670,6 +674,65 @@ The specified pathname must be relative to the top of the fax server's
 spooling area; e.g.
 .BR etc/dialrules .
 .TP
+.B DistinctiveRings
+Modern distinctive ring support on most modems indicates the ring cadence
+rather than the older style of ``RING1'', ``RING2'', etc.  To indicate
+the ring cadence, 
+.B DRingOn
+and
+.B DRingOff
+values are presented by the modem to the
+.I faxgetty
+process.  The modem indicates the entire cadence between ``RING'' indications
+Like this:
+.nf
+
+  RING
+  DROF=40
+  DRON=8
+  DROF=4
+  DRON=8
+  RING
+
+.fi
+The corresponding
+.B DistinctiveRings
+parameter for this ring cadence would be:
+.nf
+
+  DistinctiveRings:  F-8-4-8
+
+.fi
+where ``F'' tells the
+.I faxgetty
+process that the ring cadence is for a facsimile (``V'' for voice 
+and ``D'' for data), and the other values describe the ring cadence
+with leading and ending
+.B DRingOff
+values ignored.  Multiple ring cadences are indicated by delimiting
+them with commas in this fashion:
+.nf
+
+  DistinctiveRings:  V-20,F-8-4-8,D-4-2-4-8
+
+.fi
+.TP
+.B DRingOff
+A string that identifies the ``off'' value in any distinctive
+ring cadence, for example ``\s-1DROF=\s+1''.
+See also
+.B DRingOn
+and
+.BR DistinctiveRings .
+.TP
+.B DRingOn
+A string that identifies the ``on'' value in any distinctive
+ring cadence, for example ``\s-1DRON=\s+1''.
+See also
+.B DRingOff
+and
+.BR DistinctiveRings .
+.TP
 .B DynamicConfig
 The pathname of the optional shell script, e.g. ``etc/localid'', that 
 makes dynamic configuration changes, i.e., to 
@@ -943,6 +1006,12 @@ have the same
 .B ModemPriority
 value, then the \*(Fx scheduler assigns jobs to them in 
 a round-robin fashion.
+.TP
+.B NoAnswerVoice
+Whether or not to disable the answering of calls indicated as
+voice (e.g. by
+.B DistinctiveRings
+).
 .TP
 .B NoCarrierRetrys
 The number of times to redial a phone number after receiving

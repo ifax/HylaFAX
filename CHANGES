@@ -2,6 +2,9 @@
 
 Changelog for HylaFAX 4.2.1
 
+* improve modern distinctive ring support, add
+  NoAnswerVoice config feature, and enhance third-party
+  getty interaction (1 Jan 2005)
 * add support for etc/resetmodem (30 Dec 2004)
 * fix NOTIFY_FAXMASTER within notify (30 Dec 2004)
 * improve tiff2pdf and use it more (29 Dec 2004)

@@ -102,12 +102,14 @@ public:
     fxStr	ringFax;		// fax call ring string
     fxStr	ringVoice;		// voice call ring string
     fxStr	ringExtended;		// extended ring
+    fxStr	dringOn;		// pattern for distinctive ring silence interval
+    fxStr	dringOff;		// pattern for distinctive ring ring interval
+    bool	noAnswerVoice;		// leave voice calls unanswered
 					// caller id
     fxStr	cidName;		// pattern for name info
     fxStr	cidNumber;		// pattern for number info
     u_int	cidNameAnswerLength;	// answer when CID received
     u_int	cidNumberAnswerLength;	// answer when CID received
-
 					// protocol timers
     u_int	t1Timer;		// T.30 T1 timer (ms)
     u_int	t2Timer;		// T.30 T2 timer (ms)
@@ -209,9 +211,19 @@ public:
     RTNHandling rtnHandling;            // RTN signal handling method
     bool	saveUnconfirmedPages;	// don't delete unconfirmed pages
     
+    					// Distinctive ring data as sequences of DRON/DROF intervals
+    struct {
+    	int cadence[5];                 // the ring cadence as a five-dimensional vector
+	double magsqrd;               	// magnitude of the vector squared
+	u_int type;                     // call type of voice, fax, or data
+    } distinctiveRings[5];              // up to 5 distinctive ring numbers
+    u_int NoDRings;                     // number of distinctive rings numbers found
+
         virtual ~ModemConfig();
 
     void parseCID(const char*, CallerID&) const;
     const fxStr& getFlowCmd(FlowControl) const;
+    void parseDR(const char*);
+    void processDRString(char*, const u_int);
 };
 #endif /* _ModemConfig_ */

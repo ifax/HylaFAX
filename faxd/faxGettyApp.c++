@@ -236,6 +236,9 @@ faxGettyApp::listenForRing()
 		    (const char*) received_cid.number, (const char*) received_cid.name);
 	    }
 	    ++ringsHeard;
+            if (dringOn.length() && ctype == ClassModem::CALLTYPE_UNKNOWN) --ringsHeard;
+             // distinctive ring failed to identify - get another ring
+            
 	    /* DID modems may only signal a call with DID data - no RING */
 	    if (ringsBeforeAnswer && (ringsHeard >= ringsBeforeAnswer) ||
 		(cid.name.length() >= cidNameAnswerLength &&
@@ -393,7 +396,8 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
 		advanceRotary = false;
 	    } else {
 		// NB: answer based on ctype, not atype
-		ctype = modemAnswerCall(ctype, emsg, dialnumber);
+		if (!(noAnswerVoice && ctype == ClassModem::CALLTYPE_VOICE)) 
+		    ctype = modemAnswerCall(ctype, emsg, dialnumber);
 		callResolved = processCall(ctype, emsg, cid);
 	    }
 	} else if (atype == ClassModem::ANSTYPE_ANY) {
@@ -501,7 +505,7 @@ faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const Ca
 	     * then we take action based on the returned call type.
 	     */
 	    ctype = runGetty("EXTERN GETTY", OSnewEGetty,
-		egettyArgs, emsg, lockExternCalls, true);
+		egettyArgs, emsg, lockExternCalls, cid, true);
 	    if (ctype == ClassModem::CALLTYPE_DONE)	// NB: call completed
 		return (true);
 	    if (ctype != ClassModem::CALLTYPE_ERROR)
@@ -554,7 +558,7 @@ faxGettyApp::processCall(CallType ctype, fxStr& emsg, const CallerID& cid)
 	traceServer("ANSWER: DATA CONNECTION");
 	if (gettyArgs != "") {
 	    sendModemStatus("d");
-	    runGetty("GETTY", OSnewGetty, gettyArgs, emsg, lockDataCalls);
+	    runGetty("GETTY", OSnewGetty, gettyArgs, emsg, lockDataCalls, cid);
 	    sendModemStatus("e");
 	} else
 	    traceServer("ANSWER: Data connections are not permitted");
@@ -564,7 +568,7 @@ faxGettyApp::processCall(CallType ctype, fxStr& emsg, const CallerID& cid)
 	traceServer("ANSWER: VOICE CONNECTION");
 	if (vgettyArgs != "") {
 	    sendModemStatus("v");
-	    runGetty("VGETTY", OSnewVGetty, vgettyArgs, emsg, lockVoiceCalls);
+	    runGetty("VGETTY", OSnewVGetty, vgettyArgs, emsg, lockVoiceCalls, cid);
 	    sendModemStatus("w");
 	} else
 	    traceServer("ANSWER: Voice connections are not permitted");
@@ -589,6 +593,7 @@ faxGettyApp::runGetty(
     const char* args,
     fxStr& emsg,
     bool keepLock,
+    const CallerID& cid,
     bool keepModem
 )
 {
@@ -601,7 +606,7 @@ faxGettyApp::runGetty(
 	emsg = fxStr::format("%s: could not create", what);
 	return (ClassModem::CALLTYPE_ERROR);
     }
-    getty->setupArgv(args);
+    getty->setupArgv(args, cid.name, cid.number);
     /*
      * The getty process should not inherit the lock file.
      * Remove it here before the fork so that our state is

@@ -1296,6 +1296,8 @@ bool
 ClassModem::waitForRings(u_short rings, CallType& type, CallerID& cid)
 {
     bool gotring = false;
+    u_int i = 0, count = 0;
+    int incadence[5] = { 0, 0, 0, 0, 0 };
     time_t timeout = conf.ringTimeout/1000;	// 6 second/ring
     time_t start = Sys::now();
     do {
@@ -1307,6 +1309,16 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallerID& cid)
 		type = CALLTYPE_FAX;
 	    else if (streq(conf.ringVoice, rbuf))
 		type = CALLTYPE_VOICE;
+	    else if (conf.dringOff.length() && strneq(conf.dringOff, rbuf, conf.dringOff.length())) {
+	        if (count++ == 0) break;         //discard initial DROFF code if present
+	        incadence[i++] = -atoi(rbuf + conf.dringOff.length());
+	        break;
+	    }
+	    else if (conf.dringOn.length() && strneq(conf.dringOn, rbuf, conf.dringOn.length())) {
+	        ++count;
+	        incadence[i++] = atoi(rbuf + conf.dringOn.length());
+	        break;
+	    }
 	    else {
 		if (conf.ringExtended.length() && strneq(rbuf, conf.ringExtended, conf.ringExtended.length()))	// extended RING
 		    gotring = true;
@@ -1356,6 +1368,10 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallerID& cid)
 			return (false);
 		}
 	    }
+	    if (conf.dringOn.length()) {              // Compare with all distinctive ring cadences
+		modemTrace("WFR: received cadence = %d, %d, %d, %d, %d", incadence[0], incadence[1], incadence[2], incadence[3], incadence[4]);
+		type = findCallType(incadence);
+	    }
 	    gotring = true;
 	    break;
 	case AT_NOANSWER:
@@ -1367,3 +1383,22 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallerID& cid)
     } while (!gotring && Sys::now()-start < timeout);
     return (gotring);
 }
+
+CallType ClassModem::findCallType(int vec[])
+{
+// compare x^2 than x to avoid use of math functions
+
+    double limit = 0.33*0.33;
+    double dif, sum;
+    u_int n, k;
+    for (n=0; n < conf.NoDRings; ++n) {
+	for (k=0, sum=0; k < 5; ++k) {
+            dif = vec[k] - conf.distinctiveRings[n].cadence[k];
+            sum += dif*dif;
+        }
+	if (sum/conf.distinctiveRings[n].magsqrd < limit)  
+	    return conf.distinctiveRings[n].type;
+    }
+    return CALLTYPE_UNKNOWN;
+}
+

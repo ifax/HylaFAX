@@ -76,9 +76,12 @@ sigHUP(int)
  * exec getty below.
  */
 void
-Getty::setupArgv(const char* args)
+Getty::setupArgv(const char* args, const fxStr& name, const fxStr& number)
 {
     argbuf = args;
+    nambuf = name;
+    numbuf = number;
+    bool insertName = false, insertNumber = false;
     u_int l;
     /*
      * Substitute escape sequences.
@@ -98,6 +101,14 @@ Getty::setupArgv(const char* args)
 	    argbuf.insert(speed, l);
 	    l += speed.length();	// avoid loops
 	    break;
+        case 'a':
+            argbuf.remove(l-1,3);
+            insertName = true;
+            break;
+        case 'u':
+            argbuf.remove(l-1,3);
+            insertNumber = true;
+            break;            
 	case '%':			// %% = %
 	    argbuf.remove(l,1);
 	    break;
@@ -118,6 +129,10 @@ Getty::setupArgv(const char* args)
 	    argv[nargs++] = &argbuf[token];
 	}
     }
+    if (nargs < GETTY_MAXARGS-1 && insertName && nambuf.length()) 
+        argv[nargs++] = &nambuf[0];
+    if (nargs < GETTY_MAXARGS-1 && insertNumber && numbuf.length()) 
+        argv[nargs++] = &numbuf[0];
     argv[nargs] = NULL;
 }
 
@@ -217,7 +232,7 @@ void
 Getty::hangup()
 {
     // NB: this is executed in the parent
-    fxStr device = fxStr::format("%s/" | line, _PATH_DEV);
+    fxStr device = fxStr::format("%s" | line, _PATH_DEV);
     Sys::chown(device, UUCPLock::getUUCPUid(), UUCPLock::getUUCPGid());
     Sys::chmod(device, 0600);			// reset protection
 }

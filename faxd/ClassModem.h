@@ -227,6 +227,7 @@ protected:
     void	modemCapability(const char* fmt, ...);
     void	traceBits(u_int bits, const char* bitNames[]);
     void	traceBitMask(u_int bits, const char* bitNames[]);
+    CallType 	findCallType(int vec[]);
 public:
     virtual ~ClassModem();
 
