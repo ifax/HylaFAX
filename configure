@@ -70,7 +70,6 @@ UTMP=auto
 LIBTIFF="-L/usr/local/lib -ltiff"
 TIFFINC=/usr/local/include
 TIFFBIN=
-ZLIB=auto
 LIBZ=
 ZLIBINC=
 REGEX=yes
@@ -214,7 +213,6 @@ TIFFBIN
 UTMP
 UUCP_LOCKDIR	DIR_LOCKS
 UUCP_LOCKTYPE	LOCKS
-ZLIB
 DPS
 GENDIST
 GS
@@ -1311,15 +1309,6 @@ makeDefs()
     dumpvars "$VAR2" CCOMPILER CXXCOMPILER | sort>confsed2
     $RM xdefs; sed -f confsed1 $SRCDIR/defs.in | sed -f confsed2 >$1
 }
-
-#
-# -I options without arguments may confuse preprocessor,
-#  generate dummy include dir when using system ZLIB
-#
-if [ -z "$ZLIBINC" ]; then
-mkdir  .empty_directory 2>/dev/null
-ZLIBINC=.empty_directory
-fi
 
 # NB: save original values for use in checks below
 OTIFFINC="${TIFFINC}"; x="`relativize ${TIFFINC}`"; TIFFINC="$x"
@@ -2987,13 +2976,12 @@ fi
 
 Note "Done checking TIFF support."
 
-if [ $ZLIB != yes ]; then
-    Note ""
-    Note "Checking ZLIB support."
-    #
-    # Verify library is compatible.
-    #
-    cat>t.c<<EOF
+Note ""
+Note "Checking ZLIB support."
+#
+# Verify library is compatible.
+#
+cat>t.c<<EOF
 #include "zlib.h"
 main()
 {
@@ -3010,39 +2998,29 @@ main()
     }
 }
 EOF
-    capture cat t.c
-    if runMake t "t:; \${CC} \${CVERSION} -I${OZLIBINC} t.c ${LIBZ} ${MACHDEPLIBS}" && capture ./a.out; then
-                    ZLIBINC="${OZLIBINC}"
-        Note "Using ZLIB include files from $OZLIBINC"
-        Note "Using pre-built ZLIB library $LIBZ"
-    else
-        if [ -z "$LIBZ" ]; then
-            DIRS="/usr/local /opt/zlib"
-            for i in $DIRS; do
-                if runMake t "t:; \${CC} \${CVERSION} -I${i}/include t.c -L${i}/lib -lz ${MACHDEPLIBS}" && capture ./a.out; then
-                    ZLIB=no
-                    OZLIBINC="${i}/include"
-                    ZLIBINC="${i}/include"
-                    LIBZ="-L${i}/lib -lz"
-                    Note "Using ZLIB include files from $OZLIBINC"
-                    Note "Using pre-built ZLIB library $LIBZ"
-                    break
-                fi
-            done
+capture cat t.c
+if [ -z "$LIBZ" ]; then
+    LIBZ="-lz"
+fi
+if runMake t "t:; \${CC} \${CVERSION} ${OZLIBINC} t.c ${LIBZ} ${MACHDEPLIBS}" && capture ./a.out; then
+                ZLIBINC="${OZLIBINC}"
+    Note "Using ZLIB include files from $OZLIBINC"
+    Note "Using pre-built ZLIB library $LIBZ"
+else
+    LIBZ=
+    DIRS="/usr/local /opt/zlib"
+    for i in $DIRS; do
+        if runMake t "t:; \${CC} \${CVERSION} -I${i}/include t.c -L${i}/lib -lz ${MACHDEPLIBS}" && capture ./a.out; then
+            OZLIBINC="-I${i}/include"
+            ZLIBINC="-I${i}/include"
+            LIBZ="-L${i}/lib -lz"
+            Note "Using ZLIB include files from ${i}/include"
+            Note "Using pre-built ZLIB library $LIBZ"
+            break
         fi
-        if [ -z "$LIBZ" ]; then
-                if runMake t "t:; \${CC} \${CVERSION} -I${SRCDIR}/zlib t.c -L${SRCDIR}/zlib -lz ${MACHDEPLIBS}" && capture ./a.out; then
-                    ZLIB=no
-                    OZLIBINC="${SRCDIR}/zlib"
-                    ZLIBINC="${SRCDIR}/zlib"
-                    LIBZ="-L${SRCDIR}/zlib -lz"
-                    Note "Using ZLIB include files from $OZLIBINC"
-                    Note "Using pre-built ZLIB library $LIBZ"
-                    break
-                fi
-        fi
-        if [ -z "$LIBZ" ]; then
-            cat 1>&2 <<EOF
+    done
+    if [ -z "$LIBZ" ]; then
+        cat 1>&2 <<EOF
 
 Incompatible/missing ZLIB Library.
 
@@ -3071,11 +3049,10 @@ runtime (e.g.  LD_LIBRARY_PATH).  Also be sure that any relative
 pathnames are made relative to the top of the build area.
 
 EOF
-            boom
-        fi
+        boom
     fi
-    Note "Done checking ZLIB support."
 fi
+Note "Done checking ZLIB support."
 
 # NB: only check if we have the MLA tools
 if [ -f $SRCDIR/MLA/VERSION -a $DBLIB = no ]; then
@@ -4401,7 +4378,6 @@ test $IMP = yes &&		   SedConfigFiles imp/Makefile
 test "$MKDEPEND" != ":" &&	   SedConfigFiles port/mkdepend
 test $SGI2FAX = yes &&	   	   SedConfigFiles sgi2fax/Makefile
 test $PORT = yes &&		   SedConfigFiles port/Makefile
-test $ZLIB = yes &&		   SedConfigFiles zlib/Makefile
 test $REGEX = yes &&		   SedConfigFiles regex/Makefile
 test $DBLIB = yes &&		   SedConfigFiles dblib/Makefile
 if [ $HTML = yes ]; then
@@ -4449,7 +4425,6 @@ if [ "$MAKEDEPINCLUDE" != "sinclude" ]; then
     test $GS = yes	&& DEPEND="$DEPEND gs"
     test $SGI2FAX = yes	&& DEPEND="$DEPEND sgi2fax"
     test $PORT = yes	&& DEPEND="$DEPEND port"
-    test $ZLIB = yes	&& DEPEND="$DEPEND zlib"
     test $REGEX = yes	&& DEPEND="$DEPEND regex"
     test $DBLIB = yes	&& DEPEND="$DEPEND dblib"
     if [ $HTML = yes ]; then

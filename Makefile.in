@@ -72,11 +72,6 @@ dirs::
 	else \
 	    true; \
 	fi
-	@if [ "@ZLIB@" = yes ]; then \
-	    ${ECHO} "= "zlib; cd zlib; ${MAKE}; \
-	else \
-	    true; \
-	fi
 	@if [ "@REGEX@" = yes ]; then \
 	    ${ECHO} "= "regex; cd regex; ${MAKE}; \
 	else \
@@ -117,11 +112,6 @@ depend::
 	else \
 	    true; \
 	fi
-	@if [ "@ZLIB@" = yes ]; then \
-	    ${ECHO} "= "zlib; cd zlib; ${MAKE} depend; \
-	else \
-	    true; \
-	fi
 	@if [ "@REGEX@" = yes ]; then \
 	    ${ECHO} "= "regex; cd regex; ${MAKE} depend; \
 	else \
@@ -143,11 +133,6 @@ depend::
 clean::
 	@if [ "@PORT@" = yes ]; then \
 	    ${ECHO} "= "port; cd port; ${MAKE} clean; \
-	else \
-	    true; \
-	fi
-	@if [ "@ZLIB@" = yes ]; then \
-	    ${ECHO} "= "zlib; cd zlib; ${MAKE} clean; \
 	else \
 	    true; \
 	fi
@@ -190,11 +175,6 @@ clobber::
 	(cd etc; ${MAKE} clobberconfig)
 	@if [ "@PORT@" = yes ]; then \
 	    ${ECHO} "= "port; cd port; ${MAKE} clobberconfig; ${MAKE} clobber; \
-	else \
-	    true; \
-	fi
-	@if [ "@ZLIB@" = yes ]; then \
-	    ${ECHO} "= "zlib; cd zlib; ${MAKE} distclean; \
 	else \
 	    true; \
 	fi
@@ -260,11 +240,6 @@ makeDevices::
 install: makeDirs makeDevices
 	${INSTALL} -m 444 -F ${SPOOL} -idb hylafax.sw.server \
 	    -src ${SRCDIR}/COPYRIGHT -O COPYRIGHT
-	@if [ "@ZLIB@" = yes ]; then \
-	    ${ECHO} "= "zlib; cd zlib; ${MAKE} install; \
-	else \
-	    true; \
-	fi
 	@if [ "@REGEX@" = yes ]; then \
 	    ${ECHO} "= "regex; cd regex; ${MAKE} install; \
 	else \
@@ -282,11 +257,6 @@ install: makeDirs makeDevices
 	    for i in ${DSODIRS}; do \
 		(${ECHO} "= "$$i; cd $$i; ${MAKE} installDSO); \
 	    done; \
-	    if [ "@ZLIB@" = yes ]; then \
-		${ECHO} "= "zlib; cd zlib; ${MAKE} installDSO; \
-	    else \
-		true; \
-	    fi; \
 	else \
 	    true; \
 	fi
@@ -337,11 +307,6 @@ installClient: makeClientDirs
 	    for i in util; do \
 		(${ECHO} "= "$$i; cd $$i; ${MAKE} installDSO); \
 	    done; \
-	    if [ "@ZLIB@" = yes ]; then \
-		${ECHO} "= "zlib; cd zlib; ${MAKE} installDSO; \
-	    else \
-		true; \
-	    fi; \
 	else \
 	    true; \
 	fi

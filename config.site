@@ -50,7 +50,6 @@
 #GS="no"			# install Ghostscript RIP (yes|no)
 #IMP="no"			# install SGI Impressario 2.1 support (yes|no)
 #REGEX="yes"			# use distributed regular expression package
-#ZLIB="auto"			# use distributed zlib distribution
 #UTMP="utmpx"			# type of utmp+wtmp handling (auto|utmp|utmpx)
 #DBLIB="no"			# use distributed libdb distribution
 
@@ -152,12 +151,11 @@
 #
 # The source for the ZLIB library is not required
 # to build this software, but the library is required
-# to link against.  If the copy of the software that is
-# include in this distribution is not to be used then
-# set ZLIB=no and supply the following definitions.
+# to link against.  If ZLIB is installed in a 
+# non-standard location then setup LIBZ accordingly.
 #
 #LIBZ="-L/usr/local/lib -lz"		# linkage convention for libz
-#ZLIBINC="/usr/local/include"		# place to find zlib.h
+#ZLIBINC="-I/usr/local/include"		# place to find zlib.h
 
 #
 # The source for the POSIX regular expression package

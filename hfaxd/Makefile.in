@@ -65,7 +65,7 @@ C++FILES=Admin.c++ \
 	\
 	main.c++
 LC++DEFS=-DOLDPROTO_SUPPORT=1 -DSNPP_SUPPORT=1
-LC++INCS= -I${FAXDSRCDIR} -I${ZLIBINC}
+LC++INCS= -I${FAXDSRCDIR} ${ZLIBINC}
 TARGETS	= hfaxd
 
 default all::

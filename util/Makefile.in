@@ -89,7 +89,7 @@ CFILES= cvtfacility.c fxassert.c
 TARGETS=libfaxutil.${DSO} faxmsg faxmodem faxadduser faxconfig faxdeluser \
     faxstate faxinfo faxwatch textfmt dialtest typetest tiffcheck
 
-LC++INCS=-I${ZLIBINC}			# for FaxClient.c++
+LC++INCS=${ZLIBINC}			# for FaxClient.c++
 
 default all::
 	@${MAKE} incdepend
