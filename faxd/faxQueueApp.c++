@@ -635,7 +635,7 @@ faxQueueApp::preparePageHandling(FaxRequest& req,
      * accepting variable-length pages.
      */
     u_int pagechop;
-    if (info.getMaxPageLengthInMM() == (unsigned)-1) {
+    if (info.getMaxPageLengthInMM() == (u_short)-1) {
 	pagechop = req.pagechop;
 	if (pagechop == FaxRequest::chop_default)
 	    pagechop = pageChop;
@@ -788,7 +788,7 @@ faxQueueApp::setupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo& 
      * vertical resolution.  Note that if the resolution
      * info is bogus, we may select the wrong page size.
      */
-    if (info.getMaxPageLengthInMM() != (unsigned)-1) {
+    if (info.getMaxPageLengthInMM() != (u_short)-1) {
 	uint32 h;
 	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
 	params.setPageLengthInMM((u_int)(h / yres));
