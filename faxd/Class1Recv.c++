@@ -1146,7 +1146,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			} else {
 			    gotprimary = false;
 			    if (!useV34 && !(lastResponse == AT_NOCARRIER || 
-				lastResponse == AT_ERROR || !atCmd(rhCmd, AT_CONNECT)) break;
+				lastResponse == AT_ERROR || !atCmd(rhCmd, AT_CONNECT))) break;
 			}
 		    }
 		    if (!gotprimary && !sendERR) {
