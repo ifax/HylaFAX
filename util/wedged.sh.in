@@ -168,6 +168,10 @@ Consult the server trace logs for more information on what is happening.
 You will be notified again after $WEDGED_EMAIL_INTERVAL minutes if the problem persists.
 
 EOF
+    if [ -x etc/resetmodem ]; then
+	echo "An attempt to reset the modem has been made."
+	etc/resetmodem $device
+    fi
 
     #
     # Disable faxgetty

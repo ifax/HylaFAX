@@ -71,6 +71,13 @@ The
 .I device
 argument is the name of the character special device
 associated with the modem.
+.P
+If there exists an executable file 
+.B ${SPOOL}/etc/resetmodem
+then that file will be executed upon execution of
+the
+.I wedged
+script in an effort to recover the modem.
 .SH FILES
 .nf
 .ta \w'${SENDMAIL}    'u
