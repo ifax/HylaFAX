@@ -814,7 +814,7 @@ ModemServer::traceModemOp(const char* fmt0 ...)
 {
     va_list ap;
     va_start(ap, fmt0);
-    fxStr fmt = fxStr::vformat("MODEM %s", fmt0, ap);
+    fxStr fmt = fxStr::format("MODEM %s", fmt0);
     vtraceStatus(FAXTRACE_MODEMOPS, fmt, ap);
     va_end(ap);
 }
