@@ -326,20 +326,12 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		protoTrace("The destination appears to have trouble with V.34-Fax.");
 		return (send_v34fail);
 	    }
-	    /*
-	     * Detect receivers that don't support batching.
-	     *
-	     * Some will fail on the first instance of EOM.  Brother receivers
-	     * notoriously will fail to respond to the PPM that follows EOM when
-	     * using ECM.
-	     */
-	    if (batchingError && ((batched & BATCH_FIRST) || (params.ec != EC_DISABLE && lastPPM == FCF_EOM))) {
+	    if (batchingError && (batched & BATCH_FIRST)) {
 		protoTrace("The destination appears to not support batching.");
 		return (send_batchfail);
 	    }
 	    return (send_retry);	// a problem, disconnect
 	}
-	lastPPM = cmd;			// remember this PPM
 
 	int ncrp = 0;
 
