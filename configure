@@ -4601,6 +4601,7 @@ EOF
 # etc/faxaddmodem.sh	script for adding/configuring a modem
 # etc/probemodem.sh	script for probing a modem for its capabilities
 # etc/hylafax		SysV-style init script for HylaFAX servers
+# faxcover/edit-faxcover.sh script to edit faxcover.ps
 # util/xferfaxstats.sh	script for transmit statistics accounting
 # util/recvstats.sh	script for receive statistics accounting
 # util/faxcron.sh	script for cleaning up the spooling area (run from cron)
@@ -4625,6 +4626,7 @@ CONF_FILES="
     etc/Makefile
     faxalter/Makefile
     faxcover/Makefile
+    faxcover/edit-faxcover.sh
     faxd/Makefile
     faxmail/Makefile
     faxrm/Makefile

@@ -64,3 +64,11 @@ install: default ${SRCDIR}/faxcover.ps
 	${INSTALL} -F ${LIBDATA} -m 644 \
 	    -idb "${PRODUCT}.sw.client config(suggest)" \
 	    -src ${SRCDIR}/faxcover_example_sgi.ps -O faxcover_example_sgi.ps
+	${INSTALL} -F ${SBIN} -m 755 -src edit-faxcover.sh -O edit-faxcover
+
+#
+# These targets are created during the configuration procedure.
+#
+clobberconfig:
+	-${RM} -f edit-faxcover.sh
+

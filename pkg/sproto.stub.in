@@ -23,6 +23,7 @@ f none @LIBEXEC@/lockname=../etc/lockname 0755 @SYSUID@ @SYSGID@
 f none @LIBEXEC@/ondelay=../etc/ondelay 0755 @SYSUID@ @SYSGID@
 d man @MANDIR@ ? ? ?
 d man @MANDIR@/man1 ? ? ?
+f man @MANDIR@/man1/edit-faxcover.1=../man/cman.apps/edit-faxcover.1 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man1/faxalter.1=../man/cman.apps/faxalter.1 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man1/faxcover.1=../man/cman.apps/faxcover.1 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man1/faxmail.1=../man/cman.apps/faxmail.1 0444 @SYSUID@ @SYSGID@
@@ -88,6 +89,7 @@ f man @MANDIR@/man4/status.@MANNUM4_5@=../man/sman.files/status.4f 0444 @SYSUID@
 f man @MANDIR@/man4/tsi.@MANNUM4_5@=../man/sman.files/tsi.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/xferfaxlog.@MANNUM4_5@=../man/sman.files/xferfaxlog.4f 0444 @SYSUID@ @SYSGID@
 d none @SBIN@ ? ? ?
+f none @SBIN@/edit-faxcover=../faxcover/edit-faxcover.sh 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/faxadduser=../util/faxadduser 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/faxdeluser=../util/faxdeluser 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/faxmsg=../util/faxmsg 0755 @SYSUID@ @SYSGID@

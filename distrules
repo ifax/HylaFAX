@@ -407,6 +407,7 @@ HYLAFAXSRC=\
 	faxcover/faxcover.c++			\
 	faxcover/faxcover.ps			\
 	faxcover/faxcover_example_sgi.ps	\
+	faxcover/edit-faxcover.sh.in		\
     faxd/Makefile.in				\
     faxd/Makefile.IRIXdso			\
     faxd/Makefile.LINUXdso			\
@@ -614,6 +615,7 @@ MANPAGES=\
 	man/faxanswer.1m			\
 	man/faxconfig.1m			\
 	man/faxcover.1				\
+	man/edit-faxcover.1			\
 	man/faxqclean.1m			\
 	man/faxcron.1m				\
 	man/faxdeluser.1m			\

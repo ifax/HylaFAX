@@ -15,12 +15,14 @@ f none @LIBDATA@/typerules=../@SRCDIR@/util/typerules 0444 @SYSUID@ @SYSGID@
 d none @LIBEXEC@ ? ? ?
 f none @LIBEXEC@/textfmt=../util/textfmt 0755 @SYSUID@ @SYSGID@
 d none @SBIN@ ? ? ?
+f none @SBIN@/edit-faxcover=../faxcover/edit-faxcover.sh 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/faxsetup=../etc/faxsetup.sh 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/faxsetup.bsdi=../@SRCDIR@/etc/faxsetup.bsdi 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/faxsetup.irix=../@SRCDIR@/etc/faxsetup.irix 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/faxsetup.linux=../@SRCDIR@/etc/faxsetup.linux 0755 @SYSUID@ @SYSGID@
 d man @MANDIR@ ? ? ?
 d man @MANDIR@/man1 ? ? ?
+f man @MANDIR@/man1/edit-faxcover.1=../man/cman.apps/edit-faxcover.1 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man1/faxalter.1=../man/cman.apps/faxalter.1 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man1/faxcover.1=../man/cman.apps/faxcover.1 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man1/faxmail.1=../man/cman.apps/faxmail.1 0444 @SYSUID@ @SYSGID@

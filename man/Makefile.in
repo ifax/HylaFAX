@@ -49,6 +49,7 @@ SRCDIR	= ${DEPTH}/${TOPSRCDIR}/man
 # system-specific defs files.
 #
 MANCAPP=cman.apps/hylafax-client.1	\
+	cman.apps/edit-faxcover.1	\
 	cman.apps/faxalter.1	\
 	cman.apps/faxcover.1	\
 	cman.apps/faxmail.1	\
@@ -144,6 +145,7 @@ sman.apps: ${_FORCE}; test -d $@ || ${MKDIR} $@
 sman.files: ${_FORCE}; test -d $@ || ${MKDIR} $@
 
 cman.apps/hylafax-client.1::	${SRCDIR}/hylafax-client.1;	${MANCVT}
+cman.apps/edit-faxcover.1::	${SRCDIR}/edit-faxcover.1;	${MANCVT}
 cman.apps/faxalter.1::	${SRCDIR}/faxalter.1;	${MANCVT}
 cman.apps/faxcover.1::	${SRCDIR}/faxcover.1;	${MANCVT}
 cman.apps/faxmail.1::	${SRCDIR}/faxmail.1;	${MANCVT}

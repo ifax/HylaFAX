@@ -1,0 +1,84 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 2003 Multitalents
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
+.TH EDIT-FAXCOVER 1 "May 06, 2003"
+.SH NAME
+edit-faxcover \- edit faxcover.ps
+.SH SYNOPSIS
+.B edit-faxcover
+[
+.I options
+]
+
+.SH DESCRIPTION
+.I edit-faxcover
+Edits the 10 header lines of the \*(Ps\(rg cover page document.
+
+.SH OPTIONS
+.TP 12
+.BI \--with-LINEx=string
+Set variable
+.I LINEx
+where x is 1-10 to be the contents of "string".
+Warning null strings will not blank out existing lines.
+Use --with-LINE1=" " to blank out line 1 (actually it'll be a single space)
+
+.TP 12
+.BI \--with-FAXCOVER=ARG
+Edit some other faxcover.ps file
+The faxcover template file can also be specified by setting the
+.SM FAXCOVER
+environment variable.
+
+.TP 12
+.BI \--help
+print this message.
+
+.TP 12
+.BI \--nointeractive
+do not prompt for input [INTERACTIVE=no]
+
+.TP 12
+.BI \--quiet
+do not print messages
+
+.TP 12
+.BI \--verbose
+opposite of -quiet
+
+.SH DIAGNOSTICS
+Complaints about not being able to locate/write a template file.
+.SH FILES
+.ta \w'${LIBDATA}/faxcover.ps    'u
+.br
+${LIBDATA}/faxcover.ps	default cover page template
+.SH BUGS
+null strings will not blank out existing lines.
