@@ -154,6 +154,7 @@ public:
     u_int	class1SendMsgDelay;	// delay (ms) after training
     u_int	class1TrainingRecovery;	// delay (ms) after failed training
     u_int	class1RecvAbortOK;	// if non-zero, OK sent after recv abort
+    u_int	class1RMPersistence;	// how many times to persist through +FCERROR
     u_int	class1Resolutions;	// resolutions support
     u_int	class1FrameOverhead;	// overhead bytes in received frames
     u_int	class1RecvIdentTimer;	// timeout receiving initial identity

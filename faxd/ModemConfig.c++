@@ -203,6 +203,7 @@ static struct {
 { "class1sendmsgdelay",		&ModemConfig::class1SendMsgDelay,    200 },
 { "class1trainingrecovery",	&ModemConfig::class1TrainingRecovery,1500 },
 { "class1recvabortok",		&ModemConfig::class1RecvAbortOK,     200 },
+{ "class1rmpersistence",	&ModemConfig::class1RMPersistence,   2 },
 { "class1frameoverhead",	&ModemConfig::class1FrameOverhead,   4 },
 { "class1recvidenttimer",	&ModemConfig::class1RecvIdentTimer,  TIMER_T1 },
 { "class1tcfmaxnonzero",	&ModemConfig::class1TCFMaxNonZero,   10 },

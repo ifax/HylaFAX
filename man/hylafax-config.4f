@@ -283,6 +283,7 @@ Class1FrameOverhead	integer	\s-14\s+1	Class 1/1.0: extra bytes in a received \s-
 Class1NFLOCmd	string	\-	Class 1/1.0: command to set no flow control
 Class1RecvAbortOK	integer	\s-1200\s+1	Class 1/1.0: max wait (ms) for ``\s-1OK\s+1'' after recv abort
 Class1RecvIdentTimer	integer	\s-140000\s+1	Class 1/1.0: max wait (ms) for initial ident frame
+Class1RMPersistence	integer	\s-12\s+1	Class 1/1.0: times to attempt high-speed carrier recv
 Class1SFLOCmd	string	\-	Class 1/1.0: command to set software flow control
 Class1PPMWaitCmd	string	\s-1AT+FTS=7\s+1	Class 1/1.0: command to stop and wait before PPM
 Class1ResponseWaitCmd	string	\-	Class 1/1.0: command to wait before TCF response
@@ -2334,6 +2335,21 @@ However, adaptive answering schemes such as that described
 above under the
 .B AdaptiveAnswer
 parameter may require that this timer be shortened.
+.TP
+.B Class1RMPersistence
+The number of times that an attempt to receive the high-speed data carrier
+should be made, resulting in +FCERROR, before the low-speed message carrier
+reception is attempted.  Some modems are quick to (perhaps incorrectly)
+return +FCERROR, and for those modems a value of 2 or 3 should be used.
+For modems that are not quick to return +FCERROR, a value of 1 should be used.
+Proper tuning of this can provide a type of "adaptive reception control"
+for modems that accurately return +FCERROR without supporting 
+.B Class1AdaptRecvCmd.
+For those modems that support
+.B Class1AdaptRecvCmd,
+.B Class1RMPersistence
+should probably not be set at 1, although +FCERROR should almost never occur
+with such modems.
 .TP
 .B Class1SendMsgDelay
 The time, in milliseconds, to delay just before sending the image data.

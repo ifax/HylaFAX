@@ -52,9 +52,10 @@ protected:
     fxStr	rhCmd;			// command for receiving a frame
     fxStr	classCmd;		// set class command
     u_int	serviceType;		// modem service required
-    FaxParams	dis_caps;	// current remote DIS
+    FaxParams	dis_caps;		// current remote DIS
     u_int	frameSize;		// size of image frames
     u_int	signalRcvd;		// last signal received in ECM protocol
+    fxStr	signalSent;		// last signal sent to remote
     u_int	nonV34br;		// modemParams.br without V.34
     bool	sendERR;		// T.30-A send ERR instead of MCF
     bool	hadV34Trouble;		// indicates failure due to V.34 restrictions
@@ -158,6 +159,7 @@ protected:
     const Class1Cap* findBRCapability(u_short br, const Class1Cap[]);
     static bool isCapable(u_int sr, FaxParams& dis);
 // class 1 HDLC frame support
+    bool	transmitFrame(fxStr& signal);
     bool	transmitFrame(u_char fcf, bool lastFrame = true);
     bool	transmitFrame(u_char fcf, FaxParams& dcs_caps, bool lastFrame = true);
     bool	transmitFrame(u_char fcf, const fxStr&, bool lastFrame=true);

@@ -1095,6 +1095,8 @@ Class1Modem::sendRawFrame(HDLCFrame& frame)
 	protoTrace("HDLC frame with bad control field %#x", frame[1]);
 	return (false);
     }
+    signalSent = "";
+    for (u_int i = 0; i < frame.getLength(); i++) signalSent.append(frame[i]);
     static u_char buf[2] = { DLE, ETX };
     /*
      * sendFrame() is always called with a timeout set.
@@ -1167,6 +1169,20 @@ Class1Modem::sendFrame(u_char fcf, const u_char* code, const fxStr& nsf, bool la
     frame.put(code, 3);		// should be in LSBMSB already
     frame.put((const u_char*)(const char*)nsf, nsf.length());
     return (sendRawFrame(frame));
+}
+
+bool
+Class1Modem::transmitFrame(fxStr& signal)
+{
+    HDLCFrame frame(conf.class1FrameOverhead);
+    for (u_int i = 0; i < signal.length(); i++) frame.put(signal[i]);
+    startTimeout(7550);
+    bool frameSent =
+	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
+	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
+	sendRawFrame(frame);
+    stopTimeout("sending HDLC frame");
+    return (frameSent);
 }
 
 bool

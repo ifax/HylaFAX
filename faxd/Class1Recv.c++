@@ -519,7 +519,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		 */
 		fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
 		u_short attempts = 0;
-		while ((rmResponse == AT_NOTHING || rmResponse == AT_FCERROR) && attempts++ < 20) {
+		while ((rmResponse == AT_NOTHING || rmResponse == AT_FCERROR) && attempts++ < conf.class1RMPersistence) {
 		    (void) atCmd(rmCmd, AT_NOTHING);
 		    rmResponse = atResponse(rbuf, conf.t2Timer);
 		}
@@ -857,7 +857,7 @@ Class1Modem::raiseRecvCarrier(bool& dolongtrain, fxStr& emsg)
     else rmCmd = fxStr(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
     u_short attempts = 0;
     lastResponse = AT_NOTHING;
-    while ((lastResponse == AT_NOTHING || lastResponse == AT_FCERROR) && attempts++ < 20) {
+    while ((lastResponse == AT_NOTHING || lastResponse == AT_FCERROR) && attempts++ < conf.class1RMPersistence) {
 	(void) atCmd(rmCmd, AT_NOTHING);
 	lastResponse = atResponse(rbuf, conf.t2Timer);
     }
@@ -907,14 +907,22 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 	    if (!useV34) {
 		gotRTNC = false;
 		if (!raiseRecvCarrier(dolongtrain, emsg) && !gotRTNC) {
-		    if (conf.saveUnconfirmedPages && pagedataseen) {
-			protoTrace("RECV keeping unconfirmed page");
-			writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-			prevPage = true;
+		    if (lastResponse == AT_FCERROR && atCmd(rhCmd, AT_CONNECT)) {
+			// sender is transmitting V.21 instead, we may have
+			// missed the first signal attempt, but should catch
+			// the next attempt.  This "simulates" adaptive receive.
+			emsg = "";	// reset
+			gotRTNC = true;
+		    } else {
+			if (conf.saveUnconfirmedPages && pagedataseen) {
+			    protoTrace("RECV keeping unconfirmed page");
+			    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+			    prevPage = true;
+			}
+			free(block);
+			if (wasTimeout()) abortReceive();	// return to command mode
+			return (false);
 		    }
-		    free(block);
-		    if (wasTimeout()) abortReceive();	// return to command mode
-		    return (false);
 		}
 	    }
 	    if (useV34 || gotRTNC) {		// V.34 mode or if +FRH:3 in adaptive reception
@@ -965,7 +973,12 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				case FCF_PPS:
 				    tracePPM("RECV recv", rtncframe.getFCF());
 				    if (rtncframe.getLength() > 5) {
+					u_int fc = frameRev[rtncframe[6]] + 1;
+					if (fc == 256 && !dataseen) fc = 0;		// distinguish between 0 and 256
+					if (fcount < fc) fcount = fc;
 					tracePPM("RECV recv", rtncframe.getFCF2());
+					protoTrace("RECV received %u frames of block %u of page %u", \
+					    fc, frameRev[rtncframe[5]]+1, frameRev[rtncframe[4]]+1);
 					switch (rtncframe.getFCF2()) {
 					    case 0: 	// PPS-NULL
 					    case FCF_EOM:
@@ -984,7 +997,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						    free(block);
 						    return (false);
 						}
-						if (pprcnt) {
+						if (pprcnt || !prevPage) {
 						    (void) transmitFrame(FCF_PPR, fxStr(ppr, 32));
 						    tracePPR("RECV send", FCF_PPR);
 						} else {
@@ -1074,6 +1087,22 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					pprcnt = 0;
 					break;
 				    }
+				case FCF_CRP:
+				    // command repeat... just repeat whatever we last sent
+				    tracePPR("RECV recv", rtncframe.getFCF());
+				    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
+					emsg = "Failure to receive silence.";
+					if (conf.saveUnconfirmedPages && pagedataseen) {
+					    protoTrace("RECV keeping unconfirmed page");
+					    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+					    prevPage = true;
+					}
+					free(block);
+					return (false);
+				    }
+				    transmitFrame(signalSent);
+				    tracePPR("RECV send", (u_char) signalSent[2]);
+				    break;
 				case FCF_DCN:
 				    tracePPM("RECV recv", rtncframe.getFCF());
 				    gotEOT = true;
@@ -1089,14 +1118,20 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				else {
 				    gotRTNC = false;
 				    if (!raiseRecvCarrier(dolongtrain, emsg) && !gotRTNC) {
-					if (conf.saveUnconfirmedPages && pagedataseen) {
-					    protoTrace("RECV keeping unconfirmed page");
-					    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-					    prevPage = true;
+					if (lastResponse == AT_FCERROR && atCmd(rhCmd, AT_CONNECT)) {
+					    // simulate adaptive receive
+					    emsg = "";		// clear the failure
+					    gotRTNC = true;
+					} else {
+					    if (conf.saveUnconfirmedPages && pagedataseen) {
+						protoTrace("RECV keeping unconfirmed page");
+						writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+						prevPage = true;
+					    }
+					    free(block);
+					    if (wasTimeout()) abortReceive();	// return to command mode
+					    return (false);
 					}
-					free(block);
-					if (wasTimeout()) abortReceive();	// return to command mode
-					return (false);
 				    }
 				}
 			    }
