@@ -289,7 +289,7 @@ install: makeDirs makeDevices
 	else \
 	    true; \
 	fi
-	@${ECHO} "= "etc; cd etc; ${MAKE} installSysVInit; \
+	@${ECHO} "= "etc; cd etc; ${MAKE} installSysVInit;
 	@if [ "@HTML@" = yes ]; then \
 	    ${ECHO} "= "html; cd html; ${MAKE} install; \
 	else \

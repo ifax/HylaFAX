@@ -92,11 +92,11 @@ install: default
 # System V-specific init support.
 #
 installSysVInit: hylafax
-	if [ "@SYSVINIT@" ]; do
-	    cp hylafax @SYSVINIT@
-	    chmod 755 @SYSVINIT@
-	else
-	    ${PUTSERVER} -F ${SBIN} -m 755 hylafax
+	if [ "@SYSVINIT@" ]; do \
+	    cp hylafax @SYSVINIT@ \
+	    chmod 755 @SYSVINIT@ \
+	else \
+	    ${PUTSERVER} -F ${SBIN} -m 755 hylafax \
 	fi
 	if test -d /etc/config; then \
 	    ${PUTSERVER} -F /etc/config -m 644 -src config.fax -O fax; \

@@ -1139,6 +1139,8 @@ system you can obtain them by public FTP from the place where you obtained
 the HylaFAX software or from the master FTP site at ftp.sgi.com.
 EOF
      fi
+     # return to spool directory
+     cd $DIR_SPOOL
 fi
 
 #
