@@ -401,16 +401,18 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 			protoTrace(emsg);
 			return (send_failed);
 		    }
-		    /*
-		     * The session parameters cannot change except following
-		     * the reception of an RTN signal or the transmission of an
-		     * EOM signal.
-		     *
-		     * Since we did not receive RTN, and since batching (EOM)
-		     * triggers retraining in other ways, we require that the
-		     * next page have the same characteristics as this page.
-		     */
-		    next = params;
+		    if (ppr == FCF_MCF) {
+			/*
+			 * The session parameters cannot change except following
+			 * the reception of an RTN or RTP signal or the transmission
+			 * of an EOM signal.
+			 *
+			 * Since we did not receive RTN or RTP, and since batching (EOM)
+			 * triggers retraining in other ways, we require that the
+			 * next page have the same characteristics as this page.
+			 */
+			next = params;
+		    }
 		}
 		break;
 	    case FCF_DCN:		// disconnect, abort
