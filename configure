@@ -1091,7 +1091,7 @@ fi
 
 #
 # Some pre-processors (e.g. SunPRO prior to version 3.0.1)
-# leave comments in a file whe invoked with the -E option. 
+# leave comments in a file when invoked with the -E option. 
 # This messes up the default scheme used below to check for
 # function declarations.  Consequently we check for this
 # behaviour here and try to work around the problem with
@@ -1249,7 +1249,7 @@ if [ -z "$MAKECXXOVERRIDE" ]; then
 	# must specify file.c++=.C.  We patch the Makefiles with explicit
 	# construction rules to do this...
 	#
-	if [ "`$CXX -V | $SED 's/.* C \([^ .]*\).*/\1/g'`" -lt "5" ]; then
+	if [ "`$CXX -V 2>&1 | sed 'q' | sed 's/.* C++ \([^ .]*\).*/\1/g'`" -lt "5" ]; then
 	    MAKECXXOVERRIDE="=.C";
 	fi
 	;;
