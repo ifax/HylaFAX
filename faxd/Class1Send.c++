@@ -159,6 +159,10 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
 		    xinfo = frame.getXINFO();
 		    params.setFromDIS(dis, xinfo);
 		    curcap = NULL;			// force initial setup
+		    if (useV34 && params.ec == EC_DISABLE) {
+			protoTrace("V.34-Fax session, but DIS signal contains no ECM bit; ECM forced.");
+			params.ec = EC_ENABLE256;
+		    }
 		    break;
 		}
 	    } while (frame.moreFrames() && recvFrame(frame, conf.t2Timer));
@@ -738,6 +742,10 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 			 * It will work if old dis 'less' then newDIS.
 			 */
 			curcap = NULL;
+			if (useV34 && params.ec == EC_DISABLE) {
+			    protoTrace("V.34-Fax session, but DIS signal contains no ECM bit; ECM forced.");
+			    params.ec = EC_ENABLE256;
+			}
 		      }
 		    }
 		    return (sendTraining(params, --tries, emsg));
