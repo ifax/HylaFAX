@@ -30,6 +30,7 @@
  * Receive protocol.
  */
 #include <stdio.h>
+#include <sys/time.h>
 #include "Class1.h"
 #include "ModemConfig.h"
 #include "HDLCFrame.h"
