@@ -63,7 +63,7 @@ FaxConfig::readConfig(const fxStr& filename)
 }
 void FaxConfig::resetConfig() { lineno = 0; }
 
-fxBool
+bool
 FaxConfig::updateConfig(const fxStr& filename)
 {
     struct stat sb;
@@ -72,9 +72,9 @@ FaxConfig::updateConfig(const fxStr& filename)
 	resetConfig();
 	readConfig(path);
 	lastModTime = sb.st_mtime;
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 /*
@@ -102,7 +102,7 @@ FaxConfig::tildeExpand(const fxStr& filename)
     return (path);
 }
 
-fxBool
+bool
 FaxConfig::findTag(const char* tag, const void* names0, u_int n, u_int& ix)
 {
     const tags* names = (const tags*) names0;
@@ -111,23 +111,23 @@ FaxConfig::findTag(const char* tag, const void* names0, u_int n, u_int& ix)
 	const char* cp = names[i].name;
 	if (cp[0] == tag[0] && streq(cp, tag)) {
 	    ix = i;
-	    return (TRUE);
+	    return (true);
 	}
     }
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 FaxConfig::findValue(const char* value, const char* values[], u_int n, u_int& ix)
 {
     for (u_int i = 0; i < n; i++) {
 	const char* cp = values[i];
 	if (cp[0] == value[0] && streq(cp, value)) {
 	    ix = i;
-	    return (TRUE);
+	    return (true);
 	}
     }
-    return (FALSE);
+    return (false);
 }
 
 int
@@ -138,13 +138,13 @@ FaxConfig::getNumber(const char* s)
 
 #define	valeq(a,b)	(strcasecmp(a,b)==0)
 
-fxBool
+bool
 FaxConfig::getBoolean(const char* cp)
 {
     return (valeq(cp, "on") || valeq(cp, "yes") || valeq(cp, "true"));
 }
 
-fxBool
+bool
 FaxConfig::readConfigItem(const char* b)
 {
     char buf[2048];
@@ -155,7 +155,7 @@ FaxConfig::readConfigItem(const char* b)
     for (cp = buf; isspace(*cp); cp++)		// skip leading white space
 	;
     if (*cp == '#' || *cp == '\0')
-	return (TRUE);
+	return (true);
     const char* tag = cp;			// start of tag
     while (*cp && *cp != ':') {			// skip to demarcating ':'
 	if (isupper(*cp))
@@ -165,7 +165,7 @@ FaxConfig::readConfigItem(const char* b)
     if (*cp != ':') {
 	configError("Syntax error at line %u, missing ':' in \"%s\"",
 	    lineno, b);
-	return (FALSE);
+	return (false);
     }
     for (*cp++ = '\0'; isspace(*cp); cp++)	// skip white space again
 	;
@@ -180,7 +180,7 @@ FaxConfig::readConfigItem(const char* b)
 	    if (c == '\0') {			// unmatched quote mark
 		configError("Syntax error at line %u, missing quote mark in \"%s\"",
 		    lineno, b);
-		return (FALSE);
+		return (false);
 	    }
 	    if (c == '\\') {
 		c = *++cp;
@@ -211,9 +211,9 @@ FaxConfig::readConfigItem(const char* b)
     if (!setConfigItem(tag, value)) {
 	configTrace("Unknown configuration parameter \"%s\" ignored at line %u",
 	     tag, lineno);
-	return (FALSE);
+	return (false);
     } else {
 	configTrace("%s = %s (line %u)", tag, value, lineno);
-	return (TRUE);
+	return (true);
     }
 }

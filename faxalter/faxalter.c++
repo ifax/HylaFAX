@@ -32,7 +32,7 @@ parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg);
 
 class faxAlterApp : public FaxClient {
 private:
-    fxBool	groups;			// group or job id's
+    bool	groups;			// group or job id's
     fxStr	script;			// commands to send for each job
 
     void addToScript(const char* fmt ...);
@@ -44,7 +44,7 @@ public:
 
     void run(int argc, char** argv);
 };
-faxAlterApp::faxAlterApp() { groups = FALSE; }
+faxAlterApp::faxAlterApp() { groups = false; }
 faxAlterApp::~faxAlterApp() {}
 
 void
@@ -90,7 +90,7 @@ faxAlterApp::run(int argc, char** argv)
 		addToScript("SENDTIME NOW");
 	    break;
 	case 'g':			// apply to groups, not jobs
-	    groups = TRUE;
+	    groups = true;
 	    break;
 	case 'h':			// server's host
 	    setHost(optarg);
@@ -132,7 +132,7 @@ faxAlterApp::run(int argc, char** argv)
 	    addToScript("MAXDIALS %s", optarg);
 	    break;
 	case 'v':			// trace protocol
-	    setVerbose(TRUE);
+	    setVerbose(true);
 	    break;
 	case '?':
 	    usage();

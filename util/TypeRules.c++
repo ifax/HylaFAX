@@ -56,8 +56,8 @@ static const char* opNames[] =
     { "<any>", "=", "!=", "<", "<=", ">", ">=", "&", "^", "!" };
 static const char* resultNames[] = { "tiff", "postscript", "error" };
 
-fxBool
-TypeRule::match(const void* data, u_int size, fxBool verbose) const
+bool
+TypeRule::match(const void* data, u_int size, bool verbose) const
 {
     if (verbose) {
 	printf("rule: %soffset %#lx %s %s",
@@ -79,9 +79,9 @@ TypeRule::match(const void* data, u_int size, fxBool verbose) const
     if (off > size) {
 	if (verbose)
 	    printf("failed (offset past data)\n");
-	return (FALSE);
+	return (false);
     }
-    fxBool ok = FALSE;
+    bool ok = false;
     u_long v = 0;
     const u_char* cp = (const u_char*) data;
     switch (type) {
@@ -91,9 +91,9 @@ TypeRule::match(const void* data, u_int size, fxBool verbose) const
 	    if (!isprint(cp[i]) && !isspace(cp[i])) {
 		if (verbose)
 		    printf("failed (unprintable char %#x)\n", cp[i]);
-		return (FALSE);
+		return (false);
 	    }
-	ok = TRUE;
+	ok = true;
 	goto done;
     case STRING:
 	ok = (strncmp((const char*)(cp+off), value.s,
@@ -114,7 +114,7 @@ TypeRule::match(const void* data, u_int size, fxBool verbose) const
 	}
 	if (verbose)
 	    printf("failed (insufficient data)\n");
-	return (FALSE);
+	return (false);
     case LONG:
 	if (off + 4 < size) {
 	    memcpy(&v, cp+off, 4);
@@ -123,13 +123,13 @@ TypeRule::match(const void* data, u_int size, fxBool verbose) const
 	}
 	if (verbose)
 	    printf("failed (insufficient data)\n");
-	return (FALSE);
+	return (false);
     }
     /*
      * Numeric value, use operation.
      */
     switch (op) {
-    case ANY:	ok = TRUE; break;
+    case ANY:	ok = true; break;
     case EQ:	ok = (v == value.v); break;
     case NE:	ok = (v != value.v); break;
     case LT:	ok = (v  < value.v); break;
@@ -211,7 +211,7 @@ fxIMPLEMENT_ObjArray(TypeRuleArray, TypeRule)
 
 TypeRules::TypeRules()
 {
-    verbose = FALSE;
+    verbose = false;
     rules = new TypeRuleArray;
 }
 
@@ -221,14 +221,14 @@ TypeRules::~TypeRules()
 }
 
 void
-TypeRules::setVerbose(fxBool b)
+TypeRules::setVerbose(bool b)
 {
     verbose = b;
 }
 
 #include <ctype.h>
 
-static fxBool
+static bool
 appendLine(fxStr& s, const char* line)
 {
     const char* cp = line;
@@ -243,14 +243,14 @@ appendLine(fxStr& s, const char* line)
 	    if (cp[-1] == '\\') {
 		if (*cp == '\n') {	// continue cmd string on next line
 		    s.append(cmd, cp-1 - cmd);
-		    return (TRUE);
+		    return (true);
 		} else if (*cp)		// accept anything but \\0
 		    cp++;
 	    }
 	} while (*cp != '\0' && *cp != '\n' && *cp != '#');
 	s.append(fxStr(cmd, cp-cmd));
     }
-    return (FALSE);
+    return (false);
 }
 
 #include <stdarg.h>
@@ -286,10 +286,10 @@ TypeRules::read(const fxStr& file)
 	    continue;
 	TypeRule rule;
 	if (*cp == '>') {		// continuation
-	    rule.cont = TRUE;
+	    rule.cont = true;
 	    cp++;
 	} else
-	    rule.cont = FALSE;
+	    rule.cont = false;
 	const char *op = cp;
 	rule.off = strtoul(op, &cp, 0);	// file offset
 	if (cp == op) {
@@ -387,7 +387,7 @@ TypeRules::read(const fxStr& file)
 	    cp++;
 	const char* cmd = cp;		// collect cmd string
 	if (*cp != '\0' && *cp != '\n' && *cp != '#') {
-	    fxBool done = FALSE;	// XXX workaround compiler limitation
+	    bool done = false;	// XXX workaround compiler limitation
 	    do {
 		cp++;
 		if (cp[-1] == '\\') {
@@ -396,7 +396,7 @@ TypeRules::read(const fxStr& file)
 			while (fgets(line, sizeof (line), fp) != NULL &&
 			  appendLine(rule.cmd, line))
 			    ;
-			done = TRUE;
+			done = true;
 		    } else if (*cp)	// accept anything but \\0
 			cp++;
 		}
@@ -414,7 +414,7 @@ TypeRules::read(const fxStr& file)
  * Check secondary matching rules after a primary match.
  */
 u_int
-TypeRules::match2(u_int base, const void* data, u_int size, fxBool verb) const
+TypeRules::match2(u_int base, const void* data, u_int size, bool verb) const
 {
     for (u_int i = 1, n = (*rules).length() - base; i < n; i++) {
 	TypeRule& rule = (*rules)[base+i];

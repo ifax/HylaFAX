@@ -33,10 +33,10 @@
 class Class2ErsatzModem : public Class2Modem {
 protected:
 // transmission support
-    fxBool	sendPage(TIFF* tif, u_int pageChop);
-    fxBool	pageDone(u_int ppm, u_int& ppr);
+    bool	sendPage(TIFF* tif, u_int pageChop);
+    bool	pageDone(u_int ppm, u_int& ppr);
 
-    fxBool	sendEOT();
+    bool	sendEOT();
     void	abortDataTransfer();
 // miscellaneous
     virtual ATResponse atResponse(char* buf, long ms = 30*1000);

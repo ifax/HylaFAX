@@ -28,7 +28,7 @@
 
 FaxFont::FaxFont()
 {
-    ready = FALSE;		// font not ready for use
+    ready = false;		// font not ready for use
     fontAscent = fontDescent = 0;
 }
 

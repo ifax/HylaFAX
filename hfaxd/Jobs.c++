@@ -40,7 +40,7 @@
 Job::Job(const fxStr& qf, int f) : FaxRequest(qf,f)
 {
     lastmod = 0;
-    queued = FALSE;
+    queued = false;
 }
 Job::~Job() {}
 
@@ -53,7 +53,7 @@ Job::~Job() {}
  * check for ``..'' and ``/'' being used to reference
  * files outside the spooling area.
  */
-fxBool
+bool
 Job::checkDocument(const char* pathname)
 {
     struct stat sb;
@@ -154,7 +154,7 @@ static const struct {
  * ownership is based on login account and not fax uid;
  * this may need to be rethought.
  */
-fxBool
+bool
 HylaFAXServer::checkAccess(const Job& job, Token t, u_int op)
 {
     u_int n = N(params)-1;
@@ -163,12 +163,12 @@ HylaFAXServer::checkAccess(const Job& job, Token t, u_int op)
 	i++;
     u_int m = params[i].protect;
     if (m&op)					// other/public access
-	return (TRUE);
+	return (true);
     if (IS(PRIVILEGED) && ((m>>3)&op))		// administrative access
-	return (TRUE);
+	return (true);
     if (job.owner == the_user && ((m>>6)&op))	// owner access
-	return (TRUE);
-    return (FALSE);
+	return (true);
+    return (false);
 }
 
 static const struct {
@@ -263,12 +263,12 @@ static const char* docTypeNames[] = {
 };
 
 static const char*
-boolString(fxBool b)
+boolString(bool b)
 {
     return (b ? "YES" : "NO");
 }
 void
-HylaFAXServer::replyBoolean(int code, fxBool b)
+HylaFAXServer::replyBoolean(int code, bool b)
 {
     reply(code, "%s", boolString(b));
 }
@@ -281,7 +281,7 @@ HylaFAXServer::replyBoolean(int code, fxBool b)
  * and send the client an error reply.  This method is used
  * before each place a job's state is access.
  */
-fxBool
+bool
 HylaFAXServer::checkJobState(Job* job)
 {
     /*
@@ -295,13 +295,13 @@ HylaFAXServer::checkJobState(Job* job)
 	if (job == curJob)			// make default job current
 	    curJob = &defJob;
 	delete job, job = NULL;
-	return (FALSE);
+	return (false);
     }
     if (job->lastmod < sb.st_mtime) {
 	(void) updateJobFromDisk(*job);
 	job->lastmod = sb.st_mtime;
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -312,25 +312,25 @@ HylaFAXServer::checkJobState(Job* job)
  * could be lost (in our case they will be lost due to the
  * way that things work).
  */
-fxBool
+bool
 HylaFAXServer::checkParm(Job& job, Token t, u_int op)
 {
     if (!checkJobState(&job)) {			// insure consistent state
 	reply(500, "Cannot access job %s state; job deleted by another party.",
 	    (const char*) job.jobid);
-	return (FALSE);
+	return (false);
     } else if (!checkAccess(job, t, op)) {
 	reply(503, "Permission denied: no %s access to job parameter %s."
 	    , (op == A_READ ? "read" : "write")
 	    , parmToken(t)
 	);
-	return (FALSE);
+	return (false);
     } else if ((op & (A_WRITE|A_MODIFY)) &&
       job.state != FaxRequest::state_suspended && job.jobid != "default") {
 	reply(503, "Suspend the job with JSUSP first.");
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
 /*
@@ -572,17 +572,17 @@ HylaFAXServer::jstatCmd(const Job& job)
  * array.  Parameter names are case-insensitive. 
  * Unknown values cause an error reply.  
  */
-fxBool
+bool
 HylaFAXServer::setValue(u_short& v, const char* value, const char* what,
     const char* valNames[], u_int nValNames)
 {
     for (u_int i = 0; i < nValNames; i++)
 	if (strcasecmp(value, valNames[i]) == 0) {
 	    v = i;
-	    return (TRUE);
+	    return (true);
 	}
     reply(503, "Unknown %s value %s.", what, value);
-    return (FALSE);
+    return (false);
 }
 
 void
@@ -619,7 +619,7 @@ HylaFAXServer::flushPreparedDocuments(Job& job)
 /*
  * Set a job state parameter that has a string value.
  */
-fxBool
+bool
 HylaFAXServer::setJobParameter(Job& job, Token t, const fxStr& value)
 {
     if (checkParm(job, t, A_WRITE|A_MODIFY)) {
@@ -631,31 +631,31 @@ HylaFAXServer::setJobParameter(Job& job, Token t, const fxStr& value)
 	    if (setValue(job.pagechop, value, parmToken(t),
 	      chopVals, N(chopVals))) {
 		job.pagehandling = "";		// force recalculation
-		return (TRUE);
+		return (true);
 	    } else
-		return (FALSE);
+		return (false);
 	case T_DATAFORMAT:
 	    if (setValue(job.desireddf, value, parmToken(t),
 	      dataVals, N(dataVals))) {
 		flushPreparedDocuments(job);
-		return (TRUE);
+		return (true);
 	    } else
-		return (FALSE);
+		return (false);
 	}
 	for (u_int i = 0, n = N(strvals); i < n; i++)
 	    if (strvals[i].t == t) {
 		job.*strvals[i].p = value;
-		return (TRUE);
+		return (true);
 	    }
 	parmBotch(t);
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Set a job state parameter that has a integer value.
  */
-fxBool
+bool
 HylaFAXServer::setJobParameter(Job& job, Token t, u_short value)
 {
     if (checkParm(job, t, A_WRITE|A_MODIFY)) {
@@ -679,17 +679,17 @@ HylaFAXServer::setJobParameter(Job& job, Token t, u_short value)
 			break;
 		    }
 		}
-		return (TRUE);
+		return (true);
 	    }
 	parmBotch(t);
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Set a job state parameter that has a time value.
  */
-fxBool
+bool
 HylaFAXServer::setJobParameter(Job& job, Token t, time_t value)
 {
     if (checkParm(job, t, A_WRITE|A_MODIFY)) {
@@ -699,12 +699,12 @@ HylaFAXServer::setJobParameter(Job& job, Token t, time_t value)
 	    if (value != 0) {			// explicit time
 		if (value < now) {
 		    reply(503, "Bad time to send; time in the past.");	// XXX
-		    return (FALSE);
+		    return (false);
 		}
 		job.tts = value;
 	    } else				// ``NOW''
 		job.tts = now;
-	    return (TRUE);
+	    return (true);
 	case T_LASTTIME:
 	    /*
 	     * Convert client-specified kill time (as a relative number)
@@ -716,43 +716,43 @@ HylaFAXServer::setJobParameter(Job& job, Token t, time_t value)
 	     * value may be installed for LASTTIME.
 	     */
 	    job.killtime = value + (job.tts == 0 ? now : job.tts);
-	    return (TRUE);
+	    return (true);
 	case T_RETRYTIME:
 	    job.retrytime = value;
-	    return (TRUE);
+	    return (true);
 	}
 	parmBotch(t);
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Set a job state parameter that has a boolean value.
  */
-fxBool
-HylaFAXServer::setJobParameter(Job& job, Token t, fxBool b)
+bool
+HylaFAXServer::setJobParameter(Job& job, Token t, bool b)
 {
     if (checkParm(job, t, A_WRITE|A_MODIFY)) {
 	switch (t) {
 	case T_USE_ECM:
 	    job.desiredec = b;
-	    return (TRUE);
+	    return (true);
 	case T_USE_TAGLINE:
 	    job.desiredtl = b;
-	    return (TRUE);
+	    return (true);
 	case T_USE_CONTCOVER:
 	    job.useccover = b;
-	    return (TRUE);
+	    return (true);
 	}
 	parmBotch(t);
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Set a job state parameter that has a float value.
  */
-fxBool
+bool
 HylaFAXServer::setJobParameter(Job& job, Token t, float value)
 {
     if (checkParm(job, t, A_WRITE|A_MODIFY)) {
@@ -762,11 +762,11 @@ HylaFAXServer::setJobParameter(Job& job, Token t, float value)
 		job.chopthreshold = value;
 		job.pagehandling = "";		// force recalculation
 	    }
-	    return (TRUE);
+	    return (true);
 	}
 	parmBotch(t);
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -792,8 +792,8 @@ HylaFAXServer::initDefaultJob(void)
     defJob.desiredst	= ST_0MS;
     defJob.desiredec	= EC_ENABLE;
     defJob.desireddf	= DF_2DMMR;
-    defJob.desiredtl	= FALSE;
-    defJob.useccover	= TRUE;
+    defJob.desiredtl	= false;
+    defJob.useccover	= true;
     defJob.pagechop	= FaxRequest::chop_default;
     defJob.notify	= FaxRequest::no_notice;// FAX_DEFNOTIFY
     defJob.chopthreshold= 3.0;
@@ -845,16 +845,16 @@ HylaFAXServer::newJobCmd(void)
  * information in dial strings and passwords to be
  * transmitted with polling requests.
  */
-fxBool
+bool
 HylaFAXServer::newJob(fxStr& emsg)
 {
     if (!IS(PRIVILEGED) && the_user != curJob->owner) {
 	emsg = "Permission denied; cannot inherit from job " | curJob->jobid;
-	return (FALSE);
+	return (false);
     }
     u_int id = getJobNumber(emsg);		// allocate unique job ID
     if (id == (u_int) -1)
-	return (FALSE);
+	return (false);
     fxStr jobid = fxStr::format("%u", id);
     Job* job = new Job(FAX_SENDDIR "/" FAX_QFILEPREF | jobid);
     job->jobid = jobid;
@@ -898,22 +898,22 @@ HylaFAXServer::newJob(fxStr& emsg)
     job->queued = curJob->queued;
     jobs[jobid] = job;
     curJob = job;
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Update the job's state on disk.
  */
-fxBool
+bool
 HylaFAXServer::updateJobOnDisk(Job& job, fxStr& emsg)
 {
     if (lockJob(job, LOCK_EX|LOCK_NB, emsg)) {
 	// XXX don't update in place, use temp file and rename
 	job.writeQFile();
 	unlockJob(job);
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 /*
@@ -957,7 +957,7 @@ HylaFAXServer::findJobOnDisk(const char* jid, fxStr& emsg)
     if (fd >= 0) {
 	// XXX should we lock here???
 	Job* req = new Job(&filename[1], fd);
-	fxBool reject;
+	bool reject;
 	if (req->readQFile(reject) && !reject) {
 	    Sys::close(req->fd), req->fd = -1;
 	    return (req);
@@ -973,12 +973,12 @@ HylaFAXServer::findJobOnDisk(const char* jid, fxStr& emsg)
 /*
  * Update a job's state from the on-disk copy.
  */
-fxBool
+bool
 HylaFAXServer::updateJobFromDisk(Job& job)
 {
-    fxBool status = FALSE;
+    bool status = false;
     if (lockJob(job, LOCK_SH|LOCK_NB)) {
-	fxBool reject;
+	bool reject;
 	status = (job.reReadQFile(reject) && !reject);
 	unlockJob(job);
     }
@@ -991,28 +991,28 @@ HylaFAXServer::updateJobFromDisk(Job& job)
  * occurs a descriptive message is returned for
  * transmission to the client.
  */
-fxBool
+bool
 HylaFAXServer::lockJob(Job& job, int how, fxStr& emsg)
 {
     if (job.fd < 0) {
 	job.fd = Sys::open("/" | job.qfile, O_RDWR|O_CREAT, 0600);
 	if (job.fd < 0) {
 	    emsg = "Cannot open/create job description file /" | job.qfile;
-	    return (FALSE);
+	    return (false);
 	}
     }
     if (flock(job.fd, how) < 0) {
 	emsg = fxStr::format("Job file lock failed: %s", strerror(errno));
 	Sys::close(job.fd), job.fd = -1;
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
 /*
  * Like above, but no error message is returned.
  */
-fxBool
+bool
 HylaFAXServer::lockJob(Job& job, int how)
 {
     if (job.fd < 0)
@@ -1407,7 +1407,7 @@ HylaFAXServer::waitForJob(const char* jobid)
  * Do common work used in adding a document to a
  * job's set of documents that are to be sent.
  */
-fxBool
+bool
 HylaFAXServer::checkAddDocument(Job& job, Token type,
     const char* docname, FaxSendOp& op)
 {
@@ -1418,9 +1418,9 @@ HylaFAXServer::checkAddDocument(Job& job, Token type,
 	else if (!docType(docname, op))
 	    reply(550, "%s: Document type not recognized.", docname);
 	else
-	    return (TRUE);
+	    return (true);
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -1484,7 +1484,7 @@ HylaFAXServer::addPollOp(Job& job, const char* sep, const char* pwd)
  * Directory interface support for querying job status.
  */
 
-fxBool
+bool
 HylaFAXServer::isVisibleSendQFile(const char* filename, const struct stat&)
 {
     return (filename[0] == 'q');
@@ -1605,7 +1605,7 @@ HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
      *     implies read access to anything else in the
      *     job state that is protected.
      */
-    fxBool haveAccess = checkAccess(job, T_DIALSTRING, A_READ);
+    bool haveAccess = checkAccess(job, T_DIALSTRING, A_READ);
     for (const char* cp = fmt; *cp; cp++) {
 	if (*cp == '%') {
 #define	MAXSPEC	20

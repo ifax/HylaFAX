@@ -42,155 +42,155 @@
  * Standard protocol commands.
  */
 static const tab cmdtab[] = {
-{ "ABOR",         T_ABOR,	FALSE, TRUE, "[modem] (abort operation)" },
-{ "ACCT",         T_ACCT,	FALSE,FALSE, "(specify account)" },
-{ "ADMIN",        T_ADMIN,	 TRUE, TRUE, "password" },
-{ "ALLO",         T_ALLO,	FALSE,FALSE, "(allocate disk space)" },
-{ "ANSWER",       T_ANSWER,	 TRUE, TRUE, "modem [DATA|VOICE|FAX]" },
-{ "APPE",         T_APPE,	 TRUE, TRUE, "file-name" },
-{ "CWD",          T_CWD,	 TRUE, TRUE, "[directory-name]" },
-{ "CDUP",         T_CDUP,	 TRUE, TRUE, "(change directory up one level)"},
-{ "CHMOD",        T_CHMOD,	 TRUE, TRUE, "file-name mode" },
-{ "CHOWN",        T_CHOWN,	 TRUE, TRUE, "file-name user" },
-{ "DELE",         T_DELE,	 TRUE, TRUE, "file-name" },
-{ "DISABLE",      T_DISABLE,	 TRUE, TRUE, "modem [reason]" },
-{ "ENABLE",       T_ENABLE,	 TRUE, TRUE, "modem" },
-{ "HELP",         T_HELP,	FALSE, TRUE, "[<string>]" },
-{ "FILEFMT",      T_FILEFMT,	 TRUE, TRUE, "[format-string]" },
-{ "FORM",         T_FORM,	 TRUE, TRUE, "format-type" },
-{ "IDLE",         T_IDLE,	 TRUE, TRUE, "[max-idle-timeout]" },
-{ "JDELE",        T_JDELE,	 TRUE, TRUE, "[job-id]" },
-{ "JINTR",        T_JINTR,	 TRUE, TRUE, "[job-id]" },
-{ "JKILL",        T_JKILL,	 TRUE, TRUE, "[job-id]" },
-{ "JNEW",         T_JNEW,	 TRUE, TRUE, "" },
-{ "JOB",          T_JOB,	 TRUE, TRUE, "[job-id]" },
-{ "JOBFMT",       T_JOBFMT,	 TRUE, TRUE, "[format-string]" },
-{ "JPARM",        T_JPARM,	 TRUE, TRUE, "[parm-name [parm-value]]" },
-{ "JREST",        T_JREST,	 TRUE, TRUE, "(reset current job state)" },
-{ "JSUBM",        T_JSUB,	 TRUE, TRUE, "[job-id]" },
-{ "JSUSP",        T_JSUSP,	 TRUE, TRUE, "[job-id]" },
-{ "JWAIT",        T_JWAIT,	 TRUE, TRUE, "[job-id]" },
-{ "JGDELE",       T_JGDELE,	 TRUE,FALSE, "[jobgroup-id]" },
-{ "JGINTR",       T_JGINTR,	 TRUE,FALSE, "[jobgroup-id]" },
-{ "JGKILL",       T_JGKILL,	 TRUE,FALSE, "[jobgroup-id]" },
-{ "JGNEW",        T_JGNEW,	 TRUE, TRUE, "" },
-{ "JGPARM",       T_JGPARM,	 TRUE,FALSE, "parm-name [parm-value]" },
-{ "JGREST",       T_JGREST,	 TRUE,FALSE, "(reset current job group state)"},
-{ "JGRP",         T_JGRP,	 TRUE,FALSE, "[jobgroup-id]" },
-{ "JGSUBM",       T_JGSUB,	 TRUE,FALSE, "[jobgroup-id]" },
-{ "JGSUSP",       T_JGSUSP,	 TRUE,FALSE, "[jobgroup-id]" },
-{ "JGWAIT",       T_JGWAIT,	 TRUE,FALSE, "[jobgroup-id]" },
-{ "LIST",         T_LIST,	 TRUE, TRUE, "[path-name]" },
-{ "MDTM",         T_MDTM,	 TRUE, TRUE, "path-name" },
-{ "MODE",         T_MODE,	FALSE, TRUE, "(specify transfer mode)" },
-{ "MDMFMT",       T_MODEMFMT,	 TRUE, TRUE, "[format-string]" },
-{ "NLST",         T_NLST,	 TRUE, TRUE, "[path-name]" },
-{ "NOOP",         T_NOOP,	FALSE, TRUE, "" },
-{ "PASS",         T_PASS,	FALSE, TRUE, "password" },
-{ "PASV",         T_PASV,	 TRUE, TRUE, "(set server in passive mode)" },
-{ "PORT",         T_PORT,	 TRUE, TRUE, "a0,a1,a2,a3,p0,p1" },
-{ "PWD",          T_PWD,	 TRUE, TRUE, "(print working directory)" },
-{ "QUIT",         T_QUIT,	FALSE, TRUE, "(terminate service)", },
-{ "RCVFMT",       T_RCVFMT,	 TRUE, TRUE, "[format-string]" },
-{ "REIN",         T_REIN,	FALSE, TRUE, "(reinitialize server state)" },
-{ "REST",         T_REST,	 TRUE, TRUE, "restart-marker" },
-{ "RETP",         T_RETP,	 TRUE, TRUE, "file-name" },
-{ "RETR",         T_RETR,	 TRUE, TRUE, "file-name" },
-{ "RNFR",         T_RNFR,	 TRUE,FALSE, "file-name" },
-{ "RNTO",         T_RNTO,	 TRUE,FALSE, "file-name" },
-{ "SHUT",         T_SHUT,	 TRUE, TRUE, "NOW|HHSS|YYYYMMDDHHSS [reason]" },
-{ "SITE",         T_SITE,	 TRUE, TRUE, "site-cmd [arguments]" },
-{ "SIZE",         T_SIZE,	 TRUE, TRUE, "path-name" },
-{ "STAT",         T_STAT,	FALSE, TRUE, "[path-name]" },
-{ "STOR",         T_STOR,	 TRUE, TRUE, "file-name" },
-{ "STOT",         T_STOT,	 TRUE, TRUE, "(store unique temporary)" },
-{ "STOU",         T_STOU,	 TRUE, TRUE, "(store unique)" },
-{ "STRU",         T_STRU,	FALSE, TRUE, "file-structure" },
-{ "SYST",         T_SYST,	 TRUE, TRUE, "(return system type)" },
-{ "TZONE",        T_TZONE,	 TRUE, TRUE, "[GMT|LOCAL]" },
-{ "TYPE",         T_TYPE,	FALSE, TRUE, "transfer-type" },
-{ "USER",         T_USER,	FALSE, TRUE, "username" },
-{ "VRFY",         T_VRFY,	FALSE, TRUE, "dialstring" },
+{ "ABOR",         T_ABOR,	false, true, "[modem] (abort operation)" },
+{ "ACCT",         T_ACCT,	false,false, "(specify account)" },
+{ "ADMIN",        T_ADMIN,	 true, true, "password" },
+{ "ALLO",         T_ALLO,	false,false, "(allocate disk space)" },
+{ "ANSWER",       T_ANSWER,	 true, true, "modem [DATA|VOICE|FAX]" },
+{ "APPE",         T_APPE,	 true, true, "file-name" },
+{ "CWD",          T_CWD,	 true, true, "[directory-name]" },
+{ "CDUP",         T_CDUP,	 true, true, "(change directory up one level)"},
+{ "CHMOD",        T_CHMOD,	 true, true, "file-name mode" },
+{ "CHOWN",        T_CHOWN,	 true, true, "file-name user" },
+{ "DELE",         T_DELE,	 true, true, "file-name" },
+{ "DISABLE",      T_DISABLE,	 true, true, "modem [reason]" },
+{ "ENABLE",       T_ENABLE,	 true, true, "modem" },
+{ "HELP",         T_HELP,	false, true, "[<string>]" },
+{ "FILEFMT",      T_FILEFMT,	 true, true, "[format-string]" },
+{ "FORM",         T_FORM,	 true, true, "format-type" },
+{ "IDLE",         T_IDLE,	 true, true, "[max-idle-timeout]" },
+{ "JDELE",        T_JDELE,	 true, true, "[job-id]" },
+{ "JINTR",        T_JINTR,	 true, true, "[job-id]" },
+{ "JKILL",        T_JKILL,	 true, true, "[job-id]" },
+{ "JNEW",         T_JNEW,	 true, true, "" },
+{ "JOB",          T_JOB,	 true, true, "[job-id]" },
+{ "JOBFMT",       T_JOBFMT,	 true, true, "[format-string]" },
+{ "JPARM",        T_JPARM,	 true, true, "[parm-name [parm-value]]" },
+{ "JREST",        T_JREST,	 true, true, "(reset current job state)" },
+{ "JSUBM",        T_JSUB,	 true, true, "[job-id]" },
+{ "JSUSP",        T_JSUSP,	 true, true, "[job-id]" },
+{ "JWAIT",        T_JWAIT,	 true, true, "[job-id]" },
+{ "JGDELE",       T_JGDELE,	 true,false, "[jobgroup-id]" },
+{ "JGINTR",       T_JGINTR,	 true,false, "[jobgroup-id]" },
+{ "JGKILL",       T_JGKILL,	 true,false, "[jobgroup-id]" },
+{ "JGNEW",        T_JGNEW,	 true, true, "" },
+{ "JGPARM",       T_JGPARM,	 true,false, "parm-name [parm-value]" },
+{ "JGREST",       T_JGREST,	 true,false, "(reset current job group state)"},
+{ "JGRP",         T_JGRP,	 true,false, "[jobgroup-id]" },
+{ "JGSUBM",       T_JGSUB,	 true,false, "[jobgroup-id]" },
+{ "JGSUSP",       T_JGSUSP,	 true,false, "[jobgroup-id]" },
+{ "JGWAIT",       T_JGWAIT,	 true,false, "[jobgroup-id]" },
+{ "LIST",         T_LIST,	 true, true, "[path-name]" },
+{ "MDTM",         T_MDTM,	 true, true, "path-name" },
+{ "MODE",         T_MODE,	false, true, "(specify transfer mode)" },
+{ "MDMFMT",       T_MODEMFMT,	 true, true, "[format-string]" },
+{ "NLST",         T_NLST,	 true, true, "[path-name]" },
+{ "NOOP",         T_NOOP,	false, true, "" },
+{ "PASS",         T_PASS,	false, true, "password" },
+{ "PASV",         T_PASV,	 true, true, "(set server in passive mode)" },
+{ "PORT",         T_PORT,	 true, true, "a0,a1,a2,a3,p0,p1" },
+{ "PWD",          T_PWD,	 true, true, "(print working directory)" },
+{ "QUIT",         T_QUIT,	false, true, "(terminate service)", },
+{ "RCVFMT",       T_RCVFMT,	 true, true, "[format-string]" },
+{ "REIN",         T_REIN,	false, true, "(reinitialize server state)" },
+{ "REST",         T_REST,	 true, true, "restart-marker" },
+{ "RETP",         T_RETP,	 true, true, "file-name" },
+{ "RETR",         T_RETR,	 true, true, "file-name" },
+{ "RNFR",         T_RNFR,	 true,false, "file-name" },
+{ "RNTO",         T_RNTO,	 true,false, "file-name" },
+{ "SHUT",         T_SHUT,	 true, true, "NOW|HHSS|YYYYMMDDHHSS [reason]" },
+{ "SITE",         T_SITE,	 true, true, "site-cmd [arguments]" },
+{ "SIZE",         T_SIZE,	 true, true, "path-name" },
+{ "STAT",         T_STAT,	false, true, "[path-name]" },
+{ "STOR",         T_STOR,	 true, true, "file-name" },
+{ "STOT",         T_STOT,	 true, true, "(store unique temporary)" },
+{ "STOU",         T_STOU,	 true, true, "(store unique)" },
+{ "STRU",         T_STRU,	false, true, "file-structure" },
+{ "SYST",         T_SYST,	 true, true, "(return system type)" },
+{ "TZONE",        T_TZONE,	 true, true, "[GMT|LOCAL]" },
+{ "TYPE",         T_TYPE,	false, true, "transfer-type" },
+{ "USER",         T_USER,	false, true, "username" },
+{ "VRFY",         T_VRFY,	false, true, "dialstring" },
 };
 
 /*
  * Job parameter commands/keys.
  */
 static const tab parmtab[] = {
-{ "ACCTINFO",     T_ACCTINFO,	  FALSE,FALSE, "[<string>]" },
-{ "BEGBR",        T_BEGBR,	  FALSE, TRUE, "[ANY|bit-rate]" },
-{ "BEGST",        T_BEGST,	  FALSE, TRUE, "[ANY|scanline-time]" },
-{ "CHOPTHRESHOLD",T_CHOPTHRESH,	  FALSE, TRUE, "[inches]" },
-{ "CLIENT",       T_CLIENT,	  FALSE, TRUE, "[<string>]" },
-{ "COMMENTS",     T_COMMENTS,	  FALSE,FALSE, "[<string>]" },
-{ "COMMID",       T_COMMID,	  FALSE, TRUE, "(communication identifier)" },
-{ "COVER",        T_COVER,	  FALSE, TRUE, "path-name" },
-{ "DATAFORMAT",   T_DATAFORMAT,	  FALSE, TRUE, "[ANY|G31D|G32D|G4]" },
-{ "DIALSTRING",   T_DIALSTRING,	  FALSE, TRUE, "[<string>]" },
-{ "DOCUMENT",     T_DOCUMENT,	  FALSE, TRUE, "path-name" },
-{ "DONEOP",       T_DONEOP,	  FALSE, TRUE, "[<string>]" },
-{ "EXTERNAL",     T_EXTERNAL,	  FALSE, TRUE, "[<string>]" },
-{ "FROMCOMPANY",  T_FROM_COMPANY, FALSE,FALSE, "[<string>]" },
-{ "FROMLOCATION", T_FROM_LOCATION,FALSE,FALSE, "[<string>]" },
-{ "FROMUSER",     T_FROM_USER,	  FALSE, TRUE, "[<string>]" },
-{ "FROMVOICE",    T_FROM_VOICE,	  FALSE,FALSE, "[<string>]" },
-{ "GROUPID",      T_GROUPID,	  FALSE, TRUE, "(job group identifier)" },
-{ "HRES",         T_HRES,	  FALSE,FALSE, "[dots-per-inch]" },
-{ "JOBID",        T_JOBID,	  FALSE, TRUE, "(job identifier)" },
-{ "JOBINFO",      T_JOBINFO,	  FALSE, TRUE, "[<string>]" },
-{ "JOBTYPE",      T_JOBTYPE,	  FALSE, TRUE, "(job type)" },
-{ "LASTTIME",     T_LASTTIME,	  FALSE, TRUE, "[DDHHSS]" },
-{ "MAXDIALS",     T_MAXDIALS,	  FALSE, TRUE, "[<number>]" },
-{ "MAXPAGES",     T_MAXPAGES,	  FALSE, TRUE, "[<number>]" },
-{ "MAXTRIES",     T_MAXTRIES,	  FALSE, TRUE, "[<number>]" },
-{ "MINBR",        T_MINBR,	  FALSE, TRUE, "[ANY|bit-rate]" },
-{ "MODEM",        T_MODEM,	  FALSE, TRUE, "[device|class]" },
-{ "NDIALS",       T_NDIALS,	  FALSE, TRUE, "[<number>]" },
-{ "NOTIFY",       T_NOTIFY,	  FALSE, TRUE, "[NONE|DONE|REQUEUE|DONE+REQUEUE]" },
-{ "NOTIFYADDR",   T_NOTIFYADDR,	  FALSE, TRUE, "[email-address]" },
-{ "NPAGES",       T_NPAGES,	  FALSE, TRUE, "[<number>]" },
-{ "NTRIES",       T_NTRIES,	  FALSE, TRUE, "[<number>]" },
-{ "OWNER",        T_OWNER,	  FALSE, TRUE, "[<name>|<number>]" },
-{ "PAGECHOP",     T_PAGECHOP,	  FALSE, TRUE, "[DEFAULT|NONE|ALL|LAST]" },
-{ "PAGELENGTH",   T_PAGELENGTH,	  FALSE, TRUE, "[millimeters]" },
-{ "PAGEWIDTH",    T_PAGEWIDTH,	  FALSE, TRUE, "[millimeters]" },
-{ "PASSWD",       T_PASSWD,	  FALSE, TRUE, "[<string>]" },
-{ "POLL",         T_POLL,	  FALSE, TRUE, "selector [passwd]" },
-{ "REGARDING",    T_REGARDING,	  FALSE,FALSE, "[<string>]" },
-{ "RETRYTIME",    T_RETRYTIME,	  FALSE, TRUE, "[HHSS]" },
-{ "SCHEDPRI",     T_SCHEDPRI,	  FALSE, TRUE, "[<number>]" },
-{ "SENDTIME",     T_SENDTIME,	  FALSE, TRUE, "[NOW|YYYYMMDDHHSS]" },
-{ "STATE",        T_STATE,	  FALSE, TRUE, "(job state)" },
-{ "STATUS",       T_STATUS,       FALSE, TRUE, "[<string>" },
-{ "SUBADDR",      T_SUBADDR,	  FALSE, TRUE, "[<string>]" },
-{ "TAGLINE",      T_TAGLINE,	  FALSE, TRUE, "[<string>]" },
-{ "TOCOMPANY",    T_TO_COMPANY,	  FALSE, TRUE, "[<string>]" },
-{ "TOLOCATION",   T_TO_LOCATION,  FALSE, TRUE, "[<string>]" },
-{ "TOTDIALS",     T_TOTDIALS,	  FALSE, TRUE, "[<number>]" },
-{ "TOTPAGES",     T_TOTPAGES,	  FALSE, TRUE, "[<number>]" },
-{ "TOTTRIES",     T_TOTTRIES,	  FALSE, TRUE, "[<number>]" },
-{ "TOUSER",       T_TO_USER,	  FALSE, TRUE, "[<string>]" },
-{ "TOVOICE",      T_TO_VOICE,	  FALSE,FALSE, "[<string>]" },
-{ "USECONTCOVER", T_USE_CONTCOVER,FALSE, TRUE, "[YES|NO]" },
-{ "USEECM",       T_USE_ECM,	  FALSE, TRUE, "[YES|NO]" },
-{ "USETAGLINE",   T_USE_TAGLINE,  FALSE, TRUE, "[YES|NO]" },
-{ "USRKEY",       T_USRKEY,	  FALSE, TRUE, "[<string>]" },
-{ "VRES",         T_VRES,	  FALSE, TRUE, "[lines-per-inch]" },
+{ "ACCTINFO",     T_ACCTINFO,	  false,false, "[<string>]" },
+{ "BEGBR",        T_BEGBR,	  false, true, "[ANY|bit-rate]" },
+{ "BEGST",        T_BEGST,	  false, true, "[ANY|scanline-time]" },
+{ "CHOPTHRESHOLD",T_CHOPTHRESH,	  false, true, "[inches]" },
+{ "CLIENT",       T_CLIENT,	  false, true, "[<string>]" },
+{ "COMMENTS",     T_COMMENTS,	  false,false, "[<string>]" },
+{ "COMMID",       T_COMMID,	  false, true, "(communication identifier)" },
+{ "COVER",        T_COVER,	  false, true, "path-name" },
+{ "DATAFORMAT",   T_DATAFORMAT,	  false, true, "[ANY|G31D|G32D|G4]" },
+{ "DIALSTRING",   T_DIALSTRING,	  false, true, "[<string>]" },
+{ "DOCUMENT",     T_DOCUMENT,	  false, true, "path-name" },
+{ "DONEOP",       T_DONEOP,	  false, true, "[<string>]" },
+{ "EXTERNAL",     T_EXTERNAL,	  false, true, "[<string>]" },
+{ "FROMCOMPANY",  T_FROM_COMPANY, false,false, "[<string>]" },
+{ "FROMLOCATION", T_FROM_LOCATION,false,false, "[<string>]" },
+{ "FROMUSER",     T_FROM_USER,	  false, true, "[<string>]" },
+{ "FROMVOICE",    T_FROM_VOICE,	  false,false, "[<string>]" },
+{ "GROUPID",      T_GROUPID,	  false, true, "(job group identifier)" },
+{ "HRES",         T_HRES,	  false,false, "[dots-per-inch]" },
+{ "JOBID",        T_JOBID,	  false, true, "(job identifier)" },
+{ "JOBINFO",      T_JOBINFO,	  false, true, "[<string>]" },
+{ "JOBTYPE",      T_JOBTYPE,	  false, true, "(job type)" },
+{ "LASTTIME",     T_LASTTIME,	  false, true, "[DDHHSS]" },
+{ "MAXDIALS",     T_MAXDIALS,	  false, true, "[<number>]" },
+{ "MAXPAGES",     T_MAXPAGES,	  false, true, "[<number>]" },
+{ "MAXTRIES",     T_MAXTRIES,	  false, true, "[<number>]" },
+{ "MINBR",        T_MINBR,	  false, true, "[ANY|bit-rate]" },
+{ "MODEM",        T_MODEM,	  false, true, "[device|class]" },
+{ "NDIALS",       T_NDIALS,	  false, true, "[<number>]" },
+{ "NOTIFY",       T_NOTIFY,	  false, true, "[NONE|DONE|REQUEUE|DONE+REQUEUE]" },
+{ "NOTIFYADDR",   T_NOTIFYADDR,	  false, true, "[email-address]" },
+{ "NPAGES",       T_NPAGES,	  false, true, "[<number>]" },
+{ "NTRIES",       T_NTRIES,	  false, true, "[<number>]" },
+{ "OWNER",        T_OWNER,	  false, true, "[<name>|<number>]" },
+{ "PAGECHOP",     T_PAGECHOP,	  false, true, "[DEFAULT|NONE|ALL|LAST]" },
+{ "PAGELENGTH",   T_PAGELENGTH,	  false, true, "[millimeters]" },
+{ "PAGEWIDTH",    T_PAGEWIDTH,	  false, true, "[millimeters]" },
+{ "PASSWD",       T_PASSWD,	  false, true, "[<string>]" },
+{ "POLL",         T_POLL,	  false, true, "selector [passwd]" },
+{ "REGARDING",    T_REGARDING,	  false,false, "[<string>]" },
+{ "RETRYTIME",    T_RETRYTIME,	  false, true, "[HHSS]" },
+{ "SCHEDPRI",     T_SCHEDPRI,	  false, true, "[<number>]" },
+{ "SENDTIME",     T_SENDTIME,	  false, true, "[NOW|YYYYMMDDHHSS]" },
+{ "STATE",        T_STATE,	  false, true, "(job state)" },
+{ "STATUS",       T_STATUS,       false, true, "[<string>" },
+{ "SUBADDR",      T_SUBADDR,	  false, true, "[<string>]" },
+{ "TAGLINE",      T_TAGLINE,	  false, true, "[<string>]" },
+{ "TOCOMPANY",    T_TO_COMPANY,	  false, true, "[<string>]" },
+{ "TOLOCATION",   T_TO_LOCATION,  false, true, "[<string>]" },
+{ "TOTDIALS",     T_TOTDIALS,	  false, true, "[<number>]" },
+{ "TOTPAGES",     T_TOTPAGES,	  false, true, "[<number>]" },
+{ "TOTTRIES",     T_TOTTRIES,	  false, true, "[<number>]" },
+{ "TOUSER",       T_TO_USER,	  false, true, "[<string>]" },
+{ "TOVOICE",      T_TO_VOICE,	  false,false, "[<string>]" },
+{ "USECONTCOVER", T_USE_CONTCOVER,false, true, "[YES|NO]" },
+{ "USEECM",       T_USE_ECM,	  false, true, "[YES|NO]" },
+{ "USETAGLINE",   T_USE_TAGLINE,  false, true, "[YES|NO]" },
+{ "USRKEY",       T_USRKEY,	  false, true, "[<string>]" },
+{ "VRES",         T_VRES,	  false, true, "[lines-per-inch]" },
 
-{ "HELP",         T_HELP,	  FALSE, TRUE, "[<string>]" },
+{ "HELP",         T_HELP,	  false, true, "[<string>]" },
 };
 
 /*
  * Site-specific commands.
  */
 static const tab sitetab[] = {
-{ "ADDMODEM",     T_ADDMODEM,	  FALSE,FALSE, "modem [speed]"},
-{ "ADDUSER",      T_ADDUSER,	  FALSE, TRUE, "user-spec [passwd [adminwd]]"},
-{ "CONFIG",       T_CONFIG,	  FALSE, TRUE, "[parm-name [parm-value]]" },
-{ "DELMODEM",     T_DELMODEM,	  FALSE,FALSE, "modem" },
-{ "DELUSER",      T_DELUSER,	  FALSE, TRUE, "user-spec" },
-{ "TRIGGER",	  T_TRIGGER,	  FALSE, TRUE, "spec" },
-{ "HELP",         T_HELP,	  FALSE, TRUE, "[<string>]" },
+{ "ADDMODEM",     T_ADDMODEM,	  false,false, "modem [speed]"},
+{ "ADDUSER",      T_ADDUSER,	  false, true, "user-spec [passwd [adminwd]]"},
+{ "CONFIG",       T_CONFIG,	  false, true, "[parm-name [parm-value]]" },
+{ "DELMODEM",     T_DELMODEM,	  false,false, "modem" },
+{ "DELUSER",      T_DELUSER,	  false, true, "user-spec" },
+{ "TRIGGER",	  T_TRIGGER,	  false, true, "spec" },
+{ "HELP",         T_HELP,	  false, true, "[<string>]" },
 };
 
 static const tab*
@@ -242,7 +242,7 @@ HylaFAXServer::fourdigits(const char* cp)
 	   (cp[2]-'0')*10 +
 	   (cp[3]-'0');
 }
-inline fxBool
+inline bool
 isLoginToken(Token t)
 {
     return (t == T_USER || t == T_PASS || t == T_ADMIN);
@@ -350,7 +350,7 @@ HylaFAXServer::parse()
 /*
  * Protocol command (one line).
  */
-fxBool
+bool
 HylaFAXServer::cmd(Token t)
 {
     fxStr s;
@@ -361,14 +361,14 @@ HylaFAXServer::cmd(Token t)
 	if (string_param(s, "user name")) {
 	    logcmd(t, "%s", (const char*) s);
 	    userCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_PASS:			// user password
 	if (string_param(s, "password")) {
 	    logcmd(t, "<password>");
 	    passCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_ADMIN:			// administrator password
@@ -378,7 +378,7 @@ HylaFAXServer::cmd(Token t)
 	    break;
 	logcmd(t, "<password>");
 	adminCmd(s);
-	return (TRUE);
+	return (true);
     case T_REIN:			// reinitialize server
 	logcmd(t);
 	if (IS(LOGGEDIN))
@@ -392,7 +392,7 @@ HylaFAXServer::cmd(Token t)
 	    restart_point = n;
 	    reply(350, "Data transfer will restart at %lu, "
 		"send transfer command", n);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_SYST:			// system identification
@@ -400,62 +400,62 @@ HylaFAXServer::cmd(Token t)
 	    logcmd(t);
 	    // this is what we *emulate*
 	    reply(215, "%s", (const char*) systemType);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_PORT:			// port for data transfer
 	if (SP() && hostPort() && CRLF()) {
 	    portCmd();
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_PASV:			// enable passive mode
 	if (CRLF()) {
 	    logcmd(t);
 	    passiveCmd();
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_FORM:			// document format
 	if (string_param(s, "document format")) {
 	    logcmd(t, "%s", (const char*) s);
 	    formCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_MODE:			// data transfer mode
 	if (string_param(s, "transfer mode")) {
 	    logcmd(t, "%s", (const char*) s);
 	    modeCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_STRU:			// data transfer file structure
 	if (string_param(s, "file structure")) {
 	    logcmd(t, "%s", (const char*) s);
 	    struCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_TYPE:			// data transfer type
 	if (string_param(s, "transfer type")) {
 	    logcmd(t, "%s", (const char*) s);
 	    typeCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_RETP:			// retrieve next page of document/file
 	if (pathname_param(s)) {
 	    logcmd(t, "%s", (const char*) s);
 	    retrievePageCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_RETR:			// retrieve document/file
 	if (pathname_param(s)) {
 	    logcmd(t, "%s", (const char*) s);
 	    retrieveCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_STOR:			// store document/file
@@ -463,28 +463,28 @@ HylaFAXServer::cmd(Token t)
 	    logcmd(t, "%s", (const char*) s);
 	    // XXX file must exist if not admin, check for bad chars in pathname
 	    storeCmd(s, "w");
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_APPE:			// append to document/file
 	if (pathname_param(s)) {
 	    logcmd(t, "%s", (const char*) s);
 	    storeCmd(s, "a");
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_STOT:			// store uniquely named document/file
 	if (CRLF()) {
 	    logcmd(t);
-	    storeUniqueCmd(TRUE);
-	    return (TRUE);
+	    storeUniqueCmd(true);
+	    return (true);
 	}
 	break;
     case T_STOU:			// store uniquely named document/file
 	if (CRLF()) {
 	    logcmd(t);
-	    storeUniqueCmd(FALSE);
-	    return (TRUE);
+	    storeUniqueCmd(false);
+	    return (true);
 	}
 	break;
     case T_LIST:			// list directory/file
@@ -495,47 +495,47 @@ HylaFAXServer::cmd(Token t)
 		listCmd(".");
 	    else
 		nlstCmd(".");
-	    return (TRUE);
+	    return (true);
 	} else if (pathname_param(s)) {
 	    logcmd(t, "%s", (const char*) s);
 	    if (t == T_LIST)
 		listCmd(s);
 	    else
 		nlstCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_CWD:				// change working directory
 	if (opt_CRLF()) {
 	    logcmd(t);
 	    cwdCmd("/");
-	    return (TRUE);
+	    return (true);
 	} else if (pathname_param(s)) {
 	    logcmd(t, "%s", (const char*) s);
 	    cwdCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_CDUP:			// CWD ..
 	logcmd(t);
 	cwdCmd("..");
-	return (TRUE);
+	return (true);
     case T_PWD:				// print working directory
 	if (CRLF()) {
 	    logcmd(t);
 	    pwdCmd();
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_STAT:			// stat file/server status
 	if (opt_CRLF()) {
 	    logcmd(t);
 	    statusCmd();
-	    return (TRUE);
+	    return (true);
 	} else if (checklogin(T_STAT) && pathname_param(s)) {
 	    logcmd(t, "%s", (const char*) s);
 	    statFileCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_SIZE:			// return file size
@@ -546,44 +546,44 @@ HylaFAXServer::cmd(Token t)
 		reply(550, "%s: not a plain file.", (const char*) s);
 	    else
 		reply(213, "%lu", (u_long) sb.st_size);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_CHMOD:			// set file protection
 	if (SP() && STRING(s, "filename") && SP() && NUMBER(n)) {
 	    chmodCmd(s, (u_int) n);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_MDTM:			// return file last modification time
 	if (pathname_param(s)) {
 	    logcmd(t, "%s", (const char*) s);
 	    mdtmCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_DELE:			// delete file/document
 	if (pathname_param(s)) {
 	    logcmd(t, "%s", (const char*) s);
 	    deleCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_ABOR:			// abort active command/incoming call
 	if (opt_CRLF()) {
 	    logcmd(t);
 	    ack(225, cmdToken(t));
-	    return (TRUE);
+	    return (true);
 	} else if (checkadmin(T_ABOR) && string_param(s, "modem")) {
 	    abortCallCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_HELP:			// return help
 	if (opt_CRLF()) {
 	    logcmd(t);
 	    helpCmd(cmdtab, (char*) NULL);
-	    return (TRUE);
+	    return (true);
 	} else if (string_param(s, "command name")) {
 	    logcmd(t, "%s", (const char*) s);
 	    s.raisecase();
@@ -593,122 +593,122 @@ HylaFAXServer::cmd(Token t)
 		helpCmd(parmtab, NULL);
 	    else
 		helpCmd(cmdtab, s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JNEW:			// create new job
 	if (CRLF()) {
 	    newJobCmd();
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JOB:				// select current job
 	if (job_param(s)) {
 	    setCurrentJob(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JREST:			// reset job state
 	if (job_param(s)) {
 	    resetJob(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JDELE:			// delete job
 	if (job_param(s)) {
 	    deleteJob(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JINTR:			// interrupt job
 	if (job_param(s)) {
 	    interruptJob(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JKILL:			// kill job
 	if (job_param(s)) {
 	    killJob(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JSUSP:			// suspend job
 	if (job_param(s)) {
 	    suspendJob(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JSUB:			// submit job
 	if (job_param(s)) {
 	    submitJob(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JWAIT:			// wait for job
 	if (job_param(s)) {
 	    waitForJob(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JGNEW:			// create job group
 	if (CRLF()) {
 	    curJob->groupid = curJob->jobid;
 	    ack(200, cmdToken(t));
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JGREST:			// reset current job group state
 	if (CRLF()) {
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JGRP:			// select current job group
 	if (jgrp_param(s)) {
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JGDELE:			// delete job group
 	if (jgrp_param(s)) {
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JGINTR:			// interrupt job group
 	if (jgrp_param(s)) {
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JGKILL:			// kill job group
 	if (jgrp_param(s)) {
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JGSUSP:			// suspend job group
 	if (jgrp_param(s)) {
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JGSUB:			// submit job group
 	if (jgrp_param(s)) {
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JGWAIT:			// wait for job group
 	if (jgrp_param(s)) {
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_NOOP:			// no-op
 	if (CRLF()) {
 	    logcmd(t);
 	    ack(200, cmdToken(t));
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_IDLE:			// set/query idle timeout
 	if (opt_CRLF()) {
 	    logcmd(t);
 	    reply(213, "%u seconds.", idleTimeout);
-	    return (TRUE);
+	    return (true);
 	} else if (number_param(n)) {
 	    logcmd(t, "%lu", n);
 	    if (n > maxIdleTimeout && !IS(PRIVILEGED)) {
@@ -719,7 +719,7 @@ HylaFAXServer::cmd(Token t)
 		idleTimeout = (int) n;
 		reply(213, "Idle timeout set to %u.", idleTimeout);
 	    }
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_QUIT:			// terminate session
@@ -727,14 +727,14 @@ HylaFAXServer::cmd(Token t)
 	    logcmd(t);
 	    reply(221, "Goodbye.");
 	    dologout(0);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_TZONE:			// set/query timezone usage
 	if (opt_CRLF()) {
 	    reply(200, "Time values are handled in %s.", 
 		IS(USEGMT) ? "GMT" : tzname[0]);
-	    return (TRUE);
+	    return (true);
 	} else if (string_param(s, "timezone specification")) {
 	    logcmd(t, "%s", (const char*) s);
 	    s.raisecase();
@@ -748,7 +748,7 @@ HylaFAXServer::cmd(Token t)
 		reply(503, "Unknown timezone specification %s.",
 		    (const char*) s);
 	    }
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JOBFMT:			// query/specify job format string
@@ -762,7 +762,7 @@ HylaFAXServer::cmd(Token t)
 		t == T_MODEMFMT ? (const char*) modemFormat :
 				  (const char*) fileFormat
 	    );
-	    return (TRUE);
+	    return (true);
 	} else if (string_param(s, "format-string")) {
 	    if (t == T_JOBFMT)
 		jobFormat = s;
@@ -773,7 +773,7 @@ HylaFAXServer::cmd(Token t)
 	    else if (t == T_FILEFMT)
 		fileFormat = s;
 	    ack(200, cmdToken(t));
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JPARM:			// set/query job parameter
@@ -781,7 +781,7 @@ HylaFAXServer::cmd(Token t)
 	    logcmd(T_JPARM);
 	    if (checkJobState(curJob))
 		jstatCmd(*curJob);
-	    return (TRUE);
+	    return (true);
 	} else if (SP() && getToken(T_STRING, "parameter name")) {
 	    tokenBody.raisecase();
 	    const tab* p = lookup(parmtab, N(parmtab), tokenBody);
@@ -828,7 +828,7 @@ HylaFAXServer::cmd(Token t)
 	    else if (!string_param(how, "answer-how"))
 		break;
 	    answerCallCmd(s, how);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_CHOWN:			// assign file ownership
@@ -836,7 +836,7 @@ HylaFAXServer::cmd(Token t)
 	    fxStr who;
 	    if (string_param(who, "user")) {
 		chownCmd(s, who);
-		return (TRUE);
+		return (true);
 	    }
 	}
 	break;
@@ -848,13 +848,13 @@ HylaFAXServer::cmd(Token t)
 	    else if (!SP() || !multi_STRING(reason))
 		break;
 	    disableModemCmd(s, reason);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_ENABLE:			// enable outbound-usage of modem
 	if (checkadmin(T_ENABLE) && string_param(s, "modem")) {
 	    enableModemCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_SHUT:			// shutdown server
@@ -868,14 +868,14 @@ HylaFAXServer::cmd(Token t)
 	    if (s.length() == 3 && strcasecmp(cp, "NOW") == 0) {
 		time_t t = Sys::now();
 		shutCmd(*localtime(&t), reason);
-		return (TRUE);
+		return (true);
 	    } else if (s.length() == 4 && checkNUMBER(cp)) {
 		time_t t = Sys::now();
 		struct tm tm = *localtime(&t);
 		tm.tm_hour = 60*60*twodigits(cp, 60);
 		tm.tm_min  =    60*twodigits(cp+2, 60);
 		shutCmd(tm, reason);
-		return (TRUE);
+		return (true);
 	    } else if (s.length() == 12 && checkNUMBER(cp)) {
 		struct tm tm;
 		tm.tm_sec  = 0;
@@ -885,7 +885,7 @@ HylaFAXServer::cmd(Token t)
 		tm.tm_mon  = twodigits(cp+4, 12) -1;
 		tm.tm_year = fourdigits(cp+0) - 1900;
 		shutCmd(tm, reason);
-		return (TRUE);
+		return (true);
 	    } else
 		syntaxError("bad time specification");
 	}
@@ -897,17 +897,17 @@ HylaFAXServer::cmd(Token t)
 		, (const char*) hostname
 		, (const char*) hostaddr
 	    );
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Site-specific protocol commands (one line).
  */
-fxBool
+bool
 HylaFAXServer::site_cmd(Token t)
 {
     fxStr s;
@@ -918,15 +918,15 @@ HylaFAXServer::site_cmd(Token t)
 	    fxStr pass;
 	    if (opt_CRLF()) {
 		addUserCmd(s, "", "");
-		return (TRUE);
+		return (true);
 	    } else if (SP() && STRING(pass, "password")) {
 		fxStr apass;
 		if (opt_CRLF()) {
 		    addUserCmd(s, pass, "");
-		    return (TRUE);
+		    return (true);
 		} else if (string_param(apass, "admin-password")) {
 		    addUserCmd(s, pass, apass);
-		    return (TRUE);
+		    return (true);
 		}
 	    }
 	}
@@ -934,19 +934,19 @@ HylaFAXServer::site_cmd(Token t)
     case T_DELUSER:
 	if (checkadmin(T_DELUSER) && string_param(s, "user-spec")) {
 	    delUserCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_DELMODEM:
 	if (checkadmin(T_DELMODEM) && string_param(s, "modem")) {
 	    delModemCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_ADDMODEM:
 	if (checkadmin(T_ADDMODEM) && string_param(s, "modem")) {
 	    addModemCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_CONFIG:
@@ -954,10 +954,10 @@ HylaFAXServer::site_cmd(Token t)
 	    fxStr config;
 	    if (opt_CRLF()) {
 		configQueryCmd(s);
-		return (TRUE);
+		return (true);
 	    } else if (SP() && multi_STRING(config)) {
 		configCmd(s, config);
-		return (TRUE);
+		return (true);
 	    }
 	}
 	break;
@@ -965,43 +965,43 @@ HylaFAXServer::site_cmd(Token t)
 	if (string_param(s, "trigger-spec")) {
 	    logcmd(t, s);
 	    triggerCmd("%s", (const char*) s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_HELP:			// return help
 	if (opt_CRLF()) {
 	    helpCmd(sitetab, (char*) NULL);
-	    return (TRUE);
+	    return (true);
 	} else if (string_param(s, "command name")) {
 	    logcmd(T_SITE, "HELP %s", (const char*) s);
 	    s.raisecase();
 	    helpCmd(sitetab, s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     }
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 HylaFAXServer::param_cmd(Token t)
 {
     fxStr s;
     long n;
     time_t ticks;
-    fxBool b;
+    bool b;
 
     switch (t) {
     case T_SENDTIME:			// time to send job
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
-	    return (TRUE);
+	    return (true);
 	} else if (SP() && getToken(T_STRING, "time specification")) {
 	    tokenBody.raisecase();
 	    if (tokenBody == "NOW") {
 		if (CRLF() && setJobParameter(*curJob, t, (time_t) 0)) {
 		    reply(213, "%s set to NOW.", parmToken(t));
-		    return (TRUE);
+		    return (true);
 		}
 	    } else {
 		pushToken(T_STRING);	// XXX
@@ -1021,7 +1021,7 @@ HylaFAXServer::param_cmd(Token t)
 			);
 		    } else
 			reply(213, "%s set to NOW.", parmToken(t));
-		    return (TRUE);
+		    return (true);
 		}
 	    }
 	}
@@ -1029,7 +1029,7 @@ HylaFAXServer::param_cmd(Token t)
     case T_LASTTIME:			// time to kill job
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
-	    return (TRUE);
+	    return (true);
 	} else if (timespec_param(6, ticks) &&
 	  setJobParameter(*curJob, t, ticks)) {
 	    reply(213, "%s set to %02d%02d%02d."
@@ -1038,13 +1038,13 @@ HylaFAXServer::param_cmd(Token t)
 		, (ticks/(60*60))%24
 		, (ticks/60)%60
 	    );
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_RETRYTIME:			// retry interval for job
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
-	    return (TRUE);
+	    return (true);
 	} else if (timespec_param(4, ticks) &&
 	  setJobParameter(*curJob, t, ticks)) {
 	    reply(213, "%s set to %02d%02d."
@@ -1052,7 +1052,7 @@ HylaFAXServer::param_cmd(Token t)
 		, ticks/60
 		, ticks%60
 	    );
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_MAXDIALS:
@@ -1073,11 +1073,11 @@ HylaFAXServer::param_cmd(Token t)
     case T_TOTDIALS:
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
-	    return (TRUE);
+	    return (true);
 	} else if (number_param(n) &&
 	  setJobParameter(*curJob, t, (u_short) n)) {
 	    reply(213, "%s set to %u.", parmToken(t), n);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_NOTIFYADDR:
@@ -1106,11 +1106,11 @@ HylaFAXServer::param_cmd(Token t)
     case T_COMMID:
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
-	    return (TRUE);
+	    return (true);
 	} else if (SP() && multi_STRING(s) && CRLF() &&
 	  setJobParameter(*curJob, t, s)) {
 	    reply(213, "%s set to \"%s\".", parmToken(t), (const char*) s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_USE_ECM:
@@ -1118,75 +1118,75 @@ HylaFAXServer::param_cmd(Token t)
     case T_USE_CONTCOVER:
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
-	    return (TRUE);
+	    return (true);
 	} else if (boolean_param(b) &&
 	  setJobParameter(*curJob, t, b)) {
 	    reply(213, "%s set to %s.", parmToken(t), b ? "YES" : "NO");
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_CHOPTHRESH:
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
-	    return (TRUE);
+	    return (true);
 	} else if (string_param(s, "floating point number") &&
 	  setJobParameter(*curJob, t, (float) atof(s))) {
 	    reply(213, "%s set to %g.", parmToken(t), (float) atof(s));
-	    return (TRUE);
+	    return (true);
 	}
 	break;
      case T_COVER:			// specify/query cover page document
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
-	    return (TRUE);
+	    return (true);
 	} else if (pathname_param(s)) {
 	    addCoverDocument(*curJob, s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_DOCUMENT:			// specify/query normal document
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
-	    return (TRUE);
+	    return (true);
 	} else if (pathname_param(s)) {
 	    addDocument(*curJob, s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_POLL:			// specify/query poll operation
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
-	    return (TRUE);
+	    return (true);
 	} else if (SP() && STRING(s, "polling selector")) {
 	    fxStr pwd;
 	    if (opt_CRLF()) {
 		addPollOp(*curJob, s, "");	// sep but no pwd
-		return (TRUE);
+		return (true);
 	    } else if (SP() && pwd_param(pwd) && CRLF()) {
 		addPollOp(*curJob, s, pwd);	// sep & pwd
-		return (TRUE);
+		return (true);
 	    }
 	}
 	break;
     case T_HELP:			// return help
 	if (opt_CRLF()) {
 	    helpCmd(parmtab, (char*) NULL);
-	    return (TRUE);
+	    return (true);
 	} else if (string_param(s, "parameter name")) {
 	    s.raisecase();
 	    logcmd(T_JPARM, "HELP %s", (const char*) s);
 	    helpCmd(parmtab, s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Collect a single string parameter.
  */
-fxBool
+bool
 HylaFAXServer::string_param(fxStr& s, const char* what)
 {
     return SP() && STRING(s, what) && CRLF();
@@ -1195,7 +1195,7 @@ HylaFAXServer::string_param(fxStr& s, const char* what)
 /*
  * Collect a single number parameter.
  */
-fxBool
+bool
 HylaFAXServer::number_param(long& n)
 {
     return SP() && NUMBER(n) && CRLF();
@@ -1204,8 +1204,8 @@ HylaFAXServer::number_param(long& n)
 /*
  * Collect a single boolean parameter.
  */
-fxBool
-HylaFAXServer::boolean_param(fxBool& b)
+bool
+HylaFAXServer::boolean_param(bool& b)
 {
     return SP() && BOOLEAN(b) && CRLF();
 }
@@ -1213,7 +1213,7 @@ HylaFAXServer::boolean_param(fxBool& b)
 /*
  * Collect a single time parameter.
  */
-fxBool
+bool
 HylaFAXServer::timespec_param(int ndigits, time_t& t)
 {
     return SP() && TIMESPEC(ndigits, t) && CRLF();
@@ -1222,7 +1222,7 @@ HylaFAXServer::timespec_param(int ndigits, time_t& t)
 /*
  * File manipulation command.
  */
-fxBool
+bool
 HylaFAXServer::pathname_param(fxStr& s)
 {
     return SP() && pathname(s) && CRLF();
@@ -1231,48 +1231,48 @@ HylaFAXServer::pathname_param(fxStr& s)
 /*
  * Job control commands.
  */
-fxBool
+bool
 HylaFAXServer::job_param(fxStr& jid)
 {
     if (opt_CRLF()) {
 	jid = curJob->jobid;
-	return (TRUE);
+	return (true);
     } else if (SP() && STRING(jid, "job identifer") && CRLF()) {
 	jid.lowercase();
-	return (TRUE);
+	return (true);
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Job group control commands.
  */
-fxBool
+bool
 HylaFAXServer::jgrp_param(fxStr& jgid)
 {
     if (opt_CRLF()) {
 	jgid = curJob->groupid;
-	return (TRUE);
+	return (true);
     } else if (SP() && STRING(jgid, "job group identifier") && CRLF()) {
 	jgid.lowercase();
-	return (TRUE);
+	return (true);
     }
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 HylaFAXServer::pwd_param(fxStr& s)
 {
     return STRING(s, "polling password");
 }
 
-fxBool
+bool
 HylaFAXServer::pathname(fxStr& s)
 {
     return STRING(s, "pathname");
 }
 
-fxBool
+bool
 HylaFAXServer::TIMESPEC(u_int len, time_t& result)
 {
     if (getToken(T_STRING, "time specification")) {
@@ -1303,44 +1303,44 @@ HylaFAXServer::TIMESPEC(u_int len, time_t& result)
 		    result = 60*twodigits(cp, 60)
 			   +    twodigits(cp+2, 60);
 		}
-		return (TRUE);
+		return (true);
 	    }
 	} else
 	    syntaxError(fxStr::format(
 		"bad time specification (expecting %d digits)", len));
     }
-    return (FALSE);
+    return (false);
 }
 
-fxBool
-HylaFAXServer::BOOLEAN(fxBool& b)
+bool
+HylaFAXServer::BOOLEAN(bool& b)
 {
     if (getToken(T_STRING, "boolean")) {
 	tokenBody.raisecase();
 	if (tokenBody == "YES") {
-	    b = TRUE;
-	    return (TRUE);
+	    b = true;
+	    return (true);
 	} else if (tokenBody == "NO") {
-	    b = FALSE;
-	    return (TRUE);
+	    b = false;
+	    return (true);
 	} else
 	    syntaxError("invalid boolean value, use YES or NO");
     }
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 HylaFAXServer::checkToken(Token wanted)
 {
     Token t = nextToken();
     if (t != wanted) {
 	pushToken(t);
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
-fxBool
+bool
 HylaFAXServer::getToken(Token wanted, const char* expected)
 {
     Token t = nextToken();
@@ -1349,44 +1349,44 @@ HylaFAXServer::getToken(Token wanted, const char* expected)
 	    syntaxError("unmatched quote mark");
 	else
 	    syntaxError(fxStr::format("expecting %s", expected));
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
-fxBool HylaFAXServer::SP()		{ return getToken(T_SP, "<SP>"); }
-fxBool HylaFAXServer::COMMA()		{ return getToken(T_COMMA, "\",\""); }
-fxBool HylaFAXServer::CRLF()		{ return getToken(T_CRLF, "<CRLF>"); }
-fxBool HylaFAXServer::opt_CRLF()	{ return checkToken(T_CRLF); }
+bool HylaFAXServer::SP()		{ return getToken(T_SP, "<SP>"); }
+bool HylaFAXServer::COMMA()		{ return getToken(T_COMMA, "\",\""); }
+bool HylaFAXServer::CRLF()		{ return getToken(T_CRLF, "<CRLF>"); }
+bool HylaFAXServer::opt_CRLF()	{ return checkToken(T_CRLF); }
 
-fxBool
+bool
 HylaFAXServer::opt_STRING(fxStr& s)
 {
     if (checkToken(T_STRING)) {
 	s = tokenBody;
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
-fxBool
+bool
 HylaFAXServer::STRING(fxStr& s, const char* what)
 {
     if (getToken(T_STRING, what != NULL ? what : "<STRING>")) {
 	s = tokenBody;
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
-fxBool
+bool
 HylaFAXServer::multi_STRING(fxStr& s)
 {
     if (!STRING(s))
-	return (FALSE);
+	return (false);
     for (;;) {
 	switch (nextToken()) {
 	case T_CRLF:
 	    pushToken(T_CRLF);
-	    return (TRUE);
+	    return (true);
 	case T_COMMA:
 	    s.append(',');
 	    break;
@@ -1398,12 +1398,12 @@ HylaFAXServer::multi_STRING(fxStr& s)
 	    break;
 	case T_LEXERR:
 	    syntaxError("unmatched quote mark");
-	    return (FALSE);
+	    return (false);
 	}
     }
 }
 
-fxBool
+bool
 HylaFAXServer::checkNUMBER(const char* cp)
 {
     if (cp[0] == '-' || cp[0] == '+')
@@ -1411,21 +1411,21 @@ HylaFAXServer::checkNUMBER(const char* cp)
     for (; *cp; cp++)
 	if (!isdigit(*cp)) {
 	    syntaxError("invalid number");
-	    return (FALSE);
+	    return (false);
 	}
-    return (TRUE);
+    return (true);
 }
 
-fxBool
+bool
 HylaFAXServer::NUMBER(long& n)
 {
     if (!getToken(T_STRING, "decimal number")) {
-	return (FALSE);
+	return (false);
     } else if (!checkNUMBER(tokenBody)) {
-	return (FALSE);
+	return (false);
     } else {
 	n = strtol(tokenBody, NULL, 0);
-	return (TRUE);
+	return (true);
     }
 }
 
@@ -1448,7 +1448,7 @@ HylaFAXServer::syntaxError(const char* msg)
  * be received or return EOF.
  */
 int
-HylaFAXServer::getChar(fxBool waitForInput)
+HylaFAXServer::getChar(bool waitForInput)
 {
     if (recvCC <= 0) {
 	// enable non-blocking i/o on control channel
@@ -1502,33 +1502,33 @@ HylaFAXServer::pushCmdData(const char* data, int n)
  * Return the next line of data received on the control
  * channel, ignoring any Telnet protocol command sequences.
  */
-fxBool
-HylaFAXServer::getCmdLine(char* s, int n, fxBool waitForInput)
+bool
+HylaFAXServer::getCmdLine(char* s, int n, bool waitForInput)
 {
     char* cp = s;
     cpos = 0;
     while (n > 1) {
 	int c = getChar(cp != s || waitForInput);
 	if (c == EOF)
-	    return (FALSE);
+	    return (false);
 	if (c == IAC) {			// telnet protocol command
-	    c = getChar(TRUE);
+	    c = getChar(true);
 	    if (c == EOF)
-		return (FALSE);
+		return (false);
 	    switch (c&0377) {
 	    case WILL:
 	    case WONT:
-		c = getChar(TRUE);	// telnet option
+		c = getChar(true);	// telnet option
 		if (c == EOF)
-		    return (FALSE);
+		    return (false);
 		printf("%c%c%c", IAC, DONT, c&0377);
 		(void) fflush(stdout);
 		continue;
 	    case DO:
 	    case DONT:
-		c = getChar(TRUE);	// telnet option
+		c = getChar(true);	// telnet option
 		if (c == EOF)
-		    return (FALSE);
+		    return (false);
 		printf("%c%c%c", IAC, WONT, c&0377);
 		(void) fflush(stdout);
 		continue;
@@ -1551,7 +1551,7 @@ HylaFAXServer::getCmdLine(char* s, int n, fxBool waitForInput)
     *cp = '\0';
     if (TRACE(PROTOCOL))
         logDebug("command: %s", s);
-    return (TRUE);
+    return (true);
 }
 
 void
@@ -1719,25 +1719,25 @@ HylaFAXServer::cmdFailure(Token t, const char* why)
     }
 }
 
-fxBool
+bool
 HylaFAXServer::checklogin(Token t)
 {
     if (!IS(LOGGEDIN)) {
 	cmdFailure(t, "not logged in");
 	reply(530, "Please login with USER and PASS.");
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
-fxBool
+bool
 HylaFAXServer::checkadmin(Token t)
 {
     if (checklogin(t)) {
 	if (IS(PRIVILEGED))
-	    return (TRUE);
+	    return (true);
 	cmdFailure(t, "user is not privileged");
 	reply(530, "Please use ADMIN to establish administrative privileges.");
     }
-    return (FALSE);
+    return (false);
 }

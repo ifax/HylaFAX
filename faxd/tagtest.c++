@@ -113,15 +113,15 @@ setupTagLine()
 #define	MARGIN_LEFT	2
 #define	MARGIN_RIGHT	2
 
-fxBool
+bool
 setupTagLineSlop(const Class2Params& params)
 {
     if (tagLineFont->isReady()) {
 	tagLineSlop = (tagLineFont->fontHeight()+MARGIN_TOP+MARGIN_BOT+3) * 
 	    howmany(params.pageWidth(),8);
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 class MemoryDecoder : public G3Decoder {
@@ -464,7 +464,7 @@ main(int argc, char* argv[])
 	uint32* stripbytecount;
 	(void) TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &stripbytecount);
 
-	fxBool firstStrip = setupTagLineSlop(params);
+	bool firstStrip = setupTagLineSlop(params);
 	u_int ts = tagLineSlop;
 	for (u_int strip = 0; strip < TIFFNumberOfStrips(tif); strip++) {
 	    u_int totbytes = (u_int) stripbytecount[strip];
@@ -478,7 +478,7 @@ main(int argc, char* argv[])
 			 */
 			dp = imageTagLine(data+ts, fillorder, params);
 			totbytes = totbytes+ts - (dp-data);
-			firstStrip = FALSE;
+			firstStrip = false;
 		    } else
 			dp = data;
 		    if (fillorder != FILLORDER_LSB2MSB)

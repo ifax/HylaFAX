@@ -64,7 +64,7 @@ SendFaxClient::SendFaxClient()
     dialRules = NULL;
     files = new FileInfoArray;
     polls = new PollRequestArray;
-    setup = FALSE;
+    setup = false;
 
     setupConfig();
 }
@@ -87,11 +87,11 @@ void SendFaxClient::vprintWarning(const char* fmt, va_list ap)
 void SendFaxClient::vtraceServer(const char* fmt, va_list ap)
     { FaxClient::vtraceServer(fmt, ap); }
 
-fxBool
+bool
 SendFaxClient::prepareForJobSubmissions(fxStr& emsg)
 {
     if (senderName == "" && !setupSenderIdentity(from, emsg))
-	return (FALSE);
+	return (false);
     /*
      * Prepare documents for transmission.
      */
@@ -99,7 +99,7 @@ SendFaxClient::prepareForJobSubmissions(fxStr& emsg)
 	typeRules = TypeRules::read(typeRulesFile);
 	if (!typeRules) {
 	    emsg = "Unable to setup file typing and conversion rules";
-	    return (FALSE);
+	    return (false);
 	}
     }
     typeRules->setVerbose(verbose);
@@ -112,7 +112,7 @@ SendFaxClient::prepareForJobSubmissions(fxStr& emsg)
 	 *     confused by this that the message has been removed so I no
 	 *     longer have to explain why it's not a problem.
 	 */
-	(void) dialRules->parse(FALSE);
+	(void) dialRules->parse(false);
     } else
 	dialRules->setVerbose(verbose);
     /*
@@ -125,7 +125,7 @@ SendFaxClient::prepareForJobSubmissions(fxStr& emsg)
 	    continue;
 	if (!job.setPageSize(job.getPageSize())) {
 	    emsg = "Unknown page size " | job.getPageSize();
-	    return (FALSE);
+	    return (false);
 	}
     }
     /*
@@ -137,7 +137,7 @@ SendFaxClient::prepareForJobSubmissions(fxStr& emsg)
     totalPages = 0;
     for (i = 0, n = files->length(); i < n; i++)
 	if (!prepareFile((*files)[i], emsg))
-	    return (FALSE);
+	    return (false);
     /*
      * Prepare cover pages.
      */
@@ -159,11 +159,11 @@ SendFaxClient::prepareForJobSubmissions(fxStr& emsg)
 	if (job.getAutoCoverPage() && getNumberOfFiles() > 0) {
 	    fxStr file;
 	    if (!makeCoverPage(job, file, emsg))
-		return (FALSE);
-	    job.setCoverPageFile(file, TRUE);
+		return (false);
+	    job.setCoverPageFile(file, true);
 	}
     }
-    return (setup = TRUE);
+    return (setup = true);
 }
 
 static fxStr
@@ -187,7 +187,7 @@ addarg(const char* av[], int& ac, const char* flag, const fxStr& opt)
 /*
  * Invoke the cover page generation program.
  */
-fxBool
+bool
 SendFaxClient::makeCoverPage(const SendFaxJob& job, fxStr& file, fxStr& emsg)
 {
     tmpFile = _PATH_TMP "/sndfaxXXXXXX";
@@ -250,7 +250,7 @@ SendFaxClient::makeCoverPage(const SendFaxJob& job, fxStr& file, fxStr& emsg)
 		int status;
 		if (Sys::waitpid(pid, status) == pid && status == 0) {
 		    file = tmpFile;
-		    return (TRUE);
+		    return (true);
 		}
 		emsg = fxStr::format("Error creating cover sheet; "
 		    "command was \"%s\"; exit status %x"
@@ -269,7 +269,7 @@ SendFaxClient::makeCoverPage(const SendFaxJob& job, fxStr& file, fxStr& emsg)
 	emsg = fxStr::format("%s: Can not create temporary file for cover page",
 	    (const char*) tmpFile);
     Sys::unlink(tmpFile);
-    return (FALSE);
+    return (false);
 }
 
 SendFaxJob&
@@ -278,7 +278,7 @@ SendFaxClient::addJob(void)
     u_int ix = jobs->length();
     jobs->resize(ix+1);
     (*jobs)[ix] = proto;
-    setup = FALSE;
+    setup = false;
     return ((*jobs)[ix]);
 }
 u_int SendFaxClient::getNumberOfJobs() const	{ return jobs->length(); }
@@ -324,7 +324,7 @@ SendFaxClient::addFile(const fxStr& filename)
     u_int ix = files->length();
     files->resize(ix+1);
     (*files)[ix].name = filename;
-    setup = FALSE;
+    setup = false;
     return (ix);
 }
 
@@ -381,7 +381,7 @@ SendFaxClient::addPollRequest(const fxStr& sep, const fxStr& pwd)
     polls->resize(ix+1);
     (*polls)[ix].sep = sep;
     (*polls)[ix].pwd = pwd;
-    setup = FALSE;
+    setup = false;
     return (ix);
 }
 u_int SendFaxClient::getNumberOfPollRequests() const { return polls->length(); }
@@ -405,43 +405,43 @@ SendFaxClient::removePollRequest(u_int ix)
 /*
  * Submit documents and jobs to the server.
  */
-fxBool
+bool
 SendFaxClient::submitJobs(fxStr& emsg)
 {
     if (!setup) {
 	emsg = "Documents not prepared";
-	return (FALSE);
+	return (false);
     }
     if (!isLoggedIn()) {
 	emsg = "Not logged in to server";
-	return (FALSE);
+	return (false);
     }
     /*
      * Transfer documents to the server.
      */
     if (!sendDocuments(emsg))
-	return (FALSE);
+	return (false);
     /*
      * Construct jobs and submit them.
      */
     for (u_int i = 0, n = jobs->length(); i < n; i++) {
 	SendFaxJob& job = (*jobs)[i];
 	if (!job.createJob(*this, emsg))
-	    return (FALSE);
+	    return (false);
 	if (!jobSubmit(job.getJobID())) {
 	    emsg = getLastResponse();
-	    return (FALSE);
+	    return (false);
 	}
 	notifyNewJob(job);			// notify client
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Transfer the document files to the server and
  * record the serve-side documents for job submission.
  */
-fxBool
+bool
 SendFaxClient::sendDocuments(fxStr& emsg)
 {
     emsg = "";
@@ -451,9 +451,9 @@ SendFaxClient::sendDocuments(fxStr& emsg)
 	if (fd < 0) {
 	    emsg = fxStr::format(info.temp | ": Can not open: %s",
 		strerror(errno));
-	    return (FALSE);			// XXX
+	    return (false);			// XXX
 	}
-	fxBool fileSent;
+	bool fileSent;
 	if (info.rule->getResult() == TypeRule::TIFF) {
 	    fileSent = setFormat(FORM_TIFF)
 		    && setType(TYPE_I)
@@ -467,10 +467,10 @@ SendFaxClient::sendDocuments(fxStr& emsg)
 	if (!fileSent) {
 	    if (emsg == "")
 		emsg = "Document transfer failed: " | getLastResponse();
-	    return (FALSE);
+	    return (false);
 	}
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -510,7 +510,7 @@ SendFaxClient::setupConfig()
 {
     for (int i = N(strings)-1; i >= 0; i--)
 	(*this).*strings[i].p = (strings[i].def ? strings[i].def : "");
-    verbose = FALSE;
+    verbose = false;
     delete typeRules, typeRules = NULL;
     delete dialRules, dialRules = NULL;
 
@@ -524,7 +524,7 @@ SendFaxClient::resetConfig()
     setupConfig();
 }
 
-fxBool
+bool
 SendFaxClient::setConfigItem(const char* tag, const char* value)
 {
     u_int ix;
@@ -536,15 +536,15 @@ SendFaxClient::setConfigItem(const char* tag, const char* value)
     } else if (proto.setConfigItem(tag, value)) {
 	;
     } else if (!FaxClient::setConfigItem(tag, value))
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 #undef N
 
 /*
  * Setup the sender's identity.
  */
-fxBool
+bool
 SendFaxClient::setupSenderIdentity(const fxStr& from, fxStr& emsg)
 {
     FaxClient::setupUserIdentity(emsg);		// client identity
@@ -588,9 +588,9 @@ SendFaxClient::setupSenderIdentity(const fxStr& from, fxStr& emsg)
     fxStr mbox;
     if (senderName == "" || !getNonBlankMailbox(mbox)) {
 	emsg = "Malformed (null) sender name or mail address";
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
 void SendFaxClient::setFromIdentity(const char* s)	{ from = s; }
@@ -613,28 +613,28 @@ SendFaxClient::setBlankMailboxes(const fxStr& s)
  * Return the first non-null mailbox string
  * in the set of jobs.
  */
-fxBool
+bool
 SendFaxClient::getNonBlankMailbox(fxStr& s)
 {
     for (u_int i = 0, n = jobs->length(); i < n; i++) {
 	SendFaxJob& job = (*jobs)[i];
 	if (job.getMailbox() != "") {
 	    s = job.getMailbox();
-	    return (TRUE);
+	    return (true);
 	}
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Process a file submitted for transmission.
  */
-fxBool
+bool
 SendFaxClient::prepareFile(FileInfo& info, fxStr& emsg)
 {
     info.rule = fileType(info.name, emsg);
     if (!info.rule)
-	return (FALSE);
+	return (false);
     if (info.temp != "" && info.temp != info.name)
 	Sys::unlink(info.temp);
     if (info.rule->getCmd() != "") {	// conversion required
@@ -659,7 +659,7 @@ SendFaxClient::prepareFile(FileInfo& info, fxStr& emsg)
 	    Sys::unlink(tmpFile);
 	    emsg = fxStr::format("Error converting data; command was \"%s\"",
 		(const char*) sysCmd);
-	    return (FALSE);
+	    return (false);
 	}
 	info.temp = tmpFile;
     } else				// already postscript or tiff
@@ -672,7 +672,7 @@ SendFaxClient::prepareFile(FileInfo& info, fxStr& emsg)
 	estimatePostScriptPages(info.temp);
 	break;
     }
-    return (TRUE);
+    return (true);
 }
 
 /*

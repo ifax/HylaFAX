@@ -40,17 +40,17 @@ Class0Modem::~Class0Modem()
 {
 }
 
-fxBool
+bool
 Class0Modem::setupModem()
 {
     if (!selectBaudRate(conf.maxRate, conf.flowControl, conf.flowControl))
-	return (FALSE);
+	return (false);
     // Query service support information
     fxStr s;
     if (doQuery(conf.classQueryCmd, s, 500) && parseRange(s, modemServices))
 	traceBits(modemServices & SERVICE_ALL, serviceNames);
     if ((modemServices & SERVICE_DATA) == 0)
-	return (FALSE);
+	return (false);
     atCmd(conf.class0Cmd);
     setupFlowControl(flowControl);
 
@@ -70,14 +70,14 @@ Class0Modem::setupModem()
     if (modemRevision != "")
 	modemCapability("Revision " | modemRevision);
 
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Send the modem any commands needed to force use of
  * the specified flow control scheme.
  */
-fxBool
+bool
 Class0Modem::setupFlowControl(FlowControl fc)
 {
     switch (fc) {
@@ -85,7 +85,7 @@ Class0Modem::setupFlowControl(FlowControl fc)
     case FLOW_XONXOFF:	return atCmd(conf.softFlowCmd);
     case FLOW_RTSCTS:	return atCmd(conf.hardFlowCmd);
     }
-    return (TRUE);
+    return (true);
 }
 
 CallStatus
@@ -117,4 +117,4 @@ Class0Modem::dialResponse(fxStr&)
     return (FAILURE);
 }
 
-fxBool Class0Modem::isFaxModem() const		{ return FALSE; }
+bool Class0Modem::isFaxModem() const		{ return false; }

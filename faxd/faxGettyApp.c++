@@ -124,11 +124,11 @@ faxGettyApp::close()
     }
 }
 
-fxBool faxGettyApp::lockModem()		{ return modemLock->lock(); }
+bool faxGettyApp::lockModem()		{ return modemLock->lock(); }
 void faxGettyApp::unlockModem()		{ modemLock->unlock(); }
-fxBool faxGettyApp::isModemLocked()	{ return modemLock->isLocked(); }
+bool faxGettyApp::isModemLocked()	{ return modemLock->isLocked(); }
 
-fxBool
+bool
 faxGettyApp::setupModem()
 {
     /*
@@ -150,16 +150,16 @@ faxGettyApp::setupModem()
 	 * If the server is configured, listen for incoming calls.
 	 */
 	setRingsBeforeAnswer(ringsBeforeAnswer);
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 /*
  * Discard any handle on the modem.
  */
 void
-faxGettyApp::discardModem(fxBool dropDTR)
+faxGettyApp::discardModem(bool dropDTR)
 {
     int fd = getModemFd();
     if (fd >= 0) {
@@ -193,7 +193,7 @@ faxGettyApp::listenBegin()
 	 * state where we wait for the modem to come available again.
 	 */
 	traceServer("ANSWER: Can not lock modem device");
-	discardModem(FALSE);
+	discardModem(false);
 	changeState(LOCKWAIT, pollLockWait);
 	sendModemStatus("U");
     }
@@ -261,7 +261,7 @@ faxGettyApp::answerPhoneCmd(AnswerType atype)
 	 * Discard our handle on the modem and change to LOCKWAIT
 	 * state where we wait for the modem to come available again.
 	 */
-	discardModem(FALSE);
+	discardModem(false);
 	changeState(LOCKWAIT, pollLockWait);
 	sendModemStatus("U");
     }
@@ -284,16 +284,16 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid)
      * adaptive-answer is enabled and ``any'' is requested,
      * then rotate through the set of possibilities.
      */
-    fxBool callResolved;
-    fxBool advanceRotary = TRUE;
+    bool callResolved;
+    bool advanceRotary = true;
     fxStr emsg;
     if (!isCIDOk(cid.number)) {		// check Caller ID if present
 	/*
 	 * Call was rejected based on Caller ID information.
 	 */
 	traceServer("ANSWER: CID REJECTED");
-	callResolved = FALSE;
-	advanceRotary = FALSE;
+	callResolved = false;
+	advanceRotary = false;
     } else if (ctype != ClassModem::CALLTYPE_UNKNOWN) {
 	/*
 	 * Distinctive ring or other means has already identified
@@ -307,8 +307,8 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid)
 		 "but told to answer as %s; call ignored",
 		 ClassModem::callTypes[ctype],
 		 ClassModem::answerTypes[atype]);
-	    callResolved = FALSE;
-	    advanceRotary = FALSE;
+	    callResolved = false;
+	    advanceRotary = false;
 	} else {
 	    // NB: answer based on ctype, not atype
 	    ctype = modemAnswerCall(ctype, emsg);
@@ -373,14 +373,14 @@ faxGettyApp::answerCleanup()
 {
     if (modemReady()) {
 	modemHangup();
-	discardModem(TRUE);
+	discardModem(true);
     }
-    fxBool isSetup;
+    bool isSetup;
     if (isModemLocked() || lockModem()) {
 	isSetup = setupModem();
 	unlockModem();
     } else
-	isSetup = FALSE;
+	isSetup = false;
     if (isSetup)
 	changeState(RUNNING);
     else
@@ -395,10 +395,10 @@ faxGettyApp::answerCleanup()
  * comes up with.  Otherwise we use whatever deduction
  * the modem layer arrives at as the call type.
  */
-fxBool
+bool
 faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg)
 {
-    fxBool callResolved;
+    bool callResolved;
     if (atype == ClassModem::ANSTYPE_EXTERN) {
 	if (egettyArgs != "") {
 	    /*
@@ -409,9 +409,9 @@ faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg)
 	     * then we take action based on the returned call type.
 	     */
 	    ctype = runGetty("EXTERN GETTY", OSnewEGetty,
-		egettyArgs, emsg, lockExternCalls, TRUE);
+		egettyArgs, emsg, lockExternCalls, true);
 	    if (ctype == ClassModem::CALLTYPE_DONE)	// NB: call completed
-		return (TRUE);
+		return (true);
 	    if (ctype != ClassModem::CALLTYPE_ERROR)
 		modemAnswerCallCmd(ctype);
 	} else
@@ -435,10 +435,10 @@ faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg)
  * it removes the modem lock file and reconditions the modem for
  * incoming calls (if configured).
  */
-fxBool
+bool
 faxGettyApp::processCall(CallType ctype, fxStr& emsg)
 {
-    fxBool callHandled = FALSE;
+    bool callHandled = false;
 
     switch (ctype) {
     case ClassModem::CALLTYPE_FAX:
@@ -456,7 +456,7 @@ faxGettyApp::processCall(CallType ctype, fxStr& emsg)
 	    sendModemStatus("e");
 	} else
 	    traceServer("ANSWER: Data connections are not permitted");
-	callHandled = TRUE;
+	callHandled = true;
 	break;
     case ClassModem::CALLTYPE_VOICE:
 	traceServer("ANSWER: VOICE CONNECTION");
@@ -466,7 +466,7 @@ faxGettyApp::processCall(CallType ctype, fxStr& emsg)
 	    sendModemStatus("w");
 	} else
 	    traceServer("ANSWER: Voice connections are not permitted");
-	callHandled = TRUE;
+	callHandled = true;
 	break;
     case ClassModem::CALLTYPE_ERROR:
 	traceServer("ANSWER: %s", (const char*) emsg);
@@ -486,8 +486,8 @@ faxGettyApp::runGetty(
     Getty* (*newgetty)(const fxStr&, const fxStr&),
     const char* args,
     fxStr& emsg,
-    fxBool keepLock,
-    fxBool keepModem
+    bool keepLock,
+    bool keepModem
 )
 {
     fxStr prefix(_PATH_DEV);
@@ -513,7 +513,7 @@ faxGettyApp::runGetty(
      */
     if (!keepLock)
 	unlockModem();
-    fxBool parentIsInit = (getppid() == 1);
+    bool parentIsInit = (getppid() == 1);
     pid_t pid = fork();
     if (pid == -1) {
 	emsg = fxStr::format("%s: can not fork: %s", what, strerror(errno));
@@ -552,10 +552,10 @@ faxGettyApp::runGetty(
      * SIGHUP on last close.
      */
     if (!keepModem)
-	discardModem(FALSE);
+	discardModem(false);
     changeState(GETTYWAIT);
     int status;
-    getty->wait(status, TRUE);		// wait for getty/login work to complete
+    getty->wait(status, true);		// wait for getty/login work to complete
     /*
      * Retake ownership of the modem.  Note that there's
      * a race in here (another process could come along
@@ -604,11 +604,11 @@ faxGettyApp::setRingsBeforeAnswer(int rings)
     }
 }
 
-fxBool
+bool
 faxGettyApp::isCIDOk(const fxStr& cid)
 {
     updatePatterns(qualifyCID, cidPats, acceptCID, lastCIDModTime);
-    return (qualifyCID == "" ? TRUE : checkACL(cid, cidPats, *acceptCID));
+    return (qualifyCID == "" ? true : checkACL(cid, cidPats, *acceptCID));
 }
 
 /*
@@ -706,14 +706,14 @@ faxGettyApp::notifyRecvDone(const FaxRecvInfo& ri)
     );
     traceServer("RECV FAX: %s", (const char*) cmd);
     setProcessPriority(BASE);			// lower priority
-    runCmd(cmd, TRUE);
+    runCmd(cmd, true);
     setProcessPriority(state);			// restore priority
 }
 
 /*
  * Send a modem status message to the central queuer process.
  */
-fxBool
+bool
 faxGettyApp::sendModemStatus(const char* msg)
 {
     return faxApp::sendModemStatus(getModemDeviceID(), msg);
@@ -729,7 +729,7 @@ faxGettyApp::sendModemStatus(const char* msg)
 void
 faxGettyApp::openFIFOs()
 {
-    devfifo = openFIFO(fifoName | "." | getModemDeviceID(), 0600, TRUE);
+    devfifo = openFIFO(fifoName | "." | getModemDeviceID(), 0600, true);
     Dispatcher::instance().link(devfifo, Dispatcher::ReadMask, this);
 }
 
@@ -832,10 +832,10 @@ const faxGettyApp::numbertag faxGettyApp::numbers[] = {
 { "answerbias",		&faxGettyApp::answerBias,	(u_int) -1 },
 };
 const faxGettyApp::booltag faxGettyApp::booleans[] = {
-{ "adaptiveanswer",	&faxGettyApp::adaptiveAnswer,	FALSE },
-{ "lockdatacalls",	&faxGettyApp::lockDataCalls,	TRUE },
-{ "lockvoicecalls",	&faxGettyApp::lockVoiceCalls,	TRUE },
-{ "lockexterncalls",	&faxGettyApp::lockExternCalls,	TRUE },
+{ "adaptiveanswer",	&faxGettyApp::adaptiveAnswer,	false },
+{ "lockdatacalls",	&faxGettyApp::lockDataCalls,	true },
+{ "lockvoicecalls",	&faxGettyApp::lockVoiceCalls,	true },
+{ "lockexterncalls",	&faxGettyApp::lockExternCalls,	true },
 };
 
 void
@@ -855,7 +855,7 @@ faxGettyApp::setupConfig()
     setAnswerRotary("any");		// answer calls as ``any''
 }
 
-fxBool
+bool
 faxGettyApp::setConfigItem(const char* tag, const char* value)
 {
     u_int ix;
@@ -887,7 +887,7 @@ faxGettyApp::setConfigItem(const char* tag, const char* value)
 	}
     } else
 	return (FaxServer::setConfigItem(tag, value));
-    return (TRUE);
+    return (true);
 }
 #undef	N
 

@@ -187,26 +187,26 @@ DestControl::readContents()
     }
 }
 
-fxBool
+bool
 DestControl::readLine(FILE* fp, char line[], u_int cc)
 {
     if (fgets(line, cc, fp) == NULL)
-	return (FALSE);
+	return (false);
     lineno++;
     char* cp;
     if (cp = strchr(line, '#'))
 	*cp = '\0';
     if (cp = strchr(line, '\n'))
 	*cp = '\0';
-    return (TRUE);
+    return (true);
 }
 
-static fxBool
+static bool
 isContinued(FILE* fp)
 {
     int c = getc(fp);
     if (c == EOF)
-	return (FALSE);
+	return (false);
     ungetc(c, fp);
     return (isspace(c) || c == '#');
 }
@@ -238,13 +238,13 @@ crackArgv(fxStr& s)
     s.resize(cp - (char*) s);
 }
 
-fxBool
+bool
 DestControl::parseEntry(FILE* fp)
 {
     char line[1024];
     for (;;) {
 	if (!readLine(fp, line, sizeof (line)-1))
-	    return (FALSE);
+	    return (false);
 	char* cp;
 	for (cp = line; *cp && !isspace(*cp); cp++)
 	    ;
@@ -253,7 +253,7 @@ DestControl::parseEntry(FILE* fp)
 	if (cp == line) {
 	    parseError("Missing regular expression.");
 	    skipEntry(fp, line, sizeof (line)-1);
-	    return (TRUE);
+	    return (true);
 	}
 	*cp++ = '\0';
 	DestControlInfo dci(line);
@@ -263,7 +263,7 @@ DestControl::parseEntry(FILE* fp)
 	    re.getError(emsg);
 	    parseError("Bad regular expression: %s: " | emsg, re.pattern());
 	    skipEntry(fp, line, sizeof (line)-1);
-	    return (TRUE);
+	    return (true);
 	}
 	for (;;) {
 	    while (isspace(*cp))
@@ -272,11 +272,11 @@ DestControl::parseEntry(FILE* fp)
 		crackArgv(dci.args);
 		if (!isContinued(fp)) {
 		    info.append(dci);
-		    return (TRUE);
+		    return (true);
 		}
 		if (!readLine(fp, line, sizeof (line)-1)) {
 		    info.append(dci);
-		    return (FALSE);
+		    return (false);
 		}
 		cp = line;
 		continue;			// go back and skip whitespace

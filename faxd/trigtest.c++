@@ -18,7 +18,7 @@ extern "C" {
 
 #include "config.h"
 
-fxBool	verbose = FALSE;
+bool	verbose = false;
 
 static int
 openFIFO(const char* name, int mode)
@@ -416,7 +416,7 @@ main(int argc, char* argv[])
 	exit(-1);
     }
     if (argc == 3) {
-	verbose = TRUE;
+	verbose = true;
 	argc--, argv++;
     }
     if (chdir(FAX_SPOOLDIR) == -1) {

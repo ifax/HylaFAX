@@ -52,11 +52,11 @@ private:
     u_long	format;		// format for current portion being read
     PCFTableRec* toc;		// table of contents
     u_long	tocSize;	// number of entries in TOC
-    fxBool	isBigEndian;	// host byte order
+    bool	isBigEndian;	// host byte order
 
     void	cleanup();
-    fxBool	readTOC();
-    fxBool	seekToTable(u_long type);
+    bool	readTOC();
+    bool	seekToTable(u_long type);
     void	getMetric(charInfo& metric);
     void	getCompressedMetric(charInfo& metric);
     int		repadBitmap(u_char* src, u_char* dst,
@@ -66,7 +66,7 @@ private:
     int		getINT16();
     int		getINT8();
 
-    fxBool	isFormat(u_long f) const;
+    bool	isFormat(u_long f) const;
     u_int	byteOrder() const;
     u_int	bitOrder() const;
     u_int	glyphPadIndex() const;
@@ -78,7 +78,7 @@ public:
     PCFFont();
     ~PCFFont();
 
-    fxBool	read(const char* filename);
+    bool	read(const char* filename);
 
     u_int	charWidth(u_int) const;
     void	strWidth(const char* text, u_int& w, u_int& h) const;

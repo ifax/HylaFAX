@@ -39,11 +39,11 @@ public:
 faxFetchApp::faxFetchApp() {}
 faxFetchApp::~faxFetchApp() {}
 
-static fxBool
+static bool
 writeStdout(void*, const char* buf, int cc, fxStr&)
 {
     (void) Sys::write(STDOUT_FILENO, buf, cc);
-    return (TRUE);
+    return (true);
 }
 
 void
@@ -77,7 +77,7 @@ faxFetchApp::run(int argc, char** argv)
 	    mode = MODE_S;
 	    break;
 	case 'v':			// enable protocol tracing
-	    setVerbose(TRUE);
+	    setVerbose(true);
 	    break;
 	case 'z':
 	    mode = MODE_Z;

@@ -55,8 +55,8 @@ public:
 
     void setupArgv(const char* args);	// setup arguments for getty process
 					// run getty process
-    virtual void run(int fd, fxBool parentIsInit);
-    virtual fxBool wait(int& status, fxBool block = FALSE);
+    virtual void run(int fd, bool parentIsInit);
+    virtual bool wait(int& status, bool block = false);
     virtual void hangup();		// cleanup state after hangup
 
     pid_t getPID() const;		// getty pid

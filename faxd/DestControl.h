@@ -86,8 +86,8 @@ private:
     DestControlInfoArray info;		// control information
 
     void	readContents();
-    fxBool	parseEntry(FILE* fp);
-    fxBool	readLine(FILE* fp, char line[], u_int cc);
+    bool	parseEntry(FILE* fp);
+    bool	readLine(FILE* fp, char line[], u_int cc);
     void	skipEntry(FILE*, char line[], u_int cc);
     void	parseError(const char* fmt ...);
 public:

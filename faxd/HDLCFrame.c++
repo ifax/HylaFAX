@@ -37,7 +37,7 @@ HDLCFrame::HDLCFrame(u_int fo)
     base = next = buf;
     end = &buf[sizeof(buf)];
     amountToGrowBy = 1024;
-    ok = FALSE;
+    ok = false;
 }
 
 HDLCFrame::~HDLCFrame()

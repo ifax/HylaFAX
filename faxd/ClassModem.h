@@ -195,17 +195,17 @@ protected:
     ClassModem(ModemServer&, const ModemConfig&);
 
 // setup and configuration
-    virtual fxBool selectBaudRate(BaudRate max, FlowControl i, FlowControl o);
-    virtual fxBool setupManufacturer(fxStr& mfr);
-    virtual fxBool setupModel(fxStr& model);
-    virtual fxBool setupRevision(fxStr& rev);
+    virtual bool selectBaudRate(BaudRate max, FlowControl i, FlowControl o);
+    virtual bool setupManufacturer(fxStr& mfr);
+    virtual bool setupModel(fxStr& model);
+    virtual bool setupRevision(fxStr& rev);
 
-    fxBool doQuery(const fxStr& queryCmd, fxStr& result, long ms = 30*1000);
+    bool doQuery(const fxStr& queryCmd, fxStr& result, long ms = 30*1000);
 // dial/answer interactions with derived classes
     virtual const AnswerMsg* findAnswer(const char* s);
     virtual CallType answerResponse(fxStr& emsg);
     virtual CallStatus dialResponse(fxStr& emsg) = 0;
-    virtual fxBool isNoise(const char*);
+    virtual bool isNoise(const char*);
 // miscellaneous
     void	modemSupports(const char* fmt, ...);
     void	modemCapability(const char* fmt, ...);
@@ -213,11 +213,11 @@ protected:
 public:
     virtual ~ClassModem();
 
-    virtual fxBool setupModem() = 0;
-    virtual fxBool isFaxModem() const = 0;	// XXX safe to cast
+    virtual bool setupModem() = 0;
+    virtual bool isFaxModem() const = 0;	// XXX safe to cast
 
-    virtual fxBool sync(long ms = 0);		// synchronize (wait for "OK")
-    virtual fxBool reset(long ms = 5*1000);	// reset modem state
+    virtual bool sync(long ms = 0);		// synchronize (wait for "OK")
+    virtual bool reset(long ms = 5*1000);	// reset modem state
     virtual void hangup();			// hangup the phone
 
 // configuration controls
@@ -241,38 +241,38 @@ public:
 // support to write to modem w/ timeout
     void	beginTimedTransfer();
     void	endTimedTransfer();
-    fxBool	wasTimeout();
-    void	setTimeout(fxBool);
+    bool	wasTimeout();
+    void	setTimeout(bool);
     void	flushModemInput();
-    fxBool	putModem(void* data, int n, long ms = 0);
-    fxBool	putModemData(void* data, int n);
-    fxBool	putModemDLEData(const u_char* data, u_int,
+    bool	putModem(void* data, int n, long ms = 0);
+    bool	putModemData(void* data, int n);
+    bool	putModemDLEData(const u_char* data, u_int,
 		    const u_char* brev, long ms);
-    fxBool	putModemLine(const char* cp);
+    bool	putModemLine(const char* cp);
     int		getModemChar(long ms = 0);
     int		getModemDataChar();
     void	startTimeout(long ms);
     void	stopTimeout(const char* whichdir);
 // host-modem protocol parsing support
     virtual ATResponse atResponse(char* buf, long ms = 30*1000);
-    fxBool	waitFor(ATResponse wanted, long ms = 30*1000);
-    fxBool	atCmd(const fxStr& cmd, ATResponse = AT_OK, long ms = 30*1000);
-    fxBool	atQuery(const char* what, fxStr& v, long ms = 30*1000);
-    fxBool	atQuery(const char* what, u_int& v, long ms = 30*1000);
-    fxBool	parseRange(const char*, u_int&);
-    fxBool	vparseRange(const char*, int nargs ...);
+    bool	waitFor(ATResponse wanted, long ms = 30*1000);
+    bool	atCmd(const fxStr& cmd, ATResponse = AT_OK, long ms = 30*1000);
+    bool	atQuery(const char* what, fxStr& v, long ms = 30*1000);
+    bool	atQuery(const char* what, u_int& v, long ms = 30*1000);
+    bool	parseRange(const char*, u_int&);
+    bool	vparseRange(const char*, int nargs ...);
 // modem line control
-    fxBool	sendBreak(fxBool pause);
-    fxBool	setBaudRate(BaudRate rate);
-    fxBool	setBaudRate(BaudRate rate, FlowControl i, FlowControl o);
-    fxBool	setXONXOFF(FlowControl i, FlowControl o, SetAction);
-    fxBool	setDTR(fxBool on);
-    fxBool	setInputBuffering(fxBool on);
-    fxBool	modemStopOutput();
+    bool	sendBreak(bool pause);
+    bool	setBaudRate(BaudRate rate);
+    bool	setBaudRate(BaudRate rate, FlowControl i, FlowControl o);
+    bool	setXONXOFF(FlowControl i, FlowControl o, SetAction);
+    bool	setDTR(bool on);
+    bool	setInputBuffering(bool on);
+    bool	modemStopOutput();
     FlowControl	getInputFlow();
     FlowControl	getOutputFlow();
 // server-related stuff
-    fxBool	abortRequested();
+    bool	abortRequested();
 
     /*
      * Send support:
@@ -282,7 +282,7 @@ public:
      * }
      * hangup();
      */
-    virtual fxBool dataService();
+    virtual bool dataService();
     virtual CallStatus dial(const char* number, fxStr& emsg);
 
     /*
@@ -305,7 +305,7 @@ public:
      * with recvAbort available to abort a receive
      * at any time in this procedure.
      */
-    virtual fxBool waitForRings(u_int rings, CallType&, CallerID&);
+    virtual bool waitForRings(u_int rings, CallType&, CallerID&);
     virtual CallType answerCall(AnswerType, fxStr& emsg);
     virtual void answerCallCmd(CallType);
 };

@@ -52,7 +52,7 @@ pageSendApp* pageSendApp::_instance = NULL;
 pageSendApp::pageSendApp(const fxStr& devName, const fxStr& devID)
     : ModemServer(devName, devID)
 {
-    ready = FALSE;
+    ready = false;
     modemLock = NULL;
     setupConfig();
 
@@ -118,7 +118,7 @@ pageSendApp::send(const char* filename)
     if (fd >= 0) {
 	if (flock(fd, LOCK_EX) >= 0) {
 	    FaxRequest* req = new FaxRequest(filename, fd);
-	    fxBool reject;
+	    bool reject;
 	    if (req->readQFile(reject) && !reject) {
 		if (req->findRequest(FaxRequest::send_page) != fx_invalidArrayIndex) {
 		    FaxMachineInfo info;
@@ -193,7 +193,7 @@ pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info)
 	    changeState(MODEMWAIT);		// ...sort of...
 	} else
 	    sendFailed(req, send_retry, "Can not setup modem", 4*pollModemWait);
-	discardModem(TRUE);
+	discardModem(true);
 	endSession();
 	unlockModem();
     } else {
@@ -201,17 +201,17 @@ pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info)
     }
 }
 
-fxBool
+bool
 pageSendApp::prepareMsg(FaxRequest& req, FaxMachineInfo& info, fxStr& msg)
 {
     u_int i = req.findRequest(FaxRequest::send_data);
     if (i == fx_invalidArrayIndex)		// page w/o text
-	return (TRUE);
+	return (true);
     int fd = Sys::open(req.requests[i].item, O_RDONLY);
     if (fd < 0) {
 	sendFailed(req, send_failed,
 	    "Internal error: unable to open text message file");
-	return (FALSE);
+	return (false);
     }
     struct stat sb;
     (void) Sys::fstat(fd, sb);
@@ -219,7 +219,7 @@ pageSendApp::prepareMsg(FaxRequest& req, FaxMachineInfo& info, fxStr& msg)
     if (Sys::read(fd, &msg[0], (u_int) sb.st_size) != sb.st_size) {
 	sendFailed(req, send_failed,
 	    "Internal error: unable to read text message file");
-	return (FALSE);
+	return (false);
     }
     Sys::close(fd);
 
@@ -231,7 +231,7 @@ pageSendApp::prepareMsg(FaxRequest& req, FaxMachineInfo& info, fxStr& msg)
 	    msg.length(), maxMsgLen);
 	msg.resize(maxMsgLen);
     }
-    return (TRUE);
+    return (true);
 }
 
 void
@@ -273,7 +273,7 @@ pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info, const fxStr& number
 	req.ndials = 0;				// consec. failed dial attempts
 	req.tottries++;				// total answered calls
 	req.totdials++;				// total attempted calls
-	info.setCalledBefore(TRUE);
+	info.setCalledBefore(true);
 	info.setDialFailures(0);
 
 	req.status = send_ok;			// be optimistic
@@ -435,7 +435,7 @@ pageSendApp::getResponse(fxStackBuffer& buf, long secs)
  * as PageNet intersperse protocol messages and
  * verbose text messages.
  */
-static fxBool
+static bool
 scanForCode(const u_char*& cp, u_int& len)
 {
     if (len > 0) {
@@ -447,7 +447,7 @@ scanForCode(const u_char*& cp, u_int& len)
     return (len > 0);
 }
 
-fxBool
+bool
 pageSendApp::pagePrologue(FaxRequest& req, const FaxMachineInfo& info, fxStr& emsg)
 {
     fxStackBuffer buf;
@@ -461,7 +461,7 @@ pageSendApp::pagePrologue(FaxRequest& req, const FaxMachineInfo& info, fxStr& em
      */
     traceIXO("EXPECT ID (paging central identification)");
     start = Sys::now();
-    fxBool gotID = FALSE;
+    bool gotID = false;
     do {
 	putModem("\r", 1);
 	if (getResponse(buf, ixoIDProbe) >= 3) {
@@ -480,7 +480,7 @@ pageSendApp::pagePrologue(FaxRequest& req, const FaxMachineInfo& info, fxStr& em
     if (!gotID) {
 	emsg = "No initial ID response from paging central";
 	req.status = send_retry;
-	return (FALSE);
+	return (false);
     }
     flushModemInput();			// paging central may send multiple ID=
     /*
@@ -526,7 +526,7 @@ pageSendApp::pagePrologue(FaxRequest& req, const FaxMachineInfo& info, fxStr& em
 		if (--ntries == 0) {
 		    emsg = "Login failed multiple times";
 		    req.status = send_retry;
-		    return (FALSE);
+		    return (false);
 		}
 		/*
 		 * Resend the login request.
@@ -550,12 +550,12 @@ pageSendApp::pagePrologue(FaxRequest& req, const FaxMachineInfo& info, fxStr& em
 			emsg =
 			    "Paging central responded with forced disconnect";
 			req.status = send_failed;
-			return (FALSE);
+			return (false);
 		    }
 		    // check for go-ahead message
 		    if (len > 2 && cp[1] == '[' && cp[2] == 'p') {
 			traceIXO("RECV ACK (login successful & got go-ahead)");
-			return (TRUE);
+			return (true);
 		    }
 		}
 		break;
@@ -568,10 +568,10 @@ pageSendApp::pagePrologue(FaxRequest& req, const FaxMachineInfo& info, fxStr& em
 	(unknown ?
 	    "timeout waiting for response" : "too many unknown responses"));
     req.status = send_retry;
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 pageSendApp::pageGoAhead(FaxRequest& req, const FaxMachineInfo&, fxStr& emsg)
 {
     fxStackBuffer buf;
@@ -583,7 +583,7 @@ pageSendApp::pageGoAhead(FaxRequest& req, const FaxMachineInfo&, fxStr& emsg)
 	while (len > 0) {
 	    if (len > 2 && cp[0] == ESC && cp[1] == '[' && cp[2] == 'p') {
 		traceIXO("RECV go-ahead (prologue done)");
-		return (TRUE);
+		return (true);
 	    }
 	    (void) scanForCode(cp, len);
 	}
@@ -592,7 +592,7 @@ pageSendApp::pageGoAhead(FaxRequest& req, const FaxMachineInfo&, fxStr& emsg)
     emsg = fxStr::format("Protocol failure: %s waiting for go-ahead message",
 	unknown ? "timeout" : "too many unknown responses");
     req.status = send_retry;
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -612,7 +612,7 @@ addChecksum(fxStackBuffer& buf)
     buf.put(check, 3);
 }
 
-fxBool
+bool
 pageSendApp::sendPagerMsg(FaxRequest& req, faxRequest& preq, const fxStr& msg, fxStr& emsg)
 {
     /*
@@ -656,14 +656,14 @@ pageSendApp::sendPagerMsg(FaxRequest& req, faxRequest& preq, const fxStr& msg, f
 	    switch (cp[0]) {
 	    case ACK:
 		traceIXO("RECV ACK (message block accepted)");
-		return (TRUE);
+		return (true);
 	    case NAK:
 		traceIXO("RECV NAK (message block rejected)");
 		if (--ntries == 0) {
 		    req.status = send_retry;
 		    emsg = "Message block not acknowledged by paging central "
 			"after multiple tries";
-		    return (FALSE);
+		    return (false);
 		}
 		/*
 		 * Retransmit the packet to paging central.
@@ -693,14 +693,14 @@ pageSendApp::sendPagerMsg(FaxRequest& req, faxRequest& preq, const fxStr& msg, f
 		req.status = send_failed;
 		emsg = "Message block transmit failed; "
 		    "paging central rejected it";
-		return (FALSE);
+		return (false);
 	    case ESC:
 		if (len > 1 && cp[1] == EOT) {
 		    traceIXO("RECV EOT (forced disconnect)");
 		    req.status = send_failed;
 		    emsg = "Protocol failure: paging central responded to "
 			"message block transmit with forced disconnect";
-		    return (FALSE);
+		    return (false);
 		}
 		/* fall thru... */
 	    default:				// unrecognized response
@@ -715,10 +715,10 @@ pageSendApp::sendPagerMsg(FaxRequest& req, faxRequest& preq, const fxStr& msg, f
 	(unknown ?
 	    "timeout waiting for response" : "too many unknown responses"));
     req.status = send_retry;
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 pageSendApp::pageEpilogue(FaxRequest& req, const FaxMachineInfo&, fxStr& emsg)
 {
     putModem("\4\r", 2);		// EOT then <CR>
@@ -733,14 +733,14 @@ pageSendApp::pageEpilogue(FaxRequest& req, const FaxMachineInfo&, fxStr& emsg)
 	    case ESC:
 		if (len > 1 && cp[1] == EOT) {
 		    traceIXO("RECV EOT (disconnect)");
-		    return (TRUE);
+		    return (true);
 		}
 		break;
 	    case RS:
 		traceIXO("RECV RS (message content rejected)");
 		emsg = "Paging central rejected content; check PIN";
 		req.status = send_failed;
-		return (FALSE);
+		return (false);
 	    }
 	    (void) scanForCode(cp, len);
 	}
@@ -750,7 +750,7 @@ pageSendApp::pageEpilogue(FaxRequest& req, const FaxMachineInfo&, fxStr& emsg)
     req.status = send_retry;
     emsg = "Protocol failure: timeout waiting for transaction ACK/NAK "
 	"from paging central";
-    return (FALSE);
+    return (false);
 }
 
 void
@@ -1022,7 +1022,7 @@ addUcpCodedMsg(fxStackBuffer& buf, const fxStr& msg)
     }
 }
 
-fxBool
+bool
 pageSendApp::sendUcpMsg(FaxRequest& req, faxRequest& preq, const fxStr& msg, fxStr& emsg, FaxMachineInfo& info)
 {
     /*
@@ -1112,14 +1112,14 @@ pageSendApp::sendUcpMsg(FaxRequest& req, faxRequest& preq, const fxStr& msg, fxS
 		    switch( N_ACK[0]) { 
 		    case 'A':  // positive result (ACK)
 		        traceIXO("RECV ACK (message block accepted)");
-			return(TRUE);
+			return(true);
 		    case 'N': // Negative result (NACK)
 		        traceIXO("RECV NACK (message block rejected)");
 		        if(--ntries==0) {
 			    req.status = send_retry;
 			    emsg="Message block not acknowledged by paging central"
 			      "after multiple tries";
-			    return(FALSE);
+			    return(false);
 			}
 			traceIXO("SEND message block (retransmit)");
 			putModem((const char*) buf, buf.getLength());
@@ -1130,14 +1130,14 @@ pageSendApp::sendUcpMsg(FaxRequest& req, faxRequest& preq, const fxStr& msg, fxS
 	    }
 	}
     } while (Sys::now()-start < ixoXmitTimeout && unknown < ixoMaxUnknown);
-    return FALSE;
+    return false;
 }
 
 /*
  * END UCP Support
  */
 
-fxBool
+bool
 pageSendApp::putModem(const void* data, int n, long ms)
 {
     traceIXOCom("<--",  (const u_char*) data, n);
@@ -1192,7 +1192,7 @@ pageSendApp::setupConfig()
 	(*this).*numbers[i].p = numbers[i].def;
 }
 
-fxBool
+bool
 pageSendApp::setConfigItem(const char* tag, const char* value)
 {
     u_int ix;
@@ -1204,7 +1204,7 @@ pageSendApp::setConfigItem(const char* tag, const char* value)
 	(*this).*numbers[ix].p = getNumber(value);
     } else
 	return (ModemServer::setConfigItem(tag, value));
-    return (TRUE);
+    return (true);
 }
 #undef	N
 
@@ -1226,7 +1226,7 @@ pageSendApp::getConfigParity(const char* value) const
 /*
  * Modem and TTY setup
  */
-fxBool 
+bool 
 pageSendApp::setupModem()
 {
     return (ModemServer::setupModem() &&
@@ -1237,10 +1237,10 @@ pageSendApp::setupModem()
  * Modem locking support.
  */
 
-fxBool
+bool
 pageSendApp::lockModem()
 {
-    return (modemLock ? modemLock->lock() : TRUE);
+    return (modemLock ? modemLock->lock() : true);
 }
 
 void
@@ -1261,7 +1261,7 @@ pageSendApp::unlockModem()
 void
 pageSendApp::notifyModemReady()
 {
-    ready = TRUE;
+    ready = true;
 }
 
 /*

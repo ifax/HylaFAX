@@ -52,7 +52,7 @@ struct faxRequest {
 
     int compare(faxRequest const *a) const;	// XXX needed for array
 
-    fxBool isSavedOp() const;
+    bool isSavedOp() const;
 };
 fxDECLARE_ObjArray(faxRequestArray, faxRequest)
 #endif /* _faxRequest_ */

@@ -35,12 +35,12 @@ public:
     InetTransport(FaxClient&);
     ~InetTransport();
 
-    static fxBool isA(const char*);
+    static bool isA(const char*);
 
-    fxBool callServer(fxStr& emsg);
-    fxBool abortCmd(fxStr& emsg);
+    bool callServer(fxStr& emsg);
+    bool abortCmd(fxStr& emsg);
 
-    fxBool initDataConn(fxStr& emsg);
-    fxBool openDataConn(fxStr& emsg);
+    bool initDataConn(fxStr& emsg);
+    bool openDataConn(fxStr& emsg);
 };
 #endif /* _InetTransport_ */

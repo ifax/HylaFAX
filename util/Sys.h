@@ -64,12 +64,12 @@ public:
 	{ return ::stat(file, &sb); }
     static int fstat(int fd, struct stat& sb)
 	{ return ::fstat(fd, &sb); }
-    static fxBool isRegularFile(const char* filename);
-    static fxBool isFIFOFile(const char* filename);
-    static fxBool isSocketFile(const char* filename);
-    static fxBool isFIFOFile(int fd);
-    static fxBool isCharSpecialFile(const char* filename);
-    static fxBool isCharSpecialFile(const char* filename, struct stat&);
+    static bool isRegularFile(const char* filename);
+    static bool isFIFOFile(const char* filename);
+    static bool isSocketFile(const char* filename);
+    static bool isFIFOFile(int fd);
+    static bool isCharSpecialFile(const char* filename);
+    static bool isCharSpecialFile(const char* filename, struct stat&);
     static int link(const char* file1, const char* file2)
 	{ return ::link(file1, file2); }
     static int rename(const char* file1, const char* file2)

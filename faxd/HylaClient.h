@@ -41,7 +41,7 @@ class HylaClient {
 public:
     class SchedReaper : public IOHandler {
     private:
-	fxBool	started;
+	bool	started;
     public:
 	SchedReaper();
 	~SchedReaper();
@@ -55,7 +55,7 @@ private:
     u_short	refs;		// # of Triggers referencing this client
     tseq_t	seqnum;		// per-client message sequence number
     tseq_t	lrunum;		// sequence number for LRU reclaim of fd's
-    fxBool	reap;		// client should be reaped
+    bool	reap;		// client should be reaped
 
     static tseq_t lruseq;		// master sequence # generator for LRU
     static HylaClientDict clients;	// master table of clients
@@ -66,7 +66,7 @@ private:
 
     HylaClient(const fxStr& fifoName);
 
-    static fxBool reapFIFO();
+    static bool reapFIFO();
     void schedReap();
 public:
     ~HylaClient();
@@ -78,7 +78,7 @@ public:
     void dec();
 
     tseq_t getSeqnum() const;
-    fxBool send(const char* msg, u_int msgLen);
+    bool send(const char* msg, u_int msgLen);
 };
 inline void HylaClient::inc()		{ refs++; }
 inline void HylaClient::dec()		{ if (--refs == 0) delete this; }

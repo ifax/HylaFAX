@@ -45,9 +45,9 @@ public:
     u_char& operator[](u_int i) const;	// NB: no bounds checking
     u_char& operator[](int i) const;	// NB: no bounds checking
 
-    fxBool moreFrames() const;		// more frames follow
-    fxBool isOK() const;		// frame has good FCS
-    void setOK(fxBool b);		// set frame FCS indicator
+    bool moreFrames() const;		// more frames follow
+    bool isOK() const;		// frame has good FCS
+    void setOK(bool b);		// set frame FCS indicator
     u_int getRawFCF() const;		// raw FCF in frame
     u_int getFCF() const;		// FCF &~ (FCF_SNDR|FCF_RCVR)
     const u_char* getFrameData() const;	// data following FCF
@@ -62,7 +62,7 @@ protected:
     u_char*	base;
     u_short	amountToGrowBy;
     u_short	frameOverhead;		// # bytes for leader & FCS
-    fxBool	ok;			// FCS correct
+    bool	ok;			// FCS correct
 
     void addc(u_char c);		// make room & add a char to the buffer
     void grow(u_int amount);		// make more room in the buffer
@@ -70,17 +70,17 @@ protected:
 
 inline void HDLCFrame::put(u_char c)
     { if (next < end) *next++ = c; else addc(c); }
-inline void HDLCFrame::reset()			    { next = base; ok = FALSE; }
+inline void HDLCFrame::reset()			    { next = base; ok = false; }
 inline u_int HDLCFrame::getLength() const	    { return next - base; }
 
 inline HDLCFrame::operator u_char*()		    { return base; }
 inline u_char& HDLCFrame::operator[](u_int i) const { return base[i]; }
 inline u_char& HDLCFrame::operator[](int i) const   { return base[i]; }
 
-inline fxBool HDLCFrame::moreFrames() const
+inline bool HDLCFrame::moreFrames() const
     { return ((*this)[1]&0x08) == 0; }
-inline fxBool HDLCFrame::isOK() const		     { return ok; }
-inline void HDLCFrame::setOK(fxBool b)		     { ok = b; }
+inline bool HDLCFrame::isOK() const		     { return ok; }
+inline void HDLCFrame::setOK(bool b)		     { ok = b; }
 inline u_int HDLCFrame::getRawFCF() const	     { return (*this)[2]; }
 inline u_int HDLCFrame::getFCF() const		     { return (*this)[2]&0x7f; }
 inline const u_char* HDLCFrame::getFrameData() const { return &((*this)[3]); }

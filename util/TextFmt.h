@@ -49,15 +49,15 @@ private:
 
     void loadFixedMetrics(TextCoord w);
     FILE* openAFMFile(fxStr& pathname);
-    fxBool getAFMLine(FILE* fp, char* buf, int bsize);
-    static fxBool decodeFontName(const char*, fxStr&, fxStr&);
+    bool getAFMLine(FILE* fp, char* buf, int bsize);
+    static bool decodeFontName(const char*, fxStr&, fxStr&);
 public:
     TextFont(const char*);
     ~TextFont();
 
-    static fxBool findFont(const char* name);
+    static bool findFont(const char* name);
 
-    void defFont(FILE*, TextCoord pointSize, fxBool useISO8859) const;
+    void defFont(FILE*, TextCoord pointSize, bool useISO8859) const;
     void setfont(FILE*) const;
     TextCoord show(FILE*, const char*, int len) const;
     TextCoord show(FILE*, const fxStr&) const;
@@ -66,7 +66,7 @@ public:
 
     const char* getFamily(void) const;
 
-    fxBool readMetrics(TextCoord pointsize, fxBool useISO8859, fxStr& emsg);
+    bool readMetrics(TextCoord pointsize, bool useISO8859, fxStr& emsg);
 };
 /*
  * we have to use unsigned const char
@@ -88,13 +88,13 @@ public:
 	REVERSE
     };
 private:
-    fxBool	gaudy;		// emit gaudy headers
-    fxBool	landscape;	// horizontal landscape mode output
-    fxBool	useISO8859;	// use the ISO 8859-1 character encoding
-    fxBool	reverse;	// page reversal flag
-    fxBool	wrapLines;	// wrap/truncate lines
-    fxBool	headers;	// emit page headers
-    fxBool	workStarted;	// formatting work begun
+    bool	gaudy;		// emit gaudy headers
+    bool	landscape;	// horizontal landscape mode output
+    bool	useISO8859;	// use the ISO 8859-1 character encoding
+    bool	reverse;	// page reversal flag
+    bool	wrapLines;	// wrap/truncate lines
+    bool	headers;	// emit page headers
+    bool	workStarted;	// formatting work begun
     FILE*	output;		// output file stream
     FILE*	tf;		// temporary output file
     OfftArray*	pageOff;	// page offset table
@@ -112,10 +112,10 @@ private:
     TextCoord	lm, rm;		// left, right margins in local coordinates
     TextCoord	tm, bm;		// top, bottom margin in local coordinates
     TextCoord	lineHeight;	// inter-line spacing
-    fxBool	boc;		// at beginning of a column
-    fxBool	bop;		// at beginning of a page
-    fxBool	bol;		// at beginning of a line
-    fxBool	bot;		// at beginning of a text string
+    bool	boc;		// at beginning of a column
+    bool	bop;		// at beginning of a page
+    bool	bol;		// at beginning of a line
+    bool	bot;		// at beginning of a text string
     int		numcol;		// number of text columns
     int		column;		// current text column # (1..numcol)
     TextCoord	col_margin;	// inter-column margin
@@ -145,7 +145,7 @@ protected:
     virtual void fatal(const char* fmt ...) const;
 
     virtual void setupConfig(void);
-    virtual fxBool setConfigItem(const char* tag, const char* value);
+    virtual bool setConfigItem(const char* tag, const char* value);
     virtual void configError(const char* fmt ...);
     virtual void configTrace(const char* fmt ...);
 public:
@@ -157,21 +157,21 @@ public:
     static TextCoord inch(const char*);
 
     void setNumberOfColumns(u_int n);
-    void setPageHeaders(fxBool);
-    fxBool getPageHeaders(void) const;
-    void setLineWrapping(fxBool);
-    fxBool getLineWrapping(void) const;
-    void setISO8859(fxBool);
-    fxBool getISO8859(void) const;
-    fxBool setTextFont(const char* fontName);
-    void setGaudyHeaders(fxBool);
-    fxBool setPageMargins(const char*);
+    void setPageHeaders(bool);
+    bool getPageHeaders(void) const;
+    void setLineWrapping(bool);
+    bool getLineWrapping(void) const;
+    void setISO8859(bool);
+    bool getISO8859(void) const;
+    bool setTextFont(const char* fontName);
+    void setGaudyHeaders(bool);
+    bool setPageMargins(const char*);
     void setPageMargins(TextCoord l, TextCoord r, TextCoord b, TextCoord t);
     void setOutlineMargin(TextCoord);
     void setTextPointSize(TextCoord);
     TextCoord getTextPointSize(void) const;
     void setPageOrientation(u_int);
-    fxBool setPageSize(const char*);
+    bool setPageSize(const char*);
     void setPageWidth(float);
     void setPageHeight(float);
     void setPageCollation(u_int);
@@ -221,13 +221,13 @@ public:
     void reserveVSpace(TextCoord);
 };
 
-inline fxBool TextFmt::getLineWrapping(void) const	{ return wrapLines; }
-inline fxBool TextFmt::getPageHeaders(void) const	{ return headers; }
+inline bool TextFmt::getLineWrapping(void) const	{ return wrapLines; }
+inline bool TextFmt::getPageHeaders(void) const	{ return headers; }
 inline TextCoord TextFmt::getTextPointSize(void) const	{ return pointSize; }
 inline TextCoord TextFmt::getXOff(void) const		{ return xoff; }
 inline TextCoord TextFmt::getRHS(void) const		{ return right_x; }
 inline TextCoord TextFmt::getTextLineHeight(void) const	{ return lineHeight; }
-inline fxBool TextFmt::getISO8859(void) const		{ return useISO8859; }
+inline bool TextFmt::getISO8859(void) const		{ return useISO8859; }
 inline const TextFont* TextFmt::getFont(void) const	{ return curFont; }
 inline FILE* TextFmt::getOutputFile(void)		{ return tf; }
 #endif /* _TextFmt_ */

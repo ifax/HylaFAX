@@ -44,8 +44,8 @@ static	void setupCompression(TIFF*, u_int, uint32);
  * Receive Phase C data with or without copy
  * quality checking and erroneous row fixup.
  */
-fxBool
-FaxModem::recvPageDLEData(TIFF* tif, fxBool checkQuality,
+bool
+FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
     const Class2Params& params, fxStr& emsg)
 {
     setupDecoder(conf.recvFillOrder, params.is2D());
@@ -74,7 +74,7 @@ FaxModem::recvPageDLEData(TIFF* tif, fxBool checkQuality,
 	abortPageRecv();
 	emsg = "Missing EOL after 5 seconds";
 	recvTrace("%s", (const char*) emsg);
-	return (FALSE);
+	return (false);
     }
     if (checkQuality) {
 	/*
@@ -122,7 +122,7 @@ FaxModem::recvPageDLEData(TIFF* tif, fxBool checkQuality,
 	u_char* curGood = buf;			// last good row
 	memset(curGood, 0, rowSize);		// initialize to all white
 	recvBuf = NULL;				// don't need raw data
-	lastRowBad = FALSE;			// no previous row
+	lastRowBad = false;			// no previous row
 	cblc = 0;				// current bad line run
 	if (!RTCraised()) {
 	    for (;;) {
@@ -134,13 +134,13 @@ FaxModem::recvPageDLEData(TIFF* tif, fxBool checkQuality,
 		 * later for deciding whether or not the page quality
 		 * is acceptable.
 		 */
-		fxBool decodeOK = decodeRow(recvRow, rowpixels);
+		bool decodeOK = decodeRow(recvRow, rowpixels);
 		if (seenRTC())			// seen RTC, flush everything
 		    continue;
 		if (decodeOK) {
 		    curGood = recvRow;		// reset last good
 		    if (lastRowBad) {		// reset run statistics
-			lastRowBad = FALSE;
+			lastRowBad = false;
 			if (cblc > recvConsecutiveBadLineCount)
 			    recvConsecutiveBadLineCount = cblc;
 			cblc = 0;
@@ -149,7 +149,7 @@ FaxModem::recvPageDLEData(TIFF* tif, fxBool checkQuality,
 		    memcpy(recvRow, curGood, rowSize);// replicate last good
 		    recvBadLineCount++;
 		    cblc++;
-		    lastRowBad = TRUE;
+		    lastRowBad = true;
 		}
 		/*
 		 * Advance forward a scanline and if necessary
@@ -274,7 +274,7 @@ FaxModem::recvPageDLEData(TIFF* tif, fxBool checkQuality,
     TIFFSetField(tif, TIFFTAG_FAXRECVTIME,
 	(uint32) server.getPageTransferTime());
 #endif
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -360,7 +360,7 @@ FaxModem::flushRawData(TIFF* tif, tstrip_t strip, u_char* buf, u_int cc)
  * Check if the configuration parameters indicate if
  * copy quality checking should be done on recvd pages.
  */
-fxBool
+bool
 FaxModem::checkQuality()
 {
     return (conf.percentGoodLines != 0 && conf.maxConsecutiveBadLines != 0);
@@ -371,7 +371,7 @@ FaxModem::checkQuality()
  * against the configuration parameters and return an
  * indication of whether or not the page quality is acceptable.
  */
-fxBool
+bool
 FaxModem::isQualityOK(const Class2Params& params)
 {
     if (conf.percentGoodLines != 0 && recvEOLCount != 0) {
@@ -379,7 +379,7 @@ FaxModem::isQualityOK(const Class2Params& params)
 	if (percent < conf.percentGoodLines) {
 	    serverTrace("RECV: REJECT page quality, %u%% good lines (%u%% required)",
 		percent, conf.percentGoodLines);
-	    return (FALSE);
+	    return (false);
 	}
     }
     u_int cblc = conf.maxConsecutiveBadLines;
@@ -389,10 +389,10 @@ FaxModem::isQualityOK(const Class2Params& params)
 	if (recvConsecutiveBadLineCount > cblc) {
 	    serverTrace("RECV: REJECT page quality, %u-line run (max %u)",
 		recvConsecutiveBadLineCount, cblc);
-	    return (FALSE);
+	    return (false);
 	}
     }
-    return (TRUE);
+    return (true);
 }
 
 /*

@@ -25,4 +25,4 @@
  */
 #include "BoolArray.h"
 
-fxIMPLEMENT_PrimArray(fxBoolArray, fxBool)
+fxIMPLEMENT_PrimArray(fxBoolArray, bool)

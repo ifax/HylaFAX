@@ -31,8 +31,8 @@ class faxRmApp : public FaxClient {
 private:
     void usage();
 
-    fxBool removeJob(const char* id, fxStr& emsg);
-    fxBool deleteDoc(const char* id);
+    bool removeJob(const char* id, fxStr& emsg);
+    bool deleteDoc(const char* id);
 public:
     faxRmApp();
     ~faxRmApp();
@@ -54,24 +54,24 @@ faxRmApp::run(int argc, char** argv)
     readConfig(FAX_SYSCONF);
     readConfig(FAX_USERCONF);
 
-    fxBool jobs = TRUE;
-    fxBool docs = FALSE;
-    fxBool useadmin = FALSE;
+    bool jobs = true;
+    bool docs = false;
+    bool useadmin = false;
 
     while ((c = getopt(argc, argv, "ah:dv")) != -1)
 	switch (c) {
 	case 'a':
-	    useadmin = TRUE;
+	    useadmin = true;
 	    break;
 	case 'd':			// treat args as document names
-	    jobs = FALSE;
-	    docs = TRUE;
+	    jobs = false;
+	    docs = true;
 	    break;
 	case 'h':			// server's host
 	    setHost(optarg);
 	    break;
 	case 'v':
-	    setVerbose(TRUE);
+	    setVerbose(true);
 	    break;
 	case '?':
 	    usage();
@@ -103,23 +103,23 @@ faxRmApp::run(int argc, char** argv)
 	printError(emsg);
 }
 
-fxBool
+bool
 faxRmApp::removeJob(const char* id, fxStr& emsg)
 {
     if (jobKill(id)) {
 	printf("Job %s removed.\n", id);
-	return (TRUE);
+	return (true);
     }
     emsg = getLastResponse();
     if (getLastCode() == 504 && jobDelete(id)) {
 	printf("Job %s removed (from doneq).\n", id);
 	emsg = "";
-	return (TRUE);
+	return (true);
     }
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 faxRmApp::deleteDoc(const char* id)
 {
     return (command("DELE %s%s"

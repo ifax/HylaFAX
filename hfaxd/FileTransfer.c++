@@ -44,17 +44,17 @@
 #endif
 #endif /* CHAR_BIT */
 
-#define	HAVE_PSLEVEL2	FALSE
-#define	HAVE_PCL5	FALSE
+#define	HAVE_PSLEVEL2	false
+#define	HAVE_PCL5	false
 
 static struct {
     const char*	name;		// protocol token name
-    fxBool	supported;	// TRUE if format is supported
+    bool	supported;	// true if format is supported
     const char*	suffix;		// file suffix
     const char* help;		// help string for HELP FORM command
 } formats[] = {
-{ "TIFF", TRUE,		 "tif", "Tagged Image File Format, Class F only" },
-{ "PS",	  TRUE,		 "ps",  "Adobe PostScript Level I" },
+{ "TIFF", true,		 "tif", "Tagged Image File Format, Class F only" },
+{ "PS",	  true,		 "ps",  "Adobe PostScript Level I" },
 { "PS2",  HAVE_PSLEVEL2, "ps",  "Adobe PostScript Level II" },
 { "PCL",  HAVE_PCL5,	 "pcl", "HP Printer Control Language (PCL), Version 5"},
 };
@@ -88,15 +88,15 @@ HylaFAXServer::logTransfer(const char* direction,
     (void) Sys::write(xferfaxlog, msg, msg.length());
 }
 
-fxBool
+bool
 HylaFAXServer::restartSend(FILE* fd, off_t marker)
 {
     if (type == TYPE_A) {			// restart based on line count
 	int c;
 	while ((c = getc(fd)) != EOF)
 	    if (c == '\n' && --marker == 0)
-		return (TRUE);
-	return (FALSE);
+		return (true);
+	return (false);
     } else					// restart based on file offset
 	return (lseek(fileno(fd), marker, SEEK_SET) == marker);
 }
@@ -265,13 +265,13 @@ HylaFAXServer::openTIFF(const char* name)
 /*
  * Tranfer the current directory's contents of "tif" to "fdout".
  */
-fxBool
+bool
 HylaFAXServer::sendTIFFData(TIFF* tif, FILE* fdout)
 {
     state |= S_TRANSFER;
     if (setjmp(urgcatch) != 0) {
 	state &= ~S_TRANSFER;
-	return (FALSE);
+	return (false);
     }
 #define	PACK(a,b)	(((a)<<8)|(b))
     switch (PACK(type,mode)) {
@@ -280,7 +280,7 @@ HylaFAXServer::sendTIFFData(TIFF* tif, FILE* fdout)
 	if (sendTIFFHeader(tif, fileno(fdout)) &&
 	    sendITIFFData(tif, fileno(fdout))) {
 	    state &= ~S_TRANSFER;
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     default:
@@ -292,7 +292,7 @@ HylaFAXServer::sendTIFFData(TIFF* tif, FILE* fdout)
     }
 #undef PACK
     state &= ~S_TRANSFER;
-    return (FALSE);
+    return (false);
 }
 
 static void
@@ -316,7 +316,7 @@ getShort(TIFF* tif, TIFFDirEntry& de)
  * immediately after this data) and it is assumed that
  * all image data is concatenated into a single strip.
  */
-fxBool
+bool
 HylaFAXServer::sendTIFFHeader(TIFF* tif, int fdout)
 {
     static DirTemplate templ = {
@@ -398,10 +398,10 @@ HylaFAXServer::sendTIFFHeader(TIFF* tif, int fdout)
     memcpy(buf.dirstuff, &templ, sizeof (templ));
     if (write(fdout, (const char*) &buf, sizeof (buf)) != sizeof (buf)) {
 	perror_reply(426, "Data connection", errno);
-	return (FALSE);
+	return (false);
     } else {
 	byte_count += sizeof (buf);
-	return (TRUE);
+	return (true);
     }
 #undef NTAGS
 #undef offsetof
@@ -414,7 +414,7 @@ HylaFAXServer::sendTIFFHeader(TIFF* tif, int fdout)
  * consideration for any padding that might be present
  * or might be needed.
  */
-fxBool
+bool
 HylaFAXServer::sendITIFFData(TIFF* tif, int fdout)
 {
     uint32* sb;
@@ -429,7 +429,7 @@ HylaFAXServer::sendITIFFData(TIFF* tif, int fdout)
 	}
 	if (buf == NULL) {
 	    reply(551, "Error allocating intermediate buffer");
-	    return (FALSE);
+	    return (false);
 	}
 	if (TIFFReadRawStrip(tif, s, buf, cc) != cc) {
 	    reply(551, "Error reading input file at strip %u", s);
@@ -442,10 +442,10 @@ HylaFAXServer::sendITIFFData(TIFF* tif, int fdout)
 	byte_count += cc;
     }
     _TIFFfree(buf);
-    return (TRUE);
+    return (true);
 bad:
     _TIFFfree(buf);
-    return (FALSE);
+    return (false);
 }
 
 const char*
@@ -518,7 +518,7 @@ HylaFAXServer::storeCmd(const char* name, const char* mode)
  * be shared across multiple sessions.
  */
 void
-HylaFAXServer::storeUniqueCmd(fxBool isTemp)
+HylaFAXServer::storeUniqueCmd(bool isTemp)
 {
     fxStr emsg;
     u_int seqnum = getDocumentNumbers(1, emsg);
@@ -562,13 +562,13 @@ HylaFAXServer::storeUniqueCmd(fxBool isTemp)
 /*
  * Tranfer the contents of "fdin" to "fdout".
  */
-fxBool
+bool
 HylaFAXServer::sendData(FILE* fdin, FILE* fdout)
 {
     state |= S_TRANSFER;
     if (setjmp(urgcatch) != 0) {
 	state &= ~S_TRANSFER;
-	return (FALSE);
+	return (false);
     }
 #define	PACK(a,b)	(((a)<<8)|(b))
     switch (PACK(type,mode)) {
@@ -576,14 +576,14 @@ HylaFAXServer::sendData(FILE* fdin, FILE* fdout)
     case PACK(TYPE_L,MODE_S):
 	if (sendIData(fileno(fdin), fileno(fdout))) {
 	    state &= ~S_TRANSFER;
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case PACK(TYPE_I,MODE_Z):
     case PACK(TYPE_L,MODE_Z):
 	if (sendZData(fileno(fdin), fileno(fdout))) {
 	    state &= ~S_TRANSFER;
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case PACK(TYPE_A,MODE_S):
@@ -600,7 +600,7 @@ HylaFAXServer::sendData(FILE* fdin, FILE* fdout)
 		    break;
 		}
 		state &= ~S_TRANSFER;
-		return (TRUE);
+		return (true);
 	    }
 	    byte_count++;
 	    if (c == '\n') {		// \n -> \r\n
@@ -622,17 +622,17 @@ HylaFAXServer::sendData(FILE* fdin, FILE* fdout)
     }
 #undef PACK
     state &= ~S_TRANSFER;
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 HylaFAXServer::sendIData(int fdin, int fdout)
 {
     char buf[16*1024];
     for (;;) {
 	int cc = read(fdin, buf, sizeof (buf));
 	if (cc == 0)
-	    return (TRUE);
+	    return (true);
 	if (cc < 0) {
 	    perror_reply(551, "Error reading input file", errno);
 	    break;
@@ -643,10 +643,10 @@ HylaFAXServer::sendIData(int fdin, int fdout)
 	}
 	byte_count += cc;
     }
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 HylaFAXServer::sendZData(int fdin, int fdout)
 {
     z_stream zstream;
@@ -709,24 +709,24 @@ HylaFAXServer::sendZData(int fdin, int fdout)
 	    }
 	} while (state != Z_STREAM_END);
 	deflateEnd(&zstream);
-	return (TRUE);
+	return (true);
 bad:
 	deflateEnd(&zstream);
     } else
 	reply(452, "Can not initialize compression library: %s", zstream.msg);
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Transfer data from peer to file.
  */
-fxBool
+bool
 HylaFAXServer::recvData(FILE* fdin, FILE* fdout)
 {
     state |= S_TRANSFER;
     if (setjmp(urgcatch) != 0) {
 	state &= ~S_TRANSFER;
-	return (FALSE);
+	return (false);
     }
 #define	PACK(a,b)	(((a)<<8)|(b))
     switch (PACK(type,mode)) {
@@ -734,14 +734,14 @@ HylaFAXServer::recvData(FILE* fdin, FILE* fdout)
     case PACK(TYPE_L,MODE_S):
 	if (recvIData(fileno(fdin), fileno(fdout))) {
 	    state &= ~S_TRANSFER;
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case PACK(TYPE_I,MODE_Z):
     case PACK(TYPE_L,MODE_Z):
 	if (recvZData(fileno(fdin), fileno(fdout))) {
 	    state &= ~S_TRANSFER;
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case PACK(TYPE_A,MODE_S):
@@ -758,7 +758,7 @@ HylaFAXServer::recvData(FILE* fdin, FILE* fdout)
 		    break;
 		}
 		state &= ~S_TRANSFER;
-		return (TRUE);
+		return (true);
 	    }
 	    byte_count++;
 	    if (c == '\r') {		// \r\n -> \n
@@ -786,17 +786,17 @@ HylaFAXServer::recvData(FILE* fdin, FILE* fdout)
     }
 #undef PACK
     state &= ~S_TRANSFER;
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 HylaFAXServer::recvIData(int fdin, int fdout)
 {
     char buf[16*1024];			// XXX better if page-aligned
     for (;;) {
 	int cc = read(fdin, buf, sizeof (buf));
 	if (cc == 0)
-	    return (TRUE);
+	    return (true);
 	if (cc < 0) {
 	    perror_reply(426, "Data Connection", errno);
 	    break;
@@ -807,10 +807,10 @@ HylaFAXServer::recvIData(int fdin, int fdout)
 	}
 	byte_count += cc;
     }
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 HylaFAXServer::recvZData(int fdin, int fdout)
 {
     z_stream zstream;
@@ -832,7 +832,7 @@ HylaFAXServer::recvZData(int fdin, int fdout)
 		    break;
 		}
 		(void) inflateEnd(&zstream);
-		return (TRUE);
+		return (true);
 	    }
 	    if (cc < 0) {
 		perror_reply(426, "Data Connection", errno);
@@ -862,7 +862,7 @@ bad:
 	(void) inflateEnd(&zstream);
     } else
 	reply(452, "Can not initialize decoder: %s", zstream.msg);
-    return (FALSE);
+    return (false);
 }
 
 void

@@ -73,11 +73,11 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai)
 	     * time to settle.  We want a handle on the modem so that we
 	     * can be prepared to answer incoming phone calls.
 	     */
-	    discardModem(TRUE);
+	    discardModem(true);
 	    changeState(MODEMWAIT, 5);
 	} else {
 	    sendFailed(fax, send_retry, "Can not setup modem", 4*pollModemWait);
-	    discardModem(TRUE);
+	    discardModem(true);
 	    changeState(MODEMWAIT, pollModemWait);
 	}
 	endSession();
@@ -174,10 +174,10 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	fax.ndials = 0;				// consec. failed dial attempts
 	fax.tottries++;				// total answered calls
 	fax.totdials++;				// total attempted calls
-	clientInfo.setCalledBefore(TRUE);
+	clientInfo.setCalledBefore(true);
 	clientInfo.setDialFailures(0);
 	modem->sendBegin();
-	fxBool remoteHasDoc = FALSE;
+	bool remoteHasDoc = false;
 	notifyConnected(fax);
 	FaxSendStatus status = modem->getPrologue(
 	    clientCapabilities, remoteHasDoc, notice);
@@ -268,7 +268,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	    break;
 	case ClassModem::NOFCON:	// carrier seen, but handshake failed
 	case ClassModem::DATACONN:	// data connection established
-	    clientInfo.setCalledBefore(TRUE);
+	    clientInfo.setCalledBefore(true);
 	    /* fall thru... */
 	case ClassModem::BUSY:		// busy signal
 	case ClassModem::NOANSWER:	// no answer or ring back
@@ -322,7 +322,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
  * Process a polling request.
  */
 void
-FaxServer::sendPoll(FaxRequest& fax, fxBool remoteHasDoc)
+FaxServer::sendPoll(FaxRequest& fax, bool remoteHasDoc)
 {
     u_int ix = fax.findRequest(FaxRequest::send_poll);
     if (ix == fx_invalidArrayIndex) {
@@ -359,7 +359,7 @@ FaxServer::sendPoll(FaxRequest& fax, fxBool remoteHasDoc)
 /*
  * Phase B of Group 3 protocol.
  */
-fxBool
+bool
 FaxServer::sendFaxPhaseB(FaxRequest& fax, faxRequest& freq, FaxMachineInfo& clientInfo)
 {
     fax.status = send_failed;			// assume failure
@@ -411,7 +411,7 @@ FaxServer::sendFaxPhaseB(FaxRequest& fax, faxRequest& freq, FaxMachineInfo& clie
  * Check client's capabilities (DIS) against those of the
  * modem and select the parameters that are best for us.
  */
-fxBool
+bool
 FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo, fxStr& emsg)
 {
     /*
@@ -425,7 +425,7 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
 	    fxmin(clientInfo.getMaxSignallingRate(), fax.desiredbr));
     if (signallingRate == -1) {
 	emsg = "Modem does not support negotiated signalling rate";
-	return (FALSE);
+	return (false);
     }
     clientParams.br = signallingRate;
 
@@ -435,7 +435,7 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
 	    fxmax(clientInfo.getMinScanlineTime(), fax.desiredst));
     if (minScanlineTime == -1) {
 	emsg = "Modem does not support negotiated min scanline time";
-	return (FALSE);
+	return (false);
     }
     clientParams.st = minScanlineTime;
 
@@ -476,7 +476,7 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
     traceProtocol("USE %s", clientParams.scanlineTimeName());
     if (clientParams.ec == EC_ENABLE)
 	traceProtocol("USE error correction mode");
-    return (TRUE);
+    return (true);
 }
 
 /*

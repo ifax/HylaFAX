@@ -59,40 +59,40 @@ FaxRecvInfo::encode() const
     );
 }
 
-fxBool
+bool
 FaxRecvInfo::decode(const char* cp)
 {
     char* np;
     time = (u_int) strtoul(cp, &np, 16);
     if (np == cp)
-	return (FALSE);
+	return (false);
     npages = (u_short) strtoul(cp = np+1, &np, 16);
     if (np == cp)
-	return (FALSE);
+	return (false);
     params.decode((u_int) strtoul(cp = np+1, &np, 16));
     if (np == cp)
-	return (FALSE);
+	return (false);
     qfile = np+1;
     qfile.resize(qfile.next(0,','));
     cp = strchr(np+1, ',');
     if (cp == NULL)
-	return (FALSE);
+	return (false);
     commid = cp+1;
     commid.resize(commid.next(0,','));
     cp = strchr(cp+1, '"');
     if (cp == NULL)
-	return (FALSE);
+	return (false);
     sender = cp+1;
     sender.resize(sender.next(0,'"'));
     cp = strchr(cp+1, '"');
     if (cp == NULL || cp[1] != ',' || cp[2] != '"')
-	return (FALSE);
+	return (false);
     subaddr = cp+1;
     subaddr.resize(subaddr.next(0,'"'));
     cp = strchr(cp+1, '"');
     if (cp == NULL || cp[1] != ',' || cp[2] != '"')
-	return (FALSE);
+	return (false);
     reason = cp+3;			// +1 for "/+1 for ,/+1 for "
     reason.resize(reason.next(0,'"'));
-    return (TRUE);
+    return (true);
 }

@@ -46,6 +46,6 @@ struct FaxSendInfo {
     ~FaxSendInfo();
 
     fxStr encode() const;
-    fxBool decode(const char*);
+    bool decode(const char*);
 };
 #endif /* _FaxSendInfo_ */

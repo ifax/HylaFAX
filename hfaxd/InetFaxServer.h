@@ -40,7 +40,7 @@ protected:
     sockaddr_in	data_source;		// source of data connection
     sockaddr_in	data_dest;		// destination of data connection
     sockaddr_in	pasv_addr;		// local end of passive connections
-    fxBool	usedefault;		// for data transfers
+    bool	usedefault;		// for data transfers
     /*
      * Timeout intervals for retrying connections
      * to hosts that don't accept PORT cmds.
@@ -48,8 +48,8 @@ protected:
     int		swaitmax;		// wait at most 90 seconds
     int		swaitint;		// interval between retries
 
-    fxBool isLocalDomain(const fxStr& h);
-    fxBool checkHostIdentity(hostent*& hp);
+    bool isLocalDomain(const fxStr& h);
+    bool checkHostIdentity(hostent*& hp);
     void setupNetwork(int fd);
     void handleUrgentData(void);
     void passiveCmd(void);
@@ -61,10 +61,10 @@ protected:
 
     void netStatus(FILE*);
     void printaddr(FILE*, const char* leader, const struct sockaddr_in& sin);
-    fxBool hostPort();
+    bool hostPort();
     void portCmd(void);
 
-    fxBool dataConnect(void);
+    bool dataConnect(void);
     FILE* getDataSocket(const char* mode);
     FILE* openDataConn(const char* mode, int& code);
 
@@ -86,7 +86,7 @@ class InetSuperServer : public SuperServer {
 private:
     fxStr port;
 protected:
-    fxBool startServer(void);
+    bool startServer(void);
     HylaFAXServer* newChild(void);
 public:
     InetSuperServer(const char* port, int backlog = 5);

@@ -53,7 +53,7 @@ faxSendApp* faxSendApp::_instance = NULL;
 faxSendApp::faxSendApp(const fxStr& devName, const fxStr& devID)
     : FaxServer(devName, devID)
 {
-    ready = FALSE;
+    ready = false;
     modemLock = NULL;
     setupConfig();
 
@@ -131,7 +131,7 @@ faxSendApp::send(const char* filename)
 		req->desiredec = desiredEC;
 	    if (desiredST != (u_int) -1)
 		req->desiredst = desiredST;
-	    fxBool reject;
+	    bool reject;
 	    if (req->readQFile(reject) && !reject) {
 		FaxMachineInfo info;
 		info.updateConfig(canonicalizePhoneNumber(req->number));
@@ -177,10 +177,10 @@ faxSendApp::send(const char* filename)
  * Modem locking support.
  */
 
-fxBool
+bool
 faxSendApp::lockModem()
 {
-    return (modemLock ? modemLock->lock() : TRUE);
+    return (modemLock ? modemLock->lock() : true);
 }
 
 void
@@ -201,7 +201,7 @@ faxSendApp::unlockModem()
 void
 faxSendApp::notifyModemReady()
 {
-    ready = TRUE;
+    ready = true;
 }
 
 /*
@@ -298,7 +298,7 @@ faxSendApp::notifyPollRecvd(FaxRequest& req, const FaxRecvInfo& ri)
      );
     traceServer("RECV POLL: %s", (const char*) cmd);
     setProcessPriority(BASE);			// lower priority
-    runCmd(cmd, TRUE);
+    runCmd(cmd, true);
     setProcessPriority(state);			// restore previous priority
 }
 
@@ -348,7 +348,7 @@ faxSendApp::setupConfig()
 	(*this).*numbers[i].p = numbers[i].def;
 }
 
-fxBool
+bool
 faxSendApp::setConfigItem(const char* tag, const char* value)
 {
     u_int ix;
@@ -358,7 +358,7 @@ faxSendApp::setConfigItem(const char* tag, const char* value)
 	(*this).*numbers[ix].p = getNumber(value);
     } else
 	return (FaxServer::setConfigItem(tag, value));
-    return (TRUE);
+    return (true);
 }
 #undef	N
 

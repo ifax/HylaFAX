@@ -67,7 +67,7 @@ FaxRequest::reset(void)
     desiredtl = 0;
     totdials = 0, maxdials = (u_short) FAX_REDIALS;
     tottries = 0, maxtries = (u_short) FAX_RETRIES;
-    useccover = TRUE;
+    useccover = true;
     pagechop = chop_default;
     chopthreshold = -1;
     notify = no_notice;
@@ -162,10 +162,10 @@ const char* FaxRequest::chopVals[4] = {
 /*
  * Parse the contents of a job description file.
  */
-fxBool
-FaxRequest::readQFile(fxBool& rejectJob)
+bool
+FaxRequest::readQFile(bool& rejectJob)
 {
-    rejectJob = FALSE;
+    rejectJob = false;
     lineno = 0;
     lseek(fd, 0L, SEEK_SET);			// XXX should only for re-read
     /*
@@ -184,7 +184,7 @@ FaxRequest::readQFile(fxBool& rejectJob)
     Sys::fstat(fd, sb);
     if (sb.st_size < 2) {
 	error("Corrupted file (too small)");
-	return (FALSE);
+	return (false);
     }
     char stackbuf[2048];
     char* buf = stackbuf;
@@ -195,7 +195,7 @@ FaxRequest::readQFile(fxBool& rejectJob)
 	error("Read error: %s", strerror(errno));
 	if (bp != buf)
 	    delete bp;
-	return (FALSE);
+	return (false);
     }
     /*
      * Force \n-termination of the last line in the
@@ -362,12 +362,12 @@ FaxRequest::readQFile(fxBool& rejectJob)
      */
     if (state < state_suspended || state > state_done) {
 	error("Invalid scheduler state %u in job request", state);
-	rejectJob = TRUE;
+	rejectJob = true;
     }
 #define	isNull(s)	((s).length() == 0)
     if (isNull(number) || isNull(mailaddr) || isNull(sender) || isNull(jobid)
      || isNull(modem)  || isNull(client)   || isNull(owner)) {
-	rejectJob = TRUE;
+	rejectJob = true;
 	error("Null or missing %s in job request",
 	    isNull(number)   ? "number" :
 	    isNull(mailaddr) ? "mailaddr" :
@@ -385,7 +385,7 @@ FaxRequest::readQFile(fxBool& rejectJob)
     if (desireddf > DF_2DMMR)	desireddf = DF_2DMMR;
     if (buf != stackbuf)			// dynamically allocated buffer
 	delete buf;
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -400,8 +400,8 @@ FaxRequest::readQFile(fxBool& rejectJob)
  * allocated and appended to.  If you don't believe
  * this, enable the code notdef'd out below.
  */
-fxBool
-FaxRequest::reReadQFile(fxBool& rejectJob)
+bool
+FaxRequest::reReadQFile(bool& rejectJob)
 {
 #ifdef notdef
     reset();					// non-string items
@@ -516,32 +516,32 @@ FaxRequest::renameSaved(u_int fi)
  * Does the specified document (assumed to be send_fax)
  * appear to have any potential source references?
  */
-fxBool
+bool
 FaxRequest::isUnreferenced(u_int fi)
 {
     if (fi > 0 && requests[fi-1].isSavedOp()) {
 	struct stat sb;
 	if (Sys::stat(mkbasedoc(requests[fi-1].item), sb) < 0 ||
 	  sb.st_nlink == 1)
-	    return (TRUE);
+	    return (true);
     }
-    return (FALSE);
+    return (false);
 }
 
-static fxBool
+static bool
 hasDotDot(const char* pathname)
 {
     const char* cp = pathname;
     while (cp) {
 	if (cp[0] == '.')		// NB: good enough
-	    return (TRUE);
+	    return (true);
 	if (cp = strchr(cp, '/'))
 	    cp++;
     }
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 FaxRequest::checkDocument(const char* pathname)
 {
     /*
@@ -550,16 +550,16 @@ FaxRequest::checkDocument(const char* pathname)
      */
     if (pathname[0] == '/' || hasDotDot(pathname)) {
 	error("Invalid document file \"%s\"", pathname);
-	return (FALSE);
+	return (false);
     }
     int fd = Sys::open(pathname, 0);
     if (fd == -1) {
 	error("Can not access document file \"%s\": %s",
 	    pathname, strerror(errno));
-	return (FALSE);
+	return (false);
     }
     Sys::close(fd);
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -591,7 +591,7 @@ FaxRequest::addRequest(FaxSendOp op, char* tag)
  * Add a request entry and verify the document is valid.
  */
 void
-FaxRequest::addRequest(FaxSendOp op, char* tag, fxBool& rejectJob)
+FaxRequest::addRequest(FaxSendOp op, char* tag, bool& rejectJob)
 {
     char* cp = tag;
     while (*cp && *cp != ':')
@@ -609,31 +609,31 @@ FaxRequest::addRequest(FaxSendOp op, char* tag, fxBool& rejectJob)
     else
 	cp = tag, tag = "";
     if (!checkDocument(cp))
-	rejectJob = TRUE;
+	rejectJob = true;
     else
 	requests.append(faxRequest(op, dirnum, tag, cp));
 }
 
-fxBool
+bool
 FaxRequest::isStrCmd(const char* cmd, u_int& ix)
 {
     for (int i = N(strvals)-1; i >= 0; i--)
 	if (strcmp(strvals[i].name, cmd) == 0) {
 	    ix = i;
-	    return (TRUE);
+	    return (true);
 	}
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 FaxRequest::isShortCmd(const char* cmd, u_int& ix)
 {
     for (int i = N(shortvals)-1; i >= 0; i--)
 	if (strcmp(shortvals[i].name, cmd) == 0) {
 	    ix = i;
-	    return (TRUE);
+	    return (true);
 	}
-    return (FALSE);
+    return (false);
 }
 
 void

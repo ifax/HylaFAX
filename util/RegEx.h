@@ -44,8 +44,8 @@ public:
 
     const char* pattern() const;
 
-    fxBool Find(const char* text, u_int length, u_int off = 0);
-    fxBool Find(const fxStr& s, u_int off = 0);
+    bool Find(const char* text, u_int length, u_int off = 0);
+    bool Find(const fxStr& s, u_int off = 0);
     int StartOfMatch(u_int subexp = 0) const;
     int EndOfMatch(u_int subexp = 0) const;
 
@@ -61,7 +61,7 @@ private:
     void	init(int flags);
 };
 
-inline fxBool RegEx::Find(const fxStr& s, u_int off)
+inline bool RegEx::Find(const fxStr& s, u_int off)
     { return Find(s, s.length(), off); }
 inline const char* RegEx::pattern() const	{ return _pattern; }
 inline int RegEx::getErrorCode() const		{ return execResult; }

@@ -35,11 +35,11 @@ public:
     Class0Modem(ModemServer&, const ModemConfig&);
     ~Class0Modem();
 
-    fxBool setupModem();
-    virtual fxBool setupFlowControl(FlowControl fc);
+    bool setupModem();
+    virtual bool setupFlowControl(FlowControl fc);
     CallStatus	dial(const char* number, fxStr& emsg);
     CallStatus dialResponse(fxStr& emsg);
 
-    fxBool isFaxModem() const;			// XXX safe to cast
+    bool isFaxModem() const;			// XXX safe to cast
 };
 #endif /* _Class0Modem_ */

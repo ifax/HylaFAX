@@ -33,13 +33,6 @@
 #include "sys/types.h"
 #include "port.h"
 
-// Boolean type
-typedef unsigned char fxBool;
-#undef	TRUE
-#define	TRUE	((fxBool)1)
-#undef	FALSE
-#define	FALSE	((fxBool)0)
-
 // minimum of two numbers
 inline int fxmin(int a, int b)		{ return (a < b) ? a : b; }
 inline u_long fxmin(u_long a, u_long b)	{ return (a < b) ? a : b; }

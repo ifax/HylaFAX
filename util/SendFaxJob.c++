@@ -135,8 +135,8 @@ SendFaxJob::setupConfig()
     for (i = N(floats)-1; i >= 0; i--)
 	(*this).*floats[i].p = floats[i].def;
 
-    autoCover = TRUE;
-    sendTagLine = FALSE;		// default is to use server config
+    autoCover = true;
+    sendTagLine = false;		// default is to use server config
     notify = FAX_DEFNOTIFY;		// default notification
     mailbox = "";
     priority = FAX_DEFPRIORITY;		// default transmit priority
@@ -149,14 +149,14 @@ SendFaxJob::setupConfig()
     pagechop = chop_default;
 }
 
-fxBool
+bool
 SendFaxJob::setConfigItem(const char* tag, const char* value)
 {
     u_int ix;
     if (FaxConfig::findTag(tag, (const FaxConfig::tags*) strings, N(strings), ix)) {
 	(*this).*strings[ix].p = value;
 	switch (ix) {
-	case 0:	sendTagLine = TRUE; break;
+	case 0:	sendTagLine = true; break;
 	}
     } else if (FaxConfig::findTag(tag, (const FaxConfig::tags*) numbers, N(numbers), ix)) {
 	(*this).*numbers[ix].p = atoi(value);
@@ -185,15 +185,15 @@ SendFaxJob::setConfigItem(const char* tag, const char* value)
     else if (streq(tag, "pagechop"))
 	setChopHandling(value);
     else
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 #undef N
 
 #define	valeq(a,b)	(strcasecmp(a,b)==0)
 #define	valneq(a,b,n)	(strncasecmp(a,b,n)==0)
 
-fxBool
+bool
 SendFaxJob::setNotification(const char* v0)
 {
     const char* v = v0;
@@ -210,8 +210,8 @@ SendFaxJob::setNotification(const char* v0)
     else if (valeq(v, "default"))
 	notify = FAX_DEFNOTIFY;
     else
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 void SendFaxJob::setNotification(FaxNotify n)		{ notify = n; }
 /*
@@ -283,9 +283,9 @@ void SendFaxJob::setSubAddress(const char* s)		{ subaddr = s; }
 void SendFaxJob::setPassword(const char* s)		{ passwd = s; }
 void SendFaxJob::setExternalNumber(const char* s)	{ external = s; }
 
-void SendFaxJob::setAutoCoverPage(fxBool b)		{ autoCover = b; }
+void SendFaxJob::setAutoCoverPage(bool b)		{ autoCover = b; }
 void
-SendFaxJob::setCoverPageFile(const char* s, fxBool removeOnExit)
+SendFaxJob::setCoverPageFile(const char* s, bool removeOnExit)
 {
     if (coverFile != "" && removeOnExit)
 	Sys::unlink(coverFile);
@@ -300,7 +300,7 @@ void SendFaxJob::setCoverComments(const char* s)	{ comments = s; }
 void SendFaxJob::setCoverRegarding(const char* s)	{ regarding = s; }
 void SendFaxJob::setCoverVoiceNumber(const char* s)	{ voicenumber = s; }
 
-fxBool
+bool
 SendFaxJob::setPageSize(const char* name)
 {
     PageSizeInfo* info = PageSizeInfo::getPageSizeByName(name);
@@ -309,9 +309,9 @@ SendFaxJob::setPageSize(const char* name)
 	pageLength = info->height();
 	pageSize = name;
 	delete info;
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 void SendFaxJob::setVResolution(float r)		{ vres = r; }
 void SendFaxJob::setHResolution(float r)		{ hres = r; }
@@ -356,7 +356,7 @@ SendFaxJob::setDesiredMST(const char* v)
 	desiredst = atoi(v);
 }
 void SendFaxJob::setDesiredMST(int v)			{ desiredst = v; }
-void SendFaxJob::setDesiredEC(fxBool b)			{ desiredec = b; }
+void SendFaxJob::setDesiredEC(bool b)			{ desiredec = b; }
 void
 SendFaxJob::setDesiredDF(const char* v)
 {
@@ -377,7 +377,7 @@ void
 SendFaxJob::setTagLineFormat(const char* v)
 {
     tagline = v;
-    sendTagLine = TRUE;
+    sendTagLine = true;
 }
 
 void
@@ -403,15 +403,15 @@ parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg);
 #define	CHECKPARM(a,b)	CHECK(client.jobParm(a,b))
 #define	IFPARM(a,b,v)	{ if ((b) != (v)) CHECKPARM(a,b) }
 
-fxBool
+bool
 SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
 {
     if (!client.setCurrentJob("DEFAULT")) {	// inherit from default
 	emsg = client.getLastResponse();
-	return (FALSE);
+	return (false);
     }
     if (!client.newJob(jobid, groupid, emsg))	// create new job on server
-	return (FALSE);
+	return (false);
 
     time_t now = Sys::now();
 
@@ -421,7 +421,7 @@ SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
     if (sendTime != "") {
 	if (!parseAtSyntax(sendTime, *localtime(&now), tts, emsg)) {
 	    emsg.insert(sendTime | ": ");
-	    return (FALSE);
+	    return (false);
 	}
 	now = mktime(&tts);
 	// NB: must send time relative to GMT
@@ -432,7 +432,7 @@ SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
 	struct tm when;
 	if (!parseAtSyntax(killTime, tts, when, emsg)) {
 	    emsg.insert(killTime | ": ");
-	    return (FALSE);
+	    return (false);
 	}
 	CHECK(client.jobLastTime(mktime(&when) - now))
     }
@@ -462,7 +462,7 @@ SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
     IFPARM("BEGBR", desiredbr, (u_int) -1)
     IFPARM("BEGST", desiredst, (u_int) -1)
     if (desiredec != (u_int) -1)
-	CHECKPARM("USEECM", (fxBool) desiredec)
+	CHECKPARM("USEECM", (bool) desiredec)
     if (desireddf != (u_int) -1) {
 	CHECKPARM("DATAFORMAT",
 	    desireddf == 0	? "g31d" :
@@ -472,7 +472,7 @@ SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
 				  "g31d")
     }
     if (sendTagLine) {
-	CHECKPARM("USETAGLINE", TRUE)
+	CHECKPARM("USETAGLINE", true)
 	CHECKPARM("TAGLINE", tagline)
     }
     CHECKPARM("NOTIFY",
@@ -490,10 +490,10 @@ SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
 	if (fd < 0) {
 	    emsg = fxStr::format("%s: Can not open: %s",
 		(const char*) coverFile, strerror(errno));
-	    return (FALSE);			// XXX
+	    return (false);			// XXX
 	}
 	fxStr coverDoc;
-	fxBool fileSent = 
+	bool fileSent = 
 	       client.setFormat(FaxClient::FORM_PS)
 	    && client.setType(FaxClient::TYPE_I)	// XXX??? TYPE_A
 	    && client.sendZData(fd, &FaxClient::storeTemp, coverDoc, emsg);
@@ -501,7 +501,7 @@ SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
 	if (!fileSent) {
 	    if (emsg == "")
 		emsg = "Document transfer failed: " | client.getLastResponse();
-	    return (FALSE);
+	    return (false);
 	}
 	CHECK(client.jobCover(coverDoc))
     }
@@ -516,10 +516,10 @@ SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
 	client.getPollRequest(i, sep, pwd);
 	CHECK(client.jobPollRequest(sep, pwd))
     }
-    return (TRUE);
+    return (true);
 failure:
     emsg = client.getLastResponse();
-    return (FALSE);
+    return (false);
 }
 #undef CHECKPARM
 #undef IFPARM

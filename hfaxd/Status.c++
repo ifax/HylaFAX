@@ -50,13 +50,13 @@ public:
     fxStr	localIdentifier;	// to use in place of FAXNumber
     fxStr	FAXNumber;		// phone number
     fxStr	modemName;		// canonical modem name
-    fxBool	isGettyRunning;		// TRUE if faxgetty responds via FIFO
+    bool	isGettyRunning;		// true if faxgetty responds via FIFO
     fxStr	status;			// from status file
 
     ModemConfig(const char* name);
     ~ModemConfig() {};
 
-    fxBool setConfigItem(const char* tag, const char* value);
+    bool setConfigItem(const char* tag, const char* value);
     void configError(const char* fmt, ...);
     void configTrace(const char* fmt, ...);
 
@@ -81,7 +81,7 @@ ModemConfig::checkGetty(const char* fifoFile)
     isGettyRunning = (fifo != -1);
 }
 
-fxBool
+bool
 ModemConfig::setConfigItem(const char* tag, const char* value)
 {
     if (streq(tag, "faxnumber"))
@@ -105,7 +105,7 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	logTracingLevel = getNumber(value);
     else if (streq(tag, "maxrecvpages"))
 	maxRecvPages = getNumber(value);
-    return (TRUE);				// avoid complaints
+    return (true);				// avoid complaints
 }
 
 void

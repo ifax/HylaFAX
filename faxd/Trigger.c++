@@ -219,7 +219,7 @@ Trigger::tidNextFree()
  * notified when job 1932 is requeued or completes one would
  * use ``J<1932>4c60''.
  */
-fxBool
+bool
 Trigger::parse(const char* spec0)
 {
     const char* spec = spec0;
@@ -239,7 +239,7 @@ Trigger::parse(const char* spec0)
 	    for (tp = ++cp; *tp != '>'; tp++)
 		if (*tp == '\0') {			// XXX syntax error
 		    syntaxError(spec0, "missing '>'");
-		    return (FALSE);
+		    return (false);
 		}
 	    id = fxStr(cp, tp-cp);
 	    cp = tp+1;
@@ -248,7 +248,7 @@ Trigger::parse(const char* spec0)
 	u_short& m = interests[base>>4];
 	if (m != 0) {
 	    syntaxError(spec0, "interests conflict");
-	    return (FALSE);
+	    return (false);
 	}
 	if (c == '*') {
 	    m = 0xffff;
@@ -263,7 +263,7 @@ Trigger::parse(const char* spec0)
 	    m = v;
 	} else {
 	     syntaxError(spec0, "non-hex event mask");
-	     return (FALSE);
+	     return (false);
 	}
 	TriggerRef* tr = new TriggerRef(*this);
 	/*
@@ -285,13 +285,13 @@ Trigger::parse(const char* spec0)
 	    Job* job = Job::getJobByID(id);
 	    if (!job) {
 		logError("TRIGGER: job %s does not exist", (const char*) id);
-		return (FALSE);
+		return (false);
 	    }
 	    tr->insert(job->triggers);
 	}
 	spec = cp;
     }
-    return (TRUE);
+    return (true);
 }
 void
 Trigger::syntaxError(const char* spec, const char* msg)
@@ -302,7 +302,7 @@ Trigger::syntaxError(const char* spec, const char* msg)
 /*
  * Cancel (delete) the trigger with the specified id.
  */
-fxBool
+bool
 Trigger::cancel(const char* cp)
 {
     trid_t tid = (trid_t) strtoul(cp, NULL, 10);
@@ -311,10 +311,10 @@ Trigger::cancel(const char* cp)
 	if (t) {
 	    if (t->cancel())
 		delete t;
-	    return (TRUE);
+	    return (true);
 	}
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -326,12 +326,12 @@ Trigger::cancel(const char* cp)
  * posted to the client) and wait for the object holding
  * the reference to go away.
  */
-fxBool
+bool
 Trigger::cancel()
 {
     purgeWildRefs();			// wildcard references
     if (refs == 0)
-	return (TRUE);
+	return (true);
     if (interests[MODEM_BASE>>4] != 0) {
 	/*
 	 * Must explicitly search and purge references
@@ -341,12 +341,12 @@ Trigger::cancel()
 	for (ModemIter iter(Modem::list); iter.notDone(); iter++) {
 	    TriggerRef::purge(iter.modem().triggers, this);
 	    if (refs == 0)
-		return (TRUE);
+		return (true);
 	}
     }
     // clear interests so no more messages are sent
     memset(interests, 0, sizeof (interests));
-    return (FALSE);
+    return (false);
 }
 
 /*

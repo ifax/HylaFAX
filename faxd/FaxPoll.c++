@@ -36,10 +36,10 @@
 /*
  * Initiate a polling receive and invoke the receiving protocol.
  */
-fxBool
+bool
 FaxServer::pollFaxPhaseB(const fxStr& sep, const fxStr& pwd, FaxRecvInfoArray& docs, fxStr& emsg)
 {
-    fxBool pollOK = FALSE;
+    bool pollOK = false;
     changeState(RECEIVING);
     traceProtocol("POLL FAX: begin (SEP \"%s\", PWD \"%s\")",
 	(const char*) sep, (const char*) pwd);

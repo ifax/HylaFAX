@@ -98,14 +98,14 @@ public:
 
     static TypeRules* read(const fxStr& file);	// read rule database
 
-    void setVerbose(fxBool);
+    void setVerbose(bool);
 
     const TypeRule* match(const void* data, u_int size) const;
 private:
     TypeRuleArray* rules;
-    fxBool	verbose;			// while matching
+    bool	verbose;			// while matching
 
-    u_int match2(u_int base, const void* data, u_int size, fxBool verb) const;
+    u_int match2(u_int base, const void* data, u_int size, bool verb) const;
 };
 
 typedef unsigned int TypeResult;		// conversion result
@@ -127,7 +127,7 @@ public:
     };
 private:
     off_t	off;	// byte offset in file
-    fxBool	cont;	// continuation
+    bool	cont;	// continuation
     enum {
 	ASCII,		// ascii-only string
 	STRING,		// byte string
@@ -161,8 +161,8 @@ public:
     TypeRule(const TypeRule& other);
     virtual ~TypeRule();
 
-    fxBool	match(const void*, u_int size, fxBool verbose = FALSE) const;
-    fxBool	isContinuation() const;
+    bool	match(const void*, u_int size, bool verbose = false) const;
+    bool	isContinuation() const;
 
     TypeResult	getResult() const;
     const fxStr& getCmd() const;
@@ -172,7 +172,7 @@ public:
 		    const fxStr& df,
 		    const fxStr& pname) const;
 };
-inline fxBool TypeRule::isContinuation() const	{ return cont; }
+inline bool TypeRule::isContinuation() const	{ return cont; }
 inline TypeResult TypeRule::getResult() const	{ return result; }
 inline const fxStr& TypeRule::getCmd() const	{ return cmd; }
 inline fxStr TypeRule::getErrMsg() const	{ return cmd; }

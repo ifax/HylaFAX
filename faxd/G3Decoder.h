@@ -36,7 +36,7 @@ extern "C" {
 
 class G3Decoder {
 private:
-    fxBool	is2D;		// whether or not data is 2d-encoded
+    bool	is2D;		// whether or not data is 2d-encoded
     uint32	data;		// current input/output byte
     int		bit;		// current bit in input/output byte
     int		EOLcnt;		// EOL code recognized during decoding (1/0)
@@ -67,17 +67,17 @@ public:
 
     virtual ~G3Decoder();
 
-    void	setupDecoder(u_int fillorder, fxBool is2D);
+    void	setupDecoder(u_int fillorder, bool is2D);
     void	setRuns(uint16*, uint16*, int);
     uint16*	lastRuns();
 
     void	decode(void* raster, u_int w, u_int h);
-    fxBool	decodeRow(void* scanline, u_int w);
-    fxBool	isNextRow1D();
+    bool	decodeRow(void* scanline, u_int w);
+    bool	isNextRow1D();
 
     int		getPendingBits() const;
 
-    fxBool	seenRTC() const;
+    bool	seenRTC() const;
     int		getRTCRow() const;
     int		getReferenceRow() const;
 };
@@ -95,7 +95,7 @@ public:
 inline uint16* G3Decoder::lastRuns()	{ return is2D ? refruns : curruns; }
 inline const u_char* G3Decoder::getBitmap()	{ return bitmap; }
 inline int G3Decoder::getPendingBits() const	{ return bit; }
-inline fxBool G3Decoder::seenRTC() const	{ return (RTCrow != -1); }
+inline bool G3Decoder::seenRTC() const	{ return (RTCrow != -1); }
 inline int G3Decoder::getRTCRow() const		{ return RTCrow; }
 inline int G3Decoder::getReferenceRow() const	{ return rowref; }
 #endif /* _G3Decoder_ */

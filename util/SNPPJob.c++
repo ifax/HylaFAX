@@ -61,7 +61,7 @@ SNPPJob::~SNPPJob() {}
 #define	valeq(a,b)	(strcasecmp(a,b)==0)
 #define	valneq(a,b,n)	(strncasecmp(a,b,n)==0)
 
-fxBool
+bool
 SNPPJob::setNotification(const char* v0)
 {
     const char* v = v0;
@@ -78,8 +78,8 @@ SNPPJob::setNotification(const char* v0)
     else if (valeq(v, "default"))
 	setNotification(SNPP_DEFNOTIFY);
     else
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 void SNPPJob::setNotification(PageNotify n)		{ notify = n; }
 /*
@@ -132,17 +132,17 @@ void SNPPJob::setRetryTime(u_int v)			{ retryTime = v; }
 extern int
 parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg);
 
-fxBool
+bool
 SNPPJob::setHoldTime(const char* s, fxStr& emsg)
 {
     struct tm tts;
     time_t now = Sys::now();
     if (!parseAtSyntax(s, *localtime(&now), tts, emsg)) {
 	emsg.insert(fxStr::format("%s: ", s));
-	return (FALSE);
+	return (false);
     } else {
 	setHoldTime((u_int) mktime(&tts));
-	return (TRUE);
+	return (true);
     }
 }
 void SNPPJob::setHoldTime(u_int v)			{ holdTime = v; }
@@ -150,7 +150,7 @@ void SNPPJob::setMaxTries(u_int n)			{ maxRetries = n; }
 void SNPPJob::setMaxDials(u_int n)			{ maxDials = n; }
 void SNPPJob::setPIN(const char* s)			{ pin = s; }
 void SNPPJob::setPassword(const char* s)		{ passwd = s; }
-void SNPPJob::setQueued(fxBool v)			{ queued = v; }
+void SNPPJob::setQueued(bool v)			{ queued = v; }
 void SNPPJob::setSubject(const char* s)			{ subject = s; }
 void SNPPJob::setServiceLevel(u_int n)			{ serviceLevel = n; }
 
@@ -160,7 +160,7 @@ void SNPPJob::setServiceLevel(u_int n)			{ serviceLevel = n; }
 #define	CHECKPARM(a,b)	CHECK(client.siteParm(a,b))
 #define	IFPARM(a,b,v)	{ if ((b) != (v)) CHECKPARM(a,b) }
 
-fxBool
+bool
 SNPPJob::createJob(SNPPClient& client, fxStr& emsg)
 {
     if (holdTime != 0 && !client.setHoldTime((u_int) holdTime))
@@ -185,7 +185,7 @@ SNPPJob::createJob(SNPPClient& client, fxStr& emsg)
     return (client.newPage(pin, passwd, jobid, emsg));
 failure:
     emsg = client.getLastResponse();
-    return (FALSE);
+    return (false);
 }
 #undef IFPARM
 #undef CHECKPARM

@@ -75,7 +75,7 @@ struct charInfo {
 #define	CONFIG_GLYPH	2		// glyphs must be word-aligned
 #define	CONFIG_GLYPH_IX	1		// index for word-aligned glyphs
 
-inline fxBool PCFFont::isFormat(u_long f) const
+inline bool PCFFont::isFormat(u_long f) const
     { return ((format&PCF_FORMAT_MASK) == f); }
 inline u_int PCFFont::byteOrder() const
     { return ((format&PCF_BYTE_MASK) ? MSBFirst : LSBFirst); }
@@ -110,7 +110,7 @@ PCFFont::cleanup()
 {
     if (file != NULL)
 	fclose(file), file = NULL;
-    ready = FALSE;
+    ready = false;
     delete toc, toc = NULL;
     delete encoding, encoding = NULL;
     delete bitmaps, bitmaps = NULL;
@@ -123,7 +123,7 @@ PCFFont::cleanup()
  * font metrics, font bitmaps, font encoding, and
  * some of the accelerator info.
  */
-fxBool
+bool
 PCFFont::read(const char* name)
 {
     cleanup();
@@ -131,10 +131,10 @@ PCFFont::read(const char* name)
     file = fopen(filename, "r");
     if (file == NULL) {
 	error("Can not open file");
-	return (FALSE);
+	return (false);
     }
     if (!readTOC())
-	return (FALSE);
+	return (false);
     if (seekToTable(PCF_METRICS)) {
 	format = getLSB32();
 	if (isFormat(PCF_DEFAULT_FORMAT))
@@ -143,12 +143,12 @@ PCFFont::read(const char* name)
 	    numGlyphs = getINT16();
 	else {
 	    error("Bad font metric format 0x%lx", format);
-	    return (FALSE);
+	    return (false);
 	}
 	metrics = new charInfo[numGlyphs];
 	if (!metrics) {
 	    error("No space for font metric information");
-	    return (FALSE);
+	    return (false);
 	}
 	for (int i = 0; i < numGlyphs; i++) {
 	    if (isFormat(PCF_DEFAULT_FORMAT))
@@ -158,20 +158,20 @@ PCFFont::read(const char* name)
 	}
     } else {
 	error("Can not seek to font metric information");
-	return (FALSE);
+	return (false);
     }
 
     if (seekToTable(PCF_BITMAPS)) {
 	format = getLSB32();
 	if (!isFormat(PCF_DEFAULT_FORMAT)) {
 	    error("Bad bitmap data format 0x%lx", format);
-	    return (FALSE);
+	    return (false);
 	}
 	u_long nbitmaps = getINT32();
 	u_long* offsets = new u_long[nbitmaps];
 	if (!offsets) {
 	    error("No space for bitmap offsets array");
-	    return (FALSE);
+	    return (false);
 	}
 	int i;
 	for (i = 0; i < nbitmaps; i++)
@@ -186,12 +186,12 @@ PCFFont::read(const char* name)
 	if (!bitmaps) {
 	    error("No space for bitmap data array");
 	    delete offsets;
-	    return (FALSE);
+	    return (false);
 	}
 	if (fread(bitmaps, (u_int) sizebitmaps, 1, file) != 1) {
 	    error("Error reading bitmap data");
 	    delete offsets;
-	    return (FALSE);
+	    return (false);
 	}
 	if (bitOrder() != CONFIG_BIT)
 	    TIFFReverseBits(bitmaps, sizebitmaps);
@@ -216,7 +216,7 @@ PCFFont::read(const char* name)
 	    if (!padbitmaps) {
 		error("No space for padded bitmap data array");
 		delete offsets;
-		return (FALSE);
+		return (false);
 	    }
 	    int newoff = 0;
 	    for (i = 0; i < nbitmaps; i++) {
@@ -236,20 +236,20 @@ PCFFont::read(const char* name)
 	    if ((unsigned) metrics[i].bits & 1) {
 		error("Internal error, bitmap data not word-aligned");
 		delete offsets;
-		return (FALSE);
+		return (false);
 	    }
 	}
 	delete offsets;
     } else {
 	error("Can not seek to bitmap data");
-	return (FALSE);
+	return (false);
     }
 
     if (seekToTable(PCF_BDF_ENCODINGS)) {
 	format = getLSB32();
 	if (!isFormat(PCF_DEFAULT_FORMAT)) {
 	    error("Bad encodings format 0x%lx", format);
-	    return (FALSE);
+	    return (false);
 	}
 	firstCol = getINT16();
 	lastCol = getINT16();
@@ -261,7 +261,7 @@ PCFFont::read(const char* name)
 	encoding = new charInfo*[nencoding];
 	if (!encoding) {
 	    error("No space for character encoding vector");
-	    return (FALSE);
+	    return (false);
 	}
 	for (int i = 0; i < nencoding; i++) {
 	    int encodingOffset = getINT16();
@@ -280,7 +280,7 @@ PCFFont::read(const char* name)
 	}
     } else {
 	error("Can not seek to encoding data");
-	return (FALSE);
+	return (false);
     }
 
     if (seekToTable(PCF_BDF_ACCELERATORS)) {
@@ -288,7 +288,7 @@ PCFFont::read(const char* name)
 	if (!isFormat(PCF_DEFAULT_FORMAT) &&
 	    !isFormat(PCF_ACCEL_W_INKBOUNDS)) {
 	    error("Bad BDF accelerator format 0x%lx", format);
-	    return (FALSE);
+	    return (false);
 	}
 	fseek(file, 8, SEEK_CUR);	// skip a bunch of junk
 	fontAscent = (short) getINT32();
@@ -296,11 +296,11 @@ PCFFont::read(const char* name)
 	// more stuff...
     } else {
 	error("Can not seek to BDF accelerator information");
-	return (FALSE);
+	return (false);
     }
     fclose(file), file = NULL;
     filename = NULL;
-    return (ready = TRUE);
+    return (ready = true);
 }
 
 u_long
@@ -377,38 +377,38 @@ PCFFont::getCompressedMetric(charInfo& metric)
 /*
  * Position to the begining of the specified table.
  */
-fxBool
+bool
 PCFFont::seekToTable(u_long type)
 {
     for (int i = 0; i < tocSize; i++)
 	if (toc[i].type == type) {
 	    if (fseek(file, toc[i].offset, SEEK_SET) == -1) {
 		error("Can not seek; fseek failed");
-		return (FALSE);
+		return (false);
 	    }
 	    format = toc[i].format;
-	    return (TRUE);
+	    return (true);
 	}
     error("Can not seek; no such entry in the TOC");
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Read the table-of-contents for the font file.
  */
-fxBool
+bool
 PCFFont::readTOC()
 {
     u_long version = getLSB32();
     if (version != PCF_FILE_VERSION) {
 	error("Cannot read TOC; bad version number %lu", version);
-	return (FALSE);
+	return (false);
     }
     tocSize = getLSB32();
     toc = new PCFTableRec[tocSize];
     if (!toc) {
 	error("Cannot read TOC; no space for %lu records", tocSize);
-	return (FALSE);
+	return (false);
     }
     for (int i = 0; i < tocSize; i++) {
 	toc[i].type = getLSB32();
@@ -416,7 +416,7 @@ PCFFont::readTOC()
 	toc[i].size = getLSB32();
 	toc[i].offset = getLSB32();
     }
-    return (TRUE);
+    return (true);
 }
 
 int

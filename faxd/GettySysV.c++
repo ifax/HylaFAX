@@ -221,14 +221,14 @@ SysVGetty::hangup()
     Getty::hangup();
 }
 
-fxBool
-SysVGetty::wait(int& status, fxBool block)
+bool
+SysVGetty::wait(int& status, bool block)
 {
     if (Getty::wait(status, block)) {
 	exitStatus = status;
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 /*

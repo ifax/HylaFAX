@@ -40,17 +40,17 @@ private:
     u_int	getSpeed(const char* value);
     u_int	getDataFormat(const char* value);
 
-    static fxBool findRate(const char*, BaudRate&);
-    static fxBool findATResponse(const char*, ATResponse&);
-    static fxBool findFlow(const char*, FlowControl&);
-    static fxBool findDataFormat(const char*, u_int&);
+    static bool findRate(const char*, BaudRate&);
+    static bool findATResponse(const char*, ATResponse&);
+    static bool findFlow(const char*, FlowControl&);
+    static bool findDataFormat(const char*, u_int&);
 protected:
     ModemConfig();
 
     void setupConfig();
     virtual void resetConfig();
 
-    virtual fxBool setConfigItem(const char* tag, const char* value);
+    virtual bool setConfigItem(const char* tag, const char* value);
     virtual void configError(const char* fmt, ...) = 0;
     virtual void configTrace(const char* fmt, ...) = 0;
     fxStr parseATCmd(const char*);
@@ -142,8 +142,8 @@ public:
     fxStr	class2HFLOCmd;		// cmd to setup hardware flow control
     fxStr	class2MINSPCmd;		// cmd to setup min transmit speed
     fxStr	class2RecvDataTrigger;	// send to start recv
-    fxBool	class2XmitWaitForXON;	// wait for XON before send
-    fxBool	class2SendRTC;		// append RTC to page data on transmit
+    bool	class2XmitWaitForXON;	// wait for XON before send
+    bool	class2SendRTC;		// append RTC to page data on transmit
 					// for class 2.0:
     fxStr	class2PIECmd;		// cmd to set proc interrupt handling
     fxStr	class2NRCmd;		// cmd to set status reporting
@@ -165,7 +165,7 @@ public:
     u_int	percentGoodLines;	// required % of good lines in page
     u_int	maxConsecutiveBadLines;	// max consecutive bad lines in page
     u_int	minSpeed;		// minimum speed for fax transmits
-    fxBool	waitForConnect;		// modem sends multiple answer responses
+    bool	waitForConnect;		// modem sends multiple answer responses
     fxStr	tagLineFmt;		// format string for tag lines
     fxStr	tagLineFontFile;	// font file for imaging tag lines
     u_int	recvDataFormat;		// received facsimile data format

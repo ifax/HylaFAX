@@ -29,36 +29,36 @@
 /*
  * Request to poll remote documents.
  */
-fxBool
+bool
 Class2Modem::requestToPoll(fxStr& emsg)
 {
     if (!class2Cmd(splCmd, 1)) {
 	emsg = "Unable to request polling operation"
 	    " (modem may not support polling)";
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
 /*
  * Startup a polled receive operation.
  */
-fxBool
+bool
 Class2Modem::pollBegin(const fxStr& cig, const fxStr& sep, const fxStr& pwd, fxStr& emsg)
 {
     const char* cmdFailed = "Unable to setup %s (modem command failed)";
 
     if (!class2Cmd(cigCmd, cig)) {		// set polling ID
 	emsg = fxStr::format(cmdFailed, "polling identifer");
-	return (FALSE);
+	return (false);
     }
     if (sep != "" && paCmd != "" && !class2Cmd(paCmd, sep)) {
 	emsg = fxStr::format(cmdFailed, "selective polling address");
-	return (FALSE);
+	return (false);
     }
     if (pwd != "" && pwCmd != "" && !class2Cmd(pwCmd, pwd)) {
 	emsg = fxStr::format(cmdFailed, "polling password");
-	return (FALSE);
+	return (false);
     }
-    return (TRUE);
+    return (true);
 }

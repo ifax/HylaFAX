@@ -209,9 +209,9 @@ ModemConfig::setupConfig()
     flowControl		= ClassModem::FLOW_NONE;// no flow control
     maxRate		= ClassModem::BR19200;	// reasonable for most modems
     minSpeed		= BR_2400;		// minimum transmit speed
-    waitForConnect	= FALSE;		// unique modem answer response
-    class2XmitWaitForXON = TRUE;		// default per Class 2 spec
-    class2SendRTC	= FALSE;		// default per Class 2 spec
+    waitForConnect	= false;		// unique modem answer response
+    class2XmitWaitForXON = true;		// default per Class 2 spec
+    class2SendRTC	= false;		// default per Class 2 spec
     setVolumeCmds("ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1");
     recvDataFormat	= DF_ALL;		// default to no transcoding
 }
@@ -225,7 +225,7 @@ ModemConfig::resetConfig()
 
 #define	valeq(a,b)	(strcasecmp(a,b)==0)
 
-fxBool
+bool
 ModemConfig::findRate(const char* cp, BaudRate& br)
 {
     static const struct {
@@ -246,9 +246,9 @@ ModemConfig::findRate(const char* cp, BaudRate& br)
     for (int i = N(rates)-1; i >= 0; i--)
 	if (streq(cp, rates[i].name)) {
 	    br = rates[i].b;
-	    return (TRUE);
+	    return (true);
 	}
-    return (FALSE);
+    return (false);
 }
 
 BaudRate
@@ -262,7 +262,7 @@ ModemConfig::getRate(const char* cp)
     return (br);
 }
 
-fxBool
+bool
 ModemConfig::findATResponse(const char* cp, ATResponse& resp)
 {
     static const struct {
@@ -284,9 +284,9 @@ ModemConfig::findATResponse(const char* cp, ATResponse& resp)
     for (u_int i = 0; i < N(responses); i++)
 	if (valeq(cp, responses[i].name)) {
 	    resp = responses[i].r;
-	    return (TRUE);
+	    return (true);
 	}
-    return (FALSE);
+    return (false);
 }
 
 u_int
@@ -302,7 +302,7 @@ ModemConfig::getFill(const char* cp)
     }
 }
 
-fxBool
+bool
 ModemConfig::findFlow(const char* cp, FlowControl& fc)
 {
     static const struct {
@@ -318,9 +318,9 @@ ModemConfig::findFlow(const char* cp, FlowControl& fc)
     for (u_int i = 0; i < N(fcnames); i++)
 	if (valeq(cp, fcnames[i].name)) {
 	    fc = fcnames[i].f;
-	    return (TRUE);
+	    return (true);
 	}
-    return (FALSE);
+    return (false);
 }
 
 FlowControl
@@ -421,7 +421,7 @@ ModemConfig::getSpeed(const char* value)
     return (BR_2400);
 }
 
-fxBool
+bool
 ModemConfig::findDataFormat(const char* cp, u_int& df)
 {
     static const struct {
@@ -447,9 +447,9 @@ ModemConfig::findDataFormat(const char* cp, u_int& df)
     for (i = 0; i < N(dfnames); i++)
 	if (valeq(v, dfnames[i].name)) {
 	    df = dfnames[i].d;
-	    return (TRUE);
+	    return (true);
 	}
-    return (FALSE);
+    return (false);
 }
 
 u_int
@@ -472,7 +472,7 @@ ModemConfig::parseCID(const char* rbuf, CallerID& cid) const
 	cid.number = rbuf+cidNumber.length();
 }
 
-fxBool
+bool
 ModemConfig::setConfigItem(const char* tag, const char* value)
 {
     u_int ix;
@@ -502,7 +502,7 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
     else if (streq(tag, "recvdataformat"))
 	recvDataFormat = getDataFormat(value);
     else
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 #undef N

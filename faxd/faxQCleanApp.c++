@@ -43,10 +43,10 @@ fxIMPLEMENT_StrKeyPtrValueDictionary(RefDict, u_int)
 
 class faxQCleanApp : public faxApp {
 private:
-    fxBool	archiving;		// enable archival support
-    fxBool	verbose;		// trace interesting actions
-    fxBool	trace;			// trace all actions
-    fxBool	nowork;			// do not carry out actions
+    bool	archiving;		// enable archival support
+    bool	verbose;		// trace interesting actions
+    bool	trace;			// trace all actions
+    bool	nowork;			// do not carry out actions
     time_t	minJobAge;		// threshold for processing done jobs
     time_t	minDocAge;		// threshold for purging unref'd docs
 
@@ -69,10 +69,10 @@ public:
 
     void setJobAge(const char*);
     void setDocAge(const char*);
-    void setArchiving(fxBool);
-    void setVerbose(fxBool);
-    void setTracing(fxBool);
-    void setNoWork(fxBool);
+    void setArchiving(bool);
+    void setVerbose(bool);
+    void setTracing(bool);
+    void setNoWork(bool);
 };
 
 const fxStr faxQCleanApp::archDir	= FAX_ARCHDIR;
@@ -83,10 +83,10 @@ faxQCleanApp::faxQCleanApp()
 {
     minJobAge = 15*60;		// jobs kept max 15 minutes in doneq
     minDocAge = 60*60;		// 1 hour threshold on keeping unref'd documents
-    archiving = FALSE;		// default is to disable job archiving
-    verbose = FALSE;		// log actions to stdout
-    nowork = FALSE;		// default is to carry out work
-    trace = FALSE;		// trace work
+    archiving = false;		// default is to disable job archiving
+    verbose = false;		// log actions to stdout
+    nowork = false;		// default is to carry out work
+    trace = false;		// trace work
 
     qFilePrefix = FAX_SENDDIR "/q";
 }
@@ -97,16 +97,16 @@ void faxQCleanApp::setJobAge(const char* s)
     { minJobAge = (time_t) strtoul(s, NULL, 0); }
 void faxQCleanApp::setDocAge(const char* s)
     { minDocAge = (time_t) strtoul(s, NULL, 0); }
-void faxQCleanApp::setArchiving(fxBool b)	{ archiving = b; }
-void faxQCleanApp::setVerbose(fxBool b)		{ verbose = b; }
-void faxQCleanApp::setTracing(fxBool b)		{ trace = b; }
-void faxQCleanApp::setNoWork(fxBool b)		{ nowork = b; }
+void faxQCleanApp::setArchiving(bool b)	{ archiving = b; }
+void faxQCleanApp::setVerbose(bool b)		{ verbose = b; }
+void faxQCleanApp::setTracing(bool b)		{ trace = b; }
+void faxQCleanApp::setNoWork(bool b)		{ nowork = b; }
 
 void
 faxQCleanApp::run(void)
 {
     if (trace)
-	verbose = TRUE;
+	verbose = true;
     scanDirectory();
     expungeCruft();
 }
@@ -144,7 +144,7 @@ faxQCleanApp::scanDirectory(void)
 	if (fd >= 0) {
 	    if (flock(fd, LOCK_SH|LOCK_NB) >= 0) {
 		FaxRequest* req = new FaxRequest(filename, fd);
-		fxBool reject;
+		bool reject;
 		if (req->readQFile(reject) && !reject) {
 		    if (now - sb.st_mtime < minJobAge) {
 			/*
@@ -392,13 +392,13 @@ main(int argc, char** argv)
     fxStr queueDir(FAX_SPOOLDIR);
     for (GetoptIter iter(argc, argv, faxApp::getOpts()); iter.notDone(); iter++)
 	switch (iter.option()) {
-	case 'a': app.setArchiving(TRUE); break;
+	case 'a': app.setArchiving(true); break;
 	case 'j': app.setJobAge(optarg); break;
 	case 'd': app.setDocAge(optarg); break;
-	case 'n': app.setNoWork(TRUE); break;
+	case 'n': app.setNoWork(true); break;
 	case 'q': queueDir = iter.optArg(); break;
-	case 't': app.setTracing(TRUE); break;
-	case 'v': app.setVerbose(TRUE); break;
+	case 't': app.setTracing(true); break;
+	case 'v': app.setVerbose(true); break;
 	case '?': usage(appName);
 	}
     if (Sys::chdir(queueDir) < 0) {

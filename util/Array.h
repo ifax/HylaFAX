@@ -98,8 +98,8 @@ protected:
 	fxAddress()					{ ptr = 0; }
 	fxAddress(void* p)				{ ptr = (char*) p; }
 	fxAddress operator+(u_long offset) const	{ return ptr + offset; }
-	fxBool operator==(const fxAddress& r) const	{ return ptr == r.ptr; }
-	fxBool operator!=(const fxAddress& r) const	{ return ptr != r.ptr; }
+	bool operator==(const fxAddress& r) const	{ return ptr == r.ptr; }
+	bool operator!=(const fxAddress& r) const	{ return ptr != r.ptr; }
 	// NB: operator const void*() const does not work
 	operator void*() const				{ return ptr; }
     protected:

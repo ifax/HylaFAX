@@ -49,12 +49,12 @@ isLeapYear(const tm& at) {
 #endif
 #define	streq(a,b,n)	(strncasecmp(a,b,n) == 0)
 
-static	fxBool checkDay(const char*& cp, int& day);
+static	bool checkDay(const char*& cp, int& day);
 static	void adjustDay(struct tm& at, int day, const struct tm&);
-static	fxBool checkMonth(const char*& cp, int& month);
-static	fxBool parseMonthAndYear(const char*&, const struct tm& ref,
+static	bool checkMonth(const char*& cp, int& month);
+static	bool parseMonthAndYear(const char*&, const struct tm& ref,
 	    struct tm& at, fxStr& emsg);
-static	fxBool parseMultiplier(const char* cp, struct tm& at, fxStr& emsg);
+static	bool parseMultiplier(const char* cp, struct tm& at, fxStr& emsg);
 static	const char* whitespace(const char* cp);
 static	void fixup(struct tm& at);
 
@@ -102,20 +102,20 @@ parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg)
 		int min = 10*(cp[1]-'0') + (cp[2]-'0');
 		if (min >= 60) {
 		    _atError(emsg, "Illegal minutes value %u", min);
-		    return (FALSE);
+		    return (false);
 		}
 		v += min;
 		cp += 3;
 	    } else {
 		_atSyntax(emsg, "expecting HH:MM");
-		return (FALSE);
+		return (false);
 	    }
 	}
 	cp = whitespace(cp);
 	if (streq(cp, "am", 2)) {
 	    if (v >= HALFDAY+HOUR) {
 		_atError(emsg, "%u:%02u is not an AM value", v/HOUR, v%HOUR);
-		return (FALSE);
+		return (false);
 	    }
 	    if (HALFDAY <= v && v < HALFDAY+HOUR)
 		v -= HALFDAY;
@@ -123,7 +123,7 @@ parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg)
 	} else if (streq(cp, "pm", 2)) {
 	    if (v >= HALFDAY+HOUR) {
 		_atError(emsg, "%u:%02u is not a PM value", v/HOUR, v%HOUR);
-		return (FALSE);
+		return (false);
 	    }
 	    if (v < HALFDAY)
 		v += HALFDAY;
@@ -144,12 +144,12 @@ parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg)
 	    cp += 4;
 	} else {
 	    _atSyntax(emsg, "unrecognized symbolic time \"%s\"", cp);
-	    return (FALSE);
+	    return (false);
 	}
     }
     if ((unsigned) v >= FULLDAY) {
 	_atError(emsg, "Illegal time value; out of range");
-	return (FALSE);
+	return (false);
     }
     at.tm_hour = v/HOUR;
     at.tm_min = v%HOUR;
@@ -162,7 +162,7 @@ parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg)
     if (checkMonth(cp, v)) {
 	at.tm_mon = v;
 	if (!parseMonthAndYear(cp, ref, at, emsg))
-	    return (FALSE);
+	    return (false);
     } else if (checkDay(cp, v)) {
 	adjustDay(at, v, ref);
     } else {
@@ -173,7 +173,7 @@ parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg)
 	    cp += 8;
 	} else if (cp[0] != '\0' && cp[0] != '+') {
 	    _atSyntax(emsg, "expecting \"+\" after time");
-	    return (FALSE);
+	    return (false);
 	}
 	/*
 	 * Adjust the date according to whether it is before ``now''.
@@ -185,14 +185,14 @@ parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg)
      * Process any increment expression.
      */
     if (cp[0] == '+' && !parseMultiplier(++cp, at, emsg))
-	return (FALSE);
+	return (false);
     fixup(at);
     if (at < ref) {
 	_atError(emsg, "Invalid date/time; time must be in the future");
-	return (FALSE);
+	return (false);
     }
     at0 = at;
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -214,7 +214,7 @@ whitespace(const char* cp)
  * return the day number [0..6] and update
  * the character pointer.
  */
-static fxBool
+static bool
 checkDay(const char*& cp, int& day)
 {
     static const char* days[] = {
@@ -227,14 +227,14 @@ again:
 	if (streq(cp, days[i], len)) {
 	    cp += len;
 	    day = i;
-	    return (TRUE);
+	    return (true);
 	}
 	if (len != 3) {			// an Algol-style for loop...
 	    len = 3;
 	    goto again;
 	}
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -267,7 +267,7 @@ static const char* months[] = {
  * return the month index [0..11] and update
  * the character pointer.
  */
-static fxBool
+static bool
 checkMonth(const char*& cp, int& month)
 {
     for (u_int i = 0; i < N(months); i++) {
@@ -276,14 +276,14 @@ again:
 	if (streq(cp, months[i], len)) {
 	    cp += len;
 	    month = i;
-	    return (TRUE);
+	    return (true);
 	}
 	if (len != 3) {			// an Algol-style for loop...
 	    len = 3;
 	    goto again;
 	}
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -308,14 +308,14 @@ adjustYDay(struct tm& t)
 /*
  * Parse an expected day [, year] expression.
  */
-static fxBool
+static bool
 parseMonthAndYear(const char*& cp, const struct tm& ref, struct tm& at, fxStr& emsg)
 {
     char* tp;
     at.tm_mday = (u_int) strtoul(cp, &tp, 10);
     if (tp == cp) {
 	_atSyntax(emsg, "missing or invalid day of month");
-	return (FALSE);
+	return (false);
     }
     at.tm_mday--;			// tm_mday is [0..31]
     tp = (char*) whitespace(tp);
@@ -324,12 +324,12 @@ parseMonthAndYear(const char*& cp, const struct tm& ref, struct tm& at, fxStr& e
 	u_int year = (u_int) strtoul(++tp, &xp, 10);
 	if (tp == xp) {
 	    _atSyntax(emsg, "missing year");
-	    return (FALSE);
+	    return (false);
 	}
 	if (year < TM_YEAR_BASE) {
 	    _atError(emsg, "Sorry, cannot handle dates before %u",
 		TM_YEAR_BASE);
-	    return (FALSE);
+	    return (false);
 	}
 	at.tm_year = year - TM_YEAR_BASE;
 	adjustYDay(at);
@@ -352,22 +352,22 @@ parseMonthAndYear(const char*& cp, const struct tm& ref, struct tm& at, fxStr& e
     if (at.tm_mday > days[at.tm_mon]) {
 	_atError(emsg, "Invalid day of month, %s has only %u days",
 	    months[at.tm_mon], days[at.tm_mon]);
-	return (FALSE);
+	return (false);
     }
     cp = tp;
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Parse an expected multiplier expression.
  */
-static fxBool
+static bool
 parseMultiplier(const char* cp, struct tm& at, fxStr& emsg)
 {
     cp = whitespace(cp);
     if (!isdigit(cp[0])) {
 	_atSyntax(emsg, "expecting number after \"+\"");
-	return (FALSE);
+	return (false);
     }
     int v = 0;
     for (; isdigit(*cp); cp++)
@@ -375,7 +375,7 @@ parseMultiplier(const char* cp, struct tm& at, fxStr& emsg)
     cp = whitespace(cp);
     if (*cp == '\0') {
 	_atSyntax(emsg, "\"+%u\" without unit", v);
-	return (FALSE);
+	return (false);
     }
     if (streq(cp, "minute", 6))
 	at.tm_min += v;
@@ -394,9 +394,9 @@ parseMultiplier(const char* cp, struct tm& at, fxStr& emsg)
 	at.tm_year += v;
     else {
 	_atError(emsg, "Unknown increment unit \"%s\"", cp);
-	return (FALSE);
+	return (false);
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -413,7 +413,7 @@ fixup(struct tm& at)
 	at.tm_hour++, at.tm_min -= HOUR;
     while (at.tm_hour >= FULLDAY)
 	at.tm_yday++, at.tm_hour -= FULLDAY;
-    fxBool leap;
+    bool leap;
     int daysinyear;
     for (;;) {
 	leap = isLeapYear(at);

@@ -71,7 +71,7 @@ TextFmt::TextFmt()
     firstPageNum = 1;		// starting page number
     column = 1;			// current text column # (1..numcol)
     pageNum = 1;		// current page number
-    workStarted = FALSE;
+    workStarted = false;
 
     fonts = new FontDict;
     curFont = addFont("Roman", "Courier");
@@ -146,9 +146,9 @@ void TextFmt::setFontPath(const char* path)	{ TextFont::fontPath = path; }
 
 void TextFmt::setOutputFile(FILE* f)		{ output = f; }
 void TextFmt::setNumberOfColumns(u_int n)	{ numcol = n; }
-void TextFmt::setPageHeaders(fxBool b)		{ headers = b; }
-void TextFmt::setISO8859(fxBool b)		{ useISO8859 = b; }
-void TextFmt::setLineWrapping(fxBool b)		{ wrapLines = b; }
+void TextFmt::setPageHeaders(bool b)		{ headers = b; }
+void TextFmt::setISO8859(bool b)		{ useISO8859 = b; }
+void TextFmt::setLineWrapping(bool b)		{ wrapLines = b; }
 void TextFmt::setOutlineMargin(TextCoord o)	{ outline = o; }
 void TextFmt::setTextPointSize(TextCoord p)	{ pointSize = p; }
 void TextFmt::setPageOrientation(u_int o)	{ landscape = (o == LANDSCAPE); }
@@ -158,32 +158,32 @@ void TextFmt::setTitle(const char* cp)		{ title = cp; }
 void TextFmt::setFilename(const char* cp)	{ curFile = cp; }
 
 void
-TextFmt::setGaudyHeaders(fxBool b)	
+TextFmt::setGaudyHeaders(bool b)	
 {
     if (gaudy = b)
-	headers = TRUE;
+	headers = true;
 }
 
-fxBool
+bool
 TextFmt::setTextFont(const char* name)
 {
     if (TextFont::findFont(name)) {
 	(*fonts)["Roman"]->family = name;
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 
 /*
  * Parse margin syntax: l=#,r=#,t=#,b=#
  */
-fxBool
+bool
 TextFmt::setPageMargins(const char* s)
 {
     for (const char* cp = s; cp && cp[0];) {
 	if (cp[1] != '=')
-	    return (FALSE);
+	    return (false);
 	TextCoord v = inch(&cp[2]);
 	switch (tolower(cp[0])) {
 	case 'b': bm = v; break;
@@ -191,13 +191,13 @@ TextFmt::setPageMargins(const char* s)
 	case 'r': rm = v; break;
 	case 't': tm = v; break;
 	default:
-	    return (FALSE);
+	    return (false);
 	}
 	cp = strchr(cp, ',');
 	if (cp)
 	    cp++;
     }
-    return (TRUE);
+    return (true);
 }
 
 void
@@ -209,7 +209,7 @@ TextFmt::setPageMargins(TextCoord l, TextCoord r, TextCoord b, TextCoord t)
     tm = t;
 }
 
-fxBool
+bool
 TextFmt::setPageSize(const char* name)
 {
     PageSizeInfo* info = PageSizeInfo::getPageSizeByName(name);
@@ -217,9 +217,9 @@ TextFmt::setPageSize(const char* name)
 	setPageWidth(info->width() / 25.4);
 	setPageHeight(info->height() / 25.4);
 	delete info;
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 void TextFmt::setPageWidth(float pw)		{ physPageWidth = pw; }
@@ -291,7 +291,7 @@ TextFmt::beginFormatting(FILE* o)
      */
     if (lineHeight <= 0)
 	lineHeight = (pointSize * 12L) / 10L;
-    workStarted = TRUE;
+    workStarted = true;
 }
 
 void
@@ -322,7 +322,7 @@ TextFmt::endFormatting(void)
     tf = NULL;
     emitTrailer();
     fflush(output);
-    workStarted = FALSE;
+    workStarted = false;
 }
 
 /* copy bytes b1..b2 to stdout */
@@ -584,8 +584,8 @@ TextFmt::newPage(void)
     y = pageHeight - tm - lineHeight;		// y at page top
     level = 0;					// string paren level reset
     column = 1;
-    boc = TRUE;
-    bop = TRUE;
+    boc = true;
+    bop = true;
 }
 
 void
@@ -596,7 +596,7 @@ TextFmt::newCol(void)
     y = pageHeight - tm - lineHeight;		// y at page top
     level = 0;
     column++;
-    boc = TRUE;
+    boc = true;
 }
 
 static void
@@ -647,7 +647,7 @@ void
 TextFmt::beginLine(void)
 {
     if (boc)
-	beginCol(), boc = FALSE, bop = FALSE;
+	beginCol(), boc = false, bop = false;
     fputc('B', tf);
 }
 
@@ -680,8 +680,8 @@ TextFmt::beginFile(void)
 {
     newPage();				// each file starts on a new page
 
-    bol = TRUE;				// force line start
-    bot = TRUE;				// force text start
+    bol = true;				// force line start
+    bot = true;				// force text start
     xoff = col_width * (column-1);
 }
 
@@ -759,7 +759,7 @@ TextFmt::format(FILE* fp)
 	    break;
 	case '\f':			// form feed
 	    endTextCol();
-	    bol = bot = TRUE;
+	    bol = bot = true;
 	    break;
 	case '\n':			// line break
 	    if (bol)
@@ -774,7 +774,7 @@ TextFmt::format(FILE* fp)
 		break;
 	    }
 	    closeStrings("O\n");	// do overstriking
-	    bot = TRUE;			// start new string
+	    bot = true;			// start new string
 	    break;
 	default:
 	    TextCoord hm;
@@ -816,16 +816,16 @@ TextFmt::format(FILE* fp)
 		endTextLine();
 	    }
 	    if (bol)
-		beginLine(), bol = FALSE;
+		beginLine(), bol = false;
 	    if (c == '\t') {		// close open PS string and do motion
 		if (hm > 0) {
 		    closeStrings("LN");
-		    bot = TRUE;		// force new string
+		    bot = true;		// force new string
 		    hrMove(hm);
 		}
 	    } else {			// append to open PS string
 		if (bot)
-		    beginText(), bot = FALSE;
+		    beginText(), bot = false;
 		if (040 <= c && c <= 0176) {
 		    if (c == '(' || c == ')' || c == '\\')
 			fputc('\\',tf);
@@ -850,7 +850,7 @@ TextFmt::format(const char* cp, u_int cc)
 	    break;
 	case '\f':			// form feed
 	    endTextCol();
-	    bol = bot = TRUE;
+	    bol = bot = true;
 	    break;
 	case '\n':			// line break
 	    if (bol)
@@ -864,7 +864,7 @@ TextFmt::format(const char* cp, u_int cc)
 		break;			// collapse \r\n => \n
 	    cp++;			// count character
 	    closeStrings("O\n");	// do overstriking
-	    bot = TRUE;			// start new string
+	    bot = true;			// start new string
 	    break;
 	default:
 	    TextCoord hm;
@@ -906,16 +906,16 @@ TextFmt::format(const char* cp, u_int cc)
 		endTextLine();
 	    }
 	    if (bol)
-		beginLine(), bol = FALSE;
+		beginLine(), bol = false;
 	    if (c == '\t') {		// close open PS string and do motion
 		if (hm > 0) {
 		    closeStrings("LN");
 		    fprintf(tf, " %ld M ", hm);
-		    bot = TRUE;		// force new string
+		    bot = true;		// force new string
 		}
 	    } else {			// append to open PS string
 		if (bot)
-		    beginText(), bot = FALSE;
+		    beginText(), bot = false;
 		if (040 <= c && c <= 0176) {
 		    if (c == '(' || c == ')' || c == '\\')
 			fputc('\\',tf);
@@ -981,7 +981,7 @@ TextFmt::endTextLine(void)
     if ((y -= lineHeight) < bm)
 	endCol();
     xoff = col_width * (column-1);
-    bol = bot = TRUE;
+    bol = bot = true;
 }
 
 void
@@ -1048,12 +1048,12 @@ TextFmt::inch(const char* s)
 void
 TextFmt::setupConfig()
 {
-    gaudy	= FALSE;	// emit gaudy headers
-    landscape	= FALSE;	// horizontal landscape mode output
-    useISO8859	= TRUE;		// use the ISO 8859-1 character encoding
-    reverse	= FALSE;	// page reversal flag
-    wrapLines	= TRUE;		// wrap/truncate lines
-    headers	= TRUE;		// emit page headers
+    gaudy	= false;	// emit gaudy headers
+    landscape	= false;	// horizontal landscape mode output
+    useISO8859	= true;		// use the ISO 8859-1 character encoding
+    reverse	= false;	// page reversal flag
+    wrapLines	= true;		// wrap/truncate lines
+    headers	= true;		// emit page headers
 
     pointSize = -1;		// font point size in big points
     lm = inch("0.25in");	// left margin
@@ -1080,7 +1080,7 @@ void TextFmt::configTrace(const char* ...) {}
 #undef streq
 #define	streq(a,b)	(strcasecmp(a,b)==0)
 
-fxBool
+bool
 TextFmt::setConfigItem(const char* tag, const char* value)
 {
     if (streq(tag, "columns"))
@@ -1120,8 +1120,8 @@ TextFmt::setConfigItem(const char* tag, const char* value)
     else if (streq(tag, "fontpath"))
 	setFontPath(value);
     else
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 
 #define	NCHARS	(sizeof (widths) / sizeof (widths[0]))
@@ -1138,7 +1138,7 @@ TextFont::TextFont(const char* cp) : family(cp)
 }
 TextFont::~TextFont() {}
 
-fxBool
+bool
 TextFont::decodeFontName(const char* name, fxStr& filename, fxStr& emsg)
 {
     struct stat junk;
@@ -1213,7 +1213,7 @@ TextFont::decodeFontName(const char* name, fxStr& filename, fxStr& emsg)
                             fpath.remove(0, index2);
     			    if (fpath.length() > 0) fpath.remove(0, 1);
 			}
-			fxBool result = stat(filename, &junk) ? FALSE : TRUE;
+			bool result = stat(filename, &junk) ? false : true;
 			if (!result)
 	                    emsg = fxStr::format(
 			        "Warning: %s invalid Fontmap entry - no filename present", (const char*)val);
@@ -1233,15 +1233,15 @@ TextFont::decodeFontName(const char* name, fxStr& filename, fxStr& emsg)
         filename = path.head(index) | "/" | name | ".afm";
         path.remove(0, index);
         if (path.length() > 0) path.remove(0, 1);
-        if (stat(filename, &junk) == 0) return TRUE;
+        if (stat(filename, &junk) == 0) return true;
 	filename.resize(filename.length()-4);	// strip ``.afm''
-        if (stat(filename, &junk) == 0) return TRUE;
+        if (stat(filename, &junk) == 0) return true;
         index = path.next(0, ':');
     }
-    return FALSE;
+    return false;
 }
 
-fxBool
+bool
 TextFont::findFont(const char* name)
 {
     fxStr myname, emsg;
@@ -1259,7 +1259,7 @@ static const char* defRegularFont = "\
 ";
 
 void
-TextFont::defFont(FILE* fd, TextCoord ps, fxBool useISO8859) const
+TextFont::defFont(FILE* fd, TextCoord ps, bool useISO8859) const
 {
     if (useISO8859) {
 	fprintf(fd, defISOFont, (const char*) setproc,
@@ -1321,21 +1321,21 @@ TextFont::loadFixedMetrics(TextCoord w)
 	widths[i] = w;
 }
 
-fxBool
+bool
 TextFont::getAFMLine(FILE* fp, char* buf, int bsize)
 {
     if (fgets(buf, bsize, fp) == NULL)
-	return (FALSE);
+	return (false);
     char* cp = strchr(buf, '\n');
     if (cp == NULL) {			// line too long, skip it
 	int c;
 	while ((c = getc(fp)) != '\n')	// skip to end of line
 	    if (c == EOF)
-		return (FALSE);
+		return (false);
 	cp = buf;			// force line to be skipped
     }
     *cp = '\0';
-    return (TRUE);
+    return (true);
 }
 
 FILE*
@@ -1349,8 +1349,8 @@ TextFont::openAFMFile(fxStr& fontpath)
     return Sys::fopen(fontpath, "r");
 }
 
-fxBool
-TextFont::readMetrics(TextCoord ps, fxBool useISO8859, fxStr& emsg)
+bool
+TextFont::readMetrics(TextCoord ps, bool useISO8859, fxStr& emsg)
 {
     fxStr file;
     FILE *fp = openAFMFile(file);
@@ -1359,7 +1359,7 @@ TextFont::readMetrics(TextCoord ps, fxBool useISO8859, fxStr& emsg)
 	    "%s: Can not open font metrics file; using fixed widths",
 	    (const char*) file);
 	loadFixedMetrics(625*ps/1000L);		// NB: use fixed width metrics
-	return (FALSE);
+	return (false);
     }
     /*
      * Since many ISO-encoded fonts don't include metrics for
@@ -1383,7 +1383,7 @@ TextFont::readMetrics(TextCoord ps, fxBool useISO8859, fxStr& emsg)
 	     * (I don't know if this does or does not cause any problem.)
 	     */
 	    loadFixedMetrics(625*ps/1000L);	// NB: use fixed width metrics
-	    return (FALSE);
+	    return (false);
 	}
 	lineno++;
     } while (strncmp(buf, "StartCharMetrics", 16));
@@ -1395,7 +1395,7 @@ TextFont::readMetrics(TextCoord ps, fxBool useISO8859, fxStr& emsg)
 	    emsg = fxStr::format("%s, line %u: format error",
 		(const char*) file, lineno);
 	    fclose(fp);
-	    return (FALSE);
+	    return (false);
 	}
 	if (ix == -1)			// end of unencoded glyphs
 	    break;
@@ -1413,5 +1413,5 @@ TextFont::readMetrics(TextCoord ps, fxBool useISO8859, fxStr& emsg)
 	    widths[ix] = w*ps/1000L;
     }
     fclose(fp);
-    return (TRUE);
+    return (true);
 }

@@ -69,7 +69,7 @@ MemoryDecoder::decodeNextByte()
     return (*bp++);
 }
 
-static fxBool
+static bool
 isBlank(uint16* runs, u_int rowpixels)
 {
     u_int x = 0;
@@ -77,11 +77,11 @@ isBlank(uint16* runs, u_int rowpixels)
 	if ((x += *runs++) >= rowpixels)
 	    break;
 	if (runs[0] != 0)
-	    return (FALSE);
+	    return (false);
 	if ((x += *runs++) >= rowpixels)
 	    break;
     }
-    return (TRUE);
+    return (true);
 }
 
 void
@@ -153,14 +153,14 @@ main(int argc, char* argv[])
     extern char* optarg;
     float minChop = 3.0;		// chop if >= 3" white space at bottom
     u_int minRows;
-    fxBool doAll = FALSE;
+    bool doAll = false;
     int c;
 
     appName = argv[0];
     while ((c = getopt(argc, argv, "t:a")) != -1)
 	switch (c) {
 	case 'a':
-	    doAll = TRUE;
+	    doAll = true;
 	    break;
 	case 't':
 	    minChop = atof(optarg);

@@ -79,14 +79,14 @@ protected:
     ServerConfig();
 
     void	setupConfig();
-    virtual fxBool setConfigItem(const char* tag, const char* value);
+    virtual bool setConfigItem(const char* tag, const char* value);
 
 // pattern access control list support
     void	updatePatterns(const fxStr& file,
 		    RegExArray*& pats, fxBoolArray*& accept,
 		    time_t& lastModTime);
     void	readPatterns(FILE*, RegExArray*&, fxBoolArray*&);
-    fxBool	checkACL(const fxStr& id, RegExArray*, fxBoolArray&);
+    bool	checkACL(const fxStr& id, RegExArray*, fxBoolArray&);
 // methods for parameters whose assignment may have side effects
     virtual void setDialRules(const char* name);
     virtual void setLocalIdentifier(const fxStr& lid);
@@ -101,7 +101,7 @@ public:
     u_int	tracingLevel;		// tracing level w/o session
     u_int	logTracingLevel;	// tracing level during session
     u_int	tracingMask;		// tracing level control mask
-    fxBool	clocalAsRoot;		// set CLOCAL as root
+    bool	clocalAsRoot;		// set CLOCAL as root
     u_int	requeueTTS[9];		// requeue intervals[CallStatus code]
     u_int	requeueProto;		// requeue interval after protocol error
     u_int	requeueOther;		// requeue interval after other problem
@@ -122,7 +122,7 @@ public:
 
     UUCPLock*	getUUCPLock(const fxStr& deviceName);
 
-    fxBool	isTSIOk(const fxStr& tsi);
+    bool	isTSIOk(const fxStr& tsi);
 
     virtual void vconfigError(const char* fmt, va_list ap) = 0;
     virtual void vconfigTrace(const char* fmt, va_list ap) = 0;

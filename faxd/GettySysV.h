@@ -54,6 +54,6 @@ public:
     ~SysVGetty();
 
     void hangup();
-    fxBool wait(int& status, fxBool block = FALSE);
+    bool wait(int& status, bool block = false);
 };
 #endif /* _SYSVGETTY_ */

@@ -40,7 +40,7 @@ typedef struct {
     u_char	br;	// Class 2 bit rate parameter
     u_short	sr;	// T.30 DCS signalling rate
     u_char	mod;	// modulation technique
-    fxBool	ok;	// true if modem is capable
+    bool	ok;	// true if modem is capable
 } Class1Cap;
 #define	HasShortTraining(c) \
     ((c)->mod == V17 && ((c)->value & 1) && (c)[1].ok)
@@ -59,10 +59,10 @@ protected:
     Class1Cap	recvCaps[15];		// modem recv capabilities
     const Class1Cap* curcap;		// capabilities being used
     u_int	discap;			// DIS signalling rate capabilities
-    fxBool	prevPage;		// a previous page was received
-    fxBool	pageGood;		// quality of last page received
-    fxBool	recvdDCN;		// received DCN frame
-    fxBool	messageReceived;	// expect/don't expect message carrier
+    bool	prevPage;		// a previous page was received
+    bool	pageGood;		// quality of last page received
+    bool	recvdDCN;		// received DCN frame
+    bool	messageReceived;	// expect/don't expect message carrier
     u_int	lastPPM;		// last PPM during receive
 
     static const u_int modemPFMCodes[8];// map T.30 FCF to Class 2 PFM
@@ -82,32 +82,32 @@ protected:
     static const char* modulationNames[6];
 
 // modem setup stuff
-    virtual fxBool setupModem();
-    virtual fxBool setupClass1Parameters();
-    virtual fxBool setupFlowControl(FlowControl fc);
+    virtual bool setupModem();
+    virtual bool setupClass1Parameters();
+    virtual bool setupFlowControl(FlowControl fc);
 // transmission support
-    fxBool	sendPrologue(u_int dcs, u_int xinfo, const fxStr& tsi);
-    fxBool	dropToNextBR(Class2Params&);
-    fxBool	raiseToNextBR(Class2Params&);
-    fxBool	sendTraining(Class2Params&, int, fxStr& emsg);
-    fxBool	sendTCF(const Class2Params&, u_int ms);
-    fxBool	sendPage(TIFF* tif, const Class2Params&, u_int, fxStr& emsg);
-    fxBool	sendPageData(u_char* data, u_int cc, const u_char* bitrev);
-    fxBool	sendRTC(fxBool is2D);
-    fxBool	sendPPM(u_int ppm, HDLCFrame& mcf, fxStr& emsg);
-    fxBool	decodePPM(const fxStr& pph, u_int& ppm, fxStr& emsg);
+    bool	sendPrologue(u_int dcs, u_int xinfo, const fxStr& tsi);
+    bool	dropToNextBR(Class2Params&);
+    bool	raiseToNextBR(Class2Params&);
+    bool	sendTraining(Class2Params&, int, fxStr& emsg);
+    bool	sendTCF(const Class2Params&, u_int ms);
+    bool	sendPage(TIFF* tif, const Class2Params&, u_int, fxStr& emsg);
+    bool	sendPageData(u_char* data, u_int cc, const u_char* bitrev);
+    bool	sendRTC(bool is2D);
+    bool	sendPPM(u_int ppm, HDLCFrame& mcf, fxStr& emsg);
+    bool	decodePPM(const fxStr& pph, u_int& ppm, fxStr& emsg);
 // reception support
     const AnswerMsg* findAnswer(const char*);
-    fxBool	recvIdentification(
+    bool	recvIdentification(
 		    u_int f1, const fxStr& pwd,
 		    u_int f2, const fxStr& addr,
 		    u_int f3, const fxStr& id,
 		    u_int f4, u_int dics, u_int xinfo,
 		    u_int timer, fxStr& emsg);
-    fxBool	recvDCSFrames(HDLCFrame& frame);
-    fxBool	recvTraining();
-    fxBool	recvPPM(int& ppm, fxStr& emsg);
-    fxBool	recvPageData(TIFF*, fxStr& emsg);
+    bool	recvDCSFrames(HDLCFrame& frame);
+    bool	recvTraining();
+    bool	recvPPM(int& ppm, fxStr& emsg);
+    bool	recvPageData(TIFF*, fxStr& emsg);
     void	recvData(TIFF*, u_char* buf, int n);
     void	processDCSFrame(const HDLCFrame& frame);
     void	abortPageRecv();
@@ -116,7 +116,7 @@ protected:
 	AT_FCERROR	= 100 	// "+FCERROR"
     };
     virtual ATResponse atResponse(char* buf, long ms = 30*1000);
-    virtual fxBool waitFor(ATResponse wanted, long ms = 30*1000);
+    virtual bool waitFor(ATResponse wanted, long ms = 30*1000);
     void	encodeTSI(fxStr& binary, const fxStr& ascii);
     const fxStr& decodeTSI(fxStr& ascii, const HDLCFrame& binary);
     void	encodePWD(fxStr& binary, const fxStr& ascii);
@@ -124,33 +124,33 @@ protected:
     const Class1Cap* findSRCapability(u_short sr, const Class1Cap[]);
     const Class1Cap* findBRCapability(u_short br, const Class1Cap[]);
 // class 1 HDLC frame support
-    fxBool	transmitFrame(u_char fcf, fxBool lastFrame = TRUE);
-    fxBool	transmitFrame(u_char fcf, u_int, u_int, fxBool lastFrame = TRUE);
-    fxBool	transmitFrame(u_char fcf, const fxStr&, fxBool lastFrame=TRUE);
-    fxBool	transmitData(int br, u_char* data, u_int cc,
-		    const u_char* bitrev, fxBool eod);
-    fxBool	sendFrame(u_char fcf, fxBool lastFrame = TRUE);
-    fxBool	sendFrame(u_char fcf, u_int, u_int, fxBool lastFrame = TRUE);
-    fxBool	sendFrame(u_char fcf, const fxStr&, fxBool lastFrame = TRUE);
-    fxBool	sendRawFrame(HDLCFrame& frame);
-    fxBool	sendClass1Data(const u_char* data, u_int cc,
-		    const u_char* bitrev, fxBool eod);
-    fxBool	recvFrame(HDLCFrame& frame, long ms = 10*1000);
-    fxBool	recvTCF(int br, HDLCFrame&, const u_char* bitrev, long ms);
-    fxBool	recvRawFrame(HDLCFrame& frame);
+    bool	transmitFrame(u_char fcf, bool lastFrame = true);
+    bool	transmitFrame(u_char fcf, u_int, u_int, bool lastFrame = true);
+    bool	transmitFrame(u_char fcf, const fxStr&, bool lastFrame=true);
+    bool	transmitData(int br, u_char* data, u_int cc,
+		    const u_char* bitrev, bool eod);
+    bool	sendFrame(u_char fcf, bool lastFrame = true);
+    bool	sendFrame(u_char fcf, u_int, u_int, bool lastFrame = true);
+    bool	sendFrame(u_char fcf, const fxStr&, bool lastFrame = true);
+    bool	sendRawFrame(HDLCFrame& frame);
+    bool	sendClass1Data(const u_char* data, u_int cc,
+		    const u_char* bitrev, bool eod);
+    bool	recvFrame(HDLCFrame& frame, long ms = 10*1000);
+    bool	recvTCF(int br, HDLCFrame&, const u_char* bitrev, long ms);
+    bool	recvRawFrame(HDLCFrame& frame);
     void	abortReceive();
     void	traceHDLCFrame(const char* direction, const HDLCFrame& frame);
 // class 1 command support routines
-    fxBool	class1Query(const char* what, Class1Cap caps[]);
-    fxBool	parseQuery(const char*, Class1Cap caps[]);
+    bool	class1Query(const char* what, Class1Cap caps[]);
+    bool	parseQuery(const char*, Class1Cap caps[]);
 public:
     Class1Modem(FaxServer&, const ModemConfig&);
     virtual ~Class1Modem();
 
 // send support
-    fxBool	sendSetup(FaxRequest&, const Class2Params&, fxStr& emsg);
+    bool	sendSetup(FaxRequest&, const Class2Params&, fxStr& emsg);
     CallStatus	dialResponse(fxStr& emsg);
-    FaxSendStatus getPrologue(Class2Params&, fxBool&, fxStr&);
+    FaxSendStatus getPrologue(Class2Params&, bool&, fxStr&);
     void	sendBegin();
     void	sendSetupPhaseB(const fxStr& pwd, const fxStr& sub);
     FaxSendStatus sendPhaseB(TIFF* tif, Class2Params&, FaxMachineInfo&,
@@ -162,21 +162,21 @@ public:
     CallType	answerCall(AnswerType, fxStr& emsg);
     u_int	modemDIS() const;
     u_int	modemXINFO() const;
-    fxBool	setupReceive();
-    fxBool	recvBegin(fxStr& emsg);
-    fxBool	recvPage(TIFF*, int& ppm, fxStr& emsg);
-    fxBool	recvEnd(fxStr& emsg);
+    bool	setupReceive();
+    bool	recvBegin(fxStr& emsg);
+    bool	recvPage(TIFF*, int& ppm, fxStr& emsg);
+    bool	recvEnd(fxStr& emsg);
     void	recvAbort();
 
 // polling support
-    fxBool	requestToPoll(fxStr&);
-    fxBool	pollBegin(const fxStr& cig, const fxStr& sep, const fxStr& pwd,
+    bool	requestToPoll(fxStr&);
+    bool	pollBegin(const fxStr& cig, const fxStr& sep, const fxStr& pwd,
 		    fxStr& emsg);
 
 // miscellaneous
-    fxBool	faxService();			// switch to fax mode
-    fxBool	reset(long ms);			// reset modem
+    bool	faxService();			// switch to fax mode
+    bool	reset(long ms);			// reset modem
     void	setLID(const fxStr& number);	// set local id string
-    fxBool	supportsPolling() const;	// modem capability
+    bool	supportsPolling() const;	// modem capability
 };
 #endif /* _CLASS1_ */

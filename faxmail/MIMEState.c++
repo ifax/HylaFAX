@@ -36,7 +36,7 @@
 MIMEState::MIMEState(const char* t, const char* st) : type(t), subtype(st)
 {
     parent = NULL;
-    lastPart = FALSE;
+    lastPart = false;
     encode = ENC_7BIT;
     charset = CS_USASCII;
     blen = (u_int) -1;			// NB: should insure no matches
@@ -50,7 +50,7 @@ MIMEState::MIMEState(MIMEState& other)
 	type = "message", subtype = "rfc822";
     else
 	type = "text", subtype = "plain";
-    lastPart = FALSE;
+    lastPart = false;
     encode = other.encode;
     charset = other.charset;
     blen = other.blen;
@@ -62,7 +62,7 @@ MIMEState::MIMEState(MIMEState& other, const char* t, const char* st)
     , subtype(st)
     , boundary(other.boundary)
 {
-    lastPart = FALSE;
+    lastPart = false;
     encode = other.encode;
     charset = other.charset;
     blen = other.blen;
@@ -108,7 +108,7 @@ MIMEState::trace(FILE* fd)
     );
 }
 
-fxBool
+bool
 MIMEState::parseToken(const char*& cp, const char delimeter, fxStr& result)
 {
     while (*cp && isspace(*cp))
@@ -120,16 +120,16 @@ MIMEState::parseToken(const char*& cp, const char delimeter, fxStr& result)
 	result = fxStr(bp, cp-bp);
 	while (isspace(*cp))				// remove trailing ws
 	    cp++;
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 /*
  * Extract MIME-related information from a set of
  * message headers and fillin the MIME state block.
  */
-fxBool
+bool
 MIMEState::parse(const MsgFmt& msg, fxStr& emsg)
 {
     const fxStr* s = msg.findHeader("Content-Type");
@@ -145,7 +145,7 @@ MIMEState::parse(const MsgFmt& msg, fxStr& emsg)
 	} else {
 	    emsg = "Syntax error parsing MIME Content-Type: " | *s;
 	    type = "text";		// reset on parsing error
-	    return (FALSE);
+	    return (false);
 	}
     }
     s = msg.findHeader("Content-Transfer-Encoding");
@@ -157,7 +157,7 @@ MIMEState::parse(const MsgFmt& msg, fxStr& emsg)
     s = msg.findHeader("Content-ID");
     if (s)
 	cid = *s;
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -210,7 +210,7 @@ MIMEState::parseParameters(const char* cp)
 /*
  * Set a MIME parameter used by the decoder.
  */
-fxBool
+bool
 MIMEState::setParameter(const fxStr& p, const fxStr& value)
 {
     fxStr param(p);
@@ -220,8 +220,8 @@ MIMEState::setParameter(const fxStr& p, const fxStr& value)
     } else if (param.length() == 8 && param == "boundary") {
 	setBoundary(value);			// part boundary marker
     } else
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 
 /*
@@ -290,15 +290,15 @@ extern void fxFatal(const char* fmt ...);
  * Return a line of data according to the current
  * setting of the content-transfer-encoding and
  * the body part boundary.  If the boundary marker
- * or EOF is reached FALSE is returned, otherwise
- * this method returns TRUE and the decoded line.
+ * or EOF is reached false is returned, otherwise
+ * this method returns true and the decoded line.
  * If the data is encoded with a text-oriented
  * scheme (7bit, 8bit, binary, or quoted-printable)
  * then the trailing newline character is returned
  * in the buffer.  Otherwise any trailing newline
  * is discarded and only the decoded data is returned.
  */
-fxBool
+bool
 MIMEState::getLine(FILE* fd, fxStackBuffer& buf)
 {
     buf.reset();
@@ -314,14 +314,14 @@ MIMEState::getLine(FILE* fd, fxStackBuffer& buf)
 		u_int cc = buf.getLength();
 		if (cc >= blen && buf[0] == '-') {
 		    if (cc == blen && strneq(buf, boundary, blen))
-			return (FALSE);
+			return (false);
 		    if (cc == blen+2 && strneq(buf, boundary, blen+2)) {
-			lastPart = TRUE;
-			return (FALSE);
+			lastPart = true;
+			return (false);
 		    }
 		}
 		buf.put('\n');
-		return (TRUE);
+		return (true);
 	    }
 	    buf.put(c);
 	}
@@ -338,14 +338,14 @@ MIMEState::getLine(FILE* fd, fxStackBuffer& buf)
 		u_int cc = buf.getLength();
 		if (cc >= blen && buf[0] == '-') {
 		    if (cc == blen && strneq(buf, boundary, blen))
-			return (FALSE);
+			return (false);
 		    if (cc == blen+2 && strneq(buf, boundary, blen+2)) {
-			lastPart = TRUE;
-			return (FALSE);
+			lastPart = true;
+			return (false);
 		    }
 		}
 		buf.put('\n');
-		return (TRUE);
+		return (true);
 	    }
 	    buf.put(c);
 	}
@@ -356,7 +356,7 @@ MIMEState::getLine(FILE* fd, fxStackBuffer& buf)
     }
     fxFatal("Internal error, unsupported Content-Transfer-Encoding %u", encode);
     /*NOTREACHED*/
-    return (FALSE);
+    return (false);
 }
 
 static int
@@ -383,7 +383,7 @@ copyQP(fxStackBuffer& buf, const char line[], u_int cc)
 /*
  * Return a decoded line of quoted-printable text.
  */
-fxBool
+bool
 MIMEState::getQuotedPrintableLine(FILE* fd, fxStackBuffer& buf)
 {
     char line[80];				// spec says never more than 76
@@ -404,15 +404,15 @@ MIMEState::getQuotedPrintableLine(FILE* fd, fxStackBuffer& buf)
 	    }
 	    if (cc >= blen && line[0] == '-') {
 		if (cc == blen && strneq(line, boundary, blen))
-		    return (FALSE);
+		    return (false);
 		if (cc == blen+2 && strneq(line, boundary, blen+2)) {
-		    lastPart = TRUE;
-		    return (FALSE);
+		    lastPart = true;
+		    return (false);
 		}
 	    }
 	    copyQP(buf, line, cc);
 	    buf.put('\n');
-	    return (TRUE);
+	    return (true);
 	}
 	if (cc < sizeof (line)-1)
 	    line[cc++] = c;
@@ -467,7 +467,7 @@ copyBase64(fxStackBuffer& buf, const char line[], u_int cc)
 /*
  * Return a decoded line of base64 data.
  */
-fxBool
+bool
 MIMEState::getBase64Line(FILE* fd, fxStackBuffer& buf)
 {
     char line[80];				// spec says never more than 76
@@ -483,14 +483,14 @@ MIMEState::getBase64Line(FILE* fd, fxStackBuffer& buf)
 	    lineno++;
 	    if (cc >= blen && line[0] == '-') {
 		if (cc == blen && strneq(line, boundary, blen))
-		    return (FALSE);
+		    return (false);
 		if (cc == blen+2 && strneq(line, boundary, blen+2)) {
-		    lastPart = TRUE;
-		    return (FALSE);
+		    lastPart = true;
+		    return (false);
 		}
 	    }
 	    copyBase64(buf, line, cc);
-	    return (TRUE);
+	    return (true);
 	}
 	if (cc < sizeof (line)-1)
 	    line[cc++] = c;
@@ -525,7 +525,7 @@ copyUUDecode(fxStackBuffer& buf, const char line[], u_int)
 /*
  * Return a decoded line of uuencode'd data.
  */
-fxBool
+bool
 MIMEState::getUUDecodeLine(FILE* fd, fxStackBuffer& buf)
 {
     char line[80];				// spec says never more than 62
@@ -541,10 +541,10 @@ MIMEState::getUUDecodeLine(FILE* fd, fxStackBuffer& buf)
 	    lineno++;
 	    if (cc >= blen && line[0] == '-') {	// check for boundary marker
 		if (cc == blen && strneq(line, boundary, blen))
-		    return (FALSE);
+		    return (false);
 		if (cc == blen+2 && strneq(line, boundary, blen+2)) {
-		    lastPart = TRUE;
-		    return (FALSE);
+		    lastPart = true;
+		    return (false);
 		}
 	    } else if (cc >= 6 && strneq(line, "begin ", 6)) {
 		return (getUUDecodeLine(fd, buf));
@@ -552,10 +552,10 @@ MIMEState::getUUDecodeLine(FILE* fd, fxStackBuffer& buf)
 		// consume to boundary marker
 		while (getUUDecodeLine(fd, buf))
 		    ;
-		return (FALSE);
+		return (false);
 	    }
 	    copyUUDecode(buf, line, cc);
-	    return (TRUE);
+	    return (true);
 	}
 	if (cc < sizeof (line)-1)
 	    line[cc++] = c;

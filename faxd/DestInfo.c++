@@ -58,18 +58,18 @@ DestInfo::updateConfig()
     info.writeConfig();				// update as necessary
 }
 
-fxBool
+bool
 DestInfo::isActive(Job& job) const
 {
     if (running == NULL)
-	return (FALSE);
+	return (false);
     else if (running == &job)
-	return (TRUE);
+	return (true);
     else {
 	for (Job* jp = running->dnext; jp != NULL; jp = jp->dnext)
 	    if (jp == &job)
-		return (TRUE);
-	return (FALSE);
+		return (true);
+	return (false);
     }
 }
 

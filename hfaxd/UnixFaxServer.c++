@@ -48,7 +48,7 @@ UnixSuperServer::~UnixSuperServer()
 	Sys::unlink(fileName);
 }
 
-fxBool
+bool
 UnixSuperServer::startServer(void)
 {
     int s = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -64,7 +64,7 @@ UnixSuperServer::startServer(void)
 #endif
 	    (void) listen(s, getBacklog());
 	    Dispatcher::instance().link(s, Dispatcher::ReadMask, this);
-	    return (TRUE);
+	    return (true);
 	}
 	Sys::close(s);
 	logError("%s HylaFAX: bind (port %s): %m",
@@ -72,13 +72,13 @@ UnixSuperServer::startServer(void)
 	fileName = "";				// don't try to unlink file
     } else
 	logError("%s HylaFAX: socket: %m", getKind());
-    return (FALSE);
+    return (false);
 }
 HylaFAXServer* UnixSuperServer::newChild(void) { return new UnixFaxServer; }
 
 UnixFaxServer::UnixFaxServer()
 {
-    usedefault = TRUE;
+    usedefault = true;
 }
 UnixFaxServer::~UnixFaxServer() {}
 
@@ -86,7 +86,7 @@ void
 UnixFaxServer::initServer(void)
 {
     HylaFAXServer::initServer();
-    usedefault = TRUE;
+    usedefault = true;
 }
 
 void
@@ -135,7 +135,7 @@ UnixFaxServer::getDataSocket(const char* mode)
     return (NULL);
 }
 
-fxBool
+bool
 UnixFaxServer::dataConnect(void)
 {
     return Socket::connect(data, &data_dest,sizeof (data_dest)) >= 0;
@@ -188,23 +188,23 @@ UnixFaxServer::openDataConn(const char* mode, int& code)
     return (file);
 }
 
-fxBool
+bool
 UnixFaxServer::hostPort()
 {
     fxStr s;
     if (pathname(s)) {
 	data_dest.sun_family = AF_UNIX;
 	strncpy(data_dest.sun_path, s, sizeof (data_dest.sun_path));
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 void
 UnixFaxServer::portCmd(void)
 {
     logcmd(T_PORT, "%s", data_dest.sun_path);
-    usedefault = FALSE;
+    usedefault = false;
     if (pdata >= 0)
 	(void) Sys::close(pdata), pdata = -1;
     reply(200, "PORT command successful.");

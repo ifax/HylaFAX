@@ -52,7 +52,7 @@ parseError(const char* file, u_int lineno, const char* fmt ...)
     va_end(ap);
 }
 
-fxBool
+bool
 PageSizeInfo::skipws(char*& cp,
     const char* file, const char* item, u_int lineno)
 {
@@ -63,9 +63,9 @@ PageSizeInfo::skipws(char*& cp,
     if (*cp == '\0') {
 	parseError(file, lineno,
 	    "Unexpected end of line after \"%s\".\n", item);
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
 PageInfoArray*
@@ -285,5 +285,5 @@ PageSizeInfoIter::operator const PageSizeInfo&()
 	pi.info = &(*PageSizeInfo::pageInfo)[i];
     return (pi);
 }
-fxBool PageSizeInfoIter::notDone()
+bool PageSizeInfoIter::notDone()
     { return i < PageSizeInfo::pageInfo->length(); }

@@ -31,10 +31,10 @@
 InetTransport::InetTransport(FaxClient& c) : Transport(c) {}
 InetTransport::~InetTransport(){}
 
-fxBool
+bool
 InetTransport::isA(const char*)
 {
-     return (TRUE);			// XXX are there checks we can make?
+     return (true);			// XXX are there checks we can make?
 }
 
 #if CONFIG_INETTRANSPORT
@@ -52,7 +52,7 @@ extern "C" {
 #include <ctype.h>
 #include <errno.h>
 
-fxBool
+bool
 InetTransport::callServer(fxStr& emsg)
 {
     int port = client.getPort();
@@ -79,13 +79,13 @@ InetTransport::callServer(fxStr& emsg)
     struct hostent* hp = Socket::gethostbyname(client.getHost());
     if (!hp) {
 	emsg = client.getHost() | ": Unknown host";
-	return (FALSE);
+	return (false);
     }
     
     int fd = socket(hp->h_addrtype, SOCK_STREAM, protocol);
     if (fd < 0) {
 	emsg = "Can not create socket to connect to server.";
-	return (FALSE);
+	return (false);
     }
     struct sockaddr_in sin;
     memset(&sin, 0, sizeof (sin));
@@ -133,29 +133,29 @@ InetTransport::callServer(fxStr& emsg)
 	     * input and output (sigh).
 	     */
 	    client.setCtrlFds(fd, dup(fd));
-	    return (TRUE);
+	    return (true);
 	}
     }
     emsg = fxStr::format("Can not reach server at host \"%s\", port %u.",
 	(const char*) client.getHost(), ntohs(sin.sin_port));
     Sys::close(fd), fd = -1;
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 InetTransport::initDataConn(fxStr& emsg)
 {
     struct sockaddr_in data_addr;
     socklen_t dlen = sizeof (data_addr);
     if (Socket::getsockname(fileno(client.getCtrlFd()), &data_addr, &dlen) < 0) {
 	emsg = fxStr::format("getsockname(ctrl): %s", strerror(errno));
-	return (FALSE);
+	return (false);
     }
     data_addr.sin_port = 0;		// let system allocate port
     int fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd < 0) {
 	emsg = fxStr::format("socket: %s", strerror(errno));
-	return (FALSE);
+	return (false);
     }
     if (Socket::bind(fd, &data_addr, sizeof (data_addr)) < 0) {
 	emsg = fxStr::format("bind: %s", strerror(errno));
@@ -176,16 +176,16 @@ InetTransport::initDataConn(fxStr& emsg)
     if (client.command("PORT %u,%u,%u,%u,%u,%u",
 	UC(a[0]), UC(a[1]), UC(a[2]), UC(a[3]),
 	UC(p[0]), UC(p[1])) != FaxClient::COMPLETE)
-	return (FALSE);
+	return (false);
 #undef UC
     client.setDataFd(fd);
-    return (TRUE);
+    return (true);
 bad:
     Sys::close(fd), fd = -1;
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 InetTransport::openDataConn(fxStr& emsg)
 {
     int s = Socket::accept(client.getDataFd(), NULL, NULL);
@@ -196,10 +196,10 @@ InetTransport::openDataConn(fxStr& emsg)
 	if (Socket::setsockopt(s, IPPROTO_IP, IP_TOS, &tos, sizeof (tos)) < 0)
 	    client.printWarning("setsockopt(IP_TOS): %s", strerror(errno));
 #endif
-	return (TRUE);
+	return (true);
     } else {
 	emsg = fxStr::format("accept: %s", strerror(errno));
-	return (FALSE);
+	return (false);
     }
 }
 
@@ -213,7 +213,7 @@ InetTransport::openDataConn(fxStr& emsg)
  * rather than before as done by most contemporary
  * TCP implementations.
  */
-fxBool
+bool
 InetTransport::abortCmd(fxStr& emsg)
 {
     static const char msg[] =
@@ -221,21 +221,21 @@ InetTransport::abortCmd(fxStr& emsg)
     int s = fileno(client.getCtrlFd());
     if (send(s, msg, 3, MSG_OOB) != 3) {
 	emsg = fxStr::format("send(MSG_OOB): %s", strerror(errno));
-	return (FALSE);
+	return (false);
     }
     if (send(s, msg+3, sizeof (msg)-3, 0) != sizeof (msg)-3) {
 	emsg = fxStr::format("send(<DM>ABOR\\r\\n): %s", strerror(errno));
-	return (FALSE);
+	return (false);
     }
-    return (TRUE);
+    return (true);
 }
 #else
-fxBool InetTransport::callServer(fxStr& emsg)
-    { notConfigured("TCP/IP", emsg); return (FALSE); }
-fxBool InetTransport::initDataConn(fxStr& emsg)
-    { notConfigured("TCP/IP", emsg); return (FALSE); }
-fxBool InetTransport::openDataConn(fxStr& emsg)
-    { notConfigured("TCP/IP", emsg); return (FALSE); }
-fxBool InetTransport::abortDataConn(fxStr& emsg)
-    { notConfigured("TCP/IP", emsg); return (FALSE); }
+bool InetTransport::callServer(fxStr& emsg)
+    { notConfigured("TCP/IP", emsg); return (false); }
+bool InetTransport::initDataConn(fxStr& emsg)
+    { notConfigured("TCP/IP", emsg); return (false); }
+bool InetTransport::openDataConn(fxStr& emsg)
+    { notConfigured("TCP/IP", emsg); return (false); }
+bool InetTransport::abortDataConn(fxStr& emsg)
+    { notConfigured("TCP/IP", emsg); return (false); }
 #endif

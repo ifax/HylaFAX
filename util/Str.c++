@@ -307,7 +307,7 @@ void fxStr::resizeInternal(u_int chars)
 }
 
 
-void fxStr::resize(u_int chars, fxBool)
+void fxStr::resize(u_int chars, bool)
 {
     resizeInternal(chars);
     if (chars != 0) {
@@ -370,92 +370,92 @@ void fxStr::append(char a)
     data[slength-1] = 0;
 }
 
-fxBool operator==(const fxStr& a,const fxStr& b)
+bool operator==(const fxStr& a,const fxStr& b)
 {
     return (a.slength == b.slength) && (memcmp(a.data,b.data,a.slength) == 0);
 }
 
-fxBool operator==(const fxStr& a,const char* b)
+bool operator==(const fxStr& a,const char* b)
 {
     return (a.slength == strlen(b)+1) && (memcmp(a.data,b,a.slength) == 0);
 }
 
-fxBool operator==(const char* b, const fxStr& a)
+bool operator==(const char* b, const fxStr& a)
 {
     return (a.slength == strlen(b)+1) && (memcmp(a.data,b,a.slength) == 0);
 } 
 
-fxBool operator!=(const fxStr& a,const fxStr& b)
+bool operator!=(const fxStr& a,const fxStr& b)
 {
     return (a.slength != b.slength) || (memcmp(a.data,b.data,a.slength) != 0);
 }
 
-fxBool operator!=(const fxStr& a,const char* b)
+bool operator!=(const fxStr& a,const char* b)
 {
     return (a.slength != strlen(b)+1) || (memcmp(a.data,b,a.slength) != 0);
 }
 
-fxBool operator!=(const char* b, const fxStr& a)
+bool operator!=(const char* b, const fxStr& a)
 {
     return (a.slength != strlen(b)+1) || (memcmp(a.data,b,a.slength) != 0);
 } 
 
-fxBool operator>=(const fxStr& a,const fxStr& b)
+bool operator>=(const fxStr& a,const fxStr& b)
 {
     return strcmp(a,b) >= 0;
 }
 
-fxBool operator>=(const fxStr& a,const char* b)
+bool operator>=(const fxStr& a,const char* b)
 {
     return strcmp(a,b) >= 0;
 }
 
-fxBool operator>=(const char* a, const fxStr& b)
+bool operator>=(const char* a, const fxStr& b)
 {
     return strcmp(a,b) >= 0;
 } 
 
-fxBool operator>(const fxStr& a,const fxStr& b)
+bool operator>(const fxStr& a,const fxStr& b)
 {
     return strcmp(a,b) > 0;
 }
 
-fxBool operator>(const fxStr& a,const char* b)
+bool operator>(const fxStr& a,const char* b)
 {
     return strcmp(a,b) > 0;
 }
 
-fxBool operator>(const char* a, const fxStr& b)
+bool operator>(const char* a, const fxStr& b)
 {
     return strcmp(a,b) > 0;
 } 
 
-fxBool operator<=(const fxStr& a,const fxStr& b)
+bool operator<=(const fxStr& a,const fxStr& b)
 {
     return strcmp(a,b) <= 0;
 }
 
-fxBool operator<=(const fxStr& a,const char* b)
+bool operator<=(const fxStr& a,const char* b)
 {
     return strcmp(a,b) <= 0;
 }
 
-fxBool operator<=(const char* a, const fxStr& b)
+bool operator<=(const char* a, const fxStr& b)
 {
     return strcmp(a,b) <= 0;
 } 
 
-fxBool operator<(const fxStr& a,const fxStr& b)
+bool operator<(const fxStr& a,const fxStr& b)
 {
     return strcmp(a,b) < 0;
 }
 
-fxBool operator<(const fxStr& a,const char* b)
+bool operator<(const fxStr& a,const char* b)
 {
     return strcmp(a,b) < 0;
 }
 
-fxBool operator<(const char* a, const fxStr& b)
+bool operator<(const char* a, const fxStr& b)
 {
     return strcmp(a,b) < 0;
 } 

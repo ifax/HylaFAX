@@ -28,5 +28,5 @@
 
 #include "Array.h"
 
-fxDECLARE_PrimArray(fxBoolArray, fxBool)
+fxDECLARE_PrimArray(fxBoolArray, bool)
 #endif /* _BoolArray_ */

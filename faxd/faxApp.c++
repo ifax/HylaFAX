@@ -63,7 +63,7 @@ const char* GetoptIter::nextArg()
 
 faxApp::faxApp()
 {
-    running = FALSE;
+    running = false;
     faxqfifo = -1;
     setLogFacility(LOG_FAX);			// default
 #ifdef LC_CTYPE
@@ -81,11 +81,11 @@ faxApp::initialize(int, char**)
 {
     openFIFOs();
 }
-void faxApp::open(void) { running = TRUE; }
+void faxApp::open(void) { running = true; }
 void
 faxApp::close(void)
 {
-    running = FALSE;
+    running = false;
     if (faxqfifo != -1)
 	Sys::close(faxqfifo);
 }
@@ -126,7 +126,7 @@ faxApp::closeFIFOs(void)
  * Open the specified FIFO file.
  */
 int
-faxApp::openFIFO(const char* fifoName, int mode, fxBool okToExist)
+faxApp::openFIFO(const char* fifoName, int mode, bool okToExist)
 {
     if (Sys::mkfifo(fifoName, mode & 0777) < 0) {
 	if (errno != EEXIST || !okToExist)
@@ -202,7 +202,7 @@ faxApp::FIFOMessage(const char* cp)
 /*
  * Send a message to the central queuer process.
  */
-fxBool
+bool
 faxApp::vsendQueuer(const char* fmt, va_list ap)
 {
     if (faxqfifo == -1) {
@@ -223,7 +223,7 @@ faxApp::vsendQueuer(const char* fmt, va_list ap)
 	faxqfifo = Sys::open(fifoName, O_WRONLY|O_NDELAY);
 #endif
 	if (faxqfifo == -1)
-	    return (FALSE);
+	    return (false);
 	/*
 	 * Turn off O_NDELAY so that write will block if FIFO is full.
 	 */
@@ -238,20 +238,20 @@ faxApp::vsendQueuer(const char* fmt, va_list ap)
 	    Sys::close(faxqfifo), faxqfifo = -1;
 	else
 	    logError("FIFO write failed: %m");
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
 /*
  * Send a message to the central queuer process.
  */
-fxBool
+bool
 faxApp::sendQueuer(const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    fxBool ok = vsendQueuer(fmt, ap);
+    bool ok = vsendQueuer(fmt, ap);
     va_end(ap);
     return (ok);
 }
@@ -259,14 +259,14 @@ faxApp::sendQueuer(const char* fmt ...)
 /*
  * Send a modem status message to the central queuer process.
  */
-fxBool
+bool
 faxApp::sendModemStatus(const char* devid, const char* fmt0 ...)
 {
     char fmt[2*1024];
     sprintf(fmt, "+%s:%s", devid, fmt0);
     va_list ap;
     va_start(ap, fmt0);
-    fxBool ok = vsendQueuer(fmt, ap);
+    bool ok = vsendQueuer(fmt, ap);
     va_end(ap);
     return (ok);
 }
@@ -274,14 +274,14 @@ faxApp::sendModemStatus(const char* devid, const char* fmt0 ...)
 /*
  * Send a job status message to the central queuer process.
  */
-fxBool
+bool
 faxApp::sendJobStatus(const char* jobid, const char* fmt0 ...)
 {
     char fmt[2*1024];
     sprintf(fmt, "*%s:%s", jobid, fmt0);
     va_list ap;
     va_start(ap, fmt0);
-    fxBool ok = vsendQueuer(fmt, ap);
+    bool ok = vsendQueuer(fmt, ap);
     va_end(ap);
     return (ok);
 }
@@ -289,14 +289,14 @@ faxApp::sendJobStatus(const char* jobid, const char* fmt0 ...)
 /*
  * Send a receive status message to the central queuer process.
  */
-fxBool
+bool
 faxApp::sendRecvStatus(const char* devid, const char* fmt0 ...)
 {
     char fmt[2*1024];
     sprintf(fmt, "@%s:%s", devid, fmt0);
     va_list ap;
     va_start(ap, fmt0);
-    fxBool ok = vsendQueuer(fmt, ap);
+    bool ok = vsendQueuer(fmt, ap);
     va_end(ap);
     return (ok);
 }
@@ -376,8 +376,8 @@ const fxStr faxApp::enquote	= "\"";
  * is so that programs like sendmail show an informative
  * from address.
  */
-fxBool
-faxApp::runCmd(const char* cmd, fxBool changeIDs)
+bool
+faxApp::runCmd(const char* cmd, bool changeIDs)
 {
     pid_t pid = fork();
     switch (pid) {
@@ -390,16 +390,16 @@ faxApp::runCmd(const char* cmd, fxBool changeIDs)
 	_exit(127);
     case -1:
 	logError("Can not fork for \"%s\"", cmd);
-	return (FALSE);
+	return (false);
     default:
 	{ int status = 0;
 	  Sys::waitpid(pid, status);
 	  if (status != 0) {
 	    logError("Bad exit status %#o for \"%s\"", status, cmd);
-	    return (FALSE);
+	    return (false);
 	  }
 	}
-	return (TRUE);
+	return (true);
     }
 }
 

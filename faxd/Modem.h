@@ -84,7 +84,7 @@ private:
     fxStr	number;		// modem phone number
     fxStr	commid;		// communication identifier
     ModemState	state;		// modem state
-    fxBool	canpoll;	// modem is capable of polling
+    bool	canpoll;	// modem is capable of polling
     u_short	priority;	// modem priority
     Class2Params caps;		// modem capabilities
     UUCPLock*	lock;		// UUCP lockfile support
@@ -109,7 +109,7 @@ public:
     static Modem* modemExists(const fxStr& id);
     static Modem* findModem(const Job& job);
 
-    fxBool assign(Job&);		// assign modem
+    bool assign(Job&);		// assign modem
     void release();			// release modem
 
     void startLockPolling(long sec);	// initiate polling thread
@@ -122,23 +122,23 @@ public:
     u_int getPriority() const;		// return modem scheduling priority
     const fxStr& getCommID() const;	// return communication ID
 
-    fxBool isCapable(const Job& job) const;
-    fxBool supports2D() const;		// modem supports 2D-encoded fax
-    fxBool supportsVRes(float) const;	// modem supports vertical resolution
+    bool isCapable(const Job& job) const;
+    bool supports2D() const;		// modem supports 2D-encoded fax
+    bool supportsVRes(float) const;	// modem supports vertical resolution
     // modem support fax page width
-    fxBool supportsPageWidthInMM(u_int) const;
-    fxBool supportsPageWidthInPixels(u_int) const;
+    bool supportsPageWidthInMM(u_int) const;
+    bool supportsPageWidthInPixels(u_int) const;
     // modem supports fax page length
-    fxBool supportsPageLengthInMM(u_int) const;
-    fxBool supportsPolling() const;	// modem supports fax polling
+    bool supportsPageLengthInMM(u_int) const;
+    bool supportsPolling() const;	// modem supports fax polling
 
     // send message to modem FIFO
-    fxBool send(const char* msg, u_int len, fxBool cacheFd = TRUE);
+    bool send(const char* msg, u_int len, bool cacheFd = true);
     static void broadcast(const fxStr&);	// broadcast msg to all FIFOs
 
     void encode(fxStackBuffer&) const;	// encode for ModemExt
 };
-inline fxBool Modem::supportsPolling() const	{ return canpoll; }
+inline bool Modem::supportsPolling() const	{ return canpoll; }
 inline const fxStr& Modem::getDeviceID() const	{ return devID; }
 inline const fxStr& Modem::getNumber() const	{ return number; }
 inline ModemState Modem::getState() const	{ return state; }
@@ -164,6 +164,6 @@ public:
     operator Modem&() const	{ return *(Modem*)ql; }
     operator Modem*() const	{ return (Modem*) ql; }
     Modem& modem() const	{ return *(Modem*)ql; }
-    fxBool notDone()		{ return ql != head; }
+    bool notDone()		{ return ql != head; }
 };
 #endif /* _Modem_ */

@@ -81,10 +81,10 @@ readTSIPatterns(FILE* fd, RegExArray*& pats, fxBoolArray*& accept)
 	    continue;
 	RegEx* re;
 	if (line[0] == '!') {
-	    accept->append(FALSE);
+	    accept->append(false);
 	    pats->append(re = new RegEx(line+1));
 	} else {
-	    accept->append(TRUE);
+	    accept->append(true);
 	    pats->append(re = new RegEx(line));
 	}
 	if (re->getErrorCode() > REG_NOMATCH) {
@@ -138,7 +138,7 @@ prompt()
 int
 main(int argc, char* argv[])
 {
-    fxBool verbose = TRUE;
+    bool verbose = true;
     extern int optind, opterr;
     extern char* optarg;
     int c;
@@ -147,7 +147,7 @@ main(int argc, char* argv[])
     while ((c = getopt(argc, argv, ":q")) != -1)
 	switch (c) {
 	case 'q':
-	    verbose = FALSE;
+	    verbose = false;
 	    break;
 	case '?':
 	    usage();

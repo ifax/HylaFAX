@@ -146,13 +146,13 @@ FaxDB::parseDatabase(FILE* fd, FaxDBRecord* parent)
 #include "StackBuffer.h"
 #include <ctype.h>
 
-fxBool
+bool
 FaxDB::getToken(FILE* fd, fxStr& token)
 {
     int c;
 top:
     if ((c = getc(fd)) == EOF)
-	return (FALSE);
+	return (false);
     while (isspace(c)) {
 	if (c == '\n')
 	    lineno++;
@@ -162,7 +162,7 @@ top:
 	while ((c = getc(fd)) != EOF && c != '\n')
 	    ;
 	if (c == EOF)
-	    return (FALSE);
+	    return (false);
 	lineno++;
 	goto top;
     }
@@ -171,7 +171,7 @@ top:
 	buf[0] = c;
 	buf[1] = '\0';
 	token = buf;
-	return (TRUE);
+	return (true);
     }
     fxStackBuffer buf;
     if (c == '"') {
@@ -180,7 +180,7 @@ top:
 		c = getc(fd);
 		if (c == EOF) {
 		    fprintf(stderr, "%s: Premature EOF.\n", (char*) filename);
-		    return (FALSE);
+		    return (false);
 		}
 		// XXX handle standard escapes
 		if (c == '\n')
@@ -203,7 +203,7 @@ top:
     }
     buf.set('\0');
     token = (char*) buf;
-    return (TRUE);
+    return (true);
 }
 
 #ifdef notdef

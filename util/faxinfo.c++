@@ -39,21 +39,21 @@
 
 extern	const char* fmtTime(time_t t);
 
-static fxBool
+static bool
 isFAXImage(TIFF* tif)
 {
     uint16 w;
     if (TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &w) && w != 1)
-	return (FALSE);
+	return (false);
     if (TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &w) && w != 1)
-	return (FALSE);
+	return (false);
     if (!TIFFGetField(tif, TIFFTAG_COMPRESSION, &w) ||
       (w != COMPRESSION_CCITTFAX3 && w != COMPRESSION_CCITTFAX4))
-	return (FALSE);
+	return (false);
     if (!TIFFGetField(tif, TIFFTAG_PHOTOMETRIC, &w) ||
       (w != PHOTOMETRIC_MINISWHITE && w != PHOTOMETRIC_MINISBLACK))
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 
 static void
@@ -67,11 +67,11 @@ sanitize(fxStr& s)
 int
 main(int argc, char** argv)
 {
-    fxBool showFilename = TRUE;
+    bool showFilename = true;
     const char* appName = argv[0];
 
     if (argc > 2 && streq(argv[1], "-n")) {
-	showFilename = FALSE;
+	showFilename = false;
 	argc--, argv++;
     }
     if (argc != 2) {
@@ -87,7 +87,7 @@ main(int argc, char** argv)
 	printf("Could not open %s; either not TIFF or corrupted.\n", argv[1]);
 	return (0);
     }
-    fxBool ok = isFAXImage(tif);
+    bool ok = isFAXImage(tif);
     if (!ok) {
 	printf("Does not look like a facsimile?\n");
 	return (0);

@@ -36,20 +36,20 @@ class OldProtocolServer : public InetFaxServer {
 public:
     struct protoCmd {
 	const char* cmd;		// command to match
-	fxBool	check;			// if true, checkPermission first
+	bool	check;			// if true, checkPermission first
 	void (OldProtocolServer::*cmdFunc)(const char*);
     };
 private:
     faxRequestArray reqs;
     char	line[1024];		// current input line
     int		version;
-    fxBool	alreadyChecked;
+    bool	alreadyChecked;
     code_ent*	codetab;
     fxStr	modem;			// selected modem
 
     static const protoCmd cmds[];
 
-    fxBool checkHostIdentity(hostent*& hp);
+    bool checkHostIdentity(hostent*& hp);
     void setupNetwork(int fd);
     void doProtocol(void);
     void getCommandLine(char line[1024], char*& tag);
@@ -63,13 +63,13 @@ private:
     void newPollID(const char* tag);
     void setProtoVersion(const char* tag);
     void ackPermission(const char*);
-    fxBool _checkUser(const char* requestor, struct passwd* pwd);
-    fxBool isAdmin(const char* requestor);
+    bool _checkUser(const char* requestor, struct passwd* pwd);
+    bool isAdmin(const char* requestor);
     void applyToJob(const char* tag, const char* op,
 	void (OldProtocolServer::*f)(Job&, const char*));
     void applyToJobGroup(const char* tag, const char* op,
 	void (OldProtocolServer::*f)(Job&, const char*));
-    fxBool alterSuspend(Job&);
+    bool alterSuspend(Job&);
     void alterResubmit(Job&);
     void alterJobTTS(const char*);
     void alterJobGroupTTS(const char*);
@@ -111,7 +111,7 @@ private:
     void getZPostScriptData(const char* tag);
     void getZOpaqueData(const char* tag);
     void dologout(int status);
-    fxBool modemMatch(const fxStr& a, const fxStr& b);
+    bool modemMatch(const fxStr& a, const fxStr& b);
     void sendServerStatus(const char*);
     void sendServerInfo1(const char* name);
     void sendServerInfo(const char*);
@@ -138,7 +138,7 @@ class OldProtocolSuperServer : public SuperServer {
 private:
     fxStr port;
 protected:
-    fxBool startServer(void);
+    bool startServer(void);
     HylaFAXServer* newChild(void);
 public:
     OldProtocolSuperServer(const char* port, int backlog = 5);

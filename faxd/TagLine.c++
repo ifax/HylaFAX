@@ -98,16 +98,16 @@ FaxModem::setupTagLine(const FaxRequest& req, const fxStr& tagLineFmt)
  * being cropped at the bottom; probably together with a decoding
  * error of one row at the receiver.
  */
-fxBool
+bool
 FaxModem::setupTagLineSlop(const Class2Params& params)
 {
     if (tagLineFont->isReady() && tagLineFields > 0) {
 	tagLineSlop = (tagLineFont->fontHeight()+MARGIN_TOP+MARGIN_BOT+3) * 
 	    howmany(params.pageWidth(),8);
-	return (TRUE);
+	return (true);
     } else {
 	tagLineSlop = 0;
-	return (FALSE);
+	return (false);
     }
 }
 

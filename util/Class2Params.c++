@@ -91,7 +91,7 @@ Class2Params::cmd() const
     return fxStr(buf);
 }
 
-fxBool
+bool
 Class2Params::is2D() const
 {
     return (DF_2DMR <= df && df <= DF_2DMRUNCOMP);

@@ -52,8 +52,8 @@ private:
     fxStr	data;			// data to write record in lock file
 
     void setPID(pid_t);
-    fxBool writeData(int fd);
-    fxBool readData(int fd, pid_t& pid);
+    bool writeData(int fd);
+    bool readData(int fd, pid_t& pid);
 public:
     AsciiUUCPLock(const fxStr&, mode_t);
     ~AsciiUUCPLock();
@@ -67,8 +67,8 @@ private:
     pid_t	data;			// data to write record in lock file
 
     void setPID(pid_t);
-    fxBool writeData(int fd);
-    fxBool readData(int fd, pid_t& pid);
+    bool writeData(int fd);
+    bool readData(int fd, pid_t& pid);
 public:
     BinaryUUCPLock(const fxStr&, mode_t);
     ~BinaryUUCPLock();
@@ -125,7 +125,7 @@ UUCPLock::newLock(const char* type,
 UUCPLock::UUCPLock(const fxStr& pathname, mode_t m) : file(pathname)
 {
     mode = m;
-    locked = FALSE;
+    locked = false;
 
     setupIDs();
 }
@@ -159,7 +159,7 @@ void UUCPLock::setLockTimeout(time_t t) { lockTimeout = t; }
 /*
  * Create a lock file.
  */
-fxBool
+bool
 UUCPLock::create()
 {	
     /*
@@ -192,11 +192,11 @@ UUCPLock::create()
  * Check if the lock file is
  * newer than the specified age.
  */
-fxBool
+bool
 UUCPLock::isNewer(time_t age)
 {
     struct stat sb;
-    return (Sys::stat(file, sb) != 0 ? FALSE : Sys::now() - sb.st_mtime < age);
+    return (Sys::stat(file, sb) != 0 ? false : Sys::now() - sb.st_mtime < age);
 }
 
 /*
@@ -205,14 +205,14 @@ UUCPLock::isNewer(time_t age)
  * If it is older, an attempt is made to unlink it and
  * create a new one.
  */
-fxBool
+bool
 UUCPLock::lock()
 {
     if (locked)
-	return (FALSE);
+	return (false);
     uid_t ouid = geteuid();
     seteuid(0);				// need to be root
-    fxBool ok = create();
+    bool ok = create();
     if (!ok)
 	ok = check() && create();
     seteuid(ouid);
@@ -230,7 +230,7 @@ UUCPLock::unlock()
 	seteuid(0);			// need to be root
 	Sys::unlink(file);
 	seteuid(ouid);
-	locked = FALSE;
+	locked = false;
     }
 }
 
@@ -238,10 +238,10 @@ UUCPLock::unlock()
  * Set a particular owner process
  * pid for an already locked device.
  */
-fxBool
+bool
 UUCPLock::setOwner(pid_t pid)
 {
-    fxBool ok = FALSE;
+    bool ok = false;
     if (locked) {
 	uid_t ouid = geteuid();
 	seteuid(0);			// need to be root
@@ -260,7 +260,7 @@ UUCPLock::setOwner(pid_t pid)
 /*
  * Check if the owning process exists.
  */
-fxBool
+bool
 UUCPLock::ownerExists(int fd)
 {
     pid_t pid;
@@ -273,7 +273,7 @@ UUCPLock::ownerExists(int fd)
  * UUCPLock::lockTimeout seconds if the process owner
  * is no longer around.
  */
-fxBool
+bool
 UUCPLock::check()
 {
     int fd = Sys::open(file, O_RDONLY);
@@ -281,17 +281,17 @@ UUCPLock::check()
 	if (lockTimeout > 0) {
 	    if (isNewer(lockTimeout) || ownerExists(fd)) {
 		Sys::close(fd);
-		return (FALSE);
+		return (false);
 	    }
 	    Sys::close(fd);
 	    logInfo("Purge stale UUCP lock %s", (const char*) file);
 	    return (Sys::unlink(file) == 0);
 	} else {
 	    Sys::close(fd);
-	    return (FALSE);
+	    return (false);
 	}
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -310,22 +310,22 @@ AsciiUUCPLock::setPID(pid_t pid)
     sprintf((char*) data, "%*d\n", UUCP_PIDDIGITS, pid);
 }
 
-fxBool
+bool
 AsciiUUCPLock::writeData(int fd)
 {
     return (Sys::write(fd, data, UUCP_PIDDIGITS+1) == (UUCP_PIDDIGITS+1));
 }
 
-fxBool
+bool
 AsciiUUCPLock::readData(int fd, pid_t& pid)
 {
     char buf[UUCP_PIDDIGITS+1];
     if (Sys::read(fd, buf, UUCP_PIDDIGITS) == UUCP_PIDDIGITS) {
 	buf[UUCP_PIDDIGITS] = '\0';
 	pid = atol(buf);	// NB: assumes pid_t is <= 32-bits
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 /*
@@ -342,19 +342,19 @@ BinaryUUCPLock::setPID(pid_t pid)
     data = pid;			// binary pid of lock holder
 }
 
-fxBool
+bool
 BinaryUUCPLock::writeData(int fd)
 {
     return (Sys::write(fd, (char*) &data, sizeof (data)) == sizeof (data));
 }
 
-fxBool
+bool
 BinaryUUCPLock::readData(int fd, pid_t& pid)
 {
     pid_t data;
     if (Sys::read(fd, (char*) &data, sizeof (data)) == sizeof (data)) {
 	pid = data;
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }

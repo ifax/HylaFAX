@@ -63,7 +63,7 @@ RegEx::init(int flags)
     }
 }
 
-fxBool
+bool
 RegEx::Find(const char* text, u_int length, u_int off)
 {
     if (compResult == 0) {

@@ -55,7 +55,7 @@ private:
 
     static const PageInfo* getPageInfoByName(const char* name);
     static PageInfoArray* readPageInfoFile();
-    static fxBool skipws(char*& cp,
+    static bool skipws(char*& cp,
 		const char* file, const char* item, u_int lineno);
 
     static float toMM(BMU v)		{ return (v/1200.)*25.4; }
@@ -98,7 +98,7 @@ public:
     void operator++();
     void operator++(int);
     operator const PageSizeInfo&();
-    fxBool notDone();
+    bool notDone();
 };
 #else
 /*

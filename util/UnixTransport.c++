@@ -31,7 +31,7 @@
 UnixTransport::UnixTransport(FaxClient& c) : Transport(c) {}
 UnixTransport::~UnixTransport() {}
 
-fxBool
+bool
 UnixTransport::isA(const char* address)
 {
      return Sys::isSocketFile(address);
@@ -44,13 +44,13 @@ extern "C" {
 #include <sys/un.h>
 }
 
-fxBool
+bool
 UnixTransport::callServer(fxStr& emsg)
 {
     int fd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (fd < 0) {
 	emsg = "Can not create socket to connect to server.";
-	return (FALSE);
+	return (false);
     }
     struct sockaddr_un Sun;
     memset(&Sun, 0, sizeof (Sun));
@@ -61,16 +61,16 @@ UnixTransport::callServer(fxStr& emsg)
 	    (const char*) client.getHost());
     if (Socket::connect(fd, &Sun, sizeof (Sun)) >= 0) {
 	client.setCtrlFds(fd, dup(fd));
-	return (TRUE);
+	return (true);
     } else {
 	emsg = fxStr::format("Can not reach server at Unix domain socket \"%s\".",
 	    (const char*) client.getHost());
 	Sys::close(fd), fd = -1;
-	return (FALSE);
+	return (false);
     }
 }
 
-fxBool
+bool
 UnixTransport::initDataConn(fxStr&)
 {
 #ifdef notdef
@@ -78,13 +78,13 @@ UnixTransport::initDataConn(fxStr&)
     Socket::socklen_t dlen = sizeof (data_addr);
     if (Socket::getsockname(fileno(client.getCtrlFd()), &data_addr, &dlen) < 0) {
 	emsg = fxStr::format("getsockname(ctrl): %s", strerror(errno));
-	return (FALSE);
+	return (false);
     }
     data_addr.sin_port = 0;		// let system allocate port
     fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd < 0) {
 	emsg = fxStr::format("socket: %s", strerror(errno));
-	return (FALSE);
+	return (false);
     }
     if (Socket::bind(fd, &data_addr, sizeof (data_addr)) < 0) {
 	emsg = fxStr::format("bind: %s", strerror(errno));
@@ -105,37 +105,37 @@ UnixTransport::initDataConn(fxStr&)
     if (client.command("PORT %u,%u,%u,%u,%u,%u",
 	UC(a[0]), UC(a[1]), UC(a[2]), UC(a[3]),
 	UC(p[0]), UC(p[1])) != COMPLETE)
-	return (FALSE);
+	return (false);
 #undef UC
     client.setDataFd(fd);
-    return (TRUE);
+    return (true);
 bad:
     Sys::close(fd), fd = -1;
 #endif
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 UnixTransport::openDataConn(fxStr&)
 {
 #ifdef notdef
     int s = Socket::accept(fileno(client.getDataFd()), NULL, NULL);
     if (s >= 0) {
 	client.setDataFd(s);
-	return (TRUE);
+	return (true);
     } else {
 	emsg = fxStr::format("accept: %s", strerror(errno));
-	return (FALSE);
+	return (false);
     }
 #else
-    return (FALSE);
+    return (false);
 #endif
 }
 #else
-fxBool UnixTransport::callServer(fxStr& emsg)
-    { notConfigured("Unix domain", emsg); return (FALSE); }
-fxBool UnixTransport::initDataConn(fxStr& emsg)
-    { notConfigured("Unix domain", emsg); return (FALSE); }
-fxBool UnixTransport::openDataConn(fxStr& emsg)
-    { notConfigured("Unix domain", emsg); return (FALSE); }
+bool UnixTransport::callServer(fxStr& emsg)
+    { notConfigured("Unix domain", emsg); return (false); }
+bool UnixTransport::initDataConn(fxStr& emsg)
+    { notConfigured("Unix domain", emsg); return (false); }
+bool UnixTransport::openDataConn(fxStr& emsg)
+    { notConfigured("Unix domain", emsg); return (false); }
 #endif

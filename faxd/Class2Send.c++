@@ -32,7 +32,7 @@
  * Send Protocol for Class-2-style modems.
  */
 
-fxBool
+bool
 Class2Modem::sendSetup(FaxRequest& req, const Class2Params& dis, fxStr& emsg)
 {
     const char* cmdFailed = " (modem command failed)";
@@ -48,26 +48,26 @@ Class2Modem::sendSetup(FaxRequest& req, const Class2Params& dis, fxStr& emsg)
      */
     if (req.passwd != "" && pwCmd != "" && !class2Cmd(pwCmd, req.passwd)) {
 	emsg = fxStr::format("Unable to send password%s", cmdFailed);
-	return (FALSE);
+	return (false);
     }
     if (req.subaddr != "" && saCmd != "" && !class2Cmd(saCmd, req.subaddr)) {
 	emsg = fxStr::format("Unable to send subaddress%s", cmdFailed);
-	return (FALSE);
+	return (false);
     }
     if (minsp != BR_2400 && !class2Cmd(minspCmd, minsp)) {
 	emsg = fxStr::format("Unable to restrict minimum transmit speed to %s",
 	    Class2Params::bitRateNames[req.minsp], cmdFailed);
-	return (FALSE);
+	return (false);
     }
     if (conf.class2DDISCmd != "") {
 	if (!class2Cmd(conf.class2DDISCmd, dis)) {
 	    emsg = fxStr::format("Unable to setup session parameters "
 		"prior to call%s", cmdFailed);
-	    return (FALSE);
+	    return (false);
 	}
 	params = dis;
     }
-    hadHangup = FALSE;
+    hadHangup = false;
     return (FaxModem::sendSetup(req, dis, emsg));
 }
 
@@ -117,14 +117,14 @@ Class2Modem::dialResponse(fxStr& emsg)
  * sent to the caller on connecting to a fax machine.
  */
 FaxSendStatus
-Class2Modem::getPrologue(Class2Params& dis, fxBool& hasDoc, fxStr& emsg)
+Class2Modem::getPrologue(Class2Params& dis, bool& hasDoc, fxStr& emsg)
 {
-    fxBool gotParams = FALSE;
-    hasDoc = FALSE;
+    bool gotParams = false;
+    hasDoc = false;
     for (;;) {
 	switch (atResponse(rbuf, conf.t1Timer)) {
 	case AT_FPOLL:
-	    hasDoc = TRUE;
+	    hasDoc = true;
 	    protoTrace("REMOTE has document to POLL");
 	    break;
 	case AT_FDIS:
@@ -161,10 +161,10 @@ Class2Modem::getPrologue(Class2Params& dis, fxBool& hasDoc, fxStr& emsg)
  * wait for an XON from the modem in response to the +FDT,
  * before actually sending any data.
  */
-fxBool
+bool
 Class2Modem::dataTransfer()
 {
-    fxBool status;
+    bool status;
     if (xmitWaitForXON) {
 	/*
 	 * Wait for XON (DC1) from the modem after receiving
@@ -195,7 +195,7 @@ Class2Modem::dataTransfer()
     return (status);
 }
 
-static fxBool
+static bool
 pageInfoChanged(const Class2Params& a, const Class2Params& b)
 {
     return (a.vr != b.vr || a.wd != b.wd || a.ln != b.ln || a.df != b.df || a.br != b.br);
@@ -215,10 +215,10 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
     setDataTimeout(60, next.br);	// 60 seconds for 1024 byte writes
     hangupCode[0] = '\0';
 
-    fxBool transferOK;
-    fxBool morePages = FALSE;
+    bool transferOK;
+    bool morePages = false;
     do {
-	transferOK = FALSE;
+	transferOK = false;
 	if (abortRequested())
 	     goto failed;
 	/*
@@ -273,7 +273,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 			    return (status);
 			}
 		    }
-		    transferOK = TRUE;
+		    transferOK = true;
 		    break;
 		case PPR_RTN:		// page bad, retrain requested
 		    if (++ntrys >= 3) {
@@ -287,8 +287,8 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 			break;
 		    }
 		    next.br--;
-		    morePages = TRUE;	// retransmit page
-		    transferOK = TRUE;
+		    morePages = true;	// retransmit page
+		    transferOK = true;
 		    break;
 		case PPR_PIN:		// page bad, interrupt requested
 		    emsg = "Unable to transmit page"
@@ -316,7 +316,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	 * +FHNG:0).  Setup an error return so that the job will
 	 * be retried.
 	 */
-	transferOK = FALSE;
+	transferOK = false;
 	emsg = "Communication failure during Phase B/C (modem protocol botch)";
     }
     return (transferOK ? send_ok : send_retry);
@@ -336,10 +336,10 @@ failed:
  * is done to avoid timing problems when the document
  * is comprised of multiple strips.
  */
-fxBool
+bool
 Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 {
-    fxBool rc = TRUE;
+    bool rc = true;
 
     tstrip_t nstrips = TIFFNumberOfStrips(tif);
     if (nstrips > 0) {
@@ -353,7 +353,7 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	/*
 	 * Setup tag line processing.
 	 */
-	fxBool doTagLine = setupTagLineSlop(params);
+	bool doTagLine = setupTagLineSlop(params);
 	u_int ts = getTagLineSlop();
 	/*
 	 * Calculate total amount of space needed to read
@@ -400,8 +400,8 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 /*
  * Send RTC to terminate a page.
  */
-fxBool
-Class2Modem::sendRTC(fxBool is2D)
+bool
+Class2Modem::sendRTC(bool is2D)
 {
     static const u_char RTC1D[9] =
 	{ 0x00,0x10,0x01,0x00,0x10,0x01,0x00,0x10,0x01 };

@@ -36,7 +36,7 @@ struct ModemExt {
     fxStr	number;		// modem phone number
     fxStr	commid;		// communication identifier
     char	state;		// modem state
-    fxBool	canpoll;	// modem is capable of polling
+    bool	canpoll;	// modem is capable of polling
     u_short	priority;	// scheduling priority
     Class2Params caps;		// modem capabilities
 

@@ -54,7 +54,7 @@ private:
     u_int	maxRetries;		// max number times to try send
     u_int	maxDials;		// max number times to dial telephone
     u_int	serviceLevel;		// delivery service type
-    fxBool	queued;			// queued delivery
+    bool	queued;			// queued delivery
 
     u_int parseTime(const char* v);
 public:
@@ -62,14 +62,14 @@ public:
     SNPPJob(const SNPPJob& other);
     virtual ~SNPPJob();
 
-    virtual fxBool createJob(SNPPClient& client, fxStr& emsg);
+    virtual bool createJob(SNPPClient& client, fxStr& emsg);
 
     const fxStr& getJobID(void) const;
 
     /*
      * Job notification.
      */
-    fxBool setNotification(const char*);// email notification
+    bool setNotification(const char*);// email notification
     void setNotification(PageNotify);
     PageNotify getNotification() const;
     void setMailbox(const char*);	// email notification address
@@ -78,13 +78,13 @@ public:
     /*
      * Job scheduling controls.
      */
-    void setQueued(fxBool);		// queued or synchronous wait
-    fxBool getQueued() const;
+    void setQueued(bool);		// queued or synchronous wait
+    bool getQueued() const;
     void setRetryTime(u_int);		// job retry time (seconds)
     void setRetryTime(const char* v);
     u_int getRetryTime() const;
 					// time to initiate tranmission
-    fxBool setHoldTime(const char*, fxStr& emsg);
+    bool setHoldTime(const char*, fxStr& emsg);
     void setHoldTime(u_int);
     u_int getHoldTime() const;
     void setMaxTries(u_int);		// maximum attempts to send
@@ -116,7 +116,7 @@ inline u_int SNPPJob::getMaxTries() const		{ return maxRetries; }
 inline u_int SNPPJob::getMaxDials() const		{ return maxDials; }
 inline const fxStr& SNPPJob::getPIN() const		{ return pin; }
 inline const fxStr& SNPPJob::getPasswd() const		{ return passwd; }
-inline fxBool SNPPJob::getQueued() const		{ return queued; }
+inline bool SNPPJob::getQueued() const		{ return queued; }
 inline const fxStr& SNPPJob::getSubject(void) const	{ return subject; }
 inline u_int SNPPJob::getServiceLevel() const		{ return serviceLevel; }
 #endif /* _SNPPJob_ */

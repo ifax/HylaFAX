@@ -149,7 +149,7 @@ Getty::addEnvVar(int& envc, char* env[], fxStr& var)
  * the child.
  */
 void
-Getty::run(int fd, fxBool parentIsInit)
+Getty::run(int fd, bool parentIsInit)
 {
     if (Sys::chdir(_PATH_DEV) < 0)
 	fatal("chdir: %m");
@@ -206,8 +206,8 @@ Getty::setupSession(int fd)
 	fatal("Unable to dup stdin to stderr: %m");
 }
 
-fxBool
-Getty::wait(int& status, fxBool block)
+bool
+Getty::wait(int& status, bool block)
 {
     return (Sys::waitpid(pid, status, block ? 0 : WNOHANG) == pid);
 }

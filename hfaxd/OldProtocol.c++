@@ -62,7 +62,7 @@ OldProtocolSuperServer::OldProtocolSuperServer(const char* p, int bl)
 {}
 OldProtocolSuperServer::~OldProtocolSuperServer() {}
 
-fxBool
+bool
 OldProtocolSuperServer::startServer(void)
 {
     int s = socket(AF_INET, SOCK_STREAM, 0);
@@ -82,14 +82,14 @@ OldProtocolSuperServer::startServer(void)
 	if (Socket::bind(s, &sin, sizeof (sin)) >= 0) {
 	    (void) listen(s, getBacklog());
 	    Dispatcher::instance().link(s, Dispatcher::ReadMask, this);
-	    return (TRUE);				// success
+	    return (true);				// success
 	}
 	Sys::close(s);
 	logError("HylaFAX %s: bind (port %u): %m",
 	    getKind(), ntohs(sin.sin_port));
     } else
 	logError("HylaFAX %s: socket: %m", getKind());
-    return (FALSE);
+    return (false);
 }
 HylaFAXServer* OldProtocolSuperServer::newChild(void)
     { return new OldProtocolServer; }
@@ -97,7 +97,7 @@ HylaFAXServer* OldProtocolSuperServer::newChild(void)
 OldProtocolServer::OldProtocolServer()
 {
     version = 0;
-    alreadyChecked = FALSE;
+    alreadyChecked = false;
     codetab = NULL;
 }
 OldProtocolServer::~OldProtocolServer() {}
@@ -114,7 +114,7 @@ OldProtocolServer::open(void)
 	    (const char*) remotehost, (const char*) remoteaddr);
 
     fxStr emsg;
-    if (isShutdown(TRUE)) {
+    if (isShutdown(true)) {
         logInfo("HylaFAX Old connection refused (server shut down) from %s [%s]",
 	    (const char*) remotehost, (const char*) remoteaddr);
 	dologout(-1);
@@ -149,23 +149,23 @@ OldProtocolServer::open(void)
  * look up the name and check that the peer's address
  * corresponds to the host name.
  */
-fxBool
+bool
 OldProtocolServer::checkHostIdentity(hostent*& hp)
 {
     if (!isLocalDomain(hp->h_name))		// not local, don't check
-	return (TRUE);
+	return (true);
     fxStr name(hp->h_name);			// must copy static value
     hp = Socket::gethostbyname(name);
     if (hp) {
 	for (const char** cpp = (const char**) hp->h_addr_list; *cpp; cpp++)
 	    if (memcmp(*cpp, &peer_addr.sin_addr, hp->h_length) == 0)
-		return (TRUE);
+		return (true);
 	sendError("Client address %s is not listed for host name %s.",
 	    (const char*) remoteaddr, hp->h_name);
     } else
 	sendError("No inverse address mapping for client host name %s.",
 	    (const char*) name);
-    return (FALSE);
+    return (false);
 }
 
 void
@@ -220,38 +220,38 @@ OldProtocolServer::setupNetwork(int fd)
 
 // NB: there is no support for the old style data transfer
 const OldProtocolServer::protoCmd OldProtocolServer::cmds[] = {
-{ "begin",		TRUE,	&OldProtocolServer::submitJob },
-{ "checkPerm",		TRUE,	&OldProtocolServer::ackPermission },
-{ "tiff",		TRUE,	&OldProtocolServer::getTIFFData },
-{ "postscript",		TRUE,	&OldProtocolServer::getPostScriptData },
-{ "zpostscript",	TRUE,	&OldProtocolServer::getZPostScriptData },
-{ "opaque",		TRUE,	&OldProtocolServer::getOpaqueData },
-{ "zopaque",		TRUE,	&OldProtocolServer::getZOpaqueData },
-{ "poll",		TRUE,	&OldProtocolServer::newPollID },
-{ "userID",		FALSE,	&OldProtocolServer::setUserID },
-{ "version",		FALSE,	&OldProtocolServer::setProtoVersion },
-{ "serverStatus",	FALSE,	&OldProtocolServer::sendServerStatus },
-{ "serverInfo",		FALSE,	&OldProtocolServer::sendServerInfo },
-{ "allStatus",		FALSE,	&OldProtocolServer::sendAllStatus },
-{ "userStatus",		FALSE,	&OldProtocolServer::sendUserStatus },
-{ "jobStatus",		FALSE,	&OldProtocolServer::sendJobStatus },
-{ "recvStatus",		FALSE,	&OldProtocolServer::sendRecvStatus },
-{ "remove",		TRUE,	&OldProtocolServer::removeJob },
-{ "removeGroup",	TRUE,	&OldProtocolServer::removeJobGroup },
-{ "kill",		TRUE,	&OldProtocolServer::killJob },
-{ "killGroup",		TRUE,	&OldProtocolServer::killJobGroup },
-{ "alterTTS",		TRUE,	&OldProtocolServer::alterJobTTS },
-{ "alterGroupTTS",	TRUE,	&OldProtocolServer::alterJobGroupTTS },
-{ "alterKillTime",	TRUE,	&OldProtocolServer::alterJobKillTime },
-{ "alterGroupKillTime",	TRUE,	&OldProtocolServer::alterJobGroupKillTime },
-{ "alterMaxDials",	TRUE,	&OldProtocolServer::alterJobMaxDials },
-{ "alterGroupMaxDials",	TRUE,	&OldProtocolServer::alterJobGroupMaxDials },
-{ "alterNotify",	TRUE,	&OldProtocolServer::alterJobNotification },
-{ "alterGroupNotify",	TRUE,	&OldProtocolServer::alterJobGroupNotification },
-{ "alterModem",		TRUE,	&OldProtocolServer::alterJobModem },
-{ "alterGroupModem",	TRUE,	&OldProtocolServer::alterJobGroupModem },
-{ "alterPriority",	TRUE,	&OldProtocolServer::alterJobPriority },
-{ "alterGroupPriority",	TRUE,	&OldProtocolServer::alterJobGroupPriority },
+{ "begin",		true,	&OldProtocolServer::submitJob },
+{ "checkPerm",		true,	&OldProtocolServer::ackPermission },
+{ "tiff",		true,	&OldProtocolServer::getTIFFData },
+{ "postscript",		true,	&OldProtocolServer::getPostScriptData },
+{ "zpostscript",	true,	&OldProtocolServer::getZPostScriptData },
+{ "opaque",		true,	&OldProtocolServer::getOpaqueData },
+{ "zopaque",		true,	&OldProtocolServer::getZOpaqueData },
+{ "poll",		true,	&OldProtocolServer::newPollID },
+{ "userID",		false,	&OldProtocolServer::setUserID },
+{ "version",		false,	&OldProtocolServer::setProtoVersion },
+{ "serverStatus",	false,	&OldProtocolServer::sendServerStatus },
+{ "serverInfo",		false,	&OldProtocolServer::sendServerInfo },
+{ "allStatus",		false,	&OldProtocolServer::sendAllStatus },
+{ "userStatus",		false,	&OldProtocolServer::sendUserStatus },
+{ "jobStatus",		false,	&OldProtocolServer::sendJobStatus },
+{ "recvStatus",		false,	&OldProtocolServer::sendRecvStatus },
+{ "remove",		true,	&OldProtocolServer::removeJob },
+{ "removeGroup",	true,	&OldProtocolServer::removeJobGroup },
+{ "kill",		true,	&OldProtocolServer::killJob },
+{ "killGroup",		true,	&OldProtocolServer::killJobGroup },
+{ "alterTTS",		true,	&OldProtocolServer::alterJobTTS },
+{ "alterGroupTTS",	true,	&OldProtocolServer::alterJobGroupTTS },
+{ "alterKillTime",	true,	&OldProtocolServer::alterJobKillTime },
+{ "alterGroupKillTime",	true,	&OldProtocolServer::alterJobGroupKillTime },
+{ "alterMaxDials",	true,	&OldProtocolServer::alterJobMaxDials },
+{ "alterGroupMaxDials",	true,	&OldProtocolServer::alterJobGroupMaxDials },
+{ "alterNotify",	true,	&OldProtocolServer::alterJobNotification },
+{ "alterGroupNotify",	true,	&OldProtocolServer::alterJobGroupNotification },
+{ "alterModem",		true,	&OldProtocolServer::alterJobModem },
+{ "alterGroupModem",	true,	&OldProtocolServer::alterJobGroupModem },
+{ "alterPriority",	true,	&OldProtocolServer::alterJobPriority },
+{ "alterGroupPriority",	true,	&OldProtocolServer::alterJobGroupPriority },
 };
 #define	NCMDS	(sizeof (cmds) / sizeof (cmds[0]))
 
@@ -302,7 +302,7 @@ OldProtocolServer::doProtocol(void)
 			);
 			dologout(-1);
 		    }
-		    alreadyChecked = TRUE;
+		    alreadyChecked = true;
 		}
 	    }
 	    (this->*cmds[i].cmdFunc)(tag);
@@ -463,7 +463,7 @@ OldProtocolServer::ackPermission(const char*)
  */
 #include <pwd.h>
 
-fxBool
+bool
 OldProtocolServer::_checkUser(const char* requestor, struct passwd* pwd)
 {
     char buf[1024];
@@ -494,11 +494,11 @@ OldProtocolServer::_checkUser(const char* requestor, struct passwd* pwd)
     return (strcmp(requestor, buf) == 0);
 }
 
-fxBool
+bool
 OldProtocolServer::isAdmin(const char* requestor)
 {
-    static fxBool checked = FALSE;
-    static fxBool isadmin = FALSE;
+    static bool checked = false;
+    static bool isadmin = false;
 
     if (!checked) {
 	struct passwd* pwd = getpwuid(getuid());
@@ -509,18 +509,18 @@ OldProtocolServer::isAdmin(const char* requestor)
 	}
 	if (!pwd) {
 	    logError("getpwuid failed for effective uid %d: %m", geteuid());
-	    isadmin = FALSE;
+	    isadmin = false;
 	}
 	isadmin = _checkUser(requestor, pwd);
 	if (!isadmin) {					/* not fax user */
 	    pwd = getpwnam("root");
 	    if (!pwd) {
 		logError("getpwnam failed for \"root\": %m");
-		isadmin = FALSE;
+		isadmin = false;
 	    } else
 		isadmin = _checkUser(requestor, pwd);	/* root user */
 	}
-	checked = TRUE;
+	checked = true;
     }
     return (isadmin);
 }
@@ -608,19 +608,19 @@ void OldProtocolServer::alterJob##param(const char* tag)		\
 void OldProtocolServer::alterJobGroup##param(const char* tag)		\
     { applyToJobGroup(tag, "alter", &OldProtocolServer::reallyAlterJob##param); }
 
-fxBool
+bool
 OldProtocolServer::alterSuspend(Job& job)
 {
     if (job.state == FaxRequest::state_active) {
 	sendClient("jobLocked", job.jobid);	// NB: maintain old semantics
-	return (FALSE);
+	return (false);
     }
     fxStr emsg;
     if (!sendQueuerACK(emsg, "X%s", (const char*) job.jobid)) {
 	sendError("Unable to suspend job: %s", (const char*) emsg);
-	return (FALSE);
+	return (false);
     }
-    return (TRUE);
+    return (true);
 }
 
 void
@@ -1302,7 +1302,7 @@ OldProtocolServer::sendJobStatus(Job& job)
 	sendClientJobLocked(job);
 }
 
-fxBool
+bool
 OldProtocolServer::modemMatch(const fxStr& a, const fxStr& b)
 {
     return (a == MODEM_ANY || b == MODEM_ANY || a == b);

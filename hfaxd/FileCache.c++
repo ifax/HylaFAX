@@ -85,8 +85,8 @@ FileCache::hash(const char* pathname)
     return (h % CACHESIZE);
 }
 
-fxBool
-FileCache::lookup(const char* pathname, struct stat& sb, fxBool addToCache)
+bool
+FileCache::lookup(const char* pathname, struct stat& sb, bool addToCache)
 {
     lookups++;
     u_int h = hash(pathname);
@@ -99,7 +99,7 @@ FileCache::lookup(const char* pathname, struct stat& sb, fxBool addToCache)
 	    fi->serial = master++;
 	    sb = fi->sb;
 	    hits++;
-	    return (TRUE);
+	    return (true);
 	}
 	if (fi->serial < oldest->serial)
 	    oldest = fi;
@@ -110,7 +110,7 @@ FileCache::lookup(const char* pathname, struct stat& sb, fxBool addToCache)
      * Pathname not found in the cache.
      */
     if (Sys::stat(pathname, sb) < 0)
-	return (FALSE);
+	return (false);
     if (addToCache && pathname[0] != '.') {
 	if (fi) {
 	    fi = oldest;
@@ -121,17 +121,17 @@ FileCache::lookup(const char* pathname, struct stat& sb, fxBool addToCache)
 	fi->serial = master++;
 	fi->sb = sb;
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Update the file mode for any in-cache entry.
  */
-fxBool
+bool
 FileCache::chmod(const char* pathname, mode_t mode)
 {
     if (Sys::chmod(pathname, mode) < 0)
-	return (FALSE);
+	return (false);
     lookups++;
     u_int h = hash(pathname);
     u_int maxprobes = 5;
@@ -146,13 +146,13 @@ FileCache::chmod(const char* pathname, mode_t mode)
 	h = (u_int)(h*h) % CACHESIZE;
 	fi = cache[h];
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Update the file ownership for any in-cache entry.
  */
-fxBool
+bool
 FileCache::chown(const char* pathname, uid_t uid, gid_t gid)
 {
     /*
@@ -167,7 +167,7 @@ FileCache::chown(const char* pathname, uid_t uid, gid_t gid)
      */
     uid_t ouid = geteuid();
     (void) seteuid(0);
-    fxBool ok = (Sys::chown(pathname, uid, gid) >= 0);
+    bool ok = (Sys::chown(pathname, uid, gid) >= 0);
     (void) seteuid(ouid);
     if (ok) {
 	lookups++;
@@ -192,8 +192,8 @@ FileCache::chown(const char* pathname, uid_t uid, gid_t gid)
 /*
  * Like lookup, but if found in the cache, re-do the stat.
  */
-fxBool
-FileCache::update(const char* pathname, struct stat& sb, fxBool addToCache)
+bool
+FileCache::update(const char* pathname, struct stat& sb, bool addToCache)
 {
     lookups++;
     u_int h = hash(pathname);
@@ -207,12 +207,12 @@ FileCache::update(const char* pathname, struct stat& sb, fxBool addToCache)
 		hits++;
 		fi->serial = master++;
 		fi->sb = sb;
-		return (TRUE);
+		return (true);
 	    } else {
 		flushed++;
 		cache[h] = NULL;
 		delete fi;
-		return (FALSE);
+		return (false);
 	    }
 	}
 	if (fi->serial < oldest->serial)
@@ -224,7 +224,7 @@ FileCache::update(const char* pathname, struct stat& sb, fxBool addToCache)
      * Pathname not found in the cache.
      */
     if (Sys::stat(pathname, sb) < 0)
-	return (FALSE);
+	return (false);
     if (addToCache && pathname[0] != '.') {
 	if (fi) {
 	    fi = oldest;
@@ -235,7 +235,7 @@ FileCache::update(const char* pathname, struct stat& sb, fxBool addToCache)
 	fi->serial = master++;
 	fi->sb = sb;
     }
-    return (TRUE);
+    return (true);
 }
 
 void

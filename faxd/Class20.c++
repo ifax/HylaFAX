@@ -75,7 +75,7 @@ Class20Modem::atResponse(char* buf, long ms)
 	if (strneq(buf, "+FHS:", 5)) {
 	    processHangup(buf+5);
 	    lastResponse = AT_FHNG;
-	    hadHangup = TRUE;
+	    hadHangup = true;
 	} else if (strneq(buf, "+FCO", 4))
 	    lastResponse = AT_FCON;
 	else if (strneq(buf, "+FPO", 4))
@@ -122,13 +122,13 @@ Class20Modem::abortDataTransfer()
 /*
  * Send a page of data using the ``stream interface''.
  */
-fxBool
+bool
 Class20Modem::sendPage(TIFF* tif, u_int pageChop)
 {
     protoTrace("SEND begin page");
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
-    fxBool rc = sendPageData(tif, pageChop);
+    bool rc = sendPageData(tif, pageChop);
     if (!rc)
 	abortDataTransfer();
     else
@@ -146,7 +146,7 @@ Class20Modem::sendPage(TIFF* tif, u_int pageChop)
  * instead synthesize codes, ignoring whether or not the
  * modem does retraining on the next page transfer.
  */
-fxBool
+bool
 Class20Modem::pageDone(u_int ppm, u_int& ppr)
 {
     static char ppmCodes[3] = { 0x2C, 0x3B, 0x2E };
@@ -161,14 +161,14 @@ Class20Modem::pageDone(u_int ppm, u_int& ppr)
 	    switch (atResponse(rbuf, conf.pageDoneTimeout)) {
 	    case AT_FHNG:
 		if (!isNormalHangup())
-		    return (FALSE);
+		    return (false);
 		/* fall thru... */
 	    case AT_OK:				// page data good
 		ppr = PPR_MCF;			// could be PPR_RTP/PPR_PIP
-		return (TRUE);
+		return (true);
 	    case AT_ERROR:			// page data bad
 		ppr = PPR_RTN;			// could be PPR_PIN
-		return (TRUE);
+		return (true);
 	    case AT_EMPTYLINE:
 	    case AT_TIMEOUT:
 	    case AT_NOCARRIER:
@@ -180,7 +180,7 @@ Class20Modem::pageDone(u_int ppm, u_int& ppr)
     }
 bad:
     processHangup("50");			// Unspecified Phase D error
-    return (FALSE);
+    return (false);
 }
 
 /*

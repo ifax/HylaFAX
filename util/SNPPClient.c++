@@ -154,7 +154,7 @@ void SNPPClient::setModem(const fxStr& modemarg){ modem = modemarg; }
 void SNPPClient::setModem(const char* modemarg)	{ modem = modemarg; }
 
 void
-SNPPClient::setVerbose(fxBool v)
+SNPPClient::setVerbose(bool v)
 {
     if (v)
 	state |= SS_VERBOSE;
@@ -165,7 +165,7 @@ SNPPClient::setVerbose(fxBool v)
 /*
  * Setup the sender's identity.
  */
-fxBool
+bool
 SNPPClient::setupSenderIdentity(fxStr& emsg)
 {
     setupUserIdentity(emsg);			// client identity
@@ -206,9 +206,9 @@ SNPPClient::setupSenderIdentity(fxStr& emsg)
     fxStr mbox;
     if (senderName == "" || !getNonBlankMailbox(mbox)) {
 	emsg = "Malformed (null) sender name or mail address";
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 void SNPPClient::setFromIdentity(const char* s)		{ from = s; }
 
@@ -230,20 +230,20 @@ SNPPClient::setBlankMailboxes(const fxStr& s)
  * Return the first non-null mailbox string
  * in the set of jobs.
  */
-fxBool
+bool
 SNPPClient::getNonBlankMailbox(fxStr& s)
 {
     for (u_int i = 0, n = jobs->length(); i < n; i++) {
 	SNPPJob& job = (*jobs)[i];
 	if (job.getMailbox() != "") {
 	    s = job.getMailbox();
-	    return (TRUE);
+	    return (true);
 	}
     }
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 SNPPClient::setupUserIdentity(fxStr& emsg)
 {
     struct passwd* pwd = NULL;
@@ -259,7 +259,7 @@ SNPPClient::setupUserIdentity(fxStr& emsg)
 	emsg = fxStr::format(
 	    "Can not locate your password entry (account name %s, uid %lu).",
 	    (name ? name : "<unspecified>"), (u_long) getuid());
-	return (FALSE);
+	return (false);
     }
     userName = pwd->pw_name;
     if (pwd->pw_gecos && pwd->pw_gecos[0] != '\0') {
@@ -283,9 +283,9 @@ SNPPClient::setupUserIdentity(fxStr& emsg)
     if (senderName.length() == 0) {
 	emsg = "Bad (null) user name; your password file entry"
 	    " probably has bogus GECOS field information.";
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
 void
@@ -368,7 +368,7 @@ SNPPClient::configTrace(const char* fmt ...)
     }
 }
 
-fxBool
+bool
 SNPPClient::setConfigItem(const char* tag, const char* value)
 {
     u_int ix;
@@ -401,11 +401,11 @@ SNPPClient::setConfigItem(const char* tag, const char* value)
     } else if (streq(tag, "mailaddr")) {
 	jproto.setMailbox(value);
     } else
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 
-fxBool
+bool
 SNPPClient::callServer(fxStr& emsg)
 {
     if (host.length() == 0) {		// if host not specified by -h
@@ -426,9 +426,9 @@ SNPPClient::callServer(fxStr& emsg)
 	 * Transport code is expected to call back through
 	 * setCtrlFds so fdIn should be properly setup...
 	 */
-	return (fdIn != NULL && getReply(FALSE) == COMPLETE);
+	return (fdIn != NULL && getReply(false) == COMPLETE);
     } else
-	return (FALSE);
+	return (false);
 }
 
 #if CONFIG_INETTRANSPORT
@@ -443,7 +443,7 @@ extern "C" {
 #include <netdb.h>
 }
 
-fxBool
+bool
 SNPPClient::callInetServer(fxStr& emsg)
 {
     fxStr proto(getProtoName());
@@ -458,7 +458,7 @@ SNPPClient::callInetServer(fxStr& emsg)
     struct hostent* hp = Socket::gethostbyname(getHost());
     if (!hp) {
 	emsg = getHost() | ": Unknown host";
-	return (FALSE);
+	return (false);
     }
     int protocol;
     const char* cproto = proto;			// XXX for busted include files
@@ -471,7 +471,7 @@ SNPPClient::callInetServer(fxStr& emsg)
     int fd = socket(hp->h_addrtype, SOCK_STREAM, protocol);
     if (fd < 0) {
 	emsg = "Can not create socket to connect to server.";
-	return (FALSE);
+	return (false);
     }
     struct sockaddr_in sin;
     memset(&sin, 0, sizeof (sin));
@@ -513,24 +513,24 @@ SNPPClient::callInetServer(fxStr& emsg)
 		    strerror(errno));
 #endif
 	    setCtrlFds(fd, fd);
-	    return (TRUE);
+	    return (true);
 	}
     }
     emsg = fxStr::format("Can not reach server at host \"%s\", port %u.",
 	(const char*) getHost(), ntohs(sin.sin_port));
     close(fd), fd = -1;
-    return (FALSE);
+    return (false);
 }
 #else
-fxBool
+bool
 SNPPServer::callInetServer(fxStr& emsg)
 {
     emsg = "Sorry, no TCP/IP communication support was configured.";
-    return (FALSE);
+    return (false);
 }
 #endif
 
-fxBool
+bool
 SNPPClient::hangupServer(void)
 {
     if (fdIn != NULL)
@@ -538,7 +538,7 @@ SNPPClient::hangupServer(void)
     if (fdOut != NULL)
 	fclose(fdOut), fdOut = NULL;
     initServerState();
-    return (TRUE);
+    return (true);
 }
 
 void
@@ -555,7 +555,7 @@ SNPPClient::setCtrlFds(int in, int out)
 /*
  * Do login procedure.
  */
-fxBool
+bool
 SNPPClient::login(const char* user, fxStr& emsg)
 {
     if (user == NULL) {
@@ -574,10 +574,10 @@ SNPPClient::login(const char* user, fxStr& emsg)
 	    state |= SS_HASSITE;
 	else
 	    state &= ~SS_HASSITE;
-	return (TRUE);
+	return (true);
     } else {
 	emsg = "Login failed: " | lastResponse;
-	return (FALSE);
+	return (false);
     }
 }
 
@@ -688,10 +688,10 @@ getReplyCode(const char* cp)
  * handled but not collected.
  */
 int
-SNPPClient::getReply(fxBool expecteof)
+SNPPClient::getReply(bool expecteof)
 {
     int firstCode = 0;
-    fxBool continuation = FALSE;
+    bool continuation = false;
     do {
 	lastResponse.resize(0);
 	int c;
@@ -735,9 +735,9 @@ SNPPClient::getReply(fxBool expecteof)
 	    if (lastResponse[3] == '-') {	// continuation line
 		if (firstCode == 0)		// first line of reponse
 		    firstCode = code;
-		continuation = TRUE;
+		continuation = true;
 	    } else if (code == firstCode)	// end of continued reply
-		continuation = FALSE;
+		continuation = false;
 	}
     } while (continuation || code == 0);
 
@@ -755,7 +755,7 @@ SNPPClient::getReply(fxBool expecteof)
  * case was).  The resulting string is checked to
  * make sure that it is not null.
  */
-fxBool
+bool
 SNPPClient::extract(u_int& pos, const char* pattern, fxStr& result)
 {
     fxStr pat(pattern);
@@ -768,13 +768,13 @@ SNPPClient::extract(u_int& pos, const char* pattern, fxStr& result)
 	l = lastResponse.find(pos, pat);
     }
     if (l == lastResponse.length())
-	return (FALSE);
+	return (false);
     l = lastResponse.skip(l+pat.length(), ' ');// skip white space
     result = lastResponse.extract(l, lastResponse.next(l, ' ')-l);
     if (result == "")
-	return (FALSE);
+	return (false);
     pos = l;					// update position
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -782,7 +782,7 @@ SNPPClient::extract(u_int& pos, const char* pattern, fxStr& result)
  * parsed from the reply (this is for HylaFAX,
  * RFC 1861 says nothing about this).
  */
-fxBool
+bool
 SNPPClient::newPage(const fxStr& pin, const fxStr& passwd, fxStr& jobid, fxStr& emsg)
 {
     int result;
@@ -810,12 +810,12 @@ SNPPClient::newPage(const fxStr& pin, const fxStr& passwd, fxStr& jobid, fxStr& 
 		jobid.resize(jobid.skip(0, "0123456789"));
 	    } else
 		jobid = "unknown";
-	    return (TRUE);
+	    return (true);
 	} else
 	    unexpectedResponse(emsg);
     } else
 	emsg = lastResponse;
-    return (FALSE);
+    return (false);
 }
 
 SNPPJob&
@@ -847,19 +847,19 @@ SNPPClient::removeJob(const SNPPJob& job)
 	jobs->remove(ix);
 }
 
-fxBool
+bool
 SNPPClient::prepareForJobSubmissions(fxStr&)
 {
     // XXX nothing to do right now
-    return (TRUE);
+    return (true);
 }
 
-fxBool
+bool
 SNPPClient::submitJobs(fxStr& emsg)
 {
     if (!isLoggedIn()) {
 	emsg = "Not logged in to server";
-	return (FALSE);
+	return (false);
     }
     /*
      * Construct jobs and submit them.
@@ -867,21 +867,21 @@ SNPPClient::submitJobs(fxStr& emsg)
     for (u_int i = 0, n = jobs->length(); i < n; i++) {
 	SNPPJob& job = (*jobs)[i];
 	if (!job.createJob(*this, emsg))
-	    return (FALSE);
+	    return (false);
 	notifyNewJob(job);			// notify client
     }
     if (msgFile != "") {
 	if (!sendData(msgFile, emsg))
-	    return (FALSE);
+	    return (false);
     } else if (msg) {
 	if (!sendMsg(*msg, emsg))
-	    return (FALSE);
+	    return (false);
     }
     if (command("SEND") != COMPLETE) {
 	emsg = lastResponse;
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
 /*
@@ -901,7 +901,7 @@ SNPPClient::notifyNewJob(const SNPPJob& job)
  * Send a block of raw data on the data
  * conenction, interpreting write errors.
  */
-fxBool
+bool
 SNPPClient::sendRawData(void* buf, int cc, fxStr& emsg)
 {
 #ifdef __linux__
@@ -915,20 +915,20 @@ SNPPClient::sendRawData(void* buf, int cc, fxStr& emsg)
 	    protocolBotch(emsg, errno == EPIPE ?
 		" (server closed connection)" : " (server write error: %s).",
 		strerror(errno));
-	    return (FALSE);
+	    return (false);
 	}
 #else
     if (write(fileno(fdOut), buf, cc) != cc) {
 	protocolBotch(emsg, errno == EPIPE ?
 	    " (server closed connection)" : " (server write error: %s).",
 	    strerror(errno));
-	return (FALSE);
+	return (false);
     }
 #endif
-    return (TRUE);
+    return (true);
 }
 
-fxBool
+bool
 SNPPClient::sendData(int fd, fxStr& emsg)
 {
     struct stat sb;
@@ -942,23 +942,23 @@ SNPPClient::sendData(int fd, fxStr& emsg)
 	    size_t n = fxmin(cc, sizeof (buf));
 	    if (read(fd, buf, n) != n) {
 		protocolBotch(emsg, " (data read: %s).", strerror(errno));
-		return (FALSE);
+		return (false);
 	    }
 	    if (!sendRawData(buf, n, emsg))
-		return (FALSE);
+		return (false);
 	    cc -= n;
 	}
 	if (command(".") == COMPLETE)
-	    return (TRUE);
+	    return (true);
     }
     emsg = getLastResponse();
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 SNPPClient::sendData(const fxStr& filename, fxStr& emsg)
 {
-    fxBool ok = FALSE;
+    bool ok = false;
     int fd = Sys::open(filename, O_RDONLY);
     if (fd >= 0) {
 	ok = sendData(fd, emsg);
@@ -969,37 +969,37 @@ SNPPClient::sendData(const fxStr& filename, fxStr& emsg)
     return (ok);
 }
 
-fxBool
+bool
 SNPPClient::sendMsg(const char* msg, fxStr& emsg)
 {
     if (command("MESS %s", msg) != COMPLETE) {
 	emsg = getLastResponse();
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
-fxBool
+bool
 SNPPClient::siteParm(const char* name, const fxStr& value)
 {
     if (!hasSiteCmd()) {
 	printWarning("no SITE %s support; ignoring set request.", name);
-	return (TRUE);
+	return (true);
     } else
 	return (command("SITE %s %s", name, (const char*) value) == COMPLETE);
 }
 
-fxBool
+bool
 SNPPClient::siteParm(const char* name, u_int value)
 {
     if (!hasSiteCmd()) {
 	printWarning("no SITE %s support; ignoring set request.", name);
-	return (TRUE);
+	return (true);
     } else
 	return (command("SITE %s %u", name, value) == COMPLETE);
 }
 
-fxBool
+bool
 SNPPClient::setHoldTime(u_int t)
 {
     time_t tv = t;
@@ -1012,7 +1012,7 @@ SNPPClient::setHoldTime(u_int t)
 	, tm->tm_min) == COMPLETE);
 }
 
-fxBool
+bool
 SNPPClient::setRetryTime(u_int t)
 {
     return siteParm("RETRYTIME", fxStr::format("%02d%02d", t/60, t%60));

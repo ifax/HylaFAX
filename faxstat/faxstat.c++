@@ -34,7 +34,7 @@ class faxStatApp : public FaxClient {
 private:
     fxStr	header;
 
-    fxBool listWithHeader(const fxStr& dir, fxStr& emsg);
+    bool listWithHeader(const fxStr& dir, fxStr& emsg);
 public:
     faxStatApp();
     ~faxStatApp();
@@ -44,11 +44,11 @@ public:
 faxStatApp::faxStatApp() {}
 faxStatApp::~faxStatApp() {}
 
-static fxBool
+static bool
 writeStdout(void*, const char* buf, int cc, fxStr&)
 {
     (void) Sys::write(STDOUT_FILENO, buf, cc);
-    return (TRUE);
+    return (true);
 }
 
 void
@@ -60,7 +60,7 @@ faxStatApp::run(int argc, char** argv)
 
     fxStrArray dirs;
     dirs.append(FAX_STATUSDIR);		// server status
-    fxBool checkInfo = FALSE;
+    bool checkInfo = false;
     int c;
     while ((c = getopt(argc, argv, "h:adgfilrsv")) != -1)
 	switch (c) {
@@ -80,7 +80,7 @@ faxStatApp::run(int argc, char** argv)
 	    setHost(optarg);
 	    break;
 	case 'i':			// display any.info file
-	    checkInfo = TRUE;
+	    checkInfo = true;
 	    break;
 	case 'l':			// use local timezone for dates & times
 	    setTimeZone(TZ_LOCAL);
@@ -92,7 +92,7 @@ faxStatApp::run(int argc, char** argv)
 	    dirs.append(FAX_SENDDIR);
 	    break;
 	case 'v':			// enable protocol tracing
-	    setVerbose(TRUE);
+	    setVerbose(true);
 	    break;
 	case '?':
 	    fxFatal("usage: faxstat [-h server-host] [-adfglrsv]");
@@ -122,7 +122,7 @@ faxStatApp::run(int argc, char** argv)
 	printError(emsg);
 }
 
-fxBool
+bool
 faxStatApp::listWithHeader(const fxStr& dir, fxStr& emsg)
 {
     if (!setMode(MODE_S))
@@ -139,11 +139,11 @@ faxStatApp::listWithHeader(const fxStr& dir, fxStr& emsg)
 	int cc = read(getDataFd(), buf, sizeof (buf));
 	if (cc == 0) {
 	    closeDataConn();
-	    return (getReply(FALSE) == COMPLETE);
+	    return (getReply(false) == COMPLETE);
 	}
 	if (cc < 0) {
 	    emsg = fxStr::format("Data Connection: %s", strerror(errno));
-	    (void) getReply(FALSE);
+	    (void) getReply(false);
 	    break;
 	}
 	if (byte_count == 0 && header.length() > 0)
@@ -153,7 +153,7 @@ faxStatApp::listWithHeader(const fxStr& dir, fxStr& emsg)
     }
 bad:
     closeDataConn();
-    return (FALSE);
+    return (false);
 }
 
 int

@@ -80,7 +80,7 @@ private:
     static const S_numbertag numbers[];
 
     void init(void);
-    fxBool callInetServer(fxStr& emsg);
+    bool callInetServer(fxStr& emsg);
 protected:
     SNPPClient();
     SNPPClient(const fxStr& hostarg);
@@ -104,9 +104,9 @@ protected:
     virtual void notifyNewJob(const SNPPJob& job);
 
     void initServerState(void);
-    fxBool extract(u_int& pos, const char* pattern, fxStr& result);
+    bool extract(u_int& pos, const char* pattern, fxStr& result);
 
-    virtual fxBool setupUserIdentity(fxStr& emsg);
+    virtual bool setupUserIdentity(fxStr& emsg);
     void setupHostModem(const char*);
     void setupHostModem(const fxStr&);
 
@@ -114,7 +114,7 @@ protected:
      * Miscellaneous stuff used by setupSenderIdentity.
      */
     void setBlankMailboxes(const fxStr&);
-    fxBool getNonBlankMailbox(fxStr&);
+    bool getNonBlankMailbox(fxStr&);
 
     /*
      * Configuration file support; derived classes may override
@@ -122,19 +122,19 @@ protected:
      */
     virtual void resetConfig(void);
     virtual void setupConfig(void);
-    virtual fxBool setConfigItem(const char* tag, const char* value);
+    virtual bool setConfigItem(const char* tag, const char* value);
     virtual void configError(const char* fmt ...);
     virtual void configTrace(const char* fmt ...);
 
-    fxBool sendRawData(void* buf, int cc, fxStr& emsg);
+    bool sendRawData(void* buf, int cc, fxStr& emsg);
     void unexpectedResponse(fxStr& emsg);
     void protocolBotch(fxStr& emsg, const char* fmt ...);
     virtual void lostServer(void);
 public:
     virtual ~SNPPClient();
 						// prepare jobs for submission
-    virtual fxBool prepareForJobSubmissions(fxStr& emsg);
-    virtual fxBool submitJobs(fxStr& emsg);	// submit documents & jobs
+    virtual bool prepareForJobSubmissions(fxStr& emsg);
+    virtual bool submitJobs(fxStr& emsg);	// submit documents & jobs
 
     /*
      * Sender identity controls.  There are two separate
@@ -144,7 +144,7 @@ public:
      * is used by proxy services such as email to pager gateways
      * and for folks that submit jobs for other people.
      */
-    fxBool setupSenderIdentity(fxStr& emsg);	// identity associated with job
+    bool setupSenderIdentity(fxStr& emsg);	// identity associated with job
     const fxStr& getSenderName() const;
     void setFromIdentity(const char*);		// identity associated with page
     const fxStr& getFromIdentity() const;
@@ -159,19 +159,19 @@ public:
     void setModem(const char*);
     const fxStr& getModem(void) const;
 
-    virtual fxBool callServer(fxStr& emsg);
-    virtual fxBool hangupServer(void);
-    fxBool isConnected(void) const;
-    fxBool login(const char* user, fxStr& emsg);
+    virtual bool callServer(fxStr& emsg);
+    virtual bool hangupServer(void);
+    bool isConnected(void) const;
+    bool login(const char* user, fxStr& emsg);
     virtual const char* getPasswd(const char* prompt);
-    fxBool isLoggedIn(void) const;
+    bool isLoggedIn(void) const;
     void setCtrlFds(int in, int out);
     FILE* getCtrlFd(void) const;
 
-    void setVerbose(fxBool);
-    fxBool getVerbose(void) const;
+    void setVerbose(bool);
+    bool getVerbose(void) const;
 
-    fxBool hasSiteCmd(void) const;		// server has SITE cmd support
+    bool hasSiteCmd(void) const;		// server has SITE cmd support
 
     int getPort(void) const;
     const fxStr& getProtoName(void) const;
@@ -181,7 +181,7 @@ public:
     // output
     int command(const char* fmt ...);
     int vcommand(const char* fmt, va_list ap);
-    int getReply(fxBool expectEOF);
+    int getReply(bool expectEOF);
     const fxStr& getLastResponse(void) const;
     int getLastCode(void) const;
 
@@ -200,15 +200,15 @@ public:
 
     SNPPJob& getProtoJob();
 
-    fxBool setHoldTime(u_int t);
-    fxBool setRetryTime(u_int t);
-    fxBool siteParm(const char* name, const fxStr& v);
-    fxBool siteParm(const char* name, u_int v);
-    fxBool newPage(const fxStr& pin, const fxStr& passwd,
+    bool setHoldTime(u_int t);
+    bool setRetryTime(u_int t);
+    bool siteParm(const char* name, const fxStr& v);
+    bool siteParm(const char* name, u_int v);
+    bool newPage(const fxStr& pin, const fxStr& passwd,
 	fxStr& jobid, fxStr& emsg);
-    fxBool sendData(int fd, fxStr& emsg);
-    fxBool sendData(const fxStr& filename, fxStr& emsg);
-    fxBool sendMsg(const char* msg, fxStr& emsg);
+    bool sendData(int fd, fxStr& emsg);
+    bool sendData(const fxStr& filename, fxStr& emsg);
+    bool sendMsg(const char* msg, fxStr& emsg);
 
     void printError(const char* fmt ...);
     void printWarning(const char* fmt ...);
@@ -220,17 +220,17 @@ inline const fxStr& SNPPClient::getUserName(void) const	{ return userName; }
 inline const fxStr& SNPPClient::getHost(void) const	{ return host; }
 inline const fxStr& SNPPClient::getModem(void) const	{ return modem; }
 inline const fxStr& SNPPClient::getProtoName() const	{ return proto; }
-inline fxBool SNPPClient::getVerbose(void) const
+inline bool SNPPClient::getVerbose(void) const
     { return (state&SS_VERBOSE) != 0; }
 inline int SNPPClient::getPort(void) const		{ return port; }
 inline FILE* SNPPClient::getCtrlFd(void) const		{ return fdOut; }
 inline const fxStr& SNPPClient::getLastResponse(void) const
     { return lastResponse; }
 inline int SNPPClient::getLastCode(void) const		{ return code; }
-inline fxBool SNPPClient::isLoggedIn(void) const
+inline bool SNPPClient::isLoggedIn(void) const
     { return (state&SS_LOGGEDIN) != 0; }
-inline fxBool SNPPClient::isConnected(void) const	{ return fdIn != NULL; }
-inline fxBool SNPPClient::hasSiteCmd(void) const
+inline bool SNPPClient::isConnected(void) const	{ return fdIn != NULL; }
+inline bool SNPPClient::hasSiteCmd(void) const
     { return (state&SS_HASSITE) != 0 ; }
 inline SNPPJob& SNPPClient::getProtoJob()		{ return jproto; }
 inline const fxStr* SNPPClient::getPagerMsg() const	{ return msg; }

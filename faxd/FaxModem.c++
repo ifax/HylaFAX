@@ -57,7 +57,7 @@ u_int FaxModem::getTagLineSlop() const		{ return tagLineSlop; }
 /*
  * Do setup work prior to placing the call.
  */
-fxBool
+bool
 FaxModem::sendSetup(FaxRequest& req, const Class2Params&, fxStr&)
 {
     minsp = fxmax((u_int) req.minsp, conf.minSpeed);
@@ -67,7 +67,7 @@ FaxModem::sendSetup(FaxRequest& req, const Class2Params&, fxStr&)
     else
 	setupTagLine(req, req.tagline);
     curreq = &req;
-    return (TRUE);
+    return (true);
 }
 /*
  * Do work at the beginning of a send operation;
@@ -83,18 +83,18 @@ FaxModem::sendBegin()
 void FaxModem::sendSetupPhaseB(const fxStr&, const fxStr&){}
 void FaxModem::sendEnd()	{}
 
-fxBool
+bool
 FaxModem::recvBegin(fxStr&)
 {
     optFrames = 0;
-    return (TRUE);
+    return (true);
 }
 
-fxBool
+bool
 FaxModem::pollBegin(const fxStr&, const fxStr&, const fxStr&, fxStr&)
 {
     optFrames = 0;
-    return (TRUE);
+    return (true);
 }
 
 static void
@@ -120,16 +120,16 @@ FaxModem::recvCSI(const fxStr& s)
     protoTrace("REMOTE CSI \"%s\"", (const char*) tsi);
     optFrames |= 0x1;
 }
-fxBool
+bool
 FaxModem::getRecvTSI(fxStr& s)
 {
     if (optFrames & 0x1) {
 	s = tsi;
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
-fxBool FaxModem::getSendCSI(fxStr& s)	{ return getRecvTSI(s); }
+bool FaxModem::getSendCSI(fxStr& s)	{ return getRecvTSI(s); }
 
 void
 FaxModem::recvPWD(const fxStr& s)
@@ -138,14 +138,14 @@ FaxModem::recvPWD(const fxStr& s)
     protoTrace("REMOTE PWD \"%s\"", (const char*) pwd);
     optFrames |= 0x2;
 }
-fxBool
+bool
 FaxModem::getRecvPWD(fxStr& s)
 {
     if (optFrames & 0x2) {
 	s = pwd;
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 void
 FaxModem::recvSUB(const fxStr& s)
@@ -154,14 +154,14 @@ FaxModem::recvSUB(const fxStr& s)
     protoTrace("REMOTE SUB \"%s\"", (const char*) sub);
     optFrames |= 0x4;
 }
-fxBool
+bool
 FaxModem::getRecvSUB(fxStr& s)
 {
     if (optFrames & 0x4) {
 	s = sub;
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 void
 FaxModem::recvNSF(const fxStr& s)
@@ -169,14 +169,14 @@ FaxModem::recvNSF(const fxStr& s)
     nsf = s;
     protoTrace("REMOTE NSF \"%s\"", (const char*) nsf);
 }
-fxBool
+bool
 FaxModem::getSendNSF(fxStr& s)
 {
     if (optFrames & 0x8) {
 	s = nsf;
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 void
@@ -237,22 +237,22 @@ FaxModem::decodePageChop(const fxStr& pph, const Class2Params& params)
  * the next page.  See FaxServer::sendPrepareFax for the
  * construction of this string.
  */ 
-fxBool
+bool
 FaxModem::decodePPM(const fxStr& pph, u_int& ppm, fxStr& emsg)
 {
     const char* what;
     if (pph.length() >= 3 && (pph[2] != 'Z' || pph.length() >= 2+5+1)) {
 	switch (pph[pph[2] == 'Z' ? 2+5 : 2+0]) {
-	case 'P': ppm = PPM_EOP; return (TRUE);
-	case 'M': ppm = PPM_EOM; return (TRUE);
-	case 'S': ppm = PPM_MPS; return (TRUE);
+	case 'P': ppm = PPM_EOP; return (true);
+	case 'M': ppm = PPM_EOM; return (true);
+	case 'S': ppm = PPM_MPS; return (true);
 	}
 	what = "unknown";
     } else
 	what = "bad";
     emsg = fxStr::format( "Internal botch; %s post-page handling string \"%s\"",
 	what, (const char*) pph);
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -371,7 +371,7 @@ FaxModem::getBestECM() const
 /*
  * Return whether or not the modem supports 2DMR.
  */
-fxBool
+bool
 FaxModem::supports2D() const
 {
     return (modemParams.df & BIT(DF_2DMR)) != 0;
@@ -380,26 +380,26 @@ FaxModem::supports2D() const
 /*
  * Return whether or not received EOLs are byte aligned.
  */
-fxBool
+bool
 FaxModem::supportsEOLPadding() const
 {
-    return FALSE;
+    return false;
 }
 
 /*
  * Return whether or not the modem is capable of polling.
  */
-fxBool
+bool
 FaxModem::supportsPolling() const
 {
-    return FALSE;
+    return false;
 }
 
 /*
  * Return whether or not the modem supports
  * the optional Error Correction Mode (ECM).
  */
-fxBool
+bool
 FaxModem::supportsECM() const
 {
     return (modemParams.ec &~ BIT(EC_DISABLE)) != 0;
@@ -412,7 +412,7 @@ FaxModem::supportsECM() const
  * problems and general sloppiness on the part of
  * applications writing TIFF files.
  */
-fxBool
+bool
 FaxModem::supportsVRes(float res) const
 {
     if (3.0 <= res && res < 4.75)
@@ -420,14 +420,14 @@ FaxModem::supportsVRes(float res) const
     else if (5.9 <= res && res < 9.8)
 	return (modemParams.vr & BIT(VR_FINE)) != 0;
     else
-	return FALSE;
+	return false;
 }
 
 /*
  * Return whether or not the modem supports the
  * specified page width.
  */
-fxBool
+bool
 FaxModem::supportsPageWidth(u_int w) const
 {
     switch (w) {
@@ -437,7 +437,7 @@ FaxModem::supportsPageWidth(u_int w) const
     case 1216:	return (modemParams.wd & BIT(WD_1216)) != 0;
     case 864:	return (modemParams.wd & BIT(WD_864)) != 0;
     }
-    return FALSE;
+    return false;
 }
 
 /*
@@ -445,7 +445,7 @@ FaxModem::supportsPageWidth(u_int w) const
  * specified page length.  As above for vertical
  * resolution we're lenient in what we accept.
  */
-fxBool
+bool
 FaxModem::supportsPageLength(u_int l) const
 {
     // XXX probably need to be more forgiving with values
@@ -564,9 +564,9 @@ FaxModem::tracePPR(const char* dir, u_int ppr)
 /*
  * Miscellaneous server interfaces hooks.
  */
-fxBool FaxModem::isFaxModem() const		{ return TRUE; }
+bool FaxModem::isFaxModem() const		{ return true; }
 
-fxBool FaxModem::getHDLCTracing()
+bool FaxModem::getHDLCTracing()
     { return (server.getSessionTracing() & FAXTRACE_HDLC) != 0; }
 
 FaxSendStatus

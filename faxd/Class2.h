@@ -61,36 +61,36 @@ protected:
     u_int	serviceType;		// modem service required
     u_int	modemCQ;		// copy quality capabilities mask
 
-    fxBool	xmitWaitForXON;		// if true, wait for XON when sending
-    fxBool	hostDidCQ;		// if true, copy quality done on host
-    fxBool	hasPolling;		// if true, modem does polled recv
+    bool	xmitWaitForXON;		// if true, wait for XON when sending
+    bool	hostDidCQ;		// if true, copy quality done on host
+    bool	hasPolling;		// if true, modem does polled recv
     char	recvDataTrigger;	// char to send to start recv'ing data
     char	hangupCode[4];		// hangup reason (from modem)
-    fxBool	hadHangup;		// true if +FHNG:/+FHS: received
+    bool	hadHangup;		// true if +FHNG:/+FHS: received
     const u_char* rtcRev;		// bit reversal table for RTC
     fxStr	lid;			// prepared local identifier string
 
 // modem setup stuff
     void setupDefault(fxStr&, const fxStr&, const char*);
-    virtual fxBool setupModem();
-    virtual fxBool setupModel(fxStr& model);
-    virtual fxBool setupRevision(fxStr& rev);
-    virtual fxBool setupDCC();
-    virtual fxBool setupClass2Parameters();
-    virtual fxBool setupFlowControl(FlowControl fc);
+    virtual bool setupModem();
+    virtual bool setupModel(fxStr& model);
+    virtual bool setupRevision(fxStr& rev);
+    virtual bool setupDCC();
+    virtual bool setupClass2Parameters();
+    virtual bool setupFlowControl(FlowControl fc);
 // transmission support
-    fxBool	dataTransfer();
-    fxBool	sendRTC(fxBool is2D);
-    fxBool	sendPageData(TIFF* tif, u_int pageChop);
+    bool	dataTransfer();
+    bool	sendRTC(bool is2D);
+    bool	sendPageData(TIFF* tif, u_int pageChop);
 
-    virtual fxBool sendPage(TIFF* tif, u_int pageChop) = 0;
-    virtual fxBool pageDone(u_int ppm, u_int& ppr) = 0;
+    virtual bool sendPage(TIFF* tif, u_int pageChop) = 0;
+    virtual bool pageDone(u_int ppm, u_int& ppr) = 0;
 // reception support
     const AnswerMsg* findAnswer(const char*);
-    fxBool	recvDCS(const char*);
-    fxBool	recvPageData(TIFF*, fxStr& emsg);
-    fxBool	recvPPM(TIFF*, int& ppr);
-    fxBool	parseFPTS(TIFF*, const char* cp, int& ppr);
+    bool	recvDCS(const char*);
+    bool	recvPageData(TIFF*, fxStr& emsg);
+    bool	recvPPM(TIFF*, int& ppr);
+    bool	parseFPTS(TIFF*, const char* cp, int& ppr);
     void	abortPageRecv();
 // miscellaneous
     enum {			// Class 2-specific AT responses
@@ -111,24 +111,24 @@ protected:
 	AT_FPW		= 114	// password status
     };
     virtual ATResponse atResponse(char* buf, long ms = 30*1000) = 0;
-    fxBool	waitFor(ATResponse wanted, long ms = 30*1000);
+    bool	waitFor(ATResponse wanted, long ms = 30*1000);
     fxStr	stripQuotes(const char*);
 // hangup processing
     void	processHangup(const char*);
-    fxBool	isNormalHangup();
+    bool	isNormalHangup();
     const char*	hangupCause(const char* code);
     void	tracePPR(const char* dir, u_int ppr);
     void	tracePPM(const char* dir, u_int ppm);
 // class 2 command support routines
-    fxBool	class2Cmd(const fxStr& cmd, int a0,
+    bool	class2Cmd(const fxStr& cmd, int a0,
 		    ATResponse = AT_OK, long ms = 30*1000);
-    fxBool	class2Cmd(const fxStr& cmd, const fxStr& a0,
+    bool	class2Cmd(const fxStr& cmd, const fxStr& a0,
 		    ATResponse = AT_OK, long ms = 30*1000);
-    fxBool	class2Cmd(const fxStr& cmd, const Class2Params&,
+    bool	class2Cmd(const fxStr& cmd, const Class2Params&,
 		    ATResponse =AT_OK, long ms = 30*1000);
 // parsing routines for capability&parameter strings
-    fxBool	parseClass2Capabilities(const char* cap, Class2Params&);
-    fxBool	parseRange(const char*, Class2Params&);
+    bool	parseClass2Capabilities(const char* cap, Class2Params&);
+    bool	parseRange(const char*, Class2Params&);
     const char* skipStatus(const char*);
 
     Class2Modem(FaxServer&, const ModemConfig&);
@@ -136,29 +136,29 @@ public:
     virtual ~Class2Modem();
 
 // send support
-    fxBool	sendSetup(FaxRequest&, const Class2Params&, fxStr& emsg);
+    bool	sendSetup(FaxRequest&, const Class2Params&, fxStr& emsg);
     CallStatus	dialResponse(fxStr& emsg);
-    FaxSendStatus getPrologue(Class2Params&, fxBool&, fxStr&);
+    FaxSendStatus getPrologue(Class2Params&, bool&, fxStr&);
     FaxSendStatus sendPhaseB(TIFF* tif, Class2Params&, FaxMachineInfo&,
 		    fxStr& pph, fxStr& emsg);
     void	sendAbort();
 
 // receive support
-    fxBool	setupReceive();
-    fxBool	recvBegin(fxStr& emsg);
-    fxBool	recvPage(TIFF*, int& ppm, fxStr& emsg);
-    fxBool	recvEnd(fxStr& emsg);
+    bool	setupReceive();
+    bool	recvBegin(fxStr& emsg);
+    bool	recvPage(TIFF*, int& ppm, fxStr& emsg);
+    bool	recvEnd(fxStr& emsg);
     void	recvAbort();
 
 // polling support
-    fxBool	requestToPoll(fxStr& emsg);
-    fxBool	pollBegin(const fxStr& cig, const fxStr& sep, const fxStr& pwd,
+    bool	requestToPoll(fxStr& emsg);
+    bool	pollBegin(const fxStr& cig, const fxStr& sep, const fxStr& pwd,
 		    fxStr& emsg);
 
 // miscellaneous
-    fxBool	faxService();			// switch to fax mode
-    fxBool	reset(long ms);			// reset modem
+    bool	faxService();			// switch to fax mode
+    bool	reset(long ms);			// reset modem
     void	setLID(const fxStr& number);	// set local id string
-    fxBool	supportsPolling() const;	// modem capability
+    bool	supportsPolling() const;	// modem capability
 };
 #endif /* _CLASS2_ */

@@ -54,8 +54,8 @@ private:
     DialStringRules* dialRules;		// dial string conversion database
     FileInfoArray* files;		// files to send (possibly converted)
     PollRequestArray* polls;		// polling requests
-    fxBool	verbose;		// enable debugging information
-    fxBool	setup;			// if true, then ready to send
+    bool	verbose;		// enable debugging information
+    bool	setup;			// if true, then ready to send
     fxStr	tmpFile;		// stuff to cleanup on abort
     fxStr	from;			// command line from information
     fxStr	senderName;		// sender's full name
@@ -87,7 +87,7 @@ protected:
      * Derived classes can override makeCoverPage to supply an
      * application-specific cover page generation scheme.
      */
-    virtual fxBool makeCoverPage(const SendFaxJob&, fxStr& file, fxStr& emsg);
+    virtual bool makeCoverPage(const SendFaxJob&, fxStr& file, fxStr& emsg);
     /*
      * These methods are used to count/estimate the number
      * of pages in a document that is to be transmitted.
@@ -105,27 +105,27 @@ protected:
      */
     virtual void setupConfig();
     virtual void resetConfig();
-    virtual fxBool setConfigItem(const char* tag, const char* value);
+    virtual bool setConfigItem(const char* tag, const char* value);
 
     /*
      * File typerule support.
      */
     const TypeRule* fileType(const char* filename, fxStr& emsg);
-    fxBool prepareFile(FileInfo& info, fxStr& emsg);
+    bool prepareFile(FileInfo& info, fxStr& emsg);
 
     /*
      * Miscellaneous stuff used by setupSenderIdentity.
      */
     void setBlankMailboxes(const fxStr&);
-    fxBool getNonBlankMailbox(fxStr&);
+    bool getNonBlankMailbox(fxStr&);
 public:
     virtual ~SendFaxClient();
 
 						// prepare jobs for submission
-    virtual fxBool prepareForJobSubmissions(fxStr& emsg);
+    virtual bool prepareForJobSubmissions(fxStr& emsg);
     void purgeFileConversions(void);		// purge any converted docs
-    virtual fxBool submitJobs(fxStr& emsg);	// submit documents & jobs
-    virtual fxBool sendDocuments(fxStr& emsg);	// send prepared documents
+    virtual bool submitJobs(fxStr& emsg);	// submit documents & jobs
+    virtual bool sendDocuments(fxStr& emsg);	// send prepared documents
 
     /*
      * Job manipulation interfaces.
@@ -164,18 +164,18 @@ public:
      * and for folks people that submit jobs for other people.
      */
 						// identity associated with job
-    fxBool setupSenderIdentity(const fxStr&, fxStr& emsg);
+    bool setupSenderIdentity(const fxStr&, fxStr& emsg);
     const fxStr& getSenderName() const;
     void setFromIdentity(const char*);		// identity associated with fax
     const fxStr& getFromIdentity() const;
 
-    fxBool getVerbose() const;			// trace operation
-    void setVerbose(fxBool);
+    bool getVerbose() const;			// trace operation
+    void setVerbose(bool);
 };
 
 inline SendFaxJob& SendFaxClient::getProtoJob()		   { return proto; }
 inline const fxStr& SendFaxClient::getFromIdentity() const { return from; }
 inline const fxStr& SendFaxClient::getSenderName() const   { return senderName;}
-inline void SendFaxClient::setVerbose(fxBool b)		   { verbose = b; }
-inline fxBool SendFaxClient::getVerbose() const		   { return verbose; }
+inline void SendFaxClient::setVerbose(bool b)		   { verbose = b; }
+inline bool SendFaxClient::getVerbose() const		   { return verbose; }
 #endif /* _SendFaxClient_ */

@@ -167,7 +167,7 @@ void FaxClient::setModem(const fxStr& modemarg)	{ modem = modemarg; }
 void FaxClient::setModem(const char* modemarg)	{ modem = modemarg; }
 
 void
-FaxClient::setVerbose(fxBool v)
+FaxClient::setVerbose(bool v)
 {
     if (v)
 	state |= FS_VERBOSE;
@@ -175,7 +175,7 @@ FaxClient::setVerbose(fxBool v)
 	state &= ~FS_VERBOSE;
 }
 
-fxBool
+bool
 FaxClient::setupUserIdentity(fxStr& emsg)
 {
     struct passwd* pwd = NULL;
@@ -191,7 +191,7 @@ FaxClient::setupUserIdentity(fxStr& emsg)
 	emsg = fxStr::format(
 	    "Can not locate your password entry (account name %s, uid %lu).",
 	    (name ? name : "<unspecified>"), (u_long) getuid());
-	return (FALSE);
+	return (false);
     }
     userName = pwd->pw_name;
     if (pwd->pw_gecos && pwd->pw_gecos[0] != '\0') {
@@ -215,9 +215,9 @@ FaxClient::setupUserIdentity(fxStr& emsg)
     if (senderName.length() == 0) {
 	emsg = "Bad (null) user name; your password file entry"
 	    " probably has bogus GECOS field information.";
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
 /*
@@ -271,7 +271,7 @@ FaxClient::configTrace(const char* fmt ...)
     }
 }
 
-fxBool
+bool
 FaxClient::setConfigItem(const char* tag, const char* value)
 {
     u_int ix;
@@ -295,11 +295,11 @@ FaxClient::setConfigItem(const char* tag, const char* value)
     } else if (streq(tag, "filefmt")) {
 	setFileStatusFormat(value);
     } else
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 
-fxBool
+bool
 FaxClient::callServer(fxStr& emsg)
 {
     if (host.length() == 0) {		// if host not specified by -h
@@ -320,12 +320,12 @@ FaxClient::callServer(fxStr& emsg)
 	 * Transport code is expected to call back through
 	 * setCtrlFds so fdIn should be properly setup...
 	 */
-	return (fdIn != NULL && getReply(FALSE) == COMPLETE);
+	return (fdIn != NULL && getReply(false) == COMPLETE);
     } else
-	return (FALSE);
+	return (false);
 }
 
-fxBool
+bool
 FaxClient::hangupServer(void)
 {
     if (fdIn != NULL) {
@@ -342,7 +342,7 @@ FaxClient::hangupServer(void)
      */
     delete transport, transport = NULL;
     initServerState();
-    return (TRUE);
+    return (true);
 }
 
 void
@@ -367,7 +367,7 @@ FaxClient::setDataFd(int fd)
 /*
  * Do login procedure.
  */
-fxBool
+bool
 FaxClient::login(const char* user, fxStr& emsg)
 {
     if (user == NULL) {
@@ -390,10 +390,10 @@ FaxClient::login(const char* user, fxStr& emsg)
 	    (void) setTimeZone(tz);
 	    state &= ~FS_TZPEND;
 	}
-	return (TRUE);
+	return (true);
     } else {
 	emsg = "Login failed: " | lastResponse;
-	return (FALSE);
+	return (false);
     }
 }
 
@@ -409,58 +409,58 @@ FaxClient::getPasswd(const char* prompt)
 /*
  * Do admin login procedure.
  */
-fxBool
+bool
 FaxClient::admin(const char* pass, fxStr& emsg)
 {
     if (command("ADMIN %s", pass ? pass : getpass("Password:")) != COMPLETE) {
 	emsg = "Admin failed: " | lastResponse;
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
-fxBool
+bool
 FaxClient::setCommon(const FaxParam& parm, u_int v)
 {
     if (v != this->*parm.pv) {
 	if (0 < v && v < parm.NparmNames) {
 	    if (command("%s %s", parm.cmd, parm.parmNames[v]) != COMPLETE) {
 		printError("%s", (const char*) lastResponse);
-		return (FALSE);
+		return (false);
 	    }
 	} else {
 	    printError("Bad %s parameter value %u.", parm.cmd, v);
-	    return (FALSE);
+	    return (false);
 	}
 	this->*parm.pv = v;
     }
-    return (TRUE);
+    return (true);
 }
 
 static const char* typeNames[] = { "", "A", "E", "I", "L" };
 const FaxClient::FaxParam FaxClient::typeParam =
     { "TYPE", typeNames, N(typeNames), &FaxClient::type };
-fxBool FaxClient::setType(u_int v)	{ return setCommon(typeParam, v); }
+bool FaxClient::setType(u_int v)	{ return setCommon(typeParam, v); }
 
 static const char* modeNames[] = { "", "S", "B", "C", "Z" };
 const FaxClient::FaxParam FaxClient::modeParam =
     { "MODE", modeNames, N(modeNames), &FaxClient::mode };
-fxBool FaxClient::setMode(u_int v)	{ return setCommon(modeParam, v); }
+bool FaxClient::setMode(u_int v)	{ return setCommon(modeParam, v); }
 
 static const char* struNames[] = { "", "F", "R", "P", "T" };
 const FaxClient::FaxParam FaxClient::struParam =
     { "STRU", struNames, N(struNames), &FaxClient::stru };
-fxBool FaxClient::setStruct(u_int v)	{ return setCommon(struParam, v); }
+bool FaxClient::setStruct(u_int v)	{ return setCommon(struParam, v); }
 
 static const char* formNames[] = { "", "PS", "PS2", "TIFF", "PCL" };
 const FaxClient::FaxParam FaxClient::formParam =
     { "FORM", formNames, N(formNames), &FaxClient::format };
-fxBool FaxClient::setFormat(u_int v)	{ return setCommon(formParam, v); }
+bool FaxClient::setFormat(u_int v)	{ return setCommon(formParam, v); }
 
 static const char* tzoneNames[] = { "", "GMT", "LOCAL" };
 const FaxClient::FaxParam FaxClient::tzoneParam =
     { "TZONE", tzoneNames, N(tzoneNames), &FaxClient::tzone };
-fxBool
+bool
 FaxClient::setTimeZone(u_int v)
 {
     if (!isLoggedIn()) {		// set and mark pending accordingly
@@ -472,9 +472,9 @@ FaxClient::setTimeZone(u_int v)
 		state |= FS_TZPEND;
 	} else {
 	    printError("Bad time zone parameter value %u.", v);
-	    return (FALSE);
+	    return (false);
 	}
-	return (TRUE);
+	return (true);
     } else				// pass directly to server
 	return setCommon(tzoneParam, v);
 }
@@ -502,7 +502,7 @@ FaxClient::setTimeZone(u_int v)
  * is provided for this use.
  */
 
-fxBool
+bool
 FaxClient::initDataConn(fxStr& emsg)
 {
     closeDataConn();
@@ -510,23 +510,23 @@ FaxClient::initDataConn(fxStr& emsg)
 	if (!transport->initDataConn(emsg)) {
 	    if (emsg == "")
 		emsg = "Unable to initialize data connection to server";
-	    return (FALSE);
+	    return (false);
 	}
     }
-    return (TRUE);
+    return (true);
 }
 
-fxBool
+bool
 FaxClient::openDataConn(fxStr& emsg)
 {
     if (transport) {
 	if (!transport->openDataConn(emsg)) {
 	    if (emsg == "")
 		emsg = "Unable to open data connection to server";
-	    return (FALSE);
+	    return (false);
 	}
     }
-    return (TRUE);
+    return (true);
 }
 
 void
@@ -538,7 +538,7 @@ FaxClient::closeDataConn(void)
     }
 }
 
-fxBool
+bool
 FaxClient::abortDataConn(fxStr& emsg)
 {
     if (fdData >= 0 && transport) {
@@ -546,7 +546,7 @@ FaxClient::abortDataConn(fxStr& emsg)
 	if (!transport->abortCmd(emsg)) {
 	    if (emsg == "")
 		emsg = "Unable to abort data connection to server";
-	    return (FALSE);
+	    return (false);
 	}
 #ifdef notdef
 	/*
@@ -563,13 +563,13 @@ FaxClient::abortDataConn(fxStr& emsg)
 	 * existing operation is aborted followed by an ack
 	 * of the ABOR command itself.
 	 */
-	if (getReply(FALSE) != TRANSIENT ||	// 4xx operation aborted
-	    getReply(FALSE) != COMPLETE) {	// 2xx abort successful
+	if (getReply(false) != TRANSIENT ||	// 4xx operation aborted
+	    getReply(false) != COMPLETE) {	// 2xx abort successful
 	    unexpectedResponse(emsg);
-	    return (FALSE);
+	    return (false);
 	}
     }
-    return (TRUE);
+    return (true);
 }
 
 void
@@ -672,10 +672,10 @@ getReplyCode(const char* cp)
  * handled but not collected.
  */
 int
-FaxClient::getReply(fxBool expecteof)
+FaxClient::getReply(bool expecteof)
 {
     int firstCode = 0;
-    fxBool continuation = FALSE;
+    bool continuation = false;
     do {
 	lastResponse.resize(0);
 	int c;
@@ -719,9 +719,9 @@ FaxClient::getReply(fxBool expecteof)
 	    if (lastResponse[3] == '-') {	// continuation line
 		if (firstCode == 0)		// first line of reponse
 		    firstCode = code;
-		continuation = TRUE;
+		continuation = true;
 	    } else if (code == firstCode)	// end of continued reply
-		continuation = FALSE;
+		continuation = false;
 	}
     } while (continuation || code == 0);
 
@@ -739,7 +739,7 @@ FaxClient::getReply(fxBool expecteof)
  * case was).  The resulting string is checked to
  * make sure that it is not null.
  */
-fxBool
+bool
 FaxClient::extract(u_int& pos, const char* pattern, fxStr& result,
     const char* cmd, fxStr& emsg)
 {
@@ -755,24 +755,24 @@ FaxClient::extract(u_int& pos, const char* pattern, fxStr& result,
     if (l == lastResponse.length()) {
 	protocolBotch(emsg, ": No \"%s\" in %s response: %s",
 	    pattern, cmd, (const char*) lastResponse);
-	return (FALSE);
+	return (false);
     }
     l = lastResponse.skip(l+pat.length(), ' ');// skip white space
     result = lastResponse.extract(l, lastResponse.next(l, ' ')-l);
     if (result == "") {
 	protocolBotch(emsg, ": Null %s in %s response: %s",
 	    pattern, cmd, (const char*) lastResponse);
-	return (FALSE);
+	return (false);
     }
     pos = l;					// update position
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Create a new job and return its job-id
  * and group-id, parsed from the reply.
  */
-fxBool
+bool
 FaxClient::newJob(fxStr& jobid, fxStr& groupid, fxStr& emsg)
 {
     if (command("JNEW") == COMPLETE) {
@@ -796,55 +796,55 @@ FaxClient::newJob(fxStr& jobid, fxStr& groupid, fxStr& emsg)
 		jobid.resize(jobid.skip(0, "0123456789"));
 		groupid.resize(groupid.skip(0, "0123456789"));
 		curjob = jobid;
-		return (TRUE);
+		return (true);
 	    }
 	} else
 	    unexpectedResponse(emsg);
     } else
 	emsg = lastResponse;
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Set the current job on the server.
  */
-fxBool
+bool
 FaxClient::setCurrentJob(const char* jobid)
 {
     if (strcasecmp(jobid, curjob) != 0) {
 	if (command("JOB %s", jobid) != COMPLETE)
-	    return (FALSE);
+	    return (false);
 	curjob = jobid;
     }
-    return (TRUE);
+    return (true);
 }
 
-fxBool
+bool
 FaxClient::jobParm(const char* name, const fxStr& value)
 {
     return jobParm(name, (const char*) value);
 }
-fxBool
+bool
 FaxClient::jobParm(const char* name, const char* value)
 {
     return (command("JPARM %s \"%s\"", name, value) == COMPLETE);
 }
-fxBool
-FaxClient::jobParm(const char* name, fxBool b)
+bool
+FaxClient::jobParm(const char* name, bool b)
 {
     return (command("JPARM %s %s", name, b ? "YES" : "NO") == COMPLETE);
 }
-fxBool
+bool
 FaxClient::jobParm(const char* name, u_int v)
 {
     return (command("JPARM %s %u", name, v) == COMPLETE);
 }
-fxBool
+bool
 FaxClient::jobParm(const char* name, float v)
 {
     return (command("JPARM %s %g", name, v) == COMPLETE);
 }
-fxBool
+bool
 FaxClient::jobSendTime(const struct tm tm)
 {
     return (command("JPARM SENDTIME %d%02d%02d%02d%02d"
@@ -855,57 +855,57 @@ FaxClient::jobSendTime(const struct tm tm)
 	, tm.tm_min
 	) == COMPLETE);
 }
-fxBool
+bool
 FaxClient::jobLastTime(u_long tv)
 {
     return (command("JPARM LASTTIME %02d%02d%02d",
 	tv/(24*60*60), (tv/(60*60))%24, (tv/60)%60) == COMPLETE);
 }
-fxBool
+bool
 FaxClient::jobRetryTime(u_long tv)
 {
     return (command("JPARM RETRYTIME %02d%02d", tv/60, tv%60) == COMPLETE);
 }
-fxBool
+bool
 FaxClient::jobCover(const char* docname)
 {
     return (command("JPARM COVER %s", docname) == COMPLETE);
 }
-fxBool
+bool
 FaxClient::jobDocument(const char* docname)
 {
     return (command("JPARM DOCUMENT %s", docname) == COMPLETE);
 }
-fxBool
+bool
 FaxClient::jobPollRequest(const char* sep, const char* pwd)
 {
     return (command("JPARM POLL \"%s\" \"%s\"", sep, pwd) == COMPLETE);
 }
 
-fxBool
+bool
 FaxClient::jobOp(const char* op, const char* jobid)
 {
     return (command(jobid == curjob ? "%s" : "%s %s", op, jobid) == COMPLETE);
 }
-fxBool FaxClient::jobSubmit(const char* jobid)	{ return jobOp("JSUBM",jobid); }
-fxBool FaxClient::jobSuspend(const char* jobid)	{ return jobOp("JSUSP",jobid); }
-fxBool FaxClient::jobKill(const char* jobid)	{ return jobOp("JKILL",jobid); }
-fxBool FaxClient::jobDelete(const char* jobid)	{ return jobOp("JDELE",jobid); }
-fxBool FaxClient::jobWait(const char* jobid)	{ return jobOp("JWAIT",jobid); }
+bool FaxClient::jobSubmit(const char* jobid)	{ return jobOp("JSUBM",jobid); }
+bool FaxClient::jobSuspend(const char* jobid)	{ return jobOp("JSUSP",jobid); }
+bool FaxClient::jobKill(const char* jobid)	{ return jobOp("JKILL",jobid); }
+bool FaxClient::jobDelete(const char* jobid)	{ return jobOp("JDELE",jobid); }
+bool FaxClient::jobWait(const char* jobid)	{ return jobOp("JWAIT",jobid); }
 
-fxBool FaxClient::jgrpSubmit(const char* jgrpid)
+bool FaxClient::jgrpSubmit(const char* jgrpid)
     { return (command("JGSUBM %s", jgrpid) == COMPLETE); }
-fxBool FaxClient::jgrpSuspend(const char* jgrpid)
+bool FaxClient::jgrpSuspend(const char* jgrpid)
     { return (command("JGSUSP %s", jgrpid) == COMPLETE); }
-fxBool FaxClient::jgrpKill(const char* jgrpid)
+bool FaxClient::jgrpKill(const char* jgrpid)
     { return (command("JGKILL %s", jgrpid) == COMPLETE); }
-fxBool FaxClient::jgrpWait(const char* jgrpid)
+bool FaxClient::jgrpWait(const char* jgrpid)
     { return (command("JGWAIT %s", jgrpid) == COMPLETE); }
 
-fxBool
+bool
 FaxClient::runScript(const char* filename, fxStr& emsg)
 {
-    fxBool ok = FALSE;
+    bool ok = false;
     FILE* fd = fopen(filename, "r");
     if (fd != NULL) {
 	ok = runScript(fd, filename, emsg);
@@ -915,10 +915,10 @@ FaxClient::runScript(const char* filename, fxStr& emsg)
     return (ok);
 }
 
-fxBool
+bool
 FaxClient::runScript(FILE* fp, const char* filename, fxStr& emsg)
 {
-    fxBool ok = FALSE;
+    bool ok = false;
     struct stat sb;
     (void) Sys::fstat(fileno(fp), sb);
     char* addr;
@@ -942,7 +942,7 @@ FaxClient::runScript(FILE* fp, const char* filename, fxStr& emsg)
     return (ok);
 }
 
-fxBool
+bool
 FaxClient::runScript(const char* script, u_long scriptLen,
     const char* filename, fxStr& emsg)
 {
@@ -957,7 +957,7 @@ FaxClient::runScript(const char* script, u_long scriptLen,
 	    if (command("%.*s", cmdLen, script) != COMPLETE) {
 		emsg = fxStr::format("%s: line %u: %s",
 		    filename, lineno, (const char*) lastResponse);
-		return (FALSE);
+		return (false);
 	    }
 	}
 	if (*ep == '\n')
@@ -965,14 +965,14 @@ FaxClient::runScript(const char* script, u_long scriptLen,
 	scriptLen -= ep - script;
 	script = ep;
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Create a uniquely named document on the server
  * that is not removed when the server exits.
  */
-fxBool
+bool
 FaxClient::storeUnique(fxStr& docname, fxStr& emsg)
 {
     return storeUnique("STOU", docname, emsg);
@@ -981,7 +981,7 @@ FaxClient::storeUnique(fxStr& docname, fxStr& emsg)
  * Create a uniquely named document on the server
  * that is automatically removed when the server exits.
  */
-fxBool
+bool
 FaxClient::storeTemp(fxStr& docname, fxStr& emsg)
 {
     return storeUnique("STOT", docname, emsg);
@@ -991,7 +991,7 @@ FaxClient::storeTemp(fxStr& docname, fxStr& emsg)
  * Send a STOU/STOT command and parse the
  * response to get the resulting filename.
  */
-fxBool
+bool
 FaxClient::storeUnique(const char* cmd, fxStr& docname, fxStr& emsg)
 {
     if (command(cmd) == PRELIM) {
@@ -1009,31 +1009,31 @@ FaxClient::storeUnique(const char* cmd, fxStr& docname, fxStr& emsg)
 	    unexpectedResponse(emsg);
     } else
 	emsg = lastResponse;
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Create/overwrite a file on the server.
  */
-fxBool
+bool
 FaxClient::storeFile(fxStr& docname, fxStr& emsg)
 {
     if (command("STOR " | docname) != PRELIM) {
 	emsg = lastResponse;
-	return (FALSE);
+	return (false);
     }
     if (code != 150) {
 	unexpectedResponse(emsg);
-	return (FALSE);
+	return (false);
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Send a block of raw data on the data
  * conenction, interpreting write errors.
  */
-fxBool
+bool
 FaxClient::sendRawData(void* buf, int cc, fxStr& emsg)
 {
 #ifdef __linux__
@@ -1047,17 +1047,17 @@ FaxClient::sendRawData(void* buf, int cc, fxStr& emsg)
 	    protocolBotch(emsg, errno == EPIPE ?
 		" (server closed connection)" : " (server write error: %s).",
 		strerror(errno));
-	    return (FALSE);
+	    return (false);
 	}
 #else
     if (write(fdData, buf, cc) != cc) {
 	protocolBotch(emsg, errno == EPIPE ?
 	    " (server closed connection)" : " (server write error: %s).",
 	    strerror(errno));
-	return (FALSE);
+	return (false);
     }
 #endif
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -1065,9 +1065,9 @@ FaxClient::sendRawData(void* buf, int cc, fxStr& emsg)
  * and the current transfer parameters.  The server-side
  * document name where data gets placed is returned.
  */
-fxBool
+bool
 FaxClient::sendData(int fd,
-    fxBool (FaxClient::*store)(fxStr&, fxStr&), fxStr& docname, fxStr& emsg)
+    bool (FaxClient::*store)(fxStr&, fxStr&), fxStr& docname, fxStr& emsg)
 {
     char* addr = (char*) -1;
     struct stat sb;
@@ -1108,14 +1108,14 @@ FaxClient::sendData(int fd,
     if (addr != (char*) -1)
 	munmap(addr, sb.st_size);
 #endif
-    return (getReply(FALSE) == 2);
+    return (getReply(false) == 2);
 bad:
     closeDataConn();
 #if HAS_MMAP
     if (addr != (char*) -1)
 	munmap(addr, sb.st_size);
 #endif
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -1123,9 +1123,9 @@ bad:
  * and the current transfer parameters.  The server-side
  * document name where data gets placed is returned.
  */
-fxBool
+bool
 FaxClient::sendZData(int fd,
-    fxBool (FaxClient::*store)(fxStr&, fxStr&), fxStr& docname, fxStr& emsg)
+    bool (FaxClient::*store)(fxStr&, fxStr&), fxStr& docname, fxStr& emsg)
 {
     z_stream zstream;
     zstream.zalloc = NULL;
@@ -1229,9 +1229,9 @@ FaxClient::sendZData(int fd,
 	    munmap(addr, sb.st_size);
 #endif
 	deflateEnd(&zstream);
-	return (getReply(FALSE) == COMPLETE);
+	return (getReply(false) == COMPLETE);
 bad2:
-	(void) getReply(FALSE);
+	(void) getReply(false);
 	/* fall thru... */
 bad:
 	closeDataConn();
@@ -1243,7 +1243,7 @@ bad:
     } else
 	emsg = fxStr::format("Can not initialize compression library: %s",
 	    zstream.msg);
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -1255,8 +1255,8 @@ bad:
  * listing (LIST), trigger event trace log (SITE TRIGGER)
  * or other data connection-based transfer.
  */
-fxBool
-FaxClient::recvData(fxBool (*f)(void*, const char*, int, fxStr&),
+bool
+FaxClient::recvData(bool (*f)(void*, const char*, int, fxStr&),
     void* arg, fxStr& emsg, u_long restart, const char* fmt, ...)
 {
     if (!setMode(MODE_S))
@@ -1279,11 +1279,11 @@ FaxClient::recvData(fxBool (*f)(void*, const char*, int, fxStr&),
 	int cc = read(fdData, buf, sizeof (buf));
 	if (cc == 0) {
 	    closeDataConn();
-	    return (getReply(FALSE) == COMPLETE);
+	    return (getReply(false) == COMPLETE);
 	}
 	if (cc < 0) {
 	    emsg = fxStr::format("Data Connection: %s", strerror(errno));
-	    (void) getReply(FALSE);
+	    (void) getReply(false);
 	    break;
 	}
 	byte_count += cc;
@@ -1292,7 +1292,7 @@ FaxClient::recvData(fxBool (*f)(void*, const char*, int, fxStr&),
     }
 bad:
     closeDataConn();
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -1304,8 +1304,8 @@ bad:
  * listing (LIST), trigger event trace log (SITE TRIGGER)
  * or other data connection-based transfer.
  */
-fxBool
-FaxClient::recvZData(fxBool (*f)(void*, const char*, int, fxStr&),
+bool
+FaxClient::recvZData(bool (*f)(void*, const char*, int, fxStr&),
     void* arg, fxStr& emsg, u_long restart, const char* fmt, ...)
 {
     z_stream zstream;
@@ -1340,11 +1340,11 @@ FaxClient::recvZData(fxBool (*f)(void*, const char*, int, fxStr&),
 		    goto bad;
 		closeDataConn();
 		(void) inflateEnd(&zstream);
-		return (getReply(FALSE) == COMPLETE);
+		return (getReply(false) == COMPLETE);
 	    }
 	    if (cc < 0) {
 		emsg = fxStr::format("Data Connection: %s", strerror(errno));
-		(void) getReply(FALSE);
+		(void) getReply(false);
 		goto bad;
 	    }
 	    zstream.next_in = (Bytef*) buf;
@@ -1369,7 +1369,7 @@ bad:
 	inflateEnd(&zstream);
     } else
 	emsg = fxStr::format("Can not initialize decoder: %s", zstream.msg);
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -1401,27 +1401,27 @@ FaxClient::getStatusFormat(u_int flag, const char* cmd, fxStr& fmt)
  * Set the specified status format string
  *  in the client and the server.
  */
-fxBool
+bool
 FaxClient::setStatusFormat(const char* cmd, u_int flag,
     fxStr& fmt, const char* value)
 {
     if (isLoggedIn()) {
 	if (command("%s \"%s\"", cmd, value) != COMPLETE) {
 	    printError("%s", (const char*) lastResponse);
-	    return (FALSE);
+	    return (false);
 	}
 	state &= ~flag;
     } else
 	state |= flag;
     fmt = value;
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Set the job status format string in the
  * client and the server.
  */
-fxBool
+bool
 FaxClient::setJobStatusFormat(const char* cp)
 {
     return setStatusFormat("JOBFMT", FS_JFMTPEND, jobFmt, cp);
@@ -1442,7 +1442,7 @@ FaxClient::getJobStatusFormat(void)
  * Set the receive queue status format
  * string in the client and the server.
  */
-fxBool
+bool
 FaxClient::setRecvStatusFormat(const char* cp)
 {
     return setStatusFormat("RCVFMT", FS_RFMTPEND, recvFmt, cp);
@@ -1464,7 +1464,7 @@ FaxClient::getRecvStatusFormat(void)
  * Set the modem status format
  * string in the client and the server.
  */
-fxBool
+bool
 FaxClient::setModemStatusFormat(const char* cp)
 {
     return setStatusFormat("MDMFMT", FS_MFMTPEND, modemFmt, cp);
@@ -1485,7 +1485,7 @@ FaxClient::getModemStatusFormat(void)
  * Set the file status format
  * string in the client and the server.
  */
-fxBool
+bool
 FaxClient::setFileStatusFormat(const char* cp)
 {
     return setStatusFormat("FILEFMT", FS_FFMTPEND, fileFmt, cp);

@@ -83,21 +83,21 @@ void FaxServer::notifyConnected(const FaxRequest&) {}
  * just by yanking the cable and then swapping the
  * config file before hooking up the new modem.
  */
-fxBool
+bool
 FaxServer::setupModem()
 {
     modem = NULL;
     if (!ModemServer::setupModem())
-	return (FALSE);
+	return (false);
     if (getModem()->isFaxModem()) {
 	modem = (FaxModem*) ModemServer::getModem();
 	modem->setLID(localIdentifier);
     }
-    return (TRUE);
+    return (true);
 }
 
 void
-FaxServer::discardModem(fxBool dropDTR)
+FaxServer::discardModem(bool dropDTR)
 {
     ModemServer::discardModem(dropDTR);
     modem = NULL;
@@ -151,19 +151,19 @@ FaxServer::deduceModem()
  * are selected so that any imaged facsimile should
  * still be sendable.
  */
-fxBool FaxServer::modemSupports2D() const
-    { return modem ? modem->supports2D() : FALSE; }
-fxBool FaxServer::modemSupportsEOLPadding() const
-    { return modem ? modem->supportsEOLPadding() : FALSE; }
-fxBool FaxServer::modemSupportsVRes(float res) const
-    { return modem ? modem->supportsVRes(res) : TRUE; }
-fxBool FaxServer::modemSupportsPageWidth(u_int w) const
-    { return modem ? modem->supportsPageWidth(w) : TRUE; }
-fxBool FaxServer::modemSupportsPageLength(u_int l) const
-    { return modem ? modem->supportsPageLength(l) : TRUE; }
+bool FaxServer::modemSupports2D() const
+    { return modem ? modem->supports2D() : false; }
+bool FaxServer::modemSupportsEOLPadding() const
+    { return modem ? modem->supportsEOLPadding() : false; }
+bool FaxServer::modemSupportsVRes(float res) const
+    { return modem ? modem->supportsVRes(res) : true; }
+bool FaxServer::modemSupportsPageWidth(u_int w) const
+    { return modem ? modem->supportsPageWidth(w) : true; }
+bool FaxServer::modemSupportsPageLength(u_int l) const
+    { return modem ? modem->supportsPageLength(l) : true; }
 
-fxBool FaxServer::modemSupportsPolling() const
-    { return modem ? modem->supportsPolling() : FALSE; }
+bool FaxServer::modemSupportsPolling() const
+    { return modem ? modem->supportsPolling() : false; }
 
 fxStr
 FaxServer::getModemCapabilities() const

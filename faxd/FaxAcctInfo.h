@@ -44,6 +44,6 @@ struct FaxAcctInfo {
     u_int	params;		// encoded transfer parameters
     const char*	status;		// status info (optional)
 
-    fxBool record(const char* cmd) const;
+    bool record(const char* cmd) const;
 };
 #endif /* _FaxAcctInfo_ */

@@ -62,9 +62,9 @@ protected:
     };
 private:
     FILE*	statusFile;		// server status file
-    fxBool	deduceComplain;		// if true, complain when can't deduce
-    fxBool	changePriority;		// change process priority by state
-    fxBool	delayConfig;		// suppress effects while reading config
+    bool	deduceComplain;		// if true, complain when can't deduce
+    bool	changePriority;		// change process priority by state
+    bool	delayConfig;		// suppress effects while reading config
     fxStr	dialRulesFile;		// dial string rules filename
     fxStr	commid;			// communication ID
 // generic modem-related stuff
@@ -73,7 +73,7 @@ private:
     fxStr	modemDevID;		// device identifier
     ClassModem*	modem;			// modem driver
     Timeout	timer;			// timeout support class
-    fxBool	timeout;		// timeout during i/o operations
+    bool	timeout;		// timeout during i/o operations
     fxStr	configFile;		// pathname to configuration file
     BaudRate	curRate;		// current termio baud rate
     Parity	curParity;		// current termio parity setting
@@ -94,10 +94,10 @@ private:
     static const char* stateNames[9];
     static const char* stateStatus[9];
 
-    fxBool	openDevice(const char* dev);
-    fxBool	reopenDevice();
-    fxBool	tcsetattr(int op, struct termios& term);
-    fxBool	tcgetattr(const char* method, struct termios& term);
+    bool	openDevice(const char* dev);
+    bool	reopenDevice();
+    bool	tcsetattr(int op, struct termios& term);
+    bool	tcgetattr(const char* method, struct termios& term);
     static void setFlow(struct termios&, FlowControl iflow, FlowControl oflow);
     static void setParity(struct termios&, Parity);
 
@@ -116,15 +116,15 @@ protected:
 	LISTENING	= 8
     };
     ModemServerState state;
-    fxBool	abortCall;		// abort current send/receive
+    bool	abortCall;		// abort current send/receive
 // logging and tracing
     FaxMachineLog* log;			// current log device
 
     ModemServer(const fxStr& deviceName, const fxStr& devID);
 
 // modem driver setup+teardown interfaces
-    virtual fxBool setupModem();
-    virtual void discardModem(fxBool dropDTR);
+    virtual bool setupModem();
+    virtual void discardModem(bool dropDTR);
     virtual ClassModem* deduceModem();
 // low-level modem interfaces
     int		getModemFd();				// XXX
@@ -135,21 +135,21 @@ protected:
     int		getModemLine(char buf[], u_int bufSize, long ms = 0);
     int		getModemChar(long ms = 0);
     void	flushModemInput();
-    fxBool	putModem(const void* data, int n, long ms = 0);
-    fxBool	putModem1(const void* data, int n, long ms = 0);
+    bool	putModem(const void* data, int n, long ms = 0);
+    bool	putModem1(const void* data, int n, long ms = 0);
     void	startTimeout(long ms);
     void	stopTimeout(const char* whichdir);
 // modem line control
-    fxBool	sendBreak(fxBool pause);
-    fxBool	setBaudRate(BaudRate rate);
-    fxBool	setBaudRate(BaudRate rate, FlowControl i, FlowControl o);
-    fxBool	setParity(Parity parity);
-    fxBool	setXONXOFF(FlowControl i, FlowControl o, SetAction act);
-    fxBool	setDTR(fxBool on);
-    fxBool	setInputBuffering(fxBool on);
-    fxBool	modemStopOutput();
+    bool	sendBreak(bool pause);
+    bool	setBaudRate(BaudRate rate);
+    bool	setBaudRate(BaudRate rate, FlowControl i, FlowControl o);
+    bool	setParity(Parity parity);
+    bool	setXONXOFF(FlowControl i, FlowControl o, SetAction act);
+    bool	setDTR(bool on);
+    bool	setInputBuffering(bool on);
+    bool	modemStopOutput();
 // modem driver interfaces
-    fxBool	modemWaitForRings(u_int rings, CallType&, CallerID&);
+    bool	modemWaitForRings(u_int rings, CallType&, CallerID&);
     CallType	modemAnswerCall(AnswerType, fxStr&);
     void	modemAnswerCallCmd(CallType);
     void	modemFlushInput();
@@ -164,7 +164,7 @@ protected:
     void	traceModemOp(const char* fmt ...);
     void	traceStatus(int kind, const char* fmt ...);
 // modem locking interfaces implemented in derived class
-    virtual fxBool lockModem() = 0;
+    virtual bool lockModem() = 0;
     virtual void unlockModem() = 0;
 // notification interfaces implemented in derived class
     virtual void notifyModemReady() = 0;
@@ -181,7 +181,7 @@ protected:
     void	endSession();
 // abort send/receive session
     virtual void abortSession();
-    fxBool	abortRequested();
+    bool	abortRequested();
 public:
     virtual ~ModemServer();
 
@@ -199,8 +199,8 @@ public:
     int		getServerTracing() const;
     void	vtraceStatus(int kind, const char* fmt, va_list ap);
 
-    fxBool	modemReady() const;
-    fxBool	serverBusy() const;
+    bool	modemReady() const;
+    bool	serverBusy() const;
 };
 inline ClassModem* ModemServer::getModem()		{ return modem; }
 inline int ModemServer::getModemFd()			{ return modemFd; }

@@ -40,7 +40,7 @@ protected:
     FaxConfig();
     FaxConfig(const FaxConfig& other);
 
-    virtual fxBool setConfigItem(const char* tag, const char* value) = 0;
+    virtual bool setConfigItem(const char* tag, const char* value) = 0;
     virtual void configError(const char* fmt, ...) = 0;
     virtual void configTrace(const char* fmt, ...) = 0;
     u_int getConfigLineNumber() const;
@@ -55,18 +55,18 @@ public:
     } tags;
 
     // NB: const void* should be const tags* but gcc can't hack it
-    static fxBool findTag(const char*, const void*, u_int, u_int&);
-    static fxBool findValue(const char*, const char*[], u_int, u_int&);
+    static bool findTag(const char*, const void*, u_int, u_int&);
+    static bool findValue(const char*, const char*[], u_int, u_int&);
 
     static int getNumber(const char*);
-    static fxBool getBoolean(const char*);
+    static bool getBoolean(const char*);
 
     fxStr tildeExpand(const fxStr& filename);
 
     virtual void readConfig(const fxStr& filename);
-    virtual fxBool readConfigItem(const char*);
+    virtual bool readConfigItem(const char*);
     virtual void resetConfig();
-    virtual fxBool updateConfig(const fxStr& filename);
+    virtual bool updateConfig(const fxStr& filename);
 };
 inline u_int FaxConfig::getConfigLineNumber() const { return lineno; }
 #endif /* _FaxConfig_ */

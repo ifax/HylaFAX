@@ -117,7 +117,7 @@ main(int argc, char* argv[])
 	fprintf(stderr, "Unable to setup file typing and conversion rules\n");
 	return (-1);
     }
-    typeRules->setVerbose(TRUE);
+    typeRules->setVerbose(true);
     for (; optind < argc; optind++)
 	(void) fileType(argv[optind]);
     return (0);

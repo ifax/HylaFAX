@@ -28,7 +28,7 @@
 #include <sys/time.h>
 #include "Timeout.h"
 
-fxBool Timeout::timerExpired = FALSE;
+bool Timeout::timerExpired = false;
 
 Timeout::Timeout() {}
 Timeout::~Timeout() {}
@@ -37,7 +37,7 @@ void Timeout::traceTimer(const char* ...) {}
 void
 Timeout::sigAlarm(int)
 {
-    Timeout::timerExpired = TRUE;
+    Timeout::timerExpired = true;
 }
 
 #ifndef SA_INTERRUPT
@@ -47,7 +47,7 @@ Timeout::sigAlarm(int)
 void
 Timeout::startTimeout(long ms)
 {
-    timerExpired = FALSE;
+    timerExpired = false;
 #ifdef SV_INTERRUPT			/* BSD-style */
     static struct sigvec sv;
     sv.sv_handler = fxSIGVECHANDLER(Timeout::sigAlarm);

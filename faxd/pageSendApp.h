@@ -49,7 +49,7 @@ public:
     };
 private:
 // runtime state
-    fxBool	ready;			// modem ready for use
+    bool	ready;			// modem ready for use
     UUCPLock*	modemLock;		// uucp lockfile handle
     time_t	connTime;		// time connected to peer
 
@@ -78,7 +78,7 @@ private:
 // configuration support
     void	setupConfig();
     void	resetConfig();
-    fxBool	setConfigItem(const char* tag, const char* value);
+    bool	setConfigItem(const char* tag, const char* value);
     u_int	getConfigParity(const char* value) const;
 // page transmission support (independent of paging protocol)
     void	sendPage(FaxRequest&, FaxMachineInfo&);
@@ -86,27 +86,27 @@ private:
 		    const fxStr&);
 // IXO transmission support
     void	sendIxoPage(FaxRequest&, FaxMachineInfo&, const fxStr&, fxStr&);
-    fxBool	sendPagerMsg(FaxRequest&, faxRequest&, const fxStr&, fxStr&);
+    bool	sendPagerMsg(FaxRequest&, faxRequest&, const fxStr&, fxStr&);
     u_int	getResponse(fxStackBuffer& buf, long secs);
-    fxBool	prepareMsg(FaxRequest&, FaxMachineInfo&, fxStr&);
-    fxBool	pagePrologue(FaxRequest&, const FaxMachineInfo&, fxStr&);
-    fxBool	pageGoAhead(FaxRequest&, const FaxMachineInfo&, fxStr&);
-    fxBool	pageEpilogue(FaxRequest&, const FaxMachineInfo&, fxStr&);
+    bool	prepareMsg(FaxRequest&, FaxMachineInfo&, fxStr&);
+    bool	pagePrologue(FaxRequest&, const FaxMachineInfo&, fxStr&);
+    bool	pageGoAhead(FaxRequest&, const FaxMachineInfo&, fxStr&);
+    bool	pageEpilogue(FaxRequest&, const FaxMachineInfo&, fxStr&);
     void	sendFailed(FaxRequest&, FaxSendStatus, const char*, u_int = 0);
     void	notifyPageSent(FaxRequest& req, u_int fi);
     time_t	getConnectTime() const;
 // UCP transmission support
-    void	sendUcpPage(FaxRequest&, FaxMachineInfo&, const fxStr&, fxStr&);    fxBool	sendUcpMsg(FaxRequest&, faxRequest&, const fxStr&, fxStr&,
+    void	sendUcpPage(FaxRequest&, FaxMachineInfo&, const fxStr&, fxStr&);    bool	sendUcpMsg(FaxRequest&, faxRequest&, const fxStr&, fxStr&,
 		    FaxMachineInfo&);
 // modem handling
-    fxBool	lockModem();
+    bool	lockModem();
     void	unlockModem();
-    fxBool	setupModem();
+    bool	setupModem();
 // notification interfaces used by ModemServer
     void	notifyModemReady();
     void	notifyModemWedged();
 // miscellaneous
-    fxBool	putModem(const void* data, int n, long ms = 0);
+    bool	putModem(const void* data, int n, long ms = 0);
     void	traceResponse(const fxStackBuffer& buf);
     void	traceIXO(const char* fmt ...);
     void	traceIXOCom(const char* dir, const u_char* data, u_int cc);
@@ -122,7 +122,7 @@ public:
 
     FaxSendStatus send(const char* filename);
 
-    fxBool	isReady() const;
+    bool	isReady() const;
 };
-inline fxBool pageSendApp::isReady() const 	{ return ready; }
+inline bool pageSendApp::isReady() const 	{ return ready; }
 #endif

@@ -44,7 +44,7 @@ faxRequest::~faxRequest() {}
 
 int faxRequest::compare(faxRequest const*) const { return 0; }
 
-fxBool
+bool
 faxRequest::isSavedOp() const
 {
     return (op == FaxRequest::send_tiff_saved ||

@@ -54,7 +54,7 @@ SNPPSuperServer::SNPPSuperServer(const char* p, int bl)
 {}
 SNPPSuperServer::~SNPPSuperServer() {}
 
-fxBool
+bool
 SNPPSuperServer::startServer(void)
 {
     /*
@@ -86,7 +86,7 @@ SNPPSuperServer::startServer(void)
 	    (void) listen(s, getBacklog());
 	    (void) seteuid(ouid);
 	    Dispatcher::instance().link(s, Dispatcher::ReadMask, this);
-	    return (TRUE);				// success
+	    return (true);				// success
 	}
 	Sys::close(s);
 	logError("HylaFAX %s: bind (port %u): %m",
@@ -94,7 +94,7 @@ SNPPSuperServer::startServer(void)
     } else
 	logError("HylaFAX %s: socket: %m", getKind());
     (void) seteuid(ouid);
-    return (FALSE);
+    return (false);
 }
 HylaFAXServer* SNPPSuperServer::newChild(void)	{ return new SNPPServer; }
 
@@ -116,7 +116,7 @@ SNPPServer::open(void)
 	dologout(-1);
     }
     ctrlFlags = fcntl(STDIN_FILENO, F_GETFL);	// for parser
-    if (isShutdown(TRUE)) {
+    if (isShutdown(true)) {
 	reply(421, "%s SNPP server unavailable; try again later.",
 	    (const char*) hostname);
 	dologout(-1);
@@ -147,7 +147,7 @@ SNPPServer::initDefaultJob(void)
 void
 SNPPServer::initSNPPJob(void)
 {
-    defJob.queued = FALSE;		// jobs not queued--per protocol
+    defJob.queued = false;		// jobs not queued--per protocol
     defJob.maxdials = SNPP_DEFREDIALS;	// configuration defaults...
     defJob.maxtries = SNPP_DEFRETRIES;
     defJob.killtime = 60*killMap[SNPP_DEFLEVEL];
@@ -161,7 +161,7 @@ SNPPServer::resetState(void)
 {
     initDefaultJob();			// default job state
     msgFile = "";
-    haveText = FALSE;			// no message text yet
+    haveText = false;			// no message text yet
     msgs.resize(0);			// purge any message refs
 }
 
@@ -192,7 +192,7 @@ SNPPServer::dologout(int status)
     InetFaxServer::dologout(status);
 }
 
-static inline fxBool
+static inline bool
 isMagic(char c)
 {
     return (c == '[' || c == ']' || c == '*' || c == '.' || c == '^' ||
@@ -237,7 +237,7 @@ subRHS(fxStr& result, const RegEx& re, const fxStr& match)
  * to dial of the service provider and the PIN to supply
  * to the provider when talking IXO/TAP (for aliases).
  */
-fxBool
+bool
 SNPPServer::mapPagerID(const char* pagerID, fxStr& number, fxStr& pin, fxStr& emsg)
 {
     if (pagerIDMapFile != "") {
@@ -269,13 +269,13 @@ SNPPServer::mapPagerID(const char* pagerID, fxStr& number, fxStr& pin, fxStr& em
 		 * that begin with '#' are ignored (i.e. comments).
 		 */
 		const char* pattern = cp;
-		fxBool isRE = FALSE;
+		bool isRE = false;
 		for (; *cp != '\0' && !isspace(*cp); cp++)
 		    if (isMagic(*cp))
-			isRE = TRUE;
+			isRE = true;
 		if (*cp != '\0')			// \0-term. <pattern>
 		    *cp++ = '\0';
-		fxBool match;
+		bool match;
 		RegEx* re;
 		if (isRE) {
 		    re = new RegEx(pattern);
@@ -312,9 +312,9 @@ SNPPServer::mapPagerID(const char* pagerID, fxStr& number, fxStr& pin, fxStr& em
 			s.raisecase();
 			if (s == "REJECT") {
 			    emsg = fxStr::format("Invalid pager ID %s",pagerID);
-			    return (FALSE);
+			    return (false);
 			} else
-			    return (TRUE);
+			    return (true);
 		    }
 		}
 		delete re;
@@ -330,7 +330,7 @@ SNPPServer::mapPagerID(const char* pagerID, fxStr& number, fxStr& pin, fxStr& em
 	emsg = "No pager ID mapping file found";
 	logError("%s", (const char*) emsg);
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -343,51 +343,51 @@ SNPPServer::mapPagerID(const char* pagerID, fxStr& number, fxStr& pin, fxStr& em
  * Standard protocol commands.
  */
 static const tab cmdtab[] = {
-{ "2WAY", T_2WAY,	 TRUE,FALSE, "(preface 2-way transaction)" },
-{ "ABOR", T_ABOR,	FALSE, TRUE, "(abort operation)" },
-{ "ACKR", T_ACKREAD,	 TRUE,FALSE, "0|1" },
-{ "ALER", T_ALERT,	 TRUE,FALSE, "alert-level" },
-{ "CALL", T_CALLERID,    TRUE,FALSE, "caller-ID" },
-{ "COVE", T_COVERAGE,    TRUE,FALSE, "alternate-area" },
-{ "DATA", T_DATA,	 TRUE, TRUE, "(specify multi-line message)" },
-{ "EXPT", T_EXPTAG,	 TRUE,FALSE, "hours" },
-{ "HELP", T_HELP,	FALSE, TRUE, "[<string>]" },
-{ "HOLD", T_HOLDUNTIL,   TRUE, TRUE, "YYYYMMDDHHMMSS [+/-GMT-diff]" },
-{ "KTAG", T_KTAG,	 TRUE,FALSE, "message-tag pass-code" },
-{ "LEVE", T_LEVEL,	 TRUE, TRUE, "service-level" },
-{ "LOGI", T_LOGIN,	FALSE, TRUE, "username [password]" },
-{ "MCRE", T_MCRESPONSE,  TRUE,FALSE, "2-byte-code response-text" },
-{ "MESS", T_MESSAGE,	 TRUE, TRUE, "message" },
-{ "MSTA", T_MSTATUS,	 TRUE,FALSE, "message-tag pass-code" },
-{ "NOQU", T_NOQUEUEING,  TRUE,FALSE, "(disable message queueing)" },
-{ "PAGE", T_PAGER,	 TRUE, TRUE, "pager-ID|alias [PIN]" },
-{ "PING", T_PING,	 TRUE, TRUE, "pager-ID|alias" },
-{ "QUIT", T_QUIT,	FALSE, TRUE, "(terminate service)" },
-{ "RESE", T_REST,	 TRUE, TRUE, "(reset state)" },
-{ "RTYP", T_RTYPE,	 TRUE,FALSE, "reply-type-code" },
-{ "SEND", T_SEND,	 TRUE, TRUE, "(send message)" },
-{ "SITE", T_SITE,	 TRUE, TRUE, "site-cmd [arguments]" },
-{ "STAT", T_STAT,	FALSE, TRUE, "(return server status)" },
-{ "SUBJ", T_SUBJECT,	 TRUE, TRUE, "message-subject" },
+{ "2WAY", T_2WAY,	 true,false, "(preface 2-way transaction)" },
+{ "ABOR", T_ABOR,	false, true, "(abort operation)" },
+{ "ACKR", T_ACKREAD,	 true,false, "0|1" },
+{ "ALER", T_ALERT,	 true,false, "alert-level" },
+{ "CALL", T_CALLERID,    true,false, "caller-ID" },
+{ "COVE", T_COVERAGE,    true,false, "alternate-area" },
+{ "DATA", T_DATA,	 true, true, "(specify multi-line message)" },
+{ "EXPT", T_EXPTAG,	 true,false, "hours" },
+{ "HELP", T_HELP,	false, true, "[<string>]" },
+{ "HOLD", T_HOLDUNTIL,   true, true, "YYYYMMDDHHMMSS [+/-GMT-diff]" },
+{ "KTAG", T_KTAG,	 true,false, "message-tag pass-code" },
+{ "LEVE", T_LEVEL,	 true, true, "service-level" },
+{ "LOGI", T_LOGIN,	false, true, "username [password]" },
+{ "MCRE", T_MCRESPONSE,  true,false, "2-byte-code response-text" },
+{ "MESS", T_MESSAGE,	 true, true, "message" },
+{ "MSTA", T_MSTATUS,	 true,false, "message-tag pass-code" },
+{ "NOQU", T_NOQUEUEING,  true,false, "(disable message queueing)" },
+{ "PAGE", T_PAGER,	 true, true, "pager-ID|alias [PIN]" },
+{ "PING", T_PING,	 true, true, "pager-ID|alias" },
+{ "QUIT", T_QUIT,	false, true, "(terminate service)" },
+{ "RESE", T_REST,	 true, true, "(reset state)" },
+{ "RTYP", T_RTYPE,	 true,false, "reply-type-code" },
+{ "SEND", T_SEND,	 true, true, "(send message)" },
+{ "SITE", T_SITE,	 true, true, "site-cmd [arguments]" },
+{ "STAT", T_STAT,	false, true, "(return server status)" },
+{ "SUBJ", T_SUBJECT,	 true, true, "message-subject" },
 };
 
 /*
  * Site-specific commands.
  */
 static const tab sitetab[] = {
-{ "FROMUSER",   T_FROM_USER,  TRUE, TRUE, "[<string>]" },
-{ "HELP",       T_HELP,      FALSE, TRUE, "[<string>]" },
-{ "IDLE",       T_IDLE,       TRUE, TRUE, "[max-idle-timeout]" },
-{ "JPARM",      T_JPARM,      TRUE, TRUE, "(print job parameter status)" },
-{ "JQUEUE",	T_JQUEUE,     TRUE, TRUE, "[on|off]" },
-{ "LASTTIME",   T_LASTTIME,  FALSE, TRUE, "[DDHHSS]" },
-{ "MAXDIALS",   T_MAXDIALS,   TRUE, TRUE, "[<number>]" },
-{ "MAXTRIES",   T_MAXTRIES,   TRUE, TRUE, "[<number>]" },
-{ "MODEM",      T_MODEM,      TRUE, TRUE, "[device|class]" },
-{ "NOTIFY",     T_NOTIFY,     TRUE, TRUE, "[NONE|DONE|REQUEUE|DONE+REQUEUE]"},
-{ "MAILADDR",   T_NOTIFYADDR, TRUE, TRUE, "[email-address]" },
-{ "RETRYTIME",  T_RETRYTIME,  TRUE, TRUE, "[HHSS]" },
-{ "SCHEDPRI",   T_SCHEDPRI,   TRUE, TRUE, "[<number>]" },
+{ "FROMUSER",   T_FROM_USER,  true, true, "[<string>]" },
+{ "HELP",       T_HELP,      false, true, "[<string>]" },
+{ "IDLE",       T_IDLE,       true, true, "[max-idle-timeout]" },
+{ "JPARM",      T_JPARM,      true, true, "(print job parameter status)" },
+{ "JQUEUE",	T_JQUEUE,     true, true, "[on|off]" },
+{ "LASTTIME",   T_LASTTIME,  false, true, "[DDHHSS]" },
+{ "MAXDIALS",   T_MAXDIALS,   true, true, "[<number>]" },
+{ "MAXTRIES",   T_MAXTRIES,   true, true, "[<number>]" },
+{ "MODEM",      T_MODEM,      true, true, "[device|class]" },
+{ "NOTIFY",     T_NOTIFY,     true, true, "[NONE|DONE|REQUEUE|DONE+REQUEUE]"},
+{ "MAILADDR",   T_NOTIFYADDR, true, true, "[email-address]" },
+{ "RETRYTIME",  T_RETRYTIME,  true, true, "[HHSS]" },
+{ "SCHEDPRI",   T_SCHEDPRI,   true, true, "[<number>]" },
 };
 
 static const tab*
@@ -421,15 +421,15 @@ SNPPServer::siteToken(Token t)
     return tokenName(sitetab, N(sitetab), t);
 }
 
-fxBool
+bool
 SNPPServer::checklogin(Token t)
 {
     if (!IS(LOGGEDIN)) {
 	cmdFailure(t, "not logged in");
 	reply(530, "Please login with LOGIN.");
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
 /*
@@ -528,7 +528,7 @@ SNPPServer::parse()
 /*
  * Protocol command (one line).
  */
-fxBool
+bool
 SNPPServer::cmd(Token t)
 {
     fxStr s;
@@ -540,21 +540,21 @@ SNPPServer::cmd(Token t)
 	if (CRLF()) {
 	    logcmd(t);
 	    ack(250, cmdToken(t));
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_DATA:			// submit multi-line message data
 	if (CRLF()) {
 	    logcmd(t);
 	    dataCmd();
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_HELP:			// return help
 	if (opt_CRLF()) {
 	    logcmd(t);
 	    helpCmd(cmdtab, (char*) NULL);
-	    return (TRUE);
+	    return (true);
 	} else if (string_param(s, "command name")) {
 	    logcmd(t, "%s", (const char*) s);
 	    s.raisecase();
@@ -562,14 +562,14 @@ SNPPServer::cmd(Token t)
 		helpCmd(sitetab, NULL);
 	    else
 		helpCmd(cmdtab, s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_HOLDUNTIL:			// set time to send
 	if (SP() && SNPPTime(tv)) {
 	    if (opt_CRLF()) {
 		holdCmd(tv);
-		return (TRUE);
+		return (true);
 	    } else if (string_param(s, "GMT-difference")) {
 		// conver GMT offset to numeric value
 		int sign = 1;
@@ -580,7 +580,7 @@ SNPPServer::cmd(Token t)
 		    cp++;
 		time_t off = (time_t) (strtoul(cp, 0, 10)*60 / 100);
 		holdCmd(tv + sign*off);
-		return (TRUE);
+		return (true);
 	    }
 	}
 	break;
@@ -588,7 +588,7 @@ SNPPServer::cmd(Token t)
 	if (number_param(n)) {
 	    logcmd(t, "%lu", n);
 	    serviceLevel((u_int) n);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_LOGIN:			// login as user
@@ -597,11 +597,11 @@ SNPPServer::cmd(Token t)
 	    if (opt_CRLF()) {
 		logcmd(t, (const char*) s);
 		loginCmd(s);
-		return (TRUE);
+		return (true);
 	    } else if (string_param(pwd, "password")) {
 		logcmd(t, "%s <passwd>", (const char*) s);
 		loginCmd(s, pwd);
-		return (TRUE);
+		return (true);
 	    }
 	}
 	break;
@@ -609,7 +609,7 @@ SNPPServer::cmd(Token t)
 	if (SP() && multi_STRING(s) && CRLF()) {
 	    logcmd(t, "%s", (const char*) s);
 	    messageCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_PAGER:			// specify destination pager ID
@@ -618,11 +618,11 @@ SNPPServer::cmd(Token t)
 	    if (opt_CRLF()) {
 		logcmd(t, "%s", (const char*) s);
 		pagerCmd(s);
-		return (TRUE);
+		return (true);
 	    } else if (string_param(pwd, "password/PIN")) {
 		logcmd(t, "%s <passwd/PIN>", (const char*) s);
 		pagerCmd(s, pwd);
-		return (TRUE);
+		return (true);
 	    }
 	}
 	break;
@@ -630,7 +630,7 @@ SNPPServer::cmd(Token t)
 	if (string_param(s, "pager-ID")) {
 	    logcmd(t, "%s", (const char*) s);
 	    pingCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_QUIT:			// terminate session
@@ -638,7 +638,7 @@ SNPPServer::cmd(Token t)
 	    logcmd(t);
 	    reply(221, "Goodbye.");
 	    dologout(0);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_REST:			// reset server state
@@ -650,7 +650,7 @@ SNPPServer::cmd(Token t)
 	if (CRLF()) {
 	    logcmd(t);
 	    sendCmd();
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_SITE:			// site-specific command
@@ -670,37 +670,37 @@ SNPPServer::cmd(Token t)
 	if (CRLF()) {
 	    logcmd(t);
 	    statusCmd();
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_SUBJECT:			// message subject
 	if (SP() && multi_STRING(s) && CRLF()) {
 	    logcmd(t, "%s", (const char*) s);
 	    subjectCmd(s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Site-specific protocol commands (one line).
  */
-fxBool
+bool
 SNPPServer::site_cmd(Token t)
 {
     fxStr s;
     long n;
     time_t tv;
-    fxBool b;
+    bool b;
 
     switch (t) {
     case T_IDLE:			// set/query idle timeout
 	if (opt_CRLF()) {
 	    logcmd(t);
 	    reply(250, "%u seconds.", idleTimeout);
-	    return (TRUE);
+	    return (true);
 	} else if (number_param(n)) {
 	    logcmd(t, "%lu", n);
 	    if (n > maxIdleTimeout && !IS(PRIVILEGED)) {
@@ -711,18 +711,18 @@ SNPPServer::site_cmd(Token t)
 		idleTimeout = (int) n;
 		reply(250, "Idle timeout set to %u.", idleTimeout);
 	    }
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_HELP:			// return help
 	if (opt_CRLF()) {
 	    helpCmd(sitetab, (char*) NULL);
-	    return (TRUE);
+	    return (true);
 	} else if (string_param(s, "command name")) {
 	    logcmd(T_SITE, "HELP %s", (const char*) s);
 	    s.raisecase();
 	    helpCmd(sitetab, s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JQUEUE:
@@ -730,7 +730,7 @@ SNPPServer::site_cmd(Token t)
 	    logcmd(t, "%s", b ? "YES" : "NO");
 	    defJob.queued = b;
 	    reply(250, "Job will%s be queued.", b ? "" : " not");
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_FROM_USER:
@@ -740,7 +740,7 @@ SNPPServer::site_cmd(Token t)
 	if (SP() && multi_STRING(s) && CRLF() && setJobParameter(defJob, t, s)) {
 	    logcmd(t, "%s", (const char*) s);
 	    reply(250, "%s set to \"%s\".", parmToken(t), (const char*) s);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_MAXDIALS:
@@ -749,7 +749,7 @@ SNPPServer::site_cmd(Token t)
 	if (number_param(n) && setJobParameter(defJob, t, (u_short) n)) {
 	    logcmd(t, "%lu", n);
 	    reply(250, "%s set to %u.", parmToken(t), n);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_LASTTIME:			// time to kill job
@@ -759,31 +759,31 @@ SNPPServer::site_cmd(Token t)
 	    reply(250, "%s set to %02d%02d%02d."
 		, parmToken(t)
 		, tv/(24*60*60) , (tv/(60*60))%24 , (tv/60)%60);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_RETRYTIME:			// retry interval for job
 	if (timespec_param(4, tv) && setJobParameter(defJob, t, tv)) {
 	    logcmd(t, "%02d%02d" , tv/60, tv%60);
 	    reply(250, "%s set to %02d%02d.", parmToken(t), tv/60, tv%60);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     case T_JPARM:			// query job parameters
 	if (CRLF()) {
 	    logcmd(t);
 	    jstatCmd(defJob);
-	    return (TRUE);
+	    return (true);
 	}
 	break;
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Parse an SNPP time specification.
  */
-fxBool
+bool
 SNPPServer::SNPPTime(time_t& result)
 {
     if (getToken(T_STRING, "time specification") && checkNUMBER(tokenBody)) {
@@ -818,12 +818,12 @@ SNPPServer::SNPPTime(time_t& result)
 	     * client will then be applied to this result.
 	     */
 	    result = mktime(&tm) - gmtoff;
-	    return (TRUE);
+	    return (true);
 	}
 	syntaxError(fxStr::format(
 	    "bad time specification (expecting 10/12 digits, got %u)", tlen));
     }
-    return (FALSE);
+    return (false);
 }
 
 void
@@ -862,7 +862,7 @@ SNPPServer::dataCmd(void)
 	    char buf[1024];
 	    u_int len = 0;
 	    for (;;) {
-		if (getCmdLine(buf, sizeof (buf), TRUE)) {
+		if (getCmdLine(buf, sizeof (buf), true)) {
 		    const char* bp = buf;
 		    if (bp[0] == '.') {
 			if ((bp[1] == '\n' && bp[2] == '\0') || bp[1] == '\0')
@@ -889,7 +889,7 @@ SNPPServer::dataCmd(void)
 		perror_reply(554, msgFile, errno);
 		Sys::unlink(msgFile);
 	    } else {
-		haveText = TRUE;
+		haveText = true;
 		reply(250, "Message text OK.");
 	    }
 	} else
@@ -1067,7 +1067,7 @@ SNPPServer::messageCmd(const char* msg)
 		perror_reply(554, msgFile, errno);
 		Sys::unlink(msgFile);
 	    } else {
-		haveText = TRUE;
+		haveText = true;
 		reply(250, "Message text OK.");
 	    }
 	} else
@@ -1151,13 +1151,13 @@ SNPPServer::pingCmd(const char* pagerID)
 	reply(550, "%s.", (const char*) emsg);
 }
 
-static fxBool
+static bool
 notPresent(faxRequestArray& a, const char* name)
 {
     for (u_int i = 0, n = a.length(); i < n; i++)
 	if (a[i].op == FaxRequest::send_data && a[i].item == name)
-	    return (FALSE);
-    return (TRUE);
+	    return (false);
+    return (true);
 }
 
 /*
@@ -1179,13 +1179,13 @@ SNPPServer::sendCmd(void)
      */
     fxStr emsg;
     u_int i, n = msgs.length();
-    fxBool waitForJobs = FALSE;
+    bool waitForJobs = false;
     for (i = 0; i < n; i++) {
 	Job* job = findJob(msgs[i], emsg);
 	if (!job)
 	    msgs.remove(i), n--;
 	else if (!job->queued)
-	    waitForJobs = TRUE;
+	    waitForJobs = true;
     }
     if (waitForJobs) {
 	state &= ~S_LOGTRIG;		// just process events
@@ -1275,7 +1275,7 @@ SNPPServer::sendCmd(void)
 	if (setjmp(urgcatch) == 0) {
 	    Dispatcher& disp = Dispatcher::instance();
 	    state |= S_WAITTRIG|S_SENDWAIT;
-	    fxBool jobsPending;
+	    bool jobsPending;
 	    do {
 		disp.dispatch();
 		/*
@@ -1284,13 +1284,13 @@ SNPPServer::sendCmd(void)
 		 * monitor the job state(s) after each event we
 		 * receive.
 		 */
-		jobsPending = FALSE;
+		jobsPending = false;
 		for (i = 0; i < n; i++) {
 		    Job* job = findJob(msgs[i], emsg);
 		    if (!job)
 			msgs.remove(i), n--;
 		    else if (!job->queued && job->state != FaxRequest::state_done)
-			jobsPending = TRUE;
+			jobsPending = true;
 		}
 	    } while (IS(WAITTRIG) && jobsPending);
 	    reply(250, "Message processing completed.");
@@ -1427,7 +1427,7 @@ setTimeMap(time_t map[12], const char* value)
     }
 }
 
-fxBool
+bool
 SNPPServer::setConfigItem(const char* tag, const char* value)
 {
     if (streq(tag, "maxmsglength")) {
@@ -1441,7 +1441,7 @@ SNPPServer::setConfigItem(const char* tag, const char* value)
     } else if (streq(tag, "retrytimemap")) {
 	setTimeMap(retryMap, value);
     } else if (!InetFaxServer::setConfigItem(tag, value))
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 #endif /* SNPP_SUPPORT */

@@ -41,7 +41,7 @@
 
 struct CQDecoder : public G3Decoder {
     u_int	cblc;		// current count of consecutive bad lines
-    fxBool	lastRowBad;	// last decoded row was bad
+    bool	lastRowBad;	// last decoded row was bad
 
     u_long	recvEOLCount;	// EOL count for received page
     u_long	recvBadLineCount;
@@ -69,13 +69,13 @@ struct CQDecoder : public G3Decoder {
     void	serverTrace(const char* fmt ...);
     void	copyQualityTrace(const char* fmt, ...);
 
-    fxBool	recvPageDLEData(TIFF* tif, fxBool checkQuality,
+    bool	recvPageDLEData(TIFF* tif, bool checkQuality,
 		    const Class2Params& params, fxStr& emsg);
     void	abortPageRecv();
     int		nextByte();
 
-    fxBool	checkQuality();
-    fxBool	isQualityOK(const Class2Params&);
+    bool	checkQuality();
+    bool	isQualityOK(const Class2Params&);
 
     CQDecoder();
     ~CQDecoder();
@@ -138,8 +138,8 @@ CQDecoder::recvSetupTIFF(TIFF* tif, long, int fillOrder, const Class2Params& par
  * Receive Phase C data with or without copy
  * quality checking and erroneous row fixup.
  */
-fxBool
-CQDecoder::recvPageDLEData(TIFF* tif, fxBool checkQuality,
+bool
+CQDecoder::recvPageDLEData(TIFF* tif, bool checkQuality,
     const Class2Params& params, fxStr& emsg)
 {
     setupDecoder(recvFillOrder, params.is2D());
@@ -167,7 +167,7 @@ CQDecoder::recvPageDLEData(TIFF* tif, fxBool checkQuality,
 	abortPageRecv();
 	emsg = "Missing EOL after 5 seconds";
 	recvTrace("%s", (const char*) emsg);
-	return (FALSE);
+	return (false);
     }
     if (checkQuality) {
 	/*
@@ -204,7 +204,7 @@ CQDecoder::recvPageDLEData(TIFF* tif, fxBool checkQuality,
 	memset(curGood, 0, rowSize);		// initialize to all white
 	recvBuf = NULL;				// don't need raw data
 
-	lastRowBad = FALSE;			// no previous row
+	lastRowBad = false;			// no previous row
 	cblc = 0;				// current bad line run
 	if (!RTCraised()) {
 	    for (;;) {
@@ -216,13 +216,13 @@ CQDecoder::recvPageDLEData(TIFF* tif, fxBool checkQuality,
 		 * later for deciding whether or not the page quality
 		 * is acceptable.
 		 */
-		fxBool decodeOK = decodeRow(recvRow, rowpixels);
+		bool decodeOK = decodeRow(recvRow, rowpixels);
 		if (seenRTC())			// seen RTC, flush everything
 		    continue;
 		if (decodeOK) {
 		    curGood = recvRow;		// reset last good
 		    if (lastRowBad) {		// reset run statistics
-			lastRowBad = FALSE;
+			lastRowBad = false;
 			if (cblc > recvConsecutiveBadLineCount)
 			    recvConsecutiveBadLineCount = cblc;
 			cblc = 0;
@@ -231,7 +231,7 @@ CQDecoder::recvPageDLEData(TIFF* tif, fxBool checkQuality,
 		    memcpy(recvRow, curGood, rowSize);// replicate last good
 		    recvBadLineCount++;
 		    cblc++;
-		    lastRowBad = TRUE;
+		    lastRowBad = true;
 		}
 		/*
 		 * Advance forward a scanline and if necessary
@@ -350,7 +350,7 @@ CQDecoder::recvPageDLEData(TIFF* tif, fxBool checkQuality,
 	    recvEOLCount = getRTCRow();
 	}
     }
-    return (TRUE);
+    return (true);
 }
 
 void
@@ -376,7 +376,7 @@ CQDecoder::flushRawData(TIFF* tif, tstrip_t strip, u_char* buf, u_int cc)
  * Check if the configuration parameters indicate if
  * copy quality checking should be done on recvd pages.
  */
-fxBool
+bool
 CQDecoder::checkQuality()
 {
     return (percentGoodLines != 0 && maxConsecutiveBadLines != 0);
@@ -387,7 +387,7 @@ CQDecoder::checkQuality()
  * against the configuration parameters and return an
  * indication of whether or not the page quality is acceptable.
  */
-fxBool
+bool
 CQDecoder::isQualityOK(const Class2Params& params)
 {
     if (percentGoodLines != 0 && recvEOLCount != 0) {
@@ -395,7 +395,7 @@ CQDecoder::isQualityOK(const Class2Params& params)
 	if (percent < percentGoodLines) {
 	    serverTrace("RECV: REJECT page quality, %u%% good lines (%u%% required)",
 		percent, percentGoodLines);
-	    return (FALSE);
+	    return (false);
 	}
     }
     u_int cblc = maxConsecutiveBadLines;
@@ -405,10 +405,10 @@ CQDecoder::isQualityOK(const Class2Params& params)
 	if (recvConsecutiveBadLineCount > cblc) {
 	    serverTrace("RECV: REJECT page quality, %u-line run (max %u)",
 		recvConsecutiveBadLineCount, cblc);
-	    return (FALSE);
+	    return (false);
 	}
     }
-    return (TRUE);
+    return (true);
 }
 
 int

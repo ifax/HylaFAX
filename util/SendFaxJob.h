@@ -76,8 +76,8 @@ private:
     fxStr	passwd;			// password (opt)
     fxStr	external;		// displayable version of number (opt)
 
-    fxBool	autoCover;		// if TRUE, auto-generate cover sheet
-    fxBool	coverIsTemp;		// if TRUE, remove coverFile on exit
+    bool	autoCover;		// if true, auto-generate cover sheet
+    bool	coverIsTemp;		// if true, remove coverFile on exit
     fxStr	coverFile;		// cover page file
     fxStr	coverTemplate;		// cover page template file
     fxStr	name;			// receipient for cover page
@@ -87,7 +87,7 @@ private:
     fxStr	comments;		// comments for cover page
     fxStr	regarding;		// regarding info for cover page
 
-    fxBool	sendTagLine;		// if TRUE, use custom tagline format
+    bool	sendTagLine;		// if true, use custom tagline format
     fxStr	killTime;		// job's time to be killed
     fxStr	sendTime;		// job's time to be sent
     u_int	retryTime;		// retry time for failures (secs)
@@ -118,10 +118,10 @@ public:
     SendFaxJob(const SendFaxJob& other);
     virtual ~SendFaxJob();
 
-    virtual fxBool createJob(SendFaxClient& client, fxStr& emsg);
+    virtual bool createJob(SendFaxClient& client, fxStr& emsg);
 
     virtual void setupConfig();
-    virtual fxBool setConfigItem(const char* tag, const char* value);
+    virtual bool setConfigItem(const char* tag, const char* value);
 
     const fxStr& getJobID(void) const;
     const fxStr& getGroupID(void) const;
@@ -129,7 +129,7 @@ public:
     /*
      * Job notification.
      */
-    fxBool setNotification(const char*);// email notification
+    bool setNotification(const char*);// email notification
     void setNotification(FaxNotify);
     FaxNotify getNotification() const;
     void setMailbox(const char*);	// email notification address
@@ -183,10 +183,10 @@ public:
      * suppressed or an application-specified file can be
      * specified instead.
      */
-    void setAutoCoverPage(fxBool);	// auto-generate cover page
-    fxBool getAutoCoverPage() const;
+    void setAutoCoverPage(bool);	// auto-generate cover page
+    bool getAutoCoverPage() const;
 					// cover page file
-    void setCoverPageFile(const char*, fxBool removeOnExit);
+    void setCoverPageFile(const char*, bool removeOnExit);
     const fxStr& getCoverPageFile() const;
     void setCoverTemplate(const char*);	// cover page template file
     const fxStr& getCoverTemplate() const;
@@ -215,7 +215,7 @@ public:
     float getPageWidth() const;		// sending page width (mm)
     float getPageLength() const;	// sending page length (mm)
     const fxStr& getPageSize() const;	// page size by name
-    fxBool setPageSize(const char* name);
+    bool setPageSize(const char* name);
     void setVResolution(float);		// vertical resolution (lines/inch)
     float getVResolution() const;
     void setHResolution(float);		// horizontal resolution (lines/inch)
@@ -233,8 +233,8 @@ public:
     void setDesiredMST(int);		// desired/initial min-scanline time
     void setDesiredMST(const char* v);
     int getDesiredMST() const;
-    void setDesiredEC(fxBool b);	// desired use of Error Correction mode
-    fxBool getDesiredEC() const;
+    void setDesiredEC(bool b);	// desired use of Error Correction mode
+    bool getDesiredEC() const;
     void setDesiredDF(int);		// desired data format
     void setDesiredDF(const char*);
     int getDesiredDF() const;
@@ -266,7 +266,7 @@ inline const fxStr& SendFaxJob::getDialString() const	{ return number; }
 inline const fxStr& SendFaxJob::getSubAddress() const	{ return subaddr; }
 inline const fxStr& SendFaxJob::getPasswd() const	{ return passwd; }
 inline const fxStr& SendFaxJob::getExternalNumber() const{ return external; }
-inline fxBool SendFaxJob::getAutoCoverPage() const	{ return autoCover; }
+inline bool SendFaxJob::getAutoCoverPage() const	{ return autoCover; }
 inline const fxStr& SendFaxJob::getCoverPageFile() const{ return coverFile; }
 inline const fxStr& SendFaxJob::getCoverTemplate() const{ return coverTemplate;}
 inline const fxStr& SendFaxJob::getCoverName() const	{ return name; }
@@ -283,7 +283,7 @@ inline float SendFaxJob::getHResolution() const		{ return hres; }
 inline int SendFaxJob::getMinSpeed() const		{ return minsp; }
 inline int SendFaxJob::getDesiredSpeed() const		{ return desiredbr; }
 inline int SendFaxJob::getDesiredMST() const		{ return desiredst; }
-inline fxBool SendFaxJob::getDesiredEC() const		{ return desiredec; }
+inline bool SendFaxJob::getDesiredEC() const		{ return desiredec; }
 inline int SendFaxJob::getDesiredDF() const		{ return desireddf; }
 inline const fxStr& SendFaxJob::getTagLineFormat() const{ return tagline; }
 inline u_int SendFaxJob::getChopHandling() const	{ return pagechop; }

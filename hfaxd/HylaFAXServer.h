@@ -50,12 +50,12 @@
  */
 struct Job : public FaxRequest {
     time_t	lastmod;		// last file modify time, for updates
-    fxBool	queued;			// for SNPP
+    bool	queued;			// for SNPP
 
     Job(const fxStr& qf, int fd = -1);
     ~Job();
 
-    fxBool checkDocument(const char* pathname);
+    bool checkDocument(const char* pathname);
 };
 fxDECLARE_StrKeyDictionary(JobDict, Job*)
 
@@ -63,7 +63,7 @@ fxDECLARE_StrKeyDictionary(JobDict, Job*)
  * Received facsimile information.
  */
 struct RecvInfo : public FaxRecvInfo {
-    fxBool	beingReceived;		// currently being received
+    bool	beingReceived;		// currently being received
     time_t	recvTime;		// time receive operation started
 
     RecvInfo();
@@ -131,8 +131,8 @@ enum Token {
 struct tab {			// protocol command table entry
     const char*	name;
     Token	token;
-    fxBool	checklogin;	// if TRUE, must be logged in first
-    fxBool	implemented;	// FALSE if command is not implemented
+    bool	checklogin;	// if true, must be logged in first
+    bool	implemented;	// false if command is not implemented
     const char*	help;
 };
 
@@ -148,11 +148,11 @@ class HylaFAXServer;
  */ 
 struct SpoolDir {
     const char*	pathname;
-    fxBool	adminOnly;	// accessible by unprivileged clients
-    fxBool	storAble;	// unprivileged clients may STOR files
-    fxBool	deleAble;	// unprivileged clients may DELE files
+    bool	adminOnly;	// accessible by unprivileged clients
+    bool	storAble;	// unprivileged clients may STOR files
+    bool	deleAble;	// unprivileged clients may DELE files
     ino_t	ino;		// directory inode number
-    fxBool (*isVisibleFile)(const char*, const struct stat&);
+    bool (*isVisibleFile)(const char*, const struct stat&);
     void (HylaFAXServer::*listDirectory)(FILE*, const SpoolDir&, DIR*);
     void (HylaFAXServer::*listFile)(FILE*, const SpoolDir&,
 	const char*, const struct stat&);
@@ -316,7 +316,7 @@ protected:
     void listCmd(const char* name);	// LIST
     void nlstCmd(const char* name);	// NLST
     void storeCmd(const char*, const char*);// STOR+APPE
-    void storeUniqueCmd(fxBool isTemp);	// STOU+STOT
+    void storeUniqueCmd(bool isTemp);	// STOU+STOT
     void statFileCmd(const char* name);	// STAT
     void chownCmd(const char*, const char*);// CHOWN
     void chmodCmd(const char*, u_int);	// CHMOD
@@ -342,8 +342,8 @@ protected:
     void configCmd(const char* where, const char* info);
 
     virtual void initServer(void);
-    fxBool readShutdownFile(void);
-    fxBool isShutdown(fxBool quiet);
+    bool readShutdownFile(void);
+    bool isShutdown(bool quiet);
     void fatal(const char *fmt, ...);
     void reply(int code, const char* fmt, ...);
     void vreply(int code, const char* fmt, va_list ap);
@@ -356,21 +356,21 @@ protected:
     void setFileOwner(const char* filename);
 
     void loginRefused(const char* why);
-    fxBool checkUser(const char*);
-    fxBool checkuser(FILE*, const char *name);
+    bool checkUser(const char*);
+    bool checkuser(FILE*, const char *name);
     void login(void);
     void end_login(void);
     virtual void dologout(int status);
     const char* fixPathname(const char* file);
     const char* userName(u_int uid);
-    fxBool userID(const char*, u_int& id);
+    bool userID(const char*, u_int& id);
     void fillIDCache(void);
 
-    fxBool cvtPasswd(const char* type, const char* pass, fxStr& result);
-    fxBool findUser(FILE* db, const char* user, u_int& newuid);
-    fxBool addUser(FILE* db, const char* user, u_int uid,
+    bool cvtPasswd(const char* type, const char* pass, fxStr& result);
+    bool findUser(FILE* db, const char* user, u_int& newuid);
+    bool addUser(FILE* db, const char* user, u_int uid,
 	const char* upass, const char* apass);
-    fxBool deleteUser(FILE* db, const char* user);
+    bool deleteUser(FILE* db, const char* user);
 
     /*
      * Configuration file support.
@@ -382,9 +382,9 @@ protected:
     void setupConfig();
     void configError(const char* fmt, ...);
     void configTrace(const char* fmt, ...);
-    fxBool setConfigItem(const char* tag, const char* value);
+    bool setConfigItem(const char* tag, const char* value);
 
-    fxBool restartSend(FILE* fd, off_t marker);
+    bool restartSend(FILE* fd, off_t marker);
 
     static SpoolDir dirs[];
 
@@ -393,13 +393,13 @@ protected:
     static SpoolDir* dirLookup(ino_t ino);
     SpoolDir* dirAccess(const char* path);
     SpoolDir* fileAccess(const char* path, int op, struct stat&);
-    fxBool fileVisible(const SpoolDir&, const char*, const struct stat&);
+    bool fileVisible(const SpoolDir&, const char*, const struct stat&);
 
-    static fxBool isVisibleRecvQFile(const char*, const struct stat&);
+    static bool isVisibleRecvQFile(const char*, const struct stat&);
     void listRecvQ(FILE* fd, const SpoolDir& sd, DIR* dir);
     void listRecvQFile(FILE*, const SpoolDir&, const char*, const struct stat&);
 
-    static fxBool isVisibleSendQFile(const char*, const struct stat&);
+    static bool isVisibleSendQFile(const char*, const struct stat&);
     void listSendQ(FILE* fd, const SpoolDir& sd, DIR* dir);
     void listSendQFile(FILE*, const SpoolDir&, const char*, const struct stat&);
     void nlstSendQ(FILE* fd, const SpoolDir& sd, DIR* dir);
@@ -409,13 +409,13 @@ protected:
     void listStatusFile(FILE*, const SpoolDir&, const char*, const struct stat&);
     void nlstStatus(FILE* fd, const SpoolDir& sd, DIR* dir);
 
-    static fxBool isVisibleTRUE(const char*, const struct stat&);
-    static fxBool isVisibleDocQFile(const char*, const struct stat&);
-    static fxBool isVisibleRootFile(const char*, const struct stat&);
+    static bool isVisibletrue(const char*, const struct stat&);
+    static bool isVisibleDocQFile(const char*, const struct stat&);
+    static bool isVisibleRootFile(const char*, const struct stat&);
 
     void listDirectory(FILE* fd, const SpoolDir& sd, DIR* dir);
     void listUnixFile(FILE*, const SpoolDir&, const char*, const struct stat&);
-    void makeProt(const struct stat& sb, fxBool withGrp, char prot[10]);
+    void makeProt(const struct stat& sb, bool withGrp, char prot[10]);
     void Fprintf(FILE*, const char* fmt, const char*, const struct stat&);
 
     void nlstDirectory(FILE* fd, const SpoolDir& sd, DIR* dir);
@@ -425,64 +425,64 @@ protected:
     static const char* dataConnMsg(int code);
     virtual void closeDataConn(FILE*);
 
-    fxBool sendData(FILE* fdin, FILE* fdout);
-    fxBool sendIData(int fdin, int fdout);
-    fxBool sendZData(int fdin, int fdout);
-    fxBool recvData(FILE* instr, FILE* outstr);
-    fxBool recvIData(int fdin, int fdout);
-    fxBool recvZData(int fdin, int fdout);
+    bool sendData(FILE* fdin, FILE* fdout);
+    bool sendIData(int fdin, int fdout);
+    bool sendZData(int fdin, int fdout);
+    bool recvData(FILE* instr, FILE* outstr);
+    bool recvIData(int fdin, int fdout);
+    bool recvZData(int fdin, int fdout);
 
     TIFF* openTIFF(const char* name);
-    fxBool sendTIFFData(TIFF* tif, FILE* fdout);
-    fxBool sendTIFFHeader(TIFF* tif, int fdout);
-    fxBool sendITIFFData(TIFF* tif, int fdout);
+    bool sendTIFFData(TIFF* tif, FILE* fdout);
+    bool sendTIFFHeader(TIFF* tif, int fdout);
+    bool sendITIFFData(TIFF* tif, int fdout);
 
     void logTransfer(const char*, const SpoolDir&, const char*, time_t);
 
     virtual int parse(void);
-    fxBool cmd(Token t);
-    fxBool site_cmd(Token t);
-    fxBool param_cmd(Token t);
-    fxBool string_param(fxStr&, const char* what = NULL);
-    fxBool number_param(long&);
-    fxBool boolean_param(fxBool&);
-    fxBool file_param(fxStr& pathname);
-    fxBool pwd_param(fxStr& s);
-    fxBool timespec_param(int ndigits, time_t& t);
-    fxBool pathname_param(fxStr& pathname);
-    fxBool job_param(fxStr& jid);
-    fxBool jgrp_param(fxStr& jgid);
-    fxBool pathname(fxStr& s);
-    fxBool CRLF();
-    fxBool SP();
-    fxBool COMMA();
-    fxBool TIMESPEC(u_int len, time_t& result);
-    fxBool BOOLEAN(fxBool& b);
-    fxBool STRING(fxStr& s, const char* what = NULL);
-    fxBool NUMBER(long& n);
-    fxBool checkNUMBER(const char* s);
-    fxBool opt_CRLF();
-    fxBool opt_STRING(fxStr& s);
-    fxBool multi_STRING(fxStr& s);
+    bool cmd(Token t);
+    bool site_cmd(Token t);
+    bool param_cmd(Token t);
+    bool string_param(fxStr&, const char* what = NULL);
+    bool number_param(long&);
+    bool boolean_param(bool&);
+    bool file_param(fxStr& pathname);
+    bool pwd_param(fxStr& s);
+    bool timespec_param(int ndigits, time_t& t);
+    bool pathname_param(fxStr& pathname);
+    bool job_param(fxStr& jid);
+    bool jgrp_param(fxStr& jgid);
+    bool pathname(fxStr& s);
+    bool CRLF();
+    bool SP();
+    bool COMMA();
+    bool TIMESPEC(u_int len, time_t& result);
+    bool BOOLEAN(bool& b);
+    bool STRING(fxStr& s, const char* what = NULL);
+    bool NUMBER(long& n);
+    bool checkNUMBER(const char* s);
+    bool opt_CRLF();
+    bool opt_STRING(fxStr& s);
+    bool multi_STRING(fxStr& s);
     static u_int twodigits(const char* cp, u_int range);
     static u_int fourdigits(const char* cp);
     virtual void syntaxError(const char* msg);
 
     virtual void netStatus(FILE*) = 0;	// depends on transport
-    virtual fxBool hostPort() = 0;	// depends on transport
+    virtual bool hostPort() = 0;	// depends on transport
 
-    int getChar(fxBool waitForInput);
+    int getChar(bool waitForInput);
     void pushCmdData(const char* data, int n);
-    fxBool getCmdLine(char* s, int n, fxBool waitForInput = FALSE);
+    bool getCmdLine(char* s, int n, bool waitForInput = false);
     void pushToken(Token t);
     Token nextToken(void);
-    fxBool checkToken(Token);
-    fxBool getToken(Token, const char*);
+    bool checkToken(Token);
+    bool getToken(Token, const char*);
     void helpCmd(const tab* ctab, const char* s);
     void logcmd(Token t, const char* fmt = NULL, ...);
     void cmdFailure(Token t, const char* why);
-    fxBool checklogin(Token);
-    fxBool checkadmin(Token);
+    bool checklogin(Token);
+    bool checkadmin(Token);
 
     static const char* version;
 
@@ -490,19 +490,19 @@ protected:
     virtual const char* siteToken(Token t);
     static const char* parmToken(Token t);
 
-    fxBool initClientFIFO(fxStr& emsg);
+    bool initClientFIFO(fxStr& emsg);
     int FIFOInput(int fd);
     void FIFOMessage(const char* cp, u_int len);
-    fxBool sendModem(const char* modem, fxStr& emsg, const char* fmt ...);
-    fxBool sendQueuerMsg(fxStr& emsg, const fxStr& msg);
-    fxBool sendQueuer(fxStr& emsg, const char* fmt ...);
-    fxBool sendQueuerACK(fxStr& emsg, const char* fmt, ...);
-    fxBool vsendQueuerACK(fxStr& emsg, const char* fmt, va_list ap);
+    bool sendModem(const char* modem, fxStr& emsg, const char* fmt ...);
+    bool sendQueuerMsg(fxStr& emsg, const fxStr& msg);
+    bool sendQueuer(fxStr& emsg, const char* fmt ...);
+    bool sendQueuerACK(fxStr& emsg, const char* fmt, ...);
+    bool vsendQueuerACK(fxStr& emsg, const char* fmt, va_list ap);
 
-    fxBool newTrigger(fxStr& emsg, const char* fmt, ...);
-    fxBool vnewTrigger(fxStr& emsg, const char* fmt, va_list ap);
-    fxBool loadTrigger(fxStr& emsg);
-    fxBool cancelTrigger(fxStr& emsg);
+    bool newTrigger(fxStr& emsg, const char* fmt, ...);
+    bool vnewTrigger(fxStr& emsg, const char* fmt, va_list ap);
+    bool loadTrigger(fxStr& emsg);
+    bool cancelTrigger(fxStr& emsg);
     void triggerEvent(const TriggerMsgHeader& h, const char* data);
     void logEventMsg(const TriggerMsgHeader&h, fxStr& msg);
     void logJobEventMsg(const TriggerMsgHeader&, const JobExt&);
@@ -514,30 +514,30 @@ protected:
 
     virtual void initDefaultJob(void);
     void parmBotch(Token t);
-    fxBool checkAccess(const Job& job, Token t, u_int op);
-    fxBool checkParm(Job&, Token t, u_int op);
-    fxBool checkJobState(Job*);
+    bool checkAccess(const Job& job, Token t, u_int op);
+    bool checkParm(Job&, Token t, u_int op);
+    bool checkJobState(Job*);
     void replyJobParamValue(Job&, int code, Token t);
-    void replyBoolean(int code, fxBool b);
-    fxBool setValue(u_short& v, const char* value, const char* what,
+    void replyBoolean(int code, bool b);
+    bool setValue(u_short& v, const char* value, const char* what,
 	const char* valNames[], u_int nValNames);
     void flushPreparedDocuments(Job& job);
-    fxBool setJobParameter(Job&, Token t, const fxStr& value);
-    fxBool setJobParameter(Job&, Token t, u_short value);
-    fxBool setJobParameter(Job&, Token t, time_t value);
-    fxBool setJobParameter(Job&, Token t, fxBool b);
-    fxBool setJobParameter(Job&, Token t, float value);
-    fxBool docType(const char* docname, FaxSendOp& op);
-    fxBool checkAddDocument(Job&, Token type, const char* docname, FaxSendOp&);
+    bool setJobParameter(Job&, Token t, const fxStr& value);
+    bool setJobParameter(Job&, Token t, u_short value);
+    bool setJobParameter(Job&, Token t, time_t value);
+    bool setJobParameter(Job&, Token t, bool b);
+    bool setJobParameter(Job&, Token t, float value);
+    bool docType(const char* docname, FaxSendOp& op);
+    bool checkAddDocument(Job&, Token type, const char* docname, FaxSendOp&);
     void addCoverDocument(Job&, const char* docname);
     void addDocument(Job&, const char* docname);
     void addPollOp(Job&, const char* sep, const char* pwd);
     void newJobCmd(void);
-    fxBool newJob(fxStr& emsg);
+    bool newJob(fxStr& emsg);
     Job* findJob(const char* jobid, fxStr& emsg);
     Job* findJobInMemmory(const char* jobid);
     Job* findJobOnDisk(const char* jobid, fxStr& emsg);
-    fxBool updateJobFromDisk(Job& job);
+    bool updateJobFromDisk(Job& job);
     void replyCurrentJob(const char* leader);
     void setCurrentJob(const char* jobid);
     Job* preJobCmd(const char* op, const char* jobid, fxStr& emsg);
@@ -550,9 +550,9 @@ protected:
     void suspendJob(const char* jobid);
     void submitJob(const char* jobid);
     void waitForJob(const char* jobid);
-    fxBool updateJobOnDisk(Job& req, fxStr& emsg);
-    fxBool lockJob(Job& job, int how, fxStr& emsg);
-    fxBool lockJob(Job& job, int how);
+    bool updateJobOnDisk(Job& req, fxStr& emsg);
+    bool lockJob(Job& job, int how, fxStr& emsg);
+    bool lockJob(Job& job, int how);
     void unlockJob(Job& job);
 #ifdef OLDPROTO_SUPPORT
     void readJobs(void);
@@ -568,7 +568,7 @@ protected:
     u_int getJobNumber(fxStr&);
     u_int getDocumentNumbers(u_int count, fxStr&);
 
-    fxBool getRecvDocStatus(RecvInfo& ri);
+    bool getRecvDocStatus(RecvInfo& ri);
     RecvInfo* getRecvInfo(const fxStr& qfile, const struct stat& sb);
     const char* compactRecvTime(time_t t);
     void Rprintf(FILE*, const char*, const RecvInfo&, const struct stat&);

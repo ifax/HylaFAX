@@ -39,7 +39,7 @@ G3Encoder::~G3Encoder() {}
  * Reset encoding state.
  */
 void
-G3Encoder::setupEncoder(u_int fillOrder, fxBool is2d)
+G3Encoder::setupEncoder(u_int fillOrder, bool is2d)
 {
     is2D = is2d;
     /*

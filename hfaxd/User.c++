@@ -49,10 +49,10 @@
 gid_t	HylaFAXServer::faxuid = 0;		// reserved fax uid
 #define	FAXUID_RESV	HylaFAXServer::faxuid	// reserved fax uid
 
-fxBool
+bool
 HylaFAXServer::checkUser(const char* name)
 {
-    fxBool check = FALSE;
+    bool check = false;
     FILE* db = fopen(fixPathname(userAccessFile), "r");
     if (db != NULL) {
 	check = checkuser(db, name);
@@ -63,7 +63,7 @@ HylaFAXServer::checkUser(const char* name)
     return (check);
 }
 
-static fxBool
+static bool
 nextRecord(FILE* db, char line[], u_int size)
 {
     while (fgets(line, size-1, db)) {
@@ -77,9 +77,9 @@ nextRecord(FILE* db, char line[], u_int size)
 	if (cp = strchr(line, '\n'))
 	    *cp = '\0';
 	if (line[0] != '\0')
-	    return (TRUE);
+	    return (true);
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -87,15 +87,15 @@ nextRecord(FILE* db, char line[], u_int size)
  * the list of users and hosts that are permitted to
  * user the server and setup password handling.
  */
-fxBool
+bool
 HylaFAXServer::checkuser(FILE* db, const char* name)
 {
     struct stat sb;
     if (Sys::fstat(fileno(db), sb) < 0)
-	return (FALSE);
+	return (false);
     if (sb.st_mode&077) {	// file must not be publicly readable
 	logError("Access control file not mode 600; access denied.");
-	return (FALSE);
+	return (false);
     }
     uid = FAXUID_ANON;		// anonymous user
     adminwd = "*";		// disallow privileged access
@@ -132,7 +132,7 @@ HylaFAXServer::checkuser(FILE* db, const char* name)
 	RegEx pat(base, cp-base);
 	if (line[0] == '!') {		// disallow access on match
 	    if (pat.Find(dotform) || pat.Find(hostform))
-		return (FALSE);
+		return (false);
 	} else {			// allow access on match
 	    if (pat.Find(dotform) || pat.Find(hostform)) {
 		passwd = "";		// no password required
@@ -153,7 +153,7 @@ HylaFAXServer::checkuser(FILE* db, const char* name)
 		    } else
 			passwd = "";	// no password required
 		}
-		return (TRUE);
+		return (true);
 	    }
 	}
     }
@@ -163,7 +163,7 @@ HylaFAXServer::checkuser(FILE* db, const char* name)
      * folks that probe the server looking for valid accounts.
      */
     passwd = "*";
-    return (TRUE);
+    return (true);
 }
 
 fxDECLARE_PtrKeyDictionary(IDCache, u_int, fxStr)
@@ -232,7 +232,7 @@ HylaFAXServer::userName(u_int id)
 /*
  * Map user name to fax UID.
  */
-fxBool
+bool
 HylaFAXServer::userID(const char* name, u_int& id)
 {
     if (name == the_user)
@@ -245,22 +245,22 @@ HylaFAXServer::userID(const char* name, u_int& id)
 	for (IDCacheIter iter(*idcache); iter.notDone(); iter++)
 	    if (iter.value() == name) {
 		id = iter.key();
-		return (TRUE);
+		return (true);
 	    }
-	return (FALSE);
+	return (false);
     }
-    return (TRUE);
+    return (true);
 }
 
-static fxBool
+static bool
 isAllLower(const char* cp)
 {
     while (*cp) {
 	if (!islower(*cp))
-	    return (FALSE);
+	    return (false);
 	cp++;
     }
-    return (TRUE);
+    return (true);
 }
 
 static void
@@ -272,20 +272,20 @@ to64(char* cp, long v, int len)
     }
 }
 
-fxBool
+bool
 HylaFAXServer::cvtPasswd(const char* type, const char* pass, fxStr& result)
 {
     if (*pass == '\0') {		// null password *IS* permitted
 	result = "";
-	return (TRUE);
+	return (true);
     }
     if (strlen(pass) <= 5) {
 	reply(500, "%s password is too short; use 5-8 characters.", type);
-	return (FALSE);
+	return (false);
     }
     if (isAllLower(pass)) {
 	reply(500, "%s password is all lower-case; use something more.", type);
-	return (FALSE);
+	return (false);
     }
     srandom((int) Sys::now());
     char salt[9];
@@ -303,7 +303,7 @@ HylaFAXServer::cvtPasswd(const char* type, const char* pass, fxStr& result)
     to64(&salt[0], random(), 2);
 #endif
     result = crypt(pass, salt);
-    return (TRUE);
+    return (true);
 }
 
 #define	NBPL	(sizeof (u_long) * CHAR_BIT)	// bits/u_long
@@ -314,7 +314,7 @@ HylaFAXServer::cvtPasswd(const char* type, const char* pass, fxStr& result)
 #endif
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
-fxBool
+bool
 HylaFAXServer::findUser(FILE* db, const char* user, u_int& newuid)
 {
     rewind(db);
@@ -333,7 +333,7 @@ HylaFAXServer::findUser(FILE* db, const char* user, u_int& newuid)
 	for (cp = line; *cp && *cp != ':'; cp++)
 	    ;
 	if (strncmp(user, line, cp-line) == 0)
-	    return (TRUE);
+	    return (true);
 	if (*cp == ':' && isdigit(cp[1])) {	// mark uid as in-use
 	    u_int uid = (u_int) atoi(cp+1);
 	    SetBit(uid);
@@ -346,13 +346,13 @@ HylaFAXServer::findUser(FILE* db, const char* user, u_int& newuid)
 	    for (u_long mask = 1; allocated[l] & mask; mask <<= 1) 
 		b++;
 	    newuid = (u_int) (l*NBPL + b);
-	    return (FALSE);
+	    return (false);
 	}
     newuid = (u_int) -1;			// no more space
-    return (FALSE);
+    return (false);
 }
 
-fxBool
+bool
 HylaFAXServer::addUser(FILE* db, const char* user, u_int uid, const char* upass, const char* apass)
 {
     fxStr templ("/" FAX_TMPDIR "/uaddXXXXXX");
@@ -360,7 +360,7 @@ HylaFAXServer::addUser(FILE* db, const char* user, u_int uid, const char* upass,
     if (fd < 0) {
 	reply(550, "Error creating temp file %s: %s.",
 	    (const char*) templ, strerror(errno));
-	return (FALSE);
+	return (false);
     }
     rewind(db);
     char buf[8*1024];
@@ -370,7 +370,7 @@ HylaFAXServer::addUser(FILE* db, const char* user, u_int uid, const char* upass,
 	    perror_reply(550, "Write error", errno);
 	    Sys::close(fd);
 	    (void) Sys::unlink(templ);
-	    return (FALSE);
+	    return (false);
 	}
     fxStr line;
     if (*apass != '\0')
@@ -383,15 +383,15 @@ HylaFAXServer::addUser(FILE* db, const char* user, u_int uid, const char* upass,
 	perror_reply(550, "Write error", errno);
 	Sys::close(fd);
 	(void) Sys::unlink(templ);
-	return (FALSE);
+	return (false);
     }
     Sys::close(fd);
     if (Sys::rename(templ, fixPathname(userAccessFile)) < 0) {
 	perror_reply(550, "Rename of temp file failed", errno);
 	(void) Sys::unlink(templ);
-	return (FALSE);
+	return (false);
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -419,7 +419,7 @@ HylaFAXServer::addUserCmd(const char* user, const char* up, const char* ap)
 	    (const char*) userAccessFile, strerror(errno));
 }
 
-fxBool
+bool
 HylaFAXServer::deleteUser(FILE* db, const char* user)
 {
     fxStr templ("/" FAX_TMPDIR "/udelXXXXXX");
@@ -428,7 +428,7 @@ HylaFAXServer::deleteUser(FILE* db, const char* user)
     if (fd < 0 || (ftmp = fdopen(fd, "w")) == NULL) {
 	reply(550, "Error creating temp file %s: %s.",
 	    (const char*) templ, strerror(errno));
-	return (FALSE);
+	return (false);
     }
     /*
      * Scan the existing file for the specified user
@@ -437,7 +437,7 @@ HylaFAXServer::deleteUser(FILE* db, const char* user)
      * scanning line-by-line and just block-copy the
      * remaining part of the file.
      */
-    fxBool found = FALSE;
+    bool found = false;
     rewind(db);
     char line[8*1024];
     while (fgets(line, sizeof (line)-1, db)) {
@@ -446,7 +446,7 @@ HylaFAXServer::deleteUser(FILE* db, const char* user)
 	    for (cp = line; *cp && *cp != '\n' && *cp != ':'; cp++)
 		;
 	    if (strncmp(user, line, cp-line) == 0) {
-		found = TRUE;
+		found = true;
 		break;
 	    }
 	}
@@ -455,18 +455,18 @@ HylaFAXServer::deleteUser(FILE* db, const char* user)
     int cc;
     while ((cc = fread(line, 1, sizeof (line), db)) > 0)
 	fwrite(line, cc, 1, ftmp);
-    fxBool ioError = (fclose(ftmp) != 0);
+    bool ioError = (fclose(ftmp) != 0);
     if (found) {
 	if (ioError)
 	    perror_reply(550, "I/O error", errno);
 	else if (Sys::rename(templ, fixPathname(userAccessFile)) < 0)
 	    perror_reply(550, "Rename of temp file failed", errno);
 	else
-	    return (TRUE);
+	    return (true);
     } else
 	reply(500, "User %s not found in access file.", user);
     (void) Sys::unlink(templ);
-    return (FALSE);
+    return (false);
 }
 
 /*

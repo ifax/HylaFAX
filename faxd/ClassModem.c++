@@ -158,7 +158,7 @@ ClassModem::~ClassModem()
  * Default methods for modem driver interface.
  */
 
-fxBool
+bool
 ClassModem::dataService()
 {
     return atCmd(conf.class0Cmd);
@@ -180,7 +180,7 @@ ClassModem::dial(const char* number, fxStr& emsg)
 /*
  * Status messages to ignore when dialing.
  */
-fxBool
+bool
 ClassModem::isNoise(const char* s)
 {
     static const char* noiseMsgs[] = {
@@ -194,8 +194,8 @@ ClassModem::isNoise(const char* s)
 
     for (u_int i = 0; i < NNOISE; i++)
 	if (strneq(s, noiseMsgs[i], strlen(noiseMsgs[i])))
-	    return (TRUE);
-    return (FALSE);
+	    return (true);
+    return (false);
 }
 #undef NNOISE
 
@@ -462,13 +462,13 @@ ClassModem::getModemLine(char buf[], u_int bufSize, long ms)
 int ClassModem::getModemChar(long ms) { return server.getModemChar(ms); }
 int ClassModem::getModemDataChar()    { return server.getModemChar(dataTimeout); }
 
-fxBool
+bool
 ClassModem::putModemDLEData(const u_char* data, u_int cc, const u_char* bitrev, long ms)
 {
     u_char dlebuf[2*1024];
     while (cc > 0) {
 	if (wasTimeout() || abortRequested())
-	    return (FALSE);
+	    return (false);
 	/*
 	 * Copy to temp buffer, doubling DLE's.
 	 */
@@ -480,21 +480,21 @@ ClassModem::putModemDLEData(const u_char* data, u_int cc, const u_char* bitrev, 
 		dlebuf[++j] = DLE;
 	}
 	if (!putModem(dlebuf, j, ms))
-	    return (FALSE);
+	    return (false);
 	data += n;
 	cc -= n;
     }
-    return (TRUE);
+    return (true);
 }
 
 void ClassModem::flushModemInput()
     { server.modemFlushInput(); }
-fxBool ClassModem::putModem(void* d, int n, long ms)
+bool ClassModem::putModem(void* d, int n, long ms)
     { return server.putModem(d, n, ms); }
-fxBool ClassModem::putModemData(void* d, int n)
+bool ClassModem::putModemData(void* d, int n)
     { return server.putModem(d, n, dataTimeout); }
 
-fxBool
+bool
 ClassModem::putModemLine(const char* cp)
 {
     u_int cc = strlen(cp);
@@ -528,7 +528,7 @@ ClassModem::pause(u_int ms)
 /*
  * Reset the modem and set the DTE-DCE rate.
  */
-fxBool
+bool
 ClassModem::selectBaudRate(BaudRate br, FlowControl i, FlowControl o)
 {
     rate = br;
@@ -537,19 +537,19 @@ ClassModem::selectBaudRate(BaudRate br, FlowControl i, FlowControl o)
     return (reset(5*1000) || reset(5*1000));	// NB: try at most twice
 }
 
-fxBool ClassModem::sendBreak(fxBool pause)
+bool ClassModem::sendBreak(bool pause)
     { return server.sendBreak(pause); }
-fxBool
+bool
 ClassModem::setBaudRate(BaudRate r)
 {
     if (server.setBaudRate(r)) {
 	if (conf.baudRateDelay)
 	    pause(conf.baudRateDelay);
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
-fxBool
+bool
 ClassModem::setBaudRate(BaudRate r, FlowControl i, FlowControl o)
 {
     iFlow = i;
@@ -558,11 +558,11 @@ ClassModem::setBaudRate(BaudRate r, FlowControl i, FlowControl o)
     if (server.setBaudRate(r,i,o)) {
 	if (conf.baudRateDelay)
 	    pause(conf.baudRateDelay);
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
-fxBool
+bool
 ClassModem::setXONXOFF(FlowControl i, FlowControl o, SetAction a)
 {
     iFlow = i;
@@ -570,24 +570,24 @@ ClassModem::setXONXOFF(FlowControl i, FlowControl o, SetAction a)
     return server.setXONXOFF(i, o, a);
 }
 
-fxBool ClassModem::setDTR(fxBool onoff)
+bool ClassModem::setDTR(bool onoff)
     { return server.setDTR(onoff); }
-fxBool ClassModem::setInputBuffering(fxBool onoff)
+bool ClassModem::setInputBuffering(bool onoff)
     { return server.setInputBuffering(onoff); }
-fxBool ClassModem::modemStopOutput()
+bool ClassModem::modemStopOutput()
     { return server.modemStopOutput(); }
 
 /*
  * Miscellaneous server interfaces hooks.
  */
 
-fxBool ClassModem::abortRequested()
+bool ClassModem::abortRequested()
     { return server.abortRequested(); }
 
-void ClassModem::beginTimedTransfer()		{ server.timeout = FALSE; }
+void ClassModem::beginTimedTransfer()		{ server.timeout = false; }
 void ClassModem::endTimedTransfer()		{}
-fxBool ClassModem::wasTimeout()			{ return server.timeout; }
-void ClassModem::setTimeout(fxBool b)		{ server.timeout = b; }
+bool ClassModem::wasTimeout()			{ return server.timeout; }
+void ClassModem::setTimeout(bool b)		{ server.timeout = b; }
 
 /*
  * Parsing support routines.
@@ -633,12 +633,12 @@ ClassModem::trimModemLine(char buf[], int& cc)
 /* 
  * Hayes-style modem manipulation support.
  */
-fxBool
+bool
 ClassModem::reset(long ms)
 {
-    setDTR(FALSE);
+    setDTR(false);
     pause(conf.resetDelay);		// pause so modem can do reset
-    setDTR(TRUE);
+    setDTR(true);
 #ifndef CONFIG_NOREOPEN
     /*
      * On some systems lowering and raising DTR is not done
@@ -648,12 +648,12 @@ ClassModem::reset(long ms)
     server.reopenDevice();
 #endif
     if (!setBaudRate(rate, iFlow, oFlow))
-	return (FALSE);
+	return (false);
     flushModemInput();
     return atCmd(resetCmds, AT_OK, ms);
 }
 
-fxBool
+bool
 ClassModem::sync(long ms)
 {
     return waitFor(AT_OK, ms);
@@ -662,7 +662,7 @@ ClassModem::sync(long ms)
 ATResponse
 ClassModem::atResponse(char* buf, long ms)
 {
-    fxBool prevTimeout = wasTimeout();
+    bool prevTimeout = wasTimeout();
     int n = getModemLine(buf, sizeof (rbuf), ms);
     if (!prevTimeout && wasTimeout())
 	lastResponse = AT_TIMEOUT;
@@ -718,12 +718,12 @@ ClassModem::atResponse(char* buf, long ms)
  * changing the DCE-DTE communication rate and/or host-modem
  * flow control scheme are also recognized and handled.
  */
-fxBool
+bool
 ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 {
     u_int cmdlen = cmd.length();
     u_int pos = 0;
-    fxBool respPending = FALSE;
+    bool respPending = false;
 
     /*
      * Scan string for line breaks and escape codes (byte w/ 0x80 set).
@@ -743,16 +743,16 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 	    if (conf.atCmdDelay)
 		pause(conf.atCmdDelay);
 	    if (!putModemLine(cmd.extract(pos, i-pos)))
-		return (FALSE);
+		return (false);
 	    pos = ++i;			// next segment starts after line break
 	    if (r != AT_NOTHING) {
 		if (!waitFor(r, ms))
-		    return (FALSE);
+		    return (false);
 	    } else {
 		if (!waitFor(AT_OK, ms))
-		    return (FALSE);
+		    return (false);
 	    }
-	    respPending = FALSE;
+	    respPending = false;
 	} else if (isEscape(cmd[i])) {
 	    /*
 	     * Escape code; flush any partial line, process
@@ -773,7 +773,7 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 		     * translated to \r).
 		     */
 		    if (!putModemLine(cmd.extract(pos, i-1-pos)))
-			return (FALSE);
+			return (false);
 		    // setup for expected response
 		    resp = (r != AT_NOTHING ? r : AT_OK);
 		} else {
@@ -787,9 +787,9 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 		    const char* cp = &cmd[pos];
 		    server.traceStatus(FAXTRACE_MODEMCOM, "<-- [%u:%s]", cc,cp);
 		    if (!server.putModem1(cp, cc))
-			return (FALSE);
+			return (false);
 		}
-		respPending = TRUE;
+		respPending = true;
 	    }
 	    /*
 	     * Process escape codes.
@@ -823,7 +823,7 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 		    if (resp != AT_NOTHING) {
 			// XXX check return?
 			(void) waitFor(resp, ms);	// XXX ms
-			respPending = FALSE;
+			respPending = false;
 		    }
 		    break;
 		case ESC_FLUSH:			// flush input
@@ -840,8 +840,8 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 		 * does not get lost.
 		 */
 		if (resp != AT_NOTHING && !waitFor(resp, ms))
-		    return (FALSE);
-		respPending = FALSE;
+		    return (false);
+		respPending = false;
 	    }
 	} else
 	    i++;
@@ -853,17 +853,17 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 	if (conf.atCmdDelay)
 	    pause(conf.atCmdDelay);
 	if (!putModemLine(cmd.extract(pos, i-pos)))
-	    return (FALSE);
-	respPending = TRUE;
+	    return (false);
+	respPending = true;
     }
     /*
      * Wait for any pending response.
      */
     if (respPending) {
 	if (r != AT_NOTHING && !waitFor(r, ms))
-	    return (FALSE);
+	    return (false);
     }
-    return (TRUE);
+    return (true);
 }
 #undef	isEscape
 #undef	isLineBreak
@@ -871,13 +871,13 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 /*
  * Wait (carefully) for some response from the modem.
  */
-fxBool
+bool
 ClassModem::waitFor(ATResponse wanted, long ms)
 {
     for (;;) {
 	ATResponse response = atResponse(rbuf, ms);
 	if (response == wanted)
-	    return (TRUE);
+	    return (true);
 	switch (response) {
 	case AT_TIMEOUT:
 	case AT_EMPTYLINE:
@@ -887,7 +887,7 @@ ClassModem::waitFor(ATResponse wanted, long ms)
 	case AT_NOANSWER:
 	case AT_OFFHOOK:
 	    modemTrace("MODEM %s", ATresponses[response]);
-	    return (FALSE);
+	    return (false);
 	}
     }
 }
@@ -895,18 +895,18 @@ ClassModem::waitFor(ATResponse wanted, long ms)
 /*
  * Process a manufacturer/model/revision query.
  */
-fxBool
+bool
 ClassModem::doQuery(const fxStr& queryCmd, fxStr& result, long ms)
 {
     if (queryCmd == "")
-	return (TRUE);
+	return (true);
     if (queryCmd[0] == '!') {
 	/*
 	 * ``!mumble'' is interpreted as "return mumble";
 	 * this means that you can't send ! to the modem.
 	 */
 	result = queryCmd.tail(queryCmd.length()-1);
-	return (TRUE);
+	return (true);
     }
     return (atQuery(queryCmd, result, ms));
 }
@@ -914,7 +914,7 @@ ClassModem::doQuery(const fxStr& queryCmd, fxStr& result, long ms)
 /*
  * Return modem manufacturer.
  */
-fxBool
+bool
 ClassModem::setupManufacturer(fxStr& mfr)
 {
     return doQuery(mfrQueryCmd, mfr);
@@ -923,7 +923,7 @@ ClassModem::setupManufacturer(fxStr& mfr)
 /*
  * Return modem model identification.
  */
-fxBool
+bool
 ClassModem::setupModel(fxStr& model)
 {
     return doQuery(modelQueryCmd, model);
@@ -932,7 +932,7 @@ ClassModem::setupModel(fxStr& model)
 /*
  * Return modem firmware revision.
  */
-fxBool
+bool
 ClassModem::setupRevision(fxStr& rev)
 {
     return doQuery(revQueryCmd, rev);
@@ -941,7 +941,7 @@ ClassModem::setupRevision(fxStr& rev)
 /*
  * Send AT<what>? and get a string response.
  */
-fxBool
+bool
 ClassModem::atQuery(const char* what, fxStr& v, long ms)
 {
     ATResponse r = AT_ERROR;
@@ -961,7 +961,7 @@ ClassModem::atQuery(const char* what, fxStr& v, long ms)
 /*
  * Send AT<what>? and get a range response.
  */
-fxBool
+bool
 ClassModem::atQuery(const char* what, u_int& v, long ms)
 {
     char response[1024];
@@ -969,7 +969,7 @@ ClassModem::atQuery(const char* what, u_int& v, long ms)
 	sync(ms);
 	return parseRange(response, v);
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -992,26 +992,26 @@ const char SPACE = ' ';
  *     in the parsed range so that modems like the ZyXEL 2864
  *     that indicate they support ``Class Z'' are handled.
  */
-fxBool
+bool
 ClassModem::vparseRange(const char* cp, int nargs ... )
 {
-    fxBool b = TRUE;
+    bool b = true;
     va_list ap;
     va_start(ap, nargs);
     while (nargs-- > 0) {
 	while (cp[0] == SPACE)
 	    cp++;
 	char matchc;
-	fxBool acceptList;
+	bool acceptList;
 	if (cp[0] == OPAREN) {				// (<items>)
 	    matchc = CPAREN;
-	    acceptList = TRUE;
+	    acceptList = true;
 	    cp++;
 	} else if (isalnum(cp[0])) {			// <item>
 	    matchc = COMMA;
 	    acceptList = (nargs == 0);
 	} else {					// skip to comma
-	    b = FALSE;
+	    b = false;
 	    break;
 	}
 	int mask = 0;
@@ -1021,7 +1021,7 @@ ClassModem::vparseRange(const char* cp, int nargs ... )
 		continue;
 	    }
 	    if (!isalnum(cp[0])) {
-		b = FALSE;
+		b = false;
 		goto done;
 	    }
 	    int v;
@@ -1039,7 +1039,7 @@ ClassModem::vparseRange(const char* cp, int nargs ... )
 	    if (cp[0] == '-') {				// <low>-<high>
 		cp++;
 		if (!isdigit(cp[0])) {
-		    b = FALSE;
+		    b = false;
 		    goto done;
 		}
 		r = 0;
@@ -1075,7 +1075,7 @@ done:
  * Parse a single Class X range specification
  * and return the resulting bit mask.
  */
-fxBool
+bool
 ClassModem::parseRange(const char* cp, u_int& a0)
 {
     return vparseRange(cp, 1, &a0);
@@ -1093,7 +1093,7 @@ ClassModem::hangup()
     atCmd(conf.onHookCmd, AT_OK, 5000);
 }
 
-fxBool
+bool
 ClassModem::waitForRings(u_int n, CallType& type, CallerID& cinfo)
 {
     if (n > 0) {
@@ -1120,7 +1120,7 @@ ClassModem::waitForRings(u_int n, CallType& type, CallerID& cinfo)
 	    case AT_NOCARRIER:
 	    case AT_NODIALTONE:
 	    case AT_ERROR:
-		return (FALSE);
+		return (false);
 	    }
 	} while (n > 0 && Sys::now()-start < timeout);
     }

@@ -34,7 +34,7 @@
 class SNPPServer : public InetFaxServer {
 private:
     fxStr	msgFile;		// file with message text
-    fxBool	haveText;		// client specified message text
+    bool	haveText;		// client specified message text
     fxStrArray	msgs;			// jobs pending SEND (jobids)
 #define	S_SENDWAIT	0x10000		// in SEND waiting for jobs
 
@@ -53,13 +53,13 @@ protected:
 
     virtual void resetConfig();
     void setupConfig();
-    virtual fxBool setConfigItem(const char* tag, const char* value);
+    virtual bool setConfigItem(const char* tag, const char* value);
 
     int parse(void);
-    fxBool cmd(Token t);
-    fxBool site_cmd(Token t);
-    fxBool checklogin(Token);
-    fxBool SNPPTime(time_t& result);
+    bool cmd(Token t);
+    bool site_cmd(Token t);
+    bool checklogin(Token);
+    bool SNPPTime(time_t& result);
     virtual void syntaxError(const char* msg);
 
     virtual const char* cmdToken(Token t);
@@ -77,7 +77,7 @@ protected:
     void statusCmd(void);
     void subjectCmd(const char*);
 
-    fxBool mapPagerID(const char* pagerID,
+    bool mapPagerID(const char* pagerID,
 	fxStr& number, fxStr& pid, fxStr& emsg);
 public:
     SNPPServer();
@@ -91,7 +91,7 @@ class SNPPSuperServer : public SuperServer {
 private:
     fxStr port;
 protected:
-    fxBool startServer(void);
+    bool startServer(void);
     HylaFAXServer* newChild(void);
 public:
     SNPPSuperServer(const char* port, int backlog = 5);

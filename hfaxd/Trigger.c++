@@ -90,16 +90,16 @@ HylaFAXServer::triggerCmd(const char* fmt ...)
  * and return the identifier sent back by the
  * scheduler.
  */
-fxBool
+bool
 HylaFAXServer::newTrigger(fxStr& emsg, const char* fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    fxBool b = vnewTrigger(emsg, fmt, ap);
+    bool b = vnewTrigger(emsg, fmt, ap);
     va_end(ap);
     return (b);
 }
-fxBool
+bool
 HylaFAXServer::vnewTrigger(fxStr& emsg, const char* fmt, va_list ap)
 {
     trigSpec = fxStr::vformat(fmt, ap);
@@ -112,22 +112,22 @@ HylaFAXServer::vnewTrigger(fxStr& emsg, const char* fmt, va_list ap)
  * create triggers the first time as well as to re-load an
  * active trigger if the scheduler is restarted.
  */
-fxBool
+bool
 HylaFAXServer::loadTrigger(fxStr& emsg)
 {
     if (sendQueuerACK(emsg, "T%s", (const char*) trigSpec) &&
       fifoResponse.length() > 2) {
 	tid = atoi(&fifoResponse[2]);
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 /*
  * Inform the spooler that it should cancel
  * a previously created trigger.
  */
-fxBool
+bool
 HylaFAXServer::cancelTrigger(fxStr& emsg)
 {
     trigSpec = "";				// avoid spontaneous reloads
@@ -181,10 +181,10 @@ HylaFAXServer::triggerEvent(const TriggerMsgHeader& h, const char* cp)
 	if (rip->recvTime == 0)
 	    rip->recvTime = h.tstamp;
 	if (h.event == Trigger::RECV_END) {
-	    rip->beingReceived = FALSE;
+	    rip->beingReceived = false;
 	    rip->reason = ri.reason;
 	} else
-	    rip->beingReceived = TRUE;
+	    rip->beingReceived = true;
 	rip->sender = ri.sender;
 	rip->subaddr = ri.subaddr;
 	rip->npages = ri.npages;

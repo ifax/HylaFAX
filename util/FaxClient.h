@@ -134,8 +134,8 @@ private:
 
     void init(void);
 
-    fxBool sendRawData(void* buf, int cc, fxStr& emsg);
-    fxBool setCommon(const FaxParam&, u_int);
+    bool sendRawData(void* buf, int cc, fxStr& emsg);
+    bool setCommon(const FaxParam&, u_int);
 protected:
     FaxClient();
     FaxClient(const fxStr& hostarg);
@@ -147,22 +147,22 @@ protected:
     virtual void vtraceServer(const char* fmt, va_list ap);
 
     void initServerState(void);
-    fxBool jobOp(const char* op, const char* jobid);
-    fxBool extract(u_int& pos, const char* pattern, fxStr& result,
+    bool jobOp(const char* op, const char* jobid);
+    bool extract(u_int& pos, const char* pattern, fxStr& result,
 	const char* cmd, fxStr& emsg);
-    fxBool storeUnique(const char* cmd, fxStr& docname, fxStr& emsg);
+    bool storeUnique(const char* cmd, fxStr& docname, fxStr& emsg);
 
     const fxStr& getStatusFormat(u_int flag, const char* cmd, fxStr& fmt);
-    fxBool setStatusFormat(const char* cmd, u_int flag, fxStr&, const char*);
+    bool setStatusFormat(const char* cmd, u_int flag, fxStr&, const char*);
     void makeHeader(const char* fmt, const FaxFmtHeader fmts[], fxStr& header);
 
-    virtual fxBool setupUserIdentity(fxStr& emsg);
+    virtual bool setupUserIdentity(fxStr& emsg);
     void setupHostModem(const char*);
     void setupHostModem(const fxStr&);
 
     virtual void resetConfig(void);
     virtual void setupConfig(void);
-    virtual fxBool setConfigItem(const char* tag, const char* value);
+    virtual bool setConfigItem(const char* tag, const char* value);
     virtual void configError(const char* fmt ...);
     virtual void configTrace(const char* fmt ...);
 
@@ -184,25 +184,25 @@ public:
     void setModem(const char*);
     const fxStr& getModem(void) const;
 
-    virtual fxBool callServer(fxStr& emsg);
-    virtual fxBool hangupServer(void);
-    fxBool isConnected(void) const;
-    fxBool login(const char* user, fxStr& emsg);
-    fxBool admin(const char* pass, fxStr& emsg);
+    virtual bool callServer(fxStr& emsg);
+    virtual bool hangupServer(void);
+    bool isConnected(void) const;
+    bool login(const char* user, fxStr& emsg);
+    bool admin(const char* pass, fxStr& emsg);
     virtual const char* getPasswd(const char* prompt);
-    fxBool isLoggedIn(void) const;
+    bool isLoggedIn(void) const;
     void setCtrlFds(int in, int out);
     FILE* getCtrlFd(void) const;
 
-    virtual fxBool initDataConn(fxStr& emsg);
-    virtual fxBool openDataConn(fxStr& emsg);
+    virtual bool initDataConn(fxStr& emsg);
+    virtual bool openDataConn(fxStr& emsg);
     virtual void closeDataConn(void);
-    virtual fxBool abortDataConn(fxStr& emsg);
+    virtual bool abortDataConn(fxStr& emsg);
     void setDataFd(int fd);
     int getDataFd(void) const;
 
-    void setVerbose(fxBool);
-    fxBool getVerbose(void) const;
+    void setVerbose(bool);
+    bool getVerbose(void) const;
 
     int getPort(void) const;
     const fxStr& getProtoName(void) const;
@@ -213,77 +213,77 @@ public:
     // output
     int command(const char* fmt ...);
     int vcommand(const char* fmt, va_list ap);
-    int getReply(fxBool expectEOF);
+    int getReply(bool expectEOF);
     const fxStr& getLastResponse(void) const;
     int getLastCode(void) const;
     /*
      * Job control support.
      */
     const fxStr& getCurrentJob(void) const;
-    fxBool setCurrentJob(const char* jobid);
-    fxBool newJob(fxStr& jobid, fxStr& groupid, fxStr& emsg);
-    fxBool jobSubmit(const char* jobid);
-    fxBool jobSuspend(const char* jobid);
-    fxBool jobKill(const char* jobid);
-    fxBool jobDelete(const char* jobid);
-    fxBool jobWait(const char* jobid);
+    bool setCurrentJob(const char* jobid);
+    bool newJob(fxStr& jobid, fxStr& groupid, fxStr& emsg);
+    bool jobSubmit(const char* jobid);
+    bool jobSuspend(const char* jobid);
+    bool jobKill(const char* jobid);
+    bool jobDelete(const char* jobid);
+    bool jobWait(const char* jobid);
     /*
      * Set various job parameters.
      */
-    fxBool jobParm(const char* name, const fxStr& value);
-    fxBool jobParm(const char* name, const char* value);
-    fxBool jobParm(const char* name, fxBool b);
-    fxBool jobParm(const char* name, u_int v);
-    fxBool jobParm(const char* name, float v);
-    fxBool jobSendTime(const struct tm tm);
-    fxBool jobLastTime(u_long);
-    fxBool jobRetryTime(u_long);
-    fxBool jobCover(const char* docname);
-    fxBool jobDocument(const char* docname);
-    fxBool jobPollRequest(const char* sep, const char* pwd);
+    bool jobParm(const char* name, const fxStr& value);
+    bool jobParm(const char* name, const char* value);
+    bool jobParm(const char* name, bool b);
+    bool jobParm(const char* name, u_int v);
+    bool jobParm(const char* name, float v);
+    bool jobSendTime(const struct tm tm);
+    bool jobLastTime(u_long);
+    bool jobRetryTime(u_long);
+    bool jobCover(const char* docname);
+    bool jobDocument(const char* docname);
+    bool jobPollRequest(const char* sep, const char* pwd);
     /*
      * Job group control support.
      */
-    fxBool jgrpSubmit(const char* jgrpid);
-    fxBool jgrpSuspend(const char* jgrpid);
-    fxBool jgrpKill(const char* jgrpid);
-    fxBool jgrpWait(const char* jgrpid);
+    bool jgrpSubmit(const char* jgrpid);
+    bool jgrpSuspend(const char* jgrpid);
+    bool jgrpKill(const char* jgrpid);
+    bool jgrpWait(const char* jgrpid);
     /*
      * Query/set transfer state parameters.
      */
     u_int getType(void) const;
-    fxBool setType(u_int);
+    bool setType(u_int);
     u_int getMode(void) const;
-    fxBool setMode(u_int);
+    bool setMode(u_int);
     u_int getStruct(void) const;
-    fxBool setStruct(u_int);
+    bool setStruct(u_int);
     u_int getFormat(void) const;
-    fxBool setFormat(u_int);
+    bool setFormat(u_int);
     u_int getTimeZone(void) const;
-    fxBool setTimeZone(u_int);
+    bool setTimeZone(u_int);
     /*
      * Send documents to the server.
      */
-    fxBool storeUnique(fxStr& docname, fxStr& emsg);	// STOU
-    fxBool storeTemp(fxStr& docname, fxStr& emsg);	// STOT
-    fxBool storeFile(fxStr&, fxStr& emsg);		// STOR
-    fxBool sendData(int fd, fxBool (FaxClient::*store)(fxStr&, fxStr&),
+    bool storeUnique(fxStr& docname, fxStr& emsg);	// STOU
+    bool storeTemp(fxStr& docname, fxStr& emsg);	// STOT
+    bool storeFile(fxStr&, fxStr& emsg);		// STOR
+    bool sendData(int fd, bool (FaxClient::*store)(fxStr&, fxStr&),
 	fxStr& docname, fxStr& emsg);
-    fxBool sendZData(int fd, fxBool (FaxClient::*store)(fxStr&, fxStr&),
+    bool sendZData(int fd, bool (FaxClient::*store)(fxStr&, fxStr&),
 	fxStr& docname, fxStr& emsg);
     /*
      * Retrieve information from the server.
      */
-    fxBool recvData(fxBool (*f)(void*, const char*, int, fxStr&),
+    bool recvData(bool (*f)(void*, const char*, int, fxStr&),
 	void* arg, fxStr& emsg, u_long restart, const char* fmt, ...);
-    fxBool recvZData(fxBool (*f)(void*, const char*, int, fxStr&),
+    bool recvZData(bool (*f)(void*, const char*, int, fxStr&),
 	void* arg, fxStr& emsg, u_long restart, const char* fmt, ...);
     /*
      * Job scripting support.
      */
-    fxBool runScript(const char* filename, fxStr& emsg);
-    fxBool runScript(FILE*, const char* filename, fxStr& emsg);
-    fxBool runScript(const char* script, u_long scriptLen,
+    bool runScript(const char* filename, fxStr& emsg);
+    bool runScript(FILE*, const char* filename, fxStr& emsg);
+    bool runScript(const char* script, u_long scriptLen,
 	const char* filename, fxStr& emsg);
     /*
      * Status query support.
@@ -293,13 +293,13 @@ public:
     static const FaxFmtHeader modemFormats[];
     static const FaxFmtHeader fileFormats[];
 
-    fxBool setJobStatusFormat(const char*);
+    bool setJobStatusFormat(const char*);
     const fxStr& getJobStatusFormat(void);
-    fxBool setRecvStatusFormat(const char*);
+    bool setRecvStatusFormat(const char*);
     const fxStr& getRecvStatusFormat(void);
-    fxBool setModemStatusFormat(const char*);
+    bool setModemStatusFormat(const char*);
     const fxStr& getModemStatusFormat(void);
-    fxBool setFileStatusFormat(const char*);
+    bool setFileStatusFormat(const char*);
     const fxStr& getFileStatusFormat(void);
     void getJobStatusHeader(fxStr& header);
     void getRecvStatusHeader(fxStr& header);
@@ -311,7 +311,7 @@ inline const fxStr& FaxClient::getUserName(void) const	{ return userName; }
 inline const fxStr& FaxClient::getHost(void) const	{ return host; }
 inline const fxStr& FaxClient::getModem(void) const	{ return modem; }
 inline const fxStr& FaxClient::getProtoName() const	{ return proto; }
-inline fxBool FaxClient::getVerbose(void) const
+inline bool FaxClient::getVerbose(void) const
     { return (state&FS_VERBOSE) != 0; }
 inline int FaxClient::getPort(void) const		{ return port; }
 inline FILE* FaxClient::getCtrlFd(void) const		{ return fdOut; }
@@ -319,9 +319,9 @@ inline int FaxClient::getDataFd(void) const		{ return fdData; }
 inline const fxStr& FaxClient::getLastResponse(void) const
     { return lastResponse; }
 inline int FaxClient::getLastCode(void) const		{ return code; }
-inline fxBool FaxClient::isLoggedIn(void) const
+inline bool FaxClient::isLoggedIn(void) const
     { return (state&FS_LOGGEDIN) != 0; }
-inline fxBool FaxClient::isConnected(void) const	{ return fdIn != NULL; }
+inline bool FaxClient::isConnected(void) const	{ return fdIn != NULL; }
 inline u_int FaxClient::getType(void) const		{ return type; }
 inline u_int FaxClient::getStruct(void) const		{ return stru; }
 inline u_int FaxClient::getMode(void) const		{ return mode; }

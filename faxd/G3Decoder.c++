@@ -93,7 +93,7 @@ G3Decoder::G3Decoder() {}
 G3Decoder::~G3Decoder() {}
 
 void
-G3Decoder::setupDecoder(u_int recvFillOrder, fxBool is2d)
+G3Decoder::setupDecoder(u_int recvFillOrder, bool is2d)
 {
     /*
      * The G3 decoding state tables are constructed for
@@ -150,20 +150,20 @@ G3Decoder::decode(void* raster, u_int w, u_int h)
     }
 }
 
-fxBool
+bool
 G3Decoder::isNextRow1D()
 {
     DECLARE_STATE_EOL();
 
     CACHE_STATE();
     SYNC_EOL(Nop);
-    fxBool is1D;
+    bool is1D;
     if (is2D) {
 	NeedBits8(1, Nop);
 	is1D = (GetBits(1) != 0);	// 1D/2D-encoding tag bit
 	// NB: we don't clear the tag bit
     } else {
-	is1D = TRUE;
+	is1D = true;
     }
     // now reset state for next decoded row
     BitAcc = (BitAcc<<1)|1;		// EOL bit
@@ -175,11 +175,11 @@ G3Decoder::isNextRow1D()
 
 #define	unexpected(table, a0) do {		\
     invalidCode(table, a0);			\
-    rowgood = FALSE;				\
+    rowgood = false;				\
 } while (0)
 #define	extension(a0) do {			\
     invalidCode("2D", a0);			\
-    rowgood = FALSE;				\
+    rowgood = false;				\
 } while (0)
 #define	prematureEOF(a0)	// never happens 'cuz of longjmp
 #define	SWAP(t,a,b)	{ t x; x = (a); (a) = (b); (b) = x; }
@@ -188,31 +188,31 @@ G3Decoder::isNextRow1D()
  * Decode a single row of pixels and return
  * the decoded data in the scanline buffer.
  */
-fxBool
+bool
 G3Decoder::decodeRow(void* scanline, u_int lastx)
 {
     DECLARE_STATE_2D();
-    fxBool rowgood = TRUE;
-    fxBool nullrow = FALSE;
+    bool rowgood = true;
+    bool nullrow = false;
 
     CACHE_STATE();
     a0 = 0;
     RunLength = 0;
     pa = thisrun = curruns;
     SYNC_EOL(Nop);
-    fxBool is1D;
+    bool is1D;
     if (is2D) {
 	NeedBits8(1, Nop);
 	is1D = (GetBits(1) != 0);	// 1D/2D-encoding tag bit
 	ClrBits(1);
     } else
-	is1D = TRUE;
+	is1D = true;
     if (!is1D) {
 	pb = refruns;
 	b1 = *pb++;
 #define	badlength(a0,lastx) do {			\
     badPixelCount("2D", a0, lastx);			\
-    rowgood = FALSE;					\
+    rowgood = false;					\
 } while (0)
 	EXPAND2D(Nop2d);
     Nop2d:;
@@ -223,7 +223,7 @@ G3Decoder::decodeRow(void* scanline, u_int lastx)
     if (nullrow && ++RTCrun == 6 && RTCrow == -1)	\
 	RTCrow = rowref-6;				\
     badPixelCount("1D", a0, lastx);			\
-    rowgood = FALSE;					\
+    rowgood = false;					\
 } while (0)
 	EXPAND1D(Nop1d);
     Nop1d:;

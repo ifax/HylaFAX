@@ -37,30 +37,30 @@
 /*
  * Create the client FIFO and open it for use.
  */
-fxBool
+bool
 HylaFAXServer::initClientFIFO(fxStr& emsg)
 {
     clientFIFOName = fxStr::format(FAX_CLIENTDIR "/%u", getpid());
     if (Sys::mkfifo(clientFIFOName, 0622) < 0 && errno != EEXIST) {
 	emsg = fxStr::format("Could not create %s: %s",
 	    (const char*) clientFIFOName, strerror(errno));
-	return (FALSE);
+	return (false);
     }
     clientFd = Sys::open(clientFIFOName, CONFIG_OPENFIFO|O_NDELAY);
     if (clientFd == -1) {
 	emsg = fxStr::format("Could not open FIFO file %s: %s",
 	    (const char*) clientFIFOName, strerror(errno));
-	return (FALSE);
+	return (false);
     }
     if (!Sys::isFIFOFile(clientFd)) {
 	emsg = clientFIFOName | " is not a FIFO special file";
-	return (FALSE);
+	return (false);
     }
     // open should set O_NDELAY, but just to be sure...
     if (fcntl(clientFd, F_SETFL, fcntl(clientFd, F_GETFL, 0) | O_NDELAY) < 0)
 	logError("initClientFIFO %s: fcntl: %m", (const char*) clientFIFOName);
     Dispatcher::instance().link(clientFd, Dispatcher::ReadMask, this);
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -139,10 +139,10 @@ HylaFAXServer::FIFOMessage(const char* cp, u_int)
 /*
  * Send a message to the central queuer process.
  */
-fxBool
+bool
 HylaFAXServer::sendQueuerMsg(fxStr& emsg, const fxStr& msg)
 {
-    fxBool retry = FALSE;
+    bool retry = false;
 again:
     if (faxqFd == -1) {
 #ifdef FIFOSELECTBUG
@@ -164,7 +164,7 @@ again:
 	if (faxqFd == -1) {
 	    emsg = fxStr::format("Unable to open scheduler FIFO: %s",
 		strerror(errno));
-	    return (FALSE);
+	    return (false);
 	}
 	/*
 	 * Turn off O_NDELAY so that write will block if FIFO is full.
@@ -181,26 +181,26 @@ again:
 	     */
 	    Sys::close(faxqFd), faxqFd = -1;
 	    if (!retry) {
-		retry = TRUE;
+		retry = true;
 		goto again;
 	    }
 	}
 	emsg = fxStr::format("FIFO write failed: %s", strerror(errno));
 	logError(emsg);
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }
 
 /*
  * Send a message to the central queuer process.
  */
-fxBool
+bool
 HylaFAXServer::sendQueuer(fxStr& emsg, const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    fxBool ok = sendQueuerMsg(emsg, fxStr::vformat(fmt, ap));
+    bool ok = sendQueuerMsg(emsg, fxStr::vformat(fmt, ap));
     va_end(ap);
     return (ok);
 }
@@ -209,43 +209,43 @@ HylaFAXServer::sendQueuer(fxStr& emsg, const char* fmt ...)
  * Send a message to the central queuer process
  * and wait for a response on our client FIFO.
  */
-fxBool
+bool
 HylaFAXServer::sendQueuerACK(fxStr& emsg, const char* fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    fxBool b = vsendQueuerACK(emsg, fmt, ap);
+    bool b = vsendQueuerACK(emsg, fmt, ap);
     va_end(ap);
     return (b);
 }
 
-fxBool
+bool
 HylaFAXServer::vsendQueuerACK(fxStr& emsg, const char* fmt, va_list ap)
 {
     if (clientFd == -1) {
 	emsg = "Bad server state, client FIFO is not open";
-	return (FALSE);
+	return (false);
     }
     fxStr msg = fxStr::vformat(fmt, ap);
     if (msg.length() < 2) {			// sanity check
 	emsg = "Bad FIFO message, too short to be valid";
-	return (FALSE);
+	return (false);
     }
     msg.insert(clientFIFOName | ":", 1);	// insert FIFO name for reply 
-    fxBool ok = sendQueuerMsg(emsg, msg);
+    bool ok = sendQueuerMsg(emsg, msg);
     if (ok) {
 	Dispatcher& disp = Dispatcher::instance();
 	for (state |= S_WAITFIFO; IS(WAITFIFO); disp.dispatch())
 	    ;
 	if (fifoResponse.length() < 2) {	// too short to be valid
 	    emsg = "Unexpected response from scheduler: \"" |fifoResponse| "\"";
-	    ok = FALSE;
+	    ok = false;
 	} else if (fifoResponse[0] == msg[0]) {	// response to our request
 	    ok = (fifoResponse[1] == '*');
 	    if (!ok)
 		emsg = "Unspecified reason (scheduler NAK'd request)";
 	} else					// user abort
-	    ok = FALSE;
+	    ok = false;
     }
     return (ok);
 }
@@ -253,7 +253,7 @@ HylaFAXServer::vsendQueuerACK(fxStr& emsg, const char* fmt, va_list ap)
 /*
  * Send a message to a modem process via the per-modem FIFO.
  */
-fxBool
+bool
 HylaFAXServer::sendModem(const char* modem, fxStr& emsg, const char* fmt ...)
 {
     fxStr fifoName(modem);
@@ -279,7 +279,7 @@ HylaFAXServer::sendModem(const char* modem, fxStr& emsg, const char* fmt ...)
     if (fd == -1) {
 	emsg = fxStr::format("Unable to open %s: %s",
 	    (const char*) fifoName, strerror(errno));
-	return (FALSE);
+	return (false);
     }
     va_list ap;
     va_start(ap, fmt);
@@ -290,7 +290,7 @@ HylaFAXServer::sendModem(const char* modem, fxStr& emsg, const char* fmt ...)
 	emsg = fxStr::format("write to %s failed: %s",
 	    (const char*) fifoName, strerror(errno));
 	logError(emsg);
-	return (FALSE);
+	return (false);
     } else
-	return (TRUE);
+	return (true);
 }

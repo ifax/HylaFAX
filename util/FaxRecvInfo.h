@@ -48,6 +48,6 @@ public:
     ~FaxRecvInfo();
 
     fxStr encode() const;
-    fxBool decode(const char*);
+    bool decode(const char*);
 };
 #endif /* _FaxRecvInfo_ */

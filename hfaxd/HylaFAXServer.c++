@@ -193,7 +193,7 @@ HylaFAXServer::open(void)
 	dologout(-1);
     }
     ctrlFlags = fcntl(STDIN_FILENO, F_GETFL);	// for parser
-    if (isShutdown(TRUE))
+    if (isShutdown(true))
 	reply(220, "%s HylaFAX server shut down; available only for admin use.",
 	    (const char*) hostname);
     else
@@ -273,10 +273,10 @@ HylaFAXServer::fixPathname(const char* file)
     return (!IS(LOGGEDIN) && file[0] == '/' ? file+1 : file);
 }
 
-fxBool
+bool
 HylaFAXServer::readShutdownFile(void)
 {
-    fxBool ok = FALSE;
+    bool ok = false;
     FILE* fd = fopen(fixPathname(shutdownFile), "r");
     if (fd != NULL) {
 	struct tm tm;
@@ -297,7 +297,7 @@ HylaFAXServer::readShutdownFile(void)
 		char buf[1024];
 		while (fgets(buf, sizeof (buf), fd))
 		    shutdownMsg.append(buf);
-		ok = TRUE;
+		ok = true;
 	    } else
 		logError("%s: Invalid shutdown time, mktime conversion failed;"
 		    "Year=%d Mon=%d Day=%d Hour=%d Min=%d"
@@ -318,22 +318,22 @@ HylaFAXServer::readShutdownFile(void)
     return (ok);
 }
 
-fxBool
-HylaFAXServer::isShutdown(fxBool quiet)
+bool
+HylaFAXServer::isShutdown(bool quiet)
 {
     struct stat sb;
     if (shutdownFile == "" || Sys::stat(fixPathname(shutdownFile), sb) < 0)
-	return (FALSE);
+	return (false);
     if (sb.st_mtime != lastModTime) {
 	if (!readShutdownFile())
-	    return (FALSE);
+	    return (false);
 	lastModTime = sb.st_mtime;
     }
     time_t now = Sys::now();
     if (!quiet) {			// possibly send client shutdown msg
 	time_t timeToDisconnect = discTime - now;
 	time_t lastMsg = now-lastTime;
-	fxBool sendShutDownMsg =
+	bool sendShutDownMsg =
 	       (lastTime == 0)		// first time
 	    || (timeToDisconnect < 60)	// <60 seconds, warn continuously
 					// <15 minutes, warn ever 5 minutes
@@ -650,7 +650,7 @@ HylaFAXServer::configTrace(const char* fmt, ...)
     }
 }
 
-fxBool
+bool
 HylaFAXServer::setConfigItem(const char* tag, const char* value)
 {
     u_int ix;
@@ -662,7 +662,7 @@ HylaFAXServer::setConfigItem(const char* tag, const char* value)
     } else if (findTag(tag, (const tags*) numbers, N(numbers), ix)) {
 	(*this).*numbers[ix].p = getNumber(value);
     } else
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 #undef N

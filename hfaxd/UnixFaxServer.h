@@ -36,20 +36,20 @@ private:
     sockaddr_un	data_source;		// source of data connection
     sockaddr_un	data_dest;		// destination of data connection
     sockaddr_un	peer_addr;		// destination of control connection
-    fxBool	usedefault;		// for data transfers
+    bool	usedefault;		// for data transfers
 
     void passiveCmd(void);
     void netStatus(FILE*);
-    fxBool hostPort();
+    bool hostPort();
     void portCmd(void);
 
     virtual void initServer(void);
 
     FILE* getDataSocket(const char* mode);
-    fxBool dataConnect(void);
+    bool dataConnect(void);
     FILE* openDataConn(const char* mode, int& code);
     void send_data(FILE* instr, FILE* outstr, off_t blksize);
-    fxBool receive_data(FILE* instr, FILE* outstr);
+    bool receive_data(FILE* instr, FILE* outstr);
 public:
     UnixFaxServer();
     virtual ~UnixFaxServer();
@@ -63,7 +63,7 @@ class UnixSuperServer : public SuperServer {
 private:
     fxStr	fileName;		// UNIX domain socket filename
 protected:
-    fxBool startServer(void);
+    bool startServer(void);
     HylaFAXServer* newChild(void);
 public:
     UnixSuperServer(const char* filename, int backlog = 5);

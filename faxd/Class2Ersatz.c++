@@ -70,7 +70,7 @@ Class2ErsatzModem::atResponse(char* buf, long ms)
 	if (strneq(buf, "+FHNG:", 6)) {
 	    processHangup(buf+6);
 	    lastResponse = AT_FHNG;
-	    hadHangup = TRUE;
+	    hadHangup = true;
 	} else if (strneq(buf, "+FCON", 5))
 	    lastResponse = AT_FCON;
 	else if (strneq(buf, "+FPOLL", 6))
@@ -104,7 +104,7 @@ Class2ErsatzModem::atResponse(char* buf, long ms)
 /*
  * Handle the page-end protocol.
  */
-fxBool
+bool
 Class2ErsatzModem::pageDone(u_int ppm, u_int& ppr)
 {
     ppr = 0;			// something invalid
@@ -115,7 +115,7 @@ Class2ErsatzModem::pageDone(u_int ppm, u_int& ppr)
 		if (sscanf(rbuf+6, "%u", &ppr) != 1) {
 		    protoTrace("MODEM protocol botch (\"%s\"), %s",
 			rbuf, "can not parse PPR");
-		    return (FALSE);		// force termination
+		    return (false);		// force termination
 		}
 		/*
 		 * (In some firmware revisions...) The ZyXEL modem
@@ -129,11 +129,11 @@ Class2ErsatzModem::pageDone(u_int ppm, u_int& ppr)
 		 * page is good (i.e. we would hang up immediately anyway).
 		 */
 		if (ppm == PPM_EOP && ppr == PPR_MCF)
-		    return (TRUE);
+		    return (true);
 		break;
 	    case AT_OK:				// normal result code
 	    case AT_ERROR:			// possible if page retransmit
-		return (TRUE);
+		return (true);
 	    case AT_FHNG:
 		/*
 		 * Certain modems respond +FHNG:0 on the final page
@@ -144,7 +144,7 @@ Class2ErsatzModem::pageDone(u_int ppm, u_int& ppr)
 		 */
 		if (ppm == PPM_EOP && ppr == 0 && isNormalHangup()) {
 		    ppr = PPR_MCF;
-		    return (TRUE);
+		    return (true);
 		}
 		return (isNormalHangup());
 	    case AT_EMPTYLINE:
@@ -158,7 +158,7 @@ Class2ErsatzModem::pageDone(u_int ppm, u_int& ppr)
     }
 bad:
     processHangup("50");			// Unspecified Phase D error
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -175,7 +175,7 @@ Class2ErsatzModem::abortDataTransfer()
 /*
  * Send an end-of-transmission signal to the modem.
  */
-fxBool
+bool
 Class2ErsatzModem::sendEOT()
 {
     static char EOT[] = { DLE, ETX };
@@ -185,13 +185,13 @@ Class2ErsatzModem::sendEOT()
 /*
  * Send a page of data using the ``stream interface''.
  */
-fxBool
+bool
 Class2ErsatzModem::sendPage(TIFF* tif, u_int pageChop)
 {
     protoTrace("SEND begin page");
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
-    fxBool rc = sendPageData(tif, pageChop);
+    bool rc = sendPageData(tif, pageChop);
     if (rc && conf.class2SendRTC)
 	rc = sendRTC(params.is2D());
     if (rc)

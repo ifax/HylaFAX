@@ -137,64 +137,64 @@ HylaFAXServer::mdtmCmd(const char* pathname)
  * NB: this array is ordered by expected frequency of access.
  */
 SpoolDir HylaFAXServer::dirs[] = {
-{ "/status/",	FALSE, FALSE, FALSE, 0,
-  HylaFAXServer::isVisibleTRUE,
+{ "/status/",	false, false, false, 0,
+  HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listStatus,	&HylaFAXServer::listStatusFile,
   &HylaFAXServer::nlstStatus,	&HylaFAXServer::nlstUnixFile, },
-{ "/sendq/",	FALSE, FALSE, FALSE, 0,
+{ "/sendq/",	false, false, false, 0,
   HylaFAXServer::isVisibleSendQFile,
   &HylaFAXServer::listSendQ,	&HylaFAXServer::listSendQFile,
   &HylaFAXServer::nlstSendQ,	&HylaFAXServer::nlstSendQFile, },
-{ "/doneq/",	FALSE, FALSE, FALSE, 0,
+{ "/doneq/",	false, false, false, 0,
   HylaFAXServer::isVisibleSendQFile,
   &HylaFAXServer::listSendQ,	&HylaFAXServer::listSendQFile,
   &HylaFAXServer::nlstSendQ,	&HylaFAXServer::nlstSendQFile, },
-{ "/docq/",	FALSE,  TRUE,  TRUE, 0,
+{ "/docq/",	false,  true,  true, 0,
   HylaFAXServer::isVisibleDocQFile,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
-{ "/tmp/",	FALSE,  TRUE,  TRUE, 0,
-  HylaFAXServer::isVisibleTRUE,
+{ "/tmp/",	false,  true,  true, 0,
+  HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
-{ "/log/",	FALSE, FALSE, FALSE, 0,
-  HylaFAXServer::isVisibleTRUE,
+{ "/log/",	false, false, false, 0,
+  HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
-{ "/recvq/",	FALSE, FALSE,  TRUE, 0,
+{ "/recvq/",	false, false,  true, 0,
   HylaFAXServer::isVisibleRecvQFile,
   &HylaFAXServer::listRecvQ,	&HylaFAXServer::listRecvQFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
-{ "/archive/",	FALSE, FALSE, FALSE, 0,
-  HylaFAXServer::isVisibleTRUE,
+{ "/archive/",	false, false, false, 0,
+  HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
-{ "/pollq/",	FALSE,  TRUE,  TRUE, 0,
+{ "/pollq/",	false,  true,  true, 0,
   HylaFAXServer::isVisibleRecvQFile,
   &HylaFAXServer::listRecvQ,	&HylaFAXServer::listRecvQFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
-{ "/",		FALSE, FALSE, FALSE, 0,
+{ "/",		false, false, false, 0,
   HylaFAXServer::isVisibleRootFile,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
-{ "/etc/",	 TRUE, FALSE, FALSE, 0,
-  HylaFAXServer::isVisibleTRUE,
+{ "/etc/",	 true, false, false, 0,
+  HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
-{ "/info/",	FALSE, FALSE, FALSE, 0,
-  HylaFAXServer::isVisibleTRUE,
+{ "/info/",	false, false, false, 0,
+  HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
-{ "/bin/",	 TRUE, FALSE, FALSE, 0,
-  HylaFAXServer::isVisibleTRUE,
+{ "/bin/",	 true, false, false, 0,
+  HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
-{ "/config/",	FALSE, FALSE, FALSE, 0,
-  HylaFAXServer::isVisibleTRUE,
+{ "/config/",	false, false, false, 0,
+  HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
-{ "/client/",	 TRUE, FALSE, FALSE, 0,
-  HylaFAXServer::isVisibleTRUE,
+{ "/client/",	 true, false, false, 0,
+  HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
 };
@@ -400,18 +400,18 @@ HylaFAXServer::setFileOwner(const char* file)
 /*
  * Is the specified file visible to the client.
  */
-fxBool
+bool
 HylaFAXServer::fileVisible(const SpoolDir& dir, const char* filename, const struct stat& sb)
 {
     return (IS(PRIVILEGED) || (*dir.isVisibleFile)(filename, sb));
 }
-fxBool
-HylaFAXServer::isVisibleTRUE(const char*, const struct stat&)
-    { return (TRUE); }
-fxBool
+bool
+HylaFAXServer::isVisibletrue(const char*, const struct stat&)
+    { return (true); }
+bool
 HylaFAXServer::isVisibleDocQFile(const char* filename, const struct stat&)
     { return (strncmp(filename, "doc", 3) == 0); }
-fxBool
+bool
 HylaFAXServer::isVisibleRootFile(const char*, const struct stat& sb)
     { return (S_ISREG(sb.st_mode) || S_ISDIR(sb.st_mode)); }
 
@@ -621,7 +621,7 @@ HylaFAXServer::Fprintf(FILE* fd, const char* fmt,
 }
 
 void
-HylaFAXServer::makeProt(const struct stat& sb, fxBool withGrp, char prot[10])
+HylaFAXServer::makeProt(const struct stat& sb, bool withGrp, char prot[10])
 {
     char* pp = prot;
     *pp++ = S_ISREG(sb.st_mode)  ? '-' :
@@ -721,11 +721,11 @@ HylaFAXServer::nlstUnixFile(FILE* fd, const SpoolDir&,
     fprintf(fd, "%s", filename);
 }
 
-static fxBool
+static bool
 isTIFF(const TIFFHeader& h)
 {
     if (h.tiff_magic != TIFF_BIGENDIAN && h.tiff_magic != TIFF_LITTLEENDIAN)
-	return (FALSE);
+	return (false);
     union {
 	int32	i;
 	char	c[4];
@@ -738,7 +738,7 @@ isTIFF(const TIFFHeader& h)
     return (version == TIFF_VERSION);
 }
 
-fxBool
+bool
 HylaFAXServer::docType(const char* docname, FaxSendOp& op)
 {
     op = FaxRequest::send_unknown;

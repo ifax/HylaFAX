@@ -72,7 +72,7 @@ Modem::Modem(const fxStr& id)
     , lockHandler(*this)
 {
     state = DOWN;			// modem down until notified otherwise
-    canpoll = TRUE;			// be optimistic
+    canpoll = true;			// be optimistic
     fd = -1;				// force open on first use
     priority = 255;			// lowest priority
     insert(list);			// place at end of master list
@@ -117,18 +117,18 @@ Modem::getModemByID(const fxStr& id)
 /*
  * Is the modem capable of handling the job.
  */ 
-fxBool
+bool
 Modem::isCapable(const Job& job) const
 {
     if (job.willpoll && !canpoll)
-	return (FALSE);
+	return (false);
     if (job.pagewidth && !supportsPageWidthInMM(job.pagewidth))
-	return (FALSE);
+	return (false);
     if (job.pagelength && !supportsPageLengthInMM(job.pagelength))
-	return (FALSE);
+	return (false);
     if (job.resolution && !supportsVRes(job.resolution))
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 
 /*
@@ -173,13 +173,13 @@ Modem::findModem(const Job& job)
 /*
  * Assign a modem for use by a job.
  */
-fxBool
+bool
 Modem::assign(Job& job)
 {
     if (lock->lock()) {		// lock modem for use
 	state = BUSY;		// mark in use
 	job.modem = this;	// assign modem to job
-	return (TRUE);
+	return (true);
     } else {
 	/*
 	 * Modem is locked for use by an outbound task.
@@ -192,7 +192,7 @@ Modem::assign(Job& job)
 	 * to re-assign it in findModem.
 	 */
 	state = BUSY;		// mark in use
-	return (FALSE);
+	return (false);
     }
 }
 
@@ -277,7 +277,7 @@ void Modem::setState(ModemState s)		{ state = s; }
  * (but then the caller would need to know in order
  * to pad the image to the appropriate width).
  */
-fxBool
+bool
 Modem::supportsPageWidthInMM(u_int w) const
 {
     if (w <= 110)		// 864 pixels + slop
@@ -291,10 +291,10 @@ Modem::supportsPageWidthInMM(u_int w) const
     else if (w <= 306)		// 2432 pixels + slop
 	return caps.wd & BIT(WD_2432);
     else
-	return FALSE;
+	return false;
 }
 
-fxBool
+bool
 Modem::supportsPageWidthInPixels(u_int w) const
 {
     if (w <= 880)		// 864 pixels + slop
@@ -308,7 +308,7 @@ Modem::supportsPageWidthInPixels(u_int w) const
     else if (w <= 2448)		// 2432 pixels + slop
 	return caps.wd & BIT(WD_2432);
     else
-	return FALSE;
+	return false;
 }
 
 /*
@@ -318,7 +318,7 @@ Modem::supportsPageWidthInPixels(u_int w) const
  * problems and general sloppiness on the part of
  * applications writing TIFF files.
  */
-fxBool
+bool
 Modem::supportsVRes(float res) const
 {
     if (75 <= res && res < 120)
@@ -326,13 +326,13 @@ Modem::supportsVRes(float res) const
     else if (150 <= res && res < 250)
 	return caps.vr & BIT(VR_FINE);
     else
-	return FALSE;
+	return false;
 }
 
 /*
  * Return whether or not the modem supports 2DMR.
  */
-fxBool
+bool
 Modem::supports2D() const
 {
     return caps.df & BIT(DF_2DMR);
@@ -343,7 +343,7 @@ Modem::supports2D() const
  * specified page length.  As above for vertical
  * resolution we're lenient in what we accept.
  */
-fxBool
+bool
 Modem::supportsPageLengthInMM(u_int l) const
 {
     // XXX probably need to be more forgiving with values
@@ -366,17 +366,17 @@ Modem::broadcast(const fxStr& msg)
 	 * NB: We rarely send msgs, so for now close after each use.
 	 *     +1 here is so the \0 is included in the message.
 	 */
-	iter.modem().send(msg, msg.length()+1, FALSE);
+	iter.modem().send(msg, msg.length()+1, false);
     }
 }
 
 /*
  * Send a message to the process managing a modem.
  */
-fxBool
-Modem::send(const char* msg, u_int msgLen, fxBool cacheFd)
+bool
+Modem::send(const char* msg, u_int msgLen, bool cacheFd)
 {
-    fxBool retry = TRUE;
+    bool retry = true;
 again:
     if (fd < 0) {
 	fd = Sys::open(fifoName, O_WRONLY|O_NDELAY);
@@ -388,13 +388,13 @@ again:
 	     */
 	    logError("MODEM " | devID | ": Cannot open FIFO: %m");
 #endif
-	    return (FALSE);
+	    return (false);
 	}
     }
     int n = Sys::write(fd, msg, msgLen);
     if (n == -1) {
 	if (errno == EBADF && retry) {		// cached descriptor bad, retry
-	    retry = FALSE;
+	    retry = false;
 	    Sys::close(fd), fd = -1;
 	    goto again;
 	}

@@ -79,7 +79,7 @@ void fxDictionary::cleanup()
     for (i=0; i < l; i++) {
 	iters[i]->dict = 0;
 	iters[i]->node = 0;
-	iters[i]->invalid = TRUE;
+	iters[i]->invalid = true;
     }
 }
 
@@ -241,7 +241,7 @@ fxDictionary::invalidateIters(const fxDictBucket *db)
 	fxDictIter* di = iters[i];
 	if (di->node == db) {
 	    (*di)++;
-	    if (di->dict) di->invalid = TRUE;
+	    if (di->dict) di->invalid = true;
 	}
     }
 }
@@ -250,7 +250,7 @@ fxDictionary::invalidateIters(const fxDictBucket *db)
 
 fxDictIter::fxDictIter()
 {
-    invalid = FALSE;
+    invalid = false;
     dict = 0;
     bucket = 0;
     node = 0;
@@ -258,7 +258,7 @@ fxDictIter::fxDictIter()
 
 fxDictIter::fxDictIter(fxDictionary& d)
 {
-    invalid = FALSE;
+    invalid = false;
     dict = &d;
     bucket = 0;
     node = d.buckets[bucket];
@@ -278,7 +278,7 @@ fxDictIter::operator=(fxDictionary& d)
     dict = &d;
     bucket = 0;
     node = d.buckets[bucket];
-    invalid = FALSE;
+    invalid = false;
     d.addIter(this);
     if (!node) advanceToValid();
 }
@@ -302,7 +302,7 @@ fxDictIter::increment()
 {
     if (!dict) return;
     if (invalid) {
-	invalid = FALSE;
+	invalid = false;
 	return;
     }
     node = node->next;
@@ -323,12 +323,12 @@ fxDictIter::advanceToValid()
 	if (bucket == len) {
 	    dict->removeIter(this);		// it's done with us
 	    dict = 0;
-	    invalid = TRUE;
+	    invalid = true;
 	    break;
 	}
 	if (n = dict->buckets[bucket]) {	// NB: intentional =
 	    node = n;
-	    invalid = FALSE;
+	    invalid = false;
 	    break;
 	}
     }

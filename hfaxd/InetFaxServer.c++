@@ -46,7 +46,7 @@ InetSuperServer::InetSuperServer(const char* p, int bl)
 {}
 InetSuperServer::~InetSuperServer() {}
 
-fxBool
+bool
 InetSuperServer::startServer(void)
 {
     int s = socket(AF_INET, SOCK_STREAM, 0);
@@ -66,14 +66,14 @@ InetSuperServer::startServer(void)
 	if (Socket::bind(s, &sin, sizeof (sin)) >= 0) {
 	    (void) listen(s, getBacklog());
 	    Dispatcher::instance().link(s, Dispatcher::ReadMask, this);
-	    return (TRUE);				// success
+	    return (true);				// success
 	}
 	Sys::close(s);
 	logError("HylaFAX %s: bind (port %u): %m",
 	    getKind(), ntohs(sin.sin_port));
     } else
 	logError("HylaFAX %s: socket: %m", getKind());
-    return (FALSE);
+    return (false);
 }
 HylaFAXServer* InetSuperServer::newChild(void)	{ return new InetFaxServer; }
 
@@ -81,7 +81,7 @@ InetFaxServer* InetFaxServer::_instance = NULL;
 
 InetFaxServer::InetFaxServer()
 {
-    usedefault = TRUE;
+    usedefault = true;
     swaitmax = 90;			// wait at most 90 seconds
     swaitint = 5;			// interval between retries
 
@@ -110,7 +110,7 @@ void
 InetFaxServer::initServer(void)
 {
     HylaFAXServer::initServer();
-    usedefault = TRUE;
+    usedefault = true;
 }
 
 void
@@ -148,7 +148,7 @@ topDomain(const fxStr& h)
  * assume that the host is local, as it will be
  * interpreted as such.
  */
-fxBool
+bool
 InetFaxServer::isLocalDomain(const fxStr& h)
 {
     const char* p1 = topDomain(hostname);
@@ -164,23 +164,23 @@ InetFaxServer::isLocalDomain(const fxStr& h)
  * look up the name and check that the peer's address
  * corresponds to the host name.
  */
-fxBool
+bool
 InetFaxServer::checkHostIdentity(hostent*& hp)
 {
     if (!isLocalDomain(hp->h_name))		// not local, don't check
-	return (TRUE);
+	return (true);
     fxStr name(hp->h_name);			// must copy static value
     hp = Socket::gethostbyname(name);
     if (hp) {
 	for (const char** cpp = (const char**) hp->h_addr_list; *cpp; cpp++)
 	    if (memcmp(*cpp, &peer_addr.sin_addr, hp->h_length) == 0)
-		return (TRUE);
+		return (true);
 	reply(130, "Warning, client address \"%s\" is not listed for host name \"%s\".",
 	    (const char*) remoteaddr, hp->h_name);
     } else
 	reply(130, "Warning, no inverse address mapping for client host name \"%s\".",
 	    (const char*) name);
-    return (FALSE);
+    return (false);
 }
 
 void
@@ -302,7 +302,7 @@ InetFaxServer::lostConnection(void)
 }
 void InetFaxServer::sigPIPE(int) { InetFaxServer::instance().lostConnection(); }
 
-static fxBool
+static bool
 setupPassiveDataSocket(int pdata, struct sockaddr_in& pasv_addr)
 {
     socklen_t len = sizeof (pasv_addr);
@@ -400,7 +400,7 @@ bad:
     return (NULL);
 }
 
-fxBool
+bool
 InetFaxServer::dataConnect(void)
 {
     return Socket::connect(data, &data_dest,sizeof (data_dest)) >= 0;
@@ -464,12 +464,12 @@ InetFaxServer::openDataConn(const char* mode, int& code)
     return (file);
 }
 
-fxBool
+bool
 InetFaxServer::hostPort()
 {
     long a0, a1, a2, a3;
     long p0, p1;
-    fxBool syntaxOK = 
+    bool syntaxOK = 
 		      NUMBER(a0)
 	&& COMMA() && NUMBER(a1)
 	&& COMMA() && NUMBER(a2)
@@ -482,16 +482,16 @@ InetFaxServer::hostPort()
 	u_char* p = (u_char*) &data_dest.sin_port;
 	a[0] = UC(a0); a[1] = UC(a1); a[2] = UC(a2); a[3] = UC(a3);
 	p[0] = UC(p0); p[1] = UC(p1);
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 void
 InetFaxServer::portCmd(void)
 {
     logcmd(T_PORT, "%s;%u", inet_ntoa(data_dest.sin_addr), data_dest.sin_port);
-    usedefault = FALSE;
+    usedefault = false;
     if (pdata >= 0)
 	(void) Sys::close(pdata), pdata = -1;
     ack(200, cmdToken(T_PORT));

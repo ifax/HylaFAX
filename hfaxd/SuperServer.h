@@ -35,7 +35,7 @@ protected:
     SuperServer(const char* kind, int backlog);
 
     virtual HylaFAXServer* newChild(void) = 0;
-    virtual fxBool startServer(void) = 0;
+    virtual bool startServer(void) = 0;
 
     int inputReady(int fd);
     void timerExpired(long, long);

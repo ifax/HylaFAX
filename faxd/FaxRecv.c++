@@ -41,7 +41,7 @@
  * FAX Server Reception Protocol.
  */
 
-fxBool
+bool
 FaxServer::recvFax()
 {
     traceProtocol("RECV FAX: begin");
@@ -49,8 +49,8 @@ FaxServer::recvFax()
     fxStr emsg;
     FaxRecvInfoArray docs;
     FaxRecvInfo info;
-    fxBool faxRecognized = FALSE;
-    abortCall = FALSE;
+    bool faxRecognized = false;
+    abortCall = false;
 
     /*
      * Create the first file ahead of time to avoid timing
@@ -180,10 +180,10 @@ FaxServer::setupForRecv(FaxRecvInfo& ri, FaxRecvInfoArray& docs, fxStr& emsg)
 /*
  * Receive one or more documents.
  */
-fxBool
+bool
 FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, fxStr& emsg)
 {
-    fxBool recvOK;
+    bool recvOK;
     int ppm;
     pageStart = Sys::now();
     for (;;) {
@@ -201,7 +201,7 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 	     * NB: Caller-ID access control is done elsewhere; prior
 	     *     to answering a call.
 	     */
-	    fxBool okToRecv = isTSIOk(info.sender);
+	    bool okToRecv = isTSIOk(info.sender);
 	    traceServer("%s TSI \"%s\"", okToRecv ? "ACCEPT" : "REJECT",
 		(const char*) info.sender);
 	    if (!okToRecv) {
@@ -210,7 +210,7 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 		info.reason = emsg;
 		notifyDocumentRecvd(info);
 		TIFFClose(tif);
-		return (FALSE);
+		return (false);
 	    }
 	}
 	setServerStatus("Receiving from \"%s\"", (const char*) info.sender);
@@ -227,7 +227,7 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 	 */
 	tif = setupForRecv(info, docs, emsg);
 	if (tif == NULL)
-	    return (FALSE);
+	    return (false);
 	fileStart = pageStart = Sys::now();
     }
     /*NOTREACHED*/
@@ -236,28 +236,28 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 /*
  * Receive Phase B protocol processing.
  */
-fxBool
+bool
 FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, int& ppm, fxStr& emsg)
 {
     ppm = PPM_EOP;
     do {
 	if (++recvPages > maxRecvPages) {
 	    emsg = "Maximum receive page count exceeded, job terminated";
-	    return (FALSE);
+	    return (false);
 	}
 	if (!modem->recvPage(tif, ppm, emsg))
-	    return (FALSE);
+	    return (false);
 	info.npages++;
 	info.time = (u_int) getPageTransferTime();
 	info.params = modem->getRecvParams();
 	notifyPageRecvd(tif, info, ppm);
 	if (PPM_PRI_MPS <= ppm && ppm <= PPM_PRI_EOP) {
 	    emsg = "Procedure interrupt received, job terminated";
-	    return (FALSE);
+	    return (false);
 	}
 	pageStart = Sys::now();			// reset for next page
     } while (ppm == PPM_MPS || ppm == PPM_PRI_MPS);
-    return (TRUE);
+    return (true);
 }
 
 void

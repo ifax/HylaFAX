@@ -63,7 +63,7 @@ fxIMPLEMENT_StrKeyObjValueDictionary(RulesDict, RuleArrayPtr)
 
 DialStringRules::DialStringRules(const char* file) : filename(file)
 {
-    verbose = FALSE;
+    verbose = false;
     fp = NULL;
     vars = new VarDict;
     regex = new RegExArray;
@@ -77,16 +77,16 @@ DialStringRules::~DialStringRules()
     delete vars;
 }
 
-void DialStringRules::setVerbose(fxBool b) { verbose = b; }
+void DialStringRules::setVerbose(bool b) { verbose = b; }
 
 /*
  * Parse the dialing string rules file
  * to create the in-memory rules.
  */
-fxBool
-DialStringRules::parse(fxBool shouldExist)
+bool
+DialStringRules::parse(bool shouldExist)
 {
-    fxBool ok = FALSE;
+    bool ok = false;
     lineno = 0;
     fp = fopen(filename, "r");
     if (fp) {
@@ -115,7 +115,7 @@ DialStringRules::undef(const fxStr& var)
     vars->remove(var);
 }
 
-fxBool
+bool
 DialStringRules::parseRules()
 {
     char line[1024];
@@ -124,7 +124,7 @@ DialStringRules::parseRules()
 	// collect token
 	if (!isalpha(*cp)) {
 	    parseError("Syntax error, expecting identifier");
-	    return (FALSE);
+	    return (false);
 	}
 	const char* tp = cp;
 	for (cp++; isalnum(*cp); cp++)
@@ -136,14 +136,14 @@ DialStringRules::parseRules()
 	    for (cp += 2; *cp != '['; cp++)
 		if (*cp == '\0') {
 		    parseError("Missing '[' while parsing rule set");
-		    return (FALSE);
+		    return (false);
 		}
 	    if (verbose)
 		traceParse("%s := [", (const char*) var);
 	    RuleArray* ra = new RuleArray;
 	    if (!parseRuleSet(*ra)) {
 		delete ra;
-		return (FALSE);
+		return (false);
 	    }
 	    (*rules)[var] = ra;
 	    if (verbose)
@@ -151,11 +151,11 @@ DialStringRules::parseRules()
 	} else if (*cp == '=') {		// variable definition
 	    fxStr value;
 	    if (parseToken(cp+1, value) == NULL)
-		return (FALSE);
+		return (false);
 	    def(var, value);
 	} else {				// an error
 	    parseError("Missing '=' or ':=' after \"%s\"", (const char*) var);
-	    return (FALSE);
+	    return (false);
 	}
     }
     if (verbose) {
@@ -166,7 +166,7 @@ DialStringRules::parseRules()
 	if (ra == 0)
 	    traceParse("Warning, no \"DialString\" rules.");
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -244,7 +244,7 @@ DialStringRules::parseToken(const char* cp, fxStr& v)
 	    u_int l = v.next(i, '}');
 	    if (l >= v.length()) {
 		parseError("Missing '}' for variable reference");
-		return (FALSE);
+		return (NULL);
 	    }
 	    fxStr var = v.cut(i+2,l-(i+2));// variable name
 	    v.remove(i, 3);		// remove ${}
@@ -283,7 +283,7 @@ DialStringRules::subRHS(fxStr& v)
  * Parse a set of rules and construct the array of
  * rules (regular expressions + replacement strings).
  */
-fxBool
+bool
 DialStringRules::parseRuleSet(RuleArray& rules)
 {
     for (;;) {
@@ -291,23 +291,23 @@ DialStringRules::parseRuleSet(RuleArray& rules)
 	const char* cp = nextLine(line, sizeof (line));
 	if (!cp) {
 	    parseError("Missing ']' while parsing rule set");
-	    return (FALSE);
+	    return (false);
 	}
 	if (*cp == ']')
-	    return (TRUE);
+	    return (true);
 	// new rule
 	fxStr pat;
 	if ((cp = parseToken(cp, pat)) == NULL)
-	    return (FALSE);
+	    return (false);
 	while (isspace(*cp))
 	    cp++;
 	if (*cp != '=') {
 	    parseError("Rule pattern without '='");
-	    return (FALSE);
+	    return (false);
 	}
 	DialRule r;
 	if (parseToken(cp+1, r.replace) == NULL)
-	    return (FALSE);
+	    return (false);
 	if (verbose)
 	    traceParse("  \"%s\" = \"%s\"",
 		(const char*) pat, (const char*) r.replace);

@@ -69,7 +69,7 @@ Job::Job(const FaxRequest& req)
 
     dnext = NULL;
     modem = NULL;
-    suspendPending = FALSE;
+    suspendPending = false;
     registry[jobid] = this;
 }
 

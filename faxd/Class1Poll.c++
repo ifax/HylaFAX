@@ -28,13 +28,13 @@
 #include "HDLCFrame.h"
 #include "t.30.h"
 
-fxBool
+bool
 Class1Modem::requestToPoll(fxStr&)
 {
-    return TRUE;
+    return true;
 }
 
-fxBool
+bool
 Class1Modem::pollBegin(const fxStr& cig0,
     const fxStr& sep0, const fxStr& pwd0, fxStr& emsg)
 {
@@ -54,9 +54,9 @@ Class1Modem::pollBegin(const fxStr& cig0,
 	send |= DIS_PWD;
     }
 
-    setInputBuffering(FALSE);
-    prevPage = FALSE;				// no previous page received
-    pageGood = FALSE;				// quality of received page
+    setInputBuffering(false);
+    prevPage = false;				// no previous page received
+    pageGood = false;				// quality of received page
 
     return atCmd(thCmd, AT_NOTHING) &&
 	atResponse(rbuf, 2550) == AT_CONNECT &&

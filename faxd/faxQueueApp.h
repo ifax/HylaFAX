@@ -68,7 +68,7 @@ public:
 private:
     class SchedTimeout : public IOHandler {
     private:
-	fxBool	started;
+	bool	started;
     public:
 	SchedTimeout();
 	~SchedTimeout();
@@ -100,7 +100,7 @@ private:
     u_int	tracingMask;		// tracing level control mask
     fxStr	logFacility;		// syslog facility to direct trace msgs
     u_int	requeueInterval;	// job requeue interval
-    fxBool	use2D;			// ok to use 2D-encoded data
+    bool	use2D;			// ok to use 2D-encoded data
     u_int	pageChop;		// default page chop handling
     float	pageChopThreshold;	// minimum space before page chop
     fxStr	notifyCmd;		// external command for notification
@@ -116,9 +116,9 @@ private:
     static const stringtag strings[];
     static const numbertag numbers[];
 // runtime state
-    fxBool	timeout;		// timeout occurred
-    fxBool	abortPrepare;		// job preparation should be aborted
-    fxBool	quit;			// terminate server
+    bool	timeout;		// timeout occurred
+    bool	abortPrepare;		// job preparation should be aborted
+    bool	quit;			// terminate server
     int		fifo;			// fifo job queue interface
 #define	NQHASH		16
     QLink	runqs[NQHASH];		// jobs ready to run
@@ -146,14 +146,14 @@ private:
 // configuration support
     void	setupConfig();
     void	resetConfig();
-    fxBool	setConfigItem(const char* tag, const char* value);
+    bool	setConfigItem(const char* tag, const char* value);
     void	configError(const char* fmt, ...);
     void	configTrace(const char* fmt, ...);
     void	setDialRules(const char* name);
     fxStr	canonicalizePhoneNumber(const fxStr& ds);
 // modem support
     void	scanForModems();
-    fxBool	assignModem(Job& job);
+    bool	assignModem(Job& job);
     void	releaseModem(Job& job);
     void	notifyModemWedged(Modem&);
     void	pollForModemLock(Modem& modem);
@@ -184,9 +184,9 @@ private:
     FaxRequest*	readRequest(Job&);
     void	updateRequest(FaxRequest& req, Job& job);
     void	deleteRequest(Job&, FaxRequest* req, JobStatus why,
-		    fxBool force, const char* duration = "");
+		    bool force, const char* duration = "");
     void	deleteRequest(Job&, FaxRequest& req, JobStatus why,
-		    fxBool force, const char* duration = "");
+		    bool force, const char* duration = "");
     void	notifySender(Job&, JobStatus, const char* = "");
 // job management interfaces
     void	processJob(Job& job);
@@ -197,8 +197,8 @@ private:
     void	blockJob(Job&, FaxRequest&, const char*);
     void	delayJob(Job&, FaxRequest&, const char*, time_t);
     void	rejectJob(Job& job, FaxRequest& req, const fxStr& reason);
-    fxBool	submitJob(const fxStr& jobid, fxBool checkState = FALSE);
-    fxBool	suspendJob(const fxStr& jobid, fxBool abortActive);
+    bool	submitJob(const fxStr& jobid, bool checkState = false);
+    bool	suspendJob(const fxStr& jobid, bool abortActive);
     void	rejectSubmission(Job&, FaxRequest&, const fxStr& reason);
 
     void	setReadyToRun(Job& job);
@@ -206,10 +206,10 @@ private:
     void	setDead(Job& job);
     void	setActive(Job& job);
     void	setSuspend(Job& job);
-    fxBool	submitJob(FaxRequest&, fxBool checkState = FALSE);
-    fxBool	submitJob(Job& job, FaxRequest& req, fxBool checkState = FALSE);
-    fxBool	suspendJob(Job& job, fxBool abortActive);
-    fxBool	terminateJob(const fxStr& filename, JobStatus why);
+    bool	submitJob(FaxRequest&, bool checkState = false);
+    bool	submitJob(Job& job, FaxRequest& req, bool checkState = false);
+    bool	suspendJob(Job& job, bool abortActive);
+    bool	terminateJob(const fxStr& filename, JobStatus why);
     void	timeoutJob(Job& job);
     void	timeoutJob(Job& job, FaxRequest&);
     void	runJob(Job& job);
@@ -217,7 +217,7 @@ private:
     void	runScheduler();
     void	pokeScheduler();
 // job preparation stuff
-    fxBool	prepareJobNeeded(Job&, FaxRequest&, JobStatus&);
+    bool	prepareJobNeeded(Job&, FaxRequest&, JobStatus&);
     static void prepareCleanup(int s);
     void	prepareJobStart(Job&, FaxRequest*,
 		    FaxMachineInfo&, const DestControlInfo&);
@@ -230,10 +230,10 @@ private:
 		    const DestControlInfo& dci, fxStr& emsg);
     JobStatus	runConverter(Job& job, const char* app, char* const* argv,
 		    fxStr& emsg);
-    fxBool	runConverter1(Job& job, int fd, fxStr& output);
+    bool	runConverter1(Job& job, int fd, fxStr& output);
     void	makeCoverPage(Job&, FaxRequest&, const Class2Params&,
 		    const DestControlInfo&);
-    fxBool	preparePageHandling(FaxRequest&,
+    bool	preparePageHandling(FaxRequest&,
 		    const FaxMachineInfo&, const DestControlInfo&, fxStr& emsg);
     void	preparePageChop(const FaxRequest&,
 		    TIFF*, const Class2Params&, fxStr&);

@@ -45,7 +45,7 @@ class Class2Params;
 class FaxRequest {
 protected:
     void reset(void);
-    virtual fxBool checkDocument(const char* pathname);
+    virtual bool checkDocument(const char* pathname);
     virtual void error(const char* fmt, ...);
 public:
     enum {
@@ -160,26 +160,26 @@ public:
 
     FaxRequest(const fxStr& qf, int fd = -1);
     virtual ~FaxRequest();
-    fxBool readQFile(fxBool& rejectJob);
-    fxBool reReadQFile(fxBool& rejectJob);
+    bool readQFile(bool& rejectJob);
+    bool reReadQFile(bool& rejectJob);
     void writeQFile();
     u_int findRequest(FaxSendOp, u_int start = 0) const;
 
-    fxBool isNotify(u_int what) const;
+    bool isNotify(u_int what) const;
 
-    static fxBool isStrCmd(const char* cmd, u_int& ix);
-    static fxBool isShortCmd(const char* cmd, u_int& ix);
+    static bool isStrCmd(const char* cmd, u_int& ix);
+    static bool isShortCmd(const char* cmd, u_int& ix);
 
     void insertFax(u_int ix, const fxStr& file);
     void addRequest(FaxSendOp op, char* tag);
-    void addRequest(FaxSendOp op, char* tag, fxBool& rejectJob);
+    void addRequest(FaxSendOp op, char* tag, bool& rejectJob);
     void checkNotifyValue(const char* tag);
     void checkChopValue(const char* tag);
 
     static fxStr mkbasedoc(const fxStr& file);
     void renameSaved(u_int fi);
-    fxBool isUnreferenced(u_int fi);
+    bool isUnreferenced(u_int fi);
 };
-inline fxBool FaxRequest::isNotify(u_int what) const
+inline bool FaxRequest::isNotify(u_int what) const
     { return (notify & (u_short) what) != 0; }
 #endif /* _FaxRequest_ */

@@ -56,12 +56,12 @@ Class2Modem::findAnswer(const char* s)
 /*
  * Begin a fax receive session.
  */
-fxBool
+bool
 Class2Modem::recvBegin(fxStr& emsg)
 {
-    fxBool status = FALSE;
+    bool status = false;
     hangupCode[0] = '\0';
-    hadHangup = FALSE;
+    hadHangup = false;
     ATResponse r;
     do {
 	switch (r = atResponse(rbuf, 3*60*1000)) {
@@ -73,7 +73,7 @@ Class2Modem::recvBegin(fxStr& emsg)
 	case AT_EMPTYLINE:
 	    processHangup("70");
 	    emsg = hangupCause(hangupCode);
-	    return (FALSE);
+	    return (false);
 	case AT_FNSS:
 	    // XXX parse and pass on to server
 	    break;
@@ -95,7 +95,7 @@ Class2Modem::recvBegin(fxStr& emsg)
 	    status = recvDCS(rbuf);
 	    break;
 	case AT_FHNG:
-	    status = FALSE;
+	    status = false;
 	    break;
 	}
     } while (r != AT_OK);
@@ -107,16 +107,16 @@ Class2Modem::recvBegin(fxStr& emsg)
 /*
  * Process a received DCS.
  */
-fxBool
+bool
 Class2Modem::recvDCS(const char* cp)
 {
     if (parseClass2Capabilities(skipStatus(cp), params)) {
 	setDataTimeout(60, params.br);
 	FaxModem::recvDCS(params);	// announce session params
-	return (TRUE);
+	return (true);
     } else {				// protocol botch
 	processHangup("72");		// XXX "COMREC error"
-	return (FALSE);
+	return (false);
     }
 }
 
@@ -125,7 +125,7 @@ Class2Modem::recvDCS(const char* cp)
  * and then collect the data.  Return the
  * received post-page-message.
  */
-fxBool
+bool
 Class2Modem::recvPage(TIFF* tif, int& ppm, fxStr& emsg)
 {
     int ppr;
@@ -201,7 +201,7 @@ Class2Modem::recvPage(TIFF* tif, int& ppm, fxStr& emsg)
 	if (abortRequested()) {
 	    // XXX no way to purge TIFF directory
 	    emsg = "Receive aborted due to operator intervention";
-	    return (FALSE);
+	    return (false);
 	}
 	// XXX deal with PRI interrupts
 	/*
@@ -218,13 +218,13 @@ Class2Modem::recvPage(TIFF* tif, int& ppm, fxStr& emsg)
 	    recvResetPage(tif);		// reset to overwrite data
 	tracePPR("RECV send", ppr);
 	if (ppr & 1)			// page good, work complete
-	    return (TRUE);
+	    return (true);
     } while (!hostDidCQ || class2Cmd(ptsCmd, ppr));
 bad:
     if (hangupCode[0] == 0)
 	processHangup("90");			// "Unspecified Phase C error"
     emsg = hangupCause(hangupCode);
-    return (FALSE);
+    return (false);
 }
 
 void
@@ -237,7 +237,7 @@ Class2Modem::abortPageRecv()
 /*
  * Receive Phase C data using the Class 2 ``stream interface''.
  */
-fxBool
+bool
 Class2Modem::recvPageData(TIFF* tif, fxStr& emsg)
 {
     if (flowControl == FLOW_XONXOFF)
@@ -251,7 +251,7 @@ Class2Modem::recvPageData(TIFF* tif, fxStr& emsg)
      * parameters indicate CQ checking is to be done.
      */
     hostDidCQ = (modemCQ && BIT(params.df)) == 0 && checkQuality();
-    fxBool pageRecvd = recvPageDLEData(tif, hostDidCQ, params, emsg);
+    bool pageRecvd = recvPageDLEData(tif, hostDidCQ, params, emsg);
 
     // be careful about flushing here -- otherwise we lose +FPTS codes
     if (flowControl == FLOW_XONXOFF)
@@ -262,7 +262,7 @@ Class2Modem::recvPageData(TIFF* tif, fxStr& emsg)
     return (pageRecvd);
 }
 
-fxBool
+bool
 Class2Modem::recvPPM(TIFF* tif, int& ppr)
 {
     for (;;) {
@@ -277,21 +277,21 @@ Class2Modem::recvPPM(TIFF* tif, int& ppr)
 	case AT_NOANSWER:
 	case AT_ERROR:
 	    processHangup("50");
-	    return (FALSE);
+	    return (false);
 	case AT_FPTS:
 	    return parseFPTS(tif, skipStatus(rbuf), ppr);
 	case AT_FET:
 	    protoTrace("MODEM protocol botch: +FET: without +FPTS:");
 	    processHangup("100");		// "Unspecified Phase D error"
-	    return (FALSE);
+	    return (false);
 	case AT_FHNG:
 	    waitFor(AT_OK);			// resynchronize modem
-	    return (FALSE);
+	    return (false);
 	}
     }
 }
 
-fxBool
+bool
 Class2Modem::parseFPTS(TIFF* tif, const char* cp, int& ppr)
 {
     int lc = 0;
@@ -307,19 +307,19 @@ Class2Modem::parseFPTS(TIFF* tif, const char* cp, int& ppr)
 	    TIFFSetField(tif, TIFFTAG_BADFAXLINES, (u_long) blc);
 	    TIFFSetField(tif, TIFFTAG_CONSECUTIVEBADFAXLINES, cblc);
 	}
-	return (TRUE);
+	return (true);
     } else {
 	protoTrace("MODEM protocol botch: \"%s\"; can not parse line count",
 	    cp);
 	processHangup("100");		// "Unspecified Phase D error"
-	return (FALSE);
+	return (false);
     }
 }
 
 /*
  * Complete a receive session.
  */
-fxBool
+bool
 Class2Modem::recvEnd(fxStr&)
 {
     if (!hadHangup) {
@@ -329,7 +329,7 @@ Class2Modem::recvEnd(fxStr&)
 	} else
 	    (void) atCmd(abortCmd);		// abort session
     }
-    return (TRUE);
+    return (true);
 }
 
 /*

@@ -37,7 +37,7 @@ const fxStr FaxMachineInfo::infoDir(FAX_INFODIR);
 
 FaxMachineInfo::FaxMachineInfo()
 {
-    changed = FALSE;
+    changed = false;
     resetConfig();
 }
 FaxMachineInfo::FaxMachineInfo(const FaxMachineInfo& other)
@@ -79,7 +79,7 @@ FaxMachineInfo::getMaxPageWidthInMM() const
 
 #include <ctype.h>
 
-fxBool
+bool
 FaxMachineInfo::updateConfig(const fxStr& number)
 {
     fxStr canon(number);
@@ -98,10 +98,10 @@ FaxMachineInfo::updateConfig(const fxStr& number)
 void
 FaxMachineInfo::resetConfig()
 {
-    supportsHighRes = TRUE;		// assume 196 lpi support
-    supports2DEncoding = TRUE;		// assume 2D-encoding support
-    supportsPostScript = FALSE;		// no support for Adobe protocol
-    calledBefore = FALSE;		// never called before
+    supportsHighRes = true;		// assume 196 lpi support
+    supports2DEncoding = true;		// assume 2D-encoding support
+    supportsPostScript = false;		// no support for Adobe protocol
+    calledBefore = false;		// never called before
     maxPageWidth = 2432;		// max required width
     maxPageLength = -1;			// infinite page length
     maxSignallingRate = BR_14400;	// T.17 14.4KB
@@ -169,7 +169,7 @@ static const char* stnames[] =
 
 #define	setLocked(b,ix)	locked |= b<<ix
 
-fxBool
+bool
 FaxMachineInfo::setConfigItem(const char* tag, const char* value)
 {
     int b = (tag[0] == '&' ? 1 : 0);	// locked down indicator
@@ -226,8 +226,8 @@ FaxMachineInfo::setConfigItem(const char* tag, const char* value)
     } else if (streq(tag, "pagersetupcmds")) {
 	pagerSetupCmds = value;
     } else
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 
 #define	isLocked(b)	(locked & (1<<b))
@@ -235,14 +235,14 @@ FaxMachineInfo::setConfigItem(const char* tag, const char* value)
 #define	checkLock(ix, member, value)	\
     if (!isLocked(ix)) {		\
 	member = value;			\
-	changed = TRUE;			\
+	changed = true;			\
     }
 
-void FaxMachineInfo::setSupportsHighRes(fxBool b)
+void FaxMachineInfo::setSupportsHighRes(bool b)
     { checkLock(HIRES, supportsHighRes, b); }
-void FaxMachineInfo::setSupports2DEncoding(fxBool b)
+void FaxMachineInfo::setSupports2DEncoding(bool b)
     { checkLock(G32D, supports2DEncoding, b); }
-void FaxMachineInfo::setSupportsPostScript(fxBool b)
+void FaxMachineInfo::setSupportsPostScript(bool b)
     { checkLock(PS, supportsPostScript, b); }
 void FaxMachineInfo::setMaxPageWidthInPixels(int v)
     { checkLock(WD, maxPageWidth, v); }
@@ -254,16 +254,16 @@ void FaxMachineInfo::setMinScanlineTime(int v)
     { checkLock(ST, minScanlineTime, v); }
 
 void
-FaxMachineInfo::setCalledBefore(fxBool b)
+FaxMachineInfo::setCalledBefore(bool b)
 {
     calledBefore = b;
-    changed = TRUE;
+    changed = true;
 }
 
 #define	checkChanged(member, value)	\
     if (member != value) {		\
 	member = value;			\
-	changed = TRUE;			\
+	changed = true;			\
     }
 
 void FaxMachineInfo::setCSI(const fxStr& v)
@@ -300,30 +300,30 @@ FaxMachineInfo::writeConfig()
 	    Sys::close(fd);
 	} else
 	    error("open: %m");
-	changed = FALSE;
+	changed = false;
     }
 }
 
 static void
-putBoolean(fxStackBuffer& buf, const char* tag, fxBool locked, fxBool b)
+putBoolean(fxStackBuffer& buf, const char* tag, bool locked, bool b)
 {
     buf.fput("%s%s:%s\n", locked ? "&" : "", tag, b ? "yes" : "no");
 }
 
 static void
-putDecimal(fxStackBuffer& buf, const char* tag, fxBool locked, int v)
+putDecimal(fxStackBuffer& buf, const char* tag, bool locked, int v)
 {
     buf.fput("%s%s:%d\n", locked ? "&" : "", tag, v);
 }
 
 static void
-putString(fxStackBuffer& buf, const char* tag, fxBool locked, const char* v)
+putString(fxStackBuffer& buf, const char* tag, bool locked, const char* v)
 {
     buf.fput("%s%s:\"%s\"\n", locked ? "&" : "", tag, v);
 }
 
 static void
-putIfString(fxStackBuffer& buf, const char* tag, fxBool locked, const char* v)
+putIfString(fxStackBuffer& buf, const char* tag, bool locked, const char* v)
 {
     if (*v != '\0')
 	buf.fput("%s%s:\"%s\"\n", locked ? "&" : "", tag, v);
@@ -335,23 +335,23 @@ FaxMachineInfo::writeConfig(fxStackBuffer& buf)
     putBoolean(buf, "supportsHighRes", isLocked(HIRES), supportsHighRes);
     putBoolean(buf, "supports2DEncoding", isLocked(G32D),supports2DEncoding);
     putBoolean(buf, "supportsPostScript", isLocked(PS), supportsPostScript);
-    putBoolean(buf, "calledBefore", FALSE, calledBefore);
+    putBoolean(buf, "calledBefore", false, calledBefore);
     putDecimal(buf, "maxPageWidth", isLocked(WD), maxPageWidth);
     putDecimal(buf, "maxPageLength", isLocked(LN), maxPageLength);
     putString(buf, "maxSignallingRate", isLocked(BR),
 	brnames[fxmin(maxSignallingRate, BR_14400)]);
     putString(buf, "minScanlineTime", isLocked(ST),
 	stnames[fxmin(minScanlineTime, ST_40MS)]);
-    putString(buf, "remoteCSI", FALSE, csi);
-    putDecimal(buf, "sendFailures", FALSE, sendFailures);
-    putIfString(buf, "lastSendFailure", FALSE, lastSendFailure);
-    putDecimal(buf, "dialFailures", FALSE, dialFailures);
-    putIfString(buf, "lastDialFailure", FALSE, lastDialFailure);
+    putString(buf, "remoteCSI", false, csi);
+    putDecimal(buf, "sendFailures", false, sendFailures);
+    putIfString(buf, "lastSendFailure", false, lastSendFailure);
+    putDecimal(buf, "dialFailures", false, dialFailures);
+    putIfString(buf, "lastDialFailure", false, lastDialFailure);
     if (pagerMaxMsgLength != (u_int) -1)
-	putDecimal(buf, "pagerMaxMsgLength", TRUE, pagerMaxMsgLength);
-    putIfString(buf, "pagerPassword", TRUE, pagerPassword);
-    putIfString(buf, "pagerTTYParity", TRUE, pagerTTYParity);
-    putIfString(buf, "pagingProtocol", TRUE, pagingProtocol);
-    putIfString(buf, "pageSource", TRUE, pageSource);
-    putIfString(buf, "pagerSetupCmds", TRUE, pagerSetupCmds);
+	putDecimal(buf, "pagerMaxMsgLength", true, pagerMaxMsgLength);
+    putIfString(buf, "pagerPassword", true, pagerPassword);
+    putIfString(buf, "pagerTTYParity", true, pagerTTYParity);
+    putIfString(buf, "pagingProtocol", true, pagingProtocol);
+    putIfString(buf, "pageSource", true, pageSource);
+    putIfString(buf, "pagerSetupCmds", true, pagerSetupCmds);
 }

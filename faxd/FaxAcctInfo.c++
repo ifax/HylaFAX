@@ -35,10 +35,10 @@ extern	const char* fmtTime(time_t);
 /*
  * Record an activity in the transfer log file.
  */
-fxBool
+bool
 FaxAcctInfo::record(const char* cmd) const
 {
-    fxBool ok = FALSE;
+    bool ok = false;
     int fd = Sys::open(FAX_XFERLOG, O_RDWR|O_CREAT|O_APPEND, 0644);
     if (fd >= 0) {
 	fxStackBuffer record;

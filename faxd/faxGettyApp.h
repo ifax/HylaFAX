@@ -55,7 +55,7 @@ public:
     };
     struct booltag {
 	const char*	 name;
-	fxBool faxGettyApp::*p;
+	bool faxGettyApp::*p;
 	u_int		 def;
     };
 private:
@@ -74,10 +74,10 @@ private:
     fxStr	gettyArgs;		// getty arguments
     fxStr	vgettyArgs;		// voice getty arguments
     fxStr	egettyArgs;		// extern getty arguments
-    fxBool	adaptiveAnswer;		// answer as data if fax answer fails
-    fxBool	lockDataCalls;		// hold uucp lock for getty
-    fxBool	lockVoiceCalls;		// hold uucp lock for vgetty
-    fxBool	lockExternCalls;	// hold uucp lock for egetty
+    bool	adaptiveAnswer;		// answer as data if fax answer fails
+    bool	lockDataCalls;		// hold uucp lock for getty
+    bool	lockVoiceCalls;		// hold uucp lock for vgetty
+    bool	lockExternCalls;	// hold uucp lock for egetty
     u_int	answerBias;		// rotor bias applied after good calls
     u_short	answerRotor;		// rotor into possible selections
     u_short	answerRotorSize;	// rotor table size
@@ -96,32 +96,32 @@ private:
 // configuration support
     void	setupConfig();
     void	resetConfig();
-    fxBool	setConfigItem(const char* tag, const char* value);
+    bool	setConfigItem(const char* tag, const char* value);
     void	setAnswerRotary(const fxStr& value);
 // modem handling
-    fxBool	isModemLocked();
-    fxBool	lockModem();
+    bool	isModemLocked();
+    bool	lockModem();
     void	unlockModem();
-    fxBool	setupModem();
-    void	discardModem(fxBool dropDTR);
+    bool	setupModem();
+    void	discardModem(bool dropDTR);
 // inbound call handling
-    fxBool	isCIDOk(const fxStr& cid);
-    fxBool	processCall(CallType ctype, fxStr& emsg);
+    bool	isCIDOk(const fxStr& cid);
+    bool	processCall(CallType ctype, fxStr& emsg);
     CallType	runGetty(const char* what,
 		    Getty* (*newgetty)(const fxStr&, const fxStr&),
 		    const char* args, fxStr &emsg,
-		    fxBool keepLock, fxBool keepModem = FALSE);
+		    bool keepLock, bool keepModem = false);
     void	setRingsBeforeAnswer(int rings);
     void	listenBegin();
     void	listenForRing();
     void	answerPhoneCmd(AnswerType);
     void	answerPhone(AnswerType, CallType, const CallerID&);
     void	answerCleanup();
-    fxBool	answerCall(AnswerType atype, CallType& ctype, fxStr& emsg);
+    bool	answerCall(AnswerType atype, CallType& ctype, fxStr& emsg);
 
     friend void AnswerTimeoutHandler::timerExpired(long, long);
 // miscellaneous stuff
-    fxBool	sendModemStatus(const char* msg);
+    bool	sendModemStatus(const char* msg);
 // FIFO-related stuff
     void	openFIFOs();
     void	closeFIFOs();

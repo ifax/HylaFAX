@@ -44,14 +44,14 @@ public:
     MySendFaxClient();
     ~MySendFaxClient();
 
-    void setup(fxBool);
-    fxBool setConfigItem(const char* tag, const char* value);
+    void setup(bool);
+    bool setConfigItem(const char* tag, const char* value);
     void fatal(const char* fmt ...);
 };
 MySendFaxClient::MySendFaxClient() {}
 MySendFaxClient::~MySendFaxClient() {}
 void
-MySendFaxClient::setup(fxBool b)
+MySendFaxClient::setup(bool b)
 {
     resetConfig();
     readConfig(FAX_SYSCONF);
@@ -61,13 +61,13 @@ MySendFaxClient::setup(fxBool b)
     setVerbose(b);
     FaxClient::setVerbose(b);
 }
-fxBool MySendFaxClient::setConfigItem(const char* tag, const char* value)
+bool MySendFaxClient::setConfigItem(const char* tag, const char* value)
     { return SendFaxClient::setConfigItem(tag, value); }
 
 class faxMailApp : public TextFmt, public MsgFmt {
 private:
-    fxBool	markDiscarded;		// mark MIME parts not handled
-    fxBool	withinFile;		// between beginFile() & endFile()
+    bool	markDiscarded;		// mark MIME parts not handled
+    bool	withinFile;		// between beginFile() & endFile()
     fxStr	mimeConverters;		// pathname to MIME converter scripts
     fxStr	mailProlog;		// site-specific prologue definitions
     fxStr	clientProlog;		// client-specific prologue info
@@ -77,7 +77,7 @@ private:
     MySendFaxClient* client;		// for direct delivery
     SendFaxJob*	job;			// reference to outbound job
     fxStr	mailUser;		// user ID for contacting server
-    fxBool	autoCoverPage;		// make cover page for direct delivery
+    bool	autoCoverPage;		// make cover page for direct delivery
 
     void formatMIME(FILE* fd, MIMEState& mime, MsgFmt& msg);
     void formatText(FILE* fd, MIMEState& mime);
@@ -85,18 +85,18 @@ private:
     void formatMessage(FILE* fd, MIMEState& mime, MsgFmt& msg);
     void formatApplication(FILE* fd, MIMEState& mime);
     void formatDiscarded(MIMEState& mime);
-    fxBool formatWithExternal(FILE* fd, const fxStr& app, MIMEState& mime);
+    bool formatWithExternal(FILE* fd, const fxStr& app, MIMEState& mime);
 
     void emitClientPrologue(FILE*);
 
     void discardPart(FILE* fd, MIMEState& mime);
-    fxBool copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile);
-    fxBool runConverter(const fxStr& app, const fxStr& tmp, MIMEState& mime);
+    bool copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile);
+    bool runConverter(const fxStr& app, const fxStr& tmp, MIMEState& mime);
     void copyFile(FILE* fd, const char* filename);
 
     void resetConfig();
     void setupConfig();
-    fxBool setConfigItem(const char* tag, const char* value);
+    bool setConfigItem(const char* tag, const char* value);
 
     void usage(void);
 public:
@@ -105,7 +105,7 @@ public:
 
     void run(int argc, char** argv);
 
-    void setVerbose(fxBool b)		{ verbose = b; }
+    void setVerbose(bool b)		{ verbose = b; }
     void setBoldFont(const char* cp)	{ boldFont = cp; }
     void setItalicFont(const char* cp)	{ italicFont = cp; }
 };
@@ -136,7 +136,7 @@ faxMailApp::run(int argc, char** argv)
     readConfig(FAX_LIBDATA "/faxmail.conf");
     readConfig(FAX_USERCONF);
 
-    fxBool deliver = FALSE;
+    bool deliver = false;
     while ((c = Sys::getopt(argc, argv, "12b:cdf:H:i:M:np:rRs:u:vW:")) != -1)
 	switch (c) {
 	case '1': case '2':		// format in 1 or 2 columns
@@ -146,10 +146,10 @@ faxMailApp::run(int argc, char** argv)
 	    setBoldFont(optarg);
 	    break;
 	case 'c':			// truncate lines
-	    setLineWrapping(FALSE);
+	    setLineWrapping(false);
 	    break;
 	case 'd':			// enable direct delivery
-	    deliver = TRUE;
+	    deliver = true;
 	    break;
 	case 'f':			// default font for text body
 	    setTextFont(optarg);
@@ -164,7 +164,7 @@ faxMailApp::run(int argc, char** argv)
 	    setPageMargins(optarg);
 	    break;
 	case 'n':			// suppress cover page
-	    autoCoverPage = FALSE;
+	    autoCoverPage = false;
 	    break;
 	case 'p':			// point size
 	    setTextPointSize(TextFmt::inch(optarg));
@@ -185,7 +185,7 @@ faxMailApp::run(int argc, char** argv)
 	    setPageWidth(atof(optarg));
 	    break;
 	case 'v':			// trace work
-	    setVerbose(TRUE);
+	    setVerbose(true);
 	    break;
 	case '?':
 	    usage();
@@ -322,24 +322,24 @@ faxMailApp::run(int argc, char** argv)
     const fxStr* version = findHeader("MIME-Version");
     if (version && *version == "1.0") {
         beginFile();
-	withinFile = TRUE;
+	withinFile = true;
         formatHeaders(*this);		// format top-level headers
 	formatMIME(stdin, mime, *this);	// parse MIME format
         if (withinFile) endFile();
-	withinFile = FALSE;
+	withinFile = false;
     } else {
         beginFile();
-	withinFile = TRUE;
+	withinFile = true;
         formatHeaders(*this);		// format top-level headers
 	formatText(stdin, mime);	// treat body as text/plain
         if (withinFile) endFile();
-	withinFile = FALSE;
+	withinFile = false;
     }
 
     endFormatting();
 
     if (client) {			// complete direct delivery
-	fxBool status = FALSE;
+	bool status = false;
 	fxStr emsg;
 	const char* user = mailUser;
 	if (user[0] == '\0')		// null user =>'s use real uid
@@ -504,13 +504,13 @@ faxMailApp::formatApplication(FILE* fd, MIMEState& mime)
 {
     if (mime.getSubType() == "postscript") {	// copy PS straight thru
 	if (withinFile) endFile();
-	withinFile = FALSE;
+	withinFile = false;
 	FILE* fout = getOutputFile();
 	fxStackBuffer buf;
 	while (mime.getLine(fd, buf))
 	    fwrite((const char*) buf, buf.getLength(), 1, fout);
 	if (!withinFile) beginFile();
-	withinFile = TRUE;
+	withinFile = true;
     } else if (mime.getSubType() == "x-faxmail-prolog") {
 	copyPart(fd, mime, clientProlog);	// save client PS prologue
     } else {
@@ -523,10 +523,10 @@ faxMailApp::formatApplication(FILE* fd, MIMEState& mime)
  * Format a MIME part using an external conversion
  * script to convert the decoded body to PostScript.
  */
-fxBool
+bool
 faxMailApp::formatWithExternal(FILE* fd, const fxStr& app, MIMEState& mime)
 {
-    fxBool ok = FALSE;
+    bool ok = false;
     if (verbose)
 	fprintf(stderr, "CONVERT: run %s\n", (const char*) app);
     fxStr tmp;
@@ -580,7 +580,7 @@ faxMailApp::discardPart(FILE* fd, MIMEState& mime)
  * The latter is used, for example, to accumulate
  * client-specified prologue data.
  */
-fxBool
+bool
 faxMailApp::copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile)
 {
     int ftmp;
@@ -592,25 +592,25 @@ faxMailApp::copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile)
 	ftmp = Sys::open(tmpFile, O_WRONLY|O_APPEND);
     if (ftmp >= 0) {
 	fxStackBuffer buf;
-	fxBool ok = TRUE;
+	bool ok = true;
 	while (mime.getLine(fd, buf) && ok)
 	    ok = (Sys::write(ftmp, buf, buf.getLength()) == buf.getLength());
 	if (ok) {
 	    Sys::close(ftmp);
-	    return (TRUE);
+	    return (true);
 	}
 	error("%s: write error: %s", (const char*) tmpFile, strerror(errno));
 	Sys::close(ftmp);
     } else
 	error("%s: Can not create temporary file", (const char*) tmpFile);
     discardPart(fd, mime);
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Run an external converter program.
  */
-fxBool
+bool
 faxMailApp::runConverter(const fxStr& app, const fxStr& tmp, MIMEState& mime)
 {
     const char* av[3];
@@ -637,7 +637,7 @@ faxMailApp::runConverter(const fxStr& app, const fxStr& tmp, MIMEState& mime)
     default:
 	int status;
 	if (Sys::waitpid(pid, status) == pid && status == 0)
-	    return (TRUE);
+	    return (true);
 	error("Error converting %s/%s; command was \"%s %s\"; exit status %x"
 	    , (const char*) mime.getType()
 	    , (const char*) mime.getSubType()
@@ -647,7 +647,7 @@ faxMailApp::runConverter(const fxStr& app, const fxStr& tmp, MIMEState& mime)
 	);
 	break;
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -674,18 +674,18 @@ faxMailApp::copyFile(FILE* fd, const char* filename)
 void
 faxMailApp::setupConfig()
 {
-    markDiscarded = TRUE;
+    markDiscarded = true;
     mimeConverters = FAX_LIBEXEC "/faxmail";
     mailProlog = FAX_LIBDATA "/faxmail.ps";
     msgDivider = "";
     mailUser = "";			// default to real uid
-    autoCoverPage = TRUE;		// a la sendfax
+    autoCoverPage = true;		// a la sendfax
 
-    setPageHeaders(FALSE);		// disable normal page headers
+    setPageHeaders(false);		// disable normal page headers
     setNumberOfColumns(1);		// 1 input page per output page
 
-    setLineWrapping(TRUE);
-    setISO8859(TRUE);
+    setLineWrapping(true);
+    setISO8859(true);
 
     MsgFmt::setupConfig();
 }
@@ -700,7 +700,7 @@ faxMailApp::resetConfig()
 #undef streq
 #define	streq(a,b)	(strcasecmp(a,b)==0)
 
-fxBool
+bool
 faxMailApp::setConfigItem(const char* tag, const char* value)
 {
     if (streq(tag, "markdiscarded"))
@@ -720,8 +720,8 @@ faxMailApp::setConfigItem(const char* tag, const char* value)
     else if (TextFmt::setConfigItem(tag, value))
 	;
     else
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 #undef streq
 

@@ -54,17 +54,17 @@ Class2Modem::setupDefault(fxStr& s, const fxStr& configured, const char* def)
  * the manufacturer-specific bogosity here and leave
  * the remainder of the Class 2 support fairly generic.
  */
-fxBool
+bool
 Class2Modem::setupModem()
 {
     if (!selectBaudRate(conf.maxRate, conf.flowControl, conf.flowControl))
-	return (FALSE);
+	return (false);
     // Query service support information
     fxStr s;
     if (doQuery(conf.classQueryCmd, s, 500) && FaxModem::parseRange(s, modemServices))
 	traceBits(modemServices & SERVICE_ALL, serviceNames);
     if ((modemServices & serviceType) == 0)
-	return (FALSE);
+	return (false);
     atCmd(classCmd);
 
     /*
@@ -91,7 +91,7 @@ Class2Modem::setupModem()
     fxStr t30parms;
     if (!doQuery(dccQueryCmd, t30parms, 500)) {
 	serverTrace("Error getting modem capabilities");
-	return (FALSE);
+	return (false);
     }
     /*
      * Syntax: (vr),(br),(wd),(ln),(df),(ec),(bf),(st)
@@ -108,7 +108,7 @@ Class2Modem::setupModem()
     if (!parseRange(t30parms, modemParams)) {
 	serverTrace("Error parsing " | dccQueryCmd | " response: "
 	    "\"" | t30parms | "\"");
-	return (FALSE);
+	return (false);
     }
     traceModemParams();
     /*
@@ -177,15 +177,15 @@ Class2Modem::setupModem()
      * during a transmission.  This went away in SP-2388-B and in
      * the final Class 2.0 spec.  Consequently we configure the
      * modem either to ignore it (Class 2.0) or to use whatever
-     * is configured (it defaults to TRUE).
+     * is configured (it defaults to true).
      */
     if (serviceType == SERVICE_CLASS20)
-	xmitWaitForXON = FALSE;
+	xmitWaitForXON = false;
     else
 	xmitWaitForXON = conf.class2XmitWaitForXON;
 
     setupClass2Parameters();			// send parameters to the modem
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -197,7 +197,7 @@ Class2Modem::setupModem()
  * 0.  This interface is used only for outbound use or when
  * followed by setup of receive-specific parameters.
  */
-fxBool
+bool
 Class2Modem::setupClass2Parameters()
 {
     if (modemServices & serviceType) {		// when resetting at startup
@@ -227,13 +227,13 @@ Class2Modem::setupClass2Parameters()
 	 */
 	setupDCC();
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Setup receive-specific parameters.
  */
-fxBool
+bool
 Class2Modem::setupReceive()
 {
     /*
@@ -270,7 +270,7 @@ Class2Modem::setupReceive()
  * Send the modem any commands needed to force use of
  * the specified flow control scheme.
  */
-fxBool
+bool
 Class2Modem::setupFlowControl(FlowControl fc)
 {
     switch (fc) {
@@ -278,13 +278,13 @@ Class2Modem::setupFlowControl(FlowControl fc)
     case FLOW_XONXOFF:	return atCmd(softFlowCmd);
     case FLOW_RTSCTS:	return atCmd(hardFlowCmd);
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Setup DCC to reflect best capabilities of the server.
  */
-fxBool
+bool
 Class2Modem::setupDCC()
 {
     params.vr = getBestVRes();
@@ -302,7 +302,7 @@ Class2Modem::setupDCC()
  * Parse a ``capabilities'' string from the modem and
  * return the values through the params parameter.
  */
-fxBool
+bool
 Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params)
 {
     int n = sscanf(cap, "%d,%d,%d,%d,%d,%d,%d,%d",
@@ -323,10 +323,10 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params)
 	if (params.bf > BF_ENABLE)
 	    params.bf = BF_DISABLE;
 	params.st = fxmin(params.st, (u_int) ST_40MS);
-	return (TRUE);
+	return (true);
     } else {
 	protoTrace("MODEM protocol botch, can not parse \"%s\"", cap);
-	return (FALSE);
+	return (false);
     }
 }
 
@@ -334,13 +334,13 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params)
  * Place the modem into the appropriate state
  * for sending/received facsimile.
  */
-fxBool
+bool
 Class2Modem::faxService()
 {
     return setupClass2Parameters() && class2Cmd(lidCmd, lid);
 }
 
-fxBool
+bool
 Class2Modem::setupRevision(fxStr& revision)
 {
     if (FaxModem::setupRevision(revision)) {
@@ -355,12 +355,12 @@ Class2Modem::setupRevision(fxStr& revision)
 		modemRevision.remove(0, pos);
 	    }
 	}
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
-fxBool
+bool
 Class2Modem::setupModel(fxStr& model)
 {
     if (FaxModem::setupModel(model)) {
@@ -370,12 +370,12 @@ Class2Modem::setupModel(fxStr& model)
 	 */
 	if (modemMfr == "ZYXEL")
 	    modemModel.resize(modemModel.next(0, ' '));	// model is first word
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
-fxBool
+bool
 Class2Modem::supportsPolling() const
 {
     return (hasPolling);
@@ -425,7 +425,7 @@ Class2Modem::setLID(const fxStr& number)
 /*
  * Reset a Class 2 modem.
  */
-fxBool
+bool
 Class2Modem::reset(long ms)
 {
     return (FaxModem::reset(ms) && setupClass2Parameters());
@@ -439,13 +439,13 @@ Class2Modem::reset(long ms)
  * us an unsolicited NO CARRIER message.  Isn't life
  * wondeful?
  */
-fxBool
+bool
 Class2Modem::waitFor(ATResponse wanted, long ms)
 {
     for (;;) {
 	ATResponse response = atResponse(rbuf, ms);
 	if (response == wanted)
-	    return (TRUE);
+	    return (true);
 	switch (response) {
 	case AT_TIMEOUT:
 	case AT_EMPTYLINE:
@@ -454,7 +454,7 @@ Class2Modem::waitFor(ATResponse wanted, long ms)
 	case AT_NODIALTONE:
 	case AT_NOANSWER:
 	    modemTrace("MODEM %s", ATresponses[response]);
-	    return (FALSE);
+	    return (false);
 	case AT_FHNG:
 	    // return hangup status, but try to wait for requested response
 	    { char buf[1024]; (void) atResponse(buf, 2*1000); }
@@ -470,7 +470,7 @@ Class2Modem::waitFor(ATResponse wanted, long ms)
 /*
  * Send <cmd>=<a0> and wait for response.
  */
-fxBool
+bool
 Class2Modem::class2Cmd(const fxStr& cmd, int a0, ATResponse r, long ms)
 {
     return atCmd(cmd | fxStr(a0, "=%u"), r, ms);
@@ -479,7 +479,7 @@ Class2Modem::class2Cmd(const fxStr& cmd, int a0, ATResponse r, long ms)
 /*
  * Send <cmd>=<t.30 parameters> and wait response.
  */
-fxBool
+bool
 Class2Modem::class2Cmd(const fxStr& cmd, const Class2Params& p, ATResponse r, long ms)
 {
     return atCmd(cmd | "=" | p.cmd(), r, ms);
@@ -488,7 +488,7 @@ Class2Modem::class2Cmd(const fxStr& cmd, const Class2Params& p, ATResponse r, lo
 /*
  * Send <cmd>="<s>" and wait for response.
  */
-fxBool
+bool
 Class2Modem::class2Cmd(const fxStr& cmd, const fxStr& s, ATResponse r, long ms)
 {
     return atCmd(cmd | "=\"" | s | "\"", r, ms);	// XXX handle escapes
@@ -498,11 +498,11 @@ Class2Modem::class2Cmd(const fxStr& cmd, const fxStr& s, ATResponse r, long ms)
  * Parse a Class 2 parameter specification
  * and return the resulting bit masks.
  */
-fxBool
+bool
 Class2Modem::parseRange(const char* cp, Class2Params& p)
 {
     if (!vparseRange(cp, 8, &p.vr,&p.br,&p.wd,&p.ln,&p.df,&p.ec,&p.bf,&p.st))
-	return (FALSE);
+	return (false);
     p.vr &= VR_ALL;
     p.br &= BR_ALL;
     p.wd &= WD_ALL;
@@ -511,7 +511,7 @@ Class2Modem::parseRange(const char* cp, Class2Params& p)
     p.ec &= EC_ALL;
     p.bf &= BF_ALL;
     p.st &= ST_ALL;
-    return TRUE;
+    return true;
 }
 
 const char*
@@ -652,7 +652,7 @@ Class2Modem::processHangup(const char* cp)
  * that the remote side hung up the phone in a
  * "normal and proper way".
  */
-fxBool
+bool
 Class2Modem::isNormalHangup()
 {
     // normal hangup is "", "0", or "00"

@@ -35,7 +35,7 @@ class UUCPLock {
 private:
     fxStr	file;			// lock file pathname
     mode_t	mode;			// lock file mode
-    fxBool	locked;			// is lock currently held
+    bool	locked;			// is lock currently held
 
     static uid_t UUCPuid;
     static gid_t UUCPgid;
@@ -43,15 +43,15 @@ private:
 
     static time_t lockTimeout;
 
-    fxBool	create();		// create lock file
-    fxBool	isNewer(time_t age);	// is lock file newer than age
-    fxBool	ownerExists(int fd);	// does owning process exist
+    bool	create();		// create lock file
+    bool	isNewer(time_t age);	// is lock file newer than age
+    bool	ownerExists(int fd);	// does owning process exist
 protected:
     UUCPLock(const fxStr& pathname, mode_t mode);
 
     virtual void setPID(pid_t) = 0;
-    virtual fxBool writeData(int fd) = 0;
-    virtual fxBool readData(int fd, pid_t& pid) = 0;
+    virtual bool writeData(int fd) = 0;
+    virtual bool readData(int fd, pid_t& pid) = 0;
 public:
     virtual ~UUCPLock();
 
@@ -65,12 +65,12 @@ public:
 	const fxStr& device,		// device pathname
 	mode_t mode);			// file creation mode
 
-    fxBool	isLocked() const;	// device is locked
-    fxBool	lock();			// lock device
+    bool	isLocked() const;	// device is locked
+    bool	lock();			// lock device
     void	unlock();		// unlock device
-    fxBool	check();		// check if lock exists
-    fxBool	setOwner(pid_t);	// force process owner identity
+    bool	check();		// check if lock exists
+    bool	setOwner(pid_t);	// force process owner identity
 };
 
-inline fxBool UUCPLock::isLocked() const	{ return locked; }
+inline bool UUCPLock::isLocked() const	{ return locked; }
 #endif /* _UUCPLOCK_ */

@@ -54,21 +54,21 @@ const char* Class1Modem::modulationNames[6] = {
  *     least at 12000 and 14400.
  */
 const Class1Cap Class1Modem::basicCaps[15] = {
-    {  3,  0,	 	0,		     V21,   FALSE }, // v.21
-    {  24, BR_2400,	DCSSIGRATE_2400V27,  V27FB, FALSE }, // v.27 ter
-    {  48, BR_4800,	DCSSIGRATE_4800V27,  V27,   FALSE }, // v.27 ter
-    {  72, BR_7200,	DCSSIGRATE_7200V29,  V29,   FALSE }, // v.29
-    {  73, BR_7200,	DCSSIGRATE_7200V17,  V17,   FALSE }, // v.17
-    {  74, BR_7200,	DCSSIGRATE_7200V17,  V17,   FALSE }, // v.17 w/st
-    {  96, BR_9600,	DCSSIGRATE_9600V29,  V29,   FALSE }, // v.29
-    {  97, BR_9600,	DCSSIGRATE_9600V17,  V17,   FALSE }, // v.17
-    {  98, BR_9600,	DCSSIGRATE_9600V17,  V17,   FALSE }, // v.17 w/st
-    { 121, BR_12000,	DCSSIGRATE_12000V33, V33,   FALSE }, // v.33
-    { 121, BR_12000,	DCSSIGRATE_12000V17, V17,   FALSE }, // v.17
-    { 122, BR_12000,	DCSSIGRATE_12000V17, V17,   FALSE }, // v.17 w/st
-    { 145, BR_14400,	DCSSIGRATE_14400V33, V33,   FALSE }, // v.33
-    { 145, BR_14400,	DCSSIGRATE_14400V17, V17,   FALSE }, // v.17
-    { 146, BR_14400,	DCSSIGRATE_14400V17, V17,   FALSE }, // v.17 w/st
+    {  3,  0,	 	0,		     V21,   false }, // v.21
+    {  24, BR_2400,	DCSSIGRATE_2400V27,  V27FB, false }, // v.27 ter
+    {  48, BR_4800,	DCSSIGRATE_4800V27,  V27,   false }, // v.27 ter
+    {  72, BR_7200,	DCSSIGRATE_7200V29,  V29,   false }, // v.29
+    {  73, BR_7200,	DCSSIGRATE_7200V17,  V17,   false }, // v.17
+    {  74, BR_7200,	DCSSIGRATE_7200V17,  V17,   false }, // v.17 w/st
+    {  96, BR_9600,	DCSSIGRATE_9600V29,  V29,   false }, // v.29
+    {  97, BR_9600,	DCSSIGRATE_9600V17,  V17,   false }, // v.17
+    {  98, BR_9600,	DCSSIGRATE_9600V17,  V17,   false }, // v.17 w/st
+    { 121, BR_12000,	DCSSIGRATE_12000V33, V33,   false }, // v.33
+    { 121, BR_12000,	DCSSIGRATE_12000V17, V17,   false }, // v.17
+    { 122, BR_12000,	DCSSIGRATE_12000V17, V17,   false }, // v.17 w/st
+    { 145, BR_14400,	DCSSIGRATE_14400V33, V33,   false }, // v.33
+    { 145, BR_14400,	DCSSIGRATE_14400V17, V17,   false }, // v.17
+    { 146, BR_14400,	DCSSIGRATE_14400V17, V17,   false }, // v.17 w/st
 };
 #define	NCAPS	(sizeof (basicCaps) / sizeof (basicCaps[0]))
 
@@ -92,17 +92,17 @@ Class1Modem::~Class1Modem()
  * Check if the modem is a Class 1 modem and,
  * if so, configure it for use.
  */
-fxBool
+bool
 Class1Modem::setupModem()
 {
     if (!selectBaudRate(conf.maxRate, conf.flowControl, conf.flowControl))
-	return (FALSE);
+	return (false);
     // Query service support information
     fxStr s;
     if (doQuery(conf.classQueryCmd, s, 500) && FaxModem::parseRange(s, modemServices))
 	traceBits(modemServices & SERVICE_ALL, serviceNames);
     if ((modemServices & SERVICE_CLASS1) == 0)
-	return (FALSE);
+	return (false);
     atCmd(conf.class1Cmd);
 
     /*
@@ -128,7 +128,7 @@ Class1Modem::setupModem()
      */
     if (!class1Query("AT+FTM=?", xmitCaps)) {
 	serverTrace("Error parsing \"+FTM\" query response: \"%s\"", rbuf);
-	return (FALSE);
+	return (false);
     }
     modemParams.br = 0;
     u_int i;
@@ -150,7 +150,7 @@ Class1Modem::setupModem()
      */ 
     if (!class1Query("AT+FRM=?", recvCaps)) {
 	serverTrace("Error parsing \"+FRM\" query response: \"%s\"", rbuf);
-	return (FALSE);
+	return (false);
     }
     u_int mods = 0;
     for (i = 1; i < NCAPS; i++)
@@ -189,13 +189,13 @@ Class1Modem::setupModem()
     frameRev = TIFFGetBitRevTable(conf.frameFillOrder == FILLORDER_LSB2MSB);
 
     setupClass1Parameters();
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Send the modem the Class 1 configuration commands.
  */
-fxBool
+bool
 Class1Modem::setupClass1Parameters()
 {
     if (modemServices & SERVICE_CLASS1) {
@@ -203,23 +203,23 @@ Class1Modem::setupClass1Parameters()
 	setupFlowControl(flowControl);
 	atCmd(conf.setupAACmd);
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Setup receive-specific parameters.
  */
-fxBool
+bool
 Class1Modem::setupReceive()
 {
-    return (TRUE);			// nothing to do
+    return (true);			// nothing to do
 }
 
 /*
  * Send the modem any commands needed to force use of
  * the specified flow control scheme.
  */
-fxBool
+bool
 Class1Modem::setupFlowControl(FlowControl fc)
 {
     switch (fc) {
@@ -227,14 +227,14 @@ Class1Modem::setupFlowControl(FlowControl fc)
     case FLOW_XONXOFF:	return atCmd(conf.class1SFLOCmd);
     case FLOW_RTSCTS:	return atCmd(conf.class1HFLOCmd);
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
  * Place the modem into the appropriate state
  * for sending/received facsimile.
  */
-fxBool
+bool
 Class1Modem::faxService()
 {
     return (atCmd(conf.class1Cmd) && setupFlowControl(flowControl));
@@ -249,10 +249,10 @@ Class1Modem::setLID(const fxStr& number)
     encodeTSI(lid, number);
 }
 
-fxBool
+bool
 Class1Modem::supportsPolling() const
 {
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -303,7 +303,7 @@ Class1Modem::decodeTSI(fxStr& ascii, const HDLCFrame& binary)
 	n = 20;
     ascii.resize(n);
     u_int d = 0;
-    fxBool seenDigit = FALSE;
+    bool seenDigit = false;
     for (const u_char* cp = binary.getFrameData() + n-1; n > 0; cp--, n--) {
 	/*
 	 * Accept any printable ascii.
@@ -311,7 +311,7 @@ Class1Modem::decodeTSI(fxStr& ascii, const HDLCFrame& binary)
 	u_char c = frameRev[*cp];
         if (isprint(c) || c == ' ') {
 	    if (c != ' ')
-		seenDigit = TRUE;
+		seenDigit = true;
 	    if (seenDigit)
 		ascii[d++] = c;
 	}
@@ -355,19 +355,19 @@ Class1Modem::decodePWD(fxStr& ascii, const HDLCFrame& binary)
  * optionally including the end-of-data
  * marker <DLE><ETX>.
  */
-fxBool
+bool
 Class1Modem::sendClass1Data(const u_char* data, u_int cc,
-    const u_char* bitrev, fxBool eod)
+    const u_char* bitrev, bool eod)
 {
     if (!putModemDLEData(data, cc, bitrev, getDataTimeout()))
-	return (FALSE);
+	return (false);
     if (eod) {
 	u_char buf[2];
 	buf[0] = DLE;
 	buf[1] = ETX;
 	return (putModemData(buf, 2));
     } else
-	return (TRUE);
+	return (true);
 }
 
 /*
@@ -377,7 +377,7 @@ Class1Modem::sendClass1Data(const u_char* data, u_int cc,
 void
 Class1Modem::abortReceive()
 {
-    fxBool b = wasTimeout();
+    bool b = wasTimeout();
     char c = CAN;			// anything other than DC1/DC3
     putModem(&c, 1, 1);
     /*
@@ -403,7 +403,7 @@ Class1Modem::abortReceive()
  * is not received before the timeout, the receive
  * is aborted.
  */
-fxBool
+bool
 Class1Modem::recvRawFrame(HDLCFrame& frame)
 {
     int c;
@@ -434,7 +434,7 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
     }
     if (wasTimeout()) {
 	abortReceive();
-	return (FALSE);
+	return (false);
     }
     traceHDLCFrame("-->", frame);
     /*
@@ -445,18 +445,18 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
     if (!waitFor(AT_OK)) {
 	if (lastResponse == AT_ERROR)
 	    protoTrace("FCS error");
-	return (FALSE);
+	return (false);
     }
     if (frame.getFrameDataLength() < 1) {
 	protoTrace("HDLC frame too short (%u bytes)", frame.getLength());
-	return (FALSE);
+	return (false);
     }
     if ((frame[1]&0xf7) != 0xc0) {
 	protoTrace("HDLC frame with bad control field %#x", frame[1]);
-	return (FALSE);
+	return (false);
     }
-    frame.setOK(TRUE);
-    return (TRUE);
+    frame.setOK(true);
+    return (true);
 }
 
 #include "StackBuffer.h"
@@ -489,21 +489,21 @@ Class1Modem::traceHDLCFrame(const char* direction, const HDLCFrame& frame)
  * The T.30 max frame length is enforced with a 3 second
  * timeout on the send.
  */
-fxBool
+bool
 Class1Modem::sendRawFrame(HDLCFrame& frame)
 {
     traceHDLCFrame("<--", frame);
     if (frame.getLength() < 3) {
 	protoTrace("HDLC frame too short (%u bytes)", frame.getLength());
-	return (FALSE);
+	return (false);
     }
     if (frame[0] != 0xff) {
 	protoTrace("HDLC frame with bad address field %#x", frame[0]);
-	return (FALSE);
+	return (false);
     }
     if ((frame[1]&0xf7) != 0xc0) {
 	protoTrace("HDLC frame with bad control field %#x", frame[1]);
-	return (FALSE);
+	return (false);
     }
     static u_char buf[2] = { DLE, ETX };
     return (putModemDLEData(frame, frame.getLength(), frameRev, 0) &&
@@ -514,8 +514,8 @@ Class1Modem::sendRawFrame(HDLCFrame& frame)
 /*
  * Send a single byte frame.
  */
-fxBool
-Class1Modem::sendFrame(u_char fcf, fxBool lastFrame)
+bool
+Class1Modem::sendFrame(u_char fcf, bool lastFrame)
 {
     HDLCFrame frame(conf.class1FrameOverhead);
     frame.put(0xff);
@@ -527,8 +527,8 @@ Class1Modem::sendFrame(u_char fcf, fxBool lastFrame)
 /*
  * Send a frame with DCS/DIS.
  */
-fxBool
-Class1Modem::sendFrame(u_char fcf, u_int dcs, u_int xinfo, fxBool lastFrame)
+bool
+Class1Modem::sendFrame(u_char fcf, u_int dcs, u_int xinfo, bool lastFrame)
 {
     HDLCFrame frame(conf.class1FrameOverhead);
     frame.put(0xff);
@@ -554,8 +554,8 @@ Class1Modem::sendFrame(u_char fcf, u_int dcs, u_int xinfo, fxBool lastFrame)
 /*
  * Send a frame with TSI/CSI/PWD/SUB/SEP.
  */
-fxBool
-Class1Modem::sendFrame(u_char fcf, const fxStr& tsi, fxBool lastFrame)
+bool
+Class1Modem::sendFrame(u_char fcf, const fxStr& tsi, bool lastFrame)
 {
     HDLCFrame frame(conf.class1FrameOverhead);
     frame.put(0xff);
@@ -565,11 +565,11 @@ Class1Modem::sendFrame(u_char fcf, const fxStr& tsi, fxBool lastFrame)
     return (sendRawFrame(frame));
 }
 
-fxBool
-Class1Modem::transmitFrame(u_char fcf, fxBool lastFrame)
+bool
+Class1Modem::transmitFrame(u_char fcf, bool lastFrame)
 {
     startTimeout(2550);			// 3.0 - 15% = 2.55 secs
-    fxBool frameSent =
+    bool frameSent =
 	atCmd(thCmd, AT_NOTHING) &&
 	atResponse(rbuf, 0) == AT_CONNECT &&
 	sendFrame(fcf, lastFrame);
@@ -577,8 +577,8 @@ Class1Modem::transmitFrame(u_char fcf, fxBool lastFrame)
     return (frameSent);
 }
 
-fxBool
-Class1Modem::transmitFrame(u_char fcf, u_int dcs, u_int xinfo, fxBool lastFrame)
+bool
+Class1Modem::transmitFrame(u_char fcf, u_int dcs, u_int xinfo, bool lastFrame)
 {
     /*
      * The T.30 spec says no frame can take more than 3 seconds
@@ -586,7 +586,7 @@ Class1Modem::transmitFrame(u_char fcf, u_int dcs, u_int xinfo, fxBool lastFrame)
      * and guard against the send exceeding the lower bound.
      */
     startTimeout(2550);			// 3.0 - 15% = 2.55 secs
-    fxBool frameSent =
+    bool frameSent =
 	atCmd(thCmd, AT_NOTHING) &&
 	atResponse(rbuf, 0) == AT_CONNECT &&
 	sendFrame(fcf, dcs, xinfo, lastFrame);
@@ -594,11 +594,11 @@ Class1Modem::transmitFrame(u_char fcf, u_int dcs, u_int xinfo, fxBool lastFrame)
     return (frameSent);
 }
 
-fxBool
-Class1Modem::transmitFrame(u_char fcf, const fxStr& tsi, fxBool lastFrame)
+bool
+Class1Modem::transmitFrame(u_char fcf, const fxStr& tsi, bool lastFrame)
 {
     startTimeout(3000);			// give more time than others
-    fxBool frameSent =
+    bool frameSent =
 	atCmd(thCmd, AT_NOTHING) &&
 	atResponse(rbuf, 0) == AT_CONNECT &&
 	sendFrame(fcf, tsi, lastFrame);
@@ -609,16 +609,16 @@ Class1Modem::transmitFrame(u_char fcf, const fxStr& tsi, fxBool lastFrame)
 /*
  * Send data using the specified signalling rate.
  */
-fxBool
+bool
 Class1Modem::transmitData(int br, u_char* data, u_int cc,
-    const u_char* bitrev, fxBool eod)
+    const u_char* bitrev, bool eod)
 {
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
     fxStr tmCmd(br, tmCmdFmt);
-    fxBool ok = (atCmd(tmCmd, AT_CONNECT) &&
+    bool ok = (atCmd(tmCmd, AT_CONNECT) &&
 	sendClass1Data(data, cc, bitrev, eod) &&
-	(eod ? waitFor(AT_OK) : TRUE));
+	(eod ? waitFor(AT_OK) : true));
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
     return (ok);
@@ -632,24 +632,24 @@ Class1Modem::transmitData(int br, u_char* data, u_int cc,
  * is not received before the timeout, the receive
  * is aborted.
  */
-fxBool
+bool
 Class1Modem::recvFrame(HDLCFrame& frame, long ms)
 {
     frame.reset();
     startTimeout(ms);
-    fxBool readPending = atCmd(rhCmd, AT_NOTHING);
+    bool readPending = atCmd(rhCmd, AT_NOTHING);
     if (readPending && waitFor(AT_CONNECT,0))
 	return recvRawFrame(frame);		// NB: stops inherited timeout
     stopTimeout("waiting for v.21 carrier");
     if (readPending && wasTimeout())
 	abortReceive();
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Receive TCF data using the specified signalling rate.
  */
-fxBool
+bool
 Class1Modem::recvTCF(int br, HDLCFrame& buf, const u_char* bitrev, long ms)
 {
     buf.reset();
@@ -659,7 +659,7 @@ Class1Modem::recvTCF(int br, HDLCFrame& buf, const u_char* bitrev, long ms)
     /*
      * Loop waiting for carrier or timeout.
      */
-    fxBool readPending, gotCarrier;
+    bool readPending, gotCarrier;
     fxStr rmCmd(br, rmCmdFmt);
     do {
 	readPending = atCmd(rmCmd, AT_NOTHING);
@@ -668,7 +668,7 @@ Class1Modem::recvTCF(int br, HDLCFrame& buf, const u_char* bitrev, long ms)
     /*
      * If carrier was recognized, collect the data.
      */
-    fxBool gotData = FALSE;
+    bool gotData = false;
     if (gotCarrier) {
 	int c = getModemChar(0);		// NB: timeout is to first byte
 	stopTimeout("receiving TCF");
@@ -684,7 +684,7 @@ Class1Modem::recvTCF(int br, HDLCFrame& buf, const u_char* bitrev, long ms)
 		if (c == DLE) {
 		    c = getModemChar(0);
 		    if (c == ETX) {
-			gotData = TRUE;
+			gotData = true;
 			break;
 		    }
 		}
@@ -710,7 +710,7 @@ Class1Modem::recvTCF(int br, HDLCFrame& buf, const u_char* bitrev, long ms)
 /*
  * Reset a Class 1 modem.
  */
-fxBool
+bool
 Class1Modem::reset(long ms)
 {
     return (FaxModem::reset(ms) && setupClass1Parameters());
@@ -727,13 +727,13 @@ Class1Modem::atResponse(char* buf, long ms)
 /*
  * Wait (carefully) for some response from the modem.
  */
-fxBool
+bool
 Class1Modem::waitFor(ATResponse wanted, long ms)
 {
     for (;;) {
 	ATResponse response = atResponse(rbuf, ms);
 	if (response == wanted)
-	    return (TRUE);
+	    return (true);
 	switch (response) {
 	case AT_TIMEOUT:
 	case AT_EMPTYLINE:
@@ -745,7 +745,7 @@ Class1Modem::waitFor(ATResponse wanted, long ms)
 	    modemTrace("MODEM %s", ATresponses[response]);
 	    /* fall thru... */
 	case AT_FCERROR:
-	    return (FALSE);
+	    return (false);
 	}
     }
 }
@@ -753,7 +753,7 @@ Class1Modem::waitFor(ATResponse wanted, long ms)
 /*
  * Send <what>=? and get a range response.
  */
-fxBool
+bool
 Class1Modem::class1Query(const char* what, Class1Cap caps[])
 {
     char response[1024];
@@ -761,7 +761,7 @@ Class1Modem::class1Query(const char* what, Class1Cap caps[])
 	sync(5000);
 	return (parseQuery(response, caps));
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -846,7 +846,7 @@ const char SPACE = ' ';
 /*
  * Parse a Class 1 parameter string.
  */
-fxBool
+bool
 Class1Modem::parseQuery(const char* cp, Class1Cap caps[])
 {
     while (cp[0]) {
@@ -855,18 +855,18 @@ Class1Modem::parseQuery(const char* cp, Class1Cap caps[])
 	    continue;
 	}
 	if (!isdigit(cp[0]))
-	    return (FALSE);
+	    return (false);
 	int v = 0;
 	do {
 	    v = v*10 + (cp[0] - '0');
 	} while (isdigit((++cp)[0]));
 	for (u_int i = 0; i < NCAPS; i++)
 	    if (caps[i].value == v) {
-		caps[i].ok = TRUE;
+		caps[i].ok = true;
 		break;
 	    }
 	if (cp[0] == COMMA)		// <item>,<item>...
 	    cp++;
     }
-    return (TRUE);
+    return (true);
 }

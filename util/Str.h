@@ -125,29 +125,29 @@ public:
 
     /////////////////////////////////////////////////////
     // Comparison
-    friend fxBool operator==(fxStr const&, fxStr const&);
-    friend fxBool operator==(fxStr const&, char const*);
-    friend fxBool operator==(char const*, fxStr const&);
+    friend bool operator==(fxStr const&, fxStr const&);
+    friend bool operator==(fxStr const&, char const*);
+    friend bool operator==(char const*, fxStr const&);
 
-    friend fxBool operator!=(fxStr const&, fxStr const&);
-    friend fxBool operator!=(fxStr const&, char const*);
-    friend fxBool operator!=(char const*, fxStr const&);
+    friend bool operator!=(fxStr const&, fxStr const&);
+    friend bool operator!=(fxStr const&, char const*);
+    friend bool operator!=(char const*, fxStr const&);
 
-    friend fxBool operator>=(fxStr const&, fxStr const&);
-    friend fxBool operator>=(fxStr const&, char const*);
-    friend fxBool operator>=(char const*, fxStr const&);
+    friend bool operator>=(fxStr const&, fxStr const&);
+    friend bool operator>=(fxStr const&, char const*);
+    friend bool operator>=(char const*, fxStr const&);
 
-    friend fxBool operator<=(fxStr const&, fxStr const&);
-    friend fxBool operator<=(fxStr const&, char const*);
-    friend fxBool operator<=(char const*, fxStr const&);
+    friend bool operator<=(fxStr const&, fxStr const&);
+    friend bool operator<=(fxStr const&, char const*);
+    friend bool operator<=(char const*, fxStr const&);
 
-    friend fxBool operator>(fxStr const&, fxStr const&);
-    friend fxBool operator>(fxStr const&, char const*);
-    friend fxBool operator>(char const*, fxStr const&);
+    friend bool operator>(fxStr const&, fxStr const&);
+    friend bool operator>(fxStr const&, char const*);
+    friend bool operator>(char const*, fxStr const&);
 
-    friend fxBool operator<(fxStr const&, fxStr const&);
-    friend fxBool operator<(fxStr const&, char const*);
-    friend fxBool operator<(char const*, fxStr const&);
+    friend bool operator<(fxStr const&, fxStr const&);
+    friend bool operator<(fxStr const&, char const*);
+    friend bool operator<(char const*, fxStr const&);
 
     int compare(fxStr const *a) const { return ::compare(*this, *a); }
     friend int compare(fxStr const&, fxStr const&);
@@ -175,7 +175,7 @@ public:
 
     void remove(u_int posn,u_int len=1);
 
-    void resize(u_int len, fxBool reallocate = FALSE);
+    void resize(u_int len, bool reallocate = false);
     void setMaxLength(u_int maxlen);
 
     void append(char a);

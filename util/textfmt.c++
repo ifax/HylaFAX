@@ -95,13 +95,13 @@ main(int argc, char* argv[])
 	    fmt.setNumberOfColumns(c - '0');
 	    break;
 	case 'B':
-	    fmt.setPageHeaders(FALSE);
+	    fmt.setPageHeaders(false);
 	    break;
 	case 'c':		// clip/cut instead of wrapping lines
-	    fmt.setLineWrapping(FALSE);
+	    fmt.setLineWrapping(false);
 	    break;
 	case 'D':		// don't use ISO 8859-1 encoding
-	    fmt.setISO8859(FALSE);
+	    fmt.setISO8859(false);
 	    break;
 	case 'f':		// body font
 	    if (!fmt.setTextFont(optarg)) {
@@ -115,7 +115,7 @@ main(int argc, char* argv[])
 	    fmt.setFontPath(optarg);
 	    break;
 	case 'G':		// gaudy mode
-	    fmt.setGaudyHeaders(TRUE);
+	    fmt.setGaudyHeaders(true);
 	    break;
 	case 'm':		// multi-column output
 	    fmt.setNumberOfColumns(atoi(optarg));

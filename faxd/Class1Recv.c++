@@ -77,14 +77,14 @@ Class1Modem::findAnswer(const char* s)
 /*
  * Begin the receive protocol.
  */
-fxBool
+bool
 Class1Modem::recvBegin(fxStr& emsg)
 {
-    setInputBuffering(FALSE);
-    prevPage = FALSE;				// no previous page received
-    pageGood = FALSE;				// quality of received page
-    messageReceived = FALSE;			// expect message carrier
-    recvdDCN = FALSE;				// haven't seen DCN
+    setInputBuffering(false);
+    prevPage = false;				// no previous page received
+    pageGood = false;				// quality of received page
+    messageReceived = false;			// expect message carrier
+    recvdDCN = false;				// haven't seen DCN
     lastPPM = FCF_DCN;				// anything will do
 
     return FaxModem::recvBegin(emsg) && recvIdentification(
@@ -99,7 +99,7 @@ Class1Modem::recvBegin(fxStr& emsg)
  * Transmit local identification and wait for the
  * remote side to respond with their identification.
  */
-fxBool
+bool
 Class1Modem::recvIdentification(
     u_int f1, const fxStr& pwd,
     u_int f2, const fxStr& addr,
@@ -111,7 +111,7 @@ Class1Modem::recvIdentification(
     u_int trecovery = howmany(conf.class1TrainingRecovery, 1000);
     time_t start = Sys::now();
     HDLCFrame frame(conf.class1FrameOverhead);
-    fxBool framesSent;
+    bool framesSent;
 
     emsg = "No answer (T.30 T1 timeout)";
     /*
@@ -120,27 +120,27 @@ Class1Modem::recvIdentification(
      */
     if (f1) {
 	startTimeout(3000);
-	framesSent = sendFrame(f1, pwd, FALSE);
+	framesSent = sendFrame(f1, pwd, false);
 	stopTimeout("sending PWD frame");
     } else if (f2) {
 	startTimeout(3000);
-	framesSent = sendFrame(f2, addr, FALSE);
+	framesSent = sendFrame(f2, addr, false);
 	stopTimeout("sending SUB/SEP frame");
     } else {
 	startTimeout(3000);
-	framesSent = sendFrame(f3, id, FALSE);
+	framesSent = sendFrame(f3, id, false);
 	stopTimeout("sending CSI/CIG frame");
     }
     for (;;) {
 	if (framesSent) {
 	    if (f1) {
 		startTimeout(2550);
-		framesSent = sendFrame(f2, addr, FALSE);
+		framesSent = sendFrame(f2, addr, false);
 		stopTimeout("sending SUB/SEP frame");
 	    }
 	    if (framesSent && f2) {
 		startTimeout(2550);
-		framesSent = sendFrame(f3, id, FALSE);
+		framesSent = sendFrame(f3, id, false);
 		stopTimeout("sending CSI/CIG frame");
 	    }
 	    if (framesSent) {
@@ -162,14 +162,14 @@ Class1Modem::recvIdentification(
 		    if (!recvDCSFrames(frame)) {
 			if (frame.getFCF() == FCF_DCN) {
 			    emsg = "RSPREC error/got DCN";
-			    recvdDCN = TRUE;
+			    recvdDCN = true;
 			} else			// XXX DTC/DIS not handled
 			    emsg = "RSPREC invalid response received";
 			break;
 		    }
 		    if (recvTraining()) {
 			emsg = "";
-			return (TRUE);
+			return (true);
 		    }
 		    emsg = "Failure to train modems";
 		    /*
@@ -203,19 +203,19 @@ Class1Modem::recvIdentification(
 	 * Retransmit ident frames.
 	 */
 	if (f1)
-	    framesSent = transmitFrame(f1, pwd, FALSE);
+	    framesSent = transmitFrame(f1, pwd, false);
 	else if (f2)
-	    framesSent = transmitFrame(f2, addr, FALSE);
+	    framesSent = transmitFrame(f2, addr, false);
 	else
-	    framesSent = transmitFrame(f3, id, FALSE);
+	    framesSent = transmitFrame(f3, id, false);
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Receive DCS preceded by any optional frames.
  */
-fxBool
+bool
 Class1Modem::recvDCSFrames(HDLCFrame& frame)
 {
     fxStr s;
@@ -241,14 +241,14 @@ Class1Modem::recvDCSFrames(HDLCFrame& frame)
 /*
  * Receive training and analyze TCF.
  */
-fxBool
+bool
 Class1Modem::recvTraining()
 {
     protoTrace("RECV training at %s %s",
 	modulationNames[curcap->mod],
 	Class2Params::bitRateNames[curcap->br]);
     HDLCFrame buf(conf.class1FrameOverhead);
-    fxBool ok = recvTCF(curcap->value, buf, frameRev, conf.class1TCFRecvTimeout);
+    bool ok = recvTCF(curcap->value, buf, frameRev, conf.class1TCFRecvTimeout);
     if (ok) {					// check TCF data
 	u_int n = buf.getLength();
 	u_int nonzero = 0;
@@ -293,11 +293,11 @@ Class1Modem::recvTraining()
 	if (nonzero > conf.class1TCFMaxNonZero) {
 	    protoTrace("RECV: reject TCF (too many non-zero, max %u%%)",
 		conf.class1TCFMaxNonZero);
-	    ok = FALSE;
+	    ok = false;
 	}
 	if (zerorun < minrun) {
 	    protoTrace("RECV: reject TCF (zero run too short, min %u)", minrun);
-	    ok = FALSE;
+	    ok = false;
 	}
 	(void) waitFor(AT_NOCARRIER);	// wait for message carrier to drop
     }
@@ -346,7 +346,7 @@ const u_int Class1Modem::modemPPMCodes[8] = {
  * This routine is called after receiving training or after
  * sending a post-page response in a multi-page document.
  */
-fxBool
+bool
 Class1Modem::recvPage(TIFF* tif, int& ppm, fxStr& emsg)
 {
 top:
@@ -356,7 +356,7 @@ top:
 	    /*
 	     * Look for message carrier and receive Phase C data.
 	     */
-	    setInputBuffering(TRUE);
+	    setInputBuffering(true);
 	    if (flowControl == FLOW_XONXOFF)
 		(void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
 	    /*
@@ -384,13 +384,13 @@ top:
 		     */
 		    messageReceived = waitFor(AT_NOCARRIER, 2*1000);
 		    if (messageReceived)
-			prevPage = TRUE;
+			prevPage = true;
 		    timer = conf.t1Timer;		// wait longer for PPM
 		}
 	    }
 	    if (flowControl == FLOW_XONXOFF)
 		(void) setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
-	    setInputBuffering(FALSE);
+	    setInputBuffering(false);
 	    if (!messageReceived && rmResponse != AT_FCERROR) {
 		/*
 		 * One of many things may have happened:
@@ -419,7 +419,7 @@ top:
 	if (abortRequested()) {
 	    // XXX no way to purge TIFF directory
 	    emsg = "Receive aborted due to operator intervention";
-	    return (FALSE);
+	    return (false);
 	}
 	/*
 	 * Do command received logic.
@@ -430,7 +430,7 @@ top:
 	    case FCF_DIS:			// XXX no support
 		protoTrace("RECV DIS/DTC");
 		emsg = "Can not continue after DIS/DTC";
-		return (FALSE);
+		return (false);
 	    case FCF_PWD:
 	    case FCF_SUB:
 	    case FCF_NSS:
@@ -456,7 +456,7 @@ top:
 		     * was received--this violates the protocol.
 		     */
 		    emsg = "COMREC invalid response received";
-		    return (FALSE);
+		    return (false);
 		}
 		/*
 		 * [Re]transmit post page response.
@@ -478,7 +478,7 @@ top:
 			 */
 			messageReceived = (lastPPM == FCF_EOM);
 			ppm = modemPPMCodes[lastPPM&7];
-			return (TRUE);
+			return (true);
 		    }
 		} else {
 		    /*
@@ -492,17 +492,17 @@ top:
 		     * writes will overwrite the previous data.
 		     */
 		    recvResetPage(tif);
-		    messageReceived = TRUE;	// expect DCS next
+		    messageReceived = true;	// expect DCS next
 		}
 		break;
 	    case FCF_DCN:			// DCN
 		protoTrace("RECV recv DCN");
 		emsg = "COMREC received DCN";
-		recvdDCN = TRUE;
-		return (FALSE);
+		recvdDCN = true;
+		return (false);
 	    default:
 		emsg = "COMREC invalid response received";
-		return (FALSE);
+		return (false);
 	    }
 	}
     } while (!wasTimeout() && lastResponse != AT_EMPTYLINE);
@@ -517,7 +517,7 @@ top:
 	    goto top;
     } else
 	emsg = "T.30 T2 timeout, expected page not received";
-    return (FALSE);
+    return (false);
 }
 
 void
@@ -530,10 +530,10 @@ Class1Modem::abortPageRecv()
 /*
  * Receive Phase C data w/ or w/o copy quality checking.
  */
-fxBool
+bool
 Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
 {
-    fxBool pageRecvd = recvPageDLEData(tif, checkQuality(), params, emsg);
+    bool pageRecvd = recvPageDLEData(tif, checkQuality(), params, emsg);
     TIFFSetField(tif, TIFFTAG_IMAGELENGTH, getRecvEOLCount());
     TIFFSetField(tif, TIFFTAG_CLEANFAXDATA, getRecvBadLineCount() ?
 	CLEANFAXDATA_REGENERATED : CLEANFAXDATA_CLEAN);
@@ -548,7 +548,7 @@ Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
 /*
  * Complete a receive session.
  */
-fxBool
+bool
 Class1Modem::recvEnd(fxStr&)
 {
     if (!recvdDCN) {
@@ -583,8 +583,8 @@ Class1Modem::recvEnd(fxStr&)
 	} while (Sys::now()-start < t1 &&
 	    (!frame.isOK() || frame.getFCF() == FCF_EOP));
     }
-    setInputBuffering(TRUE);
-    return (TRUE);
+    setInputBuffering(true);
+    return (true);
 }
 
 /*
@@ -594,5 +594,5 @@ void
 Class1Modem::recvAbort()
 {
     transmitFrame(FCF_DCN|FCF_RCVR);
-    recvdDCN = TRUE;				// don't hang around in recvEnd
+    recvdDCN = true;				// don't hang around in recvEnd
 }

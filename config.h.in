@@ -262,7 +262,7 @@
 #define	SNPP_DEFPORT	444		/* port to use if service is unknown */
 #define	SNPP_DEFHOST	"localhost"	/* default host for SNPP service */
 /* default values for SNPP job scheduling and handling */
-#define	SNPP_DEFQUEUE	FALSE		/* default is synchronous delivery */
+#define	SNPP_DEFQUEUE	false		/* default is synchronous delivery */
 #define	SNPP_DEFLEVEL	1		/* default service level */
 #define	SNPP_DEFRETRIES	3		/* number times to retry send */
 #define	SNPP_DEFREDIALS	12		/* number times to dial phone */

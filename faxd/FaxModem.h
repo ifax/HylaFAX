@@ -61,7 +61,7 @@ private:
     void	setupTagLine(const FaxRequest&, const fxStr& tagLineFmt);
 // phase c data receive & copy quality checking
     u_int	cblc;		// current count of consecutive bad lines
-    fxBool	lastRowBad;	// last decoded row was bad
+    bool	lastRowBad;	// last decoded row was bad
 
     u_long	recvEOLCount;	// EOL count for received page
     u_long	recvBadLineCount;
@@ -102,7 +102,7 @@ protected:
     void	tracePPR(const char* dir, u_int ppr);
     void	tracePPM(const char* dir, u_int ppm);
 // server-related stuff
-    fxBool	getHDLCTracing();
+    bool	getHDLCTracing();
     FaxSendStatus sendSetupParams(TIFF*, Class2Params&,
 		    FaxMachineInfo&, fxStr&);
     void	recvTSI(const fxStr&);
@@ -115,39 +115,39 @@ protected:
     void	recvStartPage(TIFF* tif);
     void	recvResetPage(TIFF* tif);
     u_int	decodePageChop(const fxStr& pph, const Class2Params&);
-    fxBool	decodePPM(const fxStr& pph, u_int& ppm, fxStr& emsg);
+    bool	decodePPM(const fxStr& pph, u_int& ppm, fxStr& emsg);
     void	notifyPageSent(TIFF*);
 // phase c data receive & copy quality checking
-    fxBool	recvPageDLEData(TIFF* tif, fxBool checkQuality,
+    bool	recvPageDLEData(TIFF* tif, bool checkQuality,
 		    const Class2Params& params, fxStr& emsg);
     virtual void abortPageRecv() = 0;
     virtual int nextByte();
 
-    fxBool	checkQuality();
-    fxBool	isQualityOK(const Class2Params&);
+    bool	checkQuality();
+    bool	isQualityOK(const Class2Params&);
     u_long	getRecvEOLCount() const;
     u_long	getRecvBadLineCount() const;
     u_long	getRecvConsecutiveBadLineCount() const;
 // tag line support
-    fxBool	setupTagLineSlop(const Class2Params&);
+    bool	setupTagLineSlop(const Class2Params&);
     u_int	getTagLineSlop() const;
     u_char*	imageTagLine(u_char* buf, u_int fillorder, const Class2Params&);
 public:
     virtual ~FaxModem();
 
-    fxBool isFaxModem() const;
+    bool isFaxModem() const;
 
 // configuration controls
     virtual void setLID(const fxStr& number) = 0;
     u_int getCapabilities() const;
 // methods for querying modem capabilities
-    virtual fxBool supports2D() const;
-    virtual fxBool supportsEOLPadding() const;
-    virtual fxBool supportsVRes(float res) const;
-    virtual fxBool supportsPageWidth(u_int w) const;
-    virtual fxBool supportsPageLength(u_int l) const;
-    virtual fxBool supportsPolling() const;
-    virtual fxBool supportsECM() const;
+    virtual bool supports2D() const;
+    virtual bool supportsEOLPadding() const;
+    virtual bool supportsVRes(float res) const;
+    virtual bool supportsPageWidth(u_int w) const;
+    virtual bool supportsPageLength(u_int l) const;
+    virtual bool supportsPolling() const;
+    virtual bool supportsECM() const;
 
     virtual int selectSignallingRate(int br) const;
     u_int getBestSignallingRate() const;
@@ -184,19 +184,19 @@ public:
      * for doing things like keeping cover pages & documents in a
      * single T.30 document.
      */
-    virtual fxBool faxService() = 0;
-    virtual fxBool sendSetup(FaxRequest&, const Class2Params& dis, fxStr& emsg);
+    virtual bool faxService() = 0;
+    virtual bool sendSetup(FaxRequest&, const Class2Params& dis, fxStr& emsg);
     virtual void sendBegin();
     virtual FaxSendStatus getPrologue(Class2Params&,
-	fxBool& hasDoc, fxStr& emsg) = 0;
+	bool& hasDoc, fxStr& emsg) = 0;
     virtual void sendSetupPhaseB(const fxStr& pwd, const fxStr& sub);
     virtual FaxSendStatus sendPhaseB(TIFF*, Class2Params&, FaxMachineInfo&,
 	fxStr& pph, fxStr& emsg) = 0;
     virtual void sendEnd();
     virtual void sendAbort() = 0;
     // query interfaces for optional state
-    virtual fxBool getSendCSI(fxStr&);
-    virtual fxBool getSendNSF(fxStr&);
+    virtual bool getSendCSI(fxStr&);
+    virtual bool getSendNSF(fxStr&);
 
     /*
      * Fax receive protocol.  The expected sequence is:
@@ -226,15 +226,15 @@ public:
      *    }
      * }
      */
-    virtual fxBool setupReceive() = 0;
-    virtual fxBool recvBegin(fxStr& emsg);
-    virtual fxBool recvPage(TIFF*, int& ppm, fxStr& em) = 0;
-    virtual fxBool recvEnd(fxStr& emsg) = 0;
+    virtual bool setupReceive() = 0;
+    virtual bool recvBegin(fxStr& emsg);
+    virtual bool recvPage(TIFF*, int& ppm, fxStr& em) = 0;
+    virtual bool recvEnd(fxStr& emsg) = 0;
     virtual void recvAbort() = 0;
     // query interfaces for optional state
-    virtual fxBool getRecvPWD(fxStr&);
-    virtual fxBool getRecvTSI(fxStr&);
-    virtual fxBool getRecvSUB(fxStr&);
+    virtual bool getRecvPWD(fxStr&);
+    virtual bool getRecvTSI(fxStr&);
+    virtual bool getRecvSUB(fxStr&);
     virtual const Class2Params& getRecvParams() const;
 
     /*
@@ -252,8 +252,8 @@ public:
      *
      * (i.e. it's just like a receive operation.)
      */
-    virtual fxBool requestToPoll(fxStr& emsg) = 0;
-    virtual fxBool pollBegin(
+    virtual bool requestToPoll(fxStr& emsg) = 0;
+    virtual bool pollBegin(
 	const fxStr& cig, const fxStr& sep, const fxStr& pwd,
 	fxStr& emsg);
 };

@@ -64,19 +64,19 @@ private:
     fxStr	cid;			// content ID
     fxStr	boundary;		// multipart boundary marker
     u_int	blen;			// adjusted boundary length
-    fxBool	lastPart;		// TRUE if last multipart boundary seen
+    bool	lastPart;		// true if last multipart boundary seen
     Encoding	encode;			// content transfer encoding
     Charset	charset;		// text character set
 
-    static fxBool parseToken(const char*&, const char delimeter, fxStr& result);
+    static bool parseToken(const char*&, const char delimeter, fxStr& result);
 
     void parseParameters(const char*);
 protected:
-    virtual fxBool setParameter(const fxStr& param, const fxStr& value);
+    virtual bool setParameter(const fxStr& param, const fxStr& value);
 
-    fxBool getQuotedPrintableLine(FILE* fd, fxStackBuffer& buf);
-    fxBool getBase64Line(FILE* fd, fxStackBuffer& buf);
-    fxBool getUUDecodeLine(FILE* fd, fxStackBuffer& buf);
+    bool getQuotedPrintableLine(FILE* fd, fxStackBuffer& buf);
+    bool getBase64Line(FILE* fd, fxStackBuffer& buf);
+    bool getUUDecodeLine(FILE* fd, fxStackBuffer& buf);
 public:
     MIMEState(const char* type, const char* subtype);
     MIMEState(MIMEState& parent);
@@ -84,12 +84,12 @@ public:
     ~MIMEState();
 
     u_int	lineno;			// input line number
-    fxBool parse(const MsgFmt&, fxStr& emsg);
+    bool parse(const MsgFmt&, fxStr& emsg);
 
     const fxStr& getType(void) const;
     const fxStr& getSubType(void) const;
-    fxBool isParent(const char* type) const;
-    fxBool isParent(const char* type, const char* subtype) const;
+    bool isParent(const char* type) const;
+    bool isParent(const char* type, const char* subtype) const;
     const fxStr& getDescription(void) const;
     const fxStr& getContentID(void) const;
 
@@ -100,18 +100,18 @@ public:
     void setBoundary(const char*);
     const fxStr& getBoundary(void) const;
 
-    virtual fxBool getLine(FILE*, fxStackBuffer&);
-    fxBool isLastPart(void) const;
+    virtual bool getLine(FILE*, fxStackBuffer&);
+    bool isLastPart(void) const;
 
     virtual void trace(FILE*);
 };
 inline Charset MIMEState::getCharset(void) const	{ return charset; }
 inline Encoding MIMEState::getEncoding(void) const	{ return encode; }
 inline const fxStr& MIMEState::getBoundary(void) const	{ return boundary; }
-inline fxBool MIMEState::isLastPart(void) const		{ return lastPart; }
-inline fxBool MIMEState::isParent(const char* t) const
+inline bool MIMEState::isLastPart(void) const		{ return lastPart; }
+inline bool MIMEState::isParent(const char* t) const
     { return (parent && parent->type == t); }
-inline fxBool MIMEState::isParent(const char* t, const char* st) const
+inline bool MIMEState::isParent(const char* t, const char* st) const
     { return (parent && parent->type == t && parent->subtype == st); }
 inline const fxStr& MIMEState::getType(void) const	{ return type; }
 inline const fxStr& MIMEState::getSubType(void) const	{ return subtype; }

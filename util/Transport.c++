@@ -34,7 +34,7 @@
 
 Transport::Transport(FaxClient& c) : client(c) {}
 Transport::~Transport() {}
-fxBool Transport::hangupServer()	{ return (TRUE); }
+bool Transport::hangupServer()	{ return (true); }
 
 void
 Transport::closeDataConn(int fd)
@@ -65,16 +65,16 @@ Transport::getTransport(FaxClient& client, const char* address)
     }
 }
 
-fxBool
+bool
 Transport::abortCmd(fxStr& emsg)
 {
     static const char msg[] = { 'A', 'B', 'O', 'R', '\r', '\n' };
     int s = fileno(client.getCtrlFd());
     if (Sys::write(s, msg, sizeof (msg)) != sizeof (msg)) {
 	emsg = fxStr::format("send(ABOR\\r\\n): %s", strerror(errno));
-	return (FALSE);
+	return (false);
     }
-    return (TRUE);
+    return (true);
 }
 
 void

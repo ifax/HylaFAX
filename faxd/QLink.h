@@ -39,8 +39,8 @@ struct QLink {
     void remove(void);
     void insert(QLink& after);
 
-    int isEmpty(void) const;		// TRUE if list is empty (used on head)
-    int isOnList(void) const;		// TRUE if item is on list
+    int isEmpty(void) const;		// true if list is empty (used on head)
+    int isOnList(void) const;		// true if item is on list
 };
 inline int QLink::isEmpty(void) const	{ return next == this; }
 inline int QLink::isOnList(void) const	{ return next != this; }

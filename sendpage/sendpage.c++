@@ -49,7 +49,7 @@ public:
     sendPageApp();
     ~sendPageApp();
 
-    fxBool run(int argc, char** argv);
+    bool run(int argc, char** argv);
 };
 
 sendPageApp::sendPageApp()
@@ -63,7 +63,7 @@ sendPageApp::~sendPageApp()
 	Sys::unlink(msgFile);
 }
 
-fxBool
+bool
 sendPageApp::run(int argc, char** argv)
 {
     extern int optind;
@@ -80,7 +80,7 @@ sendPageApp::run(int argc, char** argv)
     readConfig(FAX_USERCONF);
 
     fxStr emsg;
-    fxBool noText = FALSE;		// default is to assume message text
+    bool noText = false;		// default is to assume message text
     SNPPJob& proto = getProtoJob();
     while ((c = Sys::getopt(argc, argv, "a:De:f:h:i:I:l:nNp:qRs:t:T:v")) != -1)
 	switch (c) {
@@ -110,7 +110,7 @@ sendPageApp::run(int argc, char** argv)
 	    proto.setServiceLevel(atoi(optarg));
 	    break;
 	case 'n':			// numeric-only page, no message text
-	    noText = TRUE;
+	    noText = true;
 	    break;
 	case 'N':			// no notification
 	    proto.setNotification("none");
@@ -119,7 +119,7 @@ sendPageApp::run(int argc, char** argv)
 	    addJob().setPIN(optarg);
 	    break;
 	case 'q':			// queue job and don't wait
-	    proto.setQueued(TRUE);
+	    proto.setQueued(true);
 	    break;
 	case 'R':			// notify when requeued or done
 	    proto.setNotification("when requeued");
@@ -132,7 +132,7 @@ sendPageApp::run(int argc, char** argv)
 	    break;
 	case 'v':			// client-server protocol tracing
 	    setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
-	    setVerbose(TRUE);
+	    setVerbose(true);
 	    break;
 	case '?':
 	    usage();
@@ -158,7 +158,7 @@ sendPageApp::run(int argc, char** argv)
 	    setPagerMsgFile(msgFile);
 	}
     }
-    fxBool status = FALSE;
+    bool status = false;
     if (callServer(emsg)) {
 	status = login(NULL, emsg)
 	      && prepareForJobSubmissions(emsg)

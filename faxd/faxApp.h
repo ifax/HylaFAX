@@ -36,11 +36,11 @@ class faxApp : public Syslog {
 private:
     static fxStr getopts;		// main arguments
 
-    fxBool	running;		// server running
+    bool	running;		// server running
     int		faxqfifo;		// cached descriptor to faxq
 protected:
     int		openFIFO(const char* fifoName, int mode,
-		    fxBool okToExist = FALSE);
+		    bool okToExist = false);
 public:
     faxApp();
     virtual ~faxApp();
@@ -56,18 +56,18 @@ public:
     virtual void open(void);
     virtual void close(void);
 
-    fxBool isRunning(void) const;
+    bool isRunning(void) const;
 
     virtual void openFIFOs(void);
     virtual void closeFIFOs(void);
     virtual int FIFOInput(int);
     virtual void FIFOMessage(const char* mesage);
 
-    fxBool sendModemStatus(const char* devid, const char* fmt ...);
-    fxBool sendJobStatus(const char* jobid, const char* fmt ...);
-    fxBool sendRecvStatus(const char* devid, const char* fmt ...);
-    fxBool sendQueuer(const char* fmt ...);
-    fxBool vsendQueuer(const char* fmt, va_list ap);
+    bool sendModemStatus(const char* devid, const char* fmt ...);
+    bool sendJobStatus(const char* jobid, const char* fmt ...);
+    bool sendRecvStatus(const char* devid, const char* fmt ...);
+    bool sendQueuer(const char* fmt ...);
+    bool vsendQueuer(const char* fmt, va_list ap);
 
     static void setOpts(const char*);
     static const fxStr& getOpts(void);
@@ -78,9 +78,9 @@ public:
     static const fxStr quote;
     static const fxStr enquote;
 
-    fxBool runCmd(const char* cmd, fxBool changeIDs = FALSE);
+    bool runCmd(const char* cmd, bool changeIDs = false);
 };
-inline fxBool faxApp::isRunning(void) const	{ return running; }
+inline bool faxApp::isRunning(void) const	{ return running; }
 
 class GetoptIter {
 private:
@@ -95,13 +95,13 @@ public:
     void operator++();
     void operator++(int);
     int option() const;
-    fxBool notDone() const;
+    bool notDone() const;
     const char* optArg() const;
     const char* getArg();
     const char* nextArg();
 };
 inline int GetoptIter::option() const		{ return c; }
-inline fxBool GetoptIter::notDone() const	{ return c != -1; }
+inline bool GetoptIter::notDone() const	{ return c != -1; }
 
 extern	const char* fmtTime(time_t);
 #endif

@@ -147,7 +147,7 @@ HylaFAXServer::login(void)
 
     uid_t ouid = geteuid();
     (void) seteuid(0);
-    fxBool isSetup = (chroot(".") >= 0 && chdir("/") >= 0);
+    bool isSetup = (chroot(".") >= 0 && chdir("/") >= 0);
     /*
      * Install the client's fax-uid as the effective gid
      * so that created files automatically are given the
@@ -162,7 +162,7 @@ HylaFAXServer::login(void)
 	end_login();
 	return;
     }
-    (void) isShutdown(FALSE);	// display any shutdown messages
+    (void) isShutdown(false);	// display any shutdown messages
     reply(230, "User %s logged in.", (const char*) the_user);
     if (TRACE(LOGIN))
 	logInfo("FAX LOGIN FROM %s [%s], %s"

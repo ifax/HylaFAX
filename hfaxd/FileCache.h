@@ -52,13 +52,13 @@ struct FileCache {
 
     static u_int hash(const char* pathname);
 
-    static fxBool lookup(const char* pathname, struct stat& sb,
-	fxBool addToCache = TRUE);
-    static fxBool update(const char* pathname, struct stat& sb,
-	fxBool addToCache = TRUE);
+    static bool lookup(const char* pathname, struct stat& sb,
+	bool addToCache = true);
+    static bool update(const char* pathname, struct stat& sb,
+	bool addToCache = true);
     static void flush(const char* pathname);
-    static fxBool chmod(const char* pathname, mode_t mode);
-    static fxBool chown(const char* pathname, uid_t uid, gid_t gid);
+    static bool chmod(const char* pathname, mode_t mode);
+    static bool chown(const char* pathname, uid_t uid, gid_t gid);
     static void reset(void);
 };
 #endif /* _FileCache_ */

@@ -52,25 +52,25 @@ FaxSendInfo::encode() const
     );
 }
 
-fxBool
+bool
 FaxSendInfo::decode(const char* cp)
 {
     char* np;
     time = (u_int) strtoul(cp, &np, 16);
     if (np == cp)
-	return (FALSE);
+	return (false);
     npages = (u_short) strtoul(cp = np+1, &np, 16);
     if (np == cp)
-	return (FALSE);
+	return (false);
     params.decode((u_int) strtoul(cp = np+1, &np, 16));
     if (np == cp)
-	return (FALSE);
+	return (false);
     commid = np+1;
     commid.resize(commid.next(0,','));
     np = strchr(np+1, '"');
     if (np == NULL)
-	return (FALSE);
+	return (false);
     qfile = np+1;		// +1 for "
     qfile.resize(qfile.next(0,'"'));
-    return (TRUE);
+    return (true);
 }

@@ -44,7 +44,7 @@ HylaClient::HylaClient(const fxStr& fn) : fifoName(fn)
     refs = 0;
     seqnum = 0;
     lrunum = lruseq;
-    reap = FALSE;
+    reap = false;
 
     clients[fn] = this;
 }
@@ -75,11 +75,11 @@ HylaClient::getClient(const fxStr& name)
  * client is scheduled to be purged at the next
  * opportune time.
  */
-fxBool
+bool
 HylaClient::send(const char* msg, u_int msgLen)
 {
      if (reap)					// ignore if marked for reaping
-	return (FALSE);
+	return (false);
      seqnum++;					// count message
 again:
     if (fifo < 0) {
@@ -105,7 +105,7 @@ again:
 	    logError("HylaClient::send: %s: Cannot open FIFO: %m",
 		(const char*) fifoName);
 	    schedReap();
-	    return (FALSE);
+	    return (false);
 	}
 	/*
 	 * NB: We mark the descriptor for non-blocking i/o; this
@@ -122,7 +122,7 @@ again:
 	if (n == -1 && (errno == EBADF || errno == EPIPE)) {
 	    Sys::close(fifo), fifo = -1;
 	    schedReap();
-	    return (FALSE);
+	    return (false);
 	}
 	if (n != msgLen)
 	    logError(
@@ -130,7 +130,7 @@ again:
 		(const char*) fifoName, seqnum, n);
 	lrunum = lruseq++;			// update last use seqnum
     }
-    return (TRUE);
+    return (true);
 }
 
 /*
@@ -139,7 +139,7 @@ again:
  * the oldest trigger with an open descriptor and
  * reclaim it.
  */
-fxBool
+bool
 HylaClient::reapFIFO()
 {
     HylaClient* cand = NULL;
@@ -162,9 +162,9 @@ HylaClient::reapFIFO()
     if (cand) {
 	Sys::close(cand->fifo);
 	cand->fifo = -1;
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 void
@@ -185,7 +185,7 @@ HylaClient::purge()
 void
 HylaClient::schedReap()
 {
-    reap = TRUE;
+    reap = true;
     schedReaper.start();
 }
 
@@ -197,13 +197,13 @@ HylaClient::schedReap()
  * "delete this".
  */
 
-HylaClient::SchedReaper::SchedReaper() { started = FALSE; }
+HylaClient::SchedReaper::SchedReaper() { started = false; }
 HylaClient::SchedReaper::~SchedReaper() {}
 
 void
 HylaClient::SchedReaper::timerExpired(long, long)
 {
-    started = FALSE;
+    started = false;
     /*
      * Reclaim clients that have gone away.
      *
@@ -230,6 +230,6 @@ HylaClient::SchedReaper::start()
 {
     if (!started) {
 	Dispatcher::instance().startTimer(0,1, this);
-	started = TRUE;
+	started = true;
     }
 }

@@ -76,23 +76,23 @@ timeval operator-(timeval src1, timeval src2) {
     return delta;
 }
 
-fxBool operator>(timeval src1, timeval src2) {
+bool operator>(timeval src1, timeval src2) {
     if (src1.tv_sec > src2.tv_sec) {
-	return TRUE;
+	return true;
     } else if (src1.tv_sec == src2.tv_sec && src1.tv_usec > src2.tv_usec) {
-	return TRUE;
+	return true;
     } else {
-	return FALSE;
+	return false;
     }
 }
 
-fxBool operator<(timeval src1, timeval src2) {
+bool operator<(timeval src1, timeval src2) {
     if (src1.tv_sec < src2.tv_sec) {
-	return TRUE;
+	return true;
     } else if (src1.tv_sec == src2.tv_sec && src1.tv_usec < src2.tv_usec) {
-	return TRUE;
+	return true;
     } else {
-	return FALSE;
+	return false;
     }
 }
 
@@ -113,7 +113,7 @@ public:
     TimerQueue();
     virtual ~TimerQueue();
 
-    fxBool isEmpty() const;
+    bool isEmpty() const;
     static timeval zeroTime();
     timeval earliestTime() const;
     static timeval currentTime();
@@ -145,7 +145,7 @@ TimerQueue::~TimerQueue() {
     }
 }
 
-inline fxBool TimerQueue::isEmpty() const {
+inline bool TimerQueue::isEmpty() const {
     return _first == NULL;
 }
 
@@ -221,8 +221,8 @@ public:
     ChildQueue();
     virtual ~ChildQueue();
 
-    fxBool isEmpty() const;
-    fxBool isReady() const;
+    bool isEmpty() const;
+    bool isReady() const;
 
     void insert(pid_t, IOHandler*);
     void remove(IOHandler*);
@@ -230,7 +230,7 @@ public:
     void setStatus(pid_t, int status);
 private:
     Child* _first;		// queue head
-    fxBool _ready;		// something is ready
+    bool _ready;		// something is ready
 };
 
 Child::Child(pid_t p, IOHandler* h, Child* n)
@@ -244,7 +244,7 @@ Child::Child(pid_t p, IOHandler* h, Child* n)
 ChildQueue::ChildQueue()
 {
     _first = NULL;
-    _ready = FALSE;
+    _ready = false;
 }
 
 ChildQueue::~ChildQueue() {
@@ -256,8 +256,8 @@ ChildQueue::~ChildQueue() {
     }
 }
 
-inline fxBool ChildQueue::isEmpty() const { return _first == NULL; }
-inline fxBool ChildQueue::isReady() const { return _ready; }
+inline bool ChildQueue::isEmpty() const { return _first == NULL; }
+inline bool ChildQueue::isReady() const { return _ready; }
 
 void ChildQueue::insert(pid_t p, IOHandler* handler) {
     /*
@@ -298,7 +298,7 @@ void ChildQueue::setStatus(pid_t p, int status) {
     for (Child* c = _first; c != NULL; c = c->next)
 	if (c->pid == p) {
 	    c->status = status;
-	    _ready = TRUE;
+	    _ready = true;
 	    break;
 	}
 }
@@ -315,7 +315,7 @@ void ChildQueue::notify() {
 	} else
 	    prev = &c->next;
     }
-    _ready = FALSE;
+    _ready = false;
 }
 
 Dispatcher::Dispatcher() {
@@ -440,9 +440,9 @@ void Dispatcher::stopChild(IOHandler* handler) {
     _cqueue->remove(handler);
 }
 
-fxBool Dispatcher::setReady(int fd, DispatcherMask mask) {
+bool Dispatcher::setReady(int fd, DispatcherMask mask) {
     if (handler(fd, mask) == NULL) {
-        return FALSE;
+        return false;
     }
     if (mask == ReadMask) {
         FD_SET(fd, &_rmaskready);
@@ -451,16 +451,16 @@ fxBool Dispatcher::setReady(int fd, DispatcherMask mask) {
     } else if (mask == ExceptMask) {
         FD_SET(fd, &_emaskready);
     } else {
-        return FALSE;
+        return false;
     }
-    return TRUE;
+    return true;
 }
 
 void Dispatcher::dispatch() {
     dispatch(NULL);
 }
 
-fxBool Dispatcher::dispatch(long& sec, long& usec) {
+bool Dispatcher::dispatch(long& sec, long& usec) {
     timeval howlong;
     timeval prevTime;
     timeval elapsedTime;
@@ -469,7 +469,7 @@ fxBool Dispatcher::dispatch(long& sec, long& usec) {
     howlong.tv_usec = usec;
     prevTime = TimerQueue::currentTime();
 
-    fxBool success = dispatch(&howlong);
+    bool success = dispatch(&howlong);
 
     elapsedTime = TimerQueue::currentTime() - prevTime;
     if (howlong > elapsedTime) {
@@ -483,7 +483,7 @@ fxBool Dispatcher::dispatch(long& sec, long& usec) {
     return success;
 }
 
-fxBool Dispatcher::dispatch(timeval* howlong) {
+bool Dispatcher::dispatch(timeval* howlong) {
     fd_set rmask;
     fd_set wmask;
     fd_set emask;
@@ -501,7 +501,7 @@ fxBool Dispatcher::dispatch(timeval* howlong) {
     return (nfound != 0);
 }
 
-fxBool Dispatcher::anyReady() const {
+bool Dispatcher::anyReady() const {
     if (!_cqueue->isEmpty()) {
         Dispatcher::sigCLD(0);		// poll for pending children
         return _cqueue->isReady();
@@ -509,10 +509,10 @@ fxBool Dispatcher::anyReady() const {
     for (int i = 0; i < _nfds; i++) {
         if (FD_ISSET(i, &_rmaskready) ||
                 FD_ISSET(i, &_wmaskready) || FD_ISSET(i, &_emaskready)) {
-            return TRUE;
+            return true;
 	    }
     }
-    return FALSE;
+    return false;
 }
 
 int Dispatcher::fillInReady(
@@ -682,20 +682,20 @@ timeval* Dispatcher::calculateTimeout(timeval* howlong) const {
 
 extern void fxFatal(const char* fmt, ...);
 
-fxBool Dispatcher::handleError() {
+bool Dispatcher::handleError() {
     switch (errno) {
     case EBADF:
 	checkConnections();
 	break;
     case EINTR:
 	if (_cqueue->isReady())
-	    return TRUE;
+	    return true;
 	break;
     default:
 	fxFatal("Dispatcher: select: %s", strerror(errno));
 	/*NOTREACHED*/
     }
-    return FALSE;			// retry select
+    return false;			// retry select
 }
 
 void Dispatcher::checkConnections() {

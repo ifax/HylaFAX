@@ -38,7 +38,7 @@
 /*
  * Force the tty into a known flow control state.
  */
-fxBool
+bool
 Class1Modem::sendSetup(FaxRequest& req, const Class2Params& dis, fxStr& emsg)
 {
     if (flowControl == FLOW_XONXOFF)
@@ -88,7 +88,7 @@ void
 Class1Modem::sendBegin()
 {
     FaxModem::sendBegin();
-    setInputBuffering(FALSE);
+    setInputBuffering(false);
     // polling accounting?
     params.br = (u_int) -1;			// force initial training
 }
@@ -97,14 +97,14 @@ Class1Modem::sendBegin()
  * Get the initial DIS command.
  */
 FaxSendStatus
-Class1Modem::getPrologue(Class2Params& params, fxBool& hasDoc, fxStr& emsg)
+Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg)
 {
     u_int t1 = howmany(conf.t1Timer, 1000);		// T1 timer in seconds
     time_t start = Sys::now();
     HDLCFrame frame(conf.class1FrameOverhead);
 
     startTimeout(conf.t2Timer);
-    fxBool framerecvd = recvRawFrame(frame);
+    bool framerecvd = recvRawFrame(frame);
     stopTimeout("receiving id frame");
     for (;;) {
 	if (framerecvd) {
@@ -198,14 +198,14 @@ const u_int Class1Modem::modemPFMCodes[8] = {
     FCF_EOP,		// 7 ??? XXX
 };
 
-fxBool
+bool
 Class1Modem::decodePPM(const fxStr& pph, u_int& ppm, fxStr& emsg)
 {
     if (FaxModem::decodePPM(pph, ppm, emsg)) {
 	ppm = modemPFMCodes[ppm];
-	return (TRUE);
+	return (true);
     } else
-	return (FALSE);
+	return (false);
 }
 
 /*
@@ -218,7 +218,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
     fxStr& pph, fxStr& emsg)
 {
     int ntrys = 0;			// # retraining/command repeats
-    fxBool morePages = TRUE;		// more pages still to send
+    bool morePages = true;		// more pages still to send
     HDLCFrame frame(conf.class1FrameOverhead);
 
     do {
@@ -319,7 +319,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		}
 		if (!sendTraining(params, 3, emsg))
 		    return (send_retry);
-		morePages = TRUE;	// force continuation
+		morePages = true;	// force continuation
 		next = params;		// avoid retraining above
 		break;
 	    case FCF_PIN:		// nak, retry w/ operator intervention
@@ -346,13 +346,13 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
  * Note that we send real zero data here rather than using
  * the Class 1 modem facility to do zero fill.
  */
-fxBool
+bool
 Class1Modem::sendTCF(const Class2Params& params, u_int ms)
 {
     u_int tcfLen = params.transferSize(ms);
     u_char* tcf = new u_char[tcfLen];
     memset(tcf, 0, tcfLen);
-    fxBool ok = transmitData(curcap->value, tcf, tcfLen, frameRev, TRUE);
+    bool ok = transmitData(curcap->value, tcf, tcfLen, frameRev, true);
     delete tcf;
     return ok;
 }
@@ -364,34 +364,34 @@ Class1Modem::sendTCF(const Class2Params& params, u_int ms)
  *     TSI	transmitter subscriber id
  *     DCS	digital command signal
  */
-fxBool
+bool
 Class1Modem::sendPrologue(u_int dcs, u_int dcs_xinfo, const fxStr& tsi)
 {
-    fxBool frameSent = (
+    bool frameSent = (
 	atCmd(thCmd, AT_NOTHING) &&
 	atResponse(rbuf, 2550) == AT_CONNECT
     );
     if (!frameSent)
-	return (FALSE);
+	return (false);
     if (pwd != fxStr::null) {
 	startTimeout(2550);		// 3.0 - 15% = 2.55 secs
-	fxBool frameSent = sendFrame(FCF_PWD|FCF_SNDR, pwd, FALSE);
+	bool frameSent = sendFrame(FCF_PWD|FCF_SNDR, pwd, false);
 	stopTimeout("sending PWD frame");
 	if (!frameSent)
-	    return (FALSE);
+	    return (false);
     }
     if (sub != fxStr::null) {
 	startTimeout(2550);		// 3.0 - 15% = 2.55 secs
-	fxBool frameSent = sendFrame(FCF_SUB|FCF_SNDR, sub, FALSE);
+	bool frameSent = sendFrame(FCF_SUB|FCF_SNDR, sub, false);
 	stopTimeout("sending SUB frame");
 	if (!frameSent)
-	    return (FALSE);
+	    return (false);
     }
     startTimeout(2550);			// 3.0 - 15% = 2.55 secs
-    frameSent = sendFrame(FCF_TSI|FCF_SNDR, tsi, FALSE);
+    frameSent = sendFrame(FCF_TSI|FCF_SNDR, tsi, false);
     stopTimeout("sending TSI frame");
     if (!frameSent)
-	return (FALSE);
+	return (false);
     startTimeout(2550);			// 3.0 - 15% = 2.55 secs
     frameSent = sendFrame(FCF_DCS|FCF_SNDR, dcs, dcs_xinfo);
     stopTimeout("sending DCS frame");
@@ -402,14 +402,14 @@ Class1Modem::sendPrologue(u_int dcs, u_int dcs_xinfo, const fxStr& tsi)
  * Return whether or not the previously received DIS indicates
  * the remote side is capable of the T.30 DCS signalling rate.
  */
-static fxBool
+static bool
 isCapable(u_int sr, u_int dis)
 {
     dis = (dis & DIS_SIGRATE) >> 10;
     switch (sr) {
     case DCSSIGRATE_2400V27:
 	if (dis == DISSIGRATE_V27FB)
-	    return (TRUE);
+	    return (true);
 	/* fall thru... */
     case DCSSIGRATE_4800V27:
 	return ((dis & DISSIGRATE_V27) != 0);
@@ -419,7 +419,7 @@ isCapable(u_int sr, u_int dis)
     case DCSSIGRATE_14400V33:
     case DCSSIGRATE_12000V33:
 	if (dis == DISSIGRATE_V33)
-	    return (TRUE);
+	    return (true);
 	/* fall thru... */
     case DCSSIGRATE_14400V17:
     case DCSSIGRATE_12000V17:
@@ -427,18 +427,18 @@ isCapable(u_int sr, u_int dis)
     case DCSSIGRATE_7200V17:
 	return (dis == DISSIGRATE_V17);
     }
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Send capabilities and do training.
  */
-fxBool
+bool
 Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 {
     if (tries == 0) {
 	emsg = "DIS/DTC received 3 times; DCS not recognized";
-	return (FALSE);
+	return (false);
     }
     u_int dcs = params.getDCS();		// NB: 24-bit DCS and
     u_int dcs_xinfo = params.getXINFO();	//     32-bit extension
@@ -514,7 +514,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 		case FCF_CFR:		// training confirmed
 		    protoTrace("TRAINING succeeded");
 		    setDataTimeout(60, params.br);
-		    return (TRUE);
+		    return (true);
 		case FCF_FTT:		// failure to train, retry
 		    break;
 		case FCF_DIS:		// new capabilities, maybe
@@ -548,26 +548,26 @@ failed:
     emsg = "Failure to train remote modem at 2400 bps or minimum speed";
 done:
     protoTrace("TRAINING failed");
-    return (FALSE);
+    return (false);
 }
 
 /*
  * Select the next lower signalling rate that's
  * acceptable to both local and remote machines.
  */
-fxBool
+bool
 Class1Modem::dropToNextBR(Class2Params& params)
 {
     for (;;) {
 	if (params.br == minsp)
-	    return (FALSE);
+	    return (false);
 	// get ``best capability'' of modem at this baud rate
 	curcap = findBRCapability(--params.br, xmitCaps);
 	if (curcap) {
 	    // hunt for compatibility with remote at this baud rate
 	    do {
 		if (isCapable(curcap->sr, dis))
-		    return (TRUE);
+		    return (true);
 		curcap--;
 	    } while (curcap->br == params.br);
 	}
@@ -579,19 +579,19 @@ Class1Modem::dropToNextBR(Class2Params& params)
  * Select the next higher signalling rate that's
  * acceptable to both local and remote machines.
  */
-fxBool
+bool
 Class1Modem::raiseToNextBR(Class2Params& params)
 {
     for (;;) {
 	if (params.br == BR_14400)	// highest speed
-	    return (FALSE);
+	    return (false);
 	// get ``best capability'' of modem at this baud rate
 	curcap = findBRCapability(++params.br, xmitCaps);
 	if (curcap) {
 	    // hunt for compatibility with remote at this baud rate
 	    do {
 		if (isCapable(curcap->sr, dis))
-		    return (TRUE);
+		    return (true);
 		curcap--;
 	    } while (curcap->br == params.br);
 	}
@@ -602,11 +602,11 @@ Class1Modem::raiseToNextBR(Class2Params& params)
 /*
  * Send data for the current page.
  */
-fxBool
+bool
 Class1Modem::sendPageData(u_char* data, u_int cc, const u_char* bitrev)
 {
     beginTimedTransfer();
-    fxBool rc = sendClass1Data(data, cc, bitrev, FALSE);
+    bool rc = sendClass1Data(data, cc, bitrev, false);
     endTimedTransfer();
     protoTrace("SENT %u bytes of data", cc);
     return rc;
@@ -618,8 +618,8 @@ Class1Modem::sendPageData(u_char* data, u_int cc, const u_char* bitrev)
  * seems that some Class 1 modems do not immediately
  * send all the data they are presented.
  */
-fxBool
-Class1Modem::sendRTC(fxBool is2D)
+bool
+Class1Modem::sendRTC(bool is2D)
 {
     static const u_char RTC1D[9+20] =
 	{ 0x00,0x10,0x01,0x00,0x10,0x01,0x00,0x10,0x01 };
@@ -627,13 +627,13 @@ Class1Modem::sendRTC(fxBool is2D)
 	{ 0x00,0x18,0x00,0xC0,0x06,0x00,0x30,0x01,0x80,0x0C };
     protoTrace("SEND %s RTC", is2D ? "2D" : "1D");
     if (is2D)
-	return sendClass1Data(RTC2D, sizeof (RTC2D), frameRev, TRUE);
+	return sendClass1Data(RTC2D, sizeof (RTC2D), frameRev, true);
     else
-	return sendClass1Data(RTC1D, sizeof (RTC1D), frameRev, TRUE);
+	return sendClass1Data(RTC1D, sizeof (RTC1D), frameRev, true);
 }
 
 #define	EOLcheck(w,mask,code) \
-    if ((w & mask) == code) { w |= mask; return (TRUE); }
+    if ((w & mask) == code) { w |= mask; return (true); }
 
 /*
  * Check the last 24 bits of received T.4-encoded
@@ -642,7 +642,7 @@ Class1Modem::sendRTC(fxBool is2D)
  * to insure future calls do not re-recognize an
  * EOL code.
  */
-static fxBool
+static bool
 EOLcode(u_long& w)
 {
     if ((w & 0x00f00f) == 0) {
@@ -663,14 +663,14 @@ EOLcode(u_long& w)
 	EOLcheck(w, 0xfc3f00, 0x002000);
 	EOLcheck(w, 0xfe1f00, 0x001000);
     }
-    return (FALSE);
+    return (false);
 }
 #undef EOLcheck
 
 /*
  * Send a page of data.
  */
-fxBool
+bool
 Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, fxStr& emsg)
 {
     /*
@@ -682,9 +682,9 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, fxS
     fxStr tmCmd(curcap[HasShortTraining(curcap)].value, tmCmdFmt);
     if (!atCmd(tmCmd, AT_CONNECT)) {
 	emsg = "Unable to establish message carrier";
-	return (FALSE);
+	return (false);
     }
-    fxBool rc = TRUE;
+    bool rc = true;
     protoTrace("SEND begin page");
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
@@ -701,7 +701,7 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, fxS
 	/*
 	 * Setup tag line processing.
 	 */
-	fxBool doTagLine = setupTagLineSlop(params);
+	bool doTagLine = setupTagLineSlop(params);
 	u_int ts = getTagLineSlop();
 	/*
 	 * Calculate total amount of space needed to read
@@ -834,18 +834,18 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, fxS
 /*
  * Send the post-page-message and wait for a response.
  */
-fxBool
+bool
 Class1Modem::sendPPM(u_int ppm, HDLCFrame& mcf, fxStr& emsg)
 {
     for (int t = 0; t < 3; t++) {
 	tracePPM("SEND send", ppm);
 	if (transmitFrame(ppm|FCF_SNDR) && recvFrame(mcf, conf.t4Timer))
-	    return (TRUE);
+	    return (true);
 	if (abortRequested())
-	    return (FALSE);
+	    return (false);
     }
     emsg = "No response to MPS or EOP repeated 3 tries";
-    return (FALSE);
+    return (false);
 }
 
 /*
@@ -855,7 +855,7 @@ void
 Class1Modem::sendEnd()
 {
     transmitFrame(FCF_DCN|FCF_SNDR);		// disconnect
-    setInputBuffering(TRUE);
+    setInputBuffering(true);
 }
 
 /*

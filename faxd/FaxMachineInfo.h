@@ -48,11 +48,11 @@ class FaxMachineInfo : public FaxConfig {
 private:
     fxStr	file;			// pathname to info file
     u_int	locked;			// bit vector of locked items
-    fxBool	changed;		// changed since restore
-    fxBool	supportsHighRes;	// capable of 7.7 line/mm vres
-    fxBool	supports2DEncoding;	// handles Group 3 2D
-    fxBool	supportsPostScript;	// handles Adobe NSF protocol
-    fxBool	calledBefore;		// successfully called before
+    bool	changed;		// changed since restore
+    bool	supportsHighRes;	// capable of 7.7 line/mm vres
+    bool	supports2DEncoding;	// handles Group 3 2D
+    bool	supportsPostScript;	// handles Adobe NSF protocol
+    bool	calledBefore;		// successfully called before
     int		maxPageWidth;		// max capable page width
     int		maxPageLength;		// max capable page length
     int		maxSignallingRate;	// max capable signalling rate
@@ -73,7 +73,7 @@ private:
 
     void writeConfig(fxStackBuffer&);
 
-    fxBool setConfigItem(const char* tag, const char* value);
+    bool setConfigItem(const char* tag, const char* value);
     void vconfigError(const char* fmt0, va_list ap);
     void configError(const char* fmt0 ...);
     void configTrace(const char* fmt0 ...);
@@ -83,14 +83,14 @@ public:
     FaxMachineInfo(const FaxMachineInfo& other);
     virtual ~FaxMachineInfo();
 
-    virtual fxBool updateConfig(const fxStr& filename);
+    virtual bool updateConfig(const fxStr& filename);
     virtual void writeConfig();
     virtual void resetConfig();
 
-    fxBool getSupportsHighRes() const;
-    fxBool getSupports2DEncoding() const;
-    fxBool getSupportsPostScript() const;
-    fxBool getCalledBefore() const;
+    bool getSupportsHighRes() const;
+    bool getSupports2DEncoding() const;
+    bool getSupportsPostScript() const;
+    bool getCalledBefore() const;
     int getMaxPageWidthInPixels() const;
     int getMaxPageWidthInMM() const;
     int getMaxPageLengthInMM() const;
@@ -103,10 +103,10 @@ public:
     const fxStr& getLastSendFailure() const;
     const fxStr& getLastDialFailure() const;
 
-    void setSupportsHighRes(fxBool);
-    void setSupports2DEncoding(fxBool);
-    void setSupportsPostScript(fxBool);
-    void setCalledBefore(fxBool);
+    void setSupportsHighRes(bool);
+    void setSupports2DEncoding(bool);
+    void setSupportsPostScript(bool);
+    void setCalledBefore(bool);
     void setMaxPageWidthInPixels(int);
     void setMaxPageLengthInMM(int);
     void setMaxSignallingRate(int);
@@ -126,13 +126,13 @@ public:
     const fxStr& getPagerSetupCmds() const;
 };
 
-inline fxBool FaxMachineInfo::getSupportsHighRes() const
+inline bool FaxMachineInfo::getSupportsHighRes() const
     { return supportsHighRes; }
-inline fxBool FaxMachineInfo::getSupports2DEncoding() const
+inline bool FaxMachineInfo::getSupports2DEncoding() const
     { return supports2DEncoding; }
-inline fxBool FaxMachineInfo::getSupportsPostScript() const
+inline bool FaxMachineInfo::getSupportsPostScript() const
     { return supportsPostScript; }
-inline fxBool FaxMachineInfo::getCalledBefore() const	
+inline bool FaxMachineInfo::getCalledBefore() const	
     { return calledBefore; }
 inline int FaxMachineInfo::getMaxPageWidthInPixels() const
     { return maxPageWidth; }

@@ -29,49 +29,49 @@
  * Wrapper functions for C library calls.
  */
 
-fxBool
+bool
 Sys::isRegularFile(const char* filename)
 {
     struct stat sb;
     return (Sys::stat(filename, sb) >= 0 && (sb.st_mode&S_IFMT) == S_IFREG);
 }
 
-fxBool
+bool
 Sys::isSocketFile(const char* filename)
 {
 #ifdef S_IFSOCK
     struct stat sb;
     return (Sys::stat(filename, sb) >= 0 && (sb.st_mode&S_IFMT) == S_IFSOCK);
 #else
-    return (FALSE);
+    return (false);
 #endif
 }
 
-fxBool
+bool
 Sys::isFIFOFile(const char* filename)
 {
     struct stat sb;
     return (Sys::stat(filename, sb) >= 0 && (sb.st_mode&S_IFMT) == S_IFIFO);
 }
 
-fxBool
+bool
 Sys::isFIFOFile(int fd)
 {
     struct stat sb;
     return (Sys::fstat(fd, sb) >= 0 && (sb.st_mode&S_IFMT) == S_IFIFO);
 }
 
-fxBool
+bool
 Sys::isCharSpecialFile(const char* filename, struct stat& sb)
 {
 #ifdef S_IFCHR
     return (Sys::stat(filename, sb) >= 0 && (sb.st_mode&S_IFMT) == S_IFCHR);
 #else
-    return (FALSE);
+    return (false);
 #endif
 }
 
-fxBool
+bool
 Sys::isCharSpecialFile(const char* filename)
 {
     struct stat sb;

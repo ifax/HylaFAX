@@ -60,7 +60,7 @@ protected:
     FaxInfoDict dict;			// name->record map
 
     void parseDatabase(FILE*, FaxDBRecord* parent);
-    fxBool getToken(FILE*, fxStr& token);
+    bool getToken(FILE*, fxStr& token);
 public:
     FaxDB(const fxStr& filename);
     ~FaxDB();

@@ -35,11 +35,11 @@ public:
     UnixTransport(FaxClient&);
     ~UnixTransport();
 
-    static fxBool isA(const char*);
+    static bool isA(const char*);
 
-    fxBool callServer(fxStr& emsg);
+    bool callServer(fxStr& emsg);
 
-    fxBool initDataConn(fxStr& emsg);
-    fxBool openDataConn(fxStr& emsg);
+    bool initDataConn(fxStr& emsg);
+    bool openDataConn(fxStr& emsg);
 };
 #endif /* _UnixTransport_ */

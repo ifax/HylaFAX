@@ -119,9 +119,9 @@ ServerConfig::setupConfig()
 
     speakerVolume = ClassModem::QUIET;	// default speaker volume
 #ifdef sgi
-    clocalAsRoot = TRUE;		// under IRIX must be root to set CLOCAL
+    clocalAsRoot = true;		// under IRIX must be root to set CLOCAL
 #else
-    clocalAsRoot = FALSE;		// everywhere else anyone can do it
+    clocalAsRoot = false;		// everywhere else anyone can do it
 #endif
     requeueTTS[ClassModem::OK]		= 0;
     requeueTTS[ClassModem::BUSY]	= FAX_REQBUSY;
@@ -276,7 +276,7 @@ ServerConfig::getUUCPLock(const fxStr& deviceName)
 	uucpLockDir, deviceName, uucpLockMode);
 }
 
-fxBool
+bool
 ServerConfig::checkACL(const fxStr& id, RegExArray* pats, fxBoolArray& accept)
 {
     if (pats != NULL) {
@@ -284,14 +284,14 @@ ServerConfig::checkACL(const fxStr& id, RegExArray* pats, fxBoolArray& accept)
 	    if ((*pats)[i]->Find(id))
 		return (accept[i]);
     }
-    return (FALSE);			// NB: reject if no patterns!
+    return (false);			// NB: reject if no patterns!
 }
 
-fxBool
+bool
 ServerConfig::isTSIOk(const fxStr& tsi)
 {
     updatePatterns(qualifyTSI, tsiPats, acceptTSI, lastTSIModTime);
-    return (qualifyTSI == "" ? TRUE : checkACL(tsi, tsiPats, *acceptTSI));
+    return (qualifyTSI == "" ? true : checkACL(tsi, tsiPats, *acceptTSI));
 }
 
 /*
@@ -354,10 +354,10 @@ ServerConfig::readPatterns(FILE* fp, RegExArray*& pats, fxBoolArray*& accept)
 	    continue;
 	RegEx* re;
 	if (line[0] == '!') {
-	    accept->append(FALSE);
+	    accept->append(false);
 	    pats->append(re = new RegEx(line+1));
 	} else {
-	    accept->append(TRUE);
+	    accept->append(true);
 	    pats->append(re = new RegEx(line));
 	}
 	if (re->getErrorCode() > REG_NOMATCH) {
@@ -390,7 +390,7 @@ tiffWarningHandler(const char* module, const char* fmt0, va_list ap)
     vlogWarning(fmt, ap);
 }
 
-fxBool
+bool
 ServerConfig::setConfigItem(const char* tag, const char* value)
 {
     u_int ix;
@@ -440,6 +440,6 @@ ServerConfig::setConfigItem(const char* tag, const char* value)
 	requeueTTS[ClassModem::DATACONN] = getNumber(value);
     else
 	return ModemConfig::setConfigItem(tag, value);
-    return (TRUE);
+    return (true);
 }
 #undef N

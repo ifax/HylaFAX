@@ -224,18 +224,18 @@ main(int argc, char** argv, char** envp)
 	switch (c) {
 	case 'h': case 'i': case 'o': case 's': case 'u':
 	    if (detach == -1)		// detach unless explicitly specified
-		detach = TRUE;
+		detach = true;
 	    break;
 	case 'H': case 'I': case 'O': case 'S':
 	    if (detach == -1)		// don't detach when invoked by inetd
-		detach = FALSE;
+		detach = false;
 	    break;
-	case 'd': detach = FALSE; break;
+	case 'd': detach = false; break;
 	case 'q': queueDir = optarg; break;
 	case '?': usage(appName);
 	}
     if (detach == -1)			// no protocol options means -I
-	detach = FALSE;
+	detach = false;
     if (Sys::chdir(queueDir) < 0)
 	fatal(queueDir | ": Can not change directory");
     CheckSpoolingSetup();

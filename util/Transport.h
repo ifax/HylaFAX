@@ -43,12 +43,12 @@ public:
 
     static Transport& getTransport(FaxClient&, const char* address);
 
-    virtual fxBool callServer(fxStr& emsg) = 0;
-    virtual fxBool hangupServer(void);
-    virtual fxBool abortCmd(fxStr& emsg);
+    virtual bool callServer(fxStr& emsg) = 0;
+    virtual bool hangupServer(void);
+    virtual bool abortCmd(fxStr& emsg);
 
-    virtual fxBool initDataConn(fxStr& emsg) = 0;
-    virtual fxBool openDataConn(fxStr& emsg) = 0;
+    virtual bool initDataConn(fxStr& emsg) = 0;
+    virtual bool openDataConn(fxStr& emsg) = 0;
     virtual void closeDataConn(int);
 };
 #endif /* _Transport_ */

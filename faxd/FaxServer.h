@@ -62,9 +62,9 @@ private:
 
 // FAX transmission protocol support
     void	sendFax(FaxRequest& fax, FaxMachineInfo&, const fxStr& number);
-    fxBool	sendClientCapabilitiesOK(FaxRequest&, FaxMachineInfo&, fxStr&);
-    fxBool	sendFaxPhaseB(FaxRequest&, faxRequest&, FaxMachineInfo&);
-    void	sendPoll(FaxRequest& fax, fxBool remoteHasDoc);
+    bool	sendClientCapabilitiesOK(FaxRequest&, FaxMachineInfo&, fxStr&);
+    bool	sendFaxPhaseB(FaxRequest&, faxRequest&, FaxMachineInfo&);
+    void	sendPoll(FaxRequest& fax, bool remoteHasDoc);
     FaxSendStatus sendSetupParams(TIFF*,
 		    Class2Params&, const FaxMachineInfo&, fxStr&);
     FaxSendStatus sendSetupParams1(TIFF*,
@@ -74,24 +74,24 @@ private:
 // FAX reception support
     int		getRecvFile(fxStr& qfile, fxStr& emsg);
     TIFF*	setupForRecv(FaxRecvInfo&, FaxRecvInfoArray&, fxStr& emsg);
-    fxBool	recvDocuments(TIFF*, FaxRecvInfo&, FaxRecvInfoArray&,
+    bool	recvDocuments(TIFF*, FaxRecvInfo&, FaxRecvInfoArray&,
 		    fxStr& emsg);
-    fxBool	recvFaxPhaseD(TIFF* tif, FaxRecvInfo&, int& ppm, fxStr& emsg);
-    fxBool	pollFaxPhaseB(const fxStr& sep, const fxStr& pwd,
+    bool	recvFaxPhaseD(TIFF* tif, FaxRecvInfo&, int& ppm, fxStr& emsg);
+    bool	pollFaxPhaseB(const fxStr& sep, const fxStr& pwd,
 		    FaxRecvInfoArray&, fxStr& emsg);
 protected:
     FaxServer(const fxStr& deviceName, const fxStr& devID);
 
-    fxBool	setupModem();
+    bool	setupModem();
     ClassModem*	deduceModem();
-    void	discardModem(fxBool dropDTR);
+    void	discardModem(bool dropDTR);
     fxStr	getModemCapabilities() const;
 
     void	readConfig(const fxStr& filename);
     void	setLocalIdentifier(const fxStr& lid);
 
     void	sendFax(FaxRequest&, FaxMachineInfo&, FaxAcctInfo&);
-    fxBool	recvFax();
+    bool	recvFax();
 
     time_t	getFileTransferTime() const;
     time_t	getPageTransferTime() const;
@@ -116,11 +116,11 @@ public:
 
     const fxStr& getLocalIdentifier() const;
 
-    fxBool modemSupports2D() const;
-    fxBool modemSupportsEOLPadding() const;
-    fxBool modemSupportsVRes(float res) const;
-    fxBool modemSupportsPageWidth(u_int w) const;
-    fxBool modemSupportsPageLength(u_int l) const;
-    fxBool modemSupportsPolling() const;
+    bool modemSupports2D() const;
+    bool modemSupportsEOLPadding() const;
+    bool modemSupportsVRes(float res) const;
+    bool modemSupportsPageWidth(u_int w) const;
+    bool modemSupportsPageLength(u_int l) const;
+    bool modemSupportsPolling() const;
 };
 #endif /* _FaxServer_ */

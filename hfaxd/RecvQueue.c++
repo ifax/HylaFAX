@@ -37,45 +37,45 @@
 
 RecvInfo::RecvInfo()
 {
-    beingReceived = FALSE;
+    beingReceived = false;
     recvTime = 0;
 }
 RecvInfo::RecvInfo(const char* qf)
 {
     qfile = qf;
-    beingReceived = FALSE;
+    beingReceived = false;
     recvTime = 0;
 }
 RecvInfo::~RecvInfo() {}
 
 fxIMPLEMENT_StrKeyPtrValueDictionary(RecvInfoDict, RecvInfo*)
 
-static fxBool
+static bool
 isFAXImage(TIFF* tif)
 {
     uint16 w;
     if (TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &w) && w != 1)
-	return (FALSE);
+	return (false);
     if (TIFFGetField(tif, TIFFTAG_BITSPERSAMPLE, &w) && w != 1)
-	return (FALSE);
+	return (false);
     if (!TIFFGetField(tif, TIFFTAG_COMPRESSION, &w) ||
       (w != COMPRESSION_CCITTFAX3 && w != COMPRESSION_CCITTFAX4))
-	return (FALSE);
+	return (false);
     if (!TIFFGetField(tif, TIFFTAG_PHOTOMETRIC, &w) ||
       (w != PHOTOMETRIC_MINISWHITE && w != PHOTOMETRIC_MINISBLACK))
-	return (FALSE);
-    return (TRUE);
+	return (false);
+    return (true);
 }
 
 /*
  * Construct receive information from a file's contents.
  */
-fxBool
+bool
 HylaFAXServer::getRecvDocStatus(RecvInfo& ri)
 {
     int fd = Sys::open(ri.qfile, O_RDWR);	// RDWR for flock emulation
     if (fd < 0)
-	return (FALSE);
+	return (false);
     /*
      * Files that are being received are locked
      * for exclusive use by faxgetty.  
@@ -96,7 +96,7 @@ HylaFAXServer::getRecvDocStatus(RecvInfo& ri)
      */
     if (!isFAXImage(tif)) {
 	TIFFClose(tif);
-	return (FALSE);
+	return (false);
     }
     /*
      * Should be a received facsimile, build up status.
@@ -153,10 +153,10 @@ HylaFAXServer::getRecvDocStatus(RecvInfo& ri)
 #endif
     } while (TIFFReadDirectory(tif));
     TIFFClose(tif);
-    return (TRUE);
+    return (true);
 }
 
-fxBool
+bool
 HylaFAXServer::isVisibleRecvQFile(const char* filename, const struct stat&)
 {
     return (strncmp(filename, "fax", 3) == 0);

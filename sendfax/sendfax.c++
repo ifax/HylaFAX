@@ -50,7 +50,7 @@ public:
     sendFaxApp();
     ~sendFaxApp();
 
-    fxBool run(int argc, char** argv);
+    bool run(int argc, char** argv);
 };
 
 fxStr sendFaxApp::dbName("~/.faxdb");
@@ -66,7 +66,7 @@ sendFaxApp::~sendFaxApp()
     delete db;
 }
 
-fxBool
+bool
 sendFaxApp::run(int argc, char** argv)
 {
     extern int optind;
@@ -82,7 +82,7 @@ sendFaxApp::run(int argc, char** argv)
     readConfig(FAX_LIBDATA "/sendfax.conf");
     readConfig(FAX_USERCONF);
 
-    fxBool waitForJob = FALSE;
+    bool waitForJob = false;
     int verbose = 0;
     SendFaxJob& proto = getProtoJob();
     db = new FaxDB(tildeExpand(dbName));
@@ -116,7 +116,7 @@ sendFaxApp::run(int argc, char** argv)
         addDestination(optarg);
         break;
     case 'E':			// disable use of ECM
-        proto.setDesiredEC(FALSE);
+        proto.setDesiredEC(false);
         break;
     case 'F':			// override tag line format string
         proto.setTagLineFormat(optarg);
@@ -146,7 +146,7 @@ sendFaxApp::run(int argc, char** argv)
         proto.setVResolution(196.);
         break;
     case 'n':			// no cover sheet
-        proto.setAutoCoverPage(FALSE);
+        proto.setAutoCoverPage(false);
         break;
     case 'N':			// no notification
         proto.setNotification("none");
@@ -175,14 +175,14 @@ sendFaxApp::run(int argc, char** argv)
     case 'v':			// verbose mode
         verbose++;
         setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
-        SendFaxClient::setVerbose(TRUE);	// type rules & basic operation
+        SendFaxClient::setVerbose(true);	// type rules & basic operation
         FaxClient::setVerbose(verbose > 1);	// protocol tracing
         break;
     case 'V':			// cover sheet: voice number field
         proto.setCoverVoiceNumber(optarg);
         break;
     case 'w':			// wait for job to complete
-        waitForJob = TRUE;
+        waitForJob = true;
         break;
     case 'x':			// cover page: to's company
         proto.setCoverCompany(optarg);
@@ -207,7 +207,7 @@ sendFaxApp::run(int argc, char** argv)
         copyToTemporary(fileno(stdin), stdinTemp);
         addFile(stdinTemp);
     }
-    fxBool status = FALSE;
+    bool status = false;
     fxStr emsg;
     if (callServer(emsg)) {
         status = login(NULL, emsg)
