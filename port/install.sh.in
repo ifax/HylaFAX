@@ -205,7 +205,7 @@ install()
     if [ $? -eq 0 ]; then
 	$VERBOSE "$CHOWN $target"
 	do_chXXX $CHOWN $target
-	if [ $CHGRP != ":" ]; then
+	if [ "$CHGRP" != ":" ]; then
 	    $VERBOSE "$CHGRP $target"
 	    do_chXXX $CHGRP $target
 	fi
