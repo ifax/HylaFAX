@@ -761,7 +761,7 @@ pageSendApp::traceResponse(const fxStackBuffer& buf)
     if (len > 0) {
 	const char* cp = buf;
 	do {
-	    if (!isprint(*cp)) {
+	    if (!isprint(*cp++)) {
 		extra = "unknown paging central response";
 		break;
 	    }
