@@ -125,7 +125,7 @@ public:
     static char* mktemp(char* templ)	{ return ::mktemp(templ); }
 
     static int mkstemp(char* templ)	{
-        int fd = mkstemp(templ);
+        int fd = ::mkstemp(templ);
 #if defined __GLIBC__ && __GLIBC__ <= 2 && __GLIBC_MINOR__ <= 0
         // Hack for older versions of glibc which do not set the file
         // permissions correctly

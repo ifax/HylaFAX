@@ -2499,6 +2499,7 @@ BuildPortDotH()
     CheckStdio fdopen 'extern FILE* fdopen(int, const char*);'
     CheckForDefine fileno stdio.h || {
 	CheckStdio fileno 'extern int fileno(FILE*);'
+	CheckStdio snprintf 'extern int snprintf(char*, size_t, const char*,...);'
     }
     CheckFuncDecl opendir 'extern DIR* opendir(const char*);' dirent.h
     CheckFuncDecl syslog 'extern void syslog(int, const char*, ...);' syslog.h
