@@ -130,39 +130,13 @@ enum Token {
 
 struct tab {			// protocol command table entry
     const char*	name;
-    Token	token;
-    bool	checklogin;	// if true, must be logged in first
-    bool	implemented;	// false if command is not implemented
+    Token token;
+    bool checklogin;	// if true, must be logged in first
+    bool implemented;	// false if command is not implemented
     const char*	help;
 };
 
-class HylaFAXServer;
-
-/*
- * Directories in the spooling area are treated
- * specially to hide implementation details and
- * privileged information that clients have no
- * business seeing.  Also we implement an access
- * control system that is built on top of the
- * normal UNIX protection mechanisms.
- */ 
-struct SpoolDir {
-    const char*	pathname;
-    bool	adminOnly;	// accessible by unprivileged clients
-    bool	storAble;	// unprivileged clients may STOR files
-    bool	deleAble;	// unprivileged clients may DELE files
-    ino_t	ino;		// directory inode number
-    bool (*isVisibleFile)(const char*, const struct stat&);
-    void (HylaFAXServer::*listDirectory)(FILE*, const SpoolDir&, DIR*);
-    void (HylaFAXServer::*listFile)(FILE*, const SpoolDir&,
-	const char*, const struct stat&);
-    void (HylaFAXServer::*nlstDirectory)(FILE*, const SpoolDir&, DIR*);
-    void (HylaFAXServer::*nlstFile)(FILE*, const SpoolDir&,
-	const char*, const struct stat&);
-    void (HylaFAXServer::*delFile)(const SpoolDir&, const char*);
-    void (HylaFAXServer::*retrFile)(const SpoolDir&, const char*);
-    void (HylaFAXServer::*storFile)(const SpoolDir&, const char*);
-};
+class SpoolDir;
 
 struct stat;
 typedef struct tiff TIFF;
@@ -179,14 +153,14 @@ extern const char* fmtTime(time_t t);
 class HylaFAXServer : public Syslog, public FaxConfig, public IOHandler {
 public:
     struct stringtag {
-	const char*	 name;
-	fxStr HylaFAXServer::* p;
-	const char*	 def;		// NULL is shorthand for ""
+        const char*	 name;
+        fxStr HylaFAXServer::* p;
+        const char*	 def;		// NULL is shorthand for ""
     };
     struct numbertag {
-	const char*	 name;
-	u_int HylaFAXServer::*p;
-	u_int		 def;
+        const char*	 name;
+        u_int HylaFAXServer::*p;
+        u_int		 def;
     };
 protected:
     u_int	state;
@@ -594,5 +568,32 @@ public:
 };
 inline void HylaFAXServer::pushToken(Token t)		{ pushedToken = t; }
 
+/*
+ * Directories in the spooling area are treated
+ * specially to hide implementation details and
+ * privileged information that clients have no
+ * business seeing.  Also we implement an access
+ * control system that is built on top of the
+ * normal UNIX protection mechanisms.
+ */ 
+struct SpoolDir {
+    const char*	pathname;
+    bool adminOnly;	// accessible by unprivileged clients
+    bool storAble;	// unprivileged clients may STOR files
+    bool deleAble;	// unprivileged clients may DELE files
+    ino_t ino;		// directory inode number
+    bool (*isVisibleFile)(const char*, const struct stat&);
+    void (HylaFAXServer::*listDirectory)(FILE*, const SpoolDir&, DIR*);
+    void (HylaFAXServer::*listFile)(FILE*, const SpoolDir&,
+        const char*, const struct stat&);
+    void (HylaFAXServer::*nlstDirectory)(FILE*, const SpoolDir&, DIR*);
+    void (HylaFAXServer::*nlstFile)(FILE*, const SpoolDir&,
+        const char*, const struct stat&);
+    void (HylaFAXServer::*delFile)(const SpoolDir&, const char*);
+    void (HylaFAXServer::*retrFile)(const SpoolDir&, const char*);
+    void (HylaFAXServer::*storFile)(const SpoolDir&, const char*);
+};
+
 #define	IS(x)	((state & (S_##x)) != 0)
+
 #endif /* _HylaFAXServer_ */

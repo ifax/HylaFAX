@@ -2316,6 +2316,7 @@ BuildPortDotH()
 	*-univel-*)	CONFIG_SOCKARGLENTYPE=size_t;;
 	*sysv4.2uw2*)	CONFIG_SOCKARGLENTYPE=size_t;;
 	*-UnixWare*)	CONFIG_SOCKARGLENTYPE=size_t;;
+	*-aix4*)	CONFIG_SOCKARGLENTYPE=size_t;;
 	*)		CONFIG_SOCKARGLENTYPE=int;;
 	esac
     }
@@ -2657,8 +2658,9 @@ BuildPortDotH()
 	if CheckForIncludeFile utmpx.h; then
 	    case $TARGET in
 	    *-hpux10.20*)	UTMP=utmp;;
-        *-linux*)	    UTMP=utmp;;
-	    *)			    UTMP=utmpx;;
+	    *-aix4*)	UTMP=utmp;;
+        *-linux*)	UTMP=utmp;;
+	    *)			UTMP=utmpx;;
 	    esac
 	else
 	    UTMP=utmp;
