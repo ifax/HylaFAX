@@ -208,15 +208,33 @@ By default \*(Fx will use the optimal compression scheme supported
 by the transmitting modem and receiving facsimile device.
 .TP 12
 .BI \-a " time"
-Schedule transmission at the indicated
+Schedule transmission up to one year in advance at the indicated
 .IR time .
-Times are specified using the syntax of the
-.IR at (1)
-command; e.g. ``now + 30 minutes'' to schedule transmission
-30 minutes in the future.
+.I Time 
+is specified in the format:
+``[HH:MM [AM|PM]|now] [+ N 
+.I period 
+| 
+.I month 
+DD | 
+.I dayofweek 
+]\'\' where 
+.I month 
+can be Jan(uary), Feb(ruary), Mar(ch), Apr(il), May, Jun(e), Jul(y), 
+Aug(ust), Sep(tember), Oct(ober), Nov(ember), or Dec(ember); 
+.I period 
+can be minute(s), hour(s), day(s), week(s), or month(s); 
+.I dayofweek 
+can be Mon(day), Tue(sday), Wed(nesday), Thu(rsday), Fri(day), 
+Sat(urday), Sun(day); 
+e.g. ``now + 30 minutes\'\' to schedule transmission
+30 minutes in the future.  Trailing information in the 
+.I time 
+field (such as YYYY) is ignored. 
 By default,
 .I sendfax
-schedules facsimile for ``now''.
+schedules facsimile for immediate delivery.  Time should be given 
+in the user's local time.
 .TP
 .BI \-b " speed"
 Transmit facsimile documents using a signalling rate that is
