@@ -1,0 +1,19 @@
+# $Id$
+#
+# prototype config for Topic modems
+#
+
+# CONFIG:CLASS1:TP560 Data/Fax/Voice 56K Modem:.*:.*: Manufacturer=Topic Model=TP560
+#
+# BEGIN-SERVER
+# END-SERVER
+
+ModemType:		Class1		# use this to supply a hint
+
+# as of v1.20, +FTS is not supported, which will cause "Stop and wait"
+# failures unless we use software pauses instead...
+
+Class1PPMWaitCmd: 	"<delay\0727>"	# \072 == :  to avoid awk problem
+Class1TCFWaitCmd: 	"<delay\0727>"
+Class1EOPWaitCmd: 	"<delay\0729>"
+
