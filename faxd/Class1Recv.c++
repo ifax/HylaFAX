@@ -1643,18 +1643,22 @@ Class1Modem::recvEnd(fxStr&)
 	HDLCFrame frame(conf.class1FrameOverhead);
 	do {
 	    if (recvFrame(frame, FCF_RCVR, conf.t2Timer)) {
+		tracePPM("RECV recv", frame.getFCF());
 		switch (frame.getFCF()) {
 		case FCF_PPS:
-		    tracePPM("RECV recv", FCF_PPS);
 		case FCF_EOP:
-		    tracePPM("RECV recv", FCF_EOP);
+		case FCF_CRP:
+		    if (!useV34) atCmd(conf.class1SwitchingCmd, AT_OK);
 		    (void) transmitFrame(FCF_MCF|FCF_RCVR);
 		    tracePPR("RECV send", FCF_MCF);
 		    break;
 		case FCF_DCN:
+		    recvdDCN = true;
 		    break;
 		default:
+		    if (!useV34) atCmd(conf.class1SwitchingCmd, AT_OK);
 		    transmitFrame(FCF_DCN|FCF_RCVR);
+		    recvdDCN = true;
 		    break;
 		}
 	    } else if (!wasTimeout() && lastResponse != AT_FCERROR && lastResponse != AT_FRH3) {
@@ -1665,8 +1669,7 @@ Class1Modem::recvEnd(fxStr&)
 		 */
 		break;
 	    }
-	} while ((unsigned) Sys::now()-start < t1 &&
-	    (!frame.isOK() || frame.getFCF() == FCF_EOP || frame.getFCF() == FCF_PPS));
+	} while ((unsigned) Sys::now()-start < t1 && (!frame.isOK() || !recvdDCN));
     }
     setInputBuffering(true);
     return (true);

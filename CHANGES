@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* add last-page CRP reception support in Phase D (30 Mar 2005)
 * handle TSI, DCS, and other signals when in ECM (29 Mar 2005)
 * don't transmit DCN after getting EOT (24 Mar 2005)
 * improve the usage of T4 and T2 timers throughout (23 Mar 2005)
