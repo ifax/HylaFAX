@@ -46,7 +46,6 @@ class FaxParams
 	FaxParams();
 	FaxParams(u_int disDcs, u_int xinfo);
 	FaxParams(u_char* pBits, int length);
-	FaxParams(Class2Params modemParams);
 
 	virtual ~FaxParams (void);
 
