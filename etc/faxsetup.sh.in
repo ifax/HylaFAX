@@ -1672,8 +1672,8 @@ EOF
             true
         fi
     else
-        $FAXQ_SERVER=0
-        $HFAXD_SERVER=0
+        FAXQ_SERVER=0
+        HFAXD_SERVER=0
     fi
     if [ -f $INETDCONF -a $HFAXD_SERVER -eq 0 ]; then
 	E="hylafax	stream	tcp	nowait	$FAX	$DIR_LIBEXEC/hfaxd	hfaxd -I"
