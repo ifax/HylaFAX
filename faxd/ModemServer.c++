@@ -541,6 +541,13 @@ ModemServer::openDevice(const char* dev)
 	traceServer("%s: Can not open modem (%m)", dev);
 	return (false);
     }
+
+    /*
+     * Wait a second for "slower" modems
+     * such as the Nokia 6210 mobile.
+     */
+    (void) sleep(1);
+
     int flags = fcntl(modemFd, F_GETFL, 0);
     if (fcntl(modemFd, F_SETFL, flags &~ O_NDELAY) < 0) {
 	 traceServer("%s: fcntl: %m", dev);
