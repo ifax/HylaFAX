@@ -33,6 +33,7 @@
 # RTS/CTS flow control is used default.
 #
 # CONFIG: CLASS2.0: USRobotics*-*
+# CONFIG: CLASS2.0: "U.S. Robotics"*-OK-*
 #
 # BEGIN-SERVER
 # END-SERVER

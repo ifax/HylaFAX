@@ -37,6 +37,8 @@
 #     set CLOCAL and also enable RTS/CTS flow control.
 #
 # CONFIG: CLASS2: ROCKWELL-AC/V34-*
+# CONFIG: CLASS2: "Supra Corporation"-"Supra 288i Sp"-*
+# CONFIG: CLASS2: "BEST DATA PRODUCTS"-"2834VF"-*
 #
 # BEGIN-SERVER
 # END-SERVER

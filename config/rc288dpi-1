@@ -38,6 +38,7 @@
 # switches to XON/XOFF (testing host was too fast to see).
 #
 # CONFIG:CLASS1:28800:.*:.*: Manufacturer=ROCKWELL Model=RC288DPi
+# CONFIG:CLASS1:56000:.*:.*: Manufacturer=Rockwell/Conexant Model=AC/K56
 #
 # BEGIN-SERVER
 # END-SERVER
