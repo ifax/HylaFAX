@@ -2616,8 +2616,10 @@ BuildPortDotH()
 	}
 	CheckForLibrary logout -lutil && {
 	    echo '#define HAS_LOGOUT 1'
-	    Note "... configure use of logout (BSD-style utmp support)"
-	    AddFuncDecl logout 'int logout(const char*);'
+        Note "... configure use of logout (BSD-style utmp support)"
+        CheckForFuncDecl logout utmp.h || {
+            AddFuncDecl logout 'int logout(const char*);'
+        }
 	}
     }
     CheckDefine _PATH_DEV     '_PATH_DEV	"/dev/"'	paths.h
