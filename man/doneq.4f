@@ -212,8 +212,8 @@ The desired data format to use for page data transmissions:
 and 4 for 2-D MMR (default).
 .TP 14
 .B desiredec
-Whether or not to negotiate the use of Error Correction Mode (\s-1ECM\s+1):
-0 to disable, 1 to enable (default).
+Which type of Error Correction Mode (\s-1ECM\s+1) to use:
+0 to disable, 1 for 64-byte ECM, or 2 for 256-byte ECM (default).
 .TP 14
 .B desiredst
 The desired minimum scanline time to use for page data transmissions:

@@ -704,7 +704,7 @@ Cover-From-Location\(S1	string	\-	cover page from-location string
 Cover-From-Voice\(S1	string	\-	cover page from-voice number string
 Cover-From-Fax\(S1	string	\-	cover page from-fax number string
 DateFormat	string	\-	cover page date format string
-DesiredEC	boolean	\-	desired use of \s-1ECM\s+1
+DesiredEC	integer	\s-12\s+1	desired type of \s-1ECM\s+1
 DesiredMST	string	\-	desired minimum scanling time to use
 DesiredSpeed	integer	\-	desired signalling rate to use
 DialRules	string	\s-1\fIsee below\fP\s+1	file containing dialstring rules
@@ -802,11 +802,9 @@ format string to pass to the cover page command when auto-generating
 cover pages.
 .TP 16
 .B DesiredEC
-Whether or not to request the use of the optional
-Error Correct Mode (\s-1ECM\s+1) when transmitting facsimile.
-(Equivalent to the
-.B \-E
-option.)
+Which type of the optional Error Correct Mode (\s-1ECM\s+1) to use when
+transmitting facsimile.  0 to disable, 1 for 64-byte ECM, and 2 for
+256-byte ECM (default).
 .TP 16
 .B DesiredMST
 The desired minimum scanline time to use when transmitting facsimile.

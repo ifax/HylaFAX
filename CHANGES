@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.1
 
+* fix documentation regarding DesiredEC (23 Nov 2004)
 * change minsp to minbr for consistency (23 Nov 2004)
 * fix hfaxd problem with file descriptors (23 Nov 2004)
 * fix hfaxd from dying on ECONNABORTED (23 Nov 2004)

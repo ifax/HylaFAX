@@ -178,7 +178,7 @@ international phone calls one might use:
 .sp .5
 .nf
 .ft C
- [+][^1]    DesiredBR=3 DesiredEC=false
+ [+][^1]    DesiredBR=3 DesiredEC=0
 .ft P
 .fi
 .SH NOTES
