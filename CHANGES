@@ -2,6 +2,9 @@
 
 Changelog for HylaFAX 4.2.0
 
+* send RTN instead of DCN in Class 1 when no page received (8 Jan 2004)
+* add Class1ExtendedRes config option (7 Jan 2004)
+* make Class1ECMSupport and ModemSoftRTFCC default true (7 Jan 2004)
 * make hfaxd reuse the TCP port when starting (16 Dec 2003)
 * fix identification of V.17 7200 bps in Class 1 receiving (15 Dec 2003)
 * add Class2UseLineCount config option (13 Dec 2003)
