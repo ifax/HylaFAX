@@ -50,9 +50,9 @@
 #	  and compared to a matching string or value.  If this value
 #	  begins with '>', then an additional rule is used and scanning
 #	  continues to the next type rule line that does not begin with
-#	  a '>'.
+#	  a '>'. Only a single level of '>' is permitted.
 # datatype: the type of data value to extract the specified offset in the
-#	  for comparison purposes.  This can be byte, short, long, or
+#	  for comparison purposes.  This can be byte, short, long, ascii or
 #	  string (a not necessarily null-terminated string of bytes).
 #	  A byte is 8 bits, short 16 bits, and long 32 bits.
 # match:  the value and operation to use in matching; the value used is
@@ -62,6 +62,10 @@
 #	  (for and-ing and comparing to zero), "^" (for xor-ing and
 #	  comparing to zero), and "!" (for taking one's complement and
 #	  comparing to zero).
+#	  For string and ascii data, no comparison operator is allowed,
+#	  and embedded spaces, but not embedded tabs, are allowed.
+#	  These data are taken literally; no C-style character escapes
+#         are meaningful.
 # result: one of "PS", "TIFF, or "error" (case insensitive).  The first
 #	  two results specifiy whether the rule generates a PostScript
 #	  file or a bilevel TIFF image.  The "error" result indicates a
@@ -78,10 +82,10 @@
 #		%v	output vertical resolution in lines/mm
 #		%V	output vertical resolution in lines/inch
 #		%f	data format, 1 for 1-d encoding or 2 for 2-d encoding
-#		%w	page width in mm
-#		%W	page width in pixels
-#		%l	page length in mm
-#		%L	page length in inches
+#		%w	page width in pixels
+#		%W	page width in mm
+#		%l	page length in pixels
+#		%L	page length in mm
 #		%s	page size by name
 #		%F	the pathname of the fax library (e.g./usr/local/lib/fax)
 #		%<x>	the <x> character (e.g. ``%%'' results in ``%''

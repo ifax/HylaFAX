@@ -52,7 +52,7 @@ file that is patterned after the
 .B /etc/magic
 file used by the System V
 .IR file (1)
-program.
+program.  However, there are significant differences, noted below.
 .PP
 Type rules work by matching data patterns in a file; typically
 patterns that appear in the first few bytes of the file (i.e.
@@ -114,7 +114,7 @@ following operators are supported (where
 .I data
 is the value extracted from the file and
 .I value
-is specified in the match field):
+is specified in the match field) except for types ``string'' and ``ascii'':
 .nf
 .sp .5
 .RS
@@ -126,8 +126,15 @@ is specified in the match field):
 ^	(data ^ value) != 0
 .RE
 .sp .5
-.fi
+
 If no operation is specified then ``='' is used.
+.PP
+
+For ``string'' and ``ascii'' no operator is allowed; the implicit
+operation is always ``=''.  In these cases, the field is terminated by
+a tab or end of line, not by ``#''.  Characters in the field have
+their literal value; there are no C-style character escapes.
+.fi
 .TP 10
 .B result
 One of ``ps'', ``tiff'', or ``error'' (case insensitive).
@@ -158,10 +165,10 @@ and the following ``%'' escape codes are substituted for:
 %v	output vertical resolution in lines/mm
 %V	output vertical resolution in lines/inch
 %f	data format, ``1'' for 1-d encoding or ``2'' for 2-d encoding
-%w	page width in mm
-%W	page width in pixels
-%l	page length in mm
-%L	page length in pixels
+%w	page width in pixels
+%W	page width in mm
+%l	page length in pixels
+%L	page length in mm
 %s	page size by name
 %F	the directry where \*(Fx filter programs reside
 %<x>	the <x> character (e.g. ``%%'' results in ``%''

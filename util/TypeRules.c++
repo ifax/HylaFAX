@@ -185,10 +185,10 @@ done:
  *		%v	output vertical resolution in lines/mm
  *		%V	output vertical resolution in lines/inch
  *		%f	data format, 1 for 1-d encoding or 2 for 2-d encoding
- *		%w	page width in mm
- *		%W	page width in pixels
- *		%l	page length in mm
- *		%L	page length in inches
+ *		%w	page width in pixels
+ *		%W	page width in mm
+ *		%l	page length in pixels
+ *		%L	page length in mm
  *		%s	page size by name
  *		%F	the pathname of the fax library (e.g./usr/local/lib/fax)
  *		%<x>	the <x> character (e.g. ``%%'' results in ``%''
@@ -215,10 +215,10 @@ TypeRule::getFmtdCmd(
 	    case 'V':	fmtd.append(fxStr(vr, "%.2f"));		  continue;
 	    case 'v':	fmtd.append(fxStr(vr/25.4, "%.2g"));	  continue;
 	    case 'f':	fmtd.append(df);			  continue;
-	    case 'W':	fmtd.append(fxStr(pw, "%.2g"));		  continue;
-	    case 'w':	fmtd.append(fxStr((pw*hr)/25.4, "%.2g")); continue;
-	    case 'L':	fmtd.append(fxStr(pl, "%.2g"));		  continue;
-	    case 'l':	fmtd.append(fxStr((pl*vr)/25.4, "%.2g")); continue;
+	    case 'W':	fmtd.append(fxStr(pw, "%.4g"));		  continue;
+	    case 'w':	fmtd.append(fxStr(pw*hr/25.4, "%.0f"));   continue;
+	    case 'L':	fmtd.append(fxStr(pl, "%.4g"));		  continue;
+	    case 'l':	fmtd.append(fxStr(pl*vr/25.4, "%.0f"));   continue;
 	    case 'F':	fmtd.append(fxStr(FAX_LIBEXEC));	  continue;
 	    case 's':	fmtd.append(pname);			  continue;
 	    }
