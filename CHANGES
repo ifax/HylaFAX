@@ -1,5 +1,9 @@
 #	$Id$	
 
+Changelog for HylaFAX 4.1.7 - Jul 20, 2003
+
+* fix PageChop feature (20 Jul 2003)
+
 Changelog for HylaFAX 4.1.6 - May 07, 2003
 
 * add edit-faxcover script (06 May 2003)

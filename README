@@ -2,17 +2,18 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.1.6
-patch-level release!  The release represents many hours of work and
-testing by developers and contributors, and our thanks goes to all who
-participate and provide feedback.
+The HylaFAX development team is pleased to announce our 4.1.7
+patch-level release!  This is a corrective release that fixes the
+PageChop feature that we inadvertently broke in the 4.1.6 patch-level,
+and is otherwise identical to 4.1.6.  As always, our sincerest thanks
+goes to all who participate and provide feedback.
 
                                *   *   *
 
 This document is intended to describe the significant differences
-between hylafax-4.1.6 and older releases, point out any known
+between hylafax-4.1.7 and older releases, point out any known
 incompatibilites and issues, and provide the reader with directions to
-further resources regarding HylaFAX.
+further resources regarding HylaFAX. 
 
                           *   NEW FEATURES   *
 
@@ -43,8 +44,11 @@ further resources regarding HylaFAX.
 
                       *   WHO SHOULD UPGRADE?   *
 
-A large number of mission-critical bugs are fixed in 4.1.6 (see CHANGES).
-Upgrading is recommended for all users.
+A large number of mission-critical bugs were fixed in 4.1.6 (see
+CHANGES), but the PageChop feature was broken in that release and many
+chose not to upgrade.  Upgrading to 4.1.7 is now strongly recommended
+for all users of 4.1.5 or older, and for anyone who installed 4.1.6
+and requires PageChop functionality.  If in doubt, upgrade!
 
                      *   HYLAFAX BINARY PACKAGES   *
 
@@ -57,10 +61,10 @@ binary package.
 
                     *   COMMERCIAL SUPPORT   *
 
-HylaFAX.org has partnered with iFax Solutions, Inc. to provide commercial
-support to HylaFAX users. Single-incident and annual support options are
-available, as well as a variety of consulting services. Contact HylaFAX
-Sales <sales@hylafax.org> for more information.
+iFax Solutions, Inc. (http://www.ifax.com) provides commercial support
+to HylaFAX users. Single-incident and annual support options are
+available, as well as a variety of consulting services. Contact
+HylaFAX Sales <sales@ifax.com> for more information.
 
                        *   FREE SUPPORT   *
 
