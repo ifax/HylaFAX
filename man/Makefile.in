@@ -123,6 +123,7 @@ MANSED=${SED}\
 	-e 's;\$${SPOOL};${SPOOL};g' \
 	-e 's;\$${BIN};${BIN};g' \
 	-e 's;\$${SBIN};${SBIN};g' \
+	-e 's;\$${TIFFBIN};${TIFFBIN};g' \
 	-e 's;\$${LIBDATA};${LIBDATA};g' \
 	-e 's;\$${LIBEXEC};${LIBEXEC};g' \
 	-e 's;\$${FONTPATH};${FONTPATH};g' ${MANSEDLOCAL}
