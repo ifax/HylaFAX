@@ -1109,6 +1109,30 @@ EOF
 echo ""
 if [ "$RESULT" = "OK" ]; then
     # Looks like a usable fax modem.  Get more information.
+    cat<<EOF
+About fax classes:
+
+The difference between fax classes has to do with how HylaFAX interacts
+with the modem and the fax protocol features that are used when sending
+or receiving faxes.  One class isn't inherently better than another;
+however, one probably will suit a user's needs better than others.
+    
+Class 1 relies on HylaFAX to perform the bulk of the fax protocol.
+Class 2 relies on the modem to perform the bulk of the fax protocol.
+Class 2.0 is similar to Class 2 but may include more features.
+Class 1.0 is similar to Class 1 but adds V.34-fax capability.
+Class 2.1 is similar to Class 2.0 but adds V.34-fax capability.
+    (V.34-fax is not yet supported by HylaFAX on Class 1.0 modems.)
+      
+HylaFAX generally will have more features when using Class 1/1.0 than
+when using most modems' Class 2 or Class 2.0 implementations.  Generally
+any problems encountered in Class 1/1.0 can be resolved by modifications
+to HylaFAX, but usually any problems encountered in Class 2/2.0/2.1 will
+require the modem manufacturer to resolve it.
+
+If you're unsure and your modem supports it, use Class 1.
+
+EOF
     # Here we build up a MODEMCLASSES string and follow
     # (for no real reason) the enumeration in faxd/ClassModem.c++
     # Class 1 = 1; Class 2 = 2; Class 2.0 = 3;
