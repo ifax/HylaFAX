@@ -192,7 +192,7 @@ if [ -f $FILE ]; then
 	 echo "Content-Type: text/plain; charset=us-ascii"
 	 echo "Content-Transfer-Encoding: 7bit"
 	 echo ""
-	 echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):"; $INFO -n $FILE
+	 $INFO -n $FILE
 	 echo "ReceivedOn: $DEVICE"
 	 if [ "$MSG" ]; then
 	    echo ""
@@ -212,7 +212,7 @@ if [ -f $FILE ]; then
 		echo "    No transcript available."
 	    fi
 	 else
-	    echo "    CommID: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
+	    echo "    CommID: c$COMMID"
 	 fi
 	 echo ""
 	 echo "--$MIMEBOUNDARY"

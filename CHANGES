@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.1
 
+* drop ftp links from received notification e-mail (8 Dec 2004)
 * fix dial-and-answer feature (2 Dec 2004)
 * add NSF recognition for MFC-3100C (29 Nov 2004)
 * fix Class 1 support for services "0,1.0" (26 Nov 2004)
