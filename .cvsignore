@@ -1,0 +1,8 @@
+config.cache
+config.log
+config.h
+defs
+.empty_directory
+Makefile
+port.h
+rules

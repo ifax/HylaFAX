@@ -50,7 +50,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
     setupDecoder(conf.recvFillOrder, params.is2D());
 
     u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 2432
-    uint16 runs[2*2432];			// run arrays for cur+ref rows
+    tiff_runlen_t runs[2*2432];			// run arrays for cur+ref rows
     setRuns(runs, runs+2432, rowpixels);
 
     recvEOLCount = 0;				// count of EOL codes

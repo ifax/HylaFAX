@@ -41,13 +41,13 @@
     DECLARE_STATE_EOL();						\
     int a0;				/* reference element */		\
     int RunLength;			/* length of current run */	\
-    uint16* pa;				/* place to stuff next run */	\
-    uint16* thisrun;			/* current row's run array */	\
+    tiff_runlen_t* pa;			/* place to stuff next run */	\
+    tiff_runlen_t* thisrun;			/* current row's run array */	\
     const TIFFFaxTabEnt* TabEnt
 #define	DECLARE_STATE_2D()						\
     DECLARE_STATE();							\
     int b1;				/* next change on prev line */	\
-    uint16* pb				/* next run in reference line */
+    tiff_runlen_t* pb			/* next run in reference line */
 /*
  * Load any state that may be changed during decoding.
  */
@@ -113,7 +113,7 @@ G3Decoder::setupDecoder(u_int recvFillOrder, bool is2d)
 }
 
 void
-G3Decoder::setRuns(uint16* cr, uint16* rr, int w)
+G3Decoder::setRuns(tiff_runlen_t* cr, tiff_runlen_t* rr, int w)
 {
     curruns = cr;
     if (refruns = rr) {
@@ -134,7 +134,7 @@ G3Decoder::decode(void* raster, u_int w, u_int h)
 {
     u_int rowbytes = howmany(w, 8);
     if (curruns == NULL) {
-	uint16 runs[2*2432];		// run arrays for cur+ref rows
+	tiff_runlen_t runs[2*2432];		// run arrays for cur+ref rows
 	setRuns(runs, runs+2432, w);
 	while (h-- > 0) {
 	    decodeRow(raster, w);
@@ -235,7 +235,7 @@ G3Decoder::decodeRow(void* scanline, u_int lastx)
 	_TIFFFax3fillruns((u_char*) scanline, thisrun, pa, lastx);
     if (is2D) {
 	SETVAL(0);			// imaginary change for reference
-	SWAP(uint16*, curruns, refruns);
+	SWAP(tiff_runlen_t*, curruns, refruns);
     }
     rowref++;
     UNCACHE_STATE();

@@ -1673,6 +1673,12 @@ EmitConfigurationDefinitions()
         echo "#define NEED_BOOL"
         echo
     fi
+
+    #
+    # Define the tiff run length type(...should be configurable)
+    #
+    echo "#define tiff_runlen_t uint32"
+
     #
     # Select the mode to use when opening FIFO files
     # in a server process.  One should be able to open
@@ -2899,7 +2905,7 @@ main()
 	printf("old include files: version %u\n", TIFFLIB_VERSION);
         exit(-1);
     }
-    if (strncmp(TIFFGetVersion(), "LIBTIFF, Version 3.4", 20) != 0) {
+    if (strncmp(TIFFGetVersion(), "LIBTIFF, Version 3.5", 20) != 0) {
 	printf("old library: version %s\n", TIFFGetVersion());
 	exit(-1);
     } else

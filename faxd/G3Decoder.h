@@ -43,8 +43,8 @@ private:
     int		RTCrun;		// count of consecutive zero-length rows
     int		rowref;		// reference count of rows decoded
     int		RTCrow;		// row number of start of RTC
-    uint16*	refruns;	// runs for reference line
-    uint16*	curruns;	// runs for current line
+    tiff_runlen_t*	refruns;	// runs for reference line
+    tiff_runlen_t*	curruns;	// runs for current line
     const u_char* bitmap;	// bit reversal table
 protected:
     G3Decoder();
@@ -68,8 +68,8 @@ public:
     virtual ~G3Decoder();
 
     void	setupDecoder(u_int fillorder, bool is2D);
-    void	setRuns(uint16*, uint16*, int);
-    uint16*	lastRuns();
+    void	setRuns(tiff_runlen_t*, tiff_runlen_t*, int);
+    tiff_runlen_t*	lastRuns();
 
     void	decode(void* raster, u_int w, u_int h);
     bool	decodeRow(void* scanline, u_int w);
@@ -92,7 +92,7 @@ public:
 #define	EOFraised()		(sigsetjmp(jmpEOF, 0) != 0)
 #define	RTCraised()		(sigsetjmp(jmpRTC, 0) != 0)
 
-inline uint16* G3Decoder::lastRuns()	{ return is2D ? refruns : curruns; }
+inline tiff_runlen_t* G3Decoder::lastRuns()	{ return is2D ? refruns : curruns; }
 inline const u_char* G3Decoder::getBitmap()	{ return bitmap; }
 inline int G3Decoder::getPendingBits() const	{ return bit; }
 inline bool G3Decoder::seenRTC() const	{ return (RTCrow != -1); }

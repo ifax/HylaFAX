@@ -805,7 +805,7 @@ MemoryDecoder::decodeNextByte()
 }
 
 static bool
-isBlank(uint16* runs, u_int rowpixels)
+isBlank(tiff_runlen_t* runs, u_int rowpixels)
 {
     u_int x = 0;
     for (;;) {
@@ -824,7 +824,7 @@ MemoryDecoder::scanPageForBlanks(u_int fillorder, const Class2Params& params)
 {
     setupDecoder(fillorder,  params.is2D());
     u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 2432
-    uint16 runs[2*2432];			// run arrays for cur+ref rows
+    tiff_runlen_t runs[2*2432];			// run arrays for cur+ref rows
     setRuns(runs, runs+2432, rowpixels);
 
     if (!RTCraised()) {
