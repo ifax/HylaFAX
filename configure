@@ -4724,6 +4724,7 @@ CONF_FILES="
     util/faxrcvd.sh
     util/mkcover.sh
     util/notify.sh
+    util/notify-4.1.sh
     util/pcl2fax.sh
     util/pollrcvd.sh
     util/ps2fax.dps.sh
