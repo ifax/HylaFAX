@@ -52,6 +52,8 @@ function docType(s)
 	return "PostScript";
     else if (match(s, "\.tif"))
 	return "TIFF";
+    else if (match(s, "\.pdf"))
+	return "PDF";
     else if (match(s, "\.pcl"))
 	return "PCL";
     else

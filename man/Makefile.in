@@ -88,6 +88,7 @@ MANSAPP=sman.apps/cqtest.1m	\
 	sman.apps/pagesend.1m	\
 	sman.apps/pollrcvd.1m	\
 	sman.apps/ps2fax.1m	\
+	sman.apps/pdf2fax.1m	\
 	sman.apps/recvstats.1m	\
 	sman.apps/tagtest.1m	\
 	sman.apps/tiff2fax.1m	\
@@ -180,6 +181,7 @@ sman.apps/notify.1m::	${SRCDIR}/notify.1m;	${MANCVT}
 sman.apps/pagesend.1m::	${SRCDIR}/pagesend.1m;	${MANCVT}
 sman.apps/pollrcvd.1m::	${SRCDIR}/pollrcvd.1m;	${MANCVT}
 sman.apps/ps2fax.1m::	${SRCDIR}/ps2fax.1m;	${MANCVT}
+sman.apps/pdf2fax.1m::	${SRCDIR}/pdf2fax.1m;	${MANCVT}
 sman.apps/recvstats.1m:: ${SRCDIR}/recvstats.1m; ${MANCVT}
 sman.apps/tagtest.1m::	${SRCDIR}/tagtest.1m;	${MANCVT}
 sman.apps/tiff2fax.1m::	${SRCDIR}/tiff2fax.1m;	${MANCVT}

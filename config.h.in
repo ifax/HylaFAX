@@ -254,6 +254,7 @@
 #define	FAX_FAXRCVDCMD	FAX_BINDIR "/faxrcvd"	/* cmd to process a recvd fax */
 #define	FAX_POLLRCVDCMD	FAX_BINDIR "/pollrcvd"	/* cmd to process a recvd fax */
 #define FAX_PS2FAXCMD	FAX_BINDIR "/ps2fax"	/* cmd to convert postscript */
+#define FAX_PDF2FAXCMD	FAX_BINDIR "/pdf2fax"	/* cmd to convert PDF */ 
 #define FAX_PCL2FAXCMD	FAX_BINDIR "/pcl2fax"	/* cmd to convert PCL */
 #define FAX_TIFF2FAXCMD	FAX_BINDIR "/tiff2fax"	/* cmd to convert TIFF */
 #define	FAX_COVERCMD	FAX_BINDIR "/mkcover"	/* cmd to make cont coverpage */

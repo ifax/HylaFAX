@@ -219,6 +219,8 @@ faxQCleanApp::collectRefs(const FaxRequest& req)
     for (u_int i = 0, n = req.requests.length(); i < n; i++) {
 	const faxRequest& freq = req.requests[i];
 	switch (freq.op) {
+	case FaxRequest::send_pdf:
+	case FaxRequest::send_pdf_saved:
 	case FaxRequest::send_tiff:
 	case FaxRequest::send_tiff_saved:
 	case FaxRequest::send_postscript:

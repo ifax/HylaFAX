@@ -250,6 +250,7 @@ faxQueueApp::prepareJobNeeded(Job& job, FaxRequest& req, JobStatus& status)
 	case FaxRequest::send_postscript:	// convert PostScript
 	case FaxRequest::send_pcl:		// convert PCL
 	case FaxRequest::send_tiff:		// verify&possibly convert TIFF
+	case FaxRequest::send_pdf:		// convert PDF
 	    return (true);
 	case FaxRequest::send_poll:		// verify modem is capable
 	    if (!job.modem->supportsPolling()) {
@@ -539,6 +540,7 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
 	case FaxRequest::send_postscript:	// convert PostScript
 	case FaxRequest::send_pcl:		// convert PCL
 	case FaxRequest::send_tiff:		// verify&possibly convert TIFF
+        case FaxRequest::send_pdf:		// convert PDF
 	    tmp = FaxRequest::mkbasedoc(freq.item) | ";" | params.encodePage();
 	    status = convertDocument(job, freq, tmp, params, dci, req.notice);
 	    if (status == Job::done) {
@@ -977,6 +979,7 @@ faxQueueApp::convertDocument(Job& job,
 	int ac = 0;
 	switch (req.op) {
 	case FaxRequest::send_postscript: argv[ac++] = ps2faxCmd; break;
+	case FaxRequest::send_pdf:	  argv[ac++] = pdf2faxCmd; break;
 	case FaxRequest::send_pcl:	  argv[ac++] = pcl2faxCmd; break;
 	case FaxRequest::send_tiff:	  argv[ac++] = tiff2faxCmd; break;
 	}
@@ -2331,6 +2334,8 @@ faxQueueApp::deleteRequest(Job& job, FaxRequest& req, JobStatus why,
 		break;
 	    case FaxRequest::send_tiff:
 	    case FaxRequest::send_tiff_saved:
+	    case FaxRequest::send_pdf:
+	    case FaxRequest::send_pdf_saved:
 	    case FaxRequest::send_postscript:
 	    case FaxRequest::send_postscript_saved:
 	    case FaxRequest::send_pcl:
@@ -2636,6 +2641,7 @@ const faxQueueApp::stringtag faxQueueApp::strings[] = {
 { "contcovercmd",	&faxQueueApp::coverCmd,		FAX_COVERCMD },
 { "notifycmd",		&faxQueueApp::notifyCmd,	FAX_NOTIFYCMD },
 { "ps2faxcmd",		&faxQueueApp::ps2faxCmd,	FAX_PS2FAXCMD },
+{ "pdf2faxcmd",		&faxQueueApp::pdf2faxCmd,	FAX_PDF2FAXCMD },
 { "pcl2faxcmd",		&faxQueueApp::pcl2faxCmd,	FAX_PCL2FAXCMD },
 { "tiff2faxcmd",	&faxQueueApp::tiff2faxCmd,	FAX_TIFF2FAXCMD },
 { "sendfaxcmd",		&faxQueueApp::sendFaxCmd,

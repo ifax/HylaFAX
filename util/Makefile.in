@@ -174,6 +174,7 @@ install: installClient
 	${PUTSUPD} -m 755 -src ${SRCDIR}/ps2fax.gs.sh -O ps2fax.gs
 	${PUTSUPD} -m 755 -src ${SRCDIR}/ps2fax.dps.sh -O ps2fax.dps
 	${PUTSUPD} -m 755 -src ${SRCDIR}/ps2fax.imp.sh -O ps2fax.imp
+	${PUTSUPD} -m 755 -src ${SRCDIR}/pdf2fax.gs.sh -O pdf2fax.gs
 	${PUTSUPD} -m 755 -src ${SRCDIR}/pcl2fax.sh -O pcl2fax
 	${PUTSUPD} -m 755 -src ${SRCDIR}/tiff2fax.sh -O tiff2fax
 	${PUTSUPD} -m 755 -src ${SRCDIR}/notify.sh -O notify

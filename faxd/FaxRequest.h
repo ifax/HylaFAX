@@ -52,17 +52,20 @@ public:
 	send_fax	= 0,	// send prepared file via fax
 	send_tiff	= 1,	// send tiff file via fax
 	send_tiff_saved	= 2,	// saved tiff file (converted)
-	send_postscript	= 3,	// send postscript file via fax
-	send_postscript_saved = 4, // saved postscript file (converted)
-	send_pcl	= 5,	// send PCL file via fax
-	send_pcl_saved	= 6,	// saved PCL file (converted to tiff)
-	send_data	= 7,	// send untyped data file
-	send_data_saved	= 8,	// send untyped data file (converted)
-	send_poll	= 9,	// make fax poll request
-	send_page	= 10,	// send pager message (converted)
-	send_page_saved	= 11,	// send pager message
-	send_uucp	= 12,	// send file via uucp
-	send_unknown	= 13
+	send_pdf	= 3,	// send PDF file via fax
+	send_pdf_saved	= 4,	// saved PDF file (converted)
+	send_postscript	= 5,	// send postscript file via fax
+	send_postscript_saved = 6, // saved postscript file (converted)
+	send_pcl	= 7,	// send PCL file via fax
+	send_pcl_saved	= 8,	// saved PCL file (converted to tiff)
+	send_data	= 9,	// send untyped data file
+	send_data_saved	= 10,	// send untyped data file (converted)
+	send_poll	= 11,	// make fax poll request
+	send_page	= 12,	// send pager message (converted)
+	send_page_saved	= 13,	// send pager message
+	send_uucp	= 14,	// send file via uucp
+	send_unknown= 15
+
     };
     enum {			// notification flags
 	no_notice	= 0x0,	// no notifications
@@ -154,7 +157,7 @@ public:
 
     static const stringval strvals[];
     static const shortval shortvals[];
-    static const char* opNames[16];
+    static const char* opNames[18];
     static const char* notifyVals[4];
     static const char* chopVals[4];
 

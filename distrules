@@ -346,6 +346,7 @@ HYLAFAXSRC=\
 	util/ps2fax.dps.sh			\
 	util/ps2fax.gs.sh			\
 	util/ps2fax.imp.sh			\
+	util/pdf2fax.gs.sh			\
 	util/recvstats.sh.in			\
 	util/tiff2fax.sh			\
 	util/wedged.sh				\
@@ -613,6 +614,7 @@ MANPAGES=\
 	man/pagesizes.4f			\
 	man/pollrcvd.1m				\
 	man/ps2fax.1m				\
+	man/pdf2fax.1m				\
 	man/recvq.4f				\
 	man/recvstats.1m			\
 	man/sendfax.1				\

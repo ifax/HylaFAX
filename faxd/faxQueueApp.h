@@ -105,6 +105,7 @@ private:
     float	pageChopThreshold;	// minimum space before page chop
     fxStr	notifyCmd;		// external command for notification
     fxStr	ps2faxCmd;		// external command for ps imager
+    fxStr	pdf2faxCmd;		// external command for pdf imager
     fxStr	pcl2faxCmd;		// external command for pcl imager
     fxStr	tiff2faxCmd;		// external command for TIFF converter
     fxStr	coverCmd;		// external command for cont cover pages

@@ -117,6 +117,8 @@ main()
     hash("retrytime");
     hash("poll");
     hash("tiff");
+    hash("pdf");
+    hash("!pdf");
     hash("!tiff");
     hash("postscript");
     hash("!postscript");

@@ -724,6 +724,8 @@ OldProtocolServer::reallyRemoveJob(const char* op, Job& job)
 	    switch (freq.op) {
 	    case FaxRequest::send_tiff:
 	    case FaxRequest::send_tiff_saved:
+	    case FaxRequest::send_pdf:
+	    case FaxRequest::send_pdf_saved:
 	    case FaxRequest::send_postscript:
 	    case FaxRequest::send_postscript_saved:
 	    case FaxRequest::send_pcl:
@@ -917,6 +919,7 @@ OldProtocolServer::setupData(void)
 		    const faxRequest& freq = reqs[--i];
 		    switch (freq.op) {
 		    case FaxRequest::send_tiff:
+		    case FaxRequest::send_pdf:
 		    case FaxRequest::send_postscript:
 		    case FaxRequest::send_pcl:
 			Sys::unlink(freq.item);
@@ -953,6 +956,7 @@ OldProtocolServer::dataTemplate(FaxSendOp type, int& dfd)
 	, seqnum
 	, type == FaxRequest::send_tiff		? ".tif" :
 	  type == FaxRequest::send_postscript	? ".ps"  :
+	  type == FaxRequest::send_pdf	? ".pdf":
 						  ""
 	);
     dfd = Sys::open(templ, O_RDWR|O_CREAT|O_EXCL, 0660);

@@ -130,10 +130,12 @@ const FaxRequest::shortval FaxRequest::shortvals[] = {
     { "desiredtl",	&FaxRequest::desiredtl },
     { "useccover",	&FaxRequest::useccover },
 };
-const char* FaxRequest::opNames[16] = {
+const char* FaxRequest::opNames[18] = {
     "fax",
     "tiff",
     "!tiff",
+    "pdf",
+    "!pdf",
     "postscript",
     "!postscript",
     "pcl",
@@ -321,6 +323,12 @@ FaxRequest::readQFile(bool& rejectJob)
 
 	case H_POLL:		addRequest(send_poll, tag); break;
 	case H_FAX:		addRequest(send_fax, tag); break;
+	case H_PDF:
+	    if (cmd[0] == '!')
+		addRequest(send_pdf_saved, tag);
+	    else
+		addRequest(send_pdf, tag, rejectJob);
+	    break;
 	case H_TIFF:
 	    if (cmd[0] == '!')
 		addRequest(send_tiff_saved, tag);
@@ -610,8 +618,10 @@ FaxRequest::addRequest(FaxSendOp op, char* tag, bool& rejectJob)
 	*cp++ = '\0';
     else
 	cp = tag, tag = "";
-    if (!checkDocument(cp))
+    if (!checkDocument(cp)) {
+    	error("Document has been rejected");
 	rejectJob = true;
+    }
     else
 	requests.append(faxRequest(op, dirnum, tag, cp));
 }

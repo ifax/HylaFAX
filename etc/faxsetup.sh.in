@@ -1242,8 +1242,28 @@ EOF
     $RM bin/ps2fax
     if [ -n "$LN_S" ]; then
 	$LN $LN_S ps2fax.$PS bin/ps2fax;
+	if [ $PS = gs ]; then
+	    Note ""
+	    Note "Make $DIR_SPOOL/bin/pdf2fax a link to $DIR_SPOOL/bin/pdf2fax.$PS."
+	    Note ""
+	    $LN $LN_S pdf2fax.$PS bin/pdf2fax;
+	else
+	    Note ""
+	    Note "Server-side PDF conversion is not supported on this system."
+	    Note ""
+	fi
     else
 	$LN bin/ps2fax.$PS bin/ps2fax;
+	if [ $PS = gs ]; then
+	    Note ""
+	    Note "Make $DIR_SPOOL/bin/pdf2fax a link to $DIR_SPOOL/bin/pdf2fax.$PS."
+	    Note ""
+	    $LN bin/pdf2fax.$PS bin/pdf2fax;
+	else
+	    Note ""
+	    Note "Server-side PDF conversion is not supported on this system."
+	    Note ""
+	fi
     fi
 fi
 

@@ -759,6 +759,10 @@ HylaFAXServer::docType(const char* docname, FaxSendOp& op)
 	    int cc = Sys::read(fd, (char*) &b, sizeof (b));
 	    if (cc > 2 && b.buf[0] == '%' && b.buf[1] == '!')
 		op = FaxRequest::send_postscript;
+	    else if (cc > 2 && b.buf[0] == '%' && b.buf[1] == 'P') {
+	    	logError("What we have here is a PDF file");
+	    	op = FaxRequest::send_pdf;
+	    }
 	    else if (cc > sizeof (b.h) && isTIFF(b.h))
 		op = FaxRequest::send_tiff;
 	    else
@@ -766,5 +770,8 @@ HylaFAXServer::docType(const char* docname, FaxSendOp& op)
 	}
 	Sys::close(fd);
     }
+    if (op == FaxRequest::send_unknown)
+    	    	logError("Don't know what file");
+
     return (op != FaxRequest::send_unknown);   
 }

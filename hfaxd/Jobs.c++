@@ -260,6 +260,8 @@ static const char* docTypeNames[] = {
     "PAGE",		// send_page_saved
     "UUCP",		// send_uucp
     "UNKNOWN",		// send_unknown
+    "PDF",			// send_pdf
+    "PDF",			// send_pdf_saved
 };
 
 static const char*
@@ -394,6 +396,8 @@ HylaFAXServer::replyJobParamValue(Job& job, int code, Token t)
 	    const faxRequest& freq = job.requests[i];
 	    // XXX should cover page docs not be shown?
 	    switch (freq.op) {
+	    case FaxRequest::send_pdf:
+	    case FaxRequest::send_pdf_saved:
 	    case FaxRequest::send_tiff:
 	    case FaxRequest::send_tiff_saved:
 	    case FaxRequest::send_postscript:
@@ -414,6 +418,8 @@ HylaFAXServer::replyJobParamValue(Job& job, int code, Token t)
 		switch (freq.op) {
 		case FaxRequest::send_tiff:
 		case FaxRequest::send_tiff_saved:
+		case FaxRequest::send_pdf:
+		case FaxRequest::send_pdf_saved:
 		case FaxRequest::send_postscript:
 		case FaxRequest::send_postscript_saved:
 		case FaxRequest::send_pcl:
@@ -530,6 +536,8 @@ HylaFAXServer::jstatCmd(const Job& job)
 		break;
 	    case FaxRequest::send_tiff:
 	    case FaxRequest::send_tiff_saved:
+	    case FaxRequest::send_pdf:
+	    case FaxRequest::send_pdf_saved:
 	    case FaxRequest::send_postscript:
 	    case FaxRequest::send_postscript_saved:
 	    case FaxRequest::send_pcl:
@@ -1213,6 +1221,8 @@ HylaFAXServer::deleteJob(const char* jobid)
 		    /* ... fall thru */
 		case FaxRequest::send_tiff_saved:
 		case FaxRequest::send_tiff:
+		case FaxRequest::send_pdf_saved:
+		case FaxRequest::send_pdf:
 		case FaxRequest::send_postscript:
 		case FaxRequest::send_postscript_saved:
 		case FaxRequest::send_pcl:
@@ -1229,6 +1239,8 @@ HylaFAXServer::deleteJob(const char* jobid)
 		switch (freq.op) {
 		case FaxRequest::send_tiff_saved:
 		case FaxRequest::send_tiff:
+		case FaxRequest::send_pdf_saved:
+		case FaxRequest::send_pdf:
 		case FaxRequest::send_postscript:
 		case FaxRequest::send_postscript_saved:
 		case FaxRequest::send_pcl:
