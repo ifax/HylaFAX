@@ -131,7 +131,7 @@ CountryCode\(S2	string	\-	local country code
 DestControls\(S1	string	\-	per-destination controls file
 DeviceMode	octal	\s-10600\s+1	protection mode to use for modem device
 DialStringRules\(S2	string	\-	dial string rules file
-DynamicLocalID	string	\-	script for dynamic receive configuration
+DynamicConfig	string	\-	script for dynamic receive configuration
 FAXNumber	string	\-	facsimile modem phone number
 FaxRcvdCmd	string	\s-1bin/faxrcvd\s+1	notification script for received facsimile
 GettyArgs	string	\-	arguments passed to getty program
@@ -639,7 +639,7 @@ The specified pathname must be relative to the top of the fax server's
 spooling area; e.g.
 .BR etc/dialrules .
 .TP
-.B DynamicLocalID
+.B DynamicConfig
 The pathname of the optional shell script, e.g. ``etc/localid'', that 
 makes dynamic configuration changes, i.e., to 
 .B LocalIdentifier,

@@ -503,7 +503,7 @@ Class2Modem::setLID(const fxStr& number)
     }
     if (lid.length() > 20)
 	lid.resize(20);
-    class2Cmd(lidCmd, lid);	// for DynamicLocalID
+    class2Cmd(lidCmd, lid);	// for DynamicConfig
 }
 
 /* 

@@ -316,8 +316,8 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
 	callResolved = false;
 	advanceRotary = false;
     } else {
-	if (dynamicLocalId.length()) {
-	    fxStr cmd(dynamicLocalId | quote | cid.name | enquote | 
+	if (dynamicConfig.length()) {
+	    fxStr cmd(dynamicConfig | quote | cid.name | enquote | 
 		quote | cid.number | enquote | quote | getModemDevice() | enquote);
 	    fxStr localid = "";
 	    int pipefd[2], idlength, status;
@@ -918,7 +918,7 @@ faxGettyApp::stringtag faxGettyApp::strings[] = {
 { "vgettyargs",		&faxGettyApp::vgettyArgs },
 { "egettyargs",		&faxGettyApp::egettyArgs },
 { "faxrcvdcmd",		&faxGettyApp::faxRcvdCmd,	FAX_FAXRCVDCMD },
-{ "dynamiclocalid",	&faxGettyApp::dynamicLocalId },
+{ "dynamicconfig",	&faxGettyApp::dynamicConfig },
 };
 faxGettyApp::numbertag faxGettyApp::numbers[] = {
 { "answerbias",		&faxGettyApp::answerBias,	(u_int) -1 },

@@ -84,7 +84,7 @@ private:
     u_short	answerRotorSize;	// rotor table size
     AnswerType	answerRotary[3];	// rotary selection of answer types
     fxStr	faxRcvdCmd;		// fax received command
-    fxStr	dynamicLocalId;		// command to dynamically generate local id
+    fxStr	dynamicConfig;		// command to dynamically alter configuration
     u_int	modemPriority;		// modem priority passed to faxq
 
     static faxGettyApp* _instance;
