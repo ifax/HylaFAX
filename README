@@ -32,15 +32,13 @@ further resources regarding HylaFAX.
 
                       *   WHO SHOULD UPGRADE?   *
 
-This release includes nearly a year's worth of truly exceptional
-contributions from HylaFAX developers and users alike, and everyone
-should consider migrating to a HylaFAX-4.2.x release as soon as
+Everyone should consider upgrading to this 4.2.1 release as soon as
 possible. While every attempt has been made to retain backwards
 compatibility with the 4.1.x series, it's possible that assumptions
 your local installation depends upon may no longer be true. Whenever
 possible, test test test before upgrading a production server!!
 
-HylaFAX-4.2.0 will be of particular benefit to anyone running their
+HylaFAX-4.2.1 will be of particular benefit to anyone running their
 modems in Class 1 due to the addition of native ECM and V.34 support
 (useful features that were previously available only in the
 notoriously buggy Class 2 firmware of modem manufacturers).
@@ -57,10 +55,10 @@ binary package.
 
                     *   COMMERCIAL SUPPORT   *
 
-iFax Solutions, Inc. (http://www.ifax.com) provides commercial support
+iFAX Solutions, Inc. (http://www.ifax.com) provides commercial support
 to HylaFAX users. Single-incident and annual support options are
 available, as well as a variety of consulting services. Contact
-HylaFAX Sales <sales@ifax.com> for more information.
+iFAX Sales <sales@ifax.com> for more information.
 
                        *   FREE SUPPORT   *
 
