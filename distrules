@@ -664,50 +664,6 @@ HTMLDIST=\
     html/icons/improved.gif			\
     ${NULL}
 #
-# Adobe Font Metric information files.
-#
-AFMFILES=\
-    afm/Makefile.in				\
-    afm/AvantGarde-Book.afm			\
-    afm/AvantGarde-BookOblique.afm		\
-    afm/AvantGarde-Demi.afm			\
-    afm/AvantGarde-DemiOblique.afm		\
-    afm/Bookman-Demi.afm			\
-    afm/Bookman-DemiItalic.afm			\
-    afm/Bookman-Light.afm			\
-    afm/Bookman-LightItalic.afm			\
-    afm/Courier-Bold.afm			\
-    afm/Courier-BoldOblique.afm			\
-    afm/Courier-Oblique.afm			\
-    afm/Courier.afm				\
-    afm/Helvetica-Bold.afm			\
-    afm/Helvetica-BoldOblique.afm		\
-    afm/Helvetica-Narrow-Bold.afm		\
-    afm/Helvetica-Narrow-BoldOblique.afm	\
-    afm/Helvetica-Narrow-Oblique.afm		\
-    afm/Helvetica-Narrow.afm			\
-    afm/Helvetica-Oblique.afm			\
-    afm/Helvetica.afm				\
-    afm/NewCenturySchlbk-Bold.afm		\
-    afm/NewCenturySchlbk-BoldItalic.afm		\
-    afm/NewCenturySchlbk-Italic.afm		\
-    afm/NewCenturySchlbk-Roman.afm		\
-    afm/Palatino-Bold.afm			\
-    afm/Palatino-BoldItalic.afm			\
-    afm/Palatino-Italic.afm			\
-    afm/Palatino-Oblique.afm			\
-    afm/Palatino-Roman.afm			\
-    afm/Symbol.afm				\
-    afm/Times-Bold.afm				\
-    afm/Times-BoldItalic.afm			\
-    afm/Times-Italic.afm			\
-    afm/Times-Oblique.afm			\
-    afm/Times-Roman.afm				\
-    afm/ZapfChancery-MediumItalic.afm		\
-    afm/ZapfDingbats.afm			\
-    afm/fontmap.pl				\
-    ${NULL}
-#
 # These rules are used to create the source distribution images
 #
 COMPRESS= gzip
@@ -716,7 +672,6 @@ CONFIG	= -with-CC=cc \
 	  -with-CXX=CC \
 	  -with-GCOPTS=" " \
 	  -with-HTML \
-	  -with-AFM \
 	  -with-DPS \
 	  -with-IMP \
 	  -with-GSRIP=/usr/freeware/bin/gs \
@@ -798,7 +753,7 @@ alpha.tar:
 	(for i in ${HYLAFAXSRC} dist/hylafax.alpha; do			\
 	   echo $$i;							\
 	done) | sed "s;.*;hylafax-$$VERSION/&;" >  $$VERSION;		\
-	(for i in ${MANPAGES} ${HTMLDIST} ${AFMFILES}; do		\
+	(for i in ${MANPAGES} ${HTMLDIST}; do		\
 	   echo $$i;							\
 	done) | sed "s;.*;hylafax-$$VERSION/&;" >> $$VERSION;		\
 	gtar -cvf $$VERSION-tar --files-from $$VERSION;			\
@@ -840,7 +795,7 @@ release.tar:
 	(for i in ${HYLAFAXSRC} dist/hylafax.alpha; do			\
 	   echo $$i;							\
 	done) | sed "s;.*;hylafax-$$VERSION/&;" >  $$VERSION;		\
-	(for i in ${MANPAGES} ${HTMLDIST} ${AFMFILES}; do		\
+	(for i in ${MANPAGES} ${HTMLDIST}; do		\
 	   echo $$i;							\
 	done) | sed "s;.*;hylafax-$$VERSION/&;" >> $$VERSION;		\
 	gtar -cvf $$VERSION-tar --files-from $$VERSION;			\

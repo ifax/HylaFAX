@@ -55,7 +55,6 @@ FAXGID=
 SYSUID=bin
 SYSGID=
 DSO=auto
-AFM=auto
 GETTY=auto
 HTML=no
 PS=auto
@@ -123,8 +122,7 @@ VERSION
 WARNING
 ZLIBINC"
 
-VAR2="AFM
-AWK
+VAR2="AWK
 BIN		DIR_BIN
 CAT
 CGIDIR		DIR_CGI
@@ -3556,9 +3554,6 @@ getGSFonts()
 
 if [ -z "$FONTMAP" ]; then
 	FONTMAP=`getGSFonts`
-	if [ -n "$FONTMAP" ]; then
-		AFM="no"
-	fi
 fi
 Note "Setting the Fontmap path to $FONTMAP"
 
@@ -4123,17 +4118,6 @@ if [ $IMP = yes ]; then
 	IMP=no
     }
 fi
-if [ "$AFM" = auto ]; then
-    if [ ! -f $PATH_AFM/Courier -a ! -f $PATH_AFM/Courier.afm ]; then
-	Note ""
-	Note "WARNING, no font metric files appear to be installed on your system, enabling"
-	Note "installation of the default set of metric files included with this software."
-	Note ""
-	AFM=yes
-    else
-	AFM=no
-    fi
-fi
 
 #
 # Convert default page size name to an entry that goes
@@ -4287,7 +4271,6 @@ test $PORT = yes &&		   SedConfigFiles port/Makefile
 test $ZLIB = yes &&		   SedConfigFiles zlib/Makefile
 test $REGEX = yes &&		   SedConfigFiles regex/Makefile
 test $DBLIB = yes &&		   SedConfigFiles dblib/Makefile
-test $AFM = yes &&		   SedConfigFiles afm/Makefile
 if [ $HTML = yes ]; then
     HTMLDIRS="
 	html
@@ -4336,7 +4319,6 @@ if [ "$MAKEDEPINCLUDE" != "sinclude" ]; then
     test $ZLIB = yes	&& DEPEND="$DEPEND zlib"
     test $REGEX = yes	&& DEPEND="$DEPEND regex"
     test $DBLIB = yes	&& DEPEND="$DEPEND dblib"
-    test $AFM = yes	&& DEPEND="$DEPEND afm"
     if [ $HTML = yes ]; then
 	DEPEND="$DEPEND html html/tools"
     fi

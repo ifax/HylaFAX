@@ -41,7 +41,6 @@
 #
 # Package controls.
 #
-#AFM="auto"			# install AFM files (auto|yes|no)
 #DSO="auto"			# configure DSO support (auto|IRIX|no)
 #GETTY="auto"			# type of getty support (auto|BSD|SysV)
 #HTML="no"			# install HTML documentation (yes|no)

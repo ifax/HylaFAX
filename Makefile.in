@@ -210,11 +210,6 @@ clobber::
 	else \
 	    true; \
 	fi
-	@if [ "@AFM@" = yes ]; then \
-	    ${ECHO} "= "afm; cd afm; ${MAKE} clobber; \
-	else \
-	    true; \
-	fi
 	@if [ "@HTML@" = yes ]; then \
 	    ${ECHO} "= "html; cd html; ${MAKE} clobber; \
 	else \
@@ -295,11 +290,6 @@ install: makeDirs makeDevices
 	    true; \
 	fi
 	@${ECHO} "= "etc; cd etc; ${MAKE} installSysVInit; \
-	@if [ "@AFM@" = yes ]; then \
-	    ${ECHO} "= "afm; cd afm; ${MAKE} install; \
-	else \
-	    true; \
-	fi
 	@if [ "@HTML@" = yes ]; then \
 	    ${ECHO} "= "html; cd html; ${MAKE} install; \
 	else \
@@ -351,11 +341,6 @@ installClient: makeClientDirs
 	    else \
 		true; \
 	    fi; \
-	else \
-	    true; \
-	fi
-	@if [ "@AFM@" = yes ]; then \
-	    ${ECHO} "= "afm; cd afm; ${MAKE} install; \
 	else \
 	    true; \
 	fi
