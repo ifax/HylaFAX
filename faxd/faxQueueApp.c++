@@ -2208,7 +2208,8 @@ faxQueueApp::runScheduler()
 			Job* cjob;		// current Job
 			FaxRequest* creq;	// current request
 			
-			for (joblist++; joblist.notDone(); joblist++) {
+			joblist++;		// Skip the current job
+			for (int i = 1; i < maxBatchJobs && joblist.notDone(); joblist++, i++) {
 			    cjob = joblist;
 			    fxAssert(cjob->tts <= Sys::now(), "Sleeping job on run queue");
 			    fxAssert(cjob->modem == NULL, "Job on run queue holding modem");
@@ -2795,6 +2796,7 @@ faxQueueApp::numbertag faxQueueApp::numbers[] = {
 { "postscripttimeout",	&faxQueueApp::postscriptTimeout, 3*60 },
 { "maxconcurrentjobs",	&faxQueueApp::maxConcurrentCalls, 1 },
 { "maxconcurrentcalls",	&faxQueueApp::maxConcurrentCalls, 1 },
+{ "maxbatchjobs",	&faxQueueApp::maxBatchJobs, 1 },
 { "maxsendpages",	&faxQueueApp::maxSendPages,	(u_int) -1 },
 { "maxtries",		&faxQueueApp::maxTries,		(u_int) FAX_RETRIES },
 { "maxdials",		&faxQueueApp::maxDials,		(u_int) FAX_REDIALS },

@@ -80,6 +80,7 @@ private:
     fxStr	configFile;		// configuration filename
     fxStr	contCoverPageTemplate;	// continuation cover page template
     u_int	postscriptTimeout;	// timeout on PostScript imager calls
+    u_int	maxBatchJobs;		// max jobs in a batch
     u_int	maxConcurrentCalls;	// max parallel jobs to a destination
     u_int	maxSendPages;		// max pages in a send job
     u_int	maxDials;		// max times to dial the phone for a job
