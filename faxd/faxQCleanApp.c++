@@ -44,6 +44,7 @@ fxIMPLEMENT_StrKeyPtrValueDictionary(RefDict, u_int)
 class faxQCleanApp : public faxApp {
 private:
     bool	archiving;		// enable archival support
+    bool	forceArchiving;		// force archiving even if doneop != "archive"
     bool	verbose;		// trace interesting actions
     bool	trace;			// trace all actions
     bool	nowork;			// do not carry out actions
@@ -70,6 +71,7 @@ public:
     void setJobAge(const char*);
     void setDocAge(const char*);
     void setArchiving(bool);
+    void setForceArchiving(bool);
     void setVerbose(bool);
     void setTracing(bool);
     void setNoWork(bool);
@@ -84,6 +86,7 @@ faxQCleanApp::faxQCleanApp()
     minJobAge = 15*60;		// jobs kept max 15 minutes in doneq
     minDocAge = 60*60;		// 1 hour threshold on keeping unref'd documents
     archiving = false;		// default is to disable job archiving
+    forceArchiving = false;	// default is not to force archiving
     verbose = false;		// log actions to stdout
     nowork = false;		// default is to carry out work
     trace = false;		// trace work
@@ -98,6 +101,7 @@ void faxQCleanApp::setJobAge(const char* s)
 void faxQCleanApp::setDocAge(const char* s)
     { minDocAge = (time_t) strtoul(s, NULL, 0); }
 void faxQCleanApp::setArchiving(bool b)	{ archiving = b; }
+void faxQCleanApp::setForceArchiving(bool b)    { forceArchiving = b; }
 void faxQCleanApp::setVerbose(bool b)		{ verbose = b; }
 void faxQCleanApp::setTracing(bool b)		{ trace = b; }
 void faxQCleanApp::setNoWork(bool b)		{ nowork = b; }
@@ -156,7 +160,7 @@ faxQCleanApp::scanDirectory(void)
 			    printf("%s: job too new, ignored (for now).\n",
 				(const char*) filename);
 			collectRefs(*req);
-		    } else if (archiving &&
+		    } else if (forceArchiving || archiving &&
 		      strncmp(req->doneop, "archive", 7) == 0) {
 			/*
 			 * Job should be archived, pass the jobid
@@ -438,13 +442,14 @@ main(int argc, char** argv)
 
     faxApp::setupPermissions();
 
-    faxApp::setOpts("j:d:q:antv");
+    faxApp::setOpts("j:d:q:aAntv");
 
     faxQCleanApp app;
     fxStr queueDir(FAX_SPOOLDIR);
     for (GetoptIter iter(argc, argv, faxApp::getOpts()); iter.notDone(); iter++)
 	switch (iter.option()) {
 	case 'a': app.setArchiving(true); break;
+	case 'A': app.setForceArchiving(true); break;
 	case 'j': app.setJobAge(optarg); break;
 	case 'd': app.setDocAge(optarg); break;
 	case 'n': app.setNoWork(true); break;
