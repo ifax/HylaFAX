@@ -402,7 +402,10 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 
     char cbuf[4];		// size of the page count signal
     if (seq & 1) {		// first block
+	initializeDecoder(params);
+	setupStartPage(tif, params);
 	u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
+	recvBuf = NULL;				// just count lines, don't save it
 	if (pipe(decoderFd) >= 0 && pipe(counterFd) >= 0) {
 	    setDecoderFd(decoderFd[0]);
 	    decoderPid = fork();

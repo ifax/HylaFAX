@@ -726,9 +726,6 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
     bool lastblock = false;
     u_short seq = 1;					// sequence code for the first block
 
-    initializeDecoder(params);
-    setupStartPage(tif, params);
-
     do {
 	u_int fnum = 0;
 	char ppr[32];					// 256 bits
