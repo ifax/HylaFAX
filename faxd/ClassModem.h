@@ -189,6 +189,7 @@ private:
     BaudRate	rate;		// selected DTE-DCE communication rate
     FlowControl	iFlow;		// input flow control scheme
     FlowControl	oFlow;		// output flow control scheme
+    fxStr	dialedNumber;	// number dialed
 protected:
 // NB: these are defined protected for convenience (XXX)
     const ModemConfig& conf;	// configuration parameters

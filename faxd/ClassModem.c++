@@ -138,6 +138,7 @@ ClassModem::dataService()
 CallStatus
 ClassModem::dial(const char* number, fxStr& emsg)
 {
+    dialedNumber = fxStr(number);
     protoTrace("DIAL %s", number);
     fxStr buf = fxStr::format((const char*) conf.dialCmd, number);
     emsg = "";
@@ -167,6 +168,8 @@ ClassModem::isNoise(const char* s)
     for (u_int i = 0; i < NNOISE; i++)
 	if (strneq(s, noiseMsgs[i], strlen(noiseMsgs[i])))
 	    return (true);
+    // some modems echo the dialed number
+    if (fxStr(s) == dialedNumber) return (true);
     return (false);
 }
 #undef NNOISE
