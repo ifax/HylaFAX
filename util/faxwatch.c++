@@ -46,9 +46,9 @@ watchApp::watchApp() {}
 watchApp::~watchApp() {}
 
 static bool
-writeData(void* arg, const char* buf, int cc, fxStr& emsg)
+writeData(int arg, const char* buf, int cc, fxStr& emsg)
 {
-    if (Sys::write((int) arg, buf, cc) != cc) {
+    if (Sys::write( arg, buf, cc) != cc) {
 	emsg = fxStr::format("write error: %s", strerror(errno));
 	return (false);
     } else
@@ -96,7 +96,7 @@ watchApp::run(int argc, char** argv)
 	if (login(NULL, emsg) && setType(TYPE_A)) {
 	    if (getTimeZone() == TZ_GMT)
 		printWarning("time values reported in GMT");
-	    (void) recvData(writeData, (void*) STDOUT_FILENO, emsg, 0,
+	    (void) recvData(writeData, STDOUT_FILENO, emsg, 0,
 		"SITE TRIGGER %s", argv[optind]);
 	}
 	hangupServer();

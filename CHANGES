@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* small fixes for compilation on AMD-64 (14 Mar 2005)
 * fix a few timeouts in faxgetty (11 Mar 2005)
 * add support for TIFFTAG_FAXDCS (5 Mar 2005)
 * fix batching error in ECM to some receivers (5 Mar 2005)

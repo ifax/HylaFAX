@@ -274,8 +274,8 @@ public:
     /*
      * Retrieve information from the server.
      */
-    bool recvData(bool (*f)(void*, const char*, int, fxStr&),
-    void* arg, fxStr& emsg, u_long restart, const char* fmt, ...);
+    bool recvData(bool (*f)(int, const char*, int, fxStr&),
+    int arg, fxStr& emsg, u_long restart, const char* fmt, ...);
     bool recvZData(bool (*f)(void*, const char*, int, fxStr&),
     void* arg, fxStr& emsg, u_long restart, const char* fmt, ...);
     /*
