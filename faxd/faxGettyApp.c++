@@ -262,13 +262,13 @@ faxGettyApp::answerPhoneCmd(AnswerType atype)
 	 * cancel any timeout and answer the call.
 	 */
 	Dispatcher::instance().stopTimer(&answerHandler);
-	answerPhone(atype, ctype, cid);
+	answerPhone(atype, ctype, received_cid);
     } else if (lockModem()) {
 	/*
 	 * The modem is ours, notifier the queuer and answer.
 	 */
 	sendModemStatus("B");
-	answerPhone(atype, ctype, cid);
+	answerPhone(atype, ctype, received_cid);
     } else if (state != ANSWERING && state != RECEIVING) {
 	/*
 	 * The modem is in use to call out, or some other process

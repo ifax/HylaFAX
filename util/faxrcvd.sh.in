@@ -124,11 +124,9 @@ if [ -f $FILE ]; then
 	fi
 	if [ "$CIDNUMBER" ]; then
 	    echo " CIDNumber: $CIDNUMBER"
-	    echo ""
 	fi
 	if [ "$CIDNAME" ]; then
 	    echo "   CIDName: $CIDNAME"
-	    echo ""
 	fi
 	if [ -n "$SENDTO" ]; then
 	    echo ""
@@ -173,11 +171,9 @@ if [ -f $FILE ]; then
 	 fi
 	 if [ "$CIDNUMBER" ]; then
 	    echo " CIDNumber: $CIDNUMBER"
-	    echo ""
 	 fi
 	 if [ "$CIDNAME" ]; then
 	    echo "   CIDName: $CIDNAME"
-	    echo ""
 	 fi
 	 echo ""
 	 echo "--$MIMEBOUNDARY"
