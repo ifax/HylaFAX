@@ -179,7 +179,11 @@ bool
 FaxClient::setupUserIdentity(fxStr& emsg)
 {
     struct passwd* pwd = NULL;
-    char* name = cuserid(NULL);
+    char* name = getenv("FAXUSER");
+    if (name)
+	pwd = getpwnam(name);
+    else
+	name = cuserid(NULL);
     if (!name) {
 	name = getlogin();
 	if (name)

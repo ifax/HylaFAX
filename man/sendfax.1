@@ -455,7 +455,10 @@ Do not notify the sender by electronic mail when the
 facsimile has been delivered or requeued.
 .TP 12
 .BI \-o " owner"
-Specify the fax owner login name.  If not specified, the user's 
+Specify the fax owner login name, replacing any
+.B FAXUSER
+environment variable that may be set for the same purpose.
+If neither is specified, the user's 
 current login name is used.
 .TP 12
 .B \-p

@@ -52,7 +52,9 @@ when jobs are queued for transmission and can also be displayed with
 .IR faxstat (1).
 Unprivileged users can alter the parameters of jobs that they own; clients
 with administrative privileges on a server can manipulate any job.
-By default,
+The user may be specified by the
+.B FAXUSER
+environment variable.  By default,
 .I faxalter
 contacts the facsimile server on the host specified in the
 .B FAXSERVER
