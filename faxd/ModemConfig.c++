@@ -213,6 +213,7 @@ ModemConfig::setupConfig()
     class2SendRTC	= false;		// default per Class 2 spec
     setVolumeCmds("ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1");
     recvDataFormat	= DF_ALL;		// default to no transcoding
+    rtnHandling         = FaxModem::RTN_RETRANSMIT; // retransmit until MCF/MPS
 }
 
 void
@@ -462,6 +463,37 @@ ModemConfig::getDataFormat(const char* cp)
     return (df);
 }
 
+bool
+ModemConfig::findRTNHandling(const char* cp, RTNHandling& rh)
+{
+    static const struct {
+        const char* name;
+        RTNHandling rh;
+    } rhnames[] = {
+        { "RETRANSMIT", FaxModem::RTN_RETRANSMIT },
+        {     "GIVEUP", FaxModem::RTN_GIVEUP },
+        {     "IGNORE", FaxModem::RTN_IGNORE },
+        {  "H_POLLACK", FaxModem::RTN_IGNORE }, // inventor's name as an alias :-)
+    };
+    for (u_int i = 0; i < N(rhnames); i++)
+        if (valeq(cp, rhnames[i].name)) {
+            rh = rhnames[i].rh;
+            return (true);
+        }
+    return (false);
+}
+
+u_int
+ModemConfig::getRTNHandling(const char* cp)
+{
+    RTNHandling rh;
+    if (!findRTNHandling(cp, rh)) {
+        configError("Unknown RTN handling method \"%s\", using RETRANSMIT", cp);
+        rh = FaxModem::RTN_RETRANSMIT;   // default
+    }
+    return (rh);
+}
+
 void
 ModemConfig::parseCID(const char* rbuf, CallerID& cid) const
 {
@@ -500,6 +532,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	minSpeed = getSpeed(value);
     else if (streq(tag, "recvdataformat"))
 	recvDataFormat = getDataFormat(value);
+    else if (streq(tag, "rtnhandlingmethod"))
+        rtnHandling = getRTNHandling(value);
     else
 	return (false);
     return (true);

@@ -113,7 +113,7 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg)
 	    do {
 		switch (frame.getRawFCF()) {
 		case FCF_NSF:
-            recvNSF(NSF(frame.getFrameData(), frame.getFrameDataLength (), frameRev));
+                    recvNSF(NSF(frame.getFrameData(), frame.getFrameDataLength(), frameRev));
 		    break;
 		case FCF_CSI:
 		    { fxStr csi; recvCSI(decodeTSI(csi, frame)); }
@@ -274,6 +274,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    tracePPR("SEND recv", ppr);
 	    switch (ppr) {
 	    case FCF_RTP:		// ack, continue after retraining
+            ignore:
 		params.br = (u_int) -1;	// force retraining above
 		/* fall thru... */
 	    case FCF_MCF:		// ack confirmation
@@ -304,22 +305,29 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		emsg = "Remote fax disconnected prematurely";
 		return (send_retry);
 	    case FCF_RTN:		// nak, retry after retraining
-		if ((++ntrys % 2) == 0) {
-		    /*
-		     * Drop to a lower signalling rate and retry.
-		     */
-		    if (params.br == BR_2400) {
-			emsg = "Unable to transmit page"
-			       " (NAK at all possible signalling rates)";
-			return (send_retry);
-		    }
-		    --params.br;
-		    curcap = NULL;	// force sendTraining to reselect
-		}
-		if (!sendTraining(params, 3, emsg))
-		    return (send_retry);
-		morePages = true;	// force continuation
-		next = params;		// avoid retraining above
+                switch( conf.rtnHandling ){
+                case RTN_IGNORE:
+                    goto ignore; // ignore error and try to send next page
+                                 // after retraining
+                case RTN_GIVEUP:
+                    emsg = "Unable to transmit page"
+                        " (giving up after RTN)";
+                    return (send_failed); // "over and out"
+                }
+                // case RTN_RETRANSMIT
+                if (++ntrys >= 3) {
+                    emsg = "Unable to transmit page"
+                        " (giving up after 3 attempts)";
+                    return (send_retry);
+                }
+                if (params.br == BR_2400) {
+                    emsg = "Unable to transmit page"
+                        "(NAK at all possible signalling rates)";
+                    return (send_retry);
+                }
+                next.br--;
+                curcap = NULL;	        // force sendTraining to reselect
+                morePages = true;	// retransmit page
 		break;
 	    case FCF_PIN:		// nak, retry w/ operator intervention
 		emsg = "Unable to transmit page"
@@ -741,6 +749,12 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, fxS
 	    totdata = totdata+ts - (dp-data);
 	} else
 	    dp = data;
+
+        /*
+         * correct broken Phase C (T.4) data if neccessary 
+         */
+        correctPhaseCData(dp, &totdata, fillorder, params);
+
 	/*
 	 * Send the page of data.  This is slightly complicated
 	 * by the fact that we may have to add zero-fill before the

@@ -212,6 +212,12 @@ Class2Modem::recvPage(TIFF* tif, int& ppm, fxStr& emsg)
 	 */
 	if (hostDidCQ)
 	    ppr = isQualityOK(params) ? PPR_MCF : PPR_RTN;
+#if 0
+        /*
+         * RTN debug code: always respond with RTN to sending facsimile
+         */
+        ppr = PPR_RTN;
+#endif
 	if (ppr & 1)
 	    TIFFWriteDirectory(tif);	// complete page write
 	else

@@ -131,7 +131,7 @@ Class20Modem::sendPage(TIFF* tif, u_int pageChop)
     bool rc = sendPageData(tif, pageChop);
     if (!rc)
 	abortDataTransfer();
-    else
+    else if( conf.class2SendRTC )
 	rc = sendRTC(params.is2D());
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(getInputFlow(), FLOW_XONXOFF, ACT_DRAIN);

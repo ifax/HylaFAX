@@ -131,7 +131,7 @@ Class2Modem::getPrologue(Class2Params& dis, bool& hasDoc, fxStr& emsg)
 	    gotParams = parseClass2Capabilities(skipStatus(rbuf), dis);
 	    break;
 	case AT_FNSF:
-        recvNSF(NSF(skipStatus(rbuf)));
+            recvNSF(NSF(skipStatus(rbuf)));
 	    break;
 	case AT_FCSI:
 	    recvCSI(stripQuotes(skipStatus(rbuf)));
@@ -250,6 +250,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		case PPR_MCF:		// page good
 		case PPR_PIP:		// page good, interrupt requested
 		case PPR_RTP:		// page good, retrain requested
+                ignore:
 		    countPage();	// bump page count
 		    notifyPageSent(tif);// update server
 		    if (pph[2] == 'Z')
@@ -276,6 +277,15 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		    transferOK = true;
 		    break;
 		case PPR_RTN:		// page bad, retrain requested
+                    switch( conf.rtnHandling ){
+                    case RTN_IGNORE:
+                        goto ignore; // ignore error and trying to send next page
+                    case RTN_GIVEUP:
+                        emsg = "Unable to transmit page"
+                            " (giving up after RTN)";
+                        goto failed; // "over and out"
+                    }
+                    // case RTN_RETRANSMIT
 		    if (++ntrys >= 3) {
 			emsg = "Unable to transmit page"
 			       " (giving up after 3 attempts)";
@@ -387,6 +397,12 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	    totdata = totdata+ts - (dp-data);
 	} else
 	    dp = data;
+
+        /*
+         * correct broken Phase C (T.4) data if necessary
+         */
+        correctPhaseCData(dp, &totdata, fillorder, params);
+
 	beginTimedTransfer();
 	rc = putModemDLEData(dp, (u_int) totdata, bitrev, getDataTimeout());
 	endTimedTransfer();

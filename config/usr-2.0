@@ -78,3 +78,7 @@ Class2CQQueryCmd:	!(0),(0)	# override modem response
 # It is not necessary for the Courier modem.
 #
 Class2NRCmd:    AT+FNR=1,1,1,0
+#
+# USR modems violate Class 2.0 specs and do not send RTC itself
+#
+Class2SendRTC:	yes

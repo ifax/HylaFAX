@@ -71,10 +71,13 @@ void
 G3Encoder::encode(const void* vp, u_int w, u_int h)
 {
     u_int rowbytes = howmany(w, 8);
+    bool firstEOL = true;
 
     while (h-- > 0) {
-	if (bit != 4)					// byte-align EOL
-	    putBits(0, (bit < 4) ? bit+4 : bit-4);
+        if( firstEOL )                                  // according to T.4 first EOL 
+            firstEOL = false;                           // should not be aligned
+        else if (bit != 4)
+            putBits(0, (bit < 4) ? bit+4 : bit-4);      // byte-align other EOLs
 	if (is2D)
 	    putBits((EOL<<1)|1, 12+1);
 	else

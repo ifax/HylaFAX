@@ -39,11 +39,13 @@ private:
     void	setVolumeCmds(const fxStr& value);
     u_int	getSpeed(const char* value);
     u_int	getDataFormat(const char* value);
+    u_int       getRTNHandling(const char* cp);
 
     static bool findRate(const char*, BaudRate&);
     static bool findATResponse(const char*, ATResponse&);
     static bool findFlow(const char*, FlowControl&);
     static bool findDataFormat(const char*, u_int&);
+    static bool findRTNHandling(const char*, RTNHandling&);
 protected:
     ModemConfig();
 
@@ -170,7 +172,9 @@ public:
     fxStr	tagLineFontFile;	// font file for imaging tag lines
     u_int	recvDataFormat;		// received facsimile data format
 
-    virtual ~ModemConfig();
+    RTNHandling rtnHandling;            // RTN signal handling method
+    
+        virtual ~ModemConfig();
 
     void parseCID(const char*, CallerID&) const;
     const fxStr& getFlowCmd(FlowControl) const;

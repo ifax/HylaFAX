@@ -174,6 +174,7 @@ RingData	string	\-	distinctive ring data call identifier
 RingFax	string	\-	distinctive ring fax call identifier
 RingsBeforeAnswer	integer	\s-10\s+1	rings to wait before answering phone
 RingVoice	string	\-	distinctive ring voice call identifier
+RTNHandlingMethod	string	\s-1Retransmit\s+1	RTN signal handling method	
 SendFaxCmd\(dg	string	\s-1bin/faxsend\s+1	fax transmit command script
 SendPageCmd\(dg	string	\s-1bin/pagesend\s+1	pager transmit command script
 SendUUCPCmd\(dg	string	\s-1bin/uucpsend\s+1	\s-1UUCP\s+1 transmit command script
@@ -304,6 +305,7 @@ Class2PIECmd	string	\s-1AT+FIE=0\s+1	Class 2.0: command to set procedure interru
 Class2PTSCmd	string	\s-1AT+FPS\s+1	Class 2.0: command to set received page status
 Class2RecvDataTrigger	string	\s-1``\e22''\s+1	Class 2.0: character to send to trigger recv
 Class2RELCmd	string	\-	Class 2.0: command to enable byte-aligned \s-1EOL\s+1 codes
+Class2SendRTC	boolean	\s-1No\s+1	Class 2.0: append \s-1RTC\s+1 to page data on transmit
 Class2SFLOCmd	string	\s-1AT+FLO=1\s+1	Class 2.0: command to set software flow control
 Class2SPLCmd	string	\s-1AT+FSP\s+1	Class 2.0: command to set polling request
 Class2TBCCmd	string	\s-1AT+FPP=0\s+1	Class 2.0: command to enable stream mode
@@ -974,6 +976,29 @@ See also
 .B RingData
 and
 .BR RingFax .
+.TP
+.B RTNHandlingMethod
+Specifies how to react to RTN signal, received from the remote;
+one of ``\s-1Retransmit\s+1'', ``\s-1Giveup\s+1'' and
+``\s-1Ignore\s+1''. ``\s-1Retransmit\s+1'' assumes that the
+page is not sent succesfully if RTN signal has been received.
+Hylafax will made up to 2 additional attempts to send the page,
+decreasing signalling rate and retraining. If RTN is still there,
+it will place up to 2 additional calls. So if the remote always respond with
+RTN, the page will be send 9 times. Although this algorithm comply with
+T.30 specs and was originally implemented by Sam Leffler as the only
+possible choice, real fax machines behave completely different. There is a
+non-written rule among fax developers, that RTN means ``over and out'' -- hang
+up immediately and never try to send the same page to the same destination
+again. That is because RTN usually indicates problems with flow control,
+incorrectly encoded T.4 data, incompatibility between local and remote
+equipment etc., but very rarely is caused by the real noise on the line.
+This ``over and out'' behaviour can be activated by ``Giveup'' value.
+There is also third option, not so radical as ``Giveup''. Yes, we will never
+retransmit the page, but we can try to send the next page, and let the
+remote to decide what to do (accept our decision or hang up). Thus one page will
+(or will not) be missed but we have a chance to successfully send all other pages.
+This behaviour can be activated by ``Ignore'' value.
 .TP
 .B SendFaxCmd\(dg
 The command to use to process outbound facsimile jobs; see
@@ -2091,7 +2116,8 @@ not (necessarily) having byte-aligned codes.
 .B Class2SendRTC
 Whether or not to append an explicit ``Return To Control'' (\s-1RTC\s+1)
 signal to the page data when transmitting.
-The Class 2 spec (i.e. SP-2388-A) states the modem will append
+The Class 2 and Class 2.0 specs (i.e. SP-2388-A and TIA/EIA-592) state
+that the modem will append
 .SM RTC
 when it receives the post-page message command from the host; this
 parameter is provided in case the modem does not correctly implement

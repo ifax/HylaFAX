@@ -40,6 +40,10 @@ class fxStackBuffer;
 class FaxFont;
 class FaxServer;
 
+// NB: these would be enums in the FaxModem class
+//     if there were a portable way to refer to them!
+typedef unsigned int RTNHandling;       // RTN signal handling method 
+
 /*
  * This is an abstract class that defines the interface to
  * the set of modem drivers.  Real drivers are derived from
@@ -81,7 +85,7 @@ private:
     fxStr	tsi;		// received TSI/CSI
     fxStr	sub;		// received subaddressing string
     fxStr	pwd;		// received password string
-    NSF     nsf;		// received nonstandard facilities
+    NSF         nsf;		// received nonstandard facilities
     // NB: remaining session state is below (params) or maintained by subclass
 protected:
 // NB: these are defined protected for convenience (XXX)
@@ -133,7 +137,18 @@ protected:
     bool	setupTagLineSlop(const Class2Params&);
     u_int	getTagLineSlop() const;
     u_char*	imageTagLine(u_char* buf, u_int fillorder, const Class2Params&);
+/*
+ * Correct if neccessary Phase C (T.4) data (remove extra RTC etc.)
+ */
+    void        correctPhaseCData(u_char* buf, u_long* pBufSize,
+                                  u_int fillorder, const Class2Params& params);
 public:
+    enum {			// FaxModem::RTNHandling
+        RTN_RETRANSMIT = 0,         // retransmit page after RTN until MCF/MPS
+        RTN_GIVEUP     = 1,         // immediately abort
+        RTN_IGNORE     = 2,         // ignore error and send next page
+    };
+
     virtual ~FaxModem();
 
     bool isFaxModem() const;
