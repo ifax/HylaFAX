@@ -8,7 +8,7 @@ JOBID=$1
 ARCHIVETO=archive/$JOBID
 FILETYPES="^!postscript:|^!tiff:|^!pcl:|^!pdf:|^!data:"
 QFILE=doneq/q$JOBID
-COMMLOGS=`grep -l "SEND FAX: JOB $JOBID" log/*`
+COMMLOGS=`find log -type f -name "c*"  -print | xargs -n50  grep -l "SEND FAX: JOB $JOBID"`
 DOCS=`grep -E $FILETYPES $QFILE | sed 's/.*://g'`
 NUMBER=`grep "^number:" $QFILE | sed 's/^number://g'`
 
