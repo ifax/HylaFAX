@@ -250,8 +250,8 @@ Class1Cmd	string	\s-1AT+FCLASS=1\s+1	Class 1: command to enter class 1
 Class1HFLOCmd	string	\-	Class 1: command to set hardware flow control
 Class1FrameOverhead	integer	\s-14\s+1	Class 1: extra bytes in a received \s-1HDLC\s+1 frame
 Class1NFLOCmd	string	\-	Class 1: command to set no flow control
-Class1RecvAbortOK	integer	\s-1100\s+1	Class 1: max wait (ms) for ``\s-1OK\s+1'' after recv abort
-Class1RecvIdentTimer	integer	\s-135000\s+1	Class 1: max wait (ms) for initial ident frame
+Class1RecvAbortOK	integer	\s-1200\s+1	Class 1: max wait (ms) for ``\s-1OK\s+1'' after recv abort
+Class1RecvIdentTimer	integer	\s-140000\s+1	Class 1: max wait (ms) for initial ident frame
 Class1SFLOCmd	string	\-	Class 1: command to set software flow control
 Class1TCFMaxNonZero	integer	\s-110\s+1	Class 1: max% of non-zero data in good \s-1TCF\s+1
 Class1TCFMinRun	integer	\s-11000\s+1	Class 1: minimum zero run in good \s-1TCF\s+1
