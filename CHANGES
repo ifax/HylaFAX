@@ -1,5 +1,9 @@
 #	$Id$	
 
+Changelog for HylaFAX 4.1.8 - Nov 11, 2003
+
+* fix remote format string vulnerability in hfaxd (11 Nov 2003)
+
 Changelog for HylaFAX 4.1.7 - Jul 20, 2003
 
 * fix PageChop feature (20 Jul 2003)
