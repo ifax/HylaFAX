@@ -105,44 +105,6 @@ ClassModem::ClassModem(ModemServer& s, const ModemConfig& c)
     , modelQueryCmd(c.modelQueryCmd)
     , revQueryCmd(c.revQueryCmd)
 {
-    /*
-     * The modem drivers and main server code require:
-     *
-     * echoOff		command echo disabled
-     * verboseResults	verbose command result strings
-     * resultCodes	result codes enabled
-     * onHook		modem initially on hook (hung up)
-     * noAutoAnswer	no auto-answer (we do it manually)
-     *
-     * In addition the following configuration is included
-     * in the reset command set:
-     *
-     * flowControl	DCE-DTE flow control method
-     * setupDTR		DTR management technique
-     * setupDCD		DCD management technique
-     * pauseTime	time to pause for "," when dialing
-     * waitTime		time to wait for carrier when dialing
-     *
-     * Any other modem-specific configuration that needs to
-     * be done at reset time should be implemented by overriding
-     * the ClassModem::reset method.
-     */
-    // XXX: workaround yet another GCC bug (sigh)
-    const fxStr& flow = conf.getFlowCmd(conf.flowControl);
-    resetCmds = "AT"
-	      | stripAT(conf.resetCmds)		// prepend to insure our needs
-	      | stripAT(conf.echoOffCmd)
-	      | stripAT(conf.verboseResultsCmd)
-	      | stripAT(conf.resultCodesCmd)
-	      | stripAT(conf.noAutoAnswerCmd)
-	      | stripAT(conf.onHookCmd)
-	      | "\nAT"
-	      | stripAT(conf.pauseTimeCmd)
-	      | stripAT(conf.waitTimeCmd)
-	      | stripAT(flow)
-	      | stripAT(conf.setupDTRCmd)
-	      | stripAT(conf.setupDCDCmd)
-	      ;
     modemServices = 0;
     rate = BR0;
     flowControl = conf.flowControl;
@@ -642,9 +604,28 @@ ClassModem::trimModemLine(char buf[], int& cc)
     }
 }
 
-/* 
- * Hayes-style modem manipulation support.
- */
+    /*
+     * The modem drivers and main server code require:
+     *
+     * echoOff		command echo disabled
+     * verboseResults	verbose command result strings
+     * resultCodes	result codes enabled
+     * onHook		modem initially on hook (hung up)
+     * noAutoAnswe	no auto-answer (we do it manually)
+     *
+     * In addition the following configuration is included
+     * in the reset command set:
+     *
+     * flowControl	DCE-DTE flow control method
+     * setupDTR		DTR management technique
+     * setupDCD		DCD management technique
+     * pauseTime	time to pause for "," when dialing
+     * waitTime		time to wait for carrier when dialing
+     *
+     * Any other modem-specific configuration that needs to
+     * be done at reset time should be implemented by overriding
+     * the ClassModem::reset method.
+     */
 bool
 ClassModem::reset(long ms)
 {
@@ -670,8 +651,46 @@ ClassModem::reset(long ms)
      * reset commands.  Depending on the modem and its
      * state, we may wait 30 sec for OK repsonse.
      */
-    return atCmd(conf.softResetCmd, AT_OK, 30*1000)
-            && atCmd(resetCmds, AT_OK, ms);
+    if ( true != atCmd(conf.softResetCmd, AT_OK, 30*1000) ) {
+        return false;
+    }
+    if ( true != atCmd(conf.resetCmds, AT_OK, ms) ) {
+        return false;
+    }
+    if ( true != atCmd(conf.echoOffCmd, AT_OK, ms) ) {
+        return false;
+    }
+    if ( true != atCmd(conf.verboseResultsCmd, AT_OK, ms) ) {
+        return false;
+    }
+    if ( true != atCmd(conf.resultCodesCmd, AT_OK, ms) ) {
+        return false;
+    }
+    if ( true != atCmd(conf.noAutoAnswerCmd, AT_OK, ms) ) {
+        return false;
+    }
+    // some modems do not accept standard onHookCmd (ATH0) when
+    // they are allready on hook
+//    if ( true != atCmd(conf.onHookCmd, AT_OK, ms) ) {
+//        return false;
+//    }
+    if ( true != atCmd(conf.pauseTimeCmd, AT_OK, ms) ) {
+        return false;
+    }
+    if ( true != atCmd(conf.waitTimeCmd, AT_OK, ms) ) {
+        return false;
+    }
+    if ( true != atCmd(conf.getFlowCmd(conf.flowControl), AT_OK, ms) ) {
+        return false;
+    }
+    if ( true != atCmd(conf.setupDTRCmd, AT_OK, ms) ) {
+        return false;
+    }
+    if ( true != atCmd(conf.setupDCDCmd, AT_OK, ms) ) {
+        return false;
+    }
+
+    return true;
 }
 
 bool

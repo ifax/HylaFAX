@@ -169,7 +169,6 @@ public:
     };
 private:
     ModemServer& server;	// server for getting to device
-    fxStr	resetCmds;	// commands to use for reset operation
     long	dataTimeout;	// baud rate-dependent data timeout
     BaudRate	rate;		// selected DTE-DCE communication rate
     FlowControl	iFlow;		// input flow control scheme
