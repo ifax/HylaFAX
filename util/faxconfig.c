@@ -81,13 +81,19 @@ main(int argc, char** argv)
 	    /*NOTREACHED*/
 	}
     if (devid != NULL) {
-	if (devid[0] == FAX_FIFO[0])
-	    strcpy(fifoname, devid);
-	else
-	    sprintf(fifoname, "%s.%.*s", FAX_FIFO,
-		sizeof (fifoname) - sizeof (FAX_FIFO), devid);
-    } else
-	strcpy(fifoname, FAX_FIFO);
+        if (devid[0] == FAX_FIFO[0]) {
+            if (strlen(devid) < sizeof(fifoname)) {
+                strcpy(fifoname, devid);
+            } else {
+                fatal("Argument is too long: %s", devid);
+            }
+        } else {
+            snprintf(fifoname, sizeof(fifoname), "%s.%.*s", FAX_FIFO,
+                sizeof (fifoname) - sizeof (FAX_FIFO), devid);
+        }
+    } else {
+        strcpy(fifoname, FAX_FIFO);
+    }
     for (cp = fifoname; cp = strchr(cp, '/'); *cp++ = '_')
 	;
     if (chdir(spooldir) < 0)
@@ -97,32 +103,39 @@ main(int argc, char** argv)
 	int fifo = open(fifoname, O_WRONLY|O_NDELAY);
 	if (fifo < 0)
 	    fatal("%s: open: %s", fifoname, strerror(errno));
-	do {
-	    int quote;
-	    char *cmd;
+        do {
+            int quote;
+            int cmdlen;
+            int cmdsize;
+            char *cmd;
 
-	    if (argc - optind < 2)
-		fatal("Missing value for \"%s\" parameter.\n", argv[optind]);
-	    cp = argv[optind+1];
-	    if (*cp != '"') {
-		for (; *cp && !isspace(*cp); cp++) 
-		    ;
-		quote = (*cp != '\0');
-	    } else
-		quote = 1;
-	    cmd = malloc(strlen(argv[optind])+strlen(argv[optind+1])+10);
-	    if (quote)
-		sprintf(cmd, "C%s%s:\"%s\"",
-		    isQueuer ? ":" : "", argv[optind], argv[optind+1]);
-	    else
-		sprintf(cmd, "C%s%s:%s",
-		    isQueuer ? ":" : "", argv[optind], argv[optind+1]);
-	    if (write(fifo, cmd, strlen(cmd)) != strlen(cmd))
-		fatal("%s: FIFO write failed for command (%s)",
-		    argv[0], strerror(errno));
-	    free(cmd);
-	} while ((optind += 2) < argc);
-	(void) close(fifo);
+            if (argc - optind < 2) {
+                fatal("Missing value for \"%s\" parameter.\n", argv[optind]);
+            }
+            cp = argv[optind+1];
+            if (*cp != '"') {
+            	for (; *cp && !isspace(*cp); cp++) 
+                ;
+            	quote = (*cp != '\0');
+            } else {
+                quote = 1;
+            }
+            cmdsize = strlen(argv[optind]) + strlen(argv[optind+1]) + 10;
+            cmd = malloc(cmdsize);
+            if (quote) {
+                cmdlen = snprintf(cmd, cmdsize, "C%s%s:\"%s\"",
+                    isQueuer ? ":" : "", argv[optind], argv[optind+1]);
+            } else {
+                cmdlen = snprintf(cmd, cmdsize, "C%s%s:%s",
+                    isQueuer ? ":" : "", argv[optind], argv[optind+1]);
+            }
+            if (cmdlen < 0 || cmdlen >= cmdsize || write(fifo, cmd, cmdlen) != cmdlen) {
+                fatal("%s: FIFO write failed for command (%s)",
+            	    argv[0], strerror(errno));
+            }
+            free(cmd);
+        } while ((optind += 2) < argc);
+        (void) close(fifo);
     }
-   return 0;
+    return 0;
 }
