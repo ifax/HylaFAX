@@ -155,31 +155,44 @@ Class20Modem::pageDone(u_int ppm, u_int& ppr)
     eop[0] = DLE;
     eop[1] = ppmCodes[ppm];
 
-    ppr = 0;					// something invalid
+    ppr = 0;            // something invalid
     if (putModemData(eop, sizeof (eop))) {
-	for (;;) {
-	    switch (atResponse(rbuf, conf.pageDoneTimeout)) {
-	    case AT_FHNG:
-		if (!isNormalHangup())
-		    return (false);
-		/* fall thru... */
-	    case AT_OK:				// page data good
-		ppr = PPR_MCF;			// could be PPR_RTP/PPR_PIP
-		return (true);
-	    case AT_ERROR:			// page data bad
-		ppr = PPR_RTN;			// could be PPR_PIN
-		return (true);
-	    case AT_EMPTYLINE:
-	    case AT_TIMEOUT:
-	    case AT_NOCARRIER:
-	    case AT_NODIALTONE:
-	    case AT_NOANSWER:
-		goto bad;
-	    }
-	}
+        for (;;) {
+            switch (atResponse(rbuf, conf.pageDoneTimeout)) {
+            case AT_FHNG:
+                if (!isNormalHangup()) {
+                    return (false);
+                }
+                ppr = PPR_MCF;
+                return (true);
+            case AT_OK:
+            case AT_ERROR:
+                /*
+                 * Despite of the (wrong) comment above,
+                 * we do explicit status query e.g. to
+                 * distinguish between RTN and PIN 
+                 */
+                {
+                    fxStr s;
+                    if(!atQuery("AT+FPS?", s) ||
+                            sscanf(s, "%u", &ppr) != 1) {
+                        protoTrace("MODEM protocol botch (\"%s\"), %s",
+                                (const char*)s, "can not parse PPR");
+                        return (false);     // force termination
+                    }
+                }
+                return (true);
+            case AT_EMPTYLINE:
+            case AT_TIMEOUT:
+            case AT_NOCARRIER:
+            case AT_NODIALTONE:
+            case AT_NOANSWER:
+                goto bad;
+            }
+        }
     }
 bad:
-    processHangup("50");			// Unspecified Phase D error
+    processHangup("50");        // Unspecified Phase D error
     return (false);
 }
 
