@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH FAXQCLEAN 1M "March 14, 1996"
+.TH FAXQCLEAN ${MANNUM1_8} "March 14, 1996"
 .SH NAME
 faxqclean \- \*(Fx queue cleaner process
 .SH SYNOPSIS
@@ -40,7 +40,7 @@ faxqclean \- \*(Fx queue cleaner process
 is a program that processes completed \*(Fx
 jobs and expunges unreferenced document files.
 This program is intended to be invoked by
-.IR cron (1M)
+.IR cron (${MANNUM1_8})
 on behalf of the super user (i.e. root) one or more times a day.
 For example, the following crontab entry might be setup for root to run
 .I faxqclean
@@ -59,7 +59,7 @@ subdirectory in the \*(Fx spooling area and process each job
 according to the
 .B doneop
 field specified in the job description file; c.f.
-.IR sendq (4F).
+.IR sendq (${MANNUM4_5}).
 Jobs that are marked for removal are purged and references to documents
 are removed.
 Jobs that are marked for archival may be archived depending on the
@@ -122,12 +122,12 @@ ${SPOOL}/archive	where archived jobs are placed
 .fi
 .PP
 Consult
-.IR hylafax-server (4F)
+.IR hylafax-server (${MANNUM4_5})
 for a complete discussion of the structure and
 content of the spooling area.
 .SH "SEE ALSO"
-.IR faxq (1M),
-.IR hylafax-server (4F),
-.IR sendq (4F),
-.IR doneq (4F),
-.IR archive (4F).
+.IR faxq (${MANNUM1_8}),
+.IR hylafax-server (${MANNUM4_5}),
+.IR sendq (${MANNUM4_5}),
+.IR doneq (${MANNUM4_5}),
+.IR archive (${MANNUM4_5}).

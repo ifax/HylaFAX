@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH FAXWATCH 1M "January 18, 1996"
+.TH FAXWATCH ${MANNUM1_8} "January 18, 1996"
 .SH NAME
 faxwatch \- monitor low-level \*(Fx server actions
 .SH SYNOPSIS
@@ -53,7 +53,7 @@ The
 .I trigger-expression
 is supplied as an argument to a ``\s-1SITE TRIGGER\s+1'' command
 passed to the 
-.IR hfaxd (1M)
+.IR hfaxd (${MANNUM1_8})
 The syntax for this expression is:
 .IP
 [<\fIclass\fP>['<'\fIid\fP'>'][<\fImask\fP>|'*']]*
@@ -187,5 +187,5 @@ MODEM_CID	M	0x0800	inbound caller-ID information
 .PP
 \(dg Event to be removed soon.
 .SH "SEE ALSO"
-.IR hylafax-server (4F),
-.IR hfaxd (1M).
+.IR hylafax-server (${MANNUM4_5}),
+.IR hfaxd (${MANNUM1_8}).

@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH PAGESEND 1M "October 3, 1995"
+.TH PAGESEND ${MANNUM1_8} "October 3, 1995"
 .SH NAME
 pagesend \- \*(Fx IXO/TAP and UCP transmit program
 .SH SYNOPSIS
@@ -65,7 +65,7 @@ will inherit a lockfile for the modem from the
 process.
 The format of the job description file specified on the
 command line is described in
-.IR sendq (4F).
+.IR sendq (${MANNUM4_5}).
 .PP
 .I pagesend
 initializes the modem before attempting to transmit the pager message
@@ -74,7 +74,7 @@ If the modem does not respond to this initialization,
 .I pagesend
 will repeatedly try to initialize the modem.
 This behaviour is required for send-only environments in which a
-.IR faxgetty (1M)
+.IR faxgetty (${MANNUM1_8})
 process is not run (and the modem would be known to be in a
 properly initialized state).
 .I pagesend
@@ -96,12 +96,12 @@ in the
 subdirectory and is named
 .BI config. device-ID ;
 consult
-.IR config (4F)
+.IR config (${MANNUM4_5})
 for detailed information on the contents of configuration files.
 .PP
 The protocol which must be used for a specific service provider
 is controled from the
-.IR info (4F)
+.IR info (${MANNUM4_5})
 file.
 .SH OPTIONS
 .TP 10
@@ -158,11 +158,11 @@ return value of the process:
 ${SPOOL}/etc/config.devID	device-specific configuration file
 .PP
 Consult
-.IR hylafax-server (4F)
+.IR hylafax-server (${MANNUM4_5})
 for a complete discussion of the structure and
 content of the spooling area.
 .SH "SEE ALSO"
-.IR faxq (1M),
-.IR hylafax-server (4F),
-.IR config (4F),
-.IR info (4F)
+.IR faxq (${MANNUM1_8}),
+.IR hylafax-server (${MANNUM4_5}),
+.IR config (${MANNUM4_5}),
+.IR info (${MANNUM4_5})

@@ -27,14 +27,14 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH PAGERMAP 4F "May 8, 1996"
+.TH PAGERMAP ${MANNUM4_5} "May 8, 1996"
 .SH NAME
 pagermap \- \s-1SNPP\s+1 pager identifier mapping file
 .SH DESCRIPTION
 The file
 .B etc/pagermap
 (by default) is used by the \s-1SNPP\s+1 support in
-.IR hfaxd (1M)
+.IR hfaxd (${MANNUM1_8})
 to map pager identifiers specified with the \s-1PAGE\s+1 directive
 to
 .SM IXO/TAP
@@ -51,7 +51,7 @@ may be called a different name; the filename is specified
 with the
 .I PagerIDMapFile
 configuration parameter read by
-.IR hfaxd (1M).
+.IR hfaxd (${MANNUM1_8}).
 .PP
 The pagermap file is comprised of one or more
 lines of the following format:
@@ -123,5 +123,5 @@ Sky(.*)	1800SkyTel/\e1
 .fi
 .sp .5
 .SH "SEE ALSO"
-.IR hfaxd (1M),
-.IR hylafax-server (4F)
+.IR hfaxd (${MANNUM1_8}),
+.IR hylafax-server (${MANNUM4_5})

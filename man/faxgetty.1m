@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH FAXGETTY 1M "July 31, 1995"
+.TH FAXGETTY ${MANNUM1_8} "July 31, 1995"
 .SH NAME
 faxgetty \- \*(Fx front-door process
 .SH SYNOPSIS
@@ -57,7 +57,7 @@ One
 should be run for each facsimile modem on a machine.
 .I faxgetty
 is typically started by
-.IR init (1M).
+.IR init (${MANNUM1_8}).
 .I faxgetty
 can also be used with data-only modems; this may be desirable if
 some of the non-facsimile features are important, such as the
@@ -69,9 +69,9 @@ and to a
 .SM FIFO
 special file on which it accepts command directives from
 administrative commands such as
-.IR faxanswer (1M)
+.IR faxanswer (${MANNUM1_8})
 and
-.IR faxabort (1M).
+.IR faxabort (${MANNUM1_8}).
 .I faxgetty
 also catches 
 .SM SIGTERM
@@ -85,7 +85,7 @@ operation are controlled through a configuration file.
 In particular, for 
 .I faxgetty
 to automatically invoke the
-.IR getty (1M)
+.IR getty (${MANNUM1_8})
 program to handle incoming data connections the
 .B GettyArgs
 parameter must be setup in the configuration file.
@@ -105,7 +105,7 @@ for
 for
 .IR /dev/term/10 .
 Consult
-.IR config (4F)
+.IR config (${MANNUM4_5})
 for detailed information on the contents of configuration files.
 .SH OPTIONS
 .TP 10
@@ -139,15 +139,15 @@ ${SPOOL}/etc/config.\fIdevice\fP	device-specific configuration file
 .fi
 .PP
 Consult
-.IR hylafax-server (4F)
+.IR hylafax-server (${MANNUM4_5})
 for a complete discussion of the structure and
 content of the spooling area.
 .SH "SEE ALSO"
-.IR faxabort (1M),
-.IR faxanswer (1M),
-.IR faxconfig (1M),
-.IR faxstate (1M),
-.IR faxq (1M),
-.IR getty (1M),
-.IR hylafax-server (4F),
-.IR config (4F)
+.IR faxabort (${MANNUM1_8}),
+.IR faxanswer (${MANNUM1_8}),
+.IR faxconfig (${MANNUM1_8}),
+.IR faxstate (${MANNUM1_8}),
+.IR faxq (${MANNUM1_8}),
+.IR getty (${MANNUM1_8}),
+.IR hylafax-server (${MANNUM4_5}),
+.IR config (${MANNUM4_5})

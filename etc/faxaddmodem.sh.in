@@ -76,7 +76,7 @@ test -f $SPOOL/etc/setup.cache || {
 FATAL ERROR: $SPOOL/etc/setup.cache is missing!
 
 The file $SPOOL/etc/setup.cache is not present.  This
-probably means the machine has not been setup using the faxsetup(1M)
+probably means the machine has not been setup using the faxsetup(@MANNUM1_8@)
 command.  Read the documentation on setting up HylaFAX before you
 startup a server system.
 
@@ -314,7 +314,7 @@ fi
 cat<<EOF
 
 Ok, time to setup a configuration file for the modem.  The manual
-page config(4F) may be useful during this process.  Also be aware
+page config(@MANNUM4_5@) may be useful during this process.  Also be aware
 that at any time you can safely interrupt this procedure.
 
 EOF
@@ -1665,7 +1665,7 @@ There is no prototype configuration file for your modem, so we will
 have to fill in the appropriate parameters by hand.  You will need the
 manual for how to program your modem to do this task.  In case you are
 uncertain of the meaning of a configuration parameter you should
-consult the config(4F) manual page for an explanation.
+consult the config(@MANNUM4_5@) manual page for an explanation.
 
 Note that modem commands must be specified exactly as they are to be
 sent to the modem.  Note also that quote marks (") will not be displayed
@@ -2025,7 +2025,7 @@ if [ $updateConfig = yes ]; then
 fi
 
 echo ""
-echo "Don't forget to run faxmodem(1M) (if you have a send-only environment)"
+echo "Don't forget to run faxmodem(@MANNUM1_8@) (if you have a send-only environment)"
 echo "or configure init to run faxgetty on $TTY."
 
 exec >/dev/null 2>&1

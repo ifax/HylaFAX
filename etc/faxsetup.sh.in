@@ -533,7 +533,7 @@ EOF
 EOF
 	}
 	;;
-    *-svr4*|*-sysv4*|*-solaris*)
+    *-svr4*|*-sysv4*|*-sysv5*|*-solaris*)
 	dumpTTYFuncs()
 	{
 	    cat<<'EOF'
@@ -1587,7 +1587,7 @@ The file $1 does not exist or is not a regular file.
 This file specifies which clients are permitted to use the HylaFAX
 server.  The file will be initialized so that local clients are
 provided service.  Consult the HTML documentation and the manual
-page hosts.hfaxd(4F) for more information on setting up this file.
+page hosts.hfaxd(@MANNUM4_5@) for more information on setting up this file.
 
 EOF
 	$RM $HOSTS
@@ -2181,7 +2181,7 @@ EOF
 	cat<<EOF
 
 You do not appear to have any modems configured for use.  Modems are
-configured for use with HylaFAX with the faxaddmodem(1M) command.
+configured for use with HylaFAX with the faxaddmodem(@MANNUM1_8@) command.
 EOF
 	prompt "Do you want to run faxaddmodem to configure a modem [yes]?"; read x
 	while isOK "$x"; do
@@ -2202,7 +2202,7 @@ Looks like you have some faxgetty processes running (PIDs are):
 
 It is usually a good idea to restart these processes after running
 faxsetup; especially if have just installed new software.  If these
-processes are being started by init(1M) then sending each of them a
+processes are being started by init(@MANNUM1_8@) then sending each of them a
 QUIT message with the faxquit command should cause them to be restarted.
 EOF
 	    prompt "Is it ok to send a QUIT command to each process [yes]?"
@@ -2252,7 +2252,7 @@ about new modems and/or their status.  This means that you must use the
 faxmodem program to inform the new faxq process about the modems you
 want to have scheduled by HylaFAX.  Beware that if you have modems that
 require non-default capabilities specified to faxmodem then you should
-read faxmodem(1M) manual page and do this work yourself (since this
+read faxmodem(@MANNUM1_8@) manual page and do this work yourself (since this
 script is not intelligent enough to automatically figure out the modem
 capabilities and supply the appropriate arguments).
 

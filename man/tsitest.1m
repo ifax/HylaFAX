@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH TSITEST 1M "March 3, 1995"
+.TH TSITEST ${MANNUM1_8} "March 3, 1995"
 .SH NAME
 tsitest \- \*(Fx
 .SM TSI
@@ -45,14 +45,14 @@ is an interactive program for the testing of the
 access control list (\c
 .SM ACL\c
 ) used by the 
-.IR faxgetty (1M)
+.IR faxgetty (${MANNUM1_8})
 server processes to screen incoming facsimile.
 The 
 .I ACLfile
 specified on the command line is expected to contain 
 .SM TSI
 control expressions as described in
-.IR tsi (4F).
+.IR tsi (${MANNUM4_5}).
 Strings typed at the prompt are then checked against the list
 and
 .I tsitest
@@ -73,7 +73,7 @@ Operate \fIquietly\fP;
 .I tsitest
 will print only whether an input string is accepted or rejected.
 .SH "SEE ALSO"
-.IR faxgetty (1M),
-.IR hylafax-server (4F),
-.IR config (4F),
-.IR tsi (4F)
+.IR faxgetty (${MANNUM1_8}),
+.IR hylafax-server (${MANNUM4_5}),
+.IR config (${MANNUM4_5}),
+.IR tsi (${MANNUM4_5})

@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH STATUS 4F "January 18, 1996"
+.TH STATUS ${MANNUM4_5} "January 18, 1996"
 .SH NAME
 status \- server status database
 .SH DESCRIPTION
@@ -49,9 +49,9 @@ program when given the
 option; it should contain information about the server system
 including an administrative contact, its location, usage conventions, etc.
 .SH "SEE ALSO"
-.IR faxq (1M),
-.IR faxsend (1M),
-.IR pagesend (1M),
-.IR faxgetty (1M),
-.IR hfaxd (1M),
+.IR faxq (${MANNUM1_8}),
+.IR faxsend (${MANNUM1_8}),
+.IR pagesend (${MANNUM1_8}),
+.IR faxgetty (${MANNUM1_8}),
+.IR hfaxd (${MANNUM1_8}),
 .IR faxstat (1)

@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH FAXQ 1M "October 27, 1995"
+.TH FAXQ ${MANNUM1_8} "October 27, 1995"
 .SH NAME
 faxq \- \*(Fx queue manager process
 .SH SYNOPSIS
@@ -51,14 +51,14 @@ outbound facsimile jobs (and potentially other types of jobs as well).
 .I faxq
 may be run by itself to provide outbound-only services or it
 may be run together with one or more
-.IR faxgetty (1M)
+.IR faxgetty (${MANNUM1_8})
 processes, in which case inbound services (e.g. receiving
 facsimile) are provided.
 When
 .I faxq
 is run by itself the set of available modems must be specified
 using the
-.IR faxmodem (1M)
+.IR faxmodem (${MANNUM1_8})
 command.
 Each modem specified in this way is assumed to exist and to
 be capable of use as a facsimile modem.
@@ -76,7 +76,7 @@ is the intended way for the software to operate.
 .PP
 .I faxq
 receives notification of outbound jobs to process from the
-.IR hfaxd (1M)
+.IR hfaxd (${MANNUM1_8})
 process that implements the server-side of the \*(Fx
 client-server protocol.
 Notification is through messages sent to a
@@ -85,7 +85,7 @@ special file that
 .I faxq
 listens to.
 This file is also used by other administrative programs such as
-.IR faxquit (1M).
+.IR faxquit (${MANNUM1_8}).
 .PP
 Many aspects of
 .I faxq
@@ -97,7 +97,7 @@ subdirectory and is named
 (as opposed to the per-modem configuration files named
 .BI config. devid );
 consult
-.IR config (4F)
+.IR config (${MANNUM4_5})
 for detailed information on this configuration file.
 Note that
 .I faxq
@@ -105,7 +105,7 @@ automatically re-reads its configuration file if it has been
 changed.
 It is also possible to dynamically change configuration parameters
 in a running process with the
-.IR faxconfig (1M)
+.IR faxconfig (${MANNUM1_8})
 program.
 Beware however that parameters changed in this way will be reset
 to the values specified in the configuration file if the file
@@ -136,15 +136,15 @@ ${SPOOL}/etc/config	configuration file
 .fi
 .PP
 Consult
-.IR hylafax-server (4F)
+.IR hylafax-server (${MANNUM4_5})
 for a complete discussion of the structure and
 content of the spooling area.
 .SH "SEE ALSO"
-.IR faxabort (1M),
-.IR faxconfig (1M),
-.IR faxmodem (1M),
-.IR faxquit (1M),
-.IR faxstate (1M),
-.IR getty (1M),
-.IR hylafax-server (4F),
-.IR config (4F).
+.IR faxabort (${MANNUM1_8}),
+.IR faxconfig (${MANNUM1_8}),
+.IR faxmodem (${MANNUM1_8}),
+.IR faxquit (${MANNUM1_8}),
+.IR faxstate (${MANNUM1_8}),
+.IR getty (${MANNUM1_8}),
+.IR hylafax-server (${MANNUM4_5}),
+.IR config (${MANNUM4_5}).

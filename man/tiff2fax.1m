@@ -29,7 +29,7 @@
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
 .ds Tf \s-1TIFF\s+1
-.TH TIFF2FAX 1M "May 12, 1996"
+.TH TIFF2FAX ${MANNUM1_8} "May 12, 1996"
 .SH NAME
 tiff2fax \- convert \*(Tf for facsimile transmission by \*(Fx
 .SH SYNOPSIS
@@ -43,9 +43,9 @@ tiff2fax \- convert \*(Tf for facsimile transmission by \*(Fx
 takes \*(Tf input and generates a \*(Tf
 Class F image file suitable for facsimile transmission.
 It is usually invoked by the \*(Fx scheduler process,
-.IR faxq (1M).
+.IR faxq (${MANNUM1_8}).
 The default implementation uses the
-.IR tiffcheck (1M)
+.IR tiffcheck (${MANNUM1_8})
 program and tools from the freely available \*(Tf software
 distribution to implement the conversion operations.
 .SH OPTIONS
@@ -101,5 +101,5 @@ There is no way to control how images are treated when they are
 resized; e.g. the original aspect ratio is not always maintained.
 .SH "SEE ALSO"
 .IR sendfax (1),
-.IR faxq (1M),
-.IR hylafax-server(4F)
+.IR faxq (${MANNUM1_8}),
+.IR hylafax-server(${MANNUM4_5})

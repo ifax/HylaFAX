@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH CQTEST 1M "October 3, 1995"
+.TH CQTEST ${MANNUM1_8} "October 3, 1995"
 .SH NAME
 cqtest \- \*(Fx copy quality checking test program
 .SH SYNOPSIS
@@ -39,7 +39,7 @@ cqtest \- \*(Fx copy quality checking test program
 .I cqtest
 is a program for testing the copy quality checking support in
 the \*(Fx software (specifically, in the
-.IR faxgetty (1M)
+.IR faxgetty (${MANNUM1_8})
 program).
 .I cqtest
 takes a
@@ -66,7 +66,7 @@ appear in each acceptable page of input data.
 This is equivalent to the
 .B MaxConsecutiveBadLines
 configuration parameter; c.f.
-.IR config (4F).
+.IR config (${MANNUM4_5}).
 By default 
 .I cqtest
 accepts no more than 5 consecutive bad lines in a page.
@@ -85,7 +85,7 @@ that is the expected width.
 This is equivalent to the
 .B PercentGoodLines
 configuration parameter; c.f.
-.IR config (4F).
+.IR config (${MANNUM4_5}).
 By default 
 .I cqtest
 requires that 95% of the rows of each page be good.
@@ -110,5 +110,5 @@ RECV/CQ: Bad 1D pixel count, row 148, got 1776, expected 1728
 RECV: 2234 total lines, 1 bad lines, 1 consecutive bad lines
 .fi
 .SH "SEE ALSO"
-.IR faxgetty (1M),
-.IR config (4F)
+.IR faxgetty (${MANNUM1_8}),
+.IR config (${MANNUM4_5})

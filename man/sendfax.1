@@ -93,7 +93,7 @@ Portable Document Format (PDF), and
 Silicon Graphics format images for transmission.
 Support for other file formats can be easily added
 through an extensible file typing and conversion facility; see
-.IR typerules (4F).
+.IR typerules (${MANNUM4_5}).
 Note that since
 .SM TIFF
 Class F documents are processed directly it is simple to forward
@@ -156,9 +156,9 @@ call waiting), may be included in the destination phone number.
 Whether or not they are stripped from the string used to
 dial the destination fax machine is dependent on the dialstring
 rules configured for use on the server; c.f.
-.IR config (4F)
+.IR config (${MANNUM4_5})
 and
-.IR dialrules (4F).
+.IR dialrules (${MANNUM4_5}).
 .PP
 A destination may also be specified as
 .IR user@fax-number .
@@ -333,7 +333,7 @@ when imaging tag lines on outgoing pages.
 Consult the description of the
 .B TagLineFormat
 parameter in
-.IR config (4F)
+.IR config (${MANNUM4_5})
 for an explanation of how to construct a format string.
 .IP
 \fINote that many locales require that proper identification
@@ -481,7 +481,7 @@ Facsimile are normally imaged with a system-default page size
 (usually letter-size pages, 8.5" by 11", for sites in North America).
 Alternate page sizes are specified symbolically using either
 the name or abbreviation of an entry in the
-.IR pagesizes (4F)
+.IR pagesizes (${MANNUM4_5})
 database; e.g.
 .I a3
 (ISO A3),
@@ -798,7 +798,7 @@ Set the transmitted page length in millimeters.
 .TP 16
 .B PageSize
 Set the page dimensions according to an entry in the
-.IR pagesizes (4F)
+.IR pagesizes (${MANNUM4_5})
 database.
 (Equivalent to the
 .B \-s
@@ -924,6 +924,6 @@ ${LIBEXEC}/sgi2fax	for converting SGI RGB images
 .IR faxstat (1),
 .IR sgi2fax (1),
 .IR textfmt (1),
-.IR hfaxd (1M),
-.IR hylafax-server (4F),
-.IR typerules (4F)
+.IR hfaxd (${MANNUM1_8}),
+.IR hylafax-server (${MANNUM4_5}),
+.IR typerules (${MANNUM4_5})

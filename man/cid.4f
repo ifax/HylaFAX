@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH CID 4F "December 5, 1994"
+.TH CID ${MANNUM4_5} "December 5, 1994"
 .SH NAME
 cid \- Caller-ID access control list
 .SH DESCRIPTION
@@ -104,7 +104,7 @@ many numbers with one pattern.
 The caller's telephone number is recognized by using the
 .B CIDNumber
 configuration parameter described in
-.IR config (4F).
+.IR config (${MANNUM4_5}).
 This parameter must be present in the per-modem configuration
 file for Caller-ID screening to function properly.
 If 
@@ -114,6 +114,6 @@ is defined, but no
 is specified, then no phone numbers will be recognized and all
 incoming calls will be ignored.
 .SH "SEE ALSO"
-.IR faxgetty (1M),
-.IR config (4F),
+.IR faxgetty (${MANNUM1_8}),
+.IR config (${MANNUM4_5}),
 .IR re_format (7).

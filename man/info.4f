@@ -28,7 +28,7 @@
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
-.TH INFO 4F "February 10, 1996"
+.TH INFO ${MANNUM4_5} "February 10, 1996"
 .SH NAME
 info \- remote device capability database
 .SH DESCRIPTION
@@ -87,7 +87,7 @@ supportsPostScript	boolean	accepts Adobe \*(Ps transfer protocol
 .RE
 .PP
 The \*(Fx scheduler,
-.IR faxq (1M),
+.IR faxq (${MANNUM1_8}),
 uses the information stored in this directory when
 deciding if a call should be placed and when
 preparing documents for transmission.
@@ -158,14 +158,14 @@ The
 can be used to define AT commands for setting up the modem
 for a specific service provider.
 This value overwrites the settings defined in
-.IR config (4F).
+.IR config (${MANNUM4_5}).
 .PP
 The
 .IR pageSource
 parameter can be used to tell the paging central who we are.
 It usually contains a SMS answerable mobile number. It is only
 used for the \s-1UCP\s+1 part of
-.IR sendpage (1M).
+.IR sendpage (${MANNUM1_8}).
 \fBNote: \fR This parameter should be used from user-land
 .IR sendpage (1)
 and will be removed later.
@@ -189,13 +189,13 @@ The data in this directory is simply a
 of remote capabilities and, except for locked down items, can be
 safely purged at any time.
 The
-.IR faxcron (1M)
+.IR faxcron (${MANNUM1_8})
 script, for example, periodically purges unlocked entries in this
 directory that have not been accessed in 30 days.
 .SH "SEE ALSO"
-.IR faxcron (1M),
-.IR faxq (1M),
-.IR faxsend (1M),
-.IR pagesend (1M),
-.IR cinfo (4F),
-.IR config (4F)
+.IR faxcron (${MANNUM1_8}),
+.IR faxq (${MANNUM1_8}),
+.IR faxsend (${MANNUM1_8}),
+.IR pagesend (${MANNUM1_8}),
+.IR cinfo (${MANNUM4_5}),
+.IR config (${MANNUM4_5})

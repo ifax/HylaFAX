@@ -26,7 +26,7 @@
 .\"
 .if n .po0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH WEDGED 1M "October 3, 1995"
+.TH WEDGED ${MANNUM1_8} "October 3, 1995"
 .SH NAME
 wedged \- \*(Fx modem wedged script
 .SH SYNOPSIS
@@ -40,15 +40,15 @@ is deemed to be in an irreparable state and requires operator intervention.
 This decision is based on the setting of the
 .B MaxSetupAttempts
 configuration parameter described in
-.IR config (4F).
+.IR config (${MANNUM4_5}).
 The default
 .I wedged
 script sends electronic mail to the FaxMaster alias and attempts
 to disable any getty processes spawned by the 
-.IR init (1M)
+.IR init (${MANNUM1_8})
 process.
 In addition the
-.IR faxq (1M)
+.IR faxq (${MANNUM1_8})
 process automatically disables use of the modem for servicing
 outbound jobs.
 .P
@@ -70,5 +70,5 @@ associated with the modem.
 /usr/lib/sendmail	for delivering mail
 .fi
 .SH "SEE ALSO"
-.IR faxq (1M),
-.IR config (4F)
+.IR faxq (${MANNUM1_8}),
+.IR config (${MANNUM4_5})

@@ -28,7 +28,7 @@
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
-.TH FAXSETUP 1M "August 26, 1996"
+.TH FAXSETUP ${MANNUM1_8} "August 26, 1996"
 .SH NAME
 faxsetup \- setup a machine for use with \*(Fx
 .SH SYNOPSIS
@@ -86,9 +86,9 @@ definition of a ``fax'' user,
 definitions for the ``hylafax'' and ``snpp'' services,
 .IP \(bu 3
 startup of the \*(Fx server processes:
-.IR faxq (1M)
+.IR faxq (${MANNUM1_8})
 and
-.IR hfaxd (1M),
+.IR hfaxd (${MANNUM1_8}),
 .IP \(bu 3
 definition of a ``FaxMaster'' mail alias for reporting server problems.
 .PP
@@ -97,7 +97,7 @@ For server machines
 also creates two files that are required by the \*(Fx command scripts.
 One file contains master configuration parameters and the other
 contains various definitions used by scripts such as
-.IR faxaddmodem (1M)
+.IR faxaddmodem (${MANNUM1_8})
 that communicate with modems.
 .SH OPTIONS
 .TP 10
@@ -153,14 +153,14 @@ ${SPOOL}/etc/setup.modem	modem-related configuration support
 .fi
 .PP
 Consult
-.IR hylafax-server (4F)
+.IR hylafax-server (${MANNUM4_5})
 for a complete discussion of the structure and
 content of the spooling area.
 .SH "SEE ALSO"
-.IR hylafax-server (4F),
-.IR config (4F),
-.IR faxq (1M),
-.IR faxgetty (1M),
-.IR faxmodem (1M),
-.IR faxconfig (1M),
-.IR faxsend (1M)
+.IR hylafax-server (${MANNUM4_5}),
+.IR config (${MANNUM4_5}),
+.IR faxq (${MANNUM1_8}),
+.IR faxgetty (${MANNUM1_8}),
+.IR faxmodem (${MANNUM1_8}),
+.IR faxconfig (${MANNUM1_8}),
+.IR faxsend (${MANNUM1_8})

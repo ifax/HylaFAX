@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH SHUTDOWN 4F "January 18, 1996"
+.TH SHUTDOWN ${MANNUM4_5} "January 18, 1996"
 .SH NAME
 \fBetc/shutdown\fP \- server shutdown control file
 .SH DESCRIPTION
@@ -37,7 +37,7 @@ is present it describes when a \*(Fx server is to be shutdown
 and may contain a descriptive message to return to clients explaining
 the reason for the shutdown.
 This file is used by the
-.IR hfaxd (1M)
+.IR hfaxd (${MANNUM1_8})
 program.
 .PP
 The file has the following format:
@@ -85,7 +85,7 @@ This value is specified as a decimal number in the form HHMM.
 .SH NOTES
 This file is typically created using the ``\s-1SHUT\s+1'' command
 supported by 
-.IR hfaxd (1M).
+.IR hfaxd (${MANNUM1_8}).
 .SH "SEE ALSO"
-.IR hfaxd (1M),
-.IR hylafax-server (4F)
+.IR hfaxd (${MANNUM1_8}),
+.IR hylafax-server (${MANNUM4_5})

@@ -28,7 +28,7 @@
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
-.TH TYPERULES 4F "May 12, 1993"
+.TH TYPERULES ${MANNUM4_5} "May 12, 1993"
 .SH NAME
 typerules \- \*(Fx file type identification and conversion rules
 .SH DESCRIPTION

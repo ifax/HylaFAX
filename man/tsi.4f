@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH TSI 4F "December 5, 1994"
+.TH TSI ${MANNUM4_5} "December 5, 1994"
 .SH NAME
 tsi \- Transmission Subscriber Identification (\c
 .SM TSI\c
@@ -124,6 +124,6 @@ machines permit any printable
 string to be sent as a
 .SM TSI.
 .SH "SEE ALSO"
-.IR faxgetty (1M),
+.IR faxgetty (${MANNUM1_8}),
 .IR re_format (7),
-.IR config (4F)
+.IR config (${MANNUM4_5})

@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH FAXSTATE 1M "July 17, 1995"
+.TH FAXSTATE ${MANNUM1_8} "July 17, 1995"
 .SH NAME
 faxstate \- control ``modem state'' of a device used by \*(Fx
 .SH SYNOPSIS
@@ -45,7 +45,7 @@ faxstate \- control ``modem state'' of a device used by \*(Fx
 .SH DESCRIPTION
 .I faxstate
 sends a message to the \*(Fx
-.IR faxgetty (1M)
+.IR faxgetty (${MANNUM1_8})
 process servicing
 .I modem
 telling it to use the specified state when notifying the
@@ -80,7 +80,7 @@ This interface is useful for send-only environments in which
 processes are not used.
 Note that modems manipulated in this way must previously have
 been configured with the
-.IR faxmodem (1M)
+.IR faxmodem (${MANNUM1_8})
 program.
 .SH OPTIONS
 The following options are supported:
@@ -108,9 +108,9 @@ The default state to use is
 .IR ready .
 .SH FILES
 Consult
-.IR hylafax-server (4F)
+.IR hylafax-server (${MANNUM4_5})
 for a complete discussion of the structure and
 content of the spooling area.
 .SH "SEE ALSO"
-.IR hylafax-server (4F),
-.IR faxgetty (1M)
+.IR hylafax-server (${MANNUM4_5}),
+.IR faxgetty (${MANNUM1_8})

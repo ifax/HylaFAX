@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH FAXCRON 1M "May 12, 1996"
+.TH FAXCRON ${MANNUM1_8} "May 12, 1996"
 .SH NAME
 faxcron \- \*(Fx routine maintenance script
 .SH SYNOPSIS
@@ -43,7 +43,7 @@ faxcron \- \*(Fx routine maintenance script
 is a command script that does routine upkeep tasks in a \*(Fx
 spooling directory hierarchy.
 This script is intended to be invoked from
-.IR cron (1M)
+.IR cron (${MANNUM1_8})
 on behalf of the fax user once a day,
 with the standard output sent by mail to the \*(Fx administrator.
 For example, the following crontab might be setup for the fax user:
@@ -150,10 +150,10 @@ ${SBIN}/recvstats	for generating receive statistics
 /tmp/faxlogXXXX	temporary file for logs of failed calls
 .fi
 .SH "SEE ALSO"
-.IR cron (1M),
-.IR faxq (1M),
-.IR faxgetty (1M),
-.IR faxsend (1M),
-.IR xferfaxstats (1M),
-.IR recvstats (1M),
-.IR hylafax-server (4F)
+.IR cron (${MANNUM1_8}),
+.IR faxq (${MANNUM1_8}),
+.IR faxgetty (${MANNUM1_8}),
+.IR faxsend (${MANNUM1_8}),
+.IR xferfaxstats (${MANNUM1_8}),
+.IR recvstats (${MANNUM1_8}),
+.IR hylafax-server (${MANNUM4_5})

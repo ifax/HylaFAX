@@ -29,7 +29,7 @@
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
 .ds Pc \s-1PCL\s+1
-.TH SENDQ 4F "May 12, 1996"
+.TH SENDQ ${MANNUM4_5} "May 12, 1996"
 .SH NAME
 sendq/q* \- \*(Fx outbound job description
 .SH DESCRIPTION
@@ -37,7 +37,7 @@ Files in the
 .B sendq
 directory specify transmission job requests.
 These files are created by
-.IR hfaxd (1M),
+.IR hfaxd (${MANNUM1_8}),
 when submitting a job on behalf of
 .IR sendfax (1)
 or
@@ -45,7 +45,7 @@ or
 Job description files also reside in the
 .B doneq
 directory; they are moved there by
-.IR faxq (1M)
+.IR faxq (${MANNUM1_8})
 when a job completes.
 .PP
 Job description files are 
@@ -149,7 +149,7 @@ If this parameter is not specified then the value specified by
 the
 .B PageChopThreshold
 configuration parameter is used; see
-.IR config (4F).
+.IR config (${MANNUM4_5}).
 .TP 14
 .B commid
 The communication identifier for the last outbound call placed
@@ -183,7 +183,7 @@ See
 and
 .B ContCoverCmd
 in 
-.IR config (4F).
+.IR config (${MANNUM4_5}).
 .TP 14
 .B data
 The pathname of a document to send.
@@ -194,9 +194,9 @@ so that subsequent retries do not reprocess the document.
 .B dataformat
 The format used to transmit facsimile data.
 This item is recorded by
-.IR faxsend (1M)
+.IR faxsend (${MANNUM1_8})
 so that
-.IR notify (1M)
+.IR notify (${MANNUM1_8})
 can return it in a notification message.
 .TP 14
 .B desiredbr
@@ -228,11 +228,11 @@ otherwise the tagline format string specified in the server
 configuration file is used; see
 .B TagLineFormat
 in
-.IR config (4F).
+.IR config (${MANNUM4_5}).
 .TP 14
 .B doneop
 The treatment the job should be given when it is processed by the 
-.IR faxqclean (1M)
+.IR faxqclean (${MANNUM1_8})
 job cleaner program.
 The may be one of
 .I remove
@@ -320,7 +320,7 @@ Typically the owner is the user that created the job, though clients
 with administrative privileges can change the ownership of jobs.
 The value is the string specified in the
 \s-1USER\s+1 command passed to
-.IR hfaxd (1M)
+.IR hfaxd (${MANNUM1_8})
 when a client logins in to the server.
 .TP 14
 .B notify
@@ -361,7 +361,7 @@ Whether or not to automatically truncate trailing whitespace on pages
 of outbound facsimile; see
 .B PageChop
 in
-.IR config (4F).
+.IR config (${MANNUM4_5}).
 The possible values are: ``\c
 .IR default ''
 to use the setting of the
@@ -456,7 +456,7 @@ parameters that are tuned for the specific reason of each failure;
 e.g. see
 .B JobReqProto
 in
-.IR config (4F).
+.IR config (${MANNUM4_5}).
 .TP 14
 .B sender
 The ``full name'' of the sender of the facsimile.
@@ -464,9 +464,9 @@ The ``full name'' of the sender of the facsimile.
 .B signalrate
 The signalling rate used to transmit facsimile data.
 This item is recorded by
-.IR faxsend (1M)
+.IR faxsend (${MANNUM1_8})
 so that
-.IR notify (1M)
+.IR notify (${MANNUM1_8})
 can return it in a notification message.
 .TP 14
 .B state
@@ -532,13 +532,13 @@ process as soon as possible.
 1 if the job should use a continuation cover page during
 retransmission, 0 otherwise.
 See 
-.IR hylafax-server (4F)
+.IR hylafax-server (${MANNUM4_5})
 for a description of continuation cover pages.
 .SH "SEE ALSO"
 .IR sendfax (1),
-.IR faxq (1M),
-.IR faxqclean (1M),
-.IR faxsend (1M),
-.IR pagesend (1M),
-.IR hfaxd (1M),
-.IR config (4F)
+.IR faxq (${MANNUM1_8}),
+.IR faxqclean (${MANNUM1_8}),
+.IR faxsend (${MANNUM1_8}),
+.IR pagesend (${MANNUM1_8}),
+.IR hfaxd (${MANNUM1_8}),
+.IR config (${MANNUM4_5})

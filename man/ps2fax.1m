@@ -28,7 +28,7 @@
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
-.TH PS2FAX 1M "August 26, 1996"
+.TH PS2FAX ${MANNUM1_8} "August 26, 1996"
 .SH NAME
 ps2fax \- image \*(Ps\(rg for facsimile transmission by \*(Fx
 .SH SYNOPSIS
@@ -44,7 +44,7 @@ takes \*(Ps input and generates a
 .SM TIFF
 Class F image file suitable for facsimile transmission.
 It is usually invoked by the \*(Fx scheduler process,
-.IR faxq (1M).
+.IR faxq (${MANNUM1_8}).
 On Silicon Graphics'
 .SM IRIX
 systems,
@@ -58,7 +58,7 @@ software.
 is actually a link (symbolic or otherwise) to the script
 appropriate for the \*(Ps imaging tool.
 The link is setup when the
-.IR faxsetup (1M)
+.IR faxsetup (${MANNUM1_8})
 script is run to configure a \*(Fx server machine for use.
 .PP
 Input files containing \*(Ps may be specified on the
@@ -203,5 +203,5 @@ determine when a problem arises when preparing a job for
 transmission.
 .SH "SEE ALSO"
 .IR sendfax (1),
-.IR faxq (1M),
-.IR hylafax-server(4F)
+.IR faxq (${MANNUM1_8}),
+.IR hylafax-server(${MANNUM4_5})

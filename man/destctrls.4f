@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH DESTCTRLS 4F "October 3, 1995"
+.TH DESTCTRLS ${MANNUM4_5} "October 3, 1995"
 .SH NAME
 destctrls \- per-destination controls for \*(Fx servers
 .SH DESCRIPTION
@@ -57,7 +57,7 @@ the end of
 .I dest
 and the start of the parameter list.
 Parameter values are parsed exactly as specified in
-.IR config (4F);
+.IR config (${MANNUM4_5});
 i.e. values with embedded whitespace may be enclosed in quote marks (``"'').
 .PP
 Comments are introduced with a ``#'' character and extend to the
@@ -78,7 +78,7 @@ configuration file.
 .PP
 The following parameters may be specified on a per-destination basis;
 consult
-.IR config (4F)
+.IR config (${MANNUM4_5})
 for a description of each parameter
 (except
 .B RejectNotice
@@ -146,6 +146,6 @@ Beware that canonical phone numbers have a leading ``+'' which is
 a special character for regular expressions.  An easy way to
 match ``+'' is with ``[+]''; e.g. ``[+]14159657824''.
 .SH "SEE ALSO"
-.IR faxq (1M),
-.IR config (4F),
+.IR faxq (${MANNUM1_8}),
+.IR config (${MANNUM4_5}),
 .IR re_format (7).

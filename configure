@@ -83,7 +83,8 @@ DBLIB=no
 LIBDB="-L/usr/local/lib -ldb"
 DBLIBINC=/usr/local/include
 CONFIG_OSFCNH=auto
-MANSEDLOCAL='-e " "'
+MANNUM4_5=4F
+MANNUM1_8=1M
 
 # SVR4 packaging stuff
 PKG_ARCH=				# ARCH variable in pkginfo file
@@ -186,8 +187,9 @@ MANCAPPNAME
 MANCFILENAME
 MANCVT
 MANFILES
+MANNUM4_5
+MANNUM1_8
 MANSAPPNAME
-MANSEDLOCAL
 MANSFILENAME
 MANSYS
 MKDEPEND
@@ -4341,10 +4343,10 @@ sysv-source-*)	MANAPPS=man1 MANSYS=man1 MANFILES=man4;;
 sysv-nroff-*)	MANAPPS=cat1 MANSYS=cat1 MANFILES=cat4;;
 esac
 case $MANSCHEME in
-bsd-*-strip)	MANSEDLOCAL="-e s/4F/5/g -e s/1M/8/g";;
-bsd-*)		MANSEDLOCAL="-e s/4F/5F/g -e s/1M/8C/g";;
-sysv-*-strip)	MANSEDLOCAL="-e s/4F/4/g";;
-sysv-*)		MANSEDLOCAL='-e " "';;
+bsd-*-strip)	MANNUM4_5=5  MANNUM1_8=8;;
+bsd-*)		MANNUM4_5=5F MANNUM1_8=8C;;
+sysv-*-strip)	MANNUM4_5=4  MANNUM1_8=1;;
+sysv-*)		MANNUM4_5=4F MANNUM1_8=1M;;
 esac
 case $MANSCHEME in
 *-source-*)	MANCVT='${MANSED} $? >$@';;

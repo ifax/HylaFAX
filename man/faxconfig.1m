@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH FAXCONFIG 1M "Oct 3, 1995"
+.TH FAXCONFIG ${MANNUM1_8} "Oct 3, 1995"
 .SH NAME
 faxconfig \- dynamically change \*(Fx configuration parameters
 .SH SYNOPSIS
@@ -51,7 +51,7 @@ These new values are maintained only for as long as that
 server process executes; to setup long-lasting configuration
 parameters the appropriate configuration file(s) must be
 edited (see
-.IR config (4F)).
+.IR config (${MANNUM4_5})).
 .PP
 .I faxconfig
 is especially useful for setting certain configuration parameters
@@ -59,7 +59,7 @@ that control the operation of \*(Fx server processes.
 For example, by manipulating the
 .B ModemPriority
 parameter of one or more
-.IR faxgetty (1M)
+.IR faxgetty (${MANNUM1_8})
 processes it is easy to dynamically reconfigure the order in which
 \*(Fx will assign modems to outbound jobs.
 .PP
@@ -70,7 +70,7 @@ is specified with the
 option, then
 .I faxconfig
 will send messages to the central scheduler process,
-.IR faxq (1M).
+.IR faxq (${MANNUM1_8}).
 If a
 .I faxgetty
 process is to be contacted, the specified
@@ -79,7 +79,7 @@ must be the last component of the character special device
 filename the modem is attached to.
 .PP
 Consult the
-.IR config (4F)
+.IR config (${MANNUM4_5})
 for the list of configuration parameters that can be set with
 .IR faxconfig .
 .SH OPTIONS
@@ -114,13 +114,13 @@ ${SPOOL}/FIFO	fifo for contacting \fIfaxq\fP
 .fi
 .PP
 Consult
-.IR hylafax-server (4F)
+.IR hylafax-server (${MANNUM4_5})
 for a complete discussion of the structure and
 content of the spooling area.
 .SH "SEE ALSO"
-.IR hylafax-server (4F),
-.IR faxmodem (1M),
-.IR faxstate (1M),
-.IR faxgetty (1M),
-.IR faxq (1M),
-.IR config (4F).
+.IR hylafax-server (${MANNUM4_5}),
+.IR faxmodem (${MANNUM1_8}),
+.IR faxstate (${MANNUM1_8}),
+.IR faxgetty (${MANNUM1_8}),
+.IR faxq (${MANNUM1_8}),
+.IR config (${MANNUM4_5}).

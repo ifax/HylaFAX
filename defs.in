@@ -322,11 +322,12 @@ MANAPPS		= @MANAPPS@
 MANSYS		= @MANSYS@
 MANFILES	= @MANFILES@
 #
-# MANSEDLOCAL	additional sed commands to use during source transformation
-#		(might want to transform section names here)
+# MANNUM4_5	specification of manpage numbering for 4, 4F, 5, or 5F
+# MANNUM1_8	specification of manpage numbering for 8, 8C, or 1M
 # MANCVT	command to convert source to installable target (can use
 #		$? and $@, but not $<)
-MANSEDLOCAL	= @MANSEDLOCAL@
+MANNUM4_5	= @MANNUM4_5@
+MANNUM1_8	= @MANNUM1_8@
 MANCVT		= @MANCVT@
 #
 # The following macros are used during the install step to generate

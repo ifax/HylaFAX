@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH PAGESIZES 4F "December 5, 1994"
+.TH PAGESIZES ${MANNUM4_5} "December 5, 1994"
 .SH NAME
 pagesizes \- \*(Fx page size definitions
 .SH DESCRIPTION

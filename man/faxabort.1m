@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH FAXABORT 1M "March 3, 1995"
+.TH FAXABORT ${MANNUM1_8} "March 3, 1995"
 .SH NAME
 faxabort \- tell a \*(Fx server to abort a receive
 .SH SYNOPSIS
@@ -40,7 +40,7 @@ faxabort \- tell a \*(Fx server to abort a receive
 .SH DESCRIPTION
 .I faxabort
 sends a message to a \*(Fx 
-.IR faxgetty (1M)
+.IR faxgetty (${MANNUM1_8})
 process servicing
 .I modem
 telling it to abort any active receive operation.
@@ -76,10 +76,10 @@ ${SPOOL}/FIFO	fifo for contacting \fIfaxq\fP
 .fi
 .PP
 Consult
-.IR hylafax-server (4F)
+.IR hylafax-server (${MANNUM4_5})
 for a complete discussion of the structure and
 content of the spooling area.
 .SH "SEE ALSO"
-.IR hylafax-server (4F),
-.IR faxq (1M),
-.IR faxgetty (1M)
+.IR hylafax-server (${MANNUM4_5}),
+.IR faxq (${MANNUM1_8}),
+.IR faxgetty (${MANNUM1_8})

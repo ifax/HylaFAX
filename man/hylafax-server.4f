@@ -29,7 +29,7 @@
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
 .ds Pc \s-1PCL\s+1
-.TH HYLAFAX 4F "January 18, 1996"
+.TH HYLAFAX ${MANNUM4_5} "January 18, 1996"
 .SH NAME
 HylaFAX \- introduction to \*(Fx server operation and file formats
 .SH DESCRIPTION
@@ -52,11 +52,11 @@ The spooling area is typically located under the
 directory
 .IR ${SPOOL} .
 Ancillary command scripts used by the server programs
-.IR faxq (1M),
-.IR faxsend (1M),
-.IR pagesend (1M),
+.IR faxq (${MANNUM1_8}),
+.IR faxsend (${MANNUM1_8}),
+.IR pagesend (${MANNUM1_8}),
 and
-.IR faxgetty (1M)
+.IR faxgetty (${MANNUM1_8})
 are located in the 
 .B bin
 subdirectory.
@@ -154,7 +154,7 @@ file is used.
 .PP
 Client applications interact with a \*(Fx server machine using
 a communications protocol implemented by the
-.IR hfaxd (1M)
+.IR hfaxd (${MANNUM1_8})
 program.
 The
 .I hfaxd
@@ -184,7 +184,7 @@ creates in the
 subdirectory.
 .SH SETUP
 Each \*(Fx server machine must run the
-.IR faxsetup (1M)
+.IR faxsetup (${MANNUM1_8})
 command prior to starting up \*(Fx server processes.
 .I faxsetup
 verifys that the \*(Fx software has been installed correctly
@@ -197,7 +197,7 @@ that is located in the
 subdirectory.
 This file contains all the information necessary to
 manage the transmission; c.f.
-.IR sendq (4F).
+.IR sendq (${MANNUM4_5}).
 The actual documents that are to be sent are usually located
 in the
 .B docq
@@ -228,7 +228,7 @@ Users may also restrict the session parameters used to format
 documents on a per-job basis.
 .PP
 The actual transmission is handled by a
-.IR faxsend (1M)
+.IR faxsend (${MANNUM1_8})
 process that is initiated by the scheduler.
 This program may be substituted for by specifying the
 .B FaxSendCmd
@@ -241,7 +241,7 @@ its job description file is locked for exclusive
 use with
 .IR flock (2).
 The
-.IR hfaxd (1M)
+.IR hfaxd (${MANNUM1_8})
 program uses this information to tell if a job is actively being processed.
 .PP
 If the
@@ -265,7 +265,7 @@ Note that it is necessary to include the ``local host''
 definition (usually 127.0.0.1) if local submission
 is to be permitted.
 For more information consult
-.IR hosts.hfaxd (4F).
+.IR hosts.hfaxd (${MANNUM4_5}).
 .PP
 There are a number of controls on outbound calls that can be
 specified using the
@@ -276,7 +276,7 @@ configuration parameter in the
 .I faxq
 configuration file).
 This file, described in
-.IR destctrls (4F),
+.IR destctrls (${MANNUM4_5}),
 allows an administrator to restrict calls by phone number
 and to control the time of day that calls may be placed.
 In addition, operational parameters such as the maximum number
@@ -417,16 +417,16 @@ Consult the
 and
 .B RingVoice
 parameters in
-.IR config (4F)
+.IR config (${MANNUM4_5})
 for a description of this facility.
 .SH "DATA CALLS"
 Most fax modems also support non-facsimile communication.
 \*(Fx uses the locking mechanism employed by
 .IR uucp (1C),
 .IR cu (1C),
-.IR slip (1M),
+.IR slip (${MANNUM1_8}),
 and
-.IR ppp (1M).
+.IR ppp (${MANNUM1_8}).
 Any
 .I faxgetty
 processes will transparently ``get out of the way''
@@ -438,7 +438,7 @@ If a call from a data modem is recognized and the
 parameter is specified in the configuration file,
 .I faxgetty
 will invoke the
-.IR getty (1M)
+.IR getty (${MANNUM1_8})
 program so that caller may login to the system.
 Similar functionality is also available for invoking
 a ``voice getty'' process, though auto-detection of inbound
@@ -460,7 +460,7 @@ kinds of debugging and tracing information; c.f.
 the
 .B ServerTracing
 parameter description in
-.IR config (4F).
+.IR config (${MANNUM4_5}).
 .PP
 Any problems encountered when transmitting a facsimile
 are described in messages returned to the user by electronic mail.
@@ -489,19 +489,19 @@ format that is easy to manipulate with programs such as
 .IR awk (1),
 to generate accounting information.
 See
-.IR xferfaxlog (4F)
+.IR xferfaxlog (${MANNUM4_5})
 for information about the format.
 See
-.IR xferfaxstats (1M)
+.IR xferfaxstats (${MANNUM1_8})
 and
-.IR recvstats (1M)
+.IR recvstats (${MANNUM1_8})
 for example scripts that print summarized accounting information.
 .PP
 Finally, the
 .I hfaxd
 process supports a event monitoring facility that can be
 access via the
-.IR faxwatch (1M)
+.IR faxwatch (${MANNUM1_8})
 program.
 This facility permits clients to register interest in various
 events and receive ``realtime notification'' when such events occur
@@ -517,10 +517,10 @@ to notify it when a modem is ready for use, busy for outbound use,
 or possibly in an unusable state (either purposely marked unavailable
 or potentially found to be wedged).
 Modem usage can be explicitly controlled with the
-.IR faxstate (1M)
+.IR faxstate (${MANNUM1_8})
 program.
 The
-.IR faxconfig (1M)
+.IR faxconfig (${MANNUM1_8})
 program can also be used to dynamically make changes to configuration
 parameters that may cause a modem to be treated differently (e.g.
 setting
@@ -546,7 +546,7 @@ Jobs have a ``scheduling priority'' that is assigned at the
 time the job is submitted.
 This priority can be changed at any time the job is not actively
 being processed using the
-.IR faxalter (1M)
+.IR faxalter (${MANNUM1_8})
 program.
 A job's scheduling priority may also be raised by
 .I faxq
@@ -566,7 +566,7 @@ modems configured for use with
 are considered always ready for use unless they are presently
 assigned to an outbound job or their state is explicitly
 changed through the
-.IR faxstate (1M)
+.IR faxstate (${MANNUM1_8})
 program (\c
 .I faxstate
 can also be used in a send-recv environment).
@@ -645,7 +645,7 @@ programs accept commands on their
 special files to alter configuration parameters in the running
 executable
 (the
-.IR faxconfig (1M)
+.IR faxconfig (${MANNUM1_8})
 program can be used to dynamically change configuration parameters).
 Values set in this way however are lost when the process exits
 or if the configuration file is re-read.
@@ -682,31 +682,31 @@ tmp/*	temporary files created when submitting a job
 archive/*	database of archived jobs
 .fi
 .SH "SEE ALSO"
-.IR faxsetup (1M),
-.IR faxq (1M),
-.IR faxgetty (1M),
-.IR hfaxd (1M),
-.IR faxsend (1M),
-.IR faxrcvd (1M),
-.IR faxconfig (1M),
-.IR faxmodem (1M),
-.IR faxstate (1M),
-.IR notify (1M),
-.IR pollrcvd (1M),
-.IR recvstats (1M),
-.IR xferfaxstats (1M),
-.IR archive (4F),
-.IR config (4F),
-.IR dialrules (4F),
-.IR doneq (4F),
-.IR hosts.hfaxd (4F),
-.IR info (4F),
-.IR log (4F),
-.IR tsi (4F),
-.IR recvq (4F),
-.IR sendq (4F),
-.IR status (4F),
-.IR xferfaxlog (4F),
+.IR faxsetup (${MANNUM1_8}),
+.IR faxq (${MANNUM1_8}),
+.IR faxgetty (${MANNUM1_8}),
+.IR hfaxd (${MANNUM1_8}),
+.IR faxsend (${MANNUM1_8}),
+.IR faxrcvd (${MANNUM1_8}),
+.IR faxconfig (${MANNUM1_8}),
+.IR faxmodem (${MANNUM1_8}),
+.IR faxstate (${MANNUM1_8}),
+.IR notify (${MANNUM1_8}),
+.IR pollrcvd (${MANNUM1_8}),
+.IR recvstats (${MANNUM1_8}),
+.IR xferfaxstats (${MANNUM1_8}),
+.IR archive (${MANNUM4_5}),
+.IR config (${MANNUM4_5}),
+.IR dialrules (${MANNUM4_5}),
+.IR doneq (${MANNUM4_5}),
+.IR hosts.hfaxd (${MANNUM4_5}),
+.IR info (${MANNUM4_5}),
+.IR log (${MANNUM4_5}),
+.IR tsi (${MANNUM4_5}),
+.IR recvq (${MANNUM4_5}),
+.IR sendq (${MANNUM4_5}),
+.IR status (${MANNUM4_5}),
+.IR xferfaxlog (${MANNUM4_5}),
 .PP
 Extensive documentation is available in online at
 http://www.vix.com/hylafax/.

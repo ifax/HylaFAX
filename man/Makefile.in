@@ -126,7 +126,9 @@ MANSED=${SED}\
 	-e 's;\$${TIFFBIN};${TIFFBIN};g' \
 	-e 's;\$${LIBDATA};${LIBDATA};g' \
 	-e 's;\$${LIBEXEC};${LIBEXEC};g' \
-	-e 's;\$${FONTPATH};${FONTPATH};g' ${MANSEDLOCAL}
+	-e 's;\$${FONTPATH};${FONTPATH};g' \
+	-e 's;\$${MANNUM4_5};${MANNUM4_5};g' \
+	-e 's;\$${MANNUM1_8};${MANNUM1_8};g'
 
 default all targets:: ${TARGETS}
 

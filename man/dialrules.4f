@@ -28,7 +28,7 @@
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
-.TH DIALRULES 4F "May 8, 1996"
+.TH DIALRULES ${MANNUM4_5} "May 8, 1996"
 .SH NAME
 dialrules \- \*(Fx dial string processing rules
 .SH DESCRIPTION
@@ -50,7 +50,7 @@ that are located in a file specified in the server configuration
 file; see the
 .B DialStringRules
 parameter in
-.IR config (4F).
+.IR config (${MANNUM4_5}).
 The generation of an externalized form for a dial string is done by
 rules that optionally appear in
 .I ${LIBDATA}/dialrules
@@ -253,8 +253,8 @@ to ``01123965-Tube#2345'', the transformations would be:
 for a final result of ``+239658823''.
 .SH "SEE ALSO"
 .IR sendfax (1),
-.IR dialtest (1M),
-.IR faxq (1M),
-.IR faxsend (1M),
-.IR faxgetty (1M),
-.IR config (4F)
+.IR dialtest (${MANNUM1_8}),
+.IR faxq (${MANNUM1_8}),
+.IR faxsend (${MANNUM1_8}),
+.IR faxgetty (${MANNUM1_8}),
+.IR config (${MANNUM4_5})

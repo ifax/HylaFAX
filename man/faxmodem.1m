@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH FAXMODEM 1M "Oct 27, 1995"
+.TH FAXMODEM ${MANNUM1_8} "Oct 27, 1995"
 .SH NAME
 faxmodem \- dynamically add a modem to a \*(Fx server system
 .SH SYNOPSIS
@@ -50,14 +50,14 @@ faxmodem \- dynamically add a modem to a \*(Fx server system
 .SH DESCRIPTION
 .I faxmodem
 sends a message to the \*(Fx queuer process
-.IR faxq (1M)
+.IR faxq (${MANNUM1_8})
 telling it that the specified modem is ready for use and
 informing it about its fax-related capabilities.
 This is the mechanism by which modems are added in a send-only
 configuration.
 Once a modem has been configured its status can be reconfigured
 using the
-.IR faxstate (1M)
+.IR faxstate (${MANNUM1_8})
 program.
 .I faxmodem
 can also be used to alter the capabilities and usage priority
@@ -67,13 +67,13 @@ The specified
 .I modem
 is either the terminal device name where the modem is
 attached or a \*(Fx device identifier (see
-.IR config (4F)
+.IR config (${MANNUM4_5})
 for information on device identifiers).
 Device names may be given without
 a leading directory pathname; e.g. ttyf2 instead of /dev/ttyf2.
 .PP
 To figure out the capabilities of a modem either use the
-.IR probemodem (1M)
+.IR probemodem (${MANNUM1_8})
 script or manually communicate with the modem.
 For a Class 2 modem the capabilities are given in the response to
 the ``AT+FDCC=?'' query command and
@@ -192,10 +192,10 @@ ${SPOOL}/FIFO	fifo for contacting \fIfaxq\fP
 .fi
 .PP
 Consult
-.IR hylafax-server (4F)
+.IR hylafax-server (${MANNUM4_5})
 for a complete discussion of the structure and
 content of the spooling area.
 .SH "SEE ALSO"
-.IR hylafax-server (4F),
-.IR faxgetty (1M),
-.IR faxq (1M).
+.IR hylafax-server (${MANNUM4_5}),
+.IR faxgetty (${MANNUM1_8}),
+.IR faxq (${MANNUM1_8}).

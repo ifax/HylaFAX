@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH HOSTS 4F "January 18, 1996"
+.TH HOSTS ${MANNUM4_5} "January 18, 1996"
 .SH NAME
 hosts.hfaxd \- \*(Fx client access control list
 .SH DESCRIPTION
@@ -37,7 +37,7 @@ file
 .B etc/hosts.hfaxd
 in the \*(Fx spooling area specifies the
 hosts and users that are permitted to access services through the
-.IR hfaxd (1M)
+.IR hfaxd (${MANNUM1_8})
 process.
 This file must exist for client access; if it is not present then
 .I hfaxd
@@ -153,5 +153,5 @@ is taken, so more-specific entries should be placed first.
 .RE
 .SH "SEE ALSO"
 .IR sendfax (1),
-.IR hfaxd (1M),
-.IR hylafax-server (4F)
+.IR hfaxd (${MANNUM1_8}),
+.IR hylafax-server (${MANNUM4_5})

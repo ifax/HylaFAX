@@ -44,15 +44,15 @@ VPATH	= ../@SRCDIR@/etc
 DIR_SYSVINIT	= @SYSVINITDIR@
 DIR_SYSVINITSTART	= @SYSVINITSTARTDIR@
 DIR_SYSVINITSTOP	= @SYSVINITSTOPDIR@
-MANSEDLOCAL		= @MANSEDLOCAL@
+MANNUM4_5		= @MANNUM4_5@
+MANNUM1_8		= @MANNUM1_8@
 NAME_SYSVINITSTART	= @SYSVINITSTARTNAME@
 NAME_SYSVINITSTOP	= @SYSVINITSTOPNAME@
 
 DIALRULES=dialrules \
 	dialrules.sf-ba \
 	dialrules.europe
-TARGETS	= config.fax faxaddmodem faxsetup hosts.hfaxd xferfaxlog \
-    lockname ondelay
+TARGETS	= config.fax hosts.hfaxd xferfaxlog lockname ondelay
 
 default all::
 	@${MAKE} targets
@@ -61,10 +61,6 @@ targets: ${TARGETS}
 
 @MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
 
-faxaddmodem:
-	${SED} ${MANSEDLOCAL} faxaddmodem.sh > faxaddmodem
-faxsetup:
-	${SED} ${MANSEDLOCAL} faxsetup.sh > faxsetup
 hosts.hfaxd:
 	${ECHO} "localhost" >hosts.hfaxd
 	${ECHO} "127.0.0.1" >>hosts.hfaxd
@@ -82,8 +78,8 @@ PUTSAMPLE	= ${PUTSERVER} -u ${FAXUSER} -g ${FAXGROUP} \
 		  -idb "config(noupdate)"
 
 install: default
-	${PUTSERVER} -F ${SBIN} -m 755 -src faxaddmodem -O faxaddmodem
-	${PUTSERVER} -F ${SBIN} -m 755 -src faxsetup -O faxsetup
+	${PUTSERVER} -F ${SBIN} -m 755 -src faxaddmodem.sh -O faxaddmodem
+	${PUTSERVER} -F ${SBIN} -m 755 -src faxsetup.sh -O faxsetup
 	for i in bsdi irix linux; do \
 	    ${PUTSERVER} -F ${SBIN} -m 755 \
 		-src ${SRCDIR}/faxsetup.$$i -O faxsetup.$$i; \
@@ -135,6 +131,5 @@ installClient: default
 # These targets are created during the configuration procedure.
 #
 clobberconfig:
-	-${RM} -f hylafax probemodem.sh faxaddmodem.sh faxsetup.sh \
-			faxaddmodem faxsetup
+	-${RM} -f hylafax probemodem.sh faxaddmodem.sh faxsetup.sh
 

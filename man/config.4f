@@ -28,7 +28,7 @@
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
-.TH CONFIG 4F "$Date$"
+.TH CONFIG ${MANNUM4_5} "$Date$"
 .SH NAME
 config \- \*(Fx configuration database
 .SH DESCRIPTION
@@ -41,14 +41,14 @@ Configuration files are located in the
 .B etc
 subdirectory.
 The configuration file for the 
-.IR faxq (1M)
+.IR faxq (${MANNUM1_8})
 program is named
 .BR config .
 The per-modem configuration files used by the
-.IR faxgetty (1M),
-.IR faxsend (1M),
+.IR faxgetty (${MANNUM1_8}),
+.IR faxsend (${MANNUM1_8}),
 and
-.IR pagesend (1M)
+.IR pagesend (${MANNUM1_8})
 programs have names of the form
 .BI config. devid ,
 where
@@ -487,7 +487,7 @@ by anyone but the super-user).
 The command to invoke to generate a continuation cover page; see
 .B ContCoverPage
 and
-.IR mkcover (1M).
+.IR mkcover (${MANNUM1_8}).
 .TP
 .B ContCoverPage\(S1
 A template file to use in creating
@@ -515,7 +515,7 @@ other things.)
 .B DestControls\(S1
 An optional file containing rules for controlling
 parameters on a per-destination basis; see
-.IR destctrls (4F)
+.IR destctrls (${MANNUM4_5})
 The following parameters may be controlled with this mechanism:
 .BR MaxConcurrentJobs ,
 .BR MaxDials ,
@@ -533,7 +533,7 @@ specify
 values for these parameters, then any settings in the
 .B config
 file used by
-.IR faxq (1M)
+.IR faxq (${MANNUM1_8})
 are used for default settings.
 Note that
 .I faxq
@@ -555,7 +555,7 @@ See also
 .B DialStringRules\(S2
 The pathname of the file that holds the rules for processing
 user-specified dial strings; c.f.
-.IR dialrules (4F).
+.IR dialrules (${MANNUM4_5}).
 The specified pathname must be relative to the top of the fax server's
 spooling area; e.g.
 .BR etc/dialrules .
@@ -574,7 +574,7 @@ The
 .B FAXNumber
 is also used to name the session log file where information
 for incoming phone calls is recorded; see
-.IR log (4F).
+.IR log (${MANNUM4_5}).
 If this phone number is not a fully qualified number
 the values of
 .B AreaCode
@@ -625,7 +625,7 @@ failed because of a fax protocol error.
 .B GettyArgs
 A string that indicates whether or not the server should invoke
 the
-.IR getty (1M)
+.IR getty (${MANNUM1_8})
 program in response to an incoming call from a data modem.
 If the string value is not null, then it is interpreted
 as a set of arguments to pass to the getty program.
@@ -782,7 +782,7 @@ The syntax is ``\fI<name>\fP\:\fI<regex>\fP'' where
 is the name for the group and 
 .I <regex>
 is a regular expression that 
-.IR faxq (1M)
+.IR faxq (${MANNUM1_8})
 matches against known modems.
 Thus for example, the default modem to use for a job,
 .BR any ,
@@ -829,14 +829,14 @@ The modem state can be used to control whether or not modems are assigned
 to outbound jobs.
 A modem's state is initially set to ``R'' (ready).
 Modem state can be dynamically changed with the
-.IR faxstate (1M)
+.IR faxstate (${MANNUM1_8})
 program or by setting this configuration parameter with the
-.IR faxconfig (1M)
+.IR faxconfig (${MANNUM1_8})
 program.
 .TP
 .B NotifyCmd\(S2
 The command to invoke to notify a client of a job status change; see
-.IR notify (1M).
+.IR notify (${MANNUM1_8}).
 .TP
 .B PageChop\(S1
 Whether or not to automatically truncate trailing whitespace on
@@ -888,7 +888,7 @@ for transmission to
 .SM TIFF/F,
 suitable for transmission;
 see
-.IR ps2fax (1M).
+.IR ps2fax (${MANNUM1_8}).
 .TP
 .B QualifyCID
 A string that specifies whether or not \fICaller-ID information\fP
@@ -900,7 +900,7 @@ is non-null and there is Caller-ID service,
 then only calls from phone numbers identified
 in the file specified by this string (typically \fBetc/cid\fP)
 will be accepted; see
-.IR cid (4F).
+.IR cid (${MANNUM4_5}).
 If
 .B QualifyCID
 is not specified in the configuration file, or the value is
@@ -924,7 +924,7 @@ If
 is non-null, then only messages from facsimile machines identified
 in the file specified by the string (typically \fBetc/tsi\fP)
 will be accepted; see
-.IR tsi (4F).
+.IR tsi (${MANNUM4_5}).
 If
 .B QualifyTSI
 is not specified in the configuration file, or the value is
@@ -977,7 +977,7 @@ and
 The number of rings to wait before answering the phone.
 If this value is set to 0, then the phone will only
 be answered in response to an explicit answer command; see
-.IR faxanswer (1M).
+.IR faxanswer (${MANNUM1_8}).
 .TP
 .B RingVoice
 A modem status string that identifies that an incoming call is
@@ -1014,11 +1014,11 @@ This behaviour can be activated by ``Ignore'' value.
 .TP
 .B SendFaxCmd\(S1
 The command to use to process outbound facsimile jobs; see
-.IR faxsend (1M).
+.IR faxsend (${MANNUM1_8}).
 .TP
 .B SendPageCmd\(S1
 The command to use to process outbound pager jobs; see
-.IR pagesend (1M).
+.IR pagesend (${MANNUM1_8}).
 .TP
 .B SendUUCPCmd\(S1
 The command to use to process outbound 
@@ -1073,7 +1073,7 @@ using the \fIfacility\fP specified with the
 .B LogFacility
 configuration parameter.
 Note that 
-.IR syslogd (1M)
+.IR syslogd (${MANNUM1_8})
 must be configured to capture
 .IR facility.info ,
 .IR facility.debug ,
@@ -1082,7 +1082,7 @@ and
 .I facility.err
 messages.
 See
-.IR log (4F)
+.IR log (${MANNUM4_5})
 for a description of the logged messages.
 .TP
 .B SessionTracing\(S2
@@ -1093,7 +1093,7 @@ The number is interpreted identically to
 Note that session tracing is placed in log files in the
 .B log
 subdirectory; see
-.IR log (4F)
+.IR log (${MANNUM4_5})
 for more information.
 .TP
 .B SpeakerVolume
@@ -1178,7 +1178,7 @@ The command to invoke to convert a TIFF submitted
 for transmission to
 .SM TIFF/F,
 suitable for transmission; see
-.IR tiff2fax (1M).
+.IR tiff2fax (${MANNUM1_8}).
 .TP
 .B TimeOfDay\(S1
 The default time-of-day restrictions to apply to outbound jobs.
@@ -1283,7 +1283,7 @@ descriptors directed to the controlling tty device.
 .TP
 .B WedgedCmd\(S1
 The command to invoke when a modem is deemed ``\fIwedged\fP''; see
-.IR wedged (1M).
+.IR wedged (${MANNUM1_8}).
 .SH "MODEM-ORIENTED CONFIGURATION PARAMETERS"
 .PP
 This section lists configuration parameters that are specific
@@ -2230,14 +2230,14 @@ Typically these commands place direct the modem to communicate
 with the service provider at 300 bps using the V.21 protocol.
 Per-service provider command strings can be setup in the
 info database; see
-.IR info (4F).
+.IR info (${MANNUM4_5}).
 .TP
 .B PagerMaxMsgLength
 The maximum length for a pager text message.
 Messages longer than this number are truncated.
 Per-service provider message lengths can be setup in the
 info database; see
-.IR info (4F).
+.IR info (${MANNUM4_5}).
 .TP 
 .B IXOService
 (\fIIXO/TAP only\fP)
@@ -2304,7 +2304,7 @@ that identify a brand or type of modem and the
 .SM DTE-DCE
 flow control scheme the prototype files configures.
 The
-.IR faxaddmodem (1M)
+.IR faxaddmodem (${MANNUM1_8})
 program that is used to configure a modem for use with
 \*(Fx selects a prototype configuration file using information
 retrieved from the modem and comments embedded in the prototype files.
@@ -2368,8 +2368,8 @@ parameters.
 Note that this means modem-related configuration parameters
 must be placed outside this area of the file.
 .SH "SEE ALSO"
-.IR faxaddmodem (1M),
-.IR faxq (1M),
-.IR faxgetty (1M),
-.IR faxsend (1M),
-.IR hylafax-server (4F)
+.IR faxaddmodem (${MANNUM1_8}),
+.IR faxq (${MANNUM1_8}),
+.IR faxgetty (${MANNUM1_8}),
+.IR faxsend (${MANNUM1_8}),
+.IR hylafax-server (${MANNUM4_5})
