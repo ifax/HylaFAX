@@ -1,5 +1,6 @@
 .cdependtime
 .c++dependtime
+archive.sh
 dialtest
 faxadduser
 faxconfig

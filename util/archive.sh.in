@@ -1,0 +1,25 @@
+#!/bin/sh
+
+#
+# This script is called by faxqclean to archive the job
+#
+
+JOBID=$1
+ARCHIVETO=archive/$JOBID
+FILETYPES="^!postscript:|^!tiff:|^!pcl:|^!pdf:|^!data:"
+QFILE=doneq/q$JOBID
+COMMLOGS=`grep -l "SEND FAX: JOB $JOBID" log/*`
+DOCS=`grep -E $FILETYPES $QFILE | sed 's/.*://g'`
+NUMBER=`grep "^number:" $QFILE | sed 's/^number://g'`
+
+#
+# Default archiving is to create a directory in the archive directory 
+# named as the job number, move the q file and the doc files into it, and 
+# copy the associated logs and info file there, also.
+#
+
+mkdir $ARCHIVETO
+mv $QFILE $ARCHIVETO
+for log in $COMMLOGS; do cp $log $ARCHIVETO; done
+for doc in $DOCS; do cp $doc $ARCHIVETO; done
+if [ -r info/$NUMBER ]; cp info/$NUMBER $ARCHIVETO; fi
