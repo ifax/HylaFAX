@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.0
 
+* fix V.17 fallbacks after the CTC/CTR exchange (21 Jun 2004)
 * tune setting of -rpath when linking on linux (21 Jun 2004)
 * add admin option and dialstring alteration to faxalter (20 Jun 2004)
 * add -end option for xferfaxstats and recvstats (17 Jun 2004)

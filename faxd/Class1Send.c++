@@ -796,10 +796,9 @@ Class1Modem::dropToNextBR(Class2Params& params)
 	if (curcap) {
 	    /*
 	     * Hunt for compatibility with remote at this baud rate.
-	     * We don't drop from V.29 to V.17 because...
-	     *   1) it will lock up the hardware on some receivers
-	     *   2) if the receiver supports V.17 then we probably tried
-	     *      it already without success
+	     * We don't drop from V.29 to V.17 because if the 
+	     * receiver supports V.17 then we probably tried
+	     * it already without success.
 	     */
 	    while (curcap->br == params.br) {
 		if (isCapable(curcap->sr, dis) && !(oldcap->mod == V29 && curcap->mod == V17))
@@ -901,6 +900,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	char ppr[32];				// 256 bits
 	for (u_int i = 0; i < 32; i++) ppr[i] = 0xff;
 	u_short badframes = frameNumber, badframesbefore = 0;
+	bool dolongtrain = false;
 
 	do {
 	    u_short fcount = 0;
@@ -981,11 +981,18 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
 	    if (!useV34) {
 		pause(conf.class1SendMsgDelay);		// T.30 5.3.2.4
-		fxStr tmCmd(curcap[HasShortTraining(curcap)].value, tmCmdFmt);
+		/*
+		 * T.30 Section 5, Note 5 states that we must use long training
+		 * on the first high-speed data message following CTC.
+		 */
+		fxStr tmCmd;
+		if (dolongtrain) tmCmd = fxStr(curcap->value, tmCmdFmt);
+		else tmCmd = fxStr(curcap[HasShortTraining(curcap)].value, tmCmdFmt);
 		if (!atCmd(tmCmd, AT_CONNECT))
 		    return (false);
 		pause(conf.class1TMConnectDelay);
 	    }
+	    dolongtrain = false;
 
 	    // The block is assembled.  Transmit it, adding transparent DLEs.  End with DLE+ETX.
 	    u_char buf[2];
@@ -1289,6 +1296,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				    protoTrace(emsg);
 				    return (false);
 				}
+				dolongtrain = true;	// T.30 states that we must use long-training next
 			    } else {
 				/*
 				 * At this point data corruption is inevitable if all data

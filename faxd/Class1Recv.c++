@@ -760,7 +760,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 	u_short pprcnt = 0;
 	u_int fcount = 0;
 	u_short syncattempts = 0;
-	bool blockgood = false;
+	bool blockgood = false, dolongtrain = false;
 	do {
 	    sentERR = false;
 	    resetBlock();
@@ -775,7 +775,13 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    emsg = "Failure to receive silence.";
 		    return (false);
 		}
-		fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
+		/*
+		 * T.30 Section 5, Note 5 states that we must use long training
+		 * on the first high-speed data message following CTR.
+		 */
+		fxStr rmCmd;
+		if (dolongtrain) rmCmd = fxStr(curcap->value, rmCmdFmt);
+		else rmCmd = fxStr(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
 		u_short attempts = 0;
 		ATResponse response = AT_NOTHING;
 		while ((response == AT_NOTHING || response == AT_FCERROR) && attempts++ < 20) {
@@ -793,6 +799,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    if (wasTimeout()) abortReceive();	// return to command mode
 		    return (false);
 		}
+		dolongtrain = false;
 	    } else {
 		if (!gotEOT) {
 		    bool gotprimary = waitForDCEChannel(false);
@@ -1083,6 +1090,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						}
 						(void) transmitFrame(FCF_CTR|FCF_RCVR);
 						tracePPR("RECV send", FCF_CTR);
+						dolongtrain = true;
 						break;
 					    case FCF_EOR:
 						tracePPM("RECV recv", rtnframe.getFCF2());
