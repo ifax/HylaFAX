@@ -153,7 +153,7 @@ done:
  */
 #define	BIT(i)	(1<<(i))
 #define	VR_ALL	(BIT(2)-1)
-#define	BR_ALL	(BIT(6)-1)
+#define	BR_ALL	(BIT(6)-1)	// don't encode > 14.4 Kbps
 #define	WD_ALL	(BIT(5)-1)
 #define	LN_ALL	(BIT(3)-1)
 #define	DF_ALL	(BIT(4)-1)
@@ -164,20 +164,23 @@ done:
 /*
  * Parse a Class 2 parameter specification and
  * return a string with the encoded information.
+ * This should encode identically as does
+ * Class2Params::encodeCaps().
  */
 int
 parseCapabilities(const char* cp, u_int* caps)
 {
+    // we are limited to 32 bits, thus BR_ALL is restricted above
     int vr, br, wd, ln, df, ec, bf, st;
     if (vparseRange(cp, 8, &vr,&br,&wd,&ln,&df,&ec,&bf,&st)) {
 	*caps = (vr&VR_ALL)
-	     | ((br&BR_ALL)<<2)
-	     | ((wd&WD_ALL)<<8)
-	     | ((ln&LN_ALL)<<13)
-	     | ((df&DF_ALL)<<16)
-	     | ((ec&EC_ALL)<<18)
-	     | ((bf&BF_ALL)<<20)
-	     | ((st&ST_ALL)<<22)
+	     | ((br&BR_ALL)<<8)
+	     | ((wd&WD_ALL)<<14)
+	     | ((ln&LN_ALL)<<19)
+	     | ((df&DF_ALL)<<22)
+	     | ((ec&EC_ALL)<<26)
+	     | ((bf&BF_ALL)<<28)
+	     | ((st&ST_ALL)<<30)
 	     ;
 	return (1);
     } else
