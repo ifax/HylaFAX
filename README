@@ -2,7 +2,7 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.1.2
+The HylaFAX development team is pleased to announce our 4.1.3
 patch-level release!  The release represents many hours of work and
 testing by developers and contributors, and our thanks goes to all who
 participate and provide feedback.
@@ -10,54 +10,48 @@ participate and provide feedback.
                                *   *   *
 
 This document is intended to describe the significant differences
-between hylafax-4.1.2 and older releases, point out any known
+between hylafax-4.1.3 and older releases, point out any known
 incompatibilites and issues, and provide the reader with directions to
 further resources regarding HylaFAX.
 
                           *   NEW FEATURES   *
 
-* improved modem recognition routine (ignores firmware rev. data in ATI0)
-* enhanced support for building on MacOS X and Digital Unix
-* more descriptive messaging for timedout/failed jobs, and T.4 protocol errors
-* enhanced support for Topic modems
-* adopt safer defaults for modem rates and dial commands
-* repaired an error which caused faxqclean to segfault under heavy load
-* fixed a problem with faxcron which could reset sequence numbers
-
+* support for MultiTech Real-Time Fax Compression Conversion via new 
+  Class2RTFCC option
+* support for Class 2.1 and V.34-fax (Super G3) modems
+* new 'sendfax -z' option to read destinations from a file
+* support for Solaris DSOs
+* additional modem support for various MultiTech, Eicon, Sedlbauer, 
+  Comtrol, and Davicom modems
+* new Class2PTSQueryCmd and Class1TCFRecvHack config options
+* job archival support
 
                          *   KNOWN ISSUES   *
 
-* Specific support for fax classes 1.0 and 2.1 are not yet implemented.
-* Server-based fax archival support is still unimplemented (although 
-  documented).
-* When running in Class 2/2.0, NSF can be parsed incorrectly.
+* HylaFAX corrupts images received in 2D-MMR.
+* Specific support for fax class 1.0 is not yet implemented.
+* NSF can be parsed incorrectly if the modem doesn't report it in hex.
 * Copy quality checking by cqtest is imperfect.
 * sendfax use of ~/.hylarc differs from its use of hyla.conf
-* faxrm and faxalter contain format string vulnerabilities.
 ** Please refer to HylaFAX Bugzilla for a detailed list of issues.
 
                        *   INCOMPATIBILITIES   *
 
+* faxinfo from older installations of HylaFAX will not give correct 
+  output when run against newly received fax image files.  faxinfo from 
+  4.1.3 can read both newly received and older fax image files.
 * The popular faxrcvd-mail scripts have been deprecated by FILETYPE use in 
-  FaxDispatch, and unchanged, will not work with faxgetty in 4.1.2.  See 
+  FaxDispatch, and unchanged, will not work with faxgetty in 4.1.3.  See 
  'man faxrcvd' for details.
-* Failed faxes now have status "F" instead of "D".  Most client programs 
-  which display/report job status will need some alteration to accomodate 
-  this.
-* HylaFAX 4.1.2 may not compile with gcc-3.0
+* HylaFAX 4.1.3 may not compile with gcc-3.0 or gcc-3.1
 
                       *   WHO SHOULD UPGRADE?   *
 
-If you've installed 4.1.1 and:
-
-a) are not seeing faxqclean dying because of segmentation faults, and
-b) don't have an unusually high rate of fax communication errors, and
-c) send at least one fax per month
-
-an upgrade is probably not essential at the present time. Users who
-don't meet one of the above criteria, and users of all other versions
-should upgrade as soon as practical.
-
+4.1.3 includes fixes for a remote format string vulnerability which could 
+be abused in a denial of service attack.  Also present in 4.1.3 are fixes 
+for several other local remote format string vulnerabilities which, in 
+some installations, could lead to elevated privileges by abuse.  Everyone 
+is advised to upgrade.
 
                      *   HYLAFAX BINARY PACKAGES   *
 

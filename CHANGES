@@ -1,5 +1,47 @@
 #	$Id$	
 
+Changelog for HylaFAX 4.1.3 - Jun 17, 2002
+
+* made minor changes for Sun Forte compiler compatibility (14 Jun 2002)
+* fixed hostname format string vulnerabilities in faxrm, faxalter, 
+  faxstat, sendfax, sendpage, and faxwatch (14 Jun 2002)
+* added TagLineFormat option for receiver's name (14 Jun 2002)
+* added MultiTech RTFCC support via Class2RTFCC option (11 Jun 2002)
+* workaround a Lucent V92 firmware bug in HDLC frame tracing (08 Jun 2002)
+* added Class2PTSQueryCmd for broken Class 2.0 firmwares (08 Jun 2002)
+* fixed a TSI format string vulnerability in faxgetty (08 Jun 2002)
+* fixed faxrcvd creation of PDFs other than letter size (08 Jun 2002)
+* added sendfax -z option to read destinations from a file (08 Jun 2002)
+* updated 'make clobberconfig' (27 May 2002)
+* added support for Solaris DSOs (24 May 2002)
+* fixed Class 1 sending CRP handling (24 May 2002)
+* changed Class 1 reception protocol to tolerate long syslog
+  delays which could be encountered in extremely heavy loads (24 May 2002)
+* added prototype support for Sedlbauer Speedfax ISDN (24 May 2002)
+* added Class1TCFRecvHack config option (24 May 2002)
+* changed Class1SwitchingDelay to Class1SwitchingCmd (24 May 2002)
+* more 64-bit system compatibility enhancement (24 May 2002)
+* large update added initial Class 2.1 and V.34-fax support in particular
+  for the MultiTech MT5634ZBA-V92 and MT5634ZPX-PCI-V92 (23 May, 14 Jun 2002)
+* have faxsetup check the fax user home directory (23 May 2002)
+* allow server-side usage of DisplayNumber in dialrules (23 May 2002)
+* changed various scripts for POSIX compliance (23 May 2002)
+* fixed a logging error in faxqclean (23 May 2002)
+* added prototype support for RocketModem PCI (10 May 2002)
+* changed the options proccessing order to fix Desired* options (03 May 2002)
+* added prototype support for Eicon Diva modems (03 May 2002)
+* enhanced configure for OSF-5.1A utmp support (03 May 2002)
+* fixed a five-second delay when receiving DID (03 May 2002, 27 May 2002)
+* added prototype for Davicom modems (03 May 2002)
+* fixed faxqclean to keep referenced docs in the doneq (03 May 2002)
+* Japanization and 64-bit system enhancement (03 May 2002)
+* fixed a configure problem with sed-3.02.80 (03 May 2002, 23 May 2002)
+* fixed a copy quality logic error with Class 2 reception (03 May 2002)
+* documented the use of "-1" values in sendfax for MaxDials (03 May 2002)
+* correct JobReqOther from interfering with other requeing (03 May 2002)
+* add preliminary job archiving support (03 May 2002)
+* make stripping of binaries in html conditional on HTML=yes (13 Apr 2002)
+
 Changelog for HylaFAX 4.1.2 - Apr 11, 2002
 
 * T.4 incompatability error message more descriptive (11 Apr 2002) 
