@@ -339,7 +339,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 			if (status != send_ok)
 			    return (status);
 		    }
-		    break;
+		    continue;
                 case RTN_GIVEUP:
                     emsg = "Unable to transmit page"
                         " (giving up after RTN)";
