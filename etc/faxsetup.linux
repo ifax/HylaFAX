@@ -32,7 +32,14 @@
 
 addPasswd()
 {
-    useradd -m -c 'Facsimile Agent' -d $4 -u $2 -o -g $3 $1
+    if [ -z "`useradd 2>&1 | grep -- -o`" ]; then
+        useradd -c 'Facsimile Agent' -d $4 -s /bin/false $1;
+        usermod -u $2 -o -g $3 $1;
+    elif [ -z "`useradd -M 2>&1 | grep invalid`" ]; then
+        useradd -M -c 'Facsimile Agent' -d $4 -u $2 -o -g $3 -s /bin/false $1;
+    else
+        useradd -c 'Facsimile Agent' -d $4 -u $2 -o -g $3 -s /bin/false $1;
+    fi
 }
 deletePasswd()
 {
