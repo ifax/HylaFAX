@@ -169,6 +169,7 @@ HYLAFAXSRC=\
     README					\
     TODO					\
     COPYRIGHT					\
+    INSTALL					\
     configure					\
     config.guess				\
     config.h.in					\
