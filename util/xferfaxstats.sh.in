@@ -52,7 +52,8 @@ SORTKEY=-sender				# default is to sort by sender
 MAPNAMES=no				# default is to not map email addresses (NIS)
 TODAY="`date +'%D %H:%M'`"
 AGE="360"				# report statistics for last year
-SINCE=
+SINCEDT=
+ENDDT=
 
 while [ x"$1" != x"" ] ; do
     case $1 in
@@ -61,8 +62,9 @@ while [ x"$1" != x"" ] ; do
     -nomap) MAPNAMES=no;;
     -map)   MAPNAMES=yes;;
     -age)   shift; AGE=$1;;
-    -since) shift; SINCE=$1;;
-    -*)	    echo "Usage: $0 [-sortkey] [-age days] [-since date] [-nomap] [files]"; exit 1;;
+    -since) shift; SINCEDT=$1;;
+    -end) shift; ENDDT=$1;;
+    -*)	    echo "Usage: $0 [-sortkey] [-age days] [-since date] [-end date] [-nomap] [files]"; exit 1;;
     *)	    FILES="$FILES $1";;
     esac
     shift
@@ -404,7 +406,7 @@ function acct(key, dest, pages, time, br, df, status)
 	if (callFailed[msg])
 	    return;
     }
-    if (cvtDateTime($1) < KEEP)
+    if (cvtDateTime($1) < KEEPSINCE || cvtDateTime($1) > KEEPEND)
 	return;
     key = cleanup(key);
 EOF
@@ -485,10 +487,14 @@ BEGIN		{ FS="\t";
 		  callFailed["job aborted"] = 1;
 		  setupToLower();
 		  setupDateTimeStuff();
-		  if (SINCE == "")
-		      KEEP = cvtDateTime(TODAY) - AGE*FULLDAY;
+		  if (SINCEDT == "")
+		      KEEPSINCE = cvtDateTime(TODAY) - AGE*FULLDAY;
 		  else
-		      KEEP = cvtDateTime(SINCE);
+		      KEEPSINCE = cvtDateTime(SINCEDT);
+		  if (ENDDT == "")
+		      KEEPEND = cvtDateTime(TODAY);
+		  else
+		      KEEPEND = cvtDateTime(ENDDT);
 EOF
 echo		  "KeyTitle = \"$KEYTITLE\""
 $CAT<<'EOF'
@@ -547,4 +553,4 @@ END		{ OFS="\t"; setupDigits();
 EOF
 echo "$AWKRULES"
 )>$tmpAwk
-$AWK -f $tmpAwk -v TODAY="$TODAY" -v AGE="$AGE" -v SINCE="$SINCE" $FILES
+$AWK -f $tmpAwk -v TODAY="$TODAY" -v AGE="$AGE" -v SINCEDT="$SINCEDT" -v ENDDT="$ENDDT" $FILES

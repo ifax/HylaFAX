@@ -54,15 +54,17 @@ FILES=
 SORTKEY=-sender				# default is to sort by sender
 TODAY="`date +'%D %H:%M'`"
 AGE="360"				# report statistics for last year
-SINCE=
+SINCEDT=
+ENDDT=
 
 while [ x"$1" != x"" ] ; do
     case $1 in
     -send*|-csi|-dest*|-speed|-rate|-format|-cidname|-cidnumber)
 	    SORTKEY=$1;;
     -age)   shift; AGE=$1;;
-    -since) shift; SINCE=$1;;
-    -*)	    echo "Usage: $0 [-sortkey] [-age days] [-since date] [files]"
+    -since) shift; SINCEDT=$1;;
+    -end) shift; ENDDT=$1;;
+    -*)	    echo "Usage: $0 [-sortkey] [-age days] [-since date] [-end date] [files]"
 	    exit 1
 	    ;;
     *)	    FILES="$FILES $1";;
@@ -320,7 +322,7 @@ function getDF(params)
 #
 function acct(key, pages, time, br, df, status, cidname, cidnumber)
 {
-    if (cvtDateTime($1) < KEEP)
+    if (cvtDateTime($1) < KEEPSINCE || cvtDateTime($1) > KEEPEND)
 	return;
     gsub("\"", "", key);
     gsub("^ +", "", key);
@@ -359,10 +361,14 @@ BEGIN		{ FS="\t";
 		  datas = "1-D MH:2-D MR:2-D Uncompressed Mode:2-D MMR";
 		  setupMaps(datas, dataMap, dfNames);
 		  setupDateTimeStuff();
-		  if (SINCE == "")
-		      KEEP = cvtDateTime(TODAY) - AGE*FULLDAY;
+		  if (SINCEDT == "")
+		      KEEPSINCE = cvtDateTime(TODAY) - AGE*FULLDAY;
 		  else
-		      KEEP = cvtDateTime(SINCE);
+		      KEEPSINCE = cvtDateTime(SINCEDT);
+		  if (ENDDT == "")
+		      KEEPEND = cvtDateTime(TODAY);
+		  else
+		      KEEPEND = cvtDateTime(ENDDT);
 		}
 END		{ OFS="\t"; setupDigits();
 		  maxlen = 15;
@@ -403,4 +409,4 @@ END		{ OFS="\t"; setupDigits();
 EOF
 echo "$AWKRULES"
 )>$tmpAwk
-$AWK -f $tmpAwk -v TODAY="$TODAY" -v AGE="$AGE" -v SINCE="$SINCE" $FILES
+$AWK -f $tmpAwk -v TODAY="$TODAY" -v AGE="$AGE" -v SINCEDT="$SINCEDT" -v ENDDT="$ENDDT" $FILES
