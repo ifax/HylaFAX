@@ -1257,6 +1257,7 @@ if [ -z "$CXXFILE" ]; then
     case $CXX-$TARGET in
     xlC-*-aix*)		CXXFILE="-+";;
     gcc-*)		CXXFILE="-x c++";;
+    *-*darwin*)		CXXFILE="-x c++";;
     CC-*-sco3.2v5.*)	CXXFILE="+.c++";;
     esac
 fi
@@ -3614,6 +3615,7 @@ if [ "$GETTY" = auto ]; then
     *bsd*)	GETTY=BSD;;
     *-sunos*)	GETTY=BSD;;
     *-ultrix*)	GETTY=BSD;;
+    *darwin*)   GETTY=BSD;;
     *)		GETTY=SysV;;
     esac
 fi
