@@ -1,6 +1,6 @@
 $Id$
 
-HylaFAX, Version 4.0 (release)
+HylaFAX, Version 4.1 (beta)
 ------------------------------
 
 Copyright (c) 1988-1996 Sam Leffler
@@ -264,12 +264,18 @@ into consideration when posting notes to it; i.e. avoid posting large
 trace logs and the such.  Also, when corresponding about this software
 please always specify:
 
-- what version you have (see "How to tell which version you have" above),
-- what system you're running on, and,
+- what version of HylaFAX you have,
+- what system you're running on (if it is Linux please name the distribution),
+  and,
 - if the problem is modem-related, identify it and the firmware rev
 
-For example: "HylaFAX v3.0beta99 under Solaris 2.3 with gcc 2.6.3;
+For example: "HylaFAX v4.0pl2 under RedHat Linux 4.2 with gcc 2.7.2;
 ZyXEL 1496E with 6.11a firmware."
+
+Please cc a copy of your patches and bug reports to patches@hylafax.org and
+bugs@hylafax.org respectively.
+
+The mailing list is archived at : http://www.hylafax.org/archive/
 
 If you find the flexfax mailing list to have too much traffic for you,
 there is also an announcements-only mailing list called flexfax-announce.
