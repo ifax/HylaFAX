@@ -747,8 +747,8 @@ Class1Modem::sendRawFrame(HDLCFrame& frame)
 	return (false);
     }
     static u_char buf[2] = { DLE, ETX };
-    return (putModemDLEData(frame, frame.getLength(), frameRev, 0) &&
-	putModem(buf, 2, 0) &&
+    return (putModemDLEData(frame, frame.getLength(), frameRev, 60*1000) &&
+	putModem(buf, 2, 60*1000) &&
 	waitFor(frame.moreFrames() ? AT_CONNECT : AT_OK, 0));
 }
 
