@@ -3,6 +3,8 @@
 Changelog for HylaFAX 4.1.4 - 22 Sep 2002
 
 CHANGES:
+* fix broken polling in Class 1 (08 Oct 2002)
+* change pollrcvd to behave similarly to faxrcvd (06 Oct 2002)
 * fix faxqclean to not miss certain orphaned files (01 Oct 2002)
 * change faxrcvd to only require 4 parameters (01 Oct 2002)
 * fix recvstats to handle new Super G3 faxing speeds (01 Oct 2002)
