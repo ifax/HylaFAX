@@ -106,7 +106,7 @@ u_int Class2Params::dfDISTab[4] = {
     0,				// 1-D MH
     DIS_2DENCODE,		// + 2-D MR
     DIS_2DENCODE,		// + Uncompressed data
-    DIS_2DENCODE,		// + 2-D MMR
+    0,				// + 2-D MMR
 };
 u_int Class2Params::brDISTab[8] = {
     DISSIGRATE_V27FB<<10,		// BR_2400
