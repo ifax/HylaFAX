@@ -103,7 +103,7 @@ faxAlterApp::run(int argc, char** argv)
 	    { time_t tv = mktime(&when) - now;
 	      addToScript("LASTTIME %02d%02d%02d"
 		, tv/(24*60*60)
-		, (tv/(60*60))%60
+		, (tv/(60*60))%24
 		, (tv/60)%60
 	      );
 	    }

@@ -755,10 +755,10 @@ SNPPServer::site_cmd(Token t)
     case T_LASTTIME:			// time to kill job
 	if (timespec_param(6, tv) && setJobParameter(defJob, t, tv)) {
 	    logcmd(t, "%02d%02d%02d"
-		, tv/(24*60*60) , (tv/(60*60))%60 , (tv/60)%60);
+		, tv/(24*60*60) , (tv/(60*60))%24 , (tv/60)%60);
 	    reply(250, "%s set to %02d%02d%02d."
 		, parmToken(t)
-		, tv/(24*60*60) , (tv/(60*60))%60 , (tv/60)%60);
+		, tv/(24*60*60) , (tv/(60*60))%24 , (tv/60)%60);
 	    return (TRUE);
 	}
 	break;

@@ -1035,7 +1035,7 @@ HylaFAXServer::param_cmd(Token t)
 	    reply(213, "%s set to %02d%02d%02d."
 		, parmToken(t)
 		, ticks/(24*60*60)
-		, (ticks/(60*60))%60
+		, (ticks/(60*60))%24
 		, (ticks/60)%60
 	    );
 	    return (TRUE);

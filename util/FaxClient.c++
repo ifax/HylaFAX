@@ -859,7 +859,7 @@ fxBool
 FaxClient::jobLastTime(u_long tv)
 {
     return (command("JPARM LASTTIME %02d%02d%02d",
-	tv/(24*60*60), (tv/(60*60))%60, (tv/60)%60) == COMPLETE);
+	tv/(24*60*60), (tv/(60*60))%24, (tv/60)%60) == COMPLETE);
 }
 fxBool
 FaxClient::jobRetryTime(u_long tv)
