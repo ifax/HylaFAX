@@ -560,7 +560,7 @@ int Dispatcher::waitFor(
 #if defined(SA_NOCLDSTOP)		// POSIX
 	sa.sa_handler = fxSIGACTIONHANDLER(&Dispatcher::sigCLD);
 	sa.sa_flags = SA_INTERRUPT;
-	sigaction(SIGCLD, &sa, &osa);
+	sigaction(SIGCHLD, &sa, &osa);
 #elif defined(SV_INTERRUPT)		// BSD-style
 	sv.sv_handler = fxSIGVECHANDLER(&Dispatcher::sigCLD);
 	sv.sv_flags = SV_INTERRUPT;
@@ -606,7 +606,7 @@ int Dispatcher::waitFor(
     }
     if (!_cqueue->isEmpty()) {
 #if defined(SA_NOCLDSTOP)		// POSIX
-	sigaction(SIGCLD, &osa, (struct sigaction*) 0);
+	sigaction(SIGCHLD, &osa, (struct sigaction*) 0);
 #elif defined(SV_INTERRUPT)		// BSD-style
 	sigvec(SIGCHLD, &osv, (struct sigvec*) 0);
 #else					// System V-style

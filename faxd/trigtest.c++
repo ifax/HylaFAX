@@ -270,7 +270,6 @@ printRecvEvent(const TriggerMsgHeader& h, const char* data)
 
 #define	MAX	5
 
-extern "C" bzero(void*, size_t);
 static	char fifoName[80];
 
 void
@@ -286,7 +285,7 @@ reapChildren(...)
     int s;
     while (waitpid(-1, &s, WNOHANG) != -1)
 	;
-    signal(SIGCLD, reapChildren);
+    signal(SIGCHLD, reapChildren);
 }
 
 void
@@ -440,7 +439,7 @@ main(int argc, char* argv[])
 	perror("bind:");
 	exit(-1);
     }
-    signal(SIGCLD, reapChildren);
+    signal(SIGCHLD, reapChildren);
     listen(s, 5);
     for (;;) {
 	Socket::socklen_t sinlen = sizeof (sin);
