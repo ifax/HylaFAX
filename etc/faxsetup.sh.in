@@ -1275,7 +1275,7 @@ PickFile()
 }
 
 INETDCONF=`PickFile	$INETDCONF /etc/inetd.conf /etc/inet/inetd.conf`
-ALIASES=`PickFile	$ALIASES   /etc/aliases /etc/ucbmail/aliases /usr/mmdf/table/alias.user /usr/mmdf/table/alias.n`
+ALIASES=`PickFile	$ALIASES   /etc/aliases /etc/ucbmail/aliases /etc/mail/aliases /usr/mmdf/table/alias.user /usr/mmdf/table/alias.n`
 SERVICES=`PickFile	$SERVICES  /etc/inet/services`
 test -f /etc/master.passwd	&& PASSWD=/etc/master.passwd
 

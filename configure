@@ -1682,6 +1682,8 @@ EmitConfigurationDefinitions()
 			    CONFIG_OPENFIFO=O_RDONLY;
 			fi
 			;;
+	*-univel-*)	CONFIG_OPENFIFO=O_RDWR;;	# UnixWare 2.1.3
+	*-UnixWare-*)	CONFIG_OPENFIFO=O_RDWR;;	# UnixWare 7
 	*)		CONFIG_OPENFIFO=O_RDONLY;;
 	esac
     }
@@ -1877,6 +1879,7 @@ EmitConfigurationDefinitions()
 	case $TARGET in
 	# XXX fill in for busted systems
 	*-univel-*)	CONFIG_SOCKARGLENTYPE=size_t;;
+	*-UnixWare-*)	CONFIG_SOCKARGLENTYPE=size_t;;
 	*)		CONFIG_SOCKARGLENTYPE=int;;
 	esac
     }
@@ -1894,6 +1897,7 @@ EmitConfigurationDefinitions()
     test "$CONFIG_MAXGID" || {
 	case $TARGET in
 	*-sco*)		CONFIG_MAXGID=60000;;
+	*-UnixWare-*)	CONFIG_MAXGID=60000;;	# UnixWare 7
 	*-hpux*)	CONFIG_MAXGID=60000;;
 	*)		CONFIG_MAXGID=60002;;	# default
 	esac
