@@ -175,7 +175,7 @@ static struct {
 { "maxconsecutivebadlines",	&ModemConfig::maxConsecutiveBadLines,5 },
 { "modemresetdelay",		&ModemConfig::resetDelay,	     2600 },
 { "modemdtrdropdelay",		&ModemConfig::dtrDropDelay,	     75 },
-{ "modembaudratedelay",		&ModemConfig::baudRateDelay,	     0 },
+{ "modembaudratedelay",		&ModemConfig::baudRateDelay,	     10 },
 { "modematcmddelay",		&ModemConfig::atCmdDelay,	     0 },
 { "faxt1timer",			&ModemConfig::t1Timer,		     TIMER_T1 },
 { "faxt2timer",			&ModemConfig::t2Timer,		     TIMER_T2 },

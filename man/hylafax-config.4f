@@ -203,7 +203,7 @@ ModemAnswerResponseTimeout	integer	\s-1180000\s+1	answer command timeout (ms)
 ModemAnswerVoiceBeginCmd	string	\-	command for start of answered voice call
 ModemAnswerVoiceCmd	string	\s-1ATA\s+1	command for answering voice call
 ModemATCmdDelay	integer	\s-10\s+1	delay before sending modem an AT cmd (ms)
-ModemBaudRateDelay	integer	\s-10\s+1	delay (ms) after setting baud rate
+ModemBaudRateDelay	integer	\s-110\s+1	delay (ms) after setting baud rate
 ModemClassQueryCmd	string	\s-1AT+FCLASS=?\s+1	command for querying modem services
 ModemCommaPauseTimeCmd	string	\s-1ATS8=2\s+1	command for setting time to pause for ``,'' in dialing string
 ModemDialCmd	string	\s-1ATDT%s\s+1	command for dialing (%s for number to dial)
@@ -1519,7 +1519,7 @@ A delay, in milliseconds, that should be performed before each
 .B ModemBaudRateDelay
 The amount of time, in milliseconds, to pause after setting the
 baud rate on the serial line.
-This parameter is only needed for hosts where (apparently)
+This is only needed for hosts and modems (such as USRs) where 
 setting the serial line parameters does not take effect immediately.
 .TP
 .B ModemCommaPauseTimeCmd
