@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* set Class1*WaitCmds in cirrus config to not use +FTS/+FRS
 * improve default modem config file for Digi/Patton Class 1
 * force the Class 2 driver to repeat the +FDIS command after EOM
 * add FaxParams class and some utilization of it
