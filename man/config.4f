@@ -692,7 +692,8 @@ facility to use when logging error messages and
 informational/debugging messages requested through the
 .B ServerTracing
 parameter.
-The list of facility names is found in the system include file
+The list of facility names is standardized; it can be found 
+in the system include file
 .BR <syslog.h> ;
 comparisons are case-insensitive.
 .TP
