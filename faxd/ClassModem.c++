@@ -130,6 +130,8 @@ ClassModem::ClassModem(ModemServer& s, const ModemConfig& c)
     // XXX: workaround yet another GCC bug (sigh)
     const fxStr& flow = conf.getFlowCmd(conf.flowControl);
     resetCmds = "AT"
+	      | stripAT(conf.softResetCmd)
+	      | "\nAT"
 	      | stripAT(conf.resetCmds)		// prepend to insure our needs
 	      | stripAT(conf.echoOffCmd)
 	      | stripAT(conf.verboseResultsCmd)
