@@ -197,10 +197,10 @@ if [ -f $FILE ]; then
 	     echo ""
 	     $MIMENCODE $FILE 2>/dev/null
 	 elif [ "$FILETYPE" = "pdf" ]; then
-	     echo "Content-Type: application/pdf; name=\"c$COMMID.pdf\""
+	     echo "Content-Type: application/pdf; name=\"$FILENAME.pdf\""
 	     echo "Content-Description: FAX document"
 	     echo "Content-Transfer-Encoding: $ENCODING"
-	     echo "Content-Disposition: attachment; filename=\"c$COMMID.pdf\""
+	     echo "Content-Disposition: attachment; filename=\"$FILENAME.pdf\""
 	     echo ""
 	     GW=`$TIFFINFO $FILE | $GREP "Image Width" | \
 		$SED 's/.*Image Width: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
