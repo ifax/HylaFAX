@@ -3,8 +3,8 @@
 #
 # HylaFAX Facsimile Software
 #
-# Copyright (c) 1994-1996 Sam Leffler
-# Copyright (c) 1994-1996 Silicon Graphics, Inc.
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
 # HylaFAX is a trademark of Silicon Graphics
 # 
 # Permission to use, copy, modify, distribute, and sell this software and 
@@ -28,12 +28,11 @@
 #
 
 #
-# wedged deviceID device 
+# pollrcvd mailaddr faxfile devID commID error-msg
 #
-# Do something when a modem looks irretrievably wedged.
-#
-if [ $# != 2 ]; then
-    echo "Usage: $0 deviceID device"
+if [ $# != 5 ]
+then
+    echo "Usage: $0 mailaddr faxfile devID commID error-msg"
     exit 1
 fi
 
@@ -44,7 +43,7 @@ test -f etc/setup.cache || {
 FATAL ERROR: $SPOOL/etc/setup.cache is missing!
 
 The file $SPOOL/etc/setup.cache is not present.  This
-probably means the machine has not been setup using the faxsetup(1M)
+probably means the machine has not been setup using the faxsetup(@MANNUM1_8@)
 command.  Read the documentation on setting up HylaFAX before you
 startup a server system.
 
@@ -53,45 +52,50 @@ EOF
 }
 . etc/setup.cache
 
-devID=$1
-device=$2
-tty=`basename $device`
+INFO=$SBIN/faxinfo
+FAX2PS=$TIFFBIN/fax2ps
 
-($CAT<<EOF
-To: FaxMaster
-From: The HylaFAX Receive Agent <fax>
-Subject: modem on $device appears wedged
+MAILADDR="$1"
+FILE="$2"
+DEVICE="$3"
+COMMID="$4"
+MSG="$5"
 
-The HylaFAX software thinks that there is a problem with the modem
-on device $device that needs attention; repeated attempts to
-initialize the modem have failed.
-EOF
-
-#
-# NB: this is for an System V-style system.
-#
-if [ -f /etc/inittab ]; then
-    ed - /etc/inittab<<EOF
-/^[^#].*:respawn:.*faxgetty[ ][ ]*$tty/s/respawn/off/
-w
-q
-EOF
-    #
-    # ed doesn't appear to have consistent exit
-    # status under SysV-style systems (does under BSD);
-    # this means checking if the above succeeded is
-    # problematic.
-    #
-    if [ $? -ne 0 ] && /bin/kill -1 1; then
-	cat<<EOF
-
-The $tty entry in /etc/inittab that spawns faxgetty on $device has
-been disabled.  After you have figured out what is wrong you may
-want to restart this process.
-EOF
+(MIMEBOUNDARY="NextPart$$"
+ echo "To: $MAILADDR"
+ echo "From: The HylaFAX Receive Agent <fax>"
+ echo "Subject: facsimile document received by polling request"
+ echo "Mime-Version: 1.0"
+ echo "Content-Type: Multipart/Mixed; Boundary=\"$MIMEBOUNDARY\""
+ echo "Content-Transfer-Encoding: 7bit"
+ echo ""
+ $INFO $FILE
+ echo "ReceivedOn: $DEVICE"
+ if [ "$MSG" ]; then
+    echo ""
+    echo "The full document was not received because:"
+    echo ""
+    echo "    $MSG"
+    echo ""
+    echo "    ---- Transcript of session follows ----"
+    echo ""
+    if [ -f log/c$COMMID ]; then
+	sed -e '/-- data/d' \
+	    -e '/start.*timer/d' -e '/stop.*timer/d' \
+	    log/c$COMMID
+    elif [ -n "$COMMID" ]; then
+	echo "    No transcript available (CommID c$COMMID)."
+    else
+	echo "    No transcript available."
     fi
-fi
-
-echo ""
-echo "Consult the server trace logs for more information on what is happening."
-) | 2>&1 $SENDMAIL -t -ffax -oi
+ fi
+ echo ""
+ echo "--$MIMEBOUNDARY"
+ echo "Content-Type: application/postscript"
+ echo "Content-Description: FAX document"
+ echo "Content-Transfer-Encoding: 7bit"
+ echo ""
+ $FAX2PS $FILE 2>/dev/null
+ echo ""
+ echo "--$MIMEBOUNDARY--"
+) | 2>&1 $SENDMAIL -ffax -oi $MAILADDR

@@ -28,15 +28,14 @@
 #
 
 #
-# Convert PCL to facsimile.
+# notify qfile why jobtime [nextTry]
 #
-# pcl2fax [-o output] [-l pagelength] [-w pagewidth]
-#	[-r resolution] [-m maxpages] [-*] file ...
+# Return mail to the submitter of a job when notification is needed.
 #
-# NB: this shell script is assumed to be run from the
-#     top of the spooling hierarchy -- s.t. the etc directory
-#     is present.
-#
+if [ $# != 3 -a $# != 4 ]; then
+    echo "Usage: $0 qfile why jobtime [nextTry]"
+    exit 1
+fi
 
 test -f etc/setup.cache || {
     SPOOL=`pwd`
@@ -45,7 +44,7 @@ test -f etc/setup.cache || {
 FATAL ERROR: $SPOOL/etc/setup.cache is missing!
 
 The file $SPOOL/etc/setup.cache is not present.  This
-probably means the machine has not been setup using the faxsetup(1M)
+probably means the machine has not been setup using the faxsetup(@MANNUM1_8@)
 command.  Read the documentation on setting up HylaFAX before you
 startup a server system.
 
@@ -54,5 +53,16 @@ EOF
 }
 . etc/setup.cache
 
-echo "PCL documents are not (currently) supported."
-exit 254			# causes document to be rejected
+QFILE=$1
+WHY=$2
+JTIME=$3
+NEXT=${4:-'??:??'}
+
+($AWK -F: -f bin/notify.awk why=$WHY jobTime=$JTIME nextTry=$NEXT $QFILE || {
+      echo ""
+      echo "Sorry, there was a problem sending notification;"
+      echo "something went wrong in the shell script $0."
+      echo ""
+      exit 1;
+  }
+) | 2>&1 $SENDMAIL -t -ffax -oi

@@ -28,20 +28,19 @@
 #
 
 #
-# Convert PostScript to facsimile using DPS-based RIP for IRIX.
+# Convert PostScript to facsimile using Ghostscript.
 #
 # ps2fax [-o output] [-l pagelength] [-w pagewidth]
 #	[-r resolution] [-m maxpages] [-*] [file ...]
 #
 # We need to process the arguments to extract the input
-# files so that we can prepend a prologue file that defines
-# LaserWriter-specific stuff as well as to insert and error
-# handler that generates ASCII diagnostic messages when
-# a problem is encountered in the interpreter.
+# files so that we can prepend a prologue file that sets
+# up a non-interactive environment.
 #
 # NB: this shell script is assumed to be run from the
 #     top of the spooling hierarchy -- s.t. the etc directory
 #     is present.
+#
 
 test -f etc/setup.cache || {
     SPOOL=`pwd`
@@ -50,7 +49,7 @@ test -f etc/setup.cache || {
 FATAL ERROR: $SPOOL/etc/setup.cache is missing!
 
 The file $SPOOL/etc/setup.cache is not present.  This
-probably means the machine has not been setup using the faxsetup(1M)
+probably means the machine has not been setup using the faxsetup(@MANNUM1_8@)
 command.  Read the documentation on setting up HylaFAX before you
 startup a server system.
 
@@ -59,39 +58,46 @@ EOF
 }
 . etc/setup.cache
 
-PS=$DPSRIP
+PS=$GSRIP
 
 fil=
-opt=
+out=ps.fax		# default output filename
+pagewidth=1728		# standard fax width
+pagelength=297		# default to A4 
+vres=98			# default to low res
+device=tiffg3		# default to 1D
 while test $# != 0
-do case "$1" in
-    -o)	shift; opt="$opt -o $1" ;;
-    -l)	shift; opt="$opt -l $1" ;;
-    -w)	shift; opt="$opt -w $1" ;;
-    -r)	shift; opt="$opt -r $1" ;;
+do
+    case "$1" in
+    -o)	shift; out="$1" ;;
+    -w) shift; pagewidth="$1" ;;
+    -l) shift; pagelength="$1" ;;
+    -r)	shift; vres="$1" ;;
     -m) shift;;				# NB: not implemented
-    -*)	opt="$opt $1" ;;
+    -1) device=tiffg3 ;;
+    -2) ($PS -h | grep tiffg32d >/dev/null 2>&1) \
+	    && { device=tiffg32d; } \
+	    || { device=tiffg3; }
+	;;
+    -*)	;;
     *)	fil="$fil $1" ;;
     esac
     shift
 done
 test -z "$fil" && fil="-"		# read from stdin
-
-test -x $PS || {
-    cat<<EOF
-
-The DPS-based PostScript RIP does not exist on the server machine
-or is not located at the expected location:
-
-    $PS
-
-This indicates that you do not have hylafax.sw.dpsrip installed on
-the system or that it is installed in a nonstandard location.  This
-must be corrected before a PostScript document can be transmitted.
-
-EOF
-    exit 254;				# cause document to be rejected
-}
+case "${pagewidth}x${pagelength}" in
+1728x280|1728x279)		# 279.4mm is actually correct...
+    paper=letter;;
+1728x364) 
+    paper=legal;;
+*x296|*x297)			# more roundoff problems...
+    paper=a4;;
+*x364)
+    paper=b4;;
+*)
+    echo "$0: Unsupported page size: $pagewidth x $pagelength";
+    exit 254;;			# causes document to be rejected
+esac
 
 #
 # The sed work fixes bug in Windows-generated
@@ -103,17 +109,15 @@ EOF
 # NB: unfortunately it appears to break valid PostScript;
 #     so it's been disabled.
 #
-$CAT etc/dpsprinter.ps $fil | $PS $opt
-if [ $? -eq 2 ]; then
-    OS=`uname -r`
-    if expr $OS \>= 6.2 >/dev/null; then
-	cat<<EOF
-
-The DPS-based PostScript RIP is a COFF executable and cannot be used
-under IRIX $OS.  You must use a different RIP such as hylafax.sw.gsrip
-which is based on the freely distributed Ghostscript software distribution.
-
-EOF
-	exit 254;			# cause document to be rejected
-    fi
-fi
+# Suggestion from "Alan Sparks" <asparks@nss.harris.com>,
+# Add the -DFIXEDMEDIA argument to the last command in ps2fax
+#
+$CAT $fil | $PS -q \
+    -sDEVICE=$device \
+    -dNOPAUSE \
+    -dSAFER=true \
+    -sPAPERSIZE=$paper \
+    -dFIXEDMEDIA \
+    -r204x$vres \
+    "-sOutputFile=$out" \
+    -
