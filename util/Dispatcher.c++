@@ -41,58 +41,6 @@ extern "C" {
 
 Dispatcher* Dispatcher::_instance;
 
-/*
-    XXX This is a bad hack to get it to work with glibc 2.1, should
-    be removed and the code dependent on it fixed at the first opportunity.
-*/
-#if defined __GLIBC__ && __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 1
-#define fds_bits __fds_bits
-#endif
-
-class FdMask : public fd_set {
-public:
-    FdMask();
-    void zero();
-    void setBit(int);
-    void clrBit(int);
-    fxBool isSet(int) const;
-    fxBool anySet() const;
-    int numSet() const;
-};
-
-FdMask::FdMask() {
-    zero();
-}
-
-void FdMask::zero() { memset(this, 0, sizeof(FdMask)); }
-void FdMask::setBit(int fd) { FD_SET(fd,this); }
-void FdMask::clrBit(int fd) { FD_CLR(fd,this); }
-fxBool FdMask::isSet(int fd) const { return (FD_ISSET(fd,this) != 0); }
-
-fxBool FdMask::anySet() const {
-    const int mskcnt = howmany(FD_SETSIZE,NFDBITS);
-    for (int i = 0; i < mskcnt; i++) {
-	if (fds_bits[i]) {
-	    return TRUE;
-	}
-    }
-    return FALSE;
-}
-
-int FdMask::numSet() const {
-    const int mskcnt = howmany(FD_SETSIZE,NFDBITS);
-    int n = 0;
-    for (int i = 0; i < mskcnt; i++) {
-	if (fds_bits[i]) {
-	    for (int j = 0; j < NFDBITS; j++) {
-		if ((fds_bits[i] & (1 << j)) != 0) {
-		    n += 1;
-		}
-	    }
-	}
-    }
-    return n;
-}
 
 /*
  * Operations on timeval structures.
@@ -372,12 +320,12 @@ void ChildQueue::notify() {
 
 Dispatcher::Dispatcher() {
     _nfds = 0;
-    _rmask = new FdMask;
-    _wmask = new FdMask;
-    _emask = new FdMask;
-    _rmaskready = new FdMask;
-    _wmaskready = new FdMask;
-    _emaskready = new FdMask;
+    FD_ZERO(&_rmask);
+    FD_ZERO(&_wmask);
+    FD_ZERO(&_emask);
+    FD_ZERO(&_rmaskready);
+    FD_ZERO(&_wmaskready);
+    FD_ZERO(&_emaskready);
     _max_fds = Sys::getOpenMax();
     _rtable = new IOHandler*[_max_fds];
     _wtable = new IOHandler*[_max_fds];
@@ -392,12 +340,6 @@ Dispatcher::Dispatcher() {
 }
 
 Dispatcher::~Dispatcher() {
-    delete _rmask;
-    delete _wmask;
-    delete _emask;
-    delete _rmaskready;
-    delete _wmaskready;
-    delete _emaskready;
     delete _rtable;
     delete _wtable;
     delete _etable;
@@ -447,16 +389,16 @@ void Dispatcher::unlink(int fd) {
 
 void Dispatcher::attach(int fd, DispatcherMask mask, IOHandler* handler) {
     if (mask == ReadMask) {
-	_rmask->setBit(fd);
-	_rtable[fd] = handler;
+        FD_SET(fd, &_rmask);
+        _rtable[fd] = handler;
     } else if (mask == WriteMask) {
-	_wmask->setBit(fd);
-	_wtable[fd] = handler;
+        FD_SET(fd, &_wmask);
+        _wtable[fd] = handler;
     } else if (mask == ExceptMask) {
-	_emask->setBit(fd);
-	_etable[fd] = handler;
+        FD_SET(fd, &_emask);
+        _etable[fd] = handler;
     } else {
-	abort();
+        abort();
     }
     if (_nfds < fd+1) {
 	_nfds = fd+1;
@@ -464,11 +406,11 @@ void Dispatcher::attach(int fd, DispatcherMask mask, IOHandler* handler) {
 }
 
 void Dispatcher::detach(int fd) {
-    _rmask->clrBit(fd);
+    FD_CLR(fd, &_rmask);
     _rtable[fd] = NULL;
-    _wmask->clrBit(fd);
+    FD_CLR(fd, &_wmask);
     _wtable[fd] = NULL;
-    _emask->clrBit(fd);
+    FD_CLR(fd, &_emask);
     _etable[fd] = NULL;
     if (_nfds == fd+1) {
 	while (_nfds > 0 && _rtable[_nfds-1] == NULL &&
@@ -500,16 +442,16 @@ void Dispatcher::stopChild(IOHandler* handler) {
 
 fxBool Dispatcher::setReady(int fd, DispatcherMask mask) {
     if (handler(fd, mask) == NULL) {
-	return FALSE;
+        return FALSE;
     }
     if (mask == ReadMask) {
-	_rmaskready->setBit(fd);
+        FD_SET(fd, &_rmaskready);
     } else if (mask == WriteMask) {
-	_wmaskready->setBit(fd);
+        FD_SET(fd, &_wmaskready);
     } else if (mask == ExceptMask) {
-	_emaskready->setBit(fd);
+        FD_SET(fd, &_emaskready);
     } else {
-	return FALSE;
+        return FALSE;
     }
     return TRUE;
 }
@@ -542,41 +484,54 @@ fxBool Dispatcher::dispatch(long& sec, long& usec) {
 }
 
 fxBool Dispatcher::dispatch(timeval* howlong) {
-    FdMask rmaskret;
-    FdMask wmaskret;
-    FdMask emaskret;
-    int nfound;
+    fd_set rmask;
+    fd_set wmask;
+    fd_set emask;
 
-    if (anyReady()) {
-	nfound = fillInReady(rmaskret, wmaskret, emaskret);
-    } else {
-	nfound = waitFor(rmaskret, wmaskret, emaskret, howlong);
-    }
+    FD_ZERO(&rmask);
+    FD_ZERO(&wmask);
+    FD_ZERO(&emask);
 
-    notify(nfound, rmaskret, wmaskret, emaskret);
+    int nfound = (anyReady()) ?
+        fillInReady(rmask, wmask, emask)
+        : waitFor(rmask, wmask, emask, howlong);
+
+    notify(nfound, rmask, wmask, emask);
 
     return (nfound != 0);
 }
 
 fxBool Dispatcher::anyReady() const {
     if (!_cqueue->isEmpty()) {
-	Dispatcher::sigCLD(0);		// poll for pending children
-	return _cqueue->isReady();
+        Dispatcher::sigCLD(0);		// poll for pending children
+        return _cqueue->isReady();
     }
-    return
-	_rmaskready->anySet() || _wmaskready->anySet() || _emaskready->anySet();
+    for (int i = 0; i < _nfds; i++) {
+        if (FD_ISSET(i, &_rmaskready) ||
+                FD_ISSET(i, &_wmaskready) || FD_ISSET(i, &_emaskready)) {
+            return TRUE;
+	    }
+    }
+    return FALSE;
 }
 
 int Dispatcher::fillInReady(
-    FdMask& rmaskret, FdMask& wmaskret, FdMask& emaskret
-) {
-    rmaskret = *_rmaskready;
-    wmaskret = *_wmaskready;
-    emaskret = *_emaskready;
-    _rmaskready->zero();
-    _wmaskready->zero();
-    _emaskready->zero();
-    return rmaskret.numSet() + wmaskret.numSet() + emaskret.numSet();
+    fd_set& rmaskret, fd_set& wmaskret, fd_set& emaskret) {
+
+    //note - this is an array copy, not a pointer assignment
+    rmaskret = _rmaskready;
+    wmaskret = _wmaskready;
+    emaskret = _emaskready;
+    FD_ZERO(&_rmaskready);
+    FD_ZERO(&_wmaskready);
+    FD_ZERO(&_emaskready);
+    int n = 0;
+    for (int i = 0; i < _nfds; i++) {
+        if (FD_ISSET(i, &rmaskret)) n++;
+        if (FD_ISSET(i, &wmaskret)) n++;
+        if (FD_ISSET(i, &emaskret)) n++;
+    }
+    return n;
 }
 
 void Dispatcher::sigCLD(int)
@@ -593,7 +548,7 @@ void Dispatcher::sigCLD(int)
 #endif
 
 int Dispatcher::waitFor(
-    FdMask& rmaskret, FdMask& wmaskret, FdMask& emaskret, timeval* howlong
+    fd_set& rmaskret, fd_set& wmaskret, fd_set& emaskret, timeval* howlong
 ) {
     int nfound;
 #if defined(SV_INTERRUPT)		// BSD-style
@@ -623,11 +578,12 @@ int Dispatcher::waitFor(
      * if so then we don't want to block in the select.
      */
     if (!_cqueue->isReady()) {
-	do {
-	    rmaskret = *_rmask;
-	    wmaskret = *_wmask;
-	    emaskret = *_emask;
-	    howlong = calculateTimeout(howlong);
+    do {
+        //note - this is an array copy, not a pointer assignment
+        rmaskret = _rmask;
+        wmaskret = _wmask;
+        emaskret = _emask;
+        howlong = calculateTimeout(howlong);
 
 #if CONFIG_BADSELECTPROTO
 	    nfound = select(_nfds,
@@ -636,19 +592,17 @@ int Dispatcher::waitFor(
 	    nfound = select(_nfds, &rmaskret, &wmaskret, &emaskret, howlong);
 #endif
 #ifdef SGISELECTBUG
-	    // XXX hack to deal with IRIX 5.2 FIFO+select bug
-	    if (wmaskret.anySet()) {
-		for (int i = 0; i < _nfds; i++)
-		    if (wmaskret.isSet(i) && !_wmask->isSet(i)) {
-			wmaskret.clrBit(i);
-		    }
-	    }
-	    if (emaskret.anySet()) {
-		for (int i = 0; i < _nfds; i++)
-		    if (emaskret.isSet(i) && !_emask->isSet(i)) {
-			emaskret.clrBit(i);
-		    }
-	    }
+        // XXX hack to deal with IRIX 5.2 FIFO+select bug
+        for (int i = 0; i < _nfds; i++) {
+            if (FD_ISSET(i, &wmaskret) && !FD_ISSET(i, &_wmask)) {
+                FD_CLR(i, &wmaskret);
+            } 
+        }
+        for (int i = 0; i < _nfds; i++) {
+            if (FD_ISSET(i, &emaskret)  && !FD_ISSET(i, &_emask)) {
+                FD_CLR(i, &emaskret);
+            }
+        }
 #endif
 	    howlong = calculateTimeout(howlong);
 	} while (nfound < 0 && !handleError());
@@ -666,44 +620,43 @@ int Dispatcher::waitFor(
     return nfound;			// timed out or input available
 }
 
-void Dispatcher::notify(
-    int nfound, FdMask& rmaskret, FdMask& wmaskret, FdMask& emaskret
-) {
+void Dispatcher::notify(int nfound,
+        fd_set& rmaskret, fd_set& wmaskret, fd_set& emaskret) {
     for (int i = 0; i < _nfds && nfound > 0; i++) {
-	if (rmaskret.isSet(i)) {
-	    int status = _rtable[i]->inputReady(i);
-	    if (status < 0) {
-		detach(i);
-	    } else if (status > 0) {
-		_rmaskready->setBit(i);
-	    }
-	    nfound--;
-	}
-	if (wmaskret.isSet(i)) {
-	    int status = _wtable[i]->outputReady(i);
-	    if (status < 0) {
-		detach(i);
-	    } else if (status > 0) {
-		_wmaskready->setBit(i);
-	    }
-	    nfound--;
-	}
-	if (emaskret.isSet(i)) {
-	    int status = _etable[i]->exceptionRaised(i);
-	    if (status < 0) {
-		detach(i);
-	    } else if (status > 0) {
-		_emaskready->setBit(i);
-	    }
-	    nfound--;
-	}
+        if (FD_ISSET(i, &rmaskret)) {
+            int status = _rtable[i]->inputReady(i);
+	        if (status < 0) {
+		        detach(i);
+	        } else if (status > 0) {
+        	    FD_SET(i, &_rmaskready);
+            }
+            nfound--;
+        }
+        if (FD_ISSET(i, &wmaskret)) {
+            int status = _wtable[i]->outputReady(i);
+            if (status < 0) {
+                detach(i);
+            } else if (status > 0) {
+       	        FD_SET(i, &_wmaskready);
+            }
+            nfound--;
+        }
+        if (FD_ISSET(i, &emaskret)) {
+            int status = _etable[i]->exceptionRaised(i);
+            if (status < 0) {
+                detach(i);
+            } else if (status > 0) {
+       	        FD_SET(i, &_emaskready);
+            }
+            nfound--;
+        }
     }
 
     if (!_queue->isEmpty()) {
-	_queue->expire(TimerQueue::currentTime());
+        _queue->expire(TimerQueue::currentTime());
     }
     if (_cqueue->isReady()) {
-	_cqueue->notify();
+        _cqueue->notify();
     }
 }
 
@@ -746,20 +699,21 @@ fxBool Dispatcher::handleError() {
 }
 
 void Dispatcher::checkConnections() {
-    FdMask rmask;
+    fd_set rmask;
+    FD_ZERO(&rmask);
     timeval poll = TimerQueue::zeroTime();
 
     for (int fd = 0; fd < _nfds; fd++) {
-	if (_rtable[fd] != NULL) {
-	    rmask.setBit(fd);
+        if (_rtable[fd] != NULL) {
+            FD_SET(fd, &rmask);
 #if CONFIG_BADSELECTPROTO
-          if (select(fd+1, (int*)&rmask, NULL, NULL, &poll) < 0) {
+            if (select(fd+1, (int*)&rmask, NULL, NULL, &poll) < 0) {
 #else
-	    if (select(fd+1, &rmask, NULL, NULL, &poll) < 0) {
+            if (select(fd+1, &rmask, NULL, NULL, &poll) < 0) {
 #endif
-		detach(fd);
-	    }
-	    rmask.clrBit(fd);
-	}
+    	        detach(fd);
+            }
+            FD_CLR(fd, &rmask);
+        }
     }
 }

@@ -32,7 +32,6 @@
 
 #include "Types.h"
 
-class FdMask;
 class IOHandler;
 class TimerQueue;
 class ChildQueue;
@@ -70,21 +69,21 @@ protected:
     virtual void detach(int fd);
     virtual fxBool dispatch(timeval*);
     virtual fxBool anyReady() const;
-    virtual int fillInReady(FdMask&, FdMask&, FdMask&);
-    virtual int waitFor(FdMask&, FdMask&, FdMask&, timeval*);
-    virtual void notify(int, FdMask&, FdMask&, FdMask&);
+    virtual int fillInReady(fd_set&, fd_set&, fd_set&);
+    virtual int waitFor(fd_set&, fd_set&, fd_set&, timeval*);
+    virtual void notify(int, fd_set&, fd_set&, fd_set&);
     virtual timeval* calculateTimeout(timeval*) const;
     virtual fxBool handleError();
     virtual void checkConnections();
 protected:
     int	_nfds;
     int _max_fds;
-    FdMask* _rmask;
-    FdMask* _wmask;
-    FdMask* _emask;
-    FdMask* _rmaskready;
-    FdMask* _wmaskready;
-    FdMask* _emaskready;
+    fd_set _rmask;
+    fd_set _wmask;
+    fd_set _emask;
+    fd_set _rmaskready;
+    fd_set _wmaskready;
+    fd_set _emaskready;
     IOHandler** _rtable;
     IOHandler** _wtable;
     IOHandler** _etable;
