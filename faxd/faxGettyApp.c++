@@ -235,11 +235,11 @@ faxGettyApp::listenForRing()
 	    }
 	    ++ringsHeard;
 	    /* DID modems may only signal a call with DID data - no RING */
-	    if (ringsBeforeAnswer && (ringsHeard >= ringsBeforeAnswer ||
+	    if (ringsBeforeAnswer && (ringsHeard >= ringsBeforeAnswer) ||
 		(cid.name.length() >= cidNameAnswerLength &&
 		 cidNameAnswerLength > 0) ||
 		(cid.number.length() >= cidNumberAnswerLength &&
-		 cidNumberAnswerLength > 0)))
+		 cidNumberAnswerLength > 0))
 	        answerPhone(ClassModem::ANSTYPE_ANY, ctype, received_cid);
 	    else if (isModemInput())
 	        again = true;

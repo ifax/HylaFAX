@@ -190,7 +190,7 @@ static struct {
 { "faxt2timer",			&ModemConfig::t2Timer,		     TIMER_T2 },
 { "faxt4timer",			&ModemConfig::t4Timer,		     TIMER_T4 },
 { "cidnumberanswerlength",	&ModemConfig::cidNumberAnswerLength, 0 },
-{ "cidnameanswerlength",	&ModemConfig::cidNumberAnswerLength, 0 },
+{ "cidnameanswerlength",	&ModemConfig::cidNameAnswerLength,   0 },
 { "modemdialresponsetimeout",	&ModemConfig::dialResponseTimeout,   3*60*1000},
 { "modemanswerresponsetimeout",	&ModemConfig::answerResponseTimeout, 3*60*1000},
 { "modempagestarttimeout",	&ModemConfig::pageStartTimeout,	     3*60*1000},
