@@ -514,7 +514,7 @@ TextFmt::emitPrologue(void)
     fprintf(output, "%%%%For: %s\n", cp ? cp : "");
     fputs("%%Origin: 0 0\n", output);
     fprintf(output, "%%%%BoundingBox: 0 0 %.0f %.0f\n",
-	physPageHeight*72, physPageWidth*72);
+	physPageWidth*72, physPageHeight*72);
     fputs("%%Pages: (atend)\n", output);
     fprintf(output, "%%%%PageOrder: %s\n",
 	reverse ? "Descend" : "Ascend");
