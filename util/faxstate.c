@@ -83,6 +83,7 @@ main(int argc, char** argv)
     const char* arg = modemstate("ready");
     char fifoname[256];
     char devid[256];
+    int cmdlen;
     char cmd[80];
     char* appname;
     char* usage = "[-s state] [-q queue-dir] [-n]";
@@ -112,9 +113,14 @@ main(int argc, char** argv)
 	    fatal("Bad option `%c'; usage: %s %s devid", c, argv[0], usage);
 	    /*NOTREACHED*/
 	}
-    if (optind != argc-1)
-	fatal("Bad option `%c'; usage: %s %s modem", c, argv[0], usage);
-    strcpy(devid, argv[optind]);
+    if (optind != argc-1) {
+        fatal("Bad option `%c'; usage: %s %s modem", c, argv[0], usage);
+    }
+    if (strlen(argv[optind]) < sizeof(devid)) {
+        strcpy(devid, argv[optind]);
+    } else {
+        fatal("Argument is too large: %s", argv[optind]);
+    }
     for (cp = devid; cp = strchr(cp, '/'); *cp++ = '_')
 	;
     if (chdir(spooldir) < 0)
@@ -125,20 +131,24 @@ main(int argc, char** argv)
 	 * what faxgetty would send.
 	 */
 	fifo = open(FAX_FIFO, O_WRONLY|O_NDELAY);
-	if (fifo < 0)
-	    fatal("%s: open: %s", FAX_FIFO, strerror(errno));
-	sprintf(cmd, "+%s:%s", devid, arg);
-	if (write(fifo, cmd, strlen(cmd)) != strlen(cmd))
-	    fatal("FIFO write failed for command (%s)", strerror(errno));
+        if (fifo < 0) {
+            fatal("%s: open: %s", FAX_FIFO, strerror(errno));
+        }
+        cmdlen = snprintf(cmd, sizeof(cmd), "+%s:%s", devid, arg);
+        if (cmdlen < 0 || cmdlen >= sizeof(cmd) || write(fifo, cmd, cmdlen) != cmdlen) {
+            fatal("FIFO write failed for command (%s)", strerror(errno));
+        }
     } else {
-	sprintf(fifoname, "%s.%.*s", FAX_FIFO,
-	    sizeof (fifoname) - sizeof (FAX_FIFO), devid);
-	fifo = open(fifoname, O_WRONLY|O_NDELAY);
-	if (fifo < 0) 
-	    fatal("%s: open: %s", fifoname, strerror(errno));
-	sprintf(cmd, "S%s", arg);
-	if (write(fifo, cmd, strlen(cmd)) != strlen(cmd))
-	    fatal("FIFO write failed for command (%s)", strerror(errno));
+        snprintf(fifoname, sizeof(fifoname), "%s.%.*s", FAX_FIFO,
+            sizeof (fifoname) - sizeof (FAX_FIFO), devid);
+        fifo = open(fifoname, O_WRONLY|O_NDELAY);
+        if (fifo < 0) {
+            fatal("%s: open: %s", fifoname, strerror(errno));
+        }
+        cmdlen = snprintf(cmd, sizeof(cmd), "S%s", arg);
+        if (cmdlen < 0 || cmdlen >= sizeof(cmd) || write(fifo, cmd, cmdlen) != cmdlen) {
+            fatal("FIFO write failed for command (%s)", strerror(errno));
+        }
     }
     (void) close(fifo);
     return 0;

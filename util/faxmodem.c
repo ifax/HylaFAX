@@ -197,6 +197,7 @@ main(int argc, char** argv)
     u_int caps;
     char canpoll = 'P';				/* can poll by default */
     char devname[80];
+    int cmdlen, pdevlen;
     char cmd[80];
     const char* usage = "[-c fax-capabilities] [-p] [-P] [-u priority] [-q queue-dir]";
     char* cp;
@@ -241,26 +242,41 @@ main(int argc, char** argv)
 	    fatal("Bad option `%c'.\nusage: %s %s modem", c, argv[0], usage);
 	    /*NOTREACHED*/
 	}
-    if (optind != argc-1)
-	fatal("Missing modem device.\nusage: %s %s modem", argv[0], usage);
-    if (strncmp(argv[optind], _PATH_DEV, strlen(_PATH_DEV)) == 0)
-	strcpy(devname, argv[optind]+strlen(_PATH_DEV));
-    else
-	strcpy(devname, argv[optind]);
+    if (optind != argc-1) {
+        fatal("Missing modem device.\nusage: %s %s modem", argv[0], usage);
+    }
+    pdevlen = strlen(_PATH_DEV);
+    if (strncmp(argv[optind], _PATH_DEV, pdevlen) == 0) {
+        if (strlen(argv[optind] + pdevlen) < sizeof(devname)) {
+            strcpy(devname, argv[optind] + pdevlen);
+        } else {
+            fatal("Argument is too long: %s", argv[optind] + pdevlen);
+        }
+    } else {
+        if (strlen(argv[optind]) < sizeof(devname)) {
+            strcpy(devname, argv[optind]);
+        } else {
+            fatal("Argument is too long: %s", argv[optind]);
+        }
+    }
     for (cp = devname; cp = strchr(cp, '/'); *cp++ = '_')
 	;
-    if (chdir(spooldir) < 0)
-	fatal("%s: chdir: %s", spooldir, strerror(errno));
+    if (chdir(spooldir) < 0) {
+        fatal("%s: chdir: %s", spooldir, strerror(errno));
+    }
     fifo = open(FAX_FIFO, O_WRONLY|O_NDELAY);
-    if (fifo < 0)
-	fatal("%s: open: %s", FAX_FIFO, strerror(errno));
-    if (priority != -1)
-	sprintf(cmd, "+%s:R%c%08x:%x", devname, canpoll, caps, priority);
-    else
-	sprintf(cmd, "+%s:R%c%08x", devname, canpoll, caps);
-    if (write(fifo, cmd, strlen(cmd)) != strlen(cmd))
-	fatal("%s: FIFO write failed for command (%s)",
-	    argv[0], strerror(errno));
+    if (fifo < 0) {
+        fatal("%s: open: %s", FAX_FIFO, strerror(errno));
+    }
+    if (priority != -1) {
+        cmdlen = snprintf(cmd, sizeof(cmd), "+%s:R%c%08x:%x", devname, canpoll, caps, priority);
+    } else {
+        cmdlen = snprintf(cmd, sizeof(cmd), "+%s:R%c%08x", devname, canpoll, caps);
+    }
+    if (cmdlen < 0 || cmdlen > sizeof(cmd) || write(fifo, cmd, cmdlen) != cmdlen) {
+        fatal("%s: FIFO write failed for command (%s)",
+            argv[0], strerror(errno));
+    }
     (void) close(fifo);
     return 0;
 }
