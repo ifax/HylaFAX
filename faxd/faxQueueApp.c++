@@ -314,6 +314,7 @@ faxQueueApp::prepareJobStart(Job& job, FaxRequest* req,
 	_exit(prepareJob(job, *req, info, dci));
 	/*NOTREACHED*/
     case -1:				// fork failed, sleep and retry
+	job.remove();			// Remove from active queue
 	delayJob(job, *req, "Could not fork to prepare job for transmission",
 	    Sys::now() + random() % requeueInterval);
 	delete req;
@@ -1276,6 +1277,7 @@ faxQueueApp::sendJobStart(Job& job, FaxRequest* req, const DestControlInfo& dci)
 	 * If it appears that the we're doing this a lot,
 	 * then lengthen the backoff.
 	 */
+	job.remove();			// Remove from active queue
 	delayJob(job, *req, "Could not fork to start job transmission",
 	    job.start + random() % requeueInterval);
 	break;
