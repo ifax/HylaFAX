@@ -7,6 +7,16 @@
 #cd /usr/local/HylaFAX-v4.0
 #sh make.links
 
+if test -f @LIBDATA@/faxcover.ps
+then
+	mv @LIBDATA@/faxcover.ps.dist @LIBDATA@/faxcover.ps.N
+	installf HylaFAX @LIBDATA@/faxcover.ps.N 0644 @SYSUID@ @SYSGID@
+else
+	mv @LIBDATA@/faxcover.ps.dist @LIBDATA@/faxcover.ps
+	installf HylaFAX @LIBDATA@/faxcover.ps 0644 @SYSUID@ @SYSGID@
+fi
+removef HylaFAX @LIBDATA@/faxcover.ps.dist
+
 if test -d @SPOOL@/recvq
 then
 	echo "\n\nRun @SBIN@/faxsetup\n"
@@ -31,5 +41,9 @@ EOF
 else
 	echo "\n\nRun @SBIN@/faxsetup -client\n"
 fi
+
+# update software database
+installf -f HylaFAX
+removef -f HylaFAX
 
 exit 0

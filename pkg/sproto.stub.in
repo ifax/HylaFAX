@@ -9,7 +9,8 @@ f none @BIN@/sendpage=../sendpage/sendpage 0755 @SYSUID@ @SYSGID@
 d none @LIBDATA@ ? ? ?
 f none @LIBDATA@/pagesizes=../util/pagesizes 0444 @SYSUID@ @SYSGID@
 f none @LIBDATA@/typerules=../@SRCDIR@/util/typerules 0444 @SYSUID@ @SYSGID@
-f none @LIBDATA@/faxcover.ps=../@SRCDIR@/faxcover/faxcover.ps 0644 @SYSUID@ @SYSGID@
+f none @LIBDATA@/faxcover.ps.dist=../@SRCDIR@/faxcover/faxcover.ps 0644 @SYSUID@ @SYSGID@
+f none @LIBDATA@/faxcover_example_sgi.ps=../@SRCDIR@/faxcover/faxcover_example_sgi.ps 0644 @SYSUID@ @SYSGID@
 f none @LIBDATA@/faxmail.ps=../@SRCDIR@/faxmail/faxmail.ps 0444 @SYSUID@ @SYSGID@
 f none @LIBDATA@/hfaxd.conf=../@SRCDIR@/hfaxd/hfaxd.conf 0644 @SYSUID@ @SYSGID@
 d none @LIBEXEC@ ? ? ?
