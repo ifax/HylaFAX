@@ -61,7 +61,7 @@ const char* ClassModem::serviceNames[9] = {
     "",				// 7
     "\"Voice\"",		// SERVICE_VOICE
 };
-const char* ClassModem::ATresponses[15] = {
+const char* ClassModem::ATresponses[14] = {
     "Nothing",			// AT_NOTHING
     "OK",			// AT_OK
     "Connection established",	// AT_CONNECT
@@ -74,8 +74,7 @@ const char* ClassModem::ATresponses[15] = {
     "Command error",		// AT_ERROR
     "<Empty line>",		// AT_EMPTYLINE
     "<Timeout>",		// AT_TIMEOUT
-    "<dle+etx>",		// AT_DLEETX
-    "<xon>",			// AT_XON
+    "<xonxoff>",		// AT_XONXOFF
     "<Unknown response>"	// AT_OTHER
 };
 const char* ClassModem::callTypes[5] = {
@@ -85,12 +84,11 @@ const char* ClassModem::callTypes[5] = {
     "voice",
     "error"
 };
-const char* ClassModem::answerTypes[5] = {
+const char* ClassModem::answerTypes[4] = {
     "any",
     "fax",
     "data",
-    "voice",
-    "dial"
+    "voice"
 };
 
 static fxStr
@@ -257,7 +255,7 @@ again:
 }
 
 CallType
-ClassModem::answerCall(AnswerType atype, fxStr& emsg, const char* number)
+ClassModem::answerCall(AnswerType atype, fxStr& emsg)
 {
     CallType ctype = CALLTYPE_ERROR;
     /*
@@ -270,18 +268,11 @@ ClassModem::answerCall(AnswerType atype, fxStr& emsg, const char* number)
     case ANSTYPE_FAX:	answerCmd = conf.answerFaxCmd; break;
     case ANSTYPE_DATA:	answerCmd = conf.answerDataCmd; break;
     case ANSTYPE_VOICE:	answerCmd = conf.answerVoiceCmd; break;
-    case ANSTYPE_DIAL:
-			answerCmd = conf.answerDialCmd;
-			dial(number, emsg);	// no error-checking
-			break;
     }
     if (answerCmd == "")
 	answerCmd = conf.answerAnyCmd;
     if (atCmd(answerCmd, AT_NOTHING)) {
-	if (atype == ANSTYPE_DIAL)
-	    ctype = CALLTYPE_FAX;	// force as fax
-	else
-	    ctype = answerResponse(emsg);
+	ctype = answerResponse(emsg);
 	if (ctype == CALLTYPE_UNKNOWN) {
 	    /*
 	     * The response does not uniquely identify the type
@@ -424,22 +415,6 @@ ClassModem::traceBits(u_int bits, const char* bitNames[])
 }
 
 /*
- * Trace a modem capability true bit mask (VR, BF, JP).
- */
-void
-ClassModem::traceBitMask(u_int bits, const char* bitNames[])
-{
-    u_int i = 0;
-    do {
-	if ((bits & i) == i) {
-	    modemSupports(bitNames[i]);
-	    bits -= i;
-	}
-	i++;
-    } while (bits);
-}
-
-/*
  * Modem i/o support.
  */
 
@@ -451,12 +426,8 @@ ClassModem::getModemLine(char buf[], u_int bufSize, long ms)
 	trimModemLine(buf, n);
     return (n);
 }
-int ClassModem::getModemBit(long ms)  { return server.getModemBit(ms); }
 int ClassModem::getModemChar(long ms) { return server.getModemChar(ms); }
 int ClassModem::getModemDataChar()    { return server.getModemChar(dataTimeout); }
-int ClassModem::getLastByte()         { return server.getLastByte(); }
-bool ClassModem::didBlockEnd()        { return server.didBlockEnd(); }
-void ClassModem::resetBlock()         { server.resetBlock(); }
 
 bool
 ClassModem::putModemDLEData(const u_char* data, u_int cc, const u_char* bitrev, long ms)
@@ -783,12 +754,8 @@ ClassModem::atResponse(char* buf, long ms)
 		lastResponse = AT_RING;
 	    break;
 	case '\020':
-	    if (streq(buf, "\020\003"))		// DLE/ETX
-		lastResponse = AT_DLEETX;
-	    break;
-	case '\021':
-	    if (streq(buf, "\021"))		// DC1 (XON)
-		lastResponse = AT_XON;
+	    if (streq(buf, "\020\003"))		// DC1/DC3 (XON/XOFF)
+		lastResponse = AT_XONXOFF;
 	    break;
 	}
     }
@@ -1092,7 +1059,7 @@ const char SPACE = ' ';
  *     that indicate they support ``Class Z'' are handled.
  */
 bool
-ClassModem::vparseRange(const char* cp, int masked, int nargs ... )
+ClassModem::vparseRange(const char* cp, int nargs ... )
 {
     bool b = true;
     va_list ap;
@@ -1183,30 +1150,9 @@ ClassModem::vparseRange(const char* cp, int masked, int nargs ... )
 		    cp++;
 	    }
 	    if (v != -1) {				// expand range or list
-		if ((BIT(nargs) & masked) == BIT(nargs)) {
-		    /*
-		     * These are pre-masked values. T.32 Table 21 gives valid
-		     * values as: 00, 01, 02, 04, 08, 10, 20, 40 (hex).
-		     *
-		     * Some modems may say "(00-7F)" when what's meant is
-		     * "(00-40)" or simply "(7F)".
-		     */
-		    if (v == 00 && r == 127)
-			v = r = 127;
-		    if (v == r)
-			mask = v;
-		    else {
-			r = fxmin(r, 64);		// clamp to valid range
-			mask = 0;
-			for (; v <= r; v++)
-			    if (v == 0 || v == 1 || v == 2 || v == 4 || v == 8 || v == 16 || v == 32 || v == 64)
-				mask += v;
-		    }
-		} else {
-		    r = fxmin(r, 31);			// clamp to valid range
-		    for (; v <= r; v++)
-			mask |= 1<<v;
-		}
+		r = fxmin(r, 31);			// clamp to valid range
+		for (; v <= r; v++)
+		    mask |= 1<<v;
 	    }
 	    if (acceptList && cp[0] == COMMA)		// (<item>,<item>...)
 		cp++;
@@ -1229,7 +1175,7 @@ done:
 bool
 ClassModem::parseRange(const char* cp, u_int& a0)
 {
-    return vparseRange(cp, 0, 1, &a0);
+    return vparseRange(cp, 1, &a0);
 }
 
 void
