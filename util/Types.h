@@ -33,6 +33,15 @@
 #include "sys/types.h"
 #include "port.h"
 
+// Boolean type
+#ifdef NEED_BOOL
+typedef unsigned char bool;
+#undef true
+#define true ((bool)1)
+#undef false
+#define false ((bool)0)
+#endif
+
 // minimum of two numbers
 inline int fxmin(int a, int b)		{ return (a < b) ? a : b; }
 inline u_long fxmin(u_long a, u_long b)	{ return (a < b) ? a : b; }

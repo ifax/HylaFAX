@@ -1650,9 +1650,7 @@ EmitConfigurationDefinitions()
     if [ "$CONFIG_NEEDBOOL" = "yes" ]; then
         Note "... adding definition for C++ bool type"
         echo
-        echo "typedef int bool;"
-        echo "const bool false = 0;"
-        echo "const bool true = 1;"
+        echo "#define NEED_BOOL"
         echo
     fi
     #
