@@ -364,7 +364,7 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	if (compression != COMPRESSION_CCITTFAX4) {
 	    uint32 g3opts = 0;
 	    TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
-	    if (g3opts&GROUP3OPT_2DENCODING == DF_2DMR)
+	    if ((g3opts & GROUP3OPT_2DENCODING) == DF_2DMR)
 		params.df = DF_2DMR;
 	    else
 		params.df = DF_1DMR;

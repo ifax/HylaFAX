@@ -145,7 +145,7 @@ Class20Modem::sendPage(TIFF* tif, u_int pageChop)
 	if (compression != COMPRESSION_CCITTFAX4) {
 	    uint32 g3opts = 0;
 	    TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
-	    if (g3opts&GROUP3OPT_2DENCODING == DF_2DMR) {
+	    if ((g3opts & GROUP3OPT_2DENCODING) == DF_2DMR) {
 		rtfcc[1] = 0x6C;	// MR
 		protoTrace("Reading MR-compressed image file");
 	    } else {
