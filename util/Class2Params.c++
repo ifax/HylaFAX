@@ -282,9 +282,9 @@ u_int Class2Params::DCSbrTab[16] = {
     BR_9600,			// 0x8/9600 V29
     BR_9600,			// 0x9/9600 V17
     BR_9600,			// 0xA/9600 V33
-    BR_7200,			// 0xB/7200 V17
+    0,				// 0xB/undefined
     BR_7200,			// 0xC/7200 V29
-    0,				// 0xD/undefined 
+    BR_7200,			// 0xD/7200 V17
     BR_7200,			// 0xE/7200 V33
     0,				// 0xF/undefined 
 };
