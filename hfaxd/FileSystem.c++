@@ -488,7 +488,7 @@ HylaFAXServer::listDirectory(FILE* fd, const SpoolDir& sd, DIR* dir)
      */
     fxStr path(sd.pathname);
     struct dirent* dp;
-    while (dp = readdir(dir)) {
+    while ((dp = readdir(dir))) {
 	if (dp->d_name[0] == '.' &&
 	  (dp->d_name[1] == '\0' || strcmp(dp->d_name, "..") == 0))
 	    continue;
@@ -706,7 +706,7 @@ HylaFAXServer::nlstDirectory(FILE* fd, const SpoolDir& sd, DIR* dir)
      */
     fxStr path(sd.pathname);
     struct dirent* dp;
-    while (dp = readdir(dir)) {
+    while ((dp = readdir(dir))) {
 	if (dp->d_name[0] == '.' &&
 	  (dp->d_name[1] == '\0' || strcmp(dp->d_name, "..") == 0))
 	    continue;

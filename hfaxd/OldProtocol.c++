@@ -280,7 +280,7 @@ OldProtocolServer::doProtocol(void)
 	     */
 	    if (strncmp(tag, _PATH_DEV, l) == 0)
 		tag += l;
-	    for (cp = tag; cp = strchr(cp, '/'); *cp = '_')
+	    for (cp = tag; (cp = strchr(cp, '/')); *cp = '_')
 		;
 	    modem = tag;
 	} else {
@@ -1120,7 +1120,7 @@ OldProtocolServer::decodeLZW(FILE* fin, FILE* fout)
 	    char* tp = (len > sizeof (buf) ? (char*) malloc(len) : buf) + len;
 	    do {
 		*--tp = codep->value;
-	    } while (codep = codep->next);
+	    } while ((codep = codep->next));
 	    fwrite(tp, len, 1, fout);
 	    total += len;
 	    if (tp != buf)
@@ -1359,7 +1359,7 @@ OldProtocolServer::sendRecvStatus(const char*)
 	    FAX_RECVDIR);
     fxStr path(FAX_RECVDIR "/");
     struct dirent* dp;
-    while (dp = readdir(dir)) {
+    while ((dp = readdir(dir))) {
 	const char* name = dp->d_name;
 	if (name[0] != 'f' || name[1] != 'a' || name[2] != 'x')
 	    continue;

@@ -109,7 +109,7 @@ main(int argc, char* argv[])
 	    *cp = '\0';
 	if (verbose)
 	    printf("input = \"%s\"\n", line);
-	if (cp = strchr(line, '(')) {
+	if ((cp = strchr(line, '('))) {
 	    char* ep = strchr(cp, ')');
 	    if (ep)
 		*ep = '\0';

@@ -51,7 +51,7 @@ FaxAcctInfo::record(const char* cmd) const
 	record.fput("\t%s", jobid);		// $ 5 = jobid
 	u_int i = 0;
 	char c;
-	for (const char* cp = jobtag; c = *cp; cp++) {
+	for (const char* cp = jobtag; (c = *cp); cp++) {
 	    if (i == sizeof (buf)-2)		// truncate string
 		break;
 	    if (c == '\t')			// tabs are field delimiters

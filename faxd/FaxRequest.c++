@@ -545,7 +545,7 @@ hasDotDot(const char* pathname)
     while (cp) {
 	if (cp[0] == '.')		// NB: good enough
 	    return (true);
-	if (cp = strchr(cp, '/'))
+	if ((cp = strchr(cp, '/')))
 	    cp++;
     }
     return (false);

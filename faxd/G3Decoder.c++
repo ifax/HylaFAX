@@ -116,7 +116,7 @@ void
 G3Decoder::setRuns(tiff_runlen_t* cr, tiff_runlen_t* rr, int w)
 {
     curruns = cr;
-    if (refruns = rr) {
+    if ((refruns = rr)) {
 	refruns[0] = w;
 	refruns[1] = 0;
     }

@@ -326,7 +326,7 @@ fxDictIter::advanceToValid()
 	    invalid = true;
 	    break;
 	}
-	if (n = dict->buckets[bucket]) {	// NB: intentional =
+	if ((n = dict->buckets[bucket])) {	// NB: intentional =
 	    node = n;
 	    invalid = false;
 	    break;

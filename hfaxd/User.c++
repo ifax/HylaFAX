@@ -74,7 +74,7 @@ nextRecord(FILE* db, char line[], u_int size)
 		    break;
 	    *cp = '\0';
 	}
-	if (cp = strchr(line, '\n'))
+	if ((cp = strchr(line, '\n')))
 	    *cp = '\0';
 	if (line[0] != '\0')
 	    return (true);

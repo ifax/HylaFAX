@@ -84,7 +84,7 @@ PageSizeInfo::readPageInfoFile()
 	    char* cp = strchr(line, '#');
 	    if (cp)
 		*cp = '\0';
-	    else if (cp = strchr(line, '\n'))
+	    else if ((cp = strchr(line, '\n')))
 		*cp = '\0';
 	    for (cp = line; isspace(*cp); cp++)
 		;

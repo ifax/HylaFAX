@@ -131,7 +131,7 @@ HylaFAXServer::listStatus(FILE* fd, const SpoolDir& sd, DIR* dir)
     struct stat sb;
     fxStr fifoPrefix("/" FAX_FIFO ".");
     struct dirent* dp;
-    while (dp = readdir(dir)) {
+    while ((dp = readdir(dir))) {
 	fxStr statusFile(path | dp->d_name);
 	if (!FileCache::update(statusFile, sb) || !S_ISREG(sb.st_mode))
 	    continue;
@@ -308,7 +308,7 @@ HylaFAXServer::nlstStatus(FILE* fd, const SpoolDir& sd, DIR* dir)
     struct stat sb;
     fxStr fifoPrefix("/" FAX_FIFO ".");
     struct dirent* dp;
-    while (dp = readdir(dir)) {
+    while ((dp = readdir(dir))) {
 	fxStr statusFile(path | dp->d_name);
 	if (!FileCache::update(statusFile, sb) || !S_ISREG(sb.st_mode))
 	    continue;

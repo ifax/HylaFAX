@@ -230,7 +230,7 @@ faxMailApp::run(int argc, char** argv)
 	    job->setDialString(dest);
 	}
 	const fxStr* s;
-	if (s = findHeader("x-fax-dialstring"))	// dialstring in envelope
+	if ((s = findHeader("x-fax-dialstring")))  // dialstring in envelope
 	    job->setDialString(*s);
 	if (job->getDialString() == "")
 	    fxFatal("No Destination/Dialstring specified");
@@ -240,7 +240,7 @@ faxMailApp::run(int argc, char** argv)
 	 */
 	if (optind+1 < argc) {
 	    client->setFromIdentity(argv[optind+1]);
-	} else if (s = findHeader("from")) {
+	} else if ((s = findHeader("from"))) {
 	    client->setFromIdentity(*s);
 	} else {
 	    fxFatal("No From/Sender identity specified");

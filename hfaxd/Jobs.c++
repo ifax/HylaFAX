@@ -1826,7 +1826,7 @@ void
 HylaFAXServer::listSendQ(FILE* fd, const SpoolDir&, DIR* dir)
 {
     struct dirent* dp;
-    while (dp = readdir(dir))
+    while ((dp = readdir(dir)))
 	if (dp->d_name[0] == 'q') {
 	    fxStr emsg;
 	    Job* job = findJob(&dp->d_name[1], emsg);
@@ -1853,7 +1853,7 @@ void
 HylaFAXServer::nlstSendQ(FILE* fd, const SpoolDir&, DIR* dir)
 {
     struct dirent* dp;
-    while (dp = readdir(dir))
+    while ((dp = readdir(dir)))
 	if (dp->d_name[0] == 'q') {
 	    fxStr emsg;
 	    Job* job = findJob(&dp->d_name[1], emsg);

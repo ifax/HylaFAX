@@ -120,7 +120,7 @@ DialStringRules::parseRules()
 {
     char line[1024];
     char* cp;
-    while (cp = nextLine(line, sizeof (line))) {
+    while ((cp = nextLine(line, sizeof (line)))) {
 	// collect token
 	if (!isalpha(*cp)) {
 	    parseError("Syntax error, expecting identifier");
@@ -183,12 +183,12 @@ DialStringRules::nextLine(char* line, int lineSize)
 	if (!fgets(line, lineSize, fp))
 	    return (NULL);
 	lineno++;
-	for (cp = line; cp = strchr(cp, '!'); cp++)
+	for (cp = line; (cp = strchr(cp, '!')); cp++)
 	    if (cp == line || cp[-1] != '\\')
 		break;
 	if (cp)
 	    *cp = '\0';
-	else if (cp = strchr(line, '\n'))
+	else if ((cp = strchr(line, '\n')))
 	    *cp = '\0';
 	for (cp = line; isspace(*cp); cp++)
 	    ;

@@ -33,7 +33,7 @@ FaxDBRecord::FaxDBRecord()
 
 FaxDBRecord::FaxDBRecord(FaxDBRecord* other)
 {
-    if (parent = other)
+    if ((parent = other))
 	parent->inc();
 }
 

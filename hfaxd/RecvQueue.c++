@@ -196,7 +196,7 @@ HylaFAXServer::listRecvQ(FILE* fd, const SpoolDir& sd, DIR* dir)
      */
     fxStr path(sd.pathname);
     struct dirent* dp;
-    while (dp = readdir(dir)) {
+    while ((dp = readdir(dir))) {
 	struct stat sb;
 	if (!isVisibleRecvQFile(dp->d_name, sb))
 	    continue;

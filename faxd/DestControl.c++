@@ -207,9 +207,9 @@ DestControl::readLine(FILE* fp, char line[], u_int cc)
 	return (false);
     lineno++;
     char* cp;
-    if (cp = strchr(line, '#'))
+    if ((cp = strchr(line, '#')))
 	*cp = '\0';
-    if (cp = strchr(line, '\n'))
+    if ((cp = strchr(line, '\n')))
 	*cp = '\0';
     return (true);
 }
