@@ -327,7 +327,7 @@ Class2Params::getDCS() const
 	    | lnDISTab[ln&3]
 	    | dfDISTab[df&3]
 	    | stDCSTab[st&7]
-	    | DCS_XTNDFIELD
+	    | (getXINFO() != 0 ? DCS_XTNDFIELD : 0)
 	    ;
     return (dcs);
 }
@@ -338,16 +338,20 @@ Class2Params::getDCS() const
 u_int
 Class2Params::getXINFO() const
 {
-    // include support for extended resolutions
-    u_int dcs_xinfo = (1<<24) | (1<<16) | (1<<8)	// extension flags for 3 more bytes
-	| (vr & VR_R8 ? DCS_200X400 : 0)
-	| (vr & VR_R16 ? DCS_400X400 : 0)
-	| (vr & VR_200X100 ? DCS_INCHRES : 0)
-	| (vr & VR_200X200 ? DCS_INCHRES : 0)		// DCS_7MMVRES set in getDCS()
-	| (vr & VR_200X400 ? (DCS_200X400 | DCS_INCHRES) : 0)
-	| (vr & VR_300X300 ? (DCS_300X300 | DCS_INCHRES) : 0)
-	| (ec & EC_ENABLE ? DCS_ECMODE : 0)
-	| (df == DF_2DMMR ? DCS_G4COMP : 0)
+    // extension flags for 3 more bytes
+    u_int firstbyte  = 0;
+    u_int secondbyte = (1<<24);
+    u_int thirdbyte  = (1<<24) | (1<<16);
+    u_int fourthbyte = (1<<24) | (1<<16) | (1<<8);
+    u_int dcs_xinfo =
+	  (vr & VR_R8 ? (DCS_200X400 | thirdbyte) : 0)
+	| (vr & VR_R16 ? (DCS_400X400 | thirdbyte) : 0)
+	| (vr & VR_200X100 ? (DCS_INCHRES | thirdbyte) : 0)
+	| (vr & VR_200X200 ? (DCS_INCHRES | thirdbyte) : 0)	// DCS_7MMVRES set in getDCS()
+	| (vr & VR_200X400 ? (DCS_200X400 | DCS_INCHRES | thirdbyte ) : 0)
+	| (vr & VR_300X300 ? (DCS_300X300 | DCS_INCHRES | thirdbyte ) : 0)
+	| (ec & EC_ENABLE ? (DCS_ECMODE | firstbyte) : 0)
+	| (df == DF_2DMMR ? (DCS_G4COMP | firstbyte) : 0)
 	;
     return (dcs_xinfo);
 }

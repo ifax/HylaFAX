@@ -502,7 +502,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
     }
     u_int dcs = params.getDCS();		// NB: 24-bit DCS and
     u_int dcs_xinfo = params.getXINFO();	//     32-bit extension
-    if (conf.class1ECMFrameSize == 64)
+    if (conf.class1ECMFrameSize == 64 && dcs_xinfo)
 	dcs_xinfo |= DCSFRAME_64;
     /*
      * Select Class 1 capability: use params.br to hunt
