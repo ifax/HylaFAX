@@ -2348,7 +2348,7 @@ BuildPortDotH()
 	    'extern void* mmap(void*, size_t, int, int, int, off_t);' sys/mman.h
     }
 
-    CheckFuncDecl mkstemp 'extern int mkstemp(char *);' stdio.h unistd.h
+    CheckFuncDecl mkstemp 'extern int mkstemp(char *);' stdlib.h stdio.h unistd.h
     CheckFuncDecl strerror 'extern char* strerror(int);' string.h
     CheckFuncDecl strncasecmp \
 	'extern int strncasecmp(const char*, const char*, size_t);' string.h
@@ -2356,7 +2356,7 @@ BuildPortDotH()
 	'extern int strcasecmp(const char*, const char*);' string.h
     CheckFuncDecl strdup 'extern char* strdup(const char*);' string.h
     CheckFuncDecl memset 'extern void* memset(void*, int, size_t);' string.h
-    CheckFuncDecl getpass 'extern char* getpass(const char *);' stdlib.h
+    CheckFuncDecl getpass 'extern char* getpass(const char *);' stdlib.h unistd.h
     CheckFuncDecl random 'extern long random(void);' math.h stdlib.h
     CheckFuncDecl srandom 'extern void srandom(int);' math.h stdlib.h
     CheckFuncDecl floor 'extern double floor(double);' math.h
@@ -2434,7 +2434,7 @@ BuildPortDotH()
     CheckVarDecl 'int.*opterr' 'extern int opterr;' stdlib.h unistd.h
     CheckVarDecl 'int.*optind' 'extern int optind;' stdlib.h unistd.h
     CheckFuncDecl system 'extern int system(const char*);' stdlib.h
-    CheckFuncDecl mktemp 'extern char* mktemp(char*);' stdio.h unistd.h
+    CheckFuncDecl mktemp 'extern char* mktemp(char*);' stdlib.h stdio.h unistd.h
     CheckStdio popen 'extern FILE* popen(const char *, const char *);'
     CheckStdio pclose 'extern int pclose(FILE*);'
     CheckStdio fdopen 'extern FILE* fdopen(int, const char*);'
@@ -2627,7 +2627,8 @@ BuildPortDotH()
 	if CheckForIncludeFile utmpx.h; then
 	    case $TARGET in
 	    *-hpux10.20*)	UTMP=utmp;;
-	    *)			UTMP=utmpx;;
+        *-linux*)	    UTMP=utmp;;
+	    *)			    UTMP=utmpx;;
 	    esac
 	else
 	    UTMP=utmp;
