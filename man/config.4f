@@ -261,6 +261,8 @@ Class1TrainingRecovery	integer	\s-11500\s+1	Class 1: delay after failed training
 .sp .5
 Class2Cmd	string	\s-1AT+FCLASS=2\s+1	Class 2: command to enter class 2/2.0
 Class2AbortCmd	string	\s-1AT+FK\s+1	Class 2: command to abort active session
+Class2APCmd	string	\s-1AT+FAP\s+1	Class 2: enable support for sending and receiving SUB, SEP, and PWD frames
+Class2APQueryCmd	string	\s-1AT+FAP=?\s+1	Class 2: query capabilities for sending and receiving SUB, SEP, and PWD frames 
 Class2BORCmd	string	\s-1AT+FBOR=0\s+1	Class 2: command to setup bit order
 Class2BUGCmd	string	\s-1AT+FBUG=1\s+1	Class 2: command to enable \s-1HDLC\s+1 frame tracing
 Class2CIGCmd	string	\s-1AT+FCIG\s+1	Class 2: command to set polling identifier
@@ -275,10 +277,13 @@ Class2HFLOCmd	string	\-	Class 2: command to set hardware flow control
 Class2LIDCmd	string	\s-1AT+FLID\s+1	Class 2: command to set local identifier string
 Class2MINSPCmd	string	\s-1AT+FMINSP\s+1	Class 2: command to set minimum transmit speed
 Class2NFLOCmd	string	\-	Class 2: command to set no flow control
+Class2PACmd	string	\s-1AT+FPA\s+1	Class 2: set polling address string
 Class2PHCTOCmd	string	\s-1AT+FPHCTO=30\s+1	Class 2: command to set Phase C timeout parameter
 Class2PTSCmd	string	\s-1AT+FPTS\s+1	Class 2: command to set received page status
+Class2PWCmd	string	\s-1AT+FPW\s+1	Class 2: set password string
 Class2RecvDataTrigger	string	\s-1``\e21''\s+1	Class 2: character to send to trigger recv
 Class2RELCmd	string	\-	Class 2: command to enable byte-aligned \s-1EOL\s+1 codes
+Class2SACmd	string	\s-1AT+FSA\s+1	Class 2: set destination subaddress string
 Class2SendRTC	boolean	\s-1No\s+1	Class 2: append \s-1RTC\s+1 to page data on transmit
 Class2SFLOCmd	string	\-	Class 2: command to set software flow control
 Class2SPLCmd	string	\s-1AT+FSPL\s+1	Class 2: command to set polling request
@@ -287,11 +292,14 @@ Class2XmitWaitForXON	boolean	\s-1Yes\s+1	Class 2: wait for \s-1XON\s+1 before se
 .sp .5
 Class2Cmd	string	\s-1AT+FCLASS=2.0\s+1	Class 2.0: command to enter class 2/2.0
 Class2AbortCmd	string	\s-1AT+FKS\s+1	Class 2.0: command to abort active session
+Class2APCmd	string	\s-1AT+FAP\s+1	Class 2.0: enable support for sending and receiving SUB, SEP, and PWD frames
+Class2APQueryCmd	string	\s-1AT+FAP=?\s+1	Class 2.0: query capabilities for sending and receiving SUB, SEP, and PWD frames
 Class2BORCmd	string	\s-1AT+FBO=0\s+1	Class 2.0: command to setup bit order
 Class2BUGCmd	string	\s-1AT+FBU=1\s+1	Class 2.0: command to enable \s-1HDLC\s+1 frame tracing
 Class2CIGCmd	string	\s-1AT+FPI\s+1	Class 2.0: command to set polling identifier
 Class2CRCmd	string	\s-1AT+FCR=1\s+1	Class 2.0: command to enable receive capability
 Class2CQCmd	string	\-	Class 2.0: command to setup copy quality parameters
+Class2CQQueryCmd	string	\s-1AT+FCQ=?\s+1	Class 2.0: command to query modem copy quality capabilities
 Class2DCCCmd	string	\s-1AT+FCC\s+1	Class 2.0: command to set modem capabilities
 Class2DCCQueryCmd	string	\s-1AT+FCC=?\s+1	Class 2.0: command to query modem capabilities
 Class2DISCmd	string	\s-1AT+FIS\s+1	Class 2.0: command to set session parameters
@@ -300,11 +308,14 @@ Class2LIDCmd	string	\s-1AT+FLI\s+1	Class 2.0: command to set local identifier st
 Class2MINSPCmd	string	\s-1AT+FMS\s+1	Class 2.0: command to set minimum transmit speed
 Class2NFLOCmd	string	\s-1AT+FLO=0\s+1	Class 2.0: command to set no flow control
 Class2NRCmd	string	\s-1AT+FNR=1,1,1,1\s+1	Class 2.0: command to set negotiation message reporting
+Class2PACmd     string	\s-1AT+FPA\s+1	Class 2.0: set polling address string
 Class2PHCTOCmd	string	\s-1AT+FCT=30\s+1	Class 2.0: command to set Phase C timeout parameter
 Class2PIECmd	string	\s-1AT+FIE=0\s+1	Class 2.0: command to set procedure interrupt handling
+Class2PWCmd     string	\s-1AT+FPW\s+1	Class 2.0: set password string
 Class2PTSCmd	string	\s-1AT+FPS\s+1	Class 2.0: command to set received page status
 Class2RecvDataTrigger	string	\s-1``\e22''\s+1	Class 2.0: character to send to trigger recv
 Class2RELCmd	string	\-	Class 2.0: command to enable byte-aligned \s-1EOL\s+1 codes
+Class2SACmd     string	\s-1AT+FSA\s+1	Class 2.0: set destination subaddress string
 Class2SendRTC	boolean	\s-1No\s+1	Class 2.0: append \s-1RTC\s+1 to page data on transmit
 Class2SFLOCmd	string	\s-1AT+FLO=1\s+1	Class 2.0: command to set software flow control
 Class2SPLCmd	string	\s-1AT+FSP\s+1	Class 2.0: command to set polling request
@@ -1955,6 +1966,16 @@ the fax software will send
 and then reset the modem by dropping
 .SM DTR .
 .TP
+.B Class2APCmd
+A largely unused option for modems supporting ITU-T.32, Class 2.1, 
+standards.  This command would be used to enable sending and receiving 
+SUB, SEP, and PWD frames.
+.TP
+.B Class2APQueryCmd
+A largely unused option for modems supporting ITU-T.32, Class 2.1, 
+standards.  This command would be used to query the capabilities of 
+sending and receiving SUB, SEP, and PWD frames.
+.TP
 .B Class2BORCmd
 The command to setup the bit order of sent and
 received facsimile data.
@@ -1976,12 +1997,13 @@ and
 parameters.
 .TP
 .B Class2BUGCmd
-The command to use to enable the tracing of
+The command to use to enable or disable the tracing of
 .SM HDLC
 frames sent and received by the modem.
 This tracing information should be returned to the host in ``\s-1+FHR:\s+1''
 and ``\s-1+FHT:\s+1'' status strings.
-Note that many Class 2 modems do not support this facility.
+Note that many Class 2 modems do not support this facility, 
+which is largely used for diagnostic purposes.
 .TP
 .B Class2CIGCmd
 The command used to set a polling identifier.
@@ -2074,6 +2096,12 @@ receiver parameters, transmitter parameters, and ID strings.
 It is not necessary to enable reporting of non-standard frames
 for correct operation of the Class 2.0 driver.
 .TP
+.B Class2PACmd
+A largely unused option for modems supporting ITU-T.32, Class 2.1,
+standards.  This command would be used to set up the polling address
+string enabled by the 
+.BR Class2APCmd .
+.TP
 .B Class2PHCTOCmd
 The command to use to set the Phase C timeout parameter (in seconds).
 .TP
@@ -2095,6 +2123,12 @@ check: see the
 and
 .B MaxConsecutiveBadLines
 parameters to understand how to defeat copy quality checking.
+.TP
+.B Class2PWCmd
+A largely unused option for modems supporting ITU-T.32, Class 2.1, 
+standards.  This command would be used to set up the password 
+string enabled by the 
+.BR Class2APCmd .
 .TP
 .B Class2RecvDataTrigger
 The character to send to the modem to trigger the transmission
@@ -2128,6 +2162,12 @@ will be marked to indicate that
 .SM EOL
 codes are byte-aligned; otherwise they will be marked as
 not (necessarily) having byte-aligned codes.
+.TP
+.B Class2SACmd
+A largely unused option for modems supporting ITU-T.32, Class 2.1, 
+standards.  This command would be used to set up the destination 
+subaddress string enabled by the 
+.BR Class2APCmd .
 .TP
 .B Class2SendRTC
 Whether or not to append an explicit ``Return To Control'' (\s-1RTC\s+1)
