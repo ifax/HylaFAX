@@ -440,7 +440,7 @@ DATE=`date`
 eval `cat $SRCDIR/VERSION | sed 's/\([0-9][0-9]*\)\.\([0-9][0-9]*\)\(.*\)/DIST_MAJOR=\1; DIST_MINOR=\2; DIST_TYPE=\3/'`
 DIST_ALPHA=`awk '{print $3}' $SRCDIR/dist/hylafax.alpha`
 VERSION="${DIST_MAJOR}.${DIST_MINOR}${DIST_TYPE}"
-if [ $DIST_TYPE = beta ]; then
+if [ "$DIST_TYPE" = beta ]; then
     VERSION="${VERSION}${DIST_ALPHA}"
 fi
 
