@@ -168,6 +168,7 @@ f none @SPOOL@/config/telebit-t3000=../@SRCDIR@/config/telebit-t3000 0444 @SYSUI
 f none @SPOOL@/config/telebit-qblazer=../@SRCDIR@/config/telebit-qblazer 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/telebit-wb=../@SRCDIR@/config/telebit-wb 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/tricom2842=../@SRCDIR@/config/tricom2842 0444 @SYSUID@ @SYSGID@
+f none @SPOOL@/config/umc9624=../@SRCDIR@/config/umc9624 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/uds-fastalk=../@SRCDIR@/config/uds-fastalk 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/umc92144=../@SRCDIR@/config/umc92144 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/usr-2.0=../@SRCDIR@/config/usr-2.0 0444 @SYSUID@ @SYSGID@

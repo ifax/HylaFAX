@@ -80,6 +80,7 @@ CONFIGFILES=class1 \
 	tricom2842 \
 	uds-fastalk \
     umc92144 \
+	umc9624\
 	usr-2.0 \
 	usr-rts \
     usr-xon \

@@ -1,0 +1,36 @@
+# HylaFAX prototype configuration file for UMC 9624,2,E,290E 14.4 modem
+# - painfully worked out through trial-and-error and HylaFAX bug fixing by
+# Lee Howard <faxguy@deanox.com>
+#
+# Note that this modem will not respond nicely to ATH when already on hook.
+# Consequently, HylaFAX versions up to and including 4.1beta3 will not
+# play nicely with it.  ATH should be removed from reset commands in the 
+# next release.
+#
+# CONFIG: CLASS2: *-"9624,2,E,290E"-*
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:              Class2        # use this to setup defaults
+ModemRate:              19200         # max rate for DCE-DTE communication
+ModemFlowControl:       rtscts
+ModemSetupDTRCmd:       AT&D2	      # setup so DTR drop resets modem
+ModemSetupDCDCmd:       AT&C1	      # setup so DCD reflects carrier (or not)
+ModemNoFlowCmd:         AT&K	      
+ModemHardFlowCmd:       AT&K3	      
+ModemSoftFlowCmd:       AT&K4	      
+ModemAnswerFaxBeginCmd: "<19200>"     # fax mode works better with 19200 baud
+ModemRecvFillOrder:     MSB2LSB       
+
+Class2APQueryCmd:	none		# prevent ERROR
+Class2BUGCmd:		none		# prevent ERROR
+Class2CQQueryCmd:	!(0),(0)	# no CQ checking capability
+Class2DDISCmd:		AT+FDIS		# workaround broken +FDIS handling
+Class2PHCTOCmd:		none		# prevent ERROR
+Class2RecvDataTrigger:  "\022"
+Class2SPLCmd:		none		# prevent ERROR
+Class2TBCCmd:		none		# prevent ERROR

@@ -220,6 +220,7 @@ HYLAFAXSRC=\
 	config/tricom2842			\
 	config/uds-fastalk			\
 	config/umc92144				\
+	config/umc9624				\
 	config/usr-2.0				\
 	config/usr-rts				\
 	config/usr-xon				\
