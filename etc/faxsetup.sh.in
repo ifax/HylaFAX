@@ -781,11 +781,11 @@ test -x "$MIMENCODE" || {
     test -x $MIMENCODE || {
 	MIMENCODE=`findAppDef base64-encode $PATH base64-encode`
     }
-    Note "Found encoder: $MIMENCODE"
+    test -x "$MIMENCODE" && Note "Found encoder: $MIMENCODE"
 }
 test -x "$UUENCODE" || {
     UUENCODE=`findAppDef uuencode $PATH uuencode`
-    Note "Found encoder: $UUENCODE"
+    test -x "$UUENCODE" && Note "Found encoder: $UUENCODE"
 }
 if [ -x "$MIMENCODE" ]; then
     if [ "$ENCODING" != "base64" ]; then
