@@ -1151,6 +1151,7 @@ fi
 # PostScript RIP support.
 #
 if onServer; then
+    cd $DIR_SPOOL
     case $PS in
     dps)	PATH_PSRIP=$PATH_DPSRIP;;
     imp)	PATH_PSRIP=$PATH_IMPRIP;;
