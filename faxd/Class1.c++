@@ -1234,8 +1234,14 @@ Class1Modem::transmitData(int br, u_char* data, u_int cc,
 	// This delay will vary depending on the modem's adherence to T.31.
 	pause(conf.class1TMConnectDelay);
 
-	ok = (sendClass1Data(data, cc, bitrev, eod) &&
-	    (eod ? waitFor(AT_OK) : true));
+	ok = sendClass1Data(data, cc, bitrev, eod);
+	if (ok && eod) {
+	    ok = false;
+	    u_short attempts = 0;
+	    while (!ok && attempts++ < 3) {
+		ok = waitFor(AT_OK, 60*1000);	// wait up to 60 seconds for "OK"
+	    }
+	}
     }
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);

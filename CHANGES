@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.1
 
+* ignore garbage after sending TCF data (26 Aug 2004)
 * fix truncation of filenames in faxcron (26 Aug 2004)
 * add configure support for libtiff 3.7 (25 Aug 2004)
 * extend short send-HDLC timeouts (18 Aug 2004)
