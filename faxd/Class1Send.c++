@@ -892,7 +892,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	    pps[1] = frameRev[FaxModem::getPageNumber() - 1];
 	    pps[2] = frameRev[blockNumber];
 	    pps[3] = frameRev[(fcount == 0 ? 255 : (fcount - 1))];
-	    u_short ppscnt = 0;
+	    u_short ppscnt = 0, crpcnt = 0;
 	    bool gotppr = false;
 	    /* get MCF/PPR/RNR */
 	    HDLCFrame pprframe(conf.class1FrameOverhead);
@@ -909,11 +909,21 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		// in those cases waiting T2 for a response will cause the remote to
 		// hang up.  So, using T4 here is imperative so that our second PPS
 		// message happens before the remote decides to hang up.
-		gotppr = recvFrame(pprframe, conf.t4Timer);
-
-	    } while (!gotppr && (++ppscnt < 3));
+		if (gotppr = recvFrame(pprframe, conf.t4Timer)) {
+		    tracePPR("SEND recv", pprframe.getFCF());
+		    if (pprframe.getFCF() == FCF_CRP) {
+			gotppr = false;
+			crpcnt++;
+			ppscnt = 0;
+			if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+			    emsg = "Failure to receive silence.";
+			    protoTrace(emsg);
+			    return (false);
+			}
+		    }
+		}
+	    } while (!gotppr && (++ppscnt < 3) && (crpcnt < 3));
 	    if (gotppr) {
-		tracePPR("SEND recv", pprframe.getFCF());
 		if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
 		    emsg = "Failure to receive silence.";
 		    protoTrace(emsg);
@@ -930,7 +940,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			    protoTrace(emsg);
 			    return (false);
 			}
-			u_short rrcnt = 0;
+			u_short rrcnt = 0, crpcnt = 0;
 			bool gotmsg = false;
 			do {
 			    if (!atCmd(thCmd, AT_CONNECT))
@@ -940,14 +950,25 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			    stopTimeout("sending RR frame");
 			    tracePPM("SEND send", FCF_RR);
 			    // T.30 states that we must wait no more than T4 between unanswered RR signals.
-			    gotmsg = recvFrame(pprframe, conf.t4Timer);
-			} while (!gotmsg && (++rrcnt < 3));
+			    if (gotmsg = recvFrame(pprframe, conf.t4Timer)) {
+				tracePPR("SEND recv", pprframe.getFCF());
+				if (pprframe.getFCF() == FCF_CRP) {
+				    gotmsg = false;
+				    crpcnt++;
+				    rrcnt = 0;
+				    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+					emsg = "Failure to receive silence.";
+					protoTrace(emsg);
+					return (false);
+				    }
+				}
+			    }
+			} while (!gotmsg && (++rrcnt < 3) && (crpcnt < 3));
 			if (!gotmsg) {
 			    emsg = "No response to RR repeated 3 times.";
 			    protoTrace(emsg);
 			    return (false);
 			}
-			tracePPR("SEND recv", pprframe.getFCF());
 			switch (pprframe.getFCF()) {
 			    case FCF_PPR:
 			    case FCF_MCF:
@@ -1017,7 +1038,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				ctc[0] = 0;
 				ctc[1] = curcap->sr >> 8;
 				bool gotctr = false;
-				u_short ctccnt = 0;
+				u_short ctccnt = 0, crpcnt = 0;
 				HDLCFrame ctrframe(conf.class1FrameOverhead);
 				do {
 				    if (!atCmd(thCmd, AT_CONNECT))
@@ -1026,14 +1047,25 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				    sendFrame(FCF_CTC|FCF_SNDR, fxStr(ctc, 2));
 				    stopTimeout("sending CTC frame");
 				    tracePPM("SEND send", FCF_CTC);
-				    gotctr = recvFrame(ctrframe, conf.t4Timer);
-				} while (!gotctr && (++ctccnt < 3));
+				    if (gotctr = recvFrame(ctrframe, conf.t4Timer)) {
+					tracePPR("SEND recv", ctrframe.getFCF());
+					if (ctrframe.getFCF() == FCF_CRP) {
+					    gotctr = false;
+					    crpcnt++;
+					    ctccnt = 0;
+					    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+						emsg = "Failure to receive silence.";
+						protoTrace(emsg);
+						return (false);
+					    }
+					}
+				    }
+				} while (!gotctr && (++ctccnt < 3) && (crpcnt < 3));
 				if (!gotctr) {
 				    emsg = "No response to CTC repeated 3 times.";
 				    protoTrace(emsg);
 				    return (false);
 				}
-				tracePPR("SEND recv", ctrframe.getFCF());
 				if (!ctrframe.getFCF() == FCF_CTR) {
 				    emsg = "COMREC invalid response received to CTC.";
 				    protoTrace(emsg);
@@ -1041,7 +1073,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				}
 			    } else {
 				bool goterr = false;
-				u_short eorcnt = 0;
+				u_short eorcnt = 0, crpcnt = 0;
 				HDLCFrame errframe(conf.class1FrameOverhead);
 				do {
 				    if (!atCmd(thCmd, AT_CONNECT))
@@ -1051,14 +1083,25 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				    stopTimeout("sending EOR frame");
 				    tracePPM("SEND send", FCF_EOR);
 				    tracePPM("SEND send", pps[0]);
-				    goterr = recvFrame(errframe, conf.t2Timer);
-				} while (!goterr && (++eorcnt < 3));
+				    if (goterr = recvFrame(errframe, conf.t2Timer)) {
+					tracePPR("SEND recv", errframe.getFCF());
+					if (errframe.getFCF() == FCF_CRP) {
+					    goterr = false;
+					    crpcnt++;
+					    eorcnt = 0;
+					    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+						emsg = "Failure to receive silence.";
+						protoTrace(emsg);
+						return (false);
+					    }
+					}
+				    }
+				} while (!goterr && (++eorcnt < 3) && (crpcnt < 3));
 				if (!goterr) {
 				    emsg = "No response to EOR repeated 3 times.";
 				    protoTrace(emsg);
 				    return (false);
 				}
-				tracePPR("SEND recv", errframe.getFCF());
 				if (errframe.getFCF() == FCF_RNR) {
 				    u_int t1 = howmany(conf.t1Timer, 1000);
 				    time_t start = Sys::now();
@@ -1070,7 +1113,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 					    protoTrace(emsg);
 					    return (false);
 					}
-					u_short rrcnt = 0;
+					u_short rrcnt = 0, crpcnt = 0;
 					bool gotmsg = false;
 					do {
 					    if (!atCmd(thCmd, AT_CONNECT))
@@ -1080,14 +1123,25 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 					    stopTimeout("sending RR frame");
 					    tracePPM("SEND send", FCF_RR);
 					    // T.30 states that we must wait no more than T4 between unanswered RR signals.
-					    gotmsg = recvFrame(errframe, conf.t4Timer);
-					} while (!gotmsg && (++rrcnt < 3));
+					    if (gotmsg = recvFrame(errframe, conf.t2Timer)) {
+						tracePPR("SEND recv", errframe.getFCF());
+						if (errframe.getFCF() == FCF_CRP) {
+						    gotmsg = false;
+						    crpcnt++;
+						    rrcnt = 0;
+						    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+							emsg = "Failure to receive silence.";
+							protoTrace(emsg);
+							return (false);
+						    }
+						}
+					    }
+					} while (!gotmsg && (++rrcnt < 3) && (crpcnt < 3));
 					if (!gotmsg) {
 					    emsg = "No response to RR repeated 3 times.";
 					    protoTrace(emsg);
 					    return (false);
 					}
-					tracePPR("SEND recv", errframe.getFCF());
 					switch (pprframe.getFCF()) {
 					    case FCF_ERR:
 						goterr = true;
