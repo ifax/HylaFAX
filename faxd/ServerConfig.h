@@ -43,6 +43,11 @@ public:
 	fxStr ServerConfig::* p;
 	const char*	 def;		// NULL is shorthand for ""
     };
+    struct S_booltag {
+	const char*	 name;
+	bool ServerConfig::* p;
+	bool		 def;		// NULL is shorthand for ""
+    };
     struct S_numbertag {
 	const char*	 name;
 	u_int ServerConfig::*p;
@@ -73,6 +78,7 @@ private:
     fxBoolArray* acceptPWD;		// accept/reject matched PWD
     fxStr	logFacility;		// syslog facility to direct trace msgs
 
+    static S_booltag bools[];
     static S_stringtag strings[];
     static S_numbertag numbers[];
     static S_filemodetag filemodes[];
@@ -117,6 +123,7 @@ public:
     fxStr	localIdentifier;	// to use in place of FAXNumber
     fxStr	FAXNumber;		// phone number
     u_int	maxSetupAttempts;	// # times to try initializing modem
+    bool	batchLogs;		// Batch session logs togther or not
 
     virtual ~ServerConfig();
 

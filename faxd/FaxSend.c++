@@ -47,7 +47,19 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai,
 {
     u_int prevPages = fax.npages;
     if (!(batched & BATCH_FIRST) || lockModem()) {
-	beginSession(fax.number);
+        if (batched & BATCH_FIRST)
+	{
+	    beginSession(fax.number);
+	    batchid = getCommID();
+	} else
+	{
+	    if (! batchLogs)
+	    {
+		beginSession(fax.number);
+		batchid.append("," | getCommID());
+		traceServer("SESSION BATCH %s", (const char*) batchid);
+	    }
+        }
 	fax.commid = getCommID();		// set by beginSession
 	traceServer("SEND FAX: JOB %s DEST %s COMMID %s DEVICE '%s'"
 	    , (const char*) fax.jobid
@@ -83,11 +95,12 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai,
 	    discardModem(true);
 	    changeState(MODEMWAIT, 5);
 	    unlockModem();
-	} else
+	    endSession();
+	} else if(! batchLogs)
 	{
-	    traceServer("BATCH CONTINUING");
+	    traceServer("SESSION BATCH CONTINUES");
+	    endSession();
 	}
-	endSession();
     } else {
 	if (state != LOCKWAIT)
 	    sendFailed(fax, send_retry,

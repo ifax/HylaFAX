@@ -840,7 +840,7 @@ faxGettyApp::notifyRecvDone(FaxRecvInfo& ri)
     fxStr cmd(faxRcvdCmd
 	| quote |             ri.qfile	| enquote
 	| quote |   getModemDeviceID()	| enquote
-	| quote |           getCommID()	| enquote
+	| quote |            ri.commid	| enquote
 	| quote |            ri.reason	| enquote
 	| callid_formatted);
     traceServer("RECV FAX: %s", (const char*) cmd);

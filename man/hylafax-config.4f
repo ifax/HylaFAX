@@ -120,6 +120,7 @@ AdminGroup	string	\s-1faxadmin\s+1	System user group for administration (if PAM 
 AnswerRotary	string	\s-1Any\s+1	alternatives for answering calls
 AnswerBias	integer	\-	bias to apply to successful rotary answer 
 AreaCode\(S2	string	\-	local area code
+BatchLogs\(S1	boolean	\s-1Yes\s+1	keep all session logs of a batch in a single log
 CallIDAnswerLength	integer	\-	answer call when CallIDPattern received
 CallIDPattern	strint	\-	call identification pattern string
 CIDName	string	\-	equivalent to CallIDPattern (2)
@@ -495,6 +496,11 @@ used, for example,
 to formulate canonical phone numbers for dialing (see
 .B DialStringRules
 below.)
+.TP
+.B BatchLogs\(S1
+When sending or recieving multiple documents (denoted by EOM), this
+value determines if the session logs span the entire batch or, if set
+to no, only contain a single document.
 .TP
 .B CallIDPattern
 A string that identifies the caller's identity in any call

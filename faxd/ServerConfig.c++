@@ -77,6 +77,10 @@ ServerConfig::configTrace(const char* fmt, ...)
 
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
+ServerConfig::S_booltag ServerConfig::bools[] = {
+{ "batchlogs",		&ServerConfig::batchLogs,	true },
+};
+
 ServerConfig::S_stringtag ServerConfig::strings[] = {
 { "logfacility",	&ServerConfig::logFacility,	LOG_FAX },
 { "faxnumber",		&ServerConfig::FAXNumber },
@@ -116,6 +120,8 @@ ServerConfig::setupConfig()
 {
     int i;
 
+    for (i = N(bools)-1; i >= 0; i--)
+	(*this).*bools[i].p = bools[i].def;
     for (i = N(strings)-1; i >= 0; i--)
 	(*this).*strings[i].p = (strings[i].def ? strings[i].def : "");
     for (i = N(filemodes)-1; i >= 0; i--)
@@ -435,6 +441,8 @@ ServerConfig::setConfigItem(const char* tag, const char* value)
 	}
     } else if (findTag(tag, (const tags*)filemodes, N(filemodes), ix))
 	(*this).*filemodes[ix].p = strtol(value, 0, 8);
+    else if (findTag(tag, (const tags*)bools, N(bools), ix))
+	(*this).*bools[ix].p = getBoolean(value);
 
     else if (streq(tag, "speakervolume"))
 	setModemSpeakerVolume(getVolume(value));

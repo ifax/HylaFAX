@@ -58,6 +58,7 @@ private:
     time_t	fileStart;		// starting time for file transmit
     time_t	pageStart;		// starting time for page transmit
     u_int	npages;			// # pages sent/received
+    fxStr	batchid;		// Batch ID, for session logs
 
     friend class FaxModem;
 

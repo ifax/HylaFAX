@@ -170,6 +170,7 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
     bool recvOK;
     u_int ppm = PPM_EOP;
     pageStart = Sys::now();
+    batchid = getCommID();
     for (;;) {
 	bool okToRecv = true;
 	fxStr reason;
@@ -240,6 +241,14 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 	/*
 	 * Setup state for another file.
 	 */
+	if (! batchLogs)
+	{
+	    traceServer("SESSION BATCH CONTINUING");
+	    endSession();
+	    beginSession(FAXNumber);
+	    batchid.append(","|getCommID());
+	    traceServer("SESSION BATCH %s", (const char*)batchid);
+	}
 	tif = setupForRecv(info, docs, emsg);
 	if (tif == NULL)
 	    return (false);

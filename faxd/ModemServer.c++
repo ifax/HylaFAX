@@ -663,17 +663,6 @@ ModemServer::beginSession(const fxStr& number)
 	log =
 	    new FaxMachineLog(ftmp, canonicalizePhoneNumber(number), commid);
     }
-
-    if (batchid)
-    {
-	batchid.append("," | commid);
-	traceServer("CONTINUE BATCH %s", (const char*)batchid);
-    } else
-    {
-    	batchid = commid;
-    }
-
-
 }
 
 /*
