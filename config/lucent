@@ -48,6 +48,7 @@
 ModemType:		Class1		# use this to supply a hint
 Class1TCFRecvHack:	yes		# avoid +FCERROR before TCF
 # Class1MsgRecvHackCmd:	AT+FRS=1	# avoid +FCERROR before image
+Class1TMConnectDelay:	400		# counteract quick CONNECT response
 
 # If your line supports Caller-ID, you may want to uncomment this...
 # QualifyCID:		etc/cid		# you must create this file

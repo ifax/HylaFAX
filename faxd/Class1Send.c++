@@ -391,8 +391,9 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 
 /*
  * Send ms's worth of zero's at the current signalling rate.
- * Note that we send real zero data here rather than using
- * the Class 1 modem facility to do zero fill.
+ * Note that we send real zero data here as recommended
+ * by T.31 8.3.3 rather than using the Class 1 modem facility
+ * to do zero fill.
  */
 bool
 Class1Modem::sendTCF(const Class2Params& params, u_int ms)
@@ -771,6 +772,11 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, fxS
 	emsg = "Unable to establish message carrier";
 	return (false);
     }
+    // As with TCF, T.31 8.3.3 requires the DCE to report CONNECT at the beginning
+    // of transmission of the training pattern rather than at the end.  We pause here
+    // to allow the remote's +FRM to result in CONNECT.
+    pause(conf.class1TMConnectDelay);
+
     bool rc = true;
     protoTrace("SEND begin page");
     if (flowControl == FLOW_XONXOFF)

@@ -644,9 +644,18 @@ Class1Modem::transmitData(int br, u_char* data, u_int cc,
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
     fxStr tmCmd(br, tmCmdFmt);
-    bool ok = (atCmd(tmCmd, AT_CONNECT) &&
-	sendClass1Data(data, cc, bitrev, eod) &&
-	(eod ? waitFor(AT_OK) : true));
+    bool ok = atCmd(tmCmd, AT_CONNECT);
+    if (ok) {
+
+	// T.31 8.3.3 requires the DCE to report CONNECT at the beginning
+	// of transmission of the training pattern rather than at the end.
+	// We pause here to allow the remote's +FRM to result in CONNECT.
+	// This delay will vary depending on the modem's adherence to T.31.
+	pause(conf.class1TMConnectDelay);
+
+	ok = (sendClass1Data(data, cc, bitrev, eod) &&
+	    (eod ? waitFor(AT_OK) : true));
+    }
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
     return (ok);
