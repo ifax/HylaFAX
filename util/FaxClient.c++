@@ -1271,12 +1271,13 @@ bool
 FaxClient::recvData(bool (*f)(void*, const char*, int, fxStr&),
     void* arg, fxStr& emsg, u_long restart, const char* fmt, ...)
 {
-    if (!setMode(MODE_S))
-	goto bad;
-    if (!initDataConn(emsg))
-	goto bad;
-    if (restart && command("REST %lu", restart) != CONTINUE)
-	goto bad;
+    if ((!setMode(MODE_S)) ||
+	(!initDataConn(emsg)) ||
+	(restart && command("REST %lu", restart) != CONTINUE)) {
+	// cannot "goto bad" because it is outside the scope of a va_arg
+	closeDataConn();
+	return (false);
+    }
     va_list ap;
     va_start(ap, fmt);
     int r; r = vcommand(fmt, ap);
@@ -1326,12 +1327,14 @@ FaxClient::recvZData(bool (*f)(void*, const char*, int, fxStr&),
     zstream.opaque = NULL;
     zstream.data_type = Z_BINARY;
     if (inflateInit(&zstream) == Z_OK) {
-	if (!setMode(MODE_Z))
-	    goto bad;
-	if (!initDataConn(emsg))
-	    goto bad;
-	if (restart && command("REST %lu", restart) != CONTINUE)
-	    goto bad;
+	if ((!setMode(MODE_Z)) ||
+	    (!initDataConn(emsg)) ||
+	    (restart && command("REST %lu", restart) != CONTINUE)) {
+	    // cannot "goto bad" because it is outside the scope of a va_arg
+	    closeDataConn();
+	    inflateEnd(&zstream);
+	    return (false);
+	}
 	va_list ap;
 	va_start(ap, fmt);
 	int r; r = vcommand(fmt, ap);		// XXX for __GNUC__

@@ -372,11 +372,7 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	uint32* stripbytecount;
 	(void) TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &stripbytecount);
 	tstrip_t strip;
-	#ifdef __alpha
-	    u_long totdata = 0;
-	#else
-	    uint32 totdata = 0;
-	#endif
+	u_long totdata = 0;
 	for (strip = 0; strip < nstrips; strip++)
 	    totdata += stripbytecount[strip];
 	/*

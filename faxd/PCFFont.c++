@@ -233,7 +233,7 @@ PCFFont::read(const char* name)
 	}
 	for (i = 0; i < nbitmaps; i++) {
 	    metrics[i].bits = bitmaps + offsets[i];
-	    if ((unsigned) metrics[i].bits & 1) {
+	    if ((unsigned long) metrics[i].bits & 1) {
 		error("Internal error, bitmap data not word-aligned");
 		delete offsets;
 		return (false);

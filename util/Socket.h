@@ -57,11 +57,11 @@ extern "C" {
 class Socket {
 public:
     static int accept(int s, void* addr, socklen_t* addrlen);
-    static int bind(int s, const void* addr, int addrlen);
-    static int connect(int s, const void* addr, int addrlen);
+    static int bind(int s, const void* addr, socklen_t addrlen);
+    static int connect(int s, const void* addr, socklen_t addrlen);
     static int getpeername(int s, void* name, socklen_t* namelen);
     static int getsockname(int s, void* name, socklen_t* namelen);
-    static int setsockopt(int s, int level, int oname, const void* oval, int olen);
+    static int setsockopt(int s, int level, int oname, const void* oval, socklen_t olen);
     static struct hostent* gethostbyname(const char* name);
 };
 
@@ -74,12 +74,12 @@ inline int Socket::accept(int s, void* addr, socklen_t* addrlen)
 #endif
 }
 
-inline int Socket::bind(int s, const void* addr, int addrlen)
+inline int Socket::bind(int s, const void* addr, socklen_t addrlen)
 {
     return ::bind(s, (const struct sockaddr*) addr, addrlen);
 }
 
-inline int Socket::connect(int s, const void* addr, int addrlen)
+inline int Socket::connect(int s, const void* addr, socklen_t addrlen)
 {
     return ::connect(s, (const struct sockaddr*) addr, addrlen);
 }
@@ -102,7 +102,7 @@ inline int Socket::getsockname(int s, void* name, socklen_t* namelen)
 #endif
 }
 
-inline int Socket::setsockopt(int s, int level, int oname, const void* oval, int olen)
+inline int Socket::setsockopt(int s, int level, int oname, const void* oval, socklen_t olen)
 {
     return ::setsockopt(s, level, oname, (const char*) oval, olen);
 }
