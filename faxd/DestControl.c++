@@ -65,7 +65,7 @@ int DestControlInfo::compare(const DestControlInfo*) const { return (0); }
 static int getNumber(const char* s) { return ((int) strtol(s, NULL, 0)); }
 
 void
-DestControlInfo::parseEntry(const char* tag, const char* value)
+DestControlInfo::parseEntry(const char* tag, const char* value, bool quoted)
 {
     if (streq(tag, "rejectnotice")) {
 	rejectNotice = value;
@@ -86,9 +86,13 @@ DestControlInfo::parseEntry(const char* tag, const char* value)
     } else if (streq(tag, "timeofday")) {
 	tod.parse(value);
 	setDefined(DCI_TIMEOFDAY);
-    } else
-	args.append(fxStr::format("%s-c %s:%s",
-	    args == "" ? "" : " ", tag, value));
+    } else {
+	if( args != "" )
+	    args.append('\0');
+	const char* quote = quoted ? "\"" : "";
+	args.append(fxStr::format("-c%c%s:%s%s%s",
+	    '\0', tag, quote, value, quote));
+    }
 }
 
 u_int
@@ -227,24 +231,6 @@ DestControl::skipEntry(FILE* fp, char line[], u_int cc)
 	;
 }
 
-static void
-crackArgv(fxStr& s)
-{
-    int i = 0;
-    do {
-        while (i < s.length() && !isspace(s[i])) i++;
-        if (i < s.length()) {
-            s[i++] = '\0';
-            int j = i;
-            while (j < s.length() && isspace(s[j])) j++;
-            if (j > i) {
-                s.remove(i, j - i);
-            }
-        }
-    } while (i < s.length());
-    s.resize(i);
-}
-
 bool
 DestControl::parseEntry(FILE* fp)
 {
@@ -276,7 +262,6 @@ DestControl::parseEntry(FILE* fp)
 	    while (isspace(*cp))
 		cp++;
 	    if (*cp == '\0') {			// EOL, look for continuation
-		crackArgv(dci.args);
 		if (!isContinued(fp)) {
 		    info.append(dci);
 		    return (true);
@@ -289,7 +274,7 @@ DestControl::parseEntry(FILE* fp)
 		continue;			// go back and skip whitespace
 	    }
 	    const char* tag = cp;
-	    while (isalpha(*cp)) {		// collect tag and lower case
+	    while (isalnum(*cp)) {		// collect tag and lower case
 		if (isupper(*cp))
 		    *cp = tolower(*cp);
 		cp++;
@@ -309,7 +294,9 @@ DestControl::parseEntry(FILE* fp)
 		    ;
 	    }
 	    const char* value = cp;
+	    bool quoted = false;
 	    if (*cp == '"') {			// quoted value
+		quoted = true;
 		value++;
 		for (cp++; *cp && *cp != '"'; cp++)
 		    ;
@@ -324,7 +311,7 @@ DestControl::parseEntry(FILE* fp)
 	    if (*cp != '\0')			// terminate value
 		*cp++ = '\0';
 	    if (tag[0] != '\0')
-		dci.parseEntry(tag, value);
+		dci.parseEntry(tag, value, quoted);
 	}
     }
 }

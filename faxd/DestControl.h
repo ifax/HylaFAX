@@ -62,7 +62,7 @@ public:
     ~DestControlInfo();
 
     int compare(const DestControlInfo*) const;
-    void parseEntry(const char* tag, const char* value);
+    void parseEntry(const char* tag, const char* value, bool quoted);
 
     u_int getMaxConcurrentJobs() const;
     u_int getMaxSendPages() const;
