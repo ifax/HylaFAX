@@ -381,8 +381,8 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	/*
 	 * Setup tag line processing.
 	 */
-	u_int ts = getTagLineSlop();
 	bool doTagLine = setupTagLineSlop(params);
+	u_int ts = getTagLineSlop();
 	/*
 	 * Calculate total amount of space needed to read
 	 * the image into memory (in its encoded format).
@@ -404,10 +404,6 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 		off += (u_int) sbc;
 	}
 	totdata -= pageChop;		// deduct trailing white space not sent
-	uint32 rowsperstrip;
-	TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);  
-	if (rowsperstrip == (uint32) -1)
-	    TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &rowsperstrip);
 	/*
 	 * Image the tag line, if intended, and then
 	 * pass the data to the modem, filtering DLE's
