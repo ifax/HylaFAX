@@ -488,6 +488,16 @@ Note "If configure does the wrong thing, check the file config.log for"
 Note "information that may help you understand what went wrong."
 Note ""
 
+# test for broken expr (Tru64 UNIX)
+x="00"
+match=`expr "$x" : "\([0-9]*\)"`
+if [ "$match" != "$x" ]; then
+	bitch "Your expr is broken. It strips leading zeroes"
+	bitch "This may cause problems with configure, faxsetup, & faxaddmodem"
+	bitch "Perhaps there is an environment variable you can set"
+	bitch "to get the desired behavior."
+fi
+
 #
 # Read site and local configuration parameters.
 #
