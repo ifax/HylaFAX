@@ -814,6 +814,11 @@ faxGettyApp::FIFOMessage(const char* cp)
 	traceServer("STATE \"%s\"", cp+1);
 	setConfigItem("modemreadystate", cp+1);
 	break;
+    case 'L':				// set modem ready state
+	traceServer("LOCKWAIT");
+	discardModem(false);
+	changeState(LOCKWAIT, pollLockWait);
+	break;
     case 'Z':				// abort send/receive
 	FaxServer::abortSession();
 	break;

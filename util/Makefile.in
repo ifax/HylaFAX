@@ -167,7 +167,7 @@ install: installClient
 	${PUTSBIN} -m 755 -O faxmsg faxadduser faxconfig faxdeluser faxmodem \
         faxstate faxwatch faxinfo tiffcheck
 	${PUTSBIN} -idb ${PRODUCT}.sw.server \
-	    -ln ${SBIN}/faxmsg -O faxabort faxanswer faxquit
+	    -ln ${SBIN}/faxmsg -O faxabort faxanswer faxquit faxlock
 	${PUTSBIN} -m 755 -O dialtest typetest
 	${PUTSBIN} -m 755 -src xferfaxstats.sh -O xferfaxstats
 	${PUTSBIN} -m 755 -src recvstats.sh -O recvstats

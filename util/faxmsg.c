@@ -93,6 +93,11 @@ main(int argc, char** argv)
 	usage = "[-q queue-dir] modem";
 	cmdfmt = "Z";
 	modemRequired = 1;
+    } else if (strcmp(appname, "faxlock") == 0) {
+	opts = "q:";
+	usage = "[-q queue-dir] modem";
+	cmdfmt = "L";
+	modemRequired = 1;
     } else {
 	fatal("Unrecognized command name %s", appname);
     }

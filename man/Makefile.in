@@ -77,6 +77,7 @@ MANSAPP=sman.apps/cqtest.1m	\
 	sman.apps/faxq.1m	\
 	sman.apps/faxqclean.1m	\
 	sman.apps/faxquit.1m	\
+	sman.apps/faxlock.1m	\
 	sman.apps/faxrcvd.1m	\
 	sman.apps/faxsend.1m	\
 	sman.apps/faxsetup.1m	\
@@ -171,6 +172,7 @@ sman.apps/faxmodem.1m::	${SRCDIR}/faxmodem.1m;	${MANCVT}
 sman.apps/faxq.1m::	${SRCDIR}/faxq.1m;	${MANCVT}
 sman.apps/faxqclean.1m::${SRCDIR}/faxqclean.1m;	${MANCVT}
 sman.apps/faxquit.1m::	${SRCDIR}/faxquit.1m;	${MANCVT}
+sman.apps/faxlock.1m::	${SRCDIR}/faxlock.1m;	${MANCVT}
 sman.apps/faxrcvd.1m::	${SRCDIR}/faxrcvd.1m;	${MANCVT}
 sman.apps/faxsend.1m::	${SRCDIR}/faxsend.1m;	${MANCVT}
 sman.apps/faxsetup.1m::	${SRCDIR}/faxsetup.1m;	${MANCVT}

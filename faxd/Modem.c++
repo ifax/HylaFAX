@@ -221,6 +221,7 @@ Modem::assign(Job& job)
     if (lock->lock()) {		// lock modem for use
 	state = BUSY;		// mark in use
 	job.modem = this;	// assign modem to job
+	send("L", 2, false);
 	return (true);
     } else {
 	/*
