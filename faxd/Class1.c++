@@ -201,6 +201,7 @@ Class1Modem::setupModem()
     case BIT(V27FB)|BIT(V27)|BIT(V29)|BIT(V33):
 	discap = DISSIGRATE_V33;
 	break;
+    case BIT(V27FB)|BIT(V27)|BIT(V29)|BIT(V17):
     case BIT(V27FB)|BIT(V27)|BIT(V29)|BIT(V33)|BIT(V17):
 	discap = DISSIGRATE_V17;
 	break;
