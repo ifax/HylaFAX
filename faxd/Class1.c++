@@ -147,7 +147,7 @@ Class1Modem::setupModem()
      * rate, data formatting capabilities, etc. for use in
      * T.30 negotiations.
      */
-    if (!class1Query("AT+FTM=?", xmitCaps)) {
+    if (!class1Query(conf.class1TMQueryCmd, xmitCaps)) {
 	serverTrace("Error parsing \"+FTM\" query response: \"%s\"", rbuf);
 	return (false);
     }
@@ -173,7 +173,7 @@ Class1Modem::setupModem()
      * transmit capabilities because we need to know more
      * than the signalling rate to formulate the DIS.
      */ 
-    if (!class1Query("AT+FRM=?", recvCaps)) {
+    if (!class1Query(conf.class1RMQueryCmd, recvCaps)) {
 	serverTrace("Error parsing \"+FRM\" query response: \"%s\"", rbuf);
 	return (false);
     }
@@ -1037,13 +1037,16 @@ Class1Modem::waitFor(ATResponse wanted, long ms)
 }
 
 /*
- * Send <what>=? and get a range response.
+ * Send queryCmd and get a range response.
  */
 bool
-Class1Modem::class1Query(const char* what, Class1Cap caps[])
+Class1Modem::class1Query(const fxStr& queryCmd, Class1Cap caps[])
 {
     char response[1024];
-    if (atCmd(what, AT_NOTHING) && atResponse(response) == AT_OTHER) {
+    if (queryCmd[0] == '!') {
+	return (parseQuery(queryCmd.tail(queryCmd.length()-1), caps));
+    }
+    if (atCmd(queryCmd, AT_NOTHING) && atResponse(response) == AT_OTHER) {
 	sync(5000);
 	return (parseQuery(response, caps));
     }

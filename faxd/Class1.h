@@ -168,7 +168,7 @@ protected:
     void	abortReceive();
     void	traceHDLCFrame(const char* direction, const HDLCFrame& frame);
 // class 1 command support routines
-    bool	class1Query(const char* what, Class1Cap caps[]);
+    bool	class1Query(const fxStr& queryCmd, Class1Cap caps[]);
     bool	parseQuery(const char*, Class1Cap caps[]);
 public:
     Class1Modem(FaxServer&, const ModemConfig&);

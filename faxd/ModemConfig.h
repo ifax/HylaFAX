@@ -118,7 +118,9 @@ public:
     fxStr	class1HFLOCmd;		// cmd to setup hardware flow control
     fxStr	class1PPMWaitCmd;	// cmd to stop and wait prior to PPM
     fxStr	class1ResponseWaitCmd;	// cmd to wait prior to TCF response
+    fxStr	class1RMQueryCmd;	// cmd to query modem for receive demodulators
     fxStr	class1TCFWaitCmd;	// cmd to stop and wait prior to TCF
+    fxStr	class1TMQueryCmd;	// cmd to query modem for transmit modulators
     fxStr	class1EOPWaitCmd;	// cmd to stop and wait prior to EOP
     fxStr	class1SwitchingCmd;	// after recv HDLC and before sending
     fxStr	class1MsgRecvHackCmd;	// cmd to avoid +FCERROR before image
