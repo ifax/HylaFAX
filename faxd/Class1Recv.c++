@@ -349,6 +349,8 @@ const u_int Class1Modem::modemPPMCodes[8] = {
 bool
 Class1Modem::recvPage(TIFF* tif, int& ppm, fxStr& emsg)
 {
+    time_t t2end = 0;
+
 top:
     do {
 	u_int timer = conf.t2Timer;
@@ -521,6 +523,18 @@ top:
 	    default:
 		emsg = "COMREC invalid response received";
 		return (false);
+	    }
+	    t2end = 0;
+	} else {
+	    /*
+	     * If remote is on hook, then modem responces [+FC]ERROR
+	     * or NO CARRIER. I only try to prevent looping (V.F.)
+	     */
+	    if (t2end) {
+		if (Sys::now() > t2end)
+		    break;
+	    } else {
+		t2end = Sys::now() + howmany(conf.t2Timer, 1000);
 	    }
 	}
     } while (!wasTimeout() && lastResponse != AT_EMPTYLINE);
