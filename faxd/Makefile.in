@@ -172,29 +172,29 @@ faxQueueApp.o FaxRecv.o:
 incdepend: hash.h
 
 faxq:	${FAXQOBJS} libfaxserver.${DSO} ${LIBS}
-	${C++F} -o $@ ${FAXQOBJS} libfaxserver.${DSO} ${LDFLAGS}
+	${C++F} -o $@ ${FAXQOBJS} ${LIBFAXSERVER} ${LDFLAGS}
 faxsend: ${FAXSENDOBJS} libfaxserver.${DSO} ${LIBS}
-	${C++F} -o $@ ${FAXSENDOBJS} libfaxserver.${DSO} ${LDFLAGS}
+	${C++F} -o $@ ${FAXSENDOBJS} ${LIBFAXSERVER} ${LDFLAGS}
 faxgetty: ${FAXGETTYOBJS} libfaxserver.${DSO} ${LIBS}
-	${C++F} -o $@ ${FAXGETTYOBJS} libfaxserver.${DSO} ${LDFLAGS}
+	${C++F} -o $@ ${FAXGETTYOBJS} ${LIBFAXSERVER} ${LDFLAGS}
 faxqclean: ${FAXQCLEANOBJS} libfaxserver.${DSO} ${LIBS}
-	${C++F} -o $@ ${FAXQCLEANOBJS} libfaxserver.${DSO} ${LDFLAGS}
+	${C++F} -o $@ ${FAXQCLEANOBJS} ${LIBFAXSERVER} ${LDFLAGS}
 
 PAGESENDOBJS=\
 	pageSendApp.o
 pagesend:${PAGESENDOBJS} libfaxserver.${DSO} ${LIBS}
-	${C++F} -o $@ ${PAGESENDOBJS} libfaxserver.${DSO} ${LDFLAGS}
+	${C++F} -o $@ ${PAGESENDOBJS} ${LIBFAXSERVER} ${LDFLAGS}
 
 tagtest: tagtest.o libfaxserver.${DSO} ${LIBS}
-	${C++F} -o $@ tagtest.o libfaxserver.${DSO} ${LDFLAGS}
+	${C++F} -o $@ tagtest.o ${LIBFAXSERVER} ${LDFLAGS}
 cqtest:	cqtest.o libfaxserver.${DSO} ${LIBS}
-	${C++F} -o $@ cqtest.o libfaxserver.${DSO} ${LDFLAGS}
+	${C++F} -o $@ cqtest.o ${LIBFAXSERVER} ${LDFLAGS}
 choptest: choptest.o libfaxserver.${DSO} ${LIBS}
-	${C++F} -o $@ choptest.o libfaxserver.${DSO} ${LDFLAGS}
+	${C++F} -o $@ choptest.o ${LIBFAXSERVER} ${LDFLAGS}
 tsitest: tsitest.o libfaxserver.${DSO} ${LIBS}
-	${C++F} -o $@ tsitest.o libfaxserver.${DSO} ${LDFLAGS}
+	${C++F} -o $@ tsitest.o ${LIBFAXSERVER} ${LDFLAGS}
 trigtest: trigtest.o libfaxserver.${DSO} ${LIBS}
-	${C++F} -o $@ trigtest.o libfaxserver.${DSO} ${LDFLAGS}
+	${C++F} -o $@ trigtest.o ${LIBFAXSERVER} ${LDFLAGS}
 
 PUTSERV=${INSTALL} -idb ${PRODUCT}.sw.server
 

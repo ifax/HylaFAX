@@ -40,6 +40,7 @@
 DIR_BIN=/usr/local/bin
 DIR_SBIN=/usr/local/sbin
 DIR_LIBDATA=/usr/local/lib/fax
+DIR_LIB=/usr/local/lib
 DIR_LIBEXEC=$DIR_SBIN
 DIR_SPOOL=/var/spool/hylafax
 DIR_HTML=/var/httpd/htdocs/hylafax
@@ -82,6 +83,9 @@ REGEXINC='${DEPTH}/${TOPSRCDIR}/regex'
 DBLIB=no
 LIBDB="-L/usr/local/lib -ldb"
 DBLIBINC=/usr/local/include
+FAXD=
+LIBFAXSERVER='libfaxserver.${DSO}'
+LIBUTIL='${UTIL}/libfaxutil.${DSO}'
 CONFIG_OSFCNH=auto
 MANNUM4_5=4F
 MANNUM1_8=1M
@@ -137,6 +141,7 @@ DSODELAY
 DSOOPTS
 ECHO
 ENVOPTS
+FAXD
 FAXGID
 FAXUID
 FAXQ_SERVER
@@ -161,10 +166,13 @@ IMP
 IMPRIP		PATH_IMPRIP
 INSTALL
 LIBDATA		DIR_LIBDATA
+LIBDIR		DIR_LIB
 LIBEXEC		DIR_LIBEXEC
+LIBFAXSERVER
 LIBPORT
 LIBREGEX
 LIBTIFF
+LIBUTIL
 LIBZ
 LIBDB
 LLDOPTS
@@ -3222,6 +3230,33 @@ if [ "$DSO" = auto ]; then
 	    Note "No runtime loader found, looks like your system does not supports DSOs."
 	    DSO=no
 	fi
+	;;
+    *-linux*)
+	DSOSUF=so
+	LIBUTIL=''
+	LIBFAXSERVER='-lfaxserver'
+	FAXD='${DEPTH}/faxd'
+	DSOOPTS='-shared -Wl,-soname,$@'
+	LLDOPTS='-L${UTIL} -L${FAXD} -lfaxutil'
+	DSO=LINUX
+	CheckCCDSO()
+	{
+	$RM t.c t.o t.${DSOSUF}
+	echo 'int f() { return 0; }'>t.c
+	capture cat t.c
+	runMake t \
+	    't.o:; ${CCF} -c t.c' \
+	    "t: t.o; \${CCF} ${DSOOPTS} -o t.${DSOSUF} t.o"
+	}
+	CheckCXXDSO()
+	{
+	$RM t.c++ t.o t.${DSOSUF}
+	echo 'int f() { return 0; }'>t.c++
+	capture cat t.c++
+	runMake t \
+	    "t.o:; \${C++F} -c \${C++FILE} t.c++${MAKECXXOVERRIDE}" \
+	    "t:t.o; \${C++F} ${DSOOPTS} -o t.${DSOSUF} t.o"
+	}
 	;;
     *)	Note "There is no support for building HylaFAX as DSOs on your system."
 	DSO=no
