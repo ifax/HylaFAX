@@ -83,3 +83,7 @@ Class2NRCmd:    AT+FNR=1,1,1,0
 # USR modems violate Class 2.0 specs and do not send RTC itself
 #
 Class2SendRTC:	yes
+#
+# +FAP=? not supported on this modem, gives ERROR in ServerTracing
+#
+Class2APQueryCmd:       AT
