@@ -175,7 +175,7 @@ QualifyTSI	string	\-	file of \s-1TSI\s+1 patterns for qualifying senders
 RecvDataFormat	string	\s-1adaptive\s+1	format for received facsimile data
 RecvFileMode	octal	\s-10600\s+1	protection mode to use for received facsimile files
 RingData	string	\-	distinctive ring data call identifier
-RingExtended	string	\s-1"RING "\s+1	extended ring message identifier
+RingExtended	string	\-	extended ring message identifier
 RingFax	string	\-	distinctive ring fax call identifier
 RingsBeforeAnswer	integer	\s-10\s+1	rings to wait before answering phone
 RingTimout	integer	\s-16000\s+1	timeout in ms after RING before reset
