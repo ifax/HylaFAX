@@ -1661,7 +1661,7 @@ fi
 #
 if onServer; then
     signalINETD=no
-    if [ -f $SYSVINIT ]; then
+    if [ -f "$SYSVINIT" ]; then
 	# started by init at boot time
         if [ $FAXQ_SERVER -eq 0 ]; then
             cat <<EOF
@@ -2165,7 +2165,7 @@ EOF
     prompt "Should I restart the HylaFAX server processes [yes]?"; read x
     if isOK "$x"; then
 	echo ""
-	if [ -x $SYSVINIT ]; then
+	if [ -x "$SYSVINIT" ]; then
 	    echo $SYSVINIT start
 	    $SYSVINIT start
 	else
