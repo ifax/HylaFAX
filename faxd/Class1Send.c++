@@ -1003,11 +1003,15 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				!((curcap->br == 0) && (badframes >= badframesbefore))) {
 				// send ctc even at 2400 baud if we're getting somewhere
 				if (curcap->br != 0) {
-				    if (!dropToNextBR(params)) {
-					// We have a minimum speed that's not BR_2400,
-					// and we're there now.  Undo curcap change...
-					curcap++;
-				    }
+				    u_char oldmod = curcap->mod;
+				    do {
+					if (!dropToNextBR(params)) {
+					    // We have a minimum speed that's not BR_2400,
+					    // and we're there now.  Undo curcap change...
+					    curcap++;
+					}
+					// drop to the next modulation protocol if we're not getting anywhere
+				    } while (curcap->br != 0 && badframes >= badframesbefore && curcap->mod == oldmod);
 				}
 				char ctc[2];
 				ctc[0] = 0;
