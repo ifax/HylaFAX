@@ -515,7 +515,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
     if (!TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts))
 	g3opts = 0;
     if (g3opts & GROUP3OPT_2DENCODING) {
-	if (!clientInfo.getSupports2DEncoding() and !class2RTFCC) {
+	if (!clientInfo.getSupports2DEncoding() && !class2RTFCC) {
 	    emsg = "Document was encoded with 2DMR,"
 		   " but client does not support this data format";
 	    return (send_reformat);
