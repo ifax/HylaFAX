@@ -1043,6 +1043,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		emsg = "Failed to properly detect high-speed data carrier.";
 		if (conf.saveUnconfirmedPages && fcount) {
 		    protoTrace("RECV keeping unconfirmed page");
+		    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
 		    prevPage = true;
 		}
 		free(block);
