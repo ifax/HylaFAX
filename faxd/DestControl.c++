@@ -36,6 +36,8 @@
 #define	DCI_MAXSENDPAGES	0x0004
 #define	DCI_MAXDIALS		0x0008
 #define	DCI_MAXTRIES		0x0010
+#define	DCI_USEXVRES		0x0020
+#define	DCI_VRES		0x0040
 
 #define	isDefined(b)		(defined & b)
 #define	setDefined(b)		(defined |= b)
@@ -56,6 +58,8 @@ DestControlInfo::DestControlInfo(const DestControlInfo& other)
     maxSendPages = other.maxSendPages;
     maxDials = other.maxDials;
     maxTries = other.maxTries;
+    usexvres = other.usexvres;
+    vres = other.vres;
 }
 DestControlInfo::~DestControlInfo() {}
 
@@ -86,6 +90,12 @@ DestControlInfo::parseEntry(const char* tag, const char* value, bool quoted)
     } else if (streq(tag, "timeofday")) {
 	tod.parse(value);
 	setDefined(DCI_TIMEOFDAY);
+    } else if (streq(tag, "usexvres")) {
+	usexvres = getNumber(value);
+	setDefined(DCI_USEXVRES);
+    } else if (streq(tag, "vres")) {
+	vres = getNumber(value);
+	setDefined(DCI_VRES);
     } else {
 	if( args != "" )
 	    args.append('\0');
@@ -150,6 +160,24 @@ DestControlInfo::nextTimeToSend(time_t t) const
 	return tod.nextTimeOfDay(t);
     else
 	return faxQueueApp::instance().nextTimeToSend(t);
+}
+
+int
+DestControlInfo::getUseXVRes() const
+{
+    if (isDefined(DCI_USEXVRES))
+	return usexvres;
+    else
+	return -1;
+}
+
+u_int
+DestControlInfo::getVRes() const
+{
+    if (isDefined(DCI_VRES))
+	return vres;
+    else
+	return 0;
 }
 
 /*

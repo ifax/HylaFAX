@@ -94,6 +94,8 @@ MaxTries	integer	\s-13\s+1	max attempts to transmit a job
 Modem	string	\s-1Any\s+1	ModemGroup to use for destination
 RejectNotice	string	\-	rejection notice for transmit job
 TimeOfDay	string	\s-1Any\s+1	default time-of-day restrictions
+VRes	integer	\-	Vertical resolution
+UseXVRes	integer	\-	Usage of extended resolutions
 .fi
 .PP
 The
@@ -133,6 +135,22 @@ phone numbers; for example
  \.*911$    RejectNotice = "Calls to emergency numbers are not permitted"
 .ft P
 .fi
+.PP
+The
+.B VRes
+parameter controls the vertical resolution. Possible values are 98 (normal resolution, equivalent to
+.I sendfax
+-l option) and 196 (fine resolution, equivalent toi
+.I sendfax
+-m option).
+.PP
+The
+.B UseXVRes
+parameter is used to enable or disable the usage of extended resolutions supported by the receiver. Possible values are 1 (enable extended resolutions usage, equivalent to
+.I sendfax
+-G option) and 0 (disable extended resolutions usage).
+This parameter supercedes the usage of
+.B VRes.
 .PP
 In addition to the above parameters, any other parameters that are specified
 are automatically accumulated and passed to programs invoked by

@@ -49,6 +49,8 @@ private:
     fxStr	rejectNotice;		// if set, reject w/ this notice
     fxStr	modem;			// if set, try with it
     TimeOfDay	tod;			// time of day restrictions
+    int		usexvres;		// use extended resolution
+    u_int	vres;			// use extended resolution
     fxStr	args;			// arguments for subprocesses
 
     // default returned on no match
@@ -71,6 +73,8 @@ public:
     const fxStr& getRejectNotice() const;
     const fxStr& getModem() const;
     time_t nextTimeToSend(time_t) const;
+    int getUseXVRes() const;
+    u_int getVRes() const;
     const fxStr& getArgs() const;
 };
 inline const fxStr& DestControlInfo::getArgs() const	{ return args; }

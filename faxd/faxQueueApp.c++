@@ -508,9 +508,32 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
      * (based on the capabilities passed to us by faxgetty).
      */
     Class2Params params;
+    
+    /*
+     * User requested vres (98 or 196) and usexvres (1=true or 0=false)
+     */
+    int vres = req.resolution;
+    int usexvres = req.usexvres;
+    /*
+     * System overrides in destcontrols:
+     * VRes: we check for vres = 98 or vres = 196 in destroncontrols;
+     *       if vres is not set getVRes returns 0.
+     * UseXVres: we check for usexvres = 0 or usexvres = 1 in destcontrols;
+     *           if usexvres is not set getUseXVRes retuns -1.
+     */
+    if (dci.getVRes() == 98)
+	vres = 98;
+    else if (dci.getVRes() == 196)
+	vres = 196;
+    if (dci.getUseXVRes() == 0)
+	usexvres = 0;
+    else if (dci.getUseXVRes() == 1)
+	usexvres = 1;
+
     // use the highest resolution the client supports
     params.vr = VR_NORMAL;
-    if (req.usexvres) {
+
+    if (usexvres) {
 	if (info.getSupportsVRes() & VR_200X100 && job.modem->supportsVR(VR_200X100))
 	    params.vr = VR_200X100;
 	if (info.getSupportsVRes() & VR_FINE && job.modem->supportsVR(VR_FINE))
@@ -528,10 +551,12 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
     } else {
 	if (info.getSupportsVRes() & VR_200X100 && job.modem->supportsVR(VR_200X100))
 	    params.vr = VR_200X100;
-	if (info.getSupportsVRes() & VR_FINE && req.resolution > 150 && job.modem->supportsVR(VR_FINE))
-	    params.vr = VR_FINE;
-	if (info.getSupportsVRes() & VR_200X200 && req.resolution > 150 && job.modem->supportsVR(VR_200X200))
-	    params.vr = VR_200X200;
+	if (vres > 150) {
+	    if (info.getSupportsVRes() & VR_FINE && job.modem->supportsVR(VR_FINE))
+		params.vr = VR_FINE;
+	    if (info.getSupportsVRes() & VR_200X200 && job.modem->supportsVR(VR_200X200))
+		params.vr = VR_200X200;
+	}
     }
     params.setPageWidthInMM(
 	fxmin((u_int) req.pagewidth, (u_int) info.getMaxPageWidthInMM()));
