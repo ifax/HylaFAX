@@ -687,6 +687,8 @@ TextFmt::beginFile(void)
 void
 TextFmt::endFile(void)
 {
+    if (!bot)
+	endTextLine();
     if (!bol)
 	endLine();
     if (!bop) {
@@ -757,8 +759,10 @@ TextFmt::format(FILE* fp)
 	case '\0':			// discard nulls
 	    break;
 	case '\f':			// form feed
-	    endTextCol();
-	    bol = bot = true;
+	    if (!bop) {
+		endTextCol();
+		bol = bot = true;
+	    }
 	    break;
 	case '\n':			// line break
 	    if (bol)
@@ -848,8 +852,10 @@ TextFmt::format(const char* cp, u_int cc)
 	case '\0':			// discard nulls
 	    break;
 	case '\f':			// form feed
-	    endTextCol();
-	    bol = bot = true;
+	    if (!bop) {
+		endTextCol();
+		bol = bot = true;
+	    }
 	    break;
 	case '\n':			// line break
 	    if (bol)
