@@ -252,7 +252,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 		    recvRow = buf;
 		}
 		if (n >= RCVBUFSIZ)
-		    flushRawData(tif, 0, (u_char*) raw, n);
+		    flushRawData(tif, 0, (const u_char*) raw, n);
 		else {
 		    memcpy(recvRow, (const char*) raw, n);
 		    recvRow += n;
@@ -346,11 +346,11 @@ setupCompression(TIFF* tif, u_int df, uint32 opts)
  * Write a strip of decoded data to the receive file.
  */
 void
-FaxModem::flushEncodedData(TIFF* tif, tstrip_t strip, u_char* buf, u_int cc)
+FaxModem::flushEncodedData(TIFF* tif, tstrip_t strip, const u_char* buf, u_int cc)
 {
     // NB: must update ImageLength for each new strip
     TIFFSetField(tif, TIFFTAG_IMAGELENGTH, recvEOLCount);
-    if (TIFFWriteEncodedStrip(tif, strip, buf, cc) == -1)
+    if (TIFFWriteEncodedStrip(tif, strip, (tdata_t)buf, cc) == -1)
 	serverTrace("RECV: %s: write error", TIFFFileName(tif));
 }
 
@@ -358,10 +358,10 @@ FaxModem::flushEncodedData(TIFF* tif, tstrip_t strip, u_char* buf, u_int cc)
  * Write a strip of raw data to the receive file.
  */
 void
-FaxModem::flushRawData(TIFF* tif, tstrip_t strip, u_char* buf, u_int cc)
+FaxModem::flushRawData(TIFF* tif, tstrip_t strip, const u_char* buf, u_int cc)
 {
     recvTrace("%u bytes of data, %lu total lines", cc, recvEOLCount);
-    if (TIFFWriteRawStrip(tif, strip, buf, cc) == -1)
+    if (TIFFWriteRawStrip(tif, strip, (tdata_t)buf, cc) == -1)
 	serverTrace("RECV: %s: write error", TIFFFileName(tif));
 }
 

@@ -547,7 +547,7 @@ OldProtocolServer::applyToJob(const char* tag, const char* op,
 	 * something to change now--leave it for a protocol
 	 * redesign.
 	 */
-	if (requestor == job->sender || isAdmin(requestor)) {
+	if (job->sender == requestor || isAdmin(requestor)) {
 	    if (TRACE(PROTOCOL))
 		logDebug("%s request by %s for %s", op, requestor, tag);
 	    (this->*f)(*job, arg);
@@ -585,7 +585,7 @@ OldProtocolServer::applyToJobGroup(const char* tag, const char* op,
 	 * something to change now--leave it for a protocol
 	 * redesign.
 	 */
-	if (requestor == job.sender || isAdmin(requestor)) {
+	if (job.sender == requestor || isAdmin(requestor)) {
 	    if (TRACE(PROTOCOL))
 		logDebug("%s request by %s for %s", op, requestor, tag);
 	    (this->*f)(job, arg);
@@ -751,23 +751,25 @@ OldProtocolServer::reallyRemoveJob(const char* op, Job& job)
     }
 }
 
-#define	DEFINE_Op(op)						\
-void OldProtocolServer::##op##Job(const char* tag)		\
-    { applyToJob(tag, fxQUOTE(op), &OldProtocolServer::do##op); }\
-void OldProtocolServer::##op##JobGroup(const char* tag)		\
-    { applyToJobGroup(tag, fxQUOTE(op), &OldProtocolServer::do##op); }
 void
 OldProtocolServer::doremove(Job& job, const char*)
 {
     reallyRemoveJob("remove", job);
 }
-DEFINE_Op(remove)
+void OldProtocolServer::removeJob(const char* tag)
+    { applyToJob(tag, fxQUOTE(op), &OldProtocolServer::doremove); }
+void OldProtocolServer::removeJobGroup(const char* tag)
+    { applyToJobGroup(tag, fxQUOTE(op), &OldProtocolServer::doremove); }
+
 void
 OldProtocolServer::dokill(Job& job, const char*)
 {
     reallyRemoveJob("kill", job);
 }
-DEFINE_Op(kill)
+void OldProtocolServer::killJob(const char* tag)
+    { applyToJob(tag, fxQUOTE(op), &OldProtocolServer::dokill); }
+void OldProtocolServer::killJobGroup(const char* tag)
+    { applyToJobGroup(tag, fxQUOTE(op), &OldProtocolServer::dokill); }
 
 /*
  * Job submission support.

@@ -29,9 +29,15 @@
 #include "string.h"
 #include "assert.h"
 #include "stdio.h"
-#include "new.h"
 #include "sys/types.h"
 #include "port.h"
+
+// Needed for the placement new operator
+#ifdef HAS_OLD_NEW_H
+#include "new.h"
+#else
+#include "new"
+#endif
 
 // Boolean type
 #ifdef NEED_BOOL

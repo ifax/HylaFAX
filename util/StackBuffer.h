@@ -54,10 +54,6 @@ public:
     u_int getLength() const;		// Return number of bytes in buffer
 
     // NB: the buffer is *NOT* null terminated, unless you put one there.
-    operator char*();			// Return base of buffer
-    operator u_char*();		// Return base of buffer
-    operator const char*();		// Return base of buffer
-    operator const u_char*();	// Return base of buffer
     operator const char*() const;	// Return base of buffer
     operator const u_char*() const;// Return base of buffer
     char& operator[](u_int i) const;	// Return character in buffer
@@ -79,11 +75,6 @@ inline void fxStackBuffer::put(char c)
 inline void fxStackBuffer::put(char const* c)	{ put(c, strlen(c)); }
 inline void fxStackBuffer::set(char c)		{ put(c); next--; }
 inline void fxStackBuffer::reset()		{ next = base; }
-inline fxStackBuffer::operator char*()		{ return base; }
-inline fxStackBuffer::operator u_char*() { return (u_char*)base; }
-inline fxStackBuffer::operator const char*()	{ return base; }
-inline fxStackBuffer::operator const u_char*()
-    { return (u_char*)base; }
 inline fxStackBuffer::operator const char*() const
     { return base; }
 inline fxStackBuffer::operator const u_char*() const

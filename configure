@@ -2432,6 +2432,14 @@ BuildPortDotH()
     fi
 
     #
+    # Check whether  compiler uses new C++ header style
+    #
+    CheckForIncludeFile new || {
+        Note "... configure use of new.h"
+            echo '#define HAS_OLD_NEW_H 1'
+    }
+
+    #
     # Some vendors have changed the socket API so that
     # call-by-reference parameters that give buffer
     # lengths are not int; this must be dealt with to

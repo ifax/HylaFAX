@@ -76,8 +76,8 @@ private:
     u_char*	recvRow;	// current receive row raster
     u_long	savedWriteOff;	// file offset to start of page data
 
-    void	flushEncodedData(TIFF*, tstrip_t, u_char*, u_int);
-    void	flushRawData(TIFF*, tstrip_t, u_char*, u_int);
+    void	flushEncodedData(TIFF*, tstrip_t, const u_char*, u_int);
+    void	flushRawData(TIFF*, tstrip_t, const u_char*, u_int);
     void	invalidCode(const char* type, int x);
     void	badPixelCount(const char* type, int got, int expected);
     void	badDecodingState(const char* type, int x);

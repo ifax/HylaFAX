@@ -54,10 +54,7 @@ public:
     friend fxTempStr& operator|(const fxTempStr&, fxStr const& b);
     friend fxTempStr& operator|(const fxTempStr&, char const* b);
 
-    operator char*() const;
-    operator int() const;
-    operator float() const;
-    operator double() const;
+    operator const char*() const;
 
     u_int length() const;
 protected:
@@ -71,10 +68,7 @@ protected:
     fxTempStr& concat(char const* b, u_int bl);
 };
 
-inline fxTempStr::operator char*() const	{ return data; }
-inline fxTempStr::operator int() const		{ return atoi(data); }
-inline fxTempStr::operator float() const	{ return float(atof(data)); }
-inline fxTempStr::operator double() const	{ return double(atof(data)); }
+inline fxTempStr::operator const char*() const	{ return data; }
 inline u_int fxTempStr::length() const		{ return slength - 1; }
 
 //----------------------------------------------------------------------
@@ -101,24 +95,10 @@ public:
     /////////////////////////////////////////////////////
     u_long hash() const;
 
-operator char*()
-	{ return data; }
     operator const char*() const
-	{ return data; }
-    operator const char*()
 	{ return data; }
     operator int() const
 	{ return atoi(data); }
-    operator int()
-	{ return atoi(data); }
-    operator float() const
-	{ return float(atof(data)); }
-    operator float()
-	{ return float(atof(data)); }
-    operator double() const
-	{ return double(atof(data)); }
-    operator double()
-	{ return double(atof(data)); }
 
     u_int length() const { return slength-1; }
 
