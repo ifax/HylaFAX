@@ -306,6 +306,21 @@ Class1Modem::faxService(bool enableV34)
 }
 
 /*
+ * The modem is initialized. Now set it to ready for answer.
+ */
+bool
+Class1Modem::ready(long ms)
+{
+    gotEOT = false;
+    useV34 = false;     // only when V.8 handshaking is used
+    if (conf.class1EnableV34Cmd != "" && conf.class1ECMSupport)   
+        if (!atCmd(conf.class1EnableV34Cmd))
+	    return (false);
+    return (FaxModem::ready(ms));
+}
+
+
+/*
  * Set the local subscriber identification.
  */
 void
