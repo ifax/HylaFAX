@@ -1351,7 +1351,6 @@ faxQueueApp::sendJobDone(Job& job, int status)
 	}
 	req->pagehandling = "";			// force recalculation
 	req->status = send_retry;		// ... force retry
-	req->tts = now;				// ... and do it now
     }
     /*
      * If the job did not finish and it is due to be
