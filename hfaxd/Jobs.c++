@@ -243,7 +243,8 @@ static const char* stateVals[] = {
     "BLOCKED",		// blocked by concurrent activity
     "READY",		// ready to be go, waiting for resources
     "ACTIVE",		// actively being processed
-    "DONE",		// processing completed
+    "DONE",		// processing completed with success
+    "FAILED",		// processing completed with failure
 };
 static const char* docTypeNames[] = {
     "FAX",		// send_fax
