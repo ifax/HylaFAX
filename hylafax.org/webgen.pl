@@ -5,6 +5,7 @@ use strict;
 #open(CONFIG,"|../configure --quiet");
 #close CONFIG;a
 `../configure
+	--quiet
 	--with-DIR_BIN=/usr/bin
 	--with-DIR_SBIN=/usr/sbin
 	--with-DIR_LIBEXEC=/usr/sbin
