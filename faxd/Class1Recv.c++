@@ -148,41 +148,41 @@ Class1Modem::recvIdentification(
      * station or (PWD) (SEP) (CIG) DTC when initiating a poll.
      */
     if (f1) {
-	startTimeout(3000);
+	startTimeout(7550);
 	framesSent = sendFrame(f1, pwd, false);
 	stopTimeout("sending PWD frame");
     } else if (f2) {
-	startTimeout(3000);
+	startTimeout(7550);
 	framesSent = sendFrame(f2, addr, false);
 	stopTimeout("sending SUB/SEP frame");
     } else if (f3) {
-	startTimeout(3000);
+	startTimeout(7550);
 	framesSent = sendFrame(f3, (const u_char*)HYLAFAX_NSF, nsf, false);
 	stopTimeout("sending NSF frame");
     } else {
-	startTimeout(3000);
+	startTimeout(7550);
 	framesSent = sendFrame(f4, id, false);
 	stopTimeout("sending CSI/CIG frame");
     }
     for (;;) {
 	if (framesSent) {
 	    if (f1) {
-		startTimeout(2550);
+		startTimeout(7550);
 		framesSent = sendFrame(f2, addr, false);
 		stopTimeout("sending SUB/SEP frame");
 	    }
 	    if (framesSent && f2) {
-		startTimeout(2550);
+		startTimeout(7550);
 		framesSent = sendFrame(f3, (const u_char*)HYLAFAX_NSF, nsf, false);
 		stopTimeout("sending NSF frame");
 	    }
 	    if (framesSent && f3) {
-		startTimeout(2550);
+		startTimeout(7550);
 		framesSent = sendFrame(f4, id, false);
 		stopTimeout("sending CSI/CIG frame");
 	    }
 	    if (framesSent) {
-		startTimeout(2550);
+		startTimeout(7550);
 		framesSent = sendFrame(f5, dics, xinfo);
 		stopTimeout("sending DIS/DCS frame");
 	    }
@@ -444,7 +444,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	 * The carrier is already raised.  Thus we
 	 * use sendFrame() instead of transmitFrame().
 	 */
-	startTimeout(2550);
+	startTimeout(7550);
 	(void) sendFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
 	stopTimeout("sending HDLC frame");
     }

@@ -1165,7 +1165,7 @@ Class1Modem::sendFrame(u_char fcf, const u_char* code, const fxStr& nsf, bool la
 bool
 Class1Modem::transmitFrame(u_char fcf, bool lastFrame)
 {
-    startTimeout(2550);			// 3.0 - 15% = 2.55 secs
+    startTimeout(7550);
     bool frameSent =
 	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
 	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
@@ -1179,10 +1179,10 @@ Class1Modem::transmitFrame(u_char fcf, u_int dcs, u_int xinfo, bool lastFrame)
 {
     /*
      * The T.30 spec says no frame can take more than 3 seconds
-     * (+/- 15%) to transmit.  We take the conservative approach.
-     * and guard against the send exceeding the lower bound.
+     * (+/- 15%) to transmit.  But the DCE can take as much as 5
+     * seconds to respond CONNECT or result OK, per T.31.
      */
-    startTimeout(2550);			// 3.0 - 15% = 2.55 secs
+    startTimeout(7550);
     bool frameSent =
 	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
 	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
@@ -1194,7 +1194,7 @@ Class1Modem::transmitFrame(u_char fcf, u_int dcs, u_int xinfo, bool lastFrame)
 bool
 Class1Modem::transmitFrame(u_char fcf, const fxStr& tsi, bool lastFrame)
 {
-    startTimeout(3000);			// give more time than others
+    startTimeout(7550);
     bool frameSent =
 	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
 	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
@@ -1206,7 +1206,7 @@ Class1Modem::transmitFrame(u_char fcf, const fxStr& tsi, bool lastFrame)
 bool
 Class1Modem::transmitFrame(u_char fcf, const u_char* code, const fxStr& nsf, bool lastFrame)
 {
-    startTimeout(3000);			// give more time than others
+    startTimeout(7550);
     bool frameSent =
 	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
 	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&

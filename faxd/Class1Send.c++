@@ -519,31 +519,37 @@ Class1Modem::sendTCF(const Class2Params& params, u_int ms)
 bool
 Class1Modem::sendPrologue(u_int dcs, u_int dcs_xinfo, const fxStr& tsi)
 {
+    /*
+     * T.31 8.3.5 requires the DCE to respond CONNECT or result OK within
+     * five seconds or it must result ERROR.  T.30 requires the data of
+     * the HDLC frame to be tranmsitted in 3 s +/- 15%.  Thus, our
+     * timeouts here must be at least 7500 ms and no more than 8500 ms.
+     */
     bool frameSent;
     if (useV34) frameSent = true;
-    else frameSent = (atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 2550) == AT_CONNECT);
+    else frameSent = (atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 7550) == AT_CONNECT);
     if (!frameSent)
 	return (false);
     if (pwd != fxStr::null) {
-	startTimeout(2550);		// 3.0 - 15% = 2.55 secs
+	startTimeout(7550);
 	bool frameSent = sendFrame(FCF_PWD|FCF_SNDR, pwd, false);
 	stopTimeout("sending PWD frame");
 	if (!frameSent)
 	    return (false);
     }
     if (sub != fxStr::null) {
-	startTimeout(2550);		// 3.0 - 15% = 2.55 secs
+	startTimeout(7550);
 	bool frameSent = sendFrame(FCF_SUB|FCF_SNDR, sub, false);
 	stopTimeout("sending SUB frame");
 	if (!frameSent)
 	    return (false);
     }
-    startTimeout(2550);			// 3.0 - 15% = 2.55 secs
+    startTimeout(7550);
     frameSent = sendFrame(FCF_TSI|FCF_SNDR, tsi, false);
     stopTimeout("sending TSI frame");
     if (!frameSent)
 	return (false);
-    startTimeout(2550);			// 3.0 - 15% = 2.55 secs
+    startTimeout(7550);
     frameSent = sendFrame(FCF_DCS|FCF_SNDR, dcs, dcs_xinfo);
     stopTimeout("sending DCS frame");
     return (frameSent);

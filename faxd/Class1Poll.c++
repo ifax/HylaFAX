@@ -60,7 +60,7 @@ Class1Modem::pollBegin(const fxStr& cig0,
     pageGood = false;				// quality of received page
 
     return atCmd(thCmd, AT_NOTHING) &&
-	atResponse(rbuf, 2550) == AT_CONNECT &&
+	atResponse(rbuf, 7550) == AT_CONNECT &&
 	recvIdentification(
 	    (send&DIS_PWD ? FCF_PPW : 0), pwd,
 	    (send&DIS_SEP ? FCF_SEP : 0), sep,

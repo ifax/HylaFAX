@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.1
 
+* extend short send-HDLC timeouts (18 Aug 2004)
 * add a pause after receiving MCF on non-ECM send sessions (18 Aug 2004)
 * fix broken fax polling (17 Aug 2004)
 * add several timing enhancements for stressed servers (16 Aug 2004)
