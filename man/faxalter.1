@@ -51,7 +51,9 @@ that has been submitted to \*(Fx; these numbers are printed by
 when jobs are queued for transmission and can also be displayed with
 .IR faxstat (1).
 Unprivileged users can alter the parameters of jobs that they own; clients
-with administrative privileges on a server can manipulate any job.
+with administrative privileges on a server can manipulate any job (see the
+.B \-A
+option below).
 The user may be specified by the
 .B FAXUSER
 environment variable.  By default,
@@ -70,6 +72,10 @@ by
 .IR sendfax (1)
 (and
 .IR at (1)).
+.TP 10
+.BI \-d " destination"
+Change the destination number to 
+.IR destination .
 .TP 10
 .BI \-h " host"
 Force the server to be contacted on a specific
@@ -91,6 +97,11 @@ per-user file and then in the system-wide file).
 If all of the above fails, then
 .I faxalter
 attempts to contact a server on the machine where it is run.
+.TP 10
+.BI \-A
+Use administrative privileges;
+.I faxalter
+will prompt for the password to set administrative privileges.
 .TP 10
 .BI \-k " time"
 Specify a new time to kill a job;

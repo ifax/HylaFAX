@@ -56,10 +56,14 @@ faxAlterApp::run(int argc, char** argv)
     time_t now = Sys::now();
     struct tm tts = *localtime(&now);
     struct tm when;
+    bool useadmin = false;
 
     int c;
-    while ((c = getopt(argc, argv, "a:h:k:m:n:P:t:DQRgpv")) != -1)
+    while ((c = getopt(argc, argv, "a:d:h:k:m:n:P:t:ADQRgpv")) != -1)
 	switch (c) {
+	case 'A':			// connect with administrative privileges
+	    useadmin = true;
+	    break;
 	case 'D':			// set notification to when done
         script.append(groups ? "JGPARM " : "JPARM ");
         script.append("NOTIFY DONE\n");
@@ -98,6 +102,16 @@ faxAlterApp::run(int argc, char** argv)
             script.append(groups ? "JGPARM " : "JPARM ");
             script.append("SENDTIME NOW\n");
         }
+	    break;
+	case 'd':			// destination number
+            script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append("EXTERNAL ");
+            script.append(optarg);
+            script.append("\n");
+            script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append("DIALSTRING ");
+            script.append(optarg);
+            script.append("\n");
 	    break;
 	case 'g':			// apply to groups, not jobs
 	    groups = true;
@@ -173,7 +187,8 @@ faxAlterApp::run(int argc, char** argv)
     if (script == "")
 	fxFatal("No job parameters specified for alteration.");
     if (callServer(emsg)) {
-	if (login(NULL, emsg)) {
+	if (login(NULL, emsg) &&
+	    (!useadmin || admin(NULL, emsg))) {
 	    for (; optind < argc; optind++) {
 		const char* jobid = argv[optind];
 		if (setCurrentJob(jobid) && jobSuspend(jobid)) {
@@ -199,11 +214,13 @@ faxAlterApp::usage()
     fxFatal("usage: faxalter"
       " [-h server-host]"
       " [-a time]"
+      " [-d number]"
       " [-k time]"
       " [-m modem]"
       " [-n notify]"
       " [-P priority]"
       " [-t tries]"
+      " [-A]"
       " [-p]"
       " [-g]"
       " [-DQR]"
