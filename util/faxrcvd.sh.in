@@ -63,6 +63,7 @@ FAX2PS=$TIFFBIN/fax2ps
 TIFF2PS=tiff2ps
 PS2PDF=ps2pdf
 TOADDR=FaxMaster
+FROMADDR=fax
 TIFFINFO=tiffinfo
 NOTIFY_FAXMASTER=always
 
@@ -134,7 +135,7 @@ if [ -f $FILE ]; then
     esac
     if [ "$TOADDR" != "$SENDTO" -a "$NOTIFY_FAXMASTER" != "no" ]; then
 	(echo "To: $TOADDR"
-	 echo "From: The HylaFAX Receive Agent <fax>"
+	 echo "From: The HylaFAX Receive Agent <$FROMADDR>"
 	 echo "Subject: Facsimile received from $SENDER";
 	 echo ""
 	 echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):"; $INFO -n $FILE
@@ -169,7 +170,7 @@ if [ -f $FILE ]; then
 	    echo ""
 	    echo "The facsimile was automatically dispatched to: $SENDTO." 
 	fi
-	) | 2>&1 $SENDMAIL -ffax -oi $TOADDR
+	) | 2>&1 $SENDMAIL -f$FROMADDR -oi $TOADDR
     fi
     if [ -n "$SENDTO" ]; then
 	(MIMEBOUNDARY="NextPart$$"
@@ -177,7 +178,7 @@ if [ -f $FILE ]; then
 	 echo "Content-Type: Multipart/Mixed; Boundary=\"$MIMEBOUNDARY\""
 	 echo "Content-Transfer-Encoding: 7bit"
 	 echo "To: $SENDTO"
-	 echo "From: The HylaFAX Receive Agent <fax>"
+	 echo "From: The HylaFAX Receive Agent <$FROMADDR>"
 	 echo "Subject: Facsimile received from $SENDER";
 	 echo ""
 	 echo "--$MIMEBOUNDARY"
@@ -249,14 +250,14 @@ if [ -f $FILE ]; then
 	 fi
 	 echo ""
 	 echo "--$MIMEBOUNDARY--"
-	) | 2>&1 $SENDMAIL -ffax -oi $SENDTO
+	) | 2>&1 $SENDMAIL -f$FROMADDR -oi $SENDTO
     fi
 else
     #
     # Generate notification mail for a failed attempt.
     #
     (echo "To: $TOADDR"
-     echo "From: The HylaFAX Receive Agent <fax>"
+     echo "From: The HylaFAX Receive Agent <$FROMADDR>"
      echo "Subject: facsimile not received"
      echo ""
      echo "An attempt to receive facsimile on $DEVICE failed because:"
@@ -274,5 +275,5 @@ else
      else
 	echo "    No transcript available."
      fi
-    ) | 2>&1 $SENDMAIL -ffax -oi $TOADDR
+    ) | 2>&1 $SENDMAIL -f$FROMADDR -oi $TOADDR
 fi
