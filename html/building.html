@@ -2205,6 +2205,10 @@ To workaround this problem either correct the include file
 <B>&lt;string.h&gt;</B> or re-install gcc and/or libg++
 (the standard distributions do not cause problems).
 
+<P>
+On Caldera eServer 2.3.1 you may need to add the following line
+to your <B>config.local</B> file.<br>
+LIBTIFF="-ltiff -ljpeg -lz"
 
 <A NAME="IRIX"><H3>IRIX Guidance</H3></A>
 
@@ -2228,7 +2232,14 @@ though it is not necessary.
 
 <A NAME="SCO"><H3>SCO Guidance</H3></A>
 
-These notes pertain to SCO 3.2 v5.0.4-v5.0.6
+<P>
+If you use the SCO Skunkware glibs package for the tiff libraries
+you will need to add the following to your <B>config.local</B> file.
+<br>LIBTIFF="-L/usr/local/lib -ltiff -ljpeg -lz -lm"
+<br>
+<br>
+
+These notes pertain to <B>SCO 3.2 v5.0.4-v5.0.6</B>
 <P>
 One of SCO's system include files for the CC compiler
 cause compilation to fail;
@@ -2236,7 +2247,7 @@ The solution is to copy <B>/usr/include/utmp.h</B> to
 the top level of the HylaFAX build tree.
 
 <P>
-These notes pertain to SCO 3.2 v5.0.2
+These notes pertain to <B>SCO 3.2 v5.0.2</B>
 <P>
 One of SCO's system include files has incorrect function prototypes
 that cause compilation to fail;
@@ -2267,7 +2278,7 @@ or one may create a patched copy of the file in a private
 </LISTING>
 
 <P>
-These notes pertain to SCO 3.2 v4.2; they may also be relevant to other
+These notes pertain to <B>SCO 3.2 v4.2</B>, they may also be relevant to other
 versions.
 
 <P>
@@ -2528,7 +2539,7 @@ included with HylaFAX; though it should be equivalent).
 
 <P>
 If you use the SCO Skunkware glibs package for the tiff libraries
-you will need to add the following to your config.local
+you will need to add the following to your <B>config.local</B> file.
 <br>LIBTIFF="-L/usr/local/lib -ltiff -ljpeg -lz -lm"
 
 <P>
@@ -2539,7 +2550,7 @@ to the socket-related system calls; this should automatically be
 done by <B>configure</B>.
 
 <P>
-These notes pertain to UnixWare 2.03
+These notes pertain to <B>UnixWare 2.03</B>
 <P>
 One system include file needs to be patched to correct
 function prototypes: If you dont' want to patch the system include file,
