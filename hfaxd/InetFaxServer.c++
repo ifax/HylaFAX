@@ -46,6 +46,12 @@ InetSuperServer::InetSuperServer(const char* p, int bl)
 {}
 InetSuperServer::~InetSuperServer() {}
 
+void
+InetSuperServer::setBindAddress(const char *bindaddress)
+{
+    this->bindaddress = bindaddress;
+}
+
 bool
 InetSuperServer::startServer(void)
 {
@@ -63,6 +69,10 @@ InetSuperServer::startServer(void)
 		sin.sin_port = htons(FAX_DEFPORT);
 	} else
 	    sin.sin_port = sp->s_port;
+
+	if (bindaddress)
+		sin.sin_addr.s_addr = inet_addr(bindaddress);
+
 	{ int on = 1;
 	    if (Socket::setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) >= 0) {
 		if (Socket::bind(s, &sin, sizeof (sin)) >= 0) {

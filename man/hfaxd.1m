@@ -44,6 +44,9 @@ hfaxd \- \*(Fx client-server protocol server
 ] [
 .B \-O
 ] [
+.B \-l
+.I bindaddress
+] [
 .B \-i
 .I port
 ] [
@@ -795,6 +798,14 @@ under a debugger or when
 is started up from the
 .IR inetd (${MANNUM1_8})
 process.
+.TP 10
+.BI \-l " bindaddress"
+Bind to the specified 
+.I bindaddress
+the tcp port. Please note that this argument need to be specified before
+the 
+.BI \-i
+otherwise it will be ignored.
 .TP 10
 .BI \-i " port"
 Listen on the specified 

@@ -85,11 +85,18 @@ public:
 class InetSuperServer : public SuperServer {
 private:
     fxStr port;
+
+    /*
+     * The address to bind the port on.
+     */
+    const char *bindaddress;
+
 protected:
     bool startServer(void);
     HylaFAXServer* newChild(void);
 public:
     InetSuperServer(const char* port, int backlog = 5);
     ~InetSuperServer();
+    void setBindAddress(const char *bindaddress = NULL);
 };
 #endif /* _InetFaxServer_ */

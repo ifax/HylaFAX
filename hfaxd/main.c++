@@ -174,7 +174,7 @@ detachFromTTY(void)
 static void
 usage(const char* appName)
 {
-    fatal("usage: %s [-o port] [-h port] [-i port] [-u socket] [-q queue-directory]",
+    fatal("usage: %s [-o port] [-h port] [-l bindaddress] [-i port] [-u socket] [-q queue-directory]",
 	appName);
 }
 
@@ -193,6 +193,8 @@ newInetServer(void)
 int
 main(int argc, char** argv, char** envp)
 {
+    const char *bindaddress = NULL;
+
     HylaFAXServer::setLogFacility(LOG_FAX);
     HylaFAXServer::setupLogging("HylaFAX");
     HylaFAXServer::setupPermissions();
@@ -204,7 +206,7 @@ main(int argc, char** argv, char** envp)
     optind = 1;
     opterr = 0;
     int c;
-    const char* opts = "dHh:Ii:Oo:q:Ss:u:";
+    const char* opts = "dHh:Ii:Oo:q:Ss:u:l:";
     /*
      * Deduce the spooling directory and whether or not to
      * detach the process from the controlling tty.  The
@@ -277,7 +279,16 @@ main(int argc, char** argv, char** envp)
 	    fatal("No HTTP suport");
 	    /*NOTREACHED*/
 #endif
-	case 'i': handlers.append(new InetSuperServer(optarg)); break;
+	case 'l':
+	    bindaddress = strdup(optarg); break;
+	case 'i': {
+		InetSuperServer* iss;
+		iss = new InetSuperServer(optarg);
+		handlers.append(iss);
+		if ((iss!=NULL) && (bindaddress!=NULL))
+		    iss->setBindAddress(bindaddress);
+		}
+		break;
 	case 'I': newInetServer(); break;
 #ifdef SNPP_SUPPORT
 	case 's': handlers.append(new SNPPSuperServer(optarg)); break;
