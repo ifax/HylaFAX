@@ -34,6 +34,7 @@
 # 57.6 w/ hardware flow control.
 # 
 # CONFIG:CLASS1:1.02:.*:.*: Manufacturer="Cirrus Logic" Model="CL-MD1414AT/EC"
+# CONFIG:CLASS1:1.0:CL-MD.*:.*: Manufacturer="Cirrus Logic" Model="CL-MD34xx"
 #
 # BEGIN-SERVER
 # END-SERVER
