@@ -1,0 +1,22 @@
+# $Id$
+#
+# prototype config file for MultiTech MT5634ZBA-V.92-NAM
+#
+
+#
+# CONFIG: CLASS2.1:"Multi-Tech Systems"-"MT5634ZBA"-*
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+
+ModemType:		Class2.1
+ModemRate:		57600		# for V.34 faxing
+ModemNoFlowCmd:		AT&K0
+ModemSoftFlowCmd:	AT&K4
+ModemHardFlowCmd:	AT&K3
+
+Class2APCmd:		AT+FAP=1,1,1
+Class2CQCmd:		AT+FCQ=1,0
+Class2SendRTC:		yes
+Class2UseHex:		yes
