@@ -1,0 +1,78 @@
+# $Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Configuration for using the Class 2 command interface with
+# an AT&T DataPort Express 14.4 modem. Model 3715-A1-202
+# Firmware version (ati1)	FW Level 091394    Checksum 182050 V1.15.07 SA
+# or newer.
+#
+# Hardware flow control is used by default.
+#
+# CONFIG: CLASS2: AT?T*PARADYNE*-ROCKWELL*144DPI*
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:		Class2		# use class 2 interface
+ModemRate:		38400		# set rate for DCE-DTE communication
+ModemFlowControl:	rtscts		# default
+#
+ModemHardFlowCmd:	AT&R0\D1\Q3	# use RTS/CTS and enable RS232 handling
+ModemSoftFlowCmd:	AT&R1\D0\Q1	# use RTS/CTS and enable RS232 handling
+ModemSetupDTRCmd:	AT&D2		# setup so DTR drop resets modem
+ModemSetupDCDCmd:	AT&C1		# setup so DCD follows carrier
+ModemSetupAACmd:	AT+FAA=1	# enable adaptive-answer in Class 2
+#
+ModemRecvFillOrder:	MSB2LSB		# bit order of received facsimile
+ModemSendFillOrder:	LSB2MSB		# bit order modem expects for transmit
+#
+ModemDialCmd:		ATDT%s		# T for tone dialing
+#
+# Chip locks the line rate and switches to xon/xoff flow
+# control when receiving facsimile--we must follow suit.
+#
+ModemAnswerFaxBeginCmd:	"<19200><xon>"	# lock line rate & switch flow control
+#
+Class2RecvDataTrigger:	"\022"		# character sent to modem to start recv
+#
+# These are known to not be implemented with the above
+# firmware rev.  Sending them to the modem does not harm anything,
+# but generates an ERROR result that can generate questions from the
+# naive--so we disable them here.
+#
+Class2CQQueryCmd:	AT	# +FAQ=? query for copy quality capabilities
+Class2APQueryCmd:	AT	# +FAP=? not supported on this modem
+Class2SPLCmd:		AT	# +FSPL= Request to Poll
+Class2TBCCmd:           AT	# +FTBC= Phase C Trasmit Data Block Size
+Class2PHCTOCmd:		AT	# +FPHCTO= phase C timeout parameter
+Class2BugCmd:		AT	# +FBUG= HDLC frame tracing
+

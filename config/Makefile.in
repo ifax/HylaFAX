@@ -50,6 +50,7 @@ CONFIGFILES=class1 \
 	att-dataport-2 \
 	att-dataport-2.0 \
 	att-dataport \
+	att-dpexpress-2 \
 	cirrus \
 	dsi-scout+ \
 	e-tech \

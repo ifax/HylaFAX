@@ -185,6 +185,7 @@ HYLAFAXSRC=\
 	config/att-dataport			\
 	config/att-dataport-2			\
 	config/att-dataport-2.0			\
+	config/att-dpexpress-2			\
 	config/cirrus				\
 	config/class1				\
 	config/class2				\
