@@ -767,7 +767,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			syncECMFrame();
 		    }
 		    // some senders don't send the requisite three RCP signals
-		} while (rcpcnt == 0 && (unsigned) Sys::now()-start < 60);	// can't expect 50 ms of flags, some violate T.4 A.3.8
+		} while (rcpcnt == 0 && (unsigned) Sys::now()-start < 5*60);	// can't expect 50 ms of flags, some violate T.4 A.3.8
 		endECMBlock();				// wait for <DLE><ETX>
 		(void) waitFor(AT_NOCARRIER);		// wait for message carrier to drop
 		if (flowControl == FLOW_XONXOFF)
