@@ -621,6 +621,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	    ppmrcvd = true;
 	    lastPPM = signalRcvd;
 	    for (u_int i = 0; i < frameRcvd.length(); i++) frame.put(frameRcvd[i]);
+	    frame.setOK(true);
 	} else {
 	    ppmrcvd = recvFrame(frame, FCF_RCVR, timer);
 	    if (ppmrcvd) lastPPM = frame.getFCF();
