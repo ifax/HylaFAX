@@ -1138,7 +1138,7 @@ EOF
     # Class 1.0 = 4; Class 2.1 = 5;   
 
     RESPONSE="`echo $RESPONSE | $SED -e 's/[()]//g' \
-	-e 's/2.0/3/g' -e 's/1.0/4/g' -e 's/2.1/5/g'`";
+	-e 's/2\.0/3/g' -e 's/1\.0/4/g' -e 's/2\.1/5/g'`";
     SUPPORT="This modem looks to have support for Class "
     MODEMCLASSES="";
     for CLASS in 1 2 3 4 5; do
