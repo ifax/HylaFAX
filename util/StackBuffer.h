@@ -60,6 +60,7 @@ public:
     operator const unsigned char*() const;// Return base of buffer
     char& operator[](u_int i) const;	// Return character in buffer
     char& operator[](int i) const;	// Return character in buffer
+    fxStackBuffer& operator=(const fxStackBuffer&);
 protected:
     char	buf[1000];
     char*	next;
