@@ -353,6 +353,24 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 
     tstrip_t nstrips = TIFFNumberOfStrips(tif);
     if (nstrips > 0) {
+
+	/*
+	 * RTFCC may mislead us here, so we temporarily
+	 * adjust params.
+	 */
+	uint16 senddf = params.df;
+	uint16 compression;
+	TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression);
+	if (compression != COMPRESSION_CCITTFAX4) {
+	    uint32 g3opts = 0;
+	    TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
+	    if (g3opts&GROUP3OPT_2DENCODING == DF_2DMR)
+		params.df = DF_2DMR;
+	    else
+		params.df = DF_1DMR;
+	} else
+	    params.df = DF_2DMMR;
+
 	/*
 	 * Correct bit order of data if not what modem expects.
 	 */
@@ -363,8 +381,12 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	/*
 	 * Setup tag line processing.
 	 */
-	bool doTagLine = setupTagLineSlop(params);
-	u_int ts = getTagLineSlop();
+	u_int ts = 0;
+	bool doTagLine = 0;
+	if (compression != COMPRESSION_CCITTFAX4) {	// broken in G4
+	    doTagLine = setupTagLineSlop(params);
+	    ts = getTagLineSlop();
+	}
 	/*
 	 * Calculate total amount of space needed to read
 	 * the image into memory (in its encoded format).
@@ -401,13 +423,15 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
         /*
          * correct broken Phase C (T.4) data if necessary
          */
-        correctPhaseCData(dp, &totdata, fillorder, params);
+	if (compression != COMPRESSION_CCITTFAX4)	// broken in G4
+	    correctPhaseCData(dp, &totdata, fillorder, params);
 
 	beginTimedTransfer();
 	rc = putModemDLEData(dp, (u_int) totdata, bitrev, getDataTimeout());
 	endTimedTransfer();
 	protoTrace("SENT %u bytes of data", totdata);
 
+	params.df = senddf;		// revert back
 	delete data;
     }
     return (rc);

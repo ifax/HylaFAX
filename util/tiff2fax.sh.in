@@ -31,7 +31,7 @@
 # Convert TIFF to fax as needed.
 #
 # tiff2fax [-o output] [-l pagelength] [-w pagewidth]
-#	[-r resolution] [-m maxpages] [-1] [-2] file ...
+#	[-r resolution] [-m maxpages] [-1] [-2] [-3] file ...
 #
 # NB: This script uses the tiffcp program from the TIFF
 #     software distribution to do certain format conversions.
@@ -71,8 +71,9 @@ do case "$1" in
     -l)	shift; opt="$opt -l $1" ;;
     -w)	shift; opt="$opt -w $1" ;;
     -r)	shift; opt="$opt -r $1" ;;
-    -1) opt="$opt $1"; df=1d ;;
-    -2) opt="$opt $1"; df=2d ;;
+    -1) opt="$opt $1"; df="g3:1d" ;;
+    -2) opt="$opt $1"; df="g3:2d" ;;
+    -3) opt="$opt $1"; df=g4 ;;
     -m) shift;;				# NB: not implemented
     *)	fil="$fil $1" ;;
     esac
@@ -136,11 +137,11 @@ OK)				# no conversion needed
     exit 254			# reject document
     ;;
 REFORMAT)			# only need format conversion (e.g. g4->g3)
-    $TIFFCP -i -c g3:$df -f lsb2msb -r 9999 $fil $out || {
+    $TIFFCP -i -c $df -f lsb2msb -r 9999 $fil $out || {
 	$CAT<<EOF
 Unexpected failure converting TIFF document; the command
 
-    $TIFFCP -i -c g3:$df -f lsb2msb -r 9999 $fil $out
+    $TIFFCP -i -c $df -f lsb2msb -r 9999 $fil $out
 
 failed with exit status $?.  This conversion was done because:
 

@@ -162,6 +162,7 @@ public:
     u_int getCapabilities() const;
 // methods for querying modem capabilities
     virtual bool supports2D() const;
+    virtual bool supportsMMR() const;
     virtual bool supportsEOLPadding() const;
     virtual bool supportsVRes(float res) const;
     virtual bool supportsPageWidth(u_int w) const;

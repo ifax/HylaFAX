@@ -37,7 +37,7 @@ usage(void)
 	" [-r vertical-res]"
 	" [-l page-length]"
 	" [-w page-width]"
-	" [-1] [-2]"
+	" [-1] [-2] [-3]"
 	" input.tif"
 	, appName
 	);
@@ -51,6 +51,7 @@ usage(void)
 #define	REIMAGE		0x10
 
 static	uint32 dataFormat = 0;
+static  bool useMMR = 0;
 static	uint32 pageLength = 297;
 static	uint32 pageWidth = 1728;
 static	u_long vres = 98;
@@ -70,6 +71,9 @@ main(int argc, char* argv[])
 	    break;
 	case '2':
 	    dataFormat |= GROUP3OPT_2DENCODING;
+	    break;
+	case '3':
+	    useMMR = 1;
 	    break;
 	case 'l':
 	    pageLength = (uint32) strtoul(optarg, NULL, 0);
@@ -147,8 +151,13 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
     }
     uint16 compression = 0;
     (void) TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression);
-    if (compression != COMPRESSION_CCITTFAX3) {
-	emsg.append("Document requires reformatting, not in Group 3 format.\n");
+    if (compression != COMPRESSION_CCITTFAX3 && compression != COMPRESSION_CCITTFAX4) {
+	emsg.append("Document requires reformatting, not in Group 3 or Group 4 format.\n");
+	status |= REFORMAT;
+    }
+    if (!useMMR && compression == COMPRESSION_CCITTFAX4) {
+	emsg.append("Document requires reformatting, "
+	    "client is incapable of receiving 2DMMR data.\n");
 	status |= REFORMAT;
     }
     uint32 g3opts = 0;

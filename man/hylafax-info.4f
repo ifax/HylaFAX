@@ -81,7 +81,8 @@ pagingProtocol	string	protocol (IXO or UCP) for this provider
 remoteCSI	string	remote device Called Subscriber Identification
 sendFailures	number	count of consecutive failed send attempts
 supportsHighRes	boolean	accepts 196 line/inch images
-supports2DEncoding	boolean	accepts Group 2D encoding
+supports2DEncoding	boolean	accepts Group 3 2D encoding
+supportsMMR	boolean	accepts Group 4 encoding
 supportsPostScript	boolean	accepts Adobe \*(Ps transfer protocol
 .fi
 .RE

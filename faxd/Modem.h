@@ -124,6 +124,7 @@ public:
 
     bool isCapable(const Job& job) const;
     bool supports2D() const;		// modem supports 2D-encoded fax
+    bool supportsMMR() const;		// modem supports 2D-MMR encoding
     bool supportsVRes(float) const;	// modem supports vertical resolution
     // modem support fax page width
     bool supportsPageWidthInMM(u_int) const;

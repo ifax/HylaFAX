@@ -212,7 +212,7 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      * to satisfy our needs (caller is responsible).
      */
     TagLineMemoryDecoder dec(buf);
-    dec.setupDecoder(fillorder,  params.is2D());
+    dec.setupDecoder(fillorder, params.is2D());
     tiff_runlen_t runs[2*2432];		// run arrays for cur+ref rows
     dec.setRuns(runs, runs+2432, w);
 

@@ -79,6 +79,10 @@ do
 	    && { device=tiffg32d; } \
 	    || { device=tiffg3; }
 	;;
+    -3) ($PS -h | grep tiffg4 >/dev/null 2>&1) \
+	    && { device=tiffg4; } \
+	    || { device=tiffg3; }
+	;;
     -*)	;;
     *)	fil="$fil $1" ;;
     esac

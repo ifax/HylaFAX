@@ -51,6 +51,7 @@ private:
     bool	changed;		// changed since restore
     bool	supportsHighRes;	// capable of 7.7 line/mm vres
     bool	supports2DEncoding;	// handles Group 3 2D
+    bool	supportsMMR;		// handles Group 4
     bool	supportsPostScript;	// handles Adobe NSF protocol
     bool	calledBefore;		// successfully called before
     u_short		maxPageWidth;		// max capable page width
@@ -89,6 +90,7 @@ public:
 
     bool getSupportsHighRes() const;
     bool getSupports2DEncoding() const;
+    bool getSupportsMMR() const;
     bool getSupportsPostScript() const;
     bool getCalledBefore() const;
     u_short getMaxPageWidthInPixels() const;
@@ -105,6 +107,7 @@ public:
 
     void setSupportsHighRes(bool);
     void setSupports2DEncoding(bool);
+    void setSupportsMMR(bool);
     void setSupportsPostScript(bool);
     void setCalledBefore(bool);
     void setMaxPageWidthInPixels(int);
@@ -130,6 +133,8 @@ inline bool FaxMachineInfo::getSupportsHighRes() const
     { return supportsHighRes; }
 inline bool FaxMachineInfo::getSupports2DEncoding() const
     { return supports2DEncoding; }
+inline bool FaxMachineInfo::getSupportsMMR() const
+    { return supportsMMR; }
 inline bool FaxMachineInfo::getSupportsPostScript() const
     { return supportsPostScript; }
 inline bool FaxMachineInfo::getCalledBefore() const	

@@ -117,6 +117,7 @@ public:
     const fxStr& getLocalIdentifier() const;
 
     bool modemSupports2D() const;
+    bool modemSupportsMMR() const;
     bool modemSupportsEOLPadding() const;
     bool modemSupportsVRes(float res) const;
     bool modemSupportsPageWidth(u_int w) const;

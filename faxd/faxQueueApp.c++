@@ -514,13 +514,17 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
     params.setPageLengthInMM(
 	fxmin((u_int) req.pagelength, (u_int) info.getMaxPageLengthInMM()));
     /*
-     * Generate 2D-encoded facsimile if:
-     * o the server is permitted to generate 2D-encoded data,
-     * o the modem is capable of sending 2D-encoded data,
+     * Generate MMR or 2D-encoded facsimile if:
+     * o the server is permitted to generate it,
+     * o the modem is capable of sending it,
      * o the remote side is known to be capable of it, and
      * o the user hasn't specified a desire to send 1D data.
      */
-    if (req.desireddf > DF_1DMR) {
+    if (req.desireddf == DF_2DMMR &&
+	use2D && job.modem->supportsMMR() &&
+	info.getCalledBefore() && info.getSupportsMMR())
+	    params.df = DF_2DMMR;
+    else if (req.desireddf > DF_1DMR) {
 	params.df = (use2D && job.modem->supports2D() &&
 	    info.getCalledBefore() && info.getSupports2DEncoding()) ?
 		DF_2DMR : DF_1DMR;
@@ -969,7 +973,7 @@ faxQueueApp::convertDocument(Job& job,
 	 *   -w <pagewidth>	output page width (pixels)
 	 *   -l <pagelength>	output page length (mm)
 	 *   -m <maxpages>	max pages to generate
-	 *   -1|-2		1d or 2d encoding
+	 *   -1|-2|-3		1d, 2d, or 2d-mmr encoding
 	 */
 	fxStr rbuf = fxStr::format("%u", params.verticalRes());
 	fxStr wbuf = fxStr::format("%u", params.pageWidth());
@@ -988,7 +992,10 @@ faxQueueApp::convertDocument(Job& job,
 	argv[ac++] = "-w"; argv[ac++] = (const char*)wbuf;
 	argv[ac++] = "-l"; argv[ac++] = (const char*)lbuf;
 	argv[ac++] = "-m"; argv[ac++] = (const char*)mbuf;
-	argv[ac++] = params.df == DF_1DMR ? "-1" : "-2";
+	if (params.df == DF_2DMMR)
+	    argv[ac++] = "-3";
+	else
+	    argv[ac++] = params.df == DF_1DMR ? "-1" : "-2";
 	argv[ac++] = req.item;
 	argv[ac] = NULL;
 	// XXX the (char* const*) is a hack to force type compatibility

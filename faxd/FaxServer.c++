@@ -196,6 +196,8 @@ FaxServer::deduceModem()
  */
 bool FaxServer::modemSupports2D() const
     { return modem ? modem->supports2D() : false; }
+bool FaxServer::modemSupportsMMR() const
+    { return modem ? modem->supportsMMR() : false; }
 bool FaxServer::modemSupportsEOLPadding() const
     { return modem ? modem->supportsEOLPadding() : false; }
 bool FaxServer::modemSupportsVRes(float res) const

@@ -408,8 +408,8 @@ main(int argc, char* argv[])
 	fatal("%s: Cannot open, or not a TIFF file", argv[optind]);
     uint16 comp;
     TIFFGetField(tif, TIFFTAG_COMPRESSION, &comp);
-    if (comp != COMPRESSION_CCITTFAX3)
-	fatal("%s: Not a Group 3-encoded TIFF file", argv[optind]);
+    if (comp != COMPRESSION_CCITTFAX3 && comp != COMPRESSION_CCITTFAX4)
+	fatal("%s: Not a Group 3 or Group 4-encoded TIFF file", argv[optind]);
     setupTagLine();
     if (!tagLineFont->isReady())
 	fatal("%s: Problem reading font", (const char*) tagLineFontFile);

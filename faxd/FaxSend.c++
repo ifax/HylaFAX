@@ -462,6 +462,7 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
      */
     clientInfo.setSupportsHighRes(clientCapabilities.vr == VR_FINE);
     clientInfo.setSupports2DEncoding(clientCapabilities.df >= DF_2DMR);
+    clientInfo.setSupportsMMR(clientCapabilities.df >= DF_2DMMR);
     clientInfo.setMaxPageWidthInPixels(clientCapabilities.pageWidth());
     clientInfo.setMaxPageLengthInMM(clientCapabilities.pageLength());
     traceProtocol("REMOTE best rate %s", clientCapabilities.bitRateName());
@@ -504,8 +505,8 @@ FaxServer::sendSetupParams1(TIFF* tif,
 {
     uint16 compression;
     (void) TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression);
-    if (compression != COMPRESSION_CCITTFAX3) {
-	emsg = fxStr::format("Document is not in a Group 3-compatible"
+    if (compression != COMPRESSION_CCITTFAX3 && compression != COMPRESSION_CCITTFAX4) {
+	emsg = fxStr::format("Document is not in a Group 3 or Group 4 compatible"
 	    " format (compression %u)", compression);
 	return (send_failed);
     }
@@ -514,14 +515,31 @@ FaxServer::sendSetupParams1(TIFF* tif,
     uint32 g3opts;
     if (!TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts))
 	g3opts = 0;
-    // RTFCC lets us ignore our file data format
+    /*
+     * RTFCC lets us ignore our file data format, but our data
+     * format may be based upon a requested data format, and without
+     * re-reading the q file, we won't know if the data format was
+     * requested.  So, RTFCC defeats requested data formatting. :-(
+     */
     if (class2RTFCC) {
 	params.df = clientCapabilities.df;
 	// even if RTFCC supported uncompressed mode (and it doesn't)
 	// it's likely that the remote was incorrect in telling us it does
 	if (params.df == DF_2DMRUNCOMP) params.df = DF_2DMR;
     } else {
-	if (g3opts & GROUP3OPT_2DENCODING) {
+	if (compression == COMPRESSION_CCITTFAX4) {
+	    if (!clientInfo.getSupportsMMR()) {
+		emsg = "Document was encoded with 2DMMR,"
+		    " but client does not support this data format";
+		return (send_reformat);
+	    }
+	    if (!modem->supportsMMR()) {
+		emsg = "Document was encoded with 2DMMR,"
+		    " but modem does not support this data format";
+		return (send_reformat);
+	    }
+	    params.df = DF_2DMMR;
+	} else if (g3opts & GROUP3OPT_2DENCODING) {
 	    if (!clientInfo.getSupports2DEncoding()) {
 		emsg = "Document was encoded with 2DMR,"
 		    " but client does not support this data format";

@@ -382,6 +382,15 @@ Modem::supports2D() const
 }
 
 /*
+ * Return whether or not the modem supports 2DMMR.
+ */
+bool
+Modem::supportsMMR() const
+{
+    return caps.df & BIT(DF_2DMMR);
+}
+
+/*
  * Return whether or not the modem supports the
  * specified page length.  As above for vertical
  * resolution we're lenient in what we accept.

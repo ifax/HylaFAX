@@ -305,8 +305,20 @@ Class2Modem::parseFPTS(TIFF* tif, const char* cp, int& ppr)
     int cblc = 0;
     ppr = 0;
     if (sscanf(cp, "%d,%d,%d,%d", &ppr, &lc, &blc, &cblc) > 0) {
-	// NB: ignore modem line count, always use our own
-	TIFFSetField(tif, TIFFTAG_IMAGELENGTH, getRecvEOLCount());
+
+	/*
+	 * In practice we cannot trust the modem line count when we're 
+	 * not using ECM due to transmission errors.  When receiving in 
+	 * Group 4 (MMR) ECM is required, so rather than implementing a 
+	 * difficult line-counting mechanism when receiving Group 4 faxes, 
+	 * we trust the modem line count.  Otherwise, we ignore it.
+	 */
+	uint16 compression;
+	(void) TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression);
+	if (compression != COMPRESSION_CCITTFAX4)
+	    lc = getRecvEOLCount();
+	TIFFSetField(tif, TIFFTAG_IMAGELENGTH, lc);
+
 	TIFFSetField(tif, TIFFTAG_CLEANFAXDATA, blc ?
 	    CLEANFAXDATA_REGENERATED : CLEANFAXDATA_CLEAN);
 	if (blc) {

@@ -27,8 +27,8 @@ Class2UseHex:		yes
 # versions that respond to AT+FFC=? with non-zero data support RTFCC
 # Class2RTFCC:		yes
 
-# unfortunately, HylaFAX can't currently receive in MMR or color
-ModemAnswerCmd:		AT+FCC=,,,,1,,,,0;A
+# unfortunately, HylaFAX can't currently receive in color
+ModemAnswerCmd:		AT+FCC=,,,,,,,,0;A
 # and, let's try to prevent any color sending attempts, also
 ModemDialCmd:		AT+FCC=,,,,,,,,0;DT%s
 

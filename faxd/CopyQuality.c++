@@ -75,13 +75,18 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 	recvTrace("%s", (const char*) emsg);
 	return (false);
     }
-    if (checkQuality) {
+    if (checkQuality && params.df != DF_2DMMR) {
 	/*
 	 * Receive a page of data w/ copy quality checking.
 	 * Note that since we decode and re-encode we can
 	 * trivially do transcoding by just changing the
 	 * TIFF tag values setup for each received page.  This
 	 * may however be too much work for some CPUs.
+	 *
+	 * Group 4 (MMR) facsimile use ECM, and so do not need
+	 * copy quality checking.  Unfortunately, our function here
+	 * is for Group 3-only, and so RecvDataFormat will not work
+	 * for Group 4 facsimile.
 	 */
 	tsize_t rowSize = TIFFScanlineSize(tif);// scanline buffer size
 	/*

@@ -91,7 +91,7 @@ Class2Params::cmd(bool class2UseHex) const
 bool
 Class2Params::is2D() const
 {
-    return (DF_2DMR <= df && df <= DF_2DMRUNCOMP);
+    return (DF_2DMR <= df && df <= DF_2DMMR);
 }
 
 /*
@@ -576,7 +576,7 @@ const char* Class2Params::pageWidthName() const
 const char* Class2Params::pageLengthNames[4] = {
     "A4 page length (297 mm)",
     "B4 page length (364 mm)",
-    "unlimited page length ",
+    "unlimited page length",
     "invalid page length (ln=3)",
 };
 const char* Class2Params::pageLengthName() const

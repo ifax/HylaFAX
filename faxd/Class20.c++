@@ -138,18 +138,26 @@ Class20Modem::sendPage(TIFF* tif, u_int pageChop)
      */
     if (conf.class2RTFCC) {
 	protoTrace("Enable Real-Time Fax Compression Conversion");
-	uint32 g3opts = 0;
+	uint16 compression;
 	char rtfcc[2];
 	rtfcc[0] = DLE;
-	TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
-	if (g3opts&GROUP3OPT_2DENCODING == DF_2DMMR)
-	    rtfcc[1] = 0x6E;	// MMR
-	else if (g3opts&GROUP3OPT_2DENCODING == DF_2DMR)
-	    rtfcc[1] = 0x6C;	// MR
-	else
-	    rtfcc[1] = 0x6B;	// MH
-	putModemData(rtfcc, sizeof (rtfcc));
+	TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression);
+	if (compression != COMPRESSION_CCITTFAX4) {
+	    uint32 g3opts = 0;
+	    TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
+	    if (g3opts&GROUP3OPT_2DENCODING == DF_2DMR) {
+		rtfcc[1] = 0x6C;	// MR
+		protoTrace("Reading MR-compressed image file");
+	    } else {
+		rtfcc[1] = 0x6B;	// MH
+		protoTrace("Reading MH-compressed image file");
+	    }
+	} else {
+	    rtfcc[1] = 0x6E;		// MMR
+	    protoTrace("Reading MMR-compressed image file");
 	}
+	putModemData(rtfcc, sizeof (rtfcc));
+    }
 
     protoTrace("SEND begin page");
     if (flowControl == FLOW_XONXOFF)

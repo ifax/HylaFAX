@@ -394,6 +394,15 @@ FaxModem::supports2D() const
 }
 
 /*
+ * Return whether or not the modem supports 2DMMR.
+ */
+bool
+FaxModem::supportsMMR() const
+{
+    return (modemParams.df & BIT(DF_2DMMR)) != 0;
+}
+
+/*
  * Return whether or not received EOLs are byte aligned.
  */
 bool

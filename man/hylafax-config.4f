@@ -2340,11 +2340,14 @@ not (necessarily) having byte-aligned codes.
 .TP
 .B Class2RTFCC
 Whether or not to enable MultiTech's Real-Time Fax Compression Conversion
-which is available in later firmware revisions for the MT5634ZBA-V92 and 
-MT5634ZPX-PCI-V92 models.  RTFCC allows HylaFAX to convert the image 
-compression between MH MR and MMR formats regardless of how faxq formatted 
-the image file.  If RTFCC is available with your firmware, then the 
-response to ``AT+FFC=?'' is non-zero.
+which is available in later firmware revisions for the MT5634ZBA-V92, 
+MT5634ZPX-PCI-V92, and other models.  RTFCC allows HylaFAX to convert the 
+image compression between MH MR and MMR formats regardless of how faxq 
+formatted the image file.  If RTFCC is available with your firmware, then 
+the response to ``AT+FFC=?'' is non-zero.  Note that when using RTFCC, the 
+compression format of the file will be ignored, thus the ``-1'', ``-2'', 
+and ``-3'' options for sendfax, ps2fax, and others will not influence the 
+actual negotiated session parameters.
 .TP
 .B Class2SACmd
 A largely unused option for modems supporting ITU-T.32, Class 2.1, 
