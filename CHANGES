@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.0
 
+* fix font rendering at hyperfine resolution (13 Aug 2004)
 * stop tiff2fax from using problematic symbolic links (11 Aug 2004)
 * fix truncation of last byte on sent MMR data (09 Aug 2004)
 * fix end of page signals and padding (23 Jul 2004)

@@ -306,21 +306,36 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params,
 			    pos = bpl - 2;
 			}
 			// put pairs of bits from l1 into the right places within l2
-			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-6))) >> (bpl-8*i-6) << pos);
+			*l2 |= (u_long)((*(l1+nl) & (1<<(bpl-8*i-5))) >> (bpl-8*i-5) << pos);
+			*l2 |= ((u_long)((*(l1+nl) & (1<<(bpl-8*i-5))) >> (bpl-8*i-5) << pos)) << 1;
 			pos -= 2;
-			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-6))) >> (bpl-8*i-6) << pos);
+
+			*l2 |= (u_long)((*(l1+nl) & (1<<(bpl-8*i-6))) >> (bpl-8*i-6) << pos);
+			*l2 |= ((u_long)((*(l1+nl) & (1<<(bpl-8*i-6))) >> (bpl-8*i-6) << pos)) << 1;
 			pos -= 2;
-			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-8))) >> (bpl-8*i-8) << pos);
+
+			*l2 |= (u_long)((*(l1+nl) & (1<<(bpl-8*i-7))) >> (bpl-8*i-7) << pos);
+			*l2 |= ((u_long)((*(l1+nl) & (1<<(bpl-8*i-7))) >> (bpl-8*i-7) << pos)) << 1;
 			pos -= 2;
-			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-8))) >> (bpl-8*i-8) << pos);
+
+			*l2 |= (u_long)((*(l1+nl) & (1<<(bpl-8*i-8))) >> (bpl-8*i-8) << pos);
+			*l2 |= ((u_long)((*(l1+nl) & (1<<(bpl-8*i-8))) >> (bpl-8*i-8) << pos)) << 1;
 			pos -= 2;
-			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-2))) >> (bpl-8*i-2) << pos);
+
+			*l2 |= (u_long)((*(l1+nl) & (1<<(bpl-8*i-1))) >> (bpl-8*i-1) << pos);
+			*l2 |= ((u_long)((*(l1+nl) & (1<<(bpl-8*i-1))) >> (bpl-8*i-1) << pos)) << 1;
 			pos -= 2;
-			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-2))) >> (bpl-8*i-2) << pos);
+
+			*l2 |= (u_long)((*(l1+nl) & (1<<(bpl-8*i-2))) >> (bpl-8*i-2) << pos);
+			*l2 |= ((u_long)((*(l1+nl) & (1<<(bpl-8*i-2))) >> (bpl-8*i-2) << pos)) << 1;
 			pos -= 2;
-			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-4))) >> (bpl-8*i-4) << pos);
+
+			*l2 |= (u_long)((*(l1+nl) & (1<<(bpl-8*i-3))) >> (bpl-8*i-3) << pos);
+			*l2 |= ((u_long)((*(l1+nl) & (1<<(bpl-8*i-3))) >> (bpl-8*i-3) << pos)) << 1;
 			pos -= 2;
-			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-4))) >> (bpl-8*i-4) << pos);
+
+			*l2 |= (u_long)((*(l1+nl) & (1<<(bpl-8*i-4))) >> (bpl-8*i-4) << pos);
+			*l2 |= ((u_long)((*(l1+nl) & (1<<(bpl-8*i-4))) >> (bpl-8*i-4) << pos)) << 1;
 			pos -= 2;
 			if (pos < 0) *l2--;
 		    }
