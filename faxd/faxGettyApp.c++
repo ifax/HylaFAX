@@ -453,14 +453,22 @@ faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const Ca
  * and the local handle on the modem is discarded so that SIGHUP
  * is delivered to the subprocess (group) on last close.  This
  * process waits for the subprocess to terminate, at which time
- * it removes the modem lock file and reconditions the modem for
- * incoming calls (if configured).
+ * it removes the modem lock file and let's faxgetty continue on
+ * to recondition the modem for incoming calls (if configured).
  */
 bool
 faxGettyApp::processCall(CallType ctype, fxStr& emsg, const CallerID& cid)
 {
     bool callHandled = false;
 
+    /*
+     * First of - turn of Dispatcher
+     */
+    int fd = getModemFd();
+    if (fd >= 0) {
+	if (Dispatcher::instance().handler(fd, Dispatcher::ReadMask))
+	    Dispatcher::instance().unlink(fd);
+    }
     switch (ctype) {
     case ClassModem::CALLTYPE_FAX:
 	traceServer("ANSWER: FAX CONNECTION  DEVICE '%s'"
