@@ -61,6 +61,7 @@ static const ModelData Brother[] =
 {{"\x55\x55\x00\x88\x90\x80\x5F\x00\x15\x51", "Intellifax 770"},
  {"\x55\x55\x00\x80\xB0\x80\x00\x00\x59\xD4", "Personal fax 190"},
  {"\x55\x55\x00\x8C\x90\x80\xF0\x02\x20", "MFC-8600"},
+ {"\x55\x55\x00\x8C\x90\x80\x7A\x06", "MFC-3100C"},
  {NULL}};
 
 static const ModelData Panasonic0E[] =
@@ -160,7 +161,7 @@ static const NSFData KnownNSF[] =
     {"\x00\x00\x4D", "Okura Electric", false },
     {"\x00\x00\x51", "Sanyo",     false, 3,10, Sanyo },
     {"\x00\x00\x55", "unknown - Japan", false },
-    {"\x00\x00\x56", "Brother",   false, 3, 9, Brother },
+    {"\x00\x00\x56", "Brother",   false, 3, 8, Brother },
     {"\x00\x00\x59", "Fujitsu",   false },
     {"\x00\x00\x5D", "Kuoni",     false },
     {"\x00\x00\x61", "Casio",     false },
