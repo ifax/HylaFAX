@@ -47,7 +47,7 @@ ModemHardFlowCmd:	AT&K3		# setup hardware flow control
 ModemSetupDTRCmd:	AT&D3		# setup so DTR drop resets modem
 ModemSetupDCDCmd:	AT&C1		# setup so DCD reflects carrier (or not)
 #
-ModemDialCmd:		ATDT%s@		# T for tone dialing, @ for silence
+ModemDialCmd:		ATDT%s		# T for tone dialing
 #
 ModemSendFillOrder:	LSB2MSB		# as expected
 ModemRecvFillOrder:	MSB2LSB		# opposite of what makes sense

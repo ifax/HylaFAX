@@ -44,7 +44,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class2		# use class 2 interface
-ModemRate:		38400		# rate for DCE-DTE communication
+ModemRate:		19200		# rate for DCE-DTE communication
 ModemFlowControl:	rtscts		# default
 #
 ModemHardFlowCmd:	ATS58=2		# full duplex hardware flow control

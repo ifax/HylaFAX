@@ -70,7 +70,7 @@ ModemType:		Class1		# use this to supply a hint
 #ModemSetupDCDCmd:	AT&C1		# setup so DCD follows carrier
 #GettyArgs:		"-h %l dx_%s"	# modem must auto-detect fax/data
 #
-# We normally append the "@" symbol to the dial string so that
+# We can append the "@" symbol to the dial string so that
 # the modem will wait 5 seconds before attempting to connect
 # and return result codes that distinguish between no carrier
 # and no answer.  This makes it possible to avoid problems with
@@ -80,7 +80,7 @@ ModemType:		Class1		# use this to supply a hint
 # NB: If you need to prefix phone numbers to get through a PBX,
 #     put it in the ModemDialCmd; e.g. "DT9%s@".
 #
-#ModemDialCmd:		ATDT%s@		# T for tone dialing, @ for silence
+#ModemDialCmd:		ATDT%s		# T for tone dialing
 #
 # Other possible configuration stuff.  The default strings are
 # shown below.  Only those that are different from the defaults

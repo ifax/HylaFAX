@@ -29,7 +29,7 @@
 #
 # Configuration for a ZyXEL 2864, 2864I, or Omni 288S in Class 2.0.
 #
-# This configuration file sets up the ZyXEL to run at 38.4 for
+# This configuration file can set up the ZyXEL to run at 38.4 for
 # both sending and receiving.  RTS/CTS flow control is used on
 # the tty port--you probably shouldn't use XON/XOFF.  Note that
 # on an SGI system the getty speed is the following non-standard
@@ -48,7 +48,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class2.0	# use class 2.0 interface
-ModemRate:		38400		# 38.4 works fine
+ModemRate:		19200
 ModemFlowControl:	rtscts		# default
 #
 ModemNoFlowCmd:		AT&H0		# disable flow control
@@ -66,11 +66,11 @@ ModemSetupAACmd:	AT+FAA=1	# enable in current class
 # &S0	  DSR always on
 # *F0	  Deny remote configuration
 #         (actually *F0 doesn't work in the firmware -- sigh)
-# S18=4	  Receive at 38400
+# S18=4	  Receive at 38400 (removed from default)
 # S38.3=1 DCD on/off sequence follows UNIX standard; also
 #	  fix receiving baud rate at S18 value
 # 
-ModemResetCmds:		AT&B1&N0&S0S18=4S38.3=1
+ModemResetCmds:		AT&B1&N0&S0S38.3=1
 #
 ModemDialCmd:		ATDT%s		# no '@' 'cuz then busy not recognized
 NoCarrierRetrys:	3		# retry 3 times on no carrier

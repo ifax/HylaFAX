@@ -52,7 +52,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class2		# use class 2 interface
-ModemRate:		38400		# lock rate for DCE-DTE communication
+ModemRate:		19200		# lock rate for DCE-DTE communication
 ModemFlowControl:	rtscts		# default
 #
 ModemHardFlowCmd:	AT&E4		# hardware flow control
@@ -61,8 +61,8 @@ ModemSetupDTRCmd:	AT&D3		# setup so DTR drop resets modem
 ModemSetupDCDCmd:	AT&C1		# setup so DCD reflects carrier (or not)
 ModemSetupAACmd:	AT+FAA=1	# enable adaptive-answer in class 2
 #
-# NB: some models get confused by the @
+# NB: some models get confused by @ in ModemDialCmd
 #
-ModemDialCmd:		ATDT%s@		# T for tone dialing, @ for silence
+ModemDialCmd:		ATDT%s		# T for tone dialing
 #
 Class2RecvDataTrigger:	"\022"		# character sent to modem to start recv

@@ -38,7 +38,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class2.0	# use class 2.0 interface
-ModemRate:		38400		# 38.4 works fine
+ModemRate:		19200
 ModemFlowControl:	rtscts		# default
 #
 ModemHardFlowCmd:	AT&R0\D1\Q3	# use RTS/CTS and enable RS232 handling

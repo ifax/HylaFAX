@@ -69,7 +69,7 @@ ModemType:		Class2.0	# use this to supply a hint
 #ModemSetupDTRCmd:	AT&D2		# setup so DTR drop resets modem
 #ModemSetupDCDCmd:	AT&C1		# setup so DCD reflects carrier (or not)
 #
-# We normally append the "@" symbol to the dial string so that
+# We can append the "@" symbol to the dial string so that
 # the modem will wait 5 seconds before attempting to connect
 # and return result codes that distinguish between no carrier
 # and no answer.  This makes it possible to avoid problems with
@@ -79,7 +79,7 @@ ModemType:		Class2.0	# use this to supply a hint
 # NB: If you need to prefix phone numbers to get through a PBX,
 #     put it in the ModemDialCmd; e.g. "DT9%s@".
 #
-#ModemDialCmd:		ATDT%s@		# T for tone dialing, @ for silence
+#ModemDialCmd:		ATDT%s		# T for tone dialing
 #
 # Other possible configuration stuff.  The default strings are
 # shown below.  Only those that are different from the defaults

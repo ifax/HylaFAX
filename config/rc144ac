@@ -53,7 +53,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class2		# use class 2 interface
-ModemRate:		38400
+ModemRate:		19200
 ModemFlowControl:	rtscts		# default
 #
 #ModemResetCmds:	AT&F2		# what you want for a Supra

@@ -48,7 +48,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class2		# use class 1 interface
-ModemRate:		38400		# locked for fax sending&receiving
+ModemRate:		19200		# locked for fax sending&receiving
 ModemFlowControl:	rtscts		# default
 #
 ModemNoFlowCmd:		AT&K0		# disable flow control cmd

@@ -17,7 +17,7 @@
 #
 
 ModemType:		Class2
-ModemRate:		38400
+ModemRate:		19200
 ModemFlowControl:	rtscts
 ModemNoFlowCmd:		AT&K0
 ModemSoftFlowCmd:	AT&K4

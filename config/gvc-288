@@ -39,7 +39,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class1		# use class 1 interface
-ModemRate:		38400		# locked for fax sending&receiving
+ModemRate:		19200		# locked for fax sending&receiving
 ModemFlowControl:	rtscts		# default
 #
 ModemNoFlowCmd:		AT\Q0		# disable flow control cmd
@@ -47,9 +47,5 @@ ModemSoftFlowCmd:	AT\Q1		# software flow control cmd
 ModemHardFlowCmd:	AT\Q3		# hardware flow control cmd
 ModemSetupDTRCmd:	AT&D3		# DTR off causes modem to reset
 ModemSetupDCDCmd:	AT&C1		# DCD follows carrier
-#
-ModemMfrQueryCmd:	AT+FMFR?	# Class 2 commands work in Class 0
-ModemModelQueryCmd:	AT+FMDL?	# actually shows 144DPI
-ModemRevQueryCmd:	AT+FREV?	# firmware revision info
 #
 ModemDialCmd:		ATDT%s		# T for tone dialing

@@ -54,7 +54,7 @@ ModemMfrQueryCmd:	!UDS
 ModemModelQueryCmd:	!FasTalk
 ModemRevQueryCmd:	ATI1
 #
-# We normally append the "@" symbol to the dial string so that
+# We can append the "@" symbol to the dial string so that
 # the modem will wait 5 seconds before attempting to connect
 # and return result codes that distinguish between no carrier
 # and no answer.  This makes it possible to avoid problems with
@@ -64,7 +64,7 @@ ModemRevQueryCmd:	ATI1
 # NB: If you need to prefix phone numbers to get through a PBX,
 #     put it in the ModemDialCmd; e.g. "DT9%s@".
 #
-ModemDialCmd:		ATDT%s@		# T for tone dialing, @ for silence
+ModemDialCmd:		ATDT%s		# T for tone dialing
 #
 # I had better results when I wasn't doing receive quality checking
 # turn these back on if you want - but don't blame me for results !!

@@ -50,7 +50,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class2		# use class 2 interface
-ModemRate:		38400		# 38.4 works fine
+ModemRate:		19200
 ModemFlowControl:	rtscts		# default
 #
 ModemNoFlowCmd:		AT&H0		# disable flow control
@@ -70,12 +70,12 @@ Class2RecvDataTrigger:	"\022"		# a la 2388-B
 # &N0	  Auto-negotiate highest possible DCE-DCE link rate
 # &S0	  DSR always on
 # *F0	  Deny remote configuration
-# S18=2	  Receive at 38400
+# S18=2	  Receive at 38400 (removed from default)
 # S38.3=1 DCD on/off sequence follows UNIX standard; also
 #	  fix receiving baud rate at S18 value
 # S39=0	  (avoid Class 2 compatibility hacks)
 # 
-ModemResetCmds:		AT&B1&N0&S0*F0S18=2S38.3=1S39=0
+ModemResetCmds:		AT&B1&N0&S0*F0S38.3=1S39=0
 #
 # We normally append the "@" symbol to the dial string so that
 # the modem will wait 5 seconds before attempting to connect

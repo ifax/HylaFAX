@@ -46,7 +46,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class1		# use class 1 interface
-ModemRate:		38400		# max rate for DCE-DTE communication
+ModemRate:		19200		# rate for DCE-DTE communication
 ModemFlowControl:	xonxoff		# hardware flow control
 #
 ModemSetupDTRCmd:	ATS13=1&D2	# setup so DTR drop resets modem

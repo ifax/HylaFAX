@@ -39,7 +39,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class1		# use class 1 interface
-ModemRate:		38400		# locked for fax sending&receiving
+ModemRate:		19200		# locked for fax sending&receiving
 ModemFlowControl:	rtscts		# default
 #
 ModemNoFlowCmd:		AT\Q		# disable flow control cmd
@@ -56,7 +56,7 @@ ModemWaitForConnect:	yes		# modem sends FAX/DATA first
 # to initiate a data connection when adaptive answer is set; the
 # following will send ATO and then wait for the CONNECT response.
 #
-ModemAnswerDataBeginCmd:"ATO\n<waitfor:CONNECT>"
+ModemAnswerDataBeginCmd:"ATO\n<waitfor\072CONNECT>"
 #
 ModemMfrQueryCmd:	!Motorola
 ModemModelQueryCmd:	!28.8

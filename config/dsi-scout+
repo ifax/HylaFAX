@@ -54,7 +54,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class1		# hint to override class 2
-ModemRate:		38400		# could probably run 57600
+ModemRate:		19200
 ModemFlowControl:	rtscts		# default
 #
 ModemNoFlowCmd:		AT*F0		# disable flow control
@@ -70,7 +70,7 @@ ModemMfrQueryCmd:	!Digicom
 ModemModelQueryCmd:	!Scout+
 ModemRevQueryCmd:	ATI1
 #
-ModemDialCmd:		ATDT%s@		# T for tone dialing, @ for silence
+ModemDialCmd:		ATDT%s		# T for tone dialing
 #
 # NB: if your modem supports S24 as described above then
 #     these can be removed.

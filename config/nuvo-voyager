@@ -52,4 +52,4 @@ ModemMfrQueryCmd:	!Nuvo
 ModemModelQueryCmd:	!9624PFX
 ModemRevQueryCmd:	ATI3
 #
-ModemDialCmd:		ATDT%s@		# T for tone dialing, @ for silence
+ModemDialCmd:		ATDT%s		# T for tone dialing

@@ -24,13 +24,13 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:              Class2        # use this to setup defaults
-ModemRate:              38400         # max rate for DCE-DTE communication
+ModemRate:              19200         # rate for DCE-DTE communication
 ModemFlowControl:       rtscts
 ModemSetupDTRCmd:       AT&D2	      # setup so DTR drop resets modem
 ModemSetupDCDCmd:       AT&C1	      # setup so DCD reflects carrier (or not)
 ModemSetupAACmd:        AT+FAA=1
 ModemSetVolumeCmd:      "ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1"
-ModemDialCmd:           ATDT%s@       # T for tone dialing, @ for silence
+ModemDialCmd:           ATDT%s       # T for tone dialing
 ModemNoFlowCmd:         AT&K	      
 ModemHardFlowCmd:       AT&K3	      
 ModemSoftFlowCmd:       AT&K4	      

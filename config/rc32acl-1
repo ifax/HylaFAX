@@ -43,7 +43,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class1		# use class 1 interface
-ModemRate:		38400
+ModemRate:		19200
 ModemFlowControl:	rtscts		# default
 #
 ModemNoFlowCmd:		AT&K		# disable flow control cmd

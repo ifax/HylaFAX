@@ -44,7 +44,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class2
-ModemRate:		38400		# rate for DCE-DTE communication
+ModemRate:		19200		# rate for DCE-DTE communication
 ModemFlowControl:	rtscts		# default
 #
 ModemNoFlowCmd:		AT&K0           # setup no flow control

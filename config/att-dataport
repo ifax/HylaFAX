@@ -47,7 +47,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class1		# use class 1 interface
-ModemRate:		38400		# could probably run 57600
+ModemRate:		19200
 ModemFlowControl:	rtscts		# default
 #
 ModemHardFlowCmd:	AT&R0\D1\Q3	# use RTS/CTS and enable RS232 handling

@@ -44,7 +44,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class1		# use class 1 interface
-ModemRate:		38400		# 38.4 works fine
+ModemRate:		19200
 ModemFlowControl:	rtscts		# default
 #
 ModemNoFlowCmd:		AT&H0		# disable flow control

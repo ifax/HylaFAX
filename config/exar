@@ -55,7 +55,7 @@ ModemSetupAACmd:	AT+FAA=1	# enable in current class
 ModemSendFillOrder:	LSB2MSB		# as expected
 ModemRecvFillOrder:	MSB2LSB		# opposite of what makes sense
 #
-ModemDialCmd:		ATDT%s@		# T for tone dialing, @ for silence
+ModemDialCmd:		ATDT%s		# T for tone dialing
 #
 ModemWaitForConnect:	yes		# wait for CONNECT on answer
 #

@@ -49,7 +49,7 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class1		# use this to supply a hint
-ModemRate:		38400		# rate for DCE-DTE communication
+ModemRate:		19200		# rate for DCE-DTE communication
 ModemFlowControl:	rtscts		# default
 #
 ModemHardFlowCmd:	AT\Q3		# set desired flow control method

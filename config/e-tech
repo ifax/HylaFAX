@@ -46,7 +46,7 @@ ModemHardFlowCmd:	AT$F4		# hardware flow control
 ModemSetupDTRCmd:	AT&D2		# setup so DTR drop resets modem
 ModemSetupDCDCmd:	AT&C1		# setup so DCD reflects carrier (or not)
 #
-# We normally append the "@" symbol to the dial string so that
+# We can append the "@" symbol to the dial string so that
 # the modem will wait 5 seconds before attempting to connect
 # and return result codes that distinguish between no carrier
 # and no answer.  This makes it possible to avoid problems with
@@ -56,6 +56,6 @@ ModemSetupDCDCmd:	AT&C1		# setup so DCD reflects carrier (or not)
 # NB: If you need to prefix phone numbers to get through a PBX,
 #     put it in the ModemDialCmd; e.g. "DT9%s@".
 #
-ModemDialCmd:		ATDT%s@		# T for tone dialing, @ for silence
+ModemDialCmd:		ATDT%s		# T for tone dialing
 #
 Class2DDISCmd:		AT+FDIS		# fix for resolution problems
