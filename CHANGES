@@ -2,9 +2,13 @@
 
 Changelog for HylaFAX 4.2.1
 
+* cause faxsetup to double-check and fix attachment encoding
+  setup (27 Dec 2004)
+* add uuencode support in pollrcvd (27 Dec 2004) 
+* add support for base64-encode (27 Dec 2004)
 * check strftime with arguments, gcc-3.3 fix (23 Dec 2004)
 * initialize some variables in some scripts that may not
-  be initialzed in setup.cache (23 Dec 2004)
+  be initialzed in setup.cache (23, 27 Dec 2004)
 * remove need to have separate "fax" user (22 Dec 2004)
 * fix parsing of AT+FCLASS=? response within faxaddmodem
   and probemodem (21 Dec 2004)

@@ -3482,6 +3482,7 @@ test "$GREP"	|| GREP=`findAppDef grep $PATH grep`
 test "$LN"	|| LN=`findAppDef ln $PATH ln`
 test "$MAN"	|| MAN=`findAppDef man $PATH man`
 test "$MIMENCODE" || MIMENCODE=`findAppDef mimencode $PATH mimencode`
+test "$MIMENCODE" || MIMENCODE=`findAppDef base64-encode $PATH base64-encode`
 test "$MKDIR"	|| MKDIR=`findAppDef mkdir $PATH mkdir`
 test "$MV"	|| MV=`findAppDef mv $PATH mv`
 test "$PWDCMD"	|| PWDCMD=`findAppDef pwd $PATH pwd`

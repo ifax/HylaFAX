@@ -176,6 +176,24 @@ dumpvals()
 }
 
 #
+# Find the full pathname of an executable;
+# supply a default if nothing is found.
+#
+findAppDef()
+{
+    app=$1; path=$2; def=$3
+    case $app in
+    /*) test -x $app && { echo $app; return; };;
+    esac
+    IFS=:
+    for i in $path; do
+	test -x $i/$app && { echo $i/$app; return; }
+    done
+    echo $def
+}
+
+
+#
 # Error diagnostics that should go to the terminal are
 # done with this interface or cat.
 #
@@ -746,6 +764,39 @@ if onServer; then
 	Note "Reading cached parameters from $DIR_SPOOL/etc/setup.cache."
 	Note ""
 	. $DIR_SPOOL/etc/setup.cache
+    fi
+fi
+
+#
+# Double-check these settings...
+#
+test -x "$MIMENCODE" || {
+    MIMENCODE=`findAppDef mimencode $PATH mimencode`
+    test -x $MIMENCODE || {
+	MIMENCODE=`findAppDef base64-encode $PATH base64-encode`
+    }
+    Note "Found encoder: $MIMENCODE"
+}
+test -x "$UUENCODE" || {
+    UUENCODE=`findAppDef uuencode $PATH uuencode`
+    Note "Found encoder: $UUENCODE"
+}
+if [ -x "$MIMENCODE" ]; then
+    if [ "$ENCODING" != "base64" ]; then
+	ENCODING=base64
+	Note "Looks like $MIMENCODE supports base64 encoding."
+    fi
+elif [ -x "$UUENCODE" ]; then
+    if capture "$UUENCODE -m $PASSWD foo"; then
+	if [ "$ENCODING" != "base64" ]; then
+	    ENCODING=base64
+	    Note "Looks like $UUENCODE supports base64 encoding."
+	fi
+    else
+	if [ "$ENCODING" != "x-uuencode" ]; then
+	    ENCODING=x-uuencode
+	    Note "Looks like $UUENCODE does not support base64 encoding."
+	fi
     fi
 fi
 
