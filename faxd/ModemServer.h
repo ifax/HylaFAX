@@ -66,6 +66,7 @@ private:
     bool	changePriority;		// change process priority by state
     bool	delayConfig;		// suppress effects while reading config
     fxStr	dialRulesFile;		// dial string rules filename
+    fxStr	batchid;		// communication ID from start of batch
     fxStr	commid;			// communication ID
 // generic modem-related stuff
     int		modemFd;		// open modem file

@@ -1203,7 +1203,7 @@ faxQueueApp::pickCmd(const FaxRequest& req)
  * between each argument string (see crackArgv below).
  */
 static void
-doexec(const char* cmd, const fxStr& dargs, const char* devid, const char* file)
+doexec(const char* cmd, const fxStr& dargs, const char* devid, const char* files, int nfiles)
 {
 #define	MAXARGS	128
     const char* av[MAXARGS];
@@ -1227,7 +1227,24 @@ doexec(const char* cmd, const fxStr& dargs, const char* devid, const char* file)
 	cp = strchr(cp,'\0')+1;
     }
     av[ac++] = "-m"; av[ac++] = devid;
-    av[ac++] = file;
+
+    if (! (MAXARGS > ac + nfiles))
+    {
+	sleep(1);
+    	logError("%d files requires %d arguments, max %d", nfiles, ac+nfiles+1, MAXARGS);
+	return;
+    }
+    while (files)
+    {
+	av[ac++] = files;
+	files = strchr(files, ' ');
+	/*
+	 * We can be naster with memory here - we're exec()ing right way
+	 */
+	if (files)
+	    *(char*)files++ = '\0';
+    }
+
     av[ac] = NULL;
     Sys::execv(cmd, (char* const*) av);
 }
@@ -1258,13 +1275,15 @@ void
 faxQueueApp::sendJobStart(Job& job, FaxRequest* req, const DestControlInfo& dci)
 {
     Job* cjob;
+    int nfiles = 1;
 
     job.start = Sys::now();			// start of transmission
     fxStr files = job.file;
     for (cjob = job.bnext; cjob != NULL; cjob = cjob->bnext) {
-	files = files | "," | cjob->file;
+	files = files | " " | cjob->file;
 	cjob->start = job.start;
 	// XXX start deadman timeout on active jobs
+	nfiles++;
     }
     
     const fxStr& cmd = pickCmd(*req);
@@ -1273,7 +1292,7 @@ faxQueueApp::sendJobStart(Job& job, FaxRequest* req, const DestControlInfo& dci)
     switch (pid) {
     case 0:				// child, startup command
 	closeAllBut(-1);		// NB: close 'em all
-	doexec(cmd, dargs, job.modem->getDeviceID(), files);
+	doexec(cmd, dargs, job.modem->getDeviceID(), files, nfiles);
 	sleep(10);			// XXX give parent time to catch signal
 	_exit(127);
 	/*NOTREACHED*/
