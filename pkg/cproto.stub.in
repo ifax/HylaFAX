@@ -31,8 +31,8 @@ f man @MANDIR@/man1/sendpage.1=../man/cman.apps/sendpage.1 0444 @SYSUID@ @SYSGID
 f man @MANDIR@/man1/sgi2fax.1=../man/cman.apps/sgi2fax.1 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man1/textfmt.1=../man/cman.apps/textfmt.1 0444 @SYSUID@ @SYSGID@
 d man @MANDIR@/man4 ? ? ?
-f man @MANDIR@/man4/pagesizes.4=../man/cman.files/pagesizes.4f 0444 @SYSUID@ @SYSGID@
-f man @MANDIR@/man4/typerules.4=../man/cman.files/typerules.4f 0444 @SYSUID@ @SYSGID@
+f man @MANDIR@/man4/pagesizes.@MANNUM4_5@=../man/cman.files/pagesizes.4f 0444 @SYSUID@ @SYSGID@
+f man @MANDIR@/man4/typerules.@MANNUM4_5@=../man/cman.files/typerules.4f 0444 @SYSUID@ @SYSGID@
 d fonts @AFMDIR@ ? ? ?
 f fonts @AFMDIR@/AvantGarde-Book=../@SRCDIR@/afm/AvantGarde-Book.afm 0444 @SYSUID@ @SYSGID@
 f fonts @AFMDIR@/AvantGarde-BookOblique=../@SRCDIR@/afm/AvantGarde-BookOblique.afm 0444 @SYSUID@ @SYSGID@

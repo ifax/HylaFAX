@@ -29,37 +29,40 @@ all default:
 	done 
 
 BINARIES=\
-	../faxalter/faxalter \
-	../faxcover/faxcover \
-	../faxmail/faxmail \
-	../faxrm/faxrm \
-	../faxstat/faxstat \
-	../sendfax/sendfax \
-	../sendpage/sendpage \
-	../util/textfmt \
-	../faxd/faxgetty \
-	../faxd/faxsend \
-	../faxd/pagesend \
-	../hfaxd/hfaxd \
-	../etc/lockname \
-	../etc/ondelay \
-	../util/faxmsg \
-	../util/faxconfig \
-	../util/faxmodem \
-	../util/faxstate \
-	../util/faxwatch \
-	../util/faxinfo \
-	../util/tiffcheck \
-	../util/dialtest \
-	../util/typetest \
-	../faxd/faxq \
-	../faxd/faxqclean \
-	../faxd/tsitest \
-	../faxd/tagtest \
-	../faxd/cqtest \
-	../faxd/choptest \
-	../html/tools/man2html \
-	../html/tools/unquote \
+	../etc/lockname			\
+	../etc/ondelay			\
+	../faxalter/faxalter		\
+	../faxcover/faxcover		\
+	../faxd/choptest		\
+	../faxd/cqtest			\
+	../faxd/faxgetty		\
+	../faxd/faxq			\
+	../faxd/faxqclean		\
+	../faxd/faxsend			\
+	../faxd/mkhash			\
+	../faxd/pagesend		\
+	../faxd/tagtest			\
+	../faxd/tsitest			\
+	../faxmail/faxmail		\
+	../faxrm/faxrm			\
+	../faxstat/faxstat		\
+	../hfaxd/hfaxd			\
+	../sendfax/sendfax		\
+	../sendpage/sendpage		\
+	../util/dialtest		\
+	../util/faxadduser		\
+	../util/faxconfig		\
+	../util/faxdeluser		\
+	../util/faxinfo			\
+	../util/faxmodem		\
+	../util/faxmsg			\
+	../util/faxstate		\
+	../util/faxwatch		\
+	../util/textfmt			\
+	../util/tiffcheck		\
+	../util/typetest		\
+	../html/tools/man2html		\
+	../html/tools/unquote		\
 	${NULL}
 
 package: cproto sproto all

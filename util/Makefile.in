@@ -171,18 +171,18 @@ install: installClient
 	${PUTSBIN} -m 755 -src xferfaxstats.sh -O xferfaxstats
 	${PUTSBIN} -m 755 -src recvstats.sh -O recvstats
 	${PUTSBIN} -m 755 -idb "config(update)" -src faxcron.sh -O faxcron
-	${PUTSUPD} -m 755 -src ${SRCDIR}/ps2fax.gs.sh -O ps2fax.gs
-	${PUTSUPD} -m 755 -src ${SRCDIR}/ps2fax.dps.sh -O ps2fax.dps
-	${PUTSUPD} -m 755 -src ${SRCDIR}/ps2fax.imp.sh -O ps2fax.imp
-	${PUTSUPD} -m 755 -src ${SRCDIR}/pdf2fax.gs.sh -O pdf2fax.gs
-	${PUTSUPD} -m 755 -src ${SRCDIR}/pcl2fax.sh -O pcl2fax
-	${PUTSUPD} -m 755 -src ${SRCDIR}/tiff2fax.sh -O tiff2fax
-	${PUTSUPD} -m 755 -src ${SRCDIR}/notify.sh -O notify
+	${PUTSUPD} -m 755 -src ps2fax.gs.sh -O ps2fax.gs
+	${PUTSUPD} -m 755 -src ps2fax.dps.sh -O ps2fax.dps
+	${PUTSUPD} -m 755 -src ps2fax.imp.sh -O ps2fax.imp
+	${PUTSUPD} -m 755 -src $(SRCDIR)/pdf2fax.gs.sh -O pdf2fax.gs
+	${PUTSUPD} -m 755 -src pcl2fax.sh -O pcl2fax
+	${PUTSUPD} -m 755 -src tiff2fax.sh -O tiff2fax
+	${PUTSUPD} -m 755 -src notify.sh -O notify
 	${PUTSUPD} -m 444 -src ${SRCDIR}/notify.awk -O notify.awk
-	${PUTSUPD} -m 755 -src ${SRCDIR}/faxrcvd.sh -O faxrcvd
-	${PUTSUPD} -m 755 -src ${SRCDIR}/pollrcvd.sh -O pollrcvd
-	${PUTSUPD} -m 755 -src ${SRCDIR}/mkcover.sh -O mkcover
-	${PUTSUPD} -m 755 -src ${SRCDIR}/wedged.sh -O wedged
+	${PUTSUPD} -m 755 -src faxrcvd.sh -O faxrcvd
+	${PUTSUPD} -m 755 -src pollrcvd.sh -O pollrcvd
+	${PUTSUPD} -m 755 -src mkcover.sh -O mkcover
+	${PUTSUPD} -m 755 -src wedged.sh -O wedged
 	${PUTSERVER} -F ${SPOOL}/etc -m 444 -idb "config(update)" \
 	    -src ${SRCDIR}/dpsprinter.ps -O dpsprinter.ps
 	${PUTSERVER} -F ${SPOOL}/etc -idb "config(suggest)" \

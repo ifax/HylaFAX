@@ -1,3 +1,15 @@
+May 27, 2001
+ (tim) [pkg/Makefile.in make.links make_proto.sh.in cproto.stub.in
+	sproto.stub.in] "make package" fixes
+ (tim) [faxsetup.sh.in] only write status/any.info on server setup
+ (tim) [util/Makefile.in] fixes for building outside of source tree needed
+       due to some utilities now created at configure time from .in files
+
+May 26, 2001
+ (tim) [configure] add support for SCO Open Server 5 using gcc
+ (tim) [Class1Send.c++] fix for SCO Open Server 5 
+       Some compilers do not allow a (goto) label in block with destructors
+
 Changelog for HylaFAX 4.1rc1 - Apr 22, 2001
 
 * Adjusted faxq to load-balance modems with equal priority (22 Apr 2001)

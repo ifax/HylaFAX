@@ -2,11 +2,11 @@
 # $Id$
 #	Tim Rice	Tue Oct 28 20:36:07 PST 1997
 #
-#	I like to keep all the HylaFAX files in /usr/local/HylaFAX-v4.0
+#	I like to keep all the HylaFAX files in /usr/local/HylaFAX-v4.1
 #	so I created this script to
 #	Setup symbolic links to the user programs and man pages
 # 
-WHERE_ALL_THE_HYLAFAX_STUFF_IS=/usr/local/HylaFAX-v4.0
+WHERE_ALL_THE_HYLAFAX_STUFF_IS=/usr/local/HylaFAX-v4.1
 #
 #
 #
