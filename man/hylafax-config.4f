@@ -244,7 +244,7 @@ ModemSetupDTRCmd	string	\-	command for setting up \s-1DTR\s+1 handling
 ModemSoftFlowCmd	string	\-	command for setting software flow control between \s-1DTE\s+1 and \s-1DCE\s+1
 ModemSoftResetCmd	string	\s-1ATZ\s+1	command for doing a soft reset
 ModemSoftResetCmdDelay	integer	\s-13000\s+1	time, in ms, to pause after a soft reset
-ModemSoftRTFCC	boolean	\s-1No\s+1	enable software-driven real-time fax compression conversion
+ModemSoftRTFCC	boolean	\s-1Yes\s+1	enable software-driven real-time fax compression conversion
 ModemType	string	\s-1\fIsee below\fP\s+1	modem type
 ModemVerboseResultsCmd	string	\s-1ATV1\s+1	command for enabling verbose result codes
 ModemWaitForConnect	boolean	\s-1No\s+1	force server to wait for ``\s-1CONNECT\s+1'' response on answer
@@ -257,7 +257,7 @@ FaxT4Timer	integer	\s-13100\s+1	\s-1CCITT T.30 T4\s+1 timer (ms)
 Class0Cmd	string	\s-1AT+FCLASS=0\s+1	Class 0: command to enter class 0
 .sp .5
 Class1Cmd	string	\s-1AT+FCLASS=1\s+1	Class 1: command to enter class 1
-Class1ECMSupport	boolean	\s-1No\s+1	Class 1: enable T.30-A ECM support
+Class1ECMSupport	boolean	\s-1Yes\s+1	Class 1: enable T.30-A ECM support
 Class1ECMDoCTC	boolean	\s-1Yes\s+1	Class 1: to perform CTC in ECM protocol
 Class1ECMFrameSize	integer	\s-1256\s+1	Class 1: image frame size in ECM protocol
 Class1HFLOCmd	string	\-	Class 1: command to set hardware flow control

@@ -232,7 +232,7 @@ ModemConfig::setupConfig()
     class2RTFCC		= false;		// real-time fax comp. conv.
     class2UseHex	= false;		// historical behavior
     class2UseLineCount	= false;		// don't trust firmware decoders
-    class1ECMSupport	= false;		// "safe" behavior until our ECM matures
+    class1ECMSupport	= true;			// "safe" behavior until our ECM matures
     class1ECMDoCTC	= true;			// continue to correct through all bitrates
     class1TCFRecvHack	= false;		// historical behavior
     class1ValidateV21Frames = false;		// assume the modem does this
@@ -240,7 +240,7 @@ ModemConfig::setupConfig()
     recvDataFormat	= DF_ALL;		// default to no transcoding
     rtnHandling         = FaxModem::RTN_RETRANSMIT; // retransmit until MCF/MPS
     saveUnconfirmedPages = true;		// keep unconfirmed pages
-    softRTFCC		= false;		// real-time fax comp. conv. (software)
+    softRTFCC		= true;			// real-time fax comp. conv. (software)
 }
 
 void
