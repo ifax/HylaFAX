@@ -39,6 +39,44 @@
 
 static	void setupCompression(TIFF*, u_int, uint32);
 
+void
+FaxModem::setupStartPage(TIFF* tif, const Class2Params& params)
+{
+    /*
+     * Not doing copy quality checking so compression and
+     * Group3Options must reflect the negotiated session
+     * parameters for the forthcoming page data.
+     */
+    setupCompression(tif, params.df, group3opts);
+    /*
+     * Do magic at page start to collect the file offset
+     * to the start of the page data--this is used in case
+     * of an error to overwrite unacceptable page data.
+     *
+     * NB: This must be done *after* setting the compression
+     *     scheme, otherwise the TIFF library will disallow
+     *     setting the Compression tag.
+     */
+    recvStartPage(tif);
+}
+
+void
+FaxModem::recvEndPage(TIFF* tif, const Class2Params& params)
+{
+    // NB: must set these after compression tag
+#ifdef TIFFTAG_FAXRECVPARAMS
+    TIFFSetField(tif, TIFFTAG_FAXRECVPARAMS,	(uint32) params.encode());
+#endif
+#ifdef TIFFTAG_FAXSUBADDRESS
+    if (sub != "")
+	TIFFSetField(tif, TIFFTAG_FAXSUBADDRESS,	(const char*) sub);
+#endif
+#ifdef TIFFTAG_FAXRECVTIME
+    TIFFSetField(tif, TIFFTAG_FAXRECVTIME,
+	(uint32) server.getPageTransferTime());
+#endif
+}
+
 /*
  * Receive Phase C data with or without copy
  * quality checking and erroneous row fixup.
@@ -75,7 +113,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 	recvTrace("%s", (const char*) emsg);
 	return (false);
     }
-    if (checkQuality && params.df != DF_2DMMR) {
+    if (checkQuality && params.ec == EC_DISABLE) {
 	/*
 	 * Receive a page of data w/ copy quality checking.
 	 * Note that since we decode and re-encode we can
@@ -83,10 +121,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 	 * TIFF tag values setup for each received page.  This
 	 * may however be too much work for some CPUs.
 	 *
-	 * Group 4 (MMR) facsimile use ECM, and so do not need
-	 * copy quality checking.  Unfortunately, our function here
-	 * is for Group 3-only, and so RecvDataFormat will not work
-	 * for Group 4 facsimile.
+	 * Copy quality checking is superfluous when using ECM.
 	 */
 	tsize_t rowSize = TIFFScanlineSize(tif);// scanline buffer size
 	/*
@@ -214,22 +249,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 	 *
 	 * NB: the image is written as a single strip of data.
 	 */
-	/*
-	 * Not doing copy quality checking so compression and
-	 * Group3Options must reflect the negotiated session
-	 * parameters for the forthcoming page data.
-	 */
-	setupCompression(tif, params.df, group3opts);
-	/*
-	 * Do magic at page start to collect the file offset
-	 * to the start of the page data--this is used in case
-	 * of an error to overwrite unacceptable page data.
-	 *
-	 * NB: This must be done *after* setting the compression
-	 *     scheme, otherwise the TIFF library will disallow
-	 *     setting the Compression tag.
-	 */
-	recvStartPage(tif);
+	setupStartPage(tif, params);
 	/*
 	 * NB: There is a potential memory leak here if the
 	 * stack buffer gets expanded, such that memory gets
@@ -271,18 +291,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 	    recvEOLCount = getRTCRow();
 	}
     }
-    // NB: must set these after compression tag
-#ifdef TIFFTAG_FAXRECVPARAMS
-    TIFFSetField(tif, TIFFTAG_FAXRECVPARAMS,	(uint32) params.encode());
-#endif
-#ifdef TIFFTAG_FAXSUBADDRESS
-    if (sub != "")
-	TIFFSetField(tif, TIFFTAG_FAXSUBADDRESS,	(const char*) sub);
-#endif
-#ifdef TIFFTAG_FAXRECVTIME
-    TIFFSetField(tif, TIFFTAG_FAXRECVTIME,
-	(uint32) server.getPageTransferTime());
-#endif
+    recvEndPage(tif, params);
     return (true);
 }
 
@@ -363,6 +372,16 @@ FaxModem::flushRawData(TIFF* tif, tstrip_t strip, const u_char* buf, u_int cc)
     recvTrace("%u bytes of data, %lu total lines", cc, recvEOLCount);
     if (TIFFWriteRawStrip(tif, strip, (tdata_t)buf, cc) == -1)
 	serverTrace("RECV: %s: write error", TIFFFileName(tif));
+}
+
+/*
+ * In ECM mode the ECM module provides the EOL counter.
+ */
+void
+FaxModem::writeECMData(TIFF* tif, const u_char* buf, u_int cc, u_int eols)
+{
+    recvEOLCount = eols;
+    flushRawData(tif, 0, buf, cc);
 }
 
 /*

@@ -443,8 +443,12 @@ ClassModem::getModemLine(char buf[], u_int bufSize, long ms)
 	trimModemLine(buf, n);
     return (n);
 }
+int ClassModem::getModemBit(long ms)  { return server.getModemBit(ms); }
 int ClassModem::getModemChar(long ms) { return server.getModemChar(ms); }
 int ClassModem::getModemDataChar()    { return server.getModemChar(dataTimeout); }
+int ClassModem::getLastByte()         { return server.getLastByte(); }
+bool ClassModem::didBlockEnd()        { return server.didBlockEnd(); }
+void ClassModem::resetBlock()         { server.resetBlock(); }
 
 bool
 ClassModem::putModemDLEData(const u_char* data, u_int cc, const u_char* bitrev, long ms)

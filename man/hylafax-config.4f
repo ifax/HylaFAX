@@ -254,6 +254,9 @@ FaxT4Timer	integer	\s-13100\s+1	\s-1CCITT T.30 T4\s+1 timer (ms)
 Class0Cmd	string	\s-1AT+FCLASS=0\s+1	Class 0: command to enter class 0
 .sp .5
 Class1Cmd	string	\s-1AT+FCLASS=1\s+1	Class 1: command to enter class 1
+Class1ECMSupport	boolean	\s-1No\s+1	Class 1: enable T.30-A ECM support
+Class1ECMDoCTC	boolean	\s-1Yes\s+1	Class 1: to perform CTC in ECM protocol
+Class1ECMFrameSize	integer	\s-1256\s+1	Class 1: image frame size in ECM protocol
 Class1HFLOCmd	string	\-	Class 1: command to set hardware flow control
 Class1FrameOverhead	integer	\s-14\s+1	Class 1: extra bytes in a received \s-1HDLC\s+1 frame
 Class1NFLOCmd	string	\-	Class 1: command to set no flow control
@@ -787,6 +790,8 @@ the server will receive before it deems a page to have unacceptable
 copy quality.
 Setting this parameter to zero causes the server to not check
 the quality of received facsimile.
+Facsimile received with error-correction do not have copy quality
+checking performed.
 See also
 .BR PercentGoodLines .
 .TP
@@ -946,6 +951,8 @@ for a received facsimile page to be deemed to have acceptable
 copy quality.
 Setting this parameter to zero causes the server to not
 check the quality of received facsimile.
+Facsimile received with error-correction do not have copy quality
+checking performed.
 See also
 .BR MaxConsecutiveBadLines .
 .TP
@@ -1030,8 +1037,9 @@ null, then all incoming facsimile messages will be accepted.
 .TP
 .B RecvDataFormat
 The data format (compression scheme) to write received facsimile data
-when copy quality checking is enabled on the host.
-(When copy quality checking is not done by the server the received
+when copy quality checking is performed on the host.
+(When copy quality checking is not done by the server, for example when
+error correction protocol is used, the received
 facsimile data is written exactly as it is received from the modem.)
 The format may be one: ``1-D MR'', ``2-D MR'', ``2-D MMR'', or ``adaptive''.
 An ``adaptive'' format causes the received data to be written using
@@ -1976,6 +1984,19 @@ of Class 1-style modems; they should not be changed lightly:
 .TP
 .B Class1Cmd
 The command to set the modem into Class 1 operation.
+.TP
+.B Class1ECMSupport
+Whether or not to support T.30-A error correction protocol.  Use of
+ECM will require 64 kilobytes of free memory per modem in active use.
+.TP
+.B Class1ECMDoCTC
+Whether or not to continue to retransmit image data in ECM protocol 
+at a lower bitrate which is not accepted as valid after four successive
+attempts at the current bitrate.
+.TP
+.B Class1ECMFrameSize
+The size in bytes of image frames to transmit during ECM protocol.
+The only acceptable values are 64 and 256.
 .TP
 .B Class1FrameOverhead
 The number of extraneous bytes in

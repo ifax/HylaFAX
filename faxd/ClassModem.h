@@ -254,8 +254,12 @@ public:
     bool	putModemDLEData(const u_char* data, u_int,
 		    const u_char* brev, long ms);
     bool	putModemLine(const char* cp);
+    int		getModemBit(long ms = 0);
     int		getModemChar(long ms = 0);
     int		getModemDataChar();
+    int		getLastByte();
+    bool	didBlockEnd();
+    void	resetBlock();
     void	startTimeout(long ms);
     void	stopTimeout(const char* whichdir);
 // host-modem protocol parsing support

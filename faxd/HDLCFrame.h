@@ -48,9 +48,11 @@ public:
     bool moreFrames() const;		// more frames follow
     bool isOK() const;			// frame has good FCS
     bool checkCRC() const;		// validate the CRC checksum
+    u_int getCRC() const;		// return the 1s complement of the CRC
     void setOK(bool b);			// set frame FCS indicator
     u_int getRawFCF() const;		// raw FCF in frame
     u_int getFCF() const;		// FCF &~ (FCF_SNDR|FCF_RCVR)
+    u_int getFCF2() const;		// FCF2 for T.30 Annex A
     const u_char* getFrameData() const;	// data following FCF
     u_int getFrameDataLength() const;	// length of data - (FCF+FCS)
     u_int getDataWord() const;		// first 0-4 bytes of data
@@ -84,9 +86,11 @@ inline bool HDLCFrame::moreFrames() const
     { return ((*this)[1]&0x08) == 0; }
 inline bool HDLCFrame::isOK() const		     { return ok; }
 inline bool HDLCFrame::checkCRC() const		     { return crc == 0x1d0f; }
+inline u_int HDLCFrame::getCRC() const		     { return ~crc; }
 inline void HDLCFrame::setOK(bool b)		     { ok = b; }
 inline u_int HDLCFrame::getRawFCF() const	     { return (*this)[2]; }
 inline u_int HDLCFrame::getFCF() const		     { return (*this)[2]&0x7f; }
+inline u_int HDLCFrame::getFCF2() const		     { return (*this)[3]&0x7f; }
 inline const u_char* HDLCFrame::getFrameData() const { return &((*this)[3]); }
 inline u_int HDLCFrame::getFrameDataLength() const
     { u_int len = getLength(); return  len > frameOverhead ? len - frameOverhead : 0; }

@@ -27,6 +27,7 @@
 /*
  * EIA/TIA-578 (Class 1) Modem Driver.
  */
+#include "Sys.h"
 #include "Class1.h"
 #include "ModemConfig.h"
 #include "HDLCFrame.h"
@@ -139,7 +140,10 @@ Class1Modem::setupModem()
     modemParams.wd = BIT(WD_1728) | BIT(WD_2048) | BIT(WD_2432);
     modemParams.ln = LN_ALL;
     modemParams.df = BIT(DF_1DMR) | BIT(DF_2DMR);
-    modemParams.ec = EC_DISABLE;
+    if (conf.class1ECMSupport)
+	modemParams.ec = BIT(EC_ENABLE) | BIT(EC_DISABLE);
+    else
+	modemParams.ec = BIT(EC_DISABLE);
     modemParams.bf = BF_DISABLE;
     modemParams.st = ST_ALL;
     traceModemParams();
@@ -177,7 +181,7 @@ Class1Modem::setupModem()
 	break;
     }
     /*
-     * T.30 specifies that HDCL frame data are in MSB bit
+     * T.30 specifies that HDLC frame data are in MSB bit
      * order except for CIG/TSI data which have LSB bit order.
      * We compose and interpret frame data in MSB bit order
      * and pass the frames through frameRev immediately before
@@ -507,6 +511,168 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
     return (true);
 }
 
+bool
+Class1Modem::syncECMFrame()
+{
+    /*
+     * We explicitly look for the first sync flag so as to
+     * not get confused by any initial garbage or training.
+     */
+    int bit = 0;
+    u_short ones = 0;
+
+    // look for the first sync flag
+
+    time_t start = Sys::now();
+    startTimeout(900);		// triple T.4 A.3.1
+    do {
+	if ((unsigned) Sys::now()-start >= 3) {
+	    protoTrace("Timeout awaiting synchronization sequence");
+	    return (false);
+	}
+	bit = getModemBit(0);
+    } while (bit != 0 && !didBlockEnd());
+    do {
+	if ((unsigned) Sys::now()-start >= 3) {
+	    protoTrace("Timeout awaiting synchronization sequence");
+	    return (false);
+	}
+	if (bit == 0 || ones > 0xFF) ones = 0;
+	bit = getModemBit(0);
+	if (bit == 1) ones++;
+    } while (!(ones == 6 && bit == 0 && bit != EOF) && !didBlockEnd());
+    stopTimeout("awaiting synchronization sequence");
+    if (wasTimeout()) {
+	return (false);
+    }
+    return (true);
+}
+
+/*
+ * Receive an HDLC frame with ECM.  We must always be cautious
+ * of "stuffed" zero-bits after five sequential one-bits between
+ * flag sequences.  We assume this is called only after a
+ * successfuly received complete flag sequence.  We must also
+ * count up detected EOLs in the bitstream.
+ */
+bool
+Class1Modem::recvECMFrame(HDLCFrame& frame)
+{
+
+    int bit = getModemBit(0);
+    u_short ones = 0;
+
+    // look for the last sync flag (possibly the previous one)
+
+    startTimeout(5000);					// just to prevent hanging
+    while (bit != 1 && bit != EOF && !didBlockEnd()) {	// flag begins with zero, address begins with one
+	do {
+	    if (bit == 0 || ones > 6) ones = 0;
+	    bit = getModemBit(0);
+	    if (bit == 1) ones++;
+	} while (!(ones == 6 && bit == 0 && bit != EOF) && !didBlockEnd());
+	ones = 0;
+	bit = getModemBit(0);
+    }
+    stopTimeout("waiting for the last synchronization flag");
+
+    // receive the frame, strip stuffed zero-bits, look for end flag, and count EOLs
+
+    ones = 1;
+    u_short bitpos = 7;
+    u_int byte = (bit << bitpos);
+    bool rcpframe = false;
+    time_t start = Sys::now();
+    do {
+	if ((unsigned) Sys::now()-start >= 3) {
+	    protoTrace("Timeout receiving HDLC frame");
+	    return (false);
+	}
+	bit = getModemBit(0);
+	if (bit == 1) {
+	    ones++;
+	}
+	if (!(ones == 5 && bit == 0 && bit != EOF)) {	// not transparent stuffed zero-bits
+	    bitpos--;
+	    byte |= (bit << bitpos);
+	    if (bitpos == 0) {			// fully populated byte
+		frame.put(byte);
+		bitpos = 8;
+		byte = 0;
+		/*
+		 * Ensure that a corrupt frame doesn't overflow the frame buffer.
+		 */
+		if (frame.getLength() > ((frameSize+6)*4)) {	//  4 times valid size
+		    protoTrace("HDLC frame length invalid.");
+		    return (false);
+		}
+	    }
+	}
+	if (bit == 0) ones = 0;
+	// don't wait for the terminating flag on an RCP frame
+	if (frame[0] == 0xff && frame[1] == 0xc0 && frame[2] == 0x61 && frame.getLength() == 5 && frame.checkCRC()) {
+	    protoTrace("RECV received RCP frame");
+	    rcpframe = true;
+	} else if (didBlockEnd()) {
+	    // sometimes RCP frames are truncated by or are missing due to premature DLE+ETX characters, sadly
+	    protoTrace("RECV assumed RCP frame with block end");
+	    // force-feed a valid RCP frame with FCS
+	    frame.reset();
+	    frame.put(0xff); frame.put(0xc0); frame.put(0x61); frame.put(0x96); frame.put(0xd3);
+	    rcpframe = true;
+	}
+    } while (ones != 6 && bit != EOF && !rcpframe);
+    bit = getModemBit(0);			// trailing bit on flag
+    if (!rcpframe) {
+	if (frame.getLength() > 0)
+	    traceHDLCFrame("-->", frame);
+	if (bit) {				// should have been zero
+	    protoTrace("Bad HDLC terminating flag received.");
+	    return (false);
+	}
+	if (byte != 0x7e) {			// trailing byte should be flag
+	    protoTrace("HDLC frame not byte-oriented.  Trailing byte: %#x", byte);
+	    return (false);
+	}
+    }
+    if (bit == EOF) {
+	protoTrace("EOF received.");
+	return (false);
+    }
+    if (frame.getLength() < 5) {		// RCP frame size
+	protoTrace("HDLC frame too short (%u bytes)", frame.getLength());
+	return (false);
+    }
+    if (frame[0] != 0xff) {
+	protoTrace("HDLC frame with bad address field %#x", frame[0]);
+	return (false);
+    }
+    if ((frame[1]&0xf7) != 0xc0) {
+	protoTrace("HDLC frame with bad control field %#x", frame[1]);
+	return (false);
+    }
+    return (true);
+}
+
+bool
+Class1Modem::endECMBlock()
+{
+    if (didBlockEnd()) return (true);	// some erroniously re-use bytes
+
+    int c = getLastByte();		// some erroniously re-use bits	
+    startTimeout(2500);			// just to prevent hanging
+    do {
+	if (c == DLE) {
+	    c = getModemChar(0);
+	    if (c == ETX || c == EOF)
+		break;
+	}
+    } while ((c = getModemChar(0)) != EOF);
+    stopTimeout("waiting for DLE+ETX");
+    if (c == EOF) return (false);
+    else return (true);
+}
+
 #include "StackBuffer.h"
 
 /*
@@ -600,7 +766,7 @@ Class1Modem::sendFrame(u_char fcf, u_int dcs, u_int xinfo, bool lastFrame)
 }
 
 /*
- * Send a frame with TSI/CSI/PWD/SUB/SEP.
+ * Send a frame with TSI/CSI/PWD/SUB/SEP/PPR.
  */
 bool
 Class1Modem::sendFrame(u_char fcf, const fxStr& tsi, bool lastFrame)

@@ -370,6 +370,8 @@ Class1Modem::processDCSFrame(const HDLCFrame& frame)
 {
     u_int dcs = frame.getDIS();			// NB: really DCS
     u_int xinfo = frame.getXINFO();
+    if (xinfo & DCSFRAME_64) frameSize = 64;
+    else frameSize = 256;
     params.setFromDCS(dcs, xinfo);
     setDataTimeout(60, params.br);
     curcap = findSRCapability(dcs&DCS_SIGRATE, recvCaps);
@@ -396,7 +398,7 @@ const u_int Class1Modem::modemPPMCodes[8] = {
 bool
 Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg)
 {
-    if (/* sendingHDLC */ lastPPM == FCF_MPS && prevPage && pageGood) {
+    if (/* sendingHDLC */ lastPPM == FCF_MPS && prevPage && pageGood && !sentERR) {
 	// sendingHDLC = false
 	/*
 	 * Resume sending HDLC frame (send data)
@@ -408,6 +410,8 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg)
 
 top:
     time_t t2end = 0;
+    signalRcvd = 0;
+    sentERR = false;
 
     do {
 	u_int timer = conf.t2Timer;
@@ -441,8 +445,11 @@ top:
 	     * high speed carrier traffic other than the TCF).
 	     */
 	    fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
-	    (void) atCmd(rmCmd, AT_NOTHING);
-	    ATResponse rmResponse = atResponse(rbuf, conf.t2Timer);
+	    ATResponse rmResponse = AT_NOTHING;
+	    while (rmResponse != AT_CONNECT && rmResponse != AT_TIMEOUT && rmResponse != AT_ERROR) {
+		(void) atCmd(rmCmd, AT_NOTHING);
+		rmResponse = atResponse(rbuf, conf.t2Timer);
+	    }
 	    if (rmResponse == AT_CONNECT) {
 		/*
 		 * The message carrier was recognized;
@@ -457,15 +464,22 @@ top:
 		     * The data was received correctly, wait
 		     * for the modem to signal carrier drop.
 		     */
-		    messageReceived = waitFor(AT_NOCARRIER, 2*1000);
-		    if (messageReceived)
+		    if (signalRcvd != 0) {
+			messageReceived = true;
 			prevPage = true;
-		    timer = conf.t1Timer;		// wait longer for PPM
+		    } else {
+			messageReceived = waitFor(AT_NOCARRIER, 2*1000);
+			if (messageReceived)
+			    prevPage = true;
+			timer = conf.t1Timer;		// wait longer for PPM
+		    }
 		}
 	    }
-	    if (flowControl == FLOW_XONXOFF)
-		(void) setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
-	    setInputBuffering(false);
+	    if (signalRcvd != 0) {
+		if (flowControl == FLOW_XONXOFF)
+		    (void) setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
+		setInputBuffering(false);
+	    }
 	    if (!messageReceived && rmResponse != AT_FCERROR) {
 		if (rmResponse != AT_ERROR) {
 		    /*
@@ -507,12 +521,24 @@ top:
 	    emsg = "Receive aborted due to operator intervention";
 	    return (false);
 	}
+
+	/*
+	 * Acknowledge PPM from ECM protocol.
+	 */
+	HDLCFrame frame(conf.class1FrameOverhead);
+	bool ppmrcvd;
+	if (signalRcvd != 0) {
+	    ppmrcvd = true;
+	    lastPPM = signalRcvd;
+	} else {
+	    ppmrcvd = recvFrame(frame, timer);
+	    if (ppmrcvd) lastPPM = frame.getFCF();
+	}
 	/*
 	 * Do command received logic.
 	 */
-	HDLCFrame frame(conf.class1FrameOverhead);
-	if (recvFrame(frame, timer)) {
-	    switch (lastPPM = frame.getFCF()) {
+	if (ppmrcvd) {
+	    switch (lastPPM) {
 	    case FCF_DIS:			// XXX no support
 		if (prevPage && !pageGood) recvResetPage(tif);
 		protoTrace("RECV DIS/DTC");
@@ -538,7 +564,7 @@ top:
 	    case FCF_PRI_EOM:			// PRI-EOM
 	    case FCF_PRI_EOP:			// PRI-EOP
 		if (prevPage && !pageGood) recvResetPage(tif);
-		tracePPM("RECV recv", lastPPM);
+		if (signalRcvd == 0) tracePPM("RECV recv", lastPPM);
 		if (!prevPage) {
 		    /*
 		     * Post page message, but no previous page
@@ -561,7 +587,7 @@ top:
 		 * to implement than using +FRH and more reliable than
 		 * using +FTS
 		 */
-		if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+		if (signalRcvd == 0 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
 		    emsg = "Failure to receive silence.";
 		    return (false);
 		}
@@ -570,19 +596,21 @@ top:
 		 * [Re]transmit post page response.
 		 */
 		if (pageGood) {
-		    if (lastPPM == FCF_MPS && messageReceived) {
-			/*
-			 * Start sending HDLC frame.
-			 * The modem will report CONNECT and transmit training
-			 * followed by flags until we begin sending data or
-			 * 5 seconds elapse.
-			 */
-			// sendingHDLC =
-			atCmd(thCmd, AT_CONNECT);
-		    } else {
-			(void) transmitFrame(FCF_MCF|FCF_RCVR);
+		    if (!sentERR) {
+			if (lastPPM == FCF_MPS && messageReceived) {
+			    /*
+			     * Start sending HDLC frame.
+			     * The modem will report CONNECT and transmit training
+			     * followed by flags until we begin sending data or
+			     * 5 seconds elapse.
+			     */
+			    // sendingHDLC =
+			    atCmd(thCmd, AT_CONNECT);
+			} else {
+			    (void) transmitFrame(FCF_MCF|FCF_RCVR);
+			}
+			tracePPR("RECV send", FCF_MCF);
 		    }
-		    tracePPR("RECV send", FCF_MCF);
 		    /*
 		     * If post page message confirms the page
 		     * that we just received, write it to disk.
@@ -677,12 +705,272 @@ Class1Modem::abortPageRecv()
 }
 
 /*
+ * Receive Phase C data in T.30-A ECM mode.
+ */
+bool
+Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
+{
+    HDLCFrame frame(5);					// A+C+FCF+FCS=5 bytes
+    u_char block[frameSize*256];			// 256 frames per block - totalling 16/64KB
+    bool lastblock = false;
+
+    u_int zeros = 0;
+    bool nullrow = true;
+    int eolcount = 0;
+    if (params.df != DF_1DMR) eolcount--;		// 2-D page begins with EOL, T.4 4.2.2
+
+    setupStartPage(tif, params);
+
+    do {
+	u_int fnum = 0;
+	char ppr[32];					// 256 bits
+	for (u_int i = 0; i < 32; i++) ppr[i] = 0xff;	// ppr defaults to all 1's, T.4 A.4.4
+	u_short rcpcnt = 0;
+	u_short pprcnt = 0;
+	u_int fcount = 0;
+	bool blockgood = false;
+	do {
+	    sentERR = false;
+	    resetBlock();
+	    signalRcvd = 0;
+	    rcpcnt = 0;
+	    bool dataseen = false;
+	    if (syncECMFrame()) {
+		time_t start = Sys::now();
+		do {
+		    frame.reset();
+		    if (recvECMFrame(frame)) {
+			if (frame[2] == 0x60) {		// FCF is FCD
+			    dataseen = true;
+			    rcpcnt = 0;			// reset RCP counter
+			    fnum = frameRev[frame[3]];	// T.4 A.3.6.1 says LSB2MSB
+			    protoTrace("RECV received frame number %u", fnum);
+			    if (fcount < (fnum + 1)) fcount = fnum + 1;
+			    // store received frame in block at position fnum (A+C+FCF+Frame No.=4 bytes)
+			    for (u_int i = 0; i < frameSize; i++) {
+				if (frame.getLength() - 6 > i)	// (A+C+FCF+Frame No.+FCS=6 bytes)
+				    block[fnum*frameSize+i] = frameRev[frame[i+4]];	// LSB2MSB
+			    }
+			    if (frame.checkCRC()) {
+				// valid frame, set the corresponding bit in ppr to 0
+				u_int pprpos, pprval;
+				for (pprpos = 0, pprval = fnum; pprval >= 8; pprval -= 8) pprpos++;
+				if (ppr[pprpos] & frameRev[1 << pprval]) ppr[pprpos] ^= frameRev[1 << pprval];
+			    } else {
+				protoTrace("RECV frame FCS check failed");
+			    }
+			} else if (frame[2] == 0x61 && frame.checkCRC()) {	// FCF is RCP
+			    rcpcnt++;
+			} else {
+			    dataseen = true;
+			    protoTrace("HDLC frame with bad FCF %#x", frame[2]);
+			}
+		    } else {
+			dataseen = true;	// assume that garbage was meant to be data
+			syncECMFrame();
+		    }
+		    // some senders don't send the requisite three RCP signals
+		} while (rcpcnt == 0 && (unsigned) Sys::now()-start < 60);	// can't expect 50 ms of flags, some violate T.4 A.3.8
+		endECMBlock();				// wait for <DLE><ETX>
+		(void) waitFor(AT_NOCARRIER);		// wait for message carrier to drop
+		if (flowControl == FLOW_XONXOFF)
+		    (void) setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
+		setInputBuffering(false);
+		bool gotpps = false;
+		HDLCFrame ppsframe(conf.class1FrameOverhead);
+		do {
+		    gotpps = recvFrame(ppsframe, conf.t2Timer);
+		} while (!wasTimeout() && !gotpps);
+		if (gotpps) {
+		    tracePPM("RECV recv", ppsframe.getFCF());
+		    tracePPM("RECV recv", ppsframe.getFCF2());
+		    if (ppsframe.getFCF() == FCF_PPS) {
+			// PPS is the only valid signal, Figure A.8/T.30
+			u_int fc = frameRev[ppsframe[6]] + 1;
+			if (fc == 256 && !dataseen) fc = 0;    // distinguish between 0 and 256
+			if (fcount < fc) fcount = fc;
+			protoTrace("RECV received %u frames of block %u of page %u", \
+			    fc, frameRev[ppsframe[5]]+1, frameRev[ppsframe[4]]+1);
+			blockgood = true;
+			if (fc > 0) {	// assume that 0 frames means that sender is done
+			    for (u_int i = 0; i <= (fcount - 1); i++) {
+				u_int pprpos, pprval;
+				for (pprpos = 0, pprval = i; pprval >= 8; pprval -= 8) pprpos++;
+				if (ppr[pprpos] & frameRev[1 << pprval]) blockgood = false;
+			    }
+			}
+
+			// requisite pause before sending response (PPR/MCF)
+			if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+			    emsg = "Failure to receive silence.";
+			    return (false);
+			}
+			if (! blockgood) {
+			    // inform the remote that one or more frames were invalid
+
+			    atCmd(thCmd, AT_CONNECT);
+			    startTimeout(3000);
+			    sendFrame(FCF_PPR, fxStr(ppr, 32));
+			    stopTimeout("sending PPR frame");
+			    tracePPR("RECV send", FCF_PPR);
+
+			    pprcnt++;
+			    if (pprcnt == 4) {
+				// expect sender to send CTC/EOR after every fourth PPR, not just the fourth
+				protoTrace("RECV sent fourth PPR");
+				pprcnt = 0;
+				HDLCFrame rtnframe(conf.class1FrameOverhead);
+				if (recvFrame(rtnframe, conf.t2Timer)) {
+				tracePPM("RECV recv", rtnframe.getFCF());
+				    u_int dcs;			// possible bits 1-16 of DCS in FIF
+				    switch (rtnframe.getFCF()) {
+					case FCF_CTC:
+					    // use 16-bit FIF to alter speed, curcap
+					    dcs = rtnframe[3] | (rtnframe[4]<<8);
+					    curcap = findSRCapability(dcs&DCS_SIGRATE, recvCaps);
+					    // requisite pause before sending response (CTR)
+					    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+						emsg = "Failure to receive silence.";
+						return (false);
+					    }
+					    (void) transmitFrame(FCF_CTR|FCF_RCVR);
+					    tracePPR("RECV send", FCF_CTR);
+					    break;
+					case FCF_EOR:
+					    blockgood = true;
+					    tracePPM("RECV recv", rtnframe.getFCF2());
+					    switch (rtnframe.getFCF2()) {
+						case 0:
+						    // EOR-NULL partial page boundary
+						    break;
+						case FCF_EOM:
+						case FCF_MPS:
+						case FCF_EOP:
+						case FCF_PRI_EOM:
+						case FCF_PRI_MPS:
+						case FCF_PRI_EOP:
+						    lastblock = true;
+						    signalRcvd = rtnframe.getFCF2();
+						    break;
+						default:
+						    emsg = "COMREC invalid response to repeated PPR received";
+						    return (false);
+					    }
+					    // requisite pause before sending response (ERR)
+					    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+						emsg = "Failure to receive silence.";
+						return (false);
+					    }
+					    (void) transmitFrame(FCF_ERR|FCF_RCVR);
+					    tracePPR("RECV send", FCF_ERR);
+					    sentERR = true;
+					    break;
+					default:
+					    emsg = "COMREC invalid response to repeated PPR received";
+					    return (false);
+				    }
+				} else {
+				    emsg = "T.30 T2 timeout, expected signal not received";
+				    return (false);
+				}
+			    }
+			}
+			if (signalRcvd == 0) {		// don't overwrite EOR settings
+			    switch (ppsframe.getFCF2()) {
+				case 0:
+				    // PPS-NULL partial page boundary
+				    break;
+				case FCF_EOM:
+				case FCF_MPS:
+				case FCF_EOP:
+				case FCF_PRI_EOM:
+				case FCF_PRI_MPS:
+				case FCF_PRI_EOP:
+				    lastblock = true;
+				    signalRcvd = ppsframe.getFCF2();
+				    break;
+				default:
+				    emsg = "COMREC invalid post-page signal received";
+				    return (false);
+			    }
+			}
+		    } else {
+			emsg = "COMREC invalid response received (expected PPS)";
+			return (false);
+		    }
+		} else {
+		    emsg = "T.30 T2 timeout, expected signal not received";
+		    return (false);
+		}
+	    }
+	    if (! blockgood) {		// back to high-speed carrier
+		setInputBuffering(true);
+		if (flowControl == FLOW_XONXOFF)
+		    (void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
+		fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
+		ATResponse response = AT_NOTHING;
+		while (response != AT_CONNECT && response != AT_TIMEOUT && response != AT_ERROR) {
+		    (void) atCmd(rmCmd, AT_NOTHING);
+		    response = atResponse(rbuf, conf.t2Timer);
+		}
+		if (response == AT_TIMEOUT || response == AT_ERROR) return (false);
+	    }
+	} while (! blockgood);
+
+	// We count EOLs here because until now the data validity was in question.
+	for (u_int i = 0; i < (fcount*frameSize); i++) {
+	    for (u_int j = 0; j <= 7; j++) {		// LSB2MSB
+		if (block[i] & (1 << j)) {
+		    if (zeros < 11) nullrow = false;
+		    else {
+			if (!nullrow) eolcount++;
+			nullrow = true;
+			if (params.df != DF_1DMR) j++;	// 2-D EOL+1 T.4 4.2.4
+		    }
+		    zeros = 0;
+		} else zeros++;
+	    }
+	}
+	// write the block to file
+	writeECMData(tif, block, (fcount*frameSize), eolcount);
+
+	if (! lastblock) {		// back to high-speed carrier
+	    if (!sentERR) {
+		// confirm block received as good
+		(void) transmitFrame(FCF_MCF|FCF_RCVR);
+		tracePPR("RECV send", FCF_MCF);
+	    }
+	    setInputBuffering(true);
+	    if (flowControl == FLOW_XONXOFF)
+		(void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
+	    fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
+	    ATResponse response = AT_NOTHING;
+	    while (response != AT_CONNECT && response != AT_TIMEOUT && response != AT_ERROR) {
+		(void) atCmd(rmCmd, AT_NOTHING);
+		response = atResponse(rbuf, conf.t2Timer);
+	    }
+	    if (response == AT_TIMEOUT || response == AT_ERROR) return (false);
+	}
+    } while (! lastblock);
+
+    recvEndPage(tif, params);
+
+    return (true);    		// signalRcvd is set, full page is received...
+}
+
+/*
  * Receive Phase C data w/ or w/o copy quality checking.
  */
 bool
 Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
 {
-    bool pageRecvd = recvPageDLEData(tif, checkQuality(), params, emsg);
+    /*
+     * T.30-A ECM mode requires a substantially different protocol than non-ECM faxes.
+     */
+    bool pageRecvd = false;
+    if (params.ec & EC_ENABLE) pageRecvd = recvPageECMData(tif, params, emsg);
+    else pageRecvd = recvPageDLEData(tif, checkQuality(), params, emsg);
+
     TIFFSetField(tif, TIFFTAG_IMAGELENGTH, getRecvEOLCount());
     TIFFSetField(tif, TIFFTAG_CLEANFAXDATA, getRecvBadLineCount() ?
 	CLEANFAXDATA_REGENERATED : CLEANFAXDATA_CLEAN);
@@ -691,7 +979,8 @@ Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
 	TIFFSetField(tif, TIFFTAG_CONSECUTIVEBADFAXLINES,
 	    getRecvConsecutiveBadLineCount());
     }
-    return (isQualityOK(params));
+    if (params.ec & EC_ENABLE) return (true);	// no RTN with ECM
+    else return (isQualityOK(params));
 }
 
 /*

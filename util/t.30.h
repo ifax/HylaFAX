@@ -259,6 +259,7 @@
 // pre-message responses
 #define	FCF_CFR		0x21		// confirmation to receive
 #define	FCF_FTT		0x22		// failure to train
+#define FCF_CTR		0x23		// response to CTC (Annex A)
 
 // post-message commands (from transmitter to receiver)
 #define	FCF_EOM		0x71		// end-of-page, restart phase B on ack
@@ -267,6 +268,9 @@
 #define	FCF_PRI_EOM	0x79		// EOM, but allow operator intervention
 #define	FCF_PRI_MPS	0x7A		// MPS, but allow operator intervention
 #define	FCF_PRI_EOP	0x7C		// MPS, but allow operator intervention
+#define FCF_PPS		0x7D		// partial page signal (Annex A)
+#define FCF_EOR		0x73		// end of retransmission (Annex A)
+#define FCF_RR		0x76		// receive ready (Annex A), was erroniously 0x37 3/93
 
 // post-message responses (from receiver to transmitter)
 #define	FCF_MCF		0x31		// message confirmation (ack MPS/EOM)
@@ -274,8 +278,14 @@
 #define	FCF_RTN		0x32		// nak, retry after retraining
 #define	FCF_PIP		0x35		// ack, continue after operating interv.
 #define	FCF_PIN		0x34		// nak, retry after operation interv.
+#define FCF_PPR		0x3D		// partial page request (Annex A)
+#define FCF_RNR		0x37		// receive not ready (Annex A)
+#define FCF_ERR		0x38		// response for EOR (Annex A)
 
 // other line control signals
 #define	FCF_DCN		0x5F		// disconnect - initiate call release
 #define	FCF_CRP		0x58		// command repeat - resend last command
+
+// command to receive
+#define FCF_CTC		0x48		// continue to correct (Annex A)
 #endif /* _t30_ */

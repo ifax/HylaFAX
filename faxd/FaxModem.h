@@ -105,6 +105,7 @@ protected:
 
 // miscellaneous
     void	countPage();
+    int		getPageNumber();
     void	recvTrace(const char* fmt, ...);
     void	copyQualityTrace(const char* fmt, ...);
     void	traceModemParams();
@@ -129,6 +130,9 @@ protected:
 // phase c data receive & copy quality checking
     bool	recvPageDLEData(TIFF* tif, bool checkQuality,
 		    const Class2Params& params, fxStr& emsg);
+    void	setupStartPage(TIFF* tif, const Class2Params& params);
+    void	recvEndPage(TIFF* tif, const Class2Params& params);
+    void	writeECMData(TIFF*, const u_char*, u_int, u_int);
     virtual void abortPageRecv() = 0;
     virtual int nextByte();
 

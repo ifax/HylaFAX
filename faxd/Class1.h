@@ -51,6 +51,9 @@ protected:
     fxStr	rhCmd;			// command for receiving a frame
     u_int	dis;			// current remote DIS
     u_int	xinfo;			// current remote DIS extensions
+    u_int	frameSize;		// size of image frames
+    u_int	signalRcvd;		// last signal received in ECM protocol
+    bool	sentERR;		// whether or not ERR was sent
     const u_char* frameRev;		// HDLC frame bit reversal table
     fxStr	lid;			// encoded local id string
     fxStr	pwd;			// transmit password
@@ -65,6 +68,18 @@ protected:
     bool	messageReceived;	// expect/don't expect message carrier
     u_int	lastPPM;		// last PPM during receive
     bool	sendCFR;		// received TCF was not confirmed
+    u_short	ecmBitPos;		// bit position to populate on ecmByte
+    u_int	ecmByte;		// pending byte to add to ecmBlock
+    u_short	ecmOnes;		// count of consecutive ones for adding zero bits
+    u_char	ecmFrame[260];		// to hold outgoing frames as they are read from the file
+    u_int	ecmFramePos;		// fill pointer for ecmFrame
+    u_char	ecmBlock[66560];	// to hold 256 raw ecmFrames to send before MCF
+    u_long	ecmBlockPos;		// fill pointer for ecmBlock
+    u_char	ecmStuffedBlock[83000];	// to hold image block after adding transparent zeros and FCS bytes
+    u_long	ecmStuffedBlockPos;	// fill pointer for ecmStuffedBlockPos
+					// 360 sync flags + 263 B/frame*256 frames + 6 B/RCP*3 RCP
+    u_short	frameNumber;		// frame sequence number of ecmFrame in ecmBlock
+    u_short	blockNumber;		// block sequence number of ecmBlock in page
 
     static const u_int modemPFMCodes[8];// map T.30 FCF to Class 2 PFM
     static const u_int modemPPMCodes[8];// map T.30 FCF to Class 2 PPM
@@ -92,9 +107,9 @@ protected:
     bool	raiseToNextBR(Class2Params&);
     bool	sendTraining(Class2Params&, int, fxStr& emsg);
     bool	sendTCF(const Class2Params&, u_int ms);
-    bool	sendPage(TIFF* tif, const Class2Params&, u_int, fxStr& emsg);
-    bool	sendPageData(u_char* data, u_int cc, const u_char* bitrev);
-    bool	sendRTC(bool is2D);
+    bool	sendPage(TIFF* tif, const Class2Params&, u_int, u_int, fxStr& emsg);
+    bool	sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm, fxStr& emsg);
+    bool	sendRTC(bool is2D, bool ecm, u_int ppmcmd, fxStr& emsg);
     bool	sendPPM(u_int ppm, HDLCFrame& mcf, fxStr& emsg);
     bool	decodePPM(const fxStr& pph, u_int& ppm, fxStr& emsg);
 // reception support
@@ -140,9 +155,17 @@ protected:
     bool	sendRawFrame(HDLCFrame& frame);
     bool	sendClass1Data(const u_char* data, u_int cc,
 		    const u_char* bitrev, bool eod);
+    bool	sendClass1ECMData(const u_char* data, u_int cc,
+		     const u_char* bitrev, bool eod, u_int ppmcmd, fxStr& emsg);
     bool	recvFrame(HDLCFrame& frame, long ms = 10*1000);
     bool	recvTCF(int br, HDLCFrame&, const u_char* bitrev, long ms);
     bool	recvRawFrame(HDLCFrame& frame);
+    bool	recvECMFrame(HDLCFrame& frame);
+    bool	syncECMFrame();
+    bool	recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg);
+    void	blockData(u_int byte, bool flag);
+    bool	blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxStr& emsg);
+    bool	endECMBlock();
     void	abortReceive();
     void	traceHDLCFrame(const char* direction, const HDLCFrame& frame);
 // class 1 command support routines

@@ -44,7 +44,7 @@ FaxModem::FaxModem(FaxServer& s, const ModemConfig& c)
     // fill order settings may be overwritten in derived class
     recvFillOrder = (conf.recvFillOrder != 0)? conf.recvFillOrder : FILLORDER_LSB2MSB;
     sendFillOrder = (conf.sendFillOrder != 0)? conf.sendFillOrder : FILLORDER_LSB2MSB;
-    rtcRev        = TIFFGetBitRevTable(sendFillOrder == FILLORDER_LSB2MSB);
+    rtcRev        = TIFFGetBitRevTable(sendFillOrder != FILLORDER_LSB2MSB);
 }
 
 FaxModem::~FaxModem()
@@ -545,6 +545,7 @@ FaxModem::modemXINFO() const
     return
 	  ((modemParams.df & BIT(DF_2DMRUNCOMP)) ? DIS_2DUNCOMP : 0)
 	| ((modemParams.df & BIT(DF_2DMMR)) ? DIS_G4COMP : 0)
+	| ((modemParams.ec & BIT(EC_ENABLE)) ? DIS_ECMODE : 0)
 	;
 }
 
@@ -574,20 +575,20 @@ void
 FaxModem::tracePPM(const char* dir, u_int ppm)
 {
     static const char* ppmNames[16] = {
-	"unknown PPM 0x00",
+	"NULL (more blocks, same page)",		// PPS-NULL
 	"EOM (more documents)",				// FCF_EOM
 	"MPS (more pages, same document)",		// FCF_MPS
-	"unknown PPM 0x03",
+	"EOR (end of retransmission)",			// FCF_EOR
 	"EOP (no more pages or documents)",		// FCF_EOP
 	"unknown PPM 0x05",
-	"unknown PPM 0x06",
+	"RR (receive ready)",				// FCF_RR
 	"unknown PPM 0x07",
-	"unknown PPM 0x08",
+	"CTC (continue to correct)",			// FCF_CTC
 	"PRI-EOM (more documents after interrupt)",	// FCF_PRI_EOM
 	"PRI-MPS (more pages after interrupt)",		// FCF_PRI_MPS
 	"unknown PPM 0x0B",
 	"PRI-EOP (no more pages after interrupt)",	// FCF_PRI_EOP
-	"unknown PPM 0x0D",
+	"PPS (partial page signal)",			// FCF_PPS
 	"unknown PPM 0x0E",
     };
     protoTrace("%s %s", dir, ppmNames[ppm&0xf]);
@@ -596,25 +597,31 @@ FaxModem::tracePPM(const char* dir, u_int ppm)
 void
 FaxModem::tracePPR(const char* dir, u_int ppr)
 {
-    static const char* pprNames[16] = {
-	"unknown PPR 0x00",
-	"MCF (message confirmation)",			// FCF_MCF/PPR_MCF
-	"RTN (retrain negative)",			// FCF_RTN/PPR_RTN
-	"RTP (retrain positive)",			// FCF_RTP/PPR_RTP
-	"PIN (procedural interrupt negative)",		// FCF_PIN/PPR_PIN
-	"PIP (procedural interrupt positive)",		// FCF_PIP/PPR_PIP
-	"unknown PPR 0x06",
-	"unknown PPR 0x07",
-	"CRP (command repeat)",				// FCF_CRP
-	"unknown PPR 0x09",
-	"unknown PPR 0x0A",
-	"unknown PPR 0x0B",
-	"unknown PPR 0x0C",
-	"unknown PPR 0x0D",
-	"unknown PPR 0x0E",
-	"DCN (disconnect)",				// FCF_DCN
-    };
-    protoTrace("%s %s", dir, pprNames[ppr&0xf]);
+    if ((ppr & 0x7f) == 0x58)				// avoid CRP-ERR collision
+	protoTrace("%s %s", dir, "CRP (command repeat)");
+    else if ((ppr & 0x7f) == 0x23)			// avoid CTR-RTP collision
+	protoTrace("%s %s", dir, "CTR (confirm continue to correct)");
+    else {
+	static const char* pprNames[16] = {
+	    "unknown PPR 0x00",
+	    "MCF (message confirmation)",		// FCF_MCF/PPR_MCF
+	    "RTN (retrain negative)",			// FCF_RTN/PPR_RTN
+	    "RTP (retrain positive)",			// FCF_RTP/PPR_RTP
+	    "PIN (procedural interrupt negative)",	// FCF_PIN/PPR_PIN
+	    "PIP (procedural interrupt positive)",	// FCF_PIP/PPR_PIP
+	    "unknown PPR 0x06",
+	    "RNR (receive not ready)",			// FCF_RNR
+	    "ERR (confirm end of retransmission)",	// FCF_ERR
+	    "unknown PPR 0x09",
+	    "unknown PPR 0x0A",
+	    "unknown PPR 0x0B",
+	    "unknown PPR 0x0C",
+	    "PPR (partial page request)",		// FCF_PPR
+	    "unknown PPR 0x0E",
+	    "DCN (disconnect)",				// FCF_DCN
+	};
+        protoTrace("%s %s", dir, pprNames[ppr&0xf]);
+    }
 }
 
 /*
@@ -677,6 +684,12 @@ FaxModem::countPage()
 {
     pageNumber++;
     pageNumberOfJob++;
+}
+
+int
+FaxModem::getPageNumber()
+{
+    return pageNumber;
 }
 
 void

@@ -92,7 +92,8 @@ ModemServer::ModemServer(const fxStr& devName, const fxStr& devID)
     curVTime = 1;			// ditto
     setupAttempts = 0;
 
-    rcvCC = rcvNext = 0;
+    rcvCC = rcvNext = rcvBit = gotByte = 0;
+    sawBlockEnd = false;
     timeout = false;
     log = NULL;
 }
@@ -1431,6 +1432,46 @@ ModemServer::getModemChar(long ms)
     return (rcvBuf[rcvNext++]);
 }
 
+int
+ModemServer::getModemBit(long ms)
+{
+    /*
+     * Return bytes bit-by-bit in MSB2LSB order.
+     * getModemChar() returns them in LSB2MSB.
+     */
+    if (rcvBit < 1) {
+	rcvBit = 8;
+	gotByte = getModemChar(ms);
+	if (gotByte == 0x10) {		// strip stuffed DLE
+	    gotByte = getModemChar(ms);
+	    if (gotByte == 0x03) sawBlockEnd = true;	// DLE+ETX
+	}
+    }
+    // enable this to simulate a VERY noisy connection
+    // if (((int) Sys::now() & 1) && ((random() % 10000)/10000.0) > 0.95) return (1);
+    if (gotByte == EOF) return (EOF);
+    else if (gotByte & (0x80 >> --rcvBit)) return (1);
+    else return (0);
+}
+
+int
+ModemServer::getLastByte()
+{
+    return gotByte;
+}
+
+bool
+ModemServer::didBlockEnd()
+{
+    return sawBlockEnd;
+}
+
+void
+ModemServer::resetBlock()
+{
+    sawBlockEnd = false;
+}
+
 void
 ModemServer::modemFlushInput()
 {
@@ -1453,7 +1494,8 @@ ModemServer::modemStopOutput()
 void
 ModemServer::flushModemInput()
 {
-    rcvCC = rcvNext = 0;
+    rcvCC = rcvNext = rcvBit = gotByte = 0;
+    sawBlockEnd = false;
 }
 
 bool

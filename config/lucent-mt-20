@@ -38,6 +38,8 @@ ModemDialCmd:		AT+FCC=,,,,,,,,0;DT%s
 # ModemAnswerCmd:	AT+FCC=,,,,1,,,,0;A
 # ModemDialCmd:		AT+FCC=,,,,1,,,,0;DT%s
 
+# If your modem supports ECM you may want to do something like this
+# Class2Cmd:		AT+FCLASS=2.0;+FRY=4
 
 # If your line supports Caller-ID, you may want to uncomment this...
 # QualifyCID:		etc/cid		# you must create this file

@@ -83,6 +83,9 @@ private:
 // buffered i/o stuff
     short	rcvCC;			// # bytes pending in rcvBuf
     short	rcvNext;		// next available byte in rcvBuf
+    u_short	rcvBit;			// pending bit of rcvNext to send
+    int		gotByte;		// byte held for bit destruction
+    bool	sawBlockEnd;		// whether DLE+ETX has been seen
     u_char	rcvBuf[1024];		// receive buffering
 
     friend class ClassModem;
@@ -134,6 +137,10 @@ protected:
     void	timerExpired(long, long);
     int		getModemLine(char buf[], u_int bufSize, long ms = 0);
     int		getModemChar(long ms = 0);
+    int		getModemBit(long ms = 0);
+    int		getLastByte();
+    bool	didBlockEnd();
+    void	resetBlock();
     bool	isModemInput() const;
     void	flushModemInput();
     bool	putModem(const void* data, int n, long ms = 0);

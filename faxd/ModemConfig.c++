@@ -202,6 +202,7 @@ static struct {
 { "class1tcfmaxnonzero",	&ModemConfig::class1TCFMaxNonZero,   10 },
 { "class1tcfminrun",		&ModemConfig::class1TCFMinRun,       (2*TCF_DURATION)/3 },
 { "class1tmconnectdelay",	&ModemConfig::class1TMConnectDelay,  0 },
+{ "class1ecmframesize",		&ModemConfig::class1ECMFrameSize,    256 },
 };
 
 void
@@ -226,6 +227,8 @@ ModemConfig::setupConfig()
     class2SendRTC	= false;		// default per Class 2 spec
     class2RTFCC		= false;		// real-time fax comp. conv.
     class2UseHex	= false;		// historical behavior
+    class1ECMSupport	= false;		// "safe" behavior until our ECM matures
+    class1ECMDoCTC	= true;			// continue to correct through all bitrates
     class1TCFRecvHack	= false;		// historical behavior
     class1ValidateV21Frames = false;		// assume the modem does this
     setVolumeCmds("ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1");
@@ -554,6 +557,10 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class2XmitWaitForXON = getBoolean(value);
     else if (streq(tag, "class2sendrtc"))
 	class2SendRTC = getBoolean(value);
+    else if (streq(tag, "class1ecmsupport"))
+	class1ECMSupport = getBoolean(value);
+    else if (streq(tag, "class1ecmdoctc"))
+	class1ECMDoCTC = getBoolean(value);
     else if (streq(tag, "class1tcfrecvhack"))
 	class1TCFRecvHack = getBoolean(value);
     else if (streq(tag, "class1validatev21frames"))

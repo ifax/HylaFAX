@@ -342,6 +342,9 @@ The following messages may appear when the facsimile protocol tracing
 \fB%s: %s (Phase B)\fP.
 An error occurred during Phase B of Group 3 protocol processing.
 .PP
+\fBBad HDLC terminating flag received.\fP.
+During Class 1 ECM; a terminating flag for an HDLC frame was corrupt.
+.PP
 \fBDELAY %u ms\fP.
 A %u-millisecond delay was done on the host.
 .PP
@@ -357,10 +360,22 @@ An error occurred while trying to transmit the
 .SM "T.30 DCS"
 frames.
 .PP
+\fBHDLC frame length invalid\fP.
+An ECM
+.SM HDLC
+protocol message was excessively long.
+.PP
+\fBHDLC frame not byte-oriented.  Trailing byte: %#x\fP.
+An ECM
+.SM HDLC
+protocol message was received with a number of bits
+incompatible with necessary byte-orientation.
+.PP
 \fBHDLC frame too short (%u bytes)\fP.
 An
 .SM HDLC
-protocol message was not at least 3 bytes long.
+protocol message was not at least 3 bytes long outside of
+ECM protocol or at least 5 bytes long within ECM protocol.
 .PP
 \fBHDLC frame with bad address field %#x\fP.
 An
@@ -496,6 +511,12 @@ on the high speed message carrier.
 During a receive operation, receipt of page of data
 on the high speed message carrier just completed.
 .PP
+\fBRECV frame FCS check failed\fP.
+During ECM protocol, a received
+.SM HDLC
+frame was received which fails the CRC check and the frame was marked
+as corrupt.
+.PP
 \fBRECV: premature EOF\fP.
 The server did not receive <DLE><ETX> to signal the end of a page
 of facsimile data during a page receive operation.
@@ -524,6 +545,22 @@ were received in error are printed.
 These numbers should always be zero unless copy quality checking
 is done in the host.
 .PP
+\fBRECV received %u frames of block %u of page %u\fP.
+When the server does Class 1 ECM; a complete block has been received
+with a given number of frames for a named page.
+.PP
+\fBRECV received assumed RCP frame with block end\fP.
+When the server does Class 1 ECM; the block-end indicator was received
+without a proper RCP frame and the receipt of an RCP frame was
+therefore assumed or feigned.
+.PP
+\fBRECV received frame number %u\fP.
+When the server does Class 1 ECM; the numbered image frame has been received.
+.PP
+\fBRECV received RCP frame\fP.
+When the server does Class 1 ECM; the first RCP frame was received,
+which signifies the end of the image block.
+.PP
 \fBRECV: REJECT page quality, %u%% good lines (%u%% required)\fP.
 When the server does copy quality checking; the received page
 is deemed to have unacceptable quality because the percentage
@@ -539,6 +576,11 @@ consecutive rows that were received in error exceeds the threshold
 specified by the
 .B MaxBadLines
 configuration parameter.
+.PP
+\fBRECV sent fourth PPR\fP.
+During Class 1 ECM; the server has rejected a received image block
+consecutively four times at which point the sender is allowed to either
+continue to retransmit the block or to end retransmissions.
 .PP
 \fBREMOTE HANGUP: %s (code %s)\fP.
 The modem returned a hangup status code (``\s-1+FHNG:\s+1'' or
