@@ -1,5 +1,33 @@
 #	$Id$	
 
+Changelog for HylaFAX 4.1.4 - 15 Sep 2002
+
+CHANGES:
+* disabled Solaris DSO support due to problems (13 Sep 2002)
+* add Class1ResponseWaitCmd to help USR send errors (13 Sep 2002)
+* add recognition of most of Japan NSF codes (13 Sep 2002)
+* fix notify manpage to not include commid (13 Sep 2002)
+* add +XMonth capability to "at" syntax (13 Sep 2002)
+* fix killtime to allow >= 24 day settings (13 Sep 2002)
+* add RingExtended config option (29 Aug 2002)
+* pass CID information to faxrcvd when using faxanswer (27 Aug 2002)
+* increase the RING timeout setting to six seconds (27 Aug 2002)
+* break lucent-isa prototype from lucent (27 Aug 2002)
+* add Class1MsgRecvHackCmd otpion (21 Aug 2002)
+* add faxqclean -A (force archiving) option (20, 29 Aug 2002)
+* fix pdf2fax to be installed properly for custom packaging (19 Aug 2002)
+* add Digi AccelePort prototype support (15 Aug 2002)
+* number DSOs according to the HylaFAX version (15 Aug 2002)
+* make faxalter accept more than one option at a time (14 Aug 2002)
+* add recognition of all US and UK NSF codes (14 Aug 2002)
+* change ModemBaudRateDelay default to help USRs reset (13 Aug 2002)
+* fix xferfaxstats to handle new Super G3 faxing speeds (08 Aug 2002)
+* support page counting for PDFs (02 Aug 2002)
+* change sendfax to warn users about bad placement of "-d" options (02 Aug 2002)
+* fixed faxaddmodem and probemodem for portability (02, 07 Aug 2002)
+* corrected some comments in prototype config files (01 Aug 2002)
+* added support for new USR Courier modem (01 Aug 2002)
+
 Changelog for HylaFAX 4.1.3 - Jul 27, 2002
 
 * change some comments in the usr-xon and usr-rts (27 Jul 2002)

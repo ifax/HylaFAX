@@ -35,27 +35,29 @@ Alvaro Aguilera      Andre Albsmeier      a.pogoda@web.de
 Ronald Appelfelder   Heinz-Ado Arnolds    Jay Ashworth
 Toki Barron          Stephan Bauer        Dmitry Bely
 Thomas Biege         David Birnbaum       Trevor Blackwell
-Marc Boucher         Yves Carlier         Jonathon Chen
-Robert Colquhoun     Ken Cornetet         Seth Cuaiklin
-Albert DeKnuydt      Paul Eggert          John Florian
-Patrice Fournier     Vyacheslav Frolov    Carsten Hoeger
-Lee Howard           John Interrante      Damiam Ivereigh
+Marc Boucher         Yves Carlier         Ed Casas
+Jonathon Chen        Robert Colquhoun     Ken Cornetet
+Seth Cuaiklin        Albert DeKnuydt      Paul Eggert
+John Florian         Patrice Fournier     Vyacheslav Frolov
+Sascha Herrmann      Carsten Hoeger       Lee Howard
+John Interrante      Damiam Ivereigh      Bernard Jech
 Nico Kadel-Garcia    Sean Kamath          Jonathan Kamens
 Dimitry Ketov        Steffan Klipsch      Hannu Koivisto
 Ken Lalonde          Rob Leadbeater       Guillaume Legoupil
-Greg Luck            Campbell McKilligan  Seth Mos
-Darren Nickerson     Giulio Orsero        John Perkins
-John Patrick Poet    Harald Pollack       Bernd Proissl
-Matthew Rice         Tim Rice             Daniel Robbins
-Michael Salzmann     John Sellens         Simon <iahnl@iah.nl>
-Vilmos Soti          Alan Sparks          Andy Sparrow
-Iain Stevenson       Marius Strobl        Daryl Thachuk
-Steve Tuckner        Aidan Van Dyk        Norbert Warmuth
-Phil Watkinson       James Werkowski      Chas Williams
-John Williams        Steve Williams       Bill Young
-Bruce Young
+Greg Luck            Pierluigi Mangani    Campbell McKilligan
+Seth Mos             Darren Nickerson     Giulio Orsero
+John Perkins         John Patrick Poet    Harald Pollack
+Bernd Proissl        Matthew Rice         Tim Rice
+Daniel Robbins       Michael Salzmann     John Sellens
+Simon <iahnl@iah.nl> Vilmos Soti          Alan Sparks
+Andy Sparrow         Iain Stevenson       Marius Strobl
+Daryl Thachuk        Steve Tuckner        Aidan Van Dyk
+Norbert Warmuth      Phil Watkinson       James Werkowski
+Chas Williams        John Williams        Steve Williams
+Bill Young           Bruce Young
 
-We appreciate the upstreamed contributions from these distributions:
+We appreciate and recognize the upstreamed contributions from these 
+distributions:
 
 Debian Linux, Gentoo Linux, Mandrake Linux, NetBSD, SuSE Linux
 
