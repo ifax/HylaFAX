@@ -1089,7 +1089,7 @@ ClassModem::vparseRange(const char* cp, int nargs ... )
 	    if (conf.class2UseHex) {			// read as hex
 		if (isxdigit(cp[0])) {
 		    char *endp;
-		    v = strtol(cp, &endp, 16);
+		    v = (int) strtol(cp, &endp, 16);
 		    cp = endp;
 		} else {
 		    v = -1;				// XXX skip item below
@@ -1115,7 +1115,7 @@ ClassModem::vparseRange(const char* cp, int nargs ... )
 			goto done;
 		    }
 		    char *endp;
-		    r = strtol(cp, &endp, 16);
+		    r = (int) strtol(cp, &endp, 16);
 		    cp = endp;
 		} else {				// assume decimal
 		    if (!isdigit(cp[0])) {
