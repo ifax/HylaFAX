@@ -609,17 +609,20 @@ ModemServer::beginSession(const fxStr& number)
 	    ftmp = Sys::open(file, O_RDWR|O_CREAT|O_EXCL, logMode);
 	} while (ftmp < 0 && errno == EEXIST && --ntry >= 0);
 	umask(omask);
-	if (ftmp >= 0) {
-	    sprintf(line, "%u", seqnum);
-	    (void) lseek(fseqf, 0, SEEK_SET);
-	    if (Sys::write(fseqf, line, strlen(line)) != strlen(line) ||
-		ftruncate(fseqf,strlen(line)))
-		logError("Error writing commid sequence number file");
-	    Sys::close(fseqf);			// NB: implicit unlock
-	    log = new
-		FaxMachineLog(ftmp, canonicalizePhoneNumber(number), commid);
-	} else
-	    logError("Failed to find free commid (seqnum=%u)", seqnum);
+        if (ftmp >= 0) {
+            fxStr lineout = fxStr::format("%u", seqnum);
+            int len = lineout.length();
+            (void) lseek(fseqf, 0, SEEK_SET);
+            if (Sys::write(fseqf, (const char*)lineout, len) != len ||
+	                ftruncate(fseqf,len)) {
+                logError("Error writing commid sequence number file");
+            }
+            Sys::close(fseqf);			// NB: implicit unlock
+            log = new
+	            FaxMachineLog(ftmp, canonicalizePhoneNumber(number), commid);
+        } else {
+	        logError("Failed to find free commid (seqnum=%u)", seqnum);
+        }
 	Sys::close(fseqf);			// NB: implicit unlock
     } else
 	logError("Unable to allocate commid: open(%s): %s",
@@ -811,8 +814,7 @@ ModemServer::traceModemOp(const char* fmt0 ...)
 {
     va_list ap;
     va_start(ap, fmt0);
-    char fmt[256];
-    sprintf(fmt, "MODEM %s", fmt0);
+    fxStr fmt = fxStr::vformat("MODEM %s", fmt0, ap);
     vtraceStatus(FAXTRACE_MODEMOPS, fmt, ap);
     va_end(ap);
 }
@@ -832,7 +834,7 @@ void
 ModemServer::vtraceStatus(int kind, const char* fmt, va_list ap)
 {
     if (log) {
-        fxStr s = fxStr::format(fmt, ap);
+        fxStr s = fxStr::vformat(fmt, ap);
         if (kind == FAXTRACE_SERVER) { // always log server stuff
             logInfo(s);
         }
@@ -840,7 +842,7 @@ ModemServer::vtraceStatus(int kind, const char* fmt, va_list ap)
 	        log->log(s);
         }
     } else if (tracingLevel & kind) {
-	    logInfo(fxStr::format(fmt, ap));
+	    logInfo(fxStr::vformat(fmt, ap));
     }
 }
 
