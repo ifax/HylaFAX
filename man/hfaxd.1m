@@ -805,7 +805,10 @@ Bind to the specified
 the tcp port. Please note that this argument need to be specified before
 the 
 .BI \-i
-otherwise it will be ignored.
+otherwise it will be ignored. A better approach to improve security would
+be to run hfaxd from xinetd, binding its service to the specific port. This
+will also make hylafax benefits from tcp wrappers and other options
+provided by xinetd.
 .TP 10
 .BI \-i " port"
 Listen on the specified 

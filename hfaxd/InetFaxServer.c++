@@ -43,13 +43,16 @@ extern "C" {
 InetSuperServer::InetSuperServer(const char* p, int bl)
     : SuperServer("INET", bl)
     , port(p)
-{}
+{
+    bindaddress = NULL;
+}
+
 InetSuperServer::~InetSuperServer() {}
 
 void
-InetSuperServer::setBindAddress(const char *bindaddress)
+InetSuperServer::setBindAddress(const char *bindaddr)
 {
-    this->bindaddress = bindaddress;
+    bindaddress = bindaddr;
 }
 
 bool
