@@ -35,6 +35,7 @@
 # CONFIG:CLASS1:LT V.90 Data+Fax Modem Version 5.99:.*:.*: Manufacturer=Lucent Model='LT Winmodem'
 # CONFIG:CLASS1:LT V.90 1.0 MT5634ZPX-PCI Internal Data/Fax/Voice Modem Version 8.19b:.*:.*: Manufacturer=MultiTech Model=MT5634ZPX-PCI
 # CONFIG:CLASS1:LT V.90 1.0 MT5634ZPX-PCI Internal Data/Fax/Voice Modem Version 8.19c:.*:.*: Manufacturer=MultiTech Model=MT5634ZPX-PCI
+# CONFIG:CLASS1:LT V.90 1.0 MT5634ZBA Serial Data/Fax Modem Version 8.19d:.*:.*: Manufacturer=MultiTech Model=MT5634ZBA
 # CONFIG:CLASS1:AT&T 33.6 Data/14.4 Fax + Voice Modem Version 5.03d:.*:.*: Manufacturer="AT&T" Model=Lucent
 #
 # BEGIN-SERVER
