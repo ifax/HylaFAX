@@ -200,6 +200,7 @@ HYLAFAXSRC=\
 	config/intel-400e			\
 	config/mt-1432				\
 	config/lucent				\
+	config/lucent-mt-2			\
 	config/moto-288				\
 	config/nuvo-voyager			\
 	config/ppi-pm14400fxmt			\

@@ -1,0 +1,29 @@
+#
+# prototype config file for MultiTech MT5634ZPX-PCI (Lucent Venus)
+# Note that this file is named intentionally "lucent-mt-2"
+# to precede "mt-1432" and win the pick; the two files are
+# incompatible and conflict in CONFIG catch-strings.
+# Non-MT5634ZPX-PCI modems will pass this file by
+# because this CONFIG line is model-specific.
+#
+
+#
+# CONFIG: CLASS2:"Multi-Tech Systems"-"MT5634ZPX-PCI"-*
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+
+ModemType:		Class2
+ModemRate:		38400
+ModemFlowControl:	rtscts
+ModemNoFlowCmd:		AT&K0
+ModemSoftFlowCmd:	AT&K4
+ModemHardFlowCmd:	AT&K3
+ModemRecvFillOrder:	MSB2LSB		# classic MultiTech
+
+Class2APQueryCmd:	none		# not available
+Class2BUGCmd:		none		# not available
+Class2NFLOCmd:		AT+FLO=0
+Class2SFLOCmd:		AT+FLO=1
+Class2HFLOCmd:		AT+FLO=2

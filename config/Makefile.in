@@ -61,6 +61,7 @@ CONFIGFILES=class1 \
 	gvc-288-2 \
 	intel-400e \
 	lucent \
+	lucent-mt-2 \
 	moto-288 \
 	mt-1432 \
 	nuvo-voyager \
