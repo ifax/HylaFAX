@@ -3400,7 +3400,7 @@ if [ -z "$DIR_SYSVINIT" ]; then
 fi
 
 if [ "$SYSVINIT" = auto ]; then
-    if test -d $DIR_SYSVINIT; then
+    if test -d "$DIR_SYSVINIT"; then
 	SYSVINIT=yes
 	Note "Looks like a SysV-style init is used, enabling installation of startup code."
     else
