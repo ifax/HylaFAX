@@ -61,7 +61,7 @@ const char* ClassModem::serviceNames[9] = {
     "",				// 7
     "\"Voice\"",		// SERVICE_VOICE
 };
-const char* ClassModem::ATresponses[13] = {
+const char* ClassModem::ATresponses[14] = {
     "Nothing",			// AT_NOTHING
     "OK",			// AT_OK
     "Connection established",	// AT_CONNECT
@@ -74,6 +74,7 @@ const char* ClassModem::ATresponses[13] = {
     "Command error",		// AT_ERROR
     "<Empty line>",		// AT_EMPTYLINE
     "<Timeout>",		// AT_TIMEOUT
+    "<xonxoff>",		// AT_XONXOFF
     "<Unknown response>"	// AT_OTHER
 };
 const char* ClassModem::callTypes[5] = {
@@ -751,6 +752,10 @@ ClassModem::atResponse(char* buf, long ms)
 	case 'R':
 	    if (streq(buf, "RING"))		// NB: avoid match of RINGING
 		lastResponse = AT_RING;
+	    break;
+	case '\020':
+	    if (streq(buf, "\020\003"))		// DC1/DC3 (XON/XOFF)
+		lastResponse = AT_XONXOFF;
 	    break;
 	}
     }

@@ -166,7 +166,8 @@ public:
 	AT_ERROR	= 9,	// "ERROR" response
 	AT_EMPTYLINE	= 10,	// empty line (0 characters received)
 	AT_TIMEOUT	= 11,	// timeout waiting for response
-	AT_OTHER	= 12	// unknown response (not one of above)
+	AT_XONXOFF	= 12,	// xon/xoff characters
+	AT_OTHER	= 13	// unknown response (not one of above)
     };
 private:
     ModemServer& server;	// server for getting to device
@@ -190,7 +191,7 @@ protected:
 
     static const char* serviceNames[9];	 // class 2 services
     static const char* callStatus[10];	 // printable call status
-    static const char* ATresponses[13];
+    static const char* ATresponses[14];
 
     ClassModem(ModemServer&, const ModemConfig&);
 
