@@ -229,9 +229,13 @@ ModemServer::changeState(ModemServerState s, long timeout)
 	    (const char*) modemDevice, setupAttempts);
 	notifyModemWedged();
     }
+    /*
+     * Before we start any timer, make sure we stop the current one
+     */
+    Dispatcher::instance().stopTimer(this);
+
     if (timeout)
 	Dispatcher::instance().startTimer(timeout, 0, this);
-
 }
 
 #if HAS_SCHEDCTL

@@ -2,7 +2,7 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.1.4
+The HylaFAX development team is pleased to announce our 4.1.5
 patch-level release!  The release represents many hours of work and
 testing by developers and contributors, and our thanks goes to all who
 participate and provide feedback.
@@ -10,7 +10,7 @@ participate and provide feedback.
                                *   *   *
 
 This document is intended to describe the significant differences
-between hylafax-4.1.4 and older releases, point out any known
+between hylafax-4.1.5 and older releases, point out any known
 incompatibilites and issues, and provide the reader with directions to
 further resources regarding HylaFAX.
 
@@ -53,9 +53,13 @@ further resources regarding HylaFAX.
 
                       *   WHO SHOULD UPGRADE?   *
 
+Anyone running the short-lived 4.1.4 release of HylaFAX should consider this
+a mandatory upgrade. A race condition in the lockfile polling code could lead
+to a non-responsive faxgetty in some circumstances.
+
 A large number of security fixes were included in the 4.1.3 release of
 HylaFAX which make it very important to upgrade to 4.1.3 or newer. If you
-are not already running 4.1.3, this 4.1.4 release is a recommended
+are not already running 4.1.3, this 4.1.5 release is a recommended
 upgrade.
 
 Anyone already running 4.1.3 on Solaris should also upgrade, since a number
