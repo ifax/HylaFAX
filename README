@@ -32,7 +32,6 @@ further resources regarding HylaFAX.
 * HylaFAX corrupts images received in 2D-MMR.
 * Specific support for fax class 1.0 is not yet implemented.
 * NSF can be parsed incorrectly if the modem doesn't report it in hex.
-* Copy quality checking by cqtest is imperfect.
 * sendfax use of ~/.hylarc differs from its use of hyla.conf
 ** Please refer to HylaFAX Bugzilla for a detailed list of issues.
 
@@ -48,10 +47,12 @@ further resources regarding HylaFAX.
                       *   WHO SHOULD UPGRADE?   *
 
 4.1.3 includes fixes for a remote format string vulnerability which could 
-be abused in a denial of service attack.  Also present in 4.1.3 are fixes 
-for several other local remote format string vulnerabilities which, in 
-some installations, could lead to elevated privileges by abuse.  Everyone 
-is advised to upgrade.
+be abused in a denial of service attack.  Also fixed is a buffer 
+overflow condition when receiving fax image data which potentially 
+could be exploited to execute arbitrary code as root.  Also present in 
+4.1.3 are fixes for several other local remote format string 
+vulnerabilities which, in some installations, could lead to elevated 
+privileges by abuse.  Everyone is advised to upgrade.
 
                      *   HYLAFAX BINARY PACKAGES   *
 

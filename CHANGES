@@ -1,7 +1,13 @@
 #	$Id$	
 
-Changelog for HylaFAX 4.1.3 - Jun 27, 2002
+Changelog for HylaFAX 4.1.3 - Jul 27, 2002
 
+* change some comments in the usr-xon and usr-rts (27 Jul 2002)
+* synchronize faxd/tif_fax3.h with libtiff's (23 Jul 2002)
+* remove the SGI logo from the default coverpage (23 Jul 2002)
+* documentation clarification for NoCarrierRetries (22 Jul 2002)
+* fix notify.awk to handle jobtag values with colons (19 Jul 2002)
+* remove admin-only restriction to the tagline (16 Jul 2002)
 * adds prototype support for MultiTech ISI5634PCI (09 Jul 2002)
 * caused the wedged script to give exit status (06 Jul 2002)
 * allowed faxgetty to identify extended RING data as a RING (06 Jul 2002)
