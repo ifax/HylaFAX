@@ -287,9 +287,9 @@ HYLAFAXSRC=\
 	util/ModemExt.c++			\
 	util/Obj.c++				\
 	util/PageSize.c++			\
-	util/RegEx.c++				\
-	util/RegExArray.c++			\
-	util/RegExDict.c++			\
+	util/RE.c++				\
+	util/REArray.c++			\
+	util/REDict.c++			\
 	util/SendFaxClient.c++			\
 	util/SendFaxJob.c++			\
 	util/SNPPClient.c++			\
@@ -327,9 +327,9 @@ HYLAFAXSRC=\
 	util/Obj.h				\
 	util/PageSize.h				\
 	util/Ptr.h				\
-	util/RegEx.h				\
-	util/RegExArray.h			\
-	util/RegExDict.h			\
+	util/RE.h				\
+	util/REArray.h			\
+	util/REDict.h			\
 	util/SendFaxClient.h			\
 	util/SendFaxJob.h			\
 	util/SNPPClient.h			\

@@ -23,5 +23,5 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
-#include "RegExDict.h"
-fxIMPLEMENT_StrKeyObjValueDictionary(RegExDict, RegExPtr)
+#include "REDict.h"
+fxIMPLEMENT_StrKeyObjValueDictionary(REDict, REPtr)

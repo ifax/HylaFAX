@@ -28,7 +28,7 @@
  * HylaFAX Dialing String Rule Support.
  */
 #include "DialRules.h"
-#include "RegExArray.h"
+#include "REArray.h"
 #include "Dictionary.h"
 
 #include <ctype.h>
@@ -42,7 +42,7 @@
 const u_int META = 0200;		// interpolation marker
 
 struct DialRule {
-    RegExPtr	pat;			// pattern to match
+    REPtr	pat;			// pattern to match
     fxStr	replace;		// replacement string
 
     DialRule();
@@ -66,7 +66,7 @@ DialStringRules::DialStringRules(const char* file) : filename(file)
     verbose = false;
     fp = NULL;
     vars = new VarDict;
-    regex = new RegExArray;
+    regex = new REArray;
     rules = new RulesDict;
 }
 
@@ -315,13 +315,13 @@ DialStringRules::parseRuleSet(RuleArray& rules)
 	u_int i = 0;
 	u_int n = regex->length();
 	while (i < n) {
-	    RegEx* re = (*regex)[i];
+	    RE* re = (*regex)[i];
 	    if (strcmp(re->pattern(), pat) == 0)
 		break;
 	    i++;
 	}
 	if (i >= n) {
-	    r.pat = new RegEx(pat);
+	    r.pat = new RE(pat);
 	    if (r.pat->getErrorCode() > REG_NOMATCH) {
 		fxStr emsg;
 		r.pat->getError(emsg);

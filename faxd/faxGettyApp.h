@@ -69,7 +69,7 @@ private:
     u_short	ringsHeard;		// # rings received
     fxStr	qualifyCID;		// if set, no answer w/o acceptable cid
     time_t	lastCIDModTime;		// last mod time of CID patterns file
-    RegExArray*	cidPats;		// recv cid patterns
+    REArray*	cidPats;		// recv cid patterns
     fxBoolArray* acceptCID;		// accept/reject matched cid
     CallerID	received_cid;		// non-null received CNID
     fxStr	gettyArgs;		// getty arguments

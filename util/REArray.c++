@@ -23,13 +23,5 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
-#ifndef _RegExArray_
-#define	_RegExArray_
-/*
- * Array of Regular Expressions.
- */
-#include "Array.h"
-#include "RegEx.h"
-
-fxDECLARE_ObjArray(RegExArray, RegExPtr)
-#endif /* _RegExArray_ */
+#include "REArray.h"
+fxIMPLEMENT_ObjArray(REArray, REPtr)

@@ -36,12 +36,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "RegExArray.h"
+#include "REArray.h"
 #include "BoolArray.h"
 #include "Str.h"
 
 fxStr		qualifyTSI;
-RegExArray*	tsiPats = NULL;		// recv tsi patterns
+REArray*	tsiPats = NULL;		// recv tsi patterns
 fxBoolArray*	acceptTSI = NULL;	// accept/reject matched tsi
 time_t		lastPatModTime = 0;	// last mod time of patterns file
 
@@ -56,12 +56,12 @@ time_t		lastPatModTime = 0;	// last mod time of patterns file
  * causes all incoming facsimile to be rejected.
  */
 void
-readTSIPatterns(FILE* fd, RegExArray*& pats, fxBoolArray*& accept)
+readTSIPatterns(FILE* fd, REArray*& pats, fxBoolArray*& accept)
 {
     if (pats)
 	pats->resize(0);
     else
-	pats = new RegExArray;
+	pats = new REArray;
     if (accept)
 	accept->resize(0);
     else
@@ -79,13 +79,13 @@ readTSIPatterns(FILE* fd, RegExArray*& pats, fxBoolArray*& accept)
 	*cp = '\0';
 	if (line[0] == '\0')
 	    continue;
-	RegEx* re;
+	RE* re;
 	if (line[0] == '!') {
 	    accept->append(false);
-	    pats->append(re = new RegEx(line+1));
+	    pats->append(re = new RE(line+1));
 	} else {
 	    accept->append(true);
-	    pats->append(re = new RegEx(line));
+	    pats->append(re = new RE(line));
 	}
 	if (re->getErrorCode() > REG_NOMATCH) {
 	    fxStr emsg;
@@ -168,7 +168,7 @@ main(int argc, char* argv[])
 	if (tsiPats != NULL) {
 	    u_int i;
 	    for (i = 0; i < tsiPats->length(); i++) {
-		RegEx* pat = (*tsiPats)[i];
+		RE* pat = (*tsiPats)[i];
 		if (verbose)
 		    printf("[check %s]\n", pat->pattern());
 		fxStr tsi(line);

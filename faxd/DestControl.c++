@@ -251,7 +251,7 @@ DestControl::parseEntry(FILE* fp)
 	*cp++ = '\0';
 	DestControlInfo dci(line);
 	if (dci.pattern.getErrorCode() > REG_NOMATCH) {
-	    RegEx& re = dci.pattern;
+	    RE& re = dci.pattern;
 	    fxStr emsg;
 	    re.getError(emsg);
 	    parseError("Bad regular expression: %s: " | emsg, re.pattern());

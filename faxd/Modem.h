@@ -35,18 +35,18 @@
 typedef	unsigned int ModemState;
 
 class UUCPLock;
-class RegEx;
-class RegExDict;
+class RE;
+class REDict;
 class fxStackBuffer;
 class Modem;
 
 class ModemGroup {
 private:
-    static RegExDict* classes;	// registered modem classes
+    static REDict* classes;	// registered modem classes
 public:
     static void reset();
-    static void set(const fxStr& name, RegEx* re);
-    static RegEx* find(const char* name);
+    static void set(const fxStr& name, RE* re);
+    static RE* find(const char* name);
 };
 
 /*

@@ -29,20 +29,20 @@
 
 #include "Modem.h"
 #include "UUCPLock.h"
-#include "RegExDict.h"
+#include "REDict.h"
 #include "TriggerRef.h"
 #include "Dispatcher.h"
 #include "config.h"
 
-RegExDict* ModemGroup::classes =  NULL;	// modem classes
+REDict* ModemGroup::classes =  NULL;	// modem classes
 
-RegEx*
+RE*
 ModemGroup::find(const char* name)
 {
     if (classes == NULL)
 	return (NULL);
-    const RegExPtr* re = classes->find(name);
-    return (re ? (RegEx*) *(RegExPtr*) re : (RegEx*) NULL);
+    const REPtr* re = classes->find(name);
+    return (re ? (RE*) *(REPtr*) re : (RE*) NULL);
 }
 
 void
@@ -52,10 +52,10 @@ ModemGroup::reset()
 }
 
 void
-ModemGroup::set(const fxStr& name, RegEx* re)
+ModemGroup::set(const fxStr& name, RE* re)
 {
     if (classes == NULL)
-	classes = new RegExDict;
+	classes = new REDict;
     (*classes)[name] = re;
 }
 
@@ -138,10 +138,10 @@ Modem::isCapable(const Job& job) const
 Modem*
 Modem::findModem(const Job& job, const DestControlInfo& dci)
 {
-    RegEx* c = ModemGroup::find(job.device);
+    RE* c = ModemGroup::find(job.device);
     if (c) {
 	const fxStr& mdci = dci.getModem();
-	RegEx* cdci = mdci != "" ? ModemGroup::find(mdci) : NULL;
+	RE* cdci = mdci != "" ? ModemGroup::find(mdci) : NULL;
 	int loops = 2;
 
 	/*

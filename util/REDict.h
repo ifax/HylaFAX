@@ -23,13 +23,13 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
-#ifndef _RegExDict_
-#define	_RegExDict_
+#ifndef _REDict_
+#define	_REDict_
 /*
  * Dictionary of Regular Expressions.
  */
 #include "Dictionary.h"
-#include "RegEx.h"
+#include "RE.h"
 
-fxDECLARE_StrKeyDictionary(RegExDict, RegExPtr)
-#endif /* _RegExDict_ */
+fxDECLARE_StrKeyDictionary(REDict, REPtr)
+#endif /* _REDict_ */

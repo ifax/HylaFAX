@@ -2674,7 +2674,7 @@ faxQueueApp::setupConfig()
     uucpLockMode = UUCP_LOCKMODE;
     delete dialRules, dialRules = NULL;
     ModemGroup::reset();		// clear+add ``any modem'' class
-    ModemGroup::set(MODEM_ANY, new RegEx(".*"));
+    ModemGroup::set(MODEM_ANY, new RE(".*"));
     pageChop = FaxRequest::chop_last;
     pageChopThreshold = 3.0;		// minimum of 3" of white space
 }
@@ -2782,7 +2782,7 @@ faxQueueApp::setConfigItem(const char* tag, const char* value)
 	    for (cp++; *cp && isspace(*cp); cp++)
 		;
 	    if (*cp != '\0') {
-		RegEx* re = new RegEx(cp);
+		RE* re = new RE(cp);
 		if (re->getErrorCode() > REG_NOMATCH) {
 		    fxStr emsg;
 		    re->getError(emsg);

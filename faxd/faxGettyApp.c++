@@ -41,7 +41,7 @@
 #include "faxGettyApp.h"
 #include "UUCPLock.h"
 #include "Getty.h"
-#include "RegExArray.h"
+#include "REArray.h"
 #include "BoolArray.h"
 #include "config.h"
 

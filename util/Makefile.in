@@ -48,9 +48,9 @@ C++FILES=Array.c++ \
 	Dictionary.c++ \
 	Obj.c++ \
 	PageSize.c++ \
-	RegEx.c++ \
-	RegExArray.c++ \
-	RegExDict.c++ \
+	RE.c++ \
+	REArray.c++ \
+	REDict.c++ \
 	StackBuffer.c++ \
 	Str.c++ \
 	StrArray.c++ \

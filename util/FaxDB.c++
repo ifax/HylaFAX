@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE.
  */
 #include "FaxDB.h"
-#include "RegEx.h"
+#include "RE.h"
 
 FaxDBRecord::FaxDBRecord()
 {
@@ -93,7 +93,7 @@ FaxDB::find(const fxStr& s, fxStr* name)
 	canon.insert('\\', l);
 	l += 2;
     }
-    RegEx pat(canon);
+    RE pat(canon);
     for (FaxInfoDictIter iter(dict); iter.notDone(); iter++) {
 	fxStr t(iter.key());
 	t.lowercase();

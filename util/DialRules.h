@@ -41,7 +41,7 @@
 #include "Str.h"
 
 class RuleArray;
-class RegExArray;
+class REArray;
 class VarDict;
 class RulesDict;
 
@@ -52,7 +52,7 @@ private:
     FILE*	fp;		// open file during parsing
     VarDict*	vars;		// defined variables during parsing
     bool	verbose;	// trace parsing of rules file
-    RegExArray*	regex;		// regular expressions
+    REArray*	regex;		// regular expressions
     RulesDict*	rules;		// rules defined in the file
 
     bool parseRules();

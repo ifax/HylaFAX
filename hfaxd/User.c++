@@ -25,7 +25,7 @@
  */
 #include "HylaFAXServer.h"
 #include "Sys.h"
-#include "RegEx.h"
+#include "RE.h"
 #include "config.h"
 
 #include <ctype.h>
@@ -129,7 +129,7 @@ HylaFAXServer::checkuser(FILE* db, const char* name)
 	for (cp = line; *cp && *cp != ':'; cp++)
 	    ;
 	const char* base = &line[line[0] == '!'];
-	RegEx pat(base, cp-base);
+	RE pat(base, cp-base);
 	if (line[0] == '!') {		// disallow access on match
 	    if (pat.Find(dotform) || pat.Find(hostform))
 		return (false);

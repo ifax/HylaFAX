@@ -33,7 +33,7 @@
 #include "Socket.h"
 #include "SNPPServer.h"
 #include "Dispatcher.h"
-#include "RegEx.h"
+#include "RE.h"
 
 #include <ctype.h>
 #if HAS_CRYPT_H
@@ -204,7 +204,7 @@ isMagic(char c)
  * Handle \escapes for a pager ID replacement string.
  */
 static void
-subRHS(fxStr& result, const RegEx& re, const fxStr& match)
+subRHS(fxStr& result, const RE& re, const fxStr& match)
 {
     /*
      * Do ``&'' and ``\n'' interpolations in the replacement.
@@ -276,9 +276,9 @@ SNPPServer::mapPagerID(const char* pagerID, fxStr& number, fxStr& pin, fxStr& em
 		if (*cp != '\0')			// \0-term. <pattern>
 		    *cp++ = '\0';
 		bool match;
-		RegEx* re;
+		RE* re;
 		if (isRE) {
-		    re = new RegEx(pattern);
+		    re = new RE(pattern);
 		    match = re->Find(pagerID, strlen(pagerID));
 		} else {
 		    match = streq(pattern, pagerID);

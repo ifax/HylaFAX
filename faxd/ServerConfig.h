@@ -32,7 +32,7 @@
 
 class DialStringRules;
 class UUCPLock;
-class RegExArray;
+class REArray;
 class fxBoolArray;
 
 class ServerConfig : public ModemConfig {
@@ -66,7 +66,7 @@ private:
     mode_t	uucpLockMode;		// UUCP lock file creation mode
     u_int	uucpLockTimeout;	// UUCP stale lock file timeout
     time_t	lastTSIModTime;		// last mod time of TSI patterns file
-    RegExArray*	tsiPats;		// recv tsi patterns
+    REArray*	tsiPats;		// recv tsi patterns
     fxBoolArray* acceptTSI;		// accept/reject matched tsi
     fxStr	logFacility;		// syslog facility to direct trace msgs
 
@@ -83,10 +83,10 @@ protected:
 
 // pattern access control list support
     void	updatePatterns(const fxStr& file,
-		    RegExArray*& pats, fxBoolArray*& accept,
+		    REArray*& pats, fxBoolArray*& accept,
 		    time_t& lastModTime);
-    void	readPatterns(FILE*, RegExArray*&, fxBoolArray*&);
-    bool	checkACL(const fxStr& id, RegExArray*, fxBoolArray&);
+    void	readPatterns(FILE*, REArray*&, fxBoolArray*&);
+    bool	checkACL(const fxStr& id, REArray*, fxBoolArray&);
 // methods for parameters whose assignment may have side effects
     virtual void setDialRules(const char* name);
     virtual void setLocalIdentifier(const fxStr& lid);

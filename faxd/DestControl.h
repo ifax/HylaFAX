@@ -28,7 +28,7 @@
 /*
  * Destination Controls.
  */
-#include "RegEx.h"
+#include "RE.h"
 #include "TimeOfDay.h"
 #include "Array.h"
 
@@ -40,7 +40,7 @@
  */
 class DestControlInfo {
 private:
-    RegEx	pattern;		// destination pattern
+    RE	pattern;		// destination pattern
     u_long	defined;		// parameters that were defined
     u_int	maxConcurrentJobs;	// max number of parallel calls
     u_int	maxSendPages;		// max pages in a send job

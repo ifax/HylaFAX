@@ -27,7 +27,7 @@
 #include "FaxTrace.h"
 #include "DialRules.h"
 #include "UUCPLock.h"
-#include "RegExArray.h"
+#include "REArray.h"
 #include "BoolArray.h"
 #include "faxApp.h"
 
@@ -284,7 +284,7 @@ ServerConfig::getUUCPLock(const fxStr& deviceName)
 }
 
 bool
-ServerConfig::checkACL(const fxStr& id, RegExArray* pats, fxBoolArray& accept)
+ServerConfig::checkACL(const fxStr& id, REArray* pats, fxBoolArray& accept)
 {
     if (pats != NULL) {
 	for (u_int i = 0; i < pats->length(); i++)
@@ -307,7 +307,7 @@ ServerConfig::isTSIOk(const fxStr& tsi)
  */
 void
 ServerConfig::updatePatterns(const fxStr& file,
-    RegExArray*& pats, fxBoolArray*& accept,
+    REArray*& pats, fxBoolArray*& accept,
     time_t& lastModTime)
 {
     struct stat sb;
@@ -336,12 +336,12 @@ ServerConfig::updatePatterns(const fxStr& file,
  * causes all incoming facsimile to be rejected.
  */
 void
-ServerConfig::readPatterns(FILE* fp, RegExArray*& pats, fxBoolArray*& accept)
+ServerConfig::readPatterns(FILE* fp, REArray*& pats, fxBoolArray*& accept)
 {
     if (pats)
 	pats->resize(0);
     else
-	pats = new RegExArray;
+	pats = new REArray;
     if (accept)
 	accept->resize(0);
     else
@@ -359,13 +359,13 @@ ServerConfig::readPatterns(FILE* fp, RegExArray*& pats, fxBoolArray*& accept)
 	*cp = '\0';
 	if (line[0] == '\0')
 	    continue;
-	RegEx* re;
+	RE* re;
 	if (line[0] == '!') {
 	    accept->append(false);
-	    pats->append(re = new RegEx(line+1));
+	    pats->append(re = new RE(line+1));
 	} else {
 	    accept->append(true);
-	    pats->append(re = new RegEx(line));
+	    pats->append(re = new RE(line));
 	}
 	if (re->getErrorCode() > REG_NOMATCH) {
 	    fxStr emsg;

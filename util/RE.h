@@ -23,8 +23,8 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
-#ifndef _RegEx_
-#define	_RegEx_
+#ifndef _RE_
+#define	_RE_
 
 #include <sys/types.h>
 #include "regex.h"
@@ -35,12 +35,12 @@
  * Reference-counted regular expressions;
  * for use with Ptrs, Arrays, and Dicts.
  */
-class RegEx : public fxObj {
+class RE : public fxObj {
 public:
-    RegEx(const char* pat, int length = 0 , int flags = REG_EXTENDED);
-    RegEx(const fxStr& pat, int flags = REG_EXTENDED);
-    RegEx(const RegEx& other, int flags = REG_EXTENDED);
-    ~RegEx();
+    RE(const char* pat, int length = 0 , int flags = REG_EXTENDED);
+    RE(const fxStr& pat, int flags = REG_EXTENDED);
+    RE(const RE& other, int flags = REG_EXTENDED);
+    ~RE();
 
     const char* pattern() const;
 
@@ -61,36 +61,36 @@ private:
     void	init(int flags);
 };
 
-inline bool RegEx::Find(const fxStr& s, u_int off)
+inline bool RE::Find(const fxStr& s, u_int off)
     { return Find(s, s.length(), off); }
-inline const char* RegEx::pattern() const	{ return _pattern; }
-inline int RegEx::getErrorCode() const		{ return execResult; }
+inline const char* RE::pattern() const	{ return _pattern; }
+inline int RE::getErrorCode() const		{ return execResult; }
 
 /*
- * This private RegExPtr definition is done to work
+ * This private REPtr definition is done to work
  * around problems with certain C++ compilers not
  * properly making the destructor method either inline
  * or static.  We also can save some space by eliminating
  * some inline functions that compilers frequently can't
  * handle in-line.
  */
-class RegExPtr {
+class REPtr {
 protected:
     void destroy();
-    RegEx* p;
+    RE* p;
 public:	
-    RegExPtr() { p = 0; }
-    RegExPtr(RegEx *tp) { p = tp ? (tp->inc(),tp) : 0; }
-    RegExPtr(const RegExPtr& other)
+    REPtr() { p = 0; }
+    REPtr(RE *tp) { p = tp ? (tp->inc(),tp) : 0; }
+    REPtr(const REPtr& other)
 	{ p = other.p ? (other.p->inc(),other.p) : 0; }
-    ~RegExPtr();
-    RegExPtr& operator=(const RegExPtr& other);
-    RegExPtr& operator=(RegEx* tp);
-    int compare(const RegExPtr *other) const
+    ~REPtr();
+    REPtr& operator=(const REPtr& other);
+    REPtr& operator=(RE* tp);
+    int compare(const REPtr *other) const
 	{ return int((char*) p - (char*) other->p); }
-    operator RegEx*() { return p; }
-    operator const RegEx*() const { return p; }
-    RegEx* operator ->() { return p; }
-    const RegEx* operator ->() const { return p; }
+    operator RE*() { return p; }
+    operator const RE*() const { return p; }
+    RE* operator ->() { return p; }
+    const RE* operator ->() const { return p; }
 };
-#endif /* _RegEx_ */
+#endif /* _RE_ */
