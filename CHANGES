@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.1
 
+* improve multi-line handling within notify (20 Dec 2004)
 * improve trap handling in faxaddmodem/probemodem (17 Dec 2004)
 * fix hfaxd from rejecting jobs scheduled for the past while
   the killtime is still in the future (15 Dec 2004)

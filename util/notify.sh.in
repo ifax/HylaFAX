@@ -196,12 +196,13 @@ parseQfile()
     /^jobtype/    { p("jobtype", $2); }
     # status needs to be used in the shell as faxstatus since status is reserved word
     /^status/    { status = $0; sub("status:", "", status);
-              if (status ~ /\\$/) {
-                  sub("\\\\$", "\n", status);
+              if (status ~ /\\\\$/) {
+                  sub(/\\\\$/, "\\\\n", status);
                   while (getline > 0) {
                   status = status $0;
-                  sub("\\\\$", "\n", status);
-                  if ($0 !~ /\\$/)
+                  gsub("*","",status);
+                  sub(/\\\\$/, "\\\\n", status);
+                  if ($0 !~ /\\\\$/)
                       break;
                   }
               } p("faxstatus", status);
@@ -554,7 +555,9 @@ returnToSender()
         printItem "%.0f (lpi)" "Resolution" "$resolution"
     fi
     if [ -z "$faxstatus" ] ; then faxstatus="  (nothing available)" ; fi
-    printItem "%s" "Status" "$faxstatus"
+    # we need to use the %b (instead of the %s) so the embedded escape characters will
+    # be interpreted. 
+    printItem "%b" "Status" "$faxstatus"
     printItem "%u (exchanges with remote device)" "Dialogs" "$tottries"
     printItem "%u (consecutive failed calls to destination)" "Dials" "$ndials"
     printItem "%u (total phone calls placed)" "Calls" "$totdials"
@@ -620,7 +623,8 @@ printStatus()
     if [ -z "$1" ] ; then # 0 string len
         echo "<no reason recorded>"
     else
-        echo $1
+        # use -e in echo to interpret escape characters in the line
+        echo -e $1
     fi
 }
 
@@ -714,7 +718,8 @@ if [ "$WHY" = "done" ] ; then
         printf "\nProcessing time was %s.\n" "$JTIME"
     fi
     if [ -n "$faxstatus" -a "$RETURNTRANSCRIPT" = "yes" ] ; then
-        echo "  Additional information:\n    " $faxstatus
+        # use -e in echo to interpret escape characters in faxstatus
+        echo -e "  Additional information:\n    " $faxstatus
         returnTranscript
     fi
     if [ -n "$RETURNFILETYPE" ] ; then 
@@ -767,7 +772,8 @@ elif [ "$WHY" = "format_failed" ] ; then
     putHeaders "$jobtag to $number failed" 
     echo " was not sent because document conversion"
     echo "to facsimile failed.  The output from the converter program was:\n"
-    echo $faxstatus "\n"
+    # use -e in echo to interpret escape characters in faxstatus
+    echo -e $faxstatus "\n"
     echo "Check any PostScript documents for non-standard fonts and invalid constructs"
     returnToSender
 elif [ "$WHY" = "no_formatter" ] ; then 
