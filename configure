@@ -2457,8 +2457,6 @@ BuildPortDotH()
         *-hpux11*)  # this is really broken, has a defined 
                     # socklen_t but does *not* use it
                 echo "#define CONFIG_HPUX_SOCKLEN_T_BRAINDAMAGE";;
-	*-osf4.0*)  # This clears up problems on Alpha, too...
-		echo "#define CONFIG_HPUX_SOCKLEN_T_BRAINDAMAGE";;
         *sysv4.2uw2*)	CONFIG_SOCKARGLENTYPE=size_t;;
         *-univel-*)	CONFIG_SOCKARGLENTYPE=size_t;;
         *-sysv5UnixWare*)	CONFIG_SOCKARGLENTYPE=size_t;;
