@@ -144,6 +144,8 @@ void NSF::loadRawData( const u_char* rawData, int size, const u_char* revTab )
 
 void NSF::decode()
 {
+    if ( nsf.length() == 0 )
+	return;
     for( const NSFData* p = KnownNSF; p->vendorId; p++ ){
         if( !memcmp( p->vendorId, &nsf[0], p->vendorIdSize ) ){
             if (p->vendorName != 0) {
