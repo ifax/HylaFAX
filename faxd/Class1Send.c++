@@ -180,7 +180,7 @@ Class1Modem::sendSetupPhaseB(const fxStr& p, const fxStr& s)
 	encodePWD(pwd, p);
     else
 	pwd = fxStr::null;
-    if (p != fxStr::null && xinfo&DIS_SUB)
+    if (s != fxStr::null && xinfo&DIS_SUB)
 	encodePWD(sub, s);
     else
 	sub = fxStr::null;
