@@ -90,6 +90,7 @@ FaxModem::setupTagLine(const FaxRequest& req, const fxStr& tagLineFmt)
 #define	MARGIN_BOT	2
 #define	MARGIN_LEFT	2
 #define	MARGIN_RIGHT	2
+#define SLOP_LINES	3
 
 /*
  * Calculate a ``slop factor'' to use in processing the tag line.
@@ -105,7 +106,7 @@ bool
 FaxModem::setupTagLineSlop(const Class2Params& params)
 {
     if (tagLineFont->isReady() && tagLineFields > 0) {
-	tagLineSlop = (tagLineFont->fontHeight()+MARGIN_TOP+MARGIN_BOT+3) * 
+	tagLineSlop = (tagLineFont->fontHeight()+MARGIN_TOP+MARGIN_BOT+SLOP_LINES) * 
 	    howmany(params.pageWidth(),8);
 	return (true);
     } else {
@@ -167,26 +168,43 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
     }
     /* 
      * Setup the raster in which the tag line is imaged.
+     *
+     * The font size information received from the font functions
+     * is suitable for VR_FINE.  Thus VR_FINE is used as the reference
+     * resolution, and all other resolutions must be scaled.
      */
     u_int w = params.pageWidth();
-    u_int h = tagLineFont->fontHeight()+MARGIN_TOP+MARGIN_BOT;
-    u_int th = (params.vr == VR_R16 || params.vr == VR_R8 || params.vr == VR_200X400) ? h :
-	(params.vr == VR_300X300) ? (tagLineFont->fontHeight()/2)+MARGIN_TOP+MARGIN_BOT :
-	(params.vr == VR_FINE || params.vr == VR_200X200) ? (tagLineFont->fontHeight()/2)+MARGIN_TOP+MARGIN_BOT :
-	(tagLineFont->fontHeight()/2)+MARGIN_TOP+MARGIN_BOT;
+    u_int h = (tagLineFont->fontHeight()*2)+MARGIN_TOP+MARGIN_BOT;	// max height - double VR_FINE
+    u_int th;								// actual tagline height
+    switch(params.vr) {
+	case VR_NORMAL:
+	case VR_200X100:
+	    th = (tagLineFont->fontHeight()/2)+MARGIN_TOP+MARGIN_BOT;	// half VR_FINE
+	    break;
+	case VR_FINE:
+	case VR_200X200:
+	    th = tagLineFont->fontHeight()+MARGIN_TOP+MARGIN_BOT;	// reference resolution
+	    break;
+	case VR_R8:
+	case VR_R16:
+	case VR_200X400:
+	case VR_300X300:	// not proportionate but legible
+	    th = (tagLineFont->fontHeight()*2)+MARGIN_TOP+MARGIN_BOT;	// double VR_FINE
+	    break;
+    }
     /*
      * imageText assumes that raster is word-aligned; we use
      * longs here to optimize the scaling done below for the
      * low res case.  This should satisfy the word-alignment.
      *
-     * NB: The +3 below is for the case where we need to re-encode
-     *     2D-encoded data.  An extra 3 rows is sufficient because
-     *     the number of consecutive 2D-encoded rows is bounded
+     * NB: The +SLOP_LINES below is for the case where we need to
+     *     re-encode 2D-encoded data.  An extra 3 rows is sufficient
+     *     because the number of consecutive 2D-encoded rows is bounded
      *     by the K parameter in the CCITT spec.
      */
-    u_int lpr = howmany(w,32);			// longs/raster row
-    u_long* raster = new u_long[(h+3)*lpr];	// decoded raster
-    memset(raster, 0, (h+3)*lpr*sizeof (u_long));// clear raster to white
+    u_int lpr = howmany(w,32);				// longs/raster row
+    u_long* raster = new u_long[(h+SLOP_LINES)*lpr];	// decoded raster
+    memset(raster,0,(h+SLOP_LINES)*lpr*sizeof (u_long));// clear raster to white
     /*
      * Break the tag into fields and render each piece of
      * text centered in its field.  Experiments indicate
@@ -194,7 +212,16 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      * say, rendering it over the original page.
      */
     l = 0;
-    u_int fieldWidth = params.pageWidth() / tagLineFields;
+    /*
+     * imageText produces good dimensioned fonts at 1728 pixels/row. At VR_R16
+     * and VR_300X300, both being wider than 1728, text appears shrinked
+     * horizontally; while VR_300 is still ok, VR_R16 is too small. To help
+     * streching the text horizontally we force text imaging to still use
+     * 1728 instead of VR_R16's 3456 (3456 / 2 = 1728); text will be
+     * imaged the 1st (left) half of the line, it will be stretched after
+     * imaging takes place.
+     */
+    u_int fieldWidth = params.pageWidth() / (params.vr == VR_R16 ? 2 : 1) / tagLineFields;
     for (u_int f = 0; f < tagLineFields; f++) {
 	fxStr tagField = tag.token(l, '|');
 	u_int fw, fh;
@@ -246,10 +273,24 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
     u_int look_ahead = roundup(dec.getPendingBits(),8) / 8;
     u_int decoded = dec.current() - look_ahead - buf;
 
-    if (params.vr != VR_R8 && params.vr != VR_R16 && params.vr != VR_200X400) {
+    /*
+     * Scale image data as needed (see notes above).
+     */
+
+    if (params.vr == VR_NORMAL || params.vr == VR_200X100) {
 	/*
-	 * Scale text vertically before encoding.  Note the
-	 * ``or'' used to generate the final samples. 
+	 * These resolutions require vertical "shrinking" of the
+	 * tagline image.  We make 1 line out of 2.
+	 * (Note the ``or'' used to generate the final samples.)
+	 *
+	 * Details:  
+	 * - image is in lines 1 through y
+	 * - available lines are 1 through y/2
+	 * - start at the top of the image
+	 * - line 1 is ORed with line 2 to get new line 1
+	 * - line 3 is ORed with line 4 to get new line 2
+	 * - ...
+	 * - line y is ORed with line y+1 to get new line (y+1)/2
 	 */
 	u_long* l1 = raster+MARGIN_TOP*lpr;
 	u_long* l2 = l1+lpr;
@@ -262,6 +303,94 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
 	}
 	memset(l3, 0, MARGIN_BOT*lpr*sizeof (u_long));
     }
+    if (params.vr == VR_R8 || params.vr == VR_R16 || params.vr == VR_200X400 || params.vr == VR_300X300) {
+	/*
+	 * These resolutions require vertical "stretching" of the
+	 * tagline image.  We make 2 lines out of 1.
+	 * Go bottom-to-top since the image resides in the top half and the
+	 * bottom data can be overwritten since it is unset.
+	 * 
+	 * Details:
+	 * - image is in lines 1 through y/2
+	 * - available lines are 1 through y
+	 * - we use 2 pointers, 1st starting at line y/2 the other at line y
+	 * - line y/2   copied in line y   and y-1
+	 * - line y/2-1 copied in line y-2 and y-2-1
+	 * - ...
+	 */
+	// bottom of actual image
+	u_long* l1 = raster - 1 + lpr * (MARGIN_TOP + (th-MARGIN_TOP-MARGIN_BOT)/2 + 2);
+	// bottom of available image
+	u_long* l2 = raster - 1 + lpr * (MARGIN_TOP + (th-MARGIN_TOP-MARGIN_BOT) + 1);
+
+	/* stretch vertically (going backwards, R->L, B->T) */
+	for (u_int nr = (th-(MARGIN_TOP+MARGIN_BOT))/2; nr; nr--) {
+	    for (u_int nl = lpr; nl; nl--) { 
+		*(l2 - lpr) = *l1;	/* y/2 copied into y-1 */
+		*l2 = *l1;		/* y/2 copied into y */ 
+		l2--;			/* left 1 long */
+		l1--;			/* left 1 long */
+	    }
+	    /* after previous loop, l1 and l2 are up 1 line; l2 needs 1 more */
+	    l2 -= lpr;			/* 2nd ptr up 1 line */
+	}
+	if (params.vr == VR_R16) {
+	    /*
+	     * hr is twice the hr in which data is imaged.
+	     * We need to strech the image horizontally:
+	     * 1234567890ABCDEFGHIJ -> 11223344556677889900
+	     * (ABCDEFGHIJ is whitespace)
+	     */
+
+	    /* Reset ptr to begin of image */
+	    l1 = raster + MARGIN_TOP*lpr;               // begin of 1st line
+	    l2 = raster + MARGIN_TOP*lpr + lpr - 1;     // end of 1st line
+	    for (u_int nr = th-(MARGIN_TOP+MARGIN_BOT); nr; nr--) {
+		/*
+		 * 0      lpr/2      lpr
+		 * |        |         |
+		 * 1234567890__________
+		 * 1234567890________00  x/2   copied into x   and x-1
+		 * 1234567890______9900  x/2-1 copied into x-2 and x-3
+		 * ...
+		 * 11223344556677889900
+		 */
+		u_int bpl = sizeof(u_long) * 8;		// bits per u_long
+		for (u_int nl = lpr/2 - 1; nl ; nl--) {
+		    // make 2 longs out of 1 (ABCD -> AABB CCDD)
+		    int pos;
+		    for (u_int i = 0; i < (bpl/8); i++) {
+			if (i == 0 || i == bpl/8/2) {
+			    *l2 = (u_long) 0;
+			    pos = bpl - 2;
+			}
+			// put pairs of bits from l1 into the right places within l2
+			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-6))) >> (bpl-8*i-6) << pos);
+			pos -= 2;
+			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-6))) >> (bpl-8*i-6) << pos);
+			pos -= 2;
+			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-8))) >> (bpl-8*i-8) << pos);
+			pos -= 2;
+			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-8))) >> (bpl-8*i-8) << pos);
+			pos -= 2;
+			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-2))) >> (bpl-8*i-2) << pos);
+			pos -= 2;
+			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-2))) >> (bpl-8*i-2) << pos);
+			pos -= 2;
+			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-4))) >> (bpl-8*i-4) << pos);
+			pos -= 2;
+			*l2 |= (u_long)((*(l1+nl) & (3<<(bpl-8*i-4))) >> (bpl-8*i-4) << pos);
+			pos -= 2;
+			if (pos < 0) *l2--;
+		    }
+		}
+		l1 += lpr;              // begin of next line
+		l2 = l1 + lpr - 1;      // end of next line
+	    }
+	}
+	memset(l2, 0, MARGIN_BOT*lpr*sizeof (u_long));
+    }
+
     /*
      * Encode the result according to the parameters of
      * the outgoing page.  Note that the encoded data is

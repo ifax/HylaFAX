@@ -912,8 +912,25 @@ faxQueueApp::preparePageChop(const FaxRequest& req,
 	float threshold = req.chopthreshold;
 	if (threshold == -1)
 	    threshold = pageChopThreshold;
-	u_int minRows = (u_int)
-	    ((params.vr == VR_NORMAL ? 98. : 196.) * threshold);
+	u_int minRows;
+	switch(params.vr) {
+	    case VR_NORMAL:
+	    case VR_200X100:
+		minRows = (u_int) (98. * threshold);
+		break;
+	    case VR_FINE:
+	    case VR_200X200:
+		minRows = (u_int) (196. * threshold);
+		break;
+	    case VR_300X300:
+		minRows = (u_int) (300. * threshold);
+		break;
+	    case VR_R8:
+	    case VR_R16:
+	    case VR_200X400:
+		minRows = (u_int) (391. * threshold);
+		break;
+	}
 	if (dec.getLastBlanks() > minRows)
 	    pagehandling.append(fxStr::format("Z%04x",
 		stripSize - (dec.getEndOfPage() - data)));
