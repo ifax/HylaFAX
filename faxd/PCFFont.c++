@@ -509,7 +509,7 @@ PCFFont::imageText(const char* text,
     if (!isBigEndian)				// XXX
 	TIFFSwabArrayOfShort((u_short*) raster, h*rowwords);
     for (const char* cp = text; *cp; cp++) {
-	u_int g = *cp;
+	u_int g = (u_char)*cp;
 	charInfo* ci = (firstCol <= g && g <= lastCol) ?
 	    encoding[g - firstCol] : cdef;
 	if (!ci)
