@@ -50,7 +50,7 @@
 #GS="no"			# install Ghostscript RIP (yes|no)
 #IMP="no"			# install SGI Impressario 2.1 support (yes|no)
 #REGEX="yes"			# use distributed regular expression package
-#ZLIB="yes"			# use distributed zlib distribution
+#ZLIB="auto"			# use distributed zlib distribution
 #UTMP="utmpx"			# type of utmp+wtmp handling (auto|utmp|utmpx)
 #DBLIB="no"			# use distributed libdb distribution
 

@@ -70,9 +70,9 @@ UTMP=auto
 LIBTIFF="-L/usr/local/lib -ltiff"
 TIFFINC=/usr/local/include
 TIFFBIN=
-ZLIB=yes
-LIBZ='-L${DEPTH}/zlib -lz'
-ZLIBINC='${DEPTH}/${TOPSRCDIR}/zlib'
+ZLIB=auto
+LIBZ=
+ZLIBINC=
 REGEX=yes
 LIBREGEX='-L${DEPTH}/regex -lregex'
 REGEXINC='${DEPTH}/${TOPSRCDIR}/regex'
@@ -1298,7 +1298,8 @@ makeDefs()
     $RM confsed1
     WARNING="Warning, this file was automatically created by the HylaFAX configure script"
     dumpvars "$VAR1" CCOMPILER CXXCOMPILER | sort>confsed1
-    $RM xdefs; sed -f confsed1 $SRCDIR/defs.in>$1
+    dumpvars "$VAR2" CCOMPILER CXXCOMPILER | sort>confsed2
+    $RM xdefs; sed -f confsed1 $SRCDIR/defs.in | sed -f confsed2 >$1
 }
 # NB: save original values for use in checks below
 OTIFFINC="${TIFFINC}"; x="`relativize ${TIFFINC}`"; TIFFINC="$x"
@@ -2395,6 +2396,7 @@ BuildPortDotH()
 	    'extern void* mmap(void*, size_t, int, int, int, off_t);' sys/mman.h
     }
 
+    CheckFuncDecl bzero 'extern void bzero(void *, int);' string.h
     CheckFuncDecl mkstemp 'extern int mkstemp(char *);' stdlib.h stdio.h unistd.h
     CheckFuncDecl strerror 'extern char* strerror(int);' string.h
     CheckFuncDecl strncasecmp \
@@ -2932,7 +2934,7 @@ EOF
 fi
 Note "Done checking TIFF support."
 
-if [ $ZLIB = no ]; then
+if [ $ZLIB != yes ]; then
     Note ""
     Note "Checking ZLIB support."
     #
@@ -2943,23 +2945,51 @@ if [ $ZLIB = no ]; then
 main()
 {
     if (strcmp(ZLIB_VERSION, "0.95") < 0) {     /* include file version */
-	printf("old include files: version %u\n", ZLIB_VERSION);
+        printf("old include files: version %u\n", ZLIB_VERSION);
         exit(-1);
     }
     if (strncmp(zlib_version, ZLIB_VERSION, 4) != 0) {
-	printf("library/header file incompatibility: %s %s\n",
-	    zlib_version, ZLIB_VERSION);
-	exit(-1);
-    } else
-	exit(0);
+        printf("library/header file incompatibility: %s %s\n",
+        zlib_version, ZLIB_VERSION);
+        exit(-1);
+    } else {
+        exit(0);
+    }
 }
 EOF
     capture cat t.c
     if runMake t "t:; \${CC} \${CVERSION} -I${OZLIBINC} t.c ${LIBZ} ${MACHDEPLIBS}" && capture ./a.out; then
-	Note "Using ZLIB include files from $OZLIBINC"
-	Note "Using pre-built ZLIB library $LIBZ"
+                    ZLIBINC="${OZLIBINC}"
+        Note "Using ZLIB include files from $OZLIBINC"
+        Note "Using pre-built ZLIB library $LIBZ"
     else
-	cat 1>&2 <<EOF
+        if [ -z "$LIBZ" ]; then
+            DIRS="/usr/local /opt/zlib"
+            for i in $DIRS; do
+                if runMake t "t:; \${CC} \${CVERSION} -I${i}/include t.c -L${i}/lib -lz ${MACHDEPLIBS}" && capture ./a.out; then
+                    ZLIB=no
+                    OZLIBINC="${i}/include"
+                    ZLIBINC="${i}/include"
+                    LIBZ="-L${i}/lib -lz"
+                    Note "Using ZLIB include files from $OZLIBINC"
+                    Note "Using pre-built ZLIB library $LIBZ"
+                    break
+                fi
+            done
+        fi
+        if [ -z "$LIBZ" ]; then
+                if runMake t "t:; \${CC} \${CVERSION} -I${SRCDIR}/zlib t.c -L${SRCDIR}/zlib -lz ${MACHDEPLIBS}" && capture ./a.out; then
+                    ZLIB=no
+                    OZLIBINC="${SRCDIR}/zlib"
+                    ZLIBINC="${SRCDIR}/zlib"
+                    LIBZ="-L${SRCDIR}/zlib -lz"
+                    Note "Using ZLIB include files from $OZLIBINC"
+                    Note "Using pre-built ZLIB library $LIBZ"
+                    break
+                fi
+        fi
+        if [ -z "$LIBZ" ]; then
+            cat 1>&2 <<EOF
 
 Incompatible/missing ZLIB Library.
 
@@ -2988,7 +3018,8 @@ runtime (e.g.  LD_LIBRARY_PATH).  Also be sure that any relative
 pathnames are made relative to the top of the build area.
 
 EOF
-	boom
+            boom
+        fi
     fi
     Note "Done checking ZLIB support."
 fi
