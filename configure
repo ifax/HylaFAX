@@ -3032,21 +3032,18 @@ EOF
 	cat 1>&2 <<EOF
 ----------------------------------------------------------
 
-With:
-
-ZLIBINC=${OZLIBINC}
-LIBZ=${LIBZ}
+With the following directories tried:
+DIRS=<default compiler search path> ${DIRS}
 
 The above program checks the version of the ZLIB library to ensure it
 is suitable for use with HylaFAX.  HylaFAX ${VERSION} requires a recent
-ZLIB software distribution; version 0.95 or newer.  If you do not have
-up to date ZLIB software on your system then you can use the version
-that is included with HylaFAX.  Otherwise, if you have the right
-software, verify that you have the ZLIBINC and LIBZ configuration
-parameters set correctly for your system (see above) and that any
-environment variables are setup that are needed to locate a libz DSO at
-runtime (e.g.  LD_LIBRARY_PATH).  Also be sure that any relative
-pathnames are made relative to the top of the build area.
+ZLIB software distribution; version 0.95 or newer.  If you have the right
+software, verify that you have the ZLIBINC(location of zlib.h) and
+LIBZ(location of libz.a/libz.so) configuration parameters set correctly
+for your system and that any environment variables are setup that are
+needed to locate a libz DSO at runtime (e.g.  LD_LIBRARY_PATH).
+Also be sure that any relative pathnames are made relative to the top of
+the build area.
 
 EOF
         boom

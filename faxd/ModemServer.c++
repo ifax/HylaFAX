@@ -832,12 +832,16 @@ void
 ModemServer::vtraceStatus(int kind, const char* fmt, va_list ap)
 {
     if (log) {
-	if (kind == FAXTRACE_SERVER)	// always log server stuff
-	    vlogInfo(fmt, ap);
-	if (logTracingLevel & kind)
-	    log->vlog(fmt, ap);
-    } else if (tracingLevel & kind)
-	vlogInfo(fmt, ap);
+        fxStr s = fxStr::format(fmt, ap);
+        if (kind == FAXTRACE_SERVER) { // always log server stuff
+            logInfo(s);
+        }
+        if (logTracingLevel & kind) {
+	        log->log(s);
+        }
+    } else if (tracingLevel & kind) {
+	    logInfo(fxStr::format(fmt, ap));
+    }
 }
 
 #include "StackBuffer.h"
