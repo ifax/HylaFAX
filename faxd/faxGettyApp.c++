@@ -509,7 +509,7 @@ faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const Ca
 	    if (ctype == ClassModem::CALLTYPE_DONE)	// NB: call completed
 		return (true);
 	    if (ctype != ClassModem::CALLTYPE_ERROR)
-		modemAnswerCallCmd(ctype);
+		modemAnswerCall(ctype, emsg, dialnumber);
 	} else
 	    emsg = "External getty use is not permitted";
     } else
@@ -646,13 +646,15 @@ faxGettyApp::runGetty(
 
 	  uid_t uid = getuid();
 	  gid_t gid = getgid();
-	  const struct passwd *pwd = getpwuid(uid);
-	  if (initgroups(pwd->pw_name, gid) != 0)
-	      traceServer("runGetty::initgroups: %m");
+          uid_t euid = geteuid();
+          gid_t egid = getegid();
 	  if (setegid(gid) < 0)
 	      traceServer("runGetty::setegid: %m");
 	  if (seteuid(uid) < 0)
 	      traceServer("runGetty::seteuid (child): %m");
+          const struct passwd *pwd = getpwuid(euid);
+          if (initgroups(pwd->pw_name, egid) != 0)
+              traceServer("runGetty::initgroups: %m");
 
 	  endpwent();
 	}
@@ -674,6 +676,10 @@ faxGettyApp::runGetty(
     changeState(GETTYWAIT);
     int status;
     getty->wait(status, true);		// wait for getty/login work to complete
+    if ( status > 1280 ) { // codes returned larger than 1280 are undefined and must be an error    
+        status = 1024;
+        emsg = "ERROR: Unknown status";
+    }
     /*
      * Retake ownership of the modem.  Note that there's
      * a race in here (another process could come along

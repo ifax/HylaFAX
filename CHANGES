@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* improve the way that external gettys are run
 * fix some problems when decoding pipe fails in ECM
 * ignore "echos" of the dialed number after dialing
 * set Class1*WaitCmds in cirrus config to not use +FTS/+FRS

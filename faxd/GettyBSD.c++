@@ -68,6 +68,56 @@ BSDSubProc::setupSession(int modemFd)
     for (fd = Sys::getOpenMax()-1; fd >= 0; fd--)
 	if (fd != modemFd)
 	    (void) Sys::close(fd);
+     
+    fd = Sys::open("tty", 0);		// NB: assumes we're in /dev
+    if (fd >= 0) {
+	ioctl(fd, TIOCNOTTY, 0);
+	Sys::close(fd);
+    }
+    fd = Sys::open(getLine(), O_RDWR|O_NONBLOCK);
+    if (fd != STDIN_FILENO)
+	fatal("Can not setup \"%s\" as stdin", getLine());
+    if (fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) &~ O_NONBLOCK))
+	fatal("Can not reset O_NONBLOCK: %m");
+    Sys::close(modemFd);		// done with this, pitch it
+
+    /*
+     * Setup descriptors for stdout, and stderr.
+     * Establish the initial line termio settings and set
+     * protection on the device file.
+     */
+    Getty::setupSession(fd);
+}
+
+/*
+ * BSD getty/login-specific subprocess support.
+ */
+
+BSDGetty::BSDGetty(const char* path, const fxStr& l, const fxStr& s) : BSDSubProc(path,l,s)
+{
+}
+
+BSDGetty::~BSDGetty()
+{
+}
+
+#define	lineEQ(a,b)	(strncmp(a,b,sizeof(a)) == 0)
+
+/*
+ * ``Open'' the device and setup the initial tty state
+ * so that the normal stdio routines can be used.
+ */
+void
+BSDGetty::setupSession(int modemFd)
+{
+    int fd;
+    /*
+     * Close everything down except the modem so
+     * that the remote side doesn't get hung up on.
+     */
+    for (fd = Sys::getOpenMax()-1; fd >= 0; fd--)
+        if (fd != modemFd)
+            (void) Sys::close(fd);
     /*
      * Now make the line be the controlling tty
      * and create a new process group/session for
@@ -121,20 +171,6 @@ BSDSubProc::setupSession(int modemFd)
      */
     Getty::setupSession(fd);
 }
-
-/*
- * BSD getty/login-specific subprocess support.
- */
-
-BSDGetty::BSDGetty(const char* path, const fxStr& l, const fxStr& s) : BSDSubProc(path,l,s)
-{
-}
-
-BSDGetty::~BSDGetty()
-{
-}
-
-#define	lineEQ(a,b)	(strncmp(a,b,sizeof(a)) == 0)
 
 void
 BSDGetty::writeWtmp(utmp* ut)

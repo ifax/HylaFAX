@@ -98,6 +98,43 @@ SysVSubProc::setupSession(int modemFd)
 	if (fd != modemFd)
 	    Sys::close(fd);
     fclose(stdin);
+    fd = Sys::open(getLine(), O_RDWR|O_NONBLOCK|O_NOCTTY);
+    if (fd != STDIN_FILENO)
+	fatal("Can not setup \"%s\" as stdin", getLine());
+    if (fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) &~ O_NONBLOCK))
+	fatal("Can not reset O_NONBLOCK: %m");
+    Sys::close(modemFd);		// done with this, pitch it
+    Getty::setupSession(fd);
+}
+
+/*
+ * System V getty/login-specific subprocess support.
+ */
+
+SysVGetty::SysVGetty(const char* path, const fxStr& l, const fxStr& s) : SysVSubProc(path,l,s)
+{
+}
+
+SysVGetty::~SysVGetty()
+{
+}
+
+/*
+ * ``Open'' the device and setup the initial tty state
+ * so that the normal stdio routines can be used.
+ */
+void
+SysVGetty::setupSession(int modemFd)
+{
+    int fd;
+    /*
+     * Close everything down except the modem so
+     * that the remote side doesn't get hung up on.
+     */
+    for (fd = Sys::getOpenMax()-1; fd >= 0; fd--)
+        if (fd != modemFd)
+            Sys::close(fd);
+    fclose(stdin);
     /*
      * Now make the line be the controlling tty
      * and create a new process group/session for
@@ -129,24 +166,6 @@ SysVSubProc::setupSession(int modemFd)
     { int off = 0; ioctl(fd, TIOCSSOFTCAR, &off); }
 #endif
     Getty::setupSession(fd);
-}
-
-/*
- * System V getty/login-specific subprocess support.
- */
-
-SysVGetty::SysVGetty(const char* path, const fxStr& l, const fxStr& s) : SysVSubProc(path,l,s)
-{
-}
-
-SysVGetty::~SysVGetty()
-{
-}
-
-void
-SysVGetty::setupSession(int modemFd)
-{
-    SysVSubProc::setupSession(modemFd);
     loginAccount();
 }
 
