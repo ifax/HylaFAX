@@ -245,8 +245,12 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 		    flushRawData(tif, 0, buf, recvRow - buf);
 		    recvRow = buf;
 		}
-		memcpy(recvRow, (const char*) raw, n);
-		recvRow += n;
+		if (n >= RCVBUFSIZ)
+		    flushRawData(tif, 0, (u_char*) raw, n);
+		else {
+		    memcpy(recvRow, (const char*) raw, n);
+		    recvRow += n;
+		}
 		recvEOLCount++;
 	    }
 	}

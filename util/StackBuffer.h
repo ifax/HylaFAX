@@ -55,8 +55,9 @@ public:
 
     // NB: the buffer is *NOT* null terminated, unless you put one there.
     // the operator char*() removed by rjc 8/99 as causes gcc-2.95 problems
-    //operator char*();			// Return base of buffer
-    //operator unsigned char*();		// Return base of buffer
+    // the operator char*() un-removed 7/02 for buffer checking
+    operator char*();			// Return base of buffer
+    operator unsigned char*();		// Return base of buffer
     operator const char*() const;	// Return base of buffer
     operator const unsigned char*() const;// Return base of buffer
     char& operator[](u_int i) const;	// Return character in buffer
@@ -78,8 +79,8 @@ inline void fxStackBuffer::put(char c)
 inline void fxStackBuffer::put(char const* c)	{ put(c, strlen(c)); }
 inline void fxStackBuffer::set(char c)		{ put(c); next--; }
 inline void fxStackBuffer::reset()		{ next = base; }
-//inline fxStackBuffer::operator char*()		{ return base; }
-//inline fxStackBuffer::operator unsigned char*()	{ return (unsigned char*)base; }
+inline fxStackBuffer::operator char*()		{ return base; }
+inline fxStackBuffer::operator unsigned char*()	{ return (unsigned char*)base; }
 inline fxStackBuffer::operator const char*() const
     { return base; }
 inline fxStackBuffer::operator const unsigned char*() const
