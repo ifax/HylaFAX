@@ -789,6 +789,7 @@ checkCompiler()
 	*-sco3.2v5.*)	C_ANSI="-Dsco -Dsco5 -b elf";;
 	*-sco*)		C_ANSI="-Dsco";;
 	*-isc*)		C_ANSI="-posix -D_SYSV3 -DISC";;
+	yes-*-solaris*)	C_ANSI="-L/usr/local/lib -R/usr/local/lib";;
 	esac
     else
 	C_ANSI="$ENVOPTS"
@@ -3240,6 +3241,9 @@ fi
 if [ "$DSO" = no ]; then
     MAKEDSOINCLUDE='#'
     DSOSUF=a DSOOPTS= DSODELAY= LLDOPTS=
+    case $ISGCC-$TARGET in
+	*-*-solaris*)	LLDOPTS="-L/usr/local/lib -R/usr/local/lib" ;;
+    esac
 else
     MAKEDSOINCLUDE="$MAKEINCLUDE"
 fi
@@ -3416,6 +3420,9 @@ if [ "$SYSVINIT" = yes ]; then
     if [ -z "$DIR_SYSVINITSTOP" ]; then
 	case $TARGET in
 	    *-linux*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d ../rc6.d";;
+	    *-solaris*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d ../rcS.d";;
+	    *sysv4.2uw2*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d";;
+	    *-UnixWare-*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d";;
 	    *)		DIR_SYSVINITSTOP="../rc0.d";;
 	esac
     fi
@@ -3425,6 +3432,7 @@ if [ "$SYSVINIT" = yes ]; then
 	    *-linux*)		NAME_SYSVINITSTART="S97hylafax" ;;
 	    *-sco3.2v4*)	NAME_SYSVINITSTART="S80hylafax" ;;
 	    *-sco3.2v5*)	NAME_SYSVINITSTART="S90hylafax" ;;
+	    *-solaris*)		NAME_SYSVINITSTART="S80hylafax" ;;
 	    *-univel*)		NAME_SYSVINITSTART="S80hylafax" ;;
 	    *sysv4.2uw2*)	NAME_SYSVINITSTART="S80hylafax" ;;
 	    *-UnixWare-*)	NAME_SYSVINITSTART="S80hylafax" ;;
@@ -3437,6 +3445,7 @@ if [ "$SYSVINIT" = yes ]; then
 	    *-linux*)		NAME_SYSVINITSTOP="K05hylafax" ;;
 	    *-sco3.2v4*)	NAME_SYSVINITSTOP="K05hylafax" ;;
 	    *-sco3.2v5*)	NAME_SYSVINITSTOP="K05hylafax" ;;
+	    *-solaris*)		NAME_SYSVINITSTOP="K20hylafax" ;;
 	    *-univel*)		NAME_SYSVINITSTOP="K05hylafax" ;;
 	    *sysv4.2uw2*)	NAME_SYSVINITSTOP="K05hylafax" ;;
 	    *-UnixWare-*)	NAME_SYSVINITSTOP="K05hylafax" ;;
@@ -3744,7 +3753,7 @@ getGSFonts()
 	if [ ! "$PS" = gs -a -n $PATH_PSRIP ];then
 		return 1
 	fi
-	$PATH_PSRIP -h | awk -F '[ ]' '
+	$PATH_PSRIP -h | $AWK -F '[ ]' '
 		BEGIN { start = 0; }
 		/Search path:/ { start = 1 }
 		{
@@ -3761,14 +3770,14 @@ getGSFonts()
 	return 0
 }
 
-Note "Setting the Fontmap path to $FONTMAP"
 case $TARGET in
 	*-freebsd*)     PATH_AFM=/usr/local/lib/afm ;;
 	*)      if [ -z "$FONTMAP" ]; then
 			FONTMAP=`getGSFonts`;
 		fi
-		Note "Setting the Fontmap path to $FONTMAP";;
+		;;
 esac
+Note "Setting the Fontmap path to $FONTMAP"
 
 #
 # Location of Adobe Font Metric files.

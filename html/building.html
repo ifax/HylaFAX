@@ -1580,7 +1580,9 @@ The default is <B>../rc2.d</B>.
 <TD>
 Location of SysV-style stop script
 The default is <B>../rc0.d</B>.
+<br>On Solaris, the default is <B>../rc0.d ../rc1.d ../rcS.d</B>.
 <br>On Linux, the default is <B>../rc0.d ../rc1.d ../rc6.d</B>.
+<br>On UnixWare, the default is <B>../rc0.d ../rc1.d</B>.
 </TR>
 
 <TR>
@@ -1750,6 +1752,7 @@ when linking an executable.
 This option is usually set only when DSO support is enabled
 (to force the executable to search for the HylaFAX-specific DSO's
 in non-standard locations in the filesystem.)
+<br>On Solaris, it's set to <B>-L/usr/local/lib -R/usr/local/lib</B>
 </TR>
 
 <TR>
@@ -1841,9 +1844,9 @@ is specified then filenames are not converted when they are installed.
 <TD>
 The name of SysV-style start script.
 <br>The default is <B>S80fax</B>.
-<br>On Linux, the default is <B>S97fax</B>.
+<br>On Linux, the default is <B>S97hylafax</B>.
 <br>On HPUX, the default is <B>S905hylafax</B>.
-<br>SCO 3.2v4.x, and UnixWare default to <B>S80hylafax</B>.
+<br>Solaris, SCO 3.2v4.x, and UnixWare default to <B>S80hylafax</B>.
 <br>SCO 3.2v5.x.x defaults to <B>S90hylafax</B>.
 </TR>
 
@@ -1852,9 +1855,10 @@ The name of SysV-style start script.
 <TD>
 The name of SysV-style stop script.
 <br>The default is <B>K80fax</B>.
-<br>On Linux, the default is <B>K05fax</B>.
+<br>On Linux, the default is <B>K05hylafax</B>.
 <br>On HPUX, the default is <B>K095hylafax</B>.
 <br>SCO 3.2v4.x, SCO 3.2v5.x.x, and UnixWare default to <B>K05hylafax</B>.
+<br>On Solaris, the default is <B>K20hylafax</B>.
 </TR>
 
 <TR>
@@ -2375,21 +2379,6 @@ the standard make does VPATH processing incorrectly for files
 passed to the mkdepend script (the last file in the list is not converted to
 a pathname relative to the source directory); this causes lots of
 msgs that can be safely ignored.
-
-<P>
-Some versions of Solaris include an old version of the
-TIFF library with the OpenWindows software.
-This can cause problems when running the configure script unless
-the <TT>LD_LIBRARY_PATH</TT> environment variable is explicitly
-set to reference the location of the newer TIFF library DSO
-or the path is explicitly set with a <TT>-R</TT> flag in the
-<TT>LIBTIFF</TT> configuration parameter.
-
-<P>
-On Solaris with GCC 2.95.x you will probably have to fix your LD_LIBRARY_PATH
-to see the libstdc++ libraries.
-<br> $ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-<br> $ ./configure
 
 <A NAME="Ultrix"><H3>Ultrix Guidance</H3></A>
 
