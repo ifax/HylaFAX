@@ -1,0 +1,40 @@
+# umc92144.config
+# Steffan Klipsch 03 Oct 98 
+#
+# This file will enable the faxaddmodem script to automatically detect
+# UMC modems with BIOS versions as used in the Creatix 14400 modems SG144U, 
+# SG144Ui, Phonemaster 144VF and Phonemaster 144VFi.
+#
+# Credits go to Sascha Ottolski how posted a working snippet in Mar 98.
+#
+# Instructions : install as file /var/spool/fax/config/umc92144
+
+#
+# Configuration for modems based on UMC 92114 DATA/FAX/VOICE CHIP SET 
+# tested on CREATIX Phonemaster 144 VFi
+# with BIOS CIS CCUSBIXX V1.10 10/10/95/VERSION 1.10 01-05-01-01)
+# users of BIOS VERSION 1.00 00-04-00-00 should consider a BIOS update
+# (search on http://www.creatix.com)
+#
+# CONFIG: CLASS2: *CCUSBIXX*-*
+# BEGIN-SERVER
+# END-SERVER
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:              Class2        # use this to setup defaults
+ModemRate:              38400         # max rate for DCE-DTE communication
+ModemFlowControl:       rtscts
+ModemSetupDTRCmd:       AT&D2	      # setup so DTR drop resets modem
+ModemSetupDCDCmd:       AT&C1	      # setup so DCD reflects carrier (or not)
+ModemSetupAACmd:        AT+FAA=1
+ModemSetVolumeCmd:      "ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1"
+ModemDialCmd:           ATDT%s@       # T for tone dialing, @ for silence
+ModemNoFlowCmd:         AT&K	      
+ModemHardFlowCmd:       AT&K3	      
+ModemSoftFlowCmd:       AT&K4	      
+ModemAnswerFaxBeginCmd: "<19200>"     # fax mode works better with 19200 baud
+ModemWaitForConnect:    yes
+ModemRecvFillOrder:     MSB2LSB       
+Class2RecvDataTrigger:  "\022"
