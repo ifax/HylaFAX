@@ -109,27 +109,20 @@ ACTIONS=`echo "$RESULT" | $SED 1q`
 case "$ACTIONS" in
 OK)				# no conversion needed
     #
-    # Two things to be aware of here.  We avoid using hard
-    # links because it screws up faxqclean logic that assumes
-    # the only hard links are used temporarily when document
-    # files are being created during the job submission process.
-    # Second, faxq creates the target file and locks it as
-    # part of the logic used to insure only one job at a time
-    # images a document.  Because we clobber the target file
-    # in this case we potentially open a window where someone
-    # may decide to image the same document.  We could depend
-    # on $LN doing the clobber for us and not remove the file
-    # first but on some systems this won't happen even though
-    # we are not an interactive process (so there's no way to
-    # prompt for a confirmation before clobbering the target).
-    # An alternative to all this is to do something like copy
-    # $fil to $out but then we would waste disk space.  We'll
-    # leave it like this for now and see if problems arise in
-    # which case we can always substitute a program that does
-    # the right thing.
+    # 1) We don't use hard links because it screws up faxqclean
+    #    logic that assumes the only hard links are used 
+    #    temporarily when document files are being created during
+    #    the job submission process.
+    # 2) We don't use symbolic links because the links get broken
+    #    when the source document is shared between jobs and
+    #    faxq removes the source document before all jobs complete.
     #
-    f=`echo $fil | $SED 's;.*/;;'`
-    $RM -f $out; $LN -s $f $out
+    # If we ever encounter problems where the client submits corrupt
+    # TIFF and we need to clean it up before transmission, then we
+    # can simply merge OK with REFORMAT.  For now we use $CP instead
+    # of $TIFFCP, however, to provide the client some control.
+    #
+    $CP -f $fil $out
     exit 0			# successful conversion
     ;;
 *REJECT*)			# document rejected out of hand
