@@ -249,6 +249,7 @@ SYSVINITSTARTNAME	NAME_SYSVINITSTART
 SYSVINITSTOPDIR	DIR_SYSVINITSTOP
 SYSVINITSTOPNAME	NAME_SYSVINITSTOP
 TARGET
+TIFF2PDF
 TIFFBIN
 TIFFINC
 TTYCMD
@@ -3489,6 +3490,7 @@ test "$PWDCMD"	|| PWDCMD=`findAppDef pwd $PATH pwd`
 test "$RMCMD"	|| RMCMD=`findAppDef rm $PATH rm`
 test "$SORT"	|| SORT=`findAppDef sort $PATH sort`
 test "$STRIP"	|| STRIP=`findAppDef strip $PATH strip`
+test "$TIFF2PDF" || TIFF2PDF=`findAppDef tiff2pdf $PATH bin/tiff2pdf`
 test "$TTYCMD"	|| TTYCMD=`findAppDef tty $PATH tty`
 test "$UUENCODE" || UUENCODE=`findAppDef uuencode $PATH uuencode`
 

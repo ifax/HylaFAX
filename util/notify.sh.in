@@ -68,6 +68,7 @@ NEXT=${4:-'??:??'}
 # backward compatibility.
 ENCODING=base64
 MIMENCODE=mimencode
+TIFF2PDF=bin/tiff2pdf
 TTYCMD=tty
 
 . etc/setup.cache
@@ -90,7 +91,6 @@ INFO=$SBIN/faxinfo
 TIFFINFO=tiffinfo
 FAX2PS=$TIFFBIN/fax2ps
 TIFF2PS=tiff2ps
-TIFF2PDF=bin/tiff2pdf
 PS2PDF=ps2pdf
 PDF2PS=pdf2ps
 PS2FAX=bin/ps2fax

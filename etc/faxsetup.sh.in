@@ -66,6 +66,7 @@ MV=@MV@				# move file for use below
 RMCMD=@RM@			# remove file for use below
 SCRIPT_SH=@SCRIPT_SH@		# shell for use below
 SED=@SED@			# sed for use below
+TIFF2PDF=@TIFF2PDF@		# tiff-to-pdf conversion tool
 TTYCMD=@TTYCMD@			# tty for error output
 UUENCODE=@UUENCODE@		# uuencode command to dump in setup.cache
 
@@ -162,6 +163,7 @@ SED
 SENDMAIL	PATH_SENDMAIL
 SPOOL		DIR_SPOOL
 SYSVINIT
+TIFF2PDF
 TIFFBIN
 TARGET
 TTYCMD
@@ -776,6 +778,12 @@ fi
 #
 # Double-check these settings...
 #
+if [ ! -x "$TIFF2PDF" ] || [ "$TIFF2PDF" = "bin/tiff2pdf" ]; then
+    TIFF2PDF=`findAppDef tiff2pdf $PATH bin/tiff2pdf`
+    if [ "$TIFF2PDF" != "bin/tiff2pdf" ]; then
+	test -x "$TIFF2PDF" && Note "Found converter: $TIFF2PDF"
+    fi
+fi
 test -x "$MIMENCODE" || {
     MIMENCODE=`findAppDef mimencode $PATH mimencode`
     test -x $MIMENCODE || {
