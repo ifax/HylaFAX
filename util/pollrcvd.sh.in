@@ -54,6 +54,28 @@ EOF
 
 INFO=$SBIN/faxinfo
 FAX2PS=$TIFFBIN/fax2ps
+MIMENCODE=mimencode
+TIFF2PS=tiff2ps
+PS2PDF=ps2pdf
+TOADDR=FaxMaster
+TIFFINFO=tiffinfo
+
+#
+# Permit various types of attachment types: ps, tif, pdf
+# Note that non-ASCII filetypes require metamail.
+# pdf requires tiff2ps and ps2pdf
+# 
+FILETYPE=ps
+
+#
+# There is no good portable way to find out the fully qualified
+# domain name (FQDN) of the host or the TCP port for the hylafax
+# service so we fudge here.  Folks may want to tailor this to
+# their needs; e.g. add a domain or use localhost so the loopback
+# interface is used.
+#
+HOSTNAME=`hostname`                     # XXX no good way to find FQDN
+PORT=4559                               # XXX no good way to lookup service
 
 MAILADDR="$1"
 FILE="$2"
@@ -61,41 +83,146 @@ DEVICE="$3"
 COMMID="$4"
 MSG="$5"
 
-(MIMEBOUNDARY="NextPart$$"
- echo "To: $MAILADDR"
- echo "From: The HylaFAX Receive Agent <fax>"
- echo "Subject: facsimile document received by polling request"
- echo "Mime-Version: 1.0"
- echo "Content-Type: Multipart/Mixed; Boundary=\"$MIMEBOUNDARY\""
- echo "Content-Transfer-Encoding: 7bit"
- echo ""
- $INFO $FILE
- echo "ReceivedOn: $DEVICE"
- if [ "$MSG" ]; then
-    echo ""
-    echo "The full document was not received because:"
-    echo ""
-    echo "    $MSG"
-    echo ""
-    echo "    ---- Transcript of session follows ----"
-    echo ""
-    if [ -f log/c$COMMID ]; then
-	sed -e '/-- data/d' \
+FILENAME=`echo $FILE | $SED -e 's/\.tif//' -e 's/recvq\///'`
+
+if [ -f $FILE ]; then
+    #
+    # Check the sender's TSI and setup to dispatch
+    # facsimile received from well-known senders.
+    #
+    SENDER="`$INFO $FILE | $AWK -F: '/Sender/ { print $2 }' 2>/dev/null`"
+    if [ -f etc/PollDispatch ]; then
+	. etc/PollDispatch       # NB: PollDispatch allows customization
+    fi
+    if [ "$TOADDR" != "$MAILADDR" ]; then # don't send FaxMaster duplicate
+	(echo "To: $TOADDR"
+	 echo "From: The HylaFAX Receive Agent <fax>"
+	 echo "Subject: Facsimile retrieved from $SENDER";   
+	 echo ""
+	 echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):"; $INFO -n $FILE
+	 echo "ReceivedOn: $DEVICE"
+	if [ "$MSG" ]; then
+	    echo ""
+	    echo "The full document was not received because:"
+	    echo ""
+	    echo "    $MSG"
+	    echo ""
+	    echo "    ---- Transcript of session follows ----"
+	    echo ""
+	    if [ -f log/c$COMMID ]; then
+		$SED -e '/-- data/d' \
+		    -e '/start.*timer/d' -e '/stop.*timer/d' \
+		    log/c$COMMID
+	    elif [ -n "$COMMID" ]; then
+		echo "    No transcript available (CommID c$COMMID)."
+	    else
+		echo "    No transcript available."
+	    fi
+	else
+	    echo "    CommID: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
+	fi
+	if [ -n "$MAILADDR" ]; then
+	    echo ""
+	    echo "The facsimile was polled by and delivered to: $MAILADDR."
+	fi
+	) | 2>&1 $SENDMAIL -ffax -oi $TOADDR
+    fi
+    if [ -n "$MAILADDR" ]; then
+	(MIMEBOUNDARY="NextPart$$"
+	 echo "Mime-Version: 1.0"
+	 echo "Content-Type: Multipart/Mixed; Boundary=\"$MIMEBOUNDARY\""
+	 echo "Content-Transfer-Encoding: 7bit"
+	 echo "To: $MAILADDR"
+	 echo "From: The HylaFAX Receive Agent <fax>"
+	 echo "Subject: Facsimile retrieved from $SENDER";   
+	 echo ""
+	 echo "--$MIMEBOUNDARY"
+	 echo "Content-Type: text/plain; charset=us-ascii"
+	 echo "Content-Transfer-Encoding: 7bit"
+	 echo ""
+	 echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):"; $INFO -n $FILE
+	 echo "ReceivedOn: $DEVICE"
+	if [ "$MSG" ]; then
+	    echo ""
+	    echo "The full document was not received because:"
+	    echo ""
+	    echo "    $MSG"
+	    echo ""
+	    echo "    ---- Transcript of session follows ----"
+	    echo ""
+	    if [ -f log/c$COMMID ]; then
+		sed -e '/-- data/d' \
+		    -e '/start.*timer/d' -e '/stop.*timer/d' \
+		    log/c$COMMID
+	    elif [ -n "$COMMID" ]; then
+		echo "    No transcript available (CommID c$COMMID)."
+	    else
+		echo "    No transcript available."
+	    fi
+	else
+	    echo "    CommID: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
+	fi
+	echo ""
+	echo "--$MIMEBOUNDARY"
+	if [ "$FILETYPE" = "tif" ]; then
+	    echo "Content-Type: image/tiff; name=\"$FILENAME.tif\""
+	    echo "Content-Description: FAX document"
+	    echo "Content-Transfer-Encoding: base64"
+	    echo "Content-Disposition: attachment; filename=\"$FILENAME.tif\""
+	    echo ""
+	    $MIMENCODE $FILE 2>/dev/null
+	elif [ "$FILETYPE" = "pdf" ]; then
+	    echo "Content-Type: application/pdf; name=\"c$COMMID.pdf\""
+	    echo "Content-Description: FAX document"
+	    echo "Content-Transfer-Encoding: base64"
+	    echo "Content-Disposition: attachment; filename=\"c$COMMID.pdf\""
+	    echo ""
+	    GW=`$TIFFINFO $FILE | $GREP "Image Width" | \
+		$SED 's/.*Image Width: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
+	    GL=`$TIFFINFO $FILE | $GREP "Image Length" | \
+		$SED 's/.*Image Length: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
+	    RW=`$TIFFINFO $FILE | $GREP "Resolution" | \
+		$SED 's/.*Resolution: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
+	    RL=`$TIFFINFO $FILE | $GREP "Resolution" | \
+		$SED 's/.*Resolution: [0-9]*, \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
+	    $TIFF2PS -a -O $FILE.ps $FILE 2>/dev/null # fax2ps looks bad
+	    $PS2PDF -g$GW\x$GL -r$RW\x$RL $FILE.ps $FILE.pdf 2>/dev/null
+	    $MIMENCODE $FILE.pdf 2>/dev/null
+	    $RM -f $FILE.ps $FILE.pdf 2>/dev/null   
+	elif [ "$FILETYPE" = "ps" ]; then
+	    echo "Content-Type: application/postscript; name=\"$FILENAME.ps\""
+	    echo "Content-Description: FAX document"
+	    echo "Content-Transfer-Encoding: 7bit"
+	    echo "Content-Disposition: attachment; filename=\"$FILENAME.ps\""
+	    echo ""
+	    $FAX2PS $FILE 2>/dev/null
+	fi
+	 echo ""
+	 echo "--$MIMEBOUNDARY--"
+	) | 2>&1 $SENDMAIL -ffax -oi $MAILADDR
+    fi
+else
+    #
+    # Generate notification mail for a failed attempt.
+    #
+    (echo "To: $TOADDR"
+     echo "From: The HylaFAX Receive Agent <fax>"
+     echo "Subject: facsimile poll retrieval failed"
+     echo ""
+     echo "An attempt to retrieve facsimile on $DEVICE failed because:"
+     echo ""
+     echo "    $MSG"
+     echo ""
+     echo "    ---- Transcript of session follows ----"
+     echo ""
+     if [ -f log/c$COMMID ]; then
+	$SED -e '/-- data/d' \
 	    -e '/start.*timer/d' -e '/stop.*timer/d' \
 	    log/c$COMMID
-    elif [ -n "$COMMID" ]; then
+     elif [ -n "$COMMID" ]; then
 	echo "    No transcript available (CommID c$COMMID)."
-    else
+     else
 	echo "    No transcript available."
-    fi
- fi
- echo ""
- echo "--$MIMEBOUNDARY"
- echo "Content-Type: application/postscript"
- echo "Content-Description: FAX document"
- echo "Content-Transfer-Encoding: 7bit"
- echo ""
- $FAX2PS $FILE 2>/dev/null
- echo ""
- echo "--$MIMEBOUNDARY--"
-) | 2>&1 $SENDMAIL -ffax -oi $MAILADDR
+     fi
+    ) | 2>&1 $SENDMAIL -ffax -oi $TOADDR
+fi
