@@ -62,7 +62,7 @@ TTYCMD=tty
 INFO=$SBIN/faxinfo
 FAX2PS=$TIFFBIN/fax2ps
 TIFF2PS=tiff2ps
-PS2PDF=ps2pdf
+TIFF2PDF=bin/tiff2pdf
 TOADDR=FaxMaster
 FROMADDR=fax
 TIFFINFO=tiffinfo
@@ -82,7 +82,7 @@ fi
 #
 # Permit various types of attachment types: ps, tif, pdf
 # Note that non-ASCII filetypes require an encoder.
-# pdf requires tiff2ps and ps2pdf
+# pdf requires tiff2ps and tiff2pdf
 #
 FILETYPE=ps
 SENDTO=
@@ -229,19 +229,9 @@ if [ -f $FILE ]; then
 	     echo "Content-Transfer-Encoding: $ENCODING"
 	     echo "Content-Disposition: attachment; filename=\"$FILENAME.pdf\""
 	     echo ""
-	     GW=`$TIFFINFO $FILE 2>$ERRORSTO | $GREP "Image Width" | \
-		$SED 's/.*Image Width: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
-	     GL=`$TIFFINFO $FILE 2>$ERRORSTO | $GREP "Image Length" | \
-		$SED 's/.*Image Length: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
-	     RW=`$TIFFINFO $FILE 2>$ERRORSTO | $GREP "Resolution" | \
-		$SED 's/.*Resolution: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
-	     RL=`$TIFFINFO $FILE 2>$ERRORSTO | $GREP "Resolution" | \
-		$SED 's/.*Resolution: [0-9]*, \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
-	     # keep any output from tiff2ps and ps2pdf from the message source
-	     $TIFF2PS -a -O $FILE.ps $FILE > $ERRORSTO 2>&1	# fax2ps output looks bad
-	     $PS2PDF -g$GW\x$GL -r$RW\x$RL $FILE.ps $FILE.pdf > $ERRORSTO 2>&1
+	     $TIFF2PDF -o $FILE.pdf $FILE
 	     encode $FILE.pdf
-	     $RM -f $FILE.ps $FILE.pdf 2>$ERRORSTO
+	     $RM -f $FILE.pdf 2>$ERRORSTO
 	 else #  default as Postscript
 	     echo "Content-Type: application/postscript; name=\"$FILENAME.ps\""
 	     echo "Content-Description: FAX document"

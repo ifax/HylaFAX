@@ -94,13 +94,14 @@ GW=`$TIFFINFO $FILE 2>$ERRORSTO | $GREP "Image Width" | \
     $SED 's/.*Image Width: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
 GL=`$TIFFINFO $FILE 2>$ERRORSTO | $GREP "Image Length" | \
     $SED 's/.*Image Length: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
-RW=`$TIFFINFO $FILE 2>$ERRORSTO | $GREP "Resolution" | \
-    $SED 's/.*Resolution: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
-RL=`$TIFFINFO $FILE 2>$ERRORSTO | $GREP "Resolution" | \
-    $SED 's/.*Resolution: [0-9]*, \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
-# keep any output from tiff2ps and ps2pdf from the message source
+RES=`$TIFFINFO $FILE 2>$ERRORSTO | $AWK 'BEGIN {rw0=rl0=0;}
+/Resolution:/ { rw=$2; rl=$3; unit=$4;
+   if(unit ~ /cm/) { rw *= 2.54; rl *= 2.54; }
+   if(rw > rw0) { rw0=rw;}
+   if(rl > rl0) { rl0=rl;}}
+END { printf "%dx%d", rw0+0.5, rl+0.5;}' 2>$ERRORSTO`
 $TIFF2PS -a -O $tmpps $FILE > $ERRORSTO 2>&1     # fax2ps output looks bad
-$PS2PDF -g$GW\x$GL -r$RW\x$RL $tmpps $out > $ERRORSTO 2>&1
+$PS2PDF -g$GW\x$GL -r$RES $tmpps $out > $ERRORSTO 2>&1
 
 $RM -f $tmpps 2>$ERRORSTO
 

@@ -63,14 +63,25 @@ TTYCMD=tty
 INFO=$SBIN/faxinfo
 FAX2PS=$TIFFBIN/fax2ps
 TIFF2PS=tiff2ps
-PS2PDF=ps2pdf
+TIFF2PDF=bin/tiff2pdf
 TOADDR=FaxMaster
 TIFFINFO=tiffinfo
+
+# 
+# Redirect errors to a tty, if possible, rather than
+# dev-nulling them or allowing them to creep into
+# the mail.
+# 
+if $TTYCMD >/dev/null 2>&1; then
+    ERRORSTO=`$TTYCMD`
+else
+    ERRORSTO=/dev/null
+fi
 
 #
 # Permit various types of attachment types: ps, tif, pdf
 # Note that non-ASCII filetypes require metamail.
-# pdf requires tiff2ps and ps2pdf
+# pdf requires tiff2ps and tiff2pdf
 # 
 FILETYPE=ps
 
@@ -204,25 +215,16 @@ if [ -f $FILE ]; then
 	    echo "Content-Transfer-Encoding: $ENCODING"
 	    echo "Content-Disposition: attachment; filename=\"c$COMMID.pdf\""
 	    echo ""
-	    GW=`$TIFFINFO $FILE | $GREP "Image Width" | \
-		$SED 's/.*Image Width: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
-	    GL=`$TIFFINFO $FILE | $GREP "Image Length" | \
-		$SED 's/.*Image Length: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
-	    RW=`$TIFFINFO $FILE | $GREP "Resolution" | \
-		$SED 's/.*Resolution: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
-	    RL=`$TIFFINFO $FILE | $GREP "Resolution" | \
-		$SED 's/.*Resolution: [0-9]*, \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
-	    $TIFF2PS -a -O $FILE.ps $FILE 2>/dev/null # fax2ps looks bad
-	    $PS2PDF -g$GW\x$GL -r$RW\x$RL $FILE.ps $FILE.pdf 2>/dev/null
+	    $TIFF2PDF -o $FILE.pdf $FILE
 	    encode $FILE.pdf
-	    $RM -f $FILE.ps $FILE.pdf 2>/dev/null   
+	    $RM -f $FILE.pdf 2>$ERRORSTO   
 	elif [ "$FILETYPE" = "ps" ]; then
 	    echo "Content-Type: application/postscript; name=\"$FILENAME.ps\""
 	    echo "Content-Description: FAX document"
 	    echo "Content-Transfer-Encoding: 7bit"
 	    echo "Content-Disposition: attachment; filename=\"$FILENAME.ps\""
 	    echo ""
-	    $FAX2PS $FILE 2>/dev/null
+	    $FAX2PS $FILE 2>$ERRORSTO
 	fi
 	 echo ""
 	 echo "--$MIMEBOUNDARY--"
