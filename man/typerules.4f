@@ -34,7 +34,7 @@ typerules \- \*(Fx file type identification and conversion rules
 .SH DESCRIPTION
 Only two types of files are accepted by the \*(Fx
 server for transmission as facsimile:
-\*(Ps\(tm files and 
+\*(Ps\(rg files and 
 .SM TIFF
 Class F (bilevel Group 3-encoded) files.
 All other types of files must be converted to one

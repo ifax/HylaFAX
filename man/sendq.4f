@@ -432,7 +432,7 @@ will form one from the
 configuration parameter.
 .TP 14
 .B postscript
-The pathname of a \*(Ps\(tm document to send.
+The pathname of a \*(Ps\(rg document to send.
 Once a \*(Ps
 document has been processed by 
 .IR faxsend ,

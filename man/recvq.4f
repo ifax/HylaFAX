@@ -84,7 +84,7 @@ by the
 .I fax
 user, which means that they are accessible only to the fax user.
 .PP
-To print a facsimile on a \*(Ps\(tm printer, the
+To print a facsimile on a \*(Ps\(rg printer, the
 .IR fax2ps (1)
 program can be used.
 .SH "SEE ALSO"
