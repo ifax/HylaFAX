@@ -1599,6 +1599,7 @@ faxQueueApp::submitJob(Job& job, FaxRequest& req, bool checkState)
      * destination phone number.
      */
     job.dest = canonicalizePhoneNumber(req.number);
+    req.external = externalizePhoneNumber(req.number);
     if (job.dest == "") {
 	if (req.external == "")			// NB: for notification logic
 	    req.external = req.number;
@@ -2918,6 +2919,18 @@ faxQueueApp::canonicalizePhoneNumber(const fxStr& ds)
 {
     if (dialRules)
 	return dialRules->canonicalNumber(ds);
+    else
+	return ds;
+}
+
+/*
+ * Convert a dialstring to an external format.
+ */
+fxStr
+faxQueueApp::externalizePhoneNumber(const fxStr& ds)
+{
+    if (dialRules)
+	return dialRules->displayNumber(ds);
     else
 	return ds;
 }

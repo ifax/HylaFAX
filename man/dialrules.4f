@@ -35,14 +35,15 @@ dialrules \- \*(Fx dial string processing rules
 A dial string specifies how to dial the telephone in order to
 reach a destination facsimile machine, or similar device.
 This string is supplied by a user with each outgoing facsimile job.
-User-supplied dial strings need to be processed in two ways by the
+User-supplied dial strings need to be processed in three ways by the
 \*(Fx server processes:
 to craft a canonical phone number for use in locating the
-receiver's capabilities, and
-to process into a form suitable for sending to a modem.
-In addition client applications may need to process a dial string
+receiver's capabilities, 
+to process into a form suitable for sending to a modem, and
 to formulate an external form that does not include private information
 such as a credit card access code.
+In addition, client applications may also need to process a dial string
+to formulate an external form.
 Phone number canonicalization and dial string preparation
 are done according to 
 .I "dial string processing rules"
