@@ -2604,7 +2604,7 @@ BuildPortDotH()
     CheckStdio snprintf 'extern int snprintf(char*, size_t, const char*,...);'
     CheckForFuncDecl vsnprintf stdio.h || {
 	echo '#include <stdarg.h>'
-	AddFuncDecl vsnprintf 'extern void vsnprintf(char*, size_t, const char*, va_list);'
+	AddFuncDecl vsnprintf 'extern int vsnprintf(char*, size_t, const char*, va_list);'
     }
     CheckForDefine fileno stdio.h || {
 	CheckStdio fileno 'extern int fileno(FILE*);'
