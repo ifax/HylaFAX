@@ -242,7 +242,10 @@ static const NSFData KnownNSF[] =
     {"\xB5\x00\x6E", "Microsoft", false },
     {"\xB5\x00\x72", "Speaking Devices", false },
     {"\xB5\x00\x74", "Compaq",    false },
-    {"\xB5\x00\x76", "Trust - Cryptek", false },
+/*
+    {"\xB5\x00\x76", "Trust - Cryptek", false },	// collision with Microsoft
+*/
+    {"\xB5\x00\x76", "Microsoft", false },		// uses LSB for country but MSB for manufacturer
     {"\xB5\x00\x78", "Cylink",    false },
     {"\xB5\x00\x7A", "Pitney Bowes", false },
     {"\xB5\x00\x7C", "Digiboard", false },
@@ -297,7 +300,6 @@ static const NSFData KnownNSF[] =
     {"\xAD\x00\x36", "HP",        false, 3, 5, HP, true },
     {"\xAD\x00\x42", "FaxTalk",   false, 0, 0, NULL, true },
     {"\xAD\x00\x44", NULL,        true,  0, 0, NULL, true },
-    {"\xAD\x00\x6E", "Microsoft", false, 0, 0, NULL, false }, // reverse-ordered country code but not the rest
     {"\xAD\x00\x98", "unknown - USA", true, 0, 0, NULL, true },
     {"\xBC\x53\x01", "Minolta",   false, 0, 0, NULL, true },
     {NULL}
