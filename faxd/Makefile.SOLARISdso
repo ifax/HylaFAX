@@ -31,8 +31,6 @@
 #
 LDIRT	+= libfaxserver.a
 
-LIBVERSION=4.0.1
-
 libfaxserver.${DSO}: ${SERVER_OBJS} ${MODEM_OBJS}
 	ld ${DSOOPTS} -o libfaxserver.${DSO}.${LIBVERSION} \
 	    ${SERVER_OBJS} ${MODEM_OBJS} ${LLDLIBS}

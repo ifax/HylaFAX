@@ -29,7 +29,6 @@
 #
 # DSO-specific rules for the util directory.
 #
-LIBVERSION=4.0.1
 
 libfaxutil.${DSO}: ${OBJECTS}
 	ld ${DSOOPTS} -o libfaxutil.${DSO}.${LIBVERSION} ${OBJECTS} 
