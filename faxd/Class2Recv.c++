@@ -275,8 +275,16 @@ Class2Modem::recvPageData(TIFF* tif, fxStr& emsg)
      * Have host do copy quality checking if the modem does not
      * support checking for this data format and if the configuration
      * parameters indicate CQ checking is to be done.
+     *
+     * If the modem is performing copy quality correction then
+     * the host cannot perform copy quality checking.
      */
-    hostDidCQ = (modemCQ & BIT(params.df)) == 0 && checkQuality();
+    if (serviceType == SERVICE_CLASS2)
+	hostDidCQ = (modemCQ & BIT(params.df)) == 0 && checkQuality();
+    else
+	hostDidCQ = modemCQ == 0 && checkQuality();
+    protoTrace("Copy quality checking performed by %s", hostDidCQ ? "host" : "modem");
+
     bool pageRecvd = recvPageDLEData(tif, hostDidCQ, params, emsg);
 
     // be careful about flushing here -- otherwise we lose +FPTS codes

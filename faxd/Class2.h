@@ -61,6 +61,7 @@ protected:
     fxStr	hardFlowCmd;		// hardware flow control command
     u_int	serviceType;		// modem service required
     u_int	modemCQ;		// copy quality capabilities mask
+    u_int	sendCQ;			// sending copy quality capabilities mask
 
     bool	xmitWaitForXON;		// if true, wait for XON when sending
     bool	hostDidCQ;		// if true, copy quality done on host

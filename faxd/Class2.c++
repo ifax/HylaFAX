@@ -106,16 +106,63 @@ Class2Modem::setupModem()
      * If the modem is capable, then enable it using the configured
      * commands.  If the modem is incapable of doing copy quality
      * checking, then the host will do the work.
+     *
+     * The recommendation for AT+FCQ varies significantly between
+     * the Class 2 and Class 2.0 specification.
+     *
+     * An assumption is made that Class2CQCmd, if configured, enables
+     * all available copy quality services (or disables them if none
+     * are available).
      */
     cqCmds = "";
-    if (doQuery(conf.class2CQQueryCmd, s) && FaxModem::parseRange(s, modemCQ)) {
-	if (modemCQ >>= 1)
-	    cqCmds = conf.class2CQCmd;
-    } else
-	modemCQ = 0;
-    static const char* whatCQ[4] = { "no", "1D", "2D", "1D+2D" };
-    modemSupports("%s copy quality checking%s", whatCQ[modemCQ&3],
-	(modemCQ && cqCmds == "" ? " (but not enabled)" : ""));
+    sendCQ = 0;
+    if (serviceType == SERVICE_CLASS2) {
+	/*
+	 * The AT+FCQ=? response indicates which compression
+         * formats are copy-quality checked.
+	 */
+	if (doQuery(conf.class2CQQueryCmd, s) && FaxModem::parseRange(s, modemCQ)) {
+	    if (modemCQ >>= 1)
+		cqCmds = conf.class2CQCmd;
+	} else
+	    modemCQ = 0;
+	static const char* whatCQ[4] = { "no", "1D", "2D", "1D+2D" };
+	modemSupports("%s copy quality checking%s", whatCQ[modemCQ&3],
+	    (modemCQ && cqCmds == "" ? " (but not enabled)" : ""));
+    } else {		// SERVICE_CLASS20, SERVICE_CLASS21
+	/*
+	 * The AT+FCQ=? response indicates whether or not copy-quality
+         * checking and/or correction are supported.  Host CQ cannot
+	 * be used if the modem performs copy-quality correction.
+	 */
+	cqCmds = conf.class2CQCmd;
+	if (doQuery(conf.class2CQQueryCmd, s) && FaxModem::vparseRange(s, 0, 2, &modemCQ, &sendCQ)) {
+	    modemCQ >>= 1;
+	    sendCQ >>= 1;
+	} else {
+	    modemCQ = 0;
+	    sendCQ = 0;
+	}
+	static const char* whatCQ[4] = { "no", "checking", "correction", "checking and correction" };
+	if (modemCQ)
+	    modemSupports("receiving copy quality %s", whatCQ[modemCQ&3]);
+	else modemSupports("no receiving copy quality services");
+	if (sendCQ)
+	    modemSupports("sending copy quality %s%s", whatCQ[sendCQ&3],
+		(sendCQ && cqCmds == "" ? " (but not enabled)" : ""));
+	else modemSupports("no sending copy quality services");
+    }
+    /*
+     * In Class 2 we follow spec defaults and assume that if cqCmds is null 
+     * that CQ is not enabled.  In Class 2.0/2.1 we follow spec default and
+     * assume the opposite.  In order to know otherwise we'd need to make
+     * sense of AT+FCQ? and incorporate that in the messages above.
+     */
+    if (serviceType == SERVICE_CLASS2)
+	if (cqCmds == "") modemCQ = 0;
+    else {	// SERVICE_CLASS20, SERVICE_CLASS21
+	if (cqCmds == "" && modemCQ) modemCQ = 1;
+    }
     /*
      * Deduce if modem supports T.class2-defined suport for
      * subaddress, selective polling address, and passwords.

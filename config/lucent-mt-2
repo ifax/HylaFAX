@@ -31,6 +31,12 @@ Class2NFLOCmd:		AT+FLO=0
 Class2SFLOCmd:		AT+FLO=1
 Class2HFLOCmd:		AT+FLO=2
 
+# The modem performs copy quality correction (in Class 2... gasp!)
+# always, thus it's not a good idea to use host-based CQ.  The
+# query response is incorrect, also.
+Class2CQQueryCmd:	"!0-2"
+Class2CQCmd:		AT+FCQ=1
+
 # If your line supports Caller-ID, you may want to uncomment this...
 # QualifyCID:		etc/cid		# you must create this file
 # ModemResetCmds:	AT+VCID=1

@@ -20,9 +20,13 @@ ModemHardFlowCmd:	AT&K3
 
 Class2APCmd:		AT+FAP=1,1,1
 Class2BUGCmd:		AT+FBU=0		# early firmware is buggy
-Class2CQCmd:		AT+FCQ=1,0
 Class2SendRTC:		yes
 Class2UseHex:		yes
+
+# Some firmwares do not report copy quality correction, although it
+# is present and cannot be disabled.  Thus modem-based CQ must be used.
+Class2CQQueryCmd:	"!(00-02),(00-02)"
+Class2CQCmd:		AT+FCQ=1,0
 
 # versions that respond to AT+FFC=? with non-zero data support RTFCC
 # Class2RTFCC:		yes

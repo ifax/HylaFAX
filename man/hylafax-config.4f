@@ -2270,6 +2270,20 @@ The value ``none'' may be used if the modem does not support any
 The command used to set a polling identifier.
 This string is inserted into the format ``\s-1%s="<id>"\s+1''.
 .TP
+.B Class2CQCmd
+The command to use to set up parameters for copy quality checking.
+For example, for an Everex 24/96D modem this parameter might be set to
+``\s-1AT+FCQ=1\enAT+FBADMUL=20\enAT+FBADLIN=10\s+1''.
+.B Class2CQCmd
+should be configured to set-up all available copy quality services
+available per
+.B Class2CQQueryCmd.
+To disable features that are available, configure
+.B Class2CQQueryCmd
+with a ``!'', and then set
+.B Class2CQCmd
+accordingly.
+.TP
 .B Class2CQQueryCmd
 The command to send to the modem to get the copy quality capabilities string.
 If the parameter begins with a ``!'', then the remainder of the
@@ -2282,15 +2296,11 @@ See also
 .B PercentGoodLines
 and
 .B MaxConsecutiveBadLines
-for parameters used to do server copy quality checking.
+for parameters used to do server copy quality checking.  If copy quality
+checking is configured to be done by the modem then it is not done by the server.
 .TP
 .B Class2CRCmd
 The command to use to enable the reception of facsimile.
-.TP
-.B Class2CQCmd
-The command to use to set up parameters for copy quality checking.
-For example, for an Everex 24/96D modem this parameter might be set to
-``\s-1AT+FCQ=1\enAT+FBADMUL=20\enAT+FBADLIN=10\s+1''.
 .TP
 .B Class2DCCCmd
 The command used to set modem capabilities.
