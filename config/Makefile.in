@@ -53,6 +53,7 @@ CONFIGFILES=class1 \
 	cirrus \
 	dsi-scout+ \
 	e-tech \
+    elsa-microlink-56k-basic-2.0 \
 	everex-2496d \
 	exar \
 	gvc-288 \
@@ -61,6 +62,7 @@ CONFIGFILES=class1 \
 	moto-288 \
 	mt-1432 \
 	nuvo-voyager \
+    performance-rts \
 	ppi-pm14400fxmt \
 	ppi-pm14400fxsa \
 	rc144ac \
@@ -72,13 +74,14 @@ CONFIGFILES=class1 \
 	rockwell \
 	rockwell-k56 \
 	telebit-t3000 \
-	telebit-qblazer \
+    telebit-qblazer \
 	telebit-wb \
 	tricom2842 \
 	uds-fastalk \
+    umc92144 \
 	usr-2.0 \
 	usr-rts \
-	usr-xon \
+    usr-xon \
 	zyxel-1496e \
 	zyxel-1496e-1 \
 	zyxel-1496e-2.0 \
