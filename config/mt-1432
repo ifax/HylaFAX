@@ -32,6 +32,8 @@
 # MT1432	firmware rev 0307 I or newer
 # MT132BG	rev 0109A
 # MT1932ZDX	rev 0109H
+# MT2834ZDX	rev 0316A or newer
+# MT2834ZDXb	rev 0317G or newer
 #
 # Note that MT1432 modems come in several varieties:
 #
@@ -52,17 +54,30 @@
 # and hardware connection/cabling (e.g. flow control).
 #
 ModemType:		Class2		# use class 2 interface
-ModemRate:		19200		# lock rate for DCE-DTE communication
+ModemRate:		38400		# lock rate for DCE-DTE communication
 ModemFlowControl:	rtscts		# default
 #
 ModemHardFlowCmd:	AT&E4		# hardware flow control
 ModemSoftFlowCmd:	AT&E5		# software flow control
 ModemSetupDTRCmd:	AT&D3		# setup so DTR drop resets modem
 ModemSetupDCDCmd:	AT&C1		# setup so DCD reflects carrier (or not)
+# The MT2834ZDX (and other newer models) may be more robust with this.
+#ModemSetupDCDCmd:	AT&C4		# setup so DCD resets modem on
+#					# carrier drop
+#
 ModemSetupAACmd:	AT+FAA=1	# enable adaptive-answer in class 2
 #
 # NB: some models get confused by @ in ModemDialCmd
+# NB: the @ causes some multifunction fax units to not go into fax mode.
 #
 ModemDialCmd:		ATDT%s		# T for tone dialing
 #
 Class2RecvDataTrigger:	"\022"		# character sent to modem to start recv
+#
+# The MT2834ZDX (and other newer models) can take advantage of these.
+#Class2APQueryCmd:	AT		# AT+FAP=? not supported on this modem
+#Class2NFLOCmd:		AT+FLO=0	# Class 2: no flow control
+#Class2SFLOCmd:		AT+FLO=1	# Class 2: software flow control
+#Class2HFLOCmd:		AT+FLO=2	# Class 2: hardware flow control
+#Class2XmitWaitForXON:	no
+#
