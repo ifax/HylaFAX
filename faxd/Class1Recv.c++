@@ -1106,6 +1106,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				default:
 				    // The message is not ECM-specific: fall out of ECM receive, and let
 				    // the earlier message-handling routines try to cope with the signal.
+				    signalRcvd = rtncframe.getFCF();
 				    messageReceived = true;
 				    return (true);
 				    break;
