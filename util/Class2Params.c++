@@ -58,37 +58,28 @@ Class2Params::operator!=(const Class2Params& other) const
     return !(*this == other);
 }
 
-static char*
-addParam(char* cp, u_int v)
-{
-    if (v != (u_int)-1) {
-	sprintf(cp, ",%u", v);
-	while (*cp != '\0') cp++;
-    } else {
-	*cp++ = ',';
-	*cp = '\0';
-    }
-    return (cp);
-}
-
 fxStr
 Class2Params::cmd() const
 {
-    char buf[1024];
-    char* cp = buf;
-
-    if (vr != (u_int) -1) {
-	sprintf(cp, "%u", vr);
-	while (*cp != '\0') cp++;
-    }
-    cp = addParam(cp, br);
-    cp = addParam(cp, wd);
-    cp = addParam(cp, ln);
-    cp = addParam(cp, df);
-    cp = addParam(cp, ec);
-    cp = addParam(cp, bf);
-    cp = addParam(cp, st);
-    return fxStr(buf);
+    u_int unset = (u_int) -1;
+    fxStr comma(",");
+    fxStr s;
+    if (vr != unset) s.append(fxStr::format("%u", vr));
+    s.append(comma);
+    if (br != unset) s.append(fxStr::format("%u", br));
+    s.append(comma);
+    if (wd != unset) s.append(fxStr::format("%u", wd));
+    s.append(comma);
+    if (ln != unset) s.append(fxStr::format("%u", ln));
+    s.append(comma);
+    if (df != unset) s.append(fxStr::format("%u", df));
+    s.append(comma);
+    if (ec != unset) s.append(fxStr::format("%u", ec));
+    s.append(comma);
+    if (bf != unset) s.append(fxStr::format("%u", bf));
+    s.append(comma);
+    if (st != unset) s.append(fxStr::format("%u", st));
+    return s;
 }
 
 bool

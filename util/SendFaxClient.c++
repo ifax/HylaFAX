@@ -190,10 +190,11 @@ addarg(const char* av[], int& ac, const char* flag, const fxStr& opt)
 bool
 SendFaxClient::makeCoverPage(const SendFaxJob& job, fxStr& file, fxStr& emsg)
 {
-    char buff[128];
-    sprintf(buff, "%s/sndfaxXXXXXX", _PATH_TMP);
+    const char* templ = _PATH_TMP "/sndfaxXXXXXX";
+    char* buff = strcpy(new char[strlen(templ) + 1], templ);
     int fd = Sys::mkstemp(buff);
     tmpFile = buff;
+    delete [] buff;
     if (fd >= 0) {
 #define	MAXARGS	128
 	const char* av[MAXARGS];
@@ -640,11 +641,12 @@ SendFaxClient::prepareFile(FileInfo& info, fxStr& emsg)
     if (info.temp != "" && info.temp != info.name)
 	Sys::unlink(info.temp);
     if (info.rule->getCmd() != "") {	// conversion required
-    char buff[128];
-    sprintf(buff, "%s/sndfaxXXXXXX", _PATH_TMP);
-    Sys::mktemp(buff);
-    tmpFile = buff;
-	/*
+        const char* templ = _PATH_TMP "/sndfaxXXXXXX";
+        char* buff = strcpy(new char[strlen(templ) + 1], templ);
+        Sys::mktemp(buff);
+        tmpFile = buff;
+        delete [] buff;
+        /*
 	 * XXX **** WARNING **** XXXX
 	 *
 	 * We need to generate files according to each job's
