@@ -394,9 +394,10 @@ faxQCleanApp::expungeCruft(void)
 		    }
 		}
 		closedir(dir1);
-		if(got_match)
+		if(got_match) {
 		    free(base);
 		    continue;
+		}
 		if(trace)
 		    printf("%s: did not find base '%s' match.\n", 
 			(const char *) file, base);
