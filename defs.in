@@ -76,7 +76,7 @@ MKDEPEND	= @MKDEPEND@
 #
 # Programs used during installation.
 #
-INSTALL		= @INSTALL@
+INSTALL		= @INSTALL@ ${INSTALL_OPTS}
 ECHO		= @ECHO@
 FUSER		= @FUSER@
 GREP		= @GREP@

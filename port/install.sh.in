@@ -83,8 +83,8 @@ CMD="@CP@"
 SRC=
 FILES=
 DESTDIR=
-CHMOD=":"
-CHOWN=":"
+CHMOD=": @CHMOD@"
+CHOWN=": @CHOWN@ @SYSUID@:@SYSGID@"
 CHGRP=":"
 RM="@RM@ -f"
 MV="@MV@ @MV_F@"
@@ -129,7 +129,7 @@ do
 		    test -p $1 >/dev/null 2>&1
 		}
 		;;
-    -ln)	shift; CMD=@LN@; SRC="$1"
+    -ln)	shift; CMD=@LN@; SRC="${ROOT}$1"
 		STRIP=":"
 		;;
     -lns)	shift; CMD=@LN@; preopts="@LN_S@"; SRC="$1"
@@ -145,7 +145,7 @@ do
 		}
 		;;
     -src)	shift; SRC="$1";;
-    -[fF])	shift; DESTDIR="$1";;
+    -[fF])	shift; DESTDIR="$1/";;
     -idb)	shift; opt="$1"
 		case "$opt" in
 		*config\(update\)*)	Updated=yes;;
@@ -162,6 +162,21 @@ do
     esac
     shift
 done
+
+# I'll assume install.sh is only used from within HylaFAX Makefiles
+ROOT_SH=`echo $0 | sed 's;/port/install.sh;;'`/root.sh
+# If we are not root we write commands to root.sh
+do_chXXX()
+{
+#	Check the user id.
+	eval `id  |  sed 's/[^a-z0-9=].*//'`
+	if [ "${uid:=0}" -ne 0 ]
+	then
+	        echo "$*" >> ${ROOT_SH}
+	else
+		eval $*
+	fi
+}
 
 #
 # Install the specified target.
@@ -189,12 +204,14 @@ install()
     fi
     if [ $? -eq 0 ]; then
 	$VERBOSE "$CHOWN $target"
-	$CHOWN $target
-	$VERBOSE "$CHGRP $target"
-	$CHGRP $target
+	do_chXXX $CHOWN $target
+	if [ $CHGRP != ":" ]; then
+	    $VERBOSE "$CHGRP $target"
+	    do_chXXX $CHGRP $target
+	fi
 	$VERBOSE "$CHMOD $target"
-	$CHMOD $target
-	if [ $STRIP != ":" -a -x $ROOT/$DESTDIR/$f ]; then
+	do_chXXX $CHMOD $target
+	if [ $STRIP != ":" -a -x $ROOT$DESTDIR$f ]; then
 	    $STRIP $target >/dev/null 2>&1 || true
 	    $VERBOSE "$STRIP $target"
 	fi
@@ -212,7 +229,7 @@ if [ $Suggested = yes ]; then
     #     use test -f to see if the file exists.
     #
     for f in $TARGETS; do
-	t=$ROOT/$DESTDIR/$f
+	t=$ROOT$DESTDIR$f
 	if [ -f $t ]; then
 	    if [ -z "$SRC" -a $HasSource = yes ]; then
 		$CMP -s $f $t || {
@@ -241,7 +258,7 @@ elif [ $Updated = yes ]; then
     #     use test -f to see if the file exists.
     #
     for f in $TARGETS; do
-	t=$ROOT/$DESTDIR/$f
+	t=$ROOT$DESTDIR$f
 	if [ -f $t ]; then
 	    if [ -z "$SRC" -a $HasSource = yes ]; then
 		$CMP -s $f $t || $MV $t $t.O
@@ -260,7 +277,7 @@ elif [ $NoUpdate = yes ]; then
     #     use test -f to see if the file exists.
     #
     for f in $TARGETS; do
-	t=$ROOT/$DESTDIR/$f
+	t=$ROOT$DESTDIR$f
 	test -f $t || install $f $t
     done
 else
@@ -269,6 +286,6 @@ else
     # with the existing copy, optionally, saved first.
     #
     for f in $TARGETS; do
-	install $f $ROOT/$DESTDIR/$f
+	install $f $ROOT$DESTDIR$f
     done
 fi
