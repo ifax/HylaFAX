@@ -41,6 +41,12 @@ DEPTH=..
 
 SRCDIR	= ${DEPTH}/${TOPSRCDIR}/etc
 VPATH	= ../@SRCDIR@/etc
+DIR_SYSVINIT	= @SYSVINITDIR@
+DIR_SYSVINITSTART	= @SYSVINITSTARTDIR@
+DIR_SYSVINITSTOP	= @SYSVINITSTOPDIR@
+MANSEDLOCAL		= @MANSEDLOCAL@
+NAME_SYSVINITSTART	= @SYSVINITSTARTNAME@
+NAME_SYSVINITSTOP	= @SYSVINITSTOPNAME@
 
 DIALRULES=dialrules \
 	dialrules.sf-ba \
@@ -76,8 +82,8 @@ PUTSAMPLE	= ${PUTSERVER} -u ${FAXUSER} -g ${FAXGROUP} \
 		  -idb "config(noupdate)"
 
 install: default
-	${PUTSERVER} -F ${SBIN} -m 755 -src ${SRCDIR}/faxaddmodem -O faxaddmodem
-	${PUTSERVER} -F ${SBIN} -m 755 -src ${SRCDIR}/faxsetup -O faxsetup
+	${PUTSERVER} -F ${SBIN} -m 755 -src faxaddmodem -O faxaddmodem
+	${PUTSERVER} -F ${SBIN} -m 755 -src faxsetup -O faxsetup
 	for i in bsdi irix linux; do \
 	    ${PUTSERVER} -F ${SBIN} -m 755 \
 		-src ${SRCDIR}/faxsetup.$$i -O faxsetup.$$i; \
@@ -97,9 +103,23 @@ install: default
 # System V-specific init support.
 #
 installSysVInit: hylafax
-	if [ "@SYSVINIT@" ]; then \
-	    cp hylafax @SYSVINIT@; \
-	    chmod 755 @SYSVINIT@; \
+	if [ "@SYSVINIT@" = yes ]; then \
+	    ${PUTSERVER} -F ${DIR_SYSVINIT} -m 755 -O hylafax; \
+	    echo "checking ${DIR_SYSVINITSTART} directories"; \
+	    if test -n "${DIR_SYSVINITSTART}"; then \
+		for i in "${DIR_SYSVINITSTART}"; do \
+		    if test -d ${DIR_SYSVINIT}/$$i; then \
+			${PUTSERVER} -F ${DIR_SYSVINIT}/$$i -lns ../`basename ${DIR_SYSVINIT}`/hylafax ${NAME_SYSVINITSTART}; \
+		    fi; \
+		done; \
+	    fi; \
+	    if test -n "${DIR_SYSVINITSTOP}"; then \
+		for i in "${DIR_SYSVINITSTOP}"; do \
+		    if test -d ${DIR_SYSVINIT}/$$i; then \
+			${PUTSERVER} -F ${DIR_SYSVINIT}/$$i -lns ../`basename ${DIR_SYSVINIT}`/hylafax ${NAME_SYSVINITSTOP}; \
+		    fi; \
+		done; \
+	    fi \
 	else \
 	    ${PUTSERVER} -F ${SBIN} -m 755 hylafax; \
 	fi
@@ -118,4 +138,6 @@ installClient: default
 # These targets are created during the configuration procedure.
 #
 clobberconfig:
-	-${RM} -f hylafax probemodem.sh faxaddmodem.sh faxsetup.sh
+	-${RM} -f hylafax probemodem.sh faxaddmodem.sh faxsetup.sh \
+			faxaddmodem faxsetup
+

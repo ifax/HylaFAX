@@ -1,10 +1,10 @@
 d none /etc ? ? ?
-d none /etc/init.d ? ? ?
-f none /etc/init.d/hylafax=../etc/hylafax 0755 @SYSUID@ @SYSGID@
-d none /etc/rc0.d ? ? ?
-s none /etc/rc0.d/K80fax=/etc/init.d/hylafax
-d none /etc/rc2.d ? ? ?
-s none /etc/rc2.d/S80fax=/etc/init.d/hylafax
+d none @SYSVINITDIR@ ? ? ?
+f none @SYSVINITDIR@/hylafax=../etc/hylafax 0755 @SYSUID@ @SYSGID@
+d none @SYSVINITDIR@/@SYSVINITSTOPDIR@ ? ? ?
+s none @SYSVINITDIR@/@SYSVINITSTOPDIR@/@SYSVINITSTOPNAME@=@SYSVINITDIR@/hylafax
+d none @SYSVINITDIR@/@SYSVINITSTARTDIR@ ? ? ?
+s none @SYSVINITDIR@/@SYSVINITSTARTDIR@/@SYSVINITSTARTNAME@=@SYSVINITDIR@/hylafax
 d none /etc/config ? ? ?
 f none /etc/config/fax=../etc/config.fax 0644 @SYSUID@ @SYSGID@
 d none @BIN@ ? ? ?
@@ -113,8 +113,8 @@ f none @SBIN@/tsitest=../faxd/tsitest 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/tagtest=../faxd/tagtest 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/cqtest=../faxd/cqtest 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/choptest=../faxd/choptest 0755 @SYSUID@ @SYSGID@
-f none @SBIN@/faxaddmodem=../etc/faxaddmodem.sh 0755 @SYSUID@ @SYSGID@
-f none @SBIN@/faxsetup=../etc/faxsetup.sh 0755 @SYSUID@ @SYSGID@
+f none @SBIN@/faxaddmodem=../etc/faxaddmodem 0755 @SYSUID@ @SYSGID@
+f none @SBIN@/faxsetup=../etc/faxsetup 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/faxsetup.bsdi=../@SRCDIR@/etc/faxsetup.bsdi 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/faxsetup.irix=../@SRCDIR@/etc/faxsetup.irix 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/faxsetup.linux=../@SRCDIR@/etc/faxsetup.linux 0755 @SYSUID@ @SYSGID@
@@ -183,7 +183,7 @@ d none @SPOOL@/etc 0755 @FAXUID@ @FAXGID@
 f none @SPOOL@/etc/dpsprinter.ps=../@SRCDIR@/util/dpsprinter.ps 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/etc/cover.templ=../@SRCDIR@/util/cover.templ 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/etc/xferfaxlog=../etc/xferfaxlog 0644 @FAXUID@ @FAXGID@
-f none @SPOOL@/etc/hosts.hfaxd=../etc/hosts 0600 @FAXUID@ @FAXGID@
+f none @SPOOL@/etc/hosts.hfaxd=../etc/hosts.hfaxd 0600 @FAXUID@ @FAXGID@
 f none @SPOOL@/etc/dialrules=../@SRCDIR@/etc/dialrules 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/etc/dialrules.sf-ba=../@SRCDIR@/etc/dialrules.sf-ba 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/etc/dialrules.europe=../@SRCDIR@/etc/dialrules.europe 0444 @SYSUID@ @SYSGID@
@@ -241,6 +241,7 @@ f html @HTMLDIR@/Modems/multitech-1432.html=../@SRCDIR@/html/Modems/multitech-14
 f html @HTMLDIR@/Modems/multitech-1932.html=../@SRCDIR@/html/Modems/multitech-1932.html 0444 @SYSUID@ @SYSGID@
 f html @HTMLDIR@/Modems/nuvo-96424pfx.html=../@SRCDIR@/html/Modems/nuvo-96424pfx.html 0444 @SYSUID@ @SYSGID@
 f html @HTMLDIR@/Modems/ppi-pm14400fxmt.html=../@SRCDIR@/html/Modems/ppi-pm14400fxmt.html 0444 @SYSUID@ @SYSGID@
+f html @HTMLDIR@/Modems/rockwell-56k.html=../@SRCDIR@/html/Modems/rockwell-56k.html 0444 @SYSUID@ @SYSGID@
 f html @HTMLDIR@/Modems/supra-v32bis.html=../@SRCDIR@/html/Modems/supra-v32bis.html 0444 @SYSUID@ @SYSGID@
 f html @HTMLDIR@/Modems/telebit-t3000.html=../@SRCDIR@/html/Modems/telebit-t3000.html 0444 @SYSUID@ @SYSGID@
 f html @HTMLDIR@/Modems/twincom-144df.html=../@SRCDIR@/html/Modems/twincom-144df.html 0444 @SYSUID@ @SYSGID@
@@ -248,7 +249,6 @@ f html @HTMLDIR@/Modems/ucom-traveller96.html=../@SRCDIR@/html/Modems/ucom-trave
 f html @HTMLDIR@/Modems/usr-courier.html=../@SRCDIR@/html/Modems/usr-courier.html 0444 @SYSUID@ @SYSGID@
 f html @HTMLDIR@/Modems/usr-sportster.html=../@SRCDIR@/html/Modems/usr-sportster.html 0444 @SYSUID@ @SYSGID@
 f html @HTMLDIR@/Modems/zyxel-1496.html=../@SRCDIR@/html/Modems/zyxel-1496.html 0444 @SYSUID@ @SYSGID@
-f html @HTMLDIR@/Modems/K56flex.html=../@SRCDIR@/html/Modems/K56flex.html 0444 @SYSUID@ @SYSGID@
 f html @HTMLDIR@/Modems/multitech-2834.html=../@SRCDIR@/html/Modems/multitech-2834.html 0444 @SYSUID@ @SYSGID@
 f html @HTMLDIR@/Modems/hayes-accura288.html=../@SRCDIR@/html/Modems/hayes-accura288.html 0444 @SYSUID@ @SYSGID@
 d html @HTMLDIR@/Majordomo 0755 @SYSUID@ @SYSGID@

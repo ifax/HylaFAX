@@ -104,13 +104,14 @@ PATH_IMPRIP=@IMPRIP@		# pathname of IRIX Impressario RIP
 
 POSIXLY_CORRECT=1; export POSIXLY_CORRECT		# disable GNU extensions
 
-
 #
 # Location of sysv init script
 #
-SYSVINIT=@SYSVINIT@
-FAXQ_SERVER=1
-HFAXD_SERVER=1
+DIR_SYSVINIT=@SYSVINITDIR@
+FAXQ_SERVER=@FAXQ_SERVER@
+HFAXD_SERVER=@HFAXD_SERVER@
+HFAXD_OLD_PROTOCOL=@HFAXD_OLD_PROTOCOL@
+HFAXD_SNPP_SERVER=@HFAXD_SNPP_SERVER@
 
 #
 # These are the configuration parameters written to the
@@ -135,6 +136,8 @@ FUSER
 GREP
 GSRIP		PATH_GSRIP
 HFAXD_SERVER
+HFAXD_OLD_PROTOCOL
+HFAXD_SNPP_SERVER
 IMPRIP		PATH_IMPRIP
 LIBDATA		DIR_LIBDATA
 LIBEXEC		DIR_LIBEXEC
@@ -1663,9 +1666,9 @@ fi
 #
 if onServer; then
     signalINETD=no
-    if [ -f "$SYSVINIT" ]; then
+    if [ -f ${DIR_SYSVINIT}/hylafax ]; then
 	# started by init at boot time
-        if [ $FAXQ_SERVER -eq 0 ]; then
+        if [ $FAXQ_SERVER = no ]; then
             cat <<EOF
 
 Warning faxq will NOT be automatically started on reboot!
@@ -1673,11 +1676,8 @@ Warning faxq will NOT be automatically started on reboot!
 EOF
             true
         fi
-    else
-        FAXQ_SERVER=0
-        HFAXD_SERVER=0
     fi
-    if [ -f $INETDCONF -a $HFAXD_SERVER -eq 0 ]; then
+    if [ -f $INETDCONF -a $HFAXD_SERVER = no ]; then
 	E="hylafax	stream	tcp	nowait	$FAX	$DIR_LIBEXEC/hfaxd	hfaxd -I"
 	editInetdConf()
 	{
@@ -1756,7 +1756,7 @@ EOF
 		isOK "$x" && editInetdConf
 	    fi
 	fi
-    elif [ ! -f $INETDCONF -a $HFAXD_SERVER -eq 0 ]; then
+    elif [ ! -f $INETDCONF -a $HFAXD_SERVER = no ]; then
 	cat<<EOF
 
 
@@ -2168,9 +2168,9 @@ EOF
     prompt "Should I restart the HylaFAX server processes [yes]?"; read x
     if isOK "$x"; then
 	echo ""
-	if [ -x "$SYSVINIT" ]; then
-	    echo $SYSVINIT start
-	    $SYSVINIT start
+	if [ -x ${DIR_SYSVINIT}/hylafax ]; then
+	    echo ${DIR_SYSVINIT}/hylafax start
+	    ${DIR_SYSVINIT}/hylafax start
 	else
 	    echo $DIR_SBIN/faxq; $DIR_SBIN/faxq
 	fi

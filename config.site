@@ -99,7 +99,16 @@
 #PATH_DPSRIP="/var/spool/fax/bin/ps2fax.exe"	# pathname of DPS-based RIP
 #PATH_IMPRIP="/usr/lib/print/psrip"	# pathname of Impressario 2.1 RIP
 #MANSCHEME="sysv-source-cat-strip"	# manual page installation scheme
-#SYSVINIT=		                # location SysV init script 
+#SYSVINIT="auto"		# install SysV-style init support (auto|yes|no)
+#DIR_SYSVINIT="/etc/init.d"	# location of SysV-style init script
+#DIR_SYSVINITSTART="../rc2.d"	# location of SysV-style start script
+#DIR_SYSVINITSTOP="../rc0.d"	# location of SysV-style stop script
+#NAME_SYSVINITSTART="S80fax"	# name of SysV-style start script
+#NAME_SYSVINITSTOP="K80fax"	# name of SysV-style stop script
+#FAXQ_SERVER=yes		# init script starts faxq
+#HFAXD_SERVER=yes		# init script starts hfaxd
+#HFAXD_OLD_PROTOCOL=no		# don't start old protocol
+#HFAXD_SNPP_SERVER=no		# don't start paging protocol
 
 # SVR4 packaging stuff
 #PKG_ARCH=				# ARCH variable in pkginfo file

@@ -1188,7 +1188,7 @@ programs that implement voice-oriented capabilities.</EM>
 
 <TR>
 <TD VALIGN=top><LISTING>
-HylaFAX configuration parameters are:
+HylaFAX configuration parameters (part 1 of 2) are:
 
 [ 1] Directory for applications:        /usr/local/bin
 [ 2] Directory for lib data files:      /usr/local/lib/fax
@@ -1197,18 +1197,30 @@ HylaFAX configuration parameters are:
 [ 5] Directory for manual pages:        /usr/local/man
 [ 6] Directory for HTML documentation:  /usr/local/doc/fax
 [ 7] Directory for spooling:            /var/spool/fax
-[ 8] Directory for font metrics:        /usr/contrib/lib/flexfax/afm
-[ 9] Directory for uucp lock files:     /var/spool/uucp
-[10] Uucp lock file scheme:             binary
-[11] PostScript imager package:         gs
-[12] PostScript imager program:         /usr/contrib/bin/gs
-[13] Manual page installation scheme:   bsd-nroff-gzip-0.gz
-[14] Default page size:                 North American Letter
-[15] Default vertical res (lpi):        98
-[16] Location of getty program:         /usr/libexec/getty
-[17] Location of voice getty program:   /bin/vgetty
-[18] Location of sendmail program:      /usr/sbin/sendmail
-[19] Location of TIFF tools:            /usr/local/bin
+[ 8] Directory for uucp lock files:     /var/spool/uucp
+[ 9] Uucp lock file scheme:             binary
+[10] PostScript imager package:         gs
+[11] PostScript imager program:         /usr/contrib/bin/gs
+[12] Manual page installation scheme:   bsd-nroff-gzip-0.gz
+[13] Default page size:                 North American Letter
+[14] Default vertical res (lpi):        98
+Are these ok [yes]? 
+
+HylaFAX configuration parameters (part 2 of 2) are:
+
+[15] Location of getty program:         /usr/libexec/getty
+[16] Location of voice getty program:   /bin/vgetty
+[17] Location of sendmail program:      /usr/sbin/sendmail
+[18] Location of TIFF tools:            /usr/local/bin
+[19] Location of SysV init scripts:
+[20] Location of SysV start scripts:
+[21] Location of SysV stop scripts:
+[22] Name of SysV start script:
+[23] Name of SysV stop script:
+[24] Init script starts faxq:           yes
+[25] Init script starts hfaxd           yes
+[26] Start old protocol:                no
+[27] Start paging protocol:             no
 
 Are these ok [yes]? 
 </LISTING></TD>
@@ -1546,6 +1558,32 @@ by default this is <B>/var/spool/fax</B>.
 </TR>
 
 <TR>
+<TD VALIGN=top><TT>DIR_SYSVINIT</TT></TD>
+<TD>
+Location of SysV-style init script.
+The default is for configure to search for
+<B>/etc/rc.d/init.d then /etc/init.d</B>.
+On sunos machines configure also searches for <B>$DIR_SBIN</B>.
+On hpux machines configure first searches for <B>/sbin/init.d</B>.
+</TR>
+
+<TR>
+<TD VALIGN=top><TT>DIR_SYSVINITSTART</TT></TD>
+<TD>
+Location of SysV-style start script
+The default is <B>../rc2.d</B>.
+<br>On Linux, the default is <B>../rc2.d ../rc3.d ../rc4.d ../rc5.d</B>.
+</TR>
+
+<TR>
+<TD VALIGN=top><TT>DIR_SYSVINITSTOP</TT></TD>
+<TD>
+Location of SysV-style stop script
+The default is <B>../rc0.d</B>.
+<br>On Linux, the default is <B>../rc0.d ../rc1.d ../rc6.d</B>.
+</TR>
+
+<TR>
 <TD VALIGN=top><TT>DSODELAY</TT></TD>
 <TD>
 When DSO's are built, the option to specify to <TT>CC</TT>
@@ -1583,6 +1621,13 @@ selected according to the target system.
 </TR>
 
 <TR>
+<TD VALIGN=top><TT>FAXQ_SERVER</TT></TD>
+<TD>
+Determines if the init script should start faxq
+<br>The default is <B>yes</B>.
+</TR>
+
+<TR>
 <TD VALIGN=top><TT>FAXUID</TT></TD>
 <TD>
 The user ID to use for the fax user; by default <TT>uucp</TT>.
@@ -1608,6 +1653,27 @@ is set, then configure may append other options to this list.
 <TD>
 Special options to pass the C++ compiler.  If this parameter
 is set, then configure may append other options to this list.
+</TR>
+
+<TR>
+<TD VALIGN=top><TT>HFAXD_OLD_PROTOCOL</TT></TD>
+<TD>
+Determines if the init script should start the old protocol.
+<br>The default is <B>no</B>.
+</TR>
+
+<TR>
+<TD VALIGN=top><TT>HFAXD_SERVER</TT></TD>
+<TD>
+Determines if the init script should start hfaxd.
+<br>The default is <B>yes</B>.
+</TR>
+
+<TR>
+<TD VALIGN=top><TT>HFAXD_SNPP_SERVER</TT></TD>
+<TD>
+Determines if the init script should start the paging protocol.
+<br>The default is <B>no</B>.
 </TR>
 
 <TR>
@@ -1771,6 +1837,27 @@ is specified then filenames are not converted when they are installed.
 </TR>
 
 <TR>
+<TD VALIGN=top><TT>NAME_SYSVINITSTART</TT></TD>
+<TD>
+The name of SysV-style start script.
+<br>The default is <B>S80fax</B>.
+<br>On Linux, the default is <B>S97fax</B>.
+<br>On HPUX, the default is <B>S905hylafax</B>.
+<br>SCO 3.2v4.x, and UnixWare default to <B>S80hylafax</B>.
+<br>SCO 3.2v5.x.x defaults to <B>S90hylafax</B>.
+</TR>
+
+<TR>
+<TD VALIGN=top><TT>NAME_SYSVINITSTOP</TT></TD>
+<TD>
+The name of SysV-style stop script.
+<br>The default is <B>K80fax</B>.
+<br>On Linux, the default is <B>K05fax</B>.
+<br>On HPUX, the default is <B>K095hylafax</B>.
+<br>SCO 3.2v4.x, SCO 3.2v5.x.x, and UnixWare default to <B>K05hylafax</B>.
+</TR>
+
+<TR>
 <TD VALIGN=top><TT>PAGESIZE</TT></TD>
 <TD>
 The default page size that client applications will use for submitted
@@ -1839,6 +1926,32 @@ is built; there is no mechanism for doing this through a runtime
 configuration file.
 <EM>This program is not part of HylaFAX; it is provided as a ``hook''
 for developers to integrate voice capabilities.</EM>
+</TR>
+
+<TR>
+<TD VALIGN=top><TT>PKG_ARCH</TT></TD>
+<TD>
+SVR4 packaging stuff (make package).
+This gets assigned to the ARCH variable in pkginfo file.
+The default is for configure to assign the value of $CPU
+</TR>
+
+<TR>
+<TD VALIGN=top><TT>PKG_EMAIL</TT></TD>
+<TD>
+SVR4 packaging stuff (make package).
+The e-mail address of the maker of the package.
+Ie. PKG_EMAIL=someone@somehost.somedomain
+This gets assigned to the EMAIL variable in pkginfo file.
+</TR>
+
+<TR>
+<TD VALIGN=top><TT>PKG_VENDOR</TT></TD>
+<TD>
+SVR4 packaging stuff (make package).
+The name of the maker of the package.
+Ie. PKG_VENDOR="Your Name Here"
+This gets assigned to the VENDOR variable in pkginfo file.
 </TR>
 
 <TR>
@@ -2114,6 +2227,45 @@ though it is not necessary.
 
 <A NAME="SCO"><H3>SCO Guidance</H3></A>
 
+These notes pertain to SCO 3.2 v5.0.4
+<P>
+One of SCO's system include files for the CC compiler
+cause compilation to fail;
+The solution is to copy <B>/usr/include/utmp.h</B> to
+the top level of the HylaFAX build tree.
+
+<P>
+These notes pertain to SCO 3.2 v5.0.2
+<P>
+One of SCO's system include files has incorrect function prototypes
+that cause compilation to fail;
+The following diff may be applied to the problematic system include file
+or one may create a patched copy of the file in a private
+<B>sys</B> directory under the top level of the HylaFAX build tree.
+
+<LISTING>
+*** /usr/include/sys/syslog.h Thu Dec 26 04:42:27 1996
+--- sys/syslog.h Fri Dec 27 17:05:11 1996
+***************
+*** 198,204 ****
+  void closelog __P((void));
+  void openlog __P((const char *, int, int));
+  int setlogmask __P((int));
+! int vsyslog __P((int, char *, va_list ));
+  __END_DECLS
+  
+  #endif /* !INKERNEL */
+--- 198,204 ----
+  void closelog __P((void));
+  void openlog __P((const char *, int, int));
+  int setlogmask __P((int));
+! int vsyslog __P((int, const char *, va_list ));
+  __END_DECLS
+  
+  #endif /* !INKERNEL */
+</LISTING>
+
+<P>
 These notes pertain to SCO 3.2 v4.2; they may also be relevant to other
 versions.
 
@@ -2216,37 +2368,7 @@ or one may create patched copies of these files in a private
   #ifdef _NO_PROTOTYPE
 </LISTING>
 
-These notes pertain to SCO 3.2 v5.0
-<P>
-One of SCO's system include files has incorrect function prototypes
-that cause compilation to fail;
-The following diff may be applied to the problematic system include file
-or one may create a patched copy of the file in a private
-<B>sys</B> directory under the top level of the HylaFAX build tree.
-
-<LISTING>
-*** /usr/include/sys/syslog.h Thu Dec 26 04:42:27 1996
---- sys/syslog.h Fri Dec 27 17:05:11 1996
-***************
-*** 198,204 ****
-  void closelog __P((void));
-  void openlog __P((const char *, int, int));
-  int setlogmask __P((int));
-! int vsyslog __P((int, char *, va_list ));
-  __END_DECLS
-  
-  #endif /* !INKERNEL */
---- 198,204 ----
-  void closelog __P((void));
-  void openlog __P((const char *, int, int));
-  int setlogmask __P((int));
-! int vsyslog __P((int, const char *, va_list ));
-  __END_DECLS
-  
-  #endif /* !INKERNEL */
-</LISTING>
-
-<A NAME="Solaris"><H3>Solaris Guidance</H3></A>
+<H3><A NAME="Solaris">Solaris Guidance</A></H3>
 
 Under (at least) Solaris 2.3
 the standard make does VPATH processing incorrectly for files
@@ -2262,6 +2384,12 @@ the <TT>LD_LIBRARY_PATH</TT> environment variable is explicitly
 set to reference the location of the newer TIFF library DSO
 or the path is explicitly set with a <TT>-R</TT> flag in the
 <TT>LIBTIFF</TT> configuration parameter.
+
+<P>
+On Solaris with GCC 2.95.x you will probably have to fix your LD_LIBRARY_PATH
+to see the libstdc++ libraries.
+<br> $ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+<br> $ ./configure
 
 <A NAME="Ultrix"><H3>Ultrix Guidance</H3></A>
 
@@ -2410,10 +2538,26 @@ putting new syslog functions in my libc.a. This means that I
 have not tried to build with the <B>port/syslog.c</B> support
 included with HylaFAX; though it should be equivalent).
 
-<A NAME="UnixWare"><H3>UnixWare Guidance</H3></A>
+<H3><A NAME="UnixWare">UnixWare Guidance</A></H3>
 
+<P>
+If you use the SCO Skunkware glibs package for the tiff libraries
+you will need to add the following to your config.local
+<br>LIBTIFF="-L/usr/local/lib -ltiff -ljpeg -lz -lm"
+
+<P>
+On some versions the configuration parameter
+<TT>CONFIG_SOCKARGLENTYPE</TT> needs to be set to <TT>size_t</TT>
+to force the argument type for call-by-reference parameters
+to the socket-related system calls; this should automatically be
+done by <B>configure</B>.
+
+<P>
+These notes pertain to UnixWare 2.03
+<P>
 One system include file needs to be patched to correct
-function prototypes:
+function prototypes: If you dont' want to patch the system include file,
+copy it to the hylafax top level directory and patch it there.
 
 <LISTING>
 *** /usr/include/netdb.h	Mon Dec 11 05:25:35 1995
@@ -2454,13 +2598,6 @@ function prototypes:
   extern struct protoent	*getprotoent(void);
   extern int		endhostent(void);
 </LISTING>
-
-<P>
-On some versions the configuration parameter
-<TT>CONFIG_SOCKARGLENTYPE</TT> needs to be set to <TT>size_t</TT>
-to force the argument type for call-by-reference parameters
-to the socket-related system calls; this should automatically be
-done by <B>configure</B>.
 
 <!--FOOTER-->
 

@@ -43,12 +43,14 @@ PORTFILES=\
     port/setegid.c				\
     port/seteuid.c				\
     port/setvbuf.c				\
+    port/snprintf.c				\
     port/srandom.c				\
     port/strcasecmp.c				\
     port/strtod.c				\
     port/strtoul.c				\
     port/syslog.c				\
     port/vsyslog.c				\
+    port/vsnprintf.c				\
     port/writev.c				\
     port/irix/so_locations			\
     ${NULL}
@@ -96,7 +98,9 @@ HTMLFILES=\
     html/Modems/usr-courier.html		\
     html/Modems/usr-sportster.html		\
     html/Modems/zyxel-1496.html			\
-    html/Modems/K56flex.html			\
+    html/Modems/zyxel-elite.html		\
+    html/Modems/zyxel-omni.html			\
+    html/Modems/rockwell-56k.html		\
     html/Modems/multitech-2834.html		\
     html/Modems/hayes-accura288.html		\
     html/Modems/Telebit/faxcmds.html		\
@@ -188,6 +192,7 @@ HYLAFAXSRC=\
 	config/class2.0				\
 	config/dsi-scout+			\
 	config/e-tech				\
+	config/elsa-microlink-56k-basic-2.0	\
 	config/everex-2496d			\
 	config/exar				\
 	config/gvc-288				\
@@ -196,6 +201,7 @@ HYLAFAXSRC=\
 	config/mt-1432				\
 	config/moto-288				\
 	config/nuvo-voyager			\
+	config/performance-rts			\
 	config/ppi-pm14400fxmt			\
 	config/ppi-pm14400fxsa			\
 	config/rc144ac				\
@@ -204,13 +210,16 @@ HYLAFAXSRC=\
 	config/rc288dpi-1			\
 	config/rc32acl				\
 	config/rc32acl-1			\
-	config/rockwell				\
+	config/rockwell-k56			\
+	config/rockwell-rc			\
+	config/sierra				\
 	config/skel				\
 	config/telebit-qblazer			\
 	config/telebit-t3000			\
 	config/telebit-wb			\
 	config/tricom2842			\
 	config/uds-fastalk			\
+	config/umc92144				\
 	config/usr-2.0				\
 	config/usr-rts				\
 	config/usr-xon				\
@@ -218,7 +227,6 @@ HYLAFAXSRC=\
 	config/zyxel-1496e-1			\
 	config/zyxel-1496e-2.0			\
 	config/zyxel-2864			\
-	config/sierra				\
     etc/Makefile.in				\
 	etc/copy.h				\
 	etc/copy.m				\
@@ -320,7 +328,9 @@ HYLAFAXSRC=\
 	util/TypeRules.h			\
 	util/UnixTransport.h			\
 	util/cvtfacility.c			\
+	util/faxadduser.c			\
 	util/faxconfig.c			\
+	util/faxdeluser.c			\
 	util/faxmodem.c				\
 	util/faxmsg.c				\
 	util/faxstate.c				\
@@ -368,29 +378,6 @@ HYLAFAXSRC=\
 	regex/regexec.c				\
 	regex/regfree.c				\
 	regex/utils.h				\
-    zlib/Makefile.in				\
-	zlib/Makefile.IRIXdso			\
-	zlib/ChangeLog				\
-	zlib/README				\
-	zlib/adler32.c				\
-	zlib/deflate.c				\
-	zlib/deflate.h				\
-	zlib/infblock.c				\
-	zlib/infblock.h				\
-	zlib/infcodes.c				\
-	zlib/infcodes.h				\
-	zlib/inffast.c				\
-	zlib/inffast.h				\
-	zlib/inflate.c				\
-	zlib/inftrees.c				\
-	zlib/inftrees.h				\
-	zlib/infutil.c				\
-	zlib/infutil.h				\
-	zlib/trees.c				\
-	zlib/zconf.h				\
-	zlib/zlib.h				\
-	zlib/zutil.c				\
-	zlib/zutil.h				\
     faxalter/Makefile.in			\
 	faxalter/faxalter.c++			\
     faxcover/Makefile.in			\
@@ -426,6 +413,8 @@ HYLAFAXSRC=\
 	faxd/Modem.h				\
 	faxd/ModemConfig.h			\
 	faxd/ModemServer.h			\
+	faxd/NSF.c++				\
+	faxd/NSF.h				\
 	faxd/PCFFont.h				\
 	faxd/QLink.h				\
 	faxd/ServerConfig.h			\
@@ -589,6 +578,7 @@ MANPAGES=\
 	man/dialtest.1m				\
 	man/faxabort.1m				\
 	man/faxaddmodem.1m			\
+	man/faxadduser.1m			\
 	man/faxsetup.1m				\
 	man/faxalter.1				\
 	man/faxanswer.1m			\
@@ -596,6 +586,7 @@ MANPAGES=\
 	man/faxcover.1				\
 	man/faxqclean.1m			\
 	man/faxcron.1m				\
+	man/faxdeluser.1m			\
 	man/faxinfo.1m				\
 	man/faxq.1m				\
 	man/faxgetty.1m				\
@@ -636,7 +627,7 @@ MANPAGES=\
 	man/tsi.4f				\
 	man/tsitest.1m				\
 	man/typerules.4f			\
-	man/xferfaxlog.4f				\
+	man/xferfaxlog.4f			\
 	man/wedged.1m				\
 	man/xferfaxstats.1m			\
     ${NULL}
@@ -648,6 +639,7 @@ HTMLDIST=\
     html/sam.gif				\
     html/matthias.gif				\
     html/hylafax.gif				\
+    html/icons/contents.gif			\
     html/icons/frog.gif				\
     html/icons/next.gif				\
     html/icons/button.excl.gif			\

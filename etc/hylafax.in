@@ -1,7 +1,8 @@
 #! /bin/sh
 #	$Id$
 #
-# chkconfig: 12345 97 05
+# chkconfig: 2345 97 05
+#
 # description: HylaFAX(tm) is a sophisticated enterprise-strength fax
 #              package for class 1 and 2 fax modems on unix systems.
 #              This init script is the preferred way to start HylaFAX,
@@ -63,11 +64,18 @@ EOF
 }
 . $SPOOL/etc/setup.cache
 
+# Just in case these are not in setup.cache yet
 if [ -z "$HFAXD_SERVER" ]; then
-    HFAXD_SERVER=1
+    HFAXD_SERVER=@HFAXD_SERVER@
 fi
 if [ -z "$FAXQ_SERVER" ]; then
-    FAXQ_SERVER=1
+    FAXQ_SERVER=@FAXQ_SERVER@
+fi
+if [ -z "$HFAXD_OLD_PROTOCOL" ]; then
+    HFAXD_OLD_PROTOCOL=@HFAXD_OLD_PROTOCOL@
+fi
+if [ -z "$HFAXD_SNPP_SERVER" ]; then
+    HFAXD_SNPP_SERVER=@HFAXD_SNPP_SERVER@
 fi
 
 IS_ON=/etc/chkconfig		# NB: chkconfig is IRIX- and Linux-specific
@@ -146,21 +154,34 @@ fi
 case $1 in
 'start')
 	if $IS_ON fax && test -x $FAXQ; then
-	    if test $FAXQ_SERVER -eq 1 ; then
+	    if test $FAXQ_SERVER = yes ; then
 		killall -15 faxq
 	    fi
-	    if test $HFAXD_SERVER -eq 1 ; then
+	    if test $HFAXD_SERVER = yes ; then
 		killall -15 hfaxd
 	    fi
 	    printf "HylaFAX:"
-            if test $FAXQ_SERVER -eq 1 ; then
+            if test $FAXQ_SERVER = yes ; then
 	        $FAXQ; printf " faxq"
             fi
-            if test $HFAXD_SERVER -eq 1 ; then
-	        $HFAXD -i $FAXPORT;
-		printf " hfaxd (without old protocol or SNPP support)"
-	    fi
-	    if test ! $FAXQ_SERVER -eq 1 -a ! $HFAXD_SERVER -eq 1 ; then
+            if test $HFAXD_SERVER = yes ; then
+	        HFAXD="$HFAXD -i $FAXPORT"
+		HFAXMSG=" hfaxd"
+		if [ $HFAXD_OLD_PROTOCOL = yes ]; then
+	    	    HFAXD="$HFAXD -o 4557"
+		    HFAXMSG="$HFAXMSG (with old protocol"
+		else
+		    HFAXMSG="$HFAXMSG (without old protocol"
+		fi
+		if [ $HFAXD_SNPP_SERVER = yes ]; then
+	    	    HFAXD="$HFAXD -s $SNPPPORT"
+		    HFAXMSG="$HFAXMSG & with SNPP support)"
+		else
+		    HFAXMSG="$HFAXMSG & without SNPP support)"
+		fi
+		$HFAXD ; printf "$HFAXMSG"
+            fi
+	    if test $FAXQ_SERVER != yes -a $HFAXD_SERVER != yes ; then
 		printf " not started (script disabled by configure)"
 	    fi
 	    $ECHO "."

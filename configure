@@ -58,7 +58,11 @@ DSO=auto
 GETTY=auto
 HTML=no
 PS=auto
-SYSVINIT=
+SYSVINIT=auto
+FAXQ_SERVER=yes			# init script starts faxq
+HFAXD_SERVER=yes		# init script starts hfaxd
+HFAXD_OLD_PROTOCOL=no		# don't start old protocol
+HFAXD_SNPP_SERVER=no		# don't start paging protocol
 SGI2FAX=auto
 PORT=auto
 LIBMALLOC=auto
@@ -79,6 +83,7 @@ DBLIB=no
 LIBDB="-L/usr/local/lib -ldb"
 DBLIBINC=/usr/local/include
 CONFIG_OSFCNH=auto
+MANSEDLOCAL='-e " "'
 
 # SVR4 packaging stuff
 PKG_ARCH=				# ARCH variable in pkginfo file
@@ -146,6 +151,7 @@ DIST_TYPE
 ECHO
 FAXGID
 FAXUID
+FAXQ_SERVER
 FILLORDER
 FONTMAP
 FONTPATH	PATH_AFM
@@ -153,6 +159,9 @@ FUSER
 GETTY
 GREP
 GSRIP 		PATH_GSRIP
+HFAXD_SERVER
+HFAXD_OLD_PROTOCOL
+HFAXD_SNPP_SERVER
 HTML
 HTMLDIR 	DIR_HTML
 HTMLPATH
@@ -210,6 +219,11 @@ STRIP
 SYSGID
 SYSUID
 SYSVINIT
+SYSVINITDIR	DIR_SYSVINIT
+SYSVINITSTARTDIR	DIR_SYSVINITSTART
+SYSVINITSTARTNAME	NAME_SYSVINITSTART
+SYSVINITSTOPDIR	DIR_SYSVINITSTOP
+SYSVINITSTOPNAME	NAME_SYSVINITSTOP
 TIFFBIN
 UTMP
 UUCP_LOCKDIR	DIR_LOCKS
@@ -585,7 +599,15 @@ findFile()
 #
 findApp()
 {
-    findThing "test -x" $1 $2
+    t="$1"; app=$1; path=$2;
+    case $app in
+    /*) eval test -x $app  -a  ! -d $app  && { echo $app; return; };;
+    esac
+    IFS=:
+    for i in $path; do
+	eval  test -x $i/$app  -a  ! -d $i/$app && { echo $i/$app; return 0; }
+    done
+    return 1
 }
 
 #
@@ -1876,6 +1898,7 @@ EmitConfigurationDefinitions()
     test "$CONFIG_BADGETOPTPROTO" || {		# char* const* vs. char**
 	case $TARGET in
 	*-aix*)		CONFIG_BADGETOPTPROTO=yes;;
+	*-sco3.2v4.*)	CONFIG_BADGETOPTPROTO=yes;;
 	*)		CONFIG_BADGETOPTPROTO=no;;
 	esac
     }
@@ -3351,16 +3374,73 @@ if [ -z "$INSTALL" ]; then
     esac
 fi
 
-if [ -z "$SYSVINIT" ]; then
-    # XXX The DIRS list needs to be more comprehensive
-    DIRS="/etc/init.d /etc/rc.d/init.d /sbin/init.d"
-    for i in $DIRS; do
-	if test -d $i; then
-	    SYSVINIT=$i/hylafax
-	    Note "Looks like a SysV-style init is used, enabling installation of startup code."
-	    break;
-	fi
+# Location SysV style init scripts
+if [ -z "$DIR_SYSVINIT" ]; then
+    DIR_SYSVINITS="
+	/etc/rc.d/init.d
+	/etc/init.d
+    "
+    case $TARGET in
+	*-sunos*)	DIR_SYSVINITS="$DIR_SYSVINITS $DIR_SBIN";;
+	*-hpux*)	DIR_SYSVINITS="/sbin/init.d $DIR_SYSVINITS";;
+	*)		;;
+    esac
+    DIR_SYSVINIT=
+    for i in $DIR_SYSVINITS; do
+	test -d $i && { DIR_SYSVINIT=$i; break; }
     done
+fi
+
+if [ "$SYSVINIT" = auto ]; then
+    if test -d $DIR_SYSVINIT; then
+	SYSVINIT=yes
+	Note "Looks like a SysV-style init is used, enabling installation of startup code."
+    else
+	SYSVINIT=no
+    fi
+fi
+
+if [ "$SYSVINIT" = yes ]; then
+	Note "Looks like SysV init scripts go in $DIR_SYSVINIT."
+fi
+
+if [ "$SYSVINIT" = yes ]; then
+    if [ -z "$DIR_SYSVINITSTART" ]; then
+	case $TARGET in
+	    *-linux*)	DIR_SYSVINITSTART="../rc2.d ../rc3.d ../rc4.d ../rc5.d";;
+	    *)		DIR_SYSVINITSTART="../rc2.d";;
+	esac
+    fi
+    if [ -z "$DIR_SYSVINITSTOP" ]; then
+	case $TARGET in
+	    *-linux*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d ../rc6.d";;
+	    *)		DIR_SYSVINITSTOP="../rc0.d";;
+	esac
+    fi
+    if [ -z "$NAME_SYSVINITSTART" ]; then
+	case $TARGET in
+	    *-hpux*)		NAME_SYSVINITSTART="S905hylafax" ;;
+	    *-linux*)		NAME_SYSVINITSTART="S97hylafax" ;;
+	    *-sco3.2v4*)	NAME_SYSVINITSTART="S80hylafax" ;;
+	    *-sco3.2v5*)	NAME_SYSVINITSTART="S90hylafax" ;;
+	    *-univel*)		NAME_SYSVINITSTART="S80hylafax" ;;
+	    *sysv4.2uw2*)	NAME_SYSVINITSTART="S80hylafax" ;;
+	    *-UnixWare-*)	NAME_SYSVINITSTART="S80hylafax" ;;
+	    *)			NAME_SYSVINITSTART="S80fax" ;;
+	esac
+    fi
+    if [ -z "$NAME_SYSVINITSTOP" ]; then
+	case $TARGET in
+	    *-hpux*)		NAME_SYSVINITSTOP="K095hylafax" ;;
+	    *-linux*)		NAME_SYSVINITSTOP="K05hylafax" ;;
+	    *-sco3.2v4*)	NAME_SYSVINITSTOP="K05hylafax" ;;
+	    *-sco3.2v5*)	NAME_SYSVINITSTOP="K05hylafax" ;;
+	    *-univel*)		NAME_SYSVINITSTOP="K05hylafax" ;;
+	    *sysv4.2uw2*)	NAME_SYSVINITSTOP="K05hylafax" ;;
+	    *-UnixWare-*)	NAME_SYSVINITSTOP="K05hylafax" ;;
+	    *)			NAME_SYSVINITSTOP="K80fax" ;;
+	esac
+    fi
 fi
 
 Note "Done selecting programs."
@@ -4045,11 +4125,11 @@ getPageSizeInfo()
     param=`grep "$pat" $1 | sed -e 's/	.*//;q'`
 }
 
-printConfig()
+printConfig1()
 {
     cat<<EOF
 
-HylaFAX configuration parameters are:
+HylaFAX configuration parameters (part 1 of 2) are:
 
 [ 1] Directory for applications:        $DIR_BIN
 [ 2] Directory for lib data files:      $DIR_LIBDATA
@@ -4065,11 +4145,32 @@ HylaFAX configuration parameters are:
 [12] Manual page installation scheme:   $MANSCHEME
 [13] Default page size:                 $PAGESIZE
 [14] Default vertical res (lpi):        $DEFVRES
-[15] Location of getty program:         $PATH_GETTY
-[16] Location of sendmail program:      $PATH_SENDMAIL
 
 EOF
 }
+
+printConfig2()
+{
+    cat<<EOF
+
+HylaFAX configuration parameters (part 2 of 2) are:
+
+[15] Location of getty program:         $PATH_GETTY
+[16] Location of voice getty program:   $PATH_VGETTY
+[17] Location of sendmail program:      $PATH_SENDMAIL
+[18] Location of TIFF tools:            $TIFFBIN
+[19] Location of SysV init scripts:	$DIR_SYSVINIT
+[20] Location of SysV start scripts:	$DIR_SYSVINITSTART
+[21] Location of SysV stop scripts:	$DIR_SYSVINITSTOP
+[22] Name of SysV start script:		$NAME_SYSVINITSTART
+[23] Name of SysV stop script:		$NAME_SYSVINITSTOP
+[24] Init script starts faxq:		$FAXQ_SERVER
+[25] Init script starts hfaxd		$HFAXD_SERVER
+[26] Start old protocol:		$HFAXD_OLD_PROTOCOL
+[27] Start paging protocol:		$HFAXD_SNPP_SERVER
+EOF
+}
+  
 
 promptForParameter()
 {
@@ -4114,8 +4215,42 @@ promptForParameter()
     15)	promptForNonNullStringParameter "$PATH_GETTY" \
 	    "Location of getty program";		PATH_GETTY="$param"
 	;;
-    16)	promptForNonNullStringParameter "$PATH_SENDMAIL" \
+    16) promptForNonNullStringParameter "$PATH_VGETTY" \
+	    "Location of vgetty program";	        PATH_VGETTY="$param"
+	;;
+    17)	promptForNonNullStringParameter "$PATH_SENDMAIL" \
 	    "Location of sendmail program";		PATH_SENDMAIL="$param"
+	;;
+    18) promptForNonNullStringParameter "$TIFFBIN" \
+	    "Location of TIFF tools";			TIFFBIN="$param"
+	;;
+    19) promptForNonNullStringParameter "$DIR_SYSVINIT" \
+	    "Location of SysV init scripts";		DIR_SYSVINIT="$param"
+	;;
+    20) promptForNonNullStringParameter "$DIR_SYSVINITSTART" \
+	    "Location of SysV start scripts";		DIR_SYSVINITSTART="$param"
+	;;
+    21) promptForNonNullStringParameter "$DIR_SYSVINITSTOP" \
+	    "Location of SysV stop scripts";		DIR_SYSVINITSTOP="$param"
+	;;
+    22) promptForNonNullStringParameter "$NAME_SYSVINITSTART" \
+	    "Name of SysV start script";		NAME_SYSVINITSTART="$param"
+	;;
+    23) promptForNonNullStringParameter "$NAME_SYSVINITSTOP" \
+	    "Name of SysV stop script";			NAME_SYSVINITSTOP="$param"
+	;;
+    24) promptForNonNullStringParameter "$FAXQ_SERVER" \
+	    "Init script starts faxq";			FAXQ_SERVER="$param"
+	;;
+    25) promptForNonNullStringParameter "$HFAXD_SERVER" \
+	    "Init script starts hfaxd";			HFAXD_SERVER="$param"
+	;;
+    26) promptForNonNullStringParameter "$HFAXD_OLD_PROTOCOL" \
+	    "Start old protocol";			HFAXD_OLD_PROTOCOL="$param"
+	;;
+    27) promptForNonNullStringParameter "$HFAXD_SNPP_SERVER" \
+	    "Start paging protocol";			HFAXD_SNPP_SERVER="$param"
+	;;
     esac
 }
 
@@ -4128,17 +4263,42 @@ if [ $QUIET = no ]; then
     ok=skip
     while [ "$ok" != y ] && [ "$ok" != yes ]; do
 	if [ "$ok" != skip ]; then
-	    for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16; do
+	    for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 ; do
 		promptForParameter $i;
 	    done
 	fi
-	printConfig
+	printConfig1
+	prompt "Are these ok [yes]?"; read ok
+	test -z "$ok" && ok=yes
+	case "$ok" in
+	[1-9]|1[0-5])	promptForParameter $ok;;
+	[yY]*|[nN]*)	continue;;
+	?*)
+	    echo ""
+	    echo "\"y\", \"yes\", or <RETURN> accepts the displayed parameters."
+	    echo "A number lets you change the numbered parameter."
+	    echo ""
+	    ;;
+	esac
+	ok=skip
+    done
+fi
+
+if [ $QUIET = no ]; then
+    ok=skip
+    while [ "$ok" != y ] && [ "$ok" != yes ]; do
+	if [ "$ok" != skip ]; then
+	    for i in 15 16 17 18 19 20 21 22 23 24 25 26 27 ; do
+		promptForParameter $i;
+	    done
+	fi
+	printConfig2
 	checkForExecutable $PATH_SENDMAIL
 	checkForExecutable $PATH_GETTY
 	prompt "Are these ok [yes]?"; read ok
 	test -z "$ok" && ok=yes
 	case "$ok" in
-	[1-9]|1[0-6])	promptForParameter $ok;;
+	1[6-9]|2[0-8])	promptForParameter $ok;;
 	[yY]*|[nN]*)	continue;;
 	?*)
 	    echo ""
@@ -4162,7 +4322,7 @@ case $MANSCHEME in
 bsd-*-strip)	MANSEDLOCAL="-e s/4F/5/g -e s/1M/8/g";;
 bsd-*)		MANSEDLOCAL="-e s/4F/5F/g -e s/1M/8C/g";;
 sysv-*-strip)	MANSEDLOCAL="-e s/4F/4/g";;
-sysv-*)		MANSEDLOCAL=;;
+sysv-*)		MANSEDLOCAL='-e " "';;
 esac
 case $MANSCHEME in
 *-source-*)	MANCVT='${MANSED} $? >$@';;
