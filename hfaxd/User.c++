@@ -55,7 +55,7 @@ HylaFAXServer::checkUser(const char* name)
     bool check = false;
     FILE* db = fopen(fixPathname(userAccessFile), "r");
     if (db != NULL) {
-	check = checkuser(db, name);
+	check = checkuser(db, name) || checkuser(name);
 	fclose(db);
     } else
 	logError("Unable to open the user access file %s: %s",
@@ -80,6 +80,22 @@ nextRecord(FILE* db, char line[], u_int size)
 	    return (true);
     }
     return (false);
+}
+
+bool
+HylaFAXServer::checkuser(const char* name)
+{
+	bool retval=false;
+#ifdef HAVE_PAM
+	struct passwd* uinfo=getpwnam(name);
+	if (uinfo != NULL) {
+		uid = uinfo->pw_uid;
+		passwd = "*";
+		adminwd = "*";
+		retval = true;
+	}
+#endif //HAVE_PAM
+	return(retval);
 }
 
 /*

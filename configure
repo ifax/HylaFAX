@@ -179,7 +179,9 @@ LIBZ
 LIBDB
 LLDOPTS
 LN
-LN_S"
+LN_S
+HAVE_PAM
+PAMLIBS"
 
 VAR2="MACHDEPLIBS
 MAKECXXOVERRIDE
@@ -327,6 +329,7 @@ Options: [defaults in brackets after descriptions]
   --version               print the version of autoconf that created configure
   --target=TARGET         configure for TARGET [TARGET=HOST]
   --srcdir=DIR            find the sources in DIR [configure dir or ..]
+  --disable-pam           disable all PAM support
   --with-PARAM[=ARG]      set configuration PARAM [ARG=yes]
 EOF
 }
@@ -380,6 +383,7 @@ do
     -srcdir=*|--srcdir=*)	SRCDIR="$ac_optarg";;
     -target|--target)		ac_prev=TARGET;;
     -target=*|--target=*)	TARGET="$ac_optarg" ;;
+	-disable-pam|--disable-pam) DISABLE_PAM="yes" ;;
     -version|--version)
 	echo "This is HylaFAX configure $Revision$"
 	exit 0
@@ -1551,6 +1555,25 @@ if [ "$LIBSUN" = auto ]; then
     else
 	LIBSUN=no
     fi
+fi
+HAVE_PAM="/*#define HAVE_PAM 1*/"
+PAMLIBS=""
+if [ "$DISABLE_PAM" != "yes" ]; then
+	Note "Checking for PAM (Pluggable Authentication Module) support"
+	CheckForLibrary pam_authenticate -lpam &&
+		CheckForLibrary misc_conv -lpam_misc -lpam &&
+		CheckForIncludeFile security/pam_appl.h &&
+		CheckForIncludeFile security/pam_misc.h && {
+			HAVE_PAM="#define HAVE_PAM 1"
+			PAMLIBS="-lpam -lpam_misc"
+		}
+	if [ "x$PAMLIBS" = "x" ]; then
+		Note "... not found. Disabling PAM support"
+		else
+		Note "... found. Enabling PAM support"
+	fi
+else
+	Note "Disabling PAM support"
 fi
 CheckForLibrary crypt -lc || {
     #

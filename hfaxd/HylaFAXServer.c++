@@ -570,6 +570,7 @@ HylaFAXServer::stringtag HylaFAXServer::strings[] = {
 { "faxqfifoname",	&HylaFAXServer::faxqFIFOName,	"/" FAX_FIFO },
 { "systemtype",		&HylaFAXServer::systemType,
   "UNIX Type: L8 Version: SVR4" },
+{ "admingroup",		&HylaFAXServer::admingroup },
 };
 HylaFAXServer::numbertag HylaFAXServer::numbers[] = {
 { "servertracing",	&HylaFAXServer::tracingLevel,		TRACE_SERVER },
@@ -590,6 +591,7 @@ HylaFAXServer::setupConfig()
     for (i = N(numbers)-1; i >= 0; i--)
 	(*this).*numbers[i].p = numbers[i].def;
     faxContact.append("@" | hostname);
+	admingroup = "faxadmin";
 }
 
 void

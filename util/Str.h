@@ -155,6 +155,8 @@ public:
 
     /////////////////////////////////////////////////////
     // Misc
+	const char* c_str() const
+	{ return data; }
     fxStr copy() const;
     fxStr extract(u_int start,u_int len) const;
     fxStr cut(u_int start,u_int len);

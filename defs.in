@@ -134,7 +134,7 @@ CVERSION	= @ENVOPTS@
 C++FILE		= @CXXFILE@
 
 # default definitions for programs--overide them as desired
-LIBS		= ${LIBUTIL}
+LIBS		= ${LIBUTIL} @PAMLIBS@
 LLDLIBS		= ${LIBS} ${LIBTIFF} ${LIBZ} ${LIBREGEX} ${LIBPORT} ${MACHDEPLIBS}
 #
 # Override this definition to eliminate shared library use.

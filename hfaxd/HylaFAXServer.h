@@ -38,6 +38,16 @@
 #include "Trigger.h"
 #include "SystemLog.h"
 
+#include "config.h"
+
+#ifdef HAVE_PAM
+extern "C" {
+#include <security/pam_appl.h>
+#include <security/pam_misc.h>
+#include <grp.h>
+}
+#endif // HAVE_PAM
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <dirent.h>
@@ -213,6 +223,8 @@ protected:
     u_int	adminAttempts;		// number of failed admin attempts
     u_int	maxAdminAttempts;	// admin failures before server exits
     fxStr	the_user;		// name of user
+	fxStr   admingroup;			// name of local user group that is allowed
+								// to administer the fax server
     IDCache*	idcache;		// fax UID -> name mapping table
     /*
      * File and file-transfer related state.
@@ -330,8 +342,11 @@ protected:
     void setFileOwner(const char* filename);
 
     void loginRefused(const char* why);
+	bool pamCheck(const char* user=NULL, const char* pass=NULL);
+	bool pamIsAdmin(const char* user=NULL);
     bool checkUser(const char*);
     bool checkuser(FILE*, const char *name);
+    bool checkuser(const char *name);
     void login(void);
     void end_login(void);
     virtual void dologout(int status);

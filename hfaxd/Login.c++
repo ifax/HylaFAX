@@ -95,6 +95,84 @@ HylaFAXServer::userCmd(const char* name)
 	loginRefused("user denied");
 }
 
+#ifdef HAVE_PAM
+int
+pamconv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata)
+{
+	int i;
+	char *password =(char*) appdata;
+	struct pam_response* replies;
+	int retval = PAM_CONV_ERR;
+
+	replies=(struct pam_response*)calloc(num_msg, sizeof(struct pam_response));
+
+	for (i=0; i<num_msg; i++) {
+		switch(msg[i]->msg_style) {
+			case PAM_PROMPT_ECHO_OFF:
+				replies[i].resp = x_strdup(password);
+				replies[i].resp_retcode = 0;
+				retval = PAM_SUCCESS;
+				break;
+		}
+	}
+	*resp = replies;
+	return(retval);
+}
+#endif //HAVE_PAM
+
+bool
+HylaFAXServer::pamIsAdmin(const char* user)
+{
+	bool retval = false;
+#ifdef HAVE_PAM
+	int i;
+	static struct group* grinfo = getgrnam(admingroup);
+	const char *curruser = (user == NULL ? the_user.c_str() : user);
+	if (grinfo != NULL) {
+		for (i=0; grinfo->gr_mem[i] != NULL; i++) {
+			if (strcmp(curruser, grinfo->gr_mem[i]) == 0) retval = true;
+		}
+	}
+#endif //HAVE_PAM
+	return(retval);
+}
+
+bool
+HylaFAXServer::pamCheck(const char* user, const char* pass)
+{
+	bool retval = false;
+#ifdef HAVE_PAM
+	if (user == NULL) user = the_user;
+	if (pass == NULL) pass = passwd.c_str();
+	struct pam_conv conv = {
+		pamconv,
+		(void*)pass
+	};
+
+	pam_handle_t *pamh = NULL;
+
+	int pamret;
+
+	pamret = pam_start(FAX_SERVICE, user, &conv, &pamh);
+	if (pamret == PAM_SUCCESS) {
+		pamret = pam_authenticate(pamh, 0);
+	}
+
+	if (pamret == PAM_SUCCESS) {
+		pamret = pam_acct_mgmt(pamh, 0);
+		retval = true;
+	}
+
+	if (pamret == PAM_SUCCESS) {
+		retval = true;
+	}
+
+	pam_end(pamh, pamret);
+	if (pamIsAdmin()) state |= S_PRIVILEGED;
+#endif //HAVE_PAM
+	return(retval);
+}
+
 void
 HylaFAXServer::passCmd(const char* pass)
 {
@@ -118,7 +196,7 @@ HylaFAXServer::passCmd(const char* pass)
 	pass++;
     } else
 	state |= S_LREPLIES;
-    if (pass[0] == '\0' || strcmp(crypt(pass, passwd), passwd) != 0) {
+    if (pass[0] == '\0' || !(strcmp(crypt(pass, passwd), passwd) == 0 || pamCheck(the_user, pass))) {
 	if (++loginAttempts >= maxLoginAttempts) {
 	    reply(530, "Login incorrect (closing connection).");
 	    logNotice("Repeated login failures for user %s from %s [%s]"
@@ -176,6 +254,7 @@ HylaFAXServer::login(void)
 
     initDefaultJob();		// setup connection-related state
     dirSetup();			// initialize directory handling
+	if (pamIsAdmin()) state |= S_PRIVILEGED;
 }
 
 void
@@ -183,7 +262,7 @@ HylaFAXServer::adminCmd(const char* pass)
 {
     fxAssert(IS(LOGGEDIN), "ADMIN command permitted when not logged in");
     // NB: null adminwd is permitted
-    if (strcmp(crypt(pass, adminwd), adminwd) != 0) {
+    if ((strcmp(crypt(pass, adminwd), adminwd) != 0) && !pamIsAdmin()) {
 	if (++adminAttempts >= maxAdminAttempts) {
 	    reply(530, "Password incorrect (closing connection).");
 	    logNotice("Repeated admin failures from %s [%s]"

@@ -283,5 +283,9 @@
 #define	MAXSEQNUM	999999999
 #define	NEXTSEQNUM(x)	(((x)+1) % MAXSEQNUM)
 
+/*
+ * PAM Authentication
+ */
+@HAVE_PAM@
 
 #endif

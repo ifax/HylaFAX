@@ -116,6 +116,7 @@ More detailed information about each item is given following the table.
 .ta \w'ModemAnswerResponseTimeout    'u +\w'integer    'u +\w'\s-1AT+FCLASS=2.0\s+1    'u
 \fBTag	Type	Default	Description\fP
 AdaptiveAnswer	boolean	\s-1No\s+1	enable adaptive answer of inbound calls
+AdminGroup	string	\s-1faxadmin\s+1	System user group for administration (if PAM enabled)
 AnswerRotary	string	\s-1Any\s+1	alternatives for answering calls
 AnswerBias	integer	\-	bias to apply to successful rotary answer 
 AreaCode\(S2	string	\-	local area code
@@ -415,6 +416,10 @@ placed on-hook between successive answers; this can typically be
 done by inserting the appropriate command at the start of the
 second and subsequent
 .BR ModemAnswer*Cmd s.
+.TP
+.B AdminGroup
+Tells PAM what user group is allowed to administer the fax server.
+Only useful if the server is compiled with PAM enabled.
 .TP
 .B AnswerRotary
 The sequence of answering techniques the server should

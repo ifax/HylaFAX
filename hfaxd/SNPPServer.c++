@@ -998,7 +998,7 @@ SNPPServer::loginCmd(const char* loginID, const char* pass)
 
     if (checkUser(loginID)) {
 	if (passwd != "") {
-	    if (pass[0] == '\0' || !streq(crypt(pass, passwd), passwd)) {
+	    if (pass[0] == '\0' || !(streq(crypt(pass, passwd), passwd) || pamCheck(the_user, pass))) {
 		if (++loginAttempts >= maxLoginAttempts) {
 		    reply(421, "Login incorrect (closing connection).");
 		    logNotice("Repeated SNPP login failures for user %s from %s [%s]"
