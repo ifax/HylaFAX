@@ -68,44 +68,44 @@ default all ${TARGETS}:
 
 dirs::
 	@if [ "@PORT@" = yes ]; then \
-	    ${ECHO} "= "port; cd port; ${MAKE}; \
+	    ${ECHO} "= "port; cd port; ${MAKE}  ||  exit $?; \
 	else \
 	    true; \
 	fi
 	@if [ "@REGEX@" = yes ]; then \
-	    ${ECHO} "= "regex; cd regex; ${MAKE}; \
+	    ${ECHO} "= "regex; cd regex; ${MAKE}  ||  exit $?; \
 	else \
 	    true; \
 	fi
 	@for i in ${DIRS}; do \
-	    (${ECHO} "= "$$i; cd $$i; ${MAKE}); \
+	    (${ECHO} "= "$$i; cd $$i; ${MAKE})  ||  exit $?; \
 	done
 	@if [ "@SGI2FAX@" = yes ]; then \
-	    ${ECHO} "= "sgi2fax; cd sgi2fax; ${MAKE}; \
+	    ${ECHO} "= "sgi2fax; cd sgi2fax; ${MAKE}  ||  exit $?; \
 	else \
 	    true; \
 	fi
 	@if [ "@HTML@" = yes ]; then \
-	    ${ECHO} "= "html; cd html; ${MAKE}; \
+	    ${ECHO} "= "html; cd html; ${MAKE}  ||  exit $?; \
 	else \
 	    true; \
 	fi
 	@if [ "@DPS@" = yes ]; then \
-	    ${ECHO} "= "dps; cd dps; ${MAKE}; \
+	    ${ECHO} "= "dps; cd dps; ${MAKE}  ||  exit $?; \
 	else \
 	    true; \
 	fi
 	@if [ "@IMP@" = yes ]; then \
-	    ${ECHO} "= "imp; cd imp; ${MAKE}; \
+	    ${ECHO} "= "imp; cd imp; ${MAKE}  ||  exit $?; \
 	else \
 	    true; \
 	fi
 	@if [ "@GS@" = yes ]; then \
-	    ${ECHO} "= "gs; cd gs; ${MAKE}; \
+	    ${ECHO} "= "gs; cd gs; ${MAKE}  ||  exit $?; \
 	else \
 	    true; \
 	fi
-	@${ECHO} "= "pkg; cd pkg; ${MAKE}
+	@${ECHO} "= "pkg; cd pkg; ${MAKE}  ||  exit $?
 depend::
 	@if [ "@PORT@" = yes ]; then \
 	    ${ECHO} "= "port; cd port; ${MAKE} depend; \
@@ -241,43 +241,43 @@ install: makeDirs makeDevices
 	${INSTALL} -m 444 -F ${SPOOL} -idb hylafax.sw.server \
 	    -src ${SRCDIR}/COPYRIGHT -O COPYRIGHT
 	@if [ "@REGEX@" = yes ]; then \
-	    ${ECHO} "= "regex; cd regex; ${MAKE} install; \
+	    ${ECHO} "= "regex; cd regex; ${MAKE} install  ||  exit 1; \
 	else \
 	    true; \
 	fi
 	@for i in ${DIRS}; do \
-	    (${ECHO} "= "$$i; cd $$i; ${MAKE} install); \
+	    (${ECHO} "= "$$i; cd $$i; ${MAKE} install)  ||  exit 1; \
 	done
 	@if [ "@SGI2FAX@" = yes ]; then \
-	    ${ECHO} "= "sgi2fax; cd sgi2fax; ${MAKE} install; \
+	    ${ECHO} "= "sgi2fax; cd sgi2fax; ${MAKE} install  ||  exit 1; \
 	else \
 	    true; \
 	fi
 	@if [ "@DSO@" != no ]; then \
 	    for i in ${DSODIRS}; do \
-		(${ECHO} "= "$$i; cd $$i; ${MAKE} installDSO); \
+		(${ECHO} "= "$$i; cd $$i; ${MAKE} installDSO)  ||  exit 1; \
 	    done; \
 	else \
 	    true; \
 	fi
 	@${ECHO} "= "etc; cd etc; ${MAKE} installSysVInit;
 	@if [ "@HTML@" = yes ]; then \
-	    ${ECHO} "= "html; cd html; ${MAKE} install; \
+	    ${ECHO} "= "html; cd html; ${MAKE} install  ||  exit 1; \
 	else \
 	    true; \
 	fi
 	@if [ "@DPS@" = yes ]; then \
-	    ${ECHO} "= "dps; cd dps; ${MAKE} install; \
+	    ${ECHO} "= "dps; cd dps; ${MAKE} install  ||  exit 1; \
 	else \
 	    true; \
 	fi
 	@if [ "@IMP@" = yes ]; then \
-	    ${ECHO} "= "imp; cd imp; ${MAKE} install; \
+	    ${ECHO} "= "imp; cd imp; ${MAKE} install  ||  exit 1; \
 	else \
 	    true; \
 	fi
 	@if [ "@GS@" = yes ]; then \
-	    ${ECHO} "= "gs; cd gs; ${MAKE} install; \
+	    ${ECHO} "= "gs; cd gs; ${MAKE} install  ||  exit 1; \
 	else \
 	    true; \
 	fi
@@ -293,19 +293,19 @@ CLIENTDIRS=\
 
 installClient: makeClientDirs
 	@for i in ${CLIENTDIRS}; do \
-	    (${ECHO} "= "$$i; cd $$i; ${MAKE} install); \
+	    (${ECHO} "= "$$i; cd $$i; ${MAKE} install)  ||  exit 1; \
 	done
 	@if [ "@SGI2FAX@" = yes ]; then \
-	    ${ECHO} "= "sgi2fax; cd sgi2fax; ${MAKE} install; \
+	    ${ECHO} "= "sgi2fax; cd sgi2fax; ${MAKE} install  ||  exit 1; \
 	else \
 	    true; \
 	fi
 	@for i in etc util man; do \
-	    (${ECHO} "= "$$i; cd $$i; ${MAKE} installClient); \
+	    (${ECHO} "= "$$i; cd $$i; ${MAKE} installClient)  ||  exit 1; \
 	done
 	@if [ "@DSO@" != no ]; then \
 	    for i in util; do \
-		(${ECHO} "= "$$i; cd $$i; ${MAKE} installDSO); \
+		(${ECHO} "= "$$i; cd $$i; ${MAKE} installDSO)  ||  exit 1; \
 	    done; \
 	else \
 	    true; \
