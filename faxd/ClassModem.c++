@@ -503,7 +503,7 @@ ClassModem::putModemLine(const char* cp)
     u_int cc = strlen(cp);
     server.traceStatus(FAXTRACE_MODEMCOM, "<-- [%u:%s\\r]", cc+1, cp);
     static const char CR = '\r';
-    return (server.putModem1(cp, cc, 60*1000) && server.putModem1(&CR, 1, 60*1000));
+    return (server.putModem1(cp, cc) && server.putModem1(&CR, 1));
 }
 
 void ClassModem::startTimeout(long ms) { server.startTimeout(ms); }

@@ -1069,8 +1069,12 @@ Class1Modem::sendRawFrame(HDLCFrame& frame)
 	return (false);
     }
     static u_char buf[2] = { DLE, ETX };
-    return (putModemDLEData(frame, frame.getLength(), frameRev, 60*1000) &&
-	putModem(buf, 2, 60*1000) &&
+    /*
+     * sendFrame() is always called with a timeout set.
+     * Let's keep it that way
+     */
+    return (putModemDLEData(frame, frame.getLength(), frameRev, 0) &&
+	putModem(buf, 2, 0) &&
 	(useV34 ? true : waitFor(frame.moreFrames() ? AT_CONNECT : AT_OK, 0)));
 }
 
@@ -1148,7 +1152,7 @@ Class1Modem::transmitFrame(u_char fcf, bool lastFrame)
 {
     startTimeout(2550);			// 3.0 - 15% = 2.55 secs
     bool frameSent =
-	(useV34 ? true : atCmd(thCmd, AT_NOTHING)) &&
+	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
 	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
 	sendFrame(fcf, lastFrame);
     stopTimeout("sending HDLC frame");
@@ -1165,7 +1169,7 @@ Class1Modem::transmitFrame(u_char fcf, u_int dcs, u_int xinfo, bool lastFrame)
      */
     startTimeout(2550);			// 3.0 - 15% = 2.55 secs
     bool frameSent =
-	(useV34 ? true : atCmd(thCmd, AT_NOTHING)) &&
+	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
 	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
 	sendFrame(fcf, dcs, xinfo, lastFrame);
     stopTimeout("sending HDLC frame");
@@ -1177,7 +1181,7 @@ Class1Modem::transmitFrame(u_char fcf, const fxStr& tsi, bool lastFrame)
 {
     startTimeout(3000);			// give more time than others
     bool frameSent =
-	(useV34 ? true : atCmd(thCmd, AT_NOTHING)) &&
+	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
 	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
 	sendFrame(fcf, tsi, lastFrame);
     stopTimeout("sending HDLC frame");
@@ -1189,7 +1193,7 @@ Class1Modem::transmitFrame(u_char fcf, const u_char* code, const fxStr& nsf, boo
 {
     startTimeout(3000);			// give more time than others
     bool frameSent =
-	(useV34 ? true : atCmd(thCmd, AT_NOTHING)) &&
+	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
 	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
 	sendFrame(fcf, code, nsf, lastFrame);
     stopTimeout("sending HDLC frame");
@@ -1235,11 +1239,11 @@ bool
 Class1Modem::recvFrame(HDLCFrame& frame, long ms)
 {
     frame.reset();
-    startTimeout(ms);
     if (useV34) {
 	return recvRawFrame(frame);
     }
-    bool readPending = atCmd(rhCmd, AT_NOTHING);
+    startTimeout(ms);
+    bool readPending = atCmd(rhCmd, AT_NOTHING, 0);
     if (readPending && waitFor(AT_CONNECT,0)){
         stopTimeout("waiting for HDLC flags");
         if (wasTimeout()){
@@ -1263,14 +1267,14 @@ Class1Modem::recvTCF(int br, HDLCFrame& buf, const u_char* bitrev, long ms)
     buf.reset();
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_DRAIN);
-    startTimeout(ms);
     /*
      * Loop waiting for carrier or timeout.
      */
     bool readPending, gotCarrier;
     fxStr rmCmd(br, rmCmdFmt);
+    startTimeout(ms);
     do {
-	readPending = atCmd(rmCmd, AT_NOTHING);
+	readPending = atCmd(rmCmd, AT_NOTHING, 0);
 	gotCarrier = readPending && waitFor(AT_CONNECT, 0);
     } while (readPending && !gotCarrier && lastResponse == AT_FCERROR);
     /*

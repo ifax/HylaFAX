@@ -446,6 +446,8 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	// sendingHDLC = false
 	/*
 	 * Resume sending HDLC frame (send data)
+	 * The carrier is already raised.  Thus we
+	 * use sendFrame() instead of transmitFrame().
 	 */
 	startTimeout(2550);
 	(void) sendFrame(FCF_MCF|FCF_RCVR);
@@ -837,7 +839,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    case FCF_PRI_MPS:
 					    case FCF_PRI_EOP:
 						if (pprcnt) {
-						    sendFrame(FCF_PPR, fxStr(ppr, 32));
+						    (void) transmitFrame(FCF_PPR, fxStr(ppr, 32));
 						    tracePPR("RECV send", FCF_PPR);
 						} else {
 						    (void) transmitFrame(FCF_MCF|FCF_RCVR);
@@ -1038,13 +1040,8 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			    if (! blockgood) {
 				if (signalRcvd == 0) {
 				    // inform the remote that one or more frames were invalid
-
-				    if (!useV34) atCmd(thCmd, AT_CONNECT);
-				    startTimeout(3000);
-				    sendFrame(FCF_PPR, fxStr(ppr, 32));
-				    stopTimeout("sending PPR frame");
+				    transmitFrame(FCF_PPR, fxStr(ppr, 32));
 				    tracePPR("RECV send", FCF_PPR);
-
 				    pprcnt++;
 				}
 				if (pprcnt == 4 && (!useV34 || !conf.class1PersistentECM)) {
