@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.1
 
+* fix tiffcheck unit comparison error (1 Sep 2004)
 * fix misconfirmation of some ECM faxes (30 Aug 2004)
 * add fax batching support to faxq (30 Aug 2004)
 * ignore garbage after sending TCF data (26 Aug 2004)

@@ -200,15 +200,22 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
      * We, however, can depend on the info in images that
      * we generate because we are careful to include valid info.
      */
-    float yres;
+    float yres, yresinch;
     if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &yres)) {
 	short resunit = RESUNIT_INCH;		// TIFF spec default
 	(void) TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &resunit);
-	if (resunit == RESUNIT_CENTIMETER)
-	    yres *= 25.4f;
-	if (resunit == RESUNIT_NONE)
-	    yres *= 720.0f;		// postscript units ?
-	yres = (yres >= 150 ? 196 : 98);	// convert to well-known values
+	if (resunit == RESUNIT_INCH) {
+	    yresinch = yres;
+	    yres /= 25.4;
+	}
+	if (resunit == RESUNIT_CENTIMETER) {
+	    yresinch = yres * 25.4;
+	    yres /= 10;
+	}
+	if (resunit == RESUNIT_NONE) {		// postscript units ?
+	    yresinch = yres * 720.0;
+	    yres /= 28.35;
+	}
     } else {
 	/*
 	 * No vertical resolution is specified, try
@@ -218,10 +225,11 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
 	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &l);
 	yres = (l < 1450 ? 98 : 196);		// B4 at 98 lpi is ~1400 lines
     }
-    if ((u_long) yres != vres) {
+    // vres is in inches, compare inches to inches, allow 15 lpi variation
+    if ((u_long) yresinch > vres ? (u_long) yresinch - vres > 15 : vres - (u_long) yresinch > 15) {
 	emsg.append(fxStr::format("Document requires reformatting to adjust"
 	    " vertical resolution (convert to %lu, document is %lu).\n",
-	    vres, (u_long) yres));
+	    vres, (u_long) yresinch));
 	status |= REVRES;
     }
 
