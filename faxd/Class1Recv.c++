@@ -717,7 +717,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 				    break;
 			    }
 			} else {
-			    protoTrace("Protocol flow control unavailble due to pipe error.");
+			    protoTrace("Protocol flow control unavailable due to pipe error.");
 			    TIFFWriteDirectory(tif);
 			}
 			/*
@@ -1361,7 +1361,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    break;
 	    }
 	} else {
-	    protoTrace("Protocol flow control unavailble due to pipe error.");
+	    protoTrace("Protocol flow control unavailable due to pipe error.");
 	    writeECMData(tif, block, cc, params, seq);
 	}
 	seq = 0;					// seq code for in-between blocks
