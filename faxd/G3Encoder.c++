@@ -39,9 +39,10 @@ G3Encoder::~G3Encoder() {}
  * Reset encoding state.
  */
 void
-G3Encoder::setupEncoder(u_int fillOrder, bool is2d)
+G3Encoder::setupEncoder(u_int fillOrder, bool is2d, bool isg4)
 {
     is2D = is2d;
+    isG4 = isg4;
     /*
      * G3-encoded data is generated in MSB2LSB bit order, so we
      * need to bit reverse only if the desired order is different.
@@ -74,10 +75,10 @@ G3Encoder::encode(const void* vp, u_int w, u_int h)
     bool firstEOL = true;
 
     while (h-- > 0) {
-        if( firstEOL )                                  // according to T.4 first EOL 
-            firstEOL = false;                           // should not be aligned
-        else if (bit != 4)
-            putBits(0, (bit < 4) ? bit+4 : bit-4);      // byte-align other EOLs
+	if( firstEOL )					// according to T.4 first EOL 
+	    firstEOL = false;				// should not be aligned
+	else if (bit != 4)
+	    putBits(0, (bit < 4) ? bit+4 : bit-4);      // byte-align other EOLs
 	if (is2D)
 	    putBits((EOL<<1)|1, 12+1);
 	else

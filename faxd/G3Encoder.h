@@ -36,6 +36,7 @@ struct tableentry;
 class G3Encoder {
 private:
     bool	is2D;		// data is to be 1d/2d-encoded
+    bool	isG4;		// data is to be G4-encoded
     const u_char* bitmap;	// bit reversal table
     short	data;		// current input/output byte
     short	bit;		// current bit in input/output byte
@@ -55,7 +56,7 @@ public:
     G3Encoder(fxStackBuffer&);
     virtual ~G3Encoder();
 
-    void	setupEncoder(u_int fillOrder, bool);
+    void	setupEncoder(u_int fillOrder, bool, bool);
     void	encode(const void* raster, u_int w, u_int h);
 };
 #endif /* _G3Encoder_ */

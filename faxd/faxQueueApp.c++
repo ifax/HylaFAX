@@ -544,7 +544,7 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
      * o the remote side is known to be capable of it, and
      * o the user hasn't specified a desire to send 1D data.
      */
-    if (req.desireddf == DF_2DMMR &&
+    if (req.desireddf == DF_2DMMR && req.desiredec == EC_ENABLE && 
 	use2D && job.modem->supportsMMR() &&
 	info.getCalledBefore() && info.getSupportsMMR())
 	    params.df = DF_2DMMR;
@@ -749,9 +749,15 @@ bad:
 void
 faxQueueApp::setupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo& info)
 {
-    uint32 g3opts = 0;
-    TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
-    params.df = (g3opts&GROUP3OPT_2DENCODING ? DF_2DMR : DF_1DMH);
+    uint16 compression = 0;
+    (void) TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression);
+    if (compression == COMPRESSION_CCITTFAX4) {
+	params.df = DF_2DMMR;
+    } else {
+	uint32 g3opts = 0;
+	TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
+	params.df = (g3opts&GROUP3OPT_2DENCODING ? DF_2DMR : DF_1DMH);
+    }
 
     uint32 w;
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
@@ -853,7 +859,7 @@ isBlank(tiff_runlen_t* runs, u_int rowpixels)
 void
 MemoryDecoder::scanPageForBlanks(u_int fillorder, const Class2Params& params)
 {
-    setupDecoder(fillorder,  params.is2D());
+    setupDecoder(fillorder,  params.is2D(), (params.df == DF_2DMMR));
     u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
     tiff_runlen_t runs[2*4864];			// run arrays for cur+ref rows
     setRuns(runs, runs+4864, rowpixels);
@@ -862,14 +868,26 @@ MemoryDecoder::scanPageForBlanks(u_int fillorder, const Class2Params& params)
 	/*
 	 * Skip a 1" margin at the top of the page before
 	 * scanning for trailing white space.  We do this
-	 * to insure that there is always enough space on
+	 * to ensure that there is always enough space on
 	 * the page to image a tag line and to satisfy a
 	 * fax machine that is incapable of imaging to the
 	 * full extent of the page.
 	 */
 	u_int topMargin = 1*98;			// 1" at 98 lpi
-	if (params.vr == VR_FINE)		// 196 lpi =>'s twice as many
-	    topMargin *= 2;
+	switch (params.vr) {
+	    case VR_FINE:
+	    case VR_200X200:
+		topMargin *= 2;			// 196 lpi =>'s twice as many
+		break;
+	    case VR_300X300:
+		topMargin *= 3;
+		break;
+	    case VR_R8:
+	    case VR_R16:
+	    case VR_200X400:
+		topMargin *= 4;
+		break;
+	}
 	do {
 	    (void) decodeRow(NULL, rowpixels);
 	} while (--topMargin);

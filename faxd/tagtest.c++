@@ -267,7 +267,7 @@ imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      * to satisfy our needs (caller is responsible).
      */
     MemoryDecoder dec(buf);
-    dec.setupDecoder(fillorder,  params.is2D());
+    dec.setupDecoder(fillorder,  params.is2D(), (params.df == DF_2DMMR));
     tiff_runlen_t runs[2*4864];		// run arrays for cur+ref rows
     dec.setRuns(runs, runs+4864, w);
 
@@ -289,7 +289,7 @@ imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      */
     for (; row < th+4 && !dec.isNextRow1D(); row++) {
 	dec.setRowNum(row);
-	dec.decodeRow(NULL, w);
+	dec.decodeRow(NULL, w, (params.df == DF_2DMMR));
     }
     th = row;				// add in discarded rows
     /*
@@ -430,7 +430,7 @@ imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      */
     fxStackBuffer result;
     G3Encoder enc(result);
-    enc.setupEncoder(fillorder, params.is2D());
+    enc.setupEncoder(fillorder, params.is2D(), (params.df == DF_2DMMR));
     enc.encode(raster, w, th);
     delete raster;
     /*

@@ -241,7 +241,7 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      * to satisfy our needs (caller is responsible).
      */
     TagLineMemoryDecoder dec(buf);
-    dec.setupDecoder(fillorder, params.is2D());
+    dec.setupDecoder(fillorder, params.is2D(), (params.df == DF_2DMMR));
     tiff_runlen_t runs[2*4864];		// run arrays for cur+ref rows
     dec.setRuns(runs, runs+4864, w);
 
@@ -259,7 +259,7 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      */
     u_int n;
     for (n = 0; n < 4 && !dec.isNextRow1D(); n++)
-	dec.decodeRow(NULL, w);
+	dec.decodeRow(NULL, w, (params.df == DF_2DMMR));
     th += n;				// compensate for discarded rows
     /*
      * Things get tricky trying to identify the last byte in
@@ -399,7 +399,7 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      */
     fxStackBuffer result;
     G3Encoder enc(result);
-    enc.setupEncoder(fillorder, params.is2D());
+    enc.setupEncoder(fillorder, params.is2D(), (params.df == DF_2DMMR));
     enc.encode(raster, w, th);
     delete raster;
     /*

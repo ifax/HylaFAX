@@ -869,7 +869,8 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	    /* get MCF/PPR/RNR */
 	    HDLCFrame pprframe(conf.class1FrameOverhead);
 	    do {
-		atCmd(thCmd, AT_CONNECT);
+		if (!atCmd(thCmd, AT_CONNECT))
+		    break;
 		startTimeout(3000);
 		sendFrame(FCF_PPS|FCF_SNDR, fxStr(pps, 4));
 		stopTimeout("sending PPS frame");
@@ -904,7 +905,8 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			u_short rrcnt = 0;
 			bool gotmsg = false;
 			do {
-			    atCmd(thCmd, AT_CONNECT);
+			    if (!atCmd(thCmd, AT_CONNECT))
+				break;
 			    startTimeout(3000);
 			    sendFrame(FCF_RR|FCF_SNDR);
 			    stopTimeout("sending RR frame");
@@ -974,7 +976,8 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				u_short ctccnt = 0;
 				HDLCFrame ctrframe(conf.class1FrameOverhead);
 				do {
-				    atCmd(thCmd, AT_CONNECT);
+				    if (!atCmd(thCmd, AT_CONNECT))
+					break;
 				    startTimeout(3000);
 				    sendFrame(FCF_CTC|FCF_SNDR, fxStr(ctc, 2));
 				    stopTimeout("sending CTC frame");
@@ -997,7 +1000,8 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				u_short eorcnt = 0;
 				HDLCFrame errframe(conf.class1FrameOverhead);
 				do {
-				    atCmd(thCmd, AT_CONNECT);
+				    if (!atCmd(thCmd, AT_CONNECT))
+					break;
 				    startTimeout(3000);
 				    sendFrame(FCF_EOR|FCF_SNDR, fxStr(pps, 1));
 				    stopTimeout("sending EOR frame");
@@ -1025,7 +1029,8 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 					u_short rrcnt = 0;
 					bool gotmsg = false;
 					do {
-					    atCmd(thCmd, AT_CONNECT);
+					    if (!atCmd(thCmd, AT_CONNECT))
+						break;
 					    startTimeout(3000);
 					    sendFrame(FCF_RR|FCF_SNDR);
 					    stopTimeout("sending RR frame");
@@ -1153,7 +1158,7 @@ Class1Modem::sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm
  * send all the data they are presented.
  */
 bool
-Class1Modem::sendRTC(bool is2D, bool ecm, u_int ppmcmd, fxStr& emsg)
+Class1Modem::sendRTC(Class2Params params, u_int ppmcmd, fxStr& emsg)
 {
     // these are intentionally reverse-encoded in order to keep
     // rtcRev and bitrev in sendPage() in agreement
@@ -1161,20 +1166,25 @@ Class1Modem::sendRTC(bool is2D, bool ecm, u_int ppmcmd, fxStr& emsg)
 	{ 0x00,0x08,0x80,0x00,0x08,0x80,0x00,0x08,0x80 };
     static const u_char RTC2D[10+20] =
 	{ 0x00,0x18,0x00,0x03,0x60,0x00,0x0C,0x80,0x01,0x30 };
-    if (is2D)
-	if (ecm)
+    static const u_char EOFB[3+20] =
+	{ 0x00,0x08,0x80 };
+    if (params.df == DF_2DMMR) {
+	protoTrace("SEND EOFB");
+	return sendClass1ECMData(EOFB, sizeof(EOFB), rtcRev, true, ppmcmd, emsg);
+    }
+    if (params.is2D()) {
+	protoTrace("SEND 2D RTC");
+	if (params.ec == EC_ENABLE)
 	    return sendClass1ECMData(RTC2D, sizeof(RTC2D), rtcRev, true, ppmcmd, emsg);
-	else {
+	else
 	    return sendClass1Data(RTC2D, sizeof (RTC2D), rtcRev, true);
-	    protoTrace("SEND 2D RTC");
-	}
-    else
-	if (ecm)
+    } else {
+	protoTrace("SEND 1D RTC");
+	if (params.ec == EC_ENABLE)
 	    return sendClass1ECMData(RTC1D, sizeof(RTC1D), rtcRev, true, ppmcmd, emsg);
-	else {
+	else
 	    return sendClass1Data(RTC1D, sizeof (RTC1D), rtcRev, true);
-	    protoTrace("SEND 1D RTC");
-	}
+    }
 }
 
 #define	EOLcheck(w,mask,code) \
@@ -1252,7 +1262,7 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
 	/*
 	 * Setup tag line processing.
 	 */
-	bool doTagLine = setupTagLineSlop(params);
+	bool doTagLine = (params.df != DF_2DMMR) && setupTagLineSlop(params);
 	u_int ts = getTagLineSlop();
 	/*
 	 * Calculate total amount of space needed to read
@@ -1286,9 +1296,9 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
 	    dp = data;
 
         /*
-         * correct broken Phase C (T.4) data if neccessary 
+         * correct broken Phase C (T.4/T.6) data if neccessary 
          */
-        correctPhaseCData(dp, &totdata, fillorder, params);
+	correctPhaseCData(dp, &totdata, fillorder, params);
 
 	/*
 	 * Send the page of data.  This is slightly complicated
@@ -1305,7 +1315,7 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
 	if (fillorder != FILLORDER_LSB2MSB)
 	    TIFFReverseBits(dp, totdata);
 	u_int minLen = params.minScanlineSize();
-	if (minLen > 0) {
+	if (minLen > 0) {			// only in non-ECM
 	    /*
 	     * Client requires a non-zero min-scanline time.  We
 	     * comply by zero-padding scanlines that have <minLen
@@ -1392,7 +1402,7 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
 	delete data;
     }
     if (rc || abortRequested())
-	rc = sendRTC(params.is2D(), (params.ec == EC_ENABLE), ppmcmd, emsg);
+	rc = sendRTC(params, ppmcmd, emsg);
     protoTrace("SEND end page");
     if (params.ec != EC_ENABLE) {
 	// these were already done by ECM protocol

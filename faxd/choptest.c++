@@ -87,7 +87,7 @@ isBlank(tiff_runlen_t* runs, u_int rowpixels)
 void
 MemoryDecoder::scanPage(u_int fillorder, const Class2Params& params)
 {
-    setupDecoder(fillorder,  params.is2D());
+    setupDecoder(fillorder,  params.is2D(), (params.df == DF_2DMMR));
     u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
     tiff_runlen_t runs[2*4864];			// run arrays for cur+ref rows
     setRuns(runs, runs+4864, rowpixels);
@@ -105,20 +105,20 @@ MemoryDecoder::scanPage(u_int fillorder, const Class2Params& params)
 	if (params.vr == VR_FINE)		// 196 lpi =>'s twice as many
 	    topMargin *= 2;
 	do {
-	    (void) decodeRow(NULL, rowpixels);
+	    (void) decodeRow(NULL, rowpixels, (params.df == DF_2DMMR));
 	} while (--topMargin);
 	/*
 	 * Scan the remainder of the page data and calculate
 	 * the number of blank lines at the bottom.
 	 */
 	for (;;) {
-	    (void) decodeRow(NULL, rowpixels);
+	    (void) decodeRow(NULL, rowpixels, (params.df == DF_2DMMR));
 	    if (isBlank(lastRuns(), rowpixels)) {
 		endOfPage = bp;			// include one blank row
 		nblanks = 0;
 		do {
 		    nblanks++;
-		    (void) decodeRow(NULL, rowpixels);
+		    (void) decodeRow(NULL, rowpixels, (params.df == DF_2DMMR));
 		} while (isBlank(lastRuns(), rowpixels));
 	    }
 	}

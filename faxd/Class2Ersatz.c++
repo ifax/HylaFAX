@@ -203,7 +203,7 @@ Class2ErsatzModem::sendPage(TIFF* tif, u_int pageChop)
 	setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
     bool rc = sendPageData(tif, pageChop);
     if (rc && conf.class2SendRTC)
-	rc = sendRTC(params.is2D());
+	rc = sendRTC(params);
     if (rc)
 	rc = sendEOT();
     else

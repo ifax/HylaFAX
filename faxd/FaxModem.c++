@@ -716,7 +716,7 @@ private:
     u_long      cc;
     
     u_int fillorder;
-    bool is2D;
+    bool is2D, isG4;
     
     u_char*     endOfData;      // used by cutExtraRTC
 
@@ -727,15 +727,16 @@ private:
     int         decodeNextByte();
 public:
     MemoryDecoder(u_char* data, u_int wid, u_long n,
-                  u_int fillorder, bool twoDim);
+                  u_int fillorder, bool twoDim, bool mmr);
     ~MemoryDecoder();
     u_char* current() { return bp; }
     void fixFirstEOL();
     u_char* cutExtraRTC();
+    u_char* cutExtraEOFB();
 };
 
 MemoryDecoder::MemoryDecoder(u_char* data, u_int wid, u_long n,
-                             u_int order, bool twoDim)
+                             u_int order, bool twoDim, bool mmr)
 {
     bp         = data;
     width      = wid;
@@ -744,10 +745,11 @@ MemoryDecoder::MemoryDecoder(u_char* data, u_int wid, u_long n,
     
     fillorder  = order;
     is2D       = twoDim;
+    isG4       = mmr;
 
     runs      = new tiff_runlen_t[2*width];      // run arrays for cur+ref rows
     rowBuf    = new u_char[byteWidth];
-    setupDecoder(fillorder, is2D);
+    setupDecoder(fillorder, is2D, isG4);
     setRuns(runs, runs+width, width);
 }
 MemoryDecoder::~MemoryDecoder()
@@ -785,7 +787,7 @@ void MemoryDecoder::fixFirstEOL()
 {
     fxStackBuffer result;
     G3Encoder enc(result);
-    enc.setupEncoder(fillorder, is2D);
+    enc.setupEncoder(fillorder, is2D, isG4);
     
     memset(rowBuf, 0, byteWidth*sizeof(u_char)); // clear row to white
     if(!RTCraised()) {
@@ -856,7 +858,7 @@ u_char* MemoryDecoder::cutExtraRTC()
         u_int look_ahead = roundup(getPendingBits(),8) / 8;
         endOfData = current() - look_ahead;
         for (;;) {
-            if( decodeRow(NULL, width) ){
+            if( decodeRow(NULL, width, isG4) ){
                 /*
                  * endOfData is now after last good row. Thus we correctly handle
                  * RTC, single EOL in the end, or no RTC/EOL at all
@@ -870,17 +872,42 @@ u_char* MemoryDecoder::cutExtraRTC()
     return endOfData;
 }
 
+u_char* MemoryDecoder::cutExtraEOFB()
+{
+    /*
+     * MMR requires us to decode the entire image...
+     */
+    endOfData = NULL;
+    if(!RTCraised()) {
+	endOfData = current();
+        for (;;) {
+            if( decodeRow(NULL, width) ){
+                endOfData = current();
+            }
+            if( seenRTC() )
+                break;
+        }
+    }
+    return endOfData;
+}
+
 void
 FaxModem::correctPhaseCData(u_char* buf, u_long* pBufSize,
                             u_int fillorder, const Class2Params& params)
 {
-    MemoryDecoder dec1(buf, params.pageWidth(), *pBufSize, fillorder, params.is2D());
-    dec1.fixFirstEOL();
-    /*
-     * We have to construct new decoder. See comments to cutExtraRTC().
-     */
-    MemoryDecoder dec2(buf, params.pageWidth(), *pBufSize, fillorder, params.is2D());
-    u_char* endOfData = dec2.cutExtraRTC();
+    u_char* endOfData;
+    if (params.df == DF_2DMMR) {
+	MemoryDecoder dec1(buf, params.pageWidth(), *pBufSize, fillorder, params.is2D(), true);
+	endOfData = dec1.cutExtraEOFB();
+    } else {
+	MemoryDecoder dec1(buf, params.pageWidth(), *pBufSize, fillorder, params.is2D(), false);
+	dec1.fixFirstEOL();
+	/*
+	 * We have to construct new decoder. See comments to cutExtraRTC().
+	 */
+	MemoryDecoder dec2(buf, params.pageWidth(), *pBufSize, fillorder, params.is2D(), false);
+	endOfData = dec2.cutExtraRTC();
+    }
     if( endOfData )
         *pBufSize = endOfData - buf;
 }

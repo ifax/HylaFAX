@@ -79,7 +79,7 @@ protected:
     virtual bool setupFlowControl(FlowControl fc);
 // transmission support
     bool	dataTransfer();
-    bool	sendRTC(bool is2D);
+    bool	sendRTC(Class2Params params);
     bool	sendPageData(TIFF* tif, u_int pageChop);
 
     virtual bool sendPage(TIFF* tif, u_int pageChop) = 0;

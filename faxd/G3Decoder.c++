@@ -93,7 +93,7 @@ G3Decoder::G3Decoder() {}
 G3Decoder::~G3Decoder() {}
 
 void
-G3Decoder::setupDecoder(u_int recvFillOrder, bool is2d)
+G3Decoder::setupDecoder(u_int recvFillOrder, bool is2d, bool isg4)
 {
     /*
      * The G3 decoding state tables are constructed for
@@ -102,6 +102,7 @@ G3Decoder::setupDecoder(u_int recvFillOrder, bool is2d)
      * appropriate byte-wide bit-reversal table.
      */
     is2D = is2d;
+    isG4 = isg4;
     bitmap = TIFFGetBitRevTable(recvFillOrder != FILLORDER_LSB2MSB);
     data = 0;					// not needed
     bit = 0;					// force initial read
@@ -130,20 +131,20 @@ void G3Decoder::raiseRTC()	{ siglongjmp(jmpRTC, 1); }
  * the decoded data in raster.
  */
 void
-G3Decoder::decode(void* raster, u_int w, u_int h)
+G3Decoder::decode(void* raster, u_int w, u_int h, bool isG4)
 {
     u_int rowbytes = howmany(w, 8);
     if (curruns == NULL) {
 	tiff_runlen_t runs[2*4864];		// run arrays for cur+ref rows
 	setRuns(runs, runs+4864, w);
 	while (h-- > 0) {
-	    decodeRow(raster, w);
+	    decodeRow(raster, w, isG4);
 	    if (raster)
 		raster = (u_char*) raster + rowbytes;
 	}
     } else {
 	while (h-- > 0) {
-	    decodeRow(raster, w);
+	    decodeRow(raster, w, isG4);
 	    if (raster)
 		raster = (u_char*) raster + rowbytes;
 	}
@@ -189,7 +190,7 @@ G3Decoder::isNextRow1D()
  * the decoded data in the scanline buffer.
  */
 bool
-G3Decoder::decodeRow(void* scanline, u_int lastx)
+G3Decoder::decodeRow(void* scanline, u_int lastx, bool isG4)
 {
     DECLARE_STATE_2D();
     bool rowgood = true;
@@ -199,18 +200,24 @@ G3Decoder::decodeRow(void* scanline, u_int lastx)
     a0 = 0;
     RunLength = 0;
     pa = thisrun = curruns;
-    SYNC_EOL(Nop);
     bool is1D;
-    if (is2D) {
-	NeedBits8(1, Nop);
-	is1D = (GetBits(1) != 0);	// 1D/2D-encoding tag bit
-	ClrBits(1);
-    } else
-	is1D = true;
+    if (isG4) {
+	is1D = false;
+    } else {
+	SYNC_EOL(Nop);
+	if (is2D) {
+	    NeedBits8(1, Nop);
+	    is1D = (GetBits(1) != 0);	// 1D/2D-encoding tag bit
+	    ClrBits(1);
+	} else
+	    is1D = true;
+    }
     if (!is1D) {
 	pb = refruns;
 	b1 = *pb++;
 #define	badlength(a0,lastx) do {			\
+    if (isG4)						\
+	RTCrow = rowref-1;				\
     badPixelCount("2D", a0, lastx);			\
     rowgood = false;					\
 } while (0)
@@ -220,8 +227,8 @@ G3Decoder::decodeRow(void* scanline, u_int lastx)
     } else {
 #define	badlength(a0,lastx) do {			\
     nullrow = (a0 == 0);				\
-    if (nullrow && ++RTCrun == 6 && RTCrow == -1)	\
-	RTCrow = rowref-6;				\
+    if (nullrow && ++RTCrun == 5 && RTCrow == -1)	\
+	RTCrow = rowref-5;				\
     badPixelCount("1D", a0, lastx);			\
     rowgood = false;					\
 } while (0)

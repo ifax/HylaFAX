@@ -166,7 +166,7 @@ Class20Modem::sendPage(TIFF* tif, u_int pageChop)
     if (!rc)
 	abortDataTransfer();
     else if( conf.class2SendRTC )
-	rc = sendRTC(params.is2D());
+	rc = sendRTC(params);
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(getInputFlow(), FLOW_XONXOFF, ACT_DRAIN);
     protoTrace("SEND end page");

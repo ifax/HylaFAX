@@ -140,9 +140,10 @@ Class1Modem::setupModem()
     modemParams.wd = BIT(WD_1728) | BIT(WD_2048) | BIT(WD_2432);
     modemParams.ln = LN_ALL;
     modemParams.df = BIT(DF_1DMH) | BIT(DF_2DMR);
-    if (conf.class1ECMSupport)
+    if (conf.class1ECMSupport) {
 	modemParams.ec = BIT(EC_ENABLE) | BIT(EC_DISABLE);
-    else
+ 	modemParams.df |= BIT(DF_2DMMR);
+    } else
 	modemParams.ec = BIT(EC_DISABLE);
     modemParams.bf = BF_DISABLE;
     modemParams.st = ST_ALL;
@@ -552,8 +553,7 @@ Class1Modem::syncECMFrame()
  * Receive an HDLC frame with ECM.  We must always be cautious
  * of "stuffed" zero-bits after five sequential one-bits between
  * flag sequences.  We assume this is called only after a
- * successfuly received complete flag sequence.  We must also
- * count up detected EOLs in the bitstream.
+ * successfuly received complete flag sequence.
  */
 bool
 Class1Modem::recvECMFrame(HDLCFrame& frame)
@@ -576,7 +576,7 @@ Class1Modem::recvECMFrame(HDLCFrame& frame)
     }
     stopTimeout("waiting for the last synchronization flag");
 
-    // receive the frame, strip stuffed zero-bits, look for end flag, and count EOLs
+    // receive the frame, strip stuffed zero-bits, and look for end flag
 
     ones = 1;
     u_short bitpos = 7;

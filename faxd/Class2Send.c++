@@ -421,10 +421,9 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	    dp = data;
 
         /*
-         * correct broken Phase C (T.4) data if necessary
+         * correct broken Phase C (T.4/T.6) data if necessary
          */
-	if (compression != COMPRESSION_CCITTFAX4)	// broken in G4
-	    correctPhaseCData(dp, &totdata, fillorder, params);
+	correctPhaseCData(dp, &totdata, fillorder, params);
 
 	beginTimedTransfer();
 	rc = putModemDLEData(dp, (u_int) totdata, bitrev, getDataTimeout());
@@ -441,7 +440,7 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
  * Send RTC to terminate a page.
  */
 bool
-Class2Modem::sendRTC(bool is2D)
+Class2Modem::sendRTC(Class2Params params)
 {
     // these are intentionally reverse-encoded in order to keep
     // rtcRev and bitrev in sendPage() in agreement
@@ -449,11 +448,18 @@ Class2Modem::sendRTC(bool is2D)
 	{ 0x00,0x08,0x80,0x00,0x08,0x80,0x00,0x08,0x80 };
     static const u_char RTC2D[10] =
 	{ 0x00,0x18,0x00,0x03,0x60,0x00,0x0C,0x80,0x01,0x30 };
-    protoTrace("SEND %s RTC", is2D ? "2D" : "1D");
-    if (is2D)
-	return putModemDLEData(RTC2D, sizeof (RTC2D), rtcRev, getDataTimeout());
-    else
-	return putModemDLEData(RTC1D, sizeof (RTC1D), rtcRev, getDataTimeout());
+    static const u_char EOFB[3] =
+	{ 0x00,0x08,0x80 };
+    if (params.df == DF_2DMMR) {
+	protoTrace("SEND EOFB");
+        return putModemDLEData(EOFB, sizeof (EOFB), rtcRev, getDataTimeout());
+    } else {
+	protoTrace("SEND %s RTC", params.is2D() ? "2D" : "1D");
+	if (params.is2D())
+	    return putModemDLEData(RTC2D, sizeof (RTC2D), rtcRev, getDataTimeout());
+	else
+	    return putModemDLEData(RTC1D, sizeof (RTC1D), rtcRev, getDataTimeout());
+    }
 }
 
 /*

@@ -227,7 +227,7 @@
 #define	    DCSFRAME_64		(1<<28)	// 64 octets
 #define	DCS_ELMODE	(0x08<<24)	// use error limiting mode
 // bit 0x04 is reserved for Group 4
-#define	DCS_G4COMP	0x02<<24)	// use T.6 compression
+#define	DCS_G4COMP	(0x02<<24)	// use T.6 compression
 // bit 0x01 indicates another information byte follows
 
 // 2nd extension byte (alternative paper width capabilities)

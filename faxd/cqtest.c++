@@ -141,7 +141,7 @@ bool
 CQDecoder::recvPageDLEData(TIFF* tif, bool checkQuality,
     const Class2Params& params, fxStr& emsg)
 {
-    setupDecoder(recvFillOrder, params.is2D());
+    setupDecoder(recvFillOrder, params.is2D(), (params.df == DF_2DMMR));
 
     u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
     tiff_runlen_t runs[2*4864];			// run arrays for cur+ref rows
@@ -215,7 +215,7 @@ CQDecoder::recvPageDLEData(TIFF* tif, bool checkQuality,
 		 * later for deciding whether or not the page quality
 		 * is acceptable.
 		 */
-		bool decodeOK = decodeRow(recvRow, rowpixels);
+		bool decodeOK = decodeRow(recvRow, rowpixels, (params.df == DF_2DMMR));
 		if (seenRTC())			// seen RTC, flush everything
 		    continue;
 		if (decodeOK) {
@@ -326,7 +326,7 @@ CQDecoder::recvPageDLEData(TIFF* tif, bool checkQuality,
 	if (!RTCraised()) {
 	    for (;;) {
 		raw.reset();
-		(void) decodeRow(NULL, rowpixels);
+		(void) decodeRow(NULL, rowpixels, (params.df == DF_2DMMR));
 		if (seenRTC())
 		    continue;
 		u_int n = raw.getLength();

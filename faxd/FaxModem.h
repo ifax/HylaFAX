@@ -75,6 +75,9 @@ private:
     tstrip_t	recvStrip;	// current strip number during receive
     u_char*	recvRow;	// current receive row raster
     u_long	savedWriteOff;	// file offset to start of page data
+    int		decoderFd[2];	// file descriptors for the decoder pipe
+    int		counterFd[2];	// file descriptors for the counter pipe
+    pid_t	decoderPid;	// process id for the decoding process
 
     void	flushEncodedData(TIFF*, tstrip_t, const u_char*, u_int);
     void	flushRawData(TIFF*, tstrip_t, const u_char*, u_int);
@@ -132,7 +135,8 @@ protected:
 		    const Class2Params& params, fxStr& emsg);
     void	setupStartPage(TIFF* tif, const Class2Params& params);
     void	recvEndPage(TIFF* tif, const Class2Params& params);
-    void	writeECMData(TIFF*, const u_char*, u_int, u_int);
+    void	writeECMData(TIFF*, u_char*, u_int, const Class2Params&, u_short);
+    void	initializeDecoder(const Class2Params&);
     virtual void abortPageRecv() = 0;
     virtual int nextByte();
 
@@ -146,7 +150,7 @@ protected:
     u_int	getTagLineSlop() const;
     u_char*	imageTagLine(u_char* buf, u_int fillorder, const Class2Params&);
 /*
- * Correct if neccessary Phase C (T.4) data (remove extra RTC etc.)
+ * Correct if neccessary Phase C (T.4/T.6) data (remove extra RTC/EOFB etc.)
  */
     void        correctPhaseCData(u_char* buf, u_long* pBufSize,
                                   u_int fillorder, const Class2Params& params);

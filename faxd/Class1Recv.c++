@@ -713,12 +713,9 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
     HDLCFrame frame(5);					// A+C+FCF+FCS=5 bytes
     u_char block[frameSize*256];			// 256 frames per block - totalling 16/64KB
     bool lastblock = false;
+    u_short seq = 1;					// sequence code for the first block
 
-    u_int zeros = 0;
-    bool nullrow = true;
-    int eolcount = 0;
-    if (params.df != DF_1DMH) eolcount--;		// 2-D page begins with EOL, T.4 4.2.2
-
+    initializeDecoder(params);
     setupStartPage(tif, params);
 
     do {
@@ -778,9 +775,10 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		setInputBuffering(false);
 		bool gotpps = false;
 		HDLCFrame ppsframe(conf.class1FrameOverhead);
+		int recvFrameCount = 20;
 		do {
 		    gotpps = recvFrame(ppsframe, conf.t2Timer);
-		} while (!wasTimeout() && !gotpps);
+		} while (!wasTimeout() && !gotpps && recvFrameCount--);
 		if (gotpps) {
 		    tracePPM("RECV recv", ppsframe.getFCF());
 		    tracePPM("RECV recv", ppsframe.getFCF2());
@@ -917,22 +915,15 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 	    }
 	} while (! blockgood);
 
-	// We count EOLs here because until now the data validity was in question.
-	for (u_int i = 0; i < (fcount*frameSize); i++) {
-	    for (u_int j = 0; j <= 7; j++) {		// LSB2MSB
-		if (block[i] & (1 << j)) {
-		    if (zeros < 11) nullrow = false;
-		    else {
-			if (!nullrow) eolcount++;
-			nullrow = true;
-			if (params.df != DF_1DMH) j++;	// 2-D EOL+1 T.4 4.2.4
-		    }
-		    zeros = 0;
-		} else zeros++;
-	    }
+	u_int cc = fcount * frameSize;
+	if (lastblock) {
+	    // trim zero padding
+	    while (block[cc - 1] == 0) cc--;
 	}
 	// write the block to file
-	writeECMData(tif, block, (fcount*frameSize), eolcount);
+	if (lastblock) seq |= 2;			// seq code for the last block
+	writeECMData(tif, block, cc, params, seq);
+	seq = 0;					// seq code for in-between blocks
 
 	if (! lastblock) {		// back to high-speed carrier
 	    if (!sentERR) {

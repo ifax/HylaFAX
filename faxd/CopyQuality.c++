@@ -77,6 +77,21 @@ FaxModem::recvEndPage(TIFF* tif, const Class2Params& params)
 #endif
 }
 
+void
+FaxModem::initializeDecoder(const Class2Params& params)
+{
+    setupDecoder(recvFillOrder, params.is2D(), (params.df == DF_2DMMR));
+
+    u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
+    tiff_runlen_t runs[2*4864];			// run arrays for cur+ref rows
+    setRuns(runs, runs+4864, rowpixels);
+    setIsECM(false);
+
+    recvEOLCount = 0;				// count of EOL codes
+    recvBadLineCount = 0;			// rows with a decoding error
+    recvConsecutiveBadLineCount = 0;		// max consecutive bad rows
+}
+
 /*
  * Receive Phase C data with or without copy
  * quality checking and erroneous row fixup.
@@ -85,15 +100,8 @@ bool
 FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
     const Class2Params& params, fxStr& emsg)
 {
-    setupDecoder(recvFillOrder, params.is2D());
-
+    initializeDecoder(params);
     u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
-    tiff_runlen_t runs[2*4864];			// run arrays for cur+ref rows
-    setRuns(runs, runs+4864, rowpixels);
-
-    recvEOLCount = 0;				// count of EOL codes
-    recvBadLineCount = 0;			// rows with a decoding error
-    recvConsecutiveBadLineCount = 0;		// max consecutive bad rows
     /*
      * Data destined for the TIFF file is buffered in buf.
      * recvRow points to the next place in buf where data
@@ -173,7 +181,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 		 * later for deciding whether or not the page quality
 		 * is acceptable.
 		 */
-		bool decodeOK = decodeRow(recvRow, rowpixels);
+		bool decodeOK = decodeRow(recvRow, rowpixels, false);	// MMR uses ECM below
 		if (seenRTC())			// seen RTC, flush everything
 		    continue;
 		if (decodeOK) {
@@ -263,7 +271,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 	if (!RTCraised()) {
 	    for (;;) {
 		raw.reset();
-		(void) decodeRow(NULL, rowpixels);
+		(void) decodeRow(NULL, rowpixels, (params.df == DF_2DMMR));
 		if (seenRTC())
 		    continue;
 		u_int n = raw.getLength();
@@ -287,7 +295,11 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 	     * Adjust the received line count to reflect the
 	     * location at which RTC was found in the data stream.
 	     */
-	    copyQualityTrace("Adjusting for RTC found at row %u", getRTCRow());
+	    if (params.df == DF_2DMMR) {
+		copyQualityTrace("Adjusting for EOFB at row %u", getRTCRow());
+	    } else {
+		copyQualityTrace("Adjusting for RTC found at row %u", getRTCRow());
+	    }
 	    recvEOLCount = getRTCRow();
 	}
     }
@@ -375,13 +387,85 @@ FaxModem::flushRawData(TIFF* tif, tstrip_t strip, const u_char* buf, u_int cc)
 }
 
 /*
- * In ECM mode the ECM module provides the EOL counter.
+ * In ECM mode the ECM module provides the line-counter.
  */
 void
-FaxModem::writeECMData(TIFF* tif, const u_char* buf, u_int cc, u_int eols)
+FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& params, u_short seq)
 {
-    recvEOLCount = eols;
-    flushRawData(tif, 0, buf, cc);
+    /*
+     * Start a decoding child process to which the parent pipes the image data 
+     * through a decoding pipe.  The child will return the line count back 
+     * through a second counting pipe.  The fork is only executed on the first 
+     * block, and the child exits after returning the line count after the last
+     * block.  In-between blocks merely dump data into the pipe.
+     */
+
+    char cbuf[4];		// size of the page count signal
+    if (seq & 1) {		// first block
+	u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
+	if (pipe(decoderFd) >= 0 && pipe(counterFd) >= 0) {
+	    setDecoderFd(decoderFd[0]);
+	    decoderPid = fork();
+	    switch (decoderPid) {
+		case -1:	// error
+		    recvTrace("Could not fork decoding.");
+		    break;
+		case 0:		// child
+		    Sys::close(decoderFd[1]);
+		    Sys::close(counterFd[0]);
+		    setIsECM(true);	// point decoder to the pipe rather than the modem for data
+		    if (!EOFraised() && !RTCraised()) {
+			for (;;) {
+			    (void) decodeRow(NULL, rowpixels);
+			    if (seenRTC()) {
+				break;
+			    }
+			    recvEOLCount++;
+			}
+		    }
+		    if (seenRTC()) {		// RTC found in data stream
+			if (params.df == DF_2DMMR) {
+			    /*
+			     * In the case of MMR, it's not really RTC, but EOFB.
+			     * However, we don't actually *find* EOFB, but rather we
+			     * wait for the first line decoding error and assume it
+			     * to be EOFB.  This is safe because MMR data after a
+			     * corrupted line is useless anyway.
+			     */
+			    copyQualityTrace("Adjusting for EOFB at row %u", getRTCRow());
+			} else
+			    copyQualityTrace("Adjusting for RTC found at row %u", getRTCRow());
+			recvEOLCount = getRTCRow();
+		    }
+		    // write the line count to the pipe
+		    Sys::write(counterFd[1], (const char*) &recvEOLCount, sizeof(recvEOLCount));
+		    exit(0);
+		default:	// parent
+		    Sys::close(decoderFd[0]);
+		    Sys::close(counterFd[1]);
+		    break;
+	    }
+	} else {
+	    recvTrace("Could not open decoding pipe.");
+	}
+    }
+    for (u_int i = 0; i < cc; i++) {
+	cbuf[0] = 0x00;		// data marker
+	cbuf[1] = buf[i];
+	Sys::write(decoderFd[1], cbuf, 2);
+    }
+    if (seq & 2) {		// last block
+	cbuf[0] = 0xFF;		// this signals...
+	cbuf[1] = 0xFF;		// ... end of data
+	Sys::write(decoderFd[1], cbuf, 2);
+
+	// read the page count from the counter pipe
+	Sys::read(counterFd[0], (char*) &recvEOLCount, sizeof(recvEOLCount));
+	(void) Sys::waitpid(decoderPid);
+	Sys::close(decoderFd[1]);
+	Sys::close(counterFd[0]);
+    }
+    flushRawData(tif, 0, (const u_char*) buf, cc);
 }
 
 /*
@@ -430,23 +514,32 @@ int
 FaxModem::nextByte()
 {
     int b;
-    if (bytePending & 0x100) {
-	b = bytePending & 0xff;
-	bytePending = 0;
+    if (getIsECM()) {
+	char buf[2];
+	decoderFd[0] = getDecoderFd();
+	while (Sys::read(decoderFd[0], buf, 2) < 1);
+	if (((unsigned) buf[0] & 0xFF) == 0xFF) raiseEOF();
+	b = (unsigned) buf[1] & 0xFF;
     } else {
-	b = getModemDataChar();
-	if (b == EOF)
-	    raiseEOF();
-    }
-    if (b == DLE) {
-	switch (b = getModemDataChar()) {
-	case EOF: raiseEOF();
-	case ETX: raiseRTC();
-	case DLE: break;		// <DLE><DLE> -> <DLE>
-	default:
-	    bytePending = b | 0x100;
-	    b = DLE;
-	    break;
+	if (bytePending & 0x100) {
+	    b = bytePending & 0xff;
+	    bytePending = 0;
+	} else {
+	    b = getModemDataChar();
+	    if (b == EOF) {
+		raiseEOF();
+	    }
+	}
+	if (b == DLE) {
+	    switch (b = getModemDataChar()) {
+	    case EOF: raiseEOF();
+	    case ETX: raiseRTC();
+	    case DLE: break;		// <DLE><DLE> -> <DLE>
+	    default:
+		bytePending = b | 0x100;
+		b = DLE;
+		break;
+	    }
 	}
     }
     b = getBitmap()[b];

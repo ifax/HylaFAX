@@ -347,6 +347,7 @@ Class2Params::getXINFO() const
 	| (vr & VR_200X400 ? (DCS_200X400 | DCS_INCHRES) : 0)
 	| (vr & VR_300X300 ? (DCS_300X300 | DCS_INCHRES) : 0)
 	| (ec & EC_ENABLE ? DCS_ECMODE : 0)
+	| (df == DF_2DMMR ? DCS_G4COMP : 0)
 	;
     return (dcs_xinfo);
 }

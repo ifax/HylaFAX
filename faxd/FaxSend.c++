@@ -477,9 +477,11 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
 #endif
 
     traceProtocol("USE %s", clientParams.bitRateName());
-    traceProtocol("USE %s", clientParams.scanlineTimeName());
-    if (clientParams.ec == EC_ENABLE)
+    if (clientParams.ec == EC_ENABLE) {
 	traceProtocol("USE error correction mode");
+	clientParams.st = ST_0MS;	// T.30 Table 2 Note 8 - ECM imposes 0ms/scanline
+    }
+    traceProtocol("USE %s", clientParams.scanlineTimeName());
     return (true);
 }
 
@@ -533,6 +535,11 @@ FaxServer::sendSetupParams1(TIFF* tif,
 	    if (!modem->supportsMMR()) {
 		emsg = "Document was encoded with 2DMMR,"
 		    " but modem does not support this data format";
+		return (send_reformat);
+	    }
+	    if (params.ec != EC_ENABLE) {
+		emsg = "Document was encoded with 2DMMR,"
+		    " but ECM is not being used.";
 		return (send_reformat);
 	    }
 	    params.df = DF_2DMMR;

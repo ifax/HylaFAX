@@ -37,12 +37,15 @@ extern "C" {
 class G3Decoder {
 private:
     bool	is2D;		// whether or not data is 2d-encoded
+    bool	isG4;		// whether or not data is MMR
     uint32	data;		// current input/output byte
     int		bit;		// current bit in input/output byte
     int		EOLcnt;		// EOL code recognized during decoding (1/0)
     int		RTCrun;		// count of consecutive zero-length rows
     int		rowref;		// reference count of rows decoded
     int		RTCrow;		// row number of start of RTC
+    int		decoderFd;	// file descriptor for decoding pipe (ECM)
+    bool	isECM;		// whether to read input data from the modem or the pipe
     tiff_runlen_t*	refruns;	// runs for reference line
     tiff_runlen_t*	curruns;	// runs for current line
     const u_char* bitmap;	// bit reversal table
@@ -67,7 +70,7 @@ public:
 
     virtual ~G3Decoder();
 
-    void	setupDecoder(u_int fillorder, bool is2D);
+    void	setupDecoder(u_int fillorder, bool is2D, bool isG4);
     void	setRuns(tiff_runlen_t*, tiff_runlen_t*, int);
     tiff_runlen_t*	lastRuns();
 
@@ -80,6 +83,11 @@ public:
     bool	seenRTC() const;
     int		getRTCRow() const;
     int		getReferenceRow() const;
+
+    int		getDecoderFd() const;
+    void	setDecoderFd(int);
+    bool	getIsECM() const;
+    void	setIsECM(bool);
 };
 
 /*
@@ -95,7 +103,11 @@ public:
 inline tiff_runlen_t* G3Decoder::lastRuns()	{ return is2D ? refruns : curruns; }
 inline const u_char* G3Decoder::getBitmap()	{ return bitmap; }
 inline int G3Decoder::getPendingBits() const	{ return bit; }
-inline bool G3Decoder::seenRTC() const	{ return (RTCrow != -1); }
+inline bool G3Decoder::seenRTC() const		{ return (RTCrow != -1); }
 inline int G3Decoder::getRTCRow() const		{ return RTCrow; }
 inline int G3Decoder::getReferenceRow() const	{ return rowref; }
+inline int G3Decoder::getDecoderFd() const	{ return decoderFd; }
+inline void G3Decoder::setDecoderFd(int fd)	{ decoderFd = fd; }
+inline bool G3Decoder::getIsECM() const		{ return isECM; }
+inline void G3Decoder::setIsECM(bool ecm)	{ isECM = ecm; }
 #endif /* _G3Decoder_ */
