@@ -59,6 +59,7 @@ CONFIGFILES=class1 \
 	exar \
 	gvc-288 \
 	gvc-288-2 \
+	hayes \
 	intel-400e \
 	lucent \
 	lucent-mt-2 \
@@ -67,6 +68,7 @@ CONFIGFILES=class1 \
 	nuvo-voyager \
 	ppi-pm14400fxmt \
 	ppi-pm14400fxsa \
+	prometheus \
 	rc144ac \
 	rc144ac-1 \
 	rc288dpi \

@@ -198,6 +198,7 @@ HYLAFAXSRC=\
 	config/exar				\
 	config/gvc-288				\
 	config/gvc-288-2			\
+	config/hayes				\
 	config/intel-400e			\
 	config/mt-1432				\
 	config/lucent				\
@@ -206,6 +207,7 @@ HYLAFAXSRC=\
 	config/nuvo-voyager			\
 	config/ppi-pm14400fxmt			\
 	config/ppi-pm14400fxsa			\
+	config/prometheus			\
 	config/rc144ac				\
 	config/rc144ac-1			\
 	config/rc288dpi				\
