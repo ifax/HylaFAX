@@ -1,0 +1,31 @@
+# $Id$
+#
+# prototype config for Digi AccelePort RAS
+# It uses a K56 chip, but is similar in behavior to Lucents.
+#
+# Note that because the devices are named as "ttyG0_00" (which on some
+# systems indicates a subdirectory, i.e. "ttyG0/00") you must:
+# `ln -s /dev/ttyG0_00 /dev/ttyG000`
+# for each device and refer to the symlink.  Otherwise various HylaFAX 
+# functions will fail.
+
+# CONFIG: CLASS2.0:"Digi"*-"RAS modem"*-*
+#
+# BEGIN-SERVER
+# END-SERVER
+
+ModemType:		Class2.0	# use this to supply a hint
+ModemRate:		19200
+ModemFlowControl:	rtscts
+ModemNoFlowCmd:		AT&K0
+ModemSoftFlowCmd:	AT&K4
+ModemHardFlowCmd:	AT&K3
+
+Class2APCmd:		AT+FAP=1,1,1
+Class2CQCmd:		AT+FCQ=2,2
+
+# versions that respond to AT+FFC=? with non-zero data support RTFCC
+# Class2RTFCC:		yes
+
+# unfortunately, HylaFAX can't currently receive in MMR
+ModemAnswerCmd:		AT+FCC=,,,,1;A
