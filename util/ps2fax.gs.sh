@@ -109,11 +109,15 @@ esac
 # NB: unfortunately it appears to break valid PostScript;
 #     so it's been disabled.
 #
+# Suggestion from "Alan Sparks" <asparks@nss.harris.com>,
+# Add the -DFIXEDMEDIA argument to the last command in ps2fax
+#
 $CAT $fil | $PS -q \
     -sDEVICE=$device \
     -dNOPAUSE \
     -dSAFER=true \
     -sPAPERSIZE=$paper \
+    -dFIXEDMEDIA \
     -r204x$vres \
     "-sOutputFile=$out" \
     -
