@@ -164,7 +164,7 @@ Class2Modem::getPrologue(Class2Params& dis, bool& hasDoc, fxStr& emsg)
 bool
 Class2Modem::dataTransfer()
 {
-    bool status;
+    bool status = false;
     if (xmitWaitForXON) {
 	/*
 	 * Wait for XON (DC1) from the modem after receiving
@@ -175,7 +175,18 @@ Class2Modem::dataTransfer()
 	FlowControl oiFlow = getInputFlow();
 	if (flowControl == FLOW_XONXOFF)
 	    setXONXOFF(FLOW_NONE, getOutputFlow(), ACT_NOW);
-	if (status = atCmd("AT+FDT", AT_CONNECT, conf.pageStartTimeout)) {
+    }
+    u_short tries = 0;
+    ATResponse r;
+    do {
+	atCmd("AT+FDT", AT_NOTHING, conf.pageStartTimeout);
+	do {
+	    r = FaxModem::atResponse(rbuf, conf.pageStartTimeout);
+	} while (r == AT_OTHER);
+    } while (r == AT_OK && tries++ < 3);
+    status = (r == AT_CONNECT);
+    if (xmitWaitForXON) {
+	if (status) {
 	    protoTrace("SEND wait for XON");
 	    int c;
 	    startTimeout(10*1000);		// 5 seconds *should* be enough
@@ -187,10 +198,10 @@ Class2Modem::dataTransfer()
 	    stopTimeout("waiting for XON before sending page data");
 	    status = (c == DC1);
 	}
-	if (flowControl == FLOW_XONXOFF)
+	if (flowControl == FLOW_XONXOFF) {
+	    FlowControl oiFlow = getInputFlow();
 	    setXONXOFF(oiFlow, getOutputFlow(), ACT_NOW);
-    } else {
-	status = atCmd("AT+FDT", AT_CONNECT, conf.pageStartTimeout);
+	}
     }
     return (status);
 }
