@@ -1876,8 +1876,10 @@ faxQueueApp::timeoutJob(Job& job)
 	job.remove();				// remove from sleep queue
 	job.state = FaxRequest::state_failed;
 	FaxRequest* req = readRequest(job);
-	if (req)
+	if (req) {
+	    req->notice = "Kill time expired";
 	    deleteRequest(job, req, Job::timedout, true);
+	}
 	setDead(job);
     } else
 	job.killtime = 0;			// mark job to be removed
@@ -1899,6 +1901,7 @@ faxQueueApp::timeoutJob(Job& job, FaxRequest& req)
     job.state = FaxRequest::state_failed;
     traceQueue(job, "KILL TIME EXPIRED");
     Trigger::post(Trigger::JOB_TIMEDOUT, job);
+    req.notice = "Kill time expired";
     deleteRequest(job, req, Job::timedout, true);
     setDead(job);
 }
