@@ -124,6 +124,7 @@ public:
 
     static char* mktemp(char* templ)	{ return ::mktemp(templ); }
     static int mkstemp(char* templ)	{ return ::mkstemp(templ); }
+    static FILE* tmpfile()	{ return ::tmpfile(); }
     static FILE* fopen(const char* filename, const char* mode)
 	{ return ::fopen(filename, mode); }
 

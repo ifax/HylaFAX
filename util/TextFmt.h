@@ -95,7 +95,6 @@ private:
     fxBool	wrapLines;	// wrap/truncate lines
     fxBool	headers;	// emit page headers
     fxBool	workStarted;	// formatting work begun
-    fxStr	tempfile;	// temp filename for doing reverse collation
     FILE*	output;		// output file stream
     FILE*	tf;		// temporary output file
     OfftArray*	pageOff;	// page offset table

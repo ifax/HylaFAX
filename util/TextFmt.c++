@@ -246,12 +246,9 @@ TextFmt::beginFormatting(FILE* o)
     /*
      * Open the file w+ so that we can reread the temp file.
      */
-    tempfile = tmpnam(NULL);
-    tf = Sys::fopen(tempfile, "w+");
+    tf = Sys::tmpfile();
     if (tf == NULL)
-	fatal("%s: Cannot open temporary file: %s",
-	    (const char*) tempfile, strerror(errno));
-    Sys::unlink(tempfile);			// so it'll be removed on exit
+	fatal("Cannot open temporary file: %s", strerror(errno));
 
     numcol = fxmax(1,numcol);
     if (pointSize == -1)
@@ -321,8 +318,7 @@ TextFmt::endFormatting(void)
 	Copy_Block(0L, last-1);
     }
     if (fclose(tf))
-	fatal("%s: Close failure on temporary file: %s",
-	    (const char*) tempfile, strerror(errno));
+	fatal("Close failure on temporary file: %s", strerror(errno));
     tf = NULL;
     emitTrailer();
     fflush(output);
@@ -339,8 +335,7 @@ TextFmt::Copy_Block(off_t b1, off_t b2)
 	    fxmin((u_long) (off_t) sizeof (buf), (u_long) (b2-k+1));
 	fseek(tf, (long) k, SEEK_SET);		// position to desired block
 	if (fread(buf, 1, (size_t) cc, tf) != cc)
-	    fatal("%s: Read error during reverse collation: %s",
-		(const char*) tempfile, strerror(errno));
+	    fatal("Read error during reverse collation: %s", strerror(errno));
 	if (fwrite(buf, 1, (size_t) cc, output) != cc)
 	    fatal("Output write error: %s", strerror(errno));
     }
