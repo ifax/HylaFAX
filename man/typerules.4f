@@ -38,7 +38,7 @@ server for transmission as facsimile:
 .SM TIFF
 Class F (bilevel Group 3-encoded) files.
 All other types of files must be converted to one
-of these two formats.
+of these three formats.
 The facsimile submission program
 applies a set of rules against the contents
 of each input file to identify the file's
