@@ -182,6 +182,7 @@ f none @SPOOL@/config/rc32acl-1=../@SRCDIR@/config/rc32acl-1 0444 @SYSUID@ @SYSG
 f none @SPOOL@/config/rockwell-k56=../@SRCDIR@/config/rockwell-k56 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/rockwell-rc=../@SRCDIR@/config/rockwell-rc 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/sierra=../@SRCDIR@/config/sierra 0444 @SYSUID@ @SYSGID@
+f none @SPOOL@/config/t38modem=../@SRCDIR@/config/t38modem 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/telebit-t3000=../@SRCDIR@/config/telebit-t3000 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/telebit-qblazer=../@SRCDIR@/config/telebit-qblazer 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/telebit-wb=../@SRCDIR@/config/telebit-wb 0444 @SYSUID@ @SYSGID@

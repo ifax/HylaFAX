@@ -231,6 +231,7 @@ HYLAFAXSRC=\
 	config/rockwell-rc			\
 	config/sierra				\
 	config/skel				\
+	config/t38modem				\
 	config/telebit-qblazer			\
 	config/telebit-t3000			\
 	config/telebit-wb			\
