@@ -222,17 +222,17 @@ static void
 crackArgv(fxStr& s)
 {
     int i = 0;
-    u_int l = s.length()+1;		// +1 for \0
     do {
-        while (s[i] && !isspace(s[i])) i++;
-        if (s[i] == '\0') break;
-        s[i++] = '\0';
-        int j = i;
-        while (isspace(s[j])) j++;
-    	if (j > i) {
-            s.remove(i, j-i);
+        while (i < s.length() && !isspace(s[i])) i++;
+        if (i < s.length()) {
+            s[i++] = '\0';
+            int j = i;
+            while (j < s.length() && isspace(s[j])) j++;
+            if (j > i) {
+                s.remove(i, j - i);
+            }
         }
-    } while (s[i] != '\0');
+    } while (i < s.length());
     s.resize(i);
 }
 
@@ -333,3 +333,4 @@ DestControl::parseError(const char* fmt0 ...)
 }
 
 fxIMPLEMENT_ObjArray(DestControlInfoArray, DestControlInfo)
+
