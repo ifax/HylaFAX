@@ -51,14 +51,16 @@ struct NSFData {
 const int NSFData::vendorIdSize = 3; // Country & provider code (T.35)
 
 static const ModelData Canon[] =
-{{"\x80\x00\x80\x48\x00\x5B\x00\x80\x80\xC0\x04\x01\x02\xEB\x07", "Faxphone B640"},
- {"\x80\x00\x80\x49\x10                \x00\x4D\x00\x80\x80\xC0\x06\x01\x01\x01\x01", "fax B100"},
+{{"\x80\x00\x80\x48\x00", "Faxphone B640"},
+ {"\x80\x00\x80\x49\x10", "Fax B100"},
+ {"\x80\x00\x8A\x49\x10", "Laser Class 9000 Series"},
  {NULL}};
   
 
 static const ModelData Brother[] =
 {{"\x55\x55\x00\x88\x90\x80\x5F\x00\x15\x51", "Intellifax 770"},
  {"\x55\x55\x00\x80\xB0\x80\x00\x00\x59\xD4", "Personal fax 190"},
+ {"\x55\x55\x00\x8C\x90\x80\xF0\x02\x20", "MFC-8600"},
  {NULL}};
 
 static const ModelData Panasonic0E[] =
@@ -109,6 +111,10 @@ static const ModelData PitneyBowes[] =
 {{"\x79\x91\xB1\xB8\x7A\xD8", "9550" },
  {NULL}};
 
+static const ModelData Muratec[] =
+{{"\xF4\x91\xFF\xFF\xFF\x42\x2A\xBC\x01\x57", "M4700" },
+ {NULL}};
+
 static const NSFData KnownNSF[] =
 {
     {"\x00\x00\x0E", "Panasonic", false, 3,10, Panasonic0E },
@@ -118,9 +124,9 @@ static const NSFData KnownNSF[] =
     {"\x00\x00\x21", "Lanier",    true  },
     {"\x00\x00\x25", "Ricoh",     true,  3,10, Ricoh },
     {"\x00\x00\x26", NULL,        false },
-    {"\x00\x00\x45", "Muratec",   false },
+    {"\x00\x00\x45", "Muratec",   false, 3,10, Muratec },
     {"\x00\x00\x51", "Sanyo",     false, 3,10, Sanyo },
-    {"\x00\x00\x56", "Brother",   false, 3,10, Brother },
+    {"\x00\x00\x56", "Brother",   false, 3, 9, Brother },
     {"\x00\x00\x66", "UTAX",      true  },
     {"\x00\x00\x79", "Panasonic", false, 3,10, Panasonic79 },
     {"\x20\x41\x59", "Siemens",   false },
@@ -200,13 +206,13 @@ void NSF::decode()
     u_int nsfSize = nsf.length();
     for( const NSFData* p = KnownNSF; p->vendorId; p++ ){
         if( nsfSize >= p->vendorIdSize &&
-            !memcmp( p->vendorId, &nsf[0], p->vendorIdSize ) ){
+            memcmp( p->vendorId, &nsf[0], p->vendorIdSize )==0 ){
 	    if( p->vendorName )
                 vendor = p->vendorName;
             if( p->knownModels ){
                 for( const ModelData* pp = p->knownModels; pp->modelId; pp++ )
                     if( nsfSize >= p->modelIdPos + p->modelIdSize &&
-                        !memcmp( pp->modelId, &nsf[p->modelIdPos], p->modelIdSize ) )
+                        memcmp( pp->modelId, &nsf[p->modelIdPos], p->modelIdSize )==0 )
                         model = pp->modelName;
             }
             findStationId( p->inverseStationIdOrder );
