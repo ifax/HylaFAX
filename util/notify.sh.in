@@ -63,7 +63,12 @@ WHY=$2
 JTIME=$3
 NEXT=${4:-'??:??'}
 
+# These settings may not be present in setup.cache if user upgraded and
+# didn't re-run faxsetup; we set them before calling setup.cache for
+# backward compatibility.
 ENCODING=base64
+MIMENCODE=mimencode
+TTYCMD=tty
 
 . etc/setup.cache
 

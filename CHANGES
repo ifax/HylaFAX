@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX 4.2.1
 
+* initialize some variables in some scripts that may not
+  be initialzed in setup.cache (23 Dec 2004)
 * remove need to have separate "fax" user (22 Dec 2004)
 * fix parsing of AT+FCLASS=? response within faxaddmodem
   and probemodem (21 Dec 2004)
