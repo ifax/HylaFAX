@@ -54,6 +54,7 @@ EOF
 INFO=$SBIN/faxinfo
 FAX2PS=$TIFFBIN/fax2ps
 MIMENCODE=mimencode
+ENCODING=base64
 TIFF2PS=tiff2ps
 PS2PDF=ps2pdf
 TOADDR=FaxMaster
@@ -181,14 +182,14 @@ if [ -f $FILE ]; then
 	 if [ "$FILETYPE" = "tif" ]; then
 	     echo "Content-Type: image/tiff; name=\"$FILENAME.tif\""
 	     echo "Content-Description: FAX document"
-	     echo "Content-Transfer-Encoding: base64"
+	     echo "Content-Transfer-Encoding: $ENCODING"
 	     echo "Content-Disposition: attachment; filename=\"$FILENAME.tif\""
 	     echo ""
 	     $MIMENCODE $FILE 2>/dev/null
 	 elif [ "$FILETYPE" = "pdf" ]; then
 	     echo "Content-Type: application/pdf; name=\"c$COMMID.pdf\""
 	     echo "Content-Description: FAX document"
-	     echo "Content-Transfer-Encoding: base64"
+	     echo "Content-Transfer-Encoding: $ENCODING"
 	     echo "Content-Disposition: attachment; filename=\"c$COMMID.pdf\""
 	     echo ""
 	     GW=`$TIFFINFO $FILE | $GREP "Image Width" | \
