@@ -74,6 +74,7 @@ sendFaxApp::run(int argc, char** argv)
     extern int optind;
     extern char* optarg;
     int c;
+    bool optionsUsed = true;
 
     appName = argv[0];
     u_int l = appName.length();
@@ -88,136 +89,146 @@ sendFaxApp::run(int argc, char** argv)
     int verbose = 0;
     SendFaxJob& proto = getProtoJob();
     db = new FaxDB(tildeExpand(dbName));
-    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:P:r:s:t:T:U:V:W:x:X:y:Y:z:12lmnpvwADENR")) != -1)
-    switch (c) {
-    case '1':			// restrict to 1D-encoded data
-        proto.setDesiredDF(0);
-        break;
-    case '2':			// restrict to 2D-encoded data
-        proto.setDesiredDF(1);
-        break;
-    case 'a':			// time at which to transmit job
-        proto.setSendTime(optarg);
-        break;
-    case 'A':			// archive job
-        proto.setDoneOp("archive");
-        break;
-    case 'b':			// minimum transfer speed
-        proto.setMinSpeed(optarg);
-        break;
-    case 'B':			// desired transmit speed
-        proto.setDesiredSpeed(optarg);
-        break;
-    case 'C':			// cover page: template file
-        proto.setCoverTemplate(optarg);
-        break;
-    case 'c':			// cover page: comment field
-        proto.setCoverComments(optarg);
-        break;
-    case 'D':			// notify when done
-        proto.setNotification("when done");
-        break;
-    case 'd':			// destination name and number
-        addDestination(optarg);
-        break;
-    case 'E':			// disable use of ECM
-        proto.setDesiredEC(false);
-        break;
-    case 'F':			// override tag line format string
-        proto.setTagLineFormat(optarg);
-        break;
-    case 'f':			// sender's identity
-        setFromIdentity(optarg);
-        break;
-    case 'h':			// server's host
-        setHost(optarg);
-        break;
-    case 'I':			// fixed retry time
-        proto.setRetryTime(optarg);
-        break;
-    case 'i':			// user-specified job identifier
-        proto.setJobTag(optarg);
-        break;
-    case 'k':			// time to kill job
-        proto.setKillTime(optarg);
-        break;
-    case 'l':			// low resolution
-        proto.setVResolution(98.);
-        break;
-    case 'M':			// desired min-scanline time
-        proto.setDesiredMST(optarg);
-        break;
-    case 'm':			// medium resolution
-        proto.setVResolution(196.);
-        break;
-    case 'n':			// no cover sheet
-        proto.setAutoCoverPage(false);
-        break;
-    case 'N':			// no notification
-        proto.setNotification("none");
-        break;
-    case 'p':			// submit polling request
-        addPollRequest();
-        break;
-    case 'P':			// set scheduling priority
-        proto.setPriority(optarg);
-        break;
-    case 'r':			// cover sheet: regarding field
-        proto.setCoverRegarding(optarg);
-        break;
-    case 'R':			// notify when requeued or done
-        proto.setNotification("when requeued");
-        break;
-    case 's':			// set page size
-        proto.setPageSize(optarg);
-        break;
-    case 't':			// times to retry sending
-        proto.setMaxRetries(atoi(optarg));
-        break;
-    case 'T':			// times to dial telephone
-        proto.setMaxDials(atoi(optarg));
-        break;
-    case 'U':			// cover page: sender's voice number
-	proto.setCoverFromVoice(optarg);
-	break;
-    case 'v':			// verbose mode
-        verbose++;
-        setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
-        SendFaxClient::setVerbose(true);	// type rules & basic operation
-        FaxClient::setVerbose(verbose > 1);	// protocol tracing
-        break;
-    case 'V':			// cover sheet: voice number field
-        proto.setCoverVoiceNumber(optarg);
-        break;
-    case 'w':			// wait for job to complete
-        waitForJob = true;
-        break;
-    case 'W':			// cover page: sender's fax number
-	proto.setCoverFromFax(optarg);
-	break;
-    case 'x':			// cover page: to's company
-        proto.setCoverCompany(optarg);
-        break;
-    case 'X':			// cover page: sender's company
-	proto.setCoverFromCompany(optarg);
-	break;
-    case 'y':			// cover page: to's location
-        proto.setCoverLocation(optarg);
-        break;
-    case 'Y':			// cover page: sender's location
-	proto.setCoverFromLocation(optarg);
-	break;
-    case 'z':			// destinations from file
-	addDestinationsFromFile(optarg);
-	break;
-    case '?':
-        usage();
-        /*NOTREACHED*/
+    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:P:r:s:t:T:U:V:W:x:X:y:Y:z:12lmnpvwADENR")) != -1) {
+        if (c != 'h')
+            optionsUsed = false;
+        switch (c) {
+        case '1':			// restrict to 1D-encoded data
+            proto.setDesiredDF(0);
+            break;
+        case '2':			// restrict to 2D-encoded data
+            proto.setDesiredDF(1);
+            break;
+        case 'a':			// time at which to transmit job
+            proto.setSendTime(optarg);
+                break;
+        case 'A':			// archive job
+            proto.setDoneOp("archive");
+            break;
+        case 'b':			// minimum transfer speed
+            proto.setMinSpeed(optarg);
+            break;
+        case 'B':			// desired transmit speed
+            proto.setDesiredSpeed(optarg);
+            break;
+        case 'C':			// cover page: template file
+            proto.setCoverTemplate(optarg);
+            break;
+        case 'c':			// cover page: comment field
+            proto.setCoverComments(optarg);
+            break;
+        case 'D':			// notify when done
+            proto.setNotification("when done");
+            break;
+        case 'd':			// destination name and number
+            optionsUsed = true;
+            addDestination(optarg);
+            break;
+        case 'E':			// disable use of ECM
+            proto.setDesiredEC(false);
+            break;
+        case 'F':			// override tag line format string
+            proto.setTagLineFormat(optarg);
+            break;
+        case 'f':			// sender's identity
+            setFromIdentity(optarg);
+            break;
+        case 'h':			// server's host
+            setHost(optarg);
+            break;
+        case 'I':			// fixed retry time
+            proto.setRetryTime(optarg);
+            break;
+        case 'i':			// user-specified job identifier
+            proto.setJobTag(optarg);
+            break;
+        case 'k':			// time to kill job
+            proto.setKillTime(optarg);
+            break;
+        case 'l':			// low resolution
+            proto.setVResolution(98.);
+            break;
+        case 'M':			// desired min-scanline time
+            proto.setDesiredMST(optarg);
+            break;
+        case 'm':			// medium resolution
+            proto.setVResolution(196.);
+            break;
+        case 'n':			// no cover sheet
+            proto.setAutoCoverPage(false);
+            break;
+        case 'N':			// no notification
+            proto.setNotification("none");
+            break;
+        case 'p':			// submit polling request
+            addPollRequest();
+            break;
+        case 'P':			// set scheduling priority
+            proto.setPriority(optarg);
+            break;
+        case 'r':			// cover sheet: regarding field
+            proto.setCoverRegarding(optarg);
+            break;
+        case 'R':			// notify when requeued or done
+            proto.setNotification("when requeued");
+            break;
+        case 's':			// set page size
+            proto.setPageSize(optarg);
+            break;
+        case 't':			// times to retry sending
+            proto.setMaxRetries(atoi(optarg));
+            break;
+        case 'T':			// times to dial telephone
+            proto.setMaxDials(atoi(optarg));
+            break;
+        case 'U':			// cover page: sender's voice number
+            proto.setCoverFromVoice(optarg);
+            break;
+        case 'v':			// verbose mode
+            verbose++;
+            setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
+            SendFaxClient::setVerbose(true);	// type rules & basic operation
+            FaxClient::setVerbose(verbose > 1);	// protocol tracing
+            break;
+        case 'V':			// cover sheet: voice number field
+            proto.setCoverVoiceNumber(optarg);
+            break;
+        case 'w':			// wait for job to complete
+            waitForJob = true;
+            break;
+        case 'W':			// cover page: sender's fax number
+            proto.setCoverFromFax(optarg);
+            break;
+        case 'x':			// cover page: to's company
+            proto.setCoverCompany(optarg);
+            break;
+        case 'X':			// cover page: sender's company
+            proto.setCoverFromCompany(optarg);
+            break;
+        case 'y':			// cover page: to's location
+            proto.setCoverLocation(optarg);
+            break;
+        case 'Y':			// cover page: sender's location
+            proto.setCoverFromLocation(optarg);
+            break;
+        case 'z':			// destinations from file
+            optionsUsed = true;
+            addDestinationsFromFile(optarg);
+            break;
+        case '?':
+            usage();
+            /*NOTREACHED*/
+        }
     }
     if (getNumberOfJobs() == 0) {
         fprintf(stderr, "%s: No destination specified.\n",
             (const char*) appName);
         usage();
+    }
+    if (!optionsUsed) {
+	fprintf(stderr, "%s: Unused options after last destination.\n",
+	    (const char*) appName);
+	usage();
     }
     if (optind < argc) {
         for (; optind < argc; optind++) {
