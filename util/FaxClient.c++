@@ -1537,6 +1537,8 @@ FaxClient::makeHeader(const char* fmt, const FaxFmtHeader fmts[], fxStr& header)
 	    char* fp = fspec;
 	    *fp++ = '%';
 	    char c = *++cp;
+	    if (c == '\0')
+		break;
 	    if (c == '-')
 		*fp++ = c, c = *++cp;
 	    if (isdigit(c)) {
