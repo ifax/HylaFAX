@@ -1,0 +1,12 @@
+# $Id$
+
+#
+# prototype config for ISA Lucent chipset modems.
+#
+
+# CONFIG:CLASS1:AT&T 33.6 Data/14.4 Fax*:.*:.*: Manufacturer="AT&T" Model=Lucent
+#
+# BEGIN-SERVER
+# END-SERVER
+
+ModemType:		Class1		# use this to supply a hint
