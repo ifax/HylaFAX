@@ -291,6 +291,7 @@ test -d /usr/local/bin && PATH=/usr/local/bin:$PATH	# for GNU stuff
 PATH=$PATH:$OPATH
 
 POSIXLY_CORRECT=1; export POSIXLY_CORRECT		# disable GNU extensions
+LC_ALL=C; export LC_ALL					# set a common language
 
 #
 # Error diagnostics that should go to the terminal are
