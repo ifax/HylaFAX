@@ -11,6 +11,7 @@
 # CONFIG:CLASS1.0:LT V.92 1.0 MT5634ZBA*:.*:.*: Manufacturer=MultiTech Model=MT5634ZBA
 # CONFIG:CLASS1.0:LT V.90 1.0 ISI5634PCI*:.*:.*: Manufacturer=MultiTech Model=ISI5634PCI
 # CONFIG:CLASS1.0:LT V.92 1.0 ISI5634PCI*:.*:.*: Manufacturer=MultiTech Model=ISI5634PCI
+# CONFIG:CLASS1.0:Mainpine Venus V.92*:.*:.*: Manufacturer=Mainpine Model=RockForceDUO+
 #
 # BEGIN-SERVER
 # END-SERVER
