@@ -1064,6 +1064,24 @@ else
 fi
 
 #
+# Check to see if the C++ compiler has an inbuilt 'bool' type
+#
+cat>dummy.C<<EOF
+int main()
+{
+    bool success = false;
+    return 0;
+}
+EOF
+capture cat dummy.C
+if capture "$CXXCOMPILER $ENVOPTS dummy.C"; then
+    CONFIG_NEEDBOOL=no
+else
+    Note "Looks like will need to define the 'bool' type."
+    CONFIG_NEEDBOOL=yes
+fi
+
+#
 # Verify that $MAKE is accessible
 #
 PATHMAKE=`findApp ${MAKE} $PATH`
@@ -1626,6 +1644,17 @@ releaseAtLeast()
 #
 EmitConfigurationDefinitions()
 {
+    #
+    # Do bool stuff
+    #
+    if [ "$CONFIG_NEEDBOOL" = "yes" ]; then
+        Note "... adding definition for C++ bool type"
+        echo
+        echo "typedef int bool;"
+        echo "const bool false = 0;"
+        echo "const bool true = 1;"
+        echo
+    fi
     #
     # Select the mode to use when opening FIFO files
     # in a server process.  One should be able to open
