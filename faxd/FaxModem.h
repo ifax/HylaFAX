@@ -262,6 +262,7 @@ public:
      */
     virtual bool setupReceive() = 0;
     virtual bool recvBegin(fxStr& emsg);
+    virtual bool recvEOMBegin(fxStr& emsg);
     virtual bool recvPage(TIFF*, u_int& ppm, fxStr& em) = 0;
     virtual bool recvEnd(fxStr& emsg) = 0;
     virtual void recvAbort() = 0;

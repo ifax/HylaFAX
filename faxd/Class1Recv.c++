@@ -101,6 +101,21 @@ Class1Modem::recvBegin(fxStr& emsg)
 }
 
 /*
+ * Begin the receive protocol after an EOM signal.
+ */
+bool
+Class1Modem::recvEOMBegin(fxStr& emsg)
+{
+    /*
+     * We must raise the transmission carrier to mimic the state following ATA.
+     */
+    pause(conf.t2Timer);	// T.30 Fig 5.2B requires T2 to elapse
+    if (!(atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 0) == AT_CONNECT))
+	return (false);
+    return Class1Modem::recvBegin(emsg);
+}
+
+/*
  * Transmit local identification and wait for the
  * remote side to respond with their identification.
  */
@@ -408,7 +423,6 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg)
 	stopTimeout("sending HDLC frame");
     }
 
-top:
     time_t t2end = 0;
     signalRcvd = 0;
     sentERR = false;
@@ -690,30 +704,12 @@ top:
 		t2end = Sys::now() + howmany(conf.t2Timer, 1000);
 	    }
 	}
-    /*
-     * We need to provide an escape from the do {...} while loop for EOM
-     * because we were looking in the wrong place for the timeout, which
-     * occurred at "Set high speed carrier & start receive."  (L.H.)
-     */
-    } while (!wasTimeout() && lastResponse != AT_EMPTYLINE && lastPPM != FCF_EOM);
-    if (lastPPM == FCF_EOM) {
-	/*
-	 * Sigh, no state machine, have to do this the hard
-	 * way.  After receipt of EOM if a subsequent frame
-	 * receive times out then we must restart Phase B
-	 * and redo training et. al.  However, because of the
-	 * timeout, we need to achieve CONNECT first, just
-	 * as we did following ATA back in the beginning.
-	 */
-	if (atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 0) == AT_CONNECT && recvBegin(emsg))
-	    goto top;
-    } else {
-	emsg = "T.30 T2 timeout, expected page not received";
-	if (prevPage && conf.saveUnconfirmedPages) {
-	    TIFFWriteDirectory(tif);
-	    protoTrace("RECV keeping unconfirmed page");
-	    return (true);
-	}
+    } while (!wasTimeout() && lastResponse != AT_EMPTYLINE);
+    emsg = "T.30 T2 timeout, expected page not received";
+    if (prevPage && conf.saveUnconfirmedPages) {
+	TIFFWriteDirectory(tif);
+	protoTrace("RECV keeping unconfirmed page");
+	return (true);
     }
     return (false);
 }

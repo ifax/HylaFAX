@@ -105,6 +105,19 @@ Class2Modem::recvBegin(fxStr& emsg)
 }
 
 /*
+ * Begin a fax receive session after EOM.
+ */
+bool
+Class2Modem::recvEOMBegin(fxStr& emsg)
+{
+    /*
+     * There's nothing to do because the modem
+     * does all of the protocol work.
+     */
+    return (true);
+}
+
+/*
  * Process a received DCS.
  */
 bool

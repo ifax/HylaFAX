@@ -96,6 +96,13 @@ FaxModem::recvBegin(fxStr&)
 }
 
 bool
+FaxModem::recvEOMBegin(fxStr&)
+{
+    optFrames = 0;
+    return (true);
+}
+
+bool
 FaxModem::pollBegin(const fxStr&, const fxStr&, const fxStr&, fxStr&)
 {
     optFrames = 0;

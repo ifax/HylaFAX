@@ -64,8 +64,6 @@ FaxServer::recvFax(const CallerID& cid)
 	fileStart = Sys::now();		// count initial negotiation on failure
 	if (faxRecognized = modem->recvBegin(emsg)) {
 	    // NB: partially fill in info for notification call
-	    if (!modem->getRecvTSI(info.sender))
-		info.sender = "<UNSPECIFIED>";
 	    notifyRecvBegun(info);
 	    if (!recvDocuments(tif, info, docs, emsg)) {
 		traceProtocol("RECV FAX: %s", (const char*) emsg);
@@ -197,7 +195,7 @@ bool
 FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, fxStr& emsg)
 {
     bool recvOK;
-    u_int ppm;
+    u_int ppm = PPM_EOP;
     pageStart = Sys::now();
     for (;;) {
 	modem->getRecvSUB(info.subaddr);		// optional subaddress
@@ -243,6 +241,8 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 	if (tif == NULL)
 	    return (false);
 	fileStart = pageStart = Sys::now();
+	if (!modem->recvEOMBegin(emsg))
+	    return (false);
     }
     /*NOTREACHED*/
 }
@@ -253,7 +253,6 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 bool
 FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
 {
-    ppm = PPM_EOP;
     do {
 	if (++recvPages > maxRecvPages) {
 	    emsg = "Maximum receive page count exceeded, job terminated";

@@ -81,6 +81,7 @@ Class1Modem::Class1Modem(FaxServer& s, const ModemConfig& c)
     , thCmd("AT+FTH=3")
     , rhCmd("AT+FRH=3")
 {
+    messageReceived = false;
     memcpy(xmitCaps, basicCaps, sizeof (basicCaps));
     memcpy(recvCaps, basicCaps, sizeof (basicCaps));
 
