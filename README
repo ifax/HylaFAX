@@ -2,7 +2,7 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.1.3
+The HylaFAX development team is pleased to announce our 4.1.4
 patch-level release!  The release represents many hours of work and
 testing by developers and contributors, and our thanks goes to all who
 participate and provide feedback.
@@ -10,49 +10,61 @@ participate and provide feedback.
                                *   *   *
 
 This document is intended to describe the significant differences
-between hylafax-4.1.3 and older releases, point out any known
+between hylafax-4.1.4 and older releases, point out any known
 incompatibilites and issues, and provide the reader with directions to
 further resources regarding HylaFAX.
 
                           *   NEW FEATURES   *
 
-* support for MultiTech Real-Time Fax Compression Conversion via new 
-  Class2RTFCC option
-* support for Class 2.1 and V.34-fax (Super G3) modems
-* gcc version 3 support
-* new 'sendfax -z' option to read destinations from a file
-* support for Solaris DSOs
-* additional modem support for various MultiTech, Eicon, Sedlbauer, 
-  Comtrol, and Davicom modems
-* new Class2PTSQueryCmd and Class1TCFRecvHack config options
-* job archival support
+* sendfax warns when -d options are used poorly
+* NSF recognition on sending for virtually all US, UK, and Japan codes
+* DSO versioning follows HylaFAX
+* additional modem support for various USR, Digi, and Lucent/Agere modems
+* faxqclean now has a "force archiving" option
+* faxanswer supports Caller-ID now when faxgetty is running
+* removed support for Solaris DSOs and various other Solaris bugfixes
+* new Class1MsgRecvHack, Class1ResponseWaitCmd, and RingExtended config
+  options
+* probemodem options to send one command and not kill faxgetty
+* improve the select bug workaround
+* faxq triggers LOCKWAIT explicitly when initiating faxsend
+* faxgetty polls for lockfiles while RUNNING
+* fix broken facsimile polling when in Class 1
 
                          *   KNOWN ISSUES   *
 
-* HylaFAX corrupts images received in 2D-MMR.
+* HylaFAX corrupts images received in 2D-MMR (patch available).
 * Specific support for fax class 1.0 is not yet implemented.
-* NSF can be parsed incorrectly if the modem doesn't report it in hex.
-* sendfax use of ~/.hylarc differs from its use of hyla.conf
+* A low-priority job can block a high priority job to the same destination.
 ** Please refer to HylaFAX Bugzilla for a detailed list of issues.
 
                        *   INCOMPATIBILITIES   *
 
 * faxinfo from older installations of HylaFAX will not give correct 
   output when run against newly received fax image files.  faxinfo from 
-  4.1.3 can read both newly received and older fax image files.
+  4.1.3 and later can read both newly received and older fax image files.
+* HylaFAX source needs to be extracted and built on a case-sensitive
+  filesystem.  Users with case-insensitive filesystems, such as those with
+  Mac OS X HFS, will need to mount a new filesystem (i.e. UFS) for this
+  purpose.
 * The popular faxrcvd-mail scripts have been deprecated by FILETYPE use in 
-  FaxDispatch, and unchanged, will not work with faxgetty in 4.1.3.  See 
- 'man faxrcvd' for details.
+  FaxDispatch, and unchanged, will not work with faxgetty in 4.1.3 and later.
+  See 'man faxrcvd' for details.
 
                       *   WHO SHOULD UPGRADE?   *
 
-4.1.3 includes fixes for a remote format string vulnerability which could 
-be abused in a denial of service attack.  Also fixed is a buffer 
-overflow condition when receiving fax image data which potentially 
-could be exploited to execute arbitrary code as root.  Also present in 
-4.1.3 are fixes for several other local remote format string 
-vulnerabilities which, in some installations, could lead to elevated 
-privileges by abuse.  Everyone is advised to upgrade.
+A large number of security fixes were included in the 4.1.3 release of
+HylaFAX which make it very important to upgrade to 4.1.3 or newer. If you
+are not already running 4.1.3, this 4.1.4 release is a recommended
+upgrade.
+
+Anyone already running 4.1.3 on Solaris should also upgrade, since a number
+of Solaris-specific issues were addressed in this release.
+
+Users who find that their modem status does not always return to idle after
+sending a fax, such as those with low-level select bugs or those running
+RedHat Linux 7.3, should upgrade.
+
 
                      *   HYLAFAX BINARY PACKAGES   *
 
