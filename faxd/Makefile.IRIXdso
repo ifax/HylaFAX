@@ -37,3 +37,7 @@ libfaxserver.${DSO}: ${SERVER_OBJS} ${MODEM_OBJS}
 
 installDSO: libfaxserver.${DSO}
 	${PUTSERV} -F ${LIBEXEC} -m 444 -O libfaxserver.${DSO}
+
+cleanDSO::
+	-${RM} -f libfaxserver.${DSO}
+

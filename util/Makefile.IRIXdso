@@ -37,3 +37,7 @@ libfaxutil.${DSO}: ${OBJECTS}
 
 installDSO: libfaxutil.${DSO}
 	${PUTCLIENT} -F ${LIBEXEC} -m 444 -O libfaxutil.${DSO}
+
+cleanDSO::
+	-${RM} -f libfaxutil.${DSO}
+

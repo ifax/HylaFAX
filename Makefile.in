@@ -149,6 +149,13 @@ clean::
 	else \
 	    true; \
 	fi
+	@if [ "@DSO@" != no ]; then \
+	    for i in ${DSODIRS}; do \
+		(${ECHO} "= "$$i; cd $$i; ${MAKE} cleanDSO); \
+	    done; \
+	else \
+	    true; \
+	fi
 	@if [ "@HTML@" = yes ]; then \
 	    ${ECHO} "= "html; cd html; ${MAKE} clean; \
 	else \
@@ -180,6 +187,13 @@ clobber::
 	fi
 	@if [ "@REGEX@" = yes ]; then \
 	    ${ECHO} "= "regex; cd regex; ${MAKE} clobber; \
+	else \
+	    true; \
+	fi
+	@if [ "@DSO@" != no ]; then \
+	    for i in ${DSODIRS}; do \
+		(${ECHO} "= "$$i; cd $$i; ${MAKE} cleanDSO); \
+	    done; \
 	else \
 	    true; \
 	fi
