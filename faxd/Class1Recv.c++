@@ -801,7 +801,10 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		} while (!wasTimeout() && !gotpps && recvFrameCount--);
 		if (gotpps) {
 		    tracePPM("RECV recv", ppsframe.getFCF());
-		    tracePPM("RECV recv", ppsframe.getFCF2());
+		    if (ppsframe.getLength() > 5) {
+			// sender may violate T.30-A.4.3 and send another signal (i.e. DCN)
+			tracePPM("RECV recv", ppsframe.getFCF2());
+		    }
 		    if (ppsframe.getFCF() == FCF_PPS) {
 			// PPS is the only valid signal, Figure A.8/T.30
 			u_int fc = frameRev[ppsframe[6]] + 1;

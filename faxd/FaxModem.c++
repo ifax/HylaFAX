@@ -607,6 +607,7 @@ FaxModem::tracePPM(const char* dir, u_int ppm)
 	"PRI-EOP (no more pages after interrupt)",	// FCF_PRI_EOP
 	"PPS (partial page signal)",			// FCF_PPS
 	"unknown PPM 0x0E",
+	"DCN (disconnect)",				// FCF_DCN
     };
     protoTrace("%s %s", dir, ppmNames[ppm&0xf]);
 }
