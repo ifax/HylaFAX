@@ -83,8 +83,8 @@ faxAlterApp::run(int argc, char** argv)
         script.append(groups ? "JGPARM " : "JPARM ");
 		script.append("SENDTIME ");
             {
-                char tmpbuf[32];
-                sprintf(tmpbuf,"%d%02d%02d%02d%02d"
+                fxStr tmpbuf = fxStr::format(
+                    "%d%02d%02d%02d%02d"
 		            , when.tm_year+1900
 		            , when.tm_mon+1
 		            , when.tm_mday
@@ -112,8 +112,8 @@ faxAlterApp::run(int argc, char** argv)
 	    { time_t tv = mktime(&when) - now;
           script.append(groups ? "JGPARM " : "JPARM ");
 	      script.append("LASTTIME ");
-          char tmpbuf[32];
-	      sprintf(tmpbuf, "%02d%02d%02d"
+	      fxStr tmpbuf = fxStr::format(
+             "%02d%02d%02d"
 		     , tv/(24*60*60)
 		     , (tv/(60*60))%24
 		     , (tv/60)%60
