@@ -152,7 +152,7 @@ MaxRecvPages	integer	\s-1\fIunlimited\fP\s+1	max pages to permit in a receive
 MaxSendPages\(dg	integer	\s-1\fIunlimited\fP\s+1	max pages to permit in a send
 MaxSetupAttempts	integer	\s-12\s+1	max attempts to initialize a modem
 MaxTries\(dg	integer	\s-13\s+1	max attempts to transmit a job
-ModemClass\(dg	string	\-	define a name for a set of modems
+ModemGroup\(dg	string	\-	define a name for a set of modems
 ModemPriority	integer	255	scheduling priority for outbound jobs
 ModemReadyState	string	\s-1R\s+1	``ready state'' sent by \fIfaxgetty\fP
 NoCarrierRetrys	integer	\s-11\s+1	number of times to retry dialing on ``\s-2NO CARRIER\s0''
@@ -759,13 +759,13 @@ file.
 See also
 .BR MaxDials .
 .TP
-.B ModemClass\(dg
+.B ModemGroup\(dg
 Define a logical name for a set of modem devices.
 This parameter can be used to define a name that clients can use
 to refer to a collection of modems.
 The syntax is ``\fI<name>\fP\:\fI<regex>\fP'' where
 .I <name>
-is the name for the class and 
+is the name for the group and 
 .I <regex>
 is a regular expression that 
 .IR faxq (1M)
