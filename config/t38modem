@@ -1,0 +1,56 @@
+# $Id$
+#
+# HylaFAX configuration for a T38FAX Pseudo Modem
+#
+# This file was originally sourced with permission from 
+# Vyacheslav Frolov's t38modem software in OpenH323 package.
+#
+
+
+# CONFIG:CLASS1:T38FAX:.*:.*: Manufacturer='Vyacheslav Frolov' Model='t38modem'
+#
+# BEGIN-SERVER
+# END-SERVER
+
+ModemType:		Class1		# use class 1 interface
+ModemFlowControl:	rtscts		# default
+
+ModemRevQueryCmd:	AT+FREV?
+
+#
+# If you're using a version earlier than 0.7.0 enable this.
+#
+#Class1FrameOverhead:	2		# does not include FCS
+
+#
+# AT#CID=10 enables ANI/DNIS reporting between the 
+# first and second RINGs in the form:
+#
+#   RING
+#   NMBR = <calling number>
+#   NDID = <called number>
+#   RING
+#
+#ModemResetCmds:	"AT#CID=10"	# enable ANI/DNIS reporting
+#RingsBeforeAnswer:	2		# collect info between two RINGs
+#QualifyCID:		etc/cid		# CID access control list file
+#CIDNumber:		"NMBR = "	# pattern string for calling number
+#CIDName:		"NDID = "	# pattern string for called number
+
+#
+# T.38 dial modifiers
+#
+# F - enable T.38 mode request after dialing
+# V - disable T.38 mode request after dialing (remote host should do it)
+#
+# calling/called number dial modifiers
+#
+# L - reset and begin of calling number
+# D - continue of called number
+#
+#ModemDialCmd:		ATDF%s		# user can override F by dial V
+#ModemDialCmd:		ATDV%s		# user can override V by dial F
+#ModemDialCmd:		ATD%sF		# user can't override F
+#ModemDialCmd:		ATD%sV		# user can't override V
+#ModemDialCmd:		ATD%sVL		# user can't override V or calling number
+
