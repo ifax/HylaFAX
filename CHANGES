@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.1
 
+* document -age option for recvstats/xferfaxstats (23 Nov 2004)
 * add coversheet information into the q-file (23 Nov 2004)
 * fix documentation regarding DesiredEC (23 Nov 2004)
 * change minsp to minbr for consistency (23 Nov 2004)
