@@ -192,6 +192,7 @@ static const NSFData KnownNSF[] =
     {"\x00\xF0\x00", "Sumitomo Electric", false },
     {"\x20\x41\x59", "Siemens",   false },
     {"\x59\x59\x01", NULL,        false },
+    {"\x86\x00\x10", "Samsung",   false },
     {"\x86\x00\x8C", "Samsung",   false, 3, 4, Samsung8C },
     {"\x86\x00\x98", "Samsung",   false },
     {"\xAD\x00\x00", "Pitney Bowes", false, 3, 6, PitneyBowes },
