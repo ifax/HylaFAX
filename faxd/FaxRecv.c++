@@ -65,8 +65,25 @@ FaxServer::recvFax(const CallerID& cid)
 	recvPages = 0;			// total count of received pages
 	fileStart = Sys::now();		// count initial negotiation on failure
 	if (faxRecognized = modem->recvBegin(emsg)) {
-	    // NB: partially fill in info for notification call
-	    notifyRecvBegun(info);
+	    /*
+	     * If the system is busy then notifyRecvBegun may not return
+	     * quickly.  Thus we run it in a child process and move on.
+	     */
+	    pid_t pid = fork();
+	    switch (pid) {
+		case 0:
+		    // NB: partially fill in info for notification call
+		    notifyRecvBegun(info);
+		    sleep(1);		// XXX give parent time
+		    exit(0);
+		case -1:
+		    logError("Can not fork for non-priority processing.");
+		    notifyRecvBegun(info);
+		    break;
+		default:
+		    Dispatcher::instance().startChild(pid, this);
+		    break;
+	    }
 	    if (!recvDocuments(tif, info, docs, emsg)) {
 		traceProtocol("RECV FAX: %s", (const char*) emsg);
 		modem->recvAbort();
@@ -198,7 +215,24 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 	info.time = (u_int) getFileTransferTime();
 	info.reason = emsg;
 	docs[docs.length()-1] = info;
-	notifyDocumentRecvd(info);
+	/*
+	 * If syslog is busy then notifyDocumentRecvd may not return
+	 * quickly.  Thus we run it in a child process and move on.
+	 */
+	pid_t pid = fork();
+	switch (pid) {
+	    case 0:
+		notifyDocumentRecvd(info);
+		sleep(1);		// XXX give parent time
+		exit(0);
+	    case -1:
+		logError("Can not fork for non-priority logging.");
+		notifyDocumentRecvd(info);
+		break;
+	    default:
+		Dispatcher::instance().startChild(pid, this);
+		break;
+	}
 	if (!recvOK || ppm == PPM_EOP)
 	    return (recvOK);
 	/*
@@ -234,7 +268,25 @@ FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
 	info.npages++;
 	info.time = (u_int) getPageTransferTime();
 	info.params = modem->getRecvParams();
-	notifyPageRecvd(tif, info, ppm);
+	/*
+	 * If syslog is busy then notifyPageRecvd may not return quickly.
+	 * Thus we run it in a child process and move on.  Timestamps
+	 * in syslog cannot be expected to have exact precision anyway.
+	 */
+	pid_t pid = fork();
+	switch (pid) {
+	    case 0:
+		notifyPageRecvd(tif, info, ppm);
+		sleep(1);		// XXX give parent time
+		exit(0);
+	    case -1:
+		logError("Can not fork for non-priority logging.");
+		notifyPageRecvd(tif, info, ppm);
+		break;
+	    default:
+		Dispatcher::instance().startChild(pid, this);
+		break;
+	}
 	if (emsg != "") return (false);		// got page with fatal error
 	if (PPM_PRI_MPS <= ppm && ppm <= PPM_PRI_EOP) {
 	    emsg = "Procedure interrupt received, job terminated";

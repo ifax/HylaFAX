@@ -295,8 +295,24 @@ faxSendApp::notifyPageSent(FaxRequest& req, const char* filename)
 {
     FaxSendInfo si(filename, req.commid, req.npages+1,
 	getPageTransferTime(), getClientParams());
-    sendJobStatus(req.jobid, "d%s", (const char*) si.encode());
-
+    /*
+     * If the system is busy then sendJobStatus may not return
+     * quickly.  Thus we run it in a child process and move on.
+     */
+    pid_t pid = fork();
+    switch (pid) {
+	case 0:
+	    sendJobStatus(req.jobid, "d%s", (const char*) si.encode());
+	    sleep(1);		// XXX give parent time
+	    exit(0);
+	case -1:
+	    logError("Can not fork for non-priority logging.");
+	    sendJobStatus(req.jobid, "d%s", (const char*) si.encode());
+	    break;
+	default:
+	    Dispatcher::instance().startChild(pid, this);
+	    break;
+    }
     FaxServer::notifyPageSent(req, filename);
 }
 

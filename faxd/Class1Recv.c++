@@ -438,21 +438,20 @@ const u_int Class1Modem::modemPPMCodes[8] = {
 bool
 Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 {
-    if (/* sendingHDLC */ lastPPM == FCF_MPS && prevPage && pageGood && !sentERR) {
-	// sendingHDLC = false
+    if (lastPPM == FCF_MPS && prevPage && pageGood) {
 	/*
 	 * Resume sending HDLC frame (send data)
 	 * The carrier is already raised.  Thus we
 	 * use sendFrame() instead of transmitFrame().
 	 */
 	startTimeout(2550);
-	(void) sendFrame(FCF_MCF|FCF_RCVR);
+	(void) sendFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
 	stopTimeout("sending HDLC frame");
     }
 
     time_t t2end = 0;
     signalRcvd = 0;
-    sentERR = false;
+    sendERR = false;
     prevPage = false;
 
     do {
@@ -626,49 +625,94 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	    case FCF_PRI_EOP:			// PRI-EOP
 		if (prevPage && !pageGood) recvResetPage(tif);
 		if (signalRcvd == 0) tracePPM("RECV recv", lastPPM);
-		/*
-		 * As recommended in T.31 Appendix II.1, we try to
-		 * prevent the rapid switching of the direction of 
-		 * transmission by using +FRS.  Theoretically, "OK"
-		 * is the only response, but if the sender has not
-		 * gone silent, then we cannot continue anyway,
-		 * and aborting here will give better information.
-		 *
-		 * Using +FRS is better than a software pause, which
-		 * could not ensure loss of carrier.  +FRS is easier
-		 * to implement than using +FRH and more reliable than
-		 * using +FTS
-		 */
-		if (signalRcvd == 0 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-		    emsg = "Failure to receive silence.";
-		    return (false);
-		}
 
 		/*
 		 * [Re]transmit post page response.
 		 */
 		if (pageGood) {
-		    if (!sentERR) {
-			if (lastPPM == FCF_MPS && messageReceived) {
-			    /*
-			     * Start sending HDLC frame.
-			     * The modem will report CONNECT and transmit training
-			     * followed by flags until we begin sending data or
-			     * 5 seconds elapse.
-			     */
-			    // sendingHDLC =
-			    if (!useV34) atCmd(thCmd, AT_CONNECT);
-			} else {
-			    (void) transmitFrame(FCF_MCF|FCF_RCVR);
-			}
-			tracePPR("RECV send", FCF_MCF);
-		    }
 		    /*
 		     * If post page message confirms the page
 		     * that we just received, write it to disk.
 		     */
 		    if (messageReceived) {
-			TIFFWriteDirectory(tif);
+			if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
+			    emsg = "Failure to receive silence.";
+			    return (false);
+			}
+			/*
+			 * On servers where disk access may be bottlenecked or stressed,
+			 * the TIFFWriteDirectory call can lag.  The strategy, then, is
+			 * to employ RNR/RR flow-control for ECM sessions and to use CRP
+			 * in non-ECM sessions in order to grant TIFFWriteDirectory
+			 * sufficient time to complete.
+			 */
+			int fcfd[2];		// flow control file descriptors for the pipe
+			pid_t fcpid = -1;	// flow control process id for the child
+			if (pipe(fcfd) >= 0) {
+			    fcpid = fork();
+			    char tbuf[1];	// trigger signal
+			    tbuf[0] = 0xFF;
+			    switch (fcpid) {
+				case -1:	// error
+				    protoTrace("Protocol flow control unavailable due to fork error.");
+				    TIFFWriteDirectory(tif);
+				    break;
+				case 0:		// child
+				    Sys::close(fcfd[1]);
+				    do {
+					fd_set rfds;
+					FD_ZERO(&rfds);
+					FD_SET(fcfd[0], &rfds);
+					struct timeval tv;
+					tv.tv_sec = 2;		// we've got a 3-second window, use it
+					tv.tv_usec = 0;
+#if CONFIG_BADSELECTPROTO
+					if (!select(fcfd[0]+1, (int*) &rfds, NULL, NULL, &tv)) {
+#else
+					if (!select(fcfd[0]+1, &rfds, NULL, NULL, &tv)) {
+#endif
+					    (void) transmitFrame(params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP|FCF_RCVR);
+					    tracePPR("RECV send", params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP);
+					    HDLCFrame rrframe(conf.class1FrameOverhead);
+					    if (recvFrame(rrframe, conf.t4Timer)) {
+						tracePPM("RECV recv", rrframe.getFCF());
+						if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
+						    protoTrace("Ignoring invalid response to RNR.");
+						}
+						if (!useV34) {
+						    atCmd(conf.class1SwitchingCmd, AT_OK);
+						}
+					    }
+					} else {		// parent finished TIFFWriteDirectory
+					    tbuf[0] = 0;
+					    if (lastPPM == FCF_MPS) {
+						/*
+						 * Raise the HDLC transmission carrier but do not
+						 * transmit MCF now.  This gives us at least a 3-second
+						 * window to buffer any delays in the post-page
+						 * processes.
+						 */
+						if (!useV34) atCmd(thCmd, AT_CONNECT);
+					    } else {
+						(void) transmitFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
+					    }
+					    tracePPR("RECV send", sendERR ? FCF_ERR : FCF_MCF);
+					}
+				    } while (tbuf[0] != 0);
+				    Sys::read(fcfd[0], NULL, 1);
+				    exit(0);
+				default:	// parent
+				    Sys::close(fcfd[0]);
+				    TIFFWriteDirectory(tif);
+				    Sys::write(fcfd[1], tbuf, 1);
+				    (void) Sys::waitpid(fcpid);
+				    Sys::close(fcfd[1]);
+				    break;
+			    }
+			} else {
+			    protoTrace("Protocol flow control unavailble due to pipe error.");
+			    TIFFWriteDirectory(tif);
+			}
 			/*
 			 * Reset state so that the next call looks
 			 * first for page carrier or frame according
@@ -684,6 +728,23 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		     * Page not received, or unacceptable; tell
 		     * other side to retransmit after retrain.
 		     */
+		    /*
+		     * As recommended in T.31 Appendix II.1, we try to
+		     * prevent the rapid switching of the direction of 
+		     * transmission by using +FRS.  Theoretically, "OK"
+		     * is the only response, but if the sender has not
+		     * gone silent, then we cannot continue anyway,
+		     * and aborting here will give better information.
+		     *
+		     * Using +FRS is better than a software pause, which
+		     * could not ensure loss of carrier.  +FRS is easier
+		     * to implement than using +FRH and more reliable than
+		     * using +FTS
+		     */
+		    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+			emsg = "Failure to receive silence.";
+			return (false);
+		    }
 		    (void) transmitFrame(FCF_RTN|FCF_RCVR);
 		    tracePPR("RECV send", FCF_RTN);
 		    /*
@@ -762,7 +823,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 	u_short syncattempts = 0;
 	bool blockgood = false, dolongtrain = false;
 	do {
-	    sentERR = false;
+	    sendERR = false;
 	    resetBlock();
 	    signalRcvd = 0;
 	    rcpcnt = 0;
@@ -804,12 +865,13 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		if (!gotEOT) {
 		    bool gotprimary = waitForDCEChannel(false);
 		    u_short rtnccnt = 0;
-		    while (!gotEOT && (gotRTNC || (ctrlFrameRcvd != fxStr::null)) && rtnccnt++ < 3) {
+		    while (!sendERR && !gotEOT && (gotRTNC || (ctrlFrameRcvd != fxStr::null)) && rtnccnt++ < 3) {
 			/*
-			 * Remote requested control channel retrain and/or the remote
-			 * didn't properly hear our last signal.  So now we have to
-			 * use a signal from the remote and then respond appropriately
-			 * to get us back in sync. DCS::CFR - PPS::PPR/MCF - EOR::ERR
+			 * Remote requested control channel retrain, the remote didn't
+			 * properly hear our last signal, and/or we got an EOR signal 
+			 * after PPR.  So now we have to use a signal from the remote
+			 * and then respond appropriately to get us back or stay in sync.
+			 * DCS::CFR - PPS::PPR/MCF - EOR::ERR
 			 */
 			if (flowControl == FLOW_XONXOFF)
 			    (void) setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
@@ -864,8 +926,20 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    case FCF_PRI_EOM:
 					    case FCF_PRI_MPS:
 					    case FCF_PRI_EOP:
-						(void) transmitFrame(FCF_ERR|FCF_RCVR);
-						tracePPR("RECV send", FCF_ERR);
+						if (fcount) {
+						    /*
+						     * The block hasn't been written to disk.
+						     * This is expected when the sender sends
+						     * EOR after our PPR (e.g. after the 4th).
+						     */
+						    blockgood = true;
+						    signalRcvd = rtncframe.getFCF2();
+						    if (signalRcvd) lastblock = true;
+						    sendERR = true;
+						} else {
+						    (void) transmitFrame(FCF_ERR|FCF_RCVR);
+						    tracePPR("RECV send", FCF_ERR);
+						}
 						break;
 					}
 				    }
@@ -876,14 +950,16 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    continue;
 				    break;
 			    }
-			    setInputBuffering(true);
-			    if (flowControl == FLOW_XONXOFF)
-				(void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
-			    gotprimary = waitForDCEChannel(false);
+			    if (!sendERR) {	// as long as we're not trying to send the ERR signal (set above)
+				setInputBuffering(true);
+				if (flowControl == FLOW_XONXOFF)
+				    (void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
+			        gotprimary = waitForDCEChannel(false);
+			    }
 			} else
 			    gotprimary = false;
 		    }
-		    if (!gotprimary) {
+		    if (!gotprimary && !sendERR) {
 			emsg = "Failed to properly open V.34 primary channel.";
 			protoTrace(emsg);
 			if (conf.saveUnconfirmedPages && pagedataseen) {
@@ -906,7 +982,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    return (false);
 		}
 	    }
-	    if (useV34 || syncECMFrame()) {		// no synchronization needed w/V.34-fax
+	    if (!sendERR && (useV34 || syncECMFrame())) {	// no synchronization needed w/V.34-fax
 		time_t start = Sys::now();
 		do {
 		    frame.reset();
@@ -1020,7 +1096,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				}
 
 				// requisite pause before sending response (PPR/MCF)
-				if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
+				if (!blockgood && !useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
 				    emsg = "Failure to receive silence.";
 				    if (conf.saveUnconfirmedPages && pagedataseen) {
 					protoTrace("RECV keeping unconfirmed page");
@@ -1126,20 +1202,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 							free(block);
 							return (false);
 						}
-						// requisite pause before sending response (ERR)
-						if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-						    emsg = "Failure to receive silence.";
-						    if (conf.saveUnconfirmedPages && pagedataseen) {
-							protoTrace("RECV keeping unconfirmed page");
-							writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-							prevPage = true;
-						    }
-						    free(block);
-						    return (false);
-						}
-						(void) transmitFrame(FCF_ERR|FCF_RCVR);
-						tracePPR("RECV send", FCF_ERR);
-						sentERR = true;
+						sendERR = true;		// do it later
 						break;
 					    default:
 						emsg = "COMREC invalid response to repeated PPR received";
@@ -1230,13 +1293,72 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 	}
 	// write the block to file
 	if (lastblock) seq |= 2;			// seq code for the last block
-	writeECMData(tif, block, cc, params, seq);
+
+	/*
+	 * On servers where disk or CPU may be bottlenecked or stressed,
+	 * the writeECMData call can lag.  The strategy, then, is
+	 * to employ RNR/RR flow-control in order to grant writeECMData
+	 * sufficient time to complete.   
+	*/
+	int fcfd[2];		// flow control file descriptors for the pipe
+	pid_t fcpid = -1;	// flow control process id for the child
+	if (pipe(fcfd) >= 0) {
+	    fcpid = fork();
+	    char tbuf[1];	// trigger signal
+	    tbuf[0] = 0xFF;
+	    switch (fcpid) {
+		case -1:	// error
+		    protoTrace("Protocol flow control unavailable due to fork error.");
+		    writeECMData(tif, block, cc, params, seq);
+		    break;
+		case 0:		// child
+		    Sys::close(fcfd[1]);
+		    do {
+			fd_set rfds;
+			FD_ZERO(&rfds);
+			FD_SET(fcfd[0], &rfds);
+			struct timeval tv;
+			tv.tv_sec = 1;		// 1000 ms should be safe
+			tv.tv_usec = 0;
+#if CONFIG_BADSELECTPROTO
+			if (!select(fcfd[0]+1, (int*) &rfds, NULL, NULL, &tv)) {
+#else
+			if (!select(fcfd[0]+1, &rfds, NULL, NULL, &tv)) {
+#endif
+			    if (!useV34) {
+				atCmd(conf.class1SwitchingCmd, AT_OK);
+			    }
+			    (void) transmitFrame(FCF_RNR|FCF_RCVR);
+			    tracePPR("RECV send", FCF_RNR);
+			    HDLCFrame rrframe(conf.class1FrameOverhead);
+			    if (recvFrame(rrframe, conf.t4Timer)) {
+				tracePPM("RECV recv", rrframe.getFCF());
+				if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
+				    protoTrace("Ignoring invalid response to RNR.");
+				}
+			    }
+			} else tbuf[0] = 0;	// parent finished writeECMData
+		    } while (tbuf[0] != 0);
+		    Sys::read(fcfd[0], NULL, 1);
+		    exit(0);
+		default:	// parent
+		    Sys::close(fcfd[0]);
+		    writeECMData(tif, block, cc, params, seq);
+		    Sys::write(fcfd[1], tbuf, 1);
+		    (void) Sys::waitpid(fcpid);
+		    Sys::close(fcfd[1]);
+		    break;
+	    }
+	} else {
+	    protoTrace("Protocol flow control unavailble due to pipe error.");
+	    writeECMData(tif, block, cc, params, seq);
+	}
 	seq = 0;					// seq code for in-between blocks
 
-	if (!lastblock && !sentERR) {
+	if (!lastblock) {
 	    // confirm block received as good
-	    (void) transmitFrame(FCF_MCF|FCF_RCVR);
-	    tracePPR("RECV send", FCF_MCF);
+	    (void) transmitFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
+	    tracePPR("RECV send", sendERR ? FCF_ERR : FCF_MCF);
 	}
     } while (! lastblock);
 
@@ -1270,7 +1392,6 @@ Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
 	     */
 	    signalRcvd = FCF_EOP;
 	    messageReceived = true;
-	    sentERR = true;
 	    if (prevPage)
 		recvEndPage(tif, params);
 	}

@@ -56,7 +56,7 @@ protected:
     u_int	frameSize;		// size of image frames
     u_int	signalRcvd;		// last signal received in ECM protocol
     u_int	nonV34br;		// modemParams.br without V.34
-    bool	sentERR;		// whether or not ERR was sent
+    bool	sendERR;		// T.30-A send ERR instead of MCF
     bool	hadV34Trouble;		// indicates failure due to V.34 restrictions
     bool	batchingError;		// indicates failure due to batching protocol
     const u_char* frameRev;		// HDLC frame bit reversal table
