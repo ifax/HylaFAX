@@ -587,6 +587,10 @@ FaxModem::tracePPM(const char* dir, u_int ppm)
 	protoTrace("%s TSI (sender id)", dir);
 	return;
     }
+    if ((ppm & 0x7F) == FCF_CRP) {
+	protoTrace("%s CRP (command repeat)", dir);
+	return;
+    }
     static const char* ppmNames[16] = {
 	"NULL (more blocks, same page)",		// PPS-NULL
 	"EOM (more documents)",				// FCF_EOM
