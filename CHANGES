@@ -1,6 +1,15 @@
+Changelog for HylaFAX 4.1rc1 - Jun 04, 2001
 
-Changelog for - May 30, 2001
-
+* remove use of /sbin/kill, problematic on Tru64 (04 Jun 2001)
+* fix ModemServer.c++ for OpenBSD (04 Jun 2001)
+* change manpage names: config to hylafax-config, info to
+  hylafax-info, log to hylafax-log, and shutdown to
+  hylafax-shutdown (03 Jun 2001)
+* add configs for UMC9624 and MT5634ZPX-PCI modems (03 Jun 2001)
+* fix TimeOfDay race if using bad syntax (03 Jun 2001)
+* break the initialization string apart and
+  remove ModemOnHookCmd from it (03 Jun 2001)
+* allow use of "none" in five config options (03 Jun 2001)
 * add HylaFAX version and device usage in logs (30 May 2001)
 * rearrangements in configure to fix HP sed (30 May 2001)
 * change default spool dir to /var/spool/hylafax (29 May 2001)
@@ -24,9 +33,6 @@ Changelog for - May 30, 2001
 * added Class1SwitchingDelay config option and default,
   correcting some timeout errors (20 May 2001)
 * fixed file gid numbering (20 May 2001)
-
-Changelog for HylaFAX 4.1rc1 - Apr 22, 2001
-
 * Adjusted faxq to load-balance modems with equal priority (22 Apr 2001)
 * Added new CONTRIBUTORS (14 Apr 2001)
 * Merged performance-rts into rc288dpi-1 config file (14/19 Apr 2001)
