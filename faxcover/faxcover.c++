@@ -383,7 +383,7 @@ faxCoverApp::tildeExpand(const fxStr& filename)
         if (!pwd) {
             fxFatal("Can not figure out who you are.");
         }
-        cp = pwd->pw_dir;
+        char* cp = pwd->pw_dir;
 	    path.insert(cp);
     }
     return (path);
