@@ -1,0 +1,111 @@
+#! smake
+#	$Id$
+#
+# @WARNING@
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# VERSION:	@VERSION@
+# DATE:		@DATE@
+# TARGET:	@TARGET@
+# CCOMPILER:	@CCOMPILER@
+# CXXCOMPILER:	@CXXCOMPILER@
+#
+DEPTH=..
+@MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
+
+SRCDIR	= ${DEPTH}/${TOPSRCDIR}/hfaxd
+VPATH	= ../@SRCDIR@/hfaxd
+FAXDSRCDIR= ${DEPTH}/${TOPSRCDIR}/faxd
+
+C++FILES=Admin.c++ \
+	FIFO.c++ \
+	FileCache.c++ \
+	FileSystem.c++ \
+	FileTransfer.c++ \
+	HylaFAXServer.c++ \
+	Jobs.c++ \
+	Login.c++ \
+	Parser.c++ \
+	RecvQueue.c++ \
+	Status.c++ \
+	Trigger.c++ \
+	User.c++ \
+	\
+	SuperServer.c++ \
+	InetFaxServer.c++ \
+	OldProtocol.c++ \
+	SNPPServer.c++ \
+	UnixFaxServer.c++ \
+	\
+	main.c++
+LC++DEFS=-DOLDPROTO_SUPPORT=1 -DSNPP_SUPPORT=1
+LC++INCS= -I${FAXDSRCDIR} -I${ZLIBINC}
+TARGETS	= hfaxd
+
+default all::
+	@${MAKE} incdepend
+	@${MAKE} targets
+
+targets: $(TARGETS)
+
+@MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
+
+hfaxd: ${OBJECTS} FaxRequest.o faxRequest.o ${LIBS}
+	${C++F} -o $@ ${OBJECTS} FaxRequest.o faxRequest.o ${LDFLAGS}
+
+#
+# Private versions are built so that we do not need
+# to link against the libfaxserver archive; this
+# avoids lots of problems on systems that do not have
+# support for DSOs (there would be many undefined
+# symbols that could only be resolved by bloating
+# the contents of the archive).
+#
+FaxRequest.o: ${FAXDSRCDIR}/FaxRequest.c++
+	${C++F} -c ${C++FILE} -I${DEPTH}/faxd ${FAXDSRCDIR}/FaxRequest.c++@MAKECXXOVERRIDE@
+faxRequest.o: ${FAXDSRCDIR}/faxRequest.c++
+	${C++F} -c ${C++FILE} ${FAXDSRCDIR}/faxRequest.c++@MAKECXXOVERRIDE@
+
+LDIRT	= version.h
+
+version.h:
+	VERSION="@DIST_MAJOR@.@DIST_MINOR@@DIST_TYPE@";\
+	if [ @DIST_TYPE@ = beta ]; then \
+	    VERSION="$${VERSION}@DIST_ALPHA@"; \
+	fi; \
+	rm -f version.h; \
+	echo "#define VERSION \"HylaFAX (tm) Version $$VERSION\"">version.h
+HylaFAXServer.o: version.h
+incdepend: version.h
+
+install: default
+	${INSTALL} -F ${LIBEXEC} -u root -m 4755 \
+	    -idb ${PRODUCT}.sw.server -O hfaxd
+	${INSTALL} -F ${LIBDATA} -m 644 -idb ${PRODUCT}.sw.server \
+	    -idb "config(noupdate)" -src ${SRCDIR}/hfaxd.conf -O hfaxd.conf

@@ -1,0 +1,101 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Changes in HylaFAX v4.0beta013
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>C</FONT>HANGE <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+<B>Current Version</B>: v4.0beta013<BR>
+<B>Previous Version</B>: <A HREF="v4.0beta012.html">v4.0beta012</A><BR>
+<B>Master FTP Site</B>: <A HREF="ftp://sgi.com/sgi/fax">sgi.com (192.48.153.1), directory sgi/fax</A><BR>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+</UL>
+
+<P>
+Note that this is a <STRONG>major new distribution</STRONG> and lots
+of things have changed.  Consult the <A HREF="hylafax4.0.html">general overview</A>
+for a high-level description of the new functionality provided in the
+v4.0 software.
+
+<P>
+This document describes the changes made to the software between the
+<I>previous</I> and <I>current</I> versions (see above).
+If you don't find something listed here, then it was not done in this
+timeframe, or it was not considered important enough to be mentioned.
+The following information is located here:
+<UL>
+<LI><A HREF="#configure">Changes in the software configuration</A>
+<LI><A HREF="#hfaxd">Changes to hfaxd</A>
+<LI><A HREF="#faxsetup">Changes to faxsetup</A>
+<LI><A HREF="#faxmail">Changes to faxmail</A>
+<LI><A HREF="#misc">Changes in miscellaneous stuff</A>
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
+
+<UL>
+<LI>various problems associated with rereading parameters written to the
+    <B>config.cache</B> file were corrected
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="hfaxd"><B><FONT SIZE=+3>C</FONT>HANGES TO HFAXD:</B></A>
+
+<UL>
+<LI><B>hfaxd</B> now becomes the super-user before doing a chown
+    system call to deal with BSD-based systems
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxsetup"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXSETUP:</B></A>
+
+<UL>
+<LI>quoted file parameters are now properly handled when checking
+    that the file exists
+<LI>the logic for finding a process on a BSD-derived system was improved
+<LI>references to the SBIN directory were corrected
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxmail"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXMAIL:</B></A>
+
+<UL>
+<LI>a bug that caused the envelope to not include the input text was fixed
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="misc"><B><FONT SIZE=+3>C</FONT>HANGES IN MISCELLANEOUS STUFF:</B></A>
+
+<UL>
+<LI><B>faxcron</B> works on systems that don't have any old-style log files
+</UL>
+
+<!--FOOTER-->
+
+<A HREF="toc.html"><IMG SRC="icons/back.gif"></A> HylaFAX table
+of contents.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

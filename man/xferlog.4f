@@ -1,0 +1,154 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH XFERLOG 4F "June 5, 1996"
+.SH NAME
+xferlog \- \*(Fx activity log
+.SH DESCRIPTION
+The file
+.B etc/xferlog
+contains information about inbound and outbound activities.
+The file contains one line per inbound or outbound call
+(except for facsimile documents retrieved by polling in which
+case multiple entries may be present for a single call).
+Lines are fixed-format,
+.I tab-separated
+.SM ASCII
+strings.
+Each record of a facsimile transmission is of the form:
+.sp .5
+.ti +0.5i
+date \s-1SEND\s+1 commid modem jobid jobtag sender ``dest-number'' ``\s-1CSI\s+1'' params #pages jobtime conntime ``reason''
+.sp .5
+.PP
+A facsimile reception record is of the form:
+.sp .5
+.ti +0.5i
+date \s-1RECV\s+1 commid modem \fI<null>\fP \fI<null>\fP fax ``local-number'' ``\s-1TSI\s+1'' params #pages jobtime conntime ``reason''
+.sp .5
+.PP
+Each facsimile document retrieved by polling has a record of the form:
+.sp .5
+.ti +0.5i
+date \s-1POLL\s+1 commid modem jobid jobtag sender ``dest-number'' ``\s-1TSI\s+1'' params #pages jobtime conntime ``reason''
+.sp .5
+An alphanumeric pager request has a record of the form:
+.sp .5
+.ti +0.5i
+date \s-1PAGE\s+1 commid modem jobid jobtag sender ``dest-number'' ``\fI<null>\fP'' 0 0 jobtime conntime ``reason''
+.sp .5
+.PP
+The following describes the fields in the above records:
+.TP 14
+.B date
+The date and time of the transaction in the format
+.SM "MM/DD/YY HH:MM",
+where 
+.SM MM
+is the numeric month,
+.SM DD
+the numeric day,
+.SM YY
+the last two digits of the year, and
+.SM HH:MM
+is the time in 24-hour format.
+.TP 14
+.B commid
+The communication identifier for the call.
+.TP 14
+.B modem
+The device identifier for the modem that was used to do the send or receive.
+.TP 14
+.B jobid
+The job number for outbound calls.
+.TP 14
+.B jobtag
+The client-specified job tag for outbound calls.
+.TP 14
+.B sender
+The sender/receiver's electronic mailing address
+(facsimile receptions are always attributed to the ``fax'' user).
+.TP 14
+.B dest-number
+The phone number dialed for outgoing calls.
+.TP 14
+.B \s-1TSI\s+1
+The Transmitter Subscriber Identification string (as received) for
+incoming calls.
+.TP 14
+.B \s-1CSI\s+1
+The Caller Subscriber Identification string of the remote machine
+(as reported) for outgoing calls.
+.TP 14
+.B local-number
+The local phone number on which the data was received.
+.TP 14
+.B params
+The negotiatated facsimile session parameters
+used for transferring data encoded as described below.
+.TP 14
+.B #pages
+The total number of pages transferred.
+.TP 14
+.B jobtime
+The duration of the session; in the format
+\s-1HH:MM:SS\s+1.
+This time includes setup overhead and any time
+spent cleaning up after a call.
+.TP 14
+.B conntime
+The time spent on the phone; in the format
+\s-1HH:MM:SS\s+1.
+This should be the time used by the PTT to calculate usage charges.
+.TP 14
+.B reason
+A string that indicates if any problem occured during the session.
+.PP
+Note that fields may have embedded blanks.
+Session parameters are encoded as a decimal number that contains
+a packed set of Class 2 session parameter values.
+The format is: 2 bits for vertical resolution, 3 bits for signalling rate,
+3 bits for page width, 2 bits for page length, 2 bits for data format,
+1 bit for ECM use, 1 bit of BF use, and 3 bits for the min scanline time.
+The page counts are always integral numbers.
+Partial pages that are to be retransmitted are not included
+in the page count.
+.PP
+The simple 
+.SM ASCII
+format was designed to be easy to process with programs like
+.IR awk (1).
+.SH BUGS
+The date format will ``break'' in the year 2000.
+Information should be recorded on a per-page basis for facsimile
+communications.
+.SH "SEE ALSO"
+.IR faxq (1M)
+.IR faxsend (1M)
+.IR faxgetty (1M)

@@ -1,0 +1,1518 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Advanced Server Configuration
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>A</FONT>DVANCED <FONT SIZE=+2>S</FONT>ERVER <FONT SIZE=+2>C</FONT>ONFIGURATION</B>
+<BASEFONT SIZE=3>
+
+<P>
+This chapter describes how to configure some of the advanced
+features of HylaFAX.  In addition it discusses how many of the
+modem-specific configuration parameters work together when sending
+and receiving facsimile.
+The set of per-modem configuration parameters provides a flexible
+mechanism for working around many modem and system limitations.
+This chapter includes the following sections:
+
+<UL>
+<LI><A HREF="#LID">Local Identifier Support</A>
+<LI><A HREF="#DialRules">Dial String Rules</A>
+<LI><A HREF="#TagLine">Tagline Support</A>
+<LI><A HREF="#AdaptiveAnswer">Adaptive Answer Support</A>
+<LI><A HREF="#CallerID">Caller-ID Support</A>
+<LI><A HREF="#DistinctiveRing">Distinctive Ring Support</A>
+<LI><A HREF="#CopyQuality">Copy Quality Checking</A>
+<LI><A HREF="#ContCoverPages">Continuation Cover Pages</A>
+<LI><A HREF="#TimeOfDay">Time-of-Day Usage Scheduling</A>
+<LI><A HREF="#DestControls">Per-destination Controls</A>
+<LI><A HREF="#PageChopping">Automatic Truncation of Whitespace</A>
+<LI><A HREF="#ModemClass">Modem Classes</A>
+<LI><A HREF="#ModemPriority">Modem Priorities</A>
+<LI><A HREF="#Transcoding">Transcoding of Received Facsimile</A>
+<LI><A HREF="#FaxRcvd">Automatic Processing of Received Facsimile</A>
+<LI><A HREF="#QualifyTSI">Rejecting Junk Facsimile</A>
+<LI><A HREF="#LockFiles">UUCP Lock Files</A>
+<LI><A HREF="#Class2Liars">Modems that Lie about their Capabilities</A>
+<LI><A HREF="#ModemSetup">Configuration Parameter Usage During Modem Setup</A>
+<LI><A HREF="#Outbound">Modem Parameter Usage for Outbound Calls</A>
+<LI><A HREF="#Inbound">Modem Parameter Usage for Inbound Calls</A>
+</UL>
+
+A <A HREF=ixotap.html>separate chapter</A>
+discusses setup and configuration of the
+support for transmitting messages to alpha-numeric pager terminals
+or GSM mobiles.
+
+<A NAME="LID"><P><HR WIDTH=65% ALIGN=right><H3>Local Identifier Support</A></H3>
+
+The facsimile communication protocols include messages that identify
+the sending and receiving devices using a 20-character string.
+The T.30 facsimile protocol
+specifies that these strings should use only numbers, the ``+''
+symbol, and space.
+Many fax machines and modem however are capable of accepting a wide range
+of ASCII characters.
+By default HylaFAX will use the canonical form of the local phone number
+for the local identity when sending or receiving facsimile.
+This phone number is specified with the per-modem <TT>FAXNumber</TT>
+configuration parameter.
+If the <TT>LocalIdentifier</TT> parameter is specified, however, HylaFAX
+will use it instead.
+Unlike <TT>FAXNumber</TT> which is converted to a canonical form that
+conforms to the T.30 specification,
+the value of the <TT>LocalIdentifier</TT> can be any ASCII string;
+for example,
+
+<UL><TT>
+<PRE>LocalIdentifier: "Errno Consulting"</PRE>
+</TT></UL>
+
+Beware that not all Class 2 and Class 2.0
+fax modems support arbitrary ASCII local identifier
+strings.  If you encounter problems verify your modem supports this
+functionality by sending the following commands (if it is a Class 2 modem):
+
+<UL><TT>
+<PRE><B>AT+FCLASS=2</B>
+OK
+<B>AT+FLID=?</B>
+(20)(32-127)
+OK</PRE>
+</TT></UL>
+
+The response to the <TT>AT+FLID=?</TT> command should indicate the
+range of ASCII characters the modem will accept in a local
+identifier string.
+
+<A NAME="DialRules"><P><HR WIDTH=65% ALIGN=right><H3>Dial String Rules</A></H3>
+
+A dial string specifies how to dial the telephone in order to
+reach a destination facsimile machine, or other device.
+This string is supplied by a user with each outbound job.
+User-supplied dial strings need to be processed in two ways by the
+HylaFAX server processes:
+to craft a canonical phone number for use in locating the
+receiver's capabilities, and
+to process into a form suitable for sending to a modem.
+In addition client applications may need to process a dial string
+to formulate an external form that does not include private information
+such as a credit card access code.
+Phone number canonicalization and dial string preparation
+are done according to 
+<I>dial string processing rules</I>
+that are located in a file specified in the server configuration file;
+
+<UL><TT>
+<PRE>DialStringRules: etc/dialrules</PRE>
+</TT></UL>
+
+The generation of an externalized form for a dial string is done by
+rules that <EM>optionally</EM> appear in
+<TT>DIR_LIBDATA</TT><B>/dialrules</B> on client machines (where
+<TT>DIR_LIBDATA</TT> is the pathname setup at the time the software
+is configured for compilation).
+
+<P>
+Dial string rules are an important part of HylaFAX as they permit
+local PTT conventions to be handled entirely on the HylaFAX server
+machine (e.g. the need to dial ``1'' before certain numbers but
+not others).  Client applications are then free to use a canonical format
+for phone numbers that is location independent.  Dial string rules
+combined with the <TT>ModemDialCmd</TT> also permit modem-specific
+idiosyncrasies such as the syntax for doing a ``flash hook'' to be
+handled transparently.
+Finally, dial string rules can be used to provide dialing <I>aliases</I>
+such as mapping ``a-zA-Z'' to the corresponding numeric codes.
+
+<P>
+Consult <A HREF="@CGIPATH@/manpage?4+dialrules">dialrules(4F)</A>
+for detailed information.
+
+<A NAME="TagLine"><P><HR WIDTH=65% ALIGN=right><H3>Tagline Support</A></H3>
+
+HylaFAX includes support for <I>tag lines</I>; a line of
+text imaged at the top of each outgoing facsimile page.
+Tag lines imaging requires the specification of:
+
+<UL>
+<LI>a format string,
+<LI>the name of a file containing an uncompressed Portable
+Compiled Font (PCF) from the X11 Window System, and
+<LI>the host bit order.
+</UL>
+
+When tag lines are enabled the fax
+server will image a line of text across the top of each outgoing facsimile
+page using the specified tag line format string and font.
+This procedure is done <I>on-the-fly</I>, just like a fax machine does it.
+However, because the fax server has lots of information about the outbound
+facsimile job, the imaged tag line may be setup to display a
+variety of information.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/info_icon.gif" HSPACE=8></TD>
+<TD VALIGN=top><CITE>
+A 100 dpi 18point Lucida Typewriter font from
+the X Window System is included in the HylaFAX distribution
+for use in imaging tag lines.
+Experiments indicate this is a reasonable font to use.
+You can however use an alternate font of your liking.
+</CITE></TD>
+</TR>
+</TABLE>
+
+<P>
+On Silicon Graphics systems
+a tag line font can be installed by converting one of the compressed font
+files provided with the standard X server; e.g.
+
+<UL><LISTING>
+% <B>zcat /usr/lib/X11/fonts/lutRS18.pcf.Z &gt; /var/spool/fax/etc/lutRS18.pcf</B>
+</LISTING></UL>
+
+<P>
+To enable use of the font and imaging of the tag lines setup the
+<TT>TagLineFont</TT> configuration parameter:
+
+<UL><TT>
+<PRE>TagLineFont: etc/lutRS18.pcf</PRE>
+</TT></UL>
+
+If font files are stored on your system in an uncompressed format then
+you can reference the file directly using an absolute pathname.
+Relative pathnames must be specified with respect to the top of the
+spooling area.
+If the <TT>TagLineFont</TT> parameter references a non-existent file
+or a file that does not contain a valid PCF font then tag line support
+will be disabled and a message will be logged through syslog.
+
+<P>
+The default tag line format string is ``<TT>From %%n|%c|Page %%p of %%t</TT>''
+which prints three fields containing the phone number of the server,
+the date and time of the outgoing job, and the page number and total pages
+for the job.  Consult the <TT>TagLineFormat</TT> parameter description in
+<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>
+for information on configuring a different format string.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/info_icon.gif" HSPACE=8></TD>
+<TD>
+The
+<A HREF="@CGIPATH@/manpage?1+tagtest">tagtest(1M)</A>
+program may be used to try out different tag
+line formats and fonts before they are configured for use by the
+server.
+</TD>
+</TR>
+</TABLE>
+
+<P>
+Finally, be certain the host bit order is configured to reflect the
+order of bits on your machine.  The host bit order should be properly
+setup at the time the configure script is run. 
+If the server has the wrong host
+bit order then tag lines will be imaged incorrectly.
+
+<A NAME="AdaptiveAnswer"><P><HR WIDTH=65% ALIGN=right><H3>Adaptive Answer Support</A></H3>
+
+<I>Adaptive answer</I> is the ability for a modem to determine
+whether an incoming phone call is for data, fax, or voice use.
+If a modem supports a good adaptive-answering facility
+then it should be enabled with the <TT>ModemSetupAACmd</TT>
+and HylaFAX will service fax, data, or voice
+calls <EM>as identified by the modem</EM> and specified
+in the modem configuration files.  For example,
+
+<UL><TT>
+<PRE>ModemSetupAACmd: AT+FAA=1</PRE>
+</TT></UL>
+
+Beware however that for some modems adaptive-answer support
+works properly only when the modem is left in Class 2 or Class 2.0;
+this may be a problem if you want to configure the modem to
+``idle in Class 0'' to avoid confusing naive programs that
+make use of the modem for outbound calls.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/warning_icon.gif" HSPACE=8></TD>
+<TD><EM>The adaptive-answer algorithm used by some modems can confuse
+some fax machines and/or data modems.
+If you do not intend to service both data and fax calls you may
+not want to configure adpative-answer for inbound calls.</EM>
+</TD>
+</TR>
+</TABLE>
+
+<P>
+If a modem does not support adaptive-answering,
+then there are several options. 
+If the modem is a Class 1 modem,
+then HylaFAX provides a simple adaptive-answering
+strategy whereby incoming calls are first answered as if they are for a
+fax machine and, if that fails, then answered as if they are for a data
+modem.  This facility is enabled by specifying something like:
+
+<UL><TT>
+<PRE>AdaptiveAnswer:		yes		# enable adaptive answer
+AnswerRotary:		"fax data"	# answer for fax, then data
+ModemAnswerCmd:		AT+FCLASS=1;A	# default is to answer as fax
+ModemAnswerDataCmd:	ATH+FCLASS=0;A	# hangup and answer as data
+Class1RecvIdentTimer:	10000		# timeout fax answer in 10 secs</PRE>
+</TT></UL>
+
+in the configuration file.   The above lines cause the fax server to do
+the following in response to an incoming phone call:
+
+<OL>
+<LI>Issue "<TT>AT+FCLASS=1;A</TT>" to answer the phone call in Class 1;
+i.e. as a fax machine (issuing CNG tones).
+<LI>Send TSI and DIS frames as required by the fax protocol.
+<LI>Wait for DCS from the caller (if it is a fax machine).
+<LI>Timeout waiting for DCS in 10 seconds (or whatever is specified
+for <TT>Class1RecvIdentTimer</TT>).
+<LI>Issue "<TT>ATH+FCLASS=0;A</TT>" to hangup and then re-answer the phone
+in Class 0; i.e. as a data modem.
+</OL>
+
+This technique assumes many things about the capabilities of the modem
+and the local telephony service and may not work for all Class 1 modems
+or for all locales.
+
+<P>
+Note also that by reversing the order of the items specified in the
+<TT>AnswerRotary</TT> parameter you can get HylaFAX to answer first
+for data and then for fax.  If calls are answered first as data,
+then you may need
+to constrain the timeout used to recognize a data call so that time
+still remains to setup a fax connection.  Consult your modem manual and
+the <TT>ModemAnswerResponseTimeout</TT>
+configuration parameter.
+
+<P>
+A second facility supported by the fax server in lieu of adaptive
+answering is a <I>rotary of answering techniques</I>.  The general idea is
+that a list of alternative ways to answer the phone is supplied and the
+server will rotate through the list on
+<EM>consecutive inbound calls</EM>
+until it finds one that works.  For example, one might specify something like:
+
+<UL><TT>
+<PRE>AnswerRotary: "fax data"</PRE>
+</TT></UL>
+
+which would instruct the server to answer incoming calls as if they
+were from a fax machine until a call was received from a data modem,
+in which case it would then answer subsequent calls
+as a data modem until a non-data call was received (in which case it
+would go back to fax).  The rotary list can have up to three items,
+with items being selected from one of:
+<I>fax</I>,
+<I>data</I>,
+<I>voice</I>,
+<I>extern</I>,
+and
+<I>any</I>
+(answer a call of an unknown type).
+The
+<I>extern</I>
+answering request forces an external application (the ``egetty'' program)
+to be invoked to
+deduce the type of an inbound call (and possibly handle it).
+The
+<I>voice</I>
+answering request causes a ``vgetty'' program to be invoked to handle
+the call.
+Finally, in conjunction with the
+rotary answer facility there is an
+<TT>AnswerBias</TT>
+parameter that can be
+used to specify an index into the rotary list to use after
+<EM>successfull</EM> calls.  In the above example, this parameter can be used,
+to force calls to always be answered first as data by specifying:
+
+<UL><TT>
+<PRE>AnswerRotary:	"fax data"
+AnswerBias:  	1</PRE>
+</TT></UL>
+
+Note that the adaptive-answer and rotary answer facilities differ only
+in whether the rotary of answering techniques is applied to a single
+call or to consecutive calls.
+
+<A NAME="CallerID"><P><HR WIDTH=65% ALIGN=right><H3>Caller-ID Support</A></H3>
+
+Caller-ID is a feature provided by phone companies
+whereby information about a calling party is passed
+to the receiver <EM>prior</EM> to answering a call.
+This facility is not universally available and not all modems
+are capable of processing the provided signals.
+For modems that are capable of processing caller-ID information
+HylaFAX provides the following support.
+
+<UL>
+<LI>Any caller-ID information received by a faxgetty process
+    is recorded in trace logs provided the <TT>ServerTracing</TT>
+    configuration parameter is set to enable the collection
+    of server messages.
+<LI>Inbound calls may be accepted or rejected according to an
+    access control list specified by the <TT>QualifyCID</TT>
+    configuration parameter.
+</UL>
+
+Note that HylaFAX parses caller-ID information according to two
+configuration parameters, <TT>CIDName</TT> and <TT>CIDNumber</TT>,
+that specify how to identify a caller's
+name and phone number (if provided by the modem).
+For example, for a ZyXEL U1496 modem, the appropriate
+configuration parameters to use for caller-ID are:
+
+<UL><TT>
+<PRE>CIDNumber: "CALLER NUMBER: " # pattern string for phone number info
+CIDName:   "CALLER NAME: "   # pattern string for identity info</PRE>
+</TT></UL>
+
+Consult
+<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>
+for a full description of the caller-ID-related configuration
+parameters.
+
+<A NAME="DistinctiveRing"><P><HR WIDTH=65% ALIGN=right><H3>Distinctive Ring Support</A></H3>
+
+Distinctive ring is a feature provided by phone companies
+whereby multiple phone numbers can be directed to a single
+phone line with different ring patterns for each phone number.
+This is a simple mechanism that can be used to
+distinguish between incoming
+fax, voice, and data calls (i.e. all fax calls are directed
+to one number, voice to a different number, and data to a
+different number).
+
+<P>
+HylaFAX supports distinctive ring capabilities through the
+<TT>RingFax</TT>, <TT>RingData</TT>, and <TT>RingVoice</TT> modem
+configuration parameters.
+Modems that support distinctive ring send a different <TT>RING</TT>
+status message to the host depending on the ring pattern presented
+by the phone company.
+By setting the configuration parameters faxgetty will match the
+appropriate <TT>RING</TT> status message and use the information
+to treat the inbound call as fax, data, or voice <EM>before</EM> answering
+the call.  For example,
+
+<UL><TT>
+<PRE>RingFax:	RING1		# treat ring pattern 1 as fax
+RingData:	RING2		# treat ring pattern 2 as data</PRE>
+</TT></UL>
+
+<A NAME="CopyQuality"><P><HR WIDTH=65% ALIGN=right><H3>Copy Quality Checking</A></H3>
+
+HylaFAX will automatically check
+the quality of received facsimile and regenerate rows of data that have
+errors in them.  This facility is termed <I>copy quality checking</I>
+and is only done if the modem is incapable of doing this task itself, or if
+the software is configured so that modem copy quality checking is
+disabled.  
+
+<P>
+Copy quality checking is automatically done in the server
+for Class 1 modems.
+To configure copy quality checking directly
+in a Class 2 or Class 2.0 modem--when the modem is
+capable--setup the <TT>Class2CQCmd</TT> parameter for the
+modem.  For example,
+
+<UL><TT>
+<PRE>Class2CQCmd: "AT+FCQ=1;+FBADMUL=5;+FBADLIN=10"</PRE>
+</TT></UL>
+
+This enables copy quality checking for receiving and sets the copy
+quality parameters so that acceptable page quality requires that no
+more than 10 consecutive bad rows of data may be present and less than
+5% of the rows in a page have errors in them.
+To disable copy quality checking in the modem use
+
+<UL><TT>
+<PRE>Class2CQCmd: AT+FCQ=0</PRE>
+</TT></UL>
+
+If a modem indicates that it supports copy quality checking but
+<TT>Class2CQCmd</TT> has not been specified then HylaFAX will note
+this when the modem is prepared for use.
+
+<P>
+Copy quality checking in the server (for any style of modem)
+is controlled by two configuration parameters:
+<TT>PercentGoodLines</TT> and
+<TT>MaxConsecutiveBadLines</TT>;
+see
+<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>
+for more information.  These parameters define the
+criteria by which the server decides if a received page has acceptable
+copy quality.  Pages that are deemed unacceptable are rejected and the
+sender is told to resend the page.
+
+<P>
+<IMG SRC="icons/warning_icon.gif" ALIGN=left HSPACE=10>
+<EM>Beware that many fax machines
+are incapable of resending pages that have unacceptable copy quality
+because they do not buffer a full page image.</EM>
+
+<P>
+If you encounter problems with the copy quality checking support you
+can disable it by setting either the
+<TT>PercentGoodLines</TT> or
+<TT>MaxConsecutiveBadLines</TT>
+parameters to 0; e.g.
+
+<UL><TT>
+<PRE>PercentGoodLines:	0	# disable copy quality checking</PRE>
+</TT></UL>
+
+Note however that doing this means you may receive facsimile that are
+unreadable.
+
+<A NAME="ContCoverPages"><P><HR WIDTH=65% ALIGN=right><H3>Continuation Cover Pages</A></H3>
+
+A <I>continuation cover page</I> is a cover page automatically generated
+by HylaFAX when retransmitting an outbound job after a protocol
+error abnormally terminated a previous transmission.
+This cover page is only generated when a user-submitted cover page has
+already been transmitted; it is intended to identify the sending
+system and provide information about why the retransmit is being done.
+HylaFAX generates the cover page using the parameters supplied when the
+job was submitted.
+In addition it provides a <I>comments</I> section that identifies
+the transmission as a continuation of a previous job and describes
+why the previous attempt to transmit failed (this may be useful
+to the receiver).
+
+<P>
+By default HylaFAX does not enable continuation cover pages.
+To enable use of this feature the <TT>ContCoverPage</TT> configuration
+parameter must be set to the pathname of a cover sheet template
+file to use in generating continuation cover pages.
+This cover page template file is passed to the
+<A HREF="@CGIPATH@/manpage?1+mkcover">mkcover(1M)</A>
+script, or to the program specified with the <TT>ContCoverCmd</TT>
+configuration parameter; consult the mkcover manual page
+for a description of this file.
+
+<A NAME="TimeOfDay"><P><HR WIDTH=65% ALIGN=right><H3>Time-of-Day Usage Scheduling</A></H3>
+
+HylaFAX can be configured so that outbound calls are placed only
+during certain hours of the day.
+This can optionally be configured on a
+<A HREF="#DestControls">per-destination basis</A>, making it easy
+to reduce phone costs by processing toll calls only during the
+time when off-peak rates are available.
+
+<P>
+By default outbound calls are permitted at any time.
+To constrain calls to a particular time or range of times the
+<TT>TimeOfDay</TT> parameter can be setup according to the syntax
+specified in
+<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>.
+This syntax is consistent with the syntax used by the UUCP software.
+For example, to permit outbound calls only between 9AM and 5PM
+local time the following might be used:
+
+<UL><TT>
+<PRE>TimeOfDay:	"0900-1700"</PRE>
+</TT></UL>
+
+<A NAME="DestControls"><P><HR WIDTH=65% ALIGN=right><H3>Per-destination Controls</A></H3>
+
+HylaFAX supports many controls on the operation of the scheduler
+and related software.
+For example, outbound jobs may be restricted so that processing is
+only done at certain times of the day.
+All of these parameters can be specified in the configuration
+file used by the central HylaFAX scheduler process.
+Parameters specified in this way apply to <EM>all outbound jobs</EM>.
+It is also possible to specify these parameters on a
+<EM>per-destination basis</EM> using the <TT>DestControls</TT>
+configuration parameter.
+This parameter specifies the pathname of a file that holds
+per-destination control parameters;
+<A HREF="@CGIPATH@/manpage?4+destctrls">destctrls(4F)</A>.
+
+<P>
+Per-destination controls are especially useful for controlling
+which phone numbers can be called.  For example, by specifying
+an entry of the form:
+
+<UL><TT>
+<PRE>^911$	RejectNotice = "Calls to emergency numbers are not permitted"</PRE>
+</TT></UL>
+
+any outbound job that would cause HylaFAX to phone 911 would automatically
+be rejected with the submitter notified by electronic mail using the
+specified message.
+
+<P>
+Another useful feature of this facility is the ability to delay toll
+calls to off-hours so that off-peak phone rates may be used.  Entries
+of the form:
+
+<UL><TT>
+<PRE>^[+]1415.*	TimeOfDay = "Any"
+^[+]1510.*	TimeOfDay = "Any"
+.*		TimeOfDay = "Wk1700-0830,Sat,Sun"</PRE>
+</TT></UL>
+
+might be used to permit calls to US area codes 415 and 510 at any
+time of day, but force all other calls to be done only during off hours.
+
+Note that the parameters specified in the configuration
+file serve as the <EM>default values</EM> to use when
+scheduling an outbound job.  That is, if a parameter value
+is not obtained from the destination controls file then it
+is taken from any parameters specified in the configuration file.
+For example, if the above rules had not included the last
+line that matched ``<TT>.*</TT>'', then the time-of-day to use
+for long-distance calls would have been that specified in the
+configuration file (by default <TT>Any</TT>).
+
+<A NAME="PageChopping"><P><HR WIDTH=65% ALIGN=right><H3>Automatic Truncation of Whitespace</A></H3>
+
+HylaFAX can be configured to automatically discard trailing whitespace in
+outbound facsimile.
+This truncation is termed <I>page chopping</I> and can be setup so that it
+is done for every page, only the last page of each document, or not all.
+Page chopping is performed during document preparation and is applied to
+all submitted documents, no matter what format they are submitted in.
+By default HylaFAX will only chop the last page of a document and at
+least 3 inches of trailing whitespace must be present before the page
+will be truncated.
+The <TT>PageChop</TT> and <TT>PageChopThreshold</TT> configuration
+parameters control the page chopping support.
+Clients can override the defaults setup on the server for each outbound
+job through command line options to sendfax and client-side configuration
+parameters.
+
+<A NAME="ModemClass"><P><HR WIDTH=65% ALIGN=right><H3>Modem Classes</A></H3>
+
+Groups of modems can be referenced by name using a facility termed
+<I>modem classes</I>.
+A modem class defines a logical name for a set of modem devices on a
+server.  This name can be used by clients in the same way that a
+specific modem device is used.
+The default modem to use for outbound jobs, ``any'', is actually just
+a predefined modem class.
+Modem classes are useful for groups that want to logically partition
+a set of modems on a single server.
+
+<P>
+Modem classes are defined with the <TT>ModemClass</TT> configuration
+parameter.
+Each definition specifies a name and a regular expression that identifies
+the set of modems that are to be included in the class.
+For example,
+
+<UL><TT>
+<PRE>ModemClass:	"any:.*"</PRE>
+</TT></UL>
+
+is the builtin definition for ``any''.  Regular expressions are matched
+against device identifiers for modems that are signalled to faxq by
+faxmodem or faxgetty.
+
+<A NAME="ModemPriority"><P><HR WIDTH=65% ALIGN=right><H3>Modem Priorities</A></H3>
+
+The HylaFAX scheduler process assigns modems to outbound jobs based
+on three criteria:
+the modem is considered ready for use,
+the modem is a member of the requested modem class (if any was specified), and
+the modem's capabilities support the requirements of the job (e.g.
+transmission of high-resolution 2D-encoded data).
+When multiple modems are present on a server machine it is also
+possible to force an <I>order</I> to the set of modems that are
+considered for allocation by assigning each modem a <I>priority</I>.
+This can be used, for example, to reduce the likelihood of assigning
+modems that are heavily used for inbound calls; e.g. near the front
+of a hunt group.
+
+<P>
+Modem priorities are specified using the <TT>ModemPriority</TT>
+configuration parameter.
+Priority values are integer numbers in the range 0-255 with lower
+values meaning higher priority.
+
+<P>
+Modem priorities are passed to the HylaFAX scheduler by the
+faxgetty processes or with the faxmodem program.
+Priorities can be dynamically changed by using the faxconfig
+program to send a new priority to a faxgetty process (who in
+turn will notify the scheduler), e.g.
+
+<UL><LISTING>
+hyla# <B>faxconfig -m ttyf2 ModemPriority 32</B>
+</LISTING></UL>
+
+or with the <TT>-u</TT> option to the faxmodem program
+when operating in a send-only environment.
+The ability to dynamically alter the priority of modems means
+it is easy to reconfigure modem usage based on time-of-day and
+traffic patterns.
+
+<A NAME="Transcoding"><P><HR WIDTH=65% ALIGN=right><H3>Transcoding of Received Facsimile</A></H3>
+
+<I>Transcoding</I> refers to the on-the-fly conversion of encoded data.
+HylaFAX supports transcoding of received facsimile so that received
+documents can be stored in files using an optimal compression algorithm.
+If the <TT>RecvDataFormat</TT> configuration parameter is set it defines
+the format for writing received facsimile data, one of: ``1-D MR'', ``2-D MR'',
+``2-D MMR'', or ``adaptive''.
+An ``adaptive'' format is the default; it causes the received data to be
+written using the data format negotiated by the sender and receiver.
+Using
+
+<UL><TT>
+<PRE>RecvDataFormat: "2-D MMR"</PRE>
+</TT></UL>
+
+gives the most space-efficient data format.
+Note that <TT>RecvDataFormat</TT> defines the encoding of the page data,
+not the file format: this is always TIFF.
+
+
+<A NAME="FaxRcvd"><P><HR WIDTH=65% ALIGN=right><H3>Automatic Processing of Received Facsimile</A></H3>
+
+It is desirable to deliver inbound facsimile directly to
+receipients.  HylaFAX routes inbound facsimile through the
+<A HREF="@CGIPATH@/manpage?1+faxrcvd">faxrcvd(1M)</A> shell script.
+This script may be tailored to use local knowledge and/or tools to
+route and deliver inbound facsimile.
+In particular, if facsimile are received from well-known senders 
+and always directed to a specific person faxrcvd can be tailored
+to automatically dispatch these facsimile by electronic mail;
+consult the manual page for details.
+Services such as Direct Inward Dial (DID) are not
+supported because the hardware uses non-standard programming interfaces.
+In the future, when updated versions of the ITU facsimile
+protocols are supported in commercial fax modems HylaFAX will
+be able to use routing information provided in the protocol
+to do automatic delivery of inbound facsimile.
+
+<P>
+Another common request is to automatically print received facsimile
+as they arrive.
+This is easy to do by editing the faxrcvd script to use a program
+such as fax2ps or tiff2ps to convert the TIFF/F file
+and then submit the resulting PostScript; e.g.
+
+<UL><LISTING>
+$TIFFBIN/fax2ps $1 | lp
+</LISTING></UL>
+
+Note that <TT>TIFFBIN</TT> is known to be the pathname of the
+directory where the TIFF tools have been installed (see faxsetup
+and the file <B>etc/setup.cache</B> in the spooling area).
+
+<A NAME="QualifyTSI"><P><HR WIDTH=65% ALIGN=right><H3>Rejecting Junk Facsimile</A></H3>
+
+By default HylaFAX will accept inbound facsimile from any caller.
+If the <TT>QualifyTSI</TT> configuration parameter is setup then
+HylaFAX will receive inbound facsimile only if the caller sends
+an acceptable Transmitting Subscriber Identification (TSI) string;
+a string that uniquely identifies who the sender is.
+HylaFAX determines which TSI are acceptable by using the rules
+given in the file specified with <TT>QualifyTSI</TT>.
+This mechanism provides a way to automatically reject
+<I>junk facsimile</I>.
+Note however that because a TSI is not authenticated in any
+way it is a simple matter for a caller to masquerade as an
+acceptable sender and bypass the access control mechanism.
+Consult <A HREF="@CGIPATH@/manpage?4+tsi">tsi(4F)</A>
+for complete details of this facility.
+
+<A NAME="LockFiles"><P><HR WIDTH=65% ALIGN=right><H3>UUCP Lock Files</A></H3>
+
+HylaFAX implements shared inbound/outbound modem usage using UUCP
+lock files.
+In normal operation each modem has a faxgetty process listening
+for data from the modem.
+When an inbound call is received the modem emits a <TT>RING</TT>
+status message that wakes up the appropriate faxgetty process.
+faxgetty then checks the UUCP lock file for the port to make sure
+the port is not busy for outbound use.
+If the port is busy (i.e. a UUCP lock file is present), then faxgetty
+will stop listening on the port and wait for the outbound use to
+terminate.
+If the port is not busy, then faxgetty will answer the call according
+to the parameters specified in the configuration file.
+
+<P>
+For this scheme to work outbound callers must install a UUCP
+lock file before using a modem.
+This lock file must be created using the same conventions understood
+by HylaFAX.
+In particular the lock file name must be consistent and the
+file contents must include the process ID of the lock file owner
+written either as a binary or ascii value according to the
+system-specific conventions.
+
+<P>
+HylaFAX supports several schemes found on different systems.
+The appropriate scheme is normally setup according to the target
+system at the time that HylaFAX is configured for building.
+It is possible, however, to override these parameters through
+the runtime configuration files; consult the 
+<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>
+manual page for information about the <TT>UUCPLockType</TT>
+configuration parameter.
+In addition to the lock type there are configuration parameters
+that control the protection mode of the lock file (<TT>UUCPLockMode</TT>),
+the directory in which lock files are created (<TT>UUCPLockDir</TT>),
+and a timeout parameter used to purge <I>stale lock files</I>.
+Again, consult <A HREF="@CGIPATH@/manpage?4+config">config(4F)</A> for
+a full description of these parameters.
+
+<A NAME="Class2Liars"><P><HR WIDTH=65% ALIGN=right><H3>Modems that Lie about their Capabilities</A></H3>
+
+Class 2 and 2.0 fax modems all too frequently have bugs in their firmware.
+Sometimes it is possible to workaround firmware problems by restricting
+a modems' capabilities.
+To do this the <TT>Class2DCCQueryCmd</TT> configuration parameter may
+be set in the per-modem configuration file.
+By default this parameter holds the command to send the modem to
+query its capabilities.
+However if the query string has a leading ``!'' then no command is
+sent to the modem and instead the remainder of the string is
+treated as the response returned by the modem.
+Thus to avoid using a particular modem capability all you need to
+do is setup a capabilities string that has a restricted set of
+modem capabilities.
+
+<P>
+Capabilities are returned using a syntax specified in the Class 2/2.0
+specification:
+
+<UL><TT>
+<PRE>(vr),(br),(wd),(ln),(df),(ec),(bf),(st)</PRE>
+</TT></PRE></UL>
+
+where,
+
+<UL><DL COMPACT>
+<DT><TT>vr</TT>
+<DD>indicates which vertical resolutions are supported,
+<DT><TT>br</TT>
+<DD>indicates which signaling rates are supported,
+<DT><TT>wd</TT>
+<DD>indicates which page widths are supported,
+<DT><TT>ln</TT>
+<DD>indicates which page lengths are supported,
+<DT><TT>df</TT>
+<DD>indicates which data formats are supported,
+<DT><TT>ec</TT>
+<DD>indicates whether or not the optional Error Correction Mode (ECM) is supported,
+<DT><TT>bf</TT>
+<DD>indicates whether or not the optional Binary File Transfer (BFT) protocol
+is supported, and
+<DT><TT>st</TT>
+<DD>indicates which minimum scan times are supported.
+</DL></UL>
+
+Each parameter is specified as single value,
+range of values (e.g. <TT>0-3</TT>),
+or list of values (e.g. <TT>0,1,2</TT>).
+The values are given in the Class 2/2.0 specification and in the following
+table (note that this table does not list values defined in the latest
+ITU T.class2 specification):
+
+<P>
+<TABLE BORDER CELLPADDING=3>
+
+<TR>
+<TH ALIGN=left>Param</TH>
+<TH ALIGN=left>Value</TH>
+<TH ALIGN=left>Description</TH>
+<TH ALIGN=left>Param</TH>
+<TH ALIGN=left>Value</TH>
+<TH ALIGN=left>Description</TH>
+</TR>
+
+<TR>
+<TD VALIGN=top ROWSPAN=2><TT>vr</TT></TD>
+<TD VALIGN=top>0</TD>
+<TD>98 lines/inch</TD>
+<TD VALIGN=top ROWSPAN=4><TT>df</TT></TD>
+<TD VALIGN=top>0</TD>
+<TD>1-D Modified Huffman</TD>
+</TR>
+<TR><TD VALIGN=top>1</TD><TD>196 lines/inch</TD>
+    <TD VALIGN=top>1</TD><TD>2-D Modified Huffman</TD>
+</TR>
+
+<TR>
+<TD VALIGN=top ROWSPAN=6><TT>br</TT></TD>
+<TD VALIGN=top>0</TD>
+<TD>2400 bits/sec</TD>
+<TD VALIGN=top>2</TD><TD>2-D Uncompressed Mode</TD>
+</TR>
+<TR><TD VALIGN=top>1</TD><TD>4800 bits/sec</TD>
+    <TD VALIGN=top>3</TD><TD>2-D Modified Modified Read</TD>
+</TR>
+<TR><TD VALIGN=top>2</TD><TD>7200 bits/sec</TD>
+    <TD VALIGN=top ROWSPAN=4><TT>ec</TT></TD><TD VALIGN=top>0</TD><TD>disable ECM</TD>
+</TR>
+<TR><TD VALIGN=top>3</TD><TD>9600 bits/sec</TD>
+    <TD VALIGN=top>1</TD><TD>enable T.30 Annex A, ECM</TD>
+</TR>
+<TR><TD VALIGN=top>4</TD><TD>12200 bits/sec</TD>
+    <TD VALIGN=top>2</TD><TD>enable T.30 Annex C, half duplex</TD>
+</TR>
+<TR><TD VALIGN=top>5</TD><TD>14400 bits/sec</TD>
+    <TD VALIGN=top>3</TD><TD>enable T.30 Annex C, full duplex</TD>
+</TR>
+
+<TR>
+<TD VALIGN=top ROWSPAN=5><TT>wd</TT></TD>
+<TD VALIGN=top>0</TD>
+<TD>1728 pixels in 215 mm</TD>
+<TD VALIGN=top ROWSPAN=2><TT>bf</TT></TD>
+<TD VALIGN=top>0</TD>
+<TD>disable file transfer modes</TD>
+</TR>
+<TR><TD VALIGN=top>1</TD><TD>2048 pixels in 255 mm</TD>
+    <TD VALIGN=top>1</TD><TD>select BFT, T.434</TD>
+</TR>
+<TR><TD VALIGN=top>2</TD><TD>2432 pixels in 303 mm</TD>
+<TD VALIGN=top ROWSPAN=8><TT>st</TT></TD>
+<TD VALIGN=top>0</TD>
+<TD>scan time/line: 0 ms/0 ms</TD>
+</TR>
+<TR><TD VALIGN=top>3</TD><TD>1216 pixels in 151 mm</TD>
+    <TD VALIGN=top>1</TD><TD>scan time/line: 5 ms/5 ms</TD>
+</TR>
+<TR><TD VALIGN=top>4</TD><TD>864 pixels in 107 mm</TD>
+    <TD VALIGN=top>2</TD><TD>scan time/line: 10 ms/5 ms</TD>
+</TR>
+
+
+
+<TR>
+<TD VALIGN=top ROWSPAN=3><TT>ln</TT></TD>
+<TD VALIGN=top>0</TD>
+<TD>A4, 297 mm</TD>
+<TD VALIGN=top>3</TD><TD>scan time/line: 10 ms/10 ms</TD>
+</TR>
+<TR><TD VALIGN=top>1</TD><TD>B4, 364 mm</TD>
+    <TD VALIGN=top>4</TD><TD>scan time/line: 20 ms/10 ms</TD>
+</TR>
+<TR><TD VALIGN=top>2</TD><TD>unlimited length</TD>
+    <TD VALIGN=top>5</TD><TD>scan time/line: 20 ms/20 ms</TD>
+</TR>
+
+<TR><TD></TD><TD></TD><TD></TD>
+    <TD VALIGN=top>6</TD><TD>scan time/line: 40 ms/20 ms</TD>
+</TR>
+<TR><TD></TD><TD></TD><TD></TD>
+    <TD VALIGN=top>7</TD><TD>scan time/line: 40 ms/40 ms</TD>
+</TR>
+
+</TABLE>
+
+<P>
+An example use of this mechanism is found in the prototype
+configuration file for the AT&T DataPort modem.
+The rev C01.66.10 firmware for the DataPort returns an invalid
+string for the <TT>AT+FDCC=?</TT> query command so the prototype
+configuration file supplies a valid one instead:
+
+<UL><TT>
+<PRE>Class2DCCQueryCmd:      "!(0,1),(0-5),(0-4),(0-2),(0),(0),(0),(0-7)"</PRE>
+</TT></UL>
+
+Beware of specifying that a modem has capabilities that it
+does not; HylaFAX is likely to try and make use of them!
+
+<A NAME="ModemSetup"><P><HR WIDTH=65% ALIGN=right><H3>Configuration Parameter Usage During Modem Setup</A></H3>
+
+There are many configuration parameters that control the operation of HylaFAX
+in resetting and initializing a modem.
+This section presents these parameters and explains how
+they fit together in normal operation.
+By understanding how these parameters are used it is possible to control
+many aspects of the operation of HylaFAX.
+
+<P>
+In normal operation HylaFAX will first <I>reset</I> a modem and
+then prepare it for use with a setup procedure appropriate for the
+modem.  Modem reset involves the following steps:
+
+<OL>
+<LI>Lower the Data Terminal Ready (DTR) signal, pause <TT>ModemResetDelay</TT>
+    milliseconds, and then raise DTR.  DTR is used to force a modem reset
+    rather than sending a command such as <TT>ATZ</TT> to the modem because
+    many modems can get confused and enter a state where commands sent 
+    from the host are ignored.  Instead HylaFAX uses a hardware control
+    signal to force the modem to do a reset operation.  This usage requires
+    that a modem respond to a DTR transition by resetting itself.
+    Since modems all take different amounts of time to do a reset operation
+    the time that HylaFAX waits for the modem to complete the reset
+    operation is programmable.
+    A certain Hayes Technical bulletin claims one should wait 2.6 seconds
+    for a modem to complete a reset operation.
+    In practice this is much longer than most modems need and this
+    parameter can be reduced with a significant speedup in the overall
+    setup process.
+<LI>Once the modem has been reset (assuming the modem monitors DTR and
+    does the ``right thing'' in response to DTR being lowered), HylaFAX
+    sets up the baud rate and flow control parameters for the tty device
+    using the <TT>ModemRate</TT> and <TT>ModemFlowControl</TT> parameters.
+<LI>HylaFAX then flushes any data received from the modem since the reset
+    and sends the following sequence of commands:
+
+<PRE>
+<TT>ModemResetCmds</TT>		any additional reset commands
+<TT>ModemEchoOffCmd</TT>		disable modem echo of commands
+<TT>ModemVerboseResultsCmd</TT>	enable verbose result codes
+<TT>ModemResultCodesCmd</TT>	enable transmission of result codes
+<TT>ModemNoAutoAnswerCmd</TT>	disable modem from auto-answering calls
+<TT>ModemOnHookCmd</TT>		place modem ``on hook''
+<TT>ModemPauseTimeCmd</TT>	configure delay for "," in dial string
+<TT>ModemWaitTimeCmd</TT>	configure time to wait for carrier
+<TT><I>modemflowcontrolcmd</I></TT>	establish DTE-DCE flow control scheme
+<TT>ModemSetupDTRCmd</TT>	force desired modem response to DTR transition
+<TT>ModemSetupDCDCmd</TT>	force desired modem response to DCD transition </PRE>
+
+Note that these commands are sent as two separate <TT>AT</TT>
+commands, broken between <TT>ModemOnHookCmd</TT>
+and <TT>ModemPauseTimeCmd</TT>;
+this is done to avoid problems with certain modems.
+</OL>
+
+The reset sequence must be successful
+for HylaFAX to consider the modem in an acceptable state
+and to proceed with the subsequent steps:
+
+<OL>
+<LI>Query the modem using <TT>ModemClassQueryCmd</TT> to verify it
+    supports the functionality specified by the <TT>ModemType</TT>
+    (this parameter can be used to control which class to use when
+    a modem supports multiple classes).
+<LI>Set the modem into the appropriate class using <TT>Class<I>X</I>Cmd</TT>,
+    where <TT><I>X</I></TT> is one of 0, 1, or 2, depending on the application.
+<LI>Identify the manufacturer, model, and firmware revision information
+    using <TT>ModemMfrQueryCmd</TT>, <TT>ModemModelQueryCmd</TT>, and
+    <TT>ModemRevQueryCmd</TT> parameters.  This information is obtained
+    early in the setup procedure in case special-case handling is required
+    for the modem.  Note also that for Class 1 modems it is typically not
+    possible to query the modem for some of this information and it must
+    instead be ``hard-coded'' in the prototype modem configuration file
+    that is selected
+    according to the product ID code returned by the <TT>ATI0</TT> command.
+<LI>Identify the modem capabilities using the <TT>ModemDCCQueryCmd</TT>
+    for Class 2/2.0 modems, or according to the capabilities of the
+    Class 1 driver and the result of <TT>AT+FTM=?</TT> and <TT>AT+FRM=?</TT>
+    commands for Class 1 modems.
+<LI>For Class 2/2.0 modems: establish whether the modem supports copy-quality
+    checking and polled retrieval of documents; both these capabilities are
+    automatically provided by the driver for Class 1 modems.  If the modem
+    supports copy quality checking, according to the result of the
+    <TT>Class2CQQueryCmd</TT> and copy-quality setup commands are provided
+    with the <TT>Class2CQCmd</TT> parameter, then the modem is setup accordingly.
+</OL>
+
+Modem initialization is then carried out by sending the following commands
+to the modem:
+
+<P>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0>
+<TR>
+<TD><IMG SRC="icons/ball_blue_icon.gif" ALT="-" HSPACE=8></TD>
+<TD><U><I>Class 2/2.0 modems</I></U>:</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2Cmd</TT></TD>
+<TD>force the modem into Class 2/2.0</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><I>class2FlowControlCmd</I>  </TD>
+<TD>establish DTE-DCE flow control scheme</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2TBCCmd</TT></TD>
+<TD>select stream modem host-modem communication</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2BORCmd</TT></TD>
+<TD>set the bit order for HDLC and page data</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2PHCTOCmd</TT></TD>
+<TD>set the timeout during page transfer (Phase C)</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2CQCmd</TT></TD>
+<TD>enable copy quality checking</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2NRCmd</TT></TD>
+<TD>enable negotiation reporting (<I>Class 2.0 only</I>)</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2PIECmd</TT></TD>
+<TD>disable program interrupt handling (<I>Class 2.0 only</I>)</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2BUGCmd</TT></TD>
+<TD>enable HDLC frame reporting if requested</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2DCCCmd</TT></TD>
+<TD>initialize modem capabilities</TD>
+</TR>
+
+<TR>
+<TD></TD>
+<TD><TT>Class2RELCmd</TT>+</TD>
+<TD>enable reception of byte-aligned EOL codes</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2CRCmd</TT>+</TD>
+<TD>enable facsimile reception</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2LIDCmd</TT>+</TD>
+<TD>set local station identifier</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>ModemSetupAACmd</TT>+</TD>
+<TD>enable adaptive-answer support</TD>
+</TR>
+
+<TR><TD><BR></TD></TR>
+
+<TR>
+<TD><IMG SRC="icons/ball_blue_icon.gif" ALT="-" HSPACE=8></TD>
+<TD><U><I>Class 1 modems</I></U>:</TD>
+</TR>
+
+<TR>
+<TD></TD>
+<TD>Class1Cmd</TD>
+<TD>force the modem into Class 1</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><I>class1FlowControlCmd</I> </TD>
+<TD>establish DTE-DCE flow control scheme</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>ModemSetupAACmd</TT></TD>
+<TD>enable adaptive-answer support</TD>
+</TR>
+</TABLE>
+
+<P>
+(<FONT SIZE=2><I>Commands marked with a ``+'' are
+optional and sent to the modem
+only if it is to be setup to receive calls</I></FONT>.)
+
+<P>
+Flow control is explicitly set separately for Class 0 (data) operation
+and Class 1, 2, 2.0 (fax) operation.  To configure the use of a
+different flow control scheme in each class simply override the
+default definition of the <TT>Class</TT><I>X</I><TT>Cmd</TT> parameter; e.g.
+
+<UL><TT>
+<PRE>Class2Cmd: "AT+FCLASS=2&lt;xon&gt;"</PRE>
+</TT></UL>
+
+Note however that this will only work for outbound usage; doing
+something similar for inbound processing is more complicated because
+the modem, rather than the host, decides when to switch between Class 0 and
+Class 1, 2, 2.0.  Consequently HylaFAX must <EM>react to
+events rather than initiate them</EM>.  This work is also complicated
+by the fact that many modems do not accept commands (or are confused
+by commands) from the host during certain critical sections of
+inbound call processing.
+
+<A NAME="Outbound"><P><HR WIDTH=65% ALIGN=right><H3>Modem Parameter Usage for Outbound Calls</A></H3>
+
+An outbound facsimile job is broken up into <I>phases</I> that
+correspond roughly 
+to the phases defined in the CCITT T.30 facsimile protocol:
+
+<UL>
+<LI>call placement
+<LI>selection of station session capabilities
+<LI>per-page capabilities negotiation
+<LI>page transfer
+<LI>page acknowledgement
+</UL>
+
+The last three phases may be repeated multiple times depending on the 
+number and characteristics of the facsimile being transmitted.
+
+<P>
+To send a facsimile a phone call must be placed.  HylaFAX takes the
+following actions:
+
+<OL>
+<LI>Lock the modem.
+<LI>Initialize the modem for outbound facsimile use.
+<LI>Instruct the modem to place the phone call.
+</OL>
+
+The corresponding set of commands sent to the modem are:
+
+<P>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0>
+<TR>
+<TD><IMG SRC="icons/ball_blue_icon.gif" ALT="-" HSPACE=8></TD>
+<TD><U><I>Class 2/2.0 modems</I></U>:</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2Cmd</TT></TD>
+<TD>force the modem into Class 2/2.0</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><I>class2FlowControlCmd</I> </TD>
+<TD>establish DTE-DCE flow control scheme</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2TBCCmd</TT></TD>
+<TD>select stream modem host-modem communication</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2BORCmd</TT></TD>
+<TD>set the bit order for HDLC and page data</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2PHCTOCmd</TT></TD>
+<TD>set the timeout during page transfer (Phase C)</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2CQCmd</TT></TD>
+<TD>enable copy quality checking</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2NRCmd</TT></TD>
+<TD>enable negotiation reporting (<I>Class 2.0 only</I>)</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2PIECmd</TT></TD>
+<TD>disable program interrupt handling (<I>Class 2.0 only</I>)</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2BUGCmd</TT></TD>
+<TD>enable HDLC frame reporting if requested</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2DCCCmd</TT></TD>
+<TD>initialize modem capabilities</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2LIDCmd</TT></TD>
+<TD>set local station identifier</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2SPLCmd</TT></TD>
+<TD>request polling status (if a polled receive is to be done)</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>Class2DDISCmd</TT></TD>
+<TD>setup initial session parameters (optional)</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>ModemDialCmd</TT></TD>
+<TD>place the call</TD>
+</TR>
+<TR>
+
+<TR><TD><BR></TD></TR>
+
+<TR>
+<TD><IMG SRC="icons/ball_blue_icon.gif" ALT="-" HSPACE=8></TD>
+<TD><U><I>Class 1 modems</I></U>:</TD>
+</TR>
+<TD></TD>
+<TD><TT>Class1Cmd</TT></TD>
+<TD>force the modem into Class 1</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><I>class1FlowControlCmd</I> </TD>
+<TD>establish DTE-DCE flow control scheme</TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><TT>ModemDialCmd</TT></TD>
+<TD>place the call</TD>
+</TR>
+</TABLE>
+
+<P>
+Note that the modem is always switched into the appropriate class
+and flow control scheme before placing the call.
+For Class 2 modems that do not properly implement the <TT>AT+FDIS</TT>
+command the <TT>Class2DDISCmd</TT> parameter must be configured so that
+HylaFAX will setup initial session parameters <EM>before</EM> placing
+the phone call.
+
+<P>
+If the call completes and a facsimile transmit session is started then
+HylaFAX will send <TT>ModemSendBeginCmd</TT> to the modem.
+This parameter can be used to enable servicing that must be done only
+while Carrier Detect (CD) is asserted to the host.
+For example, on Sun systems it is not possible to enable
+RTS/CTS flow control on serial ports implemented with the ZS8530
+unless CD is asserted; to workaround this problem for outbound calls
+one can use:
+
+<UL><TT>
+<PRE>ModemSendBeginCmd:	"&lt;rts&gt;"</PRE>
+</TT></UL>
+
+to force HylaFAX to enable RTS/CTS flow control on the host tty device
+after carrier is established.  Beware however that some modems raise
+and lower CD during Class 1 operation and this can cause problems
+for systems with restrictions of this sort.
+
+<P>
+The next phase in the processing of an outbound job is the
+selection of station capabilities.
+The receiver is required to transmit a series of messages that
+provide its identity and capabilities (e.g. whether it can accept
+2D-encoded facsimile data).
+HylaFAX examines the received capabilities and compares them to
+the capabilities required for the job.
+If the receiver is capable of accepting the documents to be sent
+then HylaFAX proceeds with the transmission.
+Otherwise HylaFAX will disconnect and, either re-prepare the outbound
+documents according to the receiver's capabilities or reject the
+job because it cannot be sent.
+
+<P>
+Page transfer requires the selection of session capabilities that
+correspond to the page to be transferred and the actual transfer
+of the page data to the modem.
+HylaFAX handles documents with varying page characteristics. 
+In particular this means that documents with a mixture of high
+res and low res data (e.g. a low res cover page followed by
+high res image or text) are handled transparently.
+
+<P>
+For Class 2 modems session parameters are set using the
+<TT>Class2DISCmd</TT> (note that this is not the same as <TT>Class2DDISCmd</TT>).
+If the negotiated session parameter needs to be changed then this
+command will be sent to the modem.
+The Class 2 specification requires that a modem accept this command
+at any time prior to an <TT>AT+FDT</TT> command.
+However because some modems do not properly implement this part
+of the specification the <TT>Class2DDISCmd</TT> is provided to workaround 
+modem limitations.
+Beware however that modems that require <TT>Class2DDISCmd</TT> may 
+not be capable of renegotiating session parameters at all; this can
+be an annoying problem.
+
+<P>
+For Class 2/2.0 modems, page data is transferred using the
+<TT>AT+FDT</TT> command.
+This command instructs the modem that a page of facsimile data
+will follow.
+The modem is released to negotiate session parameters (as needed)
+and HylaFAX then waits for a response that indicates page data
+may be transferred to the modem.
+Class 2 modems indicate they are ready for page data by sending
+<TT>CONNECT</TT> followed by XON (DC1) to the host.
+(The <TT>ModemWaitForXON</TT> configuration parameter controls whether
+or not HylaFAX should wait for XON because some Class 2 modems
+do not follow this aspect of the spec.)
+Class 2.0 modems indicate they are ready for page data by sending
+a <TT>CONNECT</TT> response to the host (but no XON).
+Class 2 modems return <TT>OK</TT> to the host when they have
+accepted all the page data.
+Class 2.0 modems do not return <TT>OK</TT>.
+
+<P>
+After a page of data has been transferred to the modem HylaFAX
+indicates whether this is the last page to be sent and/or whether
+more documents are to come.
+A <I>post-page message</I> is then sent and a post-page response
+is awaited.
+Class 2/2.0 modems handle this exchange entirely within the modem.
+For Class 1 modems HylaFAX implements this part of the protocol
+on the host: the post-page message may be retransmitted as many
+as three times.
+A post-page response indicates whether a page was successfully received
+and/or whether or not the receiver wants to resynchronize the
+line due to a perceived loss in signal quality.
+HylaFAX is capable of retransmitting pages that a receiver deems
+unacceptable.
+HylaFAX will automatically retransmit a page up to three times
+if it does not receive a positive acknowledgement from the receiver.
+
+
+<A NAME="Inbound"><P><HR WIDTH=65% ALIGN=right><H3>Modem Parameter Usage for Inbound Calls</A></H3>
+
+Inbound call handling is the most complicated part of the HylaFAX
+software.
+This is because modems vary so widely in the way they process inbound
+calls for fax, data, and voice use.
+Also, inbound calls typically require that a modem be configured
+<EM>before</EM> a call is received and many modems do not accept
+commands from the host until after a call has been recognized,
+accepted, and processing initiated.
+
+<P>
+HylaFAX handles inbound calls in the faxgetty program.
+The modem is initialized as <A HREF="#ModemSetup">described above</A>
+and faxgetty then waits for a ring status message from the modem.
+On receiving input from the modem the following processing takes place:
+
+<OL>
+<LI>The modem is locked.  If the modem cannot be locked
+    because there is an outbound user in control of the modem then
+    it is released and faxgetty will wait for the lock file 
+    to be removed.
+<LI>Wait for <TT>RingsBeforeAnswer</TT> rings, waiting at most 5 seconds
+    for each ring status message.
+    If distinctive ring support is configured (<TT>RingFax</TT>,
+    <TT>RingData</TT>, and <TT>RingVoice</TT>) then the ring status
+    messages are checked and the type of call is potentially deduced.
+    If Caller-ID support is configured (<TT>CIDName</TT> and
+    <TT>CIDNumber</TT>), then any Caller-ID information returned by the
+    modem is parsed.
+<LI>If the appropriate number of rings was not received, then the
+    line is hung up and the modem is reset and initialized.
+<LI>Check any Caller-ID information.  If <TT>QualifyCID</TT> is configured
+    and the caller is not acceptable, then reset and initialize the modem.
+<LI>If the call type is already known from distinctive ring information, then
+    the call is processed immediately.  If faxgetty was instructed to answer
+    any type of call, then the call is answered as appropriate.
+    However, if a particular type of call was to be processed (e.g. data)
+    and the deduced type of call does not match, then the call is
+    rejected and the modem is reset and initialized.
+<LI>If the call type is unknown then the call is answered according
+    to the the current type specified by
+    <TT>AnswerRotary</TT> and <TT>AnswerRotor</TT>.
+<LI>If the call is not successfully answered and if <TT>AdaptiveAnswer</TT>
+    is enabled, the next item in the <TT>AnswerRotary</TT> list is used
+    to immediately re-answer the call.  This is repeated until a call
+    is successfully answered or the list of choices in <TT>AnswerRotary</TT>
+    is exhausted.
+</OL>
+
+Call answering is done as follows:
+
+<OL>
+<LI>Send the modem one of
+    <TT>ModemAnswerDataCmd</TT>,
+    <TT>ModemAnswerFaxCmd</TT>, and
+    <TT>ModemAnswerVoiceCmd</TT> according to whether the call is to
+    be answered as data, fax, or voice, respectively.
+    If any of these are not set then <TT>ModemAnswerCmd</TT> is used instead.
+<LI>Wait for a response from the modem that signifies carrier has
+    been established and which identifies the type of call.
+    The exact set of responses is given in 
+    <A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>.
+<LI>If <TT>ModemWaitForConnect</TT> is enabled, then HylaFAX will read
+    responses from the modem until a <TT>CONNECT</TT> response is sent
+    to the host or an error is detected; e.g.
+
+<UL>
+<PRE><U><B>Host</B></U>      <U><B>Modem</B></U><TT>
+ATA  -->
+     <--  DATA
+     <--  CONNECT</PRE>
+</TT></UL>
+
+<LI>If a call is successfully answered, then one of
+    <TT>ModemAnswerDataBeginCmd</TT>,
+    <TT>ModemAnswerFaxBeginCmd</TT>, and
+    <TT>ModemAnswerVoiceBeginCmd</TT>,
+    is sent to the modem according to the call type deduced above.
+    This mechanism is useful for modems that automatically change
+    DTE-DCE communication to a fixed line speed or flow control setting
+    for inbound facsimile calls.
+</OL>
+
+At this point the call has been answered, carrier established,
+and the call type is known.
+
+<UL>
+<LI>Data calls are handled by invoking a system getty program; but
+    only if the <TT>GettyArgs</TT> parameter is set.
+<LI>Voice calls are handled by invoking a system vgetty program; but
+    only if the <TT>VGettyArgs</TT> parameter is set.
+<LI>Facsimile calls are handled directly in faxgetty.
+</UL>
+
+For a data or voice call faxgetty forks and execs the appropriate
+program.  The UUCP lock file is setup so that it is owned by the
+child (important for SLIP and PPP) and the parent handles cleanup
+of various resources when the child process terminates.
+
+<P>
+For fax operation faxgetty drops into the facsimile receive protocol.
+
+<P>
+<I>More to be added.</I>
+
+<!--FOOTER-->
+
+<P>
+<TABLE BORDER=0 WIDTH=100%>
+<TR>
+<TD><A HREF="operation.html"><IMG SRC="icons/next.gif">
+How to operate a HylaFAX server</A>.</TD>
+<TD><A HREF="toc.html"><IMG SRC="icons/back.gif">
+HylaFAX table of contents</A>.</TD>
+</TR>
+</TABLE>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

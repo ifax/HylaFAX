@@ -1,0 +1,430 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Changes in HylaFAX v3.0beta096
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>C</FONT>HANGE <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+<B>Current Version</B>: v3.0beta096<BR>
+<B>Previous Version</B>: <A HREF="v2.3beta036special.html">v2.3beta036special</A><BR>
+<B>Master FTP Site</B>: <A HREF="ftp://sgi.com/sgi/fax">sgi.com (192.48.153.1), directory sgi/fax</A><BR>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+</UL>
+
+<P>
+Note that this is a <STRONG>major new distribution</STRONG> and lots
+of things have changed.  Consult the <A HREF="hylafax.html">general overview</A>
+for a high-level description of the new functionality provided in the
+v3.0 software.
+
+<P>
+This document describes the changes made to the software between the
+<I>previous</I> and <I>current</I> versions (see above).
+If you don't find something listed here, then it was not done in this
+timeframe, or it was not considered important enough to be mentioned.
+The following information is located here:
+<UL>
+<LI><A HREF="#general">General changes</A>
+<LI><A HREF="#configure">Changes in the software configuration</A>
+<LI><A HREF="#modemconfig">Changes in the modem config files</A>
+<LI><A HREF="#faxq">Changes to faxq</A>
+<LI><A HREF="#faxsend">Changes to faxsend</A>
+<LI><A HREF="#faxgetty">Changes to faxgetty</A>
+<LI><A HREF="#pagesend">Changes to pagesend</A>
+<LI><A HREF="#faxaddmodem">Changes to faxaddmodem</A>
+<LI><A HREF="#faxalter">Changes to faxalter</A>
+<LI><A HREF="#faxcover">Changes to faxcover</A>
+<LI><A HREF="#faxmail">Changes to faxmail</A>
+<LI><A HREF="#fax2ps">Changes to fax2ps</A>
+<LI><A HREF="#faxrm">Changes to faxrm</A>
+<LI><A HREF="#faxd.recv">Changes to faxd.recv</A>
+<LI><A HREF="#sendfax">Changes to sendfax</A>
+<LI><A HREF="#sendpage">Changes to sendpage</A>
+<LI><A HREF="#utility code">Changes in the utility code</A>
+<LI><A HREF="#manual pages">Changes to the manual pages</A>
+</UL>
+
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="general"><B><FONT SIZE=+3>G</FONT>ENERAL CHANGES:</B></A>
+
+<UL>
+<LI>the name has changed, this software is now officially called
+<B><FONT SIZE=+1>H</FONT>YLA<FONT SIZE=+1>FAX</FONT></B>; consult
+<A HREF="namechange.html">this blurb</A> for why the name was changed.
+<LI>the non-manual page documentation is distributed in HTML; suitable
+  for viewing with a WWW browser (it is best viewed using Netscape)
+<LI>the software configuration scheme is completely different; the
+  software should be easier to configure and build and be portable to
+  more platforms
+<LI>the server architecture has changed radically; it better
+  handles multiple modems and is intended to be useful for non-fax
+  modem applications (e.g. there is now support for the
+  IXO/TAP protocol used to transmit pager messages)
+<LI>send-only and receive-only configurations are now possible;
+  it is also possible to mix-and-match send and receive components
+  from other software packages
+<LI>support has been added for time-of-day restrictions on outbound jobs
+<LI>outbound have a scheduling priority that can be set by a user and
+  which is manipulated by the job scheduler
+<LI>support has been added for distinctive ring; the system can be
+  configured to process incoming calls as data, fax, or voice according
+  to ring status messages
+<LI>support has been added for caller-ID; the system logs all caller
+  information and, optionally, can be configured to answer calls only
+  from a restricted set of callers
+<LI>prototype modem configuration files have been moved to a separate
+  directory in the spooling area and the filenames no longer have
+  a ``config.'' prefix
+<LI>the notion of a <I>job group</I> has been added; this is a
+  collection of jobs submitting with a single sendfax run;  a job
+  group identifier can be used to alter, remove, or query status
+  of groups of jobs
+<LI>the control information (<B>cinfo</B>) directory in the spooling
+  area no longer exists; it's function has been replaced by a
+  ``destination controls'' file used by the central scheduler process
+<LI>virtually all server-related configuration parameters can now be
+   set at runtime; this should make binary distributions more useful
+<LI>the TIFF software has been updated to version 3.3beta021
+<LI>the client-server protocol has changed and the protocol version
+   number has been incremented; this means new client applications
+   will not be able to communicate with old servers (but old clients
+   can talk to new servers)
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
+
+<UL>
+<LI>the <TT>configure</TT> script was totally rewritten to probe for
+  <I>features</I> required by the software instead of using fixed
+  per-system definitions files
+<LI>it is now possible to configure the software to be built in
+  locations other than the top of the source tree; this makes it
+  possible to build multiple versions from a single source tree
+<LI>the <TT>configuration</TT> script is much more intelligent about verifying
+  the necessary system functionality is present and the necessary tools
+  are available before a build is started
+<LI><TT>configure</TT> no longer alters any of the files provided in the
+  distribution; this makes it possible to build the software directly
+  from a read-only mounted version of the source code (e.g. from CDROM)
+<LI>per-site and per-target tailoring are simplified and virtually
+  all configuration parameters that cannot be set at runtime can be
+  controlled without modifying the source code
+<LI>virtually all configuration parameters that had to be setup at
+  compile time in the previous version can now be controlled at runtime;
+  this improves the functionality of binary-only distributions
+<LI>the sample Adobe Font Metric files that were previously provided in
+  a separate archive now come standard with the distribution; by default
+  the <TT>configure</TT> script will setup their installation only if other
+  metric files are not located on the system
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="modemconfig"><B><FONT SIZE=+3>C</FONT>HANGES IN THE MODEM CONFIG FILES:</B></A>
+
+<UL>
+<LI>the prototype modem configuration files are now kept in a
+    separate directory
+<LI>prototype config files are now named and selected according to the
+    host-modem flow control scheme used
+<LI>all AT-style modem commands must be completely specified; this
+    permits the use of +++ and the like in command strings
+<LI>a new escape code was added that causes the host to delay for a
+    period of time
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxq"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXQ:</B></A>
+
+<UL>
+<LI>faxq is the central scheduler process; it implements the scheduling
+  function done by the old faxd program
+<LI>jobs are now scheduling according to a user-settable priority
+<LI>broadcast facsimile documents are now imaged optimally; previously
+  imaged documents are reused if possible
+<LI>PostScript imaging operations are timed out according to the value
+  of the PostScriptTimeout configuration parameter
+<LI>the MaxConcurrentJobs configuration parameter controls the maximum
+  number of jobs to the same destination that will be processed concurrently;
+  this parameter can also be set on a per-destination basis using the
+  destination controls facility
+<LI>a new ServerTracing bit is available for tracing low-level job
+  management operations
+<LI>the syslog facility used for ServerTracing messages can be set in
+  the configuration file
+<LI>the UUCP locking support can now be entirely configured at runtime
+  through the configuration file
+<LI>support has been added for time-of-day restrictions on outbound jobs
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxsend"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXSEND:</B></A>
+
+<UL>
+<LI>faxsend is the program that handles outbound facsimile jobs; it
+   implements the transmit function done by the old faxd program
+<LI>the <TT>jobInProgress</TT> and <TT>rejectNotice</TT> entries in
+   the info database files have been eliminated
+<LI>the initial modem flow control scheme is now ``none''
+<LI>the maximum number of times to communicate (i.e. establish a
+   connection and initiate a transfer) can be controlled on the
+   server side and by the user
+<LI>the notification status returned to a user when a job is completed
+   or fails contains significantly more information
+<LI>RTS flow control is now properly set on AIX systems (previously
+   the capability to enable RTS flow control had to be already setup
+   for faxd to correctly force its use)
+<LI>the host-modem serial line rate can be set to 115200 on systems
+   that support it
+<LI>the syslog facility used for ServerTracing messages can be set in
+  the configuration file
+<LI>a bug has been fixed that caused the software to crash if the
+  tagline configuration was not setup correctly
+<LI>a new ClocalAsRoot configuration parameter is now available to
+  force the operations that set the CLOCAL bit on the tty to be done
+  as root (this is required by the IRIX 5.x serial drivers)
+<LI>local time conventions are now honored so tag line support will
+  display time-of-day items according to the local conventions
+
+<P>Class 1 driver:<P>
+
+<LI>the driver now forces the modem into Class 1 before placing a call
+<LI>error diagnostics returned from failed outbound calls are more specific
+<LI>user abort requests that are recognized during the post-page handshake
+   are now held until after the operation is completed (per the T.30 spec)
+
+<P>Class 2 driver:<P>
+
+<LI>the driver now forces the modem into Class 2 before placing a call
+<LI>the driver can be configured to send RTC after each page for modems
+  that incorrectly implement the specification; see Class2SendRTC
+<LI>the scanning of +FPTS: result strings is now more forgiving
+<LI>the timeout waiting for the OK status after transmitting page data
+  has been lengthened to properly handle slow line rates and/or receivers
+<LI>Error Correct Mode (ECM) is now used if possible
+
+<P>Class 2.0 driver:<P>
+
+<LI>the driver now forces the modem into Class 2 before placing a call
+<LI>Error Correct Mode (ECM) is now used if possible
+
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxgetty"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXGETTY:</B></A>
+
+<UL>
+<LI>faxgetty is the program that handles inbound calls; it
+   implements the receive function done by the old faxd program
+<LI>support has been added for distinctive ring; the server can be
+   configured to process incoming calls as data, fax, or voice according
+   to ring status messages
+<LI>support has been added for caller-ID; the server logs all caller
+   information and, optionally, can be configured to answer calls only
+   from a restricted set of callers
+<LI>an obscure bug in the copy quality checking support was corrected
+   (the pixel to the left of the start of scanline in the reference
+   scanline was not initialized to white)
+<LI>copy quality T.4 data decoding is faster
+<LI>if faxgetty is started by the init process, the entire environment
+   is passed to any getty and vgetty programs; otherwise, the child
+   processes inherit only the TZ and LANG variables (they previously
+   inherited nothing)
+<LI>the syslog facility used for ServerTracing messages can be set in
+  the configuration file
+<LI>the exact arguments used to invoke getty or vgetty are now logged
+<LI>a workaround has been added for an SCO kernel bug
+<LI>a new ClocalAsRoot configuration parameter is now available to
+  force the operations that set the CLOCAL bit on the tty to be done
+  as root (this is required by the IRIX 5.x serial drivers)
+</UL>
+
+<A NAME="pagesend"><B><FONT SIZE=+3>C</FONT>HANGES TO PAGESEND:</B></A>
+
+<UL>
+<LI>pagesend is a new program that handles outbound IXO/TAP jobs
+<LI>a new SessionTracing bit is available for tracing low-level
+   IXO protocol operation
+<LI>the syslog facility used for ServerTracing messages can be set in
+  the configuration file
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxaddmodem"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXADDMODEM:</B></A>
+
+<UL>
+<LI>additions for new configuration parameters
+<LI>auto-speed detect uses the stty command to deduce which speeds
+  are valid and starts probing at 38400 instead of 76800 to avoid
+  problems with certain modems on certain systems
+<LI>fixes and slowdowns in communication with the modem for HPUX
+  (the EOF character must be set to something other than ^D to avoid
+  system buffering)
+<LI>handles multi-line responses from the modem better
+<LI>supports selecting prototype configuration files based on whether
+  RTS/CTS or XON/XOFF flow control is to be used
+<LI>the prototype configuration file format has changed to make it
+  easier to convert a working config file into a prototype file
+<LI>automatically backs out a new config file if an error is detected
+  in its construction
+<LI>automatically verifies and propagates changes to the scheduler config file
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxalter"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXALTER:</B></A>
+
+<UL>
+<LI>has a new <TT>-g</TT> option for specifying job groups
+<LI>has a new <TT>-m</TT> option for altering the modem to use
+<LI>has a new <TT>-P</TT> option for altering the scheduling priority
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxcover"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXCOVER:</B></A>
+
+<UL>
+<LI><B>/commentsX</B> symbols are now always emitted, even if they
+   are blank; by default comments1 through comments20 generated
+   and a new <TT>-m</TT> option is available for controlling the maximum
+   number of comment lines
+<LI>the <B>BreakIntoLines</B> procedure is now automatically emitted
+   and need not be included in the cover page template file
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxmail"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXMAIL:</B></A>
+
+<UL>
+<LI>bugs in the N-up multipage have been fixed
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="fax2ps"><B><FONT SIZE=+3>C</FONT>HANGES TO FAX2PS:</B></A>
+
+<UL>
+<LI>updated for new libtiff
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxrm"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXRM:</B></A>
+
+<UL>
+<LI>has a new <TT>-g</TT> option for specifying job groups
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxd.recv"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXD.RECV:</B></A>
+
+<UL>
+<LI>the protocol version number has been changed to 2
+<LI>new protocol commands have been added for altering the
+  modem and scheduling priority of a job
+<LI>a bug has been fixed in the access control checking where certain
+  regular expressions were not treated as ``anchored''
+<LI>some diagnostics returned to the client have changed to
+  include more information
+<LI>new protocol support has been added for transmitting compressed
+  PostScript data
+<LI>support has been added for job groups
+<LI>server status returned to clients now shows the status of the
+  scheduler process and each separate faxgetty process
+<LI>the identity of the submitting machine is now recorded in the
+  job queue file
+<LI>documents are now assigned document identifiers for use in the
+  broadcast imaging scheme
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="sendfax"><B><FONT SIZE=+3>C</FONT>HANGES TO SENDFAX:</B></A>
+
+<UL>
+<LI>has a new <TT>-P</TT> option for specifying scheduling priority;
+  the symbolic priority values are recognized
+<LI>has a new <TT>-T</TT> option for specifying the maximum number of times
+  to dial the phone
+<LI>local time conventions are now honored
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="sendpage"><B><FONT SIZE=+3>C</FONT>HANGES TO SENDPAGE:</B></A>
+
+<UL>
+<LI>is a new (currently very simple) program for submitting pages
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="utility code"><B><FONT SIZE=+3>C</FONT>HANGES IN THE UTILITY CODE:</B></A>
+
+<UL>
+<LI>the FaxClient class has been changed to support compressed data transfer
+<LI>the SendFaxClient class now sends cover page documents in a compressed form;
+  also, new interfaces were added for setting the job
+  priority and maximum number of times to dial the phone
+<LI>PageSizeInfo::getPageInfoByName now also matchs against page name
+  abbreviations
+<LI>the dpsprinter.ps support file provides stubs for the <B>a4</B> and
+  <B>b4</B> page size requests commonly found in Mac- and Windows-generated
+  PostScript files
+<LI>the ps2fax shell scripts now repair a bug commonly found in
+  Windows-generated PostScript prologues
+<LI>the notify.awk script has changed significantly to return more information
+<LI>the ondelay program can now be configured to not redirect standard
+  input on systems where this causes an annoying message
+<LI>the textfmt program now honors local time conventions; also,
+  the error message printed when AFM data is not available for a font is
+  more informative
+<LI>the showcase rules in the typerules file have been corrected to force
+  showcase to run in the foreground
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="manual pages"><B><FONT SIZE=+3>C</FONT>HANGES TO THE MANUAL PAGES:</B></A>
+
+<UL>
+<LI>the specificiation of how to build and install the manual pages
+  is now easily configurable and more flexible
+<LI>all manual pages have been made consistent, including an
+  OPTIONS section for command line programs
+</UL>
+
+<!--FOOTER-->
+
+<A HREF="toc.html"><IMG SRC="icons/back.gif"></A> HylaFAX table
+of contents.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

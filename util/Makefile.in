@@ -1,0 +1,192 @@
+#! smake
+#	$Id$
+#
+# @WARNING@
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# VERSION:	$VERSION
+# DATE:		$DATE
+# TARGET:	$TARGET
+# CCOMPILER:	$CCOMPILER
+# CXXCOMPILER:	$CXXCOMPILER
+#
+DEPTH=..
+@MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
+
+SRCDIR	= ${DEPTH}/${TOPSRCDIR}/util
+VPATH	= ../@SRCDIR@/util
+
+C++FILES=Array.c++ \
+	BoolArray.c++ \
+	Dictionary.c++ \
+	Obj.c++ \
+	PageSize.c++ \
+	RegEx.c++ \
+	RegExArray.c++ \
+	RegExDict.c++ \
+	StackBuffer.c++ \
+	Str.c++ \
+	StrArray.c++ \
+	StrDict.c++ \
+	\
+	Dispatcher.c++ \
+	IOHandler.c++ \
+	Sys.c++ \
+	Syslog.c++ \
+	Timeout.c++ \
+	Fatal.c++ \
+	\
+	AtSyntax.c++ \
+	DialRules.c++ \
+	FmtTime.c++ \
+	TimeOfDay.c++ \
+	FaxDB.c++ \
+	TextFmt.c++ \
+	\
+	Class2Params.c++ \
+	FaxClient.c++ \
+	FaxConfig.c++ \
+	FaxRecvInfo.c++ \
+	FaxSendInfo.c++ \
+	JobExt.c++ \
+	ModemExt.c++ \
+	SendFaxJob.c++ \
+	SendFaxClient.c++ \
+	TypeRules.c++ \
+	Transport.c++ \
+	InetTransport.c++ \
+	UnixTransport.c++ \
+	\
+	SNPPClient.c++ \
+	SNPPJob.c++
+CFILES= cvtfacility.c fxassert.c
+TARGETS=libfaxutil.${DSO} faxmsg faxmodem faxconfig faxstate \
+	faxinfo faxwatch textfmt dialtest typetest tiffcheck
+
+LC++INCS=-I${ZLIBINC}			# for FaxClient.c++
+
+default all::
+	@${MAKE} incdepend
+	@${MAKE} targets
+
+targets: $(TARGETS)
+
+@MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
+
+libfaxutil.a: ${OBJECTS}
+	@rm -f $@;
+	@echo "${AR} ${AROPTS} $@ ${OBJECTS}"; \
+	    ${AR} ${AROPTS} $@ ${OBJECTS} ${C++FILT}
+	${RANLIB} $@
+../util/libfaxutil.a: libfaxutil.a
+
+faxmsg: ${SRCDIR}/faxmsg.c ${LIBS}
+	${CCF} -o $@ ${SRCDIR}/faxmsg.c ${LDFLAGS}
+faxstate: ${SRCDIR}/faxstate.c ${LIBS}
+	${CCF} -o $@ ${SRCDIR}/faxstate.c ${LDFLAGS}
+faxmodem: ${SRCDIR}/faxmodem.c ${LIBS}
+	${CCF} -o $@ ${SRCDIR}/faxmodem.c ${LDFLAGS}
+faxconfig: ${SRCDIR}/faxconfig.c ${LIBS}
+	${CCF} -o $@ ${SRCDIR}/faxconfig.c ${LDFLAGS}
+tiffcheck.o: ${SRCDIR}/tiffcheck.c++
+	${C++F} -c ${C++FILE} ${SRCDIR}/tiffcheck.c++@MAKECXXOVERRIDE@
+tiffcheck: tiffcheck.o ${LIBS}
+	${C++F} -o $@ tiffcheck.o ${LDFLAGS}
+textfmt.o: ${SRCDIR}/textfmt.c++
+	${C++F} -c ${C++FILE} ${SRCDIR}/textfmt.c++@MAKECXXOVERRIDE@
+textfmt: textfmt.o ${LIBS}
+	${C++F} -o $@ textfmt.o ${LDFLAGS}
+dialtest.o: ${SRCDIR}/dialtest.c++
+	${C++F} -c ${C++FILE} ${SRCDIR}/dialtest.c++@MAKECXXOVERRIDE@
+dialtest: dialtest.o ${LIBS}
+	${C++F} -o $@ dialtest.o ${LDFLAGS}
+typetest.o: ${SRCDIR}/typetest.c++
+	${C++F} -c ${C++FILE} ${SRCDIR}/typetest.c++@MAKECXXOVERRIDE@
+typetest: typetest.o ${LIBS}
+	${C++F} -o $@ typetest.o ${LDFLAGS}
+faxinfo.o: ${SRCDIR}/faxinfo.c++
+	${C++F} -c ${C++FILE} ${SRCDIR}/faxinfo.c++@MAKECXXOVERRIDE@
+faxinfo: faxinfo.o ${LIBS}
+	${C++F} -o $@ faxinfo.o ${LDFLAGS}
+faxwatch.o: ${SRCDIR}/faxwatch.c++
+	${C++F} -c ${C++FILE} ${SRCDIR}/faxwatch.c++@MAKECXXOVERRIDE@
+faxwatch: faxwatch.o ${LIBS}
+	${C++F} -o $@ faxwatch.o ${LDFLAGS}
+faxfetch: faxfetch.o ${LIBS}
+	${C++F} -o $@ faxfetch.o ${LDFLAGS}
+
+LDIRT=	checkat
+checkat.o: ${SRCDIR}/checkat.c++
+	${C++F} -c ${C++FILE} ${SRCDIR}/checkat.c++@MAKECXXOVERRIDE@
+checkat: checkat.o ${LIBS}
+	${C++F} -o $@ checkat.o ${LDFLAGS}
+
+PUTCLIENT	= ${INSTALL} -idb ${PRODUCT}.sw.client
+PUTSERVER	= ${INSTALL} -idb ${PRODUCT}.sw.server
+PUTSERV		= ${PUTSERVER} -m 755
+PUTSUPD		= ${PUTSERVER} -F ${SPOOL}/bin -idb "config(update)"
+PUTSBIN		= ${PUTSERVER} -F ${SBIN}
+
+installClient: default
+	${PUTCLIENT} -F ${LIBEXEC} -m 755 -O textfmt
+	${PUTCLIENT} -F ${LIBDATA} -m 444 -O pagesizes
+	${PUTCLIENT} -F ${LIBDATA} -m 444 -src ${SRCDIR}/typerules -O typerules
+
+install: installClient
+	${PUTSBIN} -m 755 -O faxmsg faxconfig faxmodem faxstate faxwatch \
+	    faxinfo tiffcheck
+	${PUTSBIN} -idb ${PRODUCT}.sw.server \
+	    -ln ${SBIN}/faxmsg -O faxabort faxanswer faxquit
+	${PUTSBIN} -m 755 -O dialtest typetest
+	${PUTSBIN} -m 755 -src xferstats.sh -O xferstats
+	${PUTSBIN} -m 755 -src recvstats.sh -O recvstats
+	${PUTSBIN} -m 755 -idb "config(update)" -src faxcron.sh -O faxcron
+	${PUTSUPD} -m 755 -src ${SRCDIR}/ps2fax.gs.sh -O ps2fax.gs
+	${PUTSUPD} -m 755 -src ${SRCDIR}/ps2fax.dps.sh -O ps2fax.dps
+	${PUTSUPD} -m 755 -src ${SRCDIR}/ps2fax.imp.sh -O ps2fax.imp
+	${PUTSUPD} -m 755 -src ${SRCDIR}/pcl2fax.sh -O pcl2fax
+	${PUTSUPD} -m 755 -src ${SRCDIR}/tiff2fax.sh -O tiff2fax
+	${PUTSUPD} -m 755 -src ${SRCDIR}/notify.sh -O notify
+	${PUTSUPD} -m 444 -src ${SRCDIR}/notify.awk -O notify.awk
+	${PUTSUPD} -m 755 -src ${SRCDIR}/faxrcvd.sh -O faxrcvd
+	${PUTSUPD} -m 755 -src ${SRCDIR}/pollrcvd.sh -O pollrcvd
+	${PUTSUPD} -m 755 -src ${SRCDIR}/mkcover.sh -O mkcover
+	${PUTSUPD} -m 755 -src ${SRCDIR}/wedged.sh -O wedged
+	${PUTSERVER} -F ${SPOOL}/etc -m 444 -idb "config(update)" \
+	    -src ${SRCDIR}/dpsprinter.ps -O dpsprinter.ps
+	${PUTSERVER} -F ${SPOOL}/etc -idb "config(suggest)" \
+	    -m 444 -src ${SRCDIR}/cover.templ -O cover.templ
+
+@MAKEDSOINCLUDE@ @MAKELQUOTE@${SRCDIR}/Makefile.@DSO@dso@MAKERQUOTE@
+
+#
+# These targets are created during the configuration procedure.
+#
+clobberconfig:
+	-${RM} -f pagesizes xferstats.sh recvstats.sh faxcron.sh

@@ -1,0 +1,100 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1993-1996 Sam Leffler
+.\" Copyright (c) 1993-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH DIALTEST 1M "March 3, 1995"
+.SH NAME
+dialtest \- \*(Fx dial string processing rules test program
+.SH SYNOPSIS
+.B ${SBIN}/dialtest
+[
+.I options
+]
+.I dialrules
+.SH DESCRIPTION
+.I dialtest
+is an interactive program for the testing and development of
+dial string processing rules used by \*(Fx.
+.I dialtest
+reads the file of rules specified on the command line
+and then prompts for a dial string.
+For each string typed in,
+.I dialtest
+prints the result of applying the canonicalization
+and dial-string preparation rule sets.
+A rule set whose name is
+.I setname
+can be specified by typing ``\fIsetname\fP(\fIstring\fP)'';
+for example, ``\fICanonicalName\fP(+1.415.965.7824)''.
+.PP
+Note that
+.I dialtest
+reads the rules file only when it is initially started up.
+This means that
+.I dialtest
+must be restarted for it to apply changes to a rules file.
+.SH OPTIONS
+.TP 10
+.BI \-a " code"
+Use
+.I code
+as the value of
+.B AreaCode
+in the rules file.
+The default area code is ``415''.
+.TP 10
+.BI \-c " code"
+Use
+.I code
+as the value of
+.B CountryCode
+in the rules file.
+The default country code is ``1''.
+.TP 10
+.BI \-i " prefix"
+Use
+.I prefix
+as the value of
+.B InternationalPrefix
+in the rules file.
+The default international dialing prefix is ``011''.
+.TP 10
+.BI \-l " prefix"
+Use
+.I prefix
+as the value of
+.B LongDistancePrefix
+in the rules file.
+The default long distance dialing prefix is ``1''.
+.TP 10
+.B \-v
+Print each input line before displaying the results of
+applying the dial string rules to the input string.
+This can be useful, for example, in shell scripts.
+.SH "SEE ALSO"
+.IR dialrules (4F)

@@ -1,0 +1,140 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1993-1996 Sam Leffler
+.\" Copyright (c) 1993-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH RECVSTATS 1M "March 3, 1995"
+.SH NAME
+recvstats \- summarize \*(Fx receive accounting information
+.SH SYNOPSIS
+.B ${SBIN}/recvstats
+[
+.I options
+] [
+.I files
+]
+.SH DESCRIPTION
+.I recvstats
+is a command script that prints a summary of the \*(Fx
+accounting statistics for received facsimile.
+The statistics can be sorted using one of several keys:
+the caller's \s-1CSI\s+1 (default),
+the communication speed, and
+the communication data format.
+Statistics are read from the file
+.B ${SPOOL}/etc/xferlog
+unless filenames are specified on the command line.
+.PP
+The following table is an example of the output from
+.I recvstats
+(using the default sort key):
+.sp .5
+.nf
+.ta \w'\s-1ALDUS CORPORATION\s+1   'u +\w'Pages   'u +\w'15:03:58  'u +\w'Pg/min   'u +\w'Errs   'u +\w'TypRate   'u
+\fBSender	Pages	Time	Pg/min	Errs	TypRate	TypData\fP
+	61	30:47	2.0	16	9600	1-D	MR
++13037904674	5	1:34	3.2	2	9600	1-D	MR
++14159657824	1	1:00	1.0	0	9600	1-D	MR
++15086636852	2	0:00	2.0	0	9600	1-D	MR
++15105268781	740	5:47:51	2.1	59	9600	1-D	MR
++15105287164	20	7:00	2.9	0	9600	1-D	MR
++15123713545	3	1:19	2.3	0	9600	1-D	MR
++15123713641	5	1:04	4.6	0	9600	1-D	MR
++16099211926	3	2:00	1.5	0	9600	1-D	MR
++17088987617	1	0:18	3.3	0	9600	1-D	MR
+415 390 6175	22	6:01	3.6	0	9600	1-D	MR
+415 965 7651	56	34:52	1.6	14	9600	1-D	MR
+415 973 6723	1	2:09	0.5	0	9600	2-D	MR
+49 211 161514	1	0:00	1.0	0	9600	2-D	MR
+8185970503	1	0:28	2.1	0	9600	2-D	MR
+\s-1ALDUS CORPORATION\s+1	3	2:34	1.2	0	9600	1-D	MR
+------------------------------------------------------------
+Total	925	7:19:03	2.1	91
+.sp .5
+.fi
+The
+.I Sender
+column shows the caller's \s-1TSI\s+1 (notice that some callers have
+not setup a \s-1TSI\s+1).
+The
+.I Pages
+column is the total number of good pages received.
+The
+.I time
+column shows the total amount of time spent receiving facsimile
+from a sender.
+The
+.I Pg/min
+column displays the average transfer rate.
+The
+.I Errs
+column indicates how many protocol errors were encountered while
+receiving facsimile.
+The
+.I TypRate
+column displays the most common communication speed with which
+facsimile were received.
+The
+.I TypData
+column shows the most common data format in which facsimile
+data were received.
+.SH OPTIONS
+.TP 12
+.B \-csi*
+Sort output by caller's
+.SM CSI.
+.TP 12
+.B \-format
+Sort output by data format.
+.TP 12
+.B \-send*
+Sort output by sender (i.e. caller's
+.SM CSI\c
+).
+.TP 12
+.B \-speed
+Sort output by signalling rate.
+.TP 12
+.BI \-since " time"
+Show information only for the facsimile received since the
+specified
+.IR time ;
+where
+.I time
+is of the form ``MM/DD/YY HH:MM'' (the
+.IR date (1)
+format string %D %H:%M).
+.SH FILES
+.nf
+.ta \w'${SPOOL}/etc/xferlog    'u
+${SPOOL}	spooling area
+${SPOOL}/etc/xferlog	default file from which to read statistics
+.fi
+.SH "SEE ALSO"
+.IR faxq (1M),
+.IR xferstats (1M),
+.IR log (4F)

@@ -1,0 +1,159 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1994-1996 Sam Leffler
+.\" Copyright (c) 1994-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH FAXCRON 1M "May 12, 1996"
+.SH NAME
+faxcron \- \*(Fx routine maintenance script
+.SH SYNOPSIS
+.B ${SBIN}/faxcron
+[
+.B \-n
+] [
+.B \-l
+.I lastrun
+]
+.SH DESCRIPTION
+.B faxcron
+is a command script that does routine upkeep tasks in a \*(Fx
+spooling directory hierarchy.
+This script is intended to be invoked from
+.IR cron (1M)
+on behalf of the fax user once a day,
+with the standard output sent by mail to the \*(Fx administrator.
+For example, the following crontab might be setup for the fax user:
+.sp .5
+.nf
+.ti +.2i
+\fC25   23    *    *    *   sh ${SBIN}/faxcron | mail FaxMaster\fP
+.fi
+.PP
+The
+.I faxcron
+script does the following work:
+.IP \(bu 3
+report statistics for facsimile transmitted since the last time 
+.I faxcron
+was run.
+.IP \(bu 3
+report statistics for facsimile transmitted in the past week.
+.IP \(bu 3
+report statistics for facsimile received since the last time
+.I faxcron
+was run.
+.IP \(bu 3
+report statistics for facsimile received in the past week.
+.IP \(bu 3
+report any recent calls that failed suspiciously and return the associated trace log;
+.IP \(bu 3
+purge data that is 30 days or older from the remote machine information directory;
+.IP \(bu 3
+delete information that is 30 days or older from session trace log files;
+.IP \(bu 3
+remove files from the tmp directory that are older than 1 day;
+.IP \(bu 3
+remove received facsimile that are 7 days or older;
+.IP \(bu 3
+report sites that are currently having jobs rejected; and
+.IP \(bu 3
+force all session log files to be owned by the fax user
+and kept with protection mode 644.
+.SH OPTIONS
+.TP 10
+.B \-n
+Forces
+.I faxcron
+to run without updating any files.
+.TP 10
+.BI \-l " lastrun"
+Forces the notion of the last time that
+.I faxcron
+was run to be 
+.IR lastrun .
+The value of 
+.I lastrun
+is a date and time string of the form ``MM/DD/YY HH:MM'' (the
+.IR date (1)
+format string ``%D %H:%M'').
+.TP 10
+.BI \-info " n"
+Set the expiration time for data in the info database to be
+.I n
+days.
+.TP 10
+.BI \-log " n"
+Set the expiration time for session log data to be
+.I n
+days.
+.TP 10
+.BI \-rcv " n"
+Set the expiration time for files in the received facsimile queue to be
+.I n
+days.
+.TP 10
+.BI \-tmp " n"
+Set the expiration time for files in the tmp directory to be
+.I n
+days.
+.TP 10
+.BI \-mode " m"
+Set the file protection mode for session logs to 
+.IR m
+(a command line argument to 
+.IR chmod (1)).
+.SH NOTES
+This script requires
+.IR nawk (1)
+or
+.IR gawk (1)
+and a
+.I date (1)
+program that supports the ``+format'' option.
+.PP
+If session logs are to be kept private this script must be modified
+to filter out sensitive information such as calling card numbers.
+(It should also be run with ``\-mode 0600'' so that
+session log files are not publicly readable.)
+.SH FILES
+.nf
+.ta \w'${SPOOL}/etc/xferstats    'u
+${SPOOL}	spooling area
+${SPOOL}/etc/lastrun	timestamp of last run
+${SBIN}/xferstats	for generating transmit statistics
+${SBIN}/recvstats	for generating receive statistics
+/tmp/faxcronXXXX	temporary file for truncating session logs
+/tmp/faxlogXXXX	temporary file for logs of failed calls
+.fi
+.SH "SEE ALSO"
+.IR cron (1M),
+.IR faxq (1M),
+.IR faxgetty (1M),
+.IR faxsend (1M),
+.IR xferstats (1M),
+.IR recvstats (1M),
+.IR hylafax (4F)

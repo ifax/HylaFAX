@@ -1,0 +1,50 @@
+<HTML>
+<HEAD>
+<TITLE>Telebit WorldBlazer/T3000</TITLE>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>T</FONT>ELEBIT <FONT SIZE=+1>W</FONT>ORDLBLAZER/<FONT SIZE=+1>T</FONT>3000</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR WIDTH=65% ALIGN=left SIZE=4>
+<B>Manufacturer</B>: Telebit<BR>
+<B>Model</B>: T3000 <I>or</I> WorldBlazer<BR>
+<B>Latest Firmware Revision Tried</B>: LA7.20M<BR>
+<B>Recommended Firmware Revisions</B>: LA7.20M<BR>
+<B>Last Updated</B>:$Date$<BR>
+<HR WIDTH=65% ALIGN=left SIZE=4>
+</UL>
+
+<DL COMPACT>
+<DT><IMG SRC="@HTMLPATH@/icons/info_icon.gif" ALT="o">
+<DD>Support for adaptive answer was added in rev LA7.20M.
+<DT><IMG SRC="@HTMLPATH@/icons/info_icon.gif" ALT="o">
+<DD>Telebit provides <A HREF="Telebit/faxcmds.html">online documentation</A> for the fax command set.
+</DL>
+
+<HR WIDTH=65% ALIGN=right>
+<B><A NAME="Class2"><FONT SIZE=+2>C</FONT>LASS 2 <FONT SIZE=+1>S</FONT>UPPORT</A></B>
+
+<UL>
+<LI>When HDLC frame tracing is enabled, the modem sometimes does not
+  send the <TT>AT+FCON</TT> status message to the host
+<LI>When carrier is dropped during the training phase that follows a
+<TT>AT+FDT</TT>
+command, the modem sometimes violates the Class 2 spec by
+returning "<TT>NO CARRIER</TT>" and not a <TT>+FHNG</TT> status string
+</UL>
+
+<P>
+<A HREF="twincom-144df.html"><IMG SRC="@HTMLPATH@/icons/next.gif">
+Twincom 144/DF</A>
+
+<HR>
+
+<ADDRESS>
+Copyright &copy; 1990, 1991, 1992, 1993, 1994 Sam Leffler<BR>
+Copyright &copy; 1991, 1992, 1993, 1994 Silicon Graphics, Inc.<BR>
+</ADDRESS>
+
+</BODY>
+</HTML>

@@ -1,0 +1,106 @@
+#	$Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1995-1996 Sam Leffler
+# Copyright (c) 1995-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# IRIX-specific definitions for faxsetup.
+#
+
+dumpTTYFuncs()
+{
+    cat<<'EOF'
+ttyPort()
+{
+    expr $1 : 'tty.\(.*\)'
+}
+ttyLocks()
+{
+    port=`ttyPort $1`
+    locks=
+    for x in f m d; do
+	locks="$locks $UUCP_LOCKDIR/LCK..tty$x${port}"
+    done
+    echo $locks
+}
+ttyAliases()
+{
+    port=`ttyPort $1`
+    echo /dev/ttyd${port} /dev/ttym${port} /dev/ttyf${port}
+}
+ttyDev()
+{
+    #
+    # NB: we use ttyd* device names in the following
+    # work so that we are not stopped by a need for DCD.
+    #
+    port=`ttyPort $1`
+    echo /dev/ttyd${port}
+}
+checkIRIXPort()
+{
+    devID="`echo $1 | tr '/' '_'`"
+    if [ -f $CPATH.$devID -a -p $SPOOL/FIFO.$devID ]; then
+	echo "There appears to be a modem already setup on $devID,"
+	prompt "is this to be replaced [yes]?"
+	read x;
+	isOK $x || {
+	    echo "Sorry, but you can not configure multiple servers on"
+	    echo "the same serial port."
+	    exit 1
+
+	}
+	# setup pathnames for old stuff
+	OLDFIFO=$SPOOL/FIFO.$devID; OLDCONFIG=$CPATH.$devID
+    fi
+}
+checkPort()
+{
+    case $1 in
+    ttym${PORT}) checkIRIXPort ttyd${PORT}; checkIRIXPort ttyf${PORT};;
+    ttyf${PORT}) checkIRIXPort ttym${PORT}; checkIRIXPort ttyd${PORT};;
+    ttyd${PORT}) checkIRIXPort ttym${PORT}; checkIRIXPort ttyf${PORT};;
+    esac
+}
+EOF
+}
+
+#
+# Hide the fax user from pandora & co.
+#
+machdepPasswdWork()
+{
+    f=${SGIPASSWD:-/etc/passwd.sgi}
+    if [ -f $f ]; then
+	x=$FAX:noshow
+	grep $x $f >/dev/null 2>&1 || {
+	    Note ""
+	    Note ""
+	    Note "Adding the $FAX user to $f so it is hidden from pandora/clogin."
+	    echo "$x" >>$f
+	}
+    fi
+}

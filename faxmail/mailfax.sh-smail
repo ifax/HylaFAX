@@ -1,0 +1,33 @@
+#!/bin/sh
+#
+#   mailfax - email to fax gateway for smail3.1.
+#
+#   This file should be installed as /usr/local/bin/mailfax, and the
+#   following changes made to the smail configuration:
+#
+#   Add the following to /usr/local/lib/smail/transports:
+#       fax: driver=pipe, local;
+#           pipe_as_sender, cmd="/usr/local/bin/mailfax"
+#
+#   Add the following at the start of /usr/local/lib/smail/routers:
+#       fax: driver=queryprogram, transport=fax;
+#           cmd="/usr/bin/expr ${lc:host} : '.*\.fax$'"
+#
+#   If you do not already have a routers file, you *must* create one
+#   with the default routing info, included below:
+#       inet_addrs: driver=gethostbyaddr, transport=smtp;
+#           fail_if_error, check_for_local,
+#       inet_hosts: driver=gethostbyname, transport=smtp;
+#           -required, -domain, -only_local_domain,
+#       paths: driver=pathalias, transport=uux;
+#           file=paths, proto=bsearch, optional, -required, domain=uucp,
+#       uucp_neighbors: driver=uuname, transport=uux;
+#           cmd=/usr/bin/uuname, domain=uucp,
+#       smart_host: driver=smarthost, transport=uux;
+#           -path,
+#
+#   Note: I'm not a smail expert; this file is the result of a couple
+#       of hours of experimentation.                 Rick Lyons.
+
+/usr/local/bin/faxmail | /usr/local/bin/sendfax -n -d \
+        "`/usr/bin/expr \"$ADDR\" : '\(.*\)\.fax$'`" -f "$SENDER@$PRIMARY_NAME"

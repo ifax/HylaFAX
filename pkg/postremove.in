@@ -1,0 +1,14 @@
+#
+# $Id$
+#	Tim Rice
+#
+#	postremove
+#
+
+if test -d @SPOOL@
+then
+	echo "\n\nYou will need to remove @SPOOL@\n"
+	echo "rm -fr @SPOOL@\n"
+fi
+
+exit 0

@@ -1,0 +1,126 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1995 Sam Leffler
+.\" Copyright (c) 1995 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH FAXCONFIG 1M "Oct 3, 1995"
+.SH NAME
+faxconfig \- dynamically change \*(Fx configuration parameters
+.SH SYNOPSIS
+.B ${SBIN}/faxconfig
+[
+.B \-q
+.I queue-dir
+] [
+.B \-m
+.I modem
+] [
+.I parameter
+.I value
+\ ... ]
+.SH DESCRIPTION
+.I faxconfig
+sends messages to a \*(Fx server process
+telling it to install new values for one or more
+configuration parameters.
+These new values are maintained only for as long as that
+server process executes; to setup long-lasting configuration
+parameters the appropriate configuration file(s) must be
+edited (see
+.IR config (4F)).
+.PP
+.I faxconfig
+is especially useful for setting certain configuration parameters
+that control the operation of \*(Fx server processes.
+For example, by manipulating the
+.B ModemPriority
+parameter of one or more
+.IR faxgetty (1M)
+processes it is easy to dynamically reconfigure the order in which
+\*(Fx will assign modems to outbound jobs.
+.PP
+If no 
+.I modem
+is specified with the
+.B \-m
+option, then
+.I faxconfig
+will send messages to the central scheduler process,
+.IR faxq (1M).
+If a
+.I faxgetty
+process is to be contacted, the specified
+.I modem
+must be the last component of the character special device
+filename the modem is attached to.
+.PP
+Consult the
+.IR config (4F)
+for the list of configuration parameters that can be set with
+.IR faxconfig .
+.SH OPTIONS
+The following options are available:
+.TP 10
+.BI \-m " devid"
+Direct messages to the
+.I faxgetty
+process servicing
+.I devid 
+instead of the central scheduler process,
+.IR faxq .
+The
+.I devid
+is an identifier derived from the name of
+the modem's device file; for example
+.I ttym2
+for
+.IR /dev/ttym2 ,
+.I term_10
+for
+.IR /dev/term/10 .
+.TP 10
+.BI \-q " dir"
+Use a spooling area other than
+.IR ${SPOOL} .
+.SH FILES
+.nf
+.ta \w'${SPOOL}/FIFO.<devid>    'u
+${SPOOL}	default spooling area
+${SPOOL}/FIFO	fifo for contacting \fIfaxq\fP
+.fi
+.PP
+Consult
+.IR hylafax (4F)
+for a complete discussion of the structure and
+content of the spooling area.
+.SH "SEE ALSO"
+.IR hylafax (4F),
+.IR faxmodem (1M),
+.IR faxstate (1M),
+.IR faxgetty (1M),
+.IR faxq (1M),
+.IR config (4F).

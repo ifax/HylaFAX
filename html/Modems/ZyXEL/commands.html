@@ -1,0 +1,1028 @@
+<HTML>
+<HEAD>
+<TITLE>ZyXEL Voice AT Commands</TITLE>
+</HEAD>
+
+<BODY>
+
+<B><FONT SIZE=+3>Z</FONT>YXEL <FONT SIZE=+2>V</FONT>OICE <FONT SIZE=+1>AT</FONT> <FONT SIZE=+2>C</FONT>OMMANDS</B>
+
+<HR SIZE=4>
+
+The U-1496 series modems support a set of voice AT commands.  These commands
+are basically consistent with the TIA TR29.2 committee IS-101 document. The
+command implementation is not final as of this writing.  It is certain that it
+will be continually updated during the initial stage.  Please refer to the
+manual amendment or firmware release notes in the software disk accompanying
+this modem for updated detail.
+
+<P>
+The following is a list of the voice and voice-related AT commands:
+
+<UL>
+<LI><A HREF="#AT+FCLASS=">AT+FCLASS=<I>mode</I></A>
+<LI><A HREF="#AT+FCLASS?">AT+FCLASS?</A>
+<LI><A HREF="#AT+FCLASS=?">AT+FCLASS=?</A>
+<LI><A HREF="#ATA">ATA (with AT+FCLASS=8)</A>
+<LI><A HREF="#ATD">ATD (with AT+FCLASS=8)</A>
+<LI><A HREF="#ATH">ATH (with AT+FCLASS=8)</A>
+<LI><A HREF="#ATFLO">AT+FLO=&lt;value&gt;</A>
+<LI><A HREF="#ATFLO?">AT+FLO?</A>
+<LI><A HREF="#ATFLO=?">AT+FLO=?</A>
+<LI><A HREF="#ATZ">ATZ</A>
+<LI><A HREF="#AT+VBT=">AT+VBT=<I>value</I></A>
+<LI><A HREF="#AT+VBT?">AT+VBT?</A>
+<LI><A HREF="#AT+VBT=?">AT+VBT=?</A>
+<LI><A HREF="#AT+VDD">AT+VDD=<I>value</I></A>
+<LI><A HREF="#AT+VDD?">AT+VDD?</A>
+<LI><A HREF="#AT+VDD=?">AT+VDD=?</A>
+<LI><A HREF="#AT+VDH=">AT+VDH=<I>value</I></A>
+<LI><A HREF="#AT+VDH?">AT+VDH?</A>
+<LI><A HREF="#AT+VDH=?">AT+VDH=?</A>
+<LI><A HREF="#AT+VGT=">AT+VGT=<I>value</I></A>
+<LI><A HREF="#AT+VGT?">AT+VGT?</A>
+<LI><A HREF="#AT+VGT=?">AT+VGT=?</A>
+<LI><A HREF="#AT+VIP">AT+VIP</A>
+<LI><A HREF="#AT+VIT">AT+VIT=<I>value</I></A>
+<LI><A HREF="#AT+VIT?">AT+VIT?</A>
+<LI><A HREF="#AT+VIT=?">AT+VIT=?</A>
+<LI><A HREF="#AT+VLS=">AT+VLS=<I>device</I></A>
+<LI><A HREF="#AT+VLS?">AT+VLS?</A>
+<LI><A HREF="#AT+VLS=?">AT+VLS=?</A>
+<LI><A HREF="#AT+VNH=">AT+VNH=<I>value</I></A>
+<LI><A HREF="#AT+VNH?">AT+VNH?</A>
+<LI><A HREF="#AT+VNH=?">AT+VNH=?</A>
+<LI><A HREF="#AT+VRA=">AT+VRA=<I>value</I></A>
+<LI><A HREF="#AT+VRA?">AT+VRA?</A>
+<LI><A HREF="#AT+VRA=?">AT+VRA=?</A>
+<LI><A HREF="#AT+VRN=">AT+VRN=<I>value</I></A>
+<LI><A HREF="#AT+VRN?">AT+VRN?</A>
+<LI><A HREF="#AT+VRN=?">AT+VRN=?</A>
+<LI><A HREF="#AT+VRX">AT+VRX</A>
+<LI><A HREF="#AT+VSD=">AT+VSD=<I>sds</I>,<I>sdi</I></A>
+<LI><A HREF="#AT+VSD?">AT+VSD?</A>
+<LI><A HREF="#AT+VSD=?">AT+VSD=?</A>
+<LI><A HREF="#AT+VSM=">AT+VSM=<I>cml</I></A>
+<LI><A HREF="#AT+VSM?">AT+VSM?</A>
+<LI><A HREF="#AT+VSM=?">AT+VSM=?</A>
+<LI><A HREF="#AT+VSY=">AT+VSY=<I>value</I></A>
+<LI><A HREF="#AT+VSY?">AT+VSY?</A>
+<LI><A HREF="#AT+VSY=?">AT+VSY=?</A>
+<LI><A HREF="#AT+VTS">AT+VTS=<I>string</I></A>
+<LI><A HREF="#AT+VTS=?">AT+VTS=?</A>
+<LI><A HREF="#AT+VTX">AT+VTX</A>
+<LI><A HREF="#AT+VVT=">AT+VVT=<I>value</I>
+<LI><A HREF="#AT+VVT?">AT+VVT?</A>
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+<B><FONT SIZE=+2>C</FONT>OMMAND <FONT SIZE=+2>S</FONT>YNTAX</B>
+
+<P>
+AT is used as the command line prefix, the voice command takes one of the
+following forms:
+<PRE>
+    +V&lt;CM&gt;?                  read current setting
+    +V&lt;CM&gt;=?                 read permissable setting
+    +V&lt;CM&gt;=&lt;<I>single value</I>&gt;    set single-valued parameter
+    +V&lt;CM&gt;=&lt;<I>value string</I>&gt;    set compound parameter
+</PRE>
+where &lt;CM&gt; represents a two-letter command syntax, a
+<I>value string</I> consists
+of values separated by comma or semicolon.  The first two comand forms are
+for read action,  the last two are for write action. A command may have both
+action types or just read or write type only.
+
+<P><HR WIDTH=65% ALIGN=right>
+<B><FONT SIZE=+2>R</FONT>ESPONSE <FONT SIZE=+2>S</FONT>YNTAX</B>
+
+<P>
+For each command line received, the modem issues a response to each command in
+the command line followed by a final response.
+
+<P>
+Each command response is of the form:
+<PRE>
+    &lt;CR&gt;&lt;LF&gt;
+    &lt;value&gt; or &lt;value range&gt;    response of "?" or "=?" command
+    &lt;CR&gt;&lt;LF&gt;
+</PRE>
+The final response is
+<PRE>
+    &lt;CR&gt;&lt;LF&gt;
+    OK or ERROR                 Command line response
+    &lt;CR&gt;&lt;LF&gt;
+</PRE>
+The final response is " OK " if all the commands in the command line have
+been successfully executed, otherwise it is "ERROR".
+
+<P><HR WIDTH=65% ALIGN=right>
+<B><FONT SIZE=+2>S</FONT>UPPORTED <FONT SIZE=+2>C</FONT>OMMANDS FOR <FONT SIZE=+2>V</FONT>OICE <FONT SIZE=+2>M</FONT>ODE <FONT SIZE=+2>O</FONT>PERATION</B>
+
+<H3><A NAME="AT+FCLASS=">AT+FCLASS=<I>mode</I></A></H3>
+
+<OL>
+This command selects a DCE mode as follows:
+<PRE>
+ <I>mode</I> = 0 (Default), Data mode.
+ <I>mode</I> = 2,   Class 2 Fax mode.
+ <I>mode</I> = 2.0, Class 2.0 Fax mode.
+ <I>mode</I> = 6,   ZFax mode.
+ <I>mode</I> = 8,   Voice mode.
+
+DCE Result codes:
+ OK:     Command is accepted.
+ ERROR:  <I>mode</I> is not permitted.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+FCLASS?">AT+FCLASS?</A></H3>
+
+<OL>
+DCE will return current mode setting, followed by the OK result code.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+FCLASS=?">AT+FCLASS=?</A></H3>
+
+<OL>
+DCE will return permitted modes. The response is:
+<PRE>
+    0,2,2.0,6,8
+    OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="ATA">ATA (with AT+FCLASS=8)</A></H3>
+
+<OL>
+This command causes DCE to answer the phone. DCE will return VCON
+result code immediately.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="ATD">ATD (with AT+FCLASS=8)</A></H3>
+
+<OL>
+This command causes the DCE to dial a phone number.
+<P>
+
+Result codes:
+
+<PRE>
+VCON: The DCE issues this result code when the DCE
+      has determined that the remote station is off hook.
+
+NO ANSWER: The DCE issues this result code when the DCE has
+    continuously detected Ringbacks for the S7 specified
+    amount of time.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="ATH">ATH (with AT+FCLASS=8)</A></H3>
+
+<OL>
+This command causes the DCE to hang up the phone with the following
+considerations for a hang up while in Voice mode:
+
+<UL>
+<LI> Force the command AT+FCLASS=0, but will not destroy any of the
+      Voice parameters.
+<LI> Force voice I/O device to Telco line.
+</UL>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="ATFLO">AT+FLO=&lt;value&gt;</A></H3>
+
+<OL>
+This parameter allows the DTE to identify and select the type(s) of
+flow control provided and used.
+<P>
+
+The range of the <value> is from 1 to 2.
+<PRE>
+1 -> Use XON/XOFF flow control in either direction
+2 -> Use CCITT Circuit 133 for flow control of the DCE by the DTE,
+    use CCITT Circuit 106 for flow control of the DTE by the DCE.
+</PRE>
+Default value is 1.
+<P>
+
+Result codes:
+<PRE>
+OK:    The DCE issues this result code if DCE accepts this command.
+ERROR: The DCE issues this result code if <value> is out of range.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="ATFLO?">AT+FLO?</A></H3>
+
+<OL>
+DCE will return current flow control mode followed by the OK result
+code.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="ATFLO=?">AT+FLO=?</A></H3>
+
+<OL>
+DCE will return permitted flow control modes.
+<P>
+
+The response is:
+<PRE>
+0-2
+OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="ATZ">ATZ</A></H3>
+
+<OL>
+This command causes the DCE to enter DATA MODE (AT+FCLASS=0) and
+set all of the voice related parameters to their default values.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<B><FONT SIZE=+2>V</FONT>OICE <FONT SIZE=+2>M</FONT>ODE <FONT SIZE=+2>C</FONT>OMMANDS</B>
+
+<H3><A NAME="AT+VBT=">AT+VBT=<I>value</I></A></H3>
+
+<OL>
+This command causes the DCE to set the default DTMF/tone generation
+duration used in conjunction with the AT+VTS command. 
+<P>
+
+The range of <value> is 1-255.  The units are 0.1 seconds.
+<P>
+
+<PRE>
+DCE Result codes:
+ OK:	if DCE accepts this command.
+ ERROR: if <I>value</I> parameter is out of range.
+</PRE>
+</OL>
+
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VBT?">AT+VBT?</A></H3>
+
+<OL>
+DCE will return current beep duration setting, followed by the OK
+result code.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VBT=?">AT+VBT=?</A></H3>
+
+<OL>
+DCE will return permitted values of beep duration. The response is:
+<PRE>
+   0-255
+   OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VDD">AT+VDD=<I>value</I></A></H3>
+
+<OL>
+This command sets the duration of a continous tone (DTMF) that must be
+present before the DCE will recognizes it and report it as a valid
+tone. This is in 5msec units.
+<P>
+
+The range of the &lt;value&gt; is from 0 to 255.
+Default value is 6.
+<P>
+
+Result codes:
+<PRE>
+OK:    The DCE issues this result code if DCE accepts this command.
+ERROR: The DCE issues this result code if <I>value</I> is out of range.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VDD?">AT+VDD?</A></H3>
+
+<OL>
+DCE will return current duration of a continous tone (DTMF),
+followed by the OK result code.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VDD=?">AT+VDD=?</A></H3>
+
+<OL>
+DCE will return permitted duration of a continous tone (DTMF).
+<P>
+
+The response is:
+<PRE>
+0-255
+OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+<P>
+
+<CITE>
+Note: This is not defined in IS-101. Once again this was requested by
+customers who were using the modem in overseas countries where
+the duration of a DTMF tone is not standard.
+</CITE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VDH=">AT+VDH=<I>value</I></A></H3>
+
+<OL>
+This command sets the threshold of the DTMF tone detection. Lowering
+the value increas the sensitivity. Please note that increasing the
+sensitivity by too much would cause false alarms where sounds could
+be intepreted as DTMF tones.
+<P>
+
+The range of the &lt;value&gt; is from 0 to 31.
+Default value is 16.
+<P>
+
+Result codes:
+<PRE>
+OK:    The DCE issues this result code if DCE accepts this command.
+ERROR: The DCE issues this result code if <I>value</I> is out of range.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VDH?">AT+VDH?</A></H3>
+
+<OL>
+DCE  will return current threshold of the DTMF tone detection, followed
+by the OK result code.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VDH=?">AT+VDH=?</A></H3>
+
+<OL>
+DCE will return permitted threshold of the DTMF tone detection.
+<P>
+
+The response is:
+<PRE>
+0-31
+OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+<P>
+
+<CITE>
+NOTE: This is not defined in IS-101. This command was added to enable
+the DCE to either increase or decrease its sensitivity to DTMF
+tones by defining the range of the threshold. This feature was
+added due to requests from customers.
+</CITE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VGT=">AT+VGT=<I>value</I></A></H3>
+
+<OL>
+This command causes the DCE to set the volume level for the
+transmitted voice samples.
+<P>
+
+The range of the <I>value</I> is from 0 to 255.
+The default value is 192.
+<P>
+
+Result codes:
+<PRE>
+OK:    The DCE issues this result code if DCE accepts this command.
+ERROR: The DCE issues this result code if <value> parameter is out of
+       range.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VGT?">AT+VGT?</A></H3>
+
+<OL>
+DCE will return current volume level, followed by the OK result code.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VGT=?">AT+VGT=?</A></H3>
+
+<OL>
+DCE will return permitted values of volume level. The response is:
+<PRE>
+0-255
+OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VIP">AT+VIP</A></H3>
+
+<OL>
+This command causes the DCE to initialize all the Voice parameters
+to the default settings as follows:
+<PRE>
+ Compression method		: 2-bit ADPCM
+ Silent threshold		: 15
+ Activity Timer			: 7 sec.
+ Silence interval		: 7 sec.
+ Ringback gone away timer 	: 7 sec.
+ Ringback never appeared timer	: 5.7 sec.
+ Default beep tone duration	: 1 sec.
+ Transmit Volume Selection	: 192
+ Default resync timer		: 50ms
+ Default VCON timer		: 16
+ Default DTMF det interval timer: 30ms
+ Default DTMF det threshold	: 16
+ Indicate S/W flow control	: Software
+</PRE>
+DCE Result codes:
+<PRE>
+ OK       if DCE accepts this command.
+ ERROR    if the DCE is not connected to at least one Voice
+	  I/O device.
+</PRE>
+
+<CITE>Note: Complies with the IS-101</CITE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VIT">AT+VIT=<I>value</I></A></H3>
+
+<OL>
+This command sets the DCE's initial value for the DTE/DCE Inactivity
+timer.
+<P>
+
+The range of the <I>value</I>; is from 0 to 255.  The units are 1 second.
+Default value is 7 sec.
+<P>
+
+Result codes:
+<PRE>
+OK:    The DCE issues this result code if DCE accepts this command.
+ERROR: The DCE issues this result code if <I>value</I> is out of range.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VIT?">AT+VIT?</A></H3>
+
+<OL>
+DCE will return current Inactive Timer, followed by the OK result
+code.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VIT=?">AT+VIT=?</A></H3>
+
+<OL>
+DCE will return permitted interval of Inactive Timer.
+<P>
+
+The response is:
+<PRE>
+0-255
+OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+<P>
+<CITE>Note: This does comply with IS-101</CITE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VLS=">AT+VLS=<I>device</I></A></H3>
+
+<OL>
+This command causes the DCE to select a voice I/O device.
+<P>
+
+The permitted values of <I>device</I> are:
+<PRE>
+ 0: disconnect all I/O devices 
+ 2: Telco line  
+ 8: External Microphone (Connect a Mic to dial-up line RJ-11 jack)
+16: Internal Speaker
+</PRE>
+DCE Result codes:
+<PRE>
+ OK :     if DCE accepts this command.
+ ERROR:   if <I>device</I> is not permitted.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VLS?">AT+VLS?</A></H3>
+
+<OL>
+DCE will return current I/O device followed by the OK
+result code.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VLS=?">AT+VLS=?</A></H3>
+
+<OL>
+DCE will return permitted I/O devices. The response is:
+<PRE>
+ 0,2,8,16
+ OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VNH=">AT+VNH=<I>value</I></A></H3>
+
+<OL>
+This command causes the DCE to disable or enable automatic hang-ups
+to a varying degree in the DATA and FAX modes.
+<P>
+
+The range of the <I>value</I> is from 0 to 2.
+<P>
+
+<I>value</I> = 0 (Default),
+<OL>the DCE shall not disable automatic hang-ups.</OL>
+<P>
+
+<I>value</I> = 1,
+<OL>the DCE shall disable automatic hang-ups. This behavior
+shall persist until the DTE issues ATH, ATZ, or AT+VIP
+command, or DTR drop.
+The DCE shall perform on hook on a ATH command.</OL>
+<P>
+
+<I>value</I> = 2,
+<OL>the DCE shall disable automatic hang-ups. This behavior
+shall persist until the DTE issues ATH, ATZ, or AT+VIP
+command, or DTR drop.
+The DCE shall not perform on hook on a ATH command. </OL>
+<P>
+
+Result codes:
+<PRE>
+OK:    The DCE issues this result code if DCE accepts this command.
+ERROR: The DCE issues this result code if <I>value</I> parameter
+       is out of range.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VNH?">AT+VNH?</A></H3>
+
+<OL>
+DCE will return current hang up mode, followed by the OK result code.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VNH=?">AT+VNH=?</A></H3>
+
+<OL>
+DCE will return permitted values of hangup mode. The response is:
+<PRE>
+   0-2
+   OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+<P>
+<CITE>NOTE: This does comply with IS-101</CITE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VRA=">AT+VRA=<I>value</I></A></H3>
+
+<OL>
+This command sets the amount of time the DCE shall wait between
+ringbacks before the DCE can assume that the remote station
+has gone off hook.  The default value is 70 (7 seconds).
+<P>
+
+The range of the <I>value</I> is from 0 to 255.  The units are 0.1
+second.  A value of zero forces the DCE to return VCON immediately
+after the ATD command is received.
+<P>
+
+DCE Result codes:
+<PRE>
+OK:    if DCE accepts this command.
+ERROR: if <I>value</I> is out of range.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VRA?">AT+VRA?</A></H3>
+
+<OL>
+DCE will return current Ringback Goes Away Timer, followed by the
+OK result code.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VRA=?">AT+VRA=?</A></H3>
+
+<OL>
+DCE will return the permitted interval of Ringback Goes Away
+Timer.  The response is:
+<PRE>
+ 0-255
+ OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+<P>
+<CITE>
+Note: This does comply with IS-101 except that ZyXEL default value
+                is set at 70. We derived this value after conducting numerous
+                tests and found it to be ideal with majority of the phone
+                systems.
+</CITE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VRN=">AT+VRN=<I>value</I></A></H3>
+
+<OL>
+This command sets the amount of time the DCE will wait looking for
+Ringback.  If the DCE does not detect a Ringback in this time period,
+the DCE shall assume that the remote station has gone off hook.
+<P>
+
+The range of the <I>value</I> is from 0 to 255. The units are 0.1 second.
+A value of zero forces the DCE to return VCON immediately after the
+ATD command is received.
+<P>
+
+DCE Result codes:
+<PRE>
+ OK :  if DCE accepts this command.
+ ERROR:     if <value> is out of range.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VRN?">AT+VRN?</A></H3>
+
+<OL>
+DCE will return current Ringback Never Appeared Timer, followed by
+the OK result code.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VRN=?">AT+VRN=?</A></H3>
+
+<OL>
+DCE will return the permitted interval of Ringback Never Appeared
+Timer.  The response is:
+<PRE>
+  0-255
+  OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+<P>
+<CITE>
+Note: This does comply with IS-101 except that ZyXEL default value is set
+      to 57. Once again we derived this value from numerous tests that were
+      conducted on different phone systems.
+</CITE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VRX">AT+VRX</A></H3>
+
+<OL>
+This command causes the DCE to start the voice reception process.
+<P>
+
+The DCE begins the voice receive mode by returning the CONNECT result
+code to the DTE.  After this report, the DCE sends &lt;DLE&gt; shielded
+Voice data to the DTE.
+<P>
+
+The DTE stops the voice receive state by sending a character other
+than <XON> and <XOFF>.  On termination of the voice receive state,
+the DCE will append a &lt;DLE&gt;&lt;ETX&gt; character pair, followed by the
+VCON result code.
+<P>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VSD=">AT+VSD=<I>sds</I>,<I>sdi</I></A></H3>
+
+<OL>
+This command causes the DCE to set the silence detection sensitivity,
+and the required period of silence before the DCE can report silence
+detected at the end of a voice receive either with the QUIET or
+SILENCE &lt;DLE&gt; shielded code.
+<P>
+
+See the description of the &lt;DLE&gt; shielded codes for the difference
+between SILENCE and QUIET report.
+<P>
+
+The range of the sensitivity <I>sds</I> is from 0 to 31.  Larger values
+of this parameter imply that the DCE should treat noisier conditions
+as silence.  A value of zero disables the DCE silence detection; the
+DCE shall not report QUIET or SILENCE &lt;DLE&gt; shielded codes.
+<P>
+
+The range of the interval <I>sdi</I> is 0-255 in units of 0.1 seconds.
+<P>
+
+DCE Result codes:
+<PRE>
+ OK :  if DCE accept this command.
+ ERROR:     if <sds> or <sdi> is out of range.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VSD?">AT+VSD?</A></H3>
+
+<OL>
+This command causes the DCE to report the current <sds> and <sdi>
+settings.  The form of the response is:
+<PRE>
+   <I>sds</I>,<I>sdi</I>
+   OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VSD=?">AT+VSD=?</A></H3>
+
+<OL>
+This command causes the DCE to report the permitted ranges of <I>sds</I>
+and <I>sdi</I>. The response is:
+<PRE>
+   (0-31),(0,255)
+   OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+<P>
+<CITE>
+Note: It does comply with the IS-101 except for the default values.
+              Our default values are 15 for <sds> and 70 for <sdi>. These
+              default values were derived to work with the majority of the 
+              phone systems found in the U.S. For example the reason we 
+              increased the required silence period from 5 secs to 7 secs we 
+              found that people tend to pause while leaving a message and it 
+              could cause a false alarm by reporting DLE<s> or DLE<q> and 
+              disconect a caller. On the other hand increasing it further 
+              could cause the phone company to intervene and therefore 
+              continue the recording.
+</CITE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VSM=">AT+VSM=<I>cml</I></A></H3>
+
+<OL>
+This command causes the DCE to select a compression method as
+follows:
+<PRE>
+   <I>cml</I> = 1, 9.6 KBps CELP (Code Excited Linear Prediction)
+   <I>cml</I> = 2 (Default), 19.2 KBps 2-bit ADPCM
+   <I>cml</I> = 3, 28.8 KBps 3-bit ADPCM
+   <I>cml</I> = 30, 30.7kpbs new 3-bit ADPCM
+   <I>cml</I> = 4, 38.4Kbps 4 bit ADPCM
+</PRE>
+Note: Only PLUS enhanced models support CELP mode.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VSM?">AT+VSM?</A></H3>
+
+<OL>
+This command causes the DCE to report the current compression
+setting in the following form:
+<PRE>
+  <I>cml</I>;<I>scs</I>;<I>vsr</I>
+  OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line. Where:
+<PRE>
+ <I>cml</I>: compression method label.
+ <I>scs</I>: silence compression sensitivity.
+ <I>vsr</I>: voice sampling rate.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VSM=?">AT+VSM=?</A></H3>
+
+<OL>
+This command causes the DCE to report the compression methods
+supported.  The response is as follows:
+<PRE>
+ 1;CELP;1;0;(9600)
+ 2;ADPCM;2;0;(9600)
+ 3;ADPCM;3;0;(9600)
+ 30;ADPCM;3;0;(9600)        
+ 4;ADPCM;4;0;(9600)
+ OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+<P>
+
+The first item in each line is the compression method label; the
+second item is the compression scheme; the third item is number of
+bits per sample; the fourth item is the silence detection threshold
+level; the fifth item is the sampling rate.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VSY=">AT+VSY=<I>value</I></A></H3>
+
+<OL>
+This command sets the DCE's voice recording re-sync timer.
+<P>
+
+The range of the <I>value</I> is from 0 to 255.  The units are 50ms.
+Default value is 1 (50ms).
+<P>
+
+Result codes:
+<PRE>
+OK:    The DCE issues this result code if DCE accepts this command.
+ERROR: The DCE issues this result code if <I>value</I> is out of range.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VSY?">AT+VSY?</A></H3>
+
+<OL>
+DCE will return current re-sync timer, followed by the OK result
+code.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VSY=?">AT+VSY=?</A></H3>
+
+<OL>
+DCE will return permitted interval of Inactive Timer.
+<P>
+
+The response is:
+<PRE>
+0-255
+OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+<P>
+
+<CITE>
+Note: Not defined in IS-101. This timer when set will allow the DTE
+to send this resync code(&lt;DLE&gt;&lt;FS&gt;) to signify the start of a
+new voice data stream with the same parameters as the last
+stream without first returning to the Voice Command State.
+The IS-101 does mention about "Timing Marks" but does not
+specify what interval you could set, nor a method of adjusting
+it. This will give the user the flexibility to start a new voice
+data stream at different points in the data stream.
+</CITE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VTS">AT+VTS=<I>string</I></A></H3>
+
+<OL>
+This command causes the DCE to produce DTMF and other tones.
+<P>
+
+The tone generation string consists of elements in a list with
+each element separated by commas.  Each element can be:
+<P>
+
+<OL>
+<LI> A single ASCII character in the set 0-9, A-D, #, and *.
+    The DCE interprets the ASCII character as a DTMF digit with a
+    duration as specified by the  AT+VBT command.
+
+<LI> Three numbers separated by commas and enclosed in square
+    brackets.  The DCE interprets the first and the second numbers
+    as the frequencies of the dual tones, and the third one as the
+    duration of the tone(s).
+
+    The frequency range is from 200 Hz to 3300 Hz; a frequency of
+    zero means silence.  The range of the duration is 0-255 with
+    units of 0.1 seconds.
+
+<LI> A single ASCII character and a number, separated by commas and
+    enclosed in curly braces. The DCE will interpret the ASCII
+    chracter as a DTMF digit, and the number as the duration of the
+    tone.
+</OL>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VTS=?">AT+VTS=?</A></H3>
+
+<OL>
+This command causes the DCE to report the allowable tone string
+elements. The response is as follows:
+<PRE>
+ (0,200-3300),(0,200-3300),0-9,A-D,*,#
+ OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+<P>
+<CITE>Note: Does comply with IS-101.</CITE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VTX">AT+VTX</A></H3>
+
+<OL>
+This command causes the DCE to start the voice transmission process.
+<P>
+
+The DCE begins the voice transmit mode by returning the CONNECT result
+code to the DTE.  After this report, the DCE accepts &lt;DLE&gt; shielded
+Voice data from the DTE.
+<P>
+
+The DTE stops the voice transmit state by sending a &lt;DLE&gt;&lt;ETX&gt;
+character pair to the DCE.  On termination of the voice transmit
+state, the DCE will send the VCON result code.
+<P>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VVT=">AT+VVT=<I>value</I></H3>
+
+<OL>
+This command causes the DCE to set the VCON response sensitivity,
+a higher value will decrease the sensitivity of a VCON response.
+The sole purpose of this command being added was to make it easier
+for a user to detect an off-hook when going through a different phone
+system or in some cases through a PBX. This accomplishes the same job
+as +VRA and +VRN but a lot easier to derive.
+<P>
+
+The range of the <I>value</I> is from 0 to 255.
+The default value is 16.
+<P>
+
+Result codes:
+<PRE>
+OK:    The DCE issues this result code if DCE accepts this command.
+ERROR: The DCE issues this result code if <I>value</I> parameter is out of
+       range.
+</PRE>
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAME="AT+VVT?">AT+VVT?</A></H3>
+
+<OL>
+DCE  will return current VCON sensitivity, followed by the OK
+result code.
+</OL>
+
+<HR WIDTH=65% ALIGN=right>
+<H3><A NAMe="AT+VVT=?">AT+VVT=?</A></H3>
+
+<OL>
+DCE will return permitted values of VCON sensitivity. The response is:
+<PRE>
+0-255
+OK
+</PRE>
+with &lt;CR&gt;&lt;LF&gt; between each line.
+<P>
+<CITE>Note: Not defined in the IS-101.</CITE>
+</OL>
+
+<P>
+<A HREF="@HTMLPATH@/Modems/ZyXEL/codes.html"><IMG SRC="@HTMLPATH@/icons/next.gif"> DLE-shielded codes</A>.<BR>
+<A HREF="@HTMLPATH@/Modems/ZyXEL/voice.html"><IMG SRC="@HTMLPATH@/icons/back.gif"> ZyXEL Advanced Voice Capability</A>.
+
+<HR>
+
+<ADDRESS>
+<A HREF="@HTMLPATH@/sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

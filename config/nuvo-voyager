@@ -1,0 +1,55 @@
+# $Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Configuration for using the Class 1 command interface with
+# a Nuvo Voyager 9624PFX (based on Rockwell RC224A)
+#
+# Note that XON/XOFF flow control must be used.
+#
+# CONFIG:CLASS1:242:.*:XONXOFF: Manufacturer=Nuvo Model="Voyager 9642PFX"
+# CONFIG:CLASS1:242:.*:DEFAULT: Manufacturer=Nuvo Model="Voyager 9642PFX"
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:		Class1		# hint to override class 2
+ModemRate:		19200		# locked for fax sending
+ModemFlowControl:	xonxoff		# default
+#
+ModemSetupDTRCmd:	AT&D2		# DTR off causes modem to hangup
+ModemSetupDCDCmd:	AT&C0		# DCD always on
+#
+ModemMfrQueryCmd:	!Nuvo
+ModemModelQueryCmd:	!9624PFX
+ModemRevQueryCmd:	ATI3
+#
+ModemDialCmd:		ATDT%s@		# T for tone dialing, @ for silence

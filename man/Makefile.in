@@ -1,0 +1,261 @@
+#!smake
+#	$Id$
+#
+# @WARNING@
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1988-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# VERSION:	@VERSION@
+# DATE:		@DATE@
+# TARGET:	@TARGET@
+# CCOMPILER:	@CCOMPILER@
+# CXXCOMPILER:	@CXXCOMPILER@
+#
+DEPTH=..
+@MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
+
+SRCDIR	= ${DEPTH}/${TOPSRCDIR}/man
+
+#
+# Manual page targets that are installed.
+#
+# These may be formatted or unformatted versions of the sources
+# above.  The transformation is controlled by definitions in the
+# system-specific defs files.
+#
+MANCAPP=cman.apps/hylafax.1	\
+	cman.apps/faxalter.1	\
+	cman.apps/faxcover.1	\
+	cman.apps/faxmail.1	\
+	cman.apps/faxrm.1	\
+	cman.apps/faxstat.1	\
+	cman.apps/sendfax.1	\
+	cman.apps/sendpage.1	\
+	cman.apps/sgi2fax.1	\
+	cman.apps/textfmt.1
+MANCFILE=cman.files/pagesizes.4f\
+	cman.files/typerules.4f
+MANSAPP=sman.apps/cqtest.1m	\
+	sman.apps/choptest.1m	\
+	sman.apps/dialtest.1m	\
+	sman.apps/faxabort.1m	\
+	sman.apps/faxaddmodem.1m\
+	sman.apps/faxanswer.1m	\
+	sman.apps/faxconfig.1m	\
+	sman.apps/faxmodem.1m	\
+	sman.apps/faxstate.1m	\
+	sman.apps/faxcron.1m	\
+	sman.apps/faxgetty.1m	\
+	sman.apps/faxinfo.1m	\
+	sman.apps/faxq.1m	\
+	sman.apps/faxqclean.1m	\
+	sman.apps/faxquit.1m	\
+	sman.apps/faxrcvd.1m	\
+	sman.apps/faxsend.1m	\
+	sman.apps/faxsetup.1m	\
+	sman.apps/faxstate.1m	\
+	sman.apps/faxwatch.1m	\
+	sman.apps/hfaxd.1m	\
+	sman.apps/mkcover.1m	\
+	sman.apps/notify.1m	\
+	sman.apps/pagesend.1m	\
+	sman.apps/pollrcvd.1m	\
+	sman.apps/ps2fax.1m	\
+	sman.apps/recvstats.1m	\
+	sman.apps/tagtest.1m	\
+	sman.apps/tiff2fax.1m	\
+	sman.apps/tiffcheck.1m	\
+	sman.apps/tsitest.1m	\
+	sman.apps/wedged.1m	\
+	sman.apps/xferstats.1m
+MANSFILE=sman.files/hylafax.4f	\
+	sman.files/cid.4f	\
+	sman.files/config.4f	\
+	sman.files/destctrls.4f	\
+	sman.files/dialrules.4f	\
+	sman.files/hosts.4f	\
+	sman.files/info.4f	\
+	sman.files/log.4f	\
+	sman.files/pagermap.4f	\
+	sman.files/recvq.4f	\
+	sman.files/sendq.4f	\
+	sman.files/shutdown.4f	\
+	sman.files/status.4f	\
+	sman.files/tsi.4f	\
+	sman.files/xferlog.4f
+TARGETS=cman.apps/Makefile cman.files/Makefile \
+	sman.apps/Makefile sman.files/Makefile
+
+#
+# System-specific manual page formatting commands should
+# apply this sed command to the manual page source before
+# handing it to the formatter.  This sets any pathnames
+# in the man pages to reflect local conventions.
+#
+MANSED=${SED}\
+	-e 's;\$${SPOOL};${SPOOL};g' \
+	-e 's;\$${BIN};${BIN};g' \
+	-e 's;\$${SBIN};${SBIN};g' \
+	-e 's;\$${LIBDATA};${LIBDATA};g' \
+	-e 's;\$${LIBEXEC};${LIBEXEC};g' \
+	-e 's;\$${AFMDIR};${AFMDIR};g' ${MANSEDLOCAL}
+
+default all targets:: ${TARGETS}
+
+@MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
+
+cman.apps: ${_FORCE}; test -d $@ || ${MKDIR} $@
+cman.files: ${_FORCE}; test -d $@ || ${MKDIR} $@
+sman.apps: ${_FORCE}; test -d $@ || ${MKDIR} $@
+sman.files: ${_FORCE}; test -d $@ || ${MKDIR} $@
+
+cman.apps/hylafax.1::	${SRCDIR}/hylafax.1;	${MANCVT}
+cman.apps/faxalter.1::	${SRCDIR}/faxalter.1;	${MANCVT}
+cman.apps/faxcover.1::	${SRCDIR}/faxcover.1;	${MANCVT}
+cman.apps/faxmail.1::	${SRCDIR}/faxmail.1;	${MANCVT}
+cman.apps/faxrm.1::	${SRCDIR}/faxrm.1;	${MANCVT}
+cman.apps/faxstat.1::	${SRCDIR}/faxstat.1;	${MANCVT}
+cman.apps/sendfax.1::	${SRCDIR}/sendfax.1;	${MANCVT}
+cman.apps/sendpage.1::	${SRCDIR}/sendpage.1;	${MANCVT}
+cman.apps/sgi2fax.1::	${SRCDIR}/sgi2fax.1;	${MANCVT}
+cman.apps/textfmt.1::	${SRCDIR}/textfmt.1;	${MANCVT}
+cman.files/pagesizes.4f:: ${SRCDIR}/pagesizes.4f; ${MANCVT}
+cman.files/typerules.4f:: ${SRCDIR}/typerules.4f; ${MANCVT}
+sman.apps/cqtest.1m::	${SRCDIR}/cqtest.1m;	${MANCVT}
+sman.apps/choptest.1m::	${SRCDIR}/choptest.1m;	${MANCVT}
+sman.apps/dialtest.1m::	${SRCDIR}/dialtest.1m;	${MANCVT}
+sman.apps/faxabort.1m::	${SRCDIR}/faxabort.1m;	${MANCVT}
+sman.apps/faxaddmodem.1m:: ${SRCDIR}/faxaddmodem.1m; ${MANCVT}
+sman.apps/faxanswer.1m::${SRCDIR}/faxanswer.1m;	${MANCVT}
+sman.apps/faxconfig.1m::${SRCDIR}/faxconfig.1m;	${MANCVT}
+sman.apps/faxcron.1m::	${SRCDIR}/faxcron.1m;	${MANCVT}
+sman.apps/hfaxd.1m:: ${SRCDIR}/hfaxd.1m;	${MANCVT}
+sman.apps/faxgetty.1m::	${SRCDIR}/faxgetty.1m;	${MANCVT}
+sman.apps/faxinfo.1m::	${SRCDIR}/faxinfo.1m;	${MANCVT}
+sman.apps/faxmodem.1m::	${SRCDIR}/faxmodem.1m;	${MANCVT}
+sman.apps/faxq.1m::	${SRCDIR}/faxq.1m;	${MANCVT}
+sman.apps/faxqclean.1m::${SRCDIR}/faxqclean.1m;	${MANCVT}
+sman.apps/faxquit.1m::	${SRCDIR}/faxquit.1m;	${MANCVT}
+sman.apps/faxrcvd.1m::	${SRCDIR}/faxrcvd.1m;	${MANCVT}
+sman.apps/faxsend.1m::	${SRCDIR}/faxsend.1m;	${MANCVT}
+sman.apps/faxsetup.1m::	${SRCDIR}/faxsetup.1m;	${MANCVT}
+sman.apps/faxstate.1m::${SRCDIR}/faxstate.1m;	${MANCVT}
+sman.apps/faxwatch.1m::${SRCDIR}/faxwatch.1m;	${MANCVT}
+sman.apps/mkcover.1m::	${SRCDIR}/mkcover.1m;	${MANCVT}
+sman.apps/notify.1m::	${SRCDIR}/notify.1m;	${MANCVT}
+sman.apps/pagesend.1m::	${SRCDIR}/pagesend.1m;	${MANCVT}
+sman.apps/pollrcvd.1m::	${SRCDIR}/pollrcvd.1m;	${MANCVT}
+sman.apps/ps2fax.1m::	${SRCDIR}/ps2fax.1m;	${MANCVT}
+sman.apps/recvstats.1m:: ${SRCDIR}/recvstats.1m; ${MANCVT}
+sman.apps/tagtest.1m::	${SRCDIR}/tagtest.1m;	${MANCVT}
+sman.apps/tiff2fax.1m::	${SRCDIR}/tiff2fax.1m;	${MANCVT}
+sman.apps/tiffcheck.1m::${SRCDIR}/tiffcheck.1m;	${MANCVT}
+sman.apps/tsitest.1m::	${SRCDIR}/tsitest.1m;	${MANCVT}
+sman.apps/wedged.1m::	${SRCDIR}/wedged.1m;	${MANCVT}
+sman.apps/xferstats.1m:: ${SRCDIR}/xferstats.1m; ${MANCVT}
+sman.files/hylafax.4f::	${SRCDIR}/hylafax.4f;	${MANCVT}
+sman.files/cid.4f::	${SRCDIR}/cid.4f;	${MANCVT}
+sman.files/config.4f::	${SRCDIR}/config.4f;	${MANCVT}
+sman.files/destctrls.4f:: ${SRCDIR}/destctrls.4f; ${MANCVT}
+sman.files/dialrules.4f:: ${SRCDIR}/dialrules.4f; ${MANCVT}
+sman.files/hosts.4f::	${SRCDIR}/hosts.4f;	${MANCVT}
+sman.files/info.4f::	${SRCDIR}/info.4f;	${MANCVT}
+sman.files/log.4f::	${SRCDIR}/log.4f;	${MANCVT}
+sman.files/pagermap.4f::${SRCDIR}/pagermap.4f;	${MANCVT}
+sman.files/recvq.4f::	${SRCDIR}/recvq.4f;	${MANCVT}
+sman.files/sendq.4f::	${SRCDIR}/sendq.4f;	${MANCVT}
+sman.files/shutdown.4f::${SRCDIR}/shutdown.4f;	${MANCVT}
+sman.files/status.4f::	${SRCDIR}/status.4f;	${MANCVT}
+sman.files/tsi.4f::	${SRCDIR}/tsi.4f;	${MANCVT}
+sman.files/xferlog.4f::	${SRCDIR}/xferlog.4f;	${MANCVT}
+
+LDIRT=	${MANCAPP} ${MANCFILE} ${MANSAPP} ${MANSFILE}
+
+cman.apps/Makefile: ${DEPTH}/defs cman.apps ${MANCAPP}
+	${RM} -f cman.apps/Makefile
+	(${ECHO} '#!smake';						\
+	 ${ECHO} 'DEPTH=../..';						\
+	 ${ECHO} '@MAKEINCLUDE@ @MAKELQUOTE@$${DEPTH}/defs@MAKERQUOTE@';\
+	 ${ECHO} 'install:';						\
+	 (cd cman.apps; for i in *.1; do				\
+	    f=${MANCAPPNAME};						\
+	    ${ECHO} '	$${INSTALL} -m 444 -F $${MAN}/$${MANAPPS}	\
+		-idb $${PRODUCT}.man.client -src' "$$i" '-O' "$$f";	\
+	 done)								\
+	)>cman.apps/Makefile
+cman.files/Makefile: ${DEPTH}/defs cman.files ${MANCFILE}
+	${RM} -f cman.files/Makefile
+	(${ECHO} '#!smake';						\
+	 ${ECHO} 'DEPTH=../..';						\
+	 ${ECHO} '@MAKEINCLUDE@ @MAKELQUOTE@$${DEPTH}/defs@MAKERQUOTE@';\
+	 ${ECHO} 'install:';						\
+	 (cd cman.files; for i in *.4f; do				\
+	    f=${MANCFILENAME};						\
+	    ${ECHO} '	$${INSTALL} -m 444 -F $${MAN}/$${MANFILES}	\
+		-idb $${PRODUCT}.man.client -src' "$$i" '-O' "$$f";	\
+	 done)								\
+	)>cman.files/Makefile
+sman.apps/Makefile: ${DEPTH}/defs sman.apps ${MANSAPP}
+	${RM} -f smap.apps/Makefile
+	(${ECHO} '#!smake';						\
+	 ${ECHO} 'DEPTH=../..';						\
+	 ${ECHO} '@MAKEINCLUDE@ @MAKELQUOTE@$${DEPTH}/defs@MAKERQUOTE@';\
+	 ${ECHO} 'install:';						\
+	 (cd sman.apps; for i in *.1m; do				\
+	    f=${MANSAPPNAME};						\
+	    ${ECHO} '	$${INSTALL} -m 444 -F $${MAN}/$${MANSYS}	\
+		-idb $${PRODUCT}.man.server -src' "$$i" '-O' "$$f";	\
+	 done)								\
+	)>sman.apps/Makefile
+sman.files/Makefile: ${DEPTH}/defs sman.files ${MANSFILE}
+	${RM} -f sman.files/Makefile
+	(${ECHO} '#!smake';						\
+	 ${ECHO} 'DEPTH=../..';						\
+	 ${ECHO} '@MAKEINCLUDE@ @MAKELQUOTE@$${DEPTH}/defs@MAKERQUOTE@';\
+	 ${ECHO} 'install:';						\
+	 (cd sman.files; for i in *.4f; do				\
+	    f=${MANSFILENAME};						\
+	    ${ECHO} '	$${INSTALL} -m 444 -F $${MAN}/$${MANFILES}	\
+		-idb $${PRODUCT}.man.server -src' "$$i" '-O' "$$f";	\
+	 done)								\
+	)>sman.files/Makefile
+
+installClientManPages:: cman.apps/Makefile cman.files/Makefile
+	-${INSTALL} -m ${DIRMODE} -dir -idb hylafax.man.client \
+	    ${MAN} ${MAN}/${MANAPPS} ${MAN}/${MANFILES}
+	cd cman.apps; ${MAKE} install
+	cd cman.files; ${MAKE} install
+
+installServerManPages:: sman.apps/Makefile sman.files/Makefile
+	-${INSTALL} -m ${DIRMODE} -dir -idb hylafax.man.server \
+	    ${MAN} ${MAN}/${MANSYS} ${MAN}/${MANFILES}
+	cd sman.apps; ${MAKE} install
+	cd sman.files; ${MAKE} install
+
+installClient: targets installClientManPages
+install: installClient installServerManPages

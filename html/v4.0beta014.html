@@ -1,0 +1,164 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Changes in HylaFAX v4.0beta014
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>C</FONT>HANGE <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+<B>Current Version</B>: v4.0beta014<BR>
+<B>Previous Version</B>: <A HREF="v4.0beta013.html">v4.0beta013</A><BR>
+<B>Master FTP Site</B>: <A HREF="ftp://sgi.com/sgi/fax">sgi.com (192.48.153.1), directory sgi/fax</A><BR>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+</UL>
+
+<P>
+Note that this is a <STRONG>major new distribution</STRONG> and lots
+of things have changed.  Consult the <A HREF="hylafax4.0.html">general overview</A>
+for a high-level description of the new functionality provided in the
+v4.0 software.
+
+<P>
+This document describes the changes made to the software between the
+<I>previous</I> and <I>current</I> versions (see above).
+If you don't find something listed here, then it was not done in this
+timeframe, or it was not considered important enough to be mentioned.
+The following information is located here:
+<UL>
+<LI><A HREF="#configure">Changes in the software configuration</A>
+<LI><A HREF="#faxq">Changes to faxq</A>
+<LI><A HREF="#faxsend">Changes to faxsend</A>
+<LI><A HREF="#pagesend">Changes to pagesend</A>
+<LI><A HREF="#faxgetty">Changes to faxgetty</A>
+<LI><A HREF="#hfaxd">Changes to hfaxd</A>
+<LI><A HREF="#faxalter">Changes to faxalter</A>
+<LI><A HREF="#sendpage">Changes to sendpage</A>
+<LI><A HREF="#faxsetup">Changes to faxsetup</A>
+<LI><A HREF="#faxmail">Changes to faxmail</A>
+<LI><A HREF="#misc">Changes in miscellaneous stuff</A>
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
+
+<UL>
+<LI><B>configure</B> now verifies the version of the configured TIFF software
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxq"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXQ:</B></A>
+
+<UL>
+<LI>the filenames for continuation cover pages were made to follow the
+    document naming conventions so that they are properly handled by
+    the document reference counting logic
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxsend"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXSEND:</B></A>
+
+<UL>
+<LI>time spent connected to a remote device is now recorded in addition
+    to the total time spent processing a job
+<LI>a bug was corrected in the processing of jobs that get a
+     communication error that causes an incomplete document to be sent
+<LI>the <TT>Class1RecvIdentTimer</TT> configuration parameter is now
+    correctly parsed
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="pagesend"><B><FONT SIZE=+3>C</FONT>HANGES TO PAGESEND:</B></A>
+
+<UL>
+<LI>time spent connected to a remote device is now recorded in addition
+    to the total time spent processing a job
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxgetty"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXGETTY:</B></A>
+
+<UL>
+<LI>a FreeBSD compilation problem was fixed
+<LI>a new configuration parameter <TT>ModemReadyState</TT> was added
+    to statically define the modem state to pass to <B>faxq</B> when
+    a modem becomes ready for use
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="hfaxd"><B><FONT SIZE=+3>C</FONT>HANGES TO HFAXD:</B></A>
+
+<UL>
+<LI>support was added to map between fax UIDs and symbolic names
+<LI>setting job parameters that have side effects is now handled properly
+<LI>the SNPP support was changed to workaround a Solaris 2.5 bug that
+    caused binding to a privileged port to fail
+<LI>a bug was fixed in the event logging support that caused <B>hfaxd</B>
+    to dump core
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxalter"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXALTER:</B></A>
+
+<UL>
+<LI>the handling of time values was corrected
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="sendpage"><B><FONT SIZE=+3>C</FONT>HANGES TO SENDPAGE:</B></A>
+
+<UL>
+<LI>the default SNPP server is now intialized to be on the ``localhost''
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxsetup"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXSETUP:</B></A>
+
+<UL>
+<LI>fixups for Solaris systems
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="misc"><B><FONT SIZE=+3>C</FONT>HANGES IN MISCELLANEOUS STUFF:</B></A>
+
+<UL>
+<LI>the <B>xferstats</B>, <B>recvstats</B>, and <B>faxcron</B> scripts
+    were updated to handle the new xferlog format
+<LI>the dial rules files now map alphabetic characters to their numeric
+    equivalents when forming a string to pass to the modem
+<LI>the calling sequence to <TT>parseAtSyntax</TT> was changed to avoid
+    problems with callers not allocating enough space to return an error
+    message
+</UL>
+
+<!--FOOTER-->
+
+<A HREF="toc.html"><IMG SRC="icons/back.gif"></A> HylaFAX table
+of contents.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

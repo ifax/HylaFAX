@@ -1,0 +1,153 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Changes in HylaFAX v4.0beta012
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>C</FONT>HANGE <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+<B>Current Version</B>: v4.0beta012<BR>
+<B>Previous Version</B>: <A HREF="v4.0beta011.html">v4.0beta011</A><BR>
+<B>Master FTP Site</B>: <A HREF="ftp://sgi.com/sgi/fax">sgi.com (192.48.153.1), directory sgi/fax</A><BR>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+</UL>
+
+<P>
+Note that this is a <STRONG>major new distribution</STRONG> and lots
+of things have changed.  Consult the <A HREF="hylafax4.0.html">general overview</A>
+for a high-level description of the new functionality provided in the
+v4.0 software.
+
+<P>
+This document describes the changes made to the software between the
+<I>previous</I> and <I>current</I> versions (see above).
+If you don't find something listed here, then it was not done in this
+timeframe, or it was not considered important enough to be mentioned.
+The following information is located here:
+<UL>
+<LI><A HREF="#general">General changes</A>
+<LI><A HREF="#configure">Changes in the software configuration</A>
+<LI><A HREF="#faxsend">Changes to faxsend</A>
+<LI><A HREF="#faxgetty">Changes to faxgetty</A>
+<LI><A HREF="#hfaxd">Changes to hfaxd</A>
+<LI><A HREF="#faxaddmodem">Changes to faxaddmodem</A>
+<LI><A HREF="#faxsetup">Changes to faxsetup</A>
+<LI><A HREF="#misc">Changes in miscellaneous stuff</A>
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="general"><B><FONT SIZE=+3>G</FONT>ENERAL CHANGES:</B></A>
+
+<UL>
+<LI>support was added for using an ``external getty'' application to
+   deduce--and possibly handle--an inbound call
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
+
+<UL>
+<LI>the pathname for the AFM files was moved to <B>config.h</B> to
+    avoid passing it on the command line (certain systems apparently
+    have problems with this)
+<LI>a new parameter <TT>PATH_EGETTY</TT> was added for the external
+    getty support
+<LI>the <TT>MACHDEPLIBS</TT> parameter no longer grows with each run
+    of <B>configure</B>
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxsend"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXSEND:</B></A>
+
+<UL>
+<LI>the jobtag field in the xferlog accounting record is now truncated at
+   80 characters and quote marks contained in strings are escaped
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxgetty"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXGETTY:</B></A>
+
+<UL>
+<LI>a new method for answering the telephone was added: ``extern''
+    to cause an external application to be invoked to deduce (and
+    possibly handle) an inbound call
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="hfaxd"><B><FONT SIZE=+3>C</FONT>HANGES TO HFAXD:</B></A>
+
+<UL>
+<LI>a more portable technique is now used to calculate the time differential
+    between the local timezone and GMT
+<LI>a bug was fixed in the support for the old client-server protocol that
+    caused cover pages from <EM>very old</B> clients to be interpreted
+    as protocol requests
+<LI>the <TT>JOBINFO</TT> job parameter is now properly handled
+<LI>a portability problem to 64-bit systems was corrected
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxsetup"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXSETUP:</B></A>
+
+<UL>
+<LI>several typos were corrected
+<LI>use of <TT>chdir</TT> has been replaced by <TT>cd</TT>
+<LI>the FIFO checking logic was corrected
+<LI>workarounds were added for GNU gawk
+<LI>the process name matching logic in <TT>findproc</TT> for BSD-style
+   systems was improved
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxaddmodem"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXADDMODEM:</B></A>
+
+<UL>
+<LI>the scheduler configuration file is now read before prompting for
+    server-related configuration parameters; this makes it easier to
+    fill in information such as area code
+<LI>a missing function was put back (it got removed as part of the
+    <B>faxsetup</B> split)
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="misc"><B><FONT SIZE=+3>C</FONT>HANGES IN MISCELLANEOUS STUFF:</B></A>
+
+<UL>
+<LI><B>port/install.sh</B> now checks if a ``synthesized target'' already
+    exists and if it does then it does not attempt to recreate it (this
+    eliminates diagnostics about directories, FIFO files, and symbolic
+    links that already exist)
+<LI>the <B>notify.awk</B> script has been fixed up slightly
+<LI><B>recvstats</B> was fixed to properly handle the new xferlog format
+</UL>
+
+<!--FOOTER-->
+
+<A HREF="toc.html"><IMG SRC="icons/back.gif"></A> HylaFAX table
+of contents.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

@@ -1,0 +1,116 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH FAXSTATE 1M "July 17, 1995"
+.SH NAME
+faxstate \- control ``modem state'' of a device used by \*(Fx
+.SH SYNOPSIS
+.B ${SBIN}/faxstate
+[
+.B \-q
+.I queue-dir
+] [
+.B \-s
+.I state
+] [
+.B \-n
+]
+.I modem
+.SH DESCRIPTION
+.I faxstate
+sends a message to the \*(Fx
+.IR faxgetty (1M)
+process servicing
+.I modem
+telling it to use the specified state when notifying the
+\*(Fx scheduler that a modem is ready and available for use.
+This is useful for controlling outbound use of a modem; by
+marking a modem's state as 
+.I busy
+or
+.I down
+the \*(Fx scheduler will not assign any outbound jobs to the modem.
+.PP
+The specified
+.I modem
+can either be the name (typically the
+last component of the terminal port the
+modem is attached to), or the full name
+of the associated 
+.SM FIFO
+named pipe file, e.g. ``\s-1FIFO\s+1.ttym2''.
+.PP
+If the
+.B \-n
+option, 
+.I faxstate
+emulates what 
+.I faxgetty
+would do; sending a message directly to the
+.I faxq
+process marking the specified modem down, busy, or ready.
+This interface is useful for send-only environments in which
+.I faxgetty
+processes are not used.
+Note that modems manipulated in this way must previously have
+been configured with the
+.IR faxmodem (1M)
+program.
+.SH OPTIONS
+The following options are supported:
+.TP 10
+.B \-n
+Contact
+.I faxq
+directly instead of
+.IR faxgetty .
+.TP 10
+.BI \-q " dir"
+Use a spooling area other than
+.IR ${SPOOL} .
+.TP 10
+.B \-s
+Specify the state to send the
+.I faxq
+process each time the modem becomes ready for use; one of ``\c
+.IR busy '',
+``\c
+.IR down '',
+and ``\c
+.IR ready ''.
+The default state to use is 
+.IR ready .
+.SH FILES
+Consult
+.IR hylafax (4F)
+for a complete discussion of the structure and
+content of the spooling area.
+.SH "SEE ALSO"
+.IR hylafax (4F),
+.IR faxgetty (1M)

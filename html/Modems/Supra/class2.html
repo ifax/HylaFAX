@@ -1,0 +1,1582 @@
+<HTML>
+<HEAD>
+<TITLE>CLASS 2 FAX COMMANDS FOR SUPRA FAXMODEMS</TITLE>
+</HEAD>
+
+<BODY>
+
+<H1>
+SUPRA TECHNICAL SUPPORT BULLETIN <BR>
+CLASS 2 FAX COMMANDS FOR SUPRA FAXMODEMS <BR>
+6/19/92<BR>
+</H1>
+
+<PRE>
+Supra Corporation
+7101 Supra Drive SW, Albany, OR  97321
+General (503) 967-2400 / Sales (503) 967-2410 / Fax (503) 967-2401
+Supra Tech Support  (503) 967-2440  8:00am - 5:00pm PST, M-F
+
+Supra BBS........(503) 967-2444  24 Hours
+CompuServe.......76004,565
+BIX..............SupraCorp
+America Online...SupraCorp2
+GEnie............SupraTech
+AppleLink........D2456
+UseNet EMail.....supratech%supra.uucp@cs.orst.edu
+            .....supra!supratech@cs.orst.edu
+</PRE>
+
+<H2>SUPRA's DISCLAIMER:</H2>
+
+   The following information has been taken from Rockwell's RC144AC 
+manual. It has not been taken from the CCITT Class 2 documentation, 
+which is copyrighted by the CCITT.  This information is provided for 
+educational purposes only.  To fully understand this information 
+requires a through knowledge of the T.4 fax image and the T.30 fax 
+session protocol standards.  Due to the nature of this information, 
+Supra's engineers and technical support can not and will not provide any 
+help or support on this information.  While a majority of this 
+information is correct, neither Supra nor Rockwell implies or warranties 
+that the SupraFaxModem will work exactly as documented here. This 
+information is based on an early draft of Class 2, which has undergone 
+further revisions and changes by the CCITT TR29.2 committee.  We 
+STRONGLY urge anyone attempting to develop fax software to get the 
+required documentation from Global Engineering or the TIA.
+<P>
+
+<H2>SHORT HISTORY OF CLASS 1 AND 2</H2>
+
+  In 1988 the CCITT TR29.2 committee accepted the Class 1 standard for 
+communication between fax software and fax modems.  The committee also 
+voted on, but did not accept for various technical reasons, the Class 2 
+standard.  A year later, they had slightly revised the standard but 
+again did not accept it.  Software and hardware manufactures decided to 
+unofficially adopt this standard until the TR29.2 committee could 
+develop an acceptable standard.  Since so many companies have used the 
+unoffical standard, the TR29.2 committee has designated that when the 
+standard is offically adopted it will be known as Class 2.0.  Over the 
+last year or so, the TR29.2 committee has voted on several revisions to 
+the Class 2 standard.  Their last vote was early May '92.  A no vote for 
+technical reasons was entered.  The TR29.2 committee is now reviewing 
+the technical issues that were raised.  At this time, Supra has not 
+heard of a projected date for the next ballot.
+<P>
+
+<H2>WHAT IS THE DIFFERENCE BETWEEN CLASS 1 AND 2</H2>
+
+  Class 1 fax software handles all of the T.4 fax image and T.30 session 
+protocol information and timming.  Thus, the ability to communicate 
+properly with various fax machines is more a function of the software 
+than the fax modem.  Class 2 fax software generates a T.4  fax page 
+image and sends it to the fax modem a page at a time.  The fax modem 
+then handles the T.30 session protocol information and timming.  This 
+relieves the computer's cpu from some work.  The ability to communicate 
+properly with various fax machines is more a function of the fax modem 
+than the software.  However, to further complicate matters, class 2 fax 
+software can issue Class 1 commands and take over some of the duties of 
+the Class 2 fax modem.  
+<P>
+
+  When customers have a problem communicating correctly with a fax 
+machine/modem, it can be very difficult to determine which is at fault,
+ the software or the hardware.  Supra has collected numerous Class 1 and 
+2 fax software for a variety of different computers.  When we receive a 
+report of a problem, we use these programs to determine if it is a 
+software or hardware problem.  If it is a hardware problem, we notify 
+Rockwell, otherwise we notify the software company.
+<P>
+
+<H2>BUG REPORTS</H2>
+
+  Supra is dedicated to making the best product for the best price.  If 
+you feel that you have found a bug, please fax or send a letter to the 
+attention of:
+<PRE>
+   SUPRA V32/BIS FAX BUG
+</PRE>
+Please fully describe the 'bug' (specific steps to generate it, phone 
+numbers to call, make and model of fax/modem, rev of our ROM (from I3 
+command) ), why you believe that it is a bug, what specific section of 
+Class 2 applies to this bug and how you would like the bug to be fixed.  
+Please remember that there are issues that have not been addressed or 
+settled by the TR29.2 committee in the Class 2 specifications. (i.e. how 
+the DCD and DTR lines are handled while in fax mode.)
+<P>
+
+<H2>WHERE TO GET OFFICIAL FAX DOCUMENTATION</H2>
+
+<PRE>
+  Telecommunications Industry Association
+  1722 Eye St. NW
+  Suite 440
+  Washington, DC  20006
+</PRE>
+
+You need to ask for:
+
+<DL>
+<DD>Class 1 documentation - EIA/TIA-578
+<DD>Class 2 documentation - Electronic Industries Association and 
+Telecommunications Industry Association TIA Project Number 2388, 
+Asynchronous Facsimile DCE Control Standard, Service Class 2, TR-29.2 
+Committee Letter Ballot
+</DL>
+
+<PRE>
+  Global Engineering Documents                     
+  2805 McGaw Ave
+  Irvin, CA  92713 
+  800-854-7179
+  714-261-1455
+  714-261-7892 (Fax)     
+</PRE>
+
+You need to ask for:
+<DL>
+<DD>EIA/TIA-578 - Class 1 documentation
+<DD>EIA/TIA-592 - Class 2 documentation
+<DD>CCITT v7.3  - T.1 - T.90 standards, includes T.4 & T.30
+</DL>
+
+(The cost for the above docs will run close to $200.  But Global will 
+also update you on any changes or additions to those standards you 
+purchase.)
+<P>
+
+Global Engineering will not have the Class 2 documentation until approx. 
+a month after the TR29.2 committee accepts it.  Most of those companies 
+which have developed Class 2 fax software either sit on the TR29.2 
+committee or know someone who does.  It may be possible to receive the 
+documentation from the TIA if you present a credible proposal.  Supra 
+has no knowledge of what this proposal should consist of or who you need 
+to talk to.
+<P>
+
+
+See also
+<A HREF="class1.html">CLASS 1 FAX COMMANDS FOR SUPRA FAXMODEMS</A>
+which is available on Supra BBS.
+<P>
+
+<H2>7.1  COMMAND SYNTAX AND GUIDELINES</H2>
+
+<H3>7.1.1 DTE COMMANDS</H3>
+
+The ISO 646 character set (T.50 International Alphabet 5, American 
+Standard Code for Information Interchange) is used for the issuance of 
+commands and responses.  Only the low-order 7 bits of each character are 
+used for commands or parameters; the high order bit is ignored.  Upper 
+case characters are equivalent to lower case characters.
+<P>
+
+For Phase C data transmission or reception, all 8 bits are needed.
+<P>
+
+<H4>DTE COMMAND LINES</H4>
+
+A command line is a string of characters sent from a DTE to the DCE 
+while the DCE is in a command state.  Command lines have a prefix, a 
+body, and a terminator.  The prefix consists of the ASCII characters 
+'AT' (065, 084) or 'at' (097, 116).  The body is a string of commands 
+restricted to printable ASCII characters, (032-126).  Space characters 
+(ASCII 032) and control characters other than CR (013) and BS (010) in 
+the command string are ignored.  The default terminator is the ASCII 
+&lt;CR&gt; character.  Characters that precede the AT prefix are ignored.
+<P>
+
+<H4>BASIC COMMAND SYNTAX</H4>
+
+Characters within the command line are parsed as commands with 
+associated parameter values.  The basic commands consist of single ASCII 
+characters, or single characters preceded by a prefix character (e.g., 
+'&'), followed by a decimal parameter.
+<P>
+
+Missing decimal parameters are evaluated as 0.
+<P>
+
+<H4>EXTENDED COMMAND SYNTAX</H4>
+
+The facsimile commands use extended syntax.  They are preceded by the 
+'+F' characters, and they are terminated by the semicolon ';' character 
+(059) or by the &lt;CR&gt; that terminated the command line.
+<PRE>
+         AT+FAA=0         ;+FCR 1 &lt;CR&gt;
+</PRE>
+This command instructs the DCE to answer automatically a data or fax 
+call and also enables reception.
+<PRE>
+         AT+FCLASS=0 &lt;CR&gt;      for data mode
+         AT+FCLASS=1 &lt;CR&gt;      for Service Class 1 Fax
+         AT+FCLASS=2 &lt;CR&gt;      for Service Class 2 Fax
+</PRE>
+In Class 2, the DCE makes and terminates calls, manages the 
+communication session and negotiates (T.30 protocol) and transports the 
+image date to DTE.  The T.4 protocol management of image data, etc. is 
+done by DTE.
+<P>
+
+The response to 
+<PRE>       AT+FCLASS=0&lt;CR&gt;       in Data Mode</PRE>
+or
+<PRE>       AT+FCLASS=2&lt;CR&gt;       in Service Class 2 Fax</PRE>
+is
+<PRE>       OK</PRE>
+
+The service class may be set by the DTE from the choices available using 
+the '+FCLASS=<VALUE>' command.
+<P>
+
+<H4>GENERAL RULES</H4>
+
+<OL>
+<LI>  +Fnnn commands must be entered completely otherwise an 
+    ERROR response is sent.
+
+<LI>  All response messages are preceded and followed by &lt;CR&gt;&lt;LF&gt;. 
+    Multiple response commands, e.g., +FDIS:+FCSI: and +FDCS, will 
+    therefore appear to a have a blank line between them.
+
+<LI>  Fax Class 2 commands can be separated by the ";" character.  The ";" 
+    can be omitted if desired.  Note that non-data commands cannot be 
+    separated by ";" which is allowed as a dial modifier.
+
+<LI>  All class 2 commands are assumed to be the final command on a 
+    command line.  Additional characters will be ignored.
+
+<LI>  An ERROR message will be generated if any of the following 
+    conditions:
+    <DD>a.  A class 1 command is received while in Class 2.
+    <DD>b.  A Class 2 command is received while in Class 1.
+    <DD>c.  A Class 1 or Class 2 action command is received while in data 
+          odem mode
+    <DD>d.  A Class 2 read-only parameter is given the "=" form of a +F 
+          command (e.g., AT+FAXERR=5).
+    <DD>e.  A class 2 action command is given the inappropriate "=" or 
+          "=?" (e.g., AT+FDR=?).
+</OL>
+
+<H3>7.1.2 SERIAL PORT SPEED AND FLOW CONTROL</H3>
+
+During fax mode, the DTE-DCE port speed is 19200 bps.
+<P>
+
+The DCE provides a speed buffer of 1024 bytes and provides DC1/DC3 
+(XON/XOFF) or RTS/CTS method of controlling the data into the buffer.  
+This flow control is controlled by AT&K3 or AT&K4 command.
+<P>
+
+This method of data flow control is available only for DTE to DCE 
+direction of data.  There is no provision for data flow control from DCE 
+to DTE.
+<P>
+
+<H4>DATA STREAM TERMINATION</H4>
+
+The DCE exchanges streams of data with the DTE while executing data 
+transfer commands.  These use data stream termination described in 
+Section 3.2/ISO 2111.
+<P>
+
+The ASCII &lt;DLE&gt; character (016) is used as a special character to shield 
+special characters.  The &lt;DLE&gt;&lt;ETX&gt; character pair (<106><003>) is used 
+to mark the end of a stream.  The following patterns are used:
+<PRE>
+   any data....&lt;DLE&gt;&lt;ETX&gt;       end of stream
+   any data....&lt;DLE&gt;&lt;DLE&gt;       single &lt;DLE&gt; in data
+   any data....&lt;DLE&gt;&lt;<I>any byte</I>&gt;  delete &lt;DLE&gt;&lt;<I>any byte</I>&gt;
+</PRE>
+
+<H4>DTE to DCE STREAMS</H4>
+
+The DCE filters the data stream from the DTE, and removes all character 
+pairs beginning with &lt;DLE&gt;.  The DCE recognizes &lt;DLE&gt;&lt;ETX&gt; as the stream 
+terminator.  The DCE recognizes &lt;DLE&gt;&lt;DLE&gt; and reinserts a single &lt;DLE&gt; 
+in its place.
+<P>
+
+The DTE must filter stream data to the DCE, and insert extra &lt;DLE&gt; 
+characters ahead of data.
+<P>
+
+<H4>DCE TO DTE STREAMS</H4>
+
+The DTE must filter the data stream from the DCE, and remove all 
+character pairs beginning with &lt;DLE&gt;.  The DTE must recognize &lt;DLE&gt;&lt;ETX&gt; 
+as the stream terminator.  The DTE must recognize &lt;DLE&gt;&lt;DLE&gt; and 
+reinsert a single &lt;DLE&gt; in its place.
+<P>
+
+The DCE filters stream data to the DTE, and inserts extra &lt;DLE&gt; 
+characters ahead of data.
+<P>
+
+<H3>7.1.3  AUTO ANSWER</H3>
+
+The DCE can answer as a data DCE or as a fax DCE.  It can answer the 
+call adaptively, i.e. it can determine whether call is 'data' or 'fax'.  
+The +FAA parameter controls this feature.
+<PRE>
+     AT+FAA=1           ; Auto answer as a facsimile or a
+                        ; data modem depending on call
+
+     CONNECT xxx        ; DCE status response if data call
+
+     +FCON              ; DCE status response if fax call
+</PRE>
+
+<H3>7.1.4  IDENTIFICATION OF T.30 OPTIONS</H3>
+
+Group 3 devices negotiate session parameters in DIS, DCS and DTC frames. 
+ These parameters are defined in table 8.2.
+<P>
+
+<H3>7.1.5  SESSION STATUS REPORTING</H3>
+
+The DCE provides reports to the DTE on the status of a session.  The DCE 
+provides following status reports:
+
+<OL>
+<LI>  Connection and hang up status:
+<PRE>
+        +FCON
+
+        +FHNG:&lt;0-255&gt;
+</PRE>
+<LI>  Requested DIS session parameters +FDIS:<string> reports remote 
+    facsimile capabilities.
+<PRE>
+        Syntax:+FDIS:VR, BR, WD, LN, DF, EC, BF, ST
+</PRE>
+<LI>  +FDCS:&lt;<I>string</I>&gt; reports the negotiated parameters
+
+<LI>  Phase C prompts:
+<PRE>
+        XON, XOFF, DC2
+</PRE>
+<LI>  Phase C base status reports: depending upon copy quality and related 
+    end-of page status:
+<PRE>
+        +FPTS:&lt;1-5&gt;
+</PRE>
+</OL>
+
+<H3>7.1.6  PROCEDURE INTERRRUPT NEGOTIATION</H3>
+
+CCITT allows a station to request a procedure interruption at the end of 
+a page.  This request is passed between stations by the PIP, PIN, and 
+PRI-Q messages.
+
+
+<PRE>
+<A NAME="Table7-1">TABLE 7-1. FAX CLASS 2 COMMANDS</A>
+-----------------------------------------------------------
+|   Command        Function                               |
+|---------------------------------------------------------|
+|   SERVICE CLASS ID                                      |
+|---------------------------------------------------------|
+|   +FCLASS=       Service Class                          |
+|---------------------------------------------------------|
+|   CLASS 2 ACTION COMMANDS                               |
+|---------------------------------------------------------|
+|   D              Originate a call                       |
+|   A              Answer a call                          |
+|   +FDT=          Data Transmission                      |
+|   +FET=N         Transmit Page Punctuation              |
+|   +FDR           Begin or Continue Phase C Receive Data |
+|   +FK            Session Termination                    |
+|---------------------------------------------------------|
+|  CLASS 2 DCE RESPONSES                                  |
+|---------------------------------------------------------|
+|   +FCON          Facsimile Connection Response          |
+|   +FDCS:         Report Current Session                 |
+|   +FDIS:         Report Remote Identification           |
+|   +FCFR          Indicate Confirmation to Receive       |
+|   +FTSI:         Report the Transmit Station ID         |
+|   +FCSI:         Report the Called Station ID           |
+|   +FPTS:         Page Transfer Status                   |
+|   +FET:          Post Page Message Response             |
+|   +FHNG          Call Termination with Status           |
+|---------------------------------------------------------|
+|   CLASS 2 SESSION PARAMETERS                            |
+|---------------------------------------------------------|
+|   +FMFR?         Identify Manufacturer                  | 
+|   +FMDL?         Identify Model                         |
+|   +FREV?         Identify Revision                      |
+|   +FDCC=         DCE Capabilities Parameters            |
+|   +FDIS=         Current Sessions Parameters            |
+|   +FDCS=         Current Session Results                |
+|   +FLID=         Local ID String                        |
+|   +FCR           Capability to Receive                  |
+|   +FPTS=         Page Transfer Status                   |
+|   +FAA           Adaptive Answer                        |
+|   +FBUF?         Buffer Size (Read Only)                |
+|   +FPHCTO        Phase C Time Out                       |
+|   +FAXERR        Fax Error Value                        |
+|   +FBOR          Phase C Data Bit Order                 |
+|---------------------------------------------------------|
+</PRE>
+
+
+<H2>7.2 SERVICE CLASS 2 IDENTIFICATION AND SELECTION</H2>
+
+The fax class 2 commands are summarized in <A HREF="#Table7-1">Table 7-1</A>.
+<P>
+
+Three commands report identification and selection information.  Each of 
+these three commands cause the DCE to send a message to the DTE.  Each 
+message is 20 bytes (ASCII encoded) followed by the terminating 
+character (binary 0).
+<P>
+
+<H3>7.2.1 +FMFR?, REQUEST MANUFACTURER IDENTIFICAITION</H3>
+
+The +FMFR? command caused the DCE to send a message identifying the DCE 
+product manufacturer.  The default message is:
+<PRE>
+    ROCKWELL
+    OK
+</PRE>
+
+<H3>7.2.2  +FMDL?, IDENTIFY PRODUCT MODEL</H3>
+
+The +FMDL? command causes the DCE to send a message identifying the DCE 
+product model.  The default message is:
+<PRE>
+   V.32AC
+   OK
+</PRE>
+
+<H3>7.2.3  +FREV?, IDENTIFY PRODUCT REVISION</H3>
+
+The +FREV? command causes the DCE to send a message identifying the DCE 
+product model revision number.  The typical default message is:
+<PRE>
+    V0.200 TR14-JXXX-001
+    OK
+</PRE>
+
+<H2>7.3  SERVICE CLASS 2 ACTION COMMANDS</H2>
+
+These commands transfer data, and punctuate sessions.  They also release 
+specific T.30 messages.  All action commands must be the last command on 
+a command line.  This is indicated by the terminating &lt;CR&gt;.
+<P>
+
+All action commands initiate processes.  The modem will not accept other 
+commands from the DTE until the modem issues a final result code  (e.g. 
+OK, CONNECT).  The modem will abort the process if it receives any 
+character before the final result code is issued.
+<P>
+
+<H3>7.3.1  ATD, ORIGINATE A CALL</H3>
+
+<PRE>
+Syntax:    ATD...&lt;CR&gt;
+</PRE>
+
+The DCE can support a DTE command to originate a call using the ATD 
+command (See Table 4-2).
+<P>
+
+If this command is unsuccessful, the DCE reports an appropriate failure 
+or error type result code such as NO CARRIER, NO DIALTONE or BUSY (see 
+Table 4-7).
+<P>
+
+If this call is successful, the typical DCE response is:
+<PRE>
+   ATDnn.nn         (go off-hook, dial, get CED)
+   +FCON            (DCE detects flags)
+   [+FCSI:&lt;remote ID string&gt;]
+   +FDCS:&lt;T.30 subparameter string&gt;
+   OK
+</PRE>
+
+The DCE dials, detects call progress and generates the CNG tone.  Then 
+it waits for a DIS frame.  On detection of the first Phase B preamble 
+(V.21 ch. 2 modulated by 300 bit/s HDLC flags) it reports the "+FCON" 
+message to the DTE.  The DCE then switches to 19.2K bps.
+<P>
+
+The DCE generates a DCS frame based on the received DIS frame and on the 
+previously set +FDIS parameter.  A +FDT command from the DTE releases 
+the DCE to transmit that DCS frame.
+<P>
+
+The DCE reports the initial received T.30 negotiation messages, 
+including the DIS frame and the optional CSI ID string.  The +FDIS: 
+report is followed by the OK final result code.
+<P>
+
+<H3>7.3.2  ATA, ANSWER A CALL</H3>
+
+The DCE can support a DTE command to answer an incoming call using the 
+ATA command (see Table 4-2).
+<P>
+
+The DTE may issue an Answer command in response to an incoming ring.
+<P>
+
+If the Answer command is unsuccessful, the DCE will report an 
+appropriate failure or error type result code, such as NO CARRIER (see 
+4-7)
+<P>
+
+<H4>MANUAL CALL ANSWER</H4>
+
+If this call is successful, the typical DCE response (answer and 
+receive) is:
+<PRE>
+  +FCON
+  [+FTSI:&lt;remote ID string&gt;]
+  +FDCS: &lt;T.30 subparameter string&gt;
+  OK
+  (DTE should issue +FDR command here)
+</PRE>
+
+On receipt of an Answer command from the DTE, the DCE answer and 
+generates the CED tone.  The DCE then generates a DIS frame (derived 
+from the +FDIS parameter) and hunts for the first T.30 negotiation 
+frames.  On detection of the first Phase B preamble (V.21 ch 2 modulated 
+by 300 bit/s HDLC flags), it reports the "+FCON" message to the DTE.
+<P>
+
+The DTE should report the initial received T.30 negotiation messages, 
+including the DCS frame.  The +FCS: report will be followed by the OK 
+final result code.
+<P>
+
+<H4>AUTOMATIC ANSWER</H4>
+
+The modem provides for automatic answering of incoming calls.  If 
+configured for automatic answer, the modem answers and incoming call in 
+compliance with T.30 and reports the same messages as described for 
+manual answer.
+<P>
+
+<H4>CONNECTIONS AS A DATA MODEM</H4>
+
+If configured to do so by the +FAA parameter, the DCE will adaptively 
+answer as a facsimile DCE or as a data DCE.  If the DCE answers as a 
+facsimile DCE or as a data DCE.  If the DCE answers as a data DCE, it 
+resets the +FCLASS parameter to 0 and issues the appropriate final 
+result code (e.g. CONNECT or NO CARRIER) to the DTE.
+<P>
+
+<H3>7.3.3  +FDT, DATA TRANSMISSION</H3>
+
+<PRE>
+Syntax: +FDT&lt;CR&gt;
+</PRE>
+
+The +FDT command prefixes Phase C data transmission.  When the DCE is 
+ready to accept Phase C data, it issues the negotiation responses and 
+the CONNECT result code to the DTE.
+<P>
+
+In Phase B, the +FDT command releases the DCE to proceed with 
+negotiation, and releases the DCS message to the remote station.  In 
+Phase C, the +FDT command resumes transmission after the end of a prior 
+transmit data stream.
+<P>
+
+<H4>INITIATE PAGE TRANSMISSION</H4>
+
+Phase B DCE polled response:
+<PRE>
+  [+FCSI:&lt;remote ID string&gt;]                   ; If new CSI received
+  [+FDIS:&lt;subparameters from remote station&gt;]  ; If new DIS received
+  +FDCS:&lt;T.30 subparameter string&gt;
+  CONNECT
+  &lt;XON&gt;                                        ; When ready for data
+</PRE>
+
+After placing a call, or after finishing a document exchange, the DTE 
+may command the DCE to re-enter T.30 Phase B to attempt to negotiate a 
+document transmission.
+<P>
+
+<H4>CONTINUE A PAGE</H4>
+<PRE>
+   CONNECT
+   &lt;XON&gt;
+</PRE>
+
+The DTE may issue more than one +FDT command for a given page, so that 
+different files may be concatenated together.  These files must have the 
+same format.
+<P>
+
+<H4>PHASE C DATA FRAMING</H4>
+
+Phase C data must be presented to the DCE in stream mode.  The DCE 
+expects Phase C data to follow until it detects &lt;DLE&gt;&lt;ETX&gt; termination 
+characters.  The DCE will filter the stream as described in Section 
+7.1.2
+<P>
+
+The DCE will acknowledge the end of the data by returning the OK result 
+code to the DTE.
+<P>
+
+If there is data underrun before the next +FDT or +FET= command, the DCE 
+will zero-fill pad as per T.4 until the  Phase C timeout (+FPHCTO) is 
+reached, or until more data is received.  The DCE appends an RTC pattern 
+to the transmit data after an +FET= command is received from the DTE.
+<P>
+
+<H4>PHASE C DATA FORMAT</H4>
+
+The Phase C data will be of the format specified by the negotiated T.30 
+DCS frame.  The +FDCS <string> response is defined in section 7.4.2.  
+The subparameter values are described in table 7.2.
+<P>
+
+The DCE will use the negotiated minimum Scan Time parameter from the DCS 
+frame , and insert sufficient fill bits to pad each line to the minimum 
+scan time.  This is reported in the +FDCS:ST subparameter.
+<P>
+
+If the DCE finds more than one consecutive EOL in Phase C data (e.g. 
+RTC), it will send only one EOL.
+<P>
+
+Note 1:  Phase C data must conform to T.4 specifications
+<P>
+
+Note 2:  The DTE need not include a final RTC, since the DCE will append 
+         an RTC in response to an FET= command
+<P>
+
+Note 3:  Some facsimile machines may treat two EOLs as an RTC
+<P>
+
+<H4><CAN>, ESCAPE FROM TRANSMISSION</H4>
+
+The DCE may request the DTE to halt Phase C transmission, by sending an 
+cancel <CAN> character (024) to the DTE.  In this case, the DTE should 
+terminate Phase C transmission, issue <CAN>, and wait for the OK 
+response code from the DCE.
+<P>
+
+<A NAME="Table7-2">Table 7-2  T.30 Session Subparameter Codes</A>
+
+<PRE>
+|-----------------------------------------------------------------|
+|  Label |  Function     |  Value  |  Description                 |
+|--------|---------------|---------|------------------------------|
+|  VR    |  Vertical     |   0     |  Normal, 98 lpi              |
+|        |  resolution   |   1     |  Fine, 196 lpi               |
+|--------|---------------|---------|------------------------------|
+|  BR    |  Bit Rate     |   0     |  2400 bit/s V.27 ter         |
+|        |               |   1     |  4800 bit/s V.27 ter         |
+|        |  (See note 1) |   2     |  7200 bit/s V.29 or v.17     |
+|        |               |   3     |  9600 bit/s V.29 or v.17     |
+|        |               | **4     |  12000 bit/s V.33 or v.17    |
+|        |               | **5     |  14400 bit/s V.33 or v.17    |
+|--------|---------------|---------|------------------------------|
+|  WD    | Page Width    |   0     |  1728 pixels in 215 mm       |
+|        |               |   1     |  2048 pixels in 255 mm       |
+|        |               |   2     |  2432 pixels in 303 mm       |
+|        |               |  *3     |  1216 pixels in 151 mm       |
+|        |               |  *4     |   864 pixels in 107 mm       |
+|--------|---------------|---------|------------------------------|
+|  LN    |  Page Length  |   0     |  A4, 297 mm                  |
+|        |               |  *1     |  B4, 364 mm                  |
+|        |               |  *2     |  unlimited length            |
+|--------|---------------|---------|------------------------------|
+|  DF    |  Data         |   0     |  1-D modified Huffman        |
+|        |  Compression  |   1     |  2-D modified Read           |
+|        |  Format       |  *2     |  2-D uncompressed mode       |
+|        |               |  *3     |  2-D modified Read           |
+|--------|---------------|---------|------------------------------|
+|  EC    |  Error        |   0     |  Disable ECM                 |
+|        |  Correction   |  *1     |  Enable ECM,64 bytes/frame   |
+|        |  (Annex       |  *2     |  Enable ECM,256 bytes/frame  |
+|        |   A/T.30)     |         |                              |
+|        |  (See Note 2) |         |                              |
+|--------|---------------|---------|------------------------------|
+|  BF    |  Binary File  |   0     |  Disable BFT                 |
+|        |  Transfer     |  *1     |  Enable BFT                  |
+|        |  (See Note 3) |         |                              |
+|--------|---------------|---------|------------------------------|
+|  ST    |  Scan Time/   |         |  VR=normal   VR=fine         |
+|        |  Line         |   0     |    0 ms        0 ms          |
+|        |               |   1     |    5 ms        5 ms          |
+|        |               |   2     |    10 ms       5 ms          |
+|        |               |   3     |    10 ms       10 ms         |
+|        |               |   4     |    20 ms       10 ms         |
+|        |               |   5     |    20 ms       20 ms         |
+|        |               |   6     |    40 ms       20 ms         |
+|        |               |   7     |    40 ms       40 ms         |
+|--------|---------------|---------|------------------------------|
+|  NOTES: 1: CCITT T.30 does not provide for the answering        |
+|            station to specify all speeds exactly using the DIS  |
+|            frame.  Implementation of some BR codes (e.g.code 2) |
+|            by an answering DCE is manufacturer specific.        |
+|                                                                 |
+|                                                                 |
+|         * =Not supported                                        |
+|        ** =RC144AC only                                         |
+|                                                                 |
+|         2: ECM has been implemented in Supra's version 1.200C.  |
+|            ECM transmit works correctly, and ECM receive works, |
+|            but does not tell the transmitting machine that the  |
+|            fax was received correctly.                          |
+|                                                                 |
+|        3:  BFT has been implemented in Supra's version 1.200C.  |
+|            BFT transmit works correctly, and BFT receive works, |
+|            but does not tell the transmitting machine that the  |
+|            file was received correctly.                         |
+|                                                                 |
+|-----------------------------------------------------------------|
+</PRE>
+
+<H3>7.3.4  +FET=, TRANSMIT PAGE PUNCTUATION</H3>
+
+<PRE>
+Syntax:   +FET=&lt;ppm&gt;[,&lt;pc&gt;,&lt;bc&gt;,&lt;fc&gt;]
+
+DCE response:
+  +FPTS:&lt;ppr&gt;    ; when receive from remote OK
+</PRE>
+
+This command is used to punctuate page and document transmission after 
+one or more +FDT commands.  This command generates T.30 Post Page 
+Messages selected by the &lt;ppm&gt; code (<A HREF="#Table7-3">Table 7-3</A>)
+<P>
+
+The +FET=&lt;ppm&gt; command indicates that the current page is complete; no 
+more data will be appended to it.  The value indicates if there are any 
+additional pages are to be sent and, if so, whether there is a change in 
+any of the document parameters.
+<P>
+
+The DTE can command the DCE to generate PRI-Q messages with the 
++FET=&lt;ppm&gt; command using ppm codes 4-6 (see <A HREF="#Table7-3">Table 7-3</A>)
+<P>
+
+This command must be sent within the time out specified by +FPHCTO after 
+sending Phase C data, or else the DCE will end the page and document 
+transmission.  If the Phase C timeout is reached, the DCE sends an EOP 
+post page message and terminates the session
+<P>
+
+The remote facsimile station should respond to the post page message 
+with a post page response.  The DCE will report this using the 
++FPTS:&lt;ppr&gt; response (<A HREF="#Table7-4">Table 7-4</A>)
+<P>
+
+<H4>END A PAGE</H4>
+
+The +FET= command causes the DCE to append an ETC (6 EOL) pattern as 
+needed and enter Phase D by sending the selected T.30 Post Page message.
+<P>
+
+The +FET=1 (EOM) command signals the remote station that the next 
+document will have a new DCS negotiated; this causes the session to re-
+enter Phase B.
+<P>
+
+<H3>7.3.5  +FDR, BEGIN OR CONTINUE PHASE C RECEIVE DATA</H3>
+
+<PRE>
+Syntax:   +FDR&lt;CR&gt;
+
+Default value:  3 seconds in some places
+</PRE>
+
+The +FDR command initiates transition to Phase C data reception.  This 
+can occur after answering, dialing, a document is received, or a page is 
+received.
+<P>
+
+The DCE reports the negotiated T.30 parameters, with the remote ID 
+information if available.  When the DCE is ready to commence data 
+transfer, it issues a CONNECT response code.  If the DCE cannot resume 
+data transfer because there is no more data, it responds OK.  When the 
+DTE is ready to accept data, it issues an &lt;DC2&gt; character (018) to the 
+DCE.
+<P>
+
+If the DTE issues an &lt;XOFF&gt; character to the DCE for flow control, the 
+DCE signals the DTE when its buffers are empty by sending a &lt;DLE&gt;&lt;DC2&gt; 
+(&lt;016&gt;&lt;018&gt;) character pair.
+<P>
+
+When the DCE delivers that last byte of a page, the DCE reports the Page 
+Transfer Status via the +FPTS:&lt;ppr&gt; response
+(<A HREF="#Table7-4">Table 7-4</A>).
+<P>
+
+After a Page Transfer Status Report, the DCE reports the post page 
+message from the remote facsimile station via the +FET:&lt;ppm&gt; response 
+(<A HREF="#Table7-3">Table 7-3</A>)
+which signals the intentions of the remote station.
+<P>
+
+
+<A NAME="Table7-3">Table 7-3.  T.30 Post Page Message Codes</A>
+
+<PRE>
+|-----------------------------------------------------------------|
+|  ppm    |                 |                                     |
+|  Code   |  Mnemonic       |  Description                        |
+|---------|-----------------|-------------------------------------|
+|    1    |  [PPS]-MPS      |  Another page next, same document   |
+|    2    |  [PPS]-EOM      |  Another page next                  |
+|    3    |  [PPS]-EOP      |  no more pages or documents         |
+|    4    |  [PPS-]PRI-MPS  |  Another page, procedure interrupt  |
+|    5    |  [PPS-]PRI-EOM  |  Another doc, procedure interrupt   |
+|    6    |  [PPS-]PRI-EOP  |  All done, procedure interrupt      |
+|    7    |  CTC            |  Continue to correct                |
+|   8-15  |  EOR-           |  End of Retransmission (8)+         |
+|  =8+ppm |                 |  Post Page Message (ppm code)       |
+|-----------------------------------------------------------------|
+</PRE>
+
+<A NAME="Table7-4">Table 7-4.  T.30 Post Page Response Message Codes</A>
+
+<PRE>
+|-----------------------------------------------------------------|
+|  ppr    |                 |                                     |
+|  Code   |  Mnemonic       |  Description                        |
+|---------|-----------------|-------------------------------------|
+|   0     |  PPR            |  Partial page errors                |
+|   1     |  MCF            |  Page Good                          |
+|   2     |  RTN            |  Page bad, retrain requested        |
+|   3     |  RTP            |  Page good, retrain requested       |
+|   4     |  PIN            |  Page bad, interrupt requested      |
+|   5     |  PIP            |  Page good, interrupt requested     |
+|-----------------------------------------------------------------|
+</PRE>
+
+The DCE holds the post page response message to the remote facsimile 
+station (MCF, etc.), represented in the +FPTS parameter until the next 
++FDR command.  The DTE may modify the +FPTS parameter before issuing the 
++FDR command which releases that message.  The DTE must issue a +FDR 
+command to release Post Page Messages.
+<P>
+
+<H4>INITIATE DOCUMENT RECEPTION</H4>
+
+The +FDR command may be issued in Phase B after an answer command, or in 
+Phase B after a pervious document.
+<P>
+
+The DCE response in stream mode is:
+<PRE>
+   +FCR             ; when CFR sent
+   [+FTSI:&lt;remote ID string&gt;]  ; if new TSI received
+   +FDCS:&lt;T.30 subparameter string&gt;]  ; if new DCS
+   CONNECT
+   (&lt;DC2> needed from DTE here)
+   &lt;Phase C data stream&gt;
+   &lt;DLE&gt;&lt;ETX&gt;
+   +FPTS:&lt;ppr&gt;,&lt;lc&gt;[,&lt;blc&gt;,&lt;cblc&gt;]
+   +FET:&lt;ppm&gt;
+   OK
+   (DTE must issue +FDR command to release post page response)
+</PRE>
+
+<H4>CONTINUE DOCUMENT RECEPTION</H4>
+
+The DTE may issue a +FDR command in Phase D, which releases the post 
+page message, and indicates readiness to receive another page after 
+receipt of a Multipage (+FET:0) or PPS-NULL (+FET:3) message.  The DCE 
+response will be:
+<PRE>
+   CONNECT
+   (&lt;DC2&gt; needed from DTE here)
+   &lt;Phase C data stream&gt;
+   &lt;DLE&gt;&lt;ETX&gt;
+   +FPTS:&lt;ppr>,&lt;lc&gt;[,&lt;blc&gt;,&lt;cblc&gt;]
+   +FET:&lt;ppm&gt;
+   OK
+   (DTE must issue +FDR command to release post page response.
+</PRE>
+
+If done receiving:
+<PRE>
+   +FHNG:&lt;hangup cause code&gt;
+   OK
+
+   Continue page reception
+</PRE>
+
+<H4>PHASE C DATA FRAMING</H4>
+
+Phase C data may be presented to the DTE in stream mode.  The DCE will 
+transfer a stream of data to the DTE, followed by the &lt;DLE&gt;&lt;ETX&gt; stream 
+termination characters.  The DCE will filter the stream as described in 
+7.1.2.
+<P>
+
+<H4>PHASE C DATA FORMAT</H4>
+
+The received data format is negotiated under T.30 reported by the 
++FDCS:VR,BR,WD,LN,DF,EC,BF,ST response.
+<P>
+
+The DCE will delete the terminating RTC (6 EOLs) patterns.  The DCE may 
+strip zero fill bits from the data, to minimize storage needs.
+<P>
+
+<H4><CAN>, ESCAPE FROM RECEPTION</H4>
+
+From the +FDR command until the end of Phase D Date, the DCE is in a 
+data transfer state, and will not respond to DTE command characters.  
+The DCE will respond to three ASCII control characters, &lt;DC1&gt; (017) and 
+&lt;DC3&gt; (019) flow control characters, and cancel &lt;CAN&gt; (024).
+<P>
+
+Upon receipt of the &lt;CAN&gt; character, the DCE will terminate the 
+reporting of received data by sending trailing &lt;DLE&gt;&lt;ETX&gt; characters to 
+the DTE, and will then execute an implied +FK command in order to 
+conduct an orderly disconnection.
+<P>
+
+<H3>7.3.6  +FK, SESSION TERMINATION</H3>
+
+<PRE>
+Syntax:  +FK
+</PRE>
+
+The +FK command causes the DCE to terminate the session in an orderly 
+manner.  In particular, the DCE will send a DCN message at the next 
+opportunity and hang up.  At the end of the termination process, the DCE 
+will report the +FHNG response with result code
+(A HREF="#Table7-5">Table 7-5</A>).
+<P>
+
+This operation can be invoked by using the cancel &lt;CAN&gt; character during 
+Phase C data reception (see prior section).
+<P>
+
+The DCE will wait until the current page completes, unless the reception 
+is of unlimited length; in that case, the DCE may halt reception and 
+terminate the session at any time.
+<P>
+
+<H2>7.4  SERVICE CLASS 2 DCE RESPONSES</H2>
+
+The DCE sends information responses to the DTE as a facsimile session 
+proceeds.  They indicate the state of the facsimile session and convey 
+need information.  These messages are solicited messages generated in 
+execution of DTE action commands described in section 7.3.
+<P>
+
+The DCE precedes and follows the following information responses with 
+&lt;CR&gt;&lt;LF&gt;.
+<P>
+
+The DCE provides the on-line status of several session parameters when 
+they are available during T.30 handshaking.  These include the remote ID 
+string and the DIS/DCS parameters.  These responses report the T.30 
+session parameter frames.  The subparameters are described in
+<A HREF="#Table7-2">Table 7-2</A>.
+<P>
+
+<H3>7.4.1  +FCON, FACSIMILE CONNECTION RESPONSE</H3>
+
++FCON indicates connection with a fax machine.  It is released by 
+detection of HDLC flags in the first received frame +FCON is generated 
+in response to an Originate or Answer command.
+<P>
+
+<H3>7.4.2  +FDCS:, REPORT CURRENT SESSION CAPABILITIES</H3>
+
+<PRE>
+Syntax:   +FDCS:VR,BR,WD,LN,DF,EC,BF,ST
+</PRE>
+
++FDCS:&lt;string&gt; reports the negotiated parameters.  Phase C data will be 
+formatted as described by the subparameters.  This message may be 
+generated in execution of +FDT or +FDR commands before the CONNECT 
+result code if new DCS frames are generated of received.  (See
+<A HREF="#Table7-2">Table 7-2</A>.)
+<P>
+
+<H3>7.4.3  +FDIS:, REPORT REMOTE STATION CAPABILITIES</H3>
+
+<PRE>
+Syntax:   +FDIS:VR,BR,WD,LN,DF,EC,BF,ST
+</PRE>
+
++FDIS:&lt;string&gt; reports remote facsimile station capabilities and 
+intentions.  The parameters are provided in ASCII notation.  (See
+<A HREF="#Table7-2">Table 7-2</A>.)
+<P>
+
+This message is generated in execution of Originate, Answer, +FDT, or 
++FDR commands.
+<P>
+
+<H3>7.4.4  +FCFR, INDICATE CONFIRMATION TO RECEIVE</H3>
+
+<PRE>
+Syntax:  +FCFR
+</PRE>
+
+The DCE sends a +FCFR response to the DTE upon reception of an 
+acceptable TCF training burst and a valid DCS signal from the remote 
+machine.  This indicates that the DCE will receive Phase C data after 
+the remote station receives the local DCE's CFR message.  The +FCFR 
+message is generated in execution of a +FDR command.
+<P>
+
+<H3>7.4.5  +FTSI:, REPORT THE TRANSMIT STATION ID</H3>
+
+<PRE>
+Syntax:  +FTSI:"&lt;TSI ID string&gt;" Transmit Station ID
+</PRE>
+
+This response reports the received transmit station ID string, if any. 
+ This message is generated in execution of Originate, Answer, +FDT, or 
++FDR commands.
+<P>
+
+<H3>7.4.6  +FCSI:, REPORT THE CALLED STATION ID</H3>
+
+<PRE>
+Syntax:   +FCSI:"&lt;CSI ID string&gt;" Called Station ID
+</PRE>
+
+This response reports the received called station ID string, if any.  
+This message is generated in execution of Originate, Answer, +FDT, or 
++FDA commands.
+<P>
+
+<H3>7.4.7  +FPTS:, RECEIVE PAGE TRANSFER STATUS</H3>
+
+<PRE>
+Syntax:  +FPTS:&lt;ppr&gt;,&lt;lc&gt;[,&lt;blc&gt;,&lt;cblc&gt;]
+</PRE>
+
+The +FPTS:&lt;ppr&gt; is generated by the DCE at the end of Phase C data 
+reception in execution of a +FDR command.
+<P>
+
+The &lt;ppr&gt; is generated by the DCE; it depends on the DCE capabilities at 
+T.4 error checking.  See Table 7-4 for &lt;ppr&gt; values.
+<P>
+
+The receiving DCE will count the lines and may optionally generate bad 
+line counts.  These values are:
+<PRE>
+    &lt;lc&gt; = line count
+    &lt;blc&gt; = bad line count
+    &lt;cblc&gt; = consecutive bad line count
+</PRE>
+
+A receiving DTE may inspect &lt;ppr&gt; and write a modified
+value into the +FPTS parameter.
+The DCE will hold the corresponding Post Page Response message
+until released by a +FDR command from the DTE.
+<P>
+
+<H3>7.4.8  +FET:, POST PAGE MESSAGE RESPONSE</H3>
+
+<PRE>
+Syntax:   +FET:&lt;ppm&gt;
+</PRE>
+
+The +FET:&lt;post page message&gt; response is generated by a receiving DCE 
+after DCE after the end of Phase C reception on receipt of the post-page 
+message from the transmitting station.  The +FET:&lt;ppm&gt; response is 
+generated in execution of a +FDR command.  The &lt;ppm&gt; codes respond to 
+the T.30 post page messages (<A HREF="#Table7-3">Table 7-3</A>.)
+<P>
+
+<H3>7.4.9  +FPTS:, TRANSMIT PAGE TRANSFER STATUS</H3>
+
+<PRE>
+Syntax:  +FPTS:&lt;ppr&gt;
+</PRE>
+
+The +FPTS: response reports a &ltppr&gt; number representing the copy quality 
+and related post page message responses received from the remote DCE.  
+The set of valid &lt;ppr&gt; values are defined in
+<A HREF="#Table7-4">Table 7-4</A>.
+<P>
+
+The +FPTS:&lt;ppr&gt; response is generated in execution of a +FET=&lt;ppm&gt; 
+command.
+<P>
+
+<H3>7.4.10  +FHNG:, CALL TERMINATION WITH STATUS</H3>
+
+<PRE>
+Syntax:  +FHNG:&lt;hangup status code&lt;
+</PRE>
+
++FHNG indicates that the call has been terminated.  The hangup cause is 
+reported and stored in the +FAXERR parameter for later inspection.  The 
+&lt;hangup status code&gt; values are described in
+<A HREF="#Table7-5">Table 7-5</A>.
+<P>
+
++FHNG:&lt;hsc&gt; is a possible intermediate result code to any DTE action 
+command described in Section 7.3.  It is always followed by the OK final 
+result code.
+<P>
+
+Upon termination of a call, the DCE determines the cause of termination 
+and reports it as part of the FHNG:&lt;hsc&gt; response.  It also stores this 
+&lt;hsc&gt; code in the +FAXERR parameter for later inspection.
+<P>
+
+The hangup values are organized according to the phases of the facsimile 
+transaction as defined by T.30.  A COMREC error or RSPREC error 
+indicates that one of two events occurred:
+
+<OL>
+<LI>
+a DCN (disconnect) signal was received, or
+<LI>
+an FCS error was detected and the incoming signal 
+was still present after 3 seconds.
+</OL>
+<P>
+
+The table values are in decimal notation.  Leading zero characters are 
+optional.
+<P>
+
+
+<A NAME="TAble7-5">Table 7-5  Hangup Status Codes</A>
+
+<PRE>
+|------------------------------------------------------------|
+|    Code  |  Cause Description                              |
+|----------|-------------------------------------------------|
+|     0-9  |  CALL PLACEMENT AND TERMINATION                 |
+|----------|-------------------------------------------------|
+|       0  |  Normal and proper end of connection            |
+|       1  |  Ring Detect without successful handshake       |
+|       2  |  Call aborted, from +FK or AN                   |  
+|       3  |  No Loop Current                                |
+|----------|-------------------------------------------------|
+|   10-19  |  TRANSMIT PHASE A & MISCELLANEOUS ERRORS        |
+|----------|-------------------------------------------------|
+|      10  |  Unspecified Phase A error                      |
+|      11  |  No Answer (T.30 T1 timeout)                    |
+|----------|-------------------------------------------------|
+|   20-39  |  TRANSMIT PHASE B HANGUP CODES                  |
+|----------|-------------------------------------------------|
+|      20  |  Unspecified Transmit Phase B error             |
+|      21  |  Remote cannot receive or send                  |
+|      22  |  COMREC error in transmit Phase B               |
+|      23  |  COMREC invalid command received                |
+|      24  |  RSPEC error                                    |
+|      25  |  DCS sent three times without response          |
+|      26  |  DIS/DTC received 3 times; DCS not recognized   |
+|      27  |  Failure to train at 2400 bps or +FMINSP value  |
+|      28  |  RSPREC invalid response received               |
+|----------|-------------------------------------------------|
+|   40-49  |  TRANSMIT PHASE C HANGUP CODES                  |
+|----------|-------------------------------------------------|
+|      40  |  Unspecified Transmit Phase C error             |
+|      43  |  DTE to DCE data underflow                      |
+|----------|-------------------------------------------------|
+|   50-69  |  TRANSMIT PHASE D HANGUP CODES                  |
+|----------|-------------------------------------------------|
+|      50  |  Unspecified Transmit Phase D error             |
+|      51  |  RSPREC error                                   |
+|      52  |  No response to MPS repeated 3 times            |
+|      53  |  Invalid response to MPS                        |
+|      54  |  No response to EOP repeated 3 times            |
+|      55  |  Invalid response to EOM                        |
+|      56  |  No response to EOM repeated 3 times            |
+|      57  |  Invalid response to EOM                        |
+|      58  |  Unable to continue after PIN or PIP            |
+|----------|-------------------------------------------------|
+|   70-89  |  RECEIVE PHASE B HANGUP CODES                   |
+|----------|-------------------------------------------------|
+|      70  |  Unspecified Receive Phase B error              |
+|      71  |  RSPREC error                                   | 
+|      72  |  COMREC error                                   |
+|      73  |  T.30 T2 timeout, expected page not received    |
+|      74  |  T.30 T1 timeout after EOM received             |
+|----------|-------------------------------------------------|
+|   90-99  |  RECEIVE PHASE C HANGUP CODES                   |
+|----------|-------------------------------------------------|
+|      90  |  Unspecified Receive Phase C error              |
+|      91  |  Missing EOL after 5 seconds                    |
+|      92  |  Unused code                                    |
+|      93  |  DCE to DTE buffer overflow                     |
+|      94  |  Bad CRC or frame (ECM or BFT modes)            |
+|----------|-------------------------------------------------|
+| 100-119  |  RECEIVE PHASE D HANGUP CODES                   |
+|----------|-------------------------------------------------|
+|     100  |  Unspecified Receive Phase D errors             |
+|     101  |  RSPREC invalid response received               |
+|     102  |  COMREC invalid response received               |
+|     103  |  Unable to continue after PIN or PIP            |
+|----------|-------------------------------------------------|
+| 120-255  |  RESERVED CODES                                 |
+|------------------------------------------------------------|
+</PRE>
+
+<H2>7.5  SERVICE CLASS 2 PARAMETERS</H2>
+
+All Service Class 2 parameters can be read, written, and tested for 
+range of legal values by the DCE.  The general syntax is described in 
+Section 7.1.
+<P>
+
+Group 3 FAX devices negotiate session parameters in DIS, DCS, and DTC 
+frames.  The following parameters are provided to condition the 
+facsimile DCE for the capabilities it will offer and to report the 
+session settings negotiated.
+<P>
+
+The three primary T.30 session parameters are +FDCC, +FDIS and +FDCS.  
+They are compound parameters, using values listed in
+<A HREF="#Table7-2">Table 7-2</A>.
+<A HREF="Figure70-1">Figure 70-1</A> illustrates their relationships.
+<P>
+
+<H3>7.5.1  +FDCC, DCE CAPABILITIES PARAMETERS</H3>
+
+<PRE>
+Write Syntax:   +FDCC:VR,BR,WD,LN,DF,EC,BF,ST
+
+Valid values    See Table 7-2
+
+Default values  0,3,0,2,0,0,0,0  (RC96AC)
+                0,5,0,2,0,0,0,0  (RC144AC)
+</PRE>
+
++FDCC allows the DTE to sense and constrain the capabilities of the 
+facsimile DCE from the choices defined in CCITT t.30 Table 2.  When 
++FDCC is modified by the DTE, the DCE copies +FDCC into +FDIS.
+<P>
+
+<H3>7.5.2  +FDIS, CURRENT SESSIONS CAPABILIIES PARAMETERS</H3>
+
+<PRE>
+Write Syntax:   +FDIS:VR,BR,WD,LN,DF,EC,BF,ST
+
+Valid values    See Table 7-2
+
+Default values  0,3,0,2,0,0,0,0  (RC96AC)
+                0,5,0,2,0,0,0,0  (RC144AC)
+</PRE>
+
+The +FDIS parameter allows the DTE to sense and constrain the 
+capabilities used for the current session.  The DCE uses +FDIS to 
+generate DIS or DTC messages directly, and uses +FDIS and received DIS 
+messages to generate DCS messages.
+<P>
+
+The DCE initializes the +FDIS parameter from the +FDCC parameter on 
+initialization, when +FDCC is written, and at the end of a session.
+<P>
+
+<H3>7.5.4  +FLID=, LOCAL ID STRING</H3>
+
+<PRE>
+Write Syntax   +FLID="&lt;local ID string&gt;"
+
+Valid values:   20 character ASCII string
+
+Default value:  Empty
+</PRE>
+
+If FLID is not a null string, it generates a TSI or CSI frame.  Table 
+3/T.30 includes digits 0-9, "+" and space.
+<P>
+
+If the DCE supports use of Table 3/T.30 only, the response to a +FLID=? 
+command is "(20)(32, 43, 48-57)".  If the DCE supports printable ASCII,
+the response is "(20)(32-127)" 
+The first "(20)" represents 
+string length: the second (character values) field reports supported 
+string values.
+<P>
+
+Notes: 
+<OL>
+<LI> The string is saved in RAM.
+<LI> Non-numeric characters are not filtered out.
+</OL>
+
+<H3>7.5.5  +FCR, CAPABILITY TO RECEIVE</H3>
+
+<PRE>
+Write Syntax:  +FCR=&lt;value&gt;
+
+Valid values:  1,0
+
+Default values 0
+</PRE>
+
++FCR=0 indicates that the DCE will not receive message data.  This can 
+be sued when the DTE has insufficient storage.  The DCE can send and can 
+be polled for a file.
+<P>
+
++FCR is sampled in CCITT T.30 Phase A and Phase D
+<P>
+
+<H3>7.5.6  +FPTS=, PAGE TRANSFER STATUS</H3>
+
+<PRE>
+Write syntax:   +FPTS=&lt;ppr&gt;
+
+Valid Values:   1,2,3,4,5
+
+Default value:  0
+</PRE>
+
+<H3>7.5.7  +FCQ, COPY QUALITY CHECKING</H3>
+
+<PRE>
+Write Syntax:  +FCQ=&lt;value&gt;
+
+Valid Values:  0
+
+Default Value: 0
+</PRE>
+
+This parameter controls Copy Quality checking by a receiving facsimile 
+DCE.
+<P>
+
+The DCE returns +FCQ=0 which indicates the DCE does no quality checking.  
+The DCE will generate Copy Quality OK (MCF) responses to complete pages, 
+and set +FPTS=1.
+<P>
+
+<H3>7.5.8  +FPHCTO, DTE PHASE C RESPONSE TIME-OUT</H3>
+
+<PRE>
+Write Syntax:   +FPHCTO=&lt;value&gt;
+
+Valid Values:   0-255, 100 millisecond units
+
+Default Value:  30
+</PRE>
+
+The +FPHCTO command determines how long the DCE will wait for a command 
+after reaching the end of data when transmitting in Phase C.  When this 
+time-out is reached, the DCE assumes there are no more pages and no 
+documents to send.  It then sends the T.30 EOP response to the remote 
+device.
+<P>
+
+<H3>7.5.9  +FAXERR, T.30 SESSION ERROR REPORT</H3>
+
+<PRE>
+Read Syntax:   +FAXERR=&lt;table value&gt;, read only
+
+Valid values:  0-255, see <A HREF="#Table7-5">Table 7-5</A> for meaning
+</PRE>
+
+This read-only parameter indicates the cause of the hangup. 
+<A HREF="#Table7-5">Table 7-5</A>
+shows the valid values for this parameter as well as the meaning of the 
+each value.  +FAXERR is set by the DCE at the conclusion of a fax 
+session.  The DCE resets +FAXERR to 0 at the beginning of Phase A off-
+hook time.
+<P>
+
+<H3>7.5.10  +FBOR, DATA BIT ORDER</H3>
+
+<PRE>
+Write Syntax:  +FBOR=&lt;value&gt;
+
+Valid Values:  0,1
+
+Default value:  0
+</PRE>
+
+This parameter controls the mapping between PSTN facsimile data and the 
+DTE-DCE link.  There are two choices:
+<P>
+
+DIRECT:  The first bit transferred to each byte on the DTE-DCE link is 
+the first bit transferred on the PSTN data carrier.
+<P>
+
+REVERSED:  The last bit transferred of each byte on the DTE-DCE link is 
+the first bit transferred on the PSTN data carrier.
+<P>
+
+There are two data types to control:
+<P>
+
+This command controls Phase C data (T.4 encoded data) transferred during 
+execution of +FDT or +FDR commands.
+<P>
+
+The following two codes are supported.
+<OL>
++FBOR=0  selects direct bit order for Phase C data<P>
++FBOR=1  selects reversed bit order for Phase C data<P>
+</OL>
+
+Note that this parameter does not affect the bit order of control 
+characters generated by the DCE.
+<P>
+
+<H3>7.5.11  +FAA, ANSWER PARAMETER</H3>
+
+<PRE>
+Write syntax:  +FAA=&lt;value&gt;
+
+Valid values:   0,1
+
+Default value   0
+</PRE>
+
+<OL>
++FAA=0   constrains the DCE to answer as set by +FCLASS<P>
++FAA=1   indicates that the DCE can answer and automatically <P>
+</OL>
+
+determine whether to answer as a Class 2 facsimile DCE or as a data 
+modem.  If the DCE automatically switches, if modifies FCLASS 
+appropriately.
+<P>
+
+Class 2 adaptive answer is implemented as follows:
+<P>
+
+First, a data mode handshake is attempted.  If the DCE has been 
+configured for automode detection (using the A command), the DCE may try 
+several protocols be terminating attempts to make a data mode 
+connection.  This can take as long as 6-8 seconds.
+<P>
+
+If the data mode connection attempt fails, a facsimile Class 2 
+connection is assumed.  When a connection is made, a result of the 
+adaptive answer, the DCE issues the D or FAX result code before the 
+CONNECT or +FCC message to inform the DTE of the connection type.  A 
+making a class 2 connection, the DCE stays on-line rather than going 
+into the command mode as with a Class 2 connection.
+<P>
+
+<H3>7.5.12  +FBUF?, BUFFER SIZE</H3>
+
+<PRE>
+Read syntax:   +FBUF?
+
+DCE response syntax &lt;bs&gt;,&lt;xoft&gt;,&lt;xont&gt;,&lt;bc&gt; where:
+
+  &lt;bs&gt; = total buffer size
+  &lt;xoft&gt; = XOFF threshold
+  &lt;xcont&gt; = XON threshold
+  &lt;bc&gt; = current buffer byte count
+</PRE>
+
+The +FBUF parameter allows the DTE to determine the characteristics of 
+the DCE's data buffer.  Data buffers are used for flow control.  Use of 
+the reported values allow the DTE to transfer data without provoking 
+XOFF.
+<P>
+
+<H2>7.6  EXAMPLE SESSIONS</H2>
+
+<A HREF="#Table7-6">Table 7-6</A> and
+<A HREF="#Table7-7">7-7</A>
+show the typical command and responses for sending and 
+receiving two pages respectively.
+
+<A NAME="Table7-6">Table 7-6 Send two pages, 1-D data, no errors</A>
+
+<PRE>
+|----------------------------------------------------------------------|
+| DTE COMMAND | DCE RESPONSE | LOCAL DTE ACTION |REMOTE STATION ACTION |
+|-------------|--------------|------------------|----------------------|
+| AT+FCLASS=2 | OK           | Set Class 2      |                      |
+|-------------|--------------|------------------|----------------------|
+| AT+FLID=    |              |                  |                      |
+| &lt;local id&gt;  | OK           | Set local ID     |                      |
+|-------------|--------------|------------------|----------------------|
+| AT<dial str>|              | off hook, dial   | answer               |
+|             |              | send CNG         | send [CED],          |
+|             | +FCON        | detect flags     | v.21 flags           |
+|             | +FDIS:&lt;csi&gt;  | get CSI          | CSI                  |
+|             | +FDIS:&lt;codes&gt;| get DIS          | DIS                  |
+|             | OK           |                  |                      |
+|-------------|--------------|------------------|----------------------|
+| AT+FDT      |              | send TSI         | get TSI              |
+|             |              | send DCS         | get DCS              |
+|             |              | send TCF         | get TCF              |
+|             | +FDCS:&lt;codes&gt;| get CFR          | send CFR             |
+|             | CONNECT      | send carrier     | receive carrier      |
+|             | &lt;XON&gt;        |                  |                      |
+| &lt;1st page&gt;  |              | send page data   | receive page data    |
+| &lt;DLE&gt;&lt;ETX&gt;  | OK           |                  |                      |
+|-------------|--------------|------------------|----------------------|
+| AT+FET=0    |              | send RTC         | get RTC              |
+|             |              | get MPS          | send MPS             |
+|             | +FPTS:1      | get MCF          | send MCF             |
+|             | OK           |                  |                      |
+|-------------|--------------|------------------|----------------------|
+| AT+FDT      | CONNECT      | send carrier     | receive carrier      |
+|             | &lt;XON&gt;        |                  |                      |
+| &lt;2nd page&gt;  |              | send page data   | receive page data    |
+| &lt;DLE&gt;&lt;ETX&gt;  | OK           |                  |                      |
+|-------------|--------------|------------------|----------------------|
+| AT+FET=2    |              | send RTC         | get RTC              |
+|             |              | send EOP         | get EOP              |
+|             | +FPTS:1      | get MCF          | send MCF             |
+|             | +FHNG:0      | send DCN         | get DCN              |
+|             | OK           | hangup           | hangup               |
+|-------------|--------------|------------------|----------------------|
+</PRE>
+
+<A NAME="Table7-7">Table 7-7 Receive two pages, 1-D data, no errors</A>
+<PRE>
+|----------------------------------------------------------------------|
+| DTE COMMAND | DCE RESPONSE | LOCAL DTE ACTION |REMOTE STATION ACTION |
+|-------------|--------------|------------------|----------------------|
+| AT+FCR=1    | OK           | Enable reception |                      |
+|-------------|--------------|------------------|----------------------|
+| AT+FLID=    |              |                  |                      |
+| &lt;local id&gt;  | OK           | Set local ID     |                      |
+|-------------|--------------|------------------|----------------------|
+|             | RING    <-   | detect ring  <-  | Dials[, send CNG]    |
+|-------------|--------------|------------------|----------------------|
+| ATA         |              | off hook         |                      |
+|             |              | send CED         | get CED              |
+|             |              | send CSI         | get CSI              |
+|             |              | send DIS         | get DIS              |
+|             | +FCON        | detect flags     | send v.21 flags      |
+|             |[+FTSI:"&lt;tsi&gt;"] [get TSI]        | [send TSI]           |
+|             | +FDCS:&lt;codes&gt;| get DCS          | send DCS             |
+|             | OK           | begin TCF receive| start TCF            |
+|-------------|--------------|------------------|----------------------|
+| AT+FDR      |              | accept TCF       | finish TCF           |
+|             | +FCFR        | send CFR         | get CFR              |
+|             |[+FDCS:&lt;codes&gt;]                  |                      |
+|             | CONNECT      | get page carrier | send page carrier    |
+| &lt;DC2&gt;       |              | get page data    | send page data       |
+|             |&lt;page data stream&gt;               |                      |
+|             | &lt;DLE&gt;&lt;ETX&gt; <-| detect RTC   <-  | send RTC             |
+|             | +FPTS:1,&lt;lc&gt; |                  | drop carrier         |
+|             | +FET:0    <- | get MPS       <- | send MPS             |
+|             | OK           |                  |                      |
+|-------------|--------------|------------------|----------------------|
+| AT+FDR      |              | send MCF         | get MCF              |
+|             | CONNECT      | get page carrier | send page carrier    |
+| &lt;DC2&gt;       |              | get page data    | send page data       |
+|             |&lt;page data stream&gt;               |                      |
+|             | &lt;DLE&gt;&lt;ETX&gt; <-| detect RTC   <-  | send RTC             |
+|             | +FPTS:1,&lt;lc&gt; |                  | drop carrier         |
+|             | +FET:2    <- | get EOP       <- | send EOP             |
+|             | OK           |                  |                      |
+|-------------|--------------|------------------|----------------------|
+| AT+FDR      |              | send MCF         | get MCF              |
+|             | +FHNG:0   <- | get DCN       <- | send DCN             |
+|             | OK           | hangup           | hangup               |
+|-------------|--------------|------------------|----------------------|
+</PRE>
+
+</BODY>
+</HTML>

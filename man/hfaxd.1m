@@ -1,0 +1,889 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1995-1996 Sam Leffler
+.\" Copyright (c) 1995-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
+.TH HFAXD 1M "July 12, 1996"
+.SH NAME
+hfaxd \- \*(Fx client-server protocol server
+.SH SYNOPSIS
+.B ${LIBEXEC}/hfaxd
+[
+.B \-d
+] [
+.B \-q
+.I dir
+] [
+.B \-o
+.I port
+] [
+.B \-O
+] [
+.B \-i
+.I port
+] [
+.B \-I
+] [
+.B \-s
+.I port
+] [
+.B \-S
+]
+.SH DESCRIPTION
+.I hfaxd
+is the \*(Fx program that implements the server
+portion of:
+.IP \(bu 3
+the (new) client-server protocol,
+.IP \(bu 3
+the old client-server protocol previously implemented by the
+.I faxd.recv
+program, and
+.IP \(bu 3
+the Simple Network Paging Protocol (\s-1SNPP\s+1) used to submit
+message pager jobs to the IXO/TAP and UCP support.
+.PP
+Additional client-server protocols are planned and 
+.I hfaxd
+is intended to be the ``carrier'' through which they are supported.
+.PP
+.I hfaxd
+is typically used in one of two ways; either as a standalone
+process that is started at system boot time to listen
+for client connections on one or more ports,
+or as a subservient process to the
+.IR inetd (1M)
+program.
+The two forms of use may however be combined so long as the same
+service is not provided both by the standalone
+.I hfaxd
+and through
+.IR inetd .
+.SH "HYLAFAX (NEW) CLIENT-SERVER PROTOCOL SUPPORT"
+If
+.I hfaxd
+is started with the
+.B \-i
+option it will service clients using the (new) \*(Fx client-server
+protocol.
+This protocol is strongly related to the Internet File Transfer
+Protocol (\s-1FTP\s+1); so much so in fact that \s-1FTP\s+1
+client programs that include support for ``quoted commands''
+may be used to communicate with
+.I hfaxd
+using the new protocol.
+(It should also be possible to use \s-1FTP\s+1-aware World Wide
+Web browsers such as Mosaic and Netscape Navigator to access \*(Fx
+servers through the new protocol; but the current format for
+information returned in directory listings confuses them.)
+.PP
+The
+.I hfaxd
+server currently recognizes the following protocol requests; case
+is not distinguished.
+Entries marked with a \(dg can be used only when the client has
+established administrative privileges with \s-1ADMIN\s+1.
+.PP
+.nf
+.ta \w'DISABLE\(dg        'u
+\fBRequest	Description\fP
+ABOR	abort previous command
+ACCT	specify account (ignored)
+ADMIN	specify password for administrative privileges
+ALLO	allocate storage (vacuously)
+ANSWER\(dg	request that call be answered
+APPE	append to a file
+CDUP	change to parent of current working directory
+CHMOD	change mode of a file
+CHOWN\(dg	change owner of a file
+CWD	change working directory
+DELE	delete a file
+DISABLE\(dg	disable outbound use of modem
+ENABLE\(dg	enable outbound use of modem
+HELP	give help information
+FILEFMT	specify/query format for returning file status
+FORM	specify data transfer \fIformat\fP
+IDLE	set idle-timer (in seconds)
+JDELE	delete done or suspended job
+JINTR	interrupt job
+JKILL	kill job
+JNEW	create new job
+JOB	set/query current job
+JOBFMT	specify/query format for returning job status
+JPARM	specify/query job state parameter
+JREST	reset current job state
+JSUBM	submit job to scheduler
+JSUSP	suspend job from scheduling
+JWAIT	wait for job to complete
+JGDELE	delete group of jobs
+JGKILL	kill group of jobs
+JGINTR	interrupt group of jobs
+JGNEW	place current job in a new job group
+JGPARM	set state parameter in a group of jobs
+JGREST	reset current state for a group of jobs
+JGRP	set/query current job group
+JGSUBM	submit group of jobs to scheduler
+JGSUSP	suspend group of jobs from scheduling
+JGWAIT	wait for group of jobs to complete
+LIST	list files in a directory
+MDTM	show last modification time of file
+MODE	specify data transfer \fImode\fP
+MDMFMT	specify/query format for returning modem status
+NLST	give name list of files in directory 
+NOOP	do nothing
+PASS	specify password
+PASV	prepare for server-to-server transfer
+PORT	specify data connection port
+PWD	print the current working directory
+QUIT	terminate session
+RCVFMT	specify/query format for returing received facsimile status
+REIN	reinitiate server state
+REST	restart incomplete transfer
+RETP	retrieve the next page in a file
+RETR	retrieve a file
+SHUT	schedule server shutdown
+SITE	non-standard commands (see next section)
+SIZE	return size of file
+STAT	return status of server or file
+STOR	store a file
+STOT	store a temporary file with a unique name
+STOU	store a file with a unique name
+STRU	specify data transfer \fIstructure\fP
+SYST	show operating system type of server system
+TYPE	specify data transfer \fItype\fP
+TZONE	specify timezone handling for dates and times
+USER	specify user name
+VRFY	verify dialstring handling and/or least-cost routing
+.fi
+.PP
+The following non-standard or experimental commands are supported
+through the \s-1SITE\s+1 request.
+.PP
+.nf
+.ta \w'ADDMODEM\(dg        'u
+\fBRequest	Description\fP
+ADDMODEM\(dg	add/configure new modem for use
+ADDUSER\(dg	add client access control entry
+CONFIG\(dg	send configuration parameter setting to server
+DELMODEM\(dg	deconfigure/remove modem
+DELUSER\(dg	remove client access control entry
+TRIGGER	register realtime event trigger
+HELP	give help information, e.g., SITE HELP
+.fi
+.PP
+In addition \s-1FTP\s+1 requests that are specified in Internet 
+RFC 959 but not listed here are recognized, but not implemented.
+.PP
+The 
+.I hfaxd
+server will abort an active data transfer only when the
+\s-1ABOR\s+1 command is preceded by a Telnet "Interrupt Process" (IP)
+signal and a Telnet "Synch" signal in the command Telnet stream,
+as described in Internet \s-1RFC\s+1 959.
+If a \s-1STAT\s+1 command is received during a data transfer,
+preceded by a Telnet IP and Synch, transfer status will be returned.
+.SH "OLD CLIENT-SERVER PROTOCOL SUPPORT"
+If 
+.I hfaxd
+is started with the
+.B \-o
+option it will service clients using the old \*(Fx client-server
+protocol that was used in distributions prior to the 4.0 release.
+Note however that this support is only available if
+.I hfaxd
+is compiled with the support enabled.
+.PP
+Emulation of the old protocol is important for supporting non-\s-1UNIX\s+1
+clients such as the WinFlex client for Windows systems and the
+MacFlex client for Macintosh systems.
+It is strongly recommended however that unless you need to support
+these old-style clients that you not enable support for the old
+protocol because of the inherent misdesign of this protocol.
+.SH "SIMPLE NETWORK PAGING PROTOCOL (SNPP) SUPPORT"
+If
+.I hfaxd
+is started with the
+.B \-s
+option it will service clients using the Simple Network Pager
+Protocol (\s-1SNPP\s+1) as specified in \s-1RFC\s+1 1861
+(which obsoletes
+.SM RFC
+1645).
+.PP
+The
+.I hfaxd
+server currently recognizes the \s-1SNPP\s+1
+protocol requests listed below.
+Requests marked with a \(dg are non-standard extensions to
+.SM RFC
+1861 that may be added to
+.SM SNPP
+at some future time.
+Case is not distinguished and only the
+first four characters of requests are used in identifying
+commands.
+.PP
+.nf
+.ta \w'ABOR\(dg        'u
+\fBRequest	Description\fP
+2WAY	preface a 2-way transaction
+ABOR\(dg	abort previous command
+ACKR	set read acknowledgement handling for subsequent requests
+ALER	set the alter-level for subsequent requests
+CALL	set the caller-ID for subsequent requests
+COVE	set the alternate coverage area for subsequent requests
+DATA	specify a multi-line message
+EXPT	set the expiration time for subsequent requests
+HELP	give help information
+HOLD	set the time at which subsequent requests are to be delivered
+KTAG	kill a previously submitted request
+LEVE	set the service level for subsequent requests
+LOGI	login to server
+MCRE	specify multiple response text and code
+MESS	specify a single-line message
+MSTA	return the status of a previously submitted request
+NOQU	diable message queueing
+PAGE	specify the destination pager
+PING	locate/validate a pager
+QUIT	terminate session
+RESE	reset server state
+RTYP	set the reply type code for subsequent requests
+SEND	send message(s)
+SITE\(dg	site-specific commands (see next section)
+STAT\(dg	return server status
+SUBJ	set the message text for subsequent requests
+.fi
+.PP
+The
+.I hfaxd
+server will abort an active 
+.SM SEND
+operation when an
+.SM ABOR
+command is preceded by a Telnet "Interrupt Process" (\s-1IP\s+1)
+signal and a Telnet "Synch" signal in the command Telnet stream.
+.PP
+The following non-standard or experimental commands are also
+supported through the
+.SM SITE
+request.
+.PP
+.nf
+.ta \w'RETRYTIME      'u
+\fBRequest	Description\fP
+FROMUSER	specify the sender's identity
+IDLE	set idle-timer (in seconds)
+JPARM	query job parameter status
+JQUEUE	control whether or not job is queued
+LASTTIME	set the time to terminate an unfinished job
+MAILADDR	set the e-mail address to use for notification
+MAXDIALS	set the maximum number of times to dial the phone
+MAXTRIES	set the maximum number of times to try sending the page
+MODEM	set the modem or class of modems to use
+NOTIFY	set the e-mail notification
+RETRYTIME	set the time to delay between job retries
+SCHEDPRI	set the scheduling priority for the job
+HELP	give help information, e.g., SITE HELP
+.fi
+.PP
+Note that
+.I hfaxd
+requires that
+.SM SNPP
+clients login first with the
+.SM LOGI
+directive while
+.SM RFC
+1861 permits clients to submit pages anonymously.
+.SH "CLIENT ACCESS CONTROL"
+.I hfaxd
+controls client access according to the information in the file
+.BR etc/hosts .
+This file defines the set of users and machines that may receive
+service and, optionally, defines password challenges to use in
+authenticating clients.
+Clients may be permitted access to services with or without a password
+challenge.
+Access may also be restricted based on the host machine that a
+request for service originates from.
+Consult
+.IR hosts (4F)
+for information on the format and content of this file.
+The \s-1SITE ADDUSER\s+1
+protocol request is provided for adding new users to a server
+(available only to clients with administrative privileges).
+.PP
+Server resources are controlled based on clients' identities.
+Jobs and documents, both received and submitted, are protected
+by the server.
+Typically clients are permitted access to anything they own or
+that is publicly accessible.
+There are also administrative privileges that clients may acquire
+and which permit them wide access to objects that reside on the
+server.
+.PP
+A complete client-server protocol specification is still outstanding.
+.PP
+.I hfaxd
+operates with its root directory set to the top of the
+\*(Fx spooling area; ${SPOOLDIR}.
+This is done so that clients see a virtual file hierarchy that
+is completely contained within the \*(Fx operating environment on
+the server machine.
+Administrators however must be aware of this action when specifying
+files in the
+.I hfaxd
+configuration file: absolute pathnames relative to the root of the 
+spooling should be used to specify filenames.
+.SH "SERVER ACCESS CONTROL"
+The file
+.BR etc/shutdown ,
+when present, specifies when to restrict access to a server machine.
+When this file is present and contains valid information
+.I hfaxd
+will permit only users with administrative privileges to access
+the server.
+Any other users that request service will be denied access and
+negative server responses will include any
+shutdown message specified in the shutdown file.
+Consult
+.IR shutdown (4F)
+for information on the format and content of this file.
+.PP
+The \s-1SHUT\s+1
+protocol request can be used to schedule a server shutdown;
+it is available only to clients with administrative privileges.
+To make a shutdown server available again the shutdown file
+can be deleted with the \s-1DELE\s+1
+protocol request (\fIthis is to be replaced with an ``unshut''
+protocol request so that implementation details are not part of the
+protocol\fP).
+.SH "CONFIGURATION FILES"
+.I hfaxd
+reads configuration information from the file
+.BR ${LIBDATA}/hfaxd.conf
+each time a new server process is started (i.e. for each new client).
+This file uses the same conventions used by other \*(Fx configuration
+files; as described in 
+.IR config (4F).
+The following configuration parameters are recognized; items marked
+``(\s-1SNPP\s+1)'' are used only by the \s-1SNPP\s+1 support.
+.sp .5
+.nf
+.ta \w'MaxConsecutiveBadCmds    'u +\w'integer    'u +\w'\s-1/etc/clientlog\s+1    'u
+\fBTag	Type	Default	Description\fP
+FaxContact	string	\s-1\fIsee below\fP\s+1	contact address to show in help text
+FileFmt	string	\s-1\fIsee below\fP\s+1	format string for file status results
+IdleTimeout	integer	\s-1900\s+1	client idle timeout in seconds
+JobFmt	string	\s-1\fIsee below\fP\s+1	format string for job status results
+KillTimeMap	string	\s-1\fIsee below\fP\s+1	mapping from service level to job kill time (\s-1SNPP\s+1)
+LogFacility	string	\s-1daemon\s+1	\fIsyslog\fP facility name for tracing messages
+MaxAdminAttempts	integer	\s-15\s+1	maximum admin attempts before disconnecting
+MaxConsecutiveBadCmds	integer	\s-110\s+1	maximum invalid commands before disconnecting
+MaxIdleTimeout	integer	\s-17200\s+1	maximum client idle timeout permitted
+MaxLoginAttempts	integer	\s-15\s+1	maximum login attempts before disconnecting
+MaxMsgLength	integer	128	maximum pager message length (\s-1SNPP\s+1)
+ModemFmt	string	\s-1\fIsee below\fP\s+1	format string for modem status results
+PagerIDMapFile	string	\s-1/etc/pagermap\s+1	name of file for mapping pager IDs (\s-1SNPP\s+1)
+PriorityMap	string	\s-1\fIsee below\fP\s+1	mapping from service level to job priority (\s-1SNPP\s+1)
+RcvFmt	string	\s-1\fIsee below\fP\s+1	format string for received facsimile status results
+RetryTimeMap	string	\s-1\fIsee below\fP\s+1	mapping from service level to job retry time (\s-1SNPP\s+1)
+ServerTracing	integer	\s-11\s+1	server tracing control vector
+ShutdownFile	string	\s-1/etc/shutdown\s+1	name of shutdown control file
+UserAccessFile	string	\s-1/etc/hosts\s+1	name of access control file
+XferLogFile	string	\s-1/etc/clientlog\s+1	name of file for logging client data transfers
+.fi
+.PP
+The configuration parameters are explained below:
+.TP 10
+.B FaxContact
+The e-mail address to display as a point of contact in the help text
+returned to a client in response to the \s-1HELP\s+1 or
+\s-1SITE HELP\s+1 commands.
+By default this is ``FaxMaster@\fIhostname\fP'', where
+.I hostname
+is the fully qualified name for the machine where the server is running.
+.TP 10
+.B FileFmt
+The format string to use when returning file status information with the
+\s-1LIST\s+1 and \s-1STAT\s+1 commands.
+Formats are specified using 
+.IR printf (3S)
+style conventions but using the field identifiers listed below.
+Each item can include field width, precision, left-justification,
+0-filling, etc. just as for 
+.IR printf ;
+e.g. %-8p for an 8-character wide, left-justified, blank-padded
+field containing the file protection flags.
+.IP
+.nf
+.ta \w'Format    'u +\w'Description    'u
+\fBFormat	Description\fP
+a	Last access time
+c	Creation time
+d	Device number (octal)
+f	Filename
+g	Group identifier (decimal)
+i	Inode number (decimal)
+l	Link count (decimal)
+m	Last modification time
+o	Owner (based on file \s-1GID\s+1)
+p	Fax-style protection flags (no group bits)
+q	\s-1UNIX\s+1-style protection flags
+r	Root device number (octal)
+s	File size in bytes (decimal)
+u	User identifier (decimal)
+.fi
+.IP
+The default format string is ``%-7p %3l %8o %8s %-12.12m %.48f''.
+It is recommended that all items include a field width so that client
+applications
+that construct headers from the format string can constrain the width of
+column title strings.
+.TP 10
+.B IdleTimeout
+The initial/default timeout to use in timing out idle clients.
+This value defines the maximum amount of time (in seconds) that
+.I hfaxd
+will wait for a command from a client before terminating the connection.
+Unprivileged clients may alter the idle timeout up to the value of
+.IR MaxIdleTimeout ;
+privileged clients may set the timeout to any value.
+.TP 10
+.B JobFmt
+The format string to use when returning job status information for
+jobs in the 
+.B sendq
+and
+.B doneq
+directories.
+Formats are specified using 
+.IR printf (3S)
+style conventions but using the field identifiers listed below.
+Each item can include field width, precision, left-justification,
+0-filling, etc. just as for 
+.IR printf ;
+e.g. %-3j for a 3-character wide, left-justified, blank-padded
+field containing the job state.
+.IP
+.nf
+.ta \w'Format    'u +\w'Description    'u
+\fBFormat	Description\fP
+A	Destination SubAddress
+B	Destination Password
+C	Destination company name
+D	Total # dials/maximum # dials
+E	Desired signalling rate
+F	Client-specific tagline format string
+G	Desired min-scanline time
+H	Desired data format
+I	Client-specified scheduling priority
+J	Client-specified job tag string
+K	Desired use of ECM
+L	Destination geographic location
+M	Notification e-mail address
+N	Desired use of private tagline (one-character symbol)
+O	Whether to use continuation cover page (one-character symbol)
+P	# pages transmitted/total # pages to transmit
+Q	Client-specified minimum acceptable signalling rate
+R	Destination person (receiver)
+S	Sender's identity
+T	Total # tries/maximum # tries
+U	Page chopping threshold (inches)
+V	Job done operation
+W	Communication identifier
+X	Job type (one-character symbol)
+a	Job state (one-character symbol)
+b	# consecutive failed tries
+c	Client machine name
+d	Total # dials
+e	Public (external) format of dialstring
+f	# consecutive failed dials
+g	Group identifier
+h	Page chop handling (one-character symbol)
+i	Current scheduling priority
+j	Job identifier
+k	Job kill time
+l	Page length in mm
+m	Assigned modem
+n	E-mail notification handling (one-character symbol)
+o	Job owner
+p	# pages transmitted
+q	Job retry time (MM::SS)
+r	Document resolution in lines/inch
+s	Job status information from last failure
+t	Total # tries attempted
+u	Maximum # tries
+v	Client-specified dialstring
+w	Page width in mm
+x	Maximum # dials
+y	Total # pages to transmit
+z	Time to send job
+.fi
+.IP
+The default format string is ``%\-4j %3i %1a %6.6o %\-12.12e %5P %5D %7z %.25s''.
+This string constrains each status line to be less than 80 characters.
+It is recommended that all items include a field width so that client
+applications, such as
+.IR faxstat (1)
+that construct headers from the format string can constrain the width of
+column title strings.
+.TP 10
+.B KillTimeMap
+The mapping from \s-1SNPP\s+1 service level (0-11) to job expiration time
+(kill time).
+A mapping is specified as a string of space-separate numbers where each
+value is the number of minutes to permit a job to run.
+The default mapping is ``5 5 5 15 60 240 720 1440 1440 1440 1440 1440''
+which expires a
+job in 5 minutes for service levels 0-2, 15 minutes for level three, 60
+minutes for level four, etc.
+.TP 10
+.B LogFacility
+The symbolic name for the 
+.IR syslog (3)
+facility to use when logging error messages and
+informational/debugging messages requested through the
+.B ServerTracing
+parameter.
+The list of facility names is found in the system include file
+.BR <syslog.h> ;
+comparisons are case-insensitive.
+.TP 10
+.B MaxAdminAttempts
+The maximum number of unsuccessful attempts
+gain adminstrative privileges with the \s-1ADMIN\s+1 command that
+.I hfaxd
+will permit a client before terminating the connection.
+Note that the count of attempts is reset if/when the client
+successfully gains administrative privileges.
+.TP 10
+.B MaxConsecutiveBadCmds
+The maximum number of consecutive unrecognized, unimplemented, syntactically
+incorrect, or otherwise unacceptable commands to permit a client
+before terminating the connection.
+This control has two purposes: to handle naive or malicious clients
+from sending long streams of nonsense commands to a server, and to
+insure that clients are forcibly terminated when a server is marked shutdown.
+.TP 10
+.B MaxIdleTimeout
+The maximum value that a client may set the idle timeout to.
+This value is not enforced if the client has administrative privileges.
+.TP 10
+.B MaxLoginAttempts
+The maximum number of unsuccessful attempts
+to login with the \s-1USER\s+1 and \s-1PASS\s+1 commands that
+.I hfaxd
+will permit a client before terminating the connection.
+.TP 10
+.B MaxMsgLength
+The maximum number of characters to accept in a pager message specified
+with the \s-1DATA\s+1 or \s-1MESS\s+1 commands.
+Messages longer than this value are rejected.
+.TP 10
+.B ModemFmt
+The format string to use when returning modem status information
+for modems listed in the 
+.B status
+directory.
+Formats are specified using 
+.IR printf (3S)
+style conventions but using the field identifiers listed below.
+Each item can include field width, precision, left-justification,
+0-filling, etc. just as for 
+.IR printf ;
+e.g. %-8h for an 8-character wide, left-justified, blank-padded
+field containing the name of the host the server is running on.
+.IP
+.nf
+.ta \w'Format    'u +\w'Description    'u
+\fBFormat	Description\fP
+h	Server hostname
+l	Local identifier string
+m	Canonical modem name
+n	FAX phone number
+r	Maximum pages that can be received in a single call
+s	Status information string
+t	Server and session tracing levels (xxxxx:yyyyy)
+v	Modem speaker volume as one-character symbol
+z	A ``*'' if a \fIfaxgetty\fP\|(1M) process is running; otherwise `` '' (space)
+.fi
+.IP
+The default format string is ``Modem %m (%n): %s''.
+.TP 10
+.B PagerIDMapFile
+The absolute pathname of the file that contains directions for
+mapping pager identifiers to \s-1IXO/TAP\s+1 or \s-1UCP\s+1 service providers
+(and optionally a pager identification number).
+Consult
+.IR pagermap (4F)
+for information on the format and content of this file.
+(Note that absolute pathnames are relative to the root
+of the spooling area).
+.TP 10
+.B PriorityMap
+The mapping from \s-1SNPP\s+1 service level (0-11) to job scheduling priority.
+A mapping is specified as a string of space-separate numbers where each
+value is the priority to assign to a job.
+The default mapping is ``63 127 127 127 127 127 127 127 127 127 127 127''
+which assigns
+a high priority to service level zero and normal (default) priority to
+all other service levels.
+.TP 10
+.B RcvFmt
+The format string to use when returning status information for
+received facsimile in the 
+.B recvq
+directory.
+Formats are specified using 
+.IR printf (3S)
+style conventions but using the field identifiers listed below.
+Each item can include field width, precision, left-justification,
+0-filling, etc. just as for 
+.IR printf ;
+e.g. %-3b for a 3-character wide, left-justified, blank-padded
+field containing the signalling rate.
+.IP
+.nf
+.ta \w'Format    'u +\w'Description    'u
+\fBFormat	Description\fP
+a	SubAddress received from sender (if any)
+b	Signalling rate used during receive
+d	Data format used during receive
+e	Error description if an error occurred during receive
+f	Document filename (relative to the \fBrecvq\fP directory)
+h	Time spent receiving document (HH:MM:SS)
+l	Page length in mm
+m	Fax-style protection mode string (``-rwxrwx'')
+n	File size (number of bytes)
+o	File owner
+p	Number of pages in document
+q	\s-1UNIX\s+1-style protection flags
+r	Resolution of received data
+s	Sender identity (\s-1TSI\s+1)
+t	Compact representation of the time when the receive happened
+w	Page width in mm
+z	A ``*'' if receive is going on; otherwise `` '' (space)
+.fi
+.IP
+The default format string is ``%\-7m %4p%1z %\-8.8o %14.14s %7t %f''.
+This string constrains each status line to be less than 80 characters.
+It is recommended that all items include a field width so that client
+applications, such as
+.IR faxstat (1)
+that construct headers from the format string can constrain the width of
+column title strings.
+.TP 10
+.B RetryTimeMap
+The mapping from \s-1SNPP\s+1 service level (0-11) to job retry time.
+A mapping is specified as a string of space-separate numbers where each
+value is the number of seconds to delay between delivery attempts.
+A value of zero causes retries to be scheduled using the default
+algorithm used by the \*(Fx job scheduler.
+The default mapping is
+``30 60 60 180 0 0 0 0 0 0 0 0''
+which retries a level 0 job after a 30 second delay, levels 1 and 2
+after 60 seconds, level 3 after 3 minutes, and other jobs are
+retried according to the usual scheduling algorithm.
+.TP 10
+.B ServerTracing
+A number that controls the generation of tracing
+information by a server.
+.I areas
+that are individually controlled.
+To enable tracing of multiple areas of operation, the
+flag associated with each area should be bit-or'd to
+form the value for this tag.
+.ne 1i
+.sp .5
+.ta \w'\fB256 (0x04000)    \fP'u
+.nf
+\fBFlag	Description\fP
+1 (0x00001)	General server operation
+2 (0x00002)	Client-server protocol requests and responses
+4 (0x00004)	File transfers from client to server
+8 (0x00008)	File transfers from server to client
+16 (0x00010)	Client logins
+32 (0x00020)	All network connections
+64 (0x00040)	\s-1FIFO\s+1 messages to and from \fIfaxq\fP\|(1M)
+128 (0x00080)	\s-1TIFF\s+1 Library errors and warnings
+256 (0x00100)	Configuration file processing
+.sp .5
+.fi
+.IP
+Tracing messages are directed to
+.IR syslog (3)
+using the \fIfacility\fP specified with the
+.B LogFacility
+configuration parameter.
+Note that 
+.IR syslogd (1M)
+must be configured to capture
+.IR facility.info ,
+.IR facility.debug ,
+.IR facility.warning ,
+and
+.I facility.err
+messages.
+.TP 10
+.B ShutdownFile
+The absolute pathname of the server shutdown file;
+see
+.IR shutdown (4F)
+for information on the format and content of this file.
+(Note that absolute pathnames are relative to the root
+of the spooling area).
+.TP 10
+.B UserAccessFile
+The absolute pathname of the user access control file;
+see
+.IR hosts (4F)
+for information on the format and content of this file.
+(Note that absolute pathnames are relative to the root
+of the spooling area).
+.TP 10
+.B XferLogFile
+The absolute pathname of the file to use for logging client-server
+file transfers (when enabled through the
+.B ServerTracing
+parameter).
+(Note that absolute pathnames are relative to the root
+of the spooling area).
+.SH OPTIONS
+.TP 10
+.BI \-q " dir"
+The specified directory is treated as the spooling area.
+The default spooling area,
+.IR ${SPOOL} ,
+is defined at the time the software is built.
+.TP 10
+.B \-d
+Stop
+.I hfaxd
+from
+.I detaching
+itself from the controlling terminal.
+This option is normally used only when running 
+.I hfaxd
+under a debugger or when
+.I hfaxd
+is started up from the
+.IR inetd (1M)
+process.
+.TP 10
+.BI \-i " port"
+Listen on the specified 
+.I port
+for service requests and respond with the (new) client-server protocol.
+The port may be specified either symbolically, e.g. ``hylafax''
+or numerically.
+This flag may be specified multiple times to request service on multiple
+different ports.
+.TP 10
+.BI \-o " port"
+Listen on the specified
+.I port
+for service requests and respond with the old client-server protocol.
+The port may be specified either symbolically, e.g. ``fax''
+or numerically.
+This flag may be specified multiple times to request service on multiple
+different ports.
+.TP 10
+.BI \-s " port"
+Listen on the specified
+.I port
+for service requests and respond with the Simple Network Paging (SNPP)
+protocol.
+The port may be specified either symbolically, e.g. ``snpp''
+or numerically.
+This flag may be specified multiple times to request service on multiple
+different ports.
+.TP 10
+.B \-I
+Service the (new) client-server protocol using the standard input and
+output.
+This option is useful when
+.I hfaxd
+is started up by
+.IR inetd (1M).
+.TP 10
+.B \-O
+Service the old client-server protocol using the standard input and
+output.
+This option is useful when
+.I hfaxd
+is started up by
+.IR inetd (1M).
+.TP 10
+.B \-S
+Service the Simple Network Paging (SNPP) protocol
+using the standard input and output.
+This option is useful when
+.I hfaxd
+is started up by
+.IR inetd (1M).
+.SH DIAGNOSTICS
+Diagnostics generated by
+.I hfaxd
+are logged using
+.IR syslog (3).
+.SH FILES
+.ta \w'${SPOOL}/config.\fIdevice\fP    'u
+.nf
+${LIBDATA}/hfaxd.conf	server configuration file
+${SPOOL}	spooling area
+${SPOOL}/FIFO	for submitting the job
+${SPOOL}/sendq	where job description is placed
+${SPOOL}/sendq/seqf	for assigning job identifiers
+${SPOOL}/docq/seqf	for assigning document identifiers
+${SPOOL}/tmp	temporary location of job-related files
+${SPOOL}/docq	where document files are placed
+${SPOOL}/recvq	where received facsimile are found
+${SPOOL}/archive	where archived jobs are placed
+${SPOOL}/log	for server log files
+${SPOOL}/client	for \s-1FIFO\s+1 files used in communicating with \fIfaxq\fP
+${SPOOL}/status	for server status information
+${SPOOL}/config.\fIdevice\fP	for returning server status
+${SPOOL}/etc/hosts	host access control list
+${SPOOL}/etc/shutdown	server shutdown control
+${SPOOL}/etc/pagermap	\s-1SNPP\s+1 pager ID mapping file
+.fi
+.SH BUGS
+To be filled in.
+.SH "SEE ALSO"
+.IR sendfax (1),
+.IR sendpage (1),
+.IR faxalter (1),
+.IR faxrm (1),
+.IR faxstat (1),
+.IR faxq (1M),
+.IR syslog (3)
+.IR hylafax (4F),
+.IR hosts (4F),
+.IR status (4F),
+.IR shutdown (4F),

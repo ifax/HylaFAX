@@ -1,0 +1,10 @@
+#
+# $Id$
+#	Tim Rice	Tue Feb 25 11:21:51 PST 1997
+#
+#	preremove
+#
+#cd /usr/local/HylaFAX-v4.0
+#sh remove.links
+
+exit 0

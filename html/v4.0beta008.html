@@ -1,0 +1,118 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Changes in HylaFAX v4.0beta008
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>C</FONT>HANGE <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+<B>Current Version</B>: v4.0beta008<BR>
+<B>Previous Version</B>: <A HREF="v4.0beta007.html">v4.0beta007</A><BR>
+<B>Master FTP Site</B>: <A HREF="ftp://sgi.com/sgi/fax">sgi.com (192.48.153.1), directory sgi/fax</A><BR>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+</UL>
+
+<P>
+Note that this is a <STRONG>major new distribution</STRONG> and lots
+of things have changed.  Consult the <A HREF="hylafax4.0.html">general overview</A>
+for a high-level description of the new functionality provided in the
+v4.0 software.
+
+<P>
+This document describes the changes made to the software between the
+<I>previous</I> and <I>current</I> versions (see above).
+If you don't find something listed here, then it was not done in this
+timeframe, or it was not considered important enough to be mentioned.
+The following information is located here:
+<UL>
+<LI><A HREF="#configure">Changes in the software configuration</A>
+<LI><A HREF="#hfaxd">Changes to hfaxd</A>
+<LI><A HREF="#faxmail">Changes to faxmail</A>
+<LI><A HREF="#sendpage">Changes to sendpage</A>
+<LI><A HREF="#util">Changes in the support library</A>
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
+
+<UL>
+<LI>the pathname for the <B>vgetty</B> program can now be configured
+    with the <TT>PATH_VGETTY</TT> configuration parameter
+<LI>the pathname for the directory where the TIFF tools are installed
+    can now be configured with the <TT>TIFFBIN</TT> configuration parameter
+<LI>the test program used to check for memory-mapped file support
+    now uses a test that reflects actual usage (i.e. it verifies only
+    that read-only support is present)
+<LI>new checks for <TT>dev_t</TT> type and <TT>mknod</TT> system call
+<LI>new checks for locating installed Ghostscript on Linux systems
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="hfaxd"><B><FONT SIZE=+3>C</FONT>HANGES TO HFAXD:</B></A>
+
+<UL>
+<LI><B>hfaxd</B> now automatically creates <B>/dev/null</B>, <B>/dev/tcp</B>,
+    and <B>/etc/netconfig</B> files in the chroot'd filesystem on systems
+    that appear to need them for proper operation
+<LI><B>hfaxd</B> now closes only the standard input, output, and
+    error descriptors when detaching itself from the controlling terminal
+<LI>portability problems associated with reusing a varargs parameter
+    list twice without an intervening <TT>va_end</TT>/<TT>va_start</TT>
+    have been corrected
+<LI>missing includes of <TT>&lt;net/errno.h&gt;</TT> have been fixed
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxmail"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXMAIL:</B></A>
+
+<UL>
+<LI>meta-headers were added to control which header lines are
+    kept from the envelope of processed mail messages
+<LI>the sample PostScript handwriting fonts have been removed
+<LI>old comments about the <TT>-f</TT> option to sendfax that are
+    no longer true were removed from the <B>mailfax</B> shell scripts
+<LI>the manual page has been updated to reflect current usage
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="sendpage"><B><FONT SIZE=+3>C</FONT>HANGES TO SENDPAGE:</B></A>
+
+<UL>
+<LI><B>sendpage</B> is still broken
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="util"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SUPPORT LIBRARY:</B></A>
+
+<UL>
+<LI>all uses to the <B>gethostbyname</B> function are now type-coerced
+    with a new entry in the <TT>Socket</TT> class
+</UL>
+
+<!--FOOTER-->
+
+<A HREF="toc.html"><IMG SRC="icons/back.gif"></A> HylaFAX table
+of contents.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

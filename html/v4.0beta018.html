@@ -1,0 +1,253 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Changes in HylaFAX v4.0beta018
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>C</FONT>HANGE <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+<B>Current Version</B>: v4.0beta018<BR>
+<B>Previous Version</B>: <A HREF="v4.0beta015.html">v4.0beta015</A><BR>
+<B>Master FTP Site</B>: <A HREF="ftp://sgi.com/sgi/fax">sgi.com (192.48.153.1), directory sgi/fax</A><BR>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+</UL>
+
+<P>
+Note that this is a <STRONG>major new distribution</STRONG> and lots
+of things have changed.  Consult the <A HREF="hylafax4.0.html">general overview</A>
+for a high-level description of the new functionality provided in the
+v4.0 software.
+
+<P>
+This document describes the changes made to the software between the
+<I>previous</I> and <I>current</I> versions (see above).
+If you don't find something listed here, then it was not done in this
+timeframe, or it was not considered important enough to be mentioned.
+The following information is located here:
+<UL>
+<LI><A HREF="#configure">Changes in the software configuration</A>
+<LI><A HREF="#faxq">Changes to faxq</A>
+<LI><A HREF="#faxsend">Changes to faxsend</A>
+<LI><A HREF="#faxgetty">Changes to faxgetty</A>
+<LI><A HREF="#faxqclean">Changes to faxqclean</A>
+<LI><A HREF="#hfaxd">Changes to hfaxd</A>
+<LI><A HREF="#sendfax">Changes to sendfax</A>
+<LI><A HREF="#faxmail">Changes to faxmail</A>
+<LI><A HREF="#misc">Changes in miscellaneous stuff</A>
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
+
+<UL>
+<LI>the zlib and regex packages that are included in the distribution
+    (from elsewhere) have moved to top-level directories and their
+    use is now optional; this makes it possible, for example, to link
+    against a pre-built DSO
+<LI><B>configure</B> now automatically purges any <B>config.cache</B>
+    file if configuration parameters are specified on the command line
+    or if a <B>config.site</B> or <B>config.local</B> file has been
+    modified since <B>config.cache</B> was last written
+<LI>several fatal errors during configuration now elicit more verbose
+    information from <B>configure</B>
+<LI><B>configure</B> now aborts if the <TT>strftime</TT> or <TT>socket</TT>
+    functions are not located in the expected places
+<LI>a bug was fixed where <B>configure</B> would inject diagnostic information
+    in the <B>port.h</B> file if memory mapped files were not found to be
+    supported in the expected way
+<LI>the <TT>ZLIB</TT>, <TT>LIBZ</TT> and <TT>ZLIBINC</TT>
+    configuration parameters were
+    added to specify the location of the zlib software
+<LI>the <TT>REGEX</TT>, <TT>LIBREGEX</TT> and <TT>REGEXINC</TT>
+    configuration parameters
+    were added to specify the location of the regex software
+<LI>several extraneous references to the math library (<TT>-lm</TT>)
+    were removed from Makefiles
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxq"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXQ:</B></A>
+
+<UL>
+<LI>a bug was fixed that caused active jobs to be terminated when
+    they were to be suspended
+<LI>aborting outbound jobs is now handled better
+<LI><B>faxq</B> now waits for sub-processes to terminate when a job
+    is to be suspended or aborted; this corrects a race condition
+    that caused clients to sometimes get incorrect results
+<LI>a bug was fixed where a reference to a job might be left on
+    the active queue when faxq could not fork to startup a sub-process
+<LI><B>faxq</B> now honors a job's state when initially scanning the
+    job queue at startup; this means, in particular, that suspended
+    jobs are no longer automatically submitted
+<LI>the scheduling algorithm was reorganized so that jobs are
+    processed ``more aggressively''; this causes jobs to be dispatched
+    in an order that more closely parallels the order in which they
+    are submitted
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxsend"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXSEND:</B></A>
+
+<UL>
+<LI>the total number of pages to send--as seen by the client--is now
+    properly maintained
+<LI>a bug was fixed that caused certain abort requests to be ignored 
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="pagesend"><B><FONT SIZE=+3>C</FONT>HANGES TO PAGESEND:</B></A>
+
+<UL>
+<LI>a bug was fixed that caused certain abort requests to be ignored 
+<LI>a bug was fixed that caused non-default parity settings to not be
+    handled properly
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxgetty"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXGETTY:</B></A>
+
+<UL>
+<LI>a portability problem that caused core dumps on 68K systems was fixed
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxqclean"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXQCLEAN:</B></A>
+
+<UL>
+<LI>malformed job files are now removed instead of being ignored
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="hfaxd"><B><FONT SIZE=+3>C</FONT>HANGES TO HFAXD:</B></A>
+
+<UL>
+<LI><TT>JPARM DOCUMENT</TT> now returns the set of document files for a job
+<LI><TT>JPARM COVER</TT> now returns any cover page document for a job
+<LI><TT>JPARM POLL</TT> now returns any polling requests for a job
+<LI><TT>JPARM</TT> now includeds document and polling information in the
+    status information it returns
+<LI>the <TT>%P</TT> and <TT>%y</TT> job status format escapes now correctly
+    return the total number of pages to be sent for a job
+<LI>the SNPP support now correctly resets state after each <TT>PAGE</TT>
+    request (per the spec)
+<LI>the SNPP <TT>SUBJ</TT> command now properly parses multi-token arguments
+<LI><TT>JPARM COMMID</TT> now returns the last communications identifier
+    for a job
+<LI><TT>JPARM</TT> requests now work correctly when a job's state
+    is updated by an unrelated thread of control
+<LI>the setting of many job parameters that have side effects
+    is now handled properly;
+    in particular this fixes a problem where setting a job's scheduling
+    priority had no effect
+<LI>a bug was fixed in the <TT>%h</TT> job status format escape
+<LI>a <TT>%W</TT> job status format escape was added for printing a
+    job's communication identifier
+<LI>a <TT>JINTR</TT> command was added that acts just like <TT>JSUSP</TT>
+    except that an active job is aborted before it is suspended
+<LI>a bug was fixed that caused <TT>STOR</TT> requests that created
+    a new file to fail
+<LI>a bug was fixed the permited unprivileged users to create files
+    in private directories
+<LI>a portability problem was fixed for DEC Alpha systems
+<LI><TT>RETP</TT> is a new request that returns a single page from a
+    TIFF document file; it can be used together with the <TT>REST</TT>
+    request to selectively retrieve pages from a file
+<LI>a bug was fixed in the ZIP-compressed retrieval of files
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="sendfax"><B><FONT SIZE=+3>C</FONT>HANGES TO SENDFAX:</B></A>
+
+<UL>
+<LI>the <TT>CoverCmd</TT> configuration parameter now specifies the
+    absolute pathname for the program to use in generating cover pages
+<LI>strings passed as arguments to the <TT>CoverCmd</TT> program are
+    no longer interpreted by the shell
+<LI>jobs are not submitted if a cover page cannot be created (jobs
+    used to be submitted without a cover page)
+<LI>a bug was fixed that caused certain configuration parameters to
+    be ignored
+<LI>the argument sent for the <TT>USETAGLINE</TT> job parameter is
+    now properly typed as boolean
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="sendpage"><B><FONT SIZE=+3>C</FONT>HANGES TO SENDPAGE:</B></A>
+
+<UL>
+<LI>the <TT>-s</TT> option is now correctly recognized
+<LI>a bug was fixed that caused reading messages from files to fail
+<LI>the <TT>SNPPSERVER</TT> environment variable is now correctly honored
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxmail"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXMAIL:</B></A>
+
+<UL>
+<LI>support was added to parse and specially format MIME-encoded messages
+<LI>support was added to directly deliver facsimile
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="misc"><B><FONT SIZE=+3>C</FONT>HANGES IN MISCELLANEOUS STUFF:</B></A>
+
+<UL>
+<LI><B>faxalter</B> now correctly handles ``<TT>-a now</TT>''
+<LI><B>faxcover</B> now properly escapes backslash characters in emitted
+   PostScript strings
+<LI>the <B>tiff2fax</B> script now uses symbolic links instead of hard
+   links when a processing request requires no work; this fixes a problem
+   where document files were being created with multiple links to them,
+   causing <B>faxqclean</B> to not remove the files even though they
+   were unreferenced
+<LI>a bug in <TT>killall</TT> emulation function was fixed in
+    the <B>hylafax</B> system startup script
+<LI>the ``at syntax'' support now properly converts times of the form
+   ``120 minutes''
+<LI>boolean values in configuration files can now be specified as
+   ``true'' and ``false''
+<LI>the <B>ps2fax</B> symbolic link that is installed for the
+    default PostScript RIP now references Ghostscript and is only
+    installed if no file exists 
+<LI>the text to PostScript conversion support was extended and a bug
+    was fixed in the handling of lines with trailing white space
+<LI>client support for retrieving files was extended to support
+    restarting a previous retrieval request
+<LI>an apparent problem in the socket support in SINIX MIPS 5.42 was
+    worked around
+</UL>
+
+<!--FOOTER-->
+
+<A HREF="toc.html"><IMG SRC="icons/back.gif"></A> HylaFAX table
+of contents.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

@@ -1,0 +1,179 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH FAXRM 1 "May 12, 1996"
+.SH NAME
+faxrm \- remove a \*(Fx job or document from a server
+.SH SYNOPSIS
+.B faxrm
+[
+.B \-a
+] [
+.B \-d
+] [
+.B \-v
+] [
+.B \-h
+.I hostname
+]
+.IR id ...
+.SH DESCRIPTION
+.I faxrm
+removes one or more jobs or documents from a \*(Fx server.
+If a job that is to be removed is being processed by a server,
+it is first aborted.
+.PP
+An 
+.I id
+is either a number that identifies a
+.I job
+(default) or, if the
+.B \-d
+option is specified, a document pathname.
+Job identifiers are printed by
+.IR sendfax (1)
+when jobs are queued for transmission; they can also be displayed with
+.IR faxstat (1).
+The names of documents associated with outbound jobs
+can be seen by supplying the
+.B \-f
+option to
+.IR faxstat .
+Documents in the receive queue can be viewed with the 
+.B \-r
+option to
+.IR faxstat .
+.PP
+Unprivileged users can only remove jobs or documents that they own.
+Clients with administrative privileges can remove any job or document
+(see the
+.B \-a
+option below).
+.SH OPTIONS
+.TP 10
+.B \-a
+Use administrative privileges;
+.I faxrm
+will prompt for the password to set administrative privileges.
+.TP 10
+.B \-d
+Interpret each
+.I id
+as a document pathname.
+If a pathname does not begin with ``/'' then
+.I faxrm
+automatically prepends ``/docq/''.
+.TP 10
+.BI \-h " host"
+Contact the server at the specified 
+.IR host .
+The
+.I host
+may be either a symbolic name or a network address.
+If no server is specified then
+If no
+.B \-h
+option is supplied,
+.I faxrm
+uses the
+.SM FAXSERVER
+environment variable to identify the \*(Fx server to contact.
+If this variable is not set, then
+.I faxrm
+checks for a setting in the configuration files (first in the
+per-user file and then in the system-wide file).
+If all of the above fails, then
+.I faxrm
+attempts to contact a server on the machine where it is run.
+.TP
+.B \-v
+Trace the protocol messages to and from the server.
+.SH "CONFIGURATION PARAMETERS"
+.I faxrm
+reads configuration information from the file
+.B ${LIBDATA}/hyla.conf
+and then from the file
+.BR ~/.hylarc .
+Configuration files follow the conventions described in
+.IR hylafax (1).
+The following configuration parameters are recognized:
+.sp .5
+.nf
+.ta \w'AutoConverPage    'u +\w'boolean    'u +\w'\s-1\fIsee below\fP\s+1    'u
+\fBTag	Type	Default	Description\fP
+Host	string	\s-1localhost\s+1	host to contact for service
+Port	integer	\s-14559\s+1	port to use in contacting server
+Protocol	string	\s-1tcp\s+1	protocol to use in contacting server
+Verbose	boolean	\s-1No\s+1	whether or not to enable protocol tracing
+.fi
+.PP
+The configuration parameters are explained below:
+.TP 10
+.B Host
+The host to contact for service.
+(Equivalent to the
+.B \-h
+option.)
+.TP 10
+.B Port
+The network port to contact for service.
+(Eqvuialent to the
+.B \-h
+option.)
+.TP 10
+.B Protocol
+The name of the communication protocol to use when contacting a server.
+(Equivalent to the
+.B FAXSERVICE
+environment variable.)
+.TP 10
+.B Verbose
+Control protocol tracing.
+(Equivalent to the
+.B \-v
+option.)
+.SH DIAGNOSTICS
+.B "Job %s removed." 
+A confirmation that the job was successfully removed from the 
+.B sendq
+directory.
+.PP
+.B "Job %s removed (from doneq)." 
+A confirmation that the job was successfully removed from the 
+.B done
+directory; the directory where jobs are placed once they are finished.
+.PP
+.B "%s removed." 
+A confirmation that the document was successfully deleted from the server.
+.SH "SEE ALSO"
+.IR hylafax (1),
+.IR sendfax (1),
+.IR faxalter (1),
+.IR faxstat (1),
+.IR hfaxd (1M)

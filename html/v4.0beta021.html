@@ -1,0 +1,105 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Changes in HylaFAX v4.0beta021 (aka v4.0pl0)
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>C</FONT>HANGE <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+<B>Current Version</B>: v4.0beta021 (aka v4.0pl0)<BR>
+<B>Previous Version</B>: <A HREF="v4.0beta020.html">v4.0beta020</A><BR>
+<B>Master FTP Site</B>: <A HREF="ftp://sgi.com/sgi/fax">sgi.com (192.48.153.1), directory sgi/fax</A><BR>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+</UL>
+
+<P>
+Note that this is a <STRONG>major new distribution</STRONG> and lots
+of things have changed.  Consult the <A HREF="hylafax4.0.html">general overview</A>
+for a high-level description of the new functionality provided in the
+v4.0 software.
+
+<P>
+This document describes the changes made to the software between the
+<I>previous</I> and <I>current</I> versions (see above).
+If you don't find something listed here, then it was not done in this
+timeframe, or it was not considered important enough to be mentioned.
+The following information is located here:
+<UL>
+<LI><A HREF="#configure">Changes in the software configuration</A>
+<LI><A HREF="#faxgetty">Changes to faxgetty</A>
+<LI><A HREF="#faxsetup">Changes to faxsetup</A>
+<LI><A HREF="#misc">Changes in miscellaneous stuff</A>
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
+
+<UL>
+<LI>configuration requirements for SCO 5.0 are now handled automatically
+<LI><B>configure</B> now handles systems that use #defines for the
+    <TT>syslog</TT> and <TT>vsyslog</TT> functions (e.g. SCO OS 5)
+<LI>the pathname to the <B>so_locations</B> file used in creating DSOs
+    under IRIX was corrected; this fixes build problems with the MipsPRO 7.x
+    compilers under IRIX 6.2
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxgetty"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXGETTY:</B></A>
+
+<UL>
+<LI>a bug in the decoding of 2D-encoded facsimile page data was fixed
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxsetup"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXSETUP:</B></A>
+
+<UL>
+<LI>the <TT>-spool</TT> and <TT>-tiffbin</TT> options were
+    removed in favor of
+    a more general ``<TT>-with-VAR=[value]</TT>'' syntax;
+    consult the manual page for details
+<LI><B>faxsetup</B> now forces the setting of the link to the
+    <B>ps2fax</B> shell script used to image outbound PostScript documents
+<LI>the construct that caused IRIX's <B>/bin/sh</B> to go into a infinite
+    loop on exit was removed
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="misc"><B><FONT SIZE=+3>C</FONT>HANGES IN MISCELLANEOUS STUFF:</B></A>
+
+<UL>
+<LI>a workaround for a problem in the HP-UX ANSI C compilation environment
+    was added to the string support code
+<LI>the handling of escape codes in modem command strings was redone;
+    this fixes several bugs, most notably the handling of strings with
+    embedded line breaks followed by a <TT>&lt;waitfor&gt;</TT> request
+<LI>the <B>wedged</B> script now checks if <B>/etc/inittab</B> is
+    present before trying to disable runaway faxgetty processes
+</UL>
+
+<!--FOOTER-->
+
+<A HREF="toc.html"><IMG SRC="icons/back.gif"></A> HylaFAX table
+of contents.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

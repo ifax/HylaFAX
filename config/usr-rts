@@ -1,0 +1,71 @@
+# $Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Configuration for using the Class 1 command interface with
+# a USR Courier or Sportster modem and RTS/CTS flow control. 
+#
+# CONFIG:CLASS1:1444:.*:RTSCTS: Manufacturer=USRobotics Model=Courier/Sportster
+# CONFIG:CLASS1:1445:.*:RTSCTS: Manufacturer=USRobotics Model=Courier/Sportster
+# CONFIG:CLASS1:2886:.*:RTSCTS: Manufacturer=USRobotics Model=Courier/Sportster
+# CONFIG:CLASS1:3366:.*:RTSCTS: Manufacturer=USRobotics Model=Courier
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:		Class1		# use class 1 interface
+ModemRate:		38400		# max rate for DCE-DTE communication
+ModemFlowControl:	rtscts		# hardware flow control
+#
+ModemSetupDTRCmd:	ATS13=1&D2	# setup so DTR drop resets modem
+ModemSetupDCDCmd:	AT&C1		# setup so DCD reflects carrier (or not)
+ModemNoFlowCmd:		AT&H0&I0&R1	# setup modem for no flow control
+ModemHardFlowCmd:	AT&H1&I0&R2	# setup modem for hardware flow control
+ModemSoftFlowCmd:	AT&H2&I2&R1	# setup modem for software flow control
+ModemResultCodesCmd:	ATQ0X4		# enable result codes
+#
+ModemMfrQueryCmd:	!USR
+ModemModelQueryCmd:	ATI3
+ModemRevQueryCmd:	ATI7		# XXX, returns a multi-line result
+#
+# When AT+FCLASS=1 is issued the modem automatically switches
+# to software flow control; these parameters let the fax software
+# reset flow control as needed after entering Class 1.
+#
+Class1NFLOCmd:		AT&H0&I0&R1	# setup modem for no flow control
+Class1HFLOCmd:		AT&H1&I0&R2	# setup modem for hardware flow control
+Class1SFLOCmd:		""		# modem does this automatically
+#
+# The remainder of this configuration is included so that the
+# modem "idles" in Class 0 while not sending or receiving facsimile.
+#
+ModemSetupAACmd:	AT+FCLASS=0&H1&I0&R2	# leave modem in class 0
+ModemAnswerCmd:		AT+FCLASS=1&H1&I0&R2A	# force RTS/CTS after change

@@ -1,0 +1,114 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1994-1996 Sam Leffler
+.\" Copyright (c) 1994-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH CQTEST 1M "October 3, 1995"
+.SH NAME
+cqtest \- \*(Fx copy quality checking test program
+.SH SYNOPSIS
+.B ${SBIN}/cqtest
+[
+.I options
+] input.tif
+.SH DESCRIPTION
+.I cqtest
+is a program for testing the copy quality checking support in
+the \*(Fx software (specifically, in the
+.IR faxgetty (1M)
+program).
+.I cqtest
+takes a
+.SM TIFF/F
+(\c
+.SM TIFF
+Class F) file and
+generates a new
+.SM TIFF/F
+file that is a copy of the input file, but with any erroneous scanlines
+replaced/regenerated.
+In addition,
+.I cqtest
+prints diagnostic messages describing its actions and indicates whether
+the input data has acceptable copy quality according to the copy
+quality checking threshold parameters.
+Options are provided for specifying 
+copy quality checking threshold parameters
+.SH OPTIONS
+.TP 14
+.BI \-m " badlines"
+Set the maximum consecutive bad lines of data that may
+appear in each acceptable page of input data.
+This is equivalent to the
+.B MaxConsecutiveBadLines
+configuration parameter; c.f.
+.IR config (4F).
+By default 
+.I cqtest
+accepts no more than 5 consecutive bad lines in a page.
+.TP
+.BI \-o " file"
+Write output to
+.IR file .
+By default output is written to the file
+.BR cq.tif .
+.TP
+.BI \-p " %goodlines"
+Set the minimum percentage of ``good lines'' of data that
+may appear in acceptable page of input data.
+A line is good if it decodes without error to a row of pixels
+that is the expected width.
+This is equivalent to the
+.B PercentGoodLines
+configuration parameter; c.f.
+.IR config (4F).
+By default 
+.I cqtest
+requires that 95% of the rows of each page be good.
+.SH EXAMPLES
+The following shows a multi-page, high-resolution document with a
+single error on each page.  Each page has acceptable
+copy quality using the default threshold parameters.
+.PP
+.nf
+hyla% /usr/local/sbin/cqtest ~/tiff/pics/faxix.tif
+1728 x 297, 7.7 line/mm, 1-D MR, lsb-to-msb
+RECV/CQ: Bad 1D pixel count, row 245, got 1616, expected 1728
+RECV: 2234 total lines, 1 bad lines, 1 consecutive bad lines
+1728 x 297, 7.7 line/mm, 1-D MR, lsb-to-msb
+RECV/CQ: Bad 1D pixel count, row 148, got 3023, expected 1728
+RECV: 2234 total lines, 1 bad lines, 1 consecutive bad lines
+1728 x 297, 7.7 line/mm, 1-D MR, lsb-to-msb
+RECV/CQ: Bad 1D pixel count, row 151, got 1722, expected 1728
+RECV: 2234 total lines, 1 bad lines, 1 consecutive bad lines
+1728 x 297, 7.7 line/mm, 1-D MR, lsb-to-msb
+RECV/CQ: Bad 1D pixel count, row 148, got 1776, expected 1728
+RECV: 2234 total lines, 1 bad lines, 1 consecutive bad lines
+.fi
+.SH "SEE ALSO"
+.IR faxgetty (1M),
+.IR config (4F)

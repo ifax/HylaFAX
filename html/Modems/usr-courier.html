@@ -1,0 +1,74 @@
+<HTML>
+<HEAD>
+<TITLE>US Robotics Courier</TITLE>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>US R</FONT>OBOTICS <FONT SIZE=+2>C</FONT>OURIER</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR WIDTH=65% ALIGN=left SIZE=4>
+<B>Manufacturer</B>: U.S. Robotics<BR>
+<B>Model</B>: Courier<BR>
+<B>Latest Firmware Revision Tried</B>:
+    Supervisor 08/26/94
+    DSP 08/24/94
+<BR>
+<B>Recommended Firmware Revisions</B>:
+Supervisor 08/26/94
+DSP 08/24/94
+<BR>
+<B>Last Updated</B>:$Date$<BR>
+<HR WIDTH=65% ALIGN=left SIZE=4>
+</UL>
+
+<DL COMPACT>
+<DT><IMG SRC="@HTMLPATH@/icons/info_icon.gif" ALT="o">
+<DD>Firmware revisions numbers appear to be meaningless;
+only the date stamps are useful.
+<DT><IMG SRC="@HTMLPATH@/icons/info_icon.gif" ALT="o">
+<DD>The first modem to be shipped with Class 2.0 support.
+</DL>
+
+<HR WIDTH=65% ALIGN=right>
+<B><A NAME="Class1"><FONT SIZE=+2>C</FONT>LASS 1 <FONT SIZE=+1>S</FONT>UPPORT</A></B>
+
+<UL>
+<LI>When sending DCD is raised when carrier is first received, but it is
+  then dropped from the first HDLC receive until the point where the
+  initial training is sent (from that point on DCD is asserted); this
+  can be a problem because there is no way to override this behaviour
+  which means that the host must be capable of ignoring DCD for sending
+  to function correctly
+</UL>
+
+<HR WIDTH=65% ALIGN=right>
+<B><A NAME="Class2.0"><FONT SIZE=+2>C</FONT>LASS 2.0 <FONT SIZE=+1>S</FONT>UPPORT</A></B>
+
+<UL>
+<LI>Previous Supervisor firmware revs were known to function incorrectly;
+  in particular, rev 5.1 (12/10/93)
+<LI>Certain firmware revisions incorrectly interpret the signalling rate
+  session parameter in +FIS and +FCC commands; this causes the modem to
+  attempt to negotiate session communication at 2400 bps
+<LI>RTS/CTS flow control does not work.
+<LI>Line counts returned in <TT>+FPS:</TT> status strings are wrong.
+<LI>The modem indicates it supports copy quality checking of received data,
+but it does not.
+</UL>
+
+<P>
+<A HREF="usr-sportster.html"><IMG SRC="@HTMLPATH@/icons/next.gif">
+US Robotics Sportster</A>
+
+<HR>
+
+<ADDRESS>
+Copyright &copy; 1990, 1991, 1992, 1993, 1994 Sam Leffler<BR>
+Copyright &copy; 1991, 1992, 1993, 1994 Silicon Graphics, Inc.<BR>
+</ADDRESS>
+
+</BODY>
+</HTML>

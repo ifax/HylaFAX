@@ -1,0 +1,91 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Class 1 Modem Support
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>C</FONT>LASS 1 <FONT SIZE=+2>M</FONT>ODEM <FONT SIZE=+2>S</FONT>UPPORT (CAVEAT EMPTOR)</B>
+<BASEFONT SIZE=3>
+
+<HR SIZE=4>
+
+HylaFAX includes a driver for modems that support the
+<A HREF="Modems/Supra/class1.html">EIA-578 "Class 1" programming interface</A>.
+These modems export a very low level interface
+that requires that the CCITT/ITU Recommendation T.30 facsimile communication
+protocol be implemented almost entirely in the host.  Robust support for
+this protocol places two requirements on the host system:
+
+<UL>
+<LI> low latency for serial line input
+<LI> near realtime response
+</UL>
+
+In a UNIX environment both these requirements can be problematic.  In
+particular, many UNIX systems increase the latency for data received on
+a serial port in order to reduce system overhead.  That is, input data
+are typically held in a low level device driver for some period of time
+before they are passed to the user so that bursts of input data can be
+delivered to the user together.  This behaviour is known to occur under
+the Silicon Graphics IRIX operating system; it may
+also occur under other systems.  It is important for the proper
+operation of the Class 1 driver that input data be delivered to the
+facsimile server as quickly as possible.  This may require making a
+non-standard call of some sort to the operating system.  For IRIX
+systems this call is automatically done.
+
+<P>
+The response time requirements are important for insuring that T.30
+protocol messages are received in a timely fashion.  On a loaded
+system the protocol process may be preempted by other activities and
+not be scheduled fast enough to satisfy the protocol timing requirements.
+This can usually be guarded against by assigning the facsimile process
+a high scheduling priority.  Unfortunately most UNIX systems do not
+support such facilities and so even if it is possible to
+receive serial line input with the minimum of delay, protocol timing
+requirements may not be met because of delays in scheduling the
+execution of the fax server process.  For this reason the facsimile
+server processes attempt to raise their scheduling priority while
+actively sending or receiving facsimile.  At other times, such as when
+doing queue management operations, processes run at a normal priority.
+On Silicon Graphics systems the ``high priority'' is a nondegrading
+scheduling priority that is above the priorities of the normal system
+processes.  On SVR4-derived systems the ``high priority'' is a real-time
+scheduling priority.
+On other systems the server currently always runs at the
+same (normal) scheduling priority.  For more details consult the
+<TT>setProcessPriority</TT> routine in
+<A HREF=../faxd/ModemServer.c++><B>faxd/ModemServer.c++</B></A>.
+
+<P>
+In summary,
+If you want to use a Class 1 modem with this software and
+your system does not provide support for low latency serial line input
+you are likely to have troubles.
+If your system does not provide a
+mechanism for raising process scheduling priority (note that this is
+not the same as the UNIX ``nice'' parameter), then you may see problems
+when the server is under load.
+Exactly how much load will cause trouble
+is dependent on the system configuration and processing power.
+
+<!--FOOTER-->
+
+<P>
+<A HREF="toc.html"><IMG SRC="icons/back.gif"> HylaFAX table
+of contents</A>.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

@@ -1,0 +1,113 @@
+# $Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Configuration for a ZyXEL U1496.  Firmware revisions from
+# 5.02 on should work, though rev 6.01 works much better. 
+# Actually, the preferred use is to get firwmare rev 6.13 or
+# 6.14 and configure the modem to use Class 2.0; this file
+# is kept around for folks with old firmware.
+#
+# This configuration file sets up the ZyXEL to run at 38.4 for
+# both sending and receiving.  RTS/CTS flow control is used on
+# the tty port--you probably shouldn't use XON/XOFF.  Note that
+# on an SGI system the getty speed is the following non-standard
+# gettydefs entry:
+#
+# dx_38400# B38400 # B38400 SANE TAB3 HUPCL #\r\n\n$HOSTNAME login: #dx_38400
+#
+# CONFIG: CLASS2: ZyXEL*1496*-*
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:		Class2		# use class 2 interface
+ModemRate:		38400		# 38.4 works fine
+ModemFlowControl:	rtscts		# default
+#
+ModemNoFlowCmd:		AT&H0		# disable flow control
+ModemHardFlowCmd:	AT&H3		# hardware flow control
+ModemSoftFlowCmd:	AT&H4		# software flow control
+ModemSetupDTRCmd:	AT&D2		# DTR off causes modem to hang up
+ModemSetupDCDCmd:	AT&C1		# DCD tracks carrier
+ModemSetupAACmd:	AT+FAA=1	# enable in current class
+#
+ModemSendFillOrder:	LSB2MSB		# as expected
+ModemRecvFillOrder:	MSB2LSB		# opposite of what makes sense
+Class2RecvDataTrigger:	"\022"		# a la 2388-B
+#
+# Additional reset commands:
+#
+# &B1	  DTE-DCE rate is fixed at DTE setting
+# &N0	  Auto-negotiate highest possible DCE-DCE link rate
+# &S0	  DSR always on
+# *F0	  Deny remote configuration
+# S18=2	  Receive at 38400
+# S38.3=1 DCD on/off sequence follows UNIX standard; also
+#	  fix receiving baud rate at S18 value
+# S39=0	  (avoid Class 2 compatibility hacks)
+# 
+ModemResetCmds:		AT&B1&N0&S0*F0S18=2S38.3=1S39=0
+#
+# We normally append the "@" symbol to the dial string so that
+# the modem will wait 5 seconds before attempting to connect
+# and return result codes that distinguish between no carrier
+# and no answer.  This makes it possible to avoid problems with
+# repeatedly dialing a number that doesn't have a fax machine
+# (kudos to Stuart Lynne for this trick.)
+#
+# Unfortunately, ZyXEL's don't seem to detect a busy signal when
+# the @ symbol is used to terminate the dialing string.  Instead
+# calls to a busy line come back with a NO CARRIER status which
+# causes us to toss the job.  Consequently we fall back to the
+# normal method and raise the number of retries on a no carrier
+# status.  ZyXEL claims that this behaviour is not a bug, but 
+# rather that we are requesting ``an enhancement'' (never mind
+# that their manual says that it should work).
+#
+ModemDialCmd:		ATDT%s		# no '@' 'cuz then busy not recognized
+NoCarrierRetrys:	3		# retry 3 times on no carrier
+#
+ModemSetVolumeCmd:	"ATM0 ATM1L1 ATM1L3 ATM1L5 ATM1L7"
+#
+# Caller ID configuration setup.
+#
+#QualifyCID:		etc/cid		# CID access control list file
+#CIDNumber:		"CALLER NUMBER: " # pattern string for phone number info
+#CIDName:		"CALLER NAME: "	# pattern string for identity info
+#
+PagerSetupCmds:		AT&K0&N15	# use V.22 at 1200 bps (PageNet)
+#
+# Rev 6.1x firmware have a bug in the ECM support so
+# explicitly disable it's use.  To re-enable its use just
+# comment out the following line.
+#
+Class2DCCQueryCmd:	"!(0,1),(0-5),(0-4),(0-2),(0,1),(0),(0),(0-7)"

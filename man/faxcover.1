@@ -1,0 +1,285 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
+.TH FAXCOVER 1 "November 14, 1996"
+.SH NAME
+faxcover \- generate a \*(Ps cover page for an outgoing facsimile
+.SH SYNOPSIS
+.B faxcover
+[
+.I options
+]
+.B \-f
+.IR from-name
+.B \-n
+.I fax-number
+.SH DESCRIPTION
+.I faxcover
+generates a \*(Ps\(tm cover page document on the standard output.
+The cover page fills the entire area of a default page and
+is created according to the information supplied
+on the command line and a 
+.I "cover sheet template"
+file.
+.PP
+.I faxcover
+is normally invoked by the
+.IR sendfax (1)
+program to generate a cover page for each outgoing facsmile.
+.PP
+.I faxcover
+works by creating a \*(Ps dictionary
+that contains definitions for the variable information
+that is to be placed on the facsimile cover page.
+Specifically, a dictionary with the following
+symbols are defined:
+.sp .5
+.nf
+.ta \w'\fIto-voice-number    'u +\w'destination geographic location    'u +\w'from-voice-number    'u
+\fBSymbol	Description	Symbol	Description\fP
+\fIto\fP	destination person	\fIfrom\fP	\fIsending\fP person
+\fIto-company\fP	destination company	\fIfrom-company\fP	sender's company
+\fIto-location\fP	destination geographic location	\fIfrom-location\fP	sender geographic location
+\fIto-voice-number\fP	person's voice phone number	\fIfrom-voice-number\fP	sender's voice phone number
+\fIto-fax-number\fP	destination fax phone number	\fIfrom-fax-number\fP	sender's fax phone number
+\fIcomments\fP	unbroken comment string	\fIcommentsX\fP	\fI\s-1X\s+1\fP'th line of comments
+\fIregarding\fP	Re: subject	\fIpage-count\fP	# pages other than cover page
+\fIpageWidth\fP	page width in millimeters	\fItodays-date\fP	current date and time
+\fIpageLength\fP	page length in millimeters
+.fi
+.PP
+If the
+.I comments
+string is longer than 35 characters, it
+is broken, on word boundaries, into multiple \*(Ps strings
+.I comments\s-1X\s+1
+where
+.I \s-1X\s+1
+is the line number; e.g.
+.I comments2
+for the second line of comments.
+By default
+.I faxcover
+will generate 20
+.I comments\s-1X\s+1
+strings, emitting null string values for empty lines.
+This number can be changed with the
+.B \-m
+option; see below.
+.PP
+.I faxcover
+also emits a \*(Ps procedure for breaking comment strings into
+multiple lines using the \*(Ps font metric information.
+This procedure is named
+.I BreakIntoLines
+and has the following usage convention:
+.sp .5
+.RS
+.nf
+\fC/rule (_____________________________________________) def
+/y 191.4 def /x 0 def
+y -30 0 { x exch moveto rule show } for
+comments rule stringwidth pop {
+    x y 1 add moveto show /y y 30 sub def
+} BreakIntoLines\fP
+.fi
+.RE
+.sp .5
+where the width of the rule controls the length of each line
+of comments (note that it is made slightly shorter here for
+the purpose of presentation),
+.I x
+and
+.I y
+are initialized to coordinate locations on the page where the
+comment string should be imaged, and the number 30 is the
+inter-line spacing appropriate for the font used to image the
+comment lines.
+.PP
+If information is unavailable for an item, the associated
+\*(Ps symbol is defined to be a null string.
+.PP
+Following the definition prologue,
+a cover sheet template file is copied.
+This file is expected to be a \*(Ps program
+that uses the generated strings to create a cover page.
+The template must include a
+.B showpage
+operator to cause the page to be imaged.
+The above symbols will be defined in the
+.IR "current dictionary" .
+A trailing
+.B end
+operator is supplied by
+.IR faxcover ,
+so any manipulation of the dictionary stack should
+leave the current dictionary on the top of the
+stack on completion.
+.SH OPTIONS
+.TP 12
+.BI \-c " comments"
+Use
+.I comments
+for the comment string. You may use '\\n' to break it into several lines
+on generated the cover page.
+.TP 12
+.BI \-C " file"
+Use
+.I file
+as the template file.
+The default template file is named
+.IR faxcover.ps .
+The template file can also be specified by setting the
+.SM FAXCOVER
+environment variable.
+If the template filename is not an absolute pathname, then
+.I faxcover
+looks first for this file in the home directory
+of the sender.
+If no such file is present, then it looks in the
+library directory where the \*(Fx
+client application data are installed.
+If no template file is located,
+.I faxcover
+will terminate without generating a cover page.
+.TP 12
+.BI \-D " format"
+Use
+.I format
+as the formatting specification passed to
+.IR strftime (3)
+when generating the time and date placed on the cover page.
+.TP 12
+.BI \-f " name"
+Use
+.I name
+for the sender's identity.
+.TP 12
+.BI \-l " location"
+Use
+.I location
+for the geographic location of the destination company.
+.TP 12
+.BI \-n " number"
+Use
+.I number
+for the destination fax machine number.
+.TP 12
+.BI \-p " count"
+Use
+.I count
+for the count of pages to follow the cover page.
+.TP 12
+.BI \-r " regarding"
+Use
+.I regarding
+for the ``Re:'' field.
+.TP 12
+.BI \-s " size"
+Set the page size to use for the transmitted facsimile.
+Facsimile are normally imaged with a system-default page size
+(usually letter-size pages, 8.5" by 11", for sites in North America).
+Alternate page sizes are specified symbolically using either
+the name or abbreviation of an entry in the
+.IR pagesizes (4F)
+database; e.g.
+.I a3
+(ISO A3),
+.I a4
+(ISO A4),
+.I a5
+(ISO A5),
+.I a6
+(ISO A6),
+.I b4
+(ISO B4),
+.I na-let
+(North American Letter),
+.I us-leg
+(American Legal),
+.I us-led
+(American Ledger),
+.I us-exe
+(American Executive),
+.I jp-let
+(Japanese Letter),
+and
+.I jp-leg
+(Japanese Legal).
+Comparisons are case-insensitive and any match of a
+substring of the full page-size name is sufficient; e.g. ``legal'' would
+match ``American Legal''.
+.IP
+Note that it may not be permissible to image into the
+full page area; the guaranteed reproducible area for a page is 
+typically inset.
+Also, note that while arbitrary page sizes can be specified through
+the page size database,
+only a limited set of page dimensions are supported by the
+Group 3 facsimile protocol.
+Thus if an odd-size facsimile is submitted for transmission
+it may not be possible to determine if it can be sent
+until the fax server establishes communication
+with the remote facsimile machine.
+.TP 12
+.BI \-t " name"
+Use
+.I name
+for the receiver's identity.
+.TP 12
+.BI \-v " number"
+Use
+.I number
+for the receiver's voice phone number.
+.TP 12
+.BI \-x " company"
+Use
+.I company
+for the destination company name.
+.SH DIAGNOSTICS
+Complaints about not being able to locate a template file.
+.SH FILES
+.ta \w'${LIBDATA}/faxcover.ps    'u
+~/.faxdb	personal fax number database
+.br
+${LIBDATA}/faxcover.ps	default cover page template
+.br
+${LIBDATA}/pagesizes	page size database
+.SH BUGS
+Information not supplied on the command line is
+currently obtained from the
+.I ~/.faxdb
+file.
+.I faxcover
+should read configuration parameters from the standard \*(Fx
+configuration files.
+.SH "SEE ALSO"
+.IR hylafax (1),
+.IR sendfax (1)

@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+#   mailfax - email to fax gateway for qmail.
+#
+#   This file should be installed as /local/etc/mailfax, and the
+#   following changes made to the qmail configuration:
+#
+#   Add the following to /var/qmail/control/virtualdomains
+#       .fax:fax
+#
+#   Add the following to /var/qmail/alias/.qmail-fax-default
+#       | /local/etc/mailfax
+#
+
+/local/fax/bin/faxmail | /local/fax/bin/sendfax \
+        -f $SENDER \
+        -d "$EXT2@`/usr/bin/expr \"$HOST\" : '\(.*\)\.fax$'`"

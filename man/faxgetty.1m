@@ -1,0 +1,153 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH FAXGETTY 1M "July 31, 1995"
+.SH NAME
+faxgetty \- \*(Fx front-door process
+.SH SYNOPSIS
+.B ${LIBEXEC}/faxgetty
+[
+.B \-D
+] [
+.B \-p
+] [
+.B \-q
+.I queue-dir
+]
+.I device
+.SH DESCRIPTION
+.I faxgetty
+is the \*(Fx server program that listens for incoming phone calls
+and either handles each call
+directly or hands it off to an appropriate program.
+In addition
+.I faxgetty
+monitors modem usage and notifies the \*(Fx scheduler process
+when a modem's status changes; e.g. when a modem is busy
+with an outbound call.
+.PP
+One
+.I faxgetty
+should be run for each facsimile modem on a machine.
+.I faxgetty
+is typically started by
+.IR init (1M).
+.I faxgetty
+can also be used with data-only modems; this may be desirable if
+some of the non-facsimile features are important, such as the
+support for screening calls according to Caller-ID information.
+.PP
+.I faxgetty
+listens to its facsimile modem for incoming calls
+and to a
+.SM FIFO
+special file on which it accepts command directives from
+administrative commands such as
+.IR faxanswer (1M)
+and
+.IR faxabort (1M).
+.I faxgetty
+also catches 
+.SM SIGTERM
+and
+.SM SIGINT
+signals; cleaning up any necessary resources before exiting.
+.PP
+Many aspects of
+.I faxgetty
+operation are controlled through a configuration file.
+In particular, for 
+.I faxgetty
+to automatically invoke the
+.IR getty (1M)
+program to handle incoming data connections the
+.B GettyArgs
+parameter must be setup in the configuration file.
+The configuration file is located in the spooler hierarchy
+in the
+.B etc
+subdirectory and is named
+.BI config. devid ,
+where
+.I devid
+is an identifier derived from the name of
+the modem's device file; for example
+.I ttym2
+for
+.IR /dev/ttym2 ,
+.I term_10
+for
+.IR /dev/term/10 .
+Consult
+.IR config (4F)
+for detailed information on the contents of configuration files.
+.SH OPTIONS
+.TP 10
+.B \-D
+This option forces
+.I faxgetty
+to detach itself from the controlling tty from which it was invoked.
+In normal operation
+.I faxgetty
+will 
+.B not
+dissassociate itself from the controlling tty.
+.TP 10
+.B \-p
+Do not change the process priority when receiving facsimile.
+Normally
+.I faxgetty
+will raise its priority to reduce i/o latency.
+This option is useful for debugging.
+.TP 10
+.BI \-q " dir"
+The specified directory is treated as the spooling area.
+The default spooling area,
+.IR ${SPOOL} ,
+is defined at the time the software is built.
+.SH FILES
+.ta \w'${SPOOL}/etc/config.\fIdevice\fP    'u
+.nf
+${SPOOL}/FIFO.\fIdevice\fP	FIFO special file for submitting commands
+${SPOOL}/etc/config.\fIdevice\fP	device-specific configuration file
+.fi
+.PP
+Consult
+.IR hylafax (4F)
+for a complete discussion of the structure and
+content of the spooling area.
+.SH "SEE ALSO"
+.IR faxabort (1M),
+.IR faxanswer (1M),
+.IR faxconfig (1M),
+.IR faxstate (1M),
+.IR faxq (1M),
+.IR getty (1M),
+.IR hylafax (4F),
+.IR config (4F)

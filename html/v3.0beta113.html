@@ -1,0 +1,114 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Changes in HylaFAX v3.0beta113
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>C</FONT>HANGE <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+<B>Current Version</B>: v3.0beta113<BR>
+<B>Previous Version</B>: <A HREF="v3.0beta112.html">v3.0beta112</A><BR>
+<B>Master FTP Site</B>: <A HREF="ftp://sgi.com/sgi/fax">sgi.com (192.48.153.1), directory sgi/fax</A><BR>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+</UL>
+
+<P>
+This document describes the changes made to the software between the
+<I>previous</I> and <I>current</I> versions (see above).
+If you don't find something listed here, then it was not done in this
+timeframe, or it was not considered important enough to be mentioned.
+The following information is located here:
+<UL>
+<LI><A HREF="#configure">Changes in the software configuration</A>
+<LI><A HREF="#modemconfig">Changes in the modem config files</A>
+<LI><A HREF="#faxgetty">Changes to faxgetty</A>
+<LI><A HREF="#pagesend">Changes to pagesend</A>
+<LI><A HREF="#faxaddmodem">Changes to faxaddmodem</A>
+<LI><A HREF="#sendpage">Changes to sendpage</A>
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
+
+<UL>
+<LI>an <TT>installClient</TT> target was added to the top level Makefile
+    for installing only client-specific materials
+<LI>an additional check was added to verify a proper C++ runtime environment
+    is present
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="modemconfig"><B><FONT SIZE=+3>C</FONT>HANGES IN THE MODEM CONFIG FILES:</B></A>
+
+<UL>
+<LI>new config file for the GVC MaxTech 28800
+<LI>new config file for the Motorola Lifestyle 28.8
+<LI>new config file for RC288DPi-based modems like the
+   and the Microcom DeskPort 28.8S
+<LI>the PPI FXMT config file was cleaned up and tested with the PM28800FXMT
+<LI>several config files for Rockwell-based modems were renamed and
+    cleaned up
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxgetty"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXGETTY:</B></A>
+
+<UL>
+<LI>the Class 1 driver now properly responds to a T2 timeout after
+   receiving EOM
+<LI>the Class 2/2.0 drivers now hang up more quickly after a successful
+   facsimile receive operation
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="pagesend"><B><FONT SIZE=+3>C</FONT>HANGES TO PAGESEND:</B></A>
+
+<UL>
+<LI>extraneous status messages returned by a modem when dialing are ignored
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxaddmodem"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXADDMODEM:</B></A>
+
+<UL>
+<LI>the Class 1 modem identification procedure now uses ATI0 and ATI3
+    since some modems return the same product code for ATI0 but have
+    AT command set incompatibilities (ATI3 typically returns a product
+    information string)
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="sendpage"><B><FONT SIZE=+3>C</FONT>HANGES TO SENDPAGE:</B></A>
+
+<UL>
+<LI>temporary files are now removed
+</UL>
+
+<!--FOOTER-->
+
+<A HREF="toc.html"><IMG SRC="icons/back.gif"></A> HylaFAX table
+of contents.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

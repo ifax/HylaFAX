@@ -1,0 +1,227 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Changes in HylaFAX v3.0beta108
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>C</FONT>HANGE <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+<B>Current Version</B>: v3.0beta108<BR>
+<B>Previous Version</B>: <A HREF="v3.0beta100.html">v3.0beta100</A><BR>
+<B>Master FTP Site</B>: <A HREF="ftp://sgi.com/sgi/fax">sgi.com (192.48.153.1), directory sgi/fax</A><BR>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+</UL>
+
+<P>
+This document describes the changes made to the software between the
+<I>previous</I> and <I>current</I> versions (see above).
+If you don't find something listed here, then it was not done in this
+timeframe, or it was not considered important enough to be mentioned.
+The following information is located here:
+<UL>
+<LI><A HREF="#general">General changes</A>
+<LI><A HREF="#configure">Changes in the software configuration</A>
+<LI><A HREF="#modemconfig">Changes in the modem config files</A>
+<LI><A HREF="#faxq">Changes to faxq</A>
+<LI><A HREF="#faxsend">Changes to faxsend</A>
+<LI><A HREF="#faxgetty">Changes to faxgetty</A>
+<LI><A HREF="#pagesend">Changes to pagesend</A>
+<LI><A HREF="#faxaddmodem">Changes to faxaddmodem</A>
+<LI><A HREF="#sendfax">Changes to sendfax</A>
+<LI><A HREF="#sendpage">Changes to sendpage</A>
+<LI><A HREF="#utility code">Changes in the utility code</A>
+</UL>
+
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="general"><B><FONT SIZE=+3>G</FONT>ENERAL CHANGES:</B></A>
+
+<UL>
+<LI>the LucidaTypewriter font typically used for imaging tag lines
+   in outbound facsimile is now included in the source distribution
+<LI>the old <TT>ModemFlowControlCmd</TT> modem configuration 
+   parameter has been replaced by new
+   parameters <TT>ModemHardFlowCmd</TT>, <TT>ModemSoftFlowCmd</TT>, and
+   <TT>ModemNoFlowCmd</TT>
+   (<STRONG>NOTE THAT THIS IS AN INCOMPATIBLE CHANGE</STRONG>)
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
+
+<UL>
+<LI>a new configuration directory <TT>DIR_SBIN</TT> was added; it is the
+   target for many executable programs that used to be placed in
+   <TT>DIR_SPOOL/bin</TT>
+<LI>BSDI 2.0 is now recognized
+<LI>problems handling SunPRO C++ compilers have been corrected
+<LI>various mods for SCO
+<LI>various mods for the DEC Alpha running OSF
+<LI>fix for configuring proper serial port handling support on AIX systems
+<LI>a check was added for a missing <TT>getutent</TT> function delcaration
+<LI>workaround for finding getty on SVR4-style systems
+<LI>workarounds for shells that do not properly implement function return codes
+<LI>the default lock file scheme is now setup for Solaris 2.x systems
+<LI>manual page processing was corrected for AIX systems
+<LI><TT>bsd-*-strip</TT> style manual page handling was corrected
+<LI>the <B>lockname</B> program is now automatically installed (you used
+   to have to do this manually)
+<LI><B>port/syslog.c</B> has been updated to handle systems that do not
+   support UNIX domain sockets (e.g. SCO)
+<LI><B>port/seteuid.c</B> and <B>port/setegid.c</B> have been updated for SCO
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="modemconfig"><B><FONT SIZE=+3>C</FONT>HANGES IN THE MODEM CONFIG FILES:</B></A>
+
+<UL>
+<LI>the old <TT>ModemFlowControlCmd</TT> modem configuration 
+   parameter has been replaced by new
+   parameters <TT>ModemHardFlowCmd</TT>, <TT>ModemSoftFlowCmd</TT>, and
+   <TT>ModemNoFlowCmd</TT>; the appropriate command string is sent to
+   the modem based on the current flow control scheme (the setting of
+   <TT>ModemFlowControl</TT> in the prototype config file now becomes
+   a <EM>default</EM> setting to use)
+<LI>many files have been renamed because it is no longer necessary to
+   have separate files per flow control scheme (unless there are significant
+   differences in the configuration parameters)
+<LI>a typo was fixed in usr-courier-xon
+<LI>a new file was added for modems based on the Cirrus Logic chip set
+    (e.g. the internal modem sold with WinBook XP notebook computers)
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxq"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXQ:</B></A>
+
+<UL>
+<LI>jobs are now typed as one of: <I>facsimile</I>, <I>pager</I>, etc;
+   this is used to decide which transmit agent to use and in formatting
+   notification messages
+<LI>a potential security hole in the document file handling has been corrected
+<LI>external commands invoked no longer inherit any open file descriptors
+   except <TT>stdin</TT>, <TT>stdout</TT>, and <TT>stderr</TT>
+   which are directed to <B>/dev/null</B>
+    (<EM>beware this can cause problems with some shells</EM>)
+<LI>a <TT>QUIT</TT> message (as sent by <B>faxquit</B>) no longer
+   causes immediate termination; processing is delayed until any
+   active jobs complete
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxsend"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXSEND:</B></A>
+
+<UL>
+<LI>the current flow control scheme is now used to select which of
+   <TT>ModemHardFlowCmd</TT>, <TT>ModemSoftFlowCmd</TT>, and
+   <TT>ModemNoFlowCmd</TT> to send when setting up DTE-DCE flow control
+<LI>a bug was fixed for AIX whereby flow control was potentially not
+    being initialized properly
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxgetty"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXGETTY:</B></A>
+
+<UL>
+<LI>a bug was fixed in the Class 2 driver that caused the server to
+    hang when a premature <TT>NO CARRIER</TT> result was received
+<LI>a bug was fixed for AIX whereby flow control was potentially not
+    being initialized properly
+<LI>external commands invoked no longer inherit any open file descriptors
+   except <TT>stdin</TT>, <TT>stdout</TT>, and <TT>stderr</TT>
+   which are directed to <B>/dev/null</B>
+    (<EM>beware this can cause problems with some shells</EM>)
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="pagesend"><B><FONT SIZE=+3>C</FONT>HANGES TO PAGESEND:</B></A>
+
+<UL>
+<LI>text messages are now stored in a file; this corrects problems
+    where, for example, you could not include ``:'' in a message
+<LI>jobs with no destination PINs are now rejected without placing
+    a phone call
+<LI>protocol tracing has been significantly improved
+<LI><TT>PagerSetupCmds</TT> are now sent to the modem after it is placed
+    into Class 0
+<LI>a bug has been fixed that caused various configuration parameters
+    to not be correctly initialized (e.g. <TT>IXOService</TT>)
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxaddmodem"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXADDMODEM:</B></A>
+
+<UL>
+<LI>many missing server-related configuration parameters are now
+   recognized and correctly propagated from old config files
+<LI>several missing modem-related configuration parameters are now
+   recognized and correctly propagated from prototype config files
+<LI>the faxq config file checking has been fixed up
+<LI>several obscure server-related parameters have been removed from
+   the interactive prompts; to change them you must edit the config file
+<LI>the DCE-DTE flow control scheme can now be specified as ``default''
+   and an appropriate selection will be chosen
+<LI>the logic used to select a prototype configuration file now matches
+   the flow control scheme using a regular expression instead of a straight
+   string match (means many prototype config files can be merged)
+<LI>the message about starting faxq now prints the correct argument to
+   supply on the command line to faxq
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="sendfax"><B><FONT SIZE=+3>C</FONT>HANGES TO SENDFAX:</B></A>
+
+<UL>
+<LI>a <TT>-N</TT> option was added to specify no notification
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="sendpage"><B><FONT SIZE=+3>C</FONT>HANGES TO SENDPAGE:</B></A>
+
+<UL>
+<LI>the command line interface has changed; only a single
+    text message can be specified and PINs are now specified with a new
+    <TT>-p</TT> option
+<LI>a <TT>-N</TT> option was added to specify no notification
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="utility code"><B><FONT SIZE=+3>C</FONT>HANGES IN THE UTILITY CODE:</B></A>
+
+<UL>
+<LI>some problems in <TT>probemodem</TT> have been corrected
+<LI>changes for compilation on SCO systems
+</UL>
+
+<!--FOOTER-->
+
+<A HREF="toc.html"><IMG SRC="icons/back.gif"></A> HylaFAX table
+of contents.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

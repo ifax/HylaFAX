@@ -1,0 +1,98 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Installation from a Source Distribution
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>I</FONT>NSTALLATION FROM A <FONT SIZE=+2>S</FONT>OURCE <FONT SIZE=+2>D</FONT>ISTRIBUTION</B>
+<BASEFONT SIZE=3>
+
+<HR SIZE=4>
+
+The source distribution comes in a compressed tar file.  To extract the
+software do something like:
+
+<UL><LISTING>
+% zcat &lt;somewhere&gt;/v3.0beta099-tar.Z | tar xf -
+</LISTING></UL>
+
+(uncompress and extract individual files).  The
+software is almost entirely written in C++. 
+If you do not have a working C++
+compiler and associated libraries for your machine, check
+<A HREF="building.html">here for information on obtaining GNU gcc
+and libg++</A>.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/warning_icon.gif" ALT="NOTE: " HSPACE=4></TD>
+<TD><EM>If you plan to use GNU gcc to build the software, you must use version
+2.6.1 or newer.  gcc 2.6.3 and libg++ 2.6.2 are the current recommended versions
+of the GNU tools to use, though newer versions should also work</EM>.</TD>
+</TR>
+</TABLE>
+
+<P>
+To build and install executables from the sources check the
+the <A HREF=setup.html#Guidance>section on system-specific guidance</A>
+for any known problems, then do the following:
+
+<UL><LISTING>
+% ./configure		# see <A HREF="building.html#Building">above</A>
+% make
+% su			# NB: installation must be done by the super-user
+# make install
+</LISTING></UL>
+
+If you have problems building the software consult the
+<A HREF="building.html">complete documentation on building the software</A>
+and the <A HREF="http://www.vix.com/hylafax/FAQ/">HylaFAQ</A>.
+
+<P>
+To complete the installation you may need to install one or more of the
+following:
+<UL>
+<LI> Ghostscript
+or the Display PostScript-based PostScript interpreter that is supplied
+in binary form for Silicon Graphics machines.
+There is information on
+<A HREF="ghostscript.html">
+obtaining and setting up Ghostscript
+</A>
+and information on
+<A HREF="building.html#Before.ps2fax">
+obtaining the ps2fax program
+</A>.
+If you use Ghostscript, <EM>do not forget to get the fonts</EM>!
+<LI> If you are using Ghostscript you may also need to install
+Adobe Font Metric files; these should have been automatically
+configured for installation if they were not found on the system
+where the build took place.
+</UL>
+
+<P>
+Once you have the software installed, see the chapter on
+<A HREF="setup.html">
+Server Setup and Basic Configuration</A> to understand how to
+complete the installation procedure.
+
+<!--FOOTER-->
+
+<P>
+<A HREF="toc.html"><IMG SRC="icons/back.gif"> HylaFAX table of contents</A>.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

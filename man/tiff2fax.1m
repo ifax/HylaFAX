@@ -1,0 +1,105 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1995 Sam Leffler
+.\" Copyright (c) 1995 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
+.ds Tf \s-1TIFF\s+1
+.TH TIFF2FAX 1M "May 12, 1996"
+.SH NAME
+tiff2fax \- convert \*(Tf for facsimile transmission by \*(Fx
+.SH SYNOPSIS
+.B ${SPOOL}/bin/tiff2fax
+[
+.I options
+]
+.I file
+.SH DESCRIPTION
+.B bin/tiff2fax
+takes \*(Tf input and generates a \*(Tf
+Class F image file suitable for facsimile transmission.
+It is usually invoked by the \*(Fx scheduler process,
+.IR faxq (1M).
+The default implementation uses the
+.IR tiffcheck (1M)
+program and tools from the freely available \*(Tf software
+distribution to implement the conversion operations.
+.SH OPTIONS
+The following operations are recognized:
+.TP 10
+.B \-1
+Write Group 3 1D-encoded data to the output file.
+.TP 10
+.B \-2
+Write Group 3 2D-encoded data to the output file.
+.TP 10
+.BI \-m " pages"
+Set the maximum number of pages that are permitted in the
+output file.
+If more pages are present in the input document then
+abort processing.
+.TP 10
+.BI \-o " file"
+Write output to the specified
+.I file
+instead of the default
+.B foo.tif
+filename.
+.TP 10
+.BI \-w " width"
+Set the output page
+.IR width ,
+in pixels.
+By default, pages are 1728 pixels wide.
+.TP 10
+.BI \-l " length"
+Set the output page
+.IR length
+in millimeters.
+By default, pages are 297 millimeters long.
+.TP
+.BI \-r " vres"
+Set the vertical resolution,
+in lines/inch, at which to image the \*(Ps.
+.SH FILES
+.ta \w'${SPOOL}/bin/ps2fax    'u
+.nf
+${SBIN}/tiffcheck	\*(Tf file conversion examiner
+${SPOOL}/bin/ps2fax	\*(Ps \s-1RIP\s+1 for doing complicated conversions
+/usr/local/bin/tiffcp	for converting compression schemes
+/usr/local/bin/tiff2ps	for colorspace and/or image size conversions
+.fi
+.SH BUGS
+Conversions that require re-imaging and resizing may result in
+images that are poorly placed on the page.
+.PP
+There is no way to control how images are treated when they are
+resized; e.g. the original aspect ratio is not always maintained.
+.SH "SEE ALSO"
+.IR sendfax (1),
+.IR faxq (1M),
+.IR hylafax (4F)

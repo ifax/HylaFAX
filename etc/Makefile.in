@@ -1,0 +1,113 @@
+#!smake
+#	$Id$
+#
+# @WARNING@
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# VERSION:	@VERSION@
+# DATE:		@DATE@
+# TARGET:	@TARGET@
+# CCOMPILER:	@CCOMPILER@
+# CXXCOMPILER:	@CXXCOMPILER@
+#
+DEPTH=..
+@MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
+
+SRCDIR	= ${DEPTH}/${TOPSRCDIR}/etc
+VPATH	= ../@SRCDIR@/etc
+
+DIALRULES=dialrules \
+	dialrules.sf-ba \
+	dialrules.europe
+TARGETS	= config.fax hosts xferlog lockname ondelay
+
+default all::
+	@${MAKE} targets
+
+targets: ${TARGETS}
+
+@MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
+
+hosts:
+	${ECHO} "localhost" >hosts
+	${ECHO} "127.0.0.1" >>hosts
+xferlog:
+	${ECHO} >xferlog
+config.fax:
+	${ECHO} on >config.fax
+lockname: ${SRCDIR}/lockname.c
+	${CCF} -o $@ ${SRCDIR}/lockname.c
+ondelay: ${SRCDIR}/ondelay.c
+	${CCF} -o $@ ${SRCDIR}/ondelay.c
+
+PUTSERVER	= ${INSTALL} -idb ${PRODUCT}.sw.server
+PUTSAMPLE	= ${PUTSERVER} -u ${FAXUSER} -g ${FAXGROUP} \
+		  -idb "config(noupdate)"
+
+install: default
+	${PUTSERVER} -F ${SBIN} -m 755 -src faxaddmodem.sh -O faxaddmodem
+	${PUTSERVER} -F ${SBIN} -m 755 -src faxsetup.sh -O faxsetup
+	for i in bsdi irix linux; do \
+	    ${PUTSERVER} -F ${SBIN} -m 755 \
+		-src ${SRCDIR}/faxsetup.$$i -O faxsetup.$$i; \
+	done
+	${PUTSERVER} -F ${SBIN} -m 755 -src probemodem.sh -O probemodem
+	${PUTSAMPLE} -F ${SPOOL}/etc -m 644 -o xferlog
+	${PUTSAMPLE} -F ${SPOOL}/etc -m 600 -o hosts
+	for i in ${DIALRULES}; do \
+	    ${PUTSERVER} -F ${SPOOL}/etc -m 444 -src ${SRCDIR}/$$i \
+		-idb "config(update)" -O $$i; \
+	done
+	${PUTSERVER} -F ${LIBEXEC} -m 755 -O lockname ondelay
+	${PUTSAMPLE} -F ${SPOOL}/etc -m 644 -idb nostrip \
+	    -src ${SRCDIR}/lutRS18.pcf -O lutRS18.pcf
+
+#
+# System V-specific init support.
+#
+installSysVInit: hylafax
+	${PUTSERVER} -F /etc/init.d -m 755 -O hylafax
+	${PUTSERVER} -F /etc/rc2.d -lns /etc/init.d/hylafax S80fax
+	${PUTSERVER} -F /etc/rc0.d -lns /etc/init.d/hylafax K80fax
+	if test -d /etc/config; then \
+	    ${PUTSERVER} -F /etc/config -m 644 -src config.fax -O fax; \
+	fi
+
+installClient: default
+	${PUTSERVER} -F ${SBIN} -m 755 -src faxsetup.sh -O faxsetup
+	for i in bsdi irix linux; do \
+	    ${PUTSERVER} -F ${SBIN} -m 755 \
+		-src ${SRCDIR}/faxsetup.$$i -O faxsetup.$$i; \
+	done
+
+#
+# These targets are created during the configuration procedure.
+#
+clobberconfig:
+	-${RM} -f hylafax probemodem.sh faxaddmodem.sh faxsetup.sh

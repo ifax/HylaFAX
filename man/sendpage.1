@@ -1,0 +1,489 @@
+.\"	$Id$
+.\"
+.\"  HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1994-1996 Sam Leffler
+.\" Copyright (c) 1994-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Sn \s-1SNPP\s+1
+.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
+.TH SENDPAGE 1 "May 12, 1996"
+.SH NAME
+sendpage \- submit a pager job for transmission
+.SH SYNOPSIS
+.B sendpage
+[
+.I options
+] [
+.IR message ...
+]
+.SH DESCRIPTION
+.I sendpage
+submits a pager transmission request
+to a server using the Simple Network Paging Protocol (\*(Sn)
+described in 
+.SM RFC
+1861.
+Pager requests specified with
+.I sendpage
+are normally processed immediately, although
+they may also be queued for transmission at a later time
+using a syntax identical to the
+.IR at (1)
+command.
+For each job that is queued,
+.I sendpage
+prints a
+.I "job identifier"
+on the standard output.
+A job identifier is the token by which jobs are
+identified within \*(Fx.
+Job identifiers can be supplied to the
+.IR faxrm (1)
+command to remove the jobs or to the
+.IR faxalter (1)
+command to alter job parameters.
+.PP
+Pages may be sent to one or more destination
+paging terminals and, optionally,
+include a text message (depending on the capability of the receiving device).
+Each destination is identified by a
+Pager Identification Number (\s-1PIN\s+1) specified with the
+.B \-p
+option; for example,
+sendpage -p 12345 ``Help, the fax machine is on fire!''.
+A
+.SM PIN
+is typically a numeric string though it may also be an alpha-numeric
+alias depending on the capabilities of the \*(Sn server.
+.PP
+Text messages can be specified on the command line or taken from
+standard input.
+The
+.B \-n
+option must be used if no text message is to be supplied with
+the page request\(emas for a numeric-only pager.
+Text supplied to the paging system is sent exactly as submitted
+including any newline, carriage return, or non-ASCII data.
+Message preparation including filtering and formatting
+must be done prior to submitting the data to
+.IR sendpage .
+Note that text supplied on the command line does not include a
+trailing newline character.
+.PP
+The order of options on the command line is significant.
+Each page to be transmitted is assigned the current value of
+parameters specified on the command line; e.g. whether or not to
+queue the request.
+This means that options that specify parameters for a particular
+destination must precede the pager ID specified with the
+.B \-p
+option.
+For example,
+.IP
+sendpage -l 2 -p sam Your network is hosed
+.LP
+submits a page to ``sam''
+that has service level 2 while
+.IP
+sendpage -p sam -l 2 Your network is hosed
+.LP
+submits the same page but with the default service level (1).
+Note also that parameter values persist across 
+.B \-p
+options so the following
+.IP
+sendpage -l 0 -p sam -p 5551212 Your network is hosed
+.LP
+submits two pages, both of which have service level 0.
+.SH OPTIONS
+.TP 12
+.BI \-a " time"
+Schedule transmission at the indicated
+.IR time .
+Times are specified using the syntax of the
+.IR at (1)
+command; e.g. ``now + 30 minutes'' to schedule transmission
+30 minutes in the future.
+By default,
+.I sendpage
+schedules pages for ``now''.
+(In \*(Sn parlance this option specifies the ``hold time'' for the page;
+and may result in the page being delivered to the paging terminal but
+not delivered to the user until the specified time.)
+.TP 12
+.B \-D
+Enable notification by electronic mail when the
+page has been delivered to the service provider.
+This option is meaningful only when communicating with a
+\*(Fx server.
+.TP 12
+.BI \-f " from"
+Use
+.I from
+as the identity of the message sender.
+Otherwise the sender is the user that invoked
+.IR sendpage .
+The sender is an account name to which the \*(Fx software
+should direct email notification messages.
+The
+.I from
+identity may be a fullblown ``From:'' line, e.g.
+e.g. ``Joe Blow <joe@foo.com>''
+and ``joe@foo.com (Joe Blow)'' are acceptable.
+If no host-part is specified in the
+.I from
+string the local hostname is used.
+This option is useful when
+.I sendpage
+is invoked on behalf of another user, such as in the implementation
+of an electronic mail to pager gateway.
+.TP 12
+.BI \-h " \fR[\fPmodem\fR@]\fPhost\fR[\fP:port\fR]\fP"
+Force the jobs to be processed on a specific
+.I host
+and, optionally, using a particular
+.IR modem .
+The
+.I host
+may be either a symbolic name or a network address.
+If no
+.B \-h
+option is supplied,
+.I sendpage
+uses the
+.SM SNPPSERVER
+environment variable to identify the \*(Sn server to
+which the pages should be directed.
+If no server is specified then
+.I sendpage
+attempts to contact a server on the local host.
+If no modem is specified, the job will be submitted to any
+available modem.
+.TP 12
+.BR \-I " time"
+If a job must be requeued because of a communication failure schedule
+the retry according to the specified
+.IR time .
+Times are given in seconds.
+Minutes, hours, and days can be specified with
+``\fImin\fP'', ``\fIhour\fP'', and ``\fIday\fP'' suffixes, respectively.
+By default \*(Fx reschedules jobs using retry times that depend on
+the manner in which the job failed; this interface permits a user to
+override this algorithm and specify a single fixed retry time for all
+communication failures.
+This option is meaningful only when communicating with a
+\*(Fx server.
+.TP 12
+.BR \-l " level"
+Specify a particular service
+.I level
+to use in delivering a page.
+A service level defines both a scheduling priority and
+the time that a client is willing to wait to find out
+if delivery is successful or not.
+Normal delivery is obtained with level 1 (default).
+The \*(Sc specification identifies level 0 as the highest
+priority service level with levels 1-7 lower priority
+and levels 8-11 vendor/server-specific.
+For \*(Fx server machines the mapping between service level
+and scheduling priority is defined by the configuration of
+the \*(Sn server process; see the
+.B PriorityMap
+parameter in
+.IR hfaxd (1M)
+.TP 12
+.B \-n
+Send to a numeric-only paging device; i.e. do not send a text
+message in the paging request.
+.TP 12
+.B \-N
+Do not notify the sender by electronic mail when the
+page has been delivered to the service provider (default).
+This option is meaningful only when communicating with a
+\*(Fx server.
+.TP 12
+.BI \-p " PIN"
+The Pager Identification Number (\s-1PIN\s+1) for a terminal 
+that is to receive the message.
+A message can be sent to multiple destinations by specifiying multiple
+.B \-p
+options.
+.TP 12
+.B \-q
+Mark pages to be queued on the server and do not wait for
+their delivery.
+By default
+.I sendpage
+conforms to the \*(Sn spec by synchronously waiting for
+each page to be delivered.
+This option instructs 
+.I sendpage
+to submit one or pages and then terminate immediately
+without waiting for their completion.
+When pages are queued it is advisable to enable email
+notification with the
+.B \-D
+or
+.B \-R
+options.
+Job queueing is a non-standard function of the \*(Sn
+implementation in \*(Fx and is not available when submitting
+pages to non-\*(Fx servers.
+.TP 12
+.B \-R
+Enable notification by electronic mail when the
+message has been delivered and when it is requeued for retransmission.
+\*(Fx will always notify the sender by electronic mail
+if there is problem delivering a page (irregardless of the
+email notification setting).
+This option is meaningful only when communicating with a
+\*(Fx server.
+.TP 12
+.BI \-s " subject"
+Set the ``subject'' for the specified pages according to
+.IR subject .
+For \*(Fx 
+.I subject
+is used as the identifier string returned in any email
+notification messages (instead of the usual job
+identifier number).
+This option is useful for applications that cross reference
+notification messages against job submissions.
+.TP 12
+.BI \-t " tries"
+Make no more than
+.I tries
+attempts to send the page.
+By default, \*(Fx will terminate a job if:
+3 consecutive attempts to send a particular message fail, or
+it appears the receiver is not a service provider.
+Otherwise \*(Fx places no limit on the
+.I number
+of attempts to send a page, instead terminating a job
+if it is not completed within a fixed period of time
+specified by the service level.
+Note that a try
+is a phone call in which carrier is established and the 
+.SM IXO/TAP
+or
+.SM UCP
+protocol is commenced; this is contrasted with a call
+attempt that might have failed because the line was busy.
+This option is meaningful only when communicating with a
+\*(Fx server.
+.TP 12
+.BI \-T " dials"
+Make no more than
+.I dials
+phone calls when attempting to send a page.
+By default, \*(Fx will terminate a job if:
+12 attempts to reach a service provider fail, or
+it appears the receiver is not a service provider.
+Otherwise \*(Fx terminates a job
+if it is not completed within a fixed period of time
+specified by the
+.IR "service level" .
+This option is meaningful only when communicating with a
+\*(Fx server.
+.TP 12
+.B \-v
+Trace the protocol between
+.I sendpage
+and the \*(Sn server process that does the delivery
+work on the remote machine.
+This information is directed to the standard output.
+.SH "CONFIGURATION PARAMETERS"
+.I sendpage
+reads configuration information from the files
+.BR ${LIBDATA}/hyla.conf ,
+.BR ${LIBDATA}/sendpage.conf ,
+and
+.BR ~/.hylarc ;
+in that order.
+Configuration files follow the conventions described in
+.IR hylafax (1).
+The following configuration parameters are recognized:
+.sp .5
+.nf
+.ta \w'ServiceLevel    'u +\w'integer    'u +\w'\s-1\fIsee below\fP\s+1    'u
+\fBTag	Type	Default	Description\fP
+HoldTime	string	\-	hold time to assign to pages
+Host	string	\s-1localhost\s+1	host to contact for service
+MailAddr	string	\-	mail address for notification messages
+MaxDials	integer	\s-112\s+1	times to retry dialing
+MaxTries	integer	\s-13\s+1	times to retry transmission
+Notify	string	\s-1none\s+1	control email notification
+Port	integer	\s-1444\s+1	port to use in contacting server
+Protocol	string	\s-1tcp\s+1	protocol to use in contacting server
+QueueSend	boolean	\s-1No\s+1	whether or not to queue pages
+RetryTime	string	\-	delay between failed attempts to send
+ServiceLevel	integer	\s-1\s+1	SNPP service level for pages
+Verbose	boolean	\s-1No\s+1	whether or not to enable protocol tracing
+.fi
+.PP
+The configuration parameters are explained below:
+.TP 15
+.B HoldTime
+The hold time to assign to pages.
+(Equivalent to the
+.B \-a
+option.)
+.TP 15
+.B Host
+The host to contact for service.
+(Equivalent to the
+.B \-h
+option.)
+.TP 15
+.B MailAddr
+The electronic mail address to direct notification messages from the
+server.
+If this string is specified without an ``@hostname'' part then the
+local hostname will automatically be appended.
+(Equivalent to the
+.B \-f
+option.)
+.TP 15
+.B MaxDials
+The maximum number of times to dial the phone for each job.
+(Equivalent to the
+.B \-T
+option.)
+.TP 15
+.B MaxTries
+The maximum number of times to retry sending a job.
+(Equivalent to the
+.B \-t
+option.)
+.TP 15
+.B Notify
+Control the email notification messages from the server.
+This string may be one of ``done'', ``none'', ``requeued'' or ``default''
+with an optionally preceding ``when '' (e.g. ``when done'').
+Note that ``when requeued'' implies ``when done''.
+(Equivalent to the
+.BR \-D ,
+.BR \-R ,
+and
+.B \-N
+options.)
+.TP 15
+.B Port
+The network port to contact for service.
+(Eqvuialent to the
+.B \-h
+option.)
+.TP 15
+.B Protocol
+The name of the communication protocol to use when contacting a server.
+(Equivalent to the
+.B SNPPSERVICE
+environment variable.)
+.TP 15
+.B QueueSend
+Control whether or not to wait for the pages to be delivered.
+(Equivalent to the
+.B \-q
+option.)
+.TP 15
+.B RetryTime
+The time to delay between job retries due to a communication failure.
+(Equivalent to the
+.B \-I
+option.)
+.TP 15
+.B ServiceLevel
+The
+.SM SNPP
+service level to assign to each page.
+(Equivalent to the
+.B \-l
+option.)
+.TP 15
+.B Verbose
+Control protocol tracing.
+(Equivalent to the
+.B \-v
+option.)
+.SH ENVIRONMENT
+The following environment variables are used by
+.IR sendpage :
+.TP 15
+.B SNPPSERVER
+The identity of the \*(Sn server to contact for service.
+This value is specified as ``[\fImodem\fP@]\fIhost\fP[:\fIport\fP]''
+where
+.I host
+is either a host name or the Internet ``.'' (dot) address of
+the host;
+.I port
+is the
+.SM TCP
+port number or service name to use (default is ``snpp'' or 444);
+and
+.I modem
+is an optional modem name or class on the server machine to use
+in processing the requests (this is meaningful only when the
+server is running \*(Fx).
+.TP 15
+.B SNPPSERVICE
+The communication service specification for communicating with
+the \*(Sn server.
+This value is specified as ``\fIport\fP[/\fIprotocol\fP]''; by
+default ``444/tcp''.
+.SH FILES
+.ta \w'/usr/tmp/sndpageXXXXXX    'u
+.nf
+/usr/tmp/sndpageXXXXXX	temporary files
+.fi
+.SH NOTES
+The phone number of the pager service provider is stored on the
+server machine and is not specified by the user; this is a departure
+from pager support that was supplied with \*(Fx version 3.0.
+.PP
+\*(Fx version 3.0 used to recognize a null text message and assume
+the destination paging device was numeric-only.
+This is no longer true; if a null text message is submitted then
+a null message will be included in the paging request.
+This may cause paging requests submitted to ``real SNPP'' servers
+to be rejected if the paging device is in fact numeric-only.
+When sending to a numeric-only paging device the
+.B \-n
+option should be used.
+.SH BUGS
+It is not possible to page text- and non-text devices together;
+.I sendpage
+must be run twice, once to send to text-capable devices and once to send
+to non-text devices.
+.SH "SEE ALSO"
+.IR at (1),
+.IR hylafax (1),
+.IR faxalter (1),
+.IR faxrm (1),
+.IR faxstat (1),
+.IR faxq (1M),
+.IR hfaxd (1M),
+.IR hylafax (4F)

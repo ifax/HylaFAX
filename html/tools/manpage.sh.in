@@ -1,0 +1,128 @@
+#!@SCRIPT_SH@
+#	$Id$
+#
+# Copyright (c) 1994-1995 Sam Leffler
+# Copyright (c) 1994-1995 Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# manpage?query
+#
+# Retrieve a UNIX manual page using man and return an HTML
+# document with the appropriate font changes and anchors
+# (for other manual page references).  Other stuff like page
+# headers and footers are left, though they could trivially
+# be removed with more sed commands.  Likewise one can add
+# other anchors such as include file references.
+#
+# Note that only a single manual page (the first hit) is
+# returned.  This is not a general purpose manual interface;
+# it's intended for linking manual pages to HTML documents.
+#
+# NB: man is much faster if invoked with a section; it's best
+#     to use "manpage?section+query" instead of "manpage?query"
+#
+PATH=/bin:/usr/bin
+test -d /usr/sbin && PATH=$PATH:/usr/sbin		# SGI and others
+test -d /usr/bsd && PATH=$PATH:/usr/bsd			# SGI
+test -d /usr/ucb && PATH=$PATH:/usr/ucb			# Sun and others
+test -d /usr/5bin && PATH=/usr/5bin:$PATH		# Sun and others
+test -d /usr/local/bin && PATH=/usr/local/bin:$PATH	# for GNU stuff
+
+ECHO=@ECHO@
+SED=@SED@
+CAT=@CAT@
+MAN=@MAN@
+COL=@COL@
+MAN2HTML=@CGIDIR@/man2html
+
+case "@TARGET@" in
+*-irix*)	MAN_FLAGS="-p -c" ;;
+*)		MAN_FLAGS="" ;;
+esac
+
+#
+# XXX the server expands the pathname when
+# setting SCRIPT_NAME, so it can't be reused.
+#
+SCRIPT_NAME=@CGIPATH@/manpage
+UNQUOTE=@CGIDIR@/unquote
+
+MANPATH=@MANDIR@:/usr/share/catman:/usr/share/man:/usr/catman:/usr/man
+export MANPATH
+
+$ECHO 'Content-type: text/html'
+$ECHO ''
+
+cvtLinks()
+{
+    #
+    # The first two expressions skip correctly formatted page headers
+    # (NB: many man pages are incorrectly formatted).  The 3rd
+    # expression handles the normal man page reference.  The
+    # last 3 expressions deal with incorrectly formatted references.
+    #
+    $SED -e "/^ *[A-Z][A-Z_0-9]*([l-p1-8][a-zA-Z]*)/n" \
+	-e "/^ *<B> *[A-Z][A-Z_0-9]*([l-p1-8][a-zA-Z]*)/n" \
+	-e "s;<[IB]>\([^<]*\)</[IB]>(\([l-p1-8]\)\([a-zA-Z]\{0,1\}\));<A HREF=\"$SCRIPT_NAME?\2+\1\">\1(\2\3)</A>;g" \
+	-e "s;<[IB]>\([^<]*\)</[IB]>(<[IB]>\([l-p1-8]\)\([a-zA-Z]\{0,1\}\)</[IB]>);<A HREF=\"$SCRIPT_NAME?\2+\1\">\1(\2\3)</A>;g" \
+	-e "s;<[IB]><[IB]>\([^<]*\)</[IB]></[IB]>(\([l-p1-8]\)\([a-zA-Z]\{0,1\}\));<A HREF=\"$SCRIPT_NAME?\2+\1\">\1(\2\3)</A>;g" \
+	-e "s;\([a-zA-Z_0-9][a-zA-Z_0-9]*\)(\([l-p1-8]\)\([a-zA-Z]\{0,1\}\));<A HREF=\"$SCRIPT_NAME?\2+\1\">\1(\2\3)</A>;g"
+}
+
+QUERY=`$ECHO "$QUERY_STRING" | $UNQUOTE -qn`
+
+$CAT<<EOF
+<TITLE>UNIX Manual Page: man $QUERY</TITLE>
+
+<BODY>
+EOF
+
+if [ -x $MAN -a -x $COL -a -x $MAN2HTML ]; then
+    CMD=`$MAN $MAN_FLAGS $QUERY | $SED 1q`
+    case "$CMD" in
+    *[nN]o*manual*)
+	echo "<H2><IMG SRC=\"@HTMLPATH@/icons/button.excl.gif\">$CMD</H2>"
+	echo 'The <KBD>man</KBD> command did not locate the requested manual'
+	echo 'page.  This is typically because the file is not present on the'
+	echo 'machine, but it can also be caused by a mistyped query string'
+	echo 'or some resource (e.g. an NFS-mounted filesystem) being'
+	echo 'temporarily unavailable.'
+	;;
+    *)
+	echo '<PRE WIDTH=80>'
+	$MAN $MAN_FLAGS $QUERY 2>/dev/null | $COL -x | $MAN2HTML | cvtLinks
+	echo '</PRE>'
+	;;
+    esac
+else
+    echo '<H2><IMG SRC="@HTMLPATH@/icons/button.excl.gif">No manual page support</H2>'
+    echo 'All the programs required to support manual page queries were'
+    echo 'not available or were not in the expected locations.  The following'
+    echo 'programs are required:'
+    echo '<PRE>'
+    echo "$MAN	standard manual page program"
+    echo "$COL	to filter reverse-line feeds"
+    echo "$MAN2HTML	to convert the output of $MAN to HTML"
+    echo '</PRE><P>'
+fi
+echo '</BODY>'

@@ -1,0 +1,201 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1995 Sam Leffler
+.\" Copyright (c) 1995 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH FAXMODEM 1M "Oct 27, 1995"
+.SH NAME
+faxmodem \- dynamically add a modem to a \*(Fx server system
+.SH SYNOPSIS
+.B ${SBIN}/faxmodem
+[
+.B \-q
+.I queue-dir
+] [
+.B \-c
+.I capabilities
+] [
+.B \-p
+] [
+.B \-P
+] [
+.B \-u
+.I priority
+]
+.I modem
+.SH DESCRIPTION
+.I faxmodem
+sends a message to the \*(Fx queuer process
+.IR faxq (1M)
+telling it that the specified modem is ready for use and
+informing it about its fax-related capabilities.
+This is the mechanism by which modems are added in a send-only
+configuration.
+Once a modem has been configured its status can be reconfigured
+using the
+.IR faxstate (1M)
+program.
+.I faxmodem
+can also be used to alter the capabilities and usage priority
+of a previously configured modem.
+.PP
+The specified
+.I modem
+is either the terminal device name where the modem is
+attached or a \*(Fx device identifier (see
+.IR config (4F)
+for information on device identifiers).
+Device names may be given without
+a leading directory pathname; e.g. ttyf2 instead of /dev/ttyf2.
+.PP
+To figure out the capabilities of a modem either use the
+.IR probemodem (1M)
+script or manually communicate with the modem.
+For a Class 2 modem the capabilities are given in the response to
+the ``AT+FDCC=?'' query command and
+for a Class 2.0 modem the ``AT+FCC=?'' command.
+To check if a modem is capable of polled retrieval of documents
+use ``AT+FSP=?'' for a Class 2.0 modem or ``AT+FSPL=?'' for a Class 2 modem;
+if ``1'' is indicated in the response then the modem supports polling.
+For example,
+.RS
+.sp .5
+.nf
+hyla% \fBcu -l ttyf2\fP
+Connected
+\fBat+fclass=2.0\fP
+OK
+\fBat+fcc=?\fP
+(0,1),(0-5),(0-2),(0-2),0,0,0,(0-7)
+OK
+\fBat+fsp=?\fP
+(0,1)
+OK
+.RE
+.fi
+.PP
+In this case the modem would be added using the command:
+.RS
+.sp .5
+.nf
+${SBIN}/faxmodem -c '(0,1),(0-5),(0-2),(0-2),0,0,0,(0-7)' ttyf2
+.RE
+.fi
+.LP
+(by default polling is assumed to be supported).
+.PP
+Class 1 modems require a different technique.
+The host implements most of the fax protocol so all that is needed is
+to identify the possible signalling rates the modem supports for
+transmitting; this
+is done with the ``AT+FTM=?'' command.
+For example,
+.RS
+.sp .5
+.nf
+hyla% \fBcu -l ttyf2\fP
+Connected
+\fBat+fclass=1\fP
+OK
+\fBat+ftm=?\fP
+24,48,72,73,74,96,97,98,121,122,145,146
+OK
+.RE
+.fi
+.PP
+In this case the modem supports 2400, 4800, 7200, 9600, 12200, and 14400
+bps signalling rates so the modem would be added using:
+.RS
+.nf
+.sp .5
+${SBIN}/faxmodem -c '(0,1),(0-5),(0-2),(0-2),(0,1),0,0,(0-7)' ttyf2
+.RE
+.fi
+.SH OPTIONS
+The following options are available:
+.TP 10
+.B \-c
+Specify the fax capabilities using the syntax defined by
+the ``Class 2'' specification:
+``(\fIvr\fP),(\fIbr\fP),(\fIwd\fP),(\fIln\fP),(\fIdf\fP),(\fIec\fP),(\fIbf\fP),(\fIst\fP)''.
+where,
+\fIvr\fP specifies vertical resolution,
+\fIbr\fP specifies bit rate,
+\fIwd\fP specifies page width,
+\fIln\fP specifies page length,
+\fIdf\fP specifies data compression,
+\fIec\fP specifies error correction,
+\fIbf\fP specifies binary file transfer,
+and
+\fIst\fP specifies scan time/line;
+and each of the above specifications is a range or list
+of numbers that defines the exact capabilities of the modem.
+For example, the default capabilities are
+``(0,1),(0-3),(0-4),(0-2),(0),(0),(0),(0-7)''
+which specifies the modem is capable of sending and receiving
+both low and high resolution facsimile with a variety of page
+sizes; supports signalling rates 0-3 (2400 bps through 9600 bps);
+supports only 1D-encoded data compression; and does not support
+error correction or binary file transfer.
+A modem's ability to support polled retrieval of facsimile is
+specified separately with the
+.B \-p
+and
+.B \-P
+options.
+.TP 10
+.B \-p
+Specify the modem is \fBnot\fP capable of polling for remote documents.
+.TP 10
+.B \-P
+Specify the modem is capable of polling for remote documents (default).
+.TP 10
+.BI \-q " dir"
+Use a spooling area other than
+.IR ${SPOOL} .
+.TP 10
+.BI \-u " priority"
+Assign the specified priority to the modem when scheduling
+it for outbound use.
+Modem priorities are numbers in the range [0..255] with lower
+numbers meaning higher priority.
+Modems are initially assigned priority 255.
+.SH FILES
+.nf
+.ta \w'${SPOOL}/FIFO.<devid>    'u
+${SPOOL}	default spooling area
+${SPOOL}/FIFO	fifo for contacting \fIfaxq\fP
+.fi
+.PP
+Consult
+.IR hylafax (4F)
+for a complete discussion of the structure and
+content of the spooling area.
+.SH "SEE ALSO"
+.IR hylafax (4F),
+.IR faxgetty (1M),
+.IR faxq (1M).

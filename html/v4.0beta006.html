@@ -1,0 +1,156 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Changes in HylaFAX v4.0beta006
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>C</FONT>HANGE <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+<B>Current Version</B>: v4.0beta006<BR>
+<B>Previous Version</B>: <A HREF="v4.0beta005.html">v4.0beta005</A><BR>
+<B>Master FTP Site</B>: <A HREF="ftp://sgi.com/sgi/fax">sgi.com (192.48.153.1), directory sgi/fax</A><BR>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+</UL>
+
+<P>
+Note that this is a <STRONG>major new distribution</STRONG> and lots
+of things have changed.  Consult the <A HREF="hylafax4.0.html">general overview</A>
+for a high-level description of the new functionality provided in the
+v4.0 software.
+
+<P>
+This document describes the changes made to the software between the
+<I>previous</I> and <I>current</I> versions (see above).
+If you don't find something listed here, then it was not done in this
+timeframe, or it was not considered important enough to be mentioned.
+The following information is located here:
+<UL>
+<LI><A HREF="#general">General changes in the software</A>
+<LI><A HREF="#configure">Changes in the software configuration</A>
+<LI><A HREF="#modemconfig">Changes in the modem config files</A>
+<LI><A HREF="#hfaxd">Changes to hfaxd</A>
+<LI><A HREF="#pagesend">Changes to pagesend</A>
+<LI><A HREF="#sendpage">Changes to sendpage</A>
+<LI><A HREF="#faxmail">Changes to faxmail</A>
+<LI><A HREF="#util">Changes in the support library</A>
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="general"><B><FONT SIZE=+3>G</FONT>ENERAL CHANGES IN THE SOFTWARE:</B></A>
+
+<UL>
+<LI>the default port for the client-server protocol has moved from
+    4559 to 4558
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
+
+<UL>
+<LI>relative pathnames specified for the <TT>TIFFINC</TT> and <TT>LIBTIFF</TT>
+    configuration parameters are now adjusted to reflect their use
+    within subdirectories
+<LI>the logic to extract the gcc version string no longer is confused
+    by local prefixes (e.g. cygnus-2.7.2)
+<LI><B>configure</B> now checks to see if the <TT>random</TT> function 
+    should be emulated
+<LI>the logic to check if memory-mapped files are supported was corrected
+<LI>the default function prototypes for various socket calls have been
+    changed to use <TT>struct sockaddr*</TT> parameters
+<LI>the default function prototype for <TT>crypt</TT> was corrected
+<LI><B>configure</B> now checks if the <TT>crypt</TT> function is to be
+    found in a <TT>-lcrypt</TT> library
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="modemconfig"><B><FONT SIZE=+3>C</FONT>HANGES IN THE MODEM CONFIG FILES:</B></A>
+
+<UL>
+<LI>the ZyXEL 1496 configuration files disable ECM to avoid firmware problems
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="hfaxd"><B><FONT SIZE=+3>C</FONT>HANGES TO HFAXD:</B></A>
+
+<UL>
+<LI>a bug that caused <B>hfaxd</B> to detach itself from the controlling
+    terminal when started with the -I or -O options was fixed
+<LI>the <TT>LASTTIME</TT> job parameter is now set correctly
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="pagesend"><B><FONT SIZE=+3>C</FONT>HANGES TO PAGESEND:</B></A>
+
+<UL>
+<LI>a new <TT>PagerTTYParity</TT> parameter was added to the info database
+    to specify if the IXO/TAP service provider requires a non-standard
+    bits+parity setup
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="sendpage"><B><FONT SIZE=+3>C</FONT>HANGES TO SENDPAGE:</B></A>
+
+<UL>
+<LI><B>sendpage</B> is still broken
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxmail"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXMAIL:</B></A>
+
+<UL>
+<LI><B>faxmail</B> was rewritten to use the new <TT>TextFmt</TT> class
+    for converting ASCII text to PostScript
+<LI>the default formatting was changed
+<LI>new support was added to control most formatting through header
+    fields in the envelope of the parsed mail
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="util"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SUPPORT LIBRARY:</B></A>
+
+<UL>
+<LI>zlib was updated from version 0.95 to 0.99 (nominally called 1.0)
+<LI>portability issues with sockets have been isolated in a new class
+<LI>a bug in the transmission of the <TT>SENDTIME</TT> job parameter was fixed
+<LI>a new <TT>TextFmt</TT> class was added to encapsulate the conversion
+   of ASCII text to PostScript
+<LI>a bug in the parsing of fax server specification strings was corrected
+<LI>various portability problems were fixed
+<LI><B>faxinfo</B> now reports the correct page dimensions for pages that
+   are not found in the page size database
+<LI><B>faxrcvd</B> no longer prints duplicate information
+<LI><B>textfmt</B> was rewritten to use the <TT>TextFmt</TT> class
+<LI><B>xferstats</B> now prints the correct column heading for the
+   sort key
+</UL>
+
+<!--FOOTER-->
+
+<A HREF="toc.html"><IMG SRC="icons/back.gif"></A> HylaFAX table
+of contents.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

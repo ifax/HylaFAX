@@ -1,0 +1,74 @@
+# $Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Configuration for using the Class 2.0 command interface
+# with a USR v.34 Courier or Sporster modem.
+#
+# RTS/CTS flow control is used default.
+#
+# CONFIG: CLASS2.0: USRobotics*-*
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:		Class2.0	# use class 2.0 interface
+ModemRate:		38400		# DCE-DTE communication rate
+ModemFlowControl:	rtscts		# XON/XOFF flow control assumed
+#
+ModemNoFlowCmd:		AT&H0&I0&R1	# setup modem for no flow control
+ModemHardFlowCmd:	AT&H1&I0&R2	# setup modem for hardware flow control
+ModemSoftFlowCmd:	AT&H2&I2&R1	# setup modem for software flow control
+#
+ModemSetupDTRCmd:	ATS13=1&D2	# setup so DTR drop resets modem
+ModemSetupDCDCmd:	AT&C1		# setup so DCD reflects carrier (or not)
+ModemResultCodesCmd:	ATQ0X4		# enable extended result codes
+#
+# NB: adaptive answer only seems to work properly when
+#     the modem is left idling in Class 2.0
+#
+ModemSetupAACmd:	AT+FAA=1
+#
+# Set modem speaker volume commands: OFF QUIET LOW MEDIUM HIGH.
+# Note that we both turn the speaker on/off and set volume.
+#
+ModemSetVolumeCmd:	"ATM0 ATM1 ATM1 ATM1 ATM1"
+#
+# Modem does not support HDLC frame tracing; we add this just
+# to eliminate spurious ERROR results that confuse the naive.
+#
+Class2BUGCmd:		AT+FBU=0
+#
+# The modem doesn't support copy quality checking, even though it
+# returns (0-2,0-2) for AT+FCQ=?; therefore we override the query
+# response so that the server will do copy quality checking.
+#
+Class2CQQueryCmd:	!(0),(0)	# override modem response

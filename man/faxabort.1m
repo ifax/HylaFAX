@@ -1,0 +1,85 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1994-1996 Sam Leffler
+.\" Copyright (c) 1994-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH FAXABORT 1M "March 3, 1995"
+.SH NAME
+faxabort \- tell a \*(Fx server to abort a receive
+.SH SYNOPSIS
+.B ${SBIN}/faxabort
+[
+.B \-q
+.I dir
+]
+.I modem
+.SH DESCRIPTION
+.I faxabort
+sends a message to a \*(Fx 
+.IR faxgetty (1M)
+process servicing
+.I modem
+telling it to abort any active receive operation.
+.PP
+The specified
+.I modem
+can either be the name (typically the
+last component of the terminal port the
+modem is attached to), or the full name
+of the associated 
+.SM FIFO
+named pipe file, e.g. ``\s-1FIFO\s+1.ttym2''.
+.PP
+Note that to abort a send operation the
+.IR faxrm (1)
+command must be used.
+.SH OPTIONS
+.TP 10
+.BI \-q " dir"
+Use a spooling area other than
+.IR ${SPOOL} .
+.SH NOTES
+On some systems it is not possible to abort a received facsimile
+because of problems in the operating system; on such systems the
+message sent by 
+.I faxabort
+will be (silently) ignored.
+.SH FILES
+.nf
+.ta \w'${SPOOL}/FIFO.<devid>    'u
+${SPOOL}	default spooling area
+${SPOOL}/FIFO	fifo for contacting \fIfaxq\fP
+.fi
+.PP
+Consult
+.IR hylafax (4F)
+for a complete discussion of the structure and
+content of the spooling area.
+.SH "SEE ALSO"
+.IR hylafax (4F),
+.IR faxq (1M),
+.IR faxgetty (1M)

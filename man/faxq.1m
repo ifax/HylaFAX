@@ -1,0 +1,150 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH FAXQ 1M "October 27, 1995"
+.SH NAME
+faxq \- \*(Fx queue manager process
+.SH SYNOPSIS
+.B ${LIBEXEC}/faxq
+[
+.B \-D
+] [
+.B \-q
+.I queue-dir
+]
+.SH DESCRIPTION
+.I faxq
+is the central queueing agent for \*(Fx.
+One (and only one)
+.I faxq
+process is normally running at all times.
+.I faxq
+is responsible for scheduling, preparing, and initiating
+outbound facsimile jobs (and potentially other types of jobs as well).
+.PP
+.I faxq
+may be run by itself to provide outbound-only services or it
+may be run together with one or more
+.IR faxgetty (1M)
+processes, in which case inbound services (e.g. receiving
+facsimile) are provided.
+When
+.I faxq
+is run by itself the set of available modems must be specified
+using the
+.IR faxmodem (1M)
+command.
+Each modem specified in this way is assumed to exist and to
+be capable of use as a facsimile modem.
+When
+.I faxq
+is run in conjunction with
+.IR faxgetty
+processes, it is not necessary to use
+.I faxmodem
+to specify modems; instead the programs
+communicate information about the status and
+capabilities of each modem.
+The latter setup provides a more robust and powerful system and
+is the intended way for the software to operate.
+.PP
+.I faxq
+receives notification of outbound jobs to process from the
+.IR hfaxd (1M)
+process that implements the server-side of the \*(Fx
+client-server protocol.
+Notification is through messages sent to a
+.SM FIFO
+special file that
+.I faxq
+listens to.
+This file is also used by other administrative programs such as
+.IR faxquit (1M).
+.PP
+Many aspects of
+.I faxq
+operation may be controlled through a configuration file.
+This file is located in the spooler hierarchy in the
+.B etc
+subdirectory and is named
+.B config
+(as opposed to the per-modem configuration files named
+.BI config. devid );
+consult
+.IR config (4F)
+for detailed information on this configuration file.
+Note that
+.I faxq
+automatically re-reads its configuration file if it has been
+changed.
+It is also possible to dynamically change configuration parameters
+in a running process with the
+.IR faxconfig (1M)
+program.
+Beware however that parameters changed in this way will be reset
+to the values specified in the configuration file if the file
+is re-read.
+.SH OPTIONS
+.TP 10
+.BI \-q " dir"
+The specified directory is treated as the spooling area.
+The default spooling area,
+.IR ${SPOOL} ,
+is defined at the time the software is built.
+.TP 10
+.B \-D
+This option forces
+.I faxq
+to remain attached to the controlling tty from which it was invoked.
+In normal operation
+.I faxq
+will
+.IR fork (2)
+and dissassociate itself from the controlling tty.
+This option is useful for debugging.
+.SH FILES
+.ta \w'${SPOOL}/etc/config    'u
+.nf
+${SPOOL}/FIFO	FIFO special file for submitting commands
+${SPOOL}/etc/config	configuration file
+.fi
+.PP
+Consult
+.IR hylafax (4F)
+for a complete discussion of the structure and
+content of the spooling area.
+.SH "SEE ALSO"
+.IR faxabort (1M),
+.IR faxconfig (1M),
+.IR faxmodem (1M),
+.IR faxquit (1M),
+.IR faxstate (1M),
+.IR getty (1M),
+.IR hylafax (4F),
+.IR config (4F).

@@ -1,0 +1,370 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Changes in FlexFAX v2.3beta036
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>F</FONT>LEX<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>C</FONT>HANGE <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+<B>Current Version</B>: v2.3beta036<BR>
+<B>Previous Version</B>: Release v2.2.2<BR>
+<B>Master FTP Site</B>: <A HREF="ftp://sgi.com/sgi/fax">sgi.com (192.48.153.1), directory sgi/fax</A><BR>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+</UL>
+
+<P>
+This document describes the changes made to the software between the
+<I>previous</I> and <I>current</I> versions (see above).
+If you don't find something listed here, then it was not done in this
+timeframe, or it was not considered important enough to be mentioned
+(but just about everything <STRONG>is</STRONG> mentioned).
+The following information are located here:
+<UL>
+<LI><A HREF="#General changes">General changes</A>.
+<LI><A HREF="#top of tree">Changes in the "top of the tree"</A>.
+<LI><A HREF="#config files">Changes in the prototype config files</A>.
+<LI><A HREf="#faxd">Changes to faxd</A>.
+<LI><A HREF="#faxaddmodem">Changes to faxaddmodem</A>.
+<LI><A HREF="#faxstat">Changes to faxstat</A>.
+<LI><A HREF="#faxmail">Changes to faxmail</A>.
+<LI><A HREF="#faxcover">Changes to faxcover</A>.
+<LI><A HREF="#fax2ps">Changes to fax2ps</A>.
+<LI><A HREF="#faxd.recv">Changes to faxd.recv</A>.
+<LI><A HREF="#utility code">Changes in the utility code</A>.
+<LI><A HREF="#InterViews code">Changes in the InterViews code</A>.
+<LI><A HREF="#manual pages">Changes to the manual pages</A>.
+</UL>
+
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="ClientBasics"><B><FONT SIZE=+3>G</FONT>ENERAL CHANGES:</B></A>
+
+<UL>
+<LI>regular expression support is now based on Henry Spencer's
+  POSIX 1003.2-compliant routines; this effectively extends the syntax
+  of the dialstring rules, TSI access control list, etc.
+  NB: <STRONG>THERE ARE INCOMPATIBILITES BETWEEN THE PREVIOUS REGEX SYNTAX
+      AND THE POSIX 1003.2 SYNTAX</STRONG>;
+      consult the manual page that describes
+      the POSIX syntax: util/regex/re_format.7
+<LI>the 
+<A HREF="@CGIPATH@/manpage?1+faxaddmodem">faxaddmodem</A>
+program has been moved from the client applications
+  directory (${BIN}) to the spooling area to be consistent with all
+  other the server-related software
+<LI>the server now does copy quality checking on received pages, with
+  line regeneration applied to rows received in error (when copy quality
+  checking is done in the host and not in the modem); note that this
+  is done only in the cases where a modem does not directly support
+  (or is configured to support) copy quality checking in the modem;
+  see <A HREF="copyquality.html">the documentation</A> for help
+  on configuring this support.
+<LI>the server can be configured to image a "<I>tag line</I>" across the top of
+  each page of an outbound job; see
+  <A HREF="setup-advanced.html#TagLine">the documentation</A> for help on
+  configuring this support.
+<LI>receive operations may now be aborted
+<LI>the server now tracks the consecutive number of "<I>bad calls</I>"
+  and if a threshold is exceeded (<B>MaxBadCalls</B>), it invokes a shell script
+  to permit site-specific actions (such as shutting down the server
+  and/or notifying administrators)
+<LI><EM>support for the Abaton 24/96 modem has been dropped</EM>
+<LI>the maximum number of pages that may be sent in a single job can
+  now be constrained
+<LI>the maximum number of pages that will be received in a single call
+  can now be constrained
+<LI>the TSI access control mechanism has been extended to support both
+  inclusion and exclusion
+<LI>the server may be configured to generate a "<I>continuation cover page</I>"
+  when a job fails and no longer has a cover page included in its
+  retransmission
+<LI>the server now disconnects and re-images jobs when a mismatch is
+  recognized in in the session capabilities
+<LI>the adaptive answer and answer rotary facilities have been generalized
+  to permit adaptive answer to be done in a configurable order (e.g.
+  data then fax, or fax then data)
+<LI>the server now times out PostScript imaging requests according to
+  the <B>PostScriptTimeout</B> configuration parameter
+<LI>prototype modem config files are now located in a separate config
+  subdirectory in the spooling area
+<LI>all client applications now fallback to using TCP port 4557 if no
+  "<TT>fax</TT>" service entry exists on the machine
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="top of the tree"><B><FONT SIZE=+3>C</FONT>HANGES IN THE "TOP OF THE TREE":</B></A>
+
+<UL>
+<LI>the <TT>configure</TT> script disables non-POSIX extensions in the GNU
+  shell utilities (the extensions broke the script)
+<LI>the <TT>configure</TT> script will not rebuild the port.h file if it
+  finds an existing one with created with the same target machine
+  and compiler
+<LI>the <TT>configure</TT> script now sets up the default host bit order based
+  on the system defs file and user input
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="config files"><B><FONT SIZE=+3>C</FONT>HANGES IN THE PROTOTYPE CONFIG FILES:</B></A>
+
+<UL>
+<LI>there is a new file for the AT&T DataPort with Class 2.0 firmware
+<LI>there is a new file for Class 1 modems based on the Rockwell RC32ACL
+<LI>there is a new file for the Tricom Tornado28/42
+<LI><B>config.mt-1432</B> no longer has the "@" in the dialing string
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxd"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXD:</B></A>
+<UL>
+<LI>the server now checks if a modem supports polling and rejects polling
+  requests immediately if no support is present
+<LI>the server now does copy quality checking on received pages, with
+  line regeneration applied to rows received in error (when copy quality
+  checking is done in the host and not in the modem); note that this
+  is done only in the cases where a modem does not directly support
+  copy quality checking in the modem
+<LI>the server can be configured to image a "<I>tag line</I>"
+across the top of
+  each page of an outbound job
+<LI>receipt of PIN/PIP during a transmission now causes a job to
+  aborted instead of retried
+<LI>receive operations may now be aborted
+<LI>outgoing calls that reach data modems are now recognized and treated
+  differently
+<LI>the server now tracks the consecutive number of "<I>bad calls</I>" and
+  if a threshold is exceeded (<B>MaxBadCalls</B>), it invokes a shell script
+  to permit site-specific actions (such as shutting down the server
+  and/or notifying administrators)
+<LI>the host-modem flow control can now be setup for "<I>no flow control</I>"
+<LI>the AT-command escape codes have been extended to include the no
+  flow control setting
+<LI>support for the Abaton 24/96 modem has been dropped
+<LI>there is a new configuration parameter <B>ModemSendBeginCmd</B> that is
+  interpreted after an outbound call has been established; this can
+  be used, for example, to setup RTS/CTS flow control on systems that
+  are not capable of doing this w/o having DCD raised
+<LI>a bug was fixed that caused dialing status strings with a "<TT>RING</TT>"
+  prefix to be incorrectly handled
+<LI>the maximum number of pages that may be sent in a single job can
+  now be constrained
+<LI>the maximum number of pages that will be received in a single call
+  can now be constrained
+<LI>the TSI access control mechanism has been extended to support both
+  inclusion and exclusion
+<LI>the server may be configured to generate a "<I>continuation cover page</I>"
+  when a job fails and may no longer have a cover page included in
+  its retransmission
+<LI>the server now disconnects and reimages jobs when a mismatch is
+  recognized in in the session capabilities
+<LI>a bug was corrected that resulted in truncated status information
+  being returned to users when a PostScript imaging oepration failed
+<LI>a new <TT>-p</TT> option was added to stop the server from changing its
+  priority during normal operation; this is for use in debugging
+  servers that go into infinite loops at non-preemptible scheduling
+  priority
+<LI>whether or not the server supports aborting send jobs is now based
+  on the <TT>SERVERABORTBUG</TT>
+  #define emitted by the <TT>configure</TT> script (it
+  used to be directly controlled by the type of host the code was
+  being compiled on)
+<LI>the adaptive answer and answer rotary facilities have been generalized
+  to permit adaptive answer to be done in a configurable order (e.g.
+  data then fax, or fax then data)
+<LI>the server now properly resets all its state when rereading a
+  configuration file
+<LI>the server now times out PostScript imaging requests according to
+  the <B>PostScriptTimeout</B> configuration parameter
+<LI>the tracing messages concering XON/XOFF handling have been improved
+<LI>there is a new tracing control bit for copy quality checking
+<LI>TSI+CSI can now arbitrary ASCII; this is setup with the new
+  <B>LocalIdentifier</B> config parameter
+<LI>the server-modem interface used to return dialing result codes has
+  been expanded to permit more intelligent decisions to be made for
+  failed calls
+
+<P>Class 1 driver:<P>
+
+<LI>bit order handling has been corrected for LSB-order CPUs
+<LI>a bug that caused FCS errors in received frames to not be properly
+  reported was fixed
+<LI>the driver now does a better job of shutting down transmit jobs that
+  terminate prematurely due to receipt of DCN
+<LI>a bug in the state machine used to decided whether to look for page
+  carrier or control carrier was corrected
+<LI>the driver no longer requires that received HDLC frames strictly
+  conform to the T.30 protocol; specifically some senders transmit
+  frames without FCF_SNDR set after receiving valid DCS
+<LI>the algorithm used to analyze TCF received during training now skips
+  any initial non-zero data; this change helps to ignore flag bits
+  received during the short training sequence before the message
+  carrier is established
+<LI>the parameters that control whether or not a received TCF is acceptable
+  are now configurable (<B>Class1TCFMaxNonZero</B> and <B>Class1TCFMinRun</B>)
+<LI>a bug was corrected in the transmit logic where the initial
+  identification information was not being properly retransmitted
+<LI>there is a new configuration parameter, <B>Class2CQQueryCmd</B>, that
+  is used to identify the copy quality capabilities of a Class 2/2.0 modem
+<LI>UUCP lock filenames are now munged on SCO systems to reflect local
+  requirements (SCO requires that upper case device names be locked
+  under their lower case equivalents)
+<LI>the server no longer checks the effective uid against the "<TT>fax</TT>"
+  user name; it now checks it against the "<TT>fax</TT>" user's uid
+<LI>the <TT>faxrcvd</TT> and <TT>pollrcvd</TT>
+  scripts are now passed the modem device id on the command line
+<LI>the <TT>etc/xferlog</TT> accounting now includes the job identification
+  number in each record
+
+<P>Class 2 driver:<P>
+
+<LI>when transmitting, the driver now reliably waits for &lt;XON&gt; from
+  the modem before sending page data (it used to not do this when
+  hardware flow control was being used)
+<LI>a workaround has been added for modems that do not properly implement
+  the +FDIS command; the <B>Class2DDISCmd</B> configuration parameter can be 
+  setup to cause the driver to work better with such modems
+
+<P>Class 2.0 driver:<P>
+
+<LI>the driver no longer queries for page status after each transmitted
+  page, instead using the <TT>OK</TT>/<TT>ERROR</TT> result string from the
+  <TT>AT+FDT</TT> command; this works around problems with modems that drop
+  DCD immediately after the last page and/or do not accept <TT>AT+FPS?</TT>
+  commands after carrier is dropped
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxaddmodem"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXADDMODEM:</B></A>
+
+<UL>
+<LI>additions for the new configuration parameters
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxstat"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXSTAT:</B></A>
+
+<UL>
+<LI>a new <TT>-i</TT> option returns additional server information
+<LI>System V-specific junk in the GECOS field of passwd file entries
+  is now properly stripped
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxmail"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXMAIL:</B></A>
+
+<UL>
+<LI>now generates ISO 8859-1 character encoding
+  (controlled by a new <TT>-D</TT> option)
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxcover"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXCOVER:</B></A>
+
+<UL>
+<LI><B>/to</B> is now set to a null string instead of
+"&lt;unknown&gt;" when the <I>to user name</I> is not unspecified
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="fax2ps"><B><FONT SIZE=+3>C</FONT>HANGES TO FAX2PS:</B></A>
+
+<UL>
+<LI>portability modifications
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxd.recv"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXD.RECV:</B></A>
+
+<UL>
+<LI>a new protocol command, <B>serverInfo</B>, was added to request static
+  per-server information (such as the identity of an administrator)
+<LI>job submission may now be shutdown by creating a file status/&lt;dev&gt;.shut
+  in the spooling area; this causes requests to submit a job to be
+  rejected with the contents of &lt;dev&gt;.shut returned to the client
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="utility code"><B><FONT SIZE=+3>C</FONT>HANGES IN THE UTILITY CODE:</B></A>
+
+<UL>
+<LI>compiler portability problems have been corrected in serveral of
+  the data structures classes
+<LI>a new shell script <TT>wedged.sh</TT> is invoked when a fax server thinks
+  a modem is wedged
+<LI>a new shell script <TT>mkcover.sh</TT> is invoked to create the PostScript
+  continuation cover page for jobs being retried after a protocol
+  failure; <TT>cover.templ</TT> is the associated cover page template file
+<LI>the <TT>faxquit</TT> program is no longer installed setuid fax and is no
+  longer installed in the directory where client applications reside
+<LI>the <TT>faxanswer</TT>, <TT>faxquit</TT>, and (new) <TT>faxabort</TT>
+  programs are all links to a new <TT>faxmsg</TT> program
+<LI><TT>faxabort</TT> is a new program that sends a message to a fax server telling
+  it to abort the current phone call (either sending or receiving)
+<LI>the default number of retries for a sent job now comes from <TT>config.h</TT>;
+  it used to just be <TT>-1</TT> (i.e. infinite)
+<LI>the set of ``trusted users'' is now specified in <TT>config.h</TT>
+<LI>the <TT>notify.awk</TT> script now gives more information in the Subject line
+<LI><TT>xferstats.sh</TT> and <TT>recvstats.sh</TT> handle the new accounting file record format
+<LI>a bug in <TT>transcript.sh</TT> was fixed ("<TT>cut -f1</TT>" is not accepted on
+  some systems; it must be "<TT>cut -f 1</TT>")
+<LI>a new program, <TT>tagtest</TT>, is used to test out the tag line support
+<LI>a new program, <TT>tsitest</TT>, is used to test out the TSI access control
+  support
+<LI><TT>FaxClient::sendLine</TT>
+checks parameters to catch potential protocol botches
+<LI>the regular expression support is now based on Henry Spencer's
+  POSIX 1003.2-compliant code
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="InterViews code"><B><FONT SIZE=+3>C</FONT>HANGES IN THE iNTERvIEWS CODE:</B></A>
+
+<UL>
+<LI>the two remaining InterViews classes have been merged into the 
+  utility code
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="manual pages"><B><FONT SIZE=+3>C</FONT>HANGES TO THE MANUAL PAGES:</B></A>
+
+<UL>
+<LI>the scheme for building and installing the manual pages has been
+  changed to handle filename conflicts and to be more general
+<LI><I>intro</I>(4F) has been renamed <I>flexfax</I>(4F) to avoid name conflicts
+</UL>
+
+<!--FOOTER-->
+
+<A HREF="toc.html"><IMG SRC="icons/back.gif"></A> FlexFAX table
+of contents.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

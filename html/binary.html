@@ -1,0 +1,147 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+HylaFAX Binary Distributions
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>B</FONT>INARY <FONT SIZE=+2>D</FONT>ISTRIBUTIONS</B>
+<BASEFONT SIZE=3>
+
+<HR SIZE=4>
+
+There are a number of pre-built binary distributions of the HylaFAX
+source code that are blessed as <EM>safe for installation</EM>.
+These distributions are available by public FTP from various
+sites on the Internet.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/warning_icon.gif" ALT="NOTE: " HSPACE=8></TD>
+<TD><EM>Beware of taking binary distributions from sites that are not on this list.
+HylaFAX includes several programs that are either started
+by the super-user or are installed as setuid root; thus
+installing untrusted distributions can be risky.</EM></TD>
+</TR>
+</TABLE>
+
+<P><HR WIDTH=65% ALIGN=center>
+
+<P>
+Many binary distributions are available on the master FTP site:
+
+<UL>
+<PRE><B>ftp.sgi.com</B>			<A HREF="ftp://ftp.sgi.com/sgi/fax/binary">sgi/fax/binary</A>
+    (192.48.153.1)</PRE>
+</UL>
+
+These currently include:
+<UL>
+<LI>Silicon Graphics <I>inst'able images</I>
+<LI>SVR4 <I>pkg images</I> for x86 systems
+<LI>HPUX-9.01 for HP9000/7xx systems
+<LI>Ultrix 4.4 for DecStation-5000 systems
+<LI>SunOS 4.1.4 for Sparc
+<LI>Solaris 2.4 for Sparc
+</UL>
+
+[<I>This list may be out of date, check the FTP directory.</I>]
+
+<P>
+Alternate sites that either mirror the master FTP site or that have
+specific binary distributions are:
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/warning_icon.gif" ALT="NOTE: " HSPACE=8></TD>
+<TD><I>These sites had binary distributions of FlexFAX or HylaFAX 3.0,
+they will presumably have HylaFAX 4.0 distributions soon.</I></TD>
+</TR>
+</TABLE>
+
+<P>
+FreeBSD binary distributions are available from:
+
+<UL>
+<PRE><B>ftp.freebsd.org</B>		<A HREF="ftp://ftp.freebsd.org/pub/FreeBSD/ports-current/comms/hylafax/">pub/FreeBSD/ports-current/comms/hylafax/</A>
+    (165.113.58.253)</PRE>
+</UL>
+
+<P>
+NetBSD binary distributions are available from:
+
+<UL>
+<PRE><B>ftp.netbsd.org</B>		<A HREF="ftp://ftp.netbsd.org/pub/NetBSD/packages/binaries/NetBSD-current/i386/">pub/NetBSD/packages/binaries/NetBSD-current/i386</A>
+    (206.86.8.12)</PRE>
+</UL>
+
+<HR WIDTH=65% ALIGN=center>
+
+<P>
+The binary distributions come with their own instructions.
+The following guidelines describe
+how to interpret the filenames to understand the
+format and contents of each distribution.
+
+<P>
+Distribution filenames are of the form:
+<TT>hylafax-</TT>&lt;<I>target</I>&gt;-&lt;<I>version</I>&gt;-&lt;<I>format</I>&gt;;
+where &lt;<I>target</I>&gt; describes the target system,
+&lt;<I>version</I>&gt; specifies the HylaFAX version the distribution
+was built from, and &lt;<I>format</I>&gt; specifies the format of
+the distribution as follows:
+<UL>
+<LI>a <TT>.Z</TT> suffix indicates the file has been compressed with the
+    <A HREF="@CGIPATH@/manpage?1+compress">compress(1)</A> program
+<LI>a <TT>.gz</TT> suffix indicates the file has been compressed with the
+    <A HREF="@CGIPATH@/manpage?1+gzip">GNU gzip(1)</A> program
+<LI>a <TT>.tar</TT> component indicates the file was created with the
+    <A HREF="@CGIPATH@/manpage?1+tar">tar(1)</A> program
+<LI>a <TT>-inst</TT> component indicates the file contains images for the IRIX
+    <A HREF="@CGIPATH@/manpage?1+inst">inst(1)</A> program
+<LI>a <TT>-pkg</TT> component indicates the file contains images for the SVR4
+    <A HREF="@CGIPATH@/manpage?1+pkgadd">pkgadd(1M)</A> program
+</UL>
+
+<P>
+So, for example, <TT>hylafax-irix5-v3.0beta099-inst.tar</TT> is
+a binary distribution for machines running IRIX 5.x and the 
+distribution is provided as IRIX inst images collected together in a
+single archive created by the tar program.
+
+<P>
+In addition to the binary distributions, there may also be two other
+files present for each target system.
+Files of the form <TT>INSTALL-*-*</TT> are
+installation instructions for a specific binary distribution.
+Files of the form <TT>gs*-*-tar.gz</TT>
+are binary distributions of Ghostscript, the Ghostscript fonts, and
+any associated .ps files; configured for use with HylaFAX.
+
+<!--FOOTER-->
+
+<P>
+<TABLE BORDER=0 WIDTH=100%>
+<TR>
+<TD><A HREF="setup.html"><IMG SRC="icons/next.gif">
+How to setup a HylaFAX server and prepare it for use</A>.</TD>
+<TD><A HREF="toc.html"><IMG SRC="icons/back.gif">
+HylaFAX table of contents</A>.</TD>
+</TR>
+</TABLE>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

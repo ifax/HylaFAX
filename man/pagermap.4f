@@ -1,0 +1,127 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1995-1996 Sam Leffler
+.\" Copyright (c) 1995-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH PAGERMAP 4F "May 8, 1996"
+.SH NAME
+pagermap \- \s-1SNPP\s+1 pager identifier mapping file
+.SH DESCRIPTION
+The file
+.B etc/pagermap
+(by default) is used by the \s-1SNPP\s+1 support in
+.IR hfaxd (1M)
+to map pager identifiers specified with the \s-1PAGE\s+1 directive
+to
+.SM IXO/TAP
+or
+.SM SMS
+service providers and optionally a Pager Identification
+Number (\s-1PIN\s+1).
+(The ability to specify a \s-1PIN\s+1 makes it possible to define 
+.I aliases
+for pagers.)
+Note that 
+.B etc/pagermap
+may be called a different name; the filename is specified
+with the
+.I PagerIDMapFile
+configuration parameter read by
+.IR hfaxd (1M).
+.PP
+The pagermap file is comprised of one or more
+lines of the following format:
+.sp
+.nf
+.RS
+<\fIpattern\fP> <\fIdialstring\fP>[/<\fIpin\fP>]
+.RE
+.fi
+.PP
+Each line specifies a <\fIpattern\fP> that is matched against
+a client-specified pager identifier string.
+A pattern may be a plain string or a
+.SM POSIX
+1003.2 extended regular expression; plain strings
+must compare exactly while regular expressions are unanchored and any
+substring match constitutes a ``hit''.
+Regular expressions are distinguished from plain strings by the
+presence of one or more of the magic characters ``[]*.^$-+{}()''.
+The <\fIdialstring\fP> identifies the
+.SM IXO/TAP
+or
+.SM SMS
+service provider to contact for delivery or, if <\fIdialstring\fP>
+is the string ``reject'' (case insensitive) then the pager identifier
+is rejected.
+If the optional <\fIpin\fP> is specified then it used to deliver the
+page instead of the client-specified identifier.
+.PP
+If the matching expression is a regular expression
+the optional <\fIpin\fP\>
+may reference the entire string matched by the
+regular expression with the ``&'' character.
+Substrings matched with the ``(...)'' constructs may be referenced
+by using ``\e\fIn\fP'' where
+.I n
+is a single numeric digit between 1 and 9 that refers to the
+.IR n -th
+matched substring; c.f.
+.IR re_format (7),
+.IR sed (1),
+etc.
+.PP
+.I hfaxd
+processes lines in the mapping file sequentially; the first line
+with a pattern that matches the pager identifier is used to deliver
+or reject the page.
+Lines that begin with a ``#'' are treated as comments and discarded.
+Leading whitespace on a line is also ignored.
+.SH EXAMPLES
+The following defines an alias for ``sam'', submits all destinations
+with a leading ``Sky'' to a particular
+.SM IXO/TAP 
+service provider, and otherwise rejects the pager ID.
+(Note that using alphabetics in dial strings requires
+a dialstring rules file that understands how to map alphabetics
+to key codes\(emor one that passes them through verbatim.)
+.sp .5
+.nf
+.RS
+.ft C
+.ta \w'Sky(.*)    'u
+# a simple mapping example
+sam	5551212/99
+Sky(.*)	1800SkyTel/\e1
+\&.*	reject
+.ft P
+.RE
+.fi
+.sp .5
+.SH "SEE ALSO"
+.IR hfaxd (1M),
+.IR hylafax (4F)

@@ -1,0 +1,90 @@
+<HTML>
+<HEAD>
+<TITLE>AT&T Paradyne DataPort</TITLE>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>A</FONT><FONT SIZE=+1>T&T</FONT> <FONT SIZE=+2>P</FONT>ARADYNE <FONT SIZE=+2>D</FONT>ATAPORT</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR WIDTH=65% ALIGN=left SIZE=4>
+<B>Manufacturer</B>: AT&T Paradyne<BR>
+<B>Model</B>: 3710-Ax (<I>aka</I> DataPort)<BR>
+<B>Latest Firmware Revision Tried</B>: 1.76.00<BR>
+<B>Recommended Firmware Revisions</B>: 1.76.00<BR>
+<B>Last Updated</B>:$Date$<BR>
+<HR WIDTH=65% ALIGN=left SIZE=4>
+</UL>
+
+<DL COMPACT>
+<DT><IMG SRC="@HTMLPATH@/icons/info_icon.gif" ALT="o">
+<DD>There is an
+<A HREF="http://www.whnet.com/wolfgang/att.html">FAQ specifically for AT&T modems</A>.
+<DT><IMG SRC="@HTMLPATH@/icons/smiley.gif" ALT="o">
+<DD>This modem is recommended for use with HylaFAX
+<EM>only when used in Class 1</EM>.
+</DL>
+
+<HR WIDTH=65% ALIGN=right>
+<B><A NAME="Class1"><FONT SIZE=+2>C</FONT>LASS 1 <FONT SIZE=+1>S</FONT>UPPORT</A></B>
+
+<UL>
+<LI>received HDLC frames do <EM>not</EM>
+include the FCS bytes (<I>revs prior to 1.33</I>)
+<LI>carrier is sometimes dropped w/o notice during receive (<I>rev 1.33</I>)
+<LI>the command "<TT>ATH+FCLASS=0;A</TT>"
+does not do the right thing because the command parser does not parse
+the "<TT>;A</TT>"
+<LI>the modem returns "<TT>OK</TT>" instead of
+"<TT>NO CARRIER</TT>" or "<TT>NO ANSWER</TT>" when a
+  dial attempt times out before carrier is established
+</UL>
+
+<HR WIDTH=65% ALIGN=right>
+<B><A NAME="Class2"><FONT SIZE=+2>C</FONT>LASS 2 <FONT SIZE=+1>S</FONT>UPPORT</A></B>
+
+<UL>
+<LI>Result strings for
+<TT>AT+FDCC=?</TT> and <TT>AT+FDIS=?</TT>
+are semantically incorrect;
+  ranges are returned as (a,b) instead of (a-b); e.g. (0,5) instead
+  of (0-5) for signalling rate; this causes problems in deducing the
+  true set of modem capabilities
+(<I>old firmware revs</I>)
+<LI>The modem sends the host ^S/^Q during page
+data transmission (<TT>AT+FDT</TT>)
+  even when RTS/CTS flow control is enabled.
+<LI>Prior to rev 1.76 it was not possible to
+disable copy quality checking (<TT>AT+FCQ=0</TT> failed).
+<LI>There is no support for transmission of 2D-encoded data
+<LI>In certain revisions,
+the modem was observed to enter a state where it repeatedly sent
+  EOP when commanded to send MPS (for <TT>AT+FET=0</TT>); power-cycling the
+  modem cleared this condition
+<LI>In certain revisions prior to 1.76,
+when transmitting, the modem drops page data
+(due to improperly priming the datapump).
+<LI>The modem returns "<TT>OK</TT>" instead of
+"<TT>NO CARRIER</TT>" or "<TT>NO ANSWER</TT>" when a
+  dial attempt times out before carrier is established
+<LI>In firmware revision 1.76, <TT>AT+FREV?</TT> can return gibberish that
+causes the fax software to be unable to initialize the modem; to workaround
+the problem set the <B>ModemRevQueryCmd</B>
+configuration parameter to <TT>"!C01.1.76"</TT> (so the command
+is not sent to the modem).
+</UL>
+
+<P>
+<A HREF="digicom-scout.html"><IMG SRC="@HTMLPATH@/icons/next.gif"> Digicom Scout+</A>
+
+<HR>
+
+<ADDRESS>
+Copyright &copy; 1990, 1991, 1992, 1993, 1994 Sam Leffler<BR>
+Copyright &copy; 1991, 1992, 1993, 1994 Silicon Graphics, Inc.<BR>
+</ADDRESS>
+
+</BODY>
+</HTML>

@@ -1,0 +1,884 @@
+.\"	$Id$
+.\"
+.\"  HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
+.TH SENDFAX 1 "June 21, 1996"
+.SH NAME
+sendfax \- submit a facsimile job for transmission
+.SH SYNOPSIS
+.B sendfax
+[
+.I options
+] [
+.IR files ...
+]
+.SH DESCRIPTION
+.I sendfax
+submits one or more facsimile transmission requests
+to a \*(Fx facsimile server.
+Requests are normally processed immediately, although
+they may also be queued for transmission at a later time
+using a syntax identical to the
+.IR at (1)
+command.
+For each job that is queued,
+.I sendfax
+prints a
+.I "job identifier"
+and a
+.I "job group identifier"
+on the standard output.
+A job identifier is the token by which jobs are
+identified within \*(Fx; job group identifiers are
+used to reference a set of jobs that have been
+submitted at the same time.
+Job and job group identifiers can be supplied to the
+.IR faxrm (1)
+command to remove the jobs or to the
+.IR faxalter (1)
+command to alter job parameters.
+.PP
+Facsimile are made from the concatenation
+of a cover page (see below)
+and one or more files specified on the command line.
+If no files are supplied on the command line,
+.I sendfax
+will read data from the standard input unless polling is requested.
+Cover pages are distinguished for the purpose of generating ``\c
+.IR "continuation cover pages" ''
+on the server;
+these are makeup cover pages that are automatically generated if a
+job fails after sending the original user-specified cover page.
+.PP
+.I sendfax
+passes \*(Ps\(tm and
+.SM TIFF
+documents directly through to the fax server for transmission,
+and attempts to convert other file formats to either \*(Ps or
+.SM TIFF.
+In normal operation
+.I sendfax
+automatically converts
+.SM ASCII\c
+-text,
+.IR troff (1)
+output,
+and
+Silicon Graphics format images for transmission.
+Support for other file formats can be easily added
+through an extensible file typing and conversion facility; see
+.IR typerules (4F).
+Note that since
+.SM TIFF
+Class F documents are processed directly it is simple to forward
+a received facsimile.
+.PP
+By default
+.I sendfax
+will generate a cover page for each facsimile that is to be transmitted.
+This cover page is created by the ancillary
+.IR faxcover (1)
+program using information deduced by
+.I sendfax
+and by information supplied on the command line.
+Automatic cover page generation may be suppressed with the
+.B \-n
+option.
+.PP
+In addition to sending documents,
+.I sendfax
+can be used to poll a remote facsimile machine to retrieve
+waiting documents.
+If the
+.B \-p
+option is specified, a polling request will be submitted
+to each destination.
+If a poll request is made in conjunction with the transmission
+of documents, the poll request will take place after the documents
+are transmitted.
+Documents retrieved by polling are returned to the requestor
+by electronic mail and may be viewed with a suitable viewer program.
+.PP
+One or more destinations must be specified on the command line
+using the
+.B \-d
+option.
+A destination is the dialing string to use to contact
+the remote fax machine.
+Phone numbers may include non-alphanumeric characters for
+readability\(emonly alphanumerics and ``+'' (for denoting a
+country code) are significant in placing a call.
+Alphabetic characters are automatically mapped to their numeric
+key equivalents: ``abcABC'' to ``2'', ``defDEF'' to ``3'', etc.
+Dialing prefixes, such as ``1'' and ``011''
+(for long distance calling in the United States) need
+not be included if an unambigous number is specified.
+Examples of unambiguous phone numbers are:
+.nf
+.sp .5
+.RS
+.ta \w'+31.77.594.313      'u
+\+31.77.594.131	\fIto call the Netherlands\fP
++14159657824	\fIto call California\fP
+9657824	\fIto make a local call\fP
+1-215-356-1666	\fIto call Pennsylvania from within the US\fP
+.RE
+.sp .5
+.fi
+Non-numeric strings, such as ``*70'' (to defeat
+call waiting), may be included in the destination phone number.
+Whether or not they are stripped from the string used to
+dial the destination fax machine is dependent on the dialstring
+rules configured for use on the server; c.f.
+.IR config (4F)
+and
+.IR dialrules (4F).
+.PP
+A destination may also be specified as
+.IR user@fax-number .
+In this case the
+.I user
+string will be passed to
+.I faxcover
+as the identity of the recipient.
+Note that multi-word names must be enclosed in quote marks;
+for example,
+``Sam Leff\&ler@+1.415.555.1212''.
+.PP
+The order of options on the command line is significant.
+Each fax to be transmitted is assigned the current value of
+parameters specified on the command line; e.g. whether or not to
+generate a cover page.
+This means that options that specify parameters for a particular
+destination must precede the dialstring specified with the
+.B \-d
+option.
+For example,
+.IP
+sendfax -n -d 5551212 /etc/passwd
+.LP
+submits a fax to 5551212 that has no cover page while
+.IP
+sendfax -d 5551212 -n /etc/passwd
+.LP
+submits the same fax but with the default cover page handling.
+Note also that parameter values persist across 
+.B \-d
+options so the following
+.IP
+sendfax -n -d 5551212 -d 5551313 /etc/network
+.LP
+submits two facsimile, both of which have no cover page.
+.SH OPTIONS
+.TP 12
+.B \-1
+Transmit facsimile documents using 1-D MR compression.
+By default \*(Fx will use the optimal compression scheme supported
+by the transmitting modem and receiving facsimile device.
+.TP 12
+.B \-2
+Transmit facsimile documents using 2-D MR compression, if possible.
+By default \*(Fx will use the optimal compression scheme supported
+by the transmitting modem and receiving facsimile device.
+.TP 12
+.BI \-a " time"
+Schedule transmission at the indicated
+.IR time .
+Times are specified using the syntax of the
+.IR at (1)
+command; e.g. ``now + 30 minutes'' to schedule transmission
+30 minutes in the future.
+By default,
+.I sendfax
+schedules facsimile for ``now''.
+.TP
+.BI \-b " speed"
+Transmit facsimile documents using a signalling rate that is
+constrained to be at least
+.I speed
+bits/second.
+If the specified speed is greater than the transmitting modem
+or receiver is capable of, it is reduced to the highest possible
+speed both devices support.
+If a negotiated signalling rate greater than or equal to
+.I speed
+cannot be negotiated then the job is aborted.
+Possible speeds are: 2400, 4800, 7200, 9600, 12000, and 14400.
+By default \*(Fx will use the fastest possible rate supported by
+the transmitting modem and receiving facsimile device.
+.TP
+.BI \-B " speed"
+Try to transmit facsimile documents using the
+desired signalling rate.
+Possible speeds are: 2400, 4800, 7200, 9600, 12000, and 14400.
+If the specified speed is greater than the transmitting modem
+or receiver is capable of, it is reduced to the highest possible
+speed both devices support.
+By default \*(Fx will use the fastest possible rate supported by
+the transmitting modem and receiving facsimile device (unless
+restricted by other server configuration); this
+option can be used to reduce the speed.
+Note that international calls are frequently more reliable when
+transmissions are restricted to 9600 bits/second.
+.TP 12
+.BI \-c " comments"
+Pass
+.I comments
+to the
+.IR faxcover (1)
+program for inclusion in the comments field of any generated
+cover page.
+.TP 12
+.B \-D
+Enable notification by electronic mail when the
+facsimile has been delivered.
+By default \*(Fx will notify the submitter only if there is
+a problem with a job.
+.TP 12
+.BI \-d " destination"
+Create a job to transmit the supplied documents to
+a facsimile machine at the indicated
+.IR destination .
+If the
+.I destination
+is of the form ``\fIuser\fP@\fIphone-number\fP'' then any
+cover page will show \fIuser\fP as the intended receipient.
+.TP 12
+.B \-E
+Disable use of the Error Correction Mode (\s-1ECM\s+1)
+when transmitting page data.
+By default \*(Fx will attempt to use \s-1ECM\s+1 when both
+the trasmitting modem and receiving device support it.
+Note that international calls are sometimes faster when
+\s-1ECM\s+1 is disabled.
+Beware also that some modems and/or facsimile devices do not
+properly implement \s-1ECM\s+1 causing transmission failures.
+.TP 12
+.BI \-f " from"
+Use
+.I from
+as the identity of the facsimile sender.
+Otherwise the sender is the user that invoked
+.IR sendfax .
+The sender is an account name to which the \*(Fx software
+should direct notification messages.
+The
+.I from
+identity may be a fullblown ``From:'' line, e.g.
+e.g. ``Joe Blow <joe@foo.com>''
+and ``joe@foo.com (Joe Blow)'' are acceptable.
+If no host-part is specified in the
+.I from
+string the local hostname is used.
+This option is useful when
+.I sendfax
+is invoked on behalf of another user, such as in the implementation
+of an electronic mail to fax gateway.
+.TP 12
+.BI \-F " format"
+Use the specified
+.I format
+when imaging tag lines on outgoing pages.
+Consult the description of the
+.B TagLineFormat
+parameter in
+.IR config (4F)
+for an explanation of how to construct a format string.
+.IP
+\fINote that many locales require that proper identification
+appear on all transmitted facsimile; when using this facility
+one should always include proper identification (e.g. a phone
+number) in the imaged taglines.\fP
+.IR 
+.TP 12
+.BI \-h " \fR[\fPmodem\fR@]\fPhost\fR[\fP:port\fR]\fP"
+Force the jobs to be processed on a specific
+.I host
+and, optionally, using a particular
+.IR modem .
+The
+.I host
+may be either a symbolic name or a network address.
+If no
+.B \-h
+option is supplied,
+.I sendfax
+uses the
+.SM FAXSERVER
+environment variable to identify the \*(Fx server to
+which the jobs should be directed.
+If no server is specified then
+.I sendfax
+attempts to contact a server on the local host.
+If no modem is specified, the job will be submitted to any
+available modem.
+.TP 12
+.BI \-i " identifier"
+Use the 
+.I identifier
+string in any notification messages instead of the usual job
+identifier number.
+This option is useful for applications that cross reference
+notification messages against job submissions.
+.TP
+.BI \-I " time"
+If a job must be requeued because of a communication failure schedule
+the retry according to the specified
+.IR time .
+Times are given in seconds.
+Minutes, hours, and days can be specified with
+``\fImin\fP'', ``\fIhour\fP'', and ``\fIday\fP'' suffixes, respectively.
+By default \*(Fx reschedules jobs using retry times that depend on
+the manner in which the job failed; this interface permits a user to
+override this algorithm and specify a single fixed retry time for all
+communication failures.
+.TP 12
+.BI \-k " time"
+Kill the job if it does not complete in the indicated
+.IR time .
+As for the
+.B \-a
+option, the
+.I time
+is specifed using notation compatible with
+.IR at (1).
+Note that the
+.I time
+is relative to the time of the initial transmission attempt.
+The default kill time is ``now +1 day'' (one day from the time
+the job is first processed).
+To retry for an hour, ``now +1 hour'' could be used.
+.TP 12
+.B \-l
+Transmit the facsimile at a vertical resolution of
+98 lines/inch; otherwise known as \fIlow resolution\fP.
+.TP 12
+.B \-m
+Transmit the facsimile at a vertical resolution of
+196 lines/inch; otherwise known as \fImedium resolution\fP
+or \fIfine mode\fP.
+.TP
+.BI \-M " mst"
+Transmit facsimile documents using the specified
+minimum scanline time.
+Possible times are: 0ms, 5ms, 10ms2, 10ms, 20ms2, 20ms, 40ms2, and 40ms.
+If the specified time is less than the transmitting modem
+or receiver is capable of, it is increased to the lowest possible
+time both devices support.
+By default \*(Fx will use the lowest possible time supported by
+the transmitting modem and receiving facsimile device (unless
+restricted by other server configuration).
+This option is mostly useful for debugging.
+.TP 12
+.B \-n
+Suppress the automatic generation of a cover page for
+subsequent facsimile.
+Note that polling requests do not receive a cover page unless they
+are combined with the transmission of one or more files.
+.TP
+.B \-N
+Do not notify the sender by electronic mail when the
+facsimile has been delivered or requeued.
+.TP 12
+.B \-p
+Poll each destination for any available documents.
+If a poll request is made together with document transmission, the
+poll operation is done after the documents are transmitted.
+Documents received by polling are returned to the sender by
+electronic mail.
+.TP 12
+.BI \-P " priority"
+Assign the specified scheduling
+.I priority
+to subsequent jobs.
+A priority is an integer value in the range [0-255].
+Lower values result in higher priority processing.
+By default, each job is assigned 127 for an initial scheduling priority.
+A job's priority is raised (numerically lowered) for each
+failed attempt to transmit so that retransmit attempts
+are done ahead of newly submitted jobs.
+The
+.I priority
+may also be specified as one of the following symbolic names:
+.I default
+or 
+.I normal
+(127),
+.I bulk
+or
+.I junk
+(207),
+.I high
+(63).
+.TP 12
+.B \-R
+Enable notification by electronic mail when the
+facsimile has been delivered and when it is requeued for retransmission.
+By default \*(Fx will notify the submitter only if there is
+a problem with a job.
+.TP 12
+.BI \-r " regarding"
+Pass 
+.I regarding
+to the
+.IR faxcover (1)
+program as the value of the ``Re:'' field of any generated cover page.
+.TP 12
+.BI \-s " size"
+Set the page size to use for the transmitted facsimile.
+Facsimile are normally imaged with a system-default page size
+(usually letter-size pages, 8.5" by 11", for sites in North America).
+Alternate page sizes are specified symbolically using either
+the name or abbreviation of an entry in the
+.IR pagesizes (4F)
+database; e.g.
+.I a3
+(ISO A3),
+.I a4
+(ISO A4),
+.I a5
+(ISO A5),
+.I a6
+(ISO A6),
+.I b4
+(ISO B4),
+.I na-let
+(North American Letter),
+.I us-leg
+(American Legal),
+.I us-led
+(American Ledger),
+.I us-exe
+(American Executive),
+.I jp-let
+(Japanese Letter),
+and
+.I jp-leg
+(Japanese Legal).
+Comparisons are case-insensitive and any match of a
+substring of the full page-size name is sufficient; e.g. ``legal'' would
+match ``American Legal''.
+.IP
+Note that it may not be permissible to image into the
+full page area; the guaranteed reproducible area for a page is 
+typically inset.
+Also, note that while arbitrary page sizes can be specified through
+the page size database,
+only a limited set of page dimensions are supported by the
+Group 3 facsimile protocol.
+Thus if an odd-size facsimile is submitted for transmission
+it may not be possible to determine if it can be sent
+until the fax server establishes communication
+with the remote facsimile machine.
+.TP 12
+.BI \-t " tries"
+Make no more than
+.I tries
+attempts to send the facsimile.
+By default, \*(Fx will terminate a job if:
+3 consecutive attempts to send a particular page fail, or
+it appears the receiver is not a facsimile machine.
+Otherwise \*(Fx places no limit on the
+.I number
+of attempts to send a facsimile, instead terminating a job
+if it is not completed within a 
+.I "kill time"
+timeout interval.
+Note that a try
+is a call in which carrier is established and the facsimile
+protocol is commenced; this is contrasted with a call
+attempt that might have failed because the line was busy.
+.TP 12
+.BI \-x " company"
+Pass
+.I company
+to the
+.IR faxcover (1)
+program as the destination company name.
+.TP 12
+.BI \-y " location"
+Pass
+.I location
+to the
+.IR faxcover (1)
+program as the destination company's location.
+.TP 12
+.B \-v
+Print information on the standard output
+about each conversion and cover sheet
+generation operation it does.
+If 
+.B \-v
+is specified twice, the protocol between
+.I sendfax
+and the
+.I hfaxd
+server process that does the submission work on the
+remote machine is also displayed.
+.SH "CONFIGURATION PARAMETERS"
+.I sendfax
+reads configuration information from the files
+.BR ${LIBDATA}/hyla.conf ,
+.BR ${LIBDATA}/sendfax.conf ,
+and
+.BR ~/.hylarc ;
+in that order.
+Configuration files follow the conventions described in
+.IR hylafax (1).
+The following configuration parameters are recognized:
+.sp .5
+.nf
+.ta \w'AutoCoverPage    'u +\w'boolean    'u +\w'\s-1\fIsee below\fP\s+1    'u
+\fBTag	Type	Default	Description\fP
+AutoCoverPage	boolean	\s-1Yes\s+1	automatically generate cover page
+ChopThreshold	float	\s-13.0\s+1	page chopping threshold
+CoverCmd	string	\s-1\fIsee below\fP\s+1	pathname of cover sheet program
+Cover-Comments	string	\-	cover page comments string
+Cover-Company	string	\-	cover page company name string
+Cover-Location	string	\-	cover page company location string
+Cover-Regarding	string	\-	cover page regarding string
+Cover-Template	string	\-	cover page template filename
+Cover-Voice	string	\-	cover page voice number string
+DateFormat	string	\-	cover page date format string
+DesiredEC	boolean	\-	desired use of \s-1ECM\s+1
+DesiredMST	string	\-	desired minimum scanling time to use
+DesiredSpeed	integer	\-	desired signalling rate to use
+DialRules	string	\s-1\fIsee below\fP\s+1	file containing dialstring rules
+From	string	\-	sender's identity
+HRes	float	\s-1204.\s+1	horizontal resolution
+Host	string	\s-1localhost\s+1	host to contact for service
+KillTime	string	\-	time to expire job
+MailAddr	string	\-	mail address for notification messages
+MaxDials	integer	\s-112\s+1	times to retry dialing
+MaxTries	integer	\s-13\s+1	times to retry transmission
+MinSpeed	integer	\-	minimum acceptable signalling rate
+Modem	string	\-	modem to use on server
+Notify	string	\s-1none\s+1	control email notification
+PageChop	string	\s-1default\s+1	control page chop handling
+PageLength	float	\-	page length in millimeters
+PageSize	string	\s-1default\s+1	page size by name
+PageWidth	float	\-	page width in millimeters
+Port	integer	\s-14559\s+1	port to use in contacting server
+Priority	string	\s-1default\s+1	job scheduling priority
+Protocol	string	\s-1tcp\s+1	protocol to use in contacting server
+RetryTime	string	\-	delay between failed attempts to send
+SendTime	string	\-	time to send job
+TagLine	string	\-	tagline format string
+TypeRules	string	\s-1\fIsee below\fP\s+1	file containing file typing rules
+VRes	float	\s-198.\s+1	vertical resolution
+Verbose	boolean	\s-1No\s+1	whether or not to enable protocol tracing
+.fi
+.PP
+The configuration parameters are explained below.
+Certain configuration parameters, notably those for setting strings
+on automatically generated cover pages, are defined mainly for use
+by other \*(Fx programs that share common code used by
+.IR sendfax .
+.TP 16
+.B AutoCoverPage
+Control whether or not a cover page is automatically generated
+for each job.
+(Equivalent to the
+.B \-n
+option.)
+.TP 16
+.B ChopThreshold
+The amount of white space, in inches, that must be present at the bottom
+of a page before \*(Fx will attempt to truncate the page transmission.
+.TP 16
+.B CoverCmd
+The absolute pathname of the program to use to generate cover pages.
+The default cover sheet program is 
+.BR ${BIN}/faxcover .
+.TP 16
+.B Cover-Comments
+The comments string to pass to the cover sheet program when
+auto-generating cover pages.
+.TP 16
+.B Cover-Company
+The company name string to pass to the cover sheet program when
+auto-generating cover pages.
+.TP 16
+.B Cover-Location
+The company location string to pass to the cover sheet program when
+auto-generating cover pages.
+.TP 16
+.B Cover-Regarding
+The regarding string to pass to the cover sheet program when
+auto-generating cover pages.
+.TP 16
+.B Cover-Template
+The absolute pathname of a cover sheet template file to use
+in auto-generating cover pages.
+.TP 16
+.B Cover-Voice
+The voice number string to pass to the cover sheet program when
+auto-generating cover pages.
+.TP 16
+.B DateFormat
+The 
+.IR strftime (3)
+format string to pass to the cover page command when auto-generating
+cover pages.
+.TP 16
+.B DesiredEC
+Whether or not to request the use of the optional
+Error Correct Mode (\s-1ECM\s+1) when transmitting facsimile.
+(Equivalent to the
+.B \-E
+option.)
+.TP 16
+.B DesiredMST
+The desired minimum scanline time to use when transmitting facsimile.
+(Equivalent to the
+.B \-M
+option.)
+.TP 16
+.B DesiredSpeed
+The desired signalling rate to the use when transmitting facsimile.
+(Equivalent to the
+.B \-B
+option.)
+.TP 16
+.B DialRules
+The name of the file containing the dialstring processing rules to
+when preparing an externally visible representation of the dialstring
+(e.g. to strip credit card numbers).
+By default this is ${LIBDATA}/dialrules.
+.TP 16
+.B From
+The sender's identity.
+(Equivalent to the
+.B \-f
+option.)
+.TP 16
+.B Host
+The host to contact for service.
+(Equivalent to the
+.B \-h
+option.)
+.TP 16
+.B HRes
+The horizontal resolution to use when transmitting facsimile.
+(NB: \fIthis currently has no effect\fP.)
+.TP 16
+.B KillTime
+The expiration time to assign to each job.
+(Equivalent to the
+.B \-k
+option.)
+.TP 16
+.B MailAddr
+The electronic mail address to direct notification messages from the
+server.
+If this string is specified without an ``@hostname'' part then the
+local hostname will automatically be appended.
+(Equivalent to the
+.B \-f
+option.)
+.TP 16
+.B MaxDials
+The maximum number of times to dial the phone for each job.
+(Equivalent to the
+.B \-T
+option.)
+.TP 16
+.B MaxTries
+The maximum number of times to retry sending a job.
+(Equivalent to the
+.B \-t
+option.)
+.TP 16
+.B MinSpeed
+The minimum acceptable signalling rate to use when transmitting facsimile.
+(Equivalent to the
+.B \-b
+option.)
+.TP 16
+.B Modem
+The modem to use on the server.
+(Equivalent to the
+.B \-h
+option.)
+.TP 16
+.B Notify
+Control the email notification messages from the server.
+This string may be one of ``done'', ``none'', ``requeued'' or ``default''
+with an optionally preceding ``when '' (e.g. ``when done'').
+Note that ``when requeued'' implies ``when done''.
+(Equivalent to the
+.BR \-D ,
+.BR \-R ,
+and
+.B \-N
+options.)
+.TP 16
+.B PageChop
+Control page chop handling when transmitting facsimile.
+This string may be one of ``none'', ``all'', or ``last' to have
+no pages chopped, all pages chopped, or only the last page chopped;
+respectively.
+Page chopping is controlled by the 
+.B ChopThreshold
+parameter.
+.TP 16
+.B PageLength
+Set the transmitted page length in millimeters.
+.TP 16
+.B PageSize
+Set the page dimensions according to an entry in the
+.IR pagesizes (4F)
+database.
+(Equivalent to the
+.B \-s
+option.)
+.TP 16
+.B PageWidth
+Set the transmitted page width in millimeters.
+.TP 16
+.B Port
+The network port to contact for service.
+(Eqvuialent to the
+.B \-h
+option.)
+.TP 16
+.B Priority
+The scheduling priority to assign to each job.
+(Equivalent to the
+.B \-P
+option.)
+.TP 16
+.B Protocol
+The name of the communication protocol to use when contacting a server.
+(Equivalent to the
+.B FAXSERVICE
+environment variable.)
+.TP 16
+.B RetryTime
+The time to delay between job retries due to a communication failure.
+(Equivalent to the
+.B \-I
+option.)
+.TP 16
+.B SendTime
+The time to send jobs.
+(Equivalent to the
+.B \-a
+option.)
+.TP 16
+.B TagLine
+The tagline format string to use when transmitting facsimile.
+(Equivalent to the
+.B \-F
+option.)
+.TP 16
+.B TypeRules
+The name of the file containing file type conversion rules.
+By default this is ${LIBDATA}/typerules.
+.TP 16
+.B Verbose
+Control protocol tracing.
+(Equivalent to the
+.B \-vv
+option.)
+.TP 16
+.B VRes
+Set the vertical resolution in lines/inch
+to use when transmitting facsimile.
+(Equivalent to the
+.B \-m
+and
+.B \-l
+options.)
+.SH DIAGNOSTICS
+The following messages are generated because of problems
+encountered on the local machine.
+.PP
+.B "Could not call server."
+The facsimile server on the remote machine did not respond.
+.PP
+.B "No input data; tranmission aborted."
+No data was supplied (typically on the standard input).
+No facsimile will be sent.
+.PP
+.B "Error converting data; command was "%s."
+A data conversion operation failed; the shell
+command that was used is printed.
+.PP
+.B "Can not convert %s."
+Data needed to be converted for transmission, but the
+required conversion rule was not located.
+This may indicate that the \*(Fx
+software was incorrectly installed; or perhaps
+that an
+.SM NFS\c
+-mounted directory is temporarily unavailable.
+.PP
+.B "%s: Can not determine file type."
+.I sendfax
+was unable to deduce the type of the file.
+.PP
+.B "%s: Not a regular file."
+The file is something other than a regular file; for
+example, a directory.
+.PP
+The following messages may be printed by
+.IR sendfax .
+These messages describe problems encountered by
+the server process on the remote machine.
+This list is incomplete;
+other messages may be generated by the server under
+unusual circumstances.
+.SH FILES
+.ta \w'${LIBDATA}/sendfax.conf    'u
+.nf
+~/.hylarc	per-user configuration file
+${LIBDATA}/hyla.conf	system-wide configuration file
+${LIBDATA}/sendfax.conf	system-wide configuration file
+${LIBDATA}/typerules	file type and conversion rules
+${LIBDATA}/pagesizes	page size database
+${LIBDATA}/dialrules	optional client dialstring rules
+${BIN}/faxcover	for generating cover sheets
+${LIBEXEC}/textfmt	for converting text to PostScript
+${LIBEXEC}/sgi2fax	for converting SGI RGB images
+/usr/tmp/sndfaxXXXXXX	temporary files
+.fi
+.SH "SEE ALSO"
+.IR at (1),
+.IR hylafax (1),
+.IR faxalter (1),
+.IR faxcover (1),
+.IR faxmail (1),
+.IR faxrm (1),
+.IR faxstat (1),
+.IR sgi2fax (1),
+.IR textfmt (1),
+.IR hfaxd (1M),
+.IR hylafax (4F),
+.IR typerules (4F)

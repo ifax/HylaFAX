@@ -1,0 +1,106 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH FAXANSWER 1M "May 23, 1996"
+.SH NAME
+faxanswer \- tell a \*(Fx server to answer the telephone
+.SH SYNOPSIS
+.B ${SBIN}/faxanswer
+[
+.B \-q
+.I queue-dir
+] [
+.B \-h
+.I how
+]
+.I modem
+.SH DESCRIPTION
+.I faxanswer
+sends a message to the \*(Fx
+.IR faxgetty (1M)
+process servicing
+.I modem
+telling it to answer the telephone.
+This is useful, for example, when a modem is used on a
+shared phone line and the server is
+configured to not normally answer the phone.
+.PP
+The specified
+.I modem
+can either be the name (typically the
+last component of the terminal port the
+modem is attached to), or the full name
+of the associated 
+.SM FIFO
+named pipe file, e.g. ``\s-1FIFO\s+1.ttym2''.
+.SH OPTIONS
+.TP 10
+.BI \-q " dir"
+Use a spooling area other than
+.IR ${SPOOL} .
+.TP 10
+.B \-h
+Specify exactly
+.I how
+the phone should
+be answered.
+By default, the server process is instructed
+to answer the phone and
+accept any kind of call (voice, data, fax).
+Discrimination of the type of call is dependent on a modem's
+.I "adaptive-answer"
+support.
+The
+.B \-h
+option can be used to force the server to answer the
+phone for particular type of call: one of
+.IR fax ,
+.IR data ,
+.IR voice ,
+.IR any ,
+or
+.I extern
+(to force
+.I faxgetty
+to invoke an external application to
+to handle the call).
+.SH FILES
+.nf
+.ta \w'${SPOOL}/FIFO.<devid>    'u
+${SPOOL}	default spooling area
+${SPOOL}/FIFO	fifo for contacting \fIfaxq\fP
+.fi
+.PP
+Consult
+.IR hylafax (4F)
+for a complete discussion of the structure and
+content of the spooling area.
+.SH "SEE ALSO"
+.IR hylafax (4F),
+.IR faxgetty (1M)

@@ -1,0 +1,206 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Where to get HylaFAX
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>W</FONT>HERE TO GET THE <FONT SIZE=+2>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>D</FONT>ISTRIBUTION</B>
+<BASEFONT SIZE=3>
+
+<HR SIZE=4>
+
+HylaFAX is typically obtained by public FTP on the Internet.
+It is also available on a number of public domain and freeware-style
+CD-ROMs.  The master distribution site for HylaFAX is the
+host <B>ftp.sgi.com</B>. Since 1998 there is also a server in Germany
+on the host <B>ftp.sisis.de</B>.
+The following information is included here:
+
+<UL>
+<LI><A HREF="#ByFTP">Obtaining the Software by FTP on the Internet</A>
+<LI><A HREF="#ByMail">Obtaining the Software by Electronic Mail</A>
+<LI><A HREF="#ByInst">Obtaining the Software Within Silicon Graphics</A>
+</UL>
+
+All the HylaFAX documentation is online on the World Wide Web.
+A quick synopsis of how to build and install the software from
+the source distribution is provided in the section on
+``<A HREF="install-source.html">Installation from a source distribution</A>''.
+Binary distributions come with their own installation instructions
+that are tailored to their format and the needs of the target system.
+Otherwise the HylaFAX home page at
+<A HREF=http://www.vix.com/hylafax/>http://www.vix.com/hylafax/</A>
+is the place to go for <EM>all</EM> the HylaFAX documentation.
+
+<P>
+There are two mailing lists for HylaFAX users; information
+on how to subscribe is found in the chapter
+``<A HREF="mailing-lists.html">HylaFAX Mailing Lists and Other Final Words</A>''.
+
+<HR>
+
+<H2><A NAME="ByFTP">Using public FTP on the Internet</A></H2>
+
+<H3>From ftp.sgi.com (master distribution site)</H3>
+
+The <EM>source code</EM> is available for public FTP on
+
+<UL>
+<PRE><B>ftp.sgi.com</B>			<A HREF="ftp://ftp.sgi.com/sgi/fax/source">sgi/fax/source/</A>
+    (192.48.153.1)</PRE>
+</UL>
+
+For example,
+
+<UL><PRE>
+% <B>ftp -n ftp.sgi.com</B>
+....
+ftp> <B>user ftp</B>
+... &lt;<I>type in password</I>&gt;
+ftp> <B>cd sgi/fax/source</B>
+ftp> <B>binary</B>
+ftp> <B>get hylafax-v3.0beta099-tar.gz</B></PRE>
+</UL>
+
+Software is available in <I>released form</I>
+(<EM>none presently available</EM>),
+and in <I>beta form</I>, (v3.0beta036).
+Beta software differs from released software mainly in the level
+of testing that has been done on non-Silicon Graphics platforms.
+Any files in the <B>source</B> directory of the form:
+
+<UL>
+<PRE>hylafax-&lt;<I>version</I>&gt;-patch-&lt;<I>XX</I>&gt;</PRE>
+</UL>
+
+are shell scripts that can be used to apply patches to the specified
+&lt;<I>version</I>&gt;.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/info_icon.gif" ALT="NB: " HSPACE=8></TD>
+<TD><CITE>If you are uncertain about what a patch script does just look at its
+contents;
+there is a comment at the top that
+says what version of the software
+the script is intended to patch.
+The HylaFAX home page also contains a link to
+release notes for the latest patch file.</CITE></TD>
+</TR>
+</TABLE>
+
+<P>
+The &lt;<I>XX</I>&gt; sequence numbers in the patch filenames
+indicate the order in which the
+patches must be applied; e.g. hylafax-v3.0-patch-01 must be
+applied <EM>before</EM> hylafax-v3.0-patch-02.
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<H3><A NAME="Binary">Binary distributions and alternate sites</A></H3>
+
+Many binary distributions are available on the master FTP site:
+
+<UL>
+<PRE><B>ftp.sgi.com</B>			<A HREF="ftp://ftp.sgi.com/sgi/fax/binary">sgi/fax/binary</A>
+    (192.48.153.1)</PRE>
+</UL>
+
+These include:
+<UL>
+<LI>Silicon Graphics <I>inst'able images</I>
+<LI>SVR4 <I>pkg images</I> for x86 systems
+<LI>HPUX-9.01 for HP9000/7xx systems
+<LI>Ultrix 4.4 for DecStation-5000 systems
+<LI>SunOS 4.1.x for SPARC systems
+<LI>AIX 3.2.5 for IBM RS/6000 systems
+<LI>Solaris 2.4 for SPARC systems
+</UL>
+
+[<I>This list may be out of date, check the FTP directory.</I>]
+
+<P>
+Alternate sites that either mirror the master FTP site or that have
+specific binary distributions are:
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/warning_icon.gif" ALT="NOTE: " HSPACE=8></TD>
+<TD><I>Some of these sites had binary distributions of FlexFAX or HylaFAX 3.0,
+they will presumably have HylaFAX 4.0 distributions soon.</I></TD>
+</TR>
+</TABLE>
+
+<P>
+FreeBSD binary distributions are available from:
+
+<UL>
+<PRE><B>ftp.freebsd.org</B>		<A HREF="ftp://ftp.freebsd.org/pub/FreeBSD/ports-current/comms/hylafax/">pub/FreeBSD/ports-current/comms/hylafax/</A>
+    (165.113.58.253)</PRE>
+</UL>
+
+<P>
+NetBSD binary distributions are available from:
+
+<UL>
+<PRE><B>ftp.netbsd.org</B>		<A HREF="ftp://ftp.netbsd.org/pub/NetBSD/packages/binaries/NetBSD-current/i386/">pub/NetBSD/packages/binaries/NetBSD-current/i386</A>
+    (206.86.8.12)</PRE>
+</UL>
+
+<P>
+If you are unable to locate the materials you want at one of the above
+sites, consult the
+<A HREF="http://www.lerc.nasa.gov/archieplex/">archie</A>
+resource location service to find copies
+close to your system.
+
+<HR>
+
+<H2><A NAME="ByMail">Obtaining the Software by Electronic Mail</A></H2>
+
+If you cannot use FTP at all, there is a service called
+``<I>ftpmail</I>''
+available through a variety of systems including
+<B>decwrl.dec.com</B>:  you can send electronic mail to
+one of these machines and the host will retrieve the requested
+files using FTP and then send you the files via electronic mail.
+To find out more about the ftpmail service, send a message to
+<A HREF="mailto:ftpmail@decwrl.dec.com">ftpmail@decwrl.dec.com</A> whose body
+consists of the single line ``<CITE>help</CITE>''
+or check out
+<A HREF="ftpmail-help.html">this sample response to the help query</A>.
+
+<P><HR>
+
+<H2><A NAME="ByInst">Obtaining the Software Within Silicon Graphics</A></H2>
+
+Internal to Silicon Graphics there are inst'able images on the host
+<B>dist.engr</B> in the directory <B>/sgi/hacks</B>.
+Thus you can do something like:
+<PRE>
+    % inst -f dist.engr.sgi.com:/sgi/hacks/hylafax
+</PRE>
+to install the latest version of the software on your machine.
+
+<!--FOOTER-->
+
+<P>
+<A HREF="toc.html"><IMG SRC="icons/back.gif"> HylaFAX table
+of contents</A>.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

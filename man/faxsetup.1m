@@ -1,0 +1,166 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1995-1996 Sam Leffler
+.\" Copyright (c) 1995-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
+.TH FAXSETUP 1M "August 26, 1996"
+.SH NAME
+faxsetup \- setup a machine for use with \*(Fx
+.SH SYNOPSIS
+.B ${SBIN}/faxsetup
+[
+.B \-client
+] [
+.B \-server
+] [
+.BI \-with-VAR [=value]
+]
+.SH DESCRIPTION
+.I faxsetup
+is an interactive shell script that does the
+necessary setup work to configure a client or server machine
+for the \*(Fx software.
+.I faxsetup
+must be run on every \*(Fx server machine before the software
+will function\-if a \*(Fx server program or script is invoked before
+.I faxsetup
+is run, the command will abort with a message that says to run
+.IR faxsetup .
+.I faxsetup
+may optionally be run on a \*(Fx client machine to verify the
+configuration of the software.
+.PP
+By default
+.I faxsetup
+checks a machine for use both as a \*(Fx client and server.
+Client-specific checks include:
+.IP \(bu 3
+the installation of client programs and data,
+.IP \(bu 3
+the installation of the Adobe Font Metric (\s-1AFM\s+1) information
+files used by the \*(Fx text formatting support.
+.LP
+Server-specific checks include:
+.IP \(bu 3
+the installation of server programs and data,
+.IP \(bu 3
+the existence of the \s-1UUCP\s+1 lock file directory,
+.IP \(bu 3
+the installation of the \s-1TIFF\s+1 software tools,
+.IP \(bu 3
+the configuration of the getty programs invoked for data and voice calls,
+.IP \(bu 3
+the pathnames for various system programs used by server shell scripts,
+.IP \(bu 3
+proper support for \s-1FIFO\s+1 special files,
+.IP \(bu 3
+proper installation of a \*(Ps \s-1RIP\s+1,
+.IP \(bu 3
+definition of a ``fax'' user,
+.IP \(bu 3
+definitions for the ``hylafax'' and ``snpp'' services,
+.IP \(bu 3
+startup of the \*(Fx server processes:
+.IR faxq (1M)
+and
+.IR hfaxd (1M),
+.IP \(bu 3
+definition of a ``FaxMaster'' mail alias for reporting server problems.
+.PP
+For server machines
+.I faxsetup
+also creates two files that are required by the \*(Fx command scripts.
+One file contains master configuration parameters and the other
+contains various definitions used by scripts such as
+.IR faxaddmodem (1M)
+that communicate with modems.
+.SH OPTIONS
+.TP 10
+.B \-client
+Do client-specific consistency checks.
+.TP 10
+.B \-server
+Do server-specific consistency checks.
+.TP 10
+.BI \-with-VAR "[=value]"
+Override the default definition for the configuration parameter named
+.BR VAR ;
+optionally specifying a new
+.I value 
+(if no value is specified then ``yes'' is used).
+This option is especially useful to override the default settings
+for the \*(Ps interpreter package to use (e.g. ``-with-PS=dps''),
+the spooling directory (``-with-DIR_SPOOL=/mumble''), the 
+directory where the tool applications of
+.SM TIFF
+software distribution are located (``-with-TIFFBIN=/usr/freeware''),
+etc.
+A complete list of the possible parameters can be found by looking
+at the contents of the
+.I faxsetup
+shell script;
+many of these configuration parameters are also
+described in the
+.SM HTML
+documentation
+.TP 10
+.B \-help
+Print a help message and terminate.
+.TP 10
+.B \-quiet
+Do not print verbose messages to the terminal.
+.TP 10
+.B \-verbose
+Print informative messages to the terminal (default).
+.SH BUGS
+.I faxsetup
+does not query a modem to find out its capabilities when invoking the
+.I faxmodem
+program to setup a server in a send-only configuration; it may be
+necessary to run
+.I faxmodem
+manually.
+.SH FILES
+.ta \w'${SPOOL}/etc/setup.modem    'u
+.nf
+${SPOOL}/etc/setup.cache	master configuration parameters
+${SPOOL}/etc/setup.modem	modem-related configuration support
+.fi
+.PP
+Consult
+.IR hylafax (4F)
+for a complete discussion of the structure and
+content of the spooling area.
+.SH "SEE ALSO"
+.IR hylafax (4F),
+.IR config (4F),
+.IR faxq (1M),
+.IR faxgetty (1M),
+.IR faxmodem (1M),
+.IR faxconfig (1M),
+.IR faxsend (1M)

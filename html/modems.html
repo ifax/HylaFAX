@@ -1,0 +1,515 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Which modems can be used with HylaFAX
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>W</FONT>HICH <FONT SIZE=+2>M</FONT>ODEMS CAN BE USED WITH <FONT SIZE=+2>H</FONT>YLA<FONT SIZE=+1>FAX</FONT></B>
+<BASEFONT SIZE=3>
+
+<HR SIZE=4>
+
+HylaFAX is intended to be used with
+<A HREF="Modems-PeterChen/05faxmodem.html">fax modems</A>.
+Fax modems are
+not the same as data modems though most contemporary data modems also
+include support for fax communication.
+HylaFAX works with modems that support standard host-modem command
+interfaces.
+Specifically, HylaFAX should work with any:
+
+<UL>
+<LI>Class 1 fax modem:
+modem supports the TIA/EIA-578 "Class 1" specification
+(see the section ``<A HREF="class1.html">Class 1 Support</A>''
+for <STRONG>important information on restrictions on this support</STRONG>).
+<LI>Class 2 fax modem:
+modem supports the TIA/EIA-592 draft SP-2388-A of
+August 30, 1991
+(see the section ``<A HREF="class2.html">Class 2 Support</A>'' for caveats).
+<LI>Class 2.0 fax modem:
+modem supports the TIA/EIA-592 "Class 2.0" specification
+(see the section ``<A HREF="class2.0.html">Class 2.0 Support</A>'').
+</UL>
+
+<P>
+Modems that support multiple classes can be configured to use
+any single class but not multiple classes.
+Wherever possible HylaFAX
+works around known modem problems or restricts modem usage in
+order to provide a functioning system.
+
+<P>
+The table below lists modems that have been used with HylaFAX.
+There are likely others modems that have been tried and/or are being
+used with HylaFAX; this list shows only those that have
+some form of support in the distribution or that have been publicly
+reported as <I>functional</I> (though beware that what is functional
+to one person may not be functional to you).
+Consult the
+<A HREF="Modems/index.html">Modems section</A> of this documentation
+for known modem bugs and gotchas or follow the links in the table to
+find information for a particular modem.
+
+<P>
+Modems in the list below that are marked with a
+<IMG SRC="icons/smiley.gif" ALT="+">
+are <EM>recommended for use with this software</EM>.
+This is not to say that modems not listed below or not marked as
+recommended will not work well; only that the noted modems have
+performed reliably in extended use with the software.
+Beware however, that modems only work as well the firmware that
+controls them; be sure to use up to date firmware in a modem.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC=icons/warning_icon.gif HSPACE=8 ALT="Note:"></TD>
+<TD><EM>If you are selecting a modem to use with this
+software you will do best if you use one of the
+recommended Class 2 or Class 2.0 modems; rather than a Class 1 modem</EM>.</TD>
+</TR>
+</TABLE>
+
+<P>
+Note that modems based on off-the-shelf parts (as opposed to custom
+DSP-based implementations) such as those
+produced by Rockwell are usually 
+plug compatible when it comes to fax usage.  HylaFAX includes
+configuration files for modems based on modem parts
+from Rockwell:
+RC96AC, RC144AC, RC144DP, RC32ACL, RC224A, and RC288DPI parts;
+Exar; and Cirrus Logic.  Writing a configuration file for a 
+modem that is not directly supported is straightforward.
+
+<P>
+<TABLE BORDER CELLPADDING=3>
+
+<TR>
+<TH ALIGN=left>Manufacturer</TH>
+<TH ALIGN=left>Model</TH>
+<TH ALIGN=left>Class1</TH>
+<TH>Class2</TH>
+<TH>Class2.0</TH>
+<TH>Notes</TH>
+</TR>
+
+<TR>
+<TD>AIWA</TD>
+<TD>PV-BF288</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN=2>Archtec</TD>
+<TD>SmartLink V.32Te</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>SmartLink 1419AV</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN=2>AT&T Paradyne</TD>
+<TD><A HREF="Modems/att-dataport.html">DataPort 14.4</A></TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD ALIGN=center><IMG SRC="icons/smiley.gif" ALT="+"></A></TD>
+</TR>
+
+<TR>
+<TD>DataPort 14.4 Express</A></TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>BAUSCH</TD>
+<TD>MOD 144</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN=3>Boca Research</TD>
+<TD>M1440E</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>M1440E/RC32ACL</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD ALIGN=center><A HREF=#RC32ACL>@</A></TD>
+</TR>
+
+<TR>
+<TD>MV.34I</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>BEST Communication</TD>
+<TD>BEST 28800 EC</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>CPI</TD>
+<TD>ViVa 14.4/FAX</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Digicom</TD>
+<TD><A HREF="Modems/digicom-scout.html">Scout+</A></TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD><TD ALIGN=center>No</TD>
+<TD ALIGN=center><IMG SRC="icons/smiley.gif" ALT="+"></TD>
+</TR>
+
+<TR>
+<TD>Dynalink</TD>
+<TD>Dynalink 1414VE</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Elsa</TD>
+<TD>Microlink 14.4TL</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN=2>E-Tech, Inc.</TD>
+<TD>P1496MX 5.06-SWE</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Bullet E-288 MX</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Everex</TD>
+<TD><A HREF="Modems/everex-2496d.html">EverFax 24/96D</A>, 24/96E</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>GVC</TD>
+<TD>MaxTech 28800</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN=3>Hayes</TD>
+<TD>Optima 144, Optima 28800</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD><A HREF="Modems/hayes-optima2400.html">Optima 2400+Fax96</A></TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Acura 144, Accura 288</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Intel</TD>
+<TD>SatisFAXtion 400e</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>JVC</TD>
+<TD>F-1114V/R6</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Logicode</TD>
+<TD>Quicktel Xeba 14.4</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Maestro</TD>
+<TD>Vfast</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Microcom</TD>
+<TD>DeskPorte FAST ES 28.8</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN=2>Motorola</TD>
+<TD>Lifestyle 28.8</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Power 28.8</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN=3>Multi-Tech</TD>
+<TD><A HREF="Modems/multitech-1432.html">MT1432BA</A>, MT224BA, MT2834BA</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD ALIGN=center><IMG SRC="icons/smiley.gif" ALT="+">, <A HREF=#Multi>*</A></TD>
+</TR>
+
+<TR>
+<TD><A HREF="Modems/multitech-1432.html">MT1432BG</A></TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD ALIGN=center><IMG SRC="icons/smiley.gif" ALT="+"></TD>
+</TR>
+
+<TR>
+<TD><A HREF="Modems/multitech-1932.html">MT1932ZDX</A>, MT2834ZDX</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD ALIGN=center><IMG SRC="icons/smiley.gif" ALT="+"></TD>
+</TR>
+
+<TR>
+<TD>NetComm</TD>
+<TD>M7F</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Nuvo</TD>
+<TD><A HREF="Modems/nuvo-96424pfx.html">Voyager 96424PFX</A></TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Olitec France</TD>
+<TD>Olicom Poche Fax Modem 2400</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Power Bit</TD>
+<TD>Power Bit</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN=2>Practical Peripherals</TD>
+<TD><A HREF="Modems/ppi-pm14400fxmt.html">PM14400FXMT</A>, PM14400FXSA</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>PM28800XFMT, PM288MT II</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN=3>Supra</TD>
+<TD><A HREF="Modems/supra-v32bis.html">SupraFAX v.32bis</A></TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD><A HREF="Modems/supra-v32bis.html">SupraFAX v.32bis/RC32ACL</A></TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD ALIGN=center><A HREF=#RC32ACL>@</A></TD>
+</TR>
+
+<TR>
+<TD>Express 288</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN=2>Telebit</TD>
+<TD><A HREF="Modems/telebit-t3000.html">T3000, WorldBlazer</A></TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD ALIGN=center><IMG SRC="icons/smiley.gif" ALT="+"></TD>
+</TR>
+
+<TR>
+<TD>QBlazer</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Telejet</TD>
+<TD>14400</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>TKR</TD>
+<TD>Terbo Line 19K2/005-Q</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Tricom</TD>
+<TD>Tornado28/42</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Twincom</TD>
+<TD><A HREF="Modems/twincom-144df.html">144/DF</A></TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>UDS</TD>
+<TD>FasTalk Fax32</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN=4>USRobotics</TD>
+<TD><A HREF="Modems/usr-courier.html">Courier v.Everything</A></TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD><A HREF="Modems/usr-courier.html">Courier HST</A></TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD><A HREF="Modems/usr-sportster.html">Sportster 28.8</A></TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD><A HREF="Modems/usr-sportster.html">Sportster 14.4</A></TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Well/Xtrum</TD>
+<TD>AT-2814SAM</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Yocom</TD>
+<TD>1414E</TD>
+<TD ALIGN=center>No</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Zoom</TD>
+<TD>VFX, VFP 14.4V, 14.4X</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>No</TD>
+<TD></TD>
+</TR>
+
+<TR>
+<TD ROWSPAN=2>Zero One Networking</TD>
+<TD><A HREF="Modems/zyxel-1496.html">ZyXEL U1496</A></TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD>
+<TD ALIGN=center><IMG SRC="icons/smiley.gif" ALT="+"></TD>
+</TR>
+
+<TR>
+<TD>ZyXEL Elite 2864, Elite 2864I</TD>
+<TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD><TD ALIGN=center>Yes</TD>
+<TD></TD>
+</TR>
+
+</TABLE>
+
+<P>
+<B><I>Legend</I></B>:
+<DL COMPACT>
+<DT><A NAME=Multi>*</A>
+<DD>There are apparently many variants of the MT1432BA, the following
+  models are known to work: MT1432BA, MT1432BA/A, MT1432MK, MT1432PCS.<BR>
+<DT><A NAME=RC32ACL>@</A>
+<DD>/RC32ACL refers to second-generation products made with the Rockwell
+  RC32ACL part and different firmware.<BR>
+<DT><A NAME="Recommended"><IMG SRC="icons/smiley.gif" ALT="+"></A>
+<DD><EM>Modem is recommended for use with this software.</EM><BR>
+</DL>
+
+<!--FOOTER-->
+
+<P>
+<TABLE BORDER=0 WIDTH=100%>
+<TR>
+<TD><A HREF="source.html"><IMG SRC="icons/next.gif">
+<EM>Source distributions</EM></A>.<TD>
+<TD ROWSPAN=2><A HREF="toc.html"><IMG SRC="icons/back.gif" ALT="(TOC)">
+HylaFAX table of contents</A></TD>
+</TR>
+<TR>
+<TD><A HREF="binary.html"><IMG SRC="icons/next.gif">
+<EM>Binary distributions</EM></A>.</TD>
+</TR>
+</TABLE>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

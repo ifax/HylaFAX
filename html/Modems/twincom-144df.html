@@ -1,0 +1,65 @@
+<HTML>
+<HEAD>
+<TITLE>Twincom 144/DF</TITLE>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>T</FONT>WINCOM <FONT SIZE=+1>144/DF</FONT></B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR WIDTH=65% ALIGN=left SIZE=4>
+<B>Manufacturer</B>: Twincom<BR>
+<B>Model</B>: 144/DF<BR>
+<B>Latest Firmware Revision Tried</B>: V1.270 TR14-Jxxx-001<BR>
+<B>Recommended Firmware Revisions</B>: N/A<BR>
+<B>Last Updated</B>:$Date$<BR>
+<HR WIDTH=65% ALIGN=left SIZE=4>
+</UL>
+
+<HR WIDTH=65% ALIGN=right>
+<B><A NAME="Class1"><FONT SIZE=+2>C</FONT>LASS 1 <FONT SIZE=+1>S</FONT>UPPORT</A></B>
+
+<UL>
+<LI>
+RTS/CTS is not honored while sending/receiving page data; use
+<TT>AT&K4</TT> for software (XON/XOFF) flow control
+</UL>
+
+<HR WIDTH=65% ALIGN=right>
+<B><A NAME="Class2"><FONT SIZE=+2>C</FONT>LASS 2 <FONT SIZE=+1>S</FONT>UPPORT</A></B>
+
+<UL>
+<LI>Changing DCD handling can cause the modem to drop DSR; if done
+  during initialization this can cause the fax server to get confused;
+  be sure that the setting loaded from NVRAM on reset agrees with
+  the value specified in the config file (<TT>&C1</TT> by default);
+<LI>Instead of the normal <TT>&D3</TT> setup string for RC144AC-based modems,
+  <TT>&D2</TT> should be used (note that this configuration must be done
+  manually as faxaddmodem is incapable of distinguishing between
+  RC144AC-based modems)
+<LI>The line counts in the +FPTS result code during a reception are
+  total nonsense; the only way to deduce the number of lines in a
+  received page of data is to parse the data on the host
+<LI>The modem has frequently been observed to just lockup during message
+  receive (i.e. <TT>AT+FDR</TT>);
+  it dropped DCD to the host but did not return
+  &lt;DLE&gt;&lt;ETX&gt; and/or a <TT>+FHNG</TT> code
+<LI>In testing the modem locked up during transmission to a Multi-Tech 1432BA
+modem and failed to respond to the host dropping DTR
+</UL>
+
+<P>
+<A HREF="ucom-traveller96.html"><IMG SRC="@HTMLPATH@/icons/next.gif">
+Ucom A/S Traveller 96</A>
+
+<HR>
+
+<ADDRESS>
+Copyright &copy; 1990, 1991, 1992, 1993, 1994 Sam Leffler<BR>
+Copyright &copy; 1991, 1992, 1993, 1994 Silicon Graphics, Inc.<BR>
+</ADDRESS>
+
+</BODY>
+</HTML>

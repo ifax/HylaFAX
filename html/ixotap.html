@@ -1,0 +1,231 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Alpha-Numeric Pager Support
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>A</FONT>LPHA-NUMERIC <FONT SIZE=+2>P</FONT>AGER <FONT SIZE=+2>S</FONT>UPPORT</B>
+<BASEFONT SIZE=3>
+
+<P>
+This chapter describes how to configure the support for transmitting
+messages to alpha-numberic pager devices using the IXO/TAP or the
+UCP protocol.
+This facility is implemented with the
+<A HREF="@CGIPATH@/manpage?1+sendpage">sendpage(1)</A>
+client program, the
+<A HREF="@CGIPATH@/manpage?1+hfaxd">hfaxd(1M)</A>
+server program that implements the Simple Network Pager Protocol (SNPP),
+and the
+<A HREF="@CGIPATH@/manpage?1+pagesend">pagesend(1M)</A>
+server program that does the actual delivery.
+
+<P>
+Alpha-numeric pages are transmitted by contacting a server machine
+that speaks SNPP and requesting that one or more messages be
+delivered to one or more paging terminals.
+HylaFAX implements SNPP within the framework of the hfaxd
+client-server protocol process (SNPP is one of several protocols
+it supports).
+Pager messages submitted through hfaxd result in jobs being
+submitted to
+the HylaFAX scheduler process and these jobs are in turn handed to
+the pagesend program for delivery by placing a phone call
+to a pager service provider and communicating the requests 
+using the IXO/TAP or the UCP protocol. The used protocol can
+be configured in the
+<A HREF="@CGIPATH@/manpage?4+info">info(4F)</A> files
+according capabilities of the service provider.
+
+<P>
+Note that by using SNPP to communicate between client and server,
+client applications other than sendpage can be used to
+submit pager messages.  There supposedly are several client
+applications for Mac and Windows-based systems that use SNPP to
+submit pages and a growing number of pager service providers are
+providing on-line SNPP services via the Internet.
+
+
+<A NAME="hfaxd"><P><HR WIDTH=65% ALIGN=right><H3>Setting up SNPP</A></H3>
+
+sendpage normally tries to contact an hfaxd server process at port
+444 on a HylaFAX server machine.
+To enable this service hfaxd must be started with a <TT>-s</TT>
+option when run standalone or with a <TT>-S</TT> option when started
+by the inetd process.
+For example, as a standalone server hfaxd might be started by:
+
+<UL><LISTING>
+hyla# <B>/usr/local/sbin/hfaxd -i hylafax -o 4557 -s 444</B>
+</LISTING></UL>
+
+to enable service for the HylaFAX client-server protocol (at the
+port associated with the symbolic name ``hylafax''), the old
+client-server protocol at the default port (4557), and SNPP
+at the official port (444).
+
+<P>
+One of the tasks that hfaxd does in implementing SNPP is to map
+client-specified Pager Identifier Numbers (PINs) to a dialstring
+to use in contacting the service provider.
+This work is done using rules specified in a 
+<A HREF="@CGIPATH@/manpage?4+pagermap">pagermap(4F)</A>
+file.
+For example, the following pagermap file would accept only
+PINs with a leading ``Sky'' followed by a number
+and pass the number through as the PIN:
+
+<UL><LISTING>
+^Sky([0-9]+)$	1800SkyTel/\1
+.*		reject
+</LISTING></UL>
+
+Note that this mapping functionality can also be used to
+define aliases; e.g.
+
+<UL><LISTING>
+^sam$		1800SkyTel/1234567
+</LISTING></UL>
+
+The default pagermap filename is <B>etc/pagermap</B> (relative
+to the root of the HylaFAX spooling area).
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC=icons/warning_icon.gif HSPACE=8 ALT="NOTE:"></TD>
+<TD><EM>If hfaxd does not have a pagermap file then it
+will reject all requests to submit pager messages.</EM></TD>
+</TR>
+</TABLE>
+
+<P>
+Each page request received by hfaxd causes a
+job to be submitted to the HylaFAX scheduler process.
+The scheduling parameters for these jobs are defined by the
+<I>service level</I> specified with the SNPP <TT>LEVE</TT> 
+request (typically through the <TT>-l</TT> option to sendpage).
+hfaxd uses the service level to set a job's scheduling priority,
+expiration time, and the time to delay in between retrying calls
+to the service provider based on three <I>maps</I> that can
+be specified with hfaxd configuration parameters.
+The parameters are: <TT>PriorityMap</TT>, <TT>KillTimeMap</TT>,
+and <TT>RetryTimeMap</TT>, respectively.
+Consult the 
+<A HREF="@CGIPATH@/manpage?1+hfaxd">hfaxd(1M)</A>
+manual page for complete information on these parameters.
+
+<A NAME="pagesend"><P><HR WIDTH=65% ALIGN=right><H3>Setting up Pagesend</A></H3>
+
+There are several configuration parameters associated with the
+IXO/TAP and UCP support.
+The most important parameters are <TT>PagerSetupCmds</TT>
+and <TT>PagingProtocol</TT>.
+<P>The <TT>PagerSetupCmds</TT> defines
+a set of commands to send to the modem to configure it for a call
+to the pager service provider.
+This command should usually be defined to constrain the modem to
+connect at 1200 baud using V.22 (and no error correction protocol).
+This parameter can be specfied in the
+<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A> file and
+may be overwritten  in the
+<A HREF="@CGIPATH@/manpage?4+info">info(4F)</A> file to match
+the service provider's modem configuration.
+<P>
+The <TT>PagingProtocol</TT> can be set in the info(4F) file
+to define the used protocol; it defaults to "ixo" (see below).
+<P>
+Other configuration parameters exist to control
+esoteric aspects of the IXO protocol implementation
+and should not need to be changed;
+consult
+<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>
+for full details.
+
+<P>
+Besides the configuration parameters described above,
+other pager-related information that may need to be setup
+is information in the
+<A HREF="@CGIPATH@/manpage?4+info">info(4F)</A> database
+to constrain the maximum length
+of an alpha-numeric pager message, any password string that must
+be sent to the service provider during the initial login sequence,
+and any non-standard parity setting to use in communication.
+For example,
+
+<UL><LISTING>
+&pagerMaxMsgLength:	112
+&pagerPassword:		"foobar"
+&pagerTTYParity:	none
+</LISTING></UL>
+
+The <TT>pagerTTYParity</TT> setting is not needed if the service
+provider correctly implements the IXO/TAP protocol.
+Some providers however do not use the standard 7-bits of data with
+even parity that is specified and it is necessary to specify either
+``<TT>none</TT>'' for 8-bits of data and no parity or ``<TT>odd</TT>''
+for 7-bits of data and odd parity..
+<P>
+UCP paging support has been added in version 4.0pl2. This is a new paging
+protocol originating from the european Hermes project, it was
+first applied to deliver GSM short messages (SMS). It can send
+longer pages then IXO can, and has some other nice features,
+but has a very strange character encoding. To accomodate UCP, two
+new pager parameters have bin added to the
+<A HREF="@CGIPATH@/manpage?4+info">info(4F)</A> database
+together with support to overwrite the <TT>PagerSetupCmds</TT>
+defined in config(4F):
+<UL><LISTING>
+&pagingProtocol:      "ucp"
+&pageSource:          "4989xxxxxxxx"
+&pagerSetupCmds:      "AT&N0&K4"
+</LISTING></UL>
+The <TT>pagingProtocol</TT>-parameter  has "ixo" as its default
+value, for compatibility with previous versions of HylaFAX.
+The <TT>pageSource</TT> parameter can be used to tell the
+paging central who we are. You may want to put a SMS answerable
+number here.
+<B>Note: </B>This parameter should be replaced by a user-land
+parameter in sendpage(1) for which the SNPP must be changed.
+The <TT>pagerSetupCmds</TT>-parameter shown works for the
+german GSM provider D2 and a ZyXEL 1496 modem. Consult your
+modem manual and the provider for the settings you have to
+use.
+
+<A NAME="trouble"><P><HR WIDTH=65% ALIGN=right><H3>Troubleshooting</A></H3>
+
+Each call placed by <I>pagesend</I> generates a session log
+similar to the logs created when transmitting facsimile.
+Tracing bit <TT>0x0002</TT> enables logging of the IXO or UCP protocol
+operation and <TT>0x1000</TT> enables more low-level tracing
+messages that display the binary data associated with the protocol
+messages (the latter is needed only when debugging subtle problems).
+Both bits should be set in the <TT>SessionTracing</TT> parameter
+for a modem.
+
+<P>
+The most common problems are not setting up the <TT>PagerSetupCmds</TT>
+properly for the modem and service provider and service providers
+that do not implement the IXO protocol according to the specification;
+usually by using odd instead of even parity.
+
+<!--FOOTER-->
+
+<P>
+<A HREF="toc.html"><IMG SRC="icons/back.gif">
+HylaFAX table of contents</A>.<BR>
+
+<HR>
+
+<ADDRESS>
+updated: <A HREF="matthias.html">Matthias Apitz</A> / <A HREF="mailto:guru@sisis.de">guru@sisis.de</A><BR>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

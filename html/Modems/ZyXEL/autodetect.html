@@ -1,0 +1,49 @@
+<HTML>
+<HEAD>
+<TITLE>
+ZyXEL: Automatic Detection of Voice, Fax, and Data
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<B><FONT SIZE=+3>A</FONT>UTOMATIC <FONT SIZE=+2>D</FONT>ETECTION OF <FONT SIZE=+2>V</FONT>OICE <FONT SIZE=+2>F</FONT>AX, AND <FONT SIZE=+2>D</FONT>ATA</B>
+
+<HR SIZE=4>
+
+Since there is no standard and there is no way to specify how human voice
+should behave in telephone calling and answering,  it is difficult, if not
+impossible to automatically detect a voice call from a fax or data call.  A
+common method to do this detection and switch is to have it answer with a 
+human voice announcement first and then give the options to the calling 
+party to push a number from the push-button pad to activate different features.
+In the meantime, if a faxtone (fax calling tone) is detected, the software 
+and modem will then switch into fax mode. If no tone is detected then the modem
+will assume that this is a voice call and will continue playing the
+announcement message until it gives the caller the option to leave a message.
+After that it will wait for the caller to leave a message and if it detects
+that there is no energy level present during a certain amount of time it will
+timeout and the modem will decide the call is a data call and start modem
+handshaking.  
+The shortcoming of this method is that some modems will get confused by the
+initial voice message announcement and will not get connected.
+Even if the data call is connected successfully, the longer handshake delay may
+not be acceptable in some applications. The modem can decide a fax or data call
+quicker if a data or fax calling tone is received.  The voice announcement can
+be omitted in this case. ZyXEL has moved in this direction by having the
+capability of not only detecting and generating fax tones but also data calling
+tones.
+
+<P>
+<A HREF="@HTMLPATH@/Modems/ZyXEL/commands.html"><IMG SRC="@HTMLPATH@/icons/next.gif"> Voice AT Commands</A>.<BR>
+<A HREF="@HTMLPATH@/Modems/ZyXEL/voice.html"><IMG SRC="@HTMLPATH@/icons/back.gif"> ZyXEL Advanced Voice Capability</A>.
+
+<HR>
+
+<ADDRESS>
+<A HREF="@HTMLPATH@/sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

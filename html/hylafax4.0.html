@@ -1,0 +1,131 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>HylaFAX 4.0 Information</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>4.0</FONT> <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<HR SIZE=4>
+
+<P>
+This note describes the features and changes expected to be part
+of of HylaFAX Version 4.0.
+The first public beta version of HylaFAX v4.0
+is planned for late February or early March, 1996.
+As usual the announcement of its availability will be posted to the
+<KBD>flexfax-announce@sgi.com</KBD> mailing list (which is also fed to the
+<KBD>flexfax@sgi.com</KBD> list).
+Information on subscribing to these mailing lists is available
+<A HREF="mailing-lists.html">here</A>.
+
+<P>
+<HR WIDTH=65% ALIGN=right>
+<B><FONT SIZE=+2>N</FONT>EW <FONT SIZE=+2>F</FONT>UNCTIONALITY</B>
+
+<P>
+The following is an abbreviated list of new functionality that
+is to be part of the released version of HylaFAX 4.0.
+All items not marked as incomplete will be present in the first
+beta distribution.
+
+<UL>
+<LI>Completely redesigned client-server protocol with full
+  support for submitting, managing, and querying the status of
+  outbound facsimile jobs and notification, administration, and retrieval
+  of received facsimile
+<LI>Optional support for the old client-server protocol (configurable
+  at build time and at runtime) for use with old HylaFAX- and FlexFAX-compatible
+  clients
+<LI>Revised and more flexible security measures for controlling client
+   access to server systems
+<LI>Extended job queueing model whereby outbound jobs that terminate
+   are not immediately purged from the server (or their documents)
+   for the purpose of job archival and/or job resubmission
+<LI>Hooks for automatically archiving outbound jobs on the server
+   system (full support is not planned)
+<LI>Rearchitecture of the client and server software to simplify the
+    support of multiple transport protocols
+<LI>Server support for transcoding of inbound and outbound TIFF
+    (e.g. it is possible to store all received facsimile MMR-encoded
+    to minimize space)
+<LI>Server support for automatically truncating trailing whitespace
+   in outbound facsimile
+<LI>Support for SUB (SUbAddress), SEP (SElectivePolling), and PWD (Password)
+   frames in the Class 1 driver and in future ITU T.Class2-compliant modems
+</UL>
+
+Folks interested in reviewing the new client-server protocol
+should contact me by electronic mail at
+<A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+
+<P>
+<HR WIDTH=65% ALIGN=right>
+<B><FONT SIZE=+2>N</FONT>EW <FONT SIZE=+2>C</FONT>LIENT-SERVER <FONT SIZE=+2>P</FONT>ROTOCOL</B>
+
+<P>
+HylaFAX 4.0 is a significant rearchitecture of the v3.0 software.
+Most importantly, the client-server protocol has been totally redone using
+elements of the ITU T.611 specification for the ``APPLI/COM'' Programming
+Communication Interface (PCI) and the Internet File Transfer Protocol (FTP).
+This new protocol is intended to provide a strong framework in which
+fax-aware client applications can make use of fax services in a network
+environment.
+The protocol is intended to be both sufficient and reasonably complete;
+no additional services are required such as a network file access protocol
+(as required by T.611).
+
+<P>
+An effect of the new client-server protocol is a change in the model
+for handling outbound jobs and document resources.
+In the past jobs and documents submitted to a server were assumed to
+reside on the server only so long as a job was actively being scheduled
+and/or processed.
+Under the new system the server can be considered a repository for
+documents, and jobs are treated as more long-lived objects whose
+scheduling can be controlled on a more fine-grained basis.
+Specifically, documents and jobs may persist after the time that
+a job has terminated and documents may reside on a server independent
+of any association with a job.
+These changes make it possible for clients to do things like resubmit
+failed jobs using previously transferred documents; forward received
+facsimile without transferring documents through a client's system;
+and implement job archival mechanisms.
+The more fine-grained scheduling control of jobs permits clients to
+more easily manage and control submitted jobs; it is now possible for
+a client to suspend a job, alter its contents in some complex way, and
+then resubmit it to the scheduler.
+
+<P>
+<HR WIDTH=65% ALIGN=right>
+<B><FONT SIZE=+2>D</FONT>ISTRIBUTION <FONT SIZE=+2>P</FONT>LANS</B>
+
+<P>
+HylaFAX 4.0 will be distributed in source and binary form by public
+ftp on the Internet.
+Full binary distributions for all ``<EM>supported platforms</EM>''
+are intended to be available at the same time as the source distribution.
+Source distributions that are built with the GNU gcc compiler
+<STRONG>must use gcc version 2.6.1 or later</STRONG>.
+As noted above, availability of distributions will be posted to the
+<KBD>flexfax-announce</KBD> and <KBD>flexfax</KBD> mailing lists.
+
+<!--FOOTER-->
+
+<P>
+<A HREF="toc.html"><IMG SRC="icons/back.gif" ALT="(TOC)"> HylaFAX
+table of contents</A>.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated: $Date$
+</ADDRESS>
+
+</BODY>
+</HTML>

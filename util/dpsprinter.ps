@@ -1,0 +1,119 @@
+%!
+%%Title: dpsprinter.ps -- DPS prolog to emulate some printer features.
+
+%%Notice: Copyright (c) 1989 Adobe Systems Incorporated.  All rights reserved.
+
+% $Revision$
+% $Date$
+
+%
+% This file makes a number of definitions that are technically system specific
+% but are used by many existing PostScript language drivers that were written
+% without sufficient attention to the specification.
+% 
+% This prolog ensures that serverdict, exitserver, and assorted statusdict 
+% operators are defined as expected.  The flushfile operator is also redefined
+% to allow Macintosh files with a prepended Laser Prep file to work properly.
+% 
+% There is one special "feature" definition.  The ASCII character \004
+% (CTRL-D) is defined as a no-op operator in case the prolog contains
+% one to indicate end-of-file in some contexts.
+% 
+%%BeginProcSet: DPSPrinter 1 0
+
+/serverdict where {%if
+  pop
+} {%else
+  /serverdict 1 dict def
+} ifelse
+
+serverdict /exitserver known not {
+  % NOTE: We let the usual invalidaccess error occur if serverdict is not
+  %       writeable and exitserver is not known.  This is unlikely because
+  %       either serverdict was just created (above) or it already existed
+  %       in which case exitserver should have been defined.
+  serverdict /exitserver
+    % int exitserver --
+  {
+    0 ne {
+      /exitserver errordict /invalidaccess get exec
+    } if
+    {{end} loop} stopped pop	% Clear dictstack
+    clear
+  } bind put
+} if
+
+statusdict /execjob known not {
+  statusdict /execjob {exec} bind put
+} if
+
+userdict /legal known not {
+  userdict /legal {} put
+} if
+
+userdict /letter known not {
+  userdict /letter {} put
+} if
+
+userdict /a4 known not {
+  userdict /a4 {} put
+} if
+
+userdict /b4 known not {
+  userdict /b4 {} put
+} if
+
+statusdict /pagecount known not {
+  statusdict /pagecount 0 put
+} if
+
+statusdict /printername known not {
+  statusdict /printername (DPS) put
+} if
+
+statusdict /setjobtimeout known not {
+  statusdict /setjobtimeout {pop} bind put
+} if
+
+statusdict /setrealdevice known not {
+  statusdict /setrealdevice {} put
+} if
+
+statusdict /waittimeout known not {
+  statusdict /waittimeout 600 put
+} if
+
+% The Mac Laser Prep file executes the flushfile operator to get to the end
+% of the prolog.  When documents are saved with the prolog attached, the
+% flushfile consumes the document and nothing is printed.  To get around this
+% problem the definition of flushfile is changed below to consume bytes of
+% input until a PostScript language comment (%) character is found.  The
+% rest of the line is then consumed before the revised flushfile terminates.
+
+/*flushfile /flushfile load def
+
+/flushfile
+  % file flushfile --
+{%def
+  {%loop -- search for next percent character in file
+    dup				% Copy file parameter
+    read {			% Consume character
+      8#045 eq {		% Check for ASCII percent character
+	exit			% Leave loop
+      } if
+    } if
+  } loop
+  {%loop -- search for newline character at end of comment
+    dup				% Copy file parameter
+    read {			% Consume character
+      8#012 eq {		% Check for ASCII newline character
+	exit			% Leave loop
+      } if
+    } if
+  } loop
+  pop				% Discard file parameterp
+} bind def
+
+(\004) cvn {} def		% To ignore ^D at the end of prologs.
+
+%%EndProcSet

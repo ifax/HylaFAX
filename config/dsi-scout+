@@ -1,0 +1,79 @@
+# $Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Configuration for using the Class 1 command interface with
+# a Digicom Systems, Inc (DSI) Scout+ modem.  Firmware version
+# 2A19/2931 (ati1?) or newer.
+#
+# XON/XOFF flow control must be used in firmware revisions before
+# 3507/3506 because the modem does not honor RTS/CTS during page
+# transfers.  Later revisions permit the configuration of RTS/CTS
+# flow control through a new (undocumented) register, S24:
+#
+# Value	Meaning
+#   0	use XON/XOFF in fax mode
+#   1	use RTS/CTS in fax mode
+#   2	use what is specified by *F in fax mode
+#
+# Note also that the value of S24 is not permanent.  It is reset
+# after each disconnect.  On power on S24 is 0.  S24 is unchanged
+# by the &F command.
+#
+# CONFIG:CLASS1:961:.*:.*: Manufacturer=Digicom Model=Scout+
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:		Class1		# hint to override class 2
+ModemRate:		38400		# could probably run 57600
+ModemFlowControl:	rtscts		# default
+#
+ModemNoFlowCmd:		AT*F0		# disable flow control
+ModemSoftFlowCmd:	AT*F2		# software flow control
+ModemHardFlowCmd:	AT*F3		# harware flow control
+ModemSetupDTRCmd:	AT&D3		# DTR off causes modem to reset
+ModemSetupDCDCmd:	AT&C1		# DCD follows carrier
+#
+Class1SFLOCmd:		ATS24=0		# use XON/XOFF in fax mode
+Class1HFLOCmd:		ATS24=1		# use RTS/CTS in fax mode
+#
+ModemMfrQueryCmd:	!Digicom
+ModemModelQueryCmd:	!Scout+
+ModemRevQueryCmd:	ATI1
+#
+ModemDialCmd:		ATDT%s@		# T for tone dialing, @ for silence
+#
+# NB: if your modem supports S24 as described above then
+#     these can be removed.
+#
+ModemAnswerFaxBeginCmd:	"<xon>"		# use XON/XOFF for fax recv
+Class1Cmd:	"AT+FCLASS=1\n<xon>"	# use XON/XOFF for fax send

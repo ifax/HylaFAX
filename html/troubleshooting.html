@@ -1,0 +1,1209 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Troubleshooting HylaFAX Problems
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>T</FONT>ROUBLESHOOTING <FONT SIZE=+2>H</FONT>YLA<FONT SIZE=+2>FAX</FONT> PROBLEMS</B>
+<BASEFONT SIZE=3>
+
+<HR SIZE=4>
+
+This section contains tips for dealing with the most common problems
+encountered when setting up and running the software.
+If you did not follow the instructions in the chapter on 
+``<A HREF=setup.html>Server Setup and Basic Configuration</A>''
+then do not bother reading
+this chapter; read the setup information first!
+
+<P>
+There are several components to the complete HylaFAX software package:
+<UL>
+<LI>client applications
+(<A HREF="@CGIPATH@/manpage?1+sendfax">sendfax</A>,
+(<A HREF="@CGIPATH@/manpage?1+sendpage">sendpage</A>,
+<A HREF="@CGIPATH@/manpage?1+faxstat">faxstat</A>,
+<A HREF="@CGIPATH@/manpage?1+faxrm">faxrm</A>, etc.),
+<LI>the job submission and server status process that runs
+on the server machine and communicates with client applictions
+(<A HREF="@CGIPATH@/manpage?1+hfaxd">hfaxd</A>),
+<LI>the programs that handle delivery of outbound facsimile
+and pager requests
+(<A HREF="@CGIPATH@/manpage?1+faxsend">faxsend</A> and
+<A HREF="@CGIPATH@/manpage?1+pagesend">pagesend</A>),
+<LI>the processes that service each modem
+(<A HREF="@CGIPATH@/manpage?1+faxgetty">faxgetty</A>),
+<LI>the central scheduler for outbound jobs
+(<A HREF="@CGIPATH@/manpage?1+faxq">faxq</A>), and
+<LI>the spooling area cleaner process
+(<A HREF="@CGIPATH@/manpage?1+faxqclean">faxqclean</A>).
+</UL>
+
+If you are having trouble first try to identify
+which part of the system is failing.
+Work forward from the client application to the server machine.
+On the server machine work from
+the hfaxd process to the scheduler to the delivery programs.
+Usually it is pretty obvious which piece of the system has
+got a problem but if you are unfamiliar with the software you
+can easily be fooled by error messages that may be passed back
+to client programs from a process deep within a server machine.
+The following sections cover specific areas:
+
+<UL>
+<LI><A HREF="#ClientBasics">Client Basics</A>
+<LI><A HREF="#ClientAccess">Client Access Control Problems</A>
+<LI><A HREF="#ServerBasics">Server Basics</A>
+<LI><A HREF="#Scheduler">Scheduler Operation</A>
+<LI><A HREF="#SessionTracing">Session Tracing</A>
+<LI><A HREF="#PSPrep">PostScript Document Preparation</A>
+<LI><A HREF="#TIFFPrep">TIFF Document Preparation</A>
+<LI><A HREF="#CommProblems">Communication Problems</A>
+<LI><A HREF="#GettyProblems">Getty Problems</A>
+<LI><A HREF="#Locking">Problems with UUCP, cu, tip, etc.</A>
+</UL>
+
+You can also consult the 
+<A HREF="http://www.vix.com/hylafax/FAQ/">HylaFAQ</A>
+for answers to common questions.
+
+<A NAME="ClientBasics"><P><HR WIDTH=65% ALIGN=right>
+
+<B><FONT SIZE=+3>T</FONT>ROUBLESHOOTING: <FONT SIZE=+2>C</FONT>LIENT BASICS</B></A>
+
+<P>
+All client applications support a
+<TT>-v</TT>
+option to enable various levels of debugging.
+It is possible with one or more
+<TT>-v</TT>
+options to trace the protocol between the application and
+the hfaxd process on the server machine. 
+hfaxd has a <TT>ServerTracing</TT> configuration parameter
+that controls various tracing support, including
+the protocol messages it receives.
+If you are in doubt whether a problem is on the client
+machine or the server, try the following:
+
+<P>
+Run faxstat to request server status.  You should see something like:
+
+<UL><LISTING>
+HylaFAX scheduler on hyla.chez.sgi.com: Running
+Modem ttyf2 (+1 510 528-9999): Running and idle
+</LISTING></UL>
+
+or possibly,
+
+<UL><LISTING>
+HylaFAX scheduler on hyla.chez.sgi.com: Not running.
+</LISTING></UL>
+
+If you do not see something like this, then you are having problems
+communicating with the hfaxd program on the server machine or
+there is a configuration problem on the server machine.
+If you cannot
+establish a connection to the hfaxd process on the server machine,
+then verify that you have your <TT>FAXSERVER</TT> environment variable setup
+correctly (if the server is not on the same
+machine where the faxstat program is run) and
+that both client and server programs are communicating
+on the same TCP port.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/warning_icon.gif" ALT="NOTE:" HSPACE=8></TD>
+<TD><EM>Beware of settings that might be present
+in personal or system-wide configuration files.
+Some applications such as sendfax search an additional
+file as well.  Consult manual pages for complete information about
+configuration file handling.</EM></TD>
+</TR>
+</TABLE>
+
+<P>
+On the server machine make sure that the hfaxd
+program is setup to run standalone or 
+properly configured to be invoked by the
+<A HREF="@CGIPATH@/manpage?1+inetd">inetd</A>
+program.
+If run standalone then hfaxd should be running and have
+been started with a <TT>-i</TT> option (and possibly other options).
+hfaxd should also send messages to the system logging facility
+whenever it is started up and these messages should identify
+the client-server protocols it is servicing; e.g.
+
+<UL><LISTING>
+May 28 20:11:20 5D:hyla HylaFAX[8447]: HylaFAX INET Protocol Server: restarted.
+May 28 20:11:20 5D:hyla HylaFAX[8447]: HylaFAX Old Protocol Server: restarted.
+May 28 20:11:20 5D:hyla HylaFAX[8447]: HylaFAX SNPP Protocol Server: restarted.
+</LISTING></UL>
+
+Otherwise check
+the contents of
+<A HREF="file:/etc/inetd.conf"><B>/etc/inetd.conf</B></A>,
+or similar, for a line of the form:
+
+<UL><LISTING>
+hylafax	stream	tcp	nowait	fax	/usr/local/sbin/hfaxd	hfaxd -I
+</LISTING></UL>
+
+There may also be other entries if support for the old client-server
+protocol and/or SNPP is enabled.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/warning_icon.gif" HSPACE=8></TD>
+<TD><EM>Be certain that
+<I>inetd</I> has ``<I>reread</I>'' its configuration file; either send
+it a SIGHUP or restart it.  This should automatically happen
+when the faxsetup program is run on the server machine.</EM></TD>
+</TR>
+</TABLE>
+
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/warning_icon.gif" HSPACE=8></TD>
+<TD><EM>Note also
+that the <TT>fax</TT> service must be defined on the server machine in order
+for inetd
+to startup the hfaxd program--check for this entry in the
+<A HREF="file:/etc/services"><B>/etc/services</B></A> file and/or the YP/NIS
+database.</EM></TD>
+</TR>
+</TABLE>
+
+<P>
+Note that hfaxd uses the 
+<A HREF="@CGIPATH@/manpage?2+chroot">chroot</A> 
+system call to confine clients to the HylaFAX spooling area
+on the server machine.
+On most systems only the super-user is permitted to do a chroot
+call so if hfaxd is not started by the super-user or the
+executable program is not setup to be setuid-root then it will
+not function properly.
+If this happens clients will usually be denied access with a
+message of the form ``<TT>Cannot set privileges.</TT>''.
+
+<P>
+You can also use an existing network program such as
+<A HREF="@CGIPATH@/manpage?1+telnet">telnet</A> 
+or
+<A HREF="@CGIPATH@/manpage?1+ftp">ftp</A> to communicate
+with the hfaxd process;
+
+<UL><LISTING>
+hyla% <B>telnet localhost 4559</B>
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+220 hyla.chez.sgi.com server (HylaFAX (tm) Version 4.0beta012) ready.
+<B>help</B>
+214-The following commands are recognized (* =>'s unimplemented).
+   ABOR    CHMOD   IDLE    JSUBM   JGRP*   NLST    REIN    STAT    USER 
+   ACCT*   CHOWN   JDELE   JSUSP   JGSUBM* NOOP    REST    STOR    VRFY 
+   ADMIN   DELE    JKILL   JWAIT   JGSUSP* PASS    RETR    STOT 
+   ALLO*   DISABLE JNEW    JGDELE* JGWAIT* PASV    RNFR*   STOU 
+   ANSWER  ENABLE  JOB     JGKILL* LIST    PORT    RNTO*   STRU 
+   APPE    HELP    JOBFMT  JGNEW   MDTM    PWD     SHUT    SYST 
+   CWD     FILEFMT JPARM   JGPARM* MODE    QUIT    SITE    TZONE 
+   CDUP    FORM    JREST   JGREST* MDMFMT  RCVFMT  SIZE    TYPE 
+214 Direct comments to FaxMaster@hyla.chez.sgi.com.
+<B>quit</B>
+221 Goodbye.
+Connection closed by foreign host.
+</LISTING></UL>
+
+<P>
+If the network-related configuration is setup properly but faxstat
+still does not return an expected answer then use the <TT>-v</TT> option to
+trace the client-server protocol:
+
+<UL><LISTING>
+hyla% <B>faxstat -v</B>
+Trying localhost (127.0.0.1) at port 4559...
+Connected to localhost.
+220 hyla.chez.sgi.com server (HylaFAX (tm) Version 4.0beta012) ready.
+-> USER sam
+230 User sam logged in.
+-> TZONE LOCAL
+200 Using time values in PST.
+-> PORT 127,0,0,1,7,198
+200 PORT command successful.
+-> LIST status
+150 Opening new data connection for "status".
+HylaFAX scheduler on hyla.chez.sgi.com: Running
+Modem ttyf2 (+1 510 528-9999): Running and idle
+226 Transfer complete.
+</LISTING></UL>
+
+A protocol or configuration problem should be evident from the 
+trace information.  You can also configure hfaxd
+to log its operation through
+<A HREF="@CGIPATH@/manpage?3+syslog">syslog</A>
+by setting the <TT>ServerTracing</TT> configuration parameter
+in the <B>hfaxd.conf</B> file:
+
+<UL><TT>
+<PRE>ServerTracing: 0x3		# enable protocol tracing</PRE>
+</TT></UL>
+
+hfaxd will reread this file for each new network connection so there is
+no need to restart the server if running standalone.
+
+<P>
+Once again, remember that inetd
+will not see a change to the <B>inetd.conf</B>
+file until it is restarted or sent a SIGHUP; and
+that hfaxd logs
+its debugging information through
+<A HREF="@CGIPATH@/manpage?3+syslog">syslog</A>
+(using the syslog facility setup in the <B>hfaxd.conf</B>
+file, or the setting compiled into the program
+when the software was built).
+
+<A NAME="ClientAccess"><P><HR WIDTH=65% ALIGN=right>
+
+<B><FONT SIZE=+3>T</FONT>ROUBLESHOOTING: <FONT SIZE=+2>C</FONT>LIENT ACCESS CONTROL PROBLEMS</B></A>
+
+<P>
+If you are able to establish a network connection to
+the hfaxd server process then access control problems are
+either due to incorrect installation of the server software or
+misconfigured permissions on the server machine.
+Client access is defined by the contents of the <B>etc/hosts</B> file
+located in the HylaFAX spooling area on the server machine.
+This file must exist and <EM>must not be publicly readable</EM>
+or access will be denied to all clients.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/warning_icon.gif" HSPACE=8></TD>
+<TD><EM>Beware of the protection on the <B>etc/hosts</B> file when
+upgrading from HylaFAX 3.0.  Previous versions of HylaFAX
+did not care if the file was publicly readable
+so it probably is.</EM></TD>
+</TR>
+</TABLE>
+
+<P>
+The hfaxd program confines clients to the spooling area on the
+server machine using the 
+<A HREF="@CGIPATH@/manpage?2+chroot">chroot(2)</A>
+system call.
+This means that clients should not have access to any information on
+a HylaFAX server machine outside the spooling area (and hfaxd
+restricts access to only part of this area).
+
+<P>
+HylaFAX clients are assigned a ``fax user ID'' when they login to
+a HylaFAX server.
+This identifier is similar to the normal UNIX user ID but is maintained
+separately by HylaFAX and is independent of the normal system operation.
+Beware that hfaxd stores this ID as the group ID of files that are
+created on a HylaFAX server on behalf of a client.
+The fax user ID assigned to a client is defined by the information
+in the <B>etc/hosts</B> file; consult the manual page for more details.
+You can also find the user ID for a particular user by
+logging in with telnet and issuing a <TT>STAT</TT> request:
+
+<LISTING>
+    melange% <B>telnet flake 4559</B>
+    Trying 192.111.25.39...
+    Connected to flake.esd.sgi.com.
+    Escape character is '^]'.
+    220 flake.esd.sgi.com server (HylaFAX (tm) Version 4.0beta020) ready.
+    <B>user foo</B>
+    230 User foo logged in.
+    <B>stat</B>
+    211-flake.esd.sgi.com HylaFAX server status:
+	HylaFAX (tm) Version 4.0beta020
+	Connected to melange.esd.sgi.com (192.111.25.40)
+   -->	<I>Logged in as user foo (uid 2)</I>
+	"/" is the current directory
+	Current job: (default)
+	Time values are handled in GMT
+	Idle timeout set to 900 seconds
+	Using long replies
+	No server down time currently scheduled
+	HylaFAX scheduler reached at /FIFO (not connected)
+	Server FIFO is /client/25133 (open)
+	File cache: 15 lookups, 0 hits (0.0%), 1.1 avg probes
+	    15 entries (2.3 KB), 0 entries displaced, 0 entries flushed
+	TYPE: ASCII; STRU: File; MODE: Stream; FORM: PS
+	No client data connection
+    211 End of status
+    <B>quit</B>
+    221 Goodbye.
+    Connection closed by foreign host.
+</LISTING>
+
+
+<P>
+Client access may be controlled with passwords that are
+transmitted in the clear by a client across the network connection.
+This is obviously insecure and plans exist for improved security
+measures.
+The existing password facilities use the same 
+<A HREF="@CGIPATH@/manpage?3+crypt">crypt(3)</A>
+function the system login facilities use and encrypted passwords
+are stored in the <B>etc/hosts</B> file in a format that is compatible
+with most systems' password files.
+This means that client passwords can be copied from a password file
+if desired (though this is obviously discouraged).
+The HylaFAX client-server protocol <TT>ADDUSER</TT> request includes
+a variety of checks for easy-to-guess passwords.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC=icons/warning_icon.gif ALT="NOTE:" HSPACE=8></TD>
+<TD><EM>HylaFAX uses the standard system crypt function to
+implement client passwords.  Systems without this routine
+may substitute the publicly available GNU version but then it
+may not be possible to copy encrypted passwords from the system
+password file.</EM></TD>
+</TR>
+</TABLE>
+
+<P>
+If a client is prompted for a password when contacting the server
+then it means the client is setup with a password in the
+<B>etc/hosts</B> file.
+Read the 
+<A HREF="@CGIPATH@/manpage?4+hosts">hosts(4F)</A>
+manual page carefully to understand the format for this file.
+
+<P>
+Logging of client login and network connections can be controlled
+separately by bits in the hfaxd <TT>ServerTracing</TT> configuration
+parameter; consult the
+<A HREF="@CGIPATH@/manpage?1+hfaxd">hfaxd</A>
+manual page for details.
+
+<A NAME="ServerBasics"><P><HR WIDTH=65% ALIGN=right>
+
+<B><FONT SIZE=+3>T</FONT>ROUBLESHOOTING: <FONT SIZE=+2>S</FONT>ERVER BASICS</B></A>
+
+<P>
+One faxq process does the job scheduling and initiation of outbound
+calls; it handles many tasks:
+
+<UL>
+<LI>manage the queue of jobs and schedule their processing
+<LI>prepare PostScript, TIFF, and PCL documents for transmission
+<LI>start the processes that do the low-level work to deliver facsimile
+    or pager messages
+</UL>
+
+One faxgetty server process is usually run for each fax
+modem on a machine.
+These processes are responsible for handling inbound calls,
+carrying out the following tasks:
+
+<UL>
+<LI>answer incoming call and decide whether the call is fax, data, or voice
+<LI>do the low-level work to receive facsimile
+<LI>possibly invoke the system getty program to handle data calls
+<LI>possibly invoke the system vgetty program to handle voice calls
+<LI>possibly invoke the system egetty program to deduce the type of a call
+</UL>
+
+Proper setup of HylaFAX involves setting up the configuration
+files and the ancillary programs and command scripts that are invoked
+by faxq and by faxgetty.  The setup of the ancillary
+programs should automatically be done when the software is configured
+and installed.
+The modem-related setup and much of the system-related configuration
+work should be done by the faxsetup and faxaddmodem commands.
+Problems that arise in the normal operation
+of a server typically fall into two categories:
+
+<UL>
+<LI>incorrect configuration and/or setup of the server software,
+<LI>incorrect configuration of the modem. 
+</UL>
+
+In either case HylaFAX provides extensive <I>tracing</I>
+or <I>logging</I> facilities
+that should supply the information needed to locate and correct a problem.
+
+<P>
+Tracing information is broken up into two separate areas:
+<I>server tracing</I> and <I>session tracing</I>.
+Server tracing is the logging done by server processes
+when not in active conversation with another device such as a
+facsimile machine or paging service provider.
+This tracing covers modem initialization, scheduler
+operation, and general bookkeeping and maintenance work.
+Session tracing is the logging done while a server process
+is actively communicating with a remote device; e.g. the communcation
+work done to send or receive a facsimile.
+This split permits better control over the
+amount of information logged in a production environment.
+Typically once a system is setup and working the amount of
+server tracing information captured can be quite small
+while the session tracing logged needs
+to be more extensive to help debug any communication problems
+that might arise.
+
+<P>
+HylaFAX servers processes are controlled by a collection of
+<I>configuration files</I>.
+There is a configuration file for the faxq scheduler process,
+<B>etc/config</B>, and one file for each process that uses a
+modem, <B>etc/config.<I>device</I></B>.
+(The hfaxd process that implements the client-server protocols
+also has its own configuration file.)
+
+<P>
+faxq tracing information is controlled by 
+the <TT>ServerTracing</TT> and <TT>LogFacility</TT>
+configuration parameters.
+<TT>ServerTracing</TT>
+controls which work should be traced while
+<TT>LogFacility</TT> specifies the 
+<A HREF="@CGIPATH@/manpage?3+syslog">syslog(3)</A>
+facility where the tracing messages should be directed.
+By default server tracing information is directed to the
+``<TT>daemon</TT>'' facility.
+
+<P>
+Modem-related tracing information is controlled by <TT>ServerTracing</TT>,
+<TT>SessionTracing</TT>, and <TT>LogFacility</TT>
+parameters that are put in the per-modem configuration files.
+<TT>ServerTracing</TT> controls the logging done when
+one of these programs is not in active conversation with another device
+while <TT>SessionTracing</TT> controls the logging during other times.
+As before, <TT>LogFacility</TT> defines where server tracing messages
+get sent.
+Session tracing messages are not sent using syslog; they are written
+to <I>session log files</I> that are described separately below.
+
+<P>
+To capture server tracing messages you must enable the appropriate
+bits in a <TT>ServerTracing</TT> parameter <STRONG>and</STRONG> configure
+the <A HREF="@CGIPATH@/manpage?1+syslogd">syslogd</A> process
+to capture messages sent to the
+<TT>daemon.debug</TT> facilitiy
+(or substitute for <TT>daemon</TT> to reflect the value of the
+<TT>LogFacility</TT> parameter).
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC=icons/info_icon.gif ALT="NOTE:" HSPACE=8></TD>
+<TD><EM>By setting <TT>LogFacility</TT> to something like <TT>local5</TT>
+it is easy to capture HylaFAX syslog messages in a separate file; just
+setup the <B>syslog.conf</B> file appropriately, e.g.</EM></TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><LISTING>    local5.debug	/var/spool/fax/etc/syslog</LISTING></TD>
+</TR>
+</TABLE>
+
+A sample server trace log is shown below.
+The lines marked ``<TT>FaxQueuer</TT>'' are generated by the faxq
+process.
+The lines marked ``<TT>FaxGetty</TT>'' are generated by a faxgetty process.
+The process ID of each process is shown enclosed in ``[]''.
+Each line is marked with the date and time that it was generated.
+
+<UL><LISTING>
+Apr  1 12:25:31 6V:oxford FaxQueuer[307]: HylaFAX (tm) Version 3.0beta112
+Apr  1 12:25:31 6V:oxford FaxQueuer[307]: Copyright (c) 1990-1996 Sam Leffler
+Apr  1 12:25:31 6V:oxford FaxQueuer[307]: Copyright (c) 1991-1996 Silicon Graphics, Inc.
+Apr  1 12:25:58 6V:oxford FaxQueuer[307]: MODEM ttym2 DOWN
+Apr  1 12:25:58 6V:oxford FaxGetty[477]: OPEN /dev/ttym2
+Apr  1 12:26:03 6V:oxford FaxGetty[477]: MODEM TELEBIT T3000SA - Version LA7.20F/T3000SA - Version LA7.20F
+Apr  1 12:26:04 6V:oxford FaxQueuer[307]: MODEM ttym2 READY
+</LISTING></UL>
+
+The tracing facilities supported by the HylaFAX server processes should
+provide enough information to debug any problem in the software.
+Consult the
+<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A> manual page
+for complete information on the various parameters.
+
+
+<A NAME="Scheduler"><P><HR WIDTH=65% ALIGN=right>
+
+<B><FONT SIZE=+3>T</FONT>ROUBLESHOOTING: <FONT SIZE=+2>S</FONT>CHEDULER OPERATION</B></A>
+
+<P>
+HylaFAX requires a faxq process to be running for
+outbound transmissions to be done.
+The faxstat program should show this process running in its output:
+
+<UL><LISTING>
+HylaFAX scheduler on hyla.chez.sgi.com: Running
+Modem ttyf2 (+1 510 528-9999): Running and idle
+</LISTING></UL>
+
+If the scheduler is marked ``Not running'' but faxq <EM>is</EM>
+running on the
+server machine then the first thing to check is the server tracing
+log for faxq to see if there is a problem.
+faxstat gets its information from hfaxd on the server machine and
+hfaxd decides if faxq is running based on whether it can open the
+FIFO special file <B>FIFO</B> in the spooling area on the server
+machine.
+Check that this file is the
+correct type and that it has the appropriate permission.
+faxq will create this file when it starts up if it does not exist;
+if there is a problem try stopping faxq, remove the file, possibly
+fiddle with faxq's server tracing (to get more information logged),
+and then restart faxq:
+
+<UL><LISTING>
+hyla# <B>faxquit</B>
+  ...<I>verify that faxq has terminated</I>...
+hyla# <B>/usr/local/sbin/faxq</B>
+</LISTING></UL>
+
+Note that if the faxquit command does not cause faxq to terminate
+then you may need to forcibly kill the process
+(but beware of doing this when outbound jobs are in progress as this
+can leave the system in an inconsistent state).
+When sending a signal to faxq use SIGTERM or SIGINT; faxq catches
+these signals and tries to cleanup its state as much as possible.
+
+<P>
+FIFO-related problems usually happen when the
+FIFO special file is removed
+without first stopping the HylaFAX server processes.
+This can cause one or more processes to be left
+with an open file descriptor to a file that is no longer present
+in the filesystem, and hence unreachable.
+When doing maintenance work on a HylaFAX server it is a good
+idea to first shut down the server processes.
+This is simple to do with the <B>hylafax</B> shell script used
+on System V-style systems; simply do
+
+<UL><LISTING>
+hyla# <B>/etc/init.d/hylafax stop</B>
+</LISTING></UL>
+
+<P>
+If you believe that you are having problems with the messages exchanged
+by the various HylaFAX server processes <TT>ServerTracing</TT>
+bit 0x04000 can be set to force logging of all the messages
+sent and received through FIFO special files; usually you need to
+do this only for the faxq process.
+
+<P>
+Other than FIFO communication problems,
+the most common scheduler-related
+problem encountered is that no outbound jobs get scheduled for processing.
+faxq will only schedule an outbound job when it believes it has a
+modem available that is capable of handling a job's needs.
+A modem's existence and capabilities are signalled to faxq through
+messages received on its FIFO file.
+The two programs that send modem information are faxgetty and faxmodem.
+Processes that want to send faxq information about new modems must be
+able to access the file; this means the protection on the file
+must be such that clients can open it for writing
+(the default setup should make this happen).
+The order in which faxq and faxgetty are started does not matter;
+a handshaking protocol between faxq and faxgetty insures that modem
+status information will be exchanged no matter what order the processes
+startup in.
+
+<P>
+When in doubt about what is happening, or not happening, to jobs 
+enable the job queue management tracing bit in the
+<TT>ServerTracing</TT> parameter for the faxq process; e.g.
+
+<UL><TT>
+<PRE>ServerTracing:	0x201</PRE>
+</TT></UL>
+
+and check the log to understand what is going on.
+There is also a separate bit for tracing low-level job queue operations;
+this should only be needed on rare occasions.
+
+
+<P>
+Otherwise
+there is very little that can go wrong with the scheduler
+with respect to managing the queue of outbound jobs. 
+Setting the system time backwards
+on the server machine can cause problems as timers managed by faxq
+are calculated relative to the current time-of-day.
+Jobs may be rejected
+without a phone call if a <TT>rejectNotice</TT> entry is present for a
+destination phone number in the
+destination controls file
+<A HREF="@CGIPATH@/manpage?4+destctrls">destctrls(4F)</A>.
+Beware that multiple jobs to the same destination are usually
+serialized to reduce phone calls.
+Jobs that are blocked in this way have a
+"<I>Blocked by concurrent...</I>" status.
+You can change the maximum number
+of concurrent jobs that will be scheduled to a destination with the
+<TT>MaxConcurrentJobs</TT> configuration parameter.
+
+<A NAME="SessionTracing"><P><HR WIDTH=65% ALIGN=right>
+
+<B><FONT SIZE=+3>T</FONT>ROUBLESHOOTING: <FONT SIZE=+2>S</FONT>ESSION TRACING</B></A>
+
+<P>
+The <TT>SessionTracing</TT> parameter controls tracing information
+<EM>during the
+time HylaFAX is engaged in conversation with another device</EM> (fax
+machine, pager service provider, etc.)
+Tracing of this sort is done by faxgetty processes (when receiving
+facsimile) and by processes
+started up by faxq to process outbound jobs (faxsend, pagesend, etc.).
+Session tracing is controlled by configuration parameters
+specified in the per-modem configuration files.
+It is also possible to enable session tracing on a per-destination basis
+for outbound jobs through the per-destination
+<TT>DestControls</TT> facility provided by faxq.
+
+<P>
+Communication-related problems will be found in the
+information logged under session tracing.
+Session tracing information is stored in files in the
+<B>log</B> subdirectory in the spooling tree and is returned to users via
+electronic mail when notification is requested, or when an
+unrecoverable error is encountered.
+The
+<A HREF="@CGIPATH@/manpage?4+log">log(4F)</A> manual page
+has information on the meaning of many messages that might appear
+in these files.
+
+<P>
+A sample snippet from a session log is shown below.
+The trace was collected from a transmission through
+a Class 1 modem.
+The <TT>SessionTracing</TT> parameter was set to <TT>0x4f</TT>.
+Notice that the format is very similar to the server tracing
+information collected through syslog (shown above).
+Beware that, unlike previous versions of HylaFAX, session logs are collected
+in individual files that are uniquely named according to a
+unique <I>communication identifier</I>.
+This can make locating the session log file a bit tricky; to find
+the appropriate log file you can look for a record in the <B>etc/xferlog</B>
+file or a server tracing message.
+Either should contain a communication identifier which can
+then be used to select the appropriate file from
+the <B>log</B> directory in the spooling area.
+(If only one call is being handled on a server
+you can also just look for the most recently changed file in the <B>log</B>
+directory.)
+
+<P>
+Session logs are straightforward to understand.
+Messages sent <EM>to the modem</EM> are identified by lines
+with a ``<TT>&lt;--</TT>'' mark while
+data received <EM>from the modem</EM> are identified by lines with a
+``<TT>--&gt;</TT>''.
+Timestamps show the date and time, with time to the right of the
+decimal point displayed to 10 millisecond precision (the typical
+granularity of the realtime clock on a UNIX system).
+The number of characters in each message prefix the message itself.
+Unimportant binary data, usually the facsimile page data, is sometimes
+shown generically as ``<TT>data</TT>''.
+
+<UL><LISTING>
+Apr 01 09:01:09.78: [18302]: SESSION BEGIN
+Apr 01 09:01:09.80: [18302]: MODEM set DTR OFF
+Apr 01 09:01:09.80: [18302]: MODEM set baud rate: 0 baud (flow control unchanged)
+Apr 01 09:01:09.80: [18302]: DELAY 2600 ms
+Apr 01 09:01:12.40: [18302]: MODEM set DTR ON
+Apr 01 09:01:12.40: [18302]: MODEM set baud rate: 38400 baud, input flow RTS/CTS, output flow RTS/CTS
+Apr 01 09:01:12.40: [18302]: MODEM flush i/o
+Apr 01 09:01:12.40: [18302]: <-- [14:ATE0V1Q0S0=0H0]
+Apr 01 09:01:12.53: [18302]: --> [2:OK]
+Apr 01 09:01:12.53: [18302]: <-- [20:ATS8=2S7=60&K4&D2&C1]
+Apr 01 09:01:12.66: [18302]: --> [2:OK]
+Apr 01 09:01:12.66: [18302]: <-- [11:AT+FCLASS=1]
+Apr 01 09:01:12.78: [18302]: --> [2:OK]
+Apr 01 09:01:12.78: [18302]: <-- [4:ATM0]
+Apr 01 09:01:12.90: [18302]: --> [2:OK]
+Apr 01 09:01:12.90: [18302]: <-- [11:AT+FCLASS=1]
+Apr 01 09:01:13.02: [18302]: --> [2:OK]
+Apr 01 09:01:13.06: [18302]: DIAL 14159657824
+Apr 01 09:01:13.06: [18302]: <-- [15:ATDT14159657824]
+Apr 01 09:01:23.85: [18302]: --> [7:CONNECT]
+Apr 01 09:01:23.92: [18302]: MODEM input buffering disabled
+Apr 01 09:01:25.45: [18302]: --> HDLC<26:FF C0 02 2C 4C 1C EC AC 6C 9C AC 8C 2C 8C D4 04 04 04 04 04 04 04 04 2C F7 7E>
+Apr 01 09:01:25.45: [18302]: --> [2:OK]
+Apr 01 09:01:25.45: [18302]: REMOTE CSI "+14159657824"
+Apr 01 09:01:25.45: [18302]: <-- [8:AT+FRH=3]
+Apr 01 09:01:25.45: [18302]: --> [7:CONNECT]
+Apr 01 09:01:25.79: [18302]: --> HDLC<10:FF C8 01 00 76 5F 00 C6 4A 7E>
+Apr 01 09:01:25.79: [18302]: --> [2:OK]
+Apr 01 09:01:25.82: [18302]: REMOTE best rate 14400 bit/s
+Apr 01 09:01:25.82: [18302]: REMOTE max page width 2432 pixels in 303 mm
+Apr 01 09:01:25.83: [18302]: REMOTE max unlimited page length 
+Apr 01 09:01:25.83: [18302]: REMOTE best vres 7.7 line/mm
+Apr 01 09:01:25.83: [18302]: REMOTE best format 1-D MR
+Apr 01 09:01:25.83: [18302]: REMOTE best 0 ms/scanline
+Apr 01 09:01:25.83: [18302]: REMOTE does not support PostScript transfer
+Apr 01 09:01:25.83: [18302]: USE 14400 bit/s
+Apr 01 09:01:25.83: [18302]: USE 0 ms/scanline
+Apr 01 09:01:25.83: [18302]: SEND file "docq/doc19.cover;30"
+    ....
+</LISTING></UL>
+
+Normal installation of HylaFAX will enable enough session
+tracing to debug most communication problems.
+The default configuration files come with
+<TT>SessionTracing</TT>
+set to 11 which is a good setting for Class 2 modems (i.e. a lot of
+information is provided, but the load on the server should not keep it
+from operating properly).
+For Class 1 modems a setting of 0x4f will
+also cause HDLC frames to be collected.
+Beware of tracing timer
+operations and modem I/O; these trace flags are only useful if you are
+trying to debug a problem specifically related to a timer not going
+off, or a problem where data appears to be corrupted.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/warning_icon.gif" ALT="NOTE:" HSPACE=8></TD>
+<TD><EM>When debugging modem-related problems, only
+enable the tracing that you really need.  Enabling all tracing can
+affect the operation of the server processes by altering the timing of
+operations</EM>.</TD>
+</TR>
+</TABLE>
+
+<P>
+Note that when capturing a trace for the purpose of submitting a bug
+report, the less extraneous information that you include, the easier it
+is for people to help understand the problem.
+Most of the time HylaFAX will return the relevant session log for
+a communication failure in the notification message sent to a user
+when an outbound job fails.  Note however that the contents of
+this log is controlled by the value of the <TT>SessionTracing</TT>
+parameter specified in the per-modem configuration files.
+If this parameter is set too low then session logs may be returned
+that do not show sufficient information to diagnose a problem.
+
+<A NAME="PSPrep"><P><HR WIDTH=65% ALIGN=right>
+
+<B><FONT SIZE=+3>T</FONT>ROUBLESHOOTING: <FONT SIZE=+2>P</FONT>OSTSCRIPT DOCUMENT PREPARATION</B></A>
+
+<P>
+PostScript documents submitted for transmission as facsimile are
+converted to a binary format by the
+<A HREF="@CGIPATH@/manpage?1+ps2fax">ps2fax(1M)</A>
+script that is invoked by the scheduler.
+If this preparation fails it is either due to the submission of
+invalid PostScript or a problem in the setup of the PostScript RIP
+that does the conversion from PostScript to TIFF/F.
+faxq tries to return any error messages returned by the PostScript
+RIP to the user that submits a job but some programs make this
+difficult.
+In this case it may be easiest to see what is happening by invoking
+the ps2fax script directly using the same command arguments used 
+by faxq; this information can be found in the faxq trace log.
+Beware however, that if faxq is started up by the
+<A HREf="@CGIPATH@/manpage?1+init">init(1M)</A>
+program that it may inherit a different shell environment.
+In particular, beware of problems with search paths when the PostScript
+RIP is linked with Dynamic Shared Objects (DSOs);
+e.g. when Ghostscript is linked with the the X11 driver and a
+DSO version of the X library.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/warning_icon.gif" ALT="NOTE: " HSPACE=8></TD>
+<TD><EM>On machines with dynamic shared libraries (e.g. SunOS), if you
+link Ghostscript with the X11 device driver and use shared X11
+libraries that are not in a standard location, then you may need to
+augment the HylaFAX
+<B>util/ps2fax.gs.sh</B> script with something of the form:</EM></TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><LISTING>	LD_LIBRARY_PATH=/usr/local/R5/lib:/usr/openwin/lib
+	export LD_LIBRARY_PATH</LISTING></TD>
+</TR>
+</TABLE>
+
+The faxsetup script should verify that the PostScript RIP
+is installed in the correct location and properly configured for use
+with HylaFAX.
+It may not however be able to verify DSO-related problems of the nature
+described above.
+
+<P>
+PostScript imaging problems may also result in the faxq process not
+being able to reopen the imaged document after the ps2fax script is run.
+After faxq invokes ps2fax to image a document it validates the resulting
+TIFF/F file to make sure the work was done correctly.
+This is necessary because some programs terminate with exit status 0
+indicating a successful run even if an error was encountered.
+
+<P>
+Some other potential problems to be aware of.
+If Ghostscript is configured with a <TT>tiffg32d</TT> device driver
+to generated 2D-encoded data beware that versions of Ghostscript
+prior to 3.12 (inclusive) had a bug in this driver that caused
+invalid data to be generated.
+If you are in doubt you can disable the use of 2D-encoded facsimile
+data with the <TT>User2D</TT> configuration parameter to faxq:
+
+<UL><TT>
+<PRE>Use2D: no</PRE>
+</TT></UL>
+
+(remember this goes in faxq's <B>etc/config</B> file, not the per-modem
+configuration file).
+
+<P>
+Versions of Ghostscript prior to about
+3.63 permitted PostScript documents
+to set the output page dimensions to arbitrary values.
+Some applications such as Frame 4.0 and various PostScript drivers
+found in Microsoft Windows used this facility to force the output
+page to be 1734 pixels wide (8.5 inches at 204 pixels/inch).
+This causes problems when HylaFAX requests that 
+documents be imaged with pages that are 1728 pixels wide.
+The result is that documents will be submitted, imaged, and then
+rejected during transmission because they have an incorrect page width.
+The solution is to get a current version of Ghostscript or to
+edit the PostScript documents to remove the <TT>setpagedevice</TT>
+requests that (incorrectly) force the output page dimensions.
+
+<A NAME="TIFFPrep"><P><HR WIDTH=65% ALIGN=right>
+
+<B><FONT SIZE=+3>T</FONT>ROUBLESHOOTING: <FONT SIZE=+1>TIFF</FONT> DOCUMENT PREPARATION</B></A>
+
+<P>
+Like PostScript documents TIFF documents may need to be prepared
+before they can be transmitted as facsimile.
+This work is done by the 
+<A HREF="@CGIPATH@/manpage?1+tiff2fax">tiff2fax(1M)</A>
+script that is invoked by faxq.
+The tiff2fax script depends on programs that are part of the separate
+TIFF software distribution and, in some instances, the ps2fax script.
+If you encounter a problem preparing a TIFF document for transmission
+capture the command arguments to the tiff2fax script from the
+faxq log and try running it by hand.
+
+<A NAME="CommProblems"><P><HR WIDTH=65% ALIGN=right>
+
+<B><FONT SIZE=+3>T</FONT>ROUBLESHOOTING: <FONT SIZE=+2>C</FONT>OMMUNICATION PROBLEMS</B></A>
+
+<P>
+Communication problems refer to errors that occur during an
+outbound call handled by faxsend or pagesend,
+or an inbound call handled by faxgetty.
+Almost all communication problems can be diagnosed from the
+information in a session log.
+The only server tracing information that might be needed is
+for modem setup work done by faxgetty which does not appear
+in a session log.
+
+<P>
+If a problem occurs during modem setup by faxgetty,
+set <TT>ServerTracing</TT> to 11, or similar, in the modem
+configuration file and check the server trace log.
+Modem initialization for an outbound job is included in the
+session log and controlled by the <TT>SessionTracing</TT> parameter.
+Problems during modem setup are typically caused by:
+
+<UL>
+<LI>misconfiguration of the flow control scheme,
+<LI>not disabling the getty program
+on the modem port (so that multiple processes
+are simultaneously trying to read/write to the modem), and
+<LI>invalid initialization sequences.
+</UL>
+
+<P>
+Once a call is placed, facsimile communication happens in several
+<I>phases</I>.
+First the sender and receiver negotiate a set of <I>session
+parameters</I> to use during communication.
+These parameters define the format of data that is to be exchanged,
+the physical dimensions of the pages, and
+certain other parameters related to the communication work
+(speed at which to transfer data, modulation scheme, time to
+delay between raster scanlines to permit a receiver's printer
+to run properly, etc.).
+An example of this negotiation for a Class 2.0 modem is:
+
+<UL><LISTING>
+Aug 16 09:54:03.26: [28224]: DIAL xxxxxxxxx
+Aug 16 09:54:03.26: [28224]: <-- [14:ATDTxxxxxxxxx\r]
+Aug 16 09:54:25.33: [28224]: --> [4:+FCO]
+Aug 16 09:54:25.33: [28224]: --> [26:+FCI:Gupta Corporation    ]
+Aug 16 09:54:25.33: [28224]: REMOTE CSI "Gupta Corporation"
+Aug 16 09:54:25.33: [28224]: --> [20:+FIS:1,3,0,2,0,1,0,4]
+Aug 16 09:54:25.33: [28224]: --> [2:OK]
+Aug 16 09:54:25.33: [28224]: REMOTE best rate 9600 bit/s
+Aug 16 09:54:25.33: [28224]: REMOTE max page width 1728 pixels in 215 mm
+Aug 16 09:54:25.33: [28224]: REMOTE max unlimited page length 
+Aug 16 09:54:25.34: [28224]: REMOTE best vres 7.7 line/mm
+Aug 16 09:54:25.34: [28224]: REMOTE best format 1-D MR
+Aug 16 09:54:25.34: [28224]: REMOTE supports T.30 Annex A, ECM
+Aug 16 09:54:25.34: [28224]: REMOTE best 20 ms, 10 ms/scanline
+Aug 16 09:54:25.34: [28224]: USE 9600 bit/s
+Aug 16 09:54:25.34: [28224]: USE 20 ms, 10 ms/scanline
+Aug 16 09:54:25.34: [28224]: SEND file "docq/doc1617.ps;30"
+Aug 16 09:54:25.34: [28224]: USE page width 1728 pixels in 215 mm
+Aug 16 09:54:25.35: [28224]: USE unlimited page length 
+Aug 16 09:54:25.35: [28224]: USE 3.85 line/mm
+Aug 16 09:54:25.35: [28224]: USE 1-D MR
+Aug 16 09:54:25.35: [28224]: <-- [23:AT+FIS=0,3,0,2,0,0,0,4\r]
+Aug 16 09:54:25.45: [28224]: --> [2:OK]
+</LISTING></UL>
+
+The receiver announces its <I>capabilities</I> and the sender
+then selects which of these capabilities it wants to use in
+doing the transmission.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC=icons/warning_icon.gif ALT="NOTE:" HSPACe=8></TD>
+<TD><EM>Beware that a common problem in Class 2 modems
+is for the modem to reject or ignore an <TT>AT+FDIS</TT>
+command to set the session parameters
+between the time a call is placed and a page is transmitted.
+When this problem occurs pages may appear ``squished'' or the
+session may be aborted abnormally.
+If you suspect this problem
+use the <TT>Class2DDISCmd</TT> configuration parameter to
+enable workaround support; e.g.</EM></TD>
+</TR>
+<TR>
+<TD></TD>
+<TD><LISTING>
+    Class2DDISCmd:	AT+FDIS
+</LISTING></TD>
+</TR>
+</TABLE>
+
+Following the negotiation of the session parameters pages of facsimile
+data are transmitted followed by a <I>post page exchange</I> of
+messages.
+For example:
+
+<UL><LISTING>
+Aug 16 09:54:25.45: [28224]: <-- [7:AT+FDT\r]
+Aug 16 09:54:46.53: [28224]: --> [20:+FCS:0,1,0,2,0,0,0,5]
+Aug 16 09:54:46.53: [28224]: --> [7:CONNECT]
+Aug 16 09:54:46.53: [28224]: SEND begin page
+Aug 16 09:54:46.56: [28224]: <-- data [1029]
+Aug 16 09:54:46.56: [28224]: <-- data [1024]
+Aug 16 09:54:46.56: [28224]: <-- data [1026]
+Aug 16 09:54:46.56: [28224]: <-- data [1026]
+Aug 16 09:54:46.83: [28224]: <-- data [1025]
+Aug 16 09:54:47.10: [28224]: <-- data [1027]
+Aug 16 09:54:47.36: [28224]: <-- data [1024]
+Aug 16 09:54:48.20: [28224]: <-- data [1024]
+Aug 16 09:54:48.65: [28224]: <-- data [845]
+Aug 16 09:54:49.11: [28224]: SENT 9037 bytes of data
+Aug 16 09:54:49.11: [28224]: SEND 1D RTC
+Aug 16 09:54:49.11: [28224]: <-- data [9]
+Aug 16 09:54:49.56: [28224]: SEND end page
+Aug 16 09:54:49.56: [28224]: SEND send MPS (more pages, same document)
+Aug 16 09:54:49.56: [28224]: <-- data [2]
+Aug 16 09:55:18.11: [28224]: --> [2:OK]
+Aug 16 09:55:18.11: [28224]: SEND recv MCF (message confirmation)
+</LISTING></UL>
+
+In this case after the page an ``MPS'' message was sent to
+indicate that this page was to be followed by more pages of the
+same document.
+The receiver responded with an ``MCF'' message indicating the
+received page of facsimile data was OK (had an acceptable number
+of errors, if any) and that the sender should commence sending
+the next page of data.
+This procedure continues until the sender is done in which
+case it signs off by sending an ``EOP'' message at the end of
+the last page to be transmitted.
+
+<P>
+The basic work described above
+occurs for all facsimile communication no matter
+whether it is done with a Class 1, 2, or 2.0 modem.
+Two things to understand from this abbreviated description:
+
+<UL>
+<LI>Facsimile pages 
+<EM>are not considered to be delivered until an acknowledgement
+is received from the receiver</I>.
+A receiver may explicitly reject or ``NAK'' a page for many
+reasons; HylaFAX will retransmit information as required to
+deliver a facsimile.
+<LI>The format of facsimile data transmitted by HylaFAX is
+based on the negotiated set of session parameters.
+If a facsimile document is not properly formatted or prepared
+according to the session parameters then the receiver may
+reject it.
+HylaFAX optimally <EM>preformats</EM> facsimile data according
+to any user-specified requests and any cached capabilities for the
+receiver.
+If this information is wrong then it will disconnect and
+reformat the documents according to the correct parameters.
+</UL>
+
+A more detailed description of the underlying
+facsimile protocol can be
+found at <A HREF=http://www.grayfax.com/>http://www.grayfax.com/</A>
+and, of course, in the CCITT/ITU T.30 recommendation.
+
+<P>
+When debugging a communication problem try to identify if the
+problem is transient or repeatable and if the problem always
+happens when communicating with the same sender/receiver.
+Also check the negotiated session parameters to see if there
+is any correlation, for example, to the negotiated data format
+(i.e. 1D-encoded data versus 2D-encoded data).
+Communication problems can be caused by many things including:
+
+<UL>
+<LI>misconfiguration of the communication equipment used by HylaFAX.
+<LI>poor or faulty implementations of the fax protocols
+in the sender and/or receiver, or
+<LI>line noise caused by a poor quality phone connection or other
+environmental problem (e.g. an answering machine on the same
+phone line), 
+</UL>
+
+If you can communicate with some facsimile devices but not others
+than you can usually rule out the first cause.
+Transient or unrepeatable problems, jobs that require one or more
+retransmissions before working, or other similar problems are
+frequently due to line noise or poor phone connections but sometimes
+incorrect protocol implementations or host-modem flow control
+problems that depend on host load or page content.
+If you believe your have a noise problem it is a good idea to isolate
+the modem on the phone line (i.e. remove any other equipment such
+as an answering machine or handset) and to try an alternate line
+if possible, though this may not matter if the problem is
+<I>close to the receiver</I>.
+Last but not least, when using a Class 2 or 2.0 modem check with
+the vendor to make sure the firmware revision for the modem is
+up to date.
+If you can reliably reproduce a problem then knowing the make
+and model of the device at the other end can help a modem vendor
+understand and/or fix a protocol implementation problem.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC=icons/info_icon.gif ALT="NOTE:" HSPACE=8></TD>
+<TD><EM>If communication problems persist to a specific
+receiver when using 2D-encoded data, you can disable its use
+through the
+<A HREF="@CGIPATH@/manpage?4+info">info(4F)</A> database.
+Note also that sendfax has a command line option that lets you
+select 1D-encoded data in any single transmission.</EM></TD>
+</TR>
+</TABLE>
+
+
+<P>
+The <A HREF="http://www.vix.com/hylafax/FAQ/">HylaFAQ</A> contains
+information on some common communication problems
+that might be encountered.
+It is also important to monitor the operation of a server to detect
+trends that might indicate modem or telecommunication problems;
+the <A HREF="@CGIPATH@/manpage?1+faxcron">faxcron(1M)</A>
+script is useful for doing this since it extracts
+the transcripts of failed calls.
+
+
+<A NAME="GettyProblems"><P><HR WIDTH=65% ALIGN=right>
+
+<B><FONT SIZE=+3>T</FONT>ROUBLESHOOTING: <FONT SIZE=+2>G</FONT>ETTY PROBLEMS</B></A>
+
+<P>
+HylaFAX will invoke the getty program when a data connection is
+established and the <TT>GettyArgs</TT> parameter is set to a non-null string.
+When HylaFAX
+starts up a getty program it sets the standard input, output, and error
+descriptors to the modem device (closing all other descriptors),
+creates a new process group, and turns off the <TT>CLOCAL</TT>
+bit on the tty device so that if carrier is dropped the process group
+will receive a SIGHUP signal.
+
+<UL>
+<LI>be sure that the system is not also configured to start getty
+on the modem's tty port
+<LI>beware of misconfigured getty arguments that cause getty
+to reopen and/or initialize the modem device
+<LI>also be
+careful that on some systems the
+<B>/etc/ttytab</B>
+entry for the modem port must be setup as a
+<I>dialup</I> line as opposed to a <I>local</I> line
+</UL>
+
+The section on ``<A HREF=setup.html#Guidance>System-specific Guidance</A>''
+in the chapter on setting up a server and the
+<A HREF="http://www.vix.com/hylafax/FAQ/">HylaFAQ</A> have information about other
+problems that you may encounter.
+
+<A NAME="Locking"><P><HR WIDTH=65% ALIGN=right>
+
+<B><FONT SIZE=+3>T</FONT>ROUBLESHOOTING: <FONT SIZE=+2>P</FONT>ROBLEMS WITH UUCP, CU, TIP, ETC.</B></A>
+
+<P>
+If you have a problem running the fax software together with other
+communication programs such as uucp, cu, tip, slip, ppp, etc. first
+verify that your data communication
+software is configured to use the correct modem initialization strings
+and that both HylaFAX and the program(s) in question are using
+<EM>the same device name</EM>. 
+Many of the prototype modem configuration files for Class 2 and
+Class 2.0 modems will leave the modem <I>idling</I> in Class 2 or 2.0.
+This means that in order to place a data call
+the modem must first be reset to Class 0; e.g.
+
+<UL><TT>
+<PRE>AT+FCLASS=0DT&lt;<I>phone number</I>&gt;</PRE>
+</TT></UL>
+
+Other common problems involve the ownership and protection
+of the modem device file.
+When a HylaFAX server process is running it forces the tty
+device to be owned by the ``fax'' user
+(typically the same UID as the ``uucp'' user)
+and to have the mode specified by the
+<TT>DeviceMode</TT> configuration parameter.
+Finally, beware that there are several different styles of UUCP
+lock files; verify that your UUCP and related programs
+use the same style that HylaFAX is configured to use.
+The UUCP lock file scheme used by HylaFAX may be specified with
+the <TT>UUCPLockType</TT> configuration parameter.
+If you specify this parameter be certain to put it in both the
+faxq configuration file and each modem configuration file; otherwise
+one HylaFAX server process may do the right thing while another may not.
+
+<!--FOOTER-->
+
+<P>
+<A HREF="toc.html"><IMG SRC="icons/back.gif">
+HylaFAX table of contents</A>.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

@@ -1,0 +1,17 @@
+B constrain job parameters for non privileged users
+B shut cmd uses local time
+B what to do with disable modem reason msg
+B commands for registering inbound document distribution/routing
+  (chown is there for assignment; maybe need notification mechanisms)
+B fix passwd file locking for concurrent updates
+H return tail -f log/... for status
+H inverse shut command
+H restrict active page count and/or number of jobs per-user
+H start/stop queuer
+H trigger status format strings
+H adduser must be able to set uid as well
+H per-user controls
+H format conversion during document retrival (e.g. TIFF->PS)
+? limits on the recvq cache?
+? take msgs from control channel ala SMTP (e.g. SHUT, DISABLE)
+? should ADMIN work like USER (i.e. take account name instead of passwd)

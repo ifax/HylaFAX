@@ -1,0 +1,166 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH FAXSEND 1M "October 3, 1995"
+.SH NAME
+faxsend \- \*(Fx facsimile transmit program
+.SH SYNOPSIS
+.B ${LIBEXEC}/faxsend
+[
+.B \-l
+] [
+.B \-p
+] [
+.B \-c
+.I config
+]
+.B \-m
+.I device-ID
+.I qfile
+.SH DESCRIPTION
+.I faxsend
+is the program that implements the facsimile transmission protocol
+for the \*(Fx system.
+.I faxsend
+is invoked by the
+.I faxq
+scheduler process for each facsimile transmit attempt.
+.I faxsend
+assumes that its current working directory is the top of
+the spooling hierarchy, that a suitable modem device
+has been allocated for its use, and that all documents
+to be sent are already converted to 
+.SM TIFF/F
+(\c
+.SM TIFF
+Class F) at the appropriate resolution and with an appropriate
+data encoding.
+In normal use
+.I faxsend
+will inherit a lockfile for the modem from the
+.I faxq
+process.
+The format of the job description file specified on the
+command line is described in
+.IR sendq (4F).
+.PP
+.I faxsend
+initializes the modem before attempting to transmit the facsimile
+using the information in the appropriate modem configuration file.
+If the modem does not respond to this initialization,
+.I faxsend
+will repeatedly try to initialize the modem.
+This behaviour is required for send-only environments in which a
+.IR faxgetty (1M)
+process is not run (and the modem would be known to be in a
+properly initialized state).
+.I faxsend
+catches
+.SM SIGINT
+and
+.SM SIGTERM
+and cleans up any resources it controls; this is the mechanism
+used by
+.I faxq
+to abort a job while it is in progress.
+.PP
+Many aspects of
+.I faxsend
+operation are controlled through a configuration file.
+The configuration file is located in the spooler hierarchy
+in the
+.B etc
+subdirectory and is named
+.BI config. device-ID ;
+consult
+.IR config (4F)
+for detailed information on the contents of configuration files.
+.SH OPTIONS
+The following options are recognized:
+.TP 10
+.BI \-c " config"
+Treat
+.I config
+as a configuration parameter specification that is interpreted
+after reading the per-device configuration file.
+For example, ``-c sessiontracing:0x4f'' would set the
+.B SessionTracing
+configuration parameter to ``0x4f'', overriding any setting in
+the configuration file.
+.TP 10
+.BI \-m " devID"
+The device to use in processing the job.
+Note that this is a \fIdevice identifier\fP and not the
+pathname of the tty special file.
+A device identifier is formed from a device filename by removing
+any leading ``/dev/'' and converting any ``/'' characters to ``_''
+characters.
+.TP 10
+.B \-l
+Do the
+.SM UUCP
+lockfile protocol in
+.IR faxsend .
+By default
+.I faxsend
+assumes that it is invoked with the device already locked
+and that it does not need to manage the lockfile.
+.TP 10
+.B \-p
+Do not change the process priority when transmitting.
+Normally
+.I faxsend
+will raise its priority to reduce i/o latency.
+This option is useful for debugging.
+.SH NOTES
+.I faxsend
+returns the new job status to
+.I faxq
+through the
+.IR exit (2)
+return value of the process:
+.I send_retry
+(0), retry job;
+.I send_failed
+(1), job finished without success,
+.I send_done
+(2), job completed successfully,
+.I send_reformat
+(3), job should be retried after documents are reformatted.
+.SH FILES
+${SPOOL}/etc/config.devID	device-specific configuration file
+.PP
+Consult
+.IR hylafax (4F)
+for a complete discussion of the structure and
+content of the spooling area.
+.SH "SEE ALSO"
+.IR faxq (1M),
+.IR hylafax (4F),
+.IR config (4F)

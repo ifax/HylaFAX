@@ -1,0 +1,57 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH STATUS 4F "January 18, 1996"
+.SH NAME
+status \- server status database
+.SH DESCRIPTION
+Files in the
+.B status
+directory in the \*(Fx
+spooling area contain status information about each running server.
+Files are named according to the modem being serviced.
+Files without a suffix contain a single line of
+.SM ASCII
+text that indicates what the server is currently doing:
+``Running and idle'', ``Sending to ...'', ``Answering the phone'', etc.
+The contents of the file
+.B any.info
+is returned by the
+.IR faxstat (1)
+program when given the 
+.B \-i
+option; it should contain information about the server system
+including an administrative contact, its location, usage conventions, etc.
+.SH "SEE ALSO"
+.IR faxq (1M),
+.IR faxsend (1M),
+.IR pagesend (1M),
+.IR faxgetty (1M),
+.IR hfaxd (1M),
+.IR faxstat (1)

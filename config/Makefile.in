@@ -1,0 +1,100 @@
+#!smake
+#	$Id$
+#
+# @WARNING@
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# VERSION:	@VERSION@
+# DATE:		@DATE@
+# TARGET:	@TARGET@
+# CCOMPILER:	@CCOMPILER@
+# CXXCOMPILER:	@CXXCOMPILER@
+#
+DEPTH=..
+@MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
+
+SRCDIR	= ${DEPTH}/${TOPSRCDIR}/config
+VPATH	= ../@SRCDIR@/config
+
+CONFIGFILES=class1 \
+	class2 \
+	class2.0 \
+	skel \
+	\
+	att-dataport-2 \
+	att-dataport-2.0 \
+	att-dataport \
+	cirrus \
+	dsi-scout+ \
+	e-tech \
+	everex-2496d \
+	exar \
+	gvc-288 \
+	gvc-288-2 \
+	intel-400e \
+	moto-288 \
+	mt-1432 \
+	nuvo-voyager \
+	ppi-pm14400fxmt \
+	ppi-pm14400fxsa \
+	rc144ac \
+	rc144ac-1 \
+	rc288dpi \
+	rc288dpi-1 \
+	rc32acl \
+	rc32acl-1 \
+	rockwell \
+	telebit-t3000 \
+	telebit-qblazer \
+	telebit-wb \
+	tricom2842 \
+	uds-fastalk \
+	usr-2.0 \
+	usr-rts \
+	usr-xon \
+	zyxel-1496e \
+	zyxel-1496e-1 \
+	zyxel-1496e-2.0 \
+	zyxel-2864 \
+	sierra
+TARGETS=
+
+default all::
+	@${MAKE} targets
+
+targets: ${TARGETS}
+
+@MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
+
+PUTSERVER=${INSTALL} -idb ${PRODUCT}.sw.server
+
+install: default ${CONFIGFILES}
+	for i in ${CONFIGFILES}; do \
+	    ${PUTSERVER} -F ${SPOOL}/config -m 444 -src ${SRCDIR}/$$i -O $$i; \
+	done

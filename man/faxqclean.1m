@@ -1,0 +1,133 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH FAXQCLEAN 1M "March 14, 1996"
+.SH NAME
+faxqclean \- \*(Fx queue cleaner process
+.SH SYNOPSIS
+.B ${SBIN}/faxqclean
+[
+.I options
+]
+.SH DESCRIPTION
+.I faxqclean
+is a program that processes completed \*(Fx
+jobs and expunges unreferenced document files.
+This program is intended to be invoked by
+.IR cron (1M)
+on behalf of the super user (i.e. root) one or more times a day.
+For example, the following crontab entry might be setup for root to run
+.I faxqclean
+each hour.
+.sp .5
+.nf
+.ti +.2i
+\s-1\fC0   *    *    *    *   ${SBIN}/faxqclean\fP\s+1
+.fi
+.PP
+When
+.I faxqclean
+is run it scans the
+.B doneq
+subdirectory in the \*(Fx spooling area and process each job
+according to the
+.B doneop
+field specified in the job description file; c.f.
+.IR sendq (4F).
+Jobs that are marked for removal are purged and references to documents
+are removed.
+Jobs that are marked for archival may be archived depending on the
+options supplied on the command line.
+.PP
+After scanning for completed jobs
+.I faxqclean
+scans the
+.B docq
+subdirectory and builds up a table of document files.
+Files that are not referenced by any job and that are older than
+a specified threshold are removed.
+.SH OPTIONS
+.TP 10
+.B \-a
+Enable job archiving support.
+\fINB: v4.0 does not include support for job archiving.\fP
+.TP 10
+.BI \-j " secs"
+Set the job age threshold (in seconds)
+that controls how long jobs may reside in the
+.B doneq
+directory before being processed.
+By default this value is 15 minutes (15*60 = 900 seconds).
+.TP 10
+.BI \-d " secs"
+Set the document age threshold (in seconds)
+that controls how long unreferenced files may reside in the
+.B docq
+directory before being removed.
+By default this value is 1 hour (60*60 = 3600 seconds).
+.TP 10
+.B \-n
+Do not carry out any work; just show what would be done.
+This option is useful together with the
+.B \-t
+option for debugging.
+.TP 10
+.BI \-q " dir"
+The specified directory is treated as the spooling area.
+The default spooling area,
+.IR ${SPOOL} ,
+is defined at the time the software is built.
+.TP 10
+.B \-t
+Trace in great detail exactly what
+.I faxqclean
+is doing.
+Messages are sent to the standard output.
+.TP 10
+.B \-v
+Print messages on the standard output about jobs removed or
+archived and about document files removed.
+.SH FILES
+.ta \w'${SPOOL}/archive    'u
+.nf
+${SPOOL}/done	to scan for completed jobs
+${SPOOL}/docq	to scan for unreferenced documents
+${SPOOL}/archive	where archived jobs are placed
+.fi
+.PP
+Consult
+.IR hylafax (4F)
+for a complete discussion of the structure and
+content of the spooling area.
+.SH "SEE ALSO"
+.IR faxq (1M),
+.IR hylafax (4F),
+.IR sendq (4F),
+.IR doneq (4F),
+.IR archive (4F).

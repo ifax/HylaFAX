@@ -1,0 +1,131 @@
+# $Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# EDIT THIS CONFIGURATION TO REFLECT YOUR SETUP
+#
+# BEGIN-SERVER
+#CountryCode:		1		# USA
+#LongDistancePrefix:	1
+#InternationalPrefix:	011
+#AreaCode:		415
+#DialStringRules:	etc/dialrules
+FAXNumber:		+1.999.555.1212
+LocalIdentifier:	"NothingSetup"	# default is canonical FAXNumber
+ServerTracing:		1		# log server-related operations
+SessionTracing:		11		# log server-related operations
+RecvFileMode:		0600		# recvd facsimile are not public
+LogFileMode:		0600		# private log files
+DeviceMode:		0600		# device is accessible only to uucp/fax
+GettyArgs:		"-h %l dx_%s"	# requires modem to auto-detect fax/data
+QualifyTSI:		""		# do not restrict inbound facsimile
+SpeakerVolume:		off		# machine's are already too loud
+RingsBeforeAnswer:	1		# answer on first ring
+TagLineFont:		etc/lutRS18.pcf	# tag line font
+TagLineFormat:		"From %%l|%c|Page %%p of %%t"
+MaxBadCalls:		5		# max 5 consecutive bad calls
+PostScriptTimeout:	300		# 5 minute timeout on PostScript jobs
+MaxSendPages:		25		# max pages in an outbound job
+MaxRecvPages:		25		# max pages in an inbound job
+ContCoverPage:		etc/cover.templ	# enable continuation cover pages
+DestControls:		etc/destcontrols # destination-specific controls
+MaxConcurrentJobs:	1		# serialize jobs to the same dest
+TimeOfDay:		"Any"		# outbound jobs any day, any time
+# END-SERVER
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+#ModemType:		Class1		# use this to supply a hint
+ModemRate:		38400		# rate for DCE-DTE communication
+ModemFlowControl:	rtscts		# RTS/CTS flow control assumed
+ModemSetupDTRCmd:	AT&D2		# setup so DTR drop resets modem
+ModemSetupDCDCmd:	AT&C1		# setup so DCD reflects carrier (or not)
+#
+# We normally append the "@" symbol to the dial string so that
+# the modem will wait 5 seconds before attempting to connect
+# and return result codes that distinguish between no carrier
+# and no answer.  This makes it possible to avoid problems with
+# repeatedly dialing a number that doesn't have a fax machine
+# (kudos to Stuart Lynne for this trick.)
+#
+# NB: If you need to prefix phone numbers to get through a PBX,
+#     put it in the ModemDialCmd; e.g. "DT9%s@".
+#
+ModemDialCmd:		ATDT%s@		# T for tone dialing, @ for silence
+#
+# Other possible configuration stuff.  The default strings are
+# shown below.  Only those that are different from the defaults
+# need to be included in the configuration file.
+#
+ModemResetCmds:		""		# stuff to do when modem is reset
+ModemAnswerCmd:		ATA		# use this to answer phone
+ModemNoFlowCmd:		AT&K		# disable flow control cmd
+ModemHardFlowCmd:	AT&K3		# hardware flow control cmd
+ModemSoftFlowCmd:	AT&K4		# software flow control cmd
+ModemNoAutoAnswerCmd:	ATS0=0		# disable auto-answer
+#
+# Set modem speaker volume commands: OFF QUIET LOW MEDIUM HIGH.
+# Note that we both turn the speaker on/off and set volume.
+#
+ModemSetVolumeCmd:	"ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1"
+ModemEchoOffCmd:	ATE0		# disable command echo
+ModemVerboseResultsCmd:	ATV1		# enable verbose command results
+ModemResultCodesCmd:	ATQ0		# enable result codes
+ModemOnHookCmd:		ATH0		# place phone on hook (hangup)
+ModemSoftResetCmd:	ATZ		# do soft reset of modem
+ModemWaitTimeCmd:	ATS7=60		# wait 60 seconds for carrier
+ModemCommaPauseTimeCmd:	ATS8=2		# comma pause time is 2 seconds
+ModemRecvFillOrder:	LSB2MSB		# bit order of received facsimile
+ModemSendFillOrder:	LSB2MSB		# bit order modem expects for transmit
+#
+# Configuration parameters for Class 2 modems.
+#
+Class2Cmd:		AT+FCLASS=2	# command to enter class 2
+Class2BORCmd:		AT+FBOR=0	# bit order for phase B/C/D (direct)
+Class2RELCmd:		AT+FREL=1	# byte-align EOL codes on recv
+Class2CQCmd:		""		# commands to enable copy quality proc.
+Class2AbortCmd:		AT+FK		# abort session command
+Class2CQQueryCmd:	AT+FCQ=?	# query for copy quality capabilities
+Class2DCCQueryCmd:	AT+FDCC=?	# query for modem capabilities
+Class2TBCCmd:		AT+FTBC=0	# setup stream mode
+Class2CRCmd:		AT+FCR=1	# enable capability to receive
+Class2PHCTOCmd:		AT+FPHCTO=30	# set phase C timeout parameter
+Class2BUGCmd:		AT+FBUG=1	# enable HDLC frame tracing
+Class2LIDCmd:		AT+FLID		# set local identifier command
+Class2DCCCmd:		AT+FDCC		# set modem capabilities command
+Class2DISCmd:		AT+FDIS		# set session parameters command
+Class2DDISCmd:		""		# disable pre-dial DIS command hack
+Class2CIGCmd:		AT+FCIG		# set polling identifier command
+Class2PTSCmd:		AT+FPTS		# set post-page status command
+Class2SPLCmd:		AT+FSPL		# set polling indicator command
+#
+# If Class2RecvDataTrigger is not set, then it is set to DC1
+#
+Class2RecvDataTrigger:	""		# character sent to modem to start recv
+Class2XmitWaitForXON:	yes		# if true, wait for XON before send

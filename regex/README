@@ -1,0 +1,4 @@
+This is the 4.4bsd-lite regular expression support, slightly modified
+to eliminate some 4.4bsd dependencies.
+
+	Sam

@@ -1,0 +1,128 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Changes in HylaFAX v4.0beta010
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>C</FONT>HANGE <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+<B>Current Version</B>: v4.0beta010<BR>
+<B>Previous Version</B>: <A HREF="v4.0beta009.html">v4.0beta009</A><BR>
+<B>Master FTP Site</B>: <A HREF="ftp://sgi.com/sgi/fax">sgi.com (192.48.153.1), directory sgi/fax</A><BR>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+</UL>
+
+<P>
+Note that this is a <STRONG>major new distribution</STRONG> and lots
+of things have changed.  Consult the <A HREF="hylafax4.0.html">general overview</A>
+for a high-level description of the new functionality provided in the
+v4.0 software.
+
+<P>
+This document describes the changes made to the software between the
+<I>previous</I> and <I>current</I> versions (see above).
+If you don't find something listed here, then it was not done in this
+timeframe, or it was not considered important enough to be mentioned.
+The following information is located here:
+<UL>
+<LI><A HREF="#general">General changes</A>
+<LI><A HREF="#configure">Changes in the software configuration</A>
+<LI><A HREF="#hfaxd">Changes to hfaxd</A>
+<LI><A HREF="#sendpage">Changes to sendpage</A>
+<LI><A HREF="#misc">Changes in miscellaneous stuff</A>
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="general"><B><FONT SIZE=+3>G</FONT>ENERAL CHANGES:</B></A>
+
+<UL>
+<LI>support for sending pages has returned; there is a new version
+   of <B>sendpage</B> and significant new additions to <B>hfaxd</B>
+   (see below)
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
+
+<UL>
+<LI><B>configure</B> now emits the right definition for
+    <TT>CONFIG_BADEXECVEPROTO</TT> for AIX systems
+<LI>the check for support for memory-mapped files was corrected
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="hfaxd"><B><FONT SIZE=+3>C</FONT>HANGES TO HFAXD:</B></A>
+
+<UL>
+<LI>support was added for the Simple Network Pager Protocol (SNPP)
+<LI>support was added for filesystems that use the BSD-style
+    semantics for setting the group ID on created files; <B>hfaxd</B>
+    dynamically determines if the underlying filesystem for the
+    spooling area has BSD-style or System V-style semantics and
+    acts accordingly
+<LI>a bug was fixed whereby changes to files were not reflected back
+    to the information stored in the file cache
+<LI>a bug that caused the <TT>STOR</TT> command to fail when the destination
+    file did not exist has been fixed
+<LI>the <TT>NLST</TT> command has been implemented
+<LI>a new flag was added to control tracing of configuration file processing
+<LI>a new job format control, %X, was added for returning the type
+    of a job as a one character symbol
+<LI>a race condition in the <TT>JWAIT</TT> command was fixed
+<LI>a workaround was added for compiling with the HP-UX C++ compiler
+<LI><B>hfaxd</B> no longer aborts when <B>/dev/tcp</B> is found but
+    <B>/etc/netconfig</B> is not found (required for correct operation
+    on some versions of SunOS)
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="sendpage"><B><FONT SIZE=+3>C</FONT>HANGES TO SENDPAGE:</B></A>
+
+<UL>
+<LI><B>sendpage</B> was rewritten to support the Simple Network Pager
+    Protocol (SNPP) as defined in RFC 1861 (with some additions)
+<LI>the command-line options have changed; consult the manual page
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="misc"><B><FONT SIZE=+3>C</FONT>HANGES IN MISCELLANEOUS STUFF:</B></A>
+
+<UL>
+<LI>the dialstring rules files now map alphabetics to their equivalent
+    numeric key codes
+<LI>the System V bootup script <B>etc/hylafax</B> has been changed to
+    enable SNPP support by default
+<LI>tracing functionality was added to the configuration file support
+    used by all client and server applications
+<LI>a bug was fixed in the <B>notify.awk</B> script that could cause
+    it to go into an infinite loop if certain files were missing
+<LI>a syntax error in the <B>notify.awk</B> script was corrected
+</UL>
+
+<!--FOOTER-->
+
+<A HREF="toc.html"><IMG SRC="icons/back.gif"></A> HylaFAX table
+of contents.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

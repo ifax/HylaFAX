@@ -1,0 +1,167 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+ftpmail Service Help Information
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>F</FONT>TPMAIL <FONT SIZE=+2>S</FONT>ERVICE <FONT SIZE=+2>H</FONT>ELP <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+This is a sample help response from the ftpmail service.
+To get your own, or a more up-to-date version, send mail to
+<A HREf="mailto:ftpmail@decwrl.dec.com">ftpmail@decwrl.dec.com</A>
+with a single line ``<CITE>help</CITE>'' in the body of the message.
+
+<P><HR>
+
+<P>
+<B>Date</B>: <I>Thu, 27 Oct 94 11:03:52 -0700</I><BR>
+<B>From</B>: <I>"ftpmail service on ftp-gw-1.pa.dec.com" &lt;nobody@pa.dec.com&gt;</I><BR>
+<B>To</B>: <I>sam</I><BR>
+<B>Subject</B>: <I>your ftpmail request has been received</I><BR>
+
+<LISTING>
+
+  -- Help --
+>>> $Id$
+>>>
+>>> ftpmail is not a supported service. From time to time it stops working;
+>>> we will tend to it when we get the time. Outages of a week or more are not
+>>> abnormal. 
+
+>>> commands are:
+
+	reply <MAILADDR>	set reply addr, since headers are usually wrong
+	connect [HOST [USER [PASS [ACCT]]]]
+				defaults to gatekeeper.dec.com, anonymous
+	ascii			files grabbed are printable ascii
+	binary			files grabbed are compressed or tar or both
+	chdir PLACE		"get" and "ls" commands are relative to PLACE
+					(only one CHDIR per ftpmail session,
+					and it executes before any LS/DIR/GETs)
+	compress		compress binaries using Lempel-Ziv encoding
+	compact			compress binaries using Huffman encoding
+	uuencode		binary files will be mailed in uuencode format
+	btoa			binary files will be mailed in btoa format
+	chunksize SIZE		split files into SIZE-byte chunks (def: 64000)
+	ls (or dir) PLACE	short (long) directory listing
+	index THING		search for THING in ftp server's index
+	get FILE		get a file and have it mailed to you
+					(max 10 GET's per ftpmail session)
+	quit			terminate script, ignore rest of mail message
+					(use if you have a .signature or
+					 are a VMSMAIL user)
+
+>>> notes:
+
+	-> you should send complaints to the ftpmail-admin address.  our
+	   postmaster does not handle ftpmail problems and you can save her
+	   the trouble of forwarding your complaints by just mailing them to
+	   the right address.  the "ftpmail-request" address is gone; don't
+	   use it.
+
+	-> the "index" command depends on the "SITE EXEC INDEX" feature of
+	   some ftp servers.  Gatekeeper.dec.com originated this feature,
+	   and ftp.uu.net duplicated it (with a format change to the output,
+	   naturally).  Wuarchive.wustl.edu also has this feature, though
+	   their index seems to be empty.  The source for an ftpd that
+	   supports this feature is on Gatekeeper.DEC.COM in /pub/DEC/gwtools.
+
+	-> a password of "" or '' will be sent as a null string.  if you need
+	   this you will know it, if you don't, you won't.
+
+	-> the "Subject:" of your request will be contained in the "Subject:"
+	   of all of ftpmail's responses to you regarding that request.  You
+	   can therefore use it to "tag" different requests if you have more
+	   than one outstanding at any given time.
+
+	-> you must give a "connect" command, default host is
+	   gatekeeper.dec.com, default user is anonymous, default
+	   password is your mail address with a hyphen prepended.
+
+	-> binary files will not be compressed unless 'compress' or 'compact'
+	   command is given; use this if at all possible, it helps a lot.
+	   note that many files are already compressed.  if you use any of
+	   the binary-file qualifiers (compress, compact, uuencode, btoa)
+	   without setting 'binary' first, your session will abort in error.
+
+	-> binary files will always be formatted into printable ASCII
+	   with "btoa" or "uuencode" (default is "btoa").  if you don't
+	   use the "binary" command, ftpmail will cheerfully try to mail
+	   you the binary data, which will absolutely, positively fail.
+
+	-> all retrieved files will be split into chunks and mailed.  the
+	   size of the chunk is 64000 characters unless you change it with
+	   the "chunksize" command.  CompuServe users will need to set this
+	   to 49000.  there is no way to set it higher than 100000, so please
+	   don't ask.
+
+	-> if you ask for more than 10 files in a session, you will receive
+	   an error message and your entire request will be rejected.
+
+	-> VMS/DOS/Mac versions of uudecode, atob, compress and compact
+	   are available, ask your LOCAL wizard about them if you can't
+	   locate them (but try gatekeeper.dec.com in /archive/pub/VMS
+	   if you're still using a VMS system.)
+
+	-> several mail unsplitters are hiding on gatekeeper.dec.com in
+	   /pub/mail/ua/misc/unsplit.  there is one in c, one in perl,
+	   and one in VMS DCL.
+
+	-> there is no way to request only certain parts of a file and we
+	   do not plan to add one in the near future, so please don't ask.
+
+	-> there is no way to delete things from the queue or to find out
+	   the status of things in the queue, and we do not plan to add
+	   either feature in the near future, so please don't ask.
+
+>>> examples:
+
+	-> connect to gatekeeper.dec.com and get a root directory listing:
+		connect
+		ls
+		quit
+
+	-> connect to gatekeeper.dec.com and get the README.ftp file:
+		connect
+		get README.ftp
+		quit
+
+	-> connect to gatekeeper.dec.com and get the gnuemacs sources:
+		connect
+		binary
+		uuencode
+		chdir /pub/GNU
+		get emacs-18.58.tar.Z
+		quit
+
+	-> connect to ftp.uu.net as anonymous and get a root directory list:
+		connect ftp.uu.net
+		binary
+		chdir /index/master
+		get by-name.Z
+		quit
+
+Ftpmail was written by Paul Vixie while at the DEC Western Research Laboratory
+and at the DEC Network Systems Laboratory, from 1989-1993.  Ftpmail is not a
+product or service of Digital Equipment Corporation and no support or warranty
+is expressed or implied.
+  -- End of Help --
+</LISTING>
+
+<!--FOOTER-->
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

@@ -1,0 +1,84 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>Upgrading from HylaFAX Version 3.0</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>U</FONT>PGRADING <FONT SIZE=+2>F</FONT>ROM <FONT SIZE=+2>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+1>V</FONT>ERSION 3.0</B>
+<BASEFONT SIZE=3>
+
+<HR SIZE=4>
+
+If you were previously using HylaFAX Version 3.0 beware that a number of
+things have changed in incompatible ways. 
+The following is a list of potential things you should be aware of
+when setting up HylaFAX 4.0 on a server:
+
+<UL>
+<LI>You must remove any entries in the
+    <B>inetd.conf</B> file for the old faxd.recv program and
+    stop any running faxd.recv server processes.
+<LI>The new client-server protocol operates at port 4559 (+2 from the
+    old ``fax'' port which defaulted to 4557).  You may want to add
+    a new service definition to a YP/NIS database (though you should be
+    able to function without it.
+<LI>The new client-server protocol server,
+    <A HREF="@CGIPATH@/manpage?1+hfaxd">hfaxd(1M)</A>,
+    is built by default with support for the old client-server
+    protocol but the support must explicitly be enabled.
+    If hfaxd is started up through the default shell script
+    run by <I>init</I>(1M) and <EM>not</EM> by <I>inetd</I>(1M)
+    then this happens automatically.
+    Otherwise enabling support for the old protocol may require some
+    manual configuration work.
+    Consult the hfaxd(1M) manual page.
+<LI>faxq no longer accepts a <TT>-m</TT> option to specify
+    modems to use in a send-only configuration.
+    The faxmodem program should be used instead; consult the
+    chapter on ``<A HREF=setup.html>Server Setup and Basic Configuration</A>''
+    and the manual pages for
+    <A HREF="@CGIPATH@/manpage?1+faxmodem">faxmodem(1M)</A>
+    and
+    <A HREF="@CGIPATH@/manpage?1+faxq">faxq(1M)</A>.
+<LI>The <B>etc/hosts</B> file on the server may contain passwords
+    in v4.0 and hfaxd will not trust any information there
+    unless the file is mode 0600.
+    Since previous versions did not care what mode the file was
+    it probably is publicly readable and hfaxd will deny
+    client access until the mode is corrected.
+<LI>Completed jobs are removed asynchronously with a new faxqclean
+    program; you will want to setup a cron entry to do this.
+<LI>The new
+    <A HREF="@CGIPATH@/manpage?1+faxsetup">faxsetup(1M)</A>
+    script must be run before a server machine can be used.
+</UL>
+
+<P>
+The remaining items are relevant to client and server installations:
+
+<UL>
+<LI>The old syntax ``host:modem'' for specifying a server and modem
+    is no longer supported; the only syntax supported is
+    ``modem[@host[:port]]''.
+<LI>The order of options on the command line to sendfax and
+    sendpage is now important; consult the manual pages for details.
+</UL>
+
+<!--FOOTER-->
+
+<P>
+<A HREF="toc.html"><IMG SRC="icons/back.gif" ALT="(TOC)"> HylaFAX
+table of contents</A>.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated: $Date$
+</ADDRESS>
+
+</BODY>
+</HTML>

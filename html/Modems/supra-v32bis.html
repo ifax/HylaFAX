@@ -1,0 +1,84 @@
+<HTML>
+<HEAD>
+<TITLE>Supra SupraFAX v.32bis
+</TITLE>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>S</FONT>UPRA <FONT SIZE=+2>S</FONT>UPRA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+1>v.32bis</FONT></B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR WIDTH=65% ALIGN=left SIZE=4>
+<B>Manufacturer</B>: Supra<BR>
+<B>Model</B>: SupraFAX v.32bis<BR>
+<B>Latest Firmware Revision Tried</B>: V1.200-H TR14-Jxxx-001<BR>
+<B>Recommended Firmware Revisions</B>: V1.200-H TR14-Jxxx-001<BR>
+<B>Last Updated</B>:$Date$<BR>
+<HR WIDTH=65% ALIGN=left SIZE=4>
+</UL>
+
+<DL COMPACT>
+<DT><IMG SRC="@HTMLPATH@/icons/info_icon.gif" ALT="o">
+<DD>Supra provides 
+<A HREF="Supra/class1.html">documentation on the Class 1 programming interface</A>.
+<DT><IMG SRC="@HTMLPATH@/icons/info_icon.gif" ALT="o">
+<DD>Supra provides
+<A HREF="Supra/class2.html">documentation on the Class 2 programming interface</A>.
+<DT><IMG SRC="@HTMLPATH@/icons/info_icon.gif" ALT="o">
+<DD>Firmware rev V1.80-02 TR14-Jxxx-001 is a significant improvement over
+previous firmware; it is highly recommended that you upgrade your modem
+if you have older firmware.
+</DL>
+
+<HR WIDTH=65% ALIGN=right>
+<B><A NAME="Class1"><FONT SIZE=+2>C</FONT>LASS 1 <FONT SIZE=+1>S</FONT>UPPORT</A></B>
+
+<UL>
+<LI>The <TT>AT+FAE</TT>
+command that can be used to enable auto-detect of calls from
+  data modems is only accepted in Class 0 (data mode); I've never been
+  able to get it to work correctly (when setup the modem is either unable
+  to establish carrier, or the modem locks up after notifying the host)
+<LI>RTS/CTS is not honored while sending/receiving page data; use <TT>AT&K4</TT>
+for software (XON/XOFF) flow control
+</UL>
+
+<HR WIDTH=65% ALIGN=right>
+<B><A NAME="Class2"><FONT SIZE=+2>C</FONT>LASS 2 <FONT SIZE=+1>S</FONT>UPPORT</A></B>
+
+<UL>
+<LI>Changing DCD handling can cause the modem to drop DSR; if done
+  during initialization this can cause the fax server to get confused;
+  be sure that the setting loaded from NVRAM on reset agrees with
+  the value specified in the config file (<TT>AT&C1</TT> by default); one
+  possible way of doing this is to specify <TT>&F2</TT> for the ModemResetCmds
+  parameter
+<LI>The line counts in the +FPTS result code during a reception are
+  total nonsense; the only way to deduce the number of lines in a
+  received page of data is to parse the data on the host
+<LI>Facsimile reception is locked at 19200 baud
+<LI>Adaptive answer is not reliable
+<LI>The training algorithm can loop forever; client software must
+  timeout <TT>AT+FDR</TT> requests
+  (<EM>fixed in rev V1.80-02 TR14-Jxxx-001</EM>)
+<LI>RTS/CTS is not honored while receiving page data
+<LI>The firmware often responds incorrectly to an EOM post-page message;
+  the modem has been observed to drop carrier and/or respond with an
+  incorrect HDLC message
+</UL>
+
+<P>
+<A HREF="telebit-t3000.html"><IMG SRC="@HTMLPATH@/icons/next.gif">
+Telebit WorldBlazer/T3000</A>
+
+<HR>
+
+<ADDRESS>
+Copyright &copy; 1990, 1991, 1992, 1993, 1994 Sam Leffler<BR>
+Copyright &copy; 1991, 1992, 1993, 1994 Silicon Graphics, Inc.<BR>
+</ADDRESS>
+
+</BODY>
+</HTML>

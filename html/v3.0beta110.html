@@ -1,0 +1,195 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Changes in HylaFAX v3.0beta110
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>C</FONT>HANGE <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+<B>Current Version</B>: v3.0beta110<BR>
+<B>Previous Version</B>: <A HREF="v3.0beta108.html">v3.0beta108</A><BR>
+<B>Master FTP Site</B>: <A HREF="ftp://sgi.com/sgi/fax">sgi.com (192.48.153.1), directory sgi/fax</A><BR>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+</UL>
+
+<P>
+This document describes the changes made to the software between the
+<I>previous</I> and <I>current</I> versions (see above).
+If you don't find something listed here, then it was not done in this
+timeframe, or it was not considered important enough to be mentioned.
+The following information is located here:
+<UL>
+<LI><A HREF="#general">General changes</A>
+<LI><A HREF="#configure">Changes in the software configuration</A>
+<LI><A HREF="#modemconfig">Changes in the modem config files</A>
+<LI><A HREF="#faxq">Changes to faxq</A>
+<LI><A HREF="#faxsend">Changes to faxsend</A>
+<LI><A HREF="#faxgetty">Changes to faxgetty</A>
+<LI><A HREF="#pagesend">Changes to pagesend</A>
+<LI><A HREF="#faxaddmodem">Changes to faxaddmodem</A>
+<LI><A HREF="#fax2ps">Changes to fax2ps</A>
+<LI><A HREF="#faxalter">Changes to faxalter</A>
+<LI><A HREF="#html">Changes in the HTML materials</A>
+<LI><A HREF="#man">Changes in the manual pages</A>
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="general"><B><FONT SIZE=+3>G</FONT>ENERAL CHANGES:</B></A>
+
+<UL>
+<LI>a new file <TT>COPYRIGHT</TT> has been added for inclusion in
+   binary distributions
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
+
+<UL>
+<LI><TT>-Dsco</TT> is now correctly set for compilation on SCO
+<LI>bash versions prior to 1.14 are not accepted for
+    <TT>SCRIPT_SH</TT> because they contain bugs that cause some shell scripts
+    to not function correctly
+<LI><TT>_PATH_DEV</TT> is defined if not found in <TT>&lt;paths.h&gt;</TT>
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="modemconfig"><B><FONT SIZE=+3>C</FONT>HANGES IN THE MODEM CONFIG FILES:</B></A>
+
+<UL>
+<LI>a new file was added for ZyXEL modems operating in Class 1
+   (as supported in firmware revision 6.14 and later)
+<LI>prototype config files were updated to use the new parameters:
+   <TT>Class1HFLOCmd</TT>, <TT>Class1SFLOCmd</TT>, <TT>Class1NFLOCmd</TT>
+   <TT>Class2HFLOCmd</TT>, <TT>Class2SFLOCmd</TT>, <TT>Class2NFLOCmd</TT>
+<LI>syntax errors were corrected in the Telebit T3000 and WorldBlazer files
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxq"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXQ:</B></A>
+
+<UL>
+<LI>the kill time for a job is now adjusted to take into account delays
+   introduced by time-of-day restrictions
+<LI>the initialization of the <TT>TimeOfDay</TT> configuration parameter
+   has been corrected
+<LI>the <B>ps2fax</B> script invoked to rasterize PostScript is now
+   executed directly (an intermediate shell used to be used)
+<LI>a bug was fixed where output from <B>ps2fax</B> was not being
+   properly written to the job request file; this should correct the
+   problem where output from failed PostScript conversions was not
+   being returned in the notification message
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxsend"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXSEND:</B></A>
+
+<UL>
+<LI>when a modem is set into Class 1, 2, or 2.0 the drivers now
+   send a configurable command to force setup of the current
+   flow control scheme; see
+   <TT>Class1NFLOCmd</TT>, <TT>Class1SFLOCmd</TT>, <TT>Class1HFLOCmd</TT>,
+   <TT>Class2NFLOCmd</TT>, <TT>Class2SFLOCmd</TT>, <TT>Class2HFLOCmd</TT>
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxgetty"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXGETTY:</B></A>
+
+<UL>
+<LI>the Class 1 driver now recognizes
+    <TT>"CONNECT <I>...something...</I>"</TT> to mean
+    a data connection was established; this is useful for Class 1 modems
+    that support adaptive answer
+<LI>a bug that caused core dumps after a data connection has been fixed
+<LI>the tty device mode and ownership are now properly restored after
+    getty exits
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="pagesend"><B><FONT SIZE=+3>C</FONT>HANGES TO PAGESEND:</B></A>
+
+<UL>
+<LI>multi-line text messages no longer have newline characters
+    converted to carriage returns
+<LI>some tracing messages have been added to catch all
+    protocol state transitions
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxaddmodem"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXADDMODEM:</B></A>
+
+<UL>
+<LI>the entry in <B>inetd.conf</B> is now checked to
+   make sure <B>faxd.recv</B> is run by the proper user
+<LI>several operations have been significantly sped up
+<LI>the consistency checking of the scheduler configuration file was corrected
+<LI>new configuration files are now created using a scheme that
+   insures existing data will not be lost if a filesystem is full
+<LI>configuration files are not updated unless something has changed
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="fax2ps"><B><FONT SIZE=+3>C</FONT>HANGES TO FAX2PS:</B></A>
+
+<UL>
+<LI>uses an entirely new algorithm contributed by Bret Whissel; this
+   new scheme generates more compact PostScript that should execute
+   faster and with fewer imaging artifacts
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxalter"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXALTER:</B></A>
+
+<UL>
+<LI>a bug was fixed that made it impossible to alter
+    a job's scheduling priority
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="html"><B><FONT SIZE=+3>C</FONT>HANGES IN THE HTML MATERIALS:</B></A>
+
+<UL>
+<LI><TT>make clean</TT> now works correctly
+<LI>a problem compiling <B>man2html</B> on some systems was corrected
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="man"><B><FONT SIZE=+3>C</FONT>HANGES IN THE MANUAL PAGES:</B></A>
+
+<UL>
+<LI>a construct that confused groff has been changed
+</UL>
+
+<!--FOOTER-->
+
+<A HREF="toc.html"><IMG SRC="icons/back.gif"></A> HylaFAX table
+of contents.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

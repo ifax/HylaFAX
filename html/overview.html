@@ -1,0 +1,186 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+HylaFAX Overview
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>O</FONT>VERVIEW</B>
+<BASEFONT SIZE=3>
+
+<HR SIZE=4>
+
+HylaFAX is a telecommunication system for UNIX systems.  It supports:
+
+<UL>
+<LI>sending facsimile
+<LI>receiving facsimile
+<LI>polled retrieval of facsimile
+<LI>transparent shared data use of the modem
+<LI>sending alpha-numeric pages
+</UL>
+
+<P>
+Facsimile can be any size (e.g. A4, B4), either 98 or 196 lpi, and
+transmitted/received as either 1D-encoded or 2D-encoded facsimile data
+(2D-encoded data is frequently more compact and hence takes a shorter
+time to communicate).  Any modem that supports one of the standard
+interfaces for facsimile operation can be used; i.e. any
+Class 1, Class 2, or Class 2.0 modem.
+
+<P>
+Outgoing documents can be any format; the
+<A HREF="@CGIPATH@/manpage?1+sendfax">sendfax</A>
+program uses a
+<A HREF="@CGIPATH@/manpage?4+typerules">rule-based definition file</A>
+similar to the System V <B>/etc/magic</B> file 
+to deduce document types and to decide how to convert each document
+to a form suitable for transmission (either PostScript or TIFF/F).
+Automatic cover page generation is supported and users can easily
+<A HREF="@CGIPATH@/manpage?1+faxcover">tailor cover pages</A>
+to their environment.  A simple text-based
+phonebook database is supported by the sendfax program.
+Information is also
+provided on how to trivially setup an
+<A HREF="faxgateway.html">email to fax gateway</A> service.
+
+<P>
+Incoming facsimile are stored in a receiving area as TIFF/F (read
+``<I>TIFF Class F</I>'') files and may be automatically delivered by mail
+and/or printed.  A fax server status program,
+<A HREF="@CGIPATH@/manpage?1+faxstat">faxstat</A>,
+can be used to monitor the send and receive queues,
+as well as the state of facsimile servers.
+
+<P>
+Fax modems are shared with outgoing data communication applications
+that honor the <I>UUCP locking protocol</I>.  These applications typically
+include:
+<I>cu</I>,
+<I>tip</I>,
+<I>kermit</I>,
+<I>uucp</I>,
+<I>slip</I>,
+and
+<I>ppp</I>.
+The software can also be
+configured so that incoming data calls cause HylaFAX to invoke the
+standard system
+<A HREF="@CGIPATH@/manpage?1+getty">getty</A>
+program.
+
+<P>
+The software is structured around a client-server architecture.
+Fax modems may reside on a single machine on a network and
+clients can submit outbound jobs
+from any machine that can communicate with
+the machine on which the modems reside.  Client software is
+designed to be lightweight and easy to port; imaging can be offloaded
+to the server or done on the client.  (Imaging is however, typically
+done on the server because it simplifies administration.) 
+An <A HREF="@CGIPATH@/manpage?4+hosts">access control</A>
+mechanism is included to control which users on which machines may
+access a server.
+Clients and servers communicate using well-defined publicly
+specified protocols: for facsimile
+the HylaFAX Client-Server Protocol
+and for alpha-numeric pages the
+Simple Network Paging Protocol (SNPP) specified by RFC 1861.
+
+<P>
+Multiple modems on a single server machine are effectively scheduled for
+high throughput.  Broadcast faxing is well-supported through optimal
+imaging of transmitted documents and the effective scheduling of
+modem resources.
+Support is provided for scheduling jobs during off-peak hours
+based on the destination phone numbers (e.g. long distance calls
+may be scheduled for off-peak phone rates).
+An access control mechanism can be used to restrict the class of
+phone numbers called so that, for example, calls to emergency
+services such as 911 can be rejected out of hand.
+
+<P>
+The server requires a PostScript to facsimile imaging utility for
+useful operation (otherwise, only pre-imaged facsimile may be
+transmitted.)  A
+<A HREF="@CGIPATH@/manpage?1+ps2fax">Display PostScript-based imager</A>
+is provided for IRIX 4.x- and 5.x-based systems.
+For other systems,
+<A HREF="ghostscript.html">a Ghostscript-based version</A>
+can be built from the GNU sources.
+
+<P>
+HylaFAX is freely available under copyright in complete source
+form.  It may be used in commercial applications in part or in
+whole without charge.
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME=Documentation><B><FONT SIZE=+3>D</FONT>OCUMENTATION</B></A>
+
+<P>
+HylaFAX comes with extensive documentation in two forms: this HTML-based
+documentation that is designed for on-line use and general guidance,
+and a complete set of UNIX manual pages that contain reference
+information in a more terse but precise format.
+The HTML documentation contains <I>links</I> to the manual pages
+providing a complete hypertext connection between the two forms
+of documentation.
+
+<P>
+The HylaFAX documentation is intended to support
+users of binary distributions; it is complete enough
+that access to the source code is not needed.
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME=Esoterica><B><FONT SIZE=+3>E</FONT>SOTERICA</B></A>
+
+<P>
+The name of this software package is ``<I>HylaFAX</I>'',
+not ``<I>hylafax</I>'',
+``<I>Hylafax</I>'', or anything else.
+Also, do not call this software by its old name ``<I>FlexFAX</I>''
+because that name is a trademark of another fax product and the
+folks that own that trademark are possessive.
+Please also note that ``<I>HylaFAX</I>'' is a trademark of Silicon
+Graphics and it should be treated as such when used in documentation.
+
+<P>
+Regarding the name, it is derived from the word <I>hyla</I>
+which is defined as ``<CITE>Any of a genus of (Hyla) of frogs,
+especially the tree frog.</CITE>''
+Hence the <A HREF=hylafax.gif>logo</A>
+found on the home page for this software.
+
+<P>
+Finally, please recognize that this is free software that represents
+the work of many people.
+The section of ``<A HREF=acknowledge.html>Acknowledgements</A>''
+lists those people that have made significant contributions.
+
+<!--FOOTER-->
+
+<P>
+<TABLE BORDER=0 WIDTH=100%>
+<TR>
+<TD><A HREF="modems.html"><IMG SRC="icons/next.gif">
+Which modems can be used with HylaFAX</A>.<TD>
+<TD><A HREF="toc.html"><IMG SRC="icons/back.gif" ALT="(TOC)">
+HylaFAX table of contents</A></TD>
+</TR>
+</TABLE>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

@@ -1,0 +1,2287 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
+.TH CONFIG 4F "August 28, 1996"
+.SH NAME
+config \- \*(Fx configuration database
+.SH DESCRIPTION
+\*(Fx uses a configuration file for the central queueing
+agent and for each facsimile modem attached
+to a machine.
+These files contain information about the modems and about how
+the \*(Fx server processes that service these modem should operate.
+Configuration files are located in the
+.B etc
+subdirectory.
+The configuration file for the 
+.IR faxq (1M)
+program is named
+.BR config .
+The per-modem configuration files used by the
+.IR faxgetty (1M),
+.IR faxsend (1M),
+and
+.IR pagesend (1M)
+programs have names of the form
+.BI config. devid ,
+where
+.I devid
+is an identifier derived from the name of
+the modem's device file; for example
+.I ttym2
+for
+.IR /dev/ttym2 ,
+.I term_10
+for
+.IR /dev/term/10 .
+.PP
+Configuration files have a simple format and are entirely
+.SM ASCII.
+A configuration parameter is of the form
+.sp .5
+.ti +0.5i
+\fBtag\fP: \fIvalue\fP
+.br
+.sp .5
+where a \fItag\fP identifies a parameter and a \fIvalue\fP
+is either a string, number, or boolean value.
+Comments are introduced by the ``#'' character
+and extend to the end of the line.
+String values start at the first non-blank character
+after the ``:'' and continue to the first non-whitespace
+character or, if whitespace is to be included, may be
+enclosed in quote marks (``"'').
+String values enclosed in quote marks may also use the
+standard C programming conventions for specifying escape
+codes; e.g. ``\en'' for a newline character and ``\exxx''
+for an octal value.
+Numeric values are specified according to the C programming
+conventions (leading ``0x'' for hex, leading ``0'' for octal, otherwise
+decimal), except for a few parameters, such as
+.BR RecvFileMode ,
+whose value is interpreted strictly as an octal number
+and
+.BR PageChopThreshold
+whose value is interpreted strictly as a floating point number.
+Boolean values are case insensitive.
+For a true value, either ``Yes'' or ``On'' should
+be used.
+For a false value, use ``No'' or ``Off''.
+.PP
+The following table itemizes the tags and the expected type
+of their value.
+The first part lists items specific to the operation of each
+server, while the second part has items related to the
+servicing of the modem.
+Parameters marked with a \(dg are used only
+by the \*(Fx scheduler process and should appear only in the file named
+.BR config .
+Parameters marked with a \(dd are used by both the scheduler and
+the per-device applications and so should appear in all appropriate
+configuration files (i.e. 
+.B config
+and any per-device files that make sense).
+Parameters not otherwise marked should appear only in per-device
+configuration files.
+More detailed information about each item is given following the table.
+.sp .5
+.nf
+.ta \w'ModemAnswerResponseTimeout    'u +\w'integer    'u +\w'\s-1AT+FCLASS=2.0\s+1    'u
+\fBTag	Type	Default	Description\fP
+AdaptiveAnswer	boolean	\s-1No\s+1	enable adaptive answer of inbound calls
+AnswerRotary	string	\s-1Any\s+1	alternatives for answering calls
+AnswerBias	integer	\-	bias to apply to successful rotary answer 
+AreaCode\(dd	string	\-	local area code
+CIDName	string	\-	Caller \s-1ID\s+1 name pattern string
+CIDNumber	string	\-	Caller \s-1ID\s+1 number pattern string
+ClocalAsRoot	boolean	\s-1No\s+1	set \s-1CLOCAL\s+1 using root \s-1UID\s+1
+ContCoverCmd\(dg	string	\s-1bin/mkcover\s+1	continuation cover page generation script
+ContCoverPage\(dg	string	\-	continuation cover page template filename
+CountryCode\(dd	string	\-	local country code
+DestControls\(dg	string	\-	per-destination controls file
+DeviceMode	octal	\s-10600\s+1	protection mode to use for modem device
+DialStringRules\(dd	string	\-	dial string rules file
+FAXNumber	string	\-	facsimile modem phone number
+FaxRcvdCmd	string	\s-1bin/faxrcvd\s+1	notification script for received facsimile
+GettyArgs	string	\-	arguments passed to getty program
+InternationalPrefix\(dd	string	\-	dialing prefix for international calls
+JobReqBusy	integer	\s-1180\s+1	requeue interval for \s-1BUSY\s+1 dial result
+JobReqDataConn	integer	\s-1300\s+1	requeue interval for data connection dial result
+JobReqNoAnswer	integer	\s-1300\s+1	requeue interval for \s-1NO ANSWER\s+1 dial result
+JobReqNoCarrier	integer	\s-1300\s+1	requeue interval for \s-1NO CARRIER\s+1 dial result
+JobReqNoFCon	integer	\s-1300\s+1	requeue interval for carrier without \s-1+FCON\s+1 dial result
+JobReqOther\(dd	integer	\s-1300\s+1	requeue interval for ``other'' problems
+JobReqProto	integer	\s-160\s+1	requeue interval after fax protocol error
+LockDataCalls	boolean	\s-1Yes\s+1	lock modem for the duration of an inbound data call
+LockVoiceCalls	boolean	\s-1Yes\s+1	lock modem for the duration of an inbound voice call
+LogFacility\(dd	string	\s-1daemon\s+1	\fIsyslog\fP facility name for ServerTracing messages
+LogFileMode	octal	\s-10600\s+1	protection mode to use for session log files
+LocalIdentifier	string	\-	local station identification string
+LongDistancePrefix	string	\-	dialing prefix for long distance calls
+MaxConcurrentJobs\(dg	integer	\s-11\s+1	max concurrent jobs to process for a destination
+MaxConsecutiveBadLines	integer	\s-15\s+1	max consecutive bad rows for \s-1OK\s+1 page quality
+MaxDials\(dg	integer	\s-112\s+1	max phone calls to make to transmit a job
+MaxRecvPages	integer	\s-1\fIunlimited\fP\s+1	max pages to permit in a receive
+MaxSendPages\(dg	integer	\s-1\fIunlimited\fP\s+1	max pages to permit in a send
+MaxSetupAttempts	integer	\s-12\s+1	max attempts to initialize a modem
+MaxTries\(dg	integer	\s-13\s+1	max attempts to transmit a job
+ModemClass\(dg	string	\-	define a name for a set of modems
+ModemPriority	integer	255	scheduling priority for outbound jobs
+ModemReadyState	string	\s-1R\s+1	``ready state'' sent by \fIfaxgetty\fP
+NoCarrierRetrys	integer	\s-11\s+1	number of times to retry dialing on ``\s-2NO CARRIER\s0''
+NotifyCmd\(dd	string	\s-1bin/notify\s+1	user notification command script
+PageChop\(dg	string	\s-1last\s+1	control automatic truncation of trailing whitespace
+PageChopThreshold\(dg	float	\s-13.0\s+1	whitespace truncation threshold (inches)
+PCL2FaxCmd\(dg	string	\s-1bin/pcl2fax\s+1	PCL \s-1RIP\s+1 command script
+PercentGoodLines	integer	\s-195\s+1	percentage of good rows for \s-1OK\s+1 page quality
+PollLockWait\(dd	integer	\s-130\s+1	polling interval when in ``lock wait'' state (secs)
+PollModemWait	integer	\s-130\s+1	polling interval when in ``modem wait'' state (secs)
+PollRcvdCmd	string	\s-1bin/pollrcvd\s+1	delivery script for facsimile received by polling
+PostScriptTimeout\(dg	integer	\s-1300\s+1	timeout on \*(Ps interpreter runs (secs)
+PS2FaxCmd\(dg	string	\s-1bin/ps2fax\s+1	\*(Ps \s-1RIP\s+1 command script
+QualifyCID	string	\-	file of Caller-ID patterns for checking inbound calls
+QualifyTSI	string	\-	file of \s-1TSI\s+1 patterns for qualifying senders
+RecvDataFormat	string	\s-1adaptive\s+1	format for received facsimile data
+RecvFileMode	octal	\s-10600\s+1	protection mode to use for received facsimile files
+RingData	string	\-	distinctive ring data call identifier
+RingFax	string	\-	distinctive ring fax call identifier
+RingsBeforeAnswer	integer	\s-10\s+1	rings to wait before answering phone
+RingVoice	string	\-	distinctive ring voice call identifier
+SendFaxCmd\(dg	string	\s-1bin/faxsend\s+1	fax transmit command script
+SendPageCmd\(dg	string	\s-1bin/pagesend\s+1	pager transmit command script
+SendUUCPCmd\(dg	string	\s-1bin/uucpsend\s+1	\s-1UUCP\s+1 transmit command script
+ServerTracing\(dd	integer	\s-11\s+1	non-session server tracing
+SessionTracing\(dd	integer	\s-11\s+1	send and receive session tracing
+SpeakerVolume	string	\s-1Quiet\s+1	volume level for modem speaker
+TagLineFont	string	\-	tag line font filename
+TagLineFormat	string	\s-1\fIsee below\fP\s+1	tag line format string
+TIFF2FaxCmd\(dg	string	\s-1bin/tiff2fax\s+1	\s-1TIFF\s+1 converter command script
+TimeOfDay\(dg	string	\s-1Any\s+1	default time-of-day restrictions
+Use2D\(dg	boolean	\s-1Yes\s+1	restrict/permit use of 2D-encoded fax data
+UUCPLockMode\(dd	octal	\s-10600\s+1	protection mode for \s-1UUCP\s+1 lock files
+UUCPLockDir\(dd	string	\s-1\fIsee below\fP\s+1	\s-1UUCP\s+1 lockfile directory
+UUCPLockTimeout\(dd	integer	\s-130\s+1	time before removing stale \s-1UUCP\s+1 lockfile
+UUCPLockType\(dd	string	\s-1\fIsee below\fP\s+1	\s-1UUCP\s+1 lockfile type
+VGettyArgs	string	\-	arguments passed to voice getty program
+WedgedCmd\(dg	string	\s-1bin/wedged\s+1	command to run when modem is wedged
+.sp .5
+ModemAnswerCmd	string	\s-1ATA\s+1	command for answering phone
+ModemAnswerDataBeginCmd	string	\-	command for start of answered data call
+ModemAnswerDataCmd	string	\s-1ATA\s+1	command for answering data call
+ModemAnswerFaxBeginCmd	string	\-	command for start of answered fax call
+ModemAnswerFaxCmd	string	\s-1ATA\s+1	command for answering fax call
+ModemAnswerResponseTimeout	integer	\s-1180000\s+1	answer command timeout (ms)
+ModemAnswerVoiceBeginCmd	string	\-	command for start of answered voice call
+ModemAnswerVoiceCmd	string	\s-1ATA\s+1	command for answering voice call
+ModemATCmdDelay	integer	\s-10\s+1	delay before sending modem an AT cmd (ms)
+ModemBaudRateDelay	integer	\s-10\s+1	delay (ms) after setting baud rate
+ModemClassQueryCmd	string	\s-1AT+FCLASS=?\s+1	command for querying modem services
+ModemCommaPauseTimeCmd	string	\s-1ATS8=2\s+1	command for setting time to pause for ``,'' in dialing string
+ModemDialCmd	string	\s-1ATDT%s\s+1	command for dialing (%s for number to dial)
+ModemDialResponseTimeout	integer	\s-1180000\s+1	dialing command timeout (ms)
+ModemEchoOffCmd	string	\s-1ATE0\s+1	command for disabling command echo
+ModemFlowControl	string	\s-1None\s+1	\s-1DTE-DCE\s+1 flow control scheme
+ModemFrameFillOrder	string	\s-1LSB2MSB\s+1	bit order for \s-1HDLC\s+1 frames
+ModemHardFlowCmd	string	\-	command for setting hardware flow control between \s-1DTE\s+1 and \s-1DCE\s+1
+ModemMinSpeed	string	\s-12400\s+1	minimum acceptable transmit speed
+ModemMfrQueryCmd	string	\-	command for querying modem manufacturer
+ModemModelQueryCmd	string	\-	command for querying modem model
+ModemNoAutoAnswerCmd	string	\s-1ATS0=0\s+1	command for disabling auto-answer
+ModemNoFlowCmd	string	\-	command for disabling hardware flow control between \s-1DTE\s+1 and \s-1DCE\s+1
+ModemOnHookCmd	string	\s-1ATH0\s+1	command for placing phone ``on hook''
+ModemPageDoneTimeout	integer	\s-1180000\s+1	page send/receive timeout (ms)
+ModemPageStartTimeout	integer	\s-1180000\s+1	page send/receive timeout (ms)
+ModemRate	integer	\s-119200\s+1	baud rate to use for \s-1DCE-DTE\s+1 communication
+ModemRecvFillOrder	string	\s-1LSB2MSB\s+1	bit order for received facsimile data
+ModemResetCmds	string	\-	additional commands when resetting modem
+ModemResetDelay	integer	\s-12600\s+1	delay (ms) after sending modem reset commands
+ModemResultCodesCmd	string	\s-1ATQ0\s+1	command for enabling result codes
+ModemRevQueryCmd	string	\s-1\fIsee below\fP\s+1	command for querying modem firmware revision
+ModemSendBeginCmd	string	\-	command to send on establishing carrier
+ModemSendFillOrder	string	\s-1LSB2MSB\s+1	bit order for sending facsimile data
+ModemSetVolumeCmd	string	\s-1\fIsee below\fP\s+1	commands for setting modem speaker volume level
+ModemSetupAACmd	string	\-	command for setting up adaptive answer
+ModemSetupDCDCmd	string	\-	command for setting up \s-1DCD\s+1 handling
+ModemSetupDTRCmd	string	\-	command for setting up \s-1DTR\s+1 handling
+ModemSoftFlowCmd	string	\-	command for setting software flow control between \s-1DTE\s+1 and \s-1DCE\s+1
+ModemSoftResetCmd	string	\s-1ATZ\s+1	command for doing a soft reset
+ModemType	string	\-	modem type
+ModemVerboseResultsCmd	string	\s-1ATV1\s+1	command for enabling verbose result codes
+ModemWaitForConnect	boolean	\s-1No\s+1	force server to wait for ``\s-1CONNECT\s+1'' response on answer
+ModemWaitTimeCmd	string	\s-1ATS7=60\s+1	command for setting time to wait for carrier when dialing
+.sp .5
+FaxT1Timer	integer	\s-135000\s+1	\s-1CCITT T.30 T1\s+1 timer (ms)
+FaxT2Timer	integer	\s-17000\s+1	\s-1CCITT T.30 T2\s+1 timer (ms)
+FaxT4Timer	integer	\s-13100\s+1	\s-1CCITT T.30 T4\s+1 timer (ms)
+.sp .5
+Class0Cmd	string	\s-1AT+FCLASS=0\s+1	Class 0: command to enter class 0
+.sp .5
+Class1Cmd	string	\s-1AT+FCLASS=1\s+1	Class 1: command to enter class 1
+Class1HFLOCmd	string	\-	Class 1: command to set hardware flow control
+Class1FrameOverhead	integer	\s-14\s+1	Class 1: extra bytes in a received \s-1HDLC\s+1 frame
+Class1NFLOCmd	string	\-	Class 1: command to set no flow control
+Class1RecvAbortOK	integer	\s-1100\s+1	Class 1: max wait (ms) for ``\s-1OK\s+1'' after recv abort
+Class1RecvIdentTimer	integer	\s-135000\s+1	Class 1: max wait (ms) for initial ident frame
+Class1SFLOCmd	string	\-	Class 1: command to set software flow control
+Class1TCFMaxNonZero	integer	\s-110\s+1	Class 1: max% of non-zero data in good \s-1TCF\s+1
+Class1TCFMinRun	integer	\s-11000\s+1	Class 1: minimum zero run in good \s-1TCF\s+1
+Class1TCFRecvTimeout	integer	\s-14500\s+1	Class 1: max wait (ms) for \s-1TCF\s+1
+Class1TCFResponseDelay	integer	\s-175\s+1	Class 1: delay between \s-1TCF\s+1 and ack/nak
+Class1SendPPMDelay	integer	\s-175\s+1	Class 1: delay before sending post-page message
+Class1SendTCFDelay	integer	\s-175\s+1	Class 1: delay between sending \s-1DCS\s+1 and \s-1TCF\s+1
+Class1TrainingRecovery	integer	\s-11500\s+1	Class 1: delay after failed training
+.sp .5
+Class2Cmd	string	\s-1AT+FCLASS=2\s+1	Class 2: command to enter class 2/2.0
+Class2AbortCmd	string	\s-1AT+FK\s+1	Class 2: command to abort active session
+Class2BORCmd	string	\s-1AT+FBOR=0\s+1	Class 2: command to setup bit order
+Class2BUGCmd	string	\s-1AT+FBUG=1\s+1	Class 2: command to enable \s-1HDLC\s+1 frame tracing
+Class2CIGCmd	string	\s-1AT+FCIG\s+1	Class 2: command to set polling identifier
+Class2CRCmd	string	\s-1AT+FCR=1\s+1	Class 2: command to enable receive capability
+Class2CQCmd	string	\-	Class 2: command to setup copy quality parameters
+Class2CQQueryCmd	string	\s-1AT+FCQ=?\s+1	Class 2: command to query modem copy quality capabilities
+Class2DCCCmd	string	\s-1AT+FDCC\s+1	Class 2: command to set modem capabilities
+Class2DCCQueryCmd	string	\s-1AT+FDCC=?\s+1	Class 2: command to query modem capabilities
+Class2DISCmd	string	\s-1AT+FDIS\s+1	Class 2: command to set session parameters
+Class2DDISCmd	string	\-	Class 2: command to set session parameters before dialing
+Class2HFLOCmd	string	\-	Class 2: command to set hardware flow control
+Class2LIDCmd	string	\s-1AT+FLID\s+1	Class 2: command to set local identifier string
+Class2MINSPCmd	string	\s-1AT+FMINSP\s+1	Class 2: command to set minimum transmit speed
+Class2NFLOCmd	string	\-	Class 2: command to set no flow control
+Class2PHCTOCmd	string	\s-1AT+FPHCTO=30\s+1	Class 2: command to set Phase C timeout parameter
+Class2PTSCmd	string	\s-1AT+FPTS\s+1	Class 2: command to set received page status
+Class2RecvDataTrigger	string	\s-1``\e21''\s+1	Class 2: character to send to trigger recv
+Class2RELCmd	string	\-	Class 2: command to enable byte-aligned \s-1EOL\s+1 codes
+Class2SendRTC	boolean	\s-1No\s+1	Class 2: append \s-1RTC\s+1 to page data on transmit
+Class2SFLOCmd	string	\-	Class 2: command to set software flow control
+Class2SPLCmd	string	\s-1AT+FSPL\s+1	Class 2: command to set polling request
+Class2TBCCmd	string	\s-1AT+FTBC=0\s+1	Class 2: command to enable stream mode
+Class2XmitWaitForXON	boolean	\s-1Yes\s+1	Class 2: wait for \s-1XON\s+1 before sending facsimile data
+.sp .5
+Class2Cmd	string	\s-1AT+FCLASS=2.0\s+1	Class 2.0: command to enter class 2/2.0
+Class2AbortCmd	string	\s-1AT+FKS\s+1	Class 2.0: command to abort active session
+Class2BORCmd	string	\s-1AT+FBO=0\s+1	Class 2.0: command to setup bit order
+Class2BUGCmd	string	\s-1AT+FBU=1\s+1	Class 2.0: command to enable \s-1HDLC\s+1 frame tracing
+Class2CIGCmd	string	\s-1AT+FPI\s+1	Class 2.0: command to set polling identifier
+Class2CRCmd	string	\s-1AT+FCR=1\s+1	Class 2.0: command to enable receive capability
+Class2CQCmd	string	\-	Class 2.0: command to setup copy quality parameters
+Class2DCCCmd	string	\s-1AT+FCC\s+1	Class 2.0: command to set modem capabilities
+Class2DCCQueryCmd	string	\s-1AT+FCC=?\s+1	Class 2.0: command to query modem capabilities
+Class2DISCmd	string	\s-1AT+FIS\s+1	Class 2.0: command to set session parameters
+Class2HFLOCmd	string	\s-1AT+FLO=2\s+1	Class 2.0: command to set hardware flow control
+Class2LIDCmd	string	\s-1AT+FLI\s+1	Class 2.0: command to set local identifier string
+Class2MINSPCmd	string	\s-1AT+FMS\s+1	Class 2.0: command to set minimum transmit speed
+Class2NFLOCmd	string	\s-1AT+FLO=0\s+1	Class 2.0: command to set no flow control
+Class2NRCmd	string	\s-1AT+FNR=1,1,1,1\s+1	Class 2.0: command to set negotiation message reporting
+Class2PHCTOCmd	string	\s-1AT+FCT=30\s+1	Class 2.0: command to set Phase C timeout parameter
+Class2PIECmd	string	\s-1AT+FIE=0\s+1	Class 2.0: command to set procedure interrupt handling
+Class2PTSCmd	string	\s-1AT+FPS\s+1	Class 2.0: command to set received page status
+Class2RecvDataTrigger	string	\s-1``\e22''\s+1	Class 2.0: character to send to trigger recv
+Class2RELCmd	string	\-	Class 2.0: command to enable byte-aligned \s-1EOL\s+1 codes
+Class2SFLOCmd	string	\s-1AT+FLO=1\s+1	Class 2.0: command to set software flow control
+Class2SPLCmd	string	\s-1AT+FSP\s+1	Class 2.0: command to set polling request
+Class2TBCCmd	string	\s-1AT+FPP=0\s+1	Class 2.0: command to enable stream mode
+.sp .5
+PagerSetupCmds	string	\-	commands for setting up modem for a pager call
+PagerMaxMsgLength	integer	\s-1128\s+1	max length of a text message 
+.sp .5
+IXOService	string	\s-1``PG''\s+1	IXO: service identification string
+IXODeviceID	string	\s-1``1''\s+1	IXO: device identification string
+IXOMaxUnknown	integer	\s-13\s+1	IXO and UCP: max unknown responses before abort
+IXOIDProbe	integer	\s-12\s+1	IXO: time between sending \er during ID sequence (secs)
+IXOIDTimeout	integer	\s-120\s+1	IXO: max time to wait for ID= response (secs)
+IXOLoginRetries	integer	\s-13\s+1	IXO: max attempts to login
+IXOLoginTimeout	integer	\s-115\s+1	IXO: max time to complete login (secs)
+IXOGATimeout	integer	\s-130\s+1	IXO: max time to wait for Go-Ahead response (secs)
+IXOXmitRetries	integer	\s-13\s+1	IXO and UCP: max retries to send text msg block
+IXOXmitTimeout	integer	\s-115\s+1	IXO and UCP: max time to transmit text msg block
+IXOAckTimeout	integer	\s-130\s+1	IXO: max time to wait for msg block ack (secs)
+.fi
+.SH "SERVER-ORIENTED CONFIGURATION PARAMETERS"
+.PP
+These configuration parameters affect the general
+operation of the fax server.
+.TP
+.B AdaptiveAnswer
+Control whether or not an adaptive answering
+strategy is used whereby an incoming call is
+answered in multiple ways according to the list specified in the
+.B AnswerRotary
+parameter.
+For example, if adaptive answering is enabled and
+.B AnswerRotary
+specifies ``fax data'', then an incoming call will
+first be answered as fax using
+.B ModemAnswerFaxCmd
+and then, if that fails, as data using
+.BR ModemAnswerDataCmd .
+If the adaptive answer strategy is not enabled, then calls
+are answered using the appropriate
+.B ModemAnswer*Cmd
+parameter (normally
+.B ModemAnswerCmd
+for unattended operation).
+Note that the adaptive answer strategy depends on many factors
+that limit its usefulness.
+When calls are answered first as fax,
+it typically only works with a Class 1 modem because it is
+important that the sequence of operations related to answering
+as fax be completed in a short enough time that a subsequent
+answer for data be done before the caller times out and hangs
+up the telephone
+(for this reason
+.B Class1RecvIdentTimer
+should be set to a value that is shorter than
+.BR FaxT1Timer .)
+Also, note that it is sometimes necessary to arrange that the phone be
+placed on-hook between successive answers; this can typically be
+done by inserting the appropriate command at the start of the
+second and subsequent
+.BR ModemAnswer*Cmd s.
+.TP
+.B AnswerRotary
+The sequence of answering techniques the server should
+``rotate through'' when answer incoming calls.
+Answering techniques are:
+.sp .5
+.ta \w'\fBName\fP    'u
+.nf
+\fBName	Description\fP
+fax	answer a fax call
+data	answer a data call
+voice	answer a voice call
+extern	use the \fIvgetty\fP application to answer a call
+any	answer a call of any/unknown type
+.fi
+.sp .5
+When a call is not answered succesfully, the server
+advances the rotary to the next specified answering
+technique.
+If
+.B AdaptiveAnswer
+is enabled, the server will try all the answering techniques for
+each incoming call.
+Otherwise, the rotary is advanced
+.I between
+unsuccessful phone calls.
+For example, if
+.B AdaptiveAnswer
+is disabled and
+.B AnswerRotary
+is ``fax data'',
+then the calls will initially be answered as fax until
+the first call is received that does not appear to be
+from a fax machine; after that calls will be answered
+as if they were from a data modem until the next unsuccessful
+call; after which they will one again be answered as fax. 
+Only the first three techniques listed are used; any additional
+ones are (silently) ignored.
+See also
+.BR AnswerBias .
+.TP
+.B AnswerBias
+The index into the
+.B AnswerRotary
+list that the server should rotate the list to after
+each successful incoming phone call.
+List indices are numbered starting at zero.
+For example, if
+.B AnswerRotary
+is ``fax data'' and
+.B AnswerBias
+is 1, then after each successful inbound call, the
+next call will be answered as data.
+.TP
+.B AreaCode\(dd
+The local area code in which the facsimile modem resides.
+This value is passed to the dial string rules that are
+used, for example,
+to formulate canonical phone numbers for dialing (see
+.B DialStringRules
+below.)
+.TP
+.B CIDName
+A string that identifies the caller's identity in any Caller-ID
+status messages.
+The specified string is compared against any
+unrecognized status messages received from the modem before the
+phone is placed off-hook.
+If there is a match, then the remainder
+of the message is returned as the ``caller name''.
+For example, for the ZyXEL U-1496 this parameter would be set to
+``\s-1CALLER NAME:\s+1 '' (note the trailing space).
+See also
+.B CIDNumber
+and
+.BR QualifyCID .
+.TP
+.B CIDNumber
+A string that identifies the caller's phone number in any Caller-ID
+status messages.
+The specified string is compared against any
+unrecognized status messages received from the modem before the
+phone is placed off-hook.
+If there is a match, then the remainder
+of the message is returned as the phone number of the caller.
+For example, for the ZyXEL U-1496 this parameter would be set to
+``\s-1CALLER NUMBER:\s+1 ''.
+See also
+.B CIDName
+and
+.BR QualifyCID .
+.TP
+.B ClocalAsRoot
+Control whether operations that set the
+.SM CLOCAL
+bit on the modem device special file are done with the effective
+user-ID set to the super-user or the ``fax'' user.
+By default such operations are done as the fax user, except under
+.SM IRIX
+where they are done as the super-user
+(because 
+.SM IRIX
+disallows manipulation of
+.SM CLOCAL
+by anyone but the super-user).
+.TP
+.B ContCoverCmd\(dg
+The command to invoke to generate a continuation cover page; see
+.B ContCoverPage
+and
+.IR mkcover (1M).
+.TP
+.B ContCoverPage\(dg
+A template file to use in creating
+.IR "continuation cover pages" .
+If this parameter is non-null, then the server will pass the
+filename to the command specified by
+.B ContCoverCmd
+to generate cover pages for outbound jobs that are
+continued after protocol errors.
+These cover pages identify the receiver and indicate 
+that the document is a continued transmission.
+If this parameter is not specified or is null, then the server
+will not generate continuation cover pages.
+The specified pathname must be relative to the top of the fax server's
+spooling area.
+.TP
+.B CountryCode\(dd
+The local country code in which the facsimile modem resides.
+As for
+.BR AreaCode ,
+this value is passed to the dial string rules for use in
+formulating canonical phone numbers for dialing (among
+other things.)
+.TP
+.B DestControls\(dg
+An optional file containing rules for controlling
+parameters on a per-destination basis; see
+.IR destctrls (4F)
+The following parameters may be controlled with this mechanism:
+.BR MaxConcurrentJobs ,
+.BR MaxDials ,
+.BR MaxSendPages ,
+.BR MaxTries ,
+.BR RejectNotice ,
+.BR SessionTracing ,
+and
+.BR TimeOfDay .
+If no
+.B DestControls
+parameter is specified, or if the controls file does not
+specify 
+.I default
+values for these parameters, then any settings in the
+.B config
+file used by
+.IR faxq (1M)
+are used for default settings.
+Note that
+.I faxq
+automatically rereads the contents of a
+.B DestControls
+file if it is modified while the server is running.
+.TP
+.B DeviceMode
+The file protection mode that the server should set for the
+modem device file.
+Note that this value is given in octal.
+The default value of 0600 implies that only the
+facsimile user (usually 
+.IR uucp )
+can access the modem.
+See also
+.IR chmod (2).
+.TP
+.B DialStringRules\(dd
+The pathname of the file that holds the rules for processing
+user-specified dial strings; c.f.
+.IR dialrules (4F).
+The specified pathname must be relative to the top of the fax server's
+spooling area; e.g.
+.BR etc/dialrules .
+.TP
+.B FAXNumber
+The phone number associated with the facsimile modem.
+This string is used to generate the
+Transmitter Subscriber Identification (\c
+.SM TSI\c
+) and Caller Subscriber Identification (\c
+.SM CSI\c
+) information passed to remote machines\(emunless the
+.B LocalIdentifier
+parameter is explicitly set.
+The
+.B FAXNumber
+is also used to name the session log file where information
+for incoming phone calls is recorded; see
+.IR log (4F).
+If this phone number is not a fully qualified number
+the values of
+.B AreaCode
+and
+.B CountryCode
+are used to generate the transmitted
+.SM CSI
+and
+.SM TSI.
+.TP
+.B InternationalPrefix\(dd
+The string to use to place an international phone call.
+In the United States, this is ``011''.
+This string is passed to the dial string rules.
+.TP
+.B JobReqBusy
+The delay in seconds to wait before retrying a job whose
+dialing attempt failed with a ``\s-1BUSY\s+1'' status result.
+.TP
+.B JobReqDataConn
+The delay in seconds to wait before retrying a facsimile job whose
+dialing attempt failed because a data modem answered the phone.
+.TP
+.B JobReqNoAnswer
+The delay in seconds to wait before retrying a job whose
+dialing attempt failed with a ``\s-1NO ANSWER\s+1'' status result.
+.TP
+.B JobReqNoCarrier
+The delay in seconds to wait before retrying a job whose
+dialing attempt failed with a ``\s-1NO CARRIER\s+1'' status result.
+.TP
+.B JobReqNoFCon
+The delay in seconds to wait before retrying a facsimile job whose
+dialing attempt failed because the initial facsimile protocol
+handshake failed (i.e. no ``\s-1+FCON:\s+1'' result was received
+from a Class 2/2.0 modem).
+.TP
+.B JobReqOther\(dd
+The delay in seconds to wait before retrying a job that
+failed for a reason not already covered by one of the
+.B Job*
+parameters.
+.TP
+.B JobReqProto
+The delay in seconds to wait before retrying a facsimile job that
+failed because of a fax protocol error.
+.TP
+.B GettyArgs
+A string that indicates whether or not the server should invoke
+the
+.IR getty (1M)
+program in response to an incoming call from a data modem.
+If the string value is not null, then it is interpreted
+as a set of arguments to pass to the getty program.
+Before supplying the arguments, the string is first scanned
+for ``%''-escape sequences: any appearance of ``%l'' is replaced
+with the tty name and any appearance of ``%s'' is replaced with
+the serial port speed (in decimal).
+The ``%'' character can be specified with ``%%''.
+If the
+.B GettyArgs
+parameter is not specified in the configuration file or if
+the string value is null, then data connections will be rejected.
+Note that in addition to the specified command line arguments, the
+.I getty
+program is invoked with its standard input, output, and error
+descriptors directed to the controlling tty device.
+.TP
+.B LocalIdentifier
+The local station identification string to use when transmitting
+.SM TSI
+and
+.SM CSI
+strings (see 
+.B FAXNumber
+above).
+NB: while this string may contain any printable 
+.SM ASCII
+characters; beware that
+.SM "CCITT T.30"
+specifies a restricted character set and some fax modems and machines
+may reject or not display  non-conforming strings.
+If the local identifier is not specified, a canonical form of the
+.B FAXNumber
+is used instead.
+.TP
+.B LockDataCalls
+Hold the
+.SM UUCP
+lockfile during the time an inbound data call is processed by the
+external getty program.
+If this is disabled then the lockfile will be removed just before
+the getty program is invoked.
+Note however that doing this introduces a race condition whereby
+an outbound program may sneak in and take control of the modem
+after the inbound call has been accepted, but before the getty
+program has started up and installed it's own lockfile.
+.TP
+.B LockVoiceCalls
+Hold the
+.SM UUCP
+lockfile during the time an inbound data call is processed by the
+external voice getty program.
+If this is disabled then the lockfile will be removed just before
+the voice getty program is invoked.
+Note however that doing this introduces a race condition whereby
+an outbound program may sneak in and take control of the modem
+after the inbound call has been accepted, but before the voice getty
+program has started up and installed it's own lockfile.
+.TP
+.B LogFacility\(dd
+The symbolic name for the 
+.IR syslog (3)
+facility to use when logging error messages and
+informational/debugging messages requested through the
+.B ServerTracing
+parameter.
+The list of facility names is found in the system include file
+.BR <syslog.h> ;
+comparisons are case-insensitive.
+.TP
+.B LogFileMode
+The file protection mode that should be used when
+creating files to hold session logs.
+Note that this value is given in octal.
+The default value of 0600 implies that the log files are not
+generally accessible, which is important if sensitive information
+such as calling card access codes are logged.
+If log files are to be publicly accessible, this
+value may be set, for example, to 0644.
+See also
+.IR chmod (2).
+.TP
+.B LongDistancePrefix\(dd
+The string to use to place a long distance phone call.
+In the United States, this is ``1''.
+.TP
+.B MaxConcurrentJobs\(dg
+The default value to use for the maximum number of jobs for the
+same destination that are processed concurrently.
+Note that each job is processed with a separate phone call;
+job batching is not currently supported.
+Thus this parameter defines the maximum number of concurrent phone calls
+to the same destination.
+This value may be overridden by rules in the
+.B DestControls
+file.
+.TP
+.B MaxConsecutiveBadLines
+The maximum number of consecutive erroneous rows of image data that
+the server will receive before it deems a page to have unacceptable
+copy quality.
+Setting this parameter to zero causes the server to not check
+the quality of received facsimile.
+See also
+.BR PercentGoodLines .
+.TP
+.B MaxDials\(dg
+The default value for the maximum number of times the server will
+place a call for an outbound job.
+This value may be overridden by rules in the
+.B DestControls
+file.
+See also
+.BR MaxTries .
+.TP
+.B MaxRecvPages
+The maximum number of pages the server will accept in a received
+facsimile before it aborts the session.
+.TP
+.B MaxSendPages\(dg
+The default value for the maximum number of pages the server will
+permit in a transmitted facsimile.
+Outbound jobs that exceed this limit are rejected.
+This value may be overridden by rules in the
+.B DestControls
+file.
+.TP
+.B MaxSetupAttempts
+The maximum number of times a \*(Fx server program will attempt
+to initialize a modem before considering it ``\fIwedged\fP''.
+.TP
+.B MaxTries\(dg
+The default value for the maximum number of times the server will
+attempt to communicate with a remote site.
+Note that for a call to be counted against this limit, carrier must
+be established;
+this is in contrast to the value of
+.B MaxDials
+which limits the number of calls that will be placed on behalf
+of a job.
+This value may be overridden by rules in the
+.B DestControls
+file.
+See also
+.BR MaxDials .
+.TP
+.B ModemClass\(dg
+Define a logical name for a set of modem devices.
+This parameter can be used to define a name that clients can use
+to refer to a collection of modems.
+The syntax is ``\fI<name>\fP\:\fI<regex>\fP'' where
+.I <name>
+is the name for the class and 
+.I <regex>
+is a regular expression that 
+.IR faxq (1M)
+matches against known modems.
+Thus for example, the default modem to use for a job,
+.BR any ,
+is defined as ``any:.*''.
+This parameter may be specified multiple times to define multiple
+modem classes.
+Modem classes may overlap.
+The actual set of modems in a modem class that are considered
+for use may vary based on which modems are believed to be ready for use.
+.TP
+.B ModemPriority
+The scheduling priority to use for a modem.
+Priority values are in the range 0 to 255 with greater values signifying
+higher (more desirable) priority.
+The \*(Fx scheduler process assigns the highest
+priority modem that is ready for use when scheduling an outbound job.
+.TP
+.B NoCarrierRetrys
+The number of times to redial a phone number after receiving
+a ``\s-1NO CARRIER\s+1'' result code.
+In normal operation the fax server will treat this result code
+to mean that a facsimile modem/machine did not answer the
+phone and reject the transmit job.
+This is done to avoid repeatedly dialing wrong phone numbers
+and depends on the modem distinguishing between
+no carrier and no answer.
+However, some modems are not capable of reliably
+distinguishing between no carrier and no answer, or when instructed
+to do so do not identify a busy signal correctly.
+For these modems one may find it necessary to increase the
+value of this parameter to compensate.
+It is strongly recommended, however, that this value
+not be set to a large number.
+.TP
+.B ModemReadyState
+Define the
+.I state
+transmitted to the \*(Fx scheduler process each time a modem
+is made ready by a
+.I faxgetty
+process.
+State is one of: ``R'' (ready for use), ``B'' (busy), or ``D'' (down).
+The modem state can be used to control whether or not modems are assigned
+to outbound jobs.
+A modem's state is initially set to ``R'' (ready).
+Modem state can be dynamically changed with the
+.IR faxstate (1M)
+program or by setting this configuration parameter with the
+.IR faxconfig (1M)
+program.
+.TP
+.B NotifyCmd\(dd
+The command to invoke to notify a client of a job status change; see
+.IR notify (1M).
+.TP
+.B PageChop\(dg
+Whether or not to automatically truncate trailing whitespace on
+pages of outbound facsimile (when possible).
+If page chopping is enabled, then pages with at least
+.B PageChopThreshold
+trailing whitespace on a page will be transmitted as a ``short page''
+if the receiver is capable of accepting variable-length pages.
+The possible values are: ``last'' to enable chopping of the last
+page of each document, ``all'' to enable chopping of all pages, or
+``none'' to disable page chopping.
+.TP
+.B PageChopThreshold\(dg
+The minimum amount of trailing whitespace that must be present
+on a page before page chopping will be attempted; see 
+.BR PageChop .
+Note that this value is specified in inches.
+.TP
+.B PCL2FaxCmd\(dg
+The command to invoke to convert a HP-PCL document submitted
+for transmission to
+.SM TIFF/F,
+suitable for transmission (for future use).
+.TP
+.B PercentGoodLines
+The minimum percentage of good rows of image data required 
+for a received facsimile page to be deemed to have acceptable
+copy quality.
+Setting this parameter to zero causes the server to not
+check the quality of received facsimile.
+See also
+.BR MaxConsecutiveBadLines .
+.TP
+.B PollLockWait
+When polling for the presence/removal of a 
+.SM UUCP
+lockfile, the time (in seconds) to wait between checks.
+Lockfile polling occurs when the fax server collides with
+another process using the modem for outbound use.
+.TP
+.B PollModemWait
+The time (in seconds) to wait between checks
+for a modem to become ready for use.
+Modem polling occurs when a modem fails to reset cleanly.
+.TP
+.B PS2FaxCmd\(dg
+The command to invoke to convert a \*(Ps document submitted
+for transmission to
+.SM TIFF/F,
+suitable for transmission;
+see
+.IR ps2fax (1M).
+.TP
+.B QualifyCID
+A string that specifies whether or not \fICaller-ID information\fP
+should be checked against an access control list before accepting
+an inbound call.
+If 
+.B QualifyCID
+is non-null and there is Caller-ID service,
+then only calls from phone numbers identified
+in the file specified by this string (typically \fBetc/cid\fP)
+will be accepted; see
+.IR cid (4F).
+If
+.B QualifyCID
+is not specified in the configuration file, or the value is
+null, then all incoming calls will be answered.
+Note that Caller-ID screening is only available when this
+service is enabled on the phone line and the modem is capable of
+presenting Caller-ID status information to the host.
+The
+.B CIDNumber
+and
+.B CIDName
+parameters must also be setup to reflect the manner in which
+the modem returns Caller-ID status information to the host.
+.TP
+.B QualifyTSI
+A string that specifies whether or not the identity of 
+calling facsimile machines should be checked against an access
+control list before receiving facsimile.
+If 
+.B QualifyTSI
+is non-null, then only messages from facsimile machines identified
+in the file specified by the string (typically \fBetc/tsi\fP)
+will be accepted; see
+.IR tsi (4F).
+If
+.B QualifyTSI
+is not specified in the configuration file, or the value is
+null, then all incoming facsimile messages will be accepted.
+.TP
+.B RecvDataFormat
+The data format (compression scheme) to write received facsimile data
+when copy quality checking is enabled on the host.
+(When copy quality checking is not done by the server the received
+facsimile data is written exactly as it is received from the modem.)
+The format may be one: ``1-D MR'', ``2-D MR'', ``2-D MMR'', or ``adaptive''.
+An ``adaptive'' format causes the received data to be written using
+the data format negotiated by the sender and receiver.
+Note that while 2-D MMR is the most space-efficient data format
+the resultant file may not be viewable (certain commonly used programs
+do not properly read multi-strip TIFF with 2-D MMR data).
+.TP
+.B RecvFileMode
+The file protection mode that should be used when
+creating files to hold incoming facsimile.
+Note that this value is given in octal.
+The default value of 0600 implies that only the
+facsimile user can read received facsimile.
+If incoming facsimile are to be publicly accessible, this
+value may be set, for example, to 0644.
+See also
+.IR chmod (2).
+.TP
+.B RingData
+A modem status string that identifies that an incoming call is
+for data use.
+This string should be set when a phone line has been setup with
+\fIdistinctive ring\fP service.
+See also
+.B RingFax
+and
+.BR RingVoice .
+.TP
+.B RingFax
+A modem status string that identifies that an incoming call is
+for facsimile use.
+This string should be set when a phone line has been setup with
+\fIdistinctive ring\fP service.
+See also
+.B RingData
+and
+.BR RingVoice .
+.TP
+.B RingsBeforeAnswer
+The number of rings to wait before answering the phone.
+If this value is set to 0, then the phone will only
+be answered in response to an explicit answer command; see
+.IR faxanswer (1M).
+.TP
+.B RingVoice
+A modem status string that identifies that an incoming call is
+for voice use.
+This string should be set when a phone line has been setup with
+\fIdistinctive ring\fP service.
+See also
+.B RingData
+and
+.BR RingFax .
+.TP
+.B SendFaxCmd\(dg
+The command to use to process outbound facsimile jobs; see
+.IR faxsend (1M).
+.TP
+.B SendPageCmd\(dg
+The command to use to process outbound pager jobs; see
+.IR pagesend (1M).
+.TP
+.B SendUUCPCmd\(dg
+The command to use to process outbound 
+.SM UUCP
+jobs.
+This parameter is not currently used, it is for future development.
+.TP
+.B ServerTracing\(dd
+A number that controls the generation of tracing
+information by a server when not actively sending or
+receiving facsimile.
+Tracing is divided into 
+.I areas
+that are individually controlled.
+To enable tracing of multiple areas of operation, the
+flag associated with each area should be bit-or'd to
+form the value for this tag.
+.ne 1i
+.sp .5
+.ta \w'\fB131072 (0x20000)    \fP'u +\w'Modem Communications    'u
+.nf
+\fBFlag	Area	Description\fP
+1 (0x00001)	Server Operation	queue management and general operation
+2 (0x00002)	\s-1FAX\s+1/\s-1IXO\s+1 Protocol	\s-1T.30\s+1 facsimile protocol or \s-1IXO/TAP\s+1 protocol
+4 (0x00004)	Modem Operations	modem hardware manipulation
+8 (0x00008)	Modem Communications	comands passed between host and modem
+16 (0x00010)	Timeouts	timer operations
+32 (0x00020)	Modem Capabilities	modem capabilities
+64 (0x00040)	\s-1HDLC\s+1 Frames	binary \s-1T.30 HDLC\s+1 frames
+128 (0x00080)	Binary Modem \s-1I/O\s+1	binary communication between host and modem
+256 (0x00100)	Server State Transitions	server program state transitions
+512 (0x00200)	Queue Management	job queue management
+1024 (0x00400)	Copy Quality	copy quality checking of received facsimile
+2048 (0x00800)	Job Management	low-level job management
+4096 (0x01000)	\s-1IXO\s+1 Protocol	low-level \s-1IXO\s+1 protocol
+8192 (0x02000)	Config File Parsing	unknown configuration file parameters
+16384 (0x04000)	FIFO Messages	inter-application messages
+32768 (0x08000)	Modem State Transitions	modem state changes (down, busy, ready)
+65536 (0x10000)	Dial Rules	dialstring rules parsing and execution
+131072 (0x20000)	Docq Changes	document reference handling
+.sp .5
+.fi
+For example, to enable tracing of server operations and
+protocol operations, a value of 1+2=3 should be specified.
+\fBNB: tracing timeouts and/or binary modem \s-1I/O\s+1 can adversely
+affect the operation of the fax server; enabling these areas
+should be done with extreme care.\fP
+.IP
+Server tracing is directed to
+.IR syslog (3)
+using the \fIfacility\fP specified with the
+.B LogFacility
+configuration parameter.
+Note that 
+.IR syslogd (1M)
+must be configured to capture
+.IR facility.info ,
+.IR facility.debug ,
+.IR facility.warning ,
+and
+.I facility.err
+messages.
+See
+.IR log (4F)
+for a description of the logged messages.
+.TP
+.B SessionTracing\(dd
+A number that controls the generation of tracing information
+by a server while sending or receiving facsimile.
+The number is interpreted identically to
+.B ServerTracing.
+Note that session tracing is placed in log files in the
+.B log
+subdirectory; see
+.IR log (4F)
+for more information.
+.TP
+.B SpeakerVolume
+The volume level that the in-modem speaker should be
+adjusted to while in command mode.
+The possible values are:
+.ne 1i
+.sp .5
+.ta \w'\fBMedium\fP    'u
+.nf
+\fBValue	Description\fP
+Off	silent
+Quiet	almost inaudible
+Low	tolerable in privacy
+Medium	loud enough to hear in the next room
+High	intolerable
+.sp .5
+.fi
+Note that the speaker is always turned off once carrier is established.
+Also beware that some modems support fewer volume settings;
+see
+.BR ModemSetVolumeCmd .
+.TP
+.B TagLineFont
+The filename of the font to use in imaging 
+.I "tag lines"
+across the top of each transmitted page.
+Fonts must be stored in the Portable Compiled Font (\c
+.SM PCF\c
+) format used by the X11 Window System.
+Filenames are specified relative to the root of the spooling area;
+e.g. etc/lutRS18.pcf.
+If no font is specified, if a null filename is specified, or if
+the specified font file is not readable, then tag lines will not
+be generated.
+See also
+.BR TagLineFormat .
+.TP
+.B TagLineFormat
+The format string to use when imaging
+.I "tag lines"
+across the top of each transmitted page.
+This string may include escape codes that cause various items
+to be interpolated into the imaged tag line.
+Any escape code supported by
+.IR strftime (3C)
+may be used as well as the following server-implemented codes:
+.sp .5
+.ta \w'\fBEscape\fP    'u
+.nf
+\fBEscape\fP	\fBDescription\fP
+%%d	destination phone number
+%%i	job identifier
+%%j	user-specified job tag
+%%l	\fBLocalIdentifier\fP or canonicalized \fBFAXNumber\fP
+%%m	sender's electronic mail address
+%%n	canonicalized \fBFAXNumber\fP
+%%p	current page number
+%%s	sender's name
+%%t	total pages in job
+%%%	``%''
+.fi
+.sp .5
+In addition, the format string may indicate that 
+text is to be centered in multiple equal-sized
+.I fields
+by separating text with ``|'' characters.
+For example, ``a|b|c'' would cause the tag line to be broken up into
+three equal-sized areas with the strings ``a'', ``b'', and ``c''
+centered within each region.
+The default tag line format string is ``From %%n|%c|Page %%p of %%t''.
+See also
+.BR TagLineFont .
+.TP
+.B TIFF2FaxCmd\(dg
+The command to invoke to convert a TIFF submitted
+for transmission to
+.SM TIFF/F,
+suitable for transmission; see
+.IR tiff2fax (1M).
+.TP
+.B TimeOfDay\(dg
+The default time-of-day restrictions to apply to outbound jobs.
+Outbound jobs will be processed only during the specified time.
+Any jobs submitted outside this time period will be held until
+the start of this time.
+The syntax for time-of-day restrictions is designed to be compatible
+with the syntax used by the
+.SM UUCP
+software.
+The following
+.SM BNF
+describes the syntax:
+.sp .5
+.nf
+.ft C
+   Syntax = tod ["," tod]
+      tod = <days><timerange>
+     days = "Any" | "Wk" | <dayname>+ | nothing
+  dayname = "Sun" | "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat"
+timerange = <start> "-" <end> | nothing
+    start = <24hrtime>
+      end = <24hrtime>
+ 24hrtime = {0-9}{0-9}{0-9}{0-9}
+  nothing =
+.ft P
+.fi
+.sp .5
+where \fIstart\fP and \fIend\fP are 24-hour times, day names can be either
+2- or 3-characters, and a null day or time specification means
+any time or day.
+White space and other syntactic sugar may be freely inserted between
+tokens but may not be inserted between 24-hour times in the time range.
+.IP
+This value may be overridden by rules in the
+.B DestControls
+file.
+.TP
+.B Use2D\(dg
+Control the use of 2D-encoded data for transmitted facsimile.
+.TP
+.B UUCPLockMode\(dd
+The file protection mode that should be used when creating
+.SM UUCP
+lockfiles.
+Note that this value is given in octal.
+.TP
+.B UUCPLockDir\(dd
+The pathname of the directory in which
+.SM UUCP
+lockfiles are to be created.
+.TP
+.B UUCPLockTimeout\(dd
+The time in seconds to wait before removing a \fIstale\fP
+.SM UUCP
+lockfile (i.e. a lockfile whose owner does not appear to exist).
+If this value is set to 0, then the fax server will never
+remove a stale lockfile.
+.TP
+.B UUCPLockType\(dd
+A string that specifies the type of
+.SM UUCP
+lockfile to create.
+The string may be one of ``ascii'' or ``binary''
+depending on whether the process-ID of the lock owner
+is written to the file as an ascii string or as a binary value, respectively.
+In addition, two prefixes may be used to control the format of
+the lock filename.
+If the type string is prefixed with a ``+'', then 
+.SM SVR4-\c
+style filenames are generated using the major device number of the
+tty device and the major and minor device
+numbers for the filesystem on which the tty device resides.
+If the type string is prefixed with a ``\-'', then any upper
+case letters in the device part of the lockfile name are converted
+to lower case letters;
+for example, ``LCK..ttyA01'' is converted to ``LCK..ttya01''.
+This upper-to-lower case conversion is useful for systems such as 
+.SM SCO
+where the convention is to name devices with upper-case letters, but
+create lockfiles with lower-case letters.
+.TP
+.B VGettyArgs
+A string that indicates whether or not the server should invoke
+a voice getty program
+in response to an incoming voice call.
+If the string value is not null, then it is interpreted
+as a set of arguments to pass to the \fIvgetty\fP program.
+Before supplying the arguments, the string is first scanned
+for ``%''-escape sequences: any appearance of ``%l'' is replaced
+with the tty name and any appearance of ``%s'' is replaced with
+the serial port speed (in decimal).
+The ``%'' character can be specified with ``%%''.
+If the
+.B VGettyArgs
+parameter is not specified in the configuration file or if
+the string value is null, then voice connections will be rejected.
+Note that in addition to the specified command line arguments, the
+.I vgetty
+program is invoked with its standard input, output, and error
+descriptors directed to the controlling tty device.
+.TP
+.B WedgedCmd\(dg
+The command to invoke when a modem is deemed ``\fIwedged\fP''; see
+.IR wedged (1M).
+.SH "MODEM-ORIENTED CONFIGURATION PARAMETERS"
+.PP
+This section lists configuration parameters that are specific
+to the setup and operation of the modem.
+All
+.I commands
+must be specified exactly as they are to be transmitted to the modem
+(note that this is a departure from previous versions of this software
+that automatically prepended ``\s-1AT\s+1'' to each line of commands
+sent to the modem).
+When multi-line commands are required, enclose the commands in
+quote marks (``"'') and insert a newline character ``\en'' where
+lines should be broken.
+An example of a multi-line command string is
+``\s-1AT+FCQ=1\enAT+FBADMUL=20\enAT+FBADLIN=10\s+1''.
+.PP
+Command strings sent to the modem may include command
+escapes that force the host to alter the 
+.SM DTE-DCE
+communication rate, the flow control scheme used between
+the host and modem, delay for a period of time, flush input
+data, and wait for a specific response from the modem.
+The following escape codes are interpreted:
+.ne 1i
+.sp .5
+.RS
+.nf
+.ta \w'<115200>    'u
+\fBEscape\fP	\fBEffect\fP
+<none>	enable no flow control between \s-1DTE\s+1 and \s-1DCE\s+1
+<xon>	enable software flow control between \s-1DTE\s+1 and \s-1DCE\s+1
+<rts>	enable hardware flow control between \s-1DTE\s+1 and \s-1DCE\s+1
+<2400>	set the \s-1DCE-DTE\s+1 baud rate to 2400 bps
+<4800>	set the \s-1DCE-DTE\s+1 baud rate to 4800 bps
+<9600>	set the \s-1DCE-DTE\s+1 baud rate to 9600 bps
+<19200>	set the \s-1DCE-DTE\s+1 baud rate to 19200 bps
+<38400>	set the \s-1DCE-DTE\s+1 baud rate to 38400 bps
+<57600>	set the \s-1DCE-DTE\s+1 baud rate to 57600 bps
+<76800>	set the \s-1DCE-DTE\s+1 baud rate to 76800 bps
+<115200>	set the \s-1DCE-DTE\s+1 baud rate to 115200 bps
+<delay:N>	delay N x 10 ms on the host (0 <= N <= 255)
+<flush>	flush any pending input data from the modem
+<waitfor:R>	wait for the response R from the modem (see below)
+.fi
+.RE
+.sp .5
+Note that commands to the left of an escape code are
+sent to the modem before the associated actions are 
+carried out on the host.
+This may be important when changing baud rates, as the result code
+from a command may be returned at the new baud rate.
+Also, beware that not all baud rates are supported by all
+systems and modems; the set of baud rates supported by a host is
+usually listed in 
+.IR stty (1).
+.PP
+The ``<waitfor:..>'' escape can be used to override the default
+behaviour which is to wait for an ``\s-1OK\s+1'' response to a
+command sent to the modem.
+The possible response codes are:
+.ne 1i
+.sp .5
+.RS
+.nf
+.ta \w'\s-1NODIALTONE\s+1    'u
+\s-1NOTHING\s+1	a null response
+\s-1OK\s+1	the default response
+\s-1CONNECT\s+1	``\s-1CONNECT...\s+1''
+\s-1NOANSWER\s+1	``\s-1NO ANSWER...\s+1''
+\s-1NOCARRIER\s+1	``\s-1NO CARRIER...\s+1''
+\s-1NODIALTONE\s+1	``\s-1NO DIALTONE...\s+1''
+\s-1BUSY\s+1	``\s-1BUSY\s+1''
+\s-1OFFHOOK\s+1	``\s-1PHONE OFF-HOOK\s+1''
+\s-1RING\s+1	``\s-1RING...\s+1''
+\s-1ERROR\s+1	error status from modem
+\s-1OTHER\s+1	any unrecognized modem response
+.fi
+.RE
+.sp .5
+For example ``\s-1ATO\er<waitfor:CONNECT>\s+1'' would send
+``\s-1ATO\s+1\er'' to the modem and then wait for a response
+with a leading ``\s-1CONNECT\s+1'' in it; and
+``\s-1ATS99=2\er<delay:2><flush><waitfor:NOTHING>\s+1'' would send
+``\s-1ATS99=2\er\s+1'' to the modem, delay 20 ms, flush any
+input from the modem, and then continue (not wait for any response).
+.TP
+.B ModemAnswerCmd
+The command to answer the phone.
+If possible, this command should generate a result string that 
+identifies whether the incoming call is from a facsimile, voice,
+or data modem.
+Typically this auto-detection is configured ahead of time; e.g.
+for Class 2 modems with the ``\s-1AT+FAA=1\s+1'' command.
+.IP
+The following table describes how the result codes are interpreted by
+the facsimile server.
+.nf
+.sp .5
+.ta \w'\s-1CONNECT FAX\s+1      'u +\w'No Dialtone      'u +\w'Unknown      'u +\w'Unknown      'u
+\fBResult String\fP	\fBDefault\fP	\fBClass 1\fP	\fBClass 2\fP	\fBClass2.0\fP
+\s-1CONNECT FAX\s+1	Fax	\-	\-	\-	\-
+\s-1CONNECT\s+1	Data	Unknown	\-	\-
+\s-1NO ANSWER\s+1	No Answer	\-	\-	\-
+\s-1NO CARRIER\s+1	No Carrier	\-	\-	\-
+\s-1NO DIALTONE\s+1	No Dialtone	\-	\-	\-
+\s-1ERROR\s+1	Error	\-	\-	\-
+\s-1FAX\s+1	Fax	\-	\-	\-
+\s-1DATA\s+1	Data	\-	\-	\-
+\s-1+FCON\s+1	\-	\-	Fax	Fax
+\s-1+FCO\s+1	\-	\-	Fax	Fax
+\s-1+FDM\s+1	\-	\-	Data	Data
+\s-1+FHNG:\s+1	\-	\-	Error	Error
+\s-1VCON\s+1	\-	\-	Voice	Voice
+.ta
+.fi
+.sp .5
+The ``Default'' column indicates the interpretation made for the
+result string in either class 1 or 2 unless explicitly
+overridden.
+The ``Class 1'' column indicates result strings handled specially
+for modems operating in class 1, the
+``Class 2'' column indicates special handling for modems
+operating in class 2, and the ``Class 2.0'' column indicates
+special handling for modems operating in class 2.0.
+.I Unknown
+entries imply that interpretation is based on the way in which the
+call was answered; if answering is done for an explicit call type,
+that type is assumed, otherwise a Fax call is presumed.
+.TP
+.B ModemAnswerDataBeginCmd
+The command to send to the modem once a data
+connection has been established.
+.TP
+.B ModemAnswerDataCmd
+The command to explicitly answer the phone for a data connection.
+This command must generate a result string that 
+identifies the incoming call is from a data modem.
+If this parameter is not specified or is null, then the value of
+.B ModemAnswerCmd
+is used instead.
+See also
+.B AdaptiveAnswer
+and
+.BR AnswerRotary .
+.TP
+.B ModemAnswerFaxBeginCmd
+The command to send to the modem once a facsimile
+connection has been established.
+.TP
+.B ModemAnswerFaxCmd
+The command to explicitly answer the phone for a facsimile connection.
+This command must generate a result string that 
+identifies the incoming call is from a facsimile modem.
+If this parameter is not specified or is null, then the value of
+.B ModemAnswerCmd
+is used instead.
+See also
+.B AdaptiveAnswer
+and
+.BR AnswerRotary .
+.TP
+.B ModemAnswerVoiceBeginCmd
+The command to send to the modem once a voice
+connection has been established.
+.TP
+.B ModemAnswerVoiceCmd
+The command to explicitly answer the phone for a voice connection.
+This command must generate a result string that 
+identifies the incoming call is for voice.
+If this parameter is not specified or is null, then the value of
+.B ModemAnswerCmd
+is used instead.
+See also
+.B AdaptiveAnswer
+and
+.BR AnswerRotary .
+.TP
+.B ModemAnswerResponseTimeout
+The maximum time, in milliseconds, to wait for a response from
+the modem after sending
+.BR ModemAnswerCmd .
+Note that you may want to shorten this value when using the
+server-based adaptive answer strategy; see
+.BR AdaptiveAnswer .
+.TP
+.B ModemATCmdDelay
+A delay, in milliseconds, that should be performed before each
+``AT'' command string is sent to the modem.
+.TP
+.B ModemBaudRateDelay
+The amount of time, in milliseconds, to pause after setting the
+baud rate on the serial line.
+This parameter is only needed for hosts where (apparently)
+setting the serial line parameters does not take effect immediately.
+.TP
+.B ModemCommaPauseTimeCmd
+The command to set the time,
+in seconds, that the modem should pause when encountering
+a ``,'' modifier in the dialing string.
+.TP
+.B ModemDialCmd
+The command to place a phone call.
+The string is assumed to be suitable for use
+as a parameter to the
+.IR sprintf (3S)
+function; so the ``%'' character should be escaped as ``%%''.
+The dial command must include a single ``%s'' where the number
+that is to be dialed is to be substituted.
+Facilities such as tone or pulse dialing, outgoing prefixes
+to route though a \s-1PBX\s+1,
+and so on should be included in the
+dialing command string.
+It is also important that, if possible, a trailing ``@''
+symbol should be included so that the modem
+returns result codes that distinguish between no answer and no carrier.
+Use of the ``@'' permits the server to reduce the probability
+that a wrong number is continually redialed.
+If the modem does not support this facility, then it may be
+necessary to raise the number of retries done when a
+``\s-1NO CARRIER\s+1'' result is returned.
+.TP
+.B ModemDialResponseTimeout
+The maximum time to wait, in milliseconds, for a response from
+the modem after sending
+This value should be longer than the timeout programmed into the
+modem through the
+.B ModemWaitTimeCmd
+parameter.
+This additional server-based timeout is provided to guard against
+modems that can ``lock up'' when dialing the telephone.
+.TP
+.B ModemEchoOffCmd
+The command to disable echoing of commands sent to the modem.
+.TP
+.B ModemFlowControl
+The type of flow control to use between
+.SM DTE
+and \s-1DCE\s+1;
+one of ``\s-1NONE\s+1'', ``\s-1XONXOFF\s+1'' and ``\s-1RTSCTS\s+1''.
+This value is used to select the string sent to the modem
+to initially establish 
+.SM DTE-DCE
+flow control; one of
+.BR ModemNoFlowCmd ,
+.BR ModemSoftFlowCmd ,
+and
+.BR ModemHardFlowCmd .
+The current flow control setting is also used to select the
+appropriate flow control command to send to the modem when
+the software switches to Class 1, 2, or 2.0; see
+.BR Class1HFLOCmd ,
+.BR Class1NFLOCmd ,
+.BR Class1SFLOCmd ,
+.BR Class2HFLOCmd ,
+.BR Class2NFLOCmd ,
+and
+.BR Class2SFLOCmd .
+.IP
+The server supports both software and hardware flow control
+for Class 1, Class 2, and Class 2.0 modems.
+Whether to use hardware or software flow control depends
+on the capabilities of the modem
+and the host hardware and operating system.
+Communication rates above 9600 baud often require that hardware
+flow control be used for reliable
+.SM DTE-DCE
+communication.
+However, beware that many modems only support software
+flow control when sending or receiving facsimile.
+.TP
+.B ModemFrameFillOrder
+The bit order to expect for received
+.SM HDLC
+frames and to use when formulating
+.SM HDLC
+frames to send.
+This value may be either
+.SM LSB2MSB
+when bits are ordered from least-significant-bit to
+most-significant-bit (as in the
+.SM CCITT
+specification) or
+.SM MSB2LSB
+when bits are ordered in the reverse direction.
+.TP
+.B ModemHardFlowCmd
+The command to setup hardware (\s-1RTS/CTS\s+1)
+flow control between
+.SM DTE
+and
+.SM DCE.
+.TP
+.B ModemMinSpeed
+The minimum acceptable signalling rate for transmitting facsimile
+page data.
+Possible values are: 2400, 4800, 7200, 9600, 12200, and 14400.
+.TP
+.B ModemMfrQueryCmd
+The command to send to the modem to get the manufacturer
+identification string.
+If this parameter is not set, then it is initialized
+to ``\s-1AT+FMFR?\s+1'' for Class 2 modems, or
+to ``\s-1AT+FMI?\s+1'' for Class 2.0 modems.
+If the parameter begins with a ``!'', then the remainder of the
+string is taken to be the identification string and no command
+is issued to the modem.
+.TP
+.B ModemModelQueryCmd
+The command to send to the modem to get the model identification string.
+If this parameter is not set, then it is initialized to
+to ``\s-1AT+FMDL?\s+1'' for Class 2 modems,
+or to ``\s-1AT+FMM?\s+1'' for Class 2.0 modems.
+If the parameter begins with a ``!'', then the remainder of the
+string is taken to be the identification string and no command
+is issued to the modem.
+.TP
+.B ModemNoAutoAnswerCmd
+The command to stop the modem from automatically
+answering when the phone rings.
+.TP
+.B ModemNoFlowCmd
+The command to disable flow control between
+.SM DTE
+and
+.SM DCE.
+.TP
+.B ModemOnHookCmd
+The command to place the phone ``on hook''
+(i.e. hangup).
+.TP
+.B ModemPageDoneTimeout
+The maximum time to wait, in milliseconds, for a response
+from the modem after sending a page of facsimile data (e.g.
+the time to wait for a response to a Class 2/2.0
+.SM AT+FET
+command).
+.TP
+.B ModemPageStartTimeout
+The maximum time to wait, in milliseconds, for an initial
+response from the modem when sending a page of facsimile data
+(e.g. the time to wait for a response to a Class 2/2.0
+.SM AT+FDR
+command).
+.TP
+.B ModemRate
+The baud rate to use for DCE-DTE communication.
+This value may be one of: 115200, 76800, 57600, 38400, 19200, 9600, 4800,
+2400, 1200.
+The default value is 19200 because many modems lock the
+rate at 19200 when sending or receiving facsimile.
+Note that not all values are supported by all operating
+systems and modems; consult
+.IR stty (1)
+for the available rates on your system.
+.TP
+.B ModemRecvFillOrder
+The bit order to expect for received facsimile data.
+This value may be either
+.SM LSB2MSB
+when bits are ordered from least-significant-bit to
+most-significant-bit (as in the
+.SM CCITT
+specification) or
+.SM MSB2LSB
+when bits are ordered in the reverse direction.
+According to the various specifications all modems should return
+data in
+.SM LSB2MSB
+order.
+However many Class 2 modems use
+.SM MSB2LSB
+for compatibility with modems that were built with
+Rockwell hardware/firmware that included a bug
+that was too widespread to correct.
+.TP
+.B ModemResetCmds
+A string of commands to issue to the modem during initialization.
+This string is sent to the modem
+.I before
+the standard set of configuration commands required by the fax server.
+Note that these commands \fBshould not include normal
+reset commands that are specified through other parameters\fP.
+For example, commands to setup flow control,
+.SM DCD
+handling,
+.SM DTR
+handling, etc. should be specified through the appropriate
+configuration parameters and not through this parameter.
+In addition the soft reset command (usually ``\s-1ATZ\s+1'')
+should not be included in this string; the servers issue this
+command explicitly.
+.TP
+.B ModemResetDelay
+The time, in milliseconds, to pause after resetting a modem
+either by dropping the
+.SM DTR
+signal, or through a software reset command.
+This parameter should be long enough to permit the modem to
+do any reset-related processing it requires.
+.TP
+.B ModemResultCodesCmd
+The command to enable result codes.
+.TP
+.B ModemRevQueryCmd
+The command to send to the modem to get a firmware revision identification
+string.
+If this parameter is not set, then it is initialized to
+``\s-1AT+FREV?\s+1'' for Class 2 modems, or
+to ``\s-1AT+FMR?\s+1'' for Class 2.0 modems.
+If the parameter begins with a ``!'', then the remainder of the
+string is taken to be the identification string and no command
+is issued to the modem.
+.TP
+.B ModemSendBeginCmd
+The command to send to the modem upon establishing carrier during
+a transmit operation.
+This parameter is useful for systems that are incapable of enabling
+hardware flow control without 
+.SM DCD
+asserted.
+.TP
+.B ModemSendFillOrder
+The bit order the modem expects for transmitted facsimile data.
+This value may be either
+.SM LSB2MSB
+or
+.SM MSB2LSB
+(see also
+.B ModemRecvFillOrder
+above.)
+Virtually all modems expect transmitted facsimile data in
+.SM LSB2MSB
+bit order.
+.TP
+.B ModemSetVolumeCmd
+The commands to use to set the modem speaker volume levels.
+There should be five whitespace-separated commands,
+one each for setting the
+volume to ``Off'', ``Quiet'', ``Low'', ``Medium'', and ``High'';
+the default is ``"\s-1\&ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1\s+1"''.
+See also
+.BR SpeakerVolume .
+.TP
+.B ModemSetupAACmd
+The command to setup
+.I "adaptive answer"
+support in the modem\-if available.
+Adaptive answer is the term used for the ability to
+distinguish between calls from facsimile, voice, and
+data sources.
+Note that this string is the last command issued by the device
+drivers during setup, so the command string
+may, if necessary, switch to a different
+operating mode (e.g. on some Rockwell-based modems it is necessary
+to issue the ``\s-1AT+FAA=1\s0'' command in Class 0).
+.TP
+.B ModemSetupDCDCmd
+The command to setup
+.SM DCD
+handling.
+On most systems the facsimile server will enable
+the \s-1CLOCAL\s+1 flag on the tty device to which
+the modem is connected.
+This should insure that the system does not close an open
+file descriptor associated with the modem if carrier is dropped.
+Thus, for most systems and modems 
+.B ModemSetupDCDCmd
+should setup
+.SM DCD
+to reflect carrier.
+.TP
+.B ModemSetupDTRCmd
+The command to setup
+.SM DTR
+handling so that the modem is reset when the
+.SM DTR
+signal is lowered by the host.
+The facsimile server uses this facility to insure that modems
+are not left in a ``locked up'' state.
+.TP
+.B ModemSoftFlowCmd
+The command to setup software (\s-1XON/XOFF\s+1)
+flow control between
+.SM DTE
+and
+.SM DCE.
+.TP
+.B ModemSoftResetCmd
+The command to force a soft reset of the modem.
+.TP
+.B ModemType
+This parameter must be set to one of: ``Class2'', ``Class2.0'',
+or ``Class1'';
+to indicate that the modem is a Class 2-,
+Class 2.0-, or Class 1-style modem, respectively.
+.TP
+.B ModemVerboseResultsCmd
+The command to enable verbose, as opposed to numeric, result codes.
+.TP
+.B ModemWaitForConnect
+If enabled, the facsimile server will not consider a connection
+established when answering an incoming call until a
+``\s-1CONNECT\s+1'' status string is received.
+This is useful mainly for Rockwell \s-1RC32ACL\s+1-based
+modems that send ``\s-1FAX\s+1'' and ``\s-1DATA\s+1'' status
+messages before sending ``\s-1CONNECT\s+1''.
+.TP
+.B ModemWaitTimeCmd
+The command to set the
+number of seconds to wait for a carrier signal
+when placing a call or answering the phone.
+.SH "T.30 PROTOCOL CONFIGURATION PARAMETERS"
+.PP
+The following parameters apply to the implementation of the
+.SM "CCITT T.30"
+facsimile protocol in the Class 1 device driver.
+They should not be changed without full understanding of the
+operation of the server.
+.TP
+.B FaxT1Timer
+The value of the
+.SM T1
+timer in milliseconds.
+This timer is used to time out the initial session contact;
+i.e. receipt of \s-1DIS/DCS\s+1.
+.TP
+.B FaxT2Timer
+The value of the
+.SM T2
+timer in milliseconds.
+This timer is used to time out receiving responses and commands.
+.TP
+.B FaxT4Timer
+The value of the
+.SM T4
+timer in milliseconds.
+This timer is used to time out the reception of
+.SM HDLC
+frames and, usually, trigger frame retransmissions.
+.SH "CLASS 1 MODEM CONFIGURATION PARAMETERS"
+.PP
+The following parameters are specific to the configuration
+of Class 1-style modems; they should not be changed lightly:
+.TP
+.B Class1Cmd
+The command to set the modem into Class 1 operation.
+.TP
+.B Class1FrameOverhead
+The number of extraneous bytes in
+.SM HDLC
+frames sent to the host in response to an ``\s-1AT+FRH\s+1'' command.
+For modems that properly implement the Class 1 interface, this
+number should be 4 (the default).
+.TP
+.B Class1HFLOCmd
+The command to setup hardware (\s-1RTS/CTS\s+1)
+flow control between
+.SM DTE
+and
+.SM DCE
+when operating in Class 1.
+This command is issued immediately after sending the
+.B Class1Cmd
+to switch the modem to Class 1 operation.
+.TP
+.B Class1NFLOCmd
+The command to setup no flow control between
+.SM DTE
+and
+.SM DCE
+when operating in Class 1.
+This command is issued immediately after sending the
+.B Class1Cmd
+to switch the modem to Class 1 operation.
+.TP
+.B Class1RecvAbortOK
+The time, in milliseconds, to wait for an ``\s-1OK\s+1'' result code
+from the modem after aborting an 
+.SM HDLC
+frame receive (``\s-1AT+FRH=3\s+1'').
+If this number is zero, then the modem is assumed to not correctly
+implement aborting and instead the driver will wait 200ms,
+flush any input, and then send ``\s-1AT\en\s+1'' and wait
+100ms for an ``\s-1OK\s+1'' result.
+.TP
+.B Class1RecvIdentTimer
+The time, in milliseconds, to wait for an initial
+.SM DCS
+when receiving a facsimile.
+.SM CCITT
+recommendation
+.SM T.30
+specifies this as the value of the
+.SM T1
+timer.
+However, adaptive answering schemes such as that described
+above under the
+.B AdaptiveAnswer
+parameter may require that this timer be shortened.
+.TP
+.B Class1SendPPMDelay
+The time, in milliseconds, to delay between dropping the high
+speed message carrier and sending the post-page message/command.
+.TP
+.B Class1SendTCFDelay
+The time, in milliseconds, to delay between sending 
+.SM DCS
+and
+.SM TCF.
+.TP
+.B Class1SFLOCmd
+The command to setup software (\s-1XON/XOFF\s+1) flow control between
+.SM DTE
+and
+.SM DCE
+when operating in Class 1.
+This command is issued immediately after sending the
+.B Class1Cmd
+to switch the modem to Class 1 operation.
+.TP
+.B Class1TCFMaxNonZero
+The maximum percentage of non-zero data bytes
+permitted in an acceptable received
+.SM TCF.
+Note that this number does not include any leading non-zero data
+in the received data.
+See also
+.BR Class1TCFMinRun .
+.TP
+.B Class1TCFMinRun
+The duration, in milliseconds, of the minimum run of zero data in
+an acceptable received
+.SM TCF.
+This value should be specified according to a 1.5 second
+transmission of zero data (i.e. it should be between 0 and 1500).
+See also
+.BR Class1TCFMaxNonZero .
+.TP
+.B Class1TCFRecvTimeout
+The maximum time to wait, in milliseconds, for the first byte of
+the Training Check (\c
+.SM TCF\c
+) message data that is received during the
+training phase of the facsimile reception protocol.
+.TP
+.B Class1TCFResponseDelay
+The time, in milliseconds, to delay between receiving
+.SM TCF
+and sending a response on the v.21 carrier to indicate whether or not
+training was successful.
+.TP
+.B Class1TrainingRecovery
+The time, in milliseconds, to delay after a failed training session.
+This time is used when sending training and when waiting for
+.SM DCS
+and subsequent training during receive.
+.SH "CLASS 2 AND 2.0 MODEM CONFIGURATION PARAMETERS"
+.PP
+The following parameters are specific to the configuration
+of Class 2- and Class 2.0-style modems:
+.TP
+.B Class2Cmd
+The command to set the modem into Class 2/2.0 operation.
+.TP
+.B Class2AbortCmd
+The command to use to abort an established session.
+After using this command to abort a session,
+the fax software will send
+.B ModemOnHookCmd
+and then reset the modem by dropping
+.SM DTR .
+.TP
+.B Class2BORCmd
+The command to setup the bit order of sent and
+received facsimile data.
+Usually the command ``\s-1AT+FBOR=0\s+1'' is used
+so that data is sent and received in
+.I direct
+bit order (\s-1LSB2MSB\s+1).
+Some modems, such as the Everex 24/96D,
+must use reversed bit order for
+Phase B and D data exchanges to avoid a bug that results in
+garbage data being placed in the padding of
+.SM EOL
+codes.
+The bit order specified by this command must correspond
+to the settings of the
+.B ModemSendFillOrder
+and
+.B ModemRecvFillOrder
+parameters.
+.TP
+.B Class2BUGCmd
+The command to use to enable the tracing of
+.SM HDLC
+frames sent and received by the modem.
+This tracing information should be returned to the host in ``\s-1+FHR:\s+1''
+and ``\s-1+FHT:\s+1'' status strings.
+Note that many Class 2 modems do not support this facility.
+.TP
+.B Class2CIGCmd
+The command used to set a polling identifier.
+This string is inserted into the format ``\s-1%s="<id>"\s+1''.
+.TP
+.B Class2CQQueryCmd
+The command to send to the modem to get the copy quality capabilities string.
+If the parameter begins with a ``!'', then the remainder of the
+string is taken to be the capabilities string and no command
+is issued to the modem; this can be used together with the
+.B Class2CQCmd
+to force copy quality checking to be done in the server instead
+of in the modem.
+See also
+.B PercentGoodLines
+and
+.B MaxConsecutiveBadLines
+for parameters used to do server copy quality checking.
+.TP
+.B Class2CRCmd
+The command to use to enable the reception of facsimile.
+.TP
+.B Class2CQCmd
+The command to use to set up parameters for copy quality checking.
+For example, for an Everex 24/96D modem this parameter might be set to
+``\s-1AT+FCQ=1\enAT+FBADMUL=20\enAT+FBADLIN=10\s+1''.
+.TP
+.B Class2DCCCmd
+The command used to set modem capabilities.
+This string is inserted into the format
+``\s-1%s=vr,br,wd,ln,df,ec,bf,st\s+1''.
+.TP
+.B Class2DCCQueryCmd
+The command to send to the modem to get the Class 2/2.0 capabilities.
+If the parameter begins with a ``!'', then the remainder of the
+string is taken to be the capabilities string and no command
+is issued to the modem.
+.TP
+.B Class2DDISCmd
+The command to set session parameters before dialing.
+This string is inserted into the format
+``\s-1%s=vr,br,wd,ln,df,ec,bf,st\s+1''.
+Setting this parameter enables support for Class 2 modems that do not
+properly implement the ``\s-1AT+FDIS\s+1'' command by
+setting up session parameters before dialing the telephone.
+.TP
+.B Class2DISCmd
+The command used to set the current session parameters.
+This string is inserted into the format 
+``\s-1%s=vr,br,wd,ln,df,ec,bf,st\s+1''.
+.TP
+.B Class2HFLOCmd
+The command to setup hardware (\s-1RTS/CTS\s+1)
+flow control between
+.SM DTE
+and
+.SM DCE
+when operating in Class 2/2.0.
+This command is issued immediately after sending the
+.B Class2Cmd
+to switch the modem to Class 2/2.0 operation.
+For Class 2.0 operation the default is ``\s-1AT+FLO=2\s+1''.
+.TP
+.B Class2LIDCmd
+The command used to set the local identifier string.
+This string is inserted into the format ``\s-1%s="<id>"\s+1''
+.TP
+.B Class2MINSPCmd
+The command used to set the minimum acceptable speed to be negotiated
+for transmitting page data.
+This string is inserted into the format ``\s-1%s=<speed>\s+1''
+.TP
+.B Class2NFLOCmd
+The command to setup no flow control between
+.SM DTE
+and
+.SM DCE
+when operating in Class 2/2.0.
+This command is issued immediately after sending the
+.B Class2Cmd
+to switch the modem to Class 2 operation.
+For Class 2.0 operation the default is ``\s-1AT+FLO=0\s+1''.
+.TP
+.B Class2NRCmd
+(\fIClass 2.0 only\fP)
+The command to setup negotiation message reporting.
+For the correct operation of the Class 2.0 driver
+this command must enable the reporting of:
+receiver parameters, transmitter parameters, and ID strings.
+It is not necessary to enable reporting of non-standard frames
+for correct operation of the Class 2.0 driver.
+.TP
+.B Class2PHCTOCmd
+The command to use to set the Phase C timeout parameter (in seconds).
+.TP
+.B Class2PIECmd
+(\fIClass 2.0 only\fP)
+The command to use to control procedure interrupt handling.
+Procedure interrupts should be disabled because
+\*(Fx does not provide a mechanism for dispatching procedure interrupts
+to an administrator.
+.TP
+.B Class2PTSCmd
+The command to use to set the received page status code.
+When copy quality checking is done in the host, this command may be
+used to control the post-page response delivered to the sender.
+Beware that some modems do not properly implement this command
+in which case the server should be configured to not do copy quality
+check: see the
+.B PercentGoodLines
+and
+.B MaxConsecutiveBadLines
+parameters to understand how to defeat copy quality checking.
+.TP
+.B Class2RecvDataTrigger
+The character to send to the modem to trigger the transmission
+of received data from the modem to the host.
+This character is specified to be
+.SM DC1
+(octal 21) in the
+draft specification 2388-A and
+.SM DC2
+(octal 22) in the 2388-B
+specification.
+Most Class 2 modems accept
+.SM DC1
+or both
+.SM DC1
+and
+.SM DC2.
+Some modems however only accept
+.SM DC2.
+Note that string parameters may use C-style escape sequences,
+so
+.SM DC2,
+for example, would be specified as ``"\e022"''.
+.TP
+.B Class2RELCmd
+The command to use to enable the delivery of byte-aligned
+.SM EOL
+codes in received facsimile.
+If this parameter is defined, then received facsimile data
+will be marked to indicate that
+.SM EOL
+codes are byte-aligned; otherwise they will be marked as
+not (necessarily) having byte-aligned codes.
+.TP
+.B Class2SendRTC
+Whether or not to append an explicit ``Return To Control'' (\s-1RTC\s+1)
+signal to the page data when transmitting.
+The Class 2 spec (i.e. SP-2388-A) states the modem will append
+.SM RTC
+when it receives the post-page message command from the host; this
+parameter is provided in case the modem does not correctly implement
+this.
+.TP
+.B Class2SFLOCmd
+The command to setup software (\s-1XON/XOFF\s+1) flow control between
+.SM DTE
+and
+.SM DCE
+when operating in Class 2/2.0.
+This command is issued immediately after sending the
+.B Class2Cmd
+to switch the modem to Class 2/2.0 operation.
+For Class 2.0 operation the default is ``\s-1AT+FLO=1\s+1''.
+.TP
+.B Class2SPLCmd
+The command to use to enable a polling request.
+.TP
+.B Class2TBCCmd
+The command to use to enable stream-mode communication between the
+host and modem.
+.TP
+.B Class2XmitWaitForXON
+Whether or not to wait for an
+.SM XON
+character from the modem
+before sending facsimile data to the modem for transmission.
+Note that this is only relevant for modems that conform to the
+Class 2 spec (i.e. SP-2388-A).
+The Class 2.0 specification states that the host may transmit
+data immediately upon receiving
+.SM CONNECT
+and that no
+.SM XON
+character will be sent to the host.
+.SH "PAGER-RELATED CONFIGURATION PARAMETERS"
+.PP
+The following parameters are specific to the configuration
+and operation of the IXO/TAP and UCP support for sending pager messages
+and GSM SM. Parameter not used for UCP are marked with
+``(\fIIXO/TAP only\fP)''.
+.TP
+.B PagerSetupCmds
+The commands to send to a modem to prepare the modem for a
+call to pager service provider.
+Typically these commands place direct the modem to communicate
+with the service provider at 300 bps using the V.21 protocol.
+Per-service provider command strings can be setup in the
+info database; see
+.IR info (4F).
+.TP
+.B PagerMaxMsgLength
+The maximum length for a pager text message.
+Messages longer than this number are truncated.
+Per-service provider message lengths can be setup in the
+info database; see
+.IR info (4F).
+.TP 
+.B IXOService
+(\fIIXO/TAP only\fP)
+The service identification string transmitted as part of the
+.SM IXO/TAP
+protocol.
+.TP 
+.B IXODeviceID
+(\fIIXO/TAP only\fP)
+The terminal device identification string transmitted as part of the
+.SM IXO/TAP
+protocol.
+.TP 
+.B IXOMaxUnknown
+The maximum number of unrecognized messages that will be accepted
+at various stages of the
+.SM IXO/TAP
+protocol before the sender will abort and hangup the phone.
+.TP 
+.B IXOIDProbe
+(\fIIXO/TAP only\fP)
+The time, in seconds, between sending a ``\er'' during the
+initial ID recognition sequence of the
+.SM IXO/TAP
+protocol.
+.TP 
+.B IXOIDTimeout
+(\fIIXO/TAP only\fP)
+The maximum time, in seconds, to wait for the initial ID response from
+the service provider.
+.TP 
+.B IXOLoginRetries
+(\fIIXO/TAP only\fP)
+The maximum number of attempts to login to a service provider.
+.TP 
+.B IXOLoginTimeout
+(\fIIXO/TAP only\fP)
+The maximum time, in seconds, to wait to complete the login procedure.
+.TP 
+.B IXOGATimeout
+(\fIIXO/TAP only\fP)
+The maximum time, in seconds, to wait for a Go-Ahead message from the service
+provider.
+.TP 
+.B IXOXmitRetries
+The maximum number of times to try sending a text message block
+in a single call.
+.TP 
+.B IXOXmitTimeout
+The maximum time, in seconds, to try transmitting a text message block.
+.TP 
+.B IXOAckTimeout
+(\fIIXO/TAP only\fP)
+integer	\s-130\s+1	IXO: max time to wait for msg block ack (secs)
+The maximum time, in seconds, to wait for an acknowledgement
+to a transmitted message.
+.SH "PROTOTYPE CONFIGURATION FILES"
+Per-modem configuration files are typically derived from
+prototype files that have been created for known modems.
+These prototype files are kept in the
+.B config
+subdirectory and, by convention, have names
+that identify a brand or type of modem and the
+.SM DTE-DCE
+flow control scheme the prototype files configures.
+The
+.IR faxaddmodem (1M)
+program that is used to configure a modem for use with
+\*(Fx selects a prototype configuration file using information
+retrieved from the modem and comments embedded in the prototype files.
+For Class 1 modems the product ID code returned by the command
+``\s-1ATI0\s+1''
+and the response from the comannd
+``\s-1ATI3\s+1''
+are used to select a prototype configuration file, while for Class 2
+modems the manufacturer and model as returned by
+``\s-1AT+FMFR?\s+1'' and ``\s-1AT+FMDL?\s+1'', respectively, are
+used (or ``\s-1AT+FMI?\s+1'' and ``\s-1AT+FMM?\s+1'' for
+Class 2.0 modems).
+.PP
+A Class 1 prototype configuration file is identified for use by
+.I faxaddmodem
+by searching for a comment of the form:
+.nf
+.sp .5
+\fC# CONFIG:CLASS1:144:.*:RTSCTS: Manufacturer='AT&T' Model=Dataport\fR
+.sp .5
+.fi
+In this example ``144'' is the product ID code for an \s-1AT&T\s+1 DataPort
+modem, ``.*'' is a regular expression matched against the result string
+returned by the ``\s-1ATI3\s+1'' command,
+and ``\s-1RTSCTS\s+1'' indicates the modem is configured to
+use hardware flow control during fax operation.
+The remainder of the line is evaluated by the
+.IR sh (1)
+and used to specify the modem's manufacturer and model (since Class 1
+modems do not have standard commands to query this information).
+.PP
+Class 2 and 2.0 prototype configuration files match the string
+``\fImanufacturer\fP-\fImodel\fP-\fIflowcontrol\fP'' against a
+.IR sh (1)
+glob pattern specified in the configuration file, where
+.I manufacturer
+and
+.I model
+are the strings returned by querying the modem and
+.I flowcontrol
+is either ``\s-1RTSCTS\s+1'' for hardware flow control or
+``\s-1XONXOFF\s+1'' for software flow control.
+For example:
+.sp .5
+\fC# CONFIG: CLASS2: ZyXEL*-RTSCTS\fP
+.br
+\fC# CONFIG: CLASS2.0: USRobotics*-XONXOFF\fP
+.sp .5
+are configuration comments that appear in the prototype file for
+a \s-1ZyXEL 1496E\s+1 with Class 2 support, and for a US Robotics Courier
+modem with Class 2.0 firmware.
+.PP
+The
+.I faxaddmodem
+program merges server-specific configuration parameters
+into a prototype configuration according to comments
+placed in the prototype file.
+All lines between ``\s-1BEGIN-SERVER\s+1'' and ``\s-1END-SERVER\s+1''
+comments are placed with the appropriate server configuration
+parameters.
+Note that this means modem-related configuration parameters
+must be placed outside this area of the file.
+.SH "SEE ALSO"
+.IR faxaddmodem (1M),
+.IR faxq (1M),
+.IR faxgetty (1M),
+.IR faxsend (1M),
+.IR hylafax (4F)

@@ -1,0 +1,260 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1993-1996 Sam Leffler
+.\" Copyright (c) 1993-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
+.TH DIALRULES 4F "May 8, 1996"
+.SH NAME
+dialrules \- \*(Fx dial string processing rules
+.SH DESCRIPTION
+A dial string specifies how to dial the telephone in order to
+reach a destination facsimile machine, or similar device.
+This string is supplied by a user with each outgoing facsimile job.
+User-supplied dial strings need to be processed in two ways by the
+\*(Fx server processes:
+to craft a canonical phone number for use in locating the
+receiver's capabilities, and
+to process into a form suitable for sending to a modem.
+In addition client applications may need to process a dial string
+to formulate an external form that does not include private information
+such as a credit card access code.
+Phone number canonicalization and dial string preparation
+are done according to 
+.I "dial string processing rules"
+that are located in a file specified in the server configuration
+file; see the
+.B DialStringRules
+parameter in
+.IR config (4F).
+The generation of an externalized form for a dial string is done by
+rules that optionally appear in
+.I ${LIBDATA}/dialrules
+on client machines.
+.PP
+A dial string rules file is an
+.SM ASCII
+file containing one or more 
+.IR "rule sets" .
+A rule set defines a set of
+.I "transformation rules"
+that are sequentially applied to a dial string.
+Each rule set is associated with an identifier, with certain well-known
+identifiers being used by the facsimile server or client application.
+Each transformation rule is a regular expression and a replacement string;
+the regular expression is repeatedly applied to a dial string and any
+matching substring is replaced by the replacement string.
+.PP
+The syntax of a dial string rules file is as follows.
+Comments are introduced with the ``!'' character and continue to the
+end of the current line.
+Identifiers are formed from a leading alphabetic and any number of
+subsequent alpha-numeric characters.
+A rule set is of the form:
+.sp .5
+.nf
+.RS
+\fIIdentifier\fP \fB:= [\fP
+    \fIrule1\fP
+    \fIrule2\fP
+    ...
+\fB]\fP
+.RE
+.fi
+.sp .5
+where 
+.IR rule1 ,
+.IR rule2 ,
+and so on are transformation rules.
+Line breaks are significant.
+The initial rule set definition line and the trailing ``]'' must be
+on separate lines; and each transformation rule must also be on a
+single line.
+Transformation rules are of the form:
+.sp .5
+.nf
+.ti +.5i
+\fIregular-expression\fP \fB=\fP \fIreplacement\fP
+.fi
+.sp .5
+where
+.I regular-expression
+is a
+.SM POSIX
+1003.2 extended regular expression and
+.I replacement
+is a string that is substituted in place of any portion of the dial
+string that is matched by the
+.IR regular-expression .
+White space is significant in parsing transformation rules.
+If a regular expression or replacement string has embedded white space
+in it, then the white space needs to be escaped with a ``\e'' character
+or the entire string should be enclosed in quote (``"'') marks.
+Replacement strings may reference the entire string matched by the
+regular expression with the ``&'' character.
+Substrings matched with the ``(...)'' constructs may be referenced
+by using ``\e\fIn\fP'' where
+.I n
+is a single numeric digit between 1 and 9 that refers to the
+.IR n -th
+matched substring; c.f.
+.IR re_format (7),
+.IR sed (1),
+etc.
+.PP
+To simplify and parameterize the construction of rule sets, dial string
+rules files may also include simple text-oriented variable definitions.
+A line of the form:
+.sp .5
+.nf
+.ti +.5i
+\fIfoo\fP\fB=\fP\fIstring\fP
+.fi
+.sp .5
+defines a variable named
+.I foo
+that has the value
+.IR string .
+String values with embedded whitespace must use the ``\e'' character
+or be enclosed in quote marks.
+Variables are interpolated into transformation rules by referencing them
+as:
+.sp .5
+.nf
+.ti +.5i
+\fB${\fP\fIvar\fP\fB}\fP
+.fi
+.sp .5
+Note that variable interpolation is done only once, at the time a
+transformation rule is defined.
+This means that forward references are not supported and that
+circular definitions will not cause loops.
+The facsimile server automatically defines four variables to have
+the values defined in its configuration file:
+.BR AreaCode ,
+.BR CountryCode ,
+.BR LongDistancePrefix ,
+and
+.BR InternationalPrefix 
+These variables are initialized before parsing a dial string rules
+file; thus if they are defined in the rules file then they will
+override any definition by the server.
+.PP
+There are three well known rule set names:
+.I CanonicalNumber
+to convert a dial string to a canonical format,
+.I DialString
+to prepare a dial string before using it to dial the telephone, and
+.I DisplayNumber
+to convert a dial string to an external ``displayable'' form
+that does not include the
+private information that might appear in the raw dial string.
+.SH EXAMPLES
+This is the default set of rules for transforming a dial string into
+a canonical phone number:
+.sp .5
+.nf
+.RS
+.ta \w'LDPrefix=${LongDistancePrefix}    'u
+Area=${AreaCode}	! local area code
+Country=${CountryCode}	! local country code
+IDPrefix=${InternationalPrefix}	! prefix for placing an international call
+LDPrefix=${LongDistancePrefix}	! prefix for placing a long distance call
+!
+! Convert a phone number to a canonical format:
+!
+!    +<country><areacode><rest>
+!
+! by (possibly) stripping off leading dialing prefixes for
+! long distance and/or international dialing.
+!
+CanonicalNumber := [
+.ta \w'^${LDPrefix}      'u +\w'= 'u +\w'+${Country}${Area}&      'u
+#.*	=		! strip calling card stuff
+[abcABC]	= 2	! these convert alpha to numbers
+[defDEF]	= 3
+[ghiGHI]	= 4
+[jklJKL]	= 5
+[mnoMNO]	= 6
+[prsPRS]	= 7
+[tuvTUV]	= 8
+[wxyWXY]	= 9
+[^+0-9]+	=		! strip white space etc.
+^${IDPrefix}	= +		! replace int. dialing code
+^${LDPrefix}	= +${Country}	! replace l.d. dialing code
+^[^+]	= +${Country}${Area}&	! otherwise, insert canon form
+]
+.RE
+.fi
+.sp .5
+The first rule simply strips anything following a ``#''; this
+will remove any calling card-related information.
+The next eight rules convert upper and lower case alphabetics to the
+equivalent key numbers (this is convenient for users that use
+mnemonic phone numbers).
+The tenth rule removes everything but numbers and plus signs.
+The eleventh rule translates any explicit international dialing prefix
+into the ``+'' symbol used to identify country codes.
+The twelfth rule replaces a leading long distance dialing prefix
+with the local country code string.
+The last rule matches local phone numbers and inserts the local
+country code and area code.
+.PP
+As an example, assume that
+.sp .5
+.nf
+.RS
+AreaCode=415
+CountryCode=1
+InternationalPrefix=011
+LongDistancePrefix=1
+.RE
+.fi
+.sp .5
+then if the above set of rules is applied
+to ``01123965-Tube#2345'', the transformations would be:
+.sp .5
+.nf
+.ta \w'01123965-Tube#2345    'u +\w'01123965-7824    'u
+.RS
+01123965-Tube#2345	01123965-Tube	! strip calling card stuff
+01123965-Tube	01123965-8823	! convert alphabetics
+01123965-8823	011239658823		! strip white space etc.
+011239658823	+239658823	! replace int. dialing code
++239658823	+239658823	! replace l.d. dialing code
++239658823	+239658823	! otherwise, insert canon form
+.RE
+.fi
+.sp .5
+for a final result of ``+239658823''.
+.SH "SEE ALSO"
+.IR sendfax (1),
+.IR dialtest (1M),
+.IR faxq (1M),
+.IR faxsend (1M),
+.IR faxgetty (1M),
+.IR config (4F)

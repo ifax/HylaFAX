@@ -1,0 +1,151 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1994-1996 Sam Leffler
+.\" Copyright (c) 1994-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH DESTCTRLS 4F "October 3, 1995"
+.SH NAME
+destctrls \- per-destination controls for \*(Fx servers
+.SH DESCRIPTION
+The \*(Fx configuration parameter
+.B DestControls
+specifies whether or not to apply
+per-destination controls on job characteristics
+such as the time-of-day to place a call.
+.PP
+The controls file is a simple
+.SM ASCII
+file containing a series of records of the form:
+.sp .5
+.RS
+.ta \w'\fIdest\fP    'u
+\fIdest\fP	param = value ... param = value
+.RE
+.sp .5
+where
+.I dest
+is a regular expression matched against
+the canonical form of a destination phone number and
+parameters are specified by named assignments
+(though the ``='' can also be left out).
+Whitespace may be used freely though it is used to identify
+the end of
+.I dest
+and the start of the parameter list.
+Parameter values are parsed exactly as specified in
+.IR config (4F);
+i.e. values with embedded whitespace may be enclosed in quote marks (``"'').
+.PP
+Comments are introduced with a ``#'' character and extend to the
+end of the line.
+Parameter lists may be continued across lines by starting subsequent
+lines with a whitespace character (lines commented out with ``#''
+are also considered to be part of a continued record).
+.PP
+The order of entries in a file is important.
+When a parameter value is needed
+.I faxq
+sequentially scans the file until it finds a record that matches
+the canonical form of the destination phone number.
+If the requested parameter is defined in this record, then the
+value is returned, otherwise a default value is used from the
+.I faxq
+configuration file.
+.PP
+The following parameters may be specified on a per-destination basis;
+consult
+.IR config (4F)
+for a description of each parameter
+(except
+.B RejectNotice
+which is described below).
+.sp .5
+.nf
+.ta \w'MaxConcurrentJobs    'u +\w'integer    'u +\w'\fIunlimited\fP    'u
+\fBTag	Type	Default	Description\fP
+MaxConcurrentJobs	integer	\s-11\s+1	max concurrent jobs to process for a destination
+MaxDials	integer	\s-1\fIunlimited\fP\s+1	max phone calls to make to transmit a job
+MaxSendPages	integer	\s-1\fIunlimited\fP\s+1	max pages to permit in a send
+MaxTries	integer	\s-13\s+1	max attempts to transmit a job
+RejectNotice	string	\-	rejection notice for transmit job
+TimeOfDay	string	\s-1Any\s+1	default time-of-day restrictions
+.fi
+.PP
+The
+.B RejectNotice
+parameter controls whether or not to reject
+jobs to the destination.
+Jobs that are
+rejected are done so
+without placing a phone call and the associated message
+is returned to the job submitter.
+This facility can be used to disallow calling sensitive
+phone numbers; for example
+.sp .5
+.nf
+.ft C
+ \.*911$    RejectNotice = "Calls to emergency numbers are not permitted"
+.ft P
+.fi
+.PP
+In addition to the above parameters, any other parameters that are specified
+are automatically accumulated and passed to programs invoked by
+.IR faxq ,
+such as
+.I faxsend
+and
+.IR pagesend .
+This is a convenient mechanism for defining configuration parameters
+for all modems without having to modify each modem-specific configuration
+file.  For example,
+.sp .5
+.nf
+.ft C
+ \.*    SessionTracing = 0x4f
+.ft P
+.fi
+.PP
+This mechanism also makes it easy to control transmit-related parameters
+according to the destination phone number.  For example, to disable use
+of 
+.SM ECM
+and restrict the transmit speed when placing
+international phone calls one might use:
+.sp .5
+.nf
+.ft C
+ [+][^1]    DesiredBR=9600 DesiredEC=false
+.ft P
+.fi
+.SH NOTES
+Beware that canonical phone numbers have a leading ``+'' which is
+a special character for regular expressions.  An easy way to
+match ``+'' is with ``[+]''; e.g. ``[+]14159657824''.
+.SH "SEE ALSO"
+.IR faxq (1M),
+.IR config (4F),
+.IR re_format (7).

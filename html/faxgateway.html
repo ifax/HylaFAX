@@ -1,0 +1,85 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Mail to Fax Gateway
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>M</FONT>AIL TO <FONT SIZE=+2>F</FONT>AX <FONT SIZE=+2>G</FONT>ATEWAY</B>
+<BASEFONT SIZE=3>
+
+<HR SIZE=4>
+
+It is easy to setup a simple mail to fax gateway facility with the tools
+included in this distribution and some simple additions to your
+mail delivery agent configuration.
+<OL>
+<LI>Setup the HylaFAX software as usual.
+<LI>If your system uses sendmail to deliver mail, then follow the
+   instructions in <B>faxmail/mailfax.sh-sendmail</B>.
+(Thanks to Eric Allman for the sendmail
+configuration hack.)
+<LI>If your system uses smail (e.g. Linux users), then follow the
+   instructions in <B>faxmail/mailfax.sh-smail</B>.
+<LI>If your system uses qmail to deliver mail, then follow the
+   instructions in <B>faxmail/mailfax.sh-qmail</B>.
+<LI>Restart your mail software, refreeze your configuration or
+   whatever is necessary to cause the configuration changes to be
+   seen by the system.
+</OL>
+
+Voila!  Now mail to <I>user@dest.fax</I>
+will get formatted and submitted as a
+facsimile job to <I>user</I> at the specified <I>dest</I>.
+
+<P>
+Mail submitted through this gateway can include header lines in the
+envelope that control the various aspects of the transmission.
+For example, to have the facsimile sent at 196 lines/inch the header line:
+
+<UL><TT>
+<PRE>X-FAX-Resolution: 196</PRE>
+</TT></UL>
+
+would be used.
+Headers exist not only to control aspects of the transmission
+but also the formatting work that is done in preparing the mail text
+for transmission; consult the
+<A HREF="@CGIPATH@/manpage?1+faxmail">faxmail(1)</A>
+manual page for complete information.
+
+<P>
+<TABLE BORDER=0>
+<TR>
+<TD><IMG SRC="icons/warning_icon.gif" ALT="NOTE: " HSPACE=8></TD>
+<TD><EM>The normal access control mechansims on submitting a facsimile
+for transmission are enforced; you may need to use them if you setup
+a fax gateway on your system!</EM></TD>
+</TR>
+</TABLE>
+
+<P>
+Dirk Husemann has contributed a more elaborate system; the
+<A HREF="ftp://ftp.sgi.com/sgi/fax/contrib/dirks-faxmailer/README">README</A>
+file is accessible in the user contributed software area on the master
+FTP server.
+
+<!--FOOTER-->
+
+<P>
+<A HREF="toc.html"><IMG SRC="icons/back.gif"> HylaFAX table
+of contents</A>.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

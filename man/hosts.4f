@@ -1,0 +1,157 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH HOSTS 4F "January 18, 1996"
+.SH NAME
+hosts \- \*(Fx client access control list
+.SH DESCRIPTION
+The 
+.SM ASCII
+file
+.B etc/hosts
+in the \*(Fx spooling area specifies the
+hosts and users that are permitted to access services through the
+.IR hfaxd (1M)
+process.
+This file must exist for client access; if it is not present then
+.I hfaxd
+will deny all requests for service.
+Note also that this file must be readable only by the ``fax'' user; i.e.
+it should have mode 600 and be owned by ``fax''.
+.PP
+Each newline-terminated entry is a set of colon (:) separated fields,
+all but the first of which are optional.
+Trailing null fields and their separators may be omitted.
+The most general form is:
+.sp
+.ti +.5i
+client:uid:passwd:adminwd
+.sp
+.I client
+is a regular expression to be matched against a string
+``\fIuser\fP@\fIhost\fP'' that is formed from the
+.I user
+string passed to
+.I hfaxd
+with the
+.B USER
+command and the official
+.I host
+name or the
+.SM DARPA
+Internet address, specified in ``dot notation''.
+If
+.I client
+does not contain an ``@'' then, for backwards compatibility,
+it is treated as a host for which any user may have access;
+i.e. it is automatically converted to the regular expression
+``^.*@\fIclient\fP$''.
+.PP
+Comments are introduced with the ``#'' character and extend
+to the end of the line.
+Any whitespace immediately preceding a comment is also ignored.
+.PP
+If 
+.I client
+has a leading ``!'', then it is interpreted as a class of
+hosts and users to which access is to be
+.BR disallowed .
+That is, if the pattern matches the client information,
+then access is denied.
+.PP
+Note that regular expressions are 
+.B not
+anchored.
+That is, a regular expression may match a substring
+of the ``\fIuser\fP@\fIhost\fP'' string.
+Thus `\fIpb\fP@\fI.*\e.cl\e.cam\e.ac\e.uk\fP' matches
+`\fIcpb\fP@\fImc.cl.cam.ac.uk.esd.sgi.com\fP'.
+Use ``^'' to match the start of the string and ``$'' to
+match the end.
+.PP
+Fields following 
+.I client
+are optional and specify the following:
+.TP 10
+.B uid
+The numerical user ID to assign to clients that use the entry
+for access.
+.I hfaxd
+uses the 
+.I uid
+to control access to server resources such as jobs and documents
+(the value is used to set the group ID of files created by a client).
+.IP
+Multiple clients/users may share the same 
+.I uid
+or unique IDs may be created for each client.
+User IDs may be any number in the range [0..6002]
+with 6002 used, by convention, for entries that do not have a
+.I uid
+specified.
+.TP 10
+.B passwd
+The encrypted password.
+If this field is empty (null) then no password will be demanded when
+a client logs in; i.e. the
+.B USER
+command does not need to be followed by a
+.B PASS
+command.
+.TP 10
+.B adminwd
+The encrypted password for this user to gain administrative privileges.
+If this field is empty (null) then the user is not permitted to have
+administrative privileges.
+.SH EXAMPLE
+The following is a sample hosts file.
+Note that the first entry that matches
+is taken, so more-specific entries should be placed first.
+.sp .3
+.nf
+.RS
+.ft C
+.ta \w'^sam@oxford.*Berkeley.*'u
+^pb@[^.]*\e.cl\e.cam\e.ac\e.uk$:::hFy8zXq2KaG8s
+	# pb on a machine directly in cl.cam.ac.uk can
+	# administer if an admin pw is given
+127.0.0.1	# anyone on local host uses the default uid
+^sam@flake.*sgi\e.com$	# Sam on his work machine
+^sam@oxford.*Berkeley.*	# Sam on any machine starting oxford and containing
+	# Berkeley, e.g. sam@oxfordberkeley.cl.cam.ac.uk
+^\&.*@.*.\e.esd\e.	# anyone in an esd domain
+!^tom@	# Tom Davis is denied access
+\&.*\e.sgi\e.com$	# but anyone else at sgi is ok
+.ft P
+.fi
+.RE
+.SH "SEE ALSO"
+.IR sendfax (1),
+.IR hfaxd (1M),
+.IR hylafax (4F)

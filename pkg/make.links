@@ -1,0 +1,63 @@
+:
+# $Id$
+#	Tim Rice	Tue Oct 28 20:36:07 PST 1997
+#
+#	I like to keep all the HylaFAX files in /usr/local/HylaFAX-v4.0
+#	so I created this script to
+#	Setup symbolic links to the user programs and man pages
+# 
+WHERE_ALL_THE_HYLAFAX_STUFF_IS=/usr/local/HylaFAX-v4.0
+#
+#
+#
+cd ${WHERE_ALL_THE_HYLAFAX_STUFF_IS}
+#
+PROGS="faxalter faxcover faxmail faxrm faxstat sendfax sendpage"
+# 
+if test -d /usr/local/bin
+then	
+	BIN_DIR=/usr/local/bin
+else
+	BIN_DIR=/usr/bin
+fi
+# 
+# now for the man pages
+if test -d /usr/local/man
+then	
+	MAN_DIR=/usr/local/man
+else
+	MAN_DIR=/usr/share/man
+fi
+
+case `basename $0` in
+	make.links)
+		echo "Making symbolic links for programs in ${BIN_DIR}"
+		for i in ${PROGS}
+		do
+			echo "$i \c"
+			ln -s `pwd`/bin/${i} ${BIN_DIR}/${i}
+		done
+		echo ""
+		echo "Making symbolic links for man pages \n in ${MAN_DIR}"
+		for j in `ls man`
+		do
+			for i in `ls man/$j`
+			do
+				[ ! -f ${MAN_DIR}/${j}/${i} ] && ln -s `pwd`/man/${j}/${i} ${MAN_DIR}/${j}/${i}
+			done
+		done
+		;;
+	remove.links)
+		echo "Removing symbolic links for ${PROGS}"
+		( cd ${BIN_DIR} ; rm -f ${PROGS})
+		echo "Removing symbolic links for man pages from ${MAN_DIR}"
+		for j in `ls man`
+		do
+			for i in `ls man/$j`
+			do
+				[ -L ${MAN_DIR}/${j}/${i} ] && rm -f ${MAN_DIR}/${j}/${i}
+			done
+		done
+		;;
+
+esac

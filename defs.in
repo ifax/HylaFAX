@@ -1,0 +1,348 @@
+# $Id$
+#
+# @WARNING@
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1988-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# VERSION:	@VERSION@
+# DATE:		@DATE@
+# TARGET:	@TARGET@
+# CCOMPILER:	@CCOMPILER@
+# CXXCOMPILER:	@CXXCOMPILER@
+#
+@SETMAKE@
+MAKEFILE	= Makefile
+SHELL		= @SCRIPT_SH@
+#
+# Directory locations setup at configuration time.
+# Note that changing these parameters here is likely
+# to insufficient; you are better off rerunning the
+# configure script so that all uses are set correctly.
+#
+SPOOL		= @SPOOL@
+SBIN		= @SBIN@
+BIN		= @BIN@
+LIBDATA		= @LIBDATA@
+LIBEXEC		= @LIBEXEC@
+HTMLDIR		= @HTMLDIR@
+AFMDIR		= @AFMDIR@
+#
+TOPSRCDIR	= @SRCDIR@
+PORT		= ${DEPTH}/port
+#
+# PostScript imaging support to setup for the default
+# installation.  This should be one of "gs" or "dps"
+# according to whether Ghostscript or the DPS-based
+# SGI tool is to be used.
+#
+PSPACKAGE	= @PSPACKAGE@
+#
+# Basic tools used in the build process.
+#
+C++		= @CXXCOMPILER@
+CC		= @CCOMPILER@
+AR		= @AR@
+AROPTS		= @AROPTS@
+RANLIB		= @RANLIB@
+MKDEPEND	= @MKDEPEND@
+#
+# Programs used during installation.
+#
+INSTALL		= @INSTALL@
+ECHO		= @ECHO@
+GREP		= @GREP@
+RM		= @RM@
+PWD		= @PWD@
+MKDIR		= @MKDIR@
+NAWK		= @AWK@
+SED		= @SED@
+SORT		= @SORT@
+#
+PRODUCT		= hylafax
+GENDIST		= @GENDIST@			# for SGI systems
+
+#
+# Uid&Gid for installing server stuff.  Note that the server process
+# proper (/usr/etc/faxd or similar) must either run setuid root or
+# setuid uucp (i.e. fax and uucp must have the same uid).  This is
+# so that the fax server can participate in the UUCP locking scheme
+# and thereby implement tty line sharing (i.e. share the same line
+# and modem for both fax and data).
+#
+FAXUSER		= @FAXUID@
+FAXGROUP	= @FAXGID@
+#
+# Ownership of system directories that might be created at install time
+#
+SYSUSER		= @SYSUID@
+SYSGROUP	= @SYSGID@
+DIRMODE		= 755
+#
+# Enable Dynamic Shared Object (DSO) support if appropriate.
+#
+# DSO is the suffix for a DSO file (e.g. ".so").  If DSO's are
+# not supported on a system then set this to ".a" to get static
+# linking of the appropriate libraries.
+#
+# DSOOPTS are options to CCF/C++F when creating a DSO.
+# DSODELAY is the option to supply when building a DSO with libraries
+#   that should be ``lazy loaded'' (e.g. because they are infrequently
+#   used)
+# LLDOPTS is intended to be used to pass options that force searching
+#   for DSO's that are stuck in non-standard system locations
+#
+DSO		= @DSOSUF@
+DSOOPTS		= @DSOOPTS@
+DSODELAY	= @DSODELAY@
+LLDOPTS		= @LLDOPTS@
+
+#
+# Default optimizer and prototype options
+#
+OPTIMIZER	= -O
+CVERSION	= @ENVOPTS@
+C++FILE		= @CXXFILE@
+
+# default definitions for programs--overide them as desired
+LIBS		= ${LIBUTIL} ${LIBPORT}
+LLDLIBS		= ${LIBS} ${LIBTIFF} ${LIBZ} ${LIBREGEX} ${MACHDEPLIBS}
+#
+# Override this definition to eliminate shared library use.
+#
+SHDLIBC		= @SHDLIBC@
+
+#
+# Libraries that may vary from machine to machine (especially if
+# you use GNU GCC instead of AT&T C++).
+#
+MACHDEPLIBS	= @MACHDEPLIBS@
+
+#
+# TIFF-related definitions.  The source for the TIFF library
+# is not required to build this software, but you must have
+# the TIFF library installed somewhere on your system to link
+# against.  If the default "-L /usr/local/lib -ltiff" is
+# insufficient to locate the library you can setup a config.local
+# file that defines LIBTIFF and/or TIFFINC (used to find tiffio.h)
+#
+TIFFINC		= @TIFFINC@
+LIBTIFF		= @LIBTIFF@
+TIFFBIN		= @TIFFBIN@
+#
+# zlib-related definitions.  The source for the zlib library
+# is not required to build this software, but you must have
+# the zlib library installed somewhere on your system to link
+# against.  If the default "-L /usr/local/lib -lz" is
+# insufficient to locate the library you can setup a config.local
+# file that defines LIBZ and/or ZINC (used to find zlib.h)
+#
+ZLIBINC		= @ZLIBINC@
+LIBZ		= @LIBZ@
+#
+# libdb-related definitions.  The source for the libdb library
+# is not required to build this software, but you must have
+# the libdb library installed somewhere on your system to link
+# against.  If the default "-L /usr/local/lib -ldb" is
+# insufficient to locate the library you can setup a config.local
+# file that defines LIBDB and/or DBINC (used to find db.h)
+#
+DBLIBINC	= @DBLIBINC@
+LIBDB		= @LIBDB@
+#
+# regex-related definitions.  The source for the POSIX regular
+# expression package is not required to build this software,
+# but you must have the resulting library installed somewhere
+# on your system to link against.  If the default value
+# "-L /usr/local/lib -lregex" is insufficient to locate the
+# library you can setup a config.local file that defines LIBREGEX
+# and/or REGEXINC
+#
+REGEXINC	= @REGEXINC@
+LIBREGEX	= @LIBREGEX@
+# random utility functions and classes
+UTIL		= ${DEPTH}/util
+LIBUTIL		= ${UTIL}/libfaxutil.${DSO}
+LIBPORT		= @LIBPORT@
+
+#
+# Definitions used by common rules.
+#
+COMMONRULES	= ${DEPTH}/rules
+COMMONTARGS	= clobber clean rmtargets depend incdepend
+
+#
+# C compiler flags are composed of variable (set on the command line),
+# local (defined in the makefile), and global (defined in this file)
+# parts, in that order.  This ordering is used so that variable or
+# locally specified include directories are searched before the globally
+# specified ones.
+#
+CFLAGS		= ${CVERSION} ${VCFLAGS} ${LCFLAGS} ${GCFLAGS}
+
+VCFLAGS		= ${VCDEFS} ${VCINCS} ${VCOPTS}
+LCFLAGS		= ${LCDEFS} ${LCINCS} ${LCOPTS}
+GCFLAGS		= ${GCDEFS} ${GCINCS} ${GCOPTS}
+
+COPTS		= ${VCOPTS} ${LCOPTS} ${GCOPTS}
+CDEFS		= ${VCDEFS} ${LCDEFS} ${GCDEFS}
+CINCS		= ${VCINCS} ${LCINCS} ${GCINCS}
+
+GCOPTS		= @GCOPTS@ ${OPTIMIZER} @PROTOTYPES@
+GCDEFS		= @ANSICPP@
+GCINCS		= -I. -I${DEPTH} -I${SRCDIR} \
+		    -I${DEPTH}/${TOPSRCDIR}/util -I${TIFFINC} -I${REGEXINC}
+#
+# C++ flags are decomposed using the same hierarchy as C flags.
+#
+C++FLAGS	= ${CVERSION} ${VC++FLAGS} ${LC++FLAGS} ${GC++FLAGS}
+
+VC++FLAGS	= ${VC++DEFS} ${VC++INCS} ${VC++OPTS}
+LC++FLAGS	= ${LC++DEFS} ${LC++INCS} ${LC++OPTS}
+GC++FLAGS	= ${GC++DEFS} ${GC++INCS} ${GC++OPTS}
+
+C++OPTS		= ${VC++OPTS} ${LC++OPTS} ${GC++OPTS}
+C++DEFS		= ${VC++DEFS} ${LC++DEFS} ${GC++DEFS}
+C++INCS		= ${VC++INCS} ${LC++INCS} ${GC++INCS}
+
+GC++OPTS	= @GCXXOPTS@ ${OPTIMIZER}
+GC++INCS	= -I. -I${DEPTH} -I${SRCDIR} \
+		    -I${DEPTH}/${TOPSRCDIR}/util -I${TIFFINC} -I${REGEXINC}
+GC++DEFS	= @ANSICXXPP@
+
+#
+# Loader flags, composed of library (-l's) and option parts, with
+# the libraries appearing last.  Both of these are divided into variable,
+# local, and global parts.  The composition of LDFLAGS is done in the
+# other "direction" from CFLAGS so that all the -L's, that are part of
+# LDOPTS, appear before any of the -l's, which are part of LDLIBS.
+# Another benefit of segregating the libraries from the remaining of the
+# loader options is that the libraries alone can easily be given to
+# another program, e.g., lint.
+#
+# Notes:
+#   - If a program should not be linked with the shared version of libc,
+#     then its make file should override the setting of SHDLIBC with a
+#     line such as "SHDLIBC=".
+#
+LDFLAGS		= ${LDOPTS} ${LDLIBS}
+
+LDOPTS		= ${VLDOPTS} ${LLDOPTS} ${GLDOPTS}
+LDLIBS		= ${VLDLIBS} ${LLDLIBS} ${GLDLIBS}
+
+GLDOPTS		= -L/usr/local/lib
+GLDLIBS		= ${SHDLIBC}
+
+#
+# Convenient command macros that include the flags macros.
+#
+C++F		= ${C++} ${C++FLAGS}
+CCF		= ${CC} ${CFLAGS}
+
+#
+# Shell script for generating make dependencies.  MKDEPEND is a shorthand
+# for the tool's absolute pathname.  MKDEPENDC adds MKDEPCFLAGS and the -c
+# mkdepend option to this.  The other language's mkdepend variables try to
+# include their language's name in the variable names.  Unfortunately, a
+# lot of makefiles already use the nondescript LMKDEPFLAGS for C language
+# mkdepend options, so we initialize LMKDEPCFLAGS with ${LMKDEPFLAGS}.
+#
+MKDEPENDC++	= ${MKDEPEND} ${MKDEPC++FLAGS} -c \
+		    "${C++F} ${C++FILE} -c -M @MKDEPCXXOPTS@"
+MKDEPENDC	= ${MKDEPEND} ${MKDEPCFLAGS} -c "${CCF} -c -M @MKDEPCOPTS@"
+
+MKDEPC++FLAGS	= ${VMKDEPC++FLAGS} ${LMKDEPC++FLAGS} ${GMKDEPC++FLAGS}
+MKDEPCFLAGS	= ${VMKDEPCFLAGS} ${LMKDEPCFLAGS} ${GMKDEPCFLAGS}
+LMKDEPCFLAGS	= ${LMKDEPFLAGS}
+
+GMKDEPFLAGS	= -e 's@ ${INCLDIR}/@ $${INCLDIR}/@'
+GMKDEPC++FLAGS	= ${GMKDEPFLAGS} -s C++ -e 's@\.c++\.o *: @\.o: @'
+GMKDEPCFLAGS	= ${GMKDEPFLAGS}
+
+#
+# Macro to add to LMKDEPCFLAGS or LMKDEPC++FLAGS if your makefile builds
+# single-source programs using null suffix rules (e.g., .c:}.  This option
+# works for both C and C++ make depend.
+#
+NULLSUFFIX_MKDEPFLAG=-e 's@\.o+*:@:@'
+#
+# MKDEPFILE is the name of the dependency database, included by rules.
+#
+MKDEPFILE	= Makedepend
+#
+# CDEPFILES lists all C or cc-compiled source files that depend on header
+# files computable by ${MKDEPENDC}.  C++DEPFILES lists all C++ files having
+# dependencies computable by ${MKDEPENDC++}.
+#
+C++DEPFILES	= ${C++FILES}
+CDEPFILES	= ${CFILES}
+DEPFILES	= ${C++DEPFILES} ${CDEPFILES}
+
+#
+# Directory shorthands, mainly for make depend (see GMKDEPFLAGS above).
+#
+INCLDIR		= /usr/include
+
+#
+# Manual-related controls:
+#
+# MAN		head of manual tree
+# MANAPPS	subdirectory for client stuff in BIN
+# MANSYS	subdirectory for server & server-related apps
+# MANFILES	subdirectory for file format info 
+#
+MAN		= @MANDIR@
+MANAPPS		= @MANAPPS@
+MANSYS		= @MANSYS@
+MANFILES	= @MANFILES@
+#
+# MANSEDLOCAL	additional sed commands to use during source transformation
+#		(might want to transform section names here)
+# MANCVT	command to convert source to installable target (can use
+#		$? and $@, but not $<)
+MANSEDLOCAL	= @MANSEDLOCAL@
+MANCVT		= @MANCVT@
+#
+# The following macros are used during the install step to generate
+# the filenames of the target manual pages.  They appear inside a
+# shell for loop in a command of the form:
+#
+#	f=${MAN*NAME}
+#
+# where the variable ``i'' contains the filename of the formatted
+# manual page (formatted according to the MANCVT macro).
+#
+# MANCAPPNAME	generate installed client app man page filename
+# MANCFILENAME	generate installed client file format man page filename
+# MANSAPPNAME	generate installed server app man page filename
+# MANSFILENAME	generate installed server file format man page filename
+#
+#
+MANCAPPNAME	= @MANCAPPNAME@
+MANCFILENAME	= @MANCFILENAME@
+MANSAPPNAME	= @MANSAPPNAME@
+MANSFILENAME	= @MANSFILENAME@

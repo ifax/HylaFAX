@@ -1,0 +1,266 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>HylaFAX 3.0 Information</TITLE>
+</HEAD>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>3.0</FONT> <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<HR SIZE=4>
+
+[<CITE>
+<B><FONT SIZE=+1>H</FONT>YLA<FONT SIZE=+1>FAX</FONT></FONT></B>
+is the new name for FlexFAX; check
+<A HREF="namechange.html">
+here for the reason for the name change</A>.</CITE>]
+
+<P>
+This note describes the features and changes expected to be part
+of of HylaFAX Version 3.0.
+The software has been in production use for almost 6 months so it
+should be reasonably stable by the time of the first beta distribution.
+HylaFAX v3.0beta??? is expected to be available for public ftp
+in early February, 1995.
+As usual the announcement of its availability will be posted to the
+<KBD>flexfax-announce@sgi.com</KBD> mailing list (which is also fed to the
+<KBD>flexfax@sgi.com</KBD> list).
+Information on subscribing to these mailing lists is available
+<A HREF="mailing-lists.html">here</A>.
+
+<P>
+<HR WIDTH=65% ALIGN=right>
+<B><FONT SIZE=+2>N</FONT>EW <FONT SIZE=+2>F</FONT>UNCTIONALITY</B>
+
+<P>
+The following is an abbreviated list of new functionality that
+is to be part of the released version of HylaFAX 3.0.
+All items not marked as incomplete will be present in the first
+beta distribution.
+
+<UL>
+<LI>Redesigned server architecture with a single scheduler
+  process and optional per-modem ``front door'' processes
+<LI>Revamped scheduler with time-of-day restrictions, priority-based
+  scheduling of jobs, and per-destination controls
+<LI>Optimal imaging of broadcast documents
+<LI>IXO/TAP protocol support for communicating
+   with pager service providers
+<LI>Distinctive ring support
+<LI>Caller-ID support
+<LI>Support for Class 2/2.0 modems that implement Error Correction Mode (ECM)
+<LI>Job groups
+</UL>
+
+Folks interested in defining a revised client-server protocol
+should contact me by electronic mail at
+<A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+
+<P>
+<HR WIDTH=65% ALIGN=right>
+<B><FONT SIZE=+2>N</FONT>EW <FONT SIZE=+2>S</FONT>ERVER <FONT SIZE=+2>A</FONT>RCHITECTURE</B>
+
+<P>
+HylaFAX 3.0 is a significant rearchitecture of the old FlexFAX software.
+Specifically, the server-side software has been redesigned to support:
+<UL>
+<LI>High-volume transmission of facsimile.
+<LI>Effective load-balancing and sharing of
+modem equipment for fax, data, and voice use.
+<LI>Sophisticated queueing management and control.
+<LI>Better integration with existing system facilities.
+</UL>
+
+The redesign splits the old <I>faxd</I> server process into three
+separate components:
+<UL>
+<LI><I>faxq</I>, a centralized queueing agent,
+<LI><I>faxgetty</I>, an optional ``<I>getty</I>-frontdoor''
+process that handles incoming phone calls and monitors modem usage, and
+<LI><I>faxsend</I>, a fax transmit program invoked by the <I>faxq</I> program
+to process an outbound job.
+</UL>
+
+Send-only configurations can be implemented by not running the
+<I>faxgetty</I> program on ports where fax modems reside (though doing
+this can reduce the effectiveness of the load-balancing work done by
+the queuer).
+Receive-only configurations can be implemented by running only the
+<I>faxgetty</I> program on ports where fax modems reside.
+
+<P>
+High-volume transmission of facsimile is possible because of the
+improved central queueing agent and because
+<EM>outbound documents are imaged only as required by the capabilities
+of the receiving facsimile equipment</EM>.
+In addition the queueing agent supports priority-based scheduling
+of outbound jobs, so broadcast jobs can be scheduled <EM>ahead</EM>
+or <EM>behind</EM> other jobs simply be assigning or adjusting their
+transmit priority.
+
+<P>
+Effective load-balancing of modem equipment is done in the queuer
+by assigning modems according to transmit characteristics and the
+current status of each modem.
+<I>faxgetty</I>
+processes notify the central queuer when a modem is in use for
+inbound or outbound use and also communicate each modem's capabilities.
+This makes it possible for jobs to be scheduled so that
+they are not blocked waiting for modems to be available and so that
+the <I>best modem</I> for the job is assigned; e.g. if a fax receiver
+supports the V.17 high speed facsimile communication protocol, then the
+queuer will try to assign a modem that is capable of transmitting V.17
+data.
+There are also provisions in the queuer for scheduling modems for
+non-fax use; however this functionality is not expected to be
+fully developed by the time of the 3.0 release.
+Future versions will be capable of doing
+optimal scheduling of modems for batch-oriented communication
+protocols such as UUCP.
+
+<P>
+The new queueing agent has extensive support for administrative control
+and monitoring of jobs.
+Jobs are scheduled using a <I>priority</I> assigned when the job
+is submitted.
+This priority permits
+administrators to run important jobs ahead of less-important jobs
+such as broadcasts.
+Per-destination parameters can be defined to control:
+<UL>
+<LI>the time of day that outbound jobs will be processed,
+<LI>the maximum number of concurrent jobs processed,
+<LI>the maximum number of pages that can be transmitted in a job,
+<LI>the maximum number of calls that will be made on behalf of a job, and
+<LI>whether or not jobs should be rejected out-of-hand.
+</UL>
+The configuration database is designed so that
+parameters can easily be applied to groups of destinations
+with a single specification and yet have a parameter for a single
+destination ``override'' a previous group-oriented definition.
+Optimizing phone usage by scheduling long distance
+calls to off-peak hours, for example, is simple with the new controls.
+Likewise disallowing outbound jobs to sensitive phone
+numbers (such as 911) is also easy.
+
+<P>
+Because the <I>faxgetty</I> process is not required for a send-only
+configuration, the HylaFAX software can be more easily configured for
+use on systems that support bidirectional modem use through device
+pairs (one device for outbound use and one for inbound use).
+Similarly, the <I>faxq</I> program can be combined with other
+``Smart Getty'' software, albeit with some loss in effectiveness of
+load-balancing algorithms implemented in the central queuer process.
+
+<P>
+<HR WIDTH=65% ALIGN=right>
+<B><FONT SIZE=+2>N</FONT>OTEWORTHY <FONT SIZE=+2>C</FONT>HANGES</B>
+
+<P>
+The following is an abbreviated list of the changes between
+the last public distribution of FlexFAX, 
+<A HREF="v2.3beta036special.html">v2.3beta036special</A>,
+and the
+<A HREF="v3.0beta096.html">
+first beta distribution of HylaFAX 3.0</A>.
+
+<UL>
+<LI>Prototype modem configuration files have been split out into a
+separate directory and now reflect the DTE-DCE flow control
+scheme they support.  This simplifies the task of configuring
+a modem according to a specific flow control regimen.
+<LI>There is a new configuration file for the <I>faxq</I> process.
+<LI>All modem configuration parameters that specify command
+strings to send to the modem are now <EM>fully specified</EM>.
+This means, in particular, that the fax software no longer
+prepends <TT>AT</TT> or <TT>AT+F</TT> strings.
+This change was made so that non-<TT>AT</TT>-prefix strings,
+such as the modem escape sequence, can be specified in modem
+configuration parameters.
+<LI>The Class 2 and 2.0 device drivers now enable the use of
+the optional Error Control Mode (ECM) protocol, if possible.
+The Class 1 driver does not support ECM.
+<LI>Protocol errors recognized during the initial protocol
+exchanges when sending and receiving are now more precisely
+identified; the old driver lumped all such errors together.
+<LI>A bug was fixed in the Class 1 driver that caused it to
+prematurely give up when a certain type of recoverable
+error was encountered while sending the post-page message.
+<LI>The Class 2 driver can now be configured to append RTC to
+the end of each page of transmitted facsimile data.  This
+can be used to work around modem firmware that incorrectly
+fails to append RTC to each page as specified in the
+``<I>Ersatz Class 2 Standard</I>''.
+<LI>The software no longer writes <TT>rejectNotice</TT>
+records in the <B>info</B> database when encountering a
+receiver that appears to not be a fax machine.  This
+change was made because it was too easy to misrecognize
+valid receivers as non-fax entities and because users were
+too easily confused by the result.
+<LI>The modem configuration parameter strings can now include
+escape codes that force the host to pause for a period of time
+(the delay value is specified in the string).
+<LI>Support has been added for <I>distinctive ring</I>: a feature
+where the modem presents different <TT>RING</TT> status messages
+for different <EM>types of calls</EM>.
+<LI>Support has been added to accept/reject calls based on
+<I>Caller ID</I>: a feature where
+the modem presents identification information of the caller
+before the phone is placed off-hook.
+Caller ID information is also logged.
+<LI>There is improved support for controlling the number of
+<I>tries</I> to make to transmit a facsimile, as opposed to
+the number of times to dial the phone.
+<LI>The diagnostic messages returned to a user when jobs are
+rejected have been improved.
+<LI>Almost all configuration parameters that were previously specified
+at compile-time are now configurable at runtime.
+In particular, all UUCP-locking-related parameters can now be
+specified in the configuration files.
+<LI>There is improved support for external voice-oriented programs
+that handle inbound calls.
+<LI>The software can be configured to use SVR4-style
+Dynamic Shared Objects (DSOs); this
+can significantly reduce the amount of disk space used by the
+various client and server applications.
+<LI>The UUCP locking support now understands
+the peculiarities of SCO systems.
+<LI>It is now possible to dynamically alter jobs' kill time
+and assigned modem using the <B>faxalter</B> program.
+<LI>The TIFF library included with the fax distribution
+has been updated to the latest version.
+This is interesting mainly because it incorporates
+performance enhancements in the Group 3 decoder and many
+portability changes for 64-bit platforms.
+</UL>
+
+<P>
+<HR WIDTH=65% ALIGN=right>
+<B><FONT SIZE=+2>D</FONT>ISTRIBUTION <FONT SIZE=+2>P</FONT>LANS</B>
+
+<P>
+HylaFAX will be distributed in source and binary form by public
+ftp on the Internet.
+Full binary distributions for all ``<EM>supported platforms</EM>''
+are intended to be available at the same time as the source distribution.
+Source distributions that are built with the GNU gcc compiler
+<STRONG>must use gcc version 2.6.1 or later</STRONG>.
+As noted above, availability of distributions will be posted to the
+<KBD>flexfax-announce</KBD> and <KBD>flexfax</KBD> mailing lists.
+
+<!--FOOTER-->
+
+<P>
+<A HREF="toc.html"><IMG SRC="icons/back.gif" ALT="(TOC)"> HylaFAX
+table of contents</A>.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated: $Date$
+</ADDRESS>
+
+</BODY>
+</HTML>

@@ -1,0 +1,476 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH FAXSTAT 1 "July 9, 1996"
+.SH NAME
+faxstat \- display \*(Fx status
+.SH SYNOPSIS
+.B faxstat
+[
+.I options
+]
+.SH DESCRIPTION
+.I faxstat
+reports the status of \*(Fx servers, including (potentially)
+the status of the send, receive, done, document, and archive directories.
+When invoked without options
+.I faxstat
+reports only the status of the server; the options
+described below can be used to override this behaviour.
+.PP
+Server status information indicates the state of the
+server (idle, sending, receiving, etc.)
+and the phone number that is associated with the fax modem.
+.PP
+The job queue report give the status of facsimile jobs
+queued for transmission; by default:
+.IP \(bu 3
+the job identifier,
+.IP \(bu 3
+the job state (see below for the description of the
+.B a
+format in the
+.B JobFmt
+string),
+.IP \(bu 3
+the modem or modem class the job is bound to (``any'' if the job
+can be sent though any modem),
+.IP \(bu 3
+the destination (phone number) of the job,
+.IP \(bu 3
+the time to send the job, or a blank field if the job is being
+processed or is to be sent immediately,
+.IP \(bu 3
+the job's owner,
+.IP \(bu 3
+and status information about the job (typically the reason why
+a previous attempt failed).
+.PP
+The receive queue report lists the facsimile documents
+that have been received and are awaiting delivery; by default it
+includes:
+.IP \(bu 3
+the document protection mode,
+.IP \(bu 3
+the number of pages,
+.IP \(bu 3
+the document's owner,
+.IP \(bu 3
+the phone number of the sender (if supplied),
+.IP \(bu 3
+the date and time at which the job was received, and
+.IP \(bu 3
+the filename of the document in the \fBrecvq\fP
+directory on the server machine.
+.SH OPTIONS
+.TP 10
+.B \-a
+Display the status of all jobs that are stored in the
+.B archive
+directory on the server machine
+(\fINB: this will always be empty for v4.0 because there is no
+support for job archiving\fP).
+.TP 10
+.B \-d
+Display the status of all jobs that have completed; i.e. those
+jobs located in the
+.B doneq
+directory on the server machine.
+The
+.B JobFmt
+string defines the content and format of information reported with
+this option.
+.TP 10
+.B \-f
+Display the status of document files located in the
+.B docq
+directory on the server machine.
+The
+.B FileFmt
+string defines the content and format of information reported with
+this option (see below).
+.TP 10
+.B \-g
+Display times and dates in 
+Greenwich Mean Time (\s-1GMT\s+1).
+NB: \fIthis is the default\fP.
+.TP 10
+.BI \-h " host"
+Report the status of the server on a specific
+.IR host .
+The
+.I host
+may be either a symbolic name or a network address.
+If no
+.B \-h
+option is supplied,
+.I faxstat
+uses the
+.SM FAXSERVER
+environment variable to identify the \*(Fx server to contact.
+If this variable is not set, then
+.I faxstat
+checks for a setting in the configuration files (first in the
+per-user file and then in the system-wide file).
+If all of the above fails, then
+.I faxstat
+attempts to contact a server on the machine where it is run.
+.TP 10
+.B \-i
+Display additional status information for the server.
+This status typically has information such as the \*(Fx
+version, the physical location of the server machine, and
+an administrative contact for the server.
+.TP 10
+.B \-l
+Display times and dates in the local timezone of the server.
+.TP 10
+.B \-r
+Display the receive queue status for each server.
+The
+.B RcvFmt
+string defines the content and format of information reported with
+this option (see below).
+.TP 10
+.B \-s
+Display the status of jobs in the send queue on the server machine.
+The
+.B JobFmt
+string defines the content and format of information reported with
+this option (see below).
+.TP 10
+.B \-v
+Trace the protocol exchanges between
+.I faxstat
+and the
+.I hfaxd
+processes on the standard output.
+.SH "CONFIGURATION PARAMETERS"
+.I faxstat
+reads configuration information from the file
+.B ${LIBDATA}/hyla.conf
+and then from the file
+.BR ~/.hylarc .
+Configuration files follow the conventions described in
+.IR hylafax (1).
+The following configuration parameters are recognized:
+.sp .5
+.nf
+.ta \w'AutoCoverPage    'u +\w'boolean    'u +\w'\s-1\fIsee below\fP\s+1    'u
+\fBTag	Type	Default	Description\fP
+FileFmt	string	\s-1\fIsee below\fP\s+1	format string for file status results
+Host	string	\s-1localhost\s+1	host to contact for service
+JobFmt	string	\s-1\fIsee below\fP\s+1	format string for job status results
+ModemFmt	string	\s-1\fIsee below\fP\s+1	format string for modem status results
+Port	integer	\s-14559\s+1	port to use in contacting server
+Protocol	string	\s-1tcp\s+1	protocol to use in contacting server
+RcvFmt	string	\s-1\fIsee below\fP\s+1	format string for received facsimile status results
+TimeZone	string	\s-1GMT\s+1	timezone to use for reporting dates and times
+Verbose	boolean	\s-1No\s+1	whether or not to enable protocol tracing
+.fi
+.PP
+The configuration parameters are explained below:
+.TP 14
+.B FileFmt
+The format string to use when returning file status information with the
+.B \-f
+option.
+Formats are specified using 
+.IR printf (3S)-\c
+style conventions but using the field identifiers listed below.
+Each item can include field width, precision, left-justification,
+0-filling, etc. just as for 
+.IR printf ;
+e.g. %-8p for an 8-character wide, left-justified, blank-padded
+field containing the file protection flags.
+.IP
+.nf
+.ta \w'Format    'u +\w'Description    'u
+\fBFormat	Description\fP
+a	Last access time
+c	Creation time
+d	Device number (octal)
+f	Filename
+g	Group identifier (decimal)
+i	Inode number (decimal)
+l	Link count (decimal)
+m	Last modification time
+o	Owner (based on file \s-1GID\s+1)
+p	Fax-style protection flags (no group bits)
+q	\s-1UNIX\s+1-style protection flags
+r	Root device number (octal)
+s	File size in bytes (decimal)
+u	User identifier (decimal)
+.fi
+.TP 14
+.B Host
+The host to contact for service.
+(Equivalent to the
+.B \-h
+option.)
+.TP 14
+.B JobFmt
+The format string to use when returning job status information for
+the
+.B \-s
+and
+.B \-d
+options.
+Formats are specified using 
+.IR printf (3S)-\c
+style conventions but using the field identifiers listed below.
+Each item can include field width, precision, left-justification,
+0-filling, etc. just as for 
+.IR printf ;
+e.g. %-3j for a 3-character wide, left-justified, blank-padded
+field containing the job state.
+.IP
+.nf
+.ta \w'Format    'u +\w'Description    'u
+\fBFormat	Description\fP
+A	Destination SubAddress
+B	Destination Password
+C	Destination company name
+D	Total # dials/maximum # dials
+E	Desired signalling rate
+F	Client-specific tagline format string
+G	Desired min-scanline time
+H	Desired data format
+I	Client-specified scheduling priority
+J	Client-specified job tag string
+K	Desired use of ECM (one-character symbol)
+L	Destination geographic location
+M	Notification e-mail address
+N	Desired use of private tagline (one-character symbol)
+O	Whether to use continuation cover page (one-character symbol)
+P	# pages transmitted/total # pages to transmit
+Q	Client-specified minimum acceptable signalling rate
+R	Destination person (receiver)
+S	Sender's identity
+T	Total # tries/maximum # tries
+U	Page chopping threshold (inches)
+V	Job done operation
+W	Communication identifier
+X	Job type (one-character symbol)
+a	Job state (one-character symbol)
+b	# consecutive failed tries
+c	Client machine name
+d	Total # dials
+e	Public (external) format of dialstring
+f	# consecutive failed dials
+g	Group identifier
+h	Page chop handling (one-character symbol)
+i	Current scheduling priority
+j	Job identifier
+k	Job kill time
+l	Page length in mm
+m	Assigned modem
+n	E-mail notification handling (one-character symbol)
+o	Job owner
+p	# pages transmitted
+q	Job retry time (MM::SS)
+r	Document resolution in lines/inch
+s	Job status information from last failure
+t	Total # tries attempted
+u	Maximum # tries
+v	Client-specified dialstring
+w	Page width in mm
+x	Maximum # dials
+y	Total # pages to transmit
+z	Time to send job
+.fi
+.IP
+The
+.B K
+format produces:
+``D'' if ECM is to be disabled,
+`` '' (space) if ECM use is enabled,
+``H'' if T.30 Annex C half duplex is enabled,
+or
+``F'' if T.30 Annex C full duplex is enabled.
+.IP
+The
+.B N
+format produces:
+`` '' (space) if the system-wide tagline format is to be used
+or
+``P'' if a private tagline format is to be used.
+.IP
+The
+.B O
+format produces:
+``N'' if no continuation cover page is to be used
+or
+`` '' (space) if the system default handling for continuation cover pages
+is to be used.
+.IP
+The
+.B X
+format produces:
+``F'' for a facsimile job
+or
+``P'' for a pager job.
+.IP
+The
+.B a
+format produces:
+``?'' for a job in an undefined state,
+``T'' for a suspended job (not being scheduled),
+``P'' for a pending job (waiting for its time to send to arrive),
+``S'' for a sleeping job (waiting for a scheduled timeout such as a delay between attempts to send),
+``B'' for a job blocked by concurrent activity to the same destination,
+``W'' for a job waiting for resources such as a free modem,
+``R'' for a job that is actively running,
+and
+``D'' for a job that is done.
+.IP
+The
+.B h
+format produces:
+``D'' if page chopping is disabled,
+`` '' (space) for the system default page chop handling,
+``A'' when all pages are to be chopped,
+or
+``L'' if only the last page is to be chopped.
+.IP
+The
+.B n
+format produces:
+`` '' (space) when no notification messages are to be delivered,
+``D'' when notification is to be sent when the job is done,
+``Q'' when notification is to be sent each time the job is requeued,
+or
+``A'' when notification is to be sent for either the job completing
+or being requeued.
+.IP
+It is recommended that all items include a field width so that
+the width of column title strings can be constrained
+when constructing headers from the format string.
+.TP 14
+.B ModemFmt
+The format string to use when returning modem status information.
+Formats are specified using 
+.IR printf (3S)-\c
+style conventions but using the field identifiers listed below.
+Each item can include field width, precision, left-justification,
+0-filling, etc. just as for 
+.IR printf ;
+e.g. %-8h for an 8-character wide, left-justified, blank-padded
+field containing the name of the host the server is running on.
+.IP
+.nf
+.ta \w'Format    'u +\w'Description    'u
+\fBFormat	Description\fP
+h	Server hostname
+l	Local identifier string
+m	Canonical modem name
+n	FAX phone number
+r	Maximum pages that can be received in a single call
+s	Status information string
+t	Server and session tracing levels (xxxxx:yyyyy)
+v	Modem speaker volume as one-character symbol
+z	A ``*'' if a \fIfaxgetty\fP\|(1M) process is running; otherwise `` '' (space)
+.fi
+.TP 14
+.B Port
+The network port to contact for service.
+(Eqvuialent to the
+.B \-h
+option.)
+.TP 14
+.B Protocol
+The name of the communication protocol to use when contacting a server.
+(Equivalent to the
+.B FAXSERVICE
+environment variable.)
+.TP 14
+.B RcvFmt
+The format string to use when returning status information for the
+.B \-r
+option.
+Formats are specified using 
+.IR printf (3S)-\c
+style conventions but using the field identifiers listed below.
+Each item can include field width, precision, left-justification,
+0-filling, etc. just as for 
+.IR printf ;
+e.g. %-3b for a 3-character wide, left-justified, blank-padded
+field containing the signalling rate.
+.IP
+.nf
+.ta \w'Format    'u +\w'Description    'u
+\fBFormat	Description\fP
+a	SubAddress received from sender (if any)
+b	Signalling rate used during receive
+d	Data format used during receive
+e	Error description if an error occurred during receive
+f	Document filename (relative to the \fBrecvq\fP directory)
+h	Time spent receiving document (HH:MM:SS)
+l	Page length in mm
+m	Fax-style protection mode string (``-rwxrwx'')
+n	File size (number of bytes)
+o	File owner
+p	Number of pages in document
+q	\s-1UNIX\s+1-style protection flags
+r	Resolution of received data
+s	Sender identity (\s-1TSI\s+1)
+t	Compact representation of the time when the receive happened
+w	Page width in mm
+z	A ``*'' if receive is going on; otherwise `` '' (space)
+.fi
+.IP
+It is recommended that all items include a field width so that
+the width of column title strings can be constrained
+when constructing headers from the format string.
+.TP 14
+.B TimeZone
+Control whether times and dates are reported in the local
+timezone of the server (``local'') or in GMT (``gmt'').
+By default times are reported in GMT.
+.TP 14
+.B Verbose
+Control protocol tracing.
+(Equivalent to the
+.B \-v
+option.)
+.SH BUGS
+There is no way to suppress the server status report.
+There is no way to control the printing of headers.
+.SH FILES
+.ta \w'${LIBDATA}/hyla.conf    'u
+.nf
+${LIBDATA}/hyla.conf	system-wide configuration file
+~/.hylarc	per-user configuration file
+.fi
+.SH "SEE ALSO"
+.IR hylafax (1),
+.IR sendfax (1),
+.IR faxalter (1),
+.IR faxrm (1),
+.IR hfaxd (1M)

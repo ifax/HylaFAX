@@ -1,0 +1,360 @@
+#! /bin/sh
+#	$Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Print Statistics about Received Facsimile.
+#
+SPOOL=@SPOOL@
+
+test -f $SPOOL/etc/setup.cache || {
+    cat<<EOF
+
+FATAL ERROR: $SPOOL/etc/setup.cache is missing!
+
+The file $SPOOL/etc/setup.cache is not present.  This
+probably means the machine has not been setup using the faxsetup(1M)
+command.  Read the documentation on setting up HylaFAX before you
+startup a server system.
+
+EOF
+    exit 1
+}
+. $SPOOL/etc/setup.cache
+
+FILES=
+SORTKEY=-sender				# default is to sort by sender
+TODAY="`date +'%D %H:%M'`"
+AGE="360"				# report statistics for last year
+SINCE=
+
+while [ x"$1" != x"" ] ; do
+    case $1 in
+    -send*|-csi|-dest*|-speed|-rate|-format)
+	    SORTKEY=$1;;
+    -age)   shift; AGE=$1;;
+    -since) shift; SINCE=$1;;
+    -*)	    echo "Usage: $0 [-sortkey] [-age days] [-since date] [files]"
+	    exit 1
+	    ;;
+    *)	    FILES="$FILES $1";;
+    esac
+    shift
+done
+if [ -z "$FILES" ]; then
+    FILES=$SPOOL/etc/xferlog
+fi
+
+#
+# Construct awk rules to collect information according
+# to the desired sort key.  There are multiple rules for
+# dealing with the different formats that have existed
+# over time.
+#
+case $SORTKEY in
+-send*|-csi)
+    AWKRULES='
+	$2 == "RECV" && NF == 9  { acct($3, $7, $8, $5, $6, $9); }
+	$2 == "RECV" && NF == 11 { acct($6, $9, $10, $7, $8, $11); }
+	$2 == "RECV" && NF == 12 { acct($7, $10, $11, $8, $9, $12); }
+	$2 == "RECV" && NF == 13 { acct($9, $11, $12, getBR($10), getDF($10), $13); }
+	$2 == "RECV" && NF == 14 { acct($9, $11, $13, getBR($10), getDF($10), $14); }
+	'
+    ;;
+-dest*)
+    AWKRULES='
+	$2 == "RECV" && NF == 9  { acct($4, $7, $8, $5, $6, $9); }
+	$2 == "RECV" && NF == 11 { acct($5, $9, $10, $7, $8, $11); }
+	$2 == "RECV" && NF == 12 { acct($6, $10, $11, $8, $9, $12); }
+	$2 == "RECV" && NF == 14 { acct($8, $11, $13, getBR($10), getDF($10), $14); }
+	'
+    ;;
+-speed|-rate)
+    AWKRULES='
+	$2 == "RECV" && NF == 9  { acct($5, $7, $8, $5, $6, $9); }
+	$2 == "RECV" && NF == 11 { acct($7, $9, $10, $7, $8, $11); }
+	$2 == "RECV" && NF == 12 { acct($8, $10, $11, $8, $9, $12); }
+	$2 == "RECV" && NF == 13 { acct(getBR($10), $11, $12, getBR($10), getDF($10), $13); }
+	$2 == "RECV" && NF == 14 { acct(getBR($10), $11, $13, getBR($10), getDF($10), $14); }
+	'
+    ;;
+-format)
+    AWKRULES='
+	$2 == "RECV" && NF == 9  { acct($6, $7, $8, $5, $6, $9); }
+	$2 == "RECV" && NF == 11 { acct($8, $9, $10, $7, $8, $11); }
+	$2 == "RECV" && NF == 12 { acct($9, $10, $11, $8, $9, $12); }
+	$2 == "RECV" && NF == 13 { acct(getDF($10), $11, $12, getBR($10), getDF($10), $13); }
+	$2 == "RECV" && NF == 14 { acct(getDF($10), $11, $13, getBR($10), getDF($10), $14); }
+	'
+    ;;
+esac
+
+#
+# Generate an awk program to process the statistics file.
+#
+tmpAwk=/tmp/xfer$$
+trap "rm -f $tmpAwk; exit 1" 0 1 2 15
+
+($CAT<<'EOF'
+#
+# Setup date conversion data structures.
+#
+function setupDateTimeStuff()
+{
+    daysInMonth[ 0] = 31; daysInMonth[ 1] = 28; daysInMonth[ 2] = 31;
+    daysInMonth[ 3] = 30; daysInMonth[ 4] = 31; daysInMonth[ 5] = 30;
+    daysInMonth[ 6] = 31; daysInMonth[ 7] = 31; daysInMonth[ 8] = 30;
+    daysInMonth[ 9] = 31; daysInMonth[10] = 30; daysInMonth[11] = 31;
+
+    FULLDAY = 24 * 60 * 60;
+}
+
+#
+# Convert hh:mm:ss to seconds.
+#
+function cvtTime(s)
+{
+    t = i = 0;
+    for (n = split(s, a, ":"); i++ < n; )
+	t = t*60 + a[i];
+    return t;
+}
+
+#
+# Convert MM/DD/YY hh:mm to seconds.
+# NB: this does not deal with leap years.
+#
+function cvtDateTime(s)
+{
+    yday = substr(s,7,2)*365 + substr(s,4,2) - 1;
+    mon = substr(s,0,2) + 0;
+    for (i = 0; i < mon; i++)
+	yday += daysInMonth[i];
+    return yday*FULLDAY + cvtTime(substr(s,10) ":00");
+}
+
+function setupDigits()
+{
+  digits[0] = "0"; digits[1] = "1"; digits[2] = "2";
+  digits[3] = "3"; digits[4] = "4"; digits[5] = "5";
+  digits[6] = "6"; digits[7] = "7"; digits[8] = "8";
+  digits[9] = "9";
+}
+
+#
+# Format seconds as hh:mm:ss.
+#
+function fmtTime(t)
+{
+    v = int(t/3600);
+    result = "";
+    if (v > 0) {
+	if (v >= 10)
+	    result = digits[int(v/10)];
+	result = result digits[int(v%10)] ":";
+	t -= v*3600;
+    }
+    v = int(t/60);
+    if (v >= 10 || result != "")
+	result = result digits[int(v/10)];
+    result = result digits[int(v%10)];
+    t -= v*60;
+    return (result ":" digits[int(t/10)] digits[int(t%10)]);
+}
+
+#
+# Setup map for histogram calculations
+# and indexed table for decoding params.
+#
+function setupMaps(s, map, names)
+{
+    n = split(s, a, ":");
+    for (i = 1; i <= n; i++) {
+	map[a[i]] = i;
+	names[i-1] = a[i];
+    }
+}
+
+#
+# Add pages to a histogram.
+#
+function addToMap(key, ix, pages, map)
+{
+    if (key == "") {
+	for (i in map)
+	    key = key ":";
+    }
+    n = split(key, a, ":");
+    a[map[ix]] += pages;
+    t = a[1];
+    for (i = 2; i <= n; i++)
+      t = t ":" a[i];
+    return t;
+}
+
+#
+# Return the name of the item with the
+# largest number of accumulated pages.
+#
+function bestInMap(totals, map)
+{
+   n = split(totals, a, ":");
+   imax = 1; max = -1;
+   for (j = 1; j <= n; j++)
+       if (a[j] > max) {
+	   max = a[j];
+	   imax = j;
+       }
+   split(map, a, ":");
+   return a[imax];
+}
+
+#
+# Sort array a[l..r]
+#
+function qsort(a, l, r) {
+    i = l;
+    k = r+1;
+    item = a[l];
+    for (;;) {
+	while (i < r) {
+            i++;
+	    if (a[i] >= item)
+		break;
+        }
+	while (k > l) {
+            k--;
+	    if (a[k] <= item)
+		break;
+        }
+        if (i >= k)
+	    break;
+	t = a[i]; a[i] = a[k]; a[k] = t;
+    }
+    t = a[l]; a[l] = a[k]; a[k] = t;
+    if (k != 0 && l < k-1)
+	qsort(a, l, k-1);
+    if (k+1 < r)
+	qsort(a, k+1, r);
+}
+
+function getBR(params)
+{
+    return brNames[int(int(params) / 2) % 8];
+}
+
+function getDF(params)
+{
+    return dfNames[int(int(params) / 512) % 4];
+}
+
+#
+# Accumulate a statistics record.
+#
+function acct(key, pages, time, br, df, status)
+{
+    if (cvtDateTime($1) < KEEP)
+	return;
+    gsub("\"", "", key);
+    gsub("^ +", "", key);
+    gsub(" +$", "", key);
+    recvpages[key] += pages;
+    if (pages == 0 && time > 60)
+	time = 0;
+    recvtime[key] += cvtTime(time);
+    gsub("\"", "", status);
+    if (status != "")
+	recverrs[key]++;
+    gsub("\"", "", br);
+    recvrate[key] = addToMap(recvrate[key], br, pages, rateMap);
+    gsub("\"", "", df);
+    recvdata[key] = addToMap(recvdata[key], df, pages, dataMap);
+}
+
+#
+# Print a rule between the stats and the totals line.
+#
+function printRule(n, s)
+{
+    r = "";
+    while (n-- >= 0)
+	r = r s;
+    printf "%s\n", r;
+}
+
+BEGIN		{ FS="\t";
+		  rates = "2400:4800:7200:9600:12000:14400";
+		  setupMaps(rates, rateMap, brNames);
+		  datas = "1-D MR:2-D MR:2-D Uncompressed Mode:2-D MMR";
+		  setupMaps(datas, dataMap, dfNames);
+		  setupDateTimeStuff();
+		  if (SINCE == "")
+		      KEEP = cvtDateTime(TODAY) - AGE*FULLDAY;
+		  else
+		      KEEP = cvtDateTime(SINCE);
+		}
+END		{ OFS="\t"; setupDigits();
+		  maxlen = 15;
+		  nsorted = 0;
+		  for (i in recvpages) {
+		      l = length(i);
+		      if (l > maxlen)
+			maxlen = l;
+		      sorted[nsorted++] = i;
+		  }
+		  qsort(sorted, 0, nsorted-1);
+		  fmt = "%-" maxlen "." maxlen "s";	# e.g. %-24.24s
+		  printf fmt " %5s %8s %6s %4s %7s %7s\n",
+		      "Sender", "Pages", "Time", "Pg/min",
+		      "Errs", "TypRate", "TypData";
+		  tpages = 0;
+		  ttime = 0;
+		  terrs = 0;
+		  for (k = 0; k < nsorted; k++) {
+		      i = sorted[k];
+		      t = recvtime[i]/60; if (t == 0) t = 1;
+		      n = recvpages[i]; if (n == 0) n = 1;
+		      brate = best
+		      printf fmt " %5d %8s %6.1f %4d %7d %7s\n",
+			  i, recvpages[i], fmtTime(recvtime[i]),
+			  recvpages[i] / t, recverrs[i],
+			  bestInMap(recvrate[i], rates),
+			  bestInMap(recvdata[i], datas);
+			tpages += recvpages[i];
+			ttime += recvtime[i];
+			terrs += recverrs[i];
+		  }
+		  printRule(maxlen+1+5+1+8+6+1+4+1+7+1+7, "-");
+		  t = ttime/60; if (t == 0) t = 1;
+		  printf fmt " %5d %8s %6.1f %4d\n",
+		      "Total", tpages, fmtTime(ttime), tpages/t, terrs;
+		}
+EOF
+echo "$AWKRULES"
+)>$tmpAwk
+$AWK -f $tmpAwk -v TODAY="$TODAY" -v AGE="$AGE" -v SINCE="$SINCE" $FILES

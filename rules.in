@@ -1,0 +1,197 @@
+#	$Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1988-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+
+#
+# Warning, this file was automatically created by the HylaFAX configure script
+#
+# VERSION:	@VERSION@
+# DATE:		@DATE@
+# TARGET:	@TARGET@
+# CCOMPILER:	@CCOMPILER@
+# CXXCOMPILER:	@CXXCOMPILER@
+#
+
+#
+# Common makefile rules.
+#
+# - After including defs, a makefile should say
+#   ``include ${COMMONRULES}'' to get this file.
+# - It is up to the including makefile to define a default rule before
+#   including ${COMMONRULES}.
+# - This file defines the following lists: SOURCES, enumerating all
+#   source files; OBJECTS, the .o files derived from compilable source;
+#   and DIRT, which lists intermediates and temporary files to be
+#   removed by clean.
+# - The including (parent) makefile may define source file lists for each
+#   standard suffix: CFILES for .c, etc.  This file combines all such
+#   lists into SOURCES.
+# - The parent makefile must define TARGETS in order for clobber to work.
+#
+SOURCES= ${HFILES} ${C++FILES} ${CFILES} ${SHFILES}
+OBJECTS= ${C++FILES:.c++=.o} ${CFILES:.c=.o}
+
+#
+# C++ inference rules.
+#
+.SUFFIXES: .c++ .yuk
+
+.c++:
+	${C++F} ${C++FILE} $<@MAKECXXOVERRIDE@ ${LDFLAGS} -o $@
+.c++.o:
+	${C++F} ${C++FILE} -c $<@MAKECXXOVERRIDE@
+.c++.s:
+	${C++F} ${C++FILE} -S $<@MAKECXXOVERRIDE@
+.c++.i:
+	${C++F} ${C++FILE} -E $<@MAKECXXOVERRIDE@ > $*.i
+.c++.yuk:
+	${C++F} ${C++FILE} -Fc -.yuk $<@MAKECXXOVERRIDE@
+
+#
+# Rather than removing ${OBJECTS}, clean removes ${CLEANOBJECTS} which we
+# set to *.[ou] by default, to remove obsolete objects and -O3 ucode files
+# after source has been reorganized.  If files ending in .[ou] should not
+# be removed by clean, this definition can be overridden after the include
+# of commonrules to define CLEANOBJECTS=${OBJECTS}.
+#
+CLEANOBJECTS= *.[ou]
+
+#
+# What gets cleaned, apart from objects.
+#
+DIRT= ${GDIRT} ${VDIRT} ${LDIRT}
+GDIRT= a.out core ${_FORCE}
+
+#
+# An always-unsatisfied target.
+#
+_FORCE= ${COMMONPREF}_force
+${_FORCE}:
+
+#
+# File removal rules: there are three.
+#	- clean removes intermediates and dirt
+#	- clobber removes targets as well as intermediates and dirt
+#	- rmtargets removes targets only
+# If you use incdepend (see below), then 'make clobber' will remove the
+# .*dependtime marker files used by incdepend to find modified ${DEPFILES}.
+#
+.PRECIOUS: .sdependtime .c++dependtime .cdependtime
+
+${COMMONPREF}clobber: ${COMMONPREF}clean ${COMMONPREF}rmtargets ${_FORCE}
+	-${RM} -rf Makefile ${MKDEPFILE} .*dependtime .*incdepend so_locations
+${COMMONPREF}distclean: ${COMMONPREF}clobber
+${COMMONPREF}clean: ${_FORCE}
+	-${RM} -rf ${CLEANOBJECTS} ${DIRT}
+${COMMONPREF}rmtargets: ${_FORCE}
+	-${RM} -rf ${TARGETS}
+
+#
+# Automated header dependency inference.  Most makefiles need only set the
+# CFILES, etc. lists and include commonrules.
+#
+${COMMONPREF}depend: ${_FORCE}
+	@Clist="${C++DEPFILES}" clist="${CDEPFILES}"; \
+	case "$$Clist" in \
+	  *.*) \
+	    ${ECHO} "${MKDEPENDC++} ${MKDEPFILE} $$Clist"; \
+	    ${MKDEPENDC++} ${MKDEPFILE} $$Clist; \
+	    touch .c++dependtime; \
+	esac; \
+	case "$$clist" in \
+	  *.*) \
+	    ${ECHO} "${MKDEPENDC} ${MKDEPFILE} $$clist"; \
+	    ${MKDEPENDC} ${MKDEPFILE} $$clist; \
+	    touch .cdependtime; \
+	esac
+_c++depend: ${C++DEPFILES} ${_FORCE}
+	${C++F} -M ${C++DEPFILES} | ${RAWDEPFILTER}; \
+	touch .c++incdepend
+_cdepend: ${CDEPFILES} ${_FORCE}
+	${CCF} -M ${CDEPFILES} | ${RAWDEPFILTER}; \
+	touch .cincdepend
+
+#
+# Incremental depend uses marker files to find ${DEPFILES} that are newer
+# than their dependencies.  Note that the non-incremental rules, above, also
+# touch the marker files.
+#
+# XXX can't run only one sub-make that depends on all .*dependtime, because
+# XXX smake will parallelize and mkdepend doesn't interlock itself
+#
+${COMMONPREF}incdepend: ${_FORCE}
+	@Clist="${C++DEPFILES}" clist="${CDEPFILES}"; \
+	case "$$Clist" in \
+	  *.*) \
+	    ${MAKE} -f ${MAKEFILE} _quiet.c++dependtime; \
+	esac; \
+	case "$$clist" in \
+	  *.*) \
+	    ${MAKE} -f ${MAKEFILE} _quiet.cdependtime; \
+	esac
+
+# so that make doesn't announce "`.sdependtime' is up to date."
+_quiet.c++dependtime: .c++dependtime
+_quiet.cdependtime: .cdependtime
+
+.c++dependtime: ${C++DEPFILES}
+	@if test -n "$?"; then \
+	    ${ECHO} "${MKDEPENDC++} -i ${MKDEPFILE} $?"; \
+	    ${MKDEPENDC++} -i ${MKDEPFILE} $?; \
+	    touch $@; \
+	fi
+.cdependtime: ${CDEPFILES}
+	@if test -n "$?"; then \
+	    ${ECHO} "${MKDEPENDC} -i ${MKDEPFILE} $?"; \
+	    ${MKDEPENDC} -i ${MKDEPFILE} $?; \
+	    touch $@; \
+	fi
+
+# you can't add dependencies to a target that begins with '.'
+_c++incdepend: .c++incdepend
+_cincdepend: .cincdepend
+
+.c++incdepend: ${C++DEPFILES}
+	@if test -n "$?"; then \
+	    ${C++F} -M $? | ${RAWDEPFILTER}; \
+	    touch $@; \
+	fi
+.cincdepend: ${CDEPFILES}
+	@if test -n "$?"; then \
+	    ${CCF} -M $? | ${RAWDEPFILTER}; \
+	    touch $@; \
+	fi
+
+#
+# A sed filter that prepends ${VPATH} to object targets emitted by cc -M.
+# ${VPATH} should name a directory that holds product-dependent objects.
+#
+RAWDEPFILTER= sed -e 's:^:${VPATH}/:'
+
+#
+# Include the make dependency file if it exists.
+#
+@MAKEDEPINCLUDE@ @MAKELQUOTE@${MKDEPFILE}@MAKERQUOTE@

@@ -1,0 +1,108 @@
+# $Id$
+#
+# @WARNING@
+#
+# HylaFAX Facsimile Software
+#
+
+# VERSION:	@VERSION@
+# DATE:		@DATE@
+# TARGET:	@TARGET@
+# CCOMPILER:	@CCOMPILER@
+# CXXCOMPILER:	@CXXCOMPILER@
+#
+DEPTH=..
+
+SRCDIR	= ${DEPTH}/${TOPSRCDIR}/pkg
+VPATH	= ../@SRCDIR@/pkg
+#
+SHELL	= @SCRIPT_SH@
+NULL	=
+ECHO	= echo
+
+all default:
+	@if test ! -f copyright ; then \
+		ln ../COPYRIGHT copyright ; \
+	fi
+
+BINARIES=\
+	../faxalter/faxalter \
+	../faxcover/faxcover \
+	../faxmail/faxmail \
+	../faxrm/faxrm \
+	../faxstat/faxstat \
+	../sendfax/sendfax \
+	../sendpage/sendpage \
+	../util/textfmt \
+	../faxd/faxgetty \
+	../faxd/faxsend \
+	../faxd/pagesend \
+	../hfaxd/hfaxd \
+	../etc/lockname \
+	../etc/ondelay \
+	../util/faxmsg \
+	../util/faxconfig \
+	../util/faxmodem \
+	../util/faxstate \
+	../util/faxwatch \
+	../util/faxinfo \
+	../util/tiffcheck \
+	../util/dialtest \
+	../util/typetest \
+	../faxd/faxq \
+	../faxd/faxqclean \
+	../faxd/tsitest \
+	../faxd/tagtest \
+	../faxd/cqtest \
+	../faxd/choptest \
+	../html/tools/man2html \
+	../html/tools/unquote \
+	${NULL}
+
+package: cproto sproto all
+	[ -d HylaFAX ]  &&  @RM@ -fr HylaFAX ;	\
+	${ECHO} stripping the binaries ;		\
+	for i in ${BINARIES} ; do			\
+		strip ${SRCDIR}/$$i ;			\
+	done ;						\
+	@RM@ -f pkginfo 2>/dev/null;			\
+	@RM@ -f request 2>/dev/null;			\
+	cp cpkginfo pkginfo ;				\
+	cp crequest request ;				\
+	pkgmk -d `pwd` -f cproto ;			\
+	pkgtrans -s `pwd` `pwd`/HylaFAX-client-@VERSION@.pkg HylaFAX ; \
+	@RM@ -fr HylaFAX ;				\
+	@RM@ -f pkginfo 2>/dev/null;			\
+	@RM@ -f request 2>/dev/null;			\
+	cp spkginfo pkginfo ;				\
+	cp srequest request ;				\
+	pkgmk -d `pwd` -f sproto ;			\
+	pkgtrans -s `pwd` `pwd`/HylaFAX-@VERSION@.pkg HylaFAX
+
+cproto: cproto.stub
+	${SHELL} ./make_proto.sh client
+
+sproto: sproto.stub
+	${SHELL} ./make_proto.sh server
+
+clean:
+	@RM@ -f cproto sproto
+	@RM@ -fr HylaFAX
+	@RM@ -f HylaFAX-client-@VERSION@.pkg
+	@RM@ -f HylaFAX-@VERSION@.pkg
+	@RM@ -f pkginfo
+	@RM@ -f request
+	@RM@ -f core*
+
+clobber distclean: clean
+	@RM@ -f cpkginfo
+	@RM@ -f cproto.stub
+	@RM@ -f crequest
+	@RM@ -f make_proto.sh
+	@RM@ -f postinstall
+	@RM@ -f postremove
+	@RM@ -f spkginfo
+	@RM@ -f sproto.stub
+	@RM@ -f srequest
+	@RM@ -f Makefile
+

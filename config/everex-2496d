@@ -1,0 +1,68 @@
+# $Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Configuration for an Everex 24/96D.
+#
+# It may be possible to run the modem using RTS/CTS, but at the
+# data rates it supports there's little point (and since everything
+# works fine with XON/XOFF flow control, little motivation).
+#
+# CONFIG: CLASS2: Everex*-XONXOFF
+# CONFIG: CLASS2: Everex*-DEFAULT
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:		Class2		# use class 2 interface
+ModemRate:		19200
+ModemFlowControl:	xonxoff		# default
+#
+ModemSetupDTRCmd:	AT&D3		# DTR off causes modem to reset
+ModemSetupDCDCmd:	AT&C0		# DCD always on
+ModemDialCmd:		ATDT%s@		# T for tone dialing, @ for silence
+#
+# Avoid BOR_C_REV 'cuz of a bug in the Everex modem firmware
+# (Rev 901231 or earlier): BOR=3 and REL=1 generates garbage
+# data in the EOL padding for received facsimile.
+#
+Class2BORCmd:		AT+FBOR=2	# direct phase C data, reversed B/D
+Class2RELCmd:		AT+FREL=1	# enable byte-aligned EOLs
+#
+# NB: must break CQ=1 BADMUL= BADLIN= into separate lines
+#     for the modem to grok
+#
+Class2CQCmd:		"AT+FCQ=1\nAT+FBADMUL=20\nAT+FBADLIN=10"
+#
+# Disable 2D-encoded data 'cuz some PROM versions appear
+# to receive bad data (if you figure out why, then remove this).
+#
+Class2DCCQueryCmd:      !(0,1),(0-3),(0-2),(0-2),(0),(0),(0),(0-7)

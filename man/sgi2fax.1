@@ -1,0 +1,153 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH SGI2FAX 1 "June 14, 1994"
+.SH NAME
+sgi2fax \- convert a Silicon Graphics image file for facsimile transmission
+.SH SYNOPSIS
+.B ${LIBEXEC}/sgi2fax
+[
+.I options
+]
+.IR files ...
+.SH DESCRIPTION
+.I sgi2fax
+converts Silicon Graphics format images to
+bilevel
+.SM TIFF
+Class F images in preparation for transmission as facsimile.
+.I sgi2fax
+is not normally invoked directly; it is usually run by
+.IR sendfax (1)
+when an
+.SM SGI
+image file is submitted for transmission.
+.PP
+Images are converted by scaling them to fill the guaranteed
+reproducible area on a default page.
+Each 
+.SM RGB
+pixel
+.I p
+is converted to greyscale according to:
+.nf
+.sp .5
+.ti +0.5i
+\fIp\fP\dr\u * %r + \fIp\fP\dg\u * %g + \fIp\fP\db\u * %b
+.sp .5
+.fi
+where %r, %g, and %b default to 30, 59, and 11, respectively.
+Greyscale images are then process with a high pass filter
+and dithered to a bilevel image.
+The resultant image are written as a 
+.SM TIFF
+Class F document.
+.PP
+By default, the output image is created with 204 dots/inch
+horizontal resolution and 98 lines/inch vertical resolution.
+The image is written as Group 3 1D-encoded data.
+.SH OPTIONS
+.TP
+.B \-1
+(\c
+.BR \-2 )
+Write the image as Group 3 1D- (2D-) encoded data.
+.TP
+.BI \-b " %b"
+Set the
+.I %b
+parameter used to convert color pixel values
+to greyscale pixel values.
+.TP
+.BI \-g " %g"
+Set the
+.I %g
+parameter used to convert color pixel values
+to greyscale pixel values.
+.TP
+.B \-l
+Generate an image at 98 lines/inch vertical resolution.
+know as \fIlow resolution\fP.
+.TP
+.B \-m
+Generate an image at 196 lines/inch vertical resolution.
+.TP
+.BI \-o " file"
+Write output to
+.I file
+instead of the default file named
+.BR sgi.fax .
+.TP
+.BI \-r " %r"
+Set the
+.I %r
+parameter used to convert color pixel values
+to greyscale pixel values.
+.TP
+.BI \-s " size"
+Set the output size according to the named page size.
+Images are normally created with a system-default page size
+(usually letter-size pages, 8.5" by 11", for sites in North America).
+Alternate page sizes are specified symbolically using either
+the name or abbreviation of an entry in the
+.IR pagesizes (4F)
+database; e.g.
+.I a3
+(ISO A3),
+.I a4
+(ISO A4),
+.I a5
+(ISO A5),
+.I a6
+(ISO A6),
+.I b4
+(ISO B4),
+.I na-let
+(North American Letter),
+.I us-leg
+(American Legal),
+.I us-led
+(American Ledger),
+.I us-exe
+(American Executive),
+.I jp-let
+(Japanese Letter),
+and
+.I jp-leg
+(Japanese Legal).
+Comparisons are case-insensitive and any match of a
+substring of the full page-size name is sufficient; e.g. ``legal'' would
+match ``American Legal''.
+.SH FILES
+.ta \w'${LIBDATA}/pagezes    'u
+${LIBDATA}/pagesizes	page size database
+.SH "SEE ALSO"
+.IR hylafax (1),
+.IR sendfax (1),
+.IR hylafax (4F)

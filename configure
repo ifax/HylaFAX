@@ -1,0 +1,4294 @@
+#!/bin/sh
+#	$Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1988-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+# Configuration script for HylaFAX (tm) (aka FlexFAX)
+
+#
+# Shell script to setup machine-dependent files in
+# preparation for building HylaFax source.
+#
+
+#
+# Setup general configuration parameters.
+#
+DIR_BIN=/usr/local/bin
+DIR_SBIN=/usr/local/sbin
+DIR_LIBDATA=/usr/local/lib/fax
+DIR_LIBEXEC=$DIR_SBIN
+DIR_SPOOL=/var/spool/fax
+DIR_HTML=/var/httpd/htdocs/hylafax
+DIR_CGI=/var/httpd/cgi-bin
+PATH_DPSRIP=$DIR_LIBEXEC/ps2fax.exe
+PATH_IMPRIP=/usr/lib/print/psrip
+HTMLPATH=/hylafax
+CGIPATH=/cgi-bin
+DEFVRES=98
+PAGESIZE="North American Letter"
+FAXUID=uucp
+FAXGID=
+SYSUID=bin
+SYSGID=
+DSO=auto
+AFM=auto
+GETTY=auto
+HTML=no
+PS=auto
+SYSVINIT=auto
+SGI2FAX=auto
+PORT=auto
+LIBMALLOC=auto
+LOCKS=auto
+DPS=no
+GS=no
+IMP=no
+UTMP=auto
+LIBTIFF="-L/usr/local/lib -ltiff"
+TIFFINC=/usr/local/include
+TIFFBIN=/usr/local/bin
+ZLIB=yes
+LIBZ='-L${DEPTH}/zlib -lz'
+ZLIBINC='${DEPTH}/${TOPSRCDIR}/zlib'
+REGEX=yes
+LIBREGEX='-L${DEPTH}/regex -lregex'
+REGEXINC='${DEPTH}/${TOPSRCDIR}/regex'
+DBLIB=no
+LIBDB="-L/usr/local/lib -ldb"
+DBLIBINC=/usr/local/include
+CONFIG_OSFCNH=auto
+
+# SVR4 packaging stuff
+PKG_ARCH=				# ARCH variable in pkginfo file
+PKG_EMAIL=someone@somehost.somedomain	# EMAIL variable in pkginfo file
+PKG_VENDOR="Your Name Here"		# VENDOR variable in pkginfo file
+
+: ${MAKE=make}				# make to use
+# screws up the test of `-f -'
+unset MAKEFLAGS
+RM="rm -f"
+
+VAR1="ANSICPP
+ANSICXXPP
+AR
+AROPTS
+CC
+CXX
+CXXFILE
+DATE
+DBLIBINC
+ENVOPTS
+GCOPTS
+GCXXOPTS
+MAKECXXOVERRIDE
+MAKEDEPINCLUDE
+MAKEINCLUDE
+MAKELQUOTE
+MAKERQUOTE
+MKDEPCOPTS
+MKDEPCXXOPTS
+PROTOTYPES
+RANLIB
+REGEXINC
+SCRIPT_SH
+SETMAKE
+SRCDIR
+TARGET
+TIFFINC
+VERSION
+WARNING
+ZLIBINC"
+
+VAR2="AFM
+AFMDIR		DIR_AFM
+AWK
+BIN		DIR_BIN
+CAT
+CGIDIR		DIR_CGI
+CGIPATH
+CHGRP
+CHMOD
+CHOWN
+CP
+CMP
+COL
+DBLIB
+DEFVRES
+DPSRIP 		PATH_DPSRIP
+DSO
+DSOSUF
+DSODELAY
+DSOOPTS
+DIST_MAJOR
+DIST_MINOR
+DIST_ALPHA
+DIST_TYPE
+ECHO
+FAXGID
+FAXUID
+FILLORDER
+GETTY
+GREP
+GSRIP 		PATH_GSRIP
+HTML
+HTMLDIR 	DIR_HTML
+HTMLPATH
+IMPRIP		PATH_IMPRIP
+INSTALL
+LIBDATA		DIR_LIBDATA
+LIBEXEC		DIR_LIBEXEC
+LIBPORT
+LIBREGEX
+LIBTIFF
+LIBZ
+LIBDB
+LLDOPTS
+LN
+LN_S
+MACHDEPLIBS
+MAKEDSOINCLUDE
+MAN
+MANDIR DIR_MAN
+MANAPPS
+MANCAPPNAME
+MANCFILENAME
+MANCVT
+MANFILES
+MANSAPPNAME
+MANSEDLOCAL
+MANSFILENAME
+MANSYS
+MKDEPEND
+MKDIR
+MKFIFO
+MV
+MV_F
+PAGESIZE
+PATHGETTY	PATH_GETTY
+PATHVGETTY	PATH_VGETTY
+PATHEGETTY	PATH_EGETTY
+PKG_ARCH
+PKG_EMAIL
+PKG_VENDOR
+PORT
+PORTFUNCS
+PSPACKAGE	PS
+REGEX
+RM		RMCMD
+SBIN		DIR_SBIN
+SED
+SENDMAIL	PATH_SENDMAIL
+SGI2FAX
+SHDLIBC
+SPOOL		DIR_SPOOL
+STRIP
+SYSGID
+SYSUID
+SYSVINIT
+TIFFBIN
+UTMP
+UUCP_LOCKDIR	DIR_LOCKS
+UUCP_LOCKTYPE	LOCKS
+ZLIB
+DPS
+GENDIST
+GS
+IMP
+PWD
+SORT"
+
+dumpvars()
+{
+    (for i do echo "$i"; done) |
+	while read a b; do eval c=\$${b:-$a}; echo "/@$a@/s;;$c;g"; done
+}
+dumpvals()
+{
+    (echo "$VAR1"; echo "$VAR2") |
+	while read a b; do eval c=\$${b:-$a}; echo "${b:-$a}='$c'"; done
+}
+
+#
+# We do this little dance with the search path to insure
+# that programs that we select for use by installed programs
+# (which may be run by the super-user) come from trusted
+# locations before they come from the user's private area.
+# This should help avoid accidentally configuring some
+# random version of a program in someone's personal bin.
+#
+OPATH=$PATH
+PATH=/bin:/usr/bin:/etc
+test -d /usr/ccs/bin && PATH=$PATH:/usr/ccs/bin		# SVR4/Solaris2
+test -d /usr/sbin && PATH=$PATH:/usr/sbin		# SGI and others
+test -d /usr/bsd && PATH=$PATH:/usr/bsd			# SGI
+test -d /usr/ucb && PATH=$PATH:/usr/ucb			# Sun and others
+test -d /usr/contrib/bin && PATH=$PATH:/usr/contrib/bin	# BSDi
+test -d /usr/5bin && PATH=/usr/5bin:$PATH:/usr/etc	# Sun and others
+test -d /usr/local/bin && PATH=/usr/local/bin:$PATH	# for GNU stuff
+PATH=$PATH:$OPATH
+
+POSIXLY_CORRECT=1; export POSIXLY_CORRECT		# disable GNU extensions
+
+#
+# Error diagnostics that should go to the terminal are
+# done with this interface (or cat).
+#
+bitch()
+{
+    echo "$@" 1>&2
+}
+
+die()
+{
+    kill -1 $$				# use kill so trap handler is called
+}
+
+#
+# This is the preferred interface for
+# configure to terminate abnormally.
+#
+boom()
+{
+    bitch ""
+    bitch "Unrecoverable error!  Once you've corrected the problem rerun this script."
+    die
+}
+
+usage()
+{
+    cat<<'EOF'
+Usage: configure [options] [host]
+Options: [defaults in brackets after descriptions]
+  --help                  print this message
+  --quiet                 do not print `Using ...' messages
+  --verbose		  opposite of --quiet
+  --version               print the version of autoconf that created configure
+  --target=TARGET         configure for TARGET [TARGET=HOST]
+  --srcdir=DIR            find the sources in DIR [configure dir or ..]
+  --with-PARAM[=ARG]      set configuration PARAM [ARG=yes]
+EOF
+}
+
+QUIET=no
+SITE=
+TARGET=
+RELEASE=
+SRCDIR=
+WITHARGS=no
+#
+# Crack command line arguments.  We purposely
+# use syntax and options that are compatible
+# with GNU autoconf.
+#
+ac_prev=
+for ac_option
+do
+    if [ -n "$ac_prev" ]; then		# assign the argument to previous option
+	eval "$ac_prev=\$ac_option"
+	ac_prev=
+	continue
+    fi
+    case "$ac_option" in		# collect optional argument
+    -*=*)	ac_optarg=`echo "$ac_option" | sed 's/[-_a-zA-Z0-9]*=//'`;;
+    *)		ac_optarg=;;
+    esac
+    case "$ac_option" in
+    -with-*|--with-*)
+	ac_with=`echo $ac_option|sed -e 's/-*with-//' -e 's/=.*//'`
+	# Reject names that are not valid shell variable names.
+	if [ -n "`echo $ac_with| sed 's/[-_a-zA-Z0-9]//g'`" ]; then
+	    bitch "configure: $ac_with: invalid parameter name."
+	    die
+	fi
+	ac_with=`echo $ac_with| sed 's/-/_/g'`
+	case "$ac_option" in
+	*=*)	;;
+	*)	ac_optarg=yes;;
+	esac
+	eval "${ac_with}='$ac_optarg'"
+	WITHARGS=yes
+	;;
+    -quiet|--quiet)		QUIET=yes;;
+    -verbose|--verbose)		QUIET=no;;
+    -site|--site)		ac_prev=SITE;;
+    -site=*|--site=*)		SITE="$ac_optarg";;
+    -srcdir|--srcdir)		ac_prev=SRCDIR;;
+    -srcdir=*|--srcdir=*)	SRCDIR="$ac_optarg";;
+    -target|--target)		ac_prev=TARGET;;
+    -target=*|--target=*)	TARGET="$ac_optarg" ;;
+    -version|--version)
+	echo "This is HylaFAX configure $Revision$"
+	exit 0
+	;;
+    -help|--help)		usage; exit 0;;
+    -*)
+	bitch "configure: $ac_option: invalid option; use -help for usage."
+	die
+	;;
+    *)
+	if [ x"$TARGET" != x ]; then
+	    bitch "configure: Can only configure for one target at a time."
+	    kill -1 $$
+	fi
+	TARGET="$ac_option"
+	;;
+    esac
+done
+
+if [ -n "$ac_prev" ]; then
+    bitch "configure: missing argument to --`echo $ac_prev | sed 's/_/-/g'`"
+    die
+fi
+
+#
+# Locate source directory by looking for the VERSION file.
+# The directory must either be specified through the
+# environment or be located in the current directory or a
+# parent of the current directory.
+#
+test "$SRCDIR" || {
+    configure=$0
+    # NB: don't use dirname since it may not exist
+    SRCDIR=`echo $configure | sed 's;/[^/][^/]*$;;'`
+    if [ @"$SRCDIR" = @"$configure" ]; then
+        SRCDIR=.
+    fi
+    while [ ! -r $SRCDIR/VERSION ]; do
+	# strip last directory from pathname
+	newdir=`echo $SRCDIR | sed 's;/[^/]*$;;'`
+	if [ -z "$newdir" ] || [ "$newdir" = $SRCDIR ]; then
+	    break;
+	fi
+	SRCDIR=$newdir
+    done
+}
+if [ ! -r $SRCDIR/VERSION ]; then
+    bitch "Can not locate sources in $SRCDIR; the file $SRCDIR/VERSION"
+    bitch "does not exist or is unreadable."
+    boom
+fi
+SRCDIR=`echo "$SRCDIR" | sed 's;\([^/]\)/*$;\1;'`
+
+#
+# Descriptor usage:
+# 1: ???
+# 2: messages that should be seen even if we're in the background.
+# 3: [stdout from test runs]
+# 4: verbose-style messages (Using ...)
+# 5: compiler stderr when running tests
+#
+if [ $QUIET = yes ]; then
+    exec 4>/dev/null			# chuck messages
+else
+    exec 4>&1				# messages go to stdout
+fi
+$RM ./config.log
+exec 5>./config.log			# compiler messages and the like
+
+DATE=`date`
+
+eval `cat $SRCDIR/VERSION | sed 's/\([0-9][0-9]*\)\.\([0-9][0-9]*\)\(.*\)/DIST_MAJOR=\1; DIST_MINOR=\2; DIST_TYPE=\3/'`
+DIST_ALPHA=`awk '{print $3}' $SRCDIR/dist/hylafax.alpha`
+VERSION="v${DIST_MAJOR}.${DIST_MINOR}${DIST_TYPE}"
+if [ $DIST_TYPE = beta ]; then
+    VERSION="${VERSION}${DIST_ALPHA}"
+fi
+
+Note()
+{
+    echo "$@" 1>&4
+}
+
+capture()
+{
+    (eval "set -x; $*") >&5 2>&1
+    return
+}
+captureX()
+{
+    (eval "set -x; $*") 2>&5
+    return
+}
+
+date >&5
+cat 1>&5 <<'EOF'
+
+This file contains information that was captured from running the configure
+script.  Lines that begin with a "+" are command lines echoed by the
+shell.  Other lines are the output of commands; usually the contents of
+test case files or the output from compilers.  If configure does the
+wrong thing, use the information captured here to aid in debugging.
+
+EOF
+
+Note ""
+Note "Configuring HylaFAX (tm) (aka FlexFAX) $VERSION."
+Note ""
+Note "If configure does the wrong thing, check the file config.log for"
+Note "information that may help you understand what went wrong."
+Note ""
+
+#
+# Read site and local configuration parameters.
+#
+CONFIG_FILES=
+if [ -f $SITE/config.site ]; then
+    Note "Reading site-wide parameters from $SITE/config.site."
+    . $SITE/config.site
+    capture . $SITE/config.site
+    CONFIG_FILES=$SITE/config.site
+elif [ -f $SRCDIR/config.site ]; then
+    Note "Reading site-wide parameters from $SRCDIR/config.site."
+    . $SRCDIR/config.site
+    capture . $SRCDIR/config.site
+    CONFIG_FILES=$SRCDIR/config.site
+fi
+if [ -f config.local ]; then
+    Note "Reading local parameters from config.local."
+    . ./config.local
+    capture . ./config.local
+    CONFIG_FILES="$CONFIG_FILES config.local"
+elif [ -f $SRCDIR/config.local ]; then
+    Note "Reading local parameters from $SRCDIR/config.local."
+    . $SRCDIR/config.local
+    capture . $SRCDIR/config.local
+    CONFIG_FILES="$CONFIG_FILES $SRCDIR/config.local"
+fi
+#
+# Flush cached values if something was specified on the
+# command line or if the contents of a config parameter
+# file was changed more recently.
+#
+REASON=
+if [ $WITHARGS = yes ]; then 
+    REASON="of command line parameters"
+elif [ "$CONFIG_FILES" ]; then
+    REASON=`find $CONFIG_FILES -newer config.cache -print 2>/dev/null`
+    test "$REASON" && REASON="$REASON has been updated"
+fi
+if [ "$REASON" -a -f config.cache ]; then
+   Note "Flushing cached parameters because $REASON."
+   Note ""
+   rm -f config.cache
+fi
+if [ -f config.cache ]; then
+    Note "Reading cached parameters from config.cache."
+    Note ""
+    OPORTFUNCS="$PORTFUNCS"; OMACHDEPLIBS="$MACHDEPLIBS"
+    OTIFFINC="$TIFFINC"; OLIBTIFF="$LIBTIFF"
+    OZLIBINC="$ZLIBINC"; OLIBZ="$LIBZ"
+    OREGEXINC="$REGEXINC"; OLIBREGEX="$LIBREGEX"
+    ODBLIBINC="$DBLIBINC"; OLIBDB="$LIBDB"
+    . ./config.cache
+    capture . ./config.cache
+    # NB: these are calculated each time from scratch
+    MACHDEPLIBS="$OMACHDEPLIBS"; PORTFUNCS="$OPORTFUNCS"
+    # NB: these are relativized each time so beware of cached value
+    TIFFINC="$OTIFFINC"; LIBTIFF="$OLIBTIFF"
+    ZLIBINC="$OZLIBINC"; LIBZ="$OLIBZ"
+    REGEXINC="$OREGEXINC"; LIBREGEX="$OLIBREGEX"
+    DBLIBINC="$ODBLIBINC"; LIBDB="$OLIBDB"
+fi
+
+identifyTarget()
+{
+    random=`date | awk '{print $4}' | sed -e 's/.*://'` 2>/dev/null
+    case "$random" in
+    *0) Note "Wow, you've got a $1 system!";;
+    *1) Note "Hmm, looks like a $1 system.";;
+    *2) Note "Oh no, not another $1 system...";;
+    *3) Note "Well I'll be, a $1 system.";;
+    *4) Note "Fee, fie, foe, this smells like a $1 system.";;
+    *5)	Note "Gosh, aren't you lucky to have a $1 system!";;
+    *6)	Note "YOW!!  Did something bad happen or am I on a $1 system?";;
+    *7)	Note "Do they really still make $1 systems?!";;
+    *8)	Note "I'm always happy to encounter another $1 system.";;
+    *9)	Note "Here we are again, this time on a $1 system.";;
+    esac
+}
+
+#
+# If no target is specified, try to deduce the system.
+# We use the GNU scripts for guessing and canonicalizing
+# the system identification, if available.
+#
+if [ -z "$TARGET" ]; then
+    test -f $SRCDIR/config.guess && TARGET=`sh $SRCDIR/config.guess` 2>/dev/null
+    if [ -z "$TARGET" ]; then
+	bitch "Sorry, no target was specified on the command line and I don't seem to"
+	bitch "have the GNU config.guess script that is used to deduce your system type."
+	boom
+    fi
+    identifyTarget $TARGET
+elif [ -f $SRCDIR/config.sub ]; then
+    TARGET=`sh $SRCDIR/config.sub "$TARGET"`
+else
+    Note "WARNING, the GNU config.sub script does not seem to be present.  This"
+    Note "         script is used to canonicalize your target specification; not"
+    Note "         having it may cause problems later on..."
+fi
+echo "TARGET: $TARGET" >&5
+RELEASE=`(uname -r) 2>/dev/null` || RELEASE=unknown
+echo "RELEASE: $RELEASE" >&5
+
+#
+# Find the full pathname of a file
+# using the specified test operation.
+#
+findThing()
+{
+    t="$1"; app=$2; path=$3;
+    case $app in
+    /*) eval $t $app && { echo $app; return; };;
+    esac
+    IFS=:
+    for i in $path; do
+	eval $t $i/$app && { echo $i/$app; return 0; }
+    done
+    return 1
+}
+
+#
+# Find the full pathname of a plain file.
+#
+findFile()
+{
+    findThing "test -f" $1 $2
+}
+
+#
+# Find the full pathname of an executable.
+#
+findApp()
+{
+    findThing "test -x" $1 $2
+}
+
+#
+# Find the full pathname of an executable;
+# supply a default if nothing is found.
+#
+findAppDef()
+{
+    app=$1; path=$2; def=$3
+    case $app in
+    /*) test -x $app && { echo $app; return; };;
+    esac
+    IFS=:
+    for i in $path; do
+	test -x $i/$app && { echo $i/$app; return; }
+    done
+    echo $def
+}
+
+#
+# Fixup a list of potentially relative pathnames so
+# that they work when used in a subdirectory.  The
+# string sent to stdout has no extraneous spaces so
+# it can be used, for example, in building pathnames.
+#
+# NB: There's an extra echo done here so we get a
+#     \n-terminated string passed to sed.
+#
+relativize()
+{
+    echo `(for i do
+	case "$i" in
+	/*|-l*|-l[$]{DEPTH}/*)	echo "$i" ;;
+	-L|-L/*|-L[$]{DEPTH}/*)	echo "$i" ;;
+	-I|-I/*|-I[$]{DEPTH}/*)	echo "$i" ;;
+	-R|-R/*|-R[$]{DEPTH}/*)	echo "$i" ;;
+	[$][{]DEPTH[}]/*) echo "$i" ;;
+	-L*)		echo "$i" | sed 's;^-L;-L../;' ;;
+	-R*)		echo "$i" | sed 's;^-R;-R../;' ;;
+	-I*)		echo "$i" | sed 's;^-I;-I../;' ;;
+	*)		echo "../$i" ;;
+	esac
+    done) | tr '\012' ' '` | \
+	sed -e 's;/[.]/;/;g' -e 's;[ ][ ]*$;;' -e 's;/[.]$;;'
+}
+
+#
+# Locate a C and C++ compiler and verify they work and
+# satisfy our needs (using assorted heuristics).
+#
+JUNK="
+    a.out
+    conffifo
+    confsed1
+    confsed2
+    conftestmmap
+    confx confy
+    confMakefile
+    conf.db
+    core
+    dummy
+    dummy.C
+    dummy.a
+    dummy.c
+    dummy.o
+    foo
+    m.c
+    so_locations
+    t.c
+    t.c++
+    t.o
+    t
+    xMakedepend
+    xdefs
+    xgnu.c
+    xmakeinc
+    xport.h
+    xtermios.h
+"
+trap "$RM \$JUNK; exit 1" 1 2 15
+
+$RM $JUNK
+
+#
+# Before we go too far, check some features required by the software
+#
+
+if [ -z "$MKFIFO" ]; then
+    MKFIFO=`findApp mkfifo $PATH`
+    if [ "$MKFIFO" ]; then
+	mkfifo()
+	{
+	    $MKFIFO $1
+	}
+    else
+	MKFIFO=`findApp mknod /sbin:$PATH`
+	if [ -z "$MKFIFO" ]; then
+	    cat <<EOF
+No support for creating a FIFO special file.
+
+There does not appear to be a way to create a FIFO special file.
+No mkfifo program or mknod program was located in the expected
+locations.  One of these programs is required for proper operation
+of this software.  If these programs are located in a non-standard
+location then you can setup the MKFIFO configuration parameter to
+reflect the appropriate location.  Otherwise you may need to install
+additional software on your system to support FIFO special files
+before you can configure the building of this software.
+EOF
+	    boom
+	fi
+	mkfifo()
+	{
+	    $MKFIFO $1 p
+	}
+    fi
+fi
+
+cat>xgnu.c<<EOF
+#ifdef __GNUC__
+yes;
+#endif
+EOF
+
+#
+# Check if the specified compiler is from GNU 
+#
+isGNU()
+{
+    capture "cat xgnu.c; ($1 -E xgnu.c 2>&5 | egrep yes)"
+}
+
+checkGCCVersion()
+{
+    app=$1; shift
+    eval `$app -v 2>&1 | \
+	sed -n -e '/version/s/.* [a-z\-]*\([0-9]*\)\.\([0-9]*\).\([0-9]*\).*/GCCdist=\1;GCCmajor=\2;GCCminor=\3/p'`
+    GCCversion="${GCCdist}.${GCCmajor}.${GCCminor}"; export GCCversion
+    required="$1$2$3"
+    actual="${GCCdist}${GCCmajor}${GCCminor}"
+    capture test "$actual" -ge "$required"
+}
+
+#
+# NB: use ANSI C prototype to weed out non-ANSI compilers.
+#
+cat>dummy.c<<EOF
+main(int argc, char* argv) { exit(0); }
+EOF
+
+checkCompiler()
+{
+    compiler=$1
+    if isGNU $compiler; then
+	ISGCC=yes
+    else
+	ISGCC=no
+    fi
+    #
+    # Guess special options needed to get an
+    # ANSI C compiler and/or similar.  Must
+    # be combined with above checks so we only
+    # select an ANSI C compiler.
+    #
+    if [ -z "${ENVOPTS:-}" ]; then
+	case $ISGCC-$TARGET in
+	no-*-hp*)	C_ANSI="-Aa -D_HPUX_SOURCE -Dhpux";;
+	*-sco3.2v5.*)	C_ANSI="-Dsco -D_SVID3 -b elf";;
+	*-sco*)		C_ANSI="-Dsco";;
+	*-isc*)		C_ANSI="-posix -D_SYSV3 -DISC";;
+	esac
+    else
+	C_ANSI="$ENVOPTS"
+    fi
+    $RM dummy dummy.o
+    capture $compiler -o dummy ${C_ANSI} dummy.c && {
+	CC=$compiler;
+	test -z "${CCOMPILER:-}" && CCOMPILER=`findApp $compiler $PATH`
+	test -z "${ENVOPTS:-}"   && ENVOPTS="${C_ANSI:-}"
+	return 0
+    }
+    return 1
+}
+
+CCtested=
+capture cat dummy.c
+if [ -z "${CC:-}" ]; then
+    CCOMPILER=
+    for i in gcc cc ncc dcc xlc c89 gcc2 acc; do
+	CCtested="$CCtested $i"
+	checkCompiler $i && break
+    done
+else
+    CCtested="$CCtested $CC"
+    checkCompiler $CC
+fi
+if [ -z "$CCOMPILER" ]; then
+    cat<<EOF
+
+Cannot locate a working ANSI C compiler.
+
+We attempted to compile the following test program:
+
+----------------------------------------------------------
+EOF
+    cat dummy.c
+    cat<<EOF
+----------------------------------------------------------
+
+with these compilers:
+
+    $CCtested
+
+but none of them were successful.
+
+If your compiler is in a non-standard location, you can specify its
+location in several ways:
+
+    o set the environment variable CC
+    o create a config.local or config.site file that includes a
+      definition for CC
+    o supply it on the command line using -with-CC=<pathname>
+
+If command line options are required for ANSI C compilation, set the
+ENVOPTS parameter to these options in a similar way (either through
+an environment variable or config.local/config.site) and then rerun
+this script.
+EOF
+    boom
+fi
+Note "Using $CCOMPILER for a C compiler (set CC to override)."
+
+test "$ENVOPTS" && {
+    Note "Using $ENVOPTS to get the appropriate compilation environment."
+}
+
+CheckForGandO()
+{
+    f=$1
+    if test -s $f; then
+	capture grep -i \(error\|warning\) $f || return 1
+    fi
+    return 0
+}
+
+if [ -z "$GCOPTS" ]; then
+    capture $CCOMPILER $ENVOPTS -g -c dummy.c && {
+	Note "Looks like $CCOMPILER supports the -g option."
+	# NB: cannot use captureX here 'cuz we lose stderr
+	if $CCOMPILER $ENVOPTS $GCOPTS -c -g -O dummy.c >t 2>&1 && CheckForGandO t; then
+	    GCOPTS="$GCOPTS -g"
+	else
+	    Note "... but not together with the -O option, not using it."
+	fi
+    }
+fi
+if [ "$GCOPTS" ]; then
+    Note "Using \"$GCOPTS\" for C compiler options."
+fi
+
+# 
+# Figure out if there is an ANSI C-preprocessor and,
+# if __ANSI_CPP__ is not automatically set, configure
+# it to be set.
+#
+cat>dummy.c<<EOF
+#define ansiIDENT(a) a
+#define ansiCAT(a,b) a##b
+A=ansiCAT(ANSI,CPP);
+EOF
+capture cat dummy.c
+if capture "$CCOMPILER $ENVOPTS -E dummy.c | grep ANSICPP"; then
+    Note "Looks like $CCOMPILER has an ANSI C preprocessor."
+    cat>dummy.c<<EOF
+#ifdef __ANSI_CPP__
+yes
+#else
+no
+#endif
+EOF
+    capture cat dummy.c
+    if capture "$CCOMPILER $ENVOPTS -E dummy.c | grep no"; then
+	ANSICPP='-D__ANSI_CPP__'
+	Note "... but __ANSI_CPP__ is not automatically defined, will compensate."
+    fi
+else
+    Note "Looks like $CCOMPILER has a non-ANSI C preprocessor, will try to compensate."
+fi
+
+#
+# Figure out if the C compiler supports a -M option for generating
+# Make dependency information.
+#
+cat>dummy.c<<EOF
+main(int argc, char* argv) { exit(0); }
+EOF
+capture cat dummy.c
+if capture "$CCOMPILER -c -M $MKDEPCOPTS dummy.c | grep '^dummy.o[ 	]*:[ 	]*dummy.c'"; then
+    Note "Looks like $CCOMPILER supports the -M option for generating make dependencies."
+    MKDEPEND='\${SHELL} \${PORT}/mkdepend'
+else
+    Note "Looks like $CCOMPILER does not support the -M option for generating"
+    Note "make dependencies; will disable automatic make dependency building."
+    MKDEPEND=":"
+fi
+
+cat>dummy.C<<EOF
+class foo {
+public:
+    struct bar {
+	int a;
+	bar();
+    };
+    foo();
+};
+foo::bar::bar() { a = 0; }
+foo::foo() { bar x; }
+int main() { foo t; return 0; }
+EOF
+
+checkCompiler()
+{
+    compiler=$1
+    if isGNU $compiler; then
+	ISGXX=yes
+	checkGCCVersion $compiler 2 6 1 || return 1
+    else
+	ISGXX=no
+    fi
+    $RM dummy dummy.o
+    capture $compiler -o dummy dummy.C && {
+	CXX=$compiler;
+	test -z "${CXXCOMPILER:-}" && CXXCOMPILER=`findApp $compiler $PATH`
+	return 0
+    }
+    return 1
+}
+
+CCtested=; ISGXX=no
+capture cat dummy.C
+if [ -z "${CXX:-}" ]; then
+    CXXCOMPILER=
+    #
+    # If the C compiler is GNU gcc and no C++ compiler
+    # was specified then assume gcc is to be used also
+    # for C++ compilations.
+    #
+    if [ $ISGCC = yes -a -z "$CXX" ]; then
+	CXX=$i
+    fi
+    for i in $CXX gcc g++ CC NCC DCC gcc2 xlC; do
+	CCtested="$CCtested $i"
+	checkCompiler $i && break
+    done
+else
+    CCtested="$CCtested $CXX"
+    checkCompiler $CXX
+fi
+if [ -z "$CXXCOMPILER" ]; then
+    cat<<EOF
+
+Cannot locate a suitable C++ compiler.
+
+We attempted to compile the following test program:
+
+----------------------------------------------------------
+EOF
+    cat dummy.C
+    cat<<EOF
+----------------------------------------------------------
+
+with these compilers:
+
+    $CCtested
+
+but none of them were successful.
+
+To build this software you need a C++ compiler that supports a
+reasonably modern version of C++.  In particular the compiler must
+support nested types and process temporary variables according to the
+ANSI Reference Manual (the ARM).
+
+If such a compiler is in a non-standard location, you can specify its
+location in several ways:
+
+    o set the environment variable CXX
+    o create a config.local or config.site file that includes a
+      definition for CXX
+    o supply it on the command line using -with-CXX=<pathname>
+
+If you are trying to use GNU gcc, but you do not have version 2.6.1
+or newer, then you must update your compiler (and probably libg++ as
+well) before you can compile this software.  Consult the documentation
+for information about obtaining an up-to-date version of gcc.
+EOF
+    boom
+fi
+Note "Using $CXXCOMPILER for a C++ compiler (set CXX to override)."
+
+if [ -z "$GCXXOPTS" ]; then
+    case $CXX-$TARGET in
+    *CC-*-irix*)		# cfront-based or cfront-compatible
+	GCXXOPTS='+a1 +w +p'
+	;;
+    xlC-*-aix*)
+	GCXXOPTS='-qlanglvl=compat -I/usr/lpp/xlC/include -I/usr/include'
+	;;
+    CC-*-sco3.2v5.*)		# cfront-based or cfront-compatible
+	GCXXOPTS='+a1 +p'
+	;;
+    *)
+	GCXXOPTS=
+	;;
+    esac
+    capture $CXXCOMPILER $ENVOPTS -c -g dummy.C && {
+	Note "Looks like $CXXCOMPILER supports the -g option."
+	# NB: cannot use captureX here 'cuz we lose stderr
+	if $CXXCOMPILER $ENVOPTS -c -g -O dummy.C >t 2>&1 && CheckForGandO t; then
+	    GCXXOPTS="$GCXXOPTS -g"
+	else
+	    Note "... but not together with the -O option, not using it."
+	fi
+    }
+fi
+if [ "$GCXXOPTS" ]; then
+    Note "Using \"$GCXXOPTS\" for C++ compiler options."
+fi
+
+# 
+# Figure out if there is an ANSI preprocessor for the C++
+# compiler and, if __ANSI_CPP__ is not automatically set,
+# configure it to be set.
+#
+cat>dummy.C<<EOF
+#define ansiIDENT(a) a
+#define ansiCAT(a,b) a##b
+A=ansiCAT(ANSI,CPP);
+EOF
+capture cat dummy.C
+if capture "$CXXCOMPILER $ENVOPTS -E dummy.C | grep ANSICPP"; then
+    Note "Looks like $CXXCOMPILER has an ANSI C preprocessor."
+    cat>dummy.C<<EOF
+#ifdef __ANSI_CPP__
+yes
+#else
+no
+#endif
+EOF
+    if capture "$CXXCOMPILER $ENVOPTS -E dummy.C | grep no"; then
+	ANSICXXPP='-D__ANSI_CPP__'
+	Note "... but __ANSI_CPP__ is not automatically defined, will compensate."
+    fi
+else
+    Note "Looks like $CXXCOMPILER has a non-ANSI C++ preprocessor, will try to compensate."
+fi
+
+#
+# Some pre-processors (e.g. SunPRO prior to version 3.0.1)
+# leave comments in a file whe invoked with the -E option. 
+# This messes up the default scheme used below to check for
+# function declarations.  Consequently we check for this
+# behaviour here and try to work around the problem with
+# some sed hackery.
+#
+cat>dummy.C<<EOF
+/* this comment should be stripped */
+something else just in case
+and another line also
+EOF
+capture cat dummy.C
+if capture "$CXXCOMPILER $ENVOPTS -E dummy.C | grep comment"; then
+    Note "WARNING, \"$CXX -E\" does not strip comments, will try to compensate."
+    Note "         Beware that this may not work and you may need to edit port.h"
+    Note "         to remove extraneous function declarations."
+    stripComments()
+    {
+	sed -e '/\/\*/,/\*\//d' -e 's;//.*$;;'
+    }
+else
+    stripComments()
+    {
+	cat
+    }
+fi
+
+#
+# Verify that $MAKE is accessible
+#
+PATHMAKE=`findApp ${MAKE} $PATH`
+if [ "$PATHMAKE" ]; then
+    Note "Using $PATHMAKE to configure the software."
+else
+    cat<<EOF
+No $MAKE located in the search path.
+
+There was no $MAKE program in the search path used by this script.
+If $MAKE is in a non-standard location, then set the MAKE environment
+variable to the pathname of the appropriate program or change your
+shell search path to include the directory where the program is located.
+EOF
+    boom
+fi
+
+#
+# Deduce the include syntax supported by make.
+#
+CheckForMakeIncludeSyntax()
+{
+    cat>confMakefile<<EOF
+$1
+all:
+EOF
+    capture "cat confMakefile; ${MAKE} -f confMakefile"
+}
+if [ -z "$MAKEINCLUDE" ] || [ -z "$MAKELQUOTE" ] || [ -z "$MAKERQUOTE" ]; then
+    INC=xmakeinc
+    $RM $INC; echo "" >$INC
+    if CheckForMakeIncludeSyntax "include $INC"; then
+	MAKEINCLUDE="include"
+	MAKELQUOTE=
+	MAKERQUOTE=
+    elif CheckForMakeIncludeSyntax ".include <$INC>"; then
+	MAKEINCLUDE=".include"
+	MAKELQUOTE="<"
+	MAKERQUOTE=">"
+    elif CheckForMakeIncludeSyntax "#include \"$INC\""; then
+	MAKEINCLUDE="#include"
+	MAKELQUOTE='"'
+	MAKERQUOTE='"'
+    else
+	cat 1>&2 <<EOF
+$MAKE does not support a known include syntax.
+
+The make program configured for use in building this software does not
+support a known syntax for including other files in a Makefile.  The
+Makefiles distributed with this software depend on the ability to include
+other files and will not work without this functionaliy.  The following
+syntaxes are understood and configure automatically selects one for use
+if $MAKE looks to support it:
+
+include file
+.include <file>
+#include "file"
+
+If $MAKE does support including files then you should use a different
+program to build this software; consult the documentation for help in
+locating a suitable make program.  Otherwise if $MAKE supports include
+files, but using a different syntax, then you can setup the MAKEINCLUDE,
+MAKELQUOTE, and MAKERQUOTE configuration parameters to define the
+appropriate syntax.
+EOF
+	boom
+    fi
+fi
+Note "Using \"${MAKEINCLUDE} ${MAKELQUOTE}file${MAKERQUOTE}\" syntax for Makefiles."
+
+if [ -z "$MAKEDEPINCLUDE" ]; then
+    if [ "$MKDEPEND" != ":" ]; then
+	$RM xMakedepend
+	if CheckForMakeIncludeSyntax "sinclude xMakedepend"; then
+	    Note "Looks like $MAKE supports \"sinclude\" for conditional includes."
+	    MAKEDEPINCLUDE="sinclude"
+	else
+	    MAKEDEPINCLUDE="$MAKEINCLUDE"
+	fi
+    else
+	MAKEDEPINCLUDE='#'
+    fi
+fi
+
+#
+# Check whether or not $MAKE automatically sets MAKE
+# in the Makefiles.  If not, we add an explicit define
+# for places where recursive calls are made.
+#
+if [ -z "$SETMAKE" ]; then
+    cat>confMakefile<<EOF
+all:
+	@echo M="${MAKE}"
+EOF
+    M=; eval `$MAKE -f confMakefile` >&5 2>&1
+    if [ "$M" ]; then
+	SETMAKE=
+    else
+	Note "Looks like $MAKE does not setup MAKE in Makefiles, will compensate."
+	SETMAKE="MAKE	= ${MAKE}"
+    fi
+fi
+
+if [ -z "$MAKECXXOVERRIDE" ]; then
+    case $ISGXX-$TARGET in
+    no-*-solaris*|no-*-sunos*)			# SunPRO C++ compiler
+	#
+	# Yech, the SunPro C++ compiler has no option to force a source
+	# file w/ a .c++ suffix to be treated as C++ source code; instead one
+	# must specify file.c++=.C.  We patch the Makefiles with explicit
+	# construction rules to do this...
+	#
+	MAKECXXOVERRIDE="=.C"
+	;;
+    esac
+fi
+if [ -z "$CXXFILE" ]; then
+    case $CXX-$TARGET in
+    xlC-*-aix*)		CXXFILE="-+";;
+    gcc-*)		CXXFILE="-x c++";;
+    CC-*-sco3.2v5.*)	CXXFILE="+.c++";;
+    esac
+fi
+
+test "$AR" || AR=`findApp ar $PATH`
+if [ -z "$AR" ]; then
+    Note "WARNING, could not locate a suitable ar command; using a default."
+    AR=ar
+fi
+test "$AROPTS" || AROPTS=rc
+test "$RANLIB" || RANLIB=`findApp ranlib $PATH`
+if [ -z "$RANLIB" ]; then
+    Note "WARNING, no ranlib, assuming it's not needed."
+    RANLIB=":"
+    $RM dummy.a
+    if capture $AR rcs dummy.a; then
+       AROPTS=crs
+       Note "Looks like ar has an s option to build symbol tables."
+    fi
+fi
+
+cat>dummy.C<<EOF
+#include "new.h"
+struct foo {
+    int x;
+    foo();
+    ~foo();
+};
+foo::foo() {}
+foo::~foo() {}
+int main()
+{
+    foo* ptr = 0;
+    foo* a = new(ptr) foo;
+    a->x = 0;
+    delete a;
+    return 0;
+}
+EOF
+
+#
+# Look for appropriate C++ runtime support library.
+#
+CXXRUNTIME=
+capture cat dummy.C
+capture $CXXCOMPILER $ENVOPTS -o dummy dummy.C || {
+    #
+    # Compiler does not provide it automatically, check known libraries.
+    #
+    if [ "$ISGXX" = yes ]; then
+	capture $CXXCOMPILER $ENVOPTS -o dummy dummy.C -lg++ && \
+	    { CXXRUNTIME="-lg++"; }
+    else
+	capture $CXXCOMPILER $ENVOPTS -o dummy dummy.C -lC && \
+	    { CXXRUNTIME="-lC"; }
+    fi
+}
+test "$CXXRUNTIME" && {
+    Note "Using explicit $CXXRUNTIME reference for C++ runtime support."
+}
+
+#
+# XXX we should deduce the shell bugs that require us to use
+# bash and ksh instead of sh on certain platforms (notably the
+# BSD-crowd: Linux, BSDI, FreeBSD, NetBSD) but they are very
+# hard to isolate.  We choose bash over ksh over sh; though
+# this may be iffy (ksh appears to be just as busted some places).
+#
+test "$SCRIPT_SH" || SCRIPT_SH=`findApp bash $PATH`
+test "$SCRIPT_SH" || SCRIPT_SH=`findApp ksh $PATH`
+test "$SCRIPT_SH" || SCRIPT_SH=`findApp sh $PATH`
+if [ -z "$SCRIPT_SH" ]; then
+    Note ""
+    Note "WARNING, could not locate a suitable shell for processing the command"
+    Note "         scripts included in this distribution; using a default value"
+    Note "         /bin/sh."
+    Note ""
+    SCRIPT_SH=/bin/sh
+else
+    Note "Using $SCRIPT_SH to process command scripts."
+fi
+
+makeDefs()
+{
+    $RM confsed1
+    WARNING="Warning, this file was automatically created by the HylaFAX configure script"
+    dumpvars "$VAR1" CCOMPILER CXXCOMPILER | sort>confsed1
+    $RM xdefs; sed -f confsed1 $SRCDIR/defs.in>$1
+}
+# NB: save original values for use in checks below
+OTIFFINC="${TIFFINC}"; x="`relativize ${TIFFINC}`"; TIFFINC="$x"
+OZLIBINC="${ZLIBINC}"; x="`relativize ${ZLIBINC}`"; ZLIBINC="$x"
+OREGEXINC="${REGEXINC}"; x="`relativize ${REGEXINC}`"; REGEXINC="$x"
+ODBLIBINC="${DBLIBINC}"; x="`relativize ${DBLIBINC}`"; DBLIBINC="$x"
+makeDefs xdefs
+
+#
+# runMake target rules ...
+#
+runMakeX()
+{
+    target="$1"; shift
+    $RM $target
+    (echo DEPTH=.; echo SRCDIR=.; cat xdefs;
+       for i in "$@"; do
+	  echo "$i";
+       done
+    )>confMakefile
+    captureX ${MAKE} -f confMakefile $target
+    return
+}
+runMake()
+{
+    runMakeX "$@" >&5
+    return
+}
+
+#
+# Verify everything is setup for the C++ runtime environment.
+#
+CheckForCXXRuntime()
+{
+cat>t.c++<<EOF
+#include "new.h"
+int main(){ int* a = new int; *a = 0; delete a; return 0;}
+EOF
+    runMake t "t:; \${C++F} \${C++FILE} t.c++${MAKECXXOVERRIDE}"
+}
+CheckForCXXRuntime || {
+    cat 1>&2 <<EOF
+
+Missing C++ runtime support for $CXX ($CXXCOMPILER).
+
+Compilation of the following test program failed:
+
+----------------------------------------------------------
+EOF
+    cat t.c++ 1>&2
+    if [ $ISGXX = yes ]; then
+	cat 1>&2 <<EOF
+----------------------------------------------------------
+
+Usually this is because you do not have libg++ installed on your system
+or you have installed it in a non-standard location.  If you do not
+have libg++ installed, then you must install it.  If libg++ is
+installed in a non-standard location, then you should configure the
+compiler so that it will automatically be found.
+
+EOF
+    else
+	cat 1>&2 <<EOF
+----------------------------------------------------------
+
+Usually this is because you do not have the library that provides these
+runtime routines.  It may also be caused by your runtime libraries
+being in a non-standard location that is not automatically searched for
+by your compiler.
+
+EOF
+    fi
+    boom
+}
+
+#
+# Verify C++ built executables properly handle global
+# static variables with constructors.
+#
+CheckForCXXGlobalConstructors()
+{
+cat>t.c++<<EOF
+class foo {
+private:
+    int a;
+public:
+    foo() { a = -1; }
+    int isInitialized() { return a == -1; }
+};
+static foo instanceOfFoo;
+int main() { return instanceOfFoo.isInitialized() ? 0 : 1; }
+EOF
+    runMake t "t:; \${C++F} \${C++FILE} t.c++${MAKECXXOVERRIDE}" && ./a.out
+}
+CheckForCXXGlobalConstructors || {
+    cat 1>&2 <<EOF
+
+Broken C++ handling of global constructors ($CXX/$CXXCOMPILER).
+
+Compilation or execution of the following test program failed:
+
+----------------------------------------------------------
+EOF
+    cat t.c++ 1>&2
+    cat 1>&2 <<EOF
+----------------------------------------------------------
+
+This program tests whether or not the C++ compilation support properly
+handles global static variables with constructors.  A working C++
+compilation environment is expected to arrange that global variables
+that have a constructor function (foo::foo() above) be called prior to
+the start of main().  HylaFAX will not operate properly if the C++
+compilation environment does not correctly implement this.
+
+EOF
+    if [ $ISGXX = yes ]; then
+	if expr $CXX : '.*g++.*' >/dev/null 2>&1; then
+	    cat 1>&2 <<EOF
+When using GNU gcc this can sometimes happen if gcc is improperly
+configured; consult your local GNU guru/support person for help with
+this problem.
+
+EOF
+	else
+	    cat 1>&2 <<EOF
+When using GNU gcc to compile C++ programs this can sometimes happen
+when g++ is not used to link executables.  You might try setting
+CXX to "g++" (or similar) in a config.local file or on the command
+line.  Otherwise you should consult your local GNU guru/support person
+for help with this problem.
+
+EOF
+	fi
+    fi
+    boom
+}
+
+#
+# Look for a library using a known (unique) function.
+#
+CheckForLibrary()
+{
+    f=$1; shift
+    libs="$@";
+    cat>t.c<<EOF
+int t() { $f(); return 0; }
+int main(){ t(); return 0; }
+EOF
+    capture cat t.c
+    runMake t "t:; \${CCF} t.c $libs"
+}
+
+#
+# Look for an include file.
+#
+CheckForIncludeFile()
+{
+    (for i do
+	echo "#include \"$i\""
+     done)>t.c++
+    capture cat t.c++
+    runMake t "t:; \${C++F} \${C++FILE} -E t.c++${MAKECXXOVERRIDE}"
+}
+
+if [ "$SGI2FAX" = auto ]; then
+    if CheckForLibrary iopen -limage && CheckForIncludeFile gl/image.h; then
+	Note "Looks like there is support for SGI RGB images, configuring sgi2fax."
+	SGI2FAX=yes
+    else
+	SGI2FAX=no
+    fi
+fi
+if [ "$LIBMALLOC" = auto ]; then
+    if CheckForLibrary mallopt -lmalloc; then
+	Note "Looks like -lmalloc is here, using it for memory allocation."
+	LIBMALLOC=yes
+    else
+	LIBMALLOC=no
+    fi
+fi
+if [ "$LIBSUN" = auto ]; then
+    if CheckForLibrary getpwnam -lsun; then
+	Note "Looks like -lsun is here, using it for NIS passwd & group stuff."
+	LIBSUN=yes
+    else
+	LIBSUN=no
+    fi
+fi
+CheckForLibrary crypt -lc || {
+    #
+    # FreeBSD-2.1 in particular needs -lcrypt.
+    # SCO sometime has -lcrypt_d (domestic) and
+    #    sometimes -lcrypt_i (import?)
+    #
+    for i in -lcrypt -lcrypt_d -lcrypt_i; do
+	if CheckForLibrary crypt $i; then
+	    Note "Looks like $i is needed for crypt."
+	    MACHDEPLIBS="$MACHDEPLIBS $i"
+	    break;
+	fi
+    done
+}
+CheckForLibrary strftime -lc || {
+    #
+    # SCO has strftime in -lintl.
+    #
+    if CheckForLibrary strftime -lintl; then
+	Note "Looks like -lintl is needed for strftime."
+	MACHDEPLIBS="$MACHDEPLIBS -lintl"
+    else
+	cat 1>&2 <<EOF
+No strftime function located in system libraries.
+
+The strftime function used to format date&time information was not located
+in the normal C library or in the -lintl library (present on some systems).
+This software expects this to be available and will not compile without it.
+If this function is located in a non-standard location you can specify the
+library in the MACHDEPLIBS configuration parameter.  Otherwise you should
+figure out why the usual testing done by this script failed; consult the
+diagnostics in the config.log file for more information.
+EOF
+	boom
+    fi
+}
+CheckForLibrary socket -lc || {
+    #
+    # Socket support is not in normal C library, check
+    # for SVR4-style networking w/ -lsocket & -lnsl
+    #
+    if CheckForLibrary socket -lsocket -lnsl; then
+	Note "Looks like -lsocket & -lnsl are needed for socket support."
+	MACHDEPLIBS="$MACHDEPLIBS -lsocket -lnsl"
+    elif CheckForLibrary socket -linet -lnsl_s; then
+	Note "Looks like -linet & -lnsl_s are needed for socket support."
+	MACHDEPLIBS="$MACHDEPLIBS -linet -lnsl_s"
+    elif CheckForLibrary socket -lsocket; then
+	Note "Looks like -lsocket is needed for socket support."
+	MACHDEPLIBS="$MACHDEPLIBS -lsocket"
+    else
+	cat 1>&2 <<EOF
+No socket networking support located in system libraries.
+
+The socket function used to create a network connection was not located
+in the normal C library or in the -lsocket or -linet libraries (present
+mainly on SVR4-style systems).  This software expects this to be
+available and will not compile without it.  If this function is located
+in a non-standard location you can specify the needed libraries in the
+MACHDEPLIBS configuration parameter.  Otherwise you should figure out
+why the usual testing done by this script failed; consult the
+diagnostics in the config.log file for more information.
+EOF
+	boom
+    fi
+}
+if CheckForLibrary logwtmp -lutil; then
+    Note "Looks like -lutil is needed for wtmp file logging."
+    MACHDEPLIBS="$MACHDEPLIBS -lutil"
+    HAS_LOGWTMP=yes
+else
+    HAS_LOGWTMP=no
+fi
+CheckForLibrary ftruncate -lc || {
+    CheckForLibrary chsize -lx && {
+	Note "Looks like -lx is needed for chsize (used to emulate ftruncate)."
+	MACHDEPLIBS="$MACHDEPLIBS -lx"
+    }
+}
+CheckForLibrary flock -lc || {
+    CheckForLibrary flock -lbsd && {
+	Note "Looks like -lbsd is needed for flock."
+	MACHDEPLIBS="$MACHDEPLIBS -lbsd"
+    }
+}
+for f in openlog pututxline; do
+    CheckForLibrary $f -lc || {
+	CheckForLibrary $f -lgen && {
+	    Note "Looks like -lgen is needed for $f."
+	    MACHDEPLIBS="$MACHDEPLIBS -lgen"
+	    break;
+	}
+    }
+done
+if [ "$ISGXX" = yes ]; then
+    if [ -z "$CXXRUNTIME" ]; then
+	for f in memmove strdup; do
+	    CheckForLibrary $f -lc || {
+		CheckForLibrary $f -lg++ && {
+		    Note "Looks like we need -lg++ for $f"
+		    MACHDEPLIBS="$MACHDEPLIBS -lg++"
+		    break;
+		}
+	    }
+	done
+    fi
+    for f in strtoul strerror memmove random; do
+	CheckForLibrary $f -lc || {
+	    CheckForLibrary $f -liberty && {
+		Note "Looks like we need -liberty for $f"
+		MACHDEPLIBS="$MACHDEPLIBS -liberty"
+		break;
+	    }
+	}
+    done
+fi
+CheckForLibrary floor -lm && {
+    Note "Looks like -lm is the library for math functions."
+    MACHDEPLIBS="$MACHDEPLIBS -lm"
+}
+MACHDEPLIBS="$MACHDEPLIBS $CXXRUNTIME"
+test "$LIBSUN" = yes && MACHDEPLIBS="$MACHDEPLIBS -lsun"
+test "$LIBMALLOC" = yes && MACHDEPLIBS="$MACHDEPLIBS -lmalloc"
+
+#
+# Figure out if certain system-specific interfaces are
+# supported.  We craft a port.h file that has external
+# declarations for missing routines that are required by
+# the system and modify defs to reflect which optional
+# interfaces are supported.
+#
+
+EmitCPlusPlusPrologue()
+{
+    echo '/*'
+    echo ' * Warning, this file was automatically created by the HylaFAX configure script'
+    echo ' * VERSION:	' $VERSION
+    echo ' * DATE:	' $DATE
+    echo ' * TARGET:	' $TARGET
+    echo ' * RELEASE:	' $RELEASE
+    if [ $ISGCC = yes ]; then
+	echo ' * CCOMPILER:	' ${CCOMPILER}-${GCCversion}
+    else
+	echo ' * CCOMPILER:	' $CCOMPILER
+    fi
+    if [ $ISGXX = yes ]; then
+	echo ' * CXXCOMPILER:	' ${CXXCOMPILER}-${GCCversion}
+    else
+	echo ' * CXXCOMPILER:	' $CXXCOMPILER
+    fi
+    echo ' */'
+    echo "#ifndef $1"
+    echo "#define $1 1"
+    echo '#ifdef __cplusplus'
+    echo 'extern "C" {'
+    echo '#endif'
+}
+
+EmitCPlusPlusEpilogue()
+{
+    echo '#ifdef __cplusplus'
+    echo '}'
+    echo '#endif'
+    echo '#endif'
+}
+
+releaseAtLeast()
+{
+    expr $RELEASE \>= $1 >/dev/null 2>&1
+}
+
+#
+# Emit the port.h definitions that reflect
+# the system configuration.
+#
+EmitConfigurationDefinitions()
+{
+    #
+    # Select the mode to use when opening FIFO files
+    # in a server process.  One should be able to open
+    # them read-only, but on some systems, select will
+    # go into a loop when a client does a close.  This
+    # problem can sometimes be avoided by opening the FIFO
+    # read+write on the server side.  Otherwise, the
+    # FIFO must be closed after each incoming message
+    # which can lead to delays and/or lost messages
+    # (though we try to compensate by doing some sleeps).
+    #
+    test "$CONFIG_OPENFIFO" || {
+	case $TARGET in
+	*-irix*)	if releaseAtLeast 5.2; then
+			    CONFIG_OPENFIFO=O_RDWR;
+			else
+			    CONFIG_OPENFIFO=O_RDONLY;
+			fi
+			;;
+	*-ultrix*)	CONFIG_OPENFIFO=O_RDWR;;
+	*-solaris*)	CONFIG_OPENFIFO=O_RDWR;;
+	*-sco*|*-isc*)	CONFIG_OPENFIFO=O_RDWR;;
+	*-aix*|*-hpux*)	CONFIG_OPENFIFO=O_RDWR;;
+	alpha-dec*)     CONFIG_OPENFIFO=O_RDWR;;
+	*-linux*)	if releaseAtLeast 1.3.80; then
+			    CONFIG_OPENFIFO=O_RDWR;
+			else
+			    CONFIG_OPENFIFO=O_RDONLY;
+			fi
+			;;
+	*-freebsd*)	if releaseAtLeast 3.0; then
+			    CONFIG_OPENFIFO=O_RDWR;
+			else
+			    CONFIG_OPENFIFO=O_RDONLY;
+			fi
+			;;
+	*)		CONFIG_OPENFIFO=O_RDONLY;;
+	esac
+    }
+    if [ "$CONFIG_OPENFIFO" = "O_RDWR" ]; then
+	Note "... open FIFO files read+write to avoid select bug"
+    else
+	Note "... open FIFO files read-only"
+    fi
+    echo "#define CONFIG_OPENFIFO $CONFIG_OPENFIFO"
+    test "$CONFIG_FIFOBUG" || {
+	case $TARGET in
+	*-solaris*)	CONFIG_FIFOBUG=yes;;
+	*-irix5.[01]*)	CONFIG_FIFOBUG=yes;;
+	*)		CONFIG_FIFOBUG=no;;
+	esac
+    }
+    if [ "$CONFIG_FIFOBUG" = yes ]; then
+	Note "... enable workaround for FIFO select bug"
+	echo '#define FIFOSELECTBUG 1'
+    fi
+
+    #
+    # On some versions of IRIX 5.x, when FIFOs are
+    # opened read-only in the server, select will
+    # incorrectly return bits set in the select masks
+    # even if the bits were not set on entry.  This
+    # will cause the Dispatcher code to croak unless
+    # a workaround is enabled.
+    #
+    test "$CONFIG_SELECTBUG" || {
+	case $TARGET in
+	*-irix5.[01]*)	CONFIG_SELECTBUG=yes;;
+	*)		CONFIG_SELECTBUG=no;;
+	esac
+    }
+    if [ "$CONFIG_SELECTBUG" = yes ]; then
+	Note "... enable workaround for select bug"
+	echo '#define SGISELECTBUG 1'	# NB: select also breaks!
+    fi
+
+    #
+    # On some systems the argument for ioctl(fd, TIOCMBIS, arg)
+    # is passed by value and some by reference.
+    # This can not be deduced with a dynamic check.
+    #
+    test "$CONFIG_TIOCMBIS_ARG_REF" || {
+	case $TARGET in
+	*-sysv4*)	CONFIG_TIOCMBISBYREF=yes;;
+	*-linux*)	CONFIG_TIOCMBISBYREF=yes;;
+	*-sunos*)	CONFIG_TIOCMBISBYREF=yes;;
+	*)		CONFIG_TIOCMBISBYREF=yes;;
+	esac
+    }
+    if [ "$CONFIG_TIOCMBISBYREF" = yes ]; then
+	Note "... using call-by-reference for TIOCMBIS ioctl"
+    else
+	Note "... using call-by-value for TIOCMBIS ioctl"
+    fi
+    echo "#define CONFIG_TIOCMBISBYREF $CONFIG_TIOCMBISBYREF"
+	
+    #
+    # On some systems it's necessary to include
+    # <sys/stream.h> and <sys/ptem.h> to get the
+    # necessary definitions for TIOCWINSZ.  This
+    # should be deduced with a dynamic check.
+    #
+    test "$CONFIG_WINSZHACK" || {
+	case $TARGET in
+	*-sco*)		CONFIG_WINSZHACK=yes;;
+	*-isc*)		CONFIG_WINSZHACK=yes;;
+	*)		CONFIG_WINSZHACK=no;;
+	esac
+    }
+    if [ "$CONFIG_WINSZHACK" = yes ]; then
+	Note "... enable additional include files for TIOCGWINSZ"
+	echo "#define CONFIG_WINSZHACK"
+    fi
+
+    #
+    # On some systems the server does not work properly
+    # if a recursive call is made to the dispatcher to
+    # poll for an message on the FIFO file that says to
+    # abort an outbound or inbound job.   The only know
+    # workaround for this problem is to ignore messages
+    # while processing a job.
+    #
+    test "$CONFIG_ABORTBUG" || {
+	case $TARGET in
+	*-aix*)		CONFIG_ABORTBUG=yes;;
+	*-hpux*)	CONFIG_ABORTBUG=yes;;
+	*)		CONFIG_ABORTBUG=no;;
+	esac
+    }
+    if [ "$CONFIG_ABORTBUG" = yes ]; then
+	Note "... disable support for aborting sends & receives"
+	echo '#define SERVERABORTBUG'
+    fi
+
+    #
+    # On some systems redirecting stdout to the controlling
+    # tty causes stty to issue an annoying warning message.
+    # This should probably be deduced with a dynamic test.
+    #
+    test "$CONFIG_NOSTDINDUP" || {
+	case $TARGET in
+	*-freebsd*)	CONFIG_NOSTDINDUP=yes;;
+	*)		CONFIG_NOSTDINDUP=no;;
+	esac
+    }
+    if [ "$CONFIG_NOSTDINDUP" = yes ]; then
+	Note "... assuming stty bitches when stdout is set to stdin"
+	echo "#define ONDELAY_NOSTDINDUP"
+    fi
+    #
+    # Some systems cannot handle re-opening the tty device
+    # after the modem is reset.  This is true for modems
+    # attached to some terminal servers and also on HP-UX
+    # where the modem control state is lost across opens.
+    # Basically if the OS and modem correctly handle toggling
+    # DTR to reset the modem then it's safe to configure
+    # the software to not re-open the device.
+    #
+    test "$CONFIG_NOREOPEN" || {
+	case $TARGET in
+	*-hpux*)	CONFIG_NOREOPEN=yes;;
+	*)		CONFIG_NOREOPEN=no;;
+	esac
+    }
+    if [ "$CONFIG_NOREOPEN" = yes ]; then
+	Note "... don't reopen the tty device after reset"
+	echo "#define CONFIG_NOREOPEN"
+    fi
+    #
+    # Workarounds for systems with system include files
+    # that have incorrect function declarations (wrong
+    # parameter types that require explicit casts to make
+    # the code compile with certain compilers).
+    #
+    test "$CONFIG_BADEXECVPROTO" || {		# char* const* vs. const char**
+	case $TARGET in
+	*-sco3.2v5.*)	CONFIG_BADEXECVPROTO=no;;
+	*-sco*)		CONFIG_BADEXECVPROTO=yes;;
+	*)		CONFIG_BADEXECVPROTO=no;;
+	esac
+    }
+    if [ "$CONFIG_BADEXECVPROTO" = yes ]; then
+	Note "... workaround incorrect execv function declaration"
+	echo "#define CONFIG_BADEXECVPROTO"
+    fi
+    test "$CONFIG_BADEXECVEPROTO" || {		# char* const* vs. const char**
+	case $TARGET in
+	*-sco3.2v5.*)	CONFIG_BADEXECVEPROTO=no;;
+	*-sco*)		CONFIG_BADEXECVEPROTO=yes;;
+	*)		CONFIG_BADEXECVEPROTO=no;;
+	esac
+    }
+    if [ "$CONFIG_BADEXECVEPROTO" = yes ]; then
+	Note "... workaround incorrect execve function declaration"
+	echo "#define CONFIG_BADEXECVEPROTO"
+    fi
+    test "$CONFIG_BADGETOPTPROTO" || {		# char* const* vs. char**
+	case $TARGET in
+	*-aix*)		CONFIG_BADGETOPTPROTO=yes;;
+	*)		CONFIG_BADGETOPTPROTO=no;;
+	esac
+    }
+    if [ "$CONFIG_GETOPTPROTO" = yes ]; then
+	Note "... workaround incorrect getopt function declaration"
+	echo "#define CONFIG_GETOPTPROTO"
+    fi
+    test "$CONFIG_BADSELECTPROTO" || {		# int* vs. fd_set*
+	case $TARGET in
+	*-hpux*)	CONFIG_BADSELECTPROTO=yes;;
+	*)		CONFIG_BADSELECTPROTO=no;;
+	esac
+    }
+    if [ "$CONFIG_BADSELECTPROTO" = yes ]; then
+	Note "... workaround incorrect select function declaration"
+	echo "#define CONFIG_BADSELECTPROTO"
+    fi
+    #
+    # Some vendors have changed the socket API so that
+    # call-by-reference parameters that give buffer
+    # lengths are not int; this must be dealt with to
+    # get the code to compile.  Note that we only emit
+    # the define if the type is not an int; we do this
+    # so Socket.h can include code that assumes the
+    # default so folks don't have to rerun configure.
+    #
+    test "$CONFIG_SOCKARGLENTYPE" || {		# int vs unsigned long vs ...
+	case $TARGET in
+	# XXX fill in for busted systems
+	*-univel-*)	CONFIG_SOCKARGLENTYPE=size_t;;
+	*)		CONFIG_SOCKARGLENTYPE=int;;
+	esac
+    }
+    if [ "$CONFIG_SOCKARGLENTYPE" != int ]; then
+	Note "... using $CONFIG_SOCKARGLENTYPE for call-by-reference socket length params"
+	echo "#define CONFIG_SOCKARGLENTYPE $CONFIG_SOCKARGLENTYPE"
+    fi
+    #
+    # Select the maximum fax UID.  This value is stored
+    # in the GID of files so must be constrained by any
+    # system limitations.  The maximum value is used for
+    # anonymous logins.  The default value of 60002 comes
+    # from NFS/nobody usage on various systems.
+    #
+    test "$CONFIG_MAXGID" || {
+	case $TARGET in
+	*-sco*)		CONFIG_MAXGID=60000;;
+	*-hpux*)	CONFIG_MAXGID=60000;;
+	*)		CONFIG_MAXGID=60002;;	# default
+	esac
+    }
+    if [ "$CONFIG_MAXGID" ]; then
+	if [ "$CONFIG_MAXGID" -le 60002 ]; then
+	    Note "... constrain client IDs to be <= $CONFIG_MAXGID"
+	    echo "#define CONFIG_MAXGID $CONFIG_MAXGID"
+	else
+	    Note "... max client ID too large ($CONFIG_MAXGID); using default"
+	fi
+    fi
+}
+
+#
+# Look for a function in one of the standard libraries
+# or one of the machine-dependent libraries selected above.
+#
+CheckForFunc()
+{
+    echo "extern int $1(); main(){$1();exit(0);}" >t.c
+    capture cat t.c
+    runMake t "t:; \${CC} t.c ${MACHDEPLIBS}"
+}
+
+#
+# Look for a function declaration in system include files.
+#
+AddFuncDecl()
+{
+    echo "$2";
+    Note "... add function prototype for $1"
+}
+CheckForFuncDecl()
+{
+    f=$1; shift
+    (for i do
+	echo "#include \"$i\""
+     done)>t.c++
+    capture cat t.c++
+    runMakeX t "t:; \${C++F} \${C++FILE} -E t.c++${MAKECXXOVERRIDE}" |\
+     stripComments |\
+     awk '{while($0~/[,(][ \t]*$/){printf"%s",$0;getline}print}' |\
+     grep "$f[ ]*(.*)" >&5
+    return
+}
+CheckFuncDecl()
+{
+    f=$1; shift
+    decl=$1; shift
+    CheckForFuncDecl "$f" "$@" || AddFuncDecl "$f" "$decl"
+}
+
+#
+# Look for a variable declaration in system include files.
+#
+CheckForVarDecl()
+{
+    v="$1"; shift
+    (for i do
+	echo "#include \"$i\""
+     done)>t.c++
+    capture cat t.c++
+    runMakeX t "t:; \${C++F} \${C++FILE} -E t.c++${MAKECXXOVERRIDE}" |\
+	stripComments |\
+	grep "$v" >&5
+    return
+}
+CheckVarDecl()
+{
+    v="$1"; shift
+    decl="$1"; shift
+    CheckForVarDecl "$v" "$@" || \
+	(echo "$decl"; Note "... add declaration $decl")
+}
+
+#
+# Look for a #define in system include files.
+#
+AddDefine()
+{
+   echo '#ifndef' $1
+   echo '#define' "$2"
+   echo '#endif'
+   Note '... add #define for' "$1"
+}
+CheckForDefine()
+{
+    def=$1; shift
+    (for i do
+	echo "#include \"$i\""
+     done
+     for i in "#ifdef $def" "FOUND" "#endif"; do
+	echo "$i"
+     done
+    )>t.c
+    capture cat t.c
+    runMakeX t 't:; ${CCF} -E t.c' | grep FOUND >&5
+}
+CheckDefine()
+{
+    def=$1; shift
+    decl=$1; shift
+    CheckForDefine "$def" "$@" || AddDefine "$def" "$decl"
+}
+
+CheckTermioFuncDecls()
+{
+    CheckFuncDecl cfsetospeed \
+	'extern int cfsetospeed(const struct termios*, speed_t);' $@
+    CheckFuncDecl cfsetispeed \
+	'extern int cfsetispeed(const struct termios*, speed_t);' $@
+    CheckFuncDecl tcgetattr 'extern int tcgetattr(int, struct termios*);' $@
+    CheckFuncDecl tcsetattr \
+	'extern int tcsetattr(int, int, const struct termios*);' $@
+    CheckFuncDecl tcsendbreak 'extern int tcsendbreak(int, int);' $@
+    CheckFuncDecl tcdrain 'extern int tcdrain(int);' $@
+    CheckFuncDecl tcflush 'extern int tcflush(int, int);' $@
+    CheckFuncDecl tcflow 'extern int tcflow(int, int);' $@
+}
+
+BuildTermiosDotH()
+{
+    CheckForIncludeFile termios.h || {
+	CheckForIncludeFile sys/termios.h || {
+	    bitch "Cannot locate termios.h or sys/termios.h."
+	    boom
+	}
+	Note ""
+	Note "No termios.h found; creating one with necessary definitions."
+	(EmitCPlusPlusPrologue _TERMIOS_
+	 echo '#include "sys/termios.h"'
+	 CheckTermioFuncDecls sys/termios.h
+	 EmitCPlusPlusEpilogue
+	)>xtermios.h
+	mv xtermios.h termios.h; chmod 444 termios.h
+    }
+}
+
+CheckSigvecHandler()
+{
+    cat>t.c++<<EOF
+#include <sys/types.h>
+#include <signal.h>
+void sigHUP(int) {}
+void f() {
+    struct sigvec sv;
+    sv.sv_handler = $1 (sigHUP);
+    (void) sigvec(SIGHUP, &sv, (struct sigvec*) 0);
+}
+int main() { f(); return 0; }
+EOF
+    capture cat t.c++
+    runMake t "t:; \${C++F} \${C++FILE} -c t.c++${MAKECXXOVERRIDE}"
+}
+CheckSigactionHandler()
+{
+    cat>t.c++<<EOF
+#include <sys/types.h>
+#include <signal.h>
+void sigHUP(int) {}
+void f() {
+    struct sigaction sa;
+    sa.sa_handler = $1 (sigHUP);
+    (void) sigaction(SIGHUP, &sa, (struct sigaction*) 0);
+}
+int main() { f(); return 0; }
+EOF
+    capture cat t.c++
+    runMake t "t:; \${C++F} \${C++FILE} -c t.c++${MAKECXXOVERRIDE}"
+}
+CheckSignalHandler()
+{
+    cat>t.c++<<EOF
+#include <sys/types.h>
+#include <signal.h>
+void sigHUP(int) {}
+void f() { (void) signal(SIGHUP, $1 (sigHUP)); }
+int main() { f(); return 0; }
+EOF
+    capture cat t.c++
+    runMake t "t:; \${C++F} \${C++FILE} -c t.c++${MAKECXXOVERRIDE}"
+}
+
+CheckForMMAP()
+{
+    (cat<<'EOF'
+/* part of this was lifted from GNU autoconf */
+#include <sys/types.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+EOF
+    CheckForFunc getpagesize || {
+	cat<<'EOF'
+#ifdef BSD
+# ifndef BSD4_1
+#  define HAVE_GETPAGESIZE
+# endif
+#endif
+
+#ifndef HAVE_GETPAGESIZE
+# include <sys/param.h>
+# ifdef EXEC_PAGESIZE
+#  define getpagesize() EXEC_PAGESIZE
+# else
+#  ifdef NBPG
+#   define getpagesize() NBPG * CLSIZE
+#   ifndef CLSIZE
+#    define CLSIZE 1
+#   endif
+#  else
+#   ifdef NBPC
+#    define getpagesize() NBPC
+#   else
+#    define getpagesize() PAGESIZE /* SVR4 */
+#   endif
+#  endif
+# endif
+#endif
+EOF
+    }
+cat<<'EOF'
+extern char* malloc();
+static void
+boom(const char* msg)
+{
+    printf("%s.\n", msg);
+    exit(1);
+}
+
+int
+main()
+{
+    const char* filename = "conftestmmap";
+    char* buf;
+    char* addr;
+    int i, fd, cc;
+
+    cc = getpagesize();
+    buf = malloc(cc);
+    for (i = 0; i < cc; ++i)
+	buf[i] = rand();
+    fd = open(filename, O_WRONLY|O_CREAT, 0666);
+    if (fd < 0)
+	boom("Cannot open test file");
+    if (write(fd, buf, cc) != cc)
+	boom("Write to test file failed");
+    close(fd);
+    fd = open(filename, O_RDONLY);
+    if (fd < 0)
+	boom("Cannot reopen test file");
+    addr = (char*) mmap(0, cc, PROT_READ, MAP_SHARED, fd, 0);
+    if (addr == (char*) -1)
+	boom("Cannot mmap test file");
+    for (i = 0; i < cc; ++i)
+	if (buf[i] != addr[i])
+	    boom("Compare of mmap-file contents failed");
+    exit(0);
+}
+EOF
+    )>m.c
+    capture cat m.c
+    runMake m "m:; \${CC} m.c ${MACHDEPLIBS}" && capture ./a.out
+}
+
+CheckForStructExitStatus()
+{
+    decl=$1; shift
+    (echo '#include <utmp.h>'
+    for i do
+	echo "$i"
+    done
+    cat<<EOF
+main()
+{
+    struct $decl x;
+    x.ut_exit.e_exit = 0;
+    x.ut_exit.e_termination = 0;
+    return 0;
+}
+EOF
+    )>t.c++
+    capture cat t.c++
+    runMake t "t:; \${C++F} \${C++FILE} t.c++${MAKECXXOVERRIDE}"
+}
+
+CheckForTimeZoneHandling()
+{
+    (echo '#include <time.h>'
+    cat<<EOF
+main()
+{
+    struct tm x;
+    char* cp;
+    long off;
+    cp = x.tm_zone;
+    off = x.tm_gmtoff;
+    return 0;
+}
+EOF
+    )>t.c++
+    capture cat t.c++
+    runMake t "t:; \${C++F} \${C++FILE} t.c++${MAKECXXOVERRIDE}"
+}
+
+CheckForTXCD()
+{
+    cat>t.c<<EOF
+#include <sys/ioctl.h>
+main()
+{
+    ioctl(0, TXADDCD, "rts");
+    ioctl(0, TXDELCD, "rts");
+}
+EOF
+    capture cat t.c
+    runMake t 't:; ${CC} t.c'
+}
+
+#
+# Check for a function declaration in <stdio.h>
+# and if it is missing emit the appropriate decl
+# along with an include of <stdio.h> (for any
+# FILE definition).  Apparently some combinations
+# of systems+compilers do not react well to
+# function declarations w/o various definitions
+# that appear only in stdio.h.
+#
+STDIO_H=no
+CheckStdio()
+{
+    f=$1
+    decl="$2"
+    CheckForFuncDecl $f stdio.h || {
+	if [ $STDIO_H = no ]; then
+	    echo '#include <stdio.h>'
+	    STDIO_H=yes
+	fi
+	AddFuncDecl $f "$decl"
+    }
+}
+
+getConfigTag()
+{
+    param=`grep "$1:" $2 | sed -e 's/.*:[ 	]*\([^ 	]*\).*/\1/'`
+}
+
+#
+# Check an existing port.h to see if it was created
+# for the target and compiler we're using.
+#
+CheckPortDotH()
+{
+    getConfigTag TARGET port.h; target="$param"
+    getConfigTag CCOMPILER port.h; ccompiler="$param"
+    getConfigTag CXXCOMPILER port.h; cxxcompiler="$param"
+    CCOMP=$CCOMPILER;
+	test $ISGCC = yes && CCOMP="${CCOMP}-${GCCversion}"
+    CXXCOMP=$CXXCOMPILER;
+	test $ISGXX = yes && CXXCOMP="${CXXCOMP}-${GCCversion}"
+    test "$target" = "$TARGET" && \
+    test "$ccompiler" = "$CCOMP" && \
+    test "$cxxcompiler" = "$CXXCOMP"
+}
+
+#
+# Built port.h and, optionally, termios.h based on
+# the system and compiler setup.
+#
+BuildPortDotH()
+{
+    Note ""
+    Note "Creating port.h with necessary definitions."
+
+    (EmitCPlusPlusPrologue _PORT_
+    EmitConfigurationDefinitions
+
+    echo '#include <sys/types.h>'
+    TYPES_H="sys/types.h"
+    if CheckForIncludeFile sys/bsdtypes.h; then
+	Note "... configure use of <sys/bsdtypes.h>"
+        echo '#include <sys/bsdtypes.h>'
+	TYPES_H="$TYPES_H sys/bsdtypes.h"
+    fi
+    CheckVarDecl uid_t 'typedef int uid_t;' $TYPES_H
+    CheckVarDecl gid_t 'typedef int gid_t;' $TYPES_H
+    CheckVarDecl mode_t 'typedef int mode_t;' $TYPES_H stdlib.h
+    CheckVarDecl off_t 'typedef long off_t;' $TYPES_H stdlib.h
+    CheckVarDecl pid_t 'typedef int pid_t;' $TYPES_H stdlib.h
+    CheckVarDecl size_t 'typedef unsigned size_t;' $TYPES_H stdlib.h
+    CheckVarDecl dev_t 'typedef int dev_t;' $TYPES_H stdlib.h
+
+    if [ $CONFIG_OSFCNH = auto ]; then
+	if CheckForIncludeFile osfcn.h; then
+	    CONFIG_OSFCNH=yes
+	else
+	    CONFIG_OSFCNH=no
+	fi
+    fi
+    if [ $CONFIG_OSFCNH = yes ]; then
+	Note "... configure use of <osfcn.h>"
+	echo '#define HAS_OSFCN_H 1'
+	OSFCNH='osfcn.h'
+    else
+	OSFCNH=
+    fi
+    if CheckForIncludeFile sys/select.h; then
+	Note "... configure use of <sys/select.h>"
+	echo '#define HAS_SELECT_H 1'
+	SELECTH='sys/select.h'
+    else
+	SELECTH=
+    fi
+
+    #
+    # Select signal handler type casts.
+    #
+    if [ $ISGXX = yes ]; then
+	#
+	# Must use -pendantic-errors with gcc to insure (sig_t) (...)
+	# is treated as an error instead of a warning when searching
+	# for the proper signal handler types below.
+	#
+	OGCXXOPTS="$GCXXOPTS"
+	GCXXOPTS="$GCXXOPTS -pedantic-errors"
+	makeDefs xdefs
+    fi
+    SIGHANDLERTYPES="
+	$SIGHANDLERTYPES
+	(sig_t)
+	(SIG_PF)
+	(void(*)(int))
+	(void(*)())
+	(int)
+    "
+    for i in $SIGHANDLERTYPES; do
+	CheckSignalHandler "$i" && {
+	    echo "#define fxSIGHANDLER $i"
+	    Note "... use $i for signal handler type"
+	    break;
+	}
+    done
+    for i in $SIGHANDLERTYPES; do
+	CheckSigvecHandler "$i" && {
+	    echo "#define fxSIGVECHANDLER $i"
+	    Note "... use $i for sigvec handler type"
+	    break;
+	}
+    done
+    for i in $SIGHANDLERTYPES; do
+	CheckSigactionHandler "$i" && {
+	    echo "#define fxSIGACTIONHANDLER $i"
+	    Note "... use $i for sigaction handler type"
+	    break;
+	}
+    done
+    if [ $ISGXX = yes ]; then
+	GCXXOPTS="$OGCXXOPTS"
+	makeDefs xdefs
+    fi
+
+    CheckForMMAP && {
+	echo '#define HAS_MMAP 1'
+	Note "... configure use of mmap for memory-mapped files"
+	CheckFuncDecl mmap \
+	    'extern void* mmap(void*, size_t, int, int, int, off_t);' sys/mman.h
+    }
+
+    CheckFuncDecl mkstemp 'extern int mkstemp(char *);' stdio.h unistd.h
+    CheckFuncDecl strerror 'extern char* strerror(int);' string.h
+    CheckFuncDecl strncasecmp \
+	'extern int strncasecmp(const char*, const char*, size_t);' string.h
+    CheckFuncDecl strcasecmp \
+	'extern int strcasecmp(const char*, const char*);' string.h
+    CheckFuncDecl strdup 'extern char* strdup(const char*);' string.h
+    CheckFuncDecl memset 'extern void* memset(void*, int, size_t);' string.h
+    CheckFuncDecl getpass 'extern char* getpass(const char *);' stdlib.h
+    CheckFuncDecl random 'extern long random(void);' math.h stdlib.h
+    CheckFuncDecl srandom 'extern void srandom(int);' math.h stdlib.h
+    CheckFuncDecl floor 'extern double floor(double);' math.h
+    CheckFuncDecl waitpid 'extern pid_t waitpid(pid_t, int *, int);' sys/wait.h
+    CheckForFunc sysconf && {
+	echo '#define HAS_SYSCONF 1'
+	Note "... configure use of sysconf"
+	CheckFuncDecl sysconf 'extern long sysconf(int);' unistd.h
+    }
+    CheckForFunc ulimit && {
+	echo '#define HAS_ULIMIT 1'
+	Note "... configure use of ulimit"
+	CheckFuncDecl ulimit 'extern long ulimit(int, ...);' ulimit.h
+    }
+    CheckForFunc getdtablesize && {
+	echo '#define HAS_GETDTABLESIZE 1'
+	Note "... configure use of getdtablesize"
+	CheckFuncDecl getdtablesize 'extern int getdtablesize(void);' unistd.h
+    }
+    CheckDefine _POSIX_OPEN_MAX '_POSIX_OPEN_MAX 16' limits.h
+    CheckDefine howmany 'howmany(x, y)	(((x)+((y)-1))/(y))' $TYPES_H
+    CheckForFuncDecl sigvec signal.h || {
+	echo 'struct sigvec;'
+	AddFuncDecl sigvec \
+	    'extern int sigvec(int, const struct sigvec*, struct sigvec*);'
+    }
+    CheckForFuncDecl sigaction signal.h || {
+	echo 'struct sigaction;'
+	AddFuncDecl sigaction \
+	    'extern int sigaction(int, const struct sigaction*, struct sigaction*);'
+    }
+    CheckFuncDecl kill 'extern int kill(pid_t, int);' signal.h
+    CheckFuncDecl close 'extern int close(int);' unistd.h
+    CheckFuncDecl getuid 'extern uid_t getuid(void);' unistd.h
+    CheckFuncDecl geteuid 'extern uid_t geteuid(void);' unistd.h
+    CheckFuncDecl seteuid 'extern int seteuid(uid_t);' unistd.h
+    CheckFuncDecl setegid 'extern int setegid(gid_t);' unistd.h
+    CheckFuncDecl ftruncate 'extern int ftruncate(int, off_t);' unistd.h
+    CheckFuncDecl getdtablesize 'extern int getdtablesize(void);' unistd.h
+    CheckFuncDecl chroot 'extern int chroot(const char *path);' unistd.h
+    #
+    # unistd.h is where many people put it
+    # sys/select.h is for USL-derived code
+    # sys/time.h is for HP systems (sigh)
+    # sys/types.h is for yet other systems (sigh sigh)
+    #
+    CheckForFuncDecl select unistd.h $SELECTH sys/time.h $TYPES_H || {
+	echo 'struct fd_set;'
+	echo 'struct timeval;'
+	AddFuncDecl select \
+	    'extern int select(int,struct fd_set*,struct fd_set*,struct fd_set*,struct timeval*);'
+    }
+    CheckFuncDecl unlink 'extern int unlink(const char*);' unistd.h
+    CheckFuncDecl read 'extern int read(int, const void*, unsigned int);' unistd.h
+    CheckFuncDecl ioctl 'extern int ioctl(int, int, ...);' unistd.h sys/ioctl.h
+    CheckForFunc fchown && {
+	echo '#define HAS_FCHOWN 1'
+	Note "... configure use of fchown"
+	CheckFuncDecl fchown 'extern int fchown(int, uid_t, gid_t);' unistd.h
+    }
+    CheckFuncDecl gethostname 'extern int gethostname(char*, int);' unistd.h $OSFCNH
+    CheckFuncDecl malloc 'extern void* malloc(size_t);' stdlib.h
+    CheckFuncDecl realloc 'extern void* realloc(void*, size_t);' stdlib.h
+    CheckFuncDecl free 'extern void free(void*);' stdlib.h
+    CheckFuncDecl strtoul \
+	'extern unsigned long strtoul(const char*, char**, int);' stdlib.h
+    CheckFuncDecl cuserid 'extern char* cuserid(char*);' stdio.h
+    #
+    # unistd.h is for sco3.2v4.[0-2] and GNU libc (yech!)
+    #
+    CheckFuncDecl getopt \
+	'extern int getopt(int, char* const*, const char*);' stdlib.h unistd.h
+    CheckFuncDecl isatty 'extern int isatty(int);' stdlib.h unistd.h
+    CheckVarDecl 'char.*optarg' 'extern char* optarg;' stdlib.h unistd.h
+    CheckVarDecl 'int.*opterr' 'extern int opterr;' stdlib.h unistd.h
+    CheckVarDecl 'int.*optind' 'extern int optind;' stdlib.h unistd.h
+    CheckFuncDecl system 'extern int system(const char*);' stdlib.h
+    CheckFuncDecl mktemp 'extern char* mktemp(char*);' stdio.h unistd.h
+    CheckStdio popen 'extern FILE* popen(const char *, const char *);'
+    CheckStdio pclose 'extern int pclose(FILE*);'
+    CheckStdio fdopen 'extern FILE* fdopen(int, const char*);'
+    CheckForDefine fileno stdio.h || {
+	CheckStdio fileno 'extern int fileno(FILE*);'
+    }
+    CheckFuncDecl opendir 'extern DIR* opendir(const char*);' dirent.h
+    CheckFuncDecl syslog 'extern void syslog(int, const char*, ...);' syslog.h
+    CheckForFuncDecl vsyslog syslog.h || {
+	echo '#include <stdarg.h>'
+	AddFuncDecl vsyslog 'extern void vsyslog(int, const char*, va_list);'
+    }
+    CheckFuncDecl closelog 'extern void closelog(void);' syslog.h
+    CheckFuncDecl openlog 'extern void openlog(const char*, int, int);' syslog.h
+    CheckForFunc fchmod && {
+	echo '#define HAS_FCHMOD 1'
+	Note "... configure use of fchmod"
+	CheckFuncDecl fchmod 'extern int fchmod(int, mode_t);' \
+	    unistd.h libc.h $OSFCNH sys/stat.h
+    }
+    CheckFuncDecl mknod 'extern int mknod(const char*, mode_t, dev_t);' \
+	unistd.h sys/stat.h
+    CheckForFuncDecl gettimeofday sys/time.h || {
+	echo 'struct timezone;'
+	echo 'struct timeval;'
+	AddFuncDecl gettimeofday \
+	    'extern int gettimeofday(struct timeval*, struct timezone*);'
+    }
+    CheckForFuncDecl strftime time.h || {
+	echo 'struct tm;'
+	AddFuncDecl strftime \
+	    'extern size_t strftime(char*,size_t,const char*,const struct tm*);'
+    }
+    CheckForFuncDecl localtime time.h || {
+	echo 'struct tm;'
+	AddFuncDecl localtime 'struct tm* localtime(const time_t* clock);'
+    }
+    CheckForTimeZoneHandling && {
+	echo '#define HAS_TM_ZONE 1'
+	Note "... configure use of struct tm timezone information"
+    }
+    CheckForFuncDecl setitimer sys/time.h || {
+	echo '#ifdef ITIMER_REAL'
+	echo 'struct itimerval;'
+	AddFuncDecl setitimer \
+	    'extern int setitimer(int,struct itimerval*,struct itimerval*);'
+	echo '#endif'
+    }
+    CheckFuncDecl setpwent 'extern void setpwent(void);' pwd.h
+    CheckFuncDecl endpwent 'extern void endpwent(void);' pwd.h
+    CheckFuncDecl getpwnam 'extern struct passwd* getpwnam(const char*);' pwd.h
+    case "$TARGET" in
+    *-reno*)
+	;;
+    *)
+	for i in toupper tolower; do
+	    CheckFuncDecl $i "extern int $i(int);" ctype.h
+	done
+	;;
+    esac
+    CheckForIncludeFile net/errno.h && {
+	Note "... configure use of <net/errno.h>"
+        echo '#define HAS_NETERRNO_H 1'
+    }
+    CheckForFuncDecl getpeername sys/socket.h || {
+	echo 'struct sockaddr;'
+	AddFuncDecl getpeername 'extern int getpeername(int,struct sockaddr*,int*);'
+    }
+    CheckForFuncDecl getsockname sys/socket.h || {
+	echo 'struct sockaddr;'
+	AddFuncDecl getsockname 'extern int getsockname(int,struct sockaddr*,int*);'
+    }
+    CheckFuncDecl socket 'extern int socket(int, int, int);' sys/socket.h
+    CheckFuncDecl connect 'extern int connect(int, const void*, int);' sys/socket.h
+    CheckForFuncDecl bind sys/socket.h || {
+	echo 'struct sockaddr;'
+	AddFuncDecl bind 'extern int bind(int, const struct sockaddr*, int);'
+    }
+    CheckFuncDecl listen 'extern int listen(int, int);' sys/socket.h
+    CheckFuncDecl getsockopt \
+	'extern int getsockopt(int, int, int, const char*, int*);' sys/socket.h
+    CheckFuncDecl setsockopt \
+	'extern int setsockopt(int, int, int, const char*, int);' sys/socket.h
+    CheckForFuncDecl accept sys/socket.h || {
+	echo 'struct sockaddr;'
+	AddFuncDecl accept 'extern int accept(int, struct sockaddr*, int*);'
+    }
+    CheckFuncDecl send \
+	'extern int send(int, const void*, int, int);' sys/socket.h
+    CheckFuncDecl setutent 'extern void setutent(void);' utmp.h
+    CheckFuncDecl endutent 'extern void endutent(void);' utmp.h
+    CheckForFuncDecl getutent utmp.h || {
+	echo 'struct utmp;'
+	AddFuncDecl getutent 'extern struct utmp* getutent(void);'
+    }
+    CheckForFuncDecl pututline utmp.h || {
+	echo 'struct utmp;'
+	AddFuncDecl pututline \
+	    'extern struct utmp* pututline(const struct utmp*);'
+    }
+    CheckForFuncDecl gethostbyname netdb.h || {
+	echo 'struct hostent;'
+	AddFuncDecl gethostbyname \
+	    'extern struct hostent* gethostbyname(const char*);'
+    }
+    CheckForFuncDecl gethostbyaddr netdb.h || {
+	echo 'struct hostent;'
+	AddFuncDecl gethostbyaddr \
+	    'extern struct hostent* gethostbyaddr(const void*, int, int);'
+    }
+    CheckForFuncDecl getservbyname netdb.h || {
+	echo 'struct servent;'
+	AddFuncDecl getservbyname \
+	    'extern struct servent* getservbyname(const char*, const char*);'
+    }
+    CheckForDefine LOCK_SH sys/file.h || {
+	AddDefine LOCK_SH 'LOCK_SH	1	/* shared lock */'
+	AddDefine LOCK_EX 'LOCK_EX	2	/* exclusive lock */'
+	AddDefine LOCK_NB 'LOCK_NB	4	/* dont block when locking */'
+	AddDefine LOCK_UN 'LOCK_UN	8	/* unlock */'
+    }
+    CheckFuncDecl flock 'extern int flock(int, int);' sys/file.h
+    CheckForFuncDecl sigsetjmp setjmp.h || {
+	echo '#include <setjmp.h>'
+	echo '#ifndef sigsetjmp'
+	AddDefine sigjmp_buf 'sigjmp_buf jmp_buf	/* hopefully compatible */'
+	AddFuncDecl sigsetjmp 'extern int sigsetjmp(sigjmp_buf, int);'
+	AddFuncDecl siglongjmp 'extern void siglongjmp(sigjmp_buf, int);'
+	echo '#endif'
+    }
+    CheckForFuncDecl inet_ntoa arpa/inet.h || {
+	echo 'struct in_addr;'
+	AddFuncDecl inet_ntoa 'extern char* inet_ntoa(struct in_addr);'
+    }
+    CheckForIncludeFile sys/mkdev.h && {
+	Note "... configure use of <sys/mkdev.h> (for SVR4-style lock files)"
+	echo '#define HAS_MKDEV 1'
+    }
+    CheckForIncludeFile locale.h && {
+	Note "... configure use of <locale.h> (internationalization support)"
+	echo '#define HAS_LOCALE 1'
+    }
+    CheckForIncludeFile paths.h && {
+	Note "... configure use of <paths.h>"
+	echo '#include <paths.h>'
+    }
+    CheckForIncludeFile sys/modem.h && {
+	Note "... configure use of <sys/modem.h>"
+	echo '#define HAS_MODEM_H 1'
+    }
+    CheckForIncludeFile sys/termiox.h && {
+	Note "... configure use of SVR4 termiox support"
+	echo '#define HAS_TERMIOX 1'
+    }
+    CheckForFunc flock || {
+	#
+	# Emit the necessary #defines for emulating flock
+	#
+	if CheckForFunc fcntl; then
+	    echo '#define HAS_FCNTL 1'
+	fi
+	if CheckForFunc lockf; then
+	    echo '#define HAS_LOCKF 1'
+	fi
+    }
+    # NB: logwtmp checked above when looking for -lutil
+    test $HAS_LOGWTMP = yes && {
+	#
+	# Configure use of logwtmp in the BSD getty support and
+	# verify that the accompanying logout function is present
+	# also.  Note that we put out proper declarations for the
+	# functions since they don't appear to be declared anywhere.
+	#
+	echo '#define HAS_LOGWTMP 1'
+	Note "... configure use of logwtmp (BSD-style wtmp logging)"
+	AddFuncDecl logwtmp \
+	    'int logwtmp(const char*, const char*, const char*);'
+	CheckForLibrary logout -lutil && {
+	    echo '#define HAS_LOGOUT 1'
+	    Note "... configure use of logout (BSD-style utmp support)"
+	    AddFuncDecl logout 'int logout(const char*);'
+	}
+    }
+    CheckDefine _PATH_DEV     '_PATH_DEV	"/dev/"'	paths.h
+    CheckDefine _PATH_DEVNULL '_PATH_DEVNULL	"/dev/null"'	paths.h
+    CheckDefine _PATH_TMP     '_PATH_TMP	"/tmp/"'	paths.h
+    if [ $UTMP = auto ]; then
+	if CheckForIncludeFile utmpx.h; then
+	    UTMP=utmpx;
+	else
+	    UTMP=utmp;
+	fi
+    fi
+    if [ $UTMP = utmpx ]; then
+	Note "... configure use of <utmpx.h> (extended utmp interface)"
+	echo '#define HAS_UTMPX 1'
+	CheckForDefine _PATH_WTMPX paths.h utmp.h utmpx.h || {
+	    if CheckForDefine WTMPX_FILE utmpx.h; then
+		AddDefine _PATH_WTMPX '_PATH_WTMPX	WTMPX_FILE'
+	    else
+		PATHWTMPX=`findFile wtmpx /etc:/var/adm:/usr/adm`
+		test "$PATHWTMPX" && {
+		    AddDefine _PATH_WTMPX "_PATH_WTMPX	\"${PATHWTMPX}\""
+		}
+	    fi
+	}
+	#
+	# struct exit_status is defined for all systems with
+	# utmpx support, but SVR4.0.3 headers define the extended
+	# exit status structure *within* struct utmp and then reuse
+	# it within struct utmpx.  This does not work for all
+	# compilers so we must look for this case and, if present,
+	# enable a workaround declaration of struct exit_status (sigh).
+	#
+	if CheckForStructExitStatus utmpx '#include <utmpx.h>'; then
+	    echo '#define HAS_UTEXIT 1'
+	    echo '#define HAS_EXIT_STATUS 1'
+	elif CheckForStructExitStatus utmpx \
+	    'struct exit_status { short e_termination; short e_exit; };' \
+	    '#include <utmpx.h>'; then
+	    Note "... add declaration for struct exit_status"
+	    echo '#define HAS_UTEXIT 1'
+	    echo '#define HAS_EXIT_STATUS 0'
+	fi
+    else
+	Note "... configure use of <utmp.h> (normal utmp interface)"
+	CheckForDefine _PATH_UTMP paths.h utmp.h || {
+	    if CheckForDefine UTMP_FILE utmp.h; then
+		AddDefine _PATH_UTMP '_PATH_UTMP	UTMP_FILE'
+	    else
+		PATHUTMP=`findFile utmp /etc:/var/adm:/usr/adm`
+		test "$PATHUTMP" && {
+		    AddDefine _PATH_UTMP "_PATH_UTMP	\"${PATHUTMP}\""
+		}
+	    fi
+	}
+	CheckForStructExitStatus utmp && {
+	    Note "... configure use of extended exit status in utmp"
+	    echo '#define HAS_UTEXIT 1'
+	}
+	CheckForDefine _PATH_WTMP paths.h utmp.h || {
+	    if CheckForDefine WTMP_FILE utmp.h; then
+		AddDefine _PATH_WTMP '_PATH_WTMP	WTMP_FILE'
+	    else
+		PATHWTMP=`findFile wtmp /etc:/var/adm:/usr/adm`
+		test "$PATHWTMP" && {
+		    AddDefine _PATH_WTMP "_PATH_WTMP	\"${PATHWTMP}\""
+		}
+	    fi
+	}
+    fi
+    CheckForDefine RT_NOCHANGE sys/priocntl.h sys/rtpriocntl.h && \
+    CheckForDefine TS_NOCHANGE sys/priocntl.h sys/tspriocntl.h && {
+	Note "... configure use of SVR4 realtime process control interface"
+	echo '#define HAS_PRIOCNTL 1'
+    }
+    CheckForDefine FP_NOCHANGE sys/priocntl.h sys/fppriocntl.h && {
+	Note "... called FP instead of RT"
+	echo '#define HAS_FPPRIOCNTL 1'
+    }
+    CheckForDefine NDPRI sys/schedctl.h && {
+	Note "... configure use of IRIX realtime process control interface"
+	echo '#define HAS_SCHEDCTL 1'
+    }
+    CheckForDefine RTPRIO_RTOFF sys/rtprio.h && {
+	Note "... configure use of HP-UX realtime process control interface"
+	echo '#define HAS_RTPRIO 1'
+    }
+    CheckForTXCD && {
+	Note "... configure use of TXADDCD and TXDELCD ioctls"
+	echo '#define HAS_TXCD 1'
+    }
+    if CheckForIncludeFile crypt.h; then
+	Note "... configure use of <crypt.h>"
+	echo '#define HAS_CRYPT_H 1'
+	CheckFuncDecl crypt 'extern const char* crypt(const char*, const char*);' unistd.h crypt.h
+    else
+	CheckFuncDecl crypt 'extern const char* crypt(const char*, const char*);' unistd.h stdlib.h
+    fi
+    CheckTermioFuncDecls termios.h
+    EmitCPlusPlusEpilogue
+    )>xport.h
+    mv xport.h port.h; chmod 444 port.h
+    Note "Done creating port.h."
+}
+
+if test -f port.h && CheckPortDotH; then
+    Note ""
+    Note "Using previously created port.h."
+else
+    $RM xport.h xtermios.h t.c t.c++ a.out port.h termios.h
+    BuildTermiosDotH
+    BuildPortDotH
+fi
+
+Note ""
+Note "Checking system libraries for functionality to emulate."
+
+FUNCS="
+    cuserid
+    flock
+    ftruncate
+    getopt
+    mkstemp
+    random
+    srandom
+    setegid
+    seteuid
+    setvbuf
+    strcasecmp
+    strtod
+    strtoul
+    writev
+"
+
+for i in $FUNCS; do
+    CheckForFunc $i || {
+	Note "... emulate $i"
+	PORTFUNCS="$PORTFUNCS $i.c"
+    }
+done
+#
+# SCO OS 5 #defines syslog as another function
+# so it is necessary to include syslog.h when
+# checking if the function is present in the
+# library (sigh).
+#
+CheckForSyslog()
+{
+    (echo '#include <syslog.h>';
+     echo '#include "port.h"';
+     echo 'main(){syslog(0,"foo");exit(0);}') >t.c
+    capture cat t.c
+    runMake t "t:; \${CC} t.c ${MACHDEPLIBS}"
+}
+CheckForVSyslog()
+{
+    (echo '#include <syslog.h>';
+     echo '#include <stdarg.h>';
+     echo '#include "port.h"';
+     echo 'main(){va_list ap; vsyslog(0,"foo", ap);exit(0);}') >t.c
+    capture cat t.c
+    runMake t "t:; \${CC} t.c ${MACHDEPLIBS}"
+}
+if CheckForSyslog; then
+    CheckForVSyslog || {
+	Note "... emulate vsyslog"
+	PORTFUNCS="$PORTFUNCS vsyslog.c"
+    }
+else
+    Note "... emulate syslog&co."
+    PORTFUNCS="$PORTFUNCS syslog.c"
+fi
+if [ "$PORTFUNCS" ]; then
+    LIBPORT='${PORT}/libport.a'
+    PORT=yes
+else
+    PORT=no
+fi
+Note "Done checking system libraries."
+
+Note ""
+Note "Checking TIFF support."
+#
+# Verify library is compatible.
+#
+cat>t.c<<EOF
+#include "tiffio.h"
+main()
+{
+    if (TIFFLIB_VERSION < 19960307) {     /* check include file version */
+	printf("old include files: version %u\n", TIFFLIB_VERSION);
+        exit(-1);
+    }
+    if (strncmp(TIFFGetVersion(), "LIBTIFF, Version 3.4", 20) != 0) {
+	printf("old library: version %s\n", TIFFGetVersion());
+	exit(-1);
+    } else
+	exit(0);
+}
+EOF
+capture cat t.c
+if runMake t "t:; \${CC} \${CVERSION} -I${OTIFFINC} t.c ${LIBTIFF} ${MACHDEPLIBS}" && capture ./a.out; then
+    Note "Using TIFF include files from $OTIFFINC"
+    Note "Using pre-built TIFF library $LIBTIFF"
+else
+    cat 1>&2 <<EOF
+
+Incompatible/missing TIFF Library.
+
+Compilation or execution of the following test program failed:
+
+----------------------------------------------------------
+EOF
+    cat t.c 1>&2
+    cat 1>&2 <<EOF
+----------------------------------------------------------
+
+With:
+
+TIFFINC=${OTIFFINC}
+LIBTIFF=${LIBTIFF}
+
+The above program checks the version of the TIFF library to ensure it
+is suitable for use with HylaFAX.  HylaFAX ${VERSION} requires a recent
+TIFF software distribution; one distributed March 7, 1996 or later.  If
+you do not have up to date TIFF software on your system then you can
+retrieve it from the location where you obtained this software.
+Otherwise, if you have the right software, verify that you have the
+TIFFINC and LIBTIFF configuration parameters set correctly for your
+system (see above) and that any environment variables are setup that
+are needed to locate a libtiff DSO at runtime (e.g. LD_LIBRARY_PATH).
+Also be sure that any relative pathnames are made relative to the top
+of the build area.
+
+EOF
+    boom
+fi
+Note "Done checking TIFF support."
+
+if [ $ZLIB = no ]; then
+    Note ""
+    Note "Checking ZLIB support."
+    #
+    # Verify library is compatible.
+    #
+    cat>t.c<<EOF
+#include "zlib.h"
+main()
+{
+    if (strcmp(ZLIB_VERSION, "0.95") < 0) {     /* include file version */
+	printf("old include files: version %u\n", ZLIB_VERSION);
+        exit(-1);
+    }
+    if (strncmp(zlib_version, ZLIB_VERSION, 4) != 0) {
+	printf("library/header file incompatibility: %s %s\n",
+	    zlib_version, ZLIB_VERSION);
+	exit(-1);
+    } else
+	exit(0);
+}
+EOF
+    capture cat t.c
+    if runMake t "t:; \${CC} \${CVERSION} -I${OZLIBINC} t.c ${LIBZ} ${MACHDEPLIBS}" && capture ./a.out; then
+	Note "Using ZLIB include files from $OZLIBINC"
+	Note "Using pre-built ZLIB library $LIBZ"
+    else
+	cat 1>&2 <<EOF
+
+Incompatible/missing ZLIB Library.
+
+Compilation or execution of the following test program failed:
+
+----------------------------------------------------------
+EOF
+	cat t.c 1>&2
+	cat 1>&2 <<EOF
+----------------------------------------------------------
+
+With:
+
+ZLIBINC=${OZLIBINC}
+LIBZ=${LIBZ}
+
+The above program checks the version of the ZLIB library to ensure it
+is suitable for use with HylaFAX.  HylaFAX ${VERSION} requires a recent
+ZLIB software distribution; version 0.95 or newer.  If you do not have
+up to date ZLIB software on your system then you can use the version
+that is included with HylaFAX.  Otherwise, if you have the right
+software, verify that you have the ZLIBINC and LIBZ configuration
+parameters set correctly for your system (see above) and that any
+environment variables are setup that are needed to locate a libz DSO at
+runtime (e.g.  LD_LIBRARY_PATH).  Also be sure that any relative
+pathnames are made relative to the top of the build area.
+
+EOF
+	boom
+    fi
+    Note "Done checking ZLIB support."
+fi
+
+# NB: only check if we have the MLA tools
+if [ -f $SRCDIR/MLA/VERSION -a $DBLIB = no ]; then
+    Note ""
+    Note "Checking LIBDB support."
+    #
+    # Verify library is compatible.
+    #
+    cat>t.c<<EOF
+#include <sys/types.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include "db.h"
+main()
+{
+    DBT key, data;
+    const char d[] = "some random string";
+    const char k[] = "mykey";
+    DB* db = dbopen("conf.db", O_RDWR|O_CREAT, 0644, DB_HASH, NULL);
+    if (db == NULL) {
+	printf("Cannot create hashed database file conf.db\n");
+	exit(-1);
+    }
+    key.data = (void*) k;
+    key.size = sizeof (k);
+    data.data = (void*) d;
+    data.size = sizeof (d);
+    if ((*db->put)(db, &key, &data, 0) != 0) {
+	printf("Error writing hashed db record\n");
+	exit(-1);
+    }
+    (void) (*db->close)(db);
+    db = dbopen("conf.db", O_RDONLY, 0644, DB_HASH, NULL);
+    if (db == NULL) {
+	printf("Cannot reopen hashed database file conf.db\n");
+	exit(-1);
+    }
+    data.data = (void*) NULL;
+    data.size = 0;
+    if ((*db->get)(db, &key, &data, 0) != 0) {
+	printf("Error reading hashed db record\n");
+	exit(-1);
+    }
+    if (data.size != sizeof (d) || memcmp(data.data, d, data.size) != 0) {
+	printf("Hashed db record mismatch: size %u data \"%s\"\n",
+	    data.size, data.data ? data.data : "(null)");
+	exit(-1);
+    }
+    (*db->close)(db);
+    exit(0);
+}
+EOF
+    capture cat t.c
+    if runMake t "t:; \${CC} \${CVERSION} -I${ODBLIBINC} t.c ${LIBDB} ${MACHDEPLIBS}" && capture ./a.out; then
+	Note "Using LIBDB include files from $ODBLIBINC"
+	Note "Using pre-built LIBDB library $LIBDB"
+    else
+	cat 1>&2 <<EOF
+
+Incompatible/missing LIBDB Library.
+
+Compilation or execution of the following test program failed:
+
+----------------------------------------------------------
+EOF
+	cat t.c 1>&2
+	cat 1>&2 <<EOF
+----------------------------------------------------------
+
+With:
+
+DBLIBINC=${ODBLIBINC}
+LIBDB=${LIBDB}
+
+The above program checks the operation of the LIBDB hashed database
+package to ensure it is suitable for use with HylaFAX.  HylaFAX ${VERSION}
+requires version 1.85 or newer of this package.  If you do not have
+up to date LIBDB software on your system then you can use the version
+that is included with HylaFAX.  Otherwise, if you have the right
+software, verify that you have the DBLIBINC and LIBDB configuration
+parameters set correctly for your system (see above) and that any
+environment variables are setup that are needed to locate a libz DSO at
+runtime (e.g.  LD_LIBRARY_PATH).  Also be sure that any relative
+pathnames are made relative to the top of the build area.
+
+EOF
+	boom
+    fi
+    Note "Done checking LIBDB support."
+fi
+
+if [ "$DSO" = auto ]; then
+    Note ""
+    Note "Checking for Dynamic Shared Object (DSO) support."
+    case $TARGET in
+    *-irix*)
+	if (findApp rld /lib:/usr/lib:$PATH) >/dev/null 2>&1; then
+	    DSOSUF=so
+	    DSOOPTS="${CVERSION} -shared -rdata_shared -check_registry \${DEPTH}/${SRCDIR}/port/irix/so_locations -quickstart_info"
+	    DSODELAY=-delay_load
+	    LLDOPTS='-rpath ${LIBEXEC}'
+	    DSO=IRIX
+	    CheckCCDSO()
+	    {
+		$RM t.c t.o t.${DSOSUF}
+		echo 'int f() { return 0; }'>t.c
+		capture cat t.c
+		runMake t \
+		    't.o:; ${CCF} -c t.c' \
+		    "t: t.o; \${CCF} ${DSOOPTS} -o t.${DSOSUF} t.o"
+	    }
+	    CheckCXXDSO()
+	    {
+		$RM t.c++ t.o t.${DSOSUF}
+		echo 'int f() { return 0; }'>t.c++
+		capture cat t.c++
+		runMake t \
+		    "t.o:; \${C++F} -c \${C++FILE} t.c++${MAKECXXOVERRIDE}" \
+		    "t:t.o; \${C++F} ${DSOOPTS} -o t.${DSOSUF} t.o"
+	    }
+	else
+	    Note "No runtime loader found, looks like your system does not supports DSOs."
+	    DSO=no
+	fi
+	;;
+    *)	Note "There is no support for building HylaFAX as DSOs on your system."
+	DSO=no
+	;;
+    esac
+    if [ "$DSO" != no ]; then
+	JUNK="$JUNK t.${DSOSUF}"
+	if CheckCCDSO; then
+	    if CheckCXXDSO; then
+		Note "Looks like your system supports $DSO-style DSOs."
+	    else
+		cat 1>&4 <<EOF
+Looks like your system supports DSOs...
+... but $CXXCOMPILER does not support them in the expected way.
+EOF
+		DSO=no
+	    fi
+	else
+	    cat 1>&4 <<EOF
+Looks like your system supports DSOs...
+... sigh, but $CCOMPILER does not support them in the expected way.
+EOF
+	    DSO=no
+	fi
+    fi
+elif [ "$DSO" != no ]; then
+    Note ""
+    Note "Looks like your system supports $DSO-style DSOs."
+fi
+
+if [ "$DSO" = no ]; then
+    MAKEDSOINCLUDE='#'
+    DSOSUF=a DSOOPTS= DSODELAY= LLDOPTS=
+else
+    MAKEDSOINCLUDE="$MAKEINCLUDE"
+fi
+
+Note ""
+Note "Selecting programs used during installation and operation."
+
+if [ -z "$AWK" ]; then
+    # we need an awk that supports functions and -v
+    CheckAwk()
+    {
+	(set -x; $1 -v BAR=bar '
+function foo(x) {
+    print "GOT" x
+}
+BEGIN { foo(BAR) }
+' </dev/null | grep GOTbar) >&5 2>&1
+	return
+    }
+    for i in mawk nawk gawk awk; do
+	x=`findApp $i $PATH`
+	if test "$x" && CheckAwk "$x"; then
+	    AWK=$x
+	    break
+	fi
+    done
+fi
+if [ -z "$AWK" ]; then
+    AWK=awk
+    Note ""
+    Note "WARNING, could not locate a suitable AWK for processing the command"
+    Note "         scripts included in this software distribution; using $AWK."
+else
+    Note "Looks like $AWK should be used in command scripts."
+fi
+
+test "$SED" || SED=`findApp sed $PATH`
+if [ -z "$SED" ]; then
+    SED=sed
+    Note "WARNING, could not locate a suitable SED command; using $SED."
+fi
+
+test "$PATH_SENDMAIL" || \
+    PATH_SENDMAIL=`findApp sendmail $PATH:/usr/lib:/usr/ucblib`
+if [ -z "$PATH_SENDMAIL" ]; then
+    cat<<EOF
+WARNING, could not locate sendmail on your system.
+
+Beware that the mail notification work done by this software uses
+sendmail-specific command line options.  If you do not have a
+sendmail-compatible mailer things will break.
+EOF
+    PATH_SENDMAIL=/usr/lib/sendmail
+    Note "Using $PATH_SENDMAIL to deliver mail."
+else
+    Note "Looks like $PATH_SENDMAIL should be used to deliver mail."
+fi
+
+#
+# Miscellaneous ``little'' programs.  We want absolute
+# pathnames so that work done by the super-user (e.g.
+# installation) is safer.
+#
+test "$CAT"	|| CAT=`findAppDef cat $PATH cat`
+test "$CHGRP"	|| CHGRP=`findAppDef chgrp $PATH chgrp`
+test "$CHMOD"	|| CHMOD=`findAppDef chmod $PATH chmod`
+test "$CHOWN"	|| CHOWN=`findAppDef chown $PATH chown`
+test "$CMP"	|| CMP=`findAppDef cmp $PATH cmp`
+test "$COL"	|| COL=`findAppDef col $PATH col`
+test "$CP"	|| CP=`findAppDef cp $PATH cp`
+test "$ECHO"	|| ECHO=`findAppDef echo $PATH echo`
+test "$GENDIST"	|| GENDIST=`findAppDef gendist $PATH gendist`
+test "$GREP"	|| GREP=`findAppDef grep $PATH grep`
+test "$LN"	|| LN=`findAppDef ln $PATH ln`
+test "$MAN"	|| MAN=`findAppDef man $PATH man`
+test "$MKDIR"	|| MKDIR=`findAppDef mkdir $PATH mkdir`
+test "$MV"	|| MV=`findAppDef mv $PATH mv`
+test "$RMCMD"	|| RMCMD=`findAppDef rm $PATH rm`
+test "$SORT"	|| SORT=`findAppDef sort $PATH sort`
+test "$STRIP"	|| STRIP=`findAppDef strip $PATH strip`
+# NB: can't test $PWD 'cuz it's a shell variable
+PWD=`findApp pwd $PATH`	   || PWD=pwd
+
+#
+# Test/verify we know how to create FIFO special files.
+#
+$RM conffifo;
+if capture mkfifo conffifo && test -p conffifo >/dev/null 2>&1; then
+    Note "Looks like $MKFIFO creates FIFO special files."
+elif test -f conffifo; then			# NB: not everyone has test -p
+    Note "Looks like $MKFIFO creates FIFO special files (unable to verify)."
+else
+    # NB: we can't be certain of this because on some systems
+    # only root can create a FIFO special file
+    Note "WARNING, $MKFIFO may create FIFO special files, but testing failed."
+fi
+
+#
+# Check if mv -f is supported
+#
+if [ -z "$MV_F" ]; then
+    $RM t.c; echo "">t.c
+    if capture $MV -f t.c t.o; then
+	Note "Looks like $MV supports the -f option to force a move."
+	MV_F=-f
+    else
+	Note "WARNING, looks like $MV has no -f option to force move operations;"
+	Note "         this may cause problems during installation."
+	MV_F=
+    fi
+fi
+
+#
+# Check if ln -s creates a symbolic link.
+#
+if [ -z "$LN_S" ]; then
+    capture "$RM t.c; $LN -s foo t.c" && LN_S=-s
+fi
+if [ -n "$LN_S" ]; then
+    Note "Looks like $LN supports the -s option to create a symbolic link."
+else
+    Note "WARNING, looks like $LN has no -s option to create symbolic links;"
+    Note "         this may cause problems during installation."
+fi
+
+#
+# Pick install mechanism.
+#
+if [ -z "$INSTALL" ]; then
+    case $TARGET in
+    *-irix*)	INSTALL=`findApp install /sbin:$PATH`;;
+    *)		INSTALL='${SHELL} ${PORT}/install.sh';;
+    esac
+fi
+
+if [ "$SYSVINIT" = auto ]; then
+    if test -d /etc/rc0.d -a -d /etc/rc2.d -a -d /etc/init.d; then
+	SYSVINIT=yes
+	Note "Looks like a SysV-style init is used, enabling installation of startup code."
+    else
+	SYSVINIT=no
+    fi
+fi
+
+Note "Done selecting programs."
+
+#
+# User-changable configuration parameters section.
+# Anything selected here is presented to the user
+# and may be interactively changed.
+#
+
+Note ""
+Note "Selecting default HylaFAX configuration parameters."
+Note ""
+
+#
+# Fill in any other configuration parameters not
+# setup in the site and local files.
+#
+
+#
+# Fax user GID
+#
+if [ -z "$FAXGID" ]; then
+    case $TARGET in
+    *-aix*)	FAXGID=uucp;;
+    *-bsdi*)	FAXGID=uucp;;
+    *freebsd2.1*) FAXGID=uucp; break;; # Not sure when this changed..
+    *bsd*)	FAXGID=dialer;;
+    *-hpux*)	FAXGID=sys;;
+    *-irix*)	FAXGID=nuucp;;
+    *-isc*)	FAXGID=uucp;;
+    *-linux*)	FAXGID=uucp;;
+    *-sco*)	FAXGID=uucp;;
+    *-solaris*)	FAXGID=uucp;;
+    *-sunos*)	FAXGID=uucp;;
+    *-sysv4*)	FAXGID=uucp;;
+    *-ultrix*)	FAXGID=uucp;;
+    *)	
+	FAXGID=uucp
+	for i in uucp dialer nuucp sys; do
+	    grep "^${i}:" /etc/group >/dev/null 2>&1 && { FAXGID=$i; break; }
+	done
+	;;
+    esac
+fi
+Note "Using uid $FAXUID and gid $FAXGID for controlling access to fax stuff."
+
+#
+# System installation group ID.
+#
+if [ -z "$SYSGID" ]; then
+    case $TARGET in
+    *-aix*)	SYSGID=sys;;
+    *bsd*)	SYSGID=bin;;
+    *-hpux*)	SYSGID=bin;;
+    *-irix*)	SYSGID=sys;;
+    *-isc*)	SYSGID=sys;;
+    *-linux*)	SYSGID=bin;;
+    *-sco*)	SYSGID=sys;;
+    *-solaris*)	SYSGID=sys;;
+    *-sunos*)	SYSGID=bin;;
+    *-sysv4*)	SYSGID=sys;;
+    *-ultrix*)	SYSGID=bin;;
+    *)	
+	SYSGID=sys
+	for i in sys bin; do
+	    grep "^${i}:" /etc/group >/dev/null 2>&1 && { SYSGID=$i; break; }
+	done
+	;;
+    esac
+fi
+Note "Using uid $SYSUID and gid $SYSGID for installing programs."
+
+if [ -z "$FILLORDER" ]; then
+    #
+    # Host bit order within a word.
+    #
+    case $TARGET in
+    mips-dec-*)	FILLORDER=LSB2MSB;;
+    i[3-6]86-*)	FILLORDER=LSB2MSB;;
+    *)		FILLORDER=MSB2LSB;;
+    esac
+fi
+CPU=`echo $TARGET | sed 's/-.*//'`
+Note "Using $FILLORDER bit order for your $CPU cpu."
+
+# SVR4 packaging stuff
+if [ -z "$PKG_ARCH" ]; then
+	PKG_ARCH=$CPU
+fi
+
+#
+# Style of getty support.
+#
+if [ "$GETTY" = auto ]; then
+    case $TARGET in
+    *bsd*)	GETTY=BSD;;
+    *-sunos*)	GETTY=BSD;;
+    *-ultrix*)	GETTY=BSD;;
+    *)		GETTY=SysV;;
+    esac
+fi
+Note "Looks like you need $GETTY getty support."
+if [ -z "$PATH_GETTY" ]; then
+    if CheckForDefine _PATH_GETTY paths.h; then
+	Note "Using _PATH_GETTY from <paths.h> as the program to exec for a data call."
+    else
+	#
+	# NB: use findFile instead of findApp because on some
+	#     systems this file is mode 544; so if configure
+	#     is run by an unprivileged user the file will not
+	#     be located.
+	#
+	PATH_GETTY=`findFile ttymon /usr/lib/saf:/usr/libexec:/sbin:$PATH`
+	test -z "$PATH_GETTY" && \
+	    PATH_GETTY=`findApp getty /usr/libexec:/sbin:$PATH`
+	test -z "$PATH_GETTY" && \
+	    PATH_GETTY=`findApp agetty /usr/libexec:/sbin:$PATH`
+	test -z "$PATH_GETTY" && \
+	    PATH_GETTY=`findApp mgetty /usr/libexec:/sbin:$PATH`
+	if [ -z "$PATH_GETTY" ]; then
+	    PATH_GETTY=/etc/getty
+	    Note ""
+	    Note "WARNING, could not locate a suitable getty program to exec for a"
+	    Note "         data call; using a default value $PATH_GETTY."
+	    Note ""
+	else
+	    Note "Looks like $PATH_GETTY is the program to exec for a data call."
+	fi
+    fi
+else
+    Note "Using $PATH_GETTY as the program to exec for a data call."
+fi
+
+# vgetty support
+if [ -z "$PATH_VGETTY" ]; then
+    PATH_VGETTY=`findApp vgetty /usr/libexec:/sbin:$PATH` 
+    if [ -z "$PATH_VGETTY" ]; then
+	PATH_VGETTY=/bin/vgetty
+	Note "WARNING, no vgetty program found to handle a voice call, using $PATH_VGETTY."
+    else
+	Note "Looks like $PATH_VGETTY is the program to exec for a voice call."
+    fi
+else
+    Note "Using $PATH_VGETTY as the program to exec for a voice call."
+fi
+
+# egetty support
+if [ -z "$PATH_EGETTY" ]; then
+    PATH_EGETTY=`findApp egetty /usr/libexec:/sbin:$PATH` 
+    if [ -z "$PATH_EGETTY" ]; then
+	PATH_EGETTY=/bin/egetty
+	Note "WARNING, no egetty program found, using $PATH_EGETTY."
+    else
+	Note "Looks like $PATH_EGETTY is the program to exec for an extern call."
+    fi
+else
+    Note "Using $PATH_EGETTY as the program to exec for an extern call."
+fi
+
+#
+# UUCP lock file type and location.
+#
+if [ "$LOCKS" = auto ]; then
+    case $TARGET in
+    *-aix*)	LOCKS=ascii;;
+    *-sco*)	LOCKS="-ascii";;
+    *-sysv2*)	LOCKS=binary;;
+    *-hpux*)	LOCKS=binary;;
+    *-sysv4*)	LOCKS="+ascii";;
+    *-solaris*)	LOCKS="+ascii";;
+    *-freebsd*)	LOCKS=ascii;;
+    *-netbsd*)	LOCKS=ascii;;
+    *bsd*)	LOCKS=binary;;
+    *)		LOCKS=ascii;;
+    esac
+fi
+Note "Looks like you use ${LOCKS}-style UUCP lock files."
+if [ -z "$DIR_LOCKS" ]; then
+    LOCKDIRS="
+	/var/spool/locks
+	/usr/spool/locks
+	/var/spool/lock
+	/usr/spool/lock
+	/var/spool/uucp
+	/usr/spool/uucp
+    "
+    case $TARGET in
+    *-aix*)		LOCKDIRS="/etc/locks $LOCKDIRS";;
+    *-sco*)		LOCKDIRS="/usr/spool/uucp $LOCKDIRS";;
+    esac
+    DIR_LOCKS=
+    for i in $LOCKDIRS; do
+	test -d $i && { DIR_LOCKS=$i; break; }
+    done
+fi
+if [ -z "$DIR_LOCKS" ]; then
+    DIR_LOCKS=/var/spool/uucp
+    Note "WARNING, could not locate a directory for UUCP lock files,"
+    Note "guessing that UUCP lock files go in $DIR_LOCKS."
+else
+    Note "Looks like UUCP lock files go in $DIR_LOCKS."
+fi
+
+#
+# Location of Adobe Font Metric files.
+#
+if [ -z "$DIR_AFM" ]; then
+    DIR_AFMS="
+	/usr/lib/afm
+	/usr/local/lib/afm
+	/usr/local/share/ghostscript/fonts
+	/usr/local/lib/ghostscript/fonts
+	/usr/gnu/lib/ghostscript/fonts
+	/opt/gnu/lib/ghostscript/fonts
+	/usr/lib/ghostscript/fonts
+	/usr/lib/gnu/ghostscript/fonts
+    "
+    case $TARGET in
+    *-irix*)	DIR_AFMS="/usr/lib/DPS/AFM $DIR_AFMS";;
+    *-bsdi*)	DIR_AFMS="/usr/contrib/lib/flexfax/afm $DIR_AFMS";;
+    *-sunos*)	DIR_AFMS="/usr/openwin/lib/fonts/afm $DIR_AFMS";;
+    esac
+    DIR_AFM=
+    for i in $DIR_AFMS; do
+	test -d $i && { DIR_AFM=$i; break; }
+    done
+fi
+if [ -z "$DIR_AFM" ]; then
+    # put it where ghostscript normally puts things
+    DIR_AFM=/usr/local/lib/ghostscript/fonts
+    Note "WARNING, could not locate a directory with font metric information,"
+    Note "guessing that font metric information goes in $DIR_AFM."
+else
+    Note "Looks like font metric information goes in $DIR_AFM."
+fi
+
+bitchExecutable()
+{
+    echo ""
+    echo "WARNING, $1 does not seem to be an executable program;"
+    echo "         you will need to correct this before starting up the fax server."
+    echo ""
+}
+
+#
+# PostScript package and RIP location.
+#
+PickRIP()
+{
+    if [ -z "$PATH_GSRIP" ]; then
+	GSLOCS="
+	    /usr/local/bin/gs
+	    /usr/contrib/bin/gs
+	    /usr/gnu/bin/gs
+	    /opt/gnu/bin/gs
+	    /usr/bin/gs
+	"
+	for i in $GSLOCS; do
+	    # verify Ghostscript was linked with the tiffg3 device driver
+	    capture "$i -h | grep tiffg3" && { PATH_GSRIP=$i; break; }
+	done
+    fi
+    case $PS in
+    dps)	PATH_PSRIP=$PATH_DPSRIP;;
+    imp)	PATH_PSRIP=$PATH_IMPRIP;;
+    gs)		PATH_PSRIP=$PATH_GSRIP;;
+    esac
+}
+CheckRIP()
+{
+    if [ -x "$PATH_PSRIP" ]; then
+	if [ $PS = gs ]; then
+	    # verify Ghostscript was linked with the tiffg3 device driver
+	    capture "$PATH_PSRIP -h | grep tiffg3" || cat<<EOF
+
+WARNING, no tiffg3 driver in $PATH_PSRIP.
+
+The PostScript imaging program $PATH_PSRIP does not appear to be
+to be configured with the tiffg3 device driver.  This is necessary for the
+fax software to operate correctly.  See the documentation for information
+on building Ghostscript with the necessary TIFF driver.
+EOF
+	fi
+    elif [ -n "$PATH_PSRIP" ]; then
+	bitchExecutable $PATH_PSRIP
+    else
+	cat<<EOF
+
+WARNING, no PostScript imaging program.
+
+No suitable PostScript imaging program was located on your system.
+This may be due to your not having Ghostscript installed or not having
+Ghostscript configured with the tiffg3 device driver.  A default pathname
+will be used for the moment.  You must correct this situation for the
+fax software to operate correctly.  See the WWW documentation for information
+on building Ghostscript with the necessary TIFF driver.
+
+EOF
+	PATH_PSRIP=/usr/local/bin/gs
+	PATH_GSRIP=$PATH_PSRIP
+    fi
+}
+
+if [ "$PS" = auto ]; then
+    case $TARGET in
+    *-irix*)	if expr $RELEASE \>= 6.2 >/dev/null; then
+		    PS=gs;
+		else
+		    PS=dps;
+		fi
+		;;
+    *)		PS=gs;;
+    esac
+fi
+Note "Looks like the $PS imager package should be used."
+PickRIP
+Note "Looks like $PATH_PSRIP is the PostScript RIP to use."
+CheckRIP
+
+#
+# Setup manual page-related stuff.
+#
+# Manual pages are processed according to:
+# 1. Section organization (BSD or System V)
+# 2. Pre-formatted (w/ nroff) or source.
+# 3. Compressed (compress, gzip, pack) or uncompressed.
+# 4. Whether or not the FlexFAX ``F'' suffix must be
+#    stripped for pages to be found (only for 4F pages).
+#
+if [ -z "$DIR_MAN" ]; then
+    MANPATH="
+	$MANPATH
+	/usr/local/man
+	/usr/contrib/man
+	/usr/catman/local
+    "
+    DIR_MAN=
+    for i in $MANPATH; do
+	test -d $i && { DIR_MAN=$i; break; }
+    done
+    test -z "$DIR_MAN" && DIR_MAN=/usr/local/man
+fi
+Note "Looks like manual pages go in $DIR_MAN."
+if [ -z "$MANSCHEME" ]; then
+    case $TARGET in
+    *-bsdi*|*-netbsd*)		MANSCHEME=bsd-nroff-gzip-0.gz;;
+    *-freebsd*)			MANSCHEME=bsd-source-cat;;
+    *-linux*)			MANSCHEME=bsd-source-cat;;
+    *-ultrix*)			MANSCHEME=bsd-source-cat;;
+    *-sunos*)			MANSCHEME=bsd-source-cat-strip;;
+    *-sysv[234]*)		MANSCHEME=sysv-source-cat-strip;;
+    *-hpux*)			MANSCHEME=sysv-source-cat-strip;;
+    *-solaris*)			MANSCHEME=sysv-source-cat-strip;;
+    *-aix*)			MANSCHEME=sysv-source-strip;;
+    *-isc*|*-sco*)		MANSCHEME=sysv-source-cat;;
+    *-irix*)			MANSCHEME=sysv-nroff-compress-Z;;
+    *)
+	#
+	# Try to deduce the setup from existing manual pages.
+	# XXX needs more work XXX
+	#
+	MANSCHEME=sysv-source-cat
+	if [ -d /usr/share/man ]; then
+	    if [ -d /usr/share/man/u_man ]; then
+	       MANSCHEME=sysv-source-cat
+	    elif [ -d /usr/share/man/man8 ]; then
+	       MANSCHEME=bsd-source-cat
+	    fi
+	elif [ -d /usr/share/catman ]; then
+	    if [ -d /usr/share/catman/u_man ]; then
+	       MANSCHEME=sysv-nroff-cat
+	    elif [ -d /usr/share/catman/man8 ]; then
+	       MANSCHEME=bsd-nroff-cat
+	    fi
+	fi
+	;;
+    esac
+fi
+Note "Looks like manual pages should be installed with $MANSCHEME."
+
+#
+# Figure out which brand of echo we have and define
+# prompt and print shell functions accordingly.
+#
+if [ `echo foo\\\c`@ = "foo@" ]; then
+    prompt()
+    {
+	echo "$* \\c"
+    }
+elif [ "`echo -n foo`@" = "foo@" ]; then
+    prompt()
+    {
+	echo -n "$* "
+    }
+else
+    prompt()
+    {
+	echo "$*"
+    }
+fi
+
+#
+# Prompt the user for a string that can not be null.
+#
+promptForNonNullStringParameter()
+{
+    x="" val="$1" desc="$2"
+    while [ -z "$x" ]; do
+	prompt "$desc [$val]?"; read x
+	if [ "$x" ]; then
+	    # strip leading and trailing white space
+	    x=`echo "$x" | sed -e 's/^[ 	]*//' -e 's/[ 	]*$//'`
+	else
+	    x="$val"
+	fi
+    done
+    param="$x"
+}
+
+#
+# Prompt the user for a numeric value.
+#
+promptForNumericParameter()
+{
+    x="" val="$1" desc="$2"
+    while [ -z "$x" ]; do
+	prompt "$desc [$val]?"; read x
+	if [ "$x" ]; then
+	    # strip leading and trailing white space
+	    x=`echo "$x" | sed -e 's/^[ 	]*//' -e 's/[ 	]*$//'`
+	    match=`expr "$x" : "\([0-9]*\)"`
+	    if [ "$match" != "$x" ]; then
+		echo ""
+		echo "This must be entirely numeric; please correct it."
+		echo ""
+		x="";
+	    fi
+	else
+	    x="$val"
+	fi
+    done
+    param="$x"
+}
+
+promptForImagerPackage()
+{
+    x=""
+    while [ -z "$x" ]; do
+	prompt "PostScript imager package [$PS]?"; read x
+	if [ "$x" ]; then
+	    # strip leading and trailing white space
+	    x=`echo "$x" | sed -e 's/^[ 	]*//' -e 's/[ 	]*$//'`
+	    case "$x" in
+	    [dD]ps|DPS)			x="dps";;
+	    [gG]s|[gG]host[sS]cript)	x="gs";;
+	    imp)			x="imp";;
+	    *)
+cat <<EOF
+
+"$x" is not a PostScript imager package; choose one of:
+
+dps	for Display PostScript on a Silicon Graphics machine running
+	any version of IRIX *prior* to 6.2
+gs	for the freely available Ghostscript package
+imp	for Impressario 2.1 on a Silicon Graphics machine
+
+EOF
+		x="";;
+	    esac
+	else
+	    x="$PS"
+	fi
+    done
+    PS="$x"
+}
+
+promptForPageSize()
+{
+    file=$1 x=""
+    while [ -z "$x" ]; do
+	prompt "Default page size [$PAGESIZE]?"; read x
+	if [ "$x" ]; then
+	    # strip leading and trailing white space
+	    x=`echo "$x" | sed -e 's/^[ 	]*//' -e 's/[ 	]*$//'`
+	    # search pagesizes file for an entry
+	    y=`sed -e '/^#/d' $file | grep -i "$x" | sed -e 's/	.*//;q'`
+	    if [ -z "$y" ]; then
+		cat<<EOF
+
+"$x" is not a known page size; the following are known page sizes:
+
+Name			Abbrev	Width	Height	Width	Height	Top	Left
+EOF
+		sed -e '/^#/d' -e '/@DEFPAGESIZE@/d' $file
+		echo ""
+		x=""
+	    else
+		x="$y"
+	    fi
+	else
+	    x="$PAGESIZE"
+	fi
+    done
+    PAGESIZE="$x"
+}
+
+#
+# Prompt the user for a numeric value.
+#
+promptForVRes()
+{
+    x=""
+    while [ -z "$x" ]; do
+	prompt "Default vertical res (lpi) [$DEFVRES]?"; read x
+	if [ "$x" ]; then
+	    # strip leading and trailing white space
+	    x=`echo "$x" | sed -e 's/^[ 	]*//' -e 's/[ 	]*$//'`
+	    case "$x" in
+	    98|low|med*)	x="98";;
+	    196|high|fine)	x="196";;
+	    *)
+cat <<EOF
+
+"$x" is not a valid vertical resolution; choose either "98" lines/inch
+(low resolution) or "196" lines/inch (often called fine resolution).
+
+EOF
+		x="";;
+	    esac
+	else
+	    x="$DEFVRES"
+	fi
+    done
+    DEFVRES="$x"
+}
+
+promptForUUCPLockScheme()
+{
+    x=""
+    while [ -z "$x" ]; do
+	prompt "UUCP lock file scheme [$LOCKS]?"; read x
+	if [ "$x" ]; then
+	    # strip leading and trailing white space
+	    x=`echo "$x" | sed -e 's/^[ 	]*//' -e 's/[ 	]*$//'`
+	    case "$x" in
+	    ascii|[-+]ascii)	;;
+	    binary|[-+]binary)	;;
+	    *)
+cat <<EOF
+
+"$x" is not a valid UUCP lock file scheme; choose "ascii" or
+"binary" to get lock files with the process ID of the lock holder
+written as ASCII or binary values and optionally prefix this with
+"+" for SVR4-style lock file names (LK.xxx.yyy.zzz) or "-" for
+SCO-style lock file names (convert tty names from upper to lower
+case when forming the lock file name).
+
+EOF
+		x="";;
+	    esac
+	else
+	    x="$LOCKS"
+	fi
+    done
+    LOCKS="$x"
+}
+
+promptForManPageScheme()
+{
+    x=""
+    while [ -z "$x" ]; do
+	prompt "Manual page installation scheme [$MANSCHEME]?"; read x
+	if [ "$x" ]; then
+	    # strip leading and trailing white space
+	    x=`echo "$x" | sed -e 's/^[ 	]*//' -e 's/[ 	]*$//'`
+	    # XXX do a better job of validating...
+	    case "$x" in
+	    bsd-nroff-cat*|sysv-nroff-cat*)	;;
+	    bsd-nroff-gzip*|sysv-nroff-gzip*)	;;
+	    bsd-nroff-comp*|sysv-nroff-comp*)	;;
+	    bsd-nroff-pack*|sysv-nroff-pack*)	;;
+	    bsd-source-cat*|sysv-source-cat*)	;;
+	    bsd-source-gzip*|sysv-source-gzip*)	;;
+	    bsd-source-comp*|sysv-source-comp*)	;;
+	    bsd-source-pack*|sysv-source-pack*)	;;
+	    *)
+cat <<EOF
+
+"$x" is not a valid manual page installation scheme.  Schemes are
+constructed according to:
+
+    <organization>-<formatting>-<compression>[-<suffix>]
+
+where:
+
+<organization>  is either "bsd" for BSD-style section organization (e.g.
+		file formats in section 5) or "sysv" for System V-style
+		organization (e.g. file formats in section 4).
+
+<formatting>    is either "nroff" to force installation of formatted
+                materials (using nroff) or "source" to get the nroff
+		source installed.
+
+<compression>   is either the name of a program to compress the manual
+                pages (gipz, compress, pack) or "cat" for uncompressed data.
+
+<suffix>        is either the file suffix to convert installed pages to
+                (e.g. 0.gz for gzip-compressed pages under BSD) or "strip"
+		to force the normal ".4f" suffix to be converted to ".4"
+		(or ".5" if using the BSD organization).  If no -<suffix>
+		is specified then filenames are not converted when they
+		are installed.
+
+Common schemes are:
+
+bsd-nroff-gzip-0.gz	compressed formatted pages for BSD 
+bsd-source-cat		nroff source w/ BSD organization
+sysv-source-cat-strip	nroff source for SysV w/o .4f suffix
+sysv-source-cat		nroff source for SysV as-is
+
+EOF
+		x="";;
+	    esac
+	else
+	    x="$MANSCHEME"
+	fi
+    done
+    MANSCHEME="$x"
+}
+
+getPageSizeInfo()
+{
+    pat=`grep '^default' $1 | \
+	sed -e 's/default[	 ]*//' -e 's/[ 	][ 	]*/\[ 	\]*/g'`
+    param=`grep "$pat" $1 | sed -e 's/	.*//;q'`
+}
+
+printConfig()
+{
+    cat<<EOF
+
+HylaFAX configuration parameters are:
+
+[ 1] Directory for applications:        $DIR_BIN
+[ 2] Directory for lib data files:      $DIR_LIBDATA
+[ 3] Directory for lib executables:     $DIR_LIBEXEC
+[ 4] Directory for system apps:  	$DIR_SBIN
+[ 5] Directory for manual pages:        $DIR_MAN
+[ 6] Directory for HTML documentation:  $DIR_HTML
+[ 7] Directory for spooling:            $DIR_SPOOL
+[ 8] Directory for font metrics:        $DIR_AFM
+[ 9] Directory for uucp lock files:     $DIR_LOCKS
+[10] Uucp lock file scheme:             $LOCKS
+[11] PostScript imager package:         $PS
+[12] PostScript imager program:         $PATH_PSRIP
+[13] Manual page installation scheme:   $MANSCHEME
+[14] Default page size:                 $PAGESIZE
+[15] Default vertical res (lpi):        $DEFVRES
+[16] Location of getty program:         $PATH_GETTY
+[17] Location of voice getty program:   $PATH_VGETTY
+[18] Location of sendmail program:      $PATH_SENDMAIL
+[19] Location of TIFF tools:            $TIFFBIN
+
+EOF
+}
+
+promptForParameter()
+{
+    case $1 in
+    1)	promptForNonNullStringParameter "$DIR_BIN" \
+	    "Directory to install applications";	DIR_BIN="$param"
+	;;
+    2)	promptForNonNullStringParameter "$DIR_LIBDATA" \
+	    "Directory to install library data files";	DIR_LIBDATA="$param"
+	;;
+    3)	promptForNonNullStringParameter "$DIR_LIBEXEC" \
+	    "Directory to install library executables";	DIR_LIBEXEC="$param"
+	;;
+    4)	promptForNonNullStringParameter "$DIR_SBIN" \
+	    "Directory to install system apps";		DIR_SBIN="$param"
+	;;
+    5)	promptForNonNullStringParameter "$DIR_MAN" \
+	    "Directory to install manual pages";	DIR_MAN="$param"
+	;;
+    6)	promptForNonNullStringParameter "$DIR_HTML" \
+	    "Directory to install HTML documentation";	DIR_HTML="$param"
+	;;
+    7)	promptForNonNullStringParameter "$DIR_SPOOL" \
+	    "Directory to setup server spooling area";	DIR_SPOOL="$param"
+	;;
+    8)	promptForNonNullStringParameter "$DIR_AFM" \
+	    "Directory to find Adobe font metrics";	DIR_AFM="$param"
+	;;
+    9)	promptForNonNullStringParameter "$DIR_LOCKS" \
+	    "Directory for uucp lock files";		DIR_LOCKS="$param"
+	;;
+    10)	promptForUUCPLockScheme;;
+    11)	promptForImagerPackage; PickRIP; CheckRIP;;
+    12)	promptForNonNullStringParameter "$PATH_PSRIP" \
+	    "PostScript imager program";		PATH_PSRIP="$param"
+	case "$PS" in
+	dps)	PATH_DPSRIP=$PATH_PSRIP;;
+	imp)	PATH_IMPRIP=$PATH_PSRIP;;
+	gs)	PATH_GSRIP=$PATH_PSRIP;;
+	esac
+	;;
+    13)	promptForManPageScheme;;
+    14)	promptForPageSize $SRCDIR/util/pagesizes.in;;
+    15)	promptForVRes;;
+    16)	promptForNonNullStringParameter "$PATH_GETTY" \
+	    "Location of getty program";		PATH_GETTY="$param"
+	;;
+    17) promptForNonNullStringParameter "$PATH_VGETTY" \
+	    "Location of vgetty program";	        PATH_VGETTY="$param"
+	;;
+    18)	promptForNonNullStringParameter "$PATH_SENDMAIL" \
+	    "Location of sendmail program";		PATH_SENDMAIL="$param"
+	;;
+    19) promptForNonNullStringParameter "$TIFFBIN" \
+	    "Location of TIFF tools";			TIFFBIN="$param"
+    esac
+}
+
+checkForExecutable()
+{
+    test -x $1 || bitchExecutable $1
+}
+
+if [ $QUIET = no ]; then
+    ok=skip
+    while [ "$ok" != y ] && [ "$ok" != yes ]; do
+	if [ "$ok" != skip ]; then
+	    for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19; do
+		promptForParameter $i;
+	    done
+	fi
+	printConfig
+	checkForExecutable $PATH_SENDMAIL
+	checkForExecutable $PATH_GETTY
+	prompt "Are these ok [yes]?"; read ok
+	test -z "$ok" && ok=yes
+	case "$ok" in
+	[1-9]|1[0-9])	promptForParameter $ok;;
+	[yY]*|[nN]*)	continue;;
+	?*)
+	    echo ""
+	    echo "\"y\", \"yes\", or <RETURN> accepts the displayed parameters."
+	    echo "A number lets you change the numbered parameter."
+	    echo ""
+	    ;;
+	esac
+	ok=skip
+    done
+fi
+
+$RM config.cache; dumpvals |sort> config.cache
+case $MANSCHEME in
+bsd-source-*)	MANAPPS=man1 MANSYS=man8 MANFILES=man5;;
+bsd-nroff-*)	MANAPPS=cat1 MANSYS=cat8 MANFILES=cat5;;
+sysv-source-*)	MANAPPS=man1 MANSYS=man1 MANFILES=man4;;
+sysv-nroff-*)	MANAPPS=cat1 MANSYS=cat1 MANFILES=cat4;;
+esac
+case $MANSCHEME in
+bsd-*-strip)	MANSEDLOCAL="-e s/4F/5/g -e s/1M/8/g";;
+bsd-*)		MANSEDLOCAL="-e s/4F/5F/g -e s/1M/8C/g";;
+sysv-*-strip)	MANSEDLOCAL="-e s/4F/4/g";;
+sysv-*)		MANSEDLOCAL=;;
+esac
+case $MANSCHEME in
+*-source-*)	MANCVT='${MANSED} $? >$@';;
+*-nroff-gzip-*)	MANCVT='${MANSED} $? | nroff -man | gzip > $@';;
+*-nroff-pack-*)	MANCVT='${MANSED} $? | nroff -man | pack > $@';;
+*-nroff-com*-*)	MANCVT='${MANSED} $? | nroff -man | compress > $@';;
+*-nroff-cat-*)	MANCVT='${MANSED} $? | nroff -man > $@';;
+esac
+case $MANSCHEME in
+*-0|*-0.gz|*-0.Z|*-gz|*-Z|*-z)
+    suf=`echo $MANSCHEME | $SED 's/.*-/./'`
+    A='`echo $$i | sed' B='`'		# workaround shell bugs
+    MANCAPPNAME="$A s/\\\\.1\$\$/$suf/$B"
+    MANCFILENAME="$A s/\\\\.4f\$\$/$suf/$B"
+    MANSAPPNAME="$A s/\\\\.1m\$\$/$suf/$B"
+    MANSFILENAME="$A s/\\\\.4f\$\$/$suf/$B"
+    ;;
+bsd-*-strip)
+    MANCAPPNAME='$$i'
+    MANCFILENAME='`echo $$i | sed s/\\.4f$$/.5/`'
+    MANSAPPNAME='`echo $$i | sed s/\\.1m$$/.8/`'
+    MANSFILENAME='`echo $$i | sed s/\\.4f$$/.5/`'
+    ;;
+*-strip)
+    MANCAPPNAME='$$i'
+    MANCFILENAME='`echo $$i | sed s/\\.4f$$/.4/`'
+    MANSAPPNAME='`echo $$i | sed s/\\.1m$$/.1/`'
+    MANSFILENAME='`echo $$i | sed s/\\.4f$$/.4/`'
+    ;;
+bsd-*)
+    MANCAPPNAME='$$i'
+    MANCFILENAME='`echo $$i | sed s/\\.4f$$/.5f/`'
+    MANSAPPNAME='`echo $$i | sed s/\\.1m$$/.8c/`'
+    MANSFILENAME='`echo $$i | sed s/\\.4f$$/.5f/`'
+    ;;
+*)
+    MANCAPPNAME='$$i' MANCFILENAME='$$i'
+    MANSAPPNAME='$$i' MANSFILENAME='$$i'
+    ;;
+esac
+
+Note ""
+
+if [ $GS = yes ]; then
+    test -d $SRCDIR/gs || {
+	Note ""
+	Note "WARNING, no Ghostscript build directory exists; disabling building"
+	Note "and installation of Ghostscript from source (GS=no)."
+	Note ""
+	GS=no
+    }
+fi
+if [ $DPS = yes ]; then
+    test -d $SRCDIR/dps || {
+	Note ""
+	Note "WARNING, no DPS build directory exists; disabling building"
+	Note "and installation of ps2fax for IRIX (DPS=no)."
+	Note ""
+	DPS=no
+    }
+fi
+if [ $IMP = yes ]; then
+    test -d $SRCDIR/imp || {
+	Note ""
+	Note "WARNING, no Impressario build directory exists; disabling building"
+	Note "and installation of the Impressario 2.1 back-end for IRIX (IMP=no)."
+	Note ""
+	IMP=no
+    }
+fi
+if [ "$AFM" = auto ]; then
+    if [ ! -f $DIR_AFM/Courier -a ! -f $DIR_AFM/Courier.afm ]; then
+	Note ""
+	Note "WARNING, no font metric files appear to be installed on your system, enabling"
+	Note "installation of the default set of metric files included with this software."
+	Note ""
+	AFM=yes
+    else
+	AFM=no
+    fi
+fi
+
+#
+# Convert default page size name to an entry that goes
+# in the pagesizes database file.
+#
+F=$SRCDIR/util/pagesizes
+test -f $F.in || {
+    bitch "$F.in is missing; this should be part of the distribution."
+    boom
+}
+DEFPAGESIZE=`grep "$PAGESIZE" $F.in | $SED -e 's/[^	]*/default/;q'`
+x="`relativize ${LIBTIFF}`"; LIBTIFF="$x"
+x="`relativize ${LIBZ}`"; LIBZ="$x"
+x="`relativize ${LIBREGEX}`"; LIBREGEX="$x"
+x="`relativize ${LIBDB}`"; LIBDB="$x"
+
+# NB: these should be sorted alphabetically
+$RM confsed2; dumpvars "$VAR2" DEFPAGESIZE | sort > confsed2
+
+
+SedConfigFiles()
+{
+    for F do
+	test -f $SRCDIR/$F.in || {
+	    bitch "$SRCDIR/$F.in is missing; this should be part of the distribution."
+	    boom
+	}
+	dir=`echo $F | $SED 's;/[^/]*$;;'`
+	if [ $dir != $F ] && [ ! -d $dir ]; then
+	    Note "Creating $dir directory"
+	    $MKDIR $dir
+	fi
+	suffix=`echo $F | $SED 's/.*\.//'`
+	if [ "$suffix" = h ]; then
+	    #
+	    # Compare old and new versions so that include files
+	    # are only updated when something has changed--this
+	    # saves time for subsequent makes.  Note we screen
+	    # out use of @DATE@ 'cuz otherwise that'll mess up
+	    # the comparison (this assumes dates are used in lines
+	    # of the form DATE: @DATE@).
+	    #
+	    $RM $F.new; $SED -f confsed1 $SRCDIR/$F.in | $SED -f confsed2 > $F.new
+	    $RM confx; $SED '/DATE:/d' $F.new >confx
+	    $RM confy; $SED '/DATE:/d' $F >confy 2>/dev/null
+	    if cmp -s confx confy >/dev/null 2>&1; then
+		$RM $F.new
+	    else
+		Note "Creating $F from $SRCDIR/$F.in"
+		$RM $F; $MV $F.new $F; $CHMOD 444 $F
+	    fi
+	else
+	    Note "Creating $F from $SRCDIR/$F.in"
+	    if $SED -f confsed1 $SRCDIR/$F.in  | $SED -f confsed2 >$F.new; then
+		$RM $F; $MV $F.new $F; $CHMOD 444 $F
+	    else
+		cat 1>&2 <<EOF
+Help, there was a problem crafting $F from $F.in.
+The command:
+
+    $SED -f confsed1 $SRCDIR/$F.in | $SED -f confsed2 >$F.new
+
+failed.  Aborting without cleaning up files so you can take a look...
+EOF
+		exit 1			# NB: don't use boom/die
+	    fi
+	fi
+    done
+}
+
+#
+# Configuration File Generation
+#
+# The following files are created using the parameters determined above:
+#
+# defs			master make include file for the source code
+# rules			make definitions for building from source code
+# config.h		master definitions compiled into code
+# */Makefile		make rules files
+# port/install.sh	SGI install program emulation script
+# port/mkdepend		makefile dependency generator (if configured)
+# etc/faxsetup.sh	script for setting up a machine
+# etc/faxaddmodem.sh	script for adding/configuring a modem
+# etc/probemodem.sh	script for probing a modem for its capabilities
+# etc/hylafax		SysV-style init script for HylaFAX servers
+# util/xferstats.sh	script for transmit statistics accounting
+# util/recvstats.sh	script for receive statistics accounting
+# util/faxcron.sh	script for cleaning up the spooling area (run from cron)
+# util/pagesizes	client page dimensions database (has default page size)
+# pkg/cpkginfo		SVR4 package stuff (client package info)
+# pkg/cproto.stub	SVR4 package stuff (client prototype stub)
+# pkg/crequest		SVR4 package stuff
+# pkg/make_proto.sh	SVR4 package stuff (script for making prototype files)
+# pkg/postinstall	SVR4 package stuff
+# pkg/postremove	SVR4 package stuff
+# pkg/spkginfo		SVR4 package stuff (server package info)
+# pkg/sproto.stub	SVR4 package stuff (server prototype stub)
+# pkg/srequest		SVR4 package stuff
+#
+CONF_FILES="
+    defs
+    config.h
+    rules
+
+    Makefile
+    config/Makefile
+    etc/Makefile
+    faxalter/Makefile
+    faxcover/Makefile
+    faxd/Makefile
+    faxmail/Makefile
+    faxrm/Makefile
+    faxstat/Makefile
+    hfaxd/Makefile
+    man/Makefile
+    sendfax/Makefile
+    sendpage/Makefile
+    util/Makefile
+
+    port/install.sh
+
+    etc/faxsetup.sh
+    etc/faxaddmodem.sh
+    etc/probemodem.sh
+    etc/hylafax
+
+    util/xferstats.sh
+    util/recvstats.sh
+    util/faxcron.sh
+
+    util/pagesizes
+
+    pkg/Makefile
+    pkg/cpkginfo
+    pkg/cproto.stub
+    pkg/crequest
+    pkg/make_proto.sh
+    pkg/postinstall
+    pkg/postremove
+    pkg/spkginfo
+    pkg/sproto.stub
+    pkg/srequest
+"
+SedConfigFiles $CONF_FILES
+test $DPS = yes &&		   SedConfigFiles dps/Makefile
+test $GS = yes &&		   SedConfigFiles gs/Makefile
+test $IMP = yes &&		   SedConfigFiles imp/Makefile
+test "$MKDEPEND" != ":" &&	   SedConfigFiles port/mkdepend
+test $SGI2FAX = yes &&	   	   SedConfigFiles sgi2fax/Makefile
+test $PORT = yes &&		   SedConfigFiles port/Makefile
+test $ZLIB = yes &&		   SedConfigFiles zlib/Makefile
+test $REGEX = yes &&		   SedConfigFiles regex/Makefile
+test $DBLIB = yes &&		   SedConfigFiles dblib/Makefile
+test $AFM = yes &&		   SedConfigFiles afm/Makefile
+if [ $HTML = yes ]; then
+    HTMLDIRS="
+	html
+	html/tools
+    "
+    for i in $HTMLDIRS; do
+	#
+	# NB: GNU sed/sh breaks when using the more conventional
+	#     attack, so we resort to this silliness...
+	#
+	SedConfigFiles `(cd $SRCDIR/$i; echo *.in) | \
+	    $SED -e 's;\.in;;g' \
+	    -e "s;Makefile;$i/&;g" \
+	    -e "s;[^ ]*\.html;$i/&;g" \
+	    -e "s;[^ ]*\.sh;$i/&;g"`
+    done
+fi
+test -f $SRCDIR/MLA/VERSION &&	   SedConfigFiles MLA/Makefile
+
+if [ "$MAKEDEPINCLUDE" != "sinclude" ]; then
+    Note "Setting up make dependency files."
+    #
+    # Setup null make dependency files so that we can include
+    # it w/o problem.  Some systems have conditional include
+    # support in their make, but others do not, so we use an
+    # unconditional include and setup everthing as null here
+    #
+    DEPEND=".
+	faxalter
+	faxcover
+	faxd
+	faxmail
+	faxrm
+	faxstat
+	hfaxd
+	sendfax
+	sendpage
+	util
+	man
+	etc
+	config
+	"
+    test $GS = yes	&& DEPEND="$DEPEND gs"
+    test $SGI2FAX = yes	&& DEPEND="$DEPEND sgi2fax"
+    test $PORT = yes	&& DEPEND="$DEPEND port"
+    test $ZLIB = yes	&& DEPEND="$DEPEND zlib"
+    test $REGEX = yes	&& DEPEND="$DEPEND regex"
+    test $DBLIB = yes	&& DEPEND="$DEPEND dblib"
+    test $AFM = yes	&& DEPEND="$DEPEND afm"
+    if [ $HTML = yes ]; then
+	DEPEND="$DEPEND html html/tools"
+    fi
+    test -f $SRCDIR/MLA/VERSION && DEPEND="$DEPEND MLA"
+    test -d $SRCDIR/faxview -a -d faxview && DEPEND="$DEPEND faxview"
+    for i in $DEPEND; do
+	test -f $i/Makedepend || cp /dev/null $i/Makedepend
+    done
+fi
+
+Note "Done."
+
+$RM $JUNK
+exit 0

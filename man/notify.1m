@@ -1,0 +1,102 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1993-1996 Sam Leffler
+.\" Copyright (c) 1993-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
+.TH NOTIFY 1M "May 8, 1996"
+.SH NAME
+notify \- \*(Fx user notification script
+.SH SYNOPSIS
+.B ${SPOOL}/bin/notify
+.I qfile
+.I why
+.I jobtime
+.I commid
+[
+.I nextTry
+]
+.SH DESCRIPTION
+.B bin/notify
+is the command script invoked by the facsimile server to notify a
+user about the status of an outbound job.
+The default notification script sends the user
+electronic mail describing the event or action.
+The arguments are:
+.TP 10
+.B qfile
+the pathname of the job description file.
+.TP
+.B why
+a string that specifies why the user is being notified; one of:
+.sp .5
+.nf
+.ta  +\w'poll_no_document    'u +\w'Notes    'u
+\fBWhy\fP	\fBNotes\fP	\fBMeaning\fP
+\fIdone\fP		job was completed successfully
+\fIfailed\fP	 \(dg	job was not completed
+\fIrejected\fP		job was rejected for specified reasons
+\fIblocked\fP		job is blocked by concurrent jobs
+\fIrequeued\fP	\(dg	job was not completed, but was requeued for retry
+\fIremoved\fP		job was deleted from the queue
+\fIkilled\fP		job was deleted from the queue
+\fItimedout\fP		job could not be sent before kill time expired
+\fIformat_failed\fP		document conversion failed
+\fIno_formatter\fP		the document conversion program was not found
+\fIpoll_rejected\fP	\(dg	a polling request was rejected by the remote side
+\fIpoll_no_document\fP	\(dg	a polling request failed because nothing was available
+\fIpoll_failed\fP	\(dg	a polling request failed for an unknown reason
+.sp .5
+.fi
+.br
+\(dg A transcript of the failed communication is returned
+to the sender.
+.TP
+.B jobtime
+the total transmission time of a successful job or the connect
+time of a failed request (passed as a string).
+.TP
+.B commid
+the communication identifier of the \*(Fx process that processed the
+job (used for locating communication transcripts).
+.TP
+.B nextTry
+the time (passed as a string) at which the next attempt will be
+made to complete the job.
+This parameter is passed only if
+.B why
+is ``requeued''.
+.SH FILES
+.nf
+.ta \w'/usr/lib/sendmail    'u
+${SPOOL}	spooling area
+/usr/lib/sendmail	for delivering mail
+.fi
+.SH "SEE ALSO"
+.IR faxq (1M),
+.IR hylafax (4F),
+.IR sendq (4F)

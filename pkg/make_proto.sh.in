@@ -1,0 +1,107 @@
+#!/bin/sh
+# $Id$
+#
+#	Tim Rice	Wed Sep 24 18:19:04 PDT 1997
+#
+#	Make prototype
+#
+#	System utilities used: cat, dirname, grep, rm, sort
+#
+LANG=C export LANG
+DIR_BIN=@BIN@
+DIR_LIB=@LIBDATA@
+DIR_SLIB=@LIBEXEC@
+DIR_MAN=@MANDIR@
+DIR_SBIN=@SBIN@
+DIR_SPOOL=@SPOOL@
+DIR_FONTS=@AFMDIR@
+DIR_CGI=@CGIDIR@
+DIR_HTML=@HTMLDIR@
+TMP_LIST=$$tmp
+LIST="${DIR_BIN} ${DIR_LIB} ${DIR_SLIB} ${DIR_MAN} ${DIR_SBIN}"
+
+case $1 in
+	client)	PROTOTYPE=cproto
+		DO_HTML="no"
+			;;
+	server)	PROTOTYPE=sproto
+		LIST="${LIST} ${DIR_SPOOL}"
+		DO_HTML="@HTML@"
+			;;
+	*)	echo "usage: $0 server or client"
+		exit 1 ;;
+esac
+
+for i in ${LIST}
+do
+# skip the first one, it's in prototype.stub
+	i=`dirname ${i}`
+	while [ ${i} != / ]
+	do
+		echo "d none ${i} ? ? ?" >> ${TMP_LIST}
+		i=`dirname ${i}`
+	done
+
+done
+
+if [ "@AFM@" = yes ]
+then
+# skip the first one, it's in prototype.stub
+	DIR_FONTS=`dirname ${DIR_FONTS}`
+	while [ ${DIR_FONTS} != / ]
+	do
+		echo "d none ${DIR_FONTS} ? ? ?" >> ${TMP_LIST}
+		DIR_FONTS=`dirname ${DIR_FONTS}`
+	done
+fi
+
+if [ ${DO_HTML} = yes ]
+then
+# skip the first one, it's in prototype.stub
+	DIR_HTML=`dirname ${DIR_HTML}`
+	while [ ${DIR_HTML} != / ]
+	do
+		grep "d none ${DIR_HTML} ? ? ?" ${TMP_LIST} >/dev/null \
+		|| echo "d html ${DIR_HTML} ? ? ?" >> ${TMP_LIST}
+		DIR_HTML=`dirname ${DIR_HTML}`
+	done
+	DIR_CGI=`dirname ${DIR_CGI}`
+	while [ ${DIR_CGI} != / ]
+	do
+		grep "d html ${DIR_CGI} ? ? ?" ${TMP_LIST} >/dev/null \
+		|| echo "d html ${DIR_CGI} ? ? ?" >> ${TMP_LIST}
+		DIR_CGI=`dirname ${DIR_CGI}`
+	done
+fi
+
+# prototype file
+cat >${PROTOTYPE} <<EOF
+i copyright
+i depend
+i pkginfo
+i request
+i postinstall
+i preremove
+i postremove
+EOF
+
+grep -v "^#" proto.local >> ${PROTOTYPE}
+
+sort -u ${TMP_LIST} >> ${PROTOTYPE}
+
+rm ${TMP_LIST}
+
+grep " none " ${PROTOTYPE}.stub >> ${PROTOTYPE}
+grep " man " ${PROTOTYPE}.stub >> ${PROTOTYPE}
+
+if [ "@AFM@" = yes ]
+then
+	grep " fonts " ${PROTOTYPE}.stub >> ${PROTOTYPE}
+fi
+
+if [ ${DO_HTML} = yes ]
+then
+	grep " html " ${PROTOTYPE}.stub >> ${PROTOTYPE}
+fi
+
+

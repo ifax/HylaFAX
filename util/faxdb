@@ -1,0 +1,72 @@
+#	$Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# FAX Database entries are of the form:
+#    <keyword> ":" <value>
+# where keyword includes:
+#    Name		name associated with destination fax machine
+#    Company		company name
+#    Location		in-company locational information; e.g. building#
+#    FAX-Number		phone number through fax machine is reached
+#
+# Everything is free format.  Whitespace (blank, tab, newline) can be
+# freely interspersed with tokens.  If tokens include whitespace, they
+# must be encloseed in quote marks.
+#
+# The "#" character introduces a comment -- everything to the end of
+# line is discarded.
+#
+# FAX applications that use the database access the information
+# "by keyword" to place phone calls, format cover sheets, etc.
+#
+[   Company:	"Silicon Graphics, Inc."
+    Location:	"Mountain View, California"
+
+    [ Name: "SGI FAX Mail"		FAX-Number: +1.415.961.0595 ]
+
+    [ Name: "ESD Purchasing"		FAX-Number: +1.415.962.8098 ]
+    [ Name: "Corporate Offices"		FAX-Number: +1.415.967.8538 ]
+    [ Name: "Human Resources"		FAX-Number: +1.415.967.8538 ]
+    [ Name: "Information Services"	FAX-Number: +1.415.967.8538 ]
+    [ Name: "Corporate Sales"		FAX-Number: +1.415.965.3328 ]
+    [ Name: "International Sales"	FAX-Number: +1.415.961.0573 ]
+    [ Name: "ASD Customer Support"	FAX-Number: +1.415.962.2658 ]
+    [ FAX-Number: +1.415.965.7824
+	[ Name: "Melissa Anderson"	]
+	[ Name: "Forest Baskett"	]
+	[ Name: "Greg Chesson"		]
+	[ Name: "Paul Haeberli"		]
+	[ Name: "Sam Leffler"		]
+	[ Name: "Mark Linton"		]
+	[ Name: "Jim Winget"		]
+    ]
+]
+
+[ Name: "Live 105.3"		FAX-Number: +1.415.552.5483 ]
+[ Name: "Live 105.3/#2"		FAX-Number: +1.415.552.5487 ]

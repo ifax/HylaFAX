@@ -1,0 +1,713 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
+.ds Pc \s-1PCL\s+1
+.TH HYLAFAX 4F "January 18, 1996"
+.SH NAME
+HylaFAX \- introduction to \*(Fx server operation and file formats
+.SH DESCRIPTION
+\*(Fx is a system for sending and receiving facsimile.
+It supports queued transmission and asynchronous 
+reception of facsimile.
+Ancillary programs are invoked by
+the system for flexibility
+and configurability.
+\*(Fx includes client and server programs to
+support remote submission of jobs for transmission,
+remote removal of queued jobs, and to remotely
+query the status of jobs queued for transmission.
+This document describes the organization of the 
+filesystem spooling area in which \*(Fx
+server and server-related processes operate, and
+introduces the various files that reside in the spooling area.
+.SH OVERVIEW
+The spooling area is typically located under the
+directory
+.IR ${SPOOL} .
+Ancillary command scripts used by the server programs
+.IR faxq (1M),
+.IR faxsend (1M),
+.IR pagesend (1M),
+and
+.IR faxgetty (1M)
+are located in the 
+.B bin
+subdirectory.
+Configuration, access control, and accounting
+information are maintained in the
+.B etc
+and
+.B config
+subdirectories.
+Outgoing jobs are described by files in the
+.B sendq
+subdirectory, while received facsimile are deposited in the
+.B recvq
+subdirectory.
+The
+.B docq
+and
+.B temp
+subdirectories are also used in the preparation of outbound jobs;
+the latter holds files that may be freely purged while the former
+holds client files that may reside on the server independent of
+an associated job.
+The
+.B doneq
+subdirectory holds jobs that have completed but have not yet been
+purged or archived.
+On systems with job archival support, completed jobs that have
+been archived are placed in the
+.B archive
+subdirectory.
+The
+.B pollq
+subdirectory holds documents that are available for polled
+retrieval from the server.
+The
+.B info
+subdirectory contains files that describe the capabilities
+of facsimile machines that \*(Fx has called\-\c
+this information is used in preparing documents for transmission.
+The
+.B status
+subdirectory contains files that server processes write their
+current status to.
+The
+.B log
+subdirectory contains logging information about send and
+receive sessions.
+The
+.B client
+subdirectory contains 
+.SM FIFO
+special files used for communication with
+.IR faxq .
+.PP
+\*(Fx supports multiple modems on a host.
+A single process acts as central queueing agent for all outbound jobs.
+Typically each modem also has a server process
+that monitors the modem status and handles inbound phone calls.
+Per-modem server processes communicate with the central queueing
+agent using 
+.SM FIFO
+special files; see
+.IR mknod (2)
+or
+.IR mkfifo (2).
+Any other synchronization between server processes
+is done using file-level locking.
+The
+.I faxq
+process listens for commands written to the file named
+.BR FIFO ,
+while each
+.I faxgetty
+process listens for commands written to a per-device file named
+.BI FIFO .devid
+(where
+.I devid
+is an identifier derived from the name of the device
+special file to which the modem is connected; e.g.
+.I ttym2
+for
+.IR /dev/ttym2 ,
+.I term_10
+for
+.IR /dev/term/10 .)
+To send a command to the queueing agent, one writes to
+.BR FIFO .
+This is useful, for example, for submitting a job for
+transmission.
+To send a command to a specific 
+.I faxgetty
+process, the
+.BI FIFO .devid
+file is used.
+.PP
+Client applications interact with a \*(Fx server machine using
+a communications protocol implemented by the
+.IR hfaxd (1M)
+program.
+The
+.I hfaxd
+program is typically started at system startup; it listens for
+client requests for service and creates a process for each client.
+.I hfaxd
+supports the submission of outbound jobs, querying the status
+of the send and receive queues, and altering parameters of
+previously submitted jobs.
+The
+.I hfaxd
+processes communicate with the
+.I faxq
+process through
+.SM FIFO
+special files.
+Commands sent to
+.I faxq
+are sent to
+.B FIFO
+and responses are received on
+.SM FIFO
+files that each
+.I hfaxd
+creates in the
+.B client
+subdirectory.
+.SH SETUP
+Each \*(Fx server machine must run the
+.IR faxsetup (1M)
+command prior to starting up \*(Fx server processes.
+.I faxsetup
+verifys that the \*(Fx software has been installed correctly
+and that any parameters that were specified at the time the software
+was built are appropriate for the system.
+.SH SENDING
+Each outgoing facsimile job has a job description file
+that is located in the
+.B sendq
+subdirectory.
+This file contains all the information necessary to
+manage the transmission; c.f.
+.IR sendq (4F).
+The actual documents that are to be sent are usually located
+in the
+.B docq
+subdirectory (though it is also possible to reference documents
+from the
+.B recvq
+directory).
+\*(Fx accepts \*(Ps, \*(Pc, and
+.SM TIFF
+documents for transmission (though support for
+\*(Pc documents is not currently implemented).
+Documents are automatically converted to 
+.SM TIFF/F
+documents prior to transmission according to the capabilities
+of the remote facsimile machine: maximum page width
+and length, ability to handle 2D-encoded data, and ability
+to handle high resolution (7 line/mm) data.
+This remote machine capability information is stored
+in files in the
+.B info
+subdirectory.
+If a machine has not been called before,
+\*(Fx assumes the remote machine has the requested capabilities.
+If a capabilities mismatch is detected while sending a facsimile
+\*(Fx will disconnect and reconvert the submitted documents according
+to the newly discovered capabilities.
+Users may also restrict the session parameters used to format
+documents on a per-job basis.
+.PP
+The actual transmission is handled by a
+.IR faxsend (1M)
+process that is initiated by the scheduler.
+This program may be substituted for by specifying the
+.B FaxSendCmd
+configuration parameter in the
+.I faxq
+configuration file.
+.PP
+While a job is being processed by a server process,
+its job description file is locked for exclusive
+use with
+.IR flock (2).
+The
+.IR hfaxd (1M)
+program uses this information to tell if a job is actively being processed.
+.PP
+If the
+.B SessionTracing
+parameter in a server's configuration file is non-zero,
+then tracing information for an outgoing job will be logged
+in a file in the
+.B log
+subdirectory.
+Each destination machine has a separate log file named
+by its canonical phone number.
+.PP
+The remote job submission facility includes host and user
+access control.
+The file
+.B etc/hosts
+must be present and list those hosts and users that are
+permitted to queue jobs for transmission or do other operations
+that alter the status of a job.
+Note that it is necessary to include the ``local host''
+definition (usually 127.0.0.1) if local submission
+is to be permitted.
+For more information consult
+.IR hosts (4F).
+.PP
+There are a number of controls on outbound calls that can be
+specified using the
+.B etc/destcontrols
+file (or whatever file is specified in a
+.B DestControls
+configuration parameter in the
+.I faxq
+configuration file).
+This file, described in
+.IR destctrls (4F),
+allows an administrator to restrict calls by phone number
+and to control the time of day that calls may be placed.
+In addition, operational parameters such as the maximum number
+of pages in a facsimile transmission can be constrained
+on a per-destination basis.
+.PP
+If an error is encountered during transmission and a subsequent
+retransmission would not include the original cover page, then
+\*(Fx can be configured to generate a
+.I "continuation cover page"
+that is prepended to the retransmitted pages.
+Such cover pages are usually generated by the
+.B bin/mkcover
+command; though the exact command to use can be specified in the 
+configuration file read by
+.IR faxq .
+.PP
+\*(Fx can be configured to generate a line of status information
+across the top of each page of an outbound facsimile.
+This information, termed a ``tagline'', typically includes the
+sender's identity (i.e. phone number), the time and date of the
+transmission, and the page number.
+The exact format of the tagline is configurable and applications
+can override the default configuration parameters on a per-job basis.
+Note that in the United States the law
+requires that a tagline that identifies the sender's phone number
+must appear on each transmitted page of facsimile.
+.PP
+Facsimile transmitted to receivers that accept variable-length pages
+may have short pages ``\fIchopped\fP''.
+That is, if a page has a significant amount of trailing whitespace
+and the receiver accepts variable-length pages then only the top
+part of the page will be transmitted.
+.I faxq
+can be configured so that only the last page of
+each document is potentially chopped, all pages are potentially
+chopped, or chopping is disabled.
+The minimum whitespace threshold is also configurable.
+Applications can override the default configuration parameters
+on a per-job basis.
+.SH RECEIVING
+.I faxgetty
+server processes can be configured to answer incoming
+phone calls and automatically receive facsimile.
+Received documents are placed in the
+.B recvq
+subdirectory as
+.SM TIFF
+Class F files.
+The 
+.I faxgetty
+processes can be configured to make these files publicly
+accessible, or they can be made private in which case
+an administrator must manage their delivery and/or the assignment
+of ownership to particular users.
+When a facsimile is received, the 
+.I faxgetty
+process usually invokes the
+.B bin/faxrcvd
+command; though the exact command to invoke can be specified
+in the per-modem configuration file.
+The default
+.I notify
+command is a shell script that sends a mail
+message to a well known user, the
+.IR FaxMaster ,
+but one might also, for example, automatically spool the
+document for printing.
+.PP
+\*(Fx supports a simple form of access control for receiving facsimile.
+Each
+.I faxgetty
+process may be configured to check the
+Transmission Subscriber Identifiers (\s-1TSI\s+1)
+of the remote fax machine against an access control list, typically
+.BR etc/tsi .
+Only if the 
+.SM TSI
+is matched by a regular expression pattern in the file,
+is the remote machine permitted to transmit a document.
+This mechanism can be used, for example, to guard against
+.IR "junk fax" .
+.PP
+\*(Fx can be configured to do
+.I "copy quality checking"
+on received facsimile data.
+When this feature is enabled 
+.I faxgetty
+decodes and analyzes the received facsimile data as it is received.
+If data is received with too many errors, according to the setting
+of the
+.B MaxConsecutiveBadLines
+and
+.B PercentGoodLines
+configuration parameters, then the sender will be told to retransmit
+the page.
+When copy quality checking is enabled it is also possible to force
+received facsimile data to be saved with a different compression
+scheme than was used for transmission.
+This function is known as
+.I transcoding
+and can significantly reduce the space needed to store received facsimile.
+.SH POLLING
+\*(Fx supports the polled retrieval of facsimile documents.
+Documents that are received because of a poll request are
+stored in the
+.B recvq
+subdirectory and also delivered directly to the requester using the
+.B bin/pollrcvd
+command; though the exact command to invoke can be specified
+with the
+.B PollRcvdCmd
+configuration parameter.
+The
+.B pollrcvd
+script typically encodes the binary facsimile data and
+returns it to the user via electronic mail.
+.SH "INBOUND CALL HANDLING"
+In environments where Caller-ID information is available,
+\*(Fx also supports a call screening facility similar to the
+.SM TSI
+access control facility.
+.I faxgetty
+can be configured to check the phone number of each caller
+against an access control list, typically
+.BR etc/cid .
+Only if the number is matched by a regular expression pattern
+in the file is the call answered.
+All Caller ID information is logged, irregardless of whether
+or not it is used to screen incoming calls.
+.PP
+.I faxgetty
+is also capable of using \fIdistinctive ring\fP information
+to identify whether an inbound call is voice, data, or fax.
+Consult the 
+.BR RingData ,
+.BR RingFax ,
+and
+.B RingVoice
+parameters in
+.IR config (4F)
+for a description of this facility.
+.SH "DATA CALLS"
+Most fax modems also support non-facsimile communication.
+\*(Fx uses the locking mechanism employed by
+.IR uucp (1C),
+.IR cu (1C),
+.IR slip (1M),
+and
+.IR ppp (1M).
+Any
+.I faxgetty
+processes will transparently ``get out of the way''
+when an application wants to use a modem for an outgoing call.
+In addition, \*(Fx can be configured to deduce whether an incoming
+call is for facsimile or data use.
+If a call from a data modem is recognized and the
+.B GettyArgs
+parameter is specified in the configuration file,
+.I faxgetty
+will invoke the
+.IR getty (1M)
+program so that caller may login to the system.
+Similar functionality is also available for invoking
+a ``voice getty'' process, though auto-detection of inbound
+voice calls is less extensive.
+.SH STATUS
+\*(Fx maintains status information in several forms.
+General status information for each server process is maintained
+in the
+.B status
+subdirectory and returned to users by the
+.IR faxstat (1)
+program.
+The
+.IR syslog (3)
+facility is used by all server processed
+for logging status and error diagnostics.
+The server processes may also be configured to log various
+kinds of debugging and tracing information; c.f.
+the
+.B ServerTracing
+parameter description in
+.IR config (4F).
+.PP
+Any problems encountered when transmitting a facsimile
+are described in messages returned to the user by electronic mail.
+A user may also request notification by mail when a
+job is requeued; for example, because a call failed.
+Notification by electronic mail is implemented by the
+.B bin/notify
+command script; though the name of the script may be overridden
+with the
+.B NotifyCmd
+configuration parameter.
+.PP
+The
+.IR faxstat
+utility provides (remote) status of jobs queued
+for transmission, jobs received, and the general
+status of server processes.
+.PP
+The file
+.B etc/xferlog
+contains status information about all facsimile sent and
+received on a machine.
+This file is in a simple
+.SM ASCII
+format that is easy to manipulate with programs such as
+.IR awk (1),
+to generate accounting information.
+See
+.IR xferlog (4F)
+for information about the format.
+See
+.IR xferstats (1M)
+and
+.IR recvstats (1M)
+for example scripts that print summarized accounting information.
+.PP
+Finally, the
+.I hfaxd
+process supports a event monitoring facility that can be
+access via the
+.IR faxwatch (1M)
+program.
+This facility permits clients to register interest in various
+events and receive ``realtime notification'' when such events occur
+on the server.
+Using this facility it is/should-be simple to construct applications
+that do things like monitor modem status and use.
+.SH "MODEM STATE CHANGES"
+In normal operation each modem is managed by a \*(Fx server
+process such as
+.IR faxgetty .
+These processes communicate with the central scheduler process
+to notify it when a modem is ready for use, busy for outbound use,
+or possibly in an unusable state (either purposely marked unavailable
+or potentially found to be wedged).
+Modem usage can be explicitly controlled with the
+.IR faxstate (1M)
+program.
+The
+.IR faxconfig (1M)
+program can also be used to dynamically make changes to configuration
+parameters that may cause a modem to be treated differently (e.g.
+setting
+.B RingsBeforeAnswer
+to zero will cause 
+.I faxgetty
+to not answer incoming calls).
+.PP
+When \*(Fx is used in a send-only configuration there are no
+.I faxgetty
+processes and communication must be done directly with the
+.I faxq
+process.
+The
+.I faxstate 
+program can still be used to manipulate modem use for outbound
+jobs but the
+.I faxconfig
+program is not frequently needed.
+.SH "JOB SCHEDULING"
+Outbound jobs are scheduled by a single process.
+Jobs have a ``scheduling priority'' that is assigned at the
+time the job is submitted.
+This priority can be changed at any time the job is not actively
+being processed using the
+.IR faxalter (1M)
+program.
+A job's scheduling priority may also be raised by
+.I faxq
+in response to certain scheduling events (e.g. after a failed
+attempt to send the priority may be raised).
+.PP
+Modems are assigned to outbound jobs if they are deemed ready
+for use.
+Modem readiness is usually communicated to
+.I faxq
+by per-modem
+.I faxgetty
+processes.
+In a send-only environment however this is not possible; instead
+modems configured for use with
+.I faxmodem
+are considered always ready for use unless they are presently
+assigned to an outbound job or their state is explicitly
+changed through the
+.IR faxstate (1M)
+program (\c
+.I faxstate
+can also be used in a send-recv environment).
+.PP
+Each modem has a ``modem priority'' in the range [0..255].
+Modems with a lower priority number are assigned to outbound
+jobs first.
+Modem priority is statically configured through configuration
+files, the
+.I faxmodem
+program, and the
+.I faxconfig
+program.
+.SH "JOB MANAGEMENT"
+Outbound jobs are considered to be in one of several states
+that reflect their treatment by the central scheduling process.
+Jobs are initially created in a
+.I suspended
+state, and may be returned to this state at any time that they
+are not actively being processed (e.g. a
+.I faxsend
+program is running to process the job).
+Jobs that are suspended are not processed by the scheduler; and their
+internal state may be safely altered by the owner or a system
+administrator.
+Jobs that are ready for processing by the scheduler are ``submitted''
+and their state is changed to be either 
+.I pending
+(delayed waiting for a future time to send),
+.I sleeping
+(delayed waiting for a scheduled timeout),
+.I blocked
+(delayed by concurrent activity to the same destination),
+or
+.I ready
+(ready for transmission, waiting only for available resources).
+When a job is actively processed by the
+.I faxsend
+program its state is marked
+.IR active .
+Jobs that have completed, either successfully or unsuccessfully are
+placed in a
+.I done
+state and their job description files are moved to the
+.B doneq
+subdirectory.
+Clients may still access the state of jobs that are done; until a
+``cleaner process'' either purges them from the system or archives
+their state.
+This delayed removal of a completed job's state permits clients to
+resubmit failed jobs using previously transmitted documents and other
+job state information.
+The exact mechanics of how and when done jobs are processed is
+system-dependent; for example, how long a job is left in the done
+queue before being purged, and whether job archival support is present.
+.SH CONFIGURATION
+\*(Fx server programs read configuration information from a
+configuration file.
+Multiple files are used, one for the
+.I faxq
+program and one for each modem.
+Long-running server programs all automatically re-read their
+configuration file if it is modified.
+Typically this re-reading is done frequently enough that
+administrators do not need to be aware of exactly when it takes place.
+However in some esoteric cases the file may not be read when
+expected (the one important case is that the
+.I faxgetty
+process reads its configuration file only when answering a
+call or when resetting a modem; this means that
+it will not recognize changes when the modem is idle).
+.PP
+In addition to the static configuration files, \*(Fx server
+programs accept commands on their 
+.SM FIFO
+special files to alter configuration parameters in the running
+executable
+(the
+.IR faxconfig (1M)
+program can be used to dynamically change configuration parameters).
+Values set in this way however are lost when the process exits
+or if the configuration file is re-read.
+.SH NOTES
+Automatic routing of incoming facsimile is desirable.
+.SH FILES
+.nf
+.ta \w'etc/config.<devid>    'u
+FIFO	fifo for job submission
+FIFO.<devid>	fifo for communicating with a faxgetty process
+${SBIN}/faxinfo	command that prints information about received facsimile
+${SBIN}/faxquit	command to force server to quit
+bin/faxrcvd	faxd command for handling newly received facsimile
+bin/mkcover	faxd command for generating continuation cover pages
+bin/notify	faxd command for doing user notification
+bin/pollrcvd	faxd command for delivering facsimile received by poll
+bin/ps2fax	faxd command for converting \*(Ps to \s-1TIFF\s+1
+docq/doc*	documents available for transmission
+etc/setup.cache	server setup file created by \fIfaxsetup\fP
+etc/cid	caller id access control list
+etc/config.<devid>	configuration data for <devid>
+etc/hosts	hosts that may submit jobs for transmission
+etc/tsi	fax machine receive access control list
+etc/xferlog	log of facsimile sent and received
+info/*	data base of remote fax machine capabilities
+client/*	\s-1FIFO\s+1 special files created by client processes
+config/*	prototype configuration files used by \fIfaxaddmodem\fP
+log/*	session logging records
+recvq/fax*	received facsimile
+sendq/q*	descriptions of jobs queued for transmission
+doneq/q*	descriptions of jobs that are done
+status/*	server status information
+tmp/*	temporary files created when submitting a job
+archive/*	database of archived jobs
+.fi
+.SH "SEE ALSO"
+.IR faxsetup (1M),
+.IR faxq (1M),
+.IR faxgetty (1M),
+.IR hfaxd (1M),
+.IR faxsend (1M),
+.IR faxrcvd (1M),
+.IR faxconfig (1M),
+.IR faxmodem (1M),
+.IR faxstate (1M),
+.IR notify (1M),
+.IR pollrcvd (1M),
+.IR recvstats (1M),
+.IR xferstats (1M),
+.IR archive (4F),
+.IR config (4F),
+.IR dialrules (4F),
+.IR doneq (4F),
+.IR hosts (4F),
+.IR info (4F),
+.IR log (4F),
+.IR tsi (4F),
+.IR recvq (4F),
+.IR sendq (4F),
+.IR status (4F),
+.IR xferlog (4F),
+.PP
+Extensive documentation is available in online at
+http://www.vix.com/hylafax/.
+Many of these materials are also included in the software distribution.

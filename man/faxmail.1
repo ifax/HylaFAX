@@ -1,0 +1,684 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
+.TH FAXMAIL 1 "July 22, 1996"
+.SH NAME
+faxmail \- \*(Fx mail-to-fax gateway application
+.SH SYNOPSIS
+.B faxmail
+[
+.I options
+] [
+.I destination
+[
+.I from
+] ]
+.SH DESCRIPTION
+.I faxmail
+takes an electronic mail message on standard input
+and converts it to \*(Ps\(tm in a form that is suitable
+for transmission as a facsimile.
+The converted document is either written to the standard
+output or, if direct delivery is enabled,
+it is submitted directly to a \*(Fx server for transmission.
+.PP
+.I faxmail
+is designed for use in constructing electronic mail to facsimile
+gateway services.
+For example, mail aliases may be created to automatically
+transmit electronic mail; e.g.
+.PP
+.nf
+.ti +0.5i
+sam: "|${BIN}/faxmail -d sam@5551212"
+.fi
+or 
+.I faxmail
+may be used as a ``mail transport agent'', extracting the necessary
+delivery information directly from the envelope of the mail message.
+.PP
+If
+.I faxmail
+is invoked without enabling direct delivery then it
+just formats the mail message on the standard input and
+writes the result to the standard output.
+To enable direct delivery the
+.B \-d
+option must be specified on the command line; see below
+for more information.
+.SH FORMATTING
+.I faxmail
+formats a mail message according to the following rules:
+First it parses the envelope information interpreting any
+meta-header information (see below) that is present.
+Once the entire envelope has been collected it emits a
+formatted set of header lines.
+By default all header information except the
+``From'', ``To'', ``Cc'', ``Subject'', and ``Date''
+lines are discarded.
+Header lines that are kept have the 
+.I tag
+(the string to the left of the ``:'')
+set in a \fIbold font\fP and the
+.I value
+(the string to the right of the ``:'')
+set in an \fIitalic font\fP.
+Mail messages that conform to the Multipurpose Internet
+Mail Extensions (\s-1MIME\s+1) specification are parsed
+and handled according to the rules given below.
+Plain text body parts of a mail message are formatted in a
+\fItext font\fP with any long lines wrapped at
+word boundaries unless the
+.B \-c
+option has been specified.
+.PP
+By default,
+.I faxmail
+sets all text in 10 point type on an 8.5" by 11" portrait-oriented page
+with .35" top margin, .25" bottom margin and .25" left and right
+hand margins.
+There are command-line options to control the point size,
+page dimensions, orientation, and multi-column formatting.
+Text formatting can also be controlled through meta-header
+directives placed in the envelope of the mail message.
+.SH "ENVELOPE PROCESSING"
+.I faxmail
+pre-processes the envelope information (i.e. the header lines) before
+formatting the message contents.
+Header lines whose names begin with ``X-FAX-'' (case-insensitive) are
+handled specially\-they are treated as command directives that specify
+how to generate the resultant \*(Ps or, optionally, how to deliver
+the resulting document as facsimile.
+The set of known meta-headers corresponds to the set of configuration
+parameters defined below.
+A meta-header is specified as ``X-FAX-\fIparameter\fP'' where
+.I parameter
+is the name of a configuration parameter; e.g.
+``X-FAX-TabStop'' to set the number of spaces between tab stops.
+.PP
+Controls for specifying headers to be passed through
+in the formatted text identify not only which headers but also the
+order in which the headers should be emitted.
+.I faxmail
+initializes the set of headers to retain to: ``To From Subject Cc Date''.
+If this order is acceptable then additional headers can simply 
+be added with the
+X-FAX-Headers directive; e.g. ``X-FAX-Headers: Message-id''.
+If however a different order is desired then the header
+set should be cleared with a ``clear'' header tag
+and then completely specified in the desired order; for example,
+.nf
+.sp
+X-FAX-Headers: clear Message-id Date To Subject From Cc
+.fi
+.PP
+will cause headers to be emitted in the order
+``Message-Id Date To Subject From Cc'' (depending on what headers
+are present).
+Note in particular that all header lines in the envelope can
+be suppressed by specifying ``X-FAX-Headers: clear''; this is
+useful, for example, when the body of the mail message contains
+a preformatted document that is to be transmitted.
+.PP
+In addition to the above controls,
+.I faxmail
+can also be instructed to substitute an arbitrary string for a header
+tag when generating the final envelope.
+This facility can be used to better format ad-hoc header information
+that is passed through the envelope of the message.
+The ``X-FAX-MapHeader'' meta-header specifies how to map a header line.
+For example,
+.nf
+.sp
+X-FAX-MapHeader: x_FAX_For Deliver FAX To
+.fi
+.sp
+would cause any header ``x_FAX_For'' that appeared in the envelope
+to be replaced in the formatted envelope by ``Deliver FAX To''.
+.SH "MIME PROCESSING"
+.I faxmail
+parses 
+.SM MIME
+mail messages and does some rudimentary work to:
+.IP \(bu 3
+strip out unprintable content such as audio, video, or binary data,
+.IP \(bu 3
+decode encoded parts,
+.IP \(bu 3
+insert ``digest dividers'' between multipart/digest subparts,
+.IP \(bu 3
+format message/rfc822 parts as described above for the top-level envelope, and
+.IP \(bu 3
+optionally convert graphical parts (e.g. images) for display.
+.PP
+.SM MIME
+processing is fairly simple and (currently) somewhat constrained.
+.I faxmail
+has builtin support for the following MIME parts:
+text/plain, multipart/mixed, multipart/digest, message/rfc822,
+application/postscript, and application/x-faxmail-prolog.
+Parts can also be processed through external processing scripts that
+.I faxmail
+looks for in a ``\s-1MIME\s+1 converters'' directory hierarchy.
+External scripts may override builtin processing or supplement
+the builtin support.
+For each
+.SM MIME 
+body part with type
+.I T
+and subtype
+.I S
+.I faxmail
+checks first for an executable script named T/S in the
+converter hierarchy.
+If a script exists then it is run and the result is appended to
+the output PostScript document.
+Otherwise if the part has builtin support then it is processed
+directly.
+Any part that does not have external or builtin support is discarded
+and replaced by a message that indicates the part was removed.
+This discarded message can be suppressed with the
+.I MarkDiscarded
+configuration parameter (also settable with an X-FAX-MarkDiscarded
+line in the envelope).
+.PP
+The builtin handling support is as follows:
+text/plain parts are formatted using the default \fItext font\fP
+and point size;
+multipart/mixed are ``burst'' and interpreted per the specification
+but are otherwise unformatted;
+multipart/digest are burst and an optional ``digest divider'' marking
+may be inserted before each subpart;
+message/rfc822 are formatted as described above with envelope header
+lines culled and formatted with bold and italic fonts
+(in addition, if there is insufficient space in the current output page/column
+for the message envelope, optional divider, and one line of text, then
+.I faxmail
+will insert a ``break'' so the the message starts at the top of the next
+page/column);
+application/postscript are copied through untouched to the output;
+application/x-faxmail-prolog are copied through untouched to the
+end of the prologue section of the generated PostScript document
+to permit customization of the formatted output.
+.PP
+.I faxmail
+supports the following Content-Transfer-Encoding schemes:
+7bit, 8bit, binary, base64, quoted-printable, and x-uuencode.
+Any character set that is not us-ascii is treated as iso-8859-1.
+.PP
+In general it is recommended that senders either permit 
+.I faxmail
+to format message contents or completely bypass the formatting
+facilities and submit data that is to be processed by
+.IR sendfax .
+Trying to combine the two facilities by, for example, combining PostScript
+with text that is to be formatted is unlikely to work well because
+.I faxmail
+does not track the amount of space on the page that a non-text 
+.SM MIME
+part uses.
+.SH "DIRECT DELIVERY"
+When
+.I faxmail
+is invoked with the
+.B \-d
+option it delivers the formatted document directly to a \*(Fx
+server for transmission as facsimile.
+Command line arguments may be supplied to specify the 
+delivery destination and sender identity; typically from
+information extracted by the mail transport facility.
+A command line
+.I destination
+is specified with the same syntax as
+the argument for the
+.B \-d
+option to the
+.IR sendfax (1)
+command.
+Similarly any
+.I from
+identity specified on the command line follows the same rules
+as the
+.B \-f
+option to
+.IR sendfax .
+An explicit dialstring to use in delivery can also be specified with an
+X-FAX-Dialstring header in the mail message envelope.
+If no sender identity is provided on the command line then
+.I faxmail
+will extract it from the ``From'' line in the envelope.
+.I faxmail
+will not submit a message for delivery if either the dialstring
+or sender identity is missing or null.
+.PP
+When direct delivery is enabled X-FAX- header lines may be
+included in the mail message envelope to control the submission
+and delivery process.
+As above these lines are specified as ``X-FAX-\fIparameter\fP'' where
+.I parameter
+is the name of a configuration parameter for the
+.I sendfax
+program; e.g.
+``X-FAX-VRes'' to set the vertical resolution of the transmitted facsimile.
+By default automatic cover page generation is enabled when direct
+delivery is used; this can be overridden with the
+.B \-n
+option on the command line or by including an
+X-FAX-AutoCoverPage header in the message envelope.
+.SH OPTIONS
+.TP 10
+.B \-1
+Set text in one column (default).
+.TP 10
+.B \-2
+Set text two columns.
+.TP 10
+.BI \-b " font"
+Make
+.IR font ,
+a \*(Ps font name,
+the ``\fIbold font\fP'' used to set header lines.
+The default bold font is Helvetica-Bold.
+.TP 10
+.B \-c
+Clip long text lines instead of wrapping them at page margins.
+.TP 10
+.B \-d
+Enable direct delivery of facsimile; the formatted document
+will be submitted directly to a \*(Fx server for transmission
+as facsimile.
+This option is similar to piping the output of
+.I faxmail
+to the input of
+.IR sendfax (1M)
+except when direct delivery is enabled
+.I faxmail
+interprets ``x-fax-'' header lines in the envelope of the mail message to 
+look for control information to use in delivering the facsimile and,
+by default, no automatic cover page generation is done.
+.TP 10
+.BI \-f " font"
+Make
+.IR font ,
+a \*(Ps font name,
+the text font used to set the body of mail messages.
+The default text font is Courier.
+.TP 10
+.BI \-H " height"
+Use
+.I height
+as the height, in inches, of the output page.
+The default page height is taken from the default page size.
+.TP 10
+.BI \-i " font"
+Make
+.IR font ,
+a \*(Ps font name,
+the ``\fIitalic font\fP'' used to set header lines.
+The default italic font is Helvetica-Oblique.
+.TP 10
+.BI \-M "\fBl=\fP#,\fBr=\fP#,\fBt=\fP#,\fBb=\fP#"
+Set the page margins; the default margins are:
+left and right .25 inch, top .35 inch, bottom .25 inch.
+.TP 10
+.B \-n
+Suppress auto cover page generation when doing direct delivery.
+.TP 10
+.BI \-p " size"
+Set all text using
+.I size
+for the font point size.
+.TP
+.B \-r
+Set pages rotated by 90 degrees (in ``Landscape mode'').
+.TP
+.B \-R
+Set pages unrotated (in ``Portrait mode'').
+.TP 10
+.BI \-s " size"
+Set the page size to use.
+Cover pages are normally generated using
+a system-default page size
+(usually letter-size pages, 8.5" by 11", for sites in North America).
+Alternate page sizes are specified symbolically using either
+the name or abbreviation of an entry in the
+.IR pagesizes (4F)
+database; e.g.
+.I a3
+(ISO A3),
+.I a4
+(ISO A4),
+.I a5
+(ISO A5),
+.I a6
+(ISO A6),
+.I b4
+(ISO B4),
+.I na-let
+(North American Letter),
+.I us-leg
+(American Legal),
+.I us-led
+(American Ledger),
+.I us-exe
+(American Executive),
+.I jp-let
+(Japanese Letter),
+and
+.I jp-leg
+(Japanese Legal).
+Comparisons are case-insensitive and any match of a
+substring of the full page-size name is sufficient; e.g. ``legal'' would
+match ``American Legal''.
+.TP 10
+.BI \-u " user"
+Set the user name to use when logging in to do direct delivery.
+By default the user is specified by the
+.B MailUser
+configuration parameter (see below).
+If a null user name is specified, then
+the facsimile will be submitted using the identity of the user that invoked
+.IR faxmail .
+.TP 10
+.B \-v
+Enable tracing of envelope,
+.SM MIME,
+and
+job submission processing.
+Diagnostic information is written to the standard error (envelope
+and MIME processing) and standard output (job submission).
+.TP 10
+.BI \-W " width"
+Use
+.I width
+as the width, in inches, of the output page.
+The default page width is taken from the default page size.
+.SH "CONFIGURATION PARAMETERS"
+.I faxmail
+reads configuration information from the files
+.BR ${LIBDATA}/hyla.conf ,
+and
+.BR ~/.hylarc ;
+in that order.
+Configuration files follow the conventions described in
+.IR hylafax (1).
+The following configuration parameters are recognized:
+.sp .5
+.nf
+.ta \w'TextLineHeight    'u +\w'\fI\s-1see below\s+1\fP    'u +\w'\s-1Helvetica-Oblique\s+1    'u
+\fBTag	Type	Default	Description\fP
+AutoCoverPage	boolean	\s-1Yes\s+1	automatically generate cover page
+BoldFont	string	\s-1Helvetica-Bold\s+1	font for setting header tags
+Columns	integer	\s-11\s+1	number of columns in formatted output
+DigestDivider	string	\-	multipart/digest divider \*(Ps command
+FontDir	string	\s-1\fIsee below\fP\s+1	directory for font metric files
+GaudyHeaders	boolean	\s-1No\s+1	enable/disable gaudy page headers
+Headers	string	\s-1\fIsee below\fP\s+1	headers to retain in envelope
+ISO8859	boolean	\s-1Yes\s+1	use ISO 8859-1 character encoding
+ItalicFont	string	\s-1Helvetica-Oblique\s+1	font for setting header values
+LineWrap	boolean	\s-1Yes\s+1	wrap/truncate text lines
+MailUser	string	\-	user identity for doing direct delivery
+MarkDiscarded	boolean	\s-1Yes\s+1	mark discarded \s-1MIME\s+1 body parts
+MapHeader	string	\-	define header mapping
+MIMEConverters	string	\s-1\fIsee below\fP\s+1	pathname of \s-1MIME\s+1 converter scripts
+Orientation	string	\s-1portrait\s+1	orientation of text on page
+OutlineMargin	inches	\s-10\s+1	width of outline line
+PageCollation	string	\s-1forward\s+1	collate pages in forward or reverse direction
+PageHeaders	boolean	\s-1Yes\s+1	enable/disable page headers
+PageHeight	float	\-	output page height
+PageMargins	string	\s-1\fIsee below\fP\s+1	margins for formatted page
+PageSize	string	\s-1default\s+1	output page size from database
+PageWidth	float	\-	output page width
+Prologfile	string	\s-1\fIsee below\fP\s+1	pathname of \*(Ps prologue file
+TabStop	integer	\s-18\s+1	inter-stop setting in characters
+TextFont	string	\s-1Courier\s+1	name of font for setting text
+TextLineHeight	inches	\-	text formatting line height control
+TextPointSize	inches	\s-1\fIsee below\fP\s+1	size to use in setting text
+Verbose	boolean	\s-1No\s+1	trace envelope and \s-1MIME\s+1 processing
+.fi
+.PP
+Values marked as 
+.I inches
+are specified using a syntax that
+identifies one of several possible units:
+.RS
+.sp .5
+.nf
+.ta \w'#.##sp    'u
+#.##bp	big point (1in = 72bp)
+#.##cc	cicero (1cc = 12dd)
+#.##cm	centimeter
+#.##dd	didot point (1157dd = 1238pt)
+#.##in	inch
+#.##mm	millimeter (10mm = 1cm)
+#.##pc	pica (1pc = 12pt)
+#.##pt	point (72.27pt = 1in)
+#.##sp	scaled point (65536sp = 1pt)
+.RE
+.fi
+.LP
+Unit names can be upper or lower case but no white space
+is permitted between the number and the unit.
+Values specified with no unit are interpreted as points.
+.PP
+The configuration parameters are explained below.
+Most parameters correspond to a command line option.
+Parameter values identified above as
+.I inches
+are converted according to the conventions described above.
+.TP 15
+.B AutoCoverPage
+Control whether or not a cover page is automatically generated
+for each job.
+.TP 15
+.B BoldFont
+The name of the font to use to set header tags (i.e. the
+string to the left of the ``:'').
+.TP 15
+.B Columns
+The number of columns to set text in.
+(Equivalent to the
+.B \-m
+option.)
+.TP 15
+.B DigestDivider
+The string to emit in the output before each subpart of a
+multipart/digest mail message.
+This string is typically a \*(Ps procedure that draws a
+mark of some sort.
+Dividers are expected to use no more vertical space on the
+output page than a line of text.
+.TP 15
+.B FontDir
+The directory where Adobe Font Metric (\s-1AFM\s+1) files are
+located; by default ${AFMDIR}.
+.TP 15
+.B GaudyHeaders
+Control whether or not to use a gaudy-style page header.
+Enabling gaudy headers implicitly enables page headers.
+.TP 15
+.B Headers
+Define the headers retained from the envelope and specify the order
+that they should be emitted in the formatted output.
+The set of headers is initialized to ``To From Subject Cc Date''.
+Headers specified are appended to this list except for
+a ``clear'' header that causes the current set of headers to be discarded.
+.TP 15
+.B ISO8859
+Control the use of
+.SM "ISO 8859-1"
+encoding in the generated \*(Ps
+.TP 15
+.B ItalicFont
+The name of the font to use to set header values (i.e. the
+string to the right of the ``:'').
+.TP 15
+.B LineWrap
+Control whether long text lines are wrapper or truncated at the
+right hand margin.
+(Equivalent to the
+.B \-c
+option.)
+.TP 15
+.B MailUser
+The account name to use to login to a fax server when doing direct delivery.
+Note that this account name is not used for the identity of the sender;
+this comes from the command line or the ``From'' line in the mail message.
+If a null account name is specified, then
+the facsimile will be submitted using the identity of the user that invoked
+.IR faxmail .
+.TP 15
+.B MapHeader
+Define a substitution for the specified header that should be done
+each time the header is emitted in the formatted envelope.
+Header tags are matched in a case-insensitive manner.
+.TP 15
+.B MarkDiscarded
+Control whether discarded 
+.SM MIME
+parts are replaced by a text message indicating the original
+content was removed.
+.TP 15
+.B MIMEConverters
+The pathname of a directory hierarchy that has scripts for
+external processing of 
+.SM MIME
+body parts.
+The default pathname is ${LIBEXEC}/faxmail.
+.TP 15
+.B Orientation
+Control whether pages are oriented horizontally (``landscape'')
+or vertically (``portrait'').
+(Equivalent to the
+.B \-r
+and
+.B \-R
+options.)
+.TP 15
+.B OutlineMargin
+Control whether columns of text have a line drawn around them and
+the width of the line.
+Setting this parameter to 0 disables outlines.
+.TP 15
+.B PageCollation
+Control whether the output file has pages collated in the same
+order as the input file (``forward'') or in reverse order (``reverse).
+.TP 15
+.B PageHeaders
+Control whether page headers are generated.
+.TP 15
+.B PageHeight
+Set the output page height (in inches).
+.TP 15
+.B PageMargins
+Set the output page margins.
+Margins are specified as string of the form:
+``\fBl=\fP#,\fBr=\fP#,\fBt=\fP#,\fBb=\fP#''
+where 
+.B l
+indicates the left margin,
+.B r
+indicates the right margin,
+.B t
+indicates the top margin,
+.B b
+indicates the bottom margin, and
+numbers are interpreted as 
+.IR inches .
+(Equvalent to the 
+.B \-M
+option.)
+.TP 15
+.B PageSize
+Set the output page dimensions by name.
+(Equivalent to the
+.B \-s
+option.)
+.TP 15
+.B PageWidth
+Set the output page width (in inches).
+.TP 15
+.B PrologFile
+The pathname of a file containing \*(Ps that should be included
+in the prologue section of the generated \*(Ps.
+The default prologue file is ${LIBDATA}/faxmail.ps.
+.TP 15
+.B TabStop
+Set the tab stop distance (in characters).
+.TP 15
+.B TextFont
+Set the name of font to use for setting text.
+(Equivalent to the
+.B \-f
+option.)
+.TP 15
+.B TextLineHeight
+Set the vertical text line height and spacing.
+.TP 15
+.B TextPointSize
+Set the point size to use in setting plain text.
+(Equvalent to the
+.B \-p
+option.)
+.TP 15
+.B Verbose
+Control tracing envelope and MIME processing.
+.SH NOTES
+Because a sender's identity in an electronic mail message is inherently
+untrustworthy, using
+.I faxmail
+to build a mail to fax gateway is problematic.
+Unless mail service is
+somehow restricted or the sender's identity is verified using a mechanism
+such as RFC 1847's multipart/signed MIME type
+there is no reliable way to restrict access to facilities
+setup with 
+.IR faxmail .
+.SH BUGS
+Only the last instance of a header is kept and written to the output.
+This means, for example, that only the last of many ``Received'' lines
+will be included in the formatted output.
+.SH FILES
+.ta \w'${LIBDATA}/sendfax.conf    'u
+.nf
+~/.hylarc	per-user configuration file
+${LIBDATA}/pagesizes	page size database
+${LIBDATA}/faxmail.ps	\*(Ps prologue
+${LIBDATA}/hyla.conf	system-wide configuration file
+${LIBDATA}/faxmail.conf	system-wide configuration file
+${LIBDATA}/sendfax.conf	system-wide configuration file for direct delivery
+${LIBEXEC}/faxmail	hierarchy for external \s-1MIME\s+1 converters
+${AFMDIR}	for font metrics
+/usr/tmp/faxmailXXXXXX	temporary files
+.fi
+.SH "SEE ALSO"
+.IR hylafax (1),
+.IR textfmt (1),
+.IR sendfax (1)

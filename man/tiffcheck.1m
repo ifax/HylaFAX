@@ -1,0 +1,125 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1995 Sam Leffler
+.\" Copyright (c) 1995 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Tf \s-1TIFF\s+1
+.TH TIFFCHECK 1M "January 18, 1996"
+.SH NAME
+tiffcheck \- check \*(Tf for \*(Fx conversion requirements
+.SH SYNOPSIS
+.B ${SBIN}/tiffcheck
+[
+.I options
+]
+.I file.tif
+.SH DESCRIPTION
+.B tiffcheck
+takes \*(Tf input and writes a multi-line text message to the
+standard output describing any work needed to prepare the images
+for facsimile transmission.
+.I tiffcheck
+is usually invoked by
+.IR tiff2fax (1M)
+script that is used by the \*(Fx scheduler to prepare \*(Tf documents
+submitted for transmission.
+.PP
+The first line of output is a series of ``+''-separated words that
+indicate if the input file should be:
+.IP \(bu 3
+rejected (``\s-1REJECT\s+1''),
+.IP \(bu 3
+reformatted with a different data-encoding scheme (``\s-1REFORMAT\s+1''),
+.IP \(bu 3
+scaled to different page dimensions (``\s-1RESIZE\s+1''),
+.IP \(bu 3
+reimaged in a different vertical resolution (``\s-1REVRES\s+1''), or
+.IP \(bu 3
+reimaged for other reasons such as conversion from color to black&white (``\s-1REIMAGE\s+1'').
+.PP
+The conversion requirements string
+will always have keywords in the above order; e.g. ``\s-1RESIZE+REVRES\s+1''
+if the input file needs to be scaled and converted to a different resolution.
+Information following the first line is descriptive text that explains
+the reason(s) for the file conversion(s); this text is suitable for return
+to a client (should document conversion fail or not be attempted).
+The descriptive text is ordered identically to the keywords in the
+conversion string; this makes it possible to match up conversion
+requirements to reasons.
+.SH OPTIONS
+The following operations are recognized:
+.TP 10
+.B \-1
+Set output to be Group 3 1D-encoded.
+.TP 10
+.B \-2
+Set output to be Group 3 2D-encoded.
+.TP 10
+.BI \-w " width"
+Set the output page
+.IR width ,
+in pixels.
+By default, pages are 1728 pixels wide.
+.TP 10
+.BI \-l " length"
+Set the output page
+.IR length
+in millimeters.
+By default, pages are 297 millimeters long.
+.TP
+.BI \-r " vres"
+Set the vertical resolution,
+in lines/inch, at which to image the \*(Ps.
+.SH EXAMPLES
+The following color image needs to be converted to black&white,
+resized to the output page dimensions, and reformatted to use
+Group 3 1D-encoded data.
+.sp
+.nf
+.RS
+\s-1\fChyla% ${SBIN}/tiffcheck jello.tif
+REFORMAT+RESIZE+REIMAGE
+Document is not a bilevel image (bits/sample 8).
+Document requires reformatting, not in Group 3 format.
+Document requires resizing to adjust page width (convert to 1728, document is 256).\fP\s+1
+.RE
+.fi
+.PP
+This image is a facsimile received at high resolution (196 lpi); it only
+needs to be converted to 98 lpi.
+.sp
+.nf
+.RS
+\s-1\fChyla% ${SBIN}/tiffcheck faxix.tif
+REVRES
+Document requires reformatting to adjust vertical resolution (convert to 98, document is 196).\fP\s+1
+.RE
+.fi
+.SH "SEE ALSO"
+.IR tiff2fax (1M),
+.IR faxq (1M),
+.IR hylafax (4F)

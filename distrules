@@ -1,0 +1,849 @@
+#	$Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1988-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# HylaFAX distribution rules.
+#
+
+PORTFILES=\
+    port/Makefile.in				\
+    port/install.sh.in				\
+    port/mkdepend.in				\
+    port/cuserid.c				\
+    port/flock.c				\
+    port/ftruncate.c				\
+    port/getopt.c				\
+    port/mkstemp.c				\
+    port/random.c				\
+    port/setegid.c				\
+    port/seteuid.c				\
+    port/setvbuf.c				\
+    port/srandom.c				\
+    port/strcasecmp.c				\
+    port/strtod.c				\
+    port/strtoul.c				\
+    port/syslog.c				\
+    port/vsyslog.c				\
+    port/writev.c				\
+    port/irix/so_locations			\
+    ${NULL}
+
+#
+# Files the comprise the html part of the distribution.
+#
+HTMLFILES=\
+    html/Makefile.in				\
+    \
+    html/HOWTO.html				\
+    html/binary.html				\
+    html/building.html				\
+    html/documentation.html			\
+    html/ghostscript.html			\
+    html/index.html				\
+    html/ixotap.html				\
+    html/mailing-lists.html			\
+    html/operation.html				\
+    html/overview.html				\
+    html/sam.html				\
+    html/matthias.html				\
+    html/setup.html				\
+    html/setup-advanced.html			\
+    html/setup-client.html			\
+    html/source.html				\
+    html/survey.html				\
+    html/toc.html				\
+    html/troubleshooting.html			\
+    html/upgrade4.0.html			\
+    html/v2.3beta036.html			\
+    html/Majordomo/help.html			\
+    html/Modems/index.html			\
+    html/Modems/att-dataport.html		\
+    html/Modems/digicom-scout.html		\
+    html/Modems/everex-2496d.html		\
+    html/Modems/hayes-optima2400.html		\
+    html/Modems/multitech-1432.html		\
+    html/Modems/multitech-1932.html		\
+    html/Modems/nuvo-96424pfx.html		\
+    html/Modems/ppi-pm14400fxmt.html		\
+    html/Modems/supra-v32bis.html		\
+    html/Modems/telebit-t3000.html		\
+    html/Modems/twincom-144df.html		\
+    html/Modems/ucom-traveller96.html		\
+    html/Modems/usr-courier.html		\
+    html/Modems/usr-sportster.html		\
+    html/Modems/zyxel-1496.html			\
+    html/Modems/K56flex.html			\
+    html/Modems/multitech-2834.html		\
+    html/Modems/hayes-accura288.html		\
+    html/Modems/Telebit/faxcmds.html		\
+    html/Modems/ZyXEL/autodetect.html		\
+    html/Modems/ZyXEL/codes.html		\
+    html/Modems/ZyXEL/commands.html		\
+    html/Modems/ZyXEL/compression.html		\
+    html/Modems/ZyXEL/examples.html		\
+    html/Modems/ZyXEL/voice.html		\
+    \
+    html/acknowledge.html			\
+    html/class1.html				\
+    html/class2.0.html				\
+    html/class2.html				\
+    html/contrib.html				\
+    html/copyright.html				\
+    html/faxgateway.html			\
+    html/hylafax3.0.html			\
+    html/hylafax4.0.html			\
+    html/install-source.html			\
+    html/modems.html				\
+    html/namechange.html			\
+    html/survey-help.html			\
+    html/survey-query.html			\
+    html/version.html				\
+    html/ftpmail-help.html			\
+    html/v2.3beta036special.html		\
+    html/v3.0beta096.html			\
+    html/v3.0beta100.html			\
+    html/v3.0beta108.html			\
+    html/v3.0beta110.html			\
+    html/v3.0beta111.html			\
+    html/v3.0beta112.html			\
+    html/v3.0beta113.html			\
+    html/v3.0beta114.html			\
+    html/v4.0beta005.html			\
+    html/v4.0beta006.html			\
+    html/v4.0beta007.html			\
+    html/v4.0beta008.html			\
+    html/v4.0beta009.html			\
+    html/v4.0beta010.html			\
+    html/v4.0beta011.html			\
+    html/v4.0beta012.html			\
+    html/v4.0beta013.html			\
+    html/v4.0beta014.html			\
+    html/v4.0beta015.html			\
+    html/v4.0beta018.html			\
+    html/v4.0beta020.html			\
+    html/v4.0beta021.html			\
+    html/v4.0beta022.html			\
+    html/v4.0beta023.html			\
+    html/Modems/Supra/class2.html		\
+    html/Modems/Supra/class1.html		\
+    html/Modems/Hayes/hayes.html		\
+    \
+    html/tools/Makefile.in			\
+    html/tools/man2html.c			\
+    html/tools/unquote.c			\
+    html/tools/manpage.sh.in			\
+    html/tools/faxsurvey.sh.in			\
+    ${NULL}
+#
+# Files that are makeup the HylaFAX
+# source distribution, except for HTML
+# and manual pages.
+#
+HYLAFAXSRC=\
+    VERSION					\
+    README					\
+    TODO					\
+    COPYRIGHT					\
+    configure					\
+    config.guess				\
+    config.h.in					\
+    config.sub					\
+    config.site					\
+    defs.in					\
+    Makefile.in					\
+    rules.in					\
+    distrules					\
+    dist/hylafax.spec				\
+    dist/newalpha				\
+    dist/newversion				\
+    config/Makefile.in				\
+	config/att-dataport			\
+	config/att-dataport-2			\
+	config/att-dataport-2.0			\
+	config/cirrus				\
+	config/class1				\
+	config/class2				\
+	config/class2.0				\
+	config/dsi-scout+			\
+	config/e-tech				\
+	config/everex-2496d			\
+	config/exar				\
+	config/gvc-288				\
+	config/gvc-288-2			\
+	config/intel-400e			\
+	config/mt-1432				\
+	config/moto-288				\
+	config/nuvo-voyager			\
+	config/ppi-pm14400fxmt			\
+	config/ppi-pm14400fxsa			\
+	config/rc144ac				\
+	config/rc144ac-1			\
+	config/rc288dpi				\
+	config/rc288dpi-1			\
+	config/rc32acl				\
+	config/rc32acl-1			\
+	config/rockwell				\
+	config/skel				\
+	config/telebit-qblazer			\
+	config/telebit-t3000			\
+	config/telebit-wb			\
+	config/tricom2842			\
+	config/uds-fastalk			\
+	config/usr-2.0				\
+	config/usr-rts				\
+	config/usr-xon				\
+	config/zyxel-1496e			\
+	config/zyxel-1496e-1			\
+	config/zyxel-1496e-2.0			\
+	config/zyxel-2864			\
+	config/sierra				\
+    etc/Makefile.in				\
+	etc/copy.h				\
+	etc/copy.m				\
+	etc/copy.ps				\
+	etc/dialrules				\
+	etc/dialrules.sf-ba			\
+	etc/dialrules.europe			\
+	etc/hylafax.in				\
+	etc/faxaddmodem.sh.in			\
+	etc/faxsetup.bsdi			\
+	etc/faxsetup.irix			\
+	etc/faxsetup.linux			\
+	etc/faxsetup.sh.in			\
+	etc/probemodem.sh.in			\
+	etc/lockname.c				\
+	etc/lutRS18.pcf				\
+	etc/ondelay.c				\
+    util/Makefile.in				\
+    util/Makefile.IRIXdso			\
+	util/Array.c++				\
+	util/AtSyntax.c++			\
+	util/BoolArray.c++			\
+	util/Class2Params.c++			\
+	util/DialRules.c++			\
+	util/Dictionary.c++			\
+	util/Dispatcher.c++			\
+	util/Fatal.c++				\
+	util/FaxClient.c++			\
+	util/FaxConfig.c++			\
+	util/FaxDB.c++				\
+	util/FaxRecvInfo.c++			\
+	util/FaxSendInfo.c++			\
+	util/FmtTime.c++			\
+	util/InetTransport.c++			\
+	util/IOHandler.c++			\
+	util/JobExt.c++				\
+	util/ModemExt.c++			\
+	util/Obj.c++				\
+	util/PageSize.c++			\
+	util/RegEx.c++				\
+	util/RegExArray.c++			\
+	util/RegExDict.c++			\
+	util/SendFaxClient.c++			\
+	util/SendFaxJob.c++			\
+	util/SNPPClient.c++			\
+	util/SNPPJob.c++			\
+	util/StackBuffer.c++			\
+	util/Str.c++				\
+	util/StrArray.c++			\
+	util/StrDict.c++			\
+	util/Sys.c++				\
+	util/Syslog.c++				\
+	util/TextFmt.c++			\
+	util/TimeOfDay.c++			\
+	util/Timeout.c++			\
+	util/Transport.c++			\
+	util/TypeRules.c++			\
+	util/UnixTransport.c++			\
+	util/class2.h				\
+	util/t.30.h				\
+	util/Array.h				\
+	util/BoolArray.h			\
+	util/Class2Params.h			\
+	util/DSmacros.h				\
+	util/DialRules.h			\
+	util/Dictionary.h			\
+	util/Dispatcher.h			\
+	util/FaxClient.h			\
+	util/FaxConfig.h			\
+	util/FaxDB.h				\
+	util/FaxRecvInfo.h			\
+	util/FaxSendInfo.h			\
+	util/InetTransport.h			\
+	util/IOHandler.h			\
+	util/JobExt.h				\
+	util/ModemExt.h				\
+	util/Obj.h				\
+	util/PageSize.h				\
+	util/Ptr.h				\
+	util/RegEx.h				\
+	util/RegExArray.h			\
+	util/RegExDict.h			\
+	util/SendFaxClient.h			\
+	util/SendFaxJob.h			\
+	util/SNPPClient.h			\
+	util/SNPPJob.h				\
+	util/Socket.h				\
+	util/StackBuffer.h			\
+	util/Str.h				\
+	util/StrArray.h				\
+	util/StrDict.h				\
+	util/Sys.h				\
+	util/Syslog.h				\
+	util/TextFmt.h				\
+	util/TimeOfDay.h			\
+	util/Timeout.h				\
+	util/Transport.h			\
+	util/Types.h				\
+	util/TypeRules.h			\
+	util/UnixTransport.h			\
+	util/cvtfacility.c			\
+	util/faxconfig.c			\
+	util/faxmodem.c				\
+	util/faxmsg.c				\
+	util/faxstate.c				\
+	util/fxassert.c				\
+	util/pagesizes.in			\
+	util/notify.awk				\
+	util/faxcron.sh.in			\
+	util/faxrcvd.sh				\
+	util/mkcover.sh				\
+	util/notify.sh				\
+	util/pollrcvd.sh			\
+	util/pcl2fax.sh				\
+	util/ps2fax.dps.sh			\
+	util/ps2fax.gs.sh			\
+	util/ps2fax.imp.sh			\
+	util/recvstats.sh.in			\
+	util/tiff2fax.sh			\
+	util/wedged.sh				\
+	util/xferstats.sh.in			\
+	util/typerules				\
+	util/cover.templ			\
+	util/dpsprinter.ps			\
+	util/faxdb				\
+	util/checkat.c++			\
+	util/dialtest.c++			\
+	util/faxfetch.c++			\
+	util/faxinfo.c++			\
+	util/faxwatch.c++			\
+	util/textfmt.c++			\
+	util/tiffcheck.c++			\
+	util/typetest.c++			\
+    regex/Makefile.in				\
+	regex/regex.h				\
+	regex/README				\
+	regex/COPYRIGHT				\
+	regex/WHATSNEW				\
+	regex/cclass.h				\
+	regex/cname.h				\
+	regex/engine.c				\
+	regex/re_format.7			\
+	regex/regcomp.c				\
+	regex/regerror.c			\
+	regex/regex.3				\
+	regex/regex2.h				\
+	regex/regexec.c				\
+	regex/regfree.c				\
+	regex/utils.h				\
+    zlib/Makefile.in				\
+	zlib/Makefile.IRIXdso			\
+	zlib/ChangeLog				\
+	zlib/README				\
+	zlib/adler32.c				\
+	zlib/deflate.c				\
+	zlib/deflate.h				\
+	zlib/infblock.c				\
+	zlib/infblock.h				\
+	zlib/infcodes.c				\
+	zlib/infcodes.h				\
+	zlib/inffast.c				\
+	zlib/inffast.h				\
+	zlib/inflate.c				\
+	zlib/inftrees.c				\
+	zlib/inftrees.h				\
+	zlib/infutil.c				\
+	zlib/infutil.h				\
+	zlib/trees.c				\
+	zlib/zconf.h				\
+	zlib/zlib.h				\
+	zlib/zutil.c				\
+	zlib/zutil.h				\
+    faxalter/Makefile.in			\
+	faxalter/faxalter.c++			\
+    faxcover/Makefile.in			\
+	faxcover/faxcover.c++			\
+	faxcover/faxcover.ps			\
+    faxd/Makefile.in				\
+    faxd/Makefile.IRIXdso			\
+	faxd/Class0.h				\
+	faxd/Class1.h				\
+	faxd/Class2.h				\
+	faxd/Class20.h				\
+	faxd/Class2Ersatz.h			\
+	faxd/ClassModem.h			\
+	faxd/DestControl.h			\
+	faxd/DestInfo.h				\
+	faxd/FaxAcctInfo.h			\
+	faxd/FaxFont.h				\
+	faxd/FaxMachineInfo.h			\
+	faxd/FaxMachineLog.h			\
+	faxd/FaxModem.h				\
+	faxd/FaxRequest.h			\
+	faxd/FaxSendStatus.h			\
+	faxd/FaxServer.h			\
+	faxd/FaxTrace.h				\
+	faxd/G3Decoder.h			\
+	faxd/G3Encoder.h			\
+	faxd/Getty.h				\
+	faxd/GettyBSD.h				\
+	faxd/GettySysV.h			\
+	faxd/HDLCFrame.h			\
+	faxd/HylaClient.h			\
+	faxd/Job.h				\
+	faxd/Modem.h				\
+	faxd/ModemConfig.h			\
+	faxd/ModemServer.h			\
+	faxd/PCFFont.h				\
+	faxd/QLink.h				\
+	faxd/ServerConfig.h			\
+	faxd/Trigger.h				\
+	faxd/TriggerRef.h			\
+	faxd/UUCPLock.h				\
+	faxd/faxApp.h				\
+	faxd/faxGettyApp.h			\
+	faxd/faxQueueApp.h			\
+	faxd/faxRequest.h			\
+	faxd/faxSendApp.h			\
+	faxd/pageSendApp.h			\
+	faxd/ixo.h				\
+	faxd/t4.h				\
+	faxd/tif_fax3.h				\
+	faxd/Class0.c++				\
+	faxd/Class1.c++				\
+	faxd/Class1Poll.c++			\
+	faxd/Class1Recv.c++			\
+	faxd/Class1Send.c++			\
+	faxd/Class2.c++				\
+	faxd/Class20.c++			\
+	faxd/Class2Ersatz.c++			\
+	faxd/Class2Poll.c++			\
+	faxd/Class2Recv.c++			\
+	faxd/Class2Send.c++			\
+	faxd/ClassModem.c++			\
+	faxd/CopyQuality.c++			\
+	faxd/DestControl.c++			\
+	faxd/DestInfo.c++			\
+	faxd/FaxAcctInfo.c++			\
+	faxd/FaxFont.c++			\
+	faxd/FaxMachineInfo.c++			\
+	faxd/FaxMachineLog.c++			\
+	faxd/FaxModem.c++			\
+	faxd/FaxPoll.c++			\
+	faxd/FaxRecv.c++			\
+	faxd/FaxRequest.c++			\
+	faxd/FaxSend.c++			\
+	faxd/FaxServer.c++			\
+	faxd/G3Decoder.c++			\
+	faxd/G3Encoder.c++			\
+	faxd/Getty.c++				\
+	faxd/GettyBSD.c++			\
+	faxd/GettySysV.c++			\
+	faxd/HDLCFrame.c++			\
+	faxd/HylaClient.c++			\
+	faxd/Job.c++				\
+	faxd/Modem.c++				\
+	faxd/ModemConfig.c++			\
+	faxd/ModemServer.c++			\
+	faxd/PCFFont.c++			\
+	faxd/QLink.c++				\
+	faxd/ServerConfig.c++			\
+	faxd/TagLine.c++			\
+	faxd/Trigger.c++			\
+	faxd/TriggerRef.c++			\
+	faxd/UUCPLock.c++			\
+	faxd/faxApp.c++				\
+	faxd/faxGettyApp.c++			\
+	faxd/faxQCleanApp.c++			\
+	faxd/faxQueueApp.c++			\
+	faxd/faxRequest.c++			\
+	faxd/faxSendApp.c++			\
+	faxd/pageSendApp.c++			\
+	faxd/choptest.c++			\
+	faxd/cqtest.c++				\
+	faxd/tagtest.c++			\
+	faxd/trigtest.c++			\
+	faxd/tsitest.c++			\
+	faxd/mkhash.c				\
+    faxmail/Makefile.in				\
+	faxmail/README				\
+	faxmail/faxmail.c++			\
+	faxmail/MIMEState.c++			\
+	faxmail/MIMEState.h			\
+	faxmail/MsgFmt.c++			\
+	faxmail/MsgFmt.h			\
+	faxmail/faxmail.ps			\
+	faxmail/mailfax.sh-sendmail		\
+	faxmail/mailfax.sh-smail		\
+	faxmail/mailfax.sh-qmail		\
+    faxrm/Makefile.in				\
+	faxrm/faxrm.c++				\
+    faxstat/Makefile.in				\
+	faxstat/faxstat.c++			\
+    hfaxd/Makefile.in				\
+	hfaxd/Admin.c++				\
+	hfaxd/FIFO.c++				\
+	hfaxd/FileCache.c++			\
+	hfaxd/FileCache.h			\
+	hfaxd/FileSystem.c++			\
+	hfaxd/FileTransfer.c++			\
+	hfaxd/HylaFAXServer.c++			\
+	hfaxd/HylaFAXServer.h			\
+	hfaxd/InetFaxServer.c++			\
+	hfaxd/InetFaxServer.h			\
+	hfaxd/Jobs.c++				\
+	hfaxd/Login.c++				\
+	hfaxd/OldProtocol.c++			\
+	hfaxd/OldProtocol.h			\
+	hfaxd/Parser.c++			\
+	hfaxd/RecvQueue.c++			\
+	hfaxd/Status.c++			\
+	hfaxd/SNPPServer.c++			\
+	hfaxd/SNPPServer.h			\
+	hfaxd/SuperServer.c++			\
+	hfaxd/SuperServer.h			\
+	hfaxd/TODO				\
+	hfaxd/Trace.h				\
+	hfaxd/Trigger.c++			\
+	hfaxd/UnixFaxServer.c++			\
+	hfaxd/UnixFaxServer.h			\
+	hfaxd/User.c++				\
+	hfaxd/main.c++				\
+	hfaxd/manifest.h			\
+	hfaxd/hfaxd.conf			\
+    sendfax/Makefile.in				\
+	sendfax/sendfax.c++			\
+    sendpage/Makefile.in			\
+	sendpage/sendpage.c++			\
+    sgi2fax/Makefile.in				\
+	sgi2fax/hipass.c			\
+	sgi2fax/hipass.h			\
+	sgi2fax/imgtofax.c			\
+	sgi2fax/izoom.c				\
+	sgi2fax/izoom.h				\
+	sgi2fax/lum.h				\
+	sgi2fax/lut.c				\
+	sgi2fax/lut.h				\
+	sgi2fax/rand.c				\
+	sgi2fax/row.c				\
+    pkg/Makefile.in				\
+        pkg/depend				\
+        pkg/proto.local				\
+        pkg/preremove				\
+        pkg/spkginfo.in				\
+        pkg/make_proto.sh.in			\
+        pkg/README				\
+        pkg/crequest.in				\
+        pkg/cproto.stub.in			\
+        pkg/sproto.stub.in			\
+        pkg/make.links				\
+        pkg/cpkginfo.in				\
+        pkg/postinstall.in			\
+        pkg/srequest.in				\
+        pkg/postremove.in			\
+    ${PORTFILES}				\
+    ${NULL}
+#
+# HylaFAX manual pages.
+#
+MANPAGES=\
+    man/Makefile.in				\
+	man/cid.4f				\
+	man/config.4f				\
+	man/destctrls.4f			\
+	man/dialrules.4f			\
+	man/cqtest.1m				\
+	man/choptest.1m				\
+	man/dialtest.1m				\
+	man/faxabort.1m				\
+	man/faxaddmodem.1m			\
+	man/faxsetup.1m				\
+	man/faxalter.1				\
+	man/faxanswer.1m			\
+	man/faxconfig.1m			\
+	man/faxcover.1				\
+	man/faxqclean.1m			\
+	man/faxcron.1m				\
+	man/faxinfo.1m				\
+	man/faxq.1m				\
+	man/faxgetty.1m				\
+	man/faxsend.1m				\
+	man/faxmail.1				\
+	man/faxmodem.1m				\
+	man/faxquit.1m				\
+	man/faxrcvd.1m				\
+	man/faxrm.1				\
+	man/faxstat.1				\
+	man/faxstate.1m				\
+	man/faxwatch.1m				\
+	man/hfaxd.1m				\
+	man/hosts.4f				\
+	man/hylafax.1				\
+	man/hylafax.4f				\
+	man/info.4f				\
+	man/log.4f				\
+	man/mkcover.1m				\
+	man/notify.1m				\
+	man/pagermap.4f				\
+	man/pagesend.1m				\
+	man/pagesizes.4f			\
+	man/pollrcvd.1m				\
+	man/ps2fax.1m				\
+	man/recvq.4f				\
+	man/recvstats.1m			\
+	man/sendfax.1				\
+	man/sendpage.1				\
+	man/sendq.4f				\
+	man/sgi2fax.1				\
+	man/shutdown.4f				\
+	man/status.4f				\
+	man/tagtest.1m				\
+	man/textfmt.1				\
+	man/tiffcheck.1m			\
+	man/tiff2fax.1m				\
+	man/tsi.4f				\
+	man/tsitest.1m				\
+	man/typerules.4f			\
+	man/xferlog.4f				\
+	man/wedged.1m				\
+	man/xferstats.1m			\
+    ${NULL}
+#
+# HTML-related files, including those not under RCS.
+#
+HTMLDIST=\
+    ${HTMLFILES}				\
+    html/sam.gif				\
+    html/matthias.gif				\
+    html/hylafax.gif				\
+    html/icons/frog.gif				\
+    html/icons/next.gif				\
+    html/icons/button.excl.gif			\
+    html/icons/back.gif				\
+    html/icons/smiley.gif			\
+    html/icons/ball_blue_icon.gif		\
+    html/icons/warning_icon.gif			\
+    html/icons/at_work_icon.gif			\
+    html/icons/info_icon.gif			\
+    html/icons/new.gif				\
+    html/icons/improved.gif			\
+    ${NULL}
+#
+# Adobe Font Metric information files.
+#
+AFMFILES=\
+    afm/Makefile.in				\
+    afm/AvantGarde-Book.afm			\
+    afm/AvantGarde-BookOblique.afm		\
+    afm/AvantGarde-Demi.afm			\
+    afm/AvantGarde-DemiOblique.afm		\
+    afm/Bookman-Demi.afm			\
+    afm/Bookman-DemiItalic.afm			\
+    afm/Bookman-Light.afm			\
+    afm/Bookman-LightItalic.afm			\
+    afm/Courier-Bold.afm			\
+    afm/Courier-BoldOblique.afm			\
+    afm/Courier-Oblique.afm			\
+    afm/Courier.afm				\
+    afm/Helvetica-Bold.afm			\
+    afm/Helvetica-BoldOblique.afm		\
+    afm/Helvetica-Narrow-Bold.afm		\
+    afm/Helvetica-Narrow-BoldOblique.afm	\
+    afm/Helvetica-Narrow-Oblique.afm		\
+    afm/Helvetica-Narrow.afm			\
+    afm/Helvetica-Oblique.afm			\
+    afm/Helvetica.afm				\
+    afm/NewCenturySchlbk-Bold.afm		\
+    afm/NewCenturySchlbk-BoldItalic.afm		\
+    afm/NewCenturySchlbk-Italic.afm		\
+    afm/NewCenturySchlbk-Roman.afm		\
+    afm/Palatino-Bold.afm			\
+    afm/Palatino-BoldItalic.afm			\
+    afm/Palatino-Italic.afm			\
+    afm/Palatino-Oblique.afm			\
+    afm/Palatino-Roman.afm			\
+    afm/Symbol.afm				\
+    afm/Times-Bold.afm				\
+    afm/Times-BoldItalic.afm			\
+    afm/Times-Italic.afm			\
+    afm/Times-Oblique.afm			\
+    afm/Times-Roman.afm				\
+    afm/ZapfChancery-MediumItalic.afm		\
+    afm/ZapfDingbats.afm			\
+    afm/fontmap.pl				\
+    ${NULL}
+#
+# These rules are used to create the source distribution images
+#
+COMPRESS= gzip
+ZIPSUF	= gz
+CONFIG	= -with-CC=cc \
+	  -with-CXX=CC \
+	  -with-GCOPTS=" " \
+	  -with-HTML \
+	  -with-AFM \
+	  -with-DPS \
+	  -with-IMP \
+	  -with-GSRIP=/usr/freeware/bin/gs \
+	  -with-IMPRIP='$$DIR_LIBEXEC/psrip' \
+	  -with-LIBMALLOC=no \
+	  -with-SCRIPT_SH=/bin/sh
+
+rcsclean:
+	rcsclean ${HYLAFAXSRC} && co ${HYLAFAXSRC}
+	rcsclean ${MANPAGES} && co ${MANPAGES}
+	rcsclean ${HTMLFILES} && co ${HTMLFILES}
+
+alpha:
+	(cd ${SRCDIR}/dist; sh newversion)
+	-${MAKE} clobber
+	echo touching Makedepend ; touch Makedepend
+	${MAKE} alpha.stamp
+#	${SRCDIR}/configure ${CONFIG}
+#	${MAKE} product
+	${MAKE} alpha.tar
+
+#
+# NB: A bunch of this work in splitting up the arg lists
+#     is done to avoid overflowing system params (e.g.
+#     the size of the environment).
+#
+
+# stamp relevant files according to current alpha
+alpha.stamp:
+	VERSION=`awk '{print "Alpha" $$3}' ${SRCDIR}/dist/hylafax.alpha`;\
+	NOW=`date`;							\
+	cd ${SRCDIR};							\
+	for i in ${HYLAFAXSRC}; do					\
+	    REV=`rlog -h -d"$$NOW" $$i|fgrep 'head:'|awk '{print $$2}'`;\
+	    rcs "-N$$VERSION:$$REV" "-sExp:$$REV" $$i && co -sExp $$i;	\
+	done;								\
+	for i in ${MANPAGES}; do					\
+	    REV=`rlog -h -d"$$NOW" $$i|fgrep 'head:'|awk '{print $$2}'`;\
+	    rcs "-N$$VERSION:$$REV" "-sExp:$$REV" $$i && co -sExp $$i;	\
+	done;								\
+	for i in ${HTMLFILES}; do					\
+	    REV=`rlog -h -d"$$NOW" $$i|fgrep 'head:'|awk '{print $$2}'`;\
+	    rcs "-N$$VERSION:$$REV" "-sExp:$$REV" $$i && co -sExp $$i;	\
+	done
+
+purge-old-alphas:
+	VERSIONS=`echo ${ALPHA} | awk '{for (i=1; i<=$$1; i++) printf " -nAlpha%03d",i}'`;\
+	cd ${SRCDIR};							\
+	for i in ${HYLAFAXSRC}; do					\
+	    echo rcs $$VERSIONS $$i;					\
+	    rcs $$VERSIONS $$i && co $$i;				\
+	done;								\
+	for i in ${MANPAGES}; do					\
+	    echo rcs $$VERSIONS $$i;					\
+	    rcs $$VERSIONS $$i && co $$i;				\
+	done;								\
+	for i in ${HTMLFILES}; do					\
+	    echo rcs $$VERSIONS $$i;					\
+	    rcs $$VERSIONS $$i && co $$i;				\
+	done
+
+alphadiff:
+	cd ${SRCDIR};							\
+	-@for i in ${HYLAFAXSRC}; do					\
+	    rcsdiff -r${ALPHA} $$i;					\
+	done;								\
+	-@for i in ${MANPAGES}; do					\
+	    rcsdiff -r${ALPHA} $$i;					\
+	done;								\
+	-@for i in ${HTMLFILES}; do					\
+	    rcsdiff -r${ALPHA} $$i;					\
+	done
+
+# create alpha distribution archive
+alpha.tar:
+	VERSION="v`cat ${SRCDIR}/VERSION``awk '{print $$3}' ${SRCDIR}/dist/hylafax.alpha`";	\
+	rm -f hylafax-$$VERSION $$VERSION $$VERSION-tar;		\
+	ln -s ${SRCDIR} hylafax-$$VERSION;				\
+	(for i in ${HYLAFAXSRC} dist/hylafax.alpha; do			\
+	   echo $$i;							\
+	done) | sed "s;.*;hylafax-$$VERSION/&;" >  $$VERSION;		\
+	(for i in ${MANPAGES} ${HTMLDIST} ${AFMFILES}; do		\
+	   echo $$i;							\
+	done) | sed "s;.*;hylafax-$$VERSION/&;" >> $$VERSION;		\
+	gtar -cvf $$VERSION-tar --files-from $$VERSION;			\
+	rm -f hylafax-$$VERSION-tar.${ZIPSUF};				\
+	cat $$VERSION-tar | ${COMPRESS} >hylafax-$$VERSION-tar.${ZIPSUF};\
+	rm -f hylafax-$$VERSION $$VERSION $$VERSION-tar;
+
+release:
+	(cd ${SRCDIR}/dist; sh newversion)
+	-${MAKE} clobber
+	echo touching Makedepend ; touch Makedepend
+	${MAKE} release.stamp
+#	${SRCDIR}/configure ${CONFIG}
+#	${MAKE} product
+	${MAKE} release.tar
+
+release.stamp:
+	VERSION="Release`sed 's/\./_/g' ${SRCDIR}/VERSION`";		\
+	NOW=`date`;							\
+	cd ${SRCDIR};							\
+	for i in ${HYLAFAXSRC}; do					\
+	    REV=`rlog -h -d"$$NOW" $$i|fgrep 'head:'|awk '{print $$2}'`;\
+	    rcs "-N$$VERSION:$$REV" "-sRel:$$REV" $$i && co -sRel $$i;	\
+	done;								\
+	for i in ${MANPAGES}; do					\
+	    REV=`rlog -h -d"$$NOW" $$i|fgrep 'head:'|awk '{print $$2}'`;\
+	    rcs "-N$$VERSION:$$REV" "-sRel:$$REV" $$i && co -sRel $$i;	\
+	done;								\
+	for i in ${HTMLFILES}; do					\
+	    REV=`rlog -h -d"$$NOW" $$i|fgrep 'head:'|awk '{print $$2}'`;\
+	    rcs "-N$$VERSION:$$REV" "-sRel:$$REV" $$i && co -sRel $$i;	\
+	done
+
+# create release distribution archive
+release.tar:
+	VERSION=v`cat ${SRCDIR}/VERSION`;				\
+	rm -f hylafax-$$VERSION $$VERSION $$VERSION-tar;		\
+	ln -s ${SRCDIR} hylafax-$$VERSION;				\
+	(for i in ${HYLAFAXSRC} dist/hylafax.alpha; do			\
+	   echo $$i;							\
+	done) | sed "s;.*;hylafax-$$VERSION/&;" >  $$VERSION;		\
+	(for i in ${MANPAGES} ${HTMLDIST} ${AFMFILES}; do		\
+	   echo $$i;							\
+	done) | sed "s;.*;hylafax-$$VERSION/&;" >> $$VERSION;		\
+	gtar -cvf $$VERSION-tar --files-from $$VERSION;			\
+	rm -f hylafax-$$VERSION-tar.${ZIPSUF};				\
+	cat $$VERSION-tar | ${COMPRESS} >hylafax-$$VERSION-tar.${ZIPSUF};\
+	rm -f hylafax-$$VERSION $$VERSION $$VERSION-tar;

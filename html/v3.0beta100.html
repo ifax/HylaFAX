@@ -1,0 +1,132 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Changes in HylaFAX v3.0beta100
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>H</FONT>YLA<FONT SIZE=+1>FAX</FONT> <FONT SIZE=+2>C</FONT>HANGE <FONT SIZE=+2>I</FONT>NFORMATION</B>
+<BASEFONT SIZE=3>
+
+<UL>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+<B>Current Version</B>: v3.0beta100<BR>
+<B>Previous Version</B>: <A HREF="v3.0beta096.html">v3.0beta096</A><BR>
+<B>Master FTP Site</B>: <A HREF="ftp://sgi.com/sgi/fax">sgi.com (192.48.153.1), directory sgi/fax</A><BR>
+<HR SIZE=4 WIDTH=65% ALIGN=left>
+</UL>
+
+<P>
+This document describes the changes made to the software between the
+<I>previous</I> and <I>current</I> versions (see above).
+If you don't find something listed here, then it was not done in this
+timeframe, or it was not considered important enough to be mentioned.
+The following information is located here:
+<UL>
+<LI><A HREF="#general">General changes</A>
+<LI><A HREF="#configure">Changes in the software configuration</A>
+<LI><A HREF="#modemconfig">Changes in the modem config files</A>
+<LI><A HREF="#pagesend">Changes to pagesend</A>
+<LI><A HREF="#faxaddmodem">Changes to faxaddmodem</A>
+<LI><A HREF="#utility code">Changes in the utility code</A>
+</UL>
+
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="general"><B><FONT SIZE=+3>G</FONT>ENERAL CHANGES:</B></A>
+
+<UL>
+<LI>the IRIX binary distribution inst images were overhauled; HylaFAX
+   packages now replace old FlexFAx packages, the PostScript RIP is
+   now broken out into a separate package (to make it easy to select
+   between DPS-based and GS-based RIPs), the HTML materials were renamed,
+   and the sample AFM files were placed in the software image
+<LI>the HTML materials were significantly revised (but are still unfinished)
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="configure"><B><FONT SIZE=+3>C</FONT>HANGES IN THE SOFTWARE CONFIGURATION:</B></A>
+
+<UL>
+<LI>various problems with configuring optional packages were corrected
+<LI>the HTML materials are now processed by configure to fix pathnames
+<LI>the DPS and Ghostscript-based RIPS are now handled separately so
+   that IRIX systems can configure each independently
+<LI>parameters were added for controlling the use of -lmalloc
+    (<TT>LIBMALLOC</TT>) and -lsun (<TT>LIBSUN</TT>)
+<LI>parameters were added for configuring the HTML materials; consult
+    the <B>config.site</B> file
+<LI>configure was changed to deal with the fact that various sed's
+    only support 100 commands
+<LI><TT>strdup</TT> is now checked for in -lg++ to deal with some Sun systems
+<LI>a problem with deducing signal handler types was corrected
+<LI>the default <TT>GETTY</TT> definition for Ultrix was corrected
+<LI>the manual page processing was corrected for various systems
+<LI>the <TT>install.sh</TT> script used to emulate the IRIX install
+    program now understands that certain files should be updated only
+    if they have not been changed since the last distribution; also
+    a problem with stripping non-executable files has been corrected
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="modemconfig"><B><FONT SIZE=+3>C</FONT>HANGES IN THE MODEM CONFIG FILES:</B></A>
+
+<UL>
+<LI>typos were corrected in the PM14400FXMT and ZyXEL Class 2.0 files
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="pagesend"><B><FONT SIZE=+3>C</FONT>HANGES TO PAGESEND:</B></A>
+
+<UL>
+<LI>the tty device is now setup to use 7-bit, even parity, per the spec
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="faxaddmodem"><B><FONT SIZE=+3>C</FONT>HANGES TO FAXADDMODEM:</B></A>
+
+<UL>
+<LI>existing inetd.conf entries are now checked to make sure the pathname
+   for faxd.recv corresponds to the path configured for installation
+<LI>old prototype config files are ignored
+<LI>the DTE-DCE line speed is checked against the speed specified by the
+   <TT>ModemRate</TT> parameter and if they are different the user is
+   prompted to verify
+</UL>
+
+<P><HR WIDTH=65% ALIGN=right>
+
+<A NAME="utility code"><B><FONT SIZE=+3>C</FONT>HANGES IN THE UTILITY CODE:</B></A>
+
+<UL>
+<LI>the <TT>faxrcvd</TT> script now can dispatch received facsimile from
+   well-known senders automatically; the facsimile is sent by electronic
+   mail as a MIME-encoded PostScript document
+<LI>the <TT>ps2fax</TT> shell scripts no longer try to workaround certain
+   invalid Windows-generated PostScript constructs (the patch had busted
+   valid PostScript)
+</UL>
+
+<!--FOOTER-->
+
+<A HREF="toc.html"><IMG SRC="icons/back.gif"></A> HylaFAX table
+of contents.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

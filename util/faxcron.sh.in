@@ -1,0 +1,466 @@
+#! /bin/sh
+#	$Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1993-1996 Sam Leffler
+# Copyright (c) 1993-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Script to run periodically from cron:
+#
+# 0. Print transmit and receive statistics.
+# 1. Purge info directory of old remote machine capabilities.
+# 2. Purge old session logs from the log directory.
+# 3. Purge old files in the received facsimile queue.
+# 4. Notify about sites that currently have jobs rejected.
+#
+
+AGEINFO=30			# purge remote info after 30 days inactivity
+AGELOG=30			# keep log info for last 30 days
+AGERCV=7			# purge received facsimile after 2 days
+AGETMP=1			# purge orphaned temp files after 1 day
+FAXUSER=fax			# owner of log files
+LOGMODE=0644			# mode for log files
+XFERLOG=etc/xferlog		# HylaFAX xferlog file location
+LAST=etc/lastrun		# file where time+date of last run recorded
+
+cd @SPOOL@			# NB: everything below assumes this
+
+test -f etc/setup.cache || {
+    SPOOL=`pwd`
+    cat<<EOF
+
+FATAL ERROR: $SPOOL/etc/setup.cache is missing!
+
+The file $SPOOL/etc/setup.cache is not present.  This
+probably means the machine has not been setup using the faxsetup(1M)
+command.  Read the documentation on setting up HylaFAX before you
+startup a server system.
+
+EOF
+    exit 1
+}
+. etc/setup.cache
+
+RM="$RM -f"
+TEE=tee
+UPDATE="date +'%D %H:%M' >$LAST"
+
+JUNK=/tmp/faxjunk$$		# temp file used multiple times
+AWKTMP=/tmp/faxawk$$		# temp file for awk program
+
+while [ x"$1" != x"" ] ; do
+    case $1 in
+    -n)	    RM=":" TEE=":" CP=":" MV=":" CHOWN=":" CHMOD=":" UPDATE=":";;
+    -l)	    shift; LASTRUN="$1";;
+    -info)  shift; AGEINFO="$1";;
+    -log)   shift; AGELOG="$1";;
+    -rcv)   shift; AGERCV="$1";;
+    -tmp)   shift; AGETMP="$1";;
+    -mode)  shift; LOGMODE="$1";;
+    -*)	    echo "Usage: $0 [-n] [-l lastrun] [-info days] [-log days] [-rcv days] [-tmp days] [-mode logmode]"; exit 1;;
+    esac
+    shift
+done
+
+trap "$RM \$AWKTMP \$JUNK; exit 1" 0 1 2 15
+
+
+test -z "$LASTRUN" && LASTRUN=`$CAT $LAST 2>/dev/null`
+
+echo "Facsimile transmitted since $LASTRUN:"
+echo ""
+$SBIN/xferstats -since "$LASTRUN" 
+echo ""
+
+echo "Facsimile transmitted since last week:"
+echo ""
+$SBIN/xferstats -age 7
+echo ""
+
+echo "Facsimile received since $LASTRUN:"
+echo ""
+$SBIN/recvstats -since "$LASTRUN" 
+echo ""
+
+echo "Facsimile received since last week:"
+echo ""
+$SBIN/recvstats -age 7
+echo ""
+
+echo "Report failed calls and associated session logs:"
+$CAT>$AWKTMP<<'EOF'
+#
+# Sort array a[l..r]
+#
+function qsort(a, l, r) {
+    i = l;
+    k = r+1;
+    item = a[l];
+    for (;;) {
+	while (i < r) {
+            i++;
+	    if (a[i] >= item)
+		break;
+        }
+	while (k > l) {
+            k--;
+	    if (a[k] <= item)
+		break;
+        }
+        if (i >= k)
+	    break;
+	t = a[i]; a[i] = a[k]; a[k] = t;
+    }
+    t = a[l]; a[l] = a[k]; a[k] = t;
+    if (k != 0 && l < k-1)
+	qsort(a, l, k-1);
+    if (k+1 < r)
+	qsort(a, k+1, r);
+}
+
+function cleanup(s)
+{
+    gsub("\"", "", s);
+    gsub("^ +", "", s);
+    gsub(" +$", "", s);
+    return s;
+}
+
+function setupToLower()
+{
+    upperRE = "[ABCDEFGHIJKLMNOPQRSTUVWXYZ]";
+    upper["A"] = "a"; upper["B"] = "b"; upper["C"] = "c";
+    upper["D"] = "d"; upper["E"] = "e"; upper["F"] = "f";
+    upper["G"] = "g"; upper["H"] = "h"; upper["I"] = "i";
+    upper["J"] = "j"; upper["K"] = "k"; upper["L"] = "l";
+    upper["M"] = "m"; upper["N"] = "n"; upper["O"] = "o";
+    upper["P"] = "p"; upper["Q"] = "q"; upper["R"] = "r";
+    upper["S"] = "s"; upper["T"] = "t"; upper["U"] = "u";
+    upper["V"] = "v"; upper["W"] = "w"; upper["X"] = "x";
+    upper["Y"] = "y"; upper["Z"] = "z";
+}
+
+function toLower(s)
+{
+    if (match(s, upperRE) != 0) {
+	do {
+	    c = substr(s, RSTART, 1);
+	    gsub(c, upper[c], s);
+	} while (match(s, upperRE));
+    }
+    return s;
+}
+
+#
+# Accumulate a statistics record.
+#
+function acct(dest, status, datetime, commid)
+{
+    split(datetime, a, " ");
+    split(a[1], b, "/");
+    t = b[3] b[1] b[2] a[2];
+    if (t < LASTt)
+	return;
+    status = cleanup(status);
+    if (length(status) > 11) {
+	msg = toLower(substr(status, 1, 11));
+	if (callFailed[msg])
+	    return;
+    }
+    if (status != "") {
+	dest = cleanup(dest);
+	datetime = cleanup(datetime);
+	for (i = 0; i < nerrmsg; i++)
+	    if (errmsg[i] == status)
+		break;
+	if (i == nerrmsg)
+	    errmsg[nerrmsg++] = status;
+	if (errinfo[dest] == "")
+	    errinfo[dest] = datetime "@" i "/" commid;
+	else
+	    errinfo[dest] = errinfo[dest] "|" datetime "@" i "/" commid;
+    }
+}
+
+function printOldTranscript(canon, datetime)
+{
+    gsub("[^0-9]", "", canon);
+    split(datetime, parts, " ");
+    split(parts[1], p, "/");
+    cmd = sprintf(TRANSCRIPT, canon, months[p[1]], p[2], parts[2]);
+    system(cmd);
+}
+
+function printTranscript(commid)
+{
+    printf "\n    ---- Transcript of session follows ----\n\n"
+    comFile = "log/c" commid;
+    if ((getline <comFile) > 0) {
+	do {
+	    if (index($0, "-- data") == 0)
+		print $0
+	} while ((getline <comFile) > 0);
+	close(comFile);
+    } else
+	print "No transcript available.";
+}
+
+BEGIN		{ FS="\t";
+		  callFailed["busy signal"] = 1;
+		  callFailed["unknown pro"] = 1;
+		  callFailed["no carrier "] = 1;
+		  callFailed["no local di"] = 1;
+		  callFailed["no answer f"] = 1;
+		  callFailed["job aborted"] = 1;
+		  callFailed["invalid dia"] = 1;
+		  callFailed["can not loc"] = 1;
+		  months["01"] = "Jan"; months["02"] = "Feb";
+		  months["03"] = "Mar"; months["04"] = "Apr";
+		  months["05"] = "May"; months["06"] = "Jun";
+		  months["07"] = "Jul"; months["08"] = "Aug";
+		  months["09"] = "Sep"; months["10"] = "Oct";
+		  months["11"] = "Nov"; months["12"] = "Dec";
+
+		  split(LASTRUN, a, " ");
+		  split(a[1], b, "/");
+		  LASTt = b[3] b[1] b[2] a[2];
+		  setupToLower();
+		}
+$2 == "SEND" && NF == 9  { acct($4,  $9, $1, ""); }
+$2 == "SEND" && NF == 11 { acct($5, $11, $1, ""); }
+$2 == "SEND" && NF == 12 { acct($6, $12, $1, ""); }
+$2 == "SEND" && NF == 13 { acct($7, $13, $1, $3); }
+$2 == "SEND" && NF == 14 { acct($7, $14, $1, $3); }
+END		{ nsorted = 0;
+		  for (key in errinfo)
+		      sorted[nsorted++] = key;
+		  qsort(sorted, 0, nsorted-1);
+		  for (k = 0; k < nsorted; k++) {
+		      key = sorted[k];
+		      n = split(errinfo[key], a, "|");
+		      for (i = 1; i <= n; i++) {
+			  if (split(a[i], b, "@") != 2)
+			      continue;
+			  if (split(b[2], d, "/") != 2)
+			      continue;
+			  printf "\n"
+			  printf "To: %-16.16s  Date: %s\n", key, b[1]
+			  printf "Error: %s\n\n", errmsg[d[1]]
+
+			  if (d[2] == "")
+			      printOldTranscript(key, b[1]);
+			  else
+			      printTranscript(d[2]);
+		      }
+		  }
+		}
+EOF
+$AWK -f $AWKTMP -v LASTRUN="$LASTRUN" TRANSCRIPT="\
+    LOGFILE=log/%s;\
+    TMP=/tmp/faxlog\$\$;\
+    if [ -f \$LOGFILE ]; then\
+	$SED -n -e '/%s %s %s.*SESSION BEGIN/,/SESSION END/p' \$LOGFILE |\
+	$SED -e '/start.*timer/d'\
+	     -e '/stop.*timer/d'\
+	     -e '/-- data/d'\
+	     -e 's/^/    /' >\$TMP;\
+    fi;\
+    if [ -s \$TMP ]; then\
+	$CAT \$TMP;\
+    else\
+	echo '    No transcript available.';\
+    fi;\
+    rm -f \$TMP\
+    " $XFERLOG
+echo ""
+
+#
+# Collect phone numbers that haven't been called
+# in the last $AGEINFO days.  We use this to clean
+# up the info files.
+#
+find info -ctime +$AGEINFO -print >$JUNK
+
+if [ -s $JUNK ]; then
+echo "Purge remote device capabilities older than $AGEINFO days:"
+INFOTMP=info/tmp$$
+for i in `$CAT $JUNK`; do
+    if $GREP '^&' $i >/dev/null 2>&1; then
+	echo "    $i (saving locked down values)"
+	$SED '/^[^&]/d' $i > $INFOTMP
+	$MV $INFOTMP $i; $CHOWN ${FAXUSER} $i; $CHMOD ${LOGMODE} $i
+    elif [ -f $i ]; then
+	echo "    $i"
+	$RM $i
+    fi
+done
+$RM $INFOTMP			# for -n option
+else 
+    echo "Nothing to purge in info directory."
+fi
+echo ""
+
+find log -mtime +$AGELOG -print >$JUNK
+if [ -s $JUNK ]; then
+    echo "Purge session logs older than $AGELOG days:"
+    for i in `$CAT $JUNK`; do
+	echo "    Remove $i"
+	$RM $i
+    done
+    echo ""
+fi
+
+echo "Truncate merged session logs older than $AGELOG days:"
+
+$CAT>$AWKTMP<<'EOF'
+#
+# Setup date conversion data structures.
+#
+function setupDateTimeStuff()
+{
+    Months["Jan"] =  0; Months["Feb"] =  1; Months["Mar"] =  2;
+    Months["Apr"] =  3; Months["May"] =  4; Months["Jun"] =  5;
+    Months["Jul"] =  6; Months["Aug"] =  7; Months["Sep"] =  8;
+    Months["Oct"] =  9; Months["Nov"] = 10; Months["Dec"] = 11;
+
+    daysInMonth[ 0] = 31; daysInMonth[ 1] = 28; daysInMonth[ 2] = 31;
+    daysInMonth[ 3] = 30; daysInMonth[ 4] = 31; daysInMonth[ 5] = 30;
+    daysInMonth[ 6] = 31; daysInMonth[ 7] = 31; daysInMonth[ 8] = 30;
+    daysInMonth[ 9] = 31; daysInMonth[10] = 30; daysInMonth[11] = 31;
+
+    FULLDAY = 24 * 60 * 60;
+}
+
+#
+# Convert MMM DD hh:mm:ss.ms to seconds.
+# NB: this does not deal with leap years.
+#
+function cvtTime(s)
+{
+    mon = Months[substr(s, 0, 3)];
+    yday = substr(s, 5, 2) - 1;
+    for (i = 0; i < mon; i++)
+	yday += daysInMonth[i];
+    s = substr(s, 7);
+    t = i = 0;
+    for (n = split(s, a, ":"); i++ < n; )
+	t = t*60 + a[i];
+    return yday*FULLDAY + t;
+}
+
+BEGIN			{ setupDateTimeStuff();
+			  KEEP = cvtTime(TODAY) - AGE*FULLDAY;
+			  lastRecord = "$"
+			}
+			{ if (cvtTime($1 ":" $2 ":" $3) >= KEEP) {
+			      lastRecord = NR; exit
+			  }
+			}
+END			{ print lastRecord }
+EOF
+TODAY="`date +'%h %d %T'`"
+
+for i in log/[0-9]*; do
+    if [ -f $i ]; then
+	START=`$AWK -F: -f $AWKTMP -v TODAY="$TODAY" -v AGE=$AGELOG $i` 2>/dev/null
+	if [ "$START" != 1 ]; then
+	    $SED 1,${START}d $i >$JUNK
+	    if [ -s $JUNK ]; then
+		$MV $JUNK $i; $CHOWN ${FAXUSER} $i; $CHMOD ${LOGMODE} $i
+		ls -ls $i
+	    else
+		echo "    Remove empty $i"
+		$RM $i
+	    fi
+	fi
+    fi
+done
+echo ""
+
+#
+# Purge old stuff from the receive queue.
+#
+find recvq -mtime +$AGERCV -print >$JUNK
+if [ -s $JUNK ]; then
+    echo "Purge received facsimile older than $AGERCV days:"
+    (for i in `$CAT $JUNK`; do
+	$SBIN/faxinfo $i
+	$RM $i >/dev/null 2>&1
+    done) | $AWK -F: '
+/recvq.*/	{ file=$1; }
+/Sender/	{ sender = $2; }
+/Pages/		{ pages = $2; }
+/Quality/	{ quality = $2; }
+/Received/	{ date = $2;
+		  for (i = 3; i <= NF; i++)
+		      date = date ":" $i;
+		  printf "    %-16.16s %21.21s %2d %8s%s\n", \
+			file, sender, pages, quality, date;
+		}
+'
+else
+    echo "Nothing to purge in receive queue."
+fi
+echo ""
+
+#
+# Purge old stuff from the temp directory.
+#
+find tmp -type f -mtime +$AGETMP -print >$JUNK
+if [ -s $JUNK ]; then
+    echo "Purge tmp files older than $AGETMP days:"
+    for i in `$CAT $JUNK`; do
+      if [ -f $i ]; then
+	echo "    Remove $i"
+	$RM $i
+      fi
+    done
+else
+    echo "Nothing to purge in the tmp directory."
+fi
+echo ""
+
+#
+# Note destinations whose jobs are currently being rejected.
+#
+find info cinfo -newer $LAST -print 2>/dev/null >$JUNK
+if [ -s $JUNK ]; then
+	echo "Destinations being rejected (added since $LASTRUN):"
+	$GREP "^rejectNotice:" `$CAT $JUNK` | $AWK -F: '
+		{ reason = $3;
+		  for (i = 4; i <= NF; i++)
+			reason = reason ":" $i;
+		  sub("^[ ]*", "", reason);
+		  if (reason != "") {
+		      sub(".*/", "", $1);
+		      printf "Rejecting jobs to +%s because \"%s\".\n", \
+			    $1, reason;
+		  }
+		}
+'
+fi
+
+$RM $LAST; eval $UPDATE

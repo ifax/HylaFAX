@@ -1,0 +1,222 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>
+Acknowledgements
+</TITLE>
+</HEAD>
+
+<BODY>
+
+<BASEFONT SIZE=4>
+<B><FONT SIZE=+3>A</FONT>CKNOWLEDGEMENTS</B>
+<BASEFONT SIZE=3>
+
+<HR SIZE=4>
+
+This software is more than 6 years old and is the product of many
+folks' work.  Robin Schaufler did the original scheme for delayed
+submission and worked on the original client-server protocol.
+More recently,
+the following people have helped either by testing or by contributing
+fixes and/or improvements:
+
+<PRE>
+  Phil Abercrombie     Matthias Apitz       Chris Beekhuis      
+  Peter Bentley        Trevor Blackwell     Marc Boucher        
+  Piete Brooks         Bill Campbell        Seth Chaiklin       
+  Brent Chapman        Jonathan Chen        Camden Clarke       
+  Tom Corson           Alan Crosswell       Mark Diekhans       
+  Leif Erlingsson      Greg Ferguson        Steve Fine          
+  Andrew Ford          Bob Forsman          Nico Garcia         
+  David Gilbert        Achim Gorski         Wolfgang Henke      
+  Paul Hirose          Viet Hoang           Bert Hooyman        
+  Ken Hornstein        Dirk Husemann        Jonathan I. Kamens  
+  Brian Katzung        Masao Kitano         Carsten Koch        
+  John T Kohl          Scott Kramer         Evan Leibovitch     
+  Rickard Linck        Rick Lyons           Tom Lislegaard      
+  Rob MacKinnon        Kevin McManamon      Les Mikesell        
+  Bill Morrow          Andy Moskoff         Andreas F Mueller   
+  Chris Munonye        Rob Newberry         Dag Nygren          
+  Jonas Olsson         Dave Packer          Damon Permezel      
+  David Pike           Amir Plivatsky       Stuart Pook         
+  Andy Rabagliati      Eric Rescorla        Matthew Rice        
+  Tim Rice             Marshall Rose        Daniel Rosenblatt   
+  Joel Rosi-Schwartz   Tim Rylance          Joseph E. Sacco     
+  Ian Senior           Morten Skjelland     Andrew Speer        
+  Thomas A. Szybist    Brent Townshend      Peter White         
+  Steve Williams       Scott Woodard        David Vrona         
+  Mark Vitek           Paul Vixie           Christian Zahl      
+  Luiz Zorzella        David ?             
+</PRE>
+
+(and surely others).  Also, a special thanks to Ed McCreight for
+helping me understand the stuff <I>between the lines</I>
+that's necessary to make a working Class 1 driver.
+
+<A NAME=Logo><P><HR>
+<IMG SRC="icons/frog.gif" BORDER=1 ALIGN=left HSPACE=10 VSPACE=8>
+<EM>The home page artwork was sketched by Rob Myers.
+I then butchered it with my handy use of the freely available
+<A HREF=http://www.xcf.berkeley.edu/~gimp>gimp program</A>. 
+If you like the art <A HREF=mailto:rob@engr.sgi.com>send Rob a compliment</A>. 
+If you don't like it blame me, or better yet,
+<A HREF=mailto:sam@engr.sgi.com>send me</A>
+a better version to replace it (please).
+Please note that the artwork is copyright Silicon Graphics Inc. and
+is not to be used without written permission.
+</EM>
+<BR CLEAR=left>
+<HR>
+
+<A NAME="regex"><H4>Regular Expression Support</H4></A>
+
+The regular expression support is based on Henry Spencer's POSIX 1003.2
+compliant regex package that has
+
+<LISTING>
+    Copyright 1992, 1993, 1994 Henry Spencer.
+    All rights reserved.
+</LISTING>
+
+Consult <B>regex/COPYRIGHT</B>
+for the full copyright notice associated with this software.
+
+<P><A NAME=zlib><HR WIDTH=65% ALIGN=right><H4>Compression Support</H4></A>
+
+The zlib package used in the client-server protocol has the following
+copyright notice:
+
+<LISTING>
+ (C) 1995-1996 Jean-loup Gailly and Mark Adler
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+  Jean-loup Gailly        Mark Adler
+  gzip@prep.ai.mit.edu    madler@alumni.caltech.edu
+</LISTING>
+
+Consult the file <B>zlib/README</B> for more information on the package.
+
+<P><A NAME=pcf><HR WIDTH=65% ALIGN=right><H4>PCF Font Support</H4>
+
+The code to read PCF fonts is distantly related to the X11R5 code that is
+
+<LISTING>
+    Copyright 1990 Massachusetts Institute of Technology
+</LISTING>
+
+Consult <B>faxd/PCFFont.c++</B>
+for the full copyright notice.
+
+<P><A NAME=textfmt><HR WIDTH=65% ALIGN=right><H4>Text to PostScript Conversion</TT></H4></A>
+
+The
+<TT>textfmt</TT>
+program is <EM>very distantly</EM>
+related to the <TT>lptops</TT> program written
+by Nelson Beebe; there was no copyright notice on the version of the code
+that <TT>textfmt</TT> grew out of.
+
+<P><A NAME=config><HR WIDTH=65% ALIGN=right><H4>Configuration Support</H4>
+
+The <B>config.guess</B> and <B>config.sub</B>
+scripts are part of the GNU autoconf
+package and covered by the GNU Public License (GPL).  Several ideas
+in the configure script are directly "borrowed" from autoconf (and I
+have tried to maintain as much compatibility as possible).
+
+<P><A NAME=lutRS18.pcf><HR WIDTH=65% ALIGN=right><H4>Sample PCF Font</H4></A>
+
+The PCF font <B>etc/lutRS18.pcf</B> included for use with tag lines is a
+compiled version of a LucidaTypewriter font that was contributed to X11
+by Bigelow & Holmes.  Redistribution of this font requires inclusion of
+this copyright notice:
+
+<LISTING>
+    NOTICE TO USER: The source code, including the glyphs or icons 
+    forming a par of the OPEN LOOK TM Graphic User Interface, on this 
+    tape and in these files is copyrighted under U.S. and international
+    laws. Sun Microsystems, Inc. of Mountain View, California owns
+    the copyright and has design patents pending on many of the icons. 
+    AT&T is the owner of the OPEN LOOK trademark associated with the
+    materials on this tape. Users and possessors of this source code 
+    are hereby granted a nonexclusive, royalty-free copyright and 
+    design patent license to use this code in individual and 
+    commercial software. A royalty-free, nonexclusive trademark
+    license to refer to the code and output as "OPEN LOOK" compatible 
+    is available from AT&T if, and only if, the appearance of the 
+    icons or glyphs is not changed in any manner except as absolutely
+    necessary to accommodate the standard resolution of the screen or
+    other output device, the code and output is not changed except as 
+    authorized herein, and the code and output is validated by AT&T. 
+    Bigelow & Holmes is the owner of the Lucida (R) trademark for the
+    fonts and bit-mapped images associated with the materials on this 
+    tape. Users are granted a royalty-free, nonexclusive license to use
+    the trademark only to identify the fonts and bit-mapped images if, 
+    and only if, the fonts and bit-mapped images are not modified in any
+    way by the user. 
+
+
+    Any use of this source code must include, in the user documentation 
+    and internal comments to the code, notices to the end user as  
+    follows:
+
+
+    (c) Copyright 1989 Sun Microsystems, Inc. Sun design patents
+    pending in the U.S. and foreign countries. OPEN LOOK is a 
+    trademark of AT&T. Used by written permission of the owners.
+
+
+    (c) Copyright Bigelow & Holmes 1986, 1985. Lucida is a registered 
+    trademark of Bigelow & Holmes. Permission to use the Lucida 
+    trademark is hereby granted only in association with the images 
+    and fonts described in this file.
+
+
+
+    SUN MICROSYSTEMS, INC., AT&T, AND BIGELOW & HOLMES
+    MAKE NO REPRESENTATIONS ABOUT THE SUITABILITY OF
+    THIS SOURCE CODE FOR ANY PURPOSE. IT IS PROVIDED "AS IS" 
+    WITHOUT EXPRESS OR IMPLIED WARRANTY OF ANY KIND. 
+    SUN  MICROSYSTEMS, INC., AT&T AND BIGELOW  & HOLMES, 
+    SEVERALLY AND INDIVIDUALLY, DISCLAIM ALL WARRANTIES 
+    WITH REGARD TO THIS SOURCE CODE, INCLUDING ALL IMPLIED
+    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+    PARTICULAR PURPOSE. IN NO EVENT SHALL SUN MICROSYSTEMS,
+    INC., AT&T OR BIGELOW & HOLMES BE LIABLE FOR ANY
+    SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
+    OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA      
+    OR PROFITS, WHETHER IN AN ACTION OF  CONTRACT, NEGLIGENCE
+    OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
+    WITH THE USE OR PERFORMANCE OF THIS SOURCE CODE.
+</LISTING>
+
+<!--FOOTER-->
+
+<P>
+<A HREF="toc.html"><IMG SRC="icons/back.gif"> HylaFAX table of contents</A>.<BR>
+
+<HR>
+
+<ADDRESS>
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+Last updated $Date$.
+</ADDRESS>
+
+</BODY>
+</HTML>

@@ -1,0 +1,97 @@
+# $Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Configuration for using the Class 2 command interface with
+# an AT&T DataPort 14.4 modem.  Firmware version 166 (ati1)
+# or newer.
+#
+# Hardware flow control is used by default.
+#
+# CONFIG: CLASS2: AT?T*Paradyne*-*
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:		Class2		# use class 2 interface
+ModemRate:		38400		# set rate for DCE-DTE communication
+ModemFlowControl:	rtscts		# default
+#
+ModemHardFlowCmd:	AT&R0\D1\Q3	# use RTS/CTS and enable RS232 handling
+ModemSoftFlowCmd:	AT&R1\D0\Q1	# use RTS/CTS and enable RS232 handling
+ModemSetupDTRCmd:	AT&D2		# setup so DTR drop resets modem
+ModemSetupDCDCmd:	AT&C1		# setup so DCD follows carrier
+ModemSetupAACmd:	AT+FAA=1	# enable adaptive-answer in Class 2
+#
+ModemRecvFillOrder:	MSB2LSB		# bit order of received facsimile
+ModemSendFillOrder:	LSB2MSB		# bit order modem expects for transmit
+#
+# The modem returns "OK" when there is a timeout before carrier is
+# established.  This is treated as "NO CARRIER" by faxd.  Thus we
+# need to up the NoCarrierRetrys parameter to avoid having the server
+# reject jobs prematurely.
+#
+NoCarrierRetrys:	3		# retry 3 times on no carrier
+#
+# Rev C01.66.10 firmware gives a bogus result string for
+# +FDCC=? query so we override it here.  Syntax is:
+#
+#	(vr),(br),(wd),(ln),(df),(ec),(bf),(st)
+# where,
+#	vr	vertical resolution
+#	br	bit rate
+#	wd	page width
+#	ln	page length
+#	df	data compression
+#	ec	error correction
+#	bf	binary file transfer
+#	st	scan time/line
+#
+# Note that if your modem does not support V.17 then you'll need
+# to restrict the values of br to (0-3) intead of (0-5).
+#
+Class2DCCQueryCmd:	"!(0,1),(0-5),(0-4),(0-2),(0),(0),(0),(0-7)"
+#
+# There's no suport for HDLC frame tracing; silence the avoid
+# error message so naive folks don't ask if it's a problem.
+#
+Class2BugCmd:		AT+FBUG=0
+#
+# Enable copy quality checking with some "average" parameters:
+#
+#     +FBADMUL=20	<20% bad lines for OK quality
+#     +FBADLIN=10	no more than 10 consecutive bad line on a page
+#
+# Note that default values set by the rev 1.76 firmware are 20 and 0.
+#
+Class2CQCmd:		AT+FCQ=1;+FBADMUL=20;+FBADLIN=10
+#
+PagerSetupCmds:		ATS41=10%B300	# use V.21 at 300 bps

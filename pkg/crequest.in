@@ -1,0 +1,22 @@
+# $Id$
+trap 'exit 3' 15
+# determine if libraries should be installed
+ans=`ckyorn -d y \
+        -p "Should the man pages included in this package be installed" ` || exit $?
+if [ "$ans" = y ]
+then
+        CLASSES="$CLASSES man"
+fi
+
+if [ "@AFM@" = yes ]
+then
+        CLASSES="$CLASSES fonts"
+fi
+
+# make parameters available to installation service,
+# and so to any other packaging scripts
+cat >$1 <<!
+CLASSES='$CLASSES'
+!
+exit 0
+

@@ -1,0 +1,17 @@
+#
+# $Id$
+#	Tim Rice
+#
+#	postinstall
+#
+#cd /usr/local/HylaFAX-v4.0
+#sh make.links
+
+if test -d @SPOOL@/recvq
+then
+	echo "\n\nRun @SBIN@/faxsetup\n"
+else
+	echo "\n\nRun @SBIN@/faxsetup -client\n"
+fi
+
+exit 0

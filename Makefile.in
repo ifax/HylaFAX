@@ -1,0 +1,388 @@
+#!smake
+#	$Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1988-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# @WARNING@
+#
+# VERSION:	@VERSION@
+# DATE:		@DATE@
+# TARGET:	@TARGET@
+# CCOMPILER:	@CCOMPILER@
+# CXXCOMPILER:	@CXXCOMPILER@
+#
+COMMONPREF=fax
+DEPTH	= .
+
+@MAKEINCLUDE@ @MAKELQUOTE@defs@MAKERQUOTE@
+
+SRCDIR	= ${TOPSRCDIR}/${DEPTH}
+
+DIRS=	util \
+	faxalter \
+	faxcover \
+	faxd \
+	faxmail \
+	faxrm \
+	faxstat \
+	hfaxd \
+	sendfax \
+	sendpage \
+	\
+	config \
+	etc \
+	man
+DSODIRS	= util faxd
+
+TARGETS=hylafax
+
+default all ${TARGETS}:
+	@${MAKE} -f ${MAKEFILE} dirs
+
+@MAKEINCLUDE@ @MAKELQUOTE@rules@MAKERQUOTE@
+
+dirs::
+	@if [ "@PORT@" = yes ]; then \
+	    ${ECHO} "= "port; cd port; ${MAKE}; \
+	else \
+	    true; \
+	fi
+	@if [ "@ZLIB@" = yes ]; then \
+	    ${ECHO} "= "zlib; cd zlib; ${MAKE}; \
+	else \
+	    true; \
+	fi
+	@if [ "@REGEX@" = yes ]; then \
+	    ${ECHO} "= "regex; cd regex; ${MAKE}; \
+	else \
+	    true; \
+	fi
+	@for i in ${DIRS}; do \
+	    (${ECHO} "= "$$i; cd $$i; ${MAKE}); \
+	done
+	@if [ "@SGI2FAX@" = yes ]; then \
+	    ${ECHO} "= "sgi2fax; cd sgi2fax; ${MAKE}; \
+	else \
+	    true; \
+	fi
+	@if [ "@HTML@" = yes ]; then \
+	    ${ECHO} "= "html; cd html; ${MAKE}; \
+	else \
+	    true; \
+	fi
+	@if [ "@DPS@" = yes ]; then \
+	    ${ECHO} "= "dps; cd dps; ${MAKE}; \
+	else \
+	    true; \
+	fi
+	@if [ "@IMP@" = yes ]; then \
+	    ${ECHO} "= "imp; cd imp; ${MAKE}; \
+	else \
+	    true; \
+	fi
+	@if [ "@GS@" = yes ]; then \
+	    ${ECHO} "= "gs; cd gs; ${MAKE}; \
+	else \
+	    true; \
+	fi
+depend::
+	@if [ "@PORT@" = yes ]; then \
+	    ${ECHO} "= "port; cd port; ${MAKE} depend; \
+	else \
+	    true; \
+	fi
+	@if [ "@ZLIB@" = yes ]; then \
+	    ${ECHO} "= "zlib; cd zlib; ${MAKE} depend; \
+	else \
+	    true; \
+	fi
+	@if [ "@REGEX@" = yes ]; then \
+	    ${ECHO} "= "regex; cd regex; ${MAKE} depend; \
+	else \
+	    true; \
+	fi
+	@for i in ${DIRS}; do \
+	    (${ECHO} "= "$$i; cd $$i; ${MAKE} depend); \
+	done
+	@if [ "@SGI2FAX@" = yes ]; then \
+	    ${ECHO} "= "sgi2fax; cd sgi2fax; ${MAKE} depend; \
+	else \
+	    true; \
+	fi
+	@if [ "@HTML@" = yes ]; then \
+	    ${ECHO} "= "html; cd html; ${MAKE} depend; \
+	else \
+	    true; \
+	fi
+clean::
+	@if [ "@PORT@" = yes ]; then \
+	    ${ECHO} "= "port; cd port; ${MAKE} clean; \
+	else \
+	    true; \
+	fi
+	@if [ "@ZLIB@" = yes ]; then \
+	    ${ECHO} "= "zlib; cd zlib; ${MAKE} clean; \
+	else \
+	    true; \
+	fi
+	@if [ "@REGEX@" = yes ]; then \
+	    ${ECHO} "= "regex; cd regex; ${MAKE} clean; \
+	else \
+	    true; \
+	fi
+	@for i in ${DIRS}; do \
+	    (${ECHO} "= "$$i; cd $$i; ${MAKE} clean); \
+	done
+	@if [ "@SGI2FAX@" = yes ]; then \
+	    ${ECHO} "= "sgi2fax; cd sgi2fax; ${MAKE} clean; \
+	else \
+	    true; \
+	fi
+	@if [ "@HTML@" = yes ]; then \
+	    ${ECHO} "= "html; cd html; ${MAKE} clean; \
+	else \
+	    true; \
+	fi
+	@if [ "@DPS@" = yes ]; then \
+	    ${ECHO} "= "dps; cd dps; ${MAKE} clean; \
+	else \
+	    true; \
+	fi
+	@if [ "@IMP@" = yes ]; then \
+	    ${ECHO} "= "imp; cd imp; ${MAKE} clean; \
+	else \
+	    true; \
+	fi
+	@if [ "@GS@" = yes ]; then \
+	    ${ECHO} "= "gs; cd gs; ${MAKE} clean; \
+	else \
+	    true; \
+	fi
+	@${ECHO} "= "pkg; cd pkg; ${MAKE} clean
+clobber::
+	(cd util; ${MAKE} clobberconfig)
+	(cd etc; ${MAKE} clobberconfig)
+	@if [ "@PORT@" = yes ]; then \
+	    ${ECHO} "= "port; cd port; ${MAKE} clobberconfig; ${MAKE} clobber; \
+	else \
+	    true; \
+	fi
+	@if [ "@ZLIB@" = yes ]; then \
+	    ${ECHO} "= "zlib; cd zlib; ${MAKE} clobber; \
+	else \
+	    true; \
+	fi
+	@if [ "@REGEX@" = yes ]; then \
+	    ${ECHO} "= "regex; cd regex; ${MAKE} clobber; \
+	else \
+	    true; \
+	fi
+	@for i in ${DIRS}; do \
+	    (${ECHO} "= "$$i; cd $$i; ${MAKE} clobber); \
+	done
+	@if [ "@SGI2FAX@" = yes ]; then \
+	    ${ECHO} "= "sgi2fax; cd sgi2fax; ${MAKE} clobber; \
+	else \
+	    true; \
+	fi
+	@if [ "@AFM@" = yes ]; then \
+	    ${ECHO} "= "afm; cd afm; ${MAKE} clobber; \
+	else \
+	    true; \
+	fi
+	@if [ "@HTML@" = yes ]; then \
+	    ${ECHO} "= "html; cd html; ${MAKE} clobber; \
+	else \
+	    true; \
+	fi
+	-${RM} -f Makedepend port.h config.h config.log config.cache
+distclean: clobber
+	@if [ "@DPS@" = yes ]; then \
+	    ${ECHO} "= "dps; cd dps; ${MAKE} distclean; \
+	else \
+	    true; \
+	fi
+	@if [ "@IMP@" = yes ]; then \
+	    ${ECHO} "= "imp; cd imp; ${MAKE} distclean; \
+	else \
+	    true; \
+	fi
+	@if [ "@GS@" = yes ]; then \
+	    ${ECHO} "= "gs; cd gs; ${MAKE} distclean; \
+	else \
+	    true; \
+	fi
+	(cd pkg; ${MAKE} distclean)
+	-${RM} -f defs rules Makefile
+
+makeClientDirs::
+	-${INSTALL} -u ${SYSUSER} -g ${SYSGROUP} -m ${DIRMODE} \
+	    -idb hylafax.sw.client -dir \
+	    ${BIN} ${LIBDATA} ${LIBEXEC} ${SBIN}
+makeServerDirs::
+	-${INSTALL} -u ${SYSUSER} -g ${SYSGROUP} -m ${DIRMODE} \
+	    -idb hylafax.sw.server -dir ${SBIN};
+	-${INSTALL} -u ${FAXUSER} -g ${FAXGROUP} -m ${DIRMODE} \
+	    -idb hylafax.sw.server -dir ${SPOOL}
+	-${INSTALL} -u ${FAXUSER} -g ${FAXGROUP} -m ${DIRMODE} \
+	    -idb hylafax.sw.server -dir \
+	    -F ${SPOOL} bin client config dev etc info log recvq status
+	-${INSTALL} -u ${FAXUSER} -g ${FAXGROUP} -m 700 \
+	    -idb hylafax.sw.server -dir \
+	    -F ${SPOOL} sendq doneq docq tmp pollq archive
+makeDirs: makeClientDirs makeServerDirs
+
+makeDevices::
+	${INSTALL} -u ${FAXUSER} -g ${FAXGROUP} -m 600 -fifo \
+	    -idb hylafax.sw.server -F ${SPOOL} FIFO
+
+install: makeDirs makeDevices
+	${INSTALL} -m 444 -F ${SPOOL} -idb hylafax.sw.server \
+	    -src ${SRCDIR}/COPYRIGHT -O COPYRIGHT
+	@if [ "@ZLIB@" = yes ]; then \
+	    ${ECHO} "= "zlib; cd zlib; ${MAKE} install; \
+	else \
+	    true; \
+	fi
+	@if [ "@REGEX@" = yes ]; then \
+	    ${ECHO} "= "regex; cd regex; ${MAKE} install; \
+	else \
+	    true; \
+	fi
+	@for i in ${DIRS}; do \
+	    (${ECHO} "= "$$i; cd $$i; ${MAKE} install); \
+	done
+	@if [ "@SGI2FAX@" = yes ]; then \
+	    ${ECHO} "= "sgi2fax; cd sgi2fax; ${MAKE} install; \
+	else \
+	    true; \
+	fi
+	@if [ "@DSO@" != no ]; then \
+	    for i in ${DSODIRS}; do \
+		(${ECHO} "= "$$i; cd $$i; ${MAKE} installDSO); \
+	    done; \
+	    if [ "@ZLIB@" = yes ]; then \
+		${ECHO} "= "zlib; cd zlib; ${MAKE} installDSO; \
+	    else \
+		true; \
+	    fi; \
+	else \
+	    true; \
+	fi
+	@if [ "@SYSVINIT@" = yes ]; then \
+	    ${ECHO} "= "etc; cd etc; ${MAKE} installSysVInit; \
+	else \
+	    true; \
+	fi
+	@if [ "@AFM@" = yes ]; then \
+	    ${ECHO} "= "afm; cd afm; ${MAKE} install; \
+	else \
+	    true; \
+	fi
+	@if [ "@HTML@" = yes ]; then \
+	    ${ECHO} "= "html; cd html; ${MAKE} install; \
+	else \
+	    true; \
+	fi
+	@if [ "@DPS@" = yes ]; then \
+	    ${ECHO} "= "dps; cd dps; ${MAKE} install; \
+	else \
+	    true; \
+	fi
+	@if [ "@IMP@" = yes ]; then \
+	    ${ECHO} "= "imp; cd imp; ${MAKE} install; \
+	else \
+	    true; \
+	fi
+	@if [ "@GS@" = yes ]; then \
+	    ${ECHO} "= "gs; cd gs; ${MAKE} install; \
+	else \
+	    true; \
+	fi
+
+CLIENTDIRS=\
+	faxalter \
+	faxcover \
+	faxmail  \
+	faxrm  \
+	faxstat  \
+	sendfax  \
+	sendpage
+
+installClient: makeClientDirs
+	@for i in ${CLIENTDIRS}; do \
+	    (${ECHO} "= "$$i; cd $$i; ${MAKE} install); \
+	done
+	@if [ "@SGI2FAX@" = yes ]; then \
+	    ${ECHO} "= "sgi2fax; cd sgi2fax; ${MAKE} install; \
+	else \
+	    true; \
+	fi
+	@for i in etc util man; do \
+	    (${ECHO} "= "$$i; cd $$i; ${MAKE} installClient); \
+	done
+	@if [ "@DSO@" != no ]; then \
+	    for i in util; do \
+		(${ECHO} "= "$$i; cd $$i; ${MAKE} installDSO); \
+	    done; \
+	    if [ "@ZLIB@" = yes ]; then \
+		${ECHO} "= "zlib; cd zlib; ${MAKE} installDSO; \
+	    else \
+		true; \
+	    fi; \
+	else \
+	    true; \
+	fi
+	@if [ "@AFM@" = yes ]; then \
+	    ${ECHO} "= "afm; cd afm; ${MAKE} install; \
+	else \
+	    true; \
+	fi
+
+package::
+	@${ECHO} "= "pkg; cd pkg; ${MAKE} package
+
+product::
+	test -d dist || ${MKDIR} dist
+	${RM} -f dist/rawidb
+	SRC=`${PWD}` RAWIDB=`${PWD}`/dist/rawidb ${MAKE} install
+	${RM} -f dist/idb
+	${SORT} -u +4 dist/rawidb > dist/idb
+	${GENDIST} -v -dist dist -idb dist/idb -sbase `pwd` -spec ${SRCDIR}/dist/hylafax.spec
+
+dist.inst:
+	VERSION="v`cat ${SRCDIR}/VERSION``awk '{print $$3}' ${SRCDIR}/dist/hylafax.alpha`";	\
+	rm -f $$VERSION.inst.tar; \
+	tar cf $$VERSION.inst.tar \
+	    dist/hylafax	\
+	    dist/hylafax.idb	\
+	    dist/hylafax.sw	\
+	    dist/hylafax.html	\
+	    dist/hylafax.man
+
+@MAKEINCLUDE@ @MAKELQUOTE@${SRCDIR}/distrules@MAKERQUOTE@

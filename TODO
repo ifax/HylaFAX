@@ -1,0 +1,237 @@
+#	$Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+List of outstanding bug reports and change requests
+
+
+BH job group support is broken
+B  file write errors during receive are not processed correctly
+B  polling bug in Class 1 driver (reset FCF sndr/rcvr bit at start of Phase B)
+B  no timeout in Class 1 receive if data is received when waiting for OK
+   after transmit of TSI (happens easily if wrong receive baud rate setup)
+B  sloppy processing of +FHNG: response to AT+FDT (extra read+timeout)
+H  faxadduser program equivalent of SITE ADDUSER command
+H  job archival support in faxqclean
+H  revamp modem status to have a fixed format and include useful info
+   like type, manufacturer, etc.
+H  fill-in VRFY op to support least-cost routing over a WAN
+H  use T.30 subaddress routing for received facsimile (needs database)
+H  polled transmission of documents (use SEP and PWD; add registration
+   tools and query status support)
+H  use PWD in TSI qualification
+H  select modems based on criteria such as destination phone number
+   (for locations where some lines are capable of long distance calls
+   while others are not)
+H  voice support integration
+H  VOICE/ANSWER button support for ZyXEL
+H  silent answer support?
+M  optionally replace info directory with a hashed database file to
+   reduce overhead on busy systems
+M  batch multiple jobs to the same destination (important for pages)
+M  bound transmit page count on a per-user basis
+M  add type of call control for CID access control list?
+M  restructure modem classes to support multi-class modems (e.g. class 1+2)
+M  add faxq lock to avoid naive users starting multiple queuers
+BL race in queuer/Dispatcher collecting child process status (hack sleep
+   in child to give parent time to install SIGCLD handler for now)
+BL aborted receives get an extra page written (use TIFFUnlinkDirectory)
+L  change receive timeout to be based on seeing EOL code
+L  faxmove program, analogous to lpmove
+L  permit call type deduction logic used when answering an inbound call to
+   be user-configurable (useful for distinctive ring)--not so important now
+   with configurable distinctive ring support builtin
+O  DataPort<->MicroPorte wedges when retraining after EOM
+X  add TOD control to TSI+CID access control lists? (no, can do this with
+   cron job that sends FIFO messages to change control list files)
+
+Since v4.0pl2 there is a new style for the collection of the
+bug and problem reports. If you want to hunt for bugs you may also
+fetch the article from the mailing-lists using the information
+from the "refs:" field. Please use the "report#:" if you have
+comments or hints to fix the problem.
+
+---------------
+BH     report#: 0001
+       problem: SIGSEGV in hfaxd after pagesend completed and
+                faxq finished the job
+          refs: 23/09/1996 Matthias.Apitz@SOFTCON.de
+                23/09/1996 sam@cthulhu.engr.sgi.com
+          file: problemReports/0001
+---------------
+B      report#: 0002
+       problem: faxconfig(1M) does not work for PostScriptTimeout: value
+          refs: 23/09/1996 Matthias.Apitz@SOFTCON.de
+                23/09/1996 sam@cthulhu.engr.sgi.com
+          file: problemReports/0001
+---------------
+B      report#: 0003
+       problem: MCF/RTN bug in the Class 2/2.0 driver
+                the modem says "+FPTS: 2,2219,0,0" which means
+                the page isn't good, ends phase C and ends phase C
+                and reports "+FET: 2"; HylaFAX just ignores the PPR value
+          refs: 28/01/1997 Stefan Pettersson <spp@lysator.liu.se>
+                02/02/1997 Matthias.Apitz@SOFTCON.de
+                03/02/1997 sam@sgi.com
+          file: problemReports/0003
+---------------
+BH     report#: 0004
+       problem: Bug in faxqclean
+                the TIFF version of the document has a ";31" or ";71"
+                or some such appended to it, NOT the "q file" number.
+                The faxqclean program looks at these files,
+                thinks the "q file" number is 0, and removes the
+                file since the "q file" does not exist.
+          refs: 20/02/1997 john@BlueSkyTours.COM
+          file: problemReports/0004
+---------------
+B      report#: 0005
+       problem: hp-ux 10.20 has no ut_xtime
+                GettySysV.c++:215: `struct utmpx' has no member
+                named `ut_xtime' in /usr/include/utmpx.h
+          refs: 12/05/1997 meyer-jark@anaesthesie.klinik.uni-mainz.de
+          file: problemReports/0005
+---------------
+X      report#: 0006 -- resolved in v4.0pl2
+       problem: "Yes" in modem config doesn't work
+          refs: 16/07/1997 jik@kamens.brookline.ma.us
+          file: problemReports/0006
+---------------
+B      report#: 0007
+       problem: spaces in typerules file not allowed, only TABs
+          refs: 26/08/1997 stenny@troja.stuttgart.netsurf.de
+          file: problemReports/0007
+---------------
+X      report#: 0008 -- resolved in v4.0pl2
+       problem: adding UCP driver to pagesend
+          refs: 06/02/1997 yngvi@hagkaup.is
+                28/09/1997 afm@macbeth.othello.ch
+          file: problemReports/0008
+---------------
+C      report#: 0009
+       problem: use "client" and "owner" for accounting instead "mailaddr"
+          refs: 08/02/1997 Andreas.Eulitz@Informatik.TU-Chemnitz.DE
+          file: problemReports/0009
+---------------
+B      report#: 0010
+       problem: compiling HylafAX on HP-UX 10.x
+          refs: 01/05/1997 meyer-jark@anaesthesie.klinik.uni-mainz.de
+          file: problemReports/0010
+---------------
+L      report#: 0011
+       problem: gettimeofday(a,b) for older SVR4
+          refs: 03/03/1997 dlw@seavme.xroads.com
+          file: problemReports/0011
+---------------
+C      report#: 0012
+       problem: add ELSA modem config file
+          refs: 07/05/1997 gobbers@faw9370.faw.uni-ulm.de
+          file: problemReports/0012
+---------------
+BH     report#: 0013
+       problem: SEND recv RTN (retrain negative) but page received
+                at called station
+          refs: 30/07/1997 pks1@IPA.FhG.de
+          file: problemReports/0013
+---------------
+B      report#: 0014
+       problem: faxmail doesn't support 8-bit characters
+          refs: 30/06/1997 oehansen@utbildning.halmstad.se
+          file: problemReports/0014
+---------------
+C      report#: 0015
+       problem: changes for class1 and class1.0
+          refs: 13/10/1997 sam@sgi.com
+          file: problemReports/0015
+---------------
+L      report#: 0016
+       problem: hfaxd only uses LogFacility from hfaxd.conf for
+                client connections and runs with default LOG_FAX
+                in parrent proc
+          refs: -
+          file: -
+---------------
+O      report#: 0017
+       problem: possible bug in FaxQueuer dealing with jobs
+          refs: 29/09/1997 greg@pocketscience.com
+          file: problemReports/0017
+---------------
+B      report#: 0018
+       problem: 3 bugs in hfaxd/faxq dealing with the job file
+          refs: 03/09/1997 davidb@chelsea.net
+          file: problemReports/0018
+---------------
+B      report#: 0019
+       problem: faxmail and attachments
+          refs: 30/10/1997 lrei@ictlux.com
+          file: problemReports/0019
+---------------
+O      report#: 0020
+       problem: sendpage && hfaxd SNPP problem
+          refs: 09/11/1997 frohme@memphis.edu
+          file: problemReports/0020
+---------------
+O      report#: 0021
+       problem: stopping faxq(1M) with TimeOfDay:
+          refs: 17/11/1997 ytrudeau@jyrmatec.com
+          file: problemReports/0021
+---------------
+L      report#: 0022
+       problem: LineWrap: at word boundaries
+          refs: 19/11/1997 patrick@cre8tivegroup.com
+          file: problemReports/0022
+---------------
+OH     report#: 0023
+       problem: documents in the docq directory being over writen
+          refs: 25/11/1997 jared@4websites.com
+          file: problemReports/0023
+---------------
+B      report#: 0024
+       problem: better (recent) config.guess
+          refs: 08/12/1997 jbauza@hotmail.com
+          file: problemReports/0024
+---------------
+C      report#: 0025
+       problem: option "-o owner" to sendfax(1)
+          refs: 05/01/1998 alzhimer@cs.tu-berlin.de
+          file: problemReports/0025
+---------------
+B      report#: 0026
+       problem: wrong sendmail rules for faxmail
+          refs: 07/02/1998 david@djwhome.demon.co.uk
+          file: problemReports/0026
+
+
+--
+
+B = outright bug
+O = observe (seen at least once but cannot reproduce)
+C = change request
+H = high priority
+M = medium priority
+L = low priority
+X = resolved

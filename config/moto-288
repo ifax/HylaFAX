@@ -1,0 +1,73 @@
+# $Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Configuration for a Motorola RC288DPi-based Class 1 modem.
+#    Lifestyle 28.8		S209415900 -01 1/16/95    3:30 PM
+#
+# CONFIG:CLASS1:288:Motorola:.*: Manufacturer=Motorola Model=28.8
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:		Class1		# use class 1 interface
+ModemRate:		38400		# locked for fax sending&receiving
+ModemFlowControl:	rtscts		# default
+#
+ModemNoFlowCmd:		AT\Q		# disable flow control cmd
+ModemSoftFlowCmd:	AT&R1\Q1	# software flow control cmd
+ModemHardFlowCmd:	AT&R\Q3		# hardware flow control cmd
+ModemSetupDTRCmd:	AT&D3		# DTR off causes modem to reset
+ModemSetupDCDCmd:	AT&C1		# DCD follows carrier
+ModemSetupAACmd:	AT+FAA=1
+#
+ModemAnswerCmd:		"AT*FR\nATA"	# enable autobaud before answering
+ModemWaitForConnect:	yes		# modem sends FAX/DATA first
+#
+# Apparently Rev 2 of the firmware requires that you send ATO
+# to initiate a data connection when adaptive answer is set; the
+# following will send ATO and then wait for the CONNECT response.
+#
+ModemAnswerDataBeginCmd:"ATO\n<waitfor:CONNECT>"
+#
+ModemMfrQueryCmd:	!Motorola
+ModemModelQueryCmd:	!28.8
+ModemRevQueryCmd:	AT%V		# model and firmware rev
+#
+ModemDialCmd:		ATDT%s		# T for tone dialing
+#
+# Caller ID configuration setup; add AT*ID1 to ModemResetCmds
+# to enable functionality (when supported by the local Telco).
+#
+#QualifyCID:		etc/cid		# CID access control list file
+#CIDNumber:		"CALLER NUMBER: " # pattern string for phone number info
+#CIDName:		"CALLER NAME: "	# pattern string for identity info
+#

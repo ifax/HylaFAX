@@ -1,0 +1,62 @@
+# $Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Configuration for a Rockwell RC288DPi-based Class 1 modem.
+#    Hayes Optima 28800		firmware rev ???
+#    Microcom DeskPorte 28.8S	firmware rev V1.100K-V34_DS
+#    PPI PM288FXMT		firmware rev 1.57
+#
+# Note that the modem does not lock the line rate for fax
+# receive (at least not the PM288FXMT); but not sure whether
+# current flow control settings are maintained or if it
+# switches to XON/XOFF (testing host was too fast to see).
+#
+# CONFIG:CLASS1:28800:.*:.*: Manufacturer=ROCKWELL Model=RC288DPi
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:		Class1		# use this to supply a hint
+ModemRate:		38400		# rate for DCE-DTE communication
+ModemFlowControl:	rtscts		# default
+#
+ModemNoFlowCmd:		AT&K0		# setup no flow control
+ModemHardFlowCmd:	AT&K3		# setup hardware flow control
+ModemSoftFlowCmd:	AT&K4		# setup software flow control
+ModemSetupDTRCmd:	AT&D2		# setup so DTR drop resets modem
+ModemSetupDCDCmd:	AT&C1		# setup so DCD reflects carrier (or not)
+#
+ModemMfrQueryCmd:	!Rockwell
+ModemModelQueryCmd:	!RC288DPi
+ModemRevQueryCmd:	ATI3		# product information
+#
+ModemDialCmd:		ATDT%s		# T for tone dialing

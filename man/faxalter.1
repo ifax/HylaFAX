@@ -1,0 +1,227 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH FAXALTER 1 "July 11, 1996"
+.SH NAME
+faxalter \- alter parameters of a \*(Fx job queued for transmission
+.SH SYNOPSIS
+.B faxalter
+[
+.I options
+]
+.IR id ...
+.SH DESCRIPTION
+.I faxalter
+changes the state of one or more \*(Fx jobs that
+are queued for transmission.
+Numerous parameters can be altered; see the options below.
+.PP
+An 
+.I id
+is a number that identifies a
+.IR job
+that has been submitted to \*(Fx; these numbers are printed by
+.IR sendfax (1)
+when jobs are queued for transmission and can also be displayed with
+.IR faxstat (1).
+Unprivileged users can alter the parameters of jobs that they own; clients
+with administrative privileges on a server can manipulate any job.
+By default,
+.I faxalter
+contacts the facsimile server on the host specified in the
+.B FAXSERVER
+environment variable; but consult the
+.B \-h
+option for more information.
+.SH OPTIONS
+.TP 10
+.BI \-a " time"
+Specify a new time to send a job.
+The syntax for specifying a time is the same as used
+by
+.IR sendfax (1)
+(and
+.IR at (1)).
+.TP 10
+.BI \-h " host"
+Force the server to be contacted on a specific
+.IR host .
+The
+.I host
+may be either a symbolic name or a network address.
+If no
+.B \-h
+option is supplied,
+.I faxalter
+uses the
+.SM FAXSERVER
+environment variable to identify the \*(Fx server to contact.
+If this variable is not set, then
+.I faxalter
+checks for a setting in the configuration files (first in the
+per-user file and then in the system-wide file).
+If all of the above fails, then
+.I faxalter
+attempts to contact a server on the machine where it is run.
+.TP 10
+.BI \-k " time"
+Specify a new time to kill a job;
+the syntax is the same as used for the 
+.B \-a
+option.
+.TP 10
+.BI \-m " modem"
+Assign/reassign the jobs to the specified
+.IR modem .
+Specifying ``any'' for
+.I modem
+causes the jobs to be scheduled for any available modem.
+.TP 10
+.B \-p
+The jobs should be
+.IR pushed ;
+that is, they should be sent immediately
+(this is equivalent to ``\-a now''.)
+.TP 10
+.BI \-P " pri"
+Set the scheduling priority for the specified jobs.
+The priority is an integer value in the range 0-255;
+lower values give a job higher priority.
+The default scheduling priority for a job is 127
+and priorities are recalculated after each attempt to
+process a job.
+.TP 10
+.BI \-t " tries"
+Set the maximum number of times the
+server should call the remote fax machine.
+.TP 10
+.BI \-n " scheme"
+Select a notification scheme to use for the specified jobs.
+Possible schemes are:
+``\fInone\fP'' for no notification (default),
+``\fIwhen done\fP'' for notification when the job is completed,
+``\fIwhen requeued\fP'' for notification when the job is requeued
+after a failed transmission attempt.
+The
+.BR \-Q ,
+.BR \-D ,
+and
+.B \-R
+options are shorthand for these notification schemes,
+respectively.
+One can also leave off ``\fIwhen\fP'' when using the
+.B \-n
+option; e.g., ``\fIdone\fP'' instead of ``\fIwhen done\fP''.
+.TP 10
+.B \-v
+Trace the protocol exchanges between
+.I faxalter
+and the remote
+.I hfaxd
+process.
+Tracing information is written to the standard output.
+.SH "CONFIGURATION PARAMETERS"
+.I faxalter
+reads configuration information from the file
+.B ${LIBDATA}/hyla.conf
+and then from the file
+.BR ~/.hylarc .
+Configuration files follow the conventions described in
+.IR hylafax (1).
+The following configuration parameters are recognized:
+.sp .5
+.nf
+.ta \w'AutoCoverPage    'u +\w'boolean    'u +\w'\s-1\fIsee below\fP\s+1    'u
+\fBTag	Type	Default	Description\fP
+Host	string	\s-1localhost\s+1	host to contact for service
+Port	integer	\s-14559\s+1	port to use in contacting server
+Protocol	string	\s-1tcp\s+1	protocol to use in contacting server
+Verbose	boolean	\s-1No\s+1	whether or not to enable protocol tracing
+.fi
+.PP
+The configuration parameters are explained below:
+.TP 10
+.B Host
+The host to contact for service.
+(Equivalent to the
+.B \-h
+option.)
+.TP 10
+.B Port
+The network port to contact for service.
+(Eqvuialent to the
+.B \-h
+option.)
+.TP 10
+.B Protocol
+The name of the communication protocol to use when contacting a server.
+(Equivalent to the
+.B FAXSERVICE
+environment variable.)
+.TP 10
+.B Verbose
+Control protocol tracing.
+(Equivalent to the
+.B \-v
+option.)
+.SH BUGS
+Setting a job's killtime without also setting the time to send
+may cause the wrong value for the killtime to be sent.
+This is because the killtime is calculated as the difference in
+time between the killtime and time to send: and if the time
+to send is not specified, then
+.I faxalter
+uses the current time instead of querying the server for the
+job's time to send.
+.PP
+.I faxalter
+suspends a job before attempting to alter its state.
+If a job is active when a suspend request is made there may
+be a delay while waiting for the job to enter a consistent
+state where it can be suspended.
+If
+.I faxalter
+is interrupted during this time then jobs may be left suspended.
+.PP
+.I faxalter
+only understands how to alter a subset of the available job
+parameters; there are many more client-controllable parameters
+that can only be modified by communicating directly with the server
+using the underlying protocol.
+.PP
+The continued use of the
+.IR at (1)-style
+notation for specifying times is questionable (it was done for
+backwards compatibility).
+.SH "SEE ALSO"
+.IR hylafax (1),
+.IR sendfax (1),
+.IR faxrm (1),
+.IR faxstat (1),
+.IR hfaxd (1M)

@@ -1,0 +1,77 @@
+# $Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Configuration for using the Class 1 command interface with
+# an AT&T DataPort 14.4 modem.  Firmware version 122 (ati1)
+# or newer.
+#
+# Hardware flow control is used by default.
+#
+# Note that due to a bug in the 1.22 firmware the FCS bytes in the HDLC
+# frames are NOT returned to the host.  This is fixed in versions 1.33
+# and later.  To deal with this problem, early firmware revs should be
+# sure to have Class1FrameOverhead set to 2 instead of the normal 4.
+#
+# CONFIG:CLASS1:144:.*:.*: Manufacturer='AT&T' Model=Dataport
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:		Class1		# use class 1 interface
+ModemRate:		38400		# could probably run 57600
+ModemFlowControl:	rtscts		# default
+#
+ModemHardFlowCmd:	AT&R0\D1\Q3	# use RTS/CTS and enable RS232 handling
+ModemSoftFlowCmd:	AT&R1\D0\Q1	# use RTS/CTS and enable RS232 handling
+ModemSetupDTRCmd:	AT&D2		# setup so DTR drop resets modem
+ModemSetupDCDCmd:	AT&C1		# setup so DCD follows carrier
+ModemSetupAACmd:	AT+FAA=0	# disable in case of Class 2 support
+#
+ModemMfrQueryCmd:	!AT&T
+ModemModelQueryCmd:	!DataPort
+ModemRevQueryCmd:	ATI19
+#
+# NB: this works around a bug in the 1.22 firmware; it is fixed
+# in versions 1.33 and later in which case you can remove this
+# line and use the default value of 4 (though leaving it as 2
+# won't harm anything).
+#
+Class1FrameOverhead:	2		# 1.22 firmware does not include FCS
+#
+# The modem returns "OK" when there is a timeout before carrier is
+# established.  This is treated as "NO CARRIER" by faxd.  Thus we
+# need to up the NoCarrierRetrys parameter to avoid having the server
+# reject jobs prematurely.
+#
+NoCarrierRetrys:	3		# retry 3 times on no carrier
+#
+PagerSetupCmds:		ATS41=10%B300	# use V.21 at 300 bps

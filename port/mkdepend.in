@@ -1,0 +1,258 @@
+#! @SCRIPT_SH@
+#	$Id$
+#
+# @WARNING@
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# VERSION:	@VERSION@
+# DATE:		@DATE@
+# TARGET:	@TARGET@
+# CCOMPILER:	@CCOMPILER@
+# CXXCOMPILER:	@CXXCOMPILER@
+#
+
+#
+# NAME
+#	mkdepend - compute header file dependencies
+# SYNOPSIS
+#	mkdepend [-c compiler] [-e sedprog] [-f force] [-ipr] [-s sentinel]
+#		depfile file ...
+CC=@CCOMPILER@
+SED=@SED@
+AWK=@AWK@
+
+# turn off noclobber, if set, for bash users
+test "${noclobber-}" && { unset noclobber >/dev/null 2>&1; }
+
+me=$0
+usage="usage: $me [-c compiler] [-e sedprog] [-f force] [-ipr]\n\t[-s sentinel] depfile [file ...]"
+depgen="$CC -M"
+incremental=no
+rawdepinput=no
+
+#
+# Process options and arguments.  We put quotes around the edit (-e) arguments
+# and use eval "sed -e ..." later, to preserve spaces in the edit command.
+#
+
+set -- "$@"
+
+while [ $# -gt 0 ] ; do
+	case $1 in
+	  -c)	depgen=$2; shift;;
+	  -e)	sedprog="$sedprog -e '$2'"; shift;;
+	  -f)	force="$force $2"; shift;;
+	  -i)	incremental=yes;;
+	  -p)	depgen=collapse pcount=$2 rawdepinput=yes; shift;;
+	  -r)	depgen=cat rawdepinput=yes;;
+	  -s)	sentinel=$2 ; shift;;
+	  -*)	echo $usage; exit 2;;
+	  *)	break;;
+	esac
+	shift
+done
+
+if [ $# -eq 0 ] ; then
+    echo $usage; exit 2
+fi
+
+newdepfile=$1
+depfiledir=`dirname $1`
+olddepfile=$depfiledir/#`basename $1`
+shift
+
+#
+# A shell function to collapse dependencies of targets in subdirectories
+# on common rightsides.
+#
+collapse() {
+	$SED -e 's@/\([^/:]*\): @/%\1: @' $* |
+	sort -t% +1 |
+	uniq |
+	$AWK -F: '
+	BEGIN {
+		total = '$pcount'
+	}
+	function flush(group, lastdir, dirname, count) {
+		for (dirname in group)
+			count++
+		if (count == total) {
+			print group[lastdir]
+		} else {
+			for (dirname in group)
+				print dirname group[dirname]
+		}
+		for (dirname in group)
+			delete group[dirname]
+	}
+	{
+		percent = index($1, "%")
+		name = substr($1, percent + 1)
+		if (name != basename || $2 != rightside) {
+			flush(group, dirname)
+			basename = name
+			rightside = $2
+		}
+		dirname = substr($1, 1, percent - 1)
+		group[dirname] = basename ":" rightside
+	}
+	END {
+		flush(group, dirname)
+	}' |
+	sort
+}
+
+#
+# An awk script to compress and pretty-print dependencies.
+#
+awkprog='
+BEGIN {
+	FS = ":"
+	INDENT = "\t"
+	INDENTSIZE = 8
+	MAXLINE = 72
+	MAXINDENTEDLINE = MAXLINE - INDENTSIZE - 1
+}
+
+#
+# For each line of the form "target1 ... targetN: dependent", where the
+# spaces are literal blanks, do the following:
+#
+{
+	if ($1 != target) {
+		if (depline) print depline
+		target = $1
+		depline= $0 "'"$force"'"
+		lim = MAXLINE
+	} else {
+		if (length(depline) + length($2) > lim) {
+			print depline " \\"
+			depline = INDENT
+			lim = MAXINDENTEDLINE
+		}
+		depline = depline $2
+	}
+}
+
+END {
+	if (depline) print depline 
+}'
+
+#
+# Save the old file in case of problems.  Define some temporary files for
+# incremental make depend.  Clean up if interrupted.
+#
+olddeps=/tmp/olddeps.$$
+newdeps=/tmp/newdeps.$$
+tmpdeps=$depfiledir/tmpdeps.$$
+if test "$incremental" = yes; then
+	trapcmds="rm -f $olddeps $newdeps $tmpdeps;"
+fi
+if test -f "$newdepfile"; then
+	trapcmds="$trapcmds mv -f \\$olddepfile \\$newdepfile;"
+	ln $newdepfile $olddepfile
+	echo "# placeholder in case make includes me" > $tmpdeps
+	mv -f $tmpdeps $newdepfile
+fi
+trap "$trapcmds exit 0" 1 2 15
+
+#
+# Remove any old dependencies from the file.
+#
+firstline="#$sentinel DO NOT DELETE THIS LINE -- make depend uses it"
+lastline="#$sentinel DO NOT DELETE THIS 2nd LINE -- make depend uses it"
+
+if test -f "$olddepfile"; then
+	sed -e "/^$firstline/,/^$lastline/d" $olddepfile
+fi > $newdepfile
+
+#
+# Delimit the beginning of the dependencies.  Save the old dependencies
+# in incremental mode.
+#
+echo $firstline >> $newdepfile
+if test $incremental = yes; then
+	#
+	# XXX Workaround for this sed bug: 1,/pat/d deletes 1,$ if line 1
+	# XXX and only line 1 matches pat.
+	#
+	(echo '# food for sed bug to eat'; cat $olddepfile 2> /dev/null) |
+	    sed -e "1,/^$firstline/d" -e "/^$lastline/"',$d' > $olddeps
+
+	#
+	# Compose an awk program that deletes pretty-printed dependencies
+	# from $olddeps that involve basenames of objects (in the raw input)
+	# or sources (arguments) whose dependencies are being updated.
+	#
+	awkinc='/^[^	 ]/ { deleting = 0; }'
+	if test $rawdepinput = yes; then
+		cat $* > $newdeps
+		for f in `sed -e 's@^\([^:/]*\)\.[^:/]*: .*@\1@' \
+			      -e 's@^[^:]*/\([^:/]*\)\.[^:/]*: .*@\1@' \
+			      $newdeps |
+			  sort -u`; do
+			list="$list $f"
+		done
+		set -- $newdeps
+	else
+		for f in $*; do
+			list="$list `expr ./$f : '.*/\(.*\)\..*'`"
+		done
+	fi
+	for f in $list; do
+		# NB: don't use || here 'cuz some awks get confused
+		awkinc="$awkinc
+		    /^$f\./ { deleting = 1; }
+		    /^[^	 :]*\/$f\./ { deleting = 1; }"
+	done
+	awkinc="$awkinc
+	    { if (!deleting) print \$0; }
+	"
+	$AWK "$awkinc" $olddeps >> $newdepfile
+	rm -f $olddeps
+fi
+
+#
+# Process source files - the sed commands and their functions are: 
+#	s:[^\./][^\./]*/\.\./::g	rewrite "dir/../path" to be "path"
+#	s:\([/ ]\)\./:\1:g		rewrite " ./path" to be " path" and
+#					remove the "./" from  ".././h/x.h"
+#
+# (must escape some metacharacters for systems with busted shells)
+#$depgen $* |
+depgenxx=`echo $depgen|sed -e s/\'//g -e 's/(/\\(/g' -e 's/)/\\)/g'`
+$depgenxx $* |
+    eval "sed \
+	-e :loop -e 's:[^\./][^\./]*/\.\./::g' -e tloop \
+	-e 's:\([/ ]\)\./:\1:g' \
+	$sedprog" |
+    $AWK "$awkprog" >> $newdepfile
+
+echo $lastline >> $newdepfile
+rm -f $olddepfile $newdeps

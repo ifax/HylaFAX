@@ -1,0 +1,86 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1994-1996 Sam Leffler
+.\" Copyright (c) 1994-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH TAGTEST 1M "March 3, 1995"
+.SH NAME
+tagtest \- \*(Fx tag line testing program
+.SH SYNOPSIS
+.B ${SBIN}/tagtest
+[
+.I options
+] input.tif
+.SH DESCRIPTION
+.I tagtest
+is a program for testing the ``tag line'' support in the \*(Fx server.
+.I tagtest
+takes a
+.SM TIFF/F
+(\c
+.SM TIFF
+Class F) file and
+generates a new
+.SM TIFF/F
+file that is a copy of the input file, but with sample tag lines imaged
+across the top of each page.
+Options are provided for specifying 
+a tag line format string and a tag line font file.
+If neither are specified, then
+.I tagtest
+will use builtin defaults.
+.I tagtest
+is designed for testing tag line format strings
+and fonts before they are configured for use by the
+facsimile server.
+.SH OPTIONS
+.TP 10
+.BI \-f " file"
+Image the tag line format string using the
+Portable Compiled Font (\s-1PCF\s+1) in
+.IR file .
+By default
+.I tagtest
+looks for the font file
+.BR fixed.pcf .
+.TP
+.BI \-m " format"
+Use
+.I format
+when imaging tag lines.
+If this option is not specified, then
+.I tagtest
+uses the format string ``From %%n|%c|Page %%p of %%t''.
+.TP
+.BI \-o " file"
+Write output to
+.IR file .
+By default output is written to the file
+.BR t.tif .
+.SH "SEE ALSO"
+.IR faxsend (1M),
+.IR config (4F)
