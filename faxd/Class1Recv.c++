@@ -1070,7 +1070,7 @@ Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
     /*
      * T.30-A ECM mode requires a substantially different protocol than non-ECM faxes.
      */
-    if (params.ec & EC_ENABLE) {
+    if (params.ec != EC_DISABLE) {
 	if (!recvPageECMData(tif, params, emsg)) {
 	    /*
 	     * The previous page experienced some kind of error.  Falsify
@@ -1092,7 +1092,7 @@ Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
 	TIFFSetField(tif, TIFFTAG_CONSECUTIVEBADFAXLINES,
 	    getRecvConsecutiveBadLineCount());
     }
-    if (params.ec & EC_ENABLE) return (true);	// no RTN with ECM
+    if (params.ec != EC_DISABLE) return (true);	// no RTN with ECM
     else return (isQualityOK(params));
 }
 

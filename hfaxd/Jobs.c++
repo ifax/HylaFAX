@@ -808,7 +808,7 @@ HylaFAXServer::initDefaultJob(void)
     defJob.minsp	= BR_2400;
     defJob.desiredbr	= BR_33600;
     defJob.desiredst	= ST_0MS;
-    defJob.desiredec	= EC_ENABLE;
+    defJob.desiredec	= EC_ENABLE256;
     defJob.desireddf	= DF_2DMMR;
     defJob.desiredtl	= false;
     defJob.usexvres	= false;

@@ -104,6 +104,7 @@
  * minimum DIS frame;  we only process the first 4.
  */
 #define DIS_V8		0x040000	// supports V.8 training
+#define DIS_FRAMESIZE	0x020000	// preferred ECM frame size indicator
 #define	DIS_T4XMTR	0x008000	// T.4 sender & has docs to poll
 #define	DIS_T4RCVR	0x004000	// T.4 receiver
 #define	DIS_SIGRATE	0x003C00	// data signalling rate

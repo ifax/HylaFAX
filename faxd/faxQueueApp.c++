@@ -544,7 +544,7 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
      * o the remote side is known to be capable of it, and
      * o the user hasn't specified a desire to send 1D data.
      */
-    if (req.desireddf == DF_2DMMR && req.desiredec == EC_ENABLE && 
+    if (req.desireddf == DF_2DMMR && (req.desiredec != EC_DISABLE) && 
 	use2D && job.modem->supportsMMR() &&
 	info.getCalledBefore() && info.getSupportsMMR())
 	    params.df = DF_2DMMR;

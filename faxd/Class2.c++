@@ -100,6 +100,21 @@ Class2Modem::setupModem()
 	    "\"" | t30parms | "\"");
 	return (false);
     }
+    /*
+     * The EC parameter varies between the Class 2 and Class 2.0 specs.
+     * And because modems don't all adhere to the respective spec, we must adjust
+     * modemParams based both on serviceType and on configuration to compensate.
+     */
+    if (conf.class2ECMType == ClassModem::ECMTYPE_CLASS20 ||
+       (conf.class2ECMType == ClassModem::ECMTYPE_UNSET && serviceType != SERVICE_CLASS2)) {
+	    // The Class 2.0 spec wisely lumps both 64-byte and 256-byte ECM together
+	    // because an ECM receiver must support both anyway per T.30-A.
+	    modemParams.ec ^= BIT(EC_DISABLE);	// don't adjust EC_DISABLE
+	    modemParams.ec <<= 1;		// simple adjustment
+	    modemParams.ec |= BIT(EC_DISABLE);	// reset EC_DISABLE
+	    if (modemParams.ec & BIT(EC_ENABLE256))
+		modemParams.ec |= BIT(EC_ENABLE64);
+    }
     traceModemParams();
     /*
      * Check to see if the modem supports copy quality checking.
@@ -386,6 +401,9 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params)
 	&params.vr, &params.br, &params.wd, &params.ln,
 	&params.df, &params.ec, &params.bf, &params.st);
     if (n == 8) {
+	if (params.ec != EC_DISABLE && (conf.class2ECMType == ClassModem::ECMTYPE_CLASS20 ||
+	   (conf.class2ECMType == ClassModem::ECMTYPE_UNSET && serviceType != SERVICE_CLASS2)))
+	    params.ec += 1;		// simple adjustment, drops EC_ENABLE64
 	/*
 	 * Clamp values to insure modem doesn't feed us
 	 * nonsense; should log bogus stuff also.
@@ -559,7 +577,11 @@ Class2Modem::class2Cmd(const fxStr& cmd, int a0, ATResponse r, long ms)
 bool
 Class2Modem::class2Cmd(const fxStr& cmd, const Class2Params& p, ATResponse r, long ms)
 {
-    return atCmd(cmd | "=" | p.cmd(conf.class2UseHex), r, ms);
+    bool ecm20 = false;
+    if (conf.class2ECMType == ClassModem::ECMTYPE_CLASS20 ||
+       (conf.class2ECMType == ClassModem::ECMTYPE_UNSET && serviceType != SERVICE_CLASS2))
+	ecm20 = true;
+    return atCmd(cmd | "=" | p.cmd(conf.class2UseHex, ecm20), r, ms);
 }
 
 /*

@@ -99,11 +99,16 @@ const u_short DF_2DMRUNCOMP	= 2;		// 2-D Uncompressed Mode
 const u_short DF_2DMMR	= 3;		// 2-D Modified Modified Read
 const u_short DF_ALL	= BIT(DF_2DMMR+1)-1;
 
+/*
+ * The EC definition varies between the Class 2 and Class 2.0 spec, so
+ * this is a merger of both of them.
+ */
 const u_short EC_DISABLE	= 0;		// disable ECM
-const u_short EC_ENABLE	= 1;		// enable T.30 Annex A, ECM
-const u_short EC_ECLHALF	= 2;		// enable T.30 Annex C, half duplex
-const u_short EC_ECLFULL	= 3;		// enable T.30 Annex C, full duplex
-const u_short EC_ALL	= 0x3;
+const u_short EC_ENABLE64	= 1;		// enable T.30 Annex A, 64-byte ECM
+const u_short EC_ENABLE256	= 2;		// enable T.30 Annex A, 256-byte ECM
+const u_short EC_ECLHALF	= 3;		// enable T.30 Annex C, half duplex
+const u_short EC_ECLFULL	= 4;		// enable T.30 Annex C, full duplex
+const u_short EC_ALL		= BIT(EC_ECLFULL+1)-1;
 
 const u_short BF_DISABLE	= 0;		// disable file transfer modes
 const u_short BF_ENABLE	= 1;		// select BFT, T.434

@@ -44,6 +44,7 @@ typedef	u_int AnswerType;	// type of call to answer for
 typedef u_int SpeakerVolume;
 typedef	u_int ATResponse;	// response code from AT command
 typedef	u_int BaudRate;		// serial line communication rate
+typedef u_int ECMType;		// ECM service specification to follow
 typedef	u_int FlowControl;	// serial line flow control scheme
 typedef	u_int SetAction;		// how to act when setting line
 typedef struct {
@@ -133,6 +134,12 @@ public:
 	BR57600	= 8,		// 57600 bits/sec
 	BR76800	= 9,		// 76800 bits/sec
 	BR115200= 10		// 115200 bits/sec
+    };
+
+    enum {			// ClassModem::ECMType
+	ECMTYPE_UNSET   = 0,	// use default for service type
+	ECMTYPE_CLASS2  = 1,	// use Class 2 type ECM
+	ECMTYPE_CLASS20 = 2	// use Class 2.0 type ECM
     };
 
     enum {			// ClassModem::FlowControl

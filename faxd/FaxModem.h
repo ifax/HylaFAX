@@ -181,7 +181,7 @@ public:
     virtual bool supportsPageWidth(u_int w, u_int r) const;
     virtual bool supportsPageLength(u_int l) const;
     virtual bool supportsPolling() const;
-    virtual bool supportsECM() const;
+    virtual bool supportsECM(u_int ec = 0) const;
 
     virtual int selectSignallingRate(int br) const;
     u_int getBestSignallingRate() const;

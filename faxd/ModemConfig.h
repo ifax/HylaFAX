@@ -40,6 +40,7 @@ private:
     u_int	getSpeed(const char* value);
     u_int	getDataFormat(const char* value);
     u_int       getRTNHandling(const char* cp);
+    ECMType	getECMType(const char* cp);
 
     static bool findRate(const char*, BaudRate&);
     static bool findATResponse(const char*, ATResponse&);
@@ -176,6 +177,7 @@ public:
 					// for class T.class2:
     fxStr	class2APQueryCmd;	// cmd to query address&polling caps.
     fxStr	class2APCmd;		// cmd to setup address&polling caps.
+    ECMType	class2ECMType;		// ECM specification type to use
     fxStr	class2SACmd;		// cmd to set subaddress
     fxStr	class2PACmd;		// cmd to set selective polling address
     fxStr	class2PWCmd;		// cmd to set password for transmit/poll

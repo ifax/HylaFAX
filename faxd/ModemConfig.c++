@@ -227,6 +227,7 @@ ModemConfig::setupConfig()
     maxRate		= ClassModem::BR19200;	// reasonable for most modems
     minSpeed		= BR_2400;		// minimum transmit speed
     waitForConnect	= false;		// unique modem answer response
+    class2ECMType	= ClassModem::ECMTYPE_UNSET;// follow the service type default
     class2XmitWaitForXON = true;		// default per Class 2 spec
     class2SendRTC	= false;		// default per Class 2 spec
     class2RTFCC		= false;		// real-time fax comp. conv.
@@ -288,6 +289,17 @@ ModemConfig::getRate(const char* cp)
 	br = ClassModem::BR19200;		// default
     }
     return (br);
+}
+
+ECMType
+ModemConfig::getECMType(const char* cp)
+{
+    if (valeq(cp, "2"))
+	return (ClassModem::ECMTYPE_CLASS2);
+    if (valeq(cp, "2.0"))
+	return (ClassModem::ECMTYPE_CLASS20);
+    configError("Unknown ECM type specification \"%s\", using default", cp);
+    return (ClassModem::ECMTYPE_UNSET);
 }
 
 bool
@@ -580,6 +592,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	recvDataFormat = getDataFormat(value);
     else if (streq(tag, "rtnhandlingmethod"))
         rtnHandling = getRTNHandling(value);
+    else if (streq(tag, "class2ecmtype"))
+	class2ECMType = getECMType(value);
     else if (streq(tag, "class2usehex"))
 	class2UseHex = getBoolean(value);
     else if (streq(tag, "class2uselinecount"))

@@ -39,7 +39,7 @@ private:
     static const char* verticalResNames[65];
     static const char* scanlineTimeNames[8];
     static const char* dataFormatNames[4];
-    static const char* ecmNames[4];
+    static const char* ecmNames[8];
 
     friend class FaxModem;
 public:
@@ -75,7 +75,7 @@ public:
     int operator==(const Class2Params&) const;
     int operator!=(const Class2Params&) const;
 
-    fxStr cmd(bool class2UseHex) const;		// format AT+F cmd string
+    fxStr cmd(bool class2UseHex, bool ecm20 = false) const;	// format AT+F cmd string
     void setFromDIS(u_int dis, u_int xinfo = 0);
     void setFromDCS(u_int dcs, u_int xinfo = 0);
     u_int getDCS() const;

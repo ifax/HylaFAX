@@ -236,6 +236,7 @@ main(int argc, char** argv)
     printf("%11s %s\n", "TimeToRecv:", time == 0 ? "<unknown>" : fmtTime(time));
     printf("%11s %s\n", "SignalRate:", params.bitRateName());
     printf("%11s %s\n", "DataFormat:", params.dataFormatName());
+    printf("%11s %s\n", "ErrCorrect:", params.ec == EC_DISABLE ? "No" : "Yes");
     if (cidname != "")
 	printf("%11s %s\n", "CIDName:", (const char*) cidname);
     if (cidnumber != "")

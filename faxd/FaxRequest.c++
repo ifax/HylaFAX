@@ -62,7 +62,7 @@ FaxRequest::reset(void)
     minsp = BR_2400;
     desiredbr = BR_33600;
     desiredst = ST_0MS;
-    desiredec = EC_ENABLE;
+    desiredec = EC_ENABLE256;
     desireddf = DF_2DMMR;
     desiredtl = 0;
     totdials = 0, maxdials = (u_short) FAX_REDIALS;
@@ -392,7 +392,7 @@ FaxRequest::readQFile(bool& rejectJob)
     if (minsp > BR_33600)	minsp = BR_33600;
     if (desiredbr > BR_33600)	desiredbr = BR_33600;
     if (desiredst > ST_40MS)	desiredst = ST_40MS;
-    if (desiredec > EC_ENABLE)	desiredec = EC_ENABLE;
+    if (desiredec > EC_ECLFULL)	desiredec = EC_ECLFULL;
     if (desireddf > DF_2DMMR)	desireddf = DF_2DMMR;
     if (buf != stackbuf)			// dynamically allocated buffer
 	delete buf;

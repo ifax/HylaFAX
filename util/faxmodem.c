@@ -185,7 +185,8 @@ done:
 #define	WD_ALL	(BIT(5)-1)
 #define	LN_ALL	(BIT(3)-1)
 #define	DF_ALL	(BIT(4)-1)
-#define	EC_ALL	(BIT(2)-1)
+#define EC_DISABLE 0
+#define	EC_ALL	(BIT(5)-1)
 #define	BF_ALL	(BIT(2)-1)
 #define	ST_ALL	(BIT(8)-1)
 
@@ -215,7 +216,8 @@ parseCapabilities(const char* cp, u_int* caps)
 	     | ((wd&WD_ALL)<<14)
 	     | ((ln&LN_ALL)<<19)
 	     | ((df&DF_ALL)<<22)
-	     | ((ec&EC_ALL)<<26)
+	     | ((ec&EC_DISABLE)<<26)
+	     | ((ec&EC_ALL != 0 ? 1 : 0)<<27)
 	     | ((bf&BF_ALL)<<28)
 	     | ((st&ST_ALL)<<30)
 	     ;

@@ -446,9 +446,15 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
      * Use optional Error Correction Mode (ECM) if the
      * peer implements and our modem is also capable.
      */
-    if (clientCapabilities.ec == EC_ENABLE && modem->supportsECM())
-	clientParams.ec = fax.desiredec;
-    else
+    if ((clientCapabilities.ec != EC_DISABLE) && modem->supportsECM() && fax.desiredec) {
+	// Technically, if the remote reports either type of T.30-A ECM, then they
+	// must therefore support the other (so we could pick), but we should follow
+	// the advice in T.30-C to honor the remote's bytes/frame request.
+	if (modem->supportsECM(EC_ENABLE256) && clientCapabilities.ec == EC_ENABLE256)
+	    clientParams.ec = EC_ENABLE256;
+	else
+	    clientParams.ec = EC_ENABLE64;
+    } else
 	clientParams.ec = EC_DISABLE;
     clientParams.bf = BF_DISABLE;
     /*
@@ -477,7 +483,7 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
 #endif
 
     traceProtocol("USE %s", clientParams.bitRateName());
-    if (clientParams.ec == EC_ENABLE) {
+    if (clientParams.ec != EC_DISABLE) {
 	traceProtocol("USE error correction mode");
 	clientParams.st = ST_0MS;	// T.30 Table 2 Note 8 - ECM imposes 0ms/scanline
     }
@@ -526,7 +532,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
 	// it's likely that the remote was incorrect in telling us it does
 	if (params.df == DF_2DMRUNCOMP) params.df = DF_2DMR;
 	// don't let RTFCC cause problems with restricted modems...
-	if (params.df == DF_2DMMR && (!modem->supportsMMR() || params.ec != EC_ENABLE))
+	if (params.df == DF_2DMMR && (!modem->supportsMMR() || (params.ec == EC_DISABLE)))
 		params.df = DF_2DMR;
 	if (params.df == DF_2DMR && !modem->supports2D())
 		params.df = DF_1DMH;
@@ -542,7 +548,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
 		    " but modem does not support this data format";
 		return (send_reformat);
 	    }
-	    if (params.ec != EC_ENABLE) {
+	    if (params.ec == EC_DISABLE) {
 		emsg = "Document was encoded with 2DMMR,"
 		    " but ECM is not being used.";
 		return (send_reformat);

@@ -60,7 +60,7 @@ Class2Params::operator!=(const Class2Params& other) const
 }
 
 fxStr
-Class2Params::cmd(bool class2UseHex) const
+Class2Params::cmd(bool class2UseHex, bool ecm20) const
 {
     u_int unset = (u_int) -1;
     fxStr comma(",");
@@ -80,7 +80,7 @@ Class2Params::cmd(bool class2UseHex) const
     s.append(comma);
     if (df != unset) s.append(fxStr::format(notation, df));
     s.append(comma);
-    if (ec != unset) s.append(fxStr::format(notation, ec));
+    if (ec != unset) s.append(fxStr::format(notation, ec - (ecm20 && ec ? 1 : 0)));
     s.append(comma);
     if (bf != unset) s.append(fxStr::format(notation, bf));
     s.append(comma);
@@ -265,7 +265,10 @@ Class2Params::setFromDIS(u_int dis, u_int xinfo)
 	df = DF_2DMRUNCOMP;
     else
 	df = DISdfTab[(dis & DIS_2DENCODE) >> 8];
-    ec = (xinfo & DIS_ECMODE) ? EC_ENABLE : EC_DISABLE;
+    if (xinfo & DIS_ECMODE)
+	ec = (dis & DIS_FRAMESIZE) ? EC_ENABLE64 : EC_ENABLE256;
+    else
+	ec = EC_DISABLE;
     bf = BF_DISABLE;			// XXX from xinfo
     st = DISstTab[(dis & DIS_MINSCAN) >> 1];
 }
@@ -311,6 +314,10 @@ Class2Params::setFromDCS(u_int dcs, u_int xinfo)
 	else if (xinfo & DCS_200X400) vr = VR_R8;
 	else vr = DISvrTab[(dcs & DCS_7MMVRES) >> 9];
     }
+    if (xinfo & DCS_ECMODE)
+	ec = (xinfo & DCSFRAME_64) ? EC_ENABLE64 : EC_ENABLE256;
+    else
+	ec = EC_DISABLE;
 }
 
 /*
@@ -350,7 +357,7 @@ Class2Params::getXINFO() const
 	| (vr & VR_200X200 ? (DCS_INCHRES | thirdbyte) : 0)	// DCS_7MMVRES set in getDCS()
 	| (vr & VR_200X400 ? (DCS_200X400 | DCS_INCHRES | thirdbyte ) : 0)
 	| (vr & VR_300X300 ? (DCS_300X300 | DCS_INCHRES | thirdbyte ) : 0)
-	| (ec & EC_ENABLE ? (DCS_ECMODE | firstbyte) : 0)
+	| (ec & EC_ENABLE64 || ec & EC_ENABLE256 ? (DCS_ECMODE | firstbyte) : 0)
 	| (df == DF_2DMMR ? (DCS_G4COMP | firstbyte) : 0)
 	;
     return (dcs_xinfo);
@@ -566,7 +573,7 @@ Class2Params::encode() const
 	  | ((wd&7)<<9)
 	  | ((ln&3)<<12)
 	  | ((df&3)<<14)
-	  | ((ec&1)<<16)
+	  | ((ec == EC_DISABLE ? 0 : 1)<<16)		// boolean value
 	  | ((bf&1)<<17)
 	  | ((st&7)<<18)
 	  | (1<<21)		// this is the version identifier
@@ -615,12 +622,14 @@ u_int
 Class2Params::encodeCaps() const
 {
     // we can't use all of BR_ALL because we're limited to 32 bits
+    // all ECM support is reduced to "1" (EC_ENABLE64) if any ECM is available
     return (vr&VR_ALL)
 	 | ((br&(BR_2400|BR_4800|BR_7200|BR_9600|BR_12000|BR_14400))<<8)
 	 | ((wd&WD_ALL)<<14)
 	 | ((ln&LN_ALL)<<19)
 	 | ((df&DF_ALL)<<22)
-	 | ((ec&EC_ALL)<<26)
+	 | ((ec&EC_DISABLE)<<26)
+	 | ((ec&EC_ALL != 0 ? 1 : 0)<<27)
 	 | ((bf&BF_ALL)<<28)
 	 | ((st&ST_ALL)<<30)
 	 ;
@@ -634,7 +643,7 @@ Class2Params::decodeCaps(u_int v)
     wd = (v>>14) & WD_ALL;
     ln = (v>>19) & LN_ALL;
     df = (v>>22) & DF_ALL;
-    ec = (v>>26) & EC_ALL;
+    ec = (v>>26) & (EC_DISABLE|EC_ENABLE64);				// see encoding
     bf = (v>>28) & BF_ALL;
     st = (v>>30) & ST_ALL;
 }
@@ -761,11 +770,15 @@ const char* Class2Params::scanlineTimeNames[8] = {
 };
 const char* Class2Params::scanlineTimeName() const
     { return (scanlineTimeNames[st&7]); }
-const char* Class2Params::ecmNames[4] = {
+const char* Class2Params::ecmNames[8] = {
     "no ECM",
-    "T.30 Annex A, ECM",
+    "T.30 Annex A, 64-byte ECM",
+    "T.30 Annex A, 256-byte ECM",
     "T.30 Annex C, half duplex ECM",
     "T.30 Annex C, full duplex ECM",
+    "undefined ECM",
+    "undefined ECM",
+    "undefined ECM"
 };
 const char* Class2Params::ecmName() const
-    { return (ecmNames[ec&3]); }
+    { return (ecmNames[ec&7]); }

@@ -166,7 +166,7 @@ Class1Modem::setupModem()
     modemParams.ln = LN_ALL;
     modemParams.df = BIT(DF_1DMH) | BIT(DF_2DMR);
     if (conf.class1ECMSupport) {
-	modemParams.ec = BIT(EC_ENABLE) | BIT(EC_DISABLE);
+	modemParams.ec = BIT(EC_DISABLE) | BIT(EC_ENABLE64) | BIT(EC_ENABLE256);
  	modemParams.df |= BIT(DF_2DMMR);
     } else
 	modemParams.ec = BIT(EC_DISABLE);
@@ -1108,7 +1108,8 @@ u_int
 Class1Modem::modemDIS() const
 {
     // NB: DIS is in 24-bit format
-    return (FaxModem::modemDIS() &~ DIS_SIGRATE) | (discap<<10) | DIS_XTNDFIELD;
+    u_int fs = conf.class1ECMFrameSize == 64 ? DIS_FRAMESIZE : 0;
+    return (FaxModem::modemDIS() &~ DIS_SIGRATE) | (discap<<10) | DIS_XTNDFIELD | fs;
 }
 
 /*

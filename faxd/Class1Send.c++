@@ -239,7 +239,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    params = next;
 	}
 
-	if (params.ec != EC_ENABLE) {		// ECM does it later
+	if (params.ec == EC_DISABLE) {		// ECM does it later
 	    /*
 	     * According to T.30 5.3.2.4 we must pause at least 75 ms "after 
 	     * receipt of a signal using the T.30 binary coded modulation" and 
@@ -265,7 +265,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 
 	int ncrp = 0;
 
-	if (params.ec != EC_ENABLE) {
+	if (params.ec == EC_DISABLE) {
 	    /*
 	     * Delay before switching to the low speed carrier to
 	     * send the post-page-message frame according to 
@@ -504,8 +504,12 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
     }
     u_int dcs = params.getDCS();		// NB: 24-bit DCS and
     u_int dcs_xinfo = params.getXINFO();	//     32-bit extension
-    if (conf.class1ECMFrameSize == 64 && dcs_xinfo)
-	dcs_xinfo |= DCSFRAME_64;
+    // we should respect the frame-size preference indication by the remote (DIS_FRAMESIZE)
+    if (params.ec != EC_DISABLE && (conf.class1ECMFrameSize == 64 || (dis & DIS_FRAMESIZE)) && dcs_xinfo) {
+	dcs_xinfo |= DCSFRAME_64;		// we don't want to add this bit if not using ECM
+	frameSize = 64;
+    } else
+	frameSize = 256;
     /*
      * Select Class 1 capability: use params.br to hunt
      * for the best signalling scheme acceptable to both
@@ -778,7 +782,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	    for (u_int i = 0; i < params.transferSize(200); i++)
 		blockData(0x7e, true);
 
-	    u_char* firstframe = (u_char*) malloc(conf.class1ECMFrameSize + 6);
+	    u_char* firstframe = (u_char*) malloc(frameSize + 6);
 	    fxAssert(firstframe != NULL, "ECM procedure error (frame duplication).");
 	    firstframe[0] = 0x1;			// marked as unused
 	    for (u_short fnum = 0; fnum < frameNumber; fnum++) {
@@ -788,8 +792,8 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		    HDLCFrame ecmframe(5);
 		    // frame bit marked for transmission
 		    fcount++;
-		    for (u_int i = fnum * (conf.class1ECMFrameSize + 4);
-			i < (fnum + 1) * (conf.class1ECMFrameSize + 4); i++) {
+		    for (u_int i = fnum * (frameSize + 4);
+			i < (fnum + 1) * (frameSize + 4); i++) {
 			ecmframe.put(ecmBlock[i]);
 			blockData(ecmBlock[i], false);
 		    }
@@ -805,7 +809,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		    blockData(0x7e, true);
 
 		    if (firstframe[0] == 0x1) {
-			for (u_int i = 0; i < (conf.class1ECMFrameSize + 6); i++) {
+			for (u_int i = 0; i < (frameSize + 6); i++) {
 			    firstframe[i] = ecmframe[i];
 			}
 		    }
@@ -816,10 +820,10 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		// so we repeat it.
 		HDLCFrame ecmframe(5);
 		fcount++;
-		for (u_int i = 0; i < (conf.class1ECMFrameSize + 6); i++) {
+		for (u_int i = 0; i < (frameSize + 6); i++) {
 		    blockData(firstframe[i], false);
 		}
-		ecmframe.put(firstframe, (conf.class1ECMFrameSize + 6));
+		ecmframe.put(firstframe, (frameSize + 6));
 		traceHDLCFrame("<--", ecmframe);
 		protoTrace("SEND send frame number %u", frameRev[firstframe[3]]);
 		blockData(0x7e, true);
@@ -1209,13 +1213,13 @@ Class1Modem::sendClass1ECMData(const u_char* data, u_int cc, const u_char* bitre
 	    ecmFrame[ecmFramePos++] = frameRev[frameNumber++];	// block frame number
 	}
 	ecmFrame[ecmFramePos++] = frameRev[data[i]];
-	if (ecmFramePos == (conf.class1ECMFrameSize + 4)) {
+	if (ecmFramePos == (frameSize + 4)) {
 	    if (!blockFrame(bitrev, ((i == (cc - 1)) && eod), ppmcmd, emsg))
 		return (false);
 	}
     }
     if (eod && (ecmFramePos != 0)) {
-	while (ecmFramePos < (conf.class1ECMFrameSize + 4))
+	while (ecmFramePos < (frameSize + 4))
 	    ecmFrame[ecmFramePos++] = 0x00;
 	if (!blockFrame(bitrev, true, ppmcmd, emsg))
 	    return (false);
@@ -1273,13 +1277,13 @@ Class1Modem::sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, fxStr& ems
     }
     if (params.is2D()) {
 	protoTrace("SEND 2D RTC");
-	if (params.ec == EC_ENABLE)
+	if (params.ec != EC_DISABLE)
 	    return sendClass1ECMData(RTC2D, sizeof(RTC2D), rtcRev, true, ppmcmd, emsg);
 	else
 	    return sendClass1Data(RTC2D, sizeof (RTC2D), rtcRev, true);
     } else {
 	protoTrace("SEND 1D RTC");
-	if (params.ec == EC_ENABLE)
+	if (params.ec != EC_DISABLE)
 	    return sendClass1ECMData(RTC1D, sizeof(RTC1D), rtcRev, true, ppmcmd, emsg);
 	else
 	    return sendClass1Data(RTC1D, sizeof (RTC1D), rtcRev, true);
@@ -1328,7 +1332,7 @@ bool
 Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppmcmd, fxStr& emsg)
 {
     int lastbyte = 0;
-    if (params.ec != EC_ENABLE) {	// ECM does it later
+    if (params.ec == EC_DISABLE) {	// ECM does it later
 	/*
 	 * Set high speed carrier & start transfer.  If the
 	 * negotiated modulation technique includes short
@@ -1504,7 +1508,7 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 		     * the current data and reset the pointer into
 		     * the zero fill buffer.
 		     */
-		    rc = sendPageData(fill, fp-fill, bitrev, (params.ec == EC_ENABLE), emsg);
+		    rc = sendPageData(fill, fp-fill, bitrev, (params.ec != EC_DISABLE), emsg);
 		    fp = fill;
 		    if (!rc)			// error writing data
 			break;
@@ -1531,20 +1535,20 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	     * Flush anything that was not sent above.
 	     */
 	    if (fp > fill && rc)
-		rc = sendPageData(fill, fp-fill, bitrev, (params.ec == EC_ENABLE), emsg);
+		rc = sendPageData(fill, fp-fill, bitrev, (params.ec != EC_DISABLE), emsg);
 	    delete fill;
 	} else {
 	    /*
 	     * No EOL-padding needed, just jam the bytes.
 	     */
-	    rc = sendPageData(dp, (u_int) totdata, bitrev, (params.ec == EC_ENABLE), emsg);
+	    rc = sendPageData(dp, (u_int) totdata, bitrev, (params.ec != EC_DISABLE), emsg);
 	}
 	delete data;
     }
     if (rc || abortRequested())
 	rc = sendRTC(params, ppmcmd, lastbyte, emsg);
     protoTrace("SEND end page");
-    if (params.ec != EC_ENABLE) {
+    if (params.ec == EC_DISABLE) {
 	// these were already done by ECM protocol
 	if (rc) {
 	    /*

@@ -21,3 +21,4 @@ ModemHardFlowCmd:	AT&K3
 Class2APQueryCmd:	none
 Class2SPLCmd:		none
 Class2TBCCmd:		none
+Class2ECMType:		2.0	# follows Class 2.0 spec, not Class 2
