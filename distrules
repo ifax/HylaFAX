@@ -221,6 +221,7 @@ HYLAFAXSRC=\
 	config/telebit-qblazer			\
 	config/telebit-t3000			\
 	config/telebit-wb			\
+	config/topic				\
 	config/tricom2842			\
 	config/uds-fastalk			\
 	config/umc92144				\
