@@ -31,19 +31,22 @@ his help in making a working Class 1 driver.
 We are indebted to the following people for their contributions to  
 HylaFAX since the project was moved to hylafax.org (November 1998):
 
-Andre Albsmeier      Ronald Appelfelder   Heinz-Ado Arnolds
-Jay Ashworth         Toki Barron          Stephan Bauer
-Dmitry Bely          Thomas Biege         Trevor Blackwell
-Marc Boucher         Yves Carlier         Jonathon Chen
-Robert Colquhoun     Ken Cornetet         Seth Cuaiklin
-Albert DeKnuydt      Paul Eggert          Vyacheslav Frolov
-Carsten Hoeger       Lee Howard           John Interrante
-Damiam Ivereigh      Nico Kadel-Garcia    Steffan Klipsch
-Hannu Koivisto       Greg Luck            Seth Mos
-Darren Nickerson     Giulio Orsero        Harald Pollack
-Bernd Proissl        Tim Rice             Michael Salzmann
-John Sellens         Simon <iahnl@iah.nl> Vilmos Soti
-Alan Sparks          Andy Sparrow         Iain Stevenson
+Andre Albsmeier      a.pogoda@web.de      Ronald Appelfelder
+Heinz-Ado Arnolds    Jay Ashworth         Toki Barron
+Stephan Bauer        Dmitry Bely          Thomas Biege
+Trevor Blackwell     Marc Boucher         Yves Carlier
+Jonathon Chen        Robert Colquhoun     Ken Cornetet
+Seth Cuaiklin        Albert DeKnuydt      Paul Eggert
+Patrice Fournier     Vyacheslav Frolov    Carsten Hoeger
+Lee Howard           John Interrante      Damiam Ivereigh
+Nico Kadel-Garcia    Jonathan Kamens      Steffan Klipsch
+Hannu Koivisto       Guillaume Legoupil   Greg Luck
+Campbell McKilligan  Seth Mos             Darren Nickerson
+Giulio Orsero        John Perkins         John Patrick Poet
+Harald Pollack       Bernd Proissl        Matthew Rice
+Tim Rice             Michael Salzmann     John Sellens
+Simon <iahnl@iah.nl> Vilmos Soti          Alan Sparks
+Andy Sparrow         Iain Stevenson       Marius Strobl
 Daryl Thachuk        Aidan Van Dyk        Norbert Warmuth
-Phil Watkinson       Chas Williams        John Williams
-Steve Williams
+Phil Watkinson       James Werkowski      Chas Williams
+John Williams        Steve Williams

@@ -1,4 +1,76 @@
+Changelog for HylaFAX 4.1.1 - Feb 24, 2002
+
+* resolve faxsetup and textfmt problems with Ghostscript 6.5
+  where Fontmap.GS could not be found (14 Feb 2002)
+* fix blocked jobs from getting requeued at the end (14 Feb 2002)
+* caused faxgetty to pass CIDName to faxrcvd and enhance
+  documentation to include DNIS details (14 Feb 2002)
+* gave failed jobs status "F" instead of "D" (14 Feb 2002)
+* add Topic modem prototype config support (14 Feb 2002)
+* replace Class1Send[EOP|PPM|TCF]Delay with 
+  Class1[EOP|PPM|TCF]WaitCmd, using +FTS for these pauses,
+  resolving some timing issues (14 Feb 2002)
+* fix PriorityScheduling and update html for SCO (13 Feb 2002)
+* added OpenUNIX support (13 Feb 2002)
+* updated config.guess (13 Feb 2002)
+* correct ECM detection in Class 2 (2 Feb 2002)
+* added ModemSoftResetCmdDelay default and option (2 Feb 2002)
+* enhanced Class 1 parseQuery to allow for the use
+  of parenthesis (2 Feb 2002)
+* added NSF entries for various machine types (2 Feb 2002)
+* fixed hfaxd from always exiting nonzero with inetd (2 Feb 2002)
+* altered logging to prevent double-double quoting (2 Feb 2002)
+* fixed pageSendApp.c++ logging pointer (2 Feb 2002)
+* changed the faxaddmodem default to select Class 1 (2 Feb 2002)
+* adjusted Class1SwitchingDelay default to fix ISDNs (2 Feb 2002)
+* added prototype config support for some Boca, USR, and
+  Practical Peripherals modems (2 Feb 2002)
+* corrected problems building on Digital UNIX Alphas (2 Feb 2002)
+* improved faxgetty glare handling (2 Feb 2002)
+* improved some logging verbosity (2 Feb 2002)
+* fixed an RTNHandlingMethod typo (16 Dec 2001)
+* fixed RTNHandlingMethod brokenness (15 Oct 2001)
+* corrected DestControls ability to use numeric arguments and other
+  similar DestControls fixes (12 Aug 2001)
+* more Lucent and K56 modem prototype config support (12 Aug 2001)
+* workaround: stopped trying to utilize NDIS frames (12 Aug 2001)
+* added Class1SendMsgDelay (12 Aug 2001)
+* enhanced the logging of garbage frames (12 Aug 2001)
+* added prototype config support for Hayes Optima (12 Aug 2001)
+* fixed faxgetty's parsing of Class 1.0 in +FCLASS=? (12 Aug 2001)
+* finally added faxcover "from" options and corrected it to 
+  function as documented for comments (12 Aug 2001)
+* corrected and enhanced earlier QualifyTSI fix (12 Aug 2001)
+* updated config.guess, config.sub from gcc-3.0 (18 Jul 2001)
+* cause the sequence files to begin at 1 rather than 2 (15 Jul 2001)
+* include external MultiTech into lucent-mt-2 (15 Jul 2001)
+* apply use of "none" to rc32acl prototype config (15 Jul 2001)
+* corrected documentation regarding some defaults (15 Jul 2001)
+* fixed stripQuotes for unexpected TSI quoting (15 Jul 2001)
+* integrate Linux DSO support (15 Jul 2001)
+* fixed bash v2 verbosity in probemodem (15 Jul 2001)
+* note to run hfaxd as root if run from inetd (4 Jul 2001)
+* remove setuid from hfaxd in pkg (4 Jul 2001)
+* add INSTALL to distrules (4 Jul 2001)
+* add prototype config for Prometheus (3 Jul 2001)
+* correct timing of DCN after failed QualifyTSI check (2 Jul 2001)
+* fix Class 1 EOM handling (2 Jul 2001)
+* add Class1SendEOPDelay config option and increase the default 
+  from 95ms to 200ms to prevent modem timeouts (2 Jul 2001)
+* enhance faxrcvd to utilize CID, use FILETYPE (for FaxDispatch), and 
+  other minor faxrcvd enhancments (2 Jul 2001)
+* pass CID data through successive rings and to faxrcvd (2 Jul 2001)
+* caused bulk faxes to drop in requeue priority (2 Jul 2001)
+* fix faxaddmodem from mis-parsing a modem's phone number (2 Jul 2001)
+* added 7-bit text support to typerules (2 Jul 2001)
+* stop faxqclean from deleting docq files that are in-use (2 Jul 2001)
+* fixed a bash barf when VERSION changed (2 Jul 2001)
+* caused configure to check zlib before libtiff (2 Jul 2001)
+* added prototype config support for AT&T Lucent modem (2 Jul 2001)
+* applied the use of "none" in rc288dpi config (2 Jul 2001)
+
 Changelog for HylaFAX 4.1 - Jul 1, 2001
+
 * tidied up README & INSTALL for full release (01 Jul 2001)
 * repaired dangling references to recently renamed manpages (01 Jul 2001)
 * no other changes - 4.1rc2 basically promoted to 4.1
