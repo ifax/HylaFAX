@@ -576,6 +576,7 @@ MANPAGES=\
 	man/cqtest.1m				\
 	man/choptest.1m				\
 	man/dialtest.1m				\
+	man/doneq.4f				\
 	man/faxabort.1m				\
 	man/faxaddmodem.1m			\
 	man/faxadduser.1m			\

@@ -100,6 +100,7 @@ MANSFILE=sman.files/hylafax-server.4f	\
 	sman.files/config.4f	\
 	sman.files/destctrls.4f	\
 	sman.files/dialrules.4f	\
+	sman.files/doneq.4f	\
 	sman.files/hosts.hfaxd.4f	\
 	sman.files/info.4f	\
 	sman.files/log.4f	\
@@ -189,6 +190,7 @@ sman.files/hylafax-server.4f::	${SRCDIR}/hylafax-server.4f;	${MANCVT}
 sman.files/cid.4f::	${SRCDIR}/cid.4f;	${MANCVT}
 sman.files/config.4f::	${SRCDIR}/config.4f;	${MANCVT}
 sman.files/destctrls.4f:: ${SRCDIR}/destctrls.4f; ${MANCVT}
+sman.files/doneq.4f::	${SRCDIR}/doneq.4f;	${MANCVT}
 sman.files/dialrules.4f:: ${SRCDIR}/dialrules.4f; ${MANCVT}
 sman.files/hosts.hfaxd.4f::	${SRCDIR}/hosts.hfaxd.4f;	${MANCVT}
 sman.files/info.4f::	${SRCDIR}/info.4f;	${MANCVT}
