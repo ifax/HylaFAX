@@ -217,7 +217,10 @@ subRHS(fxStr& result, const RE& re, const fxStr& match)
 		int ms = re.StartOfMatch(mn);
 		int mlen = re.EndOfMatch(mn) - ms;
 		result.remove(i);		// delete \n
-		result.insert(match.extract(ms, mlen), i);
+		if (ms >= 0)
+		    result.insert(match.extract(ms, mlen), i);
+		else
+		    logError("Invalid backreference in pagermap: \\%d", mn);
 		n = result.length();		// adjust string length ...
 		i += mlen - 1;			// ... and scan index
 	    }
