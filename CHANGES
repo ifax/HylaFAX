@@ -2,6 +2,17 @@
 
 Changelog for HylaFAX 4.2.0
 
+* fix rare faxsend segfault in Class 1 scanline padding (27 May 2004)
+* utilize DesiredBR to determine what modulation to use (24 May 2004)
+* remove Class1EnableV34Cmd from modem initialization (22 May 2004)
+* avoid V.29-to-V.17 fallback transitions (22 May 2004)
+* fix send V.34-Fax cases where receiver reports no ECM (21 May 2004)
+* add prototype support for Perle/MultiTech-SMI modems (21 May 2004)
+* fix segfault with Class2RTFCC (21 May 2004)
+* add V.34-Fax disconnection recognition during prologue (20 May 2004)
+* add prototype support for Mainpine RockForceDUO+ (19, 21 May 2004)
+* improve V.34-Fax session abortion handling (19 May 2004)
+* add more prototype support for Courier V.Everything modems (19 May 2004)
 * add '-l bindaddr' option to hfaxd (8 May 2004)
 * fix build for 64-bit Linux (8 May 2004)
 * fix error in clients when sender identity was whitespace only (8 May 2004)
