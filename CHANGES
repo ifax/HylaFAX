@@ -1,7 +1,9 @@
 #	$Id$	
 
-Changelog for HylaFAX 4.1.3 - Jun 17, 2002
+Changelog for HylaFAX 4.1.3 - Jun 27, 2002
 
+* enhanced Class1Modem::parseQuery() to parse correctly +FTM responses
+  which contain item ranges (dashes) (27 Jun 2002)
 * made fixes to enable gcc v3.0 compatibility (15 Jun 2002)
 * made minor changes for Sun Forte compiler compatibility (14 Jun 2002)
 * fixed hostname format string vulnerabilities in faxrm, faxalter, 
