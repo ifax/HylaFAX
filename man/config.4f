@@ -720,8 +720,12 @@ Note that each job is processed with a separate phone call;
 job batching is not currently supported.
 Thus this parameter defines the maximum number of concurrent phone calls
 to the same destination.
-This value may be overridden by rules in the
-.B DestControls
+Unless all of your fax destinations have multiple fax lines 
+using the same fax number per destination then 
+.B MaxConcurrentJobs 
+is probably best left as the default of 1 and exceptions should 
+be accomodated by the 
+.B DestControls 
 file.
 .TP
 .B MaxConsecutiveBadLines
