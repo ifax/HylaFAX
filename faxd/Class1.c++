@@ -588,7 +588,8 @@ Class1Modem::recvECMFrame(HDLCFrame& frame)
 
     // look for the last sync flag (possibly the previous one)
 
-    startTimeout(5000);					// just to prevent hanging
+    // some senders use this as the time to do framing so we must wait longer than T.4 A.3.1 implies
+    startTimeout(60000);				// just to prevent hanging
     while (bit != 1 && bit != EOF && !didBlockEnd()) {	// flag begins with zero, address begins with one
 	do {
 	    if (bit == 0 || ones > 6) ones = 0;
