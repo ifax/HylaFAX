@@ -75,6 +75,9 @@ typedef struct {
 #ifdef OFF
 #undef OFF			// workaround for SCO
 #endif
+#ifdef ERROR
+#undef ERROR			// workaround for Mac OS X
+#endif
 
 /*
  * This is an abstract class that defines the interface to
