@@ -182,6 +182,7 @@ static const struct {
 { "class1tcfresponsedelay",	&ModemConfig::class1TCFResponseDelay,75 },
 { "class1sendppmdelay",		&ModemConfig::class1SendPPMDelay,    75 },
 { "class1sendtcfdelay",		&ModemConfig::class1SendTCFDelay,    75 },
+{ "class1switchingdelay",	&ModemConfig::class1SwitchingDelay,  150 },
 { "class1trainingrecovery",	&ModemConfig::class1TrainingRecovery,1500 },
 { "class1recvabortok",		&ModemConfig::class1RecvAbortOK,     200 },
 { "class1frameoverhead",	&ModemConfig::class1FrameOverhead,   4 },

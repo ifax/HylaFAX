@@ -1358,6 +1358,7 @@ Class1Parameters="
     Class1RecvIdentTimer
     Class1SendPPMDelay
     Class1SendTCFDelay
+    Class1SwitchingDelay
     Class1TCFMaxNonZero
     Class1TCFMinRun
     Class1TCFRecvTimeout
@@ -1616,6 +1617,7 @@ AT	Class1SFLOCmd		\
 	Maximum wait for initial identification frame (ms)
 #	Class1SendPPMDelay	Delay before sending post-page message (ms)
 #	Class1SendTCFDelay	Delay between sending TCF and ack/nak (ms)
+#	Class1SwitchingDelay	Delay in switching transmission direction (ms)
 #	Class1TCFRecvTimeout	Timeout for receiving TCF (ms)
 #	Class1TCFResponseDelay	Delay before sending DCS and TCF (ms)
 #	Class1TrainingRecovery	Delay after failed training (ms)

@@ -458,6 +458,13 @@ top:
 		    emsg = "COMREC invalid response received";
 		    return (false);
 		}
+
+		/*
+		 * As recommended in T.31, we try to prevent the rapid
+		 * switching of the direction of transmission.
+		 */
+		pause(conf.class1SwitchingDelay);
+
 		/*
 		 * [Re]transmit post page response.
 		 */

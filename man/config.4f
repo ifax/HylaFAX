@@ -257,6 +257,7 @@ Class1TCFRecvTimeout	integer	\s-14500\s+1	Class 1: max wait (ms) for \s-1TCF\s+1
 Class1TCFResponseDelay	integer	\s-175\s+1	Class 1: delay between \s-1TCF\s+1 and ack/nak
 Class1SendPPMDelay	integer	\s-175\s+1	Class 1: delay before sending post-page message
 Class1SendTCFDelay	integer	\s-175\s+1	Class 1: delay between sending \s-1DCS\s+1 and \s-1TCF\s+1
+Class1SwitchingDelay	integer \s-1150\s+1	Class 1: delay in switching transmision direction (ms)
 Class1TrainingRecovery	integer	\s-11500\s+1	Class 1: delay after failed training
 .sp .5
 Class2Cmd	string	\s-1AT+FCLASS=2\s+1	Class 2: command to enter class 2/2.0
@@ -1920,6 +1921,10 @@ The time, in milliseconds, to delay between sending
 .SM DCS
 and
 .SM TCF.
+.TP
+.B Class1SwitchingDelay
+The time, in milliseconds, to delay when switching the direction
+of transmission, as recommended by T.31.  Default is 150.
 .TP
 .B Class1SFLOCmd
 The command to setup software (\s-1XON/XOFF\s+1) flow control between

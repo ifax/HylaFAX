@@ -114,6 +114,7 @@ public:
     u_int	class1TCFResponseDelay;	// delay (ms) btwn TCF & ack/nak
     u_int	class1SendPPMDelay;	// delay (ms) before sending PPM
     u_int	class1SendTCFDelay;	// delay (ms) btwn sending DCS & TCF
+    u_int	class1SwitchingDelay;	// delay (ms) in switching transmission direction
     u_int	class1TrainingRecovery;	// delay (ms) after failed training
     u_int	class1RecvAbortOK;	// if non-zero, OK sent after recv abort
     u_int	class1FrameOverhead;	// overhead bytes in received frames
