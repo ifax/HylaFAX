@@ -1,3 +1,22 @@
+Changelog for HylaFAX 4.1rc1 - Apr 22, 2001
+
+* Adjusted faxq to load-balance modems with equal priority (22 Apr 2001)
+* Added new CONTRIBUTORS (14 Apr 2001)
+* Merged performance-rts into rc288dpi-1 config file (14/19 Apr 2001)
+* Fixed vix.com reference in hylafax-server man page (14 Apr 2001)
+* Fixed \(dg character mis-recognition in faxwatch man page (14 Apr 2001)
+* Fixed hard-coded man page numbers in scripts (14/16 Apr 2001)
+* Clarify documentation of MaxConcurrentJobs (14 Apr 2001)
+* Alter install of hfaxd to not be suid (13 Apr 2001)
+* Fix hfaxd -q format string vulnerability (13 Apr 2001)
+* Add more NSF codes to known-NSF list (26 Mar 2001, 14 Apr 2001)
+* Fix to allow null-TSI matching (19 Mar 2001)
+* Fix USR default use of Class2APQueryCmd (19 Mar 2001)
+* Added server-side PDF conversion (19 Mar 2001, 14/17 Apr 2001)
+* Correct a typo in wedged man page (08 Mar 2001)
+* Fixed incorrect paths in some man pages (08 Mar 2001)
+* Various utmpx, LOCKS, and IXO_XMITTIMEOUT fixes (08 Mar 2001)
+
 Changelog for HylaFAX 4.1beta3 - Feb 21, 2001
 
 * creation of doneq manpage (20Feb2001)
