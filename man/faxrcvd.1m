@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH FAXRCVD ${MANNUM1_8} "May 12, 1996"
+.TH FAXRCVD ${MANNUM1_8} "May 28, 2001"
 .SH NAME
 faxrcvd \- \*(Fx notification script for received facsimile
 .SH SYNOPSIS
@@ -36,6 +36,7 @@ faxrcvd \- \*(Fx notification script for received facsimile
 .I devid
 .I commid
 .I error-msg
+.I cidnumber
 .SH DESCRIPTION
 .B bin/faxrcvd
 is the command script invoked by the facsimile server whenever
@@ -60,15 +61,19 @@ the communication identifier for the inbound call.
 .B error-msg
 an error message that is non-null if an error was encountered
 during the receive operation.
+.TP
+.B cidnumber
+the value of
+.B CIDNumber
+when using
+.B QualifyCID
 .SH NOTES
-This script can route facsimile directly to the
-intended receipient if the sender's identity is well-known.
+This script can route facsimile directly to the intended receipient.
 To do this create a shell script
 .B etc/FaxDispatch
-in the spooling area that sets the receiver's electronic mail address
-according to the sender's
-.SM TSI.
-For example,
+in the spooling area that sets
+.I SENDTO
+to the receiver's electronic mail address.  For example,
 .sp
 .nf
 .ft C
@@ -76,15 +81,25 @@ For example,
 *1*510*526*1212*) SENDTO=sam;;          # Sam's test rig in Berkeley
 *1*415*390*1212*) SENDTO=raster@asd;;   # 7L Xerox room, used for scanning
 *5107811212)      SENDTO=peebles@mti;;  # stuff from home
-*)                SENDTO=;;             # don't know who to send it to
+esac
+case "$DEVICE" in
+ttyS1)            SENDTO=john;;         # all faxes received on ttyS1
+ttyLT0)           SENDTO=mary@home;;    # all faxes received on ttyLT0
+esac
+case "$CIDNUMBER" in
+435*)        SENDTO=lee; FILETYPE=pdf;; # all faxes from area code 435
+5059627777)  SENDTO=amy; FILETYPE=tif;; # Amy wants faxes in TIFF
 esac\s+1
 .ft R
 .fi
 .sp
-Note that you must match any embedded white space and you should
-direct any facsimile that are not dispatched to a ``null person''.
-The facsimile will be sent as a MIME-encoded PostScript document;
-consult the shell script for details.
+Note that you must match any embedded white space.
+The facsimile will be sent as a MIME-encoded PostScript document
+as default.  The attachment filetype is controlled by the
+.I FILETYPE
+shell variable, and can be controlled as shown above.  Current
+filetype options are ``ps'', ``tif'', and ``pdf''.
+Consult the shell script for details.
 .SH FILES
 .nf
 .ta \w'${SBIN}/faxinfo    'u

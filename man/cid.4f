@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH CID ${MANNUM4_5} "December 5, 1994"
+.TH CID ${MANNUM4_5} "May 28, 2001"
 .SH NAME
 cid \- Caller-ID access control list
 .SH DESCRIPTION
@@ -113,6 +113,19 @@ is defined, but no
 .B CIDNumber
 is specified, then no phone numbers will be recognized and all
 incoming calls will be ignored.
+.PP
+Caller-ID data is only sent once by the telco, and the timing of
+its arrival varies upon the telco and the type of line.  If
+\*(Fx is configured to answer via
+.B RingsBeforeAnswer
+prior to the arrival of the caller-ID data, then all
+.B CIDNumber
+and
+.B CIDName
+values will be null.  For example, on US analog lines, caller-ID
+data is usually sent between RINGs 1 and 2.  In this situation,
+.B RingsBeforeAnswer
+should be set to ``2'' or greater.
 .SH "SEE ALSO"
 .IR faxgetty (${MANNUM1_8}),
 .IR hylafax-config (${MANNUM4_5}),

@@ -71,6 +71,7 @@ private:
     time_t	lastCIDModTime;		// last mod time of CID patterns file
     RegExArray*	cidPats;		// recv cid patterns
     fxBoolArray* acceptCID;		// accept/reject matched cid
+    CallerID	received_cid;		// non-null received CNID
     fxStr	gettyArgs;		// getty arguments
     fxStr	vgettyArgs;		// voice getty arguments
     fxStr	egettyArgs;		// extern getty arguments
@@ -106,7 +107,7 @@ private:
     void	discardModem(bool dropDTR);
 // inbound call handling
     bool	isCIDOk(const fxStr& cid);
-    bool	processCall(CallType ctype, fxStr& emsg);
+    bool	processCall(CallType ctype, fxStr& emsg, const CallerID& cid);
     CallType	runGetty(const char* what,
 		    Getty* (*newgetty)(const fxStr&, const fxStr&),
 		    const char* args, fxStr &emsg,
@@ -115,9 +116,9 @@ private:
     void	listenBegin();
     void	listenForRing();
     void	answerPhoneCmd(AnswerType);
-    void	answerPhone(AnswerType, CallType, const CallerID&);
+    void	answerPhone(AnswerType, CallType, const CallerID& cid);
     void	answerCleanup();
-    bool	answerCall(AnswerType atype, CallType& ctype, fxStr& emsg);
+    bool	answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const CallerID& cid);
 
     friend void AnswerTimeoutHandler::timerExpired(long, long);
 // miscellaneous stuff
@@ -134,7 +135,7 @@ private:
     void	notifyRecvBegun(const FaxRecvInfo&);
     void	notifyPageRecvd(TIFF* tif, const FaxRecvInfo&, int ppm);
     void	notifyDocumentRecvd(const FaxRecvInfo&);
-    void	notifyRecvDone(const FaxRecvInfo&);
+    void	notifyRecvDone(const FaxRecvInfo&, const CallerID&);
 public:
     faxGettyApp(const fxStr& device, const fxStr& devID);
     ~faxGettyApp();

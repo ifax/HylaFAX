@@ -30,8 +30,8 @@
 #
 # faxrcvd file devID commID error-msg
 #
-if [ $# != 4 ]; then
-    echo "Usage: $0 file devID commID error-msg"
+if [ $# != 5 ]; then
+    echo "Usage: $0 file devID commID error-msg CIDNumber "
     exit 1
 fi
 
@@ -53,7 +53,18 @@ EOF
 
 INFO=$SBIN/faxinfo
 FAX2PS=$TIFFBIN/fax2ps
+MIMENCODE=mimencode
+TIFF2PS=tiff2ps
+PS2PDF=ps2pdf
 TOADDR=FaxMaster
+
+#
+# Permit various types of attachment types: ps, tif, pdf
+# Note that non-ASCII filetypes require metamail.
+# pdf requires tiff2ps and ps2pdf
+#
+FILETYPE=ps
+
 #
 # There is no good portable way to find out the fully qualified
 # domain name (FQDN) of the host or the TCP port for the hylafax
@@ -68,6 +79,9 @@ FILE="$1"
 DEVICE="$2"
 COMMID="$3"
 MSG="$4"
+CIDNUMBER="$5"
+
+FILENAME=`echo $FILE | $SED -e 's/\.tif//' -e 's/recvq\///'`
 
 if [ -f $FILE ]; then
     #
@@ -77,39 +91,45 @@ if [ -f $FILE ]; then
     SENDER="`$INFO $FILE | $AWK -F: '/Sender/ { print $2 }' 2>/dev/null`"
     SENDTO=
     if [ -f etc/FaxDispatch ]; then
-	. etc/FaxDispatch	# NB: FaxDispatch sets SENDTO based on $SENDER
+	. etc/FaxDispatch	# NB: FaxDispatch sets SENDTO
     fi
-    (echo "To: $TOADDR"
-     echo "From: The HylaFAX Receive Agent <fax>"
-     echo "Subject: facsimile received from $SENDER";
-     echo ""
-     echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):"; $INFO -n $FILE
-     echo "ReceivedOn: $DEVICE"
-     if [ "$MSG" ]; then
-	echo ""
-	echo "The full document was not received because:"
-	echo ""
-	echo "    $MSG"
-	echo ""
-	echo "    ---- Transcript of session follows ----"
-	echo ""
-	if [ -f log/c$COMMID ]; then
-	    $SED -e '/-- data/d' \
+    if [ "$TOADDR" != "$SENDTO" ]; then # don't send FaxMaster duplicate
+	(echo "To: $TOADDR"
+	 echo "From: The HylaFAX Receive Agent <fax>"
+	 echo "Subject: Facsimile received from $SENDER";
+	 echo ""
+	 echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):"; $INFO -n $FILE
+	echo "ReceivedOn: $DEVICE"
+	if [ "$MSG" ]; then
+	    echo ""
+	    echo "The full document was not received because:"
+	    echo ""
+	    echo "    $MSG"
+	    echo ""
+	    echo "    ---- Transcript of session follows ----"
+	    echo ""
+	    if [ -f log/c$COMMID ]; then
+		$SED -e '/-- data/d' \
 		 -e '/start.*timer/d' -e '/stop.*timer/d' \
 		 log/c$COMMID
-	elif [ -n "$COMMID" ]; then
-	    echo "    No transcript available (CommID c$COMMID)."
+	    elif [ -n "$COMMID" ]; then
+		echo "    No transcript available (CommID c$COMMID)."
+	    else
+		echo "    No transcript available."
+	    fi
 	else
-	    echo "    No transcript available."
+	    echo "    CommID: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
 	fi
-     else
-	echo "CommID:     c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
-     fi
-     if [ -n "$SENDTO" ]; then
-	echo ""
-	echo "The facsimile was automatically dispatched to: $SENDTO." 
-     fi
-    ) | 2>&1 $SENDMAIL -ffax -oi $TOADDR
+	if [ "$CIDNUMBER" ]; then
+	    echo " CIDNumber: $CIDNUMBER"
+	    echo ""
+	fi
+	if [ -n "$SENDTO" ]; then
+	    echo ""
+	    echo "The facsimile was automatically dispatched to: $SENDTO." 
+	fi
+	) | 2>&1 $SENDMAIL -ffax -oi $TOADDR
+    fi
     if [ -n "$SENDTO" ]; then
 	(MIMEBOUNDARY="NextPart$$"
 	 echo "Mime-Version: 1.0"
@@ -117,7 +137,7 @@ if [ -f $FILE ]; then
 	 echo "Content-Transfer-Encoding: 7bit"
 	 echo "To: $SENDTO"
 	 echo "From: The HylaFAX Receive Agent <fax>"
-	 echo "Subject: facsimile received from $SENDER";
+	 echo "Subject: Facsimile received from $SENDER";
 	 echo ""
 	 echo "--$MIMEBOUNDARY"
 	 echo "Content-Type: text/plain; charset=us-ascii"
@@ -143,15 +163,39 @@ if [ -f $FILE ]; then
 		echo "    No transcript available."
 	    fi
 	 else
-	    echo "CommID:     c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
+	    echo "    CommID: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
+	 fi
+	 if [ "$CIDNUMBER" ]; then
+	    echo " CIDNumber: $CIDNUMBER"
+	    echo ""
 	 fi
 	 echo ""
 	 echo "--$MIMEBOUNDARY"
-	 echo "Content-Type: application/postscript"
-	 echo "Content-Description: FAX document"
-	 echo "Content-Transfer-Encoding: 7bit"
-	 echo ""
-	 $FAX2PS $FILE 2>/dev/null
+	 if [ "$FILETYPE" = "tif" ]; then
+	     echo "Content-Type: image/tiff; name=\"$FILENAME.tif\""
+	     echo "Content-Description: FAX document"
+	     echo "Content-Transfer-Encoding: base64"
+	     echo "Content-Disposition: attachment; filename=\"$FILENAME.tif\""
+	     echo ""
+	     $MIMENCODE $FILE 2>/dev/null
+	 elif [ "$FILETYPE" = "pdf" ]; then
+	     echo "Content-Type: application/pdf; name=\"c$COMMID.pdf\""
+	     echo "Content-Description: FAX document"
+	     echo "Content-Transfer-Encoding: base64"
+	     echo "Content-Disposition: attachment; filename=\"c$COMMID.pdf\""
+	     echo ""
+	     $TIFF2PS -a -O $FILE.ps $FILE 2>/dev/null # fax2ps looks bad
+	     $PS2PDF $FILE.ps $FILE.pdf 2>/dev/null
+	     $MIMENCODE $FILE.pdf 2>/dev/null
+	     $RM -f $FILE.ps $FILE.pdf 2>/dev/null
+	 else #  default as Postscript
+	     echo "Content-Type: application/postscript; name=\"$FILENAME.ps\""
+	     echo "Content-Description: FAX document"
+	     echo "Content-Transfer-Encoding: 7bit"
+	     echo "Content-Disposition: attachment; filename=\"$FILENAME.ps\""
+	     echo ""
+	     $FAX2PS $FILE 2>/dev/null
+	 fi
 	 echo ""
 	 echo "--$MIMEBOUNDARY--"
 	) | 2>&1 $SENDMAIL -ffax -oi $SENDTO

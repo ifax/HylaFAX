@@ -91,7 +91,7 @@ protected:
     void	setLocalIdentifier(const fxStr& lid);
 
     void	sendFax(FaxRequest&, FaxMachineInfo&, FaxAcctInfo&);
-    bool	recvFax();
+    bool	recvFax(const CallerID& cid);
 
     time_t	getFileTransferTime() const;
     time_t	getPageTransferTime() const;
@@ -108,7 +108,7 @@ protected:
     virtual void notifyRecvBegun(const FaxRecvInfo&);
     virtual void notifyPageRecvd(TIFF* tif, const FaxRecvInfo&, int ppm);
     virtual void notifyDocumentRecvd(const FaxRecvInfo& req);
-    virtual void notifyRecvDone(const FaxRecvInfo& req);
+    virtual void notifyRecvDone(const FaxRecvInfo& req, const CallerID& cid);
 public:
     virtual ~FaxServer();
 

@@ -184,6 +184,8 @@ faxGettyApp::listenBegin()
 	changeState(LISTENING);
 	sendModemStatus("B");
 	ringsHeard = 0;
+	received_cid.name = "";
+	received_cid.number = "";
 	listenForRing();
     } else if (state != SENDING && state != ANSWERING && state != RECEIVING) {
 	/*
@@ -215,14 +217,16 @@ faxGettyApp::listenForRing()
     CallType ctype = ClassModem::CALLTYPE_UNKNOWN;
     if (modemWaitForRings(1, ctype, cid)) {
 	if (cid.number != "" || cid.name != "") {
+	    received_cid = cid;	// CNID is only sent once.  Store it
+				// for answering after later RINGs.
 	    traceServer("ANSWER: CID NUMBER \"%s\" NAME \"%s\"",
-		(const char*) cid.number, (const char*) cid.name);
+		(const char*) received_cid.number, (const char*) received_cid.name);
 	    faxApp::sendModemStatus(getModemDeviceID(), "C\"%s\"%s\"",
-		(const char*) cid.number, (const char*) cid.name);
+		(const char*) received_cid.number, (const char*) received_cid.name);
 	}
 	++ringsHeard;
 	if (ringsBeforeAnswer && ringsHeard >= ringsBeforeAnswer)
-	    answerPhone(ClassModem::ANSTYPE_ANY, ctype, cid);
+	    answerPhone(ClassModem::ANSTYPE_ANY, ctype, received_cid);
 	else
 	    // NB: 10 second timeout should be plenty
 	    Dispatcher::instance().startTimer(10, 0, &answerHandler);
@@ -312,7 +316,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid)
 	} else {
 	    // NB: answer based on ctype, not atype
 	    ctype = modemAnswerCall(ctype, emsg);
-	    callResolved = processCall(ctype, emsg);
+	    callResolved = processCall(ctype, emsg, cid);
 	}
     } else if (atype == ClassModem::ANSTYPE_ANY) {
 	/*
@@ -321,7 +325,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid)
 	 */
 	int r = answerRotor;
 	do {
-	    callResolved = answerCall(answerRotary[r], ctype, emsg);
+	    callResolved = answerCall(answerRotary[r], ctype, emsg, cid);
 	    r = (r+1) % answerRotorSize;
 	} while (!callResolved && adaptiveAnswer && r != answerRotor);
     } else {
@@ -330,7 +334,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid)
 	 * any existing call type information such as
 	 * distinctive ring.
 	 */
-	callResolved = answerCall(atype, ctype, emsg);
+	callResolved = answerCall(atype, ctype, emsg, cid);
     }
     /*
      * Call resolved.  If we were able to recognize the call
@@ -396,7 +400,7 @@ faxGettyApp::answerCleanup()
  * the modem layer arrives at as the call type.
  */
 bool
-faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg)
+faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const CallerID& cid)
 {
     bool callResolved;
     if (atype == ClassModem::ANSTYPE_EXTERN) {
@@ -418,7 +422,7 @@ faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg)
 	    emsg = "External getty use is not permitted";
     } else
 	ctype = modemAnswerCall(atype, emsg);
-    callResolved = processCall(ctype, emsg);
+    callResolved = processCall(ctype, emsg, cid);
     return (callResolved);
 }
 
@@ -436,7 +440,7 @@ faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg)
  * incoming calls (if configured).
  */
 bool
-faxGettyApp::processCall(CallType ctype, fxStr& emsg)
+faxGettyApp::processCall(CallType ctype, fxStr& emsg, const CallerID& cid)
 {
     bool callHandled = false;
 
@@ -445,7 +449,7 @@ faxGettyApp::processCall(CallType ctype, fxStr& emsg)
 	traceServer("ANSWER: FAX CONNECTION");
 	changeState(RECEIVING);
 	sendRecvStatus(getModemDeviceID(), "B");
-	callHandled = recvFax();
+	callHandled = recvFax(cid);
 	sendRecvStatus(getModemDeviceID(), "E");
 	break;
     case ClassModem::CALLTYPE_DATA:
@@ -693,9 +697,9 @@ faxGettyApp::notifyDocumentRecvd(const FaxRecvInfo& ri)
  * Handle notification that a document has been received.
  */
 void
-faxGettyApp::notifyRecvDone(const FaxRecvInfo& ri)
+faxGettyApp::notifyRecvDone(const FaxRecvInfo& ri, const CallerID& cid)
 {
-    FaxServer::notifyRecvDone(ri);
+    FaxServer::notifyRecvDone(ri, cid);
 
     // hand to delivery/notification command
     fxStr cmd(faxRcvdCmd
@@ -703,6 +707,7 @@ faxGettyApp::notifyRecvDone(const FaxRecvInfo& ri)
 	| quote |   getModemDeviceID()	| enquote
 	| quote |           getCommID()	| enquote
 	| quote |            ri.reason	| enquote
+	| quote |           cid.number  | enquote
     );
     traceServer("RECV FAX: %s", (const char*) cmd);
     setProcessPriority(BASE);			// lower priority

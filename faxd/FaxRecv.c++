@@ -42,7 +42,7 @@
  */
 
 bool
-FaxServer::recvFax()
+FaxServer::recvFax(const CallerID& cid)
 {
     traceProtocol("RECV FAX: begin");
 
@@ -91,7 +91,11 @@ FaxServer::recvFax()
 	else
 	    Sys::chmod(ri.qfile, recvFileMode);
 	if (faxRecognized)
-	    notifyRecvDone(ri);
+	    // It would be cleaner and more versatile to include
+	    // cid as part of ri now instead of continuing to
+	    // pass it along.  This would require alterations to
+	    // FaxRecvInfo, though - not as simple an approach.
+	    notifyRecvDone(ri, cid);
     }
     traceProtocol("RECV FAX: end");
     return (faxRecognized);
@@ -305,7 +309,7 @@ FaxServer::notifyDocumentRecvd(const FaxRecvInfo& ri)
  * Handle final actions associated with a document being received.
  */
 void
-FaxServer::notifyRecvDone(const FaxRecvInfo& ri)
+FaxServer::notifyRecvDone(const FaxRecvInfo& ri, const CallerID& cid)
 {
     if (ri.reason != "")
 	traceServer("RECV FAX (%s): session with %s terminated abnormally: %s"
