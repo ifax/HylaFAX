@@ -263,7 +263,7 @@ while [ -z "$RESULT" ]; do
     # reset the modem.  If something goes wrong, it'll
     # nag the user to check on the problem.
     #
-    (trap 0 1 2 15;
+    (trap "exit 1" 1 2 15;
      while true; do
 	sleep 10;
 	echo ""
