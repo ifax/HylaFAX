@@ -112,7 +112,8 @@ public:
     fxStr	class1HFLOCmd;		// cmd to setup hardware flow control
     u_int	class1TCFRecvTimeout;	// timeout receiving TCF
     u_int	class1TCFResponseDelay;	// delay (ms) btwn TCF & ack/nak
-    u_int	class1SendPPMDelay;	// delay (ms) before sending PPM
+    u_int	class1SendEOPDelay;	// delay (ms) before sending EOP
+    u_int	class1SendPPMDelay;	// delay (ms) before sending PPM (MPS)
     u_int	class1SendTCFDelay;	// delay (ms) btwn sending DCS & TCF
     u_int	class1SwitchingDelay;	// delay (ms) in switching transmission direction
     u_int	class1TrainingRecovery;	// delay (ms) after failed training

@@ -263,7 +263,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	 *     to send the OK result and so using pause is more
 	 *     accurate.
 	 */
-	pause(cmd == FCF_MPS ? conf.class1SendPPMDelay : 95);
+	pause(cmd == FCF_MPS ? conf.class1SendPPMDelay : conf.class1SendEOPDelay);
 	do {
 	    /*
 	     * Send post-page message and get response.

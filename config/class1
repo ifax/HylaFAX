@@ -109,7 +109,8 @@ ModemType:		Class1		# use this to supply a hint
 #
 Class1Cmd:		AT+FCLASS=1	# command to enter class 1
 Class1TCFResponseDelay:	75		# 75ms delay between recv TCF & response
-Class1SendPPMDelay:	75		# 75ms delay before sending PPM
+Class1SendEOPDelay:	200		# 200ms delay preceding EOP send
+Class1SendPPMDelay:	75		# 75ms delay before sending PPM (MPS)
 Class1SendTCFDelay:	75		# 75ms delay between sending DCS & TCF
 Class1SwitchingDelay:	150		# 150ms delay in switching transmission direction
 Class1TrainingRecovery:	1500		# 1.5sec delay after training failure

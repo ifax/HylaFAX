@@ -1359,6 +1359,7 @@ Class1Parameters="
     Class1FrameOverhead
     Class1RecvAbortOK
     Class1RecvIdentTimer
+    Class1SendEOPDelay
     Class1SendPPMDelay
     Class1SendTCFDelay
     Class1SwitchingDelay
@@ -1618,7 +1619,8 @@ AT	Class1SFLOCmd		\
 	Maximum time to wait for OK after aborting a receive (ms)
 #	Class1RecvIdentTimer	\
 	Maximum wait for initial identification frame (ms)
-#	Class1SendPPMDelay	Delay before sending post-page message (ms)
+#	Class1SendEOPDelay	Delay before sending EOP message (ms)
+#	Class1SendPPMDelay	Delay before sending MPS message (ms)
 #	Class1SendTCFDelay	Delay between sending TCF and ack/nak (ms)
 #	Class1SwitchingDelay	Delay in switching transmission direction (ms)
 #	Class1TCFRecvTimeout	Timeout for receiving TCF (ms)
