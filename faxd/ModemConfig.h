@@ -59,7 +59,8 @@ protected:
     fxStr parseATCmd(const char*);
 public:
     fxStr	type;			// modem type
-    fxStr	resetCmds;		// extra modem reset commands
+    fxStr	resetCmds;		// extra modem reset commands for start of initialization
+    fxStr	readyCmds;		// extra modem reset commands for end of initialization
     fxStr	dialCmd;		// cmd for dialing (%s for number)
     fxStr	answerAnyCmd;		// cmd for answering unknown call type
     fxStr	answerDataCmd;		// cmd for answering data call

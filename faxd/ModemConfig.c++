@@ -83,6 +83,7 @@ static struct {
 { "modemanswervoicebegincmd",	&ModemConfig::answerVoiceBeginCmd },
 { "modemringresponse",		&ModemConfig::ringResponse },
 { "modemresetcmds",		&ModemConfig::resetCmds },
+{ "modemreadycmds",		&ModemConfig::readyCmds },
 { "modemdialcmd",		&ModemConfig::dialCmd,		"ATDT%s" },
 { "modemnoflowcmd",		&ModemConfig::noFlowCmd },
 { "modemsoftflowcmd",		&ModemConfig::softFlowCmd },
@@ -549,9 +550,9 @@ ModemConfig::getRTNHandling(const char* cp)
 void
 ModemConfig::parseCID(const char* rbuf, CallerID& cid) const
 {
-    if (strneq(rbuf, cidName, cidName.length()))
+    if (cidName.length() && strneq(rbuf, cidName, cidName.length()))
 	cid.name = cid.name | rbuf+cidName.length();
-    if (strneq(rbuf, cidNumber, cidNumber.length()))
+    if (cidNumber.length() && strneq(rbuf, cidNumber, cidNumber.length()))
 	cid.number = cid.number | rbuf+cidNumber.length();
 }
 

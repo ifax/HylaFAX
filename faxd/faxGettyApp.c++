@@ -144,7 +144,7 @@ faxGettyApp::setupModem()
      */
     if (updateConfig(getConfigFile()))
 	sendModemStatus("N" | getModemNumber());
-    if (FaxServer::setupModem()) {
+    if (FaxServer::setupModem() && ModemServer::readyModem()) {
 	/*
 	 * Setup modem for receiving.
 	 */

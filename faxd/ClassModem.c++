@@ -742,6 +742,18 @@ ClassModem::reset(long ms)
     return true;
 }
 
+/*
+ * Some scenarios require a "ready" command sequence to occur
+ * to, for example, un-busy a line (DID) or otherwise ready
+ * the modem for incoming calls after the rest of the
+ * initialization has already occurred.
+ */
+bool
+ClassModem::ready(long ms)
+{
+    return atCmd(conf.readyCmds, AT_OK, ms);
+}
+
 bool
 ClassModem::sync(long ms)
 {

@@ -45,7 +45,6 @@ Class2CQCmd:		AT+FCQ=1
 # CIDName:		"NAME="
 
 # Or with the MT5634ZBA-DID you'll probably need something like...
-# QualifyCID:		etc/cid		# you must create this file
-# ModemResetCmds:	AT*DS1*DD0*DF1	# enable DTMF-DID
+# ModemReadyCmds:	AT*DS1*DD0*DF1*DN4	# enable DTMF-DID, wink-start, 4 digits
 # CIDNumber:		"DTMF"		# format of AT*DF1
 # CIDNumberAnswerLength:	4	# four DTMF-DID digits then ATA

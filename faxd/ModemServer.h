@@ -127,6 +127,7 @@ protected:
 
 // modem driver setup+teardown interfaces
     virtual bool setupModem();
+    virtual bool readyModem();
     virtual void discardModem(bool dropDTR);
     virtual ClassModem* deduceModem();
 // low-level modem interfaces

@@ -491,6 +491,15 @@ ModemServer::setupModem()
 }
 
 /*
+ * Ready the modem; if needed.
+ */
+bool
+ModemServer::readyModem()
+{
+    return (modem->ready());
+}
+
+/*
  * Deduce the type of modem supplied to the server
  * and return an instance of the appropriate modem
  * driver class.

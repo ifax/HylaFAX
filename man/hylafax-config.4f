@@ -232,6 +232,7 @@ ModemOnHookCmd	string	\s-1ATH0\s+1	command for placing phone ``on hook''
 ModemPageDoneTimeout	integer	\s-1180000\s+1	page send/receive timeout (ms)
 ModemPageStartTimeout	integer	\s-1180000\s+1	page send/receive timeout (ms)
 ModemRate	integer	\s-119200\s+1	baud rate to use for \s-1DCE-DTE\s+1 communication
+ModemReadyCmds	string	\-	additional final commands when resetting modem
 ModemRecvFillOrder	string	\s-1\fIsee below\fP\s+1	bit order for received facsimile data
 ModemRecvSuccessCmd	string	\-	command to send after a successful reception
 ModemResetCmds	string	\-	additional commands when resetting modem
@@ -1815,6 +1816,13 @@ Note that not all values are supported by all operating
 systems and modems; consult
 .IR stty (1)
 for the available rates on your system.
+.TP
+.B ModemReadyCmds
+A string of commands to issue to the modem during reception initialization.
+This string is sent to the modem
+.I after
+the standard set of configuration commands required by the fax server.  This
+is done, for example, to un-busy a DID line so that calls can come through.
 .TP
 .B ModemRecvFillOrder
 The bit order to expect for received facsimile data.

@@ -235,6 +235,7 @@ public:
 
     virtual bool sync(long ms = 0);		// synchronize (wait for "OK")
     virtual bool reset(long ms = 5*1000);	// reset modem state
+    virtual bool ready(long ms = 5*1000);	// ready modem state
     virtual void hangup();			// hangup the phone
 
 // configuration controls
