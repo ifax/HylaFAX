@@ -83,11 +83,42 @@ if test ! -x $IS_ON ; then
 fi
 
 if $IS_ON verbose ; then
-    ECHO="echo -e"
+    ECHO=echo
 else		# For a quiet startup and shutdown
     ECHO=:
 fi
 
+#
+# Figure out which brand of echo we have and define prompt
+# and printf shell functions accordingly.  Note that we
+# assume that if the System V-style echo is not present,
+# then the BSD printf program is available.  These functions
+# are defined here so that they can be tailored on a per-site,
+# etc. basis.
+#
+if [ `echo foo\\\c`@ = "foo@" ]; then
+    # System V-style echo supports \r
+    # and \c which is all that we need
+    printf()
+    {
+       $ECHO "$*\\c"
+    }
+elif [ "`echo -n foo`@" = "foo@" ]; then
+    # BSD-style echo; use echo -n to get
+    # a line without the trailing newline
+    printf()
+    {
+       $ECHO -n "$*"
+    }
+else
+    # something else; do without
+    printf()
+    {
+	$ECHO "$*"
+    }
+fi
+
+#
 #
 # killall -SIGNAL process-name
 #
@@ -117,14 +148,14 @@ case $1 in
 	if $IS_ON fax && test -x $FAXQ; then
 	    killall -15 faxq
 	    killall -15 hfaxd
-	    $ECHO "HylaFAX:\c"
+	    printf "HylaFAX:"
             if test $FAXQ_SERVER -eq 1 ; then
-	        $FAXQ; $ECHO " faxq\c"
+	        $FAXQ; printf " faxq"
             fi
             if test $HFAXD_SERVER -eq 1 ; then
 	        $HFAXD -i $FAXPORT
             fi
-            $ECHO " hfaxd (without old protocol or SNPP support)\c"
+            printf " hfaxd (without old protocol or SNPP support)"
 	    $ECHO "."
 	fi
 	;;
