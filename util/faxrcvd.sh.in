@@ -30,7 +30,7 @@
 #
 # faxrcvd file devID commID error-msg
 #
-if [ $# != 6 ]; then
+if [ $# -lt 4 ]; then
     echo "Usage: $0 file devID commID error-msg CIDNumber CIDName "
     exit 1
 fi
