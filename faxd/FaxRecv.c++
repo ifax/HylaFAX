@@ -42,14 +42,14 @@
  */
 
 bool
-FaxServer::recvFax(const CallerID& cid)
+FaxServer::recvFax(const CallerID& cid, fxStr& emsg)
 {
     traceProtocol("RECV FAX: begin");
 
-    fxStr emsg = "";
     FaxRecvInfoArray docs;
     FaxRecvInfo info;
     bool faxRecognized = false;
+    emsg = "";
     abortCall = false;
     waitNotifyPid = 0;
 

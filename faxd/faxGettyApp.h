@@ -86,6 +86,7 @@ private:
     fxStr	faxRcvdCmd;		// fax received command
     fxStr	dynamicConfig;		// command to dynamically alter configuration
     u_int	modemPriority;		// modem priority passed to faxq
+    bool	logCalls;		// Log all calls for FaxAcctInfo
 
     static faxGettyApp* _instance;
 

@@ -92,7 +92,7 @@ protected:
     void	setLocalIdentifier(const fxStr& lid);
 
     void	sendFax(FaxRequest&, FaxMachineInfo&, FaxAcctInfo&, u_int&);
-    bool	recvFax(const CallerID& cid);
+    bool	recvFax(const CallerID& cid, fxStr& emsg);
 
     time_t	getFileTransferTime() const;
     time_t	getPageTransferTime() const;

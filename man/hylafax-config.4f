@@ -145,6 +145,7 @@ JobReqOther\(S2	integer	\s-1300\s+1	requeue interval for ``other'' problems
 JobReqProto	integer	\s-160\s+1	requeue interval after fax protocol error
 LockDataCalls	boolean	\s-1Yes\s+1	lock modem for the duration of an inbound data call
 LockVoiceCalls	boolean	\s-1Yes\s+1	lock modem for the duration of an inbound voice call
+LogCalls	boolean	\s-1Yes\s+1	Log all incoming calls as CALL records in xferfaxlog
 LogFacility\(S2	string	\s-1daemon\s+1	\fIsyslog\fP facility name for ServerTracing messages
 LogFileMode	octal	\s-10600\s+1	protection mode to use for session log files
 LocalIdentifier	string	\-	local station identification string
@@ -821,6 +822,11 @@ The list of facility names is standardized; it can be found
 in the system include file
 .BR <syslog.h> ;
 comparisons are case-insensitive.
+.TP
+.B LogCalls
+Log all incoming calls into xferfaxlog as CALL records.  This allows
+a quick check of all incoming calls, regardless of fax completion or
+not in a unified manner with other fax logs.
 .TP
 .B LogFileMode
 The file protection mode that should be used when

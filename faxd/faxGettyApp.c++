@@ -299,6 +299,21 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
     changeState(ANSWERING);
     beginSession(FAXNumber);
     sendModemStatus("I" | getCommID());
+
+    FaxAcctInfo ai;
+    ai.user = "fax";
+    ai.commid = getCommID();
+    ai.start = Sys::now();
+    ai.device = getModemDeviceID();
+    ai.dest = getModemNumber();
+    ai.cidname = cid.name;
+    ai.cidnumber = cid.number;
+    ai.npages = 0;
+    ai.params = 0;
+    ai.csi = "";
+    ai.jobid = "";
+    ai.jobtag = "";
+    ai.owner = "";
     /*
      * Answer the phone according to atype.  If this is
      * ``any'', then pick a more specific type.  If
@@ -312,7 +327,8 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
 	/*
 	 * Call was rejected based on Caller ID information.
 	 */
-	traceServer("ANSWER: CID REJECTED");
+	emsg = "ANSWER: CID REJECTED";
+	traceServer("%s", (const char*)emsg);
 	callResolved = false;
 	advanceRotary = false;
     } else {
@@ -326,7 +342,8 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
 	    pid_t pid = fork();
 	    switch (pid) {
 		case -1:
-		    logError("Could not fork for local ID.");
+		    emsg = "Could not fork for local ID.";
+		    logError("%s", (const char*)emsg);
 		    break;
 		case  0:
 		    dup2(pipefd[1], STDOUT_FILENO);
@@ -345,7 +362,10 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
 			}
 			Sys::waitpid(pid, status);
 			if (status != 0)
-			    logError("Bad exit status %#o for \'%s\'", status, (const char*) cmd);
+			{
+			    emsg = fxStr::format("Bad exit status %#o for \'%s\'", status, (const char*) cmd);
+			    logError("%s", (const char*)emsg);
+			}
 			// modem settings may have changed...
 			FaxModem* modem = (FaxModem*) ModemServer::getModem();
 			modem->pokeConfig();
@@ -362,10 +382,11 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
 	     * deduced call type.
 	     */
 	    if (atype != ClassModem::ANSTYPE_ANY && ctype != atype) {
-		traceServer("ANSWER: Call deduced as %s,"
+	        emsg = fxStr::format("ANSWER: Call deduced as %s,"
 		     "but told to answer as %s; call ignored",
 		     ClassModem::callTypes[ctype],
 		     ClassModem::answerTypes[atype]);
+		traceServer("%s", (const char*)emsg);
 		callResolved = false;
 		advanceRotary = false;
 	    } else {
@@ -410,6 +431,15 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
     }
     sendModemStatus("I");
     endSession();
+
+    ai.status = emsg;
+    ai.duration = Sys::now() - ai.start;
+    ai.conntime = ai.duration;
+    if (logCalls && !ai.record("CALL"))
+	logError("Error writing CALL accounting record, dest=%s",
+	    (const char*) ai.dest);
+
+
     answerCleanup();
 }
 
@@ -515,7 +545,7 @@ faxGettyApp::processCall(CallType ctype, fxStr& emsg, const CallerID& cid)
 	);
 	changeState(RECEIVING);
 	sendRecvStatus(getModemDeviceID(), "B");
-	callHandled = recvFax(cid);
+	callHandled = recvFax(cid, emsg);
 	sendRecvStatus(getModemDeviceID(), "E");
 	break;
     case ClassModem::CALLTYPE_DATA:
@@ -931,6 +961,7 @@ faxGettyApp::booltag faxGettyApp::booleans[] = {
 { "lockdatacalls",	&faxGettyApp::lockDataCalls,	true },
 { "lockvoicecalls",	&faxGettyApp::lockVoiceCalls,	true },
 { "lockexterncalls",	&faxGettyApp::lockExternCalls,	true },
+{ "logcalls",		&faxGettyApp::logCalls,		true },
 };
 
 void
