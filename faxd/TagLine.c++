@@ -68,6 +68,7 @@ FaxModem::setupTagLine(const FaxRequest& req, const fxStr& tagLineFmt)
 	case 'l': insert(tagLine, l, server.getLocalIdentifier()); break;
 	case 'm': insert(tagLine, l, req.mailaddr); break;
 	case 'n': insert(tagLine, l, server.getModemNumber()); break;
+	case 'r': insert(tagLine, l, req.receiver); break;
 	case 's': insert(tagLine, l, req.sender); break;
 	case 't': insert(tagLine, l,
 			fxStr((int)(req.totpages-req.npages), "%u")); break;

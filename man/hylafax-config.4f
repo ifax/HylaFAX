@@ -1194,6 +1194,7 @@ may be used as well as the following server-implemented codes:
 %%n	canonicalized \fBFAXNumber\fP
 %%p	current page number of session
 %%P	current page number of job
+%%r	receiver's name
 %%s	sender's name
 %%t	total pages in session
 %%T	total pages in job
