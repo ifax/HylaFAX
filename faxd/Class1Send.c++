@@ -130,7 +130,7 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg)
 		switch (frame.getRawFCF()) {
 		case FCF_DIS:
 		    if ((dis&DIS_T4RCVR) == 0) {
-			emsg = "Remote is not T.4 compatible";
+			emsg = "Remote has no T.4 receiver capability";
 			protoTrace(emsg);
 		    	return (send_failed);
 		    } else {
