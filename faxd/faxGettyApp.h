@@ -101,6 +101,7 @@ private:
     void	setAnswerRotary(const fxStr& value);
 // modem handling
     bool	isModemLocked();
+    bool	canLockModem();
     bool	lockModem();
     void	unlockModem();
     bool	setupModem();

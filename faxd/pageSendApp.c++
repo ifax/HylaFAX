@@ -1238,6 +1238,12 @@ pageSendApp::setupModem()
  */
 
 bool
+pageSendApp::canLockModem()
+{
+    return (modemLock ? modemLock->check() : true);
+}
+
+bool
 pageSendApp::lockModem()
 {
     return (modemLock ? modemLock->lock() : true);

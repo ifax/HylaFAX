@@ -99,6 +99,7 @@ private:
     void	sendUcpPage(FaxRequest&, FaxMachineInfo&, const fxStr&, fxStr&);    bool	sendUcpMsg(FaxRequest&, faxRequest&, const fxStr&, fxStr&,
 		    FaxMachineInfo&);
 // modem handling
+    bool	canLockModem();
     bool	lockModem();
     void	unlockModem();
     bool	setupModem();

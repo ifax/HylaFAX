@@ -191,6 +191,11 @@ faxSendApp::send(const char* filename)
  * Modem locking support.
  */
 
+bool faxSendApp::canLockModem()
+{
+    return (modemLock ? modemLock->check() : true);
+}
+
 bool
 faxSendApp::lockModem()
 {

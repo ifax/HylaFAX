@@ -64,6 +64,7 @@ private:
     void	resetConfig();
     bool	setConfigItem(const char* tag, const char* value);
 // modem handling
+    bool	canLockModem();
     bool	lockModem();
     void	unlockModem();
 // notification interfaces used by FaxServer

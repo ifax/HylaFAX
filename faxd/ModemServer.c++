@@ -150,7 +150,7 @@ ModemServer::open()
 	if (!modemReady)
 	    changeState(MODEMWAIT, pollModemWait);
 	else
-	    changeState(RUNNING, 0);
+	    changeState(RUNNING, pollLockWait);
     } else {
 	traceServer("%s: Can not lock device.", (const char*) modemDevice);
 	changeState(LOCKWAIT, pollLockWait);
@@ -231,6 +231,7 @@ ModemServer::changeState(ModemServerState s, long timeout)
     }
     if (timeout)
 	Dispatcher::instance().startTimer(timeout, 0, this);
+
 }
 
 #if HAS_SCHEDCTL
@@ -719,6 +720,18 @@ void
 ModemServer::timerExpired(long, long)
 {
     switch (state) {
+    case RUNNING:
+	/*
+	 * Poll the lock file, see if it's lockable.
+	 * If it's lockable, then no lock file exists.  Rinse. Repeat.
+	 * If a lockfile exists, go to LOCKWAIT
+	 */
+	if (canLockModem()) {
+	    Dispatcher::instance().startTimer(timeout, pollLockWait, this);
+	} else {
+	    changeState(LOCKWAIT, pollLockWait);
+	}
+	break;
     case MODEMWAIT:
     case LOCKWAIT:
 	/*
@@ -733,7 +746,7 @@ ModemServer::timerExpired(long, long)
 	    bool modemReady = setupModem();
 	    unlockModem();
 	    if (modemReady)
-		changeState(RUNNING, 0);
+		changeState(RUNNING, pollLockWait);
 	    else
 		changeState(MODEMWAIT, pollModemWait);
 	} else

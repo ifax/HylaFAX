@@ -129,6 +129,7 @@ faxGettyApp::close()
 
 bool faxGettyApp::lockModem()		{ return modemLock->lock(); }
 void faxGettyApp::unlockModem()		{ modemLock->unlock(); }
+bool faxGettyApp::canLockModem()	{ return modemLock->check(); }
 bool faxGettyApp::isModemLocked()	{ return modemLock->isLocked(); }
 
 bool
@@ -397,7 +398,7 @@ faxGettyApp::answerCleanup()
     } else
 	isSetup = false;
     if (isSetup)
-	changeState(RUNNING);
+	changeState(RUNNING, pollLockWait);
     else
 	changeState(MODEMWAIT, pollModemWait);
 }

@@ -165,6 +165,7 @@ protected:
     void	traceModemOp(const char* fmt ...);
     void	traceStatus(int kind, const char* fmt ...);
 // modem locking interfaces implemented in derived class
+    virtual bool canLockModem() = 0;
     virtual bool lockModem() = 0;
     virtual void unlockModem() = 0;
 // notification interfaces implemented in derived class

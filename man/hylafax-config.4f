@@ -161,7 +161,7 @@ PageChop\(S1	string	\s-1last\s+1	control automatic truncation of trailing whites
 PageChopThreshold\(S1	float	\s-13.0\s+1	whitespace truncation threshold (inches)
 PCL2FaxCmd\(S1	string	\s-1bin/pcl2fax\s+1	PCL \s-1RIP\s+1 command script
 PercentGoodLines	integer	\s-195\s+1	percentage of good rows for \s-1OK\s+1 page quality
-PollLockWait\(S2	integer	\s-130\s+1	polling interval when in ``lock wait'' state (secs)
+PollLockWait\(S2	integer	\s-130\s+1	polling interval for lockfile presense/removal (secs)
 PollModemWait	integer	\s-130\s+1	polling interval when in ``modem wait'' state (secs)
 PollRcvdCmd	string	\s-1bin/pollrcvd\s+1	delivery script for facsimile received by polling
 PostScriptTimeout\(S1	integer	\s-1300\s+1	timeout on \*(Ps interpreter runs (secs)
@@ -900,8 +900,8 @@ See also
 When polling for the presence/removal of a 
 .SM UUCP
 lockfile, the time (in seconds) to wait between checks.
-Lockfile polling occurs when the fax server collides with
-another process using the modem for outbound use.
+Lockfile polling occurs to ensure the fax server doesn't collide
+with another process using the modem.
 .TP
 .B PollModemWait
 The time (in seconds) to wait between checks
