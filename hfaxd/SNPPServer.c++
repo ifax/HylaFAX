@@ -849,7 +849,7 @@ SNPPServer::dataCmd(void)
 	fxStr emsg;
 	u_int seqnum = getDocumentNumbers(1, emsg);
 	if (seqnum == (u_int) -1) {
-	    reply(554, emsg);
+	    reply(554, "%s", (const char*)emsg);
 	    return;
 	}
 	msgFile = fxStr::format("/%s/doc%u.page", FAX_TMPDIR, seqnum);
@@ -1053,7 +1053,7 @@ SNPPServer::messageCmd(const char* msg)
 	fxStr emsg;
 	u_int seqnum = getDocumentNumbers(1, emsg);
 	if (seqnum == (u_int) -1) {
-	    reply(554, emsg);
+	    reply(554, "%s", (const char*)emsg);
 	    return;
 	}
 	msgFile = fxStr::format("/%s/doc%u.page", FAX_TMPDIR, seqnum);

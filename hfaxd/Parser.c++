@@ -964,7 +964,7 @@ HylaFAXServer::site_cmd(Token t)
 	break;
     case T_TRIGGER:
 	if (string_param(s, "trigger-spec")) {
-	    logcmd(t, s);
+	    logcmd(t, "%s", (const char*)s);
 	    triggerCmd("%s", (const char*) s);
 	    return (true);
 	}
