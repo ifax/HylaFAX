@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* handle EOT after PPS (28 Feb 2005)
 * add Class1AdaptRecvCmd config option, AT+FAR=1 support, (28 Feb 2005)
 * fix DCS scanline-time error when sending to systems without
   ECM supporting "mixed" scanline-times (24 Feb 2005)

@@ -1165,7 +1165,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			}
 		    }
 		}
-	    } while (!gotppr && (++ppscnt < 3) && (crpcnt < 3));
+	    } while (!gotppr && (++ppscnt < 3) && (crpcnt < 3) && !(useV34 && gotEOT));
 	    if (gotppr) {
 		if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
 		    emsg = "Failure to receive silence.";
