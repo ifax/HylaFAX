@@ -166,7 +166,7 @@ sendPageApp::run(int argc, char** argv)
 	hangupServer();
     }
     if (!status)
-	printError(emsg);
+	printError("%s", (const char*) emsg);
     return (status);
 }
 

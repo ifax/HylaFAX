@@ -242,7 +242,7 @@ sendFaxApp::run(int argc, char** argv)
         }
         hangupServer();
     }
-    if (!status) printError(emsg);
+    if (!status) printError("%s", (const char*) emsg);
     return (status);
 }
 

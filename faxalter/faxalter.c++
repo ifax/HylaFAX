@@ -184,7 +184,7 @@ faxAlterApp::run(int argc, char** argv)
 	hangupServer();
     }
     if (emsg != "")
-	printError(emsg);
+	printError("%s", (const char*) emsg);
 }
 
 void
