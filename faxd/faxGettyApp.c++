@@ -224,7 +224,7 @@ faxGettyApp::listenForRing()
         CallerID cid;
         again = false;
 
-        if (modemWaitForRings(1, ctype, cid)) {
+        if (modemWaitForRings(ringsHeard, ctype, cid)) {
 	    if (cid.number != "" || cid.name != "") {
 	        received_cid = cid;	// CNID is only sent once.  Store it
 				    // for answering after later RINGs.

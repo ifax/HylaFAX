@@ -158,6 +158,7 @@ ModemGroup\(S1	string	\-	define a name for a set of modems
 ModemPriority	integer	255	scheduling priority for outbound jobs
 ModemReadyState	string	\s-1R\s+1	``ready state'' sent by \fIfaxgetty\fP
 ModemRingResponse	string	\-	command to respond after hearing RING
+ModemRingsBeforeResponse	integer	\s-10\s+1	the number of rings before ModemRingResponse
 NoCarrierRetrys	integer	\s-11\s+1	number of times to retry dialing on ``\s-2NO CARRIER\s0''
 NotifyCmd\(S2	string	\s-1bin/notify\s+1	user notification command script
 PageChop\(S1	string	\s-1last\s+1	control automatic truncation of trailing whitespace
@@ -916,18 +917,17 @@ program or by setting this configuration parameter with the
 program.
 .TP
 .B ModemRingResponse
-This can be used in conjunction with
-.B RingExtended
-to cause the modem to respond with
+This can be used
+to cause the command defined by
 .B ModemRingResponse
-after hearing a RING in order to receive DID-DTMF data, for example,
-and then answer with
-.B ModemAnswerCmd
-when
-.B RingExtended
-is heard
-.B RingsBeforeAnswer
-number of times.
+to be sent to the modem after hearing at least
+.B ModemRingsBeforeResponse
+RINGs in order to receive DID-DTMF data, for example.
+.TP
+.B ModemRingsBeforeResponse
+This defines the minimum number of RINGs that must be heard before
+.B ModemRingResponse
+is first sent to the modem.
 .TP
 .B NotifyCmd\(S2
 The command to invoke to notify a client of a job status change; see

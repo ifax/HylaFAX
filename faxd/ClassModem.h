@@ -325,7 +325,7 @@ public:
      * with recvAbort available to abort a receive
      * at any time in this procedure.
      */
-    virtual bool waitForRings(u_int rings, CallType&, CallerID&);
+    virtual bool waitForRings(u_short rings, CallType&, CallerID&);
     virtual CallType answerCall(AnswerType, fxStr& emsg, const char* dialnumber = NULL);
     virtual void answerCallCmd(CallType);
 };
