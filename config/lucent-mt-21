@@ -27,13 +27,19 @@ Class2UseHex:		yes
 # versions that respond to AT+FFC=? with non-zero data support RTFCC
 # Class2RTFCC:		yes
 
+# unfortunately, HylaFAX can't currently receive in MMR or color
+ModemAnswerCmd:		AT+FCC=,,,,1,,,,0;A
+# and, let's try to prevent any color sending attempts, also
+ModemDialCmd:		AT+FCC=,,,,,,,,0;DT%s
+
 # If your line supports Caller-ID, you may want to uncomment this...
 # QualifyCID:		etc/cid		# you must create this file
 # ModemResetCmds:	AT+VCID=1
 # CIDNumber:		"NMBR="
 # CIDName:		"NAME="
 
-# unfortunately, HylaFAX can't currently receive in MMR or color
-ModemAnswerCmd:		AT+FCC=,,,,1,,,,0;A
-# and, let's try to prevent any color sending attempts, also
-ModemDialCmd:		AT+FCC=,,,,,,,,0;DT%s
+# Or with the MT5634ZBA-DID you'll probably need something like...
+# QualifyCID:		etc/cid		# you must create this file
+# ModemResetCmds:	AT*DS1*DD0*DF1	# enable DTMF-DID
+# CIDNumber:		"DTMF"		# format of AT*DF1
+# CIDNumberAnswerLength:	4	# four DTMF-DID digits then ATA

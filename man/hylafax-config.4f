@@ -120,7 +120,9 @@ AnswerRotary	string	\s-1Any\s+1	alternatives for answering calls
 AnswerBias	integer	\-	bias to apply to successful rotary answer 
 AreaCode\(S2	string	\-	local area code
 CIDName	string	\-	Caller \s-1ID\s+1 or DNIS name pattern string
+CIDNameAnswerLength	integer	\s-10\s+1	answer call when CIDName received
 CIDNumber	string	\-	Caller \s-1ID\s+1 or DNIS number pattern string
+CIDNumberAnswerLength	integer	\s-10\s+1	answer call when CIDNumber received
 ClocalAsRoot	boolean	\s-1No\s+1	set \s-1CLOCAL\s+1 using root \s-1UID\s+1
 ContCoverCmd\(S1	string	\s-1bin/mkcover\s+1	continuation cover page generation script
 ContCoverPage\(S1	string	\-	continuation cover page template filename
@@ -155,6 +157,7 @@ MaxTries\(S1	integer	\s-13\s+1	max attempts to transmit a job
 ModemGroup\(S1	string	\-	define a name for a set of modems
 ModemPriority	integer	255	scheduling priority for outbound jobs
 ModemReadyState	string	\s-1R\s+1	``ready state'' sent by \fIfaxgetty\fP
+ModemRingResponse	string	\-	command to respond after hearing RING
 NoCarrierRetrys	integer	\s-11\s+1	number of times to retry dialing on ``\s-2NO CARRIER\s0''
 NotifyCmd\(S2	string	\s-1bin/notify\s+1	user notification command script
 PageChop\(S1	string	\s-1last\s+1	control automatic truncation of trailing whitespace
@@ -458,31 +461,63 @@ below.)
 A string that identifies the caller's identity in any Caller-ID
 status messages or the called identity in any DNIS messages.
 The specified string is compared against any
-unrecognized status messages received from the modem before the
-phone is placed off-hook.
+unrecognized status messages received from the modem before
+.B ModemAnswerCmd
+is sent to the modem.
 If there is a match, then the remainder
 of the message is returned as the ``caller name''.
 For example, for the ZyXEL U-1496 this parameter would be set to
 ``\s-1CALLER NAME:\s+1 '' (note the trailing space).
+If more than one message matches, then the message remainders are 
+concatenated.
 See also
 .B CIDNumber
 and
 .BR QualifyCID .
 .TP
+.B CIDNameAnswerLength
+An integer indicating the minimum number of characters in
+.B CIDName
+to be received when
+.B ModemAnswerCmd
+is sent to the modem irrespective of any
+.B RingsBeforeAnswer
+value greater than zero.  This allows the answering of calls
+which deliver CID/DID data but not RINGs.
+A value of zero for
+.B CidNameAnswerLength
+disables this feature.
+.TP
 .B CIDNumber
 A string that identifies the caller's phone number in any Caller-ID
 status messages or the called number in any DNIS messages.
 The specified string is compared against any
-unrecognized status messages received from the modem before the
-phone is placed off-hook.
+unrecognized status messages received from the modem before
+.B ModemAnswerCmd
+is sent to the modem.
 If there is a match, then the remainder
 of the message is returned as the phone number of the caller.
 For example, for the ZyXEL U-1496 this parameter would be set to
 ``\s-1CALLER NUMBER:\s+1 ''.
+If more than one message matches, then the message remainders are 
+concatenated.
 See also
 .B CIDName
 and
 .BR QualifyCID .
+.TP
+.B CIDNumberAnswerLength
+An integer indicating the minimum number of characters in
+.B CIDNumber
+to be received when
+.B ModemAnswerCmd
+is sent to the modem irrespective of any
+.B RingsBeforeAnswer
+value greater than zero.  This allows the answering of calls
+which deliver CID/DID data but not RINGs.
+A value of zero for
+.B CidNumberAnswerLength
+disables this feature.
 .TP
 .B ClocalAsRoot
 Control whether operations that set the
@@ -860,6 +895,20 @@ Modem state can be dynamically changed with the
 program or by setting this configuration parameter with the
 .IR faxconfig (${MANNUM1_8})
 program.
+.TP
+.B ModemRingResponse
+This can be used in conjunction with
+.B RingExtended
+to cause the modem to respond with
+.B ModemRingResponse
+after hearing a RING in order to receive DID-DTMF data, for example,
+and then answer with
+.B ModemAnswerCmd
+when
+.B RingExtended
+is heard
+.B RingsBeforeAnswer
+number of times.
 .TP
 .B NotifyCmd\(S2
 The command to invoke to notify a client of a job status change; see

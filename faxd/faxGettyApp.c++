@@ -234,7 +234,12 @@ faxGettyApp::listenForRing()
 		    (const char*) received_cid.number, (const char*) received_cid.name);
 	    }
 	    ++ringsHeard;
-	    if (ringsBeforeAnswer && ringsHeard >= ringsBeforeAnswer)
+	    /* DID modems may only signal a call with DID data - no RING */
+	    if (ringsBeforeAnswer && (ringsHeard >= ringsBeforeAnswer ||
+		(cid.name.length() >= cidNameAnswerLength &&
+		 cidNameAnswerLength > 0) ||
+		(cid.number.length() >= cidNumberAnswerLength &&
+		 cidNumberAnswerLength > 0)))
 	        answerPhone(ClassModem::ANSTYPE_ANY, ctype, received_cid);
 	    else if (isModemInput())
 	        again = true;

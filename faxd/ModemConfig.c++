@@ -80,6 +80,7 @@ static struct {
 { "modemanswerfaxbegincmd",	&ModemConfig::answerFaxBeginCmd },
 { "modemanswerdatabegincmd",	&ModemConfig::answerDataBeginCmd },
 { "modemanswervoicebegincmd",	&ModemConfig::answerVoiceBeginCmd },
+{ "modemringresponse",		&ModemConfig::ringResponse },
 { "modemresetcmds",		&ModemConfig::resetCmds },
 { "modemdialcmd",		&ModemConfig::dialCmd,		"ATDT%s" },
 { "modemnoflowcmd",		&ModemConfig::noFlowCmd },
@@ -184,6 +185,8 @@ static struct {
 { "faxt1timer",			&ModemConfig::t1Timer,		     TIMER_T1 },
 { "faxt2timer",			&ModemConfig::t2Timer,		     TIMER_T2 },
 { "faxt4timer",			&ModemConfig::t4Timer,		     TIMER_T4 },
+{ "cidnumberanswerlength",	&ModemConfig::cidNumberAnswerLength, 0 },
+{ "cidnameanswerlength",	&ModemConfig::cidNumberAnswerLength, 0 },
 { "modemdialresponsetimeout",	&ModemConfig::dialResponseTimeout,   3*60*1000},
 { "modemanswerresponsetimeout",	&ModemConfig::answerResponseTimeout, 3*60*1000},
 { "modempagestarttimeout",	&ModemConfig::pageStartTimeout,	     3*60*1000},
@@ -519,9 +522,9 @@ void
 ModemConfig::parseCID(const char* rbuf, CallerID& cid) const
 {
     if (strneq(rbuf, cidName, cidName.length()))
-	cid.name = rbuf+cidName.length();
+	cid.name = cid.name | rbuf+cidName.length();
     if (strneq(rbuf, cidNumber, cidNumber.length()))
-	cid.number = rbuf+cidNumber.length();
+	cid.number = cid.number | rbuf+cidNumber.length();
 }
 
 bool

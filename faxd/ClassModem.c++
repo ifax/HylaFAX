@@ -1181,7 +1181,7 @@ ClassModem::hangup()
 }
 
 bool
-ClassModem::waitForRings(u_int n, CallType& type, CallerID& cinfo)
+ClassModem::waitForRings(u_int n, CallType& type, CallerID& cid)
 {
     if (n > 0) {
 	time_t timeout = n * (conf.ringTimeout/1000);	// 6 second/ring
@@ -1199,12 +1199,24 @@ ClassModem::waitForRings(u_int n, CallType& type, CallerID& cinfo)
 		    if (strneq(rbuf, conf.ringExtended,
 			    conf.ringExtended.length()))	// extended RING
 			n--;
-		    conf.parseCID(rbuf, cinfo);
+		    conf.parseCID(rbuf, cid);
+		    /* DID modems may send DID data in lieu of RING */
+		    if ((cid.name.length() >= conf.cidNameAnswerLength &&
+			 conf.cidNameAnswerLength > 0) ||
+			(cid.number.length() >= conf.cidNumberAnswerLength &&
+			 conf.cidNumberAnswerLength > 0))
+			n = 0;
 		    break;
 		}
 		/* fall thru... */
 	    case AT_RING:			// normal ring
-		n--;
+		if (conf.ringResponse != "")
+		    // With the MT1932ZDX we must respond ATH1>DT1 in order
+		    // to hear DTMF tones which are DID data, and we configure
+		    // RingExtended to be FAXCNG to then trigger ATA.
+		    atCmd(conf.ringResponse);
+		else
+		    n--;
 		break;
 	    case AT_NOANSWER:
 	    case AT_NOCARRIER:

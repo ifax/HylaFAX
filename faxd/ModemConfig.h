@@ -64,6 +64,7 @@ public:
     fxStr	answerDataCmd;		// cmd for answering data call
     fxStr	answerFaxCmd;		// cmd for answering fax call
     fxStr	answerVoiceCmd;		// cmd for answering voice call
+    fxStr	ringResponse;		// cmd to respond after AT_RING
     fxStr	hardFlowCmd;		// cmd for hardware flow control
     fxStr	softFlowCmd;		// cmd for software flow control
     fxStr	noFlowCmd;		// cmd for disabling flow control
@@ -99,6 +100,8 @@ public:
 					// caller id
     fxStr	cidName;		// pattern for name info
     fxStr	cidNumber;		// pattern for number info
+    u_int	cidNameAnswerLength;	// answer when CID received
+    u_int	cidNumberAnswerLength;	// answer when CID received
 
 					// protocol timers
     u_int	t1Timer;		// T.30 T1 timer (ms)
