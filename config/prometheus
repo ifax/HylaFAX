@@ -1,0 +1,24 @@
+# $Id$
+#
+# prototype config file for Prometheus PC144IVSP
+#
+
+#
+# CONFIG: CLASS2:" (c) Prometheus Products, Inc. 1995."-" PC144IVSP"-*
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+
+ModemType:		Class2
+ModemRate:		38400
+ModemFlowControl:	rtscts
+ModemNoFlowCmd:		AT&K0
+ModemSoftFlowCmd:	AT&K4
+ModemHardFlowCmd:	AT&K3
+
+	# Something very ugly spews forth when you try AT+FAP=?
+Class2APQueryCmd:	none
+
+	# The modem reports 2-D support, but it can't send it
+Class2DCCQueryCmd:	!(0,1),(0-5),(0-2),(0-2),0,0,0,(0-7)
