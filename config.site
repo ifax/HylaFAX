@@ -140,6 +140,7 @@
 #LIBSUN="auto"				# yes|no|auto configure -lsun use
 #LLDOPTS=""				# extra link line options
 #MACHDEPLIBS=""				# extra libraries for linking
+#OPTIMIZER="-O"				# optimizer flags
 #PORTFUNCS=""				# non-standard functions to emulate
 #PROTOTYPES="-prototypes"		# C compiler options for checking function prototypes
 #RANLIB=":"				# pathname of suitable ranlib program

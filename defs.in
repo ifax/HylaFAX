@@ -128,7 +128,7 @@ LLDOPTS		= @LLDOPTS@
 #
 # Default optimizer and prototype options
 #
-OPTIMIZER	= -O
+OPTIMIZER	= @OPTIMIZER@
 CVERSION	= @ENVOPTS@
 C++FILE		= @CXXFILE@
 
