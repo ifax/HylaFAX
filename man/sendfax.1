@@ -387,15 +387,14 @@ communication failures.
 .BI \-k " time"
 Kill the job if it does not complete in the indicated
 .IR time .
-As for the
-.B \-a
-option, the
+The
 .I time
-is specifed using notation compatible with
-.IR at (1).
+is specifed using notation identical to the
+.B \-a
+option.
 Note that the
 .I time
-is relative to the time of the initial transmission attempt.
+is relative to the time of the initial time-to-send.
 The default kill time is ``now + 3 hours'' (three hours from the time
 the job is first processed).
 To retry for an hour, ``now +1 hour'' could be used.
