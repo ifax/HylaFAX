@@ -256,6 +256,7 @@ Class1RecvAbortOK	integer	\s-1200\s+1	Class 1: max wait (ms) for ``\s-1OK\s+1'' 
 Class1RecvIdentTimer	integer	\s-140000\s+1	Class 1: max wait (ms) for initial ident frame
 Class1SFLOCmd	string	\-	Class 1: command to set software flow control
 Class1PPMWaitCmd	string	\s-1AT+FTS=7\s+1	Class 1: command to stop and wait before PPM
+Class1ResponseWaitCmd	string	\-	Class 1: command to wait before TCF response
 Class1TCFWaitCmd	string	\s-1AT+FTS=7\s+1	Class 1: command to stop and wait before TCF
 Class1EOPWaitCmd	string	\s-1AT+FTS=9\s+1	Class 1: command to stop and wait before EOP
 Class1MsgRecvHackCmd	string	\s-1""\s+1	Class 1: command to avoid +FCERROR before image data
@@ -1948,6 +1949,11 @@ except before sending EOP, when
 is used instead.  We must ensure that the high-speed carrier has
 stopped completely.
 According to T.30, Chapter 5, Note 4, this delay should be 75 +/- 20 ms.
+.TP
+.B Class1ResponseWaitCmd
+The command used to stop and wait after sending TCF, before attempting to 
+receive a training response from the remote.  Set this to ``AT+FRS=1'' if 
+you experience ``DIS/DTC received 3 times'' errors.
 .TP
 .B Class1TCFWaitCmd
 The command used to stop and wait before sending TCF, similar to

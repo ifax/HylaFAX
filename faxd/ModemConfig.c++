@@ -107,6 +107,7 @@ static struct {
 { "class1sflocmd",		&ModemConfig::class1SFLOCmd },
 { "class1hflocmd",		&ModemConfig::class1HFLOCmd },
 { "class1ppmwaitcmd",		&ModemConfig::class1PPMWaitCmd,	"AT+FTS=7" },
+{ "class1responsewaitcmd",	&ModemConfig::class1ResponseWaitCmd,	"" },
 { "class1tcfwaitcmd",		&ModemConfig::class1TCFWaitCmd,	"AT+FTS=7" },
 { "class1eopwaitcmd",		&ModemConfig::class1EOPWaitCmd,	"AT+FTS=9" },
 { "class1msgrecvhackcmd",	&ModemConfig::class1MsgRecvHackCmd, "" },

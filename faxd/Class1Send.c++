@@ -552,6 +552,21 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 		    goto done;
 		protoTrace("Problem sending TCF data");
 	    }
+
+	    /*
+	     * Some modems may respond OK following TCF transmission
+	     * so quickly that the carrier signal has not actually 
+	     * dropped.  T.30 requires the receiver to wait 75 +/- 20 
+	     * ms before sending a response.  Here we explicitly look for 
+	     * that silence before looking for the low-speed carrier.  
+	     * Doing this resolves "DIS/DTC received 3 times" errors 
+	     * between USR modems and certain HP OfficeJets, in 
+	     * particular.
+             */
+	    if (conf.class1ResponseWaitCmd != "") {
+		atCmd(conf.class1ResponseWaitCmd, AT_OK);
+	    }
+
 	    /*
 	     * Receive response to training.  Acceptable
 	     * responses are: DIS or DTC (DTC not handled),

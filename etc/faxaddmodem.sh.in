@@ -1303,6 +1303,7 @@ Class1Parameters="
     Class1HFLOCmd
     Class1SFLOCmd
     Class1PPMWaitCmd
+    Class1ResponseWaitCmd
     Class1TCFWaitCmd
     Class1EOPWaitCmd
     Class1FrameOverhead
@@ -1567,6 +1568,8 @@ AT	Class1SFLOCmd		\
 	Command to setup software flow control after switch to Class 1
 AT	Class1PPMWaitCmd	\
 	Command to stop and wait prior to sending PPM
+AT	Class1ResponseWaitCmd	\
+	Command to stop and wait prior to looking for the TCF response
 AT	Class1TCFWaitCmd	\
 	Command to stop and wait prior to sending TCF
 AT	Class1EOPWaitCmd	\
