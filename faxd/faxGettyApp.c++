@@ -217,11 +217,11 @@ faxGettyApp::listenForRing()
 {
     Dispatcher::instance().stopTimer(&answerHandler);
 
-    CallerID cid;
-    CallType ctype = ClassModem::CALLTYPE_UNKNOWN;
     bool again;
 
     do {
+        CallType ctype = ClassModem::CALLTYPE_UNKNOWN;
+        CallerID cid;
         again = false;
 
         if (modemWaitForRings(1, ctype, cid)) {
