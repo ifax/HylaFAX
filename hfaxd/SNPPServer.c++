@@ -298,8 +298,10 @@ SNPPServer::mapPagerID(const char* pagerID, fxStr& number, fxStr& pin, fxStr& em
 			    *cp++ = '\0';
 			    number = np;
 			    pin = cp;
-			    if (re)			// do substitutions
-				subRHS(pin, *re, pagerID);
+			    if (re) {			// do substitutions
+				    subRHS(pin, *re, pagerID);
+                    subRHS(number, *re, pagerID);
+                }
 			} else {			// <dialstring>
 			    number = np;
 			    pin = pagerID;
