@@ -445,8 +445,9 @@ top:
 	     * high speed carrier traffic other than the TCF).
 	     */
 	    fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
+	    u_short attempts = 0;
 	    ATResponse rmResponse = AT_NOTHING;
-	    while (rmResponse != AT_CONNECT && rmResponse != AT_TIMEOUT && rmResponse != AT_ERROR) {
+	    while ((rmResponse == AT_NOTHING || rmResponse == AT_FCERROR) && attempts++ < 20) {
 		(void) atCmd(rmCmd, AT_NOTHING);
 		rmResponse = atResponse(rbuf, conf.t2Timer);
 	    }
@@ -726,6 +727,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 	u_short rcpcnt = 0;
 	u_short pprcnt = 0;
 	u_int fcount = 0;
+	u_short syncattempts = 0;
 	bool blockgood = false;
 	do {
 	    sentERR = false;
@@ -802,6 +804,11 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			// requisite pause before sending response (PPR/MCF)
 			if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
 			    emsg = "Failure to receive silence.";
+			    if (conf.saveUnconfirmedPages && fcount) {
+				protoTrace("RECV keeping unconfirmed page");
+				writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+				prevPage = true;
+			    }
 			    free(block);
 			    return (false);
 			}
@@ -831,6 +838,11 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    // requisite pause before sending response (CTR)
 					    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
 						emsg = "Failure to receive silence.";
+						if (conf.saveUnconfirmedPages && fcount) {
+						    protoTrace("RECV keeping unconfirmed page");
+						    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+						    prevPage = true;
+						}
 						free(block);
 						return (false);
 					    }
@@ -855,12 +867,22 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						    break;
 						default:
 						    emsg = "COMREC invalid response to repeated PPR received";
+						    if (conf.saveUnconfirmedPages && fcount) {
+							protoTrace("RECV keeping unconfirmed page");
+							writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+							prevPage = true;
+						    }
 						    free(block);
 						    return (false);
 					    }
 					    // requisite pause before sending response (ERR)
 					    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
 						emsg = "Failure to receive silence.";
+						if (conf.saveUnconfirmedPages && fcount) {
+						    protoTrace("RECV keeping unconfirmed page");
+						    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+						    prevPage = true;
+						}
 						free(block);
 						return (false);
 					    }
@@ -870,11 +892,21 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    break;
 					default:
 					    emsg = "COMREC invalid response to repeated PPR received";
+					    if (conf.saveUnconfirmedPages && fcount) {
+						protoTrace("RECV keeping unconfirmed page");
+						writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+						prevPage = true;
+					    }
 					    free(block);
 					    return (false);
 				    }
 				} else {
 				    emsg = "T.30 T2 timeout, expected signal not received";
+				    if (conf.saveUnconfirmedPages && fcount) {
+					protoTrace("RECV keeping unconfirmed page");
+					writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+					prevPage = true;
+				    }
 				    free(block);
 				    return (false);
 				}
@@ -896,19 +928,45 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    break;
 				default:
 				    emsg = "COMREC invalid post-page signal received";
+				    if (conf.saveUnconfirmedPages && fcount) {
+					protoTrace("RECV keeping unconfirmed page");
+					writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+					prevPage = true;
+				    }
 				    free(block);
 				    return (false);
 			    }
 			}
 		    } else {
 			emsg = "COMREC invalid response received (expected PPS)";
+			if (conf.saveUnconfirmedPages && fcount) {
+			    protoTrace("RECV keeping unconfirmed page");
+			    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+			    prevPage = true;
+			}
 			free(block);
 			return (false);
 		    }
 		} else {
 		    emsg = "T.30 T2 timeout, expected signal not received";
+		    if (conf.saveUnconfirmedPages && fcount) {
+			protoTrace("RECV keeping unconfirmed page");
+			writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+			prevPage = true;
+		    }
 		    free(block);
 		    return (false);
+		}
+	    } else {
+		if (syncattempts++ > 20) {
+		    emsg = "Cannot synchronize ECM frame reception.";
+		    if (conf.saveUnconfirmedPages) {
+			protoTrace("RECV keeping unconfirmed page");
+			writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+			prevPage = true;
+		    }
+		    free(block);
+		    return(false);
 		}
 	    }
 	    if (! blockgood) {		// back to high-speed carrier
@@ -916,12 +974,19 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		if (flowControl == FLOW_XONXOFF)
 		    (void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
 		fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
+		u_short attempts = 0;
 		ATResponse response = AT_NOTHING;
-		while (response != AT_CONNECT && response != AT_TIMEOUT && response != AT_ERROR) {
+		while ((response == AT_NOTHING || response == AT_FCERROR) && attempts++ < 20) {
 		    (void) atCmd(rmCmd, AT_NOTHING);
 		    response = atResponse(rbuf, conf.t2Timer);
 		}
-		if (response == AT_TIMEOUT || response == AT_ERROR) {
+		if (response != AT_CONNECT) {
+		    emsg = "Failed to properly detect high-speed data carrier.";
+		    if (conf.saveUnconfirmedPages && fcount) {
+			protoTrace("RECV keeping unconfirmed page");
+			writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+			prevPage = true;
+		    }
 		    free(block);
 		    return (false);
 		}
@@ -948,12 +1013,18 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 	    if (flowControl == FLOW_XONXOFF)
 		(void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
 	    fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
+	    u_short attempts = 0;
 	    ATResponse response = AT_NOTHING;
-	    while (response != AT_CONNECT && response != AT_TIMEOUT && response != AT_ERROR) {
+	    while ((response == AT_NOTHING || response == AT_FCERROR) && attempts++ < 20) {
 		(void) atCmd(rmCmd, AT_NOTHING);
 		response = atResponse(rbuf, conf.t2Timer);
 	    }
-	    if (response == AT_TIMEOUT || response == AT_ERROR) {
+	    if (response != AT_CONNECT) {
+		emsg = "Failed to properly detect high-speed data carrier.";
+		if (conf.saveUnconfirmedPages && fcount) {
+		    protoTrace("RECV keeping unconfirmed page");
+		    prevPage = true;
+		}
 		free(block);
 		return (false);
 	    }
@@ -963,7 +1034,14 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
     free(block);
     recvEndPage(tif, params);
 
-    return (true);    		// signalRcvd is set, full page is received...
+    if (getRecvEOLCount() == 0) {
+	// Just because image data blocks are received properly doesn't guarantee that
+	// those blocks actually contain image data.  If the decoder finds no image
+	// data at all we send DCN instead of MCF in hopes of a retransmission.
+	emsg = "ECM page received containing no image data.";
+	return (false);
+    }
+    return (true);   		// signalRcvd is set, full page is received...
 }
 
 /*
@@ -975,8 +1053,19 @@ Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
     /*
      * T.30-A ECM mode requires a substantially different protocol than non-ECM faxes.
      */
-    if (params.ec & EC_ENABLE) (void) recvPageECMData(tif, params, emsg);
-    else (void) recvPageDLEData(tif, checkQuality(), params, emsg);
+    if (params.ec & EC_ENABLE) {
+	if (!recvPageECMData(tif, params, emsg)) {
+	    /*
+	     * The previous page experienced some kind of error.  Falsify
+	     * some event settings in order to cope with the error gracefully.
+	     */
+	    signalRcvd = FCF_EOP;
+	    messageReceived = true;
+	    sentERR = true;
+	    if (prevPage)
+		recvEndPage(tif, params);
+	}
+    } else (void) recvPageDLEData(tif, checkQuality(), params, emsg);
 
     TIFFSetField(tif, TIFFTAG_IMAGELENGTH, getRecvEOLCount());
     TIFFSetField(tif, TIFFTAG_CLEANFAXDATA, getRecvBadLineCount() ?
