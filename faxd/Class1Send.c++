@@ -820,7 +820,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	    blockData(0x7e, true);
 
 	    // The block is assembled.  Transmit it, adding transparent DLEs.  End with DLE+ETX.
-	    if (!putModemDLEData(ecmStuffedBlock, (ecmStuffedBlockPos - 1), bitrev, getDataTimeout())) {
+	    if (!putModemDLEData(ecmStuffedBlock, ecmStuffedBlockPos, bitrev, getDataTimeout())) {
 		return (false);
 	    }
 	    u_char buf[2];
