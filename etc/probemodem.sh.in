@@ -480,17 +480,11 @@ if [ "$RESULT" = "OK" ]; then
     # Class 1 = 1; Class 2 = 2; Class 2.0 = 3;
     # Class 1.0 = 4; Class 2.1 = 5;   
 
-    RESPONSE="`echo $RESPONSE | $SED -e 's/[()]//g'`";
+    RESPONSE="`echo $RESPONSE | $SED -e 's/[()]//g' \
+	-e 's/2.0/3/g' -e 's/1.0/4/g' -e 's/2.1/5/g'`";
     MODEMCLASSES="";
-    CLASS=0;
-    for MATCHSTR in \
-	",1,|^1,|,1$|^1$" \
-	",2,|^2,|,2$|^2$" \
-	",2\.0,|^2\.0,|,2\.0\$|^2\.0\$" \
-	",1\.0,|^1\.0,|,1\.0\$|^1\.0\$" \
-	",2\.1,|^2\.1,|,2\.1\$|^2\.1\$"; do
-	CLASS=$[ $CLASS + 1 ];
-	if [ "`echo $RESPONSE | $GREP -E $MATCHSTR`" != "" ]; then
+    for CLASS in 1 2 3 4 5; do
+	if [ "`echo $RESPONSE | $GREP $CLASS`" != "" ]; then
 	    if [ "$MODEMCLASSES" != "" ]; then
 		 SUPPORT=`echo $SUPPORT | $SED 's/ and /, /g'`" and ";
 	    fi
