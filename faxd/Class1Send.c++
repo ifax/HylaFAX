@@ -605,8 +605,15 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	if (!curcap)
 	    curcap = findBRCapability(params.br, xmitCaps);
 	curcap++;
-	if (!dropToNextBR(params))
-	    goto failed;
+	/*
+	 * We assume that if the sender requested 9600 or 7200 baud
+	 * and if the modem supports both V.17 and V.29 that the
+	 * desired modulation is V.29.
+	 */
+	do {
+	    if (!dropToNextBR(params))
+		goto failed;
+	} while ((params.br == BR_9600 || params.br == BR_7200) && curcap->mod != V29);
     }
     do {
 	if (!useV34) {

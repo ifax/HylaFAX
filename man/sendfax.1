@@ -276,6 +276,9 @@ restricted by other server configuration); this
 option can be used to reduce the speed.
 Note that international calls are frequently more reliable when
 transmissions are restricted to 9600 bits/second.
+For Class 1/1.0 devices, if the specified speed is not greater
+than 14400 then V.34 will not be attempted, and if the specified
+speed is 9600 or 7200 then V.29 will be assumed in lieu of V.17.
 .TP 12
 .BI \-c " comments"
 Pass
