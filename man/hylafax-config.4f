@@ -171,6 +171,7 @@ PostScriptTimeout\(S1	integer	\s-1300\s+1	timeout on \*(Ps interpreter runs (sec
 PriorityScheduling	boolean	\s-1\fIsee below\fP\s+1	use available priority job scheduling mechanism
 PS2FaxCmd\(S1	string	\s-1bin/ps2fax\s+1	\*(Ps \s-1RIP\s+1 command script
 QualifyCID	string	\-	file of Caller-ID or DNIS patterns for checking inbound calls
+QualifyPWD	string	\-	file of \s-1PWD\s+1 patterns for qualifying senders
 QualifyTSI	string	\-	file of \s-1TSI\s+1 patterns for qualifying senders
 RecvDataFormat	string	\s-1adaptive\s+1	format for received facsimile data
 RecvFileMode	octal	\s-10600\s+1	protection mode to use for received facsimile files
@@ -1029,6 +1030,17 @@ and
 .B CIDName
 parameters must also be setup to reflect the manner in which
 the modem returns Caller-ID status or DNIS data information to the host.
+.TP
+.B QualifyPWD
+A string that specifies whether or not the identity of 
+calling facsimile machines should be checked against an access
+control list before receiving facsimile.
+If 
+.B QualifyPWD
+is non-null, then only messages from facsimile machines identified
+in the file specified by the string (typically \fBetc/passwd\fP)
+will be accepted; similar to
+.B QualifyTSI.
 .TP
 .B QualifyTSI
 A string that specifies whether or not the identity of 

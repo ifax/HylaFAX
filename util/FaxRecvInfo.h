@@ -38,6 +38,7 @@ public:
     u_short	npages;		// total number of pages/page number
     fxStr	commid;		// communication identifier
     fxStr	sender;		// sender's TSI
+    fxStr	passwd;		// sender's PWD
     fxStr	subaddr;	// subaddressing information
     u_int	time;		// time on the phone
     Class2Params params;	// transfer parameters

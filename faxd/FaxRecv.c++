@@ -154,32 +154,43 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
     u_int ppm = PPM_EOP;
     pageStart = Sys::now();
     for (;;) {
+	bool okToRecv = true;
+	fxStr reason;
 	modem->getRecvSUB(info.subaddr);		// optional subaddress
+	/*
+	 * Check a received TSI/PWD against the list of acceptable
+	 * patterns defined for the server.  This form of access
+	 * control depends on the sender passing a valid TSI/PWD.
+	 * Note that to accept/reject unspecified values one
+	 * should match "<UNSPECIFIED>".
+	 *
+	 * NB: Caller-ID access control is done elsewhere; prior
+	 *     to answering a call.
+	 */
 	if (!modem->getRecvTSI(info.sender))		// optional TSI
 	    info.sender = "<UNSPECIFIED>";
 	if (qualifyTSI != "") {
-	    /*
-	     * Check a received TSI against the list of acceptable
-	     * TSI patterns defined for the server.  This form of
-	     * access control depends on the sender passing a valid
-	     * TSI.  Note that to accept/reject an unspecified TSI
-	     * one should match "<UNSPECIFIED>".
-	     *
-	     * NB: Caller-ID access control is done elsewhere; prior
-	     *     to answering a call.
-	     */
-	    bool okToRecv = isTSIOk(info.sender);
+	    okToRecv = isTSIOk(info.sender);
+	    reason = "Permission denied (unnacceptable client TSI)";
 	    traceServer("%s TSI \"%s\"", okToRecv ? "ACCEPT" : "REJECT",
 		(const char*) info.sender);
-	    if (!okToRecv) {
-		emsg = "Permission denied (unacceptable client TSI)";
-		info.time = (u_int) getFileTransferTime();
-		info.reason = emsg;
-		docs[docs.length()-1] = info;
-		notifyDocumentRecvd(info);
-		TIFFClose(tif);
-		return (false);
-	    }
+	}
+	if (!modem->getRecvPWD(info.passwd))		// optional PWD
+	    info.passwd = "<UNSPECIFIED>";
+	if (qualifyPWD != "") {
+	    okToRecv = isPWDOk(info.passwd);
+	    reason = "Permission denied (unnacceptable client PWD)";
+	    traceServer("%s PWD \"%s\"", okToRecv ? "ACCEPT" : "REJECT",
+		(const char*) info.passwd);
+	}
+	if (!okToRecv) {
+	    emsg = reason;
+	    info.time = (u_int) getFileTransferTime();
+	    info.reason = emsg;
+	    docs[docs.length()-1] = info;
+	    notifyDocumentRecvd(info);
+	    TIFFClose(tif);
+	    return (false);
 	}
 	setServerStatus("Receiving from \"%s\"", (const char*) info.sender);
 	recvOK = recvFaxPhaseD(tif, info, ppm, emsg);

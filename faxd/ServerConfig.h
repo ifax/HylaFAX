@@ -66,8 +66,11 @@ private:
     mode_t	uucpLockMode;		// UUCP lock file creation mode
     u_int	uucpLockTimeout;	// UUCP stale lock file timeout
     time_t	lastTSIModTime;		// last mod time of TSI patterns file
+    time_t	lastPWDModTime;		// last mod time of PWD patterns file
     REArray*	tsiPats;		// recv tsi patterns
+    REArray*	pwdPats;		// recv PWD patterns
     fxBoolArray* acceptTSI;		// accept/reject matched tsi
+    fxBoolArray* acceptPWD;		// accept/reject matched PWD
     fxStr	logFacility;		// syslog facility to direct trace msgs
 
     static S_stringtag strings[];
@@ -94,6 +97,7 @@ protected:
 public:
     SpeakerVolume speakerVolume;	// volume control
     fxStr	qualifyTSI;		// if set, no recv w/o acceptable tsi
+    fxStr	qualifyPWD;		// if set, no recv w/o acceptable PWD
     u_int	noCarrierRetrys;	// # times to retry on no carrier
     mode_t	recvFileMode;		// protection mode for received files
     mode_t	deviceMode;		// protection mode for modem device
@@ -124,6 +128,7 @@ public:
     UUCPLock*	getUUCPLock(const fxStr& deviceName);
 
     bool	isTSIOk(const fxStr& tsi);
+    bool	isPWDOk(const fxStr& pwd);
 
     virtual void vconfigError(const char* fmt, va_list ap) = 0;
     virtual void vconfigTrace(const char* fmt, va_list ap) = 0;

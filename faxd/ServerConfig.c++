@@ -39,8 +39,11 @@
 ServerConfig::ServerConfig()
 {
     lastTSIModTime = 0;
+    lastPWDModTime = 0;
     tsiPats = NULL;
+    pwdPats = NULL;
     acceptTSI = NULL;
+    acceptPWD = NULL;
     dialRules = NULL;
     setupConfig();
 }
@@ -49,7 +52,9 @@ ServerConfig::~ServerConfig()
 {
     delete dialRules;
     delete acceptTSI;
+    delete acceptPWD;
     delete tsiPats;
+    delete pwdPats;
 }
 
 void
@@ -80,6 +85,7 @@ ServerConfig::S_stringtag ServerConfig::strings[] = {
 { "longdistanceprefix",	&ServerConfig::longDistancePrefix },
 { "internationalprefix",&ServerConfig::internationalPrefix },
 { "qualifytsi",		&ServerConfig::qualifyTSI },
+{ "qualifypwd",		&ServerConfig::qualifyPWD },
 { "uucplockdir",	&ServerConfig::uucpLockDir,	UUCP_LOCKDIR },
 { "uucplocktype",	&ServerConfig::uucpLockType,	UUCP_LOCKTYPE },
 };
@@ -299,6 +305,13 @@ ServerConfig::isTSIOk(const fxStr& tsi)
 {
     updatePatterns(qualifyTSI, tsiPats, acceptTSI, lastTSIModTime);
     return (qualifyTSI == "" ? true : checkACL(tsi, tsiPats, *acceptTSI));
+}
+
+bool
+ServerConfig::isPWDOk(const fxStr& pwd)
+{
+    updatePatterns(qualifyPWD, pwdPats, acceptPWD, lastPWDModTime);
+    return (qualifyPWD == "" ? true : checkACL(pwd, pwdPats, *acceptPWD));
 }
 
 /*

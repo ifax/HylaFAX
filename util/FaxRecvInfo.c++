@@ -35,6 +35,7 @@ FaxRecvInfo::FaxRecvInfo(const FaxRecvInfo& other)
     , qfile(other.qfile)
     , commid(other.commid)
     , sender(other.sender)
+    , passwd(other.passwd)
     , subaddr(other.subaddr)
     , params(other.params)
     , reason(other.reason)
@@ -49,13 +50,14 @@ FaxRecvInfo::~FaxRecvInfo() {}
 fxStr
 FaxRecvInfo::encode() const
 {
-    return fxStr::format("%x,%x,%x,%s,%s,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\""
+    return fxStr::format("%x,%x,%x,%s,%s,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\""
 	, time
 	, npages
 	, params.encode()
 	, (const char*) qfile
 	, (const char*) commid
 	, (const char*) sender
+	, (const char*) passwd
 	, (const char*) subaddr
 	, (const char*) reason
 	, (const char*) cidname
@@ -91,7 +93,12 @@ FaxRecvInfo::decode(const char* cp)
     cp = strchr(cp+1, '"');
     if (cp == NULL || cp[1] != ',' || cp[2] != '"')
 	return (false);
-    subaddr = cp+1;
+    passwd = cp+1;
+    passwd.resize(sender.next(0,'"'));
+    cp = strchr(cp+1, '"');
+    if (cp == NULL || cp[1] != ',' || cp[2] != '"')
+	return (false);
+    reason = cp+3;			// +1 for "/+1 for ,/+1 for "
     subaddr.resize(subaddr.next(0,'"'));
     cp = strchr(cp+1, '"');
     if (cp == NULL || cp[1] != ',' || cp[2] != '"')
