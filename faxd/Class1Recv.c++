@@ -246,6 +246,29 @@ Class1Modem::recvDCSFrames(HDLCFrame& frame)
 bool
 Class1Modem::recvTraining()
 {
+    /*
+     * It is possible (and with some modems likely) that the sending
+     * system has not yet dropped its V.21 carrier.  So we follow the
+     * reasoning behind Class 1.0's adaptive reception control in T.32 
+     * 8.5.1 and the strategy documented in T.31 Appendix II.1: we issue
+     * another +FRH and wait for NO CARRIER before looking for the high
+     * speed carrier.  Even if the remote dropped its V.21 carrier at the
+     * same moment that we received the signal, the remote still has to
+     * wait 75 +/- 20 ms before sending us TCF as dictated by T.30
+     * Chapter 5, Note 3.  T.31 alerts us to the possibility of an ERROR 
+     * result instead of NO CARRIER due to line noise at carrier shut-off 
+     * and that we should ignore the ERROR.
+     *
+     * This approach poses less risk of failure than previous methods
+     * which simply ran through +FRM -> +FCERROR -> +FRM loops because
+     * with each iteration of said loop we ran the risk of losing our
+     * timing due to the DCE being deaf for a short period of time.  
+     * Unfortunately, this routine will cause some modems (i.e. Zyxel
+     * U336 and USR Courier 3367) to fail TCF reception.
+     */
+    if (conf.class1TCFRecvHack)
+	atCmd(rhCmd, AT_NOCARRIER);
+
     protoTrace("RECV training at %s %s",
 	modulationNames[curcap->mod],
 	Class2Params::bitRateNames[curcap->br]);
@@ -484,10 +507,22 @@ top:
 		}
 
 		/*
-		 * As recommended in T.31, we try to prevent the rapid
-		 * switching of the direction of transmission.
+		 * As recommended in T.31 Appendix II.1, we try to
+		 * prevent the rapid switching of the direction of 
+		 * transmission by using +FRS.  Theoretically, "OK"
+		 * is the only response, but if the sender has not
+		 * gone silent, then we cannot continue anyway,
+		 * and aborting here will give better information.
+		 *
+		 * Using +FRS is better than a software pause, which
+		 * could not ensure loss of carrier.  +FRS is easier
+		 * to implement than using +FRH and more reliable than
+		 * using +FTS
 		 */
-		pause(conf.class1SwitchingDelay);
+		if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+		    emsg = "Failure to receive silence.";
+		    return (false);
+		}
 
 		/*
 		 * [Re]transmit post page response.

@@ -109,6 +109,7 @@ static const struct {
 { "class1ppmwaitcmd",		&ModemConfig::class1PPMWaitCmd,	"AT+FTS=7" },
 { "class1tcfwaitcmd",		&ModemConfig::class1TCFWaitCmd,	"AT+FTS=7" },
 { "class1eopwaitcmd",		&ModemConfig::class1EOPWaitCmd,	"AT+FTS=9" },
+{ "class1switchingcmd",		&ModemConfig::class1SwitchingCmd, "AT+FRS=7" },
 { "class2cmd",			&ModemConfig::class2Cmd },
 { "class2borcmd",		&ModemConfig::class2BORCmd },
 { "class2relcmd",		&ModemConfig::class2RELCmd },
@@ -186,7 +187,6 @@ static const struct {
 { "class1tcfrecvtimeout",	&ModemConfig::class1TCFRecvTimeout,  4500 },
 { "class1tcfresponsedelay",	&ModemConfig::class1TCFResponseDelay,75 },
 { "class1sendmsgdelay",		&ModemConfig::class1SendMsgDelay,    75 },
-{ "class1switchingdelay",	&ModemConfig::class1SwitchingDelay,  75 },
 { "class1trainingrecovery",	&ModemConfig::class1TrainingRecovery,1500 },
 { "class1recvabortok",		&ModemConfig::class1RecvAbortOK,     200 },
 { "class1frameoverhead",	&ModemConfig::class1FrameOverhead,   4 },
@@ -217,6 +217,7 @@ ModemConfig::setupConfig()
     class2XmitWaitForXON = true;		// default per Class 2 spec
     class2SendRTC	= false;		// default per Class 2 spec
     class2UseHex	= false;		// historical behavior
+    class1TCFRecvHack	= false;		// historical behavior
     setVolumeCmds("ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1");
     recvDataFormat	= DF_ALL;		// default to no transcoding
     rtnHandling         = FaxModem::RTN_RETRANSMIT; // retransmit until MCF/MPS
@@ -542,6 +543,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class2XmitWaitForXON = getBoolean(value);
     else if (streq(tag, "class2sendrtc"))
 	class2SendRTC = getBoolean(value);
+    else if (streq(tag, "class1tcfrecvhack"))
+	class1TCFRecvHack = getBoolean(value);
     else if (streq(tag, "modemminspeed"))
 	minSpeed = getSpeed(value);
     else if (streq(tag, "recvdataformat"))

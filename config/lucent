@@ -45,3 +45,4 @@
 # END-SERVER
 
 ModemType:		Class1		# use this to supply a hint
+Class1TCFRecvHack:	yes		# avoid +FCERROR before TCF

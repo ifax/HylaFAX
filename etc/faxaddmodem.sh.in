@@ -1315,7 +1315,7 @@ Class1Parameters="
     Class1RecvAbortOK
     Class1RecvIdentTimer
     Class1SendMsgDelay
-    Class1SwitchingDelay
+    Class1SwitchingCmd
     Class1TCFMaxNonZero
     Class1TCFMinRun
     Class1TCFRecvTimeout
@@ -1581,7 +1581,8 @@ AT	Class1EOPWaitCmd	\
 #	Class1RecvIdentTimer	\
 	Maximum wait for initial identification frame (ms)
 #	Class1SendMsgDelay	Delay after completing training (ms)
-#	Class1SwitchingDelay	Delay in switching transmission direction (ms)
+#	Class1SwitchingCmd	\
+	Command to ensure silence after receiving HDLC and before sending
 #	Class1TCFRecvTimeout	Timeout for receiving TCF (ms)
 #	Class1TCFResponseDelay	Delay before sending DCS and TCF (ms)
 #	Class1TrainingRecovery	Delay after failed training (ms)

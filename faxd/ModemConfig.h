@@ -114,16 +114,17 @@ public:
     fxStr	class1PPMWaitCmd;	// cmd to stop and wait prior to PPM
     fxStr	class1TCFWaitCmd;	// cmd to stop and wait prior to TCF
     fxStr	class1EOPWaitCmd;	// cmd to stop and wait prior to EOP
+    fxStr	class1SwitchingCmd;	// after recv HDLC and before sending
     u_int	class1TCFRecvTimeout;	// timeout receiving TCF
     u_int	class1TCFResponseDelay;	// delay (ms) btwn TCF & ack/nak
     u_int	class1SendMsgDelay;	// delay (ms) after training
-    u_int	class1SwitchingDelay;	// delay (ms) in switching transmission direction
     u_int	class1TrainingRecovery;	// delay (ms) after failed training
     u_int	class1RecvAbortOK;	// if non-zero, OK sent after recv abort
     u_int	class1FrameOverhead;	// overhead bytes in received frames
     u_int	class1RecvIdentTimer;	// timeout receiving initial identity
     u_int	class1TCFMaxNonZero;	// non-zero threshold for TCF check
     u_int	class1TCFMinRun;	// min length of zero run for TCF check
+    bool	class1TCFRecvHack;	// deliberately look for V.21 disconnect
 					// for class 2 and 2.0:
     fxStr	class2Cmd;		// cmd for setting Class 2/2.0
     fxStr	class2DCCQueryCmd;	// cmd to query modem capabilities

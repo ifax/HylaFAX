@@ -16,4 +16,4 @@ ModemType:		Class1		# use this to supply a hint
 Class1PPMWaitCmd: 	"<delay\0727>"	# \072 == :  to avoid awk problem
 Class1TCFWaitCmd: 	"<delay\0727>"
 Class1EOPWaitCmd: 	"<delay\0729>"
-
+Class1SwitchingCmd:	"<delay\0727>"	# assumption: +FRS not supported

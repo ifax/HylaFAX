@@ -259,10 +259,11 @@ Class1TCFWaitCmd	string	\s-1AT+FTS=7\s+1	Class 1: command to stop and wait befor
 Class1EOPWaitCmd	string	\s-1AT+FTS=9\s+1	Class 1: command to stop and wait before EOP
 Class1TCFMaxNonZero	integer	\s-110\s+1	Class 1: max% of non-zero data in good \s-1TCF\s+1
 Class1TCFMinRun	integer	\s-11000\s+1	Class 1: minimum zero run in good \s-1TCF\s+1
+Class1TCFRecvHack	boolean	\s-1No\s+1	Class 1: deliberately look for carrier loss before TCF
 Class1TCFRecvTimeout	integer	\s-14500\s+1	Class 1: max wait (ms) for \s-1TCF\s+1
 Class1TCFResponseDelay	integer	\s-175\s+1	Class 1: delay between \s-1TCF\s+1 and ack/nak
 Class1SendMsgDelay	integer	\s-175\s+1	Class 1: delay before sending image data
-Class1SwitchingDelay	integer	\s-175\s+1	Class 1: delay in switching transmision direction (ms)
+Class1SwitchingCmd	string	\s-1AT+FRS=7\s+1	Class 1: command to ensure silence after HDLC reception
 Class1TrainingRecovery	integer	\s-11500\s+1	Class 1: delay after failed training
 .sp .5
 Class2Cmd	string	\s-1AT+FCLASS=2\s+1	Class 2: command to enter class 2/2.0
@@ -1978,9 +1979,10 @@ parameter may require that this timer be shortened.
 The time, in milliseconds, to delay just before sending the image data.
 According to T.30: 5.3.2.4 this should be no less than 75 ms (default).
 .TP
-.B Class1SwitchingDelay
-The time, in milliseconds, to delay when switching the direction
-of transmission when receiving, as recommended by T.31.
+.B Class1SwitchingCmd
+The command used to ensure that the sending facsimile device has turned
+off its modulator (i.e. loss-of-carrier) 
+as recommended by T.31: Appendix II.1.
 .TP
 .B Class1SFLOCmd
 The command to setup software (\s-1XON/XOFF\s+1) flow control between
@@ -2009,6 +2011,11 @@ This value should be specified according to a 1.5 second
 transmission of zero data (i.e. it should be between 0 and 1500).
 See also
 .BR Class1TCFMaxNonZero .
+.TP
+.B Class1TCFRecvHack
+Deliberately look for the low-speed carrier loss before
+switching to the high-speed TCF carrier.  Use this if session logs
+consistently show +FCERROR prior to TCF reception.
 .TP
 .B Class1TCFRecvTimeout
 The maximum time to wait, in milliseconds, for the first byte of
