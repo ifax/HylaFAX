@@ -2,25 +2,21 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.2.0
+The HylaFAX development team is pleased to announce our 4.2.1
 feature release!  As always, our sincerest thanks go to all who
 participate and provide feedback.
 
                                *   *   *
 
 This document is intended to describe the significant differences
-between hylafax-4.2.0 and older releases, point out any known
+between hylafax-4.2.1 and older releases, point out any known
 incompatibilites and issues, and provide the reader with directions to
 further resources regarding HylaFAX. 
 
                           *   NEW FEATURES   *
-* added Class 1 ECM and MMR support
-* added Class 1.0 V.34-Fax (SuperG3) Support
-* added software-driven real-time format compression conversion
-* added extended resolution support
-* removed the requirement for a case-sensitive filesystem to build
-* unified the queue file numbering mechanism
-* integrated Caller-ID/DID support throughout the software
+
+* support for gcc v3.3 and libtiff v3.7
+* fax batching support
 * numerous other enhancements and bugfixes (see CHANGES)
 
                          *   KNOWN ISSUES   *
@@ -30,17 +26,6 @@ further resources regarding HylaFAX.
 
                        *   INCOMPATIBILITIES   *
 
-* Due to tighter adherance to ITU-T T.32 and the older Class 2 
-  specifications, HylaFAX copy-quality checking and ECM support now 
-  operates slightly different in Class 2/2.0/2.1 than in previous 
-  versions.  This change will not effect users of most modems, but 
-  because the Eicon Diva Server follows T.32 yet uses the older 
-  Class 2 command interface, Diva Server users will probably need 
-  to add:
-    Class2ECMType:    2.0
-    Class2CQQueryCmd: !3
-    Class2CQCmd:      AT
-  to their respective modem config files.
 * libtiff-3.6.1 is fatally flawed when dealing with Group 3 images.  
   Don't use it as-is.  
   See: http://bugs.hylafax.org/bugzilla/show_bug.cgi?id=500
