@@ -79,6 +79,8 @@ inline u_int fxTempStr::length() const		{ return slength - 1; }
 
 //----------------------------------------------------------------------
 
+extern int compare(fxStr const&, fxStr const&);
+
 class fxStr {
     friend class fxTempStr;
 public:
