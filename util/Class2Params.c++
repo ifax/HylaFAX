@@ -473,14 +473,15 @@ Class2Params::decode(u_int v)
 u_int
 Class2Params::encodeCaps() const
 {
+    // we can't use all of BR_ALL because we're limited to 32 bits
     return (vr&VR_ALL)
-	 | ((br&BR_ALL)<<2)
-	 | ((wd&WD_ALL)<<8)
-	 | ((ln&LN_ALL)<<13)
-	 | ((df&DF_ALL)<<16)
-	 | ((ec&EC_ALL)<<18)
-	 | ((bf&BF_ALL)<<20)
-	 | ((st&ST_ALL)<<22)
+	 | ((br&(BR_2400|BR_4800|BR_7200|BR_9600|BR_12000|BR_14400))<<8)
+	 | ((wd&WD_ALL)<<14)
+	 | ((ln&LN_ALL)<<19)
+	 | ((df&DF_ALL)<<22)
+	 | ((ec&EC_ALL)<<26)
+	 | ((bf&BF_ALL)<<28)
+	 | ((st&ST_ALL)<<30)
 	 ;
 }
 
@@ -488,13 +489,13 @@ void
 Class2Params::decodeCaps(u_int v)
 {
     vr = (v>>0)  & VR_ALL;
-    br = (v>>2)  & BR_ALL;
-    wd = (v>>8)  & WD_ALL;
-    ln = (v>>13) & LN_ALL;
-    df = (v>>16) & DF_ALL;
-    ec = (v>>18) & EC_ALL;
-    bf = (v>>20) & BF_ALL;
-    st = (v>>22) & ST_ALL;
+    br = (v>>8)  & (BR_2400|BR_4800|BR_7200|BR_9600|BR_12000|BR_14400);	// see encoding
+    wd = (v>>14) & WD_ALL;
+    ln = (v>>19) & LN_ALL;
+    df = (v>>22) & DF_ALL;
+    ec = (v>>26) & EC_ALL;
+    bf = (v>>28) & BF_ALL;
+    st = (v>>30) & ST_ALL;
 }
 
 /*
