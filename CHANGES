@@ -2,6 +2,9 @@
 
 Changelog for HylaFAX 4.2.1
 
+* fix CAN-2004-1182: hfaxd client/server authentication
+  vulnerability (10 Jan 2005)
+* fix possible filename race in tiff2pdf (10 Jan 2005)
 * improve modern distinctive ring support, add
   NoAnswerVoice config feature, and enhance third-party
   getty interaction (1, 2 Jan 2005)
