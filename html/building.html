@@ -175,7 +175,7 @@ If you encounter problems, the latest GNU sed should be substituted.
 The software configuration shell script (configure) and the modem
 configuration shell script (faxaddmodem) make heavy use of
 the
-<A HREF="@CGIPATH@/manpage?1+test">test</A>
+<A HREF="@CGIPATH@/manpage?test">test</A>
 program.  On some systems the <B>/bin/test</B>
 program does not support options such as <TT>-c</TT>
 (test if a file is a character special
@@ -488,9 +488,9 @@ systems in which case they can be explicitly enabled or disabled.
 This package contains Adobe Font Metric files that
 came from the public dvips distribution.
 AFM files are required by the
-<A HREF="@CGIPATH@/manpage?1+textfmt">textfmt(1)</A>
+<A HREF="@CGIPATH@/manpage?textfmt">textfmt</A>
 and
-<A HREF="@CGIPATH@/manpage?1+faxmail">faxmail(1)</A>
+<A HREF="@CGIPATH@/manpage?faxmail">faxmail</A>
 programs for converting ASCII text to PostScript.
 The AFM files should reflect the characteristics of the
 fonts that are used for imaging PostScript on the fax server.
@@ -635,7 +635,7 @@ suitable for transmission using some other mechanism.
 This package controls whether or not to configure the
 System V-style support for automatically starting the HylaFAX
 queuer process from
-<A HREF="@CGIPATH@/manpage?1+init">init(1)</A>.
+<A HREF="@CGIPATH@/manpage?init">init</A>.
 By default this support is configured for installation only if
 the target system appears to use a System V-style init (<TT>auto</TT>);
 i.e. the <B>/etc/rc0.d</B> and <B>/etc/rc2.d</B> directories exist.
@@ -784,7 +784,7 @@ There are a few other issues to consider when installing the CGI scripts:
 <LI>The <TT>manpage</TT> script that provides access to the UNIX
    manual pages may require some tailoring if manual pages are installed
    in non-standard locations or if the normal system
-   <A HREF="@CGIPATH@/manpage?1+man">man(1)</A>
+   <A HREF="@CGIPATH@/manpage?man">man</A>
    command does not support the expected options.  If you have
    problems consult the script.
 <LI>If local support is to be provided, it may be worthwhile to alter
@@ -820,7 +820,7 @@ when configuring the latest distribution:
    file with a <B>.N</B> suffix and print a warning message.
    Be sure to reconcile these conflicts by comparing the old
    and new file contents with a program like 
-   <A HREF="@CGIPATH@/manpage?1+diff">diff(1)</A>; in most cases
+   <A HREF="@CGIPATH@/manpage?diff">diff</A>; in most cases
    you should incorporate any local modifications into the new
    file and install it for use.
 </UL>
@@ -1435,7 +1435,7 @@ Setting this parameter incorrectly should result in compilation errors.
 Whether to pass the argument to the TIOCMBIS ioctl
 by value or by reference.  On most systems the value is passed
 by reference; consult
-<A HREF="@CGIPATH@/manpage?7+termio">termio(7)</A>
+<A HREF="@CGIPATH@/manpage?termio">termio</A>
 for your system if you are unsure how your system works.
 Setting this parameter to <TT>yes</TT> is the default and generates
 code for passing the argument by reference.
@@ -1693,7 +1693,7 @@ A specification of the default type of UUCP lock files to use.
 This parameter is usually one of <TT>ascii</TT>, <TT>binary</TT>, 
 <TT>-ascii</TT> or <TT>+ascii</TT>;
 consult the
-<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>
+<A HREF="@CGIPATH@/manpage?config">config</A>
 manual page for a description of the <B>UUCPLockType</B>
 configuration parameter.
 </TR>
@@ -1776,7 +1776,7 @@ is specified then filenames are not converted when they are installed.
 The default page size that client applications will use for submitted
 facsimile.  Page sizes are specified by name and checked against the
 pagesizes database installed in the <TT>DIR_LIBDATA</TT> directory.
-See also <A HREF="@CGIPATH@/manpage?4+pagesizes">pagesizes(4F)</A>.
+See also <A HREF="@CGIPATH@/manpage?pagesizes">pagesizes</A>.
 </TR>
 
 <TR>

@@ -301,7 +301,7 @@ use device files that have names that include
 <A NAME="faxsetup"><P><HR WIDTH=65% ALIGN=right><H3>Using faxsetup to Configure a Server Machine</H3></A>
 
 Before any HylaFAX software can be used on a server machine the
-<A HREF="@CGIPATH@/manpage?1+faxsetup">faxsetup</A> script
+<A HREF="@CGIPATH@/manpage?faxsetup">faxsetup</A> script
 must be run.
 This interactive script verifies the installation of the HylaFAX
 software and also carries out a variety of one-time tasks that
@@ -391,7 +391,7 @@ If no entries are present then they may optionally be setup
 verifies that the hfaxd client-server protocol process
 is started up when the system is brought up multi-user or 
 that hfaxd is started by the
-<A HREF="@CGIPATH@/manpage?1+inetd">inetd(1M)</A>
+<A HREF="@CGIPATH@/manpage?inetd">inetd</A>
 program.
 hfaxd is the process that HylaFAX client applications
 communicate with to submit jobs, query server status, etc.
@@ -423,7 +423,7 @@ of how this work is done.
 <A NAME="faxaddmodem"><P><HR WIDTH=65% ALIGN=right><H3>Using faxaddmodem to Configure Modems</H3></A>
 
 Modems are configured for use with the
-<A HREF="@CGIPATH@/manpage?1+faxaddmodem">faxaddmodem</A> script.
+<A HREF="@CGIPATH@/manpage?faxaddmodem">faxaddmodem</A> script.
 This is an interactive script that walks you through the
 configuration and installation of a new or existing modem.
 Even if you have a previous version of HylaFAX or FlexFAX
@@ -628,7 +628,7 @@ included in the logs.  For Class 2 and Class 2.0 modems the default
 setting of 11 is typically ok.
 Consult the descriptions of <TT>ServerTracing</TT> and <TT>SessionTracing</TT>
 in the
-<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A> manual page.</EM>
+<A HREF="@CGIPATH@/manpage?config">config</A> manual page.</EM>
 <BR CLEAR=left>
 <HR>
 </FONT></TD>
@@ -958,9 +958,9 @@ unsupported modem,  To do this simply accept the default parameters
 and then edit the generated configuration file before starting up
 a server for the modem.  Once a working configuration file is
 created it is simple to create a prototype file from it; consult the
-<A HREF="@CGIPATH@/manpage?1+faxaddmodem">faxaddmodem(1M)</A>
+<A HREF="@CGIPATH@/manpage?faxaddmodem">faxaddmodem</A>
 or
-<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>
+<A HREF="@CGIPATH@/manpage?config">config</A>
 manual pages for information on doing this.
 <HR>
 </FONT></TD>
@@ -1017,7 +1017,7 @@ the steps necessary to complete the setup of a HylaFAX server machine.
 <A NAME="Starting"><P><HR WIDTH=65% ALIGN=right><H3>Starting Outbound Service</A></H3>
 
 Outbound service is carried out by the HylaFAX scheduler process, the
-<A HREF="@CGIPATH@/manpage?1+faxq">faxq(1M)</A> program.
+<A HREF="@CGIPATH@/manpage?faxq">faxq</A> program.
 There is one faxq process for all modems on a system.
 The faxq program learns about modems that can be used for outbound
 jobs by messages it receives on a FIFO special file located
@@ -1135,7 +1135,7 @@ Thus the capabilities string is
 which indicated that the modem supported 12200 and 14400 bps
 signalling rates).
 Consult the
-<A HREF="@CGIPATH@/manpage?1+faxmodem">faxmodem(1M)</A>
+<A HREF="@CGIPATH@/manpage?faxmodem">faxmodem</A>
 manual page for more information.
 
 <P>
@@ -1154,7 +1154,7 @@ a faxgetty program must be started to listen for input on the tty device.
 The configuration file setup is usually done at the same time
 that outbound service is configured; i.e. when faxaddmodem is run.
 A faxgetty server for the modem should be setup to be run by the
-<A HREF="@CGIPATH@/manpage?1+init">init(1M)</A>
+<A HREF="@CGIPATH@/manpage?init">init</A>
 process according to local system conventions.
 For System V-based systems this is done by editing the
 <B>/etc/inittab</B> file to spawn faxgetty on the appropriate port.
@@ -1177,7 +1177,7 @@ to provide inbound service.
 By setting the <TT>RingsBeforeAnswer</TT> configuration parameter to zero,
 faxgetty will not answer an
 incoming phone call unless it is explicitly commanded to by the
-<A HREF="@CGIPATH@/manpage?1+faxanswer">faxanswer(1M)</A>
+<A HREF="@CGIPATH@/manpage?faxanswer">faxanswer</A>
 program.
 This may be desirable if a phone line is used, for example,
 as the primary line for voice calls.
@@ -1320,7 +1320,7 @@ for host-modem communication.)
 HylaFAX client applications such as sendfax do not communicate directly
 with server processes such as faxq or faxgetty.
 Instead they communicate with the 
-<A HREF="@CGIPATH@/manpage?1+hfaxd">hfaxd(1M)</A>
+<A HREF="@CGIPATH@/manpage?hfaxd">hfaxd</A>
 client-server protocol process.
 This architecture insulates client applications from the internal
 structure of a server machine, provides a more robust operating
@@ -1402,7 +1402,7 @@ server machine.
 This is specified by the contents of the <B>etc/hosts</B> file in
 the HylaFAX spooling area on the server machine.
 The contents of this file is specified in the
-<A HREF="@CGIPATH@/manpage?4+hosts">hosts(4F)</A>
+<A HREF="@CGIPATH@/manpage?hosts">hosts</A>
 manual page.
 The default <B>etc/hosts</B> file that comes with HylaFAX permits anyone
 to have access through the <I>localhost</I> network interface; i.e. the
@@ -1433,9 +1433,9 @@ be mode 0600 or hfaxd will not permit client access.</EM></TD>
 
 HylaFAX comes with two programs that need to be run periodically on the
 server machine: 
-<A HREF="@CGIPATH@/manpage?1+faxqclean">faxqclean(1M)</A>
+<A HREF="@CGIPATH@/manpage?faxqclean">faxqclean</A>
 and
-<A HREF="@CGIPATH@/manpage?1+faxcron">faxcron(1M)</A>.
+<A HREF="@CGIPATH@/manpage?faxcron">faxcron</A>.
 
 <P>
 The faxqclean
@@ -1538,7 +1538,7 @@ This wiring is not compatible with the wiring used on SGI machines.
 While it may appear that the the modem and cable work,
 hardware flow control will not function properly and
 data will eventually be lost.  Consult the
-<A HREF="@CGIPATH@/manpage?7+serial">serial(7)</A>
+<A HREF="@CGIPATH@/manpage?serial">serial</A>
 manual page for an explanation of how to wire up modem cables.
 
 <P>
@@ -1584,7 +1584,7 @@ Also, when this patch is installed the
 <TT>ClocalAsRoot</TT> modem configuration parameter must be set
 to <TT>Yes</TT> for proper operation
 (see
-<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A> for a detailed
+<A HREF="@CGIPATH@/manpage?config">config</A> for a detailed
 explanation of what this parameter does).
 If you do not have the appropriate patch installed on your system
 then you will either see flow control-related problems when transmitting
@@ -1688,7 +1688,7 @@ to use software flow control.
 
 <P>
 Serial ports are conventionally called <B>tty00</B>, <B>tty01</B>,
-etc; see <A HREF="@CGIPATH@/manpage?8+MAKEDEV">MAKEDEV(8)</A>
+etc; see <A HREF="@CGIPATH@/manpage?MAKEDEV">MAKEDEV</A>
 if you need to create devices.
 
 <!--FOOTER-->

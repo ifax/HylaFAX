@@ -34,14 +34,14 @@ Class 1, Class 2, or Class 2.0 modem.
 
 <P>
 Outgoing documents can be any format; the
-<A HREF="@CGIPATH@/manpage?1+sendfax">sendfax</A>
+<A HREF="@CGIPATH@/manpage?sendfax">sendfax</A>
 program uses a
-<A HREF="@CGIPATH@/manpage?4+typerules">rule-based definition file</A>
+<A HREF="@CGIPATH@/manpage?typerules">rule-based definition file</A>
 similar to the System V <B>/etc/magic</B> file 
 to deduce document types and to decide how to convert each document
 to a form suitable for transmission (either PostScript or TIFF/F).
 Automatic cover page generation is supported and users can easily
-<A HREF="@CGIPATH@/manpage?1+faxcover">tailor cover pages</A>
+<A HREF="@CGIPATH@/manpage?faxcover">tailor cover pages</A>
 to their environment.  A simple text-based
 phonebook database is supported by the sendfax program.
 Information is also
@@ -52,7 +52,7 @@ provided on how to trivially setup an
 Incoming facsimile are stored in a receiving area as TIFF/F (read
 ``<I>TIFF Class F</I>'') files and may be automatically delivered by mail
 and/or printed.  A fax server status program,
-<A HREF="@CGIPATH@/manpage?1+faxstat">faxstat</A>,
+<A HREF="@CGIPATH@/manpage?faxstat">faxstat</A>,
 can be used to monitor the send and receive queues,
 as well as the state of facsimile servers.
 
@@ -70,7 +70,7 @@ and
 The software can also be
 configured so that incoming data calls cause HylaFAX to invoke the
 standard system
-<A HREF="@CGIPATH@/manpage?1+getty">getty</A>
+<A HREF="@CGIPATH@/manpage?getty">getty</A>
 program.
 
 <P>
@@ -82,7 +82,7 @@ the machine on which the modems reside.  Client software is
 designed to be lightweight and easy to port; imaging can be offloaded
 to the server or done on the client.  (Imaging is however, typically
 done on the server because it simplifies administration.) 
-An <A HREF="@CGIPATH@/manpage?4+hosts">access control</A>
+An <A HREF="@CGIPATH@/manpage?hosts">access control</A>
 mechanism is included to control which users on which machines may
 access a server.
 Clients and servers communicate using well-defined publicly
@@ -107,7 +107,7 @@ services such as 911 can be rejected out of hand.
 The server requires a PostScript to facsimile imaging utility for
 useful operation (otherwise, only pre-imaged facsimile may be
 transmitted.)  A
-<A HREF="@CGIPATH@/manpage?1+ps2fax">Display PostScript-based imager</A>
+<A HREF="@CGIPATH@/manpage?ps2fax">Display PostScript-based imager</A>
 is provided for IRIX 4.x- and 5.x-based systems.
 For other systems,
 <A HREF="ghostscript.html">a Ghostscript-based version</A>

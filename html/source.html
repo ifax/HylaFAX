@@ -76,7 +76,7 @@ is known, then the configuration procedure will abort.
 The Class 1 modem driver requires sub-second timer facilities and a
 minimum latency interface to serial input.  The server uses the
 BSD-style
-<A HREF="@CGIPATH@/manpage?2+setitimer">setitimer</A>
+<A HREF="@CGIPATH@/manpage?setitimer">setitimer</A>
 calls for the timer support and system-specific
 calls to enable low latency input from serial ports.  If your system
 does not support the BSD timer calls, then the server will fall back to

@@ -132,7 +132,7 @@ Finally, dial string rules can be used to provide dialing <I>aliases</I>
 such as mapping ``a-zA-Z'' to the corresponding numeric codes.
 
 <P>
-Consult <A HREF="@CGIPATH@/manpage?4+dialrules">dialrules(4F)</A>
+Consult <A HREF="@CGIPATH@/manpage?dialrules">dialrules</A>
 for detailed information.
 
 <A NAME="TagLine"><P><HR WIDTH=65% ALIGN=right><H3>Tagline Support</A></H3>
@@ -200,7 +200,7 @@ The default tag line format string is ``<TT>From %%n|%c|Page %%p of %%t</TT>''
 which prints three fields containing the phone number of the server,
 the date and time of the outgoing job, and the page number and total pages
 for the job.  Consult the <TT>TagLineFormat</TT> parameter description in
-<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>
+<A HREF="@CGIPATH@/manpage?config">config</A>
 for information on configuring a different format string.
 
 <P>
@@ -209,7 +209,7 @@ for information on configuring a different format string.
 <TD><IMG SRC="icons/info_icon.gif" HSPACE=8></TD>
 <TD>
 The
-<A HREF="@CGIPATH@/manpage?1+tagtest">tagtest(1M)</A>
+<A HREF="@CGIPATH@/manpage?tagtest">tagtest</A>
 program may be used to try out different tag
 line formats and fonts before they are configured for use by the
 server.
@@ -385,7 +385,7 @@ CIDName:   "CALLER NAME: "   # pattern string for identity info</PRE>
 </TT></UL>
 
 Consult
-<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>
+<A HREF="@CGIPATH@/manpage?config">config</A>
 for a full description of the caller-ID-related configuration
 parameters.
 
@@ -458,7 +458,7 @@ is controlled by two configuration parameters:
 <TT>PercentGoodLines</TT> and
 <TT>MaxConsecutiveBadLines</TT>;
 see
-<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>
+<A HREF="@CGIPATH@/manpage?config">config</A>
 for more information.  These parameters define the
 criteria by which the server decides if a received page has acceptable
 copy quality.  Pages that are deemed unacceptable are rejected and the
@@ -505,7 +505,7 @@ To enable use of this feature the <TT>ContCoverPage</TT> configuration
 parameter must be set to the pathname of a cover sheet template
 file to use in generating continuation cover pages.
 This cover page template file is passed to the
-<A HREF="@CGIPATH@/manpage?1+mkcover">mkcover(1M)</A>
+<A HREF="@CGIPATH@/manpage?mkcover">mkcover</A>
 script, or to the program specified with the <TT>ContCoverCmd</TT>
 configuration parameter; consult the mkcover manual page
 for a description of this file.
@@ -524,7 +524,7 @@ By default outbound calls are permitted at any time.
 To constrain calls to a particular time or range of times the
 <TT>TimeOfDay</TT> parameter can be setup according to the syntax
 specified in
-<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>.
+<A HREF="@CGIPATH@/manpage?config">config</A>.
 This syntax is consistent with the syntax used by the UUCP software.
 For example, to permit outbound calls only between 9AM and 5PM
 local time the following might be used:
@@ -547,7 +547,7 @@ It is also possible to specify these parameters on a
 configuration parameter.
 This parameter specifies the pathname of a file that holds
 per-destination control parameters;
-<A HREF="@CGIPATH@/manpage?4+destctrls">destctrls(4F)</A>.
+<A HREF="@CGIPATH@/manpage?destctrls">destctrls</A>.
 
 <P>
 Per-destination controls are especially useful for controlling
@@ -693,7 +693,7 @@ not the file format: this is always TIFF.
 
 It is desirable to deliver inbound facsimile directly to
 receipients.  HylaFAX routes inbound facsimile through the
-<A HREF="@CGIPATH@/manpage?1+faxrcvd">faxrcvd(1M)</A> shell script.
+<A HREF="@CGIPATH@/manpage?faxrcvd">faxrcvd</A> shell script.
 This script may be tailored to use local knowledge and/or tools to
 route and deliver inbound facsimile.
 In particular, if facsimile are received from well-known senders 
@@ -736,7 +736,7 @@ This mechanism provides a way to automatically reject
 Note however that because a TSI is not authenticated in any
 way it is a simple matter for a caller to masquerade as an
 acceptable sender and bypass the access control mechanism.
-Consult <A HREF="@CGIPATH@/manpage?4+tsi">tsi(4F)</A>
+Consult <A HREF="@CGIPATH@/manpage?tsi">tsi</A>
 for complete details of this facility.
 
 <A NAME="LockFiles"><P><HR WIDTH=65% ALIGN=right><H3>UUCP Lock Files</A></H3>
@@ -771,14 +771,14 @@ The appropriate scheme is normally setup according to the target
 system at the time that HylaFAX is configured for building.
 It is possible, however, to override these parameters through
 the runtime configuration files; consult the 
-<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>
+<A HREF="@CGIPATH@/manpage?config">config</A>
 manual page for information about the <TT>UUCPLockType</TT>
 configuration parameter.
 In addition to the lock type there are configuration parameters
 that control the protection mode of the lock file (<TT>UUCPLockMode</TT>),
 the directory in which lock files are created (<TT>UUCPLockDir</TT>),
 and a timeout parameter used to purge <I>stale lock files</I>.
-Again, consult <A HREF="@CGIPATH@/manpage?4+config">config(4F)</A> for
+Again, consult <A HREF="@CGIPATH@/manpage?config">config</A> for
 a full description of these parameters.
 
 <A NAME="Class2Liars"><P><HR WIDTH=65% ALIGN=right><H3>Modems that Lie about their Capabilities</A></H3>
@@ -1451,7 +1451,7 @@ Call answering is done as follows:
 <LI>Wait for a response from the modem that signifies carrier has
     been established and which identifies the type of call.
     The exact set of responses is given in 
-    <A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>.
+    <A HREF="@CGIPATH@/manpage?config">config</A>.
 <LI>If <TT>ModemWaitForConnect</TT> is enabled, then HylaFAX will read
     responses from the modem until a <TT>CONNECT</TT> response is sent
     to the host or an error is detected; e.g.

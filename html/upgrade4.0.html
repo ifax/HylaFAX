@@ -26,7 +26,7 @@ when setting up HylaFAX 4.0 on a server:
     a new service definition to a YP/NIS database (though you should be
     able to function without it.
 <LI>The new client-server protocol server,
-    <A HREF="@CGIPATH@/manpage?1+hfaxd">hfaxd(1M)</A>,
+    <A HREF="@CGIPATH@/manpage?hfaxd">hfaxd</A>,
     is built by default with support for the old client-server
     protocol but the support must explicitly be enabled.
     If hfaxd is started up through the default shell script
@@ -40,9 +40,9 @@ when setting up HylaFAX 4.0 on a server:
     The faxmodem program should be used instead; consult the
     chapter on ``<A HREF=setup.html>Server Setup and Basic Configuration</A>''
     and the manual pages for
-    <A HREF="@CGIPATH@/manpage?1+faxmodem">faxmodem(1M)</A>
+    <A HREF="@CGIPATH@/manpage?faxmodem">faxmodem</A>
     and
-    <A HREF="@CGIPATH@/manpage?1+faxq">faxq(1M)</A>.
+    <A HREF="@CGIPATH@/manpage?faxq">faxq</A>.
 <LI>The <B>etc/hosts</B> file on the server may contain passwords
     in v4.0 and hfaxd will not trust any information there
     unless the file is mode 0600.
@@ -52,7 +52,7 @@ when setting up HylaFAX 4.0 on a server:
 <LI>Completed jobs are removed asynchronously with a new faxqclean
     program; you will want to setup a cron entry to do this.
 <LI>The new
-    <A HREF="@CGIPATH@/manpage?1+faxsetup">faxsetup(1M)</A>
+    <A HREF="@CGIPATH@/manpage?faxsetup">faxsetup</A>
     script must be run before a server machine can be used.
 </UL>
 

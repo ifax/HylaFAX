@@ -17,12 +17,12 @@ This chapter describes how to configure the support for transmitting
 messages to alpha-numberic pager devices using the IXO/TAP or the
 UCP protocol.
 This facility is implemented with the
-<A HREF="@CGIPATH@/manpage?1+sendpage">sendpage(1)</A>
+<A HREF="@CGIPATH@/manpage?sendpage">sendpage</A>
 client program, the
-<A HREF="@CGIPATH@/manpage?1+hfaxd">hfaxd(1M)</A>
+<A HREF="@CGIPATH@/manpage?hfaxd">hfaxd</A>
 server program that implements the Simple Network Pager Protocol (SNPP),
 and the
-<A HREF="@CGIPATH@/manpage?1+pagesend">pagesend(1M)</A>
+<A HREF="@CGIPATH@/manpage?pagesend">pagesend</A>
 server program that does the actual delivery.
 
 <P>
@@ -39,7 +39,7 @@ the pagesend program for delivery by placing a phone call
 to a pager service provider and communicating the requests 
 using the IXO/TAP or the UCP protocol. The used protocol can
 be configured in the
-<A HREF="@CGIPATH@/manpage?4+info">info(4F)</A> files
+<A HREF="@CGIPATH@/manpage?info">info</A> files
 according capabilities of the service provider.
 
 <P>
@@ -74,7 +74,7 @@ One of the tasks that hfaxd does in implementing SNPP is to map
 client-specified Pager Identifier Numbers (PINs) to a dialstring
 to use in contacting the service provider.
 This work is done using rules specified in a 
-<A HREF="@CGIPATH@/manpage?4+pagermap">pagermap(4F)</A>
+<A HREF="@CGIPATH@/manpage?pagermap">pagermap</A>
 file.
 For example, the following pagermap file would accept only
 PINs with a leading ``Sky'' followed by a number
@@ -117,7 +117,7 @@ be specified with hfaxd configuration parameters.
 The parameters are: <TT>PriorityMap</TT>, <TT>KillTimeMap</TT>,
 and <TT>RetryTimeMap</TT>, respectively.
 Consult the 
-<A HREF="@CGIPATH@/manpage?1+hfaxd">hfaxd(1M)</A>
+<A HREF="@CGIPATH@/manpage?hfaxd">hfaxd</A>
 manual page for complete information on these parameters.
 
 <A NAME="pagesend"><P><HR WIDTH=65% ALIGN=right><H3>Setting up Pagesend</A></H3>
@@ -132,9 +132,9 @@ to the pager service provider.
 This command should usually be defined to constrain the modem to
 connect at 1200 baud using V.22 (and no error correction protocol).
 This parameter can be specfied in the
-<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A> file and
+<A HREF="@CGIPATH@/manpage?config">config</A> file and
 may be overwritten  in the
-<A HREF="@CGIPATH@/manpage?4+info">info(4F)</A> file to match
+<A HREF="@CGIPATH@/manpage?info">info</A> file to match
 the service provider's modem configuration.
 <P>
 The <TT>PagingProtocol</TT> can be set in the info(4F) file
@@ -144,14 +144,14 @@ Other configuration parameters exist to control
 esoteric aspects of the IXO protocol implementation
 and should not need to be changed;
 consult
-<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A>
+<A HREF="@CGIPATH@/manpage?config">config</A>
 for full details.
 
 <P>
 Besides the configuration parameters described above,
 other pager-related information that may need to be setup
 is information in the
-<A HREF="@CGIPATH@/manpage?4+info">info(4F)</A> database
+<A HREF="@CGIPATH@/manpage?info">info</A> database
 to constrain the maximum length
 of an alpha-numeric pager message, any password string that must
 be sent to the service provider during the initial login sequence,
@@ -177,7 +177,7 @@ first applied to deliver GSM short messages (SMS). It can send
 longer pages then IXO can, and has some other nice features,
 but has a very strange character encoding. To accomodate UCP, two
 new pager parameters have bin added to the
-<A HREF="@CGIPATH@/manpage?4+info">info(4F)</A> database
+<A HREF="@CGIPATH@/manpage?info">info</A> database
 together with support to overwrite the <TT>PagerSetupCmds</TT>
 defined in config(4F):
 <UL><LISTING>

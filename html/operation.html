@@ -26,23 +26,23 @@ In normal operation HylaFAX server machines run four independent programs:
 
 The faxq scheduler process is normally started once when the system is booted.
 If faxgetty processes are to be used, they should be setup so that the
-<A HREF="@CGIPATH@/manpage?1+init">init(1M)</A>. 
+<A HREF="@CGIPATH@/manpage?init">init</A>. 
 program will start them on each port where a fax
 modem resides.
 The hfaxd program can be run either as a standalone server process or
 started by the
-<A HREF="@CGIPATH@/manpage?1+inetd">inetd(1M)</A>
+<A HREF="@CGIPATH@/manpage?inetd">inetd</A>
 process; the intent is that it run standalone.
 faxqclean handles the delayed purging and archiving of outbound jobs
 and is intended to be run from
-<A HREF="@CGIPATH@/manpage?1+cron">cron(1)</A>
+<A HREF="@CGIPATH@/manpage?cron">cron</A>
 regularly (how regularly is a decision for the system administrator).
 
 <P>
 Under a System V-based operating system
 the normal installation procedure sets up the 
 system so the faxq and hfaxd processes are started up by
-<A HREF="@CGIPATH@/manpage?1+init">init(1M)</A>. 
+<A HREF="@CGIPATH@/manpage?init">init</A>. 
 On other systems you will need to arrange for this yourself
 (typically by editing <B>/etc/rc.local</B> or similar).
 faxgetty processes must be manually setup by editing the appropriate
@@ -54,7 +54,7 @@ is run to configure a system for use with HylaFAX.
 <P>
 If you need to start the faxq server by
 hand, consult the
-<A HREF="@CGIPATH@/manpage?1+faxq">faxq(1M)</A>
+<A HREF="@CGIPATH@/manpage?faxq">faxq</A>
 manual page and the shell script <B>etc/hylafax</B>
 that is used on System V-based systems.
 
@@ -68,18 +68,18 @@ some attention.
 <P>
 <IMG SRC="icons/info_icon.gif" ALIGN=left HSPACE=10>
 <EM>The
-<A HREF="@CGIPATH@/manpage?1+faxcron">faxcron</A>
+<A HREF="@CGIPATH@/manpage?faxcron">faxcron</A>
 script is designed to handle the
 periodic maintenance of the spooling area.  This script is designed to
 be run from
-<A HREF="@CGIPATH@/manpage?1+cron">cron(1)</A>
+<A HREF="@CGIPATH@/manpage?cron">cron</A>
 every day.</EM>
 
 <P>
 If you want to do accounting check out the
-<A HREF="@CGIPATH@/manpage?1+xferfaxstats">xferfaxstats</A>
+<A HREF="@CGIPATH@/manpage?xferfaxstats">xferfaxstats</A>
 and
-<A HREF="@CGIPATH@/manpage?1+recvstats">recvstats</A>
+<A HREF="@CGIPATH@/manpage?recvstats">recvstats</A>
 scripts for a basic attack on how to process the
 <A HREF="@CGIPATH@/xferfaxlog?4+xferfaxlog"><B>etc/xferfaxlog</B></A>
 accounting file that has records of all
@@ -110,7 +110,7 @@ enable copious tracing information by editing the HylaFAX
 configuration files.
 Consult the <A HREF="troubleshooting.html">Troubleshooting</A>
 section and the
-<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A> manual page,
+<A HREF="@CGIPATH@/manpage?config">config</A> manual page,
 in particular, for help.
 There is also information in the
 <A HREF="http://www.hylafax.org/FAQ/">HylaFAQ</A> on problems one might encounter during

@@ -25,23 +25,23 @@ this chapter; read the setup information first!
 There are several components to the complete HylaFAX software package:
 <UL>
 <LI>client applications
-(<A HREF="@CGIPATH@/manpage?1+sendfax">sendfax</A>,
-(<A HREF="@CGIPATH@/manpage?1+sendpage">sendpage</A>,
-<A HREF="@CGIPATH@/manpage?1+faxstat">faxstat</A>,
-<A HREF="@CGIPATH@/manpage?1+faxrm">faxrm</A>, etc.),
+(<A HREF="@CGIPATH@/manpage?sendfax">sendfax</A>,
+(<A HREF="@CGIPATH@/manpage?sendpage">sendpage</A>,
+<A HREF="@CGIPATH@/manpage?faxstat">faxstat</A>,
+<A HREF="@CGIPATH@/manpage?faxrm">faxrm</A>, etc.),
 <LI>the job submission and server status process that runs
 on the server machine and communicates with client applictions
-(<A HREF="@CGIPATH@/manpage?1+hfaxd">hfaxd</A>),
+(<A HREF="@CGIPATH@/manpage?hfaxd">hfaxd</A>),
 <LI>the programs that handle delivery of outbound facsimile
 and pager requests
-(<A HREF="@CGIPATH@/manpage?1+faxsend">faxsend</A> and
-<A HREF="@CGIPATH@/manpage?1+pagesend">pagesend</A>),
+(<A HREF="@CGIPATH@/manpage?faxsend">faxsend</A> and
+<A HREF="@CGIPATH@/manpage?pagesend">pagesend</A>),
 <LI>the processes that service each modem
-(<A HREF="@CGIPATH@/manpage?1+faxgetty">faxgetty</A>),
+(<A HREF="@CGIPATH@/manpage?faxgetty">faxgetty</A>),
 <LI>the central scheduler for outbound jobs
-(<A HREF="@CGIPATH@/manpage?1+faxq">faxq</A>), and
+(<A HREF="@CGIPATH@/manpage?faxq">faxq</A>), and
 <LI>the spooling area cleaner process
-(<A HREF="@CGIPATH@/manpage?1+faxqclean">faxqclean</A>).
+(<A HREF="@CGIPATH@/manpage?faxqclean">faxqclean</A>).
 </UL>
 
 If you are having trouble first try to identify
@@ -131,7 +131,7 @@ configuration file handling.</EM></TD>
 On the server machine make sure that the hfaxd
 program is setup to run standalone or 
 properly configured to be invoked by the
-<A HREF="@CGIPATH@/manpage?1+inetd">inetd</A>
+<A HREF="@CGIPATH@/manpage?inetd">inetd</A>
 program.
 If run standalone then hfaxd should be running and have
 been started with a <TT>-i</TT> option (and possibly other options).
@@ -182,7 +182,7 @@ database.</EM></TD>
 
 <P>
 Note that hfaxd uses the 
-<A HREF="@CGIPATH@/manpage?2+chroot">chroot</A> 
+<A HREF="@CGIPATH@/manpage?chroot">chroot</A> 
 system call to confine clients to the HylaFAX spooling area
 on the server machine.
 On most systems only the super-user is permitted to do a chroot
@@ -194,9 +194,9 @@ message of the form ``<TT>Cannot set privileges.</TT>''.
 
 <P>
 You can also use an existing network program such as
-<A HREF="@CGIPATH@/manpage?1+telnet">telnet</A> 
+<A HREF="@CGIPATH@/manpage?telnet">telnet</A> 
 or
-<A HREF="@CGIPATH@/manpage?1+ftp">ftp</A> to communicate
+<A HREF="@CGIPATH@/manpage?ftp">ftp</A> to communicate
 with the hfaxd process;
 
 <UL><LISTING>
@@ -247,7 +247,7 @@ Modem ttyf2 (+1 510 528-9999): Running and idle
 A protocol or configuration problem should be evident from the 
 trace information.  You can also configure hfaxd
 to log its operation through
-<A HREF="@CGIPATH@/manpage?3+syslog">syslog</A>
+<A HREF="@CGIPATH@/manpage?syslog">syslog</A>
 by setting the <TT>ServerTracing</TT> configuration parameter
 in the <B>hfaxd.conf</B> file:
 
@@ -264,7 +264,7 @@ will not see a change to the <B>inetd.conf</B>
 file until it is restarted or sent a SIGHUP; and
 that hfaxd logs
 its debugging information through
-<A HREF="@CGIPATH@/manpage?3+syslog">syslog</A>
+<A HREF="@CGIPATH@/manpage?syslog">syslog</A>
 (using the syslog facility setup in the <B>hfaxd.conf</B>
 file, or the setting compiled into the program
 when the software was built).
@@ -297,7 +297,7 @@ so it probably is.</EM></TD>
 <P>
 The hfaxd program confines clients to the spooling area on the
 server machine using the 
-<A HREF="@CGIPATH@/manpage?2+chroot">chroot(2)</A>
+<A HREF="@CGIPATH@/manpage?chroot">chroot</A>
 system call.
 This means that clients should not have access to any information on
 a HylaFAX server machine outside the spooling area (and hfaxd
@@ -353,7 +353,7 @@ transmitted in the clear by a client across the network connection.
 This is obviously insecure and plans exist for improved security
 measures.
 The existing password facilities use the same 
-<A HREF="@CGIPATH@/manpage?3+crypt">crypt(3)</A>
+<A HREF="@CGIPATH@/manpage?crypt">crypt</A>
 function the system login facilities use and encrypted passwords
 are stored in the <B>etc/hosts</B> file in a format that is compatible
 with most systems' password files.
@@ -379,14 +379,14 @@ If a client is prompted for a password when contacting the server
 then it means the client is setup with a password in the
 <B>etc/hosts</B> file.
 Read the 
-<A HREF="@CGIPATH@/manpage?4+hosts">hosts(4F)</A>
+<A HREF="@CGIPATH@/manpage?hosts">hosts</A>
 manual page carefully to understand the format for this file.
 
 <P>
 Logging of client login and network connections can be controlled
 separately by bits in the hfaxd <TT>ServerTracing</TT> configuration
 parameter; consult the
-<A HREF="@CGIPATH@/manpage?1+hfaxd">hfaxd</A>
+<A HREF="@CGIPATH@/manpage?hfaxd">hfaxd</A>
 manual page for details.
 
 <A NAME="ServerBasics"><P><HR WIDTH=65% ALIGN=right>
@@ -471,7 +471,7 @@ configuration parameters.
 <TT>ServerTracing</TT>
 controls which work should be traced while
 <TT>LogFacility</TT> specifies the 
-<A HREF="@CGIPATH@/manpage?3+syslog">syslog(3)</A>
+<A HREF="@CGIPATH@/manpage?syslog">syslog</A>
 facility where the tracing messages should be directed.
 By default server tracing information is directed to the
 ``<TT>daemon</TT>'' facility.
@@ -491,7 +491,7 @@ to <I>session log files</I> that are described separately below.
 <P>
 To capture server tracing messages you must enable the appropriate
 bits in a <TT>ServerTracing</TT> parameter <STRONG>and</STRONG> configure
-the <A HREF="@CGIPATH@/manpage?1+syslogd">syslogd</A> process
+the <A HREF="@CGIPATH@/manpage?syslogd">syslogd</A> process
 to capture messages sent to the
 <TT>daemon.debug</TT> facilitiy
 (or substitute for <TT>daemon</TT> to reflect the value of the
@@ -531,7 +531,7 @@ Apr  1 12:26:04 6V:oxford FaxQueuer[307]: MODEM ttym2 READY
 The tracing facilities supported by the HylaFAX server processes should
 provide enough information to debug any problem in the software.
 Consult the
-<A HREF="@CGIPATH@/manpage?4+config">config(4F)</A> manual page
+<A HREF="@CGIPATH@/manpage?config">config</A> manual page
 for complete information on the various parameters.
 
 
@@ -643,7 +643,7 @@ Jobs may be rejected
 without a phone call if a <TT>rejectNotice</TT> entry is present for a
 destination phone number in the
 destination controls file
-<A HREF="@CGIPATH@/manpage?4+destctrls">destctrls(4F)</A>.
+<A HREF="@CGIPATH@/manpage?destctrls">destctrls</A>.
 Beware that multiple jobs to the same destination are usually
 serialized to reduce phone calls.
 Jobs that are blocked in this way have a
@@ -678,7 +678,7 @@ Session tracing information is stored in files in the
 electronic mail when notification is requested, or when an
 unrecoverable error is encountered.
 The
-<A HREF="@CGIPATH@/manpage?4+log">log(4F)</A> manual page
+<A HREF="@CGIPATH@/manpage?log">log</A> manual page
 has information on the meaning of many messages that might appear
 in these files.
 
@@ -801,7 +801,7 @@ that do not show sufficient information to diagnose a problem.
 <P>
 PostScript documents submitted for transmission as facsimile are
 converted to a binary format by the
-<A HREF="@CGIPATH@/manpage?1+ps2fax">ps2fax(1M)</A>
+<A HREF="@CGIPATH@/manpage?ps2fax">ps2fax</A>
 script that is invoked by the scheduler.
 If this preparation fails it is either due to the submission of
 invalid PostScript or a problem in the setup of the PostScript RIP
@@ -813,7 +813,7 @@ In this case it may be easiest to see what is happening by invoking
 the ps2fax script directly using the same command arguments used 
 by faxq; this information can be found in the faxq trace log.
 Beware however, that if faxq is started up by the
-<A HREf="@CGIPATH@/manpage?1+init">init(1M)</A>
+<A HREf="@CGIPATH@/manpage?init">init</A>
 program that it may inherit a different shell environment.
 In particular, beware of problems with search paths when the PostScript
 RIP is linked with Dynamic Shared Objects (DSOs);
@@ -890,7 +890,7 @@ requests that (incorrectly) force the output page dimensions.
 Like PostScript documents TIFF documents may need to be prepared
 before they can be transmitted as facsimile.
 This work is done by the 
-<A HREF="@CGIPATH@/manpage?1+tiff2fax">tiff2fax(1M)</A>
+<A HREF="@CGIPATH@/manpage?tiff2fax">tiff2fax</A>
 script that is invoked by faxq.
 The tiff2fax script depends on programs that are part of the separate
 TIFF software distribution and, in some instances, the ps2fax script.
@@ -1107,7 +1107,7 @@ understand and/or fix a protocol implementation problem.
 <TD><EM>If communication problems persist to a specific
 receiver when using 2D-encoded data, you can disable its use
 through the
-<A HREF="@CGIPATH@/manpage?4+info">info(4F)</A> database.
+<A HREF="@CGIPATH@/manpage?info">info</A> database.
 Note also that sendfax has a command line option that lets you
 select 1D-encoded data in any single transmission.</EM></TD>
 </TR>
@@ -1120,7 +1120,7 @@ information on some common communication problems
 that might be encountered.
 It is also important to monitor the operation of a server to detect
 trends that might indicate modem or telecommunication problems;
-the <A HREF="@CGIPATH@/manpage?1+faxcron">faxcron(1M)</A>
+the <A HREF="@CGIPATH@/manpage?faxcron">faxcron</A>
 script is useful for doing this since it extracts
 the transcripts of failed calls.
 
