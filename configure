@@ -1848,28 +1848,6 @@ EmitConfigurationDefinitions()
 	echo "#define CONFIG_BADSELECTPROTO"
     fi
     #
-    # Some vendors have changed the socket API so that
-    # call-by-reference parameters that give buffer
-    # lengths are not int; this must be dealt with to
-    # get the code to compile.  Note that we only emit
-    # the define if the type is not an int; we do this
-    # so Socket.h can include code that assumes the
-    # default so folks don't have to rerun configure.
-    #
-    test "$CONFIG_SOCKARGLENTYPE" || {		# int vs unsigned long vs ...
-	case $TARGET in
-	# XXX fill in for busted systems
-	*-univel-*)	CONFIG_SOCKARGLENTYPE=size_t;;
-	*sysv4.2uw2*)	CONFIG_SOCKARGLENTYPE=size_t;;
-	*-UnixWare*)	CONFIG_SOCKARGLENTYPE=size_t;;
-	*)		CONFIG_SOCKARGLENTYPE=int;;
-	esac
-    }
-    if [ "$CONFIG_SOCKARGLENTYPE" != int ]; then
-	Note "... using $CONFIG_SOCKARGLENTYPE for call-by-reference socket length params"
-	echo "#define CONFIG_SOCKARGLENTYPE $CONFIG_SOCKARGLENTYPE"
-    fi
-    #
     # Select the maximum fax UID.  This value is stored
     # in the GID of files so must be constrained by any
     # system limitations.  The maximum value is used for
@@ -2293,6 +2271,27 @@ BuildPortDotH()
     else
 	SELECTH=
     fi
+
+    #
+    # Some vendors have changed the socket API so that
+    # call-by-reference parameters that give buffer
+    # lengths are not int; this must be dealt with to
+    # get the code to compile.  Note that we only emit
+    # the define if the type is not an int; we do this
+    # so Socket.h can include code that assumes the
+    # default so folks don't have to rerun configure.
+    #
+    test "$CONFIG_SOCKARGLENTYPE" || {		# int vs unsigned long vs ...
+	case $TARGET in
+	# XXX fill in for busted systems
+	*-univel-*)	CONFIG_SOCKARGLENTYPE=size_t;;
+	*sysv4.2uw2*)	CONFIG_SOCKARGLENTYPE=size_t;;
+	*-UnixWare*)	CONFIG_SOCKARGLENTYPE=size_t;;
+	*)		CONFIG_SOCKARGLENTYPE=int;;
+	esac
+    }
+    TYPES_H="$TYPES_H socketbits.h"
+    CheckVarDecl socklen_t "typedef $CONFIG_SOCKARGLENTYPE socklen_t;" $TYPES_H
 
     #
     # Select signal handler type casts.

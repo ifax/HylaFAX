@@ -54,10 +54,6 @@ extern "C" {
  *     did not properly consider the consequences).
  */
 
-#ifdef CONFIG_SOCKARGLENTYPE
-    typedef CONFIG_SOCKARGLENTYPE socklen_t;
-#endif
-
 class Socket {
 public:
     static int accept(int s, void* addr, socklen_t* addrlen)
