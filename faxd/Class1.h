@@ -68,7 +68,7 @@ protected:
     Class1Cap	recvCaps[15];		// modem recv capabilities
     const Class1Cap* curcap;		// capabilities being used
     u_int	discap;			// DIS signalling rate capabilities
-    bool	prevPage;		// a previous page was received
+    u_int	prevPage;		// count of previous pages received
     bool	pageGood;		// quality of last page received
     bool	recvdDCN;		// received DCN frame
     bool	messageReceived;	// expect/don't expect message carrier

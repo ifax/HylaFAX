@@ -87,7 +87,7 @@ bool
 Class1Modem::recvBegin(fxStr& emsg)
 {
     setInputBuffering(false);
-    prevPage = false;				// no previous page received
+    prevPage = 0;				// no previous page received
     pageGood = false;				// quality of received page
     messageReceived = false;			// expect message carrier
     recvdDCN = false;				// haven't seen DCN
@@ -468,7 +468,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
     time_t t2end = 0;
     signalRcvd = 0;
     sendERR = false;
-    prevPage = false;
+    prevPage = 0;
 
     do {
 	u_int timer = conf.t2Timer;
@@ -483,7 +483,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	    if (params.ec != EC_DISABLE) {
 		pageGood = recvPageData(tif, emsg);
 		messageReceived = true;
-		prevPage = true;
+		prevPage++;
 	    } else {
 		/*
 		 * Look for message carrier and receive Phase C data.
@@ -541,7 +541,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			    messageReceived = waitFor(AT_NOCARRIER, 2*1000);
 			} while (!messageReceived && Sys::now() < (nocarrierstart + 5));
 			if (messageReceived)
-			    prevPage = true;
+			    prevPage++;
 			timer = conf.t1Timer;		// wait longer for PPM
 		    }
 		} else {
@@ -917,7 +917,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			if (conf.saveUnconfirmedPages && pagedataseen) {
 			    protoTrace("RECV keeping unconfirmed page");
 			    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-			    prevPage = true;
+			    prevPage++;
 			}
 			free(block);
 			if (wasTimeout()) abortReceive();	// return to command mode
@@ -963,7 +963,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					if (conf.saveUnconfirmedPages && pagedataseen) {
 					    protoTrace("RECV keeping unconfirmed page");
 					    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-					    prevPage = true;
+					    prevPage++;
 					}
 					free(block);
 					return (false);
@@ -992,12 +992,12 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						    if (conf.saveUnconfirmedPages && pagedataseen) {
 							protoTrace("RECV keeping unconfirmed page");
 							writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-							prevPage = true;
+							prevPage++;
 						    }
 						    free(block);
 						    return (false);
 						}
-						if (pprcnt || !prevPage) {
+						if (!prevPage || (pprcnt && frameRev[rtncframe[4]]+1 > prevPage)) {
 						    (void) transmitFrame(FCF_PPR, fxStr(ppr, 32));
 						    tracePPR("RECV send", FCF_PPR);
 						} else {
@@ -1036,7 +1036,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 							if (conf.saveUnconfirmedPages && pagedataseen) {
 							    protoTrace("RECV keeping unconfirmed page");
 							    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-							    prevPage = true;
+							    prevPage++;
 							}
 							free(block);
 							return (false);
@@ -1058,7 +1058,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    if (conf.saveUnconfirmedPages && pagedataseen) {
 						protoTrace("RECV keeping unconfirmed page");
 						writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-						prevPage = true;
+						prevPage++;
 					    }
 					    free(block);
 					    return (false);
@@ -1076,7 +1076,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    if (conf.saveUnconfirmedPages && pagedataseen) {
 						protoTrace("RECV keeping unconfirmed page");
 						writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-						prevPage = true;
+						prevPage++;
 					    }
 					    free(block);
 					    return (false);
@@ -1095,7 +1095,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					if (conf.saveUnconfirmedPages && pagedataseen) {
 					    protoTrace("RECV keeping unconfirmed page");
 					    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-					    prevPage = true;
+					    prevPage++;
 					}
 					free(block);
 					return (false);
@@ -1126,7 +1126,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    if (conf.saveUnconfirmedPages && pagedataseen) {
 						protoTrace("RECV keeping unconfirmed page");
 						writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-						prevPage = true;
+						prevPage++;
 					    }
 					    free(block);
 					    if (wasTimeout()) abortReceive();	// return to command mode
@@ -1144,7 +1144,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			if (conf.saveUnconfirmedPages && pagedataseen) {
 			    protoTrace("RECV keeping unconfirmed page");
 			    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-			    prevPage = true;
+			    prevPage++;
 			}
 			free(block);
 			return (false);
@@ -1156,7 +1156,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    if (conf.saveUnconfirmedPages && pagedataseen) {
 			protoTrace("RECV keeping unconfirmed page");
 			writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-			prevPage = true;
+			prevPage++;
 		    }
 		    free(block);
 		    return (false);
@@ -1207,7 +1207,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			if (conf.saveUnconfirmedPages && pagedataseen) {
 			    protoTrace("RECV keeping unconfirmed page");
 			    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-			    prevPage = true;
+			    prevPage++;
 			}
 			free(block);
 			return (false);
@@ -1218,7 +1218,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			if (conf.saveUnconfirmedPages && pagedataseen) {
 			    protoTrace("RECV keeping unconfirmed page");
 			    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-			    prevPage = true;
+			    prevPage++;
 			}
 			free(block);
 			return (false);
@@ -1281,7 +1281,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    if (conf.saveUnconfirmedPages && pagedataseen) {
 					protoTrace("RECV keeping unconfirmed page");
 					writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-					prevPage = true;
+					prevPage++;
 				    }
 				    free(block);
 				    return (false);
@@ -1326,7 +1326,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						if (conf.saveUnconfirmedPages && pagedataseen) {
 						    protoTrace("RECV keeping unconfirmed page");
 						    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-						    prevPage = true;
+						    prevPage++;
 						}
 						free(block);
 						return (false);
@@ -1345,7 +1345,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						    if (conf.saveUnconfirmedPages && pagedataseen) {
 							protoTrace("RECV keeping unconfirmed page");
 							writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-							prevPage = true;
+							prevPage++;
 						    }
 						    free(block);
 						    return (false);
@@ -1359,7 +1359,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						    if (conf.saveUnconfirmedPages && pagedataseen) {
 							protoTrace("RECV keeping unconfirmed page");
 							writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-							prevPage = true;
+							prevPage++;
 						    }
 						    free(block);
 						    return (false);
@@ -1397,7 +1397,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 							if (conf.saveUnconfirmedPages && pagedataseen) {
 							    protoTrace("RECV keeping unconfirmed page");
 							    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-							    prevPage = true;
+							    prevPage++;
 							}
 							free(block);
 							return (false);
@@ -1409,7 +1409,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						if (conf.saveUnconfirmedPages && pagedataseen) {
 						    protoTrace("RECV keeping unconfirmed page");
 						    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-						    prevPage = true;
+						    prevPage++;
 						}
 						free(block);
 						return (false);
@@ -1419,7 +1419,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					if (conf.saveUnconfirmedPages && pagedataseen) {
 					    protoTrace("RECV keeping unconfirmed page");
 					    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-					    prevPage = true;
+					    prevPage++;
 					}
 					free(block);
 					return (false);
@@ -1445,7 +1445,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					if (conf.saveUnconfirmedPages && pagedataseen) {
 					    protoTrace("RECV keeping unconfirmed page");
 					    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-					    prevPage = true;
+					    prevPage++;
 					}
 					free(block);
 					return (false);
@@ -1457,7 +1457,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			    if (conf.saveUnconfirmedPages && pagedataseen) {
 				protoTrace("RECV keeping unconfirmed page");
 				writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-				prevPage = true;
+				prevPage++;
 			    }
 			    free(block);
 			    return (false);
@@ -1467,7 +1467,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    if (conf.saveUnconfirmedPages && pagedataseen) {
 			protoTrace("RECV keeping unconfirmed page");
 			writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-			prevPage = true;
+			prevPage++;
 		    }
 		    free(block);
 		    return (false);
@@ -1478,7 +1478,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    if (conf.saveUnconfirmedPages) {
 			protoTrace("RECV keeping unconfirmed page");
 			writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-			prevPage = true;
+			prevPage++;
 		    }
 		    free(block);
 		    return(false);
