@@ -23,6 +23,10 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
+
+/*
+                    SendFaxClient class
+*/
 #ifndef _SendFaxClient_
 #define	_SendFaxClient_
 
@@ -173,9 +177,9 @@ public:
     void setVerbose(bool);
 };
 
-inline SendFaxJob& SendFaxClient::getProtoJob()		   { return proto; }
+inline SendFaxJob& SendFaxClient::getProtoJob()	{ return proto; }
 inline const fxStr& SendFaxClient::getFromIdentity() const { return from; }
-inline const fxStr& SendFaxClient::getSenderName() const   { return senderName;}
-inline void SendFaxClient::setVerbose(bool b)		   { verbose = b; }
-inline bool SendFaxClient::getVerbose() const		   { return verbose; }
+inline const fxStr& SendFaxClient::getSenderName() const { return senderName;}
+inline void SendFaxClient::setVerbose(bool b) { verbose = b; }
+inline bool SendFaxClient::getVerbose() const { return verbose; }
 #endif /* _SendFaxClient_ */

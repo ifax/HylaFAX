@@ -49,9 +49,9 @@ public:
 
     // generic template for matching names since we can't use a union
     typedef struct {
-	const char* name;		// tag name (lowercase)
-	void* FaxConfig::*p;		// pointer to member of structure
-	void* def;			// default value
+        const char* name;		// tag name (lowercase)
+        void* FaxConfig::*p;		// pointer to member of structure
+        void* def;			// default value
     } tags;
 
     // NB: const void* should be const tags* but gcc can't hack it
@@ -68,5 +68,7 @@ public:
     virtual void resetConfig();
     virtual bool updateConfig(const fxStr& filename);
 };
+
 inline u_int FaxConfig::getConfigLineNumber() const { return lineno; }
+
 #endif /* _FaxConfig_ */

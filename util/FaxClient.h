@@ -35,61 +35,61 @@ class Transport;
 class FaxClient : public FaxConfig {
 public:
     enum {			// command reply codes
-	PRELIM	  = 1,		// positive preliminary
-	COMPLETE  = 2,		// positive completion
-	CONTINUE  = 3,		// positive intermediate
-	TRANSIENT = 4,		// transient negative completion
-	ERROR	  = 5		// permanent negative completion
+        PRELIM	  = 1,		// positive preliminary
+        COMPLETE  = 2,		// positive completion
+        CONTINUE  = 3,		// positive intermediate
+        TRANSIENT = 4,		// transient negative completion
+        ERROR	  = 5		// permanent negative completion
     };
     enum {			// data transfer TYPEs
-	TYPE_A	= 1,		// ASCII
-	TYPE_E	= 2,		// EBCDIC
-	TYPE_I	= 3,		// image
-	TYPE_L	= 4		// local byte size
+        TYPE_A	= 1,		// ASCII
+        TYPE_E	= 2,		// EBCDIC
+        TYPE_I	= 3,		// image
+        TYPE_L	= 4		// local byte size
     };
     enum {			// data transfer file STRUctures
-	STRU_F = 1,		// file (no record structure)
-	STRU_R = 2,		// record structure
-	STRU_P = 3,		// page structure
-	STRU_T = 4		// multi-IFD TIFF
+        STRU_F = 1,		// file (no record structure)
+        STRU_R = 2,		// record structure
+        STRU_P = 3,		// page structure
+        STRU_T = 4		// multi-IFD TIFF
     };
     enum {			// data transfer MODEs
-	MODE_S = 1,		// stream
-	MODE_B = 2,		// block
-	MODE_C = 3,		// run-length compressed
-	MODE_Z = 4		// zlib compressed
+        MODE_S = 1,		// stream
+        MODE_B = 2,		// block
+        MODE_C = 3,		// run-length compressed
+        MODE_Z = 4		// zlib compressed
     };
     enum {			// data file FORMats
-	FORM_PS   = 1,		// PostScript Level I
-	FORM_PS2  = 2,		// PostScript Level II
-	FORM_TIFF = 3,		// TIFF
-	FORM_PCL  = 4		// HP PCL5
+        FORM_PS   = 1,		// PostScript Level I
+        FORM_PS2  = 2,		// PostScript Level II
+        FORM_TIFF = 3,		// TIFF
+        FORM_PCL  = 4		// HP PCL5
     };
     enum {
-	TZ_GMT	  = 1,		// use GMT timezone for time values
-	TZ_LOCAL  = 2		// use local timezone for time values
+        TZ_GMT	  = 1,		// use GMT timezone for time values
+        TZ_LOCAL  = 2		// use local timezone for time values
     };
 
     // NB: the F_ prefixes workaround a bug in the AIX xlC compiler
     struct F_stringtag {
-	const char*	 name;
-	fxStr FaxClient::* p;
-	const char*	 def;	// NULL is shorthand for ""
+        const char*	 name;
+        fxStr FaxClient::* p;
+        const char*	 def;	// NULL is shorthand for ""
     };
     struct F_numbertag {
-	const char*	 name;
-	u_int FaxClient::*p;
-	u_int		 def;
+        const char*	 name;
+        u_int FaxClient::*p;
+        u_int		 def;
     };
     struct FaxParam {
-	const char* cmd;
-	const char** parmNames;
-	int	NparmNames;
-	u_int	FaxClient::*pv;
+        const char* cmd;
+        const char** parmNames;
+        int	NparmNames;
+        u_int	FaxClient::*pv;
     };
     struct FaxFmtHeader {
-	char	fmt;		// format character used by server
-	const char* title;	// column title to use
+        char	fmt;		// format character used by server
+        const char* title;	// column title to use
     };
 private:
     Transport*	transport;	// underlying transport protocol support
@@ -149,7 +149,7 @@ protected:
     void initServerState(void);
     bool jobOp(const char* op, const char* jobid);
     bool extract(u_int& pos, const char* pattern, fxStr& result,
-	const char* cmd, fxStr& emsg);
+        const char* cmd, fxStr& emsg);
     bool storeUnique(const char* cmd, fxStr& docname, fxStr& emsg);
 
     const fxStr& getStatusFormat(u_int flag, const char* cmd, fxStr& fmt);
@@ -275,16 +275,16 @@ public:
      * Retrieve information from the server.
      */
     bool recvData(bool (*f)(void*, const char*, int, fxStr&),
-	void* arg, fxStr& emsg, u_long restart, const char* fmt, ...);
+    void* arg, fxStr& emsg, u_long restart, const char* fmt, ...);
     bool recvZData(bool (*f)(void*, const char*, int, fxStr&),
-	void* arg, fxStr& emsg, u_long restart, const char* fmt, ...);
+    void* arg, fxStr& emsg, u_long restart, const char* fmt, ...);
     /*
      * Job scripting support.
      */
     bool runScript(const char* filename, fxStr& emsg);
     bool runScript(FILE*, const char* filename, fxStr& emsg);
     bool runScript(const char* script, u_long scriptLen,
-	const char* filename, fxStr& emsg);
+        const char* filename, fxStr& emsg);
     /*
      * Status query support.
      */
@@ -306,6 +306,7 @@ public:
     void getModemStatusHeader(fxStr& header);
     void getFileStatusHeader(fxStr& header);
 };
+
 inline const fxStr& FaxClient::getSenderName(void) const{ return senderName; }
 inline const fxStr& FaxClient::getUserName(void) const	{ return userName; }
 inline const fxStr& FaxClient::getHost(void) const	{ return host; }

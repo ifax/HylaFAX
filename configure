@@ -2290,7 +2290,7 @@ BuildPortDotH()
 	*)		CONFIG_SOCKARGLENTYPE=int;;
 	esac
     }
-    TYPES_H="$TYPES_H socketbits.h"
+    TYPES_H="$TYPES_H sys/socket.h"
     CheckVarDecl socklen_t "typedef $CONFIG_SOCKARGLENTYPE socklen_t;" $TYPES_H
 
     #

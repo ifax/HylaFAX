@@ -464,19 +464,18 @@ bool
 FaxClient::setTimeZone(u_int v)
 {
     if (!isLoggedIn()) {		// set and mark pending accordingly
-	if (0 < v && v < N(tzoneNames)) {
-	    tzone = v;
-	    if (v == TZ_GMT)
-		state &= ~FS_TZPEND;
-	    else
-		state |= FS_TZPEND;
-	} else {
-	    printError("Bad time zone parameter value %u.", v);
-	    return (false);
-	}
-	return (true);
-    } else				// pass directly to server
-	return setCommon(tzoneParam, v);
+        if (0 < v && v < N(tzoneNames)) {
+            tzone = v;
+            if (v == TZ_GMT) state &= ~FS_TZPEND;
+            else state |= FS_TZPEND;
+        } else {
+            printError("Bad time zone parameter value %u.", v);
+            return (false);
+        }
+        return (true);
+    } else {				// pass directly to server
+        return setCommon(tzoneParam, v);
+    }
 }
 
 /*
@@ -507,11 +506,12 @@ FaxClient::initDataConn(fxStr& emsg)
 {
     closeDataConn();
     if (transport) {
-	if (!transport->initDataConn(emsg)) {
-	    if (emsg == "")
-		emsg = "Unable to initialize data connection to server";
-	    return (false);
-	}
+        if (!transport->initDataConn(emsg)) {
+            if (emsg == "") {
+                emsg = "Unable to initialize data connection to server";
+            }
+            return (false);
+        }
     }
     return (true);
 }
@@ -520,11 +520,12 @@ bool
 FaxClient::openDataConn(fxStr& emsg)
 {
     if (transport) {
-	if (!transport->openDataConn(emsg)) {
-	    if (emsg == "")
-		emsg = "Unable to open data connection to server";
-	    return (false);
-	}
+        if (!transport->openDataConn(emsg)) {
+            if (emsg == "") {
+            	emsg = "Unable to open data connection to server";
+            }
+	        return (false);
+        }
     }
     return (true);
 }
@@ -533,8 +534,8 @@ void
 FaxClient::closeDataConn(void)
 {
     if (fdData >= 0) {
-	transport->closeDataConn(fdData);
-	fdData = -1;
+        transport->closeDataConn(fdData);
+        fdData = -1;
     }
 }
 
@@ -542,32 +543,32 @@ bool
 FaxClient::abortDataConn(fxStr& emsg)
 {
     if (fdData >= 0 && transport) {
-	fflush(fdOut);
-	if (!transport->abortCmd(emsg)) {
-	    if (emsg == "")
-		emsg = "Unable to abort data connection to server";
-	    return (false);
-	}
+        fflush(fdOut);
+        if (!transport->abortCmd(emsg)) {
+            if (emsg == "") {
+            	emsg = "Unable to abort data connection to server";
+            }
+	        return (false);
+        }
 #ifdef notdef
-	/*
-	 * Flush data from data connection.
-	 */
-	int flags = fcntl(fdData, F_GETFL, 0);
-	fcntl(fdData, F_SETFL, flags | FNONBLK);
-	while (Sys::read(fdData, buf, sizeof (buf)) > 0)
-	    ;
-	fcntl(fdData, F_SETFL, flags);
+        /*
+         * Flush data from data connection.
+         */
+        int flags = fcntl(fdData, F_GETFL, 0);
+        fcntl(fdData, F_SETFL, flags | FNONBLK);
+        while (Sys::read(fdData, buf, sizeof (buf)) > 0);
+        fcntl(fdData, F_SETFL, flags);
 #endif
-	/*
-	 * Server should send a reply that acknowledges the
-	 * existing operation is aborted followed by an ack
-	 * of the ABOR command itself.
-	 */
-	if (getReply(false) != TRANSIENT ||	// 4xx operation aborted
-	    getReply(false) != COMPLETE) {	// 2xx abort successful
-	    unexpectedResponse(emsg);
-	    return (false);
-	}
+        /*
+         * Server should send a reply that acknowledges the
+         * existing operation is aborted followed by an ack
+         * of the ABOR command itself.
+         */
+        if (getReply(false) != TRANSIENT ||	// 4xx operation aborted
+                getReply(false) != COMPLETE) {	// 2xx abort successful
+            unexpectedResponse(emsg);
+            return (false);
+        }
     }
     return (true);
 }
@@ -616,26 +617,25 @@ int
 FaxClient::vcommand(const char* fmt, va_list ap)
 {
     if (getVerbose()) {
-	if (strncasecmp("PASS ", fmt, 5) == 0)
-	    traceServer("-> PASS XXXX");
-	else if (strncasecmp("ADMIN ", fmt, 6) == 0)
-	    traceServer("-> ADMIN XXXX");
-	else {
-	    char buf[128];
-	    sprintf(buf, "-> %s", fmt);
-	    vtraceServer(buf, ap);
-	}
+        if (strncasecmp("PASS ", fmt, 5) == 0) {
+            traceServer("-> PASS XXXX");
+        } else if (strncasecmp("ADMIN ", fmt, 6) == 0) {
+            traceServer("-> ADMIN XXXX");
+        } else {
+            char buf[128];
+            sprintf(buf, "-> %s", fmt);
+            vtraceServer(buf, ap);
+        }
     }
     if (fdOut == NULL) {
-	printError("No control connection for command");
-	code = -1;
-	return (0);
+        printError("No control connection for command");
+        code = -1;
+        return (0);
     }
     vfprintf(fdOut, fmt, ap);
     fputs("\r\n", fdOut);
     (void) fflush(fdOut);
-    int r = getReply(strncmp(fmt, "QUIT", 4) == 0);
-    return (r);
+    return (getReply(strncmp(fmt, "QUIT", 4) == 0));
 }
 
 /*
@@ -650,15 +650,12 @@ FaxClient::vcommand(const char* fmt, va_list ap)
 static int
 getReplyCode(const char* cp)
 {
-    if (!isdigit(cp[0]))
-	return (0);
+    if (!isdigit(cp[0])) return (0);
     int c = (cp[0] - '0');
-    if (!isdigit(cp[1]))
-	return (0);
-    c = 10*c + (cp[1]-'0');
-    if (!isdigit(cp[2]))
-	return (0);
-    c = 10*c + (cp[2]-'0');
+    if (!isdigit(cp[1])) return (0);
+    c = 10 * c + (cp[1] - '0');
+    if (!isdigit(cp[2])) return (0);
+    c = 10 * c + (cp[2] - '0');
     return ((cp[3] == ' ' || cp[3] == '-') ? c : 0);
 }
 
@@ -677,57 +674,58 @@ FaxClient::getReply(bool expecteof)
     int firstCode = 0;
     bool continuation = false;
     do {
-	lastResponse.resize(0);
-	int c;
-	while ((c = getc(fdIn)) != '\n') {
-	    if (c == IAC) {     // handle telnet commands
-		switch (c = getc(fdIn)) {
-		case WILL:
-		case WONT:
-		    c = getc(fdIn);
-		    fprintf(fdOut, "%c%c%c", IAC, DONT, c);
-		    (void) fflush(fdOut);
-		    break;
-		case DO:
-		case DONT:
-		    c = getc(fdIn);
-		    fprintf(fdOut, "%c%c%c", IAC, WONT, c);
-		    (void) fflush(fdOut);
-		    break;
-		default:
-		    break;
-		}
-		continue;
-	    }
-	    if (c == EOF) {
-		if (expecteof) {
-		    code = 221;
-		    return (0);
-		} else {
-		    lostServer();
-		    code = 421;
-		    return (4);
-		}
-	    }
-	    if (c != '\r')
-		lastResponse.append(c);
-	}
-	if (getVerbose())
-	    traceServer("%s", (const char*) lastResponse);
-	code = getReplyCode(lastResponse);
-	if (code != 0) {			// found valid reply code
-	    if (lastResponse[3] == '-') {	// continuation line
-		if (firstCode == 0)		// first line of reponse
-		    firstCode = code;
-		continuation = true;
-	    } else if (code == firstCode)	// end of continued reply
-		continuation = false;
-	}
+        lastResponse.resize(0);
+        int c;
+        while ((c = getc(fdIn)) != '\n') {
+            if (c == IAC) {     // handle telnet commands
+            	switch (c = getc(fdIn)) {
+            	case WILL:
+                case WONT:
+            	    c = getc(fdIn);
+            	    fprintf(fdOut, "%c%c%c", IAC, DONT, c);
+                    (void) fflush(fdOut);
+                    break;
+                case DO:
+                case DONT:
+                    c = getc(fdIn);
+                    fprintf(fdOut, "%c%c%c", IAC, WONT, c);
+                    (void) fflush(fdOut);
+                    break;
+                default:
+                    break;
+                }
+                continue;
+            }
+            if (c == EOF) {
+            	if (expecteof) {
+                    code = 221;
+                    return (0);
+                } else {
+                    lostServer();
+                    code = 421;
+                    return (4);
+                }
+            }
+            if (c != '\r') lastResponse.append(c);
+        }
+        if (getVerbose()) {
+            traceServer("%s", (const char*) lastResponse);
+        }
+        code = getReplyCode(lastResponse);
+        if (code != 0) {			// found valid reply code
+            if (lastResponse[3] == '-') {	// continuation line
+                if (firstCode == 0)		// first line of reponse
+                    firstCode = code;
+                continuation = true;
+            } else if (code == firstCode)	// end of continued reply
+                continuation = false;
+        }
     } while (continuation || code == 0);
 
-    if (code == 421)				// server closed connection
-	lostServer();
-    return (code/100);
+    if (code == 421) { // server closed connection
+        lostServer();
+    }
+    return code / 100;
 }
 
 /*
@@ -746,26 +744,27 @@ FaxClient::extract(u_int& pos, const char* pattern, fxStr& result,
     fxStr pat(pattern);
     u_int l = lastResponse.find(pos, pat);
     if (l == lastResponse.length()) {		// try inverse-case version
-	if (isupper(pattern[0]))
-	    pat.lowercase();
-	else
-	    pat.raisecase();
-	l = lastResponse.find(pos, pat);
+        if (isupper(pattern[0])) {
+            pat.lowercase();
+        } else {
+            pat.raisecase();
+        }
+        l = lastResponse.find(pos, pat);
     }
     if (l == lastResponse.length()) {
-	protocolBotch(emsg, ": No \"%s\" in %s response: %s",
-	    pattern, cmd, (const char*) lastResponse);
-	return (false);
+        protocolBotch(emsg, ": No \"%s\" in %s response: %s",
+            pattern, cmd, (const char*) lastResponse);
+        return false;
     }
     l = lastResponse.skip(l+pat.length(), ' ');// skip white space
     result = lastResponse.extract(l, lastResponse.next(l, ' ')-l);
     if (result == "") {
-	protocolBotch(emsg, ": Null %s in %s response: %s",
-	    pattern, cmd, (const char*) lastResponse);
-	return (false);
+        protocolBotch(emsg, ": Null %s in %s response: %s",
+            pattern, cmd, (const char*) lastResponse);
+        return false;
     }
     pos = l;					// update position
-    return (true);
+    return true;
 }
 
 /*
@@ -776,33 +775,35 @@ bool
 FaxClient::newJob(fxStr& jobid, fxStr& groupid, fxStr& emsg)
 {
     if (command("JNEW") == COMPLETE) {
-	if (code == 200) {
-	    /*
-	     * The response should be of the form:
-	     *
-	     * 200 ... jobid: xxxx groupid: yyyy.
-	     *
-	     * where xxxx is the ID for the new job and yyyy is the
-	     * ID of the new job's group.
-	     */
-	    u_int l = 0;
-	    if (extract(l, "jobid:", jobid, "JNEW", emsg) &&
-	        extract(l, "groupid:", groupid, "JNEW", emsg)) {
-		/*
-		 * Force job and groupd IDs to be numeric;
-		 * this deals with servers that want to append
-		 * punctuation such as ``,'' or ``.''.
-		 */
-		jobid.resize(jobid.skip(0, "0123456789"));
-		groupid.resize(groupid.skip(0, "0123456789"));
-		curjob = jobid;
-		return (true);
-	    }
-	} else
-	    unexpectedResponse(emsg);
-    } else
-	emsg = lastResponse;
-    return (false);
+        if (code == 200) {
+            /*
+             * The response should be of the form:
+             *
+             * 200 ... jobid: xxxx groupid: yyyy.
+             *
+             * where xxxx is the ID for the new job and yyyy is the
+             * ID of the new job's group.
+             */
+            u_int l = 0;
+            if (extract(l, "jobid:", jobid, "JNEW", emsg) &&
+                    extract(l, "groupid:", groupid, "JNEW", emsg)) {
+                /*
+                 * Force job and groupd IDs to be numeric;
+                 * this deals with servers that want to append
+                 * punctuation such as ``,'' or ``.''.
+                 */
+                jobid.resize(jobid.skip(0, "0123456789"));
+                groupid.resize(groupid.skip(0, "0123456789"));
+                curjob = jobid;
+                return true;
+            }
+        } else {
+            unexpectedResponse(emsg);
+        }
+    } else {
+        emsg = lastResponse;
+    }
+    return false;
 }
 
 /*
@@ -812,11 +813,12 @@ bool
 FaxClient::setCurrentJob(const char* jobid)
 {
     if (strcasecmp(jobid, curjob) != 0) {
-	if (command("JOB %s", jobid) != COMPLETE)
-	    return (false);
-	curjob = jobid;
+        if (command("JOB %s", jobid) != COMPLETE) {
+            return false;
+        }
+        curjob = jobid;
     }
-    return (true);
+    return true;
 }
 
 bool
@@ -824,58 +826,68 @@ FaxClient::jobParm(const char* name, const fxStr& value)
 {
     return jobParm(name, (const char*) value);
 }
+
 bool
 FaxClient::jobParm(const char* name, const char* value)
 {
     return (command("JPARM %s \"%s\"", name, value) == COMPLETE);
 }
+
 bool
 FaxClient::jobParm(const char* name, bool b)
 {
     return (command("JPARM %s %s", name, b ? "YES" : "NO") == COMPLETE);
 }
+
 bool
 FaxClient::jobParm(const char* name, u_int v)
 {
     return (command("JPARM %s %u", name, v) == COMPLETE);
 }
+
 bool
 FaxClient::jobParm(const char* name, float v)
 {
     return (command("JPARM %s %g", name, v) == COMPLETE);
 }
+
 bool
 FaxClient::jobSendTime(const struct tm tm)
 {
     return (command("JPARM SENDTIME %d%02d%02d%02d%02d"
-	, tm.tm_year+1900
-	, tm.tm_mon+1
-	, tm.tm_mday
-	, tm.tm_hour
-	, tm.tm_min
-	) == COMPLETE);
+        , tm.tm_year+1900
+        , tm.tm_mon+1
+        , tm.tm_mday
+        , tm.tm_hour
+        , tm.tm_min
+        ) == COMPLETE);
 }
+
 bool
 FaxClient::jobLastTime(u_long tv)
 {
     return (command("JPARM LASTTIME %02d%02d%02d",
-	tv/(24*60*60), (tv/(60*60))%24, (tv/60)%60) == COMPLETE);
+        tv/(24*60*60), (tv/(60*60))%24, (tv/60)%60) == COMPLETE);
 }
+
 bool
 FaxClient::jobRetryTime(u_long tv)
 {
     return (command("JPARM RETRYTIME %02d%02d", tv/60, tv%60) == COMPLETE);
 }
+
 bool
 FaxClient::jobCover(const char* docname)
 {
     return (command("JPARM COVER %s", docname) == COMPLETE);
 }
+
 bool
 FaxClient::jobDocument(const char* docname)
 {
     return (command("JPARM DOCUMENT %s", docname) == COMPLETE);
 }
+
 bool
 FaxClient::jobPollRequest(const char* sep, const char* pwd)
 {
