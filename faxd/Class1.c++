@@ -421,6 +421,18 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
      */
     do {
 	c = getModemChar(0);
+	if (c == DLE) {
+	    c = getModemChar(0);
+	    if (c == ETX) {
+		protoTrace("--> ...+DLE+ETX");
+		break;
+	    }
+	}
+	if (c == '\n') {
+	    protoTrace("--> ...+LF");
+	    break;
+	}
+
     } while (c != EOF && c != 0xff);
     if (c == 0xff) {			// address field received
 	do {
@@ -433,11 +445,12 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 	} while ((c = getModemChar(0)) != EOF);
     }
     stopTimeout("receiving HDLC frame data");
+    if (frame.getLength() > 0)
+	traceHDLCFrame("-->", frame);
     if (wasTimeout()) {
 	abortReceive();
 	return (false);
     }
-    traceHDLCFrame("-->", frame);
     /*
      * Now collect the "OK", "ERROR", or "FCERROR"
      * response telling whether or not the FCS was
@@ -694,8 +707,16 @@ Class1Modem::recvTCF(int br, HDLCFrame& buf, const u_char* bitrev, long ms)
 			gotData = true;
 			break;
 		    }
+		    if (c == EOF) {
+			break;
+		    }
 		}
 		buf.put(bitrev[c]);
+		if (buf.getLength() > 10000) {
+		    setTimeout(true);
+		    break;
+		}
+
 	    } while ((c = getModemChar(0)) != EOF);
 	}
     }

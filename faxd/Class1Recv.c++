@@ -392,21 +392,32 @@ top:
 		(void) setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
 	    setInputBuffering(false);
 	    if (!messageReceived && rmResponse != AT_FCERROR) {
-		/*
-		 * One of many things may have happened:
-		 * o if we lost carrier, then some modems will return
-		 *   AT_NOCARRIER or AT_EMPTYLINE in response to the
-		 *   AT+FRM request.
-		 * o otherwise, there may have been a timeout receiving
-		 *   the message data, or there was a timeout waiting
-		 *   for the carrier to drop.  Anything unexpected causes
-		 *   us abort the receive to avoid looping.
-		 * The only case that we don't abort on is that we found
-		 * the wrong carrier, which means that there is an HDLC
-		 * frame waiting for us--in which case it should get
-		 * picked up below.
-		 */
-		break;
+		if (rmResponse != AT_ERROR) {
+		    /*
+		     * One of many things may have happened:
+		     * o if we lost carrier, then some modems will return
+		     *   AT_NOCARRIER or AT_EMPTYLINE in response to the
+		     *   AT+FRM request.
+		     * o otherwise, there may have been a timeout receiving
+		     *   the message data, or there was a timeout waiting
+		     *   for the carrier to drop.  Anything unexpected causes
+		     *   us abort the receive to avoid looping.
+		     * The only case that we don't abort on is that we found
+		     * the wrong carrier, which means that there is an HDLC
+		     * frame waiting for us--in which case it should get
+		     * picked up below.
+		     */
+		    if (wasTimeout()) {
+			abortReceive();		// return to command state
+		    }
+		    break;
+		} else {
+		    /*
+		     * Some modems respond ERROR instead +FCERROR on wrong carrier
+		     * and not return to command state.
+		     */
+		    abortReceive();		// return to command state
+		}
 	    }
 	}
 	/*
