@@ -467,6 +467,8 @@ if [ "$RESULT" = "OK" ]; then
     1,2,2.0)		common "1+2+2.0"; class1; class2; class2dot0;;
     0,1,2,2.0)		common "1+2+2.0"; class1; class2; class2dot0;;
     0,1,2,2.0,*)	common "1+2+2.0"; class1; class2; class2dot0;;
+    0,1,1.0,2,2.0,*)	common "1+2+2.0"; class1; class2; class2dot0;;
+    0,1,1.0,2,*)	common "1+2"; class1; class2;;
     1,2,2.0,*)		common "1+2+2.0"; class1; class2; class2dot0;;
     0,2,2.0,*)		common "2+2.0"; class2; class2dot0;;
     0,1,2.0,*)		common "1+2.0"; class1; class2dot0;;
