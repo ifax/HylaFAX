@@ -1598,6 +1598,8 @@ const FaxClient::FaxFmtHeader FaxClient::jobFormats[] = {
     { 'V',	"DoneOp" },	// V (doneop)
     { 'W',	"CommID" },	// W (commid)
     { 'X',	"JobType" },	// X (jobtype)
+    { 'Y',	"Date       Time" },	// Y (date & time)
+    { 'Z',	"UNIX Time" },	// Z (seconds since the UNIX epoch)
     { 'a',	"State" },	// a (job state as symbol)
     { 'b',	"NTries" },	// b (ntries)
     { 'c',	"Client" },	// c (client)
