@@ -39,13 +39,15 @@ struct ModelData
 struct NSFData {
     const char* vendorId;
     static
-    const int   vendorIdSize = 3; // Country & provider code (T.35)
+    const int   vendorIdSize; // Country & provider code (T.35)
     const char* vendorName;
     bool        inverseStationIdOrder;
     int         modelIdPos;
     int         modelIdSize;
     const ModelData* knownModels;
 };
+
+NSFData::vendorIdSize = 3; // Country & provider code (T.35)
 
 static const ModelData Panasonic0E[] =
 {{"\x00\x00\x00\x96", "KX-F90" },
