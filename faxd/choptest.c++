@@ -105,20 +105,20 @@ MemoryDecoder::scanPage(u_int fillorder, const Class2Params& params)
 	if (params.vr == VR_FINE)		// 196 lpi =>'s twice as many
 	    topMargin *= 2;
 	do {
-	    (void) decodeRow(NULL, rowpixels, (params.df == DF_2DMMR));
+	    (void) decodeRow(NULL, rowpixels);
 	} while (--topMargin);
 	/*
 	 * Scan the remainder of the page data and calculate
 	 * the number of blank lines at the bottom.
 	 */
 	for (;;) {
-	    (void) decodeRow(NULL, rowpixels, (params.df == DF_2DMMR));
+	    (void) decodeRow(NULL, rowpixels);
 	    if (isBlank(lastRuns(), rowpixels)) {
 		endOfPage = bp;			// include one blank row
 		nblanks = 0;
 		do {
 		    nblanks++;
-		    (void) decodeRow(NULL, rowpixels, (params.df == DF_2DMMR));
+		    (void) decodeRow(NULL, rowpixels);
 		} while (isBlank(lastRuns(), rowpixels));
 	    }
 	}
