@@ -570,6 +570,17 @@ top:
 	    case FCF_MPS:			// MPS
 	    case FCF_EOM:			// EOM
 	    case FCF_EOP:			// EOP
+		if (!prevPage && signalRcvd == 0) {
+		    /*
+		     * Post page message, but no previous page
+		     * was received.  According to T.30 we should
+		     * send DCN (as we do below with PRI-PPM),
+		     * but to be more friendly, we'll force RTN
+		     * instead.  (Non-ECM only)
+		     */
+		    prevPage = true;
+		    pageGood = false;
+		}
 	    case FCF_PRI_MPS:			// PRI-MPS
 	    case FCF_PRI_EOM:			// PRI-EOM
 	    case FCF_PRI_EOP:			// PRI-EOP
