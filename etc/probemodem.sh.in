@@ -47,12 +47,16 @@ NOCLOBBER_OFF=@NOCLOBBER_OFF@
 SPOOL=@SPOOL@
 SBIN=@SBIN@
 
+ATCMD=
+NOFUSER=
 SPEED=
 while [ x"$1" != x"" ] ; do
     case $1 in
+    -c)     ATCMD=$2; shift;;
+    -f)     NOFUSER=yes;;
     -os)    OS=$2; shift;;
     -s)	    SPEED=$2; shift;;
-    -*)	    echo "Usage: $0 [-os OS] [-s SPEED] [ttyname]"; exit 1;;
+    -*)	    echo "Usage: $0 [-f] [-c AT_COMMAND] [-os OS] [-s SPEED] [ttyname]"; exit 1;;
     *)	    TTY=$1;;
     esac
     shift
@@ -132,14 +136,16 @@ for x in $LOCKX; do
 done
 
 # zap any gettys or other users
-if ! [ -f $FUSER ]; then
-    cat<<EOF
+if [ x"$NOFUSER" != x"yes" ]; then
+    if ! [ -f $FUSER ]; then
+	cat<<EOF
 Hmm, there does not appear to be an fuser command on your machine.
 This means that I am unable to ensure that all processes using the
 modem have been killed.  I will keep going, but beware that you may
 have competition for the modem.
 EOF
-else $FUSER -k $DEVS >/dev/null 2>&1
+    else $FUSER -k $DEVS >/dev/null 2>&1
+    fi
 fi
 
 cat<<EOF
@@ -265,7 +271,11 @@ while [ -z "$RESULT" ]; do
      done)& nagpid=$!
     trap "rm -f \$JUNK; kill $nagpid \$catpid; exit 1" 0 1 2 15
 
-    SendToModem "AT+FCLASS=?" 			# ask for class support
+    if [ x"$ATCMD" != x"" ]; then
+	SendToModem "$ATCMD"
+    else
+	SendToModem "AT+FCLASS=?" 		# ask for class support
+    fi
 
     exec 3>&2 2> /dev/null	# Mute stderr against child death
     kill $nagpid
@@ -473,6 +483,11 @@ class2dot1()
 }
 
 echo ""
+if [ "$ATCMD" != "" ]; then
+    echo "The response was: $RESPONSE"
+    echo "The result was  : $RESULT"
+    exit
+fi
 if [ "$RESULT" = "OK" ]; then
     # Looks like a usable fax modem.  Get more information.
     # Here we build up a MODEMCLASSES string and follow
