@@ -1736,7 +1736,7 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 		 * negotiated min-scanline time.
 		 */
 		u_int lineLen = bp - bol;
-		if (fp + fxmax(lineLen, minLen) >= eoFill) {
+		if ((fp + fxmax(lineLen, minLen) >= eoFill) && (fp-fill != 0)) {
 		    /*
 		     * Not enough space for this scanline, flush
 		     * the current data and reset the pointer into
@@ -1747,22 +1747,32 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 		    if (!rc)			// error writing data
 			break;
 		}
-		memcpy(fp, bol, lineLen);	// first part of line
-		fp += lineLen;
-		if (lineLen < minLen) {		// must zero-fill
-		    u_int zeroLen = minLen - lineLen;
-                    if( foundEOL ){
-                        memset(fp-1, 0, zeroLen);   // zero padding
-                        fp += zeroLen;
-                        fp[-1] = bp[-1];            // last byte in EOL
-                    }
-                    else {
-                        /*
-                         * Last line does not contain EOL
-                         */
-                        memset(fp, 0, zeroLen);     // zero padding
-                        fp += zeroLen;
-                    }
+		if (lineLen >= minLen*rowsperstrip) {
+		    /*
+		     * The fill buffer is smaller than this
+		     * scanline alone.  Flush this scanline
+		     * also.  lineLen is greater than minLen.
+		     */
+		    rc = sendPageData(bol, lineLen, bitrev, (params.ec != EC_DISABLE), emsg);
+		    if (!rc)			// error writing
+			break;
+		} else {
+		    memcpy(fp, bol, lineLen);	// first part of line
+		    fp += lineLen;
+		    if (lineLen < minLen) {		// must zero-fill
+			u_int zeroLen = minLen - lineLen;
+                	if ( foundEOL ) {
+                	    memset(fp-1, 0, zeroLen);	// zero padding
+			    fp += zeroLen;
+			    fp[-1] = bp[-1];		// last byte in EOL
+			} else {
+			    /*
+			     * Last line does not contain EOL
+			     */
+			    memset(fp, 0, zeroLen);	// zero padding
+			    fp += zeroLen;
+			}
+		    }
 		}
 	    } while (bp < ep);
 	    /*
