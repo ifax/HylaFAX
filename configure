@@ -113,14 +113,17 @@ CHGRP
 CHMOD
 CHOWN
 CC
+CCOMPILER
 CMP
 COL
 CP
 CXX
+CXXCOMPILER
 CXXFILE
 DATE
 DBLIB
 DBLIBINC
+DEFPAGESIZE
 DEFVRES
 DIST_ALPHA
 DIST_MAJOR
@@ -1337,10 +1340,9 @@ fi
 
 makeDefs()
 {
-    $RM confsed1
     WARNING="Warning, this file was automatically created by the HylaFAX configure script"
-    dumpvars "$VAR1" CCOMPILER CXXCOMPILER | sort>confsed1
-    dumpvars "$VAR2" CCOMPILER CXXCOMPILER | sort>confsed2
+    $RM confsed1; dumpvars "$VAR1" | sort>confsed1
+    $RM confsed2; dumpvars "$VAR2" | sort>confsed2
     $RM xdefs; sed -f confsed1 $SRCDIR/defs.in | sed -f confsed2 >$1
 }
 
@@ -4444,7 +4446,8 @@ x="`relativize ${LIBREGEX}`"; LIBREGEX="$x"
 x="`relativize ${LIBDB}`"; LIBDB="$x"
 
 # NB: these should be sorted alphabetically
-$RM confsed2; dumpvars "$VAR2" DEFPAGESIZE | sort > confsed2
+$RM confsed1; dumpvars "$VAR1" | sort > confsed1
+$RM confsed2; dumpvars "$VAR2" | sort > confsed2
 
 
 SedConfigFiles()
