@@ -610,7 +610,7 @@ returnTranscript()
     if [ "$RETURNTRANSCRIPT" = "yes" ] ; then
         printBanner "Transcript of session follows"
         COMFILE="log/c$commid"
-        if [ -a "$COMFILE" ] ; then
+        if [ -f "$COMFILE" ] ; then
             # dump the comfile to output except for '-- data' lines
             cat $COMFILE | $GREP -v "\-\- data"
         else 
@@ -826,7 +826,7 @@ if [ "$NOTIFY_FAXMASTER" = "yes" ]; then
 	echo "Subject: $jobtag to $number $WHY"
 	echo
         COMFILE="log/c$commid"
-        if [ -a "$COMFILE" ] ; then
+        if [ -f "$COMFILE" ] ; then
             cat $COMFILE
         else 
             printf "    No transcript available"
