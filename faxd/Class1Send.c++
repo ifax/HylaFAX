@@ -239,13 +239,15 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    params = next;
 	}
 
-	/*
-	 * According to T.30 5.3.2.4 we must pause at least 75 ms "after 
-	 * receipt of a signal using the T.30 binary coded modulation" and 
-	 * "before sending any signals using V.27 ter/V.29/V.33/V.17 
-	 * modulation system"
-	 */
-	pause(conf.class1SendMsgDelay);
+	if (params.ec != EC_ENABLE) {		// ECM does it later
+	    /*
+	     * According to T.30 5.3.2.4 we must pause at least 75 ms "after 
+	     * receipt of a signal using the T.30 binary coded modulation" and 
+	     * "before sending any signals using V.27 ter/V.29/V.33/V.17 
+	     * modulation system"
+	     */
+	    pause(conf.class1SendMsgDelay);
+	}
 
 	/*
 	 * The ECM protocol needs to know PPM, so this must be done beforehand...
@@ -836,6 +838,15 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	    // add one more flag to ensure one full flag gets transmitted before DLE+ETX
 	    blockData(0x7e, true);
 
+	    // start up the high-speed carrier...
+	    if (flowControl == FLOW_XONXOFF)   
+		setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
+	    pause(conf.class1SendMsgDelay);		// T.30 5.3.2.4
+	    fxStr tmCmd(curcap[HasShortTraining(curcap)].value, tmCmdFmt);
+	    if (!atCmd(tmCmd, AT_CONNECT))
+		return (false);
+	    pause(conf.class1TMConnectDelay);
+
 	    // The block is assembled.  Transmit it, adding transparent DLEs.  End with DLE+ETX.
 	    if (!putModemDLEData(ecmStuffedBlock, ecmStuffedBlockPos, bitrev, getDataTimeout())) {
 		return (false);
@@ -1112,16 +1123,6 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		protoTrace(emsg);
 		return (false);
 	    }
-	    if (!blockgood || !lastblock) {
-		// start up the high-speed carrier...
-		if (flowControl == FLOW_XONXOFF)   
-		    setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
-		pause(conf.class1SendMsgDelay);		// T.30 5.3.2.4
-		fxStr tmCmd(curcap[HasShortTraining(curcap)].value, tmCmdFmt);
-		if (!atCmd(tmCmd, AT_CONNECT))
-		    return (false);
-		pause(conf.class1TMConnectDelay);
-	    }
 	} while (!blockgood);
 	frameNumber = 0;
 	if (lastblock) blockNumber = 0;
@@ -1266,33 +1267,53 @@ EOLcode(u_long& w)
  * Send a page of data.
  */
 bool
-Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_int ppmcmd, fxStr& emsg)
+Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppmcmd, fxStr& emsg)
 {
     int lastbyte = 0;
-    /*
-     * Set high speed carrier & start transfer.  If the
-     * negotiated modulation technique includes short
-     * training, then we use it here (it's used for all
-     * high speed carrier traffic other than the TCF).
-     */
-    fxStr tmCmd(curcap[HasShortTraining(curcap)].value, tmCmdFmt);
-    if (!atCmd(tmCmd, AT_CONNECT)) {
-	emsg = "Unable to establish message carrier";
-	return (false);
+    if (params.ec != EC_ENABLE) {	// ECM does it later
+	/*
+	 * Set high speed carrier & start transfer.  If the
+	 * negotiated modulation technique includes short
+	 * training, then we use it here (it's used for all
+	 * high speed carrier traffic other than the TCF).
+	 */
+	fxStr tmCmd(curcap[HasShortTraining(curcap)].value, tmCmdFmt);
+	if (!atCmd(tmCmd, AT_CONNECT)) {
+	    emsg = "Unable to establish message carrier";
+	    return (false);
+	}
+	// As with TCF, T.31 8.3.3 requires the DCE to report CONNECT at the beginning
+	// of transmission of the training pattern rather than at the end.  We pause here
+	// to allow the remote's +FRM to result in CONNECT.
+	pause(conf.class1TMConnectDelay);
+	if (flowControl == FLOW_XONXOFF)
+	    setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
     }
-    // As with TCF, T.31 8.3.3 requires the DCE to report CONNECT at the beginning
-    // of transmission of the training pattern rather than at the end.  We pause here
-    // to allow the remote's +FRM to result in CONNECT.
-    pause(conf.class1TMConnectDelay);
 
     bool rc = true;
     ecmBlockPos = ecmFramePos = ecmBitPos = ecmOnes = ecmByte = 0;
     protoTrace("SEND begin page");
-    if (flowControl == FLOW_XONXOFF)
-	setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
 
     tstrip_t nstrips = TIFFNumberOfStrips(tif);
     if (nstrips > 0) {
+
+	/*
+	 * RTFCC may mislead us here, so we temporarily
+	 * adjust params.
+	 */
+	Class2Params newparams = params;
+	uint16 compression;
+	TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression);
+	if (compression != COMPRESSION_CCITTFAX4) {  
+	    uint32 g3opts = 0;
+	    TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
+	    if ((g3opts & GROUP3OPT_2DENCODING) == DF_2DMR)
+		params.df = DF_2DMR;
+	    else
+		params.df = DF_1DMH;
+	} else
+	    params.df = DF_2DMMR;
+
 	/*
 	 * Correct bit order of data if not what modem expects.
 	 */
@@ -1303,7 +1324,7 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
 	/*
 	 * Setup tag line processing.
 	 */
-	bool doTagLine = (params.df != DF_2DMMR) && setupTagLineSlop(params);
+	bool doTagLine = setupTagLineSlop(params);
 	u_int ts = getTagLineSlop();
 	/*
 	 * Calculate total amount of space needed to read
@@ -1326,15 +1347,39 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
 		off += (u_int) sbc;
 	}
 	totdata -= pageChop;		// deduct trailing white space not sent
+	uint32 rowsperstrip;
+	TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
+	if (rowsperstrip == (uint32) -1)
+	    TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &rowsperstrip);
+
 	/*
 	 * Image the tag line, if intended.
 	 */
 	u_char* dp;
 	if (doTagLine) {
-	    dp = imageTagLine(data+ts, fillorder, params);
-	    totdata = totdata+ts - (dp-data);
+	    u_long totbytes = totdata;
+	    dp = imageTagLine(data+ts, fillorder, params, totbytes);
+	    // Because the whole image is processed with MMR, 
+	    // totdata is then determined during encoding.
+	    totdata = (params.df == DF_2DMMR) ? totbytes : totdata+ts - (dp-data);
 	} else
 	    dp = data;
+
+	if (conf.softRTFCC && params.df != newparams.df) {
+	    switch (params.df) {
+		case DF_1DMH:
+		    protoTrace("Reading MH-compressed image file");
+		    break;
+		case DF_2DMR:
+		    protoTrace("Reading MR-compressed image file");
+		    break;
+		case DF_2DMMR:
+		    protoTrace("Reading MMR-compressed image file");
+		    break;
+	    }
+	    dp = convertPhaseCData(dp, totdata, fillorder, params, newparams);
+	}
+	params = newparams;		// revert back
 
         /*
          * correct broken Phase C (T.4/T.6) data if neccessary 
@@ -1363,10 +1408,6 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
 	     * bytes of data to send.  To minimize underrun we
 	     * do this padding in a strip-sized buffer.
 	     */
-	    uint32 rowsperstrip;
-	    TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
-	    if (rowsperstrip == (uint32) -1)
-		 TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &rowsperstrip);
 	    u_char* fill = new u_char[minLen*rowsperstrip];
 	    u_char* eoFill = fill + minLen*rowsperstrip;
 	    u_char* fp = fill;

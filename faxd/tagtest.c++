@@ -31,8 +31,6 @@
 #include "Sys.h"
 
 #include "PCFFont.h"
-#include "G3Decoder.h"
-#include "G3Encoder.h"
 #include "StackBuffer.h"
 #include "FaxFont.h"
 #include "tiffio.h"
@@ -127,47 +125,7 @@ setupTagLineSlop(const Class2Params& params)
 	return (false);
 }
 
-class MemoryDecoder : public G3Decoder {
-private:
-    const u_char* bp;
-    int		row;
-
-    int		decodeNextByte();
-
-    void	invalidCode(const char* type, int x);
-    void	badPixelCount(const char* type, int got, int expected);
-    void	badDecodingState(const char* type, int x);
-public:
-    MemoryDecoder(const u_char* data);
-    ~MemoryDecoder();
-    const u_char* current()				{ return bp; }
-
-    void setRowNum(int r)				{ row = r; }
-};
-MemoryDecoder::MemoryDecoder(const u_char* data)	{ bp = data; }
-MemoryDecoder::~MemoryDecoder()				{}
-int MemoryDecoder::decodeNextByte()			{ return *bp++; }
-void
-MemoryDecoder::invalidCode(const char* type, int x)
-{
-    printf("Invalid %s code word, row %lu, x %d\n", type, row, x);
-}
-void
-MemoryDecoder::badPixelCount(const char* type, int got, int expected)
-{
-    printf("Bad %s pixel count, row %lu, got %d, expected %d\n",
-	type, row, got, expected);
-}
-void
-MemoryDecoder::badDecodingState(const char* type, int x)
-{
-    printf("Panic, bad %s decoding state, row %lu, x %d\n", type, row, x);
-}
-
-#ifdef roundup
-#undef roundup
-#endif
-#define	roundup(a,b)	((((a)+((b)-1))/(b))*(b))
+#include "MemoryDecoder.h"
 
 /*
  * Image the tag line in place of the top few lines of the page
@@ -179,7 +137,7 @@ MemoryDecoder::badDecodingState(const char* type, int x)
  * setup the current page number.
  */
 u_char*
-imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
+imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params, u_long& totdata)
 {
     u_int l;
     /*
@@ -228,7 +186,7 @@ imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      * longs here to optimize the scaling done below for the
      * low res case.  This should satisfy the word-alignment.
      */
-    u_int lpr = howmany(w,32);				// longs/raster row
+    u_int lpr = howmany(w,sizeof(u_long)*8);		// longs/raster row
     u_long* raster = new u_long[(h+SLOP_LINES)*lpr];	// decoded raster
     memset(raster,0,(h+SLOP_LINES)*lpr*sizeof (u_long));// clear raster to white
     /*
@@ -260,49 +218,6 @@ imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
 	(void) tagLineFont->imageText(tagField, (u_short*) raster, w, h,
 	    xoff, MARGIN_RIGHT, MARGIN_TOP, MARGIN_BOT);
     }
-    /*
-     * Decode (and discard) the top part of the page where
-     * the tag line is to be imaged.  Note that we assume
-     * the strip of raw data has enough scanlines in it
-     * to satisfy our needs (caller is responsible).
-     */
-    MemoryDecoder dec(buf);
-    dec.setupDecoder(fillorder,  params.is2D(), (params.df == DF_2DMMR));
-    tiff_runlen_t runs[2*4864];		// run arrays for cur+ref rows
-    dec.setRuns(runs, runs+4864, w);
-
-    u_int row;
-    for (row = 0; row < th; row++) {
-	dec.setRowNum(row);
-	dec.decodeRow(NULL, w);
-    }
-    /*
-     * If the source is 2D-encoded and the decoding done
-     * above leaves us at a row that is 2D-encoded, then
-     * our re-encoding below will generate a decoding
-     * error if we don't fix things up.  Thus we discard
-     * up to the next 1D-encoded scanline.  (We could
-     * instead decode the rows and re-encoded them below
-     * but to do that would require decoding above instead
-     * of skipping so that the reference line for the
-     * 2D-encoded rows is available.)
-     */
-    for (; row < th+4 && !dec.isNextRow1D(); row++) {
-	dec.setRowNum(row);
-	dec.decodeRow(NULL, w);
-    }
-    th = row;				// add in discarded rows
-    /*
-     * Things get tricky trying to identify the last byte in
-     * the decoded data that we want to replace.  The decoder
-     * must potentially look ahead to see the zeros that
-     * makeup the EOL that marks the end of the data we want
-     * to skip over.  Consequently dec.current() must be
-     * adjusted by the look ahead, a factor of the number of
-     * bits pending in the G3 decoder's bit accumulator.
-     */
-    u_int look_ahead = roundup(dec.getPendingBits(),8) / 8;
-    u_int decoded = dec.current() - look_ahead - buf;
 
     /*
      * Scale image data as needed (see notes above).
@@ -421,48 +336,10 @@ imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
 	}
 	memset(l2, 0, MARGIN_BOT*lpr*sizeof (u_long));
     }
-
-    /*
-     * Encode the result according to the parameters of
-     * the outgoing page.  Note that the encoded data is
-     * written in the bit order of the page data since
-     * it must be merged back with it below.
-     */
-    fxStackBuffer result;
-    G3Encoder enc(result);
-    enc.setupEncoder(fillorder, params.is2D(), (params.df == DF_2DMMR));
-    enc.encode(raster, w, th);
-    delete raster;
-    /*
-     * To properly join the newly encoded data and the previous
-     * data we need to insert two bytes of zero-fill prior to
-     * the start of the old data to ensure 11 bits of zero exist
-     * prior to the EOL code in the first line of data that
-     * follows what we skipped over above.  Note that this
-     * assumes the G3 decoder always stops decoding prior to
-     * an EOL code and that we've adjusted the byte count to the
-     * start of the old data so that the leading bitstring is
-     * some number of zeros followed by a 1.
-     */
-    result.put((char) 0);
-    result.put((char) 0);
-    /*
-     * Copy the encoded raster with the tag line back to
-     * the front of the buffer that was passed in.  The
-     * caller has preallocated a hunk of space for us to
-     * do this and we also reuse space occupied by the
-     * original encoded raster image.  If insufficient space
-     * exists for the newly encoded tag line, then we jam
-     * as much as will fit w/o concern for EOL markers;
-     * this will cause at most one bad row to be received
-     * at the receiver (got a better idea?).
-     */
-    u_int encoded = result.getLength();
-    if (encoded > tagLineSlop + decoded)
-	encoded = tagLineSlop + decoded;
-    u_char* dst = buf + (int)(decoded-encoded);
-    memcpy(dst, (const unsigned char*)result, encoded);
-    return (dst);
+    MemoryDecoder dec(buf, w, totdata, fillorder, params.is2D(), (params.df == DF_2DMMR));
+    u_char* encbuf = dec.encodeTagLine(raster, th, tagLineSlop);
+    totdata = dec.getCC();
+    return (encbuf);
 }
 
 void
@@ -603,17 +480,24 @@ main(int argc, char* argv[])
 	TIFFSetField(otif, TIFFTAG_BITSPERSAMPLE, 1);
 	TIFFSetField(otif, TIFFTAG_SAMPLESPERPIXEL, 1);
 	TIFFSetField(otif, TIFFTAG_FILLORDER, FILLORDER_LSB2MSB);
-	TIFFSetField(otif, TIFFTAG_COMPRESSION, COMPRESSION_CCITTFAX3);
 	TIFFSetField(otif, TIFFTAG_FILLORDER, FILLORDER_LSB2MSB);
 	uint32 r;
 	TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &r);
 	TIFFSetField(otif, TIFFTAG_ROWSPERSTRIP, r);
 	TIFFSetField(otif, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
 	TIFFSetField(otif, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISWHITE);
+
+	TIFFSetField(otif, TIFFTAG_COMPRESSION, comp);
 	uint32 opts = 0;
-	TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &opts);
-	params.df = (opts & GROUP3OPT_2DENCODING) ? DF_2DMR : DF_1DMH;
-	TIFFSetField(otif, TIFFTAG_GROUP3OPTIONS, opts);
+	if (comp != COMPRESSION_CCITTFAX4) {
+	    TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &opts);
+	    params.df = (opts & GROUP3OPT_2DENCODING) ? DF_2DMR : DF_1DMH;
+	    TIFFSetField(otif, TIFFTAG_GROUP3OPTIONS, opts);
+	} else {
+	    TIFFGetField(tif, TIFFTAG_GROUP4OPTIONS, &opts);
+            params.df = DF_2DMMR;
+	    TIFFSetField(tif, TIFFTAG_GROUP4OPTIONS, opts);
+	}
 	uint16 o;
 	if (TIFFGetField(otif, TIFFTAG_ORIENTATION, &o))
 	    TIFFSetField(tif, TIFFTAG_ORIENTATION, o);
@@ -626,17 +510,22 @@ main(int argc, char* argv[])
 	bool firstStrip = setupTagLineSlop(params);
 	u_int ts = tagLineSlop;
 	for (u_int strip = 0; strip < TIFFNumberOfStrips(tif); strip++) {
-	    u_int totbytes = (u_int) stripbytecount[strip];
+	    u_long totbytes = (u_long) stripbytecount[strip];
 	    if (totbytes > 0) {
 		u_char* data = new u_char[totbytes+ts];
 		if (TIFFReadRawStrip(tif, strip, data+ts, totbytes) >= 0) {
 		    u_char* dp;
 		    if (firstStrip) {
+			uint32 rowsperstrip;
+			TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);  
+			if (rowsperstrip == (uint32) -1)
+			    TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &rowsperstrip);
 			/*
 			 * Generate tag line at the top of the page.
 			 */
-			dp = imageTagLine(data+ts, fillorder, params);
-			totbytes = totbytes+ts - (dp-data);
+			u_long totdata = totbytes;
+			dp = imageTagLine(data+ts, fillorder, params, totdata);
+			totbytes = (params.df == DF_2DMMR) ? totdata : totbytes+ts - (dp-data);
 			firstStrip = false;
 		    } else
 			dp = data;

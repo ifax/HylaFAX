@@ -244,6 +244,7 @@ ModemSetupDTRCmd	string	\-	command for setting up \s-1DTR\s+1 handling
 ModemSoftFlowCmd	string	\-	command for setting software flow control between \s-1DTE\s+1 and \s-1DCE\s+1
 ModemSoftResetCmd	string	\s-1ATZ\s+1	command for doing a soft reset
 ModemSoftResetCmdDelay	integer	\s-13000\s+1	time, in ms, to pause after a soft reset
+ModemSoftRTFCC	boolean	\s-1No\s+1	enable software-driven real-time fax compression conversion
 ModemType	string	\s-1\fIsee below\fP\s+1	modem type
 ModemVerboseResultsCmd	string	\s-1ATV1\s+1	command for enabling verbose result codes
 ModemWaitForConnect	boolean	\s-1No\s+1	force server to wait for ``\s-1CONNECT\s+1'' response on answer
@@ -1941,6 +1942,21 @@ The command to force a soft reset of the modem.
 The time, in milliseconds, to pause after receiving the OK following
 .B ModemSoftResetCmd
 before any further commands are sent to the modem.
+.TP
+.B ModemSoftRTFCC
+Whether or not to enable software-driven Real-Time Fax Compression Conversion.
+RTFCC allows HylaFAX to convert the image compression between MH MR and MMR 
+formats regardless of how faxq formatted the image file.
+Note that when using RTFCC, the
+compression format of the file will be ignored, thus the ``-1'', ``-2'',
+and ``-3'' options for sendfax, ps2fax, and others will only influence how the
+document is prepared by faxq and will not influence the
+actual negotiated session parameters.
+.B Class2RTFCC
+takes precedence over
+.B ModemSoftRTFCC
+and if both are enabled, then software-driven RTFCC will not be performed
+in favor of the firmware-driven RTFCC.
 .TP
 .B ModemType
 This parameter must be set to one of: ``Class2'', ``Class2.0'',

@@ -358,7 +358,7 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	 * RTFCC may mislead us here, so we temporarily
 	 * adjust params.
 	 */
-	uint16 senddf = params.df;
+	Class2Params newparams = params;
 	uint16 compression;
 	TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression);
 	if (compression != COMPRESSION_CCITTFAX4) {
@@ -381,12 +381,8 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	/*
 	 * Setup tag line processing.
 	 */
-	u_int ts = 0;
-	bool doTagLine = 0;
-	if (compression != COMPRESSION_CCITTFAX4) {	// broken in G4
-	    doTagLine = setupTagLineSlop(params);
-	    ts = getTagLineSlop();
-	}
+	u_int ts = getTagLineSlop();
+	bool doTagLine = setupTagLineSlop(params);
 	/*
 	 * Calculate total amount of space needed to read
 	 * the image into memory (in its encoded format).
@@ -408,6 +404,10 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 		off += (u_int) sbc;
 	}
 	totdata -= pageChop;		// deduct trailing white space not sent
+	uint32 rowsperstrip;
+	TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);  
+	if (rowsperstrip == (uint32) -1)
+	    TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &rowsperstrip);
 	/*
 	 * Image the tag line, if intended, and then
 	 * pass the data to the modem, filtering DLE's
@@ -415,10 +415,27 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	 */
 	u_char* dp;
 	if (doTagLine) {
-	    dp = imageTagLine(data+ts, fillorder, params);
-	    totdata = totdata+ts - (dp-data);
+	    u_long totbytes = totdata;
+	    dp = imageTagLine(data+ts, fillorder, params, totbytes);
+	    totdata = (params.df == DF_2DMMR) ? totbytes : totdata+ts - (dp-data);
 	} else
 	    dp = data;
+
+	if (conf.softRTFCC && !conf.class2RTFCC && params.df != newparams.df) {
+	    switch (params.df) {
+		case DF_1DMH:
+		    protoTrace("Reading MH-compressed image file");
+		    break;
+		case DF_2DMR:
+		    protoTrace("Reading MR-compressed image file");
+		    break;
+		case DF_2DMMR:
+		    protoTrace("Reading MMR-compressed image file");
+		    break;
+	    }
+	    dp = convertPhaseCData(dp, totdata, fillorder, params, newparams);
+	}
+	params = newparams;		// revert back
 
         /*
          * correct broken Phase C (T.4/T.6) data if necessary
@@ -429,9 +446,6 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	rc = putModemDLEData(dp, (u_int) totdata, bitrev, getDataTimeout());
 	endTimedTransfer();
 	protoTrace("SENT %u bytes of data", totdata);
-
-	params.df = senddf;		// revert back
-	delete data;
     }
     return (rc);
 }

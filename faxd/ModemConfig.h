@@ -192,6 +192,7 @@ public:
     u_int	percentGoodLines;	// required % of good lines in page
     u_int	maxConsecutiveBadLines;	// max consecutive bad lines in page
     u_int	minSpeed;		// minimum speed for fax transmits
+    bool	softRTFCC;		// real-time fax compression conversion (software)
     bool	waitForConnect;		// modem sends multiple answer responses
     fxStr	tagLineFmt;		// format string for tag lines
     fxStr	tagLineFontFile;	// font file for imaging tag lines

@@ -239,6 +239,7 @@ ModemConfig::setupConfig()
     recvDataFormat	= DF_ALL;		// default to no transcoding
     rtnHandling         = FaxModem::RTN_RETRANSMIT; // retransmit until MCF/MPS
     saveUnconfirmedPages = true;		// keep unconfirmed pages
+    softRTFCC		= false;		// real-time fax comp. conv. (software)
 }
 
 void
@@ -579,6 +580,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class2UseHex = getBoolean(value);
     else if (streq(tag, "class2rtfcc"))
 	class2RTFCC = getBoolean(value);
+    else if (streq(tag, "modemsoftrtfcc"))
+	softRTFCC = getBoolean(value);
     else if (streq(tag, "saveunconfirmedpages"))
 	saveUnconfirmedPages = getBoolean(value);
     else

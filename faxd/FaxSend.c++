@@ -520,11 +520,16 @@ FaxServer::sendSetupParams1(TIFF* tif,
      * re-reading the q file, we won't know if the data format was
      * requested.  So, RTFCC defeats requested data formatting. :-(
      */
-    if (class2RTFCC) {
+    if (class2RTFCC || softRTFCC) {
 	params.df = clientCapabilities.df;
 	// even if RTFCC supported uncompressed mode (and it doesn't)
 	// it's likely that the remote was incorrect in telling us it does
 	if (params.df == DF_2DMRUNCOMP) params.df = DF_2DMR;
+	// don't let RTFCC cause problems with restricted modems...
+	if (params.df == DF_2DMMR && (!modem->supportsMMR() || params.ec != EC_ENABLE))
+		params.df = DF_2DMR;
+	if (params.df == DF_2DMR && !modem->supports2D())
+		params.df = DF_1DMH;
     } else {
 	if (compression == COMPRESSION_CCITTFAX4) {
 	    if (!clientInfo.getSupportsMMR()) {

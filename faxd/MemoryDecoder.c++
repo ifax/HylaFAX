@@ -82,6 +82,24 @@ MemoryDecoder::getLastByte()
     return (*(endOfData - 1));
 }
 
+void
+MemoryDecoder::invalidCode(const char* type, int x)
+{
+    printf("Invalid %s code word, x %d\n", type, x);
+}        
+void
+MemoryDecoder::badPixelCount(const char* type, int got, int expected)  
+{
+    if (!seenRTC())
+	printf("Bad %s pixel count, got %d, expected %d\n",
+	    type, got, expected);
+}
+void
+MemoryDecoder::badDecodingState(const char* type, int x)
+{
+    printf("Panic, bad %s decoding state, x %d\n", type, x);
+}
+
 static bool
 isBlank(tiff_runlen_t* runs, u_int rowpixels)
 {
@@ -178,13 +196,14 @@ void MemoryDecoder::fixFirstEOL()
         (void)decodeRow(rowBuf, width);
         /*
          * syncronize to the next EOL and calculate pointer to it
-         * (see detailed explanation of look_ahead in TagLine.c++)
+         * (see detailed explanation of look_ahead in encodeTagLine())
          */
         (void)isNextRow1D();
         u_int look_ahead = roundup(getPendingBits(),8) / 8;
         u_int decoded = current() - look_ahead - start;
 
         enc.encode(rowBuf, width, 1);
+	enc.encoderCleanup();
         u_int encoded = result.getLength();
             
         while( encoded < decoded ){
@@ -234,7 +253,7 @@ u_char* MemoryDecoder::cutExtraRTC()
     if(!RTCraised()) {
         /*
          * syncronize to the next EOL and calculate pointer to it
-         * (see detailed explanation of look_ahead in TagLine.c++)
+         * (see detailed explanation of look_ahead in encodeTagLine())
          */
         (void)isNextRow1D();
         u_int look_ahead = roundup(getPendingBits(),8) / 8;
@@ -273,4 +292,161 @@ u_char* MemoryDecoder::cutExtraEOFB()
     if (seenRTC())
 	endOfData--;	// step back over the first byte of EOFB
     return endOfData;
+}
+
+u_char* MemoryDecoder::encodeTagLine(u_long* raster, u_int th, u_int slop)
+{
+    /*
+     * Decode (and discard) the top part of the page where
+     * the tag line is to be imaged.  Note that we assume
+     * the strip of raw data has enough scanlines in it
+     * to satisfy our needs (caller is responsible).
+     *
+     * ... and then...
+     *
+     * Encode the result according to the parameters of
+     * the outgoing page.  Note that the encoded data is
+     * written in the bit order of the page data since
+     * it must be merged back with it below.
+     */
+    fxStackBuffer result;
+    G3Encoder enc(result);
+    enc.setupEncoder(fillorder, is2D, isG4);
+
+    u_char* start = current();
+    decode(NULL, width, th);		// discard decoded data
+    if (!isG4) {
+	/*
+	 * If the source is 2D-encoded and the decoding done
+	 * above leaves us at a row that is 2D-encoded, then
+	 * our re-encoding below will generate a decoding
+	 * error if we don't fix things up.  Thus we discard
+	 * up to the next 1D-encoded scanline.  (We could
+	 * instead decode the rows and re-encoded them below
+	 * but to do that would require decoding above instead
+	 * of skipping so that the reference line for the
+	 * 2D-encoded rows is available.)
+	 */
+	u_int n;
+	for (n = 0; n < 4 && !isNextRow1D(); n++)
+	    decodeRow(NULL, width);
+	th += n;			// compensate for discarded rows
+	/*
+	 * Things get tricky trying to identify the last byte in
+	 * the decoded data that we want to replace.  The decoder
+	 * must potentially look ahead to see the zeros that
+	 * makeup the EOL that marks the end of the data we want
+	 * to skip over.  Consequently current() must be
+	 * adjusted by the look ahead, a factor of the number of
+	 * bits pending in the G3 decoder's bit accumulator.
+	 */
+	u_int look_ahead = roundup(getPendingBits(),8) / 8;
+	u_int decoded = current() - look_ahead - bp;
+	enc.encode(raster, width, th);
+	enc.encoderCleanup();
+	delete raster;
+	/*
+	 * To properly join the newly encoded data and the previous
+	 * data we need to insert two bytes of zero-fill prior to
+	 * the start of the old data to ensure 11 bits of zero exist
+	 * prior to the EOL code in the first line of data that
+	 * follows what we skipped over above.  Note that this
+	 * assumes the G3 decoder always stops decoding prior to
+	 * an EOL code and that we've adjusted the byte count to the
+	 * start of the old data so that the leading bitstring is
+	 * some number of zeros followed by a 1.
+	 */
+	result.put((char) 0);
+	result.put((char) 0);
+	/*
+	 * Copy the encoded raster with the tag line back to
+	 * the front of the buffer that was passed in.  The
+	 * caller has preallocated a hunk of space for us to
+	 * do this and we also reuse space occupied by the
+	 * original encoded raster image.  If insufficient space
+	 * exists for the newly encoded tag line, then we jam
+	 * as much as will fit w/o concern for EOL markers;
+	 * this will cause at most one bad row to be received
+	 * at the receiver (got a better idea?).
+	 */
+	u_int encoded = result.getLength();
+	if (encoded > slop + decoded)
+	    encoded = slop + decoded;
+	u_char* dst = bp + (int)(decoded-encoded);
+	memcpy(dst, (const unsigned char*) result, encoded);
+	return (dst);
+    } else {
+	u_char* refrow = new u_char[byteWidth*sizeof(u_char)];	// reference row
+	memset(refrow, 0, byteWidth*sizeof(u_char));		// clear to white
+	enc.encode(raster, width, th, (unsigned char*) refrow);
+	/*
+	 * refrow does not need to be altered now to match the 
+	 * last line of raster because the raster contains MARGIN_BOT
+	 * blank lines.
+	 */
+	delete raster;
+	if (!RTCraised()) {
+	    for (;;) {
+		(void) decodeRow(rowBuf, width);
+		if(seenRTC())
+		    break;
+		enc.encode(rowBuf, width, 1, (unsigned char*) refrow);
+		memcpy(refrow, rowBuf, byteWidth*sizeof(u_char));
+	    }
+	}
+	enc.encoderCleanup();
+	cc = result.getLength();
+	u_char* dst = new u_char[cc];
+	memcpy(dst, (const unsigned char*) result, cc);
+	return (dst);
+    }
+}
+
+u_char* MemoryDecoder::convertDataFormat(const Class2Params& params)
+{
+    /*
+     * Convert data to the format specified in params.  The decoder has already
+     * been set up, and we don't need to worry about decoder operation here.  
+     * These params are for the encoder to use.
+     */
+    fxStackBuffer result;
+    G3Encoder enc(result);
+    enc.setupEncoder(fillorder, params.is2D(), (params.df == DF_2DMMR));
+
+    u_char* refrow = new u_char[byteWidth*sizeof(u_char)];	// reference row
+    memset(refrow, 0, byteWidth*sizeof(u_char));		// clear to white
+
+    /*
+     * For MR we encode a 1-D or 2-D line according to T.4 4.2.1.
+     * We understand that "standard" resolution means VR_NORMAL.
+     */
+    u_short k = 0;
+
+    if (!RTCraised()) {
+	for (;;) {
+	    (void) decodeRow(rowBuf, width);
+	    if(seenRTC())
+		break;
+	    // encode the line specific to the desired format
+	    if (params.df == DF_2DMMR) {
+		enc.encode(rowBuf, width, 1, (unsigned char*) refrow);
+	    } else if (params.df == DF_2DMR) {
+		if (k) {
+		    enc.encode(rowBuf, width, 1, (unsigned char*) refrow);	// 2-D
+		} else {
+		    enc.encode(rowBuf, width, 1);				// 1-D
+		    k = (params.vr == VR_NORMAL || params.vr == VR_200X100) ? 2 : 4;
+		}
+		k--;
+	    } else {	// DF_1DMH
+		enc.encode(rowBuf, width, 1);
+	    }
+	    memcpy(refrow, rowBuf, byteWidth*sizeof(u_char));
+	}
+    }
+    enc.encoderCleanup();
+    cc = result.getLength();
+    u_char* dst = new u_char[cc];
+    memcpy(dst, (const unsigned char*) result, cc);
+    return (dst);
 }

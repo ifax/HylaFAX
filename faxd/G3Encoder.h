@@ -37,6 +37,7 @@ class G3Encoder {
 private:
     bool	is2D;		// data is to be 1d/2d-encoded
     bool	isG4;		// data is to be G4-encoded
+    bool	firstEOL;	// first EOL is not byte-aligned
     const u_char* bitmap;	// bit reversal table
     short	data;		// current input/output byte
     short	bit;		// current bit in input/output byte
@@ -46,7 +47,9 @@ private:
     static const u_char oneruns[256];
 
     static int findspan(const u_char**, int, int, const u_char*);
-    static int finddiff(const u_char*, int, int);
+    static int find0span(const u_char*, int, int);
+    static int find1span(const u_char*, int, int);
+    static int finddiff(const u_char*, int, int, int);
 
     void	putBits(u_int bits, u_int length);
     void	putcode(const tableentry& te);
@@ -57,6 +60,7 @@ public:
     virtual ~G3Encoder();
 
     void	setupEncoder(u_int fillOrder, bool, bool);
-    void	encode(const void* raster, u_int w, u_int h);
+    void	encode(const void* raster, u_int w, u_int h, u_char* rp = NULL);
+    void	encoderCleanup();
 };
 #endif /* _G3Encoder_ */

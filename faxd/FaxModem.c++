@@ -734,3 +734,13 @@ FaxModem::correctPhaseCData(u_char* buf, u_long* pBufSize,
         *pBufSize = endOfData - buf;
     return lastbyte;
 }
+
+u_char*
+FaxModem::convertPhaseCData(u_char* buf, u_long& totdata, u_int fillorder, 
+			    const Class2Params& params, const Class2Params& newparams)
+{
+    MemoryDecoder dec(buf, params.pageWidth(), totdata, fillorder, params.is2D(), (params.df == DF_2DMMR));
+    u_char* data = dec.convertDataFormat(newparams);
+    totdata = dec.getCC();
+    return (data);
+}

@@ -25,7 +25,6 @@
  */
 #include "FaxServer.h"
 #include "PCFFont.h"
-#include "G3Encoder.h"
 #include "StackBuffer.h"
 #include "FaxFont.h"
 #include "FaxRequest.h"
@@ -115,27 +114,7 @@ FaxModem::setupTagLineSlop(const Class2Params& params)
     }
 }
 
-/*
- * A memory-based G3 decoder--does no checking for end-of-data; it
- * assumes there'll be enough to satisfy the decoding requests.
- */
-class TagLineMemoryDecoder : public G3Decoder {
-private:
-    const u_char* bp;
-    int decodeNextByte();
-public:
-    TagLineMemoryDecoder(const u_char* data);
-    ~TagLineMemoryDecoder();
-    const u_char* current()		{ return bp; }
-};
-TagLineMemoryDecoder::TagLineMemoryDecoder(const u_char* data) : bp(data) {}
-TagLineMemoryDecoder::~TagLineMemoryDecoder()	{}
-int TagLineMemoryDecoder::decodeNextByte()	{ return *bp++; }
-
-#ifdef roundup
-#undef roundup
-#endif
-#define	roundup(a,b)	((((a)+((b)-1))/(b))*(b))
+#include "MemoryDecoder.h"
 
 /*
  * Image the tag line in place of the top few lines of the page
@@ -147,7 +126,7 @@ int TagLineMemoryDecoder::decodeNextByte()	{ return *bp++; }
  * setup the current page number.
  */
 u_char*
-FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
+FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params, u_long& totdata)
 {
     u_int l;
     /*
@@ -202,7 +181,7 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      *     because the number of consecutive 2D-encoded rows is bounded
      *     by the K parameter in the CCITT spec.
      */
-    u_int lpr = howmany(w,32);				// longs/raster row
+    u_int lpr = howmany(w, sizeof(u_long)*8);		// longs/raster row
     u_long* raster = new u_long[(h+SLOP_LINES)*lpr];	// decoded raster
     memset(raster,0,(h+SLOP_LINES)*lpr*sizeof (u_long));// clear raster to white
     /*
@@ -234,44 +213,6 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
 	(void) tagLineFont->imageText(tagField, (u_short*) raster, w, h,
 	    xoff, MARGIN_RIGHT, MARGIN_TOP, MARGIN_BOT);
     }
-    /*
-     * Decode (and discard) the top part of the page where
-     * the tag line is to be imaged.  Note that we assume
-     * the strip of raw data has enough scanlines in it
-     * to satisfy our needs (caller is responsible).
-     */
-    TagLineMemoryDecoder dec(buf);
-    dec.setupDecoder(fillorder, params.is2D(), (params.df == DF_2DMMR));
-    tiff_runlen_t runs[2*4864];		// run arrays for cur+ref rows
-    dec.setRuns(runs, runs+4864, w);
-
-    dec.decode(NULL, w, th);		// discard decoded data
-    /*
-     * If the source is 2D-encoded and the decoding done
-     * above leaves us at a row that is 2D-encoded, then
-     * our re-encoding below will generate a decoding
-     * error if we don't fix things up.  Thus we discard
-     * up to the next 1D-encoded scanline.  (We could
-     * instead decode the rows and re-encoded them below
-     * but to do that would require decoding above instead
-     * of skipping so that the reference line for the
-     * 2D-encoded rows is available.)
-     */
-    u_int n;
-    for (n = 0; n < 4 && !dec.isNextRow1D(); n++)
-	dec.decodeRow(NULL, w);
-    th += n;				// compensate for discarded rows
-    /*
-     * Things get tricky trying to identify the last byte in
-     * the decoded data that we want to replace.  The decoder
-     * must potentially look ahead to see the zeros that
-     * makeup the EOL that marks the end of the data we want
-     * to skip over.  Consequently dec.current() must be
-     * adjusted by the look ahead, a factor of the number of
-     * bits pending in the G3 decoder's bit accumulator.
-     */
-    u_int look_ahead = roundup(dec.getPendingBits(),8) / 8;
-    u_int decoded = dec.current() - look_ahead - buf;
 
     /*
      * Scale image data as needed (see notes above).
@@ -390,46 +331,8 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
 	}
 	memset(l2, 0, MARGIN_BOT*lpr*sizeof (u_long));
     }
-
-    /*
-     * Encode the result according to the parameters of
-     * the outgoing page.  Note that the encoded data is
-     * written in the bit order of the page data since
-     * it must be merged back with it below.
-     */
-    fxStackBuffer result;
-    G3Encoder enc(result);
-    enc.setupEncoder(fillorder, params.is2D(), (params.df == DF_2DMMR));
-    enc.encode(raster, w, th);
-    delete raster;
-    /*
-     * To properly join the newly encoded data and the previous
-     * data we need to insert two bytes of zero-fill prior to
-     * the start of the old data to ensure 11 bits of zero exist
-     * prior to the EOL code in the first line of data that
-     * follows what we skipped over above.  Note that this
-     * assumes the G3 decoder always stops decoding prior to
-     * an EOL code and that we've adjusted the byte count to the
-     * start of the old data so that the leading bitstring is
-     * some number of zeros followed by a 1.
-     */
-    result.put((char) 0);
-    result.put((char) 0);
-    /*
-     * Copy the encoded raster with the tag line back to
-     * the front of the buffer that was passed in.  The
-     * caller has preallocated a hunk of space for us to
-     * do this and we also reuse space occupied by the
-     * original encoded raster image.  If insufficient space
-     * exists for the newly encoded tag line, then we jam
-     * as much as will fit w/o concern for EOL markers;
-     * this will cause at most one bad row to be received
-     * at the receiver (got a better idea?).
-     */
-    u_int encoded = result.getLength();
-    if (encoded > tagLineSlop + decoded)
-	encoded = tagLineSlop + decoded;
-    u_char* dst = buf + (int)(decoded-encoded);
-    memcpy(dst, (const unsigned char*)result, encoded);
-    return (dst);
+    MemoryDecoder dec(buf, w, totdata, fillorder, params.is2D(), (params.df == DF_2DMMR));
+    u_char* encbuf = dec.encodeTagLine(raster, th, tagLineSlop);   
+    totdata = dec.getCC();
+    return (encbuf);
 }

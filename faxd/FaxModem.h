@@ -148,12 +148,17 @@ protected:
 // tag line support
     bool	setupTagLineSlop(const Class2Params&);
     u_int	getTagLineSlop() const;
-    u_char*	imageTagLine(u_char* buf, u_int fillorder, const Class2Params&);
+    u_char*	imageTagLine(u_char* buf, u_int fillorder, const Class2Params&, u_long& totdata);
 /*
  * Correct if neccessary Phase C (T.4/T.6) data (remove extra RTC/EOFB etc.)
  */
     int		correctPhaseCData(u_char* buf, u_long* pBufSize,
                                   u_int fillorder, const Class2Params& params);
+/*
+ * Convert Phase C data...
+ */
+    u_char*	convertPhaseCData(u_char* buf, u_long& totdata, u_int fillorder,
+                            const Class2Params& params, const Class2Params& newparams);
 public:
     enum {			// FaxModem::RTNHandling
         RTN_RETRANSMIT = 0,         // retransmit page after RTN until MCF/MPS

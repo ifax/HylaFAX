@@ -106,7 +106,7 @@ protected:
     bool	raiseToNextBR(Class2Params&);
     bool	sendTraining(Class2Params&, int, fxStr& emsg);
     bool	sendTCF(const Class2Params&, u_int ms);
-    bool	sendPage(TIFF* tif, const Class2Params&, u_int, u_int, fxStr& emsg);
+    bool	sendPage(TIFF* tif, Class2Params&, u_int, u_int, fxStr& emsg);
     bool	sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm, fxStr& emsg);
     bool	sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, fxStr& emsg);
     bool	sendPPM(u_int ppm, HDLCFrame& mcf, fxStr& emsg);

@@ -44,6 +44,9 @@ private:
     u_char*	rowBuf;
 
     int		decodeNextByte();
+    void	invalidCode(const char* type, int x);
+    void	badPixelCount(const char* type, int got, int expected);
+    void	badDecodingState(const char* type, int x);
 public:
     MemoryDecoder(u_char* data, u_long cc);
     MemoryDecoder(u_char* data, u_int wid, u_long n,
@@ -53,11 +56,14 @@ public:
     void fixFirstEOL();
     u_char* cutExtraRTC();
     u_char* cutExtraEOFB();
+    u_char* encodeTagLine (u_long* raster, u_int th, u_int slop);
+    u_char* convertDataFormat(const Class2Params& params);
     int		getLastByte();
 
     void scanPageForBlanks(u_int fillorder, const Class2Params& params);
     const u_char* getEndOfPage()			{ return endOfData; }
     u_int getLastBlanks()				{ return nblanks; }
+    u_long getCC()					{ return cc; }
 };
 
 #endif
