@@ -28,6 +28,14 @@
 
 List of outstanding bug reports and change requests
 
+#########################################################################
+# **NOTE** This file has not been maintained since HylaFAX transitioned #
+# from Sam to HylaFAX.ORG, and is probably of historic value only       #
+#                                                                       #
+# Bugs should now be reported & tracked by submitting a bug report at:  #
+#                                                                       #
+#	http://bugs.hylafax.org/                                        #
+#########################################################################
 
 BH job group support is broken
 B  file write errors during receive are not processed correctly

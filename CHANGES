@@ -1,0 +1,159 @@
+Changelog for HylaFAX 4.1beta3 - Feb 21, 2001
+
+* creation of doneq manpage (20Feb2001)
+* changed link order in defs.in to fix SCO 3.2v4.2 (11Feb2001)
+* standardize default TagLine behavior (05Feb2001)
+* add prototype support for more Cirrus modems (05Feb2001)
+* added faxstat %Y and %Z JobFmt options (04Dec2000)
+* man/sendfax corrections (26Nov2000, 04Dec2000, 05Feb20001)
+* replace \(tm and dagger characters in manpages (26Nov2000, 04Dec2000)
+* correct recvstats and xferfaxstats from skipping 1st day of month (26Nov2000)
+* added prototype support to usr-rts and usr-xon configs (15Nov2000, 05Feb2001)
+* added prototype support to config/usr-2.0 (15Nov2000)
+* added prototype support to config/rc288dpi (15Nov2000)
+* replace SysV SIGCLD define with posix SIGCHLD define (15Nov2000)
+* fix faxsetup typo causing a bash error (30Oct2000)
+* some typos in the tarball. Corrected Hylafax -> HylaFAX (29Oct2000)
+* rework of README, COPYRIGHT, and CONTRIBUTORS files (29Oct2000, 04Dec2000)
+* man/config corrections (29Oct2000, 26Nov2000)
+* awk fix for Solaris (28Oct2000)
+* created a non-interactive configure option (21Oct2000)
+* various html documentation updates (15Oct2000)
+* significant SysV init-script upgrade (15Oct2000, 31Oct2000)
+* remove useless and problematic verifyModemRate from faxaddmodem (24Sep2000)
+* fix faxsetup/faxaddmodem fuser errors (24Sep2000, 30Oct2000)
+* replace MANSEDLOCAL from configure and manpage numbering fixes 
+  (23Sep2000, 13Nov2000, 06Feb2001)
+* clean up code to create FDIS strings and temp filename creation in
+  SendFaxClient (21Sep2000)
+* sprintf type cleanups to faxd files (21Sep2000)
+* fix fxAssert that was around the wrong way in Str.c++ (21Sep2000)
+* replace sprintf with snprintf in faxadduser, faxdeluser and faxmsg
+  (20Sep2000)
+* trap some other potential overflows in faxmsg (20-21Sep2000)
+* enhance the durability of the fxStr classes format() and vformat() methods 
+  using the [v]snprintf functions (20Sep2000)
+* replace sprintf() call in faxalter.c++ with fxStr::format() (20Sep2000)
+* add snprintf and vsnprintf to port functions (20Sep2000, 15Nov2000)
+* fix format functions(ie sprintf) so that they are not called twice 
+  on the same string (20Sep2000)
+* fix typo fxStr::format() to fxStr::vformat() in ModemServer.c++ (19Sep2000)
+* ensure the va_list in ModemServer.c++ is not reused (16Sep2000)
+* fix isolating snprintf calls to fxStr class (16Sep2000)
+* cleaned up some potential buffer overflows (16Sep2000)
+* fix faxsetup for Linux users (14Sep2000)
+* fix faxsetup crashes due to useradd not supporting -o option (13Sep2000,
+  19Sep2000)
+* Class 1 fixes: (08Sep2000)
+    - fix minimum scan line time
+    - fix first and last scan lines
+    - fix some EOP/MPS errors
+    - ModemRecvFillOrder default value is now autodetected
+    - Class 2.0 for USR modems is now disabled by default if no ModemType
+    - ModemFlowControl default value is now XONXOFF instead of NONE
+    - correct ModemMfrQueryCmd and ModemModelQueryCmd default values
+* fix ugly bash-2 script output in faxaddmodem (05Sep2000)
+* shift the left margin in 0.4 inches when invoking textfmt (04Sep2000)
+* fix 2 instances of find statement so that it doesn't select directories
+  (04Sep2000)
+* add -dFIXEDMEDIA in ps2fax.gs to cope with broken Windows Postscript
+  (04Sep2000)
+* add letter size paper handling to ps2gax.gs script (04Sep2000)
+* fix pagesize handling in faxmail (04Sep2000)
+* zlib removed from HylaFAX distribution (03Sep2000, 16Sep2000)
+* Class 2 fix post-page response (AT+FET) (02Sep2000)
+* fix problem on some Solaris systems using gcc (31Aug2000)
+* fix a missing format specifier in the FaxRecv.c++ traceServer() call
+  (29Aug2000)
+* portably fix faxaddmodem to not cause grep to complain about directories
+  (29Aug2000)
+* Class 2 RTN algorithm changed. RTNHandlingMethod parameter added (26Aug2000)
+* checks added to prevent possible crash when the DTE returns a broken NSF
+  frame (25Aug2000)
+* typerules support for PDF (23Aug2000)
+* fix vendorIdSize const definition to be outside the class itself
+  (14-15Aug2000)
+* use @SCRIPT_SH@ instead of /bin/sh in recvstats, faxcron, and xferfaxstats
+  (21Jul2000)
+* correct awk substr to be explicitly origin-1 in faxcron (21Jul2000)
+* fix variable assignment in faxsetup else loop (21Jul2000)
+* fix unbounded access to fxStr nsf in NSF.c++ (29Jun2000)
+* rename rockwell config file to rockwell-rc (23Jun2000)
+* defensive shell programming action (18Jun2000)
+* BSD and other portability fixes (18Jun2000)
+* security fixes (18Jun2000, 23Jun2000)
+* Class 2 fix to distinguish between RTN and PIN (07Jun2000)
+* Dmitry's class1-general patch: (07Jun2000)
+    - Decoding T.30 DIS Frame
+    - HDLC Timeout
+    - Numberof training attempts
+    - Correct delay on soft-resets
+* beautify SysV init script output (05Jun2000)
+* new config file for the AT&T DataPort Express in Class 2 (03Jun2000)
+* silence pointless stty errors when running faxaddmodem on Linux (03Jun2000)
+* SCO 5 workaround for ioctl (03Jun2000)
+* add '-type f' to find invocation in faxcron (01Jun2000) 
+* added ModemSoftResetCmd to the start of default reset string (29May2000)
+* rework of configure libtiff test; supports detecting 3.4 and 3.5
+  (28May2000, 29May2000, 03Jun2000, 06Jun2000, 08Jun2000, 13Aug2000)
+* allow HylaFAX to print national characters in the tagline (29Mar2000)
+* clean up lingering docq files on multi-destination faxes (23Mar2000)
+* fix problem with NSF.c++ decode() routine (18May2000)
+* recognition of common NSF strings from fax vendors (15May2000)
+* remove unused 'modemresetcmd' from ModemConfig.c++ (11May2000)
+* libtiff-3.5 compatibility fix!!! (11May2000)
+* fix O_EXCL handling when opening sequence file (31Mar2000)
+* fix Y2K rollover bug (29Mar2000)
+* fix erronious xferfaxstats/recvstats output (29Mar2000)
+* correction so faxcron returns traces of suspicious failures (29Mar2000)
+* automatically call BreakIntoCommentX in faxcover to create commentX vars 
+  (10Mar2000, 17Mar2000)
+* reorder header files in SuperServer.c++ (10Mar2000)
+* Y2K fix to SNPPClient.c++ (08Mar2000)
+* fix to faxQueueApp.c++ crackArgv function to correctly handle end of
+  string (08Mar2000)
+* added snprintf protoype checking to configure (05Mar2000, 10Mar2000)
+* ensure that fd_set is properly defined in the Dispatcher header file
+  (05Mar2000)
+* fixed mkstemp wrapper function in util/Sys.h (05Mar2000)
+* added missing 'char*' declaration to cp variable in faxcover (03Mar2000)
+* added new config file for Performance modems (29Feb2000)
+* create new config file: rockwell-k56 (04Dec1999, 29Feb2000, 22Jun2000)
+* updated info about the mailing list archives and added info about the links
+  and resources page to the supporting documentation section (03Dec1999)
+* made mavigation links consistent in html (03Dec1999)
+* in html recommend 1.16b firmware to reduce T.30 T2 timeout errors for
+  Multitech (03Dec1999)
+* created icon used for navigation in modem pages (21Nov1999)
+* html updated for new modem pages and contents.gif icon (21Nov1999)
+* security fixes (17-18Nov1999)
+    - cleaned up whitespace in MIMEState.c++
+    - added a glibc check after mkstemp() in faxmail
+    - fixed another potential overflow in imgtofax.c
+* security fix for faxcover (17Nov1999)
+* zlib configure fixes (17Nov1999, 03Mar2000)
+* fix faxalter security vulnerability (11Nov1999)
+* fix the BoundingBox parameter in TextFmt.c++ (10Sep1999)
+* incorporated the version number into the config.h file (02Sep1999)
+* prefer sigaction() over sigvec() for signal handling functions (01Sep1999)
+* Unixware portability fixes (01Sep1999)
+* support work for HP-UX 11 (23Aug1999, 02Sep1999, 06Sep2000)
+* support gcc-2.95 (23Aug1999, 27Aug1999, 30May2000)
+* broke hylafax manpage into hylafax-server and hylafax-client (18Aug1999,
+  15Oct2000)
+* add Ultrix Guidance in html (18Aug1999)
+* created manpages for faxadduser and faxdeluser (11Aug1999)
+* continued fixes due to renaming etc/hosts to etc/hosts.hfaxd (05Aug1999,
+  15Oct2000)
+* added faxadduser and faxdeluser utilities (05Aug1999, 11Aug1999)
+* fixes in the package directory (05Aug1999)
+* standardize defines included in Makefile headers among the subdirectories
+  (05Aug1999)
+* removed section numbers from manpages in html (02-03Aug1999)
+* html modems list updated (26Jul1999)
+* fix bool in configure (26Jul1999)
+* configure script updates (26Jul1999)
+* added support for Elsa Microlink modem (15Jul1999)
+* various information updates for change to hylafax.org (15Jul1999)
+* change ModemClass parameter to ModemGroup (10Jul1999)
+* created a BreakIntoCommentX faxcover function (30Jun1999, 10Jul1999)
