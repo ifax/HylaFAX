@@ -236,7 +236,7 @@ if [ -z "$SPEED" ]; then
 	printf " $SPEED"
 	SendToModem AT >/dev/null 2>&1
 	sleep 1
-	RESULT=`tr -ds '\015' '\012' < $OUT | tail -1`
+	RESULT=`tr -ds '\015' '\012' < $OUT | $SED -n '$p'`
 	test "$RESULT" = OK && break;
     done
     if [ "$RESULT" != OK ]; then
@@ -275,7 +275,7 @@ while [ -z "$RESULT" ]; do
     trap "rm -f \$JUNK; test \"\$catpid\" && kill \$catpid; exit 1" 0 1 2 15
     sleep 1
 
-    RESULT=`tr -ds '\015' '\012' < $OUT | tail -1`
+    RESULT=`tr -ds '\015' '\012' < $OUT | $SED -n '$p'`
     if [ -z "$RESPONSE" ]; then
 	echo ""
 	echo "There was no response from the modem.  Perhaps the modem is"
@@ -306,7 +306,7 @@ Try()
     # NB: [*&\\$] must have the "$" last for AIX (yech)
     pat=`echo "$i"|$SED -e 's/[*&\\$]/\\\\&/g'`	# escape regex metacharacters
     RESPONSE=`tr -ds '\015' '\012' < $OUT | $SED -n "/$pat/{n;s/ *$//;p;q;}"`
-    RESULT=`tr -ds '\015' '\012' < $OUT | tail -1`
+    RESULT=`tr -ds '\015' '\012' < $OUT | $SED -n '$p'`
 
     printf "$*	RESULT = \"$RESULT\"	RESPONSE = \"$RESPONSE\"\n"
 }

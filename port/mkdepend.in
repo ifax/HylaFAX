@@ -93,7 +93,7 @@ shift
 #
 collapse() {
 	$SED -e 's@/\([^/:]*\): @/%\1: @' $* |
-	sort -t% +1 |
+	(sort -t% -k 2 2>/dev/null || sort -t% +1) |
 	uniq |
 	$AWK -F: '
 	BEGIN {

@@ -846,7 +846,7 @@ if [ -z "$SPEED" ]; then
 	printf " $SPEED"
 	SendToModem AT >/dev/null 2>&1
 	sleep 1
-	RESULT=`tr -ds '\015' '\012' < $OUT | tail -1`
+	RESULT=`tr -ds '\015' '\012' < $OUT | $SED -n '$p'`
 	test "$RESULT" = OK && break;
     done
     if [ "$RESULT" != OK ]; then
@@ -884,7 +884,7 @@ while [ -z "$RESULT" ]; do
     trap "$RMCMD \$JUNK; $RMCMD -r $TMPDIR; test \"\$catpid\" && kill \$catpid; exit 1" 0 1 2 15
     sleep 1
 
-    RESULT=`tr -ds '\015' '\012' < $OUT | tail -1`
+    RESULT=`tr -ds '\015' '\012' < $OUT | $SED -n '$p'`
     if [ -z "$RESPONSE" ]; then
 	echo ""
 	echo "There was no response from the modem.  Perhaps the modem is"
