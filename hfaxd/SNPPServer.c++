@@ -1289,7 +1289,9 @@ SNPPServer::sendCmd(void)
 		    Job* job = findJob(msgs[i], emsg);
 		    if (!job)
 			msgs.remove(i), n--;
-		    else if (!job->queued && job->state != FaxRequest::state_done)
+		    else if (!job->queued && 
+		      job->state != FaxRequest::state_done &&
+		      job->state != FaxRequest::state_failed)
 			jobsPending = true;
 		}
 	    } while (IS(WAITTRIG) && jobsPending);

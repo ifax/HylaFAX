@@ -87,7 +87,8 @@ public:
 	state_blocked	= 4,	// blocked by concurrent activity
 	state_ready	= 5,	// ready to be go, waiting for resources
 	state_active	= 6,	// actively being processed
-	state_done	= 7	// processing completed
+	state_done	= 7,	// processing completed with success
+	state_failed	= 8	// processing completed with a failure
     };
     struct stringval {		// string-valued item
 	const char* name;

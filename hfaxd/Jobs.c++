@@ -1188,6 +1188,7 @@ HylaFAXServer::deleteJob(const char* jobid)
     Job* job = preJobCmd("delete", jobid, emsg);
     if (job) {
 	if (job->state != FaxRequest::state_done &&
+	  job->state != FaxRequest::state_failed &&
 	  job->state != FaxRequest::state_suspended) {
 	    reply(504, "Job %s not deleted; use JSUSP first.", jobid);
 	    return;
@@ -1269,7 +1270,8 @@ HylaFAXServer::operateOnJob(const char* jobid, const char* what, const char* op)
     fxStr emsg;
     Job* job = preJobCmd(what, jobid, emsg);
     if (job) {
-	if (job->state == FaxRequest::state_done) {
+	if (job->state == FaxRequest::state_done ||
+	  job->state == FaxRequest::state_failed) {
 	    reply(504, "Job %s not %sed; already done.", jobid, what);
 	    return;
 	}
@@ -1324,7 +1326,8 @@ HylaFAXServer::submitJob(const char* jobid)
     fxStr emsg;
     Job* job = preJobCmd("submit", jobid, emsg);
     if (job) {
-	if (job->state == FaxRequest::state_done) {
+	if (job->state == FaxRequest::state_done ||
+	  job->state == FaxRequest::state_failed) {
 	    reply(504, "Job %s not submitted; already done.", jobid);
 	    return;
 	}
@@ -1381,7 +1384,8 @@ HylaFAXServer::waitForJob(const char* jobid)
 	    reply(504, "Cannot wait for default job.");
 	    return;
 	}
-	if (job->state == FaxRequest::state_done) {
+	if (job->state == FaxRequest::state_done ||
+	  job->state == FaxRequest::state_failed) {
 	    reply(216, "Job %s done (already).", jobid);
 	    return;
 	}
@@ -1402,7 +1406,8 @@ HylaFAXServer::waitForJob(const char* jobid)
 		     * blindly hold a reference to the in-memory structure.
 		     */
 		    job = findJob(jobid, emsg);
-		    if (!job || job->state == FaxRequest::state_done)
+		    if (!job || job->state == FaxRequest::state_done ||
+		      job->state == FaxRequest::state_failed)
 			break;
 		}
 		reply(216, "Wait for job %s completed.", jobid);
@@ -1732,7 +1737,7 @@ HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
 		break;
 #endif /* OLDPROTO_SUPPORT */
 	    case 'a':
-		fprintf(fd, fspec, "?TPSBWRD"[job.state]);
+		fprintf(fd, fspec, "?TPSBWRDF"[job.state]);
 		break;
 	    case 'b':
 		fprintf(fd, fspec, job.ntries);

@@ -226,7 +226,7 @@ faxQueueApp::processJob(Job& job, FaxRequest* req,
     updateRequest(*req, job);
     if (!prepareJobNeeded(job, *req, status)) {
 	if (status != Job::done) {
-	    job.state = FaxRequest::state_done;
+	    job.state = FaxRequest::state_failed;
 	    deleteRequest(job, req, status, true);
 	    setDead(job);
 	} else
@@ -1362,7 +1362,7 @@ faxQueueApp::sendJobDone(Job& job, int status)
 	 * notified of the requeue as well as the timeout?
 	 */
 	fxAssert(!job.suspendPending, "Interrupted job timed out");
-	job.state = FaxRequest::state_done;
+	job.state = FaxRequest::state_failed;
 	deleteRequest(job, req, Job::timedout, true);
 	setDead(job);
     } else if (req->status == send_retry) {
@@ -1444,14 +1444,16 @@ faxQueueApp::sendJobDone(Job& job, int status)
 	    job.suspendPending = false;
 	delete req;				// implicit unlock of q file
     } else {
-	job.state = FaxRequest::state_done;
+	// NB: always notify client if job failed
+	if (req->status == send_failed) {
+	    job.state = FaxRequest::state_failed;
+	    deleteRequest(job, req, Job::failed, true, fmtTime(duration));
+	} else {
+	    job.state = FaxRequest::state_done;
+	    deleteRequest(job, req, Job::done, false, fmtTime(duration));
+	}
 	traceQueue(job, "SEND DONE: " | strTime(duration));
 	Trigger::post(Trigger::SEND_DONE, job);
-	// NB: always notify client if job failed
-	if (req->status == send_failed)
-	    deleteRequest(job, req, Job::failed, true, fmtTime(duration));
-	else
-	    deleteRequest(job, req, Job::done, false, fmtTime(duration));
 	setDead(job);
     }
 }
@@ -1503,7 +1505,9 @@ faxQueueApp::setSleep(Job& job, time_t tts)
 void
 faxQueueApp::setDead(Job& job)
 {
-    job.state = FaxRequest::state_done;
+    if (job.state != FaxRequest::state_done 
+      && job.state != FaxRequest::state_failed)
+	job.state = FaxRequest::state_failed;
     job.suspendPending = false;
     traceJob(job, "DEAD");
     Trigger::post(Trigger::JOB_DEAD, job);
@@ -1642,6 +1646,7 @@ faxQueueApp::submitJob(Job& job, FaxRequest& req, bool checkState)
 	    setSuspend(job);
 	    return (true);
 	case FaxRequest::state_done:
+	case FaxRequest::state_failed:
 	    setDead(job);
 	    return (true);
 	}
@@ -1718,10 +1723,12 @@ faxQueueApp::suspendJob(Job& job, bool abortActive)
 	 * Recheck the job state; it may have changed while
 	 * we were waiting for the subprocess to terminate.
 	 */
-	if (job.state != FaxRequest::state_done)
+	if (job.state != FaxRequest::state_done &&
+	  job.state != FaxRequest::state_failed)
 	    break;
 	/* fall thru... */
     case FaxRequest::state_done:
+    case FaxRequest::state_failed:
 	return (false);
     case FaxRequest::state_sleeping:
     case FaxRequest::state_pending:
@@ -1780,7 +1787,7 @@ faxQueueApp::terminateJob(const fxStr& jobid, JobStatus why)
 {
     Job* job = Job::getJobByID(jobid);
     if (job && suspendJob(*job, true)) {
-	job->state = FaxRequest::state_done;
+	job->state = FaxRequest::state_failed;
 	Trigger::post(Trigger::JOB_KILL, *job);
 	FaxRequest* req = readRequest(*job);
 	if (req)
@@ -1800,7 +1807,7 @@ faxQueueApp::rejectJob(Job& job, FaxRequest& req, const fxStr& reason)
     req.status = send_failed;
     req.notice = reason;
     traceServer("JOB " | job.jobid | ": " | reason);
-    job.state = FaxRequest::state_done;
+    job.state = FaxRequest::state_failed;
     Trigger::post(Trigger::JOB_REJECT, job);
     setDead(job);				// dispose of job
 }
@@ -1858,7 +1865,7 @@ faxQueueApp::timeoutJob(Job& job)
     Trigger::post(Trigger::JOB_TIMEDOUT, job);
     if (job.state != FaxRequest::state_active) {
 	job.remove();				// remove from sleep queue
-	job.state = FaxRequest::state_done;
+	job.state = FaxRequest::state_failed;
 	FaxRequest* req = readRequest(job);
 	if (req)
 	    deleteRequest(job, req, Job::timedout, true);
@@ -1880,7 +1887,7 @@ faxQueueApp::timeoutJob(Job& job)
 void
 faxQueueApp::timeoutJob(Job& job, FaxRequest& req)
 {
-    job.state = FaxRequest::state_done;
+    job.state = FaxRequest::state_failed;
     traceQueue(job, "KILL TIME EXPIRED");
     Trigger::post(Trigger::JOB_TIMEDOUT, job);
     deleteRequest(job, req, Job::timedout, true);
@@ -1906,7 +1913,8 @@ faxQueueApp::submitJob(const fxStr& jobid, bool checkState)
 		delete req;			// NB: unlock qfile
 	    } else
 		setDead(*job);			// XXX???
-	} else if (job->state == FaxRequest::state_done)
+	} else if (job->state == FaxRequest::state_done ||
+	  job->state == FaxRequest::state_failed)
 	    jobError(*job, "Cannot resubmit a completed job");
 	else
 	    ok = true;				// other, nothing to do
@@ -1942,17 +1950,19 @@ faxQueueApp::submitJob(const fxStr& jobid, bool checkState)
 	     */
 	    bool reject;
 	    if (req.readQFile(reject) && !reject &&
-	      req.state != FaxRequest::state_done) {
+	      req.state != FaxRequest::state_done &&
+	      req.state != FaxRequest::state_failed) {
 		status = submitJob(req, checkState);
 	    } else if (reject) {
 		Job job(req);
-		job.state = FaxRequest::state_done;
+		job.state = FaxRequest::state_failed;
 		req.status = send_failed;
 		req.notice = "Invalid or corrupted job description file";
 		traceServer("JOB " | jobid | ": " | req.notice);
 		// NB: this may not work, but we try...
 		deleteRequest(job, req, Job::rejected, true);
-	    } else if (req.state == FaxRequest::state_done) {
+	    } else if (req.state == FaxRequest::state_done ||
+	      req.state == FaxRequest::state_failed) {
 		logError("JOB %s: Cannot resubmit a completed job",
 		    (const char*) jobid);
 	    } else
@@ -2312,7 +2322,10 @@ faxQueueApp::deleteRequest(Job& job, FaxRequest& req, JobStatus why,
 	}
 	req.qfile = dest;			// moved to doneq
 	job.file = req.qfile;			// ...and track change
-	req.state = FaxRequest::state_done;	// job is definitely done
+	if (why == Job::done)
+	    req.state = FaxRequest::state_done;	// job is definitely done
+	else
+	    req.state = FaxRequest::state_failed;// job is definitely done
 	req.pri = job.pri;			// just in case someone cares
 	req.tts = Sys::now();			// mark job termination time
 	req.writeQFile();
@@ -2974,12 +2987,12 @@ vtraceJob(const Job& job, const char* fmt, va_list ap)
 {
     static const char* stateNames[] = {
         "state#0", "suspended", "pending", "sleeping", "blocked",
-	"ready", "active", "done"
+	"ready", "active", "done", "failed"
     };
     time_t now = Sys::now();
     vlogInfo(
 	  "JOB " | job.jobid
-	| " (" | stateNames[job.state&7]
+	| " (" | stateNames[job.state%9]
 	| " dest " | job.dest
 	| fxStr::format(" pri %u", job.pri)
 	| " tts " | strTime(job.tts - now)

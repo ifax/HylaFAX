@@ -368,7 +368,7 @@ FaxRequest::readQFile(bool& rejectJob)
      * ``suitable values'' by higher-level code (i.e.
      * the scheduler).
      */
-    if (state < state_suspended || state > state_done) {
+    if (state < state_suspended || state > state_failed) {
 	error("Invalid scheduler state %u in job request", state);
 	rejectJob = true;
     }
