@@ -105,8 +105,8 @@ CIDNUMBER="$5"
 CIDNAME="$6"
 
 FILENAME=`echo $FILE | $SED -e 's/\.tif//' -e 's/recvq\///'`
-SENDER="`$INFO $FILE | $AWK -F: '/Sender/ { print $2 }' 2>$ERRORSTO`"
-SUBADDR="`$INFO $FILE | $AWK -F: '/SubAddr/ { print $2 }' 2>$ERRORSTO`"
+SENDER="`$INFO $FILE | $AWK -F: '/Sender/ { print $2 }' 2>$ERRORSTO | $SED 's/^.//'`"
+SUBADDR="`$INFO $FILE | $AWK -F: '/SubAddr/ { print $2 }' 2>$ERRORSTO | $SED 's/^.//'`"
 
 #
 # Apply customizations.  All customizable variables should
