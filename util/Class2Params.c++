@@ -299,7 +299,8 @@ Class2Params::setFromDCS(u_int dcs, u_int xinfo)
     // override DIS setup
     br = DCSbrTab[(dcs & DCS_SIGRATE) >> 10];
     if (xinfo & DCS_INCHRES) {
-	if (xinfo & DCS_300X300) vr = VR_300X300;
+	if (xinfo & DCS_400X400) vr = VR_R16;	// rather than adding a VR_400X400
+	else if (xinfo & DCS_300X300) vr = VR_300X300;
 	else if (xinfo & DCS_200X400) vr = VR_200X400;
 	else if (dcs & DCS_7MMVRES) vr = VR_200X200;
 	else vr = VR_200X100;
