@@ -2314,7 +2314,7 @@ EOF
 	if [ ${header_ver} -ge 19960307 ]; then
 	    if [ "${lib_ver}" = "3.4" ]; then
 		tiff_runlen_t="uint16"
-	    elif [ "${lib_ver}" = "3.5" ]; then
+	    elif [ "${lib_ver}" = "3.5" -o "${lib_ver}" = "3.6" ]; then
 		tiff_runlen_t="uint32"
 	    fi
 	fi
@@ -2351,9 +2351,9 @@ EOF
 
 Incompatible TIFF Library.
 
-HylaFAX ${VERSION} requires TIFF software distribution ver 3.4 or 3.5.
-If you do not have up to date TIFF software on your system then you can
-retrieve it from the location where you obtained this software.
+HylaFAX ${VERSION} requires TIFF software distribution ver 3.4, 3.5, or
+3.6.  If you do not have up to date TIFF software on your system then
+you can retrieve it from the location where you obtained this software.
 EOF
 	boom
 	return 1
