@@ -724,10 +724,12 @@ HylaFAXServer::setJobParameter(Job& job, Token t, time_t value)
 	switch (t) {
 	case T_SENDTIME:
 	    if (value != 0) {			// explicit time
-		if (value < now) {
-		    reply(503, "Bad time to send; time in the past.");	// XXX
-		    return (false);
-		}
+		/*
+		 * We don't complain anymore if this value is in the
+		 * past.  Instead, we verify that the killtime is in
+		 * the future, ensuring that a window of send-time
+		 * opportunity still exists.
+		 */
 		job.tts = value;
 	    } else				// ``NOW''
 		job.tts = now;
@@ -743,6 +745,10 @@ HylaFAXServer::setJobParameter(Job& job, Token t, time_t value)
 	     * value may be installed for LASTTIME.
 	     */
 	    job.killtime = value + (job.tts == 0 ? now : job.tts);
+	    if (job.killtime < now) {
+		reply(503, "Bad time to send; time window is entirely in the past.");
+		return (false);
+	    }
 	    return (true);
 	case T_RETRYTIME:
 	    job.retrytime = value;

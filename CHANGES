@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX 4.2.1
 
+* fix hfaxd from rejecting jobs scheduled for the past while
+  the killtime is still in the future (15 Dec 2004)
 * drop ftp links from received notification e-mail (8 Dec 2004)
 * fix dial-and-answer feature (2 Dec 2004)
 * add NSF recognition for MFC-3100C (29 Nov 2004)
