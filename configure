@@ -1252,6 +1252,7 @@ if [ -z "$MAKECXXOVERRIDE" ]; then
 	if [ "`$CXX -V 2>&1 | sed 'q' | sed 's/.* C++ \([^ .]*\).*/\1/g'`" -lt "5" ]; then
 	    MAKECXXOVERRIDE="=.C";
 	fi
+	DSO=no;
 	;;
     esac
 fi
