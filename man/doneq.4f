@@ -1,0 +1,544 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
+.ds Pc \s-1PCL\s+1
+.TH DONEQ ${MANNUM4_5} "Feb 18, 2001"
+.SH NAME
+doneq/q* \- \*(Fx outbound job description
+.SH DESCRIPTION
+Files in the
+.B doneq
+directory specify transmission job requests.
+These files are created by
+.IR hfaxd (${MANNUM1_8}),
+when submitting a job on behalf of
+.IR sendfax (1)
+or
+.IR sendpage (1).
+Job description files also reside in the
+.B sendq
+directory; they are moved from there to the doneq directory by
+.IR faxq (${MANNUM1_8})
+when a job completes.
+.PP
+Job description files are 
+.SM ASCII
+files with lines of the form
+.sp .5
+.ti +0.5i
+\fBtag\fP: \fIvalue\fP
+.sp .5
+where a \fItag\fP is one of the identifiers described below
+and a \fIvalue\fP is either a string or number.
+Values start at the first non-blank character
+after the ``:'' and continue to the end of the line.
+Lines that end with a backslash character ``\e'' are continued
+to the next line.
+Numeric values are decimal integers, except for 
+.B chophreshold
+which is expressed as a floating point value.
+.PP
+The following table lists the possible tags and the required
+type of the associated value.
+.sp .5
+.RS
+.ta \w'pagehandling    'u +\w'integer    'u
+.nf
+\fBTag	Type	Description\fP
+chopthreshold	float	page chopping threshold (inches)
+commid	string	communication identifier for last call
+company	string	receiver's company
+client	string	host that submitted the job
+cover	string	continuation coverpage file
+data	string	unprocessed document of indeterminate type
+!data	string	processed document of indeterminate type
+dataformat	string	data format used to transmit a facsimile
+desiredbr	integer	desired transmit speed
+desireddf	integer	desired page data format
+desiredec	integer	desired use of Error Correction Mode (\s-1ECM\s+1)
+desiredst	integer	desired minimum scanline time
+desiredtl	integer	whether or not to use \fBtagline\fP parameter
+donop	string	operation to perform when job is reaped
+external	string	external form of dialstring
+fax	string	document ready for transmission
+groupid	integer	\*(Fx job group identifier
+jobid	integer	\*(Fx job identifier
+jobtag	string	user-specified job identifier
+jobtype	string	job type identification string
+killtime	integer	time to give up trying to send job
+location	string	receiver's location
+mailaddr	string	email address of sender
+maxdials	integer	max number of times to dial
+maxtries	integer	max number of attempts to send job
+minsp	integer	minimum required transmit speed
+modem	string	outgoing modem to use
+ndials	integer	number of consecutive failed attempts to place call
+notify	string	email notification specification
+npages	integer	number of pages transmitted
+ntries	integer	number of attempts to send current page
+number	string	dialstring to use in placing call
+owner	string	user that owns the job
+page	string	PIN in a page operation
+pagechop	string	whitespace truncation handling
+pagehandling	string	page analysis information
+pagelength	integer	facsimile page length (millimeters)
+pagewidth	integer	facsimile page width (millimeters)
+passwd	string	info to send in \s-1HDLC PWD\s+1 frame
+pcl	string	unprocessed \*(Pc document
+!pcl	string	processed \*(Pc document
+poll	string	polling request
+postscript	string	unprocessed \*(Ps document
+!postscript	string	processed \*(Ps document
+priority	integer	user-specified scheduling priority
+receiver	string	receiver's identity
+resolution	integer	vertical resolution of facsimile
+retrytime	integer	time to use between job retries
+schedpri	integer	current scheduling priority
+sender	string	identity of sender
+signalrate	string	signalling rate at which a facsimile was sent
+state	integer	job scheduling state
+status	string	job status
+subaddr	string	info to send in \s-1HDLC SUB\s+1 frame
+tagline	string	tagline format string
+tiff	string	unprocessed \s-1TIFF/F\s0 document
+!tiff	string	processed \s-1TIFF/F\s0 document
+totdials	integer	total number of phone calls
+totpages	integer	total pages to transmit
+tottries	integer	total number of attempts to send job
+tts	integer	time to send job
+useccover	integer	whether or not to use a continuation cover page
+.fi
+.RE
+.SH "PARAMETERS"
+Note that all files must be owned by the fax user.
+Pathnames for document files must be relative to the top of the
+\*(Fx spooling directory and not include ``..''.
+.TP 14
+.B chopthreshold
+The minimum trailing whitespace (in inches)
+that must appear on a page for
+it to be considered for ``page chopping''.
+If this parameter is not specified then the value specified by
+the
+.B PageChopThreshold
+configuration parameter is used; see
+.IR config (${MANNUM4_5}).
+.TP 14
+.B commid
+The communication identifier for the last outbound call placed
+for this job.
+This string is of the form ``XXXXXXXX'' where XXXXXXXX is a 
+decimal sequence number in the range 1-99999999.
+.TP 14
+.B client
+The fully qualified hostname for the machine from which the
+job was submitted.
+If the hostname is unknown at the time the job is submitted, then
+the host address in Internet standard ``.'' (dot) notation is
+supplied instead.
+.TP 14
+.B company
+The receiver's company name as specified with the
+.B \-x
+option to
+.IR sendfax (1).
+This value is used only when creating continuation cover pages.
+.TP 14
+.B cover
+The pathname of a \fIcontinuation cover page\fP to send.
+The file must be 
+.SM TIFF/F
+(i.e. it must already be prepared for transmission).
+This document will be transmitted before any other documents
+listed in the file.
+See
+.B ContCoverPage
+and
+.B ContCoverCmd
+in 
+.IR config (${MANNUM4_5}).
+.TP 14
+.B data
+The pathname of a document to send.
+Once a document has been processed, it is marked as
+.B !data
+so that subsequent retries do not reprocess the document. 
+.TP 14
+.B dataformat
+The format used to transmit facsimile data.
+This item is recorded by
+.IR faxsend (${MANNUM1_8})
+so that
+.IR notify (${MANNUM1_8})
+can return it in a notification message.
+.TP 14
+.B desiredbr
+The desired signalling rate to use for page data transmissions:
+0 for 2400 bps, 1 for 4800 bps, 2 for 7200 bps, 3 for 9600 bps,
+4 for 12000 bps, and 5 for 14400 bps (default).
+.TP 14
+.B desireddf
+The desired data format to use for page data transmissions:
+0 for 1-D MR, 1 for 2-D MR, 3 for 2-D MR with uncompressed data,
+and 4 for 2-D MMR (default).
+.TP 14
+.B desiredec
+Whether or not to negotiate the use of Error Correction Mode (\s-1ECM\s+1):
+0 to disable, 1 to enable (default).
+.TP 14
+.B desiredst
+The desired minimum scanline time to use for page data transmissions:
+0 for 0 ms (default), 1 for 5 ms, 2 for 10ms/5ms, 3 for 10ms, 4 for 20ms/10ms,
+5 for 20ms, 6 for 40ms/20ms, and 7 for 40ms.
+This value is used in selecting the negotiated session parameters.
+.TP 14
+.B desiredtl
+Whether or not to use the format string specified by the
+.B tagline
+job parameter when imaging taglines on document pages.
+If this value is non-zero then per-job format string is used;
+otherwise the tagline format string specified in the server
+configuration file is used; see
+.B TagLineFormat
+in
+.IR config (${MANNUM4_5}).
+.TP 14
+.B doneop
+The treatment the job should be given when it is processed by the 
+.IR faxqclean (${MANNUM1_8})
+job cleaner program.
+The may be one of
+.I remove
+(to expunge the job description file and all associated documents that
+are not referenced by another job)
+or
+.I archive
+(to request that the job and associated documents be archived on the
+server machine).
+Consult 
+.I faxqclean
+more details on other information that may be included in this string.
+.TP 14
+.B external
+The external form of the dialstring.
+This string is used instead of the dialstring in any status
+and log messages.
+Clients can protect private information such as access codes
+that must be placed in dialstrings by supplying a
+``cleansed'' version of the dialstring.
+.TP 14
+.B fax
+The pathname of a
+.SM TIFF/F
+document that is ready for transmission.
+If the pathname string has a leading ``xx:'', then ``xx''
+is interpreted to be the index of the first directory in
+the file to transmit (directories are numbered starting
+at zero).
+.TP 14
+.B groupid
+The job group identifier, an integer number in the range
+1 to 32000 assigned to each group of jobs by the \*(Fx software.
+Each job in a group of jobs submitted at the same time is
+assigned the same value by the \*(Fx software.
+.TP 14
+.B jobid
+The job identifier, a unique integer number in the range
+1 to 32000 assigned to each job by the \*(Fx software.
+.TP 14
+.B jobtag
+A user-specified string that is intended for identification purposes.
+If this string is defined, it is returned to the user in notification
+messages instead of the job identifier.
+.TP 14
+.B killtime
+The time to kill this job, expressed in seconds
+since 00:00:00 GMT, January 1, 1970.
+.TP 14
+.B location
+The receiver's location as specified with the
+.B \-y
+option to
+.IR sendfax (1).
+This value is used only when creating continuation cover pages.
+.TP 14
+.B mailaddr
+The electronic mail address to which notification
+messages should be directed.
+.TP 14
+.B maxdials
+The maximum number of times the server should dial the phone.
+If the job cannot be completed in this number of calls, it is terminated.
+.TP 14
+.B maxtries
+The maximum number of times the server should attempt to send a job; where
+an attempt is defined to be a session that makes it past
+Phase A of the 
+.SM CCITT T.30
+protocol (for facsimile), or similar.
+If the job cannot be completed in this number of tries, it is terminated.
+.TP 14
+.B minsp
+The minimum signalling rate to use for transmitting page data:
+0 for 2400 bps (default), 1 for 4800 bps, 2 for 7200 bps, 3 for 9600 bps,
+4 for 12000 bps, and 5 for 14400 bps.
+.TP 14
+.B modem
+The outgoing modem to use to send the job, or ``any''
+if any available modem is acceptable.
+.TP 14
+.B owner
+The identity of the user that owns the job.
+Typically the owner is the user that created the job, though clients
+with administrative privileges can change the ownership of jobs.
+The value is the string specified in the
+\s-1USER\s+1 command passed to
+.IR hfaxd (${MANNUM1_8})
+when a client logins in to the server.
+.TP 14
+.B notify
+A specification of whether the sender wants
+notification: whenever the job is requeued after
+a failed attempt to transmit (``\c
+.IR "when requeued" ''),
+when the job is completed (``\c
+.IR "when done" ''),
+either of the above (``\c
+.IR "when done+requeued" ''),
+or not at all (``\c
+.IR "none" '').
+.TP 14
+.B npages
+The number of pages in the facsimile, including
+the cover page, that have been successfully transmitted.
+.TP 14
+.B ntries
+The number of unsucessful attempts that have been made to transmit
+the current page.
+.TP 14
+.B ndials
+The number of consecutive unsucessful
+attempts to establish carrier with the
+the remote device.
+.TP 14
+.B number
+The dialstring to use to call the destination device.
+.TP 14
+.B page
+a string with
+.SM PIN
+and to use in processing a page transmit request.
+.TP 14
+.B pagechop
+Whether or not to automatically truncate trailing whitespace on pages
+of outbound facsimile; see
+.B PageChop
+in
+.IR config (${MANNUM4_5}).
+The possible values are: ``\c
+.IR default ''
+to use the setting of the
+.B PageChop
+configuration parameter, ``\c
+.IR none ''
+to disable page chopping, ``\c
+.IR all ''
+to enable chopping of all pages, and ``\c
+.IR last ''
+to enable chopping of the last page of each document.
+.TP 14
+.B pagehandling
+A string that contains per-page information
+used during facsimile transmission.
+Most of the information is used in the negotiation
+of session capabilities with optional information used in the
+implementation of page chopping.
+The string has three characters, say \fIxxc\fP,
+for each page to be transmitted.
+The \fIxx\fP characters are a hex-encoded specification
+of the session capabilities required to transmit the page.
+The \fIc\fP character is one of ``M'', ``S'', and ``P'';
+where: ``M'' indicates there is another page to follow and
+that the page requires different
+.SM T.30
+session parameters be negotiated (an
+.SM EOM
+code is to be transmitted).
+``S'' indicates there is another page to follow, but the page
+uses the same session parameters (an
+.SM MPS.
+code is to be transmitted).
+``P'' indicates this is the last page to be transmitted (an
+.SM EOP
+code is to be transmitted).
+In addition, if page chopping has been enabled and the page
+has enough trailing whitespace to be a candidate, then
+each three character string will be followed by a string of the
+form ``\fIZXXXX\fP'', where ``XXXX'' is a 4 digit hex-encoded
+count of the number of bytes of data to send for a chopped page.
+.TP 14
+.B pagelength
+The desired page length in millimeters.
+.TP 14
+.B pagewidth
+The desired page width in millimeters.
+.TP 14
+.B pcl
+The pathname of a \*(Pc document to send.
+Once a \*(Pc
+document has been processed by 
+.IR faxsend ,
+it is marked as
+.B !pcl
+so that subsequent retries do not reprocess the document. 
+.TP 14
+.B poll
+The value is a Caller Identification String (\c
+.SM CIS\c
+) to use in making a polling request.
+If no 
+.SM CIS
+is specified then 
+.I faxsend
+will form one from the
+.B FAXNumber
+configuration parameter.
+.TP 14
+.B postscript
+The pathname of a \*(Ps\(rg document to send.
+Once a \*(Ps
+document has been processed by 
+.IR faxsend ,
+it is marked as
+.B !postscript
+so that subsequent retries do not reprocess the document. 
+.TP 14
+.B receiver
+The receiver's name.
+This value is used only when creating continuation cover pages.
+.TP 14
+.B resolution
+The desired vertical resolution in lines per inch.
+This value should be either 98 or 196.
+.TP 14
+retrytime
+The time, in seconds, to delay between each attempt to transmit a job
+that fails because of a communication-oriented problem.
+Normally jobs are scheduled according to a collection of configuration
+parameters that are tuned for the specific reason of each failure;
+e.g. see
+.B JobReqProto
+in
+.IR config (${MANNUM4_5}).
+.TP 14
+.B sender
+The ``full name'' of the sender of the facsimile.
+.TP 14
+.B signalrate
+The signalling rate used to transmit facsimile data.
+This item is recorded by
+.IR faxsend (${MANNUM1_8})
+so that
+.IR notify (${MANNUM1_8})
+can return it in a notification message.
+.TP 14
+.B state
+The job scheduling state.
+Recognized values are:
+1 (\fIsuspended\fP, not being scheduled),
+2 (\fIpending\fP, waiting for the time to send),
+3 (\fIsleeping\fP, waiting for a scheduled timeout),
+4 (\fIblocked\fP, waiting for concurrent activity to the same destination to complete),
+5 (\fIready\fP, ready to be processed except for available resources),
+6 (\fIactive\fP, actively being processed by \*(Fx),
+7 (\fIdone\fP, processing completed).
+.TP 14
+.B status
+Status information about the current state of the job.
+Typically this is the reason why the last attempt to
+send the facsimile failed.
+.TP 14
+.B subaddr
+The SubAddress information to transmit when sending a facsimile.
+This string should be used by the receiver to route received
+facsimile documents.
+.TP 14
+.B tagline
+The format string to use in imaging taglines on outgoing
+documents.
+Note that this parameter is only used if the
+.B desiredtl
+parameter is non-zero.
+.TP 14
+.B tiff
+The pathname of a 
+.SM TIFF/F
+document to send.
+Once a
+.SM TIFF
+document has been processed by 
+.IR faxsend ,
+it is marked as
+.B !tiff
+so that subsequent retries do not reprocess the document. 
+.TP 14
+.B totdials
+The total number of times the server has placed a call
+to the receiving phone number.
+.TP 14
+.B totpages
+The total number of pages to be transmitted.
+.TP 14
+.B tottries
+The total number of attempts to transmit a job; see
+.B maxtries
+above.
+.TP 14
+.B tts
+The time to send the job.
+If this value is non-zero, it is number of seconds
+since 00:00:00 GMT, January 1, 1970.
+Otherwise, a value of 0 is interpreted to mean
+process as soon as possible.
+.TP 14
+.B useccover
+1 if the job should use a continuation cover page during
+retransmission, 0 otherwise.
+See 
+.IR hylafax-server (${MANNUM4_5})
+for a description of continuation cover pages.
+.SH "SEE ALSO"
+.IR sendfax (1),
+.IR faxq (${MANNUM1_8}),
+.IR faxqclean (${MANNUM1_8}),
+.IR faxsend (${MANNUM1_8}),
+.IR pagesend (${MANNUM1_8}),
+.IR hfaxd (${MANNUM1_8}),
+.IR config (${MANNUM4_5})
