@@ -28,9 +28,6 @@
 
 #include <errno.h>
 #include <sys/param.h>
-#if HAS_SELECT_H
-#include <sys/select.h>
-#endif
 extern "C" {
 #include <sys/time.h>
 }

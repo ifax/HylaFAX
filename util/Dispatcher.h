@@ -30,6 +30,10 @@
 #ifndef dp_dispatcher_h
 #define dp_dispatcher_h
 
+#ifdef HAS_SELECT_H
+#include <sys/select.h>
+#endif
+
 #include "Types.h"
 
 class IOHandler;
