@@ -1073,15 +1073,15 @@ END	{ if (proto == "")
 configureClass1and2Modem()
 {
     echo "This modem looks to have support for both Class 1 and 2;"
-    prompt "how should it be configured [2]?"
+    prompt "how should it be configured [1]?"
     x=""
     while [ "$x" != 1 -a "$x" != 2 ]; do
 	read x
 	case "$x" in
 	1|2)	;;
 	?*)	echo ""
-	        prompt "Configure as Class 1 or 2 [2]?";;
-	*)	x=2;;
+	        prompt "Configure as Class 1 or 2 [1]?";;
+	*)	x=1;;
 	esac
     done
     echo ""
@@ -1094,15 +1094,15 @@ configureClass1and2Modem()
 configureClass1and2dot0Modem()
 {
     echo "This modem looks to have support for both Class 1 and 2.0;"
-    prompt "how should it be configured [2.0]?"
+    prompt "how should it be configured [1]?"
     x=""
     while [ "$x" != 1 -a "$x" != 2.0 ]; do
 	read x
 	case "$x" in
 	1|2.0)	;;
 	?*)	echo ""
-	        prompt "Configure as Class 1 or 2.0 [2.0]?";;
-	*)	x=2.0;;
+	        prompt "Configure as Class 1 or 2.0 [1]?";;
+	*)	x=1;;
 	esac
     done
     echo ""
@@ -1115,15 +1115,15 @@ configureClass1and2dot0Modem()
 configureClass2and2dot0Modem()
 {
     echo "This modem looks to have support for both Class 2 and 2.0;"
-    prompt "how should it be configured [2.0]?"
+    prompt "how should it be configured [2]?"
     x=""
     while [ "$x" != 2 -a "$x" != 2.0 ]; do
 	read x
 	case "$x" in
 	2|2.0)	;;
 	?*)	echo ""
-	        prompt "Configure as Class 2 or 2.0 [2.0]?";;
-	*)	x=2.0;;
+	        prompt "Configure as Class 2 or 2.0 [2]?";;
+	*)	x=2;;
 	esac
     done
     echo ""
@@ -1136,15 +1136,15 @@ configureClass2and2dot0Modem()
 configureClass1and2and2dot0Modem()
 {
     echo "This modem looks to have support for both Class 1, 2 and 2.0;"
-    prompt "how should it be configured [2.0]?"
+    prompt "how should it be configured [1]?"
     x=""
     while [ "$x" != 1 -a "$x" != 2 -a "$x" != 2.0 ]; do
 	read x
 	case "$x" in
 	1|2|2.0)	;;
 	?*)	echo ""
-	        prompt "Configure as Class 1, 2 or 2.0 [2.0]?";;
-	*)	x=2.0;;
+	        prompt "Configure as Class 1, 2 or 2.0 [1]?";;
+	*)	x=1;;
 	esac
     done
     echo ""
