@@ -176,7 +176,7 @@ clobber::
 	@if [ "@PORT@" = yes ]; then \
 	    ${ECHO} "= "port; cd port; ${MAKE} clobberconfig; ${MAKE} clobber; \
 	else \
-	    true; \
+	    ${RM} -f port/install.sh  port/mkdepend; \
 	fi
 	@if [ "@REGEX@" = yes ]; then \
 	    ${ECHO} "= "regex; cd regex; ${MAKE} clobber; \
