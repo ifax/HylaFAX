@@ -271,7 +271,7 @@ FaxServer::notifyRecvBegun(const FaxRecvInfo&)
 void
 FaxServer::notifyPageRecvd(TIFF*, const FaxRecvInfo& ri, int)
 {
-    traceServer("RECV FAX (%s): from %s, page %u in %s, %s, %s, %s"
+    traceServer("RECV FAX (%s): from %s, page %u in %s, %s, %s, %s, %s"
 	, (const char*) ri.commid
 	, (const char*) ri.sender
 	, ri.npages
