@@ -1507,31 +1507,41 @@ Class1Modem::sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, fxStr& ems
 	if (lastbyte & (1<<i)) break;
 	else zeros++;
     }
-    // these are intentionally reverse-encoded in order to keep
-    // rtcRev and bitrev in sendPage() in agreement
+    /*
+     * These are intentionally reverse-encoded in order to keep
+     * rtcRev and bitrev in sendPage() in agreement.  They are also
+     * end-padded with zeros to help "push" them out of the modem.
+     * We explicitly set the zeros in the padding so as to prevent
+     * the "unset" garbage values from confusing the receiver.
+     * We don't send that padding with ECM, as it's unnecessary.
+     */
     static const u_char RTC1D[9+20] =
-	{ 0x00,0x08,0x80,0x00,0x08,0x80,0x00,0x08,0x80 };
+	{ 0x00,0x08,0x80,0x00,0x08,0x80,0x00,0x08,0x80,
+	  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+	  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
     static const u_char RTC2D[10+20] =
-	{ 0x00,0x18,0x00,0x03,0x60,0x00,0x0C,0x80,0x01,0x30 };
+	{ 0x00,0x18,0x00,0x03,0x60,0x00,0x0C,0x80,0x01,0x30,
+	  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+	  0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
     // T.6 does not allow zero-fill until after EOFB and not before.
-    u_char EOFB[3+20];
+    u_char EOFB[3];
 	EOFB[0] = (0x0800 >> zeros) & 0xFF;
 	EOFB[1] = (0x8008 >> zeros) & 0xFF;
 	EOFB[2] = 0x80 >> zeros;
     if (params.df == DF_2DMMR) {
 	protoTrace("SEND EOFB");
-	return sendClass1ECMData(EOFB, sizeof(EOFB), rtcRev, true, ppmcmd, emsg);
+	return sendClass1ECMData(EOFB, 3, rtcRev, true, ppmcmd, emsg);
     }
     if (params.is2D()) {
 	protoTrace("SEND 2D RTC");
 	if (params.ec != EC_DISABLE)
-	    return sendClass1ECMData(RTC2D, sizeof(RTC2D), rtcRev, true, ppmcmd, emsg);
+	    return sendClass1ECMData(RTC2D, 9, rtcRev, true, ppmcmd, emsg);
 	else
 	    return sendClass1Data(RTC2D, sizeof (RTC2D), rtcRev, true);
     } else {
 	protoTrace("SEND 1D RTC");
 	if (params.ec != EC_DISABLE)
-	    return sendClass1ECMData(RTC1D, sizeof(RTC1D), rtcRev, true, ppmcmd, emsg);
+	    return sendClass1ECMData(RTC1D, 10, rtcRev, true, ppmcmd, emsg);
 	else
 	    return sendClass1Data(RTC1D, sizeof (RTC1D), rtcRev, true);
     }
@@ -1708,8 +1718,10 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	 * modem wants the data in MSB2LSB order, but for now we'll
 	 * avoid the temptation to optimize.
 	 */
-	if (fillorder != FILLORDER_LSB2MSB)
+	if (fillorder != FILLORDER_LSB2MSB) {
 	    TIFFReverseBits(dp, totdata);
+	    lastbyte = frameRev[lastbyte];
+	}
 	u_int minLen = params.minScanlineSize();
 	if (minLen > 0) {			// only in non-ECM
 	    /*
