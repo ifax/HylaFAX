@@ -238,7 +238,7 @@ do
 	# Reject names that are not valid shell variable names.
 	if [ -n "`echo $ac_with| sed 's/[-_a-zA-Z0-9]//g'`" ]; then
 	    bitch "configure: $ac_with: invalid parameter name."
-	    die
+	    boom
 	fi
 	ac_with=`echo $ac_with| sed 's/-/_/g'`
 	case "$ac_option" in
