@@ -314,7 +314,7 @@ Try()
 TryClass2dot0Commands()
 {
     Try "AT+FCLASS=?";	Try "AT+FCLASS?"
-    Try "AT+FCLASS=0";	Try "AT+FCLASS=1";	Try "AT+FCLASS=2.0"
+    Try "AT+FCLASS=0";	Try "AT+FCLASS=1";	Try "$ATSTR"
     Try "AT+FCLASS?"
 
     Try "AT+FJU=?";	Try "AT+FJU?"
@@ -324,6 +324,7 @@ TryClass2dot0Commands()
     Try "AT+FIP=?"
 
     Try "AT+FAA=?";	Try "AT+FAA?"
+    Try "AT+FAP=?";	Try "AT+FAP?"
 			Try "AT+FBS?"	# NB: +FBS is a read-only parameter
     Try "AT+FBO=?";	Try "AT+FBO?"
     Try "AT+FBU=?";	Try "AT+FBU?"
@@ -334,9 +335,11 @@ TryClass2dot0Commands()
     Try "AT+FCT=?";	Try "AT+FCT?"
     Try "AT+FEA=?";	Try "AT+FEA?"
     Try "AT+FFC=?";	Try "AT+FFC?"
-    Try "AT+FHS=?";	Try "AT+FHS?"
+    Try "AT+FFD=?";	Try "AT+FFD?"
+			Try "AT+FHS?"	# +FHS is read-only
     Try "AT+FIE=?";	Try "AT+FIE?"
     Try "AT+FIS=?";	Try "AT+FIS?"
+    Try "AT+FIT=?";	Try "AT+FIT?"
     Try "AT+FLI=?";	Try "AT+FLI?"
     Try "AT+FLO=?";	Try "AT+FLO?"
     Try "AT+FLP=?";	Try "AT+FLP?"
@@ -346,13 +349,18 @@ TryClass2dot0Commands()
     Try "AT+FMS=?";	Try "AT+FMS?"
     Try "AT+FNR=?";	Try "AT+FNR?"
     Try "AT+FNS=?";	Try "AT+FNS?"
+    Try "AT+FPA=?";	Try "AT+FPA?"
     Try "AT+FPI=?";	Try "AT+FPI?"
     Try "AT+FPP=?";	Try "AT+FPP?"
     Try "AT+FPR=?";	Try "AT+FPR?"
     Try "AT+FPS=?";	Try "AT+FPS?"
+    Try "AT+FPW=?";	Try "AT+FPW?"
     Try "AT+FRQ=?";	Try "AT+FRQ?"
     Try "AT+FRY=?";	Try "AT+FRY?"
+    Try "AT+FSA=?";	Try "AT+FSA?"
     Try "AT+FSP=?";	Try "AT+FSP?"
+    Try "AT+IFC=?";	Try "AT+IFC?"
+    Try "AT+IPR=?";	Try "AT+IPR?"
 
     # NB: put this last since it resets to Class 0 on some modems
     Try "AT+FKS=?"
@@ -403,7 +411,7 @@ TryClass2Commands()
 TryClass1Commands()
 {
     Try "AT+FCLASS=?";	Try "AT+FCLASS?"
-    Try "AT+FCLASS=0";	Try "AT+FCLASS=1"
+    Try "AT+FCLASS=0";	Try "$ATSTR"
     Try "AT+FCLASS?"
     Try "AT+FJUNK=?";	Try "AT+FJUNK?"
     Try "AT+FAA=?";	Try "AT+FAA?"
@@ -433,6 +441,7 @@ common()
 class1()
 {
     echo ""; echo "Class 1 stuff..."; echo ""
+    ATSTR="AT+FCLASS=1"
     TryClass1Commands
 }
 
@@ -445,52 +454,70 @@ class2()
 class2dot0()
 {
     echo ""; echo "Class 2.0 stuff..."; echo ""
+    ATSTR="AT+FCLASS=2.0"
+    TryClass2dot0Commands
+}
+
+class1dot0()
+{
+    echo ""; echo "Class 1.0 stuff..."; echo ""
+    ATSTR="AT+FCLASS=1.0"
+    TryClass1Commands
+}
+
+class2dot1()
+{
+    echo ""; echo "Class 2.1 stuff..."; echo ""
+    ATSTR="AT+FCLASS=2.1"
     TryClass2dot0Commands
 }
 
 echo ""
 if [ "$RESULT" = "OK" ]; then
-    # Looks like a Class 1 or 2 modem, get more information
-    case "`echo $RESPONSE | sed -e 's/[()]//g'`" in
-    1)			common "1"; class1;;
-    2)			common "2"; class2;;
-    2.0)		common "2.0"; class2dot0;;
-    0,1)		common "1"; class1;;
-    0,2)		common "2"; class2;;
-    0,2.0)		common "2.0"; class2dot0;;
-    1,2)		common "1+2"; class1; class2;;
-    1,2.0)		common "1+2.0"; class1; class2dot0;;
-    2,2.0)		common "2+2.0"; class2; class2dot0;;
-    0,1,2)		common "1+2"; class1; class2;;
-    0,1,2.0)		common "1+2.0"; class1; class2dot0;;
-    0,2,2.0)		common "2+2.0"; class2; class2dot0;;
-    1,2,2.0)		common "1+2+2.0"; class1; class2; class2dot0;;
-    0,1,2,2.0)		common "1+2+2.0"; class1; class2; class2dot0;;
-    0,1,2,2.0,*)	common "1+2+2.0"; class1; class2; class2dot0;;
-    0,1,1.0,2,2.0,*)	common "1+2+2.0"; class1; class2; class2dot0;;
-    0,1,1.0,2,*)	common "1+2"; class1; class2;;
-    1,2,2.0,*)		common "1+2+2.0"; class1; class2; class2dot0;;
-    0,2,2.0,*)		common "2+2.0"; class2; class2dot0;;
-    0,1,2.0,*)		common "1+2.0"; class1; class2dot0;;
-    0,1,2,*)		common "1+2"; class1; class2;;
-    2,2.0,*)		common "2+2.0"; class2; class2dot0;;
-    1,2.0,*)		common "2+2.0"; class1; class2dot0;;
-    1,2,*)		common "1+2"; class1; class2;;
-    0,2.0,*)		common "2.0"; class2dot0;;
-    0,2,*)		common "2"; class2;;
-    0,1,*)		common "1"; class1;;
-    2.0,*)		common "2.0"; class2dot0;;
-    2,*)		common "2"; class2;;
-    1,*)		common "1"; class1;;
-    *)	echo "The result of the AT+FCLASS=? command was:"
+    # Looks like a usable fax modem.  Get more information.
+    # Here we build up a MODEMCLASSES string and follow
+    # (for no real reason) the enumeration in faxd/ClassModem.c++
+    # Class 1 = 1; Class 2 = 2; Class 2.0 = 3;
+    # Class 1.0 = 4; Class 2.1 = 5;   
+
+    RESPONSE="`echo $RESPONSE | $SED -e 's/[()]//g'`";
+    MODEMCLASSES="";
+    CLASS=0;
+    for MATCHSTR in \
+	",1,|^1,|,1$|^1$" \
+	",2,|^2,|,2$|^2$" \
+	",2\.0,|^2\.0,|,2\.0\$|^2\.0\$" \
+	",1\.0,|^1\.0,|,1\.0\$|^1\.0\$" \
+	",2\.1,|^2\.1,|,2\.1\$|^2\.1\$"; do
+	CLASS=$[ $CLASS + 1 ];
+	if [ "`echo $RESPONSE | $GREP -E $MATCHSTR`" != "" ]; then
+	    if [ "$MODEMCLASSES" != "" ]; then
+		 SUPPORT=`echo $SUPPORT | $SED 's/ and /, /g'`" and ";
+	    fi
+	    MODEMCLASSES=$MODEMCLASSES$CLASS" ";
+	    SUPPORT=$SUPPORT$CLASS
+	fi
+    done;
+    MODEMCLASSES=`echo $MODEMCLASSES | $SED -e 's/3/2.0/g' -e 's/4/1.0/g' -e 's/5/2.1/g' -e 's/ $//g'`
+    if [ "$MODEMCLASSES" == "" ]; then
+	echo "The result of the AT+FCLASS=? command was:"
 	echo ""
 	cat $OUT
 	echo ""
 	echo "I don't figure that it's worthwhile to continue..."
 	exit
-	;;
-    esac
+    else
+	for CLASS in $MODEMCLASSES; do
+	    case $CLASS in
+	    1)		class1;;
+	    2)		class2;;
+	    2.0)	class2dot0;;
+	    1.0)	class1dot0;;
+	    2.1)	class2dot1;;
+	    esac
+	done;
+    fi
 else
-    echo "This not a Class 1, 2, or 2.0 modem,"
+    echo "This not a Class 1, 2, 2.0, 1.0, or 2.1 modem."
     exit
 fi

@@ -1001,45 +1001,61 @@ configureClass2Modem()
 }
 
 #
-# As above, but for Class 2.0 modems.
+# As above, but for Class 2.0/2.1 modems.
+# Class 2.1 modems without a prototype also use class2.0.
 #
 configureClass2dot0Modem()
 {
-    ModemType=Class20
-    echo "Hmm, this looks like a Class 2.0 modem."
+    if [ "$ModemType" == "Class2.1" ]; then
+	echo "Hmm, this looks like a Class 2.1 modem."
+	MATCHSTR=CLASS2.1
+	ATSTR=AT+FCLASS=2.1
+	PROTOSTR=class2.1
+    else echo "Hmm, this looks like a Class 2.0 modem."
+	MATCHSTR=CLASS2.0
+	ATSTR=AT+FCLASS=2.0
+	PROTOSTR=class2.0
+    fi
     #
-    SendToModem "AT+FCLASS=2.0" "AT+FMI?"
+    SendToModem "$ATSTR" "AT+FMI?"
     Manufacturer=$RESPONSE
     echo "Modem manufacturer is \"$Manufacturer\"."
 
-    SendToModem "AT+FCLASS=2.0" "AT+FMM?"
+    SendToModem "$ATSTR" "AT+FMM?"
     Model=$RESPONSE
     echo "Modem model is \"$Model\"."
 
     getFlowControlConfig
 
     eval `(cd $MODEMCONFIG; \
-	$GREP 'CONFIG:[ 	]*CLASS2.0' $CONFIG_LIST |\
+	$GREP "CONFIG:[ 	]*$MATCHSTR" $CONFIG_LIST |\
 	$AWK -F: '
 	    BEGIN { print "case \"$Manufacturer-$Model-$FlowControl\" in" }
 	    FILENAME ~ /^OLD/ { next }
 	    FILENAME ~ /^config\./ { next }
 	    { print $4 ") ProtoType=" $1 ";;" }
-	    END { print "*) ProtoType=class2.0;;"; print "esac" }
+	    END { print "*) ProtoType=$PROTOSTR;;"; print "esac" }
 	')`
 }
 
 #
-# Class 1 modems are handled a bit differently as
-# there are no commands to obtain the manufacturer
-# and model.  Instead we use ATI0 to get the product
-# code and then compare it against the set of known
-# values in the config files.
+# Class 1/1.0 modems are handled a bit differently as
+# there may be no commands to obtain the manufacturer
+# and model.  Instead we use ATI0 and ATI3 to get the
+# product codes and then compare them against the set
+# of known values in the config files.
 #
 configureClass1Modem()
 {
-    ModemType=Class1 Manufacturer=Unknown Model=Unknown
-    echo "Hmm, this looks like a Class 1 modem."
+    Manufacturer=Unknown Model=Unknown
+    if [ "$ModemType" = "Class1" ]; then
+	echo "Hmm, this looks like a Class 1 modem."
+	MATCHSTR=CLASS1
+	PROTOSTR=class1
+    else echo "Hmm, this looks like a Class 1.0 modem."
+	MATCHSTR=CLASS10
+	PROTOSTR=class1.0
+    fi
 
     SendToModem "ATI0"; CODE="$RESPONSE"
     echo "Product code (ATI0) is \"$CODE\"."
@@ -1048,7 +1064,7 @@ configureClass1Modem()
 
     getFlowControlConfig
 
-    eval `(cd $MODEMCONFIG; $GREP 'CONFIG:[ 	]*CLASS1' $CONFIG_LIST) |\
+    eval `(cd $MODEMCONFIG; $GREP "CONFIG:[ 	]*$MATCHSTR" $CONFIG_LIST) |\
 	$SED 's/:[ 	]*/:/g' |\
 	$AWK -F: '
 BEGIN	{ proto = "" }
@@ -1062,97 +1078,12 @@ C ~ $4 && I ~ $5 && F ~ $6 {
 	      proto = $1 " " $7;
 	}
 END	{ if (proto == "")
-	      proto = "class1"
+	      proto = "$PROTOSTR"
 	  print "ProtoType=" proto
 	}
 	' C="$CODE" I="$INFO" F="$FlowControl" -`
     echo "Modem manufacturer is \"$Manufacturer\"."
     echo "Modem model is \"$Model\"."
-}
-
-configureClass1and2Modem()
-{
-    echo "This modem looks to have support for both Class 1 and 2;"
-    prompt "how should it be configured [1]?"
-    x=""
-    while [ "$x" != 1 -a "$x" != 2 ]; do
-	read x
-	case "$x" in
-	1|2)	;;
-	?*)	echo ""
-	        prompt "Configure as Class 1 or 2 [1]?";;
-	*)	x=1;;
-	esac
-    done
-    echo ""
-    case $x in
-    1) configureClass1Modem;;
-    2) configureClass2Modem;;
-    esac
-}
-
-configureClass1and2dot0Modem()
-{
-    echo "This modem looks to have support for both Class 1 and 2.0;"
-    prompt "how should it be configured [1]?"
-    x=""
-    while [ "$x" != 1 -a "$x" != 2.0 ]; do
-	read x
-	case "$x" in
-	1|2.0)	;;
-	?*)	echo ""
-	        prompt "Configure as Class 1 or 2.0 [1]?";;
-	*)	x=1;;
-	esac
-    done
-    echo ""
-    case $x in
-    1)   configureClass1Modem;;
-    2.0) configureClass2dot0Modem;;
-    esac
-}
-
-configureClass2and2dot0Modem()
-{
-    echo "This modem looks to have support for both Class 2 and 2.0;"
-    prompt "how should it be configured [2]?"
-    x=""
-    while [ "$x" != 2 -a "$x" != 2.0 ]; do
-	read x
-	case "$x" in
-	2|2.0)	;;
-	?*)	echo ""
-	        prompt "Configure as Class 2 or 2.0 [2]?";;
-	*)	x=2;;
-	esac
-    done
-    echo ""
-    case $x in
-    2)   configureClass2Modem;;
-    2.0) configureClass2dot0Modem;;
-    esac
-}
-
-configureClass1and2and2dot0Modem()
-{
-    echo "This modem looks to have support for both Class 1, 2 and 2.0;"
-    prompt "how should it be configured [1]?"
-    x=""
-    while [ "$x" != 1 -a "$x" != 2 -a "$x" != 2.0 ]; do
-	read x
-	case "$x" in
-	1|2|2.0)	;;
-	?*)	echo ""
-	        prompt "Configure as Class 1, 2 or 2.0 [1]?";;
-	*)	x=1;;
-	esac
-    done
-    echo ""
-    case $x in
-    1)   configureClass1Modem;;
-    2)   configureClass2Modem;;
-    2.0) configureClass2dot0Modem;;
-    esac
 }
 
 giveup()
@@ -1177,39 +1108,58 @@ EOF
 
 echo ""
 if [ "$RESULT" = "OK" ]; then
-    # Looks like a Class 1, 2, or 2.0 modem, get more information
-    case "`echo $RESPONSE | $SED -e 's/[()]//g'`" in
-    1)			configureClass1Modem;;
-    2)			configureClass2Modem;;
-    2.0)		configureClass2dot0Modem;;
-    0,1)		configureClass1Modem;;
-    0,2)		configureClass2Modem;;
-    0,2.0)		configureClass2dot0Modem;;
-    1,2)		configureClass1and2Modem;;
-    1,2.0)		configureClass1and2dot0Modem;;
-    2,2.0)		configureClass2and2dot0Modem;;
-    0,1,2)		configureClass1and2Modem;;
-    0,1,2.0)		configureClass1and2dot0Modem;;
-    0,2,2.0)		configureClass2and2dot0Modem;;
-    1,2,2.0)		configureClass1and2and2dot0Modem;;
-    0,1,2,2.0)		configureClass1and2and2dot0Modem;;
-    0,1,2,2.0,*)	configureClass1and2and2dot0Modem;;
-    0,1,1.0,2,2.0,*)	configureClass1and2and2dot0Modem;;
-    0,1,1.0,2,*)	configureClass1and2Modem;;
-    1,2,2.0,*)		configureClass1and2and2dot0Modem;;
-    0,2,2.0,*)		configureClass2and2dot0Modem;;
-    0,1,2.0,*)		configureClass1and2dot0Modem;;
-    0,1,2,*)		configureClass1and2Modem;;
-    2,2.0,*)		configureClass2and2dot0Modem;;
-    1,2.0,*)		configureClass1and2dot0Modem;;
-    1,2,*)		configureClass1and2Modem;;
-    0,2.0,*)		configureClass2dot0Modem;;
-    0,2,*)		configureClass2Modem;;
-    0,1,*)		configureClass1Modem;;
-    2.0,*)		configureClass2dot0Modem;;
-    2,*)		configureClass2Modem;;
-    1,*)		configureClass1Modem;;
-    *)			giveup;;
+    # Looks like a usable fax modem.  Get more information.
+    # Here we build up a MODEMCLASSES string and follow
+    # (for no real reason) the enumeration in faxd/ClassModem.c++
+    # Class 1 = 1; Class 2 = 2; Class 2.0 = 3;
+    # Class 1.0 = 4; Class 2.1 = 5;   
+
+    RESPONSE="`echo $RESPONSE | $SED -e 's/[()]//g'`";
+    SUPPORT="This modem looks to have support for Class "
+    MODEMCLASSES="";
+    CLASS=0;
+    for MATCHSTR in \
+	",1,|^1,|,1$|^1$" \
+	",2,|^2,|,2$|^2$" \
+	",2\.0,|^2\.0,|,2\.0\$|^2\.0\$" \
+	",1\.0,|^1\.0,|,1\.0\$|^1\.0\$" \
+	",2\.1,|^2\.1,|,2\.1\$|^2\.1\$"; do
+	CLASS=$[ $CLASS + 1 ];
+	if [ "`echo $RESPONSE | $GREP -E $MATCHSTR`" != "" ]; then
+	    if [ "$MODEMCLASSES" != "" ]; then
+		 SUPPORT=`echo $SUPPORT | $SED 's/ and /, /g'`" and ";
+	    fi
+	    MODEMCLASSES=$MODEMCLASSES$CLASS" ";
+	    SUPPORT=$SUPPORT$CLASS
+	fi
+    done;
+    MODEMCLASSES=`echo $MODEMCLASSES | $SED -e 's/3/2.0/g' -e 's/4/1.0/g' -e 's/5/2.1/g' -e 's/ $//g'`
+    SUPPORT=`echo $SUPPORT | $SED -e 's/3/2.0/g' -e 's/4/1.0/g' -e 's/5/2.1/g'`.
+    if [ "`echo $SUPPORT | $GREP " "`" == "" ]; then echo $SUPPORT; fi
+    case "$MODEMCLASSES" in
+    "")			giveup;;
+    "1")		ModemType=Class1; configureClass1Modem;;
+    "2")		configureClass2Modem;;
+    "2.0")		ModemType=Class2.0; configureClass2dot0Modem;;
+    "1.0")		ModemType=Class1.0; configureClass1Modem;;
+    "2.1")		ModemType=Class2.1; configureClass2dot0Modem;;
+    *)
+	DEFAULTCLASS=`echo $MODEMCLASSES | $SED 's/\([^ ]*\).*/\1/g'`
+	x=""
+	while [ "`echo " $MODEMCLASSES " | $GREP " $x "`" == "" ]; do
+	    echo $SUPPORT
+	    prompt "How should it be configured [$DEFAULTCLASS]?"
+	    read x
+	    if [ "$x" == "" ]; then x=$DEFAULTCLASS; fi
+	done
+	echo ""
+	case "$x" in
+	"1")		ModemType=Class1; configureClass1Modem;;
+	"2")		configureClass2Modem;;
+	"2.0")		ModemType=Class2.0; configureClass2dot0Modem;;
+	"1.0")		ModemType=Class1.0; configureClass1Modem;;
+	"2.1")		ModemType=Class2.1; configureClass2dot0Modem;;
+	esac
     esac
 else
     giveup
@@ -1396,6 +1346,7 @@ Class2Parameters="
     Class2SPLCmd
     Class2TBCCmd
     Class2XmitWaitForXON
+    Class2UseHex
     Class2NFLOCmd
     Class2HFLOCmd
     Class2SFLOCmd

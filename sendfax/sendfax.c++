@@ -23,6 +23,7 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
+#include "class2.h"		//for BR_14400 definition
 #include "SendFaxClient.h"
 #include "FaxDB.h"
 #include "Sys.h"
@@ -278,6 +279,10 @@ sendFaxApp::addDestination(const char* cp)
     SendFaxJob& job = addJob();
     job.setDialString(dest);
     job.setCoverName(recipient);
+    if(job.getDesiredSpeed() > BR_14400 && job.getDesiredEC() == false) {
+        printWarning("ECM disabled, limiting job to 14400 bps.");
+        job.setDesiredSpeed(BR_14400);
+    }
 }
 
 /*

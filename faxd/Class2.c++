@@ -172,10 +172,10 @@ Class2Modem::setupModem()
      * XON to the host when it is ready to received page data
      * during a transmission.  This went away in SP-2388-B and in
      * the final Class 2.0 spec.  Consequently we configure the
-     * modem either to ignore it (Class 2.0) or to use whatever
+     * modem either to ignore it (Class 2.0/2.1) or to use whatever
      * is configured (it defaults to true).
      */
-    if (serviceType == SERVICE_CLASS20)
+    if ((serviceType == SERVICE_CLASS20) || (serviceType == SERVICE_CLASS21))
 	xmitWaitForXON = false;
     else
 	xmitWaitForXON = conf.class2XmitWaitForXON;
@@ -327,7 +327,15 @@ Class2Modem::setupDCC()
 bool
 Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params)
 {
-    int n = sscanf(cap, "%d,%d,%d,%d,%d,%d,%d,%d",
+    /*
+     * Some modems report capabilities in hex values, others decimal.
+     */
+    fxStr notation;
+    if (conf.class2UseHex)
+	notation = "%X,%X,%X,%X,%X,%X,%X,%X";
+    else
+	notation = "%d,%d,%d,%d,%d,%d,%d,%d";
+    int n = sscanf(cap, notation,
 	&params.vr, &params.br, &params.wd, &params.ln,
 	&params.df, &params.ec, &params.bf, &params.st);
     if (n == 8) {
@@ -336,7 +344,7 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params)
 	 * nonsense; should log bogus stuff also.
 	 */
 	params.vr = fxmin(params.vr, (u_int) VR_FINE);
-	params.br = fxmin(params.br, (u_int) BR_14400);
+	params.br = fxmin(params.br, (u_int) BR_33600);
 	params.wd = fxmin(params.wd, (u_int) WD_864);
 	params.ln = fxmin(params.ln, (u_int) LN_INF);
 	params.df = fxmin(params.df, (u_int) DF_2DMMR);
@@ -504,7 +512,7 @@ Class2Modem::class2Cmd(const fxStr& cmd, int a0, ATResponse r, long ms)
 bool
 Class2Modem::class2Cmd(const fxStr& cmd, const Class2Params& p, ATResponse r, long ms)
 {
-    return atCmd(cmd | "=" | p.cmd(), r, ms);
+    return atCmd(cmd | "=" | p.cmd(conf.class2UseHex), r, ms);
 }
 
 /*

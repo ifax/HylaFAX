@@ -60,7 +60,7 @@ FaxRequest::reset(void)
     npages = totpages = 0;
     ntries = ndials = 0;
     minsp = BR_2400;
-    desiredbr = BR_14400;
+    desiredbr = BR_33600;
     desiredst = ST_0MS;
     desiredec = EC_ENABLE;
     desireddf = DF_2DMMR;
@@ -287,8 +287,8 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_PAGELENGTH:	pagelength = atoi(tag); break;
 	case H_PRIORITY:	usrpri = atoi(tag); break;
 	case H_SCHEDPRI:	pri = atoi(tag); break;
-	case H_MINSP:		minsp = tag[0] - '0'; break;
-	case H_DESIREDBR:	desiredbr = tag[0] - '0'; break;
+	case H_MINSP:		minsp = atoi(tag); break;
+	case H_DESIREDBR:	desiredbr = atoi(tag); break;
 	case H_DESIREDST:	desiredst = tag[0] - '0'; break;
 	case H_DESIREDEC:	desiredec = tag[0] - '0'; break;
 	case H_DESIREDDF:	desireddf = tag[0] - '0'; break;
@@ -386,8 +386,8 @@ FaxRequest::readQFile(bool& rejectJob)
 			       "owner"
 	);
     }
-    if (minsp > BR_14400)	minsp = BR_14400;
-    if (desiredbr > BR_14400)	desiredbr = BR_14400;
+    if (minsp > BR_33600)	minsp = BR_33600;
+    if (desiredbr > BR_33600)	desiredbr = BR_33600;
     if (desiredst > ST_40MS)	desiredst = ST_40MS;
     if (desiredec > EC_ENABLE)	desiredec = EC_ENABLE;
     if (desireddf > DF_2DMMR)	desireddf = DF_2DMMR;

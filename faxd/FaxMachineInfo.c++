@@ -152,7 +152,8 @@ void FaxMachineInfo::configTrace(const char* ...) {}
 #define	N(a)		(sizeof (a) / sizeof (a[0]))
 
 static const char* brnames[] =
-   { "2400", "4800", "7200", "9600", "12000", "14400" };
+   { "2400", "4800", "7200", "9600", "12000", "14400",
+     "16800", "19200", "21600", "24000", "26400", "28800", "31200", "33600" };
 #define	NBR	N(brnames)
 static const char* stnames[] =
    { "0ms", "5ms", "10ms/5ms", "10ms",
@@ -339,7 +340,7 @@ FaxMachineInfo::writeConfig(fxStackBuffer& buf)
     putDecimal(buf, "maxPageWidth", isLocked(WD), maxPageWidth);
     putDecimal(buf, "maxPageLength", isLocked(LN), maxPageLength);
     putString(buf, "maxSignallingRate", isLocked(BR),
-	brnames[fxmin(maxSignallingRate, BR_14400)]);
+	brnames[fxmin(maxSignallingRate, BR_33600)]);
     putString(buf, "minScanlineTime", isLocked(ST),
 	stnames[fxmin(minScanlineTime, ST_40MS)]);
     putString(buf, "remoteCSI", false, csi);

@@ -797,7 +797,7 @@ HylaFAXServer::initDefaultJob(void)
     defJob.resolution	= FAX_DEFVRES;
     defJob.usrpri	= FAX_DEFPRIORITY;
     defJob.minsp	= BR_2400;
-    defJob.desiredbr	= BR_14400;
+    defJob.desiredbr	= BR_33600;
     defJob.desiredst	= ST_0MS;
     defJob.desiredec	= EC_ENABLE;
     defJob.desireddf	= DF_2DMMR;

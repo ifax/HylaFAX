@@ -159,6 +159,7 @@ public:
     fxStr	class2SACmd;		// cmd to set subaddress
     fxStr	class2PACmd;		// cmd to set selective polling address
     fxStr	class2PWCmd;		// cmd to set password for transmit/poll
+    bool	class2UseHex;		// parse capabilities strings as hex
 
     FlowControl	flowControl;		// DTE-DCE flow control method
     BaudRate	maxRate;		// max DTE-DCE rate to try

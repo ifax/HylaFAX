@@ -1038,6 +1038,12 @@ const char SPACE = ' ';
  * at some of the responses given by rev ~4.04 of the
  * ZyXEL firmware (for example)!
  *
+ * This can also get complicated in that the parameters may
+ * be in hexadecimal or decimal notation.  If in the future
+ * a standard way to "detect" the presence of future hex values
+ * (i.e. the <low> value is "00" instead of "0") may be found.
+ * For now we just use Class2UseHex.
+ *
  * NB: We accept alphanumeric items but don't return them
  *     in the parsed range so that modems like the ZyXEL 2864
  *     that indicate they support ``Class Z'' are handled.
@@ -1075,27 +1081,47 @@ ClassModem::vparseRange(const char* cp, int nargs ... )
 		goto done;
 	    }
 	    int v;
-	    if (isdigit(cp[0])) {
-		v = 0;
-		do {
-		    v = v*10 + (cp[0] - '0');
-		} while (isdigit((++cp)[0]));
-	    } else {
-		v = -1;					// XXX skip item below
-		while (isalnum((++cp)[0]))
-		    ;
+	    if (conf.class2UseHex) {			// read as hex
+		if (isxdigit(cp[0])) {
+		    char *endp;
+		    v = strtol(cp, &endp, 16);
+		    cp = endp;
+		} else {
+		    v = -1;				// XXX skip item below
+		    while (isalnum((++cp)[0]));
+		}
+	    } else {					// assume decimal
+		if (isdigit(cp[0])) {
+		    v = 0;
+		    do {
+			v = v*10 + (cp[0] - '0');
+		    } while (isdigit((++cp)[0]));
+		} else {
+		    v = -1;				// XXX skip item below
+		    while (isalnum((++cp)[0]));
+		}
 	    }
 	    int r = v;
 	    if (cp[0] == '-') {				// <low>-<high>
 		cp++;
-		if (!isdigit(cp[0])) {
-		    b = false;
-		    goto done;
+		if (conf.class2UseHex) {		// read as hex
+		    if (!isxdigit(cp[0])) {
+			b = false;
+			goto done;
+		    }
+		    char *endp;
+		    r = strtol(cp, &endp, 16);
+		    cp = endp;
+		} else {				// assume decimal
+		    if (!isdigit(cp[0])) {
+			b = false;
+			goto done;
+		    }
+		    r = 0;
+		    do {
+			r = r*10 + (cp[0] - '0');
+		    } while (isdigit((++cp)[0]));
 		}
-		r = 0;
-		do {
-		    r = r*10 + (cp[0] - '0');
-		} while (isdigit((++cp)[0]));
 	    } else if (cp[0] == '.') {			// <d.b>
 		cp++;
 		if (v == 2) {

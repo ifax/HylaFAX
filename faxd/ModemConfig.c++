@@ -216,6 +216,7 @@ ModemConfig::setupConfig()
     waitForConnect	= false;		// unique modem answer response
     class2XmitWaitForXON = true;		// default per Class 2 spec
     class2SendRTC	= false;		// default per Class 2 spec
+    class2UseHex	= false;		// historical behavior
     setVolumeCmds("ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1");
     recvDataFormat	= DF_ALL;		// default to no transcoding
     rtnHandling         = FaxModem::RTN_RETRANSMIT; // retransmit until MCF/MPS
@@ -421,6 +422,14 @@ ModemConfig::getSpeed(const char* value)
     case 9600:	return (BR_9600);
     case 12000:	return (BR_12000);
     case 14400:	return (BR_14400);
+    case 16800:	return (BR_16800);
+    case 19200:	return (BR_19200);
+    case 21600:	return (BR_21600);
+    case 24000:	return (BR_24000);
+    case 26400:	return (BR_26400);
+    case 28800:	return (BR_28800);
+    case 31200:	return (BR_31200);
+    case 33600:	return (BR_33600);
     }
     configError("Invalid minimum transmit speed \"%s\"", value);
     return (BR_2400);
@@ -539,6 +548,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	recvDataFormat = getDataFormat(value);
     else if (streq(tag, "rtnhandlingmethod"))
         rtnHandling = getRTNHandling(value);
+    else if (streq(tag, "class2usehex"))
+	class2UseHex = getBoolean(value);
     else
 	return (false);
     return (true);

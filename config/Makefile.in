@@ -43,8 +43,10 @@ SRCDIR	= ${DEPTH}/${TOPSRCDIR}/config
 VPATH	= ../@SRCDIR@/config
 
 CONFIGFILES=class1 \
+	class1.0 \
 	class2 \
 	class2.0 \
+	class2.1 \
 	skel \
 	\
 	att-dataport-2 \
@@ -66,6 +68,8 @@ CONFIGFILES=class1 \
 	intel-400e \
 	lucent \
 	lucent-mt-2 \
+	lucent-mt-20 \
+	lucent-mt-21 \
 	moto-288 \
 	mt-1432 \
 	nuvo-voyager \

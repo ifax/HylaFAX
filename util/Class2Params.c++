@@ -59,26 +59,31 @@ Class2Params::operator!=(const Class2Params& other) const
 }
 
 fxStr
-Class2Params::cmd() const
+Class2Params::cmd(bool class2UseHex) const
 {
     u_int unset = (u_int) -1;
     fxStr comma(",");
+    fxStr notation;
+    if (class2UseHex)
+        notation = "%X";
+    else
+        notation = "%u";
     fxStr s;
-    if (vr != unset) s.append(fxStr::format("%u", vr));
+    if (vr != unset) s.append(fxStr::format(notation, vr));
     s.append(comma);
-    if (br != unset) s.append(fxStr::format("%u", br));
+    if (br != unset) s.append(fxStr::format(notation, br));
     s.append(comma);
-    if (wd != unset) s.append(fxStr::format("%u", wd));
+    if (wd != unset) s.append(fxStr::format(notation, wd));
     s.append(comma);
-    if (ln != unset) s.append(fxStr::format("%u", ln));
+    if (ln != unset) s.append(fxStr::format(notation, ln));
     s.append(comma);
-    if (df != unset) s.append(fxStr::format("%u", df));
+    if (df != unset) s.append(fxStr::format(notation, df));
     s.append(comma);
-    if (ec != unset) s.append(fxStr::format("%u", ec));
+    if (ec != unset) s.append(fxStr::format(notation, ec));
     s.append(comma);
-    if (bf != unset) s.append(fxStr::format("%u", bf));
+    if (bf != unset) s.append(fxStr::format(notation, bf));
     s.append(comma);
-    if (st != unset) s.append(fxStr::format("%u", st));
+    if (st != unset) s.append(fxStr::format(notation, st));
     return s;
 }
 
@@ -236,7 +241,10 @@ Class2Params::setFromDIS(u_int dis, u_int xinfo)
      * layers select appropriate signalling rate knowing that
      * we'll fall back to something that the modem will support.
      */
-    br = DISbrTab[(dis & DIS_SIGRATE) >> 10];
+    if (dis & DIS_V8)
+	br = BR_33600;	// Is V.8 only used by V.34 (SuperG3) faxes?
+    else
+	br = DISbrTab[(dis & DIS_SIGRATE) >> 10];
     wd = DISwdTab[(dis & DIS_PAGEWIDTH) >> 6];
     ln = DISlnTab[(dis & DIS_PAGELENGTH) >> 4];
     if (xinfo & DIS_G4COMP)
@@ -287,7 +295,7 @@ Class2Params::getDCS() const
 {
     u_int dcs = DCS_T4RCVR
 	    | vrDISTab[vr&1]
-	    | brDCSTab[br&7]
+	    | brDCSTab[br&15]
 	    | wdDISTab[wd&7]
 	    | lnDISTab[ln&3]
 	    | dfDISTab[df&3]
@@ -484,32 +492,48 @@ const char* Class2Params::verticalResNames[2] = {
 const char* Class2Params::verticalResName() const
     { return (verticalResNames[vr&1]); }
 
-const char* Class2Params::bitRateNames[8] = {
+const char* Class2Params::bitRateNames[16] = {
     "2400 bit/s",		// BR_2400
     "4800 bit/s",		// BR_4800
     "7200 bit/s",		// BR_7200
     "9600 bit/s",		// BR_9600
     "12000 bit/s",		// BR_12000
     "14400 bit/s",		// BR_14400
-    "0 bit/s",		// 6 ???
-    "0 bit/s",		// 7 ???
+    "16800 bit/s",		// BR_16800
+    "19200 bit/s",		// BR_19200
+    "21600 bit/s",		// BR_21600
+    "24000 bit/s",		// BR_24000
+    "26400 bit/s",		// BR_26400
+    "28800 bit/s",		// BR_28800
+    "31200 bit/s",		// BR_31200
+    "33600 bit/s",		// BR_33600
+    "0 bit/s",			// 14 ???
+    "0 bit/s",			// 15 ???
 };
 const char* Class2Params::bitRateName() const
-    { return (bitRateNames[br&7]); }
+    { return (bitRateNames[br&15]); }
 u_int
 Class2Params::bitRate() const
 {
-    static const u_int brRates[8] = {
+    static const u_int brRates[16] = {
 	2400,	// BR_2400
 	4800,	// BR_4800
 	7200,	// BR_7200
 	9600,	// BR_9600
 	12000,	// BR_12000
 	14400,	// BR_14400
-	14400,	// 6? XXX
-	14400,	// 7? XXX
+	16800,	// BR_16800
+	19200,	// BR_19200
+	21600,	// BR_21600
+	24000,	// BR_24000
+	26400,	// BR_26400
+	28800,	// BR_28800
+	31200,	// BR_31200
+	33600,	// BR_33600
+	14400,	// 14? XXX
+	14400,	// 15? XXX
     };
-    return (brRates[br & 7]);
+    return (brRates[br & 15]);
 }
 
 const char* Class2Params::dataFormatNames[4] = {

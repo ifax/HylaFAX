@@ -356,7 +356,7 @@ function toLower(s)
 
 function getBR(params)
 {
-    return brNames[int(int(params) / 2) % 8];
+    return brNames[int(int(params) / 2) % 16];
 }
 
 function getDF(params)
@@ -444,7 +444,7 @@ function printRule(n, s)
 }
 
 BEGIN		{ FS="\t";
-		  rates = "2400:4800:7200:9600:12000:14400";
+		  rates = "2400:4800:7200:9600:12000:14400:16800:19200:21600:24000:26400:28800:31200:33600";
 		  setupMaps(rates, rateMap, brNames);
 		  datas = "1-D MR:2-D MR:2-D Uncompressed Mode:2-D MMR";
 		  setupMaps(datas, dataMap, dfNames);

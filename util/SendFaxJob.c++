@@ -340,6 +340,14 @@ SendFaxJob::getSpeed(const char* value) const
     case 9600:	return (3);
     case 12000:	return (4);
     case 14400:	return (5);
+    case 16800:	return (6);
+    case 19200:	return (7);
+    case 21600:	return (8);
+    case 24000:	return (9);
+    case 26400:	return (10);
+    case 28800:	return (11);
+    case 31200:	return (12);
+    case 33600:	return (13);
     }
     return (-1);
 }

@@ -70,7 +70,15 @@ const int BR_7200	= 2;		// 7200 bit/s
 const int BR_9600	= 3;		// 9600 bit/s
 const int BR_12000	= 4;		// 12000 bit/s
 const int BR_14400	= 5;		// 14400 bit/s
-const int BR_ALL	= BIT(BR_14400+1)-1;
+const int BR_16800	= 6;		// 16800 bit/s
+const int BR_19200	= 7;		// 19200 bit/s
+const int BR_21600	= 8;		// 21600 bit/s
+const int BR_24000	= 9;		// 24000 bit/s
+const int BR_26400	= 10;		// 26400 bit/s
+const int BR_28800	= 11;		// 28800 bit/s
+const int BR_31200	= 12;		// 31200 bit/s
+const int BR_33600	= 13;		// 33600 bit/s
+const int BR_ALL	= BIT(BR_33600+1)-1;
 
 const int WD_1728	= 0;		// 1728 pixels in 215 mm
 const int WD_2048	= 1;		// 2048 pixels in 255 mm

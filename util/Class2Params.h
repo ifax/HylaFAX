@@ -75,7 +75,7 @@ public:
     int operator==(const Class2Params&) const;
     int operator!=(const Class2Params&) const;
 
-    fxStr cmd() const;			// format AT+F cmd string
+    fxStr cmd(bool class2UseHex) const;		// format AT+F cmd string
     void setFromDIS(u_int dis, u_int xinfo = 0);
     void setFromDCS(u_int dcs, u_int xinfo = 0);
     u_int getDCS() const;
@@ -93,7 +93,7 @@ public:
     u_int verticalRes() const;		// lines/inch
     void setVerticalRes(u_int res);
 
-    static const char* bitRateNames[8];	// XXX needed by Class 1 driver
+    static const char* bitRateNames[16];	// XXX needed by Class 1 driver
 
     const char* pageWidthName() const;
     const char* pageLengthName() const;

@@ -251,14 +251,16 @@ speed both devices support.
 If a negotiated signalling rate greater than or equal to
 .I speed
 cannot be negotiated then the job is aborted.
-Possible speeds are: 2400, 4800, 7200, 9600, 12000, and 14400.
+Possible speeds are: 2400, 4800, 7200, 9600, 12000, 14400, 16800,
+19200, 21600, 24000, 26400, 28800, 31200, and 33600.
 By default \*(Fx will use the fastest possible rate supported by
 the transmitting modem and receiving facsimile device.
 .TP
 .BI \-B " speed"
 Try to transmit facsimile documents using the
 desired signalling rate.
-Possible speeds are: 2400, 4800, 7200, 9600, 12000, and 14400.
+Possible speeds are: 2400, 4800, 7200, 9600, 12000, 14400, 16800,
+19200, 21600, 24000, 26400, 28800, 31200, and 33600.
 If the specified speed is greater than the transmitting modem
 or receiver is capable of, it is reduced to the highest possible
 speed both devices support.
@@ -301,7 +303,8 @@ cover page will show \fIuser\fP as the intended receipient.
 .TP 12
 .B \-E
 Disable use of the Error Correction Mode (\s-1ECM\s+1)
-when transmitting page data.
+when transmitting page data. Setting \s-1ECM\s+1 to false
+will limit the maximum speed to 14400 bps.
 By default \*(Fx will attempt to use \s-1ECM\s+1 when both
 the trasmitting modem and receiving device support it.
 Note that international calls are sometimes faster when

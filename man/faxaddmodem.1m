@@ -146,7 +146,7 @@ The
 program that is used to configure a modem for use with
 \*(Fx selects a prototype configuration file using information
 retrieved from the modem and comments embedded in the prototype files.
-For Class 1 modems the product ID code returned by the command
+For Class 1 and Class 1.0 modems the product ID code returned by the command
 ``\s-1ATI0\s+1''
 and the response from the comannd
 ``\s-1ATI3\s+1''
@@ -154,7 +154,7 @@ are used to select a prototype configuration file, while for Class 2
 modems the manufacturer and model as returned by
 ``\s-1AT+FMFR?\s+1'' and ``\s-1AT+FMDL?\s+1'', respectively, are
 used (or ``\s-1AT+FMI?\s+1'' and ``\s-1AT+FMM?\s+1'' for
-Class 2.0 modems).
+Class 2.0 and Class 2.1 modems).
 .PP
 A Class 1 prototype configuration file is identified for use by
 .I faxaddmodem
@@ -174,7 +174,7 @@ The remainder of the line is evaluated by the
 and used to specify the modem's manufacturer and model (since Class 1
 modems do not have standard commands to query this information).
 .PP
-Class 2 and 2.0 prototype configuration files match the string
+Class 2, 2.0, and 2.1 prototype configuration files match the string
 ``\fImanufacturer\fP-\fImodel\fP-\fIflowcontrol\fP'' against a
 .IR sh (1)
 glob pattern specified in the configuration file, where

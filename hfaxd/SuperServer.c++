@@ -29,7 +29,7 @@
 #include "SuperServer.h"
 #include "Socket.h"
 
-#define	MAXTRIES	5
+#define	MAXTRIES	10
 
 SuperServer::SuperServer(const char* k, int bl) : kind(k)
 {

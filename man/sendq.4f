@@ -202,7 +202,9 @@ can return it in a notification message.
 .B desiredbr
 The desired signalling rate to use for page data transmissions:
 0 for 2400 bps, 1 for 4800 bps, 2 for 7200 bps, 3 for 9600 bps,
-4 for 12000 bps, and 5 for 14400 bps (default).
+4 for 12000 bps, 5 for 14400 bps, 6 for 16800 bps, 7 for 19200 bps,
+8 for 21600 bps, 9 for 24000 bps, 10 for 26400 bps, 11 for 28800 bps,
+12 for 31200 bps, and 13 for 33600 bps (default).
 .TP 14
 .B desireddf
 The desired data format to use for page data transmissions:
@@ -308,7 +310,9 @@ If the job cannot be completed in this number of tries, it is terminated.
 .B minsp
 The minimum signalling rate to use for transmitting page data:
 0 for 2400 bps (default), 1 for 4800 bps, 2 for 7200 bps, 3 for 9600 bps,
-4 for 12000 bps, and 5 for 14400 bps.
+4 for 12000 bps, 5 for 14400 bps, 6 for 16800 bps, 7 for 19200 bps,
+8 for 21600 bps, 9 for 24000 bps, 10 for 26400 bps, 11 for 28800 bps,
+12 for 31200 bps, and 13 for 33600 bps.
 .TP 14
 .B modem
 The outgoing modem to use to send the job, or ``any''

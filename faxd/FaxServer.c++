@@ -32,6 +32,7 @@
 #include "Class1.h"
 #include "Class2Ersatz.h"
 #include "Class20.h"
+#include "Class21.h"
 
 #include "config.h"
 
@@ -119,7 +120,7 @@ FaxServer::deduceModem()
     h.raisecase();
     /*
      * Probe for modem using type, if specified; otherwise
-     * try Class 2.0, Class 2, Class 1, and then Class 0 types.
+     * try Class 2.1, Class 2.0, Class 2, Class 1, and then Class 0 types.
      */
     u_int modemServices = 0;    // fax classes to try (bitmask)
     ClassModem* modem;
@@ -143,6 +144,8 @@ FaxServer::deduceModem()
 	    delete modem;
 	}
     }
+    else if (h == "CLASS2.1")
+        modemServices |= SERVICE_CLASS21;
     else if (h == "CLASS2.0")
         modemServices |= SERVICE_CLASS20;
     else if (h == "CLASS2")
@@ -150,6 +153,14 @@ FaxServer::deduceModem()
     else if (h == "CLASS1")
         modemServices |= SERVICE_CLASS1;
 
+    if (modemServices & SERVICE_CLASS21) {
+	modem = new Class21Modem(*this, *this);
+	if (modem) {
+	    if (modem->setupModem())
+		return modem;
+	    delete modem;
+	}
+    }
     if (modemServices & SERVICE_CLASS20) {
 	modem = new Class20Modem(*this, *this);
 	if (modem) {

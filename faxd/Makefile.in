@@ -51,6 +51,7 @@ C++FILES=ClassModem.c++ \
 	Class1Send.c++ \
 	Class2.c++ \
 	Class20.c++ \
+	Class21.c++ \
 	Class2Ersatz.c++ \
 	Class2Poll.c++ \
 	Class2Recv.c++ \
@@ -102,6 +103,7 @@ MODEM_OBJS=ClassModem.o \
 	Class1Send.o \
 	Class2.o \
 	Class20.o \
+	Class21.o \
 	Class2Ersatz.o \
 	Class2Poll.o \
 	Class2Recv.o \

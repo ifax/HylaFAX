@@ -189,8 +189,10 @@ HYLAFAXSRC=\
 	config/att-dpexpress-2			\
 	config/cirrus				\
 	config/class1				\
+	config/class1.0				\
 	config/class2				\
 	config/class2.0				\
+	config/class2.1				\
 	config/davicom-2			\
 	config/dsi-scout+			\
 	config/e-tech				\
@@ -206,6 +208,8 @@ HYLAFAXSRC=\
 	config/mt-1432				\
 	config/lucent				\
 	config/lucent-mt-2			\
+	config/lucent-mt-20			\
+	config/lucent-mt-21			\
 	config/moto-288				\
 	config/nuvo-voyager			\
 	config/ppi-pm14400fxmt			\
@@ -400,6 +404,7 @@ HYLAFAXSRC=\
 	faxd/Class1.h				\
 	faxd/Class2.h				\
 	faxd/Class20.h				\
+	faxd/Class21.h				\
 	faxd/Class2Ersatz.h			\
 	faxd/ClassModem.h			\
 	faxd/DestControl.h			\
@@ -448,6 +453,7 @@ HYLAFAXSRC=\
 	faxd/Class1Send.c++			\
 	faxd/Class2.c++				\
 	faxd/Class20.c++			\
+	faxd/Class21.c++			\
 	faxd/Class2Ersatz.c++			\
 	faxd/Class2Poll.c++			\
 	faxd/Class2Recv.c++			\

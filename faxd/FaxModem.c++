@@ -295,7 +295,7 @@ bestBit(u_int bits, u_int top, u_int bot)
 u_int
 FaxModem::getBestSignallingRate() const
 {
-    return bestBit(modemParams.br, BR_14400, BR_2400);
+    return bestBit(modemParams.br, BR_33600, BR_2400);
 }
 
 /*
