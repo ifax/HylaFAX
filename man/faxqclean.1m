@@ -77,6 +77,11 @@ a specified threshold are removed.
 .B \-a
 Enable job archiving support.
 .TP 10
+.B \-A
+This option forces archiving even if 'doneop' in
+the queue file is not 'archive', i.e. even if the user submitted the job
+without specifying the -A flag to sendfax
+.TP 10
 .BI \-j " secs"
 Set the job age threshold (in seconds)
 that controls how long jobs may reside in the
