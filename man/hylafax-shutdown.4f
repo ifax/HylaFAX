@@ -1,0 +1,91 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1995-1996 Sam Leffler
+.\" Copyright (c) 1995-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.TH HYLAFAX-SHUTDOWN ${MANNUM4_5} "January 18, 1996"
+.SH NAME
+\fBetc/shutdown\fP \- server shutdown control file
+.SH DESCRIPTION
+If the file
+.B etc/shutdown
+is present it describes when a \*(Fx server is to be shutdown
+and may contain a descriptive message to return to clients explaining
+the reason for the shutdown.
+This file is used by the
+.IR hfaxd (${MANNUM1_8})
+program.
+.PP
+The file has the following format:
+.sp
+.nf
+.RS
+<\fIyear\fP> <\fImonth\fP> <\fIday\fP> <\fIhour\fP> <\fIminute\fP> <\fIdeny\fP> <\fIdisconnect\fP>
+<\fIshutdown message text\fP>
+.RE
+.fi
+.PP
+The first line defines the date and time the server should be shutdown
+and the time preceding at which unprivileged clients should be
+denied service or disconnected;
+these fields are described in more detail below.
+Any lines that follow the first are taken as the text of a message to
+return to clients when notifying them of a scheduled shutdown or when
+denying them service.
+.TP 10
+<\fIyear\fP>
+The decimal year; e.g. 1996.
+.TP 10
+<\fImonth\fP>
+The decimal month; e.g. 10 for October.
+.TP 10
+<\fIday\fP>
+The decimal day of the month in the range [1..31].
+.TP 10
+<\fIhour\fP>
+The decimal hour since midnight; in the range [0..23].
+.TP 10
+<\fIminute\fP>
+The decimal minute after the hour; in the range [0..59].
+.TP 10
+<\fIdeny\fP>
+The time prior to the shutdown time at which to deny service
+to unprivileged clients.
+This value is specified as decimal number in the form HHMM; e.g.
+130 for 1 hour and 30 minutes.
+.TP 10
+<\fIdisconnect\fP>
+Time time prior to the shutdown time at which to disconnect
+unprivileged clients that are logged in to the server.
+This value is specified as a decimal number in the form HHMM.
+.SH NOTES
+This file is typically created using the ``\s-1SHUT\s+1'' command
+supported by 
+.IR hfaxd (${MANNUM1_8}).
+.SH "SEE ALSO"
+.IR hfaxd (${MANNUM1_8}),
+.IR hylafax-server (${MANNUM4_5})

@@ -1,0 +1,201 @@
+.\"	$Id$
+.\"
+.\" HylaFAX Facsimile Software
+.\"
+.\" Copyright (c) 1990-1996 Sam Leffler
+.\" Copyright (c) 1991-1996 Silicon Graphics, Inc.
+.\" HylaFAX is a trademark of Silicon Graphics
+.\" 
+.\" Permission to use, copy, modify, distribute, and sell this software and 
+.\" its documentation for any purpose is hereby granted without fee, provided
+.\" that (i) the above copyright notices and this permission notice appear in
+.\" all copies of the software and related documentation, and (ii) the names of
+.\" Sam Leffler and Silicon Graphics may not be used in any advertising or
+.\" publicity relating to the software without the specific, prior written
+.\" permission of Sam Leffler and Silicon Graphics.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+.\" EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+.\" WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+.\" 
+.\" IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+.\" ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+.\" OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+.\" WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+.\" LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+.\" OF THIS SOFTWARE.
+.\"
+.if n .po 0
+.ds Fx \fIHyla\s-1FAX\s+1\fP
+.ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
+.TH HYLAFAX-INFO ${MANNUM4_5} "February 10, 1996"
+.SH NAME
+info \- remote device capability database
+.SH DESCRIPTION
+The
+.B info
+subdirectory in the \*(Fx
+spooling area holds information about the capabilities
+and status of devices that have been called.
+One file exists for each device, with the filename
+created from the remote device's fully-qualified
+phone number.
+Files have a simple
+.SM ASCII
+format.
+Each line is of the form
+.sp .5
+.ti +0.5i
+[\fB&\fP]\fBtag\fP: \fIvalue\fP
+.br
+.sp .5
+where a \fItag\fP identifies a capability and a \fIvalue\fP
+is either a string, number, or boolean value.
+An optional ``&'' at the front of the line indicates that the
+tag's value is
+.I "locked down"
+and should not be updated by the server.
+This facility is useful for restricting the capabilities used
+with a particular machine.
+.PP
+The following items are recorded:
+.RS
+.sp .5
+.ta \w'supports2DEncoding    'u +\w'boolean    'u
+.nf
+\fBTag	Type	Description\fP
+calledBefore	boolean	device has previously answered at this number
+dialFailures	number	count of consecutive failed dial operations
+lastDialFailure	string	reason for last failed dial operation
+lastSendFailure	string	reason for last failed send attempt
+maxPageWidth	number	maximum page width in pixels
+maxPageLength	number	maximum page length in millimeters
+maxSignallingRate	string	maximum signalling rate (bits/sec) to use
+minScanlineTime	string	minimum scanline time
+pagerMaxMsgLength	number	length of longest allowed text message
+pagerPassword	string	password string send to service provider
+pagerSetupCmds	string	commands for setting up modem for a specific service provider
+pagerTTYParity	string	parity & # bits configuration for IXO/TAP communication
+pageSource	string	parameter to tell the paging central who we are
+pagingProtocol	string	protocol (IXO or UCP) for this provider
+remoteCSI	string	remote device Called Subscriber Identification
+sendFailures	number	count of consecutive failed send attempts
+supportsHighRes	boolean	accepts 196 line/inch images
+supports2DEncoding	boolean	accepts Group 2D encoding
+supportsPostScript	boolean	accepts Adobe \*(Ps transfer protocol
+.fi
+.RE
+.PP
+The \*(Fx scheduler,
+.IR faxq (${MANNUM1_8}),
+uses the information stored in this directory when
+deciding if a call should be placed and when
+preparing documents for transmission.
+If a remote device's capabilities are known, then
+document preparation is constrained and/or optimized
+according to the capabilities.
+Otherwise, documents are prepared without regard for
+the remote device's capabilities and if a capability mismatch
+is encountered the session is terminated and the documents
+are reformatted using the newly discovered capabilities.
+.PP
+The
+.I calledBefore
+item is used by 
+.I faxsend
+to decide whether or not to redial a phone number
+when encountering certain errors.
+For example, if a dialing command results in a ``\s-1NO CARRIER\s+1''
+result, then the number will not be retried unless
+the number has previously been dialed successfully.
+.PP
+The
+.I minScanlineTime
+item indicates the minimum scanline time parameter
+used for facsimile transmissions.
+Acceptable values are:
+``0ms'',
+``5ms'',
+``10ms/5ms'',
+``10ms'',
+``20ms/10ms'',
+``20ms'',
+``40ms/20ms'',
+and
+``40ms''.
+(Values of the form 
+.I X/Y
+mean to use 
+.I X
+for 98 lpi images and 
+.I Y
+for 196 lpi images.)
+.PP
+The
+.I pagerTTYParity
+item specifies the communication parameters to use when communicating
+with the
+.SM IXO/TAP
+service provider.
+Acceptable values are:
+``even'' (7 bits, even parity),
+``odd'' (7 bits, odd parity),
+and
+``none'' (8 bits, no parity).
+If nothing is specified then ``even'' is used per the standard.
+.PP
+The
+.IR pagerMaxMsgLength ,
+.IR pagerPassword ,
+and
+.I pagerTTYParity
+items can be setup according to the requirements of a pager
+service provider; they typically are locked down so that their
+values are not lost during updates.
+.PP
+The
+.IR pagerSetupCmds
+can be used to define AT commands for setting up the modem
+for a specific service provider.
+This value overwrites the settings defined in
+.IR config (${MANNUM4_5}).
+.PP
+The
+.IR pageSource
+parameter can be used to tell the paging central who we are.
+It usually contains a SMS answerable mobile number. It is only
+used for the \s-1UCP\s+1 part of
+.IR sendpage (${MANNUM1_8}).
+\fBNote: \fR This parameter should be used from user-land
+.IR sendpage (1)
+and will be removed later.
+.PP
+The
+.IR pagingProtocol
+defines which protocol, \s-1UCP\s+1 or \s-1IXO\s+1, should
+be used to send the message to the service provider. It
+defaults to ``ixo''; for \s-1UCP\s+1 set ``ucp''.
+.SH NOTES
+.IR faxsend ,
+.IR pagesend ,
+and
+.I faxq
+automatically create and update entries in the
+.B info
+directory, as required.
+.PP
+The data in this directory is simply a
+.I cache
+of remote capabilities and, except for locked down items, can be
+safely purged at any time.
+The
+.IR faxcron (${MANNUM1_8})
+script, for example, periodically purges unlocked entries in this
+directory that have not been accessed in 30 days.
+.SH "SEE ALSO"
+.IR faxcron (${MANNUM1_8}),
+.IR faxq (${MANNUM1_8}),
+.IR faxsend (${MANNUM1_8}),
+.IR pagesend (${MANNUM1_8}),
+.IR cinfo (${MANNUM4_5}),
+.IR hylafax-config (${MANNUM4_5})
