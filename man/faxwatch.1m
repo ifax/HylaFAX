@@ -148,7 +148,7 @@ JOB_REJECT	J	0x0100	job rejected
 JOB_KILL	J	0x0200	job killed
 JOB_BLOCKED	J	0x0400	job blocked by other job
 JOB_DELAYED	J	0x0800	job delayed by tod restriction or similar
-JOB_ALTERED\(dg	J	0x1000	job parameters altered
+JOB_ALTERED\(S1	J	0x1000	job parameters altered
 JOB_TIMEDOUT	J	0x2000	job kill timer expired
 JOB_PREP_BEGIN	J	0x4000	job preparation started
 JOB_PREP_END	J	0x8000	job preparation finished
@@ -185,7 +185,7 @@ MODEM_VOICE_END	M	0x0400	inbound voice call finished
 MODEM_CID	M	0x0800	inbound caller-ID information
 .fi
 .PP
-\(dg Event to be removed soon.
+\(S1 Event to be removed soon.
 .SH "SEE ALSO"
 .IR hylafax-server (${MANNUM4_5}),
 .IR hfaxd (${MANNUM1_8}).
