@@ -46,6 +46,7 @@ FaxMachineLog::FaxMachineLog(int f, const fxStr& number, const fxStr& commid)
     fd = f;
     pid = getpid();
     log("SESSION BEGIN %s %s", (const char*) commid, (const char*) canon);
+    log("%s", HYLAFAX_VERSION);
 }
 
 FaxMachineLog::~FaxMachineLog()

@@ -45,14 +45,13 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai)
     u_int prevPages = fax.npages;
     if (lockModem()) {
 	beginSession(fax.number);
-	traceServer("%s", HYLAFAX_VERSION);
 	fax.commid = getCommID();		// set by beginSession
-	traceServer("SEND FAX: JOB %s DEST %s COMMID %s"
+	traceServer("SEND FAX: JOB %s DEST %s COMMID %s DEVICE '%s'"
 	    , (const char*) fax.jobid
 	    , (const char*) fax.external
 	    , (const char*) fax.commid
+	    , (const char*) getModemDevice()
 	);
-	traceServer("DEVICE '%s'", (const char*) getModemDevice());
 	if (setupModem()) {
 	    changeState(SENDING);
 	    IOHandler* handler =
@@ -696,6 +695,10 @@ FaxServer::notifyDocumentSent(FaxRequest& req, u_int fi)
 	, (const char*) req.mailaddr
 	, (const char*) req.external
 	, (const char*) freq.item
+	, fmtTime(getFileTransferTime())
+    );
+    logInfo("SEND FAX: JOB %s SENT in %s"
+	, (const char*) req.jobid
 	, fmtTime(getFileTransferTime())
     );
     if (freq.op == FaxRequest::send_fax)

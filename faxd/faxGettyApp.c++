@@ -108,7 +108,10 @@ faxGettyApp::initialize(int argc, char** argv)
 void
 faxGettyApp::open()
 {
-    traceServer("OPEN " | getModemDevice());
+    traceServer("OPEN %s  %s"
+        , (const char*) getModemDevice()
+        , HYLAFAX_VERSION
+    );
     faxApp::open();
     FaxServer::open();
 }
@@ -446,7 +449,9 @@ faxGettyApp::processCall(CallType ctype, fxStr& emsg, const CallerID& cid)
 
     switch (ctype) {
     case ClassModem::CALLTYPE_FAX:
-	traceServer("ANSWER: FAX CONNECTION");
+	traceServer("ANSWER: FAX CONNECTION  DEVICE '%s'"
+	    , (const char*) getModemDevice()
+	);
 	changeState(RECEIVING);
 	sendRecvStatus(getModemDeviceID(), "B");
 	callHandled = recvFax(cid);

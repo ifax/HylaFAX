@@ -387,7 +387,7 @@ HylaFAXServer::setFileOwner(const char* file)
             state &= ~S_SETGID;			// set by OS, no work to do
         }
         if (TRACE(SERVER)) {
-            logInfo("Filesystem has %s-style file creation semantics.",
+            logDebug("Filesystem has %s-style file creation semantics.",
                 IS(SETGID) ? "BSD" : "SysV");
         }
         state &= ~S_CHECKGID;
