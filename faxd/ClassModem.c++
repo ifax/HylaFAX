@@ -194,6 +194,8 @@ static const AnswerMsg answerMsgs[] = {
    ClassModem::AT_NOTHING, ClassModem::NOCARRIER, ClassModem::CALLTYPE_ERROR },
 { "OK",		2,
    ClassModem::AT_NOTHING, ClassModem::NOCARRIER, ClassModem::CALLTYPE_ERROR },
+{ "BUSY",	4,
+   ClassModem::AT_NOTHING, ClassModem::NOCARRIER, ClassModem::CALLTYPE_ERROR },
 { "FAX",	 3,
    ClassModem::AT_CONNECT, ClassModem::OK,	  ClassModem::CALLTYPE_FAX },
 { "DATA",	 4,
