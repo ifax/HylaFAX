@@ -85,7 +85,7 @@ desireddf	integer	desired page data format
 desiredec	integer	desired use of Error Correction Mode (\s-1ECM\s+1)
 desiredst	integer	desired minimum scanline time
 desiredtl	integer	whether or not to use \fBtagline\fP parameter
-donop	string	operation to perform when job is reaped
+doneop	string	operation to perform when job is reaped
 external	string	external form of dialstring
 fax	string	document ready for transmission
 groupid	integer	\*(Fx job group identifier
