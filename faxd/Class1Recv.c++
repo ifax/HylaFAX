@@ -95,7 +95,7 @@ Class1Modem::recvBegin(fxStr& emsg)
     fxStr nsf;
     encodeNSF(nsf, HYLAFAX_VERSION);
 
-    if (useV34) waitForDCEChannel(true);	// expect control channel
+    if (useV34 && !gotCTRL) waitForDCEChannel(true);	// expect control channel
 
     return FaxModem::recvBegin(emsg) && recvIdentification(
 	0, fxStr::null,

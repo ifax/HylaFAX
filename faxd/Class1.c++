@@ -101,6 +101,7 @@ Class1Modem::Class1Modem(FaxServer& s, const ModemConfig& c)
     fxAssert(ecmFrame != NULL, "ECM procedure error (block).");
     ecmStuffedBlock = (u_char*) malloc(fs == 256 ? 83000 : 33000);
     fxAssert(ecmFrame != NULL, "ECM procedure error (stuffed block).");
+    gotCTRL = false;
 }
 
 Class1Modem::~Class1Modem()
