@@ -103,5 +103,8 @@ SuperServer::inputReady(int fd)
 void
 SuperServer::childStatus(pid_t, int)
 {
-    Dispatcher::instance().stopChild(this);
+    /*
+     * Nothing to do here - childStatus means it's already been reaped, and
+     * thus off the queue from the Dispatcher
+     */
 }
