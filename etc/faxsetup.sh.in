@@ -394,6 +394,24 @@ else
     }
 fi
 
+#
+# Prompt the user for a string that can not be null.
+#
+promptForNonNullStringParameter()
+{
+    x="" val="$1" desc="$2"
+    while [ -z "$x" ]; do
+	prompt "$desc [$val]?"; read x
+	if [ "$x" ]; then
+	    # strip leading and trailing white space
+	    x=`echo "$x" | sed -e 's/^[ 	]*//' -e 's/[ 	]*$//'`
+	else
+	    x="$val"
+	fi
+    done
+    param="$x"
+}
+
 if onServer; then
     #
     # Setup the password file manipulation functions according
@@ -445,6 +463,15 @@ if onServer; then
 	lockPasswd()
 	{
 	    return 0				# entries are always locked
+	}
+	modifyPasswd()
+	{
+	    OLD_HOME=`grep "^${1}:" ${PASSWD} | awk -F: '{print $6}'`
+	    ed - $PASSWD <<_EOF
+g~^$1:~s~${OLD_HOME}~$4~
+w
+q
+_EOF
 	}
     elif [ -f /usr/sbin/useradd -o -f /etc/useradd ]; then
 	addPasswd()
@@ -1913,6 +1940,60 @@ fi
 # Emit shell functions required by faxaddmodem.
 #
 if onServer; then
+    printConfig()
+    {
+	cat<<EOF
+
+	HylaFAX configuration parameters are:
+
+	[1] Init script starts faxq:		$FAXQ_SERVER
+	[2] Init script starts hfaxd		$HFAXD_SERVER
+	[3] Start old protocol:			$HFAXD_OLD_PROTOCOL
+	[4] Start paging protocol:		$HFAXD_SNPP_SERVER
+EOF
+    }
+
+    promptForParameter()
+    {
+	case $1 in
+	    1) promptForNonNullStringParameter "$FAXQ_SERVER" \
+		"Init script starts faxq";	FAXQ_SERVER="$param"
+	    ;;
+	    2) promptForNonNullStringParameter "$HFAXD_SERVER" \
+		"Init script starts hfaxd";	HFAXD_SERVER="$param"
+	    ;;
+	    3) promptForNonNullStringParameter "$HFAXD_OLD_PROTOCOL" \
+		"Start old protocol";		HFAXD_OLD_PROTOCOL="$param"
+	    ;;
+	    4) promptForNonNullStringParameter "$HFAXD_SNPP_SERVER" \
+		"Start paging protocol";	HFAXD_SNPP_SERVER="$param"
+	    ;;
+	esac
+    }
+
+    ok=skip
+    while [ "$ok" != y ] && [ "$ok" != yes ]; do
+	if [ "$ok" != skip ]; then
+	    for i in 1 2 3 4 ; do
+	       promptForParameter $i;
+	    done
+	fi
+	printConfig
+	prompt "Are these ok [yes]?"; read ok
+	test -z "$ok" && ok=yes
+	case "$ok" in
+	[1-4])	promptForParameter $ok;;
+	[yY]*|[nN]*)	continue;;
+	?*)
+	    echo ""
+	    echo "\"y\", \"yes\", or <RETURN> accepts the displayed parameters."
+	    echo "A number lets you change the numbered parameter."
+	    echo ""
+	    ;;
+	esac
+	ok=skip
+    done
+
     STTYCMD=`findApp stty $PATH`
     (dumpTTYFuncs; dumpSTTYFuncs; dumpOtherModemFuncs)>&5
     $RM etc/setup.modem
