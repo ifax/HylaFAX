@@ -120,7 +120,7 @@ main(int argc, char** argv)
                 quote = 1;
             }
             cmdsize = strlen(argv[optind]) + strlen(argv[optind+1]) + 10;
-            cmd = malloc(cmdsize);
+            cmd = (char*) malloc(cmdsize);
             if (quote) {
                 cmdlen = snprintf(cmd, cmdsize, "C%s%s:\"%s\"",
                     isQueuer ? ":" : "", argv[optind], argv[optind+1]);

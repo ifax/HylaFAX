@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <time.h>
 
 #include "config.h"
 #include "port.h"

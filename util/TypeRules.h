@@ -162,7 +162,7 @@ public:
     TypeRule(const TypeRule& other);
     virtual ~TypeRule();
 
-    bool	match(const void*, u_int size, bool verbose = false) const;
+    bool	match(const void*, size_t size, bool verbose = false) const;
     bool	isContinuation() const;
 
     TypeResult	getResult() const;

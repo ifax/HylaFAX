@@ -331,7 +331,7 @@ TextFmt::Copy_Block(off_t b1, off_t b2)
 {
     char buf[16*1024];
     for (off_t k = b1; k <= b2; k += sizeof (buf)) {
-	size_t cc = (size_t) fxmin(sizeof (buf), (unsigned) (b2-k+1));
+	size_t cc = (size_t) fxmin(sizeof (buf), (size_t) (b2-k+1));
 	fseek(tf, (long) k, SEEK_SET);		// position to desired block
 	if (fread(buf, 1, (size_t) cc, tf) != cc)
 	    fatal("Read error during reverse collation: %s", strerror(errno));
