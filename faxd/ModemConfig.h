@@ -144,6 +144,7 @@ public:
     fxStr	class2CIGCmd;		// cmd to set polling identifier
     fxStr	class2SPLCmd;		// cmd to set polling request
     fxStr	class2PTSCmd;		// cmd to set page status
+    fxStr	class2PTSQueryCmd;	// cmd to query page status
     fxStr	class2NFLOCmd;		// cmd to setup no flow control
     fxStr	class2SFLOCmd;		// cmd to setup software flow control
     fxStr	class2HFLOCmd;		// cmd to setup hardware flow control

@@ -321,6 +321,7 @@ Class2PHCTOCmd	string	\s-1AT+FCT=30\s+1	Class 2.0: command to set Phase C timeou
 Class2PIECmd	string	\s-1AT+FIE=0\s+1	Class 2.0: command to set procedure interrupt handling
 Class2PWCmd     string	\s-1AT+FPW\s+1	Class 2.0: set password string
 Class2PTSCmd	string	\s-1AT+FPS\s+1	Class 2.0: command to set received page status
+Class2PTSQueryCmd	string	\s-1AT+FPTS?\s+1	Class 2.0: command to query received page status
 Class2RecvDataTrigger	string	\s-1``\e22''\s+1	Class 2.0: character to send to trigger recv
 Class2RELCmd	string	\-	Class 2.0: command to enable byte-aligned \s-1EOL\s+1 codes
 Class2SACmd     string	\s-1AT+FSA\s+1	Class 2.0: set destination subaddress string
@@ -2214,6 +2215,13 @@ check: see the
 and
 .B MaxConsecutiveBadLines
 parameters to understand how to defeat copy quality checking.
+.TP
+.B Class2PTSQueryCmd
+The command to use to query the received page status code.
+This command may be used to determine the post-page response returned from 
+the receiver.
+Beware that some modems do not properly implement this command
+in which case this setting should be set to ``none''.
 .TP
 .B Class2PWCmd
 A largely unused option for modems supporting ITU-T.32, Class 2.1, 

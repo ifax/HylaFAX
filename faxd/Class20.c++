@@ -51,6 +51,7 @@ Class20Modem::Class20Modem(FaxServer& s, const ModemConfig& c) : Class2Modem(s,c
     setupDefault(cigCmd,	conf.class2CIGCmd,	"AT+FPI");
     setupDefault(splCmd,	conf.class2SPLCmd,	"AT+FSP");
     setupDefault(ptsCmd,	conf.class2PTSCmd,	"AT+FPS");
+    setupDefault(ptsQueryCmd,	conf.class2PTSQueryCmd,	"AT+FPS?");
     setupDefault(minspCmd,	conf.class2MINSPCmd,	"AT+FMS");
 
     setupDefault(noFlowCmd,	conf.class2NFLOCmd,	"AT+FLO=0");
@@ -140,10 +141,11 @@ Class20Modem::sendPage(TIFF* tif, u_int pageChop)
 }
 
 /*
- * Handle the page-end protocol.  Since Class 2.0 returns
- * OK/ERROR according to the post-page response, we don't
- * need to query the modem to get the actual code and
- * instead synthesize codes, ignoring whether or not the
+ * Handle the page-end protocol.  Class 2.0 returns
+ * OK/ERROR according to the post-page response.  We
+ * should query the modem to get the actual code, but
+ * some modems don't support +FPS? and so instead we
+ * synthesize codes, ignoring whether or not the
  * modem does retraining on the next page transfer.
  */
 bool
@@ -158,7 +160,7 @@ Class20Modem::pageDone(u_int ppm, u_int& ppr)
     ppr = 0;            // something invalid
     if (putModemData(eop, sizeof (eop))) {
         for (;;) {
-            switch (atResponse(rbuf, conf.pageDoneTimeout)) {
+	    switch (atResponse(rbuf, conf.pageDoneTimeout)) {
             case AT_FHNG:
                 if (!isNormalHangup()) {
                     return (false);
@@ -166,20 +168,43 @@ Class20Modem::pageDone(u_int ppm, u_int& ppr)
                 ppr = PPR_MCF;
                 return (true);
             case AT_OK:
-            case AT_ERROR:
                 /*
-                 * Despite of the (wrong) comment above,
-                 * we do explicit status query e.g. to
-                 * distinguish between RTN and PIN 
+                 * We do explicit status query e.g. to
+                 * distinguish between MCF, RTP, and PIP.
+		 * If we don't understand the response,
+		 * assume that our query isn't supported.
                  */
                 {
-                    fxStr s;
-                    if(!atQuery("AT+FPS?", s) ||
-                            sscanf(s, "%u", &ppr) != 1) {
-                        protoTrace("MODEM protocol botch (\"%s\"), %s",
-                                (const char*)s, "can not parse PPR");
-                        return (false);     // force termination
-                    }
+		    if (strcasecmp(conf.class2PTSQueryCmd, "none") != 0) {
+			fxStr s;
+			if(!atQuery(conf.class2PTSQueryCmd, s) ||
+			    sscanf(s, "%u", &ppr) != 1) {
+			    protoTrace("MODEM protocol botch (\"%s\"), %s",
+			    (const char*)s, "can not parse PPR");
+			    ppr = PPR_MCF;
+			}
+		    } else
+			ppr = PPR_MCF;	// could be PPR_RTP/PPR_PIP
+                }
+                return (true);
+            case AT_ERROR:
+                /*
+                 * We do explicit status query e.g. to
+                 * distinguish between RTN and PIN 
+		 * If we don't understand the response,
+		 * assume that our query isn't supported.
+                 */
+                {
+		    if (strcasecmp(conf.class2PTSQueryCmd, "none") != 0) {
+			fxStr s;
+			if(!atQuery(conf.class2PTSQueryCmd, s) ||
+			    sscanf(s, "%u", &ppr) != 1) {
+			    protoTrace("MODEM protocol botch (\"%s\"), %s",
+			    (const char*)s, "can not parse PPR");
+			    ppr = PPR_RTN;
+			}
+		    } else
+			ppr = PPR_RTN;	// could be PPR_PIN
                 }
                 return (true);
             case AT_EMPTYLINE:

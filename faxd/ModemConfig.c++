@@ -127,6 +127,7 @@ static const struct {
 { "class2ddiscmd",		&ModemConfig::class2DDISCmd },
 { "class2cigcmd",		&ModemConfig::class2CIGCmd },
 { "class2ptscmd",		&ModemConfig::class2PTSCmd },
+{ "class2ptsquerycmd",		&ModemConfig::class2PTSQueryCmd, "AT+FPS?" },
 { "class2splcmd",		&ModemConfig::class2SPLCmd },
 { "class2piecmd",		&ModemConfig::class2PIECmd },
 { "class2nrcmd",		&ModemConfig::class2NRCmd },

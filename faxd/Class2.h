@@ -50,6 +50,7 @@ protected:
     fxStr	borCmd;			// set bit order command
     fxStr	abortCmd;		// abort session command
     fxStr	ptsCmd;			// set page status command
+    fxStr	ptsQueryCmd;		// query page status command
     fxStr	minspCmd;		// set minimum transmit speed command
     fxStr	apCmd;			// set address&polling caps. command
     fxStr	saCmd;			// set subaddress command

@@ -127,6 +127,7 @@ Class2CIGCmd:		AT+FPI		# set polling identifier command
 Class2NRCmd:		AT+FNR=1,1,1,1	# setup status reporting command
 Class2PIECmd:		AT+FIE=0	# disable interrupt-enable command
 Class2PTSCmd:		AT+FPS		# set post-page status command
+Class2PTSQueryCmd:	AT+FPS?		# set post-page status query command
 Class2SPLCmd:		AT+FSP		# set polling indicator command
 Class2NFLOCmd:		AT+FLO=0	# set no flow control command
 Class2SFLOCmd:		AT+FLO=1	# set software flow control command

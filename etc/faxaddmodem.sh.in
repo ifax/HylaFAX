@@ -1340,6 +1340,7 @@ Class2Parameters="
     Class2PHCTOCmd
     Class2PIECmd
     Class2PTSCmd
+    Class2PTSQueryCmd
     Class2RecvDataTrigger
     Class2RELCmd
     Class2SendRTC
