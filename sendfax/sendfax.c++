@@ -87,7 +87,7 @@ sendFaxApp::run(int argc, char** argv)
     int verbose = 0;
     SendFaxJob& proto = getProtoJob();
     db = new FaxDB(tildeExpand(dbName));
-    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:P:r:s:t:T:x:y:12lmnpvwDENR")) != -1)
+    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:P:r:s:t:T:V:x:y:12lmnpvwDENR")) != -1)
 	switch (c) {
 	case '1':			// restrict to 1D-encoded data
 	    proto.setDesiredDF(0);
@@ -178,6 +178,9 @@ sendFaxApp::run(int argc, char** argv)
 	    setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
 	    SendFaxClient::setVerbose(TRUE);	// type rules & basic operation
 	    FaxClient::setVerbose(verbose > 1);	// protocol tracing
+	    break;
+	case 'V':			// cover sheet: voice number field
+	    proto.setCoverVoiceNumber(optarg);
 	    break;
 	case 'w':			// wait for job to complete
 	    waitForJob = TRUE;
