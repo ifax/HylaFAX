@@ -2628,8 +2628,10 @@ BuildPortDotH()
 	#
 	echo '#define HAS_LOGWTMP 1'
 	Note "... configure use of logwtmp (BSD-style wtmp logging)"
-	AddFuncDecl logwtmp \
-	    'int logwtmp(const char*, const char*, const char*);'
+	CheckForFuncDecl logwtmp utmp.h || {
+	    AddFuncDecl logwtmp \
+		'int logwtmp(const char*, const char*, const char*);'
+	}
 	CheckForLibrary logout -lutil && {
 	    echo '#define HAS_LOGOUT 1'
 	    Note "... configure use of logout (BSD-style utmp support)"
