@@ -1120,7 +1120,7 @@ however, one probably will suit a user's needs better than others.
 Class 1 relies on HylaFAX to perform the bulk of the fax protocol.
 Class 2 relies on the modem to perform the bulk of the fax protocol.
 Class 2.0 is similar to Class 2 but may include more features.
-Class 1.0 is similar to Class 1 but adds V.34-fax capability.
+Class 1.0 is similar to Class 1 but may add V.34-fax capability.
 Class 2.1 is similar to Class 2.0 but adds V.34-fax capability.
       
 HylaFAX generally will have more features when using Class 1/1.0 than
