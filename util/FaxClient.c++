@@ -1639,6 +1639,7 @@ void FaxClient::getJobStatusHeader(fxStr& header)
  * queue status listings returned by the server.
  */
 const FaxClient::FaxFmtHeader FaxClient::recvFormats[] = {
+    { 'Y',	"Date       Time" },	// Y (date & time)
     { 'a',	"SUB" },	// a (subaddress)
     { 'b',	"BR" },		// b (bitrate)
     { 'd',	"DF" },		// d (data format)
