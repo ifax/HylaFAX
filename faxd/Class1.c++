@@ -469,8 +469,8 @@ Class1Modem::renegotiatePrimary(bool constrain)
     buf[size++] = DLE;
     if (constrain) {
 	// don't neotiate a faster rate
-	if (primaryV34Rate == 1) buf[size++] = 0x70;	// 2400 bit/s
-	else buf[size++] = primaryV34Rate + 0x6E;	// drop 2400 bit/s
+	if (primaryV34Rate == 1 || primaryV34Rate == 2) buf[size++] = 0x70;	// 2400 bit/s
+	else buf[size++] = primaryV34Rate + 0x6D;	// drop 4800 bit/s
 	buf[size++] = DLE;
     }
     buf[size++] = 0x6C;					// <DLE><pph>
