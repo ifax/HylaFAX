@@ -90,22 +90,50 @@ fxStr::fxStr(const fxTempStr& t)
 
 fxStr::fxStr(int a, const char * format)
 {
-    fxStr((const fxStr&)fxStr::format((format) ? format : "%d", a));
+    fxStr s = fxStr::format((format) ? format : "%d", a);
+    slength = s.slength;
+    if (slength > 1) {
+        data = (char*) malloc(slength);
+        memcpy(data, s.data, slength);
+    } else {
+        data = &emptyString;
+    }
 }
 
 fxStr::fxStr(long a, const char * format)
 {
-    fxStr((const fxStr&)fxStr::format((format) ? format : "%ld", a));
+    fxStr s = fxStr::format((format) ? format : "%ld", a);
+    slength = s.slength;
+    if (slength > 1) {
+        data = (char*) malloc(slength);
+        memcpy(data, s.data, slength);
+    } else {
+        data = &emptyString;
+    }
 }
 
 fxStr::fxStr(float a, const char * format)
 {
-    fxStr((const fxStr&)fxStr::format((format) ? format : "%g", a));
+    fxStr s = fxStr::format((format) ? format : "%g", a);
+    slength = s.slength;
+    if (slength > 1) {
+        data = (char*) malloc(slength);
+        memcpy(data, s.data, slength);
+    } else {
+        data = &emptyString;
+    }
 }
 
 fxStr::fxStr(double a, const char * format)
 {
-    fxStr((const fxStr&)fxStr::format((format) ? format : "%lg", a));
+    fxStr s = fxStr::format((format) ? format : "%lg", a);
+    slength = s.slength;
+    if (slength > 1) {
+        data = (char*) malloc(slength);
+        memcpy(data, s.data, slength);
+    } else {
+        data = &emptyString;
+    }
 }
 
 fxStr::~fxStr()
