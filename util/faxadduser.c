@@ -58,15 +58,19 @@ main(int argc, char** argv)
     char* hostfile = FAX_SPOOLDIR "/" FAX_PERMFILE;
     char* password = NULL;
     char* adminword = NULL;
+    char* hostname = NULL;
     int uid = FAX_DEFAULT_UID;
     
-    while ((c = getopt(argc, argv, "a:f:p:u:")) != -1) {
+    while ((c = getopt(argc, argv, "a:f:h:p:u:")) != -1) {
         switch (c) {
         case 'a':
             adminword = optarg;
             break;
         case 'f':
             hostfile = optarg;
+            break;
+        case 'h':
+            hostname = optarg;
             break;
         case 'p':
             password = optarg;
@@ -88,7 +92,8 @@ main(int argc, char** argv)
     }
     srand(time(NULL));
     while (optind < argc) {
-        fprintf(hf, "%s", argv[optind++]);
+        fprintf(hf, "^%s@", argv[optind++]);
+	if (hostname != NULL) fprintf(hf, "%s$", hostname);
         if (uid != FAX_DEFAULT_UID) {
             fprintf(hf, ":%i", uid);
         } else if (password != NULL || adminword != NULL) {

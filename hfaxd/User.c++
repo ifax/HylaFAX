@@ -136,16 +136,26 @@ HylaFAXServer::checkuser(FILE* db, const char* name)
 	 * must supply.  The next field is the password that
 	 * must be presented to gain administrative privileges.
 	 *
+	 * If the regex is a single word (no @ sign), we take it
+	 * as a host only short form for (^.*@<input>$)
+	 *
 	 * If the first character of the <regex> is a ``!''
 	 * then the line specifies user(s) to disallow; a match
 	 * causes the user to be rejected w/o a password prompt.
 	 * This facility is mainly for backwards compatibility.
 	 */
 	char* cp;
+	bool userandhost = false;
 	for (cp = line; *cp && *cp != ':'; cp++)
-	    ;
+	    if (*cp == '@') userandhost = true;
+
 	const char* base = &line[line[0] == '!'];
-	RE pat(base, cp-base);
+	fxStr pattern(base, cp-base);
+	if (! userandhost) {
+	    pattern.insert("^.*@");
+	    pattern.append("$");
+	}
+	RE pat(pattern);
 	if (line[0] == '!') {		// disallow access on match
 	    if (pat.Find(dotform) || pat.Find(hostform))
 		return (false);

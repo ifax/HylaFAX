@@ -177,16 +177,14 @@ InetFaxServer::isLocalDomain(const fxStr& h)
 /*
  * Check host identity returned by gethostbyaddr to
  * weed out clients trying to spoof us (this is mostly
- * a sanity check; it's still trivial to spoof).
- * If the name returned by gethostbyaddr is in our domain,
- * look up the name and check that the peer's address
+ * a sanity check; if they have full control of DNS
+ * they can still spoof)
+ * Look up the name and check that the peer's address
  * corresponds to the host name.
  */
 bool
 InetFaxServer::checkHostIdentity(hostent*& hp)
 {
-    if (!isLocalDomain(hp->h_name))		// not local, don't check
-	return (true);
     fxStr name(hp->h_name);			// must copy static value
     hp = Socket::gethostbyname(name);
     if (hp) {

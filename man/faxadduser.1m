@@ -39,6 +39,9 @@ faxadduser \- add a fax user to the permissions file
 .B \-f
 .I permissions file
 ] [
+.B \-h
+.I host name
+] [
 .B \-p
 .I password
 ] [
@@ -60,6 +63,9 @@ Password for the user to gain admin privileges.
 .TP 10
 .BI \-f " permissions-file"
 Use a permissions file other than the default.
+.TP 10
+.BI \-h " host name"
+Authenticate user from this host only.
 .TP 10
 .BI \-p " password"
 Password for the user to access fax services.
