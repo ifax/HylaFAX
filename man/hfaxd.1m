@@ -323,7 +323,7 @@ directive while
 .SH "CLIENT ACCESS CONTROL"
 .I hfaxd
 controls client access according to the information in the file
-.BR etc/hosts.hfaxd .
+.BR ${SPOOL}/etc/hosts.hfaxd .
 This file defines the set of users and machines that may receive
 service and, optionally, defines password challenges to use in
 authenticating clients.
@@ -362,7 +362,7 @@ configuration file: absolute pathnames relative to the root of the
 spooling should be used to specify filenames.
 .SH "SERVER ACCESS CONTROL"
 The file
-.BR etc/shutdown ,
+.BR ${SPOOL}/etc/shutdown ,
 when present, specifies when to restrict access to a server machine.
 When this file is present and contains valid information
 .I hfaxd
@@ -395,7 +395,7 @@ The following configuration parameters are recognized; items marked
 ``(\s-1SNPP\s+1)'' are used only by the \s-1SNPP\s+1 support.
 .sp .5
 .nf
-.ta \w'MaxConsecutiveBadCmds    'u +\w'integer    'u +\w'\s-1/etc/clientlog\s+1    'u
+.ta \w'MaxConsecutiveBadCmds    'u +\w'integer    'u +\w'\s-1${SPOOL}/etc/clientlog\s+1    'u
 \fBTag	Type	Default	Description\fP
 FaxContact	string	\s-1\fIsee below\fP\s+1	contact address to show in help text
 FileFmt	string	\s-1\fIsee below\fP\s+1	format string for file status results
@@ -409,14 +409,14 @@ MaxIdleTimeout	integer	\s-17200\s+1	maximum client idle timeout permitted
 MaxLoginAttempts	integer	\s-15\s+1	maximum login attempts before disconnecting
 MaxMsgLength	integer	128	maximum pager message length (\s-1SNPP\s+1)
 ModemFmt	string	\s-1\fIsee below\fP\s+1	format string for modem status results
-PagerIDMapFile	string	\s-1/etc/pagermap\s+1	name of file for mapping pager IDs (\s-1SNPP\s+1)
+PagerIDMapFile	string	\s-1${SPOOL}/etc/pagermap\s+1	name of file for mapping pager IDs (\s-1SNPP\s+1)
 PriorityMap	string	\s-1\fIsee below\fP\s+1	mapping from service level to job priority (\s-1SNPP\s+1)
 RcvFmt	string	\s-1\fIsee below\fP\s+1	format string for received facsimile status results
 RetryTimeMap	string	\s-1\fIsee below\fP\s+1	mapping from service level to job retry time (\s-1SNPP\s+1)
 ServerTracing	integer	\s-11\s+1	server tracing control vector
-ShutdownFile	string	\s-1/etc/shutdown\s+1	name of shutdown control file
-UserAccessFile	string	\s-1/etc/hosts.hfaxd\s+1	name of access control file
-XferLogFile	string	\s-1/etc/clientlog\s+1	name of file for logging client data transfers
+ShutdownFile	string	\s-1${SPOOL}/etc/shutdown\s+1	name of shutdown control file
+UserAccessFile	string	\s-1${SPOOL}/etc/hosts.hfaxd\s+1	name of access control file
+XferLogFile	string	\s-1${SPOOL}/etc/clientlog\s+1	name of file for logging client data transfers
 .fi
 .PP
 The configuration parameters are explained below:

@@ -146,8 +146,8 @@ ${SPOOL}	spooling area
 ${SPOOL}/etc/lastrun	timestamp of last run
 ${SBIN}/xferfaxstats	for generating transmit statistics
 ${SBIN}/recvstats	for generating receive statistics
-/tmp/faxcronXXXX	temporary file for truncating session logs
-/tmp/faxlogXXXX	temporary file for logs of failed calls
+${SPOOL}/tmp/faxcronXXXX	temporary file for truncating session logs
+${SPOOL}/tmp/faxlogXXXX	temporary file for logs of failed calls
 .fi
 .SH "SEE ALSO"
 .IR cron (${MANNUM1_8}),

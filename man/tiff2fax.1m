@@ -90,8 +90,8 @@ in lines/inch, at which to image the \*(Ps.
 .nf
 ${SBIN}/tiffcheck	\*(Tf file conversion examiner
 ${SPOOL}/bin/ps2fax	\*(Ps \s-1RIP\s+1 for doing complicated conversions
-/usr/local/bin/tiffcp	for converting compression schemes
-/usr/local/bin/tiff2ps	for colorspace and/or image size conversions
+${TIFFBIN}/tiffcp	for converting compression schemes
+${TIFFBIN}/tiff2ps	for colorspace and/or image size conversions
 .fi
 .SH BUGS
 Conversions that require re-imaging and resizing may result in
