@@ -57,7 +57,7 @@ extern "C" {
 #endif
 
 /* === regerror.c === */
-static char *regatoi(const regex_t *preg, char *localbuf);
+static char *regatoi(const regex_t *preg, char *localbuf, size_t buflen);
 
 #ifdef __cplusplus
 }
@@ -126,7 +126,7 @@ size_t errbuf_size;
 	char convbuf[50];
 
 	if (errcode == REG_ATOI)
-		s = regatoi(preg, convbuf);
+		s = regatoi(preg, convbuf, sizeof(convbuf));
 	else {
 		for (r = rerrs; r->code != 0; r++)
 			if (r->code == target)
@@ -136,7 +136,7 @@ size_t errbuf_size;
 			if (r->code != 0)
 				(void) strcpy(convbuf, r->name);
 			else
-				sprintf(convbuf, "REG_0x%x", target);
+				snprintf(convbuf, sizeof(convbuf), "REG_0x%x", target);
 			assert(strlen(convbuf) < sizeof(convbuf));
 			s = convbuf;
 		} else
@@ -158,12 +158,13 @@ size_t errbuf_size;
 
 /*
  - regatoi - internal routine to implement REG_ATOI
- == static char *regatoi(const regex_t *preg, char *localbuf);
+ == static char *regatoi(const regex_t *preg, char *localbuf, size_t buflen);
  */
 static char *
-regatoi(preg, localbuf)
+regatoi(preg, localbuf, buflen)
 const regex_t *preg;
 char *localbuf;
+size_t buflen;
 {
 	register struct rerr *r;
 
@@ -173,6 +174,6 @@ char *localbuf;
 	if (r->code == 0)
 		return("0");
 
-	sprintf(localbuf, "%d", r->code);
+	snprintf(localbuf, buflen, "%d", r->code);
 	return(localbuf);
 }
