@@ -1006,7 +1006,7 @@ configureClass2Modem()
 #
 configureClass2dot0Modem()
 {
-    if [ "$ModemType" == "Class2.1" ]; then
+    if [ "$ModemType" = "Class2.1" ]; then
 	echo "Hmm, this looks like a Class 2.1 modem."
 	MATCHSTR=CLASS2.1
 	ATSTR=AT+FCLASS=2.1
