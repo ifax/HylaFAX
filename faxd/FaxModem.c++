@@ -548,9 +548,9 @@ FaxModem::supportsPageLength(u_int l) const
 FaxParams
 FaxModem::modemDIS() const
 {
-    FaxParams dis(modemParams);
-
-    return dis;
+    Class2Params tmp(modemParams);
+    tmp.update();
+    return tmp;
 }
 
 /*
