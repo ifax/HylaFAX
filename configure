@@ -2575,6 +2575,10 @@ BuildPortDotH()
     CheckStdio pclose 'extern int pclose(FILE*);'
     CheckStdio fdopen 'extern FILE* fdopen(int, const char*);'
     CheckStdio snprintf 'extern int snprintf(char*, size_t, const char*,...);'
+    CheckForFuncDecl vsnprintf stdio.h || {
+	echo '#include <stdarg.h>'
+	AddFuncDecl vsnprintf 'extern void vsnprintf(char*, size_t, const char*, va_list);'
+    }
     CheckForDefine fileno stdio.h || {
 	CheckStdio fileno 'extern int fileno(FILE*);'
     }
@@ -2899,9 +2903,11 @@ FUNCS="
     setegid
     seteuid
     setvbuf
+    snprintf
     strcasecmp
     strtod
     strtoul
+    vsnprintf
     writev
 "
 

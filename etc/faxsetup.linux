@@ -32,6 +32,15 @@
 
 addPasswd()
 {
+    # We're probably creating a user with the same uid as another,
+    # so we need to use 'useradd -o' if available.  Also, some
+    # useradds copy a number of "dot" files when creating the home
+    # directory, so if available, '-M' prevents that, and if it is
+    # an invalid option, then simply not using '-m' will usually 
+    # do the trick.  We have to watch the exit status of this script,
+    # so, the last command run should have somthing to do with the valid
+    # creation of the "fax" user.
+
     if [ -z "`useradd 2>&1 | grep -- -o`" ]; then
         # useradd does *not* support the -o option
         useradd -c 'Facsimile Agent' -d $4 -s /bin/false $1;
