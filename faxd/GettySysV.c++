@@ -30,7 +30,6 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 extern "C" {
-#include <utmp.h>
 #if HAS_UTMPX
 #if !HAS_EXIT_STATUS
 /* workaround SVR4.0.3 header braindamage */
@@ -39,7 +38,9 @@ struct exit_status {
 	short e_exit;           /* Process exit status */
 };
 #endif /* !HAS_EXIT_STATUS */
+#define __USE_GNU
 #include <utmpx.h>
+#undef __USE_GNU
 
 #define utmp          utmpx
 #undef  ut_time
@@ -51,6 +52,8 @@ struct exit_status {
 #define pututline     pututxline
 #define setutent      setutxent
 #define endutent      endutxent
+#else
+#include <utmp.h>
 #endif	/* HAS_UTMPX */
 }
 
@@ -169,7 +172,9 @@ SysVGetty::loginAccount()
     ut.ut_exit.e_exit = 0;
     ut.ut_exit.e_termination = 0;
 #endif
-    ut.ut_time = Sys::now();
+//    ut.ut_time = Sys::now();
+    ut.ut_tv.tv_sec = Sys::now();
+    ut.ut_tv.tv_usec = 0;
     // mark utmp entry as a login
     strncpy(ut.ut_user, "LOGIN", sizeof (ut.ut_user));
     /*
@@ -212,7 +217,9 @@ SysVGetty::hangup()
 	ut->ut_exit.e_exit = (exitStatus >> 8) & 0xff;		// XXX
 	ut->ut_exit.e_termination = exitStatus & 0xff;		// XXX
 #endif
-	ut->ut_time = Sys::now();
+//	ut->ut_time = Sys::now();
+	ut->ut_tv.tv_sec = Sys::now();
+	ut->ut_tv.tv_usec = 0;
 	pututline(ut);
 	writeWtmp(ut);
 	break;

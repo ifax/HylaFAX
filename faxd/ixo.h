@@ -41,7 +41,7 @@
 #define	IXO_LOGINTIMEOUT	15	// timeout on login response
 #define	IXO_GATIMEOUT		30	// timeout waiting for go-ahead msg
 #define	IXO_XMITRETRIES		3	// 3 attempts to send message block
-#define	IXO_XMITTIMEOUT		15	// timeout for message block xmit resp
+#define	IXO_XMITTIMEOUT		45	// timeout for message block xmit resp
 #define	IXO_ACKTIMEOUT		30	// timeout waiting for transaction ack
 
 #define STX	02

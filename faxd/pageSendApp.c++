@@ -416,8 +416,8 @@ pageSendApp::getResponse(fxStackBuffer& buf, long secs)
 	int c = getModemChar(0);
 	if (c == EOF)
 	    break;
-	if (c == '\r') {
-	    if (buf.getLength() > 0)		// discard leading \r's
+	if (c == '\r' || c == '\003') {
+	    if (buf.getLength() > 0)		// discard leading \r's or ETX
 		break;
 	} else if (c != '\n')			// discard all \n's
 	    buf.put(c);

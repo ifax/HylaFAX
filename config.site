@@ -89,7 +89,7 @@
 #PAGESIZE="North American Letter"	# default page size
 #SYSGID="sys"				# group ID for system installs
 #SYSUID="bin"				# user ID for system installs
-#LOCKS="ansi"				# default UUCP lockfile scheme
+#LOCKS="ascii"				# default UUCP lockfile scheme
 #
 #PATH_GETTY="/etc/getty"		# pathname of suitable getty program
 #PATH_VGETTY="/bin/vgetty"		# pathname of voice getty program
