@@ -178,7 +178,7 @@ fxStr::vformat(const char* fmt, va_list ap)
     fxStr s;
     s.data = (char*)malloc(size);
     int len = vsnprintf(s.data, size, fmt, ap);
-    fxAssert(len < 0 || len >= size, "Str:vformat() Have truncated string.");
+    fxAssert(len >= 0 && len < size, "Str:vformat() Have truncated string.");
     if (size > len + 1) {
         s.data = (char*) realloc(s.data, len + 1);
     }
