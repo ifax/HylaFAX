@@ -82,7 +82,6 @@ IS_ON=/etc/chkconfig		# NB: chkconfig is IRIX- and Linux-specific
 FAXQ=$SBIN/faxq
 HFAXD=$LIBEXEC/hfaxd
 FAXQUIT=$SBIN/faxquit
-KILLALL=/sbin/killall
 FAXPORT=hylafax			# designated port for new protocol
 SNPPPORT=444			# official port for SNPP
 
@@ -130,17 +129,11 @@ fi
 #
 # killall -SIGNAL process-name
 #
-# Emulate the necessary functionality if the
-# killall program doesn't do the expected...
+# Emulate the necessary functionality of the
+# killall program
 #
-if ($KILLALL -l >/dev/null) 2>/dev/null; then
-    killall()
-    {
-	$KILLALL $1 $2
-    }
-else
-    killall()
-    {
+killall()
+{
 	# NB: ps ax should give an error on System V, so we try it first!
 	pid="`ps ax 2>/dev/null | $AWK \"\
 		/[\/ (]$2[ )]/	{print \\$1;}
@@ -148,8 +141,7 @@ else
 	test "$pid" ||
 	    pid="`ps -e 2>/dev/null | $AWK \"/ $2[ ]*\$/ {print \\$1;}\"`"
 	test "$pid" && kill $1 $pid; return
-    }
-fi
+}
 
 case $1 in
 'start')
