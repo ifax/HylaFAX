@@ -38,7 +38,11 @@
 #define HALFDAY		(12 * HOUR)	// half a day (12 hours)
 #define FULLDAY		(24 * HOUR)	// a full day (24 hours)
 
-#define	isLeapYear(y)	(((y) % 4) == 0 && ((y) % 100) != 0 || ((y) % 400) == 0)
+static int
+isLeapYear(const tm& at) {
+    int y = at.tm_year + TM_YEAR_BASE;
+    return ((y % 4) == 0 && (y % 100) != 0 || (y % 400) == 0);
+}
 
 #ifdef streq
 #undef streq
@@ -295,7 +299,7 @@ static void
 adjustYDay(struct tm& t)
 {
     // adjust year day according to month
-    const u_int* days = daysInMonth[isLeapYear(t.tm_year)];
+    const u_int* days = daysInMonth[isLeapYear(t)];
     t.tm_yday = t.tm_mday;
     for (u_int i = 0; i < t.tm_mon; i++)
 	t.tm_yday += days[i];
@@ -344,7 +348,7 @@ parseMonthAndYear(const char*& cp, const struct tm& ref, struct tm& at, fxStr& e
 	    adjustYDay(at);
 	}
     }
-    const u_int* days = daysInMonth[isLeapYear(at.tm_year)];
+    const u_int* days = daysInMonth[isLeapYear(at)];
     if (at.tm_mday > days[at.tm_mon]) {
 	_atError(emsg, "Invalid day of month, %s has only %u days",
 	    months[at.tm_mon], days[at.tm_mon]);
@@ -412,7 +416,7 @@ fixup(struct tm& at)
     fxBool leap;
     int daysinyear;
     for (;;) {
-	leap = isLeapYear(at.tm_year);
+	leap = isLeapYear(at);
 	daysinyear = leap ? 366 : 365;
 	if (at.tm_yday < daysinyear)
 	    break;
@@ -429,8 +433,12 @@ fixup(struct tm& at)
     at.tm_mday++;			// NB: [1..31]
 
     int eday = at.tm_yday;
-    for (u_int year = EPOCH_YEAR - TM_YEAR_BASE; year < at.tm_year; year++)
-	eday += isLeapYear(year) ? 366 : 365;
+    tm temp;
+    temp.tm_year = EPOCH_YEAR - TM_YEAR_BASE;
+    while (temp.tm_year < at.tm_year) {
+        eday += isLeapYear(temp) ? 366 : 365;
+        temp.tm_year++;
+    }
     at.tm_wday = (EPOCH_WDAY + eday) % DAYSPERWEEK;
 }
 
