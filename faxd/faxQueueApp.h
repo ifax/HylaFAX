@@ -154,7 +154,7 @@ private:
     fxStr	canonicalizePhoneNumber(const fxStr& ds);
 // modem support
     void	scanForModems();
-    bool	assignModem(Job& job);
+    bool	assignModem(Job& job, const DestControlInfo&);
     void	releaseModem(Job& job);
     void	notifyModemWedged(Modem&);
     void	pollForModemLock(Modem& modem);

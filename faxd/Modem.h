@@ -107,7 +107,7 @@ public:
 
     static Modem& getModemByID(const fxStr& id);
     static Modem* modemExists(const fxStr& id);
-    static Modem* findModem(const Job& job);
+    static Modem* findModem(const Job& job, const DestControlInfo& dci);
 
     bool assign(Job&);		// assign modem
     void release();			// release modem

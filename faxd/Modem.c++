@@ -136,39 +136,62 @@ Modem::isCapable(const Job& job) const
  * work associated with the specified job.
  */
 Modem*
-Modem::findModem(const Job& job)
+Modem::findModem(const Job& job, const DestControlInfo& dci)
 {
     RegEx* c = ModemGroup::find(job.device);
     if (c) {
+	const fxStr& mdci = dci.getModem();
+	RegEx* cdci = mdci != "" ? ModemGroup::find(mdci) : NULL;
+	int loops = 2;
+
 	/*
-	 * Job is assigned to a class of modems; search
-	 * the set of modems in the class according to
-	 * the order specified (if any order is specified).
+	 * At first try to find modem strictly (suitable to job and destination rules)
+	 * Then try to find modem not strictly (suitable to job rules only)
 	 */
-	for (ModemIter iter(list); iter.notDone(); iter++) {
-	    Modem& modem = iter;
-	    if (modem.getState() != Modem::READY)
-		continue;
-	    if (c->Find(modem.devID) && modem.isCapable(job)) {
 
-		/*
-		 * Move modem to the end of the priority group
-		 */
-
-		modem.remove();
-
-		if (!list.isEmpty()) {
-		    ModemIter iter(list);
-
-		    for ( ; iter.notDone(); iter++) {
-			if (iter.modem().priority > modem.priority)
-			    break;
+	for (int i = 0 ; i < loops ; i++) {
+	    /*
+	     * Job is assigned to a class of modems; search
+	     * the set of modems in the class according to
+	     * the order specified (if any order is specified).
+	     */
+	    for (ModemIter iter(list); iter.notDone(); iter++) {
+		Modem& modem = iter;
+		if (c->Find(modem.devID) && modem.isCapable(job)) {
+		    if (i == 0) {
+			if (cdci) {			// destination assigned to a class of modems
+			    if (!cdci->Find(modem.devID))
+				continue;
+			} else if (mdci != "") {	// destination assigned to an explicit modem
+			    if (mdci != modem.devID)
+				continue;
+			}
+			loops = 1;			// there is a strictly suitable modem
 		    }
-		    modem.insert(iter.modem());
-		} else
-		    modem.insert(list);
 
-		return (&modem);
+		    if (modem.getState() != Modem::READY) {
+			continue;
+		    }
+
+		    /*
+		     * Move modem to the end of the priority group
+		     */
+
+		    modem.remove();
+
+		    if (!list.isEmpty()) {
+			ModemIter iter(list);
+
+			for ( ; iter.notDone(); iter++) {
+			    if (iter.modem().priority > modem.priority)
+				break;
+			}
+			modem.insert(iter.modem());
+		    } else
+			modem.insert(list);
+
+		    return (&modem);
+		}
 	    }
 	}
     } else {

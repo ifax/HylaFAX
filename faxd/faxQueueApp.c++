@@ -2099,7 +2099,7 @@ faxQueueApp::runScheduler()
 		job.remove();			// remove from run queue
 		delayJob(job, *req, "Delayed by time-of-day restrictions", tts);
 		delete req;
-	    } else if (assignModem(job)) {
+	    } else if (assignModem(job, dci)) {
 		job.remove();			// remove from run queue
 		/*
 		 * We have a modem and have assigned it to the
@@ -2143,14 +2143,14 @@ faxQueueApp::runScheduler()
  * use from faxgetty processes.
  */
 bool
-faxQueueApp::assignModem(Job& job)
+faxQueueApp::assignModem(Job& job, const DestControlInfo& dci)
 {
     fxAssert(job.modem == NULL, "Assigning modem to job that already has one");
 
     bool retryModemLookup;
     do {
 	retryModemLookup = false;
-	Modem* modem = Modem::findModem(job);
+	Modem* modem = Modem::findModem(job, dci);
 	if (modem) {
 	    if (modem->assign(job)) {
 		Trigger::post(Trigger::MODEM_ASSIGN, *modem);

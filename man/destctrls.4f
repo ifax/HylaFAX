@@ -91,9 +91,31 @@ MaxConcurrentJobs	integer	\s-11\s+1	max concurrent jobs to process for a destina
 MaxDials	integer	\s-1\fIunlimited\fP\s+1	max phone calls to make to transmit a job
 MaxSendPages	integer	\s-1\fIunlimited\fP\s+1	max pages to permit in a send
 MaxTries	integer	\s-13\s+1	max attempts to transmit a job
+Modem	string	\s-1Any\s+1	ModemGroup to use for destination
 RejectNotice	string	\-	rejection notice for transmit job
 TimeOfDay	string	\s-1Any\s+1	default time-of-day restrictions
 .fi
+.PP
+The
+.B Modem
+parameter controls which
+.B ModemGroup
+is used in sending faxes to the destination.  If the user
+assigns a
+.B ModemGroup
+for a specific job where all modems are outside of this
+.B ModemGroup
+matching a destination, then the value of
+.B Modem
+is overridden by the user's assignment.  Likewise, if the user
+assigns a
+.B ModemGroup
+for a specific job where some, but not all, of the modems are
+included in this
+.B ModemGroup
+matching a destination, then the value of
+.B Modem
+is overridden by the inclusive set of modems found in both.
 .PP
 The
 .B RejectNotice

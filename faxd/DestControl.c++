@@ -47,6 +47,7 @@ DestControlInfo::DestControlInfo(const char* re) : pattern(re)	{ defined = 0; }
 DestControlInfo::DestControlInfo(const DestControlInfo& other)
     : pattern(other.pattern)
     , rejectNotice(other.rejectNotice)
+    , modem(other.modem)
     , tod(other.tod)
     , args(other.args)
 {
@@ -68,6 +69,8 @@ DestControlInfo::parseEntry(const char* tag, const char* value)
 {
     if (streq(tag, "rejectnotice")) {
 	rejectNotice = value;
+    } else if (streq(tag, "modem")) {
+	modem = value;
     } else if (streq(tag, "maxconcurrentjobs")) {
 	maxConcurrentJobs = getNumber(value);
 	setDefined(DCI_MAXCONCURRENTJOBS);
@@ -128,6 +131,12 @@ const fxStr&
 DestControlInfo::getRejectNotice() const
 {
     return rejectNotice;
+}
+
+const fxStr&
+DestControlInfo::getModem() const
+{
+    return modem;
 }
 
 time_t

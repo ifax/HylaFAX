@@ -47,6 +47,7 @@ private:
     u_int	maxDials;		// max times to dial the phone
     u_int	maxTries;		// max transmit attempts
     fxStr	rejectNotice;		// if set, reject w/ this notice
+    fxStr	modem;			// if set, try with it
     TimeOfDay	tod;			// time of day restrictions
     fxStr	args;			// arguments for subprocesses
 
@@ -68,6 +69,7 @@ public:
     u_int getMaxDials() const;
     u_int getMaxTries() const;
     const fxStr& getRejectNotice() const;
+    const fxStr& getModem() const;
     time_t nextTimeToSend(time_t) const;
     const fxStr& getArgs() const;
 };
