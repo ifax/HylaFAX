@@ -274,7 +274,6 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    tracePPR("SEND recv", ppr);
 	    switch (ppr) {
 	    case FCF_RTP:		// ack, continue after retraining
-            ignore:
 		params.br = (u_int) -1;	// force retraining above
 		/* fall thru... */
 	    case FCF_MCF:		// ack confirmation
@@ -307,8 +306,31 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    case FCF_RTN:		// nak, retry after retraining
                 switch( conf.rtnHandling ){
                 case RTN_IGNORE:
-                    goto ignore; // ignore error and try to send next page
-                                 // after retraining
+			// ignore error and try to send next page
+			// after retraining
+		    params.br = (u_int) -1;	// force retraining above
+		    countPage();		// bump page count
+		    notifyPageSent(tif);	// update server
+		    if (pph[2] == 'Z')
+			pph.remove(0,2+5+1);// discard page-chop+handling info
+		    else
+			pph.remove(0,3);	// discard page-handling info
+		    ntrys = 0;
+		    if (ppr == FCF_PIP) {
+			emsg = "Procedure interrupt (operator intervention)";
+			return (send_failed);
+		    }
+		    if (morePages) {
+			if (!TIFFReadDirectory(tif)) {
+			    emsg = "Problem reading document directory";
+			    return (send_failed);
+			}
+			FaxSendStatus status =
+			    sendSetupParams(tif, next, info, emsg);
+			if (status != send_ok)
+			    return (status);
+		    }
+		    break;
                 case RTN_GIVEUP:
                     emsg = "Unable to transmit page"
                         " (giving up after RTN)";
