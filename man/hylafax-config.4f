@@ -824,7 +824,8 @@ a round-robin fashion.
 .TP
 .B NoCarrierRetrys
 The number of times to redial a phone number after receiving
-a ``\s-1NO CARRIER\s+1'' result code.
+a ``\s-1NO CARRIER\s+1'' result code when the number has not
+been successfully dialed before.
 In normal operation the fax server will treat this result code
 to mean that a facsimile modem/machine did not answer the
 phone and reject the transmit job.
