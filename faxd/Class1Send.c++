@@ -113,7 +113,7 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg)
 	    do {
 		switch (frame.getRawFCF()) {
 		case FCF_NSF:
-                    recvNSF(NSF(frame.getFrameData(), frame.getFrameDataLength(), frameRev));
+                    recvNSF(NSF(frame.getFrameData(), frame.getFrameDataLength()-1, frameRev));
 		    break;
 		case FCF_CSI:
 		    { fxStr csi; recvCSI(decodeTSI(csi, frame)); }

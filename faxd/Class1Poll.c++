@@ -27,6 +27,7 @@
 #include "ModemConfig.h"
 #include "HDLCFrame.h"
 #include "t.30.h"
+#include "config.h"
 
 bool
 Class1Modem::requestToPoll(fxStr&)
@@ -63,6 +64,7 @@ Class1Modem::pollBegin(const fxStr& cig0,
 	recvIdentification(
 	    (send&DIS_PWD ? FCF_PPW : 0), pwd,
 	    (send&DIS_SEP ? FCF_SEP : 0), sep,
+	    0, fxStr::null,
 	    FCF_CIG, cig,
 	    FCF_DTC, dtc, dtc_xinfo,
 	    conf.t1Timer, emsg);

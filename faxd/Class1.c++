@@ -288,6 +288,22 @@ Class1Modem::encodeTSI(fxStr& binary, const fxStr& ascii)
 }
 
 /*
+ * Encode an NSF string for transmission.
+ */
+void
+Class1Modem::encodeNSF(fxStr& binary, const fxStr& ascii)
+{
+    u_int i, j;
+    u_int n = ascii.length();
+    binary.resize(n);
+    for (i = 0, j = 0; i < n; i++) {
+	char c = ascii[i];
+	if (isprint(c) || c == ' ')
+	    binary[j++] = frameRev[c];
+    }
+}
+
+/*
  * Do the inverse of encodeTSI; i.e. convert a binary
  * string of encoded digits into the equivalent ascii.
  * Note that as above (and per the spec) bytes are
@@ -593,6 +609,21 @@ Class1Modem::sendFrame(u_char fcf, const fxStr& tsi, bool lastFrame)
     return (sendRawFrame(frame));
 }
 
+/*
+ * Send a frame with NSF.
+ */
+bool
+Class1Modem::sendFrame(u_char fcf, const u_char* code, const fxStr& nsf, bool lastFrame)
+{
+    HDLCFrame frame(conf.class1FrameOverhead);
+    frame.put(0xff);
+    frame.put(lastFrame ? 0xc8 : 0xc0);
+    frame.put(fcf);
+    frame.put(code, 3);		// should be in LSBMSB already
+    frame.put((const u_char*)(const char*)nsf, nsf.length());
+    return (sendRawFrame(frame));
+}
+
 bool
 Class1Modem::transmitFrame(u_char fcf, bool lastFrame)
 {
@@ -630,6 +661,18 @@ Class1Modem::transmitFrame(u_char fcf, const fxStr& tsi, bool lastFrame)
 	atCmd(thCmd, AT_NOTHING) &&
 	atResponse(rbuf, 0) == AT_CONNECT &&
 	sendFrame(fcf, tsi, lastFrame);
+    stopTimeout("sending HDLC frame");
+    return (frameSent);
+}
+
+bool
+Class1Modem::transmitFrame(u_char fcf, const u_char* code, const fxStr& nsf, bool lastFrame)
+{
+    startTimeout(3000);			// give more time than others
+    bool frameSent =
+	atCmd(thCmd, AT_NOTHING) &&
+	atResponse(rbuf, 0) == AT_CONNECT &&
+	sendFrame(fcf, code, nsf, lastFrame);
     stopTimeout("sending HDLC frame");
     return (frameSent);
 }

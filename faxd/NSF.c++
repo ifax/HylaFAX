@@ -45,6 +45,7 @@ struct NSFData {
     u_int         modelIdPos;
     u_int         modelIdSize;
     const ModelData* knownModels;
+    bool        inverseBitOrder;
 };
 
 const u_int NSFData::vendorIdSize = 3; // Country & provider code (T.35)
@@ -122,7 +123,7 @@ static const ModelData Muratec48[] =
 
 /*
  * Country code first byte, then manufacturer is last two bytes. See T.35.  
- * Japan is x00, USA xB5, UK xB4, Canada x20, Tunisia xAD, Papua New Guinea x86.
+ * Japan is x00, USA xB5, UK xB4, Canada x20.
  */
 
 static const NSFData KnownNSF[] =
@@ -192,13 +193,6 @@ static const NSFData KnownNSF[] =
     {"\x00\xF0\x00", "Sumitomo Electric", false },
     {"\x20\x41\x59", "Siemens",   false },
     {"\x59\x59\x01", NULL,        false },
-    {"\x86\x00\x10", "Samsung",   false },
-    {"\x86\x00\x8C", "Samsung",   false, 3, 4, Samsung8C },
-    {"\x86\x00\x98", "Samsung",   false },
-    {"\xAD\x00\x00", "Pitney Bowes", false, 3, 6, PitneyBowes },
-    {"\xAD\x00\x36", "HP",        false, 3, 5, HP },
-    {"\xAD\x00\x42", "FaxTalk",   false },
-    {"\xAD\x00\x44", NULL,        true },
     {"\xB4\x00\xB0", "DCE",       false },
     {"\xB4\x00\xB1", "Hasler",    false },
     {"\xB4\x00\xB2", "Interquad", false },
@@ -271,7 +265,40 @@ static const NSFData KnownNSF[] =
     {"\xB5\x00\xA2", "Murata",    false },
     {"\xB5\x00\xA4", "Lanier",    false },
     {"\xB5\x00\xA6", "Qualcomm",  false },
-    {"\xB5\x00\xAA", "HylaFAX",  false },
+    {"\xB5\x00\xAA", "HylaFAX",   false },
+    /*
+     * T.30 states that all HDLC frame data should be in MSB
+     * order except as noted.  T.30 5.3.6.2.7 does not explicitly
+     * make an exception for NSF, but 5.3.6.2.4-11 do make exceptions
+     * for TSI, etc., which should be in LSB order.  Therefore, it is
+     * widely accepted that NSF is in LSB order.  However, some
+     * manufacturers unfortunately use MSB for NSF.
+     *
+     * Thus, country code x61 (Korea) turns into x86 (Papua New Guinea),
+     * code xB5 (USA) turns into xAD (Tunisia), code x26 (China) turns
+     * into x64 (Lebanon), and code x3D (France) turns into xBC (Vietnam).
+     * Therefore, we need to convert these to produce a legible station ID.
+     */
+    {"\x64\x01\x00", "unknown - China", false, 0, 0, NULL, false }, // reverse-ordered code but not station-id
+    {"\x64\x01\x01", "unknown - China", false, 0, 0, NULL, true },
+    {"\x64\x01\x02", "unknown - China", false, 0, 0, NULL, true },
+    {"\x86\x00\x0A", "unknown - Korea", false, 0, 0, NULL, true },
+    {"\x86\x00\x0E", "unknown - Korea", false, 0, 0, NULL, true },
+    {"\x86\x00\x10", "Samsung",   false, 0, 0, NULL, true },
+    {"\x86\x00\x1A", "unknown - Korea", false, 0, 0, NULL, true },
+    {"\x86\x00\x52", "unknown - Korea", false, 0, 0, NULL, true },
+    {"\x86\x00\x5A", "unknown - Korea", false, 0, 0, NULL, true },
+    {"\x86\x00\x8C", "Samsung",   false, 3, 4, Samsung8C, true },
+    {"\x86\x00\x98", "Samsung",   false, 0, 0, NULL, true },
+    {"\x86\x00\xC9", "unknown - Korea", false, 0, 0, NULL, true },
+    {"\x86\x00\xEE", "unknown - Korea", false, 0, 0, NULL, true },
+    {"\xAD\x00\x00", "Pitney Bowes", false, 3, 6, PitneyBowes, true },
+    {"\xAD\x00\x24", "Octel",     false, 0, 0, NULL, true },
+    {"\xAD\x00\x36", "HP",        false, 3, 5, HP, true },
+    {"\xAD\x00\x42", "FaxTalk",   false, 0, 0, NULL, true },
+    {"\xAD\x00\x44", NULL,        true,  0, 0, NULL, true },
+    {"\xAD\x00\x98", "unknown - USA", true, 0, 0, NULL, true },
+    {"\xBC\x53\x01", "Minolta",   false, 0, 0, NULL, true },
     {NULL}
 };
 
@@ -347,20 +374,32 @@ void NSF::decode()
                         memcmp( pp->modelId, &nsf[p->modelIdPos], p->modelIdSize )==0 )
                         model = pp->modelName;
             }
-            findStationId( p->inverseStationIdOrder );
+            findStationId( p->inverseStationIdOrder, p->inverseBitOrder );
             vendorDecoded = true;
         }
     }
     if( !vendorFound() )
-	findStationId( 0 );
+	findStationId( 0, 0 );
 }
 
-void NSF::findStationId( bool reverseOrder )
+void NSF::findStationId( bool reverseOrder, bool reverseBitOrder )
 {
     const char* id = NULL;
     u_int       idSize = 0;
     const char* maxId = NULL;
     u_int       maxIdSize = 0;
+    /*
+     * Convert to LSBMSB if it's not.
+     */
+    if ( reverseBitOrder ) {
+	for ( int i = 0 ; i < nsf.length(); i++ ) {
+	    // a one-byte bit-order converter...
+	    nsf[i] =  (((nsf[i]>>0)&1)<<7)|(((nsf[i]>>1)&1)<<6)|
+		      (((nsf[i]>>2)&1)<<5)|(((nsf[i]>>3)&1)<<4)|
+		      (((nsf[i]>>4)&1)<<3)|(((nsf[i]>>5)&1)<<2)|
+		      (((nsf[i]>>6)&1)<<1)|(((nsf[i]>>7)&1)<<0);
+	}
+    }
     /*
      * Trying to find the longest printable ASCII sequence
      */

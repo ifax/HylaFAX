@@ -102,8 +102,9 @@ protected:
     bool	recvIdentification(
 		    u_int f1, const fxStr& pwd,
 		    u_int f2, const fxStr& addr,
-		    u_int f3, const fxStr& id,
-		    u_int f4, u_int dics, u_int xinfo,
+		    u_int f3, const fxStr& nsf,
+		    u_int f4, const fxStr& id,
+		    u_int f5, u_int dics, u_int xinfo,
 		    u_int timer, fxStr& emsg);
     bool	recvDCSFrames(HDLCFrame& frame);
     bool	recvTraining();
@@ -119,6 +120,7 @@ protected:
     virtual ATResponse atResponse(char* buf, long ms = 30*1000);
     virtual bool waitFor(ATResponse wanted, long ms = 30*1000);
     void	encodeTSI(fxStr& binary, const fxStr& ascii);
+    void	encodeNSF(fxStr& binary, const fxStr& ascii);
     const fxStr& decodeTSI(fxStr& ascii, const HDLCFrame& binary);
     void	encodePWD(fxStr& binary, const fxStr& ascii);
     const fxStr& decodePWD(fxStr& ascii, const HDLCFrame& binary);
@@ -128,11 +130,13 @@ protected:
     bool	transmitFrame(u_char fcf, bool lastFrame = true);
     bool	transmitFrame(u_char fcf, u_int, u_int, bool lastFrame = true);
     bool	transmitFrame(u_char fcf, const fxStr&, bool lastFrame=true);
+    bool	transmitFrame(u_char fcf, const u_char* code, const fxStr&, bool lastFrame=true);
     bool	transmitData(int br, u_char* data, u_int cc,
 		    const u_char* bitrev, bool eod);
     bool	sendFrame(u_char fcf, bool lastFrame = true);
     bool	sendFrame(u_char fcf, u_int, u_int, bool lastFrame = true);
     bool	sendFrame(u_char fcf, const fxStr&, bool lastFrame = true);
+    bool	sendFrame(u_char fcf, const u_char* code, const fxStr&, bool lastFrame = true);
     bool	sendRawFrame(HDLCFrame& frame);
     bool	sendClass1Data(const u_char* data, u_int cc,
 		    const u_char* bitrev, bool eod);

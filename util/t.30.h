@@ -62,6 +62,9 @@
 
 #define	TCF_DURATION	1500		// 1.5 seconds
 
+// this is our defined NSF manufacturer code in reverse bit-order
+#define HYLAFAX_NSF	"\255\000\125"
+
 /*
  * Facsimile control field (FCF) values
  */

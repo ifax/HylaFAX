@@ -60,7 +60,7 @@ private:
     void clear();
     void loadHexData( const char* hexNSF );
     void loadRawData( const u_char* rawData, int size, const u_char* revTab );
-    void findStationId( bool reverseOrder );
+    void findStationId( bool reverseOrder, bool reverseBitOrder );
     void decode();
 };
 
