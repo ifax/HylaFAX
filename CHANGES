@@ -3,6 +3,14 @@
 Changelog for HylaFAX 4.1.4 - 22 Sep 2002
 
 CHANGES:
+* fix faxqclean to not miss certain orphaned files (01 Oct 2002)
+* change faxrcvd to only require 4 parameters (01 Oct 2002)
+* fix recvstats to handle new Super G3 faxing speeds (01 Oct 2002)
+* cause faxgetty to poll for lockfiles while RUNNING (01 Oct 2002)
+* cause faxq to explicitly trigger LOCKWAIT for faxgetty (01 Oct 2002)
+* replace the select bug workaround with a better fix (01 Oct 2002)
+* allow sendfax -z option to accept whitespace in file (22 Sep 2002)
+* add -f and -c options to probemodem (20 Sep 2002)
 * improve sendfax parsing of '-z' destination file (22 Sept 2002)
 * disabled Solaris DSO support due to problems (13 Sep 2002)
 * add Class1ResponseWaitCmd to help USR send errors (13 Sep 2002)
