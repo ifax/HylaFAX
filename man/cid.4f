@@ -29,18 +29,23 @@
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .TH CID ${MANNUM4_5} "May 28, 2001"
 .SH NAME
-cid \- Caller-ID access control list
+cid \- Caller-ID and DNIS access control list
 .SH DESCRIPTION
 The \*(Fx configuration parameter
 .B QualifyCID
-specifies whether or not the identity of an inbound call
+specifies whether or not the identity or identifier of an inbound call
 should be checked against an access
 control list before the telephone is answered.
-If a modem is attached to a phone line that has Caller-ID service, and
+This both enables call screening against those values and fax routing
+(in faxrcvd's FaxDispatch) based on those values.
+If a modem is attached to a phone line that has 
+Caller-ID or DNIS service, and
 .B QualifyCID
-is non-null, then only the callers identified
-in the file specified by the string (typically \fBetc/cid\fP)
-will be answered.
+is non-null, then only the calls identified by
+strings matching 
+.B CIDNumber
+in the file 
+(typically \fBetc/cid\fP) will be answered.
 .PP
 Patterns are specified one per line and must conform to the
 regular expressions syntax specified by
@@ -101,17 +106,19 @@ matches the following phone number strings:
 Finally, note that regular expressions can be used to specify
 many numbers with one pattern.
 .SH NOTES
-The caller's telephone number is recognized by using the
+In the case of Caller-ID, the caller's identity, and in the case
+of DNIS, the called number, 
+is recognized by using the
 .B CIDNumber
 configuration parameter described in
 .IR hylafax-config (${MANNUM4_5}).
 This parameter must be present in the per-modem configuration
-file for Caller-ID screening to function properly.
+file for Caller-ID or DNIS screening or routing to function properly.
 If 
 .B QualifyCID
 is defined, but no
 .B CIDNumber
-is specified, then no phone numbers will be recognized and all
+is specified, then no match will occur and all
 incoming calls will be ignored.
 .PP
 Caller-ID data is only sent once by the telco, and the timing of

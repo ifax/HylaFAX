@@ -30,8 +30,8 @@
 #
 # faxrcvd file devID commID error-msg
 #
-if [ $# != 5 ]; then
-    echo "Usage: $0 file devID commID error-msg CIDNumber "
+if [ $# != 6 ]; then
+    echo "Usage: $0 file devID commID error-msg CIDNumber CIDName "
     exit 1
 fi
 
@@ -80,6 +80,7 @@ DEVICE="$2"
 COMMID="$3"
 MSG="$4"
 CIDNUMBER="$5"
+CIDNAME="$6"
 
 FILENAME=`echo $FILE | $SED -e 's/\.tif//' -e 's/recvq\///'`
 
@@ -122,6 +123,10 @@ if [ -f $FILE ]; then
 	fi
 	if [ "$CIDNUMBER" ]; then
 	    echo " CIDNumber: $CIDNUMBER"
+	    echo ""
+	fi
+	if [ "$CIDNAME" ]; then
+	    echo "   CIDName: $CIDNAME"
 	    echo ""
 	fi
 	if [ -n "$SENDTO" ]; then
@@ -167,6 +172,10 @@ if [ -f $FILE ]; then
 	 fi
 	 if [ "$CIDNUMBER" ]; then
 	    echo " CIDNumber: $CIDNUMBER"
+	    echo ""
+	 fi
+	 if [ "$CIDNAME" ]; then
+	    echo "   CIDName: $CIDNAME"
 	    echo ""
 	 fi
 	 echo ""

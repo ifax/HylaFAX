@@ -119,8 +119,8 @@ AdaptiveAnswer	boolean	\s-1No\s+1	enable adaptive answer of inbound calls
 AnswerRotary	string	\s-1Any\s+1	alternatives for answering calls
 AnswerBias	integer	\-	bias to apply to successful rotary answer 
 AreaCode\(S2	string	\-	local area code
-CIDName	string	\-	Caller \s-1ID\s+1 name pattern string
-CIDNumber	string	\-	Caller \s-1ID\s+1 number pattern string
+CIDName	string	\-	Caller \s-1ID\s+1 or DNIS name pattern string
+CIDNumber	string	\-	Caller \s-1ID\s+1 or DNIS number pattern string
 ClocalAsRoot	boolean	\s-1No\s+1	set \s-1CLOCAL\s+1 using root \s-1UID\s+1
 ContCoverCmd\(S1	string	\s-1bin/mkcover\s+1	continuation cover page generation script
 ContCoverPage\(S1	string	\-	continuation cover page template filename
@@ -167,7 +167,7 @@ PollRcvdCmd	string	\s-1bin/pollrcvd\s+1	delivery script for facsimile received b
 PostScriptTimeout\(S1	integer	\s-1300\s+1	timeout on \*(Ps interpreter runs (secs)
 PriorityScheduling	boolean	\s-1\fIsee below\fP\s+1	use available priority job scheduling mechanism
 PS2FaxCmd\(S1	string	\s-1bin/ps2fax\s+1	\*(Ps \s-1RIP\s+1 command script
-QualifyCID	string	\-	file of Caller-ID patterns for checking inbound calls
+QualifyCID	string	\-	file of Caller-ID or DNIS patterns for checking inbound calls
 QualifyTSI	string	\-	file of \s-1TSI\s+1 patterns for qualifying senders
 RecvDataFormat	string	\s-1adaptive\s+1	format for received facsimile data
 RecvFileMode	octal	\s-10600\s+1	protection mode to use for received facsimile files
@@ -447,7 +447,7 @@ below.)
 .TP
 .B CIDName
 A string that identifies the caller's identity in any Caller-ID
-status messages.
+status messages or the called identity in any DNIS messages.
 The specified string is compared against any
 unrecognized status messages received from the modem before the
 phone is placed off-hook.
@@ -462,7 +462,7 @@ and
 .TP
 .B CIDNumber
 A string that identifies the caller's phone number in any Caller-ID
-status messages.
+status messages or the called number in any DNIS messages.
 The specified string is compared against any
 unrecognized status messages received from the modem before the
 phone is placed off-hook.
@@ -927,12 +927,13 @@ see
 .TP
 .B QualifyCID
 A string that specifies whether or not \fICaller-ID information\fP
+and/or \fIDNIS information\fP
 should be checked against an access control list before accepting
 an inbound call.
 If 
 .B QualifyCID
-is non-null and there is Caller-ID service,
-then only calls from phone numbers identified
+is non-null and there is Caller-ID or DNIS service,
+then only calls with data matching numbers identified
 in the file specified by this string (typically \fBetc/cid\fP)
 will be accepted; see
 .IR cid (${MANNUM4_5}).
@@ -940,15 +941,15 @@ If
 .B QualifyCID
 is not specified in the configuration file, or the value is
 null, then all incoming calls will be answered.
-Note that Caller-ID screening is only available when this
+Note that Caller-ID screening and DNIS routing are only available when this
 service is enabled on the phone line and the modem is capable of
-presenting Caller-ID status information to the host.
+presenting Caller-ID status or DNIS data information to the host.
 The
 .B CIDNumber
 and
 .B CIDName
 parameters must also be setup to reflect the manner in which
-the modem returns Caller-ID status information to the host.
+the modem returns Caller-ID status or DNIS data information to the host.
 .TP
 .B QualifyTSI
 A string that specifies whether or not the identity of 

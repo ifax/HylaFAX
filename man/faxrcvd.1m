@@ -37,6 +37,7 @@ faxrcvd \- \*(Fx notification script for received facsimile
 .I commid
 .I error-msg
 .I cidnumber
+.I cidname
 .SH DESCRIPTION
 .B bin/faxrcvd
 is the command script invoked by the facsimile server whenever
@@ -67,6 +68,12 @@ the value of
 .B CIDNumber
 when using
 .B QualifyCID
+.TP
+.B cidname
+the value of
+.B CIDName
+when using
+.B QualifyCID
 .SH NOTES
 This script can route facsimile directly to the intended receipient.
 To do this create a shell script
@@ -95,11 +102,40 @@ esac\s+1
 .sp
 Note that you must match any embedded white space.
 The facsimile will be sent as a MIME-encoded PostScript document
-as default.  The attachment filetype is controlled by the
+as default.
+.TP
+.I CIDNAME
+is equivalent to
+.B CIDName
+above.
+.TP
+.I CIDNUMBER
+is equivalent to
+.B CIDNumber
+above.
+.TP
+.I DEVICE
+is equivalent to
+.B device
+above.
+.TP
 .I FILETYPE
-shell variable, and can be controlled as shown above.  Current
+controls the filetype of the image attachment.  Current
 filetype options are ``ps'', ``tif'', and ``pdf''.
-Consult the shell script for details.
+.TP
+.I MSG
+is equivalent to
+.B error-msg
+above.
+.TP
+.I SENDER
+is the received TSI of the fax sender.
+.TP
+.I SENDTO
+controls the recipient of the received fax notification.  It is
+given as an e-mail address.
+.TP
+Other shell variables are available.  Consult the faxrcvd script directly.
 .SH FILES
 .nf
 .ta \w'${SBIN}/faxinfo    'u
