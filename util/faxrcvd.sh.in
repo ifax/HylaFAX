@@ -57,6 +57,7 @@ MIMENCODE=mimencode
 TIFF2PS=tiff2ps
 PS2PDF=ps2pdf
 TOADDR=FaxMaster
+TIFFINFO=tiffinfo
 
 #
 # Permit various types of attachment types: ps, tif, pdf
@@ -193,8 +194,16 @@ if [ -f $FILE ]; then
 	     echo "Content-Transfer-Encoding: base64"
 	     echo "Content-Disposition: attachment; filename=\"c$COMMID.pdf\""
 	     echo ""
+	     GW=`$TIFFINFO $FILE | $GREP "Image Width" | \
+		$SED 's/.*Image Width: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
+	     GL=`$TIFFINFO $FILE | $GREP "Image Length" | \
+		$SED 's/.*Image Length: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
+	     RW=`$TIFFINFO $FILE | $GREP "Resolution" | \
+		$SED 's/.*Resolution: \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
+	     RL=`$TIFFINFO $FILE | $GREP "Resolution" | \
+		$SED 's/.*Resolution: [0-9]*, \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
 	     $TIFF2PS -a -O $FILE.ps $FILE 2>/dev/null # fax2ps looks bad
-	     $PS2PDF $FILE.ps $FILE.pdf 2>/dev/null
+	     $PS2PDF -g$GW\x$GL -r$RW\x$RL $FILE.ps $FILE.pdf 2>/dev/null
 	     $MIMENCODE $FILE.pdf 2>/dev/null
 	     $RM -f $FILE.ps $FILE.pdf 2>/dev/null
 	 else #  default as Postscript
