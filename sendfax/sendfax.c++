@@ -76,6 +76,7 @@ sendFaxApp::run(int argc, char** argv)
     extern int optind;
     extern char* optarg;
     int c;
+    char *owner = NULL;
     bool optionsUsed = true;
 
     appName = argv[0];
@@ -91,7 +92,7 @@ sendFaxApp::run(int argc, char** argv)
     int verbose = 0;
     SendFaxJob& proto = getProtoJob();
     db = new FaxDB(tildeExpand(dbName));
-    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:P:r:s:t:T:U:V:W:x:X:y:Y:z:123lmnpvwADEGNR")) != -1) {
+    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:o:P:r:s:t:T:U:V:W:x:X:y:Y:z:123lmnpvwADEGNR")) != -1) {
         if (c != 'h')
             optionsUsed = false;
         switch (c) {
@@ -168,6 +169,9 @@ sendFaxApp::run(int argc, char** argv)
         case 'N':			// no notification
             proto.setNotification("none");
             break;
+	case 'o':			// specify owner
+	    owner = optarg;
+	    break;
         case 'p':			// submit polling request
             addPollRequest();
             break;
@@ -249,7 +253,7 @@ sendFaxApp::run(int argc, char** argv)
     bool status = false;
     fxStr emsg;
     if (callServer(emsg)) {
-        status = login(NULL, emsg)
+        status = login(owner, emsg)
             && prepareForJobSubmissions(emsg)
             && submitJobs(emsg);
         if (status && waitForJob) {
