@@ -22,4 +22,4 @@ mkdir $ARCHIVETO
 mv $QFILE $ARCHIVETO
 for log in $COMMLOGS; do cp $log $ARCHIVETO; done
 for doc in $DOCS; do cp $doc $ARCHIVETO; done
-if [ -r info/$NUMBER ]; cp info/$NUMBER $ARCHIVETO; fi
+if [ -r info/$NUMBER ]; then cp info/$NUMBER $ARCHIVETO; fi
