@@ -321,6 +321,7 @@ main(int argc, char** argv)
     signal(SIGHUP, fxSIGHANDLER(sigDone));
     signal(SIGINT, fxSIGHANDLER(sigDone));
     signal(SIGTERM, fxSIGHANDLER(sigDone));
+    signal(SIGCHLD, fxSIGHANDLER(SIG_DFL));     // by YC
     app = new sendFaxApp;
     if (!app->run(argc, argv))
 	sigDone(0);
