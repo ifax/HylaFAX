@@ -1,4 +1,10 @@
+config.fax
 faxaddmodem.sh
 faxsetup.sh
+hosts.hfaxd
+hylafax
+lockname
+Makefile
+ondelay
 probemodem.sh
-
+xferfaxlog

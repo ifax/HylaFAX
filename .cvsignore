@@ -1,4 +1,5 @@
 config.cache
+config.local
 config.log
 config.h
 defs

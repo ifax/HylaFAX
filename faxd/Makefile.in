@@ -77,6 +77,7 @@ C++FILES=ClassModem.c++ \
 	Job.c++ \
 	Modem.c++ \
 	ModemConfig.c++ \
+    NSF.c++ \
 	PCFFont.c++ \
 	QLink.c++ \
 	ServerConfig.c++ \
@@ -110,6 +111,7 @@ MODEM_OBJS=ClassModem.o \
 	G3Encoder.o \
 	HDLCFrame.o \
 	ModemConfig.o \
+    NSF.o \
 	FaxFont.o \
 	PCFFont.o \
 	TagLine.o

@@ -163,20 +163,31 @@ FaxModem::getRecvSUB(fxStr& s)
     } else
 	return (false);
 }
+
 void
-FaxModem::recvNSF(const fxStr& s)
+FaxModem::recvNSF( const NSF& aNsf )
 {
-    nsf = s;
-    protoTrace("REMOTE NSF \"%s\"", (const char*) nsf);
+    nsf = aNsf;
+    optFrames |= 0x8;
+    protoTrace("REMOTE NSF \"%s\"", (const char*) nsf.getHexNsf() );
+    protoTrace("NSF remote fax equipment: %s %s", 
+               (const char*)nsf.getVendor(),
+               (const char*)nsf.getModel());
+    if( nsf.stationIdFound() )
+        protoTrace("NSF %sremote station ID: \"%s\"",
+                   nsf.vendorFound()? "": "possible ",
+                   nsf.getStationId());
 }
+
 bool
-FaxModem::getSendNSF(fxStr& s)
+FaxModem::getSendNSF(NSF& aNsf)
 {
     if (optFrames & 0x8) {
-	s = nsf;
-	return (true);
-    } else
-	return (false);
+        aNsf = nsf;
+        return (true);
+    } else {
+        return (false);
+    }
 }
 
 void

@@ -33,6 +33,7 @@
 #include "tiffio.h"
 #include "G3Decoder.h"
 #include "FaxSendStatus.h"
+#include "NSF.h"
 
 class FaxMachineInfo;
 class fxStackBuffer;
@@ -80,7 +81,7 @@ private:
     fxStr	tsi;		// received TSI/CSI
     fxStr	sub;		// received subaddressing string
     fxStr	pwd;		// received password string
-    fxStr	nsf;		// received nonstandard facilities
+    NSF     nsf;		// received nonstandard facilities
     // NB: remaining session state is below (params) or maintained by subclass
 protected:
 // NB: these are defined protected for convenience (XXX)
@@ -108,7 +109,7 @@ protected:
     void	recvTSI(const fxStr&);
     void	recvPWD(const fxStr&);
     void	recvSUB(const fxStr&);
-    void	recvNSF(const fxStr&);
+    void	recvNSF(const NSF&);
     void	recvCSI(const fxStr&);
     void	recvDCS(const Class2Params&);
     void	recvSetupTIFF(TIFF* tif, long group3opts, int fillOrder);
@@ -196,7 +197,7 @@ public:
     virtual void sendAbort() = 0;
     // query interfaces for optional state
     virtual bool getSendCSI(fxStr&);
-    virtual bool getSendNSF(fxStr&);
+    virtual bool getSendNSF(NSF&);
 
     /*
      * Fax receive protocol.  The expected sequence is:
