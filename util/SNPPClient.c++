@@ -1005,7 +1005,7 @@ SNPPClient::setHoldTime(u_int t)
     time_t tv = t;
     struct tm* tm = gmtime(&tv);
     return (command("HOLD %02d%02d%02d%02d%02d"
-	, tm->tm_year
+	, (tm->tm_year) % 100
 	, tm->tm_mon+1
 	, tm->tm_mday
 	, tm->tm_hour
