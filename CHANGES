@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.1
 
+* fix Class 1 support for services "0,1.0" (26 Nov 2004)
 * limit hfaxd jobs cache size (23 Nov 2004)
 * fix hfaxd ABOR command and trigger (23 Nov 2004)
 * fix error when hfaxd FIFO fills (23 Nov 2004)

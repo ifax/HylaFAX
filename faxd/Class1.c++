@@ -124,7 +124,7 @@ Class1Modem::setupModem()
     fxStr s;
     if (doQuery(conf.classQueryCmd, s, 500) && FaxModem::parseRange(s, modemServices))
 	traceBits(modemServices & SERVICE_ALL, serviceNames);
-    if ((modemServices & SERVICE_CLASS1) == 0)
+    if ((modemServices & serviceType) == 0)
 	return (false);
     atCmd(classCmd);
 
@@ -250,7 +250,7 @@ Class1Modem::pokeConfig()
 bool
 Class1Modem::setupClass1Parameters()
 {
-    if (modemServices & SERVICE_CLASS1) {
+    if (modemServices & serviceType) {
 	setupFlowControl(flowControl);
 	atCmd(conf.setupAACmd);
     }
