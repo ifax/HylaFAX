@@ -402,6 +402,7 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 
     char cbuf[4];		// size of the page count signal
     if (seq & 1) {		// first block
+	decoderFd[1] = -1;
 	initializeDecoder(params);
 	setupStartPage(tif, params);
 	u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
@@ -452,12 +453,14 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 	    recvTrace("Could not open decoding pipe.");
 	}
     }
-    for (u_int i = 0; i < cc; i++) {
-	cbuf[0] = 0x00;		// data marker
-	cbuf[1] = buf[i];
-	Sys::write(decoderFd[1], cbuf, 2);
+    if (decoderFd[1] != -1) {		// only if pipe succeeded
+	    for (u_int i = 0; i < cc; i++) {
+	    cbuf[0] = 0x00;		// data marker
+	    cbuf[1] = buf[i];
+	    Sys::write(decoderFd[1], cbuf, 2);
+	}
     }
-    if (seq & 2) {		// last block
+    if (decoderFd[1] != -1 && seq & 2) {		// last block
 	cbuf[0] = 0xFF;		// this signals...
 	cbuf[1] = 0xFF;		// ... end of data
 	Sys::write(decoderFd[1], cbuf, 2);
