@@ -1145,7 +1145,17 @@ TextFont::decodeFontName(const char* name, fxStr& filename, fxStr& emsg)
     fxStr path = fontMap;
     u_int index = path.next(0, ':');
     while (index > 0) {
-        fxStr fontMapFile = path.head(index) | "/" | "Fontmap";
+
+        /* Newer versions of Ghostscript use "Fontmap.GS"
+         * whereas older ones omit the ".GS" extension.
+         * If the Fontmap.GS file isn't available default
+         * to the older convention.
+         */
+        filename = path.head(index) | "/" | "Fontmap.GS";
+        if (stat(filename, &junk) != 0)
+            filename = path.head(index) | "/" | "Fontmap";
+        fxStr fontMapFile = filename;
+
         path.remove(0, index);
         if (path.length() > 0) path.remove(0, 1);
         FILE* fd = Sys::fopen(fontMapFile, "r");

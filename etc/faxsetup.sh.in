@@ -1095,6 +1095,46 @@ EOF
 fi
 
 #
+# Runtime Fontpath/Fontmap detection
+#
+if onClient; then
+	getGSFonts()
+	{
+		$PATH_GSRIP -h 2>/dev/null | $AWK -F '[ ]' '
+			BEGIN { start = 0; }
+			/Search path:/ { start = 1 }
+			{
+				if (start == 1) {
+						if ($1 == "") {
+						gsub(" ","")
+						gsub("^[.]","")
+						gsub("^:","")
+						printf "%s", $0
+					} else if ($1 != "Search") start = 0
+				}
+			}	
+		'
+	}
+	RUNTIME_PATH_AFM=`getGSFonts`
+	if [ -n "$RUNTIME_PATH_AFM" \
+				-a "$RUNTIME_PATH_AFM" != "$PATH_AFM" ]; then 
+	    Note ""
+	    Note "Setting Ghostscript font path in $DIR_LIBDATA/hyla.conf."
+	    Note ""
+	    if [ -f $DIR_LIBDATA/hyla.conf ]; then
+		$AWK '!/^FontMap|^FontPath|\/FontPath added by/ { print }' \
+			$DIR_LIBDATA/hyla.conf > $DIR_LIBDATA/hyla.conf.tmp
+	    fi
+	    echo "# FontMap/FontPath added by faxsetup (`date 2>/dev/null`)" \
+	                                        >> $DIR_LIBDATA/hyla.conf.tmp
+	    echo "FontMap:   $RUNTIME_PATH_AFM" >> $DIR_LIBDATA/hyla.conf.tmp
+	    echo "FontPath:  $RUNTIME_PATH_AFM" >> $DIR_LIBDATA/hyla.conf.tmp
+	    $MV $DIR_LIBDATA/hyla.conf.tmp $DIR_LIBDATA/hyla.conf
+	    PATH_AFM=$RUNTIME_PATH_AFM
+	fi
+fi
+
+#
 # Installation of Adobe Font Metric files
 #
 if onClient; then
