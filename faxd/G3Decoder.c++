@@ -131,20 +131,20 @@ void G3Decoder::raiseRTC()	{ siglongjmp(jmpRTC, 1); }
  * the decoded data in raster.
  */
 void
-G3Decoder::decode(void* raster, u_int w, u_int h, bool isG4)
+G3Decoder::decode(void* raster, u_int w, u_int h)
 {
     u_int rowbytes = howmany(w, 8);
     if (curruns == NULL) {
 	tiff_runlen_t runs[2*4864];		// run arrays for cur+ref rows
 	setRuns(runs, runs+4864, w);
 	while (h-- > 0) {
-	    decodeRow(raster, w, isG4);
+	    decodeRow(raster, w);
 	    if (raster)
 		raster = (u_char*) raster + rowbytes;
 	}
     } else {
 	while (h-- > 0) {
-	    decodeRow(raster, w, isG4);
+	    decodeRow(raster, w);
 	    if (raster)
 		raster = (u_char*) raster + rowbytes;
 	}
@@ -190,7 +190,7 @@ G3Decoder::isNextRow1D()
  * the decoded data in the scanline buffer.
  */
 bool
-G3Decoder::decodeRow(void* scanline, u_int lastx, bool isG4)
+G3Decoder::decodeRow(void* scanline, u_int lastx)
 {
     DECLARE_STATE_2D();
     bool rowgood = true;

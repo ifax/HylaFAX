@@ -289,7 +289,7 @@ imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      */
     for (; row < th+4 && !dec.isNextRow1D(); row++) {
 	dec.setRowNum(row);
-	dec.decodeRow(NULL, w, (params.df == DF_2DMMR));
+	dec.decodeRow(NULL, w);
     }
     th = row;				// add in discarded rows
     /*

@@ -181,7 +181,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 		 * later for deciding whether or not the page quality
 		 * is acceptable.
 		 */
-		bool decodeOK = decodeRow(recvRow, rowpixels, false);	// MMR uses ECM below
+		bool decodeOK = decodeRow(recvRow, rowpixels);
 		if (seenRTC())			// seen RTC, flush everything
 		    continue;
 		if (decodeOK) {
@@ -271,7 +271,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 	if (!RTCraised()) {
 	    for (;;) {
 		raw.reset();
-		(void) decodeRow(NULL, rowpixels, (params.df == DF_2DMMR));
+		(void) decodeRow(NULL, rowpixels);
 		if (seenRTC())
 		    continue;
 		u_int n = raw.getLength();

@@ -259,7 +259,7 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      */
     u_int n;
     for (n = 0; n < 4 && !dec.isNextRow1D(); n++)
-	dec.decodeRow(NULL, w, (params.df == DF_2DMMR));
+	dec.decodeRow(NULL, w);
     th += n;				// compensate for discarded rows
     /*
      * Things get tricky trying to identify the last byte in

@@ -858,7 +858,7 @@ u_char* MemoryDecoder::cutExtraRTC()
         u_int look_ahead = roundup(getPendingBits(),8) / 8;
         endOfData = current() - look_ahead;
         for (;;) {
-            if( decodeRow(NULL, width, isG4) ){
+            if( decodeRow(NULL, width) ){
                 /*
                  * endOfData is now after last good row. Thus we correctly handle
                  * RTC, single EOL in the end, or no RTC/EOL at all
