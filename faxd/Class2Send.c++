@@ -302,7 +302,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 			    emsg = "Problem reading document directory";
 			    goto failed;
 			}
-			if (ppr == FCF_MCF) {
+			if (ppr == PPR_MCF) {
 			    /*
 			     * The session parameters cannot change except following
 			     * the reception of an RTN or RTP signal or the transmission
