@@ -276,7 +276,7 @@ Class1TCFRecvHack	boolean	\s-1No\s+1	Class 1: deliberately look for carrier loss
 Class1TCFRecvTimeout	integer	\s-14500\s+1	Class 1: max wait (ms) for \s-1TCF\s+1
 Class1TCFResponseDelay	integer	\s-175\s+1	Class 1: delay between \s-1TCF\s+1 and ack/nak
 Class1TMConnectDelay	integer	\s-10\s+1	Class 1: delay between +FTM CONNECT and data transmission
-Class1SendMsgDelay	integer	\s-175\s+1	Class 1: delay before sending image data
+Class1SendMsgDelay	integer	\s-1200\s+1	Class 1: delay before sending image data
 Class1SwitchingCmd	string	\s-1AT+FRS=7\s+1	Class 1: command to ensure silence after HDLC reception
 Class1TrainingRecovery	integer	\s-11500\s+1	Class 1: delay after failed training
 Class1ValidateV21Frames	boolean	\s-1No\s+1	Class 1: check FCS against received frames
@@ -2096,7 +2096,9 @@ parameter may require that this timer be shortened.
 .TP
 .B Class1SendMsgDelay
 The time, in milliseconds, to delay just before sending the image data.
-According to T.30: 5.3.2.4 this should be no less than 75 ms (default).
+According to T.30: 5.3.2.4 this should be no less than 75 ms; however,
+in practice some receivers are slow to drop their CFR transmission
+carrier and need more time to start up their reception carrier.
 .TP
 .B Class1SwitchingCmd
 The command used to ensure that the sending facsimile device has turned

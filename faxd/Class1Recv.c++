@@ -443,6 +443,15 @@ top:
 	     * negotiated modulation technique includes short
 	     * training, then we use it here (it's used for all
 	     * high speed carrier traffic other than the TCF).
+	     *
+	     * Timing here is very critical.  It is more "tricky" than timing
+	     * for AT+FRM for TCF because unlike with TCF, where the direction
+	     * of communication doesn't change, here it does change because 
+	     * we just sent CFR but now have to do AT+FRM.  In practice, if we 
+	     * issue AT+FRM after the sender does AT+FTM then we'll get +FCERROR.
+	     * Using Class1MsgRecvHackCmd often only complicates the problem.
+	     * If the modem doesn't drop its transmission carrier (OK response
+	     * following CFR) quickly enough, then we'll see more +FCERROR.
 	     */
 	    fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
 	    u_short attempts = 0;
