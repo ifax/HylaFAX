@@ -64,7 +64,7 @@ u_int FaxModem::getTagLineSlop() const		{ return tagLineSlop; }
 bool
 FaxModem::sendSetup(FaxRequest& req, const Class2Params&, fxStr&)
 {
-    minsp = fxmax((u_int) req.minsp, conf.minSpeed);
+    minsp = fxmax((u_int) req.minsp, fxmax((u_int) conf.minSpeed, modemParams.getMinSpeed()));
     pageNumber = 1;
     pageNumberOfJob = req.npages + 1;
     if (req.desiredtl == 0)

@@ -93,6 +93,7 @@ public:
     u_int verticalRes() const;		// lines/inch
     u_int horizontalRes() const;	// dpi
     void setRes(u_int xres, u_int yres);
+    u_int getMinSpeed() const;
 
     static const char* bitRateNames[16];	// XXX needed by Class 1 driver
 

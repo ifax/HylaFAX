@@ -371,14 +371,14 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
                     emsg = "Unable to transmit page"
                         " (giving up after 3 attempts)";
                     return (send_retry);
+
                 }
-                if (params.br == BR_2400) {
+		params.br = (u_int) -1;	// force training
+		if (!dropToNextBR(next)) {
                     emsg = "Unable to transmit page"
-                        "(NAK at all possible signalling rates)";
+                        " (NAK at all possible signalling rates)";
                     return (send_retry);
-                }
-                next.br--;
-                curcap = NULL;	        // force sendTraining to reselect
+		}
                 morePages = true;	// retransmit page
 		break;
 	    case FCF_PIN:		// nak, retry w/ operator intervention
@@ -478,9 +478,9 @@ isCapable(u_int sr, u_int dis)
 	return ((dis & DISSIGRATE_V29) != 0);
     case DCSSIGRATE_14400V33:
     case DCSSIGRATE_12000V33:
-	if (dis == DISSIGRATE_V33)
-	    return (true);
-	/* fall thru... */
+	// post-1994 revisions of T.30 indicate that V.33 should
+	// only be used when it is specifically permitted by DIS
+	return (dis == DISSIGRATE_V33);
     case DCSSIGRATE_14400V17:
     case DCSSIGRATE_12000V17:
     case DCSSIGRATE_9600V17:
@@ -504,17 +504,17 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
     u_int dcs_xinfo = params.getXINFO();	//     32-bit extension
     if (conf.class1ECMFrameSize == 64)
 	dcs_xinfo |= DCSFRAME_64;
-    if (!curcap) {
-	/*
-	 * Select Class 1 capability: use params.br to hunt
-	 * for the best signalling scheme acceptable to both
-	 * local and remote (based on received DIS and modem
-	 * capabilities gleaned at modem setup time).
-	 */
-	params.br++;				// XXX can go out of range
-	if (!dropToNextBR(params))
-	    goto failed;
-    }
+    /*
+     * Select Class 1 capability: use params.br to hunt
+     * for the best signalling scheme acceptable to both
+     * local and remote (based on received DIS and modem
+     * capabilities gleaned at modem setup time).
+     */
+    if (!curcap)
+	curcap = findBRCapability(params.br, xmitCaps);
+    curcap++;
+    if (!dropToNextBR(params))
+	goto failed;
     do {
 	/*
 	 * Override the Class 2 parameter bit rate
@@ -523,6 +523,17 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	 * and the received DIS.  This is because
 	 * the Class 2 state does not include the
 	 * modulation technique (v.27, v.29, v.17, v.33).
+	 *
+	 * Technically, according to post-1994 revisions
+	 * of T.30, V.33 should not be used except
+	 * in the case where the remote announces
+	 * specific V.33 support with the 1,1,1,0 rate
+	 * bits set.  However, for the sake of versatility
+	 * we'll not enforce this upon modems that support
+	 * V.33 but not V.17 and will require the user
+	 * to disable V.33 if it becomes problematic.  For
+	 * modems that support both V.17 and V.33 the
+	 * latter is never used.
 	 */
 	params.br = curcap->br;
 	dcs = (dcs &~ DCS_SIGRATE) | curcap->sr;
@@ -659,19 +670,23 @@ done:
 bool
 Class1Modem::dropToNextBR(Class2Params& params)
 {
+    if (curcap->br == BR_2400)
+	return (false);
+    curcap--;
     for (;;) {
-	if (params.br == minsp)
-	    return (false);
-	// get ``best capability'' of modem at this baud rate
-	curcap = findBRCapability(--params.br, xmitCaps);
 	if (curcap) {
 	    // hunt for compatibility with remote at this baud rate
-	    do {
+	    while (curcap->br == params.br) {
 		if (isCapable(curcap->sr, dis))
 		    return (true);
 		curcap--;
-	    } while (curcap->br == params.br);
+	    }
 	}
+	if (params.br == minsp)
+	    return (false);
+	params.br--;
+	// get ``best capability'' of modem at this baud rate
+	curcap = findBRCapability(params.br, xmitCaps);
     }
     /*NOTREACHED*/
 }
@@ -976,8 +991,13 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			    if (conf.class1ECMDoCTC && (blockgood == false) && 
 				!((curcap->br == 0) && (badframes >= badframesbefore))) {
 				// send ctc even at 2400 baud if we're getting somewhere
-				if (curcap->br != 0)
-				    curcap = findBRCapability(--params.br, xmitCaps);
+				if (curcap->br != 0) {
+				    if (!dropToNextBR(params)) {
+					// We have a minimum speed that's not BR_2400,
+					// and we're there now.  Undo curcap change...
+					curcap++;
+				    }
+				}
 				char ctc[2];
 				ctc[0] = 0;
 				ctc[1] = curcap->sr >> 8;

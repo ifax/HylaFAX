@@ -187,22 +187,22 @@ u_int Class2Params::DISvrTab[2] = {
  * based on the signalling capabilities of the DIS.
  */
 u_int Class2Params::DISbrTab[16] = {
-    BR_2400,			// 0x0/V27
-    BR_14400,			// 0x1/V17
-    BR_9600,			// 0x2/undefined
-    BR_14400,			// 0x3/V17+undefined
-    BR_4800,			// 0x4/V27
-    BR_14400,			// 0x5/V17+V27
-    BR_4800,			// 0x6/V27+undefined
-    BR_14400,			// 0x7/V17+V27+undefined
-    BR_9600,			// 0x8/V29
-    BR_14400,			// 0x9/V17+V29
-    BR_9600,			// 0xA/V29+undefined
-    BR_14400,			// 0xB/V17+V29+undefined
-    BR_9600,			// 0xC/V29+V27
-    BR_14400,			// 0xD/V17+V29+V29
-    BR_9600,			// 0xE/V29+V27+undefined
-    BR_14400,			// 0xF/V17+V29+V29+undefined
+    BR_2400,			// 0x0 V27ter fall-back (BR_4800 could be assumed, T.30 Table 2 Note 3)
+    BR_14400,			// 0x1 undefined
+    BR_9600,			// 0x2 undefined
+    BR_14400,			// 0x3 undefined
+    BR_4800,			// 0x4 V27ter
+    BR_14400,			// 0x5 reserved
+    BR_4800,			// 0x6 reserved
+    BR_14400,			// 0x7 reserved
+    BR_9600,			// 0x8 V29
+    BR_14400,			// 0x9 undefined
+    BR_9600,			// 0xA undefined
+    BR_14400,			// 0xB undefined
+    BR_9600,			// 0xC V27ter+V29
+    BR_14400,			// 0xD V27ter+V29+V17 (not V.33, post-1994)
+    BR_14400,			// 0xE V27ter+V29+V33 (invalid, post-1994, T.30 Table 2 Notes 31, 32)
+    BR_14400,			// 0xF undefined
 };
 u_int Class2Params::DISwdTab[4] = {
     WD_1728,			// DISWIDTH_1728
@@ -574,6 +574,16 @@ Class2Params::decode(u_int v)
 	bf = (v>>12) & 1;
 	st = (v>>13) & 7;
     }
+}
+
+u_int
+Class2Params::getMinSpeed() const
+{
+    u_int minspeed = BR_14400;
+    for (int speed = BR_14400; speed >= BR_2400; speed--) {
+	if (br & BIT(speed)) minspeed = speed;
+    }
+    return (minspeed);
 }
 
 u_int
