@@ -271,7 +271,7 @@ imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      */
     u_int look_ahead = roundup(dec.getPendingBits(),8) / 8;
     u_int decoded = dec.current() - look_ahead - buf;
-    if (params.vr == VR_NORMAL or params.vr == VR_200X100) {
+    if (params.vr == VR_NORMAL || params.vr == VR_200X100) {
 	/*
 	 * Scale text vertically before encoding.  Note the
 	 * ``or'' used to generate the final samples. 
