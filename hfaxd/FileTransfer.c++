@@ -521,7 +521,7 @@ void
 HylaFAXServer::storeUniqueCmd(bool isTemp)
 {
     fxStr emsg;
-    u_int seqnum = getDocumentNumbers(1, emsg);
+    u_int seqnum = getDocumentNumber(emsg);
     if (seqnum != (u_int) -1) {
 	fxStr filename = fxStr::format("/%s/doc%u.%s"
 	    , isTemp ? FAX_TMPDIR : FAX_DOCDIR

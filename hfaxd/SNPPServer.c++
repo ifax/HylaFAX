@@ -847,7 +847,7 @@ SNPPServer::dataCmd(void)
 {
     if (!haveText) {
 	fxStr emsg;
-	u_int seqnum = getDocumentNumbers(1, emsg);
+	u_int seqnum = getDocumentNumber(emsg);
 	if (seqnum == (u_int) -1) {
 	    reply(554, "%s", (const char*)emsg);
 	    return;
@@ -1051,7 +1051,7 @@ SNPPServer::messageCmd(const char* msg)
 	    return;
 	}
 	fxStr emsg;
-	u_int seqnum = getDocumentNumbers(1, emsg);
+	u_int seqnum = getDocumentNumber(emsg);
 	if (seqnum == (u_int) -1) {
 	    reply(554, "%s", (const char*)emsg);
 	    return;

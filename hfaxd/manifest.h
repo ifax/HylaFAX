@@ -46,15 +46,6 @@
 #define	FAXUID_ANON	FAXUID_MAX	// UID of anonymous user
 
 /*
- * Sequence numbers are assigned for jobs and documents
- * stored in the fax filesystem.  We constrain these
- * numbers to be 16-bit values, rolling them over a bit
- * early (for historical reasons).
- */
-#define	MAXSEQNUM	32000		// safely fits in 16 bits
-#define	NEXTSEQNUM(x)	((x) % MAXSEQNUM)
-
-/*
  * The client-server protocol is derived from the Internet
  * File Transfer Protocol (FTP).  We extend two FTP notions,
  * data transfer mode and file structure, to satisfy our

@@ -31,6 +31,7 @@
 #include "Str.h"
 #include "SystemLog.h"
 #include "Dispatcher.h"
+#include "Sequence.h"
 #include <stdarg.h>
 
 class faxApp : public SystemLog {
@@ -105,4 +106,5 @@ inline int GetoptIter::option() const		{ return c; }
 inline bool GetoptIter::notDone() const	{ return c != -1; }
 
 extern	const char* fmtTime(time_t);
+
 #endif

@@ -274,4 +274,14 @@
 #define	SNPP_DEFREDIALS	12		/* number times to dial phone */
 #define	SNPP_DEFNOTIFY	"none"		/* default is no email notification */
 #define	SNPP_DEFPRIORITY 127		/* default job priority */
+
+/*
+ * Sequence numbers are assigned for jobs and documents
+ * stored in the fax filesystem.  We no longer constrain these
+ * numbers to be 16-bit values.
+ */
+#define	MAXSEQNUM	999999999
+#define	NEXTSEQNUM(x)	(((x)+1) % MAXSEQNUM)
+
+
 #endif

@@ -618,9 +618,6 @@ ModemServer::discardModem(bool dropDTR)
     delete modem, modem = NULL;
 }
 
-#define	MAXSEQNUM	99999999
-#define	NEXTSEQNUM(x)	((x)+1 >= MAXSEQNUM ? 1 : (x)+1)
-
 /*
  * Start a session: a period of time during which
  * carrier is raised and a peer is engaged.
@@ -633,55 +630,31 @@ ModemServer::beginSession(const fxStr& number)
      * and updating the sequence number file.  If a problem
      * occurs then session logging will not be done.
      */
-    const char* seqFile = FAX_LOGDIR "/" FAX_SEQF;
-    int fseqf = Sys::open(seqFile, O_CREAT|O_RDWR, 0644);
-    if (fseqf >= 0) {
-	flock(fseqf, LOCK_EX);
-	u_int seqnum = 1;
-	char line[1024];
-	int n = read(fseqf, line, sizeof (line));
-	line[n < 0 ? 0 : n] = '\0';
-	if (n > 0)
-	    seqnum = atoi(line);
-	if (seqnum < 1 || seqnum >= MAXSEQNUM) {
-	    logWarning("Invalid commid sequence number \"%s\", resetting to 1",
-		line);
-	    seqnum = 1;
-	}
-	/*
-	 * Probe to find a valid filename.
-	 */
-	mode_t omask = umask(022);
-	int ftmp;
-	int ntry = 1000;			// that should be a lot!
-	do {
-	    commid = fxStr::format("%08u", seqnum);
-	    fxStr file = FAX_LOGDIR "/c" | commid;
-	    ftmp = Sys::open(file, O_RDWR|O_CREAT|O_EXCL, logMode);
-	    seqnum = NEXTSEQNUM(seqnum);        // Increment _after_ attempting to open
-	} while (ftmp < 0 && errno == EEXIST && --ntry >= 0);
-	umask(omask);
-        if (ftmp >= 0) {
-            fxStr lineout = fxStr::format("%u", seqnum);
-            int len = lineout.length();
-            (void) lseek(fseqf, 0, SEEK_SET);
-            if (Sys::write(fseqf, (const char*)lineout, len) != len ||
-	                ftruncate(fseqf,len)) {
-                logError("Error writing commid sequence number file");
-            }
-            Sys::close(fseqf);			// NB: implicit unlock
-            log = new
-	            FaxMachineLog(ftmp, canonicalizePhoneNumber(number), commid);
-        } else {
-	        logError("Failed to find free commid (seqnum=%u)", seqnum);
-        }
-	Sys::close(fseqf);			// NB: implicit unlock
+    fxStr emsg;
+    u_long seqnum = Sequence::getNext(FAX_LOGDIR "/" FAX_SEQF, emsg);
+
+    if (seqnum == (u_long)-1)
+    {
+	logError("Couldn't get next seqnum for session log: %s",
+		 (const char*)emsg);
+	return;
+    }
+    commid = fxStr::format(Sequence::format, seqnum);
+    fxStr file = FAX_LOGDIR "/c" | commid;
+
+    mode_t omask = umask(022);
+    int ftmp = Sys::open(file, O_RDWR|O_CREAT|O_EXCL, logMode);
+    umask(omask);
+
+    if (ftmp < 0)
+    {
+	logError("Failed to open free sessionlog (seqnum=%u)", seqnum);
     } else
-	logError("Unable to allocate commid: open(%s): %s",
-	    seqFile, strerror(errno));
+    {
+	log =
+	    new FaxMachineLog(ftmp, canonicalizePhoneNumber(number), commid);
+    }
 }
-#undef NEXTSEQNUM
-#undef MAXSEQNUM
 
 /*
  * Terminate a session.

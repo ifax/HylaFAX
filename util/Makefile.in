@@ -66,6 +66,7 @@ C++FILES=Array.c++ \
 	AtSyntax.c++ \
 	DialRules.c++ \
 	FmtTime.c++ \
+	Sequence.c++ \
 	TimeOfDay.c++ \
 	FaxDB.c++ \
 	TextFormat.c++ \

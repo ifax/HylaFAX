@@ -538,9 +538,8 @@ protected:
     const char* compactTime(time_t t);
     void Jprintf(FILE* fd, const char* fmt, const Job& job);
 
-    u_int getSequenceNumber(const char* file, u_int howmany, fxStr&);
     u_int getJobNumber(fxStr&);
-    u_int getDocumentNumbers(u_int count, fxStr&);
+    u_int getDocumentNumber(fxStr&);
 
     bool getRecvDocStatus(RecvInfo& ri);
     RecvInfo* getRecvInfo(const fxStr& qfile, const struct stat& sb);

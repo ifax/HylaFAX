@@ -104,63 +104,21 @@ FaxServer::recvFax(const CallerID& cid)
     return (faxRecognized);
 }
 
-#define	MAXSEQNUM	99999		// should be good enough, can be larger
-#define	NEXTSEQNUM(x)	((x)+1 >= MAXSEQNUM ? 1 : (x)+1)
-#define	FAX_RECVSEQF	FAX_RECVDIR "/" FAX_SEQF
-
 int
 FaxServer::getRecvFile(fxStr& qfile, fxStr& emsg)
 {
-    int fseqf = Sys::open(FAX_RECVSEQF, O_CREAT|O_RDWR, 0644);
-    if (fseqf < 0) {
-	emsg = fxStr::format("cannot open %s: %s",
-	    FAX_RECVSEQF, strerror(errno));
-	return (-1);
-    }
-    flock(fseqf, LOCK_EX);
-    u_int seqnum = 1;			// avoid 0 'cuz atoi returns it on error
-    char line[16];
-    int n = read(fseqf, line, sizeof (line));
-    line[n < 0 ? 0 : n] = '\0';
-    if (n > 0)
-	seqnum = atoi(line);
-    if (seqnum < 1 || seqnum >= MAXSEQNUM) {
-	traceServer("RECV: Bad sequence number \"%s\", reset to 1", line);
-	seqnum = 1;
-    }
-    /*
-     * Probe to find a valid filename.
-     */
-    int ftmp;
-    int ntry = 1000;			// that should be a lot!
-    do {
-	qfile = fxStr::format(FAX_RECVDIR "/fax%05u.tif", seqnum);
-	ftmp = Sys::open(qfile, O_RDWR|O_CREAT|O_EXCL, recvFileMode);
-	seqnum = NEXTSEQNUM(seqnum);    // Increment _after_ attempting to open
-    } while (ftmp < 0 && errno == EEXIST && --ntry >= 0);
-    if (ftmp >= 0) {
-	/*
-	 * Got a file to store received data in,
-	 * lock it so clients can see the receive
-	 * is active; then update the sequence
-	 * number file to reflect the allocation.
-	 */
-        (void) flock(ftmp, LOCK_EX|LOCK_NB);
-        fxStr snum = fxStr::format("%u", seqnum);
-        int len = snum.length();
-        (void) lseek(fseqf, 0, SEEK_SET);
-        if (Sys::write(fseqf, (const char*)snum, len) != len ||
-                ftruncate(fseqf, len)) {
-            emsg = fxStr::format("error updating %s: %s",
-                FAX_RECVSEQF, strerror(errno));
-            Sys::unlink(qfile);
-            Sys::close(ftmp), ftmp = -1;
-        }
-    } else {
-        emsg = "failed to find unused filename";
-    }
-    Sys::close(fseqf);			// NB: implicit unlock
-    return (ftmp);
+    u_long seqnum = Sequence::getNext(FAX_RECVDIR "/" FAX_SEQF, emsg);
+
+    if (seqnum == -1)
+	return -1;
+
+    qfile = fxStr::format(FAX_RECVDIR "/fax" | Sequence::format | ".tif", seqnum);
+    int ftmp = Sys::open(qfile, O_RDWR|O_CREAT|O_EXCL, recvFileMode);
+
+    if (ftmp < 0)
+        emsg = "Failed to find unused filename";
+
+    return ftmp;
 }
 
 /*

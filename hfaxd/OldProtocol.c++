@@ -950,7 +950,7 @@ fxStr
 OldProtocolServer::dataTemplate(FaxSendOp type, int& dfd)
 {
     fxStr emsg;
-    u_int seqnum = getDocumentNumbers(1, emsg);
+    u_int seqnum = getDocumentNumber(emsg);
     if (seqnum == (u_int) -1)
 	sendAndLogError("Could not create data temp file: %s.",
 	    (const char*) emsg);

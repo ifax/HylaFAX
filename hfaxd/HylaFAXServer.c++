@@ -31,6 +31,7 @@
 #include "HylaFAXServer.h"
 #include "Dispatcher.h"
 #include "StackBuffer.h"
+#include "Sequence.h"
 
 #include <ctype.h>
 #include <sys/file.h>
@@ -503,65 +504,10 @@ HylaFAXServer::cvtTime(const time_t& t) const
     return IS(USEGMT) ? gmtime(&t) : localtime(&t);
 }
 
-u_int
-HylaFAXServer::getSequenceNumber(const char* filename, u_int count, fxStr& emsg)
-{
-    struct stat sb;
-    int fd;
-    int rtn = lstat(filename, &sb);
-    if (rtn != 0 && errno == ENOENT) {
-        fd = Sys::open(filename, O_CREAT | O_RDWR | O_EXCL, 0600);
-    } else if (rtn == 0 && S_ISREG(sb.st_mode)) {
-        fd = Sys::open(filename, O_RDWR, 0600);
-        struct stat sb2;
-        if (fd < 0 || fstat(fd, &sb2)) {
-            //XXX some kind of error opening file
-            fd = -1;
-        } else if (sb.st_ino != sb2.st_ino || sb.st_dev != sb2.st_dev) {
-            //XXX something wrong with file
-            fd = -1;
-        }
-    } else {
-        //XXX some kind of error opening file
-        fd = -1;
-    }
-    if (fd < 0) {
-        emsg = fxStr::format("Unable to open sequence number file %s; %s.",
-            filename, strerror(errno));
-        logError("%s: open: %s", filename, strerror(errno));
-        return ((u_int) -1);
-    }
-    flock(fd, LOCK_EX);
-    u_int seqnum = 1;
-    char line[1024];
-    int n = read(fd, line, sizeof (line));
-    line[n < 0 ? 0 : n] = '\0';
-    if (n > 0) {
-        seqnum = atoi(line);
-    }
-    if (seqnum < 1 || seqnum >= MAXSEQNUM) {
-        logWarning("%s: Invalid sequence number \"%s\", resetting to 1",
-            filename, line);
-        seqnum = 1;
-    }
-    fxStr line2 = fxStr::format("%u", NEXTSEQNUM(seqnum+count));
-    lseek(fd, 0, SEEK_SET);
-    int len = line2.length();
-    if (Sys::write(fd, (const char*)line2, len) != len ||
-            ftruncate(fd, len)) {
-        emsg = fxStr::format(
-            "Unable update sequence number file %s; write failed.", filename);
-        logError("%s: Problem updating sequence number file", filename);
-        return ((u_int) -1);
-    }
-    Sys::close(fd);			// NB: implicit unlock
-    return (seqnum);
-}
-
 u_int HylaFAXServer::getJobNumber(fxStr& emsg)
-    { return (getSequenceNumber(FAX_SENDDIR "/" FAX_SEQF, 1, emsg)); }
-u_int HylaFAXServer::getDocumentNumbers(u_int count, fxStr& emsg)
-    { return (getSequenceNumber(FAX_DOCDIR "/" FAX_SEQF, count, emsg)); }
+    { return (Sequence::getNext(FAX_SENDDIR "/" FAX_SEQF, emsg)); }
+u_int HylaFAXServer::getDocumentNumber(fxStr& emsg)
+    { return (Sequence::getNext(FAX_DOCDIR "/" FAX_SEQF, emsg)); }
 
 void
 HylaFAXServer::sanitize(fxStr& s)
