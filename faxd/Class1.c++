@@ -903,13 +903,40 @@ const char SPACE = ' ';
 bool
 Class1Modem::parseQuery(const char* cp, Class1Cap caps[])
 {
+    bool bracket = false, first = true;
+    
     while (cp[0]) {
 	if (cp[0] == SPACE) {		// ignore white space
 	    cp++;
 	    continue;
 	}
-	if (!isdigit(cp[0]))
-	    return (false);
+
+        /* by a.pogoda@web.de, jan 21st 2002
+         * workaround for modems sending (<item>,<item>,...), i.e. 
+         * enclosed in brackets rather than just <item>,<item>,...
+         * e.g. elsa microlink 56k internet II and maybo others
+         */
+        if (cp[0]=='(' && first && !bracket) {
+          /* check whether the first non-space char is an 
+           * opening bracket and skip it if true
+           */ 
+          bracket = true;
+          cp++;
+          continue;
+        }
+        else if (cp[0]==')' && !first && bracket) {
+          /* if an opening bracket was scanned before and 
+           * the current char is a closing one, skip it
+           */
+          bracket = false;
+          cp++;
+          continue;
+        }
+        else if (!isdigit(cp[0]))
+	  return (false);
+
+        /* state that we already scanned past the first char */
+        first = false;
 	int v = 0;
 	do {
 	    v = v*10 + (cp[0] - '0');
@@ -924,3 +951,4 @@ Class1Modem::parseQuery(const char* cp, Class1Cap caps[])
     }
     return (true);
 }
+
