@@ -104,7 +104,7 @@ vsyslog(int pri, register const char* fmt, va_list ap)
 
 	/* build the message */
 	(void)time(&now);
-	(void)sprintf(tbuf, "<%d>%.15s ", pri, ctime(&now) + 4);
+	(void)snprintf(tbuf, sizeof(tbuf), "<%d>%.15s ", pri, ctime(&now) + 4);
 	for (p = tbuf; *p; ++p);
 	if (LogStat & LOG_PERROR)
 		stdp = p;
@@ -113,7 +113,7 @@ vsyslog(int pri, register const char* fmt, va_list ap)
 		for (; *p; ++p);
 	}
 	if (LogStat & LOG_PID) {
-		(void)sprintf(p, "[%d]", getpid());
+		(void)snprintf(p, tbuf + sizeof(tbuf) - p, "[%d]", getpid());
 		for (; *p; ++p);
 	}
 	if (LogTag) {
@@ -137,7 +137,7 @@ vsyslog(int pri, register const char* fmt, va_list ap)
 		*t1 = '\0';
 	}
 
-	(void)vsprintf(p, fmt_cpy, ap);
+	(void)vsnprintf(p, tbuf + sizeof(tbuf) - p, fmt_cpy, ap);
 
 	cnt = strlen(tbuf);
 
