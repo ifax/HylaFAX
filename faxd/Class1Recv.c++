@@ -349,9 +349,9 @@ const u_int Class1Modem::modemPPMCodes[8] = {
 bool
 Class1Modem::recvPage(TIFF* tif, int& ppm, fxStr& emsg)
 {
+top:
     time_t t2end = 0;
 
-top:
     do {
 	u_int timer = conf.t2Timer;
 	if (!messageReceived) {
@@ -537,15 +537,22 @@ top:
 		t2end = Sys::now() + howmany(conf.t2Timer, 1000);
 	    }
 	}
-    } while (!wasTimeout() && lastResponse != AT_EMPTYLINE);
+    /*
+     * We need to provide an escape from the do {...} while loop for EOM
+     * because we were looking in the wrong place for the timeout, which
+     * occurred at "Set high speed carrier & start receive."  (L.H.)
+     */
+    } while (!wasTimeout() && lastResponse != AT_EMPTYLINE && lastPPM != FCF_EOM);
     if (lastPPM == FCF_EOM) {
 	/*
 	 * Sigh, no state machine, have to do this the hard
 	 * way.  After receipt of EOM if a subsequent frame
 	 * receive times out then we must restart Phase B
-	 * and redo training et. al.
+	 * and redo training et. al.  However, because of the
+	 * timeout, we need to achieve CONNECT first, just
+	 * as we did following ATA back in the beginning.
 	 */
-	if (recvBegin(emsg))
+	if (atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 0) == AT_CONNECT && recvBegin(emsg))
 	    goto top;
     } else
 	emsg = "T.30 T2 timeout, expected page not received";
