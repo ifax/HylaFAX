@@ -155,6 +155,7 @@ public:
     fxStr	jobtype;	// job type for selecting send command
     fxStr	tagline;	// tag line format
     fxStr	doneop;		// operation to do when job completes
+    pid_t	writeQFilePid;	// pid of last writeQFile operation
     FaxItemArray items;	// set of requests
 
     static stringval strvals[];

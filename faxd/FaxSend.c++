@@ -802,9 +802,11 @@ FaxServer::notifyPageSent(FaxRequest& req, const char*)
      * If the system is busy then req.writeQFile may not return quickly.
      * Thus we run it in a child process and move on.
      */
-    pid_t pid = fork();
-    switch (pid) {
+    pid_t pid = req.writeQFilePid;
+    req.writeQFilePid = fork();
+    switch (req.writeQFilePid) {
 	case 0:
+	    if (pid > 0) (void) Sys::waitpid(pid);	// the calls to writeQFile must be sequenced serially
 	    req.writeQFile();		// update q file for clients
 	    traceProtocol("SEND FAX (%s): FROM %s TO %s (page %u of %u sent in %s)"
 		, (const char*) req.commid
@@ -829,7 +831,7 @@ FaxServer::notifyPageSent(FaxRequest& req, const char*)
 	    );
 	    break;
 	default:
-	    Dispatcher::instance().startChild(pid, this);
+	    Dispatcher::instance().startChild(req.writeQFilePid, this);
 	    break;
     }
     pageStart = now;			// for next page
@@ -866,6 +868,10 @@ FaxServer::notifyDocumentSent(FaxRequest& req, u_int fi)
 	, (const char*) req.jobid
 	, fmtTime(getFileTransferTime())
     );
+
+    // we must ensure that the previous writeQFiles have completed
+    if (req.writeQFilePid > 0) (void) Sys::waitpid(req.writeQFilePid);
+
     if (freq.op == FaxRequest::send_fax)
 	req.renameSaved(fi);
     req.items.remove(fi);

@@ -672,18 +672,22 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 #else
 					if (!select(fcfd[0]+1, &rfds, NULL, NULL, &tv)) {
 #endif
-					    (void) transmitFrame(params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP|FCF_RCVR);
-					    tracePPR("RECV send", params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP);
-					    HDLCFrame rrframe(conf.class1FrameOverhead);
-					    if (recvFrame(rrframe, conf.t4Timer)) {
-						tracePPM("RECV recv", rrframe.getFCF());
-						if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
-						    protoTrace("Ignoring invalid response to RNR.");
+					    bool gotresponse = true;
+					    u_short rnrcnt = 0;
+					    do {
+						if (emsg != "") break;
+						(void) transmitFrame(params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP|FCF_RCVR);
+						tracePPR("RECV send", params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP);
+						HDLCFrame rrframe(conf.class1FrameOverhead);
+						if (gotresponse = recvFrame(rrframe, conf.t4Timer)) {
+						    tracePPM("RECV recv", rrframe.getFCF());
+						    if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
+							protoTrace("Ignoring invalid response to RNR.");
+						    }
+						    if (!useV34) atCmd(conf.class1SwitchingCmd, AT_OK);
 						}
-						if (!useV34) {
-						    atCmd(conf.class1SwitchingCmd, AT_OK);
-						}
-					    }
+					    } while (!gotresponse && ++rnrcnt < 2);
+					    if (!gotresponse) emsg = "No response to RNR repeated 3 times.";
 					} else {		// parent finished TIFFWriteDirectory
 					    tbuf[0] = 0;
 					    if (emsg == "") {	// confirm only if there was no error
@@ -1328,18 +1332,22 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 #else
 			if (!select(fcfd[0]+1, &rfds, NULL, NULL, &tv)) {
 #endif
-			    if (!useV34) {
-				atCmd(conf.class1SwitchingCmd, AT_OK);
-			    }
-			    (void) transmitFrame(FCF_RNR|FCF_RCVR);
-			    tracePPR("RECV send", FCF_RNR);
-			    HDLCFrame rrframe(conf.class1FrameOverhead);
-			    if (recvFrame(rrframe, conf.t4Timer)) {
-				tracePPM("RECV recv", rrframe.getFCF());
-				if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
-				    protoTrace("Ignoring invalid response to RNR.");
+			    bool gotresponse = true;
+			    u_short rnrcnt = 0;
+			    do {
+				if (!useV34) atCmd(conf.class1SwitchingCmd, AT_OK);
+				if (emsg != "") break;
+				(void) transmitFrame(FCF_RNR|FCF_RCVR);
+				tracePPR("RECV send", FCF_RNR);
+				HDLCFrame rrframe(conf.class1FrameOverhead);
+				if (gotresponse = recvFrame(rrframe, conf.t4Timer)) {
+				    tracePPM("RECV recv", rrframe.getFCF());
+				    if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
+					protoTrace("Ignoring invalid response to RNR.");
+				    }
 				}
-			    }
+			    } while (!gotresponse && ++rnrcnt < 2);
+			    if (!gotresponse) emsg = "No response to RNR repeated 3 times.";
 			} else tbuf[0] = 0;	// parent finished writeECMData
 		    } while (tbuf[0] != 0);
 		    Sys::read(fcfd[0], NULL, 1);

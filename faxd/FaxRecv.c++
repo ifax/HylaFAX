@@ -51,6 +51,7 @@ FaxServer::recvFax(const CallerID& cid)
     FaxRecvInfo info;
     bool faxRecognized = false;
     abortCall = false;
+    waitNotifyPid = 0;
 
     /*
      * Create the first file ahead of time to avoid timing
@@ -69,8 +70,8 @@ FaxServer::recvFax(const CallerID& cid)
 	     * If the system is busy then notifyRecvBegun may not return
 	     * quickly.  Thus we run it in a child process and move on.
 	     */
-	    pid_t pid = fork();
-	    switch (pid) {
+	    waitNotifyPid = fork();
+	    switch (waitNotifyPid) {
 		case 0:
 		    // NB: partially fill in info for notification call
 		    notifyRecvBegun(info);
@@ -81,7 +82,7 @@ FaxServer::recvFax(const CallerID& cid)
 		    notifyRecvBegun(info);
 		    break;
 		default:
-		    Dispatcher::instance().startChild(pid, this);
+		    Dispatcher::instance().startChild(waitNotifyPid, this);
 		    break;
 	    }
 	    if (!recvDocuments(tif, info, docs, emsg)) {
@@ -219,9 +220,11 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 	 * If syslog is busy then notifyDocumentRecvd may not return
 	 * quickly.  Thus we run it in a child process and move on.
 	 */
-	pid_t pid = fork();
-	switch (pid) {
+	pid_t pid = waitNotifyPid;
+	waitNotifyPid = fork();
+	switch (waitNotifyPid) {
 	    case 0:
+		if (pid > 0) (void) Sys::waitpid(pid);
 		notifyDocumentRecvd(info);
 		sleep(1);		// XXX give parent time
 		exit(0);
@@ -230,7 +233,7 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 		notifyDocumentRecvd(info);
 		break;
 	    default:
-		Dispatcher::instance().startChild(pid, this);
+		Dispatcher::instance().startChild(waitNotifyPid, this);
 		break;
 	}
 	if (!recvOK || ppm == PPM_EOP)
@@ -273,9 +276,11 @@ FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
 	 * Thus we run it in a child process and move on.  Timestamps
 	 * in syslog cannot be expected to have exact precision anyway.
 	 */
-	pid_t pid = fork();
-	switch (pid) {
+	pid_t pid = waitNotifyPid;
+	waitNotifyPid = fork();
+	switch (waitNotifyPid) {
 	    case 0:
+		if (pid > 0) (void) Sys::waitpid(pid);
 		notifyPageRecvd(tif, info, ppm);
 		sleep(1);		// XXX give parent time
 		exit(0);
@@ -284,7 +289,7 @@ FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
 		notifyPageRecvd(tif, info, ppm);
 		break;
 	    default:
-		Dispatcher::instance().startChild(pid, this);
+		Dispatcher::instance().startChild(waitNotifyPid, this);
 		break;
 	}
 	if (emsg != "") return (false);		// got page with fatal error

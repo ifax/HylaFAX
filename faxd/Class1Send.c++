@@ -483,6 +483,11 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		protoTrace(emsg);
 		return (send_failed);
 	    case FCF_CRP:
+		if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
+		    emsg = "Failure to receive silence.";
+		    protoTrace(emsg);
+		    return (send_retry);
+		}
 		break;
 	    default:			// unexpected abort
 		emsg = "Fax protocol error (unknown frame received)";

@@ -52,6 +52,7 @@ private:
     fxStr	recvTSI;		// sender's TSI
     fxStr	hostname;		// host on which fax is received
     u_int	recvPages;		// count of received pages
+    pid_t	waitNotifyPid;		// pid of last notification process
 // send+receive stats
     time_t	connTime;		// time connected to peer
     time_t	fileStart;		// starting time for file transmit
