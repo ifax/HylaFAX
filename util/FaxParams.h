@@ -47,9 +47,9 @@ class FaxParams
 	FaxParams(u_int disDcs, u_int xinfo);
 	FaxParams(u_char* pBits, int length);
 
-	virtual ~FaxParams (void);
+	virtual ~FaxParams(void);
 
-	virtual void update (void);
+	virtual void update(bool isDIS);
 
 	void setBit(int bitNum, bool val);
 	bool isBitEnabled(int bitNum);

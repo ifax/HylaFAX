@@ -194,6 +194,6 @@ FaxParams& FaxParams::assign(const FaxParams& operand)
     return *this;
 }
 
-void FaxParams::update (void)
+void FaxParams::update(bool isDIS)
 {
 }
