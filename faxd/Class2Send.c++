@@ -484,12 +484,13 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	    }
 	    dp = convertPhaseCData(dp, totdata, fillorder, params, newparams);
 	}
-	params = newparams;		// revert back
 
         /*
          * correct broken Phase C (T.4/T.6) data if necessary
          */
-	lastByte = correctPhaseCData(dp, &totdata, fillorder, params);
+	lastByte = correctPhaseCData(dp, &totdata, fillorder, (conf.class2RTFCC ? params : newparams));
+
+	params = newparams;		// revert back
 
 	beginTimedTransfer();
 	rc = putModemDLEData(dp, (u_int) totdata, bitrev, getDataTimeout());
