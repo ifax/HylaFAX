@@ -38,6 +38,8 @@
 # CONFIG:CLASS1:3362:.*:RTSCTS: Manufacturer="USRobotics w/TI Chipset" Model="Sportster 33600"
 # CONFIG:CLASS1:3367:.*:RTSCTS: Manufacturer="USRobotics" Model="Courier"
 # CONFIG:CLASS1:5601:.*:RTSCTS: Manufacturer="3Com U. S. Robotics" Model="3CP5610"
+# CONFIG:CLASS1:5607:.*:RTSCTS: Manufacturer="3Com USRobotics" Model="Courier V.Everything"
+# CONFIG:CLASS1:5608A:.*:RTSCTS: Manufacturer="3Com USRobotics" Model="Courier"
 #
 # BEGIN-SERVER
 # END-SERVER
