@@ -44,7 +44,13 @@ struct exit_status {
 
 #define utmp          utmpx
 #undef  ut_time
+#ifdef __linux__
+#ifdef __GLIBC__
+#define ut_time       ut_tv.tv_sec
+#endif
+#else
 #define ut_time       ut_xtime
+#endif
 
 #define getutent      getutxent
 #define getutid       getutxid
@@ -52,9 +58,9 @@ struct exit_status {
 #define pututline     pututxline
 #define setutent      setutxent
 #define endutent      endutxent
-#else
+#else	/* HAS_UTMPX */
 #include <utmp.h>
-#endif	/* HAS_UTMPX */
+#endif
 }
 
 #include "Sys.h"
@@ -172,9 +178,7 @@ SysVGetty::loginAccount()
     ut.ut_exit.e_exit = 0;
     ut.ut_exit.e_termination = 0;
 #endif
-//    ut.ut_time = Sys::now();
-    ut.ut_tv.tv_sec = Sys::now();
-    ut.ut_tv.tv_usec = 0;
+    ut.ut_time = Sys::now();
     // mark utmp entry as a login
     strncpy(ut.ut_user, "LOGIN", sizeof (ut.ut_user));
     /*
@@ -217,9 +221,7 @@ SysVGetty::hangup()
 	ut->ut_exit.e_exit = (exitStatus >> 8) & 0xff;		// XXX
 	ut->ut_exit.e_termination = exitStatus & 0xff;		// XXX
 #endif
-//	ut->ut_time = Sys::now();
-	ut->ut_tv.tv_sec = Sys::now();
-	ut->ut_tv.tv_usec = 0;
+	ut->ut_time = Sys::now();
 	pututline(ut);
 	writeWtmp(ut);
 	break;
