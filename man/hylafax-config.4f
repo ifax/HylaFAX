@@ -910,8 +910,6 @@ In the United States, this is ``1''.
 .B MaxConcurrentCalls\(S1
 The default value to use for the maximum number of jobs for the
 same destination that are processed concurrently.
-Note that each job is processed with a separate phone call;
-job batching is not currently supported.
 Thus this parameter defines the maximum number of concurrent phone calls
 to the same destination.
 Unless all of your fax destinations have multiple fax lines 
