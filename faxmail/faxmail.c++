@@ -448,7 +448,9 @@ void
 faxMailApp::formatMessage(FILE* fd, MIMEState& mime, MsgFmt& msg)
 {
     if (mime.getSubType() == "rfc822") {	// discard anything else
-	msg.parseHeaders(fd, mime.lineno);	// collect headers
+						// 980316 - mic: new MsgFmt 
+	MsgFmt bodyHdrs(msg);            
+	bodyHdrs.parseHeaders(fd, mime.lineno);
 	/*
 	 * Calculate the amount of space required to format
 	 * the message headers and any required inter-message
@@ -462,11 +464,11 @@ faxMailApp::formatMessage(FILE* fd, MIMEState& mime, MsgFmt& msg)
 	     * XXX, hack.  Avoid inserting a digest divider when
 	     * the sub-part is a faxmail prologue or related part.
 	     */
-	    const fxStr* s = msg.findHeader("Content-Type");
+	    const fxStr* s = bodyHdrs.findHeader("Content-Type");
 	    if (!s || !strneq(*s, "application/x-faxmail", 21))
 		divider = msgDivider;
 	}
-	u_int nl = msg.headerCount()		// header lines
+	u_int nl = bodyHdrs.headerCount()	// header lines
 	    + (nl > 0)				// blank line following header
 	    + (divider != NULL)			// digest divider
 	    + 1;				// 1st text line of message
@@ -477,10 +479,10 @@ faxMailApp::formatMessage(FILE* fd, MIMEState& mime, MsgFmt& msg)
 	    endLine();
 	}
 	if (nl > 0)
-	    msg.formatHeaders(*this);		// emit formatted headers
+	    bodyHdrs.formatHeaders(*this);	// emit formatted headers
 
 	MIMEState subMime(mime);
-	formatMIME(fd, subMime, msg);		// format message body
+	formatMIME(fd, subMime, bodyHdrs);	// format message body
     } else {
 	discardPart(fd, mime);
 	formatDiscarded(mime);
