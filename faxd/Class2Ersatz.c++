@@ -117,6 +117,15 @@ Class2ErsatzModem::pageDone(u_int ppm, u_int& ppr)
 			rbuf, "can not parse PPR");
 		    return (false);		// force termination
 		}
+/*
+ * This hack produces more problems than solves (latest ZyXELs
+ * seem not to have the bug described below). But if there is
+ * some delay between +FPTS and OK, and the next command is
+ * feeded before OK is returned, some modems (e.g. Xircom)
+ * will then return an error (+FHNG:2). Nonetheless I daren't
+ * remove this code completely :-) -- dbely
+ */
+#if 0
 		/*
 		 * (In some firmware revisions...) The ZyXEL modem
 		 * appears to drop DCD when the remote side drops
@@ -130,6 +139,7 @@ Class2ErsatzModem::pageDone(u_int ppm, u_int& ppr)
 		 */
 		if (ppm == PPM_EOP && ppr == PPR_MCF)
 		    return (true);
+#endif		    
 		break;
 	    case AT_OK:				// normal result code
 	    case AT_ERROR:			// possible if page retransmit
