@@ -88,6 +88,8 @@ test -z "$fil" && fil="-"		# read from stdin
 case "${pagewidth}x${pagelength}" in
 1728x280|1728x279)		# 279.4mm is actually correct...
     paper=letter;;
+1728x364) 
+    paper=legal;;
 *x296|*x297)			# more roundoff problems...
     paper=a4;;
 *x364)
