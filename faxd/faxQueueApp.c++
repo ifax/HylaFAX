@@ -3071,7 +3071,7 @@ main(int argc, char** argv)
     if (Sys::chdir(queueDir) < 0)
 	faxApp::fatal(queueDir | ": Can not change directory");
     if (!Sys::isRegularFile(FAX_ETCDIR "/setup.cache"))
-	faxApp::fatal("No " FAX_ETCDIR "/setup.cache file; run faxsetup(1M) first");
+	faxApp::fatal("No " FAX_ETCDIR "/setup.cache file; run faxsetup first");
     if (detach)
 	faxApp::detachFromTTY();
 
