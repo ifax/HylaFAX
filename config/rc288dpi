@@ -68,3 +68,5 @@ ModemDialCmd:		ATDT%s		# T for tone dialing
 ModemAnswerFaxBeginCmd:	"<19200><xon>"	# lock line rate & switch flow control
 #
 Class2RecvDataTrigger:	"\022"		# character sent to modem to start recv
+Class2BUGCmd:		none		# AC/V34 gives ERROR
+Class2APQueryCmd:	none		# AC/V34 gives ERROR
