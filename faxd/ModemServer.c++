@@ -781,8 +781,8 @@ bool ModemServer::serverBusy() const
 
 bool ModemServer::modemWaitForRings(u_int rings, CallType& type, CallerID& cid)
     { return modem->waitForRings(rings, type, cid); }
-CallType ModemServer::modemAnswerCall(AnswerType atype, fxStr& emsg)
-    { return modem->answerCall(atype, emsg); }
+CallType ModemServer::modemAnswerCall(AnswerType atype, fxStr& emsg, const char* dialnumber = NULL)
+    { return modem->answerCall(atype, emsg, dialnumber); }
 void ModemServer::modemAnswerCallCmd(CallType ctype)
     { modem->answerCallCmd(ctype); }
 void ModemServer::modemHangup()			{ modem->hangup(); }

@@ -79,6 +79,13 @@ FaxServer::recvFax(const CallerID& cid)
 	}
     } else
 	traceServer("RECV FAX: %s", (const char*) emsg);
+
+    /*
+     * Possibly issue a command upon successful reception.
+     */
+    if (info.npages > 0 && info.reason == "")
+	    modem->recvSucceeded();
+
     /*
      * Now that the session is completed, do local processing
      * that might otherwise slow down the protocol (and potentially

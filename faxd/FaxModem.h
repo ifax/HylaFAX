@@ -260,6 +260,7 @@ public:
     virtual bool recvPage(TIFF*, u_int& ppm, fxStr& em) = 0;
     virtual bool recvEnd(fxStr& emsg) = 0;
     virtual void recvAbort() = 0;
+    virtual void recvSucceeded();
     // query interfaces for optional state
     virtual bool getRecvPWD(fxStr&);
     virtual bool getRecvTSI(fxStr&);

@@ -203,6 +203,7 @@ WedgedCmd\(S1	string	\s-1bin/wedged\s+1	command to run when modem is wedged
 ModemAnswerCmd	string	\s-1ATA\s+1	command for answering phone
 ModemAnswerDataBeginCmd	string	\-	command for start of answered data call
 ModemAnswerDataCmd	string	\s-1ATA\s+1	command for answering data call
+ModemAnswerDialCmd	string	\s-1ATA\s+1	command for answering data call
 ModemAnswerFaxBeginCmd	string	\-	command for start of answered fax call
 ModemAnswerFaxCmd	string	\s-1ATA\s+1	command for answering fax call
 ModemAnswerResponseTimeout	integer	\s-1180000\s+1	answer command timeout (ms)
@@ -229,6 +230,7 @@ ModemPageDoneTimeout	integer	\s-1180000\s+1	page send/receive timeout (ms)
 ModemPageStartTimeout	integer	\s-1180000\s+1	page send/receive timeout (ms)
 ModemRate	integer	\s-119200\s+1	baud rate to use for \s-1DCE-DTE\s+1 communication
 ModemRecvFillOrder	string	\s-1\fIsee below\fP\s+1	bit order for received facsimile data
+ModemRecvSuccessCmd	string	\-	command to send after a successful reception
 ModemResetCmds	string	\-	additional commands when resetting modem
 ModemResetDelay	integer	\s-12600\s+1	delay (ms) after placing DTR ON
 ModemResultCodesCmd	string	\s-1ATQ0\s+1	command for enabling result codes
@@ -1553,6 +1555,14 @@ See also
 and
 .BR AnswerRotary .
 .TP
+.B ModemAnswerDialCmd
+The command to explicitly answer the phone for a dialed connection.
+This command must generate a result string that 
+identifies the incoming call is from a facsimile modem.
+If this parameter is not specified or is null, then the value of
+.B ModemAnswerCmd
+is used instead.
+.TP
 .B ModemAnswerFaxBeginCmd
 The command to send to the modem once a facsimile
 connection has been established.
@@ -1805,6 +1815,10 @@ for Class 1 and Class 2.0 modems and
 .SM MSB2LSB
 for non-Multitech Class 2 modems. However this may be wrong for
 your modem, so you will have to specify this parameter explicitly.
+.TP
+.B ModemRecvSuccessCmd
+A string of commands to issue to the modem after a successful
+receive session before the call is disconnected.
 .TP
 .B ModemResetCmds
 A string of commands to issue to the modem during initialization.

@@ -116,10 +116,10 @@ private:
     void	setRingsBeforeAnswer(int rings);
     void	listenBegin();
     void	listenForRing();
-    void	answerPhoneCmd(AnswerType);
-    void	answerPhone(AnswerType, CallType, const CallerID& cid);
+    void	answerPhoneCmd(AnswerType, const char* dialnumber = NULL);
+    void	answerPhone(AnswerType, CallType, const CallerID& cid, const char* dialnumber = NULL);
     void	answerCleanup();
-    bool	answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const CallerID& cid);
+    bool	answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const CallerID& cid, const char* dialnumber = NULL);
 
     friend void AnswerTimeoutHandler::timerExpired(long, long);
 // miscellaneous stuff

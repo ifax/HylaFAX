@@ -149,9 +149,10 @@ public:
 	ANSTYPE_DATA	= 1,	// data call
 	ANSTYPE_FAX	= 2,	// fax call
 	ANSTYPE_VOICE	= 3,	// voice call
-	ANSTYPE_EXTERN	= 3	// any kind of call, but answered externally
+	ANSTYPE_EXTERN	= 3,	// any kind of call, but answered externally
+	ANSTYPE_DIAL	= 4	// dial out to receive (pseudo poll)
     };
-    static const char* answerTypes[4];
+    static const char* answerTypes[5];
 
     enum {			// ClassModem::ATResponse
 	AT_NOTHING	= 0,	// for passing as a parameter
@@ -315,7 +316,7 @@ public:
      * at any time in this procedure.
      */
     virtual bool waitForRings(u_int rings, CallType&, CallerID&);
-    virtual CallType answerCall(AnswerType, fxStr& emsg);
+    virtual CallType answerCall(AnswerType, fxStr& emsg, const char* dialnumber = NULL);
     virtual void answerCallCmd(CallType);
 };
 inline long ClassModem::getDataTimeout() const		{ return dataTimeout; }

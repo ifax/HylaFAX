@@ -102,6 +102,16 @@ FaxModem::pollBegin(const fxStr&, const fxStr&, const fxStr&, fxStr&)
     return (true);
 }
 
+/*
+ * Issue a command upon successful reception.
+ */
+void
+FaxModem::recvSucceeded()
+{
+    if (conf.recvSuccessCmd != "")
+	atCmd(conf.recvSuccessCmd, AT_OK);
+}
+
 static void
 stripBlanks(fxStr& d, const fxStr& s)
 {

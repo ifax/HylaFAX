@@ -64,6 +64,7 @@ public:
     fxStr	answerDataCmd;		// cmd for answering data call
     fxStr	answerFaxCmd;		// cmd for answering fax call
     fxStr	answerVoiceCmd;		// cmd for answering voice call
+    fxStr	answerDialCmd;		// cmd for answering a dialed call
     fxStr	ringResponse;		// cmd to respond after AT_RING
     fxStr	hardFlowCmd;		// cmd for hardware flow control
     fxStr	softFlowCmd;		// cmd for software flow control
@@ -90,6 +91,7 @@ public:
     fxStr	answerFaxBeginCmd;	// cmd to start inbound fax session
     fxStr	answerVoiceBeginCmd;	// cmd to start inbound voice session
     fxStr	sendBeginCmd;		// cmd to start outbound session
+    fxStr	recvSuccessCmd;		// cmd for after successful reception
     fxStr	class0Cmd;		// cmd for setting Class 0
     fxStr	classQueryCmd;		// cmd for getting modem services
 					// distinctive ring

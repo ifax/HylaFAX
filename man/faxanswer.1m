@@ -84,12 +84,17 @@ phone for particular type of call: one of
 .IR data ,
 .IR voice ,
 .IR any ,
-or
-.I extern
+.IR extern
 (to force
 .I faxgetty
 to invoke an external application to
-to handle the call).
+to handle the call),
+or
+.I dialX
+(where X is a dialstring to dial before initiating a fax reception).
+If using
+.IR dialX ,
+the specified dialstring will likely need to end with a semicolon (``;'').
 .SH FILES
 .nf
 .ta \w'${SPOOL}/FIFO.<devid>    'u

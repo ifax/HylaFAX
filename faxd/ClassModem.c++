@@ -85,11 +85,12 @@ const char* ClassModem::callTypes[5] = {
     "voice",
     "error"
 };
-const char* ClassModem::answerTypes[4] = {
+const char* ClassModem::answerTypes[5] = {
     "any",
     "fax",
     "data",
-    "voice"
+    "voice",
+    "dial"
 };
 
 static fxStr
@@ -256,7 +257,7 @@ again:
 }
 
 CallType
-ClassModem::answerCall(AnswerType atype, fxStr& emsg)
+ClassModem::answerCall(AnswerType atype, fxStr& emsg, const char* number)
 {
     CallType ctype = CALLTYPE_ERROR;
     /*
@@ -269,11 +270,18 @@ ClassModem::answerCall(AnswerType atype, fxStr& emsg)
     case ANSTYPE_FAX:	answerCmd = conf.answerFaxCmd; break;
     case ANSTYPE_DATA:	answerCmd = conf.answerDataCmd; break;
     case ANSTYPE_VOICE:	answerCmd = conf.answerVoiceCmd; break;
+    case ANSTYPE_DIAL:
+			answerCmd = conf.answerDialCmd;
+			dial(number, emsg);	// no error-checking
+			break;
     }
     if (answerCmd == "")
 	answerCmd = conf.answerAnyCmd;
     if (atCmd(answerCmd, AT_NOTHING)) {
-	ctype = answerResponse(emsg);
+	if (atype == ANSTYPE_DIAL)
+	    ctype = CALLTYPE_FAX;	// force as fax
+	else
+	    ctype = answerResponse(emsg);
 	if (ctype == CALLTYPE_UNKNOWN) {
 	    /*
 	     * The response does not uniquely identify the type
