@@ -1341,6 +1341,22 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallerID& cid)
 			conf.parseCID(rbuf, cid);
 		    }
 		} while (r != AT_OK && (Sys::now()-ringstart < 3));
+		if (conf.cidNumber == "SHIELDED_DTMF") {	// retrieve DID, e.g. via voice DTMF
+		    ringstart = Sys::now();
+		    do {
+			int c = server.getModemChar(5000);
+			if (c == 0x10) c = server.getModemChar(5000);
+			if (c == 0x23 || c == 0x2A || (c >= 0x30 && c <= 0x39)) {
+			    // a DTMF digit was received...
+			    protoTrace("MODEM HEARD DTMF: %c", c);
+			    cid.number.append(fxStr::format("%c", c));
+			}
+		    } while (cid.number.length() < conf.cidNumberAnswerLength && (Sys::now()-ringstart < 10));
+		    u_char buf[2];
+		    buf[0] = DLE; buf[1] = ETX;
+		    if (!putModem(buf, 2, 3000))
+			return (false);
+		}
 	    }
 	    gotring = true;
 	    break;

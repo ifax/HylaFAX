@@ -535,6 +535,35 @@ See also
 .B CIDName
 and
 .BR QualifyCID .
+
+The special
+.B CIDNumber
+value of "SHIELDED_DTMF" is used in conjunction with
+.B ModemRingResponse
+and
+.B CIDNumberAnswerLength.
+After executing
+.B ModemRingResponse,
+HylaFAX will expect
+DTMF data (usually DLE-shielded) for
+.B CIDNumber
+until
+.B CIDNumberAnswerLength
+is reached.  Note that if the modem is in voice mode to hear these
+DTMF digits, then it must be returned to fax mode in the
+.B ModemAnswerCmd.
+
+For example, the following settings will cause HylaFAX to enter
+voice mode and go off-hook when a RING is detected.  It will then
+expect four DTMF digits (presumably for routing), and then it will
+return to fax mode and answer the call.
+.nf
+
+  ModemRingResponse:     AT+FCLASS=8;H1
+  CIDNumber:             SHIELDED_DTMF
+  CIDNumberAnswerLength: 4
+  ModemAnswerCmd:        AT+FCLASS=1;A
+.fi
 .TP
 .B CIDNumberAnswerLength
 An integer indicating the minimum number of characters in
