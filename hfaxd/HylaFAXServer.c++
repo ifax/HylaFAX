@@ -512,24 +512,25 @@ HylaFAXServer::cvtTime(const time_t& t) const
 u_int
 HylaFAXServer::getSequenceNumber(const char* filename, u_int count, fxStr& emsg)
 {
-    int fd = Sys::open(filename, O_CREAT|O_RDWR, 0644);
+    int fd = Sys::open(filename, O_CREAT|O_RDWR|O_EXCL, 0600);
     if (fd < 0) {
-	emsg = fxStr::format("Unable to open sequence number file %s; %s.",
-	    filename, strerror(errno));
-	logError("%s: open: %s", filename, strerror(errno));
-	return ((u_int) -1);
+        emsg = fxStr::format("Unable to open sequence number file %s; %s.",
+            filename, strerror(errno));
+        logError("%s: open: %s", filename, strerror(errno));
+        return ((u_int) -1);
     }
     flock(fd, LOCK_EX);
     u_int seqnum = 1;
     char line[1024];
     int n = read(fd, line, sizeof (line));
     line[n < 0 ? 0 : n] = '\0';
-    if (n > 0)
-	seqnum = atoi(line);
+    if (n > 0) {
+        seqnum = atoi(line);
+    }
     if (seqnum < 1 || seqnum >= MAXSEQNUM) {
-	logWarning("%s: Invalid sequence number \"%s\", resetting to 1",
-	    filename, line);
-	seqnum = 1;
+        logWarning("%s: Invalid sequence number \"%s\", resetting to 1",
+            filename, line);
+        seqnum = 1;
     }
     sprintf(line, "%u", NEXTSEQNUM(seqnum+count));
     lseek(fd, 0, SEEK_SET);
@@ -543,6 +544,7 @@ HylaFAXServer::getSequenceNumber(const char* filename, u_int count, fxStr& emsg)
     Sys::close(fd);			// NB: implicit unlock
     return (seqnum);
 }
+
 u_int HylaFAXServer::getJobNumber(fxStr& emsg)
     { return (getSequenceNumber(FAX_SENDDIR "/" FAX_SEQF, 1, emsg)); }
 u_int HylaFAXServer::getDocumentNumbers(u_int count, fxStr& emsg)

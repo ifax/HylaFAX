@@ -123,7 +123,17 @@ public:
 	{ return ::gethostname(name, namelen); }
 
     static char* mktemp(char* templ)	{ return ::mktemp(templ); }
-    static int mkstemp(char* templ)	{ return ::mkstemp(templ); }
+
+    static int mkstemp(char* templ)	{
+        int fd = mkstemp(templ);
+#if defined __GLIBC__ && __GLIBC__ <= 2 && __GLIBC_MINOR__ <= 0
+        // Hack for older versions of glibc which do not set the file
+        // permissions correctly
+        if (fchmod(fd, S_IRUSR | S_IWUSR) == -1) return -1;
+#endif
+        return fd;
+    }
+
     static FILE* tmpfile()	{ return ::tmpfile(); }
     static FILE* fopen(const char* filename, const char* mode)
 	{ return ::fopen(filename, mode); }

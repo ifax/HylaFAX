@@ -478,7 +478,7 @@ HylaFAXServer::storeCmd(const char* name, const char* mode)
 		reply(553, "Bad filename; includes invalid character.");
 		return;
 	    }
-	mode_t omask = umask(007);
+	mode_t omask = umask(027);
 	FILE* fout = fopen(name, restart_point ? "r+w" : mode);
 	if (fout != NULL) {
 	    setFileOwner(name);
@@ -531,7 +531,7 @@ HylaFAXServer::storeUniqueCmd(bool isTemp)
 	FILE* fout = fopen(filename, "w");
 	if (fout != NULL) {
 	    setFileOwner(filename);
-	    FileCache::chmod(filename, 0660);		// sync cache
+	    FileCache::chmod(filename, 0640);		// sync cache
 	    if (isTemp)
 		tempFiles.append(filename);
 	    time_t start_time = Sys::now();
