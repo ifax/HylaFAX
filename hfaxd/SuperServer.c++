@@ -23,10 +23,10 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
+#include "Sys.h"
 #include "Dispatcher.h"
 #include "HylaFAXServer.h"
 #include "SuperServer.h"
-#include "Sys.h"
 #include "Socket.h"
 
 #define	MAXTRIES	5

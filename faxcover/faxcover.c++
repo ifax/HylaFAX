@@ -273,6 +273,7 @@ faxCoverApp::makeCoverSheet()
     emitDateDefs();
     coverDef("regarding", regarding);
     emitCommentDefs();
+    printf("%i comments BreakIntoCommentsX", maxcomments);
     printf("%%%%EndProlog\n");
     printf("%%%%Page: \"1\" 1\n");
     // copy prototype cover page
