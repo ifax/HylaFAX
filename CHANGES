@@ -1,3 +1,16 @@
+Changelog for HylaFAX 4.1rc2 - Jun 17, 2001
+
+* corrected some default JobReq* values (17 Jun 2001)
+* clarified documentation on sendfax -k option (17 Jun 2001)
+* added prototype configs for Courier and Zyxel models (17 Jun 2001)
+* added "Modem" option to DestControls (17 Jun 2001)
+* fix a segfault when processing null HDLC frames (17 Jun 2001)
+* continue manpage naming transition of 03 Jun (13 Jun 2001)
+* fix minor flaw in PriorityScheduling documentation (13 Jun 2001)
+* improve faxsetup onClient routines (07, 14 Jun 2001)
+* impose a T2 timeout on faxgetty vulnerability (07 Jun 2001)
+* updates for HTML documentation (07 Jun 2001)
+
 Changelog for HylaFAX 4.1rc1 - Jun 04, 2001
 
 * remove use of /sbin/killall, problematic on Tru64 (04 Jun 2001)
