@@ -703,6 +703,7 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 		    // wait for the control channel to reappear
 		    // should we reset the timeout setting?
 		    waitForDCEChannel(true);
+		    gotRTNC = true;
 		    return (false);
 		    break;
 		default:
@@ -1285,21 +1286,21 @@ Class1Modem::transmitData(int br, u_char* data, u_int cc,
  * retransmit the frame. 
  */
 bool
-Class1Modem::recvFrame(HDLCFrame& frame, long ms, u_char docrp)
+Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending)
 {
     bool gotframe;
     u_short crpcnt = 0;
     if (useV34) {
 	do {
-	    if (crpcnt) tracePPR(docrp & FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
+	    if (crpcnt) tracePPR(dir == FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
 	    frame.reset();
 	    gotframe = recvRawFrame(frame);
-	} while (docrp && crpcnt++ < 3 && !gotframe && !wasTimeout() && transmitFrame(docrp));
+	} while (!gotframe && !gotRTNC && !gotEOT && crpcnt++ < 3 && !wasTimeout() && transmitFrame(dir|FCF_CRP));
 	return (gotframe);
     }
     startTimeout(ms);
-    bool readPending = atCmd(rhCmd, AT_NOTHING, 0);
-    if (readPending && waitFor(AT_CONNECT,0)){
+    if (!readPending) readPending = atCmd(rhCmd, AT_NOTHING, 0) && waitFor(AT_CONNECT, 0);
+    if (readPending) {
         stopTimeout("waiting for HDLC flags");
         if (wasTimeout()){
             abortReceive();
@@ -1307,13 +1308,13 @@ Class1Modem::recvFrame(HDLCFrame& frame, long ms, u_char docrp)
         }
 	do {
 	    if (crpcnt) {
-		tracePPR(docrp & FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
+		tracePPR(dir == FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
 		if (!(atCmd(rhCmd, AT_NOTHING, 0) && waitFor(AT_CONNECT,0))) return (false);
 	    }
 	    frame.reset();
             gotframe = recvRawFrame(frame);
-	} while (docrp && crpcnt++ < 3 && !gotframe && !wasTimeout() &&
-		atCmd(conf.class1SwitchingCmd, AT_OK) && transmitFrame(docrp));
+	} while (!gotframe && crpcnt++ < 3 && !wasTimeout() &&
+		atCmd(conf.class1SwitchingCmd, AT_OK) && transmitFrame(dir|FCF_CRP));
 	return (gotframe);
     }
     stopTimeout("waiting for v.21 carrier");

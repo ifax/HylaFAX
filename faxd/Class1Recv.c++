@@ -195,7 +195,7 @@ Class1Modem::recvIdentification(
 	    /*
 	     * Wait for a response to be received.
 	     */
-	    if (recvFrame(frame, conf.t4Timer)) {
+	    if (recvFrame(frame, FCF_RCVR, conf.t4Timer)) {
 		do {
 		    /*
 		     * Verify a DCS command response and, if
@@ -218,7 +218,7 @@ Class1Modem::recvIdentification(
 			    return (true);
 			} else {
 			    if (lastResponse == AT_FRH3 && waitFor(AT_CONNECT,0)) {
-				gotframe = recvRawFrame(frame);
+				gotframe = recvFrame(frame, FCF_RCVR, conf.t4Timer, true);
 				lastResponse == AT_NOTHING;
 			    }
 			}
@@ -235,7 +235,7 @@ Class1Modem::recvIdentification(
 		     * the full T1 timeout, as specified by the protocol.
 		     */
 		    t1 = howmany(conf.t1Timer, 1000);
-		} while (recvFrame(frame, conf.t2Timer));
+		} while (recvFrame(frame, FCF_RCVR, conf.t2Timer));
 	    }
 	    if (gotEOT) {
 		emsg = "RSPREC error/got EOT";
@@ -293,7 +293,7 @@ Class1Modem::recvDCSFrames(HDLCFrame& frame)
 	    processDCSFrame(frame);
 	    break;
 	}
-    } while (frame.moreFrames() && recvFrame(frame, conf.t4Timer));
+    } while (frame.moreFrames() && recvFrame(frame, FCF_RCVR, conf.t4Timer));
     return (frame.isOK() && frame.getFCF() == FCF_DCS);
 }
 
@@ -547,7 +547,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		} else {
 		    if (rmResponse == AT_FRH3) {
 			HDLCFrame frame(conf.class1FrameOverhead);
-			if (waitFor(AT_CONNECT,0) && recvRawFrame(frame))
+			if (waitFor(AT_CONNECT,0) && recvFrame(frame, FCF_RCVR, conf.t4Timer, true))
 			    signalRcvd = frame.getFCF();
 		    }
 		}
@@ -613,7 +613,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	    ppmrcvd = true;
 	    lastPPM = signalRcvd;
 	} else {
-	    ppmrcvd = recvFrame(frame, timer, FCF_CRP|FCF_RCVR);
+	    ppmrcvd = recvFrame(frame, FCF_RCVR, timer);
 	    if (ppmrcvd) lastPPM = frame.getFCF();
 	}
 	/*
@@ -641,7 +641,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			if (!messageReceived) messageReceived = !(recvDCSFrames(frame));
 			if (!messageReceived) messageReceived = !(recvTraining());
 			if (messageReceived && lastResponse == AT_FRH3 && waitFor(AT_CONNECT,0)) {
-			    gotframe = recvRawFrame(frame);
+			    gotframe = recvFrame(frame, FCF_RCVR, conf.t4Timer, true);
 			    lastResponse = AT_NOTHING;
 			    messageReceived = false;
 			}
@@ -666,9 +666,8 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		     * that we just received, write it to disk.
 		     */
 		    if (messageReceived) {
-			if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
+			if (!useV34 && emsg == "" && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
 			    emsg = "Failure to receive silence.";
-			    return (false);
 			}
 			/*
 			 * On servers where disk access may be bottlenecked or stressed,
@@ -709,7 +708,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 						(void) transmitFrame(params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP|FCF_RCVR);
 						tracePPR("RECV send", params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP);
 						HDLCFrame rrframe(conf.class1FrameOverhead);
-						if (gotresponse = recvFrame(rrframe, conf.t4Timer, FCF_CRP|FCF_RCVR)) {
+						if (gotresponse = recvFrame(rrframe, FCF_RCVR, conf.t4Timer)) {
 						    tracePPM("RECV recv", rrframe.getFCF());
 						    if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
 							protoTrace("Ignoring invalid response to RNR.");
@@ -813,9 +812,13 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	    t2end = 0;
 	} else {
 	    /*
-	     * If remote is on hook, then modem responces [+FC]ERROR
-	     * or NO CARRIER. I only try to prevent looping (V.F.)
+	     * We didn't get a message.  Try to be resiliant by
+	     * looking for the signal again, but prevent infinite
+	     * looping with a timer.  However, if the modem is on
+	     * hook, then modem responds ERROR or NO CARRIER, and
+	     * for those cases there is no point in resiliancy.
 	     */
+	    if (lastResponse == AT_NOCARRIER || lastResponse == AT_ERROR) break;
 	    if (t2end) {
 		if (Sys::now() > t2end)
 		    break;
@@ -949,9 +952,9 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    rtncframe.put(frameRev[ctrlFrameRcvd[i] & 0xFF]);
 				traceHDLCFrame("-->", rtncframe);
 			    } else
-				gotrtncframe = recvFrame(rtncframe, conf.t2Timer, FCF_CRP|FCF_RCVR);
+				gotrtncframe = recvFrame(rtncframe, FCF_RCVR, conf.t2Timer);
 			} else {
-			    gotrtncframe = recvRawFrame(rtncframe);
+			    gotrtncframe = recvFrame(rtncframe, FCF_RCVR, conf.t2Timer, true);
 			}
 			if (gotrtncframe) {
 			    switch (rtncframe.getFCF()) {
@@ -1240,8 +1243,8 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		HDLCFrame ppsframe(conf.class1FrameOverhead);
 		u_short recvFrameCount = 0;
 		do {
-		    gotpps = recvFrame(ppsframe, conf.t2Timer, FCF_CRP|FCF_RCVR);
-		} while (!gotpps && !wasTimeout() && ++recvFrameCount < 20);
+		    gotpps = recvFrame(ppsframe, FCF_RCVR, conf.t2Timer);
+		} while (!gotpps && !wasTimeout() && lastResponse != AT_NOCARRIER && ++recvFrameCount < 5);
 		if (gotpps) {
 		    tracePPM("RECV recv", ppsframe.getFCF());
 		    if (ppsframe.getFCF() == FCF_PPS) {
@@ -1313,12 +1316,13 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					rtnframe = ppsframe;
 				    }
 				    pprcnt = 0;
-				    if (signalRcvd != 0 || recvFrame(rtnframe, conf.t2Timer, FCF_CRP|FCF_RCVR)) {
+				    if (signalRcvd != 0 || recvFrame(rtnframe, FCF_RCVR, conf.t2Timer)) {
 					bool gotrtnframe = true;
 					if (signalRcvd == 0) tracePPM("RECV recv", rtnframe.getFCF());
 					else signalRcvd = 0;		// reset it, we're in-sync now
 					recvFrameCount = 0;
-					while (rtnframe.getFCF() == FCF_PPS && recvFrameCount < 20 && gotrtnframe) {
+					lastResponse = AT_NOTHING;
+					while (rtnframe.getFCF() == FCF_PPS && lastResponse != AT_NOCARRIER && recvFrameCount < 5 && gotrtnframe) {
 					    // we sent PPR, but got PPS again...
 					    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
 						emsg = "Failure to receive silence.";
@@ -1332,7 +1336,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    }
 					    transmitFrame(FCF_PPR, fxStr(ppr, 32));
 					    tracePPR("RECV send", FCF_PPR);
-					    gotrtnframe = recvFrame(rtnframe, conf.t2Timer, FCF_CRP|FCF_RCVR);
+					    gotrtnframe = recvFrame(rtnframe, FCF_RCVR, conf.t2Timer);
 					    recvFrameCount++;
 					}
 					u_int dcs;			// possible bits 1-16 of DCS in FIF
@@ -1532,7 +1536,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				(void) transmitFrame(FCF_RNR|FCF_RCVR);
 				tracePPR("RECV send", FCF_RNR);
 				HDLCFrame rrframe(conf.class1FrameOverhead);
-				if (gotresponse = recvFrame(rrframe, conf.t4Timer, FCF_CRP|FCF_RCVR)) {
+				if (gotresponse = recvFrame(rrframe, FCF_RCVR, conf.t4Timer)) {
 				    tracePPM("RECV recv", rrframe.getFCF());
 				    if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
 					protoTrace("Ignoring invalid response to RNR.");
@@ -1626,7 +1630,7 @@ Class1Modem::recvEnd(fxStr&)
 	 */
 	HDLCFrame frame(conf.class1FrameOverhead);
 	do {
-	    if (recvFrame(frame, conf.t2Timer)) {
+	    if (recvFrame(frame, FCF_RCVR, conf.t2Timer)) {
 		switch (frame.getFCF()) {
 		case FCF_EOP:
 		    (void) transmitFrame(FCF_MCF|FCF_RCVR);

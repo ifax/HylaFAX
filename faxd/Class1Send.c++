@@ -138,11 +138,11 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
 
     bool framerecvd = false;
     if (batched & BATCH_FIRST)			// receive carrier raised
-	framerecvd = recvRawFrame(frame);
+	framerecvd = recvFrame(frame, FCF_SNDR, conf.t2Timer, true);
     else {					// receive carrier not raised
 	// The receiver will allow T2 to elapse intentionally here.
 	// To keep recvFrame from timing out we double our wait.
-	framerecvd = recvFrame(frame, conf.t2Timer * 2);
+	framerecvd = recvFrame(frame, FCF_SNDR, conf.t2Timer * 2);
     }
 
     for (;;) {
@@ -169,7 +169,7 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
 		    }
 		    break;
 		}
-	    } while (frame.moreFrames() && recvFrame(frame, conf.t2Timer));
+	    } while (frame.moreFrames() && recvFrame(frame, FCF_SNDR, conf.t2Timer));
 	    if (frame.isOK()) {
 		switch (frame.getRawFCF()) {
 		case FCF_DIS:
@@ -210,7 +210,7 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
 	 */
 	if ((unsigned) Sys::now()-start >= t1)
 	    break;
-	framerecvd = recvFrame(frame, conf.t2Timer);
+	framerecvd = recvFrame(frame, FCF_SNDR, conf.t2Timer);
     }
     emsg = "No answer (T.30 T1 timeout)";
     protoTrace(emsg);
@@ -750,7 +750,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	     * FTT, or CFR; and also a premature DCN.
 	     */
 	    HDLCFrame frame(conf.class1FrameOverhead);
-	    if (recvFrame(frame, conf.t4Timer)) {
+	    if (recvFrame(frame, FCF_SNDR, conf.t4Timer)) {
 		do {
 		    switch (frame.getFCF()) {
 		    case FCF_NSF:
@@ -760,7 +760,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 			{ fxStr csi; recvCSI(decodeTSI(csi, frame)); }
 			break;
 		    }
-		} while (frame.moreFrames() && recvFrame(frame, conf.t4Timer));
+		} while (frame.moreFrames() && recvFrame(frame, FCF_SNDR, conf.t4Timer));
 	    } 
 	    if (frame.isOK()) {
 		switch (frame.getFCF()) {
@@ -1144,7 +1144,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		// in those cases waiting T2 for a response will cause the remote to
 		// hang up.  So, using T4 here is imperative so that our second PPS
 		// message happens before the remote decides to hang up.
-		if (gotppr = recvFrame(pprframe, conf.t4Timer)) {
+		if (gotppr = recvFrame(pprframe, FCF_SNDR, conf.t4Timer)) {
 		    tracePPR("SEND recv", pprframe.getFCF());
 		    if (pprframe.getFCF() == FCF_CRP) {
 			gotppr = false;
@@ -1186,7 +1186,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			    stopTimeout("sending RR frame");
 			    tracePPM("SEND send", FCF_RR);
 			    // T.30 states that we must wait no more than T4 between unanswered RR signals.
-			    if (gotmsg = recvFrame(pprframe, conf.t4Timer)) {
+			    if (gotmsg = recvFrame(pprframe, FCF_SNDR, conf.t4Timer)) {
 				tracePPR("SEND recv", pprframe.getFCF());
 				if (pprframe.getFCF() == FCF_CRP) {
 				    gotmsg = false;
@@ -1310,7 +1310,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				    sendFrame(FCF_CTC|FCF_SNDR, fxStr(ctc, 2));
 				    stopTimeout("sending CTC frame");
 				    tracePPM("SEND send", FCF_CTC);
-				    if (gotctr = recvFrame(ctrframe, conf.t4Timer)) {
+				    if (gotctr = recvFrame(ctrframe, FCF_SNDR, conf.t4Timer)) {
 					tracePPR("SEND recv", ctrframe.getFCF());
 					if (ctrframe.getFCF() == FCF_CRP) {
 					    gotctr = false;
@@ -1363,7 +1363,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				    stopTimeout("sending EOR frame");
 				    tracePPM("SEND send", FCF_EOR);
 				    tracePPM("SEND send", pps[0]);
-				    if (goterr = recvFrame(errframe, conf.t2Timer)) {
+				    if (goterr = recvFrame(errframe, FCF_SNDR, conf.t2Timer)) {
 					tracePPR("SEND recv", errframe.getFCF());
 					if (errframe.getFCF() == FCF_CRP) {
 					    goterr = false;
@@ -1405,7 +1405,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 					    stopTimeout("sending RR frame");
 					    tracePPM("SEND send", FCF_RR);
 					    // T.30 states that we must wait no more than T4 between unanswered RR signals.
-					    if (gotmsg = recvFrame(errframe, conf.t2Timer)) {
+					    if (gotmsg = recvFrame(errframe, FCF_SNDR, conf.t2Timer)) {
 						tracePPR("SEND recv", errframe.getFCF());
 						if (errframe.getFCF() == FCF_CRP) {
 						    gotmsg = false;
@@ -1879,7 +1879,7 @@ Class1Modem::sendPPM(u_int ppm, HDLCFrame& mcf, fxStr& emsg)
 {
     for (int t = 0; t < 3; t++) {
 	tracePPM("SEND send", ppm);
-	if (transmitFrame(ppm|FCF_SNDR) && recvFrame(mcf, conf.t4Timer))
+	if (transmitFrame(ppm|FCF_SNDR) && recvFrame(mcf, FCF_SNDR, conf.t4Timer))
 	    return (true);
 	if (abortRequested())
 	    return (false);
