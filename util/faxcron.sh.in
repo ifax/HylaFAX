@@ -229,14 +229,14 @@ function printTranscript(commid)
 }
 
 BEGIN		{ FS="\t";
-		  callFailed["busy signal"] = 1;
-		  callFailed["unknown pro"] = 1;
-		  callFailed["no carrier "] = 1;
-		  callFailed["no local di"] = 1;
-		  callFailed["no answer f"] = 1;
-		  callFailed["job aborted"] = 1;
-		  callFailed["invalid dia"] = 1;
-		  callFailed["can not loc"] = 1;
+		  callFailed["Busy signal"] = 1;
+		  callFailed["Unknown pro"] = 1;
+		  callFailed["No carrier "] = 1;
+		  callFailed["No local di"] = 1;
+		  callFailed["No answer f"] = 1;
+		  callFailed["Job aborted"] = 1;
+		  callFailed["Invalid dia"] = 1;
+		  callFailed["Can not loc"] = 1;
 		  months["01"] = "Jan"; months["02"] = "Feb";
 		  months["03"] = "Mar"; months["04"] = "Apr";
 		  months["05"] = "May"; months["06"] = "Jun";
