@@ -3,40 +3,16 @@ $Id$
 HylaFAX, Version 4.1 (beta)
 ------------------------------
 
-Copyright (c) 1988-1996 Sam Leffler
-Copyright (c) 1991-1996 Silicon Graphics, Inc.
-HylaFAX is a trademark of Silicon Graphics
-
-    Permission to use, copy, modify, distribute, and sell this software and 
-    its documentation for any purpose is hereby granted without fee, provided
-    that (i) the above copyright notices and this permission notice appear in
-    all copies of the software and related documentation, and (ii) the names of
-    Sam Leffler and Silicon Graphics may not be used in any advertising or
-    publicity relating to the software without the specific, prior written
-    permission of Sam Leffler and Silicon Graphics.
-
-    THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
-    EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
-    WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
-
-    IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
-    ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
-    OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
-    WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
-    LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
-    OF THIS SOFTWARE.
-
-
 This note is basically just a placeholder.  The real documentation is
 located online at the HylaFAX home page:
 
     http://www.hylafax.org/
 
 The online documentation includes the full contents of the
-documentation as well as an FAQ, archives of the HylaFAX/flexfax
-mailing list, and associated modem-related documentation.  Preformatted
-copies of this documentation and the reference manual pages is also
-available by public FTP at ftp://ftp.sgi.com/sgi/fax/doc.
+documentation as well as an HOWTO, FAQ, archives of the HylaFAX mailing 
+list, and associated modem-related documentation.  Preformatted
+copies of this documentation and the reference manual pages are also
+available by public FTP at ftp://ftp.hylafax.org/doc.
 
 You will find a subset of the online documentation in the html
 subdirectory.  Beware however that timely information is usually more
@@ -48,9 +24,8 @@ local installation through the configure script.
 This note has the following sections:
 
     Installation Synopsis
+    HylaFAX Mailing List and Where To Send Bugs
     Use and Copyright
-    Acknowledgements
-    HylaFAX Mailing List and Other Final Words (where to send bugs)
 
 
 Installation Synopsis
@@ -80,9 +55,6 @@ The basic procedure is:
 If this does not work and the problem is not clear, then you will
 need to look at the documentation and/or the code.
 
-
-Use and Copyright
------------------
 There is documentation!  There is GOBS of documentation.  The HTML
 materials present information needed to build+setup the software; the
 manual pages act as a reference guide.  There are manual pages for all
@@ -95,14 +67,9 @@ Remember however that the manual pages are for reference; the HTML
 documentation is designed to be more introductory in nature and should
 usually be consulted first when you're looking for general guidance.
 
-Please note that unless you are sending me a bug *fix* to this software
-sending mail directly to me is a waste of your time.  The flexfax
-mailing list (described below) is the place to send your comments and
-problems.  The -request administrative alias (again, see below) is the
-place to send administrative requests.
-
-    I IGNORE ALL DIRECT MAIL REGARDING FAX SOFTWARE, FAX MODEMS, FAX
-    PROTOCOLS, FAX ANYTHING, EXCEPTING MAIL THAT CONTAINS BUG FIXES.
+The HylaFAX mailing lists (described below) are the place to send your
+comments and problems.  For mailing list administration, see
+http://lists.hylafax.org/cgi-bin/lsg2.cgi
 
 Silicon Graphics has seen fit to allow me to give this work away.  It
 is free.  There is no support or guarantee of any sort as to its
@@ -115,149 +82,25 @@ Finally, note that this software is called ``HylaFAX'', not ``Hylafax'',
 else has a copyright on).  If you want to refer to this software use
 ``HylaFAX (tm)'' and be sure to honor the Silicon Graphics trademark.
 
-	Sam Leffler	(sam@engr.sgi.com)
+	Sam Leffler
 
 
-Acknowledgements
-----------------
-This software is more than 6 years old and is the product of many
-folks' work.  Robin Schaufler did the original scheme for delayed
-submission and worked on the client-server protocol.  More recently,
-the following people have helped either by testing or by contributing
-fixes and/or improvements:
-
-  Matthias Apitz     Chris Beekhuis	  Peter Bentley	
-  Marc Boucher       Piete Brooks         Bill Campbell
-  Brent Chapman      Camden Clarke        Tom Corson
-  Alan Crosswell     Mark Diekhans        Greg Ferguson
-  Steve Fine	     Andrew Ford          Nico Garcia
-  Wolfgang Henke     Viet Hoang           Bert Hooyman
-  Ken Hornstein	     Dirk Husemann        Brian Katzung
-  Masao Kitano	     Carsten Koch         John T Kohl
-  Scott Kramer       Rickard Linck        Rick Lyons
-  Tom Lislegaard     Rob MacKinnon	  Kevin McManamon
-  Les Mikesell	     Bill Morrow	  Andy Moskoff
-  Chris Munonye	     Rob Newberry	  Dag Nygren
-  Jonas Olsson       Dave Packer	  Damon Permezel
-  David Pike         Amir Plivatsky       Andy Rabagliati
-  Eric Rescorla      Matthew Rice         Tim Rice
-  Marshall Rose      Daniel Rosenblatt    Joel Rosi-Schwartz
-  Tim Rylance        Joseph E. Sacco      Thomas A. Szybist
-  Brent Townshend    Peter White          Steve Williams
-  Scott Woodard      David Vrona          Paul Vixie
-  Christian Zahl
-
-(and surely others).  Also, a special thanks to Ed McCreight for
-helping me understand the stuff "between the lines" that's necessary to
-make a working Class 1 driver.
-
-The regular expression support is based on Henry Spencer's POSIX 1003.2
-compliant regex package that has ``Copyright 1992, 1993, 1994 Henry
-Spencer.  All rights reserved.'' Consult regex/COPYRIGHT for the full
-copyright notice associated with this software.
-
-The zlib package used in the client-server protocol is copyright
-1995-1996 Jean-loup Gailly and Mark Adler.  Consult the file
-zlib/README for more information on the package.
-
-The code to read PCF fonts is distantly related to the X11R5 code
-that is ``Copyright 1990 Massachusetts Institute of Technology''; consult
-faxd/PCFFont.c++ for the full copyright notice.
-
-The textfmt program is distantly related to the lptops program written
-by Nelson Beebe; there was no copyright notice on the version of the code
-that textfmt grew out of.
-
-The config.guess and config.sub scripts are part of the GNU autoconf
-package and covered by the GNU Public License (GPL).  Several ideas
-in the configure script are directly "borrowed" from autoconf (and I
-have tried to maintain as much compatibility as possible).
-
-The PCF font etc/lutRS18.pcf included for use with tag lines is a
-compiled version of a LucidaTypewriter font that was contributed to X11
-by Bigelow & Holmes.  Redistribution of this font requires inclusion of
-this copyright notice:
-
-
-    NOTICE TO USER: The source code, including the glyphs or icons 
-    forming a par of the OPEN LOOK TM Graphic User Interface, on this 
-    tape and in these files is copyrighted under U.S. and international
-    laws. Sun Microsystems, Inc. of Mountain View, California owns
-    the copyright and has design patents pending on many of the icons. 
-    AT&T is the owner of the OPEN LOOK trademark associated with the
-    materials on this tape. Users and possessors of this source code 
-    are hereby granted a nonexclusive, royalty-free copyright and 
-    design patent license to use this code in individual and 
-    commercial software. A royalty-free, nonexclusive trademark
-    license to refer to the code and output as "OPEN LOOK" compatible 
-    is available from AT&T if, and only if, the appearance of the 
-    icons or glyphs is not changed in any manner except as absolutely
-    necessary to accommodate the standard resolution of the screen or
-    other output device, the code and output is not changed except as 
-    authorized herein, and the code and output is validated by AT&T. 
-    Bigelow & Holmes is the owner of the Lucida (R) trademark for the
-    fonts and bit-mapped images associated with the materials on this 
-    tape. Users are granted a royalty-free, nonexclusive license to use
-    the trademark only to identify the fonts and bit-mapped images if, 
-    and only if, the fonts and bit-mapped images are not modified in any
-    way by the user. 
-
-
-    Any use of this source code must include, in the user documentation 
-    and internal comments to the code, notices to the end user as  
-    follows:
-
-
-    (c) Copyright 1989 Sun Microsystems, Inc. Sun design patents
-    pending in the U.S. and foreign countries. OPEN LOOK is a 
-    trademark of AT&T. Used by written permission of the owners.
-
-
-    (c) Copyright Bigelow & Holmes 1986, 1985. Lucida is a registered 
-    trademark of Bigelow & Holmes. Permission to use the Lucida 
-    trademark is hereby granted only in association with the images 
-    and fonts described in this file.
-
-
-
-    SUN MICROSYSTEMS, INC., AT&T, AND BIGELOW & HOLMES
-    MAKE NO REPRESENTATIONS ABOUT THE SUITABILITY OF
-    THIS SOURCE CODE FOR ANY PURPOSE. IT IS PROVIDED "AS IS" 
-    WITHOUT EXPRESS OR IMPLIED WARRANTY OF ANY KIND. 
-    SUN  MICROSYSTEMS, INC., AT&T AND BIGELOW  & HOLMES, 
-    SEVERALLY AND INDIVIDUALLY, DISCLAIM ALL WARRANTIES 
-    WITH REGARD TO THIS SOURCE CODE, INCLUDING ALL IMPLIED
-    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-    PARTICULAR PURPOSE. IN NO EVENT SHALL SUN MICROSYSTEMS,
-    INC., AT&T OR BIGELOW & HOLMES BE LIABLE FOR ANY
-    SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
-    OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA      
-    OR PROFITS, WHETHER IN AN ACTION OF  CONTRACT, NEGLIGENCE
-    OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
-    WITH THE USE OR PERFORMANCE OF THIS SOURCE CODE.
-
-
-
-HylaFAX Mailing List and Other Final Words (where to send bugs)
+HylaFAX Mailing List and Where To Send Bugs
 ---------------------------------------------------------------
-A mailing list for users of this software is accessible through sgi.com.
-If you want to join this mailing list or have a list-related request
-such as getting your name removed from it, send your request to
+A mailing list for users of this software is accessible through
+hylafax.org.  If you want to join this mailing list or have a 
+list-related request such as getting your name removed from it, see 
 
-    flexfax-request@sgi.com
+    http://lists.hylafax.org/cgi-bin/lsg2.cgi
 
-(FYI, "flexfax" is the old name for this software).  For example, to
-subscribe, send the line "subscribe" in the body of your message.  The
-line "help" will return a list of the commands understood by the
-mailing list management software.  You can also find information on
-subscribing to the mailing list at:
+You can also find information on subscribing to the mailing list at:
 
     http://www.hylafax.org/mailing-lists.html
 
 Submissions to the mailing list (including bug reports) should be
 directed to:
 
-    flexfax@sgi.com
+    hylafax-users@hylafax.org
 
 Note that the mailing list has many people on it.  Please take this
 into consideration when posting notes to it; i.e. avoid posting large
@@ -272,15 +115,41 @@ please always specify:
 For example: "HylaFAX v4.0pl2 under RedHat Linux 4.2 with gcc 2.7.2;
 ZyXEL 1496E with 6.11a firmware."
 
-Please cc a copy of your patches and bug reports to patches@hylafax.org and
-bugs@hylafax.org respectively.
+Please submit a copy of your patches and bug reports at 
+http://bugs.hylafax.org/bugzilla/
 
 The mailing list is archived at : http://www.hylafax.org/archive/
 
-If you find the flexfax mailing list to have too much traffic for you,
-there is also an announcements-only mailing list called flexfax-announce.
-This can be subscribed to by sending mail flexfax-announce-request@sgi.com;
-include the single line "subscribe" in the body of the message.  Note
-that there is no need to subscribe to both mailing lists; postings to
-the announcement list are automatically fed to the normal flexfax list.
+If you find the hylafax-users mailing list to have too much traffic for
+you, there is also an announcements-only mailing list called
+hylafax-announce.  This can be subscribed to in the same manner as the
+other lists at http://lists.hylafax.org/cgi-bin/lsg2.cgi  Note that there
+is no need to subscribe to both mailing lists; postings to the
+announcement list automatically fed to the hylafax-users list.
 
+
+Use and Copyright
+-----------------
+
+Copyright (c) 1988-1996 Sam Leffler
+Copyright (c) 1991-1996 Silicon Graphics, Inc.
+HylaFAX is a trademark of Silicon Graphics
+
+    Permission to use, copy, modify, distribute, and sell this software and 
+    its documentation for any purpose is hereby granted without fee, provided
+    that (i) the above copyright notices and this permission notice appear in
+    all copies of the software and related documentation, and (ii) the names of
+    Sam Leffler and Silicon Graphics may not be used in any advertising or
+    publicity relating to the software without the specific, prior written
+    permission of Sam Leffler and Silicon Graphics.
+
+    THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+    EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+    WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+
+    IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+    ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+    OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+    WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+    LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+    OF THIS SOFTWARE.

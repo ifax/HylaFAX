@@ -1,0 +1,30 @@
+This software is more than 6 years old and is the product of many
+folks' work.  Robin Schaufler did the original scheme for delayed
+submission and worked on the client-server protocol.  More recently,
+the following people have helped either by testing or by contributing
+fixes and/or improvements:
+
+  Matthias Apitz     Chris Beekhuis       Peter Bentley
+  Marc Boucher       Piete Brooks         Bill Campbell
+  Brent Chapman      Camden Clarke        Tom Corson
+  Alan Crosswell     Mark Diekhans        Greg Ferguson
+  Steve Fine         Andrew Ford          Nico Garcia
+  Wolfgang Henke     Viet Hoang           Bert Hooyman
+  Ken Hornstein      Dirk Husemann        Brian Katzung
+  Masao Kitano       Carsten Koch         John T Kohl
+  Scott Kramer       Rickard Linck        Rick Lyons
+  Tom Lislegaard     Rob MacKinnon        Kevin McManamon
+  Les Mikesell       Bill Morrow          Andy Moskoff
+  Chris Munonye      Rob Newberry         Dag Nygren
+  Jonas Olsson       Dave Packer          Damon Permezel
+  David Pike         Amir Plivatsky       Andy Rabagliati
+  Eric Rescorla      Matthew Rice         Tim Rice
+  Marshall Rose      Daniel Rosenblatt    Joel Rosi-Schwartz
+  Tim Rylance        Joseph E. Sacco      Thomas A. Szybist
+  Brent Townshend    Peter White          Steve Williams
+  Scott Woodard      David Vrona          Paul Vixie
+  Christian Zahl
+
+(and surely others).  Also, a special thanks to Ed McCreight for
+his help in making a working Class 1 driver.
+
