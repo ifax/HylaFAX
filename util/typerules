@@ -133,8 +133,3 @@
 #
 0	ascii		x		ps	%F/textfmt -B -f Courier-Bold\
 						    -p 11 -s %s >%o <%i
-
-
-
-
-
