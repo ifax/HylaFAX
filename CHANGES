@@ -1,5 +1,21 @@
 #	$Id$	
 
+Changelog for HylaFAX 4.1.9 - April 05, 2003
+
+* keep PDF mail attachment naming consistent with TIFFs (26 Jan 2004)
+* free(base) in HDLCFrame destructor (26 Jan 2004)
+* correct typerules documentation, %w, %W, %l, and %L (26 Jan 2004)
+* suppress tiffcheck libtiff warnings from being fatal (26 Jan 2004)
+* fix subaddress sending in Class 1 (26 Jan 2004)
+* fix recognition of unexpected returns to command-mode (26 Jan 2004)
+* fix identification of V.17 7200 bps in Class 1 receiving (26 Jan 2004)
+* make hfaxd reuse the TCP port when starting (26 Jan 2004)
+* fix typo in sendq and doneq man pages (26 Jan 2004)
+* add support for MMR command-line option to tiffcheck (31 Dec 2003)
+* make faxq and faxgetty not block on various child processes (5 Nov 2003)
+* fix doubling Caller ID information on double-RINGs (24 Nov 2003)
+* fix potential faxgetty CPU loop (24 Nov 2003)
+
 Changelog for HylaFAX 4.1.8 - Nov 11, 2003
 
 * fix remote format string vulnerability in hfaxd (11 Nov 2003)

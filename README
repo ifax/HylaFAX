@@ -2,18 +2,16 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.1.8
-patch-level release!  This is a security release that fixes a
-remotely exploitable format string vulnerability in hfaxd that
-could be present in certain non-default configurations. As always,
-our sincerest thanks goes to all who participate and provide
-feedback.  We'd like to extend a special thank-you to Sebastian
-Krahmer and the SuSE Security Team for discovering this issue.
+The HylaFAX development team is pleased to announce our 4.1.9
+patch-level release! This is the first maintenance release of
+HylaFAX-4.1 for the benefit of those who may not be prepared to
+upgrade to the newer, more capable HylaFAX-4.2.  As always, our
+sincerest thanks goes to all who participate and provide feedback.
 
                                *   *   *
 
 This document is intended to describe the significant differences
-between hylafax-4.1.8 and older releases, point out any known
+between hylafax-4.1.9 and older releases, point out any known
 incompatibilites and issues, and provide the reader with directions to
 further resources regarding HylaFAX.
 
@@ -38,7 +36,9 @@ further resources regarding HylaFAX.
 
                       *   WHO SHOULD UPGRADE?   *
 
-Everyone should upgrade.
+Everyone should upgrade. If you want the latest and greatest HylaFAX,
+consider upgrading to 4.2.x instead. This is a bugfix release only,
+there are no new features.
 
                      *   HYLAFAX BINARY PACKAGES   *
 
@@ -83,6 +83,9 @@ invited to:
 
   * report confirmed bugs, feature requests, and submit patches
     See: http://bugs.hylafax.org/bugzilla
+
+  * check out (and hopefully contribute to) the HylaFAX Wiki
+    See: http://wiki.hylafax.org/
 
 
 
