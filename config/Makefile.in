@@ -52,6 +52,7 @@ CONFIGFILES=class1 \
 	att-dataport \
 	att-dpexpress-2 \
 	cirrus \
+	davicom-2 \
 	dsi-scout+ \
 	e-tech \
     elsa-microlink-56k-basic-2.0 \

@@ -191,6 +191,7 @@ HYLAFAXSRC=\
 	config/class1				\
 	config/class2				\
 	config/class2.0				\
+	config/davicom-2			\
 	config/dsi-scout+			\
 	config/e-tech				\
 	config/elsa-microlink-56k-basic-2.0	\
