@@ -70,6 +70,7 @@ CONFIGFILES=class1 \
 	rc32acl \
 	rc32acl-1 \
 	rockwell \
+	rockwell-k56 \
 	telebit-t3000 \
 	telebit-qblazer \
 	telebit-wb \
