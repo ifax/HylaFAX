@@ -236,11 +236,6 @@ Class1Modem::setupModem()
     frameRev = TIFFGetBitRevTable(conf.frameFillOrder == FILLORDER_LSB2MSB);
 
     setupClass1Parameters();
-    if (conf.class1EnableV34Cmd != "" && conf.class1ECMSupport) {
-	atCmd(conf.class1EnableV34Cmd);
-	gotEOT = false;
-    }
-    useV34 = false;	// only when V.8 handshaking is used
     return (true);
 }
 
@@ -251,7 +246,6 @@ bool
 Class1Modem::setupClass1Parameters()
 {
     if (modemServices & SERVICE_CLASS1) {
-	atCmd(classCmd);
 	setupFlowControl(flowControl);
 	atCmd(conf.setupAACmd);
     }

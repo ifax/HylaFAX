@@ -50,6 +50,10 @@ Class1Modem::answerCall(AnswerType type, fxStr& emsg, const char* number)
     // Reset modemParams.br to non-V.34 settings.  If V.8 handshaking
     // succeeds, then it will be changed again.
     modemParams.br = nonV34br;
+    if (conf.class1EnableV34Cmd != "" && conf.class1ECMSupport)
+	atCmd(conf.class1EnableV34Cmd);
+    gotEOT = false;
+    useV34 = false;     // only when V.8 handshaking is used
 
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_FLUSH);

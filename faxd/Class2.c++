@@ -278,7 +278,6 @@ bool
 Class2Modem::setupClass2Parameters()
 {
     if (modemServices & serviceType) {		// when resetting at startup
-	atCmd(classCmd);
 	setupFlowControl(flowControl);		// flow control
 	// some modems don't support a TBC command
 	if (strcasecmp(tbcCmd, "none") != 0) {
