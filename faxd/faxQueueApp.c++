@@ -594,11 +594,11 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
      */
     if (req.desireddf == DF_2DMMR && (req.desiredec != EC_DISABLE) && 
 	use2D && job.modem->supportsMMR() &&
-	info.getCalledBefore() && info.getSupportsMMR())
+	 (! info.getCalledBefore() || info.getSupportsMMR()) )
 	    params.df = DF_2DMMR;
     else if (req.desireddf > DF_1DMH) {
 	params.df = (use2D && job.modem->supports2D() &&
-	    info.getCalledBefore() && info.getSupports2DEncoding()) ?
+	    (! info.getCalledBefore() || info.getSupports2DEncoding()) ) ?
 		DF_2DMR : DF_1DMH;
     } else
 	params.df = DF_1DMH;

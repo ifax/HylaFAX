@@ -140,12 +140,15 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
      * Class 1.0 modems know to not enable V.34 support if ECM is not
      * being used.  Hopefully this doesn't interfere with batched faxes.
      */
-    Class2Params dis;
-    dis.decodePage(fax.pagehandling);
-    dis.br = fxmin(modem->getBestSignallingRate(), (u_int) fax.desiredbr);
-    dis.ec = (modem->supportsECM() ? fax.desiredec : EC_DISABLE);
-    dis.st = fxmax(modem->getBestScanlineTime(), (u_int) fax.desiredst);
-    dis.bf = BF_DISABLE;
+    clientParams.decodePage(fax.pagehandling);
+    /*
+     * So we want to restrict DF sellection to those masked in fax.desireddf
+     */
+    clientParams.df = fxmin(modem->getBestDataFormat(), (u_int)fax.desireddf);
+    clientParams.br = fxmin(modem->getBestSignallingRate(), (u_int) fax.desiredbr);
+    clientParams.ec = (modem->supportsECM() ? fax.desiredec : EC_DISABLE);
+    clientParams.st = fxmax(modem->getBestScanlineTime(), (u_int) fax.desiredst);
+    clientParams.bf = BF_DISABLE;
     /*
      * Force the modem into the appropriate class
      * used to send facsimile.  We do this before
@@ -153,7 +156,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
      * requesting polling.
      */
     if ((batched & BATCH_FIRST) &&
-	!modem->faxService(!clientInfo.getHasV34Trouble() && dis.ec != EC_DISABLE && dis.br > BR_14400)) {
+	!modem->faxService(!clientInfo.getHasV34Trouble() && clientParams.ec != EC_DISABLE && clientParams.br > BR_14400)) {
 	sendFailed(fax, send_failed, "Unable to configure modem for fax use");
 	return;
     }
@@ -168,7 +171,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	sendFailed(fax, send_failed, notice);
 	return;
     }
-    if (!modem->sendSetup(fax, dis, notice)) {
+    if (!modem->sendSetup(fax, clientParams, notice)) {
 	sendFailed(fax, send_failed, notice);
 	return;
     }
@@ -561,7 +564,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
      * requested.  So, RTFCC defeats requested data formatting. :-(
      */
     if (class2RTFCC || softRTFCC) {
-	params.df = clientCapabilities.df;
+	params.df = fxmin(params.df, clientCapabilities.df);
 	// even if RTFCC supported uncompressed mode (and it doesn't)
 	// it's likely that the remote was incorrect in telling us it does
 	if (params.df == DF_2DMRUNCOMP) params.df = DF_2DMR;

@@ -50,6 +50,7 @@ private:
     bool	ready;			// modem ready for use
     UUCPLock*	modemLock;		// uucp lockfile handle
     fxStr	pollRcvdCmd;		// command for docs received by polling
+    u_int	desiredDF;		// desired data format
     u_int	desiredBR;		// desired signalling rate
     u_int	desiredST;		// desired min-scanline-time
     u_int	desiredEC;		// enable use of ECM if available

@@ -164,7 +164,7 @@ faxSendApp::send(const char* filenames)
 		    ai.start = Sys::now();
 
 		    /*
-		     * Force any DesiredBR/EC/ST options in the configuration
+		     * Force any DesiredDF/BR/EC/ST options in the configuration
 		     * files (i.e. DestControls) to take precedence over
 		     * any user-specified settings.  This shouldn't cause
 		     * too many problems, hopefully, since their usage should
@@ -172,6 +172,8 @@ faxSendApp::send(const char* filenames)
 		     * user-specification.
 		     */
 
+		    if (desiredDF != (u_int) -1)
+			req->desireddf = desiredDF;
 		    if (desiredBR != (u_int) -1)
 			req->desiredbr = desiredBR;
 		    if (desiredEC != (u_int) -1)
@@ -410,6 +412,7 @@ faxSendApp::stringtag faxSendApp::strings[] = {
 { "pollrcvdcmd",	&faxSendApp::pollRcvdCmd,	FAX_POLLRCVDCMD },
 };
 faxSendApp::numbertag faxSendApp::numbers[] = {
+{ "desireddf",		&faxSendApp::desiredDF,		(u_int) -1 },
 { "desiredbr",		&faxSendApp::desiredBR,		(u_int) -1 },
 { "desiredst",		&faxSendApp::desiredST,		(u_int) -1 },
 { "desiredec",		&faxSendApp::desiredEC,		(u_int) -1 },
