@@ -1469,7 +1469,7 @@ again:
 	if (recvCC <= 0) {
 	    if (recvCC == 0) {	// no more input coming, remove handler
 		Dispatcher::instance().unlink(STDIN_FILENO);
-		dologout(1);		// XXX what about server interactions???
+		dologout(0);		// XXX what about server interactions???
 	    }
 	    return (EOF);
 	}
