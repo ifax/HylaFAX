@@ -493,6 +493,7 @@ Class1Modem::waitForDCEChannel(bool awaitctrl)
     fxStr garbage;
     bool gotresponse = false;
     gotRTNC = false;
+    ctrlFrameRcvd = fxStr::null;
     do {
 	c = getModemChar(60000);
 	if (c == DLE) {
@@ -566,6 +567,39 @@ Class1Modem::waitForDCEChannel(bool awaitctrl)
 		    break;
 	    }
 	} else garbage.append(c);
+	if (gotCTRL && garbage.length() > 2 && (garbage[0] & 0xFF) == 0xFF && 
+	    (garbage[garbage.length()-2] & 0xFF) == 0x10 &&
+	    (garbage[garbage.length()-1] & 0xFF) == 0x03) {
+	    // We got a control frame and won't get the channel change...
+	    for (u_int i = 0; i < garbage.length()-2; i++) {
+		if ((garbage[i] & 0xFF) == DLE && ++i < garbage.length()) {
+		    /*
+		     * We've got a frame and must apply T.31-A1 Table B.1.
+		     */
+		    if ((garbage[i] & 0xFF) == 0x07) {	// end of HDLC frame w/FCS error
+			// what to do? send CRP? discard frame?
+			continue;
+		    }
+		    switch (garbage[i] & 0xFF) {
+			case DLE:	// <DLE><DLE> => <DLE>
+			    ctrlFrameRcvd.append(DLE);
+			    break;
+			case SUB:	// <DLE><SUB> => <DLE><DLE>
+			    ctrlFrameRcvd.append(DLE);
+			    ctrlFrameRcvd.append(DLE);
+			    break;
+			case 0x51:	// <DLE><0x51> => <DC1>
+			    ctrlFrameRcvd.append(DC1);
+			    break;
+			case 0x53:	// <DLE><0x53> => <DC3>
+			    ctrlFrameRcvd.append(0x13);
+			    break;
+		    }
+		} else
+		    ctrlFrameRcvd.append(garbage[i] & 0xFF);
+	    }
+	    return (false);
+	}
 	fxStr rcpsignal;
 	rcpsignal.append(0xFF);	rcpsignal.append(0x03);	rcpsignal.append(0x86);	rcpsignal.append(0x69);
 	rcpsignal.append(0xCB);	rcpsignal.append(0x10);	rcpsignal.append(0x03);

@@ -108,6 +108,7 @@ protected:
     bool	gotRTNC;	// retrain control channel
     u_short	primaryV34Rate;	// rate indication for primary channel
     u_short	controlV34Rate;	// rate indication for control channel
+    fxStr	ctrlFrameRcvd;	// unexpected control channel frame received
 
 // modem setup stuff
     virtual bool setupModem();

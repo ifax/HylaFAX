@@ -791,18 +791,26 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		if (!gotEOT) {
 		    bool gotprimary = waitForDCEChannel(false);
 		    u_short rtnccnt = 0;
-		    while (!gotEOT && gotRTNC && rtnccnt++ < 3) {
+		    while (!gotEOT && (gotRTNC || (ctrlFrameRcvd != fxStr::null)) && rtnccnt++ < 3) {
 			/*
-			 * Remote requested control channel retrain; the remote
+			 * Remote requested control channel retrain and/or the remote
 			 * didn't properly hear our last signal.  So now we have to
-			 * wait for a signal from the remote and then respond appropriately
+			 * use a signal from the remote and then respond appropriately
 			 * to get us back in sync. DCS::CFR - PPS::PPR/MCF - EOR::ERR
 			 */
 			if (flowControl == FLOW_XONXOFF)
 			    (void) setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
 			setInputBuffering(false);
 			HDLCFrame rtncframe(conf.class1FrameOverhead);
-			if (recvFrame(rtncframe, conf.t2Timer)) {
+			bool gotrtncframe = false;
+			if (ctrlFrameRcvd != fxStr::null) {
+			    gotrtncframe = true;
+			    for (u_int i = 0; i < ctrlFrameRcvd.length(); i++)
+				rtncframe.put(frameRev[ctrlFrameRcvd[i] & 0xFF]);
+			    traceHDLCFrame("-->", rtncframe);
+			} else
+			    gotrtncframe = recvFrame(rtncframe, conf.t2Timer);
+			if (gotrtncframe) {
 			    switch (rtncframe.getFCF()) {
 				case FCF_DCS:
 				    // hopefully it didn't change on us!
@@ -848,6 +856,11 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						break;
 					}
 				    }
+				    break;
+				case FCF_DCN:
+				    tracePPM("RECV recv", rtncframe.getFCF());
+				    gotEOT = true;
+				    continue;
 				    break;
 			    }
 			    setInputBuffering(true);
