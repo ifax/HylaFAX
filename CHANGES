@@ -3,6 +3,7 @@
 Changelog for HylaFAX 4.2.0 - Aug 16, 2004
 
 * resurrect 4.1.x notify as notify-4.1.sh for compatibility (16 Aug 2004)
+* significant portability cleanups to new notify script (14 Aug 2004)
 * fix font rendering at hyperfine resolution (13 Aug 2004)
 * stop tiff2fax from using problematic symbolic links (11 Aug 2004)
 * fix truncation of last byte on sent MMR data (09 Aug 2004)
