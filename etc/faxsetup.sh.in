@@ -1998,6 +1998,7 @@ C#	UUCPLockTimeout		\
 C#	MaxSendPages		Max number of pages to permit in an outbound job
 S	LogFacility		Syslog facility name for ServerTracing messages
 EOF
+)
 		. $PROMPTS
 	    fi
 	    checkForLocalFile $DialStringRules "dial string rules"
