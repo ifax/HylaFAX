@@ -45,12 +45,14 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai)
     u_int prevPages = fax.npages;
     if (lockModem()) {
 	beginSession(fax.number);
+	traceServer("%s", HYLAFAX_VERSION);
 	fax.commid = getCommID();		// set by beginSession
 	traceServer("SEND FAX: JOB %s DEST %s COMMID %s"
 	    , (const char*) fax.jobid
 	    , (const char*) fax.external
 	    , (const char*) fax.commid
 	);
+	traceServer("DEVICE '%s'", (const char*) getModemDevice());
 	if (setupModem()) {
 	    changeState(SENDING);
 	    IOHandler* handler =
