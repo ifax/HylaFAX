@@ -85,6 +85,61 @@ made to complete the job.
 This parameter is passed only if
 .B why
 is ``requeued''.
+.SH NOTES
+The behavior of
+.B notify
+is intended to be customizable via the
+.B etc/FaxNotify
+script, if present.  FaxNotify is sourced after the q-file is parsed and
+all default values are preset.  Useful settings for FaxNotify are:
+.TP
+.I WHY
+is identical to
+.B why
+mentioned above and can be useful in determining under what conditions
+various settings should take effect.  For example,
+.sp
+.nf
+.ft C
+if [ "$WHY" != "done" ]; then
+    RETURNFILETYPE=pdf;
+fi
+.ft R
+.fi
+.sp
+This would only set
+.B RETURNFILETYPE
+when the job did not complete successfully.
+.TP
+.I RETURNFILETYPE
+can be set to ``tif'', ``pdf'', ``ps'', or ``original''.  If set,
+this causes
+.B notify
+to return a copy of the submitted documents to the
+.B SENDER
+address along with the notification message.  The ``original'' setting
+uses the format type that was used in the submission.
+.TP
+.I RETURNTECHINFO
+defaults to ``yes'' and is used to indicate whether or not technical
+information such as the session parameters should be included with the notification
+message.  If set to anything other than ``yes'' this information will
+not be included.
+.TP
+.I RETURNTRANSCRIPT
+defaults to ``yes'' only on the error conditions noted above and is used to
+indicate whether or not the session transcript (log) should be returned with the
+notification message.
+.TP
+.I NOTIFY_FAXMASTER
+is used to deliver a notification message to
+.B TOADDR
+(which defaults to ``FaxMaster'') that contains technical information
+about the job.  This is useful in allowing the administrator to be aware of
+any problems before those problems are reported by the users.
+Possible settings are ``yes'', ``always'', ``no'', ``never'', and ``errors''.
+If ``errors'' is used then the notification message is only sent to FaxMaster
+when the job experienced an error.  The default is ``no''.
 .SH FILES
 .nf
 .ta \w'${SENDMAIL}    'u

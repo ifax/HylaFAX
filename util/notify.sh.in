@@ -30,68 +30,6 @@
 #
 # The notify shell now behaves in a manner like faxrcvd.  
 # It is now written in shell with a little embedded awk as needed.
-#
-# Notify now can get custom setup information or controlling information from 
-# etc/FaxNotify to help control how notification is done and what is returned to the sender.  
-# Since this call to FaxNotify is done after the
-# q file is parsed, we can adjust how we do the notify based on what we find in the
-# q file.  Ex.  who sent the fax and/or where it was sent can control what, how much and in
-# what format we return information/files to the sender.
-# 
-# nofity now understands how to deal with pdf files listed in the q file
-#
-# notify now retrieves the "owner" of the job from the q file for use in
-# the notify process if needed.
-#  
-# notify now returns the notification as a MIME encoded email
-#
-# Faxes that have been completed can have the original fax returned to the sender.
-# Based on the status of the fax ($WHY), the FaxMaster can configure (in FaxNotify) if the fax 
-# should be returned to the sender and in what format. 
-# The submitted fax will be returned to the sender as a  mime attachment.  This is done
-# by setting the RETURNFILETYPE shell variable.  The actual value of the variable will control 
-# the format of the returned fax.  Valid values for returned file formats are 
-# currently "tif","pdf","ps","original" for each varialbe. The "original" setting 
-# will cause the fax to be returned to the user in the original source format that 
-# was submitted (ie. ps returns as ps, pdf returns as pdf and tif returns as tif).  If 
-# the variable is undefined, then no fax is returned to the sender for faxes with 
-# that status.  The default is to not return faxes for any of these status.
-#
-# NOTIFY_FAXMASTER is now used to determine if the FaxMaster should
-#  get a copy of the nofication that is sent to the SENDER.  The FaxMaster will
-#  get the email at the adress listed in TOADDR.  The email will be sent as a
-#  blind CC to the FaxMaster.  Whatever is sent to the user is sent to the FaxMaster
-#  if NOTIFY_FAXMASTER is yes.  NOTIFY_FAXMASTER can be set to
-#    yes - send everything
-#    no - send nothing
-#    errors - send only failed type faxes that are not from busy, no answer or no carrier
-#    always - send everything
-#    never - send nothing
-#
-# RETURNTECHINFO is now used to determine if all of the, rather technical, information
-#  should be returned to the sender. If the value is yes, all information
-#  is returned as it always has been.  Any other value, then none of what I consider
-#  technical information is returned to the Sender.  Yes is the default
-#
-# One shortcomming of this script is that the FaxMaster can only get a copy of what is 
-# returned to the sender.  It would be preferred if the FaxMaster could get whatever is 
-# desired about the fax.  perhaps the faxmaster wants all technical information about the 
-# fax regardless of what the sender is given.  but perhaps he only wants to be given this 
-# information if the status is failed and he does not what the actual fax attachment.  
-# none of this is currently possible but should be a furture enhancment... when time permits.
-
-# 3/26/2004 Frank Brock
-#  - eliminated the need for a temporary file to process and parse the q file into local 
-#    variables for the use by the script and FaxNotify (changes to the parseQfile()
-#  - fixed a bug in the output file naming in the functions for  converting from one file 
-#    format to another.
-#  - syncronized the mimeEnocde() to the be similar to that found in faxrcvd.
-
-# 4/1/2004 Frank Brock
-#  - changed all shell variable that are created by this script to uppercase.  all remaining
-#    shell variables that are in lower case are coming from the parsing of the q file.  currently
-#    their names are being set by the output of the awk script portion of parseQfile().
-#  - change the use of awk and grep to be $AWK and $GREP to abide by setup.cache
 
 #
 # notify qfile why jobtime [nextTry]
@@ -147,8 +85,14 @@ TOADDR=FaxMaster
 FROMADDR=fax
 NOTIFY_FAXMASTER=never
 RETURNFILETYPE=
-RETURNTECHINFO=yes
 MIMEBOUNDARY="NextPart$$"
+RETURNTECHINFO=yes
+case $WHY in
+    failed|requeued|poll_rejected|poll_no_document|poll_failed)
+	RETURNTRANSCRIPT=yes;;
+    *)
+	RETURNTRANSCRIPT=no;;
+esac
 #
 # Redirect errors to a tty, if possible, rather than
 # dev-nulling them or allowing them to creep into
@@ -177,17 +121,20 @@ adjustNotifyFaxMaster()
 # "format_failed" "no_formatter" "poll_rejected" "poll_no_document" "poll_failed"
     case $NOTIFY_FAXMASTER in
         never|no) NOTIFY_FAXMASTER=no;;
+        always|yes) NOTIFY_FAXMASTER=yes;;
         errors) 
-            case $WHY in 
-                "failed"|"rejected"|"timedout"|"format_failed"|"no_formatter") 
+            case $WHY in
+                timedout|rejected|format_failed|no_formatter|poll_rejected|poll_no_document)
+		    NOTIFY_FAXMASTER=yes;;
+		done|blocked|removed|killed)
+		    NOTIFY_FAXMASTER=no;;
+                *)
                     if (match "$faxstatus" "Busy signal|No answer|No carrier") ; then
                         NOTIFY_FAXMASTER=no
                     else 
                         NOTIFY_FAXMASTER=yes
                     fi;;
-                *) NOTIFY_FAXMASTER=yes;;
             esac;;
-        always|yes) NOTIFY_FAXMASTER=yes;;
         *) NOTIFY_FAXMASTER=no;;
     esac
 }
@@ -644,7 +591,7 @@ returnToSender()
 
 returnTranscript()
 {
-    if [ "$RETURNTECHINFO" = "yes" ] ; then
+    if [ "$RETURNTRANSCRIPT" = "yes" ] ; then
         printBanner "Transcript of session follows"
         COMFILE="log/c$commid"
         if [ -a "$COMFILE" ] ; then
@@ -675,9 +622,6 @@ putHeaders()
     local SUBJECT=$1
     putMimeSetup
     echo "To: $mailaddr"
-    if [ "$NOTIFY_FAXMASTER" = "yes" ]; then  
-        echo "Bcc: $TOADDR"
-    fi
     echo "Subject: $SUBJECT"
     putMimeTextHeader
     printf "Your $jobtype job to $number"
@@ -712,13 +656,13 @@ putHeaders()
 # operations may want to know about the details of the fax
 parseQfile  
 
+#process the FaxNotify script after parse q file in case the admin wants to 
+# set any values based on what is in the q file
+setCustomValues 
+
 # adjust faxmaster notify based on some rules and what is found 
 # possibly in the q file.
 adjustNotifyFaxMaster 
-
-#process the FaxNofity script after parse q file in case the admin wants to 
-# set any values based on what is in the q file
-setCustomValues 
 
 (if [ -z $jobtag ] ; then
     jobtag="$jobtype job $jobid"
@@ -732,7 +676,6 @@ fi
 if [ "$WHY" = "done" ] ; then
     putHeaders "$jobtag to $number completed"
     echo " was completed successfully."
-    echo " "`date`
     echo "";
     if [ "$jobtype" = "facsimile" ] ; then
         printItem "%u" "Pages" "$npages"
@@ -764,7 +707,7 @@ if [ "$WHY" = "done" ] ; then
         printItem "%s" "CommID" "c$commid"
         printf "\nProcessing time was %s.\n" "$JTIME"
     fi
-    if [ -n "$faxstatus" -a "$RETURNTECHINFO" = "yes" ] ; then
+    if [ -n "$faxstatus" -a "$RETURNTRANSCRIPT" = "yes" ] ; then
         echo "  Additional information:\n    " $faxstatus
         returnTranscript
     fi
@@ -856,3 +799,24 @@ fi
 echo ""
 echo "--$MIMEBOUNDARY--"
 ) | 2>&1 $SENDMAIL -f$FROMADDR -oi -t
+
+if [ "$NOTIFY_FAXMASTER" = "yes" ]; then
+    (
+	if [ -z $jobtag ] ; then
+	    jobtag="$jobtype job $jobid"
+	fi
+	echo "To: $TOADDR"
+	echo "Subject: $jobtag to $number $WHY"
+	echo
+        COMFILE="log/c$commid"
+        if [ -a "$COMFILE" ] ; then
+            cat $COMFILE
+        else 
+            printf "    No transcript available"
+            if [ -n "$commid" ] ; then  # non 0 len commid value
+                    printf "(CommID c$commid)"
+            fi
+            echo "."
+        fi	
+    ) | 2>&1 $SENDMAIL -f$FROMADDR -oi -t
+fi
