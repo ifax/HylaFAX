@@ -572,10 +572,12 @@ FaxServer::sendSetupParams1(TIFF* tif,
      */
     float yres;
     if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &yres)) {
-	short resunit = RESUNIT_NONE;
+	short resunit = RESUNIT_INCH;		// TIFF spec default
 	(void) TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &resunit);
 	if (resunit == RESUNIT_INCH)
 	    yres /= 25.4;
+	if (resunit == RESUNIT_NONE)
+	    yres /= 720.0;			// postscript units ?
     } else {
 	/*
 	 * No vertical resolution is specified, try

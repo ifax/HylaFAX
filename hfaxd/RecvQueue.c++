@@ -112,10 +112,12 @@ HylaFAXServer::getRecvDocStatus(RecvInfo& ri)
 #endif
     float vres = 3.85;					// XXX default
     if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &vres)) {
-	uint16 resunit = RESUNIT_NONE;
+	uint16 resunit = RESUNIT_INCH;			// TIFF spec default
 	TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &resunit);
 	if (resunit == RESUNIT_INCH)
 	    vres /= 25.4;
+	if (resunit == RESUNIT_NONE)
+	    vres /= 720.0;				// postscript units ?
     }
     ri.params.setVerticalRes((u_int) vres);		// resolution
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &v);
