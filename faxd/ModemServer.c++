@@ -836,13 +836,13 @@ ModemServer::vtraceStatus(int kind, const char* fmt, va_list ap)
     if (log) {
         fxStr s = fxStr::vformat(fmt, ap);
         if (kind == FAXTRACE_SERVER) { // always log server stuff
-            logInfo(s);
+            logInfo("%s", (const char*)s);
         }
         if (logTracingLevel & kind) {
-	        log->log(s);
+	        log->log("%s", (const char*)s);
         }
     } else if (tracingLevel & kind) {
-	    logInfo(fxStr::vformat(fmt, ap));
+	    logInfo("%s", (const char*)fxStr::vformat(fmt, ap));
     }
 }
 
