@@ -259,7 +259,7 @@ Class2Params::setFromDIS(u_int dis, u_int xinfo)
 	br = DISbrTab[(dis & DIS_SIGRATE) >> 10];
     wd = DISwdTab[(dis & DIS_PAGEWIDTH) >> 6];
     ln = DISlnTab[(dis & DIS_PAGELENGTH) >> 4];
-    if (xinfo & DIS_G4COMP)
+    if ((xinfo & DIS_G4COMP) && (xinfo & DIS_ECMODE))	// MMR requires ECM
 	df = DF_2DMMR;
     else if (xinfo & DIS_2DUNCOMP)
 	df = DF_2DMRUNCOMP;
