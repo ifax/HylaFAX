@@ -525,6 +525,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
     if (tries == 0) {
 	emsg = "DIS/DTC received 3 times; DCS not recognized";
 	protoTrace(emsg);
+	if (useV34) hadV34Trouble = true;	// sadly, some receivers will do this with V.34
 	return (false);
     }
     u_int dcs = params.getDCS();		// NB: 24-bit DCS and
@@ -951,7 +952,11 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		buf[0] = DLE; buf[1] = 0x6D;	// <DLE><ctrl>
 		if (!putModemData(buf, 2)) return (false);
 		// wait for the ready indicator, <DLE><ctrl><DLE><crate>
-		if (!waitForDCEChannel(true)) return (false);
+		if (!waitForDCEChannel(true)) {
+		    emsg = "Failed to properly open control V.34 channel.";
+		    protoTrace(emsg);
+		    return (false);
+		}
 	    } else {
 		buf[0] = DLE; buf[1] = ETX;
 		if (!putModemData(buf, 2)) return (false);
