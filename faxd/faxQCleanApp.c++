@@ -336,6 +336,9 @@ faxQCleanApp::expungeCruft(void)
 			    (const char*) file);
 		    continue;			// skip, in use
 		}
+		else if (trace)
+		    printf("%s: file has no matching %s\n", 
+			(const char*) file, (const char*)qfile);
 	    } else if (strcmp(&file[l], "cover") == 0) {
 		/*
 		 * Cover page document has a jobid suffix
@@ -351,7 +354,55 @@ faxQCleanApp::expungeCruft(void)
 		    continue;			// skip, in use
 		}
 	    }
+	    else if(((l = file.nextR(file.length(), ';')) != 0) &&
+		    l < file.length()) {
+		// Check to make sure we don't delete a file with a ';'
+		// suffix, when the PS.jobid version of the file still
+		// exists.
+//		string      base(&file[5], (l -= 6));
+		char        *base;
+		int         sl=l-6;
+		l=l-6;
+		base=(char *)malloc(sl+1);
+		strncpy(base, &file[5], sl);
+		base[sl+1]=0;
+
+		bool        got_match = false;
+		DIR        *dir1 = Sys::opendir(docDir);
+
+		if(dir1 == 0) {
+		    printf("%s: Could not scan directory for base file.\n",
+			(const char *) docDir);
+			continue;
+		}
+		for(dirent *dp1 = readdir(dir1); dp1; dp1 = readdir(dir1)) {
+		    if(trace)
+		    printf("    Compare \"%s\" to \"%s\". (l=%d, dp1->d_name[l]=%c\n",
+			dp1->d_name, base, l, dp1->d_name[l]);
+		    if(strlen(dp1->d_name) > l && dp1->d_name[l] == '.' &&
+//			    base == string(dp1->d_name, l)) {
+		           ( strncmp(base, dp1->d_name, l) == 0)) {
+			// Found match
+			if(trace)
+			    printf("%s: found match to base '%s', skipping.\n",
+				(const char *)file, dp1->d_name);
+			got_match = true;
+			break;
+		    }
+		}
+		closedir(dir1);
+		if(got_match)
+		    free(base);
+		    continue;
+		if(trace)
+		    printf("%s: did not find base '%s' match.\n", 
+			(const char *) file, base);
+
+		free(base);
+	    }
+
 	}
+
 	if (nowork || Sys::unlink(file) >= 0) {
 	    if (verbose)
 		printf("DOC %s: unreferenced document removed%s.\n"

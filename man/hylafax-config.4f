@@ -910,8 +910,12 @@ Currently
 is available for IRIX, SVR/4, HP-UX, and POSIX-compliant 
 (i.e. Linux) operating systems.  The default value
 varies to maintain traditional \*(Fx behavior.  On IRIX, 
-SVR/4, ans HP-UX systems the default is true.  On others 
-the default is false.
+SVR/4, and HP-UX systems where the configure script detects one of the
+functions schedctl(), priocntl() or rtprio() the default is true.
+The only other supported priority mechanism
+is POSIX sched_setscheduler(), which is used on Linux, OpenServer and possibly
+other systems.  On such systems, as well as on systems where no priority
+scheduling mechanism exists, the default is false."
 .TP
 .B PS2FaxCmd\(S1
 The command to invoke to convert a \*(Ps document submitted

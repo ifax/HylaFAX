@@ -807,7 +807,7 @@ checkCompiler()
 	no-*-hp*)	C_ANSI="-Aa -D_HPUX_SOURCE -Dhpux";;
 	no-*-sco3.2v5.*)	C_ANSI="-Dsco -Dsco5 -b elf";;
 	yes-*-sco3.2v5.*)	C_ANSI="-Dsco -Dsco5 -m486";;
-	*-sco*)		C_ANSI="-Dsco";;
+	*-*-sco*)		C_ANSI="-Dsco";;
 	*-isc*)		C_ANSI="-posix -D_SYSV3 -DISC";;
 	yes-*-solaris*)	C_ANSI="-L/usr/local/lib -R/usr/local/lib";;
 	esac
@@ -1739,7 +1739,7 @@ EmitConfigurationDefinitions()
 			;;
 	*-ultrix*)	CONFIG_OPENFIFO=O_RDWR;;
 	*-solaris*)	CONFIG_OPENFIFO=O_RDWR;;
-	*-sco*|*-isc*)	CONFIG_OPENFIFO=O_RDWR;;
+	*-*-sco*|*-isc*)	CONFIG_OPENFIFO=O_RDWR;;
 	*-aix*|*-hpux*)	CONFIG_OPENFIFO=O_RDWR;;
 	alpha-dec*)     CONFIG_OPENFIFO=O_RDWR;;
 	*-linux*)	if releaseAtLeast 1.3.80; then
@@ -1755,7 +1755,8 @@ EmitConfigurationDefinitions()
 			fi
 			;;
 	*sysv4.2uw2.1.3)	CONFIG_OPENFIFO=O_RDWR;;	# UnixWare 2.1.3
-	*-UnixWare*)	CONFIG_OPENFIFO=O_RDWR;;	# UnixWare 7
+	*-sysv5UnixWare*)	CONFIG_OPENFIFO=O_RDWR;;	# UnixWare 7
+	*-sysv5OpenUNIX*)	CONFIG_OPENFIFO=O_RDWR;;	# OpenUNIX 8
 	*)		CONFIG_OPENFIFO=O_RDONLY;;
 	esac
     }
@@ -1825,7 +1826,7 @@ EmitConfigurationDefinitions()
     #
     test "$CONFIG_WINSZHACK" || {
 	case $TARGET in
-	*-sco*)		CONFIG_WINSZHACK=yes;;
+	*-*-sco*)	CONFIG_WINSZHACK=yes;;
 	*-isc*)		CONFIG_WINSZHACK=yes;;
 	*)		CONFIG_WINSZHACK=no;;
 	esac
@@ -1897,8 +1898,8 @@ EmitConfigurationDefinitions()
     #
     test "$CONFIG_BADEXECVPROTO" || {		# char* const* vs. const char**
 	case $TARGET in
-	*-sco3.2v5.*)	CONFIG_BADEXECVPROTO=no;;
-	*-sco*)		CONFIG_BADEXECVPROTO=yes;;
+	*-*-sco3.2v5.*)	CONFIG_BADEXECVPROTO=no;;
+	*-*-sco*)	CONFIG_BADEXECVPROTO=yes;;
 	*)		CONFIG_BADEXECVPROTO=no;;
 	esac
     }
@@ -1908,8 +1909,8 @@ EmitConfigurationDefinitions()
     fi
     test "$CONFIG_BADEXECVEPROTO" || {		# char* const* vs. const char**
 	case $TARGET in
-	*-sco3.2v5.*)	CONFIG_BADEXECVEPROTO=no;;
-	*-sco*)		CONFIG_BADEXECVEPROTO=yes;;
+	*-*-sco3.2v5.*)	CONFIG_BADEXECVEPROTO=no;;
+	*-*-sco*)	CONFIG_BADEXECVEPROTO=yes;;
 	*)		CONFIG_BADEXECVEPROTO=no;;
 	esac
     }
@@ -1920,7 +1921,7 @@ EmitConfigurationDefinitions()
     test "$CONFIG_BADGETOPTPROTO" || {		# char* const* vs. char**
 	case $TARGET in
 	*-aix*)		CONFIG_BADGETOPTPROTO=yes;;
-	*-sco3.2v4.*)	CONFIG_BADGETOPTPROTO=yes;;
+	*-*-sco3.2v4.*)	CONFIG_BADGETOPTPROTO=yes;;
 	*)		CONFIG_BADGETOPTPROTO=no;;
 	esac
     }
@@ -1949,8 +1950,9 @@ EmitConfigurationDefinitions()
     #
     test "$CONFIG_MAXGID" || {
 	case $TARGET in
-	*-sco*)		CONFIG_MAXGID=60000;;
-	*-UnixWare*)	CONFIG_MAXGID=60000;;	# UnixWare 7
+	*-*-sco*)	CONFIG_MAXGID=60000;;
+	*-sysv5UnixWare*)	CONFIG_MAXGID=60000;;	# UnixWare 7
+	*-sysv5OpenUNIX*)	CONFIG_MAXGID=60000;;	# OpenUNIX 8
 	*-hpux*)	CONFIG_MAXGID=60000;;
 	*)		CONFIG_MAXGID=60002;;	# default
 	esac
@@ -2459,7 +2461,8 @@ BuildPortDotH()
 		echo "#define CONFIG_HPUX_SOCKLEN_T_BRAINDAMAGE";;
         *sysv4.2uw2*)	CONFIG_SOCKARGLENTYPE=size_t;;
         *-univel-*)	CONFIG_SOCKARGLENTYPE=size_t;;
-        *-UnixWare*)	CONFIG_SOCKARGLENTYPE=size_t;;
+        *-sysv5UnixWare*)	CONFIG_SOCKARGLENTYPE=size_t;;
+        *-sysv5OpenUNIX*)	CONFIG_SOCKARGLENTYPE=size_t;;
 	*-freebsd4*)	CONFIG_SOCKARGLENTYPE=u_int32_t;;
 	*-freebsd5*)	CONFIG_SOCKARGLENTYPE=u_int32_t;;
         *)		CONFIG_SOCKARGLENTYPE=int;;
@@ -2776,7 +2779,7 @@ BuildPortDotH()
     }
     CheckForIncludeFile sys/termiox.h && {
 	case $TARGET in
-	*-sco3.2v5.*)	;;
+	*-*-sco3.2v5.*)	;;
 	*)		Note "... configure use of SVR4 termiox support"
 			echo '#define HAS_TERMIOX 1'
 			;;
@@ -2892,8 +2895,12 @@ BuildPortDotH()
     fi
     CheckForDefine RT_NOCHANGE sys/priocntl.h sys/rtpriocntl.h && \
     CheckForDefine TS_NOCHANGE sys/priocntl.h sys/tspriocntl.h && {
-	Note "... configure use of SVR4 realtime process control interface"
-	echo '#define HAS_PRIOCNTL 1'
+	case $TARGET in
+	*-*-sco3.2v5.*)	;;
+	*)	Note "... configure use of SVR4 realtime process control interface"
+		echo '#define HAS_PRIOCNTL 1'
+			;;
+	esac
     }
     CheckForDefine FP_NOCHANGE sys/priocntl.h sys/fppriocntl.h && {
 	Note "... called FP instead of RT"
@@ -2907,9 +2914,14 @@ BuildPortDotH()
 	Note "... configure use of HP-UX realtime process control interface"
 	echo '#define HAS_RTPRIO 1'
     }
-    CheckForDefine _POSIX_PRIORITY_SCHEDULING unistd.h && {
+    CheckForDefine _POSIX_PRIORITY_SCHEDULING unistd.h sched.h && {
 	Note "... configure use of POSIX realtime process control interface"
 	echo '#define HAS_POSIXSCHED 1'
+	case $TARGET in
+	*-*-sco3.2v5.*)	echo '#define RT_PRIORITY 96';;
+	*-linux*)	echo '#define RT_PRIORITY 1';;
+	*)		echo '#define RT_PRIORITY 1';;
+	esac
     }
     CheckForTXCD && {
 	Note "... configure use of TXADDCD and TXDELCD ioctls"
@@ -3476,7 +3488,8 @@ if [ "$SYSVINIT" = yes ]; then
 	    *-linux*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d ../rc6.d";;
 	    *-solaris*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d ../rcS.d";;
 	    *sysv4.2uw2*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d";;
-	    *-UnixWare*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d";;
+	    *-sysv5UnixWare*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d";;
+	    *-sysv5OpenUNIX*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d";;
 	    *)		DIR_SYSVINITSTOP="../rc0.d";;
 	esac
     fi
@@ -3484,7 +3497,7 @@ if [ "$SYSVINIT" = yes ]; then
 	case $TARGET in
 	    *-hpux*)		NAME_SYSVINITSTART="S905hylafax" ;;
 	    *-linux*)		NAME_SYSVINITSTART="S97hylafax" ;;
-	    *-sco3.2v5*)	NAME_SYSVINITSTART="S90hylafax" ;;
+	    *-*-sco3.2v5*)	NAME_SYSVINITSTART="S90hylafax" ;;
 	    *)			NAME_SYSVINITSTART="S80hylafax" ;;
 	esac
     fi
@@ -3535,7 +3548,7 @@ if [ -z "$FAXGID" ]; then
     *-irix*)	FAXGID=nuucp;;
     *-isc*)	FAXGID=uucp;;
     *-linux*)	FAXGID=uucp;;
-    *-sco*)	FAXGID=uucp;;
+    *-*-sco*)	FAXGID=uucp;;
     *-solaris*)	FAXGID=uucp;;
     *-sunos*)	FAXGID=uucp;;
     *-sysv4*)	FAXGID=uucp;;
@@ -3562,7 +3575,7 @@ if [ -z "$SYSGID" ]; then
     *-irix*)	SYSGID=sys;;
     *-isc*)	SYSGID=sys;;
     *-linux*)	SYSGID=bin;;
-    *-sco*)	SYSGID=sys;;
+    *-*-sco*)	SYSGID=sys;;
     *-solaris*)	SYSGID=sys;;
     *-sunos*)	SYSGID=bin;;
     *-sysv4*)	SYSGID=sys;;
@@ -3671,7 +3684,7 @@ fi
 if [ "$LOCKS" = auto ]; then
     case $TARGET in
     *-aix*)	LOCKS=ascii;;
-    *-sco*)	LOCKS="-ascii";;
+    *-*-sco*)	LOCKS="-ascii";;
     *-sysv2*)	LOCKS=binary;;
     *-hpux*)	LOCKS=binary;;
     *-sysv4*)	LOCKS="+ascii";;
@@ -3696,7 +3709,7 @@ if [ -z "$DIR_LOCKS" ]; then
     case $TARGET in
     *-aix*)     LOCKDIRS="/etc/locks $LOCKDIRS";;
     *-linux*)   LOCKDIRS="/var/lock/uucp /var/lock $LOCKDIRS";;
-    *-sco*)     LOCKDIRS="/usr/spool/uucp $LOCKDIRS";;
+    *-*-sco*)     LOCKDIRS="/usr/spool/uucp $LOCKDIRS";;
     esac
     DIR_LOCKS=
     for i in $LOCKDIRS; do
@@ -3716,7 +3729,7 @@ bitchExecutable()
     echo ""
     echo "WARNING, $1 does not seem to be an executable program;"
     echo "         you may need to correct this before starting up the fax server."
-    ls -l $1
+    ls -lL $1
     echo ""
 }
 
@@ -3905,7 +3918,7 @@ if [ -z "$MANSCHEME" ]; then
     *-hpux*)			MANSCHEME=sysv-source-cat-strip;;
     *-solaris*)			MANSCHEME=sysv-source-cat-strip;;
     *-aix*)			MANSCHEME=sysv-source-strip;;
-    *-isc*|*-sco*)		MANSCHEME=sysv-source-cat;;
+    *-isc*|*-*-sco*)		MANSCHEME=sysv-source-cat;;
     *-irix*)			MANSCHEME=sysv-nroff-compress-Z;;
     *)
 	#
