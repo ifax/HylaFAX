@@ -301,6 +301,7 @@ Usage: configure [options] [host]
 Options: [defaults in brackets after descriptions]
   --help                  print this message
   --quiet                 do not print `Using ...' messages
+  --nointeractive         do not prompt for input [INTERACTIVE=no]
   --verbose		  opposite of --quiet
   --version               print the version of autoconf that created configure
   --target=TARGET         configure for TARGET [TARGET=HOST]
@@ -788,7 +789,8 @@ checkCompiler()
     if [ -z "${ENVOPTS:-}" ]; then
 	case $ISGCC-$TARGET in
 	no-*-hp*)	C_ANSI="-Aa -D_HPUX_SOURCE -Dhpux";;
-	*-sco3.2v5.*)	C_ANSI="-Dsco -Dsco5 -b elf";;
+	no-*-sco3.2v5.*)	C_ANSI="-Dsco -Dsco5 -b elf";;
+	yes-*-sco3.2v5.*)	C_ANSI="-Dsco -Dsco5 -m486";;
 	*-sco*)		C_ANSI="-Dsco";;
 	*-isc*)		C_ANSI="-posix -D_SYSV3 -DISC";;
 	yes-*-solaris*)	C_ANSI="-L/usr/local/lib -R/usr/local/lib";;
