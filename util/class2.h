@@ -153,4 +153,5 @@ const int ETX = 3;		// <DLE><ETX> means end of transfer
 const int DC1 = 17;		// start data transfer (Class 2)
 const int DC2 = 18;		// start data transfer (Class 2.0 and ZyXEL)
 const int CAN = 24;		// abort data transfer
+const int EOT = 4;		// end transmission (Class 1.0)		
 #endif /* _class2_ */

@@ -434,6 +434,26 @@ TryClass1Commands()
     Try "AT+FRS=?"
 }
 
+TryClass1dot0Commands()
+{
+    Try "AT+FCLASS=?";	Try "AT+FCLASS?"
+    Try "AT+FCLASS=0";	Try "$ATSTR"
+    Try "AT+FCLASS?"
+    Try "AT+FJUNK=?";	Try "AT+FJUNK?"
+    Try "AT+FAA=?";	Try "AT+FAA?"
+    Try "AT+FAE=?";	Try "AT+FAE?"
+    Try "AT+FTH=?"
+    Try "AT+FRH=?"
+    Try "AT+FTM=?"
+    Try "AT+FRM=?"
+    Try "AT+FTS=?"
+    Try "AT+FRS=?"
+    Try "AT+FAR=?"
+    Try "AT+FCL=?"
+    Try "AT+FIT=?"
+    Try "AT+F34=?"
+}
+
 TryCommonCommands()
 {
     for i in 0 1 2 3 4 5 6 7 8 9; do
@@ -472,7 +492,7 @@ class1dot0()
 {
     echo ""; echo "Class 1.0 stuff..."; echo ""
     ATSTR="AT+FCLASS=1.0"
-    TryClass1Commands
+    TryClass1dot0Commands
 }
 
 class2dot1()

@@ -74,6 +74,7 @@ CONFIGFILES=class1 \
 	lucent-mt-2 \
 	lucent-mt-20 \
 	lucent-mt-21 \
+	lucent-mt-10 \
 	moto-288 \
 	mt-1432 \
 	nuvo-voyager \

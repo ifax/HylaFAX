@@ -430,7 +430,7 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params)
  * for sending/received facsimile.
  */
 bool
-Class2Modem::faxService()
+Class2Modem::faxService(bool enableV34)
 {
     return setupClass2Parameters() && class2Cmd(lidCmd, lid);
 }

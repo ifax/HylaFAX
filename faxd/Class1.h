@@ -49,11 +49,15 @@ class Class1Modem : public FaxModem {
 protected:
     fxStr	thCmd;			// command for transmitting a frame
     fxStr	rhCmd;			// command for receiving a frame
+    fxStr	classCmd;		// set class command
+    u_int	serviceType;		// modem service required
     u_int	dis;			// current remote DIS
     u_int	xinfo;			// current remote DIS extensions
     u_int	frameSize;		// size of image frames
     u_int	signalRcvd;		// last signal received in ECM protocol
+    u_int	nonV34br;		// modemParams.br without V.34
     bool	sentERR;		// whether or not ERR was sent
+    bool	hadV34Trouble;		// indicates failure due to V.34 restrictions
     const u_char* frameRev;		// HDLC frame bit reversal table
     fxStr	lid;			// encoded local id string
     fxStr	pwd;			// transmit password
@@ -95,6 +99,14 @@ protected:
 	V33   = 5 		// v.33, 14400, 12000, 9600, 7200
     };
     static const char* modulationNames[6];
+
+// V.34 indicators
+    bool	useV34;		// whether or not V.8 handhaking was used
+    bool	gotEOT;		// V.34-fax heard EOT signal
+    bool	gotCTRL;	// current channel indicator
+    bool	gotRTNC;	// retrain control channel
+    u_short	primaryV34Rate;	// rate indication for primary channel
+    u_short	controlV34Rate;	// rate indication for control channel
 
 // modem setup stuff
     virtual bool setupModem();
@@ -160,6 +172,8 @@ protected:
     bool	recvTCF(int br, HDLCFrame&, const u_char* bitrev, long ms);
     bool	recvRawFrame(HDLCFrame& frame);
     bool	recvECMFrame(HDLCFrame& frame);
+    bool        waitForDCEChannel(bool awaitctrl);
+    bool        renegotiatePrimary(bool constrain);
     bool	syncECMFrame();
     bool	recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg);
     void	blockData(u_int byte, bool flag);
@@ -202,7 +216,7 @@ public:
 		    fxStr& emsg);
 
 // miscellaneous
-    bool	faxService();			// switch to fax mode
+    bool	faxService(bool enableV34);	// switch to fax mode
     bool	reset(long ms);			// reset modem
     void	setLID(const fxStr& number);	// set local id string
     bool	supportsPolling() const;	// modem capability

@@ -61,7 +61,7 @@ const char* ClassModem::serviceNames[9] = {
     "",				// 7
     "\"Voice\"",		// SERVICE_VOICE
 };
-const char* ClassModem::ATresponses[15] = {
+const char* ClassModem::ATresponses[16] = {
     "Nothing",			// AT_NOTHING
     "OK",			// AT_OK
     "Connection established",	// AT_CONNECT
@@ -75,6 +75,7 @@ const char* ClassModem::ATresponses[15] = {
     "<Empty line>",		// AT_EMPTYLINE
     "<Timeout>",		// AT_TIMEOUT
     "<dle+etx>",		// AT_DLEETX
+    "End of transmission",	// AT_DLEEOT
     "<xon>",			// AT_XON
     "<Unknown response>"	// AT_OTHER
 };
@@ -158,6 +159,7 @@ ClassModem::isNoise(const char* s)
 	"RRING",	// Telebit
 	"RINGING",	// ZyXEL
 	"+FHR:",	// Intel 144e
+	"+F34:",	// Class 1.0 V.34 report
     };
 #define	NNOISE	(sizeof (noiseMsgs) / sizeof (noiseMsgs[0]))
 
@@ -190,6 +192,8 @@ static const AnswerMsg answerMsgs[] = {
    ClassModem::AT_NOTHING, ClassModem::NOCARRIER, ClassModem::CALLTYPE_ERROR },
 { "+FHS:",	5,
    ClassModem::AT_NOTHING, ClassModem::NOCARRIER, ClassModem::CALLTYPE_ERROR },
+{ "OK",		2,
+   ClassModem::AT_NOTHING, ClassModem::NOCARRIER, ClassModem::CALLTYPE_ERROR },
 { "FAX",	 3,
    ClassModem::AT_CONNECT, ClassModem::OK,	  ClassModem::CALLTYPE_FAX },
 { "DATA",	 4,
@@ -220,7 +224,7 @@ ClassModem::answerResponse(fxStr& emsg)
     do {
 	r = atResponse(rbuf, conf.answerResponseTimeout);
 again:
-	if (r == AT_TIMEOUT)
+	if (r == AT_TIMEOUT || r == AT_DLEEOT)
 	    break;
 	const AnswerMsg* am = findAnswer(rbuf);
 	if (am != NULL) {
@@ -788,6 +792,8 @@ ClassModem::atResponse(char* buf, long ms)
 	case '\020':
 	    if (streq(buf, "\020\003"))		// DLE/ETX
 		lastResponse = AT_DLEETX;
+	    if (streq(buf, "\020\004"))
+		lastResponse = AT_DLEEOT;	// DLE+EOT
 	    break;
 	case '\021':
 	    if (streq(buf, "\021"))		// DC1 (XON)

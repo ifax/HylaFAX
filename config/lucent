@@ -47,6 +47,7 @@
 # END-SERVER
 
 ModemType:		Class1		# use this to supply a hint
+ModemFlowControl:	rtscts		# many firmwares have broken software flow control
 Class1TCFRecvHack:	yes		# avoid +FCERROR before TCF
 # Class1MsgRecvHackCmd:	AT+FRS=1	# avoid +FCERROR before image
 Class1TMConnectDelay:	400		# counteract quick CONNECT response

@@ -1,7 +1,8 @@
 /*	$Id$ */
 /*
- * Copyright (c) 1990-1996 Sam Leffler
- * Copyright (c) 1991-1996 Silicon Graphics, Inc.
+ * Copyright (c) 2004 Lee Howard
+ * Copyright (c) 1994-1996 Sam Leffler
+ * Copyright (c) 1994-1996 Silicon Graphics, Inc.
  * HylaFAX is a trademark of Silicon Graphics
  *
  * Permission to use, copy, modify, distribute, and sell this software and 
@@ -23,17 +24,17 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
-#ifndef _FaxSendStatus_
-#define	_FaxSendStatus_
-/*
- * Status of a send job.
- */
-enum FaxSendStatus {
-    send_retry,			// waiting for retry
-    send_failed,		// finished w/o success
-    send_done,			// completed successfully
-    send_reformat,		// retry with reformatted documents
-    send_v34fail		// failed due to V.34-Fax trouble
-};
-#define	send_ok	send_done
-#endif /* _FaxSendStatus_ */
+#include "Class1Ersatz.h"
+#include "ModemConfig.h"
+
+Class1ErsatzModem::Class1ErsatzModem(FaxServer& s, const ModemConfig& c) : Class1Modem(s,c)
+{
+    serviceType = SERVICE_CLASS1;
+    setupDefault(classCmd,	conf.class1Cmd,		"AT+FCLASS=1");
+
+}
+
+Class1ErsatzModem::~Class1ErsatzModem()
+{
+}
+

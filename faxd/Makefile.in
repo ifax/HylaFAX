@@ -47,6 +47,8 @@ C++FILES=ClassModem.c++ \
 	FaxModem.c++ \
 	Class0.c++ \
 	Class1.c++ \
+	Class10.c++ \
+	Class1Ersatz.c++ \
 	Class1Poll.c++ \
 	Class1Recv.c++ \
 	Class1Send.c++ \
@@ -100,6 +102,8 @@ MODEM_OBJS=ClassModem.o \
 	FaxModem.o \
 	Class0.o \
 	Class1.o \
+	Class10.o \
+	Class1Ersatz.o \
 	Class1Poll.o \
 	Class1Recv.o \
 	Class1Send.o \

@@ -52,6 +52,10 @@ Class1Modem::sendSetup(FaxRequest& req, const Class2Params& dis, fxStr& emsg)
 CallStatus
 Class1Modem::dialResponse(fxStr& emsg)
 {
+    // This is as good a time as any, perhaps, to reset modemParams.br.
+    // If the call does V.8 handshaking, then it will be altered.
+    modemParams.br = nonV34br;
+
     int ntrys = 0;
     ATResponse r;
     do {
@@ -103,6 +107,8 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg)
     u_int t1 = howmany(conf.t1Timer, 1000);		// T1 timer in seconds
     time_t start = Sys::now();
     HDLCFrame frame(conf.class1FrameOverhead);
+
+    if (useV34)	waitForDCEChannel(true);		// expect control channel
 
     bool framerecvd = recvRawFrame(frame);
     for (;;) {
@@ -261,8 +267,14 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	/*
 	 * Transmit the facsimile message/Phase C.
 	 */
-	if (!sendPage(tif, params, decodePageChop(pph, params), cmd, emsg))
+        hadV34Trouble = false;
+	if (!sendPage(tif, params, decodePageChop(pph, params), cmd, emsg)) {
+	    if (hadV34Trouble) {
+		protoTrace("The destination appears to have trouble with V.34-Fax.");
+		return (send_v34fail);
+	    }
 	    return (send_retry);	// a problem, disconnect
+	}
 
 	int ncrp = 0;
 
@@ -442,10 +454,9 @@ Class1Modem::sendTCF(const Class2Params& params, u_int ms)
 bool
 Class1Modem::sendPrologue(u_int dcs, u_int dcs_xinfo, const fxStr& tsi)
 {
-    bool frameSent = (
-	atCmd(thCmd, AT_NOTHING) &&
-	atResponse(rbuf, 2550) == AT_CONNECT
-    );
+    bool frameSent;
+    if (useV34) frameSent = true;
+    else frameSent = (atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 2550) == AT_CONNECT);
     if (!frameSent)
 	return (false);
     if (pwd != fxStr::null) {
@@ -524,51 +535,62 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	frameSize = 64;
     } else
 	frameSize = 256;
-    /*
-     * Select Class 1 capability: use params.br to hunt
-     * for the best signalling scheme acceptable to both
-     * local and remote (based on received DIS and modem
-     * capabilities gleaned at modem setup time).
-     */
-    if (!curcap)
-	curcap = findBRCapability(params.br, xmitCaps);
-    curcap++;
-    if (!dropToNextBR(params))
-	goto failed;
-    do {
+
+    if (!useV34) {
 	/*
-	 * Override the Class 2 parameter bit rate
-	 * capability and use the signalling rate
-	 * calculated from the modem's capabilities
-	 * and the received DIS.  This is because
-	 * the Class 2 state does not include the
-	 * modulation technique (v.27, v.29, v.17, v.33).
-	 *
-	 * Technically, according to post-1994 revisions
-	 * of T.30, V.33 should not be used except
-	 * in the case where the remote announces
-	 * specific V.33 support with the 1,1,1,0 rate
-	 * bits set.  However, for the sake of versatility
-	 * we'll not enforce this upon modems that support
-	 * V.33 but not V.17 and will require the user
-	 * to disable V.33 if it becomes problematic.  For
-	 * modems that support both V.17 and V.33 the
-	 * latter is never used.
+	 * Select Class 1 capability: use params.br to hunt
+	 * for the best signalling scheme acceptable to both
+	 * local and remote (based on received DIS and modem
+	 * capabilities gleaned at modem setup time).
 	 */
-	params.br = curcap->br;
-	dcs = (dcs &~ DCS_SIGRATE) | curcap->sr;
-        /*
-	 * Set the number of train attemps on the same
-	 * modulation; having set it to 1 we immediately drop
-	 * the speed if the training has been failed.
-	 * This parameter is not specified by T.30
-	 * (the algorith left implementation defined),
-	 * so we choose the exact value according to our
-	 * common sense.
-	 */
+	if (!curcap)
+	    curcap = findBRCapability(params.br, xmitCaps);
+	curcap++;
+	if (!dropToNextBR(params))
+	    goto failed;
+    }
+    do {
+	if (!useV34) {
+	    /*
+	     * Override the Class 2 parameter bit rate
+	     * capability and use the signalling rate
+	     * calculated from the modem's capabilities
+	     * and the received DIS.  This is because
+	     * the Class 2 state does not include the
+	     * modulation technique (v.27, v.29, v.17, v.33).
+	     *
+	     * Technically, according to post-1994 revisions
+	     * of T.30, V.33 should not be used except
+	     * in the case where the remote announces
+	     * specific V.33 support with the 1,1,1,0 rate
+	     * bits set.  However, for the sake of versatility
+	     * we'll not enforce this upon modems that support
+	     * V.33 but not V.17 and will require the user
+	     * to disable V.33 if it becomes problematic.  For
+	     * modems that support both V.17 and V.33 the
+	     * latter is never used.
+	     */
+	    params.br = curcap->br;
+	    dcs = (dcs &~ DCS_SIGRATE) | curcap->sr;
+	    /*
+	     * Set the number of train attemps on the same
+	     * modulation; having set it to 1 we immediately drop
+	     * the speed if the training has been failed.
+	     * This parameter is not specified by T.30
+	     * (the algorith left implementation defined),
+	     * so we choose the exact value according to our
+	     * common sense.
+	     */
+	} else {
+	    /*
+	     * T.30 Table 2 Note 33 says that when V.34-fax is used
+	     * DCS bits 11-14 should be set to zero.
+	     */
+	    dcs = (dcs &~ DCS_SIGRATE);
+	}
 	int t = 1;
 	do {
-	    protoTrace("SEND training at %s %s",
+	    if (!useV34) protoTrace("SEND training at %s %s",
 		modulationNames[curcap->mod],
 		Class2Params::bitRateNames[curcap->br]);
 	    if (!sendPrologue(dcs, dcs_xinfo, lid)) {
@@ -579,38 +601,43 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	    }
 
 	    /*
-	     * Delay before switching to high speed carrier
-	     * to send the TCF data as required by T.30 chapter
-	     * 5 note 3.
-	     *
-	     * Historically this delay was enforced by a pause,
-	     * however, +FTS must be used.  See the notes preceding
-	     * Class1PPMWaitCmd above.
+	     * V.8 handshaking provides training for V.34-fax connections
 	     */
-	    if (!atCmd(conf.class1TCFWaitCmd, AT_OK)) {
-		emsg = "Stop and wait failure (modem on hook)";
-		protoTrace(emsg);
-		return (send_retry);
-	    }
+	    if (!useV34) {
+		/*
+		 * Delay before switching to high speed carrier
+		 * to send the TCF data as required by T.30 chapter
+		 * 5 note 3.
+		 *
+		 * Historically this delay was enforced by a pause,
+		 * however, +FTS must be used.  See the notes preceding
+		 * Class1PPMWaitCmd above.
+		 */
+		if (!atCmd(conf.class1TCFWaitCmd, AT_OK)) {
+		    emsg = "Stop and wait failure (modem on hook)";
+		    protoTrace(emsg);
+		    return (send_retry);
+		}
 
-	    if (!sendTCF(params, TCF_DURATION)) {
-		if (abortRequested())
-		    goto done;
-		protoTrace("Problem sending TCF data");
-	    }
+		if (!sendTCF(params, TCF_DURATION)) {
+		    if (abortRequested())
+			goto done;
+		    protoTrace("Problem sending TCF data");
+		}
 
-	    /*
-	     * Some modems may respond OK following TCF transmission
-	     * so quickly that the carrier signal has not actually 
-	     * dropped.  T.30 requires the receiver to wait 75 +/- 20 
-	     * ms before sending a response.  Here we explicitly look for 
-	     * that silence before looking for the low-speed carrier.  
-	     * Doing this resolves "DIS/DTC received 3 times" errors 
-	     * between USR modems and certain HP OfficeJets, in 
-	     * particular.
-             */
-	    if (conf.class1ResponseWaitCmd != "") {
-		atCmd(conf.class1ResponseWaitCmd, AT_OK);
+		/*
+		 * Some modems may respond OK following TCF transmission
+		 * so quickly that the carrier signal has not actually 
+		 * dropped.  T.30 requires the receiver to wait 75 +/- 20 
+		 * ms before sending a response.  Here we explicitly look for 
+		 * that silence before looking for the low-speed carrier.  
+		 * Doing this resolves "DIS/DTC received 3 times" errors 
+		 * between USR modems and certain HP OfficeJets, in 
+		 * particular.
+        	 */
+		if (conf.class1ResponseWaitCmd != "") {
+		    atCmd(conf.class1ResponseWaitCmd, AT_OK);
+		}
 	    }
 
 	    /*
@@ -630,11 +657,11 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 			break;
 		    }
 		} while (frame.moreFrames() && recvFrame(frame, conf.t4Timer));
-	    }
+	    } 
 	    if (frame.isOK()) {
 		switch (frame.getFCF()) {
 		case FCF_CFR:		// training confirmed
-		    protoTrace("TRAINING succeeded");
+		    if (!useV34) protoTrace("TRAINING succeeded");
 		    setDataTimeout(60, params.br);
 		    return (true);
 		case FCF_CRP:		// command repeat
@@ -676,11 +703,11 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	 * the signalling rate to the next lower rate supported
 	 * by the local & remote sides and try again.
 	 */
-    } while (dropToNextBR(params));
+    } while (!useV34 && dropToNextBR(params));
 failed:
     emsg = "Failure to train remote modem at 2400 bps or minimum speed";
 done:
-    protoTrace("TRAINING failed");
+    if (!useV34) protoTrace("TRAINING failed");
     return (false);
 }
 
@@ -739,6 +766,15 @@ Class1Modem::raiseToNextBR(Class2Params& params)
 void
 Class1Modem::blockData(u_int byte, bool flag)
 {
+    if (useV34) {
+	// With V.34-fax the DTE makes the stuffing
+	byte =  (((byte>>0)&1)<<7)|(((byte>>1)&1)<<6)|
+		(((byte>>2)&1)<<5)|(((byte>>3)&1)<<4)|
+		(((byte>>4)&1)<<3)|(((byte>>5)&1)<<2)|
+		(((byte>>6)&1)<<1)|(((byte>>7)&1)<<0);
+	ecmStuffedBlock[ecmStuffedBlockPos++] = byte;
+	return;
+    }
     for (u_int j = 8; j > 0; j--) {
 	u_short bit = (byte & (1 << (j - 1))) != 0 ? 1 : 0;
 	ecmByte |= (bit << ecmBitPos);
@@ -787,15 +823,17 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	u_short pprcnt = 0;
 	char ppr[32];				// 256 bits
 	for (u_int i = 0; i < 32; i++) ppr[i] = 0xff;
-	u_short badframes = 256, badframesbefore = 0;
+	u_short badframes = frameNumber, badframesbefore = 0;
 
 	do {
 	    u_short fcount = 0;
 	    ecmStuffedBlockPos = 0;
 
-	    // synchronize with 200 ms of 0x7e flags
-	    for (u_int i = 0; i < params.transferSize(200); i++)
-		blockData(0x7e, true);
+	    if (!useV34) {
+		// synchronize with 200 ms of 0x7e flags
+		for (u_int i = 0; i < params.transferSize(200); i++)
+		    blockData(0x7e, true);
+	    }
 
 	    u_char* firstframe = (u_char*) malloc(frameSize + 6);
 	    fxAssert(firstframe != NULL, "ECM procedure error (frame duplication).");
@@ -812,7 +850,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			ecmframe.put(ecmBlock[i]);
 			blockData(ecmBlock[i], false);
 		    }
-		    int fcs1 = ecmframe.getCRC() >> 8;	// 1st byte FCS
+		    int fcs1 = ecmframe.getCRC() >> 8;		// 1st byte FCS
 		    int fcs2 = ecmframe.getCRC() & 0xff;	// 2nd byte FCS
 		    ecmframe.put(fcs1); ecmframe.put(fcs2);
 		    blockData(fcs1, false);
@@ -820,8 +858,10 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		    traceHDLCFrame("<--", ecmframe);
 		    protoTrace("SEND send frame number %u", fnum);
 
-		    // separate frames with a 0x7e flag
-		    blockData(0x7e, true);
+		    if (!useV34) {
+			// separate frames with a 0x7e flag
+			blockData(0x7e, true);
+		    }
 
 		    if (firstframe[0] == 0x1) {
 			for (u_int i = 0; i < (frameSize + 6); i++) {
@@ -841,7 +881,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		ecmframe.put(firstframe, (frameSize + 6));
 		traceHDLCFrame("<--", ecmframe);
 		protoTrace("SEND send frame number %u", frameRev[firstframe[3]]);
-		blockData(0x7e, true);
+		if (!useV34) blockData(0x7e, true);
 	    }
 	    free(firstframe);
 	    HDLCFrame rcpframe(5);
@@ -852,41 +892,75 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		traceHDLCFrame("<--", rcpframe);
 
 		// separate frames with a 0x7e flag
-		blockData(0x7e, true);
+		if (!useV34) blockData(0x7e, true);
 	    }
 	    // add one more flag to ensure one full flag gets transmitted before DLE+ETX
-	    blockData(0x7e, true);
+	    if (!useV34) blockData(0x7e, true);
 
 	    // start up the high-speed carrier...
 	    if (flowControl == FLOW_XONXOFF)   
 		setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
-	    pause(conf.class1SendMsgDelay);		// T.30 5.3.2.4
-	    fxStr tmCmd(curcap[HasShortTraining(curcap)].value, tmCmdFmt);
-	    if (!atCmd(tmCmd, AT_CONNECT))
-		return (false);
-	    pause(conf.class1TMConnectDelay);
+	    if (!useV34) {
+		pause(conf.class1SendMsgDelay);		// T.30 5.3.2.4
+		fxStr tmCmd(curcap[HasShortTraining(curcap)].value, tmCmdFmt);
+		if (!atCmd(tmCmd, AT_CONNECT))
+		    return (false);
+		pause(conf.class1TMConnectDelay);
+	    }
 
 	    // The block is assembled.  Transmit it, adding transparent DLEs.  End with DLE+ETX.
-	    if (!putModemDLEData(ecmStuffedBlock, ecmStuffedBlockPos, bitrev, getDataTimeout())) {
-		return (false);
-	    }
 	    u_char buf[2];
-	    buf[0] = DLE; buf[1] = ETX;
-	    if (!putModemData(buf, 2)) {
-		return (false);
+	    if (useV34) {
+		// switch to primary channel
+		buf[0] = DLE; buf[1] = 0x6B;	// <DLE><pri>
+		if (!putModemData(buf, 2)) return (false);
+		// wait for the ready indicator, <DLE><pri><DLE><prate>
+		if (!waitForDCEChannel(false)) return (false);
 	    }
+	    if (useV34) {
+		// we intentionally do not send the FCS bytes as the DCE regenerates them
+		// send fcount frames separated by <DLE><ETX>
+		buf[0] = DLE; buf[1] = ETX;
+		for (u_short v34frame = 0; v34frame < fcount; v34frame++) {
+		    if (!putModemDLEData(ecmStuffedBlock, frameSize + 4, bitrev, getDataTimeout()))
+			return (false);
+		    if (!putModemData(buf, 2)) return (false);
+		    ecmStuffedBlock += (frameSize + 6);
+		}
+		// send 3 RCP frames separated by <DLE><ETX>
+		for (u_short v34frame = 0; v34frame < 3; v34frame++) {
+		    if (!putModemDLEData(ecmStuffedBlock, 3, bitrev, getDataTimeout()))
+			return (false);
+		    if (!putModemData(buf, 2)) return (false);
+		    ecmStuffedBlock += 5;
+		}
+		ecmStuffedBlock -= ecmStuffedBlockPos;
+	    } else {
+		if (!putModemDLEData(ecmStuffedBlock, ecmStuffedBlockPos, bitrev, getDataTimeout()))
+		    return (false);
+	    }
+	    if (useV34) {
+		// switch to control channel
+		buf[0] = DLE; buf[1] = 0x6D;	// <DLE><ctrl>
+		if (!putModemData(buf, 2)) return (false);
+		// wait for the ready indicator, <DLE><ctrl><DLE><crate>
+		if (!waitForDCEChannel(true)) return (false);
+	    } else {
+		buf[0] = DLE; buf[1] = ETX;
+		if (!putModemData(buf, 2)) return (false);
 
-	    // Wait for transmit buffer to empty.
-	    ATResponse r;
-	    while ((r = atResponse(rbuf, getDataTimeout())) == AT_OTHER);
-            if (!(r == AT_OK)) {
-		return (false);
+		// Wait for transmit buffer to empty.
+		ATResponse r;
+		while ((r = atResponse(rbuf, getDataTimeout())) == AT_OTHER);
+        	if (!(r == AT_OK)) {
+		    return (false);
+		}
 	    }
 
 	    if (flowControl == FLOW_XONXOFF)
 		setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
 
-	    if (!atCmd(ppmcmd == FCF_MPS ? conf.class1PPMWaitCmd : conf.class1EOPWaitCmd, AT_OK)) {
+	    if (!useV34 && !atCmd(ppmcmd == FCF_MPS ? conf.class1PPMWaitCmd : conf.class1EOPWaitCmd, AT_OK)) {
 		emsg = "Stop and wait failure (modem on hook)";
 		protoTrace(emsg);
 		return (false);
@@ -916,7 +990,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	    /* get MCF/PPR/RNR */
 	    HDLCFrame pprframe(conf.class1FrameOverhead);
 	    do {
-		if (!atCmd(thCmd, AT_CONNECT))
+		if (!useV34 && !atCmd(thCmd, AT_CONNECT))
 		    break;
 		startTimeout(3000);
 		sendFrame(FCF_PPS|FCF_SNDR, fxStr(pps, 4));
@@ -934,7 +1008,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			gotppr = false;
 			crpcnt++;
 			ppscnt = 0;
-			if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+			if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
 			    emsg = "Failure to receive silence.";
 			    protoTrace(emsg);
 			    return (false);
@@ -943,7 +1017,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		}
 	    } while (!gotppr && (++ppscnt < 3) && (crpcnt < 3));
 	    if (gotppr) {
-		if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+		if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
 		    emsg = "Failure to receive silence.";
 		    protoTrace(emsg);
 		    return (false);
@@ -962,7 +1036,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			u_short rrcnt = 0, crpcnt = 0;
 			bool gotmsg = false;
 			do {
-			    if (!atCmd(thCmd, AT_CONNECT))
+			    if (!useV34 && !atCmd(thCmd, AT_CONNECT))
 				break;
 			    startTimeout(3000);
 			    sendFrame(FCF_RR|FCF_SNDR);
@@ -975,7 +1049,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				    gotmsg = false;
 				    crpcnt++;
 				    rrcnt = 0;
-				    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+				    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
 					emsg = "Failure to receive silence.";
 					protoTrace(emsg);
 					return (false);
@@ -994,7 +1068,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				gotppr = true;
 				break;
 			    case FCF_RNR:
-				if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+				if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
 				    emsg = "Failure to receive silence.";
 				    protoTrace(emsg);
 				    return (false);
@@ -1031,6 +1105,15 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				}
 			    }
 			}
+			if (useV34 && badframes && badframes >= (badframesbefore / 2) && pprcnt < 4) {
+			    /*
+			     * With V.34-Fax we cannot send CTC, but we can request 
+			     * to renegotiate the primary rate any time.  (T.31-A1 B.8.5)
+			     * In practice, if we do not constrain the rate then
+			     * we may likely speed up the rate; so we constrain it.
+			     */
+			    renegotiatePrimary(true);		// constrain
+			}
 			if (pprcnt == 4) {
 			    pprcnt = 0;
 			    // Some receivers will ignorantly transmit PPR showing all frames good,
@@ -1039,7 +1122,8 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				blockgood = true;
 				signalRcvd = FCF_MCF;
 			    }
-			    if (conf.class1ECMDoCTC && (blockgood == false) && 
+			    // There is no CTC with V.34-fax (T.30 Annex F.3.4.5 Note 1).
+			    if (conf.class1ECMDoCTC && !useV34 && (blockgood == false) && 
 				!((curcap->br == 0) && (badframes >= badframesbefore))) {
 				// send ctc even at 2400 baud if we're getting somewhere
 				if (curcap->br != 0) {
@@ -1091,11 +1175,31 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				    return (false);
 				}
 			    } else {
+				/*
+				 * At this point data corruption is inevitable if all data
+				 * frames have not been received correctly.  This is tolerable
+				 * with MH and MR data, as the effect of the corruption
+				 * will be limited, but with MMR data all data following the
+				 * corrupt frame will be meaningless: the page image will be
+				 * truncated on the receiver's end.  So if this is the case
+				 * we disconnect, and hopefully we try again successfully.  If
+				 * this happens repeatedly to the same destination, then
+				 * disabling MMR to this destination would be advisable.
+				 */
+				if (blockgood == false && params.df == DF_2DMMR) {
+				    if (useV34) {
+					// not using CTC seems to be a problem
+					hadV34Trouble = true;
+				    }
+				    emsg = "Failure to transmit clean MMR image data.";
+				    protoTrace(emsg);
+				    return (false);
+				}
 				bool goterr = false;
 				u_short eorcnt = 0, crpcnt = 0;
 				HDLCFrame errframe(conf.class1FrameOverhead);
 				do {
-				    if (!atCmd(thCmd, AT_CONNECT))
+				    if (!useV34 && !atCmd(thCmd, AT_CONNECT))
 					break;
 				    startTimeout(3000);
 				    sendFrame(FCF_EOR|FCF_SNDR, fxStr(pps, 1));
@@ -1108,7 +1212,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 					    goterr = false;
 					    crpcnt++;
 					    eorcnt = 0;
-					    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+					    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
 						emsg = "Failure to receive silence.";
 						protoTrace(emsg);
 						return (false);
@@ -1135,7 +1239,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 					u_short rrcnt = 0, crpcnt = 0;
 					bool gotmsg = false;
 					do {
-					    if (!atCmd(thCmd, AT_CONNECT))
+					    if (!useV34 && !atCmd(thCmd, AT_CONNECT))
 						break;
 					    startTimeout(3000);
 					    sendFrame(FCF_RR|FCF_SNDR);
@@ -1148,7 +1252,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 						    gotmsg = false;
 						    crpcnt++;
 						    rrcnt = 0;
-						    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+						    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
 							emsg = "Failure to receive silence.";
 							protoTrace(emsg);
 							return (false);
@@ -1161,12 +1265,12 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 					    protoTrace(emsg);
 					    return (false);
 					}
-					switch (pprframe.getFCF()) {
+					switch (errframe.getFCF()) {
 					    case FCF_ERR:
 						goterr = true;
 						break;
 					    case FCF_RNR:
-						if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+						if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
 						    emsg = "Failure to receive silence.";
 						    protoTrace(emsg);
 						    return (false);
@@ -1610,6 +1714,14 @@ void
 Class1Modem::sendEnd()
 {
     transmitFrame(FCF_DCN|FCF_SNDR);		// disconnect
+    if (useV34) {
+	// terminate V.34 channel
+	u_char buf[2];
+	buf[0] = DLE; buf[1] = EOT;		// <DLE><EOT>
+	putModemData(buf, 2);
+	// T.31-A1 samples indicate an OK response, but anything is acceptable
+	(void) atResponse(rbuf, 60000);
+    }
     setInputBuffering(true);
 }
 

@@ -127,12 +127,25 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
     connTime = 0;				// indicate no connection
     fxStr notice;
     /*
+     * Calculate initial page-related session parameters so
+     * that braindead Class 2 modems can constrain the modem
+     * before dialing the telephone, and so that Class 1.0
+     * modems know to not enable V.34 support if ECM is not
+     * being used.
+     */
+    Class2Params dis;
+    dis.decodePage(fax.pagehandling);
+    dis.br = fxmin(modem->getBestSignallingRate(), (u_int) fax.desiredbr);
+    dis.ec = (modem->supportsECM() ? fax.desiredec : EC_DISABLE);
+    dis.st = fxmax(modem->getBestScanlineTime(), (u_int) fax.desiredst);
+    dis.bf = BF_DISABLE;
+    /*
      * Force the modem into the appropriate class
      * used to send facsimile.  We do this before
      * doing any fax-specific operations such as
      * requesting polling.
      */
-    if (!modem->faxService()) {
+    if (!modem->faxService(!clientInfo.getHasV34Trouble())) {
 	sendFailed(fax, send_failed, "Unable to configure modem for fax use");
 	return;
     }
@@ -147,17 +160,6 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	sendFailed(fax, send_failed, notice);
 	return;
     }
-    /*
-     * Calculate initial page-related session parameters so
-     * that braindead Class 2 modems can constrain the modem
-     * before dialing the telephone.
-     */
-    Class2Params dis;
-    dis.decodePage(fax.pagehandling);
-    dis.br = fxmin(modem->getBestSignallingRate(), (u_int) fax.desiredbr);
-    dis.ec = (modem->supportsECM() ? fax.desiredec : EC_DISABLE);
-    dis.st = fxmax(modem->getBestScanlineTime(), (u_int) fax.desiredst);
-    dis.bf = BF_DISABLE;
     if (!modem->sendSetup(fax, dis, notice)) {
 	sendFailed(fax, send_failed, notice);
 	return;
@@ -207,6 +209,13 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 		    traceProtocol("SEND file \"%s\"", (const char*) freq.item);
 		    fileStart = pageStart = Sys::now();
 		    if (!sendFaxPhaseB(fax, freq, clientInfo)) {
+			/*
+			 * Prevent repeated V.34 errors.
+			 */ 
+			if (fax.status == send_v34fail) {
+			    fax.status = send_retry;
+			    clientInfo.setHasV34Trouble(true);
+			}
 			/*
 			 * On protocol errors retry more quickly
 			 * (there's no reason to wait is there?).

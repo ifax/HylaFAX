@@ -167,6 +167,7 @@ f none @SPOOL@/config/lucent-isa=../@SRCDIR@/config/lucent-isa 0444 @SYSUID@ @SY
 f none @SPOOL@/config/lucent-mt-2=../@SRCDIR@/config/lucent-mt-2 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/lucent-mt-20=../@SRCDIR@/config/lucent-mt-20 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/lucent-mt-21=../@SRCDIR@/config/lucent-mt-21 0444 @SYSUID@ @SYSGID@
+f none @SPOOL@/config/lucent-mt-10=../@SRCDIR@/config/lucent-mt-10 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/moto-288=../@SRCDIR@/config/moto-288 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/mt-1432=../@SRCDIR@/config/mt-1432 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/nuvo-voyager=../@SRCDIR@/config/nuvo-voyager 0444 @SYSUID@ @SYSGID@

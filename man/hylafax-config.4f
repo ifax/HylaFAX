@@ -259,33 +259,35 @@ FaxT4Timer	integer	\s-13100\s+1	\s-1CCITT T.30 T4\s+1 timer (ms)
 Class0Cmd	string	\s-1AT+FCLASS=0\s+1	Class 0: command to enter class 0
 .sp .5
 Class1Cmd	string	\s-1AT+FCLASS=1\s+1	Class 1: command to enter class 1
-Class1ECMSupport	boolean	\s-1Yes\s+1	Class 1: enable T.30-A ECM support
-Class1ECMDoCTC	boolean	\s-1Yes\s+1	Class 1: to perform CTC in ECM protocol
-Class1ECMFrameSize	integer	\s-1256\s+1	Class 1: image frame size in ECM protocol
-Class1ExtendedRes	boolean	\s-1Yes\s+1	Class 1: enable extended resolution support
-Class1HFLOCmd	string	\-	Class 1: command to set hardware flow control
-Class1FrameOverhead	integer	\s-14\s+1	Class 1: extra bytes in a received \s-1HDLC\s+1 frame
-Class1NFLOCmd	string	\-	Class 1: command to set no flow control
-Class1RecvAbortOK	integer	\s-1200\s+1	Class 1: max wait (ms) for ``\s-1OK\s+1'' after recv abort
-Class1RecvIdentTimer	integer	\s-140000\s+1	Class 1: max wait (ms) for initial ident frame
-Class1SFLOCmd	string	\-	Class 1: command to set software flow control
-Class1PPMWaitCmd	string	\s-1AT+FTS=7\s+1	Class 1: command to stop and wait before PPM
-Class1ResponseWaitCmd	string	\-	Class 1: command to wait before TCF response
-Class1RMQueryCmd	string	\s-1AT+FRM=?\s+1	Class 1: command to query modem data reception rates
-Class1TCFWaitCmd	string	\s-1AT+FTS=7\s+1	Class 1: command to stop and wait before TCF
-Class1TMQueryCmd	string	\s-1AT+FTM=?\s+1	Class 1: command to query modem data transmission rates
-Class1EOPWaitCmd	string	\s-1AT+FTS=9\s+1	Class 1: command to stop and wait before EOP
-Class1MsgRecvHackCmd	string	\s-1""\s+1	Class 1: command to avoid +FCERROR before image data
-Class1TCFMaxNonZero	integer	\s-110\s+1	Class 1: max% of non-zero data in good \s-1TCF\s+1
-Class1TCFMinRun	integer	\s-11000\s+1	Class 1: minimum zero run in good \s-1TCF\s+1
-Class1TCFRecvHack	boolean	\s-1No\s+1	Class 1: deliberately look for carrier loss before TCF
-Class1TCFRecvTimeout	integer	\s-14500\s+1	Class 1: max wait (ms) for \s-1TCF\s+1
-Class1TCFResponseDelay	integer	\s-175\s+1	Class 1: delay between \s-1TCF\s+1 and ack/nak
-Class1TMConnectDelay	integer	\s-10\s+1	Class 1: delay between +FTM CONNECT and data transmission
-Class1SendMsgDelay	integer	\s-1200\s+1	Class 1: delay before sending image data
-Class1SwitchingCmd	string	\s-1AT+FRS=7\s+1	Class 1: command to ensure silence after HDLC reception
-Class1TrainingRecovery	integer	\s-11500\s+1	Class 1: delay after failed training
-Class1ValidateV21Frames	boolean	\s-1No\s+1	Class 1: check FCS against received frames
+Class1Cmd	string	\s-1AT+FCLASS=1.0\s+1	Class 1.0: command to enter class 1
+Class1EnableV34Cmd	string	\-	Class 1/1.0: command to enable V.34-fax support
+Class1ECMSupport	boolean	\s-1Yes\s+1	Class 1/1.0: enable T.30-A ECM support
+Class1ECMDoCTC	boolean	\s-1Yes\s+1	Class 1/1.0: to perform CTC in ECM protocol
+Class1ECMFrameSize	integer	\s-1256\s+1	Class 1/1.0: image frame size in ECM protocol
+Class1ExtendedRes	boolean	\s-1Yes\s+1	Class 1/1.0: enable extended resolution support
+Class1HFLOCmd	string	\-	Class 1/1.0: command to set hardware flow control
+Class1FrameOverhead	integer	\s-14\s+1	Class 1/1.0: extra bytes in a received \s-1HDLC\s+1 frame
+Class1NFLOCmd	string	\-	Class 1/1.0: command to set no flow control
+Class1RecvAbortOK	integer	\s-1200\s+1	Class 1/1.0: max wait (ms) for ``\s-1OK\s+1'' after recv abort
+Class1RecvIdentTimer	integer	\s-140000\s+1	Class 1/1.0: max wait (ms) for initial ident frame
+Class1SFLOCmd	string	\-	Class 1/1.0: command to set software flow control
+Class1PPMWaitCmd	string	\s-1AT+FTS=7\s+1	Class 1/1.0: command to stop and wait before PPM
+Class1ResponseWaitCmd	string	\-	Class 1/1.0: command to wait before TCF response
+Class1RMQueryCmd	string	\s-1AT+FRM=?\s+1	Class 1/1.0: command to query modem data reception rates
+Class1TCFWaitCmd	string	\s-1AT+FTS=7\s+1	Class 1/1.0: command to stop and wait before TCF
+Class1TMQueryCmd	string	\s-1AT+FTM=?\s+1	Class 1/1.0: command to query modem data transmission rates
+Class1EOPWaitCmd	string	\s-1AT+FTS=9\s+1	Class 1/1.0: command to stop and wait before EOP
+Class1MsgRecvHackCmd	string	\s-1""\s+1	Class 1/1.0: command to avoid +FCERROR before image data
+Class1TCFMaxNonZero	integer	\s-110\s+1	Class 1/1.0: max% of non-zero data in good \s-1TCF\s+1
+Class1TCFMinRun	integer	\s-11000\s+1	Class 1/1.0: minimum zero run in good \s-1TCF\s+1
+Class1TCFRecvHack	boolean	\s-1No\s+1	Class 1/1.0: deliberately look for carrier loss before TCF
+Class1TCFRecvTimeout	integer	\s-14500\s+1	Class 1/1.0: max wait (ms) for \s-1TCF\s+1
+Class1TCFResponseDelay	integer	\s-175\s+1	Class 1/1.0: delay between \s-1TCF\s+1 and ack/nak
+Class1TMConnectDelay	integer	\s-10\s+1	Class 1/1.0: delay between +FTM CONNECT and data transmission
+Class1SendMsgDelay	integer	\s-1200\s+1	Class 1/1.0: delay before sending image data
+Class1SwitchingCmd	string	\s-1AT+FRS=7\s+1	Class 1/1.0: command to ensure silence after HDLC reception
+Class1TrainingRecovery	integer	\s-11500\s+1	Class 1/1.0: delay after failed training
+Class1ValidateV21Frames	boolean	\s-1No\s+1	Class 1/1.0: check FCS against received frames
 .sp .5
 Class2Cmd	string	\s-1AT+FCLASS=2\s+1	Class 2: command to enter class 2/2.0
 Class2AbortCmd	string	\s-1AT+FK\s+1	Class 2: command to abort active session
@@ -2033,6 +2035,10 @@ of Class 1-style modems; they should not be changed lightly:
 .TP
 .B Class1Cmd
 The command to set the modem into Class 1 operation.
+.TP
+.B Class1EnableV34Cmd
+The command to enable V.34-fax support with at least the desired
+maximum primary channel rate.
 .TP
 .B Class1ECMSupport
 Whether or not to support T.30-A error correction protocol.  Use of

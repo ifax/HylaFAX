@@ -66,6 +66,7 @@ The following items are recorded:
 \fBTag	Type	Description\fP
 calledBefore	boolean	device has previously answered at this number
 dialFailures	number	count of consecutive failed dial operations
+hasV34Trouble	boolean	there is difficulty sending to this destination with V.34
 lastDialFailure	string	reason for last failed dial operation
 lastSendFailure	string	reason for last failed send attempt
 maxPageWidth	number	maximum page width in pixels in normal resolution

@@ -216,6 +216,7 @@ HYLAFAXSRC=\
 	config/lucent-mt-2			\
 	config/lucent-mt-20			\
 	config/lucent-mt-21			\
+	config/lucent-mt-10			\
 	config/moto-288				\
 	config/nuvo-voyager			\
 	config/ppi-pm14400fxmt			\

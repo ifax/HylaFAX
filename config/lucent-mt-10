@@ -1,0 +1,35 @@
+# $Id$
+
+#
+# prototype config for MultiTech 5634-series modems using
+# the Lucent/Agere chipset supporting V.34-Fax.
+#
+
+# CONFIG:CLASS1.0:LT V.90 1.0 MT5634ZPX-PCI*:.*:.*: Manufacturer=MultiTech Model=MT5634ZPX-PCI
+# CONFIG:CLASS1.0:LT V.92 1.0 MT5634ZPX-PCI*:.*:.*: Manufacturer=MultiTech Model=MT5634ZPX-PCI-V92
+# CONFIG:CLASS1.0:LT V.90 1.0 MT5634ZBA*:.*:.*: Manufacturer=MultiTech Model=MT5634ZBA
+# CONFIG:CLASS1.0:LT V.92 1.0 MT5634ZBA*:.*:.*: Manufacturer=MultiTech Model=MT5634ZBA
+# CONFIG:CLASS1.0:LT V.90 1.0 ISI5634PCI*:.*:.*: Manufacturer=MultiTech Model=ISI5634PCI
+# CONFIG:CLASS1.0:LT V.92 1.0 ISI5634PCI*:.*:.*: Manufacturer=MultiTech Model=ISI5634PCI
+#
+# BEGIN-SERVER
+# END-SERVER
+
+ModemType:		Class1.0	# use this to supply a hint
+ModemRate:		57600		# must be at least as fast as the DCE-DCE communication
+ModemFlowControl:	rtscts		# many firmwares have broken software flow control
+Class1EnableV34Cmd:	AT+F34=14,1,2	# 33600-2400 primary, 2400-1200 control
+Class1TCFRecvHack:	yes		# avoid +FCERROR before TCF
+Class1TMConnectDelay:	400		# counteract quick CONNECT response
+
+# If your line supports Caller-ID, you may want to uncomment this...
+# QualifyCID:		etc/cid		# you must create this file
+# ModemResetCmds:	AT+VCID=1
+# CIDNumber:		"NMBR="
+# CIDName:		"NAME="
+
+# Or with the MT5634ZBA-DID you'll probably need something like...
+# QualifyCID:		etc/cid		# you must create this file
+# ModemResetCmds:	AT*DS1*DD0*DF1	# enable DTMF-DID
+# CIDNumber:		"DTMF"		# format of AT*DF1
+# CIDNumberAnswerLength:	4	# four DTMF-DID digits then ATA

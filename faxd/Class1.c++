@@ -125,7 +125,7 @@ Class1Modem::setupModem()
 	traceBits(modemServices & SERVICE_ALL, serviceNames);
     if ((modemServices & SERVICE_CLASS1) == 0)
 	return (false);
-    atCmd(conf.class1Cmd);
+    atCmd(classCmd);
 
     /*
      * Query manufacturer, model, and firmware revision.
@@ -157,6 +157,21 @@ Class1Modem::setupModem()
     for (i = 1; i < NCAPS; i++)
 	if (xmitCaps[i].ok)
 	    modemParams.br |= BIT(xmitCaps[i].br);
+    nonV34br = modemParams.br;
+    if (conf.class1EnableV34Cmd != "" && conf.class1ECMSupport) {
+	// This is cosmetic, mostly, to state the modem supports V.34.
+	// We could query the modem but that would require another
+	// config option, so we just trust the enable command.
+	u_short pos = 0;
+	primaryV34Rate = 0;
+	const char* buf = conf.class1EnableV34Cmd;
+	while (buf[0] != '=') buf++;		// move to assignment
+	while (!isdigit(buf[0])) buf++;		// move to digits
+	do {
+	    primaryV34Rate = primaryV34Rate*10 + (buf[0] - '0');
+	} while (isdigit((++buf)[0]));
+	modemParams.br |= BIT(primaryV34Rate) - 1;
+    }
     if (conf.class1ExtendedRes) {
 	modemParams.vr = VR_ALL;
     } else {
@@ -220,6 +235,11 @@ Class1Modem::setupModem()
     frameRev = TIFFGetBitRevTable(conf.frameFillOrder == FILLORDER_LSB2MSB);
 
     setupClass1Parameters();
+    if (conf.class1EnableV34Cmd != "" && conf.class1ECMSupport) {
+	atCmd(conf.class1EnableV34Cmd);
+	gotEOT = false;
+    }
+    useV34 = false;	// only when V.8 handshaking is used
     return (true);
 }
 
@@ -230,7 +250,7 @@ bool
 Class1Modem::setupClass1Parameters()
 {
     if (modemServices & SERVICE_CLASS1) {
-	atCmd(conf.class1Cmd);
+	atCmd(classCmd);
 	setupFlowControl(flowControl);
 	atCmd(conf.setupAACmd);
     }
@@ -266,9 +286,14 @@ Class1Modem::setupFlowControl(FlowControl fc)
  * for sending/received facsimile.
  */
 bool
-Class1Modem::faxService()
+Class1Modem::faxService(bool enableV34)
 {
-    return (atCmd(conf.class1Cmd) && setupFlowControl(flowControl));
+    if (!atCmd(classCmd)) return (false);
+    if (conf.class1EnableV34Cmd != "" && enableV34)
+	atCmd(conf.class1EnableV34Cmd);
+    useV34 = false;	// only when V.8 handshaking is used
+    gotEOT = false;
+    return (setupFlowControl(flowControl));
 }
 
 /*
@@ -413,6 +438,7 @@ Class1Modem::sendClass1Data(const u_char* data, u_int cc,
 void
 Class1Modem::abortReceive()
 {
+    if (useV34) return;			// nothing to do in V.34
     bool b = wasTimeout();
     char c = CAN;			// anything other than DC1/DC3
     putModem(&c, 1, 1);
@@ -429,6 +455,145 @@ Class1Modem::abortReceive()
     } else
 	(void) waitFor(AT_OK, conf.class1RecvAbortOK);
     setTimeout(b);			// XXX putModem clobbers timeout state
+}
+
+/*
+ * Request a primary rate renegotiation.
+ */
+bool
+Class1Modem::renegotiatePrimary(bool constrain)
+{
+    u_char buf[4];
+    u_short size = 0;
+    buf[size++] = DLE;
+    if (constrain) {
+	// don't neotiate a faster rate
+	if (primaryV34Rate == 1) buf[size++] = 0x70;	// 2400 bit/s
+	else buf[size++] = primaryV34Rate + 0x6E;	// drop 2400 bit/s
+	buf[size++] = DLE;
+    }
+    buf[size++] = 0x6C;					// <DLE><pph>
+    if (!putModemData(buf, size)) return (false);
+    if (constrain)
+	protoTrace("Request primary rate renegotiation (limit %u bit/s).", (primaryV34Rate-1)*2400);
+    else
+	protoTrace("Request primary rate renegotiation.");
+    return (true);
+}
+
+/*
+ * Wait for a <DLE><ctrl> response per T.31-A1 B.8.4.
+ */
+bool
+Class1Modem::waitForDCEChannel(bool awaitctrl)
+{
+    time_t start = Sys::now();
+    int c;
+    fxStr garbage;
+    bool gotresponse = false;
+    gotRTNC = false;
+    do {
+	c = getModemChar(60000);
+	if (c == DLE) {
+	    /*
+	     * With V.34-faxing we expect <DLE><command>
+	     * Refer to T.31-A1 Table B.1.  Except for EOT
+	     * these are merely indicators and do not require
+	     * action.
+	     */
+	    c = getModemChar(60000);
+	    switch (c) {
+		case EOT:
+		    protoTrace("EOT received (end of transmission)");
+		    gotEOT = true;
+		    return (false);
+		    break;
+		case 0x69:
+		    protoTrace("Control channel retrain");
+		    // wait for the control channel to reappear
+		    // should we reset the timeout setting?
+		    waitForDCEChannel(true);
+		    gotRTNC = true;
+		    return (false);
+		    break;
+		case 0x6B:
+		    protoTrace("Primary channel selected");
+		    gotCTRL = false;
+		    continue;
+		    break;
+		case 0x6D:
+		    protoTrace("Control channel selected");
+		    gotCTRL = true;
+		    continue;
+		    break;
+		case 0x6E:			// 1200 bit/s
+		case 0x6F:			// 2400 bit/s
+		    // control rate indication
+		    if (controlV34Rate != (c - 0x6D)) {
+			controlV34Rate = (c - 0x6D);
+			protoTrace("Control channel rate now %u bit/s", controlV34Rate*1200);
+		    }
+		    if (awaitctrl) gotresponse = true;
+		    continue;
+		    break;
+		case 0x70:			//  2400 bit/s
+		case 0x71:			//  4800 bit/s
+		case 0x72:			//  7200 bit/s
+		case 0x73:			//  9600 bit/s
+		case 0x74:			// 12000 bit/s
+		case 0x75:			// 14400 bit/s
+		case 0x76:			// 16800 bit/s
+		case 0x77:			// 19200 bit/s
+		case 0x78:			// 21600 bit/s
+		case 0x79:			// 24000 bit/s
+		case 0x7A:			// 26400 bit/s
+		case 0x7B:			// 28800 bit/s
+		case 0x7C:			// 31200 bit/s
+		case 0x7D:			// 33600 bit/s
+		    // primary rate indication
+		    if (primaryV34Rate != (c - 0x6F)) {
+			primaryV34Rate = (c - 0x6F);
+			protoTrace("Primary channel rate now %u bit/s", primaryV34Rate*2400);
+		    }
+		    if (!awaitctrl) gotresponse = true;
+		    continue;
+		    break;
+		default:
+		    // unexpected <DLE><command>, deem as garbage
+		    garbage.append(DLE);
+		    garbage.append(c);
+		    break;
+	    }
+	} else garbage.append(c);
+	fxStr rcpsignal;
+	rcpsignal.append(0xFF);	rcpsignal.append(0x03);	rcpsignal.append(0x86);	rcpsignal.append(0x69);
+	rcpsignal.append(0xCB);	rcpsignal.append(0x10);	rcpsignal.append(0x03);
+	if (!gotCTRL && garbage == rcpsignal) {
+	    // We anticipate getting "extra" RCP frames since we
+	    // only look for one but usually we will see three.
+	    garbage.cut(0, 7);
+	}
+    } while (!gotresponse && Sys::now()-start < 60);
+    if (getHDLCTracing() && garbage.length()) {
+	fxStr buf;
+	u_int j = 0;
+	for (u_int i = 0; i < garbage.length(); i++) {
+	    if (j > 0)
+		buf.append(' ');
+	    buf.append(fxStr(garbage[i] & 0xFF, "%2.2X"));
+	    j++;
+	    if (j > 19) {
+		protoTrace("--> [%u:%.*s]",
+		    j, buf.length(), (const char*) buf);
+		buf = "";
+		j = 0;
+	    }
+	}
+	if (j)
+	    protoTrace("--> [%u:%.*s]",
+		j, buf.length(), (const char*) buf);
+    }
+    return (gotresponse);
 }
 
 /*
@@ -461,9 +626,28 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 	c = getModemChar(0);
 	if (c == 0xff || c == EOF)
 	    break;
-
+	if (useV34 && c == DLE) {
+	    c = getModemChar(0);
+	    switch (c) {
+		case EOT:
+		    protoTrace("EOT received (end of transmission)");
+		    gotEOT = true;
+		    return (false);
+		    break;
+		case 0x69:
+		    protoTrace("Control channel retrain");
+		    // wait for the control channel to reappear
+		    // should we reset the timeout setting?
+		    waitForDCEChannel(true);
+		    return (false);
+		    break;
+		default:
+		    // unexpected <DLE><command>, deem as garbage
+		    garbage.append(DLE);
+		    break;
+	    }
+	}
 	garbage.append(c);
-
 	if ( garbage.length() >= 2 && garbage.tail(2) == "\r\n") {
 	    /*
 	     * CR+LF received before address field.
@@ -493,7 +677,7 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 	if (j)
 	    protoTrace("--> [%u:%.*s]",
 		j, buf.length(), (const char*) buf);
-	}
+    }
 
     if (c == 0xff) {			// address field received
 	do {
@@ -501,6 +685,33 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 		c = getModemChar(0);
 		if (c == ETX || c == EOF)
 		    break;
+		if (useV34) {
+		    /*
+		     * T.31-A1 Table B.1
+		     * These indicate transparancy, shielding, or delimiting.
+		     */
+		    if (c == 0x07) {	// end of HDLC frame w/FCS error
+			break;
+		    }
+		    switch (c) {
+			case EOT:
+			    protoTrace("EOT received (end of transmission)");
+			    gotEOT = true;
+			    return (false);
+			    break;
+			case DLE:	// <DLE><DLE> => <DLE>
+			    break;
+			case SUB:	// <DLE><SUB> => <DLE><DLE>
+			    frame.put(frameRev[DLE]);
+			    break;
+			case 0x51:	// <DLE><0x51> => <DC1>
+			    c = DC1;
+			    break;
+			case 0x53:	// <DLE><0x53> => <DC3>
+			    c = 0x13;
+			    break;
+		    }
+		}
 	    }
 	    frame.put(frameRev[c]);
 	} while ((c = getModemChar(0)) != EOF);
@@ -517,9 +728,13 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
      * response telling whether or not the FCS was
      * legitimate.
      */
-    if (!waitFor(AT_OK)) {
+    if (!useV34 && !waitFor(AT_OK)) {
 	if (lastResponse == AT_ERROR)
 	    protoTrace("FCS error");
+	return (false);
+    }
+    if (useV34 && c == 0x07) {
+	protoTrace("FCS error");
 	return (false);
     }
     if (frame.getFrameDataLength() < 1) {
@@ -580,10 +795,74 @@ Class1Modem::syncECMFrame()
  * of "stuffed" zero-bits after five sequential one-bits between
  * flag sequences.  We assume this is called only after a
  * successfuly received complete flag sequence.
+ *
+ * Things are significantly more simple with V.34-fax ECM since
+ * there is no synchronization or RCP frames.  In this case we
+ * simply have to handle byte transparancy and shielding, looking
+ * for byte-aligned frame delimiters.
  */
 bool
 Class1Modem::recvECMFrame(HDLCFrame& frame)
 {
+    if (useV34) {
+	int c;
+	for (;;) {
+	    c = getModemChar(60000);
+	    if (wasTimeout()) {
+		return (false);
+	    }
+	    if (c == DLE) {
+		c = getModemChar(60000);
+		if (wasTimeout()) {
+		    return (false);
+		}
+		switch (c) {
+		    case DLE:
+			break;
+		    case SUB:
+			frame.put(frameRev[DLE]);
+			break;
+		    case 0x51:
+			c = 0x11;
+			break;
+		    case 0x53:
+			c = 0x13;
+			break;
+		    case ETX:
+			if (frame.getLength() > 0)
+			    traceHDLCFrame("-->", frame);
+			if (frame.getLength() < 5) {		// RCP frame size
+			    protoTrace("HDLC frame too short (%u bytes)", frame.getLength());
+			    return (false);
+			}
+			if (frame[0] != 0xff) {
+			    protoTrace("HDLC frame with bad address field %#x", frame[0]);
+			    return (false);
+			}
+			if ((frame[1]&0xf7) != 0xc0) {
+			    protoTrace("HDLC frame with bad control field %#x", frame[1]);
+			    return (false);
+			}
+			return (true);
+		    case 0x07:
+			protoTrace("FCS error");
+			return (false);
+		    case 0x04:
+			protoTrace("EOT received (end of transmission)");
+			gotEOT = true;
+			return (false);
+		    case 0x6D:
+			protoTrace("Control channel selected");
+			gotCTRL = true;
+			return (false);
+		    default:
+			protoTrace("got <DLE><%X>", c);
+			break;
+		}
+	    }
+	    frame.put(frameRev[c]);
+	}
+    }
 
     int bit = getModemBit(0);
     u_short ones = 0;
@@ -749,7 +1028,7 @@ Class1Modem::sendRawFrame(HDLCFrame& frame)
     static u_char buf[2] = { DLE, ETX };
     return (putModemDLEData(frame, frame.getLength(), frameRev, 60*1000) &&
 	putModem(buf, 2, 60*1000) &&
-	waitFor(frame.moreFrames() ? AT_CONNECT : AT_OK, 0));
+	(useV34 ? true : waitFor(frame.moreFrames() ? AT_CONNECT : AT_OK, 0)));
 }
 
 /*
@@ -826,8 +1105,8 @@ Class1Modem::transmitFrame(u_char fcf, bool lastFrame)
 {
     startTimeout(2550);			// 3.0 - 15% = 2.55 secs
     bool frameSent =
-	atCmd(thCmd, AT_NOTHING) &&
-	atResponse(rbuf, 0) == AT_CONNECT &&
+	(useV34 ? true : atCmd(thCmd, AT_NOTHING)) &&
+	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
 	sendFrame(fcf, lastFrame);
     stopTimeout("sending HDLC frame");
     return (frameSent);
@@ -843,8 +1122,8 @@ Class1Modem::transmitFrame(u_char fcf, u_int dcs, u_int xinfo, bool lastFrame)
      */
     startTimeout(2550);			// 3.0 - 15% = 2.55 secs
     bool frameSent =
-	atCmd(thCmd, AT_NOTHING) &&
-	atResponse(rbuf, 0) == AT_CONNECT &&
+	(useV34 ? true : atCmd(thCmd, AT_NOTHING)) &&
+	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
 	sendFrame(fcf, dcs, xinfo, lastFrame);
     stopTimeout("sending HDLC frame");
     return (frameSent);
@@ -855,8 +1134,8 @@ Class1Modem::transmitFrame(u_char fcf, const fxStr& tsi, bool lastFrame)
 {
     startTimeout(3000);			// give more time than others
     bool frameSent =
-	atCmd(thCmd, AT_NOTHING) &&
-	atResponse(rbuf, 0) == AT_CONNECT &&
+	(useV34 ? true : atCmd(thCmd, AT_NOTHING)) &&
+	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
 	sendFrame(fcf, tsi, lastFrame);
     stopTimeout("sending HDLC frame");
     return (frameSent);
@@ -867,8 +1146,8 @@ Class1Modem::transmitFrame(u_char fcf, const u_char* code, const fxStr& nsf, boo
 {
     startTimeout(3000);			// give more time than others
     bool frameSent =
-	atCmd(thCmd, AT_NOTHING) &&
-	atResponse(rbuf, 0) == AT_CONNECT &&
+	(useV34 ? true : atCmd(thCmd, AT_NOTHING)) &&
+	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
 	sendFrame(fcf, code, nsf, lastFrame);
     stopTimeout("sending HDLC frame");
     return (frameSent);
@@ -914,6 +1193,9 @@ Class1Modem::recvFrame(HDLCFrame& frame, long ms)
 {
     frame.reset();
     startTimeout(ms);
+    if (useV34) {
+	return recvRawFrame(frame);
+    }
     bool readPending = atCmd(rhCmd, AT_NOTHING);
     if (readPending && waitFor(AT_CONNECT,0)){
         stopTimeout("waiting for HDLC flags");
@@ -1012,6 +1294,30 @@ Class1Modem::atResponse(char* buf, long ms)
 {
     if (FaxModem::atResponse(buf, ms) == AT_OTHER && strneq(buf, "+FCERROR", 8))
 	lastResponse = AT_FCERROR;
+    if (lastResponse == AT_OTHER && strneq(buf, "+F34:", 5)) {
+	/*
+	 * V.8 handshaking was successful.  The rest of the
+	 * session is governed by T.31 Amendment 1 Annex B.
+	 * (This should only happen after ATA or ATD.)
+	 *
+	 * The +F34: response is interpreted according to T.31-A1 B.6.2.
+	 */
+	buf += 5;					// skip "+F34:" prefix
+	primaryV34Rate = 0;
+	while (!isdigit(buf[0])) buf++;		// move to digits
+	do {
+	    primaryV34Rate = primaryV34Rate*10 + (buf[0] - '0');
+        } while (isdigit((++buf)[0]));
+	controlV34Rate = 0;
+	while (!isdigit(buf[0])) buf++;		// move to digits
+	do {
+	    controlV34Rate = controlV34Rate*10 + (buf[0] - '0');
+        } while (isdigit((++buf)[0]));
+	useV34 = true;
+	protoTrace("V.8 handshaking succeeded, V.34-Fax (SuperG3) capability enabled.");
+	protoTrace("Primary channel rate: %u bit/s, Control channel rate: %u bit/s.", primaryV34Rate*2400, controlV34Rate*1200);
+	modemParams.br |= BIT(primaryV34Rate) - 1;
+    }
     return (lastResponse);
 }
 
@@ -1110,7 +1416,8 @@ Class1Modem::modemDIS() const
 {
     // NB: DIS is in 24-bit format
     u_int fs = conf.class1ECMFrameSize == 64 ? DIS_FRAMESIZE : 0;
-    return (FaxModem::modemDIS() &~ DIS_SIGRATE) | (discap<<10) | DIS_XTNDFIELD | fs;
+    u_int v8 = conf.class1ECMSupport && conf.class1EnableV34Cmd != "" ? DIS_V8 : 0;
+    return (FaxModem::modemDIS() &~ DIS_SIGRATE) | (discap<<10) | DIS_XTNDFIELD | fs | v8;
 }
 
 /*

@@ -1053,7 +1053,7 @@ configureClass1Modem()
 	MATCHSTR=CLASS1
 	PROTOSTR=class1
     else echo "Hmm, this looks like a Class 1.0 modem."
-	MATCHSTR=CLASS10
+	MATCHSTR=CLASS1.0
 	PROTOSTR=class1.0
     fi
 
@@ -1122,7 +1122,6 @@ Class 2 relies on the modem to perform the bulk of the fax protocol.
 Class 2.0 is similar to Class 2 but may include more features.
 Class 1.0 is similar to Class 1 but adds V.34-fax capability.
 Class 2.1 is similar to Class 2.0 but adds V.34-fax capability.
-    (V.34-fax is not yet supported by HylaFAX on Class 1.0 modems.)
       
 HylaFAX generally will have more features when using Class 1/1.0 than
 when using most modems' Class 2 or Class 2.0 implementations.  Generally

@@ -178,8 +178,9 @@ public:
 	AT_EMPTYLINE	= 10,	// empty line (0 characters received)
 	AT_TIMEOUT	= 11,	// timeout waiting for response
 	AT_DLEETX	= 12,	// dle/etx characters
-	AT_XON		= 13,	// xon character
-	AT_OTHER	= 14	// unknown response (not one of above)
+	AT_DLEEOT	= 13,	// dle+eot characters (end of transmission)
+	AT_XON		= 14,	// xon character
+	AT_OTHER	= 15	// unknown response (not one of above)
     };
 private:
     ModemServer& server;	// server for getting to device
@@ -203,7 +204,7 @@ protected:
 
     static const char* serviceNames[9];	 // class 2 services
     static const char* callStatus[10];	 // printable call status
-    static const char* ATresponses[15];
+    static const char* ATresponses[16];
 
     ClassModem(ModemServer&, const ModemConfig&);
 

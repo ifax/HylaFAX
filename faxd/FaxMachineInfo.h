@@ -52,6 +52,7 @@ private:
     u_short	supportsVRes;		// VR support bitmask
     bool	supports2DEncoding;	// handles Group 3 2D
     bool	supportsMMR;		// handles Group 4
+    bool	hasV34Trouble;		// has difficulty with V.34
     bool	supportsPostScript;	// handles Adobe NSF protocol
     bool	calledBefore;		// successfully called before
     u_short		maxPageWidth;		// max capable page width
@@ -91,6 +92,7 @@ public:
     u_short getSupportsVRes() const;
     bool getSupports2DEncoding() const;
     bool getSupportsMMR() const;
+    bool getHasV34Trouble() const;
     bool getSupportsPostScript() const;
     bool getCalledBefore() const;
     u_short getMaxPageWidthInPixels() const;
@@ -108,6 +110,7 @@ public:
     void setSupportsVRes(int);
     void setSupports2DEncoding(bool);
     void setSupportsMMR(bool);
+    void setHasV34Trouble(bool);
     void setSupportsPostScript(bool);
     void setCalledBefore(bool);
     void setMaxPageWidthInPixels(int);
@@ -135,6 +138,8 @@ inline bool FaxMachineInfo::getSupports2DEncoding() const
     { return supports2DEncoding; }
 inline bool FaxMachineInfo::getSupportsMMR() const
     { return supportsMMR; }
+inline bool FaxMachineInfo::getHasV34Trouble() const
+    { return hasV34Trouble; }
 inline bool FaxMachineInfo::getSupportsPostScript() const
     { return supportsPostScript; }
 inline bool FaxMachineInfo::getCalledBefore() const	

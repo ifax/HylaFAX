@@ -57,6 +57,7 @@ FaxMachineInfo::FaxMachineInfo(const FaxMachineInfo& other)
     supportsVRes = other.supportsVRes;
     supports2DEncoding = other.supports2DEncoding;
     supportsMMR = other.supportsMMR;
+    hasV34Trouble = other.hasV34Trouble;
     supportsPostScript = other.supportsPostScript;
     calledBefore = other.calledBefore;
     maxPageWidth = other.maxPageWidth;
@@ -102,6 +103,7 @@ FaxMachineInfo::resetConfig()
     supportsVRes = VR_FINE;		// normal and high res support
     supports2DEncoding = true;		// assume 2D-encoding support
     supportsMMR = true;			// assume MMR support
+    hasV34Trouble = false;		// assume no problems
     supportsPostScript = false;		// no support for Adobe protocol
     calledBefore = false;		// never called before
     maxPageWidth = 2432;		// max required width
@@ -170,6 +172,7 @@ static const char* stnames[] =
 #define	LN	5
 #define	BR	6
 #define	ST	7
+#define V34	8
 
 #define	setLocked(b,ix)	locked |= b<<ix
 
@@ -190,6 +193,9 @@ FaxMachineInfo::setConfigItem(const char* tag, const char* value)
     } else if (streq(tag, "supportsmmr")) {
 	supportsMMR = getBoolean(value);
 	setLocked(b, G4);
+    } else if (streq(tag, "hasv34trouble")) {
+	hasV34Trouble = getBoolean(value);
+	setLocked(b, V34);
     } else if (streq(tag, "supportspostscript")) {
 	supportsPostScript = getBoolean(value);
 	setLocked(b, PS);
@@ -254,6 +260,8 @@ void FaxMachineInfo::setSupports2DEncoding(bool b)
     { checkLock(G32D, supports2DEncoding, b); }
 void FaxMachineInfo::setSupportsMMR(bool b)
     { checkLock(G4, supportsMMR, b); }
+void FaxMachineInfo::setHasV34Trouble(bool b)
+    { checkLock(V34, hasV34Trouble, b); }
 void FaxMachineInfo::setSupportsPostScript(bool b)
     { checkLock(PS, supportsPostScript, b); }
 void FaxMachineInfo::setMaxPageWidthInPixels(int v)
@@ -347,6 +355,7 @@ FaxMachineInfo::writeConfig(fxStackBuffer& buf)
     putDecimal(buf, "supportsVRes", isLocked(VR), supportsVRes);
     putBoolean(buf, "supports2DEncoding", isLocked(G32D),supports2DEncoding);
     putBoolean(buf, "supportsMMR", isLocked(G4),supportsMMR);
+    putBoolean(buf, "hasV34Trouble", isLocked(V34),hasV34Trouble);
     putBoolean(buf, "supportsPostScript", isLocked(PS), supportsPostScript);
     putBoolean(buf, "calledBefore", false, calledBefore);
     putDecimal(buf, "maxPageWidth", isLocked(WD), maxPageWidth);

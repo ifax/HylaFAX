@@ -117,6 +117,7 @@ public:
     u_int	pageDoneTimeout;	// page send/receive timeout (ms)
 					// for class 1:
     fxStr	class1Cmd;		// cmd for setting Class 1
+    fxStr	class1EnableV34Cmd;	// cmd to enable V.34 support in Class 1.0
     fxStr	class1NFLOCmd;		// cmd to setup no flow control
     fxStr	class1SFLOCmd;		// cmd to setup software flow control
     fxStr	class1HFLOCmd;		// cmd to setup hardware flow control

@@ -218,7 +218,7 @@ public:
      * for doing things like keeping cover pages & documents in a
      * single T.30 document.
      */
-    virtual bool faxService() = 0;
+    virtual bool faxService(bool enableV34) = 0;
     virtual bool sendSetup(FaxRequest&, const Class2Params& dis, fxStr& emsg);
     virtual void sendBegin();
     virtual FaxSendStatus getPrologue(Class2Params&,

@@ -157,7 +157,7 @@ public:
 		    fxStr& emsg);
 
 // miscellaneous
-    bool	faxService();			// switch to fax mode
+    bool	faxService(bool enableV34);	// switch to fax mode
     bool	reset(long ms);			// reset modem
     void	setLID(const fxStr& number);	// set local id string
     bool	supportsPolling() const;	// modem capability
