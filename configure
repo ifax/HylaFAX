@@ -69,7 +69,7 @@ IMP=no
 UTMP=auto
 LIBTIFF="-L/usr/local/lib -ltiff"
 TIFFINC=/usr/local/include
-TIFFBIN=/usr/local/bin
+TIFFBIN=
 ZLIB=yes
 LIBZ='-L${DEPTH}/zlib -lz'
 ZLIBINC='${DEPTH}/${TOPSRCDIR}/zlib'
@@ -2807,6 +2807,26 @@ Note "Done checking system libraries."
 Note ""
 Note "Checking TIFF support."
 #
+# Location of TIFF binaries
+#
+if [ -z "$TIFFBIN" ]; then
+    DIRS="/usr/local/bin /usr/contrib/bin /usr/gnu/bin /usr/bin"
+    for i in $DIRS; do
+        test -x $i/tiff2ps && { TIFFBIN=$i; break; }
+    done
+fi
+if [ -z "$TIFFBIN" ]; then
+    cat 1>&2 <<EOF
+    Cannot locate the TIFF binary files(ie tiff2ps) anywhere.
+
+    Please install the TIFF binaries and set the TIFFBIN parameter 
+    to the correct path.
+EOF
+    boom
+else
+    Note "Using TIFF binary files from $TIFFBIN"
+fi
+#
 # Verify library is compatible.
 #
 cat>t.c<<EOF
@@ -3417,8 +3437,9 @@ if [ -z "$DIR_LOCKS" ]; then
 	/usr/spool/uucp
     "
     case $TARGET in
-    *-aix*)		LOCKDIRS="/etc/locks $LOCKDIRS";;
-    *-sco*)		LOCKDIRS="/usr/spool/uucp $LOCKDIRS";;
+    *-aix*)     LOCKDIRS="/etc/locks $LOCKDIRS";;
+    *-linux*)   LOCKDIRS="/var/lock $LOCKDIRS";;
+    *-sco*)     LOCKDIRS="/usr/spool/uucp $LOCKDIRS";;
     esac
     DIR_LOCKS=
     for i in $LOCKDIRS; do
@@ -3918,19 +3939,15 @@ HylaFAX configuration parameters are:
 [ 5] Directory for manual pages:        $DIR_MAN
 [ 6] Directory for HTML documentation:  $DIR_HTML
 [ 7] Directory for spooling:            $DIR_SPOOL
-[ 8] Path for fontmap files:            $FONTMAP
-[ 9] Path for font metrics:             $PATH_AFM
-[10] Directory for uucp lock files:     $DIR_LOCKS
-[11] Uucp lock file scheme:             $LOCKS
-[12] PostScript imager package:         $PS
-[13] PostScript imager program:         $PATH_PSRIP
-[14] Manual page installation scheme:   $MANSCHEME
-[15] Default page size:                 $PAGESIZE
-[16] Default vertical res (lpi):        $DEFVRES
-[17] Location of getty program:         $PATH_GETTY
-[18] Location of voice getty program:   $PATH_VGETTY
-[19] Location of sendmail program:      $PATH_SENDMAIL
-[20] Location of TIFF tools:            $TIFFBIN
+[ 8] Directory for uucp lock files:     $DIR_LOCKS
+[ 9] Uucp lock file scheme:             $LOCKS
+[10] PostScript imager package:         $PS
+[11] PostScript imager program:         $PATH_PSRIP
+[12] Manual page installation scheme:   $MANSCHEME
+[13] Default page size:                 $PAGESIZE
+[14] Default vertical res (lpi):        $DEFVRES
+[15] Location of getty program:         $PATH_GETTY
+[16] Location of sendmail program:      $PATH_SENDMAIL
 
 EOF
 }
@@ -3959,18 +3976,12 @@ promptForParameter()
     7)	promptForNonNullStringParameter "$DIR_SPOOL" \
 	    "Directory to setup server spooling area";	DIR_SPOOL="$param"
 	;;
-    8)	promptForNonNullStringParameter "$FONTMAP" \
-	    "Path for gs Fontmap files";	FONTMAP="$param"
-	;;
-    9)	promptForNonNullStringParameter "$PATH_AFM" \
-	    "Path for font metric files";	PATH_AFM="$param"
-	;;
-    10)	promptForNonNullStringParameter "$DIR_LOCKS" \
+    8)	promptForNonNullStringParameter "$DIR_LOCKS" \
 	    "Directory for uucp lock files";		DIR_LOCKS="$param"
 	;;
-    11)	promptForUUCPLockScheme;;
-    12)	promptForImagerPackage; PickRIP; CheckRIP;;
-    13)	promptForNonNullStringParameter "$PATH_PSRIP" \
+    9)	promptForUUCPLockScheme;;
+    10)	promptForImagerPackage; PickRIP; CheckRIP;;
+    11)	promptForNonNullStringParameter "$PATH_PSRIP" \
 	    "PostScript imager program";		PATH_PSRIP="$param"
 	case "$PS" in
 	dps)	PATH_DPSRIP=$PATH_PSRIP;;
@@ -3978,20 +3989,14 @@ promptForParameter()
 	gs)	PATH_GSRIP=$PATH_PSRIP;;
 	esac
 	;;
-    14)	promptForManPageScheme;;
-    15)	promptForPageSize $SRCDIR/util/pagesizes.in;;
-    16)	promptForVRes;;
-    17)	promptForNonNullStringParameter "$PATH_GETTY" \
+    12)	promptForManPageScheme;;
+    13)	promptForPageSize $SRCDIR/util/pagesizes.in;;
+    14)	promptForVRes;;
+    15)	promptForNonNullStringParameter "$PATH_GETTY" \
 	    "Location of getty program";		PATH_GETTY="$param"
 	;;
-    18) promptForNonNullStringParameter "$PATH_VGETTY" \
-	    "Location of vgetty program";	        PATH_VGETTY="$param"
-	;;
-    19)	promptForNonNullStringParameter "$PATH_SENDMAIL" \
+    16)	promptForNonNullStringParameter "$PATH_SENDMAIL" \
 	    "Location of sendmail program";		PATH_SENDMAIL="$param"
-	;;
-    20) promptForNonNullStringParameter "$TIFFBIN" \
-	    "Location of TIFF tools";			TIFFBIN="$param"
     esac
 }
 
@@ -4004,7 +4009,7 @@ if [ $QUIET = no ]; then
     ok=skip
     while [ "$ok" != y ] && [ "$ok" != yes ]; do
 	if [ "$ok" != skip ]; then
-	    for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+	    for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16; do
 		promptForParameter $i;
 	    done
 	fi
@@ -4014,7 +4019,7 @@ if [ $QUIET = no ]; then
 	prompt "Are these ok [yes]?"; read ok
 	test -z "$ok" && ok=yes
 	case "$ok" in
-	[1-9]|1[0-9]|20)	promptForParameter $ok;;
+	[1-9]|1[0-6])	promptForParameter $ok;;
 	[yY]*|[nN]*)	continue;;
 	?*)
 	    echo ""
