@@ -138,12 +138,14 @@ protected:
     bool	recvTraining();
     bool	recvPPM(int& ppm, fxStr& emsg);
     bool	recvPageData(TIFF*, fxStr& emsg);
+    bool	raiseRecvCarrier(bool& dolongtrain, fxStr& emsg);
     void	recvData(TIFF*, u_char* buf, int n);
     void	processDCSFrame(const HDLCFrame& frame);
     void	abortPageRecv();
 // miscellaneous
     enum {			// Class 1-specific AT responses
-	AT_FCERROR	= 100 	// "+FCERROR"
+	AT_FCERROR	= 100, 	// "+FCERROR"
+	AT_FRH3		= 101,	// "+FRH:3"
     };
     virtual ATResponse atResponse(char* buf, long ms = 30*1000);
     virtual bool waitFor(ATResponse wanted, long ms = 30*1000);

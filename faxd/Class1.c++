@@ -322,6 +322,9 @@ Class1Modem::ready(long ms)
     if (conf.class1EnableV34Cmd != "" && conf.class1ECMSupport)   
         if (!atCmd(conf.class1EnableV34Cmd))
 	    return (false);
+    if (conf.class1AdaptRecvCmd != "")
+	if (!atCmd(conf.class1AdaptRecvCmd))
+	    return (false);
     return (FaxModem::ready(ms));
 }
 
@@ -1363,6 +1366,8 @@ Class1Modem::atResponse(char* buf, long ms)
 {
     if (FaxModem::atResponse(buf, ms) == AT_OTHER && strneq(buf, "+FCERROR", 8))
 	lastResponse = AT_FCERROR;
+    if (lastResponse == AT_OTHER && strneq(buf, "+FRH:3", 6))
+	lastResponse = AT_FRH3;
     if (lastResponse == AT_OTHER && strneq(buf, "+F34:", 5)) {
 	/*
 	 * V.8 handshaking was successful.  The rest of the
@@ -1413,6 +1418,7 @@ Class1Modem::waitFor(ATResponse wanted, long ms)
 	    /* fall thru... */
 	case AT_OTHER:
 	case AT_FCERROR:
+	case AT_FRH3:
 	case AT_OK:
 	    return (false);
 	}

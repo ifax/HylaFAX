@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* add Class1AdaptRecvCmd config option, AT+FAR=1 support, (28 Feb 2005)
 * fix DCS scanline-time error when sending to systems without
   ECM supporting "mixed" scanline-times (24 Feb 2005)
 * cause faxsend to log jobs in batches as separate commids (24 Feb 2005)

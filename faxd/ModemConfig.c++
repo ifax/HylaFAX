@@ -107,6 +107,7 @@ static struct {
 { "modemclassquerycmd",		&ModemConfig::classQueryCmd,	"AT+FCLASS=?" },
 { "class0cmd",			&ModemConfig::class0Cmd,	"AT+FCLASS=0" },
 { "class1cmd",			&ModemConfig::class1Cmd },
+{ "class1adaptrecvcmd",		&ModemConfig::class1AdaptRecvCmd },
 { "class1enablev34cmd",		&ModemConfig::class1EnableV34Cmd },
 { "class1nflocmd",		&ModemConfig::class1NFLOCmd },
 { "class1sflocmd",		&ModemConfig::class1SFLOCmd },

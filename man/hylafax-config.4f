@@ -271,6 +271,7 @@ Class0Cmd	string	\s-1AT+FCLASS=0\s+1	Class 0: command to enter class 0
 .sp .5
 Class1Cmd	string	\s-1AT+FCLASS=1\s+1	Class 1: command to enter class 1
 Class1Cmd	string	\s-1AT+FCLASS=1.0\s+1	Class 1.0: command to enter class 1
+Class1AdaptRecvCmd	string	\-	Class 1/1.0: comman for adaptive reception support
 Class1EnableV34Cmd	string	\-	Class 1/1.0: command to enable V.34-fax support
 Class1ECMSupport	boolean	\s-1Yes\s+1	Class 1/1.0: enable T.30-A ECM support
 Class1PersistentECM	boolean	\s-1Yes\s+1	Class 1/1.0: to continue to correct while in ECM
@@ -2182,6 +2183,12 @@ of Class 1-style modems; they should not be changed lightly:
 .TP
 .B Class1Cmd
 The command to set the modem into Class 1 operation.
+.TP
+.B Class1AdaptRecvCmd
+The command used to enable adaptive reception support (usually
+``AT+FAR=1'').  This feature is new in T.31, and many modems
+will not support it.  This feature may reduce the number of
+reception failures due to errors cascading from +FCERROR messages.
 .TP
 .B Class1EnableV34Cmd
 The command to enable V.34-fax support with at least the desired
