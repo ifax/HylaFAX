@@ -63,10 +63,10 @@ EOF
 }
 . $SPOOL/etc/setup.cache
 
-if [ -z $HFAXD_SERVER ]; then
+if [ -z "$HFAXD_SERVER" ]; then
     HFAXD_SERVER=1
 fi
-if [ -z $FAXQ_SERVER ]; then
+if [ -z "$FAXQ_SERVER" ]; then
     FAXQ_SERVER=1
 fi
 
