@@ -111,12 +111,12 @@ public:
     fxStr	class1NFLOCmd;		// cmd to setup no flow control
     fxStr	class1SFLOCmd;		// cmd to setup software flow control
     fxStr	class1HFLOCmd;		// cmd to setup hardware flow control
+    fxStr	class1PPMWaitCmd;	// cmd to stop and wait prior to PPM
+    fxStr	class1TCFWaitCmd;	// cmd to stop and wait prior to TCF
+    fxStr	class1EOPWaitCmd;	// cmd to stop and wait prior to EOP
     u_int	class1TCFRecvTimeout;	// timeout receiving TCF
     u_int	class1TCFResponseDelay;	// delay (ms) btwn TCF & ack/nak
-    u_int	class1SendEOPDelay;	// delay (ms) before sending EOP
     u_int	class1SendMsgDelay;	// delay (ms) after training
-    u_int	class1SendPPMDelay;	// delay (ms) before sending PPM (MPS)
-    u_int	class1SendTCFDelay;	// delay (ms) btwn sending DCS & TCF
     u_int	class1SwitchingDelay;	// delay (ms) in switching transmission direction
     u_int	class1TrainingRecovery;	// delay (ms) after failed training
     u_int	class1RecvAbortOK;	// if non-zero, OK sent after recv abort

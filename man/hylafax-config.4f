@@ -254,14 +254,14 @@ Class1NFLOCmd	string	\-	Class 1: command to set no flow control
 Class1RecvAbortOK	integer	\s-1200\s+1	Class 1: max wait (ms) for ``\s-1OK\s+1'' after recv abort
 Class1RecvIdentTimer	integer	\s-140000\s+1	Class 1: max wait (ms) for initial ident frame
 Class1SFLOCmd	string	\-	Class 1: command to set software flow control
+Class1PPMWaitCmd	string	\s-1AT+FTS=7\s+1	Class 1: command to stop and wait before PPM
+Class1TCFWaitCmd	string	\s-1AT+FTS=7\s+1	Class 1: command to stop and wait before TCF
+Class1EOPWaitCmd	string	\s-1AT+FTS=9\s+1	Class 1: command to stop and wait before EOP
 Class1TCFMaxNonZero	integer	\s-110\s+1	Class 1: max% of non-zero data in good \s-1TCF\s+1
 Class1TCFMinRun	integer	\s-11000\s+1	Class 1: minimum zero run in good \s-1TCF\s+1
 Class1TCFRecvTimeout	integer	\s-14500\s+1	Class 1: max wait (ms) for \s-1TCF\s+1
 Class1TCFResponseDelay	integer	\s-175\s+1	Class 1: delay between \s-1TCF\s+1 and ack/nak
-Class1SendEOPDelay	integer	\s-1200\s+1	Class 1: delay before sending EOP
 Class1SendMsgDelay	integer	\s-175\s+1	Class 1: delay before sending image data
-Class1SendPPMDelay	integer	\s-175\s+1	Class 1: delay before sending MPS post-page message
-Class1SendTCFDelay	integer	\s-175\s+1	Class 1: delay between sending \s-1DCS\s+1 and \s-1TCF\s+1
 Class1SwitchingDelay	integer	\s-175\s+1	Class 1: delay in switching transmision direction (ms)
 Class1TrainingRecovery	integer	\s-11500\s+1	Class 1: delay after failed training
 .sp .5
@@ -1926,6 +1926,26 @@ This command is issued immediately after sending the
 .B Class1Cmd
 to switch the modem to Class 1 operation.
 .TP
+.B Class1PPMWaitCmd
+The command used to stop and wait before sending the post page message,
+except before sending EOP, when
+.B Class1EOPWaitCmd
+is used instead.  We must ensure that the high-speed carrier has
+stopped completely.
+According to T.30, Chapter 5, Note 4, this delay should be 75 +/- 20 ms.
+.TP
+.B Class1TCFWaitCmd
+The command used to stop and wait before sending TCF, similar to
+.B Class1PPMWaitCmd.
+According to T.30, Chapter 5, Note 3, this delay should be 75 +/- 20 ms.
+.TP
+.B Class1EOPWaitCmd
+The command used to stop and wait before sending the post page message
+similar to
+.B Class1PPMWaitCmd.
+We allow a different setting in the case of EOP, however, because
+empirically some machines may need more time.
+.TP
 .B Class1RecvAbortOK
 The time, in milliseconds, to wait for an ``\s-1OK\s+1'' result code
 from the modem after aborting an 
@@ -1951,26 +1971,9 @@ above under the
 .B AdaptiveAnswer
 parameter may require that this timer be shortened.
 .TP
-.B Class1SendEOPDelay
-The time, in milliseconds, to delay between dropping the high
-speed message carrier and sending the EOP post-page message/command.
-Empirically, this value needs to be greater than
-.B Class1SendPPMDelay
-to prevent modem response timeouts.
-.TP
 .B Class1SendMsgDelay
 The time, in milliseconds, to delay just before sending the image data.
 According to T.30: 5.3.2.4 this should be no less than 75 ms (default).
-.TP
-.B Class1SendPPMDelay
-The time, in milliseconds, to delay between dropping the high
-speed message carrier and sending the MPS post-page message/command.
-.TP
-.B Class1SendTCFDelay
-The time, in milliseconds, to delay between sending 
-.SM DCS
-and
-.SM TCF.
 .TP
 .B Class1SwitchingDelay
 The time, in milliseconds, to delay when switching the direction

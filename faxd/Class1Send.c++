@@ -259,20 +259,30 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	if (!decodePPM(pph, cmd, emsg))
 	    return (send_failed);
 	int ncrp = 0;
+
 	/*
 	 * Delay before switching to the low speed carrier to
-	 * send the post-page-message frame.  We follow the spec
-	 * in delaying 75ms before switching carriers, except
-	 * when at EOP in which case we delay longer because,
-	 * empirically, some machines need more time.  Beware
-	 * that, reportedly, lengthening this delay too much can
-	 * permit echo suppressors to kick in with bad results.
+	 * send the post-page-message frame according to 
+	 * T.30 chapter 5 note 4.  We provide for a different
+	 * setting following EOP because, empirically, some 
+	 * machines may need more time. Beware that, reportedly, 
+	 * lengthening this delay too much can permit echo 
+	 * suppressors to kick in with bad results.
 	 *
-	 * NB: We do not use +FTS because many modems are slow
-	 *     to send the OK result and so using pause is more
-	 *     accurate.
+	 * Historically this delay was done using a software pause
+	 * rather than +FTS because the time between +FTS and the 
+	 * OK response is longer than expected, and this was blamed
+	 * for timing problems.  However, this "longer than expected"
+	 * delay is a result of the time required by the modem's
+	 * firmware to actually release the carrier.  T.30 requires
+	 * a delay (period of silence), and this cannot be guaranteed
+	 * by a simple pause.  +FTS must be used.
 	 */
-	pause(cmd == FCF_MPS ? conf.class1SendPPMDelay : conf.class1SendEOPDelay);
+	if (!atCmd(cmd == FCF_MPS ? conf.class1PPMWaitCmd : conf.class1EOPWaitCmd, AT_OK)) {
+	    emsg = "Stop and wait failure (modem on hook)";
+	    return (send_failed);
+	}
+
 	do {
 	    /*
 	     * Send post-page message and get response.
@@ -522,17 +532,21 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 		protoTrace("Error sending T.30 prologue frames");
 		continue;
 	    }
+
 	    /*
 	     * Delay before switching to high speed carrier
-	     * to send the TCF data.  Note that we use pause
-	     * instead of +FTS because many modems are slow
-	     * to return the OK result and this can screw up
-	     * timing.  Reportedly some modems won't work
-	     * properly unless they see +FTS before the TCF,
-	     * but for now we stick with what appears to work
-	     * the best with the modems we use.
+	     * to send the TCF data as required by T.30 chapter
+	     * 5 note 3.
+	     *
+	     * Historically this delay was enforced by a pause,
+	     * however, +FTS must be used.  See the notes preceding
+	     * Class1PPMWaitCmd above.
 	     */
-	    pause(conf.class1SendTCFDelay);
+	    if (!atCmd(conf.class1TCFWaitCmd, AT_OK)) {
+		emsg = "Stop and wait failure (modem on hook)";
+		return (send_failed);
+	    }
+
 	    if (!sendTCF(params, TCF_DURATION)) {
 		if (abortRequested())
 		    goto done;
