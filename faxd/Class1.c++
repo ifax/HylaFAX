@@ -302,6 +302,7 @@ Class1Modem::setupFlowControl(FlowControl fc)
 bool
 Class1Modem::faxService(bool enableV34)
 {
+    lastPPM = 0;	// initializing
     if (!atCmd(classCmd)) return (false);
     if (conf.class1EnableV34Cmd != "" && enableV34)
 	atCmd(conf.class1EnableV34Cmd);

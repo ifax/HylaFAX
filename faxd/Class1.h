@@ -71,7 +71,7 @@ protected:
     bool	pageGood;		// quality of last page received
     bool	recvdDCN;		// received DCN frame
     bool	messageReceived;	// expect/don't expect message carrier
-    u_int	lastPPM;		// last PPM during receive
+    u_int	lastPPM;		// last PPM used
     bool	sendCFR;		// received TCF was not confirmed
     u_short	ecmBitPos;		// bit position to populate on ecmByte
     u_int	ecmByte;		// pending byte to add to ecmBlock
