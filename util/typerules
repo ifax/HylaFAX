@@ -132,4 +132,4 @@
 # This causes anything else with ascii-only data to be treated as text.
 #
 0	ascii		x		ps	%F/textfmt -B -f Courier-Bold\
-						    -p 11 -s %s >%o <%i
+						-Ml=0.4in -p 11 -s %s >%o <%i
