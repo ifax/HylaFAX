@@ -212,7 +212,8 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 		/*
 		 * Group 3 protocol forces any sends to precede any polling.
 		 */
-		fax.status = send_done;			// be optimistic
+		fax.status = send_failed;
+		bool dosetup = true;
 		while (fax.items.length() > 0) {	// send operations
 		    u_int i = fax.findItem(FaxRequest::send_fax);
 		    if (i == fx_invalidArrayIndex)
@@ -220,7 +221,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 		    FaxItem& freq = fax.items[i];
 		    traceProtocol("SEND file \"%s\"", (const char*) freq.item);
 		    fileStart = pageStart = Sys::now();
-		    if (!sendFaxPhaseB(fax, freq, clientInfo, batched)) {
+		    if (!sendFaxPhaseB(fax, freq, clientInfo, batched, dosetup)) {
 			/*
 			 * Prevent repeated batching errors.
 			 */
@@ -254,6 +255,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 		     * find again at the top of the loop
 		     */
 		    notifyDocumentSent(fax, i);
+		    dosetup = false;
 		}
 		if (fax.status == send_done &&
 	      fax.findItem(FaxRequest::send_poll) != fx_invalidArrayIndex)
@@ -395,14 +397,14 @@ FaxServer::sendPoll(FaxRequest& fax, bool remoteHasDoc)
  * Phase B of Group 3 protocol.
  */
 bool
-FaxServer::sendFaxPhaseB(FaxRequest& fax, FaxItem& freq, FaxMachineInfo& clientInfo, u_int batched)
+FaxServer::sendFaxPhaseB(FaxRequest& fax, FaxItem& freq, FaxMachineInfo& clientInfo, u_int batched, bool dosetup)
 {
-    fax.status = send_failed;			// assume failure
-
     TIFF* tif = TIFFOpen(freq.item, "r");
     if (tif && (freq.dirnum == 0 || TIFFSetDirectory(tif, freq.dirnum))) {
-	// set up DCS according to file characteristics
-	fax.status = sendSetupParams(tif, clientParams, clientInfo, fax.notice);
+	if (dosetup) {
+	    // set up DCS according to file characteristics
+	    fax.status = sendSetupParams(tif, clientParams, clientInfo, fax.notice);
+	}
 	if (fax.status == send_ok) {
 	    /*
 	     * Count pages sent and advance dirnum so that if we

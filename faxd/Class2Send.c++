@@ -302,12 +302,16 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 			    emsg = "Problem reading document directory";
 			    goto failed;
 			}
-			FaxSendStatus status =
-			    sendSetupParams(tif, next, info, emsg);
-			if (status != send_ok) {
-			    sendAbort();
-			    return (status);
-			}
+			/*
+			 * The session parameters cannot change except following
+			 * the reception of an RTN signal or the transmission of an
+			 * EOM signal.
+			 *
+			 * Since we did not receive RTN, and since batching (EOM)
+			 * triggers retraining in other ways, we require that the
+			 * next page have the same characteristics as this page.
+			 */
+			next = params;
 		    }
 		    transferOK = true;
 		    break;

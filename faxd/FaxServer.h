@@ -63,7 +63,7 @@ private:
 // FAX transmission protocol support
     void	sendFax(FaxRequest& fax, FaxMachineInfo&, const fxStr& number, u_int&);
     bool	sendClientCapabilitiesOK(FaxRequest&, FaxMachineInfo&, fxStr&);
-    bool	sendFaxPhaseB(FaxRequest&, FaxItem&, FaxMachineInfo&, u_int);
+    bool	sendFaxPhaseB(FaxRequest&, FaxItem&, FaxMachineInfo&, u_int, bool);
     void	sendPoll(FaxRequest& fax, bool remoteHasDoc);
     FaxSendStatus sendSetupParams(TIFF*,
 		    Class2Params&, const FaxMachineInfo&, fxStr&);
