@@ -60,7 +60,7 @@ SuperServer::inputReady(int fd)
 {
     int c = Socket::accept(fd, NULL, NULL);
     if (c < 0) {
-	if (errno == EINTR)
+	if (errno == EINTR || errno == ECONNABORTED)
 	    return (0);
 	logError("HylaFAX %s: accept: %m", (const char*) kind);
 	_exit(-1);
