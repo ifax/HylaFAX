@@ -60,6 +60,7 @@ private:
 // transmit tag line support
     u_int	pageNumber;	// current transmit page number
     u_int	pageNumberOfJob;// current transmit page number of Job
+    u_int	pageNumberOfCall;// current transmit page number of call
     FaxFont*	tagLineFont;	// font for imaging tag line
     u_int	tagLineSlop;	// extra space reserved for tag line re-encoding
     fxStr	tagLine;	// tag line formatted with transmit time
@@ -109,7 +110,7 @@ protected:
 
 // miscellaneous
     void	countPage();
-    int		getPageNumber();
+    int		getPageNumberOfCall();
     void	recvTrace(const char* fmt, ...);
     void	copyQualityTrace(const char* fmt, ...);
     void	traceModemParams();

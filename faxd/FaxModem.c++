@@ -45,6 +45,7 @@ FaxModem::FaxModem(FaxServer& s, const ModemConfig& c)
     recvFillOrder = (conf.recvFillOrder != 0)? conf.recvFillOrder : FILLORDER_LSB2MSB;
     sendFillOrder = (conf.sendFillOrder != 0)? conf.sendFillOrder : FILLORDER_LSB2MSB;
     rtcRev        = TIFFGetBitRevTable(sendFillOrder != FILLORDER_LSB2MSB);
+    pageNumberOfCall = 1;
 }
 
 FaxModem::~FaxModem()
@@ -693,12 +694,13 @@ FaxModem::countPage()
 {
     pageNumber++;
     pageNumberOfJob++;
+    pageNumberOfCall++;
 }
 
 int
-FaxModem::getPageNumber()
+FaxModem::getPageNumberOfCall()
 {
-    return pageNumber;
+    return pageNumberOfCall;
 }
 
 void

@@ -1124,7 +1124,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		pps[0] = 0x00;
 	    else
 		pps[0] = ppmcmd | 0x80;
-	    pps[1] = frameRev[FaxModem::getPageNumber() - 1];
+	    pps[1] = frameRev[FaxModem::getPageNumberOfCall() - 1];
 	    pps[2] = frameRev[blockNumber];
 	    pps[3] = frameRev[(fcountuniq == 0 ? 0 : (fcountuniq - 1))];
 	    u_short ppscnt = 0, crpcnt = 0;
