@@ -26,14 +26,14 @@
  * OF THIS SOFTWARE.
  */
 
-#include <sys/file.h>
-#include <errno.h>
-
 #include "config.h"
 #include "Str.h"
 #include "Sys.h"
 #include "SystemLog.h"
 #include "Sequence.h"
+
+#include <sys/file.h>
+#include <errno.h>
 
 const fxStr Sequence::format("%09u");
 
