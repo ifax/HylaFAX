@@ -231,6 +231,7 @@ ModemConfig::setupConfig()
     class2SendRTC	= false;		// default per Class 2 spec
     class2RTFCC		= false;		// real-time fax comp. conv.
     class2UseHex	= false;		// historical behavior
+    class2UseLineCount	= false;		// don't trust firmware decoders
     class1ECMSupport	= false;		// "safe" behavior until our ECM matures
     class1ECMDoCTC	= true;			// continue to correct through all bitrates
     class1TCFRecvHack	= false;		// historical behavior
@@ -578,6 +579,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
         rtnHandling = getRTNHandling(value);
     else if (streq(tag, "class2usehex"))
 	class2UseHex = getBoolean(value);
+    else if (streq(tag, "class2uselinecount"))
+	class2UseLineCount = getBoolean(value);
     else if (streq(tag, "class2rtfcc"))
 	class2RTFCC = getBoolean(value);
     else if (streq(tag, "modemsoftrtfcc"))

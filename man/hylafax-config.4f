@@ -313,6 +313,7 @@ Class2SendRTC	boolean	\s-1No\s+1	Class 2: append \s-1RTC\s+1 to page data on tra
 Class2SFLOCmd	string	\-	Class 2: command to set software flow control
 Class2SPLCmd	string	\s-1AT+FSPL\s+1	Class 2: command to set polling request
 Class2TBCCmd	string	\s-1AT+FTBC=0\s+1	Class 2: command to enable stream mode
+Class2UseLineCount	boolean	\s-1No\s+1	Class 2: use the line count from the firmware decoder
 Class2UseHex	boolean	\s-1No\s+1	Class 2: parse capabilities strings as hex values
 Class2XmitWaitForXON	boolean	\s-1Yes\s+1	Class 2: wait for \s-1XON\s+1 before sending facsimile data
 .sp .5
@@ -348,6 +349,7 @@ Class2SendRTC	boolean	\s-1No\s+1	Class 2.0: append \s-1RTC\s+1 to page data on t
 Class2SFLOCmd	string	\s-1AT+FLO=1\s+1	Class 2.0: command to set software flow control
 Class2SPLCmd	string	\s-1AT+FSP\s+1	Class 2.0: command to set polling request
 Class2TBCCmd	string	\s-1AT+FPP=0\s+1	Class 2.0: command to enable stream mode
+Class2UseLineCount	boolean	\s-1No\s+1	Class 2.0: use the line count from the firmware decoder
 Class2UseHex	boolean	\s-1No\s+1	Class 2.0: parse capabilities strings as hex values
 .sp .5
 PagerSetupCmds	string	\-	commands for setting up modem for a pager call
@@ -2475,6 +2477,10 @@ The command to use to enable stream-mode communication between the
 host and modem.
 The value ``none'' may be used if the modem does not support any
 .B Class2TBCCmd.
+.TP
+.B Class2UseLineCount
+Whether or not to use the line count reported to HylaFAX by the
+modem firmware decoder.
 .TP
 .B Class2UseHex
 Whether or not to parse the capabilities strings reported by the modem 
