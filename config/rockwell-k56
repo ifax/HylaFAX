@@ -42,7 +42,7 @@
 # wait for the "CONNECT" message.
 #
 # CONFIG: CLASS2: Rockwell-MultiModemZDXV-*
-# CONFIG: CLASS2: ROCKWELL-AC/K56-*
+# CONFIG: CLASS2: ROCKWELL-AC/K56*-*
 #
 # BEGIN-SERVER
 # END-SERVER
