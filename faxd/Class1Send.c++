@@ -1819,14 +1819,6 @@ void
 Class1Modem::sendEnd()
 {
     transmitFrame(FCF_DCN|FCF_SNDR);		// disconnect
-    if (useV34) {
-	// terminate V.34 channel
-	u_char buf[2];
-	buf[0] = DLE; buf[1] = EOT;		// <DLE><EOT>
-	putModemData(buf, 2);
-	// T.31-A1 samples indicate an OK response, but anything is acceptable
-	(void) atResponse(rbuf, 60000);
-    }
     setInputBuffering(true);
 }
 

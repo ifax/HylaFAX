@@ -189,6 +189,7 @@ protected:
 public:
     Class1Modem(FaxServer&, const ModemConfig&);
     virtual ~Class1Modem();
+    void	hangup();
 
 // send support
     bool	sendSetup(FaxRequest&, const Class2Params&, fxStr& emsg);

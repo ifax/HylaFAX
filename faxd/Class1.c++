@@ -258,6 +258,20 @@ Class1Modem::setupClass1Parameters()
     return (true);
 }
 
+void
+Class1Modem::hangup()
+{
+    if (useV34) {
+	// terminate V.34 channel
+	u_char buf[2];
+	buf[0] = DLE; buf[1] = EOT;		// <DLE><EOT>
+	putModemData(buf, 2);
+	// T.31-A1 samples indicate an OK response, but anything is acceptable
+	(void) atResponse(rbuf, 60000);
+    }
+    atCmd(conf.onHookCmd, AT_OK, 5000);
+}
+
 /*
  * Setup receive-specific parameters.
  */

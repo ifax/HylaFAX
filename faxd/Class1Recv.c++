@@ -1317,14 +1317,6 @@ Class1Modem::recvEnd(fxStr&)
 	} while ((unsigned) Sys::now()-start < t1 &&
 	    (!frame.isOK() || frame.getFCF() == FCF_EOP));
     }
-    if (useV34) {
-	// terminate V.34 channel
-	u_char buf[2];
-	buf[0] = DLE; buf[1] = EOT;		// <DLE><EOT>
-	putModemData(buf, 2);
-	// T.31-A1 samples indicate an OK response, but anything is acceptable
-	waitFor(AT_OK, 60000);
-    }
     setInputBuffering(true);
     return (true);
 }
