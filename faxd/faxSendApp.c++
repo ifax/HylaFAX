@@ -343,10 +343,10 @@ faxSendApp::resetConfig()
 
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
-const faxSendApp::stringtag faxSendApp::strings[] = {
+faxSendApp::stringtag faxSendApp::strings[] = {
 { "pollrcvdcmd",	&faxSendApp::pollRcvdCmd,	FAX_POLLRCVDCMD },
 };
-const faxSendApp::numbertag faxSendApp::numbers[] = {
+faxSendApp::numbertag faxSendApp::numbers[] = {
 { "desiredbr",		&faxSendApp::desiredBR,		(u_int) -1 },
 { "desiredst",		&faxSendApp::desiredST,		(u_int) -1 },
 { "desiredec",		&faxSendApp::desiredEC,		(u_int) -1 },

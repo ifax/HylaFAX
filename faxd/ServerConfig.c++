@@ -72,7 +72,7 @@ ServerConfig::configTrace(const char* fmt, ...)
 
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
-const ServerConfig::S_stringtag ServerConfig::strings[] = {
+ServerConfig::S_stringtag ServerConfig::strings[] = {
 { "logfacility",	&ServerConfig::logFacility,	LOG_FAX },
 { "faxnumber",		&ServerConfig::FAXNumber },
 { "areacode",		&ServerConfig::areaCode	},
@@ -83,7 +83,7 @@ const ServerConfig::S_stringtag ServerConfig::strings[] = {
 { "uucplockdir",	&ServerConfig::uucpLockDir,	UUCP_LOCKDIR },
 { "uucplocktype",	&ServerConfig::uucpLockType,	UUCP_LOCKTYPE },
 };
-const ServerConfig::S_numbertag ServerConfig::numbers[] = {
+ServerConfig::S_numbertag ServerConfig::numbers[] = {
 { "tracingmask",	&ServerConfig::tracingMask,	// NB: must be first
    FAXTRACE_MODEMIO|FAXTRACE_TIMEOUTS },
 { "sessiontracing",	&ServerConfig::logTracingLevel,	FAXTRACE_SERVER },
@@ -98,7 +98,7 @@ const ServerConfig::S_numbertag ServerConfig::numbers[] = {
 { "maxbadcalls",	&ServerConfig::maxConsecutiveBadCalls, 25 },
 { "maxsetupattempts",	&ServerConfig::maxSetupAttempts, 2 },
 };
-const ServerConfig::S_filemodetag ServerConfig::filemodes[] = {
+ServerConfig::S_filemodetag ServerConfig::filemodes[] = {
 { "recvfilemode",	&ServerConfig::recvFileMode,	0600 },
 { "devicemode",		&ServerConfig::deviceMode,	0600 },
 { "logfilemode",	&ServerConfig::logMode,		0600 },

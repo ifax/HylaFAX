@@ -113,9 +113,9 @@ private:
     FaxPageChop	pagechop;		// page chop handling
     float	chopthreshold;		// white space threshold for chopping
 
-    static const SFJ_stringtag strings[];
-    static const SFJ_numbertag numbers[];
-    static const SFJ_floattag floats[];
+    static SFJ_stringtag strings[];
+    static SFJ_numbertag numbers[];
+    static SFJ_floattag floats[];
 
     int getSpeed(const char* value) const;
 public:

@@ -608,7 +608,7 @@ HylaFAXServer::resetConfig()
 
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
-const HylaFAXServer::stringtag HylaFAXServer::strings[] = {
+HylaFAXServer::stringtag HylaFAXServer::strings[] = {
 { "logfacility",	&HylaFAXServer::logFacility,	LOG_FAX },
 { "faxcontact",		&HylaFAXServer::faxContact,	"FaxMaster" },
 { "useraccessfile",	&HylaFAXServer::userAccessFile,	"/" FAX_PERMFILE },
@@ -625,7 +625,7 @@ const HylaFAXServer::stringtag HylaFAXServer::strings[] = {
 { "systemtype",		&HylaFAXServer::systemType,
   "UNIX Type: L8 Version: SVR4" },
 };
-const HylaFAXServer::numbertag HylaFAXServer::numbers[] = {
+HylaFAXServer::numbertag HylaFAXServer::numbers[] = {
 { "servertracing",	&HylaFAXServer::tracingLevel,		TRACE_SERVER },
 { "idletimeout",	&HylaFAXServer::idleTimeout,		900 },
 { "maxidletimeout",	&HylaFAXServer::maxIdleTimeout,		7200 },

@@ -224,12 +224,12 @@ FaxClient::setupUserIdentity(fxStr& emsg)
  * Configuration file support.
  */
 
-const FaxClient::F_stringtag FaxClient::strings[] = {
+FaxClient::F_stringtag FaxClient::strings[] = {
 { "protocol",			&FaxClient::proto,		FAX_PROTONAME },
 { "host",			&FaxClient::host,		NULL },
 { "modem",			&FaxClient::modem,		NULL },
 };
-const FaxClient::F_numbertag FaxClient::numbers[] = {
+FaxClient::F_numbertag FaxClient::numbers[] = {
 { "port",			&FaxClient::port,		(u_int) -1 },
 };
 
@@ -420,7 +420,7 @@ FaxClient::admin(const char* pass, fxStr& emsg)
 }
 
 bool
-FaxClient::setCommon(const FaxParam& parm, u_int v)
+FaxClient::setCommon(FaxParam& parm, u_int v)
 {
     if (v != this->*parm.pv) {
 	if (0 < v && v < parm.NparmNames) {
@@ -438,27 +438,27 @@ FaxClient::setCommon(const FaxParam& parm, u_int v)
 }
 
 static const char* typeNames[] = { "", "A", "E", "I", "L" };
-const FaxClient::FaxParam FaxClient::typeParam =
+FaxClient::FaxParam FaxClient::typeParam =
     { "TYPE", typeNames, N(typeNames), &FaxClient::type };
 bool FaxClient::setType(u_int v)	{ return setCommon(typeParam, v); }
 
 static const char* modeNames[] = { "", "S", "B", "C", "Z" };
-const FaxClient::FaxParam FaxClient::modeParam =
+FaxClient::FaxParam FaxClient::modeParam =
     { "MODE", modeNames, N(modeNames), &FaxClient::mode };
 bool FaxClient::setMode(u_int v)	{ return setCommon(modeParam, v); }
 
 static const char* struNames[] = { "", "F", "R", "P", "T" };
-const FaxClient::FaxParam FaxClient::struParam =
+FaxClient::FaxParam FaxClient::struParam =
     { "STRU", struNames, N(struNames), &FaxClient::stru };
 bool FaxClient::setStruct(u_int v)	{ return setCommon(struParam, v); }
 
 static const char* formNames[] = { "", "PS", "PS2", "TIFF", "PCL" };
-const FaxClient::FaxParam FaxClient::formParam =
+FaxClient::FaxParam FaxClient::formParam =
     { "FORM", formNames, N(formNames), &FaxClient::format };
 bool FaxClient::setFormat(u_int v)	{ return setCommon(formParam, v); }
 
 static const char* tzoneNames[] = { "", "GMT", "LOCAL" };
-const FaxClient::FaxParam FaxClient::tzoneParam =
+FaxClient::FaxParam FaxClient::tzoneParam =
     { "TZONE", tzoneNames, N(tzoneNames), &FaxClient::tzone };
 bool
 FaxClient::setTimeZone(u_int v)

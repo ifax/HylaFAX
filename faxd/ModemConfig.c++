@@ -67,7 +67,7 @@ ModemConfig::getFlowCmd(FlowControl f) const
  * modem is setup based on whether the modem is Class 2
  * or Class 2.0.
  */
-static const struct {
+static struct {
     const char*		 name;
     fxStr ModemConfig::* p;
     const char*		 def;		// NULL is shorthand for ""
@@ -141,7 +141,7 @@ static const struct {
 { "class2pacmd",		&ModemConfig::class2PACmd,	"AT+FPA" },
 { "class2pwcmd",		&ModemConfig::class2PWCmd,	"AT+FPW" },
 };
-static const struct {
+static struct {
     const char*		 name;
     fxStr ModemConfig::* p;
     const char*		 def;		// NULL is shorthand for ""
@@ -157,7 +157,7 @@ static const struct {
 { "cidname",			&ModemConfig::cidName },
 { "cidnumber",			&ModemConfig::cidNumber },
 };
-static const struct {
+static struct {
     const char*		 name;
     u_int ModemConfig::* p;
     u_int		 def;
@@ -166,7 +166,7 @@ static const struct {
 { "modemsendfillorder",  &ModemConfig::sendFillOrder,  0 }, // will be autodetected
 { "modemframefillorder", &ModemConfig::frameFillOrder, FILLORDER_LSB2MSB },
 };
-static const struct {
+static struct {
     const char*		 name;
     u_int ModemConfig::* p;
     u_int		 def;

@@ -349,8 +349,8 @@ protected:
     /*
      * Configuration file support.
      */
-    static const stringtag strings[];
-    static const numbertag numbers[];
+    static stringtag strings[];
+    static numbertag numbers[];
 
     void resetConfig();
     void setupConfig();

@@ -82,7 +82,7 @@ FaxRequest::~FaxRequest()
 
 #define	N(a)		(sizeof (a) / sizeof (a[0]))
 
-const FaxRequest::stringval FaxRequest::strvals[] = {
+FaxRequest::stringval FaxRequest::strvals[] = {
     { "external",	&FaxRequest::external },
     { "number",		&FaxRequest::number },
     { "mailaddr",	&FaxRequest::mailaddr },
@@ -107,7 +107,7 @@ const FaxRequest::stringval FaxRequest::strvals[] = {
     { "doneop",		&FaxRequest::doneop },
     { "commid",		&FaxRequest::commid },
 };
-const FaxRequest::shortval FaxRequest::shortvals[] = {
+FaxRequest::shortval FaxRequest::shortvals[] = {
     { "state",		&FaxRequest::state },
     { "npages",		&FaxRequest::npages },
     { "totpages",	&FaxRequest::totpages },
@@ -130,7 +130,7 @@ const FaxRequest::shortval FaxRequest::shortvals[] = {
     { "desiredtl",	&FaxRequest::desiredtl },
     { "useccover",	&FaxRequest::useccover },
 };
-const char* FaxRequest::opNames[18] = {
+char* FaxRequest::opNames[18] = {
     "fax",
     "tiff",
     "!tiff",
@@ -148,13 +148,13 @@ const char* FaxRequest::opNames[18] = {
     "uucp",
     "13", "14", "15"
 };
-const char* FaxRequest::notifyVals[4] = {
+char* FaxRequest::notifyVals[4] = {
     "none",			// no_notice
     "when done",		// when_done
     "when requeued",		// when_requeued
     "when done+requeued"	// when_done|when_requeued
 };
-const char* FaxRequest::chopVals[4] = {
+char* FaxRequest::chopVals[4] = {
     "default",			// chop_default
     "none",			// chop_none
     "all",			// chop_all

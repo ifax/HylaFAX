@@ -76,8 +76,8 @@ private:
     fxStr	msgFile;	// filename of message text
     fxStr*	msg;		// 1-line message text string
 
-    static const S_stringtag strings[];
-    static const S_numbertag numbers[];
+    static S_stringtag strings[];
+    static S_numbertag numbers[];
 
     void init(void);
     bool callInetServer(fxStr& emsg);

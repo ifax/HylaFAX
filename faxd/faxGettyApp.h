@@ -88,9 +88,9 @@ private:
 
     static faxGettyApp* _instance;
 
-    static const stringtag strings[];
-    static const numbertag numbers[];
-    static const booltag booleans[];
+    static stringtag strings[];
+    static numbertag numbers[];
+    static booltag booleans[];
 
     static const fxStr recvDir;
 

@@ -1159,15 +1159,15 @@ pageSendApp::resetConfig()
 
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
-const pageSendApp::stringtag pageSendApp::strings[] = {
+pageSendApp::stringtag pageSendApp::strings[] = {
 { "ixoservice",		&pageSendApp::ixoService,	IXO_SERVICE },
 { "ixodeviceid",	&pageSendApp::ixoDeviceID,	IXO_DEVICEID },
 { "pagerttyparity",	&pageSendApp::pagerTTYParity,	"even" },
 };
-const pageSendApp::stringtag pageSendApp::atcmds[] = {
+pageSendApp::stringtag pageSendApp::atcmds[] = {
 { "pagersetupcmds",	&pageSendApp::pagerSetupCmds },
 };
-const pageSendApp::numbertag pageSendApp::numbers[] = {
+pageSendApp::numbertag pageSendApp::numbers[] = {
 { "pagermaxmsglength",	&pageSendApp::pagerMaxMsgLength,128 },
 { "ixomaxunknown",	&pageSendApp::ixoMaxUnknown,	IXO_MAXUNKNOWN },
 { "ixoidprobe",		&pageSendApp::ixoIDProbe,	IXO_IDPROBE },

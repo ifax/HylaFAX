@@ -114,8 +114,8 @@ private:
     fxStr	sendUUCPCmd;		// external command for UUCP calls
     fxStr	wedgedCmd;		// external command for wedged modems
 
-    static const stringtag strings[];
-    static const numbertag numbers[];
+    static stringtag strings[];
+    static numbertag numbers[];
 // runtime state
     bool	timeout;		// timeout occurred
     bool	abortPrepare;		// job preparation should be aborted

@@ -156,11 +156,11 @@ public:
     fxStr	doneop;		// operation to do when job completes
     faxRequestArray requests;	// set of requests
 
-    static const stringval strvals[];
-    static const shortval shortvals[];
-    static const char* opNames[18];
-    static const char* notifyVals[4];
-    static const char* chopVals[4];
+    static stringval strvals[];
+    static shortval shortvals[];
+    static char* opNames[18];
+    static char* notifyVals[4];
+    static char* chopVals[4];
 
     FaxRequest(const fxStr& qf, int fd = -1);
     virtual ~FaxRequest();

@@ -2662,7 +2662,7 @@ faxQueueApp::resetConfig()
 
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
-const faxQueueApp::stringtag faxQueueApp::strings[] = {
+faxQueueApp::stringtag faxQueueApp::strings[] = {
 { "logfacility",	&faxQueueApp::logFacility,	LOG_FAX },
 { "areacode",		&faxQueueApp::areaCode	},
 { "countrycode",	&faxQueueApp::countryCode },
@@ -2685,7 +2685,7 @@ const faxQueueApp::stringtag faxQueueApp::strings[] = {
    FAX_LIBEXEC "/uucpsend" },
 { "wedgedcmd",		&faxQueueApp::wedgedCmd,	FAX_WEDGEDCMD },
 };
-const faxQueueApp::numbertag faxQueueApp::numbers[] = {
+faxQueueApp::numbertag faxQueueApp::numbers[] = {
 { "tracingmask",	&faxQueueApp::tracingMask,	// NB: must be first
    FAXTRACE_MODEMIO|FAXTRACE_TIMEOUTS },
 { "servertracing",	&faxQueueApp::tracingLevel,	FAXTRACE_SERVER },

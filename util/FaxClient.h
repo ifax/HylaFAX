@@ -124,18 +124,18 @@ private:
     fxStr	modemFmt;	// modem status format string
     fxStr	fileFmt;	// file status format string
 
-    static const F_stringtag strings[];
-    static const F_numbertag numbers[];
-    static const FaxParam typeParam;
-    static const FaxParam modeParam;
-    static const FaxParam struParam;
-    static const FaxParam formParam;
-    static const FaxParam tzoneParam;
+    static F_stringtag strings[];
+    static F_numbertag numbers[];
+    static FaxParam typeParam;
+    static FaxParam modeParam;
+    static FaxParam struParam;
+    static FaxParam formParam;
+    static FaxParam tzoneParam;
 
     void init(void);
 
     bool sendRawData(void* buf, int cc, fxStr& emsg);
-    bool setCommon(const FaxParam&, u_int);
+    bool setCommon(FaxParam&, u_int);
 protected:
     FaxClient();
     FaxClient(const fxStr& hostarg);

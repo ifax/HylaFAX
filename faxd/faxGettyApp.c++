@@ -840,17 +840,17 @@ faxGettyApp::resetConfig()
 
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
-const faxGettyApp::stringtag faxGettyApp::strings[] = {
+faxGettyApp::stringtag faxGettyApp::strings[] = {
 { "qualifycid",		&faxGettyApp::qualifyCID },
 { "gettyargs",		&faxGettyApp::gettyArgs },
 { "vgettyargs",		&faxGettyApp::vgettyArgs },
 { "egettyargs",		&faxGettyApp::egettyArgs },
 { "faxrcvdcmd",		&faxGettyApp::faxRcvdCmd,	FAX_FAXRCVDCMD },
 };
-const faxGettyApp::numbertag faxGettyApp::numbers[] = {
+faxGettyApp::numbertag faxGettyApp::numbers[] = {
 { "answerbias",		&faxGettyApp::answerBias,	(u_int) -1 },
 };
-const faxGettyApp::booltag faxGettyApp::booleans[] = {
+faxGettyApp::booltag faxGettyApp::booleans[] = {
 { "adaptiveanswer",	&faxGettyApp::adaptiveAnswer,	false },
 { "lockdatacalls",	&faxGettyApp::lockDataCalls,	true },
 { "lockvoicecalls",	&faxGettyApp::lockVoiceCalls,	true },

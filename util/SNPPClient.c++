@@ -307,12 +307,12 @@ SNPPClient::setPagerMsgFile(const char* v)
  * Configuration file support.
  */
 
-const SNPPClient::S_stringtag SNPPClient::strings[] = {
+SNPPClient::S_stringtag SNPPClient::strings[] = {
 { "protocol",			&SNPPClient::proto,	SNPP_PROTONAME },
 { "host",			&SNPPClient::host,	NULL },
 { "modem",			&SNPPClient::modem,	NULL },
 };
-const SNPPClient::S_numbertag SNPPClient::numbers[] = {
+SNPPClient::S_numbertag SNPPClient::numbers[] = {
 { "port",			&SNPPClient::port,	(u_int) -1 },
 };
 

@@ -56,8 +56,8 @@ private:
 
     static faxSendApp* _instance;
 
-    static const stringtag strings[];
-    static const numbertag numbers[];
+    static stringtag strings[];
+    static numbertag numbers[];
 
 // configuration support
     void	setupConfig();

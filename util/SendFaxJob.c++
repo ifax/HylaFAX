@@ -100,7 +100,7 @@ SendFaxJob::~SendFaxJob()
  */
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
-const SendFaxJob::SFJ_stringtag SendFaxJob::strings[] = {
+SendFaxJob::SFJ_stringtag SendFaxJob::strings[] = {
 { "tagline",		&SendFaxJob::tagline,		NULL },
 { "sendtime",		&SendFaxJob::sendTime,		NULL },
 { "killtime",		&SendFaxJob::killTime,		FAX_TIMEOUT },
@@ -119,11 +119,11 @@ const SendFaxJob::SFJ_stringtag SendFaxJob::strings[] = {
 { "cover-from-voice",	&SendFaxJob::fromvoice,		NULL },
 { "cover-from-company",	&SendFaxJob::fromcompany,	NULL },
 };
-const SendFaxJob::SFJ_numbertag SendFaxJob::numbers[] = {
+SendFaxJob::SFJ_numbertag SendFaxJob::numbers[] = {
 { "maxtries",		&SendFaxJob::maxRetries,	FAX_RETRIES },
 { "maxdials",		&SendFaxJob::maxDials,		FAX_REDIALS },
 };
-const SendFaxJob::SFJ_floattag SendFaxJob::floats[] = {
+SendFaxJob::SFJ_floattag SendFaxJob::floats[] = {
 { "hres",		&SendFaxJob::hres,		204. },
 { "vres",		&SendFaxJob::vres,		FAX_DEFVRES },
 { "pagewidth",		&SendFaxJob::pageWidth,		0. },

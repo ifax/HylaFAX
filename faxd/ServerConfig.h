@@ -70,9 +70,9 @@ private:
     fxBoolArray* acceptTSI;		// accept/reject matched tsi
     fxStr	logFacility;		// syslog facility to direct trace msgs
 
-    static const S_stringtag strings[];
-    static const S_numbertag numbers[];
-    static const S_filemodetag filemodes[];
+    static S_stringtag strings[];
+    static S_numbertag numbers[];
+    static S_filemodetag filemodes[];
 
     SpeakerVolume getVolume(const char* cp);
 protected:

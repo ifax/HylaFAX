@@ -71,9 +71,9 @@ private:
 
     static pageSendApp* _instance;
 
-    static const stringtag strings[];
-    static const stringtag atcmds[];
-    static const numbertag numbers[];
+    static stringtag strings[];
+    static stringtag atcmds[];
+    static numbertag numbers[];
 
 // configuration support
     void	setupConfig();

@@ -171,7 +171,7 @@ HylaFAXServer::checkAccess(const Job& job, Token t, u_int op)
     return (false);
 }
 
-static const struct {
+static struct {
     Token	t;
     fxStr	Job::* p;
 } strvals[] = {
@@ -197,7 +197,7 @@ static const struct {
     { T_DONEOP,		&Job::doneop },
     { T_COMMID,		&Job::commid },
 };
-static const struct {
+static struct {
     Token	t;
     u_short	Job::* p;
 } shortvals[] = {
