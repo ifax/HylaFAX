@@ -3254,9 +3254,37 @@ if [ "$DSO" = auto ]; then
 	LIBUTIL=''
 	LIBFAXSERVER='-lfaxserver'
 	FAXD='${DEPTH}/faxd'
-	DSOOPTS='-shared -Wl,-soname,$@'
-	LLDOPTS='-L${UTIL} -L${FAXD} -lfaxutil'
+	DSOOPTS='-shared -fpic -Wl,-soname,$@'
+	LLDOPTS='-L${UTIL} -L${FAXD} -Wl,-rpath,${LIBDIR} -lfaxutil'
 	DSO=LINUX
+	CheckCCDSO()
+	{
+	$RM t.c t.o t.${DSOSUF}
+	echo 'int f() { return 0; }'>t.c
+	capture cat t.c
+	runMake t \
+	    't.o:; ${CCF} -c t.c' \
+	    "t: t.o; \${CCF} ${DSOOPTS} -o t.${DSOSUF} t.o"
+	}
+	CheckCXXDSO()
+	{
+	$RM t.c++ t.o t.${DSOSUF}
+	echo 'int f() { return 0; }'>t.c++
+	capture cat t.c++
+	runMake t \
+	    "t.o:; \${C++F} -c \${C++FILE} t.c++${MAKECXXOVERRIDE}" \
+	    "t:t.o; \${C++F} ${DSOOPTS} -o t.${DSOSUF} t.o"
+	}
+	;;
+    *-solaris*)
+	DSOSUF=so
+	LIBUTIL=''
+	LIBFAXSERVER='-lfaxserver'
+	FAXD='${DEPTH}/faxd'
+	# options here are passed directly to ld, not through g++ first
+	DSOOPTS='-G -h $@'
+	LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lfaxutil'
+	DSO=SOLARIS
 	CheckCCDSO()
 	{
 	$RM t.c t.o t.${DSOSUF}
@@ -3308,9 +3336,6 @@ fi
 if [ "$DSO" = no ]; then
     MAKEDSOINCLUDE='#'
     DSOSUF=a DSOOPTS= DSODELAY= LLDOPTS=
-    case $ISGCC-$TARGET in
-	*-*-solaris*)	LLDOPTS="-L/usr/local/lib -R/usr/local/lib" ;;
-    esac
 else
     MAKEDSOINCLUDE="$MAKEINCLUDE"
 fi
