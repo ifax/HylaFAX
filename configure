@@ -4341,16 +4341,9 @@ sysv-source-*)	MANAPPS=man1 MANSYS=man1 MANFILES=man4;;
 sysv-nroff-*)	MANAPPS=cat1 MANSYS=cat1 MANFILES=cat4;;
 esac
 case $MANSCHEME in
-bsd-*-strip)	MANSEDLOCAL="-e \"s/(4F)/(5)/g\" \
-                             -e \"s/\\\(^.TH.*\\\)4F/\\\15/g\" \
-                             -e \"s/(1M)/(8)/g\" \
-                             -e \"s/\\\(^.TH.*\\\)1M/\\\18/g\"";;
-bsd-*)		MANSEDLOCAL="-e \"s/(4F)/(5F)/g\" \
-                             -e \"s/\\\(^.TH.*\\\)4F/\\\15F/g\" \
-                             -e \"s/(1M)/(8C)/g\" \
-                             -e \"s/\\\(^.TH.*\\\)1M/\\\18C/g\"";;
-sysv-*-strip)	MANSEDLOCAL="-e \"s/(4F)/(4)/g\" \
-                             -e \"s/\\\(^.TH.*\\\)4F/\\\14/g\"";;
+bsd-*-strip)	MANSEDLOCAL="-e s/4F/5/g -e s/1M/8/g";;
+bsd-*)		MANSEDLOCAL="-e s/4F/5F/g -e s/1M/8C/g";;
+sysv-*-strip)	MANSEDLOCAL="-e s/4F/4/g";;
 sysv-*)		MANSEDLOCAL='-e " "';;
 esac
 case $MANSCHEME in
