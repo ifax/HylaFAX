@@ -27,14 +27,13 @@
 /*
  * Page Data Receive and Copy Quality Support for Modem Drivers.
  */
+#include "config.h"
 #include "Sys.h"
 #include "FaxModem.h"
 #include "FaxTrace.h"
 #include "ModemConfig.h"
 #include "StackBuffer.h"
 #include "FaxServer.h"
-
-#include "version.h"
 
 #define	RCVBUFSIZ	(32*1024)		// XXX
 
@@ -295,7 +294,7 @@ FaxModem::recvSetupTIFF(TIFF* tif, long, int fillOrder)
     TIFFSetField(tif, TIFFTAG_XRESOLUTION,	204.);
     TIFFSetField(tif, TIFFTAG_YRESOLUTION,	(float) params.verticalRes());
     TIFFSetField(tif, TIFFTAG_RESOLUTIONUNIT,	RESUNIT_INCH);
-    TIFFSetField(tif, TIFFTAG_SOFTWARE,		VERSION);
+    TIFFSetField(tif, TIFFTAG_SOFTWARE,		HYLAFAX_VERSION);
     TIFFSetField(tif, TIFFTAG_IMAGEDESCRIPTION,	(const char*) tsi);
     char dateTime[24];
     time_t now = Sys::now();

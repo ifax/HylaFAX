@@ -29,6 +29,7 @@
  *
  * cqtest [-m maxbad] [-o output.tif] [-p %good] input.tif
  */
+#include "config.h"
 #include "Sys.h"
 #include "StackBuffer.h"
 #include "G3Decoder.h"
@@ -36,8 +37,6 @@
 #include "Str.h"
 #include "FaxTrace.h"
 #include "tiffio.h"
-
-#include "version.h"
 
 struct CQDecoder : public G3Decoder {
     u_int	cblc;		// current count of consecutive bad lines
@@ -118,7 +117,7 @@ CQDecoder::recvSetupTIFF(TIFF* tif, long, int fillOrder, const Class2Params& par
     TIFFSetField(tif, TIFFTAG_XRESOLUTION,	204.);
     TIFFSetField(tif, TIFFTAG_YRESOLUTION,	(float) params.verticalRes());
     TIFFSetField(tif, TIFFTAG_RESOLUTIONUNIT,	RESUNIT_INCH);
-    TIFFSetField(tif, TIFFTAG_SOFTWARE,		VERSION);
+    TIFFSetField(tif, TIFFTAG_SOFTWARE,		HYLAFAX_VERSION);
 #ifdef notdef
     TIFFSetField(tif, TIFFTAG_IMAGEDESCRIPTION,	(const char*) tsi);
 #endif

@@ -103,15 +103,13 @@ faxQueueApp::~faxQueueApp()
 
 faxQueueApp& faxQueueApp::instance() { return *_instance; }
 
-#include "version.h"
-
 void
 faxQueueApp::initialize(int argc, char** argv)
 {
     updateConfig(configFile);		// read config file
     faxApp::initialize(argc, argv);
 
-    logInfo("%s", VERSION);
+    logInfo("%s", HYLAFAX_VERSION);
     logInfo("%s", "Copyright (c) 1990-1996 Sam Leffler");
     logInfo("%s", "Copyright (c) 1991-1996 Silicon Graphics, Inc.");
 

@@ -37,9 +37,7 @@
 #include <pwd.h>
 #include <limits.h>
 
-#include "version.h"
-
-const char* HylaFAXServer::version = VERSION;
+const char* HylaFAXServer::version = HYLAFAX_VERSION;
 
 /*
  * NB: The remainder of the instance state is

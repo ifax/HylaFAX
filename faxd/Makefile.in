@@ -159,22 +159,15 @@ libfaxserver.a: ${SERVER_OBJS} ${MODEM_OBJS}
 
 @MAKEDSOINCLUDE@ @MAKELQUOTE@${SRCDIR}/Makefile.@DSO@dso@MAKERQUOTE@
 
-LDIRT	= hash.h version.h mkhash
+LDIRT	= hash.h mkhash
 
 hash.h:	mkhash
 	rm -f hash.h; ./mkhash > hash.h
 mkhash:	${SRCDIR}/mkhash.c
 	${CCF} -o mkhash ${SRCDIR}/mkhash.c
 
-version.h:
-	VERSION="@DIST_MAJOR@.@DIST_MINOR@@DIST_TYPE@";\
-	if [ @DIST_TYPE@ = beta ]; then \
-	    VERSION="$${VERSION}@DIST_ALPHA@"; \
-	fi; \
-	rm -f version.h; \
-	echo "#define VERSION \"HylaFAX (tm) Version $$VERSION\"">version.h
-faxQueueApp.o FaxRecv.o: version.h
-incdepend: version.h hash.h
+faxQueueApp.o FaxRecv.o:
+incdepend: hash.h
 
 faxq:	${FAXQOBJS} libfaxserver.${DSO} ${LIBS}
 	${C++F} -o $@ ${FAXQOBJS} libfaxserver.${DSO} ${LDFLAGS}

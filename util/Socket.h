@@ -56,20 +56,60 @@ extern "C" {
 
 class Socket {
 public:
-    static int accept(int s, void* addr, socklen_t* addrlen)
-	{ return ::accept(s, (struct sockaddr*) addr, addrlen); }
-    static int bind(int s, const void* addr, int addrlen)
-	{ return ::bind(s, (const struct sockaddr*) addr, addrlen); }
-    static int connect(int s, const void* addr, int addrlen)
-	{ return ::connect(s, (const struct sockaddr*) addr, addrlen); }
-    static int getpeername(int s, void* name, socklen_t* namelen)
-	{ return ::getpeername(s, (struct sockaddr*) name, namelen); }
-    static int getsockname(int s, void* name, socklen_t* namelen)
-	{ return ::getsockname(s, (struct sockaddr*) name, namelen); }
-    static int setsockopt(int s, int level, int oname, const void* oval, int olen)
-	{ return ::setsockopt(s, level, oname, (const char*) oval, olen); }
-
-    static struct hostent* gethostbyname(const char* name)
-	{ return ::gethostbyname(name); }
+    static int accept(int s, void* addr, socklen_t* addrlen);
+    static int bind(int s, const void* addr, int addrlen);
+    static int connect(int s, const void* addr, int addrlen);
+    static int getpeername(int s, void* name, socklen_t* namelen);
+    static int getsockname(int s, void* name, socklen_t* namelen);
+    static int setsockopt(int s, int level, int oname, const void* oval, int olen);
+    static struct hostent* gethostbyname(const char* name);
 };
+
+inline int Socket::accept(int s, void* addr, socklen_t* addrlen)
+{
+#ifdef CONFIG_HPUX_SOCKLEN_T_BRAINDAMAGE
+    return ::accept(s, (struct sockaddr*) addr, (int*)addrlen);
+#else
+    return ::accept(s, (struct sockaddr*) addr, addrlen);
+#endif
+}
+
+inline int Socket::bind(int s, const void* addr, int addrlen)
+{
+    return ::bind(s, (const struct sockaddr*) addr, addrlen);
+}
+
+inline int Socket::connect(int s, const void* addr, int addrlen)
+{
+    return ::connect(s, (const struct sockaddr*) addr, addrlen);
+}
+
+inline int Socket::getpeername(int s, void* name, socklen_t* namelen)
+{
+#ifdef CONFIG_HPUX_SOCKLEN_T_BRAINDAMAGE
+    return ::getpeername(s, (struct sockaddr*) name, (int*)namelen);
+#else
+    return ::getpeername(s, (struct sockaddr*) name, namelen);
+#endif
+}
+
+inline int Socket::getsockname(int s, void* name, socklen_t* namelen)
+{
+#ifdef CONFIG_HPUX_SOCKLEN_T_BRAINDAMAGE
+    return ::getsockname(s, (struct sockaddr*) name, (int*)namelen);
+#else
+    return ::getsockname(s, (struct sockaddr*) name, namelen);
+#endif
+}
+
+inline int Socket::setsockopt(int s, int level, int oname, const void* oval, int olen)
+{
+    return ::setsockopt(s, level, oname, (const char*) oval, olen);
+}
+
+inline struct hostent* Socket::gethostbyname(const char* name)
+{
+    return ::gethostbyname(name);
+}
+
 #endif /* _Socket_ */

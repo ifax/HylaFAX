@@ -2287,11 +2287,11 @@ BuildPortDotH()
     CheckVarDecl dev_t 'typedef int dev_t;' $TYPES_H stdlib.h
 
     if [ $CONFIG_OSFCNH = auto ]; then
-	if CheckForIncludeFile osfcn.h; then
-	    CONFIG_OSFCNH=yes
-	else
-	    CONFIG_OSFCNH=no
-	fi
+        if CheckForIncludeFile osfcn.h; then
+	        CONFIG_OSFCNH=yes
+        else
+            CONFIG_OSFCNH=no
+        fi
     fi
     if [ $CONFIG_OSFCNH = yes ]; then
 	Note "... configure use of <osfcn.h>"
@@ -2318,14 +2318,17 @@ BuildPortDotH()
     # default so folks don't have to rerun configure.
     #
     test "$CONFIG_SOCKARGLENTYPE" || {		# int vs unsigned long vs ...
-	case $TARGET in
-	# XXX fill in for busted systems
-	*-univel-*)	CONFIG_SOCKARGLENTYPE=size_t;;
-	*sysv4.2uw2*)	CONFIG_SOCKARGLENTYPE=size_t;;
-	*-UnixWare*)	CONFIG_SOCKARGLENTYPE=size_t;;
-	*-aix4*)	CONFIG_SOCKARGLENTYPE=size_t;;
-	*)		CONFIG_SOCKARGLENTYPE=int;;
-	esac
+        case $TARGET in
+	    # XXX fill in for busted systems
+        *-aix4*)	CONFIG_SOCKARGLENTYPE=size_t;;
+        *-hpux11*)  # this is really broken, has a defined 
+                    # socklen_t but does *not* use it
+                echo "#define CONFIG_HPUX_SOCKLEN_T_BRAINDAMAGE";;
+        *sysv4.2uw2*)	CONFIG_SOCKARGLENTYPE=size_t;;
+        *-univel-*)	CONFIG_SOCKARGLENTYPE=size_t;;
+        *-UnixWare*)	CONFIG_SOCKARGLENTYPE=size_t;;
+        *)		CONFIG_SOCKARGLENTYPE=int;;
+        esac
     }
     TYPES_H="$TYPES_H sys/socket.h"
     CheckVarDecl socklen_t "typedef $CONFIG_SOCKARGLENTYPE socklen_t;" $TYPES_H

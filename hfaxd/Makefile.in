@@ -92,17 +92,8 @@ FaxRequest.o: ${FAXDSRCDIR}/FaxRequest.c++
 faxRequest.o: ${FAXDSRCDIR}/faxRequest.c++
 	${C++F} -c ${C++FILE} ${FAXDSRCDIR}/faxRequest.c++@MAKECXXOVERRIDE@
 
-LDIRT	= version.h
-
-version.h:
-	VERSION="@DIST_MAJOR@.@DIST_MINOR@@DIST_TYPE@";\
-	if [ @DIST_TYPE@ = beta ]; then \
-	    VERSION="$${VERSION}@DIST_ALPHA@"; \
-	fi; \
-	rm -f version.h; \
-	echo "#define VERSION \"HylaFAX (tm) Version $$VERSION\"">version.h
-HylaFAXServer.o: version.h
-incdepend: version.h
+HylaFAXServer.o: 
+incdepend:
 
 install: default
 	${INSTALL} -F ${LIBEXEC} -u root -m 4755 \

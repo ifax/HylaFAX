@@ -37,6 +37,11 @@
 #define	_CONFIG_
 #include "port.h"
 
+/*
+ * HylaFAX version number string
+ */
+#define HYLAFAX_VERSION "HylaFAX (tm) Version @VERSION@"
+
 #define	FAX_SPOOLDIR	"@SPOOL@"	/* pathname to top of spooling area */
 #define FAX_CLIENTBIN	"@BIN@"		/* place for client apps */
 #define FAX_LIBEXEC	"@LIBEXEC@"	/* place for lib executables */
