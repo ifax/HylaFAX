@@ -177,9 +177,8 @@ LIBZ
 LIBDB
 LLDOPTS
 LN
-LN_S"
-
-VAR3="MACHDEPLIBS
+LN_S
+MACHDEPLIBS
 MAKEDSOINCLUDE
 MAN
 MANDIR DIR_MAN
@@ -245,7 +244,7 @@ dumpvars()
 }
 dumpvals()
 {
-    (echo "$VAR1"; echo "$VAR2" ; echo "$VAR3") |
+    (echo "$VAR1"; echo "$VAR2") |
 	while read a b; do eval c=\$${b:-$a}; echo "${b:-$a}='$c'"; done
 }
 
@@ -669,7 +668,6 @@ JUNK="
     conffifo
     confsed1
     confsed2
-    confsed3
     conftestmmap
     confx confy
     confMakefile
@@ -1339,8 +1337,7 @@ makeDefs()
     WARNING="Warning, this file was automatically created by the HylaFAX configure script"
     dumpvars "$VAR1" CCOMPILER CXXCOMPILER | sort>confsed1
     dumpvars "$VAR2" CCOMPILER CXXCOMPILER | sort>confsed2
-    dumpvars "$VAR3" CCOMPILER CXXCOMPILER | sort>confsed3
-    $RM xdefs; sed -f confsed1 $SRCDIR/defs.in | sed -f confsed2 | sed -f confsed3 >$1
+    $RM xdefs; sed -f confsed1 $SRCDIR/defs.in | sed -f confsed2 >$1
 }
 
 # NB: save original values for use in checks below
@@ -4468,7 +4465,7 @@ SedConfigFiles()
 	    # the comparison (this assumes dates are used in lines
 	    # of the form DATE: @DATE@).
 	    #
-	    $RM $F.new; $SED -f confsed1 $SRCDIR/$F.in | $SED -f confsed2 | $SED -f confsed3 > $F.new
+	    $RM $F.new; $SED -f confsed1 $SRCDIR/$F.in | $SED -f confsed2 > $F.new
 	    $RM confx; $SED '/DATE:/d' $F.new >confx
 	    $RM confy; $SED '/DATE:/d' $F >confy 2>/dev/null
 	    if cmp -s confx confy >/dev/null 2>&1; then
@@ -4479,14 +4476,14 @@ SedConfigFiles()
 	    fi
 	else
 	    Note "Creating $F from $SRCDIR/$F.in"
-	    if $SED -f confsed1 $SRCDIR/$F.in | $SED -f confsed2 | $SED -f confsed3 >$F.new; then
+	    if $SED -f confsed1 $SRCDIR/$F.in  | $SED -f confsed2 >$F.new; then
 		$RM $F; $MV $F.new $F; $CHMOD 444 $F
 	    else
 		cat 1>&2 <<EOF
 Help, there was a problem crafting $F from $F.in.
 The command:
 
-    $SED -f confsed1 $SRCDIR/$F.in | $SED -f confsed2 | $SED -f confsed3 >$F.new
+    $SED -f confsed1 $SRCDIR/$F.in | $SED -f confsed2 >$F.new
 
 failed.  Aborting without cleaning up files so you can take a look...
 EOF
