@@ -44,6 +44,7 @@ private:
     static fxStr dbName;
 
     void addDestination(const char* cp);
+    void addDestinationsFromFile(const char* filename);
     void copyToTemporary(int fin, fxStr& tmpl);
     void fatal(const char* fmt ...);
     void usage();
@@ -87,7 +88,7 @@ sendFaxApp::run(int argc, char** argv)
     int verbose = 0;
     SendFaxJob& proto = getProtoJob();
     db = new FaxDB(tildeExpand(dbName));
-    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:P:r:s:t:T:U:V:W:x:X:y:Y:12lmnpvwADENR")) != -1)
+    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:P:r:s:t:T:U:V:W:x:X:y:Y:z:12lmnpvwADENR")) != -1)
     switch (c) {
     case '1':			// restrict to 1D-encoded data
         proto.setDesiredDF(0);
@@ -206,6 +207,9 @@ sendFaxApp::run(int argc, char** argv)
     case 'Y':			// cover page: sender's location
 	proto.setCoverFromLocation(optarg);
 	break;
+    case 'z':			// destinations from file
+	addDestinationsFromFile(optarg);
+	break;
     case '?':
         usage();
         /*NOTREACHED*/
@@ -282,6 +286,28 @@ sendFaxApp::addDestination(const char* cp)
     if(job.getDesiredSpeed() > BR_14400 && job.getDesiredEC() == false) {
         printWarning("ECM disabled, limiting job to 14400 bps.");
         job.setDesiredSpeed(BR_14400);
+    }
+}
+
+/*
+ * Add a destinations form file
+ */
+void
+sendFaxApp::addDestinationsFromFile(const char* filename)
+{
+    FILE* destfile;
+    char dest[ 256 ];
+
+    if( ( destfile = fopen( filename, "r" ) ) != NULL )
+    {
+	while( fscanf( destfile, "%255s", dest ) != EOF )
+	{
+	    addDestination( dest );
+	}
+    }
+    else
+    {
+	fatal("%s: no such file", filename);
     }
 }
 
