@@ -693,7 +693,13 @@ ClassModem::reset(long ms)
      */
     pause(conf.softResetCmdDelay);
 
+    // some modems result with OK *twice* after ATZ, so flush it
+    flushModemInput();
+
     if ( true != atCmd(conf.resetCmds, AT_OK, ms) ) {
+        return false;
+    }
+    if ( true != atCmd(conf.noAutoAnswerCmd, AT_OK, ms) ) {
         return false;
     }
     if ( true != atCmd(conf.echoOffCmd, AT_OK, ms) ) {
@@ -703,9 +709,6 @@ ClassModem::reset(long ms)
         return false;
     }
     if ( true != atCmd(conf.resultCodesCmd, AT_OK, ms) ) {
-        return false;
-    }
-    if ( true != atCmd(conf.noAutoAnswerCmd, AT_OK, ms) ) {
         return false;
     }
     // some modems do not accept standard onHookCmd (ATH0) when
@@ -808,148 +811,162 @@ ClassModem::atResponse(char* buf, long ms)
 bool
 ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 {
-    u_int cmdlen = cmd.length();
-    u_int pos = 0;
-    bool respPending = false;
+    u_int cmdlen;
+    u_int pos;
+    bool respPending;
+    if (lastResponse == AT_RING) lastResponse = AT_NOTHING;
+    do {
+	cmdlen = cmd.length();
+	pos = 0;
+	respPending = false;
 
-    /*
-     * Scan string for line breaks and escape codes (byte w/ 0x80 set).
-     * A line break causes the current string to be sent to the modem
-     * and a return status string parsed (and possibly compared to an
-     * expected response).  An escape code terminates scanning,
-     * with any pending string flushed to the modem before the
-     * associated commands are carried out.
-     */
-    u_int i = 0;
-    while (i < cmdlen) {
-	if (isLineBreak(cmd[i]) && !(i+1 < cmdlen && isEscape(cmd[i+1]))) {
-	    /*
-	     * No escape code follows, send partial string
-	     * to modem and await status string if necessary.
-	     */
+	/*
+	 * Scan string for line breaks and escape codes (byte w/ 0x80 set).
+	 * A line break causes the current string to be sent to the modem
+	 * and a return status string parsed (and possibly compared to an
+	 * expected response).  An escape code terminates scanning,
+	 * with any pending string flushed to the modem before the
+	 * associated commands are carried out.
+	 */
+	u_int i = 0;
+	while (i < cmdlen) {
+	    if (isLineBreak(cmd[i]) && !(i+1 < cmdlen && isEscape(cmd[i+1]))) {
+		/*
+		 * No escape code follows, send partial string
+		 * to modem and await status string if necessary.
+		 */
+		if (conf.atCmdDelay)
+		    pause(conf.atCmdDelay);
+		if (!putModemLine(cmd.extract(pos, i-pos)))
+		    return (false);
+		pos = ++i;			// next segment starts after line break
+		if (r != AT_NOTHING) {
+		    if (!waitFor(r, ms))
+			return (false);
+		} else {
+		    if (!waitFor(AT_OK, ms))
+			return (false);
+		}
+		respPending = false;
+	    } else if (isEscape(cmd[i])) {
+		/*
+		 * Escape code; flush any partial line, process
+		 * escape codes and carry out their actions.
+		 */
+		ATResponse resp = AT_NOTHING;
+		if (i > pos) {
+		    if (conf.atCmdDelay)
+			pause(conf.atCmdDelay);
+		    if (isLineBreak(cmd[i-1])) {
+			/*
+			 * Send data with a line break and arrange to
+			 * collect the expected response (possibly
+			 * specified through a <waitfor> escape processed
+			 * below).  Note that we use putModemLine, as
+			 * above, so that the same line break is sent
+			 * to the modem for all segments (i.e. \n is
+			 * translated to \r).
+			 */
+			if (!putModemLine(cmd.extract(pos, i-1-pos)))
+			    return (false);
+			// setup for expected response
+			resp = (r != AT_NOTHING ? r : AT_OK);
+		    } else {
+			/*
+			 * Flush any data as-is, w/o adding a line
+			 * break or expecting a response.  This is
+			 * important for sending, for example, a
+			 * command escape sequence such as "+++".
+			 */
+			u_int cc = i-pos;
+			const char* cp = &cmd[pos];
+			server.traceStatus(FAXTRACE_MODEMCOM, "<-- [%u:%s]", cc,cp);
+			if (!server.putModem1(cp, cc))
+			    return (false);
+		    }
+		    respPending = true;
+		}
+		/*
+		 * Process escape codes.
+		 */
+		BaudRate br = rate;
+		FlowControl flow = flowControl;
+		u_int delay = 0;
+		do {
+		    switch (cmd[i] & 0xff) {
+		    case ESC_SETBR:			// set host baud rate
+			br = (u_char) cmd[++i];
+			if (br != rate) {
+			    setBaudRate(br);
+			    rate = br;
+			}
+			break;
+		    case ESC_SETFLOW:			// set host flow control
+			flow = (u_char) cmd[++i];
+			if (flow != flowControl) {
+			    setBaudRate(br, flow, flow);
+			    flowControl = flow;
+			}
+			break;
+		    case ESC_DELAY:			// host delay
+			delay = (u_char) cmd[++i];
+			if (delay != 0)
+			    pause(delay*10);		// 10 ms granularity
+			break;
+		    case ESC_WAITFOR:			// wait for response
+			resp = (u_char) cmd[++i];
+		        if (resp != AT_NOTHING) {
+			    // XXX check return?
+			    (void) waitFor(resp, ms);	// XXX ms
+			    respPending = false;
+			}
+			break;
+		    case ESC_FLUSH:			// flush input
+			flushModemInput();
+			break;
+		    }
+		} while (++i < cmdlen && isEscape(cmd[i]));
+		pos = i;				// next segment starts here
+		if (respPending) {
+		    /*
+		     * If a segment with a line break was flushed
+		     * but no explicit <waitfor> escape followed
+		     * then collect the response here so that it
+		     * does not get lost.
+		     */
+		    if (resp != AT_NOTHING && !waitFor(resp, ms))
+			return (false);
+		    respPending = false;
+		}
+	    } else
+		i++;
+	}
+	/*
+	 * Flush any pending string to modem.
+	 */
+	if (i > pos) {
 	    if (conf.atCmdDelay)
 		pause(conf.atCmdDelay);
 	    if (!putModemLine(cmd.extract(pos, i-pos)))
 		return (false);
-	    pos = ++i;			// next segment starts after line break
-	    if (r != AT_NOTHING) {
-		if (!waitFor(r, ms))
+	    respPending = true;
+	}
+	/*
+	 * Wait for any pending response.
+	 */
+	if (respPending) {
+	    if (r != AT_NOTHING && !waitFor(r, ms)) {
+		if (lastResponse != AT_RING) {
 		    return (false);
-	    } else {
-		if (!waitFor(AT_OK, ms))
-		    return (false);
-	    }
-	    respPending = false;
-	} else if (isEscape(cmd[i])) {
-	    /*
-	     * Escape code; flush any partial line, process
-	     * escape codes and carry out their actions.
-	     */
-	    ATResponse resp = AT_NOTHING;
-	    if (i > pos) {
-		if (conf.atCmdDelay)
-		    pause(conf.atCmdDelay);
-		if (isLineBreak(cmd[i-1])) {
-		    /*
-		     * Send data with a line break and arrange to
-		     * collect the expected response (possibly
-		     * specified through a <waitfor> escape processed
-		     * below).  Note that we use putModemLine, as
-		     * above, so that the same line break is sent
-		     * to the modem for all segments (i.e. \n is
-		     * translated to \r).
-		     */
-		    if (!putModemLine(cmd.extract(pos, i-1-pos)))
-			return (false);
-		    // setup for expected response
-		    resp = (r != AT_NOTHING ? r : AT_OK);
 		} else {
-		    /*
-		     * Flush any data as-is, w/o adding a line
-		     * break or expecting a response.  This is
-		     * important for sending, for example, a
-		     * command escape sequence such as "+++".
-		     */
-		    u_int cc = i-pos;
-		    const char* cp = &cmd[pos];
-		    server.traceStatus(FAXTRACE_MODEMCOM, "<-- [%u:%s]", cc,cp);
-		    if (!server.putModem1(cp, cc))
-			return (false);
+		    // wait for result, but some modem's don't result after glare
+		    if (r != AT_NOTHING && !waitFor(r, ms)) {
+			lastResponse = AT_RING;
+		    }
 		}
-		respPending = true;
 	    }
-	    /*
-	     * Process escape codes.
-	     */
-	    BaudRate br = rate;
-	    FlowControl flow = flowControl;
-	    u_int delay = 0;
-	    do {
-		switch (cmd[i] & 0xff) {
-		case ESC_SETBR:			// set host baud rate
-		    br = (u_char) cmd[++i];
-		    if (br != rate) {
-			setBaudRate(br);
-			rate = br;
-		    }
-		    break;
-		case ESC_SETFLOW:		// set host flow control
-		    flow = (u_char) cmd[++i];
-		    if (flow != flowControl) {
-			setBaudRate(br, flow, flow);
-			flowControl = flow;
-		    }
-		    break;
-		case ESC_DELAY:			// host delay
-		    delay = (u_char) cmd[++i];
-		    if (delay != 0)
-			pause(delay*10);	// 10 ms granularity
-		    break;
-		case ESC_WAITFOR:		// wait for response
-		    resp = (u_char) cmd[++i];
-		    if (resp != AT_NOTHING) {
-			// XXX check return?
-			(void) waitFor(resp, ms);	// XXX ms
-			respPending = false;
-		    }
-		    break;
-		case ESC_FLUSH:			// flush input
-		    flushModemInput();
-		    break;
-		}
-	    } while (++i < cmdlen && isEscape(cmd[i]));
-	    pos = i;				// next segment starts here
-	    if (respPending) {
-		/*
-		 * If a segment with a line break was flushed
-		 * but no explicit <waitfor> escape followed
-		 * then collect the response here so that it
-		 * does not get lost.
-		 */
-		if (resp != AT_NOTHING && !waitFor(resp, ms))
-		    return (false);
-		respPending = false;
-	    }
-	} else
-	    i++;
-    }
-    /*
-     * Flush any pending string to modem.
-     */
-    if (i > pos) {
-	if (conf.atCmdDelay)
-	    pause(conf.atCmdDelay);
-	if (!putModemLine(cmd.extract(pos, i-pos)))
-	    return (false);
-	respPending = true;
-    }
-    /*
-     * Wait for any pending response.
-     */
-    if (respPending) {
-	if (r != AT_NOTHING && !waitFor(r, ms))
-	    return (false);
-    }
+	}
+    } while (lastResponse == AT_RING);
     return (true);
 }
 #undef	isEscape
