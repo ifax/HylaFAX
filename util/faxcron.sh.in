@@ -39,7 +39,7 @@
 
 AGEINFO=30			# purge remote info after 30 days inactivity
 AGELOG=30			# keep log info for last 30 days
-AGERCV=7			# purge received facsimile after 2 days
+AGERCV=7			# purge received facsimile after 7 days
 AGETMP=1			# purge orphaned temp files after 1 day
 FAXUSER=fax			# owner of log files
 LOGMODE=0644			# mode for log files
@@ -229,14 +229,14 @@ function printTranscript(commid)
 }
 
 BEGIN		{ FS="\t";
-		  callFailed["busy signal"] = 1;
-		  callFailed["unknown pro"] = 1;
-		  callFailed["no carrier "] = 1;
-		  callFailed["no local di"] = 1;
-		  callFailed["no answer f"] = 1;
-		  callFailed["job aborted"] = 1;
-		  callFailed["invalid dia"] = 1;
-		  callFailed["can not loc"] = 1;
+		  callFailed["Busy signal"] = 1;
+		  callFailed["Unknown pro"] = 1;
+		  callFailed["No carrier "] = 1;
+		  callFailed["No local di"] = 1;
+		  callFailed["No answer f"] = 1;
+		  callFailed["Job aborted"] = 1;
+		  callFailed["Invalid dia"] = 1;
+		  callFailed["Can not loc"] = 1;
 		  months["01"] = "Jan"; months["02"] = "Feb";
 		  months["03"] = "Mar"; months["04"] = "Apr";
 		  months["05"] = "May"; months["06"] = "Jun";
@@ -429,7 +429,7 @@ echo ""
 #
 # Purge old stuff from the temp directory.
 #
-find tmp -type f -mtime +$AGETMP -print >$JUNK
+find tmp -mtime +$AGETMP -print >$JUNK
 if [ -s $JUNK ]; then
     echo "Purge tmp files older than $AGETMP days:"
     for i in `$CAT $JUNK`; do
@@ -446,7 +446,7 @@ echo ""
 #
 # Note destinations whose jobs are currently being rejected.
 #
-find info cinfo -newer $LAST -print 2>/dev/null >$JUNK
+find info cinfo -type f -newer $LAST -print 2>/dev/null >$JUNK
 if [ -s $JUNK ]; then
 	echo "Destinations being rejected (added since $LASTRUN):"
 	$GREP "^rejectNotice:" `$CAT $JUNK` | $AWK -F: '
