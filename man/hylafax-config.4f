@@ -175,6 +175,7 @@ RingData	string	\-	distinctive ring data call identifier
 RingExtended	string	\s-1"RING "\s+1	extended ring message identifier
 RingFax	string	\-	distinctive ring fax call identifier
 RingsBeforeAnswer	integer	\s-10\s+1	rings to wait before answering phone
+RingTimout	integer	\s-16000\s+1	timeout in ms after RING before reset
 RingVoice	string	\-	distinctive ring voice call identifier
 RTNHandlingMethod	string	\s-1Retransmit\s+1	RTN signal handling method	
 SendFaxCmd\(S1	string	\s-1bin/faxsend\s+1	fax transmit command script
@@ -1028,6 +1029,10 @@ The number of rings to wait before answering the phone.
 If this value is set to 0, then the phone will only
 be answered in response to an explicit answer command; see
 .IR faxanswer (${MANNUM1_8}).
+.TP
+.B RingTimeout
+If a ring is heard and the call is not answered, the time in
+ms to wait before reinitializing the modem for the next call.
 .TP
 .B RingVoice
 A modem status string that identifies that an incoming call is

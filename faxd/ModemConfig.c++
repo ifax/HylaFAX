@@ -174,6 +174,7 @@ static struct {
     u_int ModemConfig::* p;
     u_int		 def;
 } numbers[] = {
+{ "ringtimeout",		&ModemConfig::ringTimeout,	     6000 },
 { "percentgoodlines",		&ModemConfig::percentGoodLines,	     95 },
 { "maxconsecutivebadlines",	&ModemConfig::maxConsecutiveBadLines,5 },
 { "modemresetdelay",		&ModemConfig::resetDelay,	     2600 },

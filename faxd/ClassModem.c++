@@ -1184,10 +1184,10 @@ bool
 ClassModem::waitForRings(u_int n, CallType& type, CallerID& cinfo)
 {
     if (n > 0) {
-	time_t timeout = n*6;			// 6 second/ring
+	time_t timeout = n * (conf.ringTimeout/1000);	// 6 second/ring
 	time_t start = Sys::now();
 	do {
-	    switch (atResponse(rbuf, 6000)) {
+	    switch (atResponse(rbuf, conf.ringTimeout)) {
 	    case AT_OTHER:			// check distinctive ring
 		 if (streq(conf.ringData, rbuf))
 		    type = CALLTYPE_DATA;
