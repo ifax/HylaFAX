@@ -499,6 +499,10 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 	protoTrace("HDLC frame with bad control field %#x", frame[1]);
 	return (false);
     }
+    if (conf.class1ValidateV21Frames && !frame.checkCRC()) {
+	protoTrace("FCS error (calculated)");
+	return (false);
+    }
     frame.setOK(true);
     return (true);
 }

@@ -227,6 +227,7 @@ ModemConfig::setupConfig()
     class2RTFCC		= false;		// real-time fax comp. conv.
     class2UseHex	= false;		// historical behavior
     class1TCFRecvHack	= false;		// historical behavior
+    class1ValidateV21Frames = false;		// assume the modem does this
     setVolumeCmds("ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1");
     recvDataFormat	= DF_ALL;		// default to no transcoding
     rtnHandling         = FaxModem::RTN_RETRANSMIT; // retransmit until MCF/MPS
@@ -555,6 +556,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class2SendRTC = getBoolean(value);
     else if (streq(tag, "class1tcfrecvhack"))
 	class1TCFRecvHack = getBoolean(value);
+    else if (streq(tag, "class1validatev21frames"))
+	class1ValidateV21Frames = getBoolean(value);
     else if (streq(tag, "modemminspeed"))
 	minSpeed = getSpeed(value);
     else if (streq(tag, "recvdataformat"))

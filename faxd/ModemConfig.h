@@ -133,6 +133,7 @@ public:
     u_int	class1TCFMinRun;	// min length of zero run for TCF check
     u_int	class1TMConnectDelay;	// delay (ms) after +FTM CONNECT
     bool	class1TCFRecvHack;	// deliberately look for V.21 disconnect
+    bool	class1ValidateV21Frames;// check received FCS values in V.21
 					// for class 2 and 2.0:
     fxStr	class2Cmd;		// cmd for setting Class 2/2.0
     fxStr	class2DCCQueryCmd;	// cmd to query modem capabilities

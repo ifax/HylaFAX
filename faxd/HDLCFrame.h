@@ -46,8 +46,9 @@ public:
     u_char& operator[](int i) const;	// NB: no bounds checking
 
     bool moreFrames() const;		// more frames follow
-    bool isOK() const;		// frame has good FCS
-    void setOK(bool b);		// set frame FCS indicator
+    bool isOK() const;			// frame has good FCS
+    bool checkCRC() const;		// validate the CRC checksum
+    void setOK(bool b);			// set frame FCS indicator
     u_int getRawFCF() const;		// raw FCF in frame
     u_int getFCF() const;		// FCF &~ (FCF_SNDR|FCF_RCVR)
     const u_char* getFrameData() const;	// data following FCF
@@ -62,15 +63,17 @@ protected:
     u_char*	base;
     u_short	amountToGrowBy;
     u_short	frameOverhead;		// # bytes for leader & FCS
+    u_int	crc;			// CRC16-CCITT calculation
     bool	ok;			// FCS correct
 
     void addc(u_char c);		// make room & add a char to the buffer
     void grow(u_int amount);		// make more room in the buffer
+    void buildCRC(u_char c);		// calculate the CRC for the frame
 };
 
 inline void HDLCFrame::put(u_char c)
-    { if (next < end) *next++ = c; else addc(c); }
-inline void HDLCFrame::reset()			    { next = base; ok = false; }
+    { if (next < end) *next++ = c; else addc(c); buildCRC(c); }
+inline void HDLCFrame::reset()			    { next = base; ok = false; crc = 0xffff; }
 inline u_int HDLCFrame::getLength() const	    { return next - base; }
 
 inline HDLCFrame::operator u_char*()		    { return base; }
@@ -80,6 +83,7 @@ inline u_char& HDLCFrame::operator[](int i) const   { return base[i]; }
 inline bool HDLCFrame::moreFrames() const
     { return ((*this)[1]&0x08) == 0; }
 inline bool HDLCFrame::isOK() const		     { return ok; }
+inline bool HDLCFrame::checkCRC() const		     { return crc == 0x1d0f; }
 inline void HDLCFrame::setOK(bool b)		     { ok = b; }
 inline u_int HDLCFrame::getRawFCF() const	     { return (*this)[2]; }
 inline u_int HDLCFrame::getFCF() const		     { return (*this)[2]&0x7f; }
