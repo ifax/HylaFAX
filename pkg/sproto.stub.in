@@ -72,7 +72,7 @@ f man @MANDIR@/man1/tiff2fax.1=../man/sman.apps/tiff2fax.1m 0444 @SYSUID@ @SYSGI
 f man @MANDIR@/man1/tiffcheck.1=../man/sman.apps/tiffcheck.1m 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man1/tsitest.1=../man/sman.apps/tsitest.1m 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man1/wedged.1=../man/sman.apps/wedged.1m 0444 @SYSUID@ @SYSGID@
-f man @MANDIR@/man1/xferstats.1=../man/sman.apps/xferstats.1m 0444 @SYSUID@ @SYSGID@
+f man @MANDIR@/man1/xferfaxstats.1=../man/sman.apps/xferfaxstats.1m 0444 @SYSUID@ @SYSGID@
 d man @MANDIR@/man4 ? ? ?
 f man @MANDIR@/man4/pagesizes.4=../man/cman.files/pagesizes.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/typerules.4=../man/cman.files/typerules.4f 0444 @SYSUID@ @SYSGID@
@@ -90,7 +90,7 @@ f man @MANDIR@/man4/sendq.4=../man/sman.files/sendq.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/shutdown.4=../man/sman.files/shutdown.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/status.4=../man/sman.files/status.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/tsi.4=../man/sman.files/tsi.4f 0444 @SYSUID@ @SYSGID@
-f man @MANDIR@/man4/xferlog.4=../man/sman.files/xferlog.4f 0444 @SYSUID@ @SYSGID@
+f man @MANDIR@/man4/xferfaxlog.4=../man/sman.files/xferfaxlog.4f 0444 @SYSUID@ @SYSGID@
 d none @SBIN@ ? ? ?
 f none @SBIN@/faxmsg=../util/faxmsg 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/faxconfig=../util/faxconfig 0755 @SYSUID@ @SYSGID@
@@ -104,7 +104,7 @@ l none @SBIN@/faxanswer=@SBIN@/faxmsg
 l none @SBIN@/faxquit=@SBIN@/faxmsg
 f none @SBIN@/dialtest=../util/dialtest 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/typetest=../util/typetest 0755 @SYSUID@ @SYSGID@
-f none @SBIN@/xferstats=../util/xferstats.sh 0755 @SYSUID@ @SYSGID@
+f none @SBIN@/xferfaxstats=../util/xferfaxstats.sh 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/recvstats=../util/recvstats.sh 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/faxcron=../util/faxcron.sh 0755 @SYSUID@ @SYSGID@
 f none @SBIN@/faxq=../faxd/faxq 0755 @SYSUID@ @SYSGID@
@@ -177,7 +177,7 @@ d none @SPOOL@/dev 0755 @FAXUID@ @FAXGID@
 d none @SPOOL@/etc 0755 @FAXUID@ @FAXGID@
 f none @SPOOL@/etc/dpsprinter.ps=../util/dpsprinter.ps 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/etc/cover.templ=../util/cover.templ 0444 @SYSUID@ @SYSGID@
-f none @SPOOL@/etc/xferlog=../etc/xferlog 0644 @FAXUID@ @FAXGID@
+f none @SPOOL@/etc/xferfaxlog=../etc/xferfaxlog 0644 @FAXUID@ @FAXGID@
 f none @SPOOL@/etc/hosts=../etc/hosts 0600 @FAXUID@ @FAXGID@
 f none @SPOOL@/etc/dialrules=../etc/dialrules 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/etc/dialrules.sf-ba=../etc/dialrules.sf-ba 0444 @SYSUID@ @SYSGID@

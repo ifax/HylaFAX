@@ -92,7 +92,7 @@ MANSAPP=sman.apps/cqtest.1m	\
 	sman.apps/tiffcheck.1m	\
 	sman.apps/tsitest.1m	\
 	sman.apps/wedged.1m	\
-	sman.apps/xferstats.1m
+	sman.apps/xferfaxstats.1m
 MANSFILE=sman.files/hylafax.4f	\
 	sman.files/cid.4f	\
 	sman.files/config.4f	\
@@ -107,7 +107,7 @@ MANSFILE=sman.files/hylafax.4f	\
 	sman.files/shutdown.4f	\
 	sman.files/status.4f	\
 	sman.files/tsi.4f	\
-	sman.files/xferlog.4f
+	sman.files/xferfaxlog.4f
 TARGETS=cman.apps/Makefile cman.files/Makefile \
 	sman.apps/Makefile sman.files/Makefile
 
@@ -177,7 +177,7 @@ sman.apps/tiff2fax.1m::	${SRCDIR}/tiff2fax.1m;	${MANCVT}
 sman.apps/tiffcheck.1m::${SRCDIR}/tiffcheck.1m;	${MANCVT}
 sman.apps/tsitest.1m::	${SRCDIR}/tsitest.1m;	${MANCVT}
 sman.apps/wedged.1m::	${SRCDIR}/wedged.1m;	${MANCVT}
-sman.apps/xferstats.1m:: ${SRCDIR}/xferstats.1m; ${MANCVT}
+sman.apps/xferfaxstats.1m:: ${SRCDIR}/xferfaxstats.1m; ${MANCVT}
 sman.files/hylafax.4f::	${SRCDIR}/hylafax.4f;	${MANCVT}
 sman.files/cid.4f::	${SRCDIR}/cid.4f;	${MANCVT}
 sman.files/config.4f::	${SRCDIR}/config.4f;	${MANCVT}
@@ -192,7 +192,7 @@ sman.files/sendq.4f::	${SRCDIR}/sendq.4f;	${MANCVT}
 sman.files/shutdown.4f::${SRCDIR}/shutdown.4f;	${MANCVT}
 sman.files/status.4f::	${SRCDIR}/status.4f;	${MANCVT}
 sman.files/tsi.4f::	${SRCDIR}/tsi.4f;	${MANCVT}
-sman.files/xferlog.4f::	${SRCDIR}/xferlog.4f;	${MANCVT}
+sman.files/xferfaxlog.4f::	${SRCDIR}/xferfaxlog.4f;	${MANCVT}
 
 LDIRT=	${MANCAPP} ${MANCFILE} ${MANSAPP} ${MANSFILE}
 

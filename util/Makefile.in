@@ -164,7 +164,7 @@ install: installClient
 	${PUTSBIN} -idb ${PRODUCT}.sw.server \
 	    -ln ${SBIN}/faxmsg -O faxabort faxanswer faxquit
 	${PUTSBIN} -m 755 -O dialtest typetest
-	${PUTSBIN} -m 755 -src xferstats.sh -O xferstats
+	${PUTSBIN} -m 755 -src xferfaxstats.sh -O xferfaxstats
 	${PUTSBIN} -m 755 -src recvstats.sh -O recvstats
 	${PUTSBIN} -m 755 -idb "config(update)" -src faxcron.sh -O faxcron
 	${PUTSUPD} -m 755 -src ${SRCDIR}/ps2fax.gs.sh -O ps2fax.gs
@@ -189,4 +189,4 @@ install: installClient
 # These targets are created during the configuration procedure.
 #
 clobberconfig:
-	-${RM} -f pagesizes xferstats.sh recvstats.sh faxcron.sh
+	-${RM} -f pagesizes xferfaxstats.sh recvstats.sh faxcron.sh

@@ -205,7 +205,7 @@ protected:
     u_int	tracingLevel;		// server tracing control flags
     fxStr	logFacility;		// name of syslog facility for logging
     fxStr	userAccessFile;		// user access control file
-    fxStr	xferLogFile;		// log file for data transfers
+    fxStr	xferfaxLogFile;		// log file for data transfers
     fxStr	faxContact;		// email account for inquiries
     fxStr	systemType;		// system ID string returned for SYST
     fxStr	faxqFIFOName;		// faxq FIFO name
@@ -247,7 +247,7 @@ protected:
     jmp_buf	urgcatch;		// throw location for transfer interrupt
     off_t	file_size;		// size of file being transferred
     off_t	byte_count;		// amount of data currently sent
-    int		xferlog;		// open transfer log file
+    int		xferfaxlog;		// open transfer log file
     int		mode;			// data transfer mode
     int		form;			// data transfer format
     int		type;			// data transfer type

@@ -46,7 +46,7 @@ the caller's \s-1CSI\s+1 (default),
 the communication speed, and
 the communication data format.
 Statistics are read from the file
-.B ${SPOOL}/etc/xferlog
+.B ${SPOOL}/etc/xferfaxlog
 unless filenames are specified on the command line.
 .PP
 The following table is an example of the output from
@@ -130,11 +130,11 @@ is of the form ``MM/DD/YY HH:MM'' (the
 format string %D %H:%M).
 .SH FILES
 .nf
-.ta \w'${SPOOL}/etc/xferlog    'u
+.ta \w'${SPOOL}/etc/xferfaxlog    'u
 ${SPOOL}	spooling area
-${SPOOL}/etc/xferlog	default file from which to read statistics
+${SPOOL}/etc/xferfaxlog	default file from which to read statistics
 .fi
 .SH "SEE ALSO"
 .IR faxq (1M),
-.IR xferstats (1M),
+.IR xferfaxstats (1M),
 .IR log (4F)

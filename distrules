@@ -342,7 +342,7 @@ HYLAFAXSRC=\
 	util/recvstats.sh.in			\
 	util/tiff2fax.sh			\
 	util/wedged.sh				\
-	util/xferstats.sh.in			\
+	util/xferfaxstats.sh.in			\
 	util/typerules				\
 	util/cover.templ			\
 	util/dpsprinter.ps			\
@@ -639,9 +639,9 @@ MANPAGES=\
 	man/tsi.4f				\
 	man/tsitest.1m				\
 	man/typerules.4f			\
-	man/xferlog.4f				\
+	man/xferfaxlog.4f				\
 	man/wedged.1m				\
-	man/xferstats.1m			\
+	man/xferfaxstats.1m			\
     ${NULL}
 #
 # HTML-related files, including those not under RCS.

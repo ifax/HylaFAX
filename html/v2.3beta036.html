@@ -224,7 +224,7 @@ across the top of
   user name; it now checks it against the "<TT>fax</TT>" user's uid
 <LI>the <TT>faxrcvd</TT> and <TT>pollrcvd</TT>
   scripts are now passed the modem device id on the command line
-<LI>the <TT>etc/xferlog</TT> accounting now includes the job identification
+<LI>the <TT>etc/xferfaxlog</TT> accounting now includes the job identification
   number in each record
 
 <P>Class 2 driver:<P>
@@ -323,7 +323,7 @@ across the top of
   it used to just be <TT>-1</TT> (i.e. infinite)
 <LI>the set of ``trusted users'' is now specified in <TT>config.h</TT>
 <LI>the <TT>notify.awk</TT> script now gives more information in the Subject line
-<LI><TT>xferstats.sh</TT> and <TT>recvstats.sh</TT> handle the new accounting file record format
+<LI><TT>xferfaxstats.sh</TT> and <TT>recvstats.sh</TT> handle the new accounting file record format
 <LI>a bug in <TT>transcript.sh</TT> was fixed ("<TT>cut -f1</TT>" is not accepted on
   some systems; it must be "<TT>cut -f 1</TT>")
 <LI>a new program, <TT>tagtest</TT>, is used to test out the tag line support

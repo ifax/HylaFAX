@@ -480,7 +480,7 @@ for transmission, jobs received, and the general
 status of server processes.
 .PP
 The file
-.B etc/xferlog
+.B etc/xferfaxlog
 contains status information about all facsimile sent and
 received on a machine.
 This file is in a simple
@@ -489,10 +489,10 @@ format that is easy to manipulate with programs such as
 .IR awk (1),
 to generate accounting information.
 See
-.IR xferlog (4F)
+.IR xferfaxlog (4F)
 for information about the format.
 See
-.IR xferstats (1M)
+.IR xferfaxstats (1M)
 and
 .IR recvstats (1M)
 for example scripts that print summarized accounting information.
@@ -669,7 +669,7 @@ etc/cid	caller id access control list
 etc/config.<devid>	configuration data for <devid>
 etc/hosts	hosts that may submit jobs for transmission
 etc/tsi	fax machine receive access control list
-etc/xferlog	log of facsimile sent and received
+etc/xferfaxlog	log of facsimile sent and received
 info/*	data base of remote fax machine capabilities
 client/*	\s-1FIFO\s+1 special files created by client processes
 config/*	prototype configuration files used by \fIfaxaddmodem\fP
@@ -694,7 +694,7 @@ archive/*	database of archived jobs
 .IR notify (1M),
 .IR pollrcvd (1M),
 .IR recvstats (1M),
-.IR xferstats (1M),
+.IR xferfaxstats (1M),
 .IR archive (4F),
 .IR config (4F),
 .IR dialrules (4F),
@@ -706,7 +706,7 @@ archive/*	database of archived jobs
 .IR recvq (4F),
 .IR sendq (4F),
 .IR status (4F),
-.IR xferlog (4F),
+.IR xferfaxlog (4F),
 .PP
 Extensive documentation is available in online at
 http://www.vix.com/hylafax/.

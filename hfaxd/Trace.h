@@ -30,8 +30,8 @@
  */
 const int TRACE_SERVER		= 0x00001;	// server operation
 const int TRACE_PROTOCOL	= 0x00002;	// fax protocol
-const int TRACE_INXFERS		= 0x00004;	// inbound file xfers
-const int TRACE_OUTXFERS	= 0x00008;	// outbound file xfers
+const int TRACE_INXFERS		= 0x00004;	// inbound file xferfaxs
+const int TRACE_OUTXFERS	= 0x00008;	// outbound file xferfaxs
 const int TRACE_LOGIN		= 0x00010;	// all user logins
 const int TRACE_CONNECT		= 0x00020;	// network connections
 const int TRACE_FIFO		= 0x00040;	// FIFO messages

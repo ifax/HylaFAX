@@ -141,10 +141,10 @@ to filter out sensitive information such as calling card numbers.
 session log files are not publicly readable.)
 .SH FILES
 .nf
-.ta \w'${SPOOL}/etc/xferstats    'u
+.ta \w'${SPOOL}/etc/xferfaxstats    'u
 ${SPOOL}	spooling area
 ${SPOOL}/etc/lastrun	timestamp of last run
-${SBIN}/xferstats	for generating transmit statistics
+${SBIN}/xferfaxstats	for generating transmit statistics
 ${SBIN}/recvstats	for generating receive statistics
 /tmp/faxcronXXXX	temporary file for truncating session logs
 /tmp/faxlogXXXX	temporary file for logs of failed calls
@@ -154,6 +154,6 @@ ${SBIN}/recvstats	for generating receive statistics
 .IR faxq (1M),
 .IR faxgetty (1M),
 .IR faxsend (1M),
-.IR xferstats (1M),
+.IR xferfaxstats (1M),
 .IR recvstats (1M),
 .IR hylafax (4F)

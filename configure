@@ -4204,7 +4204,7 @@ EOF
 # etc/faxaddmodem.sh	script for adding/configuring a modem
 # etc/probemodem.sh	script for probing a modem for its capabilities
 # etc/hylafax		SysV-style init script for HylaFAX servers
-# util/xferstats.sh	script for transmit statistics accounting
+# util/xferfaxstats.sh	script for transmit statistics accounting
 # util/recvstats.sh	script for receive statistics accounting
 # util/faxcron.sh	script for cleaning up the spooling area (run from cron)
 # util/pagesizes	client page dimensions database (has default page size)
@@ -4245,7 +4245,7 @@ CONF_FILES="
     etc/probemodem.sh
     etc/hylafax
 
-    util/xferstats.sh
+    util/xferfaxstats.sh
     util/recvstats.sh
     util/faxcron.sh
 

@@ -72,20 +72,20 @@ HylaFAXServer::logTransfer(const char* direction,
     const SpoolDir& sd, const char* pathname, time_t start)
 {
     time_t now = Sys::now();
-    time_t xfertime = now - start;
-    if (xfertime == 0)
-	xfertime++;
+    time_t xferfaxtime = now - start;
+    if (xferfaxtime == 0)
+	xferfaxtime++;
     const char* filename = strrchr(pathname, '/');
     fxStr msg(fxStr::format("%.24s %lu %s %lu %s/%s %s %s\n"
 	, ctime(&now)
-	, (u_long) xfertime
+	, (u_long) xferfaxtime
 	, (const char*) remotehost
 	, (u_long) byte_count
 	, sd.pathname, filename ? filename+1 : pathname
 	, direction
 	, (const char*) the_user
     ));
-    (void) Sys::write(xferlog, msg, msg.length());
+    (void) Sys::write(xferfaxlog, msg, msg.length());
 }
 
 fxBool
@@ -124,7 +124,7 @@ HylaFAXServer::retrieveCmd(const char* name)
 			dataConnMsg(code), name, (u_long) file_size);
 		    if (sendData(fd, dout))
 			reply(226, "Transfer complete.");
-		    if (TRACE(OUTXFERS) && xferlog != -1)
+		    if (TRACE(OUTXFERS) && xferfaxlog != -1)
 			logTransfer("o", *sd, name, start_time);
 		    closeDataConn(dout);
 		}
@@ -214,7 +214,7 @@ HylaFAXServer::retrievePageCmd(const char* name)
 		    dataConnMsg(code), name, (u_long) file_size);
 		if (sendTIFFData(tif, dout))
 		    reply(226, "Transfer complete.");
-		if (TRACE(OUTXFERS) && xferlog != -1) {
+		if (TRACE(OUTXFERS) && xferfaxlog != -1) {
 		    struct stat sb;
 		    SpoolDir* sd = fileAccess(name, R_OK, sb);
 		    logTransfer("o", *sd, name, start_time);
@@ -494,7 +494,7 @@ HylaFAXServer::storeCmd(const char* name, const char* mode)
 		    file_size = -1;
 		    if (recvData(din, fout))
 			reply(226, "Transfer complete.");
-		    if (TRACE(INXFERS) && xferlog != -1)
+		    if (TRACE(INXFERS) && xferfaxlog != -1)
 			logTransfer("i", *sd, name, start_time);
 		    closeDataConn(din);
 		}
@@ -544,7 +544,7 @@ HylaFAXServer::storeUniqueCmd(fxBool isTemp)
 		if (recvData(din, fout))
 		    reply(226, "Transfer complete (FILE: %s).",
 			(const char*) filename);
-		if (TRACE(INXFERS) && xferlog != -1)
+		if (TRACE(INXFERS) && xferfaxlog != -1)
 		    logTransfer("i"
 			, *dirLookup(isTemp ? "/" FAX_TMPDIR : "/" FAX_DOCDIR)
 			, filename

@@ -128,11 +128,11 @@
 #define	FAX_CONFIG	FAX_ETCDIR "/config"
 
 /*
- * Send/recv logging information is written to an xferlog
+ * Send/recv logging information is written to an xferfaxlog
  * file; currently in an ASCII format designed for processing
  * by programs like awk and perl.
  */
-#define	FAX_XFERLOG	FAX_ETCDIR "/xferlog"
+#define	FAX_XFERLOG	FAX_ETCDIR "/xferfaxlog"
 
 /*
  * Client access to services on the server machine is controlled

@@ -172,7 +172,7 @@ HylaFAXServer::login(void)
 	);
     (void) umask(077);
     if (tracingLevel & (TRACE_INXFERS|TRACE_OUTXFERS))
-        xferlog = Sys::open(xferLogFile, O_WRONLY|O_APPEND|O_CREAT, 0600);
+        xferfaxlog = Sys::open(xferfaxLogFile, O_WRONLY|O_APPEND|O_CREAT, 0600);
 
     initDefaultJob();		// setup connection-related state
     dirSetup();			// initialize directory handling
@@ -245,8 +245,8 @@ HylaFAXServer::dologout(int status)
     }
     for (u_int i = 0, n = tempFiles.length(); i < n; i++)
 	(void) Sys::unlink(tempFiles[i]);
-    if (xferlog != -1)
-        Sys::close(xferlog);
+    if (xferfaxlog != -1)
+        Sys::close(xferfaxlog);
     if (clientFd != -1)
 	Sys::close(clientFd);
     if (clientFIFOName != "")

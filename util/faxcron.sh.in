@@ -43,7 +43,7 @@ AGERCV=7			# purge received facsimile after 2 days
 AGETMP=1			# purge orphaned temp files after 1 day
 FAXUSER=fax			# owner of log files
 LOGMODE=0644			# mode for log files
-XFERLOG=etc/xferlog		# HylaFAX xferlog file location
+XFERLOG=etc/xferfaxlog		# HylaFAX xferfaxlog file location
 LAST=etc/lastrun		# file where time+date of last run recorded
 
 cd @SPOOL@			# NB: everything below assumes this
@@ -92,12 +92,12 @@ test -z "$LASTRUN" && LASTRUN=`$CAT $LAST 2>/dev/null`
 
 echo "Facsimile transmitted since $LASTRUN:"
 echo ""
-$SBIN/xferstats -since "$LASTRUN" 
+$SBIN/xferfaxstats -since "$LASTRUN" 
 echo ""
 
 echo "Facsimile transmitted since last week:"
 echo ""
-$SBIN/xferstats -age 7
+$SBIN/xferfaxstats -age 7
 echo ""
 
 echo "Facsimile received since $LASTRUN:"
