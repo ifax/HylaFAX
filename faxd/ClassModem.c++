@@ -826,7 +826,8 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 	 * and a return status string parsed (and possibly compared to an
 	 * expected response).  An escape code terminates scanning,
 	 * with any pending string flushed to the modem before the
-	 * associated commands are carried out.
+	 * associated commands are carried out.  All commands are sent in
+	 * uppercase.
 	 */
 	u_int i = 0;
 	while (i < cmdlen) {
@@ -837,7 +838,9 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 		 */
 		if (conf.atCmdDelay)
 		    pause(conf.atCmdDelay);
-		if (!putModemLine(cmd.extract(pos, i-pos)))
+		fxStr command = cmd.extract(pos, i-pos);
+		command.raisecase();
+		if (!putModemLine(command))
 		    return (false);
 		pos = ++i;			// next segment starts after line break
 		if (r != AT_NOTHING) {
@@ -867,7 +870,9 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 			 * to the modem for all segments (i.e. \n is
 			 * translated to \r).
 			 */
-			if (!putModemLine(cmd.extract(pos, i-1-pos)))
+			fxStr command = cmd.extract(pos, i-1-pos);
+			command.raisecase();
+			if (!putModemLine(command))
 			    return (false);
 			// setup for expected response
 			resp = (r != AT_NOTHING ? r : AT_OK);
@@ -947,7 +952,9 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 	if (i > pos) {
 	    if (conf.atCmdDelay)
 		pause(conf.atCmdDelay);
-	    if (!putModemLine(cmd.extract(pos, i-pos)))
+	    fxStr command = cmd.extract(pos, i-pos);
+	    command.raisecase();
+	    if (!putModemLine(command))
 		return (false);
 	    respPending = true;
 	}
