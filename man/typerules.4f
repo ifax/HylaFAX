@@ -217,4 +217,4 @@ This would allow, for example, command line options to be selected
 based on file type.
 .SH "SEE ALSO"
 .IR sendfax (1),
-.IR hylafax (1)
+.IR hylafax-client (1)

@@ -154,4 +154,4 @@ is taken, so more-specific entries should be placed first.
 .SH "SEE ALSO"
 .IR sendfax (1),
 .IR hfaxd (1M),
-.IR hylafax (4F)
+.IR hylafax-server (4F)

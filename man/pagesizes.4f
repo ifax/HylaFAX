@@ -122,7 +122,7 @@ If the difference in dimensions of the closest match is greater than
 1/2 inch on each side, then no page entry is returned for a lookup by
 dimension.
 .SH "SEE ALSO"
-.IR hylafax (1),
+.IR hylafax-client (1),
 .IR faxmail (1),
 .IR faxstat (1),
 .IR sendfax (1),

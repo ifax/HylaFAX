@@ -48,7 +48,7 @@ SRCDIR	= ${DEPTH}/${TOPSRCDIR}/man
 # above.  The transformation is controlled by definitions in the
 # system-specific defs files.
 #
-MANCAPP=cman.apps/hylafax.1	\
+MANCAPP=cman.apps/hylafax-client.1	\
 	cman.apps/faxalter.1	\
 	cman.apps/faxcover.1	\
 	cman.apps/faxmail.1	\
@@ -95,7 +95,7 @@ MANSAPP=sman.apps/cqtest.1m	\
 	sman.apps/tsitest.1m	\
 	sman.apps/wedged.1m	\
 	sman.apps/xferfaxstats.1m
-MANSFILE=sman.files/hylafax.4f	\
+MANSFILE=sman.files/hylafax-server.4f	\
 	sman.files/cid.4f	\
 	sman.files/config.4f	\
 	sman.files/destctrls.4f	\
@@ -136,7 +136,7 @@ cman.files: ${_FORCE}; test -d $@ || ${MKDIR} $@
 sman.apps: ${_FORCE}; test -d $@ || ${MKDIR} $@
 sman.files: ${_FORCE}; test -d $@ || ${MKDIR} $@
 
-cman.apps/hylafax.1::	${SRCDIR}/hylafax.1;	${MANCVT}
+cman.apps/hylafax-client.1::	${SRCDIR}/hylafax-client.1;	${MANCVT}
 cman.apps/faxalter.1::	${SRCDIR}/faxalter.1;	${MANCVT}
 cman.apps/faxcover.1::	${SRCDIR}/faxcover.1;	${MANCVT}
 cman.apps/faxmail.1::	${SRCDIR}/faxmail.1;	${MANCVT}
@@ -182,7 +182,7 @@ sman.apps/tiffcheck.1m::${SRCDIR}/tiffcheck.1m;	${MANCVT}
 sman.apps/tsitest.1m::	${SRCDIR}/tsitest.1m;	${MANCVT}
 sman.apps/wedged.1m::	${SRCDIR}/wedged.1m;	${MANCVT}
 sman.apps/xferfaxstats.1m:: ${SRCDIR}/xferfaxstats.1m; ${MANCVT}
-sman.files/hylafax.4f::	${SRCDIR}/hylafax.4f;	${MANCVT}
+sman.files/hylafax-server.4f::	${SRCDIR}/hylafax-server.4f;	${MANCVT}
 sman.files/cid.4f::	${SRCDIR}/cid.4f;	${MANCVT}
 sman.files/config.4f::	${SRCDIR}/config.4f;	${MANCVT}
 sman.files/destctrls.4f:: ${SRCDIR}/destctrls.4f; ${MANCVT}

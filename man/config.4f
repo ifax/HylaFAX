@@ -2284,4 +2284,4 @@ must be placed outside this area of the file.
 .IR faxq (1M),
 .IR faxgetty (1M),
 .IR faxsend (1M),
-.IR hylafax (4F)
+.IR hylafax-server (4F)

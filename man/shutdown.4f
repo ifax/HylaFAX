@@ -88,4 +88,4 @@ supported by
 .IR hfaxd (1M).
 .SH "SEE ALSO"
 .IR hfaxd (1M),
-.IR hylafax (4F)
+.IR hylafax-server (4F)

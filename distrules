@@ -613,8 +613,8 @@ MANPAGES=\
 	man/faxwatch.1m				\
 	man/hfaxd.1m				\
 	man/hosts.hfaxd.4f			\
-	man/hylafax.1				\
-	man/hylafax.4f				\
+	man/hylafax-client.1			\
+	man/hylafax-server.4f			\
 	man/info.4f				\
 	man/log.4f				\
 	man/mkcover.1m				\

@@ -532,7 +532,7 @@ process as soon as possible.
 1 if the job should use a continuation cover page during
 retransmission, 0 otherwise.
 See 
-.IR hylafax (4F)
+.IR hylafax-server (4F)
 for a description of continuation cover pages.
 .SH "SEE ALSO"
 .IR sendfax (1),
