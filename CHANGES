@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.1.3 - Jun 27, 2002
 
+* adds prototype support for MultiTech ISI5634PCI (09 Jul 2002)
 * caused the wedged script to give exit status (06 Jul 2002)
 * allowed faxgetty to identify extended RING data as a RING (06 Jul 2002)
 * fixed a buffer overflow when receiving long scan lines (06 Jul 2002)

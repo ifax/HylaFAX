@@ -37,6 +37,8 @@
 # CONFIG:CLASS1:LT V.92 1.0 MT5634ZPX-PCI*:.*:.*: Manufacturer=MultiTech Model=MT5634ZPX-PCI-V92
 # CONFIG:CLASS1:LT V.90 1.0 MT5634ZBA*:.*:.*: Manufacturer=MultiTech Model=MT5634ZBA
 # CONFIG:CLASS1:LT V.92 1.0 MT5634ZBA*:.*:.*: Manufacturer=MultiTech Model=MT5634ZBA
+# CONFIG:CLASS1:LT V.90 1.0 ISI5634PCI*:.*:.*: Manufacturer=MultiTech Model=ISI5634PCI
+# CONFIG:CLASS1:LT V.92 1.0 ISI5634PCI*:.*:.*: Manufacturer=MultiTech Model=ISI5634PCI
 # CONFIG:CLASS1:AT&T 33.6 Data/14.4 Fax*:.*:.*: Manufacturer="AT&T" Model=Lucent
 # CONFIG:CLASS1:Zoom V.90 PCI*:.*:.*: Manufacturer=Zoom Model=2920
 # CONFIG:CLASS1:Zoom V.90 USB*:.*:.*: Manufacturer=Zoom Model=2980

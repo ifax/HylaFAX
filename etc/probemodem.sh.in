@@ -426,14 +426,14 @@ TryClass1Commands()
 
 TryCommonCommands()
 {
-    for i in 0 1 2 3; do
+    for i in 0 1 2 3 4 5 6 7 8 9; do
 	Try "ATI$i"
     done
 }
 
 common()
 {
-    echo "This looks like a Class $1 modem."
+    echo "This looks like a Class $SUPPORT modem."
     echo ""
     TryCommonCommands
 }
@@ -499,6 +499,7 @@ if [ "$RESULT" = "OK" ]; then
 	fi
     done;
     MODEMCLASSES=`echo $MODEMCLASSES | $SED -e 's/3/2.0/g' -e 's/4/1.0/g' -e 's/5/2.1/g' -e 's/ $//g'`
+    SUPPORT=`echo $SUPPORT | $SED -e 's/3/2.0/g' -e 's/4/1.0/g' -e 's/5/2.1/g' -e 's/ $//g'`
     if [ "$MODEMCLASSES" = "" ]; then
 	echo "The result of the AT+FCLASS=? command was:"
 	echo ""
@@ -507,6 +508,7 @@ if [ "$RESULT" = "OK" ]; then
 	echo "I don't figure that it's worthwhile to continue..."
 	exit
     else
+	common
 	for CLASS in $MODEMCLASSES; do
 	    case $CLASS in
 	    1)		class1;;

@@ -11,6 +11,7 @@
 #
 # CONFIG: CLASS2:"Multi-Tech Systems"-"MT5634ZPX-PCI"-*
 # CONFIG: CLASS2:"Multi-Tech Systems"-"MT5634ZBA"-*
+# CONFIG: CLASS2:*-"ISI5634PCI"-*
 #
 # BEGIN-SERVER
 # END-SERVER
