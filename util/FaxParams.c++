@@ -222,7 +222,7 @@ void FaxParams::copyBytes(u_char* pBits, int length)
     }
 
     // Don't allow the last byte to have the extend bit set.
-    m_bits[MAX_BITSTRING_BYTES] = m_bits[MAX_BITSTRING_BYTES] & 0xFE;
+    m_bits[MAX_BITSTRING_BYTES-1] = m_bits[MAX_BITSTRING_BYTES-1] & 0xFE;
 }
 
 /*
@@ -345,7 +345,7 @@ FaxParams& FaxParams::assign(const FaxParams& operand)
     }
 
     // Don't allow the last byte to have the extend bit set.
-    m_bits[MAX_BITSTRING_BYTES] = m_bits[MAX_BITSTRING_BYTES] & 0xFE;
+    m_bits[MAX_BITSTRING_BYTES-1] = m_bits[MAX_BITSTRING_BYTES-1] & 0xFE;
 
     return *this;
 }
