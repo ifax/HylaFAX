@@ -553,7 +553,7 @@ Class2Params::bitRate() const
 const char* Class2Params::dataFormatNames[4] = {
     "1-D MR",			// DF_1DMR
     "2-D MR",			// DF_2DMR
-    "2-D Uncompressed Mode",	// DF_2DUNCOMP
+    "2-D Uncompressed Mode",	// DF_2DMRUNCOMP
     "2-D MMR"			// DF_2DMMR
 };
 const char* Class2Params::dataFormatName() const

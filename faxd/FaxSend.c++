@@ -514,21 +514,28 @@ FaxServer::sendSetupParams1(TIFF* tif,
     uint32 g3opts;
     if (!TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts))
 	g3opts = 0;
-    if (g3opts & GROUP3OPT_2DENCODING) {
-	if (!clientInfo.getSupports2DEncoding() && !class2RTFCC) {
-	    emsg = "Document was encoded with 2DMR,"
-		   " but client does not support this data format";
-	    return (send_reformat);
-	}
-	if (!modem->supports2D()) {
-	    emsg = "Document was encoded with 2DMR,"
-		   " but modem does not support this data format";
-	    return (send_reformat);
-	}
-	params.df = DF_2DMR;
-    } else
-	params.df = DF_1DMR;
-
+    // RTFCC lets us ignore our file data format
+    if (class2RTFCC) {
+	params.df = clientCapabilities.df;
+	// even if RTFCC supported uncompressed mode (and it doesn't)
+	// it's likely that the remote was incorrect in telling us it does
+	if (params.df == DF_2DMRUNCOMP) params.df = DF_2DMR;
+    } else {
+	if (g3opts & GROUP3OPT_2DENCODING) {
+	    if (!clientInfo.getSupports2DEncoding()) {
+		emsg = "Document was encoded with 2DMR,"
+		    " but client does not support this data format";
+		return (send_reformat);
+	    }
+	    if (!modem->supports2D()) {
+		emsg = "Document was encoded with 2DMR,"
+		    " but modem does not support this data format";
+		return (send_reformat);
+	    }
+	    params.df = DF_2DMR;
+	} else
+	    params.df = DF_1DMR;
+    }
     uint32 w;
     (void) TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
     if (w > clientInfo.getMaxPageWidthInPixels()) {
@@ -640,7 +647,7 @@ FaxServer::sendSetupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo
 	traceProtocol("USE %s", params.pageWidthName());
 	traceProtocol("USE %s", params.pageLengthName());
 	traceProtocol("USE %s", params.verticalResName());
-	traceProtocol("USE %s image data", params.dataFormatName());
+	traceProtocol("USE %s", params.dataFormatName());
     } else if (status == send_reformat) {
 	traceServer(emsg);
     } else if (status == send_failed) {
