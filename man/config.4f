@@ -982,7 +982,7 @@ Specifies how to react to RTN signal, received from the remote;
 one of ``\s-1Retransmit\s+1'', ``\s-1Giveup\s+1'' and
 ``\s-1Ignore\s+1''. ``\s-1Retransmit\s+1'' assumes that the
 page is not sent succesfully if RTN signal has been received.
-Hylafax will made up to 2 additional attempts to send the page,
+HylaFAX will made up to 2 additional attempts to send the page,
 decreasing signalling rate and retraining. If RTN is still there,
 it will place up to 2 additional calls. So if the remote always respond with
 RTN, the page will be send 9 times. Although this algorithm comply with

@@ -1,6 +1,6 @@
 /* $Id$ */
 /* 
- * This file does not exist in the original Hylafax distribution.
+ * This file does not exist in the original HylaFAX distribution.
  * Created by Dmitry Bely, April 2000
  */
 /*
