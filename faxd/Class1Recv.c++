@@ -1146,8 +1146,9 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			} else
 			    gotprimary = false;
 		    }
-		    if (!gotprimary && !sendERR && useV34) {
-			emsg = "Failed to properly open V.34 primary channel.";
+		    if (!gotprimary && !sendERR) {
+			if (useV34) emsg = "Failed to properly open V.34 primary channel.";
+			else emsg = "Failed to properly detect high-speed data carrier.";
 			protoTrace(emsg);
 			if (conf.saveUnconfirmedPages && pagedataseen) {
 			    protoTrace("RECV keeping unconfirmed page");
