@@ -279,12 +279,20 @@ function qsort(a, l, r) {
 
 function getBR(params)
 {
-    return brNames[int(int(params) / 2) % 16];
+    if ((int(int(params) / 2097152) % 2) == 1) {
+	return brNames[int(int(params) / 8) % 16];
+    } else {
+	return brNames[int(int(params) / 2) % 8];
+    }
 }
 
 function getDF(params)
 {
-    return dfNames[int(int(params) / 512) % 4];
+    if ((int(int(params) / 2097152) % 2) == 1) {
+	return dfNames[int(int(params) / 16384) % 4];
+    } else {
+	return dfNames[int(int(params) / 512) % 4];
+    }
 }
 
 #
