@@ -49,7 +49,7 @@
 #SpeakerVolume:		off		# machine's are already too loud
 #RingsBeforeAnswer:	1		# answer on first ring
 #TagLineFont:		etc/lutRS18.pcf	# tag line font
-#TagLineFormat:		"From %%l|%c|Page %%p of %%t"
+#TagLineFormat:		"From %%l|%c|Page %%P of %%T"
 #MaxBadCalls:		5		# max 5 consecutive bad calls
 #PostScriptTimeout:	300		# 5 minute timeout on PostScript jobs
 #MaxSendPages:		25		# max pages in an outbound job

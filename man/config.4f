@@ -1151,9 +1151,11 @@ may be used as well as the following server-implemented codes:
 %%l	\fBLocalIdentifier\fP or canonicalized \fBFAXNumber\fP
 %%m	sender's electronic mail address
 %%n	canonicalized \fBFAXNumber\fP
-%%p	current page number
+%%p	current page number of session
+%%P	current page number of job
 %%s	sender's name
-%%t	total pages in job
+%%t	total pages in session
+%%T	total pages in job
 %%%	``%''
 .fi
 .sp .5
@@ -1164,7 +1166,10 @@ by separating text with ``|'' characters.
 For example, ``a|b|c'' would cause the tag line to be broken up into
 three equal-sized areas with the strings ``a'', ``b'', and ``c''
 centered within each region.
-The default tag line format string is ``From %%n|%c|Page %%p of %%t''.
+The default tag line format string is ``From %%n|%c|Page %%P of %%T''.
+The differences between the %%p or %%P and the %%t or %%T options are noticed
+when a fax job is retried after an incomplete attempt and only the previously
+unsent pages are then queued in a successive session.
 See also
 .BR TagLineFont .
 .TP

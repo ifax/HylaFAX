@@ -58,6 +58,7 @@ private:
     FaxServer&	server;		// server for getting to device
 // transmit tag line support
     u_int	pageNumber;	// current transmit page number
+    u_int	pageNumberOfJob;// current transmit page number of Job
     FaxFont*	tagLineFont;	// font for imaging tag line
     u_int	tagLineSlop;	// extra space reserved for tag line re-encoding
     fxStr	tagLine;	// tag line formatted with transmit time

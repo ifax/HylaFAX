@@ -71,6 +71,8 @@ FaxModem::setupTagLine(const FaxRequest& req, const fxStr& tagLineFmt)
 	case 's': insert(tagLine, l, req.sender); break;
 	case 't': insert(tagLine, l,
 			fxStr((int)(req.totpages-req.npages), "%u")); break;
+	case 'T': insert(tagLine, l,
+			fxStr((int)(req.totpages), "%u")); break;
 	case '%': tagLine.remove(l); break;
 	default:  l += 2; break;
 	}
@@ -157,6 +159,8 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
 	    break;
 	if (tag[l+1] == 'p')
 	    insert(tag, l, fxStr((int) pageNumber, "%d"));
+	if (tag[l+1] == 'P')
+	    insert(tag, l, fxStr((int) pageNumberOfJob, "%d"));
 	else
 	    l += 2;
     }

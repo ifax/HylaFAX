@@ -66,6 +66,7 @@ FaxModem::sendSetup(FaxRequest& req, const Class2Params&, fxStr&)
 {
     minsp = fxmax((u_int) req.minsp, conf.minSpeed);
     pageNumber = 1;
+    pageNumberOfJob = req.npages + 1;
     if (req.desiredtl == 0)
 	setupTagLine(req, conf.tagLineFmt);
     else
@@ -631,6 +632,7 @@ void
 FaxModem::countPage()
 {
     pageNumber++;
+    pageNumberOfJob++;
 }
 
 void
