@@ -455,8 +455,10 @@ Class2Modem::sendRTC(Class2Params params)
     static const u_char RTC2D[10] =
 	{ 0x00,0x18,0x00,0x03,0x60,0x00,0x0C,0x80,0x01,0x30 };
     // T.6 does not allow zero-fill until after EOFB and not before.
-    const u_char EOFB[3] =
-	{ ((0x0800 >> zeros) & 0xFF),((0x8008 >> zeros) & 0xFF),(0x80 >> zeros) };
+    u_char EOFB[3];
+	EOFB[0] = (0x0800 >> zeros) & 0xFF;
+	EOFB[1] = (0x8008 >> zeros) & 0xFF;
+	EOFB[2] = 0x80 >> zeros;
     if (params.df == DF_2DMMR) {
 	protoTrace("SEND EOFB");
         return putModemDLEData(EOFB, sizeof (EOFB), rtcRev, getDataTimeout());

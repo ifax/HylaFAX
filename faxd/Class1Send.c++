@@ -810,7 +810,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	    free(firstframe);
 	    HDLCFrame rcpframe(5);
 	    rcpframe.put(0xff); rcpframe.put(0xc0); rcpframe.put(0x61); rcpframe.put(0x96); rcpframe.put(0xd3);
-	    for (u_short i = 0; i < 3; i++) {		// three RCP frames
+	    for (u_short k = 0; k < 3; k++) {		// three RCP frames
 		for (u_short j = 0; j < 5; j++)
 		    blockData(rcpframe[j], false);
 		traceHDLCFrame("<--", rcpframe);
@@ -949,18 +949,20 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			signalRcvd = pprframe.getFCF();
 			break;
 		    case FCF_PPR:
-			pprcnt++;
-			// update ppr
-			for (u_int i = 3; i < (pprframe.getLength() - (conf.class1FrameOverhead - 2)); i++) {
-			    ppr[i-3] = pprframe[i];
-			}
-			badframesbefore = badframes;
-			badframes = 0;
-			for (u_int i = 0; i < frameNumber; i++) {
-			    u_int pprpos, pprval;
-			    for (pprpos = 0, pprval = i; pprval >= 8; pprval -= 8) pprpos++;
-			    if (ppr[pprpos] & frameRev[1 << pprval]) {
-				badframes++;
+			{
+			    pprcnt++;
+			    // update ppr
+			    for (u_int i = 3; i < (pprframe.getLength() - (conf.class1FrameOverhead - 2)); i++) {
+				ppr[i-3] = pprframe[i];
+			    }
+			    badframesbefore = badframes;
+			    badframes = 0;
+			    for (u_int j = 0; j < frameNumber; j++) {
+				u_int pprpos, pprval;
+				for (pprpos = 0, pprval = j; pprval >= 8; pprval -= 8) pprpos++;
+				if (ppr[pprpos] & frameRev[1 << pprval]) {
+				    badframes++;
+				}
 			    }
 			}
 			if (pprcnt == 4) {
@@ -1182,8 +1184,10 @@ Class1Modem::sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, fxStr& ems
     static const u_char RTC2D[10+20] =
 	{ 0x00,0x18,0x00,0x03,0x60,0x00,0x0C,0x80,0x01,0x30 };
     // T.6 does not allow zero-fill until after EOFB and not before.
-    const u_char EOFB[3+20] =
-	{ ((0x0800 >> zeros) & 0xFF),((0x8008 >> zeros) & 0xFF),(0x80 >> zeros) };
+    u_char EOFB[3+20];
+	EOFB[0] = (0x0800 >> zeros) & 0xFF;
+	EOFB[1] = (0x8008 >> zeros) & 0xFF;
+	EOFB[2] = 0x80 >> zeros;
     if (params.df == DF_2DMMR) {
 	protoTrace("SEND EOFB");
 	return sendClass1ECMData(EOFB, sizeof(EOFB), rtcRev, true, ppmcmd, emsg);
