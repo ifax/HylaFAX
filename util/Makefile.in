@@ -72,6 +72,7 @@ C++FILES=Array.c++ \
 	TextFormat.c++ \
 	\
 	Class2Params.c++ \
+	FaxParams.c++ \
 	FaxClient.c++ \
 	FaxConfig.c++ \
 	FaxRecvInfo.c++ \
@@ -87,6 +88,7 @@ C++FILES=Array.c++ \
 	\
 	SNPPClient.c++ \
 	SNPPJob.c++
+	
 CFILES= cvtfacility.c fxassert.c
 TARGETS=libfaxutil.${DSO} faxmsg faxmodem faxadduser faxconfig faxdeluser \
     faxstate faxinfo faxwatch textfmt dialtest typetest tiffcheck

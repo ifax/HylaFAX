@@ -29,6 +29,7 @@
  * Raw HDLC Frame Interface.
  */
 #include "Types.h"
+#include "FaxParams.h"
 
 class HDLCFrame {
 public:
@@ -56,8 +57,7 @@ public:
     const u_char* getFrameData() const;	// data following FCF
     u_int getFrameDataLength() const;	// length of data - (FCF+FCS)
     u_int getDataWord() const;		// first 0-4 bytes of data
-    u_int getDIS() const;		// DIS/DCS data
-    u_int getXINFO() const;		// extended info after DIS/DCS
+    FaxParams getDIS() const;	// DIS/DCS data
 protected:
     u_char	buf[2048];		// large enough for TCF at 9600 baud
     u_char*	next;

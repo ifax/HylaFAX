@@ -1,5 +1,9 @@
 #	$Id$	
 
+Changelog for HylaFAX
+
+* add FaxParams class and some utilization of it
+
 Changelog for HylaFAX 4.2.1 - Jan 11, 2005
 
 * fix CAN-2004-1182: hfaxd client/server authentication

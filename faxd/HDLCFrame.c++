@@ -128,23 +128,9 @@ HDLCFrame::getDataWord() const
     return w;
 }
 
-u_int
+FaxParams
 HDLCFrame::getDIS() const
 {
-    u_int n = getFrameDataLength();
-    u_int dis = (n >= 1) ? (*this)[3] : 0;
-    dis <<= 8; if (n >= 2) dis |= (*this)[4];
-    dis <<= 8; if (n >= 3) dis |= (*this)[5];
+    FaxParams dis(base+3, getFrameDataLength()-1);
     return dis;
-}
-
-u_int
-HDLCFrame::getXINFO() const
-{
-    u_int n = getFrameDataLength();
-    u_int xinfo = (n >= 4 && ((*this)[5] & 0x1)) ? (*this)[6] : 0;
-    xinfo <<= 8; if (n >= 5 && (xinfo & 0x100)) xinfo |= (*this)[7];
-    xinfo <<= 8; if (n >= 6 && (xinfo & 0x100)) xinfo |= (*this)[8];
-    xinfo <<= 8; if (n >= 7 && (xinfo & 0x100)) xinfo |= (*this)[9];
-    return xinfo;
 }

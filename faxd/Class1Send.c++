@@ -160,9 +160,8 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
 		    { fxStr csi; recvCSI(decodeTSI(csi, frame)); }
 		    break;
 		case FCF_DIS:
-		    dis = frame.getDIS();
-		    xinfo = frame.getXINFO();
-		    params.setFromDIS(dis, xinfo);
+		    dis_caps = frame.getDIS();
+		    params.setFromDIS(dis_caps);
 		    curcap = NULL;			// force initial setup
 		    if (useV34 && params.ec == EC_DISABLE) {
 			protoTrace("V.34-Fax session, but DIS signal contains no ECM bit; ECM forced.");
@@ -174,8 +173,8 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
 	    if (frame.isOK()) {
 		switch (frame.getRawFCF()) {
 		case FCF_DIS:
-		    hasDoc = (dis & DIS_T4XMTR) != 0;// documents to poll?
-		    if ((dis&DIS_T4RCVR) == 0) {
+		    hasDoc = dis_caps.isBitEnabled(FaxParams::BITNUM_T4XMTR);// documents to poll?
+		    if (!dis_caps.isBitEnabled(FaxParams::BITNUM_T4RCVR)) {
 			emsg = "Remote has no T.4 receiver capability";
 			protoTrace(emsg);
 		    	if (! hasDoc)	// don't die if we can poll
@@ -225,11 +224,11 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
 void
 Class1Modem::sendSetupPhaseB(const fxStr& p, const fxStr& s)
 {
-    if (p != fxStr::null && xinfo&DIS_PWD)
+    if (p != fxStr::null && dis_caps.isBitEnabled(FaxParams::BITNUM_PWD))
 	encodePWD(pwd, p);
     else
 	pwd = fxStr::null;
-    if (s != fxStr::null && xinfo&DIS_SUB)
+    if (s != fxStr::null && dis_caps.isBitEnabled(FaxParams::BITNUM_SUB))
 	encodePWD(sub, s);
     else
 	sub = fxStr::null;
@@ -529,7 +528,7 @@ Class1Modem::sendTCF(const Class2Params& params, u_int ms)
  *     DCS	digital command signal
  */
 bool
-Class1Modem::sendPrologue(u_int dcs, u_int dcs_xinfo, const fxStr& tsi)
+Class1Modem::sendPrologue(FaxParams& dcs_caps, const fxStr& tsi)
 {
     /*
      * T.31 8.3.5 requires the DCE to respond CONNECT or result OK within
@@ -562,7 +561,7 @@ Class1Modem::sendPrologue(u_int dcs, u_int dcs_xinfo, const fxStr& tsi)
     if (!frameSent)
 	return (false);
     startTimeout(7550);
-    frameSent = sendFrame(FCF_DCS|FCF_SNDR, dcs, dcs_xinfo);
+    frameSent = sendFrame(FCF_DCS|FCF_SNDR, dcs_caps);
     stopTimeout("sending DCS frame");
     return (frameSent);
 }
@@ -571,30 +570,38 @@ Class1Modem::sendPrologue(u_int dcs, u_int dcs_xinfo, const fxStr& tsi)
  * Return whether or not the previously received DIS indicates
  * the remote side is capable of the T.30 DCS signalling rate.
  */
-static bool
-isCapable(u_int sr, u_int dis)
+bool
+Class1Modem::isCapable(u_int sr, FaxParams& dis)
 {
-    dis = (dis & DIS_SIGRATE) >> 10;
     switch (sr) {
     case DCSSIGRATE_2400V27:
-	if (dis == DISSIGRATE_V27FB)
+        if (!dis.isBitEnabled(FaxParams::BITNUM_SIGRATE_11) &&
+            !dis.isBitEnabled(FaxParams::BITNUM_SIGRATE_12) &&
+            !dis.isBitEnabled(FaxParams::BITNUM_SIGRATE_13) &&
+            !dis.isBitEnabled(FaxParams::BITNUM_SIGRATE_14))
 	    return (true);
 	/* fall thru... */
     case DCSSIGRATE_4800V27:
-	return ((dis & DISSIGRATE_V27) != 0);
+	return dis.isBitEnabled(FaxParams::BITNUM_SIGRATE_12);
     case DCSSIGRATE_9600V29:
     case DCSSIGRATE_7200V29:
-	return ((dis & DISSIGRATE_V29) != 0);
+	return dis.isBitEnabled(FaxParams::BITNUM_SIGRATE_11);
     case DCSSIGRATE_14400V33:
     case DCSSIGRATE_12000V33:
 	// post-1994 revisions of T.30 indicate that V.33 should
 	// only be used when it is specifically permitted by DIS
-	return (dis == DISSIGRATE_V33);
+	return(dis.isBitEnabled(FaxParams::BITNUM_SIGRATE_11) &&
+	    dis.isBitEnabled(FaxParams::BITNUM_SIGRATE_12) &&
+	    dis.isBitEnabled(FaxParams::BITNUM_SIGRATE_13) &&
+	    !dis.isBitEnabled(FaxParams::BITNUM_SIGRATE_14));
     case DCSSIGRATE_14400V17:
     case DCSSIGRATE_12000V17:
     case DCSSIGRATE_9600V17:
     case DCSSIGRATE_7200V17:
-	return (dis == DISSIGRATE_V17);
+	return(dis.isBitEnabled(FaxParams::BITNUM_SIGRATE_11) &&
+	    dis.isBitEnabled(FaxParams::BITNUM_SIGRATE_12) &&
+	    !dis.isBitEnabled(FaxParams::BITNUM_SIGRATE_13) &&
+	    dis.isBitEnabled(FaxParams::BITNUM_SIGRATE_14));
     }
     return (false);
 }
@@ -611,11 +618,11 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	if (useV34) hadV34Trouble = true;	// sadly, some receivers will do this with V.34
 	return (false);
     }
-    u_int dcs = params.getDCS();		// NB: 24-bit DCS and
-    u_int dcs_xinfo = params.getXINFO();	//     32-bit extension
+    FaxParams dcs_caps = params.getDCS();
     // we should respect the frame-size preference indication by the remote (DIS_FRAMESIZE)
-    if (params.ec != EC_DISABLE && (conf.class1ECMFrameSize == 64 || (dis & DIS_FRAMESIZE)) && dcs_xinfo) {
-	dcs_xinfo |= DCSFRAME_64;		// we don't want to add this bit if not using ECM
+    if (params.ec != EC_DISABLE && 
+	(conf.class1ECMFrameSize == 64 || dis_caps.isBitEnabled(FaxParams::BITNUM_FRAMESIZE))) {
+	dcs_caps.setBit(FaxParams::BITNUM_FRAMESIZE, true); // we don't want to add this bit if not using ECM
 	frameSize = 64;
     } else
 	frameSize = 256;
@@ -662,7 +669,10 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	     * latter is never used.
 	     */
 	    params.br = curcap->br;
-	    dcs = (dcs &~ DCS_SIGRATE) | curcap->sr;
+	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_11, curcap->sr&DCSSIGRATE_9600V29);
+	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_12, curcap->sr&DCSSIGRATE_4800V27);
+	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_13, curcap->sr&DCSSIGRATE_14400V33);
+	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_14, curcap->sr&DCSSIGRATE_14400V17);
 	    /*
 	     * Set the number of train attemps on the same
 	     * modulation; having set it to 1 we immediately drop
@@ -677,14 +687,17 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	     * T.30 Table 2 Note 33 says that when V.34-fax is used
 	     * DCS bits 11-14 should be set to zero.
 	     */
-	    dcs = (dcs &~ DCS_SIGRATE);
+	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_11, false);
+	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_12, false);
+	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_13, false);
+	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_14, false);
 	}
 	int t = 1;
 	do {
 	    if (!useV34) protoTrace("SEND training at %s %s",
 		modulationNames[curcap->mod],
 		Class2Params::bitRateNames[curcap->br]);
-	    if (!sendPrologue(dcs, dcs_xinfo, lid)) {
+	    if (!sendPrologue(dcs_caps, lid)) {
 		if (abortRequested())
 		    goto done;
 		protoTrace("Error sending T.30 prologue frames");
@@ -759,12 +772,11 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 		case FCF_FTT:		// failure to train, retry
 		    break;
 		case FCF_DIS:		// new capabilities, maybe
-		    { u_int newDIS = frame.getDIS();
-		      if (newDIS != dis) {
+		    { FaxParams newDIS = frame.getDIS();
+		      if (newDIS != dis_caps) {
 			/*
-			dis = newDIS;
-			xinfo = frame.getXINFO();
-			params.setFromDIS(dis, xinfo);
+			dis_caps = newDIS;
+			params.setFromDIS(dis_caps);
 			 *
 			 * The above code was commented because to
 			 * use the newDIS we need to do more work like
@@ -826,7 +838,7 @@ Class1Modem::dropToNextBR(Class2Params& params)
 	     * it already without success.
 	     */
 	    while (curcap->br == params.br) {
-		if (isCapable(curcap->sr, dis) && !(oldcap->mod == V29 && curcap->mod == V17))
+		if (isCapable(curcap->sr, dis_caps) && !(oldcap->mod == V29 && curcap->mod == V17))
 		    return (true);
 		curcap--;
 	    }
@@ -855,7 +867,7 @@ Class1Modem::raiseToNextBR(Class2Params& params)
 	if (curcap) {
 	    // hunt for compatibility with remote at this baud rate
 	    do {
-		if (isCapable(curcap->sr, dis))
+		if (isCapable(curcap->sr, dis_caps))
 		    return (true);
 		curcap--;
 	    } while (curcap->br == params.br);

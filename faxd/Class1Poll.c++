@@ -39,18 +39,17 @@ bool
 Class1Modem::pollBegin(const fxStr& cig0,
     const fxStr& sep0, const fxStr& pwd0, fxStr& emsg)
 {
-    u_int dtc = (modemDIS() &~ DIS_XTNDFIELD);
-    u_int dtc_xinfo = 0;
+    FaxParams dtc = modemDIS();
     u_int send = 0;
     fxStr cig;
     encodeTSI(cig, cig0);
     fxStr sep;
-    if (sep0 != fxStr::null && (xinfo&DIS_SEP)) {
+    if (sep0 != fxStr::null && (dis_caps.isBitEnabled(FaxParams::BITNUM_SEP))) {
 	encodePWD(sep, sep0);
 	send |= DIS_SEP;
     }
     fxStr pwd;
-    if (pwd0 != fxStr::null && (xinfo&DIS_PWD)) {
+    if (pwd0 != fxStr::null && (dis_caps.isBitEnabled(FaxParams::BITNUM_PWD))) {
 	encodePWD(pwd, pwd0);
 	send |= DIS_PWD;
     }
@@ -66,6 +65,6 @@ Class1Modem::pollBegin(const fxStr& cig0,
 	    (send&DIS_SEP ? FCF_SEP : 0), sep,
 	    0, fxStr::null,
 	    FCF_CIG, cig,
-	    FCF_DTC, dtc, dtc_xinfo,
+	    FCF_DTC, dtc,
 	    conf.t1Timer, emsg);
 }

@@ -30,8 +30,11 @@
  */
 #include "class2.h"
 #include "Str.h"
+#include "FaxParams.h"
 
-struct Class2Params {
+class Class2Params 
+  : public FaxParams
+{
 private:
 // XXX these exist solely for FaxModem
     static const char* pageWidthNames[8];
@@ -76,10 +79,11 @@ public:
     int operator!=(const Class2Params&) const;
 
     fxStr cmd(bool class2UseHex, bool ecm20 = false) const;	// format AT+F cmd string
+    void setFromDIS(FaxParams& dis);
     void setFromDIS(u_int dis, u_int xinfo = 0);
+    void setFromDCS(FaxParams& dcs);
     void setFromDCS(u_int dcs, u_int xinfo = 0);
-    u_int getDCS() const;
-    u_int getXINFO() const;
+    FaxParams getDCS() const;
     bool is2D() const;
 
     u_int transferSize(u_int ms) const;

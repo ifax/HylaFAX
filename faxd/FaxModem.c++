@@ -545,39 +545,12 @@ FaxModem::supportsPageLength(u_int l) const
  * Return modems best capabilities for setting up
  * the initial T.30 DIS when receiving data.
  */
-u_int
+FaxParams
 FaxModem::modemDIS() const
 {
-    return DIS_T4RCVR
-	  | ((modemParams.vr & VR_FINE) ? DIS_7MMVRES : 0)	// not getVRes(), DIS only contains partial VR data
-	  | Class2Params::brDISTab[getBestSignallingRate()]
-	  | Class2Params::wdDISTab[getBestPageWidth()]
-	  | Class2Params::lnDISTab[getBestPageWidth()]
-	  | Class2Params::dfDISTab[getBestDataFormat()]
-	  | Class2Params::stDISTab[getBestScanlineTime()]
-	  ;
-}
+    FaxParams dis(modemParams);
 
-/*
- * Return the 32-bit extended capabilities for the
- * modem for setting up the initial T.30 DIS when
- * receiving data.
- */
-u_int
-FaxModem::modemXINFO() const
-{
-    return
-	  ((modemParams.df & BIT(DF_2DMRUNCOMP)) ? DIS_2DUNCOMP : 0)
-	| ((modemParams.df & BIT(DF_2DMMR)) ? DIS_G4COMP : 0)
-	| ((modemParams.ec & BIT(EC_ENABLE256)) ? DIS_ECMODE : 0)
-	| ((modemParams.vr & VR_R8) ? DIS_200X400 | DIS_METRES : 0)
-	| ((modemParams.vr & VR_R16) ? DIS_400X400 | DIS_METRES : 0)
-	| ((modemParams.vr & VR_200X100) ? DIS_INCHRES : 0)
-	| ((modemParams.vr & VR_200X200) ? DIS_INCHRES : 0)
-	| ((modemParams.vr & VR_200X400) ? DIS_200X400 | DIS_INCHRES : 0)
-	| ((modemParams.vr & VR_300X300) ? DIS_300X300 | DIS_INCHRES : 0)
-	| ((modemParams.vr & VR_R16) ? DIS_400X400 | DIS_INCHRES : 0)	// avoiding VR_400X400
-	;
+    return dis;
 }
 
 /*

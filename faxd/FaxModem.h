@@ -34,6 +34,7 @@
 #include "G3Decoder.h"
 #include "FaxSendStatus.h"
 #include "NSF.h"
+#include "FaxParams.h"
 
 class FaxMachineInfo;
 class fxStackBuffer;
@@ -194,8 +195,7 @@ public:
     u_int getBestPageWidth() const;
     u_int getBestPageLength() const;
     u_int getBestECM() const;
-    u_int modemDIS() const;
-    u_int modemXINFO() const;
+    FaxParams modemDIS() const;
 
     /*
      * Fax send protocol.  The expected sequence is:

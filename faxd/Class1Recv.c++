@@ -39,6 +39,7 @@
 #include "t.30.h"
 #include "Sys.h"
 #include "config.h"
+#include "FaxParams.h"
 
 /*
  * Tell the modem to answer the phone.  We override
@@ -98,12 +99,14 @@ Class1Modem::recvBegin(fxStr& emsg)
 
     if (useV34 && !gotCTRL) waitForDCEChannel(true);	// expect control channel
 
+    FaxParams dis = modemDIS();
+
     return FaxModem::recvBegin(emsg) && recvIdentification(
 	0, fxStr::null,
 	0, fxStr::null,
 	FCF_NSF|FCF_RCVR, nsf,
 	FCF_CSI|FCF_RCVR, lid,
-	FCF_DIS|FCF_RCVR, modemDIS(), modemXINFO(),
+	FCF_DIS|FCF_RCVR, dis,
 	conf.class1RecvIdentTimer, emsg);
 }
 
@@ -134,7 +137,7 @@ Class1Modem::recvIdentification(
     u_int f2, const fxStr& addr,
     u_int f3, const fxStr& nsf,
     u_int f4, const fxStr& id,
-    u_int f5, u_int dics, u_int xinfo,
+    u_int f5, FaxParams& dics,
     u_int timer, fxStr& emsg)
 {
     u_int t1 = howmany(timer, 1000);		// in seconds
@@ -184,7 +187,7 @@ Class1Modem::recvIdentification(
 	    }
 	    if (framesSent) {
 		startTimeout(7550);
-		framesSent = sendFrame(f5, dics, xinfo);
+		framesSent = sendFrame(f5, dics);
 		stopTimeout("sending DIS/DCS frame");
 	    }
 	}
@@ -408,13 +411,13 @@ Class1Modem::recvTraining()
 void
 Class1Modem::processDCSFrame(const HDLCFrame& frame)
 {
-    u_int dcs = frame.getDIS();			// NB: really DCS
-    u_int xinfo = frame.getXINFO();
-    if (xinfo & DCSFRAME_64) frameSize = 64;
+    FaxParams dcs_caps = frame.getDIS();			// NB: really DCS
+
+    if (dcs_caps.isBitEnabled(FaxParams::BITNUM_FRAMESIZE)) frameSize = 64;
     else frameSize = 256;
-    params.setFromDCS(dcs, xinfo);
+    params.setFromDCS(dcs_caps);
     if (useV34) params.br = primaryV34Rate-1;
-    else curcap = findSRCapability(dcs&DCS_SIGRATE, recvCaps);
+    else curcap = findSRCapability((dcs_caps.getByte(1)<<8)&DCS_SIGRATE, recvCaps);
     setDataTimeout(60, params.br);
     recvDCS(params);				// announce session params
 }

@@ -1115,26 +1115,21 @@ Class1Modem::sendFrame(u_char fcf, bool lastFrame)
  * Send a frame with DCS/DIS.
  */
 bool
-Class1Modem::sendFrame(u_char fcf, u_int dcs, u_int xinfo, bool lastFrame)
+Class1Modem::sendFrame(u_char fcf, FaxParams& dcs_caps, bool lastFrame)
 {
     HDLCFrame frame(conf.class1FrameOverhead);
     frame.put(0xff);
     frame.put(lastFrame ? 0xc8 : 0xc0);
     frame.put(fcf);
-    frame.put(dcs>>16);
-    frame.put(dcs>>8);
-    frame.put(dcs);
-    if (dcs&(1<<0)) {			// send any optional bytes
-	frame.put(xinfo>>24);
-	if (xinfo&(1<<24)) {
-	    frame.put(xinfo>>16);
-	    if (xinfo&(1<<16)) {
-		frame.put(xinfo>>8);
-		if (xinfo&(1<<8))
-		    frame.put(xinfo);
-	    }
-	}
+
+    int curByte = 0;
+    //add dcs bytes an any optional bytes
+    frame.put(dcs_caps.getByte(curByte));
+    while (dcs_caps.hasNextByte(curByte)) {
+        curByte += 1;
+        frame.put(dcs_caps.getByte(curByte));
     }
+
     return (sendRawFrame(frame));
 }
 
@@ -1180,7 +1175,7 @@ Class1Modem::transmitFrame(u_char fcf, bool lastFrame)
 }
 
 bool
-Class1Modem::transmitFrame(u_char fcf, u_int dcs, u_int xinfo, bool lastFrame)
+Class1Modem::transmitFrame(u_char fcf, FaxParams& dcs_caps, bool lastFrame)
 {
     /*
      * The T.30 spec says no frame can take more than 3 seconds
@@ -1191,7 +1186,7 @@ Class1Modem::transmitFrame(u_char fcf, u_int dcs, u_int xinfo, bool lastFrame)
     bool frameSent =
 	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
 	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
-	sendFrame(fcf, dcs, xinfo, lastFrame);
+	sendFrame(fcf, dcs_caps, lastFrame);
     stopTimeout("sending HDLC frame");
     return (frameSent);
 }
@@ -1480,33 +1475,29 @@ Class1Modem::findBRCapability(u_short br, const Class1Cap caps[])
 }
 
 /*
- * Override the DIS signalling rate capabilities because
- * they are defined from the Class 2 parameter information
- * and do not include the modulation technique.
+ * Build upon the result from Class2Params.
  */
-u_int
+FaxParams
 Class1Modem::modemDIS() const
 {
-    // NB: DIS is in 24-bit format
-    u_int fs = conf.class1ECMFrameSize == 64 ? DIS_FRAMESIZE : 0;
-    u_int v8 = conf.class1ECMSupport && conf.class1EnableV34Cmd != "" ? DIS_V8 : 0;
-    return (FaxModem::modemDIS() &~ DIS_SIGRATE) | (discap<<10) | DIS_XTNDFIELD | fs | v8;
-}
+    FaxParams dis_caps = FaxModem::modemDIS();
 
-/*
- * Return the 32-bit extended capabilities for the
- * modem for setting up the initial T.30 DIS when
- * receiving data.
- */
-u_int
-Class1Modem::modemXINFO() const
-{
-    return FaxModem::modemXINFO()
-	| (1<<24) | (1<<16) | (1<<8)	// extension flags for 3 more bytes
-	| DIS_SEP			// support for selected polling frame
-	| DIS_SUB			// support for subaddressing frame
-	| DIS_PWD			// support for pwd frames
-	;
+    // signalling rates
+    for (u_short i = 0; i < 4; i++) dis_caps.setBit(11+i, (discap & (0x08>>i)));
+
+    // T.4 receiver
+    dis_caps.setBit(FaxParams::BITNUM_T4RCVR, true);
+
+    // we set both units preferences to allow the sender to choose
+    dis_caps.setBit(FaxParams::BITNUM_METRIC_RES, true);
+    dis_caps.setBit(FaxParams::BITNUM_INCH_RES, true);
+
+    // selective polling, subaddressing, password
+    dis_caps.setBit(FaxParams::BITNUM_SEP, true);
+    dis_caps.setBit(FaxParams::BITNUM_SUB, true);
+    dis_caps.setBit(FaxParams::BITNUM_PWD, true);
+
+    return dis_caps;
 }
 
 const char COMMA = ',';

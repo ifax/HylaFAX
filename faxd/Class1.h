@@ -29,6 +29,7 @@
  * EIA/TIA-578 (Class 1) Modem Driver.
  */
 #include "FaxModem.h"
+#include "FaxParams.h"
 
 class HDLCFrame;
 
@@ -51,8 +52,7 @@ protected:
     fxStr	rhCmd;			// command for receiving a frame
     fxStr	classCmd;		// set class command
     u_int	serviceType;		// modem service required
-    u_int	dis;			// current remote DIS
-    u_int	xinfo;			// current remote DIS extensions
+    FaxParams	dis_caps;	// current remote DIS
     u_int	frameSize;		// size of image frames
     u_int	signalRcvd;		// last signal received in ECM protocol
     u_int	nonV34br;		// modemParams.br without V.34
@@ -115,7 +115,7 @@ protected:
     virtual bool setupClass1Parameters();
     virtual bool setupFlowControl(FlowControl fc);
 // transmission support
-    bool	sendPrologue(u_int dcs, u_int xinfo, const fxStr& tsi);
+    bool	sendPrologue(FaxParams& dcs_caps, const fxStr& tsi);
     bool	dropToNextBR(Class2Params&);
     bool	raiseToNextBR(Class2Params&);
     bool	sendTraining(Class2Params&, int, fxStr& emsg);
@@ -132,7 +132,7 @@ protected:
 		    u_int f2, const fxStr& addr,
 		    u_int f3, const fxStr& nsf,
 		    u_int f4, const fxStr& id,
-		    u_int f5, u_int dics, u_int xinfo,
+		    u_int f5, FaxParams& dics,
 		    u_int timer, fxStr& emsg);
     bool	recvDCSFrames(HDLCFrame& frame);
     bool	recvTraining();
@@ -154,15 +154,16 @@ protected:
     const fxStr& decodePWD(fxStr& ascii, const HDLCFrame& binary);
     const Class1Cap* findSRCapability(u_short sr, const Class1Cap[]);
     const Class1Cap* findBRCapability(u_short br, const Class1Cap[]);
+    static bool isCapable(u_int sr, FaxParams& dis);
 // class 1 HDLC frame support
     bool	transmitFrame(u_char fcf, bool lastFrame = true);
-    bool	transmitFrame(u_char fcf, u_int, u_int, bool lastFrame = true);
+    bool	transmitFrame(u_char fcf, FaxParams& dcs_caps, bool lastFrame = true);
     bool	transmitFrame(u_char fcf, const fxStr&, bool lastFrame=true);
     bool	transmitFrame(u_char fcf, const u_char* code, const fxStr&, bool lastFrame=true);
     bool	transmitData(int br, u_char* data, u_int cc,
 		    const u_char* bitrev, bool eod);
     bool	sendFrame(u_char fcf, bool lastFrame = true);
-    bool	sendFrame(u_char fcf, u_int, u_int, bool lastFrame = true);
+    bool	sendFrame(u_char fcf, FaxParams& dcs_caps, bool lastFrame = true);
     bool	sendFrame(u_char fcf, const fxStr&, bool lastFrame = true);
     bool	sendFrame(u_char fcf, const u_char* code, const fxStr&, bool lastFrame = true);
     bool	sendRawFrame(HDLCFrame& frame);
@@ -204,8 +205,7 @@ public:
 
 // receive support
     CallType	answerCall(AnswerType, fxStr& emsg, const char* number);
-    u_int	modemDIS() const;
-    u_int	modemXINFO() const;
+    FaxParams	modemDIS() const;
     bool	setupReceive();
     bool	recvBegin(fxStr& emsg);
     bool	recvEOMBegin(fxStr& emsg);

@@ -229,6 +229,28 @@ u_int Class2Params::DISstTab[8] = {
 
 /*
  * Convert a T.30 DIS to a Class 2 parameter block.
+ */  
+void
+Class2Params::setFromDIS(FaxParams& dis_caps)
+{  
+    assign(dis_caps);
+    u_int dis = 0;
+    u_int xinfo = 0;
+
+    dis |= getByte(0) << 16;
+    dis |= getByte(1) << 8;
+    dis |= getByte(2) << 0;
+
+    xinfo |= getByte(3) << 24;
+    xinfo |= getByte(4) << 16;
+    xinfo |= getByte(5) << 8;
+    xinfo |= getByte(6) << 0;
+
+    setFromDIS(dis, xinfo);
+}
+
+/*
+ * Convert a T.30 DIS to a Class 2 parameter block.
  */
 void
 Class2Params::setFromDIS(u_int dis, u_int xinfo)
@@ -295,6 +317,28 @@ u_int Class2Params::DCSbrTab[16] = {
 /*
  * Convert a T.30 DCS to a Class 2 parameter block.
  */
+void 
+Class2Params::setFromDCS(FaxParams& dcs_caps)
+{
+    assign(dcs_caps);
+    u_int dcs = 0;
+    u_int xinfo = 0;
+  
+    dcs |= getByte(0) << 16;
+    dcs |= getByte(1) << 8;
+    dcs |= getByte(2) << 0;
+
+    xinfo |= getByte(3) << 24;
+    xinfo |= getByte(4) << 16;
+    xinfo |= getByte(5) << 8;
+    xinfo |= getByte(6) << 0;
+
+    setFromDCS(dcs, xinfo);
+}
+
+/*
+ * Convert a T.30 DCS to a Class 2 parameter block.
+ */
 void
 Class2Params::setFromDCS(u_int dcs, u_int xinfo)
 {
@@ -323,7 +367,7 @@ Class2Params::setFromDCS(u_int dcs, u_int xinfo)
 /*
  * Return a 24-bit T.30 DCS frame that reflects the parameters.
  */
-u_int
+FaxParams
 Class2Params::getDCS() const
 {
     u_int dcs = DCS_T4RCVR
@@ -334,17 +378,7 @@ Class2Params::getDCS() const
 	    | lnDISTab[ln&3]
 	    | dfDISTab[df&3]
 	    | stDCSTab[st&7]
-	    | (getXINFO() != 0 ? DCS_XTNDFIELD : 0)
 	    ;
-    return (dcs);
-}
-
-/*
- * Return a 32-bit DCS frame extension.
- */
-u_int
-Class2Params::getXINFO() const
-{
     // extension flags for 3 more bytes
     u_int firstbyte  = 0;
     u_int secondbyte = (1<<24);
@@ -360,7 +394,11 @@ Class2Params::getXINFO() const
 	| (ec & EC_ENABLE64 || ec & EC_ENABLE256 ? (DCS_ECMODE | firstbyte) : 0)
 	| (df == DF_2DMMR ? (DCS_G4COMP | firstbyte) : 0)
 	;
-    return (dcs_xinfo);
+    dcs |= (dcs_xinfo != 0 ? DCS_XTNDFIELD : 0);
+
+    FaxParams dcs_caps(dcs, dcs_xinfo);
+
+    return dcs_caps;
 }
 
 /*
