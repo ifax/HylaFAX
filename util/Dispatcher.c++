@@ -588,19 +588,6 @@ int Dispatcher::waitFor(
 #else
 	    nfound = select(_nfds, &rmaskret, &wmaskret, &emaskret, howlong);
 #endif
-#ifdef SGISELECTBUG
-        // XXX hack to deal with IRIX 5.2 FIFO+select bug
-        for (int i = 0; i < _nfds; i++) {
-            if (FD_ISSET(i, &wmaskret) && !FD_ISSET(i, &_wmask)) {
-                FD_CLR(i, &wmaskret);
-            } 
-        }
-        for (int i = 0; i < _nfds; i++) {
-            if (FD_ISSET(i, &emaskret)  && !FD_ISSET(i, &_emask)) {
-                FD_CLR(i, &emaskret);
-            }
-        }
-#endif
 	    howlong = calculateTimeout(howlong);
 	} while (nfound < 0 && !handleError());
     }
@@ -621,29 +608,35 @@ void Dispatcher::notify(int nfound,
         fd_set& rmaskret, fd_set& wmaskret, fd_set& emaskret) {
     for (int i = 0; i < _nfds && nfound > 0; i++) {
         if (FD_ISSET(i, &rmaskret)) {
-            int status = _rtable[i]->inputReady(i);
-	        if (status < 0) {
-		        detach(i);
-	        } else if (status > 0) {
-        	    FD_SET(i, &_rmaskready);
+            if (_rtable[i]) {
+                int status = _rtable[i]->inputReady(i);
+                if (status < 0) {
+                        detach(i);
+                    } else if (status > 0) {
+                        FD_SET(i, &_rmaskready);
+                }
             }
             nfound--;
         }
         if (FD_ISSET(i, &wmaskret)) {
-            int status = _wtable[i]->outputReady(i);
-            if (status < 0) {
-                detach(i);
-            } else if (status > 0) {
-       	        FD_SET(i, &_wmaskready);
+            if (_wtable[i]) {
+                int status = _wtable[i]->outputReady(i);
+                if (status < 0) {
+                    detach(i);
+                } else if (status > 0) {
+                    FD_SET(i, &_wmaskready);
+                }
             }
             nfound--;
         }
         if (FD_ISSET(i, &emaskret)) {
-            int status = _etable[i]->exceptionRaised(i);
-            if (status < 0) {
-                detach(i);
-            } else if (status > 0) {
-       	        FD_SET(i, &_emaskready);
+            if (_etable[i]) {
+                int status = _etable[i]->exceptionRaised(i);
+                if (status < 0) {
+                    detach(i);
+                } else if (status > 0) {
+                    FD_SET(i, &_emaskready);
+                }
             }
             nfound--;
         }

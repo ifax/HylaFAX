@@ -1784,25 +1784,6 @@ EmitConfigurationDefinitions()
     fi
 
     #
-    # On some versions of IRIX 5.x, when FIFOs are
-    # opened read-only in the server, select will
-    # incorrectly return bits set in the select masks
-    # even if the bits were not set on entry.  This
-    # will cause the Dispatcher code to croak unless
-    # a workaround is enabled.
-    #
-    test "$CONFIG_SELECTBUG" || {
-	case $TARGET in
-	*-irix5.[01]*)	CONFIG_SELECTBUG=yes;;
-	*)		CONFIG_SELECTBUG=no;;
-	esac
-    }
-    if [ "$CONFIG_SELECTBUG" = yes ]; then
-	Note "... enable workaround for select bug"
-	echo '#define SGISELECTBUG 1'	# NB: select also breaks!
-    fi
-
-    #
     # On some systems the argument for ioctl(fd, TIOCMBIS, arg)
     # is passed by value and some by reference.
     # This can not be deduced with a dynamic check.

@@ -202,7 +202,6 @@
 #
 #CONFIG_OPENFIFO="O_RDONLY"		# mode to open FIFOs in server proc's
 #CONFIG_FIFOBUG="yes"			# enable workaround for FIFO select bug
-#CONFIG_SELECTBUG="no"			# enable workaround for select problem
 #CONFIG_TIOCMBISBYREF="yes"		# pass arg by reference to ioctl
 #CONFIG_WINSZHACK="no"			# include extra files for TIOCWINSZ use
 #CONFIG_ABORTBUG="no"			# enable workaround for abort problems

@@ -1417,19 +1417,6 @@ By default this parameter is set according to the target system.
 </TR>
 
 <TR>
-<TD VALIGN=top><TT>CONFIG_SELECTBUG</TT></TD>
-<TD>
-On some systems where the FIFO select bug (see above) exists the
-select system call may return bits set in the read, write, and exception
-masks even if they were not requested; this in turn can cause the
-Dispatcher code to abort.
-Setting this parameter to <TT>yes</TT> causes the Dispatcher to
-ignore any bits set in bit vectors returned by select if the
-bits were not requested.
-Enabling this workaround adds additional overhead to each server process.
-</TR>
-
-<TR>
 <TD VALIGN=top><TT>CONFIG_SOCKARGLENTYPE</TT></TD>
 <TD>
 On some systems the type of call-by-reference parameters that specify
