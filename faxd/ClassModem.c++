@@ -967,6 +967,11 @@ ClassModem::waitFor(ATResponse wanted, long ms)
 	case AT_OFFHOOK:
 	case AT_RING:
 	    modemTrace("MODEM %s", ATresponses[response]);
+	case AT_OK:
+	    /*
+	     * If we get OK and aren't expecting it then we're back in command-mode
+	     * and our previous command failed to acheive the desired result.
+	     */
 	    return (false);
 	}
     }
