@@ -224,9 +224,10 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	/*
 	 * Check the next page to see if the transfer
 	 * characteristics change.  If so, update the
-	 * current T.30 session parameters.
+	 * current T.30 session parameters.  Don't send DIS if
+	 * using RTFCC, although unsetting params may be better.
 	 */
-	if (pageInfoChanged(params, next)) {
+	if (pageInfoChanged(params, next) && !conf.class2RTFCC) {
 	    if (!class2Cmd(disCmd, next)) {
 		emsg = "Unable to set session parameters";
 		break;

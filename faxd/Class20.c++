@@ -126,6 +126,31 @@ Class20Modem::abortDataTransfer()
 bool
 Class20Modem::sendPage(TIFF* tif, u_int pageChop)
 {
+    /*
+     * Support MT5634ZBA-V92 real-time fax compression conversion:
+     * AT+FFC=? gives us non-zero data if RTFCC is supported.
+     * Firstly, we must have set our FCC to MMR support (+FCC=,,,,3), and
+     * we may need to have ECM enabled (+FCC=,,,,,1) if we intend to
+     * allow RTFCC to send in MMR.  Now we send <DLE><char> where char =
+     *    6Bh  -  if we formatted the image in MH
+     *    6Ch  -  if we formatted the image in MR
+     *    6Eh  -  if we formatted the image in MMR
+     */
+    if (conf.class2RTFCC) {
+	protoTrace("Enable Real-Time Fax Compression Conversion");
+	uint32 g3opts = 0;
+	char rtfcc[2];
+	rtfcc[0] = DLE;
+	TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
+	if (g3opts&GROUP3OPT_2DENCODING == DF_2DMMR)
+	    rtfcc[1] = 0x6E;	// MMR
+	else if (g3opts&GROUP3OPT_2DENCODING == DF_2DMR)
+	    rtfcc[1] = 0x6C;	// MR
+	else
+	    rtfcc[1] = 0x6B;	// MH
+	putModemData(rtfcc, sizeof (rtfcc));
+	}
+
     protoTrace("SEND begin page");
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);

@@ -151,6 +151,7 @@ public:
     fxStr	class2MINSPCmd;		// cmd to setup min transmit speed
     fxStr	class2RecvDataTrigger;	// send to start recv
     bool	class2XmitWaitForXON;	// wait for XON before send
+    bool	class2RTFCC;		// real-time fax compression conversion
     bool	class2SendRTC;		// append RTC to page data on transmit
 					// for class 2.0:
     fxStr	class2PIECmd;		// cmd to set proc interrupt handling

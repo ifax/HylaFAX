@@ -5,6 +5,7 @@
 
 #
 # CONFIG: CLASS2.0:"Multi-Tech Systems"-"MT5634ZBA"-*
+# CONFIG: CLASS2.0:"Multi-Tech Systems"-"MT5634ZPX"-*
 #
 # BEGIN-SERVER
 # END-SERVER
@@ -21,3 +22,9 @@ Class2BUGCmd:		AT+FBU=0		# early firmware is buggy
 Class2CQCmd:		AT+FCQ=1,0
 Class2SendRTC:		yes
 Class2UseHex:		yes
+
+# versions that respond to AT+FFC=? with non-zero data support RTFCC
+# Class2RTFCC:		yes
+
+# unfortunately, HylaFAX can't currently receive in MMR
+ModemAnswerCmd:		AT+FCC=01,05,02,02,02,01,00,07,7F;A

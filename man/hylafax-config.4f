@@ -324,6 +324,7 @@ Class2PTSCmd	string	\s-1AT+FPS\s+1	Class 2.0: command to set received page statu
 Class2PTSQueryCmd	string	\s-1AT+FPTS?\s+1	Class 2.0: command to query received page status
 Class2RecvDataTrigger	string	\s-1``\e22''\s+1	Class 2.0: character to send to trigger recv
 Class2RELCmd	string	\-	Class 2.0: command to enable byte-aligned \s-1EOL\s+1 codes
+Class2RTFCC	boolean	\s-1No\s+1	Class 2.0: enable real-time fax compression conversion
 Class2SACmd     string	\s-1AT+FSA\s+1	Class 2.0: set destination subaddress string
 Class2SendRTC	boolean	\s-1No\s+1	Class 2.0: append \s-1RTC\s+1 to page data on transmit
 Class2SFLOCmd	string	\s-1AT+FLO=1\s+1	Class 2.0: command to set software flow control
@@ -2261,6 +2262,14 @@ will be marked to indicate that
 .SM EOL
 codes are byte-aligned; otherwise they will be marked as
 not (necessarily) having byte-aligned codes.
+.TP
+.B Class2RTFCC
+Whether or not to enable MultiTech's Real-Time Fax Compression Conversion
+which is available in later firmware revisions for the MT5634ZBA-V92 and 
+MT5634ZPX-PCI-V92 models.  RTFCC allows HylaFAX to convert the image 
+compression between MH MR and MMR formats regardless of how faxq formatted 
+the image file.  If RTFCC is available with your firmware, then the 
+response to ``AT+FFC=?'' is non-zero.
 .TP
 .B Class2SACmd
 A largely unused option for modems supporting ITU-T.32, Class 2.1, 

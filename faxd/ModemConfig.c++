@@ -217,6 +217,7 @@ ModemConfig::setupConfig()
     waitForConnect	= false;		// unique modem answer response
     class2XmitWaitForXON = true;		// default per Class 2 spec
     class2SendRTC	= false;		// default per Class 2 spec
+    class2RTFCC		= false;		// real-time fax comp. conv.
     class2UseHex	= false;		// historical behavior
     class1TCFRecvHack	= false;		// historical behavior
     setVolumeCmds("ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1");
@@ -554,6 +555,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
         rtnHandling = getRTNHandling(value);
     else if (streq(tag, "class2usehex"))
 	class2UseHex = getBoolean(value);
+    else if (streq(tag, "class2rtfcc"))
+	class2RTFCC = getBoolean(value);
     else
 	return (false);
     return (true);
