@@ -1525,7 +1525,7 @@ fixupFaxUser()
 {
     emsg1=`modifyPasswd $FAX $faxUID $faxGID $DIR_SPOOL 2>&1`
     case $? in
-    0)	echo "Done, the \"$FAX\" user should now have the right user id.";;
+    0)	echo "Done, the \"$FAX\" user should now have the correct $1.";;
     *) cat <<-EOF
 
 	FATAL ERROR: Command failed!
@@ -1534,9 +1534,7 @@ fixupFaxUser()
 
 	"$emsg1"
 
-	HylaFAX will not work correctly until the proper uid is setup
-	for it in the password file.  Please fix this problem and then
-	rerun faxsetup.
+	HylaFAX will not work correctly until the proper $1 is set up.
 
 	EOF
 	boom
@@ -1613,6 +1611,11 @@ isOK()
 
 if onServer; then
     x=`grep "^$FAX:" $PASSWD | cut -d: -f3`
+    if [ "$PASSWD" == "/etc/master.passwd" ]; then
+	PARAMLOC=9;
+    else
+	PARAMLOC=6;
+    fi
     if [ -z "$x" ]; then
 	echo ""
 	echo ""
@@ -1629,7 +1632,17 @@ if onServer; then
 	echo "to work properly, the fax user uid must be the same as uucp."
 	prompt "Is it ok to change the password entry for \"$FAX\" [yes]?"
 	read x;
-	isOK $x && fixupFaxUser
+	isOK $x && fixupFaxUser "user id"
+    elif [ `grep "^$FAX:" $PASSWD | cut -d: -f$PARAMLOC` != $DIR_SPOOL ]; then
+	echo ""
+	echo ""
+	echo "It looks like you have a \"$FAX\" user in the password file,"
+	echo "but with a home directory different than what is currently"
+	echo "configured.  This is not a serious matter, but should be"
+	echo "corrected."
+	prompt "Is it ok to change the home directory for \"$FAX\" [yes]?"
+	read x;
+	isOK $x && fixupFaxUser "home directory"
     fi
     machdepPasswdWork
 
