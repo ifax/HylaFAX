@@ -193,9 +193,10 @@ Class1Modem::recvIdentification(
 	}
 	if (framesSent) {
 	    /*
-	     * Wait for a response to be received.
+	     * Wait for a response to be received.  We wait T2
+	     * rather than T4 due to empirical evidence for that need.
 	     */
-	    if (recvFrame(frame, FCF_RCVR, conf.t4Timer)) {
+	    if (recvFrame(frame, FCF_RCVR, conf.t2Timer)) {
 		do {
 		    /*
 		     * Verify a DCS command response and, if
@@ -218,7 +219,9 @@ Class1Modem::recvIdentification(
 			    return (true);
 			} else {
 			    if (lastResponse == AT_FRH3 && waitFor(AT_CONNECT,0)) {
-				gotframe = recvFrame(frame, FCF_RCVR, conf.t4Timer, true);
+				// It's unclear if we are in "COMMAND REC" or "RESPONSE REC" mode,
+				// but since we are already detecting the carrier, wait the longer.
+				gotframe = recvFrame(frame, FCF_RCVR, conf.t2Timer, true);
 				lastResponse == AT_NOTHING;
 			    }
 			}
@@ -273,6 +276,8 @@ Class1Modem::recvIdentification(
 
 /*
  * Receive DCS preceded by any optional frames.
+ * Although technically this is "RESPONSE REC",
+ * we wait T2 due to empirical evidence of that need.
  */
 bool
 Class1Modem::recvDCSFrames(HDLCFrame& frame)
@@ -293,7 +298,7 @@ Class1Modem::recvDCSFrames(HDLCFrame& frame)
 	    processDCSFrame(frame);
 	    break;
 	}
-    } while (frame.moreFrames() && recvFrame(frame, FCF_RCVR, conf.t4Timer));
+    } while (frame.moreFrames() && recvFrame(frame, FCF_RCVR, conf.t2Timer));
     return (frame.isOK() && frame.getFCF() == FCF_DCS);
 }
 
@@ -547,7 +552,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		} else {
 		    if (rmResponse == AT_FRH3) {
 			HDLCFrame frame(conf.class1FrameOverhead);
-			if (waitFor(AT_CONNECT,0) && recvFrame(frame, FCF_RCVR, conf.t4Timer, true))
+			if (waitFor(AT_CONNECT,0) && recvFrame(frame, FCF_RCVR, conf.t2Timer, true))
 			    signalRcvd = frame.getFCF();
 		    }
 		}
@@ -641,7 +646,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			if (!messageReceived) messageReceived = !(recvDCSFrames(frame));
 			if (!messageReceived) messageReceived = !(recvTraining());
 			if (messageReceived && lastResponse == AT_FRH3 && waitFor(AT_CONNECT,0)) {
-			    gotframe = recvFrame(frame, FCF_RCVR, conf.t4Timer, true);
+			    gotframe = recvFrame(frame, FCF_RCVR, conf.t2Timer, true);
 			    lastResponse = AT_NOTHING;
 			    messageReceived = false;
 			}
@@ -708,7 +713,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 						(void) transmitFrame(params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP|FCF_RCVR);
 						tracePPR("RECV send", params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP);
 						HDLCFrame rrframe(conf.class1FrameOverhead);
-						if (gotresponse = recvFrame(rrframe, FCF_RCVR, conf.t4Timer)) {
+						if (gotresponse = recvFrame(rrframe, FCF_RCVR, conf.t2Timer)) {
 						    tracePPM("RECV recv", rrframe.getFCF());
 						    if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
 							protoTrace("Ignoring invalid response to RNR.");
@@ -1536,7 +1541,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				(void) transmitFrame(FCF_RNR|FCF_RCVR);
 				tracePPR("RECV send", FCF_RNR);
 				HDLCFrame rrframe(conf.class1FrameOverhead);
-				if (gotresponse = recvFrame(rrframe, FCF_RCVR, conf.t4Timer)) {
+				if (gotresponse = recvFrame(rrframe, FCF_RCVR, conf.t2Timer)) {
 				    tracePPM("RECV recv", rrframe.getFCF());
 				    if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
 					protoTrace("Ignoring invalid response to RNR.");

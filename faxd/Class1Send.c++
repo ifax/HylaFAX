@@ -760,7 +760,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 			{ fxStr csi; recvCSI(decodeTSI(csi, frame)); }
 			break;
 		    }
-		} while (frame.moreFrames() && recvFrame(frame, FCF_SNDR, conf.t4Timer));
+		} while (frame.moreFrames() && recvFrame(frame, FCF_SNDR, conf.t2Timer));
 	    } 
 	    if (frame.isOK()) {
 		switch (frame.getFCF()) {
@@ -1143,7 +1143,8 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		// Some receivers will almost always miss our first PPS message, and
 		// in those cases waiting T2 for a response will cause the remote to
 		// hang up.  So, using T4 here is imperative so that our second PPS
-		// message happens before the remote decides to hang up.
+		// message happens before the remote decides to hang up. As we're in
+		// a "RESPONSE REC" operation, anyway, this is correct behavior.
 		if (gotppr = recvFrame(pprframe, FCF_SNDR, conf.t4Timer)) {
 		    tracePPR("SEND recv", pprframe.getFCF());
 		    if (pprframe.getFCF() == FCF_CRP) {
@@ -1363,7 +1364,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				    stopTimeout("sending EOR frame");
 				    tracePPM("SEND send", FCF_EOR);
 				    tracePPM("SEND send", pps[0]);
-				    if (goterr = recvFrame(errframe, FCF_SNDR, conf.t2Timer)) {
+				    if (goterr = recvFrame(errframe, FCF_SNDR, conf.t4Timer)) {
 					tracePPR("SEND recv", errframe.getFCF());
 					if (errframe.getFCF() == FCF_CRP) {
 					    goterr = false;
@@ -1405,7 +1406,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 					    stopTimeout("sending RR frame");
 					    tracePPM("SEND send", FCF_RR);
 					    // T.30 states that we must wait no more than T4 between unanswered RR signals.
-					    if (gotmsg = recvFrame(errframe, FCF_SNDR, conf.t2Timer)) {
+					    if (gotmsg = recvFrame(errframe, FCF_SNDR, conf.t4Timer)) {
 						tracePPR("SEND recv", errframe.getFCF());
 						if (errframe.getFCF() == FCF_CRP) {
 						    gotmsg = false;

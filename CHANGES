@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* improve the usage of T4 and T2 timers throughout (23 Mar 2005)
 * improve some error-handling scenarios (23 Mar 2005)
 * improve identification of ECM blocks with zero frames (16 Mar 2005)
 * fix potential error in ECM reception frame counting (16 Mar 2005)

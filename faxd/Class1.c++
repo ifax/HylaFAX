@@ -1318,8 +1318,7 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending)
 	return (gotframe);
     }
     stopTimeout("waiting for v.21 carrier");
-    if (readPending && wasTimeout())
-	abortReceive();
+    if (wasTimeout()) abortReceive();
     return (false);
 }
 
