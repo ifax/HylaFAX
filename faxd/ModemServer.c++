@@ -152,7 +152,7 @@ ModemServer::open()
 	else
 	    changeState(RUNNING, 0);
     } else {
-	traceServer("%s: Can not lock device.", (char*) modemDevice);
+	traceServer("%s: Can not lock device.", (const char*) modemDevice);
 	changeState(LOCKWAIT, pollLockWait);
     }
 }
@@ -855,7 +855,7 @@ ModemServer::traceModemIO(const char* dir, const u_char* data, u_int cc)
 	buf.put(hexdigits[b&0xf]);
     }
     traceStatus(FAXTRACE_MODEMIO, "%s <%u:%.*s>",
-	dir, cc, buf.getLength(), (char*) buf);
+	dir, cc, buf.getLength(), (const char*) buf);
 }
 
 /*

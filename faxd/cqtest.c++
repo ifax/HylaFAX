@@ -334,7 +334,7 @@ CQDecoder::recvPageDLEData(TIFF* tif, bool checkQuality,
 		    flushRawData(tif, 0, buf, recvRow - buf);
 		    recvRow = buf;
 		}
-		memcpy(recvRow, (char*) raw, n);
+		memcpy(recvRow, (const char*) raw, n);
 		recvRow += n;
 		recvEOLCount++;
 	    }

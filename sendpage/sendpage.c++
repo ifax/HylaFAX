@@ -196,20 +196,22 @@ sendPageApp::usage()
 void
 sendPageApp::copyToTemporary(int fin, fxStr& tmpl)
 {
-    tmpl = _PATH_TMP "/sndpageXXXXXX";
-    int fd = Sys::mkstemp(tmpl);
+    char buff[128];
+    sprintf(buff, "%s/sndpageXXXXXX", _PATH_TMP);
+    int fd = Sys::mkstemp(buff);
+    tmpl = buff;
     if (fd >= 0) {
 	int cc;
 	char buf[16*1024];
-	while ((cc = Sys::read(fin, buf, sizeof (buf))) > 0) {
-	    if (Sys::write(fd, buf, cc) != cc) {
-		Sys::unlink(tmpl);
-		fatal("%s: write error", (char*) tmpl);
-	    }
-	}
+    while ((cc = Sys::read(fin, buf, sizeof (buf))) > 0) {
+        if (Sys::write(fd, buf, cc) != cc) {
+            Sys::unlink(tmpl);
+            fatal("%s: write error", (const char*) tmpl);
+        }
+    }
 	Sys::close(fd);
     } else
-	fatal("%s: Can not create temporary file", (char*) tmpl);
+	fatal("%s: Can not create temporary file", (const char*) tmpl);
 }
 
 void

@@ -103,7 +103,7 @@ readTSIPatterns(FILE* fd, RegExArray*& pats, fxBoolArray*& accept)
 void
 updateTSIPatterns()
 {
-    FILE* fd = fopen((char*) qualifyTSI, "r");
+    FILE* fd = fopen((const char*) qualifyTSI, "r");
     if (fd != NULL) {
 	struct stat sb;
 	if (fstat(fileno(fd), &sb) >= 0 && sb.st_mtime >= lastPatModTime) {

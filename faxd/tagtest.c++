@@ -326,8 +326,7 @@ imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
     if (encoded > tagLineSlop + decoded)
 	encoded = tagLineSlop + decoded;
     u_char* dst = buf + (int)(decoded-encoded);
-    u_char* src = result;
-    memcpy(dst, src, encoded);
+    memcpy(dst, (const unsigned char*)result, encoded);
     return (dst);
 }
 
@@ -413,7 +412,7 @@ main(int argc, char* argv[])
 	fatal("%s: Not a Group 3-encoded TIFF file", argv[optind]);
     setupTagLine();
     if (!tagLineFont->isReady())
-	fatal("%s: Problem reading font", (char*) tagLineFontFile);
+	fatal("%s: Problem reading font", (const char*) tagLineFontFile);
 
     TIFF* otif = TIFFOpen(output, "w");
     if (!otif)

@@ -309,7 +309,8 @@ faxMailApp::run(int argc, char** argv)
 	 * Redirect formatted output to a temp
 	 * file and setup delivery of the file.
 	 */
-	fxStr tmpl = _PATH_TMP "/faxmailXXXXXX";
+    char tmpl[128];
+    sprintf(tmpl, "%s/faxmailXXXXXX", _PATH_TMP);
 	int fd = Sys::mkstemp(tmpl);
 	if (fd < 0)
 	    fxFatal("Cannot create temp file %s", (const char*) tmpl);
@@ -558,7 +559,7 @@ faxMailApp::formatDiscarded(MIMEState& mime)
 		, (const char*) mime.getType()
 		, (const char*) mime.getSubType()
 	    );
-	format(buf, buf.getLength());
+	format((const char*)buf, buf.getLength());
     }
 }
 
@@ -585,11 +586,15 @@ faxMailApp::copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile)
 {
     int ftmp;
     if (tmpFile == "") {
-	tmpFile = _PATH_TMP "/faxmailXXXXXX";
-	tmps.append(tmpFile);
-	ftmp = Sys::mkstemp(tmpFile);
-    } else
-	ftmp = Sys::open(tmpFile, O_WRONLY|O_APPEND);
+        char buff[128];
+        sprintf(buff, "%s/faxmailXXXXXX", _PATH_TMP);
+        int fd = Sys::mkstemp(buff);
+        ftmp = Sys::mkstemp(buff);
+        tmpFile = buff;
+        tmps.append(tmpFile);
+    } else {
+        ftmp = Sys::open(tmpFile, O_WRONLY|O_APPEND);
+    }
     if (ftmp >= 0) {
 	fxStackBuffer buf;
 	bool ok = true;

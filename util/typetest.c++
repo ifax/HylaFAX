@@ -76,7 +76,7 @@ fileType(const char* filename)
     }
     if (tr->getResult() == TypeRule::ERROR) {
 	fxStr emsg(tr->getErrMsg());
-	fprintf(stderr, "%s: %s\n", filename, (char*) emsg);
+	fprintf(stderr, "%s: %s\n", filename, (const char*) emsg);
 	return (NULL);
     }
     return tr;   

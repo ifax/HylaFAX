@@ -25,6 +25,7 @@
  */
 #ifndef _Array_
 #define _Array_
+#include <stdlib.h>
 #include "Obj.h"
 #include "Ptr.h"
 
@@ -35,7 +36,7 @@ public:
     ARRAY();
     ARRAY(u_int size);
     ARRAY(ARRAY const &);
-    void operator=(ARRAY const &);
+    ARRAY& operator=(ARRAY const &);
     ITEM & operator[](u_int index) const;
     u_int length() const;
     void append(ITEM const & item);
@@ -112,7 +113,7 @@ protected:
     virtual ~fxArray();
 
     void * operator[](u_int index) { return data + elementsize*index; }
-    void operator=(fxArray const &);
+    fxArray& operator=(fxArray const &);
 
     void append(void const *item);
     void append(fxArray const &);
@@ -175,9 +176,9 @@ protected:
     ARRAY(ARRAY const&a);						\
     ~ARRAY();								\
     virtual const char* className() const;				\
-    void operator=(ARRAY const&a) {					\
-	maxi = a.maxi; num = a.num; if (data) delete (void*)data;	\
-	data = a.raw_copy(); }						\
+    ARRAY& operator=(ARRAY const& a) {					\
+        maxi = a.maxi; num = a.num; if (data) free(data);	\
+        data = memmove(malloc(num), a.data, num); return (*this);}		\
     ITEM & operator[](u_int index) {					\
       fxAssert(index*sizeof(ITEM) < num, "Invalid Array[] index");	\
       return *(ITEM *)((char *)((void *)data) + index*sizeof(ITEM));	\

@@ -249,7 +249,6 @@ fi
 depgenxx=`echo $depgen|sed -e s/\'//g -e 's/(/\\(/g' -e 's/)/\\)/g'`
 $depgenxx $* |
     eval "sed \
-	-e :loop -e 's:[^\./][^\./]*/\.\./::g' -e tloop \
 	-e 's:\([/ ]\)\./:\1:g' \
 	$sedprog" |
     $AWK "$awkprog" >> $newdepfile

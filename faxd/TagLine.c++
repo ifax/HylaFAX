@@ -294,7 +294,6 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
     if (encoded > tagLineSlop + decoded)
 	encoded = tagLineSlop + decoded;
     u_char* dst = buf + (int)(decoded-encoded);
-    u_char* src = result;
-    memcpy(dst, src, encoded);
+    memcpy(dst, (const unsigned char*)result, encoded);
     return (dst);
 }

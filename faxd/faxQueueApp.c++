@@ -339,7 +339,7 @@ faxQueueApp::prepareJobDone(Job& job, int status)
     Trigger::post(Trigger::JOB_PREP_END, job);
     if (status&0xff) {
 	logError("JOB %s: bad exit status %#x from sub-fork",
-	    (char*) job.jobid, status);
+	    (const char*) job.jobid, status);
 	status = Job::failed;
     } else
 	status >>= 8;
@@ -352,7 +352,7 @@ faxQueueApp::prepareJobDone(Job& job, int status)
     if (!req) {
 	// NB: no way to notify the user (XXX)
 	logError("JOB %s: qfile vanished during preparation",
-	    (char*) job.jobid);
+	    (const char*) job.jobid);
 	setDead(job);
     } else {
 	switch (status) {
@@ -1298,7 +1298,7 @@ faxQueueApp::sendJobDone(Job& job, int status)
     FaxRequest* req = readRequest(job);		// reread the qfile
     if (!req) {
 	logError("JOB %s: SEND FINISHED: %s; but job file vanished",
-	    (char*) job.jobid, fmtTime(duration));
+	    (const char*) job.jobid, fmtTime(duration));
 	setDead(job);
 	return;
     }
@@ -2704,21 +2704,18 @@ faxQueueApp::configTrace(const char* fmt, ...)
 static void
 crackArgv(fxStr& s)
 {
-    char* cp = s;
-    u_int l = s.length()+1;		// +1 for \0
+    int i = 0;
     do {
-	while (*cp && !isspace(*cp))
-	    cp++;
-	if (*cp == '\0')
-	    break;
-	*cp++ = '\0';
-	char* tp = cp;
-	while (isspace(*tp))
-	    tp++;
-	if (tp > cp)
-	    memcpy(cp, tp, l-(tp - (char*) s));
-    } while (*cp != '\0');
-    s.resize(cp - (char*) s);
+        while (s[i] && !isspace(s[i])) i++;
+        if (s[i] == '\0') break;
+        s[i++] = '\0';
+        int j = i;
+        while (isspace(s[j])) j++;
+        if (j > i) {
+            s.remove(i, j - i);
+        }
+    } while (s[i] != '\0');
+    s.resize(i);
 }
 
 static void

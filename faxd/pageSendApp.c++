@@ -424,7 +424,7 @@ pageSendApp::getResponse(fxStackBuffer& buf, long secs)
     }
     if (secs) stopTimeout("reading line from modem");
     if (buf.getLength() > 0)
-	traceIXOCom("-->", (u_char*) (char*) buf, buf.getLength());
+	traceIXOCom("-->", (u_char*) (const char*) buf, buf.getLength());
     return (buf.getLength());
 }
 

@@ -138,8 +138,9 @@ Getty::addEnvVar(int& envc, char* env[], fxStr& var)
 {
     const char* val = getenv(var);
     if (val) {
-	var.append(fxStr::format("=%s", val));
-	env[envc++] = var;
+        var.append(fxStr::format("=%s", val));
+        const char* v = var;
+        env[envc++] = (char*)v;
     }
 }
 
@@ -171,14 +172,14 @@ Getty::run(int fd, bool parentIsInit)
      * just pass everything through.
      */
     if (!parentIsInit) {
-	char* env[10];
-	int envc = 0;
-	addEnvVar(envc, env, tzVar);		// timezone
-	addEnvVar(envc, env, langVar);		// for locale
-	env[envc] = NULL;
-	Sys::execve(getty, argv, env);	
+        char* env[10];
+        int envc = 0;
+        addEnvVar(envc, env, tzVar);		// timezone
+        addEnvVar(envc, env, langVar);		// for locale
+        env[envc] = NULL;
+        Sys::execve(getty, argv, env);	
     } else
-	Sys::execv(getty, argv);
+        Sys::execv(getty, argv);
     _exit(127);
 }
 

@@ -189,7 +189,7 @@ faxCoverApp::usage()
 	" [-s pagesize]"
 	" -f from"
 	" -n fax-number"
-	, (char*) appName);
+	, (const char*) appName);
 }
 
 const char* faxCoverApp::prologue = "\
@@ -397,7 +397,7 @@ faxCoverApp::printError(const char* va_alist ...)
 {
     va_list ap;
     va_start(ap, va_alist);
-    fprintf(stderr, "%s: ", (char*) appName);
+    fprintf(stderr, "%s: ", (const char*) appName);
     vfprintf(stderr, fmt, ap);
     va_end(ap);
     fprintf(stderr, ".\n");

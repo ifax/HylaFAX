@@ -85,7 +85,7 @@ void fxDictionary::cleanup()
 
 fxDictBucket::~fxDictBucket()
 {
-    delete kvmem;
+    if (kvmem) free(kvmem);
 }
 
 void

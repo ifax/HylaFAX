@@ -180,7 +180,7 @@ SysVGetty::loginAccount()
     fxStr id(getLine());
     if (id.length() > sizeof (ut.ut_id))
 	id.remove(0, id.length() - sizeof (ut.ut_id));
-    strncpy(ut.ut_id, (char*) id, sizeof (ut.ut_id));
+    strncpy(ut.ut_id, (const char*) id, sizeof (ut.ut_id));
     strncpy(ut.ut_line, getLine(), sizeof (ut.ut_line));
     setutent();
     pututline(&ut);

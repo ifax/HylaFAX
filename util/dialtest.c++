@@ -115,14 +115,14 @@ main(int argc, char* argv[])
 		*ep = '\0';
 	    fxStr set(line, cp-line);
 	    fxStr result = rules.applyRules(set, cp+1);
-	    printf("%s(%s) = \"%s\"\n", (char*) set, cp+1, (char*) result);
+	    printf("%s(%s) = \"%s\"\n", (const char*) set, cp+1, (const char*) result);
 	} else {
 	    fxStr c = rules.canonicalNumber(line);
 	    fxStr d = rules.dialString(line);
 	    fxStr n = rules.displayNumber(line);
-	    printf("canonical = \"%s\"\n", (char*) c);
-	    printf("dial-string = \"%s\"\n", (char*) d);
-	    printf("display = \"%s\"\n", (char *) n);
+	    printf("canonical = \"%s\"\n", (const char*) c);
+	    printf("dial-string = \"%s\"\n", (const char*) d);
+	    printf("display = \"%s\"\n", (const char *) n);
 	}
     }
     return (0);

@@ -120,7 +120,7 @@ FaxDB::parseDatabase(FILE* fd, FaxDBRecord* parent)
 	if (key == "]") {
 	    if (parent == 0)
 		fprintf(stderr, "%s: line %d: Unmatched \"]\".\n",
-		    (char*) filename, lineno);
+		    (const char*) filename, lineno);
 	    break;
 	}
 	if (key == "[") {
@@ -132,7 +132,7 @@ FaxDB::parseDatabase(FILE* fd, FaxDBRecord* parent)
 	    break;
 	if (value != ":") {
 	    fprintf(stderr, "%s: line %d: Missing \":\" separator.\n",
-		(char*) filename, lineno);
+		(const char*) filename, lineno);
 	    continue;
 	}
 	if (!getToken(fd, value))
@@ -179,7 +179,7 @@ top:
 	    if (c == '\\') {
 		c = getc(fd);
 		if (c == EOF) {
-		    fprintf(stderr, "%s: Premature EOF.\n", (char*) filename);
+		    fprintf(stderr, "%s: Premature EOF.\n", (const char*) filename);
 		    return (false);
 		}
 		// XXX handle standard escapes
@@ -202,7 +202,7 @@ top:
 	    ungetc(c, fd);
     }
     buf.set('\0');
-    token = (char*) buf;
+    token = (const char*) buf;
     return (true);
 }
 

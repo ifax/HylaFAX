@@ -221,21 +221,19 @@ DestControl::skipEntry(FILE* fp, char line[], u_int cc)
 static void
 crackArgv(fxStr& s)
 {
-    char* cp = s;
+    int i = 0;
     u_int l = s.length()+1;		// +1 for \0
     do {
-	while (*cp && !isspace(*cp))
-	    cp++;
-	if (*cp == '\0')
-	    break;
-	*cp++ = '\0';
-	char* tp = cp;
-	while (isspace(*tp))
-	    tp++;
-	if (tp > cp)
-	    memcpy(cp, tp, l-(tp - (char*) s));
-    } while (*cp != '\0');
-    s.resize(cp - (char*) s);
+        while (s[i] && !isspace(s[i])) i++;
+        if (s[i] == '\0') break;
+        s[i++] = '\0';
+        int j = i;
+        while (isspace(s[j])) j++;
+    	if (j > i) {
+            s.remove(i, j-i);
+        }
+    } while (s[i] != '\0');
+    s.resize(i);
 }
 
 bool

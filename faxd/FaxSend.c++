@@ -388,7 +388,7 @@ FaxServer::sendFaxPhaseB(FaxRequest& fax, faxRequest& freq, FaxMachineInfo& clie
 		    fax.notice.append(
 			"Giving up after 3 attempts to send same page");
 		    traceServer("SEND: %s \"%s\", dirnum %d",
-			(char*) fax.notice, (char*) freq.item, freq.dirnum);
+			(const char*) fax.notice, (const char*) freq.item, freq.dirnum);
 		    fax.status = send_failed;
 		}
 	    } else {
@@ -400,7 +400,7 @@ FaxServer::sendFaxPhaseB(FaxRequest& fax, faxRequest& freq, FaxMachineInfo& clie
 	fax.notice = tif ? "Can not set directory in document file" :
 			   "Can not open document file";
 	traceServer("SEND: %s \"%s\", dirnum %d",
-	    (char*) fax.notice, (char*) freq.item, freq.dirnum);
+	    (const char*) fax.notice, (const char*) freq.item, freq.dirnum);
     }
     if (tif)
 	TIFFClose(tif);

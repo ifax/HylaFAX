@@ -271,17 +271,19 @@ sendFaxApp::addDestination(const char* cp)
 void
 sendFaxApp::copyToTemporary(int fin, fxStr& tmpl)
 {
-    tmpl = _PATH_TMP "/sndfaxXXXXXX";
-    int fd = Sys::mkstemp(tmpl);
+    char buff[128];
+    sprintf(buff, "%s/sndfaxXXXXXX", _PATH_TMP);
+    int fd = Sys::mkstemp(buff);
+    tmpl = buff;
     if (fd < 0) {
-        fatal("%s: Can not create temporary file", (char*) tmpl);
+        fatal("%s: Can not create temporary file", (const char*) tmpl);
     }
     int cc, total = 0;
     char buf[16*1024];
     while ((cc = Sys::read(fin, buf, sizeof (buf))) > 0) {
         if (Sys::write(fd, buf, cc) != cc) {
             Sys::unlink(tmpl);
-            fatal("%s: write error", (char*) tmpl);
+            fatal("%s: write error", (const char*) tmpl);
         }
         total += cc;
     }

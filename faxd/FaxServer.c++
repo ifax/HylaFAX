@@ -59,8 +59,11 @@ FaxServer::initialize(int argc, char** argv)
 {
     ModemServer::initialize(argc, argv);
     hostname.resize(MAXHOSTNAMELEN);
-    if (Sys::gethostname(hostname, hostname.length()) == 0)
-	hostname.resize(strlen(hostname));
+    char buff[MAXHOSTNAMELEN];
+    if (Sys::gethostname(buff, MAXHOSTNAMELEN) == 0) {
+        hostname = buff;
+        hostname.resize(strlen(hostname));
+    }
 }
 
 time_t FaxServer::getConnectTime() const

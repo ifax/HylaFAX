@@ -161,18 +161,20 @@ bool
 MsgFmt::setConfigItem(const char* tag, const char* value)
 {
     if (streq(tag, "headers")) {
-	fxStr s(value);
-	char* cp = s;
-	char* tp;
-	do {
-	    tp = strchr(cp, ' ');
-	    if (tp)
-		*tp++ = '\0';
-	    if (streq(cp, "clear"))
-		headToKeep.resize(0);
-	    else
-		headToKeep.append(cp);
-	} while (cp = tp);
+        char* cp = strcpy(new char[strlen(value) + 1], value);
+        char* tp;
+        do {
+            tp = strchr(cp, ' ');
+            if (tp) {
+                *tp++ = '\0';
+            }
+            if (streq(cp, "clear")) {
+                headToKeep.resize(0);
+            } else {
+                headToKeep.append(cp);
+            }
+	    } while (cp = tp);
+        delete [] cp;
     } else if (streq(tag, "mapheader")) {
 	char* tp = strchr(value, ' ');
 	if (tp) {

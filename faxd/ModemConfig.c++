@@ -396,7 +396,7 @@ ModemConfig::parseATCmd(const char* cp)
 	    ecode[0] = ESC_WAITFOR;
 	    ecode[1] = (u_char) resp;
 	} else {
-	    configError("Unknown AT escape code \"%s\"", (char*) esc);
+	    configError("Unknown AT escape code \"%s\"", (const char*) esc);
 	    pos = epos;
 	    continue;
 	}

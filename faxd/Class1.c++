@@ -479,7 +479,7 @@ Class1Modem::traceHDLCFrame(const char* direction, const HDLCFrame& frame)
 	buf.put(hexdigits[b&0xf]);
     }
     protoTrace("%s HDLC<%u:%.*s>", direction,
-	frame.getLength(), buf.getLength(), (char*) buf);
+	frame.getLength(), buf.getLength(), (const char*) buf);
 }
 
 /*

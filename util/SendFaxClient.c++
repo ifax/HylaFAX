@@ -190,8 +190,10 @@ addarg(const char* av[], int& ac, const char* flag, const fxStr& opt)
 bool
 SendFaxClient::makeCoverPage(const SendFaxJob& job, fxStr& file, fxStr& emsg)
 {
-    tmpFile = _PATH_TMP "/sndfaxXXXXXX";
-    int fd = Sys::mkstemp(tmpFile);
+    char buff[128];
+    sprintf(buff, "%s/sndfaxXXXXXX", _PATH_TMP);
+    int fd = Sys::mkstemp(buff);
+    tmpFile = buff;
     if (fd >= 0) {
 #define	MAXARGS	128
 	const char* av[MAXARGS];
@@ -638,8 +640,10 @@ SendFaxClient::prepareFile(FileInfo& info, fxStr& emsg)
     if (info.temp != "" && info.temp != info.name)
 	Sys::unlink(info.temp);
     if (info.rule->getCmd() != "") {	// conversion required
-	tmpFile = _PATH_TMP "/faxsndXXXXXX";
-	Sys::mktemp(tmpFile);
+    char buff[128];
+    sprintf(buff, "%s/sndfaxXXXXXX", _PATH_TMP);
+    Sys::mktemp(buff);
+    tmpFile = buff;
 	/*
 	 * XXX **** WARNING **** XXXX
 	 *

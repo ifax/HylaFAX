@@ -64,8 +64,9 @@ HylaFAXServer::HylaFAXServer()
     faxqFd = -1;
     clientFd = -1;
 
-    hostname.resize(64);
-    (void) gethostname(hostname, hostname.length());
+    char buff[64];
+    (void) gethostname(buff, sizeof(buff));
+    hostname = buff;
     hostaddr = "unknown";	// derived classes should fill-in
 
     lastModTime = 0;		// shutdown file mod time
@@ -444,16 +445,16 @@ HylaFAXServer::vreply(int code, const char* fmt, va_list ap)
 {
     if (autospout != "") {
         printf("%d-", code);
-        char* cp = autospout;
-        while (*cp) {
-            if (*cp == '\n') {
+        int i = 0;
+        while (autospout[i] != '\0') {
+            if (autospout[i] == '\n') {
                 fputs("\r\n", stdout);
-                if (*(++cp))
+                if (autospout[++i])
                     printf("%d-", code);
             } else
-                putchar(*cp++);
+                putchar(autospout[i++]);
         }
-        if (*(--cp) != '\n')
+        if (autospout[--i] != '\n')
             printf("\r\n");
         autospout = "";
     }
@@ -550,9 +551,9 @@ u_int HylaFAXServer::getDocumentNumbers(u_int count, fxStr& emsg)
 void
 HylaFAXServer::sanitize(fxStr& s)
 {
-    for (char* cp = s; *cp; cp++)
-	if (!isascii(*cp) || !isprint(*cp))
-	    *cp = '?';
+    for (int i = 0; i < s.length(); i++)
+	if (!isascii(s[i]) || !isprint(s[i]))
+	    s[i] = '?';
 }
 
 /*

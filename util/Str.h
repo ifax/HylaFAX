@@ -99,8 +99,9 @@ public:
     /////////////////////////////////////////////////////
     u_long hash() const;
 
-    operator char*()
-	{ return data; }
+    // Removed by rjc 8/1999 because gives ugly warning with gcc-2.95
+    //operator char*()
+	//{ return data; }
     operator const char*() const
 	{ return data; }
     operator int() const

@@ -355,7 +355,8 @@ HylaFAXServer::findUser(FILE* db, const char* user, u_int& newuid)
 bool
 HylaFAXServer::addUser(FILE* db, const char* user, u_int uid, const char* upass, const char* apass)
 {
-    fxStr templ("/" FAX_TMPDIR "/uaddXXXXXX");
+    char templ[128];
+    sprintf(templ, "/%s/uaddXXXXXX", FAX_TMPDIR);
     int fd = Sys::mkstemp(templ);
     if (fd < 0) {
 	reply(550, "Error creating temp file %s: %s.",
@@ -422,7 +423,8 @@ HylaFAXServer::addUserCmd(const char* user, const char* up, const char* ap)
 bool
 HylaFAXServer::deleteUser(FILE* db, const char* user)
 {
-    fxStr templ("/" FAX_TMPDIR "/udelXXXXXX");
+    char templ[128];
+    sprintf(templ, "/%s/udelXXXXXX", FAX_TMPDIR);
     int fd = Sys::mkstemp(templ);
     FILE* ftmp;
     if (fd < 0 || (ftmp = fdopen(fd, "w")) == NULL) {

@@ -166,7 +166,9 @@ HylaFAXServer::getServerStatus(const char* fileName, fxStr& status)
 	struct stat sb;
 	(void) Sys::fstat(fd, sb);
 	status.resize((u_int) sb.st_size);
-	int n = Sys::read(fd, status, status.length());
+    char buff[sb.st_size];
+	int n = Sys::read(fd, buff, sb.st_size);
+    status = buff;
 	Sys::close(fd);
 	if (n > 0 && status[n-1] == '\n')
 	    n--;
