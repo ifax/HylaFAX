@@ -194,6 +194,8 @@ HYLAFAXSRC=\
 	config/davicom-2			\
 	config/dsi-scout+			\
 	config/e-tech				\
+	config/eicon				\
+	config/eicon-2				\
 	config/elsa-microlink-56k-basic-2.0	\
 	config/everex-2496d			\
 	config/exar				\

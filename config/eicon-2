@@ -1,0 +1,23 @@
+# $Id$
+#
+# prototype config file for the Eicon Diva ISDN Modem
+#
+
+#
+# CONFIG: CLASS2:Eicon*-*-*
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+
+ModemType:		Class2
+ModemRate:		19200	# on boards supporting V.34-fax,
+				# this may need to be 57600
+ModemFlowControl:	rtscts
+ModemNoFlowCmd:		AT&K0
+ModemSoftFlowCmd:	AT&K4
+ModemHardFlowCmd:	AT&K3
+
+Class2APQueryCmd:	none
+Class2SPLCmd:		none
+Class2TBCCmd:		none

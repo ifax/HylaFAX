@@ -1,0 +1,11 @@
+# $Id$
+#
+# prototype config for Eicon Diva
+#
+
+# CONFIG:CLASS1:Eicon*:.*:.*: Manufacturer=Eicon Model=Diva
+#
+# BEGIN-SERVER
+# END-SERVER
+
+ModemType:		Class1		# use this to supply a hint

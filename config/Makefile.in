@@ -55,6 +55,8 @@ CONFIGFILES=class1 \
 	davicom-2 \
 	dsi-scout+ \
 	e-tech \
+	eicon \
+	eicon-2 \
     elsa-microlink-56k-basic-2.0 \
 	everex-2496d \
 	exar \
