@@ -67,6 +67,7 @@ fxBool MySendFaxClient::setConfigItem(const char* tag, const char* value)
 class faxMailApp : public TextFmt, public MsgFmt {
 private:
     fxBool	markDiscarded;		// mark MIME parts not handled
+    fxBool	withinFile;		// between beginFile() & endFile()
     fxStr	mimeConverters;		// pathname to MIME converter scripts
     fxStr	mailProlog;		// site-specific prologue definitions
     fxStr	clientProlog;		// client-specific prologue info
@@ -318,17 +319,23 @@ faxMailApp::run(int argc, char** argv)
     } else
 	beginFormatting(stdout);	// NB: sets up page info
 
-    beginFile();
-
-    formatHeaders(*this);		// format top-level headers
-
     const fxStr* version = findHeader("MIME-Version");
-    if (version && *version == "1.0")
+    if (version && *version == "1.0") {
+        beginFile();
+	withinFile = TRUE;
+        formatHeaders(*this);		// format top-level headers
 	formatMIME(stdin, mime, *this);	// parse MIME format
-    else
+        if (withinFile) endFile();
+	withinFile = FALSE;
+    } else {
+        beginFile();
+	withinFile = TRUE;
+        formatHeaders(*this);		// format top-level headers
 	formatText(stdin, mime);	// treat body as text/plain
+        if (withinFile) endFile();
+	withinFile = FALSE;
+    }
 
-    endFile();
     endFormatting();
 
     if (client) {			// complete direct delivery
@@ -496,10 +503,14 @@ void
 faxMailApp::formatApplication(FILE* fd, MIMEState& mime)
 {
     if (mime.getSubType() == "postscript") {	// copy PS straight thru
+	if (withinFile) endFile();
+	withinFile = FALSE;
 	FILE* fout = getOutputFile();
 	fxStackBuffer buf;
 	while (mime.getLine(fd, buf))
 	    fwrite((const char*) buf, buf.getLength(), 1, fout);
+	if (!withinFile) beginFile();
+	withinFile = TRUE;
     } else if (mime.getSubType() == "x-faxmail-prolog") {
 	copyPart(fd, mime, clientProlog);	// save client PS prologue
     } else {
