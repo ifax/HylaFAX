@@ -1,3 +1,20 @@
+#	$Id$	
+
+Changelog for HylaFAX 4.1.2 - Apr 11, 2002
+
+* T.4 incompatability error message more descriptive (11 Apr 2002) 
+* fix faxcron to prevent it from deleting seqf files (11 Apr 2002)
+* alter faxaddmodem to perform regex on the ATI0 result (7 Apr 2002)
+* enhance defaults to recognize and configure Mac OS X (7 Apr 2002)
+* change PWD usage in configure to PWDCMD (7 Apr 2002)
+* add notification message to timedout jobs (7 Apr 2002)
+* cleanup previous Topic modem enhancement (7 Apr 2002)
+* cleanup previous Digital Unix enhancement (7 Apr 2002)
+* cleanup previous "F" status enhancement (7 Apr 2002)
+* changed many prototype configs to use 19200 baud instead of 38400
+  and to not use the "@" dial-command option (7 Apr 2002)
+* fix segfault in faxqclean (28 Feb 2002)
+
 Changelog for HylaFAX 4.1.1 - Feb 24, 2002
 
 * resolve faxsetup and textfmt problems with Ghostscript 6.5

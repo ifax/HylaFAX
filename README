@@ -2,34 +2,28 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.1.1 patch-level 
-release!  The release represents countless hours of work and testing by 
-developers and contributors, and our thanks goes to all who participate 
-and provide feedback.
+The HylaFAX development team is pleased to announce our 4.1.2
+patch-level release!  The release represents many hours of work and
+testing by developers and contributors, and our thanks goes to all who
+participate and provide feedback.
 
                                *   *   *
 
 This document is intended to describe the significant differences
-between hylafax-4.1.1 and hylafax-4.1, point out any known
+between hylafax-4.1.2 and older releases, point out any known
 incompatibilites and issues, and provide the reader with directions to
 further resources regarding HylaFAX.
 
                           *   NEW FEATURES   *
 
-* improved prototype config support for AT&T, Prometheus, MultiTech, 
-  Hayes, Conexant, Boca, US Robotics, and Practical Peripherals modems
-* 7-bit text support for typerules
-* bulk faxes now drop in requeue priority rather than increase
-* pass CIDNumber and CIDName through to faxgetty for CID/DNIS routing
-* FILETYPE support in FaxDispatch (requires metamail when using TIFF/PDF)
-* integrated Linux DSO support
-* coverpage "from" options and faxcover behavior and documentation harmony
-* added Class1SendMsgDelay and ModemSoftResetCmdDelay defaults and options
-* added Class1EOPWaitCmd, Class1PPMWaitCmd, and Class1TCFWaitCmd in lieu 
-  of Class1Send*Delay options which causes Class 1 modems to use +FTS 
-  instead of software pauses in these instances.
-* various other bugfixes, minor enhancements, and additions
-** please refer to CHANGES for a detailed list of code changes
+* improved modem recognition routine (ignores firmware rev. data in ATI0)
+* enhanced support for building on MacOS X and Digital Unix
+* more descriptive messaging for timedout/failed jobs, and T.4 protocol errors
+* enhanced support for Topic modems
+* adopt safer defaults for modem rates and dial commands
+* repaired an error which caused faxqclean to segfault under heavy load
+* fixed a problem with faxcron which could reset sequence numbers
+
 
                          *   KNOWN ISSUES   *
 
@@ -45,15 +39,27 @@ further resources regarding HylaFAX.
                        *   INCOMPATIBILITIES   *
 
 * The popular faxrcvd-mail scripts have been deprecated by FILETYPE use in 
-  FaxDispatch, and unchanged, will not work with faxgetty in 4.1.1.  See 
+  FaxDispatch, and unchanged, will not work with faxgetty in 4.1.2.  See 
  'man faxrcvd' for details.
 * Failed faxes now have status "F" instead of "D".  Most client programs 
   which display/report job status will need some alteration to accomodate 
   this.
-* HylaFAX 4.1.1 may not compile with gcc-3.0, and limited support is 
-  available for Mac OS-X.
+* HylaFAX 4.1.2 may not compile with gcc-3.0
 
-                  *   HYLAFAX BINARY PACKAGES   *
+                      *   WHO SHOULD UPGRADE?   *
+
+If you've installed 4.1.1 and:
+
+a) are not seeing faxqclean dying because of segmentation faults, and
+b) don't have an unusually high rate of fax communication errors, and
+c) send at least one fax per month
+
+an upgrade is probably not essential at the present time. Users who
+don't meet one of the above criteria, and users of all other versions
+should upgrade as soon as practical.
+
+
+                     *   HYLAFAX BINARY PACKAGES   *
 
 Binary packages for some operating systems and platforms are available.  
 Please see ftp://ftp.hylafax.org/binary/ and 
@@ -62,12 +68,20 @@ willing to produce a binary package of HylaFAX for general distribution,
 then you are invited to join hylafax-devel@hylafax.org and solicit your 
 binary package.
 
-                          *   SUPPORT   *
+                    *   COMMERCIAL SUPPORT   *
 
-HylaFAX has numerous support resources available.  The user is encouraged 
-to utilize the manpage documentation before turning to other support 
-arenas.  However, if other support is desired, or if you would like to 
-actively take part in the HylaFAX community, you are invited to:
+HylaFAX.org has partnered with iFax Solutions, Inc. to provide commercial
+support to HylaFAX users. Single-incident and annual support options are
+available, as well as a variety of consulting services. Contact HylaFAX
+Sales <sales@hylafax.org> for more information.
+
+                       *   FREE SUPPORT   *
+
+HylaFAX has numerous public support resources available.  The user is
+encouraged to utilize the manpage documentation before turning to
+other support arenas.  However, if other support is desired, or if you
+would like to actively take part in the HylaFAX community, you are
+invited to:
 
   * join and participate in a HylaFAX mailing list
     See: http://www.hylafax.org/mailing-lists.html
