@@ -31,16 +31,18 @@ his help in making a working Class 1 driver.
 We are indebted to the following people for their contributions to  
 HylaFAX since the project was moved to hylafax.org (November 1998):
 
-Andre Albsmeier      Ronald Appelfelder   Jay Ashworth
-Toki Barron          Stephan Bauer        Dmitry Bely
-Thomas Biege         Trevor Blackwell     Marc Boucher
-Yves Carlier         Jonathon Chen        Robert Colquhoun
-Ken Cornetet         Seth Cuaiklin        Albert DeKnuydt
-Paul Eggert          Vyacheslav Frolov    Lee Howard
-John Interrante      Damiam Ivereigh      Nico Kadel-Garcia
+Andre Albsmeier      Ronald Appelfelder   Heinz-Ado Arnolds
+Jay Ashworth         Toki Barron          Stephan Bauer
+Dmitry Bely          Thomas Biege         Trevor Blackwell
+Marc Boucher         Yves Carlier         Jonathon Chen
+Robert Colquhoun     Ken Cornetet         Seth Cuaiklin
+Albert DeKnuydt      Paul Eggert          Vyacheslav Frolov
+Carsten Hoeger       Lee Howard           John Interrante
+Damiam Ivereigh      Nico Kadel-Garcia    Steffan Klipsch
 Hannu Koivisto       Greg Luck            Darren Nickerson
 Giulio Orsero        Harald Pollack       Bernd Proissl
 Tim Rice             Michael Salzmann     John Sellens
 Simon <iahnl@iah.nl> Alan Sparks          Andy Sparrow
-Iain Stevenson       Aidan Van Dyk        Phil Watkinson
-Chas Williams        John Williams        Steve Williams
+Iain Stevenson       Daryl Thachuk        Aidan Van Dyk
+Phil Watkinson       Chas Williams        John Williams
+Steve Williams
