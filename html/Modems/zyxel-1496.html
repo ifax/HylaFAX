@@ -1,124 +1,86 @@
 <HTML>
 <HEAD>
 <TITLE>ZyXEL U-1496</TITLE>
-
+</HEAD>
+<BODY>
 <BASEFONT SIZE=4>
-<B><FONT SIZE=+3>Z</FONT>ERO <FONT SIZE=+2>O</FONT>NE <FONT SIZE=+2>N</FONT>ETWORKING <FONT SIZE=+1>ZyXEL U-1496</FONT></B>
+<B><FONT SIZE="+3">Z</FONT>YXEL <FONT SIZE="+2">C</FONT>OMMUNICATIONS <FONT SIZE="+1">U-1496</FONT></B>
 <BASEFONT SIZE=3>
 
 <UL>
-<HR WIDTH=65% ALIGN=left SIZE=4>
-<B>Manufacturer</B>: Zero One Networking<BR>
+<HR WIDTH="65%" ALIGN=left SIZE=4>
+<B>Manufacturer</B>: ZyXEL Communications Inc.<BR>
 <B>Model</B>: ZyXEL U-1496<BR>
 <B>Latest Firmware Revision Tried</B>:
-    V 6.13 M<BR>
+    V 6.19 M<BR>
 <B>Recommended Firmware Revisions</B>:
-    V 6.13 M <I>or</I>
-    V 6.12 M<BR>
-<B>Last Updated</B>:$Date$<BR>
-<HR WIDTH=65% ALIGN=left SIZE=4>
+    V 6.19 M<BR>
+<B>Last Updated</B>: Date: 1999/03/28 21:22:11 $<BR>
+<HR WIDTH="65%" ALIGN=left SIZE=4>
 </UL>
 
 <DL COMPACT>
-<DT><IMG SRC="@HTMLPATH@/icons/info_icon.gif" ALT="o">
+<DT><IMG SRC="../icons/info_icon.gif" ALT="o">
 <DD>Includes
 <A HREF="ZyXEL/voice.html">support for digitized voice</A>.
-<DT><IMG SRC="@HTMLPATH@/icons/info_icon.gif" ALT="o">
+<DT><IMG SRC="../icons/info_icon.gif" ALT="o">
 <DD>The first modem with working Class 2.0 support.
-<DT><IMG SRC="@HTMLPATH@/icons/smiley.gif" ALT="o">
+<DT><IMG SRC="../icons/smiley.gif" ALT="o">
 <DD>This modem is recommended for use with HylaFAX <EM>
-only with firmware revision 6.13 or later</EM>.
+only with firmware revision 6.19 or later</EM>.
 </DL>
 
-<HR WIDTH=65% ALIGN=right>
-<B><A NAME="Class2"><FONT SIZE=+2>C</FONT>LASS 2 <FONT SIZE=+1>S</FONT>UPPORT</A></B>
+<HR WIDTH="65%" ALIGN=right>
+<B><A NAME="Class2"><FONT SIZE="+2">C</FONT>LASS 2 <FONT SIZE="+1">S</FONT>UPPORT</A></B>
 
 <P>
-<EM>Most of the problems/issues listed here are fixed
+<EM>Most of the problems/issues found were fixed
 in the rev 6.13 firmware.</EM>
 
-<UL>
-<LI><TT>AT+FMDL?</TT>
-and
-<TT>AT+FREV?</TT>
-return the same string, the concatentation of
-  the modem model and the firmware revision.
-<LI>Some prom revisions do not include a trailing "<TT>OK</TT>" in response to
-<TT>AT+FDCC=?</TT>
-<LI>DC2 must be sent to the modem to trigger the transfer of Phase C
-  data from the modem to the host after a <TT>AT+FDR</TT> command; this reflects
-  revision 2388-B of the Class 2 spec and is different from the DC1
-  required by 2388-A (and accepted by most modems)
-<LI>The modem advertises that it supports the 2DMR data format, but it
-  does not; this "advertisement" is both in its result string for a
-<TT>AT+FDCC=?</TT> query and in the DIS/DCS sent to clients
-<LI>Sending 2DMR data to the modem can cause it to lock up leaving CTS
-  low to the host; some versions of firmware also send an infinite
-  stream of trash to the remote side when this condition occurs
-<LI>In some prom revisions the result string from a
-<TT>AT+FDCC=?</TT> query does
-  not conform to any syntax listed in either 2388-B or 2388-A;
-  furthermore, it requires a context sensitive parser!
-<LI><TT>AT+FDIS</TT>
-commands to set session parameters after establishing a
-  connection with a remote machine are accepted but ignored; this
-  makes it impossible to select/change data format (1D vs 2D encoding)
-  and vertical resolution (98lpi vs 196lpi); since it is not in general
-  feasible to set all session parameters before dialing the telephone,
-  this problem makes it possible only to support the minimum set of
-  Group 3 capabilities (1D data, 98 lpi)
-<LI>Sending non-Class 2 commands to the modem after establishing a
-  connection often causes the modem to drop carrier; for example,
-  <TT>ATM0</TT> before a <TT>AT+FDR</TT> command will do this;
-<LI>The line counts in the <TT>+FPTS</TT> result code during a reception are
-  total nonsense; the only way to deduce the number of lines in a
-  received page of data is to parse the data on the host
-<LI>In later versions (5.05 for example) the syntax of the <TT>+FPTS:</TT>
-  result code violates 2388-A and/or 2388-B
-<LI>There is no way to abort a session (i.e. the <TT>AT+FK</TT> command is not
-  recognized)
-<LI>When sending, the modem appears to immediately drop DCD when it
-  loses carrier; this usually occurs after a final
-<TT>AT+FPTS</TT>
-is sent
-  to the host, but before the requisite OK and and/or +FHNG strings;
-  this action appears to be independent of whether or not DCD is
-  configured to follow carrier (i.e. <TT>&C0</TT> or <TT>&C1</TT>)
-<LI>When receiving with a negotiated 14400 signalling rate, the
-<TT>+FDCS:</TT>
-  status string indicates a 9600 baud signalling rate (br=3)
-<LI>The reception of multiple documents appears to cause the modem to
-  hangup (i.e. an EOM post page message causes the modem to hangup)
-<LI>The modem sometimes sends received data to the host with the
-  wrong bit order
-<LI>The scheme used to do adaptive-answer asserts a data carrier before
-  falling back to a fax carrier;  this can confuse a few fax modems and
-  make it impossible to receive facsimile without disabling adaptive
-  answer (<TT>AT+FAA=0</TT>)
-<LI><TT>AT+FLID?</TT> returns
-"<TT>OK</TT>" but not the current value of the local identifier.
-<LI>The modem sends the host ^S/^Q during page data transmission (<TT>AT+FDT</TT>)
-  even when RTS/CTS flow control is enabled
-</UL>
 
-<HR WIDTH=65% ALIGN=right>
-<B><A NAME="Class2.0"><FONT SIZE=+2>C</FONT>LASS 2.0 <FONT SIZE=+1>S</FONT>UPPORT</A></B>
+<HR WIDTH="65%" ALIGN=right>
+<B><A NAME="Class2.0"><FONT SIZE="+2">C</FONT>LASS 2.0 <FONT SIZE="+1">S</FONT>UPPORT</A></B>
 
 <UL>
-<LI>When transmitting, it is not necessary to send RTC, the
-modem will append RTC to the page data upon receiving the
-post-page message from the host.
+<LI>Several comments have been made to the mailing-list to say that this modem suffers
+    particularly from the <I>retrain negative problem</I> [ will send the first page three
+    times, then abort ].
+<LI>However, the latest firmware, <B>v6.19</B>, has been reported to solve this issue; and
+    the modem can be recommended for use with HylaFAX with this firmware revision or later.
+<LI>Problems were reported with the <b>1496EG+</b> model available in the
+    German market. The advice was to <i>get an old dusty 1496E</i>.
+<LI>A <i>99.8%</i> error free rate was the result of lowering the baud rate
+    to 19200 in both the <TT>ModemRate</TT> as well as the <b>S18</b> register.
+    These are the necessary additions to the modem config file:
+<PRE>
+# Additional reset commands:
+#
+# &B1         DTE-DCE rate is fixed at DTE setting
+# &N0         Auto-negotiate highest possible DCE-DCE link rate
+# &S0         DSR always on
+# *F0         Deny remote configuration
+# S18=3       Receive at 19200
+# S38.3=1     DCD on/off sequence follows UNIX standard; also
+#             fix receiving baud rate at S18 value
+# S39=0       (avoid Class 2 compatibility hacks)
+#
+ModemResetCmds:      AT&B1&N0&S0*F0S18=3S38.3=1S39=0
+#
+</PRE>
 </UL>
 
 <P>
-<A HREF="att-dataport.html"><IMG SRC="@HTMLPATH@/icons/next.gif">
-AT&T Paradyne DataPort</A>
-
+<!--htdig_noindex-->
+<A HREF="index.html"><IMG SRC="../icons/contents.gif" 
+HEIGHT="20" WIDTH="20" ALT=" Back to Modem Index "> Modem Index </A>
+<A HREf="zyxel-elite.html"><IMG SRC="../icons/next.gif"
+HEIGHT="20" WIDTH="20" ALT=" Next Modem in List "> Zyxel Elite 2864 and 2864I</A>
+<!--/htdig_noindex-->
 <HR>
 
 <ADDRESS>
-Copyright &copy; 1990, 1991, 1992, 1993, 1994 Sam Leffler<BR>
-Copyright &copy; 1991, 1992, 1993, 1994 Silicon Graphics, Inc.<BR>
+<A HREF="mailto:webmaster@hylafax.org">webmaster@hylafax.org</A>.
+Last updated $Date$.
 </ADDRESS>
 
 </BODY>
