@@ -129,7 +129,9 @@ HTML_DOCS=${SRCDIR}/acknowledge.html		\
     ${SRCDIR}/Modems/usr-courier.html		\
     ${SRCDIR}/Modems/usr-sportster.html		\
     ${SRCDIR}/Modems/zyxel-1496.html		\
-    ${SRCDIR}/Modems/K56flex.html		\
+    ${SRCDIR}/Modems/zyxel-elite.html		\
+    ${SRCDIR}/Modems/zyxel-omni.html		\
+    ${SRCDIR}/Modems/rockwell-56k.html		\
     ${SRCDIR}/Modems/multitech-2834.html	\
     ${SRCDIR}/Modems/hayes-accura288.html	\
     ${NULL}
@@ -144,6 +146,7 @@ ICONS_DOCS=${SRCDIR}/icons/at_work_icon.gif	\
     ${SRCDIR}/icons/next.gif			\
     ${SRCDIR}/icons/smiley.gif			\
     ${SRCDIR}/icons/warning_icon.gif		\
+    ${SRCDIR}/icons/contents.gif		\
     ${SRCDIR}/sam.gif				\
     ${SRCDIR}/matthias.gif			\
     ${SRCDIR}/hylafax.gif			\
