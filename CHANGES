@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX 4.2.0
 
+* add '-l bindaddr' option to hfaxd (8 May 2004)
+* fix build for 64-bit Linux (8 May 2004)
 * fix error in clients when sender identity was whitespace only (8 May 2004)
 * add recognition of blacklisted modem dialing responses (8 May 2004)
 * impose a timeout on sending some commands to Class 2 modems (5 May 2004)
