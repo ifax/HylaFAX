@@ -41,28 +41,23 @@
 extern int optind;
 extern char* optarg;
 
+const char passwd_salts[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
+
+const char* usage = "faxadduser [-a admin-password] [-f hosts-file] \
+[ -p password] [-u uid] username";
+
 int
 main(int argc, char** argv)
 {
     char buff[256];
-    char passwd_salts[64];
     char salt_buff[2];
     FILE* hf = NULL;
     int c;
+    int salt;
     char* hostfile = FAX_SPOOLDIR "/" FAX_PERMFILE;
     char* password = NULL;
     char* adminword = NULL;
-    int salt;
     int uid = FAX_DEFAULT_UID;
-    const char* usage = "faxadduser [-a admin-password] [-f hosts-file] \
-[ -p password] [-u uid] username";
-    int index = 0;
-    int i;
-    for (i = 'a'; i <= 'z'; i++) { passwd_salts[index++] = i; }
-    for (i = 'A'; i <= 'Z'; i++) { passwd_salts[index++] = i; }
-    for (i = '0'; i <= '9'; i++) { passwd_salts[index++] = i; }
-    passwd_salts[index++] = '.';
-    passwd_salts[index++] = '/';
     
     while ((c = getopt(argc, argv, "a:f:p:u:")) != -1) {
         switch (c) {
@@ -95,12 +90,16 @@ main(int argc, char** argv)
         fprintf(hf, "%s", argv[optind++]);
         if (uid != FAX_DEFAULT_UID) {
             fprintf(hf, ":%i", uid);
+        } else if (password != NULL || adminword != NULL) {
+            fprintf(hf, ":");
         }
         if (password != NULL) {
             salt = (int)(4096.0 * rand() / (RAND_MAX + 1.0));
             salt_buff[0] = passwd_salts[salt / 64];
             salt_buff[1] = passwd_salts[salt % 64];
             fprintf(hf, ":%s", crypt(password, salt_buff));
+        } else if (adminword != NULL) {
+            fprintf(hf, ":");
         }
         if (adminword != NULL) {
             salt = (int)(4096.0 * rand() / (RAND_MAX + 1.0));

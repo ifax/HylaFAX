@@ -65,8 +65,10 @@ MANSAPP=sman.apps/cqtest.1m	\
 	sman.apps/dialtest.1m	\
 	sman.apps/faxabort.1m	\
 	sman.apps/faxaddmodem.1m\
+	sman.apps/faxadduser.1m	\
 	sman.apps/faxanswer.1m	\
 	sman.apps/faxconfig.1m	\
+	sman.apps/faxdeluser.1m	\
 	sman.apps/faxmodem.1m	\
 	sman.apps/faxstate.1m	\
 	sman.apps/faxcron.1m	\
@@ -151,9 +153,11 @@ sman.apps/choptest.1m::	${SRCDIR}/choptest.1m;	${MANCVT}
 sman.apps/dialtest.1m::	${SRCDIR}/dialtest.1m;	${MANCVT}
 sman.apps/faxabort.1m::	${SRCDIR}/faxabort.1m;	${MANCVT}
 sman.apps/faxaddmodem.1m:: ${SRCDIR}/faxaddmodem.1m; ${MANCVT}
+sman.apps/faxadduser.1m::${SRCDIR}/faxadduser.1m;	${MANCVT}
 sman.apps/faxanswer.1m::${SRCDIR}/faxanswer.1m;	${MANCVT}
 sman.apps/faxconfig.1m::${SRCDIR}/faxconfig.1m;	${MANCVT}
 sman.apps/faxcron.1m::	${SRCDIR}/faxcron.1m;	${MANCVT}
+sman.apps/faxdeluser.1m::${SRCDIR}/faxdeluser.1m;	${MANCVT}
 sman.apps/hfaxd.1m:: ${SRCDIR}/hfaxd.1m;	${MANCVT}
 sman.apps/faxgetty.1m::	${SRCDIR}/faxgetty.1m;	${MANCVT}
 sman.apps/faxinfo.1m::	${SRCDIR}/faxinfo.1m;	${MANCVT}
