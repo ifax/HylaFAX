@@ -226,6 +226,15 @@ const char* faxCoverApp::prologue = "\
     } loop\n\
     pop pop pop pop\n\
 } def\n\
+/BreakIntoCommentX {\n\
+% <maxlines> <text> BreakIntoCommentX -\n\
+    /cbuf (Comment ) def\n\
+    0 exch\n\
+    linebreak { search { 4 -1 roll 1 add 4 2 roll }{ exch 1 add exit } ifelse } loop\n\
+    dup dup 2 add 1 roll
+    -1 1 { cbuf exch 7 exch 48 add put cbuf cvn exch def } for\n\
+    1 add exch 1 exch { cbuf exch 7 exch 48 add put cbuf cvn () def } for\n\
+} def\n\
 ";
 
 void
