@@ -285,10 +285,8 @@ ClassModem::answerCall(AnswerType atype, fxStr& emsg, const char* number)
     if (answerCmd == "")
 	answerCmd = conf.answerAnyCmd;
     if (atCmd(answerCmd, AT_NOTHING)) {
-	if (atype == ANSTYPE_DIAL)
-	    ctype = CALLTYPE_FAX;	// force as fax
-	else
-	    ctype = answerResponse(emsg);
+	ctype = answerResponse(emsg);
+	if (atype == ANSTYPE_DIAL) ctype = CALLTYPE_FAX;	// force as fax
 	if (ctype == CALLTYPE_UNKNOWN) {
 	    /*
 	     * The response does not uniquely identify the type
