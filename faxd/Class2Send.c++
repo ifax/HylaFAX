@@ -242,6 +242,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
     fxStr& pph, fxStr& emsg, u_int& batched)
 {
     int ntrys = 0;			// # retraining/command repeats
+    u_int ppm, previousppm = 0;
 
     setDataTimeout(60, next.br);	// 60 seconds for 1024 byte writes
     hangupCode[0] = '\0';
@@ -270,7 +271,6 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	     * remote station (XXX need to deal with PRI requests).).
 	     */
 	    morePages = !TIFFLastDirectory(tif);
-	    u_int ppm;
 	    if (!decodePPM(pph, ppm, emsg))
 		goto failed;
 
@@ -347,7 +347,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		/*
 		 * We received no PPR.
 		 */
-		if (ppm = PPM_EOM && (batched & BATCH_FIRST)) {
+		if (ppm == PPM_EOM && (batched & BATCH_FIRST)) {
 		    emsg = "Batching protocol error";
 		    protoTrace("The destination appears to not support batching.");
 		    return (send_batchfail);
@@ -357,12 +357,13 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    /*
 	     * We were unable to negotiate settings and transfer page image data.
 	     */
-	    if (!(batched & BATCH_FIRST)) {
+	    if (previousppm == PPM_EOM) {
 		emsg = "Batching protocol error";
 		protoTrace("The destination appears to not support batching.");
 		return (send_batchfail);
 	    }
 	}
+	previousppm = ppm;
     } while (transferOK && morePages && !hadHangup);
     if (!transferOK) {
 	if (emsg == "") {

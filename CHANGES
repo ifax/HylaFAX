@@ -33,7 +33,7 @@ Changelog for HylaFAX 4.2.0
 * handle repeated PPS, DCS, or EOR signals in V.34-Fax (26 Apr 2004)
 * attempt to handle CTC signals from broken senders (26 Apr 2004)
 * improved pagermap backreference error handling (22 Apr 2004)
-* add batching support to faxsend (19 Apr 2004)
+* add batching support to faxsend (19 Apr, 9 Jun 2004)
 * change MaxConcurrentJobs to MaxConcurrentCalls (19 Apr 2004)
 * improve V.34-Fax renegotiations by dropping 4800 bps per step (12 Apr 2004)
 * improve some V.34-Fax error logging and handling (12, 19 Apr 2004)
