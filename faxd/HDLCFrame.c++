@@ -43,7 +43,7 @@ HDLCFrame::HDLCFrame(u_int fo)
 
 HDLCFrame::~HDLCFrame()
 {
-    if (base != buf) delete base;
+    if (base != buf) free(base);
 }
 
 HDLCFrame::HDLCFrame(const HDLCFrame& other)
