@@ -141,20 +141,20 @@ HylaFAXServer::getRecvDocStatus(RecvInfo& ri)
     ri.cidname = "";
     ri.cidnumber = "";
     if (TIFFGetField(tif, TIFFTAG_IMAGEDESCRIPTION, &cp)) {
-	while (cp[0] != '\0' and cp[0] != '\n') {	// sender 
+	while (cp[0] != '\0' && cp[0] != '\n') {	// sender 
 	    ri.sender.append(cp[0]);
 	    cp++;
 	}
 	if (cp[0] == '\n') {
 	    cp++;
-	    while (cp[0] != '\0' and cp[0] != '\n') {   // cidname
+	    while (cp[0] != '\0' && cp[0] != '\n') {   // cidname
 		ri.cidname.append(cp[0]);
 		cp++;
 	    }
 	}
 	if (cp[0] == '\n') {
 	    cp++;
-	    while (cp[0] != '\0' and cp[0] != '\n') {   // cidnumber
+	    while (cp[0] != '\0' && cp[0] != '\n') {   // cidnumber
 		ri.cidnumber.append(cp[0]);
 		cp++;
 	    }
