@@ -1244,12 +1244,14 @@ if [ -z "$MAKECXXOVERRIDE" ]; then
     case $ISGXX-$TARGET in
     no-*-solaris*|no-*-sunos*)			# SunPRO C++ compiler
 	#
-	# Yech, the SunPro C++ compiler has no option to force a source
+	# Yech, the SunPro C++ compiler < v5 has no option to force a source
 	# file w/ a .c++ suffix to be treated as C++ source code; instead one
 	# must specify file.c++=.C.  We patch the Makefiles with explicit
 	# construction rules to do this...
 	#
-	MAKECXXOVERRIDE="=.C"
+	if [ "`$CXX -V | $SED 's/.* C \([^ .]*\).*/\1/g'`" -lt "5" ]; then
+	    MAKECXXOVERRIDE="=.C";
+	fi
 	;;
     esac
 fi

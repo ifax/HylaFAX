@@ -176,7 +176,7 @@ MsgFmt::setConfigItem(const char* tag, const char* value)
         } while (cp = tp);
         delete [] cp;
     } else if (streq(tag, "mapheader")) {
-	char* tp = strchr(value, ' ');
+	char* tp = (char *) strchr(value, ' ');
 	if (tp) {
 	    for (*tp++ = '\0'; isspace(*tp); tp++)
 		;

@@ -367,7 +367,7 @@ HylaFAXServer::Rprintf(FILE* fd, const char* fmt,
 		fprintf(fd, fspec, (const char*) ri.reason);
 		break;
 	    case 'f':
-		fp = strrchr(ri.qfile, '/');
+		fp = (char *) strrchr(ri.qfile, '/');
 		fprintf(fd, fspec, fp ? fp+1 : (const char*) ri.qfile);
 		break;
 	    case 'h':

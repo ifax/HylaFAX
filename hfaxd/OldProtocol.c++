@@ -528,7 +528,7 @@ void
 OldProtocolServer::applyToJob(const char* tag, const char* op,
     void (OldProtocolServer::*f)(Job&, const char*))
 {
-    char* requestor = strchr(tag, ':');
+    char* requestor = (char *) strchr(tag, ':');
     if (!requestor)
 	protocolBotch("no requestor name for \"%s\" command.", op);
     *requestor++ = '\0';
@@ -561,7 +561,7 @@ void
 OldProtocolServer::applyToJobGroup(const char* tag, const char* op,
     void (OldProtocolServer::*f)(Job&, const char*))
 {
-    char* requestor = strchr(tag, ':');
+    char* requestor = (char *) strchr(tag, ':');
     if (!requestor)
 	protocolBotch("no requestor name for \"%s\" command.", op);
     *requestor++ = '\0';
