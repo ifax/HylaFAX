@@ -1082,9 +1082,11 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			}
 		    } while (!gotppr);		
 		}
+		bool doctceor;
 		switch (pprframe.getFCF()) {
 		    case FCF_MCF:
 		    case FCF_PIP:
+			hadV34Trouble = false;
 			blockgood = true;
 			signalRcvd = pprframe.getFCF();
 			break;
@@ -1105,25 +1107,39 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				}
 			    }
 			}
-			if (useV34 && badframes && badframes >= (badframesbefore / 2) && pprcnt < 4) {
-			    /*
-			     * With V.34-Fax we cannot send CTC, but we can request 
-			     * to renegotiate the primary rate any time.  (T.31-A1 B.8.5)
-			     * In practice, if we do not constrain the rate then
-			     * we may likely speed up the rate; so we constrain it.
-			     */
-			    renegotiatePrimary(true);		// constrain
+			doctceor = (pprcnt == 4);
+			/*
+			 * T.30 Annex F prohibits CTC in V.34-Fax.  Per the spec our options
+			 * are to do EOR or DCN.  However, many receivers will allow us to
+			 * simply continue sending image blocks followed by PPS.  Coupled with
+			 * primary rate negotiations, this becomes a better-than-CTC solution.
+			 * Do this up to 12 attempts and only when something has gotten through.
+			 */
+			if (useV34) {
+			    if (pprcnt >= 4 && badframes) hadV34Trouble = true;	// problematic V.34?
+			    if (pprcnt == 8) doctceor = true;
+			    if (conf.class1PersistentECM && badframes && badframes != frameNumber) doctceor = false;
+			    if (pprcnt == 12) doctceor = true;
+			    if (!doctceor && badframes && badframes >= (badframesbefore / 2)) {
+				/*
+				 * Request to renegotiate the primary rate.  (T.31-A1 B.8.5)
+				 * In practice, if we do not constrain the rate then
+				 * we may likely speed up the rate; so we constrain it.
+				 */
+				renegotiatePrimary(true);		// constrain
+			    }
 			}
-			if (pprcnt == 4) {
+			if (doctceor) {
 			    pprcnt = 0;
 			    // Some receivers will ignorantly transmit PPR showing all frames good,
 			    // so if that's the case then do EOR instead of CTC.
 			    if (badframes == 0) {
+				hadV34Trouble = false;
 				blockgood = true;
 				signalRcvd = FCF_MCF;
 			    }
 			    // There is no CTC with V.34-fax (T.30 Annex F.3.4.5 Note 1).
-			    if (conf.class1ECMDoCTC && !useV34 && (blockgood == false) && 
+			    if (conf.class1PersistentECM && !useV34 && (blockgood == false) && 
 				!((curcap->br == 0) && (badframes >= badframesbefore))) {
 				// send ctc even at 2400 baud if we're getting somewhere
 				if (curcap->br != 0) {
@@ -1187,10 +1203,6 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				 * disabling MMR to this destination would be advisable.
 				 */
 				if (blockgood == false && params.df == DF_2DMMR) {
-				    if (useV34) {
-					// not using CTC seems to be a problem
-					hadV34Trouble = true;
-				    }
 				    emsg = "Failure to transmit clean MMR image data.";
 				    protoTrace(emsg);
 				    return (false);

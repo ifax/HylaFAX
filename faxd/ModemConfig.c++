@@ -237,7 +237,7 @@ ModemConfig::setupConfig()
     class2UseLineCount	= false;		// don't trust firmware decoders
     class1ECMSupport	= true;			// support for ECM
     class1ExtendedRes	= true;			// support for extended resolutions
-    class1ECMDoCTC	= true;			// continue to correct through all bitrates
+    class1PersistentECM	= true;			// continue to correct
     class1TCFRecvHack	= false;		// historical behavior
     class1ValidateV21Frames = false;		// assume the modem does this
     setVolumeCmds("ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1");
@@ -581,8 +581,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class2SendRTC = getBoolean(value);
     else if (streq(tag, "class1ecmsupport"))
 	class1ECMSupport = getBoolean(value);
-    else if (streq(tag, "class1ecmdoctc"))
-	class1ECMDoCTC = getBoolean(value);
+    else if (streq(tag, "class1persistentecm"))
+	class1PersistentECM = getBoolean(value);
     else if (streq(tag, "class1extendedres"))
 	class1ExtendedRes = getBoolean(value);
     else if (streq(tag, "class1tcfrecvhack"))

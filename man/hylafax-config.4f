@@ -262,7 +262,7 @@ Class1Cmd	string	\s-1AT+FCLASS=1\s+1	Class 1: command to enter class 1
 Class1Cmd	string	\s-1AT+FCLASS=1.0\s+1	Class 1.0: command to enter class 1
 Class1EnableV34Cmd	string	\-	Class 1/1.0: command to enable V.34-fax support
 Class1ECMSupport	boolean	\s-1Yes\s+1	Class 1/1.0: enable T.30-A ECM support
-Class1ECMDoCTC	boolean	\s-1Yes\s+1	Class 1/1.0: to perform CTC in ECM protocol
+Class1PersistentECM	boolean	\s-1Yes\s+1	Class 1/1.0: to continue to correct while in ECM
 Class1ECMFrameSize	integer	\s-1256\s+1	Class 1/1.0: image frame size in ECM protocol
 Class1ExtendedRes	boolean	\s-1Yes\s+1	Class 1/1.0: enable extended resolution support
 Class1HFLOCmd	string	\-	Class 1/1.0: command to set hardware flow control
@@ -2044,10 +2044,10 @@ maximum primary channel rate.
 Whether or not to support T.30-A error correction protocol.  Use of
 ECM will require 64 kilobytes of free memory per modem in active use.
 .TP
-.B Class1ECMDoCTC
-Whether or not to continue to retransmit image data in ECM protocol 
-at a lower bitrate which is not accepted as valid after four successive
-attempts at the current bitrate.
+.B Class1PersistentECM
+Whether or not to continue to retransmit and allow to continue to 
+receive image data in ECM protocol 
+which is not accepted as valid after four successive attempts.
 .TP
 .B Class1ECMFrameSize
 The size in bytes of image frames to transmit during ECM protocol.

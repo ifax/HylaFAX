@@ -1004,7 +1004,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			    tracePPR("RECV send", FCF_PPR);
 
 			    pprcnt++;
-			    if (pprcnt == 4) {
+			    if (pprcnt == 4 && (!useV34 || !conf.class1PersistentECM)) {
 				// expect sender to send CTC/EOR after every fourth PPR, not just the fourth
 				protoTrace("RECV sent fourth PPR");
 				pprcnt = 0;
