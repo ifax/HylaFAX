@@ -130,15 +130,17 @@ LOCKSTR=`expr "         $$" : '.*\(..........\)'`
 for x in $LOCKX; do
     echo "$LOCKSTR" > $x
 done
+
 # zap any gettys or other users
-fuser -k $DEVS >/dev/null 2>&1 || {
+if ! [ -f $FUSER ]; then
     cat<<EOF
 Hmm, there does not appear to be an fuser command on your machine.
-This means that I am unable to insure that all processes using the
+This means that I am unable to ensure that all processes using the
 modem have been killed.  I will keep going, but beware that you may
 have competition for the modem.
 EOF
-}
+else $FUSER -k $DEVS >/dev/null 2>&1
+fi
 
 cat<<EOF
 
