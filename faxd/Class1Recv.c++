@@ -690,20 +690,6 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 					    if (!gotresponse) emsg = "No response to RNR repeated 3 times.";
 					} else {		// parent finished TIFFWriteDirectory
 					    tbuf[0] = 0;
-					    if (emsg == "") {	// confirm only if there was no error
-						if (lastPPM == FCF_MPS) {
-						    /*
-						     * Raise the HDLC transmission carrier but do not
-						     * transmit MCF now.  This gives us at least a 3-second
-						     * window to buffer any delays in the post-page
-						     * processes.
-						     */
-						    if (!useV34) atCmd(thCmd, AT_CONNECT);
-						} else {
-						    (void) transmitFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
-						}
-						tracePPR("RECV send", sendERR ? FCF_ERR : FCF_MCF);
-					    }
 					}
 				    } while (tbuf[0] != 0);
 				    Sys::read(fcfd[0], NULL, 1);
@@ -719,6 +705,20 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			} else {
 			    protoTrace("Protocol flow control unavailable due to pipe error.");
 			    TIFFWriteDirectory(tif);
+			}
+			if (emsg == "") {	// confirm only if there was no error
+			    if (lastPPM == FCF_MPS) {
+				/*
+				 * Raise the HDLC transmission carrier but do not
+				 * transmit MCF now.  This gives us at least a 3-second
+				 * window to buffer any delays in the post-page
+				 * processes.
+				 */
+				if (!useV34) atCmd(thCmd, AT_CONNECT);
+			    } else {
+				(void) transmitFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
+			    }
+			    tracePPR("RECV send", sendERR ? FCF_ERR : FCF_MCF);
 			}
 			/*
 			 * Reset state so that the next call looks
