@@ -1,3 +1,4 @@
+*.so.*.*.*
 .c++dependtime
 choptest
 cqtest
@@ -12,4 +13,3 @@ mkhash
 pagesend
 tagtest
 tsitest
-
