@@ -300,7 +300,7 @@ Class2Modem::recvPPM(TIFF* tif, int& ppr)
 bool
 Class2Modem::parseFPTS(TIFF* tif, const char* cp, int& ppr)
 {
-    int lc = 0;
+    uint32 lc = 0;
     int blc = 0;
     int cblc = 0;
     ppr = 0;
