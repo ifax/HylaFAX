@@ -85,5 +85,5 @@ inline u_int HDLCFrame::getRawFCF() const	     { return (*this)[2]; }
 inline u_int HDLCFrame::getFCF() const		     { return (*this)[2]&0x7f; }
 inline const u_char* HDLCFrame::getFrameData() const { return &((*this)[3]); }
 inline u_int HDLCFrame::getFrameDataLength() const
-    { return getLength() - frameOverhead; }
+    { u_int len = getLength(); return  len > frameOverhead ? len - frameOverhead : 0; }
 #endif /* _HDLCFRAME_ */
