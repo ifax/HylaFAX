@@ -30,11 +30,11 @@
 # EDIT THIS CONFIGURATION TO REFLECT YOUR SETUP
 #
 # BEGIN-SERVER
-#CountryCode:		1		# USA
-#LongDistancePrefix:	1
-#InternationalPrefix:	011
-#AreaCode:		415
-#DialStringRules:	etc/dialrules
+CountryCode:		1		# USA
+LongDistancePrefix:	1
+InternationalPrefix:	011
+AreaCode:		415
+DialStringRules:	etc/dialrules
 FAXNumber:		+1.999.555.1212
 LocalIdentifier:	"NothingSetup"	# default is canonical FAXNumber
 ServerTracing:		1		# log server-related operations
@@ -103,29 +103,3 @@ ModemWaitTimeCmd:	ATS7=60		# wait 60 seconds for carrier
 ModemCommaPauseTimeCmd:	ATS8=2		# comma pause time is 2 seconds
 ModemRecvFillOrder:	LSB2MSB		# bit order of received facsimile
 ModemSendFillOrder:	LSB2MSB		# bit order modem expects for transmit
-#
-# Configuration parameters for Class 2 modems.
-#
-Class2Cmd:		AT+FCLASS=2	# command to enter class 2
-Class2BORCmd:		AT+FBOR=0	# bit order for phase B/C/D (direct)
-Class2RELCmd:		AT+FREL=1	# byte-align EOL codes on recv
-Class2CQCmd:		""		# commands to enable copy quality proc.
-Class2AbortCmd:		AT+FK		# abort session command
-Class2CQQueryCmd:	AT+FCQ=?	# query for copy quality capabilities
-Class2DCCQueryCmd:	AT+FDCC=?	# query for modem capabilities
-Class2TBCCmd:		AT+FTBC=0	# setup stream mode
-Class2CRCmd:		AT+FCR=1	# enable capability to receive
-Class2PHCTOCmd:		AT+FPHCTO=30	# set phase C timeout parameter
-Class2BUGCmd:		AT+FBUG=1	# enable HDLC frame tracing
-Class2LIDCmd:		AT+FLID		# set local identifier command
-Class2DCCCmd:		AT+FDCC		# set modem capabilities command
-Class2DISCmd:		AT+FDIS		# set session parameters command
-Class2DDISCmd:		""		# disable pre-dial DIS command hack
-Class2CIGCmd:		AT+FCIG		# set polling identifier command
-Class2PTSCmd:		AT+FPTS		# set post-page status command
-Class2SPLCmd:		AT+FSPL		# set polling indicator command
-#
-# If Class2RecvDataTrigger is not set, then it is set to DC1
-#
-Class2RecvDataTrigger:	""		# character sent to modem to start recv
-Class2XmitWaitForXON:	yes		# if true, wait for XON before send
