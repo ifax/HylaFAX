@@ -186,7 +186,7 @@ public:
     void	sendAbort();
 
 // receive support
-    CallType	answerCall(AnswerType, fxStr& emsg);
+    CallType	answerCall(AnswerType, fxStr& emsg, const char* number);
     u_int	modemDIS() const;
     u_int	modemXINFO() const;
     bool	setupReceive();

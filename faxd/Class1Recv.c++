@@ -45,11 +45,11 @@
  * flow control state to be setup to our liking.
  */
 CallType
-Class1Modem::answerCall(AnswerType type, fxStr& emsg)
+Class1Modem::answerCall(AnswerType type, fxStr& emsg, const char* number)
 {
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_FLUSH);
-    return FaxModem::answerCall(type, emsg);
+    return ClassModem::answerCall(type, emsg, number);
 }
 
 /*
