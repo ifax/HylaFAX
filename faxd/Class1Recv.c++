@@ -744,7 +744,10 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 				 * window to buffer any delays in the post-page
 				 * processes.
 				 */
-				if (!useV34) atCmd(thCmd, AT_CONNECT);
+				if (!useV34 && !atCmd(thCmd, AT_CONNECT)) {
+				    emsg = "Failure to raise V.21 transmission carrier.";
+				    return (false);
+				}
 			    } else {
 				(void) transmitFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
 			    }
