@@ -819,7 +819,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	// As the remote can request any frame of the block until
 	// MCF we must keep the full image block available.
 
-	bool blockgood = false;
+	bool blockgood = false, renegotiate = false, constrain = false;
 	u_short pprcnt = 0;
 	char ppr[32];				// 256 bits
 	for (u_int i = 0; i < 32; i++) ppr[i] = 0xff;
@@ -916,6 +916,13 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		if (!putModemData(buf, 2)) return (false);
 		// wait for the ready indicator, <DLE><pri><DLE><prate>
 		if (!waitForDCEChannel(false)) return (false);
+		if (renegotiate) {
+		    // Although spec says this can be done any time,
+		    // in practice it must be done at this moment.
+		    renegotiatePrimary(constrain);
+		    renegotiate = false;
+		    constrain = false;
+		}
 	    }
 	    if (useV34) {
 		// we intentionally do not send the FCS bytes as the DCE regenerates them
@@ -1126,7 +1133,8 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				 * In practice, if we do not constrain the rate then
 				 * we may likely speed up the rate; so we constrain it.
 				 */
-				renegotiatePrimary(true);		// constrain
+				renegotiate = true;
+				constrain = true;
 			    }
 			}
 			if (doctceor) {
