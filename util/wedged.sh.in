@@ -95,3 +95,5 @@ fi
 echo ""
 echo "Consult the server trace logs for more information on what is happening."
 ) | 2>&1 $SENDMAIL -t -ffax -oi
+
+exit 0
