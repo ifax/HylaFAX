@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX 4.2.1
 
+* add -fpic to DSO build for non-x86 Linux (23 Nov 2004)
+* add CALL records to xferfaxlog and LogCalls config (16 Nov 2004)
 * fix/implement desireddf in faxsend and faxq (29 Oct 2004)
 * fix the filetype output for JPARM DOCUMENTS (14 Oct 2004)
 * add SHIELDED_DTMF option for CIDNumber (7 Oct 2004)
