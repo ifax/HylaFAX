@@ -2423,6 +2423,8 @@ BuildPortDotH()
         *sysv4.2uw2*)	CONFIG_SOCKARGLENTYPE=size_t;;
         *-univel-*)	CONFIG_SOCKARGLENTYPE=size_t;;
         *-UnixWare*)	CONFIG_SOCKARGLENTYPE=size_t;;
+	*-freebsd4*)	CONFIG_SOCKARGLENTYPE=u_int32_t;;
+	*-freebsd5*)	CONFIG_SOCKARGLENTYPE=u_int32_t;;
         *)		CONFIG_SOCKARGLENTYPE=int;;
         esac
     }
@@ -3694,10 +3696,14 @@ getGSFonts()
 	return 0
 }
 
-if [ -z "$FONTMAP" ]; then
-	FONTMAP=`getGSFonts`
-fi
 Note "Setting the Fontmap path to $FONTMAP"
+case $TARGET in
+	*-freebsd*)     PATH_AFM=/usr/local/lib/afm ;;
+	*)      if [ -z "$FONTMAP" ]; then
+			FONTMAP=`getGSFonts`;
+		fi
+		Note "Setting the Fontmap path to $FONTMAP";;
+esac
 
 #
 # Location of Adobe Font Metric files.
