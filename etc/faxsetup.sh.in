@@ -299,7 +299,7 @@ Note ""
 
 CPU=`expr $TARGET : '\(.*\)-.*-.*'` || CPU=unknown
 VENDOR=`expr $TARGET : '.*-\(.*\)-.*'` || VENDOR=unknown
-OS=`expr $TARGET : '.*-.*-\([a-zA-z]*\).*'` || OS=unknown
+OS=`expr $TARGET : '.*-.*-\([a-zA-Z]*\).*'` || OS=unknown
 RELEASE=`(uname -r) 2>/dev/null` || RELEASE=unknown
 
 #
