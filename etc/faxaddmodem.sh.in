@@ -1070,7 +1070,7 @@ configureClass1Modem()
 BEGIN	{ proto = "" }
 FILENAME ~ /^OLD/ { next }
 FILENAME ~ /^config\./ { next }
-(C == $4 || (C ~ $4 && $4 ~ "\*")) && I ~ $5 && F ~ $6 {
+(C == $4 || (C ~ $4 && $4 ~ /\*/)) && I ~ $5 && F ~ $6 {
 	  if (proto != "") {
 	      print "echo \"Warning, multiple configuration files exist for this modem,\";"
 	      print "echo \"   the file " $1 " is ignored.\";"
