@@ -55,6 +55,7 @@ EOF
 # backward compatibility.
 ENCODING=base64
 MIMENCODE=mimencode
+TTYCMD=tty
 
 . etc/setup.cache
 
@@ -66,7 +67,17 @@ TOADDR=FaxMaster
 FROMADDR=fax
 TIFFINFO=tiffinfo
 NOTIFY_FAXMASTER=always
-ERRORSTO=/dev/tty
+
+#
+# Redirect errors to a tty, if possible, rather than
+# dev-nulling them or allowing them to creep into
+# the mail.
+#
+if $TTYCMD >/dev/null 2>&1; then
+    ERRORSTO=`$TTYCMD`
+else
+    ERRORSTO=/dev/null
+fi
 
 #
 # Permit various types of attachment types: ps, tif, pdf
@@ -74,6 +85,36 @@ ERRORSTO=/dev/tty
 # pdf requires tiff2ps and ps2pdf
 #
 FILETYPE=ps
+SENDTO=
+
+#
+# There is no good portable way to find out the fully qualified
+# domain name (FQDN) of the host or the TCP port for the hylafax
+# service so we fudge here.  Folks may want to tailor this to
+# their needs; e.g. add a domain or use localhost so the loopback
+# interface is used.
+#
+HOSTNAME=`hostname`			# XXX no good way to find FQDN
+PORT=4559				# XXX no good way to lookup service
+
+FILE="$1"
+DEVICE="$2"
+COMMID="$3"
+MSG="$4"
+CIDNUMBER="$5"
+CIDNAME="$6"
+
+FILENAME=`echo $FILE | $SED -e 's/\.tif//' -e 's/recvq\///'`
+SENDER="`$INFO $FILE | $AWK -F: '/Sender/ { print $2 }' 2>$ERRORSTO`"
+SUBADDR="`$INFO $FILE | $AWK -F: '/SubAddr/ { print $2 }' 2>$ERRORSTO`"
+
+#
+# Apply customizations.  All customizable variables should
+# be set to their non-customized defaults prior to this.
+#
+if [ -f etc/FaxDispatch ]; then
+    . etc/FaxDispatch		# NB: FaxDispatch sets SENDTO
+fi
 
 #
 # Produce mailable encoding for binary files.
@@ -95,36 +136,7 @@ encode()
     fi
 }
 
-#
-# There is no good portable way to find out the fully qualified
-# domain name (FQDN) of the host or the TCP port for the hylafax
-# service so we fudge here.  Folks may want to tailor this to
-# their needs; e.g. add a domain or use localhost so the loopback
-# interface is used.
-#
-HOSTNAME=`hostname`			# XXX no good way to find FQDN
-PORT=4559				# XXX no good way to lookup service
-
-FILE="$1"
-DEVICE="$2"
-COMMID="$3"
-MSG="$4"
-CIDNUMBER="$5"
-CIDNAME="$6"
-
-FILENAME=`echo $FILE | $SED -e 's/\.tif//' -e 's/recvq\///'`
-
 if [ -f $FILE ]; then
-    #
-    # Check the sender's TSI and setup to dispatch
-    # facsimile received from well-known senders.
-    #
-    SUBADDR="`$INFO $FILE | $AWK -F: '/SubAddr/ { print $2 }' 2>$ERRORSTO`"
-    SENDER="`$INFO $FILE | $AWK -F: '/Sender/ { print $2 }' 2>$ERRORSTO`"
-    SENDTO=
-    if [ -f etc/FaxDispatch ]; then
-	. etc/FaxDispatch	# NB: FaxDispatch sets SENDTO
-    fi
     #
     # Don't send FaxMaster duplicates, and FaxMaster may not even
     # want a message at all, depending on NOTIFY_FAXMASTER.

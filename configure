@@ -249,6 +249,7 @@ SYSVINITSTOPNAME	NAME_SYSVINITSTOP
 TARGET
 TIFFBIN
 TIFFINC
+TTYCMD
 UTMP
 UUCP_LOCKDIR	DIR_LOCKS
 UUCP_LOCKTYPE	LOCKS
@@ -3428,10 +3429,11 @@ test "$MAN"	|| MAN=`findAppDef man $PATH man`
 test "$MIMENCODE" || MIMENCODE=`findAppDef mimencode $PATH mimencode`
 test "$MKDIR"	|| MKDIR=`findAppDef mkdir $PATH mkdir`
 test "$MV"	|| MV=`findAppDef mv $PATH mv`
+test "$PWDCMD"	|| PWDCMD=`findAppDef pwd $PATH pwd`
 test "$RMCMD"	|| RMCMD=`findAppDef rm $PATH rm`
 test "$SORT"	|| SORT=`findAppDef sort $PATH sort`
 test "$STRIP"	|| STRIP=`findAppDef strip $PATH strip`
-test "$PWDCMD"	|| PWDCMD=`findAppDef pwd $PATH pwd`
+test "$TTYCMD"	|| TTYCMD=`findAppDef tty $PATH tty`
 test "$UUENCODE" || UUENCODE=`findAppDef uuencode $PATH uuencode`
 
 #

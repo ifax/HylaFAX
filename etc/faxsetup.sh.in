@@ -66,6 +66,7 @@ MV=@MV@				# move file for use below
 RMCMD=@RM@			# remove file for use below
 SCRIPT_SH=@SCRIPT_SH@		# shell for use below
 SED=@SED@			# sed for use below
+TTYCMD=@TTYCMD@			# tty for error output
 UUENCODE=@UUENCODE@		# uuencode command to dump in setup.cache
 
 FAX=fax				# identity of the fax user
@@ -163,6 +164,7 @@ SPOOL		DIR_SPOOL
 SYSVINIT
 TIFFBIN
 TARGET
+TTYCMD
 UUENCODE
 UUCP_LOCKDIR	DIR_LOCKS
 UUCP_LOCKTYPE	LOCKS"

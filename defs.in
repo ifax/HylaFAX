@@ -86,6 +86,7 @@ MKDIR		= @MKDIR@
 NAWK		= @AWK@
 SED		= @SED@
 SORT		= @SORT@
+TTYCMD		= @TTYCMD@
 #
 PRODUCT		= hylafax
 GENDIST		= @GENDIST@			# for SGI systems
