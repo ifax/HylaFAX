@@ -1166,7 +1166,7 @@ EOF
 	x=""
 	while [ "`echo \" $MODEMCLASSES \" | $GREP \" $x \"`" = "" ]; do
 	    echo $SUPPORT
-	    prompt "How should it be configured [$DEFAULTCLASS]?"
+	    prompt "How should it be configured [$DEFAULTCLASS]?";
 	    read x
 	    if [ "$x" = "" ]; then x=$DEFAULTCLASS; fi
 	done
