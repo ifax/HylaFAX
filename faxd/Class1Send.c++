@@ -315,11 +315,11 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		else
 		    pph.remove(0,3);	// discard page-handling info
 		ntrys = 0;
-		if (ppr == FCF_PIP) {
-		    emsg = "Procedure interrupt (operator intervention)";
-		    return (send_failed);
-		}
 		if (morePages) {
+		    if (ppr == FCF_PIP) {
+			emsg = "Procedure interrupt (operator intervention)";
+			return (send_failed);
+		    }
 		    if (!TIFFReadDirectory(tif)) {
 			emsg = "Problem reading document directory";
 			return (send_failed);
@@ -942,7 +942,9 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		}
 		switch (pprframe.getFCF()) {
 		    case FCF_MCF:
+		    case FCF_PIP:
 			blockgood = true;
+			signalRcvd = pprframe.getFCF();
 			break;
 		    case FCF_PPR:
 			pprcnt++;
@@ -963,7 +965,10 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			    pprcnt = 0;
 			    // Some receivers will ignorantly transmit PPR showing all frames good,
 			    // so if that's the case then do EOR instead of CTC.
-			    if (badframes == 0) blockgood = true;
+			    if (badframes == 0) {
+				blockgood = true;
+				signalRcvd = FCF_MCF;
+			    }
 			    if (conf.class1ECMDoCTC && (blockgood == false) && 
 				!((curcap->br == 0) && (badframes >= badframesbefore))) {
 				// send ctc even at 2400 baud if we're getting somewhere
@@ -1069,6 +1074,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				    return (false);
 				}
 				blockgood = true;
+				signalRcvd = FCF_MCF;
 			    }
 			}
 			break;
@@ -1094,7 +1100,6 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	    }
 	} while (!blockgood);
 	frameNumber = 0;
-	signalRcvd = FCF_MCF;
 	if (lastblock) blockNumber = 0;
 	else blockNumber++;
     }

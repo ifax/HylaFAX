@@ -258,11 +258,11 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		    else
 			pph.remove(0,3);	// discard page-handling info
 		    ntrys = 0;
-		    if (ppr == PPR_PIP) {
-			emsg = "Procedure interrupt (operator intervention)";
-			goto failed;
-		    }
 		    if (morePages) {
+			if (ppr == PPR_PIP) {
+			    emsg = "Procedure interrupt (operator intervention)";
+			    goto failed;
+			}
 			if (!TIFFReadDirectory(tif)) {
 			    emsg = "Problem reading document directory";
 			    goto failed;
