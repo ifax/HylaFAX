@@ -118,7 +118,7 @@ f none @SBIN@/faxsetup.linux=../@SRCDIR@/etc/faxsetup.linux 0755 @SYSUID@ @SYSGI
 f none @SBIN@/probemodem=../etc/probemodem.sh 0755 @SYSUID@ @SYSGID@
 d none @SPOOL@ 0755 @FAXUID@ @FAXGID@
 d none @SPOOL@/bin 0755 @FAXUID@ @FAXGID@
-f none @SPOOL@/bin/pdf2fax.gs=../@SRCDIR@/util/pdf2fax.gs.sh 0755 @SYSUID@ @SYSGID@
+f none @SPOOL@/bin/pdf2fax.gs=../util/pdf2fax.gs.sh 0755 @SYSUID@ @SYSGID@
 f none @SPOOL@/bin/ps2fax.gs=../util/ps2fax.gs.sh 0755 @SYSUID@ @SYSGID@
 f none @SPOOL@/bin/ps2fax.dps=../util/ps2fax.dps.sh 0755 @SYSUID@ @SYSGID@
 f none @SPOOL@/bin/ps2fax.imp=../util/ps2fax.imp.sh 0755 @SYSUID@ @SYSGID@

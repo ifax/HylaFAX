@@ -61,8 +61,6 @@ BINARIES=\
 	../util/textfmt			\
 	../util/tiffcheck		\
 	../util/typetest		\
-	../html/tools/man2html		\
-	../html/tools/unquote		\
 	${NULL}
 
 package: cproto sproto all
@@ -71,19 +69,23 @@ package: cproto sproto all
 	for i in ${BINARIES} ; do			\
 		strip ${SRCDIR}/$$i ;			\
 	done ;						\
+	if [ "@HTML@" = yes ]; then			\
+		strip ${SRCDIR}/../html/tools/man2html;	\
+		strip ${SRCDIR}/../html/tools/unquote;	\
+	fi;						\
 	@RM@ -f pkginfo 2>/dev/null;			\
 	@RM@ -f request 2>/dev/null;			\
 	cp cpkginfo pkginfo ;				\
 	cp crequest request ;				\
 	pkgmk -d `pwd` -f cproto ;			\
-	pkgtrans -s `pwd` `pwd`/HylaFAX-client-@VERSION@.pkg HylaFAX ; \
+	pkgtrans -s `pwd` `pwd`/HylaFAX-client-@VERSION@-@PKG_ARCH@.pkg HylaFAX ; \
 	@RM@ -fr HylaFAX ;				\
 	@RM@ -f pkginfo 2>/dev/null;			\
 	@RM@ -f request 2>/dev/null;			\
 	cp spkginfo pkginfo ;				\
 	cp srequest request ;				\
 	pkgmk -d `pwd` -f sproto ;			\
-	pkgtrans -s `pwd` `pwd`/HylaFAX-@VERSION@.pkg HylaFAX
+	pkgtrans -s `pwd` `pwd`/HylaFAX-@VERSION@-@PKG_ARCH@.pkg HylaFAX
 
 cproto: cproto.stub
 	${SHELL} ./make_proto.sh client
@@ -94,8 +96,8 @@ sproto: sproto.stub
 clean:
 	@RM@ -f cproto sproto
 	@RM@ -fr HylaFAX
-	@RM@ -f HylaFAX-client-@VERSION@.pkg
-	@RM@ -f HylaFAX-@VERSION@.pkg
+	@RM@ -f HylaFAX-client-@VERSION@-@PKG_ARCH@.pkg
+	@RM@ -f HylaFAX-@VERSION@-@PKG_ARCH@.pkg
 	@RM@ -f pkginfo
 	@RM@ -f request
 	@RM@ -f core*
