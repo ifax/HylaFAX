@@ -217,7 +217,7 @@ G3Decoder::decodeRow(void* scanline, u_int lastx)
 	b1 = *pb++;
 #define	badlength(a0,lastx) do {			\
     if (isG4)						\
-	RTCrow = rowref-1;				\
+	RTCrow = rowref;				\
     badPixelCount("2D", a0, lastx);			\
     rowgood = false;					\
 } while (0)
@@ -228,7 +228,7 @@ G3Decoder::decodeRow(void* scanline, u_int lastx)
 #define	badlength(a0,lastx) do {			\
     nullrow = (a0 == 0);				\
     if (nullrow && ++RTCrun == 5 && RTCrow == -1)	\
-	RTCrow = rowref-5;				\
+	RTCrow = rowref-4;				\
     badPixelCount("1D", a0, lastx);			\
     rowgood = false;					\
 } while (0)
