@@ -251,6 +251,8 @@ static const char* docTypeNames[] = {
     "FAX",		// send_fax
     "TIFF",		// send_tiff
     "TIFF",		// send_tiff_saved
+    "PDF",		// send_pdf
+    "PDF",		// send_pdf_saved
     "PS",		// send_postscript
     "PS",		// send_postscript_saved
     "PCL",		// send_pcl
@@ -262,8 +264,6 @@ static const char* docTypeNames[] = {
     "PAGE",		// send_page_saved
     "UUCP",		// send_uucp
     "UNKNOWN",		// send_unknown
-    "PDF",			// send_pdf
-    "PDF",			// send_pdf_saved
 };
 
 static const char*
