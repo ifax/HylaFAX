@@ -1,9 +1,10 @@
 # $Id$
 #
-# prototype config for Topic modems
+# prototype config for Topic modems and other similarly broken firmwares
 #
 
-# CONFIG:CLASS1:TP560 Data/Fax/Voice 56K Modem:.*:.*: Manufacturer=Topic Model=TP560
+# CONFIG:CLASS1:TP560.*:.*:.*: Manufacturer=Topic Model=TP560
+# CONFIG:CLASS1:Linux ISDN.*:.*:.*: Manufacturer=Sedlbauer Model=Speedfax
 #
 # BEGIN-SERVER
 # END-SERVER
