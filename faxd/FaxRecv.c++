@@ -74,6 +74,7 @@ FaxServer::recvFax(const CallerID& cid)
 	    if (!modem->recvEnd(emsg))
 		traceProtocol("RECV FAX: %s", (const char*) emsg);
 	} else {
+	    modem->trainingFailed();		// wait until after QualifyTSI
 	    traceProtocol("RECV FAX: %s", (const char*) emsg);
 	    TIFFClose(tif);
 	}
@@ -219,6 +220,7 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 		return (false);
 	    }
 	}
+	modem->trainingSucceeded();		// wait until after QualifyTSI
 	setServerStatus("Receiving from \"%s\"", (const char*) info.sender);
 	recvOK = recvFaxPhaseD(tif, info, ppm, emsg);
 	TIFFClose(tif);

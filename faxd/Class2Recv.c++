@@ -346,3 +346,23 @@ Class2Modem::recvAbort()
 {
     strcpy(hangupCode, "50");			// force abort in recvEnd
 }
+
+/*
+ * Processes to perform at the end of training,
+ * but after TSI screening, so we know where
+ * we're going.
+ */
+void
+Class2Modem::trainingSucceeded()
+{
+    // nothing
+}
+
+/*
+ * ibid.
+ */
+void
+Class2Modem::trainingFailed()
+{
+    // nothing
+}

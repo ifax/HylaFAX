@@ -147,6 +147,8 @@ public:
     bool	recvPage(TIFF*, int& ppm, fxStr& emsg);
     bool	recvEnd(fxStr& emsg);
     void	recvAbort();
+    void	trainingSucceeded();
+    void	trainingFailed();
 
 // polling support
     bool	requestToPoll(fxStr& emsg);

@@ -301,19 +301,31 @@ Class1Modem::recvTraining()
 	}
 	(void) waitFor(AT_NOCARRIER);	// wait for message carrier to drop
     }
-    /*
-     * Send training response; we follow the spec
-     * by delaying 75ms before switching carriers.
-     */
-    pause(conf.class1TCFResponseDelay);
-    if (ok) {
-	transmitFrame(FCF_CFR|FCF_RCVR);
-	protoTrace("TRAINING succeeded");
-    } else {
-	transmitFrame(FCF_FTT|FCF_RCVR);
-	protoTrace("TRAINING failed");
-    }
     return (ok);
+}
+
+/*
+ * Send training response (success); we follow the spec
+ * by delaying 75ms before switching carriers.
+ */
+void
+Class1Modem::trainingSucceeded()
+{
+    pause(conf.class1TCFResponseDelay);
+    transmitFrame(FCF_CFR|FCF_RCVR);
+    protoTrace("TRAINING succeeded");
+}
+
+/*
+ * Send training response (failure); we follow the spec
+ * by delaying 75ms before switching carriers.
+ */
+void
+Class1Modem::trainingFailed()
+{
+    pause(conf.class1TCFResponseDelay);
+    transmitFrame(FCF_FTT|FCF_RCVR);
+    protoTrace("TRAINING failed");
 }
 
 /*
@@ -455,6 +467,8 @@ top:
 		    && recvDCSFrames(frame)
 		    && recvTraining()
 		);
+		if (messageReceived) trainingFailed();
+		else trainingSucceeded();
 		break;
 	    case FCF_MPS:			// MPS
 	    case FCF_EOM:			// EOM
@@ -552,8 +566,10 @@ top:
 	 * timeout, we need to achieve CONNECT first, just
 	 * as we did following ATA back in the beginning.
 	 */
-	if (atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 0) == AT_CONNECT && recvBegin(emsg))
+	if (atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 0) == AT_CONNECT && recvBegin(emsg)) {
+	    trainingSucceeded();
 	    goto top;
+	} else trainingFailed();
     } else
 	emsg = "T.30 T2 timeout, expected page not received";
     return (false);
