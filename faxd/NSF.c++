@@ -297,6 +297,7 @@ static const NSFData KnownNSF[] =
     {"\xAD\x00\x36", "HP",        false, 3, 5, HP, true },
     {"\xAD\x00\x42", "FaxTalk",   false, 0, 0, NULL, true },
     {"\xAD\x00\x44", NULL,        true,  0, 0, NULL, true },
+    {"\xAD\x00\x6E", "Microsoft", false, 0, 0, NULL, false }, // reverse-ordered country code but not the rest
     {"\xAD\x00\x98", "unknown - USA", true, 0, 0, NULL, true },
     {"\xBC\x53\x01", "Minolta",   false, 0, 0, NULL, true },
     {NULL}
