@@ -63,9 +63,27 @@ FaxModem::setupStartPage(TIFF* tif, const Class2Params& params)
 void
 FaxModem::recvEndPage(TIFF* tif, const Class2Params& params)
 {
+    /*
+     * FAXRECVPARAMS is limited to a 32-bit value, and as that is quite
+     * limited in comparison to all possible fax parameters, FAXDCS is
+     * intended to be used to discern most fax parameters.  The DCS
+     * signal, however, does not contain bitrate information when V.34-Fax
+     * is used, so tiffinfo, for example, will use FAXDCS for all fax
+     * parameters except for bitrate which comes from FAXRECVPARAMS.
+     *
+     * As FAXDCS is more recent in libtiff than is FAXRECVPARAMS some
+     * installations may not be able to use FAXDCS, in which case those
+     * installations will be limited to the 32-bit restraints.
+     */
     // NB: must set these after compression tag
 #ifdef TIFFTAG_FAXRECVPARAMS
     TIFFSetField(tif, TIFFTAG_FAXRECVPARAMS,	(uint32) params.encode());
+#endif
+#ifdef TIFFTAG_FAXDCS
+    FaxParams pageparams = FaxParams(params);
+    fxStr faxdcs = "";
+    pageparams.asciiEncode(faxdcs);
+    TIFFSetField(tif, TIFFTAG_FAXDCS, (const char*) faxdcs);
 #endif
 #ifdef TIFFTAG_FAXSUBADDRESS
     if (sub != "")

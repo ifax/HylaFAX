@@ -27,6 +27,7 @@
 #define	fax_capabilities
 
 #include "Types.h"
+#include "Str.h"
 
 struct Class2Params;
 
@@ -56,6 +57,8 @@ class FaxParams
 
 	u_char getByte(int byteNum);
 	bool hasNextByte(int byteNum);
+	void asciiEncode(fxStr&);
+	void asciiDecode(const char*);
 
 	bool operator==(FaxParams& operand) const;
 	bool operator!=(FaxParams& operand) const;

@@ -170,6 +170,34 @@ u_char FaxParams::getByte(int byteNum)
     return m_bits[byteNum];
 }
 
+/*
+ * Convert FaxParams and return a formatted ASCII DCS/DIS equivalent.
+ */
+void FaxParams::asciiEncode(fxStr& response)
+{
+    u_int byte = 0;
+    do {
+	if (byte) response.append(" ");
+	response.append(fxStr::format("%.2X", getByte(byte)));
+    } while (hasNextByte(byte++));
+}
+
+/*
+ * Reverse of asciiEncode, take ASCII string and make it into FaxParams
+ */
+void FaxParams::asciiDecode(const char* dcs)
+{
+    u_int byte = 0;
+    while (dcs[0] != '\0' && dcs[1] != '\0') {
+	u_char value = 0;
+	value = 2;
+	m_bits[byte] = ((dcs[0] - (dcs[0] > 64 ? 55 : 48)) << 4) + (dcs[1] - (dcs[1] > 64 ? 55 : 48));
+	setExtendBits(byte++);
+	dcs += 2;
+	if (dcs[0] == ' ') dcs++;
+    }
+}
+
 bool FaxParams::operator==(FaxParams& operand) const
 {
     bool equals = true;

@@ -819,6 +819,7 @@ faxGettyApp::notifyDocumentRecvd(FaxRecvInfo& ri)
     ai.jobtag = "";
     ai.callid = ri.callid;
     ai.owner = "";
+    ri.params.asciiEncode(ai.faxdcs);
     if (!ai.record("RECV"))
 	logError("Error writing RECV accounting record, dest=%s",
 	    (const char*) ai.dest);

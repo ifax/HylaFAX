@@ -90,6 +90,7 @@ case $SORTKEY in
 	$2 == "SEND" && NF == 16 { acct($7, $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 17 { acct($7 " (" $17 ")", $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 18 { acct($7 " (" $18 ")", $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 19 { acct($7 " (" $18 ")", $8, $11, $13, getBR($10), getDFfromDCS($19), $14); }
 	'
     KEYTITLE="Sender"
     ;;
@@ -103,6 +104,7 @@ case $SORTKEY in
 	$2 == "SEND" && NF == 16 { acct($9, $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 17 { acct($9, $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 18 { acct($9, $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 19 { acct($9, $8, $11, $13, getBR($10), getDFfromDCS($19), $14); }
 	'
     KEYTITLE="CSI"
     MAPNAMES=no
@@ -117,6 +119,7 @@ case $SORTKEY in
 	$2 == "SEND" && NF == 16 { acct($8, $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 17 { acct($8, $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 18 { acct($8, $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 19 { acct($8, $8, $11, $13, getBR($10), getDFfromDCS($19), $14); }
 	'
     KEYTITLE="Destination"
     MAPNAMES=no
@@ -131,6 +134,7 @@ case $SORTKEY in
 	$2 == "SEND" && NF == 16 { acct(getBR($10), $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 17 { acct(getBR($10), $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 18 { acct(getBR($10), $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 19 { acct(getBR($10), $8, $11, $13, getBR($10), getDFfromDCS($19), $14); }
 	'
     KEYTITLE="Speed"
     MAPNAMES=no
@@ -145,6 +149,7 @@ case $SORTKEY in
 	$2 == "SEND" && NF == 16 { acct(getDF($10), $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 17 { acct(getDF($10), $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 18 { acct(getDF($10), $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 19 { acct(getDF($10), $8, $11, $13, getBR($10), getDFfromDCS($19), $14); }
 	'
     KEYTITLE="Format"
     MAPNAMES=no
@@ -156,6 +161,7 @@ case $SORTKEY in
 	$2 == "SEND" && NF == 16 { acct($6, $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 17 { acct($6, $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 18 { acct($6, $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 19 { acct($6, $8, $11, $13, getBR($10), getDFfromDCS($19), $14); }
 	'
     KEYTITLE="JobTag"
     MAPNAMES=no
@@ -167,6 +173,7 @@ case $SORTKEY in
 	$2 == "SEND" && NF == 16 { acct($4, $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 17 { acct($4, $8, $11, $13, getBR($10), getDF($10), $14); }
 	$2 == "SEND" && NF == 18 { acct($4, $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 19 { acct($4, $8, $11, $13, getBR($10), getDFfromDCS($19), $14); }
 	'
     KEYTITLE="Device"
     MAPNAMES=no
@@ -401,6 +408,33 @@ function getDF(params)
     }
 }
 
+function isBitSet(bit, dcs) {
+    byte = int((bit - 1) / 8);  
+    pos = 7 - ((bit - 1) % 8);
+    dcsbyte = int("0x"substr(dcs, byte*3+1, 2));
+    return int(int(dcsbyte / (2 ^ pos)) % 2);
+}
+        
+function getDFfromDCS(dcs)
+{
+    if (substr(dcs, 1, 1) == "\"")
+	dcs = substr(dcs, 2);
+    if (substr(dcs, length(dcs), 1) == "\"")
+	dcs = substr(dcs, 1, length(dcs)-1);
+    if (isBitSet(68, dcs)) {
+	if (isBitSet(69, dcs))  
+	    return dfNames[6]; 
+	return dfNames[5];
+    }
+    if (isBitSet(31, dcs))  
+	return dfNames[3];
+    if (isBitSet(26, dcs))
+	return dfNames[2];
+    if (isBitSet(16, dcs))
+	return dfNames[1];
+    return dfNames[0];
+}
+
 #
 # Accumulate a statistics record.
 #
@@ -483,7 +517,7 @@ function printRule(n, s)
 BEGIN		{ FS="\t";
 		  rates = "2400:4800:7200:9600:12000:14400:16800:19200:21600:24000:26400:28800:31200:33600";
 		  setupMaps(rates, rateMap, brNames);
-		  datas = "1-D MH:2-D MR:2-D Uncompressed Mode:2-D MMR";
+		  datas = "1-D MH:2-D MR:2-D Uncompressed Mode:2-D MMR:JBIG Basic:JPEG Greyscale:JPEG Full-color";
 		  setupMaps(datas, dataMap, dfNames);
 		  callFailed["busy signal"] = 1;
 		  callFailed["unknown pro"] = 1;

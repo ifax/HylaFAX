@@ -92,6 +92,7 @@ case $SORTKEY in
 	$2 == "RECV" && NF == 16 { acct($9, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 17 { acct($9, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 18 { acct($9, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
+	$2 == "RECV" && NF == 19 { acct($9, $11, $13, getBR($10), getDFfromDCS($19), $14, $15, $16); }
 	'
     ;;
 -cidname)
@@ -99,6 +100,7 @@ case $SORTKEY in
 	$2 == "RECV" && NF == 16 { acct($15, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 17 { acct($15, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 18 { acct($15, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
+	$2 == "RECV" && NF == 19 { acct($15, $11, $13, getBR($10), getDFfromDCS($19), $14, $15, $16); }
 	'
     ;;
 -cidnumber)
@@ -106,6 +108,7 @@ case $SORTKEY in
 	$2 == "RECV" && NF == 16 { acct($16, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 17 { acct($16, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 18 { acct($16, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
+	$2 == "RECV" && NF == 19 { acct($16, $11, $13, getBR($10), getDFfromDCS($19), $14, $15, $16); }
 	'
     ;;
 -dest*)
@@ -117,6 +120,7 @@ case $SORTKEY in
 	$2 == "RECV" && NF == 16 { acct($8, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 17 { acct($8, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 18 { acct($8, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
+	$2 == "RECV" && NF == 19 { acct($8, $11, $13, getBR($10), getDFfromDCS($19), $14, $15, $16); }
 	'
     ;;
 -speed|-rate)
@@ -129,6 +133,7 @@ case $SORTKEY in
 	$2 == "RECV" && NF == 16 { acct(getBR($10), $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 17 { acct(getBR($10), $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 18 { acct(getBR($10), $11, $13, getBR($10), getDF($10), $14, $15, $16); }
+	$2 == "RECV" && NF == 19 { acct(getBR($10), $11, $13, getBR($10), getDFfromDCS($19), $14, $15, $16); }
 	'
     ;;
 -format)
@@ -141,6 +146,7 @@ case $SORTKEY in
 	$2 == "RECV" && NF == 16 { acct(getDF($10), $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 17 { acct(getDF($10), $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	$2 == "RECV" && NF == 18 { acct(getDF($10), $11, $13, getBR($10), getDF($10), $14, $15, $16); }
+	$2 == "RECV" && NF == 19 { acct(getDF($10), $11, $13, getBR($10), getDFfromDCS($19), $14, $15, $16); }
 	'
     ;;
 esac
@@ -323,6 +329,33 @@ function getDF(params)
     }
 }
 
+function isBitSet(bit, dcs) {
+    byte = int((bit - 1) / 8);
+    pos = 7 - ((bit - 1) % 8);
+    dcsbyte = int("0x"substr(dcs, byte*3+1, 2));
+    return int(int(dcsbyte / (2 ^ pos)) % 2);
+}
+
+function getDFfromDCS(dcs)
+{
+    if (substr(dcs, 1, 1) == "\"")
+	dcs = substr(dcs, 2);
+    if (substr(dcs, length(dcs), 1) == "\"")
+	dcs = substr(dcs, 1, length(dcs)-1);
+    if (isBitSet(68, dcs)) {
+	if (isBitSet(69, dcs))
+	    return dfNames[6];
+	return dfNames[5];
+    }
+    if (isBitSet(31, dcs))
+	return dfNames[3];
+    if (isBitSet(26, dcs))
+	return dfNames[2];
+    if (isBitSet(16, dcs))
+	return dfNames[1];
+    return dfNames[0];
+}
+
 #
 # Accumulate a statistics record.
 #
@@ -364,7 +397,7 @@ function printRule(n, s)
 BEGIN		{ FS="\t";
 		  rates = "2400:4800:7200:9600:12000:14400:16800:19200:21600:24000:26400:28800:31200:33600";
 		  setupMaps(rates, rateMap, brNames);
-		  datas = "1-D MH:2-D MR:2-D Uncompressed Mode:2-D MMR";
+		  datas = "1-D MH:2-D MR:2-D Uncompressed Mode:2-D MMR:JBIG Basic:JPEG Greyscale:JPEG Full-color";
 		  setupMaps(datas, dataMap, dfNames);
 		  setupDateTimeStuff();
 		  if (SINCEDT == "")

@@ -290,7 +290,7 @@ Class2Params::setFromDCS(u_int dcs, u_int xinfo)
 #define CHECKPARAM(a, b, c)	(c ? a & BIT(b) : a == b)
 
 /*
- * Return a 24-bit T.30 DIS/DCS frame that reflects the parameters.
+ * Set the T.30 DIS/DCS bits that reflects the parameters.
  * isDIS distinguishes between DIS and DCS
  *
  * Class2Params may be capability bitmaps (modemParams) or may be

@@ -65,7 +65,7 @@ FaxAcctInfo::record(const char* cmd)
 	record.fput("\t%s", user);		// $ 7 = sender
 	record.fput("\t\"%s\"", dest);		// $ 8 = dest
 	record.fput("\t\"%s\"", csi);		// $ 9 = csi
-	record.fput("\t%u", params);		// $10 = encoded params
+	record.fput("\t%u", params);		// $10 = encoded params and DCS
 	record.fput("\t%d", npages);		// $11 = npages
 	record.fput("\t%s", fmtTime(duration));	// $12 = duration
 	record.fput("\t%s", fmtTime(conntime));	// $13 = conntime
@@ -78,7 +78,8 @@ FaxAcctInfo::record(const char* cmd)
 	    callid_formatted.append(callid[i]);
 	}
 	record.fput("\t\"%s\"", (const char*) callid_formatted);	// $17 = CallID3 -> CallIDn
-	record.fput("\t\"%s\"", owner);		// $18 = owner
+	record.fput("\t\"%s\"", owner);					// $18 = owner
+	record.fput("\t\"%s\"", (const char*) faxdcs);			// $19 = DCS
 	record.put('\n');
 	flock(fd, LOCK_EX);
 	ok = (Sys::write(fd, record, record.getLength()) == (ssize_t)record.getLength());

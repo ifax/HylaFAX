@@ -351,6 +351,7 @@ faxSendApp::notifyPollRecvd(FaxRequest& req, FaxRecvInfo& ri)
     ai.jobtag = req.jobtag;
     CallID empty_callid;
     ai.callid = empty_callid;
+    ri.params.asciiEncode(ai.faxdcs);
     if (!ai.record("POLL"))
 	logError("Error writing POLL accounting record, dest=%s",
 	    (const char*) ai.dest);

@@ -110,9 +110,13 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai,
     }
     /*
      * Record transmit accounting information for caller.
+     *
+     * As the encoded parameters is limited to 32 bits and DCS does
+     * not contain V.34-Fax speeds we use both.
      */
     ai.npages = fax.npages - prevPages;		// count of pages transmitted
-    ai.params = clientParams.encode();		// negotiated parameters
+    ai.params = clientParams.encode();		// encoded negotiated parameters
+    clientParams.asciiEncode(ai.faxdcs);	// DCS signal
     fax.sigrate = clientParams.bitRateName();	// (last) signalling rate used
     fax.df = clientParams.dataFormatName();	// negotiated data format
 }

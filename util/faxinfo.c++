@@ -141,9 +141,20 @@ main(int argc, char** argv)
 #ifdef TIFFTAG_FAXRECVPARAMS
     }
 #endif
+    char* cp;
+#ifdef TIFFTAG_FAXDCS
+    if (TIFFGetField(tif, TIFFTAG_FAXDCS, &cp)) {
+	// cannot trust br from faxdcs as V.34-Fax does not provide it there
+	u_int brhold = params.br;
+	fxStr faxdcs(cp);
+	sanitize(faxdcs);
+	params.asciiDecode((const char*) faxdcs);	// params per Table 2/T.30
+	params.setFromDCS(params);
+	params.br = brhold;
+    }
+#endif
     fxStr sender = "";
     CallID callid;
-    char* cp;
     if (TIFFGetField(tif, TIFFTAG_IMAGEDESCRIPTION, &cp)) {
 	while (cp[0] != '\0' && cp[0] != '\n') {	// sender
 	    sender.append(cp[0]);

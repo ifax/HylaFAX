@@ -137,6 +137,17 @@ HylaFAXServer::getRecvDocStatus(RecvInfo& ri)
     }
 #endif
     char* cp;
+#ifdef TIFFTAG_FAXDCS
+    if (TIFFGetField(tif, TIFFTAG_FAXDCS, &cp)) {
+	// cannot trust br from faxdcs as V.34-Fax does not provide it there
+	u_int brhold = ri.params.br;
+	fxStr faxdcs(cp);
+	sanitize(faxdcs);
+	ri.params.asciiDecode((const char*) faxdcs);	// params per Table 2/T.30
+	ri.params.setFromDCS(ri.params);
+	ri.params.br = brhold;
+    }
+#endif
     ri.sender = "";
     CallID empty_callid;
     ri.callid = empty_callid;

@@ -46,6 +46,7 @@ struct FaxAcctInfo {
     const char*	status;		// status info (optional)
     CallID	callid;		// call identification
     const char* owner;		// job owner (uid)
+    fxStr	faxdcs;		// negotiated DCS parameters
 
     bool record(const char* cmd);
 };
