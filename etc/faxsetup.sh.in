@@ -394,24 +394,6 @@ else
     }
 fi
 
-#
-# Prompt the user for a string that can not be null.
-#
-promptForNonNullStringParameter()
-{
-    x="" val="$1" desc="$2"
-    while [ -z "$x" ]; do
-	prompt "$desc [$val]?"; read x
-	if [ "$x" ]; then
-	    # strip leading and trailing white space
-	    x=`echo "$x" | sed -e 's/^[ 	]*//' -e 's/[ 	]*$//'`
-	else
-	    x="$val"
-	fi
-    done
-    param="$x"
-}
-
 if onServer; then
     #
     # Setup the password file manipulation functions according
@@ -1956,16 +1938,16 @@ EOF
     promptForParameter()
     {
 	case $1 in
-	    1) promptForNonNullStringParameter "$FAXQ_SERVER" \
+	    1) promptForBooleanParameter "$FAXQ_SERVER" \
 		"Init script starts faxq";	FAXQ_SERVER="$param"
 	    ;;
-	    2) promptForNonNullStringParameter "$HFAXD_SERVER" \
+	    2) promptForBooleanParameter "$HFAXD_SERVER" \
 		"Init script starts hfaxd";	HFAXD_SERVER="$param"
 	    ;;
-	    3) promptForNonNullStringParameter "$HFAXD_OLD_PROTOCOL" \
+	    3) promptForBooleanParameter "$HFAXD_OLD_PROTOCOL" \
 		"Start old protocol";		HFAXD_OLD_PROTOCOL="$param"
 	    ;;
-	    4) promptForNonNullStringParameter "$HFAXD_SNPP_SERVER" \
+	    4) promptForBooleanParameter "$HFAXD_SNPP_SERVER" \
 		"Start paging protocol";	HFAXD_SNPP_SERVER="$param"
 	    ;;
 	esac
