@@ -256,7 +256,7 @@ Class2Modem::recvPageData(TIFF* tif, fxStr& emsg)
      * support checking for this data format and if the configuration
      * parameters indicate CQ checking is to be done.
      */
-    hostDidCQ = (modemCQ && BIT(params.df)) == 0 && checkQuality();
+    hostDidCQ = (modemCQ & BIT(params.df)) == 0 && checkQuality();
     bool pageRecvd = recvPageDLEData(tif, hostDidCQ, params, emsg);
 
     // be careful about flushing here -- otherwise we lose +FPTS codes
