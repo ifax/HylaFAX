@@ -28,6 +28,7 @@
 #include "FaxDB.h"
 #include "Sys.h"
 #include "config.h"
+#include <ctype.h>		// isspace()
 
 #if HAS_LOCALE
 extern "C" {
@@ -307,17 +308,17 @@ void
 sendFaxApp::addDestinationsFromFile(const char* filename)
 {
     FILE* destfile;
-    char dest[ 256 ];
+    char dest[256];
+    char *cp;
 
-    if( ( destfile = fopen( filename, "r" ) ) != NULL )
-    {
-	while( fscanf( destfile, "%255s", dest ) != EOF )
-	{
-	    addDestination( dest );
+    if ((destfile = fopen(filename, "r")) != NULL) {
+	while (fgets(dest, sizeof(dest), destfile)) {
+            for (cp = strchr(dest, '\0'); cp>dest && isspace(cp[-1]); cp--);
+            *cp='\0';
+	    if (dest[0] != '#' && dest[0] != '\0')
+		addDestination(dest);
 	}
-    }
-    else
-    {
+    } else {
 	fatal("%s: no such file", filename);
     }
 }
