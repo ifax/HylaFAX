@@ -79,7 +79,8 @@ SuperServer::inputReady(int fd)
 	HylaFAXServer* app; app = newChild();	// XXX for __GNUC__
 	Dispatcher::instance().unlink(fd);
 	HylaFAXServer::closeLogging();		// close any open syslog fd
-	HylaFAXServer::closeAllBut(c);
+	HylaFAXServer::closeAllDispatched();
+	Sys::close(STDERR_FILENO);
 	if (dup2(c, STDIN_FILENO) < 0 || dup2(c, STDOUT_FILENO) < 0) {
 	    logError("HylaFAX %s: dup2: %m", (const char*) kind);
 	    _exit(-1);

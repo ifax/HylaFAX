@@ -569,6 +569,7 @@ public:
 
     static void setupPermissions(void);
     static void closeAllBut(int fd);
+    static void closeAllDispatched();
 
     static void sanitize(fxStr& s);
     static void canonModem(fxStr& s);

@@ -163,6 +163,7 @@ detachFromTTY(void)
     dup2(fd, STDIN_FILENO);
     dup2(fd, STDOUT_FILENO);
     dup2(fd, STDERR_FILENO);
+    Sys::close(fd);
     switch (fork()) {
     case 0:	break;			// child, continue
     case -1:	_exit(1);		// error

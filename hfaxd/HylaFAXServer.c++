@@ -267,6 +267,25 @@ HylaFAXServer::closeAllBut(int fd)
 	}
 }
 
+/*
+ * Unlink all dispatcher i/o handlers and close
+ * their file descriptor.
+ */
+void
+HylaFAXServer::closeAllDispatched()
+{
+    Dispatcher& disp = Dispatcher::instance();
+    for (int f = Sys::getOpenMax()-1; f >= 0; f--)
+    {
+	IOHandler* h = disp.handler(f, Dispatcher::ReadMask);
+	if (h)
+	{
+	    disp.unlink(f);
+	    Sys::close(f);
+	}
+    }
+}
+
 const char*
 HylaFAXServer::fixPathname(const char* file)
 {
