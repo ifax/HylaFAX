@@ -753,7 +753,7 @@ elif [ "$WHY" = "requeued" ] ; then
 elif [ "$WHY" = "removed" ] || [ "$WHY" = "killed" ] ; then 
     putHeaders "$jobtag to $number removed from queue" 
     echo " was deleted from the queue."
-    if [ "$WHY"= "killed" ] ; then
+    if [ "$WHY" = "killed" ] ; then
         returnToSender
     fi
 elif [ "$WHY" = "timedout" ]; then 
