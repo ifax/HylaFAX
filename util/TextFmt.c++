@@ -86,6 +86,7 @@ TextFmt::~TextFmt()
     delete fonts;
     if (tf != NULL)
 	fclose(tf);
+    tf = NULL;
 }
 
 void
@@ -322,6 +323,7 @@ TextFmt::endFormatting(void)
     if (fclose(tf))
 	fatal("%s: Close failure on temporary file: %s",
 	    (const char*) tempfile, strerror(errno));
+    tf = NULL;
     emitTrailer();
     fflush(output);
     workStarted = FALSE;
