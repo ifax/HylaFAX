@@ -237,7 +237,7 @@ main(int argc, char** argv, char** envp)
     if (detach == -1)			// no protocol options means -I
 	detach = false;
     if (Sys::chdir(queueDir) < 0)
-	fatal(queueDir | ": Can not change directory");
+	fatal("Can not change directory to %s", (const char*)queueDir);
     CheckSpoolingSetup();
     if (detach)
 	detachFromTTY();
