@@ -210,7 +210,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 		 */
 		recvRow += rowSize;
 		recvEOLCount++;
-		if (recvRow + rowSize >= &buf[RCVBUFSIZ]) {
+		if (recvRow + rowSize > &buf[RCVBUFSIZ]) {
 		    flushEncodedData(tif, recvStrip++, buf, recvRow - buf);
 		    recvRow = buf;
 		}
