@@ -574,6 +574,11 @@ SendFaxClient::setupSenderIdentity(const fxStr& from, fxStr& emsg)
 	    senderName = from.head(l);
 	    l++, setBlankMailboxes(from.token(l, '>'));
 	}
+	
+	// strip leading&trailing white space and quotes
+	senderName.remove(0, senderName.skip(0, " \t\""));
+	senderName.resize(senderName.skipR(senderName.length(), " \t\""));
+	
 	if (senderName == "" && getNonBlankMailbox(senderName)) {
 	    /*
 	     * Mail address, but no "real name"; construct one from
