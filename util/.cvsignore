@@ -1,4 +1,13 @@
 dialtest
 faxadduser
+faxconfig
 faxdeluser
+faxinfo
+faxmodem
+faxmsg
+faxstate
+faxwatch
+Makefile
+textfmt
+tiffcheck
 typetest

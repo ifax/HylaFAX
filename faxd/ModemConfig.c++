@@ -81,7 +81,6 @@ static const struct {
 { "modemanswerdatabegincmd",	&ModemConfig::answerDataBeginCmd },
 { "modemanswervoicebegincmd",	&ModemConfig::answerVoiceBeginCmd },
 { "modemresetcmds",		&ModemConfig::resetCmds },
-{ "modemresetcmd",		&ModemConfig::resetCmds },
 { "modemdialcmd",		&ModemConfig::dialCmd,		"ATDT%s" },
 { "modemnoflowcmd",		&ModemConfig::noFlowCmd },
 { "modemsoftflowcmd",		&ModemConfig::softFlowCmd },
