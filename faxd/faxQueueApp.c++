@@ -256,7 +256,7 @@ faxQueueApp::prepareJobNeeded(Job& job, FaxRequest& req, JobStatus& status)
 	    if (!job.modem->supportsPolling()) {
 		req.notice = "Modem does not support polling";
 		status = Job::rejected;
-		jobError(job, "SEND REJECT: " | req.notice);
+		jobError(job, "SEND REJECT: %s", (const char*) req.notice);
 		return (false);
 	    }
 	    break;
@@ -915,7 +915,7 @@ faxQueueApp::convertDocument(Job& job,
 	 * the file.  This should not happen.
 	 */
 	if (status != Job::done)
-	    jobError(job, "CONVERT DOCUMENT: " | emsg | ": %m");
+	    jobError(job, "CONVERT DOCUMENT: %s: %m", (const char*) emsg);
     } else {
 	(void) flock(fd, LOCK_EX);		// XXX check for errors?
 	/*
@@ -984,9 +984,9 @@ faxQueueApp::convertDocument(Job& job,
 	    if (status == Job::done)	// discard any debugging output
 		emsg = "";
 	    else
-		jobError(job, "CONVERT DOCUMENT: " | emsg);
+		jobError(job, "CONVERT DOCUMENT: %s", (const char*) emsg);
 	} else if (status == Job::rejected)
-	    jobError(job, "SEND REJECT: " | emsg);
+	    jobError(job, "SEND REJECT: %s", (const char*) emsg);
 	(void) Sys::close(fd);		// NB: implicit unlock
     }
     return (status);
@@ -1930,7 +1930,7 @@ faxQueueApp::submitJob(const fxStr& jobid, bool checkState)
 		job.state = FaxRequest::state_failed;
 		req.status = send_failed;
 		req.notice = "Invalid or corrupted job description file";
-		traceServer("JOB " | jobid | ": " | req.notice);
+		traceServer("JOB " | jobid | ": %s", (const char*) req.notice);
 		// NB: this may not work, but we try...
 		deleteRequest(job, req, Job::rejected, true);
 	    } else if (req.state == FaxRequest::state_done ||
@@ -2786,7 +2786,7 @@ faxQueueApp::setConfigItem(const char* tag, const char* value)
 		if (re->getErrorCode() > REG_NOMATCH) {
 		    fxStr emsg;
 		    re->getError(emsg);
-		    configError("Bad pattern for modem group \"%s\": %s: " | emsg,
+		    configError("Bad pattern for modem group \"%s\": %s: %s", (const char*) emsg,
 			(const char*) name, re->pattern());
 		} else
 		    ModemGroup::set(name, re);
