@@ -534,7 +534,7 @@ with the remote facsimile machine.
 Make no more than
 .I tries
 attempts to send the facsimile.
-By default, \*(Fx will terminate a job if:
+By default, \*(Fx will terminate a job if
 3 consecutive attempts to send a particular page fail, or
 it appears the receiver is not a facsimile machine.
 Otherwise \*(Fx places no limit on the
@@ -547,12 +547,18 @@ Note that a try
 is a call in which carrier is established and the facsimile
 protocol is commenced; this is contrasted with a call
 attempt that might have failed because the line was busy.
+Use ``-1'' to indicate that no
+.I tries
+value should be specified to the server.
 .TP 12
 .BI \-T " maxdials"
 Make no more than
 .I maxdials
 calls in attempting to send the facsimile.  By default, HylaFAX will 
 redial 12 times before killing a job.
+Use ``-1'' to indicate that no
+.I maxdials
+value should be specified to the server.
 .TP 12
 .BI \-U " voice-no"
 Pass
