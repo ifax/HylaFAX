@@ -41,6 +41,14 @@ extern "C" {
 
 Dispatcher* Dispatcher::_instance;
 
+/*
+    XXX This is a bad hack to get it to work with glibc 2.1, should
+    be removed and the code dependent on it fixed at the first opportunity.
+*/
+#if defined __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 1
+#define fds_bits __fds_bits
+#endif
+
 class FdMask : public fd_set {
 public:
     FdMask();
