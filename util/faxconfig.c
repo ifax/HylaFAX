@@ -76,8 +76,7 @@ main(int argc, char** argv)
 	    devid = optarg;
 	    break;
 	case '?':
-	    fatal("Bad option `%c'.\nusage: %s %s [param value ...]",
-		c, argv[0], usage);
+	    fatal("usage: %s %s [param value ...]", argv[0], usage);
 	    /*NOTREACHED*/
 	}
     if (devid != NULL) {

@@ -239,7 +239,7 @@ main(int argc, char** argv)
 	    priority = atoi(optarg);
 	    break;
 	case '?':
-	    fatal("Bad option `%c'.\nusage: %s %s modem", c, argv[0], usage);
+	    fatal("usage: %s %s modem", argv[0], usage);
 	    /*NOTREACHED*/
 	}
     if (optind != argc-1) {

@@ -110,11 +110,11 @@ main(int argc, char** argv)
 	    spooldir = optarg;
 	    break;
 	case '?':
-	    fatal("Bad option `%c'; usage: %s %s devid", c, argv[0], usage);
+	    fatal("usage: %s %s devid", argv[0], usage);
 	    /*NOTREACHED*/
 	}
     if (optind != argc-1) {
-        fatal("Bad option `%c'; usage: %s %s modem", c, argv[0], usage);
+        fatal("usage: %s %s modem", argv[0], usage);
     }
     if (strlen(argv[optind]) < sizeof(devid)) {
         strcpy(devid, argv[optind]);

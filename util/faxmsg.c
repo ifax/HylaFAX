@@ -110,7 +110,7 @@ main(int argc, char** argv)
 	    spooldir = optarg;
 	    break;
 	case '?':
-	    fatal("Bad option `%c'; usage: %s %s", c, argv[0], usage);
+	    fatal("usage: %s %s", argv[0], usage);
 	    /*NOTREACHED*/
 	}
     if (optind == argc-1) {
