@@ -158,6 +158,87 @@ newpath
 closepath clip newpath
 /Helvetica-SHOWISO findfont 14 scalefont setfont
 
+% tom-baby's logo stuff:
+
+/inch {72 mul} def
+/width {.375 inch} def
+/r {.3 inch} def
+/d {r 30 cos mul neg} def
+/R {2 inch} def
+1 setlinejoin
+
+/pnta { r 30 cos mul r 30 sin mul } def
+/pntb { R 90 cos mul d 90 sin mul sub R 90 sin mul d 90 cos mul add } def
+/pntc { R 30 cos mul d 30 sin mul add R 30 sin mul d 30 cos mul sub } def
+/pntd { r 90 cos mul r 90 sin mul } def
+/pnte { R 150 cos mul d 150 sin mul sub R 150 sin mul d 150 cos mul add } def
+/pntf { R 90 cos mul d 90 sin mul add R 90 sin mul d 90 cos mul sub } def
+/pntg { r 150 cos mul r 150 sin mul } def
+/pnth { R 210 cos mul d 210 sin mul sub R 210 sin mul d 210 cos mul add } def
+/pnti { R 150 cos mul d 150 sin mul add R 150 sin mul d 150 cos mul sub } def
+/pntj { r 210 cos mul r 210 sin mul } def
+/pntk { R 270 cos mul d 270 sin mul sub R 270 sin mul d 270 cos mul add } def
+/pntl { R 210 cos mul d 210 sin mul add R 210 sin mul d 210 cos mul sub } def
+/pntm { r 270 cos mul r 270 sin mul } def
+/pntn { R 330 cos mul d 330 sin mul sub R 330 sin mul d 330 cos mul add } def
+/pnto { R 270 cos mul d 270 sin mul add R 270 sin mul d 270 cos mul sub } def
+/pntp { r 330 cos mul r 330 sin mul } def
+/pntq { R 30 cos mul d 30 sin mul sub R 30 sin mul d 30 cos mul add } def
+/pntr { R 330 cos mul d 330 sin mul add R 330 sin mul d 330 cos mul sub } def
+
+/logo { newpath
+     pnta moveto pntb lineto pntc lineto pntd lineto pnte lineto
+     pntf lineto pntg lineto pnth lineto pnti lineto pntj lineto
+     pntk lineto pntl lineto pntm lineto pntn lineto pnto lineto
+     pntp lineto pntq lineto pntr lineto
+     closepath
+} def
+
+/drawlogo {
+gsave
+ .8 inch 10.2 inch translate
+ .2 .2 scale
+ width setlinewidth
+
+ logo stroke
+
+ width 1.13 mul setlinewidth
+ 1 setgray
+ newpath
+ pntc moveto pntd lineto pnte lineto stroke
+ newpath
+ pnti moveto pntj lineto pntk lineto stroke
+ newpath
+ pnto moveto pntp lineto pntq lineto stroke
+
+ width setlinewidth
+ 0 setgray
+ newpath
+ pntb moveto pntc lineto pntd lineto pnte lineto pntf lineto stroke
+ newpath
+ pnth moveto pnti lineto pntj lineto pntk lineto pntl lineto stroke
+ newpath
+ pntn moveto pnto lineto pntp lineto pntq lineto pntr lineto stroke
+
+grestore
+} def
+
+/drawtext {
+gsave
+
+ 1.4 inch 10.2 inch moveto
+ /Helvetica-BoldOblique findfont 23 scalefont setfont
+ (SiliconGraphics) show
+ 1.42 inch 9.95 inch moveto
+ /Helvetica-Bold findfont 14 scalefont setfont
+ (Computer Systems) show
+
+grestore
+} def
+
+drawlogo
+drawtext
+
 0 0 0 setrgbcolor
 /Helvetica-Bold-SHOWISO findfont 24 scalefont setfont
 %164.063 644 M 168.356 644 M (Applications Consulting) S
