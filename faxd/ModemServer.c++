@@ -556,6 +556,11 @@ ModemServer::discardModem(bool dropDTR)
 	if (dropDTR)
 	    (void) setDTR(false);			// force hangup
 	Sys::close(modemFd), modemFd = -1;		// discard open file
+#ifdef sco5
+	// do it again so DTR is really off (SCO Open Server 5 wierdness)
+	modemFd = Sys::open(modemDevice, O_RDWR|O_NDELAY|O_NOCTTY);
+	Sys::close(modemFd), modemFd = -1;
+#endif
     }
     delete modem, modem = NULL;
 }

@@ -761,7 +761,7 @@ checkCompiler()
     if [ -z "${ENVOPTS:-}" ]; then
 	case $ISGCC-$TARGET in
 	no-*-hp*)	C_ANSI="-Aa -D_HPUX_SOURCE -Dhpux";;
-	*-sco3.2v5.*)	C_ANSI="-Dsco -D_SVID3 -b elf";;
+	*-sco3.2v5.*)	C_ANSI="-Dsco -Dsco5 -b elf";;
 	*-sco*)		C_ANSI="-Dsco";;
 	*-isc*)		C_ANSI="-posix -D_SYSV3 -DISC";;
 	esac
@@ -1768,10 +1768,10 @@ EmitConfigurationDefinitions()
     }
     if [ "$CONFIG_TIOCMBISBYREF" = yes ]; then
 	Note "... using call-by-reference for TIOCMBIS ioctl"
+	echo "#define CONFIG_TIOCMBISBYREF $CONFIG_TIOCMBISBYREF"
     else
 	Note "... using call-by-value for TIOCMBIS ioctl"
     fi
-    echo "#define CONFIG_TIOCMBISBYREF $CONFIG_TIOCMBISBYREF"
 	
     #
     # On some systems it's necessary to include
@@ -2721,8 +2721,12 @@ BuildPortDotH()
 	echo '#define HAS_MODEM_H 1'
     }
     CheckForIncludeFile sys/termiox.h && {
-	Note "... configure use of SVR4 termiox support"
-	echo '#define HAS_TERMIOX 1'
+	case $TARGET in
+	*-sco3.2v5.*)	;;
+	*)		Note "... configure use of SVR4 termiox support"
+			echo '#define HAS_TERMIOX 1'
+			;;
+	esac
     }
     CheckForFunc flock || {
 	#
