@@ -506,8 +506,10 @@ FaxRequest::renameSaved(u_int fi)
 	if (Sys::rename(src.item, basedoc) < 0) {
 	    logError("Unable to rename transmitted document %s: %s",
 		(const char*) src.item, strerror(errno));
-	    Sys::unlink(src.item);	// just remove it (???XXX)
 	}
+	// Posix rename will succeed without doing anything if the
+	// source and destination files are hard linked
+	Sys::unlink(src.item);		// just remove it
 	src.item = basedoc;		// change job reference
     }
 }
