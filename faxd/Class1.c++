@@ -801,7 +801,7 @@ Class1Modem::syncECMFrame()
     // look for the first sync flag
 
     time_t start = Sys::now();
-    startTimeout(900);		// triple T.4 A.3.1
+    startTimeout(3600);		// twelve times T.4 A.3.1
     do {
 	if ((unsigned) Sys::now()-start >= 3) {
 	    protoTrace("Timeout awaiting synchronization sequence");
