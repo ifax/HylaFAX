@@ -533,7 +533,7 @@ EOF
 	    }
 	    ttyLocks()
 	    {
-		echo $UUCP_LOCKDIR/LCK..$1
+		echo $UUCP_LOCKDIR/LCK..`expr /$1 : '.*/\(.*\)'`
 	    }
 	    ttyAliases()
 	    {
@@ -597,7 +597,7 @@ EOF
 	    }
 	    ttyLocks()
 	    {
-		echo $UUCP_LOCKDIR/LCK..$1
+		echo $UUCP_LOCKDIR/LCK..`expr /$1 : '.*/\(.*\)'`
 	    }
 	    ttyAliases()
 	    {
