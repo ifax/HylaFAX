@@ -421,7 +421,7 @@ faxApp::setupPermissions(void)
 	faxApp::fatal("No fax user \"%s\" defined on your system!\n"
 	    "This software is not installed properly!", FAX_USER);
     if (euid == 0) {
-	if (setegid(pwd->pw_uid) < 0)
+	if (setegid(pwd->pw_gid) < 0)
 	    faxApp::fatal("Can not setup permissions (gid)");
 	if (seteuid(pwd->pw_uid) < 0)
 	    faxApp::fatal("Can not setup permissions (uid)");
