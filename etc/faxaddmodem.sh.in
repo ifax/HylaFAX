@@ -770,7 +770,10 @@ SendToModem()
 {
     COMMAND=$*
     sleep 1					# wait for previous kill
-    onDev $STTY 0; sleep 1			# reset the modem (hopefully)
+    case $TARGET in
+    *-linux*)	;;
+    *)	onDev $STTY 0; sleep 1	;;		# reset the modem (hopefully)
+    esac
 						# start listening for output
     onDev -c "$STTY clocal && exec $CAT $tdev"; sleep 2
     #

@@ -152,6 +152,7 @@ SENDMAIL	PATH_SENDMAIL
 SPOOL		DIR_SPOOL
 SYSVINIT
 TIFFBIN
+TARGET
 UUCP_LOCKDIR	DIR_LOCKS
 UUCP_LOCKTYPE	LOCKS"
 
@@ -433,7 +434,7 @@ if onServer; then
     elif [ -f /etc/pwconv ]; then	# could be a SCO box
 	addPasswd()
 	{
-	    echo "${1}:NOLOGIN:${2}:${3}:Facsimile Agent:${4}:" >> ${PASSWD}
+	    echo "${1}:NOLOGIN:${2}:${3}:Facsimile Agent:${4}:/bin/false" >> ${PASSWD}
 	    /etc/pwconv
 	}
 	lockPasswd()
