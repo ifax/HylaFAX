@@ -1,8 +1,55 @@
 #	$Id$	
 
-Changelog for HylaFAX 4.1.7 - Jul 20, 2003
+Changelog for HylaFAX 4.2.0
 
-* fix PageChop feature (20 Jul 2003)
+* make hfaxd reuse the TCP port when starting (16 Dec 2003)
+* fix identification of V.17 7200 bps in Class 1 receiving (15 Dec 2003)
+* add Class2UseLineCount config option (13 Dec 2003)
+* fix xferfaxstats name mapping and change default (11 Dec 2003)  
+* fix line counting error (11 Dec 2003)
+* remove misleading bits from Class 1 DIS signal (10 Dec 2003)
+* fix awk error in faxaddmodem (5 Dec 2003, 1 Jan 2004)
+* add default config support for ZyXEL U90E (4 Dec 2003) 
+* fix defined name collision with Mac OS X (1 Dec 2003) 
+* add ModemSoftRTFCC (1 Dec 2003)
+* image tag lines on MMR faxes (1 Dec 2003)
+* fix doubling Caller ID information on double-RINGs (24 Nov 2003)
+* fix potential faxgetty CPU loop (24 Nov 2003)
+* rename various files for case insensitive filesystems (20 Nov 2003)
+* remove superfluous bytes from Class 1 DCS (17 Nov 2003)
+* fix format string vulnerability in hfaxd (10 Nov 2003)
+* fix variable and function name collision with Solaris (10 Nov 2003)
+* consolidate MemoryDecoder code (7 Nov, 1 Dec 2003)
+* make faxq and faxgetty not block on various child processes (5 Nov 2003)
+* prefer agetty over getty and enhance documentation (5 Nov 2003)
+* add ModemRecvSuccessCmd (3 Nov 2003)
+* add ModemAnswerDialCmd and faxanswer -h "dial"
+  options (3, 20 Nov, 5 Dec 2003)
+* add modulation changes into the Class 1 fallback (1 Nov 2003)
+* enhance Class1TMQueryCmd and Class1RMQueryCmd (1 Nov 2003)
+* extend Class1SendMsgDelay default to avoid PPM errors (1 Nov 2003)
+* fix recognition of unexpected returns to command-mode (31 Oct 2003)
+* fix subaddress sending in Class 1 (28 Oct 2003)
+* fix configure for gcc 3.3.1 support (16 Oct 2003)
+* improve behavior after last-page PIP reception (15 Oct 2003)
+* suppress tiffcheck libtiff warnings from being fatal (13 Oct 2003)
+* add Class 1 MMR support (9, 13 Oct 2003)
+* configure MIMENCODE, UUENCODE, and ENCODING at compile-time
+  and cause faxrcvd to automatically use them (7, 14 Oct 2003)
+* correct typerules documentation, %w, %W, %l, and %L (4 Oct 2003)
+* correct "1-D MR" nomenclature to "1-D MH" (22 Sep 2003)
+* add Class 1 ECM support (20 Sep, 7, 16-17 Oct, 1 Nov, 10 Dec 2003)
+* keep PDF mail attachment naming consistent with TIFFs (01 Sep 2003)
+* add Class1ValidateV21Frames config option (29 Aug 2003)
+* add AT_XON to repair Topic functionality (02 Aug 2003)
+* enhance faxgetty to send NSF in Class 1 (18 Jul 2003)
+* stop faxsend from initializing the modem twice (8 Jul 2003)
+* add Class1TMConnectDelay config option (8 Jul 2003)
+* add SaveUnconfirmedPages config option (8 Jul 2003)
+* require ECM before logging MMR capability (8 Jul 2003)
+* fix typo in sendq and doneq man pages (8 Jul 2003)
+* fix broken page chopping (30 Jun 2003)
+* add extended resolution support (18 Jun, 2 Jul, 23, 26 Sep 2003)
 
 Changelog for HylaFAX 4.1.6 - May 07, 2003
 
