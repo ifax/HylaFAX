@@ -192,7 +192,7 @@ function cvtDateTime(s)
     else
         yday -= 70;
     yday = yday*365 + substr(s,4,2) - 1;
-    mon = substr(s,1,2) + 0;
+    mon = substr(s,1,2) - 1;
     for (i = 0; i < mon; i++)
 	yday += daysInMonth[i];
     return yday*FULLDAY + cvtTime(substr(s,10) ":00");
