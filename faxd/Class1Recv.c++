@@ -1070,6 +1070,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					(void) transmitFrame(FCF_CTR|FCF_RCVR);
 					tracePPR("RECV send", FCF_CTR);
 					dolongtrain = true;
+					pprcnt = 0;
 					break;
 				    }
 				case FCF_DCN:
@@ -1265,6 +1266,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    transmitFrame(FCF_PPR, fxStr(ppr, 32));
 				    tracePPR("RECV send", FCF_PPR);
 				    pprcnt++;
+				    if (pprcnt > 4) pprcnt = 4;		// could've been 4 before increment
 				}
 				if (pprcnt == 4 && (!useV34 || !conf.class1PersistentECM)) {
 				    HDLCFrame rtnframe(conf.class1FrameOverhead);
@@ -1277,8 +1279,27 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    }
 				    pprcnt = 0;
 				    if (signalRcvd != 0 || recvFrame(rtnframe, conf.t2Timer)) {
+					bool gotrtnframe = true;
 					if (signalRcvd == 0) tracePPM("RECV recv", rtnframe.getFCF());
 					else signalRcvd = 0;		// reset it, we're in-sync now
+					recvFrameCount = 0;
+					while (rtnframe.getFCF() == FCF_PPS && recvFrameCount < 20 && gotrtnframe) {
+					    // we sent PPR, but got PPS again...
+					    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
+						emsg = "Failure to receive silence.";
+						if (conf.saveUnconfirmedPages && pagedataseen) {
+						    protoTrace("RECV keeping unconfirmed page");
+						    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+						    prevPage = true;
+						}
+						free(block);
+						return (false);
+					    }
+					    transmitFrame(FCF_PPR, fxStr(ppr, 32));
+					    tracePPR("RECV send", FCF_PPR);
+					    gotrtnframe = recvFrame(rtnframe, conf.t2Timer);
+					    recvFrameCount++;
+					}
 					u_int dcs;			// possible bits 1-16 of DCS in FIF
 					switch (rtnframe.getFCF()) {
 					    case FCF_CTC:

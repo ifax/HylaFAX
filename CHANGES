@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX
 
+* handle PPS after 4th PPR (2 Mar 2005)
+* fix potential error in counting of PPR signals (2 Mar 2005)
 * handle EOT after PPS (28 Feb 2005)
 * add Class1AdaptRecvCmd config option, AT+FAR=1 support, (28 Feb 2005)
 * fix DCS scanline-time error when sending to systems without
