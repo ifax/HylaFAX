@@ -3290,12 +3290,17 @@ if [ "$DSO" = auto ]; then
 	fi
 	;;
     *-linux*)
+	if [ "X${DIR_LIB}" != "X/usr/lib" ]; then
+	    USE_RPATH=' -Wl,-rpath,${LIBDIR}'
+	else
+	    USE_RPATH=''
+	fi
 	DSOSUF=so
 	LIBUTIL=''
 	LIBFAXSERVER='-lfaxserver'
 	FAXD='${DEPTH}/faxd'
 	DSOOPTS='-shared -fpic -Wl,-soname,$@'
-	LLDOPTS='-L${UTIL} -L${FAXD} -Wl,-rpath,${LIBDIR} -lfaxutil'
+	LLDOPTS='-L${UTIL} -L${FAXD} -lfaxutil'$USE_RPATH
 	DSO=LINUX
 	CheckCCDSO()
 	{
