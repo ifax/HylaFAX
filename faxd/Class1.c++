@@ -405,7 +405,6 @@ Class1Modem::abortReceive()
 bool
 Class1Modem::recvRawFrame(HDLCFrame& frame)
 {
-    int c;
     /*
      * The spec says that a frame that takes between
      * 2.55 and 3.45 seconds to be received may be
@@ -419,21 +418,47 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
      * be we leave this legacy code unchanged
      * for sure - D.B.
      */
-    do {
+    int c;
+    fxStr garbage;
+
+    for (;;) {
 	c = getModemChar(0);
-	if (c == DLE) {
-	    c = getModemChar(0);
-	    if (c == ETX) {
-		protoTrace("--> ...+DLE+ETX");
-		break;
-	    }
-	}
-	if (c == '\n') {
-	    protoTrace("--> ...+LF");
+	if (c == 0xff || c == EOF)
+	    break;
+
+	garbage.append(c);
+
+	if ( garbage.length() >= 2 && garbage.tail(2) == "\r\n") {
+	    /*
+	     * CR+LF received before address field.
+	     * We expect result code (though it's possible
+	     * that CR+LF is a part of garbage frame)
+	     */
+	    garbage = garbage.head(garbage.length() - 2);
 	    break;
 	}
+    }
 
-    } while (c != EOF && c != 0xff);
+    if (getHDLCTracing() && garbage.length()) {
+	fxStr buf;
+	u_int j = 0;
+	for (u_int i = 0; i < garbage.length(); i++) {
+	    if (j > 0)
+		buf.append(' ');
+	    buf.append(fxStr(garbage[i] & 0xFF, "%2.2X"));
+	    j++;
+	    if (j > 19) {
+		protoTrace("--> [%u:%.*s]",
+		    j, buf.length(), (const char*) buf);
+		buf = "";
+		j = 0;
+	    }
+	}
+	if (j)
+	    protoTrace("--> [%u:%.*s]",
+		j, buf.length(), (const char*) buf);
+	}
+
     if (c == 0xff) {			// address field received
 	do {
 	    if (c == DLE) {
