@@ -47,6 +47,8 @@ const int SERVICE_DATA	 = BIT(0);	// data service
 const int SERVICE_CLASS1 = BIT(1);	// class 1 interface
 const int SERVICE_CLASS2 = BIT(2);	// class 2 interface
 const int SERVICE_CLASS20 = BIT(3);	// class 2.0 interface
+const int SERVICE_CLASS10 = BIT(4);	// class 1.0 interface
+const int SERVICE_CLASS21 = BIT(5);	// class 2.1 interface
 const int SERVICE_VOICE	 = BIT(8);	// voice service (ZyXEL extension)
 const int SERVICE_ALL	 = BIT(9)-1;
 

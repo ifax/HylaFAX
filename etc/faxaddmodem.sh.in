@@ -1195,6 +1195,7 @@ if [ "$RESULT" = "OK" ]; then
     0,1,2,2.0)		configureClass1and2and2dot0Modem;;
     0,1,2,2.0,*)	configureClass1and2and2dot0Modem;;
     0,1,1.0,2,2.0,*)	configureClass1and2and2dot0Modem;;
+    0,1,1.0,2,*)	configureClass1and2Modem;;
     1,2,2.0,*)		configureClass1and2and2dot0Modem;;
     0,2,2.0,*)		configureClass2and2dot0Modem;;
     0,1,2.0,*)		configureClass1and2dot0Modem;;

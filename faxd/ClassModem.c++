@@ -54,8 +54,8 @@ const char* ClassModem::serviceNames[9] = {
     "\"Class 1\"",		// SERVICE_CLASS1
     "\"Class 2\"",		// SERVICE_CLASS2
     "\"Class 2.0\"",		// SERVICE_CLASS20 (XXX 3)
-    "",				// 4
-    "",				// 5
+    "\"Class 1.0\"",		// SERVICE_CLASS10 (XXX 4)
+    "\"Class 2.1\"",		// SERVICE_CLASS21 (XXX 5)
     "",				// 6
     "",				// 7
     "\"Voice\"",		// SERVICE_VOICE
@@ -1088,9 +1088,20 @@ ClassModem::vparseRange(const char* cp, int nargs ... )
 		} while (isdigit((++cp)[0]));
 	    } else if (cp[0] == '.') {			// <d.b>
 		cp++;
+		if (v == 2) {
+		    if (cp[0] == '1') {			// 2.1 -> 5
+			v = 5;
+			r = 5;
+		    } else {				// 2.0 -> 3
+			v = 3;
+			r = 3;
+		    }
+		} else {				// 1.0 -> 4
+			v = 4;
+			r = 4;
+		}
 		while (isdigit(cp[0]))			// XXX
 		    cp++;
-		v++, r++;				// XXX 2.0 -> 3
 	    }
 	    if (v != -1) {				// expand range or list
 		r = fxmin(r, 31);			// clamp to valid range
