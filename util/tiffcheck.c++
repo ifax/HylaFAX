@@ -64,7 +64,7 @@ main(int argc, char* argv[])
     int c;
 
     appName = argv[0];
-    while ((c = getopt(argc, argv, "r:l:w:12")) != -1)
+    while ((c = getopt(argc, argv, "r:l:w:123")) != -1)
 	switch (c) {
 	case '1':
 	    dataFormat &= ~GROUP3OPT_2DENCODING;
