@@ -113,6 +113,7 @@ public:
     u_int	class1TCFRecvTimeout;	// timeout receiving TCF
     u_int	class1TCFResponseDelay;	// delay (ms) btwn TCF & ack/nak
     u_int	class1SendEOPDelay;	// delay (ms) before sending EOP
+    u_int	class1SendMsgDelay;	// delay (ms) after training
     u_int	class1SendPPMDelay;	// delay (ms) before sending PPM (MPS)
     u_int	class1SendTCFDelay;	// delay (ms) btwn sending DCS & TCF
     u_int	class1SwitchingDelay;	// delay (ms) in switching transmission direction

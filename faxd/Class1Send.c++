@@ -237,6 +237,15 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		return (send_retry);
 	    params = next;
 	}
+
+	/*
+	 * According to T.30 5.3.2.4 we must pause at least 75 ms "after 
+	 * receipt of a signal using the T.30 binary coded modulation" and 
+	 * "before sending any signals using V.27 ter/V.29/V.33/V.17 
+	 * modulation system"
+	 */
+	pause(conf.class1SendMsgDelay);
+
 	/*
 	 * Transmit the facsimile message/Phase C.
 	 */
@@ -558,9 +567,18 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 		case FCF_DIS:		// new capabilities, maybe
 		    { u_int newDIS = frame.getDIS();
 		      if (newDIS != dis) {
+			/*
 			dis = newDIS;
 			xinfo = frame.getXINFO();
 			params.setFromDIS(dis, xinfo);
+			 *
+			 * The above code was commented because to
+			 * use the newDIS we need to do more work like
+			 *     sendClientCapabilitiesOK()
+			 *     sendSetupParams()
+			 * So we ignore newDIS.
+			 * It will work if old dis 'less' then newDIS.
+			 */
 			curcap = NULL;
 		      }
 		    }

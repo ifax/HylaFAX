@@ -182,6 +182,7 @@ static const struct {
 { "class1tcfrecvtimeout",	&ModemConfig::class1TCFRecvTimeout,  4500 },
 { "class1tcfresponsedelay",	&ModemConfig::class1TCFResponseDelay,75 },
 { "class1sendeopdelay",		&ModemConfig::class1SendEOPDelay,    200 },
+{ "class1sendmsgdelay",		&ModemConfig::class1SendMsgDelay,    75 },
 { "class1sendppmdelay",		&ModemConfig::class1SendPPMDelay,    75 },
 { "class1sendtcfdelay",		&ModemConfig::class1SendTCFDelay,    75 },
 { "class1switchingdelay",	&ModemConfig::class1SwitchingDelay,  150 },

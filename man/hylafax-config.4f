@@ -258,6 +258,7 @@ Class1TCFMinRun	integer	\s-11000\s+1	Class 1: minimum zero run in good \s-1TCF\s
 Class1TCFRecvTimeout	integer	\s-14500\s+1	Class 1: max wait (ms) for \s-1TCF\s+1
 Class1TCFResponseDelay	integer	\s-175\s+1	Class 1: delay between \s-1TCF\s+1 and ack/nak
 Class1SendEOPDelay	integer	\s-1200\s+1	Class 1: delay before sending EOP
+Class1SendMsgDelay	integer	\s-175\s+1	Class 1: delay before sending image data
 Class1SendPPMDelay	integer	\s-175\s+1	Class 1: delay before sending MPS post-page message
 Class1SendTCFDelay	integer	\s-175\s+1	Class 1: delay between sending \s-1DCS\s+1 and \s-1TCF\s+1
 Class1SwitchingDelay	integer	\s-1150\s+1	Class 1: delay in switching transmision direction (ms)
@@ -1946,6 +1947,10 @@ speed message carrier and sending the EOP post-page message/command.
 Empirically, this value needs to be greater than
 .B Class1SendPPMDelay
 to prevent modem response timeouts.
+.TP
+.B Class1SendMsgDelay
+The time, in milliseconds, to delay just before sending the image data.
+According to T.30: 5.3.2.4 this should be no less than 75 ms (default).
 .TP
 .B Class1SendPPMDelay
 The time, in milliseconds, to delay between dropping the high

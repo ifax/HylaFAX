@@ -1361,6 +1361,7 @@ Class1Parameters="
     Class1RecvAbortOK
     Class1RecvIdentTimer
     Class1SendEOPDelay
+    Class1SendMsgDelay
     Class1SendPPMDelay
     Class1SendTCFDelay
     Class1SwitchingDelay
@@ -1621,6 +1622,7 @@ AT	Class1SFLOCmd		\
 #	Class1RecvIdentTimer	\
 	Maximum wait for initial identification frame (ms)
 #	Class1SendEOPDelay	Delay before sending EOP message (ms)
+#	Class1SendMsgDelay	Delay after completing training (ms)
 #	Class1SendPPMDelay	Delay before sending MPS message (ms)
 #	Class1SendTCFDelay	Delay between sending TCF and ack/nak (ms)
 #	Class1SwitchingDelay	Delay in switching transmission direction (ms)
