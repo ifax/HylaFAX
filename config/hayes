@@ -1,0 +1,29 @@
+# $Id$
+#
+# Configuration for Hayes Optima 336B
+#
+# It is very similar to other RC288DPI modems (it uses that chipset), but 
+# does not follow the quirky bit order as well as having an intolerance 
+# for the "<19200><xon>" answer signal.
+#
+# CONFIG: CLASS2: *-"OPTIMA 33600"-*
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+ModemType:		Class2
+ModemRate:		38400
+ModemFlowControl:	rtscts
+#
+ModemNoFlowCmd:		AT&K0
+ModemSoftFlowCmd:	AT&K4
+ModemHardFlowCmd:	AT&K3
+ModemSetupDTRCmd:	AT&D3		# DTR off causes modem to reset
+ModemSetupDCDCmd:	AT&C1		# DCD follows carrier
+ModemSetupAACmd:	AT+FAA=1	# enable adaptive-answer in Class 2
+#
+ModemDialCmd:		ATDT%s
+#
+Class2RecvDataTrigger:	"\022"		# character sent to modem to start recv
+Class2BUGCmd:		none		# prevent init ERROR
+Class2APQueryCmd:	none		# prevent init ERROR
