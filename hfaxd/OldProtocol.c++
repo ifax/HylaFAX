@@ -284,7 +284,7 @@ OldProtocolServer::doProtocol(void)
 		;
 	    modem = tag;
 	} else {
-	    int i;
+	    u_int i;
 	    for (i = 0; i < NCMDS && !isCmd(cmds[i].cmd); i++)
 		;
 	    if (i == NCMDS)
@@ -1116,7 +1116,7 @@ OldProtocolServer::decodeLZW(FILE* fin, FILE* fout)
 	     * value to output (written in reverse).
 	     */
 	    char buf[1024];
-	    int len = codep->length;
+	    u_int len = codep->length;
 	    char* tp = (len > sizeof (buf) ? (char*) malloc(len) : buf) + len;
 	    do {
 		*--tp = codep->value;

@@ -69,9 +69,9 @@ public:
     bool readMetrics(TextCoord pointsize, bool useISO8859, fxStr& emsg);
 };
 /*
- * we have to use unsigned const char
+ * we have to use const u_char
  */
-inline TextCoord TextFont::charwidth(const char c) const { return widths[(unsigned const char) c]; }
+inline TextCoord TextFont::charwidth(const char c) const { return widths[(const u_char) c]; }
 inline const char* TextFont::getFamily(void) const	 { return family; }
 
 class FontDict;

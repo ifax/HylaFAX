@@ -607,7 +607,7 @@ faxQueueApp::preparePageHandling(FaxRequest& req,
      * accepting variable-length pages.
      */
     u_int pagechop;
-    if (info.getMaxPageLengthInMM() == -1) {
+    if (info.getMaxPageLengthInMM() == (unsigned)-1) {
 	pagechop = req.pagechop;
 	if (pagechop == FaxRequest::chop_default)
 	    pagechop = pageChop;
@@ -759,7 +759,7 @@ faxQueueApp::setupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo& 
      * vertical resolution.  Note that if the resolution
      * info is bogus, we may select the wrong page size.
      */
-    if (info.getMaxPageLengthInMM() != -1) {
+    if (info.getMaxPageLengthInMM() != (unsigned)-1) {
 	uint32 h;
 	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
 	params.setPageLengthInMM((u_int)(h / yres));
@@ -2741,12 +2741,12 @@ faxQueueApp::configTrace(const char* fmt, ...)
 static void
 crackArgv(fxStr& s)
 {
-    int i = 0;
+    u_int i = 0;
     do {
         while (i < s.length() && !isspace(s[i])) i++;
         if (i < s.length()) {
             s[i++] = '\0';
-            int j = i;
+            u_int j = i;
             while (j < s.length() && isspace(s[j])) j++;
             if (j > i) {
                 s.remove(i, j - i);

@@ -329,7 +329,7 @@ Dispatcher::Dispatcher() {
     _etable = new IOHandler*[_max_fds];
     _queue = new TimerQueue;
     _cqueue = new ChildQueue;
-    for (int i = 0; i < _max_fds; i++) {
+    for (u_int i = 0; i < _max_fds; i++) {
 	_rtable[i] = NULL;
 	_wtable[i] = NULL;
 	_etable[i] = NULL;
@@ -385,6 +385,9 @@ void Dispatcher::unlink(int fd) {
 }
 
 void Dispatcher::attach(int fd, DispatcherMask mask, IOHandler* handler) {
+    if (fd < 0)
+	return;
+
     if (mask == ReadMask) {
         FD_SET(fd, &_rmask);
         _rtable[fd] = handler;
@@ -397,7 +400,7 @@ void Dispatcher::attach(int fd, DispatcherMask mask, IOHandler* handler) {
     } else {
         abort();
     }
-    if (_nfds < fd+1) {
+    if (_nfds < (unsigned)fd+1) {
 	_nfds = fd+1;
     }
 }
@@ -409,7 +412,7 @@ void Dispatcher::detach(int fd) {
     _wtable[fd] = NULL;
     FD_CLR(fd, &_emask);
     _etable[fd] = NULL;
-    if (_nfds == fd+1) {
+    if (_nfds == (unsigned)fd+1) {
 	while (_nfds > 0 && _rtable[_nfds-1] == NULL &&
 	       _wtable[_nfds-1] == NULL && _etable[_nfds-1] == NULL
 	) {
@@ -503,7 +506,7 @@ bool Dispatcher::anyReady() const {
         Dispatcher::sigCLD(0);		// poll for pending children
         return _cqueue->isReady();
     }
-    for (int i = 0; i < _nfds; i++) {
+    for (u_int i = 0; i < _nfds; i++) {
         if (FD_ISSET(i, &_rmaskready) ||
                 FD_ISSET(i, &_wmaskready) || FD_ISSET(i, &_emaskready)) {
             return true;
@@ -523,7 +526,7 @@ int Dispatcher::fillInReady(
     FD_ZERO(&_wmaskready);
     FD_ZERO(&_emaskready);
     int n = 0;
-    for (int i = 0; i < _nfds; i++) {
+    for (u_int i = 0; i < _nfds; i++) {
         if (FD_ISSET(i, &rmaskret)) n++;
         if (FD_ISSET(i, &wmaskret)) n++;
         if (FD_ISSET(i, &emaskret)) n++;
@@ -606,7 +609,7 @@ int Dispatcher::waitFor(
 
 void Dispatcher::notify(int nfound,
         fd_set& rmaskret, fd_set& wmaskret, fd_set& emaskret) {
-    for (int i = 0; i < _nfds && nfound > 0; i++) {
+    for (u_int i = 0; i < _nfds && nfound > 0; i++) {
         if (FD_ISSET(i, &rmaskret)) {
             if (_rtable[i]) {
                 int status = _rtable[i]->inputReady(i);
@@ -693,7 +696,7 @@ void Dispatcher::checkConnections() {
     FD_ZERO(&rmask);
     timeval poll = TimerQueue::zeroTime();
 
-    for (int fd = 0; fd < _nfds; fd++) {
+    for (u_int fd = 0; fd < _nfds; fd++) {
         if (_rtable[fd] != NULL) {
             FD_SET(fd, &rmask);
 #if CONFIG_BADSELECTPROTO

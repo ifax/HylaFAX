@@ -145,7 +145,7 @@ public:
 // receive support
     bool	setupReceive();
     bool	recvBegin(fxStr& emsg);
-    bool	recvPage(TIFF*, int& ppm, fxStr& emsg);
+    bool	recvPage(TIFF*, u_int& ppm, fxStr& emsg);
     bool	recvEnd(fxStr& emsg);
     void	recvAbort();
 

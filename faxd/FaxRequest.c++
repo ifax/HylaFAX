@@ -191,7 +191,7 @@ FaxRequest::readQFile(bool& rejectJob)
     char stackbuf[2048];
     char* buf = stackbuf;
     char* bp = buf;
-    if (sb.st_size > sizeof (buf)-1)		// extra byte for terminating \0
+    if (sb.st_size > (off_t)sizeof(buf)-1)	// extra byte for terminating \0
 	bp = buf = new char[sb.st_size+1];
     if (Sys::read(fd, bp, (u_int) sb.st_size) != sb.st_size) {
 	error("Read error: %s", strerror(errno));

@@ -126,7 +126,7 @@ Class2Modem::recvDCS(const char* cp)
  * received post-page-message.
  */
 bool
-Class2Modem::recvPage(TIFF* tif, int& ppm, fxStr& emsg)
+Class2Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg)
 {
     int ppr;
 

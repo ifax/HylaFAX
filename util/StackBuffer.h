@@ -55,11 +55,11 @@ public:
 
     // NB: the buffer is *NOT* null terminated, unless you put one there.
     operator char*();			// Return base of buffer
-    operator unsigned char*();		// Return base of buffer
+    operator u_char*();		// Return base of buffer
     operator const char*();		// Return base of buffer
-    operator const unsigned char*();	// Return base of buffer
+    operator const u_char*();	// Return base of buffer
     operator const char*() const;	// Return base of buffer
-    operator const unsigned char*() const;// Return base of buffer
+    operator const u_char*() const;// Return base of buffer
     char& operator[](u_int i) const;	// Return character in buffer
     char& operator[](int i) const;	// Return character in buffer
     fxStackBuffer& operator=(const fxStackBuffer&);
@@ -80,14 +80,14 @@ inline void fxStackBuffer::put(char const* c)	{ put(c, strlen(c)); }
 inline void fxStackBuffer::set(char c)		{ put(c); next--; }
 inline void fxStackBuffer::reset()		{ next = base; }
 inline fxStackBuffer::operator char*()		{ return base; }
-inline fxStackBuffer::operator unsigned char*() { return (unsigned char*)base; }
+inline fxStackBuffer::operator u_char*() { return (u_char*)base; }
 inline fxStackBuffer::operator const char*()	{ return base; }
-inline fxStackBuffer::operator const unsigned char*()
-    { return (unsigned char*)base; }
+inline fxStackBuffer::operator const u_char*()
+    { return (u_char*)base; }
 inline fxStackBuffer::operator const char*() const
     { return base; }
-inline fxStackBuffer::operator const unsigned char*() const
-    { return (unsigned char*)base; }
+inline fxStackBuffer::operator const u_char*() const
+    { return (u_char*)base; }
 inline u_int fxStackBuffer::getLength() const	{ return next - base; }
 inline char& fxStackBuffer::operator[](u_int ix) const { return base[ix]; }
 inline char& fxStackBuffer::operator[](int ix) const   { return base[ix]; }

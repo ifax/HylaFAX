@@ -31,7 +31,7 @@
 
 class SNPPClient;
 
-typedef unsigned int PageNotify;
+typedef u_int PageNotify;
 
 class SNPPJob : public fxObj {
 public:

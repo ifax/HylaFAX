@@ -108,7 +108,7 @@ private:
     u_int match2(u_int base, const void* data, u_int size, bool verb) const;
 };
 
-typedef unsigned int TypeResult;		// conversion result
+typedef u_int TypeResult;		// conversion result
 
 /*
  * Type rules specify how to convert a file that is

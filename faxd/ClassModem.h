@@ -38,14 +38,14 @@ class Class2Params;
 
 // NB: these would be enums in the ClassModem class
 //     if there were a portable way to refer to them!
-typedef unsigned int CallStatus;	// return status from dialing op
-typedef	unsigned int CallType;		// type detected for incoming call
-typedef	unsigned int AnswerType;	// type of call to answer for
-typedef unsigned int SpeakerVolume;
-typedef	unsigned int ATResponse;	// response code from AT command
-typedef	unsigned int BaudRate;		// serial line communication rate
-typedef	unsigned int FlowControl;	// serial line flow control scheme
-typedef	unsigned int SetAction;		// how to act when setting line
+typedef u_int CallStatus;	// return status from dialing op
+typedef	u_int CallType;		// type detected for incoming call
+typedef	u_int AnswerType;	// type of call to answer for
+typedef u_int SpeakerVolume;
+typedef	u_int ATResponse;	// response code from AT command
+typedef	u_int BaudRate;		// serial line communication rate
+typedef	u_int FlowControl;	// serial line flow control scheme
+typedef	u_int SetAction;		// how to act when setting line
 typedef struct {
     const char*	msg;		// string to match
     u_short	len;		// string length

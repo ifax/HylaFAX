@@ -124,7 +124,7 @@ again:
 	    schedReap();
 	    return (false);
 	}
-	if (n != msgLen)
+	if ((unsigned) n != msgLen)
 	    logError(
 		"HylaClient::send: %s: write failed (return %d, seq# %u, %m)",
 		(const char*) fifoName, seqnum, n);

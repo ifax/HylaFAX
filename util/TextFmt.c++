@@ -331,8 +331,7 @@ TextFmt::Copy_Block(off_t b1, off_t b2)
 {
     char buf[16*1024];
     for (off_t k = b1; k <= b2; k += sizeof (buf)) {
-	off_t cc = (off_t)
-	    fxmin((u_long) (off_t) sizeof (buf), (u_long) (b2-k+1));
+	size_t cc = (size_t) fxmin(sizeof (buf), (unsigned) (b2-k+1));
 	fseek(tf, (long) k, SEEK_SET);		// position to desired block
 	if (fread(buf, 1, (size_t) cc, tf) != cc)
 	    fatal("Read error during reverse collation: %s", strerror(errno));
@@ -604,7 +603,7 @@ putString(FILE* fd, const char* val)
 {
     fputc('(', fd);
     for (; *val; val++) {
-	unsigned c = *val & 0xff;
+	u_int c = *val & 0xff;
 	if ((c & 0200) == 0) {
 	    if (c == '(' || c == ')' || c == '\\')
 		fputc('\\', fd);
@@ -620,7 +619,7 @@ TextFmt::beginCol(void)
 {
     if (column == 1) {				// new page
 	if (reverse)  {
-	    int k = pageNum-firstPageNum;
+	    u_int k = pageNum-firstPageNum;
 	    off_t off = (off_t) ftell(tf);
 	    if (k < pageOff->length())
 		(*pageOff)[k] = off;
@@ -1165,7 +1164,7 @@ TextFont::decodeFontName(const char* name, fxStr& filename, fxStr& emsg)
 	    int aliascount = maxaliases;
             while (fgets(buf, sizeof(buf), fd) != NULL &&
 		aliascount > 0) {
-                int len = strcspn(buf, "%\n");
+                size_t len = strcspn(buf, "%\n");
                 if (len == strlen(buf)) {
 	            emsg = fxStr::format(
 	                "Warning:%s - line too long.", (const char*)fontMapFile);
@@ -1295,14 +1294,14 @@ TextFont::show(FILE* fd, const char* val, int len) const
     if (len > 0) {
 	fprintf(fd, "(");
 	do {
-	    unsigned c = *val++ & 0xff;
+	    u_int c = *val++ & 0xff;
 	    if ((c & 0200) == 0) {
 		if (c == '(' || c == ')' || c == '\\')
 		    fputc('\\', fd);
 		fputc(c, fd);
 	    } else
 		fprintf(fd, "\\%03o", c);
-	    hm += widths[(unsigned) c];		// Leif Erlingsson <leif@lege.com>
+	    hm += widths[c];		// Leif Erlingsson <leif@lege.com>
 	} while (--len);
 	fprintf(fd, ")%s ", (const char*) showproc);
     }
@@ -1419,7 +1418,7 @@ TextFont::readMetrics(TextCoord ps, bool useISO8859, fxStr& emsg)
 	 */
 	if (ix > 127)
 	    w = 625;			// distrust metrics-file for char > 127
-	if (ix < NCHARS)
+	if ((unsigned)ix < NCHARS)
 	    widths[ix] = w*ps/1000L;
     }
     fclose(fp);

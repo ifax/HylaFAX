@@ -711,7 +711,7 @@ HylaFAXServer::cmd(Token t)
 	    return (true);
 	} else if (number_param(n)) {
 	    logcmd(t, "%lu", n);
-	    if (n > maxIdleTimeout && !IS(PRIVILEGED)) {
+	    if ((unsigned)n > maxIdleTimeout && !IS(PRIVILEGED)) {
 		idleTimeout = maxIdleTimeout;
 		reply(213, "%lu: Idle timeout too large, set to %u.",
 		    n, maxIdleTimeout);
@@ -1485,7 +1485,7 @@ again:
 void
 HylaFAXServer::pushCmdData(const char* data, int n)
 {
-    if (recvNext + n > sizeof (recvBuf)) {
+    if ((unsigned) recvNext + n > sizeof (recvBuf)) {
 	logError("No space to push back urgent data \"%.*s\"", n, data);
 	return;
     }

@@ -84,7 +84,7 @@ public:
     struct FaxParam {
         const char* cmd;
         const char** parmNames;
-        int	NparmNames;
+        u_int	NparmNames;
         u_int	FaxClient::*pv;
     };
     struct FaxFmtHeader {

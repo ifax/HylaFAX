@@ -289,19 +289,19 @@ again:
 /*
  * The number of days in each month of the year.
  */
-static const u_int nonLeapYear[12] =
+static const int nonLeapYear[12] =
     { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-static const u_int leapYear[12] =
+static const int leapYear[12] =
     { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-static const u_int* daysInMonth[2] = { nonLeapYear, leapYear };
+static const int* daysInMonth[2] = { nonLeapYear, leapYear };
 
 static void
 adjustYDay(struct tm& t)
 {
     // adjust year day according to month
-    const u_int* days = daysInMonth[isLeapYear(t)];
+    const int* days = daysInMonth[isLeapYear(t)];
     t.tm_yday = t.tm_mday;
-    for (u_int i = 0; i < t.tm_mon; i++)
+    for (int i = 0; i < t.tm_mon; i++)
 	t.tm_yday += days[i];
 }
 
@@ -348,7 +348,7 @@ parseMonthAndYear(const char*& cp, const struct tm& ref, struct tm& at, fxStr& e
 	    adjustYDay(at);
 	}
     }
-    const u_int* days = daysInMonth[isLeapYear(at)];
+    const int* days = daysInMonth[isLeapYear(at)];
     if (at.tm_mday > days[at.tm_mon]) {
 	_atError(emsg, "Invalid day of month, %s has only %u days",
 	    months[at.tm_mon], days[at.tm_mon]);
@@ -426,7 +426,7 @@ fixup(struct tm& at)
      * Now recalculate derivative values
      * to insure everything is consistent.
      */
-    const u_int* days = daysInMonth[leap];
+    const int* days = daysInMonth[leap];
     at.tm_mday = at.tm_yday;
     for (at.tm_mon = 0; at.tm_mday >= days[at.tm_mon]; at.tm_mon++)
 	at.tm_mday -= days[at.tm_mon];

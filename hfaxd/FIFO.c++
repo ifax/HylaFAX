@@ -172,7 +172,7 @@ again:
 	if (fcntl(faxqFd, F_SETFL, fcntl(faxqFd, F_GETFL, 0) &~ O_NDELAY) < 0)
 	    logError("fcntl: %m");
     }
-    u_int len = msg.length()+1;
+    ssize_t len = msg.length()+1;
     if (Sys::write(faxqFd, msg, len) != len) {
 	if (errno == EBADF || errno == EPIPE) {
 	    /*
@@ -285,7 +285,7 @@ HylaFAXServer::sendModem(const char* modem, fxStr& emsg, const char* fmt ...)
     va_start(ap, fmt);
     fxStr msg = fxStr::vformat(fmt, ap);
     va_end(ap);
-    u_int len = msg.length()+1;
+    ssize_t len = msg.length()+1;
     if (Sys::write(fd, msg, len) != len) {
 	emsg = fxStr::format("write to %s failed: %s",
 	    (const char*) fifoName, strerror(errno));

@@ -382,7 +382,7 @@ HylaFAXServer::addUser(FILE* db, const char* user, u_int uid, const char* upass,
 	line = fxStr::format("%s:%u:%s\n", user, uid, upass);
     else
 	line = fxStr::format("%s:%u\n", user, uid);
-    if (Sys::write(fd, line, line.length()) != line.length()) {
+    if (Sys::write(fd, line, line.length()) != (ssize_t)line.length()) {
 	perror_reply(550, "Write error", errno);
 	Sys::close(fd);
 	(void) Sys::unlink(tfile);

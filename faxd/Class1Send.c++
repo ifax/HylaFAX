@@ -160,7 +160,7 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg)
 	/*
 	 * Wait up to T1 for a valid DIS.
 	 */
-	if (Sys::now()-start >= t1)
+	if ((unsigned) Sys::now()-start >= t1)
 	    break;
 	framerecvd = recvFrame(frame, conf.t2Timer);
     }

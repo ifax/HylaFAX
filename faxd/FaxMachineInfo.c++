@@ -71,10 +71,10 @@ FaxMachineInfo::FaxMachineInfo(const FaxMachineInfo& other)
 }
 FaxMachineInfo::~FaxMachineInfo() { writeConfig(); }
 
-int
+u_short
 FaxMachineInfo::getMaxPageWidthInMM() const
 {
-    return (int)(maxPageWidth/(204.0f/25.4f));
+    return (u_short)(maxPageWidth/(204.0f/25.4f));
 }
 
 #include <ctype.h>
@@ -103,7 +103,7 @@ FaxMachineInfo::resetConfig()
     supportsPostScript = false;		// no support for Adobe protocol
     calledBefore = false;		// never called before
     maxPageWidth = 2432;		// max required width
-    maxPageLength = -1;			// infinite page length
+    maxPageLength = (u_short) -1;	// infinite page length
     maxSignallingRate = BR_14400;	// T.17 14.4KB
     minScanlineTime = ST_0MS;		// 0ms/0ms
     sendFailures = 0;
@@ -292,7 +292,7 @@ FaxMachineInfo::writeConfig()
 	    fxStackBuffer buf;
 	    writeConfig(buf);
 	    u_int cc = buf.getLength();
-	    if (Sys::write(fd, buf, cc) != cc) {
+	    if (Sys::write(fd, buf, cc) != (ssize_t)cc) {
 		error("write error: %s", strerror(errno));
 		Sys::close(fd);
 		return;

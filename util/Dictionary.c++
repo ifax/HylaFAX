@@ -47,7 +47,7 @@ fxDictionary::fxDictionary(u_int ksize, u_int vsize,u_int initsize)
 
 fxDictionary::fxDictionary(const fxDictionary& a)
 {
-    for (int i = 0; i < a.buckets.length(); i++) {
+    for (u_int i = 0; i < a.buckets.length(); i++) {
 	const fxDictBucket* sb = a.buckets[i];
 	while (sb) {
 	    addInternal(KEY(sb),VALUE(sb));
@@ -95,7 +95,7 @@ fxDictionary::operator=(const fxDictionary &a)
     assert(valuesize == a.getValueSize());
     if (this == &a) return;
     this->fxDictionary::~fxDictionary();	// NB: need this for HP C++ 3.4
-    for (int i = 0; i < a.buckets.length(); i++) {
+    for (u_int i = 0; i < a.buckets.length(); i++) {
 	const fxDictBucket* db = a.buckets[i];
 	while (db) {
 	    addInternal(KEY(db), VALUE(db));
@@ -210,7 +210,7 @@ fxDictionary::hashKey(const void* key) const
 {
     u_long u = 0;
     const u_long* p = (const u_long*)key;
-    int l = (int)keysize;
+    u_int l = keysize;
     while (l>=sizeof (u_long)) {
 	u ^= *p++;
 	l -= sizeof (u_long);

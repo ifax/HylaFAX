@@ -248,7 +248,7 @@ again:
 	    emsg = callStatus[cs];
 	    return (CALLTYPE_ERROR);
 	}
-    } while (Sys::now()-start < conf.answerResponseTimeout);
+    } while ((unsigned) Sys::now()-start < conf.answerResponseTimeout);
     emsg = "Ring detected without successful handshake";
     return (CALLTYPE_ERROR);
 }
@@ -585,7 +585,7 @@ ClassModem::trimModemLine(char buf[], int& cc)
 	buf[cc] = '\0';
     }
     if (cc > 0) {
-	u_int i = 0;
+	int i = 0;
 	// leading white space
 	while (i < cc && isspace(buf[i]))
 	    i++;

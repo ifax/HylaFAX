@@ -538,7 +538,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
     }
     uint32 w;
     (void) TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
-    if (w > clientInfo.getMaxPageWidthInPixels()) {
+    if (w > (uint32)clientInfo.getMaxPageWidthInPixels()) {
 	emsg = fxStr::format("Client does not support document page width"
 		", max remote page width %u pixels, image width %lu pixels",
 		clientInfo.getMaxPageWidthInPixels(), w);
@@ -608,7 +608,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
      * to take into account sloppy coding practice (e.g.
      * using 200 dpi for high-res facsimile.
      */
-    if (clientInfo.getMaxPageLengthInMM() != -1) {
+    if (clientInfo.getMaxPageLengthInMM() != (u_short)-1) {
 	u_long h = 0;
 	(void) TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
 	float len = h / yres;			// page length in mm

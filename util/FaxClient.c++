@@ -1103,7 +1103,7 @@ FaxClient::sendData(int fd,
 	while (cc > 0) {
 	    char buf[32*1024];			// XXX better if page-aligned
 	    size_t n = fxmin(cc, sizeof (buf));
-	    if (read(fd, buf, n) != n) {
+	    if (read(fd, buf, n) != (ssize_t)n) {
 		protocolBotch(emsg, " (data read: %s).", strerror(errno));
 		goto bad;
 	    }

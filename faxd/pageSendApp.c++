@@ -476,7 +476,7 @@ pageSendApp::pagePrologue(FaxRequest& req, const FaxMachineInfo& info, fxStr& em
 		buf.getLength(), (const char*) buf);
 	} else
 	    traceResponse(buf);
-    } while (!gotID && Sys::now() - start < ixoIDTimeout);
+    } while (!gotID && (unsigned) Sys::now() - start < ixoIDTimeout);
     if (!gotID) {
 	emsg = "No initial ID response from paging central";
 	req.status = send_retry;
@@ -563,7 +563,7 @@ pageSendApp::pagePrologue(FaxRequest& req, const FaxMachineInfo& info, fxStr& em
 	    if (!scanForCode(cp, len))
 		traceResponse(buf);
 	}
-    } while (Sys::now()-start < ixoLoginTimeout && --unknown);
+    } while ((unsigned)Sys::now()-start < ixoLoginTimeout && --unknown != 0);
     emsg = fxStr::format("Protocol failure: %s from paging central",
 	(unknown ?
 	    "timeout waiting for response" : "too many unknown responses"));
@@ -588,7 +588,7 @@ pageSendApp::pageGoAhead(FaxRequest& req, const FaxMachineInfo&, fxStr& emsg)
 	    (void) scanForCode(cp, len);
 	}
 	traceResponse(buf);
-    } while (Sys::now()-start < ixoGATimeout && --unknown);
+    } while ((unsigned) Sys::now()-start < ixoGATimeout && --unknown != 0);
     emsg = fxStr::format("Protocol failure: %s waiting for go-ahead message",
 	unknown ? "timeout" : "too many unknown responses");
     req.status = send_retry;
@@ -710,7 +710,7 @@ pageSendApp::sendPagerMsg(FaxRequest& req, faxRequest& preq, const fxStr& msg, f
 	    if (!scanForCode(cp, len))
 		traceResponse(resp);
 	}
-    } while (Sys::now()-start < ixoXmitTimeout && unknown < ixoMaxUnknown);
+    } while ((unsigned)Sys::now()-start < ixoXmitTimeout && unknown < ixoMaxUnknown);
     emsg = fxStr::format("Protocol failure: %s to message block transmit",
 	(unknown ?
 	    "timeout waiting for response" : "too many unknown responses"));
@@ -746,7 +746,7 @@ pageSendApp::pageEpilogue(FaxRequest& req, const FaxMachineInfo&, fxStr& emsg)
 	}
 	traceResponse(buf);
 	// NB: ignore unknown responses
-    } while (Sys::now() - start < ixoAckTimeout);
+    } while ((unsigned)Sys::now() - start < ixoAckTimeout);
     req.status = send_retry;
     emsg = "Protocol failure: timeout waiting for transaction ACK/NAK "
 	"from paging central";
@@ -1129,7 +1129,7 @@ pageSendApp::sendUcpMsg(FaxRequest& req, faxRequest& preq, const fxStr& msg, fxS
 		}
 	    }
 	}
-    } while (Sys::now()-start < ixoXmitTimeout && unknown < ixoMaxUnknown);
+    } while ((unsigned)Sys::now()-start < ixoXmitTimeout && unknown < ixoMaxUnknown);
     return false;
 }
 

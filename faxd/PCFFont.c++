@@ -150,7 +150,7 @@ PCFFont::read(const char* name)
 	    error("No space for font metric information");
 	    return (false);
 	}
-	for (int i = 0; i < numGlyphs; i++) {
+	for (u_int i = 0; i < numGlyphs; i++) {
 	    if (isFormat(PCF_DEFAULT_FORMAT))
 		getMetric(metrics[i]);
 	    else
@@ -173,8 +173,7 @@ PCFFont::read(const char* name)
 	    error("No space for bitmap offsets array");
 	    return (false);
 	}
-	int i;
-	for (i = 0; i < nbitmaps; i++)
+	for (u_int i = 0; i < nbitmaps; i++)
 	    offsets[i] = getINT32();
 	u_long bitmapSizes[4];
 	bitmapSizes[0] = getINT32();
@@ -219,7 +218,7 @@ PCFFont::read(const char* name)
 		return (false);
 	    }
 	    int newoff = 0;
-	    for (i = 0; i < nbitmaps; i++) {
+	    for (u_int i = 0; i < nbitmaps; i++) {
 		off_t old = offsets[i];
 		offsets[i] = newoff;
 		const charInfo& metric = metrics[i];
@@ -231,7 +230,7 @@ PCFFont::read(const char* name)
 	    delete bitmaps;
 	    bitmaps = padbitmaps;
 	}
-	for (i = 0; i < nbitmaps; i++) {
+	for (u_int i = 0; i < nbitmaps; i++) {
 	    metrics[i].bits = bitmaps + offsets[i];
 	    if ((unsigned long) metrics[i].bits & 1) {
 		error("Internal error, bitmap data not word-aligned");
@@ -263,7 +262,7 @@ PCFFont::read(const char* name)
 	    error("No space for character encoding vector");
 	    return (false);
 	}
-	for (int i = 0; i < nencoding; i++) {
+	for (u_int i = 0; i < nencoding; i++) {
 	    int encodingOffset = getINT16();
 	    encoding[i] = (encodingOffset == 0xffff) ?
 		0 : metrics + encodingOffset;
@@ -380,7 +379,7 @@ PCFFont::getCompressedMetric(charInfo& metric)
 bool
 PCFFont::seekToTable(u_long type)
 {
-    for (int i = 0; i < tocSize; i++)
+    for (u_int i = 0; i < tocSize; i++)
 	if (toc[i].type == type) {
 	    if (fseek(file, toc[i].offset, SEEK_SET) == -1) {
 		error("Can not seek; fseek failed");
@@ -410,7 +409,7 @@ PCFFont::readTOC()
 	error("Cannot read TOC; no space for %lu records", tocSize);
 	return (false);
     }
-    for (int i = 0; i < tocSize; i++) {
+    for (u_int i = 0; i < tocSize; i++) {
 	toc[i].type = getLSB32();
 	toc[i].format = getLSB32();
 	toc[i].size = getLSB32();
@@ -498,9 +497,9 @@ PCFFont::imageText(const char* text,
 {
     if (!ready)
 	return (0);
-    int rowwords = howmany(w,16);
-    int y = tm + fontAscent;
-    int x = lm;
+    u_int rowwords = howmany(w,16);
+    u_int y = tm + fontAscent;
+    u_int x = lm;
     /*
      * The rasterize assumes words have a big-endian
      * byte order.  For now (rather than fix it) we

@@ -35,7 +35,7 @@
 
 // Boolean type
 #ifdef NEED_BOOL
-typedef unsigned char bool;
+typedef u_char bool;
 #undef true
 #define true ((bool)1)
 #undef false

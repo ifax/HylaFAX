@@ -59,7 +59,7 @@ isFAXImage(TIFF* tif)
 static void
 sanitize(fxStr& s)
 {
-    for(int i = 0; i < s.length(); i++) {
+    for(u_int i = 0; i < s.length(); i++) {
         if (!isascii(s[i]) || !isprint(s[i])) s[i] = '?';
     }
 }

@@ -23,6 +23,7 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
+#include "config.h"		//for BR_14400 definition
 #include "class2.h"		//for BR_14400 definition
 #include "SendFaxClient.h"
 #include "FaxDB.h"

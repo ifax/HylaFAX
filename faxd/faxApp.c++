@@ -232,7 +232,7 @@ faxApp::vsendQueuer(const char* fmt, va_list ap)
     }
     fxStr msg = fxStr::vformat(fmt, ap);
     u_int len = msg.length() + 1;
-    if (Sys::write(faxqfifo, (const char*)msg, len) != len) {
+    if (Sys::write(faxqfifo, (const char*)msg, len) != (ssize_t)len) {
 	if (errno == EBADF || errno == EPIPE)		// reader expired
 	    Sys::close(faxqfifo), faxqfifo = -1;
 	else

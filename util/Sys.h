@@ -89,9 +89,9 @@ public:
 	{ return ::open(filename, flags, m); }
     static int close(int fd)		{ return ::close(fd); }
     // NB: char* param to read+write for implicit cast when using fxStr's
-    static int write(int fd, const char *buf, u_int cc)
+    static ssize_t write(int fd, const char *buf, u_int cc)
 	{ return ::write(fd, buf, cc); }
-    static int read(int fd, char* buf, unsigned cc)
+    static ssize_t read(int fd, char* buf, u_int cc)
 	{ return ::read(fd, buf, cc); }
 
     static time_t now(void)		{ return ::time(0); }

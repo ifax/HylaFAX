@@ -190,7 +190,7 @@ bool
 FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, fxStr& emsg)
 {
     bool recvOK;
-    int ppm;
+    u_int ppm;
     pageStart = Sys::now();
     for (;;) {
 	modem->getRecvSUB(info.subaddr);		// optional subaddress
@@ -244,7 +244,7 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
  * Receive Phase B protocol processing.
  */
 bool
-FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, int& ppm, fxStr& emsg)
+FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
 {
     ppm = PPM_EOP;
     do {

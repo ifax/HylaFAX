@@ -33,7 +33,7 @@
 
 class PageInfoArray;
 
-typedef unsigned int BMU;	// ISO basic measurement unit
+typedef u_int BMU;	// ISO basic measurement unit
 struct PageInfo {
     const char* name;	// page size name
     const char* abbr;	// abbreviated name

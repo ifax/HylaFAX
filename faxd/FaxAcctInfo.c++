@@ -72,7 +72,7 @@ FaxAcctInfo::record(const char* cmd) const
 	record.fput("\t\"%s\"", status);	// $14 = status
 	record.put('\n');
 	flock(fd, LOCK_EX);
-	ok = (Sys::write(fd, record, record.getLength()) == record.getLength());
+	ok = (Sys::write(fd, record, record.getLength()) == (ssize_t)record.getLength());
 	Sys::close(fd);				// implicit unlock
     }
     return (ok);

@@ -940,7 +940,7 @@ SNPPClient::sendData(int fd, fxStr& emsg)
 	while (cc > 0) {
 	    char buf[32*1024];
 	    size_t n = fxmin(cc, sizeof (buf));
-	    if (read(fd, buf, n) != n) {
+	    if (read(fd, buf, n) != (ssize_t) n) {
 		protocolBotch(emsg, " (data read: %s).", strerror(errno));
 		return (false);
 	    }

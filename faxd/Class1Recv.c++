@@ -377,7 +377,7 @@ const u_int Class1Modem::modemPPMCodes[8] = {
  * sending a post-page response in a multi-page document.
  */
 bool
-Class1Modem::recvPage(TIFF* tif, int& ppm, fxStr& emsg)
+Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg)
 {
     if (/* sendingHDLC */ lastPPM == FCF_MPS && prevPage && pageGood) {
 	// sendingHDLC = false
@@ -698,7 +698,7 @@ Class1Modem::recvEnd(fxStr&)
 		 */
 		break;
 	    }
-	} while (Sys::now()-start < t1 &&
+	} while ((unsigned) Sys::now()-start < t1 &&
 	    (!frame.isOK() || frame.getFCF() == FCF_EOP));
     }
     setInputBuffering(true);

@@ -703,7 +703,7 @@ SNPPServer::site_cmd(Token t)
 	    return (true);
 	} else if (number_param(n)) {
 	    logcmd(t, "%lu", n);
-	    if (n > maxIdleTimeout && !IS(PRIVILEGED)) {
+	    if ((unsigned)n > maxIdleTimeout && !IS(PRIVILEGED)) {
 		idleTimeout = maxIdleTimeout;
 		reply(250, "%lu: Idle timeout too large, set to %u.",
 		    n, maxIdleTimeout);

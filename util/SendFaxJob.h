@@ -31,8 +31,8 @@
 
 class SendFaxClient;
 
-typedef unsigned int FaxNotify;
-typedef	unsigned int FaxPageChop;
+typedef u_int FaxNotify;
+typedef	u_int FaxPageChop;
 
 class SendFaxJob : public fxObj {
 public:

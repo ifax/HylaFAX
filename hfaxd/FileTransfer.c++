@@ -241,8 +241,8 @@ HylaFAXServer::openTIFF(const char* name)
 		char buf[512];
 		TIFFHeader h;
 	    } b;
-	    int cc = Sys::read(fd, (char*) &b, sizeof (b));
-	    if (cc > sizeof (b.h) && b.h.tiff_version == TIFF_VERSION &&
+	    ssize_t cc = Sys::read(fd, (char*) &b, sizeof (b));
+	    if (cc > (ssize_t)sizeof (b.h) && b.h.tiff_version == TIFF_VERSION &&
 	      (b.h.tiff_magic == TIFF_BIGENDIAN ||
 	       b.h.tiff_magic == TIFF_LITTLEENDIAN)) {
 		(void) lseek(fd, 0L, SEEK_SET);		// rewind
@@ -420,7 +420,7 @@ HylaFAXServer::sendITIFFData(TIFF* tif, int fdout)
     uint32* sb;
     (void) TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &sb);
     tdata_t buf = _TIFFmalloc(sb[0]);
-    uint32 bsize = sb[0];
+    tsize_t bsize = sb[0];
     for (tstrip_t s = 0, ns = TIFFNumberOfStrips(tif); s < ns; s++) {
 	tsize_t cc = sb[s];
 	if (cc > bsize) {
@@ -827,7 +827,7 @@ HylaFAXServer::recvZData(int fdin, int fdout)
 	    int cc = read(fdin, buf, sizeof (buf));
 	    if (cc == 0) {
 		size_t occ = sizeof (obuf) - zstream.avail_out;
-		if (occ > 0 && write(fdout, obuf, occ) != occ) {
+		if (occ > 0 && write(fdout, obuf, occ) != (ssize_t)occ) {
 		    perror_reply(452, "Error writing output file", errno);
 		    break;
 		}
@@ -850,7 +850,7 @@ HylaFAXServer::recvZData(int fdin, int fdout)
 		    goto bad;
 		}
 		size_t occ = sizeof (obuf) - zstream.avail_out;
-		if (write(fdout, obuf, occ) != occ) {
+		if (write(fdout, obuf, occ) != (ssize_t)occ) {
 		    perror_reply(452, "Error writing output file", errno);
 		    goto bad;
 		}

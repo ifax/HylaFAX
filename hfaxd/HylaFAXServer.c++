@@ -566,7 +566,7 @@ u_int HylaFAXServer::getDocumentNumbers(u_int count, fxStr& emsg)
 void
 HylaFAXServer::sanitize(fxStr& s)
 {
-    for (int i = 0; i < s.length(); i++)
+    for (u_int i = 0; i < s.length(); i++)
 	if (!isascii(s[i]) || !isprint(s[i]))
 	    s[i] = '?';
 }

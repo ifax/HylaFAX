@@ -756,14 +756,14 @@ HylaFAXServer::docType(const char* docname, FaxSendOp& op)
 		char buf[512];
 		TIFFHeader h;
 	    } b;
-	    int cc = Sys::read(fd, (char*) &b, sizeof (b));
+	    ssize_t cc = Sys::read(fd, (char*) &b, sizeof (b));
 	    if (cc > 2 && b.buf[0] == '%' && b.buf[1] == '!')
 		op = FaxRequest::send_postscript;
 	    else if (cc > 2 && b.buf[0] == '%' && b.buf[1] == 'P') {
 	    	logError("What we have here is a PDF file");
 	    	op = FaxRequest::send_pdf;
 	    }
-	    else if (cc > sizeof (b.h) && isTIFF(b.h))
+	    else if (cc > (ssize_t)sizeof (b.h) && isTIFF(b.h))
 		op = FaxRequest::send_tiff;
 	    else
 		op = FaxRequest::send_data;

@@ -65,7 +65,7 @@ static const char* opNames[] =
 static const char* resultNames[] = { "tiff", "postscript", "error" };
 
 bool
-TypeRule::match(const void* data, u_int size, bool verbose) const
+TypeRule::match(const void* data, size_t size, bool verbose) const
 {
     if (verbose) {
 	printf("rule: %soffset %#lx %s %s",
@@ -84,13 +84,13 @@ TypeRule::match(const void* data, u_int size, bool verbose) const
 	}
 	printf(" -- ");
     }
-    if (off > size) {
+    if (off > (off_t)size) {
 	if (verbose)
 	    printf("failed (offset past data)\n");
 	return (false);
     }
     bool ok = false;
-    u_long v = 0;
+    long v = 0;
     const u_char* cp = (const u_char*) data;
     switch (type) {
     case ASCII:
@@ -128,7 +128,7 @@ TypeRule::match(const void* data, u_int size, bool verbose) const
 	v = *cp;
 	break;
     case SHORT:
-	if (off + 2 < size) {
+	if (off + 2 < (off_t)size) {
 	    u_short w;
 	    memcpy(&w, cp+off, 2);
 	    v = ntohs(w);
@@ -138,7 +138,7 @@ TypeRule::match(const void* data, u_int size, bool verbose) const
 	    printf("failed (insufficient data)\n");
 	return (false);
     case LONG:
-	if (off + 4 < size) {
+	if (off + 4 < (off_t)size) {
 	    memcpy(&v, cp+off, 4);
 	    v = ntohl(v);
 	    break;

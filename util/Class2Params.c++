@@ -23,6 +23,7 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
+#include "config.h"
 #include "Class2Params.h"
 #include "Sys.h"
 #include "t.30.h"

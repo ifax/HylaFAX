@@ -53,10 +53,10 @@ private:
     bool	supports2DEncoding;	// handles Group 3 2D
     bool	supportsPostScript;	// handles Adobe NSF protocol
     bool	calledBefore;		// successfully called before
-    int		maxPageWidth;		// max capable page width
-    int		maxPageLength;		// max capable page length
-    int		maxSignallingRate;	// max capable signalling rate
-    int		minScanlineTime;	// min scanline time capable
+    u_short		maxPageWidth;		// max capable page width
+    u_short		maxPageLength;		// max capable page length
+    u_short		maxSignallingRate;	// max capable signalling rate
+    u_short		minScanlineTime;	// min scanline time capable
     fxStr	csi;			// last received CSI
     int		sendFailures;		// count of failed send attempts
     int		dialFailures;		// count of failed dial attempts
@@ -91,11 +91,11 @@ public:
     bool getSupports2DEncoding() const;
     bool getSupportsPostScript() const;
     bool getCalledBefore() const;
-    int getMaxPageWidthInPixels() const;
-    int getMaxPageWidthInMM() const;
-    int getMaxPageLengthInMM() const;
-    int getMaxSignallingRate() const;
-    int getMinScanlineTime() const;
+    u_short getMaxPageWidthInPixels() const;
+    u_short getMaxPageWidthInMM() const;
+    u_short getMaxPageLengthInMM() const;
+    u_short getMaxSignallingRate() const;
+    u_short getMinScanlineTime() const;
     const fxStr& getCSI() const;
 
     int getSendFailures() const;
@@ -134,13 +134,13 @@ inline bool FaxMachineInfo::getSupportsPostScript() const
     { return supportsPostScript; }
 inline bool FaxMachineInfo::getCalledBefore() const	
     { return calledBefore; }
-inline int FaxMachineInfo::getMaxPageWidthInPixels() const
+inline u_short FaxMachineInfo::getMaxPageWidthInPixels() const
     { return maxPageWidth; }
-inline int FaxMachineInfo::getMaxPageLengthInMM() const
+inline u_short FaxMachineInfo::getMaxPageLengthInMM() const
     { return maxPageLength; }
-inline int FaxMachineInfo::getMaxSignallingRate() const
+inline u_short FaxMachineInfo::getMaxSignallingRate() const
     { return maxSignallingRate; }
-inline int FaxMachineInfo::getMinScanlineTime() const
+inline u_short FaxMachineInfo::getMinScanlineTime() const
     { return minScanlineTime; }
 inline const fxStr& FaxMachineInfo::getCSI() const
     { return csi; }

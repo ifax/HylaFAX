@@ -80,8 +80,8 @@ protected:
     virtual bool handleError();
     virtual void checkConnections();
 protected:
-    int	_nfds;
-    int _max_fds;
+    u_int _nfds;
+    u_int _max_fds;
     fd_set _rmask;
     fd_set _wmask;
     fd_set _emask;

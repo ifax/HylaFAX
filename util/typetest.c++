@@ -94,7 +94,7 @@ usage()
 int
 main(int argc, char* argv[])
 {
-    extern int optind, opterr;
+    extern int optind;
     extern char* optarg;
     int c;
     fxStr file;

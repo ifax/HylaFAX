@@ -76,7 +76,7 @@ private:
     TIFF*	setupForRecv(FaxRecvInfo&, FaxRecvInfoArray&, fxStr& emsg);
     bool	recvDocuments(TIFF*, FaxRecvInfo&, FaxRecvInfoArray&,
 		    fxStr& emsg);
-    bool	recvFaxPhaseD(TIFF* tif, FaxRecvInfo&, int& ppm, fxStr& emsg);
+    bool	recvFaxPhaseD(TIFF* tif, FaxRecvInfo&, u_int& ppm, fxStr& emsg);
     bool	pollFaxPhaseB(const fxStr& sep, const fxStr& pwd,
 		    FaxRecvInfoArray&, fxStr& emsg);
 protected:

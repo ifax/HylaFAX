@@ -445,7 +445,7 @@ again:
     }
     if (!cacheFd)
 	Sys::close(fd), fd = -1;
-    return (n == msgLen);
+    return ((unsigned)n == msgLen);
 }
 
 #include "StackBuffer.h"

@@ -39,16 +39,15 @@ struct ModelData
 
 struct NSFData {
     const char* vendorId;
-    static
-    const int   vendorIdSize; // Country & provider code (T.35)
+    static const u_int   vendorIdSize; // Country & provider code (T.35)
     const char* vendorName;
     bool        inverseStationIdOrder;
-    int         modelIdPos;
-    int         modelIdSize;
+    u_int         modelIdPos;
+    u_int         modelIdSize;
     const ModelData* knownModels;
 };
 
-const int NSFData::vendorIdSize = 3; // Country & provider code (T.35)
+const u_int NSFData::vendorIdSize = 3; // Country & provider code (T.35)
 
 static const ModelData Canon[] =
 {{"\x80\x00\x80\x48\x00", "Faxphone B640"},
