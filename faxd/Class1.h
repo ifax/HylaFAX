@@ -71,13 +71,12 @@ protected:
     u_short	ecmBitPos;		// bit position to populate on ecmByte
     u_int	ecmByte;		// pending byte to add to ecmBlock
     u_short	ecmOnes;		// count of consecutive ones for adding zero bits
-    u_char	ecmFrame[260];		// to hold outgoing frames as they are read from the file
+    u_char*	ecmFrame;		// to hold outgoing frames as they are read from the file
     u_int	ecmFramePos;		// fill pointer for ecmFrame
-    u_char	ecmBlock[66560];	// to hold 256 raw ecmFrames to send before MCF
+    u_char*	ecmBlock;		// to hold 256 raw ecmFrames to send before MCF
     u_long	ecmBlockPos;		// fill pointer for ecmBlock
-    u_char	ecmStuffedBlock[83000];	// to hold image block after adding transparent zeros and FCS bytes
+    u_char*	ecmStuffedBlock;	// to hold image block after adding transparent zeros and FCS bytes
     u_long	ecmStuffedBlockPos;	// fill pointer for ecmStuffedBlockPos
-					// 360 sync flags + 263 B/frame*256 frames + 6 B/RCP*3 RCP
     u_short	frameNumber;		// frame sequence number of ecmFrame in ecmBlock
     u_short	blockNumber;		// block sequence number of ecmBlock in page
 

@@ -711,7 +711,8 @@ bool
 Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 {
     HDLCFrame frame(5);					// A+C+FCF+FCS=5 bytes
-    u_char block[frameSize*256];			// 256 frames per block - totalling 16/64KB
+    u_char* block = (u_char*) malloc(frameSize*256);	// 256 frames per block - totalling 16/64KB
+    fxAssert(block != NULL, "ECM procedure error (receive block).");
     bool lastblock = false;
     u_short seq = 1;					// sequence code for the first block
 
@@ -801,6 +802,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			// requisite pause before sending response (PPR/MCF)
 			if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
 			    emsg = "Failure to receive silence.";
+			    free(block);
 			    return (false);
 			}
 			if (! blockgood) {
@@ -829,6 +831,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    // requisite pause before sending response (CTR)
 					    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
 						emsg = "Failure to receive silence.";
+						free(block);
 						return (false);
 					    }
 					    (void) transmitFrame(FCF_CTR|FCF_RCVR);
@@ -852,11 +855,13 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						    break;
 						default:
 						    emsg = "COMREC invalid response to repeated PPR received";
+						    free(block);
 						    return (false);
 					    }
 					    // requisite pause before sending response (ERR)
 					    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
 						emsg = "Failure to receive silence.";
+						free(block);
 						return (false);
 					    }
 					    (void) transmitFrame(FCF_ERR|FCF_RCVR);
@@ -865,10 +870,12 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    break;
 					default:
 					    emsg = "COMREC invalid response to repeated PPR received";
+					    free(block);
 					    return (false);
 				    }
 				} else {
 				    emsg = "T.30 T2 timeout, expected signal not received";
+				    free(block);
 				    return (false);
 				}
 			    }
@@ -889,15 +896,18 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    break;
 				default:
 				    emsg = "COMREC invalid post-page signal received";
+				    free(block);
 				    return (false);
 			    }
 			}
 		    } else {
 			emsg = "COMREC invalid response received (expected PPS)";
+			free(block);
 			return (false);
 		    }
 		} else {
 		    emsg = "T.30 T2 timeout, expected signal not received";
+		    free(block);
 		    return (false);
 		}
 	    }
@@ -911,7 +921,10 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    (void) atCmd(rmCmd, AT_NOTHING);
 		    response = atResponse(rbuf, conf.t2Timer);
 		}
-		if (response == AT_TIMEOUT || response == AT_ERROR) return (false);
+		if (response == AT_TIMEOUT || response == AT_ERROR) {
+		    free(block);
+		    return (false);
+		}
 	    }
 	} while (! blockgood);
 
@@ -940,10 +953,14 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		(void) atCmd(rmCmd, AT_NOTHING);
 		response = atResponse(rbuf, conf.t2Timer);
 	    }
-	    if (response == AT_TIMEOUT || response == AT_ERROR) return (false);
+	    if (response == AT_TIMEOUT || response == AT_ERROR) {
+		free(block);
+		return (false);
+	    }
 	}
     } while (! lastblock);
 
+    free(block);
     recvEndPage(tif, params);
 
     return (true);    		// signalRcvd is set, full page is received...
@@ -958,9 +975,8 @@ Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
     /*
      * T.30-A ECM mode requires a substantially different protocol than non-ECM faxes.
      */
-    bool pageRecvd = false;
-    if (params.ec & EC_ENABLE) pageRecvd = recvPageECMData(tif, params, emsg);
-    else pageRecvd = recvPageDLEData(tif, checkQuality(), params, emsg);
+    if (params.ec & EC_ENABLE) (void) recvPageECMData(tif, params, emsg);
+    else (void) recvPageDLEData(tif, checkQuality(), params, emsg);
 
     TIFFSetField(tif, TIFFTAG_IMAGELENGTH, getRecvEOLCount());
     TIFFSetField(tif, TIFFTAG_CLEANFAXDATA, getRecvBadLineCount() ?

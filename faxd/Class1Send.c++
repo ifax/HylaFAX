@@ -761,7 +761,8 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	    for (u_int i = 0; i < params.transferSize(200); i++)
 		blockData(0x7e, true);
 
-	    u_char firstframe[conf.class1ECMFrameSize + 6];
+	    u_char* firstframe = (u_char*) malloc(conf.class1ECMFrameSize + 6);
+	    fxAssert(firstframe != NULL, "ECM procedure error (frame duplication).");
 	    firstframe[0] = 0x1;			// marked as unused
 	    for (u_short fnum = 0; fnum < frameNumber; fnum++) {
 		u_int pprpos, pprval;
@@ -806,6 +807,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		protoTrace("SEND send frame number %u", frameRev[firstframe[3]]);
 		blockData(0x7e, true);
 	    }
+	    free(firstframe);
 	    HDLCFrame rcpframe(5);
 	    rcpframe.put(0xff); rcpframe.put(0xc0); rcpframe.put(0x61); rcpframe.put(0x96); rcpframe.put(0xd3);
 	    for (u_short i = 0; i < 3; i++) {		// three RCP frames

@@ -83,10 +83,30 @@ Class1Modem::Class1Modem(FaxServer& s, const ModemConfig& c)
 {
     memcpy(xmitCaps, basicCaps, sizeof (basicCaps));
     memcpy(recvCaps, basicCaps, sizeof (basicCaps));
+
+    /*
+     * Because the sending routines deliver data to the transmit functions
+     * in segments, these must be globally available to spool outgoing data
+     * until a complete ECM block can be assembled.
+     *
+     * Besides the contents of ecmBlock, ecmStuffedBlock must be able to
+     * hold all sync flag bytes, stuffed bits, and RCP frames.
+     */
+    u_int fs = 256;
+    if (conf.class1ECMFrameSize == 64) fs = 64;
+    ecmFrame = (u_char*) malloc(fs + 4);
+    fxAssert(ecmFrame != NULL, "ECM procedure error (frame).");
+    ecmBlock = (u_char*) malloc((fs + 4) * 256);
+    fxAssert(ecmFrame != NULL, "ECM procedure error (block).");
+    ecmStuffedBlock = (u_char*) malloc(fs == 256 ? 83000 : 33000);
+    fxAssert(ecmFrame != NULL, "ECM procedure error (stuffed block).");
 }
 
 Class1Modem::~Class1Modem()
 {
+    free(ecmFrame);
+    free(ecmBlock);
+    free(ecmStuffedBlock);
 }
 
 /*
