@@ -101,6 +101,8 @@ public:
     /////////////////////////////////////////////////////
     u_long hash() const;
 
+operator char*()
+	{ return data; }
     operator const char*() const
 	{ return data; }
     operator const char*()

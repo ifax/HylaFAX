@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include <errno.h>
 
 #define DEFAULT_FORMAT_BUFFER 4096
 
@@ -153,7 +154,9 @@ fxStr::format(const char* fmt ...)
     int len = vsnprintf(s.data, size, fmt, ap);
     va_end(ap);
     while (len < 0 || len >= size) {
-        if (len >= size) {
+	if (len < 0 && errno != 0)
+	    return s;
+	if (len >= size) {
             size = len + 1;
         } else {
             size *= 2;
