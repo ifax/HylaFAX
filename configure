@@ -1301,6 +1301,16 @@ makeDefs()
     dumpvars "$VAR2" CCOMPILER CXXCOMPILER | sort>confsed2
     $RM xdefs; sed -f confsed1 $SRCDIR/defs.in | sed -f confsed2 >$1
 }
+
+#
+# -I options without arguments may confuse preprocessor,
+#  generate dummy include dir when using system ZLIB
+#
+if [ -z "$ZLIBINC" ]; then
+mkdir  .empty_directory 2>/dev/null
+ZLIBINC=.empty_directory
+fi
+
 # NB: save original values for use in checks below
 OTIFFINC="${TIFFINC}"; x="`relativize ${TIFFINC}`"; TIFFINC="$x"
 OZLIBINC="${ZLIBINC}"; x="`relativize ${ZLIBINC}`"; ZLIBINC="$x"
