@@ -379,6 +379,16 @@ const u_int Class1Modem::modemPPMCodes[8] = {
 bool
 Class1Modem::recvPage(TIFF* tif, int& ppm, fxStr& emsg)
 {
+    if (/* sendingHDLC */ lastPPM == FCF_MPS && prevPage && pageGood) {
+	// sendingHDLC = false
+	/*
+	 * Resume sending HDLC frame (send data)
+	 */
+	startTimeout(2550);
+	(void) sendFrame(FCF_MCF|FCF_RCVR);
+	stopTimeout("sending HDLC frame");
+    }
+
 top:
     time_t t2end = 0;
 
@@ -528,7 +538,18 @@ top:
 		 * [Re]transmit post page response.
 		 */
 		if (pageGood) {
-		    (void) transmitFrame(FCF_MCF|FCF_RCVR);
+		    if (lastPPM == FCF_MPS && messageReceived) {
+			/*
+			 * Start sending HDLC frame.
+			 * The modem will report CONNECT and transmit training
+			 * followed by flags until we begin sending data or
+			 * 5 seconds elapse.
+			 */
+			// sendingHDLC =
+			atCmd(thCmd, AT_CONNECT);
+		    } else {
+			(void) transmitFrame(FCF_MCF|FCF_RCVR);
+		    }
 		    tracePPR("RECV send", FCF_MCF);
 		    /*
 		     * If post page message confirms the page
