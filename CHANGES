@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* improve identification of ECM blocks with zero frames (16 Mar 2005)
 * fix potential error in ECM reception frame counting (16 Mar 2005)
 * add CRP usage in receiving when message frames
   are received corrupt (14 Mar 2005)

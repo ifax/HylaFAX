@@ -974,7 +974,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    tracePPM("RECV recv", rtncframe.getFCF());
 				    if (rtncframe.getLength() > 5) {
 					u_int fc = frameRev[rtncframe[6]] + 1;
-					if (fc == 256 && !dataseen) fc = 0;		// distinguish between 0 and 256
+					if ((fc == 256 || fc == 1) && !dataseen) fc = 0;	// distinguish 0 from 1 and 256
 					if (fcount < fc) fcount = fc;
 					tracePPM("RECV recv", rtncframe.getFCF2());
 					protoTrace("RECV received %u frames of block %u of page %u", \
@@ -1262,7 +1262,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			case FCF_PPS:
 			    {
 				u_int fc = frameRev[ppsframe[6]] + 1;
-				if (fc == 256 && !dataseen) fc = 0;		// distinguish between 0 and 256
+				if ((fc == 256 || fc == 1) && !dataseen) fc = 0;	// distinguish 0 from 1 and 256
 				if (fcount < fc) fcount = fc;
 				protoTrace("RECV received %u frames of block %u of page %u", \
 				    fc, frameRev[ppsframe[5]]+1, frameRev[ppsframe[4]]+1);
