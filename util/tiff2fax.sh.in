@@ -137,7 +137,9 @@ OK)				# no conversion needed
     exit 254			# reject document
     ;;
 REFORMAT)			# only need format conversion (e.g. g4->g3)
-    $TIFFCP -i -c $df -f lsb2msb -r 9999 $fil $out || {
+    $TIFFCP -i -c $df -f lsb2msb -r 9999 $fil $out
+    # libtiff 3.5.7 gives exit status 9 when there are unknown tags...
+    if [ $? != 0 -a $? != 9 ]; then {
 	$CAT<<EOF
 Unexpected failure converting TIFF document; the command
 
@@ -148,6 +150,7 @@ failed with exit status $?.  This conversion was done because:
 EOF
 	echo "$RESULT" | $SED 1d; exit 254
     }
+    fi
     exit 0
     ;;
 #
