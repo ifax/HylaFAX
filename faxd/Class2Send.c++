@@ -86,6 +86,15 @@ Class2Modem::dialResponse(fxStr& emsg)
 	 * modems seem to get hosed and lockup.
 	 */
 	r = atResponse(rbuf, conf.dialResponseTimeout);
+
+	// Blacklisting (see notes in Class1Send.c++)
+	if (strncmp(rbuf, "BLACKLISTED", 11) == 0
+		|| strncmp(rbuf, "DELAYED", 7) == 0
+		|| strncmp(rbuf, "DIALING DISABLED", 16) == 0) {
+	    emsg = "Blacklisted by modem";
+	    return (NOCARRIER);
+	}
+
 	switch (r) {
 	case AT_ERROR:	    return (ERROR);	// error in dial command
 	case AT_BUSY:	    return (BUSY);	// busy signal

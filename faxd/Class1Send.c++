@@ -60,6 +60,28 @@ Class1Modem::dialResponse(fxStr& emsg)
     ATResponse r;
     do {
 	r = atResponse(rbuf, conf.dialResponseTimeout);
+	
+	/*
+	 * Blacklisting is handled internally just like a NOCARRIER.
+	 * emsg is customized to let the user know the problem lies in
+	 * the modem and not in line conditions, cables ...
+	 * The known blacklisting modem responses are:
+	 * 1. "BLACKLISTED"
+	 * 2. "DELAYED HH:MM:SS" (ie: "DELAYED 00:59:02")
+	 * 3. "DIALING DISABLED" (USR)
+	 * User can switch on/off the modem or use appropriate reset commands
+	 * to clear/disable blacklisted numbers, ie:
+	 * ModemResetCmds: AT%TCB  (Some rockwell chipsets)
+	 * ModemResetCmds: AT%D0   (Some topic chipsets)
+	 * ModemResetCmds: ATS40=7 (Some usr chipsets)
+	 */
+	if (strncmp(rbuf, "BLACKLISTED", 11) == 0
+		|| strncmp(rbuf, "DELAYED", 7) == 0
+		|| strncmp(rbuf, "DIALING DISABLED", 16) == 0) {
+	    emsg = "Blacklisted by modem";
+	    return (NOCARRIER);
+	}
+
 	switch (r) {
 	case AT_ERROR:	    return (ERROR);	// error in dial command
 	case AT_BUSY:	    return (BUSY);	// busy signal
