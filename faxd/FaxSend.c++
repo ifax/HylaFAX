@@ -521,11 +521,7 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
 #endif
 
     traceProtocol("USE %s", clientParams.bitRateName());
-    if (clientParams.ec != EC_DISABLE) {
-	traceProtocol("USE error correction mode");
-	clientParams.st = ST_0MS;	// T.30 Table 2 Note 8 - ECM imposes 0ms/scanline
-    }
-    traceProtocol("USE %s", clientParams.scanlineTimeName());
+    if (clientParams.ec != EC_DISABLE) traceProtocol("USE error correction mode");
     return (true);
 }
 
@@ -773,6 +769,24 @@ FaxServer::sendSetupParams1(TIFF* tif,
 	params.ln = (len < 330 ? LN_A4 : LN_B4);
     } else
 	params.ln = LN_INF;
+    /*
+     * Scanline time varies depending on the remote capabilities,
+     * upon ECM usage, and upon the resolution.  The MS2 parameters
+     * are not available in DCS.
+     */
+    if (params.st == ST_40MS2) {
+        if (params.vr) params.st = ST_20MS;
+        else params.st = ST_40MS;
+    }
+    if (params.st == ST_20MS2) {
+        if (params.vr) params.st = ST_10MS;
+        else params.st = ST_20MS;
+    }
+    if (params.st == ST_10MS2) {
+        if (params.vr) params.st = ST_5MS;
+        else params.st = ST_10MS;
+    }
+    if (params.ec != EC_DISABLE) params.st = ST_0MS;	// T.30 Table 2 Note 8 - ECM imposes 0ms/scanline
     return (send_ok);
 }
 
@@ -785,6 +799,7 @@ FaxServer::sendSetupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo
 	traceProtocol("USE %s", params.pageLengthName());
 	traceProtocol("USE %s", params.verticalResName());
 	traceProtocol("USE %s", params.dataFormatName());
+	traceProtocol("USE %s", params.scanlineTimeName());
     } else if (status == send_reformat) {
 	traceServer(emsg);
     } else if (status == send_failed) {

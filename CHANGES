@@ -2,6 +2,10 @@
 
 Changelog for HylaFAX
 
+* fix DCS scanline-time error when sending to systems without
+  ECM supporting "mixed" scanline-times (24 Feb 2005)
+* cause faxsend to log jobs in batches as separate commids (24 Feb 2005)
+* change how faxsend is invoked for batches (24 Feb 2005)
 * add batch failed detection for Brothers (23 Feb 2005)
 * minor fix in notify for mawk (16 Feb 2005)
 * fix a false V.34-Fax error message after FTT (16 Feb 2005)
