@@ -76,6 +76,7 @@ Class1Modem::dialResponse(fxStr& emsg)
 	     */
 	    if (++ntrys == 3) {
 		emsg = "Ringback detected, no answer without CED"; // XXX
+		protoTrace(emsg);
 		return (NOFCON);
 	    }
 	    break;
@@ -286,6 +287,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	     */
 	    if (!atCmd(cmd == FCF_MPS ? conf.class1PPMWaitCmd : conf.class1EOPWaitCmd, AT_OK)) {
 		emsg = "Stop and wait failure (modem on hook)";
+		protoTrace(emsg);
 		return (send_retry);
 	    }
 	}
@@ -320,10 +322,12 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		if (morePages) {
 		    if (ppr == FCF_PIP) {
 			emsg = "Procedure interrupt (operator intervention)";
+			protoTrace(emsg);
 			return (send_failed);
 		    }
 		    if (!TIFFReadDirectory(tif)) {
 			emsg = "Problem reading document directory";
+			protoTrace(emsg);
 			return (send_failed);
 		    }
 		    FaxSendStatus status =
@@ -334,6 +338,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		break;
 	    case FCF_DCN:		// disconnect, abort
 		emsg = "Remote fax disconnected prematurely";
+		protoTrace(emsg);
 		return (send_retry);
 	    case FCF_RTN:		// nak, retry after retraining
                 switch( conf.rtnHandling ){
@@ -350,11 +355,13 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		    ntrys = 0;
 		    if (ppr == FCF_PIP) {
 			emsg = "Procedure interrupt (operator intervention)";
+			protoTrace(emsg);
 			return (send_failed);
 		    }
 		    if (morePages) {
 			if (!TIFFReadDirectory(tif)) {
 			    emsg = "Problem reading document directory";
+			    protoTrace(emsg);
 			    return (send_failed);
 			}
 			FaxSendStatus status =
@@ -366,12 +373,14 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
                 case RTN_GIVEUP:
                     emsg = "Unable to transmit page"
                         " (giving up after RTN)";
+		    protoTrace(emsg);
                     return (send_failed); // "over and out"
                 }
                 // case RTN_RETRANSMIT
                 if (++ntrys >= 3) {
                     emsg = "Unable to transmit page"
                         " (giving up after 3 attempts)";
+		    protoTrace(emsg);
                     return (send_retry);
 
                 }
@@ -379,6 +388,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		if (!dropToNextBR(next)) {
                     emsg = "Unable to transmit page"
                         " (NAK at all possible signalling rates)";
+		    protoTrace(emsg);
                     return (send_retry);
 		}
                 morePages = true;	// retransmit page
@@ -386,16 +396,19 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    case FCF_PIN:		// nak, retry w/ operator intervention
 		emsg = "Unable to transmit page"
 		       " (NAK with operator intervention)";
+		protoTrace(emsg);
 		return (send_failed);
 	    case FCF_CRP:
 		break;
 	    default:			// unexpected abort
 		emsg = "Fax protocol error (unknown frame received)";
+		protoTrace(emsg);
 		return (send_retry);
 	    }
 	} while (frame.getFCF() == FCF_CRP && ++ncrp < 3);
 	if (ncrp == 3) {
 	    emsg = "Fax protocol error (command repeated 3 times)";
+	    protoTrace(emsg);
 	    return (send_retry);
 	}
     } while (morePages);
@@ -500,6 +513,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 {
     if (tries == 0) {
 	emsg = "DIS/DTC received 3 times; DCS not recognized";
+	protoTrace(emsg);
 	return (false);
     }
     u_int dcs = params.getDCS();		// NB: 24-bit DCS and
@@ -575,6 +589,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	     */
 	    if (!atCmd(conf.class1TCFWaitCmd, AT_OK)) {
 		emsg = "Stop and wait failure (modem on hook)";
+		protoTrace(emsg);
 		return (send_retry);
 	    }
 
@@ -1342,6 +1357,7 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	fxStr tmCmd(curcap[HasShortTraining(curcap)].value, tmCmdFmt);
 	if (!atCmd(tmCmd, AT_CONNECT)) {
 	    emsg = "Unable to establish message carrier";
+	    protoTrace(emsg);
 	    return (false);
 	}
 	// As with TCF, T.31 8.3.3 requires the DCE to report CONNECT at the beginning
@@ -1562,8 +1578,10 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	if (flowControl == FLOW_XONXOFF)
 	    setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
     }
-    if (!rc && (emsg == ""))
+    if (!rc && (emsg == "")) {
 	emsg = "Unspecified Transmit Phase C error";	// XXX
+    	protoTrace(emsg);
+    }
     return (rc);
 }
 
