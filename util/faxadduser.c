@@ -81,7 +81,7 @@ main(int argc, char** argv)
     }
     hf = fopen(hostfile, "a+");
     if (hf == NULL) {
-        sprintf(buff, "Error - cannot open hosts file: %s", hostfile);
+        snprintf(buff, sizeof(buff), "Error - cannot open hosts file: %s", hostfile);
         perror(buff);
         return 0;
     }

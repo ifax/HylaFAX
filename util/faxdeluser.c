@@ -64,16 +64,16 @@ main(int argc, char** argv)
         }
     }
     if ((hf = fopen(hostfile, "r+")) == NULL) {
-        sprintf(buff, "Error - cannot open file: %s", hostfile);
+        snprintf(buff, sizeof(buff), "Error - cannot open file: %s", hostfile);
         perror(buff);
-        return 0;
+        return -1;
     }
-    sprintf(newhostfile, "%s.%i", hostfile, (int)getpid());
+    snprintf(newhostfile, sizeof(newhostfile), "%s.%i", hostfile, (int)getpid());
     fd = open(newhostfile, O_CREAT | O_EXCL | O_WRONLY, S_IRUSR | S_IWUSR);
     if (fd == -1) {
-        sprintf(buff, "Error cannot open file %s", newhostfile);
+        snprintf(buff, sizeof(buff), "Error cannot open file %s", newhostfile);
         perror(buff);
-        return 0;
+        return -1;
     }
     while (fgets(buff, sizeof(buff), hf)) {
         skip = 0;
@@ -87,9 +87,9 @@ main(int argc, char** argv)
         }
         if (!skip) {
             if (write(fd, buff, strlen(buff)) == -1) {
-                sprintf(buff, "Error writing to file %s", newhostfile);
+                snprintf(buff, sizeof(buff), "Error writing to file %s", newhostfile);
                 perror(buff);
-                return 0;
+                return -1;
             }
         }
     }
@@ -97,10 +97,12 @@ main(int argc, char** argv)
     close(fd);
     if (rename(newhostfile, hostfile)) {
         perror("Error writing hosts file");
+        return -1;
     }
     pw = getpwnam(FAX_USER);
     if (pw == NULL || chown(hostfile, pw->pw_uid, pw->pw_uid)) {
         perror("Error writing hosts file");
+        return -1;
     }
     return 0;
 }

@@ -60,6 +60,7 @@ main(int argc, char** argv)
     char* spooldir = FAX_SPOOLDIR;
     const char* arg;
     char fifoname[256];
+    int cmdlen, fnlen;
     char cmd[80];
     char* appname;
     const char* opts;
@@ -108,25 +109,37 @@ main(int argc, char** argv)
 	    /*NOTREACHED*/
 	}
     if (optind == argc-1) {
-	if (argv[optind][0] == FAX_FIFO[0])
-	    strcpy(fifoname, argv[optind]);
-	else
-	    sprintf(fifoname, "%s.%.*s", FAX_FIFO,
-		sizeof (fifoname) - sizeof (FAX_FIFO), argv[optind]);
+        if (argv[optind][0] == FAX_FIFO[0]) {
+            if (strlen(argv[optind]) < sizeof(fifoname)) {
+                strcpy(fifoname, argv[optind]);
+            } else {
+                fatal("Argument name too long: %s", argv[optind]);
+            }
+        } else {
+            fnlen = snprintf(fifoname, sizeof(fifoname), "%s.%.*s", FAX_FIFO,
+                sizeof (fifoname) - sizeof (FAX_FIFO), argv[optind]);
+            if (fnlen < 0 | fnlen >= sizeof(fifoname)) {
+                fatal("Argument name too long: %s", argv[optind]);
+            }
+        }
     } else if (!modemRequired) {
-	strcpy(fifoname, FAX_FIFO);
-    } else
-	fatal("usage: %s %s", argv[0], usage);
+        strcpy(fifoname, FAX_FIFO);
+    } else {
+        fatal("usage: %s %s", argv[0], usage);
+    }
     for (cp = fifoname; cp = strchr(cp, '/'); *cp++ = '_')
 	;
-    if (chdir(spooldir) < 0)
-	fatal("%s: chdir: %s", spooldir, strerror(errno));
+    if (chdir(spooldir) < 0) {
+        fatal("%s: chdir: %s", spooldir, strerror(errno));
+    }
     fifo = open(fifoname, O_WRONLY|O_NDELAY);
-    if (fifo < 0)
-	fatal("%s: open: %s", fifoname, strerror(errno));
-    sprintf(cmd, cmdfmt, arg);
-    if (write(fifo, cmd, strlen(cmd)) != strlen(cmd))
-	fatal("FIFO write failed for command (%s)", strerror(errno));
+    if (fifo < 0) {
+        fatal("%s: open: %s", fifoname, strerror(errno));
+    }
+    cmdlen = snprintf(cmd, sizeof(cmd), cmdfmt, arg);
+    if (write(fifo, cmd, cmdlen) != cmdlen) {
+        fatal("FIFO write failed for command (%s)", strerror(errno));
+    }
     (void) close(fifo);
     return 0;
 }
