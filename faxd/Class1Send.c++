@@ -113,7 +113,7 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg)
 	    do {
 		switch (frame.getRawFCF()) {
 		case FCF_NSF:
-                    recvNSF(NSF(frame.getFrameData(), frame.getFrameDataLength()-1, frameRev));
+                    recvNSF(NSF(frame.getFrameData(), frame.getFrameDataLength(), frameRev));
 		    break;
 		case FCF_CSI:
 		    { fxStr csi; recvCSI(decodeTSI(csi, frame)); }
@@ -221,7 +221,6 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
     HDLCFrame frame(conf.class1FrameOverhead);
 
     do {
-	signalRcvd = 0;
 	if (abortRequested())
 	    return (send_failed);
 	/*
@@ -248,60 +247,50 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	pause(conf.class1SendMsgDelay);
 
 	/*
-	 * The ECM protocol needs to know PPM, so this must be done beforehand...
+	 * Transmit the facsimile message/Phase C.
+	 */
+	if (!sendPage(tif, params, decodePageChop(pph, params), emsg))
+	    return (send_retry);	// a problem, disconnect
+	/*
+	 * Everything went ok, look for the next page to send.
 	 */
 	morePages = !TIFFLastDirectory(tif);
 	u_int cmd;
 	if (!decodePPM(pph, cmd, emsg))
 	    return (send_failed);
-
-	/*
-	 * Transmit the facsimile message/Phase C.
-	 */
-	if (!sendPage(tif, params, decodePageChop(pph, params), cmd, emsg))
-	    return (send_retry);	// a problem, disconnect
-
 	int ncrp = 0;
 
-	if (params.ec != EC_ENABLE) {
-	    /*
-	     * Delay before switching to the low speed carrier to
-	     * send the post-page-message frame according to 
-	     * T.30 chapter 5 note 4.  We provide for a different
-	     * setting following EOP because, empirically, some 
-	     * machines may need more time. Beware that, reportedly, 
-	     * lengthening this delay too much can permit echo 
-	     * suppressors to kick in with bad results.
-	     *
-	     * Historically this delay was done using a software pause
-	     * rather than +FTS because the time between +FTS and the 
-	     * OK response is longer than expected, and this was blamed
-	     * for timing problems.  However, this "longer than expected"
-	     * delay is a result of the time required by the modem's
-	     * firmware to actually release the carrier.  T.30 requires
-	     * a delay (period of silence), and this cannot be guaranteed
-	     * by a simple pause.  +FTS must be used.
-	     */
-	    if (!atCmd(cmd == FCF_MPS ? conf.class1PPMWaitCmd : conf.class1EOPWaitCmd, AT_OK)) {
-		emsg = "Stop and wait failure (modem on hook)";
-		return (send_retry);
-	    }
+	/*
+	 * Delay before switching to the low speed carrier to
+	 * send the post-page-message frame according to 
+	 * T.30 chapter 5 note 4.  We provide for a different
+	 * setting following EOP because, empirically, some 
+	 * machines may need more time. Beware that, reportedly, 
+	 * lengthening this delay too much can permit echo 
+	 * suppressors to kick in with bad results.
+	 *
+	 * Historically this delay was done using a software pause
+	 * rather than +FTS because the time between +FTS and the 
+	 * OK response is longer than expected, and this was blamed
+	 * for timing problems.  However, this "longer than expected"
+	 * delay is a result of the time required by the modem's
+	 * firmware to actually release the carrier.  T.30 requires
+	 * a delay (period of silence), and this cannot be guaranteed
+	 * by a simple pause.  +FTS must be used.
+	 */
+	if (!atCmd(cmd == FCF_MPS ? conf.class1PPMWaitCmd : conf.class1EOPWaitCmd, AT_OK)) {
+	    emsg = "Stop and wait failure (modem on hook)";
+	    return (send_retry);
 	}
 
 	do {
-	    u_int ppr;
-	    if (signalRcvd == 0) {
-		/*
-		 * Send post-page message and get response.
-		 */
-		if (!sendPPM(cmd, frame, emsg))
-		    return (send_retry);
-		ppr = frame.getFCF();
-		tracePPR("SEND recv", ppr);
-	    } else {
-		// ECM protocol already got post-page response
-		ppr = signalRcvd;
-	    }
+	    /*
+	     * Send post-page message and get response.
+	     */
+	    if (!sendPPM(cmd, frame, emsg))
+		return (send_retry);
+	    u_int ppr = frame.getFCF();
+	    tracePPR("SEND recv", ppr);
 	    switch (ppr) {
 	    case FCF_RTP:		// ack, continue after retraining
 		params.br = (u_int) -1;	// force retraining above
@@ -315,11 +304,11 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		else
 		    pph.remove(0,3);	// discard page-handling info
 		ntrys = 0;
+		if (ppr == FCF_PIP) {
+		    emsg = "Procedure interrupt (operator intervention)";
+		    return (send_failed);
+		}
 		if (morePages) {
-		    if (ppr == FCF_PIP) {
-			emsg = "Procedure interrupt (operator intervention)";
-			return (send_failed);
-		    }
 		    if (!TIFFReadDirectory(tif)) {
 			emsg = "Problem reading document directory";
 			return (send_failed);
@@ -371,14 +360,14 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
                     emsg = "Unable to transmit page"
                         " (giving up after 3 attempts)";
                     return (send_retry);
-
                 }
-		params.br = (u_int) -1;	// force training
-		if (!dropToNextBR(next)) {
+                if (params.br == BR_2400) {
                     emsg = "Unable to transmit page"
-                        " (NAK at all possible signalling rates)";
+                        "(NAK at all possible signalling rates)";
                     return (send_retry);
-		}
+                }
+                next.br--;
+                curcap = NULL;	        // force sendTraining to reselect
                 morePages = true;	// retransmit page
 		break;
 	    case FCF_PIN:		// nak, retry w/ operator intervention
@@ -402,9 +391,8 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 
 /*
  * Send ms's worth of zero's at the current signalling rate.
- * Note that we send real zero data here as recommended
- * by T.31 8.3.3 rather than using the Class 1 modem facility
- * to do zero fill.
+ * Note that we send real zero data here rather than using
+ * the Class 1 modem facility to do zero fill.
  */
 bool
 Class1Modem::sendTCF(const Class2Params& params, u_int ms)
@@ -478,9 +466,9 @@ isCapable(u_int sr, u_int dis)
 	return ((dis & DISSIGRATE_V29) != 0);
     case DCSSIGRATE_14400V33:
     case DCSSIGRATE_12000V33:
-	// post-1994 revisions of T.30 indicate that V.33 should
-	// only be used when it is specifically permitted by DIS
-	return (dis == DISSIGRATE_V33);
+	if (dis == DISSIGRATE_V33)
+	    return (true);
+	/* fall thru... */
     case DCSSIGRATE_14400V17:
     case DCSSIGRATE_12000V17:
     case DCSSIGRATE_9600V17:
@@ -502,19 +490,17 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
     }
     u_int dcs = params.getDCS();		// NB: 24-bit DCS and
     u_int dcs_xinfo = params.getXINFO();	//     32-bit extension
-    if (conf.class1ECMFrameSize == 64)
-	dcs_xinfo |= DCSFRAME_64;
-    /*
-     * Select Class 1 capability: use params.br to hunt
-     * for the best signalling scheme acceptable to both
-     * local and remote (based on received DIS and modem
-     * capabilities gleaned at modem setup time).
-     */
-    if (!curcap)
-	curcap = findBRCapability(params.br, xmitCaps);
-    curcap++;
-    if (!dropToNextBR(params))
-	goto failed;
+    if (!curcap) {
+	/*
+	 * Select Class 1 capability: use params.br to hunt
+	 * for the best signalling scheme acceptable to both
+	 * local and remote (based on received DIS and modem
+	 * capabilities gleaned at modem setup time).
+	 */
+	params.br++;				// XXX can go out of range
+	if (!dropToNextBR(params))
+	    goto failed;
+    }
     do {
 	/*
 	 * Override the Class 2 parameter bit rate
@@ -523,17 +509,6 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	 * and the received DIS.  This is because
 	 * the Class 2 state does not include the
 	 * modulation technique (v.27, v.29, v.17, v.33).
-	 *
-	 * Technically, according to post-1994 revisions
-	 * of T.30, V.33 should not be used except
-	 * in the case where the remote announces
-	 * specific V.33 support with the 1,1,1,0 rate
-	 * bits set.  However, for the sake of versatility
-	 * we'll not enforce this upon modems that support
-	 * V.33 but not V.17 and will require the user
-	 * to disable V.33 if it becomes problematic.  For
-	 * modems that support both V.17 and V.33 the
-	 * latter is never used.
 	 */
 	params.br = curcap->br;
 	dcs = (dcs &~ DCS_SIGRATE) | curcap->sr;
@@ -670,23 +645,19 @@ done:
 bool
 Class1Modem::dropToNextBR(Class2Params& params)
 {
-    if (curcap->br == BR_2400)
-	return (false);
-    curcap--;
     for (;;) {
+	if (params.br == minsp)
+	    return (false);
+	// get ``best capability'' of modem at this baud rate
+	curcap = findBRCapability(--params.br, xmitCaps);
 	if (curcap) {
 	    // hunt for compatibility with remote at this baud rate
-	    while (curcap->br == params.br) {
+	    do {
 		if (isCapable(curcap->sr, dis))
 		    return (true);
 		curcap--;
-	    }
+	    } while (curcap->br == params.br);
 	}
-	if (params.br == minsp)
-	    return (false);
-	params.br--;
-	// get ``best capability'' of modem at this baud rate
-	curcap = findBRCapability(params.br, xmitCaps);
     }
     /*NOTREACHED*/
 }
@@ -715,470 +686,16 @@ Class1Modem::raiseToNextBR(Class2Params& params)
     /*NOTREACHED*/
 }
 
-void
-Class1Modem::blockData(u_int byte, bool flag)
-{
-    for (u_int j = 8; j > 0; j--) {
-	u_short bit = (byte & (1 << (j - 1))) != 0 ? 1 : 0;
-	ecmByte |= (bit << ecmBitPos);
-	ecmBitPos++;
-	if (ecmBitPos == 8) {
-	    ecmStuffedBlock[ecmStuffedBlockPos++] = ecmByte;
-	    ecmBitPos = 0;
-	    ecmByte = 0;
-	}
-	// add transparent zero bits if needed
-	if (bit == 1 && !flag) ecmOnes++;
-	else ecmOnes = 0;
-	if (ecmOnes == 5) {
-	    ecmBitPos++;
-	    if (ecmBitPos == 8) {
-		ecmStuffedBlock[ecmStuffedBlockPos++] = ecmByte;
-		ecmBitPos = 0;
-		ecmByte = 0;
-	    }
-	    ecmOnes = 0;
-	}
-    }
-}
-
-/*
- * Buffer ECM HDLC image frames until a full block is received.
- * Perform T.30-A image block transmission protocol.
- */
-bool
-Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxStr& emsg)
-{
-    // we have a full image frame
-
-    for (u_int i = 0; i < ecmFramePos; i++)
-	ecmBlock[ecmBlockPos++] = ecmFrame[i];
-    ecmFramePos = 0;
-    if (frameNumber == 256 || lastframe) {
-	ecmBlockPos = 0;
-	bool lastblock = lastframe;
-
-	// We now have a full image block without stuffed zero bits.
-	// As the remote can request any frame of the block until
-	// MCF we must keep the full image block available.
-
-	bool blockgood = false;
-	u_short pprcnt = 0;
-	char ppr[32];				// 256 bits
-	for (u_int i = 0; i < 32; i++) ppr[i] = 0xff;
-	u_short badframes = 256, badframesbefore = 0;
-
-	do {
-	    u_short fcount = 0;
-	    ecmStuffedBlockPos = 0;
-
-	    // synchronize with 200 ms of 0x7e flags
-	    for (u_int i = 0; i < params.transferSize(200); i++)
-		blockData(0x7e, true);
-
-	    u_char* firstframe = (u_char*) malloc(conf.class1ECMFrameSize + 6);
-	    fxAssert(firstframe != NULL, "ECM procedure error (frame duplication).");
-	    firstframe[0] = 0x1;			// marked as unused
-	    for (u_short fnum = 0; fnum < frameNumber; fnum++) {
-		u_int pprpos, pprval;
-        	for (pprpos = 0, pprval = fnum; pprval >= 8; pprval -= 8) pprpos++;
-        	if (ppr[pprpos] & frameRev[1 << pprval]) {
-		    HDLCFrame ecmframe(5);
-		    // frame bit marked for transmission
-		    fcount++;
-		    for (u_int i = fnum * (conf.class1ECMFrameSize + 4);
-			i < (fnum + 1) * (conf.class1ECMFrameSize + 4); i++) {
-			ecmframe.put(ecmBlock[i]);
-			blockData(ecmBlock[i], false);
-		    }
-		    int fcs1 = ecmframe.getCRC() >> 8;	// 1st byte FCS
-		    int fcs2 = ecmframe.getCRC() & 0xff;	// 2nd byte FCS
-		    ecmframe.put(fcs1); ecmframe.put(fcs2);
-		    blockData(fcs1, false);
-		    blockData(fcs2, false);
-		    traceHDLCFrame("<--", ecmframe);
-		    protoTrace("SEND send frame number %u", fnum);
-
-		    // separate frames with a 0x7e flag
-		    blockData(0x7e, true);
-
-		    if (firstframe[0] == 0x1) {
-			for (u_int i = 0; i < (conf.class1ECMFrameSize + 6); i++) {
-			    firstframe[i] = ecmframe[i];
-			}
-		    }
-		}
-	    }
-	    if (fcount == 1 && pprcnt > 0) {
-		// Some receivers may have a hard time hearing the first frame
-		// so we repeat it.
-		HDLCFrame ecmframe(5);
-		fcount++;
-		for (u_int i = 0; i < (conf.class1ECMFrameSize + 6); i++) {
-		    blockData(firstframe[i], false);
-		}
-		ecmframe.put(firstframe, (conf.class1ECMFrameSize + 6));
-		traceHDLCFrame("<--", ecmframe);
-		protoTrace("SEND send frame number %u", frameRev[firstframe[3]]);
-		blockData(0x7e, true);
-	    }
-	    free(firstframe);
-	    HDLCFrame rcpframe(5);
-	    rcpframe.put(0xff); rcpframe.put(0xc0); rcpframe.put(0x61); rcpframe.put(0x96); rcpframe.put(0xd3);
-	    for (u_short k = 0; k < 3; k++) {		// three RCP frames
-		for (u_short j = 0; j < 5; j++)
-		    blockData(rcpframe[j], false);
-		traceHDLCFrame("<--", rcpframe);
-
-		// separate frames with a 0x7e flag
-		blockData(0x7e, true);
-	    }
-	    // add one more flag to ensure one full flag gets transmitted before DLE+ETX
-	    blockData(0x7e, true);
-
-	    // The block is assembled.  Transmit it, adding transparent DLEs.  End with DLE+ETX.
-	    if (!putModemDLEData(ecmStuffedBlock, ecmStuffedBlockPos, bitrev, getDataTimeout())) {
-		return (false);
-	    }
-	    u_char buf[2];
-	    buf[0] = DLE; buf[1] = ETX;
-	    if (!putModemData(buf, 2)) {
-		return (false);
-	    }
-
-	    // Wait for transmit buffer to empty.
-	    ATResponse r;
-	    while ((r = atResponse(rbuf, getDataTimeout())) == AT_OTHER);
-            if (!(r == AT_OK)) {
-		return (false);
-	    }
-
-	    if (flowControl == FLOW_XONXOFF)
-		setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
-
-	    if (!atCmd(ppmcmd == FCF_MPS ? conf.class1PPMWaitCmd : conf.class1EOPWaitCmd, AT_OK)) {
-		emsg = "Stop and wait failure (modem on hook)";
-		protoTrace(emsg);
-		return (false);
-	    }
-
-	    /*
-	     * A pause here helps prevent getting RNR from some receivers.
-	     * In theory (per spec) it should not be longer than the smallest T2.
-	     * In practice it cannot be shorter than the smallest T4.
-	     *
-	     * It is now disabled because our RNR/RR handling now functions and
-	     * pausing 3 seconds needlessly slows down the process quite a bit.
-	     */
-	    //pause (3000);
-
-	    /* build PPS frame and send it */
-	    char pps[4];
-	    if (!lastblock)
-		pps[0] = 0x00;
-	    else
-		pps[0] = ppmcmd | 0x80;
-	    pps[1] = frameRev[FaxModem::getPageNumber() - 1];
-	    pps[2] = frameRev[blockNumber];
-	    pps[3] = frameRev[(fcount == 0 ? 255 : (fcount - 1))];
-	    u_short ppscnt = 0;
-	    bool gotppr = false;
-	    /* get MCF/PPR/RNR */
-	    HDLCFrame pprframe(conf.class1FrameOverhead);
-	    do {
-		if (!atCmd(thCmd, AT_CONNECT))
-		    break;
-		startTimeout(3000);
-		sendFrame(FCF_PPS|FCF_SNDR, fxStr(pps, 4));
-		stopTimeout("sending PPS frame");
-		tracePPM("SEND send", FCF_PPS);
-		tracePPM("SEND send", pps[0]);
-
-		// Some receivers will almost always miss our first PPS message, and
-		// in those cases waiting T2 for a response will cause the remote to
-		// hang up.  So, using T4 here is imperative so that our second PPS
-		// message happens before the remote decides to hang up.
-		gotppr = recvFrame(pprframe, conf.t4Timer);
-
-	    } while (!gotppr && (++ppscnt < 3));
-	    if (gotppr) {
-		tracePPR("SEND recv", pprframe.getFCF());
-		if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
-		    emsg = "Failure to receive silence.";
-		    protoTrace(emsg);
-		    return (false);
-		}
-		if (pprframe.getFCF() == FCF_RNR) {
-		    u_int t1 = howmany(conf.t1Timer, 1000);
-		    time_t start = Sys::now();
-		    gotppr = false;
-		    do {
-			if ((unsigned) Sys::now()-start >= t1) {
-			    // we use T1 rather than T5 to "minimize transmission inefficiency" (T.30 A.5.4.1)
-			    emsg = "Receiver flow control exceeded timer.";
-			    protoTrace(emsg);
-			    return (false);
-			}
-			u_short rrcnt = 0;
-			bool gotmsg = false;
-			do {
-			    if (!atCmd(thCmd, AT_CONNECT))
-				break;
-			    startTimeout(3000);
-			    sendFrame(FCF_RR|FCF_SNDR);
-			    stopTimeout("sending RR frame");
-			    tracePPM("SEND send", FCF_RR);
-			    // T.30 states that we must wait no more than T4 between unanswered RR signals.
-			    gotmsg = recvFrame(pprframe, conf.t4Timer);
-			} while (!gotmsg && (++rrcnt < 3));
-			if (!gotmsg) {
-			    emsg = "No response to RR repeated 3 times.";
-			    protoTrace(emsg);
-			    return (false);
-			}
-			tracePPR("SEND recv", pprframe.getFCF());
-			switch (pprframe.getFCF()) {
-			    case FCF_PPR:
-			    case FCF_MCF:
-				gotppr = true;
-				break;
-			    case FCF_RNR:
-				if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
-				    emsg = "Failure to receive silence.";
-				    protoTrace(emsg);
-				    return (false);
-				}
-				break;
-			    default:
-				emsg = "COMREC invalid response received to RR.";
-				protoTrace(emsg);
-				return (false);
-				break;
-			}
-		    } while (!gotppr);		
-		}
-		switch (pprframe.getFCF()) {
-		    case FCF_MCF:
-		    case FCF_PIP:
-			blockgood = true;
-			signalRcvd = pprframe.getFCF();
-			break;
-		    case FCF_PPR:
-			{
-			    pprcnt++;
-			    // update ppr
-			    for (u_int i = 3; i < (pprframe.getLength() - (conf.class1FrameOverhead - 2)); i++) {
-				ppr[i-3] = pprframe[i];
-			    }
-			    badframesbefore = badframes;
-			    badframes = 0;
-			    for (u_int j = 0; j < frameNumber; j++) {
-				u_int pprpos, pprval;
-				for (pprpos = 0, pprval = j; pprval >= 8; pprval -= 8) pprpos++;
-				if (ppr[pprpos] & frameRev[1 << pprval]) {
-				    badframes++;
-				}
-			    }
-			}
-			if (pprcnt == 4) {
-			    pprcnt = 0;
-			    // Some receivers will ignorantly transmit PPR showing all frames good,
-			    // so if that's the case then do EOR instead of CTC.
-			    if (badframes == 0) {
-				blockgood = true;
-				signalRcvd = FCF_MCF;
-			    }
-			    if (conf.class1ECMDoCTC && (blockgood == false) && 
-				!((curcap->br == 0) && (badframes >= badframesbefore))) {
-				// send ctc even at 2400 baud if we're getting somewhere
-				if (curcap->br != 0) {
-				    if (!dropToNextBR(params)) {
-					// We have a minimum speed that's not BR_2400,
-					// and we're there now.  Undo curcap change...
-					curcap++;
-				    }
-				}
-				char ctc[2];
-				ctc[0] = 0;
-				ctc[1] = curcap->sr >> 8;
-				bool gotctr = false;
-				u_short ctccnt = 0;
-				HDLCFrame ctrframe(conf.class1FrameOverhead);
-				do {
-				    if (!atCmd(thCmd, AT_CONNECT))
-					break;
-				    startTimeout(3000);
-				    sendFrame(FCF_CTC|FCF_SNDR, fxStr(ctc, 2));
-				    stopTimeout("sending CTC frame");
-				    tracePPM("SEND send", FCF_CTC);
-				    gotctr = recvFrame(ctrframe, conf.t4Timer);
-				} while (!gotctr && (++ctccnt < 3));
-				if (!gotctr) {
-				    emsg = "No response to CTC repeated 3 times.";
-				    protoTrace(emsg);
-				    return (false);
-				}
-				tracePPR("SEND recv", ctrframe.getFCF());
-				if (!ctrframe.getFCF() == FCF_CTR) {
-				    emsg = "COMREC invalid response received to CTC.";
-				    protoTrace(emsg);
-				    return (false);
-				}
-			    } else {
-				bool goterr = false;
-				u_short eorcnt = 0;
-				HDLCFrame errframe(conf.class1FrameOverhead);
-				do {
-				    if (!atCmd(thCmd, AT_CONNECT))
-					break;
-				    startTimeout(3000);
-				    sendFrame(FCF_EOR|FCF_SNDR, fxStr(pps, 1));
-				    stopTimeout("sending EOR frame");
-				    tracePPM("SEND send", FCF_EOR);
-				    tracePPM("SEND send", pps[0]);
-				    goterr = recvFrame(errframe, conf.t2Timer);
-				} while (!goterr && (++eorcnt < 3));
-				if (!goterr) {
-				    emsg = "No response to EOR repeated 3 times.";
-				    protoTrace(emsg);
-				    return (false);
-				}
-				tracePPR("SEND recv", errframe.getFCF());
-				if (errframe.getFCF() == FCF_RNR) {
-				    u_int t1 = howmany(conf.t1Timer, 1000);
-				    time_t start = Sys::now();
-				    goterr = false;
-				    do {
-					if ((unsigned) Sys::now()-start >= t1) {
-					    // we use T1 rather than T5 to "minimize transmission inefficiency" (T.30 A.5.4.1)
-					    emsg = "Receiver flow control exceeded timer.";
-					    protoTrace(emsg);
-					    return (false);
-					}
-					u_short rrcnt = 0;
-					bool gotmsg = false;
-					do {
-					    if (!atCmd(thCmd, AT_CONNECT))
-						break;
-					    startTimeout(3000);
-					    sendFrame(FCF_RR|FCF_SNDR);
-					    stopTimeout("sending RR frame");
-					    tracePPM("SEND send", FCF_RR);
-					    // T.30 states that we must wait no more than T4 between unanswered RR signals.
-					    gotmsg = recvFrame(errframe, conf.t4Timer);
-					} while (!gotmsg && (++rrcnt < 3));
-					if (!gotmsg) {
-					    emsg = "No response to RR repeated 3 times.";
-					    protoTrace(emsg);
-					    return (false);
-					}
-					tracePPR("SEND recv", errframe.getFCF());
-					switch (pprframe.getFCF()) {
-					    case FCF_ERR:
-						goterr = true;
-						break;
-					    case FCF_RNR:
-						if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
-						    emsg = "Failure to receive silence.";
-						    protoTrace(emsg);
-						    return (false);
-						}
-						break;
-					    default:
-						emsg = "COMREC invalid response received to RR.";
-						protoTrace(emsg);
-						return (false);
-						break;
-					}
-				    } while (!goterr);		
-				}
-				if (!(errframe.getFCF() == FCF_ERR)) {
-				    emsg = "COMREC invalid response received to EOR.";
-				    protoTrace(emsg);
-				    return (false);
-				}
-				blockgood = true;
-				signalRcvd = FCF_MCF;
-			    }
-			}
-			break;
-		    default:
-			emsg = "COMREC invalid response received to PPS.";
-			protoTrace(emsg);
-			return(false);
-		}
-	    } else {
-		emsg = "No response to PPS repeated 3 times.";
-		protoTrace(emsg);
-		return (false);
-	    }
-	    if (!blockgood || !lastblock) {
-		// start up the high-speed carrier...
-		if (flowControl == FLOW_XONXOFF)   
-		    setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
-		pause(conf.class1SendMsgDelay);		// T.30 5.3.2.4
-		fxStr tmCmd(curcap[HasShortTraining(curcap)].value, tmCmdFmt);
-		if (!atCmd(tmCmd, AT_CONNECT))
-		    return (false);
-		pause(conf.class1TMConnectDelay);
-	    }
-	} while (!blockgood);
-	frameNumber = 0;
-	if (lastblock) blockNumber = 0;
-	else blockNumber++;
-    }
-    return (true);
-}
-
-/*
- * Send T.30-A framed image data.
- */
-bool
-Class1Modem::sendClass1ECMData(const u_char* data, u_int cc, const u_char* bitrev, bool eod, u_int ppmcmd, fxStr& emsg)
-{
-    /*
-     * Buffer data into the block.  We buffer the entire block
-     * before sending it to prevent any modem buffer underruns.
-     * Later we send it to putModemDLEData() which adds the 
-     * transparent DLE characters and transmits it.
-     */
-    for (u_int i = 0; i < cc; i++) {
-	if (ecmFramePos == 0) {
-	    ecmFrame[ecmFramePos++] = 0xff; 	// address field
-	    ecmFrame[ecmFramePos++] = 0xc0;	// control field
-	    ecmFrame[ecmFramePos++] = 0x60;	// FCD FCF
-	    ecmFrame[ecmFramePos++] = frameRev[frameNumber++];	// block frame number
-	}
-	ecmFrame[ecmFramePos++] = frameRev[data[i]];
-	if (ecmFramePos == (conf.class1ECMFrameSize + 4)) {
-	    if (!blockFrame(bitrev, ((i == (cc - 1)) && eod), ppmcmd, emsg))
-		return (false);
-	}
-    }
-    if (eod && (ecmFramePos != 0)) {
-	while (ecmFramePos < (conf.class1ECMFrameSize + 4))
-	    ecmFrame[ecmFramePos++] = 0x00;
-	if (!blockFrame(bitrev, true, ppmcmd, emsg))
-	    return (false);
-    }
-    return (true);
-}
-
 /*
  * Send data for the current page.
  */
 bool
-Class1Modem::sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm, fxStr& emsg)
+Class1Modem::sendPageData(u_char* data, u_int cc, const u_char* bitrev)
 {
     beginTimedTransfer();
-    bool rc;
-    if (ecm)
-	rc = sendClass1ECMData(data, cc, bitrev, false, 0, emsg);
-    else {
-	rc = sendClass1Data(data, cc, bitrev, false);
-	protoTrace("SENT %u bytes of data", cc);
-    }
+    bool rc = sendClass1Data(data, cc, bitrev, false);
     endTimedTransfer();
+    protoTrace("SENT %u bytes of data", cc);
     return rc;
 }
 
@@ -1189,42 +706,17 @@ Class1Modem::sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm
  * send all the data they are presented.
  */
 bool
-Class1Modem::sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, fxStr& emsg)
+Class1Modem::sendRTC(bool is2D)
 {
-    // determine the number of trailing zeros on the last byte of data
-    u_short zeros = 0;
-    for (short i = 7; i >= 0; i--) {
-	if (lastbyte & (1<<i)) break;
-	else zeros++;
-    }
-    // these are intentionally reverse-encoded in order to keep
-    // rtcRev and bitrev in sendPage() in agreement
     static const u_char RTC1D[9+20] =
-	{ 0x00,0x08,0x80,0x00,0x08,0x80,0x00,0x08,0x80 };
+	{ 0x00,0x10,0x01,0x00,0x10,0x01,0x00,0x10,0x01 };
     static const u_char RTC2D[10+20] =
-	{ 0x00,0x18,0x00,0x03,0x60,0x00,0x0C,0x80,0x01,0x30 };
-    // T.6 does not allow zero-fill until after EOFB and not before.
-    u_char EOFB[3+20];
-	EOFB[0] = (0x0800 >> zeros) & 0xFF;
-	EOFB[1] = (0x8008 >> zeros) & 0xFF;
-	EOFB[2] = 0x80 >> zeros;
-    if (params.df == DF_2DMMR) {
-	protoTrace("SEND EOFB");
-	return sendClass1ECMData(EOFB, sizeof(EOFB), rtcRev, true, ppmcmd, emsg);
-    }
-    if (params.is2D()) {
-	protoTrace("SEND 2D RTC");
-	if (params.ec == EC_ENABLE)
-	    return sendClass1ECMData(RTC2D, sizeof(RTC2D), rtcRev, true, ppmcmd, emsg);
-	else
-	    return sendClass1Data(RTC2D, sizeof (RTC2D), rtcRev, true);
-    } else {
-	protoTrace("SEND 1D RTC");
-	if (params.ec == EC_ENABLE)
-	    return sendClass1ECMData(RTC1D, sizeof(RTC1D), rtcRev, true, ppmcmd, emsg);
-	else
-	    return sendClass1Data(RTC1D, sizeof (RTC1D), rtcRev, true);
-    }
+	{ 0x00,0x18,0x00,0xC0,0x06,0x00,0x30,0x01,0x80,0x0C };
+    protoTrace("SEND %s RTC", is2D ? "2D" : "1D");
+    if (is2D)
+	return sendClass1Data(RTC2D, sizeof (RTC2D), rtcRev, true);
+    else
+	return sendClass1Data(RTC1D, sizeof (RTC1D), rtcRev, true);
 }
 
 #define	EOLcheck(w,mask,code) \
@@ -1266,9 +758,8 @@ EOLcode(u_long& w)
  * Send a page of data.
  */
 bool
-Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_int ppmcmd, fxStr& emsg)
+Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, fxStr& emsg)
 {
-    int lastbyte = 0;
     /*
      * Set high speed carrier & start transfer.  If the
      * negotiated modulation technique includes short
@@ -1280,13 +771,7 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
 	emsg = "Unable to establish message carrier";
 	return (false);
     }
-    // As with TCF, T.31 8.3.3 requires the DCE to report CONNECT at the beginning
-    // of transmission of the training pattern rather than at the end.  We pause here
-    // to allow the remote's +FRM to result in CONNECT.
-    pause(conf.class1TMConnectDelay);
-
     bool rc = true;
-    ecmBlockPos = ecmFramePos = ecmBitPos = ecmOnes = ecmByte = 0;
     protoTrace("SEND begin page");
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
@@ -1303,7 +788,7 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
 	/*
 	 * Setup tag line processing.
 	 */
-	bool doTagLine = (params.df != DF_2DMMR) && setupTagLineSlop(params);
+	bool doTagLine = setupTagLineSlop(params);
 	u_int ts = getTagLineSlop();
 	/*
 	 * Calculate total amount of space needed to read
@@ -1337,9 +822,9 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
 	    dp = data;
 
         /*
-         * correct broken Phase C (T.4/T.6) data if neccessary 
+         * correct broken Phase C (T.4) data if neccessary 
          */
-	lastbyte = correctPhaseCData(dp, &totdata, fillorder, params);
+        correctPhaseCData(dp, &totdata, fillorder, params);
 
 	/*
 	 * Send the page of data.  This is slightly complicated
@@ -1356,7 +841,7 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
 	if (fillorder != FILLORDER_LSB2MSB)
 	    TIFFReverseBits(dp, totdata);
 	u_int minLen = params.minScanlineSize();
-	if (minLen > 0) {			// only in non-ECM
+	if (minLen > 0) {
 	    /*
 	     * Client requires a non-zero min-scanline time.  We
 	     * comply by zero-padding scanlines that have <minLen
@@ -1405,7 +890,7 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
 		     * the current data and reset the pointer into
 		     * the zero fill buffer.
 		     */
-		    rc = sendPageData(fill, fp-fill, bitrev, (params.ec == EC_ENABLE), emsg);
+		    rc = sendPageData(fill, fp-fill, bitrev);
 		    fp = fill;
 		    if (!rc)			// error writing data
 			break;
@@ -1432,34 +917,31 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
 	     * Flush anything that was not sent above.
 	     */
 	    if (fp > fill && rc)
-		rc = sendPageData(fill, fp-fill, bitrev, (params.ec == EC_ENABLE), emsg);
+		rc = sendPageData(fill, fp-fill, bitrev);
 	    delete fill;
 	} else {
 	    /*
 	     * No EOL-padding needed, just jam the bytes.
 	     */
-	    rc = sendPageData(dp, (u_int) totdata, bitrev, (params.ec == EC_ENABLE), emsg);
+	    rc = sendPageData(dp, (u_int) totdata, bitrev);
 	}
 	delete data;
     }
     if (rc || abortRequested())
-	rc = sendRTC(params, ppmcmd, lastbyte, emsg);
+	rc = sendRTC(params.is2D());
     protoTrace("SEND end page");
-    if (params.ec != EC_ENABLE) {
-	// these were already done by ECM protocol
-	if (rc) {
-	    /*
-	     * Wait for transmit buffer to empty.
-	     */
-	    ATResponse r;
-	    while ((r = atResponse(rbuf, getDataTimeout())) == AT_OTHER)
-		;
-	    rc = (r == AT_OK);
-	}
-	if (flowControl == FLOW_XONXOFF)
-	    setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
+    if (rc) {
+	/*
+	 * Wait for transmit buffer to empty.
+	 */
+	ATResponse r;
+	while ((r = atResponse(rbuf, getDataTimeout())) == AT_OTHER)
+	    ;
+	rc = (r == AT_OK);
     }
-    if (!rc && (emsg == ""))
+    if (flowControl == FLOW_XONXOFF)
+	setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
+    if (!rc)
 	emsg = "Unspecified Transmit Phase C error";	// XXX
     return (rc);
 }
