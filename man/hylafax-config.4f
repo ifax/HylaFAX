@@ -155,7 +155,7 @@ LogFacility\(S2	string	\s-1daemon\s+1	\fIsyslog\fP facility name for ServerTraci
 LogFileMode	octal	\s-10600\s+1	protection mode to use for session log files
 LocalIdentifier	string	\-	local station identification string
 LongDistancePrefix	string	\-	dialing prefix for long distance calls
-MaxBatchJobs\(S1	integer	\s-11\s+1	max jobs in a batch
+MaxBatchJobs\(S1	integer	\-	max jobs in a batch
 MaxConcurrentCalls\(S1	integer	\s-11\s+1	max concurrent jobs to process for a destination
 MaxConsecutiveBadLines	integer	\s-15\s+1	max consecutive bad rows for \s-1OK\s+1 page quality
 MaxDials\(S1	integer	\s-112\s+1	max phone calls to make to transmit a job

@@ -2796,7 +2796,7 @@ faxQueueApp::numbertag faxQueueApp::numbers[] = {
 { "postscripttimeout",	&faxQueueApp::postscriptTimeout, 3*60 },
 { "maxconcurrentjobs",	&faxQueueApp::maxConcurrentCalls, 1 },
 { "maxconcurrentcalls",	&faxQueueApp::maxConcurrentCalls, 1 },
-{ "maxbatchjobs",	&faxQueueApp::maxBatchJobs, 1 },
+{ "maxbatchjobs",	&faxQueueApp::maxBatchJobs,	(u_int) -1 },
 { "maxsendpages",	&faxQueueApp::maxSendPages,	(u_int) -1 },
 { "maxtries",		&faxQueueApp::maxTries,		(u_int) FAX_RETRIES },
 { "maxdials",		&faxQueueApp::maxDials,		(u_int) FAX_REDIALS },
