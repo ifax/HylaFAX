@@ -53,8 +53,6 @@ EOF
 
 INFO=$SBIN/faxinfo
 FAX2PS=$TIFFBIN/fax2ps
-MIMENCODE=mimencode
-ENCODING=base64
 TIFF2PS=tiff2ps
 PS2PDF=ps2pdf
 TOADDR=FaxMaster
@@ -63,10 +61,28 @@ NOTIFY_FAXMASTER=always
 
 #
 # Permit various types of attachment types: ps, tif, pdf
-# Note that non-ASCII filetypes require metamail.
+# Note that non-ASCII filetypes require an encoder.
 # pdf requires tiff2ps and ps2pdf
 #
 FILETYPE=ps
+
+#
+# Produce mailable encoding for binary files.
+#
+encode()
+{
+    if [ -x "$MIMENCODE" ]; then
+	$MIMENCODE $1 2>/dev/null
+    else
+	if [ -x "$UUENCODE" ]; then
+	    if [ "$ENCODING" = "base64" ]; then
+		$UUENCODE -m $1 $1 | grep -E -v "^begin|^====$" 2>/dev/null
+	    else
+		$UUENCODE $1 $1 | grep -E -v "^begin|^====$" 2>/dev/null
+	    fi
+	fi
+    fi
+}
 
 #
 # There is no good portable way to find out the fully qualified
@@ -195,7 +211,7 @@ if [ -f $FILE ]; then
 	     echo "Content-Transfer-Encoding: $ENCODING"
 	     echo "Content-Disposition: attachment; filename=\"$FILENAME.tif\""
 	     echo ""
-	     $MIMENCODE $FILE 2>/dev/null
+	     encode $FILE;
 	 elif [ "$FILETYPE" = "pdf" ]; then
 	     echo "Content-Type: application/pdf; name=\"$FILENAME.pdf\""
 	     echo "Content-Description: FAX document"
@@ -212,7 +228,7 @@ if [ -f $FILE ]; then
 		$SED 's/.*Resolution: [0-9]*, \([0-9]*\).*/\1/g' | sort -n | $SED -n '$p'`
 	     $TIFF2PS -a -O $FILE.ps $FILE 2>/dev/null # fax2ps looks bad
 	     $PS2PDF -g$GW\x$GL -r$RW\x$RL $FILE.ps $FILE.pdf 2>/dev/null
-	     $MIMENCODE $FILE.pdf 2>/dev/null
+	     encode $FILE.pdf
 	     $RM -f $FILE.ps $FILE.pdf 2>/dev/null
 	 else #  default as Postscript
 	     echo "Content-Type: application/postscript; name=\"$FILENAME.ps\""

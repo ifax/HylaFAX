@@ -141,6 +141,7 @@ DSOSUF
 DSODELAY
 DSOOPTS
 ECHO
+ENCODING
 ENVOPTS
 FAXD
 FAXGID
@@ -199,6 +200,7 @@ MANNUM1_8
 MANSAPPNAME
 MANSFILENAME
 MANSYS
+MIMENCODE
 MKDEPCOPTS
 MKDEPCXXOPTS
 MKDEPEND
@@ -250,6 +252,7 @@ TIFFINC
 UTMP
 UUCP_LOCKDIR	DIR_LOCKS
 UUCP_LOCKTYPE	LOCKS
+UUENCODE
 VERSION
 WARNING
 ZLIBINC"
@@ -3422,12 +3425,14 @@ test "$GENDIST"	|| GENDIST=`findAppDef gendist $PATH gendist`
 test "$GREP"	|| GREP=`findAppDef grep $PATH grep`
 test "$LN"	|| LN=`findAppDef ln $PATH ln`
 test "$MAN"	|| MAN=`findAppDef man $PATH man`
+test "$MIMENCODE" || MIMENCODE=`findAppDef mimencode $PATH mimencode`
 test "$MKDIR"	|| MKDIR=`findAppDef mkdir $PATH mkdir`
 test "$MV"	|| MV=`findAppDef mv $PATH mv`
 test "$RMCMD"	|| RMCMD=`findAppDef rm $PATH rm`
 test "$SORT"	|| SORT=`findAppDef sort $PATH sort`
 test "$STRIP"	|| STRIP=`findAppDef strip $PATH strip`
 test "$PWDCMD"	|| PWDCMD=`findAppDef pwd $PATH pwd`
+test "$UUENCODE" || UUENCODE=`findAppDef uuencode $PATH uuencode`
 
 #
 # Test/verify we know how to create FIFO special files.
@@ -3469,6 +3474,24 @@ if [ -n "$LN_S" ]; then
 else
     Note "WARNING, looks like $LN has no -s option to create symbolic links;"
     Note "         this may cause problems during installation."
+fi
+
+#
+# Check if uuencode supports base64 encoding.
+#
+if [ -z "$ENCODING" ]; then
+    if [ -x "$MIMENCODE" ]; then
+	ENCODING=base64
+	Note "Looks like $MIMENCODE supports base64 encoding."
+    elif [ -x "$UUENCODE" ]; then
+	if capture "$UUENCODE -m port.h foo"; then
+	    ENCODING=base64
+	    Note "Looks like $UUENCODE supports base64 encoding."
+	else
+	    ENCODING=x-uuencode
+	    Note "Looks like $UUENCODE does not support base64 encoding."
+	fi
+    fi
 fi
 
 #
