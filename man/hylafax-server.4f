@@ -29,7 +29,7 @@
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
 .ds Pc \s-1PCL\s+1
-.TH HYLAFAX ${MANNUM4_5} "January 18, 1996"
+.TH HYLAFAX-SERVER ${MANNUM4_5} "January 18, 1996"
 .SH NAME
 HylaFAX \- introduction to \*(Fx server operation and file formats
 .SH DESCRIPTION
@@ -205,7 +205,7 @@ subdirectory (though it is also possible to reference documents
 from the
 .B recvq
 directory).
-\*(Fx accepts \*(Ps, \*(Pc, and
+\*(Fx accepts \*(Ps, PDF, \*(Pc, and
 .SM TIFF
 documents for transmission (though support for
 \*(Pc documents is not currently implemented).
@@ -579,7 +579,11 @@ files, the
 .I faxmodem
 program, and the
 .I faxconfig
-program.
+program.  If multiple modems share the same priority value,
+then
+.IR faxq (${MANNUM1_8})
+will allocate jobs to them in a round-robin 
+fashon.
 .SH "JOB MANAGEMENT"
 Outbound jobs are considered to be in one of several states
 that reflect their treatment by the central scheduling process.

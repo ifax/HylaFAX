@@ -32,9 +32,9 @@
 .SH NAME
 typerules \- \*(Fx file type identification and conversion rules
 .SH DESCRIPTION
-Only two types of files are accepted by the \*(Fx
+Only three types of files are accepted by the \*(Fx
 server for transmission as facsimile:
-\*(Ps\(rg files and 
+\*(Ps\(rg files, PDF files, and 
 .SM TIFF
 Class F (bilevel Group 3-encoded) files.
 All other types of files must be converted to one
@@ -177,6 +177,7 @@ that are handled directly by the server:
 .ta \w'offset    'u +\w'datatype    'u +\w'#Inventor V    'u +\w'result    'u +\w'command        'u
 #offset	datatype	match	result	command
 0	string	%!	ps		# \*(Ps
+0	string	%PDF	ps		# \*(Ps by Ghostscript
 0	short	0x4d4d	tiff		# big-endian \s-1TIFF\s+1
 0	short	0x4949	tiff		# little-endian \s-1TIFF\s+1
 .fi

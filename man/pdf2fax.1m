@@ -170,29 +170,11 @@ extension to the X server.
 The default Ghostscript-based environment is more uncertain;
 consult the Ghostscript documentation for information on
 what fonts are available.
-.SH FILES
-.ta \w'${SPOOL}/etc/dpsprinter.ps    'u
-.nf
-${SPOOL}/etc/dpsprinter.ps	PDF code read at startup for \s-1DPS\s+1
-/usr/lib/DPS/default.dps_vm	startup VM file for \s-1DPS\s+1
-/usr/lib/DPS/outline	Type 1 fonts for \s-1DPS\s+1
-/usr/lib/DPS/prebuilt	prebuilt versions of fonts for \s-1DPS\s+1
-.fi
 .SH BUGS
 Output from the Display PDF version of this command
 is encoded according to the Display PDF binary encoding
 protocol.
 .PP
-No prebuilt bitmap fonts are currently available for the
-.SM DPS\c
--based imager;
-this would greatly improve legibility at low resolutions,
-as the rendering of outline fonts at 98 lpi is particularly
-poor.
-.PP
-Both
-.SM DPS-
-and
 Ghostscript-based versions of this program fail to exit with
 non-zero status when an invalid PDF document is processed;
 this makes it problematic for the \*(Fx queue manager to

@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH XFERLOG ${MANNUM4_5} "June 5, 1996"
+.TH XFERFAXLOG ${MANNUM4_5} "June 5, 1996"
 .SH NAME
 xferfaxlog \- \*(Fx activity log
 .SH DESCRIPTION
@@ -144,6 +144,13 @@ The simple
 .SM ASCII
 format was designed to be easy to process with programs like
 .IR awk (1).
+.SH NOTES
+The sender field does not necessarily represent the submitter's 
+actual identity.  For example, it reflects the value given by
+the
+.IR sendfax (${MANNUM1_8})
+``-f'' option.  Be cautious that this field is not utilized
+for auditing if the fax user base is not trusted.
 .SH BUGS
 The date format will ``break'' in the year 2000.
 Information should be recorded on a per-page basis for facsimile

@@ -87,6 +87,8 @@ Changelog for HylaFAX 4.1beta3 - Feb 21, 2001
 * portably fix faxaddmodem to not cause grep to complain about directories
   (29Aug2000)
 * Class 2 RTN algorithm changed. RTNHandlingMethod parameter added (26Aug2000)
+  -RTC is not sent automatically anymore (affects usr-2.0 and 
+   ppi-pm14400fxmt)
 * checks added to prevent possible crash when the DTE returns a broken NSF
   frame (25Aug2000)
 * typerules support for PDF (23Aug2000)

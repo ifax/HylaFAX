@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH XFERSTATS ${MANNUM1_8} "May 12, 1996"
+.TH XFERFAXSTATS ${MANNUM1_8} "May 12, 1996"
 .SH NAME
 xferfaxstats \- summarize \*(Fx transmission accounting
 .SH SYNOPSIS
@@ -173,6 +173,13 @@ account name.
 ``\fBWarning, weird user address/name "%s".\fP''
 During address mapping an address was encountered that multiple ``@''
 symbols in it.
+.SH NOTES
+The sender field does not necessarily represent the submitter's
+actual identity.  For example, it reflects the value given by
+the
+.IR sendfax (${MANNUM1_8})
+``-f'' option.  Be cautious that this field is not utilized
+for auditing if the fax user base is not trusted.
 .SH FILES
 .nf
 .ta \w'${SPOOL}    'u

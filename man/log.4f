@@ -105,6 +105,12 @@ A
 .IR schedctl (2)
 system call to set the server process priority failed.
 .PP
+\fBsched policy=%d, priority=%d\fP.
+(\fIOnly on POSIX compliant systems.\fP)
+Describes a
+.IR setscheduler (2)
+system call to enhance real-time job scheduling.
+.PP
 \fBUnable to set %s scheduling parameters: %m\fP.
 (\fIOnly on \s-1SVR4\s+1-style systems.\fP)
 A

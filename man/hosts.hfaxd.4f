@@ -27,7 +27,7 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH HOSTS ${MANNUM4_5} "January 18, 1996"
+.TH HOSTS.HFAXD ${MANNUM4_5} "January 18, 1996"
 .SH NAME
 hosts.hfaxd \- \*(Fx client access control list
 .SH DESCRIPTION
