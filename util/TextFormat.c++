@@ -39,7 +39,7 @@
 #include "Array.h"
 #include "Dictionary.h"
 #include "PageSize.h"
-#include "TextFmt.h"
+#include "TextFormat.h"
 #include "Sys.h"
 
 #include <ctype.h>
@@ -62,7 +62,7 @@ fxIMPLEMENT_PrimArray(OfftArray, off_t)
 fxDECLARE_StrKeyDictionary(FontDict, TextFont*)
 fxIMPLEMENT_StrKeyPtrValueDictionary(FontDict, TextFont*)
 
-TextFmt::TextFmt()
+TextFormat::TextFormat()
 {
     output = NULL;
     tf = NULL;
@@ -76,10 +76,10 @@ TextFmt::TextFmt()
     fonts = new FontDict;
     curFont = addFont("Roman", "Courier");
 
-    TextFmt::setupConfig();	// NB: virtual
+    TextFormat::setupConfig();	// NB: virtual
 }
 
-TextFmt::~TextFmt()
+TextFormat::~TextFormat()
 {
     for (FontDictIter iter(*fonts); iter.notDone(); iter++)
 	delete iter.value();
@@ -90,7 +90,7 @@ TextFmt::~TextFmt()
 }
 
 void
-TextFmt::warning(const char* fmt ...) const
+TextFormat::warning(const char* fmt ...) const
 {
     fputs("Warning, ", stderr);
     va_list ap;
@@ -101,7 +101,7 @@ TextFmt::warning(const char* fmt ...) const
 }
 
 void
-TextFmt::error(const char* fmt ...) const
+TextFormat::error(const char* fmt ...) const
 {
     va_list ap;
     va_start(ap, fmt);
@@ -111,7 +111,7 @@ TextFmt::error(const char* fmt ...) const
 }
 
 void
-TextFmt::fatal(const char* fmt ...) const
+TextFormat::fatal(const char* fmt ...) const
 {
     va_list ap;
     va_start(ap, fmt);
@@ -122,7 +122,7 @@ TextFmt::fatal(const char* fmt ...) const
 }
 
 TextFont*
-TextFmt::addFont(const char* name, const char* family)
+TextFormat::addFont(const char* name, const char* family)
 {
     TextFont* f = new TextFont(family);
     (*fonts)[name] = f;
@@ -135,37 +135,37 @@ TextFmt::addFont(const char* name, const char* family)
 }
 
 const TextFont*
-TextFmt::getFont(const char* name) const
+TextFormat::getFont(const char* name) const
 {
     return (*fonts)[name];
 }
 
-void TextFmt::setFont(TextFont* f)		{ curFont = f; }
-void TextFmt::setFont(const char* name)		{ curFont = (*fonts)[name]; }	
-void TextFmt::setFontPath(const char* path)	{ TextFont::fontPath = path; }	
+void TextFormat::setFont(TextFont* f)		{ curFont = f; }
+void TextFormat::setFont(const char* name)		{ curFont = (*fonts)[name]; }	
+void TextFormat::setFontPath(const char* path)	{ TextFont::fontPath = path; }	
 
-void TextFmt::setOutputFile(FILE* f)		{ output = f; }
-void TextFmt::setNumberOfColumns(u_int n)	{ numcol = n; }
-void TextFmt::setPageHeaders(bool b)		{ headers = b; }
-void TextFmt::setISO8859(bool b)		{ useISO8859 = b; }
-void TextFmt::setLineWrapping(bool b)		{ wrapLines = b; }
-void TextFmt::setOutlineMargin(TextCoord o)	{ outline = o; }
-void TextFmt::setTextPointSize(TextCoord p)	{ pointSize = p; }
-void TextFmt::setPageOrientation(u_int o)	{ landscape = (o == LANDSCAPE); }
-void TextFmt::setPageCollation(u_int c)		{ reverse = (c == REVERSE); }
-void TextFmt::setTextLineHeight(TextCoord h)	{ lineHeight = h; }
-void TextFmt::setTitle(const char* cp)		{ title = cp; }
-void TextFmt::setFilename(const char* cp)	{ curFile = cp; }
+void TextFormat::setOutputFile(FILE* f)		{ output = f; }
+void TextFormat::setNumberOfColumns(u_int n)	{ numcol = n; }
+void TextFormat::setPageHeaders(bool b)		{ headers = b; }
+void TextFormat::setISO8859(bool b)		{ useISO8859 = b; }
+void TextFormat::setLineWrapping(bool b)		{ wrapLines = b; }
+void TextFormat::setOutlineMargin(TextCoord o)	{ outline = o; }
+void TextFormat::setTextPointSize(TextCoord p)	{ pointSize = p; }
+void TextFormat::setPageOrientation(u_int o)	{ landscape = (o == LANDSCAPE); }
+void TextFormat::setPageCollation(u_int c)		{ reverse = (c == REVERSE); }
+void TextFormat::setTextLineHeight(TextCoord h)	{ lineHeight = h; }
+void TextFormat::setTitle(const char* cp)		{ title = cp; }
+void TextFormat::setFilename(const char* cp)	{ curFile = cp; }
 
 void
-TextFmt::setGaudyHeaders(bool b)	
+TextFormat::setGaudyHeaders(bool b)	
 {
     if (gaudy = b)
 	headers = true;
 }
 
 bool
-TextFmt::setTextFont(const char* name)
+TextFormat::setTextFont(const char* name)
 {
     if (TextFont::findFont(name)) {
 	(*fonts)["Roman"]->family = name;
@@ -179,7 +179,7 @@ TextFmt::setTextFont(const char* name)
  * Parse margin syntax: l=#,r=#,t=#,b=#
  */
 bool
-TextFmt::setPageMargins(const char* s)
+TextFormat::setPageMargins(const char* s)
 {
     for (const char* cp = s; cp && cp[0];) {
 	if (cp[1] != '=')
@@ -201,7 +201,7 @@ TextFmt::setPageMargins(const char* s)
 }
 
 void
-TextFmt::setPageMargins(TextCoord l, TextCoord r, TextCoord b, TextCoord t)
+TextFormat::setPageMargins(TextCoord l, TextCoord r, TextCoord b, TextCoord t)
 {
     lm = l;
     rm = r;
@@ -210,7 +210,7 @@ TextFmt::setPageMargins(TextCoord l, TextCoord r, TextCoord b, TextCoord t)
 }
 
 bool
-TextFmt::setPageSize(const char* name)
+TextFormat::setPageSize(const char* name)
 {
     PageSizeInfo* info = PageSizeInfo::getPageSizeByName(name);
     if (info) {
@@ -222,22 +222,22 @@ TextFmt::setPageSize(const char* name)
 	return (false);
 }
 
-void TextFmt::setPageWidth(float pw)		{ physPageWidth = pw; }
-void TextFmt::setPageHeight(float ph)		{ physPageHeight = ph; }
+void TextFormat::setPageWidth(float pw)		{ physPageWidth = pw; }
+void TextFormat::setPageHeight(float ph)		{ physPageHeight = ph; }
 
 void
-TextFmt::setModTimeAndDate(time_t t)
+TextFormat::setModTimeAndDate(time_t t)
 {
     struct tm* tm = localtime(&t);
     char buf[30];
     strftime(buf, sizeof (buf), "%X", tm); modTime = buf;
     strftime(buf, sizeof (buf), "%D", tm); modDate = buf;
 }
-void TextFmt::setModTime(const char* cp)	{ modTime = cp; }
-void TextFmt::setModDate(const char* cp)	{ modDate = cp; }
+void TextFormat::setModTime(const char* cp)	{ modTime = cp; }
+void TextFormat::setModDate(const char* cp)	{ modDate = cp; }
 
 void
-TextFmt::beginFormatting(FILE* o)
+TextFormat::beginFormatting(FILE* o)
 {
     output = o;
     pageHeight = ICVT(physPageHeight);
@@ -295,7 +295,7 @@ TextFmt::beginFormatting(FILE* o)
 }
 
 void
-TextFmt::endFormatting(void)
+TextFormat::endFormatting(void)
 {
     emitPrologue();
     /*
@@ -327,7 +327,7 @@ TextFmt::endFormatting(void)
 
 /* copy bytes b1..b2 to stdout */
 void
-TextFmt::Copy_Block(off_t b1, off_t b2)
+TextFormat::Copy_Block(off_t b1, off_t b2)
 {
     char buf[16*1024];
     for (off_t k = b1; k <= b2; k += sizeof (buf)) {
@@ -365,7 +365,7 @@ static const char* ISOprologue2 = "\
  * compilers...
  */
 void
-TextFmt::putISOPrologue(void)
+TextFormat::putISOPrologue(void)
 {
     fputs("/ISOLatin1Encoding where{pop save true}{false}ifelse\n", output);
     fputs("/ISOLatin1Encoding[\n", output);
@@ -502,10 +502,10 @@ static const char* headerPrologue2 = "\
  * Emit the DSC header comments and prologue.
  */
 void
-TextFmt::emitPrologue(void)
+TextFormat::emitPrologue(void)
 {
     fputs("%!PS-Adobe-3.0\n", output);
-    fprintf(output, "%%%%Creator: HylaFAX TextFmt Class\n");
+    fprintf(output, "%%%%Creator: HylaFAX TextFormat Class\n");
     fprintf(output, "%%%%Title: %s\n", (const char*) title);
     time_t t = Sys::now();
     fprintf(output, "%%%%CreationDate: %s", ctime(&t));
@@ -561,14 +561,14 @@ TextFmt::emitPrologue(void)
     fputs("end\n", output);
     fputs("%%EndProlog\n", output);
 }
-void TextFmt::emitClientComments(FILE*) {}
-void TextFmt::emitClientPrologue(FILE*) {}
+void TextFormat::emitClientComments(FILE*) {}
+void TextFormat::emitClientPrologue(FILE*) {}
 
 /*
  * Emit the DSC trailer comments.
  */
 void
-TextFmt::emitTrailer(void)
+TextFormat::emitTrailer(void)
 {
     fputs("%%Trailer\n", output);
     fprintf(output, "%%%%Pages: %d\n", pageNum - firstPageNum);
@@ -576,7 +576,7 @@ TextFmt::emitTrailer(void)
 }
 
 void
-TextFmt::newPage(void)
+TextFormat::newPage(void)
 {
     x = lm;					// x starts at left margin
     right_x = col_width - col_margin/2;		// right x, 0-relative
@@ -588,7 +588,7 @@ TextFmt::newPage(void)
 }
 
 void
-TextFmt::newCol(void)
+TextFormat::newCol(void)
 {
     x += col_width;				// x, shifted
     right_x += col_width;			// right x, shifted
@@ -615,7 +615,7 @@ putString(FILE* fd, const char* val)
 }
 
 void
-TextFmt::beginCol(void)
+TextFormat::beginCol(void)
 {
     if (column == 1) {				// new page
 	if (reverse)  {
@@ -643,7 +643,7 @@ TextFmt::beginCol(void)
 }
 
 void
-TextFmt::beginLine(void)
+TextFormat::beginLine(void)
 {
     if (boc)
 	beginCol(), boc = false, bop = false;
@@ -651,21 +651,21 @@ TextFmt::beginLine(void)
 }
 
 void
-TextFmt::beginText(void)
+TextFormat::beginText(void)
 {
     fputc('(', tf);
     level++;
 }
 
 void
-TextFmt::hrMove(TextCoord x)
+TextFormat::hrMove(TextCoord x)
 {
     fprintf(tf, " %ld M ", x);
     xoff += x;
 }
 
 void
-TextFmt::closeStrings(const char* cmd)
+TextFormat::closeStrings(const char* cmd)
 {
     int l = level;
     for (; level > 0; level--)
@@ -675,7 +675,7 @@ TextFmt::closeStrings(const char* cmd)
 }
 
 void
-TextFmt::beginFile(void)
+TextFormat::beginFile(void)
 {
     newPage();				// each file starts on a new page
 
@@ -685,7 +685,7 @@ TextFmt::beginFile(void)
 }
 
 void
-TextFmt::endFile(void)
+TextFormat::endFile(void)
 {
     if (!bot)
 	endTextLine();
@@ -708,7 +708,7 @@ TextFmt::endFile(void)
 }
 
 void
-TextFmt::formatFile(const char* name)
+TextFormat::formatFile(const char* name)
 {
     FILE* fp = fopen(name, "r");
     if (fp != NULL) {
@@ -720,7 +720,7 @@ TextFmt::formatFile(const char* name)
 }
 
 void
-TextFmt::formatFile(FILE* fp)
+TextFormat::formatFile(FILE* fp)
 {
 #if HAS_MMAP
     struct stat sb;
@@ -751,7 +751,7 @@ TextFmt::formatFile(FILE* fp)
 }
 
 void
-TextFmt::format(FILE* fp)
+TextFormat::format(FILE* fp)
 {
     int c;
     while ((c = getc(fp)) != EOF) {
@@ -843,7 +843,7 @@ TextFmt::format(FILE* fp)
 }
 
 void
-TextFmt::format(const char* cp, u_int cc)
+TextFormat::format(const char* cp, u_int cc)
 {
     const char* ep = cp+cc;
     while (cp < ep) {
@@ -946,7 +946,7 @@ grestore\n\
 ";
 
 void
-TextFmt::endCol(void)
+TextFormat::endCol(void)
 {
     if (outline > 0) {
 	fprintf(tf, outlineCol, outline,
@@ -963,7 +963,7 @@ TextFmt::endCol(void)
 }
 
 void
-TextFmt::endLine(void)
+TextFormat::endLine(void)
 {
     fputs("EL\n", tf);
     if ((y -= lineHeight) < bm)
@@ -972,7 +972,7 @@ TextFmt::endLine(void)
 }
 
 void
-TextFmt::endTextCol(void)
+TextFormat::endTextCol(void)
 {
     closeStrings("LN");
     fputc('\n', tf);
@@ -980,7 +980,7 @@ TextFmt::endTextCol(void)
 }
 
 void
-TextFmt::endTextLine(void)
+TextFormat::endTextLine(void)
 {
     closeStrings("S\n");
     if ((y -= lineHeight) < bm)
@@ -990,14 +990,14 @@ TextFmt::endTextLine(void)
 }
 
 void
-TextFmt::reserveVSpace(TextCoord vs)
+TextFormat::reserveVSpace(TextCoord vs)
 {
     if (y - vs < bm)
 	endCol();
 }
 
 void
-TextFmt::flush(void)
+TextFormat::flush(void)
 {
     fflush(tf);
     if (ferror(tf) && errno == ENOSPC)
@@ -1020,7 +1020,7 @@ TextFmt::flush(void)
  * the number and the dimension.
  */
 TextCoord
-TextFmt::inch(const char* s)
+TextFormat::inch(const char* s)
 {
     char* cp;
     double v = strtod(s, &cp);
@@ -1051,7 +1051,7 @@ TextFmt::inch(const char* s)
  * Configuration file support.
  */
 void
-TextFmt::setupConfig()
+TextFormat::setupConfig()
 {
     gaudy	= false;	// emit gaudy headers
     landscape	= false;	// horizontal landscape mode output
@@ -1074,19 +1074,19 @@ TextFmt::setupConfig()
 }
 
 void
-TextFmt::resetConfig()
+TextFormat::resetConfig()
 {
     setupConfig();
 }
 
-void TextFmt::configError(const char* ...) {}
-void TextFmt::configTrace(const char* ...) {}
+void TextFormat::configError(const char* ...) {}
+void TextFormat::configTrace(const char* ...) {}
 
 #undef streq
 #define	streq(a,b)	(strcasecmp(a,b)==0)
 
 bool
-TextFmt::setConfigItem(const char* tag, const char* value)
+TextFormat::setConfigItem(const char* tag, const char* value)
 {
     if (streq(tag, "columns"))
 	setNumberOfColumns(getNumber(value));

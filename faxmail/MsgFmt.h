@@ -26,7 +26,7 @@
 #ifndef _MsgFmt_
 #define	_MsgFmt_
 
-#include "TextFmt.h"
+#include "TextFormat.h"
 #include "StrArray.h"
 #include "StrDict.h"
 
@@ -56,7 +56,7 @@ struct MsgFmt {
     u_int headerCount(void);
     fxStr mapHeader(const fxStr& name);
     void parseHeaders(FILE* fd, u_int& lineno);
-    void formatHeaders(TextFmt& fmt);
-    void showItalic(TextFmt& fmt, const char* cp);
+    void formatHeaders(TextFormat& fmt);
+    void showItalic(TextFormat& fmt, const char* cp);
 };
 #endif /* _MsgFmt_ */

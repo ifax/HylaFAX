@@ -23,8 +23,8 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
-#ifndef _TextFmt_
-#define	_TextFmt_
+#ifndef _TextFormat_
+#define	_TextFormat_
 /*
  * Simple Text To PostScript Conversion Support.
  */
@@ -45,7 +45,7 @@ private:
     static fxStr fontPath;		// path for afm files
     static u_int fontID;		// font identifier number
 
-    friend class TextFmt;
+    friend class TextFormat;
 
     void loadFixedMetrics(TextCoord w);
     FILE* openAFMFile(fxStr& pathname);
@@ -77,7 +77,7 @@ inline const char* TextFont::getFamily(void) const	 { return family; }
 class FontDict;
 class OfftArray;
 
-class TextFmt : public FaxConfig {
+class TextFormat : public FaxConfig {
 public:
     enum {			// page orientation
 	LANDSCAPE,
@@ -149,8 +149,8 @@ protected:
     virtual void configError(const char* fmt ...);
     virtual void configTrace(const char* fmt ...);
 public:
-    TextFmt();
-    virtual ~TextFmt();
+    TextFormat();
+    virtual ~TextFormat();
 
     virtual void resetConfig(void);
 
@@ -221,13 +221,13 @@ public:
     void reserveVSpace(TextCoord);
 };
 
-inline bool TextFmt::getLineWrapping(void) const	{ return wrapLines; }
-inline bool TextFmt::getPageHeaders(void) const	{ return headers; }
-inline TextCoord TextFmt::getTextPointSize(void) const	{ return pointSize; }
-inline TextCoord TextFmt::getXOff(void) const		{ return xoff; }
-inline TextCoord TextFmt::getRHS(void) const		{ return right_x; }
-inline TextCoord TextFmt::getTextLineHeight(void) const	{ return lineHeight; }
-inline bool TextFmt::getISO8859(void) const		{ return useISO8859; }
-inline const TextFont* TextFmt::getFont(void) const	{ return curFont; }
-inline FILE* TextFmt::getOutputFile(void)		{ return tf; }
-#endif /* _TextFmt_ */
+inline bool TextFormat::getLineWrapping(void) const	{ return wrapLines; }
+inline bool TextFormat::getPageHeaders(void) const	{ return headers; }
+inline TextCoord TextFormat::getTextPointSize(void) const	{ return pointSize; }
+inline TextCoord TextFormat::getXOff(void) const		{ return xoff; }
+inline TextCoord TextFormat::getRHS(void) const		{ return right_x; }
+inline TextCoord TextFormat::getTextLineHeight(void) const	{ return lineHeight; }
+inline bool TextFormat::getISO8859(void) const		{ return useISO8859; }
+inline const TextFont* TextFormat::getFont(void) const	{ return curFont; }
+inline FILE* TextFormat::getOutputFile(void)		{ return tf; }
+#endif /* _TextFormat_ */

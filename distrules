@@ -300,7 +300,7 @@ HYLAFAXSRC=\
 	util/StrDict.c++			\
 	util/Sys.c++				\
 	util/SystemLog.c++			\
-	util/TextFmt.c++			\
+	util/TextFormat.c++			\
 	util/TimeOfDay.c++			\
 	util/Timeout.c++			\
 	util/Transport.c++			\
@@ -341,7 +341,7 @@ HYLAFAXSRC=\
 	util/StrDict.h				\
 	util/Sys.h				\
 	util/SystemLog.h			\
-	util/TextFmt.h				\
+	util/TextFormat.h				\
 	util/TimeOfDay.h			\
 	util/Timeout.h				\
 	util/Transport.h			\

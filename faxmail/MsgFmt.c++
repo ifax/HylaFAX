@@ -25,7 +25,7 @@
  */
 #include "MsgFmt.h"
 #include "StackBuffer.h"
-#include "TextFmt.h"
+#include "TextFormat.h"
 
 #include <ctype.h>
 
@@ -210,7 +210,7 @@ MsgFmt::headerCount(void)
 #define	roundup(x, y)	((((x)+((y)-1))/(y))*(y))
 
 void
-MsgFmt::formatHeaders(TextFmt& fmt)
+MsgFmt::formatHeaders(TextFormat& fmt)
 {
     /*
      * Calculate tab stop for headers based on the
@@ -267,7 +267,7 @@ MsgFmt::formatHeaders(TextFmt& fmt)
  * field header tab stop on any line overflows.
  */
 void
-MsgFmt::showItalic(TextFmt& fmt, const char* cp)
+MsgFmt::showItalic(TextFormat& fmt, const char* cp)
 {
     const TextFont* italic = fmt.getFont("Italic");
     if (!italic)

@@ -68,7 +68,7 @@ C++FILES=Array.c++ \
 	FmtTime.c++ \
 	TimeOfDay.c++ \
 	FaxDB.c++ \
-	TextFmt.c++ \
+	TextFormat.c++ \
 	\
 	Class2Params.c++ \
 	FaxClient.c++ \

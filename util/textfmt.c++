@@ -27,7 +27,7 @@
 /*
  * A sort of enscript clone...
  */
-#include "TextFmt.h"
+#include "TextFormat.h"
 #include "Sys.h"
 #include "config.h"
 
@@ -81,7 +81,7 @@ main(int argc, char* argv[])
     setlocale(LC_TIME, "");			// for strftime calls
 #endif
 
-    TextFmt fmt;
+    TextFormat fmt;
 
     fmt.resetConfig();
     fmt.readConfig(FAX_SYSCONF);
@@ -127,16 +127,16 @@ main(int argc, char* argv[])
 	    }
 	    break;
 	case 'o':		// outline columns
-	    fmt.setOutlineMargin(TextFmt::inch(optarg));
+	    fmt.setOutlineMargin(TextFormat::inch(optarg));
 	    break;
 	case 'p':		// text point size
-	    fmt.setTextPointSize(TextFmt::inch(optarg));
+	    fmt.setTextPointSize(TextFormat::inch(optarg));
 	    break;
 	case 'r':		// rotate page (landscape)
-	    fmt.setPageOrientation(TextFmt::LANDSCAPE);
+	    fmt.setPageOrientation(TextFormat::LANDSCAPE);
 	    break;
 	case 'R':		// don't rotate page (portrait)
-	    fmt.setPageOrientation(TextFmt::PORTRAIT);
+	    fmt.setPageOrientation(TextFormat::PORTRAIT);
 	    break;
 	case 's':		// page size
 	    if (!fmt.setPageSize(optarg)) {
@@ -145,10 +145,10 @@ main(int argc, char* argv[])
 	    }
 	    break;
 	case 'U':		// reverse page collation
-	    fmt.setPageCollation(TextFmt::REVERSE);
+	    fmt.setPageCollation(TextFormat::REVERSE);
 	    break;
 	case 'V':		// vertical line height+spacing
-	    fmt.setTextLineHeight(TextFmt::inch(optarg));
+	    fmt.setTextLineHeight(TextFormat::inch(optarg));
 	    break;
 	default:
 	    fprintf(stderr,"Unrecognized option \"%c\".\n", c);

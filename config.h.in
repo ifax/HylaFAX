@@ -224,7 +224,7 @@
 
 /*
  * The default pathname for the Fontmap(s) file
- * is compiled into util/TextFmt.o but can be overridden
+ * is compiled into util/TextFormat.o but can be overridden
  * through configuration files.
  */
 #ifndef _PATH_FONTMAP
@@ -233,7 +233,7 @@
 
 /*
  * The default pathname for the location of the fonts
- * is compiled into util/TextFmt.o but can be overridden
+ * is compiled into util/TextFormat.o but can be overridden
  * through configuration files.
  */
 #ifndef _PATH_AFM

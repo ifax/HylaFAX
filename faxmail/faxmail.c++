@@ -64,7 +64,7 @@ MySendFaxClient::setup(bool b)
 bool MySendFaxClient::setConfigItem(const char* tag, const char* value)
     { return SendFaxClient::setConfigItem(tag, value); }
 
-class faxMailApp : public TextFmt, public MsgFmt {
+class faxMailApp : public TextFormat, public MsgFmt {
 private:
     bool	markDiscarded;		// mark MIME parts not handled
     bool	withinFile;		// between beginFile() & endFile()
@@ -168,13 +168,13 @@ faxMailApp::run(int argc, char** argv)
 	    autoCoverPage = false;
 	    break;
 	case 'p':			// point size
-	    setTextPointSize(TextFmt::inch(optarg));
+	    setTextPointSize(TextFormat::inch(optarg));
 	    break;
 	case 'r':			// rotate page (landscape)
-	    setPageOrientation(TextFmt::LANDSCAPE);
+	    setPageOrientation(TextFormat::LANDSCAPE);
 	    break;
 	case 'R':			// don't rotate page (portrait)
-	    setPageOrientation(TextFmt::PORTRAIT);
+	    setPageOrientation(TextFormat::PORTRAIT);
 	    break;
 	case 's':			// page size
         pageSize = optarg;
@@ -718,7 +718,7 @@ faxMailApp::setupConfig()
 void
 faxMailApp::resetConfig()
 {
-    TextFmt::resetConfig();
+    TextFormat::resetConfig();
     setupConfig();
 }
 
@@ -742,7 +742,7 @@ faxMailApp::setConfigItem(const char* tag, const char* value)
 	mailUser = value;
     else if (MsgFmt::setConfigItem(tag, value))
 	;
-    else if (TextFmt::setConfigItem(tag, value))
+    else if (TextFormat::setConfigItem(tag, value))
 	;
     else
 	return (false);
