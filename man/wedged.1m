@@ -43,8 +43,15 @@ configuration parameter described in
 .IR hylafax-config (${MANNUM4_5}).
 The default
 .I wedged
-script sends electronic mail to the FaxMaster alias and attempts
-to disable any getty processes spawned by the 
+script sends electronic mail to the FaxMaster alias. The interval at which
+emails are sent can be configured in the
+.B etc/FaxDispatch
+file by setting the WEDGED_EMAIL_INTERVAL variable to the desired number
+of minutes (emails will be sent no more than every WEDGED_EMAIL_INTERVAL
+minutes, until the wedged condition persists).
+If the variable WEDGED_DISABLE_FAXGETTY is set in
+.B etc/FaxDispatch
+then the script will attempt to disable any getty processes spawned by the
 .IR init (${MANNUM1_8})
 process.
 In addition the
