@@ -1,5 +1,7 @@
 config.fax
+faxaddmodem
 faxaddmodem.sh
+faxsetup
 faxsetup.sh
 hosts.hfaxd
 hylafax
