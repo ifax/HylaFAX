@@ -35,8 +35,6 @@ private:
     bool	groups;			// group or job id's
     fxStr	script;			// commands to send for each job
 
-    void addToScript(const char* fmt ...);
-
     void usage();
 public:
     faxAlterApp();
@@ -63,13 +61,16 @@ faxAlterApp::run(int argc, char** argv)
     while ((c = getopt(argc, argv, "a:h:k:m:n:P:t:DQRgpv")) != -1)
 	switch (c) {
 	case 'D':			// set notification to when done
-	    addToScript("NOTIFY DONE");
+        script.append(groups ? "JGPARM " : "JPARM ");
+        script.append("NOTIFY DONE");
 	    break;
 	case 'Q':			// no notification (quiet)
-	    addToScript("NOTIFY NONE");
+        script.append(groups ? "JGPARM " : "JPARM ");
+        script.append("NOTIFY DONE");
 	    break;
 	case 'R':			// set notification to when requeued
-	    addToScript("NOTIFY DONE+REQUEUE");
+        script.append(groups ? "JGPARM " : "JPARM ");
+        script.append("NOTIFY DONE+REQUEUE");
 	    break;
 	case 'a':			// send at specified time
 	    if (strcasecmp(optarg, "NOW")) {
@@ -79,15 +80,23 @@ faxAlterApp::run(int argc, char** argv)
 		}
 		now = mktime(&tts);
 		when = *gmtime(&now);	// NB: must be relative to GMT
-		addToScript("SENDTIME %d%02d%02d%02d%02d"
-		    , when.tm_year+1900
-		    , when.tm_mon+1
-		    , when.tm_mday
-		    , when.tm_hour
-		    , when.tm_min
-		);
-	    } else
-		addToScript("SENDTIME NOW");
+        script.append(groups ? "JGPARM " : "JPARM ");
+		script.append("SENDTIME ");
+            {
+                char tmpbuf[32];
+                sprintf(tmpbuf,"%d%02d%02d%02d%02d"
+		            , when.tm_year+1900
+		            , when.tm_mon+1
+		            , when.tm_mday
+		            , when.tm_hour
+		            , when.tm_min
+		        );
+                script.append(tmpbuf);
+            }
+	    } else {
+            script.append(groups ? "JGPARM " : "JPARM ");
+            script.append("SENDTIME NOW");
+        }
 	    break;
 	case 'g':			// apply to groups, not jobs
 	    groups = true;
@@ -101,35 +110,51 @@ faxAlterApp::run(int argc, char** argv)
 		return;
 	    }
 	    { time_t tv = mktime(&when) - now;
-	      addToScript("LASTTIME %02d%02d%02d"
-		, tv/(24*60*60)
-		, (tv/(60*60))%24
-		, (tv/60)%60
+          script.append(groups ? "JGPARM " : "JPARM ");
+	      script.append("LASTTIME ");
+          char tmpbuf[32];
+	      sprintf(tmpbuf, "%02d%02d%02d"
+		     , tv/(24*60*60)
+		     , (tv/(60*60))%24
+		     , (tv/60)%60
 	      );
+          script.append(tmpbuf);
 	    }
 	    break;
 	case 'm':			// modem
-	    addToScript("MODEM %s", optarg);
+        script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append("MODEM ");
+        script.append(optarg);
 	    break;
 	case 'n':			// set notification
-	    addToScript("NOTIFY %s",
-		strcasecmp(optarg, "done") == 0 ?	"DONE" :
-		strcasecmp(optarg, "requeued") == 0 ?	"DONE+REQUEUE" :
-							optarg);
+        script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append("NOTIFY ");
+		if (strcasecmp(optarg, "done") == 0) {
+            script.append("DONE");
+        } else if (strcasecmp(optarg, "requeued") == 0) {
+            script.append("DONE+REQUEUE");
+        } else {
+            script.append(optarg);
+        }
 	    break;
 	case 'p':			// send now (push)
-	    addToScript("SENDTIME NOW");
+        script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append("SENDTIME NOW");
 	    break;
 	case 'P':			// scheduling priority
 	    if ((u_int) atoi(optarg) > 255)
 		fxFatal("Invalid job priority %s;"
 		    " values must be in the range [0,255]", optarg);
-	    addToScript("SCHEDPRI %s", optarg);
+        script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append("SCHEDPRI ");
+	    script.append(optarg);
 	    break;
 	case 't':			// set max number of retries
 	    if (atoi(optarg) < 0)
 		fxFatal("Bad number of retries for -t option: %s", optarg);
-	    addToScript("MAXDIALS %s", optarg);
+        script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append("MAXDIALS ");
+	    script.append(optarg);
 	    break;
 	case 'v':			// trace protocol
 	    setVerbose(true);
@@ -177,17 +202,6 @@ faxAlterApp::usage()
       " [-g]"
       " [-DQR]"
       " jobID...");
-}
-
-void
-faxAlterApp::addToScript(const char* fmt0 ...)
-{
-    va_list ap;
-    va_start(ap, fmt0);
-    char fmt[1024];
-    sprintf(fmt, "%s %s\n", groups ? "JGPARM" : "JPARM", fmt0);
-    script.append(fxStr::vformat(fmt, ap));
-    va_end(ap);
 }
 
 int
