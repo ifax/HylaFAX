@@ -100,15 +100,18 @@ multiple lines using the \*(Ps font metric information.
 This procedure is named
 .I BreakIntoLines
 and has the following usage convention:
+
+%<line-width> <line-height> <x> <y> <string> BreakIntoLines -
+
+eg
 .sp .5
 .RS
 .nf
 \fC/rule (_____________________________________________) def
+/lw rule stringwidth pop def /lh 30 def
 /y 191.4 def /x 0 def
 y -30 0 { x exch moveto rule show } for
-comments rule stringwidth pop {
-    x y 1 add moveto show /y y 30 sub def
-} BreakIntoLines\fP
+lw lh x y comments BreakIntoLines\fP
 .fi
 .RE
 .sp .5
