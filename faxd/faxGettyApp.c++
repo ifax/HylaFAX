@@ -321,7 +321,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
 		quote | cid.number | enquote | quote | getModemDevice() | enquote);
 	    fxStr localid = "";
 	    int pipefd[2], idlength, status;
-	    char dlid[21];	// max CSI size (20) plus '\0'
+	    char line[1024];
 	    pipe(pipefd);
 	    pid_t pid = fork();
 	    switch (pid) {
@@ -334,18 +334,21 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
 		    Sys::close(pipefd[1]);
 		    execl("/bin/sh", "sh", "-c", (const char*) cmd, (char*) NULL);
 		    sleep(1);
-		    exit(0);
+		    exit(1);
 		default:
 		    Sys::close(pipefd[1]);
-		    idlength = Sys::read(pipefd[0], dlid, sizeof(dlid));
-		    Sys::waitpid(pid, status);
-		    if (status != 0)
-		        logError("Bad exit status %#o for \'%s\'", status, (const char*) cmd);
-		    localid = fxStr(dlid, idlength-1);
-		    FaxServer::setLocalIdentifier(localid, true);	// Class 2 must issue command
+		    {
+			FILE* fd = fdopen(pipefd[0], "r");
+			while (fgets(line, sizeof (line)-1, fd)){
+			    line[strlen(line)-1]='\0';		// Nuke \n at end of line
+			    (void) readConfigItem(line);
+			}
+			Sys::waitpid(pid, status);
+			if (status != 0)
+			    logError("Bad exit status %#o for \'%s\'", status, (const char*) cmd);
+		    }
 		    break;
 	    }
-	    traceServer("ANSWER: LOCAL ID '%s'", (const char*) localid);
 	}
 	if (ctype != ClassModem::CALLTYPE_UNKNOWN) {
 	    /*

@@ -159,7 +159,7 @@ public:
 // miscellaneous
     bool	faxService(bool enableV34);	// switch to fax mode
     bool	reset(long ms);			// reset modem
-    void	setLID(const fxStr& number, bool now = false);	// set local id string
+    void	setLID(const fxStr& number);	// set local id string
     bool	supportsPolling() const;	// modem capability
     int		lastByte;
 };

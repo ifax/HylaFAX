@@ -333,12 +333,6 @@ Class2Modem::setupReceive()
 	group3opts &= ~GROUP3OPT_FILLBITS;
     atCmd(crCmd);				// enable receiving
     /*
-     * Must do this here instead of above because the
-     * station identifier isn't normally setup until
-     * the caller invokes us.
-     */
-    class2Cmd(lidCmd, lid);			// local station identifier
-    /*
      * Enable adaptive-answer support.  If we're configured,
      * we'll act like getty and initiate a login session if
      * we get a data connection.  Note that we do this last
@@ -431,7 +425,7 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params)
 bool
 Class2Modem::faxService(bool enableV34)
 {
-    return setupClass2Parameters() && class2Cmd(lidCmd, lid);
+    return setupClass2Parameters();
 }
 
 bool
@@ -499,7 +493,7 @@ Class2Modem::stripQuotes(const char* cp)
  * length is 20 characters (per the spec).
  */
 void
-Class2Modem::setLID(const fxStr& number, bool now)
+Class2Modem::setLID(const fxStr& number)
 {
     lid.resize(0);
     for (u_int i = 0, n = number.length(); i < n; i++) {
@@ -509,7 +503,7 @@ Class2Modem::setLID(const fxStr& number, bool now)
     }
     if (lid.length() > 20)
 	lid.resize(20);
-    if (now) class2Cmd(lidCmd, lid);	// for DynamicLocalID
+    class2Cmd(lidCmd, lid);	// for DynamicLocalID
 }
 
 /* 

@@ -171,7 +171,7 @@ public:
     bool isFaxModem() const;
 
 // configuration controls
-    virtual void setLID(const fxStr& number, bool now = false) = 0;
+    virtual void setLID(const fxStr& number) = 0;
     u_int getCapabilities() const;
 // methods for querying modem capabilities
     virtual bool supports2D() const;

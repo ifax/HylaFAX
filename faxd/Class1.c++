@@ -324,7 +324,7 @@ Class1Modem::ready(long ms)
  * Set the local subscriber identification.
  */
 void
-Class1Modem::setLID(const fxStr& number, bool now)
+Class1Modem::setLID(const fxStr& number)
 {
     encodeTSI(lid, number);
 }
