@@ -158,7 +158,7 @@ The
 can be used to define AT commands for setting up the modem
 for a specific service provider.
 This value overwrites the settings defined in
-.IR config (${MANNUM4_5}).
+.IR hylafax-config (${MANNUM4_5}).
 .PP
 The
 .IR pageSource
@@ -197,5 +197,4 @@ directory that have not been accessed in 30 days.
 .IR faxq (${MANNUM1_8}),
 .IR faxsend (${MANNUM1_8}),
 .IR pagesend (${MANNUM1_8}),
-.IR cinfo (${MANNUM4_5}),
 .IR hylafax-config (${MANNUM4_5})

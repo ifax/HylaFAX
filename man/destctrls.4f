@@ -57,7 +57,7 @@ the end of
 .I dest
 and the start of the parameter list.
 Parameter values are parsed exactly as specified in
-.IR config (${MANNUM4_5});
+.IR hylafax-config (${MANNUM4_5});
 i.e. values with embedded whitespace may be enclosed in quote marks (``"'').
 .PP
 Comments are introduced with a ``#'' character and extend to the
@@ -78,7 +78,7 @@ configuration file.
 .PP
 The following parameters may be specified on a per-destination basis;
 consult
-.IR config (${MANNUM4_5})
+.IR hylafax-config (${MANNUM4_5})
 for a description of each parameter
 (except
 .B RejectNotice

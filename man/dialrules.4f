@@ -50,7 +50,7 @@ that are located in a file specified in the server configuration
 file; see the
 .B DialStringRules
 parameter in
-.IR config (${MANNUM4_5}).
+.IR hylafax-config (${MANNUM4_5}).
 The generation of an externalized form for a dial string is done by
 rules that optionally appear in
 .I ${LIBDATA}/dialrules

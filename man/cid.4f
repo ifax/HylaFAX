@@ -104,7 +104,7 @@ many numbers with one pattern.
 The caller's telephone number is recognized by using the
 .B CIDNumber
 configuration parameter described in
-.IR config (${MANNUM4_5}).
+.IR hylafax-config (${MANNUM4_5}).
 This parameter must be present in the per-modem configuration
 file for Caller-ID screening to function properly.
 If 

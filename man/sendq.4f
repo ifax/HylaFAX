@@ -149,7 +149,7 @@ If this parameter is not specified then the value specified by
 the
 .B PageChopThreshold
 configuration parameter is used; see
-.IR config (${MANNUM4_5}).
+.IR hylafax-config (${MANNUM4_5}).
 .TP 14
 .B commid
 The communication identifier for the last outbound call placed
@@ -183,7 +183,7 @@ See
 and
 .B ContCoverCmd
 in 
-.IR config (${MANNUM4_5}).
+.IR hylafax-config (${MANNUM4_5}).
 .TP 14
 .B data
 The pathname of a document to send.
@@ -228,7 +228,7 @@ otherwise the tagline format string specified in the server
 configuration file is used; see
 .B TagLineFormat
 in
-.IR config (${MANNUM4_5}).
+.IR hylafax-config (${MANNUM4_5}).
 .TP 14
 .B doneop
 The treatment the job should be given when it is processed by the 
@@ -361,7 +361,7 @@ Whether or not to automatically truncate trailing whitespace on pages
 of outbound facsimile; see
 .B PageChop
 in
-.IR config (${MANNUM4_5}).
+.IR hylafax-config (${MANNUM4_5}).
 The possible values are: ``\c
 .IR default ''
 to use the setting of the
@@ -456,7 +456,7 @@ parameters that are tuned for the specific reason of each failure;
 e.g. see
 .B JobReqProto
 in
-.IR config (${MANNUM4_5}).
+.IR hylafax-config (${MANNUM4_5}).
 .TP 14
 .B sender
 The ``full name'' of the sender of the facsimile.

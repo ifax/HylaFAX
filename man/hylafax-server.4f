@@ -417,7 +417,7 @@ Consult the
 and
 .B RingVoice
 parameters in
-.IR config (${MANNUM4_5})
+.IR hylafax-config (${MANNUM4_5})
 for a description of this facility.
 .SH "DATA CALLS"
 Most fax modems also support non-facsimile communication.
@@ -460,7 +460,7 @@ kinds of debugging and tracing information; c.f.
 the
 .B ServerTracing
 parameter description in
-.IR config (${MANNUM4_5}).
+.IR hylafax-config (${MANNUM4_5}).
 .PP
 Any problems encountered when transmitting a facsimile
 are described in messages returned to the user by electronic mail.
@@ -704,8 +704,8 @@ archive/*	database of archived jobs
 .IR dialrules (${MANNUM4_5}),
 .IR doneq (${MANNUM4_5}),
 .IR hosts.hfaxd (${MANNUM4_5}),
-.IR info (${MANNUM4_5}),
-.IR log (${MANNUM4_5}),
+.IR hylafax-info (${MANNUM4_5}),
+.IR hylafax-log (${MANNUM4_5}),
 .IR tsi (${MANNUM4_5}),
 .IR recvq (${MANNUM4_5}),
 .IR sendq (${MANNUM4_5}),

@@ -372,7 +372,7 @@ Any other users that request service will be denied access and
 negative server responses will include any
 shutdown message specified in the shutdown file.
 Consult
-.IR shutdown (${MANNUM4_5})
+.IR hylafax-shutdown (${MANNUM4_5})
 for information on the format and content of this file.
 .PP
 The \s-1SHUT\s+1
@@ -390,7 +390,7 @@ reads configuration information from the file
 each time a new server process is started (i.e. for each new client).
 This file uses the same conventions used by other \*(Fx configuration
 files; as described in 
-.IR config (${MANNUM4_5}).
+.IR hylafax-config (${MANNUM4_5}).
 The following configuration parameters are recognized; items marked
 ``(\s-1SNPP\s+1)'' are used only by the \s-1SNPP\s+1 support.
 .sp .5
@@ -754,7 +754,7 @@ messages.
 .B ShutdownFile
 The absolute pathname of the server shutdown file;
 see
-.IR shutdown (${MANNUM4_5})
+.IR hylafax-shutdown (${MANNUM4_5})
 for information on the format and content of this file.
 (Note that absolute pathnames are relative to the root
 of the spooling area).

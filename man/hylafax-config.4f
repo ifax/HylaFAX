@@ -577,7 +577,7 @@ The
 .B FAXNumber
 is also used to name the session log file where information
 for incoming phone calls is recorded; see
-.IR log (${MANNUM4_5}).
+.IR hylafax-log (${MANNUM4_5}).
 If this phone number is not a fully qualified number
 the values of
 .B AreaCode
@@ -1110,7 +1110,7 @@ and
 .I facility.err
 messages.
 See
-.IR log (${MANNUM4_5})
+.IR hylafax-log (${MANNUM4_5})
 for a description of the logged messages.
 .TP
 .B SessionTracing\(S2
@@ -1121,7 +1121,7 @@ The number is interpreted identically to
 Note that session tracing is placed in log files in the
 .B log
 subdirectory; see
-.IR log (${MANNUM4_5})
+.IR hylafax-log (${MANNUM4_5})
 for more information.
 .TP
 .B SpeakerVolume
@@ -2283,14 +2283,14 @@ Typically these commands place direct the modem to communicate
 with the service provider at 300 bps using the V.21 protocol.
 Per-service provider command strings can be setup in the
 info database; see
-.IR info (${MANNUM4_5}).
+.IR hylafax-info (${MANNUM4_5}).
 .TP
 .B PagerMaxMsgLength
 The maximum length for a pager text message.
 Messages longer than this number are truncated.
 Per-service provider message lengths can be setup in the
 info database; see
-.IR info (${MANNUM4_5}).
+.IR hylafax-info (${MANNUM4_5}).
 .TP 
 .B IXOService
 (\fIIXO/TAP only\fP)
