@@ -929,8 +929,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		if (!gotEOT) {
 		    bool gotprimary;
 		    if (useV34) gotprimary = waitForDCEChannel(false);
-		    u_short rtnccnt = 0;
-		    while (!sendERR && !gotEOT && (gotRTNC || (ctrlFrameRcvd != fxStr::null)) && rtnccnt++ < 3) {
+		    while (!sendERR && !gotEOT && (gotRTNC || (ctrlFrameRcvd != fxStr::null))) {
 			/*
 			 * Remote requested control channel retrain, the remote didn't
 			 * properly hear our last signal, and/or we got an EOR signal 
