@@ -317,6 +317,12 @@ Note()
     echo "$@" 1>&4
 }
 
+capture()
+{
+    (eval "set -x; $*") >&5 2>&1
+    return
+}  
+
 Note ""
 Note "Setup program for HylaFAX (tm) $VERSION."
 Note ""
