@@ -946,7 +946,7 @@ static const char* parityNames[] = {
     "7 bits, odd parity",	// ODD
 };
 
-#if defined(CCTS_OFLOW) && defined(CRTS_IFLOW) && !defined(__NetBSD__)
+#if defined(CCTS_OFLOW) && defined(CRTS_IFLOW) && !defined(__NetBSD__) && !defined(__OpenBSD__)
 #undef CRTSCTS				/* BSDi */
 #define	CRTSCTS	(CCTS_OFLOW|CRTS_IFLOW)
 #endif
