@@ -52,35 +52,32 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai)
 	    , (const char*) fax.commid
 	    , (const char*) getModemDevice()
 	);
-	if (setupModem()) {
-	    changeState(SENDING);
-	    IOHandler* handler =
-		Dispatcher::instance().handler(
-		    getModemFd(), Dispatcher::ReadMask);
-	    if (handler)
-		Dispatcher::instance().unlink(getModemFd());
-	    setServerStatus("Sending job " | fax.jobid);
-	    /*
-	     * Construct the phone number to dial by applying the
-	     * dialing rules to the user-specified dialing string.
-	     */
-	    sendFax(fax, clientInfo, prepareDialString(fax.number));
-	    /*
-	     * Because some modems are impossible to safely hangup in the
-	     * event of a problem, we force a close on the device so that
-	     * the modem will see DTR go down and (hopefully) clean up any
-	     * bad state its in.  We then wait a couple of seconds before
-	     * trying to setup the modem again so that it can have some
-	     * time to settle.  We want a handle on the modem so that we
-	     * can be prepared to answer incoming phone calls.
-	     */
-	    discardModem(true);
-	    changeState(MODEMWAIT, 5);
-	} else {
-	    sendFailed(fax, send_retry, "Can not setup modem", 4*pollModemWait);
-	    discardModem(true);
-	    changeState(MODEMWAIT, pollModemWait);
-	}
+
+	/* Dispatcher already did setupModem() */
+
+	changeState(SENDING);
+	IOHandler* handler =
+	    Dispatcher::instance().handler(
+		getModemFd(), Dispatcher::ReadMask);
+	if (handler)
+	    Dispatcher::instance().unlink(getModemFd());
+	setServerStatus("Sending job " | fax.jobid);
+	/*
+	 * Construct the phone number to dial by applying the
+	 * dialing rules to the user-specified dialing string.
+	 */
+	sendFax(fax, clientInfo, prepareDialString(fax.number));
+	/*
+	 * Because some modems are impossible to safely hangup in the
+	 * event of a problem, we force a close on the device so that
+	 * the modem will see DTR go down and (hopefully) clean up any
+	 * bad state its in.  We then wait a couple of seconds before
+	 * trying to setup the modem again so that it can have some
+	 * time to settle.  We want a handle on the modem so that we
+	 * can be prepared to answer incoming phone calls.
+	 */
+	discardModem(true);
+	changeState(MODEMWAIT, 5);
 	endSession();
 	unlockModem();
     } else {
