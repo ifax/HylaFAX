@@ -297,9 +297,9 @@ Note ""
 Note "Created for $TARGET on $DATE."
 Note ""
 
-CPU=`expr $TARGET : '\(.*\)-.*-.*'` || CPU=unknown
-VENDOR=`expr $TARGET : '.*-\(.*\)-.*'` || VENDOR=unknown
-OS=`expr $TARGET : '.*-.*-\([a-zA-Z]*\).*'` || OS=unknown
+CPU=`expr $TARGET : '\([^\-]*\)'` || CPU=unknown
+VENDOR=`expr $TARGET : '[^\-]*-\([^-]*\)'` || VENDOR=unknown
+OS=`expr $TARGET : '[^\-]*-[^\-]*-\([a-zA-Z]*\).*'` || OS=unknown
 RELEASE=`(uname -r) 2>/dev/null` || RELEASE=unknown
 
 #
