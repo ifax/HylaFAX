@@ -130,8 +130,6 @@ ClassModem::ClassModem(ModemServer& s, const ModemConfig& c)
     // XXX: workaround yet another GCC bug (sigh)
     const fxStr& flow = conf.getFlowCmd(conf.flowControl);
     resetCmds = "AT"
-	      | stripAT(conf.softResetCmd)
-	      | "\nAT"
 	      | stripAT(conf.resetCmds)		// prepend to insure our needs
 	      | stripAT(conf.echoOffCmd)
 	      | stripAT(conf.verboseResultsCmd)
@@ -649,10 +647,17 @@ ClassModem::reset(long ms)
      */
     server.reopenDevice();
 #endif
-    if (!setBaudRate(rate, iFlow, oFlow))
-	return (false);
+    if (!setBaudRate(rate, iFlow, oFlow)) {
+        return (false);
+    }
     flushModemInput();
-    return atCmd(resetCmds, AT_OK, ms);
+    /*
+     * Perform a soft reset as well to ensure the modem
+     * is in a stable state before sending the additional
+     * reset commands.
+     */
+    return atCmd(conf.softResetCmd, AT_OK, conf.resetDelay)
+            && atCmd(resetCmds, AT_OK, ms);
 }
 
 bool

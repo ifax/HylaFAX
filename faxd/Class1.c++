@@ -396,8 +396,7 @@ Class1Modem::abortReceive()
 }
 
 /*
- * Receive an HDLC frame.  The timeout is against
- * the receipt of the HDLC flags; the frame itself must
+ * Receive an HDLC frame. The frame itself must
  * be received within 3 seconds (per the spec).
  * If a carrier is received, but the complete frame
  * is not received before the timeout, the receive
@@ -408,20 +407,22 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 {
     int c;
     /*
-     * Search for HDLC frame flags.  The
-     * timeout is to reception of the flags.
+     * The spec says that a frame that takes between
+     * 2.55 and 3.45 seconds to be received may be
+     * discarded; we also add some time for DCE
+     * to detect and strip flags. 
+     */
+    startTimeout(5000);
+    /*
+     * Strip HDLC frame flags. This is not needed,
+     * (according to the standard DCE does the job),
+     * be we leave this legacy code unchanged
+     * for sure - D.B.
      */
     do {
 	c = getModemChar(0);
     } while (c != EOF && c != 0xff);
-    stopTimeout("waiting for HDLC flags");
-    if (c == 0xff) {			// flags received
-	/*
-	 * The spec says that a frame that takes between
-	 * 2.55 and 3.45 seconds to be received may be
-	 * discarded; we use 3.1 seconds as a compromise.
-	 */
-	startTimeout(3100);
+    if (c == 0xff) {			// address field received
 	do {
 	    if (c == DLE) {
 		c = getModemChar(0);
@@ -430,8 +431,8 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 	    }
 	    frame.put(frameRev[c]);
 	} while ((c = getModemChar(0)) != EOF);
-	stopTimeout("receiving HDLC frame data");
     }
+    stopTimeout("receiving HDLC frame data");
     if (wasTimeout()) {
 	abortReceive();
 	return (false);
@@ -638,8 +639,14 @@ Class1Modem::recvFrame(HDLCFrame& frame, long ms)
     frame.reset();
     startTimeout(ms);
     bool readPending = atCmd(rhCmd, AT_NOTHING);
-    if (readPending && waitFor(AT_CONNECT,0))
-	return recvRawFrame(frame);		// NB: stops inherited timeout
+    if (readPending && waitFor(AT_CONNECT,0)){
+        stopTimeout("waiting for HDLC flags");
+        if (wasTimeout()){
+            abortReceive();
+            return (false);
+        }
+        return recvRawFrame(frame);
+    }
     stopTimeout("waiting for v.21 carrier");
     if (readPending && wasTimeout())
 	abortReceive();

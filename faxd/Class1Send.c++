@@ -103,9 +103,7 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg)
     time_t start = Sys::now();
     HDLCFrame frame(conf.class1FrameOverhead);
 
-    startTimeout(conf.t2Timer);
     bool framerecvd = recvRawFrame(frame);
-    stopTimeout("receiving id frame");
     for (;;) {
 	if (framerecvd) {
 	    /*
@@ -465,7 +463,16 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	 */
 	params.br = curcap->br;
 	dcs = (dcs &~ DCS_SIGRATE) | curcap->sr;
-	int t = 2;
+        /*
+	 * Set the number of train attemps on the same
+	 * modulation; having set it to 1 we immediately drop
+	 * the speed if the training has been failed.
+	 * This parameter is not specified by T.30
+	 * (the algorith left implementation defined),
+	 * so we choose the exact value according to our
+	 * common sense.
+	 */
+	int t = 1;
 	do {
 	    protoTrace("SEND training at %s %s",
 		modulationNames[curcap->mod],
@@ -540,7 +547,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	    pause(conf.class1TrainingRecovery);
 	} while (--t > 0);
 	/*
-	 * Two attempts at the current speed failed, drop
+	 * (t) attempts at the current speed failed, drop
 	 * the signalling rate to the next lower rate supported
 	 * by the local & remote sides and try again.
 	 */
@@ -846,6 +853,7 @@ Class1Modem::sendPPM(u_int ppm, HDLCFrame& mcf, fxStr& emsg)
 	    return (false);
     }
     emsg = "No response to MPS or EOP repeated 3 tries";
+    protoTrace(emsg);
     return (false);
 }
 
