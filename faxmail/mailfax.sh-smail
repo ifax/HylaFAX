@@ -29,5 +29,17 @@
 #   Note: I'm not a smail expert; this file is the result of a couple
 #       of hours of experimentation.                 Rick Lyons.
 
+TMPVAR=${SENDER//\`/}
+TMPVAR=${TMPVAR//\$\(/}
+SENDER=${TMPVAR//\(/}
+
+TMPVAR=${ADDR//\`/}
+TMPVAR=${TMPVAR//\$\(/}
+ADDR=${TMPVAR//\(/}
+
+TMPVAR=${PRIMARY_NAME//\`/}
+TMPVAR=${TMPVAR//\$\(/}
+PRIMARY_NAME=${TMPVAR//\(/}
+
 /usr/local/bin/faxmail | /usr/local/bin/sendfax -n -d \
         "`/usr/bin/expr \"$ADDR\" : '\(.*\)\.fax$'`" -f "$SENDER@$PRIMARY_NAME"

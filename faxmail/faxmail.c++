@@ -310,14 +310,10 @@ faxMailApp::run(int argc, char** argv)
 	 * file and setup delivery of the file.
 	 */
     char tmpl[128];
-    sprintf(tmpl, "%s/faxmailXXXXXX", _PATH_TMP);
+    sprintf(tmpl, "%s/faxmail.XXXXXX", _PATH_TMP);
 	int fd = Sys::mkstemp(tmpl);
 	if (fd < 0) {
         fxFatal("Cannot create temp file %s", (const char*) tmpl);
-    }
-    // security add for glibc < 2.0.7
-    if (fchmod(fd, 600) == -1) {
-        fxFatal("%s: %s", (const char*) tmpl, strerror(errno));
     }
 	tmps.append(tmpl);
 	client->addFile(tmpl);
@@ -592,8 +588,7 @@ faxMailApp::copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile)
     int ftmp;
     if (tmpFile == "") {
         char buff[128];
-        sprintf(buff, "%s/faxmailXXXXXX", _PATH_TMP);
-        int fd = Sys::mkstemp(buff);
+        snprintf(buff, sizeof(buff) - 1, "%s/faxmail.XXXXXX", _PATH_TMP);
         ftmp = Sys::mkstemp(buff);
         tmpFile = buff;
         tmps.append(tmpFile);
@@ -601,18 +596,26 @@ faxMailApp::copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile)
         ftmp = Sys::open(tmpFile, O_WRONLY|O_APPEND);
     }
     if (ftmp >= 0) {
-	fxStackBuffer buf;
-	bool ok = true;
-	while (mime.getLine(fd, buf) && ok)
-	    ok = (Sys::write(ftmp, buf, buf.getLength()) == buf.getLength());
-	if (ok) {
-	    Sys::close(ftmp);
-	    return (true);
-	}
-	error("%s: write error: %s", (const char*) tmpFile, strerror(errno));
-	Sys::close(ftmp);
-    } else
-	error("%s: Can not create temporary file", (const char*) tmpFile);
+        /*
+        if (!Sys::isRegularFile(tmpFile)) {
+            error("%s: is not a regular file", (const char*) tmpFile);
+            return(false);
+        }
+        */
+        fxStackBuffer buf;
+        bool ok = true;
+        while (mime.getLine(fd, buf) && ok) {
+	        ok = (Sys::write(ftmp, buf, buf.getLength()) == buf.getLength());
+        }
+        if (ok) {
+            Sys::close(ftmp);
+            return (true);
+        }
+        error("%s: write error: %s", (const char*) tmpFile, strerror(errno));
+        Sys::close(ftmp);
+    } else {
+	    error("%s: Can not create temporary file", (const char*) tmpFile);
+    }
     discardPart(fd, mime);
     return (false);
 }

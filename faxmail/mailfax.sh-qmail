@@ -12,6 +12,10 @@
 #       | /local/etc/mailfax
 #
 
+TMPVAR=${SENDER//\`/}
+TMPVAR=${TMPVAR//\$\(/}
+SENDER=${TMPVAR//\)/}
+
 /local/fax/bin/faxmail | /local/fax/bin/sendfax \
-        -f $SENDER \
+        -f "$SENDER" \
         -d "$EXT2@`/usr/bin/expr \"$HOST\" : '\(.*\)\.fax$'`"
