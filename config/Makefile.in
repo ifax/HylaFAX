@@ -63,7 +63,6 @@ CONFIGFILES=class1 \
 	moto-288 \
 	mt-1432 \
 	nuvo-voyager \
-    performance-rts \
 	ppi-pm14400fxmt \
 	ppi-pm14400fxsa \
 	rc144ac \

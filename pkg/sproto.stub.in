@@ -154,7 +154,6 @@ f none @SPOOL@/config/intel-400e=../@SRCDIR@/config/intel-400e 0444 @SYSUID@ @SY
 f none @SPOOL@/config/moto-288=../@SRCDIR@/config/moto-288 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/mt-1432=../@SRCDIR@/config/mt-1432 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/nuvo-voyager=../@SRCDIR@/config/nuvo-voyager 0444 @SYSUID@ @SYSGID@
-f none @SPOOL@/config/performance-rts=../@SRCDIR@/config/performance-rts 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/ppi-pm14400fxmt=../@SRCDIR@/config/ppi-pm14400fxmt 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/ppi-pm14400fxsa=../@SRCDIR@/config/ppi-pm14400fxsa 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/rc144ac=../@SRCDIR@/config/rc144ac 0444 @SYSUID@ @SYSGID@

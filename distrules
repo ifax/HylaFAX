@@ -201,7 +201,6 @@ HYLAFAXSRC=\
 	config/mt-1432				\
 	config/moto-288				\
 	config/nuvo-voyager			\
-	config/performance-rts			\
 	config/ppi-pm14400fxmt			\
 	config/ppi-pm14400fxsa			\
 	config/rc144ac				\
