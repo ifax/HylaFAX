@@ -71,7 +71,7 @@ public:
 /*
  * we have to use const u_char
  */
-inline TextCoord TextFont::charwidth(const char c) const { return widths[(const u_char) c]; }
+inline TextCoord TextFont::charwidth(const char c) const { return widths[(u_char) c]; }
 inline const char* TextFont::getFamily(void) const	 { return family; }
 
 class FontDict;

@@ -216,7 +216,7 @@ InetTransport::openDataConn(fxStr& emsg)
 bool
 InetTransport::abortCmd(fxStr& emsg)
 {
-    static const char msg[] =
+    static const u_char msg[] =
 	{ IAC, IP, IAC, DM, 'A', 'B', 'O', 'R', '\r', '\n' };
     int s = fileno(client.getCtrlFd());
     if (send(s, msg, 3, MSG_OOB) != 3) {
