@@ -173,7 +173,7 @@ MsgFmt::setConfigItem(const char* tag, const char* value)
             } else {
                 headToKeep.append(cp);
             }
-	    } while (cp = tp);
+        } while (cp = tp);
         delete [] cp;
     } else if (streq(tag, "mapheader")) {
 	char* tp = strchr(value, ' ');

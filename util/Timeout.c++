@@ -48,17 +48,17 @@ void
 Timeout::startTimeout(long ms)
 {
     timerExpired = false;
-#ifdef SV_INTERRUPT			/* BSD-style */
-    static struct sigvec sv;
-    sv.sv_handler = fxSIGVECHANDLER(Timeout::sigAlarm);
-    sv.sv_flags = SV_INTERRUPT;
-    sigvec(SIGALRM, &sv, (struct sigvec*) 0);
-#else
 #ifdef SA_NOCLDSTOP			/* POSIX */
     static struct sigaction sa;
     sa.sa_handler = fxSIGACTIONHANDLER(Timeout::sigAlarm);
     sa.sa_flags = SA_INTERRUPT;
     sigaction(SIGALRM, &sa, (struct sigaction*) 0);
+#else
+#ifdef SV_INTERRUPT			/* BSD-style */
+    static struct sigvec sv;
+    sv.sv_handler = fxSIGVECHANDLER(Timeout::sigAlarm);
+    sv.sv_flags = SV_INTERRUPT;
+    sigvec(SIGALRM, &sv, (struct sigvec*) 0);
 #else					/* System V-style */
     signal(SIGALRM, fxSIGHANDLER(sigAlarm));
 #endif

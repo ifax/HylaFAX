@@ -551,23 +551,23 @@ int Dispatcher::waitFor(
     fd_set& rmaskret, fd_set& wmaskret, fd_set& emaskret, timeval* howlong
 ) {
     int nfound;
-#if defined(SV_INTERRUPT)		// BSD-style
-    static struct sigvec sv, osv;
-#elif defined(SA_NOCLDSTOP)		// POSIX
+#if defined(SA_NOCLDSTOP)		// POSIX
     static struct sigaction sa, osa;
+#elif defined(SV_INTERRUPT)		// BSD-style
+    static struct sigvec sv, osv;
 #else					// System V-style
     void (*osig)();
 #endif
 
     if (!_cqueue->isEmpty()) {
-#if defined(SV_INTERRUPT)		// BSD-style
-	sv.sv_handler = fxSIGVECHANDLER(&Dispatcher::sigCLD);
-	sv.sv_flags = SV_INTERRUPT;
-	sigvec(SIGCHLD, &sv, &osv);
-#elif defined(SA_NOCLDSTOP)		// POSIX
+#if defined(SA_NOCLDSTOP)		// POSIX
 	sa.sa_handler = fxSIGACTIONHANDLER(&Dispatcher::sigCLD);
 	sa.sa_flags = SA_INTERRUPT;
 	sigaction(SIGCLD, &sa, &osa);
+#elif defined(SV_INTERRUPT)		// BSD-style
+	sv.sv_handler = fxSIGVECHANDLER(&Dispatcher::sigCLD);
+	sv.sv_flags = SV_INTERRUPT;
+	sigvec(SIGCHLD, &sv, &osv);
 #else					// System V-style
 	osig = (void (*)())signal(SIGCLD, fxSIGHANDLER(&Dispatcher::sigCLD));
 #endif
@@ -608,10 +608,10 @@ int Dispatcher::waitFor(
 	} while (nfound < 0 && !handleError());
     }
     if (!_cqueue->isEmpty()) {
-#if defined(SV_INTERRUPT)		// BSD-style
-	sigvec(SIGCHLD, &osv, (struct sigvec*) 0);
-#elif defined(SA_NOCLDSTOP)		// POSIX
+#if defined(SA_NOCLDSTOP)		// POSIX
 	sigaction(SIGCLD, &osa, (struct sigaction*) 0);
+#elif defined(SV_INTERRUPT)		// BSD-style
+	sigvec(SIGCHLD, &osv, (struct sigvec*) 0);
 #else					// System V-style
 	(void) signal(SIGCLD, fxSIGHANDLER(osig));
 #endif

@@ -722,7 +722,7 @@ checkGCCVersion()
     app=$1; shift
     eval `$app -v 2>&1 | \
 	sed -n -e '/version/s/.* [a-z\-]*\([0-9]*\)\.\([0-9]*\).\([0-9]*\).*/GCCdist=\1;GCCmajor=\2;GCCminor=\3/p'`
-    export GCCversion="${GCCdist}.${GCCmajor}.${GCCminor}"
+    GCCversion="${GCCdist}.${GCCmajor}.${GCCminor}"; export GCCversion
     if [ ${GCCdist} -gt $1 ]; then
         return 0
     fi
@@ -2334,44 +2334,52 @@ BuildPortDotH()
     # Select signal handler type casts.
     #
     if [ $ISGXX = yes ]; then
-	#
-	# Must use -pendantic-errors with gcc to insure (sig_t) (...)
-	# is treated as an error instead of a warning when searching
-	# for the proper signal handler types below.
-	#
-	OGCXXOPTS="$GCXXOPTS"
-	GCXXOPTS="$GCXXOPTS -pedantic-errors"
-	makeDefs xdefs
+        #
+        # Must use -pendantic-errors with gcc to insure (sig_t) (...)
+        # is treated as an error instead of a warning when searching
+        # for the proper signal handler types below.
+        #
+        OGCXXOPTS="$GCXXOPTS"
+        GCXXOPTS="$GCXXOPTS -pedantic-errors"
+        makeDefs xdefs
     fi
     SIGHANDLERTYPES="
-	$SIGHANDLERTYPES
-	(sig_t)
-	(SIG_PF)
-	(void(*)(int))
-	(void(*)())
-	(int)
+        $SIGHANDLERTYPES
+        (sig_t)
+        (SIG_PF)
+        (void(*)(int))
+        (void(*)())
+        (int)
     "
+    SIGHANDLERTYPE=
     for i in $SIGHANDLERTYPES; do
-	CheckSignalHandler "$i" && {
-	    echo "#define fxSIGHANDLER $i"
-	    Note "... use $i for signal handler type"
-	    break;
-	}
+        CheckSigactionHandler "$i" && {
+            SIGHANDLERTYPE="#define fxSIGACTIONHANDLER $i"
+            Note "... use $i for sigaction handler type"
+            break;
+	    }
     done
+    # Only look for sigvec if we cannot find a sigaction() type
+    if [ -z "$SIGHANDLERTYPE" ]; then
+        for i in $SIGHANDLERTYPES; do
+            CheckSigvecHandler "$i" && {
+                SIGHANDLERTYPE="#define fxSIGVECHANDLER $i"
+                Note "... use $i for sigvec handler type"
+                break;
+	        }
+        done
+    fi
+    echo $SIGHANDLERTYPE
+    SIGHANDLERTYPE=
     for i in $SIGHANDLERTYPES; do
-	CheckSigvecHandler "$i" && {
-	    echo "#define fxSIGVECHANDLER $i"
-	    Note "... use $i for sigvec handler type"
-	    break;
-	}
+        CheckSignalHandler "$i" && {
+            SIGHANDLERTYPE="#define fxSIGHANDLER $i"
+            Note "... use $i for signal handler type"
+            break;
+        }
     done
-    for i in $SIGHANDLERTYPES; do
-	CheckSigactionHandler "$i" && {
-	    echo "#define fxSIGACTIONHANDLER $i"
-	    Note "... use $i for sigaction handler type"
-	    break;
-	}
-    done
+    echo $SIGHANDLERTYPE
+
     if [ $ISGXX = yes ]; then
 	GCXXOPTS="$OGCXXOPTS"
 	makeDefs xdefs
