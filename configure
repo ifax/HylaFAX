@@ -2356,6 +2356,7 @@ Incompatible TIFF Library.
 HylaFAX ${VERSION} requires TIFF software distribution ver 3.4, 3.5, or
 3.6.  If you do not have up to date TIFF software on your system then
 you can retrieve it from the location where you obtained this software.
+The Home Page for version 3.5 and later is http://www.libtiff.org
 EOF
 	boom
 	return 1
