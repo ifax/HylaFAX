@@ -328,7 +328,7 @@ else
 fi
 echo ""
 
-find log -mtime +$AGELOG -print >$JUNK
+find log -type f -mtime +$AGELOG -print >$JUNK
 if [ -s $JUNK ]; then
     echo "Purge session logs older than $AGELOG days:"
     for i in `$CAT $JUNK`; do
@@ -408,7 +408,7 @@ echo ""
 #
 # Purge old stuff from the receive queue.
 #
-find recvq -mtime +$AGERCV -print >$JUNK
+find recvq -type f -mtime +$AGERCV -print >$JUNK
 if [ -s $JUNK ]; then
     echo "Purge received facsimile older than $AGERCV days:"
     (for i in `$CAT $JUNK`; do
