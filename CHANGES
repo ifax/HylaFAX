@@ -1,6 +1,6 @@
 Changelog for HylaFAX 4.1rc1 - Jun 04, 2001
 
-* remove use of /sbin/kill, problematic on Tru64 (04 Jun 2001)
+* remove use of /sbin/killall, problematic on Tru64 (04 Jun 2001)
 * fix ModemServer.c++ for OpenBSD (04 Jun 2001)
 * change manpage names: config to hylafax-config, info to
   hylafax-info, log to hylafax-log, and shutdown to

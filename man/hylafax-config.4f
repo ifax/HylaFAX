@@ -165,7 +165,7 @@ PollLockWait\(S2	integer	\s-130\s+1	polling interval when in ``lock wait'' state
 PollModemWait	integer	\s-130\s+1	polling interval when in ``modem wait'' state (secs)
 PollRcvdCmd	string	\s-1bin/pollrcvd\s+1	delivery script for facsimile received by polling
 PostScriptTimeout\(S1	integer	\s-1300\s+1	timeout on \*(Ps interpreter runs (secs)
-PriorityScheduling\(S2	boolean	\s-1\fIsee below\fP\s+1	use available priority job scheduling mechanism
+PriorityScheduling	boolean	\s-1\fIsee below\fP\s+1	use available priority job scheduling mechanism
 PS2FaxCmd\(S1	string	\s-1bin/ps2fax\s+1	\*(Ps \s-1RIP\s+1 command script
 QualifyCID	string	\-	file of Caller-ID patterns for checking inbound calls
 QualifyTSI	string	\-	file of \s-1TSI\s+1 patterns for qualifying senders
@@ -896,7 +896,7 @@ The time (in seconds) to wait between checks
 for a modem to become ready for use.
 Modem polling occurs when a modem fails to reset cleanly.
 .TP
-.B PriorityScheduling\(S2
+.B PriorityScheduling
 Indicates whether the \*(Fx scheduler should utilize available 
 priority job scheduling mechanisms to enhance realtime execution, 
 particularly with Class 1 configurations on older or slower 
