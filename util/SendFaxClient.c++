@@ -783,7 +783,7 @@ SendFaxClient::estimatePostScriptPages(const char* filename)
 	        rewind(fd);
 	        char *cp = line;
 		int len;
-	        while ((len = fread(cp, 1, endbuf-cp, fd)) > 0) {
+	        while ((len = fread(cp, 1, endbuf-cp, fd)) > slen+line-cp) {
                     endbuf = cp+len;    // Will only change on the last pass.
 	            cp = line;
 	            while ((cp = (char *) memchr(cp, '/', endbuf-cp-slen))) {
