@@ -71,6 +71,7 @@ private:
     fxStr	mimeConverters;		// pathname to MIME converter scripts
     fxStr	mailProlog;		// site-specific prologue definitions
     fxStr	clientProlog;		// client-specific prologue info
+    fxStr   pageSize;       // record specified page size
     fxStr	msgDivider;		// digest message divider
     fxStrArray	tmps;			// temp files
 
@@ -176,7 +177,8 @@ faxMailApp::run(int argc, char** argv)
 	    setPageOrientation(TextFmt::PORTRAIT);
 	    break;
 	case 's':			// page size
-	    setPageSize(optarg);
+        pageSize = optarg;
+	    setPageSize(pageSize);
 	    break;
 	case 'u':			// mail/login user
 	    mailUser = optarg;
@@ -236,12 +238,17 @@ faxMailApp::run(int argc, char** argv)
 	/*
 	 * Establish the sender's identity.
 	 */
-	if (optind+1 < argc)
+	if (optind+1 < argc) {
 	    client->setFromIdentity(argv[optind+1]);
-	else if (s = findHeader("from"))
+	} else if (s = findHeader("from")) {
 	    client->setFromIdentity(*s);
-	else
+	} else {
 	    fxFatal("No From/Sender identity specified");
+    }
+
+    if (pageSize != "") {
+        job->setPageSize(pageSize);
+    }
 
 	/*
 	 * Scan envelope for any meta-headers that
@@ -691,6 +698,7 @@ faxMailApp::setupConfig()
     mimeConverters = FAX_LIBEXEC "/faxmail";
     mailProlog = FAX_LIBDATA "/faxmail.ps";
     msgDivider = "";
+    pageSize = "";
     mailUser = "";			// default to real uid
     autoCoverPage = true;		// a la sendfax
 
