@@ -43,7 +43,7 @@ class NSF {
     bool  stationIdDecoded;
 public:
     NSF();
-    NSF( const char* hexNSF );
+    NSF( const char* hexNSF, bool useHex );
     NSF( const u_char* rawData, int size, const u_char* revTab );
     /*
      * We are happy with default copy constructor and copy assignment,
@@ -58,7 +58,7 @@ public:
     const char* getStationId(){ return (const char*)stationId; }
 private:
     void clear();
-    void loadHexData( const char* hexNSF );
+    void loadHexData( const char* hexNSF, bool useHex );
     void loadRawData( const u_char* rawData, int size, const u_char* revTab );
     void findStationId( bool reverseOrder, bool reverseBitOrder );
     void decode();

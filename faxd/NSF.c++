@@ -311,10 +311,10 @@ NSF::NSF()
 }
 
 
-NSF::NSF( const char* hexNSF )
+NSF::NSF( const char* hexNSF, bool useHex )
 {
     clear();
-    loadHexData( hexNSF );
+    loadHexData( hexNSF, useHex );
     decode();
 }
 
@@ -336,16 +336,17 @@ void NSF::clear()
     stationIdDecoded = false;
 }
 
-void NSF::loadHexData( const char* hexNSF )
+void NSF::loadHexData( const char* hexNSF, bool useHex )
 {
     hexNsf.append( hexNSF );
     const char *p = hexNSF;
     char *pNext = NULL;
     for( ;; ){
-        int val = strtol( p, &pNext, 16 );
+        int val = strtol( p, &pNext, (useHex ? 16 : 10) );
         if( pNext == p )
             break;
         p = pNext;
+	if (p[0] != '\0') p++;		// skip delimiter
         nsf.append( (unsigned char)val );
     }
 }

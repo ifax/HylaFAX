@@ -305,6 +305,7 @@ Class2DCCQueryCmd	string	\s-1AT+FDCC=?\s+1	Class 2: command to query modem capab
 Class2DISCmd	string	\s-1AT+FDIS\s+1	Class 2: command to set session parameters
 Class2DDISCmd	string	\-	Class 2: command to set session parameters before dialing
 Class2ECMType	string	\s-1``2''\s+1	Class 2: ECM specification type to follow
+Class2HexNSF	boolean	\s-1Yes\s+1	Class 2: parse NSF strings as hex values
 Class2HFLOCmd	string	\-	Class 2: command to set hardware flow control
 Class2LIDCmd	string	\s-1AT+FLID\s+1	Class 2: command to set local identifier string
 Class2MINSPCmd	string	\s-1AT+FMINSP\s+1	Class 2: command to set minimum transmit speed
@@ -338,6 +339,7 @@ Class2DCCCmd	string	\s-1AT+FCC\s+1	Class 2.0: command to set modem capabilities
 Class2DCCQueryCmd	string	\s-1AT+FCC=?\s+1	Class 2.0: command to query modem capabilities
 Class2DISCmd	string	\s-1AT+FIS\s+1	Class 2.0: command to set session parameters
 Class2ECMType	string	\s-1``2.0''\s+1	Class 2.0: ECM specification type to follow
+Class2HexNSF	boolean	\s-1Yes\s+1	Class 2.0: parse NSF strings as hex values
 Class2HFLOCmd	string	\s-1AT+FLO=2\s+1	Class 2.0: command to set hardware flow control
 Class2LIDCmd	string	\s-1AT+FLI\s+1	Class 2.0: command to set local identifier string
 Class2MINSPCmd	string	\s-1AT+FMS\s+1	Class 2.0: command to set minimum transmit speed
@@ -2359,6 +2361,10 @@ The interpretation of the EC parameter in the modem DCC response varies
 between the Class 2, ``2'', and Class 2.0, ``2.0'', specifications.  This
 configuration parameter allows the administrator to specify which type to
 use.  The corresponding specification type is used by default.
+.TP
+.B Class2HexNSF
+Whether or not to parse the NSF strings reported by the modem 
+using hexadecimal values.  By default, they are parsed as hexadecimal values.
 .TP
 .B Class2HFLOCmd
 The command to setup hardware (\s-1RTS/CTS\s+1)

@@ -234,6 +234,7 @@ ModemConfig::setupConfig()
     class2SendRTC	= false;		// default per Class 2 spec
     class2RTFCC		= false;		// real-time fax comp. conv.
     class2UseHex	= false;		// historical behavior
+    class2HexNSF	= true;			// most modems report NSF in hexadecimal
     class2UseLineCount	= false;		// don't trust firmware decoders
     class1ECMSupport	= true;			// support for ECM
     class1ExtendedRes	= true;			// support for extended resolutions
@@ -599,6 +600,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class2ECMType = getECMType(value);
     else if (streq(tag, "class2usehex"))
 	class2UseHex = getBoolean(value);
+    else if (streq(tag, "class2hexnsf"))
+	class2HexNSF = getBoolean(value);
     else if (streq(tag, "class2uselinecount"))
 	class2UseLineCount = getBoolean(value);
     else if (streq(tag, "class2rtfcc"))

@@ -144,7 +144,7 @@ Class2Modem::getPrologue(Class2Params& dis, bool& hasDoc, fxStr& emsg, u_int& ba
 		gotParams = parseClass2Capabilities(skipStatus(rbuf), dis);
 		break;
 	    case AT_FNSF:
-		recvNSF(NSF(skipStatus(rbuf)));
+		recvNSF(NSF(skipStatus(rbuf), conf.class2HexNSF));
 		break;
 	    case AT_FCSI:
 		recvCSI(stripQuotes(skipStatus(rbuf)));

@@ -49,6 +49,8 @@ CONFIGFILES=class1 \
 	class2.1 \
 	skel \
 	\
+	agere-mp-2 \
+	agere-mp-21 \
 	att-dataport-2 \
 	att-dataport-2.0 \
 	att-dataport \

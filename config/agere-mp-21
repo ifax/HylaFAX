@@ -1,0 +1,36 @@
+# $Id$
+#
+# prototype config file for Mainpine Ltd. RockForceDUO+
+#
+
+#
+# CONFIG: CLASS2.1:"Agere Systems"-"Mainpine Venus V.92"*-*
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+
+ModemType:		Class2.1
+ModemRate:		57600		# for V.34 faxing
+ModemNoFlowCmd:		AT&K0
+ModemSoftFlowCmd:	AT&K4
+ModemHardFlowCmd:	AT&K3
+ModemRecvFillOrder:	MSB2LSB
+
+Class2APCmd:		AT+FAP=1,1,1
+Class2BUGCmd:		AT+FBU=0	# early firmware is buggy
+Class2SendRTC:		yes
+Class2UseHex:		yes
+
+# unfortunately, HylaFAX can't currently send or receive in color
+ModemAnswerCmd:		AT+FCC=,,,,,,,,0;A
+ModemDialCmd:		AT+FCC=,,,,,,,,0;DT%s
+
+# You may want to do something like this to enable CTC in ECM
+# Class2Cmd:		AT+FCLASS=2.1;+FRY=4
+
+# If your line supports Caller-ID, you may want to uncomment this...
+# QualifyCID:		etc/cid		# you must create this file
+# ModemResetCmds:	AT+VCID=1
+# CIDNumber:		"NMBR="
+# CIDName:		"NAME="

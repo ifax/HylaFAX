@@ -185,6 +185,8 @@ HYLAFAXSRC=\
     dist/newalpha				\
     dist/newversion				\
     config/Makefile.in				\
+	config/agere-mp-2			\
+	config/agere-mp-21			\
 	config/att-dataport			\
 	config/att-dataport-2			\
 	config/att-dataport-2.0			\

@@ -184,6 +184,7 @@ public:
     fxStr	class2PACmd;		// cmd to set selective polling address
     fxStr	class2PWCmd;		// cmd to set password for transmit/poll
     bool	class2UseHex;		// parse capabilities strings as hex
+    bool	class2HexNSF;		// parse nsf strings as hex
     bool	class2UseLineCount;	// use the firmware decoder's line count
 
     FlowControl	flowControl;		// DTE-DCE flow control method
