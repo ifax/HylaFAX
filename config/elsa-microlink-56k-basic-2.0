@@ -1,0 +1,110 @@
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+#
+# Permission to use, copy, modify, distribute, and sell this software and
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+#
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+#
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+# OF THIS SOFTWARE.
+#
+
+#
+# Configuration for using the Class 2.0 command interface with
+# a Elsa MicroLink 56k basic
+#
+# CONFIG: CLASS2.0: *ELSA*MicroLink*56k*basic*-RTSCTS
+# CONFIG: CLASS2.0: *ELSA*MicroLink*56k*basic*-DEFAULT
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+# EDIT THIS CONFIGURATION TO REFLECT YOUR SETUP
+#
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:              Class2.0        # use this to supply a hint
+ModemRate:              115200          # max rate for DCE-DTE communication
+ModemFlowControl:       rtscts          # XON/XOFF flow control assumed
+ModemSetupDTRCmd:       AT&D2           # setup so DTR drop resets modem
+ModemSetupDCDCmd:       AT&C1           # setup so DCD reflects carrier (or not)
+#
+# We normally append the "@" symbol to the dial string so that
+# the modem will wait 5 seconds before attempting to connect
+# and return result codes that distinguish between no carrier
+# and no answer.  This makes it possible to avoid problems with
+# repeatedly dialing a number that doesn't have a fax machine
+# (kudos to Stuart Lynne for this trick.)
+#
+# NB: If you need to prefix phone numbers to get through a PBX,
+#     put it in the ModemDialCmd; e.g. "DT9%s@".
+#
+ModemDialCmd:           ATDT%s@
+#
+# Other possible configuration stuff.  The default strings are
+# shown below.  Only those that are different from the defaults
+# need to be included in the configuration file.
+#
+ModemResetCmds:         ATX3            # stuff to do when modem is reset
+ModemAnswerCmd:         ATA             # use this to answer phone
+ModemNoFlowCmd:         AT&K
+ModemHardFlowCmd:       AT&K3
+ModemSoftFlowCmd:       AT&K1
+ModemNoAutoAnswerCmd:   ATS0=0          # disable auto-answer
+#
+# Set modem speaker volume commands: OFF QUIET LOW MEDIUM HIGH.
+# Note that we both turn the speaker on/off and set volume.
+#
+ModemSetVolumeCmd:      "ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1"
+ModemEchoOffCmd:        ATE0            # disable command echo
+ModemVerboseResultsCmd: ATV1            # enable verbose command results
+ModemResultCodesCmd:    ATQ0            # enable result codes
+ModemOnHookCmd:         ATH             # place phone on hook (hangup)
+ModemSoftResetCmd:      ATZ             # do soft reset of modem
+ModemWaitTimeCmd:       ATS7=60         # wait 60 seconds for carrier
+ModemCommaPauseTimeCmd: ATS8=2          # comma pause time is 2 seconds
+ModemRecvFillOrder:     LSB2MSB         # bit order of received facsimile
+ModemSendFillOrder:     LSB2MSB         # bit order modem expects for transmit
+#
+# Configuration parameters for Class 2.0 modems.
+#
+Class2Cmd:              AT+FCLASS=2.0   # command to enter class 2.0
+Class2BORCmd:           AT+FBO=0        # bit order for phase B/C/D (direct)
+Class2CQCmd:            ""              # commands to enable copy quality proc.
+Class2AbortCmd:         AT+FKS          # abort session command
+Class2CQQueryCmd:       AT+FCQ=?        # query for copy quality capabilities
+Class2DCCQueryCmd:      AT+FCC=?        # query for modem capabilities
+Class2TBCCmd:           AT+FPP=0        # setup stream mode
+Class2CRCmd:            AT+FCR=1        # enable capability to receive
+Class2PHCTOCmd:         AT+FCT=30       # set phase C timeout parameter
+Class2BUGCmd:           AT+FBU=1        # enable HDLC frame tracing
+Class2LIDCmd:           AT+FLI          # set local identifier command
+Class2DCCCmd:           AT+FCC          # set modem capabilities command
+Class2DISCmd:           AT+FIS          # set session parameters command
+Class2DDISCmd:          ""              # disable pre-dial DIS command hack
+Class2CIGCmd:           AT+FPI          # set polling identifier command
+Class2NRCmd:            AT+FNR=1,1,1,1  # setup status reporting command
+Class2PIECmd:           AT+FIE=0        # disable interrupt-enable command
+Class2PTSCmd:           AT+FPS          # set post-page status command
+Class2SPLCmd:           AT+FSP          # set polling indicator command
+Class2NFLOCmd:          AT+FLO=0        # set no flow control command
+Class2SFLOCmd:          AT+FLO=1        # set software flow control command
+Class2HFLOCmd:          AT+FLO=2        # set hardware flow control command
