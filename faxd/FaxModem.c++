@@ -733,6 +733,7 @@ public:
     void fixFirstEOL();
     u_char* cutExtraRTC();
     u_char* cutExtraEOFB();
+    int		getLastByte();
 };
 
 MemoryDecoder::MemoryDecoder(u_char* data, u_int wid, u_long n,
@@ -765,6 +766,12 @@ MemoryDecoder::decodeNextByte()
         raiseRTC();                     // XXX don't need to recognize EOF
     cc--;
     return (*bp++);
+}
+
+int
+MemoryDecoder::getLastByte()
+{
+    return (*(endOfData - 1));
 }
 
 #ifdef roundup
@@ -888,17 +895,21 @@ u_char* MemoryDecoder::cutExtraEOFB()
                 break;
         }
     }
+    if (seenRTC())
+	endOfData--;	// step back over the first byte of EOFB
     return endOfData;
 }
 
-void
+int
 FaxModem::correctPhaseCData(u_char* buf, u_long* pBufSize,
                             u_int fillorder, const Class2Params& params)
 {
     u_char* endOfData;
+    int lastbyte = 0;
     if (params.df == DF_2DMMR) {
 	MemoryDecoder dec1(buf, params.pageWidth(), *pBufSize, fillorder, params.is2D(), true);
 	endOfData = dec1.cutExtraEOFB();
+	lastbyte = dec1.getLastByte();
     } else {
 	MemoryDecoder dec1(buf, params.pageWidth(), *pBufSize, fillorder, params.is2D(), false);
 	dec1.fixFirstEOL();
@@ -910,4 +921,5 @@ FaxModem::correctPhaseCData(u_char* buf, u_long* pBufSize,
     }
     if( endOfData )
         *pBufSize = endOfData - buf;
+    return lastbyte;
 }

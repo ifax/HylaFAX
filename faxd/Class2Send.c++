@@ -423,7 +423,7 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
         /*
          * correct broken Phase C (T.4/T.6) data if necessary
          */
-	correctPhaseCData(dp, &totdata, fillorder, params);
+	lastByte = correctPhaseCData(dp, &totdata, fillorder, params);
 
 	beginTimedTransfer();
 	rc = putModemDLEData(dp, (u_int) totdata, bitrev, getDataTimeout());
@@ -442,14 +442,21 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 bool
 Class2Modem::sendRTC(Class2Params params)
 {
+    // determine the number of trailing zeros on the last byte of data
+    u_short zeros = 0;
+    for (short i = 7; i >= 0; i--) {
+	if (lastByte & (1<<i)) break;
+	else zeros++;
+    }
     // these are intentionally reverse-encoded in order to keep
     // rtcRev and bitrev in sendPage() in agreement
     static const u_char RTC1D[9] =
 	{ 0x00,0x08,0x80,0x00,0x08,0x80,0x00,0x08,0x80 };
     static const u_char RTC2D[10] =
 	{ 0x00,0x18,0x00,0x03,0x60,0x00,0x0C,0x80,0x01,0x30 };
-    static const u_char EOFB[3] =
-	{ 0x00,0x08,0x80 };
+    // T.6 does not allow zero-fill until after EOFB and not before.
+    const u_char EOFB[3] =
+	{ ((0x0800 >> zeros) & 0xFF),((0x8008 >> zeros) & 0xFF),(0x80 >> zeros) };
     if (params.df == DF_2DMMR) {
 	protoTrace("SEND EOFB");
         return putModemDLEData(EOFB, sizeof (EOFB), rtcRev, getDataTimeout());

@@ -159,5 +159,6 @@ public:
     bool	reset(long ms);			// reset modem
     void	setLID(const fxStr& number);	// set local id string
     bool	supportsPolling() const;	// modem capability
+    int		lastByte;
 };
 #endif /* _CLASS2_ */

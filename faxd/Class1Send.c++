@@ -1073,7 +1073,9 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			}
 			break;
 		    default:
-			break;
+			emsg = "COMREC invalid response received to PPS.";
+			protoTrace(emsg);
+			return(false);
 		}
 	    } else {
 		emsg = "No response to PPS repeated 3 times.";
@@ -1158,16 +1160,23 @@ Class1Modem::sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm
  * send all the data they are presented.
  */
 bool
-Class1Modem::sendRTC(Class2Params params, u_int ppmcmd, fxStr& emsg)
+Class1Modem::sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, fxStr& emsg)
 {
+    // determine the number of trailing zeros on the last byte of data
+    u_short zeros = 0;
+    for (short i = 7; i >= 0; i--) {
+	if (lastbyte & (1<<i)) break;
+	else zeros++;
+    }
     // these are intentionally reverse-encoded in order to keep
     // rtcRev and bitrev in sendPage() in agreement
     static const u_char RTC1D[9+20] =
 	{ 0x00,0x08,0x80,0x00,0x08,0x80,0x00,0x08,0x80 };
     static const u_char RTC2D[10+20] =
 	{ 0x00,0x18,0x00,0x03,0x60,0x00,0x0C,0x80,0x01,0x30 };
-    static const u_char EOFB[3+20] =
-	{ 0x00,0x08,0x80 };
+    // T.6 does not allow zero-fill until after EOFB and not before.
+    const u_char EOFB[3+20] =
+	{ ((0x0800 >> zeros) & 0xFF),((0x8008 >> zeros) & 0xFF),(0x80 >> zeros) };
     if (params.df == DF_2DMMR) {
 	protoTrace("SEND EOFB");
 	return sendClass1ECMData(EOFB, sizeof(EOFB), rtcRev, true, ppmcmd, emsg);
@@ -1228,6 +1237,7 @@ EOLcode(u_long& w)
 bool
 Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_int ppmcmd, fxStr& emsg)
 {
+    int lastbyte = 0;
     /*
      * Set high speed carrier & start transfer.  If the
      * negotiated modulation technique includes short
@@ -1298,7 +1308,7 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
         /*
          * correct broken Phase C (T.4/T.6) data if neccessary 
          */
-	correctPhaseCData(dp, &totdata, fillorder, params);
+	lastbyte = correctPhaseCData(dp, &totdata, fillorder, params);
 
 	/*
 	 * Send the page of data.  This is slightly complicated
@@ -1402,7 +1412,7 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, u_i
 	delete data;
     }
     if (rc || abortRequested())
-	rc = sendRTC(params, ppmcmd, emsg);
+	rc = sendRTC(params, ppmcmd, lastbyte, emsg);
     protoTrace("SEND end page");
     if (params.ec != EC_ENABLE) {
 	// these were already done by ECM protocol
