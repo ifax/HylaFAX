@@ -8,7 +8,7 @@ CHANGES:
 * add Class1ResponseWaitCmd to help USR send errors (13 Sep 2002)
 * add recognition of most of Japan NSF codes (13 Sep 2002)
 * fix notify manpage to not include commid (13 Sep 2002)
-* add +XMonth capability to "at" syntax (13 Sep 2002)
+* fix +XMonth capability of "at" syntax to use 12 month year (13 Sep 2002) 
 * fix killtime to allow >= 24 day settings (13 Sep 2002)
 * add RingExtended config option (29 Aug 2002)
 * pass CID information to faxrcvd when using faxanswer (27 Aug 2002)
