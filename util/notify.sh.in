@@ -205,7 +205,7 @@ parseQfile()
                   sub(/\\\\$/, "\\\\n", status);
                   while (getline > 0) {
                   status = status $0;
-                  gsub("*","",status);
+                  gsub(/\*/,"",status);
                   sub(/\\\\$/, "\\\\n", status);
                   if ($0 !~ /\\\\$/)
                       break;
