@@ -1,6 +1,6 @@
 #	$Id$	
 
-Changelog for HylaFAX 4.2.0
+Changelog for HylaFAX 4.2.0 - Aug 16, 2004
 
 * resurrect 4.1.x notify as notify-4.1.sh for compatibility (16 Aug 2004)
 * fix font rendering at hyperfine resolution (13 Aug 2004)
