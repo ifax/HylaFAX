@@ -63,10 +63,14 @@ InetSuperServer::startServer(void)
 		sin.sin_port = htons(FAX_DEFPORT);
 	} else
 	    sin.sin_port = sp->s_port;
-	if (Socket::bind(s, &sin, sizeof (sin)) >= 0) {
-	    (void) listen(s, getBacklog());
-	    Dispatcher::instance().link(s, Dispatcher::ReadMask, this);
-	    return (true);				// success
+	{ int on = 1;
+	    if (Socket::setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) >= 0) {
+		if (Socket::bind(s, &sin, sizeof (sin)) >= 0) {
+		    (void) listen(s, getBacklog());
+		    Dispatcher::instance().link(s, Dispatcher::ReadMask, this);
+		    return (true);				// success
+		}
+	    }
 	}
 	Sys::close(s);
 	logError("HylaFAX %s: bind (port %u): %m",
