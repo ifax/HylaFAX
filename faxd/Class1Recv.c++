@@ -1134,7 +1134,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    if (wasTimeout()) abortReceive();	// return to command mode
 					    return (false);
 					}
-				    }
+				    } else gotprimary = true;
 				}
 			    }
 			} else {
