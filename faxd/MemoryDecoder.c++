@@ -289,8 +289,8 @@ u_char* MemoryDecoder::cutExtraEOFB()
                 break;
         }
     }
-    if (seenRTC())
-	endOfData--;	// step back over the first byte of EOFB
+    if (seenRTC() && *(endOfData - 1) == 0x00)
+	endOfData--;	// step back over the first byte of EOFB, lastbyte must be non-zero!
     return endOfData;
 }
 
