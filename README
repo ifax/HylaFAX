@@ -19,6 +19,7 @@ further resources regarding HylaFAX.
 * support for MultiTech Real-Time Fax Compression Conversion via new 
   Class2RTFCC option
 * support for Class 2.1 and V.34-fax (Super G3) modems
+* gcc version 3 support
 * new 'sendfax -z' option to read destinations from a file
 * support for Solaris DSOs
 * additional modem support for various MultiTech, Eicon, Sedlbauer, 
@@ -43,7 +44,6 @@ further resources regarding HylaFAX.
 * The popular faxrcvd-mail scripts have been deprecated by FILETYPE use in 
   FaxDispatch, and unchanged, will not work with faxgetty in 4.1.3.  See 
  'man faxrcvd' for details.
-* HylaFAX 4.1.3 may not compile with gcc-3.0 or gcc-3.1
 
                       *   WHO SHOULD UPGRADE?   *
 
