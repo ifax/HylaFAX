@@ -856,7 +856,11 @@ while [ -z "$RESULT" ]; do
     trap "$RMCMD \$JUNK; $RMCMD -r $TMPDIR; kill $nagpid \$catpid; exit 1" 0 1 2 15
     SendToModem "AT+FCLASS=?" 			# ask for class support
 
+    exec 3>&2 2> /dev/null  # Mute stderr against child death
     kill $nagpid
+    wait $nagpid            # Really waits its end
+    exec 2>&3 3>&-          # Restore stderr
+
     trap "$RMCMD \$JUNK; $RMCMD -r $TMPDIR; test \"\$catpid\" && kill \$catpid; exit 1" 0 1 2 15
     sleep 1
 
