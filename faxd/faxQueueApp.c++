@@ -357,6 +357,7 @@ faxQueueApp::prepareJobDone(Job& job, int status)
     } else {
 	switch (status) {
 	case Job::requeued:		// couldn't fork RIP
+	    job.remove();
 	    delayJob(job, *req, "Cannot fork to prepare job for transmission",
 		Sys::now() + random() % requeueInterval);
 	    delete req;
