@@ -10,10 +10,10 @@
 if test -f @LIBDATA@/faxcover.ps
 then
 	mv @LIBDATA@/faxcover.ps.dist @LIBDATA@/faxcover.ps.N
-	installf HylaFAX @LIBDATA@/faxcover.ps.N 0644 @SYSUID@ @SYSGID@
+	installf HylaFAX @LIBDATA@/faxcover.ps.N f 0644 @SYSUID@ @SYSGID@
 else
 	mv @LIBDATA@/faxcover.ps.dist @LIBDATA@/faxcover.ps
-	installf HylaFAX @LIBDATA@/faxcover.ps 0644 @SYSUID@ @SYSGID@
+	installf HylaFAX @LIBDATA@/faxcover.ps f 0644 @SYSUID@ @SYSGID@
 fi
 removef HylaFAX @LIBDATA@/faxcover.ps.dist
 
