@@ -37,6 +37,8 @@
 #include <sys/file.h>
 #include <pwd.h>
 #include <limits.h>
+#include <grp.h>
+#include <unistd.h>
 
 const char* HylaFAXServer::version = HYLAFAX_VERSION;
 
@@ -219,6 +221,8 @@ HylaFAXServer::setupPermissions(void)
 	logError("No fax user \"%s\" defined on your system!\n"
 	    "This software is not installed properly!", FAX_USER);
     else if (euid == 0) {
+	if (initgroups(pwd->pw_name, pwd->pw_gid) != 0)
+	    logError("Can not setup permissions (supplementary groups): %m");
 	if (setegid(pwd->pw_gid) < 0)
 	    logError("Can not setup permissions (gid): %m");
 	else if (seteuid(pwd->pw_uid) < 0)

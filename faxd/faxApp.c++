@@ -29,6 +29,8 @@
 #include <errno.h>
 #include <pwd.h>
 #include <limits.h>
+#include <grp.h>
+#include <unistd.h>
 extern "C" {
 #if HAS_LOCALE
 #include <locale.h>
@@ -425,6 +427,8 @@ faxApp::setupPermissions(void)
 	faxApp::fatal("No fax user \"%s\" defined on your system!\n"
 	    "This software is not installed properly!", FAX_USER);
     if (euid == 0) {
+	if (initgroups(pwd->pw_name, pwd->pw_gid) != 0)
+	    faxApp::fatal("Can not setup permissions (supplementary groups)");
 	if (setegid(pwd->pw_gid) < 0)
 	    faxApp::fatal("Can not setup permissions (gid)");
 	if (seteuid(pwd->pw_uid) < 0)
