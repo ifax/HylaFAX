@@ -1312,11 +1312,15 @@ Class1Modem::recvTCF(int br, HDLCFrame& buf, const u_char* bitrev, long ms)
 	if (c != EOF) {
 	    buf.reset();
 	    /*
-	     * Use a 2 second timer to receive the 1.5
-	     * second TCF--perhaps this is too long to
-	     * permit us to send the nak in time?
+	     * Use a  timer to receive the 1.5
+	     * second TCF--perhaps if it is too long it
+	     * won't permit us to send the nak in time?
+	     *
+	     * It needs to be longer than 1.5 seconds, though
+	     * to support senders that may not start the zeros
+	     * until a second or two after CONNECT.
 	     */
-	    startTimeout(2000);
+	    startTimeout(ms);
 	    do {
 		if (c == DLE) {
 		    c = getModemChar(0);

@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* change the 2 s TCF timeout to use Class1TCFRecvTimeout (2 Mar 2005)
 * handle PPS after 4th PPR (2 Mar 2005)
 * fix potential error in counting of PPR signals (2 Mar 2005)
 * handle EOT after PPS (28 Feb 2005)
