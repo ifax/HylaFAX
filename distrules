@@ -193,6 +193,9 @@ HYLAFAXSRC=\
 	config/class2				\
 	config/class2.0				\
 	config/class2.1				\
+	config/digi				\
+	config/digi-2				\
+	config/digi-20				\
 	config/davicom-2			\
 	config/dsi-scout+			\
 	config/e-tech				\
