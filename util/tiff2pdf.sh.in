@@ -75,7 +75,7 @@ else
 fi
 
 tmpps=foo.ps
-out=foo.pdf				# default output filename
+out=foo$$.pdf				# default output filename
 FILE=
 opt=
 while test $# != 0
