@@ -357,6 +357,7 @@ OptionalServerParameters="
     LocalIdentifier
     LogFacility
     ClocalAsRoot
+    PriorityScheduling
     TagLineFont
     TagLineFormat
     QualifyCID
@@ -446,6 +447,7 @@ defaultMaxConsecutiveBadLines=5
 defaultMaxRecvPages=1000
 defaultLogFacility=daemon
 defaultClocalAsRoot=\"\"
+defaultPriorityScheduling=\"\"
 defaultAdaptiveAnswer=\"\"
 defaultAnswerRotary=\"\"
 defaultAnswerBias=\"\"
@@ -729,6 +731,7 @@ B	LockVoiceCalls		Hold UUCP lockfile during inbound voice calls
 	Max number of pages to accept in a received facsimile
 S	LogFacility		Syslog facility name for ServerTracing messages
 B	ClocalAsRoot		Set UID to 0 to manipulate CLOCAL
+B	PriorityScheduling	Use available priority job scheduling mechanism
 EOF
 	. $PROMPTS
     fi

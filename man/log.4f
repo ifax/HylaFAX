@@ -117,6 +117,11 @@ A
 .IR priocntl
 system call to get the current process scheduling information failed.
 .PP
+\fBsched policy=%d, priority=%d\fP.
+(\fIOnly on POSIX-compliant systems.\fP)
+Indicates a possible change in the system job scheduling due to use of
+.B PriorityScheduling
+.PP
 \fB%s: Can not deduce modem type.\fP.
 The server was unable to reset and initialize the modem.
 This can be caused by many things: wrong device filename, improper

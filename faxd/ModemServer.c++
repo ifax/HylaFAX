@@ -305,11 +305,35 @@ static const int rtprioParams[9] = {
     RTPRIO_HIGH,		// RECEIVING
     RTPRIO_RTOFF,		// LISTENING
 };
+#elif HAS_POSIXSCHED
+/*
+ * In POSIX (i.e. Linux), a real time priority is
+ * between 1 (low) and 99 (high);
+ * for now we conservatively use 1.  Priority of 0 
+ * is without real-time application.
+ */
+#include <sched.h>
+static const struct SchedInfo {
+    int		policy;
+    int		priority;
+} sched_setschedulerParams[9] = {
+    {SCHED_OTHER,	0},	// BASE
+    {SCHED_OTHER,	0},	// RUNNING
+    {SCHED_OTHER,	0},	// MODEMWAIT
+    {SCHED_OTHER,	0},	// LOCKWAIT
+    {SCHED_OTHER,	0},	// GETTYWAIT
+    {SCHED_FIFO,	1},	// SENDING
+    {SCHED_FIFO,	1},	// ANSWERING
+    {SCHED_FIFO,	1},	// RECEIVING
+    {SCHED_OTHER,	0},	// LISTENING
+};
+
 #endif
 
 void
 ModemServer::setProcessPriority(ModemServerState s)
 {
+    if (priorityScheduling) {
 #if HAS_SCHEDCTL
     uid_t euid = geteuid();
     if (seteuid(0) >= 0) {		// must be done as root
@@ -364,7 +388,22 @@ ModemServer::setProcessPriority(ModemServerState s)
 	    traceServer("seteuid(%d): %m", euid);
     } else
 	traceServer("seteuid(root): %m");
+#elif HAS_POSIXSCHED
+    uid_t euid = geteuid();
+    if (seteuid(0) >= 0) {		// must be done as root
+	struct sched_param sp;
+	sp.sched_priority = sched_setschedulerParams[s].priority;
+	if (sched_setscheduler(0, sched_setschedulerParams[s].policy, &sp))
+	    traceServer("sched_setscheduler: %m");
+	if (sched_getparam(0, &sp))
+	    traceServer("sched_getparam: %m");
+	traceServer("sched policy=%d, priority=%d", sched_getscheduler(0), sp.sched_priority);
+	if (seteuid(euid) < 0)		// restore previous effective uid
+	    traceServer("seteuid(%d): %m", euid);
+    } else
+	traceServer("seteuid(root): %m");
 #endif
+    }
 }
 
 /*

@@ -2887,6 +2887,10 @@ BuildPortDotH()
 	Note "... configure use of HP-UX realtime process control interface"
 	echo '#define HAS_RTPRIO 1'
     }
+    CheckForDefine _POSIX_PRIORITY_SCHEDULING unistd.h && {
+	Note "... configure use of POSIX realtime process control interface"
+	echo '#define HAS_POSIXSCHED 1'
+    }
     CheckForTXCD && {
 	Note "... configure use of TXADDCD and TXDELCD ioctls"
 	echo '#define HAS_TXCD 1'

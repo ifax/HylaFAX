@@ -55,8 +55,8 @@ actively sending or receiving facsimile.  At other times, such as when
 doing queue management operations, processes run at a normal priority.
 On Silicon Graphics systems the ``high priority'' is a nondegrading
 scheduling priority that is above the priorities of the normal system
-processes.  On SVR4-derived systems the ``high priority'' is a real-time
-scheduling priority.
+processes.  On SVR4-derived, HP-UX, and POSIX compliant systems the 
+``high priority'' is a real-time scheduling priority.
 On other systems the server currently always runs at the
 same (normal) scheduling priority.  For more details consult the
 <TT>setProcessPriority</TT> routine in

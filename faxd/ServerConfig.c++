@@ -123,6 +123,13 @@ ServerConfig::setupConfig()
 #else
     clocalAsRoot = false;		// everywhere else anyone can do it
 #endif
+
+#if HAS_SCHEDCTL || HAS_PRIOCNTL || HAS_RTPRIO
+    priorityScheduling = true;		// maintain historic behavior
+#else
+    priorityScheduling = false;		// for new mechanisms anyone can do it
+#endif
+
     requeueTTS[ClassModem::OK]		= 0;
     requeueTTS[ClassModem::BUSY]	= FAX_REQBUSY;
     requeueTTS[ClassModem::NOCARRIER]	= FAX_REQUEUE;
@@ -424,6 +431,8 @@ ServerConfig::setConfigItem(const char* tag, const char* value)
 	setDialRules(value);
     else if (streq(tag, "clocalasroot"))
 	clocalAsRoot = getBoolean(value);
+    else if (streq(tag, "priorityscheduling"))
+	priorityScheduling = getBoolean(value);
     else if (streq(tag, "jobreqbusy"))
 	requeueTTS[ClassModem::BUSY] = getNumber(value);
     else if (streq(tag, "jobreqnocarrier"))

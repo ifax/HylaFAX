@@ -102,6 +102,7 @@ public:
     u_int	logTracingLevel;	// tracing level during session
     u_int	tracingMask;		// tracing level control mask
     bool	clocalAsRoot;		// set CLOCAL as root
+    bool	priorityScheduling;	// change process priority
     u_int	requeueTTS[9];		// requeue intervals[CallStatus code]
     u_int	requeueProto;		// requeue interval after protocol error
     u_int	requeueOther;		// requeue interval after other problem
