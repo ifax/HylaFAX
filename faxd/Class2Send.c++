@@ -274,8 +274,11 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    if (!decodePPM(pph, ppm, emsg))
 		goto failed;
 
-	    if (ppm == PPM_EOP && !(batched & BATCH_LAST))
+	    if (ppm == PPM_EOP && !(batched & BATCH_LAST)) {
 		ppm = PPM_EOM;
+		// this should force us to resend disCmd, since some modems don't remember
+		params.vr = (u_int) -1;
+	    }
 
 	    tracePPM("SEND send", ppm);
 	    u_int ppr;

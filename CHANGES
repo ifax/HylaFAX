@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* force the Class 2 driver to repeat the +FDIS command after EOM
 * add FaxParams class and some utilization of it
 
 Changelog for HylaFAX 4.2.1 - Jan 11, 2005
