@@ -537,6 +537,7 @@ Class1Modem::waitForDCEChannel(bool awaitctrl)
 		case EOT:
 		    protoTrace("EOT received (end of transmission)");
 		    gotEOT = true;
+		    recvdDCN = true;
 		    return (false);
 		    break;
 		case 0x69:
@@ -696,6 +697,7 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 		case EOT:
 		    protoTrace("EOT received (end of transmission)");
 		    gotEOT = true;
+		    recvdDCN = true;
 		    return (false);
 		    break;
 		case 0x69:
@@ -762,6 +764,7 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 			case EOT:
 			    protoTrace("EOT received (end of transmission)");
 			    gotEOT = true;
+			    recvdDCN = true;
 			    return (false);
 			    break;
 			case DLE:	// <DLE><DLE> => <DLE>
@@ -915,6 +918,7 @@ Class1Modem::recvECMFrame(HDLCFrame& frame)
 		    case 0x04:
 			protoTrace("EOT received (end of transmission)");
 			gotEOT = true;
+			recvdDCN = true;
 			return (false);
 		    case 0x6D:
 			protoTrace("Control channel selected");

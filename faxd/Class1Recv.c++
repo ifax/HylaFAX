@@ -1112,8 +1112,9 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    break;
 				case FCF_DCN:
 				    tracePPM("RECV recv", rtncframe.getFCF());
-				    gotEOT = true;
 				    emsg = "COMREC received DCN";
+				    gotEOT = true;
+				    recvdDCN = true;
 				    continue;
 				    break;
 			    }
