@@ -72,8 +72,8 @@ CONFIGFILES=class1 \
 	rc288dpi-1 \
 	rc32acl \
 	rc32acl-1 \
-	rockwell \
 	rockwell-k56 \
+	rockwell-rc \
 	telebit-t3000 \
     telebit-qblazer \
 	telebit-wb \
