@@ -214,7 +214,7 @@ imgtofax(char* input, int pn)
     TIFFSetField(tif, TIFFTAG_PAGENUMBER, pn, npages);
     TIFFSetField(tif, TIFFTAG_CLEANFAXDATA, CLEANFAXDATA_CLEAN);
     { char buf[1024];
-      sprintf(buf, "Ditherered B&W version of %s", input);
+      snprintf(buf, sizeof(buf) - 1, "Ditherered B&W version of %s", input);
       TIFFSetField(tif, TIFFTAG_IMAGEDESCRIPTION, buf);
     }
     TIFFSetField(tif, TIFFTAG_SOFTWARE, "sgi2fax");

@@ -304,52 +304,56 @@ MIMEState::getLine(FILE* fd, fxStackBuffer& buf)
     buf.reset();
     switch (encode) {
     case ENC_7BIT:
-	for (;;) {
-	    int c = getc(fd);
-	    if (c == EOF)
-		return (buf.getLength() > 0);
-	    c &= 0xff;
-	    if (c == '\n') {			// check for boundary marker
-		lineno++;
-		u_int cc = buf.getLength();
-		if (cc >= blen && buf[0] == '-') {
-		    if (cc == blen && strneq(buf, boundary, blen))
-			return (false);
-		    if (cc == blen+2 && strneq(buf, boundary, blen+2)) {
-			lastPart = true;
-			return (false);
-		    }
-		}
-		buf.put('\n');
-		return (true);
-	    }
-	    buf.put(c);
-	}
-	/*NOTREACHED*/
+        for (;;) {
+            int c = getc(fd);
+            if (c == EOF) {
+                return (buf.getLength() > 0);
+            }
+            c &= 0xff;
+            if (c == '\n') {			// check for boundary marker
+	            lineno++;
+	            u_int cc = buf.getLength();
+	            if (cc >= blen && buf[0] == '-') {
+	                if (cc == blen && strneq(buf, boundary, blen)) {
+		                return (false);
+                    }
+	                if (cc == blen+2 && strneq(buf, boundary, blen+2)) {
+		                lastPart = true;
+		                return (false);
+	                }
+            	}
+                buf.put('\n');
+                return (true);
+            }
+            buf.put(c);
+        }
+	    /*NOTREACHED*/
     case ENC_8BIT:
     case ENC_BINARY:
-	for (;;) {
-	    int c = getc(fd);
-	    if (c == EOF)
-		return (buf.getLength() > 0);
-	    c &= 0xff;
-	    if (c == '\n') {			// check for boundary marker
-		lineno++;
-		u_int cc = buf.getLength();
-		if (cc >= blen && buf[0] == '-') {
-		    if (cc == blen && strneq(buf, boundary, blen))
-			return (false);
-		    if (cc == blen+2 && strneq(buf, boundary, blen+2)) {
-			lastPart = true;
-			return (false);
-		    }
-		}
-		buf.put('\n');
-		return (true);
-	    }
-	    buf.put(c);
-	}
-	/*NOTREACHED*/
+        for (;;) {
+            int c = getc(fd);
+            if (c == EOF) {
+	            return (buf.getLength() > 0);
+            }
+            c &= 0xff;
+            if (c == '\n') {			// check for boundary marker
+	            lineno++;
+                u_int cc = buf.getLength();
+                if (cc >= blen && buf[0] == '-') {
+                    if (cc == blen && strneq(buf, boundary, blen)) {
+                        return (false);
+                    }
+	                if (cc == blen+2 && strneq(buf, boundary, blen+2)) {
+                	    lastPart = true;
+                    	return (false);
+                    }
+	            }
+                buf.put('\n');
+                return (true);
+            }
+            buf.put(c);
+        }
+	    /*NOTREACHED*/
     case ENC_QPRINT:	return getQuotedPrintableLine(fd, buf);
     case ENC_BASE64:	return getBase64Line(fd, buf);
     case ENC_UUENCODE:	return getUUDecodeLine(fd, buf);

@@ -158,22 +158,24 @@ HylaFAXServer::initServer(void)
 static void
 tiffErrorHandler(const char* module, const char* fmt0, va_list ap)
 {
-    char fmt[128];
-    if (module != NULL)
-	sprintf(fmt, "%s: Warning, %s.", module, fmt0);
-    else
-	sprintf(fmt, "Warning, %s.", fmt0);
+    char fmt[128] = {0};
+    if (module != NULL) {
+        snprintf(fmt, sizeof(fmt) -1, "%s: Warning, %s.", module, fmt0);
+    } else {
+        snprintf(fmt, sizeof(fmt) - 1, "Warning, %s.", fmt0);
+    }
     vlogError(fmt, ap);
 }
 
 static void
 tiffWarningHandler(const char* module, const char* fmt0, va_list ap)
 {
-    char fmt[128];
-    if (module != NULL)
-	sprintf(fmt, "%s: Warning, %s.", module, fmt0);
-    else
-	sprintf(fmt, "Warning, %s.", fmt0);
+    char fmt[128] = {0};
+    if (module != NULL) {
+        snprintf(fmt, sizeof(fmt) -1, "%s: Warning, %s.", module, fmt0);
+    } else {
+        snprintf(fmt, sizeof(fmt) -1, "Warning, %s.", fmt0);
+    }
     vlogWarning(fmt, ap);
 }
 

@@ -312,8 +312,13 @@ faxMailApp::run(int argc, char** argv)
     char tmpl[128];
     sprintf(tmpl, "%s/faxmailXXXXXX", _PATH_TMP);
 	int fd = Sys::mkstemp(tmpl);
-	if (fd < 0)
-	    fxFatal("Cannot create temp file %s", (const char*) tmpl);
+	if (fd < 0) {
+        fxFatal("Cannot create temp file %s", (const char*) tmpl);
+    }
+    // security add for glibc < 2.0.7
+    if (fchmod(fd, 600) == -1) {
+        fxFatal("%s: %s", (const char*) tmpl, strerror(errno));
+    }
 	tmps.append(tmpl);
 	client->addFile(tmpl);
 	beginFormatting(fdopen(fd, "w"));
