@@ -3570,6 +3570,7 @@ Note "Using uid $FAXUID and gid $FAXGID for controlling access to fax stuff."
 if [ -z "$SYSGID" ]; then
     case $TARGET in
     *-aix*)	SYSGID=sys;;
+    *netbsd*)	SYSGID=wheel;;
     *bsd*)	SYSGID=bin;;
     *-hpux*)	SYSGID=bin;;
     *-irix*)	SYSGID=sys;;

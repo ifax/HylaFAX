@@ -36,6 +36,14 @@ extern "C" {
 #include <netinet/in.h>
 }
 
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+
 TypeRule::TypeRule() {}
 TypeRule::~TypeRule() {}
 TypeRule::TypeRule(const TypeRule& other)
@@ -51,7 +59,7 @@ TypeRule::TypeRule(const TypeRule& other)
 }
 
 static const char* typeNames[] =
-    { "ascii", "string", "address", "byte", "short", "long" };
+    { "ascii", "asciiesc", "string", "address", "byte", "short", "long" };
 static const char* opNames[] =
     { "<any>", "=", "!=", "<", "<=", ">", ">=", "&", "^", "!" };
 static const char* resultNames[] = { "tiff", "postscript", "error" };
@@ -68,7 +76,7 @@ TypeRule::match(const void* data, u_int size, bool verbose) const
 	);
 	if (type == STRING)
 	    printf(" \"%s\"", value.s);
-	else if (type != ASCII) {
+	else if (type != ASCII && type != ASCIIESC) {
 	    if (op == ANY)
 		printf(" <any value>");
 	    else
@@ -94,6 +102,16 @@ TypeRule::match(const void* data, u_int size, bool verbose) const
 		return (false);
 	    }
 	ok = true;
+	goto done;
+    case ASCIIESC:
+	u_int i;
+	for (i = 0; i < size; i++)
+	    if (!isprint(cp[i]) && !isspace(cp[i]) && cp[i] != '\033') {
+		if (verbose)
+		    printf("failed (unprintable char %#x)\n", cp[i]);
+		return (FALSE);
+	    }
+	ok = TRUE;
 	goto done;
     case STRING:
 	ok = (strncmp((const char*)(cp+off), value.s,
@@ -311,6 +329,8 @@ TypeRules::read(const fxStr& file)
 	    rule.type = TypeRule::STRING;
 	else if (strncasecmp(tp, "ascii", cp-tp) == 0)
 	    rule.type = TypeRule::ASCII;
+	else if (strncasecmp(tp, "asciiesc", cp-tp) == 0)
+	    rule.type = TypeRule::ASCIIESC;
 	else if (strncasecmp(tp, "addr", cp-tp) == 0)
 	    rule.type = TypeRule::ADDR;
 	else {
@@ -321,7 +341,8 @@ TypeRules::read(const fxStr& file)
 	    cp++;
 	rule.op = TypeRule::EQ;		// default is '='
 	const char* vp = cp;
-	if (rule.type != TypeRule::STRING && rule.type != TypeRule::ASCII) {
+	if (rule.type != TypeRule::STRING && rule.type != TypeRule::ASCII
+	 && rule.type != TypeRule::ASCIIESC) {
 	    // numeric value
 	    switch (*vp) {
 	    case '=':	rule.op = TypeRule::EQ;	cp++; break;

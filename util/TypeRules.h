@@ -130,6 +130,7 @@ private:
     bool	cont;	// continuation
     enum {
 	ASCII,		// ascii-only string
+	ASCIIESC,	// ascii-only string + escape char (iso-2022 variants)
 	STRING,		// byte string
 	ADDR,		// address of match
 	BYTE,		// 8 bits

@@ -144,7 +144,7 @@ protected:
 /*
  * Correct if neccessary Phase C (T.4) data (remove extra RTC etc.)
  */
-    void        correctPhaseCData(u_char* buf, u_long* pBufSize,
+    void        correctPhaseCData(u_char* buf, uint32* pBufSize,
                                   u_int fillorder, const Class2Params& params);
 public:
     enum {			// FaxModem::RTNHandling
