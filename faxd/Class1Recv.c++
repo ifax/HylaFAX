@@ -963,146 +963,39 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		} while (!gotpps && !wasTimeout() && ++recvFrameCount < 20);
 		if (gotpps) {
 		    tracePPM("RECV recv", ppsframe.getFCF());
-		    if (ppsframe.getLength() > 5) {
+		    if (ppsframe.getFCF() == FCF_PPS) {
 			// sender may violate T.30-A.4.3 and send another signal (i.e. DCN)
 			tracePPM("RECV recv", ppsframe.getFCF2());
 		    }
-		    if (ppsframe.getFCF() == FCF_PPS) {
-			// PPS is the only valid signal, Figure A.8/T.30
-			u_int fc = frameRev[ppsframe[6]] + 1;
-			if (fc == 256 && !dataseen) fc = 0;    // distinguish between 0 and 256
-			if (fcount < fc) fcount = fc;
-			protoTrace("RECV received %u frames of block %u of page %u", \
-			    fc, frameRev[ppsframe[5]]+1, frameRev[ppsframe[4]]+1);
-			blockgood = true;
-			if (fc > 0) {	// assume that 0 frames means that sender is done
-			    for (u_int i = 0; i <= (fcount - 1); i++) {
-				u_int pprpos, pprval;
-				for (pprpos = 0, pprval = i; pprval >= 8; pprval -= 8) pprpos++;
-				if (ppr[pprpos] & frameRev[1 << pprval]) blockgood = false;
-			    }
-			}
-
-			// requisite pause before sending response (PPR/MCF)
-			if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-			    emsg = "Failure to receive silence.";
-			    if (conf.saveUnconfirmedPages && pagedataseen) {
-				protoTrace("RECV keeping unconfirmed page");
-				writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-				prevPage = true;
-			    }
-			    free(block);
-			    return (false);
-			}
-			if (! blockgood) {
-			    // inform the remote that one or more frames were invalid
-
-			    if (!useV34) atCmd(thCmd, AT_CONNECT);
-			    startTimeout(3000);
-			    sendFrame(FCF_PPR, fxStr(ppr, 32));
-			    stopTimeout("sending PPR frame");
-			    tracePPR("RECV send", FCF_PPR);
-
-			    pprcnt++;
-			    if (pprcnt == 4 && (!useV34 || !conf.class1PersistentECM)) {
-				// expect sender to send CTC/EOR after every fourth PPR, not just the fourth
-				protoTrace("RECV sent fourth PPR");
-				pprcnt = 0;
-				HDLCFrame rtnframe(conf.class1FrameOverhead);
-				if (recvFrame(rtnframe, conf.t2Timer)) {
-				tracePPM("RECV recv", rtnframe.getFCF());
-				    u_int dcs;			// possible bits 1-16 of DCS in FIF
-				    switch (rtnframe.getFCF()) {
-					case FCF_CTC:
-					    if (useV34) {
-						// T.30 F.3.4.5 Note 1 does not permit CTC in V.34-fax
-						emsg = "Received invalid CTC signal in V.34-Fax.";
-						if (conf.saveUnconfirmedPages && pagedataseen) {
-						    protoTrace("RECV keeping unconfirmed page");
-						    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-						    prevPage = true;
-						}
-						free(block);
-						return (false);
-					    }
-					    // use 16-bit FIF to alter speed, curcap
-					    dcs = rtnframe[3] | (rtnframe[4]<<8);
-					    curcap = findSRCapability(dcs&DCS_SIGRATE, recvCaps);
-					    // requisite pause before sending response (CTR)
-					    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
-						emsg = "Failure to receive silence.";
-						if (conf.saveUnconfirmedPages && pagedataseen) {
-						    protoTrace("RECV keeping unconfirmed page");
-						    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-						    prevPage = true;
-						}
-						free(block);
-						return (false);
-					    }
-					    (void) transmitFrame(FCF_CTR|FCF_RCVR);
-					    tracePPR("RECV send", FCF_CTR);
-					    break;
-					case FCF_EOR:
-					    tracePPM("RECV recv", rtnframe.getFCF2());
-					    /*
-					     * It may be wise to disconnect here if MMR is being
-					     * used because there will surely be image data loss.
-					     * However, since the sender knows what the extent of
-					     * the data loss will be, we'll naively assume that
-					     * the sender knows what it's doing, and we'll
-					     * proceed as instructed by it.
-					     */
-					    blockgood = true;
-					    switch (rtnframe.getFCF2()) {
-						case 0:
-						    // EOR-NULL partial page boundary
-						    break;
-						case FCF_EOM:
-						case FCF_MPS:
-						case FCF_EOP:
-						case FCF_PRI_EOM:
-						case FCF_PRI_MPS:
-						case FCF_PRI_EOP:
-						    lastblock = true;
-						    signalRcvd = rtnframe.getFCF2();
-						    break;
-						default:
-						    emsg = "COMREC invalid response to repeated PPR received";
-						    if (conf.saveUnconfirmedPages && pagedataseen) {
-							protoTrace("RECV keeping unconfirmed page");
-							writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-							prevPage = true;
-						    }
-						    free(block);
-						    return (false);
-					    }
-					    // requisite pause before sending response (ERR)
-					    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-						emsg = "Failure to receive silence.";
-						if (conf.saveUnconfirmedPages && pagedataseen) {
-						    protoTrace("RECV keeping unconfirmed page");
-						    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-						    prevPage = true;
-						}
-						free(block);
-						return (false);
-					    }
-					    (void) transmitFrame(FCF_ERR|FCF_RCVR);
-					    tracePPR("RECV send", FCF_ERR);
-					    sentERR = true;
-					    break;
-					default:
-					    emsg = "COMREC invalid response to repeated PPR received";
-					    if (conf.saveUnconfirmedPages && pagedataseen) {
-						protoTrace("RECV keeping unconfirmed page");
-						writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-						prevPage = true;
-					    }
-					    free(block);
-					    return (false);
+		    switch (ppsframe.getFCF()) {
+			/*
+			 * PPS is the only valid signal, Figure A.8/T.30; however, some
+			 * senders don't handle T.30 A.1.3 ("When PPR is received four
+			 * times for the same block...") properly (possibly because T.30
+			 * A.4.1 isn't clear about the "per-block" requirement), and so
+			 * it is possible for us to get CTC or EOR here (if the modem
+			 * quickly reported NO CARRIER when we went looking for the
+			 * non-existent high-speed carrier and the sender is persistent).
+			 */
+			case FCF_PPS:
+			    {
+				u_int fc = frameRev[ppsframe[6]] + 1;
+				if (fc == 256 && !dataseen) fc = 0;		// distinguish between 0 and 256
+				if (fcount < fc) fcount = fc;
+				protoTrace("RECV received %u frames of block %u of page %u", \
+				    fc, frameRev[ppsframe[5]]+1, frameRev[ppsframe[4]]+1);
+				blockgood = true;
+				if (fc > 0) {	// assume that 0 frames means that sender is done
+				    for (u_int i = 0; i <= (fcount - 1); i++) {
+					u_int pprpos, pprval;
+					for (pprpos = 0, pprval = i; pprval >= 8; pprval -= 8) pprpos++;
+					if (ppr[pprpos] & frameRev[1 << pprval]) blockgood = false;
 				    }
-				} else {
-				    emsg = "T.30 T2 timeout, expected signal not received";
+				}
+
+				// requisite pause before sending response (PPR/MCF)
+				if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
+				    emsg = "Failure to receive silence.";
 				    if (conf.saveUnconfirmedPages && pagedataseen) {
 					protoTrace("RECV keeping unconfirmed page");
 					writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
@@ -1112,41 +1005,177 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    return (false);
 				}
 			    }
-			}
-			if (signalRcvd == 0) {		// don't overwrite EOR settings
-			    switch (ppsframe.getFCF2()) {
-				case 0:
-				    // PPS-NULL partial page boundary
-				    break;
-				case FCF_EOM:
-				case FCF_MPS:
-				case FCF_EOP:
-				case FCF_PRI_EOM:
-				case FCF_PRI_MPS:
-				case FCF_PRI_EOP:
-				    lastblock = true;
-				    signalRcvd = ppsframe.getFCF2();
-				    break;
-				default:
-				    emsg = "COMREC invalid post-page signal received";
-				    if (conf.saveUnconfirmedPages && pagedataseen) {
-					protoTrace("RECV keeping unconfirmed page");
-					writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-					prevPage = true;
-				    }
-				    free(block);
-				    return (false);
+			    /* ... pass through ... */
+			case FCF_CTC:
+			case FCF_EOR:
+			    if (! blockgood &&
+				 (ppsframe.getFCF() == FCF_CTC || ppsframe.getFCF() == FCF_EOR) &&
+				 (!useV34 || !conf.class1PersistentECM)) {	// only if we can make use of the signal
+				signalRcvd = ppsframe.getFCF();
+				pprcnt = 4;
 			    }
-			}
-		    } else {
-			emsg = "COMREC invalid response received (expected PPS)";
-			if (conf.saveUnconfirmedPages && pagedataseen) {
-			    protoTrace("RECV keeping unconfirmed page");
-			    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-			    prevPage = true;
-			}
-			free(block);
-			return (false);
+			    if (! blockgood) {
+				if (signalRcvd == 0) {
+				    // inform the remote that one or more frames were invalid
+
+				    if (!useV34) atCmd(thCmd, AT_CONNECT);
+				    startTimeout(3000);
+				    sendFrame(FCF_PPR, fxStr(ppr, 32));
+				    stopTimeout("sending PPR frame");
+				    tracePPR("RECV send", FCF_PPR);
+
+				    pprcnt++;
+				}
+				if (pprcnt == 4 && (!useV34 || !conf.class1PersistentECM)) {
+				    HDLCFrame rtnframe(conf.class1FrameOverhead);
+				    if (signalRcvd == 0) {
+					// expect sender to send CTC/EOR after every fourth PPR, not just the fourth
+					protoTrace("RECV sent fourth PPR");
+				    } else {
+					// we already got the signal
+					rtnframe = ppsframe;
+				    }
+				    pprcnt = 0;
+				    if (signalRcvd != 0 || recvFrame(rtnframe, conf.t2Timer)) {
+					if (signalRcvd == 0) tracePPM("RECV recv", rtnframe.getFCF());
+					else signalRcvd = 0;		// reset it, we're in-sync now
+					u_int dcs;			// possible bits 1-16 of DCS in FIF
+					switch (rtnframe.getFCF()) {
+					    case FCF_CTC:
+						if (useV34) {
+						    // T.30 F.3.4.5 Note 1 does not permit CTC in V.34-fax
+						    emsg = "Received invalid CTC signal in V.34-Fax.";
+						    if (conf.saveUnconfirmedPages && pagedataseen) {
+							protoTrace("RECV keeping unconfirmed page");
+							writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+							prevPage = true;
+						    }
+						    free(block);
+						    return (false);
+						}
+						// use 16-bit FIF to alter speed, curcap
+						dcs = rtnframe[3] | (rtnframe[4]<<8);
+						curcap = findSRCapability(dcs&DCS_SIGRATE, recvCaps);
+						// requisite pause before sending response (CTR)
+						if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+						    emsg = "Failure to receive silence.";
+						    if (conf.saveUnconfirmedPages && pagedataseen) {
+							protoTrace("RECV keeping unconfirmed page");
+							writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+							prevPage = true;
+						    }
+						    free(block);
+						    return (false);
+						}
+						(void) transmitFrame(FCF_CTR|FCF_RCVR);
+						tracePPR("RECV send", FCF_CTR);
+						break;
+					    case FCF_EOR:
+						tracePPM("RECV recv", rtnframe.getFCF2());
+						/*
+						 * It may be wise to disconnect here if MMR is being
+						 * used because there will surely be image data loss.
+						 * However, since the sender knows what the extent of
+						 * the data loss will be, we'll naively assume that
+						 * the sender knows what it's doing, and we'll
+						 * proceed as instructed by it.
+						 */
+						blockgood = true;
+						switch (rtnframe.getFCF2()) {
+						    case 0:
+							// EOR-NULL partial page boundary
+							break;
+						    case FCF_EOM:
+						    case FCF_MPS:
+						    case FCF_EOP:
+						    case FCF_PRI_EOM:
+						    case FCF_PRI_MPS:
+						    case FCF_PRI_EOP:
+							lastblock = true;
+							signalRcvd = rtnframe.getFCF2();
+							break;
+						    default:
+							emsg = "COMREC invalid response to repeated PPR received";
+							if (conf.saveUnconfirmedPages && pagedataseen) {
+							    protoTrace("RECV keeping unconfirmed page");
+							    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+							    prevPage = true;
+							}
+							free(block);
+							return (false);
+						}
+						// requisite pause before sending response (ERR)
+						if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
+						    emsg = "Failure to receive silence.";
+						    if (conf.saveUnconfirmedPages && pagedataseen) {
+							protoTrace("RECV keeping unconfirmed page");
+							writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+							prevPage = true;
+						    }
+						    free(block);
+						    return (false);
+						}
+						(void) transmitFrame(FCF_ERR|FCF_RCVR);
+						tracePPR("RECV send", FCF_ERR);
+						sentERR = true;
+						break;
+					    default:
+						emsg = "COMREC invalid response to repeated PPR received";
+						if (conf.saveUnconfirmedPages && pagedataseen) {
+						    protoTrace("RECV keeping unconfirmed page");
+						    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+						    prevPage = true;
+						}
+						free(block);
+						return (false);
+					}
+				    } else {
+					emsg = "T.30 T2 timeout, expected signal not received";
+					if (conf.saveUnconfirmedPages && pagedataseen) {
+					    protoTrace("RECV keeping unconfirmed page");
+					    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+					    prevPage = true;
+					}
+					free(block);
+					return (false);
+				    }
+				}
+			    }
+			    if (signalRcvd == 0) {		// don't overwrite EOR settings
+				switch (ppsframe.getFCF2()) {
+				    case 0:
+					// PPS-NULL partial page boundary
+					break;
+				    case FCF_EOM:
+				    case FCF_MPS:
+				    case FCF_EOP:
+				    case FCF_PRI_EOM:
+				    case FCF_PRI_MPS:
+				    case FCF_PRI_EOP:
+					lastblock = true;
+					signalRcvd = ppsframe.getFCF2();
+					break;
+				    default:
+					emsg = "COMREC invalid post-page signal received";
+					if (conf.saveUnconfirmedPages && pagedataseen) {
+					    protoTrace("RECV keeping unconfirmed page");
+					    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+					    prevPage = true;
+					}
+					free(block);
+					return (false);
+				}
+			    }
+			    break;
+			default:
+			    emsg = "COMREC invalid response received (expected PPS)";
+			    if (conf.saveUnconfirmedPages && pagedataseen) {
+				protoTrace("RECV keeping unconfirmed page");
+				writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
+				prevPage = true;
+			    }
+			    free(block);
+			    return (false);
 		    }
 		} else {
 		    emsg = "T.30 T2 timeout, expected signal not received";
