@@ -1836,6 +1836,23 @@ if onServer; then
 	    fi
 	fi
     fi
+    FAXMASTER=$x
+fi
+
+#
+# Generate or update default values for status/any.info
+#
+if [ -r $DIR_SPOOL/status/any.info ]; then
+    INFO=`cat $DIR_SPOOL/status/any.info | \
+	$GREP -v "HylaFAX version" | $GREP -v "FaxMaster"`
+else INFO=""
+fi
+if [ -d $DIR_SPOOL/status ]; then
+    echo "Update $DIR_SPOOL/status/any.info."
+    echo "HylaFAX version $VERSION built $DATE for $TARGET" \
+	> $DIR_SPOOL/status/any.info
+    echo $FAXMASTER >> $DIR_SPOOL/status/any.info
+    echo $INFO >> $DIR_SPOOL/status/any.info
 fi
 
 #
