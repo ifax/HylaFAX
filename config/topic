@@ -4,6 +4,7 @@
 #
 
 # CONFIG:CLASS1:TP560.*:.*:.*: Manufacturer=Topic Model=TP560
+# CONFIG:CLASS1:Hamlet H56XCT.*:.*:.*: Manufacturer=Hamlet Model=H56XCT
 # CONFIG:CLASS1:Linux ISDN.*:.*:.*: Manufacturer=Sedlbauer Model=Speedfax
 #
 # BEGIN-SERVER
