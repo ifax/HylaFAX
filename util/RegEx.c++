@@ -71,7 +71,7 @@ RegEx::Find(const char* text, u_int length, u_int off)
 	 * These two checks are for compatibility with the old
 	 * InterViews code; yech (but the DialRules logic needs it).
 	 */
-	if (off >= length || (off != 0 && _pattern[0] == '^'))
+	if (((off || length) && off >= length) || (off && _pattern[0] == '^'))
 	    execResult = REG_NOMATCH;
 	else {
 	    matches[0].rm_so = off;
