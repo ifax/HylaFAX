@@ -340,9 +340,9 @@ putTifEncodedImage()
         mimeEncode "$SOURCEFILE"
         return # all done here
     elif [ $CONVERTFROM = "pdf" ] ; then 
-        CONVERTCMD="$PDF2FAX -o $OUTFILE $SOURCEFILE" 
+        CONVERTCMD="$PDF2FAX -r $resolution -o $OUTFILE $SOURCEFILE" 
     elif [ $CONVERTFROM = "ps" ] ; then 
-        CONVERTCMD="$PS2FAX -o $OUTFILE $SOURCEFILE" 
+        CONVERTCMD="$PS2FAX -r $resolution -o $OUTFILE $SOURCEFILE" 
     else
         return # unknow convert from format
     fi
