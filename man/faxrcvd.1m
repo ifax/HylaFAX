@@ -132,6 +132,14 @@ is equivalent to
 .B error-msg
 above.
 .TP
+.I NOTIFY_FAXMASTER
+(an underscore ``_'' character is between NOTIFY and FAXMASTER)
+indicates whether or not the HylaFAX administrator should be notified
+regarding incoming facsimile.  Default is ``always''.  Also available are
+``never'', which means to never send any received facsimile notification,
+and ``errors'', which means to send notification only if there were
+reception errors.
+.TP
 .I SENDER
 is the received TSI of the fax sender.
 .TP

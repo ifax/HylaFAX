@@ -59,6 +59,7 @@ TIFF2PS=tiff2ps
 PS2PDF=ps2pdf
 TOADDR=FaxMaster
 TIFFINFO=tiffinfo
+NOTIFY_FAXMASTER=always
 
 #
 # Permit various types of attachment types: ps, tif, pdf
@@ -97,7 +98,16 @@ if [ -f $FILE ]; then
     if [ -f etc/FaxDispatch ]; then
 	. etc/FaxDispatch	# NB: FaxDispatch sets SENDTO
     fi
-    if [ "$TOADDR" != "$SENDTO" ]; then # don't send FaxMaster duplicate
+    #
+    # Don't send FaxMaster duplicates, and FaxMaster may not even
+    # want a message at all, depending on NOTIFY_FAXMASTER.
+    #
+    case $NOTIFY_FAXMASTER$MSG in
+	never*)		NOTIFY_FAXMASTER=no;;
+	errors)		NOTIFY_FAXMASTER=no;;
+	*)		NOTIFY_FAXMASTER=yes;;
+    esac
+    if [ "$TOADDR" != "$SENDTO" -a "$NOTIFY_FAXMASTER" != "no" ]; then
 	(echo "To: $TOADDR"
 	 echo "From: The HylaFAX Receive Agent <fax>"
 	 echo "Subject: Facsimile received from $SENDER";
