@@ -9,7 +9,10 @@ Server Setup and Basic Configuration
 <BODY>
 
 <BASEFONT SIZE=4>
-<B><FONT SIZE=+3>S</FONT>ERVER <FONT SIZE=+2>S</FONT>ETUP AND <FONT SIZE=+2>B</FONT>ASIC <FONT SIZE=+2>C</FONT>ONFIGURATION</B>
+<B><FONT SIZE="+3">S</FONT>ERVER
+   <FONT SIZE="+2">S</FONT>ETUP AND
+   <FONT SIZE="+2">B</FONT>ASIC
+   <FONT SIZE="+2">C</FONT>ONFIGURATION</B>
 <BASEFONT SIZE=3>
 
 <HR SIZE=4>
@@ -71,14 +74,14 @@ Note that many decisions in setting up a server machine
 are dependent on the operating system present on the machine.
 Some system-specific guidance is sprinkled throughout these
 materials, with additional information provided in a section on
-<A HREF=#Guidance>system-specific guidance</A>.
+<A HREF="#Guidance">system-specific guidance</A>.
 There is also a section on
 ``<A HREF="#Problems">Modem Configuration Issues</A>,'' while
 advanced configuration and setup issues are discussed in a
 subsequent chapter titled
 ``<A HREF="setup-advanced.htl">Advanced Server Configuration</A>.''
 
-<A NAME="Software"><P><HR WIDTH=65% ALIGN=right><H3>Installing HylaFAX</H3></A>
+<H3><A NAME="Software"><P><HR WIDTH="65%" ALIGN=right>Installing HylaFAX</A></H3>
 
 Most installations of HylaFAX will be done
 from a source code distribution.
@@ -100,7 +103,7 @@ Each binary distributions of HylaFAX should include detailed
 installation instructions that reflect the exact contents of the distribution
 and any distribution-specific requirements.
 
-<A NAME="Modem"><P><HR WIDTH=65% ALIGN=right><H3>Selecting a Facsimile Modem</H3></A>
+<H3><A NAME="Modem"><P><HR WIDTH="65%" ALIGN=right>Selecting a Facsimile Modem</A></H3>
 
 Selecting a modem usually means purchasing a modem that is capable
 of sending and receiving facsimile.
@@ -125,14 +128,14 @@ reliable for use in sending and receiving facsimile.
 <P>
 <TABLE BORDER=0>
 <TR>
-<TD><IMG SRC=icons/warning_icon.gif HSPACE=8 ALT="Note:"></TD>
+<TD><IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=8></TD>
 <TD><EM>If you are buying a modem to use
 with this software you will do best if you use one of the
 recommended Class 2 or Class 2.0 modems; rather than a Class 1 modem</EM>.</TD>
 </TR>
 </TABLE>
 
-<A NAME="Check"><P><HR WIDTH=65% ALIGN=right><H3>Checking Your Modem</H3></A>
+<H3><A NAME="Check"><P><HR WIDTH="65%" ALIGN=right>Checking Your Modem</A></H3>
 
 Once you have a modem to use with HylaFAX
 first make sure that the modem works for data use.
@@ -176,7 +179,7 @@ provide digitized voice support.
 HylaFAX can be used with any modem that supports Class 1, Class 2,
 or Class 2.0.
 
-<A NAME="FlowControl"><P><HR WIDTH=65% ALIGN=right><H3>Selecting a Flow Control Scheme</H3></A>
+<H3><A NAME="FlowControl"><P><HR WIDTH="65%" ALIGN=right>Selecting a Flow Control Scheme</A></H3>
 
 <I>Flow control</I> refers to the mechanism used to control the transfer
 of data <EM>between the host and the modem</EM>
@@ -202,7 +205,7 @@ facsimile use are:
 <P>
 <TABLE BORDER=0>
 <TR>
-<TD><IMG SRC="icons/warning_icon.gif" ALT="NOTE: " HSPACE=8></TD>
+<TD><IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=8></TD>
 <TD><EM>Beware that although a modem may properly implement hardware
 flow control when doing data communication, it may not
 support hardware flow control during facsimile communication.  Consult
@@ -219,19 +222,19 @@ should be defined for the modem.
 <P>
 <TABLE BORDER=0>
 <TR>
-<TD VALIGN=top><IMG SRC="icons/warning_icon.gif" ALT="NOTE: " HSPACE=4></TD>
+<TD VALIGN=top><IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=4></TD>
 <TD><EM>Note that some operating systems do not support RTS/CTS flow
 control unless carrier is present.
 In particular, some versions of SunOS and
 Solaris requires patches to correct this mis-behaviour;
 consult the sections below for
-<A HREF=#Guidance>system-specific guidance</A>.</EM></TD>
+<A HREF="#Guidance">system-specific guidance</A>.</EM></TD>
 </TR>
 </TABLE>
 
 <TABLE BORDER=0>
 <TR>
-<TD VALIGN=top><IMG SRC="icons/warning_icon.gif" ALT="NOTE: " HSPACE=4></TD>
+<TD VALIGN=top><IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=4></TD>
 <TD><EM>
 Versions of IRIX prior to 6.2 have a bug in the
 device driver for the on-board serial ports on IP20 and IP22 systems
@@ -240,7 +243,7 @@ Patch 475 (``RTS/CTS flow control busted when <TT>CLOCAL</TT> is set'')
 and its successors correct
 this problem and must be installed to use HylaFAX with hardware flow control.
 For complete details refer to the section below on
-<A HREF=#IRIX>IRIX-specific guidance</A>.</EM></TD>
+<A HREF="#IRIX">IRIX-specific guidance</A>.</EM></TD>
 </TR>
 </TABLE>
 
@@ -248,7 +251,7 @@ For complete details refer to the section below on
 When in doubt or having trouble, configure the modem to use software
 flow control for fax use.
 
-<A NAME="Device"><P><HR WIDTH=65% ALIGN=right><H3>Choosing a TTY Device</H3></A>
+<H3><A NAME="Device"><P><HR WIDTH="65%" ALIGN=right>Choosing a TTY Device</A></H3>
 
 There are two things to beware of in selecting a tty device file to
 use with your modem: flow control usage and port locking mechanisms.
@@ -298,7 +301,7 @@ However because of this interchangability it is not possible to
 use device files that have names that include
 ``_'' in them, e.g. ``/dev/my_tty''.
 
-<A NAME="faxsetup"><P><HR WIDTH=65% ALIGN=right><H3>Using faxsetup to Configure a Server Machine</H3></A>
+<H3><A NAME="faxsetup"><P><HR WIDTH="65%" ALIGN=right>Using faxsetup to Configure a Server Machine</A></H3>
 
 Before any HylaFAX software can be used on a server machine the
 <A HREF="@CGIPATH@/manpage?faxsetup">faxsetup</A> script
@@ -324,7 +327,7 @@ used by command scripts that communicate with modems.
 <P>
 <TABLE BORDER=0>
 <TR>
-<TD><IMG SRC="icons/warning_icon.gif" HSPACE=4></TD>
+<TD><IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=4></TD>
 <TD><EM>The <B>setup.cache</B> and <B>setup.modem</B>
 files must be present for HylaFAX to function properly.
 If these files do not exist then HylaFAX server applications will
@@ -420,7 +423,7 @@ The following sections elaborate on this work and provide examples
 of how this work is done.
 
 
-<A NAME="faxaddmodem"><P><HR WIDTH=65% ALIGN=right><H3>Using faxaddmodem to Configure Modems</H3></A>
+<H3><A NAME="faxaddmodem"><P><HR WIDTH="65%" ALIGN=right>Using faxaddmodem to Configure Modems</A></H3>
 
 Modems are configured for use with the
 <A HREF="@CGIPATH@/manpage?faxaddmodem">faxaddmodem</A> script.
@@ -547,7 +550,7 @@ on tag lines created by the fax server.
 <TR>
 <TD COLSPAN=2><FONT SIZE=2>
 <HR>
-<IMG SRC="icons/info_icon.gif" HSPACE=8 ALIGN=left>
+<IMG ALT="Info" SRC="icons/info_icon.gif" HSPACE=8 ALIGN=left>
 Phone numbers should be supplied with a
 complete international dialing specification:
 ``+&lt<I>country code</I>&gt; &lt<I>local part</I>&gt;''
@@ -574,7 +577,7 @@ the canonical phone number of the fax modem is used instead.
 <TR>
 <TD COLSPAN=2><FONT SIZE=2>
 <HR>
-<IMG SRC="icons/info_icon.gif" HSPACE=8 ALIGN=left>
+<IMG ALT="Info" SRC="icons/info_icon.gif" HSPACE=8 ALIGN=left>
 Beware
 that the facsimile communication protocol restricts
 the local identification string to numbers, blank, and the ``+'' symbol.
@@ -620,7 +623,7 @@ These parameters control the logging done by server processes.
 <TR>
 <TD COLSPAN=2><FONT SIZE=2>
 <HR>
-<IMG SRC="icons/warning_icon.gif" HSPACE=8 VSPACE=8 ALIGN=left>
+<IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=8 VSPACE=8 ALIGN=left>
 <EM>It is important that tracing during send and receive sessions include
 sufficient information to diagnose problems.  For Class 1 modems this
 parameter is usually set to <TT>0x4f</TT> so that HDLC frames are
@@ -724,7 +727,7 @@ of the next chapter.
 <TR>
 <TD COLSPAN=2><FONT SIZE=2>
 <HR>
-<IMG SRC="icons/warning_icon.gif" HSPACE=8 ALIGN=left>
+<IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=8 ALIGN=left>
 <EM>Note that in the United States some form of identification
 of the sender of a facsimile is required by law; properly configured
 tag lines are an acceptable form of identification.
@@ -769,7 +772,7 @@ the section below.
 <TR>
 <TD COLSPAN=2><FONT SIZE=2>
 <HR>
-<IMG SRC="icons/info_icon.gif" HSPACE=8 ALIGN=left>
+<IMG ALT="Info" SRC="icons/info_icon.gif" HSPACE=8 ALIGN=left>
 The syslog facility controls where HylaFAX directs server tracing-related
 messages. By setting this parameter to a non-standard
 value HylaFAX messages can easily be recorded in a file separate
@@ -895,13 +898,13 @@ The flow control scheme requested is one of <TT>xonxoff</TT> for
 software flow control, <TT>rtscts</TT> for hardware flow control,
 or <TT>default</TT> for a setting that is appropriate for the
 modem and the tty device.
-</TD>
+</FONT></TD>
 </TR>
 
 <TR>
 <TD COLSPAN=2><FONT SIZE=2>
 <HR>
-<IMG SRC="icons/warning_icon.gif" HSPACE=8 VSPACE=8 ALIGN=left>
+<IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=8 VSPACE=8 ALIGN=left>
 <EM>Beware of using an improper flow control scheme for the selected
 tty device.  On systems where faxaddmodem understands how
 tty device names reflect flow control characteristics, selecting
@@ -970,7 +973,7 @@ manual pages for information on doing this.
 <TD VALIGN=top><LISTING>
 Creating new configuration file /var/spool/fax/etc/config.ttyf2...
 Done setting up the modem configuration.
-</LISTING></UL>
+</LISTING></TD>
 </TR>
 
 <TR>
@@ -989,7 +992,6 @@ process.  If any parameters are incompatible
 it prompts to see if they should be used to create a new
 file for the scheduler.
 </FONT></TD>
-</TR>
 </TR>
 
 </TABLE>
@@ -1014,7 +1016,7 @@ file and automatically use its contents.
 If faxaddmodem was invoked by faxsetup then faxsetup should complete
 the steps necessary to complete the setup of a HylaFAX server machine.
 
-<A NAME="Starting"><P><HR WIDTH=65% ALIGN=right><H3>Starting Outbound Service</A></H3>
+<H3><A NAME="Starting"><P><HR WIDTH="65%" ALIGN=right>Starting Outbound Service</A></H3>
 
 Outbound service is carried out by the HylaFAX scheduler process, the
 <A HREF="@CGIPATH@/manpage?faxq">faxq</A> program.
@@ -1146,7 +1148,7 @@ just treat the modems as ready for use until it receives more up to date
 information from the faxgetty processes.
 
 
-<A NAME="Inbound"><P><HR WIDTH=65% ALIGN=right><H3>Setting up Inbound Service</A></H3>
+<H3><A NAME="Inbound"><P><HR WIDTH="65%" ALIGN=right>Setting up Inbound Service</A></H3>
 
 To setup HylaFAX for inbound facsimile or data service a
 modem configuration file must be setup and
@@ -1191,11 +1193,11 @@ scheduling decisions).
 faxgetty also includes support for
 screening calls based on
 caller-ID information (consult the section
-``<A HREF=setup-advanced.html#CallerID>Caller-ID Support</A>'')
+``<A HREF="setup-advanced.html#CallerID">Caller-ID Support</A>'')
 and for automatically routing calls based
 on distinctive ring when these services are provided by the local PTT
 (consult the section
-``<A HREF=setup-advanced.html#DistinctiveRing>Distinctive Ring Support</A>'') .
+``<A HREF="setup-advanced.html#DistinctiveRing">Distinctive Ring Support</A>'') .
 For this additional functionality, and
 because faxgetty does a reliable job of reseting and configuring
 recalcitrant modems, it may even be desirable to run faxgetty on
@@ -1205,7 +1207,7 @@ non-fax modems.
 The following sections discuss HylaFAX support for
 servicing particular types of inbound calls.
 
-<A NAME="Fax"><P><HR WIDTH=25% ALIGN=center><H4>Facsimile Service</A></H4>
+<H4><A NAME="Fax"><P><HR WIDTH="25%" ALIGN=center>Facsimile Service</A></H4>
 
 In normal operation HylaFAX's faxgetty process
 will automatically answer inbound phone
@@ -1218,7 +1220,7 @@ specified in the modem configuration file.
 The <TT>RecvDataFormat</TT> configuration parameter can be used to
 control the encoding of data stored in these files; consult the
 section on
-``<A HREF=setup-advanced.html#Transcoding>Transcoding of Received Facsimile</A>''
+``<A HREF="setup-advanced.html#Transcoding">Transcoding of Received Facsimile</A>''
 for more information on this facility.
 The maximum number of pages that will be received in a single
 call can also be controlled with the <TT>MaxRecvPages</TT>
@@ -1230,7 +1232,7 @@ consult the section on
 ``<A HREF="setup-advanced.html#QualifyTSI">Rejecting Junk Facsimile</A>''
 for more information.
 
-<A NAME="Data"><P><HR WIDTH=25% ALIGN=center><H4>Data Service</A></H4>
+<H4><A NAME="Data"><P><HR WIDTH="25%" ALIGN=center>Data Service</A></H4>
 
 By default HylaFAX does not enable support for inbound data calls.
 Data service is not enabled so that naive users do not accidentally
@@ -1315,7 +1317,7 @@ h|std.38400|38400-baud:sp#38400:<BR>
 (Note that as before, the ``<TT>%s</TT>'' is replaced by the speed
 for host-modem communication.)
 
-<A NAME="HFaxd"><P><HR WIDTH=65% ALIGN=right><H2>Setting up Client Access</A></H2>
+<H2><A NAME="HFaxd"><P><HR WIDTH="65%" ALIGN=right>Setting up Client Access</A></H2>
 
 HylaFAX client applications such as sendfax do not communicate directly
 with server processes such as faxq or faxgetty.
@@ -1388,7 +1390,7 @@ protocols than to have multiple unrelated hfaxd processes.
 <P>
 <TABLE BORDER=0>
 <TR>
-<TD><IMG SRC=icons/warning_icon.gif HSPACE=8></TD>
+<TD><IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=8></TD>
 <TD><EM>Beware that hfaxd must either be started up by the super-user
 or be installed setuid-root for proper operation.</EM></TD>
 </TR>
@@ -1423,13 +1425,13 @@ somewhat awkward.
 <P>
 <TABLE BORDER=0>
 <TR>
-<TD><IMG SRC=icons/warning_icon.gif HSPACE=8></TD>
+<TD><IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=8></TD>
 <TD><EM>The <B>etc/hosts.hfaxd</B> file must be owned by the fax user and
 be mode 0600 or hfaxd will not permit client access.</EM></TD>
 </TR>
 </TABLE>
 
-<A NAME="Cron"><P><HR WIDTH=65% ALIGN=right><H3>Setting up Periodic Maintenance Work</A></H3>
+<H3><A NAME="Cron"><P><HR WIDTH="65%" ALIGN=right>Setting up Periodic Maintenance Work</A></H3>
 
 HylaFAX comes with two programs that need to be run periodically on the
 server machine: 
@@ -1452,7 +1454,7 @@ have completed.
 <P>
 <TABLE BORDER=0>
 <TR>
-<TD><IMG SRC=icons/warning_icon.gif HSPACE=8></TD>
+<TD><IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=8></TD>
 <TD><EM>The faxqclean program in version 4.0 does not support
 job archiving; but consult the manual page to verify this
 (in case someone has done some local improvements).</EM></TD>
@@ -1482,7 +1484,7 @@ A sample cron entry to run faxcron might be:
 </LISTING></UL>
 
 
-<A NAME="Problems"><P><HR WIDTH=65% ALIGN=right><H3>Modem Configuration Issues</A></H3>
+<H3><A NAME="Problems"><P><HR WIDTH="65%" ALIGN=right>Modem Configuration Issues</A></H3>
 
 Beware that when faxgetty processes control a modem they
 may leave the modem in a state suitable for sending and receiving facsimile.
@@ -1510,7 +1512,7 @@ when doing adaptive answer.
 <P>
 <TABLE BORDER=0>
 <TR>
-<TD><IMG SRC="icons/warning_icon.gif" HSPACE=4></TD>
+<TD><IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=4></TD>
 <TD><EM>Note that when HylaFAX places an outbound facsimile call it
 automatically forces the modem into Class 1, 2, or 2.0
 <STRONG>before</STRONG> issuing <TT>ModemDialCmd</TT>.
@@ -1519,7 +1521,7 @@ Thus the old FlexFAX trick of changing the class in the
 </TR>
 </TABLE>
 
-<A NAME="Guidance"><P><HR WIDTH=65% ALIGN=right><H2>System-specific Guidance</H2></A>
+<H2><A NAME="Guidance"><P><HR WIDTH="65%" ALIGN=right>System-specific Guidance</A></H2>
 
 This section contains some setup-related issues that are
 dependent on the operating system installed on the target machine.
@@ -1527,7 +1529,7 @@ The information included here is by no means exhaustive; it reflects
 feedback from users accumulated over multiple HylaFAX versions
 and/or operating system releases.
 
-<A NAME="IRIX"><P><HR WIDTH=65% ALIGN=right><H3>IRIX Guidance</A></H3>
+<H3><A NAME="IRIX"><P><HR WIDTH="65%" ALIGN=right>IRIX Guidance</A></H3>
 
 On Silicon Graphics Indigo and Indy machines
 you can not use a Macintosh modem cable to connect your modem
@@ -1562,7 +1564,7 @@ one HylaFAX is using).
 <P>
 <TABLE BORDER=0>
 <TR>
-<TD><IMG SRC="icons/warning_icon.gif" HSPACE=4></TD>
+<TD><IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=4></TD>
 <TD><EM>USR modems work under IRIX 5.x 
 only when patch 475 or a successor is installed
 and <TT>ClocalAsRoot</TT> is set to <TT>Yes</TT>
@@ -1594,7 +1596,7 @@ DCD when carrier is lost.
 <P>
 <TABLE BORDER=0>
 <TR>
-<TD><IMG SRC="icons/warning_icon.gif" HSPACE=4></TD>
+<TD><IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=4></TD>
 <TD><EM>
 The DPS-based PostScript imager program distributed with HylaFAX
 is available only in COFF format.
@@ -1610,13 +1612,13 @@ The font metric files required by client applications are contained
 in the <B>dps_eoe.sw.dpsfonts</B> image that is part of
 the standard IRIX distribution.
 
-<A NAME="SCO"><P><HR WIDTH=65% ALIGN=right><H3>SCO Guidance</A></H3>
+<H3><A NAME="SCO"><P><HR WIDTH="65%" ALIGN=right>SCO Guidance</A></H3>
 
 The standard SCO serial I/O driver (SIO) does nothing with modem control
 lines if <TT>CLOCAL</TT> is set on the tty device.
 The usual workaround is to use the FAS driver instead.
 
-<A NAME="Solaris"><P><HR WIDTH=65% ALIGN=right><H3>Solaris Guidance</A></H3>
+<H3><A NAME="Solaris"><P><HR WIDTH="65%" ALIGN=right>Solaris Guidance</A></H3>
 
 <P>
 Versions of Solaris prior to 2.5 require a patch to
@@ -1642,14 +1644,14 @@ When using <I>ttymon</I> to service inbound data calls set the
 <P>
 <TABLE BORDER=0>
 <TR>
-<TD><IMG SRC="icons/warning_icon.gif" ALT="NOTE: " HSPACE=8></TD>
+<TD><IMG ALT="Note!" SRC="icons/warning_icon.gif" HSPACE=8></TD>
 <TD><EM>Be certain you are not running a ttymon with sac when using HylaFAX.
 Disable all ports that are to be used by HylaFAX
 with admintool or <I>pmadm</I>(1m).</EM></TD>
 </TR>
 </TABLE>
 
-<A NAME="SunOS"><P><HR WIDTH=65% ALIGN=right><H3>SunOS Guidance</A></H3>
+<H3><A NAME="SunOS"><P><HR WIDTH="65%" ALIGN=right>SunOS Guidance</A></H3>
 
 <P>
 Versions of SunOS prior to 4.1.4 require a patch to
@@ -1664,7 +1666,7 @@ These patches are available at:
 
 (choose the one appropriate to the system you are running).
 
-<A NAME="SVR4"><P><HR WIDTH=65% ALIGN=right><H3>SVR4 Guidance</A></H3>
+<H3><A NAME="SVR4"><P><HR WIDTH="65%" ALIGN=right>SVR4 Guidance</A></H3>
 
 <P>
 The following <B>GettyArgs:</B> configuration parameter is
@@ -1677,28 +1679,39 @@ suitable for many SVR4-based systems:
 Be sure entries for different baud rates are defined in the
 <B>/etc/ttydefs</B> file.
 
-<A NAME="Ultrix"><P><HR WIDTH=65% ALIGN=right><H3>Ultrix Guidance</A></H3>
+<H3><A NAME="Ultrix"><P><HR WIDTH="65%" ALIGN=right>Ultrix Guidance</A></H3>
 
-[<I>Ed: this information is old.</I>]<BR>
+[<I>Ed: Thanks to Albert DeKnuydt for the following advice.</I>]<BR>
 
-<P>
-Hardware flow control does not work in HylaFAX Version 3.0,
-modems must be configured
-to use software flow control.
-
-<P>
-Serial ports are conventionally called <B>tty00</B>, <B>tty01</B>,
-etc; see <A HREF="@CGIPATH@/manpage?MAKEDEV">MAKEDEV</A>
-if you need to create devices.
+<UL>
+<LI>As Ultrix has a brain-damaged shell, the command <TT>/bin/sh ./configure</TT> does
+    not work properly.
+    You should use instead <TT>/bin/sh5 &lt; configure </TT>.
+<LI>The archaic syslog facility should be upgraded from
+    <A HREF="ftp://gatekeeper.dec.com/pub/DEC/jtkohl-syslog-complete.tar.Z">ftp://gatekeeper.dec.com/pub/DEC/jtkohl-syslog-complete.tar.Z</A>.
+<LI>Ultrix lacks some functions in the c library, and needs to linked to <B>libiberty.a</B> as well.
+    After configuration, change the line in the defs file from
+    <PRE>MACHDEPLIBS = -lm -lmalloc</PRE>
+    to
+    <PRE>MACHDEPLIBS = -lm -lmalloc -liberty</PRE>
+    Libiberty is available with the gcc compiler.
+<LI>Ultrix header files violate ANSI rules so you have to tell gcc 2.95 (and later) to allow
+    this with the added line in the defs file :
+    <PRE>LC++OPTS = -fpermissive</PRE>
+<LI>Interrupt handling is out of date, and cannot claim to be compatible with <TT>SV_INTERRUPT</TT>.
+    Add the following line to port.h after configuration :
+    <PRE>#undef SV_INTERRUPT</PRE>
+<LI>Most (all?) DEC mips machines do not completely support serial port speeds above 19200.
+</UL>
 
 <!--FOOTER-->
 
 <P>
-<TABLE BORDER=0 WIDTH=100%>
+<TABLE BORDER=0 WIDTH="100%">
 <TR>
-<TD><A HREF="setup-advanced.html"><IMG SRC="icons/next.gif">
+<TD><A HREF="setup-advanced.html"><IMG ALT="Next" SRC="icons/next.gif">
 Advanced server configuration</A>.</TD>
-<TD><A HREF="toc.html"><IMG SRC="icons/back.gif">
+<TD><A HREF="toc.html"><IMG ALT="Back" SRC="icons/back.gif">
 HylaFAX table of contents</A>.</TD>
 </TR>
 </TABLE>
@@ -1706,7 +1719,7 @@ HylaFAX table of contents</A>.</TD>
 <HR>
 
 <ADDRESS>
-<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:sam@engr.sgi.com">sam@engr.sgi.com</A>.
+<A HREF="sam.html">Sam Leffler</A> / <A HREF="mailto:webmaster@hylafax.org">webmaster@hylafax.org</A>.
 Last updated $Date$.
 </ADDRESS>
 
