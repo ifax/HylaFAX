@@ -169,6 +169,7 @@ static const struct {
 { "percentgoodlines",		&ModemConfig::percentGoodLines,	     95 },
 { "maxconsecutivebadlines",	&ModemConfig::maxConsecutiveBadLines,5 },
 { "modemresetdelay",		&ModemConfig::resetDelay,	     2600 },
+{ "modemdtrdropdelay",		&ModemConfig::dtrDropDelay,	     75 },
 { "modembaudratedelay",		&ModemConfig::baudRateDelay,	     0 },
 { "modematcmddelay",		&ModemConfig::atCmdDelay,	     0 },
 { "faxt1timer",			&ModemConfig::t1Timer,		     TIMER_T1 },

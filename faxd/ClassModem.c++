@@ -649,8 +649,9 @@ bool
 ClassModem::reset(long ms)
 {
     setDTR(false);
-    pause(conf.resetDelay);		// pause so modem can do reset
+    pause(conf.dtrDropDelay);		// required DTR OFF-to-ON delay
     setDTR(true);
+    pause(conf.resetDelay);		// pause so modem can do reset
 #ifndef CONFIG_NOREOPEN
     /*
      * On some systems lowering and raising DTR is not done
@@ -666,9 +667,10 @@ ClassModem::reset(long ms)
     /*
      * Perform a soft reset as well to ensure the modem
      * is in a stable state before sending the additional
-     * reset commands.
+     * reset commands.  Depending on the modem and its
+     * state, we may wait 30 sec for OK repsonse.
      */
-    return atCmd(conf.softResetCmd, AT_OK, conf.resetDelay)
+    return atCmd(conf.softResetCmd, AT_OK, 30*1000)
             && atCmd(resetCmds, AT_OK, ms);
 }
 

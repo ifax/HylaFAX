@@ -163,6 +163,7 @@ public:
     u_int	sendFillOrder;		// bit order of sent data
     u_int	frameFillOrder;		// bit order of HDLC frames
     u_int	resetDelay;		// delay (ms) after reseting modem
+    u_int	dtrDropDelay;		// delay (ms) after dropping DTR
     u_int	baudRateDelay;		// delay (ms) after setting baud rate
     u_int	atCmdDelay;		// delay (ms) between each AT cmd
     u_int	percentGoodLines;	// required % of good lines in page

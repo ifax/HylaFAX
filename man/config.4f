@@ -208,6 +208,7 @@ ModemClassQueryCmd	string	\s-1AT+FCLASS=?\s+1	command for querying modem service
 ModemCommaPauseTimeCmd	string	\s-1ATS8=2\s+1	command for setting time to pause for ``,'' in dialing string
 ModemDialCmd	string	\s-1ATDT%s\s+1	command for dialing (%s for number to dial)
 ModemDialResponseTimeout	integer	\s-1180000\s+1	dialing command timeout (ms)
+ModemDTRDropDelay	integer	\s-175\s+1	delay (ms) between DTR OFF and DTR ON
 ModemEchoOffCmd	string	\s-1ATE0\s+1	command for disabling command echo
 ModemFlowControl	string	\s-1XONXOFF\s+1	\s-1DTE-DCE\s+1 flow control scheme
 ModemFrameFillOrder	string	\s-1LSB2MSB\s+1	bit order for \s-1HDLC\s+1 frames
@@ -223,7 +224,7 @@ ModemPageStartTimeout	integer	\s-1180000\s+1	page send/receive timeout (ms)
 ModemRate	integer	\s-119200\s+1	baud rate to use for \s-1DCE-DTE\s+1 communication
 ModemRecvFillOrder	string	\s-1\fIsee below\fP\s+1	bit order for received facsimile data
 ModemResetCmds	string	\-	additional commands when resetting modem
-ModemResetDelay	integer	\s-12600\s+1	delay (ms) after sending modem reset commands
+ModemResetDelay	integer	\s-12600\s+1	delay (ms) after placing DTR ON
 ModemResultCodesCmd	string	\s-1ATQ0\s+1	command for enabling result codes
 ModemRevQueryCmd	string	\s-1\fIsee below\fP\s+1	command for querying modem firmware revision
 ModemSendBeginCmd	string	\-	command to send on establishing carrier
@@ -1542,6 +1543,15 @@ parameter.
 This additional server-based timeout is provided to guard against
 modems that can ``lock up'' when dialing the telephone.
 .TP
+.B ModemDTRDropDelay
+The time, in milliseconds, to pause between placing
+.SM DTR
+OFF and 
+.SM DTR
+ON while resetting a modem.  This value should be at
+least equal to the time-value of the analogous S-register,
+usually S25.
+.TP
 .B ModemEchoOffCmd
 The command to disable echoing of commands sent to the modem.
 .TP
@@ -1718,12 +1728,14 @@ should not be included in this string; the servers issue this
 command explicitly.
 .TP
 .B ModemResetDelay
-The time, in milliseconds, to pause after resetting a modem
-either by dropping the
+The time, in milliseconds, to pause after setting
 .SM DTR
-signal, or through a software reset command.
-This parameter should be long enough to permit the modem to
-do any reset-related processing it requires.
+ON, while resetting a modem.
+.SM DTR
+ON does not respond with ``OK'', so this parameter should 
+be long enough to allow the modem time to be ready for 
+.B ModemSoftResetCmd
+successively.
 .TP
 .B ModemResultCodesCmd
 The command to enable result codes.
