@@ -795,6 +795,7 @@ Class1Modem::waitFor(ATResponse wanted, long ms)
 	case AT_NODIALTONE:
 	case AT_NOANSWER:
 	case AT_OFFHOOK:
+	case AT_RING:
 	    modemTrace("MODEM %s", ATresponses[response]);
 	    /* fall thru... */
 	case AT_FCERROR:

@@ -33,7 +33,7 @@
 /*
  * Call status description strings.
  */
-const char* ClassModem::callStatus[9] = {
+const char* ClassModem::callStatus[10] = {
     "Call successful",				// OK
     "Busy signal detected",			// BUSY
     "No carrier detected",			// NOCARRIER
@@ -43,6 +43,7 @@ const char* ClassModem::callStatus[9] = {
     "Unknown problem (check modem power)",	// FAILURE
     "Carrier established, but Phase A failure",	// NOFCON
     "Data connection established (wanted fax)",	// DATACONN
+    "Glare - RING detected",			// RING
 };
 /*
  * Service class descriptions.  The first three
@@ -926,6 +927,7 @@ ClassModem::waitFor(ATResponse wanted, long ms)
 	case AT_NODIALTONE:
 	case AT_NOANSWER:
 	case AT_OFFHOOK:
+	case AT_RING:
 	    modemTrace("MODEM %s", ATresponses[response]);
 	    return (false);
 	}

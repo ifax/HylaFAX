@@ -474,6 +474,7 @@ Class2Modem::waitFor(ATResponse wanted, long ms)
 	case AT_NOCARRIER:
 	case AT_NODIALTONE:
 	case AT_NOANSWER:
+	case AT_RING:
 	    modemTrace("MODEM %s", ATresponses[response]);
 	    return (false);
 	case AT_FHNG:
