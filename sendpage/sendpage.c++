@@ -196,10 +196,11 @@ sendPageApp::usage()
 void
 sendPageApp::copyToTemporary(int fin, fxStr& tmpl)
 {
-    char buff[128];
-    sprintf(buff, "%s/sndpageXXXXXX", _PATH_TMP);
+    const char* templ = _PATH_TMP "/sndpageXXXXXX";
+    char* buff = strcpy(new char[strlen(templ) + 1], templ);
     int fd = Sys::mkstemp(buff);
     tmpl = buff;
+    delete [] buff;
     if (fd >= 0) {
 	int cc;
 	char buf[16*1024];
