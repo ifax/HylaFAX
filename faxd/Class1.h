@@ -175,7 +175,7 @@ protected:
 		    const u_char* bitrev, bool eod);
     bool	sendClass1ECMData(const u_char* data, u_int cc,
 		     const u_char* bitrev, bool eod, u_int ppmcmd, fxStr& emsg);
-    bool	recvFrame(HDLCFrame& frame, long ms = 10*1000);
+    bool	recvFrame(HDLCFrame& frame, long ms = 10*1000, u_char docrp = 0);
     bool	recvTCF(int br, HDLCFrame&, const u_char* bitrev, long ms);
     bool	recvRawFrame(HDLCFrame& frame);
     bool	recvECMFrame(HDLCFrame& frame);

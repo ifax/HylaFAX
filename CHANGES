@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX
 
+* add CRP usage in receiving when message frames
+  are received corrupt (14 Mar 2005)
 * add Class1RMPersistence, better ECM +FCERROR handling (14 Mar 2005)
 * small fixes for compilation on AMD-64 (14 Mar 2005)
 * fix a few timeouts in faxgetty (11 Mar 2005)

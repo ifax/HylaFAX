@@ -613,7 +613,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	    ppmrcvd = true;
 	    lastPPM = signalRcvd;
 	} else {
-	    ppmrcvd = recvFrame(frame, timer);
+	    ppmrcvd = recvFrame(frame, timer, FCF_CRP|FCF_RCVR);
 	    if (ppmrcvd) lastPPM = frame.getFCF();
 	}
 	/*
@@ -709,7 +709,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 						(void) transmitFrame(params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP|FCF_RCVR);
 						tracePPR("RECV send", params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP);
 						HDLCFrame rrframe(conf.class1FrameOverhead);
-						if (gotresponse = recvFrame(rrframe, conf.t4Timer)) {
+						if (gotresponse = recvFrame(rrframe, conf.t4Timer, FCF_CRP|FCF_RCVR)) {
 						    tracePPM("RECV recv", rrframe.getFCF());
 						    if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
 							protoTrace("Ignoring invalid response to RNR.");
@@ -950,7 +950,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    rtncframe.put(frameRev[ctrlFrameRcvd[i] & 0xFF]);
 				traceHDLCFrame("-->", rtncframe);
 			    } else
-				gotrtncframe = recvFrame(rtncframe, conf.t2Timer);
+				gotrtncframe = recvFrame(rtncframe, conf.t2Timer, FCF_CRP|FCF_RCVR);
 			} else {
 			    gotrtncframe = recvRawFrame(rtncframe);
 			}
@@ -1241,7 +1241,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		HDLCFrame ppsframe(conf.class1FrameOverhead);
 		u_short recvFrameCount = 0;
 		do {
-		    gotpps = recvFrame(ppsframe, conf.t2Timer);
+		    gotpps = recvFrame(ppsframe, conf.t2Timer, FCF_CRP|FCF_RCVR);
 		} while (!gotpps && !wasTimeout() && ++recvFrameCount < 20);
 		if (gotpps) {
 		    tracePPM("RECV recv", ppsframe.getFCF());
@@ -1314,7 +1314,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					rtnframe = ppsframe;
 				    }
 				    pprcnt = 0;
-				    if (signalRcvd != 0 || recvFrame(rtnframe, conf.t2Timer)) {
+				    if (signalRcvd != 0 || recvFrame(rtnframe, conf.t2Timer, FCF_CRP|FCF_RCVR)) {
 					bool gotrtnframe = true;
 					if (signalRcvd == 0) tracePPM("RECV recv", rtnframe.getFCF());
 					else signalRcvd = 0;		// reset it, we're in-sync now
@@ -1333,7 +1333,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    }
 					    transmitFrame(FCF_PPR, fxStr(ppr, 32));
 					    tracePPR("RECV send", FCF_PPR);
-					    gotrtnframe = recvFrame(rtnframe, conf.t2Timer);
+					    gotrtnframe = recvFrame(rtnframe, conf.t2Timer, FCF_CRP|FCF_RCVR);
 					    recvFrameCount++;
 					}
 					u_int dcs;			// possible bits 1-16 of DCS in FIF
@@ -1533,7 +1533,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				(void) transmitFrame(FCF_RNR|FCF_RCVR);
 				tracePPR("RECV send", FCF_RNR);
 				HDLCFrame rrframe(conf.class1FrameOverhead);
-				if (gotresponse = recvFrame(rrframe, conf.t4Timer)) {
+				if (gotresponse = recvFrame(rrframe, conf.t4Timer, FCF_CRP|FCF_RCVR)) {
 				    tracePPM("RECV recv", rrframe.getFCF());
 				    if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
 					protoTrace("Ignoring invalid response to RNR.");

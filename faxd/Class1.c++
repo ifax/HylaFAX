@@ -1278,13 +1278,24 @@ Class1Modem::transmitData(int br, u_char* data, u_int cc,
  * If a carrier is received, but the complete frame
  * is not received before the timeout, the receive
  * is aborted.
+ *
+ * If the frame is received in error, then in instances
+ * where the other end is likely to be able to receive
+ * it, we can transmit CRP to get the other end to
+ * retransmit the frame. 
  */
 bool
-Class1Modem::recvFrame(HDLCFrame& frame, long ms)
+Class1Modem::recvFrame(HDLCFrame& frame, long ms, u_char docrp)
 {
-    frame.reset();
+    bool gotframe;
+    u_short crpcnt = 0;
     if (useV34) {
-	return recvRawFrame(frame);
+	do {
+	    if (crpcnt) tracePPR(docrp & FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
+	    frame.reset();
+	    gotframe = recvRawFrame(frame);
+	} while (docrp && crpcnt++ < 3 && !gotframe && !wasTimeout() && transmitFrame(docrp));
+	return (gotframe);
     }
     startTimeout(ms);
     bool readPending = atCmd(rhCmd, AT_NOTHING, 0);
@@ -1294,7 +1305,16 @@ Class1Modem::recvFrame(HDLCFrame& frame, long ms)
             abortReceive();
             return (false);
         }
-        return recvRawFrame(frame);
+	do {
+	    if (crpcnt) {
+		tracePPR(docrp & FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
+		if (!(atCmd(rhCmd, AT_NOTHING, 0) && waitFor(AT_CONNECT,0))) return (false);
+	    }
+	    frame.reset();
+            gotframe = recvRawFrame(frame);
+	} while (docrp && crpcnt++ < 3 && !gotframe && !wasTimeout() &&
+		atCmd(conf.class1SwitchingCmd, AT_OK) && transmitFrame(docrp));
+	return (gotframe);
     }
     stopTimeout("waiting for v.21 carrier");
     if (readPending && wasTimeout())
