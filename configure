@@ -2999,31 +2999,6 @@ fi
 Note "Done checking system libraries."
 
 Note ""
-Note "Checking TIFF support."
-#
-# Location of TIFF binaries
-#
-if [ -z "$TIFFBIN" ]; then
-    DIRS="/usr/local/bin /usr/contrib/bin /usr/gnu/bin /usr/bin"
-    for i in $DIRS; do
-        test -x $i/tiff2ps && { TIFFBIN=$i; break; }
-    done
-fi
-if [ -z "$TIFFBIN" ]; then
-    cat 1>&2 <<EOF
-    Cannot locate the TIFF binary files(ie tiff2ps) anywhere.
-
-    Please install the TIFF binaries and set the TIFFBIN parameter 
-    to the correct path.
-EOF
-    boom
-else
-    Note "Using TIFF binary files from $TIFFBIN"
-fi
-
-Note "Done checking TIFF support."
-
-Note ""
 Note "Checking ZLIB support."
 #
 # Verify library is compatible.
@@ -3097,6 +3072,31 @@ EOF
     fi
 fi
 Note "Done checking ZLIB support."
+
+Note ""
+Note "Checking TIFF support."
+#
+# Location of TIFF binaries
+#
+if [ -z "$TIFFBIN" ]; then
+    DIRS="/usr/local/bin /usr/contrib/bin /usr/gnu/bin /usr/bin"
+    for i in $DIRS; do
+        test -x $i/tiff2ps && { TIFFBIN=$i; break; }
+    done
+fi
+if [ -z "$TIFFBIN" ]; then
+    cat 1>&2 <<EOF
+    Cannot locate the TIFF binary files(ie tiff2ps) anywhere.
+
+    Please install the TIFF binaries and set the TIFFBIN parameter 
+    to the correct path.
+EOF
+    boom
+else
+    Note "Using TIFF binary files from $TIFFBIN"
+fi
+
+Note "Done checking TIFF support."
 
 # NB: only check if we have the MLA tools
 if [ -f $SRCDIR/MLA/VERSION -a $DBLIB = no ]; then
