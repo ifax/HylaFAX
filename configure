@@ -308,6 +308,7 @@ EOF
 }
 
 QUIET=no
+INTERACTIVE=${INTERACTIVE:="yes"}
 SITE=
 TARGET=
 RELEASE=
@@ -347,6 +348,7 @@ do
 	WITHARGS=yes
 	;;
     -quiet|--quiet)		QUIET=yes;;
+    -nointeractive|--nointeractive)	INTERACTIVE=no;;
     -verbose|--verbose)		QUIET=no;;
     -site|--site)		ac_prev=SITE;;
     -site=*|--site=*)		SITE="$ac_optarg";;
@@ -3653,7 +3655,8 @@ bitchExecutable()
 {
     echo ""
     echo "WARNING, $1 does not seem to be an executable program;"
-    echo "         you will need to correct this before starting up the fax server."
+    echo "         you may need to correct this before starting up the fax server."
+    ls -l $1
     echo ""
 }
 
@@ -4259,6 +4262,11 @@ checkForExecutable()
     test -x $1 || bitchExecutable $1
 }
 
+if [ $QUIET = no -a $INTERACTIVE != no ]; then
+	Note "Press Return to Continue "
+	read ok
+fi
+
 if [ $QUIET = no ]; then
     ok=skip
     while [ "$ok" != y ] && [ "$ok" != yes ]; do
@@ -4268,19 +4276,23 @@ if [ $QUIET = no ]; then
 	    done
 	fi
 	printConfig1
-	prompt "Are these ok [yes]?"; read ok
-	test -z "$ok" && ok=yes
-	case "$ok" in
-	[1-9]|1[0-5])	promptForParameter $ok;;
-	[yY]*|[nN]*)	continue;;
-	?*)
-	    echo ""
-	    echo "\"y\", \"yes\", or <RETURN> accepts the displayed parameters."
-	    echo "A number lets you change the numbered parameter."
-	    echo ""
-	    ;;
-	esac
-	ok=skip
+	if [ $INTERACTIVE = no ]; then
+	    ok=yes
+	else
+	    prompt "Are these ok [yes]?"; read ok
+	    test -z "$ok" && ok=yes
+	    case "$ok" in
+	    [1-9]|1[0-4])	promptForParameter $ok;;
+	    [yY]*|[nN]*)	continue;;
+	    ?*)
+		echo ""
+		echo "\"y\", \"yes\", or <RETURN> accepts the displayed parameters."
+		echo "A number lets you change the numbered parameter."
+		echo ""
+		;;
+	    esac
+	    ok=skip
+	fi
     done
 fi
 
@@ -4295,19 +4307,23 @@ if [ $QUIET = no ]; then
 	printConfig2
 	checkForExecutable $PATH_SENDMAIL
 	checkForExecutable $PATH_GETTY
-	prompt "Are these ok [yes]?"; read ok
-	test -z "$ok" && ok=yes
-	case "$ok" in
-	1[6-9]|2[0-8])	promptForParameter $ok;;
-	[yY]*|[nN]*)	continue;;
-	?*)
-	    echo ""
-	    echo "\"y\", \"yes\", or <RETURN> accepts the displayed parameters."
-	    echo "A number lets you change the numbered parameter."
-	    echo ""
-	    ;;
-	esac
-	ok=skip
+	if [ $INTERACTIVE = no ]; then
+	    ok=yes
+	else
+	    prompt "Are these ok [yes]?"; read ok
+	    test -z "$ok" && ok=yes
+	    case "$ok" in
+	    1[5-9]|2[0-7])	promptForParameter $ok;;
+	    [yY]*|[nN]*)	continue;;
+	    ?*)
+		echo ""
+		echo "\"y\", \"yes\", or <RETURN> accepts the displayed parameters."
+		echo "A number lets you change the numbered parameter."
+		echo ""
+		;;
+	    esac
+	    ok=skip
+	fi
     done
 fi
 
