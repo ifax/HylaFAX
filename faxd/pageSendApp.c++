@@ -240,12 +240,12 @@ pageSendApp::sendFailed(FaxRequest& req, FaxSendStatus stat, const char* notice,
     req.status = stat;
     req.notice = notice;
     /*
-     * When requeued for the default interval (requeueOther),
+     * When requeued for the default interval (called with 3 args),
      * don't adjust the time-to-send field so that the spooler
      * will set it according to the default algorithm that 
-     * uses the command-line parameter and a random jitter.
+     * uses the command-line parameter or requeueOther and a random jitter.
      */
-    if (tts != requeueOther)
+    if (tts != 0)
 	req.tts = Sys::now() + tts;
     traceServer("PAGE FAILED: %s", notice);
 }

@@ -105,18 +105,18 @@ FaxServer::sendFailed(FaxRequest& fax, FaxSendStatus stat, const char* notice, u
     fax.status = stat;
     fax.notice = notice;
     /*
-     * When requeued for the default interval (requeueOther),
+     * When requeued for the default interval (called with 3 args),
      * don't adjust the time-to-send field so that the spooler
      * will set it according to the default algorithm that 
-     * uses the command-line parameter and a random jitter.
+     * uses the command-line parameter or requeueOther and a random jitter.
      */
-    if (tts != requeueOther)
+    if (tts != 0)
 	fax.tts = Sys::now() + tts;
-	traceServer("SEND FAILED: JOB %s DEST %s ERR %s"
-		, (const char*) fax.jobid
-            	, (const char*) fax.external
-            	, (const char*) notice
-        );
+    traceServer("SEND FAILED: JOB %s DEST %s ERR %s"
+	, (const char*) fax.jobid
+	, (const char*) fax.external
+	, (const char*) notice
+    );
 
 }
 
