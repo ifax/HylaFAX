@@ -88,7 +88,7 @@ protected:
     fxStr	getModemCapabilities() const;
 
     void	readConfig(const fxStr& filename);
-    void	setLocalIdentifier(const fxStr& lid);
+    void	setLocalIdentifier(const fxStr& lid, bool now = false);
 
     void	sendFax(FaxRequest&, FaxMachineInfo&, FaxAcctInfo&, u_int&);
     bool	recvFax(const CallerID& cid);

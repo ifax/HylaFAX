@@ -315,43 +315,76 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
 	traceServer("ANSWER: CID REJECTED");
 	callResolved = false;
 	advanceRotary = false;
-    } else if (ctype != ClassModem::CALLTYPE_UNKNOWN) {
-	/*
-	 * Distinctive ring or other means has already identified
-	 * the type of call.  If we're to answer the call in a
-	 * different way, then treat this as an error and don't
-	 * answer the phone.  Otherwise answer according to the
-	 * deduced call type.
-	 */
-	if (atype != ClassModem::ANSTYPE_ANY && ctype != atype) {
-	    traceServer("ANSWER: Call deduced as %s,"
-		 "but told to answer as %s; call ignored",
-		 ClassModem::callTypes[ctype],
-		 ClassModem::answerTypes[atype]);
-	    callResolved = false;
-	    advanceRotary = false;
-	} else {
-	    // NB: answer based on ctype, not atype
-	    ctype = modemAnswerCall(ctype, emsg, dialnumber);
-	    callResolved = processCall(ctype, emsg, cid);
-	}
-    } else if (atype == ClassModem::ANSTYPE_ANY) {
-	/*
-	 * Normal operation; answer according to the settings
-	 * for the rotary and adaptive answer capabilities.
-	 */
-	int r = answerRotor;
-	do {
-	    callResolved = answerCall(answerRotary[r], ctype, emsg, cid, dialnumber);
-	    r = (r+1) % answerRotorSize;
-	} while (!callResolved && adaptiveAnswer && r != answerRotor);
     } else {
-	/*
-	 * Answer for a specific type of call but w/o
-	 * any existing call type information such as
-	 * distinctive ring.
-	 */
-	callResolved = answerCall(atype, ctype, emsg, cid, dialnumber);
+	if (dynamicLocalId.length()) {
+	    fxStr cmd(dynamicLocalId | quote | cid.name | enquote | 
+		quote | cid.number | enquote | quote | getModemDevice() | enquote);
+	    fxStr localid = "";
+	    int pipefd[2], idlength, status;
+	    char dlid[21];	// max CSI size (20) plus '\0'
+	    pipe(pipefd);
+	    pid_t pid = fork();
+	    switch (pid) {
+		case -1:
+		    logError("Could not fork for local ID.");
+		    break;
+		case  0:
+		    dup2(pipefd[1], STDOUT_FILENO);
+		    Sys::close(pipefd[0]);
+		    Sys::close(pipefd[1]);
+		    execl("/bin/sh", "sh", "-c", (const char*) cmd, (char*) NULL);
+		    sleep(1);
+		    exit(0);
+		default:
+		    Sys::close(pipefd[1]);
+		    idlength = Sys::read(pipefd[0], dlid, sizeof(dlid));
+		    Sys::waitpid(pid, status);
+		    if (status != 0)
+		        logError("Bad exit status %#o for \'%s\'", status, (const char*) cmd);
+		    localid = fxStr(dlid, idlength-1);
+		    FaxServer::setLocalIdentifier(localid, true);	// Class 2 must issue command
+		    break;
+	    }
+	    traceServer("ANSWER: LOCAL ID '%s'", (const char*) localid);
+	}
+	if (ctype != ClassModem::CALLTYPE_UNKNOWN) {
+	    /*
+	     * Distinctive ring or other means has already identified
+	     * the type of call.  If we're to answer the call in a
+	     * different way, then treat this as an error and don't
+	     * answer the phone.  Otherwise answer according to the
+	     * deduced call type.
+	     */
+	    if (atype != ClassModem::ANSTYPE_ANY && ctype != atype) {
+		traceServer("ANSWER: Call deduced as %s,"
+		     "but told to answer as %s; call ignored",
+		     ClassModem::callTypes[ctype],
+		     ClassModem::answerTypes[atype]);
+		callResolved = false;
+		advanceRotary = false;
+	    } else {
+		// NB: answer based on ctype, not atype
+		ctype = modemAnswerCall(ctype, emsg, dialnumber);
+		callResolved = processCall(ctype, emsg, cid);
+	    }
+	} else if (atype == ClassModem::ANSTYPE_ANY) {
+	    /*
+	     * Normal operation; answer according to the settings
+	     * for the rotary and adaptive answer capabilities.
+	     */
+	    int r = answerRotor;
+	    do {
+		callResolved = answerCall(answerRotary[r], ctype, emsg, cid, dialnumber);
+		r = (r+1) % answerRotorSize;
+	    } while (!callResolved && adaptiveAnswer && r != answerRotor);
+	} else {
+	    /*
+	     * Answer for a specific type of call but w/o
+	     * any existing call type information such as
+	     * distinctive ring.
+	     */
+	    callResolved = answerCall(atype, ctype, emsg, cid, dialnumber);
+	}
     }
     /*
      * Call resolved.  If we were able to recognize the call
@@ -882,6 +915,7 @@ faxGettyApp::stringtag faxGettyApp::strings[] = {
 { "vgettyargs",		&faxGettyApp::vgettyArgs },
 { "egettyargs",		&faxGettyApp::egettyArgs },
 { "faxrcvdcmd",		&faxGettyApp::faxRcvdCmd,	FAX_FAXRCVDCMD },
+{ "dynamiclocalid",	&faxGettyApp::dynamicLocalId },
 };
 faxGettyApp::numbertag faxGettyApp::numbers[] = {
 { "answerbias",		&faxGettyApp::answerBias,	(u_int) -1 },

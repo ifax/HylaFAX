@@ -499,7 +499,7 @@ Class2Modem::stripQuotes(const char* cp)
  * length is 20 characters (per the spec).
  */
 void
-Class2Modem::setLID(const fxStr& number)
+Class2Modem::setLID(const fxStr& number, bool now)
 {
     lid.resize(0);
     for (u_int i = 0, n = number.length(); i < n; i++) {
@@ -509,6 +509,7 @@ Class2Modem::setLID(const fxStr& number)
     }
     if (lid.length() > 20)
 	lid.resize(20);
+    if (now) class2Cmd(lidCmd, lid);	// for DynamicLocalID
 }
 
 /* 

@@ -254,10 +254,10 @@ FaxServer::readConfig(const fxStr& filename)
  * modem (e.g. for Class 2-style modems).
  */
 void
-FaxServer::setLocalIdentifier(const fxStr& lid)
+FaxServer::setLocalIdentifier(const fxStr& lid, bool now)
 {
     ServerConfig::setLocalIdentifier(lid);
     if (modem)
-	modem->setLID(lid);
+	modem->setLID(lid, now);
 }
 const fxStr& FaxServer::getLocalIdentifier() const { return (localIdentifier); }
