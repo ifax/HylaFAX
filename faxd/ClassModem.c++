@@ -839,7 +839,7 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 		if (conf.atCmdDelay)
 		    pause(conf.atCmdDelay);
 		fxStr command = cmd.extract(pos, i-pos);
-		command.raisecase();
+		command.raiseatcmd();
 		if (!putModemLine(command))
 		    return (false);
 		pos = ++i;			// next segment starts after line break
@@ -871,7 +871,7 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 			 * translated to \r).
 			 */
 			fxStr command = cmd.extract(pos, i-1-pos);
-			command.raisecase();
+			command.raiseatcmd();
 			if (!putModemLine(command))
 			    return (false);
 			// setup for expected response
@@ -953,7 +953,7 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 	    if (conf.atCmdDelay)
 		pause(conf.atCmdDelay);
 	    fxStr command = cmd.extract(pos, i-pos);
-	    command.raisecase();
+	    command.raiseatcmd();
 	    if (!putModemLine(command))
 		return (false);
 	    respPending = true;

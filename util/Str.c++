@@ -256,6 +256,38 @@ void fxStr::raisecase(u_int posn, u_int chars)
     }
 }
 
+/*
+ * Although T.32 6.1.1 and T.31 6.1 may lead a DCE to not
+ * distinguish between lower case and upper case, many DCEs
+ * actually support lower case characters in quoted strings.
+ * Thus, we don't rasecase quoted strings.
+ */
+void fxStr::raiseatcmd(u_int posn, u_int chars)
+{
+    if (!chars) chars = slength-1-posn;
+    fxAssert(posn+chars<slength, "Str::raiseatcmd: Invalid range");
+    bool quoted = false;
+    while (chars--) {
+#ifdef hpux				// HPUX bogosity; see above
+#ifdef toupper
+#undef toupper
+#endif
+	if (!quoted)
+	    data[posn] = toupper(data[posn]);
+#elif defined(_toupper)
+	char c = data[posn];
+	if (islower(c) && !quoted)
+	    data[posn] = _toupper(c);
+#else
+	if (!quoted)
+	    data[posn] = toupper(data[posn]);
+#endif
+	if (data[posn] == '\"')
+	    quoted = !quoted;
+	posn++;
+    }
+}
+
 fxStr fxStr::copy() const
 {
     return fxStr(data,slength-1);

@@ -162,6 +162,7 @@ public:
     fxStr tail(u_int) const;
     void lowercase(u_int posn=0, u_int len=0);
     void raisecase(u_int posn=0, u_int len=0);
+    void raiseatcmd(u_int posn=0, u_int len=0);
 
     void remove(u_int posn,u_int len=1);
 
