@@ -100,10 +100,10 @@ Class2Params::is2D() const
  */
 u_int Class2Params::vrDISTab[2] = {
     0,				// VR_NORMAL
-    DIS_7MMVRES,		// VR_FINE
+    DIS_7MMVRES			// VR_FINE
 };
 u_int Class2Params::dfDISTab[4] = {
-    0,				// 1-D MH
+    0,				// 1-D MR
     DIS_2DENCODE,		// + 2-D MR
     DIS_2DENCODE,		// + Uncompressed data
     DIS_2DENCODE,		// + 2-D MMR
@@ -175,7 +175,7 @@ u_int Class2Params::stDCSTab[8] = {
  * subparameter code values.
  */
 u_int Class2Params::DISdfTab[2] = {
-    DF_1DMH,			// !DIS_2DENCODE
+    DF_1DMR,			// !DIS_2DENCODE
     DF_2DMR			// DIS_2DENCODE
 };
 u_int Class2Params::DISvrTab[2] = {
@@ -187,22 +187,22 @@ u_int Class2Params::DISvrTab[2] = {
  * based on the signalling capabilities of the DIS.
  */
 u_int Class2Params::DISbrTab[16] = {
-    BR_2400,			// 0x0 V27ter fall-back (BR_4800 could be assumed, T.30 Table 2 Note 3)
-    BR_14400,			// 0x1 undefined
-    BR_9600,			// 0x2 undefined
-    BR_14400,			// 0x3 undefined
-    BR_4800,			// 0x4 V27ter
-    BR_14400,			// 0x5 reserved
-    BR_4800,			// 0x6 reserved
-    BR_14400,			// 0x7 reserved
-    BR_9600,			// 0x8 V29
-    BR_14400,			// 0x9 undefined
-    BR_9600,			// 0xA undefined
-    BR_14400,			// 0xB undefined
-    BR_9600,			// 0xC V27ter+V29
-    BR_14400,			// 0xD V27ter+V29+V17 (not V.33, post-1994)
-    BR_14400,			// 0xE V27ter+V29+V33 (invalid, post-1994, T.30 Table 2 Notes 31, 32)
-    BR_14400,			// 0xF undefined
+    BR_2400,			// 0x0/V27
+    BR_14400,			// 0x1/V17
+    BR_9600,			// 0x2/undefined
+    BR_14400,			// 0x3/V17+undefined
+    BR_4800,			// 0x4/V27
+    BR_14400,			// 0x5/V17+V27
+    BR_4800,			// 0x6/V27+undefined
+    BR_14400,			// 0x7/V17+V27+undefined
+    BR_9600,			// 0x8/V29
+    BR_14400,			// 0x9/V17+V29
+    BR_9600,			// 0xA/V29+undefined
+    BR_14400,			// 0xB/V17+V29+undefined
+    BR_9600,			// 0xC/V29+V27
+    BR_14400,			// 0xD/V17+V29+V29
+    BR_9600,			// 0xE/V29+V27+undefined
+    BR_14400,			// 0xF/V17+V29+V29+undefined
 };
 u_int Class2Params::DISwdTab[4] = {
     WD_1728,			// DISWIDTH_1728
@@ -233,18 +233,7 @@ u_int Class2Params::DISstTab[8] = {
 void
 Class2Params::setFromDIS(u_int dis, u_int xinfo)
 {
-    // VR is a bitmap of available settings, not a maximum
     vr = DISvrTab[(dis & DIS_7MMVRES) >> 9];
-    if (xinfo & DIS_METRES) {
-	if (xinfo & DIS_200X400) vr |= VR_R8;
-	if (xinfo & DIS_400X400) vr |= VR_R16;
-    }
-    if (xinfo & DIS_INCHRES) {
-	vr |= VR_200X100;
-	if (dis & DIS_7MMVRES) vr |= VR_200X200;
-	if (xinfo & DIS_200X400) vr |= VR_200X400;
-	if (xinfo & DIS_300X300) vr |= VR_300X300;
-    }
     /*
      * Beware that some modems (e.g. the Supra) indicate they
      * support the V.17 bit rates, but not the normal V.27+V.29
@@ -259,7 +248,7 @@ Class2Params::setFromDIS(u_int dis, u_int xinfo)
 	br = DISbrTab[(dis & DIS_SIGRATE) >> 10];
     wd = DISwdTab[(dis & DIS_PAGEWIDTH) >> 6];
     ln = DISlnTab[(dis & DIS_PAGELENGTH) >> 4];
-    if ((xinfo & DIS_G4COMP) && (xinfo & DIS_ECMODE))	// MMR requires ECM
+    if (xinfo & DIS_G4COMP)
 	df = DF_2DMMR;
     else if (xinfo & DIS_2DUNCOMP)
 	df = DF_2DMRUNCOMP;
@@ -282,9 +271,9 @@ u_int Class2Params::DCSbrTab[16] = {
     BR_9600,			// 0x8/9600 V29
     BR_9600,			// 0x9/9600 V17
     BR_9600,			// 0xA/9600 V33
-    BR_7200,			// 0xB/7200 V17
+    0,				// 0xB/undefined
     BR_7200,			// 0xC/7200 V29
-    0,				// 0xD/undefined 
+    BR_7200,			// 0xD/7200 V17
     BR_7200,			// 0xE/7200 V33
     0,				// 0xF/undefined 
 };
@@ -296,21 +285,7 @@ void
 Class2Params::setFromDCS(u_int dcs, u_int xinfo)
 {
     setFromDIS(dcs, xinfo);
-    // override DIS setup
-    br = DCSbrTab[(dcs & DCS_SIGRATE) >> 10];
-    if (xinfo & DCS_INCHRES) {
-	if (xinfo & DCS_400X400) vr = VR_R16;	// rather than adding a VR_400X400
-	else if (xinfo & DCS_300X300) vr = VR_300X300;
-	else if (xinfo & DCS_200X400) vr = VR_200X400;
-	else if (dcs & DCS_7MMVRES) vr = VR_200X200;
-	else vr = VR_200X100;
-    } else {			// bit 44 of DCS is 0
-	// some manufacturers don't send DCS_INCHRES with DCS_300X300
-	if (xinfo & DCS_300X300) vr = VR_300X300;
-	else if (xinfo & DCS_400X400) vr = VR_R16;
-	else if (xinfo & DCS_200X400) vr = VR_R8;
-	else vr = DISvrTab[(dcs & DCS_7MMVRES) >> 9];
-    }
+    br = DCSbrTab[(dcs & DCS_SIGRATE) >> 10];	// override DIS setup
 }
 
 /*
@@ -321,13 +296,11 @@ Class2Params::getDCS() const
 {
     u_int dcs = DCS_T4RCVR
 	    | vrDISTab[vr&1]
-	    | vrDISTab[(vr>>4)&1]	// check for VR_200X200
 	    | brDCSTab[br&15]
 	    | wdDISTab[wd&7]
 	    | lnDISTab[ln&3]
 	    | dfDISTab[df&3]
 	    | stDCSTab[st&7]
-	    | DCS_XTNDFIELD
 	    ;
     return (dcs);
 }
@@ -338,18 +311,7 @@ Class2Params::getDCS() const
 u_int
 Class2Params::getXINFO() const
 {
-    // include support for extended resolutions
-    u_int dcs_xinfo = (1<<24) | (1<<16) | (1<<8)	// extension flags for 3 more bytes
-	| (vr & VR_R8 ? DCS_200X400 : 0)
-	| (vr & VR_R16 ? DCS_400X400 : 0)
-	| (vr & VR_200X100 ? DCS_INCHRES : 0)
-	| (vr & VR_200X200 ? DCS_INCHRES : 0)		// DCS_7MMVRES set in getDCS()
-	| (vr & VR_200X400 ? (DCS_200X400 | DCS_INCHRES) : 0)
-	| (vr & VR_300X300 ? (DCS_300X300 | DCS_INCHRES) : 0)
-	| (ec & EC_ENABLE ? DCS_ECMODE : 0)
-	| (df == DF_2DMMR ? DCS_G4COMP : 0)
-	;
-    return (dcs_xinfo);
+    return (0);					// for now
 }
 
 /*
@@ -375,7 +337,7 @@ Class2Params::minScanlineSize() const
     static const u_int stTimes[8] =
 	{ 0, 5, 10, 10, 20, 20, 40, 40 };
     u_int ms = stTimes[st&7];
-    if ((st & 1) == 0 && vr > VR_NORMAL)
+    if ((st & 1) == 0 && vr == VR_FINE)
 	ms /= 2;
     return transferSize(ms);
 }
@@ -383,7 +345,7 @@ Class2Params::minScanlineSize() const
 u_int
 Class2Params::pageWidth() const
 {
-    u_int widths[8] = {
+    static const u_int widths[8] = {
 	1728,	// 1728 in 215 mm line
 	2048,	// 2048 in 255 mm line
 	2432,	// 2432 in 303 mm line
@@ -393,56 +355,23 @@ Class2Params::pageWidth() const
 	1728,	// undefined
 	1728,	// undefined
     };
-    switch (vr) {
-	case VR_300X300: 
-	    widths[0] = 2592;
-	    break;  
-	case VR_R16:
-	    widths[0] = 3456;
-	    widths[1] = 4096;
-	    widths[2] = 4864;
-	    widths[3] = 2432;
-	    widths[4] = 1728;
-	    break;
-	case VR_NORMAL:
-	case VR_FINE:
-	case VR_R8:
-	case VR_200X100:
-	case VR_200X200:
-	case VR_200X400:
-	    // nothing
-	    break;
-    }
     return (widths[wd&7]);
 }
 
 void
 Class2Params::setPageWidthInMM(u_int w)
 {
-    // This function is unused and doesn't support VR_300X300 and VR_R16.
     wd = (w == 255 ? WD_2048 : w == 303 ? WD_2432 : WD_1728);
 }
 
 void
 Class2Params::setPageWidthInPixels(u_int w)
 {
-    /*
-     * Here we attempt to determine the WD parameter with
-     * a pixel width which is impossible to be perfect
-     * because there are colliding values.  However,
-     * since we don't use > WD_2432, this is fine.
-     */
     wd = (w == 1728 ? WD_1728 :
 	  w == 2048 ? WD_2048 :
 	  w == 2432 ? WD_2432 :
 	  w == 1216 ? WD_1216 :
 	  w ==  864 ? WD_864 :
-	  w == 3456 ? WD_1728 :
-	  w == 4096 ? WD_2048 :
-	  w == 4864 ? WD_2432 :
-	//w == 2432 ? WD_1216 :		// collision
-	//w == 1728 ? WD_864 :		// collision
-	  w == 2592 ? WD_1728 :
 		      WD_1728);
 }
 
@@ -468,56 +397,21 @@ Class2Params::setPageLengthInMM(u_int l)
 }
 
 u_int
-Class2Params::horizontalRes() const
-{
-    /*
-     * Technically horizontal resolution depends upon the
-     * the number of pixels across the page and the page width.
-     * But, these are just used for writing TIFF tags for 
-     * received faxes, so we do this to accomodate the session
-     * parameters, even though it may be slightly off.
-     */
-    return (vr == VR_NORMAL ? 204 :
-	    vr == VR_FINE ? 204 :
-	    vr == VR_R8 ? 204 :
-	    vr == VR_R16 ? 408 :
-	    vr == VR_200X100 ? 200 :
-	    vr == VR_200X200 ? 200 :
-	    vr == VR_200X400 ? 200 :
-	    vr == VR_300X300 ? 300 :
-	    (u_int) -1);
-}
-
-u_int
 Class2Params::verticalRes() const
 {
-    return (vr == VR_NORMAL ? 98 :
-	    vr == VR_FINE ? 196 :
-	    vr == VR_R8 ? 391 :
-	    vr == VR_R16 ? 391 :
-	    vr == VR_200X100 ? 100 :
-	    vr == VR_200X200 ? 200 :
-	    vr == VR_200X400 ? 400 :
-	    vr == VR_300X300 ? 300 :
-	    (u_int) -1);
+    return (vr == VR_NORMAL ? 98 : vr == VR_FINE ? 196 : (u_int) -1);
 }
 
 void
-Class2Params::setRes(u_int xres, u_int yres)
+Class2Params::setVerticalRes(u_int res)
 {
-    vr = (xres > 300 && yres > 391 ? VR_R16 : 
-	xres > 204 && yres > 250 ? VR_300X300 :
-	yres > 391 ? VR_200X400 : 
-	yres > 250 ? VR_R8 : 
-	yres > 196 ? VR_200X200 :
-	yres > 150 ? VR_FINE : 
-	yres > 98 ? VR_200X100 : VR_NORMAL);
+    vr = (res > 150 ? VR_FINE : VR_NORMAL);
 }
 
 fxStr
 Class2Params::encodePage() const
 {
-    int v = (vr&3) | ((wd&7)<<1) | ((ln&3)<<4) | ((df&3)<<6);
+    int v = (vr&1) | ((wd&7)<<1) | ((ln&3)<<4) | ((df&3)<<6);
     return fxStr(v, "%02x");
 }
 
@@ -536,7 +430,7 @@ Class2Params::decodePage(const char* s)
 u_int
 Class2Params::encode() const
 {
-    return  (vr > 4 ? ((vr>>4)&7)<<0 : (vr&7)<<0)	// push inch resolutions
+    return  ((vr&7)<<0)
 	  | ((br&15)<<3)
 	  | ((wd&7)<<9)
 	  | ((ln&3)<<12)
@@ -552,7 +446,7 @@ void
 Class2Params::decode(u_int v)
 {
     if (v>>21 == 1) {		// check version
-	vr = ((v>>0) & 7);	// VR is a bitmap
+	vr = (v>>0) & 7;
 	br = (v>>3) & 15;
 	wd = (v>>9) & 7;
 	ln = (v>>12) & 3;
@@ -574,16 +468,6 @@ Class2Params::decode(u_int v)
 	bf = (v>>12) & 1;
 	st = (v>>13) & 7;
     }
-}
-
-u_int
-Class2Params::getMinSpeed() const
-{
-    u_int minspeed = BR_14400;
-    for (int speed = BR_14400; speed >= BR_2400; speed--) {
-	if (br & BIT(speed)) minspeed = speed;
-    }
-    return (minspeed);
 }
 
 u_int
@@ -617,37 +501,12 @@ Class2Params::decodeCaps(u_int v)
 /*
  * Routines for printing some Class 2 capabilities.
  */
-const char* Class2Params::verticalResNames[65] = {
+const char* Class2Params::verticalResNames[2] = {
     "3.85 line/mm",
     "7.7 line/mm",
-    "15.4 line/mm", "",
-    "R16 x 15.4 line/mm", "", "", "",
-    "200 x 100 dpi", "", "", "", "", "", "", "",
-    "200 x 200 dpi", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-    "200 x 400 dpi", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-    "300 x 300 dpi"
 };
-
 const char* Class2Params::verticalResName() const
-    { return (verticalResNames[vr & VR_ALL]); }
-
-const char* Class2Params::bestVerticalResName() const
-{
-    /*
-     * "Best" is determined by comparing pixels per square
-     * area of image.  Thus 300x300 is "better" than 200x400.
-     */
-    u_int res = VR_NORMAL;	// required default
-    if (vr & VR_200X100)	res = VR_200X100;
-    if (vr & VR_FINE)		res = VR_FINE;
-    if (vr & VR_200X200)	res = VR_200X200;
-    if (vr & VR_R8)		res = VR_R8;
-    if (vr & VR_200X400)	res = VR_200X400;
-    if (vr & VR_300X300)	res = VR_300X300;
-    if (vr & VR_R16)		res = VR_R16;
-    return(verticalResNames[res]);
-}
-
+    { return (verticalResNames[vr&1]); }
 
 const char* Class2Params::bitRateNames[16] = {
     "2400 bit/s",		// BR_2400
@@ -694,7 +553,7 @@ Class2Params::bitRate() const
 }
 
 const char* Class2Params::dataFormatNames[4] = {
-    "1-D MH",			// DF_1DMH
+    "1-D MR",			// DF_1DMR
     "2-D MR",			// DF_2DMR
     "2-D Uncompressed Mode",	// DF_2DMRUNCOMP
     "2-D MMR"			// DF_2DMMR
@@ -703,11 +562,11 @@ const char* Class2Params::dataFormatName() const
      { return (dataFormatNames[df&3]); }
 
 const char* Class2Params::pageWidthNames[8] = {
-    "A4 page width (215 mm)",
-    "B4 page width (255 mm)",
-    "A3 page width (303 mm)",
-    "page width 151 mm",
-    "page width 107 mm",
+    "page width 1728 pixels in 215 mm",
+    "page width 2048 pixels in 255 mm",
+    "page width 2432 pixels in 303 mm",
+    "page width 1216 pixels in 151 mm",
+    "page width 864 pixels in 107 mm",
     "undefined page width (wd=5)",
     "undefined page width (wd=6)",
     "undefined page width (wd=7)",
