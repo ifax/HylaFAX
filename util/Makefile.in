@@ -30,11 +30,11 @@
 #
 
 #
-# VERSION:	$VERSION
-# DATE:		$DATE
-# TARGET:	$TARGET
-# CCOMPILER:	$CCOMPILER
-# CXXCOMPILER:	$CXXCOMPILER
+# VERSION:	@VERSION@
+# DATE:		@DATE@
+# TARGET:	@TARGET@
+# CCOMPILER:	@CCOMPILER@
+# CXXCOMPILER:	@CXXCOMPILER@
 #
 DEPTH=..
 @MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
@@ -86,8 +86,8 @@ C++FILES=Array.c++ \
 	SNPPClient.c++ \
 	SNPPJob.c++
 CFILES= cvtfacility.c fxassert.c
-TARGETS=libfaxutil.${DSO} faxmsg faxmodem faxconfig faxstate \
-	faxinfo faxwatch textfmt dialtest typetest tiffcheck
+TARGETS=libfaxutil.${DSO} faxmsg faxmodem faxadduser faxconfig faxdeluser \
+    faxstate faxinfo faxwatch textfmt dialtest typetest tiffcheck
 
 LC++INCS=-I${ZLIBINC}			# for FaxClient.c++
 
@@ -112,8 +112,12 @@ faxstate: ${SRCDIR}/faxstate.c ${LIBS}
 	${CCF} -o $@ ${SRCDIR}/faxstate.c ${LDFLAGS}
 faxmodem: ${SRCDIR}/faxmodem.c ${LIBS}
 	${CCF} -o $@ ${SRCDIR}/faxmodem.c ${LDFLAGS}
+faxadduser: ${SRCDIR}/faxadduser.c ${LIBS}
+	${CCF} -o $@ ${SRCDIR}/faxadduser.c ${LDFLAGS}
 faxconfig: ${SRCDIR}/faxconfig.c ${LIBS}
 	${CCF} -o $@ ${SRCDIR}/faxconfig.c ${LDFLAGS}
+faxdeluser: ${SRCDIR}/faxdeluser.c ${LIBS}
+	${CCF} -o $@ ${SRCDIR}/faxdeluser.c ${LDFLAGS}
 tiffcheck.o: ${SRCDIR}/tiffcheck.c++
 	${C++F} -c ${C++FILE} ${SRCDIR}/tiffcheck.c++@MAKECXXOVERRIDE@
 tiffcheck: tiffcheck.o ${LIBS}
@@ -159,8 +163,8 @@ installClient: default
 	${PUTCLIENT} -F ${LIBDATA} -m 444 -src ${SRCDIR}/typerules -O typerules
 
 install: installClient
-	${PUTSBIN} -m 755 -O faxmsg faxconfig faxmodem faxstate faxwatch \
-	    faxinfo tiffcheck
+	${PUTSBIN} -m 755 -O faxmsg faxadduser faxconfig faxdeluser faxmodem \
+        faxstate faxwatch faxinfo tiffcheck
 	${PUTSBIN} -idb ${PRODUCT}.sw.server \
 	    -ln ${SBIN}/faxmsg -O faxabort faxanswer faxquit
 	${PUTSBIN} -m 755 -O dialtest typetest
