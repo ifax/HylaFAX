@@ -194,37 +194,37 @@ faxCoverApp::usage()
 
 const char* faxCoverApp::prologue = "\
 /wordbreak ( ) def\n\
-/BreakIntoLines\n\
-{ /proc exch def\n\
-  /linewidth exch def\n\
-  /textstring exch def\n\
-  /breakwidth wordbreak stringwidth pop def\n\
-  /curwidth 0 def\n\
-  /lastwordbreak 0 def\n\
-  /startchar 0 def\n\
-  /restoftext textstring def\n\
-  { restoftext wordbreak search\n\
-    { /nextword exch def pop\n\
-      /restoftext exch def\n\
-      /wordwidth nextword stringwidth pop def\n\
-      curwidth wordwidth add linewidth gt\n\
-      { textstring startchar\n\
-	lastwordbreak startchar sub\n\
-	getinterval proc\n\
-	/startchar lastwordbreak def\n\
-	/curwidth wordwidth breakwidth add def }\n\
-      { /curwidth curwidth wordwidth add\n\
-	breakwidth add def\n\
-      } ifelse\n\
-      /lastwordbreak lastwordbreak\n\
-      nextword length add 1 add def\n\
-    }\n\
-    { pop exit }\n\
-    ifelse\n\
-  } loop\n\
-  /lastchar textstring length def\n\
-  textstring startchar lastchar startchar sub\n\
-  getinterval proc\n\
+/linebreak (\\n) def\n\
+/doLine {\n\
+% <line> <width> <height> <x> <y> doLine <width> <height> <x> <y>\n\
+    2 copy moveto 5 -1 roll\n\
+    wordbreak\n\
+    {\n\
+        search {\n\
+            dup stringwidth pop currentpoint pop add 7 index 6 index add gt {\n\
+                6 3 roll 2 index sub 2 copy moveto 6 3 roll\n\
+            } if\n\
+            show wordbreak show\n\
+        }{\n\
+            dup stringwidth pop currentpoint pop add 5 index 4 index add gt {\n\
+                3 1 roll 3 index sub 2 copy moveto 3 -1 roll\n\
+            } if\n\
+            show exit\n\
+        } ifelse\n\
+    } loop\n\
+    2 index sub 2 copy moveto\n\
+} def\n\
+/BreakIntoLines {\n\
+% <width> <height> <x> <y> <text> BreakIntoLines\n\
+    linebreak\n\
+    {\n\
+         search {\n\
+             7 3 roll doLine 6 -2 roll\n\
+         }{\n\
+             5 1 roll doLine exit\n\
+         } ifelse\n\
+    } loop\n\
+    pop pop pop pop\n\
 } def\n\
 ";
 
@@ -332,39 +332,15 @@ void
 faxCoverApp::emitCommentDefs()
 {
     /*
-     * Break comment string into multiple lines (if needed).
+     * Fix up new line characters.
      */
+    u_int crlf = comments.find(0, "\\n", (u_int) 0);
+    while ( crlf < comments.length()) {
+        comments.remove(crlf, 2);
+        comments.insert('\n', crlf);
+        crlf = comments.find(0, "\\n", (u_int) 0);
+    }
     coverDef("comments", comments);
-    int line = 1;
-    while (comments.length() > 0) {
-	// strip leading white space
-	while (comments.length() > 0 && isspace(comments[0]))
-	    comments.remove(0);
-	int len = fxmin(comments.length(), (u_int) 35);
-	if (len == 35 && !isspace(comments[len-1])) {// break on word boundary
-	    int l = len-1;
-	    for (; l > 1 && !isspace(comments[l-1]); l--)
-		;
-	    if (l > 0)
-		len = l;
-	    // otherwise, break in the middle of this really long word
-	}
-      int tot = comments.length();
-      u_int crlf = comments.find(0, "\\n", (u_int) 0);
-      if ( crlf < comments.length() && crlf < len ) {
-              len = crlf;
-      }
-	fxStr num(line, "%u");
-	coverDef("comments" | num, comments.cut(0,len));
-      if ( crlf < tot && comments.length() >= 2 ) {
-              comments.cut(0, 2);
-      }
-	line++;
-    }
-    for (; line < maxcomments; line++) {
-	fxStr num(line, "%u");
-	coverDef("comments" | num, "");
-    }
 }
 
 void
