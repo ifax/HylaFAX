@@ -285,6 +285,8 @@ SendFaxJob::setPriority(const char* pri)
 	priority = FAX_DEFPRIORITY;
     else if (valeq(pri, "bulk") || valeq(pri, "junk"))
 	priority = FAX_DEFPRIORITY + 4*16;
+    else if (valeq(pri, "low"))
+	priority = FAX_DEFPRIORITY + 4*16-1;
     else if (valeq(pri, "high"))
 	priority = FAX_DEFPRIORITY - 4*16;
     else
