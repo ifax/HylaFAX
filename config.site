@@ -60,7 +60,7 @@
 #DIR_LIBDATA="/usr/lib/fax"		# directory for client data
 #DIR_LIBEXEC="/usr/lib/fax"		# directory for libraries&hidden apps
 #DIR_MAN="/usr/local/man"		# directory for manual pages
-#DIR_SPOOL="/var/spool/fax"		# directory for spooling area
+#DIR_SPOOL="/var/spool/hylafax"		# directory for spooling area
 #DIR_SBIN="/var/spool/fax/bin"		# directory for system apps
 #DIR_LOCKS="/usr/spool/locks"		# directory for UUCP lock files
 #FONTMAP="/usr/share/ghostscript/3.33"	# directorys containing Fontmap files

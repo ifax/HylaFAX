@@ -471,7 +471,7 @@ ModemServer::setupModem()
 	 * Reset the modem in case some other program
 	 * went in and messed with the configuration.
 	 */
-        if( !modem->reset() )
+        if( !(modem->reset() || modem->reset()) )	// try twice
             return (false);
     /*
      * Most modem-related parameters are dealt with

@@ -1,3 +1,10 @@
+May 29, 2001
+  (tim) [configure config.site] change default spool dir to hylafax.
+	Break up VAR2 to help out sed on HP (thanks to Alan O'Keefe
+	<aokeefe@primus.com.au> for testing)
+	[faxd/ModemServer.c++] add additional reset to ModemServer::setupModem
+	sugested by Bernd Proissl <lists@proissl.de>
+
 May 27, 2001
  (tim) [pkg/Makefile.in make.links make_proto.sh.in cproto.stub.in
 	sproto.stub.in] "make package" fixes
