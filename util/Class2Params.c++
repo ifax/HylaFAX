@@ -429,30 +429,44 @@ Class2Params::decodePage(const char* s)
 u_int
 Class2Params::encode() const
 {
-    return  ((vr&1)<<0)
-	  | ((br&7)<<1)
-	  | ((wd&7)<<4)
-	  | ((ln&3)<<7)
-	  | ((df&3)<<9)
-	  | ((ec&1)<<11)
-	  | ((bf&1)<<12)
-	  | ((st&7)<<13)
+    return  ((vr&7)<<0)
+	  | ((br&15)<<3)
+	  | ((wd&7)<<9)
+	  | ((ln&3)<<12)
+	  | ((df&3)<<14)
+	  | ((ec&1)<<16)
+	  | ((bf&1)<<17)
+	  | ((st&7)<<18)
+	  | (1<<21)		// this is the version identifier
 	  ;
 }
 
 void
 Class2Params::decode(u_int v)
 {
-    vr = (v>>0) & 1;
-    br = (v>>1) & 7;
-    wd = (v>>4) & 7;
-    ln = (v>>7) & 3;
-    if (ln == LN_LET)			// force protocol value
-	ln = LN_A4;
-    df = (v>>9) & 3;
-    ec = (v>>11) & 1;
-    bf = (v>>12) & 1;
-    st = (v>>13) & 7;
+    if (v>>21 == 1) {		// check version
+	vr = (v>>0) & 7;
+	br = (v>>3) & 15;
+	wd = (v>>9) & 7;
+	ln = (v>>12) & 3;
+	if (ln == LN_LET)	// force protocol value
+	    ln = LN_A4;
+	df = (v>>14) & 3;
+	ec = (v>>16) & 1;
+	bf = (v>>17) & 1;
+	st = (v>>18) & 7;
+    } else {			// original version
+	vr = (v>>0) & 1;
+	br = (v>>1) & 7;
+	wd = (v>>4) & 7;
+	ln = (v>>7) & 3;
+	if (ln == LN_LET)	// force protocol value
+	    ln = LN_A4;
+	df = (v>>9) & 3;
+	ec = (v>>11) & 1;
+	bf = (v>>12) & 1;
+	st = (v>>13) & 7;
+    }
 }
 
 u_int
