@@ -169,6 +169,8 @@ HYLAFAXSRC=\
     README					\
     TODO					\
     COPYRIGHT					\
+    CONTRIBUTORS				\
+    CHANGES					\
     INSTALL					\
     configure					\
     config.guess				\
@@ -263,6 +265,8 @@ HYLAFAXSRC=\
 	etc/ondelay.c				\
     util/Makefile.in				\
     util/Makefile.IRIXdso			\
+    util/Makefile.LINUXdso			\
+    util/Makefile.SOLARISdso			\
 	util/Array.c++				\
 	util/AtSyntax.c++			\
 	util/BoolArray.c++			\
@@ -355,19 +359,19 @@ HYLAFAXSRC=\
 	util/pagesizes.in			\
 	util/notify.awk				\
 	util/faxcron.sh.in			\
-	util/archive.sh				\
-	util/faxrcvd.sh				\
-	util/mkcover.sh				\
-	util/notify.sh				\
-	util/pollrcvd.sh			\
-	util/pcl2fax.sh				\
-	util/ps2fax.dps.sh			\
-	util/ps2fax.gs.sh			\
-	util/ps2fax.imp.sh			\
-	util/pdf2fax.gs.sh			\
+	util/archive.sh.in			\
+	util/faxrcvd.sh.in			\
+	util/mkcover.sh.in			\
+	util/notify.sh.in			\
+	util/pollrcvd.sh.in			\
+	util/pcl2fax.sh.in			\
+	util/ps2fax.dps.sh.in			\
+	util/ps2fax.gs.sh.in			\
+	util/ps2fax.imp.sh.in			\
+	util/pdf2fax.gs.sh.in			\
 	util/recvstats.sh.in			\
-	util/tiff2fax.sh			\
-	util/wedged.sh				\
+	util/tiff2fax.sh.in			\
+	util/wedged.sh.in			\
 	util/xferfaxstats.sh.in			\
 	util/typerules				\
 	util/cover.templ			\
@@ -402,8 +406,11 @@ HYLAFAXSRC=\
     faxcover/Makefile.in			\
 	faxcover/faxcover.c++			\
 	faxcover/faxcover.ps			\
+	faxcover/faxcover_example_sgi.ps	\
     faxd/Makefile.in				\
     faxd/Makefile.IRIXdso			\
+    faxd/Makefile.LINUXdso			\
+    faxd/Makefile.SOLARISdso			\
 	faxd/Class0.h				\
 	faxd/Class1.h				\
 	faxd/Class2.h				\
@@ -622,6 +629,7 @@ MANPAGES=\
 	man/faxstat.1				\
 	man/faxstate.1m				\
 	man/faxwatch.1m				\
+	man/faxlock.1m				\
 	man/hfaxd.1m				\
 	man/hosts.hfaxd.4f			\
 	man/hylafax-client.1			\
