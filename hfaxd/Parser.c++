@@ -1279,7 +1279,7 @@ HylaFAXServer::TIMESPEC(u_int len, time_t& result)
 	if (tokenBody.length() == len) {
 	    if (checkNUMBER(tokenBody)) {
 		const char* cp = tokenBody;
-		if (len == 12) {		// YYYYMMDDHHSS
+		if (len == 12) {		// YYYYMMDDHHMM
 		    struct tm tm;
 		    tm.tm_sec  = 0;
 		    tm.tm_min  = twodigits(cp+10, 60);
@@ -1296,8 +1296,8 @@ HylaFAXServer::TIMESPEC(u_int len, time_t& result)
 		     */
 		    result = mktime(&tm) - gmtoff;
 		} else if (len == 6) {		// DDHHMM
-		    result = 24*60*60*twodigits(cp, 24)
-			   +    60*60*twodigits(cp+2, 60)
+		    result = 24*60*60*twodigits(cp, 100)
+			   +    60*60*twodigits(cp+2, 24)
 			   +       60*twodigits(cp+4, 60);
 		} else {			// MMSS
 		    result = 60*twodigits(cp, 60)
