@@ -344,18 +344,7 @@ bool FaxParams::operator!=(FaxParams& operand) const
 
 FaxParams& FaxParams::assign(const FaxParams& operand)
 {
-    bool lastbyte = false;
-
-    for (int byte = 0; byte < MAX_BITSTRING_BYTES; byte++) {
-	if (!lastbyte) m_bits[byte] = operand.m_bits[byte];
-	else m_bits[byte] = 0;		// clear bits when they have no meaning
-
-	if (byte > 2 && !(m_bits[byte] & 0x01)) lastbyte = true;
-    }
-
-    // Don't allow the last byte to have the extend bit set.
-    m_bits[MAX_BITSTRING_BYTES-1] = m_bits[MAX_BITSTRING_BYTES-1] & 0xFE;
-
+    memcpy(m_bits, operand.m_bits, sizeof(m_bits));
     return *this;
 }
 
