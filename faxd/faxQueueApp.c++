@@ -2050,109 +2050,111 @@ faxQueueApp::runScheduler()
      * insures the highest priority job is always processed
      * first.
      */
-    for (u_int i = 0; i < NQHASH; i++) {
-	for (JobIter iter(runqs[i]); iter.notDone(); iter++) {
-	    Job& job = iter;
-	    fxAssert(job.tts <= Sys::now(), "Sleeping job on run queue");
-	    fxAssert(job.modem == NULL, "Job on run queue holding modem");
+    if (! quit) {
+	for (u_int i = 0; i < NQHASH; i++) {
+	    for (JobIter iter(runqs[i]); iter.notDone(); iter++) {
+		Job& job = iter;
+		fxAssert(job.tts <= Sys::now(), "Sleeping job on run queue");
+		fxAssert(job.modem == NULL, "Job on run queue holding modem");
 
-	    /*
-	     * Read the on-disk job state and process the job.
-	     * Doing all the processing below each time the job
-	     * is considered for processing could be avoided by
-	     * doing it only after assigning a modem but that
-	     * would potentially cause the order of dispatch
-	     * to be significantly different from the order
-	     * of submission; something some folks care about.
-	     */
-	    traceJob(job, "PROCESS");
-	    Trigger::post(Trigger::JOB_PROCESS, job);
-	    FaxRequest* req = readRequest(job);
-	    if (!req) {			// problem reading job state on-disk
-		setDead(job);
-		continue;
-	    }
-	    /*
-	     * Do per-destination processing and checking.
-	     */
-	    DestInfo& di = destJobs[job.dest];
-	    const DestControlInfo& dci = destCtrls[job.dest];
-	    /*
-	     * Constrain the maximum number of times the phone
-	     * will be dialed and/or the number of attempts that
-	     * will be made (and reject jobs accordingly).
-	     */
-	    u_short maxdials = fxmin((u_short) dci.getMaxDials(),req->maxdials);
-	    if (req->totdials >= maxdials) {
-		rejectJob(job, *req, fxStr::format(
-		    "REJECT: Too many attempts to dial: %u, max %u",
-		    req->totdials, maxdials));
-		deleteRequest(job, req, Job::rejected, true);
-		continue;
-	    }
-	    u_short maxtries = fxmin((u_short) dci.getMaxTries(),req->maxtries);
-	    if (req->tottries >= maxtries) {
-		rejectJob(job, *req, fxStr::format(
-		    "REJECT: Too many attempts to transmit: %u, max %u",
-		    req->tottries, maxtries));
-		deleteRequest(job, req, Job::rejected, true);
-		continue;
-	    }
-	    // NB: repeat this check so changes in max pages are applied
-	    u_int maxpages = dci.getMaxSendPages();
-	    if (req->totpages > maxpages) {
-		rejectJob(job, *req, fxStr::format(
-		    "REJECT: Too many pages in submission: %u, max %u",
-		    req->totpages, maxpages));
-		deleteRequest(job, req, Job::rejected, true);
-		continue;
-	    }
-	    if (dci.getRejectNotice() != "") {
 		/*
-		 * Calls to this destination are being rejected for
-		 * a specified reason that we return to the sender.
+		 * Read the on-disk job state and process the job.
+		 * Doing all the processing below each time the job
+		 * is considered for processing could be avoided by
+		 * doing it only after assigning a modem but that
+		 * would potentially cause the order of dispatch
+		 * to be significantly different from the order
+		 * of submission; something some folks care about.
 		 */
-		rejectJob(job, *req, "REJECT: " | dci.getRejectNotice());
-		deleteRequest(job, req, Job::rejected, true);
-		continue;
+		traceJob(job, "PROCESS");
+		Trigger::post(Trigger::JOB_PROCESS, job);
+		FaxRequest* req = readRequest(job);
+		if (!req) {			// problem reading job state on-disk
+		    setDead(job);
+		    continue;
+		}
+		/*
+		 * Do per-destination processing and checking.
+		 */
+		DestInfo& di = destJobs[job.dest];
+		const DestControlInfo& dci = destCtrls[job.dest];
+		/*
+		 * Constrain the maximum number of times the phone
+		 * will be dialed and/or the number of attempts that
+		 * will be made (and reject jobs accordingly).
+		 */
+		u_short maxdials = fxmin((u_short) dci.getMaxDials(),req->maxdials);
+		if (req->totdials >= maxdials) {
+		    rejectJob(job, *req, fxStr::format(
+			"REJECT: Too many attempts to dial: %u, max %u",
+			req->totdials, maxdials));
+		    deleteRequest(job, req, Job::rejected, true);
+		    continue;
+		}
+		u_short maxtries = fxmin((u_short) dci.getMaxTries(),req->maxtries);
+		if (req->tottries >= maxtries) {
+		    rejectJob(job, *req, fxStr::format(
+			"REJECT: Too many attempts to transmit: %u, max %u",
+			req->tottries, maxtries));
+		    deleteRequest(job, req, Job::rejected, true);
+		    continue;
+		}
+		// NB: repeat this check so changes in max pages are applied
+		u_int maxpages = dci.getMaxSendPages();
+		if (req->totpages > maxpages) {
+		    rejectJob(job, *req, fxStr::format(
+			"REJECT: Too many pages in submission: %u, max %u",
+			req->totpages, maxpages));
+		    deleteRequest(job, req, Job::rejected, true);
+		    continue;
+		}
+		if (dci.getRejectNotice() != "") {
+		    /*
+		     * Calls to this destination are being rejected for
+		     * a specified reason that we return to the sender.
+		     */
+		    rejectJob(job, *req, "REJECT: " | dci.getRejectNotice());
+		    deleteRequest(job, req, Job::rejected, true);
+		    continue;
+		}
+		time_t now = Sys::now();
+		time_t tts;
+		if (!di.isActive(job) && !isOKToStartJobs(di, dci, 1)) {
+		    /*
+		     * This job would exceed the max number of concurrent
+		     * jobs that may be sent to this destination.  Put it
+		     * on a ``blocked queue'' for the destination; the job
+		     * will be made ready to run when one of the existing
+		     * jobs terminates.
+		     */
+		    blockJob(job, *req, "Blocked by concurrent jobs");
+		    job.remove();			// remove from run queue
+		    di.block(job);			// place at tail of di queue
+		    delete req;
+		} else if ((tts = dci.nextTimeToSend(now)) != now) {
+		    /*
+		     * This job may not be started now because of time-of-day
+		     * restrictions.  Reschedule it for the next possible time.
+		     */
+		    job.remove();			// remove from run queue
+		    delayJob(job, *req, "Delayed by time-of-day restrictions", tts);
+		    delete req;
+		} else if (assignModem(job, dci)) {
+		    job.remove();			// remove from run queue
+		    /*
+		     * We have a modem and have assigned it to the
+		     * job.  The job is not on any list; processJob
+		     * is responsible for requeing the job according
+		     * to the outcome of the work it does (which may
+		     * take place asynchronously in a sub-process).
+		     * Likewise the release of the assigned modem is
+		     * also assumed to take place asynchronously in
+		     * the context of the job's processing.
+		     */
+		    processJob(job, req, di, dci);
+		} else				// leave job on run queue
+		    delete req;
 	    }
-	    time_t now = Sys::now();
-	    time_t tts;
-	    if (!di.isActive(job) && !isOKToStartJobs(di, dci, 1)) {
-		/*
-		 * This job would exceed the max number of concurrent
-		 * jobs that may be sent to this destination.  Put it
-		 * on a ``blocked queue'' for the destination; the job
-		 * will be made ready to run when one of the existing
-		 * jobs terminates.
-		 */
-		blockJob(job, *req, "Blocked by concurrent jobs");
-		job.remove();			// remove from run queue
-		di.block(job);			// place at tail of di queue
-		delete req;
-	    } else if ((tts = dci.nextTimeToSend(now)) != now) {
-		/*
-		 * This job may not be started now because of time-of-day
-		 * restrictions.  Reschedule it for the next possible time.
-		 */
-		job.remove();			// remove from run queue
-		delayJob(job, *req, "Delayed by time-of-day restrictions", tts);
-		delete req;
-	    } else if (assignModem(job, dci)) {
-		job.remove();			// remove from run queue
-		/*
-		 * We have a modem and have assigned it to the
-		 * job.  The job is not on any list; processJob
-		 * is responsible for requeing the job according
-		 * to the outcome of the work it does (which may
-		 * take place asynchronously in a sub-process).
-		 * Likewise the release of the assigned modem is
-		 * also assumed to take place asynchronously in
-		 * the context of the job's processing.
-		 */
-		processJob(job, req, di, dci);
-	    } else				// leave job on run queue
-		delete req;
 	}
     }
     /*
