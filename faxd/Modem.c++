@@ -67,8 +67,8 @@ void ModemLockWaitHandler::timerExpired(long, long)
 QLink Modem::list;			// master list of known modems
 
 Modem::Modem(const fxStr& id)
-    : devID(id)
-    , fifoName(FAX_FIFO "." | id)
+    : fifoName(FAX_FIFO "." | id)
+    , devID(id)
     , lockHandler(*this)
 {
     state = DOWN;			// modem down until notified otherwise

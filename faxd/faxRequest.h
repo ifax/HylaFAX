@@ -42,8 +42,8 @@ typedef unsigned short FaxSendOp;
 struct faxRequest {
     FaxSendOp	op;		// send operation type
     u_short	dirnum;		// directory index for TIFF images
-    fxStr	addr;		// SUB/SEP for transmit/poll
     fxStr	item;		// filename/password for transmit/poll
+    fxStr	addr;		// SUB/SEP for transmit/poll
 
     faxRequest();
     faxRequest(FaxSendOp, u_short dirnum, const fxStr& addr, const fxStr& item);

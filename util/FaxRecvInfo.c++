@@ -34,9 +34,9 @@ FaxRecvInfo::FaxRecvInfo(const FaxRecvInfo& other)
     : fxObj(other)
     , qfile(other.qfile)
     , commid(other.commid)
-    , params(other.params)
     , sender(other.sender)
     , subaddr(other.subaddr)
+    , params(other.params)
     , reason(other.reason)
 {
     npages = other.npages;

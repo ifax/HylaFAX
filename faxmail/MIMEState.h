@@ -81,7 +81,7 @@ public:
     MIMEState(const char* type, const char* subtype);
     MIMEState(MIMEState& parent);
     MIMEState(MIMEState& parent, const char* type, const char* subtype);
-    ~MIMEState();
+    virtual ~MIMEState();
 
     u_int	lineno;			// input line number
     bool parse(const MsgFmt&, fxStr& emsg);

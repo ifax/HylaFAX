@@ -200,7 +200,7 @@ public:
     ~ServerConfigDialStringRules();
 };
 ServerConfigDialStringRules::ServerConfigDialStringRules(ServerConfig& c, const char* f)
-    : config(c), DialStringRules(f)
+    : DialStringRules(f), config(c)
 {}
 ServerConfigDialStringRules::~ServerConfigDialStringRules() {}
 
