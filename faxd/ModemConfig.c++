@@ -596,16 +596,20 @@ ModemConfig::processDRString(char* cp, const u_int i)
     else if (*cp == 'D')
     	distinctiveRings[i].type = ClassModem::CALLTYPE_DATA;
 
+    while (*cp != '-'){ cp++;}
+    *cp = '\0';
     u_int j = 0;
-    char *cp1 = cp += 2;
+    int sign = 1;
+    char *cp1 = cp += 1;
     while (*cp++) {
-    	if (*cp == ':') {
-	    *cp = '\0';                             // Nuke the ':'
-    	    distinctiveRings[i].cadence[j++] = atoi(cp1);
+    	if (*cp == '-') {
+	    *cp = '\0';                             // Nuke the '-'
+    	    distinctiveRings[i].cadence[j++] = sign*atoi(cp1);
+	    sign = -sign;
 	    cp1 = ++cp;
 	}
     }
-    distinctiveRings[i].cadence[j] =  atoi(cp1);
+    distinctiveRings[i].cadence[j] =  sign*atoi(cp1);
 
     double sum = 0;
     for ( u_int k=0; k < 5; ++k ) 
