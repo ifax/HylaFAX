@@ -1099,7 +1099,7 @@ pageSendApp::sendUcpMsg(FaxRequest& req, faxRequest& preq, const fxStr& msg, fxS
  	        sum += tmp[i];
 	    sum&=0xff;
 	    pos2=tmp.length();
-	    fxStr CS=tmp.tokenR(pos2,"/");
+	    fxStr CSum=tmp.tokenR(pos2,"/");
 
 	    pos2=0;
 	    fxStr TRN=tmp.token(pos2,"/");

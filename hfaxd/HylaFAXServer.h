@@ -428,7 +428,7 @@ protected:
     bool jgrp_param(fxStr& jgid);
     bool pathname(fxStr& s);
     bool CRLF();
-    bool SP();
+    bool SPACE();
     bool COMMA();
     bool TIMESPEC(u_int len, time_t& result);
     bool BOOLEAN(bool& b);
