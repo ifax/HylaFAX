@@ -512,7 +512,25 @@ HylaFAXServer::cvtTime(const time_t& t) const
 u_int
 HylaFAXServer::getSequenceNumber(const char* filename, u_int count, fxStr& emsg)
 {
-    int fd = Sys::open(filename, O_CREAT|O_RDWR|O_EXCL, 0600);
+    struct stat sb;
+    int fd;
+    int rtn = lstat(filename, &sb);
+    if (rtn != 0 && errno == ENOENT) {
+        fd = Sys::open(filename, O_CREAT | O_RDWR | O_EXCL, 0600);
+    } else if (rtn == 0 && S_ISREG(sb.st_mode)) {
+        fd = Sys::open(filename, O_RDWR, 0600);
+        struct stat sb2;
+        if (fd < 0 || fstat(fd, &sb2)) {
+            //XXX some kind of error opening file
+            fd = -1;
+        } else if (sb.st_ino != sb2.st_ino || sb.st_dev != sb2.st_dev) {
+            //XXX something wrong with file
+            fd = -1;
+        }
+    } else {
+        //XXX some kind of error opening file
+        fd = -1;
+    }
     if (fd < 0) {
         emsg = fxStr::format("Unable to open sequence number file %s; %s.",
             filename, strerror(errno));
