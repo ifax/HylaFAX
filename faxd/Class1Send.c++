@@ -253,6 +253,10 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	 */
 	if (params != next) {
 	    if (!sendTraining(next, 3, emsg)) {
+		if (hadV34Trouble) {
+		    protoTrace("The destination appears to have trouble with V.34-Fax.");
+		    return (send_v34fail);
+		}
 		if (!(batched & BATCH_FIRST)) {
 		    protoTrace("The destination appears to not support batching.");
 		    return (send_batchfail);
