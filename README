@@ -61,11 +61,12 @@ manual pages act as a reference guide.  There are manual pages for all
 the programs and for all the files and directories that you may be
 curious about.  Of course there is also source code for everything, but
 this should (hopefully) not be needed.  A useful introduction to the
-client applications is given in hylafax-client(1).  If you want to learn how
-the server and spooling system work, look first at hylafax-server(4F).
-Remember however that the manual pages are for reference; the HTML
-documentation is designed to be more introductory in nature and should
-usually be consulted first when you're looking for general guidance.
+client applications is given in the hylafax-client manpage.  If you want 
+to learn how the server and spooling system work, look first at the 
+hylafax-server manpage.  Remember however that the manual pages are for 
+reference; the HTML documentation is designed to be more introductory in 
+nature and should usually be consulted first when you're looking for 
+general guidance.
 
 The HylaFAX mailing lists (described below) are the place to send your
 comments and problems.  For mailing list administration, see
