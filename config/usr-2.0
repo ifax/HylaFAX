@@ -72,3 +72,9 @@ Class2BUGCmd:		AT+FBU=0
 # response so that the server will do copy quality checking.
 #
 Class2CQQueryCmd:	!(0),(0)	# override modem response
+#
+# Disables the reporting of bad frames by the modem.  This
+# overcomes a firmware problem in the x2 and V90 Sportsters.
+# It is not necessary for the Courier modem.
+#
+Class2NRCmd:    AT+FNR=1,1,1,0

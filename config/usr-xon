@@ -69,3 +69,9 @@ Class1SFLOCmd:		""		# modem does this automatically
 #
 ModemSetupAACmd:	AT+FCLASS=0	# leave modem idling in class 0
 ModemAnswerCmd:		AT+FCLASS=1A	# answer in Class 1
+#
+# Disables the reporting of bad frames by the modem.  This
+# overcomes a firmware problem in the x2 and V90 Sportsters.
+# It is not necessary for the Courier modem.
+#
+Class2NRCmd:    AT+FNR=1,1,1,0
