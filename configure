@@ -2297,6 +2297,7 @@ CheckLibtiff()
     Note "... checking TIFF library version"
     tiff_runlen_t=""
     cat>t.c<<EOF
+#include <stdio.h>
 #include "tiffio.h"
 main()
 {
