@@ -1,8 +1,9 @@
 #	$Id$	
 
-Changelog for HylaFAX 4.1.4 - 15 Sep 2002
+Changelog for HylaFAX 4.1.4 - 22 Sep 2002
 
 CHANGES:
+* improve sendfax parsing of '-z' destination file (22 Sept 2002)
 * disabled Solaris DSO support due to problems (13 Sep 2002)
 * add Class1ResponseWaitCmd to help USR send errors (13 Sep 2002)
 * add recognition of most of Japan NSF codes (13 Sep 2002)
