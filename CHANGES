@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX 4.2.0
 
+* add Class 1.0 and V.34-Fax/SuperG3 support (29, 30 Mar 2004)
+* add "low" priority setting for sendfax (26 Mar 2004)
 * add modem config prototype for t38modem (22 Mar 2004)
 * fix CID*AnswerLength-based answering (22 Mar 2004)
 * fix for Class 2.0/2.1 modems that respond OK to AT+FDT (22 Mar 2004)
