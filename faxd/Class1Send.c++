@@ -576,6 +576,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 		    protoTrace("TRAINING succeeded");
 		    setDataTimeout(60, params.br);
 		    return (true);
+		case FCF_CRP:		// command repeat
 		case FCF_FTT:		// failure to train, retry
 		    break;
 		case FCF_DIS:		// new capabilities, maybe
@@ -604,9 +605,10 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 			emsg = "RSPREC invalid response received";
 		    goto done;
 		}
+	    } else {
+		// delay to give other side time to reset
+		pause(conf.class1TrainingRecovery);
 	    }
-	    // delay to give other side time to reset
-	    pause(conf.class1TrainingRecovery);
 	} while (--t > 0);
 	/*
 	 * (t) attempts at the current speed failed, drop
