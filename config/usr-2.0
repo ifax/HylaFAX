@@ -86,4 +86,4 @@ Class2SendRTC:	yes
 #
 # +FAP=? not supported on this modem, gives ERROR in ServerTracing
 #
-Class2APQueryCmd:       AT
+Class2APQueryCmd:       none

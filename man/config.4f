@@ -2024,6 +2024,8 @@ SUB, SEP, and PWD frames.
 A largely unused option for modems supporting ITU-T.32, Class 2.1, 
 standards.  This command would be used to query the capabilities of 
 sending and receiving SUB, SEP, and PWD frames.
+The value ``none'' may be used if the modem does not support any
+.B Class2APQueryCmd.
 .TP
 .B Class2BORCmd
 The command to setup the bit order of sent and
@@ -2053,6 +2055,8 @@ This tracing information should be returned to the host in ``\s-1+FHR:\s+1''
 and ``\s-1+FHT:\s+1'' status strings.
 Note that many Class 2 modems do not support this facility, 
 which is largely used for diagnostic purposes.
+The value ``none'' may be used if the modem does not support any
+.B Class2BUGCmd.
 .TP
 .B Class2CIGCmd
 The command used to set a polling identifier.
@@ -2153,6 +2157,8 @@ string enabled by the
 .TP
 .B Class2PHCTOCmd
 The command to use to set the Phase C timeout parameter (in seconds).
+The value ``none'' may be used if the modem does not support any
+.B Class2PHCTOCmd.
 .TP
 .B Class2PIECmd
 (\fIClass 2.0 only\fP)
@@ -2241,10 +2247,14 @@ For Class 2.0 operation the default is ``\s-1AT+FLO=1\s+1''.
 .TP
 .B Class2SPLCmd
 The command to use to enable a polling request.
+The value ``none'' may be used if the modem does not support any
+.B Class2SPLCmd.
 .TP
 .B Class2TBCCmd
 The command to use to enable stream-mode communication between the
 host and modem.
+The value ``none'' may be used if the modem does not support any
+.B Class2TBCCmd.
 .TP
 .B Class2XmitWaitForXON
 Whether or not to wait for an

@@ -70,5 +70,5 @@ Class2RecvDataTrigger:	"\022"		# character sent to modem to start recv
 # but generates an ERROR result that can generate questions from the
 # naive--so we disable them here.
 #
-Class2TBCCmd:		AT		# setup stream mode
-Class2PHCTOCmd:		AT		# set phase C timeout parameter
+Class2TBCCmd:		none		# setup stream mode
+Class2PHCTOCmd:		none		# set phase C timeout parameter

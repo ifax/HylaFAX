@@ -70,9 +70,9 @@ Class2RecvDataTrigger:	"\022"		# character sent to modem to start recv
 # naive--so we disable them here.
 #
 Class2CQQueryCmd:	AT	# +FAQ=? query for copy quality capabilities
-Class2APQueryCmd:	AT	# +FAP=? not supported on this modem
-Class2SPLCmd:		AT	# +FSPL= Request to Poll
-Class2TBCCmd:           AT	# +FTBC= Phase C Trasmit Data Block Size
-Class2PHCTOCmd:		AT	# +FPHCTO= phase C timeout parameter
-Class2BugCmd:		AT	# +FBUG= HDLC frame tracing
+Class2APQueryCmd:	none	# +FAP=? not supported on this modem
+Class2SPLCmd:		none	# +FSPL= Request to Poll
+Class2TBCCmd:           none	# +FTBC= Phase C Trasmit Data Block Size
+Class2PHCTOCmd:		none	# +FPHCTO= phase C timeout parameter
+Class2BugCmd:		none	# +FBUG= HDLC frame tracing
 

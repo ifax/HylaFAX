@@ -108,3 +108,4 @@ Class2SPLCmd:           AT+FSP          # set polling indicator command
 Class2NFLOCmd:          AT+FLO=0        # set no flow control command
 Class2SFLOCmd:          AT+FLO=1        # set software flow control command
 Class2HFLOCmd:          AT+FLO=2        # set hardware flow control command
+Class2APQueryCmd:	none		# not supported

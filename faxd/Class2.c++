@@ -123,8 +123,11 @@ Class2Modem::setupModem()
     int sub = 0;
     int sep = 0;
     int pwd = 0;
-    if (doQuery(conf.class2APQueryCmd, s))
-	(void) vparseRange(s, 3, &sub, &sep, &pwd);
+    // some modems don't support an AP-query command
+    if (strcasecmp(conf.class2APQueryCmd, "none") != 0) {
+	if (doQuery(conf.class2APQueryCmd, s))
+	    (void) vparseRange(s, 3, &sub, &sep, &pwd);
+    }
     if (sub & BIT(1)) {
 	saCmd = conf.class2SACmd;
 	modemSupports("subaddressing");
@@ -146,8 +149,11 @@ Class2Modem::setupModem()
      * Check if the modem supports polled reception of documents.
      */
     u_int t;
-    if (doQuery(splCmd | "=?", s) && FaxModem::parseRange(s, t))
-	hasPolling = (t & BIT(1)) != 0;
+    // some modems don't support an SPL command
+    if (strcasecmp(splCmd, "none") != 0) {
+	if (doQuery(splCmd | "=?", s) && FaxModem::parseRange(s, t))
+	    hasPolling = (t & BIT(1)) != 0;
+    }
     /*
      * Define the code to send to the modem to trigger the
      * transfer of received Phase C data to the host.  Most
@@ -212,7 +218,10 @@ Class2Modem::setupClass2Parameters()
     if (modemServices & serviceType) {		// when resetting at startup
 	atCmd(classCmd);
 	setupFlowControl(flowControl);		// flow control
-	atCmd(tbcCmd);				// stream mode
+	// some modems don't support a TBC command
+	if (strcasecmp(tbcCmd, "none") != 0) {
+	    atCmd(tbcCmd);			// stream mode
+	}
 	atCmd(borCmd);				// Phase B+C bit order
 	/*
 	 * Set Phase C data transfer timeout parameter.
@@ -222,13 +231,17 @@ Class2Modem::setupClass2Parameters()
 	 * do not support this command (or perhaps they
 	 * hide it under a different name).
 	 */
-	atCmd(phctoCmd);
+	if (strcasecmp(phctoCmd, "none") != 0) {
+	    atCmd(phctoCmd);
+	}
 
 	(void) atCmd(cqCmds);			// copy quality checking
 	(void) atCmd(nrCmd);			// negotiation reporting
 	(void) atCmd(apCmd);			// address&polling reporting
 	(void) atCmd(pieCmd);			// program interrupt enable
-	if (getHDLCTracing())			// HDLC frame tracing
+						// HDLC frame tracing
+	// some modems don't support a BUG command
+	if (getHDLCTracing() && strcasecmp(bugCmd, "none") != 0)
 	    atCmd(bugCmd);
 	/*
 	 * Force the DCC so that we can override
