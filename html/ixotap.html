@@ -39,7 +39,7 @@ the pagesend program for delivery by placing a phone call
 to a pager service provider and communicating the requests 
 using the IXO/TAP or the UCP protocol. The used protocol can
 be configured in the
-<A HREF="@CGIPATH@/manpage?info">info</A> files
+<A HREF="@CGIPATH@/manpage?hylafax-info">info</A> files
 according capabilities of the service provider.
 
 <P>
@@ -132,9 +132,9 @@ to the pager service provider.
 This command should usually be defined to constrain the modem to
 connect at 1200 baud using V.22 (and no error correction protocol).
 This parameter can be specfied in the
-<A HREF="@CGIPATH@/manpage?config">config</A> file and
+<A HREF="@CGIPATH@/manpage?hylafax-config">config</A> file and
 may be overwritten  in the
-<A HREF="@CGIPATH@/manpage?info">info</A> file to match
+<A HREF="@CGIPATH@/manpage?hylafax-info">info</A> file to match
 the service provider's modem configuration.
 <P>
 The <TT>PagingProtocol</TT> can be set in the info(4F) file
@@ -144,14 +144,14 @@ Other configuration parameters exist to control
 esoteric aspects of the IXO protocol implementation
 and should not need to be changed;
 consult
-<A HREF="@CGIPATH@/manpage?config">config</A>
+<A HREF="@CGIPATH@/manpage?hylafax-config">config</A>
 for full details.
 
 <P>
 Besides the configuration parameters described above,
 other pager-related information that may need to be setup
 is information in the
-<A HREF="@CGIPATH@/manpage?info">info</A> database
+<A HREF="@CGIPATH@/manpage?hylafax-info">info</A> database
 to constrain the maximum length
 of an alpha-numeric pager message, any password string that must
 be sent to the service provider during the initial login sequence,
@@ -177,7 +177,7 @@ first applied to deliver GSM short messages (SMS). It can send
 longer pages then IXO can, and has some other nice features,
 but has a very strange character encoding. To accomodate UCP, two
 new pager parameters have bin added to the
-<A HREF="@CGIPATH@/manpage?info">info</A> database
+<A HREF="@CGIPATH@/manpage?hylafax-info">info</A> database
 together with support to overwrite the <TT>PagerSetupCmds</TT>
 defined in config(4F):
 <UL><LISTING>

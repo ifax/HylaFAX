@@ -176,7 +176,7 @@ a tag line font can be installed by converting one of the compressed font
 files provided with the standard X server; e.g.
 
 <UL><LISTING>
-% <B>zcat /usr/lib/X11/fonts/lutRS18.pcf.Z &gt; /var/spool/fax/etc/lutRS18.pcf</B>
+% <B>zcat /usr/lib/X11/fonts/lutRS18.pcf.Z &gt; /var/spool/hylafax/etc/lutRS18.pcf</B>
 </LISTING></UL>
 
 <P>
@@ -200,7 +200,7 @@ The default tag line format string is ``<TT>From %%n|%c|Page %%p of %%t</TT>''
 which prints three fields containing the phone number of the server,
 the date and time of the outgoing job, and the page number and total pages
 for the job.  Consult the <TT>TagLineFormat</TT> parameter description in
-<A HREF="@CGIPATH@/manpage?config">config</A>
+<A HREF="@CGIPATH@/manpage?hylafax-config">config</A>
 for information on configuring a different format string.
 
 <P>
@@ -385,7 +385,7 @@ CIDName:   "CALLER NAME: "   # pattern string for identity info</PRE>
 </TT></UL>
 
 Consult
-<A HREF="@CGIPATH@/manpage?config">config</A>
+<A HREF="@CGIPATH@/manpage?hylafax-config">config</A>
 for a full description of the caller-ID-related configuration
 parameters.
 
@@ -458,7 +458,7 @@ is controlled by two configuration parameters:
 <TT>PercentGoodLines</TT> and
 <TT>MaxConsecutiveBadLines</TT>;
 see
-<A HREF="@CGIPATH@/manpage?config">config</A>
+<A HREF="@CGIPATH@/manpage?hylafax-config">config</A>
 for more information.  These parameters define the
 criteria by which the server decides if a received page has acceptable
 copy quality.  Pages that are deemed unacceptable are rejected and the
@@ -524,7 +524,7 @@ By default outbound calls are permitted at any time.
 To constrain calls to a particular time or range of times the
 <TT>TimeOfDay</TT> parameter can be setup according to the syntax
 specified in
-<A HREF="@CGIPATH@/manpage?config">config</A>.
+<A HREF="@CGIPATH@/manpage?hylafax-config">config</A>.
 This syntax is consistent with the syntax used by the UUCP software.
 For example, to permit outbound calls only between 9AM and 5PM
 local time the following might be used:
@@ -771,14 +771,14 @@ The appropriate scheme is normally setup according to the target
 system at the time that HylaFAX is configured for building.
 It is possible, however, to override these parameters through
 the runtime configuration files; consult the 
-<A HREF="@CGIPATH@/manpage?config">config</A>
+<A HREF="@CGIPATH@/manpage?hylafax-config">config</A>
 manual page for information about the <TT>UUCPLockType</TT>
 configuration parameter.
 In addition to the lock type there are configuration parameters
 that control the protection mode of the lock file (<TT>UUCPLockMode</TT>),
 the directory in which lock files are created (<TT>UUCPLockDir</TT>),
 and a timeout parameter used to purge <I>stale lock files</I>.
-Again, consult <A HREF="@CGIPATH@/manpage?config">config</A> for
+Again, consult <A HREF="@CGIPATH@/manpage?hylafax-config">config</A> for
 a full description of these parameters.
 
 <A NAME="Class2Liars"><P><HR WIDTH=65% ALIGN=right><H3>Modems that Lie about their Capabilities</A></H3>
@@ -1451,7 +1451,7 @@ Call answering is done as follows:
 <LI>Wait for a response from the modem that signifies carrier has
     been established and which identifies the type of call.
     The exact set of responses is given in 
-    <A HREF="@CGIPATH@/manpage?config">config</A>.
+    <A HREF="@CGIPATH@/manpage?hylafax-config">config</A>.
 <LI>If <TT>ModemWaitForConnect</TT> is enabled, then HylaFAX will read
     responses from the modem until a <TT>CONNECT</TT> response is sent
     to the host or an error is detected; e.g.

@@ -574,7 +574,7 @@ HYLAFAXSRC=\
 MANPAGES=\
     man/Makefile.in				\
 	man/cid.4f				\
-	man/config.4f				\
+	man/hylafax-config.4f			\
 	man/destctrls.4f			\
 	man/dialrules.4f			\
 	man/cqtest.1m				\
@@ -608,8 +608,8 @@ MANPAGES=\
 	man/hosts.hfaxd.4f			\
 	man/hylafax-client.1			\
 	man/hylafax-server.4f			\
-	man/info.4f				\
-	man/log.4f				\
+	man/hylafax-info.4f			\
+	man/hylafax-log.4f			\
 	man/mkcover.1m				\
 	man/notify.1m				\
 	man/pagermap.4f				\
@@ -624,7 +624,7 @@ MANPAGES=\
 	man/sendpage.1				\
 	man/sendq.4f				\
 	man/sgi2fax.1				\
-	man/shutdown.4f				\
+	man/hylafax-shutdown.4f			\
 	man/status.4f				\
 	man/tagtest.1m				\
 	man/textfmt.1				\

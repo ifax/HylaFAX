@@ -93,4 +93,4 @@ program can be used.
 .IR fax2ps (1),
 .IR faxgetty (${MANNUM1_8}),
 .IR libtiff (3),
-.IR config (${MANNUM4_5})
+.IR hylafax-config (${MANNUM4_5})

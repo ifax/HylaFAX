@@ -257,4 +257,4 @@ for a final result of ``+239658823''.
 .IR faxq (${MANNUM1_8}),
 .IR faxsend (${MANNUM1_8}),
 .IR faxgetty (${MANNUM1_8}),
-.IR config (${MANNUM4_5})
+.IR hylafax-config (${MANNUM4_5})

@@ -541,4 +541,4 @@ for a description of continuation cover pages.
 .IR faxsend (${MANNUM1_8}),
 .IR pagesend (${MANNUM1_8}),
 .IR hfaxd (${MANNUM1_8}),
-.IR config (${MANNUM4_5})
+.IR hylafax-config (${MANNUM4_5})

@@ -507,7 +507,7 @@ setup the <B>syslog.conf</B> file appropriately, e.g.</EM></TD>
 </TR>
 <TR>
 <TD></TD>
-<TD><LISTING>    local5.debug	/var/spool/fax/etc/syslog</LISTING></TD>
+<TD><LISTING>    local5.debug	/var/spool/hylafax/etc/syslog</LISTING></TD>
 </TR>
 </TABLE>
 
@@ -531,7 +531,7 @@ Apr  1 12:26:04 6V:oxford FaxQueuer[307]: MODEM ttym2 READY
 The tracing facilities supported by the HylaFAX server processes should
 provide enough information to debug any problem in the software.
 Consult the
-<A HREF="@CGIPATH@/manpage?config">config</A> manual page
+<A HREF="@CGIPATH@/manpage?hylafax-config">config</A> manual page
 for complete information on the various parameters.
 
 
@@ -678,7 +678,7 @@ Session tracing information is stored in files in the
 electronic mail when notification is requested, or when an
 unrecoverable error is encountered.
 The
-<A HREF="@CGIPATH@/manpage?log">log</A> manual page
+<A HREF="@CGIPATH@/manpage?hylafax-log">log</A> manual page
 has information on the meaning of many messages that might appear
 in these files.
 
@@ -1107,7 +1107,7 @@ understand and/or fix a protocol implementation problem.
 <TD><EM>If communication problems persist to a specific
 receiver when using 2D-encoded data, you can disable its use
 through the
-<A HREF="@CGIPATH@/manpage?info">info</A> database.
+<A HREF="@CGIPATH@/manpage?hylafax-info">info</A> database.
 Note also that sendfax has a command line option that lets you
 select 1D-encoded data in any single transmission.</EM></TD>
 </TR>

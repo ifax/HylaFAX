@@ -498,7 +498,7 @@ modem-related parameters are setup based on the type of modem.
 
 <TR>
 <TD VALIGN=top><LISTING>
-Reading scheduler config file /var/spool/fax/etc/config.
+Reading scheduler config file /var/spool/hylafax/etc/config.
 </LISTING></TD>
 
 <TD><FONT SIZE=2>
@@ -591,7 +591,7 @@ In practice however, most facsimile machines will accept any ASCII string.
 <TD VALIGN=top><LISTING>
 Long distance dialing prefix [1]? 
 International dialing prefix [011]? 
-Dial string rules file (relative to /var/spool/fax)
+Dial string rules file (relative to /var/spool/hylafax)
    [etc/dialrules.sf-ba]?
 </LISTING></TD>
 
@@ -631,7 +631,7 @@ included in the logs.  For Class 2 and Class 2.0 modems the default
 setting of 11 is typically ok.
 Consult the descriptions of <TT>ServerTracing</TT> and <TT>SessionTracing</TT>
 in the
-<A HREF="@CGIPATH@/manpage?config">config</A> manual page.</EM>
+<A HREF="@CGIPATH@/manpage?hylafax-config">config</A> manual page.</EM>
 <BR CLEAR=left>
 <HR>
 </FONT></TD>
@@ -698,7 +698,7 @@ for incoming data usage.
 <TR>
 <TD VALIGN=top><LISTING>
 Pathname of TSI access control list file
-   (relative to /var/spool/fax) [""]? 
+   (relative to /var/spool/hylafax) [""]? 
 </LISTING></TD>
 
 <TD VALIGN=top><FONT SIZE=2>
@@ -711,7 +711,7 @@ to be accepted.  This parameter is discussed more below.
 
 <TR>
 <TD VALIGN=top><LISTING>
-Tag line font file (relative to /var/spool/fax) [etc/lutRS18.pcf]? 
+Tag line font file (relative to /var/spool/hylafax) [etc/lutRS18.pcf]? 
 Tag line format string ["From %%l|%c|Page %%p of %%t"]? 
 </LISTING></TD>
 
@@ -963,7 +963,7 @@ a server for the modem.  Once a working configuration file is
 created it is simple to create a prototype file from it; consult the
 <A HREF="@CGIPATH@/manpage?faxaddmodem">faxaddmodem</A>
 or
-<A HREF="@CGIPATH@/manpage?config">config</A>
+<A HREF="@CGIPATH@/manpage?hylafax-config">config</A>
 manual pages for information on doing this.
 <HR>
 </FONT></TD>
@@ -971,14 +971,14 @@ manual pages for information on doing this.
 
 <TR>
 <TD VALIGN=top><LISTING>
-Creating new configuration file /var/spool/fax/etc/config.ttyf2...
+Creating new configuration file /var/spool/hylafax/etc/config.ttyf2...
 Done setting up the modem configuration.
 </LISTING></TD>
 </TR>
 
 <TR>
 <TD VALIGN=top><LISTING>
-Checking /var/spool/fax/etc/config for consistency...
+Checking /var/spool/hylafax/etc/config for consistency...
 ...everything looks ok; leaving existing file unchanged.
 
 Don't forget to run faxmodem(1M) (if you have a send-only environment)
@@ -1586,7 +1586,7 @@ Also, when this patch is installed the
 <TT>ClocalAsRoot</TT> modem configuration parameter must be set
 to <TT>Yes</TT> for proper operation
 (see
-<A HREF="@CGIPATH@/manpage?config">config</A> for a detailed
+<A HREF="@CGIPATH@/manpage?hylafax-config">config</A> for a detailed
 explanation of what this parameter does).
 If you do not have the appropriate patch installed on your system
 then you will either see flow control-related problems when transmitting

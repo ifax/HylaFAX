@@ -7,7 +7,7 @@
 #
 # Credits go to Sascha Ottolski how posted a working snippet in Mar 98.
 #
-# Instructions : install as file /var/spool/fax/config/umc92144
+# Instructions : install as file $SPOOL/config/umc92144
 
 #
 # Configuration for modems based on UMC 92114 DATA/FAX/VOICE CHIP SET 

@@ -1196,7 +1196,7 @@ HylaFAX configuration parameters (part 1 of 2) are:
 [ 4] Directory for system apps:         /usr/local/bin
 [ 5] Directory for manual pages:        /usr/local/man
 [ 6] Directory for HTML documentation:  /usr/local/doc/fax
-[ 7] Directory for spooling:            /var/spool/fax
+[ 7] Directory for spooling:            /var/spool/hylafax
 [ 8] Directory for uucp lock files:     /var/spool/uucp
 [ 9] Uucp lock file scheme:             binary
 [10] PostScript imager package:         gs
@@ -1554,7 +1554,7 @@ installed; by default this is <B>/usr/local/sbin</B>.
 <TD VALIGN=top><TT>DIR_SPOOL</TT></TD>
 <TD>
 The directory in which the HylaFAX server spooling area should be setup;
-by default this is <B>/var/spool/fax</B>.
+by default this is <B>/var/spool/hylafax</B>.
 </TR>
 
 <TR>
@@ -1762,7 +1762,7 @@ A specification of the default type of UUCP lock files to use.
 This parameter is usually one of <TT>ascii</TT>, <TT>binary</TT>, 
 <TT>-ascii</TT> or <TT>+ascii</TT>;
 consult the
-<A HREF="@CGIPATH@/manpage?config">config</A>
+<A HREF="@CGIPATH@/manpage?hylafax-config">config</A>
 manual page for a description of the <B>UUCPLockType</B>
 configuration parameter.
 </TR>
@@ -2138,7 +2138,7 @@ DIR_AFM="/usr/contrib/lib/hylafax/afm"  # AFM files
 DIR_LIBDATA="/usr/contrib/lib/hylafax"  # client data
 DIR_LIBEXEC="/usr/contrib/lib/hylafax"  # libs&hidden apps
 DIR_SBIN="/usr/contrib/bin"             # system apps
-DIR_SPOOL="/var/spool/fax"              # spooling area
+DIR_SPOOL="/var/spool/hylafax"          # spooling area
 PATH_GSRIP="/usr/contrib/bin/gs"        # Ghostscript RIP
 </LISTING></UL>
 

@@ -147,5 +147,5 @@ a special character for regular expressions.  An easy way to
 match ``+'' is with ``[+]''; e.g. ``[+]14159657824''.
 .SH "SEE ALSO"
 .IR faxq (${MANNUM1_8}),
-.IR config (${MANNUM4_5}),
+.IR hylafax-config (${MANNUM4_5}),
 .IR re_format (7).

@@ -98,17 +98,17 @@ MANSAPP=sman.apps/cqtest.1m	\
 	sman.apps/xferfaxstats.1m
 MANSFILE=sman.files/hylafax-server.4f	\
 	sman.files/cid.4f	\
-	sman.files/config.4f	\
+	sman.files/hylafax-config.4f	\
 	sman.files/destctrls.4f	\
 	sman.files/dialrules.4f	\
 	sman.files/doneq.4f	\
 	sman.files/hosts.hfaxd.4f	\
-	sman.files/info.4f	\
-	sman.files/log.4f	\
+	sman.files/hylafax-info.4f	\
+	sman.files/hylafax-log.4f	\
 	sman.files/pagermap.4f	\
 	sman.files/recvq.4f	\
 	sman.files/sendq.4f	\
-	sman.files/shutdown.4f	\
+	sman.files/hylafax-shutdown.4f	\
 	sman.files/status.4f	\
 	sman.files/tsi.4f	\
 	sman.files/xferfaxlog.4f
@@ -191,17 +191,17 @@ sman.apps/wedged.1m::	${SRCDIR}/wedged.1m;	${MANCVT}
 sman.apps/xferfaxstats.1m:: ${SRCDIR}/xferfaxstats.1m; ${MANCVT}
 sman.files/hylafax-server.4f::	${SRCDIR}/hylafax-server.4f;	${MANCVT}
 sman.files/cid.4f::	${SRCDIR}/cid.4f;	${MANCVT}
-sman.files/config.4f::	${SRCDIR}/config.4f;	${MANCVT}
+sman.files/hylafax-config.4f::	${SRCDIR}/hylafax-config.4f;	${MANCVT}
 sman.files/destctrls.4f:: ${SRCDIR}/destctrls.4f; ${MANCVT}
 sman.files/doneq.4f::	${SRCDIR}/doneq.4f;	${MANCVT}
 sman.files/dialrules.4f:: ${SRCDIR}/dialrules.4f; ${MANCVT}
 sman.files/hosts.hfaxd.4f::	${SRCDIR}/hosts.hfaxd.4f;	${MANCVT}
-sman.files/info.4f::	${SRCDIR}/info.4f;	${MANCVT}
-sman.files/log.4f::	${SRCDIR}/log.4f;	${MANCVT}
+sman.files/hylafax-info.4f::	${SRCDIR}/hylafax-info.4f;	${MANCVT}
+sman.files/hylafax-log.4f::	${SRCDIR}/hylafax-log.4f;	${MANCVT}
 sman.files/pagermap.4f::${SRCDIR}/pagermap.4f;	${MANCVT}
 sman.files/recvq.4f::	${SRCDIR}/recvq.4f;	${MANCVT}
 sman.files/sendq.4f::	${SRCDIR}/sendq.4f;	${MANCVT}
-sman.files/shutdown.4f::${SRCDIR}/shutdown.4f;	${MANCVT}
+sman.files/hylafax-shutdown.4f::${SRCDIR}/hylafax-shutdown.4f;	${MANCVT}
 sman.files/status.4f::	${SRCDIR}/status.4f;	${MANCVT}
 sman.files/tsi.4f::	${SRCDIR}/tsi.4f;	${MANCVT}
 sman.files/xferfaxlog.4f::	${SRCDIR}/xferfaxlog.4f;	${MANCVT}

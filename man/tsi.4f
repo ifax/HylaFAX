@@ -126,4 +126,4 @@ string to be sent as a
 .SH "SEE ALSO"
 .IR faxgetty (${MANNUM1_8}),
 .IR re_format (7),
-.IR config (${MANNUM4_5})
+.IR hylafax-config (${MANNUM4_5})

@@ -115,5 +115,5 @@ is specified, then no phone numbers will be recognized and all
 incoming calls will be ignored.
 .SH "SEE ALSO"
 .IR faxgetty (${MANNUM1_8}),
-.IR config (${MANNUM4_5}),
+.IR hylafax-config (${MANNUM4_5}),
 .IR re_format (7).

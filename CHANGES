@@ -1,24 +1,29 @@
-May 29, 2001
-  (tim) [configure config.site] change default spool dir to hylafax.
-	Break up VAR2 to help out sed on HP (thanks to Alan O'Keefe
-	<aokeefe@primus.com.au> for testing)
-	[faxd/ModemServer.c++] add additional reset to ModemServer::setupModem
-	sugested by Bernd Proissl <lists@proissl.de>
-  (tim) [configure] back out HP fixes. (oops)
-  (tim) [util/Makefile.in] fix clobberconfig:
-	[config.site] change spool/fax to spool/hylafax (missed one, thanks Lee)
 
-May 27, 2001
- (tim) [pkg/Makefile.in make.links make_proto.sh.in cproto.stub.in
-	sproto.stub.in] "make package" fixes
- (tim) [faxsetup.sh.in] only write status/any.info on server setup
- (tim) [util/Makefile.in] fixes for building outside of source tree needed
-       due to some utilities now created at configure time from .in files
+Changelog for - May 30, 2001
 
-May 26, 2001
- (tim) [configure] add support for SCO Open Server 5 using gcc
- (tim) [Class1Send.c++] fix for SCO Open Server 5 
-       Some compilers do not allow a (goto) label in block with destructors
+* add HylaFAX version and device usage in logs (30 May 2001)
+* rearrangements in configure to fix HP sed (30 May 2001)
+* change default spool dir to /var/spool/hylafax (29 May 2001)
+* make ModemServer attempt resets twice, if needed (29 May 2001)
+* fixes for building outside of source tree (27 May 2001)
+* fixes for 'make package' (27 May 2001)
+* removed a goto in faxd/Class1Send.c++ which
+  caused compile errors for some (27 May 2001)
+* improved error handling for:  (20 May 2001)
+  - DLE+ETX
+  - ERROR after AT+FRM (instead of +FCERROR)
+  - faxgetty training hangups
+* added ModemDTRDropDelay config option and default,
+  correcting some "Can not setup modem" issues (20 May 2001)
+* improved logging verbosity for SEND FAILED (20 May 2001)
+* updated various documentation antiquities (20 May 2001)
+* added Lucent (LT) Winmodem prototype config (20 May 2001)
+* added default status/any.info creation by faxsetup (20, 27 May 2001)
+* added PriorityScheduling option and POSIX function (20 May 2001)
+* fixed previous utmp update for libc5 (20 May 2001)
+* added Class1SwitchingDelay config option and default,
+  correcting some timeout errors (20 May 2001)
+* fixed file gid numbering (20 May 2001)
 
 Changelog for HylaFAX 4.1rc1 - Apr 22, 2001
 

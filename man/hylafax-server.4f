@@ -700,7 +700,7 @@ archive/*	database of archived jobs
 .IR recvstats (${MANNUM1_8}),
 .IR xferfaxstats (${MANNUM1_8}),
 .IR archive (${MANNUM4_5}),
-.IR config (${MANNUM4_5}),
+.IR hylafax-config (${MANNUM4_5}),
 .IR dialrules (${MANNUM4_5}),
 .IR doneq (${MANNUM4_5}),
 .IR hosts.hfaxd (${MANNUM4_5}),
