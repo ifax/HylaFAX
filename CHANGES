@@ -2,6 +2,9 @@
 
 Changelog for HylaFAX
 
+* fix dialtest problem when using parenthesis (1 Apr 2005)
+* fix crash when using malformed format strings (1 Apr 2005)
+* initialize frameCount for compilers that don't (1 Apr 2005)
 * add last-page CRP reception support in Phase D (30 Mar 2005)
 * handle TSI, DCS, and other signals when in ECM (29 Mar 2005)
 * don't transmit DCN after getting EOT (24 Mar 2005)
