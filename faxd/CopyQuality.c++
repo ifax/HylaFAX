@@ -124,7 +124,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 	recvStartPage(tif);
 
 	u_char* curGood = buf;			// last good row
-	memset(curGood, 0, rowSize);		// initialize to all white
+	memset(curGood, 0, (size_t) rowSize);	// initialize to all white
 	recvBuf = NULL;				// don't need raw data
 	lastRowBad = false;			// no previous row
 	cblc = 0;				// current bad line run
@@ -150,7 +150,8 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 			cblc = 0;
 		    }
 		} else {
-		    memcpy(recvRow, curGood, rowSize);// replicate last good
+		    memcpy(recvRow, curGood, (size_t) rowSize);
+			// replicate last good
 		    recvBadLineCount++;
 		    cblc++;
 		    lastRowBad = true;
