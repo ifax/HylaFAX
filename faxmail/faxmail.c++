@@ -487,7 +487,7 @@ faxMailApp::formatMessage(FILE* fd, MIMEState& mime, MsgFmt& msg)
 		divider = msgDivider;
 	}
 	u_int nl = bodyHdrs.headerCount()	// header lines
-	    + (nl > 0)				// blank line following header
+	    + (bodyHdrs.headerCount() > 0)	// blank line following header
 	    + (divider != NULL)			// digest divider
 	    + 1;				// 1st text line of message
 	reserveVSpace(nl*getTextLineHeight());
