@@ -1109,7 +1109,6 @@ HylaFAXServer::findJob(const char* jobid, fxStr& emsg)
 	{
 	    JobDictIter iter(jobs);
 	    job = iter.value();
-	    logError("Removing: %s", (const char*)job->jobid);
 	    jobs.remove(job->jobid);
 	    delete job;
 	}
