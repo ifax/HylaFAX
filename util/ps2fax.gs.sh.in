@@ -90,9 +90,9 @@ do
 done
 test -z "$fil" && fil="-"		# read from stdin
 case "${pagewidth}x${pagelength}" in
-1728x280|1728x279)		# 279.4mm is actually correct...
+1728x280|1728x279|2592x280|2592x279|3456x280|3456x279)	# 279.4mm is actually correct...
     paper=letter;;
-1728x364) 
+1728x364|2592x364|3456x364) 
     paper=legal;;
 *x296|*x297)			# more roundoff problems...
     paper=a4;;
@@ -101,6 +101,29 @@ case "${pagewidth}x${pagelength}" in
 *)
     echo "$0: Unsupported page size: $pagewidth x $pagelength";
     exit 254;;			# causes document to be rejected
+esac
+
+# The image must end up with a pixel width according to T.32 Table 21.
+# Ghostscript contains code to fixate a4 and letter to 1728 pixels
+# when using 196-204 dpi, but not for the others, thus the floats.
+case "$paper" in
+    a4)
+	case "$pagewidth" in
+	    2592) hres=313.65;;		# VR_R300X300
+	    3456) hres=418.20;; 	# VR_R16
+	    *) hres=209.10;;		# everything else, 1728 pixels
+	esac;;
+    b4)					# no 300x300 available with B4
+	case "$pagewidth" in
+	    4096) hres=415.95;; 	# VR_R16
+	    *) hres=207.98;;		# everything else, 2048 pixels
+	esac;;
+    *)					# letter, legal
+	case "$pagewidth" in
+	    2592) hres=304.94;;		# VR_R300X300
+	    3456) hres=406.59;; 	# VR_R16
+	    *) hres=203.29;;		# everything else, 1728 pixels
+	esac;;
 esac
 
 #
@@ -122,6 +145,6 @@ $CAT $fil | $PS -q \
     -dSAFER=true \
     -sPAPERSIZE=$paper \
     -dFIXEDMEDIA \
-    -r204x$vres \
+    -r$hres\x$vres \
     "-sOutputFile=$out" \
     -

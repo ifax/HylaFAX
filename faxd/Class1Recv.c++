@@ -353,7 +353,8 @@ void
 Class1Modem::processDCSFrame(const HDLCFrame& frame)
 {
     u_int dcs = frame.getDIS();			// NB: really DCS
-    params.setFromDCS(dcs, frame.getXINFO());
+    u_int xinfo = frame.getXINFO();
+    params.setFromDCS(dcs, xinfo);
     setDataTimeout(60, params.br);
     curcap = findSRCapability(dcs&DCS_SIGRATE, recvCaps);
     recvDCS(params);				// announce session params

@@ -134,8 +134,8 @@ G3Decoder::decode(void* raster, u_int w, u_int h)
 {
     u_int rowbytes = howmany(w, 8);
     if (curruns == NULL) {
-	tiff_runlen_t runs[2*2432];		// run arrays for cur+ref rows
-	setRuns(runs, runs+2432, w);
+	tiff_runlen_t runs[2*4864];		// run arrays for cur+ref rows
+	setRuns(runs, runs+4864, w);
 	while (h-- > 0) {
 	    decodeRow(raster, w);
 	    if (raster)

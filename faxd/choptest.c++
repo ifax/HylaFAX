@@ -88,9 +88,9 @@ void
 MemoryDecoder::scanPage(u_int fillorder, const Class2Params& params)
 {
     setupDecoder(fillorder,  params.is2D());
-    u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 2432
-    tiff_runlen_t runs[2*2432];			// run arrays for cur+ref rows
-    setRuns(runs, runs+2432, rowpixels);
+    u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
+    tiff_runlen_t runs[2*4864];			// run arrays for cur+ref rows
+    setRuns(runs, runs+4864, rowpixels);
 
     if (!RTCraised()) {
 	/*

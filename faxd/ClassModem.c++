@@ -415,6 +415,22 @@ ClassModem::traceBits(u_int bits, const char* bitNames[])
 }
 
 /*
+ * Trace a modem capability true bit mask (VR, BF, JP).
+ */
+void
+ClassModem::traceBitMask(u_int bits, const char* bitNames[])
+{
+    u_int i = 0;
+    do {
+	if ((bits & i) == i) {
+	    modemSupports(bitNames[i]);
+	    bits -= i;
+	}
+	i++;
+    } while (bits);
+}
+
+/*
  * Modem i/o support.
  */
 
@@ -1054,7 +1070,7 @@ const char SPACE = ' ';
  *     that indicate they support ``Class Z'' are handled.
  */
 bool
-ClassModem::vparseRange(const char* cp, int nargs ... )
+ClassModem::vparseRange(const char* cp, int masked, int nargs ... )
 {
     bool b = true;
     va_list ap;
@@ -1145,9 +1161,30 @@ ClassModem::vparseRange(const char* cp, int nargs ... )
 		    cp++;
 	    }
 	    if (v != -1) {				// expand range or list
-		r = fxmin(r, 31);			// clamp to valid range
-		for (; v <= r; v++)
-		    mask |= 1<<v;
+		if ((BIT(nargs) & masked) == BIT(nargs)) {
+		    /*
+		     * These are pre-masked values. T.32 Table 21 gives valid
+		     * values as: 00, 01, 02, 04, 08, 10, 20, 40 (hex).
+		     *
+		     * Some modems may say "(00-7F)" when what's meant is
+		     * "(00-40)" or simply "(7F)".
+		     */
+		    if (v == 00 && r == 127)
+			v = r = 127;
+		    if (v == r)
+			mask = v;
+		    else {
+			r = fxmin(r, 64);		// clamp to valid range
+			mask = 0;
+			for (; v <= r; v++)
+			    if (v == 0 || v == 1 || v == 2 || v == 4 || v == 8 || v == 16 || v == 32 || v == 64)
+				mask += v;
+		    }
+		} else {
+		    r = fxmin(r, 31);			// clamp to valid range
+		    for (; v <= r; v++)
+			mask |= 1<<v;
+		}
 	    }
 	    if (acceptList && cp[0] == COMMA)		// (<item>,<item>...)
 		cp++;
@@ -1170,7 +1207,7 @@ done:
 bool
 ClassModem::parseRange(const char* cp, u_int& a0)
 {
-    return vparseRange(cp, 1, &a0);
+    return vparseRange(cp, 0, 1, &a0);
 }
 
 void

@@ -120,7 +120,6 @@ public:
     bool modemSupportsMMR() const;
     bool modemSupportsEOLPadding() const;
     bool modemSupportsVRes(float res) const;
-    bool modemSupportsPageWidth(u_int w) const;
     bool modemSupportsPageLength(u_int l) const;
     bool modemSupportsPolling() const;
 };

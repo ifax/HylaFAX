@@ -54,7 +54,7 @@ FaxMachineInfo::FaxMachineInfo(const FaxMachineInfo& other)
 {
     locked = other.locked;
 
-    supportsHighRes = other.supportsHighRes;
+    supportsVRes = other.supportsVRes;
     supports2DEncoding = other.supports2DEncoding;
     supportsMMR = other.supportsMMR;
     supportsPostScript = other.supportsPostScript;
@@ -99,7 +99,7 @@ FaxMachineInfo::updateConfig(const fxStr& number)
 void
 FaxMachineInfo::resetConfig()
 {
-    supportsHighRes = true;		// assume 196 lpi support
+    supportsVRes = VR_FINE;		// normal and high res support
     supports2DEncoding = true;		// assume 2D-encoding support
     supportsMMR = true;			// assume MMR support
     supportsPostScript = false;		// no support for Adobe protocol
@@ -162,7 +162,7 @@ static const char* stnames[] =
      "20ms/10ms", "20ms", "40ms/20ms", "40ms" };
 #define	NST	N(stnames)
 
-#define	HIRES	0
+#define VR	0
 #define	G32D	1
 #define	G4	2
 #define	PS	3
@@ -178,9 +178,12 @@ FaxMachineInfo::setConfigItem(const char* tag, const char* value)
 {
     int b = (tag[0] == '&' ? 1 : 0);	// locked down indicator
     if (b) tag++;
-    if (streq(tag, "supportshighres")) {
-	supportsHighRes = getBoolean(value);
-	setLocked(b, HIRES);
+    if (streq(tag, "supportshighres")) {	// obsolete tag
+	supportsVRes = VR_FINE;
+	setLocked(b, VR);
+    } else if (streq(tag, "supportsvres")) {
+	supportsVRes = getNumber(value);
+	setLocked(b, VR);
     } else if (streq(tag, "supports2dencoding")) {
 	supports2DEncoding = getBoolean(value);
 	setLocked(b, G32D);
@@ -245,8 +248,8 @@ FaxMachineInfo::setConfigItem(const char* tag, const char* value)
 	changed = true;			\
     }
 
-void FaxMachineInfo::setSupportsHighRes(bool b)
-    { checkLock(HIRES, supportsHighRes, b); }
+void FaxMachineInfo::setSupportsVRes(int v)
+    { checkLock(VR, supportsVRes, v); }
 void FaxMachineInfo::setSupports2DEncoding(bool b)
     { checkLock(G32D, supports2DEncoding, b); }
 void FaxMachineInfo::setSupportsMMR(bool b)
@@ -341,7 +344,7 @@ putIfString(fxStackBuffer& buf, const char* tag, bool locked, const char* v)
 void
 FaxMachineInfo::writeConfig(fxStackBuffer& buf)
 {
-    putBoolean(buf, "supportsHighRes", isLocked(HIRES), supportsHighRes);
+    putDecimal(buf, "supportsVRes", isLocked(VR), supportsVRes);
     putBoolean(buf, "supports2DEncoding", isLocked(G32D),supports2DEncoding);
     putBoolean(buf, "supportsMMR", isLocked(G4),supportsMMR);
     putBoolean(buf, "supportsPostScript", isLocked(PS), supportsPostScript);

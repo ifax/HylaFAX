@@ -95,12 +95,29 @@ main(int argc, char** argv)
 
     Class2Params params;
     uint32 v;
-#ifdef TIFFTAG_FAXRECVPARAMS
-    if (TIFFGetField(tif, TIFFTAG_FAXRECVPARAMS, &v))
-	params.decode((u_int) v);			// page transfer params
-    else {
-#endif
     float vres = 3.85;					// XXX default
+    float hres = 8.03;
+#ifdef TIFFTAG_FAXRECVPARAMS
+    if (TIFFGetField(tif, TIFFTAG_FAXRECVPARAMS, &v)) {
+	params.decode((u_int) v);			// page transfer params
+	// inch & metric resolutions overlap and are distinguished by yres
+	TIFFGetField(tif, TIFFTAG_YRESOLUTION, &vres);
+	switch ((u_int) vres) {
+	    case 100:
+		params.vr = VR_200X100;
+		break;
+	    case 200:
+		params.vr = VR_200X200;
+		break;
+	    case 400:
+		params.vr = VR_200X400;
+		break;
+	    case 300:
+		params.vr = VR_300X300;
+		break;
+	}
+    } else {
+#endif
     if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &vres)) {
 	uint16 resunit = RESUNIT_INCH;			// TIFF spec default
 	TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &resunit);
@@ -108,8 +125,14 @@ main(int argc, char** argv)
 	    vres /= 25.4;
 	if (resunit == RESUNIT_NONE)
 	    vres /= 720.0;				// postscript units ?
+	if (TIFFGetField(tif, TIFFTAG_XRESOLUTION, &hres)) {
+	    if (resunit == RESUNIT_INCH)
+		hres /= 25.4;
+	    if (resunit == RESUNIT_NONE)
+		hres /= 720.0;				// postscript units ?
+        }
     }
-    params.setVerticalRes((u_int) vres);		// resolution
+    params.setRes((u_int) hres, (u_int) vres);		// resolution
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &v);
     params.setPageWidthInPixels((u_int) v);		// page width
     TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &v);
@@ -145,9 +168,21 @@ main(int argc, char** argv)
 	date = buf;
     }
     TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &v);
-    float h = v / (params.verticalRes() < 100 ? 3.85 : 7.7);
+    float h = v / (params.vr == VR_NORMAL ? 3.85 : 
+	params.vr == VR_200X100 ? 3.94 : 
+	params.vr == VR_FINE ? 7.7 :
+	params.vr == VR_200X200 ? 7.87 : 
+	params.vr == VR_R8 ? 15.4 : 
+	params.vr == VR_200X400 ? 12.81 : 
+	params.vr == VR_300X300 ? 9.14 : 15.4);
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &v);
-    float w = (v / 204.) * 25.4;
+    float w = v / (params.vr == VR_NORMAL ? 8.0 : 
+	params.vr == VR_200X100 ? 8.00 : 
+	params.vr == VR_FINE ? 8.00 :
+	params.vr == VR_200X200 ? 8.00 : 
+	params.vr == VR_R8 ? 8.00 : 
+	params.vr == VR_200X400 ? 8.00 : 
+	params.vr == VR_300X300 ? 12.01 : 16.01);
     time_t time = 0;
     u_int npages = 0;					// page count
     do {
@@ -160,10 +195,14 @@ main(int argc, char** argv)
     TIFFClose(tif);
 
     printf("%11s %u\n", "Pages:", npages);
-    if (params.verticalRes() == 98)
+    if (params.vr == VR_NORMAL)
 	printf("%11s Normal\n", "Quality:");
-    else if (params.verticalRes() == 196)
+    else if (params.vr == VR_FINE)
 	printf("%11s Fine\n", "Quality:");
+    else if (params.vr == VR_R8)
+	printf("%11s Superfine\n", "Quality:");
+    else if (params.vr == VR_R16)
+	printf("%11s Hyperfine\n", "Quality:");
     else
 	printf("%11s %u lines/inch\n", "Quality:", params.verticalRes());
     PageSizeInfo* info = PageSizeInfo::getPageSizeBySize(w, h);

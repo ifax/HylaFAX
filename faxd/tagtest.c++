@@ -236,8 +236,8 @@ imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      */
     MemoryDecoder dec(buf);
     dec.setupDecoder(fillorder,  params.is2D());
-    tiff_runlen_t runs[2*2432];		// run arrays for cur+ref rows
-    dec.setRuns(runs, runs+2432, w);
+    tiff_runlen_t runs[2*4864];		// run arrays for cur+ref rows
+    dec.setRuns(runs, runs+4864, w);
 
     u_int row;
     for (row = 0; row < th; row++) {
@@ -271,7 +271,7 @@ imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      */
     u_int look_ahead = roundup(dec.getPendingBits(),8) / 8;
     u_int decoded = dec.current() - look_ahead - buf;
-    if (params.vr == VR_NORMAL) {
+    if (params.vr == VR_NORMAL or params.vr == VR_200X100) {
 	/*
 	 * Scale text vertically before encoding.  Note the
 	 * ``or'' used to generate the final samples. 
@@ -436,7 +436,7 @@ main(int argc, char* argv[])
 	uint32 l;
 	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &l);
 	params.vr = (l < 1500 ? VR_NORMAL : VR_FINE);
-	TIFFSetField(otif, TIFFTAG_XRESOLUTION, 204.);
+	TIFFSetField(otif, TIFFTAG_XRESOLUTION, (float) params.horizontalRes());
 	TIFFSetField(otif, TIFFTAG_YRESOLUTION, (float) params.verticalRes());
 	TIFFSetField(otif, TIFFTAG_RESOLUTIONUNIT, RESUNIT_INCH);
 	TIFFSetField(otif, TIFFTAG_IMAGELENGTH, l);

@@ -49,7 +49,7 @@ private:
     fxStr	file;			// pathname to info file
     u_int	locked;			// bit vector of locked items
     bool	changed;		// changed since restore
-    bool	supportsHighRes;	// capable of 7.7 line/mm vres
+    u_short	supportsVRes;		// VR support bitmask
     bool	supports2DEncoding;	// handles Group 3 2D
     bool	supportsMMR;		// handles Group 4
     bool	supportsPostScript;	// handles Adobe NSF protocol
@@ -88,7 +88,7 @@ public:
     virtual void writeConfig();
     virtual void resetConfig();
 
-    bool getSupportsHighRes() const;
+    u_short getSupportsVRes() const;
     bool getSupports2DEncoding() const;
     bool getSupportsMMR() const;
     bool getSupportsPostScript() const;
@@ -105,7 +105,7 @@ public:
     const fxStr& getLastSendFailure() const;
     const fxStr& getLastDialFailure() const;
 
-    void setSupportsHighRes(bool);
+    void setSupportsVRes(int);
     void setSupports2DEncoding(bool);
     void setSupportsMMR(bool);
     void setSupportsPostScript(bool);
@@ -129,8 +129,8 @@ public:
     const fxStr& getPagerSetupCmds() const;
 };
 
-inline bool FaxMachineInfo::getSupportsHighRes() const
-    { return supportsHighRes; }
+inline u_short FaxMachineInfo::getSupportsVRes() const
+    { return supportsVRes; }
 inline bool FaxMachineInfo::getSupports2DEncoding() const
     { return supports2DEncoding; }
 inline bool FaxMachineInfo::getSupportsMMR() const

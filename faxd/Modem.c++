@@ -116,7 +116,7 @@ Modem::getModemByID(const fxStr& id)
 
 /*
  * Is the modem capable of handling the job.
- */ 
+ */
 bool
 Modem::isCapable(const Job& job) const
 {
@@ -365,11 +365,25 @@ bool
 Modem::supportsVRes(float res) const
 {
     if (75 <= res && res < 120)
-	return caps.vr & BIT(VR_NORMAL);
+	return (caps.vr & VR_NORMAL || caps.vr & VR_200X100);
     else if (150 <= res && res < 250)
-	return caps.vr & BIT(VR_FINE);
+	return (caps.vr & VR_FINE || caps.vr & VR_200X200);
+    else if (250 <= res && res < 350)
+	return caps.vr & VR_300X300;
+    else if (350 <= res && res < 500)
+	return (caps.vr & VR_R8 || caps.vr & VR_200X400 || caps.vr & VR_R16);
     else
 	return false;
+}
+
+/*
+ * Return whether or not the modem supports the
+ * specified VR setting.
+ */
+bool
+Modem::supportsVR(u_int r) const
+{
+        return caps.vr & r;
 }
 
 /*

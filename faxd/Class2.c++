@@ -126,7 +126,7 @@ Class2Modem::setupModem()
     // some modems don't support an AP-query command
     if (strcasecmp(conf.class2APQueryCmd, "none") != 0) {
 	if (doQuery(conf.class2APQueryCmd, s))
-	    (void) vparseRange(s, 3, &sub, &sep, &pwd);
+	    (void) vparseRange(s, 0, 3, &sub, &sep, &pwd);
     }
     if (sub & BIT(1)) {
 	saCmd = conf.class2SACmd;
@@ -309,7 +309,7 @@ Class2Modem::setupFlowControl(FlowControl fc)
 bool
 Class2Modem::setupDCC()
 {
-    params.vr = getBestVRes();
+    params.vr = getVRes();
     params.br = getBestSignallingRate();
     params.wd = getBestPageWidth();
     params.ln = getBestPageLength();
@@ -343,7 +343,7 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params)
 	 * Clamp values to insure modem doesn't feed us
 	 * nonsense; should log bogus stuff also.
 	 */
-	params.vr = fxmin(params.vr, (u_int) VR_FINE);
+	params.vr = params.vr & VR_ALL;
 	params.br = fxmin(params.br, (u_int) BR_33600);
 	params.wd = fxmin(params.wd, (u_int) WD_864);
 	params.ln = fxmin(params.ln, (u_int) LN_INF);
@@ -531,7 +531,13 @@ Class2Modem::class2Cmd(const fxStr& cmd, const fxStr& s, ATResponse r, long ms)
 bool
 Class2Modem::parseRange(const char* cp, Class2Params& p)
 {
-    if (!vparseRange(cp, 8, &p.vr,&p.br,&p.wd,&p.ln,&p.df,&p.ec,&p.bf,&p.st))
+    /*
+     * VR, BF, and JP are already reported as bitmap
+     * values accoring to T.32 Table 21.
+     * In vparseRange(), VR:nargs=7, BF:nargs=1.  JP not handled.
+     */
+    int masked = (1 << 7) + (1 << 1);	// reversed, count-down style
+    if (!vparseRange(cp, masked, 8, &p.vr,&p.br,&p.wd,&p.ln,&p.df,&p.ec,&p.bf,&p.st))
 	return (false);
     p.vr &= VR_ALL;
     p.br &= BR_ALL;

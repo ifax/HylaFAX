@@ -460,7 +460,7 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
      * constructed here is also recorded in a private database for
      * use in pre-formatting documents sent in future conversations.
      */
-    clientInfo.setSupportsHighRes(clientCapabilities.vr == VR_FINE);
+    clientInfo.setSupportsVRes(clientCapabilities.vr);
     clientInfo.setSupports2DEncoding(clientCapabilities.df >= DF_2DMR);
     clientInfo.setSupportsMMR(clientCapabilities.df >= DF_2DMMR);
     clientInfo.setMaxPageWidthInPixels(clientCapabilities.pageWidth());
@@ -468,7 +468,7 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
     traceProtocol("REMOTE best rate %s", clientCapabilities.bitRateName());
     traceProtocol("REMOTE max %s", clientCapabilities.pageWidthName());
     traceProtocol("REMOTE max %s", clientCapabilities.pageLengthName());
-    traceProtocol("REMOTE best vres %s", clientCapabilities.verticalResName());
+    traceProtocol("REMOTE best vres %s", clientCapabilities.bestVerticalResName());
     traceProtocol("REMOTE best format %s", clientCapabilities.dataFormatName());
     if (clientCapabilities.ec != EC_DISABLE)
 	traceProtocol("REMOTE supports %s", clientCapabilities.ecmName());
@@ -554,35 +554,9 @@ FaxServer::sendSetupParams1(TIFF* tif,
 	} else
 	    params.df = DF_1DMR;
     }
-    uint32 w;
-    (void) TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
-    if (w > (uint32)clientInfo.getMaxPageWidthInPixels()) {
-	emsg = fxStr::format("Client does not support document page width"
-		", max remote page width %u pixels, image width %lu pixels",
-		clientInfo.getMaxPageWidthInPixels(), w);
-	return (send_reformat);
-    }
-    if (!modem->supportsPageWidth((u_int) w)) {
-	static const char* widths[8] = {
-	    "1728",	// 1728 in 215 mm line
-	    "2048",	// 2048 in 255 mm line
-	    "2432",	// 2432 in 303 mm line
-	    "1216",	// 1216 in 151 mm line
-	    "864",	// 864 in 107 mm line
-	    "<undefined>",
-	    "<undefined>",
-	    "<undefined>",
-	};
-	emsg = fxStr::format("Modem does not support document page width"
-		", max page width %s pixels, image width %lu pixels",
-		widths[modem->getBestPageWidth()&7], w);
-	return (send_reformat);
-    }
-    // NB: only common values
-    params.wd = (w <= 1728 ? WD_1728 : w <= 2048 ? WD_2048 : WD_2432);
 
     /*
-     * Try to deduce the vertical resolution of the image
+     * Try to deduce the resolution of the image
      * image.  This can be problematical for arbitrary TIFF
      * images 'cuz vendors sometimes don't give the units.
      * We, however, can depend on the info in images that
@@ -605,20 +579,110 @@ FaxServer::sendSetupParams1(TIFF* tif,
 	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &l);
 	yres = (l < 1450 ? 3.85 : 7.7);		// B4 at 98 lpi is ~1400 lines
     }
-    if (yres >= 7.) {
-	if (!clientInfo.getSupportsHighRes()) {
+    float xres;
+    if (TIFFGetField(tif, TIFFTAG_XRESOLUTION, &xres)) {
+	short resunit = RESUNIT_INCH;		// TIFF spec default
+	(void) TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &resunit);
+	if (resunit == RESUNIT_INCH)
+	    xres /= 25.4;
+	if (resunit == RESUNIT_NONE)
+	    xres /= 720.0;			// postscript units ?
+    } else {
+	/*
+	 * No horizontal resolution is specified, try
+	 * to deduce one from the image width.
+	 */
+	u_long l;
+	TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &l);
+	xres = (l < 1729 ? 8 : 16);		// R8 = 8 l/mm, R16 = 16 l/mm
+    }
+    if (yres >= 15.) {
+	if (xres > 10) {
+	    if (!(clientInfo.getSupportsVRes() & VR_R16)) {
+		emsg = fxStr::format("Hyperfine resolution document is not supported"
+		    " by client, image resolution %g x %g lines/mm", xres, yres);
+		return (send_reformat);
+	    }
+	    if (!modem->supportsVRes(20)) {	// "20" is coded for R16
+		emsg = fxStr::format("Hyperfine resolution document is not supported"
+		    " by modem, image resolution %g x %g lines/mm", xres, yres);
+		return (send_reformat);
+	    }
+	params.vr = VR_R16;
+	} else {
+	    if (!((clientInfo.getSupportsVRes() & VR_R8) || (clientInfo.getSupportsVRes() & VR_200X400))) {
+		emsg = fxStr::format("Superfine resolution document is not supported"
+		    " by client, image resolution %g lines/mm", yres);
+		return (send_reformat);
+	    }
+	    if (!modem->supportsVRes(yres)) {
+		emsg = fxStr::format("Superfine resolution document is not supported"
+		    " by modem, image resolution %g lines/mm", yres);
+		return (send_reformat);
+	    }
+	if (clientInfo.getSupportsVRes() & VR_R8) params.vr = VR_R8;
+	else params.vr = VR_200X400;
+	}
+    } else if (yres >= 10.) {
+	if (!(clientInfo.getSupportsVRes() & VR_300X300)) {
+	    emsg = fxStr::format("300x300 resolution document is not supported"
+		" by client, image resolution %g lines/mm", yres);
+	    return (send_reformat);
+	}
+	if (!modem->supportsVRes(yres)) {
+	    emsg = fxStr::format("300x300 resolution document is not supported"
+		" by modem, image resolution %g lines/mm", yres);
+	    return (send_reformat);
+	}
+	params.vr = VR_300X300;
+    } else if (yres >= 7.) {
+	if (!((clientInfo.getSupportsVRes() & VR_FINE) || (clientInfo.getSupportsVRes() & VR_200X200))) {
 	    emsg = fxStr::format("High resolution document is not supported"
-		          " by client, image resolution %g lines/mm", yres);
+		" by client, image resolution %g lines/mm", yres);
 	    return (send_reformat);
 	}
 	if (!modem->supportsVRes(yres)) {
 	    emsg = fxStr::format("High resolution document is not supported"
-		          " by modem, image resolution %g lines/mm", yres);
+		" by modem, image resolution %g lines/mm", yres);
 	    return (send_reformat);
 	}
-	params.vr = VR_FINE;
+	if (clientInfo.getSupportsVRes() & VR_FINE) params.vr = VR_FINE;
+	else params.vr = VR_200X200;
     } else
-	params.vr = VR_NORMAL;
+	params.vr = VR_NORMAL;		// support required
+
+    /*
+     * Max page width depends on the resolution, so this must come after VR.
+     * maxPageWidth is stored in normal values, so we must compare against
+     * the corresponding normal resolution page width.
+     */
+    uint32 w;
+    (void) TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
+    double rf = (params.vr == VR_R16 ? 2 : params.vr == VR_300X300 ? 1.5 : 1);
+    if (w > (clientInfo.getMaxPageWidthInPixels()*rf)) {
+	emsg = fxStr::format("Client does not support document page width"
+		", max remote page width %u pixels, image width %lu pixels",
+		(uint32) (clientInfo.getMaxPageWidthInPixels()*rf), w);
+	return (send_reformat);
+    }
+    if (!modem->supportsPageWidth((u_int) w, params.vr)) {
+	static const double widths[8] = {
+	    1728*rf,	// 1728 in 215 mm line
+	    2048*rf,	// 2048 in 255 mm line
+	    2432*rf,	// 2432 in 303 mm line
+	    1216*rf,	// 1216 in 151 mm line
+	    864*rf,	// 864 in 107 mm line
+	    0,
+	    0,
+	    0,
+	};
+	emsg = fxStr::format("Modem does not support document page width"
+		", max page width %u pixels, image width %lu pixels",
+		widths[modem->getBestPageWidth()&7], w);
+	return (send_reformat);
+    }
+    // NB: only common values
+    params.wd = ((uint32) (w/rf) <= 1728 ? WD_1728 : (uint32) (w/rf) <= 2048 ? WD_2048 : WD_2432);
 
     /*
      * Select page length according to the image size and

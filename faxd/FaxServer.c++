@@ -202,8 +202,6 @@ bool FaxServer::modemSupportsEOLPadding() const
     { return modem ? modem->supportsEOLPadding() : false; }
 bool FaxServer::modemSupportsVRes(float res) const
     { return modem ? modem->supportsVRes(res) : true; }
-bool FaxServer::modemSupportsPageWidth(u_int w) const
-    { return modem ? modem->supportsPageWidth(w) : true; }
 bool FaxServer::modemSupportsPageLength(u_int l) const
     { return modem ? modem->supportsPageLength(l) : true; }
 

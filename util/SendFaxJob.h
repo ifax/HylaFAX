@@ -93,6 +93,7 @@ private:
     fxStr	fromcompany;		// rec. from company for cover page
 
     bool	sendTagLine;		// if true, use custom tagline format
+    bool	useXVRes;		// if true, use extended resolutions
     fxStr	killTime;		// job's time to be killed
     fxStr	sendTime;		// job's time to be sent
     u_int	retryTime;		// retry time for failures (secs)
@@ -250,6 +251,8 @@ public:
     int getDesiredMST() const;
     void setDesiredEC(bool b);	// desired use of Error Correction mode
     bool getDesiredEC() const;
+    void setUseXVRes(bool b);		// desired use of extended resolutions
+    bool getUseXVRes() const;
     void setDesiredDF(int);		// desired data format
     void setDesiredDF(const char*);
     int getDesiredDF() const;
@@ -303,6 +306,7 @@ inline int SendFaxJob::getMinSpeed() const		{ return minsp; }
 inline int SendFaxJob::getDesiredSpeed() const		{ return desiredbr; }
 inline int SendFaxJob::getDesiredMST() const		{ return desiredst; }
 inline bool SendFaxJob::getDesiredEC() const		{ return desiredec; }
+inline bool SendFaxJob::getUseXVRes() const		{ return useXVRes; }
 inline int SendFaxJob::getDesiredDF() const		{ return desireddf; }
 inline const fxStr& SendFaxJob::getTagLineFormat() const{ return tagline; }
 inline u_int SendFaxJob::getChopHandling() const	{ return pagechop; }

@@ -114,7 +114,7 @@ CQDecoder::recvSetupTIFF(TIFF* tif, long, int fillOrder, const Class2Params& par
     TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP,	(uint32) -1);
     TIFFSetField(tif, TIFFTAG_PLANARCONFIG,	PLANARCONFIG_CONTIG);
     TIFFSetField(tif, TIFFTAG_FILLORDER,	(uint16) fillOrder);
-    TIFFSetField(tif, TIFFTAG_XRESOLUTION,	204.);
+    TIFFSetField(tif, TIFFTAG_XRESOLUTION,	(float) params.horizontalRes());
     TIFFSetField(tif, TIFFTAG_YRESOLUTION,	(float) params.verticalRes());
     TIFFSetField(tif, TIFFTAG_RESOLUTIONUNIT,	RESUNIT_INCH);
     TIFFSetField(tif, TIFFTAG_SOFTWARE,		HYLAFAX_VERSION);
@@ -143,9 +143,9 @@ CQDecoder::recvPageDLEData(TIFF* tif, bool checkQuality,
 {
     setupDecoder(recvFillOrder, params.is2D());
 
-    u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 2432
-    tiff_runlen_t runs[2*2432];			// run arrays for cur+ref rows
-    setRuns(runs, runs+2432, rowpixels);
+    u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
+    tiff_runlen_t runs[2*4864];			// run arrays for cur+ref rows
+    setRuns(runs, runs+4864, rowpixels);
 
     recvEOLCount = 0;				// count of EOL codes
     recvBadLineCount = 0;			// rows with a decoding error

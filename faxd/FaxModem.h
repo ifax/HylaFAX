@@ -165,7 +165,7 @@ public:
     virtual bool supportsMMR() const;
     virtual bool supportsEOLPadding() const;
     virtual bool supportsVRes(float res) const;
-    virtual bool supportsPageWidth(u_int w) const;
+    virtual bool supportsPageWidth(u_int w, u_int r) const;
     virtual bool supportsPageLength(u_int l) const;
     virtual bool supportsPolling() const;
     virtual bool supportsECM() const;
@@ -176,7 +176,7 @@ public:
     u_int getBestScanlineTime() const;
     virtual int selectScanlineTime(int st) const;
 
-    u_int getBestVRes() const;
+    u_int getVRes() const;
     u_int getBestDataFormat() const;
     u_int getBestPageWidth() const;
     u_int getBestPageLength() const;

@@ -36,7 +36,7 @@ private:
 // XXX these exist solely for FaxModem
     static const char* pageWidthNames[8];
     static const char* pageLengthNames[4];
-    static const char* verticalResNames[2];
+    static const char* verticalResNames[65];
     static const char* scanlineTimeNames[8];
     static const char* dataFormatNames[4];
     static const char* ecmNames[4];
@@ -91,7 +91,8 @@ public:
     u_int pageLength() const;		// page length in mm
     void setPageLengthInMM(u_int l);
     u_int verticalRes() const;		// lines/inch
-    void setVerticalRes(u_int res);
+    u_int horizontalRes() const;	// dpi
+    void setRes(u_int xres, u_int yres);
 
     static const char* bitRateNames[16];	// XXX needed by Class 1 driver
 
@@ -100,6 +101,7 @@ public:
     const char* bitRateName() const;
     u_int bitRate() const;		// bits/second value
     const char* verticalResName() const;
+    const char* bestVerticalResName() const;
     const char* scanlineTimeName() const;
     const char* dataFormatName() const;
     const char* ecmName() const;

@@ -126,6 +126,7 @@ public:
     bool supports2D() const;		// modem supports 2D-encoded fax
     bool supportsMMR() const;		// modem supports 2D-MMR encoding
     bool supportsVRes(float) const;	// modem supports vertical resolution
+    bool supportsVR(u_int) const;	// modem supports VR setting
     // modem support fax page width
     bool supportsPageWidthInMM(u_int) const;
     bool supportsPageWidthInPixels(u_int) const;

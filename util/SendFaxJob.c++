@@ -73,6 +73,7 @@ SendFaxJob::SendFaxJob(const SendFaxJob& other)
     autoCover = other.autoCover;
     coverIsTemp = other.coverIsTemp;
     sendTagLine = other.sendTagLine;
+    useXVRes = other.useXVRes;
     retryTime = other.retryTime;
     hres = other.hres;
     vres = other.vres;
@@ -145,6 +146,7 @@ SendFaxJob::setupConfig()
 
     autoCover = true;
     sendTagLine = false;		// default is to use server config
+    useXVRes = false;			// default is to use normal or fine
     notify = FAX_DEFNOTIFY;		// default notification
     mailbox = "";
     priority = FAX_DEFPRIORITY;		// default transmit priority
@@ -186,6 +188,8 @@ SendFaxJob::setConfigItem(const char* tag, const char* value)
 	setDesiredMST(value);
     else if (streq(tag, "desiredec"))
 	setDesiredEC(FaxConfig::getBoolean(value));
+    else if (streq(tag, "usexvres"))
+	setUseXVRes(FaxConfig::getBoolean(value));
     else if (streq(tag, "desireddf"))
 	setDesiredDF(value);
     else if (streq(tag, "retrytime"))
@@ -379,6 +383,7 @@ SendFaxJob::setDesiredMST(const char* v)
 }
 void SendFaxJob::setDesiredMST(int v)			{ desiredst = v; }
 void SendFaxJob::setDesiredEC(bool b)			{ desiredec = b; }
+void SendFaxJob::setUseXVRes(bool b)			{ useXVRes = b; }
 void
 SendFaxJob::setDesiredDF(const char* v)
 {
@@ -496,6 +501,9 @@ SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
     if (sendTagLine) {
 	CHECKPARM("USETAGLINE", true)
 	CHECKPARM("TAGLINE", tagline)
+    }
+    if (useXVRes) {
+	CHECKPARM("USEXVRES", true)
     }
     if (doneop == "archive") {
 	CHECKPARM("DONEOP", "archive")

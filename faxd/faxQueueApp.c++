@@ -508,8 +508,31 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
      * (based on the capabilities passed to us by faxgetty).
      */
     Class2Params params;
-    params.setVerticalRes(req.resolution > 150 && !info.getSupportsHighRes() ?
-	98 : req.resolution);
+    // use the highest resolution the client supports
+    params.vr = VR_NORMAL;
+    if (req.usexvres) {
+	if (info.getSupportsVRes() & VR_200X100 && job.modem->supportsVR(VR_200X100))
+	    params.vr = VR_200X100;
+	if (info.getSupportsVRes() & VR_FINE && job.modem->supportsVR(VR_FINE))
+	    params.vr = VR_FINE;
+	if (info.getSupportsVRes() & VR_200X200 && job.modem->supportsVR(VR_200X200))
+	    params.vr = VR_200X200;
+	if (info.getSupportsVRes() & VR_R8 && job.modem->supportsVR(VR_R8))
+	    params.vr = VR_R8;
+	if (info.getSupportsVRes() & VR_200X400 && job.modem->supportsVR(VR_200X400))
+	    params.vr = VR_200X400;
+	if (info.getSupportsVRes() & VR_300X300 && job.modem->supportsVR(VR_300X300))
+	    params.vr = VR_300X300;
+	if (info.getSupportsVRes() & VR_R16 && job.modem->supportsVR(VR_R16))
+	    params.vr = VR_R16;
+    } else {
+	if (info.getSupportsVRes() & VR_200X100 && job.modem->supportsVR(VR_200X100))
+	    params.vr = VR_200X100;
+	if (info.getSupportsVRes() & VR_FINE && req.resolution > 150 && job.modem->supportsVR(VR_FINE))
+	    params.vr = VR_FINE;
+	if (info.getSupportsVRes() & VR_200X200 && req.resolution > 150 && job.modem->supportsVR(VR_200X200))
+	    params.vr = VR_200X200;
+    }
     params.setPageWidthInMM(
 	fxmin((u_int) req.pagewidth, (u_int) info.getMaxPageWidthInMM()));
     params.setPageLengthInMM(
@@ -741,22 +764,23 @@ faxQueueApp::setupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo& 
      * We, however, can depend on the info in images that
      * we generate 'cuz we're careful to include valid info.
      */
-    float yres;
-    if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &yres)) {
+    float yres, xres;
+    if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &yres) && TIFFGetField(tif, TIFFTAG_YRESOLUTION, &xres)) {
 	uint16 resunit;
 	TIFFGetFieldDefaulted(tif, TIFFTAG_RESOLUTIONUNIT, &resunit);
 	if (resunit == RESUNIT_CENTIMETER)
 	    yres *= 25.4;
-	params.setVerticalRes((u_int) yres);
+	    xres *= 25.4;
+	params.setRes((u_int) xres, (u_int) yres);
     } else {
 	/*
-	 * No vertical resolution is specified, try
+	 * No resolution is specified, try
 	 * to deduce one from the image length.
 	 */
 	uint32 l;
 	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &l);
 	// B4 at 98 lpi is ~1400 lines
-	params.setVerticalRes(l < 1450 ? 98 : 196);
+	params.setRes(204, (l < 1450 ? 98 : 196));
     }
 
     /*
@@ -830,9 +854,9 @@ void
 MemoryDecoder::scanPageForBlanks(u_int fillorder, const Class2Params& params)
 {
     setupDecoder(fillorder,  params.is2D());
-    u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 2432
-    tiff_runlen_t runs[2*2432];			// run arrays for cur+ref rows
-    setRuns(runs, runs+2432, rowpixels);
+    u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
+    tiff_runlen_t runs[2*4864];			// run arrays for cur+ref rows
+    setRuns(runs, runs+4864, rowpixels);
 
     if (!RTCraised()) {
 	/*

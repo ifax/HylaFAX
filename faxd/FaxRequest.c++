@@ -68,6 +68,7 @@ FaxRequest::reset(void)
     totdials = 0, maxdials = (u_short) FAX_REDIALS;
     tottries = 0, maxtries = (u_short) FAX_RETRIES;
     useccover = true;
+    usexvres = false;
     pagechop = chop_default;
     chopthreshold = -1;
     notify = no_notice;
@@ -129,6 +130,7 @@ FaxRequest::shortval FaxRequest::shortvals[] = {
     { "desireddf",	&FaxRequest::desireddf },
     { "desiredtl",	&FaxRequest::desiredtl },
     { "useccover",	&FaxRequest::useccover },
+    { "usexvres",	&FaxRequest::usexvres },
 };
 char* FaxRequest::opNames[18] = {
     "fax",
@@ -294,6 +296,7 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_DESIREDDF:	desireddf = tag[0] - '0'; break;
 	case H_DESIREDTL:	desiredtl = tag[0] - '0'; break;
 	case H_USECCOVER:	useccover = tag[0] - '0'; break;
+	case H_USEXVRES:	usexvres = tag[0] - '0'; break;
 	case H_TTS:
 	    tts = atoi(tag);
 	    if (tts == 0)	// distinguish ``now'' from unset

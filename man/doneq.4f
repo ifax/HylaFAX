@@ -134,6 +134,7 @@ totpages	integer	total pages to transmit
 tottries	integer	total number of attempts to send job
 tts	integer	time to send job
 useccover	integer	whether or not to use a continuation cover page
+usexvres	integer	whether or not to use highest vertical resolution
 .fi
 .RE
 .SH "PARAMETERS"
@@ -531,6 +532,10 @@ process as soon as possible.
 .B useccover
 1 if the job should use a continuation cover page during
 retransmission, 0 otherwise.
+.TP 14
+.B usexvres
+1 if the job should use the highest possible vertical
+resolution, 0 otherwise.
 See 
 .IR hylafax-server (${MANNUM4_5})
 for a description of continuation cover pages.

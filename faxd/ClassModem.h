@@ -212,6 +212,7 @@ protected:
     void	modemSupports(const char* fmt, ...);
     void	modemCapability(const char* fmt, ...);
     void	traceBits(u_int bits, const char* bitNames[]);
+    void	traceBitMask(u_int bits, const char* bitNames[]);
 public:
     virtual ~ClassModem();
 
@@ -263,7 +264,7 @@ public:
     bool	atQuery(const char* what, fxStr& v, long ms = 30*1000);
     bool	atQuery(const char* what, u_int& v, long ms = 30*1000);
     bool	parseRange(const char*, u_int&);
-    bool	vparseRange(const char*, int nargs ...);
+    bool	vparseRange(const char*, int masked, int nargs ...);
 // modem line control
     bool	sendBreak(bool pause);
     bool	setBaudRate(BaudRate rate);

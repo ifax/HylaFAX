@@ -876,11 +876,11 @@ Class1Modem::modemXINFO() const
 	| DIS_864
 	| DIS_1728H
 	| DIS_1728L
-#ifdef notdef
 	| DIS_200X400			// additional resolutions
 	| DIS_300X300
 	| DIS_400X400
-#endif
+	| DIS_METRES			// announce support for both metric
+	| DIS_INCHRES			// and inch-based resolutions.
 	;
 }
 

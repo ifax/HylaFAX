@@ -172,6 +172,7 @@ static const tab parmtab[] = {
 { "TOUSER",       T_TO_USER,	  false, true, "[<string>]" },
 { "TOVOICE",      T_TO_VOICE,	  false,false, "[<string>]" },
 { "USECONTCOVER", T_USE_CONTCOVER,false, true, "[YES|NO]" },
+{ "USEXVRES",     T_USE_XVRES,	  false, true, "[YES|NO]" },
 { "USEECM",       T_USE_ECM,	  false, true, "[YES|NO]" },
 { "USETAGLINE",   T_USE_TAGLINE,  false, true, "[YES|NO]" },
 { "USRKEY",       T_USRKEY,	  false, true, "[<string>]" },
@@ -1116,6 +1117,16 @@ HylaFAXServer::param_cmd(Token t)
     case T_USE_ECM:
     case T_USE_TAGLINE:
     case T_USE_CONTCOVER:
+	if (opt_CRLF()) {
+	    replyJobParamValue(*curJob, 213, t);
+	    return (true);
+	} else if (boolean_param(b) &&
+	  setJobParameter(*curJob, t, b)) {
+	    reply(213, "%s set to %s.", parmToken(t), b ? "YES" : "NO");
+	    return (true);
+	}
+	break;
+    case T_USE_XVRES:
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
 	    return (true);

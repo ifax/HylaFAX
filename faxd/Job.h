@@ -115,7 +115,7 @@ public:
     u_short	state;		// scheduling state
     u_short	pagewidth;	// desired output page width (mm)
     u_short	pagelength;	// desired output page length (mm)
-    u_short	resolution;	// desired vertical resolution (lpi)
+    u_short	resolution;	// desired vertical resolution (lpi) (normal/fine)
     bool	willpoll;	// job has polling request
     bool	suspendPending;	// suspend state change pending for job
 

@@ -342,9 +342,14 @@ FaxModem::getBestScanlineTime() const
  * Return the best vres the modem supports.
  */
 u_int
-FaxModem::getBestVRes() const
+FaxModem::getVRes() const
 {
-    return bestBit(modemParams.vr, VR_FINE, VR_NORMAL);
+    /*
+     * We don't use bestBit() here because T.32 Table 21
+     * states that VR is to be reported as a bitmask
+     * of supported resolutions.  So we already have it.
+     */
+    return (modemParams.vr);
 }
 
 /*
@@ -436,14 +441,24 @@ FaxModem::supportsECM() const
  * rather tolerant because of potential precision
  * problems and general sloppiness on the part of
  * applications writing TIFF files.
+ *
+ * Because R8 and R16 vertical resolutions are the same
+ * but differ by horizontal resolution, R16 is "coded"
+ * as "20" in order to support it.
  */
 bool
 FaxModem::supportsVRes(float res) const
 {
     if (3.0 <= res && res < 4.75)
-	return (modemParams.vr & BIT(VR_NORMAL)) != 0;
+	return ((modemParams.vr & VR_NORMAL) || (modemParams.vr & VR_200X100)) != 0;
     else if (5.9 <= res && res < 9.8)
-	return (modemParams.vr & BIT(VR_FINE)) != 0;
+	return ((modemParams.vr & VR_FINE) || (modemParams.vr & VR_200X200)) != 0;
+    else if (9.8 <= res && res < 13)
+	return (modemParams.vr & VR_300X300) != 0;
+    else if (13 <= res && res < 19)
+	return ((modemParams.vr & VR_R8) || (modemParams.vr & VR_200X400)) != 0;
+    else if (res == 20)
+	return (modemParams.vr & VR_R16) != 0;
     else
 	return false;
 }
@@ -453,14 +468,34 @@ FaxModem::supportsVRes(float res) const
  * specified page width.
  */
 bool
-FaxModem::supportsPageWidth(u_int w) const
+FaxModem::supportsPageWidth(u_int w, u_int r) const
 {
-    switch (w) {
-    case 1728:	return (modemParams.wd & BIT(WD_1728)) != 0;
-    case 2048:	return (modemParams.wd & BIT(WD_2048)) != 0;
-    case 2432:	return (modemParams.wd & BIT(WD_2432)) != 0;
-    case 1216:	return (modemParams.wd & BIT(WD_1216)) != 0;
-    case 864:	return (modemParams.wd & BIT(WD_864)) != 0;
+    switch (r) {
+	case VR_R16:
+	    switch (w) {
+		case 3456:   return (modemParams.wd & BIT(WD_1728)) != 0;
+		case 4096:   return (modemParams.wd & BIT(WD_2048)) != 0;
+		case 4864:   return (modemParams.wd & BIT(WD_2432)) != 0;
+		case 2432:   return (modemParams.wd & BIT(WD_1216)) != 0;
+		case 1728:   return (modemParams.wd & BIT(WD_864)) != 0;
+	    }
+	case VR_300X300:
+	    switch (w) {
+		case 2592:   return (modemParams.wd & BIT(WD_1728)) != 0;
+	    }
+	case VR_NORMAL:
+	case VR_FINE:
+	case VR_R8:
+	case VR_200X100:
+	case VR_200X200:
+	case VR_200X400:
+	    switch (w) {
+		case 1728:   return (modemParams.wd & BIT(WD_1728)) != 0;
+		case 2048:   return (modemParams.wd & BIT(WD_2048)) != 0;
+		case 2432:   return (modemParams.wd & BIT(WD_2432)) != 0;
+		case 1216:   return (modemParams.wd & BIT(WD_1216)) != 0;
+		case 864:    return (modemParams.wd & BIT(WD_864)) != 0;
+	    }
     }
     return false;
 }
@@ -490,7 +525,7 @@ u_int
 FaxModem::modemDIS() const
 {
     return DIS_T4RCVR
-	  | Class2Params::vrDISTab[getBestVRes()]
+	  | DIS_7MMVRES		// not getVRes(), DIS only contains partial VR data
 	  | Class2Params::brDISTab[getBestSignallingRate()]
 	  | Class2Params::wdDISTab[getBestPageWidth()]
 	  | Class2Params::lnDISTab[getBestPageWidth()]
@@ -523,7 +558,7 @@ FaxModem::modemXINFO() const
 void
 FaxModem::traceModemParams()
 {
-    traceBits(modemParams.vr, Class2Params::verticalResNames);
+    traceBitMask(modemParams.vr, Class2Params::verticalResNames);
     traceBits(modemParams.br, Class2Params::bitRateNames);
     traceBits(modemParams.wd, Class2Params::pageWidthNames);
     traceBits(modemParams.ln, Class2Params::pageLengthNames);

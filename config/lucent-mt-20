@@ -27,10 +27,17 @@ Class2UseHex:		yes
 # versions that respond to AT+FFC=? with non-zero data support RTFCC
 # Class2RTFCC:		yes
 
-# unfortunately, HylaFAX can't currently receive in color
+# unfortunately, HylaFAX can't currently send or receive in color
 ModemAnswerCmd:		AT+FCC=,,,,,,,,0;A
-# and, let's try to prevent any color sending attempts, also
 ModemDialCmd:		AT+FCC=,,,,,,,,0;DT%s
+
+# Some firmware revisions (i.e. 1.25 in ZBAs) report MMR support but
+# corrupt the data.  Enabling the following lines should work around this.
+# Compare this against the modem's AT+FCC=? response.
+# Class2DCCQueryCmd:    "!(00-01),(00-05),(00-02),(00-02),(00-01),(00-01),(00),(00-07)"
+# ModemAnswerCmd:	AT+FCC=,,,,1,,,,0;A
+# ModemDialCmd:		AT+FCC=,,,,1,,,,0;DT%s
+
 
 # If your line supports Caller-ID, you may want to uncomment this...
 # QualifyCID:		etc/cid		# you must create this file

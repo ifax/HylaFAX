@@ -1629,6 +1629,7 @@ const FaxClient::FaxFmtHeader FaxClient::jobFormats[] = {
     { 'x',	"MaxDials" },	// x (maxdials)
     { 'y',	"TotPages" },	// y (totpages)
     { 'z',	"TTS" },	// z (tts)
+    { '0',	"UseXVres" },	// 0 (usexvres as symbol)
     { '\0' },
 };
 void FaxClient::getJobStatusHeader(fxStr& header)

@@ -142,6 +142,7 @@ static const struct {
     { T_USE_CONTCOVER,	A_RUSR|A_RADM|A_WADM|A_ROTH },
     { T_USE_ECM,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_USE_TAGLINE,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
+    { T_USE_XVRES,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_USRKEY,		A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_VRES,		A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_NIL,		0 },
@@ -389,6 +390,9 @@ HylaFAXServer::replyJobParamValue(Job& job, int code, Token t)
     case T_USE_TAGLINE:
 	replyBoolean(code, job.desiredtl);
 	return;
+    case T_USE_XVRES:
+	replyBoolean(code, job.usexvres);
+	return;
     case T_USE_CONTCOVER:
 	replyBoolean(code, job.useccover);
 	return;
@@ -514,6 +518,8 @@ HylaFAXServer::jstatCmd(const Job& job)
 	jstatLine(T_USE_ECM,	"%s", boolString(job.desiredec));
     if (checkAccess(job, T_USE_TAGLINE, A_READ))
 	jstatLine(T_USE_TAGLINE,"%s", boolString(job.desiredtl));
+    if (checkAccess(job, T_USE_XVRES, A_READ))
+	jstatLine(T_USE_XVRES,"%s", boolString(job.usexvres));
     if (checkAccess(job, T_USE_CONTCOVER, A_READ))
 	jstatLine(T_USE_CONTCOVER,"%s", boolString(job.useccover));
     u_int i, n;
@@ -749,6 +755,9 @@ HylaFAXServer::setJobParameter(Job& job, Token t, bool b)
 	case T_USE_TAGLINE:
 	    job.desiredtl = b;
 	    return (true);
+	case T_USE_XVRES:
+	    job.usexvres = b;
+	    return (true);
 	case T_USE_CONTCOVER:
 	    job.useccover = b;
 	    return (true);
@@ -802,6 +811,7 @@ HylaFAXServer::initDefaultJob(void)
     defJob.desiredec	= EC_ENABLE;
     defJob.desireddf	= DF_2DMMR;
     defJob.desiredtl	= false;
+    defJob.usexvres	= false;
     defJob.useccover	= true;
     defJob.pagechop	= FaxRequest::chop_default;
     defJob.notify	= FaxRequest::no_notice;// FAX_DEFNOTIFY
@@ -884,6 +894,7 @@ HylaFAXServer::newJob(fxStr& emsg)
     job->desiredec = curJob->desiredec;
     job->desireddf = curJob->desireddf;
     job->desiredtl = curJob->desiredtl;
+    job->usexvres = curJob->usexvres;
     job->useccover = curJob->useccover;
     job->pagechop = curJob->pagechop;
     job->notify = curJob->notify;
@@ -1601,7 +1612,8 @@ static const char jformat[] = {
     'u',		// w (pagewidth)
     'u',		// x (maxdials)
     'u',		// y (total pages)
-    's'			// z (tts)
+    's',		// z (tts)
+    'c',		// 0 (usexvres as symbol)
 };
 
 /*
@@ -1815,6 +1827,9 @@ HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
 		break;
 	    case 'z':
 		fprintf(fd, fspec, compactTime(job.tts));
+		break;
+	    case '0':
+		fprintf(fd, fspec, "N "[job.usexvres]);
 		break;
 	    }
 	} else

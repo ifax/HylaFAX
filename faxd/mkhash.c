@@ -112,6 +112,7 @@ main()
     hash("desireddf");
     hash("desiredtl");
     hash("useccover");
+    hash("usexvres");
     hash("tts");
     hash("killtime");
     hash("retrytime");

@@ -53,16 +53,15 @@ const u_short SERVICE_VOICE	 = BIT(8);	// voice service (ZyXEL extension)
 const u_short SERVICE_ALL	 = BIT(9)-1;
 
 // t.30 session subparameter codes
-// NB: only the first two are used
-const u_int VR_NORMAL	= 0;		// 98 lpi
-const u_int VR_FINE	= 1;		// 196 lpi
-const u_int VR_R8		= 2;		// R8  x 15.4 l/mm
-const u_int VR_R16	= 4;		// R16 x 15.4 l/mm
-const u_int VR_200X100	= 8;		// 200 dpi x 100 l/25.4mm
-const u_int VR_200X200	= 10;		// 200 dpi x 200 l/25.4mm
-const u_int VR_200X400	= 20;		// 200 dpi x 400 l/25.4mm
-const u_int VR_300X300	= 40;		// 300 dpi x 300 l/25.4mm
-const u_int VR_ALL	= BIT(VR_FINE+1)-1;
+const u_int VR_NORMAL	= 0x00;		// 98 lpi
+const u_int VR_FINE	= 0x01;		// 196 lpi
+const u_int VR_R8	= 0x02;		// R8  x 15.4 l/mm
+const u_int VR_R16	= 0x04;		// R16 x 15.4 l/mm
+const u_int VR_200X100	= 0x08;		// 200 dpi x 100 l/25.4mm
+const u_int VR_200X200	= 0x10;		// 200 dpi x 200 l/25.4mm
+const u_int VR_200X400	= 0x20;		// 200 dpi x 400 l/25.4mm
+const u_int VR_300X300	= 0x40;		// 300 dpi x 300 l/25.4mm
+const u_int VR_ALL	= 0x7F;
 
 const u_short BR_2400	= 0;		// 2400 bit/s
 const u_short BR_4800	= 1;		// 4800 bit/s

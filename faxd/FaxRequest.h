@@ -118,7 +118,7 @@ public:
     u_short	maxtries;	// max # attempts to deliver (answered calls)
     u_short	pagewidth;	// desired output page width (mm)
     u_short	pagelength;	// desired output page length (mm)
-    u_short	resolution;	// desired vertical resolution (lpi)
+    u_short	resolution;	// desired vertical resolution (lpi) (normal/fine)
     u_short	usrpri;		// user-requested scheduling priority
     u_short	pri;		// current scheduling priority
     u_short	minsp;		// minimum acceptable signalling rate
@@ -128,6 +128,7 @@ public:
     u_short	desireddf;	// desired data format
     u_short	desiredtl;	// desired tagline handling
     u_short	useccover;	// whether to use continuation cover page
+    u_short	usexvres;	// whether to use extended VR
     u_short	pagechop;	// whether to do page chopping
     u_short	notify;		// email notification flags
     float	chopthreshold;	// minimum white space before chopping

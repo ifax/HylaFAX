@@ -119,7 +119,16 @@ HylaFAXServer::getRecvDocStatus(RecvInfo& ri)
 	if (resunit == RESUNIT_NONE)
 	    vres /= 720.0;				// postscript units ?
     }
-    ri.params.setVerticalRes((u_int) vres);		// resolution
+    float hres = 8.03;					// XXX default
+    if (TIFFGetField(tif, TIFFTAG_XRESOLUTION, &hres)) {
+	uint16 resunit = RESUNIT_INCH;			// TIFF spec default
+	TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &resunit);
+	if (resunit == RESUNIT_INCH)
+	    hres /= 25.4;
+	if (resunit == RESUNIT_NONE)
+	    hres /= 720.0;				// postscript units ?
+    }
+    ri.params.setRes((u_int) hres, (u_int) vres);	// resolution
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &v);
     ri.params.setPageWidthInPixels((u_int) v);		// page width
     TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &v);
