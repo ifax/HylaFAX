@@ -105,6 +105,7 @@
 >3	string		87a		tiff	gif2tiff -%f -v %V %i %o
 >3 	string		89a		error	GIF (version 89a)
 0	long		0x59a66a95	tiff	ras2tiff -%f -v %V %i %o
+0	string		%PDF		ps	pdf2ps %i %o
 #
 # NB: psdit is the Adobe Transcript program for converting ditroff output
 0	string		x T psc		ps	psdit <%i >%o
@@ -132,3 +133,8 @@
 #
 0	ascii		x		ps	%F/textfmt -B -f Courier-Bold\
 						    -p 11 -s %s >%o <%i
+
+
+
+
+
