@@ -4612,6 +4612,7 @@ CONF_FILES="
     util/recvstats.sh
     util/faxcron.sh
     util/pagesizes
+    util/archive.sh
     util/faxrcvd.sh
     util/mkcover.sh
     util/notify.sh

@@ -344,6 +344,7 @@ HYLAFAXSRC=\
 	util/pagesizes.in			\
 	util/notify.awk				\
 	util/faxcron.sh.in			\
+	util/archive.sh				\
 	util/faxrcvd.sh				\
 	util/mkcover.sh				\
 	util/notify.sh				\

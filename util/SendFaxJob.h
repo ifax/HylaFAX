@@ -68,6 +68,7 @@ private:
     fxStr	jobid;			// job ID
     fxStr	groupid;		// job-group ID
     fxStr	jobtag;			// user-specified job identifier
+    fxStr	doneop;			// job doneop control
     FaxNotify	notify;			// job notification control
     fxStr	mailbox;		// mail address for notification
 
@@ -129,6 +130,8 @@ public:
 
     const fxStr& getJobID(void) const;
     const fxStr& getGroupID(void) const;
+
+    void setDoneOp(const char*);
 
     /*
      * Job notification.

@@ -86,7 +86,7 @@ sendFaxApp::run(int argc, char** argv)
     int verbose = 0;
     SendFaxJob& proto = getProtoJob();
     db = new FaxDB(tildeExpand(dbName));
-    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:P:r:s:t:T:U:V:W:x:X:y:Y:12lmnpvwDENR")) != -1)
+    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:P:r:s:t:T:U:V:W:x:X:y:Y:12lmnpvwADENR")) != -1)
     switch (c) {
     case '1':			// restrict to 1D-encoded data
         proto.setDesiredDF(0);
@@ -96,6 +96,9 @@ sendFaxApp::run(int argc, char** argv)
         break;
     case 'a':			// time at which to transmit job
         proto.setSendTime(optarg);
+        break;
+    case 'A':			// archive job
+        proto.setDoneOp("archive");
         break;
     case 'b':			// minimum transfer speed
         proto.setMinSpeed(optarg);

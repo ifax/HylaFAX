@@ -201,6 +201,8 @@ SendFaxJob::setConfigItem(const char* tag, const char* value)
 #define	valeq(a,b)	(strcasecmp(a,b)==0)
 #define	valneq(a,b,n)	(strncasecmp(a,b,n)==0)
 
+void SendFaxJob::setDoneOp(const char* v)	{ doneop = v; }
+
 bool
 SendFaxJob::setNotification(const char* v0)
 {
@@ -486,6 +488,9 @@ SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
     if (sendTagLine) {
 	CHECKPARM("USETAGLINE", true)
 	CHECKPARM("TAGLINE", tagline)
+    }
+    if (doneop == "archive") {
+	CHECKPARM("DONEOP", "archive")
     }
     CHECKPARM("NOTIFY",
 	notify == when_done	? "done" :

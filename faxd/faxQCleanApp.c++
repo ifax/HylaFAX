@@ -159,9 +159,8 @@ faxQCleanApp::scanDirectory(void)
 		    } else if (archiving &&
 		      strncmp(req->doneop, "archive", 7) == 0) {
 			/*
-			 * Job should be archived, create an entry in the
-			 * archive directory that contains the job's state,
-			 * references to the documents, and the session logs.
+			 * Job should be archived, pass the jobid
+			 * value to the archive script for archiving.
 			 */
 			if (verbose)
 			    printf("JOB %s: archive (%s)%s.\n"
@@ -241,8 +240,13 @@ faxQCleanApp::collectRefs(const FaxRequest& req)
  * Archive completed fax job.
  */
 void
-faxQCleanApp::archiveJob(const FaxRequest&)
+faxQCleanApp::archiveJob(const FaxRequest& req)
 {
+    // hand the archiving task off to the archiving command
+    fxStr cmd("bin/archive"
+	| quote |             req.jobid	| enquote
+    );
+    runCmd(cmd, true);
 }
 
 /*
