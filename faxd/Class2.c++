@@ -413,11 +413,10 @@ Class2Modem::stripQuotes(const char* cp)
 {
     fxStr s(cp);
     u_int pos = s.next(0, '"');
-    if (pos != s.length())
-      s.remove(0,pos+1);
-    pos = s.next(0, '"');
-    if (pos != s.length())
-      s.remove(pos, s.length()-pos);
+    while (pos != s.length()) {
+	s.remove(pos,1);
+	pos = s.next(0,'"');
+    }
     return (s);
 }
 
