@@ -860,6 +860,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 
 	do {
 	    u_short fcount = 0;
+	    u_short fcountuniq = 0;
 	    ecmStuffedBlockPos = 0;
 
 	    if (!useV34) {
@@ -903,6 +904,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		    }
 		}
 	    }
+	    fcountuniq = fcount;
 	    if (fcount == 1 && pprcnt > 0) {
 		// Some receivers may have a hard time hearing the first frame
 		// so we repeat it.
@@ -1020,7 +1022,14 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	     */
 	    //pause (3000);
 
-	    /* build PPS frame and send it */
+	    /*
+	     * Build PPS frame and send it.  We don't use I3 = 0xFF when sending
+	     * zero-count frames because some receivers will read it as 256.
+	     * Instead we send I3 = 0x00, which technically indicates one frame,
+	     * but it should be harmless since any interpretation of I3 will not
+	     * exceed previous indications, and the receiver has already acknowledged
+	     * all frames properly received.  I3 indicates the *unique* frame count.
+	     */
 	    char pps[4];
 	    if (!lastblock)
 		pps[0] = 0x00;
@@ -1028,7 +1037,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		pps[0] = ppmcmd | 0x80;
 	    pps[1] = frameRev[FaxModem::getPageNumber() - 1];
 	    pps[2] = frameRev[blockNumber];
-	    pps[3] = frameRev[(fcount == 0 ? 255 : (fcount - 1))];
+	    pps[3] = frameRev[(fcountuniq == 0 ? 0 : (fcountuniq - 1))];
 	    u_short ppscnt = 0, crpcnt = 0;
 	    bool gotppr = false;
 	    /* get MCF/PPR/RNR */
