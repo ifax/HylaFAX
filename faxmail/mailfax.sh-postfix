@@ -1,0 +1,138 @@
+#!/bin/sh
+#
+# mailfax - email to fax gateway for Postfix.
+#
+# Here you find instructions about 2 email-to-fax configurations
+# using HylaFAX and Postfix, they differ in the email address format:
+#
+# 1. <username>@<fax-no>.fax      ('classic' HylaFAX email-to-fax setup)
+#
+# 2. <fax-no>@fax.yourdomain.dom  
+#
+# GENERAL NOTES:
+# - Linux binary/config files locations assumed, change them to suit your
+#   system conventions.
+# - Setup #1 requires you install this file as /usr/bin/mailfax, while
+#   setup #2 does not.
+# - Whatever setup you chose, when finished you need to run
+#   # postmap /etc/postfix/transport
+#   # postfix reload
+#   in order for the changes to take effect immediately
+#
+################################################## 
+#
+# 1. <username>@<fax-no>.fax      ('classic' HylaFAX email-to-fax setup)
+#
+# *** you NEED TO INSTALL this file as /usr/bin/mailfax ***
+#
+#   Add the following to /etc/postfix/master.cf:
+#      fax	unix	-	n	n	-	1	pipe
+#          flags= user=fax argv=/usr/bin/mailfax ${user} ${recipient} ${sender}
+#
+#   Add the following to /etc/postfix/transport:
+#      .fax   fax:localhost
+#
+#   Add the following to /etc/postfix/main.cf:
+#      transport_maps = hash:/etc/postfix/transport
+#      fax_destination_recipient_limit = 1
+# 
+#
+# Notes:
+# 1) If you want the fax to be submitted as an user other than fax (uucp), 
+#    then replace
+#    flags= user=fax argv=/usr/bin/mailfax ${user} ${recipient} ${sender}
+#    with
+#    flags= user=<anyuser> argv=/usr/bin/mailfax ${user} ${recipient} ${sender}
+#    Do not use 'root' ...
+# 2) If you want the HylaFAX email contact to be the same for all the fax
+#    submitted via email, then replace
+#    flags= user=fax argv=/usr/bin/mailfax ${user} ${recipient} ${sender}
+#    with
+#    flags= user=fax argv=/usr/bin/mailfax ${user} ${recipient} <some@address>
+# 
+##################################################
+#
+# 2. <fax-no>@fax.yourdomain.dom
+# 
+# *** you _DO_ _NOT_ NEED TO INSTALL this file as /usr/bin/mailfax ***
+#
+# See http://www.postfix.org/faq.html#fax for instructions on how to set up
+# an email-to-fax gateway with this email address format.
+# 
+# For your convenience the faq available at the above URL is reproduced here.
+#
+# ===== http://www.postfix.org/faq.html#fax (as of 2001-03-05)
+# Sending mail to a FAX machine
+#
+# The following information is by Joerg Henne:
+#
+# Over here we are using the scheme <fax number>@fax.our.domain
+# with Postfix and HylaFax. Here's the setup used:
+#
+#    /etc/postfix/master.cf:
+#      fax	unix	-	n	n	-	1	pipe
+#          flags= user=fax argv=/usr/bin/faxmail -d -n ${user}
+#
+#    /etc/postfix/transport:
+#        fax.your.domain   fax:localhost
+#
+#    /etc/postfix/main.cf:
+#        transport_maps = hash:/etc/postfix/transport
+#        fax_destination_recipient_limit = 1
+#
+# The process limit of 1 in the master.cf file is necessary with fax software 
+# that cannot handle multiple requests at the same time.
+# It won't hurt otherwise.
+#
+# The fax_destination_recipient_limit entry (by Simon, Mr.Simix) 
+# is necessary with fax software that can't have more than one destination 
+# on its command line. It won't hurt otherwise.
+#
+# Specify dbm instead of hash if your system uses dbm files instead of
+# db files. To find out what map types Postfix supports, use the command
+# postconf -m.
+#
+# Note: be sure to not advertise fax.your.domain in the DNS :-)
+#
+# =====
+#
+# Notes:
+# 1) If you want the fax to be submitted as an user other than fax (uucp), 
+#    then replace
+#    flags= user=fax argv=/usr/bin/faxmail -d -n ${user}
+#    with
+#    flags= user=<anyuser> argv=/usr/bin/faxmail -d -n ${user}
+#    Do not use 'root' ...
+# 2) faxmail automatically gets the 'from' identity (to be used for email 
+#    notifications by HylaFAX) from the email headers; should you find the 
+#    address is not detected correctly you can try replacing
+#    flags= user=fax argv=/usr/bin/faxmail -d -n ${user}
+#    with
+#    flags= user=fax argv=/usr/bin/faxmail -d -n ${user} ${sender}
+#    If you want the email contact to be the same for all the fax submitted
+#    via email, then use
+#    flags= user=fax argv=/usr/bin/faxmail -d -n ${user} <some@address>
+#
+################################################## 
+USER=$1
+RECIPIENT=$2
+SENDER=$3
+
+TMPVAR=${USER//\`/}
+TMPVAR=${TMPVAR//\$\(/}
+USER=${TMPVAR//\)/}
+
+TMPVAR=${RECIPIENT//\`/}
+TMPVAR=${TMPVAR//\$\(/}
+RECIPIENT=${TMPVAR//\)/}
+
+TMPVAR=${SENDER//\`/}
+TMPVAR=${TMPVAR//\$\(/}
+SENDER=${TMPVAR//\)/}
+
+# Try the commented out command if this does not work...
+FAXNO=`/usr/bin/expr "$RECIPIENT" : '.*@\(.*\)\.fax$'`
+#FAXNO=`/usr/bin/expr \"$RECIPIENT\" : '.*@\(.*\)\.fax$'`
+
+/usr/bin/faxmail -n -d "${USER}@${FAXNO}" ${SENDER}
+

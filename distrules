@@ -498,6 +498,7 @@ HYLAFAXSRC=\
 	faxmail/mailfax.sh-sendmail		\
 	faxmail/mailfax.sh-smail		\
 	faxmail/mailfax.sh-qmail		\
+	faxmail/mailfax.sh-postfix		\
     faxrm/Makefile.in				\
 	faxrm/faxrm.c++				\
     faxstat/Makefile.in				\
