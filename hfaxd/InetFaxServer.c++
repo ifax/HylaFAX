@@ -186,7 +186,7 @@ InetFaxServer::checkHostIdentity(hostent*& hp)
 void
 InetFaxServer::setupNetwork(int fd)
 {
-    Socket::socklen_t addrlen;
+    socklen_t addrlen;
 
     addrlen = sizeof (peer_addr);
     if (Socket::getpeername(fd, &peer_addr, &addrlen) < 0) {
@@ -305,7 +305,7 @@ void InetFaxServer::sigPIPE(int) { InetFaxServer::instance().lostConnection(); }
 static fxBool
 setupPassiveDataSocket(int pdata, struct sockaddr_in& pasv_addr)
 {
-    Socket::socklen_t len = sizeof (pasv_addr);
+    socklen_t len = sizeof (pasv_addr);
     return (
 	Socket::bind(pdata, &pasv_addr, sizeof (pasv_addr)) >= 0 &&
         Socket::getsockname(pdata, &pasv_addr, &len) >= 0 &&
@@ -415,7 +415,7 @@ InetFaxServer::openDataConn(const char* mode, int& code)
     byte_count = 0;
     if (pdata >= 0) {			// passive mode, wait for connection
         struct sockaddr_in from;
-        Socket::socklen_t fromlen = sizeof (from);
+        socklen_t fromlen = sizeof (from);
 	// XXX don't block, select....????
         int s = Socket::accept(pdata, (struct sockaddr*) &from, &fromlen);
         if (s < 0) {

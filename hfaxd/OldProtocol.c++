@@ -171,7 +171,7 @@ OldProtocolServer::checkHostIdentity(hostent*& hp)
 void
 OldProtocolServer::setupNetwork(int fd)
 {
-    Socket::socklen_t addrlen;
+    socklen_t addrlen;
 
     addrlen = sizeof (peer_addr);
     if (Socket::getpeername(fd, &peer_addr, &addrlen) < 0) {

@@ -53,14 +53,13 @@ extern "C" {
  *     sometimes because of 64-bit reasons but mostly because they
  *     did not properly consider the consequences).
  */
-class Socket {
-public:
+
 #ifdef CONFIG_SOCKARGLENTYPE
     typedef CONFIG_SOCKARGLENTYPE socklen_t;
-#else
-    typedef int socklen_t;
 #endif
 
+class Socket {
+public:
     static int accept(int s, void* addr, socklen_t* addrlen)
 	{ return ::accept(s, (struct sockaddr*) addr, addrlen); }
     static int bind(int s, const void* addr, int addrlen)

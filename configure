@@ -3571,6 +3571,7 @@ if [ -z "$PATH_AFM" ]; then
 	    /usr/local/lib/afm
 	    /usr/local/share/ghostscript/fonts
 	    /usr/local/lib/ghostscript/fonts
+	    /usr/share/ghostscript/fonts
 	    /usr/gnu/lib/ghostscript/fonts
 	    /opt/gnu/lib/ghostscript/fonts
 	    /usr/lib/ghostscript/fonts
