@@ -45,7 +45,8 @@ VPATH	= ../@SRCDIR@/etc
 DIALRULES=dialrules \
 	dialrules.sf-ba \
 	dialrules.europe
-TARGETS	= config.fax hosts.hfaxd xferfaxlog lockname ondelay
+TARGETS	= config.fax faxaddmodem faxsetup hosts.hfaxd xferfaxlog \
+    lockname ondelay
 
 default all::
 	@${MAKE} targets
@@ -54,6 +55,10 @@ targets: ${TARGETS}
 
 @MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
 
+faxaddmodem:
+	${SED} ${MANSEDLOCAL} faxaddmodem.sh > faxaddmodem
+faxsetup:
+	${SED} ${MANSEDLOCAL} faxsetup.sh > faxsetup
 hosts.hfaxd:
 	${ECHO} "localhost" >hosts.hfaxd
 	${ECHO} "127.0.0.1" >>hosts.hfaxd
@@ -71,8 +76,8 @@ PUTSAMPLE	= ${PUTSERVER} -u ${FAXUSER} -g ${FAXGROUP} \
 		  -idb "config(noupdate)"
 
 install: default
-	${PUTSERVER} -F ${SBIN} -m 755 -src faxaddmodem.sh -O faxaddmodem
-	${PUTSERVER} -F ${SBIN} -m 755 -src faxsetup.sh -O faxsetup
+	${PUTSERVER} -F ${SBIN} -m 755 -src ${SRCDIR}/faxaddmodem -O faxaddmodem
+	${PUTSERVER} -F ${SBIN} -m 755 -src ${SRCDIR}/faxsetup -O faxsetup
 	for i in bsdi irix linux; do \
 	    ${PUTSERVER} -F ${SBIN} -m 755 \
 		-src ${SRCDIR}/faxsetup.$$i -O faxsetup.$$i; \
