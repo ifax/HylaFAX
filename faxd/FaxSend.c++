@@ -72,7 +72,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai,
 	 * dialing rules to the user-specified dialing string.
 	 */
 	sendFax(fax, clientInfo, prepareDialString(fax.number), batched);
-	if (batched & BATCH_LAST) {
+	if ((batched & BATCH_LAST) || (fax.status != send_done)) {
 	    /*
 	     * Because some modems are impossible to safely hangup in the
 	     * event of a problem, we force a close on the device so that
@@ -262,7 +262,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 		    sendPoll(fax, remoteHasDoc);
 	    }
 	}
-	if (batched & BATCH_LAST)
+	if ((batched & BATCH_LAST) || (fax.status != send_done))
 	    modem->sendEnd();
 	if (fax.status != send_done) {
 	    clientInfo.setSendFailures(clientInfo.getSendFailures()+1);
@@ -331,7 +331,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	    sendFailed(fax, send_failed, notice);
 	}
     }
-    if (batched & BATCH_LAST) {
+    if ((batched & BATCH_LAST) || (fax.status != send_done)) {
 	/*
 	 * Cleanup after the call.  If we have new information on
 	 * the client's remote capabilities, the machine info

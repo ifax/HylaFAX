@@ -218,21 +218,38 @@ void
 faxQueueApp::processJob(Job& job, FaxRequest* req,
     DestInfo& di, const DestControlInfo& dci)
 {
-    job.commid = "";				// set on return
-    di.active(job);
-    FaxMachineInfo& info = di.getInfo(job.dest);
     JobStatus status;
-    setActive(job);				// place job on active list
-    updateRequest(*req, job);
-    if (!prepareJobNeeded(job, *req, status)) {
-	if (status != Job::done) {
-	    job.state = FaxRequest::state_failed;
-	    deleteRequest(job, req, status, true);
-	    setDead(job);
-	} else
-	    sendJobStart(job, req, dci);
-    } else
-	prepareJobStart(job, req, info, dci);
+    FaxMachineInfo& info = di.getInfo(job.dest);
+
+    Job* bjob = job.bfirst();	// first job in batch
+    Job* cjob = &job;		// current job
+    FaxRequest* creq = req;	// current request
+    Job* njob = NULL;		// next job
+    
+    for (; cjob != NULL; cjob = njob) {
+	creq = cjob->breq;
+	njob = cjob->bnext;
+	cjob->commid = "";			// set on return
+	di.active(*cjob);
+	setActive(*cjob);			// place job on active list
+	updateRequest(*creq, *cjob);
+	if (!prepareJobNeeded(*cjob, *creq, status)) {
+	    if (status != Job::done) {
+		if (cjob->bprev == NULL)
+		    bjob = njob;
+		cjob->state = FaxRequest::state_failed;
+		deleteRequest(*cjob, creq, status, true);
+		setDead(*cjob);
+	    }
+	} else {
+	    if (prepareJobStart(*cjob, creq, info, dci))
+		return;
+	    else if (cjob->bprev == NULL)
+		bjob = njob;
+	}
+    }
+    if (bjob != NULL)
+	sendJobStart(*bjob, bjob->breq, dci);
 }
 
 /*
@@ -288,7 +305,7 @@ faxQueueApp::prepareCleanup(int s)
  * server thread at which point the transmit work is actually
  * initiated.
  */
-void
+bool
 faxQueueApp::prepareJobStart(Job& job, FaxRequest* req,
     FaxMachineInfo& info, const DestControlInfo& dci)
 {
@@ -318,11 +335,14 @@ faxQueueApp::prepareJobStart(Job& job, FaxRequest* req,
 	delayJob(job, *req, "Could not fork to prepare job for transmission",
 	    Sys::now() + random() % requeueInterval);
 	delete req;
+	return false;
 	break;
     default:				// parent, setup handler to wait
 	job.startPrepare(pid);
 	delete req;			// must reread after preparation
+	job.breq = NULL;
 	Trigger::post(Trigger::JOB_PREP_BEGIN, job);
+	return true;
 	break;
     }
 }
@@ -343,34 +363,40 @@ faxQueueApp::prepareJobDone(Job& job, int status)
 	status = Job::failed;
     } else
 	status >>= 8;
+    bool abort = true;
     if (job.suspendPending) {		// co-thread waiting
 	job.suspendPending = false;
 	releaseModem(job);
-	return;
-    }
-    FaxRequest* req = readRequest(job);
-    if (!req) {
-	// NB: no way to notify the user (XXX)
-	logError("JOB %s: qfile vanished during preparation",
-	    (const char*) job.jobid);
-	setDead(job);
     } else {
-	switch (status) {
-	case Job::requeued:		// couldn't fork RIP
-	    job.remove();
-	    delayJob(job, *req, "Cannot fork to prepare job for transmission",
-		Sys::now() + random() % requeueInterval);
-	    delete req;
-	    break;
-	case Job::done:			// preparation completed successfully
-	    sendJobStart(job, req, destCtrls[job.dest]);
-	    break;
-	default:			// problem preparing job
-	    deleteRequest(job, req, status, true);
+	FaxRequest* req = readRequest(job);
+	if (!req) {
+	    // NB: no way to notify the user (XXX)
+	    logError("JOB %s: qfile vanished during preparation",
+		(const char*) job.jobid);
 	    setDead(job);
-	    break;
+	} else {
+	    switch (status) {
+	    case Job::requeued:		// couldn't fork RIP
+		job.remove();
+		delayJob(job, *req, "Cannot fork to prepare job for transmission",
+		    Sys::now() + random() % requeueInterval);
+		delete req;
+		break;
+	    case Job::done:			// preparation completed successfully
+		job.breq = req;
+		abort = false;
+		break;
+	    default:			// problem preparing job
+		deleteRequest(job, req, status, true);
+		setDead(job);
+		break;
+	    }
 	}
     }
+    if (job.bnext != NULL)
+	processJob(*job.bnext, job.bnext->breq, destJobs[job.dest], destCtrls[job.dest]);
+    else if (!abort || job.bprev != NULL)
+	sendJobStart(*job.bfirst(), job.bfirst()->breq, destCtrls[job.dest]);
 }
 
 /*
@@ -1231,55 +1257,92 @@ joinargs(const fxStr& cmd, const fxStr& dargs)
 void
 faxQueueApp::sendJobStart(Job& job, FaxRequest* req, const DestControlInfo& dci)
 {
-    job.start = Sys::now();		// start of transmission
-    // XXX start deadman timeout on active job
+    Job* cjob;
+
+    job.start = Sys::now();			// start of transmission
+    fxStr files = job.file;
+    for (cjob = job.bnext; cjob != NULL; cjob = cjob->bnext) {
+	files = files | "," | cjob->file;
+	cjob->start = job.start;
+	// XXX start deadman timeout on active jobs
+    }
+    
     const fxStr& cmd = pickCmd(*req);
     fxStr dargs(dci.getArgs());
     pid_t pid = fork();
     switch (pid) {
     case 0:				// child, startup command
 	closeAllBut(-1);		// NB: close 'em all
-	doexec(cmd, dargs, job.modem->getDeviceID(), job.file);
+	doexec(cmd, dargs, job.modem->getDeviceID(), files);
 	sleep(10);			// XXX give parent time to catch signal
 	_exit(127);
 	/*NOTREACHED*/
     case -1:				// fork failed, sleep and retry
 	/*
 	 * We were unable to start the command because the
-	 * system is out of processes.  Take the job off the
-	 * active list and requeue it for a future time. 
+	 * system is out of processes.  Take the jobs off the
+	 * active list and requeue them for a future time. 
 	 * If it appears that the we're doing this a lot,
 	 * then lengthen the backoff.
 	 */
-	job.remove();			// Remove from active queue
-	delayJob(job, *req, "Could not fork to start job transmission",
-	    job.start + random() % requeueInterval);
+	Job* njob;
+	for (cjob = &job; cjob != NULL; cjob = njob) {
+	    njob = cjob->bnext;
+	    req = cjob->breq;
+	    cjob->remove();			// Remove from active queue
+	    delayJob(*cjob, *req, "Could not fork to start job transmission",
+		cjob->start + random() % requeueInterval);
+	    delete req;
+	}
 	break;
     default:				// parent, setup handler to wait
 	traceQueue(job, "CMD START"
 	    | joinargs(cmd, dargs)
 	    | " -m " | job.modem->getDeviceID()
-	    | " "    | job.file
+	    | " "    | files
 	    | " (PID %lu)"
 	    , pid
 	);
 	job.startSend(pid);
-	Trigger::post(Trigger::SEND_BEGIN, job);
+	for (cjob = &job; cjob != NULL; cjob = njob) {
+	    njob = cjob->bnext;
+	    Trigger::post(Trigger::SEND_BEGIN, *cjob);
+	    delete cjob->breq;		// discard handle (NB: releases lock)
+	    cjob->breq = NULL;
+	}
 	break;
     }
-    delete req;				// discard handle (NB: releases lock)
 }
 
 void
 faxQueueApp::sendJobDone(Job& job, int status)
+{
+    Job* cjob;
+    Job* njob;
+    FaxRequest* req;
+    int cstatus = status;
+
+    for (cjob = &job; cjob != NULL; cjob = njob) {
+	njob = cjob->bnext;
+	req = readRequest(*cjob);		// reread the qfile
+	if (!(status&0xff) && req)
+	    cstatus = (req->status << 8);
+	else
+	    cstatus = status;
+	sendJobDone(*cjob, req, cstatus);
+    }
+}
+
+void
+faxQueueApp::sendJobDone(Job& job, FaxRequest* req, int status)
 {
     time_t now = Sys::now();
     time_t duration = now - job.start;
 
     traceQueue(job, "CMD DONE: exit status %#x", status);
     Trigger::post(Trigger::SEND_END, job);
+    job.bnext = NULL; job.bprev = NULL;		// clear any batching
     releaseModem(job);				// done with modem
-    FaxRequest* req = readRequest(job);		// reread the qfile
     if (!req) {
 	logError("JOB %s: SEND FINISHED: %s; but job file vanished",
 	    (const char*) job.jobid, fmtTime(duration));
@@ -1507,7 +1570,7 @@ faxQueueApp::setDead(Job& job)
 	Job* jb;
 	const DestControlInfo& dci = destCtrls[job.dest];
 	u_int n = 1;
-	while (isOKToStartJobs(di, dci, n) && (jb = di.nextBlocked())) {
+	while ((isOKToStartJobs(di, dci, n) || di.supportsBatching()) && (jb = di.nextBlocked())) {
 	    setReadyToRun(*jb);
 	    n++;
 	    FaxRequest* req = readRequest(*jb);
@@ -2113,6 +2176,7 @@ faxQueueApp::runScheduler()
 		    delete req;
 		} else if (assignModem(job, dci)) {
 		    job.remove();			// remove from run queue
+		    job.breq = req;
 		    /*
 		     * We have a modem and have assigned it to the
 		     * job.  The job is not on any list; processJob
@@ -2123,6 +2187,52 @@ faxQueueApp::runScheduler()
 		     * also assumed to take place asynchronously in
 		     * the context of the job's processing.
 		     */
+		    (void) di.getInfo(job.dest);	// must read file for supportsBatching
+		    if (di.supportsBatching() && req->jobtype == "facsimile") {	// fax only for now
+			/*
+			 * The destination supports batching.  Continue down the queue 
+			 * and build an array of all processable jobs to this destination
+			 * allowed on this modem which are not of a lesser priority than
+			 * jobs to other destinations.
+			 */
+
+			JobIter joblist = iter;
+			Job* bjob = &job;	// Last batched Job
+			Job* cjob;		// current Job
+			FaxRequest* creq;	// current request
+			
+			for (joblist++; joblist.notDone(); joblist++) {
+			    cjob = joblist;
+			    fxAssert(cjob->tts <= Sys::now(), "Sleeping job on run queue");
+			    fxAssert(cjob->modem == NULL, "Job on run queue holding modem");
+			    if (job.dest != cjob->dest)
+				continue;
+
+			    /* Check priorities */
+			    cjob->modem = job.modem;
+
+			    creq = readRequest(*cjob);
+
+			    /* XXX Should do some check here:
+			     * normal checks for a request (use a function?)
+			     * max total of pages in a batch,
+			     * We don't have to worry about compression format, resolution, 
+			     * and other negotiation parameters because we renegotiate settings
+			     * between jobs after EOM.
+			     * ... */
+
+			    traceJob(job, "ADDING JOB " | cjob->jobid | " TO BATCH");
+			    if (iter.notDone() && &iter.job() == bjob)
+				iter++;
+			    cjob->remove();
+			    bjob->bnext = cjob;
+			    cjob->bprev = bjob;
+			    bjob = cjob;
+			    cjob->breq = creq;
+			}
+			bjob->bnext = NULL;
+		    } else
+			job.bnext = NULL;
 		    processJob(job, req, di, dci);
 		} else				// leave job on run queue
 		    delete req;
@@ -2198,10 +2308,12 @@ void
 faxQueueApp::releaseModem(Job& job)
 {
     fxAssert(job.modem != NULL, "No assigned modem to release");
-    Trigger::post(Trigger::MODEM_RELEASE, *job.modem);
-    job.modem->release();
+    if (job.bnext == NULL && job.bprev == NULL) {
+	Trigger::post(Trigger::MODEM_RELEASE, *job.modem);
+	job.modem->release();
+	pokeScheduler();
+    }
     job.modem = NULL;			// remove reference to modem
-    pokeScheduler();
 }
 
 /*

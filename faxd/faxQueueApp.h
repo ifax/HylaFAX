@@ -196,6 +196,7 @@ private:
 		    DestInfo&, const DestControlInfo&);
     void	sendJobStart(Job&, FaxRequest*, const DestControlInfo&);
     void	sendJobDone(Job& job, int status);
+    void	sendJobDone(Job& job, FaxRequest* req, int status);
     void	blockJob(Job&, FaxRequest&, const char*);
     void	delayJob(Job&, FaxRequest&, const char*, time_t);
     void	rejectJob(Job& job, FaxRequest& req, const fxStr& reason);
@@ -221,7 +222,7 @@ private:
 // job preparation stuff
     bool	prepareJobNeeded(Job&, FaxRequest&, JobStatus&);
     static void prepareCleanup(int s);
-    void	prepareJobStart(Job&, FaxRequest*,
+    bool	prepareJobStart(Job&, FaxRequest*,
 		    FaxMachineInfo&, const DestControlInfo&);
     void	prepareJobDone(Job&, int status);
     JobStatus	prepareJob(Job& job, FaxRequest& req,
