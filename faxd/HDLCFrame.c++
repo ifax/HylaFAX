@@ -38,7 +38,6 @@ HDLCFrame::HDLCFrame(u_int fo)
     end = &buf[sizeof(buf)];
     amountToGrowBy = 1024;
     ok = false;
-    crc = 0xffff;
 }
 
 HDLCFrame::~HDLCFrame()
@@ -60,7 +59,6 @@ HDLCFrame::HDLCFrame(const HDLCFrame& other)
     memcpy(base, other.base, len);
     ok = other.ok;
     frameOverhead = other.frameOverhead;
-    crc = 0xffff;
 }
 
 void
@@ -69,20 +67,6 @@ HDLCFrame::addc(u_char c)
     if (next >= end)
 	grow(amountToGrowBy);
     *next++ = c;
-}
-
-void
-HDLCFrame::buildCRC(u_char c)
-{
-    /*
-     * This follows the "typical implementation" described
-     * in T.30 5.3.7.  crc is preset to 0xffff.
-     */
-    for (int i = 7; i >= 0; i--) {
-	crc ^= (c & (1 << i)) << (15 - i);
-	crc <<= 1;
-	if (crc >> 16) crc ^= 0x11021;
-   }
 }
 
 void
