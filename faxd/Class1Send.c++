@@ -269,6 +269,8 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
     HDLCFrame frame(conf.class1FrameOverhead);
 
     do {
+        hadV34Trouble = false;		// to monitor failure type
+	batchingError = false;
 	signalRcvd = 0;
 	if (abortRequested())
 	    return (send_failed);
@@ -319,8 +321,6 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	/*
 	 * Transmit the facsimile message/Phase C.
 	 */
-        hadV34Trouble = false;		// to monitor failure type
-	batchingError = false;
 	if (!sendPage(tif, params, decodePageChop(pph, params), cmd, emsg)) {
 	    if (hadV34Trouble) {
 		protoTrace("The destination appears to have trouble with V.34-Fax.");
