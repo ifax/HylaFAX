@@ -65,8 +65,11 @@ FaxParams::FaxParams()
 
 FaxParams::FaxParams(u_char* pBits, int length)
 {
-    initializeBitString();
-    copyBytes(pBits, length);
+    setupT30(pBits, length);
+}
+
+FaxParams::~FaxParams (void)
+{
 }
 
 /*
@@ -74,15 +77,7 @@ FaxParams::FaxParams(u_char* pBits, int length)
  */
 FaxParams::FaxParams(u_int disDcs, u_int xinfo)
 {
-    initializeBitString();
-    m_bits[0] = (disDcs&0xFF0000) >> 16;
-    m_bits[1] = (disDcs&0x00FF00) >>  8;
-    m_bits[2] = (disDcs&0x0000FF) >>  0;
-
-    m_bits[3] = (xinfo&0xFF000000) >> 24;
-    m_bits[4] = (xinfo&0x00FF0000) >> 16;
-    m_bits[5] = (xinfo&0x0000FF00) >>  8;
-    m_bits[6] = (xinfo&0x000000FF) >>  0;
+    setupT30(disDcs, xinfo);
 }
 
 /*
@@ -209,9 +204,18 @@ FaxParams::FaxParams(Class2Params modemParams)
     if (modemParams.ec & BIT(EC_ENABLE64) && !(modemParams.ec & BIT(EC_ENABLE256))) setBit(BITNUM_FRAMESIZE, true);
 }
 
-
-void FaxParams::copyBytes(u_char* pBits, int length)
+/*
+ * Set all bits to zero.  According to Table 2 T.30 NOTE 1, reserved
+ * bits should also be set to zero.
+ */
+void FaxParams::initializeBitString()
 {
+    for (int i = 0; i < MAX_BITSTRING_BYTES; i++) m_bits[i] = 0;
+}
+
+void FaxParams::setupT30(u_char* pBits, int length)
+{
+    initializeBitString();
     bool lastbyte = false;
 
     for (int byte = 0; byte < MAX_BITSTRING_BYTES && byte < length; byte++) {
@@ -225,14 +229,19 @@ void FaxParams::copyBytes(u_char* pBits, int length)
     m_bits[MAX_BITSTRING_BYTES-1] = m_bits[MAX_BITSTRING_BYTES-1] & 0xFE;
 }
 
-/*
- * Set all bits to zero.  According to Table 2 T.30 NOTE 1, reserved
- * bits should also be set to zero.
- */
-void FaxParams::initializeBitString()
+void FaxParams::setupT30 (u_int disDcs, u_int xinfo)
 {
-    for (int i = 0; i < MAX_BITSTRING_BYTES; i++) m_bits[i] = 0;
+    initializeBitString();
+    m_bits[0] = (disDcs&0xFF0000) >> 16;
+    m_bits[1] = (disDcs&0x00FF00) >>  8;
+    m_bits[2] = (disDcs&0x0000FF) >>  0;
+
+    m_bits[3] = (xinfo&0xFF000000) >> 24;
+    m_bits[4] = (xinfo&0x00FF0000) >> 16;
+    m_bits[5] = (xinfo&0x0000FF00) >>  8;
+    m_bits[6] = (xinfo&0x000000FF) >>  0;
 }
+
 
 /*
  * Table 2 T.30  defines bit numbers 1 ... 127.  
@@ -348,4 +357,8 @@ FaxParams& FaxParams::assign(const FaxParams& operand)
     m_bits[MAX_BITSTRING_BYTES-1] = m_bits[MAX_BITSTRING_BYTES-1] & 0xFE;
 
     return *this;
+}
+
+void FaxParams::update (void)
+{
 }

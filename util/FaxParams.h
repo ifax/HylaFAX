@@ -48,6 +48,10 @@ class FaxParams
 	FaxParams(u_char* pBits, int length);
 	FaxParams(Class2Params modemParams);
 
+	virtual ~FaxParams (void);
+
+	virtual void update (void);
+
 	void setBit(int bitNum, bool val);
 	bool isBitEnabled(int bitNum);
 
@@ -59,6 +63,9 @@ class FaxParams
 	FaxParams& operator=(const FaxParams& operand);
 
     protected:
+	void setupT30(u_char* pBits, int length);
+	void setupT30(u_int dcs_dis, u_int xinfo);
+
 	static const int BITNUM_V8_CAPABLE;  //06
 	static const int BITNUM_FRAMESIZE;   //07
 	static const int BITNUM_T4XMTR;      //09
@@ -96,7 +103,6 @@ class FaxParams
 
     private:
 	void initializeBitString();
-	void copyBytes(u_char* pBits, int length);
 	int calculateByteNumber(int bitNum);
 	u_char calculateMask(int bitNum);
 	void setExtendBits(int byteNum);
