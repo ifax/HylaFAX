@@ -30,13 +30,20 @@ further resources regarding HylaFAX.
 
                        *   INCOMPATIBILITIES   *
 
-* Due to tighter adherance to the Class 2 specifications, HylaFAX copy-
-  quality checking now operates slightly different in Class 2/2.0/2.1 than
-  in previous versions.  This change will not effect users of most modems,
-  but users of the Eicon Diva Server will probably need to add
-  "Class2ECMType: 2.0" to their respective modem config files.
-* libtiff-3.6.1 is fatally flawed when dealing with Group 3 images.  Don't
-  use it as-is.  See: http://bugs.hylafax.org/bugzilla/show_bug.cgi?id=500
+* Due to tighter adherance to ITU-T T.32 and the older Class 2 
+  specifications, HylaFAX copy-quality checking and ECM support now 
+  operates slightly different in Class 2/2.0/2.1 than in previous 
+  versions.  This change will not effect users of most modems, but 
+  because the Eicon Diva Server follows T.32 yet uses the older 
+  Class 2 command interface, Diva Server users will probably need 
+  to add:
+    Class2ECMType:    2.0
+    Class2CQQueryCmd: !3
+    Class2CQCmd:      AT
+  to their respective modem config files.
+* libtiff-3.6.1 is fatally flawed when dealing with Group 3 images.  
+  Don't use it as-is.  
+  See: http://bugs.hylafax.org/bugzilla/show_bug.cgi?id=500
 
                       *   WHO SHOULD UPGRADE?   *
 
