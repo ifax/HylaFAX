@@ -549,14 +549,10 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
 	    params.vr = VR_300X300;
 	if (info.getSupportsVRes() & VR_R16 && job.modem->supportsVR(VR_R16))
 	    params.vr = VR_R16;
-    } else {
-	if (info.getSupportsVRes() & VR_200X100 && job.modem->supportsVR(VR_200X100))
-	    params.vr = VR_200X100;
+    } else {				// limit ourselves to normal and fine
 	if (vres > 150) {
 	    if (info.getSupportsVRes() & VR_FINE && job.modem->supportsVR(VR_FINE))
 		params.vr = VR_FINE;
-	    if (info.getSupportsVRes() & VR_200X200 && job.modem->supportsVR(VR_200X200))
-		params.vr = VR_200X200;
 	}
     }
     params.setPageWidthInMM(
