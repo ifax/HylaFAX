@@ -146,16 +146,23 @@ fi
 case $1 in
 'start')
 	if $IS_ON fax && test -x $FAXQ; then
-	    killall -15 faxq
-	    killall -15 hfaxd
+	    if test $FAXQ_SERVER -eq 1 ; then
+		killall -15 faxq
+	    fi
+	    if test $HFAXD_SERVER -eq 1 ; then
+		killall -15 hfaxd
+	    fi
 	    printf "HylaFAX:"
             if test $FAXQ_SERVER -eq 1 ; then
 	        $FAXQ; printf " faxq"
             fi
             if test $HFAXD_SERVER -eq 1 ; then
-	        $HFAXD -i $FAXPORT
-            fi
-            printf " hfaxd (without old protocol or SNPP support)"
+	        $HFAXD -i $FAXPORT;
+		printf " hfaxd (without old protocol or SNPP support)"
+	    fi
+	    if test ! $FAXQ_SERVER -eq 1 -a ! $HFAXD_SERVER -eq 1 ; then
+		printf " not started (script disabled by configure)"
+	    fi
 	    $ECHO "."
 	fi
 	;;

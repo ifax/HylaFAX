@@ -105,6 +105,18 @@ MODEMCONFIG=$SPOOL/config	# location of prototype modem config files
 RMCMD="$RM -f"			# forced removal
 
 #
+# Build a list of config files in a portable way for grepping...
+#
+
+cd $MODEMCONFIG
+CONFIG_LIST=""
+for file in *; do
+  if [ -f "$file" ]; then
+    CONFIG_LIST="$CONFIG_LIST $file"
+  fi
+done
+
+#
 # Prompt the user for a string that can not be null.
 #
 promptForNonNullStringParameter()
@@ -954,7 +966,7 @@ configureClass2Modem()
     getFlowControlConfig
 
     eval `(cd $MODEMCONFIG; \
-	$GREP 'CONFIG:[ 	]*CLASS2' * |\
+	$GREP 'CONFIG:[ 	]*CLASS2' $CONFIG_LIST |\
 	$AWK -F: '
 	    BEGIN { print "case \"$Manufacturer-$Model-$FlowControl\" in" }
 	    FILENAME ~ /^OLD/ { next }
@@ -983,7 +995,7 @@ configureClass2dot0Modem()
     getFlowControlConfig
 
     eval `(cd $MODEMCONFIG; \
-	$GREP 'CONFIG:[ 	]*CLASS2.0' * |\
+	$GREP 'CONFIG:[ 	]*CLASS2.0' $CONFIG_LIST |\
 	$AWK -F: '
 	    BEGIN { print "case \"$Manufacturer-$Model-$FlowControl\" in" }
 	    FILENAME ~ /^OLD/ { next }
@@ -1012,7 +1024,7 @@ configureClass1Modem()
 
     getFlowControlConfig
 
-    eval `(cd $MODEMCONFIG; $GREP 'CONFIG:[ 	]*CLASS1' *) |\
+    eval `(cd $MODEMCONFIG; $GREP 'CONFIG:[ 	]*CLASS1' $CONFIG_LIST) |\
 	$SED 's/:[ 	]*/:/g' |\
 	$AWK -F: '
 BEGIN	{ proto = "" }
