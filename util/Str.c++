@@ -28,7 +28,8 @@
 #include <ctype.h>
 #include <stdarg.h>
 
-#define NUMBUFSIZE 2048
+#define DEFAULT_FORMAT_BUFFER 4096
+
 char fxStr::emptyString = '\0';
 fxStr fxStr::null;
 
@@ -65,7 +66,7 @@ fxStr::fxStr(const char *s, u_int len)
     slength = len+1;
 }
 
-fxStr::fxStr(const fxStr&s)
+fxStr::fxStr(const fxStr& s)
 {
     slength = s.slength;
     if (slength > 1) {
@@ -76,7 +77,7 @@ fxStr::fxStr(const fxStr&s)
     }
 }
 
-fxStr::fxStr(const fxTempStr &t)
+fxStr::fxStr(const fxTempStr& t)
 {
     slength = t.slength;
     if (t.slength>1) {
@@ -89,44 +90,22 @@ fxStr::fxStr(const fxTempStr &t)
 
 fxStr::fxStr(int a, const char * format)
 {
-    char buffer[NUMBUFSIZE];
-    if (!format) format = "%d";
-    sprintf(buffer,format,a);
-    slength = strlen(buffer) + 1;
-    data = (char*) malloc(slength);
-    memcpy(data,buffer,slength);
+    fxStr((const fxStr&)fxStr::format((format) ? format : "%d", a));
 }
 
 fxStr::fxStr(long a, const char * format)
 {
-    char buffer[NUMBUFSIZE];
-    if (!format) format = "%ld";
-    sprintf(buffer,format,a);
-    slength = strlen(buffer) + 1;
-    data = (char*) malloc(slength);
-    memcpy(data,buffer,slength);
+    fxStr((const fxStr&)fxStr::format((format) ? format : "%ld", a));
 }
 
 fxStr::fxStr(float a, const char * format)
 {
-    char buffer[NUMBUFSIZE];
-    if (!format) format = "%g";
-    sprintf(buffer,format,a);
-    slength = strlen(buffer) + 1;
-    fxAssert(slength>1, "Str::Str(float): bogus conversion");
-    data = (char*) malloc(slength);
-    memcpy(data,buffer,slength);
+    fxStr((const fxStr&)fxStr::format((format) ? format : "%g", a));
 }
 
 fxStr::fxStr(double a, const char * format)
 {
-    char buffer[NUMBUFSIZE];
-    if (!format) format = "%lg";
-    sprintf(buffer,format,a);
-    slength = strlen(buffer) + 1;
-    fxAssert(slength>1, "Str::Str(double): bogus conversion");
-    data = (char*) malloc(slength); // XXX assume slength>1
-    memcpy(data,buffer,slength);
+    fxStr((const fxStr&)fxStr::format((format) ? format : "%lg", a));
 }
 
 fxStr::~fxStr()
@@ -138,20 +117,45 @@ fxStr::~fxStr()
 fxStr
 fxStr::format(const char* fmt ...)
 {
-    char buf[4096];
+    int size = DEFAULT_FORMAT_BUFFER;
+    fxStr s;
     va_list ap;
     va_start(ap, fmt);
-    vsprintf(buf, fmt, ap);
+    s.data = (char*)malloc(size);
+    int len = vsnprintf(s.data, size, fmt, ap);
     va_end(ap);
-    return fxStr(buf);
+    while (len < 0 || len >= size) {
+        if (len >= size) {
+            size = len + 1;
+        } else {
+            size *= 2;
+        }
+        s.data = (char*)realloc(s.data, size);
+        va_start(ap, fmt);
+        len = vsnprintf(s.data, size, fmt, ap);
+        va_end(ap);
+    }
+    if (size > len + 1) {
+        s.data = (char*) realloc(s.data, len + 1);
+    }
+    s.slength = len + 1;
+    return s; //XXX this is return by value which is inefficient
 }
 
 fxStr
 fxStr::vformat(const char* fmt, va_list ap)
 {
-    char buf[4096];
-    vsprintf(buf, fmt, ap);
-    return fxStr(buf);
+    //XXX can truncate but cant do much about it without va_copy
+    int size = DEFAULT_FORMAT_BUFFER;
+    fxStr s;
+    s.data = (char*)malloc(size);
+    int len = vsnprintf(s.data, size, fmt, ap);
+    fxAssert(len < 0 || len >= size, "Str:vformat() Have truncated string.");
+    if (size > len + 1) {
+        s.data = (char*) realloc(s.data, len + 1);
+    }
+    s.slength = len + 1;
+    return s; //XXX this is return by value which is inefficient
 }
 
 fxStr fxStr::extract(u_int start, u_int chars) const
@@ -291,18 +295,20 @@ void fxStr::insert(char a, u_int posn)
 void fxStr::resizeInternal(u_int chars)
 {
     if (slength > 1) {
-	if (chars > 0) {
-	    if (chars >= slength)
-		data = (char*) realloc(data,chars+1);
-	} else {
-	    assert(data != &emptyString);
-	    free(data);
-	    data = &emptyString;
-	}
+        if (chars > 0) {
+            if (chars >= slength) {
+                data = (char*) realloc(data,chars+1);
+            }
+        } else {
+            assert(data != &emptyString);
+            free(data);
+            data = &emptyString;
+        }
     } else {
-	assert(data == &emptyString);
-	if (chars)
-	    data = (char*) malloc(chars+1);
+        assert(data == &emptyString);
+        if (chars) {
+            data = (char*) malloc(chars+1);
+        }
     }
 }
 
