@@ -935,7 +935,7 @@ FaxClient::runScript(FILE* fp, const char* filename, fxStr& emsg)
     (void) Sys::fstat(fileno(fp), sb);
     char* addr;
 #if HAS_MMAP
-    addr = (char*) mmap(NULL, sb.st_size, PROT_READ, MAP_SHARED, fileno(fp), 0);
+    addr = (char*) mmap(NULL, (size_t) sb.st_size, PROT_READ, MAP_SHARED, fileno(fp), 0);
     if (addr == (char*) -1) {		// revert to file reads
 #endif
 	addr = new char[sb.st_size];
@@ -948,7 +948,7 @@ FaxClient::runScript(FILE* fp, const char* filename, fxStr& emsg)
 #if HAS_MMAP
     } else {				// send mmap'd file data
 	ok = runScript(addr, sb.st_size, filename, emsg);
-	munmap(addr, sb.st_size);
+	munmap(addr, (size_t) sb.st_size);
     }
 #endif
     return (ok);
@@ -1096,7 +1096,7 @@ FaxClient::sendData(int fd,
     if (!openDataConn(emsg))
 	goto bad;
 #if HAS_MMAP
-    addr = (char*) mmap(NULL, sb.st_size, PROT_READ, MAP_SHARED, fd, 0);
+    addr = (char*) mmap(NULL, (size_t) sb.st_size, PROT_READ, MAP_SHARED, fd, 0);
     if (addr == (char*) -1) {			// revert to file reads
 #endif
 	cc = (size_t) sb.st_size;
@@ -1112,20 +1112,20 @@ FaxClient::sendData(int fd,
 	    cc -= n;
 	}
 #if HAS_MMAP
-    } else if (!sendRawData(addr, sb.st_size, emsg)) // send mmap'd file data
+    } else if (!sendRawData(addr, (int) sb.st_size, emsg)) // send mmap'd file data
 	goto bad;
 #endif
     closeDataConn();
 #if HAS_MMAP
     if (addr != (char*) -1)
-	munmap(addr, sb.st_size);
+	munmap(addr, (size_t) sb.st_size);
 #endif
     return (getReply(false) == 2);
 bad:
     closeDataConn();
 #if HAS_MMAP
     if (addr != (char*) -1)
-	munmap(addr, sb.st_size);
+	munmap(addr, (size_t) sb.st_size);
 #endif
     return (false);
 }
@@ -1165,7 +1165,7 @@ FaxClient::sendZData(int fd,
 	if (!openDataConn(emsg))
 	    goto bad;
 #if HAS_MMAP
-	addr = (char*) mmap(NULL, sb.st_size, PROT_READ, MAP_SHARED, fd, 0);
+	addr = (char*) mmap(NULL, (size_t) sb.st_size, PROT_READ, MAP_SHARED, fd, 0);
 	if (addr == (char*) -1) {		// revert to file reads
 #endif
 	    cc = (size_t) sb.st_size;
@@ -1197,7 +1197,7 @@ FaxClient::sendZData(int fd,
 #if HAS_MMAP
 	} else {
 	    zstream.next_in = (Bytef*) addr;
-	    zstream.avail_in = sb.st_size;
+	    zstream.avail_in = (u_int) sb.st_size;
 	    do {
 		if (deflate(&zstream, Z_NO_FLUSH) != Z_OK) {
 		    emsg = fxStr::format("zlib compressor error: %s",
@@ -1238,7 +1238,7 @@ FaxClient::sendZData(int fd,
 	closeDataConn();
 #if HAS_MMAP
 	if (addr != (char*) -1)
-	    munmap(addr, sb.st_size);
+	    munmap(addr, (size_t) sb.st_size);
 #endif
 	deflateEnd(&zstream);
 	return (getReply(false) == COMPLETE);
@@ -1249,7 +1249,7 @@ bad:
 	closeDataConn();
 #if HAS_MMAP
 	if (addr != (char*) -1)
-	    munmap(addr, sb.st_size);
+	    munmap(addr, (size_t) sb.st_size);
 #endif
 	deflateEnd(&zstream);
     } else

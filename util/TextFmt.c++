@@ -726,7 +726,7 @@ TextFmt::formatFile(FILE* fp)
     struct stat sb;
     Sys::fstat(fileno(fp), sb);
     char* addr = (char*)
-	mmap(NULL, sb.st_size, PROT_READ, MAP_SHARED, fileno(fp), 0);
+	mmap(NULL, (size_t) sb.st_size, PROT_READ, MAP_SHARED, fileno(fp), 0);
     if (addr == (char*) -1) {		// revert to file reads
 #endif
 	int c;
@@ -745,7 +745,7 @@ TextFmt::formatFile(FILE* fp)
 	beginFile();
 	format(cp, ep-cp);
 	endFile();
-	munmap(addr, sb.st_size);
+	munmap(addr, (size_t) sb.st_size);
     }
 #endif
 }
