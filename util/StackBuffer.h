@@ -80,7 +80,7 @@ inline void fxStackBuffer::put(char const* c)	{ put(c, strlen(c)); }
 inline void fxStackBuffer::set(char c)		{ put(c); next--; }
 inline void fxStackBuffer::reset()		{ next = base; }
 inline fxStackBuffer::operator char*()		{ return base; }
-inline fxStackBuffer::operator unsigned char*()	{ return (unsigned char*)base; }
+inline fxStackBuffer::operator unsigned char*() { return (unsigned char*)base; }
 inline fxStackBuffer::operator const char*()	{ return base; }
 inline fxStackBuffer::operator const unsigned char*()
     { return (unsigned char*)base; }

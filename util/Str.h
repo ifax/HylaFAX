@@ -101,16 +101,21 @@ public:
     /////////////////////////////////////////////////////
     u_long hash() const;
 
-    // Removed by rjc 8/1999 because gives ugly warning with gcc-2.95
-    //operator char*()
-	//{ return data; }
     operator const char*() const
+	{ return data; }
+    operator const char*()
 	{ return data; }
     operator int() const
 	{ return atoi(data); }
+    operator int()
+	{ return atoi(data); }
     operator float() const
 	{ return float(atof(data)); }
+    operator float()
+	{ return float(atof(data)); }
     operator double() const
+	{ return double(atof(data)); }
+    operator double()
 	{ return double(atof(data)); }
 
     u_int length() const { return slength-1; }
