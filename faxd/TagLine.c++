@@ -236,7 +236,8 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      * adjusted by the look ahead, a factor of the number of
      * bits pending in the G3 decoder's bit accumulator.
      */
-    u_int decoded = dec.current() - roundup(dec.getPendingBits(),8) - buf;
+    u_int look_ahead = roundup(dec.getPendingBits(),8) / 8;
+    u_int decoded = dec.current() - look_ahead - buf;
 
     if (params.vr == VR_NORMAL) {
 	/*
