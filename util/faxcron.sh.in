@@ -302,7 +302,7 @@ echo ""
 # in the last $AGEINFO days.  We use this to clean
 # up the info files.
 #
-find info -ctime +$AGEINFO -print >$JUNK
+find info -type f -ctime +$AGEINFO -print >$JUNK
 
 if [ -s $JUNK ]; then
 echo "Purge remote device capabilities older than $AGEINFO days:"
@@ -429,7 +429,7 @@ echo ""
 #
 # Purge old stuff from the temp directory.
 #
-find tmp -mtime +$AGETMP -print >$JUNK
+find tmp -type f -mtime +$AGETMP -print >$JUNK
 if [ -s $JUNK ]; then
     echo "Purge tmp files older than $AGETMP days:"
     for i in `$CAT $JUNK`; do
