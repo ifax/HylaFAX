@@ -90,7 +90,7 @@ const ServerConfig::S_numbertag ServerConfig::numbers[] = {
 { "servertracing",	&ServerConfig::tracingLevel,	FAXTRACE_SERVER },
 { "uucplocktimeout",	&ServerConfig::uucpLockTimeout,	0 },
 { "nocarrierretrys",	&ServerConfig::noCarrierRetrys,	1 },
-{ "jobreqproto",	&ServerConfig::requeueProto,	FAX_REQUEUE },
+{ "jobreqproto",	&ServerConfig::requeueProto,	FAX_REQPROTO },
 { "jobreqother",	&ServerConfig::requeueOther,	FAX_REQUEUE },
 { "pollmodemwait",	&ServerConfig::pollModemWait,	30 },
 { "polllockwait",	&ServerConfig::pollLockWait,	30 },
