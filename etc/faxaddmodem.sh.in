@@ -1306,6 +1306,7 @@ Class1Parameters="
     Class1TCFWaitCmd
     Class1EOPWaitCmd
     Class1FrameOverhead
+    Class1MsgRecvHackCmd
     Class1RecvAbortOK
     Class1RecvIdentTimer
     Class1SendMsgDelay
@@ -1571,6 +1572,7 @@ AT	Class1TCFWaitCmd	\
 AT	Class1EOPWaitCmd	\
 	Command to stop and wait prior to sending EOP
 #	Class1FrameOverhead	Extra bytes in a received HDLC frame
+#	Class1MsgRecvHackCmd	Command to avoid +FCERROR before image data
 #	Class1RecvAbortOK	\
 	Maximum time to wait for OK after aborting a receive (ms)
 #	Class1RecvIdentTimer	\

@@ -405,6 +405,18 @@ top:
 	    setInputBuffering(true);
 	    if (flowControl == FLOW_XONXOFF)
 		(void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
+
+	    /*
+	     * Same reasoning here as before receiving TCF.  In practice,
+	     * however, we can't follow Class1TCFRecvHack because it
+	     * apparently takes too much time to drop the V.21 carrier.  
+	     * So, our approach is much like Class1SwitchingCmd.
+	     */
+	    if (!atCmd(conf.class1MsgRecvHackCmd, AT_OK)) {
+		emsg = "Failure to receive silence.";
+		return (false);
+	    }
+
 	    /*
 	     * Set high speed carrier & start receive.  If the
 	     * negotiated modulation technique includes short

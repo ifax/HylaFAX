@@ -257,6 +257,7 @@ Class1SFLOCmd	string	\-	Class 1: command to set software flow control
 Class1PPMWaitCmd	string	\s-1AT+FTS=7\s+1	Class 1: command to stop and wait before PPM
 Class1TCFWaitCmd	string	\s-1AT+FTS=7\s+1	Class 1: command to stop and wait before TCF
 Class1EOPWaitCmd	string	\s-1AT+FTS=9\s+1	Class 1: command to stop and wait before EOP
+Class1MsgRecvHackCmd	string	\s-1""\s+1	Class 1: command to avoid +FCERROR before image data
 Class1TCFMaxNonZero	integer	\s-110\s+1	Class 1: max% of non-zero data in good \s-1TCF\s+1
 Class1TCFMinRun	integer	\s-11000\s+1	Class 1: minimum zero run in good \s-1TCF\s+1
 Class1TCFRecvHack	boolean	\s-1No\s+1	Class 1: deliberately look for carrier loss before TCF
@@ -1953,6 +1954,12 @@ similar to
 .B Class1PPMWaitCmd.
 We allow a different setting in the case of EOP, however, because
 empirically some machines may need more time.
+.TP
+.B Class1MsgRecvHackCmd
+If receive failures occur due to +FCERROR just prior to image data 
+reception, setting
+.B Class1MsgRecvHackCmd
+to AT+FRS=1 may help.
 .TP
 .B Class1RecvAbortOK
 The time, in milliseconds, to wait for an ``\s-1OK\s+1'' result code

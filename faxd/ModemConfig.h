@@ -115,6 +115,7 @@ public:
     fxStr	class1TCFWaitCmd;	// cmd to stop and wait prior to TCF
     fxStr	class1EOPWaitCmd;	// cmd to stop and wait prior to EOP
     fxStr	class1SwitchingCmd;	// after recv HDLC and before sending
+    fxStr	class1MsgRecvHackCmd;	// cmd to avoid +FCERROR before image
     u_int	class1TCFRecvTimeout;	// timeout receiving TCF
     u_int	class1TCFResponseDelay;	// delay (ms) btwn TCF & ack/nak
     u_int	class1SendMsgDelay;	// delay (ms) after training
