@@ -618,11 +618,11 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	if (useV34) hadV34Trouble = true;	// sadly, some receivers will do this with V.34
 	return (false);
     }
-    FaxParams dcs_caps = params.getDCS();
+    params.update();
     // we should respect the frame-size preference indication by the remote (DIS_FRAMESIZE)
     if (params.ec != EC_DISABLE && 
 	(conf.class1ECMFrameSize == 64 || dis_caps.isBitEnabled(FaxParams::BITNUM_FRAMESIZE))) {
-	dcs_caps.setBit(FaxParams::BITNUM_FRAMESIZE, true); // we don't want to add this bit if not using ECM
+	params.setBit(FaxParams::BITNUM_FRAMESIZE, true); // we don't want to add this bit if not using ECM
 	frameSize = 64;
     } else
 	frameSize = 256;
@@ -669,10 +669,10 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	     * latter is never used.
 	     */
 	    params.br = curcap->br;
-	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_11, curcap->sr&DCSSIGRATE_9600V29);
-	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_12, curcap->sr&DCSSIGRATE_4800V27);
-	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_13, curcap->sr&DCSSIGRATE_14400V33);
-	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_14, curcap->sr&DCSSIGRATE_14400V17);
+	    params.setBit(FaxParams::BITNUM_SIGRATE_11, curcap->sr&DCSSIGRATE_9600V29);
+	    params.setBit(FaxParams::BITNUM_SIGRATE_12, curcap->sr&DCSSIGRATE_4800V27);
+	    params.setBit(FaxParams::BITNUM_SIGRATE_13, curcap->sr&DCSSIGRATE_14400V33);
+	    params.setBit(FaxParams::BITNUM_SIGRATE_14, curcap->sr&DCSSIGRATE_14400V17);
 	    /*
 	     * Set the number of train attemps on the same
 	     * modulation; having set it to 1 we immediately drop
@@ -687,17 +687,17 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	     * T.30 Table 2 Note 33 says that when V.34-fax is used
 	     * DCS bits 11-14 should be set to zero.
 	     */
-	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_11, false);
-	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_12, false);
-	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_13, false);
-	    dcs_caps.setBit(FaxParams::BITNUM_SIGRATE_14, false);
+	    params.setBit(FaxParams::BITNUM_SIGRATE_11, false);
+	    params.setBit(FaxParams::BITNUM_SIGRATE_12, false);
+	    params.setBit(FaxParams::BITNUM_SIGRATE_13, false);
+	    params.setBit(FaxParams::BITNUM_SIGRATE_14, false);
 	}
 	int t = 1;
 	do {
 	    if (!useV34) protoTrace("SEND training at %s %s",
 		modulationNames[curcap->mod],
 		Class2Params::bitRateNames[curcap->br]);
-	    if (!sendPrologue(dcs_caps, lid)) {
+	    if (!sendPrologue(params, lid)) {
 		if (abortRequested())
 		    goto done;
 		protoTrace("Error sending T.30 prologue frames");

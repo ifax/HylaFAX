@@ -74,6 +74,7 @@ public:
     static u_int DCSbrTab[16];		// DIS actual bit rate
 
     Class2Params();
+    virtual void update (void);
 
     int operator==(const Class2Params&) const;
     int operator!=(const Class2Params&) const;
@@ -83,7 +84,6 @@ public:
     void setFromDIS(u_int dis, u_int xinfo = 0);
     void setFromDCS(FaxParams& dcs);
     void setFromDCS(u_int dcs, u_int xinfo = 0);
-    FaxParams getDCS() const;
     bool is2D() const;
 
     u_int transferSize(u_int ms) const;

@@ -367,8 +367,8 @@ Class2Params::setFromDCS(u_int dcs, u_int xinfo)
 /*
  * Return a 24-bit T.30 DCS frame that reflects the parameters.
  */
-FaxParams
-Class2Params::getDCS() const
+void
+Class2Params::update (void)
 {
     u_int dcs = DCS_T4RCVR
 	    | vrDISTab[vr&1]
@@ -396,9 +396,8 @@ Class2Params::getDCS() const
 	;
     dcs |= (dcs_xinfo != 0 ? DCS_XTNDFIELD : 0);
 
-    FaxParams dcs_caps(dcs, dcs_xinfo);
+    setupT30(dcs, dcs_xinfo);
 
-    return dcs_caps;
 }
 
 /*
