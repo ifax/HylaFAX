@@ -978,7 +978,7 @@ OldProtocolServer::getData(FaxSendOp type, long cc)
 	while (cc > 0) {
 	    char buf[4096];
 	    long n = fxmin(cc, (u_long) sizeof (buf));
-	    if (fread(buf, n, 1, stdin) != 1)
+	    if (fread(buf, (size_t) n, 1, stdin) != 1)
 		protocolBotch("not enough data received: %u of %u bytes.",
 		    total, total+cc);
 	    if (Sys::write(dfd, buf, (u_int) n) != n)
