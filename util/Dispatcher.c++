@@ -67,7 +67,7 @@ FdMask::FdMask() {
 void FdMask::zero() { memset(this, 0, sizeof(FdMask)); }
 void FdMask::setBit(int fd) { FD_SET(fd,this); }
 void FdMask::clrBit(int fd) { FD_CLR(fd,this); }
-fxBool FdMask::isSet(int fd) const { return FD_ISSET(fd,this) != 0; }
+fxBool FdMask::isSet(int fd) const { return (FD_ISSET(fd,this) != 0); }
 
 fxBool FdMask::anySet() const {
     const int mskcnt = howmany(FD_SETSIZE,NFDBITS);
