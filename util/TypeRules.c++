@@ -94,6 +94,7 @@ TypeRule::match(const void* data, u_int size, bool verbose) const
     const u_char* cp = (const u_char*) data;
     switch (type) {
     case ASCII:
+	{
 	u_int i;
 	for (i = 0; i < size; i++)
 	    if (!isprint(cp[i]) && !isspace(cp[i])) {
@@ -103,7 +104,9 @@ TypeRule::match(const void* data, u_int size, bool verbose) const
 	    }
 	ok = true;
 	goto done;
+	}
     case ASCIIESC:
+	{
 	u_int i;
 	for (i = 0; i < size; i++)
 	    if (!isprint(cp[i]) && !isspace(cp[i]) && cp[i] != '\033') {
@@ -113,6 +116,7 @@ TypeRule::match(const void* data, u_int size, bool verbose) const
 	    }
 	ok = TRUE;
 	goto done;
+	}
     case STRING:
 	ok = (strncmp((const char*)(cp+off), value.s,
 	    fxmin((u_int) strlen(value.s), (u_int)(size-off))) == 0);
