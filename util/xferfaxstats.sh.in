@@ -186,8 +186,13 @@ function cvtTime(s)
 #
 function cvtDateTime(s)
 {
-    yday = substr(s,7,2)*365 + substr(s,4,2) - 1;
-    mon = substr(s,0,2) + 0;
+    yday = substr(s,7,2)
+    if (yday < 70)
+        yday += 30;
+    else
+        yday -= 70;
+    yday = yday*365 + substr(s,4,2) - 1;
+    mon = substr(s,1,2) + 0;
     for (i = 0; i < mon; i++)
 	yday += daysInMonth[i];
     return yday*FULLDAY + cvtTime(substr(s,10) ":00");
