@@ -46,7 +46,7 @@
 #include "Trigger.h"
 #include "faxQueueApp.h"
 #include "HylaClient.h"
-#include "MemoryDecoder.h"
+#include "G3Decoder.h"
 #include "FaxSendInfo.h"
 #include "config.h"
 
@@ -508,31 +508,8 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
      * (based on the capabilities passed to us by faxgetty).
      */
     Class2Params params;
-    // use the highest resolution the client supports
-    params.vr = VR_NORMAL;
-    if (req.usexvres) {
-	if (info.getSupportsVRes() & VR_200X100 && job.modem->supportsVR(VR_200X100))
-	    params.vr = VR_200X100;
-	if (info.getSupportsVRes() & VR_FINE && job.modem->supportsVR(VR_FINE))
-	    params.vr = VR_FINE;
-	if (info.getSupportsVRes() & VR_200X200 && job.modem->supportsVR(VR_200X200))
-	    params.vr = VR_200X200;
-	if (info.getSupportsVRes() & VR_R8 && job.modem->supportsVR(VR_R8))
-	    params.vr = VR_R8;
-	if (info.getSupportsVRes() & VR_200X400 && job.modem->supportsVR(VR_200X400))
-	    params.vr = VR_200X400;
-	if (info.getSupportsVRes() & VR_300X300 && job.modem->supportsVR(VR_300X300))
-	    params.vr = VR_300X300;
-	if (info.getSupportsVRes() & VR_R16 && job.modem->supportsVR(VR_R16))
-	    params.vr = VR_R16;
-    } else {
-	if (info.getSupportsVRes() & VR_200X100 && job.modem->supportsVR(VR_200X100))
-	    params.vr = VR_200X100;
-	if (info.getSupportsVRes() & VR_FINE && req.resolution > 150 && job.modem->supportsVR(VR_FINE))
-	    params.vr = VR_FINE;
-	if (info.getSupportsVRes() & VR_200X200 && req.resolution > 150 && job.modem->supportsVR(VR_200X200))
-	    params.vr = VR_200X200;
-    }
+    params.setVerticalRes(req.resolution > 150 && !info.getSupportsHighRes() ?
+	98 : req.resolution);
     params.setPageWidthInMM(
 	fxmin((u_int) req.pagewidth, (u_int) info.getMaxPageWidthInMM()));
     params.setPageLengthInMM(
@@ -544,16 +521,16 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
      * o the remote side is known to be capable of it, and
      * o the user hasn't specified a desire to send 1D data.
      */
-    if (req.desireddf == DF_2DMMR && req.desiredec == EC_ENABLE && 
+    if (req.desireddf == DF_2DMMR &&
 	use2D && job.modem->supportsMMR() &&
 	info.getCalledBefore() && info.getSupportsMMR())
 	    params.df = DF_2DMMR;
-    else if (req.desireddf > DF_1DMH) {
+    else if (req.desireddf > DF_1DMR) {
 	params.df = (use2D && job.modem->supports2D() &&
 	    info.getCalledBefore() && info.getSupports2DEncoding()) ?
-		DF_2DMR : DF_1DMH;
+		DF_2DMR : DF_1DMR;
     } else
-	params.df = DF_1DMH;
+	params.df = DF_1DMR;
     /*
      * Check and process the documents to be sent
      * using the parameter selected above.
@@ -749,15 +726,9 @@ bad:
 void
 faxQueueApp::setupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo& info)
 {
-    uint16 compression = 0;
-    (void) TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression);
-    if (compression == COMPRESSION_CCITTFAX4) {
-	params.df = DF_2DMMR;
-    } else {
-	uint32 g3opts = 0;
-	TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
-	params.df = (g3opts&GROUP3OPT_2DENCODING ? DF_2DMR : DF_1DMH);
-    }
+    uint32 g3opts = 0;
+    TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
+    params.df = (g3opts&GROUP3OPT_2DENCODING ? DF_2DMR : DF_1DMR);
 
     uint32 w;
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
@@ -770,23 +741,22 @@ faxQueueApp::setupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo& 
      * We, however, can depend on the info in images that
      * we generate 'cuz we're careful to include valid info.
      */
-    float yres, xres;
-    if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &yres) && TIFFGetField(tif, TIFFTAG_YRESOLUTION, &xres)) {
+    float yres;
+    if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &yres)) {
 	uint16 resunit;
 	TIFFGetFieldDefaulted(tif, TIFFTAG_RESOLUTIONUNIT, &resunit);
 	if (resunit == RESUNIT_CENTIMETER)
 	    yres *= 25.4;
-	    xres *= 25.4;
-	params.setRes((u_int) xres, (u_int) yres);
+	params.setVerticalRes((u_int) yres);
     } else {
 	/*
-	 * No resolution is specified, try
+	 * No vertical resolution is specified, try
 	 * to deduce one from the image length.
 	 */
 	uint32 l;
 	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &l);
 	// B4 at 98 lpi is ~1400 lines
-	params.setRes(204, (l < 1450 ? 98 : 196));
+	params.setVerticalRes(l < 1450 ? 98 : 196);
     }
 
     /*
@@ -800,6 +770,101 @@ faxQueueApp::setupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo& 
 	params.setPageLengthInMM((u_int)(h / yres));
     } else
 	params.ln = LN_INF;
+}
+
+/*
+ * Page Chopping Support.
+ */
+class MemoryDecoder : public G3Decoder {
+private:
+    u_long	  cc;
+    const u_char* bp;
+    const u_char* endOfPage;
+    u_int	  nblanks;
+
+    int decodeNextByte();
+public:
+    MemoryDecoder(const u_char* data, u_long cc);
+    ~MemoryDecoder();
+    const u_char* current()				{ return bp; }
+
+    void scanPageForBlanks(u_int fillorder, const Class2Params& params);
+
+    const u_char* getEndOfPage()			{ return endOfPage; }
+    u_int getLastBlanks()				{ return nblanks; }
+};
+MemoryDecoder::MemoryDecoder(const u_char* data, u_long n)
+{
+    bp = data;
+    cc = n;
+    endOfPage = NULL;
+    nblanks = 0;
+}
+MemoryDecoder::~MemoryDecoder()				{}
+
+int
+MemoryDecoder::decodeNextByte()
+{
+    if (cc == 0)
+	raiseRTC();			// XXX don't need to recognize EOF
+    cc--;
+    return (*bp++);
+}
+
+static bool
+isBlank(tiff_runlen_t* runs, u_int rowpixels)
+{
+    u_int x = 0;
+    for (;;) {
+	if ((x += *runs++) >= rowpixels)
+	    break;
+	if (runs[0] != 0)
+	    return (false);
+	if ((x += *runs++) >= rowpixels)
+	    break;
+    }
+    return (true);
+}
+
+void
+MemoryDecoder::scanPageForBlanks(u_int fillorder, const Class2Params& params)
+{
+    setupDecoder(fillorder,  params.is2D());
+    u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 2432
+    tiff_runlen_t runs[2*2432];			// run arrays for cur+ref rows
+    setRuns(runs, runs+2432, rowpixels);
+
+    if (!RTCraised()) {
+	/*
+	 * Skip a 1" margin at the top of the page before
+	 * scanning for trailing white space.  We do this
+	 * to insure that there is always enough space on
+	 * the page to image a tag line and to satisfy a
+	 * fax machine that is incapable of imaging to the
+	 * full extent of the page.
+	 */
+	u_int topMargin = 1*98;			// 1" at 98 lpi
+	if (params.vr == VR_FINE)		// 196 lpi =>'s twice as many
+	    topMargin *= 2;
+	do {
+	    (void) decodeRow(NULL, rowpixels);
+	} while (--topMargin);
+	/*
+	 * Scan the remainder of the page data and calculate
+	 * the number of blank lines at the bottom.
+	 */
+	for (;;) {
+	    (void) decodeRow(NULL, rowpixels);
+	    if (isBlank(lastRuns(), rowpixels)) {
+		endOfPage = bp;			// include one blank row
+		nblanks = 0;
+		do {
+		    nblanks++;
+		    (void) decodeRow(NULL, rowpixels);
+		} while (isBlank(lastRuns(), rowpixels));
+	    }
+	}
+    }
 }
 
 void
@@ -823,25 +888,8 @@ faxQueueApp::preparePageChop(const FaxRequest& req,
 	float threshold = req.chopthreshold;
 	if (threshold == -1)
 	    threshold = pageChopThreshold;
-	u_int minRows;
-	switch(params.vr) {
-	    case VR_NORMAL:
-	    case VR_200X100:
-		minRows = (u_int) (98. * threshold);
-		break;
-	    case VR_FINE:
-	    case VR_200X200:
-		minRows = (u_int) (196. * threshold);
-		break;
-	    case VR_300X300:
-		minRows = (u_int) (300. * threshold);
-		break;
-	    case VR_R8:
-	    case VR_R16:
-	    case VR_200X400:
-		minRows = (u_int) (391. * threshold);
-		break;
-	}
+	u_int minRows = (u_int)
+	    ((params.vr == VR_NORMAL ? 98. : 196.) * threshold);
 	if (dec.getLastBlanks() > minRows)
 	    pagehandling.append(fxStr::format("Z%04x",
 		stripSize - (dec.getEndOfPage() - data)));
@@ -948,7 +996,7 @@ faxQueueApp::convertDocument(Job& job,
 	if (params.df == DF_2DMMR)
 	    argv[ac++] = "-3";
 	else
-	    argv[ac++] = params.df == DF_1DMH ? "-1" : "-2";
+	    argv[ac++] = params.df == DF_1DMR ? "-1" : "-2";
 	argv[ac++] = req.item;
 	argv[ac] = NULL;
 	// XXX the (char* const*) is a hack to force type compatibility
@@ -2476,7 +2524,7 @@ faxQueueApp::notifyModemWedged(Modem& modem)
 	| quote |                  dev | enquote
     );
     traceServer("MODEM WEDGED: %s", (const char*) cmd);
-    runCmd(cmd, true, this);
+    runCmd(cmd, true);
 }
 
 void
@@ -2935,7 +2983,7 @@ faxQueueApp::notifySender(Job& job, JobStatus why, const char* duration)
 	cmd.append(buf);
     }
     traceServer("NOTIFY: %s", (const char*) cmd);
-    runCmd(cmd, true, this);
+    runCmd(cmd, true);
 }
 
 void
@@ -3026,12 +3074,6 @@ faxQueueApp::jobError(const Job& job, const char* fmt ...)
     va_start(ap, fmt);
     vlogError("JOB " | job.jobid | ": " | fmt, ap);
     va_end(ap);
-}
-
-void faxQueueApp::childStatus(pid_t pid, int status)
-{
-    // We don't do anything here - nothing to act on.
-    traceServer("NOTIFY exit status: %#o (%u)", status, pid);
 }
 
 static void
