@@ -1472,7 +1472,8 @@ faxQueueApp::setReadyToRun(Job& job)
     traceJob(job, "READY");
     Trigger::post(Trigger::JOB_READY, job);
     JobIter iter(runqs[JOBHASH(job.pri)]);
-    for (; iter.notDone() && iter.job().pri <= job.pri; iter++)
+    for (; iter.notDone() && (iter.job().pri < job.pri || 
+      (iter.job().pri == job.pri && iter.job().tts <= job.tts)); iter++)
 	;
     job.insert(iter.job());
 }
@@ -1524,8 +1525,16 @@ faxQueueApp::setDead(Job& job)
 	Job* jb;
 	const DestControlInfo& dci = destCtrls[job.dest];
 	u_int n = 1;
-	while (isOKToStartJobs(di, dci, n) && (jb = di.nextBlocked()))
-	    setReadyToRun(*jb), n++;
+	while (isOKToStartJobs(di, dci, n) && (jb = di.nextBlocked())) {
+	    setReadyToRun(*jb);
+	    n++;
+	    FaxRequest* req = readRequest(*jb);
+	    if (req) {
+		req->notice = "";
+		updateRequest(*req, *jb);
+		delete req;
+	    }
+        }
     } else {
 	/*
 	 * This is the last job to the destination; purge
