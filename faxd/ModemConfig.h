@@ -189,6 +189,7 @@ public:
     u_int	recvDataFormat;		// received facsimile data format
 
     RTNHandling rtnHandling;            // RTN signal handling method
+    bool	saveUnconfirmedPages;	// don't delete unconfirmed pages
     
         virtual ~ModemConfig();
 

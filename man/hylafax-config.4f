@@ -181,6 +181,7 @@ RingsBeforeAnswer	integer	\s-10\s+1	rings to wait before answering phone
 RingTimout	integer	\s-16000\s+1	timeout in ms after RING before reset
 RingVoice	string	\-	distinctive ring voice call identifier
 RTNHandlingMethod	string	\s-1Retransmit\s+1	RTN signal handling method	
+SaveUnconfirmedPages	boolean	\s-1true\s+1	save or delete unconfirmed pages
 SendFaxCmd\(S1	string	\s-1bin/faxsend\s+1	fax transmit command script
 SendPageCmd\(S1	string	\s-1bin/pagesend\s+1	pager transmit command script
 SendUUCPCmd\(S1	string	\s-1bin/uucpsend\s+1	\s-1UUCP\s+1 transmit command script
@@ -1115,6 +1116,12 @@ retransmit the page, but we can try to send the next page, and let the
 remote to decide what to do (accept our decision or hang up). Thus one page will
 (or will not) be missed but we have a chance to successfully send all other pages.
 This behaviour can be activated by ``Ignore'' value.
+.TP
+.B SaveUnconfirmedPages
+Whether or not to save a received facsimile image page if the sender disconnects
+without sending the post-page message, without hearing our message confirmation,
+without retraining as requested, or otherwise breaks fax protocol following such
+pages for which the sender should not have a ``receipt confirmation''.
 .TP
 .B SendFaxCmd\(S1
 The command to use to process outbound facsimile jobs; see

@@ -46,7 +46,7 @@ FaxServer::recvFax(const CallerID& cid)
 {
     traceProtocol("RECV FAX: begin");
 
-    fxStr emsg;
+    fxStr emsg = "";
     FaxRecvInfoArray docs;
     FaxRecvInfo info;
     bool faxRecognized = false;
@@ -258,6 +258,7 @@ FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
 	info.time = (u_int) getPageTransferTime();
 	info.params = modem->getRecvParams();
 	notifyPageRecvd(tif, info, ppm);
+	if (emsg != "") return (false);		// got page with fatal error
 	if (PPM_PRI_MPS <= ppm && ppm <= PPM_PRI_EOP) {
 	    emsg = "Procedure interrupt received, job terminated";
 	    return (false);

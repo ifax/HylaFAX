@@ -498,6 +498,7 @@ top:
 	if (recvFrame(frame, timer)) {
 	    switch (lastPPM = frame.getFCF()) {
 	    case FCF_DIS:			// XXX no support
+		if (prevPage && !pageGood) recvResetPage(tif);
 		protoTrace("RECV DIS/DTC");
 		emsg = "Can not continue after DIS/DTC";
 		return (false);
@@ -506,6 +507,7 @@ top:
 	    case FCF_NSS:
 	    case FCF_TSI:
 	    case FCF_DCS:
+		if (prevPage && !pageGood) recvResetPage(tif);
 		// look for high speed carrier only if training successful
 		messageReceived = !(
 		       FaxModem::recvBegin(emsg)
@@ -519,6 +521,7 @@ top:
 	    case FCF_PRI_MPS:			// PRI-MPS
 	    case FCF_PRI_EOM:			// PRI-EOM
 	    case FCF_PRI_EOP:			// PRI-EOP
+		if (prevPage && !pageGood) recvResetPage(tif);
 		tracePPM("RECV recv", lastPPM);
 		if (!prevPage) {
 		    /*
@@ -591,7 +594,6 @@ top:
 		     * Reset the TIFF-related state so that subsequent
 		     * writes will overwrite the previous data.
 		     */
-		    recvResetPage(tif);
 		    messageReceived = true;	// expect DCS next
 		}
 		break;
@@ -599,8 +601,14 @@ top:
 		protoTrace("RECV recv DCN");
 		emsg = "COMREC received DCN";
 		recvdDCN = true;
+		if (prevPage && conf.saveUnconfirmedPages) {
+		    TIFFWriteDirectory(tif);
+		    protoTrace("RECV keeping unconfirmed page");
+		    return (true);
+		}
 		return (false);
 	    default:
+		if (prevPage && !pageGood) recvResetPage(tif);
 		emsg = "COMREC invalid response received";
 		return (false);
 	    }
@@ -634,8 +642,14 @@ top:
 	 */
 	if (atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 0) == AT_CONNECT && recvBegin(emsg))
 	    goto top;
-    } else
+    } else {
 	emsg = "T.30 T2 timeout, expected page not received";
+	if (prevPage && conf.saveUnconfirmedPages) {
+	    TIFFWriteDirectory(tif);
+	    protoTrace("RECV keeping unconfirmed page");
+	    return (true);
+	}
+    }
     return (false);
 }
 

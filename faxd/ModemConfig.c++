@@ -230,6 +230,7 @@ ModemConfig::setupConfig()
     setVolumeCmds("ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1");
     recvDataFormat	= DF_ALL;		// default to no transcoding
     rtnHandling         = FaxModem::RTN_RETRANSMIT; // retransmit until MCF/MPS
+    saveUnconfirmedPages = true;		// keep unconfirmed pages
 }
 
 void
@@ -564,6 +565,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class2UseHex = getBoolean(value);
     else if (streq(tag, "class2rtfcc"))
 	class2RTFCC = getBoolean(value);
+    else if (streq(tag, "saveunconfirmedpages"))
+	saveUnconfirmedPages = getBoolean(value);
     else
 	return (false);
     return (true);

@@ -129,6 +129,8 @@ bool
 Class2Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg)
 {
     int ppr;
+    bool prevPage = false;
+    bool pageGood = false; 
 
     do {
 	ppm = PPM_EOP;
@@ -145,20 +147,25 @@ Class2Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg)
 	do {
 	    switch (r = atResponse(rbuf, conf.pageStartTimeout)) {
 	    case AT_FDCS:			// inter-page DCS
+		if (prevPage && !pageGood) recvResetPage(tif);
 		(void) recvDCS(rbuf);
 		break;
 	    case AT_FTSI:
+		if (prevPage && !pageGood) recvResetPage(tif);
 		recvTSI(stripQuotes(skipStatus(rbuf)));
 		break;
 	case AT_FSA:
+		if (prevPage && !pageGood) recvResetPage(tif);
 		recvSUB(stripQuotes(skipStatus(rbuf)));
 		break;
 #ifdef notdef
 	case AT_FPA:
+		if (prevPage && !pageGood) recvResetPage(tif);
 		recvSEP(stripQuotes(skipStatus(rbuf)));
 		break;
 #endif
 	case AT_FPW:
+		if (prevPage && !pageGood) recvResetPage(tif);
 		recvPWD(stripQuotes(skipStatus(rbuf)));
 		break;
 	    case AT_TIMEOUT:
@@ -177,8 +184,15 @@ Class2Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg)
 	 *     don't understand the FillOrder tag!
 	 */
 	recvSetupTIFF(tif, group3opts, FILLORDER_LSB2MSB);
-	if (!recvPageData(tif, emsg) || !recvPPM(tif, ppr))
+	if (!recvPageData(tif, emsg)) {
+	    prevPage = false;
 	    goto bad;
+	}
+	else {
+	    prevPage = true;
+	    if (!recvPPM(tif, ppr))
+		goto bad;
+	}
 	if (!waitFor(AT_FET))		// post-page message status
 	    goto bad;
 	ppm = atoi(skipStatus(rbuf));
@@ -218,10 +232,11 @@ Class2Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg)
          */
         ppr = PPR_RTN;
 #endif
-	if (ppr & 1)
+	if (ppr & 1) {
+	    pageGood = true;
 	    TIFFWriteDirectory(tif);	// complete page write
-	else
-	    recvResetPage(tif);		// reset to overwrite data
+	} else
+	    pageGood = false;
 	tracePPR("RECV send", ppr);
 	if (ppr & 1)			// page good, work complete
 	    return (true);
@@ -230,6 +245,11 @@ bad:
     if (hangupCode[0] == 0)
 	processHangup("90");			// "Unspecified Phase C error"
     emsg = hangupCause(hangupCode);
+    if (prevPage && conf.saveUnconfirmedPages) {
+	TIFFWriteDirectory(tif);
+	protoTrace("RECV keeping unconfirmed page");
+	return (true);
+    }
     return (false);
 }
 
