@@ -403,6 +403,7 @@ Class1Modem::decodeTSI(fxStr& ascii, const HDLCFrame& binary)
     int n = binary.getFrameDataLength();
     if (n > 20)			// spec says no more than 20 digits
 	n = 20;
+    else n--;			// trim FCF
     ascii.resize(n);
     u_int d = 0;
     bool seenDigit = false;
@@ -817,6 +818,8 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 	protoTrace("FCS error (calculated)");
 	return (false);
     }
+    frameRcvd = "";
+    for (u_int i = 0; i < frame.getLength(); i++) frameRcvd.append(frame[i]);
     frame.setOK(true);
     return (true);
 }
@@ -1341,10 +1344,11 @@ Class1Modem::recvTCF(int br, HDLCFrame& buf, const u_char* bitrev, long ms)
     bool readPending, gotCarrier;
     fxStr rmCmd(br, rmCmdFmt);
     startTimeout(ms);
+    u_short attempts = 0;
     do {
 	readPending = atCmd(rmCmd, AT_NOTHING, 0);
 	gotCarrier = readPending && waitFor(AT_CONNECT, 0);
-    } while (readPending && !gotCarrier && lastResponse == AT_FCERROR);
+    } while (readPending && !gotCarrier && lastResponse == AT_FCERROR && ++attempts < conf.class1RMPersistence);
     /*
      * If carrier was recognized, collect the data.
      */

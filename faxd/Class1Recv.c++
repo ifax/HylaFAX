@@ -400,6 +400,8 @@ Class1Modem::recvTraining()
 	    gotnocarrier = waitFor(AT_NOCARRIER, 2*1000);
 	} while (!gotnocarrier && Sys::now() < (nocarrierstart + 5));
     } else {
+	// the CONNECT is waited for later...
+	if (lastResponse == AT_FCERROR && atCmd(rhCmd, AT_NOTHING)) lastResponse = AT_FRH3;
 	if (lastResponse == AT_FRH3) return (false);	// detected V.21 carrier
     }
     /*
@@ -428,6 +430,7 @@ Class1Modem::recvTraining()
 void
 Class1Modem::processDCSFrame(const HDLCFrame& frame)
 {
+    if (frame.getFrameDataLength() < 4) return;	// minimum acceptable DCS frame size
     FaxParams dcs_caps = frame.getDIS();			// NB: really DCS
 
     if (dcs_caps.isBitEnabled(FaxParams::BITNUM_FRAMESIZE_DCS)) frameSize = 64;
@@ -473,7 +476,6 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
     time_t t2end = 0;
     signalRcvd = 0;
     sendERR = false;
-    prevPage = 0;
 
     do {
 	u_int timer = conf.t2Timer;
@@ -485,7 +487,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	    pageGood = false;
 	    recvSetupTIFF(tif, group3opts, FILLORDER_LSB2MSB, id);
 	    ATResponse rmResponse = AT_NOTHING;
-	    if (params.ec != EC_DISABLE) {
+	    if (params.ec != EC_DISABLE || useV34) {
 		pageGood = recvPageData(tif, emsg);
 		messageReceived = true;
 		prevPage++;
@@ -550,6 +552,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			timer = conf.t1Timer;		// wait longer for PPM
 		    }
 		} else {
+		    if (rmResponse == AT_FCERROR && atCmd(rhCmd, AT_NOTHING)) rmResponse = AT_FRH3;
 		    if (rmResponse == AT_FRH3) {
 			HDLCFrame frame(conf.class1FrameOverhead);
 			if (waitFor(AT_CONNECT,0) && recvFrame(frame, FCF_RCVR, conf.t2Timer, true))
@@ -617,6 +620,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	if (signalRcvd != 0) {
 	    ppmrcvd = true;
 	    lastPPM = signalRcvd;
+	    for (u_int i = 0; i < frameRcvd.length(); i++) frame.put(frameRcvd[i]);
 	} else {
 	    ppmrcvd = recvFrame(frame, FCF_RCVR, timer);
 	    if (ppmrcvd) lastPPM = frame.getFCF();
@@ -637,20 +641,20 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	    case FCF_TSI:
 	    case FCF_DCS:
 		{
+		    signalRcvd = 0;
 		    if (prevPage && !pageGood) recvResetPage(tif);
 		    // look for high speed carrier only if training successful
 		    messageReceived = !(FaxModem::recvBegin(emsg));
-		    bool gotframe = true;
-		    while (gotframe) {
-			gotframe = false;
-			if (!messageReceived) messageReceived = !(recvDCSFrames(frame));
-			if (!messageReceived) messageReceived = !(recvTraining());
-			if (messageReceived && lastResponse == AT_FRH3 && waitFor(AT_CONNECT,0)) {
-			    gotframe = recvFrame(frame, FCF_RCVR, conf.t2Timer, true);
-			    lastResponse = AT_NOTHING;
-			    messageReceived = false;
+		    if (!messageReceived) messageReceived = !(recvDCSFrames(frame));
+		    if (!messageReceived) messageReceived = !(recvTraining());
+		    if (messageReceived && lastResponse == AT_FRH3 && waitFor(AT_CONNECT,0)) {
+			messageReceived = false;
+			if (recvFrame(frame, FCF_RCVR, conf.t2Timer, true)) {
+			    messageReceived = true;
+			    signalRcvd = frame.getFCF();
 			}
-		    }
+			lastResponse = AT_NOTHING;
+		    } else messageReceived = false;
 		    break;
 		}
 	    case FCF_MPS:			// MPS
@@ -893,6 +897,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
     bool lastblock = false;
     bool pagedataseen = false;
     u_short seq = 1;					// sequence code for the first block
+    prevBlock = 0;
 
     do {
 	u_int fnum = 0;
@@ -962,27 +967,12 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			    gotrtncframe = recvFrame(rtncframe, FCF_RCVR, conf.t2Timer, true);
 			}
 			if (gotrtncframe) {
+			    tracePPM("RECV recv", rtncframe.getFCF());
 			    switch (rtncframe.getFCF()) {
-				case FCF_DCS:
-				    // hopefully it didn't change on us!
-				    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-					emsg = "Failure to receive silence.";
-					if (conf.saveUnconfirmedPages && pagedataseen) {
-					    protoTrace("RECV keeping unconfirmed page");
-					    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
-					    prevPage++;
-					}
-					free(block);
-					return (false);
-				    }
-				    transmitFrame(FCF_CFR|FCF_RCVR);
-				    break;
 				case FCF_PPS:
-				    tracePPM("RECV recv", rtncframe.getFCF());
 				    if (rtncframe.getLength() > 5) {
 					u_int fc = frameRev[rtncframe[6]] + 1;
 					if ((fc == 256 || fc == 1) && !dataseen) fc = 0;	// distinguish 0 from 1 and 256
-					if (fcount < fc) fcount = fc;
 					tracePPM("RECV recv", rtncframe.getFCF2());
 					protoTrace("RECV received %u frames of block %u of page %u", \
 					    fc, frameRev[rtncframe[5]]+1, frameRev[rtncframe[4]]+1);
@@ -1004,7 +994,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						    free(block);
 						    return (false);
 						}
-						if (!prevPage || (pprcnt && frameRev[rtncframe[4]]+1 > prevPage)) {
+						if (frameRev[rtncframe[4]] > prevPage || (frameRev[rtncframe[4]] == prevPage && frameRev[rtncframe[5]] > prevBlock)) {
 						    (void) transmitFrame(FCF_PPR, fxStr(ppr, 32));
 						    tracePPR("RECV send", FCF_PPR);
 						} else {
@@ -1016,7 +1006,6 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    }
 				    break;
 				case FCF_EOR:
-				    tracePPM("RECV recv", rtncframe.getFCF());
 				    if (rtncframe.getLength() > 5) {
 					tracePPM("RECV recv", rtncframe.getFCF2());
 					switch (rtncframe.getFCF2()) {
@@ -1058,7 +1047,6 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				case FCF_CTC:
 				    {
 					u_int dcs;			// possible bits 1-16 of DCS in FIF
-					tracePPM("RECV recv", rtncframe.getFCF());
 					if (useV34) {
 					    // T.30 F.3.4.5 Note 1 does not permit CTC in V.34-fax
 					    emsg = "Received invalid CTC signal in V.34-Fax.";
@@ -1096,7 +1084,6 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    }
 				case FCF_CRP:
 				    // command repeat... just repeat whatever we last sent
-				    tracePPR("RECV recv", rtncframe.getFCF());
 				    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
 					emsg = "Failure to receive silence.";
 					if (conf.saveUnconfirmedPages && pagedataseen) {
@@ -1111,11 +1098,16 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    tracePPR("RECV send", (u_char) signalSent[2]);
 				    break;
 				case FCF_DCN:
-				    tracePPM("RECV recv", rtncframe.getFCF());
 				    emsg = "COMREC received DCN";
 				    gotEOT = true;
 				    recvdDCN = true;
 				    continue;
+				    break;
+				default:
+				    // The message is not ECM-specific: fall out of ECM receive, and let
+				    // the earlier message-handling routines try to cope with the signal.
+				    messageReceived = true;
+				    return (true);
 				    break;
 			    }
 			    if (!sendERR) {	// as long as we're not trying to send the ERR signal (set above)
@@ -1213,7 +1205,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    // some senders don't send the requisite three RCP signals
 		} while (rcpcnt == 0 && (unsigned) Sys::now()-start < 5*60);	// can't expect 50 ms of flags, some violate T.4 A.3.8
 		if (useV34) {
-		    if (!gotEOT && !waitForDCEChannel(true)) {
+		    if (!gotEOT && !gotCTRL && !waitForDCEChannel(true)) {
 			emsg = "Failed to properly open V.34 control channel.";
 			protoTrace(emsg);
 			if (conf.saveUnconfirmedPages && pagedataseen) {
@@ -1302,13 +1294,12 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			    /* ... pass through ... */
 			case FCF_CTC:
 			case FCF_EOR:
-			    if (! blockgood &&
-				 (ppsframe.getFCF() == FCF_CTC || ppsframe.getFCF() == FCF_EOR) &&
-				 (!useV34 || !conf.class1PersistentECM)) {	// only if we can make use of the signal
-				signalRcvd = ppsframe.getFCF();
-				pprcnt = 4;
-			    }
 			    if (! blockgood) {
+				if ((ppsframe.getFCF() == FCF_CTC || ppsframe.getFCF() == FCF_EOR) &&
+				     (!useV34 || !conf.class1PersistentECM)) {	// only if we can make use of the signal
+				    signalRcvd = ppsframe.getFCF();
+				    pprcnt = 4;
+				}
 				if (signalRcvd == 0) {
 				    // inform the remote that one or more frames were invalid
 				    transmitFrame(FCF_PPR, fxStr(ppr, 32));
@@ -1465,8 +1456,10 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				}
 			    }
 			    break;
-			default:
-			    emsg = "COMREC invalid response received (expected PPS)";
+			case FCF_DCN:
+			    emsg = "COMREC received DCN";
+			    gotEOT = true;
+			    recvdDCN = true;  
 			    if (conf.saveUnconfirmedPages && pagedataseen) {
 				protoTrace("RECV keeping unconfirmed page");
 				writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
@@ -1474,6 +1467,13 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			    }
 			    free(block);
 			    return (false);
+			default:
+			    // The message is not ECM-specific: fall out of ECM receive, and let
+			    // the earlier message-handling routines try to cope with the signal.
+			    signalRcvd = ppsframe.getFCF();
+			    messageReceived = true;
+			    return (true);
+			    break;
 		    }
 		} else {
 		    emsg = "T.30 T2 timeout, expected signal not received";
@@ -1577,6 +1577,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 	    (void) transmitFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
 	    tracePPR("RECV send", sendERR ? FCF_ERR : FCF_MCF);
 	}
+	prevBlock++;
     } while (! lastblock);
 
     free(block);
@@ -1632,7 +1633,7 @@ Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
 bool
 Class1Modem::recvEnd(fxStr&)
 {
-    if (!recvdDCN) {
+    if (!recvdDCN && !gotEOT) {
 	u_int t1 = howmany(conf.t1Timer, 1000);	// T1 timer in seconds
 	time_t start = Sys::now();
 	/*
@@ -1642,9 +1643,11 @@ Class1Modem::recvEnd(fxStr&)
 	do {
 	    if (recvFrame(frame, FCF_RCVR, conf.t2Timer)) {
 		switch (frame.getFCF()) {
+		case FCF_PPS:
+		    tracePPM("RECV recv", FCF_PPS);
 		case FCF_EOP:
-		    (void) transmitFrame(FCF_MCF|FCF_RCVR);
 		    tracePPM("RECV recv", FCF_EOP);
+		    (void) transmitFrame(FCF_MCF|FCF_RCVR);
 		    tracePPR("RECV send", FCF_MCF);
 		    break;
 		case FCF_DCN:
@@ -1662,7 +1665,7 @@ Class1Modem::recvEnd(fxStr&)
 		break;
 	    }
 	} while ((unsigned) Sys::now()-start < t1 &&
-	    (!frame.isOK() || frame.getFCF() == FCF_EOP));
+	    (!frame.isOK() || frame.getFCF() == FCF_EOP || frame.getFCF() == FCF_PPS));
     }
     setInputBuffering(true);
     return (true);
@@ -1674,6 +1677,6 @@ Class1Modem::recvEnd(fxStr&)
 void
 Class1Modem::recvAbort()
 {
-    transmitFrame(FCF_DCN|FCF_RCVR);
+    if (!recvdDCN && !gotEOT) transmitFrame(FCF_DCN|FCF_RCVR);
     recvdDCN = true;				// don't hang around in recvEnd
 }

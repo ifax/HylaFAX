@@ -55,6 +55,7 @@ protected:
     FaxParams	dis_caps;		// current remote DIS
     u_int	frameSize;		// size of image frames
     u_int	signalRcvd;		// last signal received in ECM protocol
+    fxStr	frameRcvd;		// last frame received from the remote
     fxStr	signalSent;		// last signal sent to remote
     u_int	nonV34br;		// modemParams.br without V.34
     bool	sendERR;		// T.30-A send ERR instead of MCF
@@ -69,6 +70,7 @@ protected:
     const Class1Cap* curcap;		// capabilities being used
     u_int	discap;			// DIS signalling rate capabilities
     u_int	prevPage;		// count of previous pages received
+    u_int	prevBlock;		// count of previous blocks (of this page) received
     bool	pageGood;		// quality of last page received
     bool	recvdDCN;		// received DCN frame
     bool	messageReceived;	// expect/don't expect message carrier
