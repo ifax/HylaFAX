@@ -97,6 +97,10 @@ case "$CIDNUMBER" in
 435*)        SENDTO=lee; FILETYPE=pdf;; # all faxes from area code 435
 5059627777)  SENDTO=amy; FILETYPE=tif;; # Amy wants faxes in TIFF
 esac\s+1
+case "$SUBADDR" in
+53)          SENDTO=FaxMaster;;         # without double-notification
+roger)       SENDTO=roger;;             # possible text subaddressing
+esac\s+1
 .ft R
 .fi
 .sp
@@ -134,6 +138,10 @@ is the received TSI of the fax sender.
 .I SENDTO
 controls the recipient of the received fax notification.  It is
 given as an e-mail address.
+.TP
+.I SUBADDR
+the received subaddress value, communicated by the sender for 
+post-reception routing purposes
 .TP
 Other shell variables are available.  Consult the faxrcvd script directly.
 .SH FILES

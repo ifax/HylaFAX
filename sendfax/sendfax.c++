@@ -267,11 +267,22 @@ sendFaxApp::usage()
 }
 
 /*
- * Add a destination; parse ``person@number'' syntax.
+ * Add a destination; parse ``person@number#subaddress'' syntax.
+ * T.33 Appendix I suggests that ``#'' be used to tag a subaddress.
  */
 void
 sendFaxApp::addDestination(const char* cp)
 {
+    fxStr subaddress;
+    size_t sublen = 0;
+    const char* ap = strchr(cp, '#');
+    if (ap) {
+	ap = ap+1;
+	subaddress = fxStr(ap);
+	sublen = strlen(subaddress) + 1;
+    } else {
+	subaddress = "";
+    }
     fxStr recipient;
     const char* tp = strchr(cp, '@');
     if (tp) {
@@ -280,7 +291,7 @@ sendFaxApp::addDestination(const char* cp)
     } else {
         recipient = "";
     }
-    fxStr dest(cp);
+    fxStr dest(cp, strlen(cp) - sublen);
     if (db && dest.length() > 0) {
         fxStr name;
         FaxDBRecord* r = db->find(dest, &name);
@@ -296,6 +307,7 @@ sendFaxApp::addDestination(const char* cp)
     SendFaxJob& job = addJob();
     job.setDialString(dest);
     job.setCoverName(recipient);
+    job.setSubAddress(subaddress);
     if(job.getDesiredSpeed() > BR_14400 && job.getDesiredEC() == false) {
         printWarning("ECM disabled, limiting job to 14400 bps.");
         job.setDesiredSpeed(BR_14400);

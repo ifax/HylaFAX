@@ -132,8 +132,9 @@ option.
 A destination is the dialing string to use to contact
 the remote fax machine.
 Phone numbers may include non-alphanumeric characters for
-readability\(emonly alphanumerics and ``+'' (for denoting a
-country code) are significant in placing a call.
+readability\(emonly alphanumerics, ``+'' (for denoting a
+country code), and ``#'' (for denoting a subaddress)
+are significant in placing a call.
 Alphabetic characters are automatically mapped to their numeric
 key equivalents: ``abcABC'' to ``2'', ``defDEF'' to ``3'', etc.
 Dialing prefixes, such as ``1'' and ``011''
@@ -298,8 +299,10 @@ a facsimile machine at the indicated
 .IR destination .
 If the
 .I destination
-is of the form ``\fIuser\fP@\fIphone-number\fP'' then any
-cover page will show \fIuser\fP as the intended receipient.
+is of the form ``\fIuser\fP@\fIphone-number\fP#\fIsubaddress\fP'' then any
+cover page will show \fIuser\fP as the intended receipient, and the 
+remote system will be supplied the subaddress value (i.e. for routing) 
+provided that the sending modem and the receiving system support it.
 .TP 12
 .B \-E
 Disable use of the Error Correction Mode (\s-1ECM\s+1)

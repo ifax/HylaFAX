@@ -195,7 +195,7 @@ LDPrefix=${LongDistancePrefix}	! prefix for placing a long distance call
 !
 CanonicalNumber := [
 .ta \w'^${LDPrefix}      'u +\w'= 'u +\w'+${Country}${Area}&      'u
-#.*	=		! strip calling card stuff
+%.*	=		! strip calling card stuff
 [abcABC]	= 2	! these convert alpha to numbers
 [defDEF]	= 3
 [ghiGHI]	= 4
@@ -212,7 +212,7 @@ CanonicalNumber := [
 .RE
 .fi
 .sp .5
-The first rule simply strips anything following a ``#''; this
+The first rule simply strips anything following a ``%''; this
 will remove any calling card-related information.
 The next eight rules convert upper and lower case alphabetics to the
 equivalent key numbers (this is convenient for users that use
@@ -237,12 +237,12 @@ LongDistancePrefix=1
 .fi
 .sp .5
 then if the above set of rules is applied
-to ``01123965-Tube#2345'', the transformations would be:
+to ``01123965-Tube%2345'', the transformations would be:
 .sp .5
 .nf
 .ta \w'01123965-Tube#2345    'u +\w'01123965-7824    'u
 .RS
-01123965-Tube#2345	01123965-Tube	! strip calling card stuff
+01123965-Tube%2345	01123965-Tube	! strip calling card stuff
 01123965-Tube	01123965-8823	! convert alphabetics
 01123965-8823	011239658823		! strip white space etc.
 011239658823	+239658823	! replace int. dialing code

@@ -326,10 +326,7 @@ Class1Modem::decodeTSI(fxStr& ascii, const HDLCFrame& binary)
 void
 Class1Modem::encodePWD(fxStr& binary, const fxStr& ascii)
 {
-    u_int n = fxmin(ascii.length(), (u_int) 20);
-    binary.resize(n);
-    for (u_int i = 0, j = n-1; i < n; i++, j--)
-	binary[j] = frameRev[ascii[i]];
+    encodeTSI(binary, ascii);
 }
 
 /*
@@ -339,15 +336,7 @@ Class1Modem::encodePWD(fxStr& binary, const fxStr& ascii)
 const fxStr&
 Class1Modem::decodePWD(fxStr& ascii, const HDLCFrame& binary)
 {
-    u_int n = fxmin(binary.getFrameDataLength(), (u_int) 20);
-    ascii.resize(n);
-    u_int d = 0;
-    for (const u_char* cp = binary.getFrameData() + n-1; n > 0; cp--, n--) {
-	u_char c = frameRev[*cp];
-	if (isprint(c) || c == ' ')	// XXX accept only printable ascii
-	    ascii[d++] = c;
-    }
-    return ascii;
+    return decodeTSI(ascii, binary);
 }
 
 /*

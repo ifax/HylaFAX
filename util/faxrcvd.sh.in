@@ -90,6 +90,7 @@ if [ -f $FILE ]; then
     # Check the sender's TSI and setup to dispatch
     # facsimile received from well-known senders.
     #
+    SUBADDR="`$INFO $FILE | $AWK -F: '/SubAddr/ { print $2 }' 2>/dev/null`"
     SENDER="`$INFO $FILE | $AWK -F: '/Sender/ { print $2 }' 2>/dev/null`"
     SENDTO=
     if [ -f etc/FaxDispatch ]; then

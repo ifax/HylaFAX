@@ -176,11 +176,11 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg)
 void
 Class1Modem::sendSetupPhaseB(const fxStr& p, const fxStr& s)
 {
-    if (xinfo&DIS_PWD)
+    if (p != fxStr::null && xinfo&DIS_PWD)
 	encodePWD(pwd, p);
     else
 	pwd = fxStr::null;
-    if (xinfo&DIS_SUB)
+    if (p != fxStr::null && xinfo&DIS_SUB)
 	encodePWD(sub, s);
     else
 	sub = fxStr::null;
