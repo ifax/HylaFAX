@@ -3422,7 +3422,7 @@ if [ "$SYSVINIT" = yes ]; then
 	    *-linux*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d ../rc6.d";;
 	    *-solaris*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d ../rcS.d";;
 	    *sysv4.2uw2*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d";;
-	    *-UnixWare-*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d";;
+	    *-UnixWare*)	DIR_SYSVINITSTOP="../rc0.d ../rc1.d";;
 	    *)		DIR_SYSVINITSTOP="../rc0.d";;
 	esac
     fi
@@ -3430,28 +3430,25 @@ if [ "$SYSVINIT" = yes ]; then
 	case $TARGET in
 	    *-hpux*)		NAME_SYSVINITSTART="S905hylafax" ;;
 	    *-linux*)		NAME_SYSVINITSTART="S97hylafax" ;;
-	    *-sco3.2v4*)	NAME_SYSVINITSTART="S80hylafax" ;;
 	    *-sco3.2v5*)	NAME_SYSVINITSTART="S90hylafax" ;;
-	    *-solaris*)		NAME_SYSVINITSTART="S80hylafax" ;;
-	    *-univel*)		NAME_SYSVINITSTART="S80hylafax" ;;
-	    *sysv4.2uw2*)	NAME_SYSVINITSTART="S80hylafax" ;;
-	    *-UnixWare-*)	NAME_SYSVINITSTART="S80hylafax" ;;
-	    *)			NAME_SYSVINITSTART="S80fax" ;;
+	    *)			NAME_SYSVINITSTART="S80hylafax" ;;
 	esac
     fi
     if [ -z "$NAME_SYSVINITSTOP" ]; then
 	case $TARGET in
 	    *-hpux*)		NAME_SYSVINITSTOP="K095hylafax" ;;
-	    *-linux*)		NAME_SYSVINITSTOP="K05hylafax" ;;
-	    *-sco3.2v4*)	NAME_SYSVINITSTOP="K05hylafax" ;;
-	    *-sco3.2v5*)	NAME_SYSVINITSTOP="K05hylafax" ;;
 	    *-solaris*)		NAME_SYSVINITSTOP="K20hylafax" ;;
-	    *-univel*)		NAME_SYSVINITSTOP="K05hylafax" ;;
-	    *sysv4.2uw2*)	NAME_SYSVINITSTOP="K05hylafax" ;;
-	    *-UnixWare-*)	NAME_SYSVINITSTOP="K05hylafax" ;;
-	    *)			NAME_SYSVINITSTOP="K80fax" ;;
+	    *)			NAME_SYSVINITSTOP="K05hylafax" ;;
 	esac
     fi
+fi
+
+# now to keep from breaking etc/Makefile
+if [ -z "$DIR_SYSVINITSTART" ]; then
+    DIR_SYSVINITSTART="dir_sysvinitstart_set_to_non_null_string"
+fi
+if [ -z "$DIR_SYSVINITSTOP" ]; then
+    DIR_SYSVINITSTOP="dir_sysvinitstop_set_to_non_null_string"
 fi
 
 Note "Done selecting programs."

@@ -106,20 +106,17 @@ installSysVInit: hylafax
 	if [ "@SYSVINIT@" = yes ]; then \
 	    ${PUTSERVER} -F ${DIR_SYSVINIT} -m 755 -O hylafax; \
 	    echo "checking ${DIR_SYSVINITSTART} directories"; \
-	    if test -n "${DIR_SYSVINITSTART}"; then \
-		for i in "${DIR_SYSVINITSTART}"; do \
-		    if test -d ${DIR_SYSVINIT}/$$i; then \
-			${PUTSERVER} -F ${DIR_SYSVINIT}/$$i -lns ../`basename ${DIR_SYSVINIT}`/hylafax ${NAME_SYSVINITSTART}; \
-		    fi; \
-		done; \
-	    fi; \
-	    if test -n "${DIR_SYSVINITSTOP}"; then \
-		for i in "${DIR_SYSVINITSTOP}"; do \
-		    if test -d ${DIR_SYSVINIT}/$$i; then \
-			${PUTSERVER} -F ${DIR_SYSVINIT}/$$i -lns ../`basename ${DIR_SYSVINIT}`/hylafax ${NAME_SYSVINITSTOP}; \
-		    fi; \
-		done; \
-	    fi \
+	    for i in ${DIR_SYSVINITSTART}; do \
+		if test -d ${DIR_SYSVINIT}/$$i; then \
+		    ${PUTSERVER} -F ${DIR_SYSVINIT}/$$i -lns ../`basename ${DIR_SYSVINIT}`/hylafax ${NAME_SYSVINITSTART}; \
+		fi; \
+	    done; \
+	    echo "checking ${DIR_SYSVINITSTOP} directories"; \
+	    for i in ${DIR_SYSVINITSTOP}; do \
+		if test -d ${DIR_SYSVINIT}/$$i; then \
+		    ${PUTSERVER} -F ${DIR_SYSVINIT}/$$i -lns ../`basename ${DIR_SYSVINIT}`/hylafax ${NAME_SYSVINITSTOP}; \
+		fi; \
+	    done; \
 	else \
 	    ${PUTSERVER} -F ${SBIN} -m 755 hylafax; \
 	fi
