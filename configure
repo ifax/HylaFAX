@@ -1522,6 +1522,22 @@ EOF
 }
 
 #
+# Look for a library using a known (unique) function.
+#
+CheckForLibraryWithArgs()
+{
+    f=$1; shift
+    a=$1; shift
+    libs="$@";
+    cat>t.c<<EOF
+int t() { $f($a); return 0; }
+int main(){ t(); return 0; }
+EOF
+    capture cat t.c
+    runMake t "t:; \${CCF} t.c $libs"
+}
+
+#
 # Look for an include file.
 #
 CheckForIncludeFile()
@@ -1590,7 +1606,7 @@ CheckForLibrary crypt -lc || {
 	fi
     done
 }
-CheckForLibrary strftime -lc || {
+CheckForLibraryWithArgs strftime "(void*)0, 0, (void*)0, (void*)0" -lc || {
     #
     # SCO has strftime in -lintl.
     #

@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.1
 
+* check strftime with arguments, gcc-3.3 fix (23 Dec 2004)
 * initialize some variables in some scripts that may not
   be initialzed in setup.cache (23 Dec 2004)
 * remove need to have separate "fax" user (22 Dec 2004)
