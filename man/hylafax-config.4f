@@ -267,7 +267,7 @@ Class1EnableV34Cmd	string	\-	Class 1/1.0: command to enable V.34-fax support
 Class1ECMSupport	boolean	\s-1Yes\s+1	Class 1/1.0: enable T.30-A ECM support
 Class1PersistentECM	boolean	\s-1Yes\s+1	Class 1/1.0: to continue to correct while in ECM
 Class1ECMFrameSize	integer	\s-1256\s+1	Class 1/1.0: image frame size in ECM protocol
-Class1ExtendedRes	boolean	\s-1Yes\s+1	Class 1/1.0: enable extended resolution support
+Class1ExtendedRes	boolean	\-	Class 1/1.0: enable extended resolution support
 Class1HFLOCmd	string	\-	Class 1/1.0: command to set hardware flow control
 Class1FrameOverhead	integer	\s-14\s+1	Class 1/1.0: extra bytes in a received \s-1HDLC\s+1 frame
 Class1NFLOCmd	string	\-	Class 1/1.0: command to set no flow control
@@ -276,6 +276,7 @@ Class1RecvIdentTimer	integer	\s-140000\s+1	Class 1/1.0: max wait (ms) for initia
 Class1SFLOCmd	string	\-	Class 1/1.0: command to set software flow control
 Class1PPMWaitCmd	string	\s-1AT+FTS=7\s+1	Class 1/1.0: command to stop and wait before PPM
 Class1ResponseWaitCmd	string	\-	Class 1/1.0: command to wait before TCF response
+Class1Resolutions	integer	\s-10x7F\s+1	Class 1/1.0: bitmap of supported resolutions
 Class1RMQueryCmd	string	\s-1AT+FRM=?\s+1	Class 1/1.0: command to query modem data reception rates
 Class1TCFWaitCmd	string	\s-1AT+FTS=7\s+1	Class 1/1.0: command to stop and wait before TCF
 Class1TMQueryCmd	string	\s-1AT+FTM=?\s+1	Class 1/1.0: command to query modem data transmission rates
@@ -2090,6 +2091,8 @@ extremely poor line quality.
 .TP
 .B Class1ExtendedRes
 Whether or not to support resolutions other than normal and fine.
+This option has been deprecated by
+.B Class1Resolutions.
 .TP
 .B Class1FrameOverhead
 The number of extraneous bytes in
@@ -2131,6 +2134,26 @@ According to T.30, Chapter 5, Note 4, this delay should be 75 +/- 20 ms.
 The command used to stop and wait after sending TCF, before attempting to 
 receive a training response from the remote.  Set this to ``AT+FRS=1'' if 
 you experience ``DIS/DTC received 3 times'' errors.
+.TP
+.B Class1Resolutions
+A bitmapped (bit-or'd) value indicating the resolutions to be supported during facsimile
+operation.  Individual resolutions follow Table 21/T.32 and are defined as follows:
+.ne 1i
+.sp .5
+.ta \w'\fB131072 (0x20)    \fP'u +\w'Modem Communications    'u
+.nf
+\fBBit	Description\fP
+0 (0x00)	R8 x 3.85 l/mm, Normal
+1 (0x01)	R8 x 7.7 l/mm, Fine
+2 (0x02)	R8 x 15.4 l/mm, Superfine
+4 (0x04)	R16 x 15.4 l/mm, Hyperfine
+8 (0x08)	200 dpi x 100 l/inch
+16 (0x10)	200 dpi x 200 l/inch
+32 (0x20)	200 dpi x 400 l/inch
+64 (0x40)	300 dpi x 300 l/inch
+.sp .5
+.fi
+Thus, a value of 3 would indicate support for normal, fine, and superfine resolutions.
 .TP
 .B Class1RMQueryCmd
 The command to send to the modem to get the list of supported reception bit-rates.

@@ -173,21 +173,12 @@ Class1Modem::setupModem()
 	} while (isdigit((++buf)[0]));
 	modemParams.br |= BIT(primaryV34Rate) - 1;
     }
-    if (conf.class1ExtendedRes) {
-	modemParams.vr = VR_ALL;
-    } else {
-	modemParams.vr = VR_NORMAL | VR_FINE;
-    }
     modemParams.wd = BIT(WD_1728) | BIT(WD_2048) | BIT(WD_2432);
     modemParams.ln = LN_ALL;
     modemParams.df = BIT(DF_1DMH) | BIT(DF_2DMR);
-    if (conf.class1ECMSupport) {
-	modemParams.ec = BIT(EC_DISABLE) | BIT(EC_ENABLE64) | BIT(EC_ENABLE256);
- 	modemParams.df |= BIT(DF_2DMMR);
-    } else
-	modemParams.ec = BIT(EC_DISABLE);
     modemParams.bf = BF_DISABLE;
     modemParams.st = ST_ALL;
+    pokeConfig();
     traceModemParams();
     /*
      * Receive capabilities are maintained separately from
@@ -237,6 +228,20 @@ Class1Modem::setupModem()
 
     setupClass1Parameters();
     return (true);
+}
+
+/*
+ * These are potentially dynamic modem settings that can be altered on-the-fly.
+ */
+void
+Class1Modem::pokeConfig()
+{
+    modemParams.vr = conf.class1Resolutions;	// bitmapped by configuration
+    if (conf.class1ECMSupport) {
+	modemParams.ec = BIT(EC_DISABLE) | BIT(EC_ENABLE64) | BIT(EC_ENABLE256);
+ 	modemParams.df |= BIT(DF_2DMMR);
+    } else
+	modemParams.ec = BIT(EC_DISABLE);
 }
 
 /*

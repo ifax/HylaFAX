@@ -135,6 +135,7 @@ public:
     u_int	class1SendMsgDelay;	// delay (ms) after training
     u_int	class1TrainingRecovery;	// delay (ms) after failed training
     u_int	class1RecvAbortOK;	// if non-zero, OK sent after recv abort
+    u_int	class1Resolutions;	// resolutions support
     u_int	class1FrameOverhead;	// overhead bytes in received frames
     u_int	class1RecvIdentTimer;	// timeout receiving initial identity
     u_int	class1TCFMaxNonZero;	// non-zero threshold for TCF check
@@ -143,7 +144,6 @@ public:
     u_int	class1ECMFrameSize;	// ECM frame size for transmission
     bool	class1ECMSupport;	// support T.30-A ECM
     bool	class1PersistentECM;	// continue to correct
-    bool	class1ExtendedRes;	// support for extended resolutions
     bool	class1TCFRecvHack;	// deliberately look for V.21 disconnect
     bool	class1ValidateV21Frames;// check received FCS values in V.21
 					// for class 2 and 2.0:

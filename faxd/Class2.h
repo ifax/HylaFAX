@@ -150,6 +150,7 @@ public:
     bool	recvPage(TIFF*, u_int& ppm, fxStr& emsg, const fxStr& id);
     bool	recvEnd(fxStr& emsg);
     void	recvAbort();
+    void	pokeConfig();
 
 // polling support
     bool	requestToPoll(fxStr& emsg);

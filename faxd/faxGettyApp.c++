@@ -346,6 +346,9 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
 			Sys::waitpid(pid, status);
 			if (status != 0)
 			    logError("Bad exit status %#o for \'%s\'", status, (const char*) cmd);
+			// modem settings may have changed...
+			FaxModem* modem = (FaxModem*) ModemServer::getModem();
+			modem->pokeConfig();
 		    }
 		    break;
 	    }

@@ -549,7 +549,7 @@ u_int
 FaxModem::modemDIS() const
 {
     return DIS_T4RCVR
-	  | DIS_7MMVRES		// not getVRes(), DIS only contains partial VR data
+	  | ((modemParams.vr & VR_FINE) ? DIS_7MMVRES : 0)	// not getVRes(), DIS only contains partial VR data
 	  | Class2Params::brDISTab[getBestSignallingRate()]
 	  | Class2Params::wdDISTab[getBestPageWidth()]
 	  | Class2Params::lnDISTab[getBestPageWidth()]

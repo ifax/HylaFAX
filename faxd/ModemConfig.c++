@@ -238,7 +238,7 @@ ModemConfig::setupConfig()
     class2HexNSF	= true;			// most modems report NSF in hexadecimal
     class2UseLineCount	= false;		// don't trust firmware decoders
     class1ECMSupport	= true;			// support for ECM
-    class1ExtendedRes	= true;			// support for extended resolutions
+    class1Resolutions	= VR_ALL;		// resolutions support
     class1PersistentECM	= true;			// continue to correct
     class1TCFRecvHack	= false;		// historical behavior
     class1ValidateV21Frames = false;		// assume the modem does this
@@ -586,7 +586,9 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
     else if (streq(tag, "class1persistentecm"))
 	class1PersistentECM = getBoolean(value);
     else if (streq(tag, "class1extendedres"))
-	class1ExtendedRes = getBoolean(value);
+	class1Resolutions = getBoolean(value) ? VR_ALL : (VR_NORMAL | VR_FINE);
+    else if (streq(tag, "class1resolutions"))
+	class1Resolutions = getNumber(value);
     else if (streq(tag, "class1tcfrecvhack"))
 	class1TCFRecvHack = getBoolean(value);
     else if (streq(tag, "class1validatev21frames"))

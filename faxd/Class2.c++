@@ -265,6 +265,11 @@ Class2Modem::setupModem()
     return (true);
 }
 
+void
+Class2Modem::pokeConfig()
+{
+}
+
 /*
  * Switch the modem to Class 2/2.0 and  insure parameters
  * are set as we want them since some modems reset state
