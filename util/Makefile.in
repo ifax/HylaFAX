@@ -179,8 +179,8 @@ install: installClient
 	${PUTSUPD} -m 755 -src pdf2fax.gs.sh -O pdf2fax.gs
 	${PUTSUPD} -m 755 -src pcl2fax.sh -O pcl2fax
 	${PUTSUPD} -m 755 -src tiff2fax.sh -O tiff2fax
+	${PUTSUPD} -m 755 -src tiff2pdf.sh -O tiff2pdf
 	${PUTSUPD} -m 755 -src notify.sh -O notify
-	${PUTSUPD} -m 444 -src ${SRCDIR}/notify.awk -O notify.awk
 	${PUTSUPD} -m 755 -src archive.sh -O archive
 	${PUTSUPD} -m 755 -src faxrcvd.sh -O faxrcvd
 	${PUTSUPD} -m 755 -src pollrcvd.sh -O pollrcvd
@@ -200,5 +200,5 @@ clobberconfig:
 	-${RM} -f pagesizes xferfaxstats.sh recvstats.sh faxcron.sh \
 		faxrcvd.sh mkcover.sh notify.sh pcl2fax.sh pollrcvd.sh \
 		ps2fax.dps.sh ps2fax.gs.sh ps2fax.imp.sh tiff2fax.sh \
-		wedged.sh archive.sh pdf2fax.gs.sh
+		tiff2pdf.sh wedged.sh archive.sh pdf2fax.gs.sh
 

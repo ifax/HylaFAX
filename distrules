@@ -359,7 +359,6 @@ HYLAFAXSRC=\
 	util/faxstate.c				\
 	util/fxassert.c				\
 	util/pagesizes.in			\
-	util/notify.awk				\
 	util/faxcron.sh.in			\
 	util/archive.sh.in			\
 	util/faxrcvd.sh.in			\
@@ -373,6 +372,7 @@ HYLAFAXSRC=\
 	util/pdf2fax.gs.sh.in			\
 	util/recvstats.sh.in			\
 	util/tiff2fax.sh.in			\
+	util/tiff2pdf.sh.in			\
 	util/wedged.sh.in			\
 	util/xferfaxstats.sh.in			\
 	util/typerules				\
