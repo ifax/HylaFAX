@@ -63,3 +63,5 @@ ModemSetupAACmd:	AT+FCLASS=0;+FAA=1 # enable in class 0
 ModemSendFillOrder:	LSB2MSB		# as expected
 ModemRecvFillOrder:	MSB2LSB		# opposite of what makes sense
 Class2RecvDataTrigger:	"\022"		# a la 2388-B
+Class2APQueryCmd:	none		# prevent ERROR
+Class2BUGCmd:		none		# prevent ERROR
