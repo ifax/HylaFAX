@@ -196,7 +196,10 @@ SendToModem()
 {
     COMMAND=$*
     sleep 1					# wait for previous kill
-    onDev $STTY 0; sleep 1			# reset the modem (hopefully)
+    case $TARGET in    
+    *-linux*)	;;
+    *)	onDev $STTY 0; sleep 1	;;		# reset the modem (hopefully)
+    esac
 						# start listening for output
     onDev -c "$STTY clocal && exec $CAT $tdev"; sleep 2
     #
@@ -281,8 +284,10 @@ Try()
 {
     TRYCOMMAND=$*
     sleep 1					# wait for previous kill
-    onDev $STTY 0				# reset the modem (hopefully)
-    sleep 1
+    case $TARGET in    
+    *-linux*)	;;
+    *)	onDev $STTY 0; sleep 1	;;		# reset the modem (hopefully)
+    esac
     onDev -c "$STTY clocal && exec $CAT $tdev"	# start listening for output
     sleep 1
     onDev $STTY -echo -icrnl -ixon -ixoff -isig eof '"^A"' clocal $SPEED
