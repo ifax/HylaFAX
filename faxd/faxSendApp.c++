@@ -122,15 +122,13 @@ faxSendApp::send(const char* filename)
 	    /*
 	     * Handle any session parameters that might be passed
 	     * down from faxq (or possibly stuck in the modem config
-	     * file).  These are applied before reading the queue
-	     * file so that any user-specified values override.
+	     * file).  Except for DesiredBR/EC/ST, these are applied 
+	     * before reading the queue file so that any user-specified 
+	     * values override.  We don't handle DesiredBR/EC/ST this
+	     * way because it would break their usage in DestControls
+	     * since there's currently no way for us to determine if
+	     * the setting in the queue file is explicitly specified.
 	     */
-	    if (desiredBR != (u_int) -1)
-		req->desiredbr = desiredBR;
-	    if (desiredEC != (u_int) -1)
-		req->desiredec = desiredEC;
-	    if (desiredST != (u_int) -1)
-		req->desiredst = desiredST;
 	    bool reject;
 	    if (req->readQFile(reject) && !reject) {
 		FaxMachineInfo info;
@@ -138,6 +136,22 @@ faxSendApp::send(const char* filename)
 		FaxAcctInfo ai;
 
 		ai.start = Sys::now();
+
+		/*
+		 * Force any DesiredBR/EC/ST options in the configuration
+		 * files (i.e. DestControls) to take precedence over
+		 * any user-specified settings.  This shouldn't cause
+		 * too many problems, hopefully, since their usage should
+		 * be fairly rare either by configuration settings or by
+		 * user-specification.
+		 */
+
+		if (desiredBR != (u_int) -1)
+		    req->desiredbr = desiredBR;
+		if (desiredEC != (u_int) -1)
+		    req->desiredec = desiredEC;
+		if (desiredST != (u_int) -1)
+		    req->desiredst = desiredST;
 
 		FaxServer::sendFax(*req, info, ai);
 

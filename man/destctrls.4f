@@ -160,7 +160,7 @@ international phone calls one might use:
 .sp .5
 .nf
 .ft C
- [+][^1]    DesiredBR=9600 DesiredEC=false
+ [+][^1]    DesiredBR=3 DesiredEC=false
 .ft P
 .fi
 .SH NOTES
