@@ -33,7 +33,7 @@ This chapter includes the following sections:
 <LI><A HREF="#TimeOfDay">Time-of-Day Usage Scheduling</A>
 <LI><A HREF="#DestControls">Per-destination Controls</A>
 <LI><A HREF="#PageChopping">Automatic Truncation of Whitespace</A>
-<LI><A HREF="#ModemClass">Modem Classes</A>
+<LI><A HREF="#ModemGroup">Modem Groups</A>
 <LI><A HREF="#ModemPriority">Modem Priorities</A>
 <LI><A HREF="#Transcoding">Transcoding of Received Facsimile</A>
 <LI><A HREF="#FaxRcvd">Automatic Processing of Received Facsimile</A>
@@ -603,27 +603,27 @@ Clients can override the defaults setup on the server for each outbound
 job through command line options to sendfax and client-side configuration
 parameters.
 
-<A NAME="ModemClass"><P><HR WIDTH=65% ALIGN=right><H3>Modem Classes</A></H3>
+<A NAME="ModemGroup"><P><HR WIDTH=65% ALIGN=right><H3>Modem Groups</A></H3>
 
 Groups of modems can be referenced by name using a facility termed
-<I>modem classes</I>.
-A modem class defines a logical name for a set of modem devices on a
+<I>modem groups</I>.
+A modem group defines a logical name for a set of modem devices on a
 server.  This name can be used by clients in the same way that a
 specific modem device is used.
 The default modem to use for outbound jobs, ``any'', is actually just
-a predefined modem class.
-Modem classes are useful for groups that want to logically partition
+a predefined modem group.
+Modem groups are useful for groups that want to logically partition
 a set of modems on a single server.
 
 <P>
-Modem classes are defined with the <TT>ModemClass</TT> configuration
+Modem groups are defined with the <TT>ModemGroup</TT> configuration
 parameter.
 Each definition specifies a name and a regular expression that identifies
 the set of modems that are to be included in the class.
 For example,
 
 <UL><TT>
-<PRE>ModemClass:	"any:.*"</PRE>
+<PRE>ModemGroup:	"any:.*"</PRE>
 </TT></UL>
 
 is the builtin definition for ``any''.  Regular expressions are matched
@@ -635,7 +635,7 @@ faxmodem or faxgetty.
 The HylaFAX scheduler process assigns modems to outbound jobs based
 on three criteria:
 the modem is considered ready for use,
-the modem is a member of the requested modem class (if any was specified), and
+the modem is a member of the requested modem group (if any was specified), and
 the modem's capabilities support the requirements of the job (e.g.
 transmission of high-resolution 2D-encoded data).
 When multiple modems are present on a server machine it is also

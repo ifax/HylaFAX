@@ -2794,14 +2794,14 @@ faxQueueApp::setConfigItem(const char* tag, const char* value)
 		if (re->getErrorCode() > REG_NOMATCH) {
 		    fxStr emsg;
 		    re->getError(emsg);
-		    configError("Bad pattern for modem class \"%s\": %s: " | emsg,
+		    configError("Bad pattern for modem group \"%s\": %s: " | emsg,
 			(const char*) name, re->pattern());
 		} else
 		    ModemGroup::set(name, re);
 	    } else
-		configError("No regular expression for modem class");
+		configError("No regular expression for modem group");
 	} else
-	    configError("Missing ':' separator in modem class specification");
+	    configError("Missing ':' separator in modem group specification");
     } else if (streq(tag, "pagechop")) {
 	if (streq(value, "all"))
 	    pageChop = FaxRequest::chop_all;
