@@ -3483,7 +3483,7 @@ if [ -z "$DIR_SYSVINIT" ]; then
     case $TARGET in
 	*-sunos*)	DIR_SYSVINITS="$DIR_SYSVINITS $DIR_SBIN";;
 	*-hpux*)	DIR_SYSVINITS="/sbin/init.d $DIR_SYSVINITS";;
-	*-dec-osf4.0*)	DIR_SYSVINITS="/sbin/init.d $DIR_SYSVINITS";;
+	*-dec-osf*)	DIR_SYSVINITS="/sbin/init.d $DIR_SYSVINITS";;
 	*)		;;
     esac
     DIR_SYSVINIT=

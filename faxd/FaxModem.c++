@@ -814,7 +814,7 @@ u_char* MemoryDecoder::cutExtraRTC()
 }
 
 void
-FaxModem::correctPhaseCData(u_char* buf, uint32* pBufSize,
+FaxModem::correctPhaseCData(u_char* buf, u_long* pBufSize,
                             u_int fillorder, const Class2Params& params)
 {
     MemoryDecoder dec1(buf, params.pageWidth(), *pBufSize, fillorder, params.is2D());
