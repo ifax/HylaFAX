@@ -1196,7 +1196,8 @@ ClassModem::waitForRings(u_int n, CallType& type, CallerID& cinfo)
 		else if (streq(conf.ringVoice, rbuf))
 		    type = CALLTYPE_VOICE;
 		else {
-		    if (strneq(rbuf, "RING ", 5))	// extended RING
+		    if (strneq(rbuf, conf.ringExtended,
+			    conf.ringExtended.length()))	// extended RING
 			n--;
 		    conf.parseCID(rbuf, cinfo);
 		    break;

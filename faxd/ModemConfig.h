@@ -94,6 +94,7 @@ public:
     fxStr	ringData;		// data call ring string
     fxStr	ringFax;		// fax call ring string
     fxStr	ringVoice;		// voice call ring string
+    fxStr	ringExtended;		// extended ring
 					// caller id
     fxStr	cidName;		// pattern for name info
     fxStr	cidNumber;		// pattern for number info

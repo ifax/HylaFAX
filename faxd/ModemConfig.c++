@@ -155,6 +155,7 @@ static struct {
 { "ringdata",			&ModemConfig::ringData },
 { "ringfax",			&ModemConfig::ringFax },
 { "ringvoice",			&ModemConfig::ringVoice },
+{ "ringextended",		&ModemConfig::ringExtended,	"RING " },
 { "cidname",			&ModemConfig::cidName },
 { "cidnumber",			&ModemConfig::cidNumber },
 };
