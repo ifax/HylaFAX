@@ -643,9 +643,9 @@ Class1Modem::sendRTC(bool is2D)
 	{ 0x00,0x18,0x00,0xC0,0x06,0x00,0x30,0x01,0x80,0x0C };
     protoTrace("SEND %s RTC", is2D ? "2D" : "1D");
     if (is2D)
-	return sendClass1Data(RTC2D, sizeof (RTC2D), frameRev, true);
+	return sendClass1Data(RTC2D, sizeof (RTC2D), rtcRev, true);
     else
-	return sendClass1Data(RTC1D, sizeof (RTC1D), frameRev, true);
+	return sendClass1Data(RTC1D, sizeof (RTC1D), rtcRev, true);
 }
 
 #define	EOLcheck(w,mask,code) \
@@ -713,7 +713,7 @@ Class1Modem::sendPage(TIFF* tif, const Class2Params& params, u_int pageChop, fxS
 	uint16 fillorder;
 	TIFFGetFieldDefaulted(tif, TIFFTAG_FILLORDER, &fillorder);
 	const u_char* bitrev =
-	    TIFFGetBitRevTable(conf.sendFillOrder != FILLORDER_LSB2MSB);
+	    TIFFGetBitRevTable(sendFillOrder != FILLORDER_LSB2MSB);
 	/*
 	 * Setup tag line processing.
 	 */

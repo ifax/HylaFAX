@@ -157,8 +157,8 @@ static const struct {
     u_int ModemConfig::* p;
     u_int		 def;
 } fillorders[] = {
-{ "modemrecvfillorder",	 &ModemConfig::recvFillOrder,  FILLORDER_LSB2MSB },
-{ "modemsendfillorder",	 &ModemConfig::sendFillOrder,  FILLORDER_LSB2MSB },
+{ "modemrecvfillorder",  &ModemConfig::recvFillOrder,  0 }, // will be autodetected
+{ "modemsendfillorder",  &ModemConfig::sendFillOrder,  0 }, // will be autodetected
 { "modemframefillorder", &ModemConfig::frameFillOrder, FILLORDER_LSB2MSB },
 };
 static const struct {
@@ -205,7 +205,7 @@ ModemConfig::setupConfig()
     for (i = N(numbers)-1; i >= 0; i--)
 	(*this).*numbers[i].p = numbers[i].def;
 
-    flowControl		= ClassModem::FLOW_NONE;// no flow control
+    flowControl         = ClassModem::FLOW_XONXOFF;// software flow control
     maxRate		= ClassModem::BR19200;	// reasonable for most modems
     minSpeed		= BR_2400;		// minimum transmit speed
     waitForConnect	= false;		// unique modem answer response

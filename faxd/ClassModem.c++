@@ -148,6 +148,9 @@ ClassModem::ClassModem(ModemServer& s, const ModemConfig& c)
     flowControl = conf.flowControl;
     iFlow = FLOW_NONE;
     oFlow = FLOW_NONE;
+    setupDefault(mfrQueryCmd,   conf.mfrQueryCmd,       "ATI3");
+    setupDefault(modelQueryCmd, conf.modelQueryCmd,     "ATI0");
+    setupDefault(revQueryCmd,   conf.revQueryCmd,       ""); // No "standard" way? -- dbely
 }
 
 ClassModem::~ClassModem()
@@ -523,6 +526,15 @@ ClassModem::pause(u_int ms)
     tv.tv_sec = ms / MSEC_PER_SEC;
     tv.tv_usec = (ms % MSEC_PER_SEC) * 1000;
     (void) select(0, 0, 0, 0, &tv);
+}
+
+static void
+ClassModem::setupDefault(fxStr& s, const fxStr& configured, const char* def)
+{
+    if (configured == "")
+	s = def;
+    else
+	s = configured;
 }
 
 /*

@@ -28,6 +28,7 @@
 
 #include "Sys.h"
 #include "FaxServer.h"
+#include "Class0.h"
 #include "Class1.h"
 #include "Class2Ersatz.h"
 #include "Class20.h"
@@ -120,8 +121,36 @@ FaxServer::deduceModem()
      * Probe for modem using type, if specified; otherwise
      * try Class 2.0, Class 2, Class 1, and then Class 0 types.
      */
+    u_int modemServices = 0;    // fax classes to try (bitmask)
     ClassModem* modem;
-    if (h == "CLASS2.0" || h == "UNKNOWN") {
+    if (h == "UNKNOWN"){
+	modem = new Class0Modem(*this, *this);
+	if (modem) {
+	    if (modem->setupModem()){
+                modemServices = modem->getModemServices();
+                fxStr mfr = modem->getManufacturer();
+                mfr.raisecase();
+                if( mfr.find(0,"ROBOTICS") < mfr.length() ||
+                    mfr.find(0,"3COM")     < mfr.length() ){
+                    /*
+                     * Don't use Class2.0 with USR modems if not explicitly
+                     * specified in the config file (it doesn't work reliably) -- dbely
+                     */
+                    modem->serverTrace("USR/3COM modem: disable Class 2.0");
+                    modemServices &= ~SERVICE_CLASS20;
+                }
+            }
+	    delete modem;
+	}
+    }
+    else if (h == "CLASS2.0")
+        modemServices |= SERVICE_CLASS20;
+    else if (h == "CLASS2")
+        modemServices |= SERVICE_CLASS2;
+    else if (h == "CLASS1")
+        modemServices |= SERVICE_CLASS1;
+
+    if (modemServices & SERVICE_CLASS20) {
 	modem = new Class20Modem(*this, *this);
 	if (modem) {
 	    if (modem->setupModem())
@@ -129,7 +158,7 @@ FaxServer::deduceModem()
 	    delete modem;
 	}
     }
-    if (h == "CLASS2" || h == "UNKNOWN") {
+    if (modemServices & SERVICE_CLASS2) {
 	modem = new Class2ErsatzModem(*this, *this);
 	if (modem) {
 	    if (modem->setupModem())
@@ -137,7 +166,7 @@ FaxServer::deduceModem()
 	    delete modem;
 	}
     }
-    if (h == "CLASS1" || h == "UNKNOWN") {
+    if (modemServices & SERVICE_CLASS1) {
 	modem = new Class1Modem(*this, *this);
 	if (modem) {
 	    if (modem->setupModem())

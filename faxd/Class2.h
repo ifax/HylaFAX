@@ -67,11 +67,9 @@ protected:
     char	recvDataTrigger;	// char to send to start recv'ing data
     char	hangupCode[4];		// hangup reason (from modem)
     bool	hadHangup;		// true if +FHNG:/+FHS: received
-    const u_char* rtcRev;		// bit reversal table for RTC
     fxStr	lid;			// prepared local identifier string
 
 // modem setup stuff
-    void setupDefault(fxStr&, const fxStr&, const char*);
     virtual bool setupModem();
     virtual bool setupModel(fxStr& model);
     virtual bool setupRevision(fxStr& rev);

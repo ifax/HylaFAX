@@ -32,20 +32,10 @@ Class2Modem::Class2Modem(FaxServer& s, const ModemConfig& c) : FaxModem(s,c)
 {
     hangupCode[0] = '\0';
     serviceType = 0;			// must be set in derived class
-    rtcRev = TIFFGetBitRevTable(conf.sendFillOrder == FILLORDER_LSB2MSB);
 }
 
 Class2Modem::~Class2Modem()
 {
-}
-
-void
-Class2Modem::setupDefault(fxStr& s, const fxStr& configured, const char* def)
-{
-    if (configured == "")
-	s = def;
-    else
-	s = configured;
 }
 
 /*
@@ -183,6 +173,25 @@ Class2Modem::setupModem()
 	xmitWaitForXON = false;
     else
 	xmitWaitForXON = conf.class2XmitWaitForXON;
+
+    /*
+     * Most Class2 modems require recvFillOrder == MSB2LSB
+     * (Rockwell bug, which has become "standard" now).
+     *
+     * The only known exception is early Multitech modems,
+     * that follow original Class2 specs (LSB2MSB). They  report the
+     * manufacturer as "Multi-Tech Sys" or "Multi-Tech Systems".
+     *
+     * Other Class2 modems that requires recvFillOrder == LSB2MSB
+     * (if any) are expected to set the appropriate value in the
+     * config file.
+     */
+    if( conf.recvFillOrder == 0 &&  serviceType == SERVICE_CLASS2 ){
+        if ( modemMfr.find(0, "MULTI-TECH") >= modemMfr.length()  ){
+            // Not a Multitech
+            recvFillOrder = FILLORDER_MSB2LSB;
+        }
+    }
 
     setupClass2Parameters();			// send parameters to the modem
     return (true);

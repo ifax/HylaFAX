@@ -96,6 +96,9 @@ protected:
     fxStackBuffer* recvBuf;	// raw recv data for when copy quality disabled
     uint32	group3opts;	// for writing received TIFF
     Class2Params params;	// current session params
+    u_int       recvFillOrder;  // bit order of recvd data (ModemConfig & autodetected)
+    u_int       sendFillOrder;  // bit order of sent data (ModemConfig & autodetected)
+    const u_char* rtcRev;       // bit reversal table for RTC
 
     FaxModem(FaxServer&, const ModemConfig&);
 

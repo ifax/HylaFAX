@@ -28,7 +28,7 @@
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
 .ds Ps P\s-2OST\s+2S\s-2CRIPT\s+2
-.TH CONFIG 4F "August 28, 1996"
+.TH CONFIG 4F "$Date$"
 .SH NAME
 config \- \*(Fx configuration database
 .SH DESCRIPTION
@@ -208,7 +208,7 @@ ModemCommaPauseTimeCmd	string	\s-1ATS8=2\s+1	command for setting time to pause f
 ModemDialCmd	string	\s-1ATDT%s\s+1	command for dialing (%s for number to dial)
 ModemDialResponseTimeout	integer	\s-1180000\s+1	dialing command timeout (ms)
 ModemEchoOffCmd	string	\s-1ATE0\s+1	command for disabling command echo
-ModemFlowControl	string	\s-1None\s+1	\s-1DTE-DCE\s+1 flow control scheme
+ModemFlowControl	string	\s-1XONXOFF\s+1	\s-1DTE-DCE\s+1 flow control scheme
 ModemFrameFillOrder	string	\s-1LSB2MSB\s+1	bit order for \s-1HDLC\s+1 frames
 ModemHardFlowCmd	string	\-	command for setting hardware flow control between \s-1DTE\s+1 and \s-1DCE\s+1
 ModemMinSpeed	string	\s-12400\s+1	minimum acceptable transmit speed
@@ -220,7 +220,7 @@ ModemOnHookCmd	string	\s-1ATH0\s+1	command for placing phone ``on hook''
 ModemPageDoneTimeout	integer	\s-1180000\s+1	page send/receive timeout (ms)
 ModemPageStartTimeout	integer	\s-1180000\s+1	page send/receive timeout (ms)
 ModemRate	integer	\s-119200\s+1	baud rate to use for \s-1DCE-DTE\s+1 communication
-ModemRecvFillOrder	string	\s-1LSB2MSB\s+1	bit order for received facsimile data
+ModemRecvFillOrder	string	\s-1\fIsee below\fP\s+1	bit order for received facsimile data
 ModemResetCmds	string	\-	additional commands when resetting modem
 ModemResetDelay	integer	\s-12600\s+1	delay (ms) after sending modem reset commands
 ModemResultCodesCmd	string	\s-1ATQ0\s+1	command for enabling result codes
@@ -233,7 +233,7 @@ ModemSetupDCDCmd	string	\-	command for setting up \s-1DCD\s+1 handling
 ModemSetupDTRCmd	string	\-	command for setting up \s-1DTR\s+1 handling
 ModemSoftFlowCmd	string	\-	command for setting software flow control between \s-1DTE\s+1 and \s-1DCE\s+1
 ModemSoftResetCmd	string	\s-1ATZ\s+1	command for doing a soft reset
-ModemType	string	\-	modem type
+ModemType	string	\s-1\fIsee below\fP\s+1	modem type
 ModemVerboseResultsCmd	string	\s-1ATV1\s+1	command for enabling verbose result codes
 ModemWaitForConnect	boolean	\s-1No\s+1	force server to wait for ``\s-1CONNECT\s+1'' response on answer
 ModemWaitTimeCmd	string	\s-1ATS7=60\s+1	command for setting time to wait for carrier when dialing
@@ -1536,6 +1536,11 @@ flow control be used for reliable
 communication.
 However, beware that many modems only support software
 flow control when sending or receiving facsimile.
+.IP
+Note that modems usually support software flow control even
+if they have no explicit AT-command to activate it; in this case
+it is switched on when the modem enters fax mode, having
+AT+FCLASS=... from \s-1DTE\s+1.
 .TP
 .B ModemFrameFillOrder
 The bit order to expect for received
@@ -1569,7 +1574,8 @@ The command to send to the modem to get the manufacturer
 identification string.
 If this parameter is not set, then it is initialized
 to ``\s-1AT+FMFR?\s+1'' for Class 2 modems, or
-to ``\s-1AT+FMI?\s+1'' for Class 2.0 modems.
+to ``\s-1AT+FMI?\s+1'' for Class 2.0 modems, or
+to ``\s-1ATI3\s+1'' for Class 1 modems.
 If the parameter begins with a ``!'', then the remainder of the
 string is taken to be the identification string and no command
 is issued to the modem.
@@ -1577,8 +1583,9 @@ is issued to the modem.
 .B ModemModelQueryCmd
 The command to send to the modem to get the model identification string.
 If this parameter is not set, then it is initialized to
-to ``\s-1AT+FMDL?\s+1'' for Class 2 modems,
-or to ``\s-1AT+FMM?\s+1'' for Class 2.0 modems.
+to ``\s-1AT+FMDL?\s+1'' for Class 2 modems, or
+to ``\s-1AT+FMM?\s+1'' for Class 2.0 modems, or
+to ``\s-1ATI0\s+1'' for Class 1 modems.
 If the parameter begins with a ``!'', then the remainder of the
 string is taken to be the identification string and no command
 is issued to the modem.
@@ -1636,11 +1643,18 @@ According to the various specifications all modems should return
 data in
 .SM LSB2MSB
 order.
-However many Class 2 modems use
+However most Class 2 modems (except maybe only Multitech) use
 .SM MSB2LSB
 for compatibility with modems that were built with
 Rockwell hardware/firmware that included a bug
 that was too widespread to correct.
+.IP
+If this parameter is not set, then it is autodetected and set to
+.SM LSB2MSB
+for Class 1 and Class 2.0 modems and
+.SM MSB2LSB
+for non-Multitech Class 2 modems. However this may be wrong for
+your modem, so you will have to specify this parameter explicitly.
 .TP
 .B ModemResetCmds
 A string of commands to issue to the modem during initialization.
@@ -1762,6 +1776,8 @@ This parameter must be set to one of: ``Class2'', ``Class2.0'',
 or ``Class1'';
 to indicate that the modem is a Class 2-,
 Class 2.0-, or Class 1-style modem, respectively.
+If this parameter is not set, then it is autodetected and 
+the highest supported fax class is used.
 .TP
 .B ModemVerboseResultsCmd
 The command to enable verbose, as opposed to numeric, result codes.

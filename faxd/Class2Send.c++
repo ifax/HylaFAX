@@ -359,7 +359,7 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	uint16 fillorder;
 	TIFFGetFieldDefaulted(tif, TIFFTAG_FILLORDER, &fillorder);
 	const u_char* bitrev =
-	    TIFFGetBitRevTable(fillorder != conf.sendFillOrder);
+	    TIFFGetBitRevTable(fillorder != sendFillOrder);
 	/*
 	 * Setup tag line processing.
 	 */

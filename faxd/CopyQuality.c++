@@ -47,7 +47,7 @@ bool
 FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
     const Class2Params& params, fxStr& emsg)
 {
-    setupDecoder(conf.recvFillOrder, params.is2D());
+    setupDecoder(recvFillOrder, params.is2D());
 
     u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 2432
     tiff_runlen_t runs[2*2432];			// run arrays for cur+ref rows

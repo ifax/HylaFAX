@@ -195,6 +195,7 @@ protected:
     ClassModem(ModemServer&, const ModemConfig&);
 
 // setup and configuration
+    static void setupDefault(fxStr&, const fxStr&, const char*);
     virtual bool selectBaudRate(BaudRate max, FlowControl i, FlowControl o);
     virtual bool setupManufacturer(fxStr& mfr);
     virtual bool setupModel(fxStr& model);
@@ -227,6 +228,7 @@ public:
     const fxStr& getManufacturer() const;
     const fxStr& getRevision() const;
     fxStr	getCapabilities() const;
+    u_int	getModemServices() const;
 // data transfer timeout controls
     void	setDataTimeout(long secs, u_int br);
     long	getDataTimeout() const;
@@ -313,6 +315,7 @@ inline long ClassModem::getDataTimeout() const		{ return dataTimeout; }
 inline const fxStr& ClassModem::getModel() const	{ return modemModel; }
 inline const fxStr& ClassModem::getManufacturer() const	{ return modemMfr; }
 inline const fxStr& ClassModem::getRevision() const	{ return modemRevision; }
+inline u_int ClassModem::getModemServices() const       { return modemServices; }
 inline FlowControl ClassModem::getInputFlow()		{ return iFlow; }
 inline FlowControl ClassModem::getOutputFlow()		{ return oFlow; }
 #endif /* _ClassModem_ */
