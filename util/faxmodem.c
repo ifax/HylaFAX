@@ -186,7 +186,7 @@ parseCapabilities(const char* cp, u_int* caps)
 
 extern	int cvtFacility(const char*, int*);
 
-void
+int
 main(int argc, char** argv)
 {
     extern int optind;
@@ -261,5 +261,5 @@ main(int argc, char** argv)
 	fatal("%s: FIFO write failed for command (%s)",
 	    argv[0], strerror(errno));
     (void) close(fifo);
-    exit(0);
+    return 0;
 }

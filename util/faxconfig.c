@@ -51,7 +51,7 @@ fatal(char* fmt, ...)
 
 extern	int cvtFacility(const char*, int*);
 
-void
+int
 main(int argc, char** argv)
 {
     extern int optind;
@@ -123,5 +123,5 @@ main(int argc, char** argv)
 	} while ((optind += 2) < argc);
 	(void) close(fifo);
     }
-    exit(0);
+   return 0;
 }

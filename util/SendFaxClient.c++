@@ -457,11 +457,11 @@ SendFaxClient::sendDocuments(fxStr& emsg)
 	if (info.rule->getResult() == TypeRule::TIFF) {
 	    fileSent = setFormat(FORM_TIFF)
 		    && setType(TYPE_I)
-		    && sendData(fd, FaxClient::storeTemp, info.doc, emsg);
+		    && sendData(fd, &FaxClient::storeTemp, info.doc, emsg);
 	} else {
 	    fileSent = setFormat(FORM_PS)
 	    	    && setType(TYPE_I)		// XXX TYPE_A???
-		    && sendZData(fd, FaxClient::storeTemp, info.doc, emsg);
+		    && sendZData(fd, &FaxClient::storeTemp, info.doc, emsg);
 	}
 	Sys::close(fd);
 	if (!fileSent) {

@@ -72,7 +72,7 @@ modemstate(const char* arg)
     return (NULL);
 }
 
-void
+int
 main(int argc, char** argv)
 {
     extern int optind;
@@ -140,5 +140,5 @@ main(int argc, char** argv)
 	    fatal("FIFO write failed for command (%s)", strerror(errno));
     }
     (void) close(fifo);
-    exit(0);
+    return 0;
 }

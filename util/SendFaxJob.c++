@@ -496,7 +496,7 @@ SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
 	fxBool fileSent = 
 	       client.setFormat(FaxClient::FORM_PS)
 	    && client.setType(FaxClient::TYPE_I)	// XXX??? TYPE_A
-	    && client.sendZData(fd, FaxClient::storeTemp, coverDoc, emsg);
+	    && client.sendZData(fd, &FaxClient::storeTemp, coverDoc, emsg);
 	Sys::close(fd);
 	if (!fileSent) {
 	    if (emsg == "")

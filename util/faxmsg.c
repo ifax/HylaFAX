@@ -50,7 +50,7 @@ fatal(char* fmt, ...)
 
 extern	int cvtFacility(const char*, int*);
 
-void
+int
 main(int argc, char** argv)
 {
     extern int optind;
@@ -127,5 +127,5 @@ main(int argc, char** argv)
     if (write(fifo, cmd, strlen(cmd)) != strlen(cmd))
 	fatal("FIFO write failed for command (%s)", strerror(errno));
     (void) close(fifo);
-    exit(0);
+    return 0;
 }
