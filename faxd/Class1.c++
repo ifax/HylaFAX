@@ -163,14 +163,12 @@ Class1Modem::setupModem()
 	// This is cosmetic, mostly, to state the modem supports V.34.
 	// We could query the modem but that would require another
 	// config option, so we just trust the enable command.
-	u_short pos = 0;
 	primaryV34Rate = 0;
-	const char* buf = conf.class1EnableV34Cmd;
-	while (buf[0] != '=') buf++;		// move to assignment
-	while (!isdigit(buf[0])) buf++;		// move to digits
-	do {
-	    primaryV34Rate = primaryV34Rate*10 + (buf[0] - '0');
-	} while (isdigit((++buf)[0]));
+	u_short pos = conf.class1EnableV34Cmd.findR(conf.class1EnableV34Cmd.length(), "+F34=", 5) + 4;
+	if (pos == 4) // Unknown class1EnableV34Cmd
+	    modemCapability("Unable to determinate V.34 speed from class1EnableV34Cmd, V.34 faxing will be disabled!");
+	else
+	    primaryV34Rate = atoi(conf.class1EnableV34Cmd.extract(pos, conf.class1EnableV34Cmd.next(pos, ',') - pos));
 	modemParams.br |= BIT(primaryV34Rate) - 1;
     }
     modemParams.wd = BIT(WD_1728) | BIT(WD_2048) | BIT(WD_2432);

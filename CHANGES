@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* modify parsing of Class1EnableV34Cmd (5 Mar 2005)
 * add configurable support for tiff2pdf from libtiff (2 Mar 2005)
 * change the 2 s TCF timeout to use Class1TCFRecvTimeout (2 Mar 2005)
 * handle PPS after 4th PPR (2 Mar 2005)
