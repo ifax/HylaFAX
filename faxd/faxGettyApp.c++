@@ -257,7 +257,7 @@ faxGettyApp::listenForRing()
  * many different states.
  */
 void
-faxGettyApp::answerPhoneCmd(AnswerType atype, const char* dialnumber)
+faxGettyApp::answerPhoneCmd(AnswerType atype)
 {
     CallerID cid;
     CallType ctype = ClassModem::CALLTYPE_UNKNOWN;
@@ -268,13 +268,13 @@ faxGettyApp::answerPhoneCmd(AnswerType atype, const char* dialnumber)
 	 * cancel any timeout and answer the call.
 	 */
 	Dispatcher::instance().stopTimer(&answerHandler);
-	answerPhone(atype, ctype, received_cid, dialnumber);
+	answerPhone(atype, ctype, received_cid);
     } else if (lockModem()) {
 	/*
 	 * The modem is ours, notifier the queuer and answer.
 	 */
 	sendModemStatus("B");
-	answerPhone(atype, ctype, received_cid, dialnumber);
+	answerPhone(atype, ctype, received_cid);
     } else if (state != ANSWERING && state != RECEIVING) {
 	/*
 	 * The modem is in use to call out, or some other process
@@ -294,7 +294,7 @@ faxGettyApp::answerPhoneCmd(AnswerType atype, const char* dialnumber)
  * user (sending an "ANSWER" command through the FIFO).
  */
 void
-faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, const char* dialnumber)
+faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid)
 {
     changeState(ANSWERING);
     beginSession(FAXNumber);
@@ -332,7 +332,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
 	    advanceRotary = false;
 	} else {
 	    // NB: answer based on ctype, not atype
-	    ctype = modemAnswerCall(ctype, emsg, dialnumber);
+	    ctype = modemAnswerCall(ctype, emsg);
 	    callResolved = processCall(ctype, emsg, cid);
 	}
     } else if (atype == ClassModem::ANSTYPE_ANY) {
@@ -342,7 +342,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
 	 */
 	int r = answerRotor;
 	do {
-	    callResolved = answerCall(answerRotary[r], ctype, emsg, cid, dialnumber);
+	    callResolved = answerCall(answerRotary[r], ctype, emsg, cid);
 	    r = (r+1) % answerRotorSize;
 	} while (!callResolved && adaptiveAnswer && r != answerRotor);
     } else {
@@ -351,7 +351,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallerID& cid, 
 	 * any existing call type information such as
 	 * distinctive ring.
 	 */
-	callResolved = answerCall(atype, ctype, emsg, cid, dialnumber);
+	callResolved = answerCall(atype, ctype, emsg, cid);
     }
     /*
      * Call resolved.  If we were able to recognize the call
@@ -417,7 +417,7 @@ faxGettyApp::answerCleanup()
  * the modem layer arrives at as the call type.
  */
 bool
-faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const CallerID& cid, const char* dialnumber)
+faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const CallerID& cid)
 {
     bool callResolved;
     if (atype == ClassModem::ANSTYPE_EXTERN) {
@@ -438,7 +438,7 @@ faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const Ca
 	} else
 	    emsg = "External getty use is not permitted";
     } else
-	ctype = modemAnswerCall(atype, emsg, dialnumber);
+	ctype = modemAnswerCall(atype, emsg);
     callResolved = processCall(ctype, emsg, cid);
     return (callResolved);
 }
@@ -453,14 +453,22 @@ faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const Ca
  * and the local handle on the modem is discarded so that SIGHUP
  * is delivered to the subprocess (group) on last close.  This
  * process waits for the subprocess to terminate, at which time
- * it removes the modem lock file and reconditions the modem for
- * incoming calls (if configured).
+ * it removes the modem lock file and let's faxgetty continue on
+ * to recondition the modem for incoming calls (if configured).
  */
 bool
 faxGettyApp::processCall(CallType ctype, fxStr& emsg, const CallerID& cid)
 {
     bool callHandled = false;
 
+    /*
+     * First - turn off Dispatcher
+     */
+    int fd = getModemFd();
+    if (fd >= 0) {
+	if (Dispatcher::instance().handler(fd, Dispatcher::ReadMask))
+	    Dispatcher::instance().unlink(fd);
+    }
     switch (ctype) {
     case ClassModem::CALLTYPE_FAX:
 	traceServer("ANSWER: FAX CONNECTION  DEVICE '%s'"
@@ -731,7 +739,7 @@ faxGettyApp::notifyRecvDone(const FaxRecvInfo& ri, const CallerID& cid)
     );
     traceServer("RECV FAX: %s", (const char*) cmd);
     setProcessPriority(BASE);			// lower priority
-    runCmd(cmd, true, this);
+    runCmd(cmd, true);
     setProcessPriority(state);			// restore priority
 }
 
@@ -799,20 +807,6 @@ faxGettyApp::FIFOMessage(const char* cp)
 		answerPhoneCmd(ClassModem::ANSTYPE_VOICE);
 	    else if (streq(cp+1, "extern"))
 		answerPhoneCmd(ClassModem::ANSTYPE_EXTERN);
-	    else if (strncmp(cp+1, "dial", 4) == 0) {
-		/*   
-		 * In order to accomodate some so-called "polling" servers which
-		 * do not follow spec in that we have to dial in, but begin the
-		 * poll with ATA and follow fax reception protocol rather than
-		 * polling protocol.  (Which essentially requires us to not
-		 * produce typical calling CNG beeps, but rather a CED squelch.)
-		 * We must terminate the dialstring with a semicolon, which
-		 * should instruct the modem to return "OK" after dialing and not
-		 * produce CNG, at which time we would follow with ATA.
-		 */
-		const char* dialnumber = cp+5;		// usually must end with ";"
-		answerPhoneCmd(ClassModem::ANSTYPE_DIAL, dialnumber);
-	    }
 	} else
 	    answerPhoneCmd(answerRotary[0]);
 	break;
