@@ -799,10 +799,17 @@ for use may vary based on which modems are believed to be ready for use.
 .TP
 .B ModemPriority
 The scheduling priority to use for a modem.
-Priority values are in the range 0 to 255 with greater values signifying
+Priority values are in the range 0 to 255 with lesser values signifying
 higher (more desirable) priority.
 The \*(Fx scheduler process assigns the highest
 priority modem that is ready for use when scheduling an outbound job.
+
+If multiple available modems in a job's selected 
+.B ModemGroup 
+have the same 
+.B ModemPriority
+value, then the \*(Fx scheduler assigns jobs to them in 
+a round-robin fashion.
 .TP
 .B NoCarrierRetrys
 The number of times to redial a phone number after receiving

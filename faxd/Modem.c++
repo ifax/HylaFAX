@@ -149,8 +149,27 @@ Modem::findModem(const Job& job)
 	    Modem& modem = iter;
 	    if (modem.getState() != Modem::READY)
 		continue;
-	    if (c->Find(modem.devID) && modem.isCapable(job))
+	    if (c->Find(modem.devID) && modem.isCapable(job)) {
+
+		/*
+		 * Move modem to the end of the priority group
+		 */
+
+		modem.remove();
+
+		if (!list.isEmpty()) {
+		    ModemIter iter(list);
+
+		    for ( ; iter.notDone(); iter++) {
+			if (iter.modem().priority > modem.priority)
+			    break;
+		    }
+		    modem.insert(iter.modem());
+		} else
+		    modem.insert(list);
+
 		return (&modem);
+	    }
 	}
     } else {
 	/*
@@ -251,14 +270,14 @@ Modem::setCapabilities(const char* s)
 	     */
 	    remove();
 	    priority = pri;
-	    if (!isEmpty()) {
+	    if (!list.isEmpty()) {
 		ModemIter iter(list);
 		do {
 		    if (iter.modem().priority > pri)
 			break;
 		    iter++;
 		} while (iter.notDone());
-		insert(*iter.modem().prev);
+		insert(iter.modem());
 	    } else
 		insert(list);
 	}
