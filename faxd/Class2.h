@@ -138,9 +138,9 @@ public:
 // send support
     bool	sendSetup(FaxRequest&, const Class2Params&, fxStr& emsg);
     CallStatus	dialResponse(fxStr& emsg);
-    FaxSendStatus getPrologue(Class2Params&, bool&, fxStr&);
+    FaxSendStatus getPrologue(Class2Params&, bool&, fxStr&, u_int&);
     FaxSendStatus sendPhaseB(TIFF* tif, Class2Params&, FaxMachineInfo&,
-		    fxStr& pph, fxStr& emsg);
+		    fxStr& pph, fxStr& emsg, u_int& batched);
     void	sendAbort();
 
 // receive support

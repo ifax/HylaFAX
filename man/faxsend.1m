@@ -42,7 +42,7 @@ faxsend \- \*(Fx facsimile transmit program
 ]
 .B \-m
 .I device-ID
-.I qfile
+.I qfile[,qfile[,qfile[,...]]]
 .SH DESCRIPTION
 .I faxsend
 is the program that implements the facsimile transmission protocol
@@ -89,6 +89,12 @@ and cleans up any resources it controls; this is the mechanism
 used by
 .I faxq
 to abort a job while it is in progress.
+.PP
+Multiple fax jobs of documents with varying formatting may be sent in
+one fax call by ``batching'' them by supplying faxsend with multiple
+comma-separated
+.I qfile
+entries.
 .PP
 Many aspects of
 .I faxsend

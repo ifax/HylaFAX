@@ -324,6 +324,7 @@ FaxRequest::readQFile(bool& rejectJob)
 	    notice = tag;
 	    break;
 
+	case H_RETURNED:	status = (FaxSendStatus) atoi(tag); break;
 	case H_POLL:		addItem(send_poll, tag); break;
 	case H_FAX:		addItem(send_fax, tag); break;
 	case H_PDF:
@@ -463,6 +464,7 @@ FaxRequest::writeQFile()
 	cp++;
     }
     sb.put(sp, cp-sp); sb.put('\n');
+    sb.fput("returned:%d\n", status);
     sb.fput("notify:%s\n", notifyVals[notify&3]);
     sb.fput("pagechop:%s\n", chopVals[pagechop&3]);
     sb.fput("chopthreshold:%g\n", chopthreshold);

@@ -73,6 +73,17 @@ DestInfo::isActive(Job& job) const
     }
 }
 
+/*
+ * Not all equipment out there supports our batching protocol using
+ * EOM.  So SupportsBatching in the info file is flagged if we have
+ * encountered specific batching trouble in the past.
+ */
+bool
+DestInfo::supportsBatching()
+{
+    return info.getSupportsBatching();
+}
+
 void
 DestInfo::active(Job& job)
 {

@@ -1480,7 +1480,7 @@ faxQueueApp::setSleep(Job& job, time_t tts)
 }
 
 #define	isOKToStartJobs(di, dci, n) \
-    (di.getActive()+n <= dci.getMaxConcurrentJobs())
+    (di.getActive()+n <= dci.getMaxConcurrentCalls())
 
 /*
  * Process a job that's finished.  The corpse gets placed
@@ -1807,7 +1807,7 @@ faxQueueApp::rejectJob(Job& job, FaxRequest& req, const fxStr& reason)
 }
 
 /*
- * Deal with a job that's blocked by a concurrent job.
+ * Deal with a job that's blocked by a concurrent call.
  */
 void
 faxQueueApp::blockJob(Job& job, FaxRequest& req, const char* mesg)
@@ -2097,12 +2097,12 @@ faxQueueApp::runScheduler()
 		if (!di.isActive(job) && !isOKToStartJobs(di, dci, 1)) {
 		    /*
 		     * This job would exceed the max number of concurrent
-		     * jobs that may be sent to this destination.  Put it
+		     * calls that may be made to this destination.  Put it
 		     * on a ``blocked queue'' for the destination; the job
 		     * will be made ready to run when one of the existing
 		     * jobs terminates.
 		     */
-		    blockJob(job, *req, "Blocked by concurrent jobs");
+		    blockJob(job, *req, "Blocked by concurrent calls");
 		    job.remove();			// remove from run queue
 		    di.block(job);			// place at tail of di queue
 		    delete req;
@@ -2677,7 +2677,8 @@ faxQueueApp::numbertag faxQueueApp::numbers[] = {
 { "servertracing",	&faxQueueApp::tracingLevel,	FAXTRACE_SERVER },
 { "uucplocktimeout",	&faxQueueApp::uucpLockTimeout,	0 },
 { "postscripttimeout",	&faxQueueApp::postscriptTimeout, 3*60 },
-{ "maxconcurrentjobs",	&faxQueueApp::maxConcurrentJobs, 1 },
+{ "maxconcurrentjobs",	&faxQueueApp::maxConcurrentCalls, 1 },
+{ "maxconcurrentcalls",	&faxQueueApp::maxConcurrentCalls, 1 },
 { "maxsendpages",	&faxQueueApp::maxSendPages,	(u_int) -1 },
 { "maxtries",		&faxQueueApp::maxTries,		(u_int) FAX_RETRIES },
 { "maxdials",		&faxQueueApp::maxDials,		(u_int) FAX_REDIALS },
@@ -2921,8 +2922,8 @@ faxQueueApp::getUUCPLock(const fxStr& deviceName)
 
 u_int faxQueueApp::getTracingLevel() const
     { return tracingLevel; }
-u_int faxQueueApp::getMaxConcurrentJobs() const
-    { return maxConcurrentJobs; }
+u_int faxQueueApp::getMaxConcurrentCalls() const
+    { return maxConcurrentCalls; }
 u_int faxQueueApp::getMaxSendPages() const
     { return maxSendPages; }
 u_int faxQueueApp::getMaxDials() const

@@ -85,9 +85,9 @@ for a description of each parameter
 which is described below).
 .sp .5
 .nf
-.ta \w'MaxConcurrentJobs    'u +\w'integer    'u +\w'\fIunlimited\fP    'u
+.ta \w'MaxConcurrentCalls    'u +\w'integer    'u +\w'\fIunlimited\fP    'u
 \fBTag	Type	Default	Description\fP
-MaxConcurrentJobs	integer	\s-11\s+1	max concurrent jobs to process for a destination
+MaxConcurrentCalls	integer	\s-11\s+1	max concurrent jobs to process for a destination
 MaxDials	integer	\s-1\fIunlimited\fP\s+1	max phone calls to make to transmit a job
 MaxSendPages	integer	\s-1\fIunlimited\fP\s+1	max pages to permit in a send
 MaxTries	integer	\s-13\s+1	max attempts to transmit a job

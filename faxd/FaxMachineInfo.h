@@ -54,6 +54,7 @@ private:
     bool	supportsMMR;		// handles Group 4
     bool	hasV34Trouble;		// has difficulty with V.34
     bool	supportsPostScript;	// handles Adobe NSF protocol
+    bool	supportsBatching;	// handles batching (EOM) protocol
     bool	calledBefore;		// successfully called before
     u_short		maxPageWidth;		// max capable page width
     u_short		maxPageLength;		// max capable page length
@@ -94,6 +95,7 @@ public:
     bool getSupportsMMR() const;
     bool getHasV34Trouble() const;
     bool getSupportsPostScript() const;
+    bool getSupportsBatching() const;
     bool getCalledBefore() const;
     u_short getMaxPageWidthInPixels() const;
     u_short getMaxPageWidthInMM() const;
@@ -112,6 +114,7 @@ public:
     void setSupportsMMR(bool);
     void setHasV34Trouble(bool);
     void setSupportsPostScript(bool);
+    void setSupportsBatching(bool);
     void setCalledBefore(bool);
     void setMaxPageWidthInPixels(int);
     void setMaxPageLengthInMM(int);
@@ -142,6 +145,8 @@ inline bool FaxMachineInfo::getHasV34Trouble() const
     { return hasV34Trouble; }
 inline bool FaxMachineInfo::getSupportsPostScript() const
     { return supportsPostScript; }
+inline bool FaxMachineInfo::getSupportsBatching() const
+    { return supportsBatching; }
 inline bool FaxMachineInfo::getCalledBefore() const	
     { return calledBefore; }
 inline u_short FaxMachineInfo::getMaxPageWidthInPixels() const

@@ -61,9 +61,9 @@ private:
     friend class FaxModem;
 
 // FAX transmission protocol support
-    void	sendFax(FaxRequest& fax, FaxMachineInfo&, const fxStr& number);
+    void	sendFax(FaxRequest& fax, FaxMachineInfo&, const fxStr& number, u_int&);
     bool	sendClientCapabilitiesOK(FaxRequest&, FaxMachineInfo&, fxStr&);
-    bool	sendFaxPhaseB(FaxRequest&, FaxItem&, FaxMachineInfo&);
+    bool	sendFaxPhaseB(FaxRequest&, FaxItem&, FaxMachineInfo&, u_int);
     void	sendPoll(FaxRequest& fax, bool remoteHasDoc);
     FaxSendStatus sendSetupParams(TIFF*,
 		    Class2Params&, const FaxMachineInfo&, fxStr&);
@@ -90,7 +90,7 @@ protected:
     void	readConfig(const fxStr& filename);
     void	setLocalIdentifier(const fxStr& lid);
 
-    void	sendFax(FaxRequest&, FaxMachineInfo&, FaxAcctInfo&);
+    void	sendFax(FaxRequest&, FaxMachineInfo&, FaxAcctInfo&, u_int&);
     bool	recvFax(const CallerID& cid);
 
     time_t	getFileTransferTime() const;

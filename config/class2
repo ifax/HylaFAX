@@ -56,7 +56,7 @@
 #MaxRecvPages:		25		# max pages in an inbound job
 #ContCoverPage:		etc/cover.templ	# enable continuation cover pages
 #DestControls:		etc/destcontrols # destination-specific controls
-#MaxConcurrentJobs:	1		# serialize jobs to the same dest
+#MaxConcurrentCalls:	1		# serialize jobs to the same dest
 #TimeOfDay:		"Any"		# outbound jobs any day, any time
 # END-SERVER
 #

@@ -112,46 +112,57 @@ Class2Modem::dialResponse(fxStr& emsg)
     return (FAILURE);
 }
 
+#define BATCH_FIRST 1
+#define BATCH_LAST  2
+
 /*
  * Process the string of session-related information
  * sent to the caller on connecting to a fax machine.
  */
 FaxSendStatus
-Class2Modem::getPrologue(Class2Params& dis, bool& hasDoc, fxStr& emsg)
+Class2Modem::getPrologue(Class2Params& dis, bool& hasDoc, fxStr& emsg, u_int& batched)
 {
     bool gotParams = false;
     hasDoc = false;
-    for (;;) {
-	switch (atResponse(rbuf, conf.t1Timer)) {
-	case AT_FPOLL:
-	    hasDoc = true;
-	    protoTrace("REMOTE has document to POLL");
-	    break;
-	case AT_FDIS:
-	    gotParams = parseClass2Capabilities(skipStatus(rbuf), dis);
-	    break;
-	case AT_FNSF:
-            recvNSF(NSF(skipStatus(rbuf)));
-	    break;
-	case AT_FCSI:
-	    recvCSI(stripQuotes(skipStatus(rbuf)));
-	    break;
-	case AT_OK:
-	    if (gotParams)
-		return (send_ok);
-	    /* fall thru... */
-	case AT_TIMEOUT:
-	case AT_EMPTYLINE:
-	case AT_NOCARRIER:
-	case AT_NODIALTONE:
-	case AT_NOANSWER:
-	case AT_ERROR:
-	    processHangup("20");		// Unspecified Phase B error
-	    /* fall thru... */
-	case AT_FHNG:
-	    emsg = hangupCause(hangupCode);
-	    return (send_retry);
+    if (batched & BATCH_FIRST) {		// only for the first document
+	for (;;) {
+	    switch (atResponse(rbuf, conf.t1Timer)) {
+	    case AT_FPOLL:
+		hasDoc = true;
+		protoTrace("REMOTE has document to POLL");
+		break;
+	    case AT_FDIS:
+		gotParams = parseClass2Capabilities(skipStatus(rbuf), dis);
+		break;
+	    case AT_FNSF:
+		recvNSF(NSF(skipStatus(rbuf)));
+		break;
+	    case AT_FCSI:
+		recvCSI(stripQuotes(skipStatus(rbuf)));
+		break;
+	    case AT_OK:
+		if (gotParams)
+		    return (send_ok);
+		/* fall thru... */
+	    case AT_TIMEOUT:
+	    case AT_EMPTYLINE:
+	    case AT_NOCARRIER:
+	    case AT_NODIALTONE:
+	    case AT_NOANSWER:
+	    case AT_ERROR:
+		processHangup("20");		// Unspecified Phase B error
+		/* fall thru... */
+	    case AT_FHNG:
+		emsg = hangupCause(hangupCode);
+		return (send_retry);
+	    }
 	}
+    } else {
+	/*
+	 * We already have the remote DIS.  Class 2 protocol says to now send
+	 * +FIS and then +FDT, expecting CONNECT, so we skip this "prologue".
+	 */
+	return (send_ok);
     }
 }
 
@@ -219,7 +230,7 @@ pageInfoChanged(const Class2Params& a, const Class2Params& b)
  */
 FaxSendStatus
 Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
-    fxStr& pph, fxStr& emsg)
+    fxStr& pph, fxStr& emsg, u_int& batched)
 {
     int ntrys = 0;			// # retraining/command repeats
 
@@ -253,6 +264,10 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    u_int ppm;
 	    if (!decodePPM(pph, ppm, emsg))
 		goto failed;
+
+	    if (ppm == PPM_EOP && !(batched & BATCH_LAST))
+		ppm = PPM_EOM;
+
 	    tracePPM("SEND send", ppm);
 	    u_int ppr;
 	    if (pageDone(ppm, ppr)) {
@@ -319,6 +334,24 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		    emsg = "Modem protocol error (unknown post-page response)";
 		    break;
 		}
+	    } else {
+		/*
+		 * We received no PPR.
+		 */
+		if (ppm = PPM_EOM && (batched & BATCH_FIRST)) {
+		    emsg = "Batching protocol error";
+		    protoTrace("The destination appears to not support batching.");
+		    return (send_batchfail);
+		}
+	    }
+	} else {
+	    /*
+	     * We were unable to negotiate settings and transfer page image data.
+	     */
+	    if (!(batched & BATCH_FIRST)) {
+		emsg = "Batching protocol error";
+		protoTrace("The destination appears to not support batching.");
+		return (send_batchfail);
 	    }
 	}
     } while (transferOK && morePages && !hadHangup);

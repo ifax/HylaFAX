@@ -120,6 +120,7 @@ priority	integer	user-specified scheduling priority
 receiver	string	receiver's identity
 resolution	integer	vertical resolution of facsimile
 retrytime	integer	time to use between job retries
+returned	integer	indicates status return value for the job
 schedpri	integer	current scheduling priority
 sender	string	identity of sender
 signalrate	string	signalling rate at which a facsimile was sent
@@ -458,6 +459,10 @@ e.g. see
 .B JobReqProto
 in
 .IR hylafax-config (${MANNUM4_5}).
+.TP 14
+returned
+Used internally to determine the last return value of the send
+command issued for this job.
 .TP 14
 .B sender
 The ``full name'' of the sender of the facsimile.

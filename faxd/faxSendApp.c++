@@ -112,82 +112,119 @@ faxSendApp::close()
     }
 }
 
+# define BATCH_FIRST 1
+# define BATCH_LAST  2
+
 FaxSendStatus
-faxSendApp::send(const char* filename)
+faxSendApp::send(const char* filenames)
 {
-    int fd = Sys::open(filename, O_RDWR);
-    if (fd >= 0) {
-	if (flock(fd, LOCK_EX) >= 0) {
-	    FaxRequest* req = new FaxRequest(filename, fd);
-	    /*
-	     * Handle any session parameters that might be passed
-	     * down from faxq (or possibly stuck in the modem config
-	     * file).  Except for DesiredBR/EC/ST, these are applied 
-	     * before reading the queue file so that any user-specified 
-	     * values override.  We don't handle DesiredBR/EC/ST this
-	     * way because it would break their usage in DestControls
-	     * since there's currently no way for us to determine if
-	     * the setting in the queue file is explicitly specified.
-	     */
-	    bool reject;
-	    if (req->readQFile(reject) && !reject) {
-		FaxMachineInfo info;
-		info.updateConfig(canonicalizePhoneNumber(req->number));
-		FaxAcctInfo ai;
+    /*
+     * filenames can be a comma-separated list.  Loop through
+     * the list.  Set batched to BATCH_FIRST for the first job,
+     * to BATCH_LAST for the last job, to nothing for the in-
+     * between jobs, and to BATCH_FIRST|BATCH_LAST for a single
+     * job.
+     */
 
-		ai.start = Sys::now();
+    u_int batched = BATCH_FIRST;
+    FaxSendStatus status = send_done;
+    fxStr filename;
+    fxStr batchcommid;
 
+    while (filenames[0] != '\0' && status == send_done) {
+	if (filenames[0] == ',') filenames++;
+	filename = "";
+	// set filename to the next on the list and move the filenames pointer...
+	for (; filenames[0] != ',' && filenames[0] != '\0'; filenames++) {
+	    filename.append(filenames[0]);
+	}
+	filename.append('\0');
+	if (filenames[0] == '\0') batched |= BATCH_LAST;
+
+	int fd = Sys::open(filename, O_RDWR);
+	if (fd >= 0) {
+	    if (flock(fd, LOCK_EX) >= 0) {
+		FaxRequest* req = new FaxRequest(filename, fd);
 		/*
-		 * Force any DesiredBR/EC/ST options in the configuration
-		 * files (i.e. DestControls) to take precedence over
-		 * any user-specified settings.  This shouldn't cause
-		 * too many problems, hopefully, since their usage should
-		 * be fairly rare either by configuration settings or by
-		 * user-specification.
+		 * Handle any session parameters that might be passed
+		 * down from faxq (or possibly stuck in the modem config
+		 * file).  Except for DesiredBR/EC/ST, these are applied 
+		 * before reading the queue file so that any user-specified 
+		 * values override.  We don't handle DesiredBR/EC/ST this
+		 * way because it would break their usage in DestControls
+		 * since there's currently no way for us to determine if
+		 * the setting in the queue file is explicitly specified.
 		 */
+		bool reject;
+		if (req->readQFile(reject) && !reject) {
+		    FaxMachineInfo info;
+		    info.updateConfig(canonicalizePhoneNumber(req->number));
+		    FaxAcctInfo ai;
 
-		if (desiredBR != (u_int) -1)
-		    req->desiredbr = desiredBR;
-		if (desiredEC != (u_int) -1)
-		    req->desiredec = desiredEC;
-		if (desiredST != (u_int) -1)
-		    req->desiredst = desiredST;
+		    ai.start = Sys::now();
 
-		FaxServer::sendFax(*req, info, ai);
+		    /*
+		     * Force any DesiredBR/EC/ST options in the configuration
+		     * files (i.e. DestControls) to take precedence over
+		     * any user-specified settings.  This shouldn't cause
+		     * too many problems, hopefully, since their usage should
+		     * be fairly rare either by configuration settings or by
+		     * user-specification.
+		     */
 
-		ai.duration = Sys::now() - ai.start;
-		ai.conntime = getConnectTime();
-		ai.commid = req->commid;
-		ai.device = getModemDeviceID();
-		ai.dest = req->external;
-		ai.jobid = req->jobid;
-		ai.jobtag = req->jobtag;
-		ai.user = req->mailaddr;
-		ai.csi = info.getCSI();
-		ai.cidname = "";
-		ai.cidnumber = "";
-		ai.owner = req->owner;
-		if (req->status == send_done)
-		    ai.status = "";
-		else
-		    ai.status = req->notice;
-		if (!ai.record("SEND"))
-		    logError("Error writing SEND accounting record, dest=%s",
-			(const char*) ai.dest);
+		    if (desiredBR != (u_int) -1)
+			req->desiredbr = desiredBR;
+		    if (desiredEC != (u_int) -1)
+			req->desiredec = desiredEC;
+		    if (desiredST != (u_int) -1)
+			req->desiredst = desiredST;
 
-		req->writeQFile();		// update on-disk copy
-		FaxSendStatus status = req->status;
-		delete req;
-		return (status);		// return status for exit
-	    } else
-		delete req;
-	    logError("Could not read request file");
-	} else
-	    logError("Could not lock request file: %m");
-	Sys::close(fd);
-    } else
-	logError("Could not open request file: %m");
-    return (send_failed);
+		    req->commid = batchcommid;		// pass commid on...
+
+		    FaxServer::sendFax(*req, info, ai, batched);
+
+		    batchcommid = req->commid;		// ... to all batched jobs
+
+		    ai.duration = Sys::now() - ai.start;
+		    ai.conntime = getConnectTime();
+		    ai.commid = req->commid;
+		    ai.device = getModemDeviceID();
+		    ai.dest = req->external;
+		    ai.jobid = req->jobid;
+		    ai.jobtag = req->jobtag;
+		    ai.user = req->mailaddr;
+		    ai.csi = info.getCSI();
+		    ai.cidname = "";
+		    ai.cidnumber = "";
+		    ai.owner = req->owner;
+		    if (req->status == send_done)
+			ai.status = "";
+		    else
+			ai.status = req->notice;
+		    if (!ai.record("SEND"))
+			logError("Error writing SEND accounting record, dest=%s",
+			    (const char*) ai.dest);
+
+		    req->writeQFile();		// update on-disk copy
+		    status = req->status;
+		    delete req;
+		} else {
+		    delete req;
+		    logError("Could not read request file");
+		    status = send_failed;
+		}
+	    } else {
+		logError("Could not lock request file: %m");
+		Sys::close(fd);
+		status = send_failed;
+	    }
+	} else {
+	    logError("Could not open request file: %m");
+	    status = send_failed;
+	}
+	batched = 0;            // disable BATCH_FIRST and BATCH_LAST routines
+    }
+    return (status);		// return status for exit
 }
 
 /*

@@ -134,6 +134,7 @@ main()
     hash("pagechop");
     hash("chopthreshold");
     hash("status");
+    hash("returned");
     hash("doneop");
     hash("commid");
     printf("/* %u total collisions */\n", collisions);

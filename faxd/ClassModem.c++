@@ -61,7 +61,7 @@ const char* ClassModem::serviceNames[9] = {
     "",				// 7
     "\"Voice\"",		// SERVICE_VOICE
 };
-const char* ClassModem::ATresponses[16] = {
+const char* ClassModem::ATresponses[17] = {
     "Nothing",			// AT_NOTHING
     "OK",			// AT_OK
     "Connection established",	// AT_CONNECT
@@ -72,6 +72,7 @@ const char* ClassModem::ATresponses[16] = {
     "Phone off-hook",		// AT_OFFHOOK
     "Ring",			// AT_RING
     "Command error",		// AT_ERROR
+    "Hang up",			// AT_FHNG
     "<Empty line>",		// AT_EMPTYLINE
     "<Timeout>",		// AT_TIMEOUT
     "<dle+etx>",		// AT_DLEETX
@@ -997,6 +998,10 @@ ClassModem::waitFor(ATResponse wanted, long ms)
 	ATResponse response = atResponse(rbuf, ms);
 	if (response == wanted)
 	    return (true);
+
+	// we need to translate AT responses from faxd/Class2.h
+	if (response == 100) response = AT_FHNG;
+
 	switch (response) {
 	case AT_TIMEOUT:
 	case AT_EMPTYLINE:
@@ -1006,6 +1011,7 @@ ClassModem::waitFor(ATResponse wanted, long ms)
 	case AT_NOANSWER:
 	case AT_OFFHOOK:
 	case AT_RING:
+	case AT_FHNG:
 	    modemTrace("MODEM %s", ATresponses[response]);
 	case AT_OK:
 	    /*

@@ -58,6 +58,7 @@ protected:
     u_int	nonV34br;		// modemParams.br without V.34
     bool	sentERR;		// whether or not ERR was sent
     bool	hadV34Trouble;		// indicates failure due to V.34 restrictions
+    bool	batchingError;		// indicates failure due to batching protocol
     const u_char* frameRev;		// HDLC frame bit reversal table
     fxStr	lid;			// encoded local id string
     fxStr	pwd;			// transmit password
@@ -191,11 +192,11 @@ public:
 // send support
     bool	sendSetup(FaxRequest&, const Class2Params&, fxStr& emsg);
     CallStatus	dialResponse(fxStr& emsg);
-    FaxSendStatus getPrologue(Class2Params&, bool&, fxStr&);
+    FaxSendStatus getPrologue(Class2Params&, bool&, fxStr&, u_int&);
     void	sendBegin();
     void	sendSetupPhaseB(const fxStr& pwd, const fxStr& sub);
     FaxSendStatus sendPhaseB(TIFF* tif, Class2Params&, FaxMachineInfo&,
-		    fxStr& pph, fxStr& emsg);
+		    fxStr& pph, fxStr& emsg, u_int& batched);
     void	sendEnd();
     void	sendAbort();
 

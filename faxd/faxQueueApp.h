@@ -80,7 +80,7 @@ private:
     fxStr	configFile;		// configuration filename
     fxStr	contCoverPageTemplate;	// continuation cover page template
     u_int	postscriptTimeout;	// timeout on PostScript imager calls
-    u_int	maxConcurrentJobs;	// max parallel jobs to a destination
+    u_int	maxConcurrentCalls;	// max parallel jobs to a destination
     u_int	maxSendPages;		// max pages in a send job
     u_int	maxDials;		// max times to dial the phone for a job
     u_int	maxTries;		// max transmits tried for a job
@@ -256,7 +256,7 @@ public:
 
     // used by DestControlInfo for default values
     u_int	getTracingLevel() const;
-    u_int	getMaxConcurrentJobs() const;
+    u_int	getMaxConcurrentCalls() const;
     u_int	getMaxSendPages() const;
     u_int	getMaxDials() const;
     u_int	getMaxTries() const;

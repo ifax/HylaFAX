@@ -175,12 +175,13 @@ public:
 	AT_OFFHOOK	= 7,	// "PHONE OFF-HOOK" response
 	AT_RING		= 8,	// "RING" response
 	AT_ERROR	= 9,	// "ERROR" response
-	AT_EMPTYLINE	= 10,	// empty line (0 characters received)
-	AT_TIMEOUT	= 11,	// timeout waiting for response
-	AT_DLEETX	= 12,	// dle/etx characters
-	AT_DLEEOT	= 13,	// dle+eot characters (end of transmission)
-	AT_XON		= 14,	// xon character
-	AT_OTHER	= 15	// unknown response (not one of above)
+	AT_FHNG		= 10,	// "FHNG" response
+	AT_EMPTYLINE	= 11,	// empty line (0 characters received)
+	AT_TIMEOUT	= 12,	// timeout waiting for response
+	AT_DLEETX	= 13,	// dle/etx characters
+	AT_DLEEOT	= 14,	// dle+eot characters (end of transmission)
+	AT_XON		= 15,	// xon character
+	AT_OTHER	= 16	// unknown response (not one of above)
     };
 private:
     ModemServer& server;	// server for getting to device
@@ -204,7 +205,7 @@ protected:
 
     static const char* serviceNames[9];	 // class 2 services
     static const char* callStatus[10];	 // printable call status
-    static const char* ATresponses[16];
+    static const char* ATresponses[17];
 
     ClassModem(ModemServer&, const ModemConfig&);
 

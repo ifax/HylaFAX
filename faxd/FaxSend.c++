@@ -36,16 +36,21 @@
 #include "t.30.h"
 #include "config.h"
 
+#define BATCH_FIRST 1
+#define BATCH_LAST  2
+
 /*
  * FAX Server Transmission Protocol.
  */
 void
-FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai)
+FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai, u_int& batched)
 {
     u_int prevPages = fax.npages;
-    if (lockModem()) {
-	beginSession(fax.number);
-	fax.commid = getCommID();		// set by beginSession
+    if (!(batched & BATCH_FIRST) || lockModem()) {
+	if (batched & BATCH_FIRST) {
+	    beginSession(fax.number);
+	    fax.commid = getCommID();		// set by beginSession
+	}
 	traceServer("SEND FAX: JOB %s DEST %s COMMID %s DEVICE '%s'"
 	    , (const char*) fax.jobid
 	    , (const char*) fax.external
@@ -66,20 +71,22 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai)
 	 * Construct the phone number to dial by applying the
 	 * dialing rules to the user-specified dialing string.
 	 */
-	sendFax(fax, clientInfo, prepareDialString(fax.number));
-	/*
-	 * Because some modems are impossible to safely hangup in the
-	 * event of a problem, we force a close on the device so that
-	 * the modem will see DTR go down and (hopefully) clean up any
-	 * bad state its in.  We then wait a couple of seconds before
-	 * trying to setup the modem again so that it can have some
-	 * time to settle.  We want a handle on the modem so that we
-	 * can be prepared to answer incoming phone calls.
-	 */
-	discardModem(true);
-	changeState(MODEMWAIT, 5);
-	endSession();
-	unlockModem();
+	sendFax(fax, clientInfo, prepareDialString(fax.number), batched);
+	if (batched & BATCH_LAST) {
+	    /*
+	     * Because some modems are impossible to safely hangup in the
+	     * event of a problem, we force a close on the device so that
+	     * the modem will see DTR go down and (hopefully) clean up any
+	     * bad state its in.  We then wait a couple of seconds before
+	     * trying to setup the modem again so that it can have some
+	     * time to settle.  We want a handle on the modem so that we
+	     * can be prepared to answer incoming phone calls.
+	     */
+	    discardModem(true);
+	    changeState(MODEMWAIT, 5);
+	    unlockModem();
+	    endSession();
+	}
     } else {
 	if (state != LOCKWAIT)
 	    sendFailed(fax, send_retry,
@@ -122,16 +129,16 @@ FaxServer::sendFailed(FaxRequest& fax, FaxSendStatus stat, const char* notice, u
  * agent at the given phone number.
  */
 void
-FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& number)
+FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& number, u_int& batched)
 {
     connTime = 0;				// indicate no connection
     fxStr notice;
     /*
      * Calculate initial page-related session parameters so
-     * that braindead Class 2 modems can constrain the modem
-     * before dialing the telephone, and so that Class 1.0
-     * modems know to not enable V.34 support if ECM is not
-     * being used.
+     * that braindead Class 2 modems which ignore AT+FIS can constrain
+     * the modem with AT+FCC before dialing the telephone, and so that
+     * Class 1.0 modems know to not enable V.34 support if ECM is not
+     * being used.  Hopefully this doesn't interfere with batched faxes.
      */
     Class2Params dis;
     dis.decodePage(fax.pagehandling);
@@ -145,7 +152,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
      * doing any fax-specific operations such as
      * requesting polling.
      */
-    if (!modem->faxService(!clientInfo.getHasV34Trouble() && dis.ec != EC_DISABLE)) {
+    if ((batched & BATCH_FIRST) && !modem->faxService(!clientInfo.getHasV34Trouble() && dis.ec != EC_DISABLE)) {
 	sendFailed(fax, send_failed, "Unable to configure modem for fax use");
 	return;
     }
@@ -166,7 +173,11 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
     }
     fax.notice = "";
     notifyCallPlaced(fax);
-    CallStatus callstat = modem->dial(number, notice);
+    CallStatus callstat;
+    if (batched & BATCH_FIRST)
+	callstat = modem->dial(number, notice);
+    else
+	callstat = ClassModem::OK;
     if (callstat == ClassModem::OK)
 	connTime = Sys::now();			// connection start time
     (void) abortRequested();			// check for user abort
@@ -185,7 +196,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	bool remoteHasDoc = false;
 	notifyConnected(fax);
 	FaxSendStatus status = modem->getPrologue(
-	    clientCapabilities, remoteHasDoc, notice);
+	    clientCapabilities, remoteHasDoc, notice, batched);
 	if (status != send_ok) {
 	    sendFailed(fax, status, notice, requeueProto);
 	} else {
@@ -208,7 +219,15 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 		    FaxItem& freq = fax.items[i];
 		    traceProtocol("SEND file \"%s\"", (const char*) freq.item);
 		    fileStart = pageStart = Sys::now();
-		    if (!sendFaxPhaseB(fax, freq, clientInfo)) {
+		    if (!sendFaxPhaseB(fax, freq, clientInfo, batched)) {
+			/*
+			 * Prevent repeated batching errors.
+			 */
+			if (fax.status == send_batchfail) {
+			    fax.status = send_retry;
+			    clientInfo.setSupportsBatching(false);
+			    batched |= BATCH_LAST;
+			}
 			/*
 			 * Prevent repeated V.34 errors.
 			 */ 
@@ -240,7 +259,8 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 		    sendPoll(fax, remoteHasDoc);
 	    }
 	}
-	modem->sendEnd();
+	if (batched & BATCH_LAST)
+	    modem->sendEnd();
 	if (fax.status != send_done) {
 	    clientInfo.setSendFailures(clientInfo.getSendFailures()+1);
 	    clientInfo.setLastSendFailure(fax.notice);
@@ -308,12 +328,14 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	    sendFailed(fax, send_failed, notice);
 	}
     }
-    /*
-     * Cleanup after the call.  If we have new information on
-     * the client's remote capabilities, the machine info
-     * database will be updated when the instance is destroyed.
-     */
-    modem->hangup();
+    if (batched & BATCH_LAST) {
+	/*
+	 * Cleanup after the call.  If we have new information on
+	 * the client's remote capabilities, the machine info
+	 * database will be updated when the instance is destroyed.
+	 */
+	modem->hangup();
+    }
     /*
      * This may not be exact--the line may already have been
      * dropped--but it should be close enough unless the modem
@@ -372,7 +394,7 @@ FaxServer::sendPoll(FaxRequest& fax, bool remoteHasDoc)
  * Phase B of Group 3 protocol.
  */
 bool
-FaxServer::sendFaxPhaseB(FaxRequest& fax, FaxItem& freq, FaxMachineInfo& clientInfo)
+FaxServer::sendFaxPhaseB(FaxRequest& fax, FaxItem& freq, FaxMachineInfo& clientInfo, u_int batched)
 {
     fax.status = send_failed;			// assume failure
 
@@ -391,7 +413,7 @@ FaxServer::sendFaxPhaseB(FaxRequest& fax, FaxItem& freq, FaxMachineInfo& clientI
 	     */
 	    u_int prevPages = fax.npages;
 	    fax.status = modem->sendPhaseB(tif, clientParams, clientInfo,
-		fax.pagehandling, fax.notice);
+		fax.pagehandling, fax.notice, batched);
 	    if (fax.npages == prevPages) {
 		fax.ntries++;
 		if (fax.ntries > 2) {

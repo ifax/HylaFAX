@@ -63,6 +63,7 @@ public:
     bool isEmpty() const;		// true if any jobs referenced
 
     bool isActive(Job&) const;	// true if job is considered active
+    bool supportsBatching();		// if remote supports batch protocol
     void active(Job&);			// set job active to destination
     void done(Job&);			// remove job from active set
     void block(Job&);			// add job to blocked queue

@@ -222,10 +222,10 @@ public:
     virtual bool sendSetup(FaxRequest&, const Class2Params& dis, fxStr& emsg);
     virtual void sendBegin();
     virtual FaxSendStatus getPrologue(Class2Params&,
-	bool& hasDoc, fxStr& emsg) = 0;
+	bool& hasDoc, fxStr& emsg, u_int& batched) = 0;
     virtual void sendSetupPhaseB(const fxStr& pwd, const fxStr& sub);
     virtual FaxSendStatus sendPhaseB(TIFF*, Class2Params&, FaxMachineInfo&,
-	fxStr& pph, fxStr& emsg) = 0;
+	fxStr& pph, fxStr& emsg, u_int& batched) = 0;
     virtual void sendEnd();
     virtual void sendAbort() = 0;
     // query interfaces for optional state

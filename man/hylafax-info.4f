@@ -81,6 +81,7 @@ pageSource	string	parameter to tell the paging central who we are
 pagingProtocol	string	protocol (IXO or UCP) for this provider
 remoteCSI	string	remote device Called Subscriber Identification
 sendFailures	number	count of consecutive failed send attempts
+supportsBatching	boolean	accepts batching protocol
 supportsHighRes	boolean	accepts 196 line/inch images (obsolete)
 supportsVRes	number	vertical resolution support bitmask
 supports2DEncoding	boolean	accepts Group 3 2D encoding
@@ -195,6 +196,11 @@ The
 .IR faxcron (${MANNUM1_8})
 script, for example, periodically purges unlocked entries in this
 directory that have not been accessed in 30 days.
+.PP
+When the first batching attempt fails then
+.IR supportsBatching
+is set to false.  It must be manually altered in order to re-enable
+batching to the destination.
 .PP
 Restricting the capabilities used with a particular machine to a value
 other than those that are mandatory can cause documents to be sent

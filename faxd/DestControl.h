@@ -42,7 +42,7 @@ class DestControlInfo {
 private:
     RE	pattern;		// destination pattern
     u_long	defined;		// parameters that were defined
-    u_int	maxConcurrentJobs;	// max number of parallel calls
+    u_int	maxConcurrentCalls;	// max number of parallel calls
     u_int	maxSendPages;		// max pages in a send job
     u_int	maxDials;		// max times to dial the phone
     u_int	maxTries;		// max transmit attempts
@@ -66,7 +66,7 @@ public:
     int compare(const DestControlInfo*) const;
     void parseEntry(const char* tag, const char* value, bool quoted);
 
-    u_int getMaxConcurrentJobs() const;
+    u_int getMaxConcurrentCalls() const;
     u_int getMaxSendPages() const;
     u_int getMaxDials() const;
     u_int getMaxTries() const;

@@ -679,7 +679,7 @@ EOF
     defaultContCoverPage=
     defaultContCoverCmd=\"bin/mkcover\"
     defaultDestControls=
-    defaultMaxConcurrentJobs=1
+    defaultMaxConcurrentCalls=1
     defaultMaxDials=12
     defaultMaxSendPages=0xffffffff
     defaultMaxTries=3
@@ -2024,7 +2024,7 @@ OptionalSchedulerParameters="
     ContCoverPage
     ContCoverCmd
     DestControls
-    MaxConcurrentJobs
+    MaxConcurrentCalls
     MaxDials
     MaxSendPages
     MaxTries
@@ -2152,7 +2152,7 @@ C#	SessionTracing		\
 S	ContCoverPage		Continuation cover page (relative to $DIR_SPOOL)
 C#	PostScriptTimeout	\
 	Timeout when converting PostScript documents (secs)
-C#	MaxConcurrentJobs	\
+C#	MaxConcurrentCalls	\
 	Maximum number of concurrent jobs to a destination
 S	ModemGroup		Define a group of modems
 S	TimeOfDay		Time of day restrictions for outbound jobs

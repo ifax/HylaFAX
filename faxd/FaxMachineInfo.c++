@@ -59,6 +59,7 @@ FaxMachineInfo::FaxMachineInfo(const FaxMachineInfo& other)
     supportsMMR = other.supportsMMR;
     hasV34Trouble = other.hasV34Trouble;
     supportsPostScript = other.supportsPostScript;
+    supportsBatching = other.supportsBatching;
     calledBefore = other.calledBefore;
     maxPageWidth = other.maxPageWidth;
     maxPageLength = other.maxPageLength;
@@ -105,6 +106,7 @@ FaxMachineInfo::resetConfig()
     supportsMMR = true;			// assume MMR support
     hasV34Trouble = false;		// assume no problems
     supportsPostScript = false;		// no support for Adobe protocol
+    supportsBatching = true;		// assume batching (EOM) support
     calledBefore = false;		// never called before
     maxPageWidth = 2432;		// max required width
     maxPageLength = (u_short) -1;	// infinite page length
@@ -173,6 +175,7 @@ static const char* stnames[] =
 #define	BR	6
 #define	ST	7
 #define V34	8
+#define BATCH	9
 
 #define	setLocked(b,ix)	locked |= b<<ix
 
@@ -199,6 +202,9 @@ FaxMachineInfo::setConfigItem(const char* tag, const char* value)
     } else if (streq(tag, "supportspostscript")) {
 	supportsPostScript = getBoolean(value);
 	setLocked(b, PS);
+    } else if (streq(tag, "supportsbatching")) {
+	supportsBatching = getBoolean(value);
+	setLocked(b, BATCH);
     } else if (streq(tag, "calledbefore")) {
 	calledBefore = getBoolean(value);
     } else if (streq(tag, "maxpagewidth")) {
@@ -264,6 +270,8 @@ void FaxMachineInfo::setHasV34Trouble(bool b)
     { checkLock(V34, hasV34Trouble, b); }
 void FaxMachineInfo::setSupportsPostScript(bool b)
     { checkLock(PS, supportsPostScript, b); }
+void FaxMachineInfo::setSupportsBatching(bool b)
+    { checkLock(BATCH, supportsBatching, b); }
 void FaxMachineInfo::setMaxPageWidthInPixels(int v)
     { checkLock(WD, maxPageWidth, v); }
 void FaxMachineInfo::setMaxPageLengthInMM(int v)
@@ -357,6 +365,7 @@ FaxMachineInfo::writeConfig(fxStackBuffer& buf)
     putBoolean(buf, "supportsMMR", isLocked(G4),supportsMMR);
     putBoolean(buf, "hasV34Trouble", isLocked(V34),hasV34Trouble);
     putBoolean(buf, "supportsPostScript", isLocked(PS), supportsPostScript);
+    putBoolean(buf, "supportsBatching", isLocked(BATCH), supportsBatching);
     putBoolean(buf, "calledBefore", false, calledBefore);
     putDecimal(buf, "maxPageWidth", isLocked(WD), maxPageWidth);
     putDecimal(buf, "maxPageLength", isLocked(LN), maxPageLength);

@@ -31,7 +31,7 @@
 #include "faxQueueApp.h"
 #include "FaxTrace.h"
 
-#define	DCI_MAXCONCURRENTJOBS	0x0001
+#define	DCI_MAXCONCURRENTCALLS	0x0001
 #define	DCI_TIMEOFDAY		0x0002
 #define	DCI_MAXSENDPAGES	0x0004
 #define	DCI_MAXDIALS		0x0008
@@ -54,7 +54,7 @@ DestControlInfo::DestControlInfo(const DestControlInfo& other)
     , args(other.args)
 {
     defined = other.defined;
-    maxConcurrentJobs = other.maxConcurrentJobs;
+    maxConcurrentCalls = other.maxConcurrentCalls;
     maxSendPages = other.maxSendPages;
     maxDials = other.maxDials;
     maxTries = other.maxTries;
@@ -75,9 +75,12 @@ DestControlInfo::parseEntry(const char* tag, const char* value, bool quoted)
 	rejectNotice = value;
     } else if (streq(tag, "modem")) {
 	modem = value;
-    } else if (streq(tag, "maxconcurrentjobs")) {
-	maxConcurrentJobs = getNumber(value);
-	setDefined(DCI_MAXCONCURRENTJOBS);
+    } else if (streq(tag, "maxconcurrentjobs")) {	// backwards compatibility
+	maxConcurrentCalls = getNumber(value);
+	setDefined(DCI_MAXCONCURRENTCALLS);
+    } else if (streq(tag, "maxconcurrentcalls")) {
+	maxConcurrentCalls = getNumber(value);
+	setDefined(DCI_MAXCONCURRENTCALLS);
     } else if (streq(tag, "maxsendpages")) {
 	maxSendPages = getNumber(value);
 	setDefined(DCI_MAXSENDPAGES);
@@ -106,12 +109,12 @@ DestControlInfo::parseEntry(const char* tag, const char* value, bool quoted)
 }
 
 u_int
-DestControlInfo::getMaxConcurrentJobs() const
+DestControlInfo::getMaxConcurrentCalls() const
 {
-    if (isDefined(DCI_MAXCONCURRENTJOBS))
-	return maxConcurrentJobs;
+    if (isDefined(DCI_MAXCONCURRENTCALLS))
+	return maxConcurrentCalls;
     else
-	return faxQueueApp::instance().getMaxConcurrentJobs();
+	return faxQueueApp::instance().getMaxConcurrentCalls();
 }
 
 u_int

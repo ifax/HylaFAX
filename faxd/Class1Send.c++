@@ -98,19 +98,26 @@ Class1Modem::sendBegin()
     params.br = (u_int) -1;			// force initial training
 }
 
+#define BATCH_FIRST 1
+#define BATCH_LAST  2
+
 /*
  * Get the initial DIS command.
  */
 FaxSendStatus
-Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg)
+Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int& batched)
 {
     u_int t1 = howmany(conf.t1Timer, 1000);		// T1 timer in seconds
     time_t start = Sys::now();
     HDLCFrame frame(conf.class1FrameOverhead);
 
-    if (useV34)	waitForDCEChannel(true);		// expect control channel
+    if (useV34 && (batched & BATCH_FIRST))
+	waitForDCEChannel(true);		// expect control channel
 
-    bool framerecvd = recvRawFrame(frame);
+    bool framerecvd = false;
+    if (batched & BATCH_FIRST)
+	framerecvd = recvRawFrame(frame);
+
     for (;;) {
 	if (framerecvd) {
 	    /*
@@ -162,6 +169,10 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg)
 	 * This delay is only supposed to be done if the signal
 	 * is gone (see p.105 of Rec. T.30).  We just assume
 	 * it rather than send a command to the modem to check.
+	 * Getting NO CARRIER after EOM seems necessary, so we
+	 * usually do this at least twice before any HDLC frames
+	 * are received.  Using +FTS may be better than looping,
+	 * but many modems won't support that.
 	 */
 	pause(200);
 	/*
@@ -221,7 +232,7 @@ Class1Modem::decodePPM(const fxStr& pph, u_int& ppm, fxStr& emsg)
  */
 FaxSendStatus
 Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
-    fxStr& pph, fxStr& emsg)
+    fxStr& pph, fxStr& emsg, u_int& batched)
 {
     int ntrys = 0;			// # retraining/command repeats
     bool morePages = true;		// more pages still to send
@@ -241,8 +252,13 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	 * DIS frame.
 	 */
 	if (params != next) {
-	    if (!sendTraining(next, 3, emsg))
+	    if (!sendTraining(next, 3, emsg)) {
+		if (!(batched & BATCH_FIRST)) {
+		    protoTrace("The destination appears to not support batching.");
+		    return (send_batchfail);
+		}
 		return (send_retry);
+	    }
 	    params = next;
 	}
 
@@ -263,15 +279,22 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	u_int cmd;
 	if (!decodePPM(pph, cmd, emsg))
 	    return (send_failed);
+	if (cmd == FCF_EOP && !(batched & BATCH_LAST))
+	    cmd = FCF_EOM;
 
 	/*
 	 * Transmit the facsimile message/Phase C.
 	 */
-        hadV34Trouble = false;
+        hadV34Trouble = false;		// to monitor failure type
+	batchingError = false;
 	if (!sendPage(tif, params, decodePageChop(pph, params), cmd, emsg)) {
 	    if (hadV34Trouble) {
 		protoTrace("The destination appears to have trouble with V.34-Fax.");
 		return (send_v34fail);
+	    }
+	    if (batchingError && (batched & BATCH_FIRST)) {
+		protoTrace("The destination appears to not support batching.");
+		return (send_batchfail);
 	    }
 	    return (send_retry);	// a problem, disconnect
 	}
@@ -310,8 +333,13 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		/*
 		 * Send post-page message and get response.
 		 */
-		if (!sendPPM(cmd, frame, emsg))
+		if (!sendPPM(cmd, frame, emsg)) {
+		    if (cmd == FCF_EOM && (batched & BATCH_FIRST)) {
+			protoTrace("The destination appears to not support batching.");
+			return (send_batchfail);
+		    }
 		    return (send_retry);
+		}
 		ppr = frame.getFCF();
 		tracePPR("SEND recv", ppr);
 	    } else {
@@ -1042,6 +1070,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			if ((unsigned) Sys::now()-start >= t1) {
 			    // we use T1 rather than T5 to "minimize transmission inefficiency" (T.30 A.5.4.1)
 			    emsg = "Receiver flow control exceeded timer.";
+			    if (ppmcmd == FCF_EOM) batchingError = true;
 			    protoTrace(emsg);
 			    return (false);
 			}
@@ -1247,6 +1276,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				} while (!goterr && (++eorcnt < 3) && (crpcnt < 3));
 				if (!goterr) {
 				    emsg = "No response to EOR repeated 3 times.";
+				    if (ppmcmd == FCF_EOM) batchingError = true;
 				    protoTrace(emsg);
 				    return (false);
 				}
@@ -1258,6 +1288,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 					if ((unsigned) Sys::now()-start >= t1) {
 					    // we use T1 rather than T5 to "minimize transmission inefficiency" (T.30 A.5.4.1)
 					    emsg = "Receiver flow control exceeded timer.";
+					    if (ppmcmd == FCF_EOM) batchingError = true;
 					    protoTrace(emsg);
 					    return (false);
 					}
@@ -1326,6 +1357,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		}
 	    } else {
 		emsg = "No response to PPS repeated 3 times.";
+		if (ppmcmd == FCF_EOM) batchingError = true;
 		protoTrace(emsg);
 		return (false);
 	    }
@@ -1727,7 +1759,20 @@ Class1Modem::sendPPM(u_int ppm, HDLCFrame& mcf, fxStr& emsg)
 	if (abortRequested())
 	    return (false);
     }
-    emsg = "No response to MPS or EOP repeated 3 tries";
+    switch (ppm) {
+	case FCF_MPS:
+	    emsg = "No response to MPS repeated 3 tries";
+	    break;
+	case FCF_EOP:
+	    emsg = "No response to EOP repeated 3 tries";
+	    break;
+	case FCF_EOM:
+	    emsg = "No response to EOM repeated 3 tries";
+	    break;
+	default:
+	    emsg = "No response to PPM repeated 3 tries";
+	    break;
+    }
     protoTrace(emsg);
     return (false);
 }
