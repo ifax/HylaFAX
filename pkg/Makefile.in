@@ -21,8 +21,8 @@ NULL	=
 ECHO	= echo
 
 all default:
-	-if test ! -L copyright ; then \
-		ln -s $(VPATH)/../COPYRIGHT copyright ; \
+	if [ ! -f copyright ]; then \
+		cp $(VPATH)/../COPYRIGHT copyright ; \
 	fi ; \
 	for i in README depend make.links preremove proto.local ; do	\
 		[ -f $$i ]  ||  cp $(VPATH)/$$i . ;			\
