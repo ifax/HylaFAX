@@ -98,6 +98,8 @@ case "${pagewidth}x${pagelength}" in
     paper=a4;;
 *x364)
     paper=b4;;
+2432x*|3648x*|4864x*)
+    paper=a3;;
 *)
     echo "$0: Unsupported page size: $pagewidth x $pagelength";
     exit 254;;			# causes document to be rejected
@@ -109,18 +111,25 @@ esac
 case "$paper" in
     a4)
 	case "$pagewidth" in
-	    2592) hres=313.65;;		# VR_R300X300
+	    2592) hres=313.65;;		# VR_300X300
 	    3456) hres=418.20;; 	# VR_R16
 	    *) hres=209.10;;		# everything else, 1728 pixels
 	esac;;
-    b4)					# no 300x300 available with B4
+    b4)
 	case "$pagewidth" in
+	    3072) hres=311.97;;		# VR_300X300
 	    4096) hres=415.95;; 	# VR_R16
 	    *) hres=207.98;;		# everything else, 2048 pixels
 	esac;;
+    a3)
+	case "$pagewidth" in
+	    3648) hres=311.94;;		# VR_300X300
+	    4864) hres=415.93;; 	# VR_R16
+	    *) hres=207.96;;		# everything else, 2432 pixels
+	esac;;
     *)					# letter, legal
 	case "$pagewidth" in
-	    2592) hres=304.94;;		# VR_R300X300
+	    2592) hres=304.94;;		# VR_300X300
 	    3456) hres=406.59;; 	# VR_R16
 	    *) hres=203.29;;		# everything else, 1728 pixels
 	esac;;

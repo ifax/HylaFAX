@@ -400,6 +400,10 @@ Class2Params::pageWidth() const
     switch (vr) {
 	case VR_300X300: 
 	    widths[0] = 2592;
+	    widths[1] = 3072;
+	    widths[2] = 3648;
+	    widths[3] = 1824;
+	    widths[4] = 1296;
 	    break;  
 	case VR_R16:
 	    widths[0] = 3456;
@@ -423,8 +427,20 @@ Class2Params::pageWidth() const
 void
 Class2Params::setPageWidthInMM(u_int w)
 {
-    // This function is unused and doesn't support VR_300X300 and VR_R16.
-    wd = (w == 255 ? WD_2048 : w == 303 ? WD_2432 : WD_1728);
+    /*
+     * We get the width in MM from the q file.  Basically,
+     * faxing only deals with three page widths defined by
+     * pixel-widths: 1728, 2048, and 2432 (in R8 resolution).
+     * The associated page size names are A4, B4, and A3.  
+     * However, the calculated size in millimeters differs
+     * between pixel-widths and page size.
+     * 1728 pixels = 215 mm : A4 = 209.903 mm
+     * 2048 pixels = 255 mm : B4 = 250.119 mm
+     * 2432 pixels = 303 mm : A3 = 297.039 mm
+     * The client program may therefore use a range of
+     * pagewidth (mm) values.  We must interpret wisely.
+     */
+    wd = (w > 270 ? WD_2432 : w > 230 ? WD_2048 : WD_1728);
 }
 
 void
@@ -447,6 +463,10 @@ Class2Params::setPageWidthInPixels(u_int w)
 	//w == 2432 ? WD_1216 :		// collision
 	//w == 1728 ? WD_864 :		// collision
 	  w == 2592 ? WD_1728 :
+	  w == 3072 ? WD_2048 :
+	  w == 3648 ? WD_2432 :
+	  w == 1824 ? WD_1216 :
+	  w == 1296 ? WD_864 :
 		      WD_1728);
 }
 
@@ -468,7 +488,8 @@ Class2Params::setPageLengthInMM(u_int l)
     ln = (l == (u_int) -1 ?  LN_INF :
 	  l <= 280 ?	     LN_LET :
 	  l <= 300 ?	     LN_A4 :
-			     LN_B4);
+	  l <= 380 ?	     LN_B4 :
+			     LN_INF);
 }
 
 u_int

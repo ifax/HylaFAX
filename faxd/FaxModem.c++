@@ -492,6 +492,10 @@ FaxModem::supportsPageWidth(u_int w, u_int r) const
 	case VR_300X300:
 	    switch (w) {
 		case 2592:   return (modemParams.wd & BIT(WD_1728)) != 0;
+		case 3072:   return (modemParams.wd & BIT(WD_2048)) != 0;
+		case 3648:   return (modemParams.wd & BIT(WD_2432)) != 0;
+		case 1824:   return (modemParams.wd & BIT(WD_1216)) != 0;
+		case 1296:   return (modemParams.wd & BIT(WD_864)) != 0;
 	    }
 	case VR_NORMAL:
 	case VR_FINE:

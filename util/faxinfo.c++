@@ -173,8 +173,8 @@ main(int argc, char** argv)
 	params.vr == VR_FINE ? 7.7 :
 	params.vr == VR_200X200 ? 7.87 : 
 	params.vr == VR_R8 ? 15.4 : 
-	params.vr == VR_200X400 ? 12.81 : 
-	params.vr == VR_300X300 ? 9.14 : 15.4);
+	params.vr == VR_200X400 ? 15.75 : 
+	params.vr == VR_300X300 ? 11.81 : 15.4);
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &v);
     float w = v / (params.vr == VR_NORMAL ? 8.0 : 
 	params.vr == VR_200X100 ? 8.00 : 
