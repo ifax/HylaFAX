@@ -257,7 +257,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 		    notifyDocumentSent(fax, i);
 		    dosetup = false;
 		}
-		if (fax.status == send_done &&
+		if ((fax.status == send_done || dosetup) &&
 	      fax.findItem(FaxRequest::send_poll) != fx_invalidArrayIndex)
 		    sendPoll(fax, remoteHasDoc);
 	    }
