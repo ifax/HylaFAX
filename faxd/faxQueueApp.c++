@@ -46,7 +46,7 @@
 #include "Trigger.h"
 #include "faxQueueApp.h"
 #include "HylaClient.h"
-#include "G3Decoder.h"
+#include "MemoryDecoder.h"
 #include "FaxSendInfo.h"
 #include "config.h"
 
@@ -800,113 +800,6 @@ faxQueueApp::setupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo& 
 	params.setPageLengthInMM((u_int)(h / yres));
     } else
 	params.ln = LN_INF;
-}
-
-/*
- * Page Chopping Support.
- */
-class MemoryDecoder : public G3Decoder {
-private:
-    u_long	  cc;
-    const u_char* bp;
-    const u_char* endOfPage;
-    u_int	  nblanks;
-
-    int decodeNextByte();
-public:
-    MemoryDecoder(const u_char* data, u_long cc);
-    ~MemoryDecoder();
-    const u_char* current()				{ return bp; }
-
-    void scanPageForBlanks(u_int fillorder, const Class2Params& params);
-
-    const u_char* getEndOfPage()			{ return endOfPage; }
-    u_int getLastBlanks()				{ return nblanks; }
-};
-MemoryDecoder::MemoryDecoder(const u_char* data, u_long n)
-{
-    bp = data;
-    cc = n;
-    endOfPage = NULL;
-    nblanks = 0;
-}
-MemoryDecoder::~MemoryDecoder()				{}
-
-int
-MemoryDecoder::decodeNextByte()
-{
-    if (cc == 0)
-	raiseRTC();			// XXX don't need to recognize EOF
-    cc--;
-    return (*bp++);
-}
-
-static bool
-isBlank(tiff_runlen_t* runs, u_int rowpixels)
-{
-    u_int x = 0;
-    for (;;) {
-	if ((x += *runs++) >= rowpixels)
-	    break;
-	if (runs[0] != 0)
-	    return (false);
-	if ((x += *runs++) >= rowpixels)
-	    break;
-    }
-    return (true);
-}
-
-void
-MemoryDecoder::scanPageForBlanks(u_int fillorder, const Class2Params& params)
-{
-    setupDecoder(fillorder,  params.is2D(), (params.df == DF_2DMMR));
-    u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
-    tiff_runlen_t runs[2*4864];			// run arrays for cur+ref rows
-    setRuns(runs, runs+4864, rowpixels);
-
-    if (!RTCraised()) {
-	/*
-	 * Skip a 1" margin at the top of the page before
-	 * scanning for trailing white space.  We do this
-	 * to ensure that there is always enough space on
-	 * the page to image a tag line and to satisfy a
-	 * fax machine that is incapable of imaging to the
-	 * full extent of the page.
-	 */
-	u_int topMargin = 1*98;			// 1" at 98 lpi
-	switch (params.vr) {
-	    case VR_FINE:
-	    case VR_200X200:
-		topMargin *= 2;			// 196 lpi =>'s twice as many
-		break;
-	    case VR_300X300:
-		topMargin *= 3;
-		break;
-	    case VR_R8:
-	    case VR_R16:
-	    case VR_200X400:
-		topMargin *= 4;
-		break;
-	}
-	do {
-	    (void) decodeRow(NULL, rowpixels);
-	} while (--topMargin);
-	/*
-	 * Scan the remainder of the page data and calculate
-	 * the number of blank lines at the bottom.
-	 */
-	for (;;) {
-	    (void) decodeRow(NULL, rowpixels);
-	    if (isBlank(lastRuns(), rowpixels)) {
-		endOfPage = bp;			// include one blank row
-		nblanks = 0;
-		do {
-		    nblanks++;
-		    (void) decodeRow(NULL, rowpixels);
-		} while (isBlank(lastRuns(), rowpixels));
-	    }
-	}
-    }
 }
 
 void

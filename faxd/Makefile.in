@@ -73,6 +73,7 @@ C++FILES=ClassModem.c++ \
 	FaxServer.c++ \
 	G3Decoder.c++ \
 	G3Encoder.c++ \
+	MemoryDecoder.c++ \
 	Getty.c++ \
 	Getty@GETTY@.c++ \
 	HDLCFrame.c++ \
@@ -112,6 +113,7 @@ MODEM_OBJS=ClassModem.o \
 	CopyQuality.o \
 	G3Decoder.o \
 	G3Encoder.o \
+	MemoryDecoder.o \
 	HDLCFrame.o \
 	ModemConfig.o \
     NSF.o \

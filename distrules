@@ -438,6 +438,7 @@ HYLAFAXSRC=\
 	faxd/HDLCFrame.h			\
 	faxd/HylaClient.h			\
 	faxd/Job.h				\
+	faxd/MemoryDecoder.h			\
 	faxd/Modem.h				\
 	faxd/ModemConfig.h			\
 	faxd/ModemServer.h			\
@@ -492,6 +493,7 @@ HYLAFAXSRC=\
 	faxd/HDLCFrame.c++			\
 	faxd/HylaClient.c++			\
 	faxd/Job.c++				\
+	faxd/MemoryDecoder.c++			\
 	faxd/Modem.c++				\
 	faxd/ModemConfig.c++			\
 	faxd/ModemServer.c++			\
