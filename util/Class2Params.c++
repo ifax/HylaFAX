@@ -103,7 +103,7 @@ u_int Class2Params::vrDISTab[2] = {
     DIS_7MMVRES,		// VR_FINE
 };
 u_int Class2Params::dfDISTab[4] = {
-    0,				// 1-D MR
+    0,				// 1-D MH
     DIS_2DENCODE,		// + 2-D MR
     DIS_2DENCODE,		// + Uncompressed data
     DIS_2DENCODE,		// + 2-D MMR
@@ -175,7 +175,7 @@ u_int Class2Params::stDCSTab[8] = {
  * subparameter code values.
  */
 u_int Class2Params::DISdfTab[2] = {
-    DF_1DMR,			// !DIS_2DENCODE
+    DF_1DMH,			// !DIS_2DENCODE
     DF_2DMR			// DIS_2DENCODE
 };
 u_int Class2Params::DISvrTab[2] = {
@@ -683,7 +683,7 @@ Class2Params::bitRate() const
 }
 
 const char* Class2Params::dataFormatNames[4] = {
-    "1-D MR",			// DF_1DMR
+    "1-D MH",			// DF_1DMH
     "2-D MR",			// DF_2DMR
     "2-D Uncompressed Mode",	// DF_2DMRUNCOMP
     "2-D MMR"			// DF_2DMMR

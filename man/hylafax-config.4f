@@ -1041,7 +1041,7 @@ when copy quality checking is performed on the host.
 (When copy quality checking is not done by the server, for example when
 error correction protocol is used, the received
 facsimile data is written exactly as it is received from the modem.)
-The format may be one: ``1-D MR'', ``2-D MR'', ``2-D MMR'', or ``adaptive''.
+The format may be one: ``1-D MH'', ``2-D MR'', ``2-D MMR'', or ``adaptive''.
 An ``adaptive'' format causes the received data to be written using
 the data format negotiated by the sender and receiver.
 Note that while 2-D MMR is the most space-efficient data format

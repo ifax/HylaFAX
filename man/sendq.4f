@@ -209,7 +209,7 @@ The desired signalling rate to use for page data transmissions:
 .TP 14
 .B desireddf
 The desired data format to use for page data transmissions:
-0 for 1-D MR, 1 for 2-D MR, 3 for 2-D MR with uncompressed data,
+0 for 1-D MH, 1 for 2-D MR, 3 for 2-D MR with uncompressed data,
 and 4 for 2-D MMR (default).
 .TP 14
 .B desiredec

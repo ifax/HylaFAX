@@ -139,7 +139,7 @@ Class1Modem::setupModem()
     modemParams.vr = VR_ALL;
     modemParams.wd = BIT(WD_1728) | BIT(WD_2048) | BIT(WD_2432);
     modemParams.ln = LN_ALL;
-    modemParams.df = BIT(DF_1DMR) | BIT(DF_2DMR);
+    modemParams.df = BIT(DF_1DMH) | BIT(DF_2DMR);
     if (conf.class1ECMSupport)
 	modemParams.ec = BIT(EC_ENABLE) | BIT(EC_DISABLE);
     else

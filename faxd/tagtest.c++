@@ -425,7 +425,7 @@ main(int argc, char* argv[])
     params.vr = VR_NORMAL;
     params.wd = WD_1728;
     params.ln = LN_INF;
-    params.df = DF_1DMR;
+    params.df = DF_1DMH;
 
     pageNumber = 1;
 
@@ -452,7 +452,7 @@ main(int argc, char* argv[])
 	TIFFSetField(otif, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISWHITE);
 	uint32 opts = 0;
 	TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &opts);
-	params.df = (opts & GROUP3OPT_2DENCODING) ? DF_2DMR : DF_1DMR;
+	params.df = (opts & GROUP3OPT_2DENCODING) ? DF_2DMR : DF_1DMH;
 	TIFFSetField(otif, TIFFTAG_GROUP3OPTIONS, opts);
 	uint16 o;
 	if (TIFFGetField(otif, TIFFTAG_ORIENTATION, &o))

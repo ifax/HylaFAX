@@ -549,7 +549,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
 	    }
 	    params.df = DF_2DMR;
 	} else
-	    params.df = DF_1DMR;
+	    params.df = DF_1DMH;
     }
 
     /*

@@ -183,7 +183,7 @@ main(int argc, char* argv[])
     params.vr = VR_NORMAL;
     params.wd = WD_1728;
     params.ln = LN_INF;
-    params.df = DF_1DMR;
+    params.df = DF_1DMH;
 
     printf("Chop %s >=%.2g\" of white space at the bottom.\n"
 	, doAll ? "all pages with" : "last page if"
@@ -204,7 +204,7 @@ main(int argc, char* argv[])
 
 	    uint32 opts = 0;
 	    TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &opts);
-	    params.df = (opts & GROUP3OPT_2DENCODING) ? DF_2DMR : DF_1DMR;
+	    params.df = (opts & GROUP3OPT_2DENCODING) ? DF_2DMR : DF_1DMH;
 
 	    uint16 fillorder;
 	    TIFFGetFieldDefaulted(tif, TIFFTAG_FILLORDER, &fillorder);

@@ -228,7 +228,7 @@ standard, but the client capabilities indicate this data format is not
 supported.
 This is not a fatal error; the server will disconnect and reimage the
 document using
-.SM 1DMR
+.SM 1DMH
 encoding.
 .PP
 \fBREJECT: Client does not support document page width, max remote page width %u, image width %lu\fP.
@@ -609,7 +609,7 @@ data is better than
 with optional uncompressed data, is better than
 .SM 2DMR
 data, is better than
-.SM 1DMR
+.SM 1DMH
 data.
 .PP
 \fBREMOTE best rate %s\fP.

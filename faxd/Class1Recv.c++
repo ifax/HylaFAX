@@ -717,7 +717,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
     u_int zeros = 0;
     bool nullrow = true;
     int eolcount = 0;
-    if (params.df != DF_1DMR) eolcount--;		// 2-D page begins with EOL, T.4 4.2.2
+    if (params.df != DF_1DMH) eolcount--;		// 2-D page begins with EOL, T.4 4.2.2
 
     setupStartPage(tif, params);
 
@@ -925,7 +925,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    else {
 			if (!nullrow) eolcount++;
 			nullrow = true;
-			if (params.df != DF_1DMR) j++;	// 2-D EOL+1 T.4 4.2.4
+			if (params.df != DF_1DMH) j++;	// 2-D EOL+1 T.4 4.2.4
 		    }
 		    zeros = 0;
 		} else zeros++;

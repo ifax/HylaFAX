@@ -457,7 +457,7 @@ ModemConfig::findDataFormat(const char* cp, u_int& df)
 	const char* name;
 	u_int d;
     } dfnames[] = {
-	{       "1DMR", DF_1DMR },
+	{       "1DMH", DF_1DMH },
 	{       "2DMR", DF_2DMR },
 	{ "2DMRUNCOMP", DF_2DMRUNCOMP },
 	{      "2DMMR", DF_2DMMR },

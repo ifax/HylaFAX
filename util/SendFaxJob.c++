@@ -387,7 +387,7 @@ void SendFaxJob::setUseXVRes(bool b)			{ useXVRes = b; }
 void
 SendFaxJob::setDesiredDF(const char* v)
 {
-    if (strcasecmp(v, "1d") == 0 || strcasecmp(v, "1dmr") == 0)
+    if (strcasecmp(v, "1d") == 0 || strcasecmp(v, "1dmh") == 0 || strcasecmp(v, "1dmr") == 0)
 	desireddf = 0;
     else if (strcasecmp(v, "2d") == 0 || strcasecmp(v, "2dmr") == 0)
 	desireddf = 1;

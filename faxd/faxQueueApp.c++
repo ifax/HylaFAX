@@ -548,12 +548,12 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
 	use2D && job.modem->supportsMMR() &&
 	info.getCalledBefore() && info.getSupportsMMR())
 	    params.df = DF_2DMMR;
-    else if (req.desireddf > DF_1DMR) {
+    else if (req.desireddf > DF_1DMH) {
 	params.df = (use2D && job.modem->supports2D() &&
 	    info.getCalledBefore() && info.getSupports2DEncoding()) ?
-		DF_2DMR : DF_1DMR;
+		DF_2DMR : DF_1DMH;
     } else
-	params.df = DF_1DMR;
+	params.df = DF_1DMH;
     /*
      * Check and process the documents to be sent
      * using the parameter selected above.
@@ -751,7 +751,7 @@ faxQueueApp::setupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo& 
 {
     uint32 g3opts = 0;
     TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
-    params.df = (g3opts&GROUP3OPT_2DENCODING ? DF_2DMR : DF_1DMR);
+    params.df = (g3opts&GROUP3OPT_2DENCODING ? DF_2DMR : DF_1DMH);
 
     uint32 w;
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
@@ -1020,7 +1020,7 @@ faxQueueApp::convertDocument(Job& job,
 	if (params.df == DF_2DMMR)
 	    argv[ac++] = "-3";
 	else
-	    argv[ac++] = params.df == DF_1DMR ? "-1" : "-2";
+	    argv[ac++] = params.df == DF_1DMH ? "-1" : "-2";
 	argv[ac++] = req.item;
 	argv[ac] = NULL;
 	// XXX the (char* const*) is a hack to force type compatibility

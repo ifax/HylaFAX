@@ -367,7 +367,7 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	    if ((g3opts & GROUP3OPT_2DENCODING) == DF_2DMR)
 		params.df = DF_2DMR;
 	    else
-		params.df = DF_1DMR;
+		params.df = DF_1DMH;
 	} else
 	    params.df = DF_2DMMR;
 

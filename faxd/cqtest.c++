@@ -307,7 +307,7 @@ CQDecoder::recvPageDLEData(TIFF* tif, bool checkQuality,
 	    TIFFSetField(tif, TIFFTAG_GROUP3OPTIONS,
 		group3opts | GROUP3OPT_2DENCODING);
 	    break;
-	case DF_1DMR:
+	case DF_1DMH:
 	    TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_CCITTFAX3);
 	    TIFFSetField(tif, TIFFTAG_GROUP3OPTIONS,
 		group3opts &~ GROUP3OPT_2DENCODING);
@@ -550,7 +550,7 @@ main(int argc, char* argv[])
 	    params.vr = VR_FINE;
 	uint32 opts = 0;
 	TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &opts);
-	params.df = (opts & GROUP3OPT_2DENCODING) ? DF_2DMR : DF_1DMR;
+	params.df = (opts & GROUP3OPT_2DENCODING) ? DF_2DMR : DF_1DMH;
 	TIFFGetFieldDefaulted(tif, TIFFTAG_FILLORDER, &cq.recvFillOrder);
 
 	printf("%u x %u, %s, %s, %s\n"

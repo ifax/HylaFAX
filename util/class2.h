@@ -93,8 +93,8 @@ const u_short LN_ALL	= BIT(LN_INF+1)-1;
 
 const u_short LN_LET	= 3;		// XXX US Letter size (used internally)
 
-const u_short DF_1DMR	= 0;		// 1-D Modified Huffman
-const u_short DF_2DMR	= 1;		// 2-D Modified Huffman
+const u_short DF_1DMH	= 0;		// 1-D Modified Huffman
+const u_short DF_2DMR	= 1;		// 2-D Modified Read
 const u_short DF_2DMRUNCOMP	= 2;		// 2-D Uncompressed Mode
 const u_short DF_2DMMR	= 3;		// 2-D Modified Modified Read
 const u_short DF_ALL	= BIT(DF_2DMMR+1)-1;
