@@ -111,7 +111,12 @@ FaxServer::sendFailed(FaxRequest& fax, FaxSendStatus stat, const char* notice, u
      */
     if (tts != requeueOther)
 	fax.tts = Sys::now() + tts;
-    traceServer("SEND FAILED: %s", notice);
+	traceServer("SEND FAILED: JOB %s DEST %s ERR %s"
+		, (const char*) fax.jobid
+            	, (const char*) fax.external
+            	, (const char*) notice
+        );
+
 }
 
 /*
