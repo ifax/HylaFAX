@@ -4620,6 +4620,7 @@ CONF_FILES="
     util/pollrcvd.sh
     util/ps2fax.dps.sh
     util/ps2fax.gs.sh
+    util/pdf2fax.gs.sh
     util/ps2fax.imp.sh
     util/tiff2fax.sh
     util/wedged.sh
