@@ -346,7 +346,7 @@ FaxRequest::readQFile(bool& rejectJob)
 
 	case H_RETURNED:	status = (FaxSendStatus) atoi(tag); break;
 	case H_POLL:		// H_MINBR collides
-	    if (cmd[1] == 'm')
+	    if (cmd[0] == 'm')
 		minbr = atoi(tag);
 	    else
 		addItem(send_poll, tag); break;
