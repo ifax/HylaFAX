@@ -389,8 +389,11 @@ test "$MAPNAMES" = "yes" && $CAT<<'EOF'
 	    #
 	    # Strip hostname from multi-part domain name.
 	    #
+EOF
+test "$MAPNAMES" = "yes" && echo 'p = split("'`hostname`'", hostname, ".");'
+test "$MAPNAMES" = "yes" && $CAT<<'EOF'
 	    n = split(addr, domains, ".");
-	    if (n > 2) {		# e.g. flake.asd.sgi.com
+	    if (n > p - 1) {		# e.g. flake.asd.sgi.com
 		l = length(domains[1])+1;
 		addr = substr(addr, l+1, length(addr)-l);
 		key = user "@" addr;
