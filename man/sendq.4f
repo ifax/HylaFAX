@@ -134,7 +134,6 @@ totpages	integer	total pages to transmit
 tottries	integer	total number of attempts to send job
 tts	integer	time to send job
 useccover	integer	whether or not to use a continuation cover page
-usexvres	integer	whether or not to use highest vertical resolution
 .fi
 .RE
 .SH "PARAMETERS"
@@ -209,7 +208,7 @@ The desired signalling rate to use for page data transmissions:
 .TP 14
 .B desireddf
 The desired data format to use for page data transmissions:
-0 for 1-D MH, 1 for 2-D MR, 3 for 2-D MR with uncompressed data,
+0 for 1-D MR, 1 for 2-D MR, 3 for 2-D MR with uncompressed data,
 and 4 for 2-D MMR (default).
 .TP 14
 .B desiredec
@@ -536,10 +535,6 @@ process as soon as possible.
 .B useccover
 1 if the job should use a continuation cover page during
 retransmission, 0 otherwise.
-.TP 14
-.B usexvres
-1 if the job should use the highest possible vertical
-resolution, 0 otherwise.
 See 
 .IR hylafax-server (${MANNUM4_5})
 for a description of continuation cover pages.
