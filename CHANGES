@@ -2,7 +2,10 @@
 
 Changelog for HylaFAX 4.2.0
 
-* improve COMMLOGS assingment in default archive script (04 May 2004)
+* fix error in clients when sender identity was whitespace only (8 May 2004)
+* add recognition of blacklisted modem dialing responses (8 May 2004)
+* impose a timeout on sending some commands to Class 2 modems (5 May 2004)
+* improve COMMLOGS assignment in default archive script (04 May 2004)
 * add prototype support for AboCom and another MultiTech (29 Apr 2004)
 * fix faxaddmodem and probemodem to support locking devices
   in subdirectories (29 Apr 2004)
@@ -21,7 +24,7 @@ Changelog for HylaFAX 4.2.0
 * change Class1ECMDoCTC into Class1PersistentECM and apply to V.34-Fax (6 Apr 2004)
 * add owner field to xferfaxstats output (6 Apr 2004)
 * add tiff2pdf, remove notify.awk, and add significant notify enhancements
-  such as returning a copy of the faxed document (6, 17 Apr 2004)
+  such as returning a copy of the faxed document (6, 17 Apr, 5 May 2004)
 * add add WEDGED_EMAIL_INTERVAL and WEDGED_DISABLE_FAXGETTY options (6 Apr 2004)
 * recognize BUSY as an answer response indicating disconnection (6 Apr 2004)
 * add Class 1.0 and V.34-Fax/SuperG3 support (29, 30 Mar 2004)
