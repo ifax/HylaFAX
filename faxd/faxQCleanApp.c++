@@ -305,10 +305,10 @@ faxQCleanApp::expungeCruft(void)
 		    (const char*) file, sb.st_nlink);
 	    continue;
 	}
-	if (docrefs.find(dp->d_name)) {		// referenced from doneq
+	if (docrefs.find(file)) {		// referenced from doneq
 	    if (trace)
 		printf("%s: ignored, file has %u references\n",
-		    (const char*) file, docrefs[dp->d_name]);
+		    (const char*) file, docrefs[file]);
 	    continue;
 	}
 	if (now - sb.st_mtime < minDocAge) {	// not old enough
