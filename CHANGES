@@ -2,6 +2,9 @@
 
 Changelog for HylaFAX 4.2.0
 
+* improve and fix several no-modem-response timeouts (31 May 2004)
+* fix an error in faxq when adding a job that had a no_formatter
+  error to the sleep queue (31 May 2004)
 * fix rare faxsend segfault in Class 1 scanline padding (27 May 2004)
 * utilize DesiredBR to determine what modulation to use (24 May 2004)
 * remove Class1EnableV34Cmd from modem initialization (22 May 2004)
