@@ -280,7 +280,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	 */
 	if (!atCmd(cmd == FCF_MPS ? conf.class1PPMWaitCmd : conf.class1EOPWaitCmd, AT_OK)) {
 	    emsg = "Stop and wait failure (modem on hook)";
-	    return (send_failed);
+	    return (send_retry);
 	}
 
 	do {
@@ -544,7 +544,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	     */
 	    if (!atCmd(conf.class1TCFWaitCmd, AT_OK)) {
 		emsg = "Stop and wait failure (modem on hook)";
-		return (send_failed);
+		return (send_retry);
 	    }
 
 	    if (!sendTCF(params, TCF_DURATION)) {
