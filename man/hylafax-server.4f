@@ -709,5 +709,5 @@ archive/*	database of archived jobs
 .IR xferfaxlog (${MANNUM4_5}),
 .PP
 Extensive documentation is available in online at
-http://www.vix.com/hylafax/.
+http://www.hylafax.org/.
 Many of these materials are also included in the software distribution.
