@@ -55,6 +55,21 @@ while [ x"$1" != x"" ] ; do
     shift
 done
 
+# Test selected modem speed against a list of known standards
+
+if [ "$SPEED" != "" -a "$SPEED" != 38400 -a "$SPEED" != 19200 \
+   -a "$SPEED" != 9600 -a "$SPEED" != 4800 -a "$SPEED" != 2400 \
+   -a "$SPEED" != 1200 ]; then
+   cat<<EOF
+
+Warning, you have selected a DTE-DCE communication rate ($SPEED) that
+differs from known standards. $SPEED may not work correctly for sending
+and receiving facsimile: check your modem manual to make sure that
+$SPEED is acceptable.
+
+EOF
+fi
+
 test -f $SPOOL/etc/setup.cache || {
     cat<<EOF
 
@@ -284,15 +299,17 @@ LOCKSTR=`expr "         $$" : '.*\(..........\)'`
 for x in $LOCKX; do
     echo "$LOCKSTR" > $x
 done
+
 # zap any gettys or other users
-fuser -k $DEVS >/dev/null 2>&1 || {
+if ! [ -f $FUSER ]; then
     cat<<EOF
 Hmm, there does not appear to be an fuser command on your machine.
-This means that I am unable to insure that all processes using the
+This means that I am unable to ensure that all processes using the
 modem have been killed.  I will keep going, but beware that you may
 have competition for the modem.
 EOF
-}
+else $FUSER -k $DEVS >/dev/null 2>&1
+fi
 
 cat<<EOF
 
@@ -1487,37 +1504,6 @@ $3 != ""{ p($1, $2) }
 END	{ printf "\n" }'
 }
 
-verifyModemRate()
-{
-    if [ "$ModemRate" != "$SPEED" ]; then
-	cat<<EOF
-
-Hmmm, the configured DTE-DCE communication rate ($ModemRate) is
-different than the rate that we are using to setup the modem ($SPEED).
-
-EOF
-	while [ "$ModemRate" != "$SPEED" ]; do
-	    prompt "Are you sure you want to use $ModemRate as the DTE-DCE baud rate [yes]?"; read x
-	    isOK $x && break
-	    # Next time prompt for the speed we established earlier.
-	    ModemRate=$SPEED
-	    promptFor Numeric ModemRate "DTE-DCE communication baud rate"
-	done
-    fi
-    if [ "$ModemRate" != "$protoModemRate" ]; then
-	cat<<EOF
-
-Warning, the prototype configuration for your modem uses a different
-DTE-DCE communication rate ($protoModemRate) than the rate that you have
-selected ($ModemRate).  Unless this prototype configuration file is setup
-to automatically switch baud rates for facsimile communication, $ModemRate
-may not work correctly for sending and receiving facsimile: check your
-modem manual to make sure that $ModemRate is acceptable.
-
-EOF
-    fi
-}
-
 promptFor()
 {
     eval test \"\$proto$2\" && {
@@ -1588,7 +1574,6 @@ AT	ModemOnHookCmd		Command for placing phone \"on hook\" (hangup)
 #	ModemPageDoneTimeout	Page send/receive timeout (ms)
 #	ModemPageStartTimeout	Page send/receive timeout (ms)
 #	ModemRate		DTE-DCE communication baud rate
-	verifyModemRate
 BO	ModemRecvFillOrder	\
 	Bit order that modem sends received facsimile data
 AT	ModemResetCmds		Additional commands for resetting the modem
@@ -1725,7 +1710,6 @@ while isNotOK $ok; do
     #
     prompt "Are these ok [yes]?"; read ok
 done
-verifyModemRate
 TMPSED=$TMPDIR/faxsed$$; JUNK="$JUNK $TMPSED"
 (echoServerSedCommands; echoModemSedCommands)>$TMPSED
 

@@ -55,6 +55,7 @@ CHMOD=@CHMOD@			# change file mode for use below
 CHOWN=@CHOWN@			# change file owner for use below
 CP=@CP@				# cp command for use below
 ECHO=@ECHO@			# echo command for use below
+FUSER=@FUSER@			# fuser command to dump in setup.cache
 GREP=@GREP@			# grep command for use below
 LN=@LN@				# ln command for use below
 LN_S=@LN_S@			# ln option for creating a symbolic link
@@ -130,6 +131,7 @@ CP
 DPSRIP		PATH_DPSRIP
 ECHO
 FAXQ_SERVER
+FUSER
 GREP
 GSRIP		PATH_GSRIP
 HFAXD_SERVER

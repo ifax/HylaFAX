@@ -149,6 +149,7 @@ FAXUID
 FILLORDER
 FONTMAP
 FONTPATH	PATH_AFM
+FUSER
 GETTY
 GREP
 GSRIP 		PATH_GSRIP
@@ -3285,6 +3286,7 @@ test "$CMP"	|| CMP=`findAppDef cmp $PATH cmp`
 test "$COL"	|| COL=`findAppDef col $PATH col`
 test "$CP"	|| CP=`findAppDef cp $PATH cp`
 test "$ECHO"	|| ECHO=`findAppDef echo $PATH echo`
+test "$FUSER"	|| FUSER=`findAppDef fuser /sbin:$PATH fuser`
 test "$GENDIST"	|| GENDIST=`findAppDef gendist $PATH gendist`
 test "$GREP"	|| GREP=`findAppDef grep $PATH grep`
 test "$LN"	|| LN=`findAppDef ln $PATH ln`
