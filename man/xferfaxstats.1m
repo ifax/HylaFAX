@@ -112,19 +112,18 @@ The
 column shows the most common data format in which facsimile
 data were transmitted.
 .PP
-By default, account names other than ``root'' and ``guest''
-are automatically mapped to a canonical format
+Account names other than ``root'' and ``guest''
+can be automatically mapped to a canonical format
 in which the host name is removed and identical addresses in the
-same domain are merged together.
+same domain are merged together (i.e. for NIS environments).
 For example, ``sam@flake.asd.sgi.com'' and ``sam@foobar.asd.sgi.com''
 are both mapped to ``sam@asd.sgi.com'' with the associated statistics
 accumulated.
 Identical account names in different domains generate a warning;
 e.g. ``loki@wpd.sgi.com'' and ``loki@corp.sgi.com''.
-If the
-.B \-nomap
-option is specified, then the above mapping is not done and
-account names are not altered.
+The above mapping is done only if the
+.B \-map
+option is specified, by default account names are not altered.
 .ne 1i
 .SH OPTIONS
 .TP 12
@@ -145,7 +144,13 @@ Sort output by the negotiated data format.
 Sort output by client-specified job tag identifiers.
 .TP
 .B \-nomap
-Supress the normal account name mapping by which
+Do not perform the account name mapping by which
+statistics for the ``root'' and ``guest'' acounts are 
+merged and leading hostname part of domain names are stripped.
+This is the default behavior.
+.TP
+.B \-map
+Perform the account name mapping by which
 statistics for the ``root'' and ``guest'' acounts are 
 merged and leading hostname part of domain names are stripped.
 .TP

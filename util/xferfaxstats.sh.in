@@ -49,7 +49,7 @@ EOF
 
 FILES=
 SORTKEY=-sender				# default is to sort by sender
-MAPNAMES=yes				# default is to map email addresses
+MAPNAMES=no				# default is to not map email addresses (NIS)
 TODAY="`date +'%D %H:%M'`"
 AGE="360"				# report statistics for last year
 SINCE=
@@ -59,6 +59,7 @@ while [ x"$1" != x"" ] ; do
     -send*|-csi|-dest*|-speed|-rate|-format|-job*|-dev*)
 	    SORTKEY=$1;;
     -nomap) MAPNAMES=no;;
+    -map)   MAPNAMES=yes;;
     -age)   shift; AGE=$1;;
     -since) shift; SINCE=$1;;
     -*)	    echo "Usage: $0 [-sortkey] [-age days] [-since date] [-nomap] [files]"; exit 1;;
@@ -406,7 +407,7 @@ EOF
 test "$MAPNAMES" = "yes" && echo 'p = split("'`hostname`'", hostname, ".");'
 test "$MAPNAMES" = "yes" && $CAT<<'EOF'
 	    n = split(addr, domains, ".");
-	    if (n > p - 1) {		# e.g. flake.asd.sgi.com
+	    if (p > 1 && n > p) {		# e.g. flake.asd.sgi.com
 		l = length(domains[1])+1;
 		addr = substr(addr, l+1, length(addr)-l);
 		key = user "@" addr;
