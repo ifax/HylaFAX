@@ -198,8 +198,10 @@ imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      */
     u_int w = params.pageWidth();
     u_int h = tagLineFont->fontHeight()+MARGIN_TOP+MARGIN_BOT;
-    u_int th = (params.vr == VR_FINE) ?
-	h : (tagLineFont->fontHeight()/2)+MARGIN_TOP+MARGIN_BOT;
+    u_int th = (params.vr == VR_R16 || params.vr == VR_R8 || params.vr == VR_200X400) ? h :
+	(params.vr == VR_300X300) ? (tagLineFont->fontHeight()/2)+MARGIN_TOP+MARGIN_BOT :
+	(params.vr == VR_FINE || params.vr == VR_200X200) ? (tagLineFont->fontHeight()/2)+MARGIN_TOP+MARGIN_BOT :
+	(tagLineFont->fontHeight()/2)+MARGIN_TOP+MARGIN_BOT;
     /*
      * imageText assumes that raster is word-aligned; we use
      * longs here to optimize the scaling done below for the
@@ -271,7 +273,7 @@ imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params)
      */
     u_int look_ahead = roundup(dec.getPendingBits(),8) / 8;
     u_int decoded = dec.current() - look_ahead - buf;
-    if (params.vr == VR_NORMAL || params.vr == VR_200X100) {
+    if (params.vr != VR_R8 and params.vr != VR_R16 and params.vr != VR_200X400) {
 	/*
 	 * Scale text vertically before encoding.  Note the
 	 * ``or'' used to generate the final samples. 

@@ -365,7 +365,7 @@ bool
 Modem::supportsVRes(float res) const
 {
     if (75 <= res && res < 120)
-	return (caps.vr & VR_NORMAL || caps.vr & VR_200X100);
+	return (true);		// all fax modems must support vr = 0
     else if (150 <= res && res < 250)
 	return (caps.vr & VR_FINE || caps.vr & VR_200X200);
     else if (250 <= res && res < 350)

@@ -50,6 +50,11 @@ fatal(char* fmt, ...)
     exit(-1);
 }
 
+
+#define	BIT(i)	(1<<(i))
+
+int fxmin(int a, int b)          { return (a < b) ? a : b; }
+
 const char OPAREN = '(';
 const char CPAREN = ')';
 const char COMMA = ',';
@@ -67,7 +72,7 @@ const char SPACE = ' ';
  *     that indicate they support ``Class Z'' are handled.
  */
 int
-vparseRange(const char* cp, int nargs, ... )
+vparseRange(const char* cp, int masked, int nargs, ... )
 {
     int b = 1;
     va_list ap;
@@ -130,9 +135,33 @@ vparseRange(const char* cp, int nargs, ... )
 		    cp++;
 		v++, r++;				/* XXX 2.0 -> 3 */
 	    }
-	    if (v != -1) {				/* expand range or list */
-		for (; v <= r; v++)
-		    mask |= 1<<v;
+	    if (v != -1) {			/* expand range or list */
+		if ((BIT(nargs) & masked) == BIT(nargs)) {
+		    /*
+		     * These are pre-masked values. T.32 Table 21 gives valid
+		     * values as: 00, 01, 02, 04, 08, 10, 20, 40 (hex).
+		     *
+		     * Some modems may say "(00-7F)" when what's meant is
+		     * "(00-40)" or simply "(7F)".
+		     */
+		    if (v == 00 && r == 127)
+			v = r = 127;
+		    if (v == r)
+			mask = v;
+		    else {
+			r = fxmin(r, 64);	// clamp to valid range */
+			mask = 0;
+			for (; v <= r; v++)
+			    if (v == 0 || v == 1 || v == 2 || v == 4 || v == 8 || v == 16 || v == 32 || v == 64)
+				mask += v;
+		    }
+		}
+
+		else {
+			r = fxmin(r, 31);	// clamp to valid range
+			for (; v <= r; v++)
+			    mask |= 1<<v;
+		}
 	    }
 	    if (acceptList && cp[0] == COMMA)		/* (<item>,<item>...) */
 		cp++;
@@ -151,8 +180,7 @@ done:
 /*
  * Class 2 Fax Modem Definitions.
  */
-#define	BIT(i)	(1<<(i))
-#define	VR_ALL	(BIT(2)-1)
+#define	VR_ALL	(BIT(7)-1)
 #define	BR_ALL	(BIT(6)-1)	// don't encode > 14.4 Kbps
 #define	WD_ALL	(BIT(5)-1)
 #define	LN_ALL	(BIT(3)-1)
@@ -172,7 +200,16 @@ parseCapabilities(const char* cp, u_int* caps)
 {
     // we are limited to 32 bits, thus BR_ALL is restricted above
     int vr, br, wd, ln, df, ec, bf, st;
-    if (vparseRange(cp, 8, &vr,&br,&wd,&ln,&df,&ec,&bf,&st)) {
+    
+    /*
+     * reversed, count-down style bitmask: used to tell vparseRange
+     * which capabilities are 'true' bitmask (not just max bit);
+     * right now they are vr and bf (ie: vr is 7th position considering
+     * the list in reversed order and base 0)
+     */
+    int masked = (1 << 7) + (1 << 1);
+    
+    if (vparseRange(cp, masked, 8, &vr,&br,&wd,&ln,&df,&ec,&bf,&st)) {
 	*caps = (vr&VR_ALL)
 	     | ((br&BR_ALL)<<8)
 	     | ((wd&WD_ALL)<<14)
