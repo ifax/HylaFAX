@@ -906,6 +906,11 @@ CheckForGandO()
 }
 
 if [ -z "$GCOPTS" ]; then
+    case $CC-$TARGET in
+    gcc-x86_64-*-linux-gnu)
+	GCOPTS='-fPIC'
+	;;
+    esac
     capture $CCOMPILER $ENVOPTS -g -c dummy.c && {
 	Note "Looks like $CCOMPILER supports the -g option."
 	# NB: cannot use captureX here 'cuz we lose stderr
@@ -1062,6 +1067,9 @@ if [ -z "$GCXXOPTS" ]; then
 	;;
     CC-*-sco3.2v5.*)		# cfront-based or cfront-compatible
 	GCXXOPTS='+a1 +p'
+	;;
+    g++-x86_64-*-linux-gnu)
+	GCXXOPTS='-fPIC'
 	;;
     *)
 	GCXXOPTS=
