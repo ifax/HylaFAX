@@ -181,9 +181,9 @@ SNPPServer::dologout(int status)
 	for (u_int i = 0, n = msgs.length(); i < n; i++) {
 	    Job* job = findJob(msgs[i], emsg);
 	    if (job) {
-		for (u_int j = 0, m = job->requests.length(); j < m; j++)
-		    if (job->requests[j].op == FaxRequest::send_data)
-			(void) Sys::unlink(job->requests[j].item);
+		for (u_int j = 0, m = job->items.length(); j < m; j++)
+		    if (job->items[j].op == FaxRequest::send_data)
+			(void) Sys::unlink(job->items[j].item);
 		(void) Sys::unlink(job->qfile);
 		delete job;
 	    }
@@ -1104,7 +1104,7 @@ SNPPServer::pagerCmd(const char* pagerID, const char* pin)
      * request is made).
      */
     curJob = &defJob;				// inherit from default job
-    // XXX merge requests to same provider (maybe?)
+    // XXX merge items to same provider (maybe?)
     if (newJob(emsg) && updateJobOnDisk(*curJob, emsg)) {
 	fxStr file("/" | curJob->qfile);
 	setFileOwner(file);			// force ownership
@@ -1114,9 +1114,9 @@ SNPPServer::pagerCmd(const char* pagerID, const char* pin)
 	curJob->number = provider;		// destination phone number
 	if (!pin)				// use mapped value
 	    pin = PIN;
-	curJob->requests.append(faxRequest(FaxRequest::send_page, 0, "", pin));
-	curJob->requests.append(
-	    faxRequest(FaxRequest::send_page_saved, 0, "", pin));
+	curJob->items.append(FaxItem(FaxRequest::send_page, 0, "", pin));
+	curJob->items.append(
+	    FaxItem(FaxRequest::send_page_saved, 0, "", pin));
 	reply(250, "Pager ID accepted; provider: %s pin: %s jobid: %s."
 	    , (const char*) provider
 	    , pin
@@ -1152,7 +1152,7 @@ SNPPServer::pingCmd(const char* pagerID)
 }
 
 static bool
-notPresent(faxRequestArray& a, const char* name)
+notPresent(FaxItemArray& a, const char* name)
 {
     for (u_int i = 0, n = a.length(); i < n; i++)
 	if (a[i].op == FaxRequest::send_data && a[i].item == name)
@@ -1213,14 +1213,14 @@ SNPPServer::sendCmd(void)
 	     */
 	    fxStr document =
 		fxStr::format("/" FAX_DOCDIR "%s.", cp) | job->jobid;
-	    if (notPresent(job->requests, &document[1])) {
+	    if (notPresent(job->items, &document[1])) {
 		if (Sys::link(docname, document) < 0) {
 		    reply(554, "Unable to link document %s to %s: %s.",
 			docname, (const char*) document, strerror(errno));
 		    return;
 		}
-		job->requests.append(
-		    faxRequest(FaxRequest::send_data, 0, "", &document[1]));
+		job->items.append(
+		    FaxItem(FaxRequest::send_data, 0, "", &document[1]));
 	    }
 	}
 	/*

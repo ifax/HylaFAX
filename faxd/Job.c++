@@ -100,7 +100,7 @@ Job::update(const FaxRequest& req)
     pagewidth = req.pagewidth;
     pagelength = req.pagelength;
     resolution = req.resolution;
-    willpoll = (req.findRequest(FaxRequest::send_poll) != fx_invalidArrayIndex);
+    willpoll = (req.findItem(FaxRequest::send_poll) != fx_invalidArrayIndex);
     device = req.modem;
 }
 

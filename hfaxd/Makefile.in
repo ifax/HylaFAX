@@ -76,8 +76,8 @@ targets: $(TARGETS)
 
 @MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
 
-hfaxd: ${OBJECTS} FaxRequest.o faxRequest.o ${LIBS}
-	${C++F} -o $@ ${OBJECTS} FaxRequest.o faxRequest.o ${LDFLAGS}
+hfaxd: ${OBJECTS} FaxRequest.o FaxItem.o ${LIBS}
+	${C++F} -o $@ ${OBJECTS} FaxRequest.o FaxItem.o ${LDFLAGS}
 
 #
 # Private versions are built so that we do not need
@@ -89,8 +89,8 @@ hfaxd: ${OBJECTS} FaxRequest.o faxRequest.o ${LIBS}
 #
 FaxRequest.o: ${FAXDSRCDIR}/FaxRequest.c++
 	${C++F} -c ${C++FILE} -I${DEPTH}/faxd ${FAXDSRCDIR}/FaxRequest.c++@MAKECXXOVERRIDE@
-faxRequest.o: ${FAXDSRCDIR}/faxRequest.c++
-	${C++F} -c ${C++FILE} ${FAXDSRCDIR}/faxRequest.c++@MAKECXXOVERRIDE@
+FaxItem.o: ${FAXDSRCDIR}/FaxItem.c++
+	${C++F} -c ${C++FILE} ${FAXDSRCDIR}/FaxItem.c++@MAKECXXOVERRIDE@
 
 HylaFAXServer.o: 
 incdepend:

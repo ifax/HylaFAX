@@ -324,43 +324,43 @@ FaxRequest::readQFile(bool& rejectJob)
 	    notice = tag;
 	    break;
 
-	case H_POLL:		addRequest(send_poll, tag); break;
-	case H_FAX:		addRequest(send_fax, tag); break;
+	case H_POLL:		addItem(send_poll, tag); break;
+	case H_FAX:		addItem(send_fax, tag); break;
 	case H_PDF:
 	    if (cmd[0] == '!')
-		addRequest(send_pdf_saved, tag);
+		addItem(send_pdf_saved, tag);
 	    else
-		addRequest(send_pdf, tag, rejectJob);
+		addItem(send_pdf, tag, rejectJob);
 	    break;
 	case H_TIFF:
 	    if (cmd[0] == '!')
-		addRequest(send_tiff_saved, tag);
+		addItem(send_tiff_saved, tag);
 	    else
-		addRequest(send_tiff, tag, rejectJob);
+		addItem(send_tiff, tag, rejectJob);
 	    break;
 	case H_POSTSCRIPT:
 	    if (cmd[0] == '!')
-		addRequest(send_postscript_saved, tag);
+		addItem(send_postscript_saved, tag);
 	    else
-		addRequest(send_postscript, tag, rejectJob);
+		addItem(send_postscript, tag, rejectJob);
 	    break;
 	case H_PCL:
 	    if (cmd[0] == '!')
-		addRequest(send_pcl_saved, tag);
+		addItem(send_pcl_saved, tag);
 	    else
-		addRequest(send_pcl, tag, rejectJob);
+		addItem(send_pcl, tag, rejectJob);
 	    break;
 	case H_DATA:
 	    if (cmd[0] == '!')
-		addRequest(send_data_saved, tag);
+		addItem(send_data_saved, tag);
 	    else
-		addRequest(send_data, tag, rejectJob);
+		addItem(send_data, tag, rejectJob);
 	    break;
 	case H_PAGE:
 	    if (cmd[0] == '!')
-		addRequest(send_page_saved, tag);
+		addItem(send_page_saved, tag);
 	    else
-		addRequest(send_page, tag);
+		addItem(send_page, tag);
 	    break;
 	}
     } while (bp < ep);
@@ -407,7 +407,7 @@ FaxRequest::readQFile(bool& rejectJob)
  * will cause all fields to be written.  This means
  * that we should not need to reset the state to the
  * default values assigned when the instance is created;
- * except for the requests array which is dynamically
+ * except for the items array which is dynamically
  * allocated and appended to.  If you don't believe
  * this, enable the code notdef'd out below.
  */
@@ -419,7 +419,7 @@ FaxRequest::reReadQFile(bool& rejectJob)
     for (int i = N(strvals)-1; i >= 0; i--)	// string stuff
 	(*this).*strvals[i].p = "";
 #endif
-    requests.resize(0);				// document/polling requests
+    items.resize(0);				// document/polling requests
     return (readQFile(rejectJob));
 }
 
@@ -466,13 +466,13 @@ FaxRequest::writeQFile()
     sb.fput("notify:%s\n", notifyVals[notify&3]);
     sb.fput("pagechop:%s\n", chopVals[pagechop&3]);
     sb.fput("chopthreshold:%g\n", chopthreshold);
-    for (u_int i = 0; i < requests.length(); i++) {
-	const faxRequest& req = requests[i];
+    for (u_int i = 0; i < items.length(); i++) {
+	const FaxItem& fitem = items[i];
 	sb.fput("%s:%u:%s:%s\n"
-	    , opNames[req.op&15]
-	    , req.dirnum
-	    , (const char*) req.addr
-	    , (const char*) req.item
+	    , opNames[fitem.op&15]
+	    , fitem.dirnum
+	    , (const char*) fitem.addr
+	    , (const char*) fitem.item
 	);
     }
     lseek(fd, 0L, SEEK_SET);
@@ -511,8 +511,8 @@ FaxRequest::mkbasedoc(const fxStr& file)
 void
 FaxRequest::renameSaved(u_int fi)
 {
-    if (fi > 0 && requests[fi-1].isSavedOp()) {
-	faxRequest& src = requests[fi-1];
+    if (fi > 0 && items[fi-1].isSavedOp()) {
+	FaxItem& src = items[fi-1];
 	fxStr basedoc = mkbasedoc(src.item);
 	if (Sys::rename(src.item, basedoc) < 0) {
 	    logError("Unable to rename transmitted document %s: %s",
@@ -532,9 +532,9 @@ FaxRequest::renameSaved(u_int fi)
 bool
 FaxRequest::isUnreferenced(u_int fi)
 {
-    if (fi > 0 && requests[fi-1].isSavedOp()) {
+    if (fi > 0 && items[fi-1].isSavedOp()) {
 	struct stat sb;
-	if (Sys::stat(mkbasedoc(requests[fi-1].item), sb) < 0 ||
+	if (Sys::stat(mkbasedoc(items[fi-1].item), sb) < 0 ||
 	  sb.st_nlink == 1)
 	    return (true);
     }
@@ -580,7 +580,7 @@ FaxRequest::checkDocument(const char* pathname)
  * the document pathname to make sure that it is valid.
  */
 void
-FaxRequest::addRequest(FaxSendOp op, char* tag)
+FaxRequest::addItem(FaxSendOp op, char* tag)
 {
     char* cp = tag;
     while (*cp && *cp != ':')
@@ -597,14 +597,14 @@ FaxRequest::addRequest(FaxSendOp op, char* tag)
 	*cp++ = '\0';
     else
 	cp = tag, tag = "";
-    requests.append(faxRequest(op, dirnum, tag, cp));
+    items.append(FaxItem(op, dirnum, tag, cp));
 }
 
 /*
  * Add a request entry and verify the document is valid.
  */
 void
-FaxRequest::addRequest(FaxSendOp op, char* tag, bool& rejectJob)
+FaxRequest::addItem(FaxSendOp op, char* tag, bool& rejectJob)
 {
     char* cp = tag;
     while (*cp && *cp != ':')
@@ -626,7 +626,7 @@ FaxRequest::addRequest(FaxSendOp op, char* tag, bool& rejectJob)
 	rejectJob = true;
     }
     else
-	requests.append(faxRequest(op, dirnum, tag, cp));
+	items.append(FaxItem(op, dirnum, tag, cp));
 }
 
 bool
@@ -674,10 +674,10 @@ FaxRequest::checkChopValue(const char* tag)
 }
 
 u_int
-FaxRequest::findRequest(FaxSendOp op, u_int ix) const
+FaxRequest::findItem(FaxSendOp op, u_int ix) const
 {
-    while (ix < requests.length()) {
-	if (requests[ix].op == op)
+    while (ix < items.length()) {
+	if (items[ix].op == op)
 	    return (ix);
 	ix++;
     }
@@ -687,7 +687,7 @@ FaxRequest::findRequest(FaxSendOp op, u_int ix) const
 void
 FaxRequest::insertFax(u_int ix, const fxStr& file)
 {
-    requests.insert(faxRequest(send_fax, 0, fxStr::null, file), ix);
+    items.insert(FaxItem(send_fax, 0, fxStr::null, file), ix);
 }
 
 void

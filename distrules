@@ -423,6 +423,7 @@ HYLAFAXSRC=\
 	faxd/DestInfo.h				\
 	faxd/FaxAcctInfo.h			\
 	faxd/FaxFont.h				\
+	faxd/FaxItem.h				\
 	faxd/FaxMachineInfo.h			\
 	faxd/FaxMachineLog.h			\
 	faxd/FaxModem.h				\
@@ -453,7 +454,6 @@ HYLAFAXSRC=\
 	faxd/faxApp.h				\
 	faxd/faxGettyApp.h			\
 	faxd/faxQueueApp.h			\
-	faxd/faxRequest.h			\
 	faxd/faxSendApp.h			\
 	faxd/pageSendApp.h			\
 	faxd/ixo.h				\
@@ -477,6 +477,7 @@ HYLAFAXSRC=\
 	faxd/DestInfo.c++			\
 	faxd/FaxAcctInfo.c++			\
 	faxd/FaxFont.c++			\
+	faxd/FaxItem.c++			\
 	faxd/FaxMachineInfo.c++			\
 	faxd/FaxMachineLog.c++			\
 	faxd/FaxModem.c++			\
@@ -508,7 +509,6 @@ HYLAFAXSRC=\
 	faxd/faxGettyApp.c++			\
 	faxd/faxQCleanApp.c++			\
 	faxd/faxQueueApp.c++			\
-	faxd/faxRequest.c++			\
 	faxd/faxSendApp.c++			\
 	faxd/pageSendApp.c++			\
 	faxd/choptest.c++			\

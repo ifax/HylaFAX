@@ -62,6 +62,7 @@ C++FILES=ClassModem.c++ \
 	DestInfo.c++ \
 	FaxAcctInfo.c++ \
 	FaxFont.c++ \
+	FaxItem.c++ \
 	FaxMachineInfo.c++ \
 	FaxMachineLog.c++ \
 	FaxPoll.c++ \
@@ -91,7 +92,6 @@ C++FILES=ClassModem.c++ \
 	faxApp.c++ \
 	faxGettyApp.c++ \
 	faxQueueApp.c++ \
-	faxRequest.c++ \
 	faxSendApp.c++ \
 	tagtest.c++ \
 	tsitest.c++ \
@@ -122,7 +122,7 @@ MODEM_OBJS=ClassModem.o \
 	TagLine.o
 SERVER_OBJS=faxApp.o \
 	\
-	faxRequest.o \
+	FaxItem.o \
 	FaxRequest.o \
 	\
 	FaxAcctInfo.o \

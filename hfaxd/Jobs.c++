@@ -397,10 +397,10 @@ HylaFAXServer::replyJobParamValue(Job& job, int code, Token t)
 	replyBoolean(code, job.useccover);
 	return;
     case T_DOCUMENT:
-	for (i = 0, n = job.requests.length(); i < n; i++) {
-	    const faxRequest& freq = job.requests[i];
+	for (i = 0, n = job.items.length(); i < n; i++) {
+	    const FaxItem& fitem = job.items[i];
 	    // XXX should cover page docs not be shown?
-	    switch (freq.op) {
+	    switch (fitem.op) {
 	    case FaxRequest::send_pdf:
 	    case FaxRequest::send_pdf_saved:
 	    case FaxRequest::send_tiff:
@@ -410,17 +410,17 @@ HylaFAXServer::replyJobParamValue(Job& job, int code, Token t)
 	    case FaxRequest::send_pcl:
 	    case FaxRequest::send_pcl_saved:
 		lreply(code, "%s %s",
-		    docTypeNames[freq.op], (const char*) freq.item);
+		    docTypeNames[fitem.op], (const char*) fitem.item);
 		break;
 	    }
 	}
 	reply(code, "End of documents.");
 	return;
     case T_COVER:
-	for (i = 0, n = job.requests.length(); i < n; i++) {
-	    const faxRequest& freq = job.requests[i];
-	    if (freq.item.length() > 7 && freq.item.tail(6) == ".cover") {
-		switch (freq.op) {
+	for (i = 0, n = job.items.length(); i < n; i++) {
+	    const FaxItem& fitem = job.items[i];
+	    if (fitem.item.length() > 7 && fitem.item.tail(6) == ".cover") {
+		switch (fitem.op) {
 		case FaxRequest::send_tiff:
 		case FaxRequest::send_tiff_saved:
 		case FaxRequest::send_pdf:
@@ -430,7 +430,7 @@ HylaFAXServer::replyJobParamValue(Job& job, int code, Token t)
 		case FaxRequest::send_pcl:
 		case FaxRequest::send_pcl_saved:
 		    reply(code, "%s %s",
-			docTypeNames[freq.op], (const char*) freq.item);
+			docTypeNames[fitem.op], (const char*) fitem.item);
 		    return;
 		}
 	    }
@@ -438,13 +438,13 @@ HylaFAXServer::replyJobParamValue(Job& job, int code, Token t)
 	reply(code+1, "No cover page document.");
 	return;
     case T_POLL:
-	for (i = 0, n = job.requests.length(); i < n; i++) {
-	    const faxRequest& freq = job.requests[i];
-	    if (freq.op == FaxRequest::send_poll)
+	for (i = 0, n = job.items.length(); i < n; i++) {
+	    const FaxItem& fitem = job.items[i];
+	    if (fitem.op == FaxRequest::send_poll)
 		lreply(code, "\"%s\" \"%s\"",
-		    (const char*) freq.item, (const char*) freq.addr);
+		    (const char*) fitem.item, (const char*) fitem.addr);
 	}
-	reply(code, "End of polling requests.");
+	reply(code, "End of polling items.");
 	return;
     }
     for (i = 0, n = N(strvals); i < n; i++)
@@ -534,12 +534,12 @@ HylaFAXServer::jstatCmd(const Job& job)
      *     for access to T_COVER and T_POLL also.
      */
     if (checkAccess(job, T_DOCUMENT, A_READ)) {
-	for (i = 0, n = job.requests.length(); i < n; i++) {
-	    const faxRequest& freq = job.requests[i];
-	    switch (freq.op) {
+	for (i = 0, n = job.items.length(); i < n; i++) {
+	    const FaxItem& fitem = job.items[i];
+	    switch (fitem.op) {
 	    case FaxRequest::send_fax:
-		jstatLine(T_DOCUMENT, "%s %s %u", docTypeNames[freq.op],
-		    (const char*) freq.item, freq.dirnum);
+		jstatLine(T_DOCUMENT, "%s %s %u", docTypeNames[fitem.op],
+		    (const char*) fitem.item, fitem.dirnum);
 		break;
 	    case FaxRequest::send_tiff:
 	    case FaxRequest::send_tiff_saved:
@@ -552,27 +552,27 @@ HylaFAXServer::jstatCmd(const Job& job)
 	    case FaxRequest::send_data:
 	    case FaxRequest::send_data_saved:
 		jstatLine(
-		    (freq.item.length() > 7 && freq.item.tail(6) == ".cover" ?
+		    (fitem.item.length() > 7 && fitem.item.tail(6) == ".cover" ?
 			T_COVER : T_DOCUMENT) 
 		    , "%s %s"
-		    , docTypeNames[freq.op]
-		    , (const char*) freq.item
+		    , docTypeNames[fitem.op]
+		    , (const char*) fitem.item
 		);
 		break;
 	    case FaxRequest::send_page:
 	    case FaxRequest::send_page_saved:
 		jstatLine(T_DOCUMENT
-		    , freq.addr == "" ? "%s \"%s\"" : "%s \"%s\" \"%s\""
-		    , docTypeNames[freq.op]
-		    , (const char*) freq.item
-		    , (const char*) freq.addr
+		    , fitem.addr == "" ? "%s \"%s\"" : "%s \"%s\" \"%s\""
+		    , docTypeNames[fitem.op]
+		    , (const char*) fitem.item
+		    , (const char*) fitem.addr
 		);
 		break;
 	    case FaxRequest::send_poll:
 		jstatLine(T_POLL
-		    , freq.addr == "" ? "\"%s\"" : "\"%s\" \"%s\""
-		    , (const char*) freq.item
-		    , (const char*) freq.addr
+		    , fitem.addr == "" ? "\"%s\"" : "\"%s\" \"%s\""
+		    , (const char*) fitem.item
+		    , (const char*) fitem.addr
 		);
 		break;
 	    }
@@ -615,17 +615,17 @@ void
 HylaFAXServer::flushPreparedDocuments(Job& job)
 {
     u_int j = 0;
-    while (j < job.requests.length()) {
-	faxRequest& freq = job.requests[j];
-	if (freq.op == FaxRequest::send_fax) {
+    while (j < job.items.length()) {
+	FaxItem& fitem = job.items[j];
+	if (fitem.op == FaxRequest::send_fax) {
 	    // NB: don't waste time requesting ACK
 	    fxStr emsg;
-	    sendQueuer(emsg, "U%s", (const char*) freq.item);
-	    job.requests.remove(j);
+	    sendQueuer(emsg, "U%s", (const char*) fitem.item);
+	    job.items.remove(j);
 	    continue;
 	}
-	if (freq.isSavedOp())
-	    freq.op--;				// assumes order of enum
+	if (fitem.isSavedOp())
+	    fitem.op--;				// assumes order of enum
 	j++;
     }
     job.pagehandling = "";			// force recalculation
@@ -862,7 +862,7 @@ HylaFAXServer::newJobCmd(void)
  * jobs by inheriting state--this would permit them to
  * look at privileged information such as calling card
  * information in dial strings and passwords to be
- * transmitted with polling requests.
+ * transmitted with polling items.
  */
 bool
 HylaFAXServer::newJob(fxStr& emsg)
@@ -1224,11 +1224,11 @@ HylaFAXServer::deleteJob(const char* jobid)
 	 * it can properly expunge imaged versions of the docs.
 	 */
 	if (job->state == FaxRequest::state_suspended) {
-	    for (u_int i = 0, n = job->requests.length(); i < n; i++) {
-		const faxRequest& freq = job->requests[i];
-		switch (freq.op) {
+	    for (u_int i = 0, n = job->items.length(); i < n; i++) {
+		const FaxItem& fitem = job->items[i];
+		switch (fitem.op) {
 		case FaxRequest::send_fax:
-		    if (sendQueuerACK(emsg, "U%s", (const char*) freq.item) ||
+		    if (sendQueuerACK(emsg, "U%s", (const char*) fitem.item) ||
 		      !job->isUnreferenced(i))
 			break;
 		    /* ... fall thru */
@@ -1241,15 +1241,15 @@ HylaFAXServer::deleteJob(const char* jobid)
 		case FaxRequest::send_pcl:
 		case FaxRequest::send_pcl_saved:
 		case FaxRequest::send_data:
-		    Sys::unlink(freq.item);
+		    Sys::unlink(fitem.item);
 		    break;
 		}
 	    }
 	} else {
 	    // expunge any cover page documents
-	    for (u_int i = 0, n = job->requests.length(); i < n; i++) {
-		const faxRequest& freq = job->requests[i];
-		switch (freq.op) {
+	    for (u_int i = 0, n = job->items.length(); i < n; i++) {
+		const FaxItem& fitem = job->items[i];
+		switch (fitem.op) {
 		case FaxRequest::send_tiff_saved:
 		case FaxRequest::send_tiff:
 		case FaxRequest::send_pdf_saved:
@@ -1258,8 +1258,8 @@ HylaFAXServer::deleteJob(const char* jobid)
 		case FaxRequest::send_postscript_saved:
 		case FaxRequest::send_pcl:
 		case FaxRequest::send_pcl_saved:
-		    if (freq.item.findR(freq.item.length(), ".cover"))
-			Sys::unlink(freq.item);
+		    if (fitem.item.findR(fitem.item.length(), ".cover"))
+			Sys::unlink(fitem.item);
 		    break;
 		}
 	    }
@@ -1464,7 +1464,7 @@ HylaFAXServer::addCoverDocument(Job& job, const char* docname)
 	fxStr covername = "/" FAX_DOCDIR "/doc" | job.jobid | ".cover";
 	if (Sys::link(docname, covername) >= 0) {
 	    // XXX mark as cover page
-	    job.requests.append(faxRequest(op, 0, "", &covername[1]));
+	    job.items.append(FaxItem(op, 0, "", &covername[1]));
 	    reply(200, "Added cover page document %s as %s.",
 		docname, &covername[1]);
 	    job.pagehandling = "";		// force recalculation
@@ -1488,7 +1488,7 @@ HylaFAXServer::addDocument(Job& job, const char* docname)
 	    cp = docname;
 	fxStr document = fxStr::format("/" FAX_DOCDIR "%s.", cp) | job.jobid;
 	if (Sys::link(docname, document) >= 0) {
-	    job.requests.append(faxRequest(op, 0, "", &document[1]));
+	    job.items.append(FaxItem(op, 0, "", &document[1]));
 	    reply(200, "Added document %s as %s.", docname, &document[1]);
 	    job.pagehandling = "";		// force recalculation
 	} else
@@ -1504,7 +1504,7 @@ void
 HylaFAXServer::addPollOp(Job& job, const char* sep, const char* pwd)
 {
     if (checkParm(job, T_POLL, A_WRITE)) {
-	job.requests.append(faxRequest(FaxRequest::send_poll, 0, sep, pwd));
+	job.items.append(FaxItem(FaxRequest::send_poll, 0, sep, pwd));
 	reply(200, "Added poll operation.");
     }
 }

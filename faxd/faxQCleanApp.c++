@@ -219,9 +219,9 @@ faxQCleanApp::scanDirectory(void)
 void
 faxQCleanApp::collectRefs(const FaxRequest& req)
 {
-    for (u_int i = 0, n = req.requests.length(); i < n; i++) {
-	const faxRequest& freq = req.requests[i];
-	switch (freq.op) {
+    for (u_int i = 0, n = req.items.length(); i < n; i++) {
+	const FaxItem& fitem = req.items[i];
+	switch (fitem.op) {
 	case FaxRequest::send_pdf:
 	case FaxRequest::send_pdf_saved:
 	case FaxRequest::send_tiff:
@@ -233,8 +233,8 @@ faxQCleanApp::collectRefs(const FaxRequest& req)
 	    if (trace)
 		printf("JOB %s: reference %s\n",
 		    (const char*) req.jobid,
-		    (const char*) freq.item);
-	    docrefs[freq.item]++;
+		    (const char*) fitem.item);
+	    docrefs[fitem.item]++;
 	    break;
 	}
     }

@@ -23,8 +23,8 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
-#ifndef _faxRequest_
-#define	_faxRequest_
+#ifndef _FaxItem_
+#define	_FaxItem_
 /*
  * HylaFAX request substructure.
  */
@@ -39,20 +39,20 @@ typedef unsigned short FaxSendOp;
  * nested class but due to compiler limitations
  * we are forced to make it public.
  */
-struct faxRequest {
+struct FaxItem {
     FaxSendOp	op;		// send operation type
     u_short	dirnum;		// directory index for TIFF images
     fxStr	item;		// filename/password for transmit/poll
     fxStr	addr;		// SUB/SEP for transmit/poll
 
-    faxRequest();
-    faxRequest(FaxSendOp, u_short dirnum, const fxStr& addr, const fxStr& item);
-    faxRequest(const faxRequest& other);
-    ~faxRequest();
+    FaxItem();
+    FaxItem(FaxSendOp, u_short dirnum, const fxStr& addr, const fxStr& item);
+    FaxItem(const FaxItem& other);
+    ~FaxItem();
 
-    int compare(faxRequest const *a) const;	// XXX needed for array
+    int compare(FaxItem const *a) const;	// XXX needed for array
 
     bool isSavedOp() const;
 };
-fxDECLARE_ObjArray(faxRequestArray, faxRequest)
-#endif /* _faxRequest_ */
+fxDECLARE_ObjArray(FaxItemArray, FaxItem)
+#endif /* _FaxItem_ */

@@ -41,7 +41,7 @@ typedef	struct tiff TIFF;
 class Class2Params;
 class DialStringRules;
 class UUCPLock;
-class faxRequest;
+class FaxItem;
 class Modem;
 class Trigger;
 
@@ -227,7 +227,7 @@ private:
     JobStatus	prepareJob(Job& job, FaxRequest& req,
 		    const FaxMachineInfo&, const DestControlInfo&);
     JobStatus	convertDocument(Job&,
-		    const faxRequest& input, const fxStr& outFile,
+		    const FaxItem& input, const fxStr& outFile,
 		    const Class2Params& params,
 		    const DestControlInfo& dci, fxStr& emsg);
     JobStatus	runConverter(Job& job, const char* app, char* const* argv,

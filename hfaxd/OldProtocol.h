@@ -40,7 +40,7 @@ public:
 	void (OldProtocolServer::*cmdFunc)(const char*);
     };
 private:
-    faxRequestArray reqs;
+    FaxItemArray reqs;
     char	line[1024];		// current input line
     int		version;
     bool	alreadyChecked;

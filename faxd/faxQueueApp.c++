@@ -245,8 +245,8 @@ faxQueueApp::processJob(Job& job, FaxRequest* req,
 bool
 faxQueueApp::prepareJobNeeded(Job& job, FaxRequest& req, JobStatus& status)
 {
-    for (u_int i = 0, n = req.requests.length(); i < n; i++)
-	switch (req.requests[i].op) {
+    for (u_int i = 0, n = req.items.length(); i < n; i++)
+	switch (req.items[i].op) {
 	case FaxRequest::send_postscript:	// convert PostScript
 	case FaxRequest::send_pcl:		// convert PCL
 	case FaxRequest::send_tiff:		// verify&possibly convert TIFF
@@ -562,15 +562,15 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
     bool updateQFile = false;
     fxStr tmp;		// NB: here to avoid compiler complaint
     u_int i = 0;
-    while (i < req.requests.length() && status == Job::done && !abortPrepare) {
-	faxRequest& freq = req.requests[i];
-	switch (freq.op) {
+    while (i < req.items.length() && status == Job::done && !abortPrepare) {
+	FaxItem& fitem = req.items[i];
+	switch (fitem.op) {
 	case FaxRequest::send_postscript:	// convert PostScript
 	case FaxRequest::send_pcl:		// convert PCL
 	case FaxRequest::send_tiff:		// verify&possibly convert TIFF
         case FaxRequest::send_pdf:		// convert PDF
-	    tmp = FaxRequest::mkbasedoc(freq.item) | ";" | params.encodePage();
-	    status = convertDocument(job, freq, tmp, params, dci, req.notice);
+	    tmp = FaxRequest::mkbasedoc(fitem.item) | ";" | params.encodePage();
+	    status = convertDocument(job, fitem, tmp, params, dci, req.notice);
 	    if (status == Job::done) {
 		/*
 		 * Insert converted file into list and mark the
@@ -579,7 +579,7 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
 		 * is sent, while the saved file is kept around
 		 * in case it needs to be returned to the sender.
 		 */
-		freq.op++;			// NB: assumes order of enum
+		fitem.op++;			// NB: assumes order of enum
 		req.insertFax(i+1, tmp);
 	    } else
 		Sys::unlink(tmp);		// bail out
@@ -661,22 +661,22 @@ faxQueueApp::preparePageHandling(FaxRequest& req,
 	     */
 	    if (tif)			// close previous file
 		TIFFClose(tif), tif = NULL;
-	    if (i >= req.requests.length())
+	    if (i >= req.items.length())
 		goto done;
-	    i = req.findRequest(FaxRequest::send_fax, i);
+	    i = req.findItem(FaxRequest::send_fax, i);
 	    if (i == fx_invalidArrayIndex)
 		goto done;
-	    const faxRequest& freq = req.requests[i];
-	    tif = TIFFOpen(freq.item, "r");
+	    const FaxItem& fitem = req.items[i];
+	    tif = TIFFOpen(fitem.item, "r");
 	    if (tif == NULL) {
-		emsg = "Can not open document file " | freq.item;
+		emsg = "Can not open document file " | fitem.item;
 		goto bad;
 	    }
-	    if (freq.dirnum != 0 && !TIFFSetDirectory(tif, freq.dirnum)) {
+	    if (fitem.dirnum != 0 && !TIFFSetDirectory(tif, fitem.dirnum)) {
 		emsg = fxStr::format(
 		    "Can not set directory %u in document file %s"
-		    , freq.dirnum
-		    , (const char*) freq.item
+		    , fitem.dirnum
+		    , (const char*) fitem.item
 		);
 		goto bad;
 	    }
@@ -855,7 +855,7 @@ faxQueueApp::preparePageChop(const FaxRequest& req,
  */
 JobStatus
 faxQueueApp::convertDocument(Job& job,
-    const faxRequest& req,
+    const FaxItem& req,
     const fxStr& outFile,
     const Class2Params& params,
     const DestControlInfo& dci,
@@ -1113,17 +1113,17 @@ faxQueueApp::runConverter1(Job& job, int fd, fxStr& output)
 void
 faxQueueApp::makeCoverPage(Job& job, FaxRequest& req, const Class2Params& params, const DestControlInfo& dci)
 {
-    faxRequest freq(FaxRequest::send_postscript, 0, fxStr::null, req.cover);
+    FaxItem fitem(FaxRequest::send_postscript, 0, fxStr::null, req.cover);
     fxStr cmd(coverCmd
 	| " " | req.qfile
 	| " " | contCoverPageTemplate
-	| " " | freq.item
+	| " " | fitem.item
     );
     traceQueue(job, "COVER PAGE: " | cmd);
     if (runCmd(cmd, true)) {
 	fxStr emsg;
-	fxStr tmp = freq.item | ";" | params.encodePage();
-	if (convertDocument(job, freq, tmp, params, dci, emsg)) {
+	fxStr tmp = fitem.item | ";" | params.encodePage();
+	if (convertDocument(job, fitem, tmp, params, dci, emsg)) {
 	    req.insertFax(0, tmp);
 	    req.cover = tmp;			// needed in sendJobDone
 	    req.pagehandling = "";		// XXX force recalculation
@@ -1131,7 +1131,7 @@ faxQueueApp::makeCoverPage(Job& job, FaxRequest& req, const Class2Params& params
 	    jobError(job, "SEND: No continuation cover page, "
 		" document conversion failed: %s", (const char*) emsg);
 	}
-	Sys::unlink(freq.item);
+	Sys::unlink(fitem.item);
     } else {
 	jobError(job,
 	    "SEND: No continuation cover page, generation cmd failed");
@@ -1290,15 +1290,15 @@ faxQueueApp::sendJobDone(Job& job, int status)
 	 */
 	Trigger::post(Trigger::SEND_REFORMAT, job);
 	u_int i = 0;
-	while (i < req->requests.length()) {
-	    faxRequest& freq = req->requests[i];
-	    if (freq.op == FaxRequest::send_fax) {
-		unrefDoc(freq.item);
-		req->requests.remove(i);
+	while (i < req->items.length()) {
+	    FaxItem& fitem = req->items[i];
+	    if (fitem.op == FaxRequest::send_fax) {
+		unrefDoc(fitem.item);
+		req->items.remove(i);
 		continue;
 	    }
-	    if (freq.isSavedOp())
-		freq.op--;			// assumes order of enum
+	    if (fitem.isSavedOp())
+		fitem.op--;			// assumes order of enum
 	    i++;
 	}
 	req->pagehandling = "";			// force recalculation
@@ -1337,9 +1337,9 @@ faxQueueApp::sendJobDone(Job& job, int status)
 	     * cover page.  If the generated cover page was not
 	     * sent, then delete it so that it'll get recreated.
 	     */
-	    if (req->requests[0].item == req->cover) {
+	    if (req->items[0].item == req->cover) {
 		Sys::unlink(req->cover);
-		req->requests.remove(0);
+		req->items.remove(0);
 	    }
 	} else if (req->useccover &&
 	  req->npages > 0 && contCoverPageTemplate != "") {
@@ -1576,7 +1576,7 @@ faxQueueApp::submitJob(Job& job, FaxRequest& req, bool checkState)
 	    "REJECT: Requested modem " | req.modem | " is not registered");
 	return (false);
     }
-    if (req.requests.length() == 0) {
+    if (req.items.length() == 0) {
 	rejectSubmission(job, req, "REJECT: No work found in job file");
 	return (false);
     }
@@ -2285,12 +2285,12 @@ faxQueueApp::deleteRequest(Job& job, FaxRequest& req, JobStatus why,
 	 * delete/rename references to source documents
 	 * so the imaged versions can be expunged.
 	 */
-	while (i < req.requests.length()) {
-	    faxRequest& freq = req.requests[i];
-	    if (freq.op == FaxRequest::send_fax) {
+	while (i < req.items.length()) {
+	    FaxItem& fitem = req.items[i];
+	    if (fitem.op == FaxRequest::send_fax) {
 		req.renameSaved(i);
-		unrefDoc(freq.item);
-		req.requests.remove(i);
+		unrefDoc(fitem.item);
+		req.items.remove(i);
 	    } else
 		i++;
 	}
@@ -2319,12 +2319,12 @@ faxQueueApp::deleteRequest(Job& job, FaxRequest& req, JobStatus why,
 	    req.writeQFile();
 	    notifySender(job, why, duration);
 	}
-	u_int n = req.requests.length();
+	u_int n = req.items.length();
 	for (u_int i = 0; i < n; i++) {
-	    const faxRequest& freq = req.requests[i];
-	    switch (freq.op) {
+	    const FaxItem& fitem = req.items[i];
+	    switch (fitem.op) {
 	    case FaxRequest::send_fax:
-		unrefDoc(freq.item);
+		unrefDoc(fitem.item);
 		break;
 	    case FaxRequest::send_tiff:
 	    case FaxRequest::send_tiff_saved:
@@ -2334,11 +2334,11 @@ faxQueueApp::deleteRequest(Job& job, FaxRequest& req, JobStatus why,
 	    case FaxRequest::send_postscript_saved:
 	    case FaxRequest::send_pcl:
 	    case FaxRequest::send_pcl_saved:
-		Sys::unlink(freq.item);
+		Sys::unlink(fitem.item);
 		break;
 	    }
 	}
-	req.requests.remove(0, n);
+	req.items.remove(0, n);
 	Sys::unlink(req.qfile);
     }
 }

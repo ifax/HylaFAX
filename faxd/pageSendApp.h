@@ -86,7 +86,7 @@ private:
 		    const fxStr&);
 // IXO transmission support
     void	sendIxoPage(FaxRequest&, FaxMachineInfo&, const fxStr&, fxStr&);
-    bool	sendPagerMsg(FaxRequest&, faxRequest&, const fxStr&, fxStr&);
+    bool	sendPagerMsg(FaxRequest&, FaxItem&, const fxStr&, fxStr&);
     u_int	getResponse(fxStackBuffer& buf, long secs);
     bool	prepareMsg(FaxRequest&, FaxMachineInfo&, fxStr&);
     bool	pagePrologue(FaxRequest&, const FaxMachineInfo&, fxStr&);
@@ -96,7 +96,7 @@ private:
     void	notifyPageSent(FaxRequest& req, u_int fi);
     time_t	getConnectTime() const;
 // UCP transmission support
-    void	sendUcpPage(FaxRequest&, FaxMachineInfo&, const fxStr&, fxStr&);    bool	sendUcpMsg(FaxRequest&, faxRequest&, const fxStr&, fxStr&,
+    void	sendUcpPage(FaxRequest&, FaxMachineInfo&, const fxStr&, fxStr&);    bool	sendUcpMsg(FaxRequest&, FaxItem&, const fxStr&, fxStr&,
 		    FaxMachineInfo&);
 // modem handling
     bool	canLockModem();

@@ -84,8 +84,8 @@ FaxServer::notifyPollRecvd(FaxRequest&, const FaxRecvInfo&)
 void
 FaxServer::notifyPollDone(FaxRequest& req, u_int pi)
 {
-    if (req.requests[pi].op == FaxRequest::send_poll) {
-	req.requests.remove(pi);
+    if (req.items[pi].op == FaxRequest::send_poll) {
+	req.items.remove(pi);
 	req.writeQFile();
     } else
 	logError("notifyPollDone called for non-poll request");

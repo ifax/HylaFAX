@@ -268,7 +268,7 @@ faxSendApp::notifyPageSent(FaxRequest& req, const char* filename)
 void
 faxSendApp::notifyDocumentSent(FaxRequest& req, u_int fi)
 {
-    FaxSendInfo si(req.requests[fi].item, req.commid, req.npages,
+    FaxSendInfo si(req.items[fi].item, req.commid, req.npages,
 	getFileTransferTime(), getClientParams());
 
     FaxServer::notifyDocumentSent(req, fi);
@@ -329,7 +329,7 @@ faxSendApp::notifyPollRecvd(FaxRequest& req, const FaxRecvInfo& ri)
 void
 faxSendApp::notifyPollDone(FaxRequest& req, u_int pi)
 {
-    FaxSendInfo si(req.requests[pi].item, req.commid, req.npages,
+    FaxSendInfo si(req.items[pi].item, req.commid, req.npages,
 	getFileTransferTime(), getClientParams());
     sendJobStatus(req.jobid, "P%s", (const char*) si.encode());
     FaxServer::notifyPollDone(req, pi);

@@ -142,7 +142,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
      * do something to get back status about whether or
      * not documents are available for retrieval.
      */
-    if (fax.findRequest(FaxRequest::send_poll) != fx_invalidArrayIndex &&
+    if (fax.findItem(FaxRequest::send_poll) != fx_invalidArrayIndex &&
 	!modem->requestToPoll(notice)) {
 	sendFailed(fax, send_failed, notice);
 	return;
@@ -199,11 +199,11 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 		 * Group 3 protocol forces any sends to precede any polling.
 		 */
 		fax.status = send_done;			// be optimistic
-		while (fax.requests.length() > 0) {	// send operations
-		    u_int i = fax.findRequest(FaxRequest::send_fax);
+		while (fax.items.length() > 0) {	// send operations
+		    u_int i = fax.findItem(FaxRequest::send_fax);
 		    if (i == fx_invalidArrayIndex)
 			break;
-		    faxRequest& freq = fax.requests[i];
+		    FaxItem& freq = fax.items[i];
 		    traceProtocol("SEND file \"%s\"", (const char*) freq.item);
 		    fileStart = pageStart = Sys::now();
 		    if (!sendFaxPhaseB(fax, freq, clientInfo)) {
@@ -227,7 +227,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 		    notifyDocumentSent(fax, i);
 		}
 		if (fax.status == send_done &&
-	      fax.findRequest(FaxRequest::send_poll) != fx_invalidArrayIndex)
+	      fax.findItem(FaxRequest::send_poll) != fx_invalidArrayIndex)
 		    sendPoll(fax, remoteHasDoc);
 	    }
 	}
@@ -327,7 +327,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 void
 FaxServer::sendPoll(FaxRequest& fax, bool remoteHasDoc)
 {
-    u_int ix = fax.findRequest(FaxRequest::send_poll);
+    u_int ix = fax.findItem(FaxRequest::send_poll);
     if (ix == fx_invalidArrayIndex) {
 	fax.notice = "polling operation not done because of internal failure";
 	traceServer("internal muckup, lost polling request");
@@ -339,7 +339,7 @@ FaxServer::sendPoll(FaxRequest& fax, bool remoteHasDoc)
 	if (fax.notify == FaxRequest::no_notice)
 	    fax.notify = FaxRequest::when_done;
     } else {
-	faxRequest& freq = fax.requests[ix];
+	FaxItem& freq = fax.items[ix];
 	FaxRecvInfoArray docs;
 	fax.status = (pollFaxPhaseB(freq.addr, freq.item, docs, fax.notice) ?
 	    send_done : send_retry);
@@ -363,7 +363,7 @@ FaxServer::sendPoll(FaxRequest& fax, bool remoteHasDoc)
  * Phase B of Group 3 protocol.
  */
 bool
-FaxServer::sendFaxPhaseB(FaxRequest& fax, faxRequest& freq, FaxMachineInfo& clientInfo)
+FaxServer::sendFaxPhaseB(FaxRequest& fax, FaxItem& freq, FaxMachineInfo& clientInfo)
 {
     fax.status = send_failed;			// assume failure
 
@@ -780,7 +780,7 @@ FaxServer::notifyPageSent(FaxRequest& req, const char*)
 void
 FaxServer::notifyDocumentSent(FaxRequest& req, u_int fi)
 {
-    const faxRequest& freq = req.requests[fi];
+    const FaxItem& freq = req.items[fi];
     if (freq.op != FaxRequest::send_fax) {
 	logError("notifyDocumentSent called for non-TIFF file");
 	return;
@@ -798,6 +798,6 @@ FaxServer::notifyDocumentSent(FaxRequest& req, u_int fi)
     );
     if (freq.op == FaxRequest::send_fax)
 	req.renameSaved(fi);
-    req.requests.remove(fi);
+    req.items.remove(fi);
     req.writeQFile();
 }

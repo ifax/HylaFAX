@@ -25,27 +25,27 @@
  */
 #include "FaxRequest.h"
 
-faxRequest::faxRequest(FaxSendOp o, u_short d, const fxStr& a, const fxStr& s)
+FaxItem::FaxItem(FaxSendOp o, u_short d, const fxStr& a, const fxStr& s)
     : item(s)
     , addr(a)
 {
     op = o;
     dirnum = d;
 }
-faxRequest::faxRequest() {}
-faxRequest::faxRequest(const faxRequest& other)
+FaxItem::FaxItem() {}
+FaxItem::FaxItem(const FaxItem& other)
     : item(other.item)
     , addr(other.addr)
 {
     op = other.op;
     dirnum = other.dirnum;
 }
-faxRequest::~faxRequest() {}
+FaxItem::~FaxItem() {}
 
-int faxRequest::compare(faxRequest const*) const { return 0; }
+int FaxItem::compare(FaxItem const*) const { return 0; }
 
 bool
-faxRequest::isSavedOp() const
+FaxItem::isSavedOp() const
 {
     return (op == FaxRequest::send_tiff_saved ||
 	    op == FaxRequest::send_postscript_saved ||
@@ -53,4 +53,4 @@ faxRequest::isSavedOp() const
 	    op == FaxRequest::send_page_saved ||
 	    op == FaxRequest::send_data_saved);
 }
-fxIMPLEMENT_ObjArray(faxRequestArray, faxRequest)
+fxIMPLEMENT_ObjArray(FaxItemArray, FaxItem)

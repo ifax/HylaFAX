@@ -29,7 +29,7 @@
  * HylaFAX Job Request Structure.
  */
 #include "FaxSendStatus.h"
-#include "faxRequest.h"
+#include "FaxItem.h"
 #include <time.h>
 #include <stdio.h>
 
@@ -155,7 +155,7 @@ public:
     fxStr	jobtype;	// job type for selecting send command
     fxStr	tagline;	// tag line format
     fxStr	doneop;		// operation to do when job completes
-    faxRequestArray requests;	// set of requests
+    FaxItemArray items;	// set of requests
 
     static stringval strvals[];
     static shortval shortvals[];
@@ -168,7 +168,7 @@ public:
     bool readQFile(bool& rejectJob);
     bool reReadQFile(bool& rejectJob);
     void writeQFile();
-    u_int findRequest(FaxSendOp, u_int start = 0) const;
+    u_int findItem(FaxSendOp, u_int start = 0) const;
 
     bool isNotify(u_int what) const;
 
@@ -176,8 +176,8 @@ public:
     static bool isShortCmd(const char* cmd, u_int& ix);
 
     void insertFax(u_int ix, const fxStr& file);
-    void addRequest(FaxSendOp op, char* tag);
-    void addRequest(FaxSendOp op, char* tag, bool& rejectJob);
+    void addItem(FaxSendOp op, char* tag);
+    void addItem(FaxSendOp op, char* tag, bool& rejectJob);
     void checkNotifyValue(const char* tag);
     void checkChopValue(const char* tag);
 

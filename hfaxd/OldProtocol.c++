@@ -430,7 +430,7 @@ OldProtocolServer::setUserID(const char* tag)
 void
 OldProtocolServer::newPollID(const char* tag)
 {
-    reqs.append(faxRequest(FaxRequest::send_poll, 0, tag, ""));
+    reqs.append(FaxItem(FaxRequest::send_poll, 0, tag, ""));
 }
 
 /*
@@ -719,9 +719,9 @@ OldProtocolServer::reallyRemoveJob(const char* op, Job& job)
     if (sendQueuerACK(emsg, "%s%s", cmd, (const char*) job.jobid)) {
 	sendClient("removed", job.jobid);
     } else if (lockJob(job, LOCK_EX|LOCK_NB, emsg)) {
-	for (u_int i = 0, n = job.requests.length(); i < n; i++) {
-	    const faxRequest& freq = job.requests[i];
-	    switch (freq.op) {
+	for (u_int i = 0, n = job.items.length(); i < n; i++) {
+	    const FaxItem& fitem = job.items[i];
+	    switch (fitem.op) {
 	    case FaxRequest::send_tiff:
 	    case FaxRequest::send_tiff_saved:
 	    case FaxRequest::send_pdf:
@@ -730,11 +730,11 @@ OldProtocolServer::reallyRemoveJob(const char* op, Job& job)
 	    case FaxRequest::send_postscript_saved:
 	    case FaxRequest::send_pcl:
 	    case FaxRequest::send_pcl_saved:
-		Sys::unlink(freq.item);
+		Sys::unlink(fitem.item);
 		break;
 	    case FaxRequest::send_fax:
 		if (job.isUnreferenced(i))
-		    Sys::unlink(freq.item);
+		    Sys::unlink(fitem.item);
 		break;
 	    }
 	}
@@ -835,9 +835,9 @@ OldProtocolServer::submitJob(const char*)
 	} else if (isCmd("zcover")) {
 	    coverProtocol(1, atoi(tag));
 	} else if (isCmd("page")) {
-	   job.requests.append(faxRequest(FaxRequest::send_page, 0, "", tag));
+	   job.items.append(FaxItem(FaxRequest::send_page, 0, "", tag));
 	} else if (isCmd("!page")) {
-	   job.requests.append(faxRequest(FaxRequest::send_page_saved, 0, "", tag));
+	   job.items.append(FaxItem(FaxRequest::send_page_saved, 0, "", tag));
 	} else				// XXX discard unknown items
 	    logInfo("Unknown job item %s:%s", line, tag);
     }
@@ -897,43 +897,43 @@ OldProtocolServer::coverProtocol(int isLZW, int cc)
     if (fflush(fd) != 0)
 	sendAndLogError("Error writing cover sheet data: %s.", strerror(errno));
     fclose(fd);
-    curJob->requests.append(
-	faxRequest(FaxRequest::send_postscript, 0, "", templ));
+    curJob->items.append(
+	FaxItem(FaxRequest::send_postscript, 0, "", templ));
 }
 
 void
 OldProtocolServer::setupData(void)
 {
     for (u_int i = 0, n = reqs.length(); i < n; i++) {
-	const faxRequest& freq = reqs[i];
-	if (freq.op != FaxRequest::send_poll) {
-	    const char* cp = strrchr(freq.item, '/');
+	const FaxItem& fitem = reqs[i];
+	if (fitem.op != FaxRequest::send_poll) {
+	    const char* cp = strrchr(fitem.item, '/');
 	    if (!cp)				// relative name, e.g. doc123
-		cp = freq.item;
+		cp = fitem.item;
 	    fxStr doc = fxStr::format("/" FAX_DOCDIR "%s.", cp) | curJob->jobid;
-	    if (Sys::link(freq.item, doc) < 0) {
+	    if (Sys::link(fitem.item, doc) < 0) {
 		logError("Can not link document \"%s\": %s",
 		    (const char*) doc, strerror(errno));
 		sendError("Problem setting up document file: %s",
 		    strerror(errno));
 		// purge links that will never get used
 		do {
-		    const faxRequest& freq = reqs[--i];
-		    switch (freq.op) {
+		    const FaxItem& fitem = reqs[--i];
+		    switch (fitem.op) {
 		    case FaxRequest::send_tiff:
 		    case FaxRequest::send_pdf:
 		    case FaxRequest::send_postscript:
 		    case FaxRequest::send_pcl:
-			Sys::unlink(freq.item);
+			Sys::unlink(fitem.item);
 			break;
 		    }
 		} while (i != 0);
 		dologout(1);
 		/*NOTREACHED*/
 	    }
-	    curJob->requests.append(faxRequest(freq.op, 0, "", &doc[1]));
+	    curJob->items.append(FaxItem(fitem.op, 0, "", &doc[1]));
 	} else
-	    curJob->requests.append(freq);
+	    curJob->items.append(fitem);
     }
 }
 
@@ -966,7 +966,7 @@ OldProtocolServer::dataTemplate(FaxSendOp type, int& dfd)
 	sendAndLogError("Could not create data temp file %s: %s.",
 	    (const char*) templ, strerror(errno));
     tempFiles.append(templ);
-    reqs.append(faxRequest(type, 0, "", templ));
+    reqs.append(FaxItem(type, 0, "", templ));
     return (templ);
 }
 

@@ -120,7 +120,7 @@ pageSendApp::send(const char* filename)
 	    FaxRequest* req = new FaxRequest(filename, fd);
 	    bool reject;
 	    if (req->readQFile(reject) && !reject) {
-		if (req->findRequest(FaxRequest::send_page) != fx_invalidArrayIndex) {
+		if (req->findItem(FaxRequest::send_page) != fx_invalidArrayIndex) {
 		    FaxMachineInfo info;
 		    info.updateConfig(canonicalizePhoneNumber(req->number));
 		    FaxAcctInfo ai;
@@ -204,10 +204,10 @@ pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info)
 bool
 pageSendApp::prepareMsg(FaxRequest& req, FaxMachineInfo& info, fxStr& msg)
 {
-    u_int i = req.findRequest(FaxRequest::send_data);
+    u_int i = req.findItem(FaxRequest::send_data);
     if (i == fx_invalidArrayIndex)		// page w/o text
 	return (true);
-    int fd = Sys::open(req.requests[i].item, O_RDONLY);
+    int fd = Sys::open(req.items[i].item, O_RDONLY);
     if (fd < 0) {
 	sendFailed(req, send_failed,
 	    "Internal error: unable to open text message file");
@@ -381,15 +381,15 @@ pageSendApp::sendIxoPage(FaxRequest& req, FaxMachineInfo& info, const fxStr& msg
     fxStr& notice)
 {
     if (pagePrologue(req, info, notice)) {
-	while (req.requests.length() > 0) {	// messages
-	    u_int i = req.findRequest(FaxRequest::send_page);
+	while (req.items.length() > 0) {	// messages
+	    u_int i = req.findItem(FaxRequest::send_page);
 	    if (i == fx_invalidArrayIndex)
 		break;
-	    if (req.requests[i].item.length() == 0) {
+	    if (req.items[i].item.length() == 0) {
 		sendFailed(req, send_failed, "No PIN specified");
 		break;
 	    }
-	    if (!sendPagerMsg(req, req.requests[i], msg, req.notice)) {
+	    if (!sendPagerMsg(req, req.items[i], msg, req.notice)) {
 		/*
 		 * On protocol errors retry more quickly
 		 * (there's no reason to wait is there?).
@@ -399,7 +399,7 @@ pageSendApp::sendIxoPage(FaxRequest& req, FaxMachineInfo& info, const fxStr& msg
 		    break;
 		}
 	    }
-	    req.requests.remove(i);
+	    req.items.remove(i);
 	}
 	if (req.status == send_ok)
 	    (void) pageEpilogue(req, info, notice);
@@ -613,7 +613,7 @@ addChecksum(fxStackBuffer& buf)
 }
 
 bool
-pageSendApp::sendPagerMsg(FaxRequest& req, faxRequest& preq, const fxStr& msg, fxStr& emsg)
+pageSendApp::sendPagerMsg(FaxRequest& req, FaxItem& preq, const fxStr& msg, fxStr& emsg)
 {
     /*
      * Build page packet:
@@ -818,15 +818,15 @@ pageSendApp::sendUcpPage(FaxRequest& req, FaxMachineInfo& info,
     const fxStr& msg, fxStr& notice)
 {
 
-    while (req.requests.length() > 0) {	// messages
-        u_int i = req.findRequest(FaxRequest::send_page);
+    while (req.items.length() > 0) {	// messages
+        u_int i = req.findItem(FaxRequest::send_page);
 	if (i == fx_invalidArrayIndex)
 	    break;
-	if (req.requests[i].item.length() == 0) {
+	if (req.items[i].item.length() == 0) {
 	    sendFailed(req, send_failed, "No PIN specified");
 	    break;
 	}
-	if (!sendUcpMsg(req, req.requests[i], msg, req.notice, info)) {
+	if (!sendUcpMsg(req, req.items[i], msg, req.notice, info)) {
 	    /*
 	     * On protocol errors retry more quickly
 	     * (there's no reason to wait is there?).
@@ -836,7 +836,7 @@ pageSendApp::sendUcpPage(FaxRequest& req, FaxMachineInfo& info,
 		break;
 	    }
 	}
-	req.requests.remove(i);
+	req.items.remove(i);
     }
 //    if (req.status == send_ok) 
 //        (void) pageEpilogue(req, info, notice);
@@ -1023,7 +1023,7 @@ addUcpCodedMsg(fxStackBuffer& buf, const fxStr& msg)
 }
 
 bool
-pageSendApp::sendUcpMsg(FaxRequest& req, faxRequest& preq, const fxStr& msg, fxStr& emsg, FaxMachineInfo& info)
+pageSendApp::sendUcpMsg(FaxRequest& req, FaxItem& preq, const fxStr& msg, fxStr& emsg, FaxMachineInfo& info)
 {
     /*
      * Build page packet:
