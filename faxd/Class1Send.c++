@@ -618,11 +618,11 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	if (useV34) hadV34Trouble = true;	// sadly, some receivers will do this with V.34
 	return (false);
     }
-    params.update();
+    params.update(false);
     // we should respect the frame-size preference indication by the remote (DIS_FRAMESIZE)
     if (params.ec != EC_DISABLE && 
-	(conf.class1ECMFrameSize == 64 || dis_caps.isBitEnabled(FaxParams::BITNUM_FRAMESIZE))) {
-	params.setBit(FaxParams::BITNUM_FRAMESIZE, true); // we don't want to add this bit if not using ECM
+	(conf.class1ECMFrameSize == 64 || dis_caps.isBitEnabled(FaxParams::BITNUM_FRAMESIZE_DIS))) {
+	params.setBit(FaxParams::BITNUM_FRAMESIZE_DCS, true); // we don't want to add this bit if not using ECM
 	frameSize = 64;
     } else
 	frameSize = 256;

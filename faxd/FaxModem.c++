@@ -549,7 +549,7 @@ FaxParams
 FaxModem::modemDIS() const
 {
     Class2Params tmp(modemParams);
-    tmp.update();
+    tmp.update(true);
     return tmp;
 }
 

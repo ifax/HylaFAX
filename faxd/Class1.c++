@@ -1485,9 +1485,6 @@ Class1Modem::modemDIS() const
     // signalling rates
     for (u_short i = 0; i < 4; i++) dis_caps.setBit(11+i, (discap & (0x08>>i)));
 
-    // T.4 receiver
-    dis_caps.setBit(FaxParams::BITNUM_T4RCVR, true);
-
     // we set both units preferences to allow the sender to choose
     dis_caps.setBit(FaxParams::BITNUM_METRIC_RES, true);
     dis_caps.setBit(FaxParams::BITNUM_INCH_RES, true);

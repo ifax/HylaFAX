@@ -413,7 +413,7 @@ Class1Modem::processDCSFrame(const HDLCFrame& frame)
 {
     FaxParams dcs_caps = frame.getDIS();			// NB: really DCS
 
-    if (dcs_caps.isBitEnabled(FaxParams::BITNUM_FRAMESIZE)) frameSize = 64;
+    if (dcs_caps.isBitEnabled(FaxParams::BITNUM_FRAMESIZE_DCS)) frameSize = 64;
     else frameSize = 256;
     params.setFromDCS(dcs_caps);
     if (useV34) params.br = primaryV34Rate-1;

@@ -95,82 +95,6 @@ Class2Params::is2D() const
 }
 
 /*
- * Tables to convert from Class 2
- * subparameter codes to a T.30 DIS.
- */
-u_int Class2Params::vrDISTab[2] = {
-    0,				// VR_NORMAL
-    DIS_7MMVRES,		// VR_FINE
-};
-u_int Class2Params::dfDISTab[4] = {
-    0,				// 1-D MH
-    DIS_2DENCODE,		// + 2-D MR
-    DIS_2DENCODE,		// + Uncompressed data
-    0,				// + 2-D MMR
-};
-u_int Class2Params::brDISTab[8] = {
-    DISSIGRATE_V27FB<<10,		// BR_2400
-    DISSIGRATE_V27<<10,			// BR_4800
-    (DISSIGRATE_V27|DISSIGRATE_V29)<<10,// BR_7200
-    (DISSIGRATE_V27|DISSIGRATE_V29)<<10,// BR_9600
-    0xD,				// BR_12000 (v.27,v.29,v.17,v.33)
-    0xD,				// BR_14400 (v.27,v.29,v.17,v.33)
-    (DISSIGRATE_V27|DISSIGRATE_V29)<<10,// 6 ?
-    (DISSIGRATE_V27|DISSIGRATE_V29)<<10,// 7 ?
-};
-u_int Class2Params::wdDISTab[8] = {
-    DISWIDTH_1728<<6,		// WD_1728
-    DISWIDTH_2048<<6,		// WD_2048
-    DISWIDTH_2432<<6,		// WD_2432
-    DISWIDTH_1728<<6,		// WD_1216 XXX
-    DISWIDTH_1728<<6,		// WD_864 XXX
-    DISWIDTH_1728<<6,		// 5
-    DISWIDTH_1728<<6,		// 6
-    DISWIDTH_1728<<6,		// 7
-};
-u_int Class2Params::lnDISTab[3] = {
-    DISLENGTH_A4<<4,		// LN_A4
-    DISLENGTH_A4B4<<4,		// LN_B4
-    DISLENGTH_UNLIMITED<<4	// LN_INF
-};
-u_int Class2Params::stDISTab[8] = {
-    DISMINSCAN_0MS<<1,		// ST_0MS
-    DISMINSCAN_5MS<<1,		// ST_5MS
-    DISMINSCAN_10MS2<<1,	// ST_10MS2
-    DISMINSCAN_10MS<<1,		// ST_10MS
-    DISMINSCAN_20MS2<<1,	// ST_20MS2
-    DISMINSCAN_20MS<<1,		// ST_20MS
-    DISMINSCAN_40MS2<<1,	// ST_40MS2
-    DISMINSCAN_40MS<<1,		// ST_40MS
-};
-
-/*
- * Convert a Class 2 bit rate code to a T.30
- * DCS code.  Beware that certain entries map
- * speeds and protocols (e.g. v.17 vs. v.33).
- */
-u_int Class2Params::brDCSTab[8] = {
-    DCSSIGRATE_2400V27,		// BR_2400
-    DCSSIGRATE_4800V27,		// BR_4800
-    DCSSIGRATE_7200V29,		// BR_7200
-    DCSSIGRATE_9600V29,		// BR_9600
-    DCSSIGRATE_12000V17,	// BR_12000
-    DCSSIGRATE_14400V17,	// BR_14400
-    DCSSIGRATE_9600V29,		// 6 ?
-    DCSSIGRATE_9600V29,		// 7 ?
-};
-u_int Class2Params::stDCSTab[8] = {
-    DISMINSCAN_0MS<<1,		// ST_0MS
-    DISMINSCAN_5MS<<1,		// ST_5MS
-    DISMINSCAN_10MS<<1,		// ST_10MS2
-    DISMINSCAN_10MS<<1,		// ST_10MS
-    DISMINSCAN_20MS<<1,		// ST_20MS2
-    DISMINSCAN_20MS<<1,		// ST_20MS
-    DISMINSCAN_40MS<<1,		// ST_40MS2
-    DISMINSCAN_40MS<<1,		// ST_40MS
-};
-
-/*
  * Tables for mapping a T.30 DIS to Class 2
  * subparameter code values.
  */
@@ -225,6 +149,24 @@ u_int Class2Params::DISstTab[8] = {
     ST_40MS2,			// DISMINSCAN_40MS2
     ST_20MS2,			// DISMINSCAN_20MS2
     ST_0MS			// DISMINSCAN_0MS
+};
+u_int Class2Params::DCSbrTab[16] = {
+    BR_2400,			// 0x0/2400 V27
+    BR_14400,			// 0x1/14400 V17
+    BR_14400,			// 0x2/14400 V33
+    0,				// 0x3/undefined 
+    BR_4800,			// 0x4/4800 V27
+    BR_12000,			// 0x5/12000 V17
+    BR_12000,			// 0x6/12000 V33
+    0,				// 0x7/undefined 
+    BR_9600,			// 0x8/9600 V29
+    BR_9600,			// 0x9/9600 V17
+    BR_9600,			// 0xA/9600 V33
+    0,				// 0xB/undefined
+    BR_7200,			// 0xC/7200 V29
+    BR_7200,			// 0xD/7200 V17
+    BR_7200,			// 0xE/7200 V33
+    0,				// 0xF/undefined 
 };
 
 /*
@@ -295,25 +237,6 @@ Class2Params::setFromDIS(u_int dis, u_int xinfo)
     st = DISstTab[(dis & DIS_MINSCAN) >> 1];
 }
 
-u_int Class2Params::DCSbrTab[16] = {
-    BR_2400,			// 0x0/2400 V27
-    BR_14400,			// 0x1/14400 V17
-    BR_14400,			// 0x2/14400 V33
-    0,				// 0x3/undefined 
-    BR_4800,			// 0x4/4800 V27
-    BR_12000,			// 0x5/12000 V17
-    BR_12000,			// 0x6/12000 V33
-    0,				// 0x7/undefined 
-    BR_9600,			// 0x8/9600 V29
-    BR_9600,			// 0x9/9600 V17
-    BR_9600,			// 0xA/9600 V33
-    0,				// 0xB/undefined
-    BR_7200,			// 0xC/7200 V29
-    BR_7200,			// 0xD/7200 V17
-    BR_7200,			// 0xE/7200 V33
-    0,				// 0xF/undefined 
-};
-
 /*
  * Convert a T.30 DCS to a Class 2 parameter block.
  */
@@ -364,53 +287,32 @@ Class2Params::setFromDCS(u_int dcs, u_int xinfo)
 	ec = EC_DISABLE;
 }
 
+#define CHECKPARAM(a, b, c)	(c ? a & BIT(b) : a == b)
+
 /*
- * Return a 24-bit T.30 DCS frame that reflects the parameters.
+ * Return a 24-bit T.30 DIS/DCS frame that reflects the parameters.
+ * isDIS distinguishes between DIS and DCS
+ *
+ * Class2Params may be capability bitmaps (modemParams) or may be
+ * settings (params), we must be capable of handling both.
  */
 void
-Class2Params::update (void)
+Class2Params::update(bool isDIS)
 {
-#if 1
-    u_int dcs = DCS_T4RCVR
-	    | vrDISTab[vr&1]
-	    | vrDISTab[(vr>>4)&1]	// check for VR_200X200
-	    | brDCSTab[br&15]
-	    | wdDISTab[wd&7]
-	    | lnDISTab[ln&3]
-	    | dfDISTab[df&3]
-	    | stDCSTab[st&7]
-	    ;
-    // extension flags for 3 more bytes
-    u_int firstbyte  = 0;
-    u_int secondbyte = (1<<24);
-    u_int thirdbyte  = (1<<24) | (1<<16);
-    u_int fourthbyte = (1<<24) | (1<<16) | (1<<8);
-    u_int dcs_xinfo =
-	  (vr & VR_R8 ? (DCS_200X400 | thirdbyte) : 0)
-	| (vr & VR_R16 ? (DCS_400X400 | thirdbyte) : 0)
-	| (vr & VR_200X100 ? (DCS_INCHRES | thirdbyte) : 0)
-	| (vr & VR_200X200 ? (DCS_INCHRES | thirdbyte) : 0)	// DCS_7MMVRES set in getDCS()
-	| (vr & VR_200X400 ? (DCS_200X400 | DCS_INCHRES | thirdbyte ) : 0)
-	| (vr & VR_300X300 ? (DCS_300X300 | DCS_INCHRES | thirdbyte ) : 0)
-	| (ec & EC_ENABLE64 || ec & EC_ENABLE256 ? (DCS_ECMODE | firstbyte) : 0)
-	| (df == DF_2DMMR ? (DCS_G4COMP | firstbyte) : 0)
-	;
-    dcs |= (dcs_xinfo != 0 ? DCS_XTNDFIELD : 0);
-
-    setupT30(dcs, dcs_xinfo);
-#else
     setupT30(0,0);
+    setBit(BITNUM_T4RCVR, true);	// Table 2-T.30 Notes 19 & 20
     /*
      * RESOLUTIONS
      *
      * We set both resolution units preferences in order to
      * allow the sender to choose between them.  If it has
      * prepared an inch-based document, that's how we want it.
+     * VR is bitmapped natively in all cases.
      */
     if (vr & VR_FINE || vr & VR_200X200) setBit(BITNUM_VR_FINE, true);	// R8  x  7.7 l/mm
     if (vr & VR_R8 || vr & VR_200X400)   setBit(BITNUM_VR_R8, true);	// R8  x 15.4 l/mm
-    if (vr & VR_R16) 				 setBit(BITNUM_VR_R16, true);	// R16 x 15.4 l/mm
-    if (vr & VR_300X300)				 setBit(BITNUM_VR_300X300, true);// 300 x 300 dpi
+    if (vr & VR_R16)			 setBit(BITNUM_VR_R16, true);	// R16 x 15.4 l/mm
+    if (vr & VR_300X300)		 setBit(BITNUM_VR_300X300, true);// 300 x 300 dpi
 
     /*
      * SIGNALING RATE
@@ -428,11 +330,35 @@ Class2Params::update (void)
      * V.17 support requires both V.29 and V.27 support.
      * V.29 and V.27 support are independent.
      * V.34 requires V.8 support.
+     *
+     * The imperfect assumptions are that:
+     *		BR_2400 -- BR_4800  are V.27
+     *		BR_7200 -- BR_9600  are V.29
+     *		BR_12000 - BR_14400 are V.17
+     *		BR_16800 - BR_33600 are V.34
+     *
+     * The protocol drivers will certainly need to reproduce
+     * this independently.
      */
-    if (br & BIT(BR_14400))	setBit(BITNUM_SIGRATE_14, true);
-    if (br & BIT(BR_9600))	setBit(BITNUM_SIGRATE_11, true);
-    if (br & BIT(BR_4800))	setBit(BITNUM_SIGRATE_12, true);
-    if (br & BIT(BR_33600)) setBit(BITNUM_V8_CAPABLE, true);
+    if (isDIS) {	// DIS
+	if (CHECKPARAM(br, BR_14400, true))	setBit(BITNUM_SIGRATE_14, true);
+	if (CHECKPARAM(br, BR_9600, true))	setBit(BITNUM_SIGRATE_11, true);
+	if (CHECKPARAM(br, BR_4800, true))	setBit(BITNUM_SIGRATE_12, true);
+	if (CHECKPARAM(br, BR_33600, true))	setBit(BITNUM_V8_CAPABLE, true);
+    } else {		// DCS
+	// no bits set for V.34 rates and V.27ter 2400
+	if (CHECKPARAM(br, BR_14400, false))	setBit(BITNUM_SIGRATE_14, true);
+	if (CHECKPARAM(br, BR_12000, false)) {
+	    setBit(BITNUM_SIGRATE_14, true);
+	    setBit(BITNUM_SIGRATE_12, true);
+	}
+	if (CHECKPARAM(br, BR_9600, false))	setBit(BITNUM_SIGRATE_11, true);
+	if (CHECKPARAM(br, BR_7200, false)) {
+	    setBit(BITNUM_SIGRATE_11, true);
+	    setBit(BITNUM_SIGRATE_12, true);
+	}
+	if (CHECKPARAM(br, BR_4800, false))	setBit(BITNUM_SIGRATE_12, true);
+    }
 
     /*
      * RECORDING WIDTH
@@ -448,8 +374,8 @@ Class2Params::update (void)
      * A3 support requires B4 support.
      * A4 support is required.
      */
-    if (wd & BIT(WD_2432))      setBit(BITNUM_WIDTH_18, true);
-    else if (wd & BIT(WD_2048)) setBit(BITNUM_WIDTH_17, true);
+    if (CHECKPARAM(wd, WD_2432, isDIS))		setBit(BITNUM_WIDTH_18, true);
+    else if (CHECKPARAM(wd, WD_2048, isDIS))	setBit(BITNUM_WIDTH_17, true);
 
     /*
      * RECORDING LENGTH
@@ -460,8 +386,8 @@ Class2Params::update (void)
      * Using "unlimited" page length is the only way to get the popular
      * "US-Legal" page size.
      */
-    if (ln & BIT(LN_INF))	  setBit(BITNUM_LENGTH_20, true);
-    else if (ln & BIT(LN_B4)) setBit(BITNUM_LENGTH_19, true);
+    if (CHECKPARAM(ln, LN_INF, isDIS))		setBit(BITNUM_LENGTH_20, true);
+    else if (CHECKPARAM(ln, LN_B4, isDIS))	setBit(BITNUM_LENGTH_19, true);
 
     /*
      * DATA FORMAT
@@ -474,29 +400,30 @@ Class2Params::update (void)
      * such as JPEG, JBIG, T.81, and T.43, but they're
      * not discernable from Class2Params.
      */
-    if (df & BIT(DF_2DMR))  setBit(BITNUM_2DMR, true);
-    if (df & BIT(DF_2DMMR) && ec != EC_DISABLE) setBit(BITNUM_2DMMR, true);
+    if (CHECKPARAM(df, DF_2DMR, isDIS))  setBit(BITNUM_2DMR, true);
+    if (CHECKPARAM(df, DF_2DMMR, isDIS) && (CHECKPARAM(ec, EC_ENABLE64, isDIS) || CHECKPARAM(ec, EC_ENABLE256, isDIS)))
+	setBit(BITNUM_2DMMR, true);
 
     /*
      * MINIMUM SCANLINE TIME
      */
-    if (st & BIT(ST_5MS) || 
-        st & BIT(ST_20MS2) ||
-        st & BIT(ST_40MS2) ||
-        st & BIT(ST_0MS)) {
-        setBit(BITNUM_ST_21, true);
+    if (CHECKPARAM(st, ST_5MS, isDIS) || 
+        CHECKPARAM(st, ST_20MS2, isDIS) ||
+        CHECKPARAM(st, ST_40MS2, isDIS) ||
+        CHECKPARAM(st, ST_0MS, isDIS)) {
+	setBit(BITNUM_ST_21, true);
     }
-    if (st & BIT(ST_10MS) || 
-        st & BIT(ST_10MS2) ||
-        st & BIT(ST_20MS2) ||
-        st & BIT(ST_0MS)) {
-        setBit(BITNUM_ST_22, true);
+    if (CHECKPARAM(st, ST_10MS, isDIS) || 
+        CHECKPARAM(st, ST_10MS2, isDIS) ||
+        CHECKPARAM(st, ST_20MS2, isDIS) ||
+        CHECKPARAM(st, ST_0MS, isDIS)) {
+	setBit(BITNUM_ST_22, true);
     }
-    if (st & BIT(ST_40MS) || 
-        st & BIT(ST_10MS2) ||
-        st & BIT(ST_40MS2) ||
-        st & BIT(ST_0MS)) {
-        setBit(BITNUM_ST_23, true);
+    if (CHECKPARAM(st, ST_40MS, isDIS) || 
+        CHECKPARAM(st, ST_10MS2, isDIS) ||
+        CHECKPARAM(st, ST_40MS2, isDIS) ||
+        CHECKPARAM(st, ST_0MS, isDIS)) {
+	setBit(BITNUM_ST_23, true);
     }
     
     /*
@@ -508,9 +435,16 @@ Class2Params::update (void)
      * A sender must support no ECM.  Senders
      * should honor the preference of the receiver.
      */
-    if (ec != EC_DISABLE)	   setBit(BITNUM_ECM, true);
-    if (ec & BIT(EC_ENABLE64) && !(ec & BIT(EC_ENABLE256))) setBit(BITNUM_FRAMESIZE, true);
-#endif
+    if (CHECKPARAM(ec, EC_ENABLE64, isDIS)) {
+	setBit(BITNUM_ECM, true);
+	if (isDIS) setBit(BITNUM_FRAMESIZE_DIS, true);
+	else setBit(BITNUM_FRAMESIZE_DCS, true);
+    }
+    if (CHECKPARAM(ec, EC_ENABLE256, isDIS)) {
+	setBit(BITNUM_ECM, true);
+	if (isDIS) setBit(BITNUM_FRAMESIZE_DIS, false);
+	else setBit(BITNUM_FRAMESIZE_DCS, false);
+    }
 }
 
 /*

@@ -74,7 +74,7 @@ public:
     static u_int DCSbrTab[16];		// DIS actual bit rate
 
     Class2Params();
-    virtual void update (void);
+    virtual void update(bool isDIS);
 
     int operator==(const Class2Params&) const;
     int operator!=(const Class2Params&) const;
