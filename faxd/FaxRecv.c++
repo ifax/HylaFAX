@@ -132,9 +132,9 @@ FaxServer::getRecvFile(fxStr& qfile, fxStr& emsg)
     int ftmp;
     int ntry = 1000;			// that should be a lot!
     do {
-	seqnum = NEXTSEQNUM(seqnum);
 	qfile = fxStr::format(FAX_RECVDIR "/fax%05u.tif", seqnum);
 	ftmp = Sys::open(qfile, O_RDWR|O_CREAT|O_EXCL, recvFileMode);
+	seqnum = NEXTSEQNUM(seqnum);    // Increment _after_ attempting to open
     } while (ftmp < 0 && errno == EEXIST && --ntry >= 0);
     if (ftmp >= 0) {
 	/*

@@ -642,10 +642,10 @@ ModemServer::beginSession(const fxStr& number)
 	int ftmp;
 	int ntry = 1000;			// that should be a lot!
 	do {
-	    seqnum = NEXTSEQNUM(seqnum);
 	    commid = fxStr::format("%08u", seqnum);
 	    fxStr file = FAX_LOGDIR "/c" | commid;
 	    ftmp = Sys::open(file, O_RDWR|O_CREAT|O_EXCL, logMode);
+	    seqnum = NEXTSEQNUM(seqnum);        // Increment _after_ attempting to open
 	} while (ftmp < 0 && errno == EEXIST && --ntry >= 0);
 	umask(omask);
         if (ftmp >= 0) {
