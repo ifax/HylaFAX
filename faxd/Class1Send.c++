@@ -783,12 +783,19 @@ Class1Modem::dropToNextBR(Class2Params& params)
 {
     if (curcap->br == BR_2400)
 	return (false);
+    const Class1Cap* oldcap = curcap;
     curcap--;
     for (;;) {
 	if (curcap) {
-	    // hunt for compatibility with remote at this baud rate
+	    /*
+	     * Hunt for compatibility with remote at this baud rate.
+	     * We don't drop from V.29 to V.17 because...
+	     *   1) it will lock up the hardware on some receivers
+	     *   2) if the receiver supports V.17 then we probably tried
+	     *      it already without success
+	     */
 	    while (curcap->br == params.br) {
-		if (isCapable(curcap->sr, dis))
+		if (isCapable(curcap->sr, dis) && !(oldcap->mod == V29 && curcap->mod == V17))
 		    return (true);
 		curcap--;
 	    }
