@@ -85,6 +85,7 @@ case $SORTKEY in
 	$2 == "SEND" && NF == 12 { acct($5, $6, $10, $11, $8, $9, $12); }
 	$2 == "SEND" && NF == 13 { acct($7, $8, $11, $12, getBR($10), getDF($10), $13); }
 	$2 == "SEND" && NF == 14 { acct($7, $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 16 { acct($7, $8, $11, $13, getBR($10), getDF($10), $14); }
 	'
     KEYTITLE="Sender"
     ;;
@@ -95,6 +96,7 @@ case $SORTKEY in
 	$2 == "SEND" && NF == 12 { acct($7, $6, $10, $11, $8, $9, $12); }
 	$2 == "SEND" && NF == 13 { acct($9, $8, $11, $12, getBR($10), getDF($10), $13); }
 	$2 == "SEND" && NF == 14 { acct($9, $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 16 { acct($9, $8, $11, $13, getBR($10), getDF($10), $14); }
 	'
     KEYTITLE="CSI"
     MAPNAMES=no
@@ -106,6 +108,7 @@ case $SORTKEY in
 	$2 == "SEND" && NF == 12 { acct($6, $6, $10, $11, $8, $9, $12); }
 	$2 == "SEND" && NF == 13 { acct($8, $8, $11, $12, getBR($10), getDF($10), $13); }
 	$2 == "SEND" && NF == 14 { acct($8, $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 16 { acct($8, $8, $11, $13, getBR($10), getDF($10), $14); }
 	'
     KEYTITLE="Destination"
     MAPNAMES=no
@@ -117,6 +120,7 @@ case $SORTKEY in
 	$2 == "SEND" && NF == 12 { acct($8, $6, $10, $11, $8, $9, $12); }
 	$2 == "SEND" && NF == 13 { acct(getBR($10), $8, $11, $12, getBR($10), getDF($10), $13); }
 	$2 == "SEND" && NF == 14 { acct(getBR($10), $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 16 { acct(getBR($10), $8, $11, $13, getBR($10), getDF($10), $14); }
 	'
     KEYTITLE="Speed"
     MAPNAMES=no
@@ -128,6 +132,7 @@ case $SORTKEY in
 	$2 == "SEND" && NF == 12 { acct($9, $6, $10, $11, $8, $9, $12); }
 	$2 == "SEND" && NF == 13 { acct(getDF($10), $8, $11, $12, getBR($10), getDF($10), $13); }
 	$2 == "SEND" && NF == 14 { acct(getDF($10), $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 16 { acct(getDF($10), $8, $11, $13, getBR($10), getDF($10), $14); }
 	'
     KEYTITLE="Format"
     MAPNAMES=no
@@ -136,6 +141,7 @@ case $SORTKEY in
     AWKRULES='
 	$2 == "SEND" && NF == 13 { acct($6, $8, $11, $12, getBR($10), getDF($10), $13); }
 	$2 == "SEND" && NF == 14 { acct($6, $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 16 { acct($6, $8, $11, $13, getBR($10), getDF($10), $14); }
 	'
     KEYTITLE="JobTag"
     MAPNAMES=no
@@ -144,6 +150,7 @@ case $SORTKEY in
     AWKRULES='
 	$2 == "SEND" && NF == 13 { acct($4, $8, $11, $12, getBR($10), getDF($10), $13); }
 	$2 == "SEND" && NF == 14 { acct($4, $8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "SEND" && NF == 16 { acct($4, $8, $11, $13, getBR($10), getDF($10), $14); }
 	'
     KEYTITLE="Device"
     MAPNAMES=no

@@ -38,6 +38,8 @@ FaxRecvInfo::FaxRecvInfo(const FaxRecvInfo& other)
     , subaddr(other.subaddr)
     , params(other.params)
     , reason(other.reason)
+    , cidname(other.cidname)
+    , cidnumber(other.cidnumber)
 {
     npages = other.npages;
     time = other.time;
@@ -47,7 +49,7 @@ FaxRecvInfo::~FaxRecvInfo() {}
 fxStr
 FaxRecvInfo::encode() const
 {
-    return fxStr::format("%x,%x,%x,%s,%s,\"%s\",\"%s\",\"%s\""
+    return fxStr::format("%x,%x,%x,%s,%s,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\""
 	, time
 	, npages
 	, params.encode()
@@ -56,6 +58,8 @@ FaxRecvInfo::encode() const
 	, (const char*) sender
 	, (const char*) subaddr
 	, (const char*) reason
+	, (const char*) cidname
+	, (const char*) cidnumber
     );
 }
 
@@ -94,5 +98,15 @@ FaxRecvInfo::decode(const char* cp)
 	return (false);
     reason = cp+3;			// +1 for "/+1 for ,/+1 for "
     reason.resize(reason.next(0,'"'));
+    cp = strchr(cp+1, '"');
+    if (cp == NULL || cp[1] != ',' || cp[2] != '"')
+	return (false);
+    reason = cp+3;			// +1 for "/+1 for ,/+1 for "
+    cidname.resize(cidname.next(0,'"'));
+    cp = strchr(cp+1, '"');
+    if (cp == NULL || cp[1] != ',' || cp[2] != '"')
+	return (false);
+    reason = cp+3;			// +1 for "/+1 for ,/+1 for "
+    cidnumber.resize(cidnumber.next(0,'"'));
     return (true);
 }

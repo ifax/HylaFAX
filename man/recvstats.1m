@@ -42,8 +42,8 @@ recvstats \- summarize \*(Fx receive accounting information
 is a command script that prints a summary of the \*(Fx
 accounting statistics for received facsimile.
 The statistics can be sorted using one of several keys:
-the caller's \s-1CSI\s+1 (default),
-the communication speed, and
+the caller's \s-1CSI\s+1 (default), CIDName, CIDNumber,
+the communication speed, or
 the communication data format.
 Statistics are read from the file
 .B ${SPOOL}/etc/xferfaxlog
@@ -54,32 +54,38 @@ The following table is an example of the output from
 (using the default sort key):
 .sp .5
 .nf
-.ta \w'\s-1ALDUS CORPORATION\s+1   'u +\w'Pages   'u +\w'15:03:58  'u +\w'Pg/min   'u +\w'Errs   'u +\w'TypRate   'u
-\fBSender	Pages	Time	Pg/min	Errs	TypRate	TypData\fP
-	61	30:47	2.0	16	9600	1-D	MR
-+13037904674	5	1:34	3.2	2	9600	1-D	MH
-+14159657824	1	1:00	1.0	0	9600	1-D	MH
-+15086636852	2	0:00	2.0	0	9600	1-D	MH
-+15105268781	740	5:47:51	2.1	59	9600	1-D	MH
-+15105287164	20	7:00	2.9	0	9600	1-D	MH
-+15123713545	3	1:19	2.3	0	9600	1-D	MH
-+15123713641	5	1:04	4.6	0	9600	1-D	MH
-+16099211926	3	2:00	1.5	0	9600	1-D	MH
-+17088987617	1	0:18	3.3	0	9600	1-D	MH
-415 390 6175	22	6:01	3.6	0	9600	1-D	MH
-415 965 7651	56	34:52	1.6	14	9600	1-D	MH
-415 973 6723	1	2:09	0.5	0	9600	2-D	MR
-49 211 161514	1	0:00	1.0	0	9600	2-D	MR
-8185970503	1	0:28	2.1	0	9600	2-D	MR
-\s-1ALDUS CORPORATION\s+1	3	2:34	1.2	0	9600	1-D	MH
-------------------------------------------------------------
-Total	925	7:19:03	2.1	91
+.ta \w'\s-1ALDUS CORPORATION\s+1   'u +\w'1234567890'u +\w'1234567890'u +\w'Pages   'u +\w'15:03:58  'u +\w'Pg/min   'u +\w'Errs   'u +\w'TypRate   'u
+\fBSender	CIDName	CIDNumber	Pages	Time	Pg/min	Errs	TypRate	TypData\fP
+			61	30:47	2.0	16	9600	1-D	MR
++13037904674			5	1:34	3.2	2	9600	1-D	MH
++14159657824			1	1:00	1.0	0	9600	1-D	MH
++15086636852			2	0:00	2.0	0	9600	1-D	MH
++15105268781			740	5:47:51	2.1	59	9600	1-D	MH
++15105287164			20	7:00	2.9	0	9600	1-D	MH
++15123713545			3	1:19	2.3	0	9600	1-D	MH
++15123713641			5	1:04	4.6	0	9600	1-D	MH
++16099211926			3	2:00	1.5	0	9600	1-D	MH
++17088987617			1	0:18	3.3	0	9600	1-D	MH
+415 390 6175			22	6:01	3.6	0	9600	1-D	MH
+415 965 7651			56	34:52	1.6	14	9600	1-D	MH
+415 973 6723			1	2:09	0.5	0	9600	2-D	MR
+49 211 161514			1	0:00	1.0	0	9600	2-D	MR
+8185970503			1	0:28	2.1	0	9600	2-D	MR
+\s-1ALDUS CORPORATION\s+1	ALDUS CO	5551212	3	2:34	1.2	0	9600	1-D	MH
+--------------------------------------------------------------------------------------------------
+Total			925	7:19:03	2.1	91
 .sp .5
 .fi
 The
 .I Sender
 column shows the caller's \s-1TSI\s+1 (notice that some callers have
 not setup a \s-1TSI\s+1).
+The
+.I CIDName
+column is the received CIDName value for the sender.
+The
+.I CIDNumber
+column is the received CIDNumber value for the sender.
 The
 .I Pages
 column is the total number of good pages received.
@@ -107,6 +113,12 @@ data were received.
 .B \-csi*
 Sort output by caller's
 .SM CSI.
+.TP 12
+.B \-cidname
+Sort output by CIDName
+.TP 12
+.B \-cidnumber
+Sort output by CIDNumber
 .TP 12
 .B \-format
 Sort output by data format.

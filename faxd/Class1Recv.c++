@@ -411,7 +411,7 @@ const u_int Class1Modem::modemPPMCodes[8] = {
  * sending a post-page response in a multi-page document.
  */
 bool
-Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg)
+Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 {
     if (/* sendingHDLC */ lastPPM == FCF_MPS && prevPage && pageGood && !sentERR) {
 	// sendingHDLC = false
@@ -480,7 +480,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg)
 		 * receive the Phase C data.
 		 */
 		protoTrace("RECV: begin page");
-		recvSetupTIFF(tif, group3opts, FILLORDER_LSB2MSB);
+		recvSetupTIFF(tif, group3opts, FILLORDER_LSB2MSB, id);
 		pageGood = recvPageData(tif, emsg);
 		protoTrace("RECV: end page");
 		if (!wasTimeout()) {

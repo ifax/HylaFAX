@@ -70,6 +70,8 @@ FaxAcctInfo::record(const char* cmd) const
 	record.fput("\t%s", fmtTime(duration));	// $12 = duration
 	record.fput("\t%s", fmtTime(conntime));	// $13 = conntime
 	record.fput("\t\"%s\"", status);	// $14 = status
+	record.fput("\t\"%s\"", cidname);	// $15 = CIDName
+	record.fput("\t\"%s\"", cidnumber);	// $16 = CIDNumber
 	record.put('\n');
 	flock(fd, LOCK_EX);
 	ok = (Sys::write(fd, record, record.getLength()) == (ssize_t)record.getLength());

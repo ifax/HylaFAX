@@ -139,7 +139,7 @@ Class2Modem::recvDCS(const char* cp)
  * received post-page-message.
  */
 bool
-Class2Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg)
+Class2Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 {
     int ppr;
     bool prevPage = false;
@@ -196,7 +196,7 @@ Class2Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg)
 	 * NB: always write data in LSB->MSB for folks that
 	 *     don't understand the FillOrder tag!
 	 */
-	recvSetupTIFF(tif, group3opts, FILLORDER_LSB2MSB);
+	recvSetupTIFF(tif, group3opts, FILLORDER_LSB2MSB, id);
 	if (!recvPageData(tif, emsg)) {
 	    prevPage = false;
 	    goto bad;

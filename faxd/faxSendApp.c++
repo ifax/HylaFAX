@@ -164,6 +164,8 @@ faxSendApp::send(const char* filename)
 		ai.jobtag = req->jobtag;
 		ai.user = req->mailaddr;
 		ai.csi = info.getCSI();
+		ai.cidname = "";
+		ai.cidnumber = "";
 		if (req->status == send_done)
 		    ai.status = "";
 		else
@@ -303,6 +305,8 @@ faxSendApp::notifyPollRecvd(FaxRequest& req, const FaxRecvInfo& ri)
     ai.status = ri.reason;
     ai.jobid = req.jobid;
     ai.jobtag = req.jobtag;
+    ai.cidname = "";
+    ai.cidnumber = "";
     if (!ai.record("POLL"))
 	logError("Error writing POLL accounting record, dest=%s",
 	    (const char*) ai.dest);

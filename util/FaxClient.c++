@@ -1647,6 +1647,8 @@ const FaxClient::FaxFmtHeader FaxClient::recvFormats[] = {
     { 'e',	"Error" },	// e (error description)
     { 'f',	"Filename" },	// f (filename)
     { 'h',	"Time" },	// h (time spent receiving)
+    { 'i',	"CIDName" },	// i (caller id name)
+    { 'j',	"CIDNumber" },	// j (caller id number)
     { 'l',	"Length" },	// l (pagelength)
     { 'm',	"Protect" },	// m (fax-style protection mode, no group bits)
     { 'n',	"Size" },	// n (file size)

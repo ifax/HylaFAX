@@ -715,6 +715,8 @@ faxGettyApp::notifyDocumentRecvd(const FaxRecvInfo& ri)
     ai.status = ri.reason;
     ai.jobid = "";
     ai.jobtag = "";
+    ai.cidname = ri.cidname;
+    ai.cidnumber = ri.cidnumber;
     if (!ai.record("RECV"))
 	logError("Error writing RECV accounting record, dest=%s",
 	    (const char*) ai.dest);
@@ -724,9 +726,9 @@ faxGettyApp::notifyDocumentRecvd(const FaxRecvInfo& ri)
  * Handle notification that a document has been received.
  */
 void
-faxGettyApp::notifyRecvDone(const FaxRecvInfo& ri, const CallerID& cid)
+faxGettyApp::notifyRecvDone(const FaxRecvInfo& ri)
 {
-    FaxServer::notifyRecvDone(ri, cid);
+    FaxServer::notifyRecvDone(ri);
 
     // hand to delivery/notification command
     fxStr cmd(faxRcvdCmd
@@ -734,8 +736,8 @@ faxGettyApp::notifyRecvDone(const FaxRecvInfo& ri, const CallerID& cid)
 	| quote |   getModemDeviceID()	| enquote
 	| quote |           getCommID()	| enquote
 	| quote |            ri.reason	| enquote
-	| quote |           cid.number  | enquote
-	| quote |             cid.name  | enquote
+	| quote |         ri.cidnumber  | enquote
+	| quote |           ri.cidname  | enquote
     );
     traceServer("RECV FAX: %s", (const char*) cmd);
     setProcessPriority(BASE);			// lower priority

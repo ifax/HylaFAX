@@ -42,6 +42,8 @@ public:
     u_int	time;		// time on the phone
     Class2Params params;	// transfer parameters
     fxStr	reason;		// reason for failure (if not null)
+    fxStr	cidname;	// caller id name
+    fxStr	cidnumber;	// caller id number
 
     FaxRecvInfo();
     FaxRecvInfo(const FaxRecvInfo& other);

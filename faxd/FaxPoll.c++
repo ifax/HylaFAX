@@ -55,6 +55,7 @@ FaxServer::pollFaxPhaseB(const fxStr& sep, const fxStr& pwd, FaxRecvInfoArray& d
 	recvPages = 0;			// count of received pages
 	fileStart = Sys::now();		// count initial negotiation on failure
 	if (modem->pollBegin(canonicalizePhoneNumber(FAXNumber), sep, pwd, emsg)) {
+	    const CallerID cid;		// null
 	    pollOK = recvDocuments(tif, info, docs, emsg);
 	    if (!pollOK)
 		traceProtocol("POLL FAX: %s", (const char*) emsg);

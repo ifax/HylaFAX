@@ -173,12 +173,6 @@ if [ -f $FILE ]; then
 	else
 	    echo "    CommID: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
 	fi
-	if [ "$CIDNUMBER" ]; then
-	    echo " CIDNumber: $CIDNUMBER"
-	fi
-	if [ "$CIDNAME" ]; then
-	    echo "   CIDName: $CIDNAME"
-	fi
 	if [ -n "$SENDTO" ]; then
 	    echo ""
 	    echo "The facsimile was automatically dispatched to: $SENDTO." 
@@ -219,12 +213,6 @@ if [ -f $FILE ]; then
 	    fi
 	 else
 	    echo "    CommID: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
-	 fi
-	 if [ "$CIDNUMBER" ]; then
-	    echo " CIDNumber: $CIDNUMBER"
-	 fi
-	 if [ "$CIDNAME" ]; then
-	    echo "   CIDName: $CIDNAME"
 	 fi
 	 echo ""
 	 echo "--$MIMEBOUNDARY"

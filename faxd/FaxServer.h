@@ -108,7 +108,7 @@ protected:
     virtual void notifyRecvBegun(const FaxRecvInfo&);
     virtual void notifyPageRecvd(TIFF* tif, const FaxRecvInfo&, int ppm);
     virtual void notifyDocumentRecvd(const FaxRecvInfo& req);
-    virtual void notifyRecvDone(const FaxRecvInfo& req, const CallerID& cid);
+    virtual void notifyRecvDone(const FaxRecvInfo& req);
 public:
     virtual ~FaxServer();
 

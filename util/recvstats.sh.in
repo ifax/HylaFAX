@@ -58,7 +58,7 @@ SINCE=
 
 while [ x"$1" != x"" ] ; do
     case $1 in
-    -send*|-csi|-dest*|-speed|-rate|-format)
+    -send*|-csi|-dest*|-speed|-rate|-format|-cidname|-cidnumber)
 	    SORTKEY=$1;;
     -age)   shift; AGE=$1;;
     -since) shift; SINCE=$1;;
@@ -87,6 +87,17 @@ case $SORTKEY in
 	$2 == "RECV" && NF == 12 { acct($7, $10, $11, $8, $9, $12); }
 	$2 == "RECV" && NF == 13 { acct($9, $11, $12, getBR($10), getDF($10), $13); }
 	$2 == "RECV" && NF == 14 { acct($9, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "RECV" && NF == 16 { acct($9, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
+	'
+    ;;
+-cidname)
+    AWKRULES='
+	$2 == "RECV" && NF == 16 { acct($15, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
+	'
+    ;;
+-cidnumber)
+    AWKRULES='
+	$2 == "RECV" && NF == 16 { acct($16, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	'
     ;;
 -dest*)
@@ -95,6 +106,7 @@ case $SORTKEY in
 	$2 == "RECV" && NF == 11 { acct($5, $9, $10, $7, $8, $11); }
 	$2 == "RECV" && NF == 12 { acct($6, $10, $11, $8, $9, $12); }
 	$2 == "RECV" && NF == 14 { acct($8, $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "RECV" && NF == 16 { acct($8, $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	'
     ;;
 -speed|-rate)
@@ -104,6 +116,7 @@ case $SORTKEY in
 	$2 == "RECV" && NF == 12 { acct($8, $10, $11, $8, $9, $12); }
 	$2 == "RECV" && NF == 13 { acct(getBR($10), $11, $12, getBR($10), getDF($10), $13); }
 	$2 == "RECV" && NF == 14 { acct(getBR($10), $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "RECV" && NF == 16 { acct(getBR($10), $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	'
     ;;
 -format)
@@ -113,6 +126,7 @@ case $SORTKEY in
 	$2 == "RECV" && NF == 12 { acct($9, $10, $11, $8, $9, $12); }
 	$2 == "RECV" && NF == 13 { acct(getDF($10), $11, $12, getBR($10), getDF($10), $13); }
 	$2 == "RECV" && NF == 14 { acct(getDF($10), $11, $13, getBR($10), getDF($10), $14); }
+	$2 == "RECV" && NF == 16 { acct(getDF($10), $11, $13, getBR($10), getDF($10), $14, $15, $16); }
 	'
     ;;
 esac
@@ -298,7 +312,7 @@ function getDF(params)
 #
 # Accumulate a statistics record.
 #
-function acct(key, pages, time, br, df, status)
+function acct(key, pages, time, br, df, status, cidname, cidnumber)
 {
     if (cvtDateTime($1) < KEEP)
 	return;
@@ -316,6 +330,10 @@ function acct(key, pages, time, br, df, status)
     recvrate[key] = addToMap(recvrate[key], br, pages, rateMap);
     gsub("\"", "", df);
     recvdata[key] = addToMap(recvdata[key], df, pages, dataMap);
+    gsub("\"", "", cidname);
+    gsub("\"", "", cidnumber);
+    lastcidname[key] = cidname;
+    lastcidnumber[key] = cidnumber;
 }
 
 #
@@ -350,9 +368,9 @@ END		{ OFS="\t"; setupDigits();
 		      sorted[nsorted++] = i;
 		  }
 		  qsort(sorted, 0, nsorted-1);
-		  fmt = "%-" maxlen "." maxlen "s";	# e.g. %-24.24s
+		  fmt = "%-" maxlen "." maxlen "s" " %-" maxlen "." maxlen "s" " %-" maxlen "." maxlen "s";	# e.g. %-24.24s
 		  printf fmt " %5s %8s %6s %4s %7s %7s\n",
-		      "Sender", "Pages", "Time", "Pg/min",
+		      "Sender", "CIDName", "CIDNumber", "Pages", "Time", "Pg/min",
 		      "Errs", "TypRate", "TypData";
 		  tpages = 0;
 		  ttime = 0;
@@ -363,7 +381,7 @@ END		{ OFS="\t"; setupDigits();
 		      n = recvpages[i]; if (n == 0) n = 1;
 		      brate = best
 		      printf fmt " %5d %8s %6.1f %4d %7d %7s\n",
-			  i, recvpages[i], fmtTime(recvtime[i]),
+			  i, lastcidname[i], lastcidnumber[i], recvpages[i], fmtTime(recvtime[i]),
 			  recvpages[i] / t, recverrs[i],
 			  bestInMap(recvrate[i], rates),
 			  bestInMap(recvdata[i], datas);
@@ -371,10 +389,10 @@ END		{ OFS="\t"; setupDigits();
 			ttime += recvtime[i];
 			terrs += recverrs[i];
 		  }
-		  printRule(maxlen+1+5+1+8+6+1+4+1+7+1+7, "-");
+		  printRule(maxlen+1+maxlen+1+maxlen+1+5+1+8+6+1+4+1+7+1+7, "-");
 		  t = ttime/60; if (t == 0) t = 1;
 		  printf fmt " %5d %8s %6.1f %4d\n",
-		      "Total", tpages, fmtTime(ttime), tpages/t, terrs;
+		      "Total", "", "", tpages, fmtTime(ttime), tpages/t, terrs;
 		}
 EOF
 echo "$AWKRULES"

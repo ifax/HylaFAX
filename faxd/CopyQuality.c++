@@ -311,7 +311,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
  * Setup "stock TIFF tags" in preparation for receiving a page of data.
  */
 void
-FaxModem::recvSetupTIFF(TIFF* tif, long, int fillOrder)
+FaxModem::recvSetupTIFF(TIFF* tif, long, int fillOrder, const fxStr& id)
 {
     TIFFSetField(tif, TIFFTAG_SUBFILETYPE,	FILETYPE_PAGE);
     TIFFSetField(tif, TIFFTAG_IMAGEWIDTH,	(uint32) params.pageWidth());
@@ -326,7 +326,7 @@ FaxModem::recvSetupTIFF(TIFF* tif, long, int fillOrder)
     TIFFSetField(tif, TIFFTAG_YRESOLUTION,	(float) params.verticalRes());
     TIFFSetField(tif, TIFFTAG_RESOLUTIONUNIT,	RESUNIT_INCH);
     TIFFSetField(tif, TIFFTAG_SOFTWARE,		HYLAFAX_VERSION);
-    TIFFSetField(tif, TIFFTAG_IMAGEDESCRIPTION,	(const char*) tsi);
+    TIFFSetField(tif, TIFFTAG_IMAGEDESCRIPTION,	(const char*) id);
     char dateTime[24];
     time_t now = Sys::now();
     strftime(dateTime, sizeof (dateTime), "%Y:%m:%d %H:%M:%S", localtime(&now));

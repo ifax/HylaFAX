@@ -139,6 +139,8 @@ pageSendApp::send(const char* filename)
 		    ai.dest = req->external;
 		    ai.csi = "";
 		    ai.params = 0;
+		    ai.cidname = "";
+		    ai.cidnumber = "";
 		    if (req->status == send_done)
 			ai.status = "";
 		    else

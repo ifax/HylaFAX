@@ -140,11 +140,32 @@ main(int argc, char** argv)
 #ifdef TIFFTAG_FAXRECVPARAMS
     }
 #endif
-    fxStr sender;
+    fxStr sender = "";
+    fxStr cidname = "";
+    fxStr cidnumber = "";
     char* cp;
     if (TIFFGetField(tif, TIFFTAG_IMAGEDESCRIPTION, &cp)) {
-	sender = cp;
+	while (cp[0] != '\0' && cp[0] != '\n') {	// sender
+	    sender.append(cp[0]);
+	    cp++;
+	}
+	if (cp[0] == '\n') {
+	    cp++;
+	    while (cp[0] != '\0' && cp[0] != '\n') {	// cidname
+		cidname.append(cp[0]);
+		cp++;
+	    }
+	}
+	if (cp[0] == '\n') {
+	    cp++;
+	    while (cp[0] != '\0' && cp[0] != '\n') {	// cidnumber
+		cidnumber.append(cp[0]);
+		cp++;
+	    }
+	}
 	sanitize(sender);
+	sanitize(cidname);
+	sanitize(cidnumber);
     } else
 	sender = "<unknown>";
     printf("%11s %s\n", "Sender:", (const char*) sender);
@@ -215,5 +236,9 @@ main(int argc, char** argv)
     printf("%11s %s\n", "TimeToRecv:", time == 0 ? "<unknown>" : fmtTime(time));
     printf("%11s %s\n", "SignalRate:", params.bitRateName());
     printf("%11s %s\n", "DataFormat:", params.dataFormatName());
+    if (cidname != "")
+	printf("%11s %s\n", "CIDName:", (const char*) cidname);
+    if (cidnumber != "")
+	printf("%11s %s\n", "CIDNumber:", (const char*) cidnumber);
     return (0);
 }

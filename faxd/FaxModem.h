@@ -124,7 +124,7 @@ protected:
     void	recvNSF(const NSF&);
     void	recvCSI(const fxStr&);
     void	recvDCS(const Class2Params&);
-    void	recvSetupTIFF(TIFF* tif, long group3opts, int fillOrder);
+    void	recvSetupTIFF(TIFF* tif, long group3opts, int fillOrder, const fxStr& id);
     void	recvStartPage(TIFF* tif);
     void	recvResetPage(TIFF* tif);
     u_int	decodePageChop(const fxStr& pph, const Class2Params&);
@@ -263,7 +263,7 @@ public:
     virtual bool setupReceive() = 0;
     virtual bool recvBegin(fxStr& emsg);
     virtual bool recvEOMBegin(fxStr& emsg);
-    virtual bool recvPage(TIFF*, u_int& ppm, fxStr& em) = 0;
+    virtual bool recvPage(TIFF*, u_int& ppm, fxStr& em, const fxStr& id) = 0;
     virtual bool recvEnd(fxStr& emsg) = 0;
     virtual void recvAbort() = 0;
     virtual void recvSucceeded();

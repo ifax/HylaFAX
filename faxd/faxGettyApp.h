@@ -136,7 +136,7 @@ private:
     void	notifyRecvBegun(const FaxRecvInfo&);
     void	notifyPageRecvd(TIFF* tif, const FaxRecvInfo&, int ppm);
     void	notifyDocumentRecvd(const FaxRecvInfo&);
-    void	notifyRecvDone(const FaxRecvInfo&, const CallerID&);
+    void	notifyRecvDone(const FaxRecvInfo&);
 public:
     faxGettyApp(const fxStr& device, const fxStr& devID);
     ~faxGettyApp();

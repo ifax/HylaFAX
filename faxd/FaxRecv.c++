@@ -58,6 +58,8 @@ FaxServer::recvFax(const CallerID& cid)
      * after recvBegin can cause part of the first page to
      * be lost.)
      */
+    info.cidname = cid.name;
+    info.cidnumber = cid.number;
     TIFF* tif = setupForRecv(info, docs, emsg);
     if (tif) {
 	recvPages = 0;			// total count of received pages
@@ -96,11 +98,7 @@ FaxServer::recvFax(const CallerID& cid)
 	else
 	    Sys::chmod(ri.qfile, recvFileMode);
 	if (faxRecognized)
-	    // It would be cleaner and more versatile to include
-	    // cid as part of ri now instead of continuing to
-	    // pass it along.  This would require alterations to
-	    // FaxRecvInfo, though - not as simple an approach.
-	    notifyRecvDone(ri, cid);
+	    notifyRecvDone(ri);
     }
     traceProtocol("RECV FAX: end");
     return (faxRecognized);
@@ -253,12 +251,16 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 bool
 FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
 {
+    fxStr id = info.sender;
+    if (info.cidname.length() || info.cidnumber.length()) id.append("\n" | info.cidname);
+    if (info.cidnumber.length()) id.append("\n" | info.cidnumber);
+
     do {
 	if (++recvPages > maxRecvPages) {
 	    emsg = "Maximum receive page count exceeded, job terminated";
 	    return (false);
 	}
-	if (!modem->recvPage(tif, ppm, emsg))
+	if (!modem->recvPage(tif, ppm, emsg, id))
 	    return (false);
 	info.npages++;
 	info.time = (u_int) getPageTransferTime();
@@ -317,7 +319,7 @@ FaxServer::notifyDocumentRecvd(const FaxRecvInfo& ri)
  * Handle final actions associated with a document being received.
  */
 void
-FaxServer::notifyRecvDone(const FaxRecvInfo& ri, const CallerID& cid)
+FaxServer::notifyRecvDone(const FaxRecvInfo& ri)
 {
     if (ri.reason != "")
 	traceServer("RECV FAX (%s): session with %s terminated abnormally: %s"

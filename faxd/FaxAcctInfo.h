@@ -43,6 +43,8 @@ struct FaxAcctInfo {
     u_int	npages;		// pages successfully sent/rcvd
     u_int	params;		// encoded transfer parameters
     const char*	status;		// status info (optional)
+    const char*	cidname;	// caller id name
+    const char*	cidnumber;	// caller id number
 
     bool record(const char* cmd) const;
 };

@@ -192,7 +192,7 @@ public:
     bool	setupReceive();
     bool	recvBegin(fxStr& emsg);
     bool	recvEOMBegin(fxStr& emsg);
-    bool	recvPage(TIFF*, u_int& ppm, fxStr& emsg);
+    bool	recvPage(TIFF*, u_int& ppm, fxStr& emsg, const fxStr& id);
     bool	recvEnd(fxStr& emsg);
     void	recvAbort();
 
