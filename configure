@@ -1853,6 +1853,8 @@ EmitConfigurationDefinitions()
 	echo "#define CONFIG_GETOPTPROTO"
     fi
     test "$CONFIG_BADSELECTPROTO" || {		# int* vs. fd_set*
+	*-hpux10.20*)	CONFIG_BADSELECTPROTO=no;;
+	*-hpux11*)	CONFIG_BADSELECTPROTO=no;;
 	case $TARGET in
 	*-hpux*)	CONFIG_BADSELECTPROTO=yes;;
 	*)		CONFIG_BADSELECTPROTO=no;;
@@ -2635,7 +2637,10 @@ BuildPortDotH()
     CheckDefine _PATH_TMP     '_PATH_TMP	"/tmp/"'	paths.h
     if [ $UTMP = auto ]; then
 	if CheckForIncludeFile utmpx.h; then
-	    UTMP=utmpx;
+	    case $TARGET in
+	    *-hpux10.20*)	UTMP=utmp;;
+	    *)			UTMP=utmpx;;
+	    esac
 	else
 	    UTMP=utmp;
 	fi
