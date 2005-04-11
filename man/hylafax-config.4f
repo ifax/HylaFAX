@@ -2350,6 +2350,13 @@ For those modems that support
 .B Class1RMPersistence
 should probably not be set at 1, although +FCERROR should almost never occur
 with such modems.
+.IP
+If the modem does not support the reporting of +FCERROR or adaptive reception
+control, then
+.B Class1RMPersistence
+should probably be set at 0, which causes the timeout looking for the high-speed
+data carrier to be shortened, thus increasing the likelihood of recovery from
+any dissynchronization.
 .TP
 .B Class1SendMsgDelay
 The time, in milliseconds, to delay just before sending the image data.

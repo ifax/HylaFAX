@@ -526,10 +526,10 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		 */
 		fxStr rmCmd(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
 		u_short attempts = 0;
-		while ((rmResponse == AT_NOTHING || rmResponse == AT_FCERROR) && attempts++ < conf.class1RMPersistence) {
+		do {
 		    (void) atCmd(rmCmd, AT_NOTHING);
-		    rmResponse = atResponse(rbuf, conf.t2Timer);
-		}
+		    rmResponse = atResponse(rbuf, conf.class1RMPersistence ? conf.t2Timer : conf.t2Timer - conf.t4Timer);
+		} while ((rmResponse == AT_NOTHING || rmResponse == AT_FCERROR) && attempts++ < conf.class1RMPersistence);
 		if (rmResponse == AT_CONNECT) {
 		    /*
 		     * The message carrier was recognized;
@@ -870,10 +870,10 @@ Class1Modem::raiseRecvCarrier(bool& dolongtrain, fxStr& emsg)
     else rmCmd = fxStr(curcap[HasShortTraining(curcap)].value, rmCmdFmt);
     u_short attempts = 0;
     lastResponse = AT_NOTHING;
-    while ((lastResponse == AT_NOTHING || lastResponse == AT_FCERROR) && attempts++ < conf.class1RMPersistence) {
+    do {
 	(void) atCmd(rmCmd, AT_NOTHING);
-	lastResponse = atResponse(rbuf, conf.t2Timer);
-    }
+	lastResponse = atResponse(rbuf, conf.class1RMPersistence ? conf.t2Timer : conf.t2Timer - conf.t4Timer);
+    } while ((lastResponse == AT_NOTHING || lastResponse == AT_FCERROR) && attempts++ < conf.class1RMPersistence);
     if (lastResponse == AT_FRH3 && waitFor(AT_CONNECT,0)) {
 	gotRTNC = true;
 	gotEOT = false;
@@ -921,7 +921,8 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 	    if (!useV34) {
 		gotRTNC = false;
 		if (!raiseRecvCarrier(dolongtrain, emsg) && !gotRTNC) {
-		    if (lastResponse == AT_FCERROR && atCmd(rhCmd, AT_CONNECT)) {
+		    if (wasTimeout()) abortReceive();	// return to command mode
+		    if (lastResponse != AT_NOCARRIER && atCmd(rhCmd, AT_CONNECT, conf.t2Timer)) {
 			// sender is transmitting V.21 instead, we may have
 			// missed the first signal attempt, but should catch
 			// the next attempt.  This "simulates" adaptive receive.
@@ -934,7 +935,6 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			    prevPage++;
 			}
 			free(block);
-			if (wasTimeout()) abortReceive();	// return to command mode
 			return (false);
 		    }
 		}
@@ -1120,7 +1120,8 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				else {
 				    gotRTNC = false;
 				    if (!raiseRecvCarrier(dolongtrain, emsg) && !gotRTNC) {
-					if (lastResponse == AT_FCERROR && atCmd(rhCmd, AT_CONNECT)) {
+					if (wasTimeout()) abortReceive();	// return to command mode
+					if (lastResponse != AT_NOCARRIER && atCmd(rhCmd, AT_CONNECT, conf.t2Timer)) {
 					    // simulate adaptive receive
 					    emsg = "";		// clear the failure
 					    gotRTNC = true;
@@ -1131,7 +1132,6 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						prevPage++;
 					    }
 					    free(block);
-					    if (wasTimeout()) abortReceive();	// return to command mode
 					    return (false);
 					}
 				    } else gotprimary = true;
