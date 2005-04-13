@@ -995,7 +995,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						    free(block);
 						    return (false);
 						}
-						if (frameRev[rtncframe[4]]+1 > prevPage || (frameRev[rtncframe[4]]+1 == prevPage && frameRev[rtncframe[5]]+1 > prevBlock)) {
+						if (frameRev[rtncframe[4]] > prevPage || (frameRev[rtncframe[4]] == prevPage && frameRev[rtncframe[5]] >= prevBlock)) {
 						    (void) transmitFrame(FCF_PPR, fxStr(ppr, 32));
 						    tracePPR("RECV send", FCF_PPR);
 						} else {
