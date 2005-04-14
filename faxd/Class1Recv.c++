@@ -529,7 +529,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		do {
 		    (void) atCmd(rmCmd, AT_NOTHING);
 		    rmResponse = atResponse(rbuf, conf.class1RMPersistence ? conf.t2Timer : conf.t2Timer - conf.t4Timer);
-		} while ((rmResponse == AT_NOTHING || rmResponse == AT_FCERROR) && attempts++ < conf.class1RMPersistence);
+		} while ((rmResponse == AT_NOTHING || rmResponse == AT_FCERROR) && ++attempts < conf.class1RMPersistence);
 		if (rmResponse == AT_CONNECT) {
 		    /*
 		     * The message carrier was recognized;
@@ -883,7 +883,7 @@ Class1Modem::raiseRecvCarrier(bool& dolongtrain, fxStr& emsg)
     do {
 	(void) atCmd(rmCmd, AT_NOTHING);
 	lastResponse = atResponse(rbuf, conf.class1RMPersistence ? conf.t2Timer : conf.t2Timer - conf.t4Timer);
-    } while ((lastResponse == AT_NOTHING || lastResponse == AT_FCERROR) && attempts++ < conf.class1RMPersistence);
+    } while ((lastResponse == AT_NOTHING || lastResponse == AT_FCERROR) && ++attempts < conf.class1RMPersistence);
     if (lastResponse == AT_FRH3 && waitFor(AT_CONNECT,0)) {
 	gotRTNC = true;
 	gotEOT = false;
