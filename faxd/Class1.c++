@@ -841,6 +841,7 @@ Class1Modem::syncECMFrame()
     do {
 	if ((unsigned) Sys::now()-start >= 3) {
 	    protoTrace("Timeout awaiting synchronization sequence");
+	    setTimeout(true);
 	    return (false);
 	}
 	bit = getModemBit(0);
@@ -848,6 +849,7 @@ Class1Modem::syncECMFrame()
     do {
 	if ((unsigned) Sys::now()-start >= 3) {
 	    protoTrace("Timeout awaiting synchronization sequence");
+	    setTimeout(true);
 	    return (false);
 	}
 	if (bit == 0 || ones > 0xFF) ones = 0;

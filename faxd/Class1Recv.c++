@@ -1506,6 +1506,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    return (false);
 		}
 	    } else {
+		if (wasTimeout()) abortReceive();
 		if (syncattempts++ > 20) {
 		    emsg = "Cannot synchronize ECM frame reception.";
 		    if (conf.saveUnconfirmedPages) {
