@@ -495,10 +495,6 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		/*
 		 * Look for message carrier and receive Phase C data.
 		 */
-		setInputBuffering(true);
-		if (flowControl == FLOW_XONXOFF)
-		    (void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
-
 		/*
 		 * Same reasoning here as before receiving TCF.  In practice,
 		 * however, we can't follow Class1TCFRecvHack because it
@@ -531,6 +527,13 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		    rmResponse = atResponse(rbuf, conf.class1RMPersistence ? conf.t2Timer : conf.t2Timer - conf.t4Timer);
 		} while ((rmResponse == AT_NOTHING || rmResponse == AT_FCERROR) && ++attempts < conf.class1RMPersistence);
 		if (rmResponse == AT_CONNECT) {
+		    /*
+		     * We don't want the AT+FRM=n command to get buffered,
+		     * so buffering and flow control must be done after CONNECT.
+		     */
+		    setInputBuffering(true);
+		    if (flowControl == FLOW_XONXOFF)
+			(void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
 		    /*
 		     * The message carrier was recognized;
 		     * receive the Phase C data.
@@ -925,9 +928,6 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 	    signalRcvd = 0;
 	    rcpcnt = 0;
 	    bool dataseen = false;
-	    setInputBuffering(true);
-	    if (flowControl == FLOW_XONXOFF)
-		(void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
 	    if (!useV34) {
 		gotRTNC = false;
 		if (!raiseRecvCarrier(dolongtrain, emsg) && !gotRTNC) {
@@ -1127,9 +1127,6 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    break;
 			    }
 			    if (!sendERR) {	// as long as we're not trying to send the ERR signal (set above)
-				setInputBuffering(true);
-				if (flowControl == FLOW_XONXOFF)
-				    (void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
 			        if (useV34) gotprimary = waitForDCEChannel(false);
 				else {
 				    gotRTNC = false;
@@ -1186,6 +1183,12 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    return (false);
 		}
 	    }
+	    /*
+	     * Buffering and flow control must be done after AT+FRM=n.
+	     */
+	    setInputBuffering(true);
+	    if (flowControl == FLOW_XONXOFF)
+		(void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
 	    if (!sendERR && (useV34 || syncECMFrame())) {	// no synchronization needed w/V.34-fax
 		time_t start = Sys::now();
 		do {

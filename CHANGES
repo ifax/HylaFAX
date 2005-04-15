@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* adjust the timing of input buffering enabling (15 Apr 2005)
 * fix dialtest problem when using parenthesis (1 Apr 2005)
 * fix crash when using malformed format strings (1 Apr 2005)
 * initialize frameCount for compilers that don't (1 Apr 2005)
