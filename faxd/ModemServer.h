@@ -86,6 +86,7 @@ private:
     u_short	rcvBit;			// pending bit of rcvNext to send
     int		gotByte;		// byte held for bit destruction
     bool	sawBlockEnd;		// whether DLE+ETX has been seen
+    bool	inputBuffered;		// whether or not modem input is buffered
     u_char	rcvBuf[1024];		// receive buffering
 
     friend class ClassModem;

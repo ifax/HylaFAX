@@ -83,6 +83,7 @@ ModemServer::ModemServer(const fxStr& devName, const fxStr& devID)
     deduceComplain = true;		// first failure causes complaint
     changePriority = true;
     delayConfig = false;
+    inputBuffered = true;		// OSes buffer by default
 
     modemFd = -1;
     modem = NULL;
@@ -214,7 +215,8 @@ ModemServer::changeState(ModemServerState s, long timeout)
 	if (changePriority)
 	    setProcessPriority(state);
 	if (modemFd >= 0)
-	    setInputBuffering(state != RUNNING);
+	    setInputBuffering(state != RUNNING && state != SENDING &&
+		state != ANSWERING && state != RECEIVING && state != LISTENING);
 	setServerStatus(stateStatus[state]);
 	switch (state) {
 	case RUNNING:
@@ -1266,7 +1268,8 @@ ModemServer::setXONXOFF(FlowControl iFlow, FlowControl oFlow, SetAction act)
 bool
 ModemServer::setInputBuffering(bool on)
 {
-    traceModemOp("input buffering %s", on ? "enabled" : "disabled");
+    if (on != inputBuffered) traceModemOp("input buffering %s", on ? "enabled" : "disabled");
+    inputBuffered = on;
 #ifdef SIOC_ITIMER
     /*
      * Silicon Graphics systems have a settable timer

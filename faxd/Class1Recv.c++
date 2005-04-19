@@ -965,9 +965,6 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			 * and then respond appropriately to get us back or stay in sync.
 			 * DCS::CFR - PPS::PPR/MCF - EOR::ERR
 			 */
-			if (flowControl == FLOW_XONXOFF)
-			    (void) setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
-			setInputBuffering(false);
 			HDLCFrame rtncframe(conf.class1FrameOverhead);
 			bool gotrtncframe = false;
 			if (useV34) {
@@ -1227,6 +1224,9 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    }
 		    // some senders don't send the requisite three RCP signals
 		} while (rcpcnt == 0 && (unsigned) Sys::now()-start < 5*60);	// can't expect 50 ms of flags, some violate T.4 A.3.8
+		if (flowControl == FLOW_XONXOFF)
+		    (void) setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
+		setInputBuffering(false);
 		if (useV34) {
 		    if (!gotEOT && !gotCTRL && !waitForDCEChannel(true)) {
 			emsg = "Failed to properly open V.34 control channel.";
@@ -1261,9 +1261,6 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			gotnocarrier = waitFor(AT_NOCARRIER, 2*1000);
 		    } while (!gotnocarrier && Sys::now() < (nocarrierstart + 5));
 		}
-		if (flowControl == FLOW_XONXOFF)
-		    (void) setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
-		setInputBuffering(false);
 		bool gotpps = false;
 		HDLCFrame ppsframe(conf.class1FrameOverhead);
 		u_short recvFrameCount = 0;
