@@ -561,7 +561,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		    }
 		    bool getframe = false;
 		    if (rmResponse == AT_FRH3) getframe = waitFor(AT_CONNECT, 0);
-		    else if (lastResponse != AT_NOCARRIER) getframe = atCmd(rhCmd, AT_CONNECT, conf.t2Timer);
+		    else if (rmResponse != AT_NOCARRIER) getframe = atCmd(rhCmd, AT_CONNECT, conf.t1Timer);	// wait longer
 		    if (getframe) {
 			HDLCFrame frame(conf.class1FrameOverhead);
 			if (recvFrame(frame, FCF_RCVR, conf.t2Timer, true)) {
@@ -935,7 +935,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			abortReceive();		// return to command mode
 			setTimeout(false);
 		    }
-		    if (lastResponse != AT_NOCARRIER && atCmd(rhCmd, AT_CONNECT, conf.t2Timer)) {
+		    if (lastResponse != AT_NOCARRIER && atCmd(rhCmd, AT_CONNECT, conf.t1Timer)) {	// wait longer
 			// sender is transmitting V.21 instead, we may have
 			// missed the first signal attempt, but should catch
 			// the next attempt.  This "simulates" adaptive receive.
@@ -1132,7 +1132,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    abortReceive();	// return to command mode
 					    setTimeout(false);
 					}
-					if (lastResponse != AT_NOCARRIER && atCmd(rhCmd, AT_CONNECT, conf.t2Timer)) {
+					if (lastResponse != AT_NOCARRIER && atCmd(rhCmd, AT_CONNECT, conf.t1Timer)) {	// wait longer
 					    // simulate adaptive receive
 					    emsg = "";		// clear the failure
 					    gotRTNC = true;
@@ -1265,7 +1265,15 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		HDLCFrame ppsframe(conf.class1FrameOverhead);
 		u_short recvFrameCount = 0;
 		do {
-		    gotpps = recvFrame(ppsframe, FCF_RCVR, conf.t2Timer);
+		    /*
+		     * It is possible that the high-speed carrier drop was
+		     * detected in error or that some line noise caused it but
+		     * that the sender has not disconnected.  It is possible
+		     * then, that T2 will not be long enough to receive the
+		     * partial-page signal because the sender is still transmitting
+		     * high-speed data.  So we wait T1 instead.
+		     */
+		    gotpps = recvFrame(ppsframe, FCF_RCVR, conf.t1Timer);	// wait longer
 		} while (!gotpps && !wasTimeout() && lastResponse != AT_NOCARRIER && ++recvFrameCount < 5);
 		if (gotpps) {
 		    tracePPM("RECV recv", ppsframe.getFCF());
