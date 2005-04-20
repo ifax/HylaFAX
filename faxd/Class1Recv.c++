@@ -1151,8 +1151,14 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			    }
 			} else {
 			    gotprimary = false;
-			    if (!useV34 && !(lastResponse == AT_NOCARRIER || 
-				lastResponse == AT_ERROR || !atCmd(rhCmd, AT_CONNECT))) break;
+			    if (!useV34) {
+				if (wasTimeout()) {
+				    abortReceive();
+				    break;
+				}
+				if (lastResponse == AT_NOCARRIER || lastResponse == AT_ERROR ||
+				    !atCmd(rhCmd, AT_CONNECT, conf.t1Timer))) break;
+			    }
 			}
 		    }
 		    if (!gotprimary && !sendERR) {
