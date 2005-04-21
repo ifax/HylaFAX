@@ -1157,7 +1157,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    break;
 				}
 				if (lastResponse == AT_NOCARRIER || lastResponse == AT_ERROR ||
-				    !atCmd(rhCmd, AT_CONNECT, conf.t1Timer))) break;
+				    !atCmd(rhCmd, AT_CONNECT, conf.t1Timer)) break;
 			    }
 			}
 		    }
