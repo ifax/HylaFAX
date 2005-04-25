@@ -1187,10 +1187,10 @@ Class1Modem::transmitFrame(fxStr& signal)
     HDLCFrame frame(conf.class1FrameOverhead);
     for (u_int i = 0; i < signal.length(); i++) frame.put(signal[i]);
     startTimeout(7550);
-    bool frameSent =
-	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
-	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
-	sendRawFrame(frame);
+    bool frameSent = useV34 ? true : atCmd(thCmd, AT_NOTHING, 0);
+    if (frameSent) frameSent = useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT;
+    if (frameSent) frameSent = sendRawFrame(frame);
+    else if (lastResponse == AT_ERROR) gotEOT = true;	// on hook
     stopTimeout("sending HDLC frame");
     return (frameSent);
 }
@@ -1199,10 +1199,10 @@ bool
 Class1Modem::transmitFrame(u_char fcf, bool lastFrame)
 {
     startTimeout(7550);
-    bool frameSent =
-	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
-	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
-	sendFrame(fcf, lastFrame);
+    bool frameSent = useV34 ? true : atCmd(thCmd, AT_NOTHING, 0);
+    if (frameSent) frameSent = useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT;
+    if (frameSent) frameSent = sendFrame(fcf, lastFrame);
+    else if (lastResponse == AT_ERROR) gotEOT = true;	// on hook
     stopTimeout("sending HDLC frame");
     return (frameSent);
 }
@@ -1216,10 +1216,10 @@ Class1Modem::transmitFrame(u_char fcf, FaxParams& dcs_caps, bool lastFrame)
      * seconds to respond CONNECT or result OK, per T.31.
      */
     startTimeout(7550);
-    bool frameSent =
-	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
-	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
-	sendFrame(fcf, dcs_caps, lastFrame);
+    bool frameSent = useV34 ? true : atCmd(thCmd, AT_NOTHING, 0);
+    if (frameSent) frameSent = useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT;
+    if (frameSent) frameSent = sendFrame(fcf, dcs_caps, lastFrame);
+    else if (lastResponse == AT_ERROR) gotEOT = true;	// on hook
     stopTimeout("sending HDLC frame");
     return (frameSent);
 }
@@ -1228,10 +1228,10 @@ bool
 Class1Modem::transmitFrame(u_char fcf, const fxStr& tsi, bool lastFrame)
 {
     startTimeout(7550);
-    bool frameSent =
-	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
-	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
-	sendFrame(fcf, tsi, lastFrame);
+    bool frameSent = useV34 ? true : atCmd(thCmd, AT_NOTHING, 0);
+    if (frameSent) frameSent = useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT;
+    if (frameSent) frameSent = sendFrame(fcf, tsi, lastFrame);
+    else if (lastResponse == AT_ERROR) gotEOT = true;	// on hook
     stopTimeout("sending HDLC frame");
     return (frameSent);
 }
@@ -1240,10 +1240,10 @@ bool
 Class1Modem::transmitFrame(u_char fcf, const u_char* code, const fxStr& nsf, bool lastFrame)
 {
     startTimeout(7550);
-    bool frameSent =
-	(useV34 ? true : atCmd(thCmd, AT_NOTHING, 0)) &&
-	(useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT) &&
-	sendFrame(fcf, code, nsf, lastFrame);
+    bool frameSent = useV34 ? true : atCmd(thCmd, AT_NOTHING, 0);
+    if (frameSent) frameSent = useV34 ? true : atResponse(rbuf, 0) == AT_CONNECT;
+    if (frameSent) frameSent = sendFrame(fcf, code, nsf, lastFrame);
+    else if (lastResponse == AT_ERROR) gotEOT = true;	// on hook
     stopTimeout("sending HDLC frame");
     return (frameSent);
 }
@@ -1275,7 +1275,7 @@ Class1Modem::transmitData(int br, u_char* data, u_int cc,
 		ok = waitFor(AT_OK, 60*1000);	// wait up to 60 seconds for "OK"
 	    }
 	}
-    }
+    } else if (lastResponse == AT_ERROR) gotEOT = true;	// on hook
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
     return (ok);
