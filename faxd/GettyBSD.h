@@ -42,6 +42,8 @@ public:
 };
 
 class BSDGetty : public BSDSubProc {
+protected:
+    void setupSession(int modemFd);
 private:
     void writeWtmp(utmp* ut);
     void logout(const char* line);
