@@ -1325,7 +1325,7 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending)
 	} while (!gotframe && crpcnt++ < 3 && !wasTimeout() &&
 		atCmd(conf.class1SwitchingCmd, AT_OK) && transmitFrame(dir|FCF_CRP));
 	return (gotframe);
-    }
+    } else if (lastResponse == AT_ERROR) gotEOT = true;		// on hook
     stopTimeout("waiting for v.21 carrier");
     if (wasTimeout()) abortReceive();
     return (false);
