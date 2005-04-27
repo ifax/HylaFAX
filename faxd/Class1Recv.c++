@@ -887,6 +887,7 @@ Class1Modem::raiseRecvCarrier(bool& dolongtrain, fxStr& emsg)
 	(void) atCmd(rmCmd, AT_NOTHING);
 	lastResponse = atResponse(rbuf, conf.class1RMPersistence ? conf.t2Timer : conf.t2Timer - conf.t4Timer);
     } while ((lastResponse == AT_NOTHING || lastResponse == AT_FCERROR) && ++attempts < conf.class1RMPersistence);
+    if (lastResponse == AT_ERROR) gotEOT = true;	// on hook
     if (lastResponse == AT_FRH3 && waitFor(AT_CONNECT,0)) {
 	gotRTNC = true;
 	gotEOT = false;
