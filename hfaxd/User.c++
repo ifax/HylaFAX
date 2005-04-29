@@ -58,7 +58,7 @@ HylaFAXServer::checkUser(const char* name)
 	// We use checkuser() like this to avoid compiler quirks
 	// that surface with or-ing them.
 	if (checkuser(db, name)) check = true;
-	if (checkuser(name)) check = true;
+	if (!check && checkuser(name)) check = true;
 	fclose(db);
     } else
 	logError("Unable to open the user access file %s: %s",
