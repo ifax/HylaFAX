@@ -139,6 +139,8 @@ main()
     hash("notify");
     hash("pagechop");
     hash("chopthreshold");
+    hash("csi");
+    hash("nsf");
     hash("status");
     hash("returned");
     hash("doneop");

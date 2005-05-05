@@ -161,6 +161,8 @@ public:
     fxStr	jobtype;	// job type for selecting send command
     fxStr	tagline;	// tag line format
     fxStr	doneop;		// operation to do when job completes
+    fxStr	csi;		// CSI string from receiving equipment (ASCII representation)
+    fxStr	nsf;		// NSF string from receiving equipment (ASCII representation)
     pid_t	writeQFilePid;	// pid of last writeQFile operation
     FaxItemArray items;	// set of requests
 

@@ -187,7 +187,13 @@ parseQfile()
         doneop = "default";
         pagernum = "unknown";
         commid = "";
+	csi = "";
+	equipment = "";
+	station = "";
     }
+    /^csi/	{ p("csi",$2); }
+    /^nsf/	{ p("equipment",$3); }
+    /^nsf/	{ p("station",$5); }
     /^jobid/    { p("jobid",$2); }
     /^groupid/    { p("groupid", $2); }
     /^state/    { p("state", $2+0); }  
@@ -471,7 +477,7 @@ printItem()
     FMT="$1"
     TAG="$2"
     VALUE="$3"
-    printf "%14s: $FMT\n" "$TAG" "$VALUE"
+    printf "%16s: $FMT\n" "$TAG" "$VALUE"
 }
 
 
@@ -694,6 +700,7 @@ if [ "$WHY" = "done" ] ; then
     echo "";
     if [ "$jobtype" = "facsimile" ] ; then
         printItem "%u" "Pages" "$npages"
+        printItem "%s" "Receiver" "$csi"
         if [ "$RETURNTECHINFO" = "yes" ] ; then
             if [ "$resolution" = "196" ] ; then 
                 printItem "%s" "Quality" "Fine"
@@ -704,6 +711,8 @@ if [ "$WHY" = "done" ] ; then
             printItem "%.0f (mm)" "Page Length" "$pagelength"
             printItem "%s" "Signal Rate" "$signalrate"
             printItem "%s" "Data Format" "$dataformat"
+            printItem "%s" "Remote Equipment" "$equipment"
+            printItem "%s" "Remote Station" "$station"
         fi
     fi
     if [ "$RETURNTECHINFO" = "yes" ] ; then

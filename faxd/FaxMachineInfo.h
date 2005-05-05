@@ -61,6 +61,8 @@ private:
     u_short		maxSignallingRate;	// max capable signalling rate
     u_short		minScanlineTime;	// min scanline time capable
     fxStr	csi;			// last received CSI
+    fxStr	nsf;			// last received NSF
+    fxStr	dis;			// last received DIS
     int		sendFailures;		// count of failed send attempts
     int		dialFailures;		// count of failed dial attempts
     fxStr	lastSendFailure;	// reason for last failed send attempt
@@ -103,6 +105,8 @@ public:
     u_short getMaxSignallingRate() const;
     u_short getMinScanlineTime() const;
     const fxStr& getCSI() const;
+    const fxStr& getNSF() const;
+    const fxStr& getDIS() const;
 
     int getSendFailures() const;
     int getDialFailures() const;
@@ -121,6 +125,8 @@ public:
     void setMaxSignallingRate(int);
     void setMinScanlineTime(int);
     void setCSI(const fxStr&);
+    void setNSF(const fxStr&);
+    void setDIS(const fxStr&);
 
     void setSendFailures(int);
     void setDialFailures(int);
@@ -159,6 +165,10 @@ inline u_short FaxMachineInfo::getMinScanlineTime() const
     { return minScanlineTime; }
 inline const fxStr& FaxMachineInfo::getCSI() const
     { return csi; }
+inline const fxStr& FaxMachineInfo::getNSF() const
+    { return nsf; }
+inline const fxStr& FaxMachineInfo::getDIS() const
+    { return dis; }
 
 inline int FaxMachineInfo::getSendFailures() const
     { return sendFailures; }

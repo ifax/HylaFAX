@@ -80,6 +80,8 @@ pagerTTYParity	string	parity & # bits configuration for IXO/TAP communication
 pageSource	string	parameter to tell the paging central who we are
 pagingProtocol	string	protocol (IXO or UCP) for this provider
 remoteCSI	string	remote device Called Subscriber Identification
+remoteNSF	string	remote equipment Non-Standard Facilities information
+remoteDIS	string	remote Digital Identification Signal: capabilities
 sendFailures	number	count of consecutive failed send attempts
 supportsBatching	boolean	accepts batching protocol
 supportsHighRes	boolean	accepts 196 line/inch images (obsolete)

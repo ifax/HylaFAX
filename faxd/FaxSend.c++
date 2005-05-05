@@ -222,9 +222,23 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	if (status != send_ok) {
 	    sendFailed(fax, status, notice, requeueProto);
 	} else {
+	    // CSI
 	    fxStr csi("<UNSPECIFIED>");
 	    (void) modem->getSendCSI(csi);
 	    clientInfo.setCSI(csi);			// record remote CSI
+	    fax.csi = csi;				// store in queue file also for notify
+
+	    // NSF
+	    NSF nsf;
+	    (void) modem->getSendNSF(nsf);
+	    clientInfo.setNSF(nsf.getHexNsf());		// record remote NSF
+	    fax.nsf = fxStr::format("Equipment:%s %s:Station:%s", nsf.getVendor(), nsf.getModel(), nsf.getStationId());
+
+	    // DIS
+	    fxStr clientdis;
+	    clientCapabilities.asciiEncode(clientdis);
+	    clientInfo.setDIS(clientdis);
+
 	    if (!sendClientCapabilitiesOK(fax, clientInfo, notice)) {
 		// NB: mark job completed 'cuz there's no way recover
 		sendFailed(fax, send_failed, notice);

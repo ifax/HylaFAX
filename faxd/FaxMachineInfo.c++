@@ -44,6 +44,8 @@ FaxMachineInfo::FaxMachineInfo(const FaxMachineInfo& other)
     : FaxConfig(other)
     , file(other.file)
     , csi(other.csi)
+    , nsf(other.nsf)
+    , dis(other.dis)
     , lastSendFailure(other.lastSendFailure)
     , lastDialFailure(other.lastDialFailure)
     , pagerPassword(other.pagerPassword)
@@ -219,6 +221,10 @@ FaxMachineInfo::setConfigItem(const char* tag, const char* value)
 	dialFailures = getNumber(value);
     } else if (streq(tag, "remotecsi")) {
 	csi = value;
+    } else if (streq(tag, "remotensf")) {
+	nsf = value;
+    } else if (streq(tag, "remotedis")) {
+	dis = value;
     } else if (streq(tag, "lastsendfailure")) {
 	lastSendFailure = value;
     } else if (streq(tag, "lastdialfailure")) {
@@ -296,6 +302,10 @@ FaxMachineInfo::setCalledBefore(bool b)
 
 void FaxMachineInfo::setCSI(const fxStr& v)
     { checkChanged(csi, v); }
+void FaxMachineInfo::setNSF(const fxStr& v)
+    { checkChanged(nsf, v); }
+void FaxMachineInfo::setDIS(const fxStr& v)
+    { checkChanged(dis, v); }
 void FaxMachineInfo::setLastSendFailure(const fxStr& v)
     { checkChanged(lastSendFailure, v); }
 void FaxMachineInfo::setLastDialFailure(const fxStr& v)
@@ -374,6 +384,8 @@ FaxMachineInfo::writeConfig(fxStackBuffer& buf)
     putString(buf, "minScanlineTime", isLocked(ST),
 	stnames[fxmin(minScanlineTime, ST_40MS)]);
     putString(buf, "remoteCSI", false, csi);
+    putString(buf, "remoteNSF", false, nsf);
+    putString(buf, "remoteDIS", false, dis);
     putDecimal(buf, "sendFailures", false, sendFailures);
     putIfString(buf, "lastSendFailure", false, lastSendFailure);
     putDecimal(buf, "dialFailures", false, dialFailures);

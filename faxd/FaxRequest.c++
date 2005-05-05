@@ -71,6 +71,8 @@ FaxRequest::reset(void)
     usexvres = false;
     pagechop = chop_default;
     chopthreshold = -1;
+    csi = fxStr::null;
+    nsf = fxStr::null;
     notify = no_notice;
     jobtype = "facsimile";		// for compatibility w/ old clients
     writeQFilePid = 0;
@@ -114,6 +116,8 @@ FaxRequest::stringval FaxRequest::strvals[] = {
     { "passwd",		&FaxRequest::passwd },
     { "doneop",		&FaxRequest::doneop },
     { "commid",		&FaxRequest::commid },
+    { "csi",		&FaxRequest::csi },
+    { "nsf",		&FaxRequest::nsf },
 };
 FaxRequest::shortval FaxRequest::shortvals[] = {
     { "state",		&FaxRequest::state },
@@ -327,6 +331,8 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_NOTIFY:		checkNotifyValue(tag); break;
 	case H_PAGECHOP:	checkChopValue(tag); break;
 	case H_CHOPTHRESHOLD:	chopthreshold = atof(tag); break;
+	case H_CSI:		csi = tag; break;
+	case H_NSF:		nsf = tag; break;
 	case H_DONEOP:		doneop = tag; break;
 	case H_STATUS:
 	    /*

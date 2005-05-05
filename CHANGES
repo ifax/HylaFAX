@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX
 
+* add remoteNSF, remoteDIS to info files and return
+  CSI and interpreted NSF with notify information (4 May 2005)
 * improved disconnection detection (25, 26 Apr 2005)
 * wait longer for partial-page signals (19 Apr 2005)
 * adjust the timing of input buffering enabling (15 Apr 2005)
