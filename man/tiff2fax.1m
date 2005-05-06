@@ -48,6 +48,11 @@ The default implementation uses the
 .IR tiffcheck (${MANNUM1_8})
 program and tools from the freely available \*(Tf software
 distribution to implement the conversion operations.
+.PP
+This script can modify outgoing facsimile, such as watermarking,
+To do this create a shell script
+.B etc/FaxModify
+in the spooling area that alters the document.
 .SH OPTIONS
 The following operations are recognized:
 .TP 10

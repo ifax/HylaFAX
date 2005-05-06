@@ -85,6 +85,13 @@ test -z "$fil" && {
 }
 
 #
+# Apply customizations such as watermarking.   
+#
+if [ -f etc/FaxModify ]; then
+    . etc/FaxModify
+fi
+
+#
 # tiffcheck looks over a TIFF document and prints out a string
 # that describes what's needed (if anything) to make the file
 # suitable for transmission with the specified parameters (page

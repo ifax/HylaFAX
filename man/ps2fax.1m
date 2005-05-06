@@ -95,6 +95,11 @@ Group 3 2D-encoding scheme (\c
 .SM EOL
 codes are still padded to byte boundaries).
 .PP
+This script can modify outgoing facsimile, such as watermarking,
+To do this create a shell script
+.B etc/FaxModify
+in the spooling area that alters the document.
+.PP
 Note that
 .B bin/ps2fax
 is usually just a link to a shell script that invokes the

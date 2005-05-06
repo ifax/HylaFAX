@@ -144,6 +144,14 @@ esac
 #
 # NB: unfortunately it appears to break valid PostScript;
 #     so it's been disabled.
+
+#
+# Apply customizations such as watermarking.
+#
+if [ -f etc/FaxModify ]; then
+    . etc/FaxModify
+fi
+
 #
 # Suggestion from "Alan Sparks" <asparks@nss.harris.com>,
 # Add the -DFIXEDMEDIA argument to the last command in ps2fax

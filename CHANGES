@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* add FaxModify hook for outbound image pre-processing (6 May 2005)
 * improve the way that page transfer time, as stored in
   the received TIFF file is calculated (6 May 2005)
 * add option in lucent-mt-10 prototype config file to

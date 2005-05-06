@@ -119,6 +119,13 @@ EOF
 pageheight=`expr "$pagelength" \* "$vres" \* 10 / 255 2>/dev/null`
 
 #
+# Apply customizations such as watermarking.   
+#
+if [ -f etc/FaxModify ]; then
+    . etc/FaxModify
+fi
+
+#
 # Force temp/scratch files away from the normal place
 # in the spooling area in case we are using the RIP on
 # a system w/o the rest of Impressario

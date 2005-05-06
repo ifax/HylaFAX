@@ -103,6 +103,14 @@ EOF
 # NB: unfortunately it appears to break valid PostScript;
 #     so it's been disabled.
 #
+
+#
+# Apply customizations such as watermarking.   
+#
+if [ -f etc/FaxModify ]; then
+    . etc/FaxModify
+fi
+
 $CAT etc/dpsprinter.ps $fil | $PS $opt
 if [ $? -eq 2 ]; then
     OS=`uname -r`
