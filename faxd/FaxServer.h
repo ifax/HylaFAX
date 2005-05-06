@@ -57,6 +57,7 @@ private:
     time_t	connTime;		// time connected to peer
     time_t	fileStart;		// starting time for file transmit
     time_t	pageStart;		// starting time for page transmit
+    time_t	pageTransferTime;	// transfer time for last page
     u_int	npages;			// # pages sent/received
     fxStr	batchid;		// Batch ID, for session logs
 
@@ -97,6 +98,7 @@ protected:
 
     time_t	getFileTransferTime() const;
     time_t	getPageTransferTime() const;
+    time_t	setPageTransferTime();
     time_t	getConnectTime() const;
     const Class2Params& getClientParams() const;
 

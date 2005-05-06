@@ -91,7 +91,7 @@ FaxModem::recvEndPage(TIFF* tif, const Class2Params& params)
 #endif
 #ifdef TIFFTAG_FAXRECVTIME
     TIFFSetField(tif, TIFFTAG_FAXRECVTIME,
-	(uint32) server.getPageTransferTime());
+	(uint32) server.setPageTransferTime());
 #endif
 }
 

@@ -63,7 +63,7 @@ FaxServer::recvFax(const CallID& callid, fxStr& emsg)
     TIFF* tif = setupForRecv(info, docs, emsg);
     if (tif) {
 	recvPages = 0;			// total count of received pages
-	fileStart = Sys::now();		// count initial negotiation on failure
+	fileStart = pageStart = Sys::now();
 	if (faxRecognized = modem->recvBegin(emsg)) {
 	    /*
 	     * If the system is busy then notifyRecvBegun may not return
@@ -169,7 +169,6 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 {
     bool recvOK;
     u_int ppm = PPM_EOP;
-    pageStart = Sys::now();
     batchid = getCommID();
     for (;;) {
 	bool okToRecv = true;
@@ -306,7 +305,6 @@ FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
 	    emsg = "Procedure interrupt received, job terminated";
 	    return (false);
 	}
-	pageStart = Sys::now();			// reset for next page
     } while (ppm == PPM_MPS || ppm == PPM_PRI_MPS);
     return (true);
 }

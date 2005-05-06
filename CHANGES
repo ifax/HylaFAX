@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX
 
+* improve the way that page transfer time, as stored in
+  the received TIFF file is calculated (6 May 2005)
 * add option in lucent-mt-10 prototype config file to
   work around a MainPine V.34-Fax problem (6 May 2005)
 * add remoteNSF, remoteDIS to info files and return

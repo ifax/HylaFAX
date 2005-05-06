@@ -74,7 +74,13 @@ time_t FaxServer::getConnectTime() const
 time_t FaxServer::getFileTransferTime() const
     { return (Sys::now() - fileStart); }
 time_t FaxServer::getPageTransferTime() const
-    { return (Sys::now() - pageStart); }
+    { return (pageTransferTime); }
+time_t FaxServer::setPageTransferTime()
+{
+    pageTransferTime = Sys::now() - pageStart;
+    pageStart = Sys::now();	// reset
+    return (pageTransferTime);
+}
 const Class2Params& FaxServer::getClientParams() const
     { return (clientParams); }
 
