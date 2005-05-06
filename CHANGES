@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX
 
+* add JPEG color fax receiving support - requires
+  that libtiff and libjpeg be enhanced (6 May 2005)
 * add PNG and JPEG to typerules (6 May 2005)
 * add FaxModify hook for outbound image pre-processing (6 May 2005)
 * improve the way that page transfer time, as stored in
