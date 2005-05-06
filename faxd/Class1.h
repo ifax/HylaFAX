@@ -85,7 +85,7 @@ protected:
     u_long	ecmBlockPos;		// fill pointer for ecmBlock
     u_char*	ecmStuffedBlock;	// to hold image block after adding transparent zeros and FCS bytes
     u_long	ecmStuffedBlockPos;	// fill pointer for ecmStuffedBlockPos
-    u_short	frameNumber;		// frame sequence number of ecmFrame in ecmBlock
+    u_int	frameNumber;		// frame sequence number of ecmFrame in ecmBlock
     u_short	blockNumber;		// block sequence number of ecmBlock in page
 
     static const u_int modemPFMCodes[8];// map T.30 FCF to Class 2 PFM
