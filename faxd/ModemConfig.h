@@ -162,6 +162,9 @@ public:
     u_int	class1TCFMinRun;	// min length of zero run for TCF check
     u_int	class1TMConnectDelay;	// delay (ms) after +FTM CONNECT
     u_int	class1ECMFrameSize;	// ECM frame size for transmission
+    bool	class1GreyJPEGSupport;	// Greyscale JPEG support
+    bool	class1ColorJPEGSupport;	// Full-color JPEG support
+    bool	class1JBIGBasicSupport;	// Basic (monochrome) JBIG support
     bool	class1ECMSupport;	// support T.30-A ECM
     bool	class1PersistentECM;	// continue to correct
     bool	class1TCFRecvHack;	// deliberately look for V.21 disconnect

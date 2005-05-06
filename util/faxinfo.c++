@@ -40,9 +40,22 @@
 
 extern	const char* fmtTime(time_t t);
 
+/*
+ * This tests whether the tif file is a "fax" image.
+ * Traditional fax images are MH, MR, MMR, but some can
+ * be JPEG, JBIG, and possibly others.  So we use
+ * TIFFTAG_FAXRECVPARAMS as a "fax" image identifier,
+ * and if it's not there, then we resort to traditional
+ * tactics.
+ */
 static bool
 isFAXImage(TIFF* tif)
 {
+#ifdef TIFFTAG_FAXRECVPARAMS
+    uint32 v;
+    if (TIFFGetField(tif, TIFFTAG_FAXRECVPARAMS, &v) && v != 0)
+	return (true);
+#endif
     uint16 w;
     if (TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &w) && w != 1)
 	return (false);

@@ -41,7 +41,7 @@ private:
     static const char* pageLengthNames[4];
     static const char* verticalResNames[65];
     static const char* scanlineTimeNames[8];
-    static const char* dataFormatNames[4];
+    static const char* dataFormatNames[7];
     static const char* ecmNames[8];
 
     friend class FaxModem;

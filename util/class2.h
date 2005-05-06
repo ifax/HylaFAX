@@ -97,6 +97,9 @@ const u_short DF_1DMH	= 0;		// 1-D Modified Huffman
 const u_short DF_2DMR	= 1;		// 2-D Modified Read
 const u_short DF_2DMRUNCOMP	= 2;		// 2-D Uncompressed Mode
 const u_short DF_2DMMR	= 3;		// 2-D Modified Modified Read
+const u_short DF_JBIG_BASIC	= 4;    // Single-progression sequential coding (Rec. T.85)
+const u_short DF_JPEG_GREY	= 5;	// Greyscale JPEG (T.4 Annex E and T.81)
+const u_short DF_JPEG_COLOR	= 6;	// Full-color JPEG (T.4 Annex E and T.81)
 const u_short DF_ALL	= BIT(DF_2DMMR+1)-1;
 
 /*

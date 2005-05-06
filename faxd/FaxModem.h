@@ -76,6 +76,7 @@ private:
     u_long	recvConsecutiveBadLineCount;
     tstrip_t	recvStrip;	// current strip number during receive
     u_char*	recvRow;	// current receive row raster
+    u_char*	recvPageStart;	// pointer to start of page buffer
     u_long	savedWriteOff;	// file offset to start of page data
     int		decoderFd[2];	// file descriptors for the decoder pipe
     int		counterFd[2];	// file descriptors for the counter pipe

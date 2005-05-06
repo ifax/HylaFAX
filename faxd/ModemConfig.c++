@@ -245,6 +245,9 @@ ModemConfig::setupConfig()
     class2HexNSF	= true;			// most modems report NSF in hexadecimal
     class2UseLineCount	= false;		// don't trust firmware decoders
     class1ECMSupport	= true;			// support for ECM
+    class1GreyJPEGSupport = false;		// support for greyscale JPEG
+    class1ColorJPEGSupport = false;		// support for full color JPEG
+    class1JBIGBasicSupport = false;		// support for monochrome JBIG
     class1Resolutions	= VR_ALL;		// resolutions support
     class1PersistentECM	= true;			// continue to correct
     class1TCFRecvHack	= false;		// historical behavior
@@ -647,6 +650,12 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class2SendRTC = getBoolean(value);
     else if (streq(tag, "class1ecmsupport"))
 	class1ECMSupport = getBoolean(value);
+    else if (streq(tag, "class1greyjpegsupport"))
+	class1GreyJPEGSupport = getBoolean(value);
+    else if (streq(tag, "class1colorjpegsupport"))
+	class1ColorJPEGSupport = getBoolean(value);
+    else if (streq(tag, "class1jbigbasicsupport"))
+	class1JBIGBasicSupport = getBoolean(value);
     else if (streq(tag, "class1persistentecm"))
 	class1PersistentECM = getBoolean(value);
     else if (streq(tag, "class1extendedres"))

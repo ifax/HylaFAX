@@ -257,6 +257,14 @@ Class2Params::setFromDCS(FaxParams& dcs_caps)
     xinfo |= getByte(6) << 0;
 
     setFromDCS(dcs, xinfo);
+
+    if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JBIG_BASIC)) df = DF_JBIG_BASIC;
+    if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JPEG)) df = DF_JPEG_GREY;
+    //if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JBIG)) df = DF_JBIG_GREY;
+    if (dcs_caps.isBitEnabled(FaxParams::BITNUM_FULLCOLOR)) {
+	if (df == DF_JPEG_GREY) df = DF_JPEG_COLOR;
+	//if (df == DF_JBIG_GREY) df = DF_JBIG_COLOR;
+    }
 }
 
 /*
@@ -811,14 +819,17 @@ Class2Params::bitRate() const
     return (brRates[br & 15]);
 }
 
-const char* Class2Params::dataFormatNames[4] = {
+const char* Class2Params::dataFormatNames[7] = {
     "1-D MH",			// DF_1DMH
     "2-D MR",			// DF_2DMR
     "2-D Uncompressed Mode",	// DF_2DMRUNCOMP
-    "2-D MMR"			// DF_2DMMR
+    "2-D MMR",			// DF_2DMMR
+    "JBIG Basic",		// DF_JBIG_BASIC
+    "JPEG Greyscale",		// DF_JPEG_GREY
+    "JPEG Full-Color"		// DF_JPEG_COLOR
 };
 const char* Class2Params::dataFormatName() const
-     { return (dataFormatNames[df&3]); }
+     { return (dataFormatNames[df]); }
 
 const char* Class2Params::pageWidthNames[8] = {
     "A4 page width (215 mm)",

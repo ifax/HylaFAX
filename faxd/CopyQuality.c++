@@ -333,13 +333,23 @@ FaxModem::recvSetupTIFF(TIFF* tif, long, int fillOrder, const fxStr& id)
 {
     TIFFSetField(tif, TIFFTAG_SUBFILETYPE,	FILETYPE_PAGE);
     TIFFSetField(tif, TIFFTAG_IMAGEWIDTH,	(uint32) params.pageWidth());
-    TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE,	1);
-    TIFFSetField(tif, TIFFTAG_PHOTOMETRIC,	PHOTOMETRIC_MINISWHITE);
+    if (params.df == DF_JPEG_COLOR || params.df == DF_JPEG_GREY) {
+	TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE,	8);
+	TIFFSetField(tif, TIFFTAG_PHOTOMETRIC,		PHOTOMETRIC_CIELAB);
+	TIFFSetField(tif, TIFFTAG_PLANARCONFIG,		PLANARCONFIG_CONTIG);
+	// libtiff requires IMAGELENGTH to be set before SAMPLESPERPIXEL, 
+	// or StripOffsets and StripByteCounts will have SAMPLESPERPIXEL values
+	TIFFSetField(tif, TIFFTAG_IMAGELENGTH,		2000);	// we adjust this later
+	TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL,	params.df == DF_JPEG_GREY ? 1 : 3);
+    } else {
+	TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE,	1);
+	TIFFSetField(tif, TIFFTAG_PHOTOMETRIC,		PHOTOMETRIC_MINISWHITE);
+	TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL,	1);
+	TIFFSetField(tif, TIFFTAG_FILLORDER,		(uint16) fillOrder);
+    }
     TIFFSetField(tif, TIFFTAG_ORIENTATION,	ORIENTATION_TOPLEFT);
-    TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL,	1);
     TIFFSetField(tif, TIFFTAG_ROWSPERSTRIP,	(uint32) -1);
     TIFFSetField(tif, TIFFTAG_PLANARCONFIG,	PLANARCONFIG_CONTIG);
-    TIFFSetField(tif, TIFFTAG_FILLORDER,	(uint16) fillOrder);
     TIFFSetField(tif, TIFFTAG_XRESOLUTION,	(float) params.horizontalRes());
     TIFFSetField(tif, TIFFTAG_YRESOLUTION,	(float) params.verticalRes());
     TIFFSetField(tif, TIFFTAG_RESOLUTIONUNIT,	RESUNIT_INCH);
@@ -361,6 +371,13 @@ static void
 setupCompression(TIFF* tif, u_int df, uint32 opts)
 {
     switch (df) {
+    case DF_JPEG_GREY:
+    case DF_JPEG_COLOR:
+	TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_JPEG);
+	break;
+    case DF_JBIG_BASIC:
+	TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_JBIG);
+	break;
     case DF_2DMMR:
 	TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_CCITTFAX4);
 	TIFFSetField(tif, TIFFTAG_GROUP4OPTIONS, opts);
@@ -420,76 +437,183 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 
     char cbuf[4];		// size of the page count signal
     if (seq & 1) {		// first block
-	decoderFd[1] = -1;
-	initializeDecoder(params);
-	setupStartPage(tif, params);
-	u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
-	recvBuf = NULL;				// just count lines, don't save it
-	if (pipe(decoderFd) >= 0 && pipe(counterFd) >= 0) {
-	    setDecoderFd(decoderFd[0]);
-	    decoderPid = fork();
-	    switch (decoderPid) {
-		case -1:	// error
-		    recvTrace("Could not fork decoding.");
-		    break;
-		case 0:		// child
+	switch (params.df) {
+	    case DF_1DMH:
+	    case DF_2DMR:
+	    case DF_2DMMR:
+		{
+		    decoderFd[1] = -1;
+		    initializeDecoder(params);
+		    setupStartPage(tif, params);
+		    u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
+		    recvBuf = NULL;				// just count lines, don't save it
+		    if (pipe(decoderFd) >= 0 && pipe(counterFd) >= 0) {
+			setDecoderFd(decoderFd[0]);
+			decoderPid = fork();
+			switch (decoderPid) {
+			    case -1:	// error
+				recvTrace("Could not fork decoding.");
+				break;
+			    case 0:		// child
+				Sys::close(decoderFd[1]);
+				Sys::close(counterFd[0]);
+				setIsECM(true);	// point decoder to the pipe rather than the modem for data
+				if (!EOFraised() && !RTCraised()) {
+				    for (;;) {
+					(void) decodeRow(NULL, rowpixels);
+					if (seenRTC()) {
+					    break;
+					}
+					recvEOLCount++;
+				    }
+				}
+				if (seenRTC()) {		// RTC found in data stream
+				    if (params.df == DF_2DMMR) {
+					/*
+					 * In the case of MMR, it's not really RTC, but EOFB.
+					 * However, we don't actually *find* EOFB, but rather we
+					 * wait for the first line decoding error and assume it
+					 * to be EOFB.  This is safe because MMR data after a
+					 * corrupted line is useless anyway.
+					 */
+					copyQualityTrace("Adjusting for EOFB at row %u", getRTCRow());
+				    } else
+					copyQualityTrace("Adjusting for RTC found at row %u", getRTCRow());
+				    recvEOLCount = getRTCRow();
+				}
+				// write the line count to the pipe
+				Sys::write(counterFd[1], (const char*) &recvEOLCount, sizeof(recvEOLCount));
+				exit(0);
+			    default:	// parent
+				Sys::close(decoderFd[0]);
+				Sys::close(counterFd[1]);
+				break;
+			}
+		    } else {
+			recvTrace("Could not open decoding pipe.");
+		    }
+		}
+		break;
+
+	    case DF_JBIG_BASIC:
+		setupStartPage(tif, params);
+		//Parse JBIG BIH to get the image length.
+
+		//See T.82 6.6.2
+		//These three integers are coded most significant byte first. In
+		//other words, XD is the sum of 256^3 times the fifth byte in BIH, 256^2 times the
+		//sixth byte, 256 times the seventh byte, and the eighth byte.
+
+		//Yd is byte 9, 10, 11, and 12
+
+		recvEOLCount = 256*256*256*buf[9-1];
+		recvEOLCount += 256*256*buf[10-1];
+		recvEOLCount += 256*buf[11-1];
+		recvEOLCount += buf[12-1];
+
+		protoTrace("RECV: Yd field in BIH is %d", recvEOLCount);
+		break;
+
+	    case DF_JPEG_GREY:
+	    case DF_JPEG_COLOR:
+		recvEOLCount = 0;
+		recvRow = (u_char*) malloc(1024*1000);    // 1M should do it?
+		fxAssert(recvRow != NULL, "page buffering error (JPEG page).");
+		recvPageStart = recvRow;
+		setupStartPage(tif, params);
+		break;
+	}
+    }
+    switch (params.df) {
+	case DF_1DMH:
+	case DF_2DMR:
+	case DF_2DMMR:
+	    {
+		if (decoderFd[1] != -1) {	// only if pipe succeeded
+		    for (u_int i = 0; i < cc; i++) {
+			cbuf[0] = 0x00;		// data marker
+			cbuf[1] = buf[i];
+			Sys::write(decoderFd[1], cbuf, 2);
+		    }
+		}
+		if (decoderFd[1] != -1 && seq & 2) {	// last block
+		    cbuf[0] = 0xFF;		// this signals...
+		    cbuf[1] = 0xFF;		// ... end of data
+		    Sys::write(decoderFd[1], cbuf, 2);
+
+		    // read the page count from the counter pipe
+		    Sys::read(counterFd[0], (char*) &recvEOLCount, sizeof(recvEOLCount));
+		    (void) Sys::waitpid(decoderPid);
 		    Sys::close(decoderFd[1]);
 		    Sys::close(counterFd[0]);
-		    setIsECM(true);	// point decoder to the pipe rather than the modem for data
-		    if (!EOFraised() && !RTCraised()) {
-			for (;;) {
-			    (void) decodeRow(NULL, rowpixels);
-			    if (seenRTC()) {
-				break;
-			    }
-			    recvEOLCount++;
-			}
-		    }
-		    if (seenRTC()) {		// RTC found in data stream
-			if (params.df == DF_2DMMR) {
-			    /*
-			     * In the case of MMR, it's not really RTC, but EOFB.
-			     * However, we don't actually *find* EOFB, but rather we
-			     * wait for the first line decoding error and assume it
-			     * to be EOFB.  This is safe because MMR data after a
-			     * corrupted line is useless anyway.
-			     */
-			    copyQualityTrace("Adjusting for EOFB at row %u", getRTCRow());
-			} else
-			    copyQualityTrace("Adjusting for RTC found at row %u", getRTCRow());
-			recvEOLCount = getRTCRow();
-		    }
-		    // write the line count to the pipe
-		    Sys::write(counterFd[1], (const char*) &recvEOLCount, sizeof(recvEOLCount));
-		    exit(0);
-		default:	// parent
-		    Sys::close(decoderFd[0]);
-		    Sys::close(counterFd[1]);
-		    break;
+		}
 	    }
-	} else {
-	    recvTrace("Could not open decoding pipe.");
-	}
-    }
-    if (decoderFd[1] != -1) {		// only if pipe succeeded
-	    for (u_int i = 0; i < cc; i++) {
-	    cbuf[0] = 0x00;		// data marker
-	    cbuf[1] = buf[i];
-	    Sys::write(decoderFd[1], cbuf, 2);
-	}
-    }
-    if (decoderFd[1] != -1 && seq & 2) {		// last block
-	cbuf[0] = 0xFF;		// this signals...
-	cbuf[1] = 0xFF;		// ... end of data
-	Sys::write(decoderFd[1], cbuf, 2);
+	    break;
 
-	// read the page count from the counter pipe
-	Sys::read(counterFd[0], (char*) &recvEOLCount, sizeof(recvEOLCount));
-	(void) Sys::waitpid(decoderPid);
-	Sys::close(decoderFd[1]);
-	Sys::close(counterFd[0]);
+	case DF_JBIG_BASIC:
+	    //search for NEWLEN Marker Segment in JBIG Bi-Level Image Data
+	    for (int i = 0; i < cc-2; i++) {
+		if (buf[i] == 0xFF && buf[i+1] == 0x05) {
+		    recvEOLCount = 256*256*256*buf[i+2];
+		    recvEOLCount += 256*256*buf[i+3];   
+		    recvEOLCount += 256*buf[i+4];
+		    recvEOLCount += buf[i+5];
+
+		    protoTrace("RECV: Found NEWLEN Marker Segment in BID, Yd = %d", recvEOLCount);
+		}
+	    }
+	    break;
+
+	case DF_JPEG_GREY:
+	case DF_JPEG_COLOR:
+	    {
+		u_long framelength = 0;
+		u_long framewidth = 0;
+		for (int i = 0; i < cc-2; i++) {
+		    if (buf[i] == 0xFF && buf[i+1] == 0xC0) {
+			framelength = 256*buf[i+5];
+			framelength += buf[i+6];
+			framewidth = 256*buf[i+7];
+			framewidth += buf[i+8];
+			protoTrace("RECV: Found Start of Frame (SOF) Marker, size: %lu x %lu", framewidth, framelength);
+		    }
+		    if (buf[i] == 0xFF && buf[i+1] == 0xDC) {
+			framelength = 256*buf[i+4];
+			framelength += buf[i+5];
+			protoTrace("RECV: Found Define Number of Lines (DNL) Marker, lines: %lu", framelength);
+		    }
+		}
+		if (framelength > recvEOLCount) recvEOLCount = framelength;
+	    }
+	    break;
     }
-    flushRawData(tif, 0, (const u_char*) buf, cc);
+    if (params.df != DF_JPEG_GREY && params.df != DF_JPEG_COLOR) {
+	flushRawData(tif, 0, (const u_char*) buf, cc);
+    } else {
+	memcpy(recvRow, (const char*) buf, cc);
+	recvRow += cc;
+    }
+    if (seq & 2 && recvEOLCount && (params.df == DF_JPEG_GREY || params.df == DF_JPEG_COLOR)) {
+	/*
+	 * DNL markers generally are not usable in TIFF files.  Furthermore,
+	 * many TIFF viewers cannot use them, either.  So, we go back 
+	 * through the strip and replace any "zero" image length attributes
+	 * of any SOF markers with recvEOLCount.  Perhaps we should strip
+         * out the DNL marker entirely, but leaving it in seems harmless.
+	 */
+	u_long pagesize = recvRow - recvPageStart;
+	recvRow = recvPageStart;
+	for (uint32 i = 0; i < pagesize; i++) {
+	    if (recvRow[i] == 0xFF && recvRow[i+1] == 0xC0 && recvRow[i+5] == 0x00 && recvRow[i+6] == 0x00) {
+		recvRow[i+5] = recvEOLCount >> 8;
+		recvRow[i+6] = recvEOLCount & 0xFF;
+		protoTrace("RECV: fixing zero image frame length in SOF marker at byte %lu to %lu", i, recvEOLCount);
+	    }
+	}
+	if (TIFFWriteRawStrip(tif, 0, (tdata_t) recvRow, pagesize) == -1)
+	    serverTrace("RECV: %s: write error", TIFFFileName(tif));
+	free(recvRow);
+    }
 }
 
 /*

@@ -88,6 +88,7 @@ class FaxParams
 	static const int BITNUM_ECM		= 27;
 	static const int BITNUM_FRAMESIZE_DCS	= 28;
 	static const int BITNUM_2DMMR		= 31;
+	static const int BITNUM_JBIG		= 36;
 	static const int BITNUM_VR_R8		= 41;
 	static const int BITNUM_VR_300X300	= 42;
 	static const int BITNUM_VR_R16		= 43;
@@ -96,6 +97,8 @@ class FaxParams
 	static const int BITNUM_SEP		= 47;
 	static const int BITNUM_SUB		= 49;
 	static const int BITNUM_PWD		= 50;
+	static const int BITNUM_JPEG		= 68;
+	static const int BITNUM_FULLCOLOR	= 69;
 	static const int BITNUM_JBIG_BASIC	= 78;
 	static const int BITNUM_JBIG_L0		= 79;
 

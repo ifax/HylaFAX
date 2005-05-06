@@ -1554,6 +1554,26 @@ Class1Modem::modemDIS() const
     dis_caps.setBit(FaxParams::BITNUM_SUB, true);
     dis_caps.setBit(FaxParams::BITNUM_PWD, true);
 
+    if (conf.class1ECMSupport) {
+	// JBIG
+	if (conf.class1JBIGBasicSupport)
+	    dis_caps.setBit(FaxParams::BITNUM_JBIG_BASIC, true);
+/* - disabled for now
+	// JBIG grey/color requires JPEG grey/color
+	if (conf.class1GreyJBIGSupport || conf.class1ColorJBIGSupport) {
+	    dis_caps.setBit(FaxParams::BITNUM_JPEG, true);
+	    dis_caps.setBit(FaxParams::BITNUM_JBIG, true);
+	}
+	if (conf.class1ColorJBIGSupport)
+	    dis_caps.setBit(FaxParams::BITNUM_FULLCOLOR, true);
+*/
+
+	// JPEG
+	if (conf.class1GreyJPEGSupport || conf.class1ColorJPEGSupport)
+	    dis_caps.setBit(FaxParams::BITNUM_JPEG, true);
+	if (conf.class1ColorJPEGSupport)
+	    dis_caps.setBit(FaxParams::BITNUM_FULLCOLOR, true);
+    }
     return dis_caps;
 }
 

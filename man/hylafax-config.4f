@@ -273,6 +273,7 @@ Class0Cmd	string	\s-1AT+FCLASS=0\s+1	Class 0: command to enter class 0
 Class1Cmd	string	\s-1AT+FCLASS=1\s+1	Class 1: command to enter class 1
 Class1Cmd	string	\s-1AT+FCLASS=1.0\s+1	Class 1.0: command to enter class 1
 Class1AdaptRecvCmd	string	\-	Class 1/1.0: comman for adaptive reception support
+Class1ColorJPEGSupport	boolean	\s-1No\s+1	Class 1/1.0: to enable color JPEG fax support
 Class1EnableV34Cmd	string	\-	Class 1/1.0: command to enable V.34-fax support
 Class1ECMSupport	boolean	\s-1Yes\s+1	Class 1/1.0: enable T.30-A ECM support
 Class1PersistentECM	boolean	\s-1Yes\s+1	Class 1/1.0: to continue to correct while in ECM
@@ -280,6 +281,7 @@ Class1ECMFrameSize	integer	\s-1256\s+1	Class 1/1.0: image frame size in ECM prot
 Class1ExtendedRes	boolean	\-	Class 1/1.0: enable extended resolution support
 Class1HFLOCmd	string	\-	Class 1/1.0: command to set hardware flow control
 Class1FrameOverhead	integer	\s-14\s+1	Class 1/1.0: extra bytes in a received \s-1HDLC\s+1 frame
+Class1GreyJPEGSupport	boolean	\s-1No\s+1	Class 1/1.0: to enable grey JPEG fax support
 Class1NFLOCmd	string	\-	Class 1/1.0: command to set no flow control
 Class1RecvAbortOK	integer	\s-1200\s+1	Class 1/1.0: max wait (ms) for ``\s-1OK\s+1'' after recv abort
 Class1RecvIdentTimer	integer	\s-140000\s+1	Class 1/1.0: max wait (ms) for initial ident frame
@@ -2197,6 +2199,11 @@ The command used to enable adaptive reception support (usually
 will not support it.  This feature may reduce the number of
 reception failures due to errors cascading from +FCERROR messages.
 .TP
+.B Class1ColorJPEGSupport
+Whether or not to enable support for T.30-E full-color facsimile
+with JPEG compression.  Enabling this automatically enables
+.B Class1GreyJPEGSupport.
+.TP
 .B Class1EnableV34Cmd
 The command to enable V.34-fax support with at least the desired
 maximum primary channel rate.
@@ -2228,6 +2235,12 @@ The number of extraneous bytes in
 frames sent to the host in response to an ``\s-1AT+FRH\s+1'' command.
 For modems that properly implement the Class 1 interface, this
 number should be 4 (the default).
+.TP
+.B Class1GreyJPEGSupport
+Whether or not to enable support for T.30-E greyscale facsimile
+with JPEG compression.  This is always enabled if
+.B Class1GreyJPEGSupport
+is enabled.
 .TP
 .B Class1HFLOCmd
 The command to setup hardware (\s-1RTS/CTS\s+1)
