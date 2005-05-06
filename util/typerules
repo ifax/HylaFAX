@@ -138,6 +138,14 @@
 >15     string          ascii		ps	%F/textfmt -B -f Courier-Bold\
 						-Ml=0.4in -p 11 -s %s >%o <%i
 #
+0	string		\x89PNG		error	PNG
+0	short		0xffd8		error	
+>6	string		JFIF		error	JPEG
+0	short		0xd8ff		error	
+>6	string		JFIF		error	JPEG
+0	string		#FIG		error	FIG
+
+#
 # Japanization (should help other iso-2022 variants too)
 #
 #>15	string		asciiesc	ps	a2ps-j -l '' -p -ns -nt <%i >%o
