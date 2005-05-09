@@ -583,8 +583,14 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
     }
     params.setPageWidthInMM(
 	fxmin((u_int) req.pagewidth, (u_int) info.getMaxPageWidthInMM()));
+
+    /*
+     * Follow faxsend and use unlimited page length whenever possible.
+     */
+    useUnlimitedLN = (info.getMaxPageLengthInMM() == (u_short) -1);
     params.setPageLengthInMM(
 	fxmin((u_int) req.pagelength, (u_int) info.getMaxPageLengthInMM()));
+
     /*
      * Generate MMR or 2D-encoded facsimile if:
      * o the server is permitted to generate it,
@@ -993,6 +999,7 @@ faxQueueApp::convertDocument(Job& job,
 	argv[ac++] = "-w"; argv[ac++] = (const char*)wbuf;
 	argv[ac++] = "-l"; argv[ac++] = (const char*)lbuf;
 	argv[ac++] = "-m"; argv[ac++] = (const char*)mbuf;
+	if (useUnlimitedLN) argv[ac++] = "-U";
 	if (params.df == DF_2DMMR)
 	    argv[ac++] = "-3";
 	else
@@ -2834,6 +2841,7 @@ faxQueueApp::setupConfig()
 	(*this).*numbers[i].p = numbers[i].def;
     tod.reset();			// any day, any time
     use2D = true;			// ok to use 2D data
+    useUnlimitedLN = true;		// ok to use LN_INF
     uucpLockMode = UUCP_LOCKMODE;
     delete dialRules, dialRules = NULL;
     ModemGroup::reset();		// clear+add ``any modem'' class

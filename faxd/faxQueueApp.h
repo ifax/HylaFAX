@@ -102,6 +102,7 @@ private:
     fxStr	logFacility;		// syslog facility to direct trace msgs
     u_int	requeueInterval;	// job requeue interval
     bool	use2D;			// ok to use 2D-encoded data
+    bool	useUnlimitedLN;		// ok to use unlimited page length
     u_int	pageChop;		// default page chop handling
     float	pageChopThreshold;	// minimum space before page chop
     fxStr	notifyCmd;		// external command for notification

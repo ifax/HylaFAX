@@ -75,6 +75,7 @@ do case "$1" in
     -2) opt="$opt $1"; df="g3:2d" ;;
     -3) opt="$opt $1"; df=g4 ;;
     -m) shift;;				# NB: not implemented
+    -U) opt="$opt $1" ;;
     *)	fil="$fil $1" ;;
     esac
     shift

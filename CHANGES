@@ -2,6 +2,11 @@
 
 Changelog for HylaFAX
 
+* add unlimited length option to image preparation scripts
+  and add FaxModify customization support (9 May 2005)
+* add UseJobTSI modem config option and FAXNUMBER and TSI
+  queue file options (9 May 2005)
+* break NoCarrierRetries into JobRetry* parameters (9 May 2005)
 * add JPEG color fax receiving support - requires
   that libtiff and libjpeg be enhanced (6 May 2005)
 * add PNG and JPEG to typerules (6 May 2005)

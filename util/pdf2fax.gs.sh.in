@@ -66,6 +66,7 @@ pagewidth=1728		# standard fax width
 pagelength=297		# default to A4 
 vres=98			# default to low res
 device=tiffg3		# default to 1D
+unlimitedlength=no	# default to fixed length-pages
 while test $# != 0
 do
     case "$1" in
@@ -74,6 +75,7 @@ do
     -l) shift; pagelength="$1" ;;
     -r) shift; vres="$1" ;;
     -m) shift;;				# NB: not implemented
+    -U) unlimitedlength=yes ;;
     -1) device=tiffg3 ;;
     -2) ($PS -h | grep tiffg32d >/dev/null 2>&1) \
 	    && { device=tiffg32d; } \
@@ -104,10 +106,19 @@ case "${pagewidth}x${pagelength}" in
     echo "$0: Unsupported page size: $pagewidth x $pagelength";
     exit 254;;			# causes document to be rejected
 esac
-
+#
 # The image must end up with a pixel width according to T.32 Table 21.
 # Ghostscript contains code to fixate a4 and letter to 1728 pixels
-# when using 196-204 dpi, but not for the others, thus the floats.
+# when using 196-204 dpi and tiffg3/4, it supposedly does the same for
+# B4 but not for A3, thus the floats are needed (for A3's benefit).
+#
+# See ghostscript/doc/Devices.htm under -dAdjustWidth=1 (default).
+# Use -dAdjustWidth=0 to disable.  With the right patch,
+# http://bugs.ghostscript.com/show_bug.cgi?id=688064
+# AdjustWidth can be made to specify the pagewidth directly and
+# replace -dFIXEDMEDIA to permit TIFFs to be produced with
+# varied lengths.
+#
 case "$paper" in
     a4)
 	case "$pagewidth" in
@@ -146,22 +157,28 @@ esac
 #     so it's been disabled.
 
 #
+# Suggestion from "Alan Sparks" <asparks@nss.harris.com>,
+# Add the -DFIXEDMEDIA argument to the last command in ps2fax.
+# This prevents page sizing within the documents from altering
+# the command-line page size specification.  This prevents
+# TIFFs to be made with pages of varied lengths, however.
+# See the comments on AdjustWidth above.
+#
+FIXEDWIDTH="-dFIXEDMEDIA"
+
+#
 # Apply customizations such as watermarking.
 #
 if [ -f etc/FaxModify ]; then
     . etc/FaxModify
 fi
 
-#
-# Suggestion from "Alan Sparks" <asparks@nss.harris.com>,
-# Add the -DFIXEDMEDIA argument to the last command in ps2fax
-#
 $PS -q \
     -sDEVICE=$device \
     -dNOPAUSE \
     -dSAFER=true \
     -sPAPERSIZE=$paper \
-    -dFIXEDMEDIA \
+    $FIXEDWIDTH \
     -dBATCH \
     -r$hres\x$vres \
     "-sOutputFile=$out" \

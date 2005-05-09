@@ -55,6 +55,7 @@ static  bool useMMR = 0;
 static	uint32 pageLength = 297;
 static	uint32 pageWidth = 1728;
 static	u_long vres = 98;
+static	bool useUnlimitedLength = false;
 
 static	int checkPageFormat(TIFF* tif, fxStr& emsg);
 
@@ -64,7 +65,7 @@ main(int argc, char* argv[])
     int c;
 
     appName = argv[0];
-    while ((c = getopt(argc, argv, "r:l:w:123")) != -1)
+    while ((c = getopt(argc, argv, "r:l:w:U123")) != -1)
 	switch (c) {
 	case '1':
 	    dataFormat &= ~GROUP3OPT_2DENCODING;
@@ -74,6 +75,9 @@ main(int argc, char* argv[])
 	    break;
 	case '3':
 	    useMMR = 1;
+	    break;
+	case 'U':
+	    useUnlimitedLength = true;
 	    break;
 	case 'l':
 	    pageLength = (uint32) strtoul(optarg, NULL, 0);
@@ -262,12 +266,17 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
 	emsg = "Document is not valid TIFF (missing ImageLength tag).\n";
 	return (REJECT);
     }
-    float len = h / (yres == 0 ? 1. : yres);		// page length in mm
-    if (pageLength != (uint32) -1 && len > pageLength+30) {
-	emsg.append(fxStr::format("Document requires resizing to adjust"
-	    " page length (convert to %lu, document is %lu).\n",
-	    (u_long) pageLength, (u_long) len));
-	status |= RESIZE;
+    /*
+     * Ignore length check when unlimited length is used.
+     */
+    if (!useUnlimitedLength) {
+	float len = h / (yres == 0 ? 1. : yres);		// page length in mm
+	if (pageLength != (uint32) -1 && len > pageLength+30) {
+	    emsg.append(fxStr::format("Document requires resizing to adjust"
+		" page length (convert to %lu, document is %lu).\n",
+		(u_long) pageLength, (u_long) len));
+	    status |= RESIZE;
+	}
     }
     return (status);
 }
