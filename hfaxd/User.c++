@@ -60,7 +60,12 @@ HylaFAXServer::checkUser(const char* name)
     } else
 	logError("Unable to open the user access file %s: %s",
 	    (const char*) userAccessFile, strerror(errno));
-    return (check);
+    /*
+     * This causes the user to be prompted for a password
+     * and then denied access.  We do this to guard against
+     * folks that probe the server looking for valid accounts.
+     */
+    return (true);
 }
 
 static bool
@@ -183,13 +188,8 @@ HylaFAXServer::checkuser(FILE* db, const char* name)
 	    }
 	}
     }
-    /*
-     * This causes the user to be prompted for a password
-     * and then denied access.  We do this to guard against
-     * folks that probe the server looking for valid accounts.
-     */
     passwd = "*";
-    return (true);
+    return (false);
 }
 
 fxDECLARE_PtrKeyDictionary(IDCache, u_int, fxStr)

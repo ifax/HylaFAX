@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* fix PAM authentication to set proper UID (9 May 2005)
 * add unlimited length option to image preparation scripts
   and add FaxModify customization support (9 May 2005)
 * add UseJobTSI modem config option and FAXNUMBER and TSI
