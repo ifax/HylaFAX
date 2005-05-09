@@ -206,6 +206,7 @@ TagLineFormat	string	\s-1\fIsee below\fP\s+1	tag line format string
 TIFF2FaxCmd\(S1	string	\s-1bin/tiff2fax\s+1	\s-1TIFF\s+1 converter command script
 TimeOfDay\(S1	string	\s-1Any\s+1	default time-of-day restrictions
 Use2D\(S1	boolean	\s-1Yes\s+1	restrict/permit use of 2D-encoded fax data
+UseJobTSI	boolean	\s-1No\s+1	use job-specified TSI instead of \s-1LocalIdentifier\s+1
 UUCPLockMode\(S2	octal	\s-10600\s+1	protection mode for \s-1UUCP\s+1 lock files
 UUCPLockDir\(S2	string	\s-1\fIsee below\fP\s+1	\s-1UUCP\s+1 lockfile directory
 UUCPLockTimeout\(S2	integer	\s-130\s+1	time before removing stale \s-1UUCP\s+1 lockfile

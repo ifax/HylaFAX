@@ -78,6 +78,8 @@ main()
     hash("jobtag");
     hash("pagehandling");
     hash("modem");
+    hash("faxnumber");
+    hash("tsi");
     hash("receiver");
     hash("company");
     hash("location");

@@ -72,6 +72,7 @@ private:
     FaxNotify	notify;			// job notification control
     fxStr	mailbox;		// mail address for notification
 
+    fxStr	tsi;			// TSI
     fxStr	number;			// fax phone number/dialing string
     fxStr	subaddr;		// subaddress for routing (opt)
     fxStr	passwd;			// password (opt)
@@ -172,6 +173,8 @@ public:
      * of the dialing string is used in generating cover
      * pages (see below) and when job status is displayed.
      */
+    void setTSI(const char*);		// TSI
+    const fxStr& getTSI() const;
     void setDialString(const char*);	// dialing string/phone number
     const fxStr& getDialString() const;
     void setSubAddress(const char*);	// destination subaddress for routing
@@ -280,6 +283,7 @@ inline const fxStr& SendFaxJob::getSendTime() const	{ return sendTime; }
 inline u_int SendFaxJob::getMaxRetries() const		{ return maxRetries; }
 inline u_int SendFaxJob::getMaxDials() const		{ return maxDials; }
 inline int SendFaxJob::getPriority() const		{ return priority; }
+inline const fxStr& SendFaxJob::getTSI() const		{ return tsi; }
 inline const fxStr& SendFaxJob::getDialString() const	{ return number; }
 inline const fxStr& SendFaxJob::getSubAddress() const	{ return subaddr; }
 inline const fxStr& SendFaxJob::getPasswd() const	{ return passwd; }

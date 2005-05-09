@@ -144,6 +144,8 @@ public:
     fxStr	external;	// displayable phone number for fax machine
     fxStr	notice;		// message to send for notification
     fxStr	modem;		// outgoing modem to use
+    fxStr	faxnumber;	// Sender's number to advertise to phone company
+    fxStr	tsi;		// TSI to use instead of LocalIdentifier
     fxStr	pagehandling;	// page analysis information
     fxStr	receiver;	// receiver's identity for cover page generation
     fxStr	company;	// receiver's company for cover page generation

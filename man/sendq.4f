@@ -88,6 +88,7 @@ desiredtl	integer	whether or not to use \fBtagline\fP parameter
 doneop	string	operation to perform when job is reaped
 external	string	external form of dialstring
 fax	string	document ready for transmission
+faxnumber	string	faxnumber to use sending
 groupid	integer	\*(Fx job group identifier
 jobid	integer	\*(Fx job identifier
 jobtag	string	user-specified job identifier
@@ -133,6 +134,7 @@ tiff	string	unprocessed \s-1TIFF/F\s0 document
 totdials	integer	total number of phone calls
 totpages	integer	total pages to transmit
 tottries	integer	total number of attempts to send job
+tsi	string	TSI to transmit when sending
 tts	integer	time to send job
 useccover	integer	whether or not to use a continuation cover page
 usexvres	integer	whether or not to use highest vertical resolution
@@ -266,6 +268,10 @@ If the pathname string has a leading ``xx:'', then ``xx''
 is interpreted to be the index of the first directory in
 the file to transmit (directories are numbered starting
 at zero).
+.TP 14
+.B faxnumber
+The number to use when sending a fax.  Parallel's FAXNumber device config
+option.
 .TP 14
 .B groupid
 The job group identifier, an integer number in the range
@@ -530,6 +536,12 @@ The total number of pages to be transmitted.
 The total number of attempts to transmit a job; see
 .B maxtries
 above.
+.TP 14
+.B tsi
+TSI to use when sending.  This is only used if the device 
+has been configured to allow it.  Otherwise, the configured
+.IR LocalIdentifier .
+is used.
 .TP 14
 .B tts
 The time to send the job.

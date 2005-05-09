@@ -45,6 +45,11 @@ public:
 	u_int faxSendApp::* p;
 	u_int		 def;
     };
+    struct booltag {
+	const char*	 name;
+	bool faxSendApp::* p;
+	bool		 def;
+    };
 private:
 // runtime state
     bool	ready;			// modem ready for use
@@ -54,11 +59,13 @@ private:
     u_int	desiredBR;		// desired signalling rate
     u_int	desiredST;		// desired min-scanline-time
     u_int	desiredEC;		// enable use of ECM if available
+    bool	useJobTSI;		// User the Job submitted TSI
 
     static faxSendApp* _instance;
 
     static stringtag strings[];
     static numbertag numbers[];
+    static booltag booleans[];
 
 // configuration support
     void	setupConfig();

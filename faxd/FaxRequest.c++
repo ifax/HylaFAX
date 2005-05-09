@@ -95,6 +95,8 @@ FaxRequest::stringval FaxRequest::strvals[] = {
     { "jobtag",		&FaxRequest::jobtag },
     { "pagehandling",	&FaxRequest::pagehandling },
     { "modem",		&FaxRequest::modem },
+    { "faxnumber",	&FaxRequest::faxnumber },
+    { "tsi",		&FaxRequest::tsi },
     { "receiver",	&FaxRequest::receiver },
     { "company",	&FaxRequest::company },
     { "location",	&FaxRequest::location },
@@ -265,6 +267,13 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_COMMID:		commid = tag; break;
 	case H_PAGEHANDLING:	pagehandling = tag; break;
 	case H_MODEM:		modem = tag; break;
+	case H_FAXNUMBER:	faxnumber = tag; break;
+	case H_TSI:			// NB: tsi csi collide
+	    if (cmd[0] == 't')
+		tsi = tag;
+	    else
+		csi = tag;
+	    break;
 	case H_RECEIVER:	receiver = tag; break;
 	case H_COMPANY:		company = tag; break;
 	case H_LOCATION:	location = tag; break;
@@ -331,7 +340,6 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_NOTIFY:		checkNotifyValue(tag); break;
 	case H_PAGECHOP:	checkChopValue(tag); break;
 	case H_CHOPTHRESHOLD:	chopthreshold = atof(tag); break;
-	case H_CSI:		csi = tag; break;
 	case H_NSF:		nsf = tag; break;
 	case H_DONEOP:		doneop = tag; break;
 	case H_STATUS:

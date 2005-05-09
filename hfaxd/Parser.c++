@@ -130,6 +130,7 @@ static const tab parmtab[] = {
 { "DOCUMENT",     T_DOCUMENT,	  false, true, "path-name" },
 { "DONEOP",       T_DONEOP,	  false, true, "[<string>]" },
 { "EXTERNAL",     T_EXTERNAL,	  false, true, "[<string>]" },
+{ "FAXNUMBER",    T_FAXNUMBER,	  false, true, "[<string>]" },
 { "FROMCOMPANY",  T_FROM_COMPANY, false, true, "[<string>]" },
 { "FROMLOCATION", T_FROM_LOCATION,false, true, "[<string>]" },
 { "FROMUSER",     T_FROM_USER,	  false, true, "[<string>]" },
@@ -171,6 +172,7 @@ static const tab parmtab[] = {
 { "TOTTRIES",     T_TOTTRIES,	  false, true, "[<number>]" },
 { "TOUSER",       T_TO_USER,	  false, true, "[<string>]" },
 { "TOVOICE",      T_TO_VOICE,	  false, true, "[<string>]" },
+{ "TSI",          T_TSI,	  false, true, "[<string>]" },
 { "USECONTCOVER", T_USE_CONTCOVER,false, true, "[YES|NO]" },
 { "USEXVRES",     T_USE_XVRES,	  false, true, "[YES|NO]" },
 { "USEECM",       T_USE_ECM,	  false, true, "[YES|NO]" },
@@ -1111,6 +1113,8 @@ HylaFAXServer::param_cmd(Token t)
     case T_COMMID:
     case T_REGARDING:
     case T_COMMENTS:
+    case T_FAXNUMBER:
+    case T_TSI:
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
 	    return (true);

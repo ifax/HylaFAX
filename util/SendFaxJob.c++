@@ -294,6 +294,7 @@ SendFaxJob::setPriority(const char* pri)
 }
 void SendFaxJob::setPriority(int p)			{ priority = p; }
 
+void SendFaxJob::setTSI(const char* s)			{ tsi = s; }
 void SendFaxJob::setDialString(const char* s)		{ number = s; }
 void SendFaxJob::setSubAddress(const char* s)		{ subaddr = s; }
 void SendFaxJob::setPassword(const char* s)		{ passwd = s; }
@@ -475,6 +476,7 @@ SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
      * If the dialstring is different from the
      * displayable number then pass both.
      */
+    IFPARM("TSI", tsi, "")
     IFPARM("EXTERNAL", external, number)
     CHECKPARM("DIALSTRING", number)
     IFPARM("SUBADDR", subaddr, "")

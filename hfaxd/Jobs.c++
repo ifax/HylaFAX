@@ -105,6 +105,7 @@ static const struct {
     { T_DOCUMENT,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_DONEOP,		A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_EXTERNAL,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
+    { T_FAXNUMBER,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_FROM_COMPANY,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_FROM_LOCATION,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_FROM_USER,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
@@ -145,6 +146,7 @@ static const struct {
     { T_TO_LOCATION,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_TO_USER,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_TO_VOICE,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
+    { T_TSI,		A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_USE_CONTCOVER,	A_RUSR|A_RADM|A_WADM|A_ROTH },
     { T_USE_ECM,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_USE_TAGLINE,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
@@ -198,6 +200,8 @@ static struct {
     { T_FROM_VOICE,	&Job::fromvoice },
     { T_PASSWD,		&Job::passwd },
     { T_CLIENT,		&Job::client },
+    { T_FAXNUMBER,	&Job::faxnumber },
+    { T_TSI,		&Job::tsi },
     { T_TAGLINE,	&Job::tagline },
     { T_SUBADDR,	&Job::subaddr },
     { T_GROUPID,	&Job::groupid },
@@ -845,6 +849,8 @@ HylaFAXServer::initDefaultJob(void)
     defJob.passwd	= "";
     defJob.external	= "";
     defJob.modem	= MODEM_ANY;
+    defJob.faxnumber	= "";
+    defJob.tsi		= "";
     defJob.receiver	= "";
     defJob.company	= "";
     defJob.location	= "";
@@ -932,6 +938,8 @@ HylaFAXServer::newJob(fxStr& emsg)
     job->number = curJob->number;
     job->external = curJob->external;
     job->modem = curJob->modem;
+    job->faxnumber = curJob->faxnumber;
+    job->tsi = curJob->tsi;
     job->receiver = curJob->receiver;
     job->company = curJob->company;
     job->location = curJob->location;

@@ -143,6 +143,7 @@ faxSendApp::send(const char** filenames, int num)
 		 */
 		bool reject;
 		if (req->readQFile(reject) && !reject) {
+
 		    FaxMachineInfo info;
 		    info.updateConfig(canonicalizePhoneNumber(req->number));
 		    FaxAcctInfo ai;
@@ -168,6 +169,9 @@ faxSendApp::send(const char** filenames, int num)
 			req->desiredst = desiredST;
 
 		    req->commid = batchcommid;		// pass commid on...
+
+		    if (useJobTSI && req->tsi != "")
+			FaxServer::setLocalIdentifier(req->tsi);
 
 		    FaxServer::sendFax(*req, info, ai, batched);
 
@@ -406,6 +410,9 @@ faxSendApp::numbertag faxSendApp::numbers[] = {
 { "desiredst",		&faxSendApp::desiredST,		(u_int) -1 },
 { "desiredec",		&faxSendApp::desiredEC,		(u_int) -1 },
 };
+faxSendApp::booltag faxSendApp::booleans[] = {
+{ "usejobtsi",		&faxSendApp::useJobTSI,		false },
+};
 
 void
 faxSendApp::setupConfig()
@@ -415,6 +422,8 @@ faxSendApp::setupConfig()
 	(*this).*strings[i].p = (strings[i].def ? strings[i].def : "");
     for (i = N(numbers)-1; i >= 0; i--)
 	(*this).*numbers[i].p = numbers[i].def;
+    for (i = N(booleans)-1; i >= 0; i--)
+	(*this).*booleans[i].p = booleans[i].def;
 }
 
 bool
@@ -425,6 +434,8 @@ faxSendApp::setConfigItem(const char* tag, const char* value)
 	(*this).*strings[ix].p = value;
     } else if (findTag(tag, (const tags*) numbers, N(numbers), ix)) {
 	(*this).*numbers[ix].p = getNumber(value);
+    } else if (findTag(tag, (const tags*) booleans, N(booleans), ix)) {
+	(*this).*booleans[ix].p = getBoolean(value);
     } else
 	return (FaxServer::setConfigItem(tag, value));
     return (true);
