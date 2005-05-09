@@ -323,7 +323,7 @@ pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info, const fxStr& number
 	     * the modem is incapable of distinguishing between
 	     * ``No Carrier'' and ``No Answer''.
 	     */
-	    if (!info.getCalledBefore() && req.ndials > noCarrierRetrys) {
+	    if (!info.getCalledBefore() && req.ndials > retryMAX[callstat]) {
 		sendFailed(req, send_failed, notice);
 		break;
 	    }

@@ -314,17 +314,14 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	fax.ndials++;			// number of consecutive failed calls
 	fax.totdials++;			// total attempted calls
 	switch (callstat) {
+	case ClassModem::NOFCON:	// carrier seen, but handshake failed
+	    clientInfo.setCalledBefore(true);
+	    /* fall thru... */
+	case ClassModem::DATACONN:	// data connection established
 	case ClassModem::NOCARRIER:	// no carrier detected on remote side
-	    /*
-	     * Since some modems can not distinguish between ``No Carrier''
-	     * and ``No Answer'' we offer this configurable hack whereby
-	     * we'll retry the job <n> times in the face of ``No Carrier''
-	     * dialing errors; if we've never previously reached a facsimile
-	     * machine at that number.  This should not be used except if
-	     * the modem is incapable of distinguishing betwee ``No Carrier''
-	     * and ``No Answer''.
-	     */
-	    if (!clientInfo.getCalledBefore() && fax.ndials > noCarrierRetrys)
+	case ClassModem::BUSY:		// busy signal
+	case ClassModem::NOANSWER:	// no answer or ring back
+	    if (!clientInfo.getCalledBefore() && fax.ndials > retryMAX[callstat])
 		sendFailed(fax, send_failed, notice);
 	    else if (fax.retrytime != 0)
 		sendFailed(fax, send_retry, notice, fax.retrytime);
@@ -334,19 +331,11 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	case ClassModem::NODIALTONE:	// no local dialtone, possibly unplugged
 	case ClassModem::ERROR:		// modem might just need to be reset
 	case ClassModem::FAILURE:	// modem returned something unexpected
-	    sendFailed(fax, send_retry, notice, requeueTTS[callstat]);
-	    break;
-	case ClassModem::NOFCON:	// carrier seen, but handshake failed
-	case ClassModem::DATACONN:	// data connection established
-	    clientInfo.setCalledBefore(true);
-	    /* fall thru... */
-	case ClassModem::BUSY:		// busy signal
-	case ClassModem::NOANSWER:	// no answer or ring back
-	    if (fax.retrytime != 0)
-		sendFailed(fax, send_retry, notice, fax.retrytime);
+	    if (!clientInfo.getCalledBefore() && fax.ndials > retryMAX[callstat])
+		sendFailed(fax, send_failed, notice);
 	    else
 		sendFailed(fax, send_retry, notice, requeueTTS[callstat]);
-	    /* fall thru... */
+	    break;
 	case ClassModem::OK:		// call was aborted by user
 	    break;
 	}

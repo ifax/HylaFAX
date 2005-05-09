@@ -104,7 +104,6 @@ public:
     SpeakerVolume speakerVolume;	// volume control
     fxStr	qualifyTSI;		// if set, no recv w/o acceptable tsi
     fxStr	qualifyPWD;		// if set, no recv w/o acceptable PWD
-    u_int	noCarrierRetrys;	// # times to retry on no carrier
     mode_t	recvFileMode;		// protection mode for received files
     mode_t	deviceMode;		// protection mode for modem device
     mode_t	logMode;		// protection mode for log files
@@ -116,6 +115,8 @@ public:
     u_int	requeueTTS[9];		// requeue intervals[CallStatus code]
     u_int	requeueProto;		// requeue interval after protocol error
     u_int	requeueOther;		// requeue interval after other problem
+    u_int	retryMAX[9];		// number of retries[CallStatus code]
+    u_int	retryOther;		// number of retries after other problem
     u_int	pollModemWait;		// polling interval in modem wait state
     u_int	pollLockWait;		// polling interval in lock wait state
     u_int	maxRecvPages;		// max pages to accept on receive

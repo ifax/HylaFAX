@@ -163,6 +163,8 @@
 #define	FAX_REQBUSY	(3*60)		/* requeue interval on busy answer */
 #define	FAX_REQPROTO	(1*60)		/* requeue interval on protocol error */
 #define	FAX_REQUEUE	(5*60)		/* requeue interval on other */
+#define FAX_RETBUSY	(u_int)-1		/* retry maximum on busy answer */
+#define FAX_RETRY	(u_int)-1		/* retry maximum for others */
 #define	FAX_RETRIES	3		/* number times to retry send */
 #define	FAX_REDIALS	12		/* number times to dial phone */
 #define	FAX_TIMEOUT	"now + 3 hours"	/* default job timeout (at syntax) */

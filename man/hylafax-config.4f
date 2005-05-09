@@ -149,6 +149,11 @@ JobReqNoCarrier	integer	\s-1300\s+1	requeue interval for \s-1NO CARRIER\s+1 dial
 JobReqNoFCon	integer	\s-1300\s+1	requeue interval for carrier without \s-1+FCON\s+1 dial result
 JobReqOther\(S2	integer	\s-1300\s+1	requeue interval for ``other'' problems
 JobReqProto	integer	\s-160\s+1	requeue interval after fax protocol error
+JobRetryBusy	integer	\-	number of retries for \s-1BUSY\s+1 dial result
+JobRetryDataConn	integer	\-	number of retries for data connection dial result
+JobRetryNoAnswer	integer	\-	number of retries for \s-1NO ANSWER\s+1 dial result
+JobRetryNoCarrier	integer	\-	number of retries for \s-1NO CARRIER\s+1 dial result
+JobRetryOther	integer	\-	number of retries for ``other'' problems
 LockDataCalls	boolean	\s-1Yes\s+1	lock modem for the duration of an inbound data call
 LockVoiceCalls	boolean	\s-1Yes\s+1	lock modem for the duration of an inbound voice call
 LogCalls	boolean	\s-1Yes\s+1	Log all incoming calls as CALL records in xferfaxlog
@@ -828,12 +833,51 @@ from a Class 2/2.0 modem).
 .B JobReqOther\(S2
 The delay in seconds to wait before retrying a job that
 failed for a reason not already covered by one of the
-.B Job*
+.B JobReq*
 parameters.
 .TP
 .B JobReqProto
 The delay in seconds to wait before retrying a facsimile job that
 failed because of a fax protocol error.
+.TP
+.B JobRetryBusy
+The number of times to redial a phone number after receiving
+a ``\s-1BUSY\s+1'' result code when the number has not
+been successfully dialed before.
+.TP
+.B JobRetryDataConn
+The number of times to redial a phone number after the
+dialing attempt failed because a data modem answered the phone when
+the number has not been successfully dialed before.
+.TP
+.B JobRetryNoAnswer
+The number of times to redial a phone number after the
+dialing attempt failed because of NO ANSWER when
+the number has not been successfully dialed before.
+.TP
+.B JobRetryNoCarrier
+The number of times to redial a phone number after the
+dialing attempt failed because of NO ANSWER when
+the number has not been successfully dialed before.
+In normal operation the fax server will treat this result code
+to mean that a facsimile modem/machine did not answer the
+phone and reject the transmit job.
+This is done to avoid repeatedly dialing wrong phone numbers
+and depends on the modem distinguishing between
+no carrier and no answer.
+However, some modems are not capable of reliably
+distinguishing between no carrier and no answer, or when instructed
+to do so do not identify a busy signal correctly.
+For these modems one may find it necessary to increase the
+value of this parameter to compensate.
+It is strongly recommended, however, that this value
+not be set to a large number.
+.TP
+.B JobRetryOther
+The number of times to redial a phone number after the
+dialing attempt failed for a reason not already covered
+by one of the other JobRetry* parameters when
+the number has not been successfully dialed before.
 .TP
 .B GettyArgs
 A string that indicates whether or not the server should invoke
@@ -1036,22 +1080,7 @@ voice (e.g. by
 ).
 .TP
 .B NoCarrierRetrys
-The number of times to redial a phone number after receiving
-a ``\s-1NO CARRIER\s+1'' result code when the number has not
-been successfully dialed before.
-In normal operation the fax server will treat this result code
-to mean that a facsimile modem/machine did not answer the
-phone and reject the transmit job.
-This is done to avoid repeatedly dialing wrong phone numbers
-and depends on the modem distinguishing between
-no carrier and no answer.
-However, some modems are not capable of reliably
-distinguishing between no carrier and no answer, or when instructed
-to do so do not identify a busy signal correctly.
-For these modems one may find it necessary to increase the
-value of this parameter to compensate.
-It is strongly recommended, however, that this value
-not be set to a large number.
+This is mapped onto \s-1JobRetryNoCarrier\1+1
 .TP
 .B ModemReadyState
 Define the

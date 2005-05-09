@@ -99,9 +99,9 @@ ServerConfig::S_numbertag ServerConfig::numbers[] = {
 { "sessiontracing",	&ServerConfig::logTracingLevel,	FAXTRACE_SERVER },
 { "servertracing",	&ServerConfig::tracingLevel,	FAXTRACE_SERVER },
 { "uucplocktimeout",	&ServerConfig::uucpLockTimeout,	0 },
-{ "nocarrierretrys",	&ServerConfig::noCarrierRetrys,	1 },
 { "jobreqproto",	&ServerConfig::requeueProto,	FAX_REQPROTO },
 { "jobreqother",	&ServerConfig::requeueOther,	FAX_REQUEUE },
+{ "jobretryother",	&ServerConfig::retryOther,	FAX_RETRY },
 { "pollmodemwait",	&ServerConfig::pollModemWait,	30 },
 { "polllockwait",	&ServerConfig::pollLockWait,	30 },
 { "maxrecvpages",	&ServerConfig::maxRecvPages,	(u_int) -1 },
@@ -151,6 +151,17 @@ ServerConfig::setupConfig()
     requeueTTS[ClassModem::FAILURE]	= FAX_REQUEUE;
     requeueTTS[ClassModem::NOFCON]	= FAX_REQUEUE;
     requeueTTS[ClassModem::DATACONN]	= FAX_REQUEUE;
+
+
+    retryMAX[ClassModem::OK]		= 0;
+    retryMAX[ClassModem::BUSY]		= FAX_RETBUSY;
+    retryMAX[ClassModem::NOCARRIER]	= FAX_RETRY;
+    retryMAX[ClassModem::NOANSWER]	= FAX_RETRY;
+    retryMAX[ClassModem::NODIALTONE]	= FAX_RETRY;
+    retryMAX[ClassModem::ERROR]		= FAX_RETRY;
+    retryMAX[ClassModem::FAILURE]	= FAX_RETRY;
+    retryMAX[ClassModem::NOFCON]	= FAX_RETRY;
+    retryMAX[ClassModem::DATACONN]	= FAX_RETRY;
 
     localIdentifier = "";
     delete dialRules, dialRules = NULL;
@@ -464,6 +475,18 @@ ServerConfig::setConfigItem(const char* tag, const char* value)
 	requeueTTS[ClassModem::NOFCON] = getNumber(value);
     else if (streq(tag, "jobreqdataconn"))
 	requeueTTS[ClassModem::DATACONN] = getNumber(value);
+    else if (streq(tag, "nocarrierretrys"))
+	retryMAX[ClassModem::NOCARRIER] = getNumber(value);
+    else if (streq(tag, "jobretrybusy"))
+	retryMAX[ClassModem::BUSY] = getNumber(value);
+    else if (streq(tag, "jobretrynocarrier"))
+	retryMAX[ClassModem::NOCARRIER] = getNumber(value);
+    else if (streq(tag, "jobretrynoanswer"))
+	retryMAX[ClassModem::NOANSWER] = getNumber(value);
+    else if (streq(tag, "jobretrynofcon"))
+	retryMAX[ClassModem::NOFCON] = getNumber(value);
+    else if (streq(tag, "jobretrydataconn"))
+	retryMAX[ClassModem::DATACONN] = getNumber(value);
     else
 	return ModemConfig::setConfigItem(tag, value);
     return (true);
