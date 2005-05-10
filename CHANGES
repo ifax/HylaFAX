@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX
 
+* stop sendfax from passing comments to hfaxd due to
+  problems with newlines (10 May 2005)
 * fix PAM authentication to set proper UID (9 May 2005)
 * add unlimited length option to image preparation scripts
   and add FaxModify customization support (9 May 2005)
