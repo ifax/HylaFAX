@@ -948,7 +948,7 @@ FaxClient::runScript(FILE* fp, const char* filename, fxStr& emsg)
 	else
 	    emsg = fxStr::format("%s: Read error: %s",
 		filename, strerror(errno));
-	delete addr;
+	delete [] addr;
 #if HAS_MMAP
     } else {				// send mmap'd file data
 	ok = runScript(addr, sb.st_size, filename, emsg);

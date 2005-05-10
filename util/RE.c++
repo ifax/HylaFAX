@@ -47,7 +47,7 @@ RE::RE(const RE& other, int flags)
 RE::~RE()
 {
     regfree(&c_pattern);
-    delete matches;
+    delete [] matches;
 }
 
 void

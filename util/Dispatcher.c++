@@ -337,9 +337,9 @@ Dispatcher::Dispatcher() {
 }
 
 Dispatcher::~Dispatcher() {
-    delete _rtable;
-    delete _wtable;
-    delete _etable;
+    delete [] _rtable;
+    delete [] _wtable;
+    delete [] _etable;
     delete _queue;
     delete _cqueue;
 }

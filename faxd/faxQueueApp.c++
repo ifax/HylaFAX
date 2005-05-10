@@ -900,7 +900,7 @@ faxQueueApp::preparePageChop(const FaxRequest& req,
 	    pagehandling.append(fxStr::format("Z%04x",
 		stripSize - (dec.getEndOfPage() - data)));
     }
-    delete data;
+    delete [] data;
 }
 
 /*
