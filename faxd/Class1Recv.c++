@@ -705,6 +705,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			    fcpid = fork();
 			    char tbuf[1];	// trigger signal
 			    tbuf[0] = 0xFF;
+			    time_t rrstart = Sys::now();
 			    switch (fcpid) {
 				case -1:	// error
 				    protoTrace("Protocol flow control unavailable due to fork error.");
@@ -733,17 +734,22 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 						HDLCFrame rrframe(conf.class1FrameOverhead);
 						if (gotresponse = recvFrame(rrframe, FCF_RCVR, conf.t2Timer)) {
 						    tracePPM("RECV recv", rrframe.getFCF());
-						    if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
+						    if (rrframe.getFCF() == FCF_DCN) {
+							protoTrace("RECV recv DCN");
+							emsg = "COMREC received DCN";
+							gotEOT = true;
+							recvdDCN = true;
+						    } else if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
 							protoTrace("Ignoring invalid response to RNR.");
 						    }
 						    if (!useV34) atCmd(conf.class1SwitchingCmd, AT_OK);
 						}
-					    } while (!gotresponse && ++rnrcnt < 2);
+					    } while (!gotEOT && !recvdDCN && !gotresponse && ++rnrcnt < 2 && Sys::now()-rrstart < 60);
 					    if (!gotresponse) emsg = "No response to RNR repeated 3 times.";
 					} else {		// parent finished TIFFWriteDirectory
 					    tbuf[0] = 0;
 					}
-				    } while (tbuf[0] != 0);
+				    } while (!gotEOT && !recvdDCN && tbuf[0] != 0 && Sys::now()-rrstart < 60);
 				    Sys::read(fcfd[0], NULL, 1);
 				    exit(0);
 				default:	// parent
@@ -1557,6 +1563,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 	    fcpid = fork();
 	    char tbuf[1];	// trigger signal
 	    tbuf[0] = 0xFF;
+	    time_t rrstart = Sys::now();
 	    switch (fcpid) {
 		case -1:	// error
 		    protoTrace("Protocol flow control unavailable due to fork error.");
@@ -1586,14 +1593,19 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				HDLCFrame rrframe(conf.class1FrameOverhead);
 				if (gotresponse = recvFrame(rrframe, FCF_RCVR, conf.t2Timer)) {
 				    tracePPM("RECV recv", rrframe.getFCF());
-				    if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
+				    if (rrframe.getFCF() == FCF_DCN) {
+					protoTrace("RECV recv DCN");
+					emsg = "COMREC received DCN";
+					gotEOT = true;
+					recvdDCN = true;
+				    } else if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
 					protoTrace("Ignoring invalid response to RNR.");
 				    }
 				}
-			    } while (!gotresponse && ++rnrcnt < 2);
+			    } while (!recvdDCN && !gotEOT && !gotresponse && ++rnrcnt < 2 && Sys::now()-rrstart < 60);
 			    if (!gotresponse) emsg = "No response to RNR repeated 3 times.";
 			} else tbuf[0] = 0;	// parent finished writeECMData
-		    } while (tbuf[0] != 0);
+		    } while (!gotEOT && !recvdDCN && tbuf[0] != 0 && Sys::now()-rrstart < 60);
 		    Sys::read(fcfd[0], NULL, 1);
 		    exit(0);
 		default:	// parent

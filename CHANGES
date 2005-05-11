@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX
 
+* fix potential looping in Class 1 protocol flow control 
+  mechanisms (11 May 2005)
 * stop sendfax from passing comments to hfaxd due to
   problems with newlines (10 May 2005)
 * fix PAM authentication to set proper UID (9 May 2005)
