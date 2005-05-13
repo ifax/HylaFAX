@@ -1451,8 +1451,12 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						}
 						sendERR = true;		// do it later
 						break;
+					    case FCF_DCN:
+						emsg = "COMREC received DCN";
+						gotEOT = true;
+						recvdDCN = true;  
 					    default:
-						emsg = "COMREC invalid response to repeated PPR received";
+						if (emsg == "") emsg = "COMREC invalid response to repeated PPR received";
 						if (conf.saveUnconfirmedPages && pagedataseen) {
 						    protoTrace("RECV keeping unconfirmed page");
 						    writeECMData(tif, block, (fcount * frameSize), params, (seq |= 2));
