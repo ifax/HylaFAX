@@ -3869,7 +3869,7 @@ PickRIP()
 	"
 	for i in $GSLOCS; do
 	    # verify Ghostscript was linked with the tiffg3 device driver
-	    capture "$i -h | grep tiffg3" && { PATH_GSRIP=$i; break; }
+	    capture "$i -h 2>&1 | grep tiffg3" && { PATH_GSRIP=$i; break; }
 	done
     fi
     case $PS in
@@ -3883,7 +3883,7 @@ CheckRIP()
     if [ -x "$PATH_PSRIP" ]; then
 	if [ $PS = gs ]; then
 	    # verify Ghostscript was linked with the tiffg3 device driver
-	    capture "$PATH_PSRIP -h | grep tiffg3" || cat<<EOF
+	    capture "$PATH_PSRIP -h 2>&1 | grep tiffg3" || cat<<EOF
 
 WARNING, no tiffg3 driver in $PATH_PSRIP.
 

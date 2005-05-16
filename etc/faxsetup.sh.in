@@ -1282,7 +1282,7 @@ if onServer; then
     if [ -x "$PATH_PSRIP" ]; then
 	if [ $PS = gs ]; then
 	    # verify Ghostscript was linked with the tiffg3 device driver
-	    $PATH_PSRIP -h | grep tiffg3 >/dev/null 2>&1 || {
+	    $PATH_PSRIP -h 2>&1 | grep tiffg3 >/dev/null 2>&1 || {
 		cat >&2 <<EOF
 
 FATAL ERROR: No tiffg3 driver in $PATH_PSRIP.

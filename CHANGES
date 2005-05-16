@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* fix configure and faxsetup for espgs (16 May 2005)
 * fix potential looping in Class 1 protocol flow control 
   mechanisms (11 May 2005)
 * stop sendfax from passing comments to hfaxd due to
