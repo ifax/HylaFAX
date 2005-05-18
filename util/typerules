@@ -160,5 +160,5 @@
 
 #  Support 7-bit text which would otherwise be seen as binary.
 #
-0	byte		x		ps	%F/textfmt -B -f Courier-Bold \
-							  -p 11 -s %s >%o <%i
+#0	byte		x		ps	%F/textfmt -B -f Courier-Bold \
+#							  -p 11 -s %s >%o <%i
