@@ -36,6 +36,7 @@
 # CONFIG:CLASS1:1.02:.*:.*: Manufacturer="Cirrus Logic" Model="CL-MD1414AT/EC"
 # CONFIG:CLASS1:1.0:CL-MD34*:.*: Manufacturer="Cirrus Logic" Model="CL-MD34xx"
 # CONFIG:CLASS1:1.0:CL-MD56*:.*: Manufacturer="Cirrus Logic" Model="CL-MD56xx"
+# CONFIG:CLASS1:.*:MD56xx:.*: Manufacturer="Intel/Ambient/Cirrus Logic" Model="CL-MD56xx"
 #
 # BEGIN-SERVER
 # END-SERVER
