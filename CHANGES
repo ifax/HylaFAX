@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* add Rockwell/Conexant Class 1.0 prototype config (18 May 2005)
 * fix configure and faxsetup for espgs (16 May 2005)
 * fix potential looping in Class 1 protocol flow control 
   mechanisms (11 May 2005)
