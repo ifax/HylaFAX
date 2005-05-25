@@ -1819,6 +1819,7 @@ EmitConfigurationDefinitions()
 	*sysv4.2uw2.1.3)	CONFIG_OPENFIFO=O_RDWR;;	# UnixWare 2.1.3
 	*-sysv5UnixWare*)	CONFIG_OPENFIFO=O_RDWR;;	# UnixWare 7
 	*-sysv5OpenUNIX*)	CONFIG_OPENFIFO=O_RDWR;;	# OpenUNIX 8
+	*-sysv5SCO_SV*)		CONFIG_OPENFIFO=O_RDWR;;	# OpenServer 6
 	*)		CONFIG_OPENFIFO=O_RDONLY;;
 	esac
     }
@@ -1996,6 +1997,7 @@ EmitConfigurationDefinitions()
 	*-*-sco*)	CONFIG_MAXGID=60000;;
 	*-sysv5UnixWare*)	CONFIG_MAXGID=60000;;	# UnixWare 7
 	*-sysv5OpenUNIX*)	CONFIG_MAXGID=60000;;	# OpenUNIX 8
+	*-sysv5SCO_SV*)		CONFIG_MAXGID=60000;;	# OpenServer 6
 	*-hpux*)	CONFIG_MAXGID=60000;;
 	*)		CONFIG_MAXGID=60002;;	# default
 	esac
@@ -2514,6 +2516,7 @@ BuildPortDotH()
         *-univel-*)	CONFIG_SOCKARGLENTYPE=size_t;;
         *-sysv5UnixWare*)	CONFIG_SOCKARGLENTYPE=size_t;;
         *-sysv5OpenUNIX*)	CONFIG_SOCKARGLENTYPE=size_t;;
+        *-sysv5SCO_SV*)	CONFIG_SOCKARGLENTYPE=size_t;;
 	*-freebsd4*)	CONFIG_SOCKARGLENTYPE=u_int32_t;;
 	*-freebsd5*)	CONFIG_SOCKARGLENTYPE=u_int32_t;;
         *)		CONFIG_SOCKARGLENTYPE=int;;
@@ -3617,6 +3620,7 @@ if [ "$SYSVINIT" = yes ]; then
 	    *-hpux*)		NAME_SYSVINITSTART="S905hylafax" ;;
 	    *-linux*)		NAME_SYSVINITSTART="S97hylafax" ;;
 	    *-*-sco3.2v5*)	NAME_SYSVINITSTART="S90hylafax" ;;
+	    *-sysv5SCO_SV*)	NAME_SYSVINITSTART="S90hylafax" ;;
 	    *)			NAME_SYSVINITSTART="S80hylafax" ;;
 	esac
     fi
