@@ -26,7 +26,11 @@
 #include "FaxParams.h"
 #include "Class2Params.h"
 #include "SystemLog.h"
+#ifdef HAVE_IOSTREAM
 #include <iostream>
+#else
+#include "iostream.h"
+#endif
 
 FaxParams::FaxParams()
 {

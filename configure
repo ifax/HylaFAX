@@ -2831,6 +2831,10 @@ BuildPortDotH()
 	Note "... configure use of <sys/modem.h>"
 	echo '#define HAS_MODEM_H 1'
     }
+    CheckForIncludeFile iostream && {
+	Note "... configure use of <iostream>"
+	echo '#define HAVE_IOSTREAM 1'
+    }
     CheckForIncludeFile sys/termiox.h && {
 	case $TARGET in
 	*-*-sco3.2v5.*)	;;
