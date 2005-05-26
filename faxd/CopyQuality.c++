@@ -118,7 +118,6 @@ bool
 FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
     const Class2Params& params, fxStr& emsg)
 {
-    initializeDecoder(params);
     u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
     /*
      * Data destined for the TIFF file is buffered in buf.
@@ -443,7 +442,6 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 	    case DF_2DMMR:
 		{
 		    decoderFd[1] = -1;
-		    initializeDecoder(params);
 		    setupStartPage(tif, params);
 		    u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
 		    recvBuf = NULL;				// just count lines, don't save it

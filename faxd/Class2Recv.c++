@@ -298,6 +298,7 @@ Class2Modem::recvPageData(TIFF* tif, fxStr& emsg)
 	hostDidCQ = modemCQ == 0 && checkQuality();
     protoTrace("Copy quality checking performed by %s", hostDidCQ ? "host" : "modem");
 
+    initializeDecoder(params);
     bool pageRecvd = recvPageDLEData(tif, hostDidCQ, params, emsg);
 
     // be careful about flushing here -- otherwise we lose +FPTS codes

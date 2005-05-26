@@ -677,6 +677,11 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	    case FCF_PRI_MPS:			// PRI-MPS
 	    case FCF_PRI_EOM:			// PRI-EOM
 	    case FCF_PRI_EOP:			// PRI-EOP
+		if (!getRecvEOLCount()) {
+		    // We have a null page, don't save it because it makes readers fail.
+		    pageGood = false;
+		    if (params.ec != EC_DISABLE) return (false);
+		}
 		if (prevPage && !pageGood) recvResetPage(tif);
 		if (signalRcvd == 0) tracePPM("RECV recv", lastPPM);
 
@@ -1653,6 +1658,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 bool
 Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
 {
+    initializeDecoder(params);
     /*
      * T.30-A ECM mode requires a substantially different protocol than non-ECM faxes.
      */
