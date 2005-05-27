@@ -139,6 +139,7 @@ protected:
     void	setupStartPage(TIFF* tif, const Class2Params& params);
     void	recvEndPage(TIFF* tif, const Class2Params& params);
     void	writeECMData(TIFF*, u_char*, u_int, const Class2Params&, u_short);
+    void	resetLineCounts();
     void	initializeDecoder(const Class2Params&);
     virtual void abortPageRecv() = 0;
     virtual int nextByte();

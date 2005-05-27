@@ -1658,11 +1658,11 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 bool
 Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
 {
-    initializeDecoder(params);
     /*
      * T.30-A ECM mode requires a substantially different protocol than non-ECM faxes.
      */
     if (params.ec != EC_DISABLE) {
+	resetLineCounts();	// in case we don't make it to initializeDecoder
 	if (!recvPageECMData(tif, params, emsg)) {
 	    /*
 	     * The previous page experienced some kind of error.  Falsify

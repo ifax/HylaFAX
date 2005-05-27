@@ -96,6 +96,14 @@ FaxModem::recvEndPage(TIFF* tif, const Class2Params& params)
 }
 
 void
+FaxModem::resetLineCounts()
+{
+    recvEOLCount = 0;				// count of EOL codes
+    recvBadLineCount = 0;			// rows with a decoding error
+    recvConsecutiveBadLineCount = 0;		// max consecutive bad rows
+}
+
+void
 FaxModem::initializeDecoder(const Class2Params& params)
 {
     setupDecoder(recvFillOrder, params.is2D(), (params.df == DF_2DMMR));
@@ -104,10 +112,7 @@ FaxModem::initializeDecoder(const Class2Params& params)
     tiff_runlen_t runs[2*4864];			// run arrays for cur+ref rows
     setRuns(runs, runs+4864, rowpixels);
     setIsECM(false);
-
-    recvEOLCount = 0;				// count of EOL codes
-    recvBadLineCount = 0;			// rows with a decoding error
-    recvConsecutiveBadLineCount = 0;		// max consecutive bad rows
+    resetLineCounts();
 }
 
 /*
@@ -118,6 +123,7 @@ bool
 FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
     const Class2Params& params, fxStr& emsg)
 {
+    initializeDecoder(params);
     u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
     /*
      * Data destined for the TIFF file is buffered in buf.
@@ -442,6 +448,7 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 	    case DF_2DMMR:
 		{
 		    decoderFd[1] = -1;
+		    initializeDecoder(params);
 		    setupStartPage(tif, params);
 		    u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
 		    recvBuf = NULL;				// just count lines, don't save it
