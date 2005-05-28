@@ -149,7 +149,7 @@ vparseRange(const char* cp, int masked, int nargs, ... )
 		    if (v == r)
 			mask = v;
 		    else {
-			r = fxmin(r, 64);	// clamp to valid range */
+			r = fxmin(r, 64);	/* clamp to valid range */
 			mask = 0;
 			for (; v <= r; v++)
 			    if (v == 0 || v == 1 || v == 2 || v == 4 || v == 8 || v == 16 || v == 32 || v == 64)
@@ -158,7 +158,7 @@ vparseRange(const char* cp, int masked, int nargs, ... )
 		}
 
 		else {
-			r = fxmin(r, 31);	// clamp to valid range
+			r = fxmin(r, 31);	/* clamp to valid range */
 			for (; v <= r; v++)
 			    mask |= 1<<v;
 		}
@@ -181,7 +181,7 @@ done:
  * Class 2 Fax Modem Definitions.
  */
 #define	VR_ALL	(BIT(7)-1)
-#define	BR_ALL	(BIT(6)-1)	// don't encode > 14.4 Kbps
+#define	BR_ALL	(BIT(6)-1)	/* don't encode > 14.4 Kbps */
 #define	WD_ALL	(BIT(5)-1)
 #define	LN_ALL	(BIT(3)-1)
 #define	DF_ALL	(BIT(4)-1)
@@ -199,7 +199,7 @@ done:
 int
 parseCapabilities(const char* cp, u_int* caps)
 {
-    // we are limited to 32 bits, thus BR_ALL is restricted above
+    /* we are limited to 32 bits, thus BR_ALL is restricted above */
     int vr, br, wd, ln, df, ec, bf, st;
     
     /*
