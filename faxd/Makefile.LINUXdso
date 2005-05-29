@@ -38,7 +38,8 @@ libfaxserver.${DSO}: ${SERVER_OBJS} ${MODEM_OBJS}
 
 installDSO: libfaxserver.${DSO}
 	${PUTSERV} -F ${LIBDIR} -m 755 -O libfaxserver.${DSO}.${LIBVERSION}
-	(cd ${LIBDIR}; ln -sf libfaxserver.${DSO}.${LIBVERSION} libfaxserver.${DSO})
+	${PUTSERV} -F ${LIBDIR} -lns libfaxserver.${DSO}.${LIBVERSION} libfaxserver.${DSO}
+
 
 cleanDSO::
 	-${RM} -f libfaxserver.${DSO}.${LIBVERSION}

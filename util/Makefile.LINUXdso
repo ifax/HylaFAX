@@ -40,7 +40,8 @@ libfaxutil.${DSO}: ${OBJECTS}
 
 installDSO: libfaxutil.${DSO}
 	${PUTCLIENT} -F ${LIBDIR} -m 755 -O libfaxutil.${DSO}.${LIBVERSION}
-	(cd ${LIBDIR}; ln -sf libfaxutil.${DSO}.${LIBVERSION} libfaxutil.${DSO})
+	${PUTCLIENT} -F ${LIBDIR} -lns libfaxutil.${DSO}.${LIBVERSION} libfaxutil.${DSO}
+
 
 cleanDSO::
 	-${RM} -f libfaxutil.${DSO}.${LIBVERSION}
