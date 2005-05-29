@@ -26,11 +26,40 @@
 #include "FaxParams.h"
 #include "Class2Params.h"
 #include "SystemLog.h"
-#ifdef HAVE_IOSTREAM
-#include <iostream>
-#else
-#include "iostream.h"
-#endif
+
+const int FaxParams::BITNUM_V8_CAPABLE	=  6;
+const int FaxParams::BITNUM_FRAMESIZE_DIS	=  7;
+const int FaxParams::BITNUM_T4XMTR		=  9;
+const int FaxParams::BITNUM_T4RCVR		= 10;
+const int FaxParams::BITNUM_SIGRATE_11	= 11;
+const int FaxParams::BITNUM_SIGRATE_12	= 12;
+const int FaxParams::BITNUM_SIGRATE_13	= 13;
+const int FaxParams::BITNUM_SIGRATE_14	= 14;
+const int FaxParams::BITNUM_VR_FINE		= 15;
+const int FaxParams::BITNUM_2DMR		= 16;
+const int FaxParams::BITNUM_WIDTH_17	= 17;
+const int FaxParams::BITNUM_WIDTH_18	= 18;
+const int FaxParams::BITNUM_LENGTH_19	= 19;
+const int FaxParams::BITNUM_LENGTH_20	= 20;
+const int FaxParams::BITNUM_ST_21		= 21;
+const int FaxParams::BITNUM_ST_22		= 22;
+const int FaxParams::BITNUM_ST_23		= 23;
+const int FaxParams::BITNUM_ECM		= 27;
+const int FaxParams::BITNUM_FRAMESIZE_DCS	= 28;
+const int FaxParams::BITNUM_2DMMR		= 31;
+const int FaxParams::BITNUM_JBIG		= 36;
+const int FaxParams::BITNUM_VR_R8		= 41;
+const int FaxParams::BITNUM_VR_300X300	= 42;
+const int FaxParams::BITNUM_VR_R16		= 43;
+const int FaxParams::BITNUM_INCH_RES	= 44;
+const int FaxParams::BITNUM_METRIC_RES	= 45;
+const int FaxParams::BITNUM_SEP		= 47;
+const int FaxParams::BITNUM_SUB		= 49;
+const int FaxParams::BITNUM_PWD		= 50;
+const int FaxParams::BITNUM_JPEG		= 68;
+const int FaxParams::BITNUM_FULLCOLOR	= 69;
+const int FaxParams::BITNUM_JBIG_BASIC	= 78;
+const int FaxParams::BITNUM_JBIG_L0		= 79;
 
 FaxParams::FaxParams()
 {
