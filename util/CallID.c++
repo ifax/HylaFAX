@@ -24,6 +24,9 @@
  */
 #include "CallID.h"
 
+const int CallID::NUMBER = 0;
+const int CallID::NAME = 1;
+
 CallID::CallID (int howmany)
     : _id(howmany)
 {

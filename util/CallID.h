@@ -47,8 +47,8 @@ public:
 
     size_t size(void) const;
 
-    static const int NUMBER=0;
-    static const int NAME=1;
+    static const int NUMBER;	//=0;
+    static const int NAME;	//=1;
 
 };
 
