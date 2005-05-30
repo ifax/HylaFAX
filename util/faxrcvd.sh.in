@@ -102,7 +102,7 @@ DEVICE="$1"; shift;
 COMMID="$1"; shift;
 MSG="$1"; shift;
 COUNT=1
-while [ "$1" != "" ]; do
+while [ $# -ge 1 ]; do
     eval CALLID$COUNT="$1"
     shift
     COUNT=`expr $COUNT + 1`
