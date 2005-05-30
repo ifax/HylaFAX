@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* fix some dysfunctional mail redirects (30 May 2005)
 * don't save null-data pages (26 May 2005)
 * Add support for OpenServer 6 (24 May 2005)
 * update config.guess and config.sub to current versions (24 May 2005)

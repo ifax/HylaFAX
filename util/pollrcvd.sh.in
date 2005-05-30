@@ -163,7 +163,7 @@ if [ -f $FILE ]; then
 	    echo ""
 	    echo "The facsimile was polled by and delivered to: $MAILADDR."
 	fi
-	) | 2>&1 $SENDMAIL -ffax -oi $TOADDR
+	) 2>$ERRORSTO | $SENDMAIL -ffax -oi $TOADDR
     fi
     if [ -n "$MAILADDR" ]; then
 	(MIMEBOUNDARY="NextPart$$"
@@ -228,7 +228,7 @@ if [ -f $FILE ]; then
 	fi
 	 echo ""
 	 echo "--$MIMEBOUNDARY--"
-	) | 2>&1 $SENDMAIL -ffax -oi $MAILADDR
+	) 2>$ERRORSTO | $SENDMAIL -ffax -oi $MAILADDR
     fi
 else
     #
@@ -253,5 +253,5 @@ else
      else
 	echo "    No transcript available."
      fi
-    ) | 2>&1 $SENDMAIL -ffax -oi $TOADDR
+    ) 2>$ERRORSTO | $SENDMAIL -ffax -oi $TOADDR
 fi

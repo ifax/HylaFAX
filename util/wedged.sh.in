@@ -54,6 +54,16 @@ EOF
 . etc/setup.cache
 
 #
+# Redirect errors to a tty, if possible, rather than
+# dev-nulling them or allowing them to creep into
+# the mail.
+#
+if $TTYCMD >/dev/null 2>&1; then
+    ERRORSTO=`$TTYCMD`
+else
+    ERRORSTO=/dev/null
+fi   
+#
 # Command line params
 #
 devID=$1
@@ -199,7 +209,7 @@ EOF
 	fi
     fi
 
-    ) | 2>&1 $SENDMAIL -f$FROMADDR -oi $TOADDR
+    ) 2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $TOADDR
 fi
 
 exit 0
