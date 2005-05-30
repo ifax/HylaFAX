@@ -50,7 +50,7 @@ fxStr
 FaxRecvInfo::encode()
 {
     fxStr callid_formatted;
-    for (int i = 0; i < callid.size(); i++) {
+    for (u_int i = 0; i < callid.size(); i++) {
 	if (i) callid_formatted.append("\",\"");
         callid_formatted.append(callid[i]);
     }

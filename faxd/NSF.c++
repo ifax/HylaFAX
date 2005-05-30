@@ -397,7 +397,7 @@ void NSF::findStationId( bool reverseOrder, bool reverseBitOrder )
      * Convert to LSBMSB if it's not.
      */
     if ( reverseBitOrder ) {
-	for ( int i = 0 ; i < nsf.length(); i++ ) {
+	for ( u_int i = 0 ; i < nsf.length(); i++ ) {
 	    // a one-byte bit-order converter...
 	    nsf[i] =  (((nsf[i]>>0)&1)<<7)|(((nsf[i]>>1)&1)<<6)|
 		      (((nsf[i]>>2)&1)<<5)|(((nsf[i]>>3)&1)<<4)|

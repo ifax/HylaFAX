@@ -84,7 +84,7 @@ HylaFAXServer::FIFOInput(int fd)
 		 * Setup the unpacking work and dispatch it.
 		 */
 		TriggerMsgHeader h;
-		int left = &buf[cc]-bp;
+		u_int left = &buf[cc]-bp;
 		bool needy = false;
 		if (left < sizeof(TriggerMsgHeader))
 		{

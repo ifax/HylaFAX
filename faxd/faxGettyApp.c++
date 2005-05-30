@@ -229,7 +229,7 @@ faxGettyApp::listenForRing()
 		received_callid = callid;	// CNID is only sent once.  Store it
 						// for answering after later RINGs.
 		fxStr send;
-		for (int i = 0; i < received_callid.size(); i++) {
+		for (u_int i = 0; i < received_callid.size(); i++) {
 		    if (i) send.append(',');
 		    send.append("\"" | received_callid[i] | "\"");
 		    traceServer("ANSWER: Call ID %d \"%s\"", i+1, received_callid.id(i));
@@ -242,7 +242,7 @@ faxGettyApp::listenForRing()
             
 	    /* DID modems may only signal a call with DID data - no RING */
 	    bool done = false;
-	    for (int i = 0; i < callid.size(); i++) {
+	    for (u_int i = 0; i < callid.size(); i++) {
 		if (idConfig[i].answerlength > 0 && callid[i].length() >= idConfig[i].answerlength) {
 		    done = true;
 		    break;
@@ -341,7 +341,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
     } else {
 	if (dynamicConfig.length()) {
 	    fxStr cmd(dynamicConfig | quote | getModemDevice() | enquote);
-	    for (int i = 0; i < callid.size(); i++)
+	    for (u_int i = 0; i < callid.size(); i++)
 		cmd.append(quote | callid.id(i) | enquote);
 	    fxStr localid = "";
 	    int pipefd[2], idlength, status;
@@ -475,7 +475,7 @@ faxGettyApp::answerCleanup()
 	discardModem(true);
     }
 
-    for (int i = 0; i < received_callid.size(); i++)
+    for (u_int i = 0; i < received_callid.size(); i++)
 	received_callid[i].resize(0);
 
     bool isSetup;
@@ -834,7 +834,7 @@ faxGettyApp::notifyRecvDone(FaxRecvInfo& ri)
     FaxServer::notifyRecvDone(ri);
 
     fxStr callid_formatted;
-    for (int i = 0; i < ri.callid.size(); i++) {
+    for (u_int i = 0; i < ri.callid.size(); i++) {
 	callid_formatted.append(quote | ri.callid.id(i) | enquote);
     }
     // hand to delivery/notification command

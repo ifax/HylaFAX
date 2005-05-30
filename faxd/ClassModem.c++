@@ -1325,7 +1325,7 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallID& callid)
 		    gotring = true;
 		conf.parseCallID(rbuf, callid);
 		/* DID modems may send DID data in lieu of RING */
-		for (int i = 0; i < conf.idConfig.length(); i++) {
+		for (u_int i = 0; i < conf.idConfig.length(); i++) {
 		    if (conf.idConfig[i].answerlength && callid.length(i) >= conf.idConfig[i].answerlength)
 			gotring = true;
 		}
@@ -1341,7 +1341,7 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallID& callid)
 		ATResponse r;
 		time_t ringstart = Sys::now();
 		bool callidwasempty = true;
-		for (int i = 0; callidwasempty && i < callid.size(); i++)
+		for (u_int i = 0; callidwasempty && i < callid.size(); i++)
 		    if (callid.length(i) )
 			callidwasempty = false;
 		do {
@@ -1354,8 +1354,8 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallID& callid)
 			conf.parseCallID(rbuf, callid);
 		    }
 		} while (r != AT_OK && (Sys::now()-ringstart < 3));
-		for (int i = 0 ; i < conf.idConfig.length(); i++) {
-		    if (conf.idConfig[i].pattern == "SHIELDED_DTMF") {	// retrieve DID, e.g. via voice DTMF
+		for (u_int j = 0 ; j < conf.idConfig.length(); j++) {
+		    if (conf.idConfig[j].pattern == "SHIELDED_DTMF") {	// retrieve DID, e.g. via voice DTMF
 			ringstart = Sys::now();
 			do {
 			    int c = server.getModemChar(5000);
@@ -1363,9 +1363,9 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallID& callid)
 			    if (c == 0x23 || c == 0x2A || (c >= 0x30 && c <= 0x39)) {
 				// a DTMF digit was received...
 				protoTrace("MODEM HEARD DTMF: %c", c);
-				callid[i].append(fxStr::format("%c", c));
+				callid[j].append(fxStr::format("%c", c));
 			    }
-			} while (callid.length(i) < conf.idConfig[i].answerlength && (Sys::now()-ringstart < 10));
+			} while (callid.length(j) < conf.idConfig[j].answerlength && (Sys::now()-ringstart < 10));
 			u_char buf[2];
 			buf[0] = DLE; buf[1] = ETX;
 			if (!putModem(buf, 2, 3000))

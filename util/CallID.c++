@@ -24,8 +24,8 @@
  */
 #include "CallID.h"
 
-const int CallID::NUMBER = 0;
-const int CallID::NAME = 1;
+const u_int CallID::NUMBER = 0;
+const u_int CallID::NAME = 1;
 
 CallID::CallID (int howmany)
     : _id(howmany)
@@ -43,7 +43,7 @@ CallID::~CallID (void)
 void CallID::operator= (const CallID& a)
 {
     _id.resize(a._id.length());
-    for (int i = 0; i < _id.length(); i++)
+    for (u_int i = 0; i < _id.length(); i++)
 	_id[i] = a._id[i];
 }
 
@@ -86,7 +86,7 @@ fxStr& CallID::operator [](int i)
 
 bool CallID::isEmpty (void) const
 {
-    for (int i = 0; i < _id.length(); i++)
+    for (u_int i = 0; i < _id.length(); i++)
     {
 	if (_id[i].length() != 0)
 	    return false;

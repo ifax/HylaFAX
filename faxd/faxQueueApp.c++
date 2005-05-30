@@ -2235,7 +2235,7 @@ faxQueueApp::runScheduler()
 			FaxRequest* creq;	// current request
 			
 			joblist++;		// Skip the current job
-			for (int i = 1; i < maxBatchJobs && joblist.notDone(); joblist++, i++) {
+			for (u_int i = 1; i < maxBatchJobs && joblist.notDone(); joblist++, i++) {
 			    cjob = joblist;
 			    fxAssert(cjob->tts <= Sys::now(), "Sleeping job on run queue");
 			    fxAssert(cjob->modem == NULL, "Job on run queue holding modem");

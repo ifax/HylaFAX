@@ -265,7 +265,7 @@ bool
 FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
 {
     fxStr id = info.sender;
-    for (int i = 0; i < info.callid.size(); i++) {
+    for (u_int i = 0; i < info.callid.size(); i++) {
 	id.append('\n');
 	id.append(info.callid[i]);
     }

@@ -73,7 +73,7 @@ FaxAcctInfo::record(const char* cmd)
 	record.fput("\t\"%s\"", callid.size() > CallID::NAME ? (const char*) callid[1] : "");	// $15 = CallID2/CIDName
 	record.fput("\t\"%s\"", callid.size() > CallID::NUMBER ? (const char*) callid[0] : "");	// $16 = CallID1/CIDNumber
 	fxStr callid_formatted = "";
-	for (int i = 2; i < callid.size(); i++) {
+	for (i = 2; i < callid.size(); i++) {
 	    if (i > 2) callid_formatted.append("::");
 	    callid_formatted.append(callid[i]);
 	}

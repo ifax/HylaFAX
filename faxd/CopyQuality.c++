@@ -558,7 +558,7 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 	case DF_JBIG_BASIC:
 	    //search for NEWLEN Marker Segment in JBIG Bi-Level Image Data
 	    {
-		for (int i = 0; i < cc-2; i++) {
+		for (u_int i = 0; i < cc-2; i++) {
 		    if (buf[i] == 0xFF && buf[i+1] == 0x05) {
 			recvEOLCount = 256*256*256*buf[i+2];
 			recvEOLCount += 256*256*buf[i+3];   
@@ -576,7 +576,7 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 	    {
 		u_long framelength = 0;
 		u_long framewidth = 0;
-		for (int i = 0; i < cc-2; i++) {
+		for (u_int i = 0; i < cc-2; i++) {
 		    if (buf[i] == 0xFF && buf[i+1] == 0xC0) {
 			framelength = 256*buf[i+5];
 			framelength += buf[i+6];
