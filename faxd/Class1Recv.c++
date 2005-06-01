@@ -1319,12 +1319,30 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				protoTrace("RECV received %u frames of block %u of page %u", \
 				    fc, frameRev[ppsframe[5]]+1, frameRev[ppsframe[4]]+1);
 				blockgood = true;
-				if (fc > 0) {	// assume that 0 frames means that sender is done
+				if (fc) {
 				    for (u_int i = 0; i <= (fcount - 1); i++) {
 					u_int pprpos, pprval;
 					for (pprpos = 0, pprval = i; pprval >= 8; pprval -= 8) pprpos++;
 					if (ppr[pprpos] & frameRev[1 << pprval]) blockgood = false;
 				    }
+				} else {
+				    /*
+				     * The sender sent no frames.  This will happen for at least two
+				     * reasons.
+				     *
+				     * 1) If we previously received data from this block and responded
+				     * with PPR but the sender is done retransmitting frames as the sender
+				     * thinks that our PPR signal did not indicate any frame that the 
+				     * sender transmitted.  This usually only happens with the last frame
+				     * of a block due to counting errors.  In this case we respond with MCF.
+				     *
+				     * 2) The sender feeds paper into a scanner during the initial
+				     * synchronization and it expected another page but didn't get it 
+				     * (e.g. paper feed problem).  We respond with a full PPR in hopes that
+				     * the sender knows what they're doing by sending PPS instead of DCN.
+				     * The sender can recover by sending data with the block retransmission.
+				     */
+				    if (!fcount) blockgood = false;	// MCF only if we have data
 				}
 
 				// requisite pause before sending response (PPR/MCF)

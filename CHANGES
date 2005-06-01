@@ -1,7 +1,8 @@
 #	$Id$	
 
-Changelog for HylaFAX
+Changelog for HylaFAX 4.2.2
 
+* send PPR instead of DCN when an empty block is received (1 Jun 2005)
 * fix some dysfunctional mail redirects (30 May 2005)
 * don't save null-data pages (26 May 2005)
 * Add support for OpenServer 6 (24 May 2005)
