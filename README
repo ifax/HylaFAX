@@ -2,20 +2,23 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.2.1
+The HylaFAX development team is pleased to announce our 4.2.2
 patch level release!  As always, our sincerest thanks go to all who
 participate and provide feedback.
 
                                *   *   *
 
 This document is intended to describe the significant differences
-between hylafax-4.2.1 and older releases, point out any known
+between hylafax-4.2.2 and older releases, point out any known
 incompatibilites and issues, and provide the reader with directions to
 further resources regarding HylaFAX. 
 
                           *   NEW FEATURES   *
 
 * faxgetty can now utilize more than two call identification tags
+* color fax (JPEG) reception is now supported (requires updating
+  libtiff and libjpeg)
+* FaxModify makes pre-processing outbound fax images on the server easier
 * numerous other enhancements and bugfixes (see CHANGES)
 
                          *   KNOWN ISSUES   *
@@ -27,7 +30,7 @@ further resources regarding HylaFAX.
 
 * Some of the CallID changes in this release required some reordering of
   the command-line parameters with which the DynamicConfig scripts were
-  called.
+  called.  If you use DynamicConfig check your scripts after upgrading.
 * TIFFs received prior to upgrading to this release will display their
   CIDName and CIDNumber information reversed (CallID2, CallID1) when
   examined with faxinfo.
@@ -37,8 +40,17 @@ further resources regarding HylaFAX.
 
                       *   WHO SHOULD UPGRADE?   *
 
-For security reasons, everyone should consider upgrading to this 4.2.1
-release as soon as possible.
+* For security reasons, everyone not yet using 4.2.1 should consider
+  upgrading to this 4.2.2 release as soon as possible.
+* New improvements in 4.2.2 with unexpected signal handling should benefit
+  most Class 1/1.0 users (with or without ECM enabled).
+* If using a modem with a newer Rockwell or Conexant chipset that
+  indicates Class 1.0 support you may want to upgrade and re-run faxaddmodem
+  to choose Class 1.0 in order to improve unexpected signal handling.
+* If you regularly send fax batches (new in 4.2.0) you should upgrade to
+  get the fixes in 4.2.2.
+* If you wish to send multipage faxes with mixed page lengths you should
+  upgrade (requires patching Ghostscript).
 
                      *   HYLAFAX BINARY PACKAGES   *
 
