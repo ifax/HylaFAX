@@ -485,6 +485,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		sendCFR = false;
 	    }
 	    pageGood = false;
+	    resetLineCounts();		// in case we don't make it to initializeDecoder
 	    recvSetupTIFF(tif, group3opts, FILLORDER_LSB2MSB, id);
 	    ATResponse rmResponse = AT_NOTHING;
 	    if (params.ec != EC_DISABLE || useV34) {
@@ -1680,7 +1681,6 @@ Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
      * T.30-A ECM mode requires a substantially different protocol than non-ECM faxes.
      */
     if (params.ec != EC_DISABLE) {
-	resetLineCounts();	// in case we don't make it to initializeDecoder
 	if (!recvPageECMData(tif, params, emsg)) {
 	    /*
 	     * The previous page experienced some kind of error.  Falsify
