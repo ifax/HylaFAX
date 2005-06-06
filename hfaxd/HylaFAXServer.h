@@ -43,7 +43,6 @@
 #ifdef HAVE_PAM
 extern "C" {
 #include <security/pam_appl.h>
-#include <security/pam_misc.h>
 #include <grp.h>
 }
 #endif // HAVE_PAM

@@ -109,7 +109,7 @@ pamconv(int num_msg, const struct pam_message **msg, struct pam_response **resp,
 	for (i=0; i<num_msg; i++) {
 		switch(msg[i]->msg_style) {
 			case PAM_PROMPT_ECHO_OFF:
-				replies[i].resp = x_strdup(password);
+				replies[i].resp = password ? strdup(password) : NULL;
 				replies[i].resp_retcode = 0;
 				retval = PAM_SUCCESS;
 				break;

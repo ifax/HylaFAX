@@ -1579,11 +1579,9 @@ PAMLIBS=""
 if [ "$DISABLE_PAM" != "yes" ]; then
 	Note "Checking for PAM (Pluggable Authentication Module) support"
 	CheckForLibrary pam_authenticate -lpam &&
-		CheckForLibrary misc_conv -lpam_misc -lpam &&
-		CheckForIncludeFile security/pam_appl.h &&
-		CheckForIncludeFile security/pam_misc.h && {
+		CheckForIncludeFile security/pam_appl.h && {
 			HAVE_PAM="#define HAVE_PAM 1"
-			PAMLIBS="-lpam -lpam_misc"
+			PAMLIBS="-lpam"
 		}
 	if [ "x$PAMLIBS" = "x" ]; then
 		Note "... not found. Disabling PAM support"
