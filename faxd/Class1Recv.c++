@@ -1311,14 +1311,29 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			 * it is possible for us to get CTC or EOR here (if the modem
 			 * quickly reported NO CARRIER when we went looking for the
 			 * non-existent high-speed carrier and the sender is persistent).
+			 *
+			 * CRP is a bizarre signal to get instead of PPS, but some
+			 * senders repeatedly transmit this instead of PPS.  So to
+			 * handle it as best as possible we interpret the signal as
+			 * meaning PPS-NULL (full block) unless there was no data seen
+			 * (in which case PPS-MPS is assumed) in order to prevent 
+			 * any data loss, and we let the sender cope with it from there.
 			 */
 			case FCF_PPS:
+			case FCF_CRP:
 			    {
-				u_int fc = frameRev[ppsframe[6]] + 1;
+				u_int fc = ppsframe.getFCF() == FCF_CRP ? 256 : frameRev[ppsframe[6]] + 1;
 				if ((fc == 256 || fc == 1) && !dataseen) fc = 0;	// distinguish 0 from 1 and 256
 				if (fcount < fc) fcount = fc;
-				protoTrace("RECV received %u frames of block %u of page %u", \
-				    fc, frameRev[ppsframe[5]]+1, frameRev[ppsframe[4]]+1);
+				if (ppsframe.getFCF() == FCF_CRP) {
+				    if (fc) ppsframe[3] = 0x00;		// FCF2 = NULL
+				    else ppsframe[3] = FCF_MPS;
+				    protoTrace("RECV unexpected CRP - assume %u frames of block %u of page %u", \
+					fc, prevBlock + 1, prevPage + 1);
+				} else {
+				    protoTrace("RECV received %u frames of block %u of page %u", \
+					fc, frameRev[ppsframe[5]]+1, frameRev[ppsframe[4]]+1);
+				}
 				blockgood = true;
 				if (fc) {
 				    for (u_int i = 0; i <= (fcount - 1); i++) {
