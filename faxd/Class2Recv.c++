@@ -144,6 +144,7 @@ Class2Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
     int ppr;
     bool prevPage = false;
     bool pageGood = false; 
+    pageStarted = false;
 
     do {
 	ppm = PPM_EOP;
@@ -160,25 +161,25 @@ Class2Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	do {
 	    switch (r = atResponse(rbuf, conf.pageStartTimeout)) {
 	    case AT_FDCS:			// inter-page DCS
-		if (prevPage && !pageGood) recvResetPage(tif);
+		if (!pageGood) recvResetPage(tif);
 		(void) recvDCS(rbuf);
 		break;
 	    case AT_FTSI:
-		if (prevPage && !pageGood) recvResetPage(tif);
+		if (!pageGood) recvResetPage(tif);
 		recvTSI(stripQuotes(skipStatus(rbuf)));
 		break;
 	case AT_FSA:
-		if (prevPage && !pageGood) recvResetPage(tif);
+		if (!pageGood) recvResetPage(tif);
 		recvSUB(stripQuotes(skipStatus(rbuf)));
 		break;
 #ifdef notdef
 	case AT_FPA:
-		if (prevPage && !pageGood) recvResetPage(tif);
+		if (!pageGood) recvResetPage(tif);
 		recvSEP(stripQuotes(skipStatus(rbuf)));
 		break;
 #endif
 	case AT_FPW:
-		if (prevPage && !pageGood) recvResetPage(tif);
+		if (!pageGood) recvResetPage(tif);
 		recvPWD(stripQuotes(skipStatus(rbuf)));
 		break;
 	    case AT_TIMEOUT:

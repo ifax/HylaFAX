@@ -106,6 +106,7 @@ protected:
     u_int       recvFillOrder;  // bit order of recvd data (ModemConfig & autodetected)
     u_int       sendFillOrder;  // bit order of sent data (ModemConfig & autodetected)
     const u_char* rtcRev;       // bit reversal table for RTC
+    bool	pageStarted;	// recvStartPage has been called
 
     FaxModem(FaxServer&, const ModemConfig&);
 

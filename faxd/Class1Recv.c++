@@ -484,7 +484,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		transmitFrame(FCF_CFR|FCF_RCVR);
 		sendCFR = false;
 	    }
-	    pageGood = false;
+	    pageGood = pageStarted = false;
 	    resetLineCounts();		// in case we don't make it to initializeDecoder
 	    recvSetupTIFF(tif, group3opts, FILLORDER_LSB2MSB, id);
 	    ATResponse rmResponse = AT_NOTHING;
@@ -646,7 +646,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	if (ppmrcvd) {
 	    switch (lastPPM) {
 	    case FCF_DIS:			// XXX no support
-		if (prevPage && !pageGood) recvResetPage(tif);
+		if (!pageGood) recvResetPage(tif);
 		protoTrace("RECV DIS/DTC");
 		emsg = "Can not continue after DIS/DTC";
 		return (false);
@@ -657,7 +657,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	    case FCF_DCS:
 		{
 		    signalRcvd = 0;
-		    if (prevPage && !pageGood) recvResetPage(tif);
+		    if (!pageGood) recvResetPage(tif);
 		    // look for high speed carrier only if training successful
 		    messageReceived = !(FaxModem::recvBegin(emsg));
 		    if (!messageReceived) messageReceived = !(recvDCSFrames(frame));
@@ -683,7 +683,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		    pageGood = false;
 		    if (params.ec != EC_DISABLE) return (false);
 		}
-		if (prevPage && !pageGood) recvResetPage(tif);
+		if (!pageGood) recvResetPage(tif);
 		if (signalRcvd == 0) tracePPM("RECV recv", lastPPM);
 
 		/*
@@ -840,7 +840,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		}
 		return (false);
 	    default:
-		if (prevPage && !pageGood) recvResetPage(tif);
+		if (!pageGood) recvResetPage(tif);
 		emsg = "COMREC invalid response received";
 		return (false);
 	    }

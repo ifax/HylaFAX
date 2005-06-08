@@ -678,6 +678,7 @@ FaxModem::recvStartPage(TIFF* tif)
     u_long* lp;
     (void) TIFFGetField(tif, TIFFTAG_STRIPOFFSETS, &lp);
     savedWriteOff = lp[0];
+    pageStarted = true;
 }
 
 /*
@@ -693,6 +694,7 @@ FaxModem::recvStartPage(TIFF* tif)
 void
 FaxModem::recvResetPage(TIFF* tif)
 {
+    if (!pageStarted) return;
     u_long* lp;
     TIFFSetWriteOffset(tif, 0);		// force library to reset state
     TIFFGetField(tif, TIFFTAG_STRIPOFFSETS, &lp);	lp[0] = savedWriteOff;
