@@ -2879,6 +2879,7 @@ BuildPortDotH()
 	    *-hpux10.20*)	UTMP=utmp;;
 	    *-hpux11*)		UTMP=utmp;;
 	    *-aix4*)		UTMP=utmp;;
+	    *-aix5*)		UTMP=utmp;;
 	    *-dec-osf4.0*)	UTMP=utmp;;
 	    *-osf-5.1a*)	UTMP=utmp;;
 	    *-linux*)		UTMP=utmp;;

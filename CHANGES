@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.2
 
+* adjust configure for AIX 5 (14 Jun 2005)
 * handle CRP sent as PPS (8 Jun 2005)
 * fix segfault when resetting a received TIFF page (8 Jun 2005)
 * update symbolic links to the Linux DSOs on upgrades (7 Jun 2005)
