@@ -458,6 +458,10 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 			switch (decoderPid) {
 			    case -1:	// error
 				recvTrace("Could not fork decoding.");
+				Sys::close(decoderFd[0]);
+				Sys::close(decoderFd[1]);
+				Sys::close(counterFd[0]);
+				Sys::close(counterFd[1]);
 				break;
 			    case 0:		// child
 				Sys::close(decoderFd[1]);

@@ -352,6 +352,8 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
 		case -1:
 		    emsg = "Could not fork for local ID.";
 		    logError("%s", (const char*)emsg);
+		    Sys::close(pipefd[0]);
+		    Sys::close(pipefd[1]);
 		    break;
 		case  0:
 		    dup2(pipefd[1], STDOUT_FILENO);
@@ -378,6 +380,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
 			FaxModem* modem = (FaxModem*) ModemServer::getModem();
 			modem->pokeConfig();
 		    }
+		    Sys::close(pipefd[0]);
 		    break;
 	    }
 	}

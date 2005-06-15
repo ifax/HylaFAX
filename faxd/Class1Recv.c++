@@ -716,6 +716,8 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 				case -1:	// error
 				    protoTrace("Protocol flow control unavailable due to fork error.");
 				    TIFFWriteDirectory(tif);
+				    Sys::close(fcfd[0]);
+				    Sys::close(fcfd[1]);
 				    break;
 				case 0:		// child
 				    Sys::close(fcfd[1]);
@@ -1611,6 +1613,8 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		case -1:	// error
 		    protoTrace("Protocol flow control unavailable due to fork error.");
 		    writeECMData(tif, block, cc, params, seq);
+		    Sys::close(fcfd[0]);
+		    Sys::close(fcfd[1]);
 		    break;
 		case 0:		// child
 		    Sys::close(fcfd[1]);

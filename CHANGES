@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.2
 
+* fix error of a pipe file descriptors not being closed (15 Jun 2005)
 * fix error in not employing Class1SwitchingCmd before sending
   prologue frames (15 Jun 2005)
 * adjust configure for AIX 5 (14 Jun 2005)
