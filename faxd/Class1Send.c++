@@ -538,7 +538,13 @@ Class1Modem::sendPrologue(FaxParams& dcs_caps, const fxStr& tsi)
      */
     bool frameSent;
     if (useV34) frameSent = true;
-    else frameSent = (atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 7550) == AT_CONNECT);
+    else {
+	if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+	    protoTrace("Failure to receive silence.");
+	    return (false);
+	}
+	frameSent = (atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 7550) == AT_CONNECT);
+    }
     if (!frameSent)
 	return (false);
     if (pwd != fxStr::null) {
