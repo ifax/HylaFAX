@@ -160,7 +160,7 @@ HylaFAXServer::getRecvDocStatus(RecvInfo& ri)
 	u_int i = 0;
 	while (cp[0] == '\n') {
 	    cp++;
-	    ri.callid.resize(i);
+	    ri.callid.resize(i+1);
 	    while (cp[0] != '\0' && cp[0] != '\n') {
 		ri.callid[i].append(cp[0]);
 		cp++;
