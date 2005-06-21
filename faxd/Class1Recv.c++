@@ -240,10 +240,10 @@ Class1Modem::recvIdentification(
 		    t1 = howmany(conf.t1Timer, 1000);
 		} while (recvFrame(frame, FCF_RCVR, conf.t2Timer));
 	    }
-	    if (gotEOT) {
-		emsg = "RSPREC error/got EOT";
-		return (false);
-	    }
+	}
+	if (gotEOT) {
+	    emsg = "RSPREC error/got EOT";
+	    return (false);
 	}
 	/*
 	 * We failed to send our frames or failed to receive
