@@ -139,6 +139,7 @@ pageSendApp::send(const char* filename)
 		    ai.dest = req->external;
 		    ai.csi = "";
 		    ai.params = 0;
+		    ai.npages = 0;
 		    CallID empty_callid;
 		    ai.callid = empty_callid;
 		    ai.owner = req->owner;
