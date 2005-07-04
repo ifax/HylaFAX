@@ -1565,9 +1565,6 @@ faxQueueApp::setSleep(Job& job, time_t tts)
     job.startTTSTimer(tts);
 }
 
-#define	isOKToStartJobs(di, dci, n) \
-    (di.getActive()+n <= dci.getMaxConcurrentCalls())
-
 /*
  * Process a job that's finished.  The corpse gets placed
  * on the deadq and is reaped the next time the scheduler
@@ -1583,36 +1580,7 @@ faxQueueApp::setDead(Job& job)
     job.suspendPending = false;
     traceJob(job, "DEAD");
     Trigger::post(Trigger::JOB_DEAD, job);
-    DestInfo& di = destJobs[job.dest];
-    di.done(job);			// remove from active destination list
-    di.updateConfig();			// update file if something changed
-    if (!di.isEmpty()) {
-	/*
-	 * Check if there are blocked jobs waiting to run
-	 * and that there is now room to run one.  If so,
-	 * take jobs off the blocked queue and make them
-	 * ready for processing.
-	 */
-	Job* jb;
-	const DestControlInfo& dci = destCtrls[job.dest];
-	u_int n = 1;
-	while ((isOKToStartJobs(di, dci, n) || di.supportsBatching()) && (jb = di.nextBlocked())) {
-	    setReadyToRun(*jb);
-	    n++;
-	    FaxRequest* req = readRequest(*jb);
-	    if (req) {
-		req->notice = "";
-		updateRequest(*req, *jb);
-		delete req;
-	    }
-        }
-    } else {
-	/*
-	 * This is the last job to the destination; purge
-	 * the entry from the destination jobs database.
-	 */
-	destJobs.remove(job.dest);
-    }
+    removeDestInfoJob(job);
     if (job.isOnList())			// lazy remove from active list
 	job.remove();
     job.insert(*deadq.next);		// setup job corpus for reaping
@@ -1825,6 +1793,14 @@ faxQueueApp::suspendJob(Job& job, bool abortActive)
 	destJobs[job.dest].unblock(job);
 	break;
     }
+
+    /*
+     * We must remove any DestInfo stuff this is recorded in
+     * When the job is resubmitted (or killed), we don't know
+     * when (could be hours/never), or even if the dest number
+     * will be the same
+     */
+    removeDestInfoJob(job);
     job.remove();				// remove from old queue
     job.stopKillTimer();			// clear kill timer
     return (true);
@@ -2072,6 +2048,48 @@ faxQueueApp::runJob(Job& job)
     pokeScheduler();
 }
 
+/*
+ * Process the DestInfo job-block list
+ * for this job.  If the job is active and blocking other
+ * jobs, we need to unblock...
+ */
+#define	isOKToStartJobs(di, dci, n) \
+    (di.getActive()+n <= dci.getMaxConcurrentCalls())
+
+void
+faxQueueApp::removeDestInfoJob (Job& job)
+{
+    DestInfo& di = destJobs[job.dest];
+    di.done(job);			// remove from active destination list
+    di.updateConfig();			// update file if something changed
+    if (!di.isEmpty()) {
+	/*
+	 * Check if there are blocked jobs waiting to run
+	 * and that there is now room to run one.  If so,
+	 * take jobs off the blocked queue and make them
+	 * ready for processing.
+	 */
+	Job* jb;
+	const DestControlInfo& dci = destCtrls[job.dest];
+	u_int n = 1;
+	while ((isOKToStartJobs(di, dci, n) || di.supportsBatching()) && (jb = di.nextBlocked())) {
+	    setReadyToRun(*jb);
+	    n++;
+	    FaxRequest* req = readRequest(*jb);
+	    if (req) {
+		req->notice = "";
+		updateRequest(*req, *jb);
+		delete req;
+	    }
+        }
+    } else {
+	/*
+	 * This is the last job to the destination; purge
+	 * the entry from the destination jobs database.
+	 */
+	destJobs.remove(job.dest);
+    }
+}
 /*
  * Scan the list of jobs and process those that are ready
  * to go.  Note that the scheduler should only ever be

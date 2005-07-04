@@ -219,6 +219,8 @@ private:
     void	timeoutJob(Job& job, FaxRequest&);
     void	runJob(Job& job);
 
+    void	removeDestInfoJob (Job& job);
+
     void	runScheduler();
     void	pokeScheduler();
 // job preparation stuff
