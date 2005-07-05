@@ -119,8 +119,8 @@ causes the jobs to be scheduled for any available modem.
 .B \-p
 The jobs should be
 .IR pushed ;
-that is, they should be sent immediately
-(this is equivalent to ``\-a now''.)
+that is, they should be requeued with a time-to-send as the
+current time (this is equivalent to ``\-a now'').
 .TP 10
 .BI \-P " pri"
 Set the scheduling priority for the specified jobs.
@@ -203,7 +203,7 @@ Control protocol tracing.
 (Equivalent to the
 .B \-v
 option.)
-.SH BUGS
+.SH NOTES
 Setting a job's killtime without also setting the time to send
 may cause the wrong value for the killtime to be sent.
 This is because the killtime is calculated as the difference in
@@ -221,6 +221,12 @@ state where it can be suspended.
 If
 .I faxalter
 is interrupted during this time then jobs may be left suspended.
+.PP
+.I faxalter
+requeues the job.  This means that the job will end up at the bottom
+of the queue for the job's priority.  Thus, when queues are heavy
+an adjustment of the job's killtime may need to be considered when
+altering any other parameter.
 .PP
 .I faxalter
 only understands how to alter a subset of the available job

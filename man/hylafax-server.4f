@@ -595,7 +595,9 @@ are not actively being processed (e.g. a
 program is running to process the job).
 Jobs that are suspended are not processed by the scheduler; and their
 internal state may be safely altered by the owner or a system
-administrator.
+administrator.  Suspending and then releasing a job has the effect
+of requeueing the job, meaning that it will end up at the bottom of
+queue for that job's priority.
 Jobs that are ready for processing by the scheduler are ``submitted''
 and their state is changed to be either 
 .I pending
