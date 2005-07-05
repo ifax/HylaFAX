@@ -2122,7 +2122,9 @@ faxQueueApp::runScheduler()
      * not be necessary to restart the process to have
      * config file changes take effect.
      */
-    (void) updateConfig(configFile);
+    if (updateConfig(configFile) && (maxBatchJobs > 1) )
+	    traceServer("MaxBatchJobs = %u, batching is not fully supported",
+		    maxBatchJobs);
     /*
      * Scan the job queue and locate a compatible modem to
      * use in processing the job.  Doing things in this order
@@ -2840,7 +2842,7 @@ faxQueueApp::numbertag faxQueueApp::numbers[] = {
 { "postscripttimeout",	&faxQueueApp::postscriptTimeout, 3*60 },
 { "maxconcurrentjobs",	&faxQueueApp::maxConcurrentCalls, 1 },
 { "maxconcurrentcalls",	&faxQueueApp::maxConcurrentCalls, 1 },
-{ "maxbatchjobs",	&faxQueueApp::maxBatchJobs,	(u_int) -1 },
+{ "maxbatchjobs",	&faxQueueApp::maxBatchJobs,	(u_int) 1 },
 { "maxsendpages",	&faxQueueApp::maxSendPages,	(u_int) -1 },
 { "maxtries",		&faxQueueApp::maxTries,		(u_int) FAX_RETRIES },
 { "maxdials",		&faxQueueApp::maxDials,		(u_int) FAX_REDIALS },
