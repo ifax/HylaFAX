@@ -394,14 +394,16 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		    pph.remove(0,3);	// discard page-handling info
 		if (params.ec == EC_DISABLE) atCmd(conf.class1SwitchingCmd, AT_OK);
 		ntrys = 0;
-		if (morePages) {
-		    if (ppr == FCF_PIP) {
-			emsg = "Procedure interrupt (operator intervention)";
+		if (morePages) {	// meaning, more pages in this file, but there may be other files
+		    if (!TIFFReadDirectory(tif)) {
+			emsg = "Problem reading document directory";
 			protoTrace(emsg);
 			return (send_failed);
 		    }
-		    if (!TIFFReadDirectory(tif)) {
-			emsg = "Problem reading document directory";
+		}
+		if (cmd != FCF_EOP) {
+		    if (ppr == FCF_PIP) {
+			emsg = "Procedure interrupt (operator intervention)";
 			protoTrace(emsg);
 			return (send_failed);
 		    }
