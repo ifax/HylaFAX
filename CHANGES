@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX 4.2.2
 
+* fix ECM frame data from being overwritten by corrupt frames later
+  (11 Jul 2005)
 * fix a faxq crash involving job alteration (4 Jul 2005)
 * fix error of a pipe file descriptors not being closed (15 Jun 2005)
 * fix error in not employing Class1SwitchingCmd before sending

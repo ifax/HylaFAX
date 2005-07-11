@@ -1220,12 +1220,12 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			    rcpcnt = 0;			// reset RCP counter
 			    fnum = frameRev[frame[3]];	// T.4 A.3.6.1 says LSB2MSB
 			    protoTrace("RECV received frame number %u", fnum);
-			    // store received frame in block at position fnum (A+C+FCF+Frame No.=4 bytes)
-			    for (u_int i = 0; i < frameSize; i++) {
-				if (frame.getLength() - 6 > i)	// (A+C+FCF+Frame No.+FCS=6 bytes)
-				    block[fnum*frameSize+i] = frameRev[frame[i+4]];	// LSB2MSB
-			    }
 			    if (frame.checkCRC()) {
+				// store received frame in block at position fnum (A+C+FCF+Frame No.=4 bytes)
+				for (u_int i = 0; i < frameSize; i++) {
+				    if (frame.getLength() - 6 > i)	// (A+C+FCF+Frame No.+FCS=6 bytes)
+					block[fnum*frameSize+i] = frameRev[frame[i+4]];	// LSB2MSB
+				}
 				if (fcount < (fnum + 1)) fcount = fnum + 1;
 				// valid frame, set the corresponding bit in ppr to 0
 				u_int pprpos, pprval;
