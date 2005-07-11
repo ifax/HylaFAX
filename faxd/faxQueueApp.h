@@ -85,6 +85,7 @@ private:
     u_int	maxSendPages;		// max pages in a send job
     u_int	maxDials;		// max times to dial the phone for a job
     u_int	maxTries;		// max transmits tried for a job
+    time_t	lastRun;		// time of last scheduler run
     TimeOfDay	tod;			// time of day restrictions on sends
     DestControl	destCtrls;		// destination control database
     fxStr	longDistancePrefix;	// prefix str for long distance dialing

@@ -88,6 +88,7 @@ faxQueueApp::faxQueueApp()
 {
     fifo = -1;
     quit = false;
+    lastRun = Sys::now() - 1;
     dialRules = NULL;
     setupConfig();
 
@@ -375,28 +376,44 @@ faxQueueApp::prepareJobDone(Job& job, int status)
 		(const char*) job.jobid);
 	    setDead(job);
 	} else {
-	    switch (status) {
-	    case Job::requeued:		// couldn't fork RIP
-		job.remove();
-		delayJob(job, *req, "Cannot fork to prepare job for transmission",
-		    Sys::now() + random() % requeueInterval);
-		delete req;
-		break;
-	    case Job::done:			// preparation completed successfully
+	    bool processnext = false;
+	    bool startsendjob = false;
+	    Job* targetjob = &job;
+	    if (status == Job::done) {		// preparation completed successfully
 		job.breq = req;
-		abort = false;
-		break;
-	    default:			// problem preparing job
-		deleteRequest(job, req, status, true);
-		setDead(job);
-		break;
+		startsendjob = (job.bnext == NULL);
+		processnext = !startsendjob;
+		if (processnext) {
+		    targetjob = job.bnext;
+		}
+	    } else {
+		/*
+		 * Job preparation did not complete successfully.
+		 *
+		 * If there is more than one job in this batch, then remove this job
+		 * and adjust the batch accordingly.
+		 */
+		if (job.bnext == NULL) {	// no jobs left in batch
+		    targetjob = job.bprev;
+		    startsendjob = (targetjob != NULL);
+		} else {			// more jobs in batch
+		    targetjob = job.bnext;
+		    processnext = true;
+		}
+		if (status == Job::requeued) {
+		    job.remove();
+		    delayJob(job, *req, "Cannot fork to prepare job for transmission",
+			Sys::now() + random() % requeueInterval);
+		    delete req;
+		} else {
+		    deleteRequest(job, req, status, true);
+		    setDead(job);
+		}
 	    }
+	    if (processnext) processJob(*targetjob, targetjob->breq, destJobs[targetjob->dest], destCtrls[targetjob->dest]);
+	    else if (startsendjob) sendJobStart(*targetjob->bfirst(), targetjob->bfirst()->breq, destCtrls[targetjob->dest]);
 	}
     }
-    if (job.bnext != NULL)
-	processJob(*job.bnext, job.bnext->breq, destJobs[job.dest], destCtrls[job.dest]);
-    else if (!abort || job.bprev != NULL)
-	sendJobStart(*job.bfirst(), job.bfirst()->breq, destCtrls[job.dest]);
 }
 
 /*
@@ -1347,14 +1364,17 @@ faxQueueApp::sendJobDone(Job& job, int status)
     Job* njob;
     FaxRequest* req;
     int cstatus = status;
+    bool seenabort = false;
 
     for (cjob = &job; cjob != NULL; cjob = njob) {
 	njob = cjob->bnext;
 	req = readRequest(*cjob);		// reread the qfile
-	if (!(status&0xff) && req)
+	if ((!(status&0xff) || seenabort) && req)
 	    cstatus = (req->status << 8);
-	else
+	else {
 	    cstatus = status;
+	    seenabort = true;
+	}
 	sendJobDone(*cjob, req, cstatus);
     }
 }
@@ -2122,9 +2142,7 @@ faxQueueApp::runScheduler()
      * not be necessary to restart the process to have
      * config file changes take effect.
      */
-    if (updateConfig(configFile) && (maxBatchJobs > 1) )
-	    traceServer("MaxBatchJobs = %u, batching is not fully supported",
-		    maxBatchJobs);
+    (void) updateConfig(configFile);
     /*
      * Scan the job queue and locate a compatible modem to
      * use in processing the job.  Doing things in this order
@@ -2253,6 +2271,13 @@ faxQueueApp::runScheduler()
 			Job* bjob = &job;	// Last batched Job
 			Job* cjob;		// current Job
 			FaxRequest* creq;	// current request
+
+			/*
+			 * Since job files are passed to the send program as command-line
+			 * parameters, our batch size is limited by that number of
+			 * parameters.  64 should be a portable number.
+			 */
+			if (maxBatchJobs > 64) maxBatchJobs = 64;
 			
 			joblist++;		// Skip the current job
 			for (u_int i = 1; i < maxBatchJobs && joblist.notDone(); joblist++, i++) {
@@ -2398,7 +2423,16 @@ faxQueueApp::pollForModemLock(Modem& modem)
 void
 faxQueueApp::pokeScheduler()
 {
-    schedTimeout.start();
+    /*
+     * If we don't throttle the scheduler then large
+     * queues can halt the system with CPU consumption.
+     * So we keep the scheduler from running more than
+     * once per second.
+     */
+    if (Sys::now() != lastRun) {
+	schedTimeout.start();
+	lastRun = Sys::now();
+    }
 }
 
 /*
@@ -2842,7 +2876,7 @@ faxQueueApp::numbertag faxQueueApp::numbers[] = {
 { "postscripttimeout",	&faxQueueApp::postscriptTimeout, 3*60 },
 { "maxconcurrentjobs",	&faxQueueApp::maxConcurrentCalls, 1 },
 { "maxconcurrentcalls",	&faxQueueApp::maxConcurrentCalls, 1 },
-{ "maxbatchjobs",	&faxQueueApp::maxBatchJobs,	(u_int) 1 },
+{ "maxbatchjobs",	&faxQueueApp::maxBatchJobs,	(u_int) 64 },
 { "maxsendpages",	&faxQueueApp::maxSendPages,	(u_int) -1 },
 { "maxtries",		&faxQueueApp::maxTries,		(u_int) FAX_RETRIES },
 { "maxdials",		&faxQueueApp::maxDials,		(u_int) FAX_REDIALS },
