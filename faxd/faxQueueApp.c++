@@ -412,6 +412,15 @@ faxQueueApp::prepareJobDone(Job& job, int status)
 	    }
 	    if (processnext) processJob(*targetjob, targetjob->breq, destJobs[targetjob->dest], destCtrls[targetjob->dest]);
 	    else if (startsendjob) sendJobStart(*targetjob->bfirst(), targetjob->bfirst()->breq, destCtrls[targetjob->dest]);
+	    else {
+		/*
+		 * This destination was marked as called, but all jobs to this
+		 * destination failed preparation, so we must undo the call marking.
+		 */
+		DestInfo& di = destJobs[job.dest];
+		di.hangup();
+		unblockDestJobs(job, di);	// release any blocked jobs
+	    }
 	}
     }
 }
@@ -1366,6 +1375,10 @@ faxQueueApp::sendJobDone(Job& job, int status)
     int cstatus = status;
     bool seenabort = false;
 
+    DestInfo& di = destJobs[job.dest];
+    di.hangup();
+    unblockDestJobs(job, di);
+
     for (cjob = &job; cjob != NULL; cjob = njob) {
 	njob = cjob->bnext;
 	req = readRequest(*cjob);		// reread the qfile
@@ -2073,35 +2086,41 @@ faxQueueApp::runJob(Job& job)
  * for this job.  If the job is active and blocking other
  * jobs, we need to unblock...
  */
-#define	isOKToStartJobs(di, dci, n) \
-    (di.getActive()+n <= dci.getMaxConcurrentCalls())
+#define	isOKToCall(di, dci, n) \
+    (di.getCalls()+n <= dci.getMaxConcurrentCalls())
 
 void
-faxQueueApp::removeDestInfoJob (Job& job)
+faxQueueApp::unblockDestJobs(Job& job, DestInfo& di)
+{
+    /*
+     * Check if there are blocked jobs waiting to run
+     * and that there is now room to run one.  If so,
+     * take jobs off the blocked queue and make them
+     * ready for processing.
+     */
+    Job* jb;
+    const DestControlInfo& dci = destCtrls[job.dest];
+    u_int n = 1;
+    while (isOKToCall(di, dci, n) && (jb = di.nextBlocked())) {
+	setReadyToRun(*jb);
+	if (!di.supportsBatching()) n++;
+	FaxRequest* req = readRequest(*jb);
+	if (req) {
+	    req->notice = "";
+	    updateRequest(*req, *jb);
+	    delete req;
+	}
+    }
+}
+
+void
+faxQueueApp::removeDestInfoJob(Job& job)
 {
     DestInfo& di = destJobs[job.dest];
     di.done(job);			// remove from active destination list
     di.updateConfig();			// update file if something changed
     if (!di.isEmpty()) {
-	/*
-	 * Check if there are blocked jobs waiting to run
-	 * and that there is now room to run one.  If so,
-	 * take jobs off the blocked queue and make them
-	 * ready for processing.
-	 */
-	Job* jb;
-	const DestControlInfo& dci = destCtrls[job.dest];
-	u_int n = 1;
-	while ((isOKToStartJobs(di, dci, n) || di.supportsBatching()) && (jb = di.nextBlocked())) {
-	    setReadyToRun(*jb);
-	    n++;
-	    FaxRequest* req = readRequest(*jb);
-	    if (req) {
-		req->notice = "";
-		updateRequest(*req, *jb);
-		delete req;
-	    }
-        }
+	unblockDestJobs(job, di);
     } else {
 	/*
 	 * This is the last job to the destination; purge
@@ -2225,7 +2244,7 @@ faxQueueApp::runScheduler()
 		}
 		time_t now = Sys::now();
 		time_t tts;
-		if (!di.isActive(job) && !isOKToStartJobs(di, dci, 1)) {
+		if (!isOKToCall(di, dci, 1)) {
 		    /*
 		     * This job would exceed the max number of concurrent
 		     * calls that may be made to this destination.  Put it
@@ -2266,6 +2285,7 @@ faxQueueApp::runScheduler()
 			 * allowed on this modem which are not of a lesser priority than
 			 * jobs to other destinations.
 			 */
+			unblockDestJobs(job, di);
 
 			JobIter joblist = iter;
 			Job* bjob = &job;	// Last batched Job
@@ -2312,6 +2332,7 @@ faxQueueApp::runScheduler()
 			bjob->bnext = NULL;
 		    } else
 			job.bnext = NULL;
+		    di.call();			// mark as called to correctly block other jobs
 		    processJob(job, req, di, dci);
 		} else				// leave job on run queue
 		    delete req;

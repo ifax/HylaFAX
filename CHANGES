@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX 4.2.2
 
+* fix job blocking (concurrent call) handling, especially
+  as dealing with batches (13 Jul 2003)
 * fix job modifications on batched, running jobs (13 Jul 2005)
 * throttle faxq from running the scheduler more than once per
   second in order to keep faxq from eating up CPU (11 Jul 2005)
