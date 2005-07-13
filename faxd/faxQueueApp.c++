@@ -1346,8 +1346,8 @@ faxQueueApp::sendJobStart(Job& job, FaxRequest* req, const DestControlInfo& dci)
 	    | " (PID %lu)"
 	    , pid
 	);
-	job.startSend(pid);
 	for (cjob = &job; cjob != NULL; cjob = njob) {
+	    cjob->startSend(pid);
 	    njob = cjob->bnext;
 	    Trigger::post(Trigger::SEND_BEGIN, *cjob);
 	    delete cjob->breq;		// discard handle (NB: releases lock)
