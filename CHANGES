@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.2
 
+* correct cover sheet page count for some PDFs (14 Jul 2005)
 * fix job blocking (concurrent call) handling, especially
   as dealing with batches (13 Jul 2003)
 * fix job modifications on batched, running jobs (13 Jul 2005)
