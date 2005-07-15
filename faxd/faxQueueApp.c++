@@ -1355,8 +1355,9 @@ faxQueueApp::sendJobStart(Job& job, FaxRequest* req, const DestControlInfo& dci)
 	    | " (PID %lu)"
 	    , pid
 	);
+	job.startSend(pid);
 	for (cjob = &job; cjob != NULL; cjob = njob) {
-	    cjob->startSend(pid);
+	    cjob->pid = pid;
 	    njob = cjob->bnext;
 	    Trigger::post(Trigger::SEND_BEGIN, *cjob);
 	    delete cjob->breq;		// discard handle (NB: releases lock)
@@ -1372,55 +1373,47 @@ faxQueueApp::sendJobDone(Job& job, int status)
     Job* cjob;
     Job* njob;
     FaxRequest* req;
-    int cstatus = status;
-    bool seenabort = false;
+    FaxSendStatus cstatus = send_retry;
 
     DestInfo& di = destJobs[job.dest];
     di.hangup();
     unblockDestJobs(job, di);
+    releaseModem(job);				// done with modem
+
+    traceQueue(job, "CMD DONE: exit status %#x", status);
+    if (status&0xff)
+	logError("Send program terminated abnormally with exit status %#x", status);
 
     for (cjob = &job; cjob != NULL; cjob = njob) {
 	njob = cjob->bnext;
 	req = readRequest(*cjob);		// reread the qfile
-	if ((!(status&0xff) || seenabort) && req)
-	    cstatus = (req->status << 8);
-	else {
-	    cstatus = status;
-	    seenabort = true;
+	if (!req) {
+	    time_t now = Sys::now();
+	    time_t duration = now - job.start;
+	    logError("JOB %s: SEND FINISHED: %s; but job file vanished",
+		(const char*) job.jobid, fmtTime(duration));
+	    setDead(job);
+	    continue;
 	}
-	sendJobDone(*cjob, req, cstatus);
+	sendJobDone(*cjob, req);
     }
 }
 
 void
-faxQueueApp::sendJobDone(Job& job, FaxRequest* req, int status)
+faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
 {
     time_t now = Sys::now();
     time_t duration = now - job.start;
 
-    traceQueue(job, "CMD DONE: exit status %#x", status);
     Trigger::post(Trigger::SEND_END, job);
     job.bnext = NULL; job.bprev = NULL;		// clear any batching
-    releaseModem(job);				// done with modem
-    if (!req) {
-	logError("JOB %s: SEND FINISHED: %s; but job file vanished",
-	    (const char*) job.jobid, fmtTime(duration));
-	setDead(job);
-	return;
-    }
     job.commid = req->commid;			// passed from subprocess
-    if (status&0xff) {
-	req->notice = fxStr::format(
-	    "Send program terminated abnormally with exit status %#x", status);
-	req->status = send_failed;
-	logError("JOB " | job.jobid | ": " | req->notice);
-    } else if ((status >>= 8) == 127) {
+    if (req->status == 127) {
 	req->notice = "Send program terminated abnormally; unable to exec " |
 	    pickCmd(*req);
 	req->status = send_failed;
 	logError("JOB " | job.jobid | ": " | req->notice);
-    } else
-	req->status = (FaxSendStatus) status;
+    }
     if (req->status == send_reformat) {
 	/*
 	 * Job requires reformatting to deal with the discovery

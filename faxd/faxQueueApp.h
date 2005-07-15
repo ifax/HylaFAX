@@ -199,7 +199,7 @@ private:
 		    DestInfo&, const DestControlInfo&);
     void	sendJobStart(Job&, FaxRequest*, const DestControlInfo&);
     void	sendJobDone(Job& job, int status);
-    void	sendJobDone(Job& job, FaxRequest* req, int status);
+    void	sendJobDone(Job& job, FaxRequest* req);
     void	blockJob(Job&, FaxRequest&, const char*);
     void	delayJob(Job&, FaxRequest&, const char*, time_t);
     void	rejectJob(Job& job, FaxRequest& req, const fxStr& reason);

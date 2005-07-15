@@ -11,7 +11,7 @@ Changelog for HylaFAX 4.2.2
 * fix job preparation failures in batches from causing faxq list
   corruption which would trigger faxq failure and worse (11 Jul 2005)
 * fix the abortion of the lead job in a batch from causing
-  all other jobs in the batch to also abort (11 Jul 2005)
+  all other jobs in the batch to also abort (11, 15 Jul 2005)
 * restrict MaxBatchJobs to 64 in order to prevent command-line
   parameters from causing faxsend invocation errors (11 Jul 2005)
 * fix ECM frame data from being overwritten by corrupt frames later
