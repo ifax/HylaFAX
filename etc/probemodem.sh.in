@@ -308,6 +308,9 @@ Try()
     sleep 1
     onDev $STTY -echo -icrnl -ixon -ixoff -isig eof '"^A"' clocal $SPEED
     sleep 1
+    if [ "$ATSTR" != "" ]; then
+	printf "$ATSTR\r\r" >$tdev; sleep 1;
+    fi
     for i in $TRYCOMMAND; do
 	printf "$i\r\r" >$tdev; sleep 1;
     done
