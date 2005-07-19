@@ -990,7 +990,7 @@ configureClass2Modem()
     getFlowControlConfig
 
     eval `(cd $MODEMCONFIG; \
-	$GREP 'CONFIG:[ 	]*CLASS2' $CONFIG_LIST |\
+	$GREP 'CONFIG:[ 	]*CLASS2:' $CONFIG_LIST |\
 	$AWK -F: '
 	    BEGIN { print "case \"$Manufacturer-$Model-$FlowControl\" in" }
 	    FILENAME ~ /^OLD/ { next }
@@ -1028,7 +1028,7 @@ configureClass2dot0Modem()
     getFlowControlConfig
 
     eval `(cd $MODEMCONFIG; \
-	$GREP "CONFIG:[ 	]*$MATCHSTR" $CONFIG_LIST |\
+	$GREP "CONFIG:[ 	]*$MATCHSTR:" $CONFIG_LIST |\
 	$AWK -F: '
 	    BEGIN { print "case \"$Manufacturer-$Model-$FlowControl\" in" }
 	    FILENAME ~ /^OLD/ { next }
@@ -1064,7 +1064,7 @@ configureClass1Modem()
 
     getFlowControlConfig
 
-    eval `(cd $MODEMCONFIG; $GREP "CONFIG:[ 	]*$MATCHSTR" $CONFIG_LIST) |\
+    eval `(cd $MODEMCONFIG; $GREP "CONFIG:[ 	]*$MATCHSTR:" $CONFIG_LIST) |\
 	$SED 's/:[ 	]*/:/g' |\
 	$AWK -F: '
 BEGIN	{ proto = "" }
