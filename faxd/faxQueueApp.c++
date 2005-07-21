@@ -62,22 +62,49 @@ fxStr strTime(time_t t)	{ return fxStr(fmtTime(t)); }
 
 #define	JOBHASH(pri)	(((pri) >> 4) & (NQHASH-1))
 
-faxQueueApp::SchedTimeout::SchedTimeout() { started = false; }
+faxQueueApp::SchedTimeout::SchedTimeout()
+{
+    started = false;
+    pending = false;
+    lastRun = Sys::now() - 1;
+}
+
 faxQueueApp::SchedTimeout::~SchedTimeout() {}
 
 void
 faxQueueApp::SchedTimeout::timerExpired(long, long)
 {
-    started = false;
     faxQueueApp::instance().runScheduler();
+    started = false;
 }
 
 void
 faxQueueApp::SchedTimeout::start()
 {
-    if (!started) {
+    /*
+     * If we don't throttle the scheduler then large
+     * queues can halt the system with CPU consumption.
+     * So we keep the scheduler from running more than
+     * once per second.
+     */
+    if (!started && Sys::now() > lastRun) {
 	Dispatcher::instance().startTimer(0,1, this);
+	lastRun = Sys::now();
 	started = true;
+	pending = false;
+    } else {
+	if (!pending) {
+	    /*
+	     * The scheduler is either running now or has been run
+	     * within the last second and there are no timers set
+	     * to trigger another scheduler run.  So we set a
+	     * timer to go off in one second to avoid a stalled
+	     * run queue.
+	     */
+	    Dispatcher::instance().startTimer(1,0, this);
+	    lastRun = Sys::now() + 1;
+	    pending = true;
+	}
     }
 }
 
@@ -88,7 +115,6 @@ faxQueueApp::faxQueueApp()
 {
     fifo = -1;
     quit = false;
-    lastRun = Sys::now() - 1;
     dialRules = NULL;
     setupConfig();
 
@@ -2437,16 +2463,7 @@ faxQueueApp::pollForModemLock(Modem& modem)
 void
 faxQueueApp::pokeScheduler()
 {
-    /*
-     * If we don't throttle the scheduler then large
-     * queues can halt the system with CPU consumption.
-     * So we keep the scheduler from running more than
-     * once per second.
-     */
-    if (Sys::now() != lastRun) {
-	schedTimeout.start();
-	lastRun = Sys::now();
-    }
+    schedTimeout.start();
 }
 
 /*

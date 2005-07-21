@@ -8,7 +8,7 @@ Changelog for HylaFAX 4.2.2
   as dealing with batches (13 Jul 2003)
 * fix job modifications on batched, running jobs (13 Jul 2005)
 * throttle faxq from running the scheduler more than once per
-  second in order to keep faxq from eating up CPU (11 Jul 2005)
+  second in order to keep faxq from eating up CPU (11, 21 Jul 2005)
 * fix job preparation failures in batches from causing faxq list
   corruption which would trigger faxq failure and worse (11 Jul 2005)
 * fix the abortion of the lead job in a batch from causing
