@@ -23,7 +23,6 @@ further resources regarding HylaFAX.
 
                          *   KNOWN ISSUES   *
 
-* A low-priority job can block a high priority job to the same destination.
 ** Please refer to HylaFAX Bugzilla for a detailed list of issues.
 
                        *   INCOMPATIBILITIES   *
