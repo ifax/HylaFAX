@@ -92,7 +92,6 @@ to abort a job while it is in progress.
 .PP
 Multiple fax jobs of documents with varying formatting may be sent in
 one fax call by ``batching'' them by supplying faxsend with multiple
-comma-separated
 .I qfile
 entries.
 .PP
@@ -149,16 +148,16 @@ This option is useful for debugging.
 returns the new job status to
 .I faxq
 through the
-.IR exit (2)
-return value of the process:
-.I send_retry
-(0), retry job;
-.I send_failed
-(1), job finished without success,
-.I send_done
-(2), job completed successfully,
-.I send_reformat
-(3), job should be retried after documents are reformatted.
+.I returned
+value in the associated qfile:
+.I send_retry,
+retry job;
+.I send_failed,
+job finished without success,
+.I send_done,
+job completed successfully,
+.I send_reformat,
+job should be retried after documents are reformatted.
 .SH FILES
 ${SPOOL}/etc/config.devID	device-specific configuration file
 .PP
