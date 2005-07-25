@@ -505,22 +505,27 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 		break;
 
 	    case DF_JBIG_BASIC:
-		setupStartPage(tif, params);
-		//Parse JBIG BIH to get the image length.
+		{
+		    setupStartPage(tif, params);
+		    /*
+		     * Parse JBIG BIH to get the image length.
+		     *
+		     * See T.82 6.6.2
+		     * These three integers are coded most significant byte first. In
+		     * other words, XD is the sum of 256^3 times the fifth byte in BIH, 256^2
+		     * times the sixth byte, 256 times the seventh byte, and the eighth byte.
+		     */
+		    u_long framelength = 0;
+		    //Yd is byte 9, 10, 11, and 12
+		    framelength = 256*256*256*buf[9-1];
+		    framelength += 256*256*buf[10-1];
+		    framelength += 256*buf[11-1];
+		    framelength += buf[12-1];
 
-		//See T.82 6.6.2
-		//These three integers are coded most significant byte first. In
-		//other words, XD is the sum of 256^3 times the fifth byte in BIH, 256^2 times the
-		//sixth byte, 256 times the seventh byte, and the eighth byte.
-
-		//Yd is byte 9, 10, 11, and 12
-
-		recvEOLCount = 256*256*256*buf[9-1];
-		recvEOLCount += 256*256*buf[10-1];
-		recvEOLCount += 256*buf[11-1];
-		recvEOLCount += buf[12-1];
-
-		protoTrace("RECV: Yd field in BIH is %d", recvEOLCount);
+		    protoTrace("RECV: Yd field in BIH is %d", framelength);
+		    // senders commonly use 0xFFFF and 0xFFFFFFFF as empty fill - ignore such large values
+		    if (framelength < 65535 && framelength > recvEOLCount) recvEOLCount = framelength;
+		}
 		break;
 
 	    case DF_JPEG_GREY:
@@ -562,14 +567,16 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 	case DF_JBIG_BASIC:
 	    //search for NEWLEN Marker Segment in JBIG Bi-Level Image Data
 	    {
+		u_long framelength = 0;
 		for (u_int i = 0; i < cc-2; i++) {
 		    if (buf[i] == 0xFF && buf[i+1] == 0x05) {
-			recvEOLCount = 256*256*256*buf[i+2];
-			recvEOLCount += 256*256*buf[i+3];   
-			recvEOLCount += 256*buf[i+4];
-			recvEOLCount += buf[i+5];
+			framelength = 256*256*256*buf[i+2];
+			framelength += 256*256*buf[i+3];   
+			framelength += 256*buf[i+4];
+			framelength += buf[i+5];
 
-			protoTrace("RECV: Found NEWLEN Marker Segment in BID, Yd = %d", recvEOLCount);
+			protoTrace("RECV: Found NEWLEN Marker Segment in BID, Yd = %d", framelength);
+			if (framelength < 65535 && framelength > recvEOLCount) recvEOLCount = framelength;
 		    }
 		}
 	    }
@@ -594,7 +601,7 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 			protoTrace("RECV: Found Define Number of Lines (DNL) Marker, lines: %lu", framelength);
 		    }
 		}
-		if (framelength > recvEOLCount) recvEOLCount = framelength;
+		if (framelength < 65535 && framelength > recvEOLCount) recvEOLCount = framelength;
 	    }
 	    break;
     }

@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.2
 
+* fix some error conditions with JBIG and JPEG reception (25 Jul 2005)
 * improve probemodem results for some modems (16 Jul 2005)
 * correct cover sheet page count for some PDFs (14 Jul 2005)
 * fix job blocking (concurrent call) handling, especially
