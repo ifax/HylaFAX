@@ -192,7 +192,6 @@ Class2Modem::dataTransfer()
 	 * flow control is in use then disable it temporarily
 	 * so that we can read the input stream for DC1.
 	 */
-	FlowControl oiFlow = getInputFlow();
 	if (flowControl == FLOW_XONXOFF)
 	    setXONXOFF(FLOW_NONE, getOutputFlow(), ACT_NOW);
     }
