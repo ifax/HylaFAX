@@ -1586,7 +1586,7 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
  */
 
 /*
- * Insert a job in the queue of read-to-run jobs.
+ * Insert a job in the queue of ready-to-run jobs.
  */
 void
 faxQueueApp::setReadyToRun(Job& job)
@@ -2097,6 +2097,13 @@ faxQueueApp::runJob(Job& job)
 {
     job.remove();
     setReadyToRun(job);
+    /*
+     * In order to deliberately batch jobs by using a common
+     * time-to-send we need to give time for the other jobs'
+     * timers to expire and to enter the run queue before
+     * running the scheduler.
+     */
+    sleep(1);			// is this long enough?
     pokeScheduler();
 }
 
