@@ -1417,8 +1417,8 @@ faxQueueApp::sendJobDone(Job& job, int status)
 	    time_t now = Sys::now();
 	    time_t duration = now - job.start;
 	    logError("JOB %s: SEND FINISHED: %s; but job file vanished",
-		(const char*) job.jobid, fmtTime(duration));
-	    setDead(job);
+		(const char*) cjob->jobid, fmtTime(duration));
+	    setDead(*cjob);
 	    continue;
 	}
 	sendJobDone(*cjob, req);
@@ -2433,13 +2433,14 @@ faxQueueApp::assignModem(Job& job, const DestControlInfo& dci)
 void
 faxQueueApp::releaseModem(Job& job)
 {
-    fxAssert(job.modem != NULL, "No assigned modem to release");
-    if (job.bnext == NULL && job.bprev == NULL) {
-	Trigger::post(Trigger::MODEM_RELEASE, *job.modem);
-	job.modem->release();
-	pokeScheduler();
+    Trigger::post(Trigger::MODEM_RELEASE, *job.modem);
+    job.modem->release();
+    pokeScheduler();
+    Job* cjob;
+    for (cjob = &job; cjob != NULL; cjob = cjob->bnext) {
+	fxAssert(cjob->modem != NULL, "No assigned modem to release");
+	cjob->modem = NULL;			// remove reference to modem
     }
-    job.modem = NULL;			// remove reference to modem
 }
 
 /*
