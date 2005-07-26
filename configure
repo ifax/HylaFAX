@@ -2969,12 +2969,16 @@ BuildPortDotH()
 	echo '#define HAS_RTPRIO 1'
     }
     CheckForDefine _POSIX_PRIORITY_SCHEDULING unistd.h sched.h && {
-	Note "... configure use of POSIX realtime process control interface"
-	echo '#define HAS_POSIXSCHED 1'
 	case $TARGET in
-	*-*-sco3.2v5.*)	echo '#define RT_PRIORITY 96';;
-	*-linux*)	echo '#define RT_PRIORITY 1';;
-	*)		echo '#define RT_PRIORITY 1';;
+	*darwin8*)	Note "... ignoring POSIX realtime process control interface as invalid";;
+	*)
+			Note "... configure use of POSIX realtime process control interface"
+			echo '#define HAS_POSIXSCHED 1'
+			case $TARGET in
+			*-*-sco3.2v5.*)	echo '#define RT_PRIORITY 96';;
+			*-linux*)	echo '#define RT_PRIORITY 1';;
+			*)		echo '#define RT_PRIORITY 1';;
+			esac
 	esac
     }
     CheckForTXCD && {
