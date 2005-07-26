@@ -179,22 +179,19 @@ bool
 FaxClient::setupUserIdentity(fxStr& emsg)
 {
     struct passwd* pwd = NULL;
-    char* name = getenv("FAXUSER");
+    const char* name = getenv("FAXUSER");
     if (name)
 	pwd = getpwnam(name);
     else
-	name = cuserid(NULL);
-    if (!name) {
-	name = getlogin();
-	if (name)
-	    pwd = getpwnam(name);
-    }
-    if (!pwd)
 	pwd = getpwuid(getuid());
     if (!pwd) {
-	emsg = fxStr::format(
-	    "Can not locate your password entry (account name %s, uid %lu).",
-	    (name ? name : "<unspecified>"), (u_long) getuid());
+	if (name)
+	    emsg = fxStr::format("Can not locate FAXUSER password entry "
+		"(account name %s, uid %lu): %s", name, (u_long) getuid(),
+		strerror(errno));
+	else
+	    emsg = fxStr::format("Can not locate your password entry "
+		"(uid %lu): %s", (u_long) getuid(), strerror(errno));
 	return (false);
     }
     userName = pwd->pw_name;
@@ -626,9 +623,12 @@ FaxClient::vcommand(const char* fmt, va_list ap)
         } else if (strncasecmp("ADMIN ", fmt, 6) == 0) {
             traceServer("-> ADMIN XXXX");
         } else {
+	    va_list ap2;
             fxStr s("-> ");
             s.append(fmt);
-            vtraceServer(s, ap);
+	    va_copy(ap2, ap);
+            vtraceServer(s, ap2);
+	    va_end(ap2);
         }
     }
     if (fdOut == NULL) {

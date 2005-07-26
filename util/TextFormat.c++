@@ -509,7 +509,7 @@ TextFormat::emitPrologue(void)
     fprintf(output, "%%%%Title: %s\n", (const char*) title);
     time_t t = Sys::now();
     fprintf(output, "%%%%CreationDate: %s", ctime(&t));
-    char* cp = cuserid(NULL);
+    char* cp = getlogin();
     fprintf(output, "%%%%For: %s\n", cp ? cp : "");
     fputs("%%Origin: 0 0\n", output);
     fprintf(output, "%%%%BoundingBox: 0 0 %.0f %.0f\n",

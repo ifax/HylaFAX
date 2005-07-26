@@ -246,19 +246,13 @@ SNPPClient::getNonBlankMailbox(fxStr& s)
 bool
 SNPPClient::setupUserIdentity(fxStr& emsg)
 {
-    struct passwd* pwd = NULL;
-    char* name = cuserid(NULL);
-    if (!name) {
-	name = getlogin();
-	if (name)
-	    pwd = getpwnam(name);
-    }
-    if (!pwd)
-	pwd = getpwuid(getuid());
+    struct passwd* pwd;
+
+    pwd = getpwuid(getuid());
     if (!pwd) {
 	emsg = fxStr::format(
-	    "Can not locate your password entry (account name %s, uid %lu).",
-	    (name ? name : "<unspecified>"), (u_long) getuid());
+	    "Can not locate your password entry (uid %lu): %s.",
+		(u_long) getuid(), strerror(errno));
 	return (false);
     }
     userName = pwd->pw_name;
