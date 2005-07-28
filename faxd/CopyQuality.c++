@@ -523,7 +523,11 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 		    framelength += buf[12-1];
 
 		    protoTrace("RECV: Yd field in BIH is %d", framelength);
-		    // senders commonly use 0xFFFF and 0xFFFFFFFF as empty fill - ignore such large values
+		    /*
+		     * Senders commonly use 0xFFFF and 0xFFFFFFFF as empty fill.  We ignore such large 
+		     * values because if we use them and no NEWLEN marker is received, then the page
+		     * length causes problems for viewers (specifically libtiff).
+		     */
 		    if (framelength < 65535 && framelength > recvEOLCount) recvEOLCount = framelength;
 		}
 		break;
@@ -576,7 +580,7 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 			framelength += buf[i+5];
 
 			protoTrace("RECV: Found NEWLEN Marker Segment in BID, Yd = %d", framelength);
-			if (framelength < 65535 && framelength > recvEOLCount) recvEOLCount = framelength;
+			if (framelength < 65535) recvEOLCount = framelength;
 		    }
 		}
 	    }
@@ -594,14 +598,15 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 			framewidth = 256*buf[i+7];
 			framewidth += buf[i+8];
 			protoTrace("RECV: Found Start of Frame (SOF) Marker, size: %lu x %lu", framewidth, framelength);
+			if (framelength < 65535 && framelength > recvEOLCount) recvEOLCount = framelength;
 		    }
 		    if (buf[i] == 0xFF && buf[i+1] == 0xDC) {
 			framelength = 256*buf[i+4];
 			framelength += buf[i+5];
 			protoTrace("RECV: Found Define Number of Lines (DNL) Marker, lines: %lu", framelength);
+			if (framelength < 65535) recvEOLCount = framelength;
 		    }
 		}
-		if (framelength < 65535 && framelength > recvEOLCount) recvEOLCount = framelength;
 	    }
 	    break;
     }
@@ -611,7 +616,31 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 	memcpy(recvRow, (const char*) buf, cc);
 	recvRow += cc;
     }
-    if (seq & 2 && recvEOLCount && (params.df == DF_JPEG_GREY || params.df == DF_JPEG_COLOR)) {
+    if (seq & 2 && !recvEOLCount && params.df > DF_2DMMR) {
+	/*
+	 * We didn't detect an image length marker (DNL/NEWLEN).  So
+	 * we use the session parameters to guess at one, and we hope that
+	 * the eventual viewing decoder can cope with things if the data
+	 * is short.
+	 */
+	u_int len, res;
+	switch (params.ln) {
+	    case LN_A4:	len = 297; break;
+	    default:	len = 364; break;	// LN_INF, LN_B4
+	}
+	switch (params.vr) {	// values in mm/100 to avoid floats
+	    case VR_NORMAL:	res = 385; break;
+	    case VR_FINE:	res = 770;  break;
+	    case VR_200X100:	res = 394; break;
+	    case VR_200X200:	res = 787; break;
+	    case VR_200X400:    res = 1575; break;
+	    case VR_300X300:    res = 1181; break;
+	    default:		res = 1540; break;	// VR_R16, VR_R8
+	}
+	recvEOLCount = (u_long) ((len * res) / 100);
+	protoTrace("RECV: assumed image length of %lu lines", recvEOLCount);
+    }
+    if (seq & 2 && (params.df == DF_JPEG_GREY || params.df == DF_JPEG_COLOR)) {
 	/*
 	 * DNL markers generally are not usable in TIFF files.  Furthermore,
 	 * many TIFF viewers cannot use them, either.  So, we go back 
