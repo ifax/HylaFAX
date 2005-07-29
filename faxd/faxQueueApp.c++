@@ -445,7 +445,7 @@ faxQueueApp::prepareJobDone(Job& job, int status)
 		 */
 		DestInfo& di = destJobs[job.dest];
 		di.hangup();
-		unblockDestJobs(job, di);	// release any blocked jobs
+		removeDestInfoJob(job);		// release any blocked jobs/release destination block
 	    }
 	}
     }
