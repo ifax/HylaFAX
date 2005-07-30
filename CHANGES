@@ -5,7 +5,7 @@ Changelog for HylaFAX 4.2.2
 * fix potential hang on detecting an ECM block end (29 Jul 2005)
 * fix job batches to properly release modems (26 Jul 2005)
 * fix build error with Mac OS X 10.4 (26 Jul 2005)
-* fix sendfax crash with verbose output (25 Jul 2005)
+* fix sendfax crash with verbose output (25, 29 Jul 2005)
 * fix a race with scheduled jobs to allow for coordinated
   batch sending (25 Jul 2005)
 * fix some error conditions with JBIG and JPEG reception (25 Jul 2005)
