@@ -1386,7 +1386,7 @@ ModemServer::getModemLine(char rbuf[], u_int bufSize, long ms)
     u_int cc = 0;
     if (ms) startTimeout(ms);
     do {
-	while ((c = getModemChar(0)) != EOF && c != '\n')
+	while ((c = getModemChar(0)) != EOF && c != '\n' && !timer.wasTimeout())
 	    if (c != '\0' && c != '\r' && cc < bufSize)
 		rbuf[cc++] = c;
     } while (!timer.wasTimeout() && cc == 0 && c != EOF);

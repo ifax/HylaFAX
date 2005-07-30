@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.2
 
+* fix potential hang on reading data from modem (30 Jul 2005)
 * fix potential hang on detecting an ECM block end (29 Jul 2005)
 * fix job batches to properly release modems (26 Jul 2005)
 * fix build error with Mac OS X 10.4 (26 Jul 2005)
