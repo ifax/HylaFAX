@@ -616,12 +616,14 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 	memcpy(recvRow, (const char*) buf, cc);
 	recvRow += cc;
     }
-    if (seq & 2 && !recvEOLCount && params.df > DF_2DMMR) {
+    if (seq & 2 && !recvEOLCount && (params.df ==  DF_JPEG_GREY || params.df == DF_JPEG_COLOR)) {
 	/*
 	 * We didn't detect an image length marker (DNL/NEWLEN).  So
 	 * we use the session parameters to guess at one, and we hope that
 	 * the eventual viewing decoder can cope with things if the data
 	 * is short.
+	 *
+	 * This approach doesn't seem to work with JBIG, so for now we only do it with JPEG.
 	 */
 	u_int len, res;
 	switch (params.ln) {
