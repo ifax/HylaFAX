@@ -58,17 +58,17 @@ main(int argc, char** argv)
     extern char* optarg;
     int fifo, c;
     char* spooldir = FAX_SPOOLDIR;
-    const char* arg;
+    const char* arg = NULL;
     char fifoname[256];
     int cmdlen, fnlen;
     char cmd[80];
     char* appname;
-    const char* opts;
-    const char* usage;
-    const char* cmdfmt;
+    const char* opts = NULL;
+    const char* usage = NULL;
+    const char* cmdfmt = NULL;
     char* cp;
     int facility = LOG_DAEMON;
-    int modemRequired;
+    int modemRequired = 0;
 
     (void) cvtFacility(LOG_FAX, &facility);
     openlog(argv[0], LOG_PID|LOG_ODELAY, facility);
@@ -122,8 +122,8 @@ main(int argc, char** argv)
             }
         } else {
             fnlen = snprintf(fifoname, sizeof(fifoname), "%s.%.*s", FAX_FIFO,
-                sizeof (fifoname) - sizeof (FAX_FIFO), argv[optind]);
-            if (fnlen < 0 | fnlen >= sizeof(fifoname)) {
+                (int) (sizeof(fifoname) - sizeof(FAX_FIFO)), argv[optind]);
+            if (fnlen < 0 || fnlen >= sizeof(fifoname)) {
                 fatal("Argument name too long: %s", argv[optind]);
             }
         }
@@ -132,7 +132,7 @@ main(int argc, char** argv)
     } else {
         fatal("usage: %s %s", argv[0], usage);
     }
-    for (cp = fifoname; cp = strchr(cp, '/'); *cp++ = '_')
+    for (cp = fifoname; (cp = strchr(cp, '/')); *cp++ = '_')
 	;
     if (chdir(spooldir) < 0) {
         fatal("%s: chdir: %s", spooldir, strerror(errno));

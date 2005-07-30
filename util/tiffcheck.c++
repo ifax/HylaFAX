@@ -101,7 +101,7 @@ main(int argc, char* argv[])
     /*
      * Suppress libtiff warning messages from becoming fatal.
      */
-    TIFFErrorHandler whandler = TIFFSetWarningHandler(NULL);
+    TIFFSetWarningHandler(NULL);
 
     if (tif) {
 	status = OK;
@@ -204,18 +204,18 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
      * We, however, can depend on the info in images that
      * we generate because we are careful to include valid info.
      */
-    float yres, yresinch;
+    float yres, yresinch = .0F;
     if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &yres)) {
 	short resunit = RESUNIT_INCH;		// TIFF spec default
 	(void) TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &resunit);
 	if (resunit == RESUNIT_INCH) {
 	    yresinch = yres;
 	    yres /= 25.4;
-	}
+	} else
 	if (resunit == RESUNIT_CENTIMETER) {
 	    yresinch = yres * 25.4;
 	    yres /= 10;
-	}
+	} else
 	if (resunit == RESUNIT_NONE) {		// postscript units ?
 	    yresinch = yres * 720.0;
 	    yres /= 28.35;

@@ -80,7 +80,7 @@ TypeRule::match(const void* data, size_t size, bool verbose) const
 	    if (op == ANY)
 		printf(" <any value>");
 	    else
-		printf(" %#x", value.v);
+		printf(" %#llx", (long long) value.v);
 	}
 	printf(" -- ");
     }

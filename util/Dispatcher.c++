@@ -550,7 +550,7 @@ void Dispatcher::sigCLD(int)
 int Dispatcher::waitFor(
     fd_set& rmaskret, fd_set& wmaskret, fd_set& emaskret, timeval* howlong
 ) {
-    int nfound;
+    int nfound = 0;
 #if defined(SA_NOCLDSTOP)		// POSIX
     static struct sigaction sa, osa;
 #elif defined(SV_INTERRUPT)		// BSD-style
@@ -578,12 +578,12 @@ int Dispatcher::waitFor(
      * if so then we don't want to block in the select.
      */
     if (!_cqueue->isReady()) {
-    do {
-        //note - this is an array copy, not a pointer assignment
-        rmaskret = _rmask;
-        wmaskret = _wmask;
-        emaskret = _emask;
-        howlong = calculateTimeout(howlong);
+	do {
+	    //note - this is an array copy, not a pointer assignment
+	    rmaskret = _rmask;
+	    wmaskret = _wmask;
+	    emaskret = _emask;
+	    howlong = calculateTimeout(howlong);
 
 #if CONFIG_BADSELECTPROTO
 	    nfound = select(_nfds,

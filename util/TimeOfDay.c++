@@ -145,7 +145,7 @@ TimeOfDay::parse(const char* cp)
 	// skip to any time range
 	while (*cp && *cp != ',' && !isdigit(*cp))
 	    cp++;
-	time_t start, end;
+	unsigned start, end;
 	if (sscanf(cp, "%u-%u", &start, &end) == 2) {
 	    // convert from military time to seconds
 	    start = (start/100)*60 + (start%100);

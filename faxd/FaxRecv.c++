@@ -126,7 +126,7 @@ FaxServer::getRecvFile(fxStr& qfile, fxStr& emsg)
 {
     u_long seqnum = Sequence::getNext(FAX_RECVDIR "/" FAX_SEQF, emsg);
 
-    if (seqnum == -1)
+    if (seqnum == (u_long) -1)
 	return -1;
 
     qfile = fxStr::format(FAX_RECVDIR "/fax" | Sequence::format | ".tif", seqnum);

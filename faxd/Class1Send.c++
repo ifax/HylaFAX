@@ -762,7 +762,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 		do {
 		    switch (frame.getFCF()) {
 		    case FCF_NSF:
-			{ u_int nsf = frame.getDataWord(); }
+			recvNSF(NSF(frame.getFrameData(), frame.getFrameDataLength()-1, frameRev));
 			break;
 		    case FCF_CSI:
 			{ fxStr csi; recvCSI(decodeTSI(csi, frame)); }

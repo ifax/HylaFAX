@@ -48,7 +48,7 @@ watchApp::~watchApp() {}
 static bool
 writeData(int arg, const char* buf, int cc, fxStr& emsg)
 {
-    if (Sys::write( arg, buf, cc) != cc) {
+    if (Sys::write((intptr_t) arg, buf, cc) != cc) {
 	emsg = fxStr::format("write error: %s", strerror(errno));
 	return (false);
     } else

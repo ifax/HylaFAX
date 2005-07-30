@@ -322,7 +322,7 @@ HylaFAXServer::sendTIFFHeader(TIFF* tif, int fdout)
     static DirTemplate templ = {
 #define	TIFFdiroff(v) \
     (uint32) (sizeof (TIFFHeader) + sizeof (uint16) + \
-      (unsigned long) &(((DirTemplate*) 0)->v))
+      (intptr_t) &(((DirTemplate*) 0)->v))
 	{ TIFFTAG_SUBFILETYPE,		TIFF_LONG,	1 },
 	{ TIFFTAG_IMAGEWIDTH,		TIFF_LONG,	1 },
 	{ TIFFTAG_IMAGELENGTH,		TIFF_LONG, 	1 },

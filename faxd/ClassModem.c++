@@ -95,15 +95,6 @@ const char* ClassModem::answerTypes[5] = {
     "dial"
 };
 
-static fxStr
-stripAT(const fxStr& a0)
-{
-    fxStr s(a0);
-    if (s.length() >= 2 && s.head(2) == "AT")
-	s.remove(0, 2);
-    return s;
-}
-
 ClassModem::ClassModem(ModemServer& s, const ModemConfig& c)
     : server(s)
     , conf(c)
@@ -1333,7 +1324,7 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallID& callid)
 	    }
 	    /* fall thru... */
 	case AT_RING:			// normal ring
-	    if (conf.ringResponse != "" && (rings+1) >= conf.ringsBeforeResponse) {
+	    if (conf.ringResponse != "" && rings+1U >= conf.ringsBeforeResponse) {
 		// With the MT1932ZDX we must respond ATH1>DT1 in order
 		// to hear DTMF tones which are DID data, and we configure
 		// RingExtended to be FAXCNG to then trigger ATA.

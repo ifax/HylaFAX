@@ -66,7 +66,7 @@ main(int argc, char* argv[])
     char* internationalPrefix = "011";
     char* longDistancePrefix = "1";
     bool verbose = false;
-    extern int optind, opterr;
+    extern int optind;
     extern char* optarg;
     int c;
 

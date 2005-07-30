@@ -96,7 +96,6 @@ faxCoverApp::~faxCoverApp()
 void
 faxCoverApp::initialize(int argc, char** argv)
 {
-    extern int optind;
     extern char* optarg;
     int c;
 

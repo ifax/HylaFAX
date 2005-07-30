@@ -88,7 +88,7 @@ main(int argc, char** argv)
             }
         } else {
             snprintf(fifoname, sizeof(fifoname), "%s.%.*s", FAX_FIFO,
-                sizeof (fifoname) - sizeof (FAX_FIFO), devid);
+                (int) (sizeof(fifoname) - sizeof(FAX_FIFO)), devid);
         }
     } else {
         strcpy(fifoname, FAX_FIFO);

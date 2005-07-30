@@ -748,6 +748,10 @@ ModemServer::timerExpired(long, long)
 	} else
 	    changeState(LOCKWAIT, pollLockWait);
 	break;
+    default:
+	traceServer("ModemServer::timerExpired() in an unexpected "
+	    "state %d", state);
+	break;
     }
 }
 
