@@ -1050,11 +1050,11 @@ Class1Modem::endECMBlock()
 	    return false;
 	}
 	if (c == DLE) {
-	    c = getModemChar(0);
+	    c = getModemChar(30*1000);
 	    if (c == ETX || c == EOF)
 		break;
 	}
-    } while ((c = getModemChar(0)) != EOF);
+    } while ((c = getModemChar(30*1000)) != EOF);
     if (c == EOF) return (false);
     else return (true);
 }
