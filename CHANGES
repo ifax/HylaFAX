@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.2
 
+* fix problem with PAM authentication features (2 Aug 2005)
 * fix potential hang on reading data from modem (30 Jul 2005)
 * fix potential hang on detecting an ECM block end (29 Jul 2005)
 * fix job batches to properly release modems (26 Jul 2005)

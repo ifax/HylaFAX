@@ -160,7 +160,6 @@ HylaFAXServer::pamCheck(const char* user, const char* pass)
 
 	if (pamret == PAM_SUCCESS) {
 		pamret = pam_acct_mgmt(pamh, 0);
-		retval = true;
 	}
 
 	if (pamret == PAM_SUCCESS) {
