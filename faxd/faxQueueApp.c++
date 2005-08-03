@@ -767,16 +767,22 @@ faxQueueApp::preparePageHandling(FaxRequest& req,
 	     */
 	    if (tif)			// close previous file
 		TIFFClose(tif), tif = NULL;
-	    if (i >= req.items.length())
-		goto done;
+	    if (i >= req.items.length()) {
+		req.pagehandling.append('P');		// EOP
+		return (true);
+	    }
 	    i = req.findItem(FaxRequest::send_fax, i);
-	    if (i == fx_invalidArrayIndex)
-		goto done;
+	    if (i == fx_invalidArrayIndex) {
+		req.pagehandling.append('P');		// EOP
+		return (true);
+	    }
 	    const FaxItem& fitem = req.items[i];
 	    tif = TIFFOpen(fitem.item, "r");
 	    if (tif == NULL) {
 		emsg = "Can not open document file " | fitem.item;
-		goto bad;
+		if (tif)
+		    TIFFClose(tif);
+		return (false);
 	    }
 	    if (fitem.dirnum != 0 && !TIFFSetDirectory(tif, fitem.dirnum)) {
 		emsg = fxStr::format(
@@ -784,7 +790,9 @@ faxQueueApp::preparePageHandling(FaxRequest& req,
 		    , fitem.dirnum
 		    , (const char*) fitem.item
 		);
-		goto bad;
+		if (tif)
+		    TIFFClose(tif);
+		return (false);
 	    }
 	    i++;			// advance for next find
 	} else {
@@ -797,13 +805,17 @@ faxQueueApp::preparePageHandling(FaxRequest& req,
 		    , TIFFCurrentDirectory(tif)
 		    , TIFFFileName(tif)
 		);
-		goto bad;
+		if (tif)
+		    TIFFClose(tif);
+		return (false);
 	    }
 	}
 	if (++req.totpages > maxPages) {
 	    emsg = fxStr::format("Too many pages in submission; max %u",
 		maxPages);
-	    goto bad;
+	    if (tif)
+		TIFFClose(tif);
+	    return (false);
 	}
 	next = params;
 	setupParams(tif, next, info);
@@ -837,13 +849,6 @@ faxQueueApp::preparePageHandling(FaxRequest& req,
 	    preparePageChop(req, tif, next, req.pagehandling);
 	params = next;
     }
-done:
-    req.pagehandling.append('P');		// EOP
-    return (true);
-bad:
-    if (tif)
-	TIFFClose(tif);
-    return (false);
 }
 
 /*
