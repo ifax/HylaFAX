@@ -2463,6 +2463,7 @@ BuildPortDotH()
     CheckVarDecl pid_t 'typedef int pid_t;' $TYPES_H stdlib.h
     CheckVarDecl size_t 'typedef unsigned size_t;' $TYPES_H stdlib.h
     CheckVarDecl dev_t 'typedef int dev_t;' $TYPES_H stdlib.h
+    CheckVarDecl intptr_t 'typedef long intptr_t;' $TYPES_H stdint.h
 
     if [ $CONFIG_OSFCNH = auto ]; then
         if CheckForIncludeFile osfcn.h; then
