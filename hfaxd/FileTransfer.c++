@@ -35,6 +35,7 @@
 
 #include <ctype.h>
 #include <limits.h>
+#include <stdint.h>
 
 #ifndef CHAR_BIT
 #ifdef NBBY

@@ -28,6 +28,7 @@
 #include "config.h"
 
 #include <errno.h>
+#include <stdint.h>
 
 class watchApp : public FaxClient {
 private:
