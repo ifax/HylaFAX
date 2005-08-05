@@ -216,6 +216,7 @@ parseQfile()
                   if ($0 !~ /\\\\$/)
                       break;
                   }
+		  gsub(/\`/, "", status);
               } p("faxstatus", status);
             }
     /^resolution/    { p("resolution", $2); }
@@ -775,6 +776,9 @@ elif [ "$WHY" = "removed" ] || [ "$WHY" = "killed" ] ; then
     if [ "$WHY" = "killed" ] ; then
         returnToSender
     fi
+    if [ -n "$RETURNFILETYPE" ] ; then
+	returnFaxImage "$RETURNFILETYPE"
+    fi
 elif [ "$WHY" = "timedout" ]; then 
     putHeaders "$jobtag to $number failed" 
     echo " could not be completed before the appointed deadline."
@@ -785,7 +789,7 @@ elif [ "$WHY" = "timedout" ]; then
 elif [ "$WHY" = "format_failed" ] ; then 
     putHeaders "$jobtag to $number failed" 
     echo " was not sent because document conversion"
-    echo "to facsimile failed.  The output from the converter program was:\n"
+    echo -e "to facsimile failed.  The output from the converter program was:\n"
     # use -e in echo to interpret escape characters in faxstatus
     echo -e $faxstatus "\n"
     echo "Check any PostScript documents for non-standard fonts and invalid constructs"
@@ -812,7 +816,7 @@ else
     putHeaders "Notice about $jobtag" 
     echo " had something happen to it."
     echo "Unfortunately, the notification script was invoked with an unknown reason"
-    echo "so the rest of this message is for debugging:\n"
+    echo -e "so the rest of this message is for debugging:\n"
     echo "why: $WHY"
     echo "jobTime: $JTIME"
     echo "nextTry: $NEXT"
@@ -827,6 +831,12 @@ echo "--$MIMEBOUNDARY--"
 ) 2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi -t
 
 if [ "$NOTIFY_FAXMASTER" = "yes" ]; then
+    # make sure that FAXMASTER gets all information in email by forcing some RETURN values
+    # and then reset them later
+    origRETURNTRANSCRIPT=$RETURNTRANSCRIPT
+    origRETURNTECHINFO=$RETURNTECHINFO
+    RETURNTRANSCRIPT="yes"
+    RETURNTECHINFO="yes"
     (
 	if [ -z "$jobtag" ] ; then
 	    jobtag="$jobtype job $jobid"
@@ -834,15 +844,9 @@ if [ "$NOTIFY_FAXMASTER" = "yes" ]; then
 	echo "To: $TOADDR"
 	echo "Subject: $jobtag to $number $WHY"
 	echo
-        COMFILE="log/c$commid"
-        if [ -f "$COMFILE" ] ; then
-            cat $COMFILE
-        else 
-            printf "    No transcript available"
-            if [ -n "$commid" ] ; then  # non 0 len commid value
-                    printf "(CommID c$commid)"
-            fi
-            echo "."
-        fi	
+	returnTranscript
+	returnToSender
     ) 2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi -t
+    RETURNTRANSCRIPT=$origRETURNTRANSCRIPT
+    RETURNTECHINFO=$origRETURNTECHINFO
 fi
