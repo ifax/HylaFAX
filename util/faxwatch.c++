@@ -28,7 +28,9 @@
 #include "config.h"
 
 #include <errno.h>
+#ifdef HAVE_STDINT_H
 #include <stdint.h>
+#endif
 
 class watchApp : public FaxClient {
 private:

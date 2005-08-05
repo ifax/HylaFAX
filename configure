@@ -2463,7 +2463,12 @@ BuildPortDotH()
     CheckVarDecl pid_t 'typedef int pid_t;' $TYPES_H stdlib.h
     CheckVarDecl size_t 'typedef unsigned size_t;' $TYPES_H stdlib.h
     CheckVarDecl dev_t 'typedef int dev_t;' $TYPES_H stdlib.h
-    CheckVarDecl intptr_t 'typedef long intptr_t;' $TYPES_H stdint.h
+    if CheckForIncludeFile stdint.h; then
+	Note "... configure use of <stdint.h>"
+        echo '#define HAVE_STDINT_H 1'
+	TYPES_H="$TYPES_H stdint.h"
+    fi
+    CheckVarDecl intptr_t 'typedef long intptr_t;' $TYPES_H
 
     if [ $CONFIG_OSFCNH = auto ]; then
         if CheckForIncludeFile osfcn.h; then
