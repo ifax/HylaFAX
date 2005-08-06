@@ -97,7 +97,7 @@ HylaFAXServer::userCmd(const char* name)
 
 #ifdef HAVE_PAM
 int
-pamconv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata)
+pamconv(int num_msg, STRUCT_PAM_MESSAGE **msg, struct pam_response **resp, void *appdata)
 {
 	int i;
 	char *password =(char*) appdata;

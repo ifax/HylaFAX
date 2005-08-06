@@ -1574,6 +1574,33 @@ if [ "$LIBSUN" = auto ]; then
 	LIBSUN=no
     fi
 fi
+
+#
+# PAM libraries are slightly different.  So we run some tests to try to
+# distinguish between them.
+#
+CheckPAMType()
+{
+    Note "... checking PAM library version"
+    cat>t.c++<<EOF
+#include "security/pam_appl.h"
+int
+pamconv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata)
+{
+    return(0);
+}
+main()
+{
+    struct pam_conv conv = { pamconv };
+}
+EOF
+    if runMake t "t:; \${C++F} $PAMLIBS \${C++FILE} t.c++${MAKECXXOVERRIDE}"; then
+	echo '#define STRUCT_PAM_MESSAGE const struct pam_message'
+    else
+	echo '#define STRUCT_PAM_MESSAGE struct pam_message'
+    fi
+}
+
 HAVE_PAM="/*#define HAVE_PAM 1*/"
 PAMLIBS=""
 if [ "$DISABLE_PAM" != "yes" ]; then
@@ -3002,6 +3029,9 @@ BuildPortDotH()
     if CheckLibtiff; then
 	Note "... add declaration for tiff_runlen_t"
 	echo "#define tiff_runlen_t ${tiff_runlen_t}"
+    fi
+    if [ "x$PAMLIBS" != "x" ]; then
+	CheckPAMType
     fi
     EmitCPlusPlusEpilogue
     )>xport.h
