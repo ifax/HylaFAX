@@ -1319,7 +1319,11 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending)
 	    if (crpcnt) {
 		tracePPR(dir == FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
 		startTimeout(ms);
-		if (!(atCmd(rhCmd, AT_NOTHING, 0) && waitFor(AT_CONNECT,0))) return (false);
+		if (!(atCmd(rhCmd, AT_NOTHING, 0) && waitFor(AT_CONNECT,0))) {
+		    stopTimeout("waiting for v.21 carrier");
+		    if (wasTimeout()) abortReceive();
+		    return (false);
+		}
 		stopTimeout("waiting for v.21 carrier");
 	    }
 	    frame.reset();
