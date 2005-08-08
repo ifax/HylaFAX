@@ -152,7 +152,7 @@ JobReqProto	integer	\s-160\s+1	requeue interval after fax protocol error
 JobRetryBusy	integer	\-	number of retries for \s-1BUSY\s+1 dial result
 JobRetryDataConn	integer	\-	number of retries for data connection dial result
 JobRetryNoAnswer	integer	\-	number of retries for \s-1NO ANSWER\s+1 dial result
-JobRetryNoCarrier	integer	\-	number of retries for \s-1NO CARRIER\s+1 dial result
+JobRetryNoCarrier	integer	1	number of retries for \s-1NO CARRIER\s+1 dial result
 JobRetryOther	integer	\-	number of retries for ``other'' problems
 LockDataCalls	boolean	\s-1Yes\s+1	lock modem for the duration of an inbound data call
 LockVoiceCalls	boolean	\s-1Yes\s+1	lock modem for the duration of an inbound voice call
@@ -175,7 +175,7 @@ ModemReadyState	string	\s-1R\s+1	``ready state'' sent by \fIfaxgetty\fP
 ModemRingResponse	string	\-	command to respond after hearing RING
 ModemRingsBeforeResponse	integer	\s-10\s+1	the number of rings before ModemRingResponse
 NoAnswerVoice	boolean	\s-1false\s+1	disable the answering of voice-indicated calls
-NoCarrierRetrys	integer	\s-11\s+1	number of times to retry dialing on ``\s-2NO CARRIER\s0''
+NoCarrierRetrys	integer	\-	Deprecated - See JobRetryNoCarrier
 NotifyCmd\(S2	string	\s-1bin/notify\s+1	user notification command script
 PageChop\(S1	string	\s-1last\s+1	control automatic truncation of trailing whitespace
 PageChopThreshold\(S1	float	\s-13.0\s+1	whitespace truncation threshold (inches)

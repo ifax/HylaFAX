@@ -155,7 +155,7 @@ ServerConfig::setupConfig()
 
     retryMAX[ClassModem::OK]		= 0;
     retryMAX[ClassModem::BUSY]		= FAX_RETBUSY;
-    retryMAX[ClassModem::NOCARRIER]	= FAX_RETRY;
+    retryMAX[ClassModem::NOCARRIER]	= 1;		// Old NoCarrierRetry Default
     retryMAX[ClassModem::NOANSWER]	= FAX_RETRY;
     retryMAX[ClassModem::NODIALTONE]	= FAX_RETRY;
     retryMAX[ClassModem::ERROR]		= FAX_RETRY;
