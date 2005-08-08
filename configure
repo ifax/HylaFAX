@@ -2695,7 +2695,6 @@ BuildPortDotH()
     CheckFuncDecl free 'extern void free(void*);' stdlib.h
     CheckFuncDecl strtoul \
 	'extern unsigned long strtoul(const char*, char**, int);' stdlib.h
-    CheckFuncDecl cuserid 'extern char* cuserid(char*);' stdio.h
     #
     # unistd.h is for sco3.2v4.[0-2] and GNU libc (yech!)
     #
@@ -3052,7 +3051,6 @@ Note ""
 Note "Checking system libraries for functionality to emulate."
 
 FUNCS="
-    cuserid
     flock
     ftruncate
     getopt

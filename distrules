@@ -34,7 +34,6 @@ PORTFILES=\
     port/Makefile.in				\
     port/install.sh.in				\
     port/mkdepend.in				\
-    port/cuserid.c				\
     port/flock.c				\
     port/ftruncate.c				\
     port/getopt.c				\

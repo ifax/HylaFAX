@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.2.2
 
+* remove deprecated cuserid (8 Aug 2005)
 * fix some problems with sender notifications (5 Aug 2005)
 * fix problem with PAM authentication features (2 Aug 2005)
 * fix potential hang on reading data from modem (30 Jul 2005)
