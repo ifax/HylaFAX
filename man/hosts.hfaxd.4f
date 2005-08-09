@@ -111,8 +111,8 @@ to control access to server resources such as jobs and documents
 Multiple clients/users may share the same 
 .I uid
 or unique IDs may be created for each client.
-User IDs may be any number in the range [0..6002]
-with 6002 used, by convention, for entries that do not have a
+User IDs may be any number in the range [0..60002]
+with 60002 used, by convention, for entries that do not have a
 .I uid
 specified.
 .TP 10

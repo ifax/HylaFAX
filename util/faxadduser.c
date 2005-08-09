@@ -36,7 +36,7 @@
 #include "port.h"
 
 #ifndef FAX_DEFAULT_UID
-#define FAX_DEFAULT_UID 6002
+#define FAX_DEFAULT_UID 60002
 #endif
 
 extern int optind;
