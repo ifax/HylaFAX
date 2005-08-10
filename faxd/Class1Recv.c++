@@ -1710,18 +1710,19 @@ Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
 	    if (prevPage)
 		recvEndPage(tif, params);
 	}
-    } else (void) recvPageDLEData(tif, checkQuality(), params, emsg);
-
-    TIFFSetField(tif, TIFFTAG_IMAGELENGTH, getRecvEOLCount());
-    TIFFSetField(tif, TIFFTAG_CLEANFAXDATA, getRecvBadLineCount() ?
-	CLEANFAXDATA_REGENERATED : CLEANFAXDATA_CLEAN);
-    if (getRecvBadLineCount()) {
-	TIFFSetField(tif, TIFFTAG_BADFAXLINES, getRecvBadLineCount());
-	TIFFSetField(tif, TIFFTAG_CONSECUTIVEBADFAXLINES,
-	    getRecvConsecutiveBadLineCount());
+	return (true);		// no RTN with ECM
+    } else {
+	(void) recvPageDLEData(tif, checkQuality(), params, emsg);
+	TIFFSetField(tif, TIFFTAG_IMAGELENGTH, getRecvEOLCount());
+	TIFFSetField(tif, TIFFTAG_CLEANFAXDATA, getRecvBadLineCount() ?
+	    CLEANFAXDATA_REGENERATED : CLEANFAXDATA_CLEAN);
+	if (getRecvBadLineCount()) {
+	    TIFFSetField(tif, TIFFTAG_BADFAXLINES, getRecvBadLineCount());
+	    TIFFSetField(tif, TIFFTAG_CONSECUTIVEBADFAXLINES,
+		getRecvConsecutiveBadLineCount());
+	}
+	return (isQualityOK(params));
     }
-    if (params.ec != EC_DISABLE) return (true);	// no RTN with ECM
-    else return (isQualityOK(params));
 }
 
 /*
