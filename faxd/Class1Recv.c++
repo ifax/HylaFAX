@@ -1710,6 +1710,7 @@ Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
 	    if (prevPage)
 		recvEndPage(tif, params);
 	}
+	TIFFSetField(tif, TIFFTAG_IMAGELENGTH, getRecvEOLCount());
 	return (true);		// no RTN with ECM
     } else {
 	(void) recvPageDLEData(tif, checkQuality(), params, emsg);
