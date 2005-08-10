@@ -74,8 +74,8 @@ else
     ERRORSTO=/dev/null
 fi
 
-tmpps=foo$$.ps
-out=foo.pdf				# default output filename
+tmpps=tmp/foo$$.ps
+out=tmp/foo.pdf				# default output filename
 FILE=
 opt=
 while test $# != 0
