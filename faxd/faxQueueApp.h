@@ -76,7 +76,7 @@ private:
 	~SchedTimeout();
 	void timerExpired(long, long);
 
-	void start();
+	void start(u_short s = 0);
     };
 // configuration stuff
     fxStr	configFile;		// configuration filename
@@ -225,7 +225,7 @@ private:
     void        unblockDestJobs(Job& job, DestInfo& di);
 
     void	runScheduler();
-    void	pokeScheduler();
+    void	pokeScheduler(u_short s = 0);
 // job preparation stuff
     bool	prepareJobNeeded(Job&, FaxRequest&, JobStatus&);
     static void prepareCleanup(int s);

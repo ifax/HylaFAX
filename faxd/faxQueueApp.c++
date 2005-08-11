@@ -79,7 +79,7 @@ faxQueueApp::SchedTimeout::timerExpired(long, long)
 }
 
 void
-faxQueueApp::SchedTimeout::start()
+faxQueueApp::SchedTimeout::start(u_short s)
 {
     /*
      * If we don't throttle the scheduler then large
@@ -88,12 +88,12 @@ faxQueueApp::SchedTimeout::start()
      * once per second.
      */
     if (!started && Sys::now() > lastRun) {
-	Dispatcher::instance().startTimer(0,1, this);
-	lastRun = Sys::now();
+	Dispatcher::instance().startTimer(s, 1, this);
+	lastRun = Sys::now() + s;
 	started = true;
 	pending = false;
     } else {
-	if (!pending) {
+	if (!pending && lastRun <= Sys::now()) {
 	    /*
 	     * The scheduler is either running now or has been run
 	     * within the last second and there are no timers set
@@ -101,8 +101,8 @@ faxQueueApp::SchedTimeout::start()
 	     * timer to go off in one second to avoid a stalled
 	     * run queue.
 	     */
-	    Dispatcher::instance().startTimer(1,0, this);
-	    lastRun = Sys::now() + 1;
+	    Dispatcher::instance().startTimer(s + 1, 0, this);
+	    lastRun = Sys::now() + 1 + s;
 	    pending = true;
 	}
     }
@@ -2106,10 +2106,10 @@ faxQueueApp::runJob(Job& job)
      * In order to deliberately batch jobs by using a common
      * time-to-send we need to give time for the other jobs'
      * timers to expire and to enter the run queue before
-     * running the scheduler.
+     * running the scheduler.  Thus the scheduler is poked
+     * with a delay.
      */
-    sleep(1);			// is this long enough?
-    pokeScheduler();
+    pokeScheduler(1);
 }
 
 /*
@@ -2474,9 +2474,9 @@ faxQueueApp::pollForModemLock(Modem& modem)
  * next time the dispatcher is invoked.
  */
 void
-faxQueueApp::pokeScheduler()
+faxQueueApp::pokeScheduler(u_short s)
 {
-    schedTimeout.start();
+    schedTimeout.start(s);
 }
 
 /*
