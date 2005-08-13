@@ -454,7 +454,7 @@ echo ""
 find info cinfo -type f -newer $LAST -print 2>/dev/null >$JUNK
 if [ -s $JUNK ]; then
 	echo "Destinations being rejected (added since $LASTRUN):"
-	$GREP "^rejectNotice:" `$CAT $JUNK` | $AWK -F: '
+	(for i in `$CAT $JUNK`; do $GREP "^rejectNotice:" $i; done) | $AWK -F: '
 		{ reason = $3;
 		  for (i = 4; i <= NF; i++)
 			reason = reason ":" $i;
