@@ -1507,9 +1507,11 @@ Class1Modem::sendClass1ECMData(const u_char* data, u_int cc, const u_char* bitre
 		return (false);
 	}
     }
-    if (eod && (ecmFramePos != 0)) {
-	while (ecmFramePos < (frameSize + 4))
-	    ecmFrame[ecmFramePos++] = 0x00;
+    if (eod) {
+	if (ecmFramePos != 0)	{
+	    // frame must be filled to end with zero-data
+	    while (ecmFramePos < (frameSize + 4)) ecmFrame[ecmFramePos++] = 0x00;
+	}
 	if (!blockFrame(bitrev, true, ppmcmd, emsg))
 	    return (false);
     }
