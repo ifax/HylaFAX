@@ -329,10 +329,28 @@ function getDF(params)
     }
 }
 
+function hex(n) {
+    # GNU Awk 3.1.3 has a type conversion error from hex strings,
+    # so we have to do it the hard way
+    val = 0;
+    for (position = 1; position <= length(n); position++) {
+	val = val * 16;
+	char = tolower(substr(n, position, 1));
+	if (char == "a") val = val + 10;
+	else if (char == "b") val = val + 11;
+	else if (char == "c") val = val + 12;
+	else if (char == "d") val = val + 13;
+	else if (char == "e") val = val + 14;
+	else if (char == "f") val = val + 15;
+	else val = val + int(char);
+    }
+    return val;
+}
+
 function isBitSet(bit, dcs) {
     byte = int((bit - 1) / 8);
     pos = 7 - ((bit - 1) % 8);
-    dcsbyte = int("0x"substr(dcs, byte*3+1, 2));
+    dcsbyte = hex(substr(dcs, (byte*3+1), 2));
     return int(int(dcsbyte / (2 ^ pos)) % 2);
 }
 
