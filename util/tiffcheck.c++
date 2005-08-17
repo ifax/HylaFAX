@@ -161,21 +161,22 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
     }
     uint16 compression = 0;
     (void) TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression);
-    if (compression != COMPRESSION_CCITTFAX3 && compression != COMPRESSION_CCITTFAX4) {
-	emsg.append("Document requires reformatting, not in Group 3 or Group 4 format.\n");
-	status |= REFORMAT;
-    }
-    if (!useMMR && compression == COMPRESSION_CCITTFAX4) {
-	emsg.append("Document requires reformatting, "
-	    "client is incapable of receiving 2DMMR data.\n");
-	status |= REFORMAT;
-    }
-    uint32 g3opts = 0;
-    (void) TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
-    if ((g3opts ^ dataFormat) & GROUP3OPT_2DENCODING) {
-	emsg.append("Document requires reformatting, "
-	    "client is incapable of receiving 2DMR data.\n");
-	status |= REFORMAT;
+    if (useMMR) {
+	if (compression != COMPRESSION_CCITTFAX4) {
+	    emsg.append("Document requires reformatting, not in Group 4 format.\n");
+	    status |= REFORMAT;
+	}
+    } else {
+	if (compression != COMPRESSION_CCITTFAX3) {
+	    emsg.append("Document requires reformatting, not in Group 3 format.\n");
+	    status |= REFORMAT;
+	}
+	uint32 g3opts = 0;
+	(void) TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
+	if ((g3opts ^ dataFormat) & GROUP3OPT_2DENCODING) {
+	    emsg.append("Document requires reformatting, not in 2DMR format.\n");
+	    status |= REFORMAT;
+	}
     }
     /*
      * FaxSend can handle multistrip MH and MR images (not MMR),
