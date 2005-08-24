@@ -45,7 +45,7 @@ TARGETS=\
 default all::
 	@${MAKE} incdepend
 	@${MAKE} targets
-	
+
 targets: ${TARGETS}
 
 @MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
