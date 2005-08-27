@@ -102,7 +102,7 @@ Changelog for HylaFAX 4.2.2
 * minor fix in notify for mawk (16 Feb 2005)
 * fix a false V.34-Fax error message after FTT (16 Feb 2005)
 * convert CIDName/CIDNumber to CallID (14 Feb 2005)
-* add MaxBatchJobs config option (10 Feb 2005)
+* add MaxBatchJobs config option (10 Feb, 26 Aug 2005)
 * improve the way that external gettys are run
 * fix some problems when decoding pipe fails in ECM
 * ignore "echos" of the dialed number after dialing

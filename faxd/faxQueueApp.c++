@@ -2331,7 +2331,8 @@ faxQueueApp::runScheduler()
 			if (maxBatchJobs > 64) maxBatchJobs = 64;
 			
 			joblist++;		// Skip the current job
-			for (u_int i = 1; i < maxBatchJobs && joblist.notDone(); joblist++, i++) {
+			u_int batchedjobs = 1;
+			for (; batchedjobs < maxBatchJobs && joblist.notDone(); joblist++) {
 			    cjob = joblist;
 			    fxAssert(cjob->tts <= Sys::now(), "Sleeping job on run queue");
 			    fxAssert(cjob->modem == NULL, "Job on run queue holding modem");
@@ -2359,6 +2360,7 @@ faxQueueApp::runScheduler()
 			    cjob->bprev = bjob;
 			    bjob = cjob;
 			    cjob->breq = creq;
+			    batchedjobs++;
 			}
 			bjob->bnext = NULL;
 		    } else
