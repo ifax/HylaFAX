@@ -766,7 +766,7 @@ and
 The pathname of the optional shell script, e.g. ``etc/localid'', that 
 makes dynamic configuration changes, i.e., to 
 .B LocalIdentifier,
-based on and device ID and call identification.  The script is passed those
+based on device ID and call identification.  The script is passed those
 values as the parameters ($1 = device id, $2 = CallID1, $3 = CallID2, $4 = CallID3, ...), 
 when answering an incoming call.  The script can then 
 perform local processing as desired to send on standard output the 
