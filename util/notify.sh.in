@@ -161,8 +161,7 @@ setCustomValues()
     # be set to their non-customized defaults prior to this.
     #
     if [ -f etc/FaxNotify ]; then
-        # FaxNotify sets all nofity preferecnes that can be accessed
-        # in the notify.awk script
+        # source notify preferecnes
         . etc/FaxNotify
     fi
 }
