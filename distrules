@@ -360,11 +360,13 @@ HYLAFAXSRC=\
 	util/faxstate.c				\
 	util/fxassert.c				\
 	util/pagesizes.in			\
+	util/notify.awk				\
 	util/faxcron.sh.in			\
 	util/archive.sh.in			\
 	util/faxrcvd.sh.in			\
 	util/mkcover.sh.in			\
 	util/notify.sh.in			\
+	util/notify-4.1.sh.in			\
 	util/pollrcvd.sh.in			\
 	util/pcl2fax.sh.in			\
 	util/ps2fax.dps.sh.in			\

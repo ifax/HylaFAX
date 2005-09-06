@@ -185,6 +185,7 @@ install: installClient
 	${PUTSUPD} -m 755 -src tiff2pdf.sh -O tiff2pdf
 	${PUTSUPD} -m 755 -src notify.sh -O notify
 	${PUTSUPD} -m 755 -src notify-4.1.sh -O notify-4.1
+	${PUTSUPD} -m 444 -src ${SRCDIR}/notify.awk -O notify.awk
 	${PUTSUPD} -m 755 -src archive.sh -O archive
 	${PUTSUPD} -m 755 -src faxrcvd.sh -O faxrcvd
 	${PUTSUPD} -m 755 -src pollrcvd.sh -O pollrcvd
