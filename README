@@ -27,6 +27,10 @@ further resources regarding HylaFAX.
 
                        *   INCOMPATIBILITIES   *
 
+* Some modem config files generated from earlier versions' config file
+  prototypes may contain Class1TCFRecvHack.  This is no longer desireable
+  for production use, and this feature should now only be used for
+  debugging purposes.
 * Some of the CallID changes in this release required some reordering of
   the command-line parameters with which the DynamicConfig scripts were
   called.  If you use DynamicConfig check your scripts after upgrading.

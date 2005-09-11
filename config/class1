@@ -112,7 +112,6 @@ Class1Cmd:		AT+FCLASS=1	# command to enter class 1
 Class1PPMWaitCmd:	AT+FTS=7	# command to stop and wait before PPM
 Class1TCFWaitCmd:	AT+FTS=7	# command to stop and wait before TCF
 Class1EOPWaitCmd:	AT+FTS=9	# command to stop and wait before EOP
-Class1MsgRecvHackCmd:	""	# command to avoid +FCERROR before image
 Class1TCFResponseDelay:	75		# 75ms delay between recv TCF & response
 Class1SendMsgDelay:	200		# 75ms delay after training
 Class1SwitchingCmd:	AT+FRS=7	# silence between HDLC recv and trans
