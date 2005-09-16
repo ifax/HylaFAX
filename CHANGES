@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX 4.2.2
 
+* fix error of confirming an ECM block missing frames other
+  than the last frame when a null block is received (16 Sep 2005)
 * fix error of tiffcheck missing needed reformatting (17 Aug 2005)
 * add workaround for a bug in recent versions of gawk (15 Aug 2005)
 * fix send error causing ECM data to not get sent (15 Aug 2005)
