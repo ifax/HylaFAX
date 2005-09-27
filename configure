@@ -181,7 +181,9 @@ LLDOPTS
 LN
 LN_S
 HAVE_PAM
-PAMLIBS"
+PAMLIBS
+HAVE_JBIG
+LIBJBIG"
 
 VAR2="MACHDEPLIBS
 MAKECXXOVERRIDE
@@ -1617,6 +1619,23 @@ if [ "$DISABLE_PAM" != "yes" ]; then
 	fi
 else
 	Note "Disabling PAM support"
+fi
+HAVE_JBIG="/*#define HAVE_JBIG 1*/"
+LIBJBIG=""
+if [ "$DISABLE_JBIG" != "yes" ]; then
+	Note "Checking for JBIG library support"
+	CheckForLibrary jbg_enc_init -ljbig &&
+		CheckForIncludeFile jbig.h && {
+			HAVE_JBIG="#define HAVE_JBIG 1"
+			LIBJBIG="-ljbig"
+		}
+	if [ "x$LIBJBIG" = "x" ]; then
+		Note "... not found. Disabling JBIG support"
+	else
+		Note "... found. Enabling JBIG support"
+	fi
+else
+	Note "Disabling JBIG support"
 fi
 CheckForLibrary crypt -lc || {
     #

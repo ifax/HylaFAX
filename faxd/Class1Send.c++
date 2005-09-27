@@ -1570,8 +1570,20 @@ Class1Modem::sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm
  * send all the data they are presented.
  */
 bool
-Class1Modem::sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, fxStr& emsg)
+Class1Modem::sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, uint32 rows, fxStr& emsg)
 {
+    if (params.df == DF_JBIG) {
+	/*
+	 * If we ever needed to send NEWLEN or other JBIG-terminating
+	 * markers this is where we would do it.
+	 */
+	//u_char newlen[8] = { 0xFF, 0x05, 
+	//    (rows>>24)&0xFF, (rows>>16)&0xFF, (rows>>8)&0xFF, rows&0xFF,
+	//    0xFF, 0x02 };	// SDNORM is added per spec
+	//return sendClass1ECMData(newlen, 8, rtcRev, true, ppmcmd, emsg);
+	return sendClass1ECMData(NULL, 0, rtcRev, true, ppmcmd, emsg);
+    }
+
     // determine the number of trailing zeros on the last byte of data
     u_short zeros = 0;
     for (short i = 7; i >= 0; i--) {
@@ -1686,6 +1698,7 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
     protoTrace("SEND begin page");
 
     tstrip_t nstrips = TIFFNumberOfStrips(tif);
+    uint32 rowsperstrip = 0;
     if (nstrips > 0) {
 
 	/*
@@ -1738,7 +1751,6 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 		off += (u_int) sbc;
 	}
 	totdata -= pageChop;		// deduct trailing white space not sent
-	uint32 rowsperstrip;
 	TIFFGetFieldDefaulted(tif, TIFFTAG_ROWSPERSTRIP, &rowsperstrip);
 	if (rowsperstrip == (uint32) -1)
 	    TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &rowsperstrip);
@@ -1756,6 +1768,12 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	} else
 	    dp = data;
 
+	/*
+	 * After a page chop rowsperstrip is no longer valid, as the strip will
+	 * be shorter.  Therefore, convertPhaseCData (for the benefit of JBIG) and 
+	 * correctPhaseCData deliberately update rowsperstrip.
+	 */
+
 	if (conf.softRTFCC && params.df != newparams.df) {
 	    switch (params.df) {
 		case DF_1DMH:
@@ -1768,14 +1786,15 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 		    protoTrace("Reading MMR-compressed image file");
 		    break;
 	    }
-	    dp = convertPhaseCData(dp, totdata, fillorder, params, newparams);
+	    dp = convertPhaseCData(dp, totdata, fillorder, params, newparams, rowsperstrip);
 	}
 	params = newparams;		// revert back
 
         /*
          * correct broken Phase C (T.4/T.6) data if neccessary 
          */
-	lastbyte = correctPhaseCData(dp, &totdata, fillorder, params);
+	if (params.df <= DF_2DMMR)
+	    lastbyte = correctPhaseCData(dp, &totdata, fillorder, params, rowsperstrip);
 
 	/*
 	 * Send the page of data.  This is slightly complicated
@@ -1789,7 +1808,7 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	 * modem wants the data in MSB2LSB order, but for now we'll
 	 * avoid the temptation to optimize.
 	 */
-	if (fillorder != FILLORDER_LSB2MSB) {
+	if (params.df <= DF_2DMMR && fillorder != FILLORDER_LSB2MSB) {
 	    TIFFReverseBits(dp, totdata);
 	    lastbyte = frameRev[lastbyte];
 	}
@@ -1887,7 +1906,7 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	delete data;
     }
     if (rc || abortRequested())
-	rc = sendRTC(params, ppmcmd, lastbyte, emsg);
+	rc = sendRTC(params, ppmcmd, lastbyte, rowsperstrip, emsg);
     protoTrace("SEND end page");
     if (params.ec == EC_DISABLE) {
 	// these were already done by ECM protocol

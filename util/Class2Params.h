@@ -109,6 +109,7 @@ public:
     const char* bestVerticalResName() const;
     const char* scanlineTimeName() const;
     const char* dataFormatName() const;
+    fxStr dataFormatsName();
     const char* ecmName() const;
 
     u_int encode() const;		// generate encoded params

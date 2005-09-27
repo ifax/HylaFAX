@@ -426,6 +426,15 @@ FaxModem::supportsMMR() const
 }
 
 /*
+ * Return whether or not the modem supports JBIG.
+ */
+bool
+FaxModem::supportsJBIG() const
+{
+    return (modemParams.df & BIT(DF_JBIG)) != 0;
+}
+
+/*
  * Return whether or not received EOLs are byte aligned.
  */
 bool
@@ -728,7 +737,7 @@ FaxModem::notifyPageSent(TIFF* tif)
 
 int
 FaxModem::correctPhaseCData(u_char* buf, u_long* pBufSize,
-                            u_int fillorder, const Class2Params& params)
+                            u_int fillorder, const Class2Params& params, uint32& rows)
 {
     u_char* endOfData;
     int lastbyte = 0;
@@ -736,6 +745,7 @@ FaxModem::correctPhaseCData(u_char* buf, u_long* pBufSize,
 	MemoryDecoder dec1(buf, params.pageWidth(), *pBufSize, fillorder, params.is2D(), true);
 	endOfData = dec1.cutExtraEOFB();
 	lastbyte = dec1.getLastByte();
+	rows = dec1.getRows();
     } else {
 	MemoryDecoder dec1(buf, params.pageWidth(), *pBufSize, fillorder, params.is2D(), false);
 	dec1.fixFirstEOL();
@@ -744,6 +754,7 @@ FaxModem::correctPhaseCData(u_char* buf, u_long* pBufSize,
 	 */
 	MemoryDecoder dec2(buf, params.pageWidth(), *pBufSize, fillorder, params.is2D(), false);
 	endOfData = dec2.cutExtraRTC();
+	rows = dec2.getRows();
     }
     if( endOfData )
         *pBufSize = endOfData - buf;
@@ -752,10 +763,11 @@ FaxModem::correctPhaseCData(u_char* buf, u_long* pBufSize,
 
 u_char*
 FaxModem::convertPhaseCData(u_char* buf, u_long& totdata, u_int fillorder, 
-			    const Class2Params& params, const Class2Params& newparams)
+			    const Class2Params& params, const Class2Params& newparams, uint32& rows)
 {
     MemoryDecoder dec(buf, params.pageWidth(), totdata, fillorder, params.is2D(), (params.df == DF_2DMMR));
     u_char* data = dec.convertDataFormat(newparams);
     totdata = dec.getCC();
+    rows = dec.getRows();
     return (data);
 }

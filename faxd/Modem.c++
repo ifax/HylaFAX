@@ -405,6 +405,15 @@ Modem::supportsMMR() const
 }
 
 /*
+ * Return whether or not the modem supports JBIG.
+ */
+bool
+Modem::supportsJBIG() const
+{
+    return caps.df & BIT(DF_JBIG);
+}
+
+/*
  * Return whether or not the modem supports the
  * specified page length.  As above for vertical
  * resolution we're lenient in what we accept.

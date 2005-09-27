@@ -238,6 +238,7 @@ Class1Modem::pokeConfig()
     if (conf.class1ECMSupport) {
 	modemParams.ec = BIT(EC_DISABLE) | BIT(EC_ENABLE64) | BIT(EC_ENABLE256);
  	modemParams.df |= BIT(DF_2DMMR);
+	if (conf.class1JBIGSupport) modemParams.df |= BIT(DF_JBIG);
     } else
 	modemParams.ec = BIT(EC_DISABLE);
 }
@@ -1565,8 +1566,10 @@ Class1Modem::modemDIS() const
 
     if (conf.class1ECMSupport) {
 	// JBIG
-	if (conf.class1JBIGBasicSupport)
+	if (conf.class1JBIGSupport) {
 	    dis_caps.setBit(FaxParams::BITNUM_JBIG_BASIC, true);
+	    dis_caps.setBit(FaxParams::BITNUM_JBIG_L0, true);	// JBIG library can handle L0 = 1-Yd
+	}
 /* - disabled for now
 	// JBIG grey/color requires JPEG grey/color
 	if (conf.class1GreyJBIGSupport || conf.class1ColorJBIGSupport) {
@@ -1576,7 +1579,6 @@ Class1Modem::modemDIS() const
 	if (conf.class1ColorJBIGSupport)
 	    dis_caps.setBit(FaxParams::BITNUM_FULLCOLOR, true);
 */
-
 	// JPEG
 	if (conf.class1GreyJPEGSupport || conf.class1ColorJPEGSupport)
 	    dis_caps.setBit(FaxParams::BITNUM_JPEG, true);

@@ -365,6 +365,8 @@ function getDFfromDCS(dcs)
 	    return dfNames[6];
 	return dfNames[5];
     }
+    if (isBitSet(78, dcs) || isBitSet(79, dcs))
+	return dfNames[4];
     if (isBitSet(31, dcs))
 	return dfNames[3];
     if (isBitSet(26, dcs))
@@ -415,7 +417,7 @@ function printRule(n, s)
 BEGIN		{ FS="\t";
 		  rates = "2400:4800:7200:9600:12000:14400:16800:19200:21600:24000:26400:28800:31200:33600";
 		  setupMaps(rates, rateMap, brNames);
-		  datas = "1-D MH:2-D MR:2-D Uncompressed Mode:2-D MMR:JBIG Basic:JPEG Greyscale:JPEG Full-color";
+		  datas = "1-D MH:2-D MR:2-D Uncompressed Mode:2-D MMR:JBIG:JPEG Greyscale:JPEG Full-color";
 		  setupMaps(datas, dataMap, dfNames);
 		  setupDateTimeStuff();
 		  if (SINCEDT == "")

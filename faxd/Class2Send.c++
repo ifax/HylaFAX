@@ -481,6 +481,7 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	} else
 	    dp = data;
 
+	uint32 rows = 0;
 	if (conf.softRTFCC && !conf.class2RTFCC && params.df != newparams.df) {
 	    switch (params.df) {
 		case DF_1DMH:
@@ -493,13 +494,13 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 		    protoTrace("Reading MMR-compressed image file");
 		    break;
 	    }
-	    dp = convertPhaseCData(dp, totdata, fillorder, params, newparams);
+	    dp = convertPhaseCData(dp, totdata, fillorder, params, newparams, rows);
 	}
 
         /*
          * correct broken Phase C (T.4/T.6) data if necessary
          */
-	lastByte = correctPhaseCData(dp, &totdata, fillorder, (conf.class2RTFCC ? params : newparams));
+	lastByte = correctPhaseCData(dp, &totdata, fillorder, (conf.class2RTFCC ? params : newparams), rows);
 
 	params = newparams;		// revert back
 

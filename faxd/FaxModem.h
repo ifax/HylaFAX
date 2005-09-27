@@ -159,12 +159,12 @@ protected:
  * Correct if neccessary Phase C (T.4/T.6) data (remove extra RTC/EOFB etc.)
  */
     int		correctPhaseCData(u_char* buf, u_long* pBufSize,
-                                  u_int fillorder, const Class2Params& params);
+                                  u_int fillorder, const Class2Params& params, uint32& rows);
 /*
  * Convert Phase C data...
  */
     u_char*	convertPhaseCData(u_char* buf, u_long& totdata, u_int fillorder,
-                            const Class2Params& params, const Class2Params& newparams);
+                            const Class2Params& params, const Class2Params& newparams, uint32& rows);
 public:
     enum {			// FaxModem::RTNHandling
         RTN_RETRANSMIT = 0,         // retransmit page after RTN until MCF/MPS
@@ -183,6 +183,7 @@ public:
 // methods for querying modem capabilities
     virtual bool supports2D() const;
     virtual bool supportsMMR() const;
+    virtual bool supportsJBIG() const;
     virtual bool supportsEOLPadding() const;
     virtual bool supportsVRes(float res) const;
     virtual bool supportsPageWidth(u_int w, u_int r) const;

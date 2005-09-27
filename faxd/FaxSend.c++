@@ -538,15 +538,15 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
      * use in pre-formatting documents sent in future conversations.
      */
     clientInfo.setSupportsVRes(clientCapabilities.vr);
-    clientInfo.setSupports2DEncoding(clientCapabilities.df >= DF_2DMR);
-    clientInfo.setSupportsMMR(clientCapabilities.df >= DF_2DMMR);
+    clientInfo.setSupports2DEncoding(clientCapabilities.df & BIT(DF_2DMR));
+    clientInfo.setSupportsMMR(clientCapabilities.df & BIT(DF_2DMMR));
     clientInfo.setMaxPageWidthInPixels(clientCapabilities.pageWidth());
     clientInfo.setMaxPageLengthInMM(clientCapabilities.pageLength());
     traceProtocol("REMOTE best rate %s", clientCapabilities.bitRateName());
     traceProtocol("REMOTE max %s", clientCapabilities.pageWidthName());
     traceProtocol("REMOTE max %s", clientCapabilities.pageLengthName());
     traceProtocol("REMOTE best vres %s", clientCapabilities.bestVerticalResName());
-    traceProtocol("REMOTE best format %s", clientCapabilities.dataFormatName());
+    traceProtocol("REMOTE format support: %s", (const char*) clientCapabilities.dataFormatsName());
     if (clientCapabilities.ec != EC_DISABLE)
 	traceProtocol("REMOTE supports %s", clientCapabilities.ecmName());
     traceProtocol("REMOTE best %s", clientCapabilities.scanlineTimeName());
@@ -597,14 +597,31 @@ FaxServer::sendSetupParams1(TIFF* tif,
      * requested.  So, RTFCC defeats requested data formatting. :-(
      */
     if (class2RTFCC || softRTFCC) {
-	params.df = fxmin(params.df, clientCapabilities.df);
+	/*
+	 * Determine the "maximum" compression.
+	 *
+	 * params.df prior to here represents how faxq formatted the image.
+	 * clientCapabilities.df represents what formats the remote supports.
+	 *
+	 * Ignore what faxq did and send with the "highest" (monochrome) 
+	 * compression that both the modem and the remote supports.
+	 */
+	params.df = 0;
+	u_int bits = clientCapabilities.df;
+	bits &= BIT(DF_JBIG+1)-1;		// cap at JBIG, only deal with monochrome
+	while (bits) {
+	    bits >>= 1;
+	    if (bits) params.df++;
+	}
+	if (params.df == DF_JBIG && (!modem->supportsJBIG() || (params.ec == EC_DISABLE)))
+		params.df = DF_2DMMR;
 	// even if RTFCC supported uncompressed mode (and it doesn't)
 	// it's likely that the remote was incorrect in telling us it does
 	if (params.df == DF_2DMRUNCOMP) params.df = DF_2DMR;
 	// don't let RTFCC cause problems with restricted modems...
 	if (params.df == DF_2DMMR && (!modem->supportsMMR() || (params.ec == EC_DISABLE)))
 		params.df = DF_2DMR;
-	if (params.df == DF_2DMR && !modem->supports2D())
+	if (params.df == DF_2DMR && (!modem->supports2D() || !(clientCapabilities.df & BIT(DF_2DMR))))
 		params.df = DF_1DMH;
     } else {
 	if (compression == COMPRESSION_CCITTFAX4) {

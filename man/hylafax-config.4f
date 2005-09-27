@@ -288,6 +288,7 @@ Class1ExtendedRes	boolean	\-	Class 1/1.0: enable extended resolution support
 Class1HFLOCmd	string	\-	Class 1/1.0: command to set hardware flow control
 Class1FrameOverhead	integer	\s-14\s+1	Class 1/1.0: extra bytes in a received \s-1HDLC\s+1 frame
 Class1GreyJPEGSupport	boolean	\s-1No\s+1	Class 1/1.0: to enable grey JPEG fax support
+Class1JBIGSupport	boolean	\s-1\fIsee below\fP\s+1	Class 1/1.0: to enable monochrome JBIG fax support
 Class1NFLOCmd	string	\-	Class 1/1.0: command to set no flow control
 Class1RecvAbortOK	integer	\s-1200\s+1	Class 1/1.0: max wait (ms) for ``\s-1OK\s+1'' after recv abort
 Class1RecvIdentTimer	integer	\s-140000\s+1	Class 1/1.0: max wait (ms) for initial ident frame
@@ -2294,8 +2295,15 @@ number should be 4 (the default).
 .B Class1GreyJPEGSupport
 Whether or not to enable support for T.30-E greyscale facsimile
 with JPEG compression.  This is always enabled if
-.B Class1GreyJPEGSupport
+.B Class1ColorJPEGSupport
 is enabled.
+.TP
+.B Class1JBIGSupport
+Whether or not to enable support for T.85 monochrome facsimile
+with JBIG compression.  This defaults to true if, during the build process
+a compatible JBIG library was found; otherwise
+.B Class1JBIGSupport
+defaults to false.
 .TP
 .B Class1HFLOCmd
 The command to setup hardware (\s-1RTS/CTS\s+1)

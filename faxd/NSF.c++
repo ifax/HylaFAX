@@ -53,6 +53,7 @@ static const ModelData Canon[] =
 {{"\x80\x00\x80\x48\x00", "Faxphone B640"},
  {"\x80\x00\x80\x49\x10", "Fax B100"},
  {"\x80\x00\x8A\x49\x10", "Laser Class 9000 Series"},
+ {"\x80\x00\x8A\x48\x00", "Laser Class 2060"},
  {NULL}};
   
 
@@ -209,7 +210,6 @@ static const NSFData KnownNSF[] =
     {"\x00\xD0\x00", "USC",       false },
     {"\x00\xE0\x00", "Hiboshi",   false },
     {"\x00\xF0\x00", "Sumitomo Electric", false },
-    {"\x20\x41\x59", "Siemens",   false },
     {"\x59\x59\x01", NULL,        false },
     {"\xB4\x00\xB0", "DCE",       false },
     {"\xB4\x00\xB1", "Hasler",    false },
@@ -297,9 +297,12 @@ static const NSFData KnownNSF[] =
      *
      * Thus, country code x61 (Korea) turns into x86 (Papua New Guinea),
      * code xB5 (USA) turns into xAD (Tunisia), code x26 (China) turns
-     * into x64 (Lebanon), and code x3D (France) turns into xBC (Vietnam).
+     * into x64 (Lebanon), code x04 (Germany) turns into x20 (Canada), 
+     * and code x3D (France) turns into xBC (Vietnam).
      * Therefore, we need to convert these to produce a legible station ID.
      */
+    {"\x20\x41\x59", "Siemens", false },
+    {"\x20\xD1\xC0", "Ferrari Electronic", false },
     {"\x64\x00\x00", "unknown - China 00 00", false },
     {"\x64\x01\x00", "unknown - China 01 00", false },
     {"\x64\x01\x01", "unknown - China 01 01", false },

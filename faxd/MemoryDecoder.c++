@@ -30,6 +30,7 @@
 #include "MemoryDecoder.h"
 #include "G3Encoder.h"
 #include "StackBuffer.h"
+#include "config.h"
 
 MemoryDecoder::MemoryDecoder(u_char* data, u_long n)
 {
@@ -39,6 +40,7 @@ MemoryDecoder::MemoryDecoder(u_char* data, u_long n)
     nblanks = 0;
     runs = NULL;
     rowBuf = NULL;
+    rows = 0;
 }
 
 MemoryDecoder::MemoryDecoder(u_char* data, u_int wid, u_long n,
@@ -48,6 +50,7 @@ MemoryDecoder::MemoryDecoder(u_char* data, u_int wid, u_long n,
     width      = wid;
     byteWidth  = howmany(width, 8);
     cc         = n;
+    rows       = 0;
     
     fillorder  = order;
     is2D       = twoDim;
@@ -250,6 +253,7 @@ u_char* MemoryDecoder::cutExtraRTC()
     }
         
     endOfData = NULL;
+    rows = 0;
     if(!RTCraised()) {
         /*
          * syncronize to the next EOL and calculate pointer to it
@@ -268,6 +272,7 @@ u_char* MemoryDecoder::cutExtraRTC()
             }
             if( seenRTC() )
                 break;
+	    rows++;
         }
     }
     return endOfData;
@@ -279,6 +284,7 @@ u_char* MemoryDecoder::cutExtraEOFB()
      * MMR requires us to decode the entire image...
      */
     endOfData = NULL;
+    rows = 0;
     if(!RTCraised()) {
 	endOfData = current();
         for (;;) {
@@ -287,6 +293,7 @@ u_char* MemoryDecoder::cutExtraEOFB()
             }
             if( seenRTC() )
                 break;
+	    rows++;
         }
     }
     if (seenRTC() && *(endOfData - 1) == 0x00)
@@ -402,6 +409,18 @@ u_char* MemoryDecoder::encodeTagLine(u_long* raster, u_int th, u_int slop)
     }
 }
 
+#ifdef HAVE_JBIG
+extern "C" {
+#include "jbig.h"
+}
+fxStackBuffer resultBuffer;
+
+void bufferJBIGData(unsigned char *start, size_t len, void *file)
+{
+    resultBuffer.put((const char*) start, len);
+}
+#endif /* HAVE_JBIG */
+
 u_char* MemoryDecoder::convertDataFormat(const Class2Params& params)
 {
     /*
@@ -409,44 +428,96 @@ u_char* MemoryDecoder::convertDataFormat(const Class2Params& params)
      * been set up, and we don't need to worry about decoder operation here.  
      * These params are for the encoder to use.
      */
-    fxStackBuffer result;
-    G3Encoder enc(result);
-    enc.setupEncoder(fillorder, params.is2D(), (params.df == DF_2DMMR));
+    rows = 0;
+    if (params.df <= DF_2DMMR) {
+	fxStackBuffer result;
+	G3Encoder enc(result);
+	enc.setupEncoder(fillorder, params.is2D(), (params.df == DF_2DMMR));
 
-    u_char* refrow = new u_char[byteWidth*sizeof(u_char)];	// reference row
-    memset(refrow, 0, byteWidth*sizeof(u_char));		// clear to white
+	u_char* refrow = new u_char[byteWidth*sizeof(u_char)];	// reference row
+	memset(refrow, 0, byteWidth*sizeof(u_char));		// clear to white
 
-    /*
-     * For MR we encode a 1-D or 2-D line according to T.4 4.2.1.
-     * We understand that "standard" resolution means VR_NORMAL.
-     */
-    u_short k = 0;
+	/*
+	 * For MR we encode a 1-D or 2-D line according to T.4 4.2.1.
+	 * We understand that "standard" resolution means VR_NORMAL.
+	 */
+	u_short k = 0;
 
-    if (!RTCraised()) {
-	for (;;) {
-	    (void) decodeRow(rowBuf, width);
-	    if(seenRTC())
-		break;
-	    // encode the line specific to the desired format
-	    if (params.df == DF_2DMMR) {
-		enc.encode(rowBuf, width, 1, (unsigned char*) refrow);
-	    } else if (params.df == DF_2DMR) {
-		if (k) {
-		    enc.encode(rowBuf, width, 1, (unsigned char*) refrow);	// 2-D
-		} else {
-		    enc.encode(rowBuf, width, 1);				// 1-D
-		    k = (params.vr == VR_NORMAL || params.vr == VR_200X100) ? 2 : 4;
+	if (!RTCraised()) {
+	    for (;;) {
+		(void) decodeRow(rowBuf, width);
+		if(seenRTC())
+		    break;
+		rows++;
+		// encode the line specific to the desired format
+		if (params.df == DF_2DMMR) {
+		    enc.encode(rowBuf, width, 1, (unsigned char*) refrow);
+		} else if (params.df == DF_2DMR) {
+		    if (k) {
+			enc.encode(rowBuf, width, 1, (unsigned char*) refrow);	// 2-D
+		    } else {
+			enc.encode(rowBuf, width, 1);				// 1-D
+			k = (params.vr == VR_NORMAL || params.vr == VR_200X100) ? 2 : 4;
+		    }
+		    k--;
+		} else {	// DF_1DMH
+		    enc.encode(rowBuf, width, 1);
 		}
-		k--;
-	    } else {	// DF_1DMH
-		enc.encode(rowBuf, width, 1);
+		memcpy(refrow, rowBuf, byteWidth*sizeof(u_char));
 	    }
-	    memcpy(refrow, rowBuf, byteWidth*sizeof(u_char));
 	}
+	enc.encoderCleanup();
+	cc = result.getLength();
+	u_char* dst = new u_char[cc];
+	memcpy(dst, (const unsigned char*) result, cc);
+	return (dst);
+    } else if (params.df == DF_JBIG) {
+#ifdef HAVE_JBIG
+	char* decodedrow = new char[byteWidth];
+	fxStackBuffer raster;
+	resultBuffer = raster;		// initialize resultBuffer
+	if (!RTCraised()) {
+	    for (;;) {
+		(void) decodeRow(decodedrow, width);
+		if(seenRTC())
+		    break;
+		raster.put(decodedrow, byteWidth*sizeof(u_char));
+		rows++;
+	    }
+	}
+	delete decodedrow;
+	// bitmap raster is prepared, pass through JBIG encoding...
+	cc = raster.getLength();
+	u_char* rasterdst = new u_char[cc];
+	memcpy(rasterdst, (const unsigned char*) raster, cc);
+	unsigned char *pmap[1] = { rasterdst };
+	struct jbg_enc_state jbigstate;
+	jbg_enc_init(&jbigstate, width, rows, 1, pmap, bufferJBIGData, NULL);
+	/*
+	 * T.85 requires "single-progressive sequential coding" and thus:
+	 *
+	 * Dl = 0, D = 0, P = 1 are required
+	 * L0 = 128 is suggested (and appears to be standard among senders)
+	 * Mx = 0 to 127 (and 0 appears to be standard)
+	 * My = 0, HITOLO = 0, SEQ = 0, ILEAVE = 0, SMID = 0
+	 * TPDON = 0, DPON = 0, DPPRIV = 0, DPLAST = 0
+	 *
+	 * As these settings vary from the library's defaults, we carefully
+	 * specify all of them.
+	 */
+	jbg_enc_options(&jbigstate, 0, 0, 128, 0, 0);
+	jbg_enc_out(&jbigstate);
+	jbg_enc_free(&jbigstate);
+	delete rasterdst;
+	// image is now encoded into JBIG
+	//resultBuffer[19] |= 0x20;	// set VLENGTH = 1, if someday we want to transmit NEWLEN
+	cc = resultBuffer.getLength();
+	u_char* dst = new u_char[cc];
+	memcpy(dst, (const unsigned char*) resultBuffer, cc);
+	return (dst);
+#else
+	printf("Attempt to convert Phase C data to JBIG without JBIG support.  This should not happen.\n");
+	return (NULL);
+#endif /* HAVE_JBIG */
     }
-    enc.encoderCleanup();
-    cc = result.getLength();
-    u_char* dst = new u_char[cc];
-    memcpy(dst, (const unsigned char*) result, cc);
-    return (dst);
 }

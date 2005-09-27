@@ -380,7 +380,7 @@ setupCompression(TIFF* tif, u_int df, uint32 opts)
     case DF_JPEG_COLOR:
 	TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_JPEG);
 	break;
-    case DF_JBIG_BASIC:
+    case DF_JBIG:
 	TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_JBIG);
 	break;
     case DF_2DMMR:
@@ -504,9 +504,10 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 		}
 		break;
 
-	    case DF_JBIG_BASIC:
+	    case DF_JBIG:
 		{
 		    setupStartPage(tif, params);
+		    copyQualityTrace("BIH: Dl %d, D %d, P %d, fill %d", buf[0], buf[1], buf[2], buf[3]);
 		    /*
 		     * Parse JBIG BIH to get the image length.
 		     *
@@ -516,19 +517,26 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 		     * times the sixth byte, 256 times the seventh byte, and the eighth byte.
 		     */
 		    u_long framelength = 0;
-		    //Yd is byte 9, 10, 11, and 12
-		    framelength = 256*256*256*buf[9-1];
-		    framelength += 256*256*buf[10-1];
-		    framelength += 256*buf[11-1];
-		    framelength += buf[12-1];
-
-		    protoTrace("RECV: Yd field in BIH is %d", framelength);
+		    framelength = 256*256*256*buf[8];
+		    framelength += 256*256*buf[9];
+		    framelength += 256*buf[10];
+		    framelength += buf[11];
 		    /*
-		     * Senders commonly use 0xFFFF and 0xFFFFFFFF as empty fill.  We ignore such large 
+		     * Senders commonly use 0xFFFF and 0xFFFFFFFF as "maximum Yd".  We ignore such large 
 		     * values because if we use them and no NEWLEN marker is received, then the page
 		     * length causes problems for viewers (specifically libtiff).
 		     */
 		    if (framelength < 65535 && framelength > recvEOLCount) recvEOLCount = framelength;
+		    copyQualityTrace("BIH: Xd %d, Yd %d, L0 %d, Mx %d, My %d",
+			256*256*256*buf[4]+256*256*buf[5]+256*buf[6]+buf[7],
+			framelength,
+			256*256*256*buf[12]+256*256*buf[13]+256*buf[14]+buf[15],
+			buf[16], buf[17]);
+		    copyQualityTrace("BIH: fill %d, HITOLO %d, SEQ %d, ILEAVE %d, SMID %d", 
+			(buf[18]&0xF0)>>4, (buf[18]&0x8)>>3, (buf[18]&0x4)>>2, (buf[18]&0x2)>>1, buf[18]&0x1);
+		    copyQualityTrace("BIH: fill %d, LRLTWO %d, VLENGTH %d, TPDON %d, TPBON %d, DPON %d, DPPRIV %u, DPLAST %u", 
+			(buf[19]&0x80)>>7, (buf[19]&0x40)>>6, (buf[19]&0x20)>>5, (buf[19]&0x10)>>4, (buf[19]&0x8)>>3, 
+			(buf[19]&0x4)>>2, (buf[19]&0x2)>>1, buf[19]&0x1);
 		}
 		break;
 
@@ -568,20 +576,93 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 	    }
 	    break;
 
-	case DF_JBIG_BASIC:
-	    //search for NEWLEN Marker Segment in JBIG Bi-Level Image Data
+	case DF_JBIG:
+	    // search for Marker Segments in JBIG Bi-Level Image Data
 	    {
 		u_long framelength = 0;
-		for (u_int i = 0; i < cc-2; i++) {
-		    if (buf[i] == 0xFF && buf[i+1] == 0x05) {
+		u_int sdnormcount = 0, i = 0;
+		if (seq & 1) i += 20;		// skip BIH
+		for (; i < cc; i++) {
+		    if (i+1 < cc && buf[i] == 0xFF && buf[i+1] == 0x04) {
+			if (sdnormcount) {
+			    copyQualityTrace("Found %d SDNORM Marker Segments in BID", sdnormcount);
+			    sdnormcount = 0;
+			}
+			copyQualityTrace("Found ABORT Marker Segment in BID");
+			i += 1;
+			continue;
+		    }
+		    if (i+7 < cc && buf[i] == 0xFF && buf[i+1] == 0x06) {
+			if (sdnormcount) {
+			    copyQualityTrace("Found %d SDNORM Marker Segments in BID", sdnormcount);
+			    sdnormcount = 0;
+			}
+			copyQualityTrace("Found ATMOVE Marker Segment in BID, Yat %d, tx %d, ty %d", 
+			    256*256*256*buf[i+2]+256*256*buf[i+3]+256*buf[i+4]+buf[i+5], buf[i+6], buf[i+7]);
+			i += 7;
+			continue;
+		    }
+		    if (i+6 < cc && buf[i] == 0xFF && buf[i+1] == 0x07) {
+			if (sdnormcount) {
+			    copyQualityTrace("Found %d SDNORM Marker Segments in BID", sdnormcount);
+			    sdnormcount = 0;
+			}
+			u_long clength = 256*256*256*buf[i+2]+256*256*buf[i+3]+256*buf[i+4]+buf[i+5];
+			fxStr comment = "";
+			for (u_long cpos = 0; i+6+cpos < cc && cpos < clength; cpos++) comment.append(buf[i+6+cpos]);
+			copyQualityTrace("Found COMMENT Marker Segment in BID, \"%s\"", (const char*) comment);
+			i = i + clength + 5;
+			continue;
+		    }
+		    if (i+5 < cc && buf[i] == 0xFF && buf[i+1] == 0x05) {
+			if (sdnormcount) {
+			    copyQualityTrace("Found %d SDNORM Marker Segments in BID", sdnormcount);
+			    sdnormcount = 0;
+			}
 			framelength = 256*256*256*buf[i+2];
 			framelength += 256*256*buf[i+3];   
 			framelength += 256*buf[i+4];
 			framelength += buf[i+5];
-
-			protoTrace("RECV: Found NEWLEN Marker Segment in BID, Yd = %d", framelength);
+			copyQualityTrace("Found NEWLEN Marker Segment in BID, Yd = %d", framelength);
 			if (framelength < 65535) recvEOLCount = framelength;
+			i += 5;
+			continue;
 		    }
+		    if (i+1 < cc && buf[i] == 0xFF && buf[i+1] == 0x01) {
+			if (sdnormcount) {
+			    copyQualityTrace("Found %d SDNORM Marker Segments in BID", sdnormcount);
+			    sdnormcount = 0;
+			}
+			copyQualityTrace("Found RESERVE Marker Segment in BID");
+			i += 1;
+			continue;
+		    }
+		    if (i+1 < cc && buf[i] == 0xFF && buf[i+1] == 0x02) {
+			sdnormcount++;
+			i += 1;
+			continue;
+		    }
+		    if (i+1 < cc && buf[i] == 0xFF && buf[i+1] == 0x03) {
+			if (sdnormcount) {
+			    copyQualityTrace("Found %d SDNORM Marker Segments in BID", sdnormcount);
+			    sdnormcount = 0;
+			}
+			copyQualityTrace("Found SDRST Marker Segment in BID");
+			i += 1;
+			continue;
+		    }
+		    if (i+1 < cc && buf[i] == 0xFF && buf[i+1] != 0x00) {	// not STUFF
+			if (sdnormcount) {
+			    copyQualityTrace("Found %d SDNORM Marker Segments in BID", sdnormcount);
+			    sdnormcount = 0;
+			}
+			copyQualityTrace("Found Unknown Marker %#x Segment in BID", buf[i+1]);
+			i +=1;
+			continue;
+		    }
+		}
+		if (sdnormcount) {
+		    copyQualityTrace("Found %d SDNORM Marker Segments in BID", sdnormcount);
 		}
 	    }
 	    break;
@@ -597,13 +678,13 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 			framelength += buf[i+6];
 			framewidth = 256*buf[i+7];
 			framewidth += buf[i+8];
-			protoTrace("RECV: Found Start of Frame (SOF) Marker, size: %lu x %lu", framewidth, framelength);
+			copyQualityTrace("Found Start of Frame (SOF) Marker, size: %lu x %lu", framewidth, framelength);
 			if (framelength < 65535 && framelength > recvEOLCount) recvEOLCount = framelength;
 		    }
 		    if (buf[i] == 0xFF && buf[i+1] == 0xDC) {
 			framelength = 256*buf[i+4];
 			framelength += buf[i+5];
-			protoTrace("RECV: Found Define Number of Lines (DNL) Marker, lines: %lu", framelength);
+			copyQualityTrace("Found Define Number of Lines (DNL) Marker, lines: %lu", framelength);
 			if (framelength < 65535) recvEOLCount = framelength;
 		    }
 		}

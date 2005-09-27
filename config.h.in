@@ -290,4 +290,9 @@
  */
 @HAVE_PAM@
 
+/*
+ * JBIG library support
+ */
+@HAVE_JBIG@
+
 #endif

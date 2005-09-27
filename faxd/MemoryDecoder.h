@@ -36,6 +36,7 @@ private:
     u_int	width;
     u_int	byteWidth;
     u_long	cc;
+    uint32	rows;
     u_int	fillorder;
     bool	is2D, isG4;
     u_char*	endOfData;	// used by cutExtraRTC
@@ -64,6 +65,7 @@ public:
     const u_char* getEndOfPage()			{ return endOfData; }
     u_int getLastBlanks()				{ return nblanks; }
     u_long getCC()					{ return cc; }
+    uint32 getRows()					{ return rows; }
 };
 
 #endif

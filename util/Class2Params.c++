@@ -171,6 +171,9 @@ u_int Class2Params::DCSbrTab[16] = {
 
 /*
  * Convert a T.30 DIS to a Class 2 parameter block.
+ *
+ * Note that DIS is a list of *capabilities* and not necessarily maximums.
+ * Thus the values here can be set to bitmaps rather than settings.
  */  
 void
 Class2Params::setFromDIS(FaxParams& dis_caps)
@@ -189,6 +192,16 @@ Class2Params::setFromDIS(FaxParams& dis_caps)
     xinfo |= getByte(6) << 0;
 
     setFromDIS(dis, xinfo);
+
+    if (ec != EC_DISABLE) {
+	if (dis_caps.isBitEnabled(FaxParams::BITNUM_JBIG_BASIC)) df |= BIT(DF_JBIG);
+	if (dis_caps.isBitEnabled(FaxParams::BITNUM_JPEG)) df |= BIT(DF_JPEG_GREY);
+	//if (dis_caps.isBitEnabled(FaxParams::BITNUM_JBIG)) df |= BIT(DF_JBIG_GREY);
+	if (dis_caps.isBitEnabled(FaxParams::BITNUM_FULLCOLOR)) {
+	    if (df & BIT(DF_JPEG_GREY)) df |= BIT(DF_JPEG_COLOR);
+	    //if (df & BIT(DF_JBIG_GREY)) df |= BIT(DF_JBIG_COLOR);
+	}
+    }
 }
 
 /*
@@ -223,12 +236,16 @@ Class2Params::setFromDIS(u_int dis, u_int xinfo)
 	br = DISbrTab[(dis & DIS_SIGRATE) >> 10];
     wd = DISwdTab[(dis & DIS_PAGEWIDTH) >> 6];
     ln = DISlnTab[(dis & DIS_PAGELENGTH) >> 4];
+
+    // DF here is a bitmap
+    df = BIT(DF_1DMH);		// required support for all G3 facsimile
     if ((xinfo & DIS_G4COMP) && (xinfo & DIS_ECMODE))	// MMR requires ECM
-	df = DF_2DMMR;
-    else if (xinfo & DIS_2DUNCOMP)
-	df = DF_2DMRUNCOMP;
-    else
-	df = DISdfTab[(dis & DIS_2DENCODE) >> 8];
+	df |= BIT(DF_2DMMR);
+    if (xinfo & DIS_2DUNCOMP)
+	df |= BIT(DF_2DMRUNCOMP);
+    if (dis & DIS_2DENCODE)
+	df |= BIT(DF_2DMR);
+
     if (xinfo & DIS_ECMODE)
 	ec = (dis & DIS_FRAMESIZE) ? EC_ENABLE64 : EC_ENABLE256;
     else
@@ -258,7 +275,8 @@ Class2Params::setFromDCS(FaxParams& dcs_caps)
 
     setFromDCS(dcs, xinfo);
 
-    if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JBIG_BASIC)) df = DF_JBIG_BASIC;
+    if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JBIG_BASIC)) df = DF_JBIG;
+    if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JBIG_L0)) df = DF_JBIG;
     if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JPEG)) df = DF_JPEG_GREY;
     //if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JBIG)) df = DF_JBIG_GREY;
     if (dcs_caps.isBitEnabled(FaxParams::BITNUM_FULLCOLOR)) {
@@ -289,6 +307,12 @@ Class2Params::setFromDCS(u_int dcs, u_int xinfo)
 	else if (xinfo & DCS_200X400) vr = VR_R8;
 	else vr = DISvrTab[(dcs & DCS_7MMVRES) >> 9];
     }
+
+    // DF here is a setting, not a bitmap, max of DF_2DMMR (JPEG, JBIG set later)
+    if (df & BIT(DF_2DMMR)) df = DF_2DMMR;
+    else if (df & BIT(DF_2DMR)) df = DF_2DMR;
+    else df = DF_1DMH;
+
     if (xinfo & DCS_ECMODE)
 	ec = (xinfo & DCSFRAME_64) ? EC_ENABLE64 : EC_ENABLE256;
     else
@@ -400,17 +424,18 @@ Class2Params::update(bool isDIS)
     /*
      * DATA FORMAT
      *
-     * Options: MH (required), MR, and MMR.
+     * Options: MH (required), MR, MMR, JBIG, JPEG.
      *
-     * ECM support is required for MMR.
+     * ECM support is required for MMR, JBIG, and JPEG.
      *
      * There are other data format options in T.30
-     * such as JPEG, JBIG, T.81, and T.43, but they're
-     * not discernable from Class2Params.
+     * such as T.81, and T.43.
      */
     if (CHECKPARAM(df, DF_2DMR, isDIS))  setBit(BITNUM_2DMR, true);
     if (CHECKPARAM(df, DF_2DMMR, isDIS) && (CHECKPARAM(ec, EC_ENABLE64, isDIS) || CHECKPARAM(ec, EC_ENABLE256, isDIS)))
 	setBit(BITNUM_2DMMR, true);
+    if (CHECKPARAM(df, DF_JBIG, isDIS) && (CHECKPARAM(ec, EC_ENABLE64, isDIS) || CHECKPARAM(ec, EC_ENABLE256, isDIS)))
+	setBit(BITNUM_JBIG_BASIC, true);
 
     /*
      * MINIMUM SCANLINE TIME
@@ -824,12 +849,25 @@ const char* Class2Params::dataFormatNames[7] = {
     "2-D MR",			// DF_2DMR
     "2-D Uncompressed Mode",	// DF_2DMRUNCOMP
     "2-D MMR",			// DF_2DMMR
-    "JBIG Basic",		// DF_JBIG_BASIC
+    "JBIG",			// DF_JBIG
     "JPEG Greyscale",		// DF_JPEG_GREY
     "JPEG Full-Color"		// DF_JPEG_COLOR
 };
 const char* Class2Params::dataFormatName() const
      { return (dataFormatNames[df]); }
+
+fxStr
+Class2Params::dataFormatsName()
+{
+    fxStr formats = "MH";
+    if (df & BIT(DF_2DMR)) formats.append(", MR");
+    if (df & BIT(DF_2DMMR)) formats.append(", MMR");
+    if (df & BIT(DF_JBIG)) formats.append(", JBIG");
+    // since color requires greyscale, just say one or the other
+    if (df & BIT(DF_JPEG_COLOR)) formats.append(", JPEG Full-Color");
+    else if (df & BIT(DF_JPEG_GREY))  formats.append(", JPEG Greyscale");
+    return (formats);
+}
 
 const char* Class2Params::pageWidthNames[8] = {
     "A4 page width (215 mm)",
