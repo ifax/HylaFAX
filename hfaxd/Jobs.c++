@@ -880,6 +880,7 @@ HylaFAXServer::newJobCmd(void)
 	curJob->lastmod = Sys::now();		// noone else should update
 	reply(200, "New job created: jobid: %s groupid: %s.",
 	    (const char*) curJob->jobid, (const char*) curJob->groupid);
+	blankJobs[curJob->jobid] = curJob;
     } else
 	reply(503, "%s.", (const char*) emsg);
 }
@@ -1419,9 +1420,12 @@ HylaFAXServer::submitJob(const char* jobid)
 		 * queue file to reflect what it did with it
 		 * (e.g. what state it placed the job in).
 		 */
-		if (sendQueuerACK(emsg, "S%s", jobid))
+		if (sendQueuerACK(emsg, "S%s", jobid)) {
 		    reply(200, "Job %s submitted.", jobid);
-		else
+		    Job** jpp = (Job**) blankJobs.find(job->jobid);
+		    if (jpp)
+			blankJobs.remove(job->jobid);	// it's no longer blank
+		} else
 		    reply(460, "Failed to submit job %s: %s.",
 			jobid, (const char*) emsg);
 	    } else

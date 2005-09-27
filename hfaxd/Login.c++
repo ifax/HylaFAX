@@ -329,5 +329,10 @@ HylaFAXServer::dologout(int status)
 	Sys::close(clientFd);
     if (clientFIFOName != "")
 	Sys::unlink(clientFIFOName);
+    for (JobDictIter iter(blankJobs); iter.notDone(); iter++) {
+	Job* job = iter.value();
+	fxStr file("/" | job->qfile);
+	Sys::unlink(file);
+    }
     _exit(status);		// beware of flushing buffers after a SIGPIPE
 }

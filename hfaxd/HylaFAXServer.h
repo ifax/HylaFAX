@@ -261,6 +261,7 @@ protected:
     JobDict	jobs;			// non-default jobs
     Job*	curJob;			// current job
     fxStr	jobFormat;		// job status format string
+    JobDict	blankJobs;		// jobs created during this session but not submitted
     /*
      * Receive queue-related state.
      */

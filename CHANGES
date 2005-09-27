@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* make hfaxd clean up after itself (27 Sep 2005)
 * add xferfaxlog accounting for jobs that time out (27 Sep 2005)
 * add a job abort notification message (27 Sep 2005)
 * requeue batches together (27 Sep 2005)
