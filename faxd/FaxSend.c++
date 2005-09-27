@@ -784,7 +784,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
 	return (send_reformat);
     }
     // NB: only common values
-    params.wd = ((uint32) (w/rf) <= 1728 ? WD_1728 : (uint32) (w/rf) <= 2048 ? WD_2048 : WD_2432);
+    params.wd = ((uint32) (w/rf) <= 1728 ? WD_A4 : (uint32) (w/rf) <= 2048 ? WD_B4 : WD_A3);
 
     /*
      * Select page length according to the image size and

@@ -376,8 +376,8 @@ FaxModem::getVRes() const
 u_int
 FaxModem::getBestPageWidth() const
 {
-    // XXX NB: we don't use anything > WD_2432
-    return bestBit(modemParams.wd, WD_2432, WD_1728);
+    // XXX NB: we don't use anything > WD_A3
+    return bestBit(modemParams.wd, WD_A3, WD_A4);
 }
 
 /*
@@ -503,19 +503,15 @@ FaxModem::supportsPageWidth(u_int w, u_int r) const
     switch (r) {
 	case VR_R16:
 	    switch (w) {
-		case 3456:   return (modemParams.wd & BIT(WD_1728)) != 0;
-		case 4096:   return (modemParams.wd & BIT(WD_2048)) != 0;
-		case 4864:   return (modemParams.wd & BIT(WD_2432)) != 0;
-		case 2432:   return (modemParams.wd & BIT(WD_1216)) != 0;
-		case 1728:   return (modemParams.wd & BIT(WD_864)) != 0;
+		case 3456:   return (modemParams.wd & BIT(WD_A4)) != 0;
+		case 4096:   return (modemParams.wd & BIT(WD_B4)) != 0;
+		case 4864:   return (modemParams.wd & BIT(WD_A3)) != 0;
 	    }
 	case VR_300X300:
 	    switch (w) {
-		case 2592:   return (modemParams.wd & BIT(WD_1728)) != 0;
-		case 3072:   return (modemParams.wd & BIT(WD_2048)) != 0;
-		case 3648:   return (modemParams.wd & BIT(WD_2432)) != 0;
-		case 1824:   return (modemParams.wd & BIT(WD_1216)) != 0;
-		case 1296:   return (modemParams.wd & BIT(WD_864)) != 0;
+		case 2592:   return (modemParams.wd & BIT(WD_A4)) != 0;
+		case 3072:   return (modemParams.wd & BIT(WD_B4)) != 0;
+		case 3648:   return (modemParams.wd & BIT(WD_A3)) != 0;
 	    }
 	case VR_NORMAL:
 	case VR_FINE:
@@ -524,11 +520,9 @@ FaxModem::supportsPageWidth(u_int w, u_int r) const
 	case VR_200X200:
 	case VR_200X400:
 	    switch (w) {
-		case 1728:   return (modemParams.wd & BIT(WD_1728)) != 0;
-		case 2048:   return (modemParams.wd & BIT(WD_2048)) != 0;
-		case 2432:   return (modemParams.wd & BIT(WD_2432)) != 0;
-		case 1216:   return (modemParams.wd & BIT(WD_1216)) != 0;
-		case 864:    return (modemParams.wd & BIT(WD_864)) != 0;
+		case 1728:   return (modemParams.wd & BIT(WD_A4)) != 0;
+		case 2048:   return (modemParams.wd & BIT(WD_B4)) != 0;
+		case 2432:   return (modemParams.wd & BIT(WD_A3)) != 0;
 	    }
     }
     return false;

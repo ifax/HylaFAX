@@ -117,10 +117,10 @@
 #define	DIS_7MMVRES	0x000200	// vertical resolution = 7.7 line/mm
 #define	DIS_2DENCODE	0x000100	// 2-d compression supported
 #define	DIS_PAGEWIDTH	0x0000C0	// recording width capabilities
-#define	    DISWIDTH_1728	0	// only 1728
-#define	    DISWIDTH_2432	1	// 2432, 2048, 1728
-#define	    DISWIDTH_2048	2	// 2048, 1728
-#define	    DISWIDTH_INVALID	3	// invalid, but treat as 2432
+#define	    DISWIDTH_A4		0	// only 215mm (A4)
+#define	    DISWIDTH_A3		1	// 215, 255, and 303 (A4, B4, A3)
+#define	    DISWIDTH_B4		2	// 215, and 255 (A4, B4)
+#define	    DISWIDTH_INVALID	3	// invalid, but treat as A3
 #define	DIS_PAGELENGTH	0x000030	// max recording length capabilities
 #define	    DISLENGTH_A4	0	// A4 (297 mm)
 #define	    DISLENGTH_UNLIMITED	1	// no max length
@@ -218,9 +218,9 @@
 #define	DCS_7MMVRES	0x000200	// vertical resolution = 7.7 line/mm
 #define	DCS_2DENCODE	0x000100	// use 2-d encoding
 #define	DCS_PAGEWIDTH	0x0000C0	// recording width
-#define	    DCSWIDTH_1728	(0<<6)
-#define	    DCSWIDTH_2432	(1<<6)
-#define	    DCSWIDTH_2048	(2<<6)
+#define	    DCSWIDTH_A4		(0<<6)
+#define	    DCSWIDTH_A3		(1<<6)
+#define	    DCSWIDTH_B4		(2<<6)
 #define	DCS_PAGELENGTH	0x000030	// max recording length
 #define	    DCSLENGTH_A4	(0<<4)
 #define	    DCSLENGTH_UNLIMITED	(1<<4)

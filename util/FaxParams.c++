@@ -58,6 +58,8 @@ const int FaxParams::BITNUM_SUB		= 49;
 const int FaxParams::BITNUM_PWD		= 50;
 const int FaxParams::BITNUM_JPEG		= 68;
 const int FaxParams::BITNUM_FULLCOLOR	= 69;
+const int FaxParams::BITNUM_LETTER_SIZE	= 76;
+const int FaxParams::BITNUM_LEGAL_SIZE	= 77;
 const int FaxParams::BITNUM_JBIG_BASIC	= 78;
 const int FaxParams::BITNUM_JBIG_L0		= 79;
 

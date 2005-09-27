@@ -323,16 +323,12 @@ void Modem::setState(ModemState s)		{ state = s; }
 bool
 Modem::supportsPageWidthInMM(u_int w) const
 {
-    if (w <= 110)		// 864 pixels + slop
-	return caps.wd & BIT(WD_864);
-    else if (w <= 154)		// 1216 pixels + slop
-	return caps.wd & BIT(WD_1216);
-    else if (w <= 218)		// 1728 pixels + slop
-	return caps.wd & BIT(WD_1728);
+    if (w <= 218)		// 1728 pixels + slop
+	return caps.wd & BIT(WD_A4);
     else if (w <= 258)		// 2048 pixels + slop
-	return caps.wd & BIT(WD_2048);
+	return caps.wd & BIT(WD_B4);
     else if (w <= 306)		// 2432 pixels + slop
-	return caps.wd & BIT(WD_2432);
+	return caps.wd & BIT(WD_A3);
     else
 	return false;
 }
@@ -340,16 +336,12 @@ Modem::supportsPageWidthInMM(u_int w) const
 bool
 Modem::supportsPageWidthInPixels(u_int w) const
 {
-    if (w <= 880)		// 864 pixels + slop
-	return caps.wd & BIT(WD_864);
-    else if (w <= 1232)		// 1216 pixels + slop
-	return caps.wd & BIT(WD_1216);
-    else if (w <= 1744)		// 1728 pixels + slop
-	return caps.wd & BIT(WD_1728);
+    if (w <= 1744)		// 1728 pixels + slop
+	return caps.wd & BIT(WD_A4);
     else if (w <= 2064)		// 2048 pixels + slop
-	return caps.wd & BIT(WD_2048);
+	return caps.wd & BIT(WD_B4);
     else if (w <= 2448)		// 2432 pixels + slop
-	return caps.wd & BIT(WD_2432);
+	return caps.wd & BIT(WD_A3);
     else
 	return false;
 }

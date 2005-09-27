@@ -79,12 +79,10 @@ const u_short BR_31200	= 12;		// 31200 bit/s
 const u_short BR_33600	= 13;		// 33600 bit/s
 const u_short BR_ALL	= BIT(BR_33600+1)-1;
 
-const u_short WD_1728	= 0;		// 1728 pixels in 215 mm
-const u_short WD_2048	= 1;		// 2048 pixels in 255 mm
-const u_short WD_2432	= 2;		// 2432 pixels in 303 mm
-const u_short WD_1216	= 3;		// 1216 pixels in 151 mm
-const u_short WD_864	= 4;		// 864 pixels in 107 mm
-const u_short WD_ALL	= BIT(WD_864+1)-1;
+const u_short WD_A4	= 0;		// 1728 pixels in 215 mm
+const u_short WD_B4	= 1;		// 2048 pixels in 255 mm
+const u_short WD_A3	= 2;		// 2432 pixels in 303 mm
+const u_short WD_ALL	= BIT(WD_A3+1)-1;
 
 const u_short LN_A4		= 0;		// A4, 297 mm
 const u_short LN_B4		= 1;		// B4, 364 mm

@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* clean up page sizes and signalling (27 Sep 2005)
 * improve logging when a document is rejected (27 Sep 2005)
 * delay blocked jobs on failure (27 Sep 2005)
 * batch sleeping jobs too (27 Sep 2005)

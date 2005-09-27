@@ -99,6 +99,8 @@ class FaxParams
 	static const int BITNUM_PWD;		// 50;
 	static const int BITNUM_JPEG;		// 68;
 	static const int BITNUM_FULLCOLOR;	// 69;
+	static const int BITNUM_LETTER_SIZE;	// 76;
+	static const int BITNUM_LEGAL_SIZE;	// 77;
 	static const int BITNUM_JBIG_BASIC;	// 78;
 	static const int BITNUM_JBIG_L0;	// 79;
 

@@ -408,7 +408,7 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params)
 	 */
 	params.vr = params.vr & VR_ALL;
 	params.br = fxmin(params.br, (u_int) BR_33600);
-	params.wd = fxmin(params.wd, (u_int) WD_864);
+	params.wd = fxmin(params.wd, (u_int) WD_A3);
 	params.ln = fxmin(params.ln, (u_int) LN_INF);
 	params.df = fxmin(params.df, (u_int) DF_2DMMR);
 	if (params.ec > EC_ECLFULL)		// unknown, disable use

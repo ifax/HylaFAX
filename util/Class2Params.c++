@@ -129,10 +129,9 @@ u_int Class2Params::DISbrTab[16] = {
     BR_14400,			// 0xF undefined
 };
 u_int Class2Params::DISwdTab[4] = {
-    WD_1728,			// DISWIDTH_1728
-    WD_2432,			// DISWIDTH_2432
-    WD_2048,			// DISWIDTH_2048
-    WD_2432			// invalid, but treated as 2432
+    WD_A4,			// DISWIDTH_A4
+    WD_A3,			// DISWIDTH_A3
+    WD_B4			// DISWIDTH_B4
 };
 u_int Class2Params::DISlnTab[4] = {
     LN_A4,			// DISLENGTH_A4
@@ -275,6 +274,12 @@ Class2Params::setFromDCS(FaxParams& dcs_caps)
 
     setFromDCS(dcs, xinfo);
 
+    if (dcs_caps.isBitEnabled(FaxParams::BITNUM_LETTER_SIZE) || 
+	dcs_caps.isBitEnabled(FaxParams::BITNUM_LEGAL_SIZE)) {
+	// we map letter and legal onto WD_A4 + LN_INF for convenience
+	wd = WD_A4;
+	ln = LN_INF;
+    }
     if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JBIG_BASIC)) df = DF_JBIG;
     if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JBIG_L0)) df = DF_JBIG;
     if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JPEG)) df = DF_JPEG_GREY;
@@ -406,8 +411,8 @@ Class2Params::update(bool isDIS)
      * A3 support requires B4 support.
      * A4 support is required.
      */
-    if (CHECKPARAM(wd, WD_2432, isDIS))		setBit(BITNUM_WIDTH_18, true);
-    else if (CHECKPARAM(wd, WD_2048, isDIS))	setBit(BITNUM_WIDTH_17, true);
+    if (CHECKPARAM(wd, WD_A3, isDIS))		setBit(BITNUM_WIDTH_18, true);
+    else if (CHECKPARAM(wd, WD_B4, isDIS))	setBit(BITNUM_WIDTH_17, true);
 
     /*
      * RECORDING LENGTH
@@ -564,7 +569,7 @@ Class2Params::setPageWidthInMM(u_int w)
      * The client program may therefore use a range of
      * pagewidth (mm) values.  We must interpret wisely.
      */
-    wd = (w > 270 ? WD_2432 : w > 230 ? WD_2048 : WD_1728);
+    wd = (w > 270 ? WD_A3 : w > 230 ? WD_B4 : WD_A4);
 }
 
 void
@@ -574,24 +579,18 @@ Class2Params::setPageWidthInPixels(u_int w)
      * Here we attempt to determine the WD parameter with
      * a pixel width which is impossible to be perfect
      * because there are colliding values.  However,
-     * since we don't use > WD_2432, this is fine.
+     * since we don't use > WD_A3, this is fine.
      */
-    wd = (w == 1728 ? WD_1728 :
-	  w == 2048 ? WD_2048 :
-	  w == 2432 ? WD_2432 :
-	  w == 1216 ? WD_1216 :
-	  w ==  864 ? WD_864 :
-	  w == 3456 ? WD_1728 :
-	  w == 4096 ? WD_2048 :
-	  w == 4864 ? WD_2432 :
-	//w == 2432 ? WD_1216 :		// collision
-	//w == 1728 ? WD_864 :		// collision
-	  w == 2592 ? WD_1728 :
-	  w == 3072 ? WD_2048 :
-	  w == 3648 ? WD_2432 :
-	  w == 1824 ? WD_1216 :
-	  w == 1296 ? WD_864 :
-		      WD_1728);
+    wd = (w == 1728 ? WD_A4 :
+	  w == 2048 ? WD_B4 :
+	  w == 2432 ? WD_A3 :
+	  w == 3456 ? WD_A4 :
+	  w == 4096 ? WD_B4 :
+	  w == 4864 ? WD_A3 :
+	  w == 2592 ? WD_A4 :
+	  w == 3072 ? WD_B4 :
+	  w == 3648 ? WD_A3 :
+		      WD_A4);
 }
 
 u_int

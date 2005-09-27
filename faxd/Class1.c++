@@ -172,7 +172,7 @@ Class1Modem::setupModem()
 	    primaryV34Rate = atoi(conf.class1EnableV34Cmd.extract(pos, conf.class1EnableV34Cmd.next(pos, ',') - pos));
 	modemParams.br |= BIT(primaryV34Rate) - 1;
     }
-    modemParams.wd = BIT(WD_1728) | BIT(WD_2048) | BIT(WD_2432);
+    modemParams.wd = BIT(WD_A4) | BIT(WD_B4) | BIT(WD_A3);
     modemParams.ln = LN_ALL;
     modemParams.df = BIT(DF_1DMH) | BIT(DF_2DMR);
     modemParams.bf = BF_DISABLE;
@@ -1559,6 +1559,10 @@ Class1Modem::modemDIS() const
     // we set both units preferences to allow the sender to choose
     dis_caps.setBit(FaxParams::BITNUM_METRIC_RES, true);
     dis_caps.setBit(FaxParams::BITNUM_INCH_RES, true);
+
+    // we indicate both letter and legal page size support
+    dis_caps.setBit(FaxParams::BITNUM_LETTER_SIZE, true);
+    dis_caps.setBit(FaxParams::BITNUM_LEGAL_SIZE, true);
 
     // selective polling, subaddressing, password
     dis_caps.setBit(FaxParams::BITNUM_SEP, true);

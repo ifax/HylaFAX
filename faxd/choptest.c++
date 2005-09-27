@@ -89,7 +89,7 @@ main(int argc, char* argv[])
 
     Class2Params params;
     params.vr = VR_NORMAL;
-    params.wd = WD_1728;
+    params.wd = WD_A4;
     params.ln = LN_INF;
     params.df = DF_1DMH;
 
