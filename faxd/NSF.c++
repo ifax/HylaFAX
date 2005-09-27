@@ -45,7 +45,6 @@ struct NSFData {
     u_int         modelIdPos;
     u_int         modelIdSize;
     const ModelData* knownModels;
-    bool        inverseBitOrder;
 };
 
 const u_int NSFData::vendorIdSize = 3; // Country & provider code (T.35)
@@ -60,13 +59,12 @@ static const ModelData Canon[] =
 static const ModelData Brother[] =
 {{"\x55\x55\x00\x88\x90\x80\x5F\x00\x15\x51", "Fax-560/770"},
  {"\x55\x55\x00\x80\xB0\x80\x00\x00\x59\xD4", "Personal fax 190"},
- {"\x55\x55\x00\x8C\x90\x80\xF0\x02\x20", "MFC-8600"},
- {"\x55\x55\x00\x8C\x90\x80\x7A\x06", "MFC-3100C"},
+ {"\x55\x55\x00\x8C\x90\x80", "MFC-3100C/MFC-8600"},
  {NULL}};
 
 static const ModelData Panasonic0E[] =
 {{"\x00\x00\x00\x96\x0F\x01\x02\x00\x10\x05\x02\x95\xC8\x08\x01\x49\x02\x41\x53\x54\x47", "KX-F90" },
- {"\x00\x00\x00\x96\x0F\x01\x03\x00\x10\x05\x02\x95\xC8\x08\x01\x49\x02                \x03", "KX-F230 or KX-FT21 or ..." },
+ {"\x00\x00\x00\x96\x0F\x01\x03\x00\x10\x05\x02\x95\xC8\x08\x01\x49\x02\x03", "KX-F230/KX-FT21" },
  {"\x00\x00\x00\x16\x0F\x01\x03\x00\x10\x05\x02\x95\xC8\x08",          "KX-F780" },
  {"\x00\x00\x00\x16\x0F\x01\x03\x00\x10\x00\x02\x95\x80\x08\x75\xB5",  "KX-M260" },
  {"\x00\x00\x00\x16\x0F\x01\x02\x00\x10\x05\x02\x85\xC8\x08\xAD", "KX-F2050BS" },
@@ -82,9 +80,16 @@ static const ModelData Ricoh[] =
 {{"\x00\x00\x00\x12\x10\x0D\x02\x00\x50\x00\x2A\xB8\x2C", "/Nashuatec P394" },
  {NULL}};
 
+static const ModelData Samsung16[] =
+{{"\x00\x00\xA4\x01", "M545 6800" },
+ {NULL}};
 
 static const ModelData Samsung8C[] =
 {{"\x00\x00\x01\x00", "SF-2010" },
+ {NULL}};
+
+static const ModelData SamsungA2[] =
+{{"\x00\x00\x80\x00", "FX-4000" },
  {NULL}};
 
 static const ModelData Sanyo[] =
@@ -109,6 +114,18 @@ static const ModelData Xerox[] =
 {{"\x00\x08\x2D\x43\x57\x50\x61\x75\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x1A\x02\x02\x10\x01\x82\x01\x30\x34", "635 Workcenter" },
  {NULL}};
 
+static const ModelData XeroxDA[] =
+{{"\x00\x00\xC0\x00", "Workcentre Pro 580" },
+ {NULL}};
+
+static const ModelData Lexmark[] =
+{{"\x00\x80\xA0\x00", "X4270" },
+ {NULL}};
+
+static const ModelData JetFax[] =
+{{"\x01\x00\x45\x00\x0D\x7F", "M910e" },
+ {NULL}};
+
 static const ModelData PitneyBowes[] = 
 {{"\x79\x91\xB1\xB8\x7A\xD8", "9550" },
  {NULL}};
@@ -129,7 +146,7 @@ static const ModelData Muratec48[] =
 
 static const NSFData KnownNSF[] =
 {
-    {"\x00\x00\x00", "unknown - Japan", true },
+    {"\x00\x00\x00", "unknown - indeterminate", true },
     {"\x00\x00\x01", "Anjitsu",  false },
     {"\x00\x00\x02", "Nippon Telephone", false },
     {"\x00\x00\x05", "Mitsuba Electric", false },
@@ -160,8 +177,8 @@ static const NSFData KnownNSF[] =
     {"\x00\x00\x49", "Japan Electric", false },
     {"\x00\x00\x4D", "Okura Electric", false },
     {"\x00\x00\x51", "Sanyo",     false, 3,10, Sanyo },
-    {"\x00\x00\x55", "unknown - Japan", false },
-    {"\x00\x00\x56", "Brother",   false, 3, 8, Brother },
+    {"\x00\x00\x55", "unknown - Japan 55", false },
+    {"\x00\x00\x56", "Brother",   false, 3, 6, Brother },
     {"\x00\x00\x59", "Fujitsu",   false },
     {"\x00\x00\x5D", "Kuoni",     false },
     {"\x00\x00\x61", "Casio",     false },
@@ -283,26 +300,52 @@ static const NSFData KnownNSF[] =
      * into x64 (Lebanon), and code x3D (France) turns into xBC (Vietnam).
      * Therefore, we need to convert these to produce a legible station ID.
      */
-    {"\x64\x01\x00", "unknown - China", false, 0, 0, NULL, false }, // reverse-ordered code but not station-id
-    {"\x64\x01\x01", "unknown - China", false, 0, 0, NULL, true },
-    {"\x64\x01\x02", "unknown - China", false, 0, 0, NULL, true },
-    {"\x86\x00\x0A", "unknown - Korea", false, 0, 0, NULL, true },
-    {"\x86\x00\x0E", "unknown - Korea", false, 0, 0, NULL, true },
-    {"\x86\x00\x10", "Samsung",   false, 0, 0, NULL, true },
-    {"\x86\x00\x1A", "unknown - Korea", false, 0, 0, NULL, true },
-    {"\x86\x00\x52", "unknown - Korea", false, 0, 0, NULL, true },
-    {"\x86\x00\x5A", "unknown - Korea", false, 0, 0, NULL, true },
-    {"\x86\x00\x8C", "Samsung",   false, 3, 4, Samsung8C, true },
-    {"\x86\x00\x98", "Samsung",   false, 0, 0, NULL, true },
-    {"\x86\x00\xC9", "unknown - Korea", false, 0, 0, NULL, true },
-    {"\x86\x00\xEE", "unknown - Korea", false, 0, 0, NULL, true },
-    {"\xAD\x00\x00", "Pitney Bowes", false, 3, 6, PitneyBowes, true },
-    {"\xAD\x00\x24", "Octel",     false, 0, 0, NULL, true },
-    {"\xAD\x00\x36", "HP",        false, 3, 5, HP, true },
-    {"\xAD\x00\x42", "FaxTalk",   false, 0, 0, NULL, true },
-    {"\xAD\x00\x44", NULL,        true,  0, 0, NULL, true },
-    {"\xAD\x00\x98", "unknown - USA", true, 0, 0, NULL, true },
-    {"\xBC\x53\x01", "Minolta",   false, 0, 0, NULL, true },
+    {"\x64\x00\x00", "unknown - China 00 00", false },
+    {"\x64\x01\x00", "unknown - China 01 00", false },
+    {"\x64\x01\x01", "unknown - China 01 01", false },
+    {"\x64\x01\x02", "unknown - China 01 02", false },
+    {"\x86\x00\x02", "unknown - Korea 02", false },
+    {"\x86\x00\x06", "unknown - Korea 06", false },
+    {"\x86\x00\x08", "unknown - Korea 08", false },
+    {"\x86\x00\x0A", "unknown - Korea 0A", false },
+    {"\x86\x00\x0E", "unknown - Korea 0E", false },
+    {"\x86\x00\x10", "Samsung",   false },
+    {"\x86\x00\x11", "unknown - Korea 11" },
+    {"\x86\x00\x16", "Samsung", false, 3, 4, Samsung16 },
+    {"\x86\x00\x1A", "unknown - Korea 1A", false },
+    {"\x86\x00\x40", "unknown - Korea 40", false },
+    {"\x86\x00\x48", "unknown - Korea 48", false },
+    {"\x86\x00\x52", "unknown - Korea 52", false },
+    {"\x86\x00\x5A", "unknown - Korea 5A", false },
+    {"\x86\x00\x5E", "unknown - Korea 5E", false },
+    {"\x86\x00\x66", "unknown - Korea 66", false },
+    {"\x86\x00\x6E", "unknown - Korea 6E", false },
+    {"\x86\x00\x82", "unknown - Korea 82", false },
+    {"\x86\x00\x88", "unknown - Korea 88", false },
+    {"\x86\x00\x8A", "unknown - Korea 8A", false },
+    {"\x86\x00\x8C", "Samsung", false, 3, 4, Samsung8C },
+    {"\x86\x00\x92", "unknown - Korea 92", false },
+    {"\x86\x00\x98", "Samsung",   false },
+    {"\x86\x00\xA2", "Samsung", false, 3, 4, SamsungA2 },
+    {"\x86\x00\xA4", "unknown - Korea A4", false },
+    {"\x86\x00\xC9", "unknown - Korea C9", false },
+    {"\x86\x00\xCC", "unknown - Korea CC", false },
+    {"\x86\x00\xDA", "Xerox", false, 3, 4, XeroxDA },
+    {"\x86\x00\xE2", "unknown - Korea E2", false },
+    {"\x86\x00\xEE", "unknown - Korea EE", false },
+    {"\xAD\x00\x00", "Pitney Bowes", false, 3, 6, PitneyBowes },
+    {"\xAD\x00\x0C", "Dialogic",  false },
+    {"\xAD\x00\x15", "Lexmark",   false, 3, 4, Lexmark },
+    {"\xAD\x00\x16", "JetFax",    false, 3, 6, JetFax },
+    {"\xAD\x00\x24", "Octel",     false },
+    {"\xAD\x00\x36", "HP",        false, 3, 5, HP },
+    {"\xAD\x00\x42", "FaxTalk",   false },
+    {"\xAD\x00\x44", NULL,        true },
+    {"\xAD\x00\x46", "BrookTrout", false },
+    {"\xAD\x00\x51", "Telogy Networks", false },
+    {"\xAD\x00\x5C", "IBM", false },
+    {"\xAD\x00\x98", "unknown - USA 98", true },
+    {"\xBC\x53\x01", "Minolta",   false },
     {NULL}
 };
 
@@ -379,37 +422,41 @@ void NSF::decode()
                         memcmp( pp->modelId, &nsf[p->modelIdPos], p->modelIdSize )==0 )
                         model = pp->modelName;
             }
-            findStationId( p->inverseStationIdOrder, p->inverseBitOrder );
+            findStationId( p->inverseStationIdOrder );
             vendorDecoded = true;
         }
     }
     if( !vendorFound() )
-	findStationId( 0, 0 );
+	findStationId( 0 );
 }
 
-void NSF::findStationId( bool reverseOrder, bool reverseBitOrder )
+void NSF::findStationId( bool reverseOrder )
 {
     const char* id = NULL;
     u_int       idSize = 0;
     const char* maxId = NULL;
     u_int       maxIdSize = 0;
     /*
-     * Convert to LSBMSB if it's not.
+     * Sometimes station ID is in MSB2LSB, and sometimes it is in
+     * LSB2MSB. Rather than trying to collect bit order information
+     * about every fax machine out there, we simply inverse the
+     * data bit order and append it to the raw data and thereby
+     * check both ways.
      */
-    if ( reverseBitOrder ) {
-	for ( u_int i = 0 ; i < nsf.length(); i++ ) {
-	    // a one-byte bit-order converter...
-	    nsf[i] =  (((nsf[i]>>0)&1)<<7)|(((nsf[i]>>1)&1)<<6)|
-		      (((nsf[i]>>2)&1)<<5)|(((nsf[i]>>3)&1)<<4)|
-		      (((nsf[i]>>4)&1)<<3)|(((nsf[i]>>5)&1)<<2)|
-		      (((nsf[i]>>6)&1)<<1)|(((nsf[i]>>7)&1)<<0);
-	}
+    fxStr thisnsf = nsf;
+    thisnsf.append((char) 0x00);	// establish a break
+    for ( u_int i = 0 ; i < nsf.length(); i++ ) {
+	// a one-byte bit-order converter...
+	thisnsf.append((((nsf[i]>>0)&1)<<7)|(((nsf[i]>>1)&1)<<6)|
+	      (((nsf[i]>>2)&1)<<5)|(((nsf[i]>>3)&1)<<4)|
+	      (((nsf[i]>>4)&1)<<3)|(((nsf[i]>>5)&1)<<2)|
+	      (((nsf[i]>>6)&1)<<1)|(((nsf[i]>>7)&1)<<0));
     }
     /*
      * Trying to find the longest printable ASCII sequence
      */
-    for( const char *p = (const char*)nsf + NSFData::vendorIdSize,
-             *end = p + nsf.length(); p < end; p++ ){
+    for( const char *p = (const char*)thisnsf + NSFData::vendorIdSize,
+             *end = p + thisnsf.length(); p < end; p++ ){
         if( isprint(*p) ){
             if( !idSize++ ) 
                 id = p;
