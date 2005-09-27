@@ -1409,12 +1409,22 @@ faxQueueApp::sendJobDone(Job& job, int status)
 {
     Job* cjob;
     Job* njob;
-    FaxRequest* req;
-    FaxSendStatus cstatus = send_retry;
-
     DestInfo& di = destJobs[job.dest];
+    FaxRequest* req = readRequest(job);
+    if (req && req->status == send_retry) {
+	// prevent turnaround-redialing, delay any blocked jobs
+	time_t newtts = req->tts;
+	while (cjob = di.nextBlocked()) {
+	    FaxRequest* blockedreq = readRequest(*cjob);
+	    if (blockedreq) {
+		delayJob(*cjob, *blockedreq, "Delayed by prior call", newtts);
+		delete blockedreq;
+	    }
+	}
+    } else {
+	unblockDestJobs(job, di);
+    }
     di.hangup();
-    unblockDestJobs(job, di);
     releaseModem(job);				// done with modem
 
     traceQueue(job, "CMD DONE: exit status %#x", status);
@@ -1423,7 +1433,7 @@ faxQueueApp::sendJobDone(Job& job, int status)
 
     for (cjob = &job; cjob != NULL; cjob = njob) {
 	njob = cjob->bnext;
-	req = readRequest(*cjob);		// reread the qfile
+	if (cjob != &job) req = readRequest(*cjob);	// the first was already read
 	if (!req) {
 	    time_t now = Sys::now();
 	    time_t duration = now - job.start;

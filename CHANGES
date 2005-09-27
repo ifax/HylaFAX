@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* delay blocked jobs on failure (27 Sep 2005)
 * batch sleeping jobs too (27 Sep 2005)
 * fix and improve copy quality correction (27 Sep 2005)
 * fix PAM support for non-passworded authentication (27 Sep 2005)
