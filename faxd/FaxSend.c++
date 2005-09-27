@@ -276,6 +276,13 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 			    clientInfo.setHasV34Trouble(true);
 			}
 			/*
+			 * Prevent repeated V.17 errors.
+			 */ 
+			if (fax.status == send_v17fail) {
+			    fax.status = send_retry;
+			    clientInfo.setHasV17Trouble(true);
+			}
+			/*
 			 * On protocol errors retry more quickly
 			 * (there's no reason to wait is there?).
 			 */
@@ -444,6 +451,11 @@ FaxServer::sendFaxPhaseB(FaxRequest& fax, FaxItem& freq, FaxMachineInfo& clientI
 	    u_int prevPages = fax.npages;
 	    fax.status = modem->sendPhaseB(tif, clientParams, clientInfo,
 		fax.pagehandling, fax.notice, batched);
+	    if (fax.status == send_v17fail && fax.notice == "") {
+		// non-fatal V.17 incompatibility
+		clientInfo.setHasV17Trouble(true);
+		fax.status = send_ok;
+	    }
 	    if (fax.npages == prevPages) {
 		fax.ntries++;
 		if (fax.ntries > 2) {
@@ -492,6 +504,7 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
 	return (false);
     }
     clientParams.br = signallingRate;
+    if (clientInfo.getHasV17Trouble() && (clientParams.br == BR_14400 || clientParams.br == BR_12000)) clientParams.br = BR_9600;
 
     clientInfo.setMinScanlineTime(clientCapabilities.st);
     int minScanlineTime =

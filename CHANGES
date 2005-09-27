@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* add hasV17Trouble detection on sending (27 Sep 2005)
 * improve NSF station ID detection (27 Sep 2005)
 * session logging improvements (27 Sep 2005)
 * add Retransmit-Ignore RTNHandlingMethod (27 Sep 2005)

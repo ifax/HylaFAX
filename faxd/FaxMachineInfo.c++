@@ -60,6 +60,7 @@ FaxMachineInfo::FaxMachineInfo(const FaxMachineInfo& other)
     supports2DEncoding = other.supports2DEncoding;
     supportsMMR = other.supportsMMR;
     hasV34Trouble = other.hasV34Trouble;
+    hasV17Trouble = other.hasV17Trouble;
     supportsPostScript = other.supportsPostScript;
     supportsBatching = other.supportsBatching;
     calledBefore = other.calledBefore;
@@ -107,6 +108,7 @@ FaxMachineInfo::resetConfig()
     supports2DEncoding = true;		// assume 2D-encoding support
     supportsMMR = true;			// assume MMR support
     hasV34Trouble = false;		// assume no problems
+    hasV17Trouble = false;		// assume no problems
     supportsPostScript = false;		// no support for Adobe protocol
     supportsBatching = true;		// assume batching (EOM) support
     calledBefore = false;		// never called before
@@ -177,7 +179,8 @@ static const char* stnames[] =
 #define	BR	6
 #define	ST	7
 #define V34	8
-#define BATCH	9
+#define V17	9
+#define BATCH	10
 
 #define	setLocked(b,ix)	locked |= b<<ix
 
@@ -201,6 +204,9 @@ FaxMachineInfo::setConfigItem(const char* tag, const char* value)
     } else if (streq(tag, "hasv34trouble")) {
 	hasV34Trouble = getBoolean(value);
 	setLocked(b, V34);
+    } else if (streq(tag, "hasv17trouble")) {
+	hasV17Trouble = getBoolean(value);
+	setLocked(b, V17);
     } else if (streq(tag, "supportspostscript")) {
 	supportsPostScript = getBoolean(value);
 	setLocked(b, PS);
@@ -274,6 +280,8 @@ void FaxMachineInfo::setSupportsMMR(bool b)
     { checkLock(G4, supportsMMR, b); }
 void FaxMachineInfo::setHasV34Trouble(bool b)
     { checkLock(V34, hasV34Trouble, b); }
+void FaxMachineInfo::setHasV17Trouble(bool b)
+    { checkLock(V17, hasV17Trouble, b); }
 void FaxMachineInfo::setSupportsPostScript(bool b)
     { checkLock(PS, supportsPostScript, b); }
 void FaxMachineInfo::setSupportsBatching(bool b)
@@ -374,6 +382,7 @@ FaxMachineInfo::writeConfig(fxStackBuffer& buf)
     putBoolean(buf, "supports2DEncoding", isLocked(G32D),supports2DEncoding);
     putBoolean(buf, "supportsMMR", isLocked(G4),supportsMMR);
     putBoolean(buf, "hasV34Trouble", isLocked(V34),hasV34Trouble);
+    putBoolean(buf, "hasV17Trouble", isLocked(V17),hasV17Trouble);
     putBoolean(buf, "supportsPostScript", isLocked(PS), supportsPostScript);
     putBoolean(buf, "supportsBatching", isLocked(BATCH), supportsBatching);
     putBoolean(buf, "calledBefore", false, calledBefore);

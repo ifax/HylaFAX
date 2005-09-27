@@ -270,6 +270,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 
     do {
         hadV34Trouble = false;		// to monitor failure type
+        hadV17Trouble = false;		// to monitor failure type
 	batchingError = false;
 	signalRcvd = 0;
 	if (abortRequested())
@@ -288,6 +289,10 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		if (hadV34Trouble) {
 		    protoTrace("The destination appears to have trouble with V.34-Fax.");
 		    return (send_v34fail);
+		}
+		if (hadV17Trouble) {
+		    protoTrace("The destination appears to have trouble with V.17.");
+		    return (send_v17fail);
 		}
 		if (!(batched & BATCH_FIRST)) {
 		    protoTrace("The destination appears to not support batching.");
@@ -504,6 +509,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    return (send_retry);
 	}
     } while (morePages);
+    if (hadV17Trouble) return (send_v17fail);
     return (send_ok);
 }
 
@@ -622,6 +628,7 @@ Class1Modem::isCapable(u_int sr, FaxParams& dis)
 bool
 Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 {
+    u_short attempt = 0;
     if (tries == 0) {
 	emsg = "DIS/DTC received 3 times; DCS not recognized";
 	protoTrace(emsg);
@@ -658,6 +665,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	} while ((params.br == BR_9600 || params.br == BR_7200) && curcap->mod != V29);
     }
     do {
+	attempt++;
 	if (!useV34) {
 	    /*
 	     * Override the Class 2 parameter bit rate
@@ -804,9 +812,20 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 		    }
 		    return (sendTraining(params, --tries, emsg));
 		default:
-		    if (frame.getFCF() == FCF_DCN)
+		    if (frame.getFCF() == FCF_DCN) {
+			/*
+			 * The receiver is disconnecting.  This can happen
+			 * if the receiver is exhaused from retraining, but
+			 * it also happens in situations where, for example,
+			 * the receiver determines that there is a modulator
+			 * incompatibility (i.e. with V.17).  In that case,
+			 * we must prevent ourselves from redialing and
+			 * reattempting V.17 training, or we'll never get
+			 * through.
+			 */
+			if (curcap->mod == V17 && attempt == 1 && tries == 3) hadV17Trouble = true;
 			emsg = "RSRPEC error/got DCN";
-		    else
+		    } else
 			emsg = "RSPREC invalid response received";
 		    goto done;
 		}
@@ -1293,6 +1312,12 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				hadV34Trouble = false;
 				blockgood = true;
 				signalRcvd = FCF_MCF;
+			    }
+			    if (!useV34 && curcap->mod == V17 && badframes == frameNumber) {
+				// looks like a V.17 modulator incompatibility that managed to pass TCF
+				// we set hasV17Trouble to help future calls to this destination
+				protoTrace("The destination appears to have trouble with V.17.");
+				hadV17Trouble = true;
 			    }
 			    // There is no CTC with V.34-fax (T.30 Annex F.3.4.5 Note 1).
 			    if (conf.class1PersistentECM && !useV34 && (blockgood == false) && 

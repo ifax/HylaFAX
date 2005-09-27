@@ -53,6 +53,7 @@ private:
     bool	supports2DEncoding;	// handles Group 3 2D
     bool	supportsMMR;		// handles Group 4
     bool	hasV34Trouble;		// has difficulty with V.34
+    bool	hasV17Trouble;		// has difficulty with V.17
     bool	supportsPostScript;	// handles Adobe NSF protocol
     bool	supportsBatching;	// handles batching (EOM) protocol
     bool	calledBefore;		// successfully called before
@@ -96,6 +97,7 @@ public:
     bool getSupports2DEncoding() const;
     bool getSupportsMMR() const;
     bool getHasV34Trouble() const;
+    bool getHasV17Trouble() const;
     bool getSupportsPostScript() const;
     bool getSupportsBatching() const;
     bool getCalledBefore() const;
@@ -117,6 +119,7 @@ public:
     void setSupports2DEncoding(bool);
     void setSupportsMMR(bool);
     void setHasV34Trouble(bool);
+    void setHasV17Trouble(bool);
     void setSupportsPostScript(bool);
     void setSupportsBatching(bool);
     void setCalledBefore(bool);
@@ -149,6 +152,8 @@ inline bool FaxMachineInfo::getSupportsMMR() const
     { return supportsMMR; }
 inline bool FaxMachineInfo::getHasV34Trouble() const
     { return hasV34Trouble; }
+inline bool FaxMachineInfo::getHasV17Trouble() const
+    { return hasV17Trouble; }
 inline bool FaxMachineInfo::getSupportsPostScript() const
     { return supportsPostScript; }
 inline bool FaxMachineInfo::getSupportsBatching() const

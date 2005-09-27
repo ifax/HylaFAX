@@ -60,6 +60,7 @@ protected:
     u_int	nonV34br;		// modemParams.br without V.34
     bool	sendERR;		// T.30-A send ERR instead of MCF
     bool	hadV34Trouble;		// indicates failure due to V.34 restrictions
+    bool	hadV17Trouble;		// indicates failure due to V.17 problems
     bool	batchingError;		// indicates failure due to batching protocol
     const u_char* frameRev;		// HDLC frame bit reversal table
     fxStr	lid;			// encoded local id string
