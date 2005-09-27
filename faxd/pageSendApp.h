@@ -69,6 +69,8 @@ private:
     u_int	ixoXmitTimeout;		// timeout waiting for xmit response
     u_int	ixoAckTimeout;		// timeout waiting ro final ack/nak
 
+    fxStr	batchid;		// Batch ID, for session logs
+
     static pageSendApp* _instance;
 
     static stringtag strings[];
@@ -81,11 +83,11 @@ private:
     bool	setConfigItem(const char* tag, const char* value);
     u_int	getConfigParity(const char* value) const;
 // page transmission support (independent of paging protocol)
-    void	sendPage(FaxRequest&, FaxMachineInfo&);
-    void	sendPage(FaxRequest&, FaxMachineInfo&, const fxStr&,
-		    const fxStr&);
+    void 	sendPage(FaxRequest&, FaxMachineInfo&, u_int&);
+    void 	sendPage(FaxRequest&, FaxMachineInfo&, const fxStr&, 
+			const fxStr&, u_int&);	
 // IXO transmission support
-    void	sendIxoPage(FaxRequest&, FaxMachineInfo&, const fxStr&, fxStr&);
+    void	sendIxoPage(FaxRequest&, FaxMachineInfo&, const fxStr&, fxStr&, u_int&);
     bool	sendPagerMsg(FaxRequest&, FaxItem&, const fxStr&, fxStr&);
     u_int	getResponse(fxStackBuffer& buf, long secs);
     bool	prepareMsg(FaxRequest&, FaxMachineInfo&, fxStr&);

@@ -111,11 +111,37 @@ pageSendApp::close()
     }
 }
 
+# define BATCH_FIRST 1
+# define BATCH_LAST  2
+
 FaxSendStatus
-pageSendApp::send(const char* filename)
+pageSendApp::send(const char* filenames)
 {
-    int fd = Sys::open(filename, O_RDWR);
-    if (fd >= 0) {
+    /*
+     * filenames can be a comma-separated list.  Loop through
+     * the list.  Set batched to BATCH_FIRST for the first job,
+     * to BATCH_LAST for the last job, to nothing for the in-
+     * between jobs, and to BATCH_FIRST|BATCH_LAST for a single
+     * job.
+     */
+
+    u_int batched = BATCH_FIRST;
+    FaxSendStatus status = send_done;
+    fxStr filename;
+    fxStr batchcommid;
+
+    while (filenames[0] != '\0' && status == send_done) {
+	if (filenames[0] == ',') filenames++;
+	filename = "";
+	// set filename to the next on the list and move the filenames pointer...
+	for (; filenames[0] != ',' && filenames[0] != '\0'; filenames++) {
+	    filename.append(filenames[0]);
+	}
+	filename.append('\0');
+	if (filenames[0] == '\0') batched |= BATCH_LAST;
+
+	int fd = Sys::open(filename, O_RDWR);
+	if (fd >= 0) {
 	if (flock(fd, LOCK_EX) >= 0) {
 	    FaxRequest* req = new FaxRequest(filename, fd);
 	    bool reject;
@@ -127,7 +153,11 @@ pageSendApp::send(const char* filename)
 
 		    ai.start = Sys::now();
 
-		    sendPage(*req, info);
+		    req->commid = batchcommid;        // pass commid on...
+
+		    sendPage(*req, info, batched);
+
+		    batchcommid = req->commid;        // ... to all batched jobs
 
 		    ai.jobid = req->jobid;
 		    ai.jobtag = req->jobtag;
@@ -152,30 +182,46 @@ pageSendApp::send(const char* filename)
 			    "PAGE", (const char*) ai.dest);
 		} else
 		    sendFailed(*req, send_failed, "Job has no PIN to send to");
-		req->writeQFile();		// update on-disk copy
-		return (req->status);		// return status for exit
-	    } else
+		req->writeQFile();        // update on-disk copy
+		status = req->status;
 		delete req;
-	    logError("Could not read request file");
-	} else
-	    logError("Could not lock request file: %m");
-	Sys::close(fd);
-    } else
-	logError("Could not open request file: %m");
-    return (send_failed);
+		} else {
+		delete req;
+		logError("Could not read request file");
+		status = send_failed;
+		}
+		} else {
+		logError("Could not lock request file: %m");
+		Sys::close(fd);
+		status = send_failed;
+		}
+        } else {
+		logError("Could not open request file \"%s\": %m", filename);
+		status = send_failed;
+        }
+		if (status != send_done)
+		break;
+        batched = 0;            // disable BATCH_FIRST and BATCH_LAST routines
+    }
+    return (status);        // return status for exit
 }
 
 void
-pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info)
+pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info, u_int& batched)
 {
-    if (lockModem()) {
-	beginSession(req.number);
-	req.commid = getCommID();
-	traceServer("SEND PAGE: JOB %s DEST %s COMMID %s"
-	    , (const char*) req.jobid
-	    , (const char*) req.external
-	    , (const char*) req.commid
-	);
+    if (!(batched & BATCH_FIRST) || lockModem()) {
+        if (batched & BATCH_FIRST) {
+            beginSession(req.number);
+            batchid = getCommID();
+        }
+
+        req.commid = getCommID();        // set by beginSession
+        traceServer("SEND PAGE (possibly batched): JOB %s DEST %s COMMID %s DEVICE '%s'"
+                    , (const char*) req.jobid
+                    , (const char*) req.external
+                    , (const char*) req.commid
+                    , (const char*) getModemDevice()
+                   );
 	/*
 	 * Setup tty parity; per-destination information takes
 	 * precedence over command-line arguments/config params;
@@ -184,7 +230,7 @@ pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info)
 	if (info.getPagerTTYParity() != "")
 	    pagerTTYParity = info.getPagerTTYParity();
 	// NB: may need to set tty baud rate here XXX
-	if (setupModem()) {
+    if (!(batched & BATCH_FIRST) || setupModem()) {
 	    changeState(SENDING);
 	    setServerStatus("Sending page " | req.jobid);
 	    /*
@@ -193,13 +239,16 @@ pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info)
 	     */
 	    fxStr msg;
 	    if (prepareMsg(req, info, msg))
-		sendPage(req, info, prepareDialString(req.number), msg);
-	    changeState(MODEMWAIT);		// ...sort of...
-	} else
-	    sendFailed(req, send_retry, "Can not setup modem", 4*pollModemWait);
-	discardModem(true);
-	endSession();
-	unlockModem();
+	       sendPage(req, info, prepareDialString(req.number), msg, batched);
+        } else
+	       sendFailed(req, send_retry, "Can not setup modem", 4*pollModemWait);
+
+        if ((batched & BATCH_LAST) || (req.status != send_done)) {
+            discardModem(true);
+            changeState(MODEMWAIT, 5);
+            unlockModem();
+            endSession();
+        } 
     } else {
 	sendFailed(req, send_retry, "Can not lock modem device",2*pollLockWait);
     }
@@ -255,21 +304,30 @@ pageSendApp::sendFailed(FaxRequest& req, FaxSendStatus stat, const char* notice,
 }
 
 void
-pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info, const fxStr& number, const fxStr& msg)
+pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info, const fxStr& number, const fxStr& msg, u_int& batched)
 {
     connTime = 0;				// indicate no connection
-    if (!getModem()->dataService()) {
+    if ((batched & BATCH_FIRST) && !getModem()->dataService()) {
 	sendFailed(req, send_failed, "Unable to configure modem for data use");
 	return;
     }
     req.notice = "";
     fxStr notice;
     time_t pageStart = Sys::now();
-    if (info.getPagerSetupCmds() != "")		// use values from info file
-	pagerSetupCmds = info.getPagerSetupCmds();
-    if (pagerSetupCmds != "")			// configure line speed, etc.
-	(void) getModem()->atCmd(pagerSetupCmds);
-    CallStatus callstat = getModem()->dial(number, notice);
+    if (batched & BATCH_FIRST) {
+        if (info.getPagerSetupCmds() != "")        // use values from info file
+            pagerSetupCmds = info.getPagerSetupCmds();
+
+        if (pagerSetupCmds != "")            // configure line speed, etc.
+            (void) getModem()->atCmd(pagerSetupCmds);
+    }
+
+    CallStatus callstat;
+
+    if (batched & BATCH_FIRST)
+        callstat = getModem()->dial(number, notice);
+    else
+        callstat = ClassModem::OK;
     if (callstat == ClassModem::OK)
 	connTime = Sys::now();			// connection start time
     (void) abortRequested();			// check for user abort
@@ -284,7 +342,7 @@ pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info, const fxStr& number
 
 	// from this point on, the treatment of the two protocols differs
 	if (streq(info.getPagingProtocol(), "ixo")) {
-	    sendIxoPage(req, info, msg, notice);
+	    sendIxoPage(req, info, msg, notice, batched);
 	} else if (streq(info.getPagingProtocol(), "ucp")) {
 	    sendUcpPage(req, info, msg, notice);
 	} else {
@@ -355,12 +413,17 @@ pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info, const fxStr& number
 	    sendFailed(req, send_failed, notice);
 	}
     }
+
+   if ((batched & BATCH_LAST) || (req.status != send_done))
+    {
     /*
      * Cleanup after the call.  If we have new information on
      * the client's remote capabilities, the machine info
      * database will be updated when the instance is destroyed.
      */
     getModem()->hangup();
+    }
+
     /*
      * This may not be exact--the line may already have been
      * dropped--but it should be close enough unless the modem
@@ -382,10 +445,16 @@ pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info, const fxStr& number
  */
 void
 pageSendApp::sendIxoPage(FaxRequest& req, FaxMachineInfo& info, const fxStr& msg,
-    fxStr& notice)
+    fxStr& notice, u_int& batched)
 {
-    if (pagePrologue(req, info, notice)) {
-	while (req.items.length() > 0) {	// messages
+	if (batched & BATCH_FIRST) {
+		if(!pagePrologue(req, info, notice)) {
+			sendFailed(req, req.status, notice, requeueProto);
+			return;
+		}
+	}
+
+	while (req.items.length() > 0) {    // messages
 	    u_int i = req.findItem(FaxRequest::send_page);
 	    if (i == fx_invalidArrayIndex)
 		break;
@@ -404,11 +473,12 @@ pageSendApp::sendIxoPage(FaxRequest& req, FaxMachineInfo& info, const fxStr& msg
 		}
 	    }
 	    req.items.remove(i);
-	}
-	if (req.status == send_ok)
-	    (void) pageEpilogue(req, info, notice);
-    } else
-	sendFailed(req, req.status, notice, requeueProto);
+    }
+
+    if ((batched & BATCH_LAST)
+            && req.status == send_ok) {
+        (void) pageEpilogue(req, info, notice);
+    }
 }
 
 u_int

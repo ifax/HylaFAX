@@ -2309,7 +2309,12 @@ faxQueueApp::runScheduler()
 		     * the context of the job's processing.
 		     */
 		    (void) di.getInfo(job.dest);	// must read file for supportsBatching
-		    if (di.supportsBatching() && req->jobtype == "facsimile") {	// fax only for now
+		    FaxMachineInfo info;
+		    if (di.supportsBatching()
+		    	&& (req->jobtype == "facsimile"
+		    		|| (req->jobtype == "pager" 
+		    			&& streq(info.getPagingProtocol(), "ixo")))) { 
+					// fax and IXO pages only for now
 			/*
 			 * The destination supports batching.  Continue down the queue 
 			 * and build an array of all processable jobs to this destination

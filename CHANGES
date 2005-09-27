@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* add IXO/TAP page batching (27 Sep 2005)
 * fix Class 1 handling of EOM in pagehandling (27 Sep 2005)
 * improve dataformat reporting and handling (27 Sep 2005)
 * add JBIG send support (27 Sep 2005)
