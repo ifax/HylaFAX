@@ -127,8 +127,8 @@ pageSendApp::send(const char* filenames)
 
     u_int batched = BATCH_FIRST;
     FaxSendStatus status = send_done;
-    fxStr filename;
-    fxStr batchcommid;
+    fxStr filename, batchcommid, notice;
+    time_t retrybatchtts;
 
     while (filenames[0] != '\0' && status == send_done) {
 	if (filenames[0] == ',') filenames++;
@@ -142,68 +142,97 @@ pageSendApp::send(const char* filenames)
 
 	int fd = Sys::open(filename, O_RDWR);
 	if (fd >= 0) {
-	if (flock(fd, LOCK_EX) >= 0) {
-	    FaxRequest* req = new FaxRequest(filename, fd);
-	    bool reject;
-	    if (req->readQFile(reject) && !reject) {
-		if (req->findItem(FaxRequest::send_page) != fx_invalidArrayIndex) {
-		    FaxMachineInfo info;
-		    info.updateConfig(canonicalizePhoneNumber(req->number));
-		    FaxAcctInfo ai;
+	    if (flock(fd, LOCK_EX) >= 0) {
+		FaxRequest* req = new FaxRequest(filename, fd);
+		bool reject;
+		if (req->readQFile(reject) && !reject) {
+		    if (status == send_done) {
 
-		    ai.start = Sys::now();
+			if (req->findItem(FaxRequest::send_page) != fx_invalidArrayIndex) {
+			    FaxMachineInfo info;
+			    info.updateConfig(canonicalizePhoneNumber(req->number));
+			    FaxAcctInfo ai;
 
-		    req->commid = batchcommid;        // pass commid on...
+			    ai.start = Sys::now();
 
-		    sendPage(*req, info, batched);
+			    req->commid = batchcommid;		// pass commid on...
 
-		    batchcommid = req->commid;        // ... to all batched jobs
+			    sendPage(*req, info, batched);
 
-		    ai.jobid = req->jobid;
-		    ai.jobtag = req->jobtag;
-		    ai.user = req->mailaddr;
-		    ai.duration = Sys::now() - ai.start;
-		    ai.conntime = getConnectTime();
-		    ai.commid = req->commid;
-		    ai.device = getModemDeviceID();
-		    ai.dest = req->external;
-		    ai.csi = "";
-		    ai.params = 0;
-		    ai.npages = 0;
-		    CallID empty_callid;
-		    ai.callid = empty_callid;
-		    ai.owner = req->owner;
-		    if (req->status == send_done)
-			ai.status = "";
-		    else
-			ai.status = req->notice;
-		    if (!ai.record("PAGE"))
-			logError("Error writing %s accounting record, dest=%s",
-			    "PAGE", (const char*) ai.dest);
-		} else
-		    sendFailed(*req, send_failed, "Job has no PIN to send to");
-		req->writeQFile();        // update on-disk copy
-		status = req->status;
-		delete req;
+			    batchcommid = req->commid;		// ... to all batched jobs
+
+			    ai.jobid = req->jobid;
+			    ai.jobtag = req->jobtag;
+			    ai.user = req->mailaddr;
+			    ai.duration = Sys::now() - ai.start;
+			    ai.conntime = getConnectTime();
+			    ai.commid = req->commid;
+			    ai.device = getModemDeviceID();
+			    ai.dest = req->external;
+			    ai.csi = "";
+			    ai.params = 0;
+			    ai.npages = 0;
+			    CallID empty_callid;
+			    ai.callid = empty_callid;
+			    ai.owner = req->owner;
+			    if (req->status == send_done)
+				ai.status = "";
+			    else
+				ai.status = req->notice;
+			    if (!ai.record("PAGE"))
+				logError("Error writing %s accounting record, dest=%s",
+				    "PAGE", (const char*) ai.dest);
+			} else
+			    sendFailed(*req, send_failed, "Job has no PIN to send to");
+
+			status = req->status;
+		    } else {
+			/*
+			 * This job cannot get sent right now due to an error in a previous
+			 * job in the batch.
+			 *
+			 * In the event that the previous error was not an in-job error (e.g.
+			 * a busy signal) then we treat that error as if it applies to all jobs.
+			 * We "keep the batch together" by synchronizing their tts.
+			 *
+			 * In the event that the previous error was an in-job error, then the
+			 * previous job processing is essentially blocking this job from
+			 * processing, and so we set the notice accordingly and don't increase
+			 * the dial-count.  In case batching itself triggered the problem, we
+			 * don't set the tts, allowing faxq to reschedule the job, expecting that
+			 * to disassemble and "shuffle" the entire batch.
+			 */
+			if (notice == "No carrier detected" ||
+			    notice == "Busy signal detected" ||
+			    notice == "No answer from remote") {
+			    req->notice = notice;
+			    req->status = send_retry;
+			    req->tts = retrybatchtts;
+			    req->totdials++;
+			} else {
+			    req->notice = "Blocked by another job";
+			    req->status = send_retry;
+			}
+		    }
+		    req->writeQFile();		// update on-disk copy
+		    delete req;
 		} else {
-		delete req;
-		logError("Could not read request file");
-		status = send_failed;
+		    delete req;
+		    logError("Could not read request file");
+		    status = send_failed;
 		}
-		} else {
+	    } else {
 		logError("Could not lock request file: %m");
 		Sys::close(fd);
 		status = send_failed;
-		}
-        } else {
-		logError("Could not open request file \"%s\": %m", filename);
-		status = send_failed;
-        }
-		if (status != send_done)
-		break;
-        batched = 0;            // disable BATCH_FIRST and BATCH_LAST routines
+	    }
+	} else {
+	    logError("Could not open request file \"%s\": %m", (const char*) filename);
+	    status = send_failed;
+	}
+	batched = 0;		// disable BATCH_FIRST and BATCH_LAST routines
     }
-    return (status);        // return status for exit
+    return (status);		// return status for exit
 }
 
 void
