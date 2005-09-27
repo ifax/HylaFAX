@@ -198,7 +198,7 @@ RingFax	string	\-	distinctive ring fax call identifier
 RingsBeforeAnswer	integer	\s-10\s+1	rings to wait before answering phone
 RingTimeout	integer	\s-16000\s+1	timeout in ms after RING before reset
 RingVoice	string	\-	distinctive ring voice call identifier
-RTNHandlingMethod	string	\s-1Retransmit\s+1	RTN signal handling method	
+RTNHandlingMethod	string	\s-1Retransmit-Ignore\s+1	RTN signal handling method	
 SaveUnconfirmedPages	boolean	\s-1true\s+1	save or delete unconfirmed pages
 SendFaxCmd\(S1	string	\s-1bin/faxsend\s+1	fax transmit command script
 SendPageCmd\(S1	string	\s-1bin/pagesend\s+1	pager transmit command script
@@ -1316,27 +1316,43 @@ and
 .BR RingFax .
 .TP
 .B RTNHandlingMethod
-Specifies how to react to RTN signal, received from the remote;
-one of ``\s-1Retransmit\s+1'', ``\s-1Giveup\s+1'' and
-``\s-1Ignore\s+1''. ``\s-1Retransmit\s+1'' assumes that the
-page is not sent succesfully if RTN signal has been received.
-HylaFAX will make up to 2 additional attempts to send the page,
-decreasing signalling rate and retraining. If RTN is still there,
-it will place up to 2 additional calls. So if the remote always respond with
-RTN, the page will be send 9 times. Although this algorithm comply with
-T.30 specs and was originally implemented by Sam Leffler as the only
-possible choice, real fax machines behave completely different. There is a
-non-written rule among fax developers, that RTN means ``over and out'' -- hang
-up immediately and never try to send the same page to the same destination
-again. That is because RTN usually indicates problems with flow control,
-incorrectly encoded T.4 data, incompatibility between local and remote
-equipment etc., but very rarely is caused by the real noise on the line.
-This ``over and out'' behaviour can be activated by ``Giveup'' value.
-There is also third option, not so radical as ``Giveup''. Yes, we will never
-retransmit the page, but we can try to send the next page, and let the
-remote to decide what to do (accept our decision or hang up). Thus one page will
-(or will not) be missed but we have a chance to successfully send all other pages.
-This behaviour can be activated by ``Ignore'' value.
+Specifies how to react to an RTN signal received from the remote:
+one of ``\s-1Retransmit\s+1'', ``\s-1Giveup\s+1'',``\s-1Ignore\s+1'',
+or ``\s-1Retransmit-Ignore\s+1''.
+
+``\s-1Retransmit\s+1'' assumes that the page is not received succesfully.
+HylaFAX will make up to two additional attempts to send the page,
+decreasing signalling rate and retraining.  If RTN continues,
+up to 2 additional calls will be placed.  The downside is that if the remote
+always responds with RTN, the page will be sent 9 times and no following
+pages will be sent.  Many fax machines will not behave this way, although 
+T.30 specification seems clear that this is the intent of the RTN signal.
+
+Many fax machines will interpret RTN as meaning to not send the same data
+again.  That is because RTN may indicate problems with flow control,
+incorrectly encoded T.4 data, or some incompatibility other than line noise.
+Fax machines that interpret RTN this way will disconnect and require a manual
+retransmission.  This ``over and out'' behaviour can be activated by the 
+``\s-1Giveup\s+1'' value.  The advantage to this behavior is that the same
+page of image data will not be sent multiple times, but the downside is that
+the following pages will not be sent.
+
+``\s-1Ignore\s+1'' is similar to ``\s-1Giveup\s+1'' in that it makes the
+assumption the data cannot be automatically accepted by the receiver.  However,
+rather than disconnecting the page of image data is abandoned and processing moves
+on to the next.  The remote is left to decide what to do with the unacceptable
+page of image data.  The downside to this behavior, is that the remote may or may
+not have kept the page, depending on its interpretation of the RTN signal - but
+it does allow us to continue on to the next page.
+
+``\s-1Retransmit-Ignore\s+1'' is a combination of ``\s-1Retransmit\s+1'' and
+``\s-1Ignore\s+1''.  The page of image data is retransmitted up to two additional
+times, but rather than disconnecting after a third RTN signal for the same page, 
+processing then continues on to the next page.  This approach is an effort to
+satisfy both interpretations of an RTN signal.  It allows the receiver to hopefully
+receive a better copy of the image data while not failing to send subsequent pages.
+If the receiver saves or prints a copy of pages for which it transmits RTN, then it
+could save or print up to three copies of every page.
 .TP
 .B SaveUnconfirmedPages
 Whether or not to save a received facsimile image page if the sender disconnects

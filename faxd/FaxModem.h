@@ -168,7 +168,8 @@ public:
     enum {			// FaxModem::RTNHandling
         RTN_RETRANSMIT = 0,         // retransmit page after RTN until MCF/MPS
         RTN_GIVEUP     = 1,         // immediately abort
-        RTN_IGNORE     = 2          // ignore error and send next page
+        RTN_IGNORE     = 2,         // ignore error and send next page
+        RTN_RETRANSMITIGNORE = 3    // retransmit but ignore error instead of hanging up
     };
 
     virtual ~FaxModem();

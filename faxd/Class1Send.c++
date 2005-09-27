@@ -427,6 +427,8 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		return (send_retry);
 	    case FCF_RTN:		// nak, retry after retraining
                 switch( conf.rtnHandling ){
+		case RTN_RETRANSMITIGNORE:
+		    if (ntrys < 2) break;
                 case RTN_IGNORE:
 			// ignore error and try to send next page
 			// after retraining

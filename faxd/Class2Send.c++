@@ -321,6 +321,8 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		    break;
 		case PPR_RTN:		// page bad, retrain requested
                     switch( conf.rtnHandling ){
+		    case RTN_RETRANSMITIGNORE:
+			if (ntrys < 2) break;
                     case RTN_IGNORE:
                         goto ignore; // ignore error and trying to send next page
                     case RTN_GIVEUP:

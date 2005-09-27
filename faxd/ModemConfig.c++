@@ -254,7 +254,7 @@ ModemConfig::setupConfig()
     class1ValidateV21Frames = false;		// assume the modem does this
     setVolumeCmds("ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1");
     recvDataFormat	= DF_ALL;		// default to no transcoding
-    rtnHandling         = FaxModem::RTN_RETRANSMIT; // retransmit until MCF/MPS
+    rtnHandling         = FaxModem::RTN_RETRANSMITIGNORE; // retransmit until MCF/MPS
     saveUnconfirmedPages = true;		// keep unconfirmed pages
     softRTFCC		= true;			// real-time fax comp. conv. (software)
     noAnswerVoice	= false;		// answer voice calls
@@ -540,7 +540,7 @@ ModemConfig::findRTNHandling(const char* cp, RTNHandling& rh)
         { "RETRANSMIT", FaxModem::RTN_RETRANSMIT },
         {     "GIVEUP", FaxModem::RTN_GIVEUP },
         {     "IGNORE", FaxModem::RTN_IGNORE },
-        {  "H_POLLACK", FaxModem::RTN_IGNORE }, // inventor's name as an alias :-)
+        { "RETRANSMIT-IGNORE", FaxModem::RTN_RETRANSMITIGNORE }
     };
     for (u_int i = 0; i < N(rhnames); i++)
         if (valeq(cp, rhnames[i].name)) {
@@ -555,8 +555,8 @@ ModemConfig::getRTNHandling(const char* cp)
 {
     RTNHandling rh;
     if (!findRTNHandling(cp, rh)) {
-        configError("Unknown RTN handling method \"%s\", using RETRANSMIT", cp);
-        rh = FaxModem::RTN_RETRANSMIT;   // default
+        configError("Unknown RTN handling method \"%s\", using RETRANSMIT-IGNORE", cp);
+        rh = FaxModem::RTN_RETRANSMITIGNORE;   // default
     }
     return (rh);
 }

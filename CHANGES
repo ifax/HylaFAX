@@ -1,5 +1,9 @@
 #	$Id$	
 
+Changelog for HylaFAX
+
+* add Retransmit-Ignore RTNHandlingMethod (27 Sep 2005)
+
 Changelog for HylaFAX 4.2.2
 
 * fix error of confirming an ECM block missing frames other
