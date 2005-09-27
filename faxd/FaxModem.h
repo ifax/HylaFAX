@@ -77,7 +77,9 @@ private:
     tstrip_t	recvStrip;	// current strip number during receive
     u_char*	recvRow;	// current receive row raster
     u_char*	recvPageStart;	// pointer to start of page buffer
-    u_long	savedWriteOff;	// file offset to start of page data
+    u_long*	savedWriteOff;	// file offset at start of page data
+    u_long*	savedStripByteCounts;	// byte counts at start of page data
+    int		decodedPixels;	// number of pixels decoded with error
     int		decoderFd[2];	// file descriptors for the decoder pipe
     int		counterFd[2];	// file descriptors for the counter pipe
     pid_t	decoderPid;	// process id for the decoding process

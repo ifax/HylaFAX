@@ -688,9 +688,8 @@ FaxModem::recvStartPage(TIFF* tif)
 {
     u_char null[1];
     (void) TIFFWriteRawStrip(tif, 0, null, 0);
-    u_long* lp;
-    (void) TIFFGetField(tif, TIFFTAG_STRIPOFFSETS, &lp);
-    savedWriteOff = lp[0];
+    (void) TIFFGetField(tif, TIFFTAG_STRIPOFFSETS, &savedWriteOff);
+    (void) TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &savedStripByteCounts);
     pageStarted = true;
 }
 
@@ -708,10 +707,9 @@ void
 FaxModem::recvResetPage(TIFF* tif)
 {
     if (!pageStarted) return;
-    u_long* lp;
     TIFFSetWriteOffset(tif, 0);		// force library to reset state
-    TIFFGetField(tif, TIFFTAG_STRIPOFFSETS, &lp);	lp[0] = savedWriteOff;
-    TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &lp);	lp[0] = 0;
+    TIFFSetField(tif, TIFFTAG_STRIPOFFSETS, savedWriteOff);
+    TIFFSetField(tif, TIFFTAG_STRIPBYTECOUNTS, savedStripByteCounts);
 }
 
 void

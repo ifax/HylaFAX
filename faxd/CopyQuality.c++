@@ -189,8 +189,8 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 	 */
 	recvStartPage(tif);
 
-	u_char* curGood = buf;			// last good row
-	memset(curGood, 0, (size_t) rowSize);	// initialize to all white
+	u_char* curGood = (u_char*) malloc((size_t) rowSize);
+	memset(curGood, 0, (size_t) rowSize);	// clear to white
 	recvBuf = NULL;				// don't need raw data
 	lastRowBad = false;			// no previous row
 	cblc = 0;				// current bad line run
@@ -204,11 +204,11 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 		 * later for deciding whether or not the page quality
 		 * is acceptable.
 		 */
+		decodedPixels = rowpixels;	// assume no error
 		bool decodeOK = decodeRow(recvRow, rowpixels);
 		if (seenRTC())			// seen RTC, flush everything
 		    continue;
 		if (decodeOK) {
-		    curGood = recvRow;		// reset last good
 		    if (lastRowBad) {		// reset run statistics
 			lastRowBad = false;
 			if (cblc > recvConsecutiveBadLineCount)
@@ -216,12 +216,54 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 			cblc = 0;
 		    }
 		} else {
-		    memcpy(recvRow, curGood, (size_t) rowSize);
-			// replicate last good
+		    /*
+		     * Our copy-quality correction mechanism involves decoding
+		     * and re-encoding each line (as is being done), and if a
+		     * line is decoded with error (short pixel count) then the
+		     * remaining pixels are carried-over from the row above.
+		     * This is done instead of replacing the corrupt row with
+		     * the last good row to avoid severe data loss where the
+		     * decoded data is still valid (only incomplete), and this
+		     * is done instead of replacing the missing data with white
+		     * to avoid visual disconnect of blackened areas.
+		     */
+		    if (decodedPixels < rowpixels) {
+			u_int filledchars = (decodedPixels + 7) / 8;
+			u_short rembits = decodedPixels % 8;
+			memcpy(recvRow + filledchars, curGood + filledchars, rowSize - filledchars);
+			if (rembits) {
+			    // now deal with the transitional character
+			    u_char remmask = 0;
+			    for (u_short bit = 0; bit < 8; bit++) {
+				remmask<<1;
+				if (bit < rembits) remmask |= 1;
+			    }
+			    recvRow[filledchars-1] = (recvRow[filledchars-1] & remmask) | (curGood[filledchars-1] & ~remmask);
+			}
+		    } else if (decodedPixels >= rowpixels) {
+			/*
+			 * If we get a long pixel count, then our correction mechanism
+			 * involves trimming horizontal "streaks" at the end of the
+			 * scanline and replacing that data with the corresponding data
+			 * from the preceding scanline.  If the streak doesn't exceed
+			 * rowpixels, then copy quality checking won't catch it, so
+			 * streaks can still appear, but this does well at getting most
+			 * of them in practice.
+			 */
+			u_int pos = rowSize - 1;
+			u_char streak = recvRow[pos];
+			if (streak == 0xFF || streak == 0x00) {
+			    while (pos && recvRow[pos] == streak) {
+				recvRow[pos] = curGood[pos];
+				pos--;
+			    }
+			}
+		    }
 		    recvBadLineCount++;
 		    cblc++;
 		    lastRowBad = true;
 		}
+		if (decodedPixels) memcpy(curGood, recvRow, (size_t) rowSize);
 		/*
 		 * Advance forward a scanline and if necessary
 		 * flush the buffer.  Note that we leave the
@@ -239,6 +281,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 		}
 	    }
 	}
+	free(curGood);
 	if (seenRTC()) {			// RTC found in data stream
 	    /*
 	     * Adjust everything to reflect the location
@@ -247,6 +290,8 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 	    copyQualityTrace("Adjusting for RTC found at row %u", getRTCRow());
 						// # EOL's in recognized RTC
 	    u_int n = (u_int)(recvEOLCount - getRTCRow());
+	    if (cblc - n  > recvConsecutiveBadLineCount)
+		recvConsecutiveBadLineCount = cblc - n;
 	    if ((recvRow -= n*rowSize) < buf)
 		recvRow = buf;
 	    if (n > recvBadLineCount)		// deduct RTC
@@ -262,6 +307,8 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 	     * junk from the sender.
 	     */
 	    copyQualityTrace("Adjusting for trailing noise (%lu run)", cblc);
+	    if (cblc > recvConsecutiveBadLineCount)
+		recvConsecutiveBadLineCount = cblc;
 	    recvEOLCount -= cblc;
 	    recvBadLineCount -= cblc;
 	    if ((recvRow -= cblc*rowSize) < buf)
@@ -864,9 +911,11 @@ FaxModem::invalidCode(const char* type, int x)
 void
 FaxModem::badPixelCount(const char* type, int got, int expected)
 {
-    if (!seenRTC())
+    if (!seenRTC()) {
 	copyQualityTrace("Bad %s pixel count, row %u, got %d, expected %d",
 	    type, getReferenceRow(), got, expected);
+	decodedPixels = got;
+    }
 }
 
 void

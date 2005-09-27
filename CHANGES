@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* fix and improve copy quality correction (27 Sep 2005)
 * fix PAM support for non-passworded authentication (27 Sep 2005)
 * add comments for enscript typerules entry (27 Sep 2005)
 * document JobFmt Y option (27 Sep 2005)
