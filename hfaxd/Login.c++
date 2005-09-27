@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <fcntl.h>
+#include <pwd.h>
 #if HAS_CRYPT_H
 #include <crypt.h>
 #endif
@@ -99,24 +100,22 @@ HylaFAXServer::userCmd(const char* name)
 int
 pamconv(int num_msg, STRUCT_PAM_MESSAGE **msg, struct pam_response **resp, void *appdata)
 {
-	int i;
 	char *password =(char*) appdata;
 	struct pam_response* replies;
-	int retval = PAM_CONV_ERR;
+
+	if (num_msg != 1 || msg[0]->msg_style != PAM_PROMPT_ECHO_OFF)
+	    return PAM_CONV_ERR;
+
+	if (password == NULL)
+	    return PAM_CONV_AGAIN;
 
 	replies=(struct pam_response*)calloc(num_msg, sizeof(struct pam_response));
 
-	for (i=0; i<num_msg; i++) {
-		switch(msg[i]->msg_style) {
-			case PAM_PROMPT_ECHO_OFF:
-				replies[i].resp = password ? strdup(password) : NULL;
-				replies[i].resp_retcode = 0;
-				retval = PAM_SUCCESS;
-				break;
-		}
-	}
+	replies[0].resp = strdup(password);
+	replies[0].resp_retcode = 0;
 	*resp = replies;
-	return(retval);
+
+	return PAM_SUCCESS;
 }
 #endif //HAVE_PAM
 
@@ -142,34 +141,61 @@ HylaFAXServer::pamCheck(const char* user, const char* pass)
 {
 	bool retval = false;
 #ifdef HAVE_PAM
+	if (pamh == NULL)
+	    return false;
+
 	if (user == NULL) user = the_user;
 	if (pass == NULL) pass = passwd.c_str();
+
 	struct pam_conv conv = {
 		pamconv,
 		(void*)pass
 	};
-
-	pam_handle_t *pamh = NULL;
+       
 
 	int pamret;
 
-	pamret = pam_start(FAX_SERVICE, user, &conv, &pamh);
-	if (pamret == PAM_SUCCESS) {
-		pamret = pam_authenticate(pamh, 0);
-	}
+	pamret = pam_set_item(pamh, PAM_CONV, &conv);
 
-	if (pamret == PAM_SUCCESS) {
-		pamret = pam_acct_mgmt(pamh, 0);
-	}
+	if (pamret == PAM_SUCCESS)
+	    pamret = pam_authenticate(pamh, 0);
 
-	if (pamret == PAM_SUCCESS) {
+	if (pamret == PAM_SUCCESS)
+	    pamret = pam_acct_mgmt(pamh, 0);
+
+	if (pamret == PAM_SUCCESS)
 		retval = true;
-	}
 
-	pam_end(pamh, pamret);
-	if (pamIsAdmin()) state |= S_PRIVILEGED;
+	pamEnd(pamret);
+	return retval;
+#endif
+}
+
+void HylaFAXServer::pamEnd(int pamret)
+{
+#ifdef HAVE_PAM
+    if (pamret == PAM_SUCCESS)
+    {
+	if (pamIsAdmin())
+	    state |= S_PRIVILEGED;
+
+	char *newname=NULL;
+	
+	pamret = pam_get_item(pamh, PAM_USER, (const void **)&newname);
+
+	if (pamret == PAM_SUCCESS && newname != NULL)
+	    the_user = strdup(newname);
+
+	struct passwd* uinfo=getpwnam((const char *)the_user);
+	if (uinfo != NULL) {
+	    uid = uinfo->pw_uid;
+	}	
+
+    }
+    pamret = pam_end(pamh, pamret);
+    pamh = NULL;
+
 #endif //HAVE_PAM
-	return(retval);
 }
 
 void
@@ -239,6 +265,11 @@ HylaFAXServer::login(void)
 	end_login();
 	return;
     }
+
+#ifdef HAVE_PAM
+    pam_chrooted = true;
+#endif
+
     (void) isShutdown(false);	// display any shutdown messages
     reply(230, "User %s logged in.", (const char*) the_user);
     if (TRACE(LOGIN))

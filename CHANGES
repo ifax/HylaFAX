@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* fix PAM support for non-passworded authentication (27 Sep 2005)
 * add comments for enscript typerules entry (27 Sep 2005)
 * document JobFmt Y option (27 Sep 2005)
 * improve JDELE hfaxd handling (27 Sep 2005)

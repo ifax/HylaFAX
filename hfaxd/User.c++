@@ -49,6 +49,11 @@
 gid_t	HylaFAXServer::faxuid = 0;		// reserved fax uid
 #define	FAXUID_RESV	HylaFAXServer::faxuid	// reserved fax uid
 
+#ifdef HAVE_PAM
+extern int
+pamconv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata);
+#endif
+
 bool
 HylaFAXServer::checkUser(const char* name)
 {
@@ -91,14 +96,33 @@ bool
 HylaFAXServer::checkuser(const char* name)
 {
 	bool retval=false;
+
 #ifdef HAVE_PAM
-	struct passwd* uinfo=getpwnam(name);
-	if (uinfo != NULL) {
-		uid = uinfo->pw_uid;
-		passwd = "*";
-		adminwd = "*";
-		retval = true;
+	if (pam_chrooted) {
+	    logNotice("PAM authentication for %s can't be used for a re-issuance of USER command because of chroot jail\n", name);
+	    return false;
 	}
+
+	int pamret;
+	struct pam_conv conv = {pamconv, NULL};		
+
+	pamret = pam_start(FAX_SERVICE, name, &conv, &pamh);
+
+	if (pamret == PAM_SUCCESS)
+		pamret = pam_authenticate(pamh, 0);
+
+	if (pamret == PAM_SUCCESS)
+		pamret = pam_acct_mgmt(pamh, 0);
+
+	if (pamret == PAM_SUCCESS) {
+		passwd = "";
+		pamEnd(pamret);
+	} else {
+	    passwd = "*";
+	    adminwd = "*";
+	}
+	retval = true;
+
 #endif //HAVE_PAM
 	return(retval);
 }

@@ -60,6 +60,11 @@ HylaFAXServer::HylaFAXServer()
     adminAttempts = 0;		// NB: not reset by REIN command
     idcache = NULL;
 
+#ifdef HAVE_PAM
+	pamh = NULL;
+	pam_chrooted = false;
+#endif
+
     data = -1;			// current data connection (socket)
     pdata = -1;			// passive mode data connect (socket)
     faxqFd = -1;

@@ -214,6 +214,11 @@ protected:
     /*
      * User authentication and login-related state.
      */
+#ifdef HAVE_PAM
+	pam_handle_t *pamh;		// handle to current pam session
+	bool	pam_chrooted;	// if already chrooted, PAM gets disabled
+#endif
+
     fxStr	passwd;			// encrypted user password
     fxStr	adminwd;		// encrypted passwd for admin privileges
     u_int	uid;			// client's ID
@@ -344,6 +349,7 @@ protected:
     void loginRefused(const char* why);
 	bool pamCheck(const char* user=NULL, const char* pass=NULL);
 	bool pamIsAdmin(const char* user=NULL);
+	void pamEnd(int pamret);
     bool checkUser(const char*);
     bool checkuser(FILE*, const char *name);
     bool checkuser(const char *name);
