@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* add comments for enscript typerules entry (27 Sep 2005)
 * document JobFmt Y option (27 Sep 2005)
 * improve JDELE hfaxd handling (27 Sep 2005)
 * be more informative with /dev/null errors (27 Sep 2005)

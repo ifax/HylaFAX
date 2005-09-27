@@ -158,6 +158,20 @@
 0	ascii		x		ps	%F/textfmt -B -f Courier-Bold\
 						-Ml=0.4in -p 11 -s %s >%o <%i
 
+#
+# Use enscript, instead of HylaFAX textfmt, for converting text into ps.
+# 1) Comment out the 2 lines above referring to textfmt
+# 2) Un-comment the following 3 lines
+#    Notes: - The '--margins' and '-s' params are set to produce output similar
+#             to the textfmt invocation above.
+#           - Page size is fixed, since enscript doesn't handle the values
+#             assigned to the %s macro. Use:
+#             '-M Letter' (not 'letter', not 'LETTER') for US letter
+#             '-M A4'     (not 'a4') for ISO A4
+#0	ascii		x		ps	enscript -B -f Courier-Bold@11 \
+#						--margins=24::60:36 -s 2.2 \
+#						-q -M A4 -p %o %i
+
 #  Support 7-bit text which would otherwise be seen as binary.
 #
 #0	byte		x		ps	%F/textfmt -B -f Courier-Bold \
