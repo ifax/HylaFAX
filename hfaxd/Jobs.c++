@@ -1801,7 +1801,6 @@ HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
 	    case 'X':
 		fprintf(fd, fspec, toupper(job.jobtype[0]));
 		break;
-#if OLDPROTO_SUPPORT
 	    case 'Y':
 		{ char buf[30];				// XXX HP C++
 		  strftime(buf, sizeof (buf), "%Y/%m/%d %H.%M.%S",
@@ -1812,7 +1811,6 @@ HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
 	    case 'Z':
 		fprintf(fd, fspec, job.tts);
 		break;
-#endif /* OLDPROTO_SUPPORT */
 	    case 'a':
 		fprintf(fd, fspec, "?TPSBWRDF"[job.state]);
 		break;
