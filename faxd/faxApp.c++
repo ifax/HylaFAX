@@ -357,6 +357,8 @@ detachIO(void)
     endpwent();				// XXX some systems hold descriptors
     closelog();				// XXX in case syslog has descriptor
     int fd = Sys::open(_PATH_DEVNULL, O_RDWR);
+    if (fd == -1)
+	printf("Could not open null device file %s.", _PATH_DEVNULL);
     dup2(fd, STDIN_FILENO);
     dup2(fd, STDOUT_FILENO);
     dup2(fd, STDERR_FILENO);
@@ -464,6 +466,8 @@ faxApp::detachFromTTY(void)
 {
 #ifdef O_NOCTTY
     int fd = Sys::open(_PATH_DEVNULL, O_RDWR);
+    if (fd == -1)
+	printf("Could not open null device file %s.", _PATH_DEVNULL);
     dup2(fd, STDIN_FILENO);
     dup2(fd, STDOUT_FILENO);
     dup2(fd, STDERR_FILENO);

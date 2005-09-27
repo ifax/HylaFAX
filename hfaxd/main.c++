@@ -160,6 +160,8 @@ static void
 detachFromTTY(void)
 {
     int fd = Sys::open(_PATH_DEVNULL, O_RDWR);
+    if (fd == -1)
+	fatal("Could not open null device file %s.", _PATH_DEVNULL);
     dup2(fd, STDIN_FILENO);
     dup2(fd, STDOUT_FILENO);
     dup2(fd, STDERR_FILENO);
