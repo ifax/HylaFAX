@@ -1903,8 +1903,10 @@ faxQueueApp::terminateJob(const fxStr& jobid, JobStatus why)
 	job->state = FaxRequest::state_failed;
 	Trigger::post(Trigger::JOB_KILL, *job);
 	FaxRequest* req = readRequest(*job);
-	if (req)
+	if (req) {
+	    req->notice = "Job aborted by request";
 	    deleteRequest(*job, req, why, why != Job::removed);
+	}
 	setDead(*job);
 	return (true);
     } else
