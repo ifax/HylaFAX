@@ -662,7 +662,7 @@ FaxRequest::addItem(FaxSendOp op, char* tag, bool& rejectJob)
     else
 	cp = tag, tag = "";
     if (!checkDocument(cp)) {
-    	error("Document has been rejected");
+    	error("Rejected document in corrupt job request");
 	rejectJob = true;
     }
     else

@@ -57,7 +57,17 @@ bool
 Job::checkDocument(const char* pathname)
 {
     struct stat sb;
-    return (FileCache::lookup(fxStr::format("/%s", pathname), sb));
+    if (FileCache::lookup(fxStr::format("/%s", pathname), sb))
+	return (true);
+    int fd = Sys::open(pathname, 0);
+    if (fd == -1) {
+	logError("Can not access document file \"%s\": %s",
+	    pathname, strerror(errno));
+	return (false);
+    }
+    Sys::close(fd);
+    logError("Undetermined error with document file \"%s\"", pathname);
+    return (false);
 }
 
 fxIMPLEMENT_StrKeyPtrValueDictionary(JobDict, Job*)
