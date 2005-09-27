@@ -289,6 +289,12 @@ faxQueueApp::processJob(Job& job, FaxRequest* req,
 bool
 faxQueueApp::prepareJobNeeded(Job& job, FaxRequest& req, JobStatus& status)
 {
+    if (!req.items.length()) {
+	req.notice = "Job contains no documents";
+	status = Job::rejected;
+	jobError(job, "SEND REJECT: %s", (const char*) req.notice);
+	return (false);
+    }
     for (u_int i = 0, n = req.items.length(); i < n; i++)
 	switch (req.items[i].op) {
 	case FaxRequest::send_postscript:	// convert PostScript

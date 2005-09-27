@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* don't place a call if there are no documents (27 Sep 2005)
 * make hfaxd clean up after itself (27 Sep 2005)
 * add xferfaxlog accounting for jobs that time out (27 Sep 2005)
 * add a job abort notification message (27 Sep 2005)
