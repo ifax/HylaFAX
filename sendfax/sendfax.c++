@@ -289,7 +289,7 @@ sendFaxApp::addDestination(const char* cp)
     fxStr subaddress;
     size_t sublen = 0;
     const char* ap = strchr(cp, '#');
-    if (ap) {
+    if (ap && !strchr(cp, '@')) {
 	ap = ap+1;
 	subaddress = fxStr(ap);
 	sublen = strlen(subaddress) + 1;
