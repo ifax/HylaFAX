@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* improve JDELE hfaxd handling (27 Sep 2005)
 * be more informative with /dev/null errors (27 Sep 2005)
 * don't place a call if there are no documents (27 Sep 2005)
 * make hfaxd clean up after itself (27 Sep 2005)

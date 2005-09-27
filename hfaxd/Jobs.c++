@@ -1252,6 +1252,11 @@ HylaFAXServer::deleteJob(const char* jobid)
     fxStr emsg;
     Job* job = preJobCmd("delete", jobid, emsg);
     if (job) {
+	const char* startdir = cwd->pathname;
+	if (Sys::chdir("/") < 0) {
+	    reply(504, "Cannot change to base spool directory.");
+	    return;
+	}
 	if (job->state != FaxRequest::state_done &&
 	  job->state != FaxRequest::state_failed &&
 	  job->state != FaxRequest::state_suspended) {
@@ -1317,7 +1322,10 @@ HylaFAXServer::deleteJob(const char* jobid)
 		}
 	    }
 	}
-	(void) Sys::unlink(job->qfile);		// XXX
+	if (Sys::unlink(job->qfile) < 0)
+	    reply(504, "Deletion of queue file %s failed.", (const char*) job->qfile);
+	if (Sys::chdir(startdir) < 0)
+	    reply(504, "Cannot change to %s spool directory.", startdir);
 	jobs.remove(job->jobid);
 	if (job == curJob)			// make default job current
 	    curJob = &defJob;
