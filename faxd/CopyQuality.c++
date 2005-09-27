@@ -35,6 +35,8 @@
 #include "StackBuffer.h"
 #include "FaxServer.h"
 
+#include <ctype.h>
+
 #define	RCVBUFSIZ	(32*1024)		// XXX
 
 static	void setupCompression(TIFF*, u_int, uint32);
@@ -656,7 +658,10 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 			}
 			u_long clength = 256*256*256*buf[i+2]+256*256*buf[i+3]+256*buf[i+4]+buf[i+5];
 			fxStr comment = "";
-			for (u_long cpos = 0; i+6+cpos < cc && cpos < clength; cpos++) comment.append(buf[i+6+cpos]);
+			for (u_long cpos = 0; i+6+cpos < cc && cpos < clength; cpos++) {
+			    if (!isprint(buf[i+6+cpos])) break;		// only printables
+			    comment.append(buf[i+6+cpos]);
+			}
 			copyQualityTrace("Found COMMENT Marker Segment in BID, \"%s\"", (const char*) comment);
 			i = i + clength + 5;
 			continue;
@@ -671,7 +676,8 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 			framelength += 256*buf[i+4];
 			framelength += buf[i+5];
 			copyQualityTrace("Found NEWLEN Marker Segment in BID, Yd = %d", framelength);
-			if (framelength < 65535) recvEOLCount = framelength;
+			// T.82: "The new Yd shall never be greater than the original"
+			if (framelength < 65535 && (!recvEOLCount || framelength < recvEOLCount)) recvEOLCount = framelength;
 			i += 5;
 			continue;
 		    }
