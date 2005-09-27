@@ -1967,6 +1967,46 @@ faxQueueApp::delayJob(Job& job, FaxRequest& req, const char* mesg, time_t tts)
 	releaseModem(job);
 }
 
+void
+faxQueueApp::timeoutAccounting(Job& job, FaxRequest& req)
+{
+    FaxAcctInfo ai;
+    ai.jobid = (const char*) req.jobid;
+    ai.jobtag = (const char*) req.jobtag;
+    ai.user = (const char*) req.mailaddr;
+    ai.start = Sys::now();
+    ai.duration = 0;
+    ai.conntime = 0;
+    ai.commid = "";
+    ai.device = "";
+    ai.dest = (const char*) req.external;
+    ai.csi = "";
+    ai.npages = 0;
+    ai.params = 0;
+    ai.status = "Kill time expired";
+    CallID empty_callid;
+    ai.callid = empty_callid;
+    ai.owner = (const char*) req.owner;
+    ai.faxdcs = "";
+    pid_t pid = fork();
+    switch (pid) {
+	case -1:			// error
+	    if (!ai.record("UNSENT"))
+		logError("Error writing UNSENT accounting record, dest=%s",
+		    (const char*) ai.dest);
+	    break;
+	case 0:				// child
+	    if (!ai.record("UNSENT"))
+		logError("Error writing UNSENT accounting record, dest=%s",
+		    (const char*) ai.dest);
+	    _exit(255);
+	    /*NOTREACHED*/
+	default:			// parent
+	    Dispatcher::instance().startChild(pid, this);
+	    break;
+    }
+}
+
 /*
  * Process the job who's kill time expires.  The job is
  * terminated unless it is currently being tried, in which
@@ -1983,6 +2023,7 @@ faxQueueApp::timeoutJob(Job& job)
 	job.state = FaxRequest::state_failed;
 	FaxRequest* req = readRequest(job);
 	if (req) {
+	    timeoutAccounting(job, *req);
 	    req->notice = "Kill time expired";
 	    deleteRequest(job, req, Job::timedout, true);
 	}
@@ -2007,6 +2048,7 @@ faxQueueApp::timeoutJob(Job& job, FaxRequest& req)
     job.state = FaxRequest::state_failed;
     traceQueue(job, "KILL TIME EXPIRED");
     Trigger::post(Trigger::JOB_TIMEDOUT, job);
+    timeoutAccounting(job, req);
     req.notice = "Kill time expired";
     deleteRequest(job, req, Job::timedout, true);
     setDead(job);
