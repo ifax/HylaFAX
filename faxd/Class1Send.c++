@@ -275,6 +275,18 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	signalRcvd = 0;
 	if (abortRequested())
 	    return (send_failed);
+	if (repeatPhaseB) {
+	    /*
+	     * We need to repeat protocol from the beginning of Phase B
+	     * due to a non-batched EOM signal (formatting change).
+	     */
+	    params.br = (u_int) -1;		// force retraining
+	    batched = batched & ~BATCH_FIRST;	// must raise V.21 receive carrier
+	    bool hasDoc;
+	    FaxSendStatus status = getPrologue(params, hasDoc, emsg, batched);
+	    if (status != send_ok) return (send_retry);
+	    repeatPhaseB = false;
+	}
 	/*
 	 * Check the next page to see if the transfer
 	 * characteristics change.  If so, update the
@@ -320,6 +332,14 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	u_int cmd;
 	if (!decodePPM(pph, cmd, emsg))
 	    return (send_failed);
+	/*
+	 * If pph tells us that the PPM is going to be EOM it means that the
+	 * next page is formatted differently from the current page.  To handle this
+	 * situation properly, EOM is used.  Following EOM we must repeat the
+	 * entire protocol of Phase B.  This triggers that.  Batching is handled
+	 * also with EOM, but not with the repeatPhaseB flag.
+	 */
+	repeatPhaseB = (cmd == FCF_EOM);
 	if (cmd == FCF_EOP && !(batched & BATCH_LAST))
 	    cmd = FCF_EOM;
 
@@ -412,15 +432,15 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 			protoTrace(emsg);
 			return (send_failed);
 		    }
-		    if (ppr == FCF_MCF) {
+		    if (ppr == FCF_MCF && !repeatPhaseB) {
 			/*
 			 * The session parameters cannot change except following
 			 * the reception of an RTN or RTP signal or the transmission
 			 * of an EOM signal.
 			 *
-			 * Since we did not receive RTN or RTP, and since batching (EOM)
-			 * triggers retraining in other ways, we require that the
-			 * next page have the same characteristics as this page.
+			 * Since we did not receive RTN or RTP, if EOM was not used
+			 * (repeating from the start of Phase B) then we require that
+			 * the next page have the same characteristics as this page.
 			 */
 			next = params;
 		    }

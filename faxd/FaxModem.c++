@@ -630,6 +630,8 @@ FaxModem::tracePPR(const char* dir, u_int ppr)
 	protoTrace("%s %s", dir, "CTR (confirm continue to correct)");
     else if ((ppr & 0x7f) == FCF_CFR)			// avoid CFR-MPS collision
 	protoTrace("%s %s", dir, "CFR (confirmation to receive)");
+    else if ((ppr & 0x7f) == FCF_NSF)			// avoid NSF-PIN collision
+	protoTrace("%s %s", dir, "NSF (non-standard facilities)");
     else {
 	static const char* pprNames[16] = {
 	    "unknown PPR 0x00",
