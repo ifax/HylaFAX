@@ -2372,8 +2372,26 @@ faxQueueApp::runScheduler()
 			 * jobs to other destinations.
 			 */
 			unblockDestJobs(job, di);
+			/*
+			 * Jobs that are on the sleep queue with state_sleeping
+			 * can be batched because the tts that the submitter requested
+			 * is known to have passed already.  So we pull these jobs out
+			 * of the sleep queue and place them into the run queue so that
+			 * the batching loop below can pick them up.  Note that we cannot
+			 * read the queue file (readRequest) at this point.  Any needed
+			 * alteration to the queue file must occur below within the loop
+			 * where the queue file is updated.
+			 */
+			for (JobIter sleepiter(sleepq); sleepiter.notDone(); sleepiter++) {
+			    if (sleepiter.job().dest != job.dest || sleepiter.job().state != FaxRequest::state_sleeping)
+				continue;
+			    sleepiter.job().stopTTSTimer();
+			    sleepiter.job().tts = now;
+			    sleepiter.job().state = FaxRequest::state_ready;
+			    sleepiter.job().remove();
+			    setReadyToRun(sleepiter.job());
+			}
 
-			JobIter joblist = iter;
 			Job* bjob = &job;	// Last batched Job
 			Job* cjob;		// current Job
 			FaxRequest* creq;	// current request
@@ -2385,37 +2403,46 @@ faxQueueApp::runScheduler()
 			 */
 			if (maxBatchJobs > 64) maxBatchJobs = 64;
 			
-			joblist++;		// Skip the current job
 			u_int batchedjobs = 1;
-			for (; batchedjobs < maxBatchJobs && joblist.notDone(); joblist++) {
-			    cjob = joblist;
-			    fxAssert(cjob->tts <= Sys::now(), "Sleeping job on run queue");
-			    fxAssert(cjob->modem == NULL, "Job on run queue holding modem");
-			    if (job.dest != cjob->dest)
-				continue;
+			for (u_int j = 0; batchedjobs < maxBatchJobs && j < NQHASH; j++) {
+			    for (JobIter joblist(runqs[j]); batchedjobs < maxBatchJobs && joblist.notDone(); joblist++) {
+				cjob = joblist;
+				if (job.jobid == cjob->jobid)
+				    continue;	// Skip the current job
+				fxAssert(cjob->tts <= Sys::now(), "Sleeping job on run queue");
+				fxAssert(cjob->modem == NULL, "Job on run queue holding modem");
+				if (job.dest != cjob->dest)
+				    continue;
 
-			    /* Check priorities */
-			    cjob->modem = job.modem;
+				/* Check priorities */
+				cjob->modem = job.modem;
 
-			    creq = readRequest(*cjob);
+				creq = readRequest(*cjob);
 
-			    /* XXX Should do some check here:
-			     * normal checks for a request (use a function?)
-			     * max total of pages in a batch,
-			     * We don't have to worry about compression format, resolution, 
-			     * and other negotiation parameters because we renegotiate settings
-			     * between jobs after EOM.
-			     * ... */
+				/* XXX Should do some check here:
+				 * normal checks for a request (use a function?)
+				 * max total of pages in a batch,
+				 * We don't have to worry about compression format, resolution, 
+				 * and other negotiation parameters because we renegotiate settings
+				 * between jobs after EOM.
+				 * ... */
 
-			    traceJob(job, "ADDING JOB " | cjob->jobid | " TO BATCH");
-			    if (iter.notDone() && &iter.job() == bjob)
-				iter++;
-			    cjob->remove();
-			    bjob->bnext = cjob;
-			    cjob->bprev = bjob;
-			    bjob = cjob;
-			    cjob->breq = creq;
-			    batchedjobs++;
+				traceJob(job, "ADDING JOB " | cjob->jobid | " TO BATCH");
+				if (iter.notDone() && &iter.job() == bjob)
+				    iter++;
+				cjob->remove();
+				bjob->bnext = cjob;
+				cjob->bprev = bjob;
+				bjob = cjob;
+				cjob->breq = creq;
+				if (creq->tts > now) {
+				    // This job was batched from sleeping, things have
+				    // changed; Update the queue file for onlookers.
+				    creq->tts = now;
+				    updateRequest(*creq, *cjob);
+				}
+				batchedjobs++;
+			    }
 			}
 			bjob->bnext = NULL;
 		    } else
