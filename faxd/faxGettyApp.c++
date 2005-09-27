@@ -339,10 +339,12 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
 	callResolved = false;
 	advanceRotary = false;
     } else {
+	fxStr callid_formatted = "";
+	for (u_int i = 0; i < callid.size(); i++)
+	    callid_formatted.append(quote | callid.id(i) | enquote);
+	if (callid_formatted.length()) traceProtocol("CallID:%s", (const char*) callid_formatted);
 	if (dynamicConfig.length()) {
-	    fxStr cmd(dynamicConfig | quote | getModemDevice() | enquote);
-	    for (u_int i = 0; i < callid.size(); i++)
-		cmd.append(quote | callid.id(i) | enquote);
+	    fxStr cmd(dynamicConfig | quote | getModemDevice() | enquote | callid_formatted);
 	    fxStr localid = "";
 	    int pipefd[2], idlength, status;
 	    char line[1024];

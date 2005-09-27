@@ -655,6 +655,8 @@ bool FaxModem::isFaxModem() const		{ return true; }
 
 bool FaxModem::getHDLCTracing()
     { return (server.getSessionTracing() & FAXTRACE_HDLC) != 0; }
+bool FaxModem::getECMTracing()
+    { return (server.getSessionTracing() & FAXTRACE_ECM) != 0; }
 
 FaxSendStatus
 FaxModem::sendSetupParams(TIFF* tif, Class2Params& params,

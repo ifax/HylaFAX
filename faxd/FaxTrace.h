@@ -47,6 +47,7 @@ const int FAXTRACE_MODEMSTATE	= 0x08000;	// modem state changes
 const int FAXTRACE_DIALRULES	= 0x10000;	// dialstring processing
 const int FAXTRACE_DOCREFS	= 0x20000;	// document reference handling
 const int FAXTRACE_TIFF		= 0x40000;	// TIFF library msgs
+const int FAXTRACE_ECM		= 0x80000;	// ECM HDLC image data frames
 const int FAXTRACE_ANY		= 0xffffffff;
 
 const int FAXTRACE_MASK		= 0xfffff;

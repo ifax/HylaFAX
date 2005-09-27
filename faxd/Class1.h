@@ -189,7 +189,7 @@ protected:
     bool	blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxStr& emsg);
     bool	endECMBlock();
     void	abortReceive();
-    void	traceHDLCFrame(const char* direction, const HDLCFrame& frame);
+    void	traceHDLCFrame(const char* direction, const HDLCFrame& frame, bool isecm = false);
 // class 1 command support routines
     bool	class1Query(const fxStr& queryCmd, Class1Cap caps[]);
     bool	parseQuery(const char*, Class1Cap caps[]);

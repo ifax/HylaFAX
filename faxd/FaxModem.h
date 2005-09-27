@@ -120,6 +120,7 @@ protected:
     void	tracePPM(const char* dir, u_int ppm);
 // server-related stuff
     bool	getHDLCTracing();
+    bool	getECMTracing();
     FaxSendStatus sendSetupParams(TIFF*, Class2Params&,
 		    FaxMachineInfo&, fxStr&);
     void	recvTSI(const fxStr&);

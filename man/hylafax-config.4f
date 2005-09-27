@@ -1407,6 +1407,8 @@ form the value for this tag.
 32768 (0x08000)	Modem State Transitions	modem state changes (down, busy, ready)
 65536 (0x10000)	Dial Rules	dialstring rules parsing and execution
 131072 (0x20000)	Docq Changes	document reference handling
+262144 (0x40000)	TIFF library	any messages produced by the TIFF library
+524288 (0x80000)	ECM Frames	binary \s-1T.30-A HDLC\s+1 ECM frames
 .sp .5
 .fi
 For example, to enable tracing of server operations and

@@ -903,7 +903,7 @@ Class1Modem::recvECMFrame(HDLCFrame& frame)
 			break;
 		    case ETX:
 			if (frame.getLength() > 0)
-			    traceHDLCFrame("-->", frame);
+			    traceHDLCFrame("-->", frame, true);
 			if (frame.getLength() < 5) {		// RCP frame size
 			    protoTrace("HDLC frame too short (%u bytes)", frame.getLength());
 			    return (false);
@@ -1008,7 +1008,7 @@ Class1Modem::recvECMFrame(HDLCFrame& frame)
     bit = getModemBit(0);			// trailing bit on flag
     if (!rcpframe) {
 	if (frame.getLength() > 0)
-	    traceHDLCFrame("-->", frame);
+	    traceHDLCFrame("-->", frame, true);
 	if (bit) {				// should have been zero
 	    protoTrace("Bad HDLC terminating flag received.");
 	    return (false);
@@ -1065,10 +1065,13 @@ Class1Modem::endECMBlock()
  * Log an HLDC frame along with a time stamp (secs.10ms).
  */
 void
-Class1Modem::traceHDLCFrame(const char* direction, const HDLCFrame& frame)
+Class1Modem::traceHDLCFrame(const char* direction, const HDLCFrame& frame, bool isecm)
 {
-    if (!getHDLCTracing())
-	return;
+    if (!isecm) {
+	if (!getHDLCTracing()) return;
+    } else {
+	if (!getECMTracing()) return;
+    }
     const char* hexdigits = "0123456789ABCDEF";
     fxStackBuffer buf;
     for (u_int i = 0; i < frame.getLength(); i++) {

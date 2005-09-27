@@ -981,7 +981,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		    ecmframe.put(fcs1); ecmframe.put(fcs2);
 		    blockData(fcs1, false);
 		    blockData(fcs2, false);
-		    traceHDLCFrame("<--", ecmframe);
+		    traceHDLCFrame("<--", ecmframe, true);
 		    protoTrace("SEND send frame number %u", fnum);
 
 		    if (!useV34) {
@@ -1006,7 +1006,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		    blockData(firstframe[i], false);
 		}
 		ecmframe.put(firstframe, (frameSize + 6));
-		traceHDLCFrame("<--", ecmframe);
+		traceHDLCFrame("<--", ecmframe, true);
 		protoTrace("SEND send frame number %u", frameRev[firstframe[3]]);
 		if (!useV34) blockData(0x7e, true);
 	    }
@@ -1016,7 +1016,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	    for (u_short k = 0; k < 3; k++) {		// three RCP frames
 		for (u_short j = 0; j < 5; j++)
 		    blockData(rcpframe[j], false);
-		traceHDLCFrame("<--", rcpframe);
+		traceHDLCFrame("<--", rcpframe, true);
 
 		// separate frames with a 0x7e flag
 		if (!useV34) blockData(0x7e, true);

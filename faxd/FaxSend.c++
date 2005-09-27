@@ -61,11 +61,14 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai,
 	    }
         }
 	fax.commid = getCommID();		// set by beginSession
-	traceServer("SEND FAX: JOB %s DEST %s COMMID %s DEVICE '%s'"
+	traceServer("SEND FAX: JOB %s DEST %s COMMID %s DEVICE '%s' FROM '%s <%s>' USER %s"
 	    , (const char*) fax.jobid
 	    , (const char*) fax.external
 	    , (const char*) fax.commid
 	    , (const char*) getModemDevice()
+	    , (const char*) fax.sender
+	    , (const char*) fax.mailaddr
+	    , (const char*) fax.owner
 	);
 
 	/* Dispatcher already did setupModem() */

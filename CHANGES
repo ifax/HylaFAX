@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* session logging improvements (27 Sep 2005)
 * add Retransmit-Ignore RTNHandlingMethod (27 Sep 2005)
 
 Changelog for HylaFAX 4.2.2
