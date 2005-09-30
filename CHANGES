@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* fix CallID problems by initializing answer lengths (29 Sep 2005)
 * fix sendfax to allow "#" in the to-name (27 Sep 2005)
 * clean up page sizes and signalling (27 Sep 2005)
 * improve logging when a document is rejected (27 Sep 2005)

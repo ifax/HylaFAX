@@ -701,6 +701,7 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	if (idConfig.length() < callidIndex+1 && callidIndex != (u_int) -1)
 	    idConfig.resize(callidIndex+1);
 	if (tag[6] == 'p') {
+	    idConfig[callidIndex].answerlength = 0;	// we must initialize this
 	    idConfig[callidIndex].pattern = value;
 	    configTrace("CallID[%d].pattern = \"%s\"", callidIndex,
 		    (const char*)idConfig[callidIndex].pattern);
