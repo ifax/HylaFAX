@@ -101,11 +101,12 @@ if [ "$euid" != "root" ]; then
 fi
 
 # security
-if ! TMPDIR=`mktemp -d /tmp/.faxaddmodem.XXXXXX/`; then
+TMPDIR=`(mktemp -d /tmp/.faxaddmodem.XXXXXX) 2>/dev/null`
+if test X$TMPDIR = X; then
     TMPDIR=/tmp/.faxaddmodem$$
-    umask 077
-    mkdir $TMPDIR || exit 1
 fi
+@RM@ -rf $TMPDIR
+(umask 077 ; mkdir $TMPDIR) || exit 1
 
 SH=$SCRIPT_SH			# shell for use below
 CPATH=$SPOOL/etc/config		# prefix of configuration file

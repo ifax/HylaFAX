@@ -78,20 +78,18 @@ test -f $SPOOL/etc/setup.cache || {
 . $SPOOL/etc/setup.cache	# common configuration stuff
 . $SPOOL/etc/setup.modem	# modem-specific stuff
 
-SH=$SCRIPT_SH			# shell for use below
-if ! TMPDIR=`mktemp -d /tmp/.probemodem.XXXXXX`; then
-    TMPDIR=/tmp/.probemodem.sh$$
-    mkdir $TMPDIR || exit 1
+TMPDIR=`(mktemp -d /tmp/.probemodem.XXXXXX) 2>/dev/null`
+if test X$TMPDIR = X; then
+    TMPDIR=/tmp/.probemodem$$
 fi
+@RM@ -fr $TMPDIR
+(umask 077 ; mkdir $TMPDIR) || exit 1
+
+SH=$SCRIPT_SH			# shell for use below
 OUT=$TMPDIR/probemodem$$	# temp file in which modem output is recorded
 SVR4UULCKN=$LIBEXEC/lockname	# SVR4 UUCP lock name construction program
 ONDELAY=$LIBEXEC/ondelay	# prgm to open devices blocking on carrier
 CAT="$CAT -u"			# something to do unbuffered reads and writes
-
-# security
-${NOCLOBBER_ON}
-> $OUT || exit 1
-${NOCLOBBER_OFF}
 
 while [ -z "$TTY" -o ! -c /dev/$TTY ]; do
     if [ "$TTY" != "" ]; then
@@ -130,7 +128,7 @@ done
 # Lock the device for later use when deducing the modem type.
 #
 JUNK="$LOCKX $OUT"
-trap "rm -f $JUNK; exit 1" 0 1 2 15
+trap "@RM@ -f $JUNK; @RM@ -fr $TMPDIR; exit 1" 0 1 2 15
 
 LOCKSTR=`expr "         $$" : '.*\(..........\)'`
 # lock the device by all of its names
@@ -272,7 +270,7 @@ while [ -z "$RESULT" ]; do
 	echo ""
 	echo "Hmm, something seems to be hung, check your modem eh?"
      done)& nagpid=$!
-    trap "rm -f \$JUNK; kill $nagpid \$catpid; exit 1" 0 1 2 15
+    trap "@RM@ -f \$JUNK; @RM@ -fr $TMPDIR; kill $nagpid \$catpid; exit 1" 0 1 2 15
 
     if [ x"$ATCMD" != x"" ]; then
 	SendToModem "$ATCMD"
@@ -285,7 +283,7 @@ while [ -z "$RESULT" ]; do
     wait $nagpid		# Really waits its end
     exec 2>&3 3>&-		# Restore stderr
 
-    trap "rm -f \$JUNK; test \"\$catpid\" && kill \$catpid; exit 1" 0 1 2 15
+    trap "@RM@ -f \$JUNK; @RM@ -fr $TMPDIR; test \"\$catpid\" && kill \$catpid; exit 1" 0 1 2 15
     sleep 1
 
     RESULT=`tr -ds '\015' '\012' < $OUT | $SED -n '$p'`

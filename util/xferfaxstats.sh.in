@@ -183,15 +183,14 @@ esac
 #
 # Generate an awk program to process the statistics file.
 #
-# security
-if ! TMPDIR=`mktemp -d /tmp/.xferfaxstats.XXXXXX`; then
-    TMPDIR=/tmp/.xferfaxstats.sh$$
-    mkdir $TMPDIR || exit 1
+TMPDIR=`(mktemp -d /tmp/.xferfaxstats.XXXXXX) 2>/dev/null`
+if test X$TMPDIR = X; then
+    TMPDIR=/tmp/.xferfaxstats$$
 fi
-
-tmpAwk=$TMPDIR/faxawk$$                # temp file for awk program
-
-trap "rm -rf $TMPDIR; exit 1" 0 1 2 15
+@RM@ -fr $TMPDIR
+(umask 077 ; mkdir $TMPDIR) || exit 1
+tmpAwk=$TMPDIR/xferfax$$
+trap "@RM@ -fr $TMPDIR; exit 1" 0 1 2 15
 
 ($CAT<<'EOF'
 #
