@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* replace Class1TCFResponseDelay with Class1SwitchingCmd (20 Oct 2005)
 * disable client programs from looking for UNIX socket
   when the CONFIG_UNIXTRANSPORT is not enabled (20 Oct 2005)
 * improve security technique when creating temporary files (20 Oct 2005)

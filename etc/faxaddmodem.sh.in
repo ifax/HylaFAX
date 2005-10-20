@@ -1339,7 +1339,6 @@ Class1Parameters="
     Class1TCFMaxNonZero
     Class1TCFMinRun
     Class1TCFRecvTimeout
-    Class1TCFResponseDelay
     Class1TrainingRecovery
 "
 Class2Parameters="
@@ -1608,7 +1607,6 @@ AT	Class1EOPWaitCmd	\
 #	Class1SwitchingCmd	\
 	Command to ensure silence after receiving HDLC and before sending
 #	Class1TCFRecvTimeout	Timeout for receiving TCF (ms)
-#	Class1TCFResponseDelay	Delay before sending DCS and TCF (ms)
 #	Class1TrainingRecovery	Delay after failed training (ms)
 EOF
 	;;

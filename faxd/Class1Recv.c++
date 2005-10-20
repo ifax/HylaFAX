@@ -408,7 +408,7 @@ Class1Modem::recvTraining()
      * Send training response; we follow the spec
      * by delaying 75ms before switching carriers.
      */
-    pause(conf.class1TCFResponseDelay);
+    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) return (false);
     if (ok) {
 	/*
 	 * Send CFR later so that we can cancel

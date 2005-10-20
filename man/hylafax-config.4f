@@ -306,7 +306,6 @@ Class1TCFMaxNonZero	integer	\s-110\s+1	Class 1/1.0: max% of non-zero data in goo
 Class1TCFMinRun	integer	\s-11000\s+1	Class 1/1.0: minimum zero run in good \s-1TCF\s+1
 Class1TCFRecvHack	boolean	\s-1No\s+1	Class 1/1.0: deliberately look for carrier loss before TCF
 Class1TCFRecvTimeout	integer	\s-14500\s+1	Class 1/1.0: max wait (ms) for \s-1TCF\s+1
-Class1TCFResponseDelay	integer	\s-175\s+1	Class 1/1.0: delay between \s-1TCF\s+1 and ack/nak
 Class1TMConnectDelay	integer	\s-10\s+1	Class 1/1.0: delay between +FTM CONNECT and data transmission
 Class1SendMsgDelay	integer	\s-1200\s+1	Class 1/1.0: delay before sending image data
 Class1SwitchingCmd	string	\s-1AT+FRS=7\s+1	Class 1/1.0: command to ensure silence after HDLC reception
@@ -2484,12 +2483,6 @@ the Training Check (\c
 .SM TCF\c
 ) message data that is received during the
 training phase of the facsimile reception protocol.
-.TP
-.B Class1TCFResponseDelay
-The time, in milliseconds, to delay between receiving
-.SM TCF
-and sending a response on the v.21 carrier to indicate whether or not
-training was successful.
 .TP
 .B Class1TMConnectDelay
 The time, in milliseconds, to delay after receiving CONNECT following +FTM
