@@ -2,6 +2,9 @@
 
 Changelog for HylaFAX
 
+* disable client programs from looking for UNIX socket
+  when the CONFIG_UNIXTRANSPORT is not enabled (20 Oct 2005)
+* improve security technique when creating temporary files (20 Oct 2005)
 * fix CallID problems by initializing answer lengths (29 Sep 2005)
 * fix sendfax to allow "#" in the to-name (27 Sep 2005)
 * clean up page sizes and signalling (27 Sep 2005)

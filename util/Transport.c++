@@ -27,7 +27,9 @@
 #include "Transport.h"
 #include "FaxClient.h"
 #include "InetTransport.h"
+#if CONFIG_UNIXTRANSPORT
 #include "UnixTransport.h"
+#endif
 #include "Sys.h"
 
 #include <errno.h>
@@ -50,17 +52,23 @@ Transport::getTransport(FaxClient& client, const char* address)
 	 * An unqualified destination; look for
 	 * the best available transport facility.
 	 */
+#if CONFIG_UNIXTRANPSORT
 	if (UnixTransport::isA(FAX_DEFUNIX)) {
 	    client.setHost(FAX_DEFUNIX);
 	    return *new UnixTransport(client);
 	} else {
+#endif
 	    client.setHost(FAX_DEFHOST);
 	    return *new InetTransport(client);
+#if CONFIG_UNIXTRANPSORT
 	}
+#endif
     } else {
+#if CONFIG_UNIXTRANPSORT
 	if (UnixTransport::isA(address))
 	    return *new UnixTransport(client);
 	else
+#endif
 	    return *new InetTransport(client);
     }
 }

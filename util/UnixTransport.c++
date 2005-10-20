@@ -31,13 +31,13 @@
 UnixTransport::UnixTransport(FaxClient& c) : Transport(c) {}
 UnixTransport::~UnixTransport() {}
 
+#if CONFIG_UNIXTRANSPORT
 bool
 UnixTransport::isA(const char* address)
 {
      return Sys::isSocketFile(address);
 }
 
-#if CONFIG_UNIXTRANSPORT
 #include "Socket.h"
 
 extern "C" {

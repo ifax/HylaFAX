@@ -101,14 +101,15 @@ if [ "$euid" != "root" ]; then
 fi
 
 # security
-TMPDIR=/tmp/.faxaddmodem$$
-umask 077
-rm -rf $TMPDIR
-mkdir $TMPDIR || exit 1
+if ! TMPDIR=`mktemp -d /tmp/.faxaddmodem.XXXXXX/`; then
+    TMPDIR=/tmp/.faxaddmodem$$
+    umask 077
+    mkdir $TMPDIR || exit 1
+fi
 
 SH=$SCRIPT_SH			# shell for use below
 CPATH=$SPOOL/etc/config		# prefix of configuration file
-OUT=$TMPDIR/addmodem$$         # temp file in which modem output is recorded
+OUT=$TMPDIR/faxaddmodem.sh$$	# temp file in which modem output is recorded
 SVR4UULCKN=$LIBEXEC/lockname	# SVR4 UUCP lock name construction program
 ONDELAY=$LIBEXEC/ondelay	# prgm to open devices blocking on carrier
 CAT="$CAT -u"			# something to do unbuffered reads and writes
