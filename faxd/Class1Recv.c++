@@ -1135,6 +1135,8 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    // the earlier message-handling routines try to cope with the signal.
 				    signalRcvd = rtncframe.getFCF();
 				    messageReceived = true;
+				    prevPage--;		// counteract the forthcoming increment
+				    // maybe we should save an unconfirmed page here?
 				    return (true);
 				    break;
 			    }
@@ -1569,6 +1571,8 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			    // the earlier message-handling routines try to cope with the signal.
 			    signalRcvd = ppsframe.getFCF();
 			    messageReceived = true;
+			    prevPage--;		// counteract the forthcoming increment
+			    // maybe we should save an unconfirmed page here?
 			    return (true);
 			    break;
 		    }
