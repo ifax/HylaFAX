@@ -1535,7 +1535,7 @@ HylaFAXServer::addCoverDocument(Job& job, const char* docname)
 {
     FaxSendOp op;
     if (checkAddDocument(job, T_COVER, docname, op)) {
-	fxStr covername = "/" FAX_DOCDIR "/doc" | job.jobid | ".cover";
+	fxStr covername = "/" FAX_DOCDIR "/cover" | job.jobid | ".cover";
 	if (Sys::link(docname, covername) >= 0) {
 	    // XXX mark as cover page
 	    job.items.append(FaxItem(op, 0, "", &covername[1]));

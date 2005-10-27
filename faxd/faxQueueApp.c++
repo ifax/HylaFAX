@@ -1528,9 +1528,7 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
 	} else if (req->useccover &&
 	  req->npages > 0 && contCoverPageTemplate != "") {
 	    /*
-	     * At least one page was sent so any existing
-	     * cover page is certain to be gone.  Setup
-	     * to generate a cover page when the job is
+	     * Setup to generate a cover page when the job is
 	     * retried.  Note that we assume the continuation
 	     * cover page will be PostScript (though the
 	     * type is not used anywhere just now).

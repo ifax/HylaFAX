@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* fix cover page deletion problem (27 Oct 2005)
 * don't increment internal page count when an unexpected signal
   is received in place of PPS (21 Oct 2005)
 * replace Class1TCFResponseDelay with Class1SwitchingCmd (20 Oct 2005)

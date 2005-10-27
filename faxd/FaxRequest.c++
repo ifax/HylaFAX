@@ -532,8 +532,7 @@ FaxRequest::mkbasedoc(const fxStr& file)
 {
     fxStr doc(file);
     u_int l = doc.nextR(doc.length(), '.');
-    if (strcmp(&doc[l], "cover"))
-	doc.resize(l-1);
+    doc.resize(l-1);
     return (doc);
 }
 

@@ -282,7 +282,7 @@ faxQCleanApp::expungeCruft(void)
 	 */
 	if (strncmp(dp->d_name, "doc", 3) && strncmp(dp->d_name, "cover", 5)) {
 	    if (trace)
-		printf("%s%s: ignored, no leading \"doc\" in filename\n",
+		printf("%s%s: ignored, no leading \"doc\" or \"cover\" in filename\n",
 		    (const char*) path, dp->d_name);
 	    continue;
 	}
