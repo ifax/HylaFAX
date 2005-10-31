@@ -212,7 +212,7 @@ void fxStr::lowercase(u_int posn, u_int chars)
     if (!chars) chars = slength-1-posn;
     fxAssert(posn+chars<slength, "Str::lowercase: Invalid range");
     while (chars--) {
-#ifdef hpux
+#if defined(hpux) || defined(__hpux) || defined(__hpux__)
 	/*
 	 * HPUX (10.x at least) is seriously busted.  According
 	 * to the manual page, when compiling in ANSI C mode tolower

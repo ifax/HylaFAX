@@ -26,7 +26,7 @@
 #include "port.h"
 #include <unistd.h>
 
-#ifdef hpux
+#if defined(hpux) || defined(__hpux) || defined(__hpux__)
 int
 setegid(gid_t gid)
 {
