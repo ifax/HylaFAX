@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX
 
+* fix trap usage and exit status for some scripts (31 Oct 2005)
 * fix cover page deletion problem (27 Oct 2005)
 * don't increment internal page count when an unexpected signal
   is received in place of PPS (21 Oct 2005)

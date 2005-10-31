@@ -190,7 +190,7 @@ fi
 @RM@ -fr $TMPDIR
 (umask 077 ; mkdir $TMPDIR) || exit 1
 tmpAwk=$TMPDIR/xferfax$$
-trap "@RM@ -fr $TMPDIR; exit 1" 0 1 2 15
+trap "@RM@ -fr $TMPDIR" 0 1 2 15
 
 ($CAT<<'EOF'
 #
