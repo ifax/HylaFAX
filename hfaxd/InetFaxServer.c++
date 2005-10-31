@@ -206,7 +206,7 @@ InetFaxServer::setupNetwork(int fd)
 
     addrlen = sizeof (peer_addr);
     if (Socket::getpeername(fd, &peer_addr, &addrlen) < 0) {
-        logError("getpeername: %m");
+        logError("getpeername: %m (incorrect hfaxd invocation?)");
         dologout(-1);
     }
     addrlen = sizeof (ctrl_addr);
