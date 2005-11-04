@@ -1,6 +1,6 @@
 #	$Id$	
 
-Changelog for HylaFAX
+Changelog for HylaFAX 4.2.3beta1
 
 * fix trap usage and exit status for some scripts (31 Oct 2005)
 * fix cover page deletion problem (27 Oct 2005)
