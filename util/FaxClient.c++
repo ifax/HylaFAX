@@ -321,7 +321,12 @@ FaxClient::callServer(fxStr& emsg)
 	 * Transport code is expected to call back through
 	 * setCtrlFds so fdIn should be properly setup...
 	 */
-	return (fdIn != NULL && getReply(false) == COMPLETE);
+	if (fdIn == NULL)
+	    return (false);
+	int rep = PRELIM;
+	for (int i = 0; rep == PRELIM && i < 100; i++)
+	    rep = getReply(false);
+	return (rep == COMPLETE);
     } else
 	return (false);
 }
