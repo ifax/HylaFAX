@@ -161,7 +161,7 @@ fi
 @RM@ -fr $TMPDIR
 (umask 077 ; mkdir $TMPDIR) || exit 1
 tmpAwk=$TMPDIR/xferfax$$
-trap "@RM@ -f $tmpAwk; @RM@ -fr $TMPDIR" 0 1 2 15
+trap "@RM@ -f $tmpAwk; @RM@ -fr $TMPDIR; exit 1" 1 2 15
 
 ($CAT<<'EOF'
 #
@@ -469,3 +469,7 @@ EOF
 echo "$AWKRULES"
 )>$tmpAwk
 $AWK -f $tmpAwk -v TODAY="$TODAY" -v AGE="$AGE" -v SINCEDT="$SINCEDT" -v ENDDT="$ENDDT" $FILES
+
+# cleanup
+@RM@ -f $tmpAwk; @RM@ -fr $TMPDIR
+exit 0

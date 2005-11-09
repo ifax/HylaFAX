@@ -128,7 +128,7 @@ done
 # Lock the device for later use when deducing the modem type.
 #
 JUNK="$LOCKX $OUT"
-trap "@RM@ -f $JUNK; @RM@ -fr $TMPDIR" 0 1 2 15
+trap "@RM@ -f $JUNK; @RM@ -fr $TMPDIR; exit 1" 1 2 15
 
 LOCKSTR=`expr "         $$" : '.*\(..........\)'`
 # lock the device by all of its names
@@ -270,7 +270,7 @@ while [ -z "$RESULT" ]; do
 	echo ""
 	echo "Hmm, something seems to be hung, check your modem eh?"
      done)& nagpid=$!
-    trap "@RM@ -f \$JUNK; @RM@ -fr $TMPDIR; kill $nagpid \$catpid" 0 1 2 15
+    trap "@RM@ -f \$JUNK; @RM@ -fr $TMPDIR; kill $nagpid \$catpid; exit 1" 1 2 15
 
     if [ x"$ATCMD" != x"" ]; then
 	SendToModem "$ATCMD"
@@ -283,7 +283,7 @@ while [ -z "$RESULT" ]; do
     wait $nagpid		# Really waits its end
     exec 2>&3 3>&-		# Restore stderr
 
-    trap "@RM@ -f \$JUNK; @RM@ -fr $TMPDIR; test \"\$catpid\" && kill \$catpid" 0 1 2 15
+    trap "@RM@ -f \$JUNK; @RM@ -fr $TMPDIR; test \"\$catpid\" && kill \$catpid; exit 1" 1 2 15
     sleep 1
 
     RESULT=`tr -ds '\015' '\012' < $OUT | $SED -n '$p'`
@@ -510,7 +510,9 @@ echo ""
 if [ "$ATCMD" != "" ]; then
     echo "The response was: $RESPONSE"
     echo "The result was  : $RESULT"
-    exit
+    # cleanup
+    @RM@ -f $JUNK; @RM@ -fr $TMPDIR
+    exit 0
 fi
 if [ "$RESULT" = "OK" ]; then
     # Looks like a usable fax modem.  Get more information.
@@ -539,7 +541,9 @@ if [ "$RESULT" = "OK" ]; then
 	cat $OUT
 	echo ""
 	echo "I don't figure that it's worthwhile to continue..."
-	exit
+	# cleanup
+	@RM@ -f $JUNK; @RM@ -fr $TMPDIR
+	exit 0
     else
 	common
 	for CLASS in $MODEMCLASSES; do
@@ -554,5 +558,9 @@ if [ "$RESULT" = "OK" ]; then
     fi
 else
     echo "This not a Class 1, 2, 2.0, 1.0, or 2.1 modem."
-    exit
 fi
+
+# cleanup
+@RM@ -f $JUNK; @RM@ -fr $TMPDIR
+exit 0
+

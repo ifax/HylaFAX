@@ -93,7 +93,7 @@ while [ x"$1" != x"" ] ; do
     shift
 done
 
-trap "$RM \$AWKTMP \$JUNK; $RM -rf $TMPDIR" 0 1 2 15
+trap "$RM \$AWKTMP \$JUNK; $RM -rf $TMPDIR; exit 1" 1 2 15
 
 
 test -z "$LASTRUN" && LASTRUN=`$CAT $LAST 2>/dev/null`
@@ -472,3 +472,7 @@ if [ -s $JUNK ]; then
 fi
 
 $RM $LAST; eval $UPDATE
+
+# cleanup
+$RM $AWKTMP $JUNK; $RM -rf $TMPDIR
+exit 0

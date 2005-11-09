@@ -254,7 +254,7 @@ while [ -z "$TTY" -o ! -c /dev/$TTY ]; do
 done
 
 JUNK="$OUT"
-trap "$RMCMD \$JUNK; $RMCMD -r $TMPDIR" 0 1 2 15
+trap "$RMCMD \$JUNK; $RMCMD -r $TMPDIR; exit 1" 1 2 15
 
 if [ ! -d $UUCP_LOCKDIR ]; then
     cat<<EOF
@@ -875,7 +875,7 @@ while [ -z "$RESULT" ]; do
 	echo ""
 	echo "Hmm, something seems to be hung, check your modem eh?"
      done)& nagpid=$!
-    trap "$RMCMD \$JUNK; $RMCMD -r $TMPDIR; kill $nagpid \$catpid" 0 1 2 15
+    trap "$RMCMD \$JUNK; $RMCMD -r $TMPDIR; kill $nagpid \$catpid; exit 1" 1 2 15
     SendToModem "AT+FCLASS=?" 			# ask for class support
 
     exec 3>&2 2> /dev/null  # Mute stderr against child death
@@ -883,7 +883,7 @@ while [ -z "$RESULT" ]; do
     wait $nagpid            # Really waits its end
     exec 2>&3 3>&-          # Restore stderr
 
-    trap "$RMCMD \$JUNK; $RMCMD -r $TMPDIR; test \"\$catpid\" && kill \$catpid" 0 1 2 15
+    trap "$RMCMD \$JUNK; $RMCMD -r $TMPDIR; test \"\$catpid\" && kill \$catpid; exit 1" 1 2 15
     sleep 1
 
     RESULT=`tr -ds '\015' '\012' < $OUT | $SED -n '$p'`
@@ -2019,3 +2019,7 @@ echo "Don't forget to run faxmodem(@MANNUM1_8@) (if you have a send-only environ
 echo "or configure init to run faxgetty on $TTY."
 
 exec >/dev/null 2>&1
+
+# cleanup
+$RMCMD $JUNK; $RMCMD -r $TMPDIR
+exit 0
