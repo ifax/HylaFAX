@@ -1,6 +1,6 @@
 #	$Id$	
 
-Changelog for HylaFAX 4.2.3rc1
+Changelog for HylaFAX 4.2.3
 
 * fix clients to accept 1yz preliminary reponse on connection
   according to RFC959 (8 Nov 2005)
