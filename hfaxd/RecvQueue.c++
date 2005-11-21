@@ -459,7 +459,7 @@ HylaFAXServer::Rprintf(FILE* fd, const char* fmt,
 	    case 'Y':
 		{ char buf[30];					// XXX HP C++
 		  strftime(buf, sizeof (buf), "%Y:%m:%d %H:%M:%S",
-		      localtime(&ri.recvTime));
+			IS(USEGMT) ? gmtime(&ri.recvTime) : localtime(&ri.recvTime));
 		  fprintf(fd, fspec, buf);
 		}
 		break;

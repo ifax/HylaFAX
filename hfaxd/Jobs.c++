@@ -1814,7 +1814,7 @@ HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
 	    case 'Y':
 		{ char buf[30];				// XXX HP C++
 		  strftime(buf, sizeof (buf), "%Y/%m/%d %H.%M.%S",
-		    localtime(&job.tts));
+			IS(USEGMT) ? gmtime(&job.tts) : localtime(&job.tts));
 		  fprintf(fd, fspec, buf);
 		}
 		break;

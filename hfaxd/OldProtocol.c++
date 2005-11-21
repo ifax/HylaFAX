@@ -138,6 +138,12 @@ OldProtocolServer::open(void)
     (void) umask(077);
     dirSetup();					// initialize directory handling
 
+    /*
+     * old protocol Jprintf format %Y historically gives localtime,
+     * we'll force off USEGMT now that %Y is GMT/LOCAL aware, just like
+     * SNNPServer.
+     */
+    state &= ~S_USEGMT;
     doProtocol();
 }
 
