@@ -1203,7 +1203,7 @@ then only calls with
 data matching identifications
 in the file specified by this string (typically \fBetc/cid\fP)
 will be accepted; see
-.IR cid (${MANNUM4_5}).
+.IR callid (${MANNUM4_5}).
 If
 .B QualifyCID
 is not specified in the configuration file, or the value is
