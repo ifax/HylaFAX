@@ -146,6 +146,7 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
     }
 
     for (;;) {
+	if (gotEOT) break;
 	if (framerecvd) {
 	    /*
 	     * An HDLC frame was received; process any
