@@ -40,7 +40,7 @@ const char* ClassModem::callStatus[10] = {
     "No answer from remote",			// NOANSWER
     "No local dialtone",			// NODIALTONE
     "Invalid dialing command",			// ERROR
-    "Unknown problem (check modem power)",	// FAILURE
+    "Unknown problem",				// FAILURE
     "Carrier established, but Phase A failure",	// NOFCON
     "Data connection established (wanted fax)",	// DATACONN
     "Glare - RING detected",			// RING
