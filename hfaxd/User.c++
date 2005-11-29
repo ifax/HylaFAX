@@ -427,11 +427,11 @@ HylaFAXServer::addUser(FILE* db, const char* user, u_int uid, const char* upass,
 	}
     fxStr line;
     if (*apass != '\0')
-	line = fxStr::format("%s:%u:%s:%s\n", user, uid, upass, apass);
+	line = fxStr::format("^%s@:%u:%s:%s\n", user, uid, upass, apass);
     else if (*upass != '\0')
-	line = fxStr::format("%s:%u:%s\n", user, uid, upass);
+	line = fxStr::format("^%s@:%u:%s\n", user, uid, upass);
     else
-	line = fxStr::format("%s:%u\n", user, uid);
+	line = fxStr::format("^%s@:%u\n", user, uid);
     if (Sys::write(fd, line, line.length()) != (ssize_t)line.length()) {
 	perror_reply(550, "Write error", errno);
 	Sys::close(fd);
