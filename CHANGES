@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.2.3
 
+* prevent some faxgetty hangs in Phase C EOL sync (29 Nov 2005)
 * fix for clients specifying TZONE LOCAL/GMT and using %Y for
   JobFmt and RcvFmt (22 Nov 2005)
 
