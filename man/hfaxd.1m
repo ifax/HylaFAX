@@ -78,7 +78,8 @@ is intended to be the ``carrier'' through which they are supported.
 .I hfaxd
 is typically used in one of two ways; either as a standalone
 process that is started at system boot time to listen
-for client connections on one or more ports,
+for client connections on one or more ports (in which case the
+-i, -o, or -s option must be used),
 or as a subservient process to the
 .IR inetd (${MANNUM1_8})
 program.
