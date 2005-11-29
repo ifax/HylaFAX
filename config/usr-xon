@@ -80,8 +80,8 @@ Class1ResponseWaitCmd:	AT+FRS=1	# wait after sending TCF for response
 ModemSetupAACmd:	AT+FCLASS=0	# leave modem idling in class 0
 ModemAnswerCmd:		AT+FCLASS=1A	# answer in Class 1
 #
-# Disables the reporting of bad frames by the modem.  This
-# overcomes a firmware problem in the x2 and V90 Sportsters.
-# It is not necessary for the Courier modem.
+# When using AT+FRS=n we see USR modems reset themselves in the middle of sessions
+# this is not good.  So, we seem to work-around that problem by not using the
+# command.  Unfortunately, this isn't an ideal thing.
 #
-Class2NRCmd:    AT+FNR=1,1,1,0
+Class1SwitchingCmd:	"<delay\0727>"
