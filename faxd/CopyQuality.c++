@@ -657,6 +657,7 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 			    sdnormcount = 0;
 			}
 			u_long clength = 256*256*256*buf[i+2]+256*256*buf[i+3]+256*buf[i+4]+buf[i+5];
+			if (clength > 256) clength = 256;		// keep it sane
 			fxStr comment = "";
 			for (u_long cpos = 0; i+6+cpos < cc && cpos < clength; cpos++) {
 			    if (!isprint(buf[i+6+cpos])) break;		// only printables
