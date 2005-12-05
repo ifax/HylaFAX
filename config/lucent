@@ -44,7 +44,7 @@
 # CONFIG:CLASS1:Zoom V.90 PCI*:.*:.*: Manufacturer=Zoom Model=2920
 # CONFIG:CLASS1:Zoom V.90 USB*:.*:.*: Manufacturer=Zoom Model=2980
 # CONFIG:CLASS1:EFM560 VER*:.*:.*: Manufacturer=AboCom Model=EFM560
-# CONFIG:CLASS1:Mainpine Venus V.92*:.*:.*: Manufacturer=Mainpine Model=RockForceDUO+
+# CONFIG:CLASS1:Mainpine Venus V.92*:.*:.*: Manufacturer=Mainpine Model=RockForce
 #
 # BEGIN-SERVER
 # END-SERVER
