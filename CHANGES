@@ -2,6 +2,8 @@
 
 Changelog since HylaFAX 4.2.3
 
+* all Mainpine boards no longer identified as the DUO+
+  2-port model (5 Dec 2005)
 * update hfaxd 'site adduser' functionality (29 Nov 2005)
 * prevent some faxgetty hangs in Phase C EOL sync (29 Nov 2005)
 * fix for clients specifying TZONE LOCAL/GMT and using %Y for
