@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.2.3
 
+* fix Solaris 9 compile error due to PAM (15 Dec 2005)
 * all Mainpine boards no longer identified as the DUO+
   2-port model (5 Dec 2005)
 * update hfaxd 'site adduser' functionality (29 Nov 2005)
