@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.2.3
 
+* fix a Solaris compile error due to PAM_CONV_AGAIN (15 Dec 2005)
 * fix Solaris 9 compile error due to PAM (15 Dec 2005)
 * all Mainpine boards no longer identified as the DUO+
   2-port model (5 Dec 2005)

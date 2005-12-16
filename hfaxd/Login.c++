@@ -107,7 +107,14 @@ pamconv(int num_msg, STRUCT_PAM_MESSAGE **msg, struct pam_response **resp, void 
 	    return PAM_CONV_ERR;
 
 	if (password == NULL)
-	    return PAM_CONV_AGAIN;
+	    /*
+	     * Solaris doesn't have PAM_CONV_AGAIN defined.
+	     */
+	    #ifdef PAM_CONV_AGAIN
+		return PAM_CONV_AGAIN;
+	    #else
+		return PAM_CONV_ERR;
+	    #endif
 
 	replies=(struct pam_response*)calloc(num_msg, sizeof(struct pam_response));
 
@@ -155,7 +162,16 @@ HylaFAXServer::pamCheck(const char* user, const char* pass)
 
 	int pamret;
 
-	pamret = pam_set_item(pamh, PAM_CONV, &conv);
+	/*
+	 * Solaris has proprietary pam_[sg]et_item() extension.
+	 * Sun defines PAM_MSG_VERSION therefore is possible to use
+	 * it in order to recognize the extensions of Solaris
+	 */
+	#ifdef PAM_MSG_VERSION
+	    pamret = pam_set_item(pamh, PAM_CONV, (const void *)&conv);
+	#else
+	    pamret = pam_set_item(pamh, PAM_CONV, &conv);
+	#endif
 
 	if (pamret == PAM_SUCCESS)
 	    pamret = pam_authenticate(pamh, 0);
@@ -180,8 +196,17 @@ void HylaFAXServer::pamEnd(int pamret)
 	    state |= S_PRIVILEGED;
 
 	char *newname=NULL;
-	
-	pamret = pam_get_item(pamh, PAM_USER, (const void **)&newname);
+
+	/*
+	 * Solaris has proprietary pam_[sg]et_item() extension.
+	 * Sun defines PAM_MSG_VERSION therefore is possible to use
+	 * it in order to recognize the extensions of Solaris
+	 */
+	#ifdef PAM_MSG_VERSION
+	    pamret = pam_get_item(pamh, PAM_USER, (void **)&newname);
+	#else
+	    pamret = pam_get_item(pamh, PAM_USER, (const void **)&newname);
+	#endif
 
 	if (pamret == PAM_SUCCESS && newname != NULL)
 	    the_user = strdup(newname);
