@@ -2,6 +2,8 @@
 
 Changelog since HylaFAX 4.2.3
 
+* fix possible hfaxd login vulnerability due to PAM
+  library absence during build (15 Dec 2005)
 * fix a Solaris compile error due to PAM_CONV_AGAIN (15 Dec 2005)
 * fix Solaris 9 compile error due to PAM (15 Dec 2005)
 * all Mainpine boards no longer identified as the DUO+

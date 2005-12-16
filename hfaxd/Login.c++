@@ -183,8 +183,8 @@ HylaFAXServer::pamCheck(const char* user, const char* pass)
 		retval = true;
 
 	pamEnd(pamret);
-	return retval;
 #endif
+	return retval;
 }
 
 void HylaFAXServer::pamEnd(int pamret)
