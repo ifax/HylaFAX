@@ -2416,11 +2416,10 @@ EOF
 	Note "  Found tiffio.h version ${header_ver}"
 	Note "  Found libtiff version ${lib_ver}"
 	if [ ${header_ver} -ge 19960307 ]; then
-	    if [ "${lib_ver}" = "3.4" ]; then
-		tiff_runlen_t="uint16"
-	    elif [ "${lib_ver}" = "3.5" -o "${lib_ver}" = "3.6" -o "${lib_ver}" = "3.7" ]; then
-		tiff_runlen_t="uint32"
-	    fi
+	    case ${lib_ver} in
+		3.4)		tiff_runlen_t="uint16" ;;
+		3.[567])	tiff_runlen_t="uint32" ;;
+	    esac
 	fi
     else
 	cat 1>&2 <<EOF
