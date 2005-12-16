@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.2.3
 
+* don't lock-down pagingProtocol by default (15 Dec 2005)
 * fix possible hfaxd login vulnerability due to PAM
   library absence during build (15 Dec 2005)
 * fix a Solaris compile error due to PAM_CONV_AGAIN (15 Dec 2005)
