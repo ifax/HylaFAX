@@ -1,6 +1,6 @@
 #	$Id$	
 
-Changelog since HylaFAX 4.2.3
+Changelog for HylaFAX 4.2.4
 
 * don't lock-down pagingProtocol by default (15 Dec 2005)
 * fix possible hfaxd login vulnerability due to PAM
