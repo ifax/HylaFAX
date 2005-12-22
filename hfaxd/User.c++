@@ -51,7 +51,7 @@ gid_t	HylaFAXServer::faxuid = 0;		// reserved fax uid
 
 #ifdef HAVE_PAM
 extern int
-pamconv(int num_msg, const STRUCT_PAM_MESSAGE **msg, struct pam_response **resp, void *appdata);
+pamconv(int num_msg, STRUCT_PAM_MESSAGE **msg, struct pam_response **resp, void *appdata);
 #endif
 
 bool
