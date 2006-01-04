@@ -103,7 +103,12 @@ COMMID="$1"; shift;
 MSG="$1"; shift;
 COUNT=1
 while [ $# -ge 1 ]; do
-    eval "CALLID$COUNT=\"$1\""
+    # In shell scripts, there are no special characters in hard-quoted
+    # strings (quoted with (')). Single-quotes can't even be escaped
+    # inside such strings and must be put outside of them. We thus replace
+    # (') with ('\'') which terminates the current string, adds a single
+    # quote and starts a new string.
+    eval "CALLID$COUNT='`echo $1 | $SED -e "s/'/'\\\\\''/g"`'"
     shift
     COUNT=`expr $COUNT + 1`
 done

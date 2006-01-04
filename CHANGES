@@ -2,9 +2,11 @@
 
 Changelog for HylaFAX 4.2.4
 
+* CVE-2005-3539: Fix for faxrcvd/notify script vulnerabilites
+  (4 Jan 2004)
 * don't lock-down pagingProtocol by default (15 Dec 2005)
-* fix possible hfaxd login vulnerability due to PAM
-  library absence during build (15 Dec 2005)
+* CVE-2005-3538: fix possible hfaxd login vulnerability due
+  to PAM library absence during build (15 Dec 2005)
 * fix a Solaris compile error due to PAM_CONV_AGAIN (15 Dec 2005)
 * fix Solaris 9 compile error due to PAM (15 Dec 2005)
 * all Mainpine boards no longer identified as the DUO+

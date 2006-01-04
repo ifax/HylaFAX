@@ -171,8 +171,18 @@ parseQfile()
     eval `($AWK -F: ' 
     function p(varname,val)
     {
+        # In shell scripts, there are no special characters in hard-quoted
+        # strings (quoted with (')). Single-quotes can't even be escaped
+        # inside such strings and must be put outside of them. We thus replace
+        # (') with ('\'') which terminates the current string, adds a single
+        # quote and starts a new string.
+        gsub(/\\047/, "\047\\\\\047\047", val);
+        # New lines in eval could cause problems so we escape them. As with
+        # single quotes above, we must first close the current string, add
+        # the escaped new line (double quoted) and start a new string.
+        gsub(/\n/, "\047\042\\\\n\042\047", val);
         # print out variable name and value so we can eval it in the shell
-        printf "%s=\"%s\"\n",varname,val
+        printf "%s=\\047%s\\047\n",varname,val
     }
     BEGIN {
         nfiles = 0;
@@ -206,16 +216,9 @@ parseQfile()
     /^jobtype/    { p("jobtype", $2); }
     # status needs to be used in the shell as faxstatus since status is reserved word
     /^status/    { status = $0; sub("status:", "", status);
-              if (status ~ /\\\\$/) {
-                  sub(/\\\\$/, "\\\\n", status);
-                  while (getline > 0) {
+              while ($0 ~ /\\\\$/ && getline > 0) {
+                  sub(/\\\\$/, "\\n", status);
                   status = status $0;
-                  gsub(/\*/,"",status);
-                  sub(/\\\\$/, "\\\\n", status);
-                  if ($0 !~ /\\\\$/)
-                      break;
-                  }
-		  gsub(/\`/, "", status);
               } p("faxstatus", status);
             }
     /^resolution/    { p("resolution", $2); }
