@@ -2,23 +2,23 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.2.3
+The HylaFAX development team is pleased to announce our 4.2.4
 patch level release!  As always, our sincerest thanks go to all who
 participate and provide feedback.
 
                                *   *   *
 
 This document is intended to describe the significant differences
-between hylafax-4.2.3 and older releases, point out any known
+between hylafax-4.2.4 and older releases, point out any known
 incompatibilites and issues, and provide the reader with directions to
 further resources regarding HylaFAX. 
 
                           *   NEW FEATURES   *
 
-* IXO/TAP page batching
-* JBIG send support via ModemSoftRTFCC in Class 1/1.0 (requires
-  JBIG-KIT library)
-* Retransmit-Ignore, a new RTNHandlingMethod, is now the default
+* Security fix - hfaxd vulnerability CVE-2005-3538
+* Security fix - script vulnerability CVE-2005-3539 
+* PAM support on Solaris
+* Local/GMT timezone support in JOBFMT/RECVFMT formatters
 * numerous other enhancements and bugfixes (see CHANGES)
 
                          *   KNOWN ISSUES   *
@@ -31,30 +31,35 @@ further resources regarding HylaFAX.
   prototypes may contain Class1TCFRecvHack.  This is no longer desireable
   for production use, and this feature should now only be used for
   debugging purposes.
-* If upgrading from any release other than 4.2.2 directly, be advised that
-  CIDName/CIDNumber are now part of a larger CallID framework. 
+* The time value of %Z in jobfmt/recvfmt is now returned in GMT time
+  when GMT is requested, and in local time when local time is
+  requested. Previously, %Z was always returned in local time, even
+  if GMT had been requested.
+* If upgrading from any releases other than 4.2.2 or 4.2.3, be advised
+  that CIDName/CIDNumber are now part of a larger CallID framework. 
 * libtiff-3.6.1 is fatally flawed when dealing with Group 3 images.  
   Don't use it as-is.  
   See: http://bugs.hylafax.org/bugzilla/show_bug.cgi?id=500
 
                       *   WHO SHOULD UPGRADE?   *
 
-* For security reasons, everyone should consider upgrading to this 4.2.3
+* For security reasons, everyone should consider upgrading to this 4.2.4
   release as soon as possible.
-* Users of Class 1/1.0 devices should upgrade to benefit from ongoing
-  work in this area  
-* Users who regularly send fax batches (first introduced in 4.2.0) 
-  should upgrade to get the fixes in 4.2.3.
-
 
                      *   HYLAFAX BINARY PACKAGES   *
 
 Binary packages for some operating systems and platforms are available.  
-Please see ftp://ftp.hylafax.org/binary/ and 
-http://www.hylafax.org/howto/install.html#ss2.3.3  If you are able and 
-willing to produce a binary package of HylaFAX for general distribution, 
-then you are invited to join hylafax-devel@hylafax.org and solicit your 
-binary package.
+Please see:
+
+   ftp://ftp.hylafax.org/binary/
+   http://www.hylafax.org/content/Binary_Packages
+   http://www.hylafax.org/content/Handbook:Binary_Package_Install
+
+If you are able and  willing to produce a binary package of HylaFAX for
+general distribution, and one is not already available for your platform/OS,
+then you are invited to add it to the Binary_Packages wiki page at
+www.hylafax.org.
+
 
                        *   SUPPORT   *
 
@@ -65,7 +70,7 @@ would like to actively take part in the HylaFAX community, you are
 invited to:
 
   * join and participate in a HylaFAX mailing list
-    See: http://www.hylafax.org/mailing-lists.html
+    See: http://www.hylafax.org/content/Mailing_Lists
 
     When corresponding about this software, please always specify:
     - what version of HylaFAX you have,
@@ -76,10 +81,10 @@ invited to:
     ZyXEL 1496E with 6.11a firmware."
 
   * read the on-line documentation and resources
-    See: http://www.hylafax.org and http://www.hylafax.org/howto
+    See: http://www.hylafax.org/content/Documentation
 
   * review HylaFAX CVS
-    See: http://www.hylafax.org/cvs.html
+    See: http://new.hylafax.org/content/Developers
 
   * report confirmed bugs, feature requests, and submit patches
     See: http://bugs.hylafax.org/bugzilla
