@@ -1,5 +1,9 @@
 #	$Id$	
 
+Changelog since HylaFAX 4.2.4
+
+* Fix notify shell comments interrupting AWK script (9 Jan 2006)
+
 Changelog for HylaFAX 4.2.4
 
 * CVE-2005-3539: Fix for faxrcvd/notify script vulnerabilites

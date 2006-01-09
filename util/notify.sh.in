@@ -168,20 +168,22 @@ setCustomValues()
 
 parseQfile()
 {
+    # In shell scripts, there are no special characters in hard-quoted
+    # strings (quoted with (')). Single-quotes can't even be escaped
+    # inside such strings and must be put outside of them. We thus replace
+    # (') with ('\'') which terminates the current string, adds a single
+    # quote and starts a new string.
+    #
+    # New lines in eval could cause problems so we escape them. As with
+    # single quotes above, we must first close the current string, add
+    # the escaped new line (double quoted) and start a new string.
+    #
+    # print out variable name and value so we can eval it in the shell
     eval `($AWK -F: ' 
     function p(varname,val)
     {
-        # In shell scripts, there are no special characters in hard-quoted
-        # strings (quoted with (')). Single-quotes can't even be escaped
-        # inside such strings and must be put outside of them. We thus replace
-        # (') with ('\'') which terminates the current string, adds a single
-        # quote and starts a new string.
         gsub(/\\047/, "\047\\\\\047\047", val);
-        # New lines in eval could cause problems so we escape them. As with
-        # single quotes above, we must first close the current string, add
-        # the escaped new line (double quoted) and start a new string.
         gsub(/\n/, "\047\042\\\\n\042\047", val);
-        # print out variable name and value so we can eval it in the shell
         printf "%s=\\047%s\\047\n",varname,val
     }
     BEGIN {
