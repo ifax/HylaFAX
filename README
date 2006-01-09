@@ -2,21 +2,23 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.2.4
-patch level release!  As always, our sincerest thanks go to all who
+The HylaFAX development team is pleased to announce our 4.2.5
+patch level release!  This fixes the problems users have been
+reporting in 4.2.4, which will be removed from the FTP and web
+sites. As always, our sincerest thanks go to all who
 participate and provide feedback.
 
                                *   *   *
 
 This document is intended to describe the significant differences
-between hylafax-4.2.4 and older releases, point out any known
+between hylafax-4.2.5 and older releases, point out any known
 incompatibilites and issues, and provide the reader with directions to
-further resources regarding HylaFAX. 
+further resources regarding HylaFAX.
 
                           *   NEW FEATURES   *
 
 * Security fix - hfaxd vulnerability CVE-2005-3538
-* Security fix - script vulnerability CVE-2005-3539 
+* Security fix - script vulnerability CVE-2005-3539
 * PAM support on Solaris
 * Local/GMT timezone support in JOBFMT/RECVFMT formatters
 * numerous other enhancements and bugfixes (see CHANGES)
@@ -35,7 +37,7 @@ further resources regarding HylaFAX.
   when GMT is requested, and in local time when local time is
   requested. Previously, %Z was always returned in local time, even
   if GMT had been requested.
-* If upgrading from any releases other than 4.2.2 or 4.2.3, be advised
+* If upgrading from any release older than 4.2.2, be advised
   that CIDName/CIDNumber are now part of a larger CallID framework. 
 * libtiff-3.6.1 is fatally flawed when dealing with Group 3 images.  
   Don't use it as-is.  
@@ -43,8 +45,10 @@ further resources regarding HylaFAX.
 
                       *   WHO SHOULD UPGRADE?   *
 
-* For security reasons, everyone should consider upgrading to this 4.2.4
-  release as soon as possible.
+* For security reasons, everyone should consider upgrading to this 4.2.5
+  release as soon as possible. Anyone who upgraded to 4.2.4 during its
+  short lifetime should also upgrade, otherwise faxrcvd and notify may
+  not function as expected.
 
                      *   HYLAFAX BINARY PACKAGES   *
 
