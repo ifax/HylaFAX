@@ -1,6 +1,6 @@
 #	$Id$	
 
-Changelog since HylaFAX 4.2.4
+Changelog for HylaFAX 4.2.5
 
 * Include crypt.h where necessary (BUG 722) (9 Jan 2005)
 * Fix eval sed in faxrcvd script (BUG 719) (9 Jan 2006)
