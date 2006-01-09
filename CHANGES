@@ -2,7 +2,8 @@
 
 Changelog since HylaFAX 4.2.4
 
-* Fix notify shell comments interrupting AWK script (9 Jan 2006)
+* Include crypt.h where necessary (BUG 722) (9 Jan 2005)
+* Fix shell comments in nofity AWK script (BUG 719) (9 Jan 2006)
 
 Changelog for HylaFAX 4.2.4
 

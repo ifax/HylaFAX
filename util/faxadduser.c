@@ -35,6 +35,10 @@
 #include "config.h"
 #include "port.h"
 
+#if HAS_CRYPT_H
+#include <crypt.h>
+#endif
+
 #ifndef FAX_DEFAULT_UID
 #define FAX_DEFAULT_UID 60002
 #endif
