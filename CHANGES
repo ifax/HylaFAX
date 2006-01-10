@@ -2,9 +2,11 @@
 
 Changelog for HylaFAX 4.2.5
 
-* Include crypt.h where necessary (BUG 722) (9 Jan 2005)
-* Fix eval sed in faxrcvd script (BUG 719) (9 Jan 2006)
-* Fix shell comments in nofity AWK script (BUG 719) (9 Jan 2006)
+* make sure probemodem removes lock files (BUG 691) (9 Jan 2005)
+* portability cleanup to MemoryDecoder.c++ (BUG 224) (9 Jan 2005)
+* include crypt.h where necessary (BUG 722) (9 Jan 2005)
+* fix eval sed in faxrcvd script (BUG 719) (9 Jan 2006)
+* fix shell comments in nofity AWK script (BUG 719) (9 Jan 2006)
 
 Changelog for HylaFAX 4.2.4
 
