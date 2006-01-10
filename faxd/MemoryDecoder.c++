@@ -490,7 +490,8 @@ u_char* MemoryDecoder::convertDataFormat(const Class2Params& params)
 	cc = raster.getLength();
 	u_char* rasterdst = new u_char[cc];
 	memcpy(rasterdst, (const unsigned char*) raster, cc);
-	unsigned char *pmap[1] = { rasterdst };
+	unsigned char *pmap[1];
+	pmap[0] = rasterdst;
 	struct jbg_enc_state jbigstate;
 	jbg_enc_init(&jbigstate, width, rows, 1, pmap, bufferJBIGData, NULL);
 	/*
