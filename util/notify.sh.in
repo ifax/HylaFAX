@@ -639,8 +639,8 @@ printStatus()
     if [ -z "$1" ] ; then # 0 string len
         echo "<no reason recorded>"
     else
-        # use -e in echo to interpret escape characters in the line
-        echo -e $1
+        # we need to change the '\n' in the strings to real newlines
+        echo "$1" | sed -e 's/\\n/\n/g'
     fi
 }
 
@@ -737,8 +737,8 @@ if [ "$WHY" = "done" ] ; then
         printf "\nProcessing time was %s.\n" "$JTIME"
     fi
     if [ -n "$faxstatus" -a "$RETURNTRANSCRIPT" = "yes" ] ; then
-        # use -e in echo to interpret escape characters in faxstatus
-        echo -e "  Additional information:\n    " $faxstatus
+        echo "  Additional information:"
+	printStatus "     $faxstatus"
         returnTranscript
     fi
     if [ -n "$RETURNFILETYPE" ] ; then 
@@ -793,9 +793,10 @@ elif [ "$WHY" = "timedout" ]; then
 elif [ "$WHY" = "format_failed" ] ; then 
     putHeaders "$jobtag to $number failed" 
     echo " was not sent because document conversion"
-    echo -e "to facsimile failed.  The output from the converter program was:\n"
-    # use -e in echo to interpret escape characters in faxstatus
-    echo -e $faxstatus "\n"
+    echo "to facsimile failed.  The output from the converter program was:"
+    echo ""
+    printStatus "$faxstatus"
+    echo ""
     echo "Check any PostScript documents for non-standard fonts and invalid constructs"
     returnToSender
 elif [ "$WHY" = "no_formatter" ] ; then 
@@ -820,7 +821,8 @@ else
     putHeaders "Notice about $jobtag" 
     echo " had something happen to it."
     echo "Unfortunately, the notification script was invoked with an unknown reason"
-    echo -e "so the rest of this message is for debugging:\n"
+    echo "so the rest of this message is for debugging:"
+    echo ""
     echo "why: $WHY"
     echo "jobTime: $JTIME"
     echo "nextTry: $NEXT"
