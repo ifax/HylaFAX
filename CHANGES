@@ -3,6 +3,7 @@
 Changelog for HylaFAX 4.2.5
 
 * change notify to not rely on echo -e (BUG 724) (11 Jan 2005)
+* add prototype config catch for Digicom Leonardo modems (11 Jan 2005)
 * make sure probemodem removes lock files (BUG 691) (9 Jan 2005)
 * portability cleanup to MemoryDecoder.c++ (BUG 224) (9 Jan 2005)
 * include crypt.h where necessary (BUG 722) (9 Jan 2005)
