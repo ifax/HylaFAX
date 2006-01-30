@@ -2062,7 +2062,7 @@ EmitConfigurationDefinitions()
 #
 CheckForFunc()
 {
-    echo "extern int $1(); main(){$1();exit(0);}" >t.c
+    echo "extern int $1(); main(){$1($2);exit(0);}" >t.c
     capture cat t.c
     runMake t "t:; \${CC} t.c ${MACHDEPLIBS}"
 }
@@ -3082,7 +3082,6 @@ FUNCS="
     strcasecmp
     strtod
     strtoul
-    vsnprintf
     writev
 "
 
@@ -3092,6 +3091,15 @@ for i in $FUNCS; do
 	PORTFUNCS="$PORTFUNCS $i.c"
     }
 done
+
+#
+# Now for those functions that need args.
+#
+CheckForFunc vsnprintf "(void*)0, 0, (void*)0, (void*)0" || {
+    Note "... emulate vsnprintf"
+    PORTFUNCS="$PORTFUNCS vsnprintf.c"
+}
+
 #
 # SCO OS 5 #defines syslog as another function
 # so it is necessary to include syslog.h when
