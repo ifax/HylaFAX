@@ -1416,7 +1416,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					protoTrace("RECV sent fourth PPR");
 				    } else {
 					// we already got the signal
-					rtnframe = ppsframe;
+					rtnframe.put(ppsframe, ppsframe.getLength());
 				    }
 				    pprcnt = 0;
 				    if (signalRcvd != 0 || recvFrame(rtnframe, FCF_RCVR, conf.t2Timer)) {
