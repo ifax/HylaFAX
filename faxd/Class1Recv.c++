@@ -660,8 +660,15 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		    if (!pageGood) recvResetPage(tif);
 		    // look for high speed carrier only if training successful
 		    messageReceived = !(FaxModem::recvBegin(emsg));
-		    if (!messageReceived) messageReceived = !(recvDCSFrames(frame));
-		    if (!messageReceived) messageReceived = !(recvTraining());
+		    bool trainok = true;
+		    short traincount = 0;
+		    do {
+			if (!messageReceived) messageReceived = !(recvDCSFrames(frame));
+			if (!messageReceived) {
+			    trainok = recvTraining();
+			    messageReceived = (!trainok && lastResponse == AT_FRH3);
+			}
+		    } while (!trainok && traincount++ < 3 && recvFrame(frame, FCF_RCVR, timer));
 		    if (messageReceived && lastResponse == AT_FRH3 && waitFor(AT_CONNECT,0)) {
 			messageReceived = false;
 			if (recvFrame(frame, FCF_RCVR, conf.t2Timer, true)) {

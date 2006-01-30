@@ -1,5 +1,10 @@
 #	$Id$	
 
+Changelog
+
+* fix rare occassion where TCF fails following an unexpected
+  receipt of prologue frames (30 Jan 2006)
+
 Changelog for HylaFAX 4.2.5
 
 * change notify to not rely on echo -e (BUG 724) (11 Jan 2005)
