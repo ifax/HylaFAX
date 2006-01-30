@@ -70,8 +70,8 @@
  *	  and embedded spaces, but not embedded tabs, are allowed.
  *	  These data are taken literally; no C-style character escapes
  *         are meaningful.
- * result: one of "PS", "TIFF, or "error" (case insensitive).  The first
- *	  two results specifiy whether the rule generates a PostScript
+ * result: one of "PS", "TIFF", "PDF", or "error" (case insensitive).  The
+ *	  first two results specifiy whether the rule generates a PostScript
  *	  file or a bilevel TIFF image.  The "error" result indicates a
  *	  file is unsuitable for transmission and if supplied as an
  *	  argument to sendfax, the command should be aborted.
@@ -129,6 +129,7 @@ public:
     enum {
 	TIFF,		// bilevel Group 3-encoded TIFF
 	POSTSCRIPT,	// PostScript
+	PDF,		// Portable Document Format
 	ERROR		// recognized erronious format
     };
 private:

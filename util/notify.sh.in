@@ -86,7 +86,6 @@ local_seq() {
 	done
 }
 
-FILE=file
 INFO=$SBIN/faxinfo
 TIFFINFO=tiffinfo
 FAX2PS=$TIFFBIN/fax2ps
@@ -238,15 +237,36 @@ parseQfile()
     /^totdials/    { p("totdials", $2); }
     /^tottries/    { p("tottries", $2); }
     /^client/    { p("client", $2); }
-    /^[!]*post/    { p("files_"++nfiles, $4); }
-    /^[!]*tiff/    { p("files_"++nfiles, $4); }
-    /^[!]*pdf/    { p("files_"++nfiles, $4); }
-    /^[!]*pcl/    { p("files_"++nfiles, $4); }
+    /^[!]*post/    { p("files_"++nfiles, $4); p("filetype_"nfiles, "PostScript"); }
+    /^[!]*tiff/    { p("files_"++nfiles, $4); p("filetype_"nfiles, "TIFF"); }
+    /^[!]*pdf/    { p("files_"++nfiles, $4); p("filetype_"nfiles, "PDF"); }
+    /^[!]*pcl/    { p("files_"++nfiles, $4); p("filetype_"nfiles, "PCL"); }
     /^page:/    { p("pins_"++npins, $4); }
     /^data:/    { p("files_"++nfiles, $4); }
     /^poll/        { p("poll", " -p"); }
     END { p("nfiles", nfiles); p("npins", npins) } ' $QFILE )`
 
+}
+
+fileType()
+# determine the type of file passed using the unix 'file' command
+# with the '-i' option (mime type output)
+{
+    FILENAME=$1
+    if [ -f "$FILENAME" ] ; then
+	FILETYPE=`file $FILENAME`
+        if (match "$FILETYPE" "postscript") ; then 
+            echo "PostScript"
+        elif (match "$FILETYPE" "tiff") ; then 
+            echo "TIFF"
+        elif (match "$FILETYPE" "pdf") ; then 
+            echo "PDF"
+        else
+            echo "Unknown document type"
+        fi
+    else
+        echo "File does not exist"
+    fi
 }
 
 returnFaxImage()
@@ -267,10 +287,20 @@ returnFaxImage()
     for i in `local_seq 1 $nfiles`; do 
         name="files_$i"
 	eval filename=`echo "$"$name`
-
 	if [ -s $filename ] ; then # file is > 0 size
-	    FROMFMT=`fileType $filename`
-            case "$FROMFMT" in "ps" | "tif" | "pdf" ) # test we know the source format
+	    type="filetype_$i"
+	    eval FROMFMT=`echo "$"$type`
+	    #
+	    # Because Ghostscript accepts PDF identically to PostScript
+	    # and because HylaFAX has historically handled PDF named as
+	    # "postscript" we have to double-check the PostScript filetype.
+	    #
+	    if [ "$FROMFMT" = "PostScript" ]; then
+		if [ "`fileType $filename`" != "PostScript" ]; then
+		    FROMFMT=PDF
+		fi
+	    fi
+            case "$FROMFMT" in "PostScript" | "TIFF" | "PDF" ) # test we know the source format
                 if [ "$RETURNFORMAT" = "tif" ] ; then
                     ENCODEDFILENAME="$number-$i.tif"
                     putMimeImageTIFHeader "$ENCODEDFILENAME"
@@ -284,17 +314,19 @@ returnFaxImage()
                     putMimeAppPSHeader "$ENCODEDFILENAME"
 		    putPsEncodedImage "$filename" "$FROMFMT"
                 elif [ "$RETURNFORMAT" = "original" ] ; then
-                    ENCODEDFILENAME="$number-$i.$FROMFMT"
                     case "$FROMFMT" in
-                    "tif")
+                    "TIFF")
+			ENCODEDFILENAME="$number-$i.tif"
                         putMimeImageTIFHeader "$ENCODEDFILENAME"
 			putTifEncodedImage "$filename" "$FROMFMT"
                         ;;
-                    "ps")
+                    "PostScript")
+			ENCODEDFILENAME="$number-$i.ps"
                         putMimeAppPSHeader "$ENCODEDFILENAME"
 			putPsEncodedImage "$filename" "$FROMFMT"
                         ;;
-                    "pdf")
+                    "PDF")
+			ENCODEDFILENAME="$number-$i.pdf"
                         putMimeAppPDFHeader "$ENCODEDFILENAME"
 			putPdfEncodedImage "$filename" "$FROMFMT"
                         ;;
@@ -314,12 +346,12 @@ putPdfEncodedImage()
     SOURCEFILE=$1
     CONVERTFROM=$2
     OUTFILE="tmp/conv2pdf$$.out" ;
-    if [ "$CONVERTFROM" = "pdf" ] ; then
+    if [ "$CONVERTFROM" = "PDF" ] ; then
         mimeEncode "$SOURCEFILE"
         return # all done here
-    elif [ "$CONVERTFROM" = "tif" ] ; then
+    elif [ "$CONVERTFROM" = "TIFF" ] ; then
         CONVERTCMD="$TIFF2PDF -o $OUTFILE $SOURCEFILE" 
-    elif [ "$CONVERTFROM" = "ps" ] ; then
+    elif [ "$CONVERTFROM" = "PostScript" ] ; then
         CONVERTCMD="$PS2PDF $SOURCEFILE $OUTFILE" 
     else
         return # unknow convert from format
@@ -336,13 +368,13 @@ putPsEncodedImage()
     SOURCEFILE=$1
     CONVERTFROM=$2
     OUTFILE="tmp/conv2ps$$.out" ;
-    if [ "$CONVERTFROM" = "ps" ] ; then
+    if [ "$CONVERTFROM" = "PostScript" ] ; then
         mimeEncode "$SOURCEFILE"
         return # all done here
-    elif [ "$CONVERTFROM" = "tif" ] ; then
+    elif [ "$CONVERTFROM" = "TIFF" ] ; then
         #  tiff2ps -a for all pages, 
         CONVERTCMD="$TIFF2PS -a  $SOURCEFILE > $OUTFILE" 
-    elif [ "$CONVERTFROM" = "pdf" ] ; then
+    elif [ "$CONVERTFROM" = "PDF" ] ; then
         CONVERTCMD="$PDF2PS $SOURCEFILE $OUTFILE" 
     else
         return # unknow convert from format
@@ -359,12 +391,12 @@ putTifEncodedImage()
     SOURCEFILE=$1
     CONVERTFROM=$2
     OUTFILE="tmp/conv2tif$$.out" ;
-    if [ $CONVERTFROM = "tif" ] ; then 
+    if [ $CONVERTFROM = "TIFF" ] ; then 
         mimeEncode "$SOURCEFILE"
         return # all done here
-    elif [ $CONVERTFROM = "pdf" ] ; then 
+    elif [ $CONVERTFROM = "PDF" ] ; then 
         CONVERTCMD="$PDF2FAX -r $resolution -o $OUTFILE $SOURCEFILE" 
-    elif [ $CONVERTFROM = "ps" ] ; then 
+    elif [ $CONVERTFROM = "PostScript" ] ; then 
         CONVERTCMD="$PS2FAX -r $resolution -o $OUTFILE $SOURCEFILE" 
     else
         return # unknow convert from format
@@ -507,46 +539,6 @@ match()
     fi
 }
 
-fileType()
-# determine the type of file passed using the unix 'file' command
-# with the '-i' option (mime type output)
-{
-    FILENAME=$1
-    if [ -f "$FILENAME" ] ; then
-	FILETYPE=`$FILE $FILENAME`
-        if (match "$FILETYPE" "postscript") ; then 
-            echo "ps"
-        elif (match "$FILETYPE" "tiff") ; then 
-            echo "tif"
-        elif (match "$FILETYPE" "pdf") ; then 
-            echo "pdf"
-        else
-            echo "Unknown document type"
-        fi
-    else
-        echo "File does not exisit"
-    fi
-}
-
-docType()
-# determine the type of file based on the file extension of the file name
-{
-    FILENAME=$1
-    if (match $FILENAME "\.cover$") ; then 
-        echo "PostScript cover page"
-    elif (match $FILENAME "\.ps$") ; then 
-        echo "PostScript"
-    elif (match $FILENAME "\.tif$") ; then
-        echo "TIFF"
-    elif (match $FILENAME "\.pdf$") ; then 
-        echo "PDF"
-    elif (match $FILENAME "\.pcl$") ; then
-        echo "PCL"
-    else
-        echo "Unknown document type"
-    fi
-}
-
 #
 # Construct a return-to-sender message.
 #
@@ -596,7 +588,19 @@ returnToSender()
 		if [ -f $filename ] ; then
 			set - `wc -c "$filename"`
                     FILESIZE=$1
-		    printf "%-20s %8d %s\n" "$filename" "$FILESIZE" "`docType $filename`"
+		    type="filetype_$i"
+		    eval filetype=`echo "$"$type`
+		    #
+		    # Because Ghostscript accepts PDF identically to PostScript
+		    # and because HylaFAX has historically handled PDF named as
+		    # "postscript" we have to double-check the PostScript filetype.
+		    #
+		    if [ "$filetype" = "PostScript" ]; then
+			if [ "`fileType $filename`" != "PostScript" ]; then
+			    filetype=PDF
+			fi
+		    fi
+		    printf "%-20s %8d %s\n" "$filename" "$FILESIZE" "$filetype"
                 fi
             done
         fi
@@ -658,9 +662,7 @@ putHeaders()
 ##########
 
 #  exports used for debug tracing
-#export -f fileType
 #export -f returnTranscript
-#export -f docType
 #export -f putMimeAppPDFHeader
 #export -f putMimeImageTIFHeader
 #export -f mimeEncode

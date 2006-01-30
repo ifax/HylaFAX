@@ -63,7 +63,8 @@ public:
         FORM_PS   = 1,		// PostScript Level I
         FORM_PS2  = 2,		// PostScript Level II
         FORM_TIFF = 3,		// TIFF
-        FORM_PCL  = 4		// HP PCL5
+        FORM_PCL  = 4,		// HP PCL5
+        FORM_PDF  = 5		// Portable Document Format
     };
     enum {
         TZ_GMT	  = 1,		// use GMT timezone for time values

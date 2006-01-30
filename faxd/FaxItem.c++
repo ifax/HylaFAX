@@ -50,6 +50,7 @@ FaxItem::isSavedOp() const
     return (op == FaxRequest::send_tiff_saved ||
 	    op == FaxRequest::send_postscript_saved ||
 	    op == FaxRequest::send_pcl_saved ||
+	    op == FaxRequest::send_pdf_saved ||
 	    op == FaxRequest::send_page_saved ||
 	    op == FaxRequest::send_data_saved);
 }

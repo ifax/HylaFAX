@@ -62,7 +62,7 @@ static const char* typeNames[] =
     { "ascii", "asciiesc", "string", "address", "byte", "short", "long" };
 static const char* opNames[] =
     { "<any>", "=", "!=", "<", "<=", ">", ">=", "&", "^", "!" };
-static const char* resultNames[] = { "tiff", "postscript", "error" };
+static const char* resultNames[] = { "tiff", "postscript", "pdf", "error" };
 
 bool
 TypeRule::match(const void* data, size_t size, bool verbose) const
@@ -402,6 +402,8 @@ TypeRules::read(const fxStr& file)
 	    rule.result = TypeRule::TIFF;
 	else if (strncasecmp(rp, "ps", cp-rp) == 0)
 	    rule.result = TypeRule::POSTSCRIPT;
+	else if (strncasecmp(rp, "pdf", cp-rp) == 0)
+	    rule.result = TypeRule::PDF;
 	else if (strncasecmp(rp, "error", cp-rp) == 0)
 	    rule.result = TypeRule::ERROR;
 	else {

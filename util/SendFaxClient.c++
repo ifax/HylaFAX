@@ -465,6 +465,10 @@ SendFaxClient::sendDocuments(fxStr& emsg)
 	    fileSent = setFormat(FORM_TIFF)
 		    && setType(TYPE_I)
 		    && sendData(fd, &FaxClient::storeTemp, info.doc, emsg);
+	} else if (info.rule->getResult() == TypeRule::PDF) {
+	    fileSent = setFormat(FORM_PDF)
+	    	    && setType(TYPE_I)
+		    && sendData(fd, &FaxClient::storeTemp, info.doc, emsg);
 	} else {
 	    fileSent = setFormat(FORM_PS)
 	    	    && setType(TYPE_I)		// XXX TYPE_A???
@@ -677,13 +681,14 @@ SendFaxClient::prepareFile(FileInfo& info, fxStr& emsg)
 	    return (false);
 	}
 	info.temp = tmpFile;
-    } else				// already postscript or tiff
+    } else				// already postscript, pdf, or tiff
 	info.temp = info.name;
     switch (info.rule->getResult()) {
     case TypeRule::TIFF:
 	countTIFFPages(info.temp);
 	break;
     case TypeRule::POSTSCRIPT:
+    case TypeRule::PDF:
 	estimatePostScriptPages(info.temp);
 	break;
     }

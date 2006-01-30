@@ -760,7 +760,7 @@ HylaFAXServer::docType(const char* docname, FaxSendOp& op)
 	    if (cc > 2 && b.buf[0] == '%' && b.buf[1] == '!')
 		op = FaxRequest::send_postscript;
 	    else if (cc > 2 && b.buf[0] == '%' && b.buf[1] == 'P') {
-	    	logError("What we have here is a PDF file");
+	    	logDebug("What we have here is a PDF file");
 	    	op = FaxRequest::send_pdf;
 	    }
 	    else if (cc > (ssize_t)sizeof (b.h) && isTIFF(b.h))
