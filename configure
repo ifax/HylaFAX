@@ -3475,16 +3475,6 @@ if [ "$DSO" = no ]; then
     DSOSUF=a DSOOPTS= DSODELAY= LLDOPTS=
 else
     MAKEDSOINCLUDE="$MAKEINCLUDE"
-    case $CC-$TARGET in
-    gcc-*-linux-gnu)
-	GCOPTS="${GCOPTS} -fpic"
-	;;
-    esac
-    case $CXX-$TARGET in
-    g++-*-linux-gnu)
-	GCXXOPTS="${GCXXOPTS} -fpic"
-	;;
-    esac
 fi
 
 Note ""
