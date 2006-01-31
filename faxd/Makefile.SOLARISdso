@@ -41,5 +41,5 @@ installDSO: libfaxserver.${DSO}
 	(cd ${LIBDIR}; ln -s libfaxserver.${DSO}.${LIBVERSION} libfaxserver.${DSO})
 
 cleanDSO::
-	-${RM} -f libfaxserver.${DSO}.${LIBVERSION}
+	-${RM} -f libfaxserver.${DSO}.${LIBVERSION} libfaxserver.${DSO}
 

@@ -31,7 +31,7 @@
 #
 
 libfaxutil.${DSO}: ${OBJECTS}
-	ld ${DSOOPTS} -o libfaxutil.${DSO}.${LIBVERSION} ${OBJECTS} 
+	ld ${DSOOPTS} -o libfaxutil.${DSO}.${LIBVERSION} ${OBJECTS}
 	ln -s libfaxutil.${DSO}.${LIBVERSION} libfaxutil.${DSO}
 
 ../util/libfaxutil.${DSO}: libfaxutil.${DSO}
@@ -41,5 +41,5 @@ installDSO: libfaxutil.${DSO}
 	(cd ${LIBDIR}; ln -s libfaxutil.${DSO}.${LIBVERSION} libfaxutil.${DSO})
 
 cleanDSO::
-	-${RM} -f libfaxutil.${DSO}.${LIBVERSION}
+	-${RM} -f libfaxutil.${DSO}.${LIBVERSION} libfaxutil.${DSO}
 

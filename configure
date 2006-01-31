@@ -3377,6 +3377,8 @@ if [ "$DSO" = auto ]; then
 	FAXD='${DEPTH}/faxd'
 	DSOOPTS='-shared -fpic -Wl,-soname,$@'
 	LLDOPTS='-L${UTIL} -L${FAXD} -lfaxutil'$USE_RPATH
+	GCOPTS="${GCOPTS} -fpic"
+	GCXXOPTS="${GCXXOPTS} -fpic"
 	DSO=LINUX
 	CheckCCDSO()
 	{
@@ -3397,39 +3399,48 @@ if [ "$DSO" = auto ]; then
 	    "t:t.o; \${C++F} ${DSOOPTS} -o t.${DSOSUF} t.o"
 	}
 	;;
-#
-# Solaris DSO support seems rather fundamentally broken.
-# See http://bugs.hylafax.org/bugzilla/show_bug.cgi?id=291
-# We'd love to have this fixed if you've got a rainy day to spare ;-)
-#
-#    *-solaris*)
-#	DSOSUF=so
-#	LIBUTIL=''
-#	LIBFAXSERVER='-lfaxserver'
-#	FAXD='${DEPTH}/faxd'
-#	# options here are passed directly to ld, not through g++ first
-#	DSOOPTS='-G -h $@'
-#	LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lfaxutil'
-#	DSO=SOLARIS
-#	CheckCCDSO()
-#	{
-#	$RM t.c t.o t.${DSOSUF}
-#	echo 'int f() { return 0; }'>t.c
-#	capture cat t.c
-#	runMake t \
-#	    't.o:; ${CCF} -c t.c' \
-#	    "t: t.o; \${CCF} ${DSOOPTS} -o t.${DSOSUF} t.o"
-#	}
-#	CheckCXXDSO()
-#	{
-#	$RM t.c++ t.o t.${DSOSUF}
-#	echo 'int f() { return 0; }'>t.c++
-#	capture cat t.c++
-#	runMake t \
-#	    "t.o:; \${C++F} -c \${C++FILE} t.c++${MAKECXXOVERRIDE}" \
-#	    "t:t.o; \${C++F} ${DSOOPTS} -o t.${DSOSUF} t.o"
-#	}
-#	;;
+    *-solaris*)
+	if [ "X${DIR_LIB}" != "X/usr/lib" ]; then
+	    USE_RPATH=' -R${LIBDIR}'
+	else
+	    USE_RPATH=''
+	fi
+	DSOSUF=so
+	LIBUTIL=''
+	FAXD='${DEPTH}/faxd'
+	LIBFAXSERVER='-L${FAXD} -lfaxserver'
+	# options here are passed directly to ld, not through g++ first
+	DSOOPTS='-G -h $@'
+	if [ ${ISGCC} = "yes" ] ; then
+	    LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lfaxutil -lstdc++'
+	    GCOPTS="${GCOPTS} -fpic"
+	    GCXXOPTS="${GCXXOPTS} -fpic"
+	else
+	    LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lfaxutil -lCrun'
+	    GCOPTS="${GCOPTS} -Kpic"
+	    GCXXOPTS="${GCXXOPTS} -Kpic"
+	fi
+	#LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lfaxutil'
+	DSO=SOLARIS
+	CheckCCDSO()
+	{
+	$RM t.c t.o t.${DSOSUF}
+	echo 'int f() { return 0; }'>t.c
+	capture cat t.c
+	runMake t \
+	    't.o:; ${CCF} -c t.c' \
+	    "t: t.o; \${CCF} ${DSOOPTS} -o t.${DSOSUF} t.o"
+	}
+	CheckCXXDSO()
+	{
+	$RM t.c++ t.o t.${DSOSUF}
+	echo 'int f() { return 0; }'>t.c++
+	capture cat t.c++
+	runMake t \
+	    "t.o:; \${C++F} -c \${C++FILE} t.c++${MAKECXXOVERRIDE}" \
+	    "t:t.o; \${C++F} ${DSOOPTS} -o t.${DSOSUF} t.o"
+	}
+	;;
     *)	Note "There is no support for building HylaFAX as DSOs on your system."
 	DSO=no
 	;;
@@ -3466,12 +3477,12 @@ else
     MAKEDSOINCLUDE="$MAKEINCLUDE"
     case $CC-$TARGET in
     gcc-*-linux-gnu)
-	GCOPTS="$GCOPTS -fpic"
+	GCOPTS="${GCOPTS} -fpic"
 	;;
     esac
     case $CXX-$TARGET in
     g++-*-linux-gnu)
-	GCXXOPTS="$GCXXOPTS -fpic"
+	GCXXOPTS="${GCXXOPTS} -fpic"
 	;;
     esac
 fi
