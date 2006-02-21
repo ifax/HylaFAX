@@ -61,12 +61,14 @@ TTYCMD=tty
 CHARSET=us-ascii
 
 . etc/setup.cache
+. bin/common-functions
 
 INFO=$SBIN/faxinfo
 FAX2PS=$TIFFBIN/fax2ps
 TIFF2PS=tiff2ps
 TOADDR=FaxMaster
 TIFFINFO=tiffinfo
+FROMADDR=fax
 
 # 
 # Redirect errors to a tty, if possible, rather than
@@ -125,44 +127,52 @@ encode()
 }
 
 if [ -f $FILE ]; then
-    #
-    # Check the sender's TSI and setup to dispatch
-    # facsimile received from well-known senders.
-    #
     SENDER="`$INFO $FILE | $AWK -F: '/Sender/ { print $2 }' 2>/dev/null`"
-    if [ -f etc/PollDispatch ]; then
-	. etc/PollDispatch       # NB: PollDispatch allows customization
-    fi
+fi
+if [ -f etc/PollDispatch ]; then
+    . etc/PollDispatch       # NB: PollDispatch allows customization
+fi
+# 
+# Fetch language settings (after FaxDispatch for customization of $LANG).
+# 
+. bin/dictionary
+if [ -f etc/FaxDictionary ]; then
+    . etc/FaxDictionary
+fi
+setInfoSize
+
+if [ -f $FILE ]; then
     if [ "$TOADDR" != "$MAILADDR" ]; then # don't send FaxMaster duplicate
 	(echo "To: $TOADDR"
-	 echo "From: The HylaFAX Receive Agent <fax>"
-	 echo "Subject: Facsimile retrieved from $SENDER";   
+	 echo "From: $DICTRECEIVEAGENT <$FROMADDR>"
+	 eval echo "Subject: $DICTRETRIEVEDFROM";   
 	 echo ""
-	 echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):"; $INFO -n $FILE
-	 echo "ReceivedOn: $DEVICE"
+	 echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):";
+	 faxInfo $FILE
+	 printf "%`echo $INFOSIZE`s: $DEVICE\n" "$DICTRECEIVEDON"
 	if [ "$MSG" ]; then
 	    echo ""
-	    echo "The full document was not received because:"
+	    echo "$DICTMSGINTRO"
 	    echo ""
 	    echo "    $MSG"
 	    echo ""
-	    echo "    ---- Transcript of session follows ----"
+	    echo "$DICTLOGFOLLOWS"
 	    echo ""
 	    if [ -f log/c$COMMID ]; then
 		$SED -e '/-- data/d' \
 		    -e '/start.*timer/d' -e '/stop.*timer/d' \
 		    log/c$COMMID
 	    elif [ -n "$COMMID" ]; then
-		echo "    No transcript available (CommID c$COMMID)."
+		echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
 	    else
-		echo "    No transcript available."
+		echo "$DICTNOLOGAVAIL."
 	    fi
 	else
-	    echo "    CommID: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
+	    echo "    $DICTCOMMID: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
 	fi
 	if [ -n "$MAILADDR" ]; then
 	    echo ""
-	    echo "The facsimile was polled by and delivered to: $MAILADDR."
+	    eval echo "$DICTPOLLDISPATCHTO"
 	fi
 	) 2>$ERRORSTO | $SENDMAIL -ffax -oi $TOADDR
     fi
@@ -172,34 +182,35 @@ if [ -f $FILE ]; then
 	 echo "Content-Type: Multipart/Mixed; Boundary=\"$MIMEBOUNDARY\""
 	 echo "Content-Transfer-Encoding: 7bit"
 	 echo "To: $MAILADDR"
-	 echo "From: The HylaFAX Receive Agent <fax>"
-	 echo "Subject: Facsimile retrieved from $SENDER";   
+	 echo "From: $DICTRECEIVEAGENT <$FROMADDR>"
+	 eval echo "Subject: $DICTRETRIEVEDFROM";
 	 echo ""
 	 echo "--$MIMEBOUNDARY"
 	 echo "Content-Type: text/plain; charset=$CHARSET"
 	 echo "Content-Transfer-Encoding: quoted-printable"
 	 echo ""
-	 echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):"; $INFO -n $FILE
-	 echo "ReceivedOn: $DEVICE"
+	 echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):";
+	 faxInfo $FILE
+	 printf "%`echo $INFOSIZE`s: $DEVICE\n" "$DICTRECEIVEDON"
 	if [ "$MSG" ]; then
 	    echo ""
-	    echo "The full document was not received because:"
+	    echo "$DICTMSGINTRO"
 	    echo ""
 	    echo "    $MSG"
 	    echo ""
-	    echo "    ---- Transcript of session follows ----"
+	    echo "$DICTLOGFOLLOWS"
 	    echo ""
 	    if [ -f log/c$COMMID ]; then
 		sed -e '/-- data/d' \
 		    -e '/start.*timer/d' -e '/stop.*timer/d' \
 		    log/c$COMMID
 	    elif [ -n "$COMMID" ]; then
-		echo "    No transcript available (CommID c$COMMID)."
+		echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
 	    else
-		echo "    No transcript available."
+		echo "$DICTNOLOGAVAIL."
 	    fi
 	else
-	    echo "    CommID: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
+	    echo "    $DICTCOMMID: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
 	fi
 	echo ""
 	echo "--$MIMEBOUNDARY"
@@ -236,23 +247,23 @@ else
     # Generate notification mail for a failed attempt.
     #
     (echo "To: $TOADDR"
-     echo "From: The HylaFAX Receive Agent <fax>"
-     echo "Subject: facsimile poll retrieval failed"
+     echo "From: $DICTRECEIVEAGENT <$FROMADDR>"
+     echo "Subject: $DICTPOLLFAILED"
      echo ""
-     echo "An attempt to retrieve facsimile on $DEVICE failed because:"
+     eval echo "$DICTATTEMPTEDPOLLFAILED"
      echo ""
      echo "    $MSG"
      echo ""
-     echo "    ---- Transcript of session follows ----"
+     echo "$DICTLOGFOLLOWS"
      echo ""
      if [ -f log/c$COMMID ]; then
 	$SED -e '/-- data/d' \
 	    -e '/start.*timer/d' -e '/stop.*timer/d' \
 	    log/c$COMMID
      elif [ -n "$COMMID" ]; then
-	echo "    No transcript available (CommID c$COMMID)."
+	echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
      else
-	echo "    No transcript available."
+	echo "$DICTNOLOGAVAIL."
      fi
     ) 2>$ERRORSTO | $SENDMAIL -ffax -oi $TOADDR
 fi

@@ -1,0 +1,63 @@
+#!/bin/sh
+#    $Id$
+
+#
+# This holds various functions that are common to the
+# various bin scripts.
+#
+
+#
+# For getting all of the "faxinfo" items to line up.
+#
+setInfoSize()
+{
+    INFOSIZE=0
+    for ITEM in DICTSENDER DICTPAGES DICTQUALITY DICTSIZE DICTRECEIVED \
+		DICTTIMETORECV DICTSIGNALRATE DICTDATAFORMAT DICTERRCORRECT \
+		DICTCALLID1 DICTCALLID2 DICTCALLID3 DICTCALLID4 DICTCALLID \
+		DICTCALLID6 DICTCALLID7 DICTRECEIVEDON DICTCOMMID; do
+	THISLEN="`eval echo "$"$ITEM | wc -m | $SED 's/ //g'`"
+	if [ $THISLEN -gt $INFOSIZE ]; then INFOSIZE=$THISLEN; fi
+    done
+}
+
+#
+# For getting all of the notify job items to line up.
+#
+setItemSize()
+{
+    ITEMSIZE=0
+    for ITEM in DICTDESTINATION DICTJOBID DICTGROUPID DICTSENDER DICTMAILADDR \
+		DICTCOMMID DICTMODEM DICTSUBMITTEDFROM DICTPAGEWIDTH \
+		DICTPAGELENGTH DICTRES DICTSTATUS DICTDIALOGS DICTDIALS \
+		DICTCALLS DICTPAGES DICTATTEMPS DICTDIRNUM DICTRECEIVER DICTQUALITY \
+		DICTPAGEWIDTH DICTPAGELENGTH DICTDATAFORMAT DICTREMOTEEQUIPMENT \
+		DICTREMOTESTATION DICTSIGNALRATE; do
+	THISLEN="`eval echo "$"$ITEM | wc -m | $SED 's/ //g'`"
+	if [ $THISLEN -gt $ITEMSIZE ]; then ITEMSIZE=$THISLEN; fi
+    done
+}
+
+faxInfo()
+{
+    $INFO -n $1 | $SED -e "s/^ *Sender:/`printf %$INFOSIZE\s "$DICTSENDER"`:/g" \
+		-e "s/^ *Pages:/`printf %$INFOSIZE\s "$DICTPAGES"`:/g" \
+		-e "s/^ *Quality:/`printf %$INFOSIZE\s "$DICTQUALITY"`:/g" \
+		-e "s/^ *Page:/`printf %$INFOSIZE\s "$DICTSIZE"`:/g" \
+		-e "s/^ *Received:/`printf %$INFOSIZE\s "$DICTRECEIVED"`:/g" \
+		-e "s/^ *TimeToRecv:/`printf %$INFOSIZE\s "$DICTTIMETORECV"`:/g" \
+		-e "s/^ *SignalRate:/`printf %$INFOSIZE\s "$DICTSIGNALRATE"`:/g" \
+		-e "s/^ *DataFormat:/`printf %$INFOSIZE\s "$DICTDATAFORMAT"`:/g" \
+		-e "s/^ *ErrCorrect:/`printf %$INFOSIZE\s "$DICTERRCORRECT"`:/g" \
+		-e "s/^ *CallID1:/`printf %$INFOSIZE\s "$DICTCALLID1"`:/g" \
+		-e "s/^ *CallID2:/`printf %$INFOSIZE\s "$DICTCALLID2"`:/g" \
+		-e "s/^ *CallID3:/`printf %$INFOSIZE\s "$DICTCALLID3"`:/g" \
+		-e "s/^ *CallID4:/`printf %$INFOSIZE\s "$DICTCALLID4"`:/g" \
+		-e "s/^ *CallID5:/`printf %$INFOSIZE\s "$DICTCALLID5"`:/g" \
+		-e "s/^ *CallID6:/`printf %$INFOSIZE\s "$DICTCALLID6"`:/g" \
+		-e "s/^ *CallID7:/`printf %$INFOSIZE\s "$DICTCALLID7"`:/g" \
+		-e "s/ Yes$/ $DICTYES/g" \
+		-e "s/ No$/ $DICTNO/g" \
+		-e "s/ Normal$/ $DICTNORMAL/g" \
+		-e "s/ Fine$/ $DICTFINE/g"
+}

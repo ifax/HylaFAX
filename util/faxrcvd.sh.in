@@ -60,6 +60,7 @@ TTYCMD=tty
 CHARSET=us-ascii
 
 . etc/setup.cache
+. bin/common-functions
 
 INFO=$SBIN/faxinfo
 FAX2PS=$TIFFBIN/fax2ps
@@ -126,6 +127,15 @@ if [ -f etc/FaxDispatch ]; then
 fi
 
 #
+# Fetch language settings (after FaxDispatch for customization of $LANG).
+#
+. bin/dictionary
+if [ -f etc/FaxDictionary ]; then
+    . etc/FaxDictionary
+fi
+setInfoSize
+
+#
 # Produce mailable encoding for binary files.
 #
 encode()
@@ -160,34 +170,35 @@ if [ -f $FILE ]; then
 	 echo "Content-Type: text/plain; charset=$CHARSET"
 	 echo "Content-Transfer-Encoding: quoted-printable"
 	 echo "To: $TOADDR"
-	 echo "From: The HylaFAX Receive Agent <$FROMADDR>"
-	 echo "Subject: Facsimile received from $SENDER";
+	 echo "From: $DICTRECEIVEAGENT <$FROMADDR>"
+	 eval echo "Subject: $DICTRECEIVEDFROM";
 	 echo ""
-	 echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):"; $INFO -n $FILE
-	echo "ReceivedOn: $DEVICE"
+	 echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):";
+	 faxInfo $FILE
+	 printf "%`echo $INFOSIZE`s: $DEVICE\n" "$DICTRECEIVEDON"
 	if [ "$MSG" ]; then
 	    echo ""
-	    echo "The full document was not received because:"
+	    echo "$DICTMSGINTRO"
 	    echo ""
 	    echo "    $MSG"
 	    echo ""
-	    echo "    ---- Transcript of session follows ----"
+	    echo "$DICTLOGFOLLOWS"
 	    echo ""
 	    if [ -f log/c$COMMID ]; then
 		$SED -e '/-- data/d' \
 		 -e '/start.*timer/d' -e '/stop.*timer/d' \
 		 log/c$COMMID
 	    elif [ -n "$COMMID" ]; then
-		echo "    No transcript available (CommID c$COMMID)."
+		echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
 	    else
-		echo "    No transcript available."
+		echo "$DICTNOLOGAVAIL."
 	    fi
 	else
-	    echo "    CommID: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
+	    printf "%`echo $INFOSIZE`s: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)\n" "$DICTCOMMID"
 	fi
 	if [ -n "$SENDTO" ]; then
 	    echo ""
-	    echo "The facsimile was automatically dispatched to: $SENDTO." 
+	    eval echo "$DICTDISPATCHEDTO"
 	fi
 	) 2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $TOADDR
     fi
@@ -197,34 +208,34 @@ if [ -f $FILE ]; then
 	 echo "Content-Type: Multipart/Mixed; Boundary=\"$MIMEBOUNDARY\""
 	 echo "Content-Transfer-Encoding: 7bit"
 	 echo "To: $SENDTO"
-	 echo "From: The HylaFAX Receive Agent <$FROMADDR>"
-	 echo "Subject: Facsimile received from $SENDER";
+	 echo "From: $DICTRECEIVEAGENT <$FROMADDR>"
+	 eval echo "Subject: $DICTRECEIVEDFROM";
 	 echo ""
 	 echo "--$MIMEBOUNDARY"
 	 echo "Content-Type: text/plain; charset=$CHARSET"
 	 echo "Content-Transfer-Encoding: quoted-printable"
 	 echo ""
-	 $INFO -n $FILE
-	 echo "ReceivedOn: $DEVICE"
+	 faxInfo $FILE
+	 printf "%`echo $INFOSIZE`s: $DEVICE\n" "$DICTRECEIVEDON"
 	 if [ "$MSG" ]; then
 	    echo ""
-	    echo "The full document was not received because:"
+	    echo "$DICTMSGINTRO"
 	    echo ""
 	    echo "    $MSG"
 	    echo ""
-	    echo "    ---- Transcript of session follows ----"
+	    echo "$DICTLOGFOLLOWS"
 	    echo ""
 	    if [ -f log/c$COMMID ]; then
 		$SED -e '/-- data/d' \
 		     -e '/start.*timer/d' -e '/stop.*timer/d' \
 		     log/c$COMMID
 	    elif [ -n "$COMMID" ]; then
-		echo "    No transcript available (CommID c$COMMID)."
+		echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
 	    else
-		echo "    No transcript available."
+		echo "$DICTNOLOGAVAIL."
 	    fi
 	 else
-	    echo "    CommID: c$COMMID"
+	    printf "%`echo $INFOSIZE`s: c$COMMID\n" "$DICTCOMMID"
 	 fi
 	 echo ""
 	 echo "--$MIMEBOUNDARY"
@@ -261,23 +272,23 @@ else
     # Generate notification mail for a failed attempt.
     #
     (echo "To: $TOADDR"
-     echo "From: The HylaFAX Receive Agent <$FROMADDR>"
-     echo "Subject: facsimile not received"
+     echo "From: $DICTRECEIVEAGENT <$FROMADDR>"
+     echo "Subject: $DICTNOTRECEIVED"
      echo ""
-     echo "An attempt to receive facsimile on $DEVICE failed because:"
+     eval echo "$DICTATTEMPTEDFAXFAILED"
      echo ""
      echo "    $MSG"
      echo ""
-     echo "    ---- Transcript of session follows ----"
+     echo "$DICTLOGFOLLOWS"
      echo ""
      if [ -f log/c$COMMID ]; then
 	$SED -e '/-- data/d' \
 	     -e '/start.*timer/d' -e '/stop.*timer/d' \
 	    log/c$COMMID
      elif [ -n "$COMMID" ]; then
-	echo "    No transcript available (CommID c$COMMID)."
+	echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
      else
-	echo "    No transcript available."
+	echo "$DICTNOLOGAVAIL."
      fi
     ) 2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $TOADDR
 fi

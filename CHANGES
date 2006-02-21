@@ -2,6 +2,8 @@
 
 Changelog
 
+* add dictionary for notify, faxrcvd, and pollrcvd
+  internationalization support (21 Feb 2006)
 * add CHARSET config option for mailing scripts (21 Feb 2006)
 * use To-Company and To-Name coverpage entries in the notification
   message if they are available to use (21 Feb 2006)

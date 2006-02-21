@@ -363,6 +363,8 @@ HYLAFAXSRC=\
 	util/notify.awk				\
 	util/faxcron.sh.in			\
 	util/archive.sh.in			\
+	util/common-functions.sh.in		\
+	util/dictionary.sh.in			\
 	util/faxrcvd.sh.in			\
 	util/mkcover.sh.in			\
 	util/notify.sh.in			\

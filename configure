@@ -4820,6 +4820,8 @@ CONF_FILES="
     util/faxcron.sh
     util/pagesizes
     util/archive.sh
+    util/dictionary.sh
+    util/common-functions.sh
     util/faxrcvd.sh
     util/mkcover.sh
     util/notify.sh

@@ -73,6 +73,7 @@ TTYCMD=tty
 CHARSET=us-ascii
 
 . etc/setup.cache
+. bin/common-functions
 
 local_seq() {
 	if [ $1 -gt $2 ]; then
@@ -164,6 +165,15 @@ setCustomValues()
         # source notify preferecnes
         . etc/FaxNotify
     fi
+
+    #
+    # Language settings...
+    #
+    . bin/dictionary
+    if [ -f etc/FaxDictionary ]; then
+	. etc/FaxDictionary
+    fi
+    setItemSize
 }
 
 parseQfile()
@@ -265,10 +275,10 @@ fileType()
         elif (match "$FILETYPE" "pdf") ; then 
             echo "PDF"
         else
-            echo "Unknown document type"
+            echo "$DICTUNKNOWNDOCTYPE"
         fi
     else
-        echo "File does not exist"
+        echo "$DICTNOFILEEXISTS"
     fi
 }
 
@@ -514,10 +524,10 @@ mimeEncode()
 
 printItem()
 {
-    FMT="$1"
+    FMT="`echo %$ITEMSIZE\s: $1`"
     TAG="$2"
     VALUE="$3"
-    printf "%16s: $FMT\n" "$TAG" "$VALUE"
+    printf "$FMT\n" "$TAG" "$VALUE"
 }
 
 
@@ -548,43 +558,43 @@ match()
 returnToSender()
 {
     printBanner "Unsent job status"
-    printItem "%s" "Destination" "$number"
-    printItem "%s" "JobID" "$jobid"
-    printItem "%s" "GroupID" "$groupid"
-    printItem "%s" "Sender" "$sender"
-    printItem "%s" "Mailaddr" "$mailaddr"
+    printItem "%s" "$DICTDESTINATION" "$number"
+    printItem "%s" "$DICTJOBID" "$jobid"
+    printItem "%s" "$DICTGROUPID" "$groupid"
+    printItem "%s" "$DICTSENDER" "$sender"
+    printItem "%s" "$DICTMAILADDR" "$mailaddr"
     if [ -n "$commid" ] ; then
-        printItem "%s" "CommID" "$commid"
+        printItem "%s" "$DICTCOMMID" "$commid"
     fi
     if [ "$modem" != "any" -a "$RETURNTECHINFO" = "yes" ] ; then
-        printItem "%s" "Modem" "$modem"
+        printItem "%s" "$DICTMODEM" "$modem"
     fi
-    printItem "%s" 'Submitted From' "$client"
+    printItem "%s" "$DICTSUBMITTEDFROM" "$client"
     if [ "$jobtype" = "facsimile" -a "$RETURNTECHINFO" = "yes" ] ; then
-        printItem "%u (mm)" "Page Width" "$pagewidth"
-        printItem "%.0f (mm)" "Page Length" "$pagelength"
-        printItem "%.0f (lpi)" "Resolution" "$resolution"
+        printItem "%u (mm)" "$DICTPAGEWIDTH" "$pagewidth"
+        printItem "%.0f (mm)" "$DICTPAGELENGTH" "$pagelength"
+        printItem "%.0f (lpi)" "$DICTRES" "$resolution"
     fi
-    if [ -z "$faxstatus" ] ; then faxstatus="  (nothing available)" ; fi
+    if [ -z "$faxstatus" ] ; then faxstatus="  ($DICTNOTHINGAVAIL)" ; fi
     # we need to use the %b (instead of the %s) so the embedded escape characters will
     # be interpreted. 
-    printItem "%b" "Status" "$faxstatus"
-    printItem "%u (exchanges with remote device)" "Dialogs" "$tottries"
-    printItem "%u (consecutive failed calls to destination)" "Dials" "$ndials"
-    printItem "%u (total phone calls placed)" "Calls" "$totdials"
+    printItem "%b" "$DICTSTATUS" "$faxstatus"
+    printItem "%u ($DICTREMOTEEXCHANGES)" "$DICTDIALOGS" "$tottries"
+    printItem "%u ($DICTFAILEDCALLS)" "$DICTDIALS" "$ndials"
+    printItem "%u ($DICTTOTALCALLS)" "$DICTCALLS" "$totdials"
     if [ "$jobtype" = "facsimile" ] ; then
-        printItem "%u (pages transmitted)" "Pages" "$npages"
-        printItem "%u (total pages to transmit)" "TotPages" "$totpages"
-        printItem "%u (attempts to send current page)" "Attempts" "$ntries"
-        printItem "%u (directory of next page to send)" "Dirnum" "$dirnum"
+        printItem "%u ($DICTPAGESTRANSMITTED)" "$DICTPAGES" "$npages"
+        printItem "%u ($DICTTOTALPAGES)" "$DICTTOTPAGES" "$totpages"
+        printItem "%u ($DICTATTEMPTSPAGE)" "$DICTATTEMPS" "$ntries"
+        printItem "%u ($DICTDIRNEXTPAGE)" "$DICTDIRNUM" "$dirnum"
         if [ $nfiles -gt 0 -a "$RETURNTECHINFO" = "yes" ] ; then
-            printBanner "Documents submitted for transmission"
-            echo "The following documents were submitted for transmission and are"
-            echo "available on the server for reuse until they are automatically"
-            echo "purged when this job is ${doneop}d.  Documents may also be manually"
-            echo "removed using the faxrm command; consult faxrm(1) for information."
+            printBanner "$DICTDOCSSUBMITTED"
+            eval echo "$DICTDOCSTEXT1"
+            eval echo "$DICTDOCSTEXT2"
+            eval echo "$DICTDOCSTEXT3"
+            eval echo "$DICTDOCSTEXT4"
             echo ""
-            printf "%-20s %8s %s\n" "Filename" "Size" "Type"
+            printf "%-20s %8s %s\n" "$DICTFILENAME" "$DICTSIZE" "$DICTTYPE"
 	    for i in `local_seq 1 $nfiles`; do
                 name="files_$i"
                 eval filename=`echo "$"$name`
@@ -609,15 +619,15 @@ returnToSender()
         fi
     elif [ "$jobtype" = "pager" ] ; then
         if [ $npins -ne 0 ] ; then
-            printBanner "Unsent pages submitted for transmission"
+            printBanner "$DICTUNSENTPAGES"
 	    for i in `local_seq 1 $npins`; do
                 name="files_$i"
 		eval pin=`echo "$"$name`
-                printf "%15s\n" "PIN " $pin
+                printf "%15s\n" "$DICTPIN" $pin
             done
         fi
         if [ $nfiles -ne 0 -a -s $files_0 ] ; then
-            printBanner "Message text"
+            printBanner "$DICTMESSAGETEXT"
             cat $files_0
         fi
     fi
@@ -626,15 +636,15 @@ returnToSender()
 returnTranscript()
 {
     if [ "$RETURNTRANSCRIPT" = "yes" ] ; then
-        printBanner "Transcript of session follows"
+        printBanner "$DICTLOGFOLLOWS2"
         COMFILE="log/c$commid"
         if [ -f "$COMFILE" ] ; then
             # dump the comfile to output except for '-- data' lines
             cat $COMFILE | $GREP -v "\-\- data"
         else 
-            printf "    No transcript available"
+            printf "$DICTNOLOGAVAIL"
             if [ -n "$commid" ] ; then  # non 0 len commid value
-                    printf "(CommID c$commid)"
+                    printf "($DICTCOMMID c$commid)"
             fi
             echo "."
         fi
@@ -644,10 +654,10 @@ returnTranscript()
 printStatus()
 {
     if [ -z "$1" ] ; then # 0 string len
-        echo "<no reason recorded>"
+        echo "<$DICTNOREASON>"
     else
-        # we need to change the '\n' in the strings to real newlines
-        echo "$1" | sed -e 's/\\n/\n/g'
+	# we need to change the '\n' in the strings to real newlines
+	echo "$1" | sed -e 's/\\n/\n/g'
     fi
 }
 
@@ -657,7 +667,8 @@ putHeaders()
     echo "To: $mailaddr"
     echo "Subject: $1"
     putMimeTextHeader
-    printf "Your $jobtype job to $number"
+    THISJOBTYPE=`eval echo "$"DICT$jobtype`
+    eval printf \"$DICTYOURJOBTO\"
 }
 
 ##########
@@ -696,7 +707,8 @@ setCustomValues
 adjustNotifyFaxMaster 
 
 (if [ -z "$jobtag" ] ; then
-    jobtag="$jobtype job $jobid"
+    THISJOBTYPE=`eval echo "$"DICT$jobtype`
+    jobtag="`eval echo $DICTJOB`"
 fi
 if [ "$doneop" = "default" ] ; then
     doneop="remove"
@@ -706,7 +718,7 @@ if [ "$jobtype" = "pager" ] ; then
 fi
 DESTINATION="$receiver"
 if [ -n "$receiver" ] && [ -n "$company" ]; then
-    DESTINATION="$receiver at "
+    DESTINATION="$receiver $DICTAT "
 fi
 DESTINATION="$DESTINATION$company"
 if [ -n "$DESTINATION" ]; then
@@ -715,44 +727,45 @@ else
     DESTINATION="$number"
 fi
 if [ "$WHY" = "done" ] ; then
-    putHeaders "$jobtag to $DESTINATION completed"
-    echo " was completed successfully."
+    putHeaders "$jobtag $DICTTO $DESTINATION $DICTCOMPLETED"
+    echo "$DICTCOMPLETEDSUCCESSFULLY";
     echo "";
     if [ "$jobtype" = "facsimile" ] ; then
-        printItem "%u" "Pages" "$npages"
-        printItem "%s" "Receiver" "$csi"
+        printItem "%u" "$DICTPAGES" "$npages"
+        printItem "%s" "$DICTRECEIVER" "$csi"
         if [ "$RETURNTECHINFO" = "yes" ] ; then
             if [ "$resolution" = "196" ] ; then 
-                printItem "%s" "Quality" "Fine"
+                printItem "%s" "$DICTQUALITY" "$DICTFINE"
             else
-                printItem "%s" "Quality" "Normal"
+                printItem "%s" "$DICTQUALITY" "$DICTNORMAL"
             fi
-            printItem "%u (mm)" "Page Width" "$pagewidth"
-            printItem "%.0f (mm)" "Page Length" "$pagelength"
-            printItem "%s" "Signal Rate" "$signalrate"
-            printItem "%s" "Data Format" "$dataformat"
-            printItem "%s" "Remote Equipment" "$equipment"
-            printItem "%s" "Remote Station" "$station"
+            printItem "%u (mm)" "$DICTPAGEWIDTH" "$pagewidth"
+            printItem "%.0f (mm)" "$DICTPAGELENGTH" "$pagelength"
+            printItem "%s" "$DICTSIGNALRATE" "$signalrate"
+            printItem "%s" "$DICTDATAFORMAT" "$dataformat"
+            printItem "%s" "$DICTREMOTEEQUIPMENT" "$equipment"
+            printItem "%s" "$DICTREMOTESTATION" "$station"
         fi
     fi
     if [ "$RETURNTECHINFO" = "yes" ] ; then
         if [ "$tottries" != "1" ] ; then 
-            printItem "%s (exchanges with remote device)" "Dialogs" "$tottries"
+            printItem "%s ($DICTREMOTEEXCHANGES)" "$DICTDIALOGS" "$tottries"
         fi
         if [ "$totdials" != "1" ] ; then 
-            printItem "%s (total phone calls placed)" "Calls" "$totdials"
+            printItem "%s ($DICTTOTALCALLS)" "$DICTCALLS" "$totdials"
         fi
         if [ "$modem" != "any" ] ; then 
-            printItem "%s" "Modem" "$modem"
+            printItem "%s" "$DICTMODEM" "$modem"
         fi
-        printItem "%s" "Submitted From" "$client"
-        printItem "%s" "JobID" "$jobid"
-        printItem "%s" "GroupID" "$groupid"
-        printItem "%s" "CommID" "c$commid"
-        printf "\nProcessing time was %s.\n" "$JTIME"
+        printItem "%s" "$DICTSUBMITTEDFROM" "$client"
+        printItem "%s" "$DICTJOBID" "$jobid"
+        printItem "%s" "$DICTGROUPID" "$groupid"
+        printItem "%s" "$DICTCOMMID" "c$commid"
+        printf "\n$DICTPROCESSINGTIME %s.\n" "$JTIME"
     fi
     if [ -n "$faxstatus" -a "$RETURNTRANSCRIPT" = "yes" ] ; then
-        echo "  Additional information:"
+        # use -e in echo to interpret escape characters in faxstatus
+	echo "$DICTADDITIONALINFO"
 	printStatus "     $faxstatus"
         returnTranscript
     fi
@@ -760,8 +773,8 @@ if [ "$WHY" = "done" ] ; then
         returnFaxImage "$RETURNFILETYPE"
     fi
 elif [ "$WHY" = "failed" ] ; then 
-    putHeaders "$jobtag to $DESTINATION failed"
-    printf " failed because:\n    "
+    putHeaders "$jobtag $DICTTO $DESTINATION $DICTFAILED"
+    printf " $DICTFAILEDBECAUSE\n    "
     printStatus "$faxstatus"
     returnTranscript
     returnToSender
@@ -769,29 +782,29 @@ elif [ "$WHY" = "failed" ] ; then
         returnFaxImage "$RETURNFILETYPE"
     fi
 elif [ "$WHY" = "rejected" ] ; then 
-    putHeaders "$jobtag to $DESTINATION failed"
-    printf " was rejected because:\n    "
+    putHeaders "$jobtag $DICTTO $DESTINATION $DICTFAILED"
+    printf " $REJECTEDBECAUSE\n    "
     printStatus "$faxstatus"
     returnToSender
     if [ -n "$RETURNFILETYPE" ] ; then
         returnFaxImage "$RETURNFILETYPE"
     fi
 elif [ "$WHY" = "blocked" ] ; then
-    putHeaders "$jobtag to $DESTINATION blocked"
-    printf " is delayed in the scheduling queues because:\n    "
+    putHeaders "$jobtag $DICTTO $DESTINATION $DICTBLOCKED"
+    printf " $DICTDELAYEDBECAUSE\n    "
     printStatus "$faxstatus" 
     echo ""
-    echo "The job will be processed as soon as possible."
+    echo "$DICTASSOONASPOSSIBLE"
 elif [ "$WHY" = "requeued" ] ; then
-    putHeaders "$jobtag to $DESTINATION requeued" 
-    printf " was not sent because:\n    "
+    putHeaders "$jobtag $DICTTO $DESTINATION $DICTREQUEUED" 
+    printf " $DICTWASNOTSENT\n    "
     printStatus "$faxstatus" 
     echo ""
-    echo "The job will be retried at $NEXT."
+    echo "$DICTWILLBERETRIED $NEXT."
     returnTranscript
 elif [ "$WHY" = "removed" ] || [ "$WHY" = "killed" ] ; then 
-    putHeaders "$jobtag to $DESTINATION removed from queue" 
-    echo " was deleted from the queue."
+    putHeaders "$jobtag $DICTTO $DESTINATION $DICTREMOVEDFROMQUEUE" 
+    echo " $DICTWASDELETED"
     if [ "$WHY" = "killed" ] ; then
         returnToSender
     fi
@@ -799,50 +812,50 @@ elif [ "$WHY" = "removed" ] || [ "$WHY" = "killed" ] ; then
 	returnFaxImage "$RETURNFILETYPE"
     fi
 elif [ "$WHY" = "timedout" ]; then 
-    putHeaders "$jobtag to $DESTINATION failed" 
-    echo " could not be completed before the appointed deadline."
+    putHeaders "$jobtag $DICTTO $DESTINATION $DICTFAILED" 
+    echo " $DICTTIMEDOUT"
     returnToSender
     if [ -n "$RETURNFILETYPE" ] ; then
         returnFaxImage "$RETURNFILETYPE"
     fi
 elif [ "$WHY" = "format_failed" ] ; then 
-    putHeaders "$jobtag to $DESTINATION failed" 
-    echo " was not sent because document conversion"
-    echo "to facsimile failed.  The output from the converter program was:"
+    putHeaders "$jobtag to $DESTINATION $DICTFAILED" 
+    echo " $DICTCONVERSION1"
+    echo "$DICTCONVERSION2"
     echo ""
     printStatus "$faxstatus"
     echo ""
-    echo "Check any PostScript documents for non-standard fonts and invalid constructs"
+    echo "$DICTCONVERSION3"
     returnToSender
 elif [ "$WHY" = "no_formatter" ] ; then 
-    putHeaders "$jobtag to $DESTINATION failed" 
-    echo " was not sent because"
-    echo "the document conversion script was not found."
+    putHeaders "$jobtag $DICTTO $DESTINATION $DICTFAILED"
+    echo " $DICTNOFORMATTER1"
+    echo "$DICTNOFORMATTER2"
     returnToSender
 elif (match "$WHY"  "poll_*") ; then 
-    putHeaders "Notice about $jobtag" 
-    printf ", a polling request,\ncould not be completed because "
+    putHeaders "$DICTNOTICEABOUT $jobtag" 
+    printf "$DICTPOLLINGFAILED"
     if [ "$WHY" = "poll_rejected" ] ; then
-        echo "the remote side rejected your request."
+        echo "$DICTREMOTEREJECTED"
     elif [ "$WHY" = "poll_no_document" ] ; then
-        echo "no document was available for retrieval."
+        echo "$DICTNODOCTOPOLL"
     elif [ "$WHY" = "poll_failed" ] ; then
-        echo "an unspecified problem occurred."
+        echo "$DICTUNSPECIFIEDPROBLEM"
     fi
     echo "";
-    printf "Processing time was %s.\n" "$JTIME"
+    printf "$DICTPROCESSINGTIME %s.\n" "$JTIME"
     returnTranscript
 else 
-    putHeaders "Notice about $jobtag" 
-    echo " had something happen to it."
-    echo "Unfortunately, the notification script was invoked with an unknown reason"
-    echo "so the rest of this message is for debugging:"
+    putHeaders "$DICTNOTICEABOUT $jobtag" 
+    echo " $DICTUNKNOWNREASON1"
+    echo "$DICTUNKNOWNREASON2"
+    echo "$DICTUNKNOWNREASON3"
     echo ""
     echo "why: $WHY"
     echo "jobTime: $JTIME"
     echo "nextTry: $NEXT"
     echo  ""
-    echo "This should not happen, please report it to your administrator."
+    echo "$DICTUNKNOWNREASON4"
     returnTranscript
     returnToSender
 fi
