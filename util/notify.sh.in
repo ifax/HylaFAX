@@ -70,6 +70,7 @@ ENCODING=base64
 MIMENCODE=mimencode
 TIFF2PDF=bin/tiff2pdf
 TTYCMD=tty
+CHARSET=us-ascii
 
 . etc/setup.cache
 
@@ -436,8 +437,8 @@ putMimeTextHeader()
     echo "This is a multi-part message in MIME format."
     echo ""
     echo "--$MIMEBOUNDARY"
-    echo "Content-Type: text/plain; charset=us-ascii"
-    echo "Content-Transfer-Encoding: 7bit"
+    echo "Content-Type: text/plain; charset=$CHARSET"
+    echo "Content-Transfer-Encoding: quoted-printable"
     echo ""
 }
 

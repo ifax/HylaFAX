@@ -57,6 +57,7 @@ ENCODING=base64
 MIMENCODE=mimencode
 TIFF2PDF=bin/tiff2pdf
 TTYCMD=tty
+CHARSET=us-ascii
 
 . etc/setup.cache
 
@@ -155,7 +156,10 @@ if [ -f $FILE ]; then
 	*)		NOTIFY_FAXMASTER=yes;;
     esac
     if [ "$TOADDR" != "$SENDTO" -a "$NOTIFY_FAXMASTER" != "no" ]; then
-	(echo "To: $TOADDR"
+	(echo "Mime-Version: 1.0"
+	 echo "Content-Type: text/plain; charset=$CHARSET"
+	 echo "Content-Transfer-Encoding: quoted-printable"
+	 echo "To: $TOADDR"
 	 echo "From: The HylaFAX Receive Agent <$FROMADDR>"
 	 echo "Subject: Facsimile received from $SENDER";
 	 echo ""
@@ -197,8 +201,8 @@ if [ -f $FILE ]; then
 	 echo "Subject: Facsimile received from $SENDER";
 	 echo ""
 	 echo "--$MIMEBOUNDARY"
-	 echo "Content-Type: text/plain; charset=us-ascii"
-	 echo "Content-Transfer-Encoding: 7bit"
+	 echo "Content-Type: text/plain; charset=$CHARSET"
+	 echo "Content-Transfer-Encoding: quoted-printable"
 	 echo ""
 	 $INFO -n $FILE
 	 echo "ReceivedOn: $DEVICE"
