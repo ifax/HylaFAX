@@ -2,6 +2,7 @@
 
 Changelog
 
+* fix buffer overrun in NSF parsing (21 Feb 2006)
 * add dictionary for notify, faxrcvd, and pollrcvd
   internationalization support (21 Feb 2006)
 * add CHARSET config option for mailing scripts (21 Feb 2006)

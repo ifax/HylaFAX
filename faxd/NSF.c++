@@ -458,8 +458,8 @@ void NSF::findStationId( bool reverseOrder )
     /*
      * Trying to find the longest printable ASCII sequence
      */
-    for( const char *p = (const char*)thisnsf + NSFData::vendorIdSize,
-             *end = p + thisnsf.length(); p < end; p++ ){
+    const char *p = (const char*) thisnsf, *end = p + thisnsf.length();
+    for (p += NSFData::vendorIdSize; p < end; p++) {
         if( isprint(*p) ){
             if( !idSize++ ) 
                 id = p;
