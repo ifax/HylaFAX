@@ -2,6 +2,8 @@
 
 Changelog
 
+* use To-Company and To-Name coverpage entries in the notification
+  message if they are available to use (21 Feb 2006)
 * add support for libtiff-3.8 (31 Jan 2006)
 * use PDF in q-files when appropriate (30 Jan 2006)
 * fix configure in vsnprintf detection (30 Jan 2006)

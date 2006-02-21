@@ -210,6 +210,8 @@ parseQfile()
     /^doneop/    { p("doneop", $2); }
     /^number/    { p("number", $2); }
     /^external/    { p("number", $2); }        # override unprocessed number
+    /^receiver/    { p("receiver", $2); }
+    /^company/    { p("company", $2); }
     /^sender/    { p("sender", $2); }
     /^mailaddr/    { p("mailaddr", $2); }
     /^owner/    { p("owner", $2); }
@@ -701,8 +703,18 @@ fi
 if [ "$jobtype" = "pager" ] ; then
     number=$pagernum
 fi
+DESTINATION="$receiver"
+if [ -n "$receiver" ] && [ -n "$company" ]; then
+    DESTINATION="$receiver at "
+fi
+DESTINATION="$DESTINATION$company"
+if [ -n "$DESTINATION" ]; then
+    DESTINATION="$DESTINATION ($number)"
+else
+    DESTINATION="$number"
+fi
 if [ "$WHY" = "done" ] ; then
-    putHeaders "$jobtag to $number completed"
+    putHeaders "$jobtag to $DESTINATION completed"
     echo " was completed successfully."
     echo "";
     if [ "$jobtype" = "facsimile" ] ; then
@@ -747,7 +759,7 @@ if [ "$WHY" = "done" ] ; then
         returnFaxImage "$RETURNFILETYPE"
     fi
 elif [ "$WHY" = "failed" ] ; then 
-    putHeaders "$jobtag to $number failed"
+    putHeaders "$jobtag to $DESTINATION failed"
     printf " failed because:\n    "
     printStatus "$faxstatus"
     returnTranscript
@@ -756,7 +768,7 @@ elif [ "$WHY" = "failed" ] ; then
         returnFaxImage "$RETURNFILETYPE"
     fi
 elif [ "$WHY" = "rejected" ] ; then 
-    putHeaders "$jobtag to $number failed"
+    putHeaders "$jobtag to $DESTINATION failed"
     printf " was rejected because:\n    "
     printStatus "$faxstatus"
     returnToSender
@@ -764,20 +776,20 @@ elif [ "$WHY" = "rejected" ] ; then
         returnFaxImage "$RETURNFILETYPE"
     fi
 elif [ "$WHY" = "blocked" ] ; then
-    putHeaders "$jobtag to $number blocked"
+    putHeaders "$jobtag to $DESTINATION blocked"
     printf " is delayed in the scheduling queues because:\n    "
     printStatus "$faxstatus" 
     echo ""
     echo "The job will be processed as soon as possible."
 elif [ "$WHY" = "requeued" ] ; then
-    putHeaders "$jobtag to $number requeued" 
+    putHeaders "$jobtag to $DESTINATION requeued" 
     printf " was not sent because:\n    "
     printStatus "$faxstatus" 
     echo ""
     echo "The job will be retried at $NEXT."
     returnTranscript
 elif [ "$WHY" = "removed" ] || [ "$WHY" = "killed" ] ; then 
-    putHeaders "$jobtag to $number removed from queue" 
+    putHeaders "$jobtag to $DESTINATION removed from queue" 
     echo " was deleted from the queue."
     if [ "$WHY" = "killed" ] ; then
         returnToSender
@@ -786,14 +798,14 @@ elif [ "$WHY" = "removed" ] || [ "$WHY" = "killed" ] ; then
 	returnFaxImage "$RETURNFILETYPE"
     fi
 elif [ "$WHY" = "timedout" ]; then 
-    putHeaders "$jobtag to $number failed" 
+    putHeaders "$jobtag to $DESTINATION failed" 
     echo " could not be completed before the appointed deadline."
     returnToSender
     if [ -n "$RETURNFILETYPE" ] ; then
         returnFaxImage "$RETURNFILETYPE"
     fi
 elif [ "$WHY" = "format_failed" ] ; then 
-    putHeaders "$jobtag to $number failed" 
+    putHeaders "$jobtag to $DESTINATION failed" 
     echo " was not sent because document conversion"
     echo "to facsimile failed.  The output from the converter program was:"
     echo ""
@@ -802,7 +814,7 @@ elif [ "$WHY" = "format_failed" ] ; then
     echo "Check any PostScript documents for non-standard fonts and invalid constructs"
     returnToSender
 elif [ "$WHY" = "no_formatter" ] ; then 
-    putHeaders "$jobtag to $number failed" 
+    putHeaders "$jobtag to $DESTINATION failed" 
     echo " was not sent because"
     echo "the document conversion script was not found."
     returnToSender
