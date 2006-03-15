@@ -99,7 +99,6 @@ MANSAPP=sman.apps/cqtest.1m	\
 	sman.apps/wedged.1m	\
 	sman.apps/xferfaxstats.1m
 MANSFILE=sman.files/hylafax-server.4f	\
-	sman.files/callid.4f	\
 	sman.files/hylafax-config.4f	\
 	sman.files/destctrls.4f	\
 	sman.files/dialrules.4f	\
@@ -194,7 +193,6 @@ sman.apps/tsitest.1m::	${SRCDIR}/tsitest.1m;	${MANCVT}
 sman.apps/wedged.1m::	${SRCDIR}/wedged.1m;	${MANCVT}
 sman.apps/xferfaxstats.1m:: ${SRCDIR}/xferfaxstats.1m; ${MANCVT}
 sman.files/hylafax-server.4f::	${SRCDIR}/hylafax-server.4f;	${MANCVT}
-sman.files/callid.4f::	${SRCDIR}/callid.4f;	${MANCVT}
 sman.files/hylafax-config.4f::	${SRCDIR}/hylafax-config.4f;	${MANCVT}
 sman.files/destctrls.4f:: ${SRCDIR}/destctrls.4f; ${MANCVT}
 sman.files/doneq.4f::	${SRCDIR}/doneq.4f;	${MANCVT}

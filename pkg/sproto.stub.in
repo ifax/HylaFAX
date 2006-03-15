@@ -73,7 +73,6 @@ f man @MANDIR@/man1/xferfaxstats.@MANNUM1_8@=../man/sman.apps/xferfaxstats.1m 04
 d man @MANDIR@/man4 ? ? ?
 f man @MANDIR@/man4/pagesizes.@MANNUM4_5@=../man/cman.files/pagesizes.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/typerules.@MANNUM4_5@=../man/cman.files/typerules.4f 0444 @SYSUID@ @SYSGID@
-f man @MANDIR@/man4/callid.@MANNUM4_5@=../man/sman.files/callid.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/hylafax-config.@MANNUM4_5@=../man/sman.files/hylafax-config.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/destctrls.@MANNUM4_5@=../man/sman.files/destctrls.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/dialrules.@MANNUM4_5@=../man/sman.files/dialrules.4f 0444 @SYSUID@ @SYSGID@
