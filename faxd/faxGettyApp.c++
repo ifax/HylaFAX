@@ -64,9 +64,6 @@ faxGettyApp::faxGettyApp(const fxStr& devName, const fxStr& devID)
 {
     devfifo = -1;
     modemLock = NULL;
-    lastCIDModTime = 0;
-    cidPats = NULL;
-    acceptCID = NULL;
     setupConfig();
 
     fxAssert(_instance == NULL, "Cannot create multiple faxGettyApp instances");
@@ -75,8 +72,6 @@ faxGettyApp::faxGettyApp(const fxStr& devName, const fxStr& devID)
 
 faxGettyApp::~faxGettyApp()
 {
-    delete acceptCID;
-    delete cidPats;
     delete modemLock;
 }
 
@@ -330,62 +325,77 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
     bool callResolved;
     bool advanceRotary = true;
     fxStr emsg;
-    if (!isCIDOk(callid.size() > CallID::NUMBER ? callid.id(CallID::NUMBER) : "")) {	// check Caller ID if present
+
+    fxStr callid_formatted = "";
+
+    /*
+     * We default to accepting all calls.
+     * If the DynamicConfig set's RejectCall to true, then we
+     * will reject it.
+     */
+    rejectCall = false;
+
+    for (u_int i = 0; i < callid.size(); i++)
+	callid_formatted.append(quote | callid.id(i) | enquote);
+
+    if (callid_formatted.length())
+    	traceProtocol("CallID:%s", (const char*) callid_formatted);
+
+    if (dynamicConfig.length()) {
+	fxStr cmd(dynamicConfig | quote | getModemDevice() | enquote | callid_formatted);
+	traceServer("DynamicConfig: %s", (const char*)cmd);
+	fxStr localid = "";
+	int pipefd[2], idlength, status;
+	char line[1024];
+	pipe(pipefd);
+	pid_t pid = fork();
+	switch (pid) {
+	    case -1:
+		emsg = "Could not fork for local ID.";
+		logError("%s", (const char*)emsg);
+		Sys::close(pipefd[0]);
+		Sys::close(pipefd[1]);
+		break;
+	    case  0:
+		dup2(pipefd[1], STDOUT_FILENO);
+		Sys::close(pipefd[0]);
+		Sys::close(pipefd[1]);
+		execl("/bin/sh", "sh", "-c", (const char*) cmd, (char*) NULL);
+		sleep(1);
+		exit(1);
+	    default:
+		Sys::close(pipefd[1]);
+		{
+		    FILE* fd = fdopen(pipefd[0], "r");
+		    while (fgets(line, sizeof (line)-1, fd)){
+			line[strlen(line)-1]='\0';		// Nuke \n at end of line
+			(void) readConfigItem(line);
+		    }
+		    Sys::waitpid(pid, status);
+		    if (status != 0)
+		    {
+			emsg = fxStr::format("Bad exit status %#o for \'%s\'", status, (const char*) cmd);
+			logError("%s", (const char*)emsg);
+		    }
+		    // modem settings may have changed...
+		    FaxModem* modem = (FaxModem*) ModemServer::getModem();
+		    modem->pokeConfig();
+		}
+		Sys::close(pipefd[0]);
+		break;
+	}
+    }
+
+    if (rejectCall)
+    {
 	/*
 	 * Call was rejected based on Caller ID information.
 	 */
-	emsg = "ANSWER: CID REJECTED";
+	emsg = "ANSWER: CALL REJECTED";
 	traceServer("%s", (const char*)emsg);
 	callResolved = false;
 	advanceRotary = false;
     } else {
-	fxStr callid_formatted = "";
-	for (u_int i = 0; i < callid.size(); i++)
-	    callid_formatted.append(quote | callid.id(i) | enquote);
-	if (callid_formatted.length()) traceProtocol("CallID:%s", (const char*) callid_formatted);
-	if (dynamicConfig.length()) {
-	    fxStr cmd(dynamicConfig | quote | getModemDevice() | enquote | callid_formatted);
-	    fxStr localid = "";
-	    int pipefd[2], idlength, status;
-	    char line[1024];
-	    pipe(pipefd);
-	    pid_t pid = fork();
-	    switch (pid) {
-		case -1:
-		    emsg = "Could not fork for local ID.";
-		    logError("%s", (const char*)emsg);
-		    Sys::close(pipefd[0]);
-		    Sys::close(pipefd[1]);
-		    break;
-		case  0:
-		    dup2(pipefd[1], STDOUT_FILENO);
-		    Sys::close(pipefd[0]);
-		    Sys::close(pipefd[1]);
-		    execl("/bin/sh", "sh", "-c", (const char*) cmd, (char*) NULL);
-		    sleep(1);
-		    exit(1);
-		default:
-		    Sys::close(pipefd[1]);
-		    {
-			FILE* fd = fdopen(pipefd[0], "r");
-			while (fgets(line, sizeof (line)-1, fd)){
-			    line[strlen(line)-1]='\0';		// Nuke \n at end of line
-			    (void) readConfigItem(line);
-			}
-			Sys::waitpid(pid, status);
-			if (status != 0)
-			{
-			    emsg = fxStr::format("Bad exit status %#o for \'%s\'", status, (const char*) cmd);
-			    logError("%s", (const char*)emsg);
-			}
-			// modem settings may have changed...
-			FaxModem* modem = (FaxModem*) ModemServer::getModem();
-			modem->pokeConfig();
-		    }
-		    Sys::close(pipefd[0]);
-		    break;
-	    }
-	}
 	if (ctype != ClassModem::CALLTYPE_UNKNOWN) {
 	    /*
 	     * Distinctive ring or other means has already identified
@@ -742,13 +752,6 @@ faxGettyApp::setRingsBeforeAnswer(int rings)
     }
 }
 
-bool
-faxGettyApp::isCIDOk(const fxStr& cid)
-{
-    updatePatterns(qualifyCID, cidPats, acceptCID, lastCIDModTime);
-    return (qualifyCID == "" ? true : checkACL(cid, cidPats, *acceptCID));
-}
-
 /*
  * Notification handlers.
  */
@@ -986,7 +989,6 @@ faxGettyApp::resetConfig()
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
 faxGettyApp::stringtag faxGettyApp::strings[] = {
-{ "qualifycid",		&faxGettyApp::qualifyCID },
 { "gettyargs",		&faxGettyApp::gettyArgs },
 { "vgettyargs",		&faxGettyApp::vgettyArgs },
 { "egettyargs",		&faxGettyApp::egettyArgs },
@@ -1002,6 +1004,7 @@ faxGettyApp::booltag faxGettyApp::booleans[] = {
 { "lockvoicecalls",	&faxGettyApp::lockVoiceCalls,	true },
 { "lockexterncalls",	&faxGettyApp::lockExternCalls,	true },
 { "logcalls",		&faxGettyApp::logCalls,		true },
+{ "rejectcall",		&faxGettyApp::rejectCall,	false },
 };
 
 void

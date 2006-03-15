@@ -187,11 +187,12 @@ PollRcvdCmd	string	\s-1bin/pollrcvd\s+1	delivery script for facsimile received b
 PostScriptTimeout\(S1	integer	\s-1300\s+1	timeout on \*(Ps interpreter runs (secs)
 PriorityScheduling	boolean	\s-1\fIsee below\fP\s+1	use available priority job scheduling mechanism
 PS2FaxCmd\(S1	string	\s-1bin/ps2fax\s+1	\*(Ps \s-1RIP\s+1 command script
-QualifyCID	string	\-	file of Caller-ID or DNIS patterns for checking inbound calls
+QualifyCID	obselete	\-	See \s-1DynamicConfig\s+1 and \s-1RejectCall\s+1 for rejecting calls
 QualifyPWD	string	\-	file of \s-1PWD\s+1 patterns for qualifying senders
 QualifyTSI	string	\-	file of \s-1TSI\s+1 patterns for qualifying senders
 RecvDataFormat	string	\s-1adaptive\s+1	format for received facsimile data
 RecvFileMode	octal	\s-10600\s+1	protection mode to use for received facsimile files
+RejectCall	boolean	\s-1false\s+1	Reject the current call
 RingData	string	\-	distinctive ring data call identifier
 RingExtended	string	\-	extended ring message identifier
 RingFax	string	\-	distinctive ring fax call identifier
@@ -763,20 +764,22 @@ and
 .BR DistinctiveRings .
 .TP
 .B DynamicConfig
-The pathname of the optional shell script, e.g. ``etc/localid'', that 
+The pathname of the optional program, e.g. ``etc/localid'', that 
 makes dynamic configuration changes, i.e., to 
 .B LocalIdentifier,
-based on device ID and call identification.  The script is passed those
+based on device ID and call identification.  The program is passed those
 values as the parameters ($1 = device id, $2 = CallID1, $3 = CallID2, $4 = CallID3, ...), 
-when answering an incoming call.  The script can then 
+when answering an incoming call.  The program can then 
 perform local processing as desired to send on standard output the 
 configuration items to change in a ``parameter:value'' format, i.e.
 ``LocalIdentifier: +1.800.555.1212''.  If there are multiple parameters
 to be changed, then each item must be on its own line.
 This is commonly used to dynamically alter the local identification 
 of systems which use DID/DNIS, but it can also be used to allow different
-modem configurations for different senders.
-Note that this script must be marked as executable by the faxgetty process.
+modem configurations for different senders.  This program can also set the
+.BR RejectCall
+options to cause the current call to be rejected instaead of answered.
+Note that this file must be marked as executable by the faxgetty process.
 .TP
 .B FAXNumber
 The phone number associated with the facsimile modem.
@@ -1191,31 +1194,6 @@ suitable for transmission;
 see
 .IR ps2fax (${MANNUM1_8}).
 .TP
-.B QualifyCID
-A string that specifies whether or not \fIcall identification information\fP
-should be checked against an access control list before accepting
-an inbound call.
-If 
-.B QualifyCID
-is non-null and there is call identification service,
-then only calls with 
-.B CallID1
-data matching identifications
-in the file specified by this string (typically \fBetc/cid\fP)
-will be accepted; see
-.IR callid (${MANNUM4_5}).
-If
-.B QualifyCID
-is not specified in the configuration file, or the value is
-null, then all incoming calls will be answerable.
-Note that call identification screening is only available when this
-service is enabled on the phone line and the modem is capable of
-presenting that information to the host.
-The
-.B CallIDPattern
-parameters must also be setup to reflect the manner in which
-the modem returns call identification information to the host.
-.TP
 .B QualifyPWD
 A string that specifies whether or not the identity of 
 calling facsimile machines should be checked against an access
@@ -1265,6 +1243,15 @@ If incoming facsimile are to be publicly accessible, this
 value may be set, for example, to 0644.
 See also
 .IR chmod (2).
+.TP
+.B RejectCall
+If this is set to true, the current call will not be answered, and will
+be rejected.  This option has no effect if set in the configuration file,
+but when set by the
+.BR DynamicConfig
+program, controls the current call.  This options superseeds the obsolete
+.BR QualifyCID
+option.
 .TP
 .B RingData
 A modem status string that identifies that an incoming call is

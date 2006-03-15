@@ -67,10 +67,6 @@ private:
 
     u_short	ringsBeforeAnswer;	// # rings to wait
     u_short	ringsHeard;		// # rings received
-    fxStr	qualifyCID;		// if set, no answer w/o acceptable cid
-    time_t	lastCIDModTime;		// last mod time of CID patterns file
-    REArray*	cidPats;		// recv cid patterns
-    fxBoolArray* acceptCID;		// accept/reject matched cid
     CallID	received_callid;	// non-null received CNID
     fxStr	gettyArgs;		// getty arguments
     fxStr	vgettyArgs;		// voice getty arguments
@@ -87,6 +83,7 @@ private:
     fxStr	dynamicConfig;		// command to dynamically alter configuration
     u_int	modemPriority;		// modem priority passed to faxq
     bool	logCalls;		// Log all calls for FaxAcctInfo
+    bool	rejectCall;
 
     static faxGettyApp* _instance;
 
@@ -109,7 +106,6 @@ private:
     bool	setupModem();
     void	discardModem(bool dropDTR);
 // inbound call handling
-    bool	isCIDOk(const fxStr& cid);
     bool	processCall(CallType ctype, fxStr& emsg, const CallID& callid);
     CallType	runGetty(const char* what,
 		    Getty* (*newgetty)(const fxStr&, const fxStr&),

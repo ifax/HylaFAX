@@ -2,6 +2,7 @@
 
 Changelog
 
+* remove QualifyCID in lieu of DynamicConfig RejectCall (15 Mar 2006)
 * fix buffer overrun in NSF parsing (21 Feb 2006)
 * add dictionary for notify, faxrcvd, and pollrcvd
   internationalization support (21 Feb 2006)
