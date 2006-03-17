@@ -35,7 +35,7 @@ public:
     Class0Modem(ModemServer&, const ModemConfig&);
     ~Class0Modem();
 
-    bool setupModem();
+    bool setupModem(bool isSend = true);
     virtual bool setupFlowControl(FlowControl fc);
     CallStatus	dial(const char* number, fxStr& emsg);
     CallStatus dialResponse(fxStr& emsg);

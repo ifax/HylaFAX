@@ -259,7 +259,7 @@ pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info, u_int& batched)
 	if (info.getPagerTTYParity() != "")
 	    pagerTTYParity = info.getPagerTTYParity();
 	// NB: may need to set tty baud rate here XXX
-    if (!(batched & BATCH_FIRST) || setupModem()) {
+    if (!(batched & BATCH_FIRST) || setupModem(true)) {
 	    changeState(SENDING);
 	    setServerStatus("Sending page " | req.jobid);
 	    /*
@@ -1330,9 +1330,9 @@ pageSendApp::getConfigParity(const char* value) const
  * Modem and TTY setup
  */
 bool 
-pageSendApp::setupModem()
+pageSendApp::setupModem(bool isSend)
 {
-    return (ModemServer::setupModem() &&
+    return (ModemServer::setupModem(isSend) &&
 	setParity((Parity) getConfigParity(pagerTTYParity)));
 }
 

@@ -127,10 +127,10 @@ protected:
     ModemServer(const fxStr& deviceName, const fxStr& devID);
 
 // modem driver setup+teardown interfaces
-    virtual bool setupModem();
+    virtual bool setupModem(bool isSend = true);
     virtual bool readyModem();
     virtual void discardModem(bool dropDTR);
-    virtual ClassModem* deduceModem();
+    virtual ClassModem* deduceModem(bool isSend = true);
 // low-level modem interfaces
     int		getModemFd();				// XXX
     BaudRate	getModemRate() const;

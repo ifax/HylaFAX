@@ -294,5 +294,6 @@
  * JBIG library support
  */
 @HAVE_JBIG@
+@HAVE_JBIGTIFF@
 
 #endif

@@ -130,7 +130,7 @@ bool faxGettyApp::canLockModem()	{ return modemLock->check(); }
 bool faxGettyApp::isModemLocked()	{ return modemLock->isLocked(); }
 
 bool
-faxGettyApp::setupModem()
+faxGettyApp::setupModem(bool isSend)
 {
     /*
      * Reread the configuration file if it has been
@@ -141,7 +141,7 @@ faxGettyApp::setupModem()
      */
     if (updateConfig(getConfigFile()))
 	sendModemStatus("N" | getModemNumber());
-    if (FaxServer::setupModem() && ModemServer::readyModem()) {
+    if (FaxServer::setupModem(false) && ModemServer::readyModem()) {
 	/*
 	 * Setup modem for receiving.
 	 */
@@ -379,7 +379,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
 		    }
 		    // modem settings may have changed...
 		    FaxModem* modem = (FaxModem*) ModemServer::getModem();
-		    modem->pokeConfig();
+		    modem->pokeConfig(false);
 		}
 		Sys::close(pipefd[0]);
 		break;
@@ -495,7 +495,7 @@ faxGettyApp::answerCleanup()
 
     bool isSetup;
     if (isModemLocked() || lockModem()) {
-	isSetup = setupModem();
+	isSetup = setupModem(false);
 	unlockModem();
     } else
 	isSetup = false;

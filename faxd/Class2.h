@@ -72,7 +72,7 @@ protected:
     fxStr	lid;			// prepared local identifier string
 
 // modem setup stuff
-    virtual bool setupModem();
+    virtual bool setupModem(bool isSend = true);
     virtual bool setupModel(fxStr& model);
     virtual bool setupRevision(fxStr& rev);
     virtual bool setupDCC();
@@ -150,7 +150,7 @@ public:
     bool	recvPage(TIFF*, u_int& ppm, fxStr& emsg, const fxStr& id);
     bool	recvEnd(fxStr& emsg);
     void	recvAbort();
-    void	pokeConfig();
+    void	pokeConfig(bool isSend);
 
 // polling support
     bool	requestToPoll(fxStr& emsg);
@@ -158,7 +158,7 @@ public:
 		    fxStr& emsg);
 
 // miscellaneous
-    bool	faxService(bool enableV34);	// switch to fax mode
+    bool	faxService(bool enableV34);	// switch to fax mode (send)
     bool	reset(long ms);			// reset modem
     void	setLID(const fxStr& number);	// set local id string
     bool	supportsPolling() const;	// modem capability

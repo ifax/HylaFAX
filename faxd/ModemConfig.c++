@@ -247,9 +247,17 @@ ModemConfig::setupConfig()
     class1GreyJPEGSupport = false;		// support for greyscale JPEG
     class1ColorJPEGSupport = false;		// support for full color JPEG
 #ifdef HAVE_JBIG
-    class1JBIGSupport	= true;			// support for monochrome JBIG
+#ifdef HAVE_JBIGTIFF
+    class1JBIGSupport	= FaxModem::JBIG_FULL;	// full support for monochrome JBIG
 #else
-    class1JBIGSupport	= false;		// support for monochrome JBIG
+    class1JBIGSupport	= FaxModem::JBIG_SEND;	// send support for monochrome JBIG
+#endif
+#else
+#ifdef HAVE_JBIGTIFF
+    class1JBIGSupport	= FaxModem::JBIG_RECV;	// receive support for monochrome JBIG
+#else
+    class1JBIGSupport	= FaxModem::JBIG_NONE;	// no support for monochrome JBIG
+#endif
 #endif
     class1Resolutions	= VR_ALL;		// resolutions support
     class1PersistentECM	= true;			// continue to correct
@@ -564,6 +572,46 @@ ModemConfig::getRTNHandling(const char* cp)
     return (rh);
 }
 
+u_int
+ModemConfig::getJBIGSupport(const char* cp)
+{
+    JBIGSupport js;
+    if (valeq(cp, "FULL")) {
+	js = FaxModem::JBIG_FULL;
+    } else if (valeq(cp, "YES")) {
+	js = FaxModem::JBIG_FULL;
+    } else if (valeq(cp, "TRUE")) {
+	js = FaxModem::JBIG_FULL;
+    } else if (valeq(cp, "NONE")) {
+	js = FaxModem::JBIG_NONE;
+    } else if (valeq(cp, "NO")) {
+	js = FaxModem::JBIG_NONE;
+    } else if (valeq(cp, "FALSE")) {
+	js = FaxModem::JBIG_NONE;
+    } else if (valeq(cp, "SEND")) {
+	js = FaxModem::JBIG_SEND;
+    } else if (valeq(cp, "RECEIVE")) {
+	js = FaxModem::JBIG_RECV;
+    } else if (valeq(cp, "RECV")) {
+	js = FaxModem::JBIG_RECV;
+    } else {
+#ifdef HAVE_JBIG
+#ifdef HAVE_JBIGTIFF
+	js = FaxModem::JBIG_FULL;
+#else
+	js = FaxModem::JBIG_SEND;
+#endif
+#else
+#ifdef HAVE_JBIGTIFF
+	js = FaxModem::JBIG_RECV;
+#else
+	js = FaxModem::JBIG_NONE;
+#endif
+#endif
+    }
+    return (js);
+}
+
 void
 ModemConfig::parseCallID(const char* rbuf, CallID& callid) const
 {
@@ -657,10 +705,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class1GreyJPEGSupport = getBoolean(value);
     else if (streq(tag, "class1colorjpegsupport"))
 	class1ColorJPEGSupport = getBoolean(value);
-#ifdef HAVE_JBIG
     else if (streq(tag, "class1jbigsupport"))
-	class1JBIGSupport = getBoolean(value);
-#endif
+        class1JBIGSupport = getJBIGSupport(value);
     else if (streq(tag, "class1persistentecm"))
 	class1PersistentECM = getBoolean(value);
     else if (streq(tag, "class1extendedres"))

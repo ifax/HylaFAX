@@ -117,7 +117,7 @@ Class1Modem::~Class1Modem()
  * if so, configure it for use.
  */
 bool
-Class1Modem::setupModem()
+Class1Modem::setupModem(bool isSend)
 {
     if (!selectBaudRate(conf.maxRate, conf.flowControl, conf.flowControl))
 	return (false);
@@ -177,7 +177,7 @@ Class1Modem::setupModem()
     modemParams.df = BIT(DF_1DMH) | BIT(DF_2DMR);
     modemParams.bf = BF_DISABLE;
     modemParams.st = ST_ALL;
-    pokeConfig();
+    pokeConfig(isSend);
     traceModemParams();
     /*
      * Receive capabilities are maintained separately from
@@ -233,13 +233,27 @@ Class1Modem::setupModem()
  * These are potentially dynamic modem settings that can be altered on-the-fly.
  */
 void
-Class1Modem::pokeConfig()
+Class1Modem::pokeConfig(bool isSend)
 {
     modemParams.vr = conf.class1Resolutions;	// bitmapped by configuration
     if (conf.class1ECMSupport) {
 	modemParams.ec = BIT(EC_DISABLE) | BIT(EC_ENABLE64) | BIT(EC_ENABLE256);
  	modemParams.df |= BIT(DF_2DMMR);
-	if (conf.class1JBIGSupport) modemParams.df |= BIT(DF_JBIG);
+	switch (conf.class1JBIGSupport) {
+	    case FaxModem::JBIG_FULL:
+		jbigSupported = true; 
+		break;
+	    case FaxModem::JBIG_SEND:
+		jbigSupported = isSend;
+		break;
+	    case FaxModem::JBIG_RECV:
+		jbigSupported = !isSend;
+		break;
+	    default:
+		jbigSupported = false;
+		break;
+	}
+	if (jbigSupported) modemParams.df |= BIT(DF_JBIG);
     } else
 	modemParams.ec = BIT(EC_DISABLE);
 }
@@ -297,7 +311,7 @@ Class1Modem::setupFlowControl(FlowControl fc)
 
 /*
  * Place the modem into the appropriate state
- * for sending/received facsimile.
+ * for sending facsimile.
  */
 bool
 Class1Modem::faxService(bool enableV34)
@@ -1571,7 +1585,7 @@ Class1Modem::modemDIS() const
 
     if (conf.class1ECMSupport) {
 	// JBIG
-	if (conf.class1JBIGSupport) {
+	if (jbigSupported) {
 	    dis_caps.setBit(FaxParams::BITNUM_JBIG_BASIC, true);
 	    dis_caps.setBit(FaxParams::BITNUM_JBIG_L0, true);	// JBIG library can handle L0 = 1-Yd
 	}

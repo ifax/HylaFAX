@@ -104,7 +104,7 @@ private:
     bool	canLockModem();
     bool	lockModem();
     void	unlockModem();
-    bool	setupModem();
+    bool	setupModem(bool isSend);
 // notification interfaces used by ModemServer
     void	notifyModemReady();
     void	notifyModemWedged();

@@ -96,10 +96,10 @@ void FaxServer::notifyConnected(const FaxRequest&) {}
  * config file before hooking up the new modem.
  */
 bool
-FaxServer::setupModem()
+FaxServer::setupModem(bool isSend)
 {
     modem = NULL;
-    if (!ModemServer::setupModem())
+    if (!ModemServer::setupModem(isSend))
 	return (false);
     if (getModem()->isFaxModem()) {
 	modem = (FaxModem*) ModemServer::getModem();
@@ -121,7 +121,7 @@ FaxServer::discardModem(bool dropDTR)
  * driver class.
  */
 ClassModem*
-FaxServer::deduceModem()
+FaxServer::deduceModem(bool isSend)
 {
     fxStr h(type);
     h.raisecase();
@@ -134,7 +134,7 @@ FaxServer::deduceModem()
     if (h == "UNKNOWN"){
 	modem = new Class0Modem(*this, *this);
 	if (modem) {
-	    if (modem->setupModem()){
+	    if (modem->setupModem(isSend)){
                 modemServices = modem->getModemServices();
                 fxStr mfr = modem->getManufacturer();
                 mfr.raisecase();
@@ -165,7 +165,7 @@ FaxServer::deduceModem()
     if (modemServices & SERVICE_CLASS21) {
 	modem = new Class21Modem(*this, *this);
 	if (modem) {
-	    if (modem->setupModem())
+	    if (modem->setupModem(isSend))
 		return modem;
 	    delete modem;
 	}
@@ -173,7 +173,7 @@ FaxServer::deduceModem()
     if (modemServices & SERVICE_CLASS20) {
 	modem = new Class20Modem(*this, *this);
 	if (modem) {
-	    if (modem->setupModem())
+	    if (modem->setupModem(isSend))
 		return modem;
 	    delete modem;
 	}
@@ -181,7 +181,7 @@ FaxServer::deduceModem()
     if (modemServices & SERVICE_CLASS2) {
 	modem = new Class2ErsatzModem(*this, *this);
 	if (modem) {
-	    if (modem->setupModem())
+	    if (modem->setupModem(isSend))
 		return modem;
 	    delete modem;
 	}
@@ -189,7 +189,7 @@ FaxServer::deduceModem()
     if (modemServices & SERVICE_CLASS10) {
 	modem = new Class10Modem(*this, *this);
 	if (modem) {
-	    if (modem->setupModem())
+	    if (modem->setupModem(isSend))
 		return modem;
 	    delete modem;
 	}
@@ -197,7 +197,7 @@ FaxServer::deduceModem()
     if (modemServices & SERVICE_CLASS1) {
 	modem = new Class1ErsatzModem(*this, *this);
 	if (modem) {
-	    if (modem->setupModem())
+	    if (modem->setupModem(isSend))
 		return modem;
 	    delete modem;
 	}

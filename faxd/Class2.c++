@@ -45,7 +45,7 @@ Class2Modem::~Class2Modem()
  * the remainder of the Class 2 support fairly generic.
  */
 bool
-Class2Modem::setupModem()
+Class2Modem::setupModem(bool isSend)
 {
     if (!selectBaudRate(conf.maxRate, conf.flowControl, conf.flowControl))
 	return (false);
@@ -266,7 +266,7 @@ Class2Modem::setupModem()
 }
 
 void
-Class2Modem::pokeConfig()
+Class2Modem::pokeConfig(bool isSend)
 {
 }
 
@@ -425,7 +425,7 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params)
 
 /*
  * Place the modem into the appropriate state
- * for sending/received facsimile.
+ * for sending facsimile.
  */
 bool
 Class2Modem::faxService(bool enableV34)

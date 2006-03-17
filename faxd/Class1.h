@@ -62,6 +62,7 @@ protected:
     bool	hadV34Trouble;		// indicates failure due to V.34 restrictions
     bool	hadV17Trouble;		// indicates failure due to V.17 problems
     bool	batchingError;		// indicates failure due to batching protocol
+    bool	jbigSupported;		// whether or not JBIG is supported in this mode
     const u_char* frameRev;		// HDLC frame bit reversal table
     fxStr	lid;			// encoded local id string
     fxStr	pwd;			// transmit password
@@ -116,7 +117,7 @@ protected:
     fxStr	ctrlFrameRcvd;	// unexpected control channel frame received
 
 // modem setup stuff
-    virtual bool setupModem();
+    virtual bool setupModem(bool isSend = true);
     virtual bool setupClass1Parameters();
     virtual bool setupFlowControl(FlowControl fc);
 // transmission support
@@ -220,7 +221,7 @@ public:
     bool	recvPage(TIFF*, u_int& ppm, fxStr& emsg, const fxStr& id);
     bool	recvEnd(fxStr& emsg);
     void	recvAbort();
-    void	pokeConfig();
+    void	pokeConfig(bool isSend);
 
 // polling support
     bool	requestToPoll(fxStr&);
@@ -228,9 +229,9 @@ public:
 		    fxStr& emsg);
 
 // miscellaneous
-    bool	faxService(bool enableV34);	// switch to fax mode
+    bool	faxService(bool enableV34);	// switch to fax mode (send)
     bool	reset(long ms);			// reset modem
-    bool	ready(long ms);			// ready modem
+    bool	ready(long ms);			// ready modem for receive
     void	setLID(const fxStr& number);	// set local id string
     bool	supportsPolling() const;	// modem capability
 };

@@ -85,8 +85,8 @@ private:
 protected:
     FaxServer(const fxStr& deviceName, const fxStr& devID);
 
-    bool	setupModem();
-    ClassModem*	deduceModem();
+    bool	setupModem(bool isSend = true);
+    ClassModem*	deduceModem(bool isSend = true);
     void	discardModem(bool dropDTR);
     fxStr	getModemCapabilities() const;
 

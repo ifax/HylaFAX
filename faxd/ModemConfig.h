@@ -57,6 +57,7 @@ private:
     u_int	getSpeed(const char* value);
     u_int	getDataFormat(const char* value);
     u_int       getRTNHandling(const char* cp);
+    u_int       getJBIGSupport(const char* cp);
     ECMType	getECMType(const char* cp);
 
     static bool findRate(const char*, BaudRate&);
@@ -163,7 +164,6 @@ public:
     u_int	class1ECMFrameSize;	// ECM frame size for transmission
     bool	class1GreyJPEGSupport;	// Greyscale JPEG support
     bool	class1ColorJPEGSupport;	// Full-color JPEG support
-    bool	class1JBIGSupport;	// monochrome JBIG support
     bool	class1ECMSupport;	// support T.30-A ECM
     bool	class1PersistentECM;	// continue to correct
     bool	class1TCFRecvHack;	// deliberately look for V.21 disconnect
@@ -229,6 +229,7 @@ public:
     u_int	recvDataFormat;		// received facsimile data format
 
     RTNHandling rtnHandling;            // RTN signal handling method
+    JBIGSupport	class1JBIGSupport;	// monochrome JBIG support
     bool	saveUnconfirmedPages;	// don't delete unconfirmed pages
     
     					// Distinctive ring data as sequences of DRON/DROF intervals

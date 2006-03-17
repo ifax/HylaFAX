@@ -228,7 +228,7 @@ protected:
 public:
     virtual ~ClassModem();
 
-    virtual bool setupModem() = 0;
+    virtual bool setupModem(bool isSend = true) = 0;
     virtual bool isFaxModem() const = 0;	// XXX safe to cast
 
     virtual bool sync(long ms = 0);		// synchronize (wait for "OK")

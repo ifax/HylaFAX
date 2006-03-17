@@ -184,6 +184,7 @@ LN_S
 HAVE_PAM
 PAMLIBS
 HAVE_JBIG
+HAVE_JBIGTIFF
 LIBJBIG"
 
 VAR2="MACHDEPLIBS
@@ -3246,6 +3247,23 @@ EOF
     boom
 else
     Note "Using TIFF binary files from $TIFFBIN"
+fi
+
+HAVE_JBIGTIFF="/*#define HAVE_JBIGTIFF 1*/"
+if [ "$DISABLE_JBIG" != "yes" ]; then
+    Note "Checking JBIG-in-TIFF conversion support."
+    if [ -z "`$TIFFBIN/tiffcp -c g4 misc/jbig.tif misc/foo.tif 2>&1`" ]; then
+	$TIFFBIN/tiffcp misc/jbig.tif misc/foo.tif
+	if [ -n "`$TIFFBIN/tiffinfo misc/foo.tif | grep 'Fax DCS'`" ]; then
+	    HAVE_JBIGTIFF="#define HAVE_JBIGTIFF 1"
+	    Note "JBIG-in-TIFF conversion support found."
+	else
+	    Note "JBIG-in-TIFF fax support not found."
+	fi
+    else
+	Note "JBIG-in-TIFF conversion support not found."
+    fi
+    rm -f misc/foo.tif
 fi
 
 Note "Done checking TIFF support."

@@ -103,7 +103,7 @@ private:
     bool	canLockModem();
     bool	lockModem();
     void	unlockModem();
-    bool	setupModem();
+    bool	setupModem(bool isSend);
     void	discardModem(bool dropDTR);
 // inbound call handling
     bool	processCall(CallType ctype, fxStr& emsg, const CallID& callid);

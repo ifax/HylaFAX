@@ -41,7 +41,7 @@ Class0Modem::~Class0Modem()
 }
 
 bool
-Class0Modem::setupModem()
+Class0Modem::setupModem(bool isSetup)
 {
     if (!selectBaudRate(conf.maxRate, conf.flowControl, conf.flowControl))
 	return (false);
