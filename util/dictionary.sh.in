@@ -48,7 +48,7 @@ case "$LANG" in
 	DICTDOCSTEXT1="Nastêpuj±ce dokumenty zosta³y przeznaczone do trasmisji i s±";
 	DICTDOCSTEXT2="dostêpne na serwerze do ponownego u¿ycia do momentu, gdy zostan± automatycznie";
 	DICTDOCSTEXT3="wyczyszczone, gdy zadanie zostanie `if [ \"\$doneop\" = archive ]; then echo 'zarchiwizowane' else echo 'usuniête'; fi`. Dokumenty mo¿na równie¿ usuwaæ";
-	DICTDOCSTEXT4="rêcznie przy pomocy komendy faxrm. Proszê zajrzeæ do strony podrêcznika faxrm(1).";
+	DICTDOCSTEXT4="rêcznie przy pomocy komendy faxrm. Proszê zajrzeæ do strony podrêcznika faxrm\(1\).";
 	DICTFILENAME="Nazwa pliku";
 	DICTSIZE="Rozmiar";
 	DICTTYPE="Typ";
@@ -160,7 +160,7 @@ case "$LANG" in
 	DICTDOCSTEXT1="Les documents suivants ont été soumis pour la transmission et sont ";
 	DICTDOCSTEXT2="disponible sur le serveur pour la réutilisation jusqu'à ce qu'ils soient automatiquement ";
 	DICTDOCSTEXT3="purgé quand ce travail est `if [ \"\$doneop\" = archive ]; then echo 'archived'; else echo 'removed'; fi`. Les documents peuvent également être manuellement ";
-	DICTDOCSTEXT4="enlevé en utilisant la commande de faxrm; consultez faxrm(1) pour information.";
+	DICTDOCSTEXT4="enlevé en utilisant la commande de faxrm\; consultez faxrm\(1\) pour information.";
 	DICTFILENAME="Nom du fichier";
 	DICTSIZE="Taille";
 	DICTTYPE="Type";
@@ -273,7 +273,7 @@ case "$LANG" in
 	DICTDOCSTEXT1="I seguenti documenti sono stati inviati per essere trasmessi e sono";
 	DICTDOCSTEXT2="disponibili sul server per essere riutilizzati finché non saranno automaticamente";
 	DICTDOCSTEXT3="eliminati quando questo lavoro sarà `if [ \"\$doneop\" = archive ]; then echo 'archiviato'; else echo 'rimosso'; fi`. I documenti possono anche essere manualmente";
-	DICTDOCSTEXT4="eliminati tramite il comando faxrm; consultate faxrm(1) per maggiori informazioni.";
+	DICTDOCSTEXT4="eliminati tramite il comando faxrm\; consultate faxrm\(1\) per maggiori informazioni.";
 	DICTFILENAME="Nome file";
 	DICTSIZE="Dimensioni";
 	DICTTYPE="Tipo";
@@ -386,7 +386,7 @@ case "$LANG" in
 	DICTDOCSTEXT1="Os seguintes documentos foram submetidos para envio e estão";
 	DICTDOCSTEXT2="disponíveis no servidor para reenvio até serem removidos";
 	DICTDOCSTEXT3="automaticamente quando este arquivo estiver `if [ \"\$doneop\" = archive ]; then echo 'arquivado'; else echo 'removido'; fi`.  Os documentos podem ser removidos";
-	DICTDOCSTEXT4="manualmente usando o comando faxrm; consulte faxrm(1) para mais informação.";
+	DICTDOCSTEXT4="manualmente usando o comando faxrm\; consulte faxrm\(1\) para mais informação.";
 	DICTFILENAME="Nome do arquivo";
 	DICTSIZE="Tamanho";
 	DICTTYPE="Tipo";
@@ -499,7 +499,7 @@ case "$LANG" in
 	DICTDOCSTEXT1="Os seguintes documentos foram submetidos para envio e estão";
 	DICTDOCSTEXT2="disponíveis no servidor para reenvio até serem removidos";
 	DICTDOCSTEXT3="automáticamente quando este ficheiro estiver `if [ \"\$doneop\" = archive ]; then echo 'arquivado'; else echo 'removido'; fi`.  Os documentos podem ser removidos";
-	DICTDOCSTEXT4="manualmente usando o comando faxrm; consulte faxrm(1) para mais informação.";
+	DICTDOCSTEXT4="manualmente usando o comando faxrm\; consulte faxrm\(1\) para mais informação.";
 	DICTFILENAME="Nome do ficheiro";
 	DICTSIZE="Tamanho";
 	DICTTYPE="Tipo";
@@ -612,7 +612,7 @@ case "$LANG" in
 	DICTDOCSTEXT1="Los documentos siguientes fueron sometidos para transmisión y están";
 	DICTDOCSTEXT2="disponibles en el servidor para reutilizarse hasta que sean eliminados";
 	DICTDOCSTEXT3="automáticamente o cuando este trabajo esté `if [ \"\$doneop\" = archive ]; then echo 'archivado'; else echo 'eliminado'; fi`.  Los documentos podrán también ser eliminados";
-	DICTDOCSTEXT4="manualmente usando el comando faxrm; consulte faxrm(1) para más información.";
+	DICTDOCSTEXT4="manualmente usando el comando faxrm\; consulte faxrm\(1\) para más información.";
 	DICTFILENAME="Nombre de fichero";
 	DICTSIZE="Tamaño";
 	DICTTYPE="Tipo";
@@ -725,7 +725,7 @@ case "$LANG" in
 	DICTDOCSTEXT1="Die folgenden Dokumente wurden zum Versand übermittelt und sind";
 	DICTDOCSTEXT2="auf dem Server zur erneuten Nutzung verfügbar bis sie automatisch";
 	DICTDOCSTEXT3="bereinigt, wenn dieser Auftrag `if [ \"\$doneop\" = archive ]; then echo 'archiviert'; else echo 'entfernt'; fi`.  Dokumente können auch manuell";
-	DICTDOCSTEXT4="entfernt werden durch Nutzung des faxrm Kommandos; siehe dazu faxrm(1) für mehr Information.";
+	DICTDOCSTEXT4="entfernt werden durch Nutzung des faxrm Kommandos\; siehe dazu faxrm\(1\) für mehr Information.";
 	DICTFILENAME="Dateiname";
 	DICTSIZE="Grösse";
 	DICTTYPE="Typ";
@@ -838,7 +838,7 @@ case "$LANG" in
 	DICTDOCSTEXT1="The following documents were submitted for transmission and are";
 	DICTDOCSTEXT2="available on the server for reuse until they are automatically";
 	DICTDOCSTEXT3="purged when this job is `if [ \"\$doneop\" = archive ]; then echo 'archived'; else echo 'removed'; fi`. Documents may also be manually";
-	DICTDOCSTEXT4="removed using the faxrm command; consult faxrm(1) for information.";
+	DICTDOCSTEXT4="removed using the faxrm command\; consult faxrm\(1\) for information.";
 	DICTFILENAME="Filename";
 	DICTSIZE="Size";
 	DICTTYPE="Type";
