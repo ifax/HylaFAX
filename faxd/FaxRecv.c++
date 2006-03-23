@@ -135,6 +135,8 @@ FaxServer::getRecvFile(fxStr& qfile, fxStr& emsg)
     if (ftmp < 0)
         emsg = "Failed to find unused filename";
 
+    (void) flock(ftmp, LOCK_EX);
+
     return ftmp;
 }
 
