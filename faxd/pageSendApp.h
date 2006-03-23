@@ -123,7 +123,7 @@ public:
     void	open();
     void	close();
 
-    FaxSendStatus send(const char* filename);
+    FaxSendStatus send(const char** filename, int num);
 
     bool	isReady() const;
 };

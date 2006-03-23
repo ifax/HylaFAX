@@ -115,35 +115,21 @@ pageSendApp::close()
 # define BATCH_LAST  2
 
 FaxSendStatus
-pageSendApp::send(const char* filenames)
+pageSendApp::send(const char** filenames, int num)
 {
-    /*
-     * filenames can be a comma-separated list.  Loop through
-     * the list.  Set batched to BATCH_FIRST for the first job,
-     * to BATCH_LAST for the last job, to nothing for the in-
-     * between jobs, and to BATCH_FIRST|BATCH_LAST for a single
-     * job.
-     */
-
     u_int batched = BATCH_FIRST;
     FaxSendStatus status = send_done;
-    fxStr filename, batchcommid, notice;
+    fxStr batchcommid, notice;
     time_t retrybatchtts;
 
-    while (filenames[0] != '\0' && status == send_done) {
-	if (filenames[0] == ',') filenames++;
-	filename = "";
-	// set filename to the next on the list and move the filenames pointer...
-	for (; filenames[0] != ',' && filenames[0] != '\0'; filenames++) {
-	    filename.append(filenames[0]);
-	}
-	filename.append('\0');
-	if (filenames[0] == '\0') batched |= BATCH_LAST;
-
-	int fd = Sys::open(filename, O_RDWR);
+    for (int i = 0; i < num; i++) {
+	if (i+1 == num)
+	    batched |= BATCH_LAST;
+				    
+	int fd = Sys::open(filenames[i], O_RDWR);
 	if (fd >= 0) {
 	    if (flock(fd, LOCK_EX) >= 0) {
-		FaxRequest* req = new FaxRequest(filename, fd);
+		FaxRequest* req = new FaxRequest(filenames[i], fd);
 		bool reject;
 		if (req->readQFile(reject) && !reject) {
 		    if (status == send_done) {
@@ -227,7 +213,7 @@ pageSendApp::send(const char* filenames)
 		status = send_failed;
 	    }
 	} else {
-	    logError("Could not open request file \"%s\": %m", (const char*) filename);
+	    logError("Could not open request file \"%s\": %m", filenames[i]);
 	    status = send_failed;
 	}
 	batched = 0;		// disable BATCH_FIRST and BATCH_LAST routines
@@ -1438,7 +1424,7 @@ main(int argc, char** argv)
 	Dispatcher::instance().dispatch();
     FaxSendStatus status;
     if (app->isReady())
-	status = app->send(argv[optind]);
+	status = app->send((const char**)&argv[optind], argc - optind);
     else
 	status = send_retry;
     app->close();
