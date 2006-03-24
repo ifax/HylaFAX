@@ -2,6 +2,7 @@
 
 Changelog
 
+* Fix hfaxd timezone handling on new GLIBC (BUG 723) (24 Mar 2006)
 * Fix locking of recvq tiff files (BUG 739) (23 Mar 2006)
 * fix batching of page jobs (23 Mar 2006)
 * expand Class1JBIGSupport to allow for differentiation

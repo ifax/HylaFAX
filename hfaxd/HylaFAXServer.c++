@@ -98,6 +98,12 @@ HylaFAXServer::HylaFAXServer()
     tzname[1] = NULL;
 #endif
 
+    // Latest glibc will revert to UTC in the chroot if it can't
+    // find the zoneinfo file and no TZ is set in the environment.
+    fxStr tz = fxStr::format("%s%d:%02d%s", tzname[0], (gmtoff / 3600),
+		((gmtoff / 60) % 60), tzname[1]);
+    setenv("TZ", tz, 0);
+
     cachedTIFF = NULL;
 }
 
