@@ -91,7 +91,7 @@ HylaFAXServer::userCmd(const char* name)
 	    if (loginAttempts)
 		sleep(loginAttempts);
 	} else
-	    login();
+	    login(230);
     } else
 	loginRefused("user denied");
 }
@@ -264,11 +264,16 @@ HylaFAXServer::passCmd(const char* pass)
 	);
 	return;
     }
-    login();
+    login(230);
 }
 
+/*
+ * Login is shared between SNPP and HylaFAX RFC 959 protocol,
+ * but different protocols use different codes for success.
+ * We make the caller tell us what success is.
+ */
 void
-HylaFAXServer::login(void)
+HylaFAXServer::login(int code)
 {
     loginAttempts = 0;		// this time successful
     state |= S_LOGGEDIN;
@@ -296,7 +301,7 @@ HylaFAXServer::login(void)
 #endif
 
     (void) isShutdown(false);	// display any shutdown messages
-    reply(230, "User %s logged in.", (const char*) the_user);
+    reply(code, "User %s logged in.", (const char*) the_user);
     if (TRACE(LOGIN))
 	logInfo("FAX LOGIN FROM %s [%s], %s"
 	    , (const char*) remotehost

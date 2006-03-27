@@ -1017,7 +1017,7 @@ SNPPServer::loginCmd(const char* loginID, const char* pass)
 		return;
 	    }
 	}
-	login();
+	login(250);
     } else {
 	if (++loginAttempts >= maxLoginAttempts) {
 	    reply(421, "Login incorrect (closing connection).");

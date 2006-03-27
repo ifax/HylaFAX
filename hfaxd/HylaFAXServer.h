@@ -353,7 +353,7 @@ protected:
     bool checkUser(const char*);
     bool checkuser(FILE*, const char *name);
     bool checkuser(const char *name);
-    void login(void);
+    void login(int code);
     void end_login(void);
     virtual void dologout(int status);
     const char* fixPathname(const char* file);
