@@ -27,56 +27,40 @@
 .\"
 .if n .po 0
 .ds Fx \fIHyla\s-1FAX\s+1\fP
-.TH DESTCTRLS ${MANNUM4_5} "October 3, 1995"
+.TH JOBCONTROL ${MANNUM1_8} "Mar 27, 2006"
 .SH NAME
-destctrls \- per-destination controls for \*(Fx servers
+jobcontrols \- per-job controls for \*(Fx servers
 .SH DESCRIPTION
 The \*(Fx configuration parameter
-.B DestControls
-specifies whether or not to apply
-per-destination controls on job characteristics
+.B JobControlCmd
+specifies the script that is used to apply 
+per-job controls on job characteristics
 such as the time-of-day to place a call.
 .PP
-The controls file is a simple
+The controls program should produce a simple line-based
 .SM ASCII
-file containing a series of records of the form:
+output containing a series of records of the form:
 .sp .5
 .RS
-.ta \w'\fIdest\fP    'u
-\fIdest\fP	param = value ... param = value
+param: value
 .RE
 .sp .5
-where
-.I dest
-is a regular expression matched against
-the canonical form of a destination phone number and
-parameters are specified by named assignments
-(though the ``='' can also be left out).
-Whitespace may be used freely though it is used to identify
-the end of
-.I dest
-and the start of the parameter list.
+which is parsed the same manner as all HylaFAX config files.
 Parameter values are parsed exactly as specified in
 .IR hylafax-config (${MANNUM4_5});
 i.e. values with embedded whitespace may be enclosed in quote marks (``"'').
 .PP
 Comments are introduced with a ``#'' character and extend to the
 end of the line.
-Parameter lists may be continued across lines by starting subsequent
-lines with a whitespace character (lines commented out with ``#''
-are also considered to be part of a continued record).
 .PP
-The order of entries in a file is important.
-When a parameter value is needed
-.I faxq
-sequentially scans the file until it finds a record that matches
-the canonical form of the destination phone number.
-If the requested parameter is defined in this record, then the
-value is returned, otherwise a default value is used from the
+The order of entries in the output is important.
+The last parameter value overrides any previous values.
+If the requested parameter is defined in the output, then the
+last value is returned, otherwise a default value is used from the
 .I faxq
 configuration file.
 .PP
-The following parameters may be specified on a per-destination basis;
+The following parameters may be specified on a per-job basis;
 consult
 .IR hylafax-config (${MANNUM4_5})
 for a description of each parameter
@@ -132,7 +116,7 @@ phone numbers; for example
 .sp .5
 .nf
 .ft C
- \.*911$    RejectNotice = "Calls to emergency numbers are not permitted"
+    RejectNotice: "Calls to emergency numbers are not permitted"
 .ft P
 .fi
 .PP
@@ -165,7 +149,7 @@ file.  For example,
 .sp .5
 .nf
 .ft C
- \.*    SessionTracing = 0x4f
+    SessionTracing: 0x4f
 .ft P
 .fi
 .PP
@@ -178,13 +162,11 @@ international phone calls one might use:
 .sp .5
 .nf
 .ft C
- [+][^1]    DesiredBR=3 DesiredEC=0
+    DesiredBR: 3
+    DesiredEC: 0
 .ft P
 .fi
 .SH NOTES
-Beware that canonical phone numbers have a leading ``+'' which is
-a special character for regular expressions.  An easy way to
-match ``+'' is with ``[+]''; e.g. ``[+]14159657824''.
 .SH "SEE ALSO"
 .IR faxq (${MANNUM1_8}),
 .IR hylafax-config (${MANNUM4_5}),

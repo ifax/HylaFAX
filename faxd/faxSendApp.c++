@@ -138,7 +138,7 @@ faxSendApp::send(const char** filenames, int num)
 		 * file).  Except for DesiredBR/EC/ST, these are applied 
 		 * before reading the queue file so that any user-specified 
 		 * values override.  We don't handle DesiredBR/EC/ST this
-		 * way because it would break their usage in DestControls
+		 * way because it would break their usage in JobControls
 		 * since there's currently no way for us to determine if
 		 * the setting in the queue file is explicitly specified.
 		 */
@@ -154,7 +154,7 @@ faxSendApp::send(const char** filenames, int num)
 
 			/*
 			 * Force any DesiredDF/BR/EC/ST options in the configuration
-			 * files (i.e. DestControls) to take precedence over
+			 * files (i.e. JobControls) to take precedence over
 			 * any user-specified settings.  This shouldn't cause
 			 * too many problems, hopefully, since their usage should
 			 * be fairly rare either by configuration settings or by

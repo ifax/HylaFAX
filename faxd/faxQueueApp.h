@@ -33,7 +33,7 @@
 #include "IOHandler.h"
 #include "Job.h"
 #include "DestInfo.h"
-#include "DestControl.h"
+#include "JobControl.h"
 #include "StrDict.h"
 
 typedef	struct tiff TIFF;
@@ -88,7 +88,6 @@ private:
     u_int	maxDials;		// max times to dial the phone for a job
     u_int	maxTries;		// max transmits tried for a job
     TimeOfDay	tod;			// time of day restrictions on sends
-    DestControl	destCtrls;		// destination control database
     fxStr	longDistancePrefix;	// prefix str for long distance dialing
     fxStr	internationalPrefix;	// prefix str for international dialing
     fxStr	areaCode;		// local area code
@@ -117,6 +116,7 @@ private:
     fxStr	sendPageCmd;		// external command for page transmits
     fxStr	sendUUCPCmd;		// external command for UUCP calls
     fxStr	wedgedCmd;		// external command for wedged modems
+    fxStr	jobCtrlCmd;		// external command for JobControl
 
     static stringtag strings[];
     static numbertag numbers[];
@@ -145,6 +145,7 @@ private:
     friend class JobKillHandler;	// for acccess to timeoutJob
     friend class JobPrepareHandler;	// for acccess to prepareJobDone
     friend class JobSendHandler;	// for acccess to sendJobDone
+    friend class JobCtrlHandler;	// for acccess to ctrlJobDone
     friend class faxQueueApp::SchedTimeout;// for access to runScheduler
     friend class ModemLockWaitHandler;	// for access to pollForModemLock
 
@@ -158,7 +159,7 @@ private:
     fxStr	canonicalizePhoneNumber(const fxStr& ds);
 // modem support
     void	scanForModems();
-    bool	assignModem(Job& job, const DestControlInfo&);
+    bool	assignModem(Job& job);
     void	releaseModem(Job& job);
     void	notifyModemWedged(Modem&);
     void	pollForModemLock(Modem& modem);
@@ -196,9 +197,8 @@ private:
     void	notifySender(Job&, JobStatus, const char* = "");
 // job management interfaces
     void	processJob(Job& job);
-    void	processJob(Job&, FaxRequest* req,
-		    DestInfo&, const DestControlInfo&);
-    void	sendJobStart(Job&, FaxRequest*, const DestControlInfo&);
+    void	processJob(Job&, FaxRequest* req, DestInfo& di);
+    void	sendJobStart(Job&, FaxRequest*);
     void	sendJobDone(Job& job, int status);
     void	sendJobDone(Job& job, FaxRequest* req);
     void	blockJob(Job&, FaxRequest&, const char*);
@@ -227,25 +227,26 @@ private:
 
     void	runScheduler();
     void	pokeScheduler(u_short s = 0);
+// job control stuff
+    void	ctrlJobDone(Job& job, int status);
 // job preparation stuff
     bool	prepareJobNeeded(Job&, FaxRequest&, JobStatus&);
     static void prepareCleanup(int s);
     bool	prepareJobStart(Job&, FaxRequest*,
-		    FaxMachineInfo&, const DestControlInfo&);
+		    FaxMachineInfo&);
     void	prepareJobDone(Job&, int status);
     JobStatus	prepareJob(Job& job, FaxRequest& req,
-		    const FaxMachineInfo&, const DestControlInfo&);
+		    const FaxMachineInfo&);
     JobStatus	convertDocument(Job&,
 		    const FaxItem& input, const fxStr& outFile,
 		    const Class2Params& params,
-		    const DestControlInfo& dci, fxStr& emsg);
+		    fxStr& emsg);
     JobStatus	runConverter(Job& job, const char* app, char* const* argv,
 		    fxStr& emsg);
     bool	runConverter1(Job& job, int fd, fxStr& output);
-    void	makeCoverPage(Job&, FaxRequest&, const Class2Params&,
-		    const DestControlInfo&);
-    bool	preparePageHandling(FaxRequest&,
-		    const FaxMachineInfo&, const DestControlInfo&, fxStr& emsg);
+    void	makeCoverPage(Job&, FaxRequest&, const Class2Params&);
+    bool	preparePageHandling(Job&, FaxRequest&,
+		    const FaxMachineInfo&, fxStr& emsg);
     void	preparePageChop(const FaxRequest&,
 		    TIFF*, const Class2Params&, fxStr&);
     void	setupParams(TIFF*, Class2Params&, const FaxMachineInfo&);
@@ -263,7 +264,7 @@ public:
     // NB: public for use by Modem class
     UUCPLock*	getUUCPLock(const fxStr& deviceName);
 
-    // used by DestControlInfo for default values
+    // used by JobControlInfo for default values
     u_int	getTracingLevel() const;
     u_int	getMaxConcurrentCalls() const;
     u_int	getMaxSendPages() const;

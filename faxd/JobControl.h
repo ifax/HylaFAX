@@ -23,12 +23,13 @@
  * LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
  * OF THIS SOFTWARE.
  */
-#ifndef _DestControl_
-#define	_DestControl_
+#ifndef _JobControl_
+#define	_JobControl_
 /*
  * Destination Controls.
  */
-#include "RE.h"
+#include "FaxConfig.h"
+#include "Str.h"
 #include "TimeOfDay.h"
 #include "Array.h"
 
@@ -38,9 +39,10 @@
  * phone number matches the regex, then associated parameters
  * are used.
  */
-class DestControlInfo {
+class JobControlInfo
+  : public FaxConfig
+{
 private:
-    RE	pattern;		// destination pattern
     u_long	defined;		// parameters that were defined
     u_int	maxConcurrentCalls;	// max number of parallel calls
     u_int	maxSendPages;		// max pages in a send job
@@ -54,16 +56,17 @@ private:
     fxStr	args;			// arguments for subprocesses
 
     // default returned on no match
-    static const DestControlInfo defControlInfo;
+    static const JobControlInfo defControlInfo;
 
-    friend class DestControl;
+    friend class JobControl;
 public:
-    DestControlInfo(const char* regex);
-    DestControlInfo();
-    DestControlInfo(const DestControlInfo& other);
-    ~DestControlInfo();
+    JobControlInfo(const char* regex);
+    JobControlInfo();
+    JobControlInfo(const fxStr& buffer);
+    JobControlInfo(const JobControlInfo& other);
+    ~JobControlInfo();
 
-    int compare(const DestControlInfo*) const;
+    int compare(const JobControlInfo*) const;
     void parseEntry(const char* tag, const char* value, bool quoted);
 
     u_int getMaxConcurrentCalls() const;
@@ -76,32 +79,11 @@ public:
     int getUseXVRes() const;
     u_int getVRes() const;
     const fxStr& getArgs() const;
+
+    virtual bool setConfigItem(const char*, const char*);
+    virtual void configError(const char*, ...);
+    virtual void configTrace(const char*, ...);
 };
-inline const fxStr& DestControlInfo::getArgs() const	{ return args; }
+inline const fxStr& JobControlInfo::getArgs() const	{ return args; }
 
-fxDECLARE_ObjArray(DestControlInfoArray, DestControlInfo)
-
-/*
- * Destination control information database.
- */
-class DestControl {
-private:
-    fxStr	filename;		// database filename
-    time_t	lastModTime;		// last modification timestamp
-    u_int	lineno;			// line number while parsing
-    DestControlInfoArray info;		// control information
-
-    void	readContents();
-    bool	parseEntry(FILE* fp);
-    bool	readLine(FILE* fp, char line[], u_int cc);
-    void	skipEntry(FILE*, char line[], u_int cc);
-    void	parseError(const char* fmt ...);
-public:
-    DestControl();
-    virtual ~DestControl();
-
-    void setFilename(const char* filename);
-
-    const DestControlInfo& operator[](const fxStr&);
-};
-#endif /* _DestControl_ */
+#endif /* _JobControl_ */

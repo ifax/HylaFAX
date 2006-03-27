@@ -131,7 +131,7 @@ ClocalAsRoot	boolean	\s-1No\s+1	set \s-1CLOCAL\s+1 using root \s-1UID\s+1
 ContCoverCmd\(S1	string	\s-1bin/mkcover\s+1	continuation cover page generation script
 ContCoverPage\(S1	string	\-	continuation cover page template filename
 CountryCode\(S2	string	\-	local country code
-DestControls\(S1	string	\-	per-destination controls file
+DestControls\(S1	obsolete	\-	Obsoleted by JobControl
 DeviceMode	octal	\s-10600\s+1	protection mode to use for modem device
 DialStringRules\(S2	string	\-	dial string rules file
 DistinctiveRings	string	\-	configuration for distinctive ring cadences
@@ -142,6 +142,7 @@ FAXNumber	string	\-	facsimile modem phone number
 FaxRcvdCmd	string	\s-1bin/faxrcvd\s+1	notification script for received facsimile
 GettyArgs	string	\-	arguments passed to getty program
 InternationalPrefix\(S2	string	\-	dialing prefix for international calls
+JobControlCmd\(S1	string	\-	job control command
 JobReqBusy	integer	\s-1180\s+1	requeue interval for \s-1BUSY\s+1 dial result
 JobReqDataConn	integer	\s-1300\s+1	requeue interval for data connection dial result
 JobReqNoAnswer	integer	\s-1300\s+1	requeue interval for \s-1NO ANSWER\s+1 dial result
@@ -656,35 +657,6 @@ this value is passed to the dial string rules for use in
 formulating canonical phone numbers for dialing (among
 other things.)
 .TP
-.B DestControls\(S1
-An optional file containing rules for controlling
-parameters on a per-destination basis; see
-.IR destctrls (${MANNUM4_5})
-The following parameters may be controlled with this mechanism:
-.BR MaxConcurrentCalls ,
-.BR MaxDials ,
-.BR MaxSendPages ,
-.BR MaxTries ,
-.BR RejectNotice ,
-.BR SessionTracing ,
-and
-.BR TimeOfDay .
-If no
-.B DestControls
-parameter is specified, or if the controls file does not
-specify 
-.I default
-values for these parameters, then any settings in the
-.B config
-file used by
-.IR faxq (${MANNUM1_8})
-are used for default settings.
-Note that
-.I faxq
-automatically rereads the contents of a
-.B DestControls
-file if it is modified while the server is running.
-.TP
 .B DeviceMode
 The file protection mode that the server should set for the
 modem device file.
@@ -810,6 +782,11 @@ and
 The string to use to place an international phone call.
 In the United States, this is ``011''.
 This string is passed to the dial string rules.
+.TP
+.B JobControlCmd\(S1
+The command to invoke to which provides Job Control information for a
+job. See
+.IR JobControl (${MANNUM1_8}).
 .TP
 .B JobReqBusy
 The delay in seconds to wait before retrying a job whose
@@ -987,9 +964,9 @@ Unless all of your fax destinations have multiple fax lines
 using the same fax number per destination then 
 .B MaxConcurrentCalls 
 is probably best left as the default of 1 and exceptions should 
-be accomodated by the 
-.B DestControls 
-file.
+be accomodated by the
+.B JobControl 
+mechanism.
 .TP
 .B MaxBatchJobs\(S1
 The maximum number of jobs to batch together in a single call.
@@ -1009,8 +986,8 @@ See also
 The default value for the maximum number of times the server will
 place a call for an outbound job.
 This value may be overridden by rules in the
-.B DestControls
-file.
+.B JobControl
+mechanism.
 See also
 .BR MaxTries .
 .TP
@@ -1023,8 +1000,8 @@ The default value for the maximum number of pages the server will
 permit in a transmitted facsimile.
 Outbound jobs that exceed this limit are rejected.
 This value may be overridden by rules in the
-.B DestControls
-file.
+.B JobControl
+mechanism.
 .TP
 .B MaxSetupAttempts
 The maximum number of times a \*(Fx server program will attempt
@@ -1040,8 +1017,8 @@ this is in contrast to the value of
 which limits the number of calls that will be placed on behalf
 of a job.
 This value may be overridden by rules in the
-.B DestControls
-file.
+.B JobControl
+mechanism.
 See also
 .BR MaxDials .
 .TP
@@ -1548,8 +1525,8 @@ White space and other syntactic sugar may be freely inserted between
 tokens but may not be inserted between 24-hour times in the time range.
 .IP
 This value may be overridden by rules in the
-.B DestControls
-file.
+.B JobControl
+mechanism.
 .TP
 .B Use2D\(S1
 Control the use of 2D-encoded data for transmitted facsimile.

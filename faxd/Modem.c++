@@ -136,11 +136,11 @@ Modem::isCapable(const Job& job) const
  * work associated with the specified job.
  */
 Modem*
-Modem::findModem(const Job& job, const DestControlInfo& dci)
+Modem::findModem(const Job& job)
 {
     RE* c = ModemGroup::find(job.device);
     if (c) {
-	const fxStr& mdci = dci.getModem();
+	const fxStr& mdci = job.getJCI().getModem();
 	RE* cdci = mdci != "" ? ModemGroup::find(mdci) : NULL;
 	int loops = 2;
 

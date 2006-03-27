@@ -261,6 +261,7 @@
 #define FAX_TIFF2FAXCMD	FAX_BINDIR "/tiff2fax"	/* cmd to convert TIFF */
 #define	FAX_COVERCMD	FAX_BINDIR "/mkcover"	/* cmd to make cont coverpage */
 #define	FAX_WEDGEDCMD	FAX_BINDIR "/wedged"	/* cmd to handle wedged modem */
+#define	FAX_JOBCTRLCMD	FAX_BINDIR "/jcontrol"	/* cmd to handle job control*/
 
 /*
  * SNPP-related client-server definitions.

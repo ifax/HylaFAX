@@ -42,6 +42,7 @@
 #include "Timeout.h"
 #include "UUCPLock.h"
 #include "DialRules.h"
+#include "RE.h"
 #include "Modem.h"
 #include "Trigger.h"
 #include "faxQueueApp.h"
@@ -242,8 +243,7 @@ faxQueueApp::scanClientDirectory()
  * can be located by filename if necessary.
  */
 void
-faxQueueApp::processJob(Job& job, FaxRequest* req,
-    DestInfo& di, const DestControlInfo& dci)
+faxQueueApp::processJob(Job& job, FaxRequest* req, DestInfo& di)
 {
     JobStatus status;
     FaxMachineInfo& info = di.getInfo(job.dest);
@@ -269,14 +269,14 @@ faxQueueApp::processJob(Job& job, FaxRequest* req,
 		setDead(*cjob);
 	    }
 	} else {
-	    if (prepareJobStart(*cjob, creq, info, dci))
+	    if (prepareJobStart(*cjob, creq, info))
 		return;
 	    else if (cjob->bprev == NULL)
 		bjob = njob;
 	}
     }
     if (bjob != NULL)
-	sendJobStart(*bjob, bjob->breq, dci);
+	sendJobStart(*bjob, bjob->breq);
 }
 
 /*
@@ -340,7 +340,7 @@ faxQueueApp::prepareCleanup(int s)
  */
 bool
 faxQueueApp::prepareJobStart(Job& job, FaxRequest* req,
-    FaxMachineInfo& info, const DestControlInfo& dci)
+    FaxMachineInfo& info)
 {
     traceQueue(job, "PREPARE START");
     abortPrepare = false;
@@ -361,7 +361,7 @@ faxQueueApp::prepareJobStart(Job& job, FaxRequest* req,
 	 */
 	signal(SIGTERM, fxSIGHANDLER(faxQueueApp::prepareCleanup));
 	signal(SIGINT, fxSIGHANDLER(faxQueueApp::prepareCleanup));
-	_exit(prepareJob(job, *req, info, dci));
+	_exit(prepareJob(job, *req, info));
 	/*NOTREACHED*/
     case -1:				// fork failed, sleep and retry
 	job.remove();			// Remove from active queue
@@ -442,8 +442,10 @@ faxQueueApp::prepareJobDone(Job& job, int status)
 		    setDead(job);
 		}
 	    }
-	    if (processnext) processJob(*targetjob, targetjob->breq, destJobs[targetjob->dest], destCtrls[targetjob->dest]);
-	    else if (startsendjob) sendJobStart(*targetjob->bfirst(), targetjob->bfirst()->breq, destCtrls[targetjob->dest]);
+	    if (processnext)
+		processJob(*targetjob, targetjob->breq, destJobs[targetjob->dest]);
+	    else if (startsendjob)
+		sendJobStart(*targetjob->bfirst(), targetjob->bfirst()->breq);
 	    else {
 		/*
 		 * This destination was marked as called, but all jobs to this
@@ -583,7 +585,7 @@ faxQueueApp::unrefDoc(const fxStr& file)
  */
 JobStatus
 faxQueueApp::prepareJob(Job& job, FaxRequest& req,
-    const FaxMachineInfo& info, const DestControlInfo& dci)
+    const FaxMachineInfo& info)
 {
     /*
      * Select imaging parameters according to requested
@@ -606,13 +608,13 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
      * UseXVres: we check for usexvres = 0 or usexvres = 1 in destcontrols;
      *           if usexvres is not set getUseXVRes retuns -1.
      */
-    if (dci.getVRes() == 98)
+    if (job.getJCI().getVRes() == 98)
 	vres = 98;
-    else if (dci.getVRes() == 196)
+    else if (job.getJCI().getVRes() == 196)
 	vres = 196;
-    if (dci.getUseXVRes() == 0)
+    if (job.getJCI().getUseXVRes() == 0)
 	usexvres = 0;
-    else if (dci.getUseXVRes() == 1)
+    else if (job.getJCI().getUseXVRes() == 1)
 	usexvres = 1;
 
     // use the highest resolution the client supports
@@ -682,7 +684,7 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
 	case FaxRequest::send_tiff:		// verify&possibly convert TIFF
         case FaxRequest::send_pdf:		// convert PDF
 	    tmp = FaxRequest::mkbasedoc(fitem.item) | ";" | params.encodePage();
-	    status = convertDocument(job, fitem, tmp, params, dci, req.notice);
+	    status = convertDocument(job, fitem, tmp, params, req.notice);
 	    if (status == Job::done) {
 		/*
 		 * Insert converted file into list and mark the
@@ -707,7 +709,7 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
 	     * Note that a failure in doing this is not considered
 	     * fatal; perhaps this should be configurable?
 	     */
-	    makeCoverPage(job, req, params, dci);
+	    makeCoverPage(job, req, params);
 	    updateQFile = true;
 	}
 	if (req.pagehandling == "" && !abortPrepare) {
@@ -715,7 +717,7 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
 	     * Calculate/recalculate the per-page session parameters
 	     * and check the page count against the max pages.
 	     */
-	    if (!preparePageHandling(req, info, dci, req.notice)) {
+	    if (!preparePageHandling(job, req, info, req.notice)) {
 		status = Job::rejected;		// XXX
 		req.notice.insert("Document preparation failed: ");
 	    }
@@ -737,8 +739,8 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
  * is done during transmission.
  */
 bool
-faxQueueApp::preparePageHandling(FaxRequest& req,
-    const FaxMachineInfo& info, const DestControlInfo& dci, fxStr& emsg)
+faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
+    const FaxMachineInfo& info, fxStr& emsg)
 {
     /*
      * Figure out whether to try chopping off white space
@@ -753,7 +755,7 @@ faxQueueApp::preparePageHandling(FaxRequest& req,
 	    pagechop = pageChop;
     } else
 	pagechop = FaxRequest::chop_none;
-    u_int maxPages = dci.getMaxSendPages();
+    u_int maxPages = job.getJCI().getMaxSendPages();
     /*
      * Scan the pages and figure out where session parameters
      * will need to be renegotiated.  Construct a string of
@@ -975,7 +977,6 @@ faxQueueApp::convertDocument(Job& job,
     const FaxItem& req,
     const fxStr& outFile,
     const Class2Params& params,
-    const DestControlInfo& dci,
     fxStr& emsg)
 {
     JobStatus status;
@@ -1048,7 +1049,7 @@ faxQueueApp::convertDocument(Job& job,
 	fxStr rbuf = fxStr::format("%u", params.verticalRes());
 	fxStr wbuf = fxStr::format("%u", params.pageWidth());
 	fxStr lbuf = fxStr::format("%d", params.pageLength());
-	fxStr mbuf = fxStr::format("%u", dci.getMaxSendPages());
+	fxStr mbuf = fxStr::format("%u", job.getJCI().getMaxSendPages());
 	const char* argv[30];
 	int ac = 0;
 	switch (req.op) {
@@ -1229,7 +1230,7 @@ faxQueueApp::runConverter1(Job& job, int fd, fxStr& output)
  * so that everything just gets recalculated from scratch.
  */
 void
-faxQueueApp::makeCoverPage(Job& job, FaxRequest& req, const Class2Params& params, const DestControlInfo& dci)
+faxQueueApp::makeCoverPage(Job& job, FaxRequest& req, const Class2Params& params)
 {
     FaxItem fitem(FaxRequest::send_postscript, 0, fxStr::null, req.cover);
     fxStr cmd(coverCmd
@@ -1241,7 +1242,7 @@ faxQueueApp::makeCoverPage(Job& job, FaxRequest& req, const Class2Params& params
     if (runCmd(cmd, true)) {
 	fxStr emsg;
 	fxStr tmp = fitem.item | ";" | params.encodePage();
-	if (convertDocument(job, fitem, tmp, params, dci, emsg)) {
+	if (convertDocument(job, fitem, tmp, params, emsg)) {
 	    req.insertFax(0, tmp);
 	    req.cover = tmp;			// needed in sendJobDone
 	    req.pagehandling = "";		// XXX force recalculation
@@ -1342,7 +1343,7 @@ joinargs(const fxStr& cmd, const fxStr& dargs)
 }
 
 void
-faxQueueApp::sendJobStart(Job& job, FaxRequest* req, const DestControlInfo& dci)
+faxQueueApp::sendJobStart(Job& job, FaxRequest* req)
 {
     Job* cjob;
     int nfiles = 1;
@@ -1357,7 +1358,7 @@ faxQueueApp::sendJobStart(Job& job, FaxRequest* req, const DestControlInfo& dci)
     }
     
     const fxStr& cmd = pickCmd(*req);
-    fxStr dargs(dci.getArgs());
+    fxStr dargs(job.getJCI().getArgs());
     pid_t pid = fork();
     switch (pid) {
     case 0:				// child, startup command
@@ -1605,11 +1606,61 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
  */
 
 /*
- * Insert a job in the queue of ready-to-run jobs.
+ * Begin the process to insert a job in the queue
+ * of ready-to-run jobs.  We run JobControl, and when it's done, it's
+ * plased on the ready-to-run queue.
+ * JobControl is done running
  */
 void
 faxQueueApp::setReadyToRun(Job& job)
 {
+    if (jobCtrlCmd.length()) {
+	const char *app[3];
+	app[0] = jobCtrlCmd;
+	app[1] = job.jobid;
+	app[2] = NULL;
+	traceJob(job, "CONTROL");
+	int pfd[2];
+	if (pipe(pfd) >= 0) {
+	    pid_t pid = fork();
+	    switch (pid) {
+	    case -1:			// error - continue with no JCI
+		jobError(job, "JOB CONTROL: fork: %m");
+		Sys::close(pfd[1]);
+		break;
+	    case 0:				// child, exec command
+		if (pfd[1] != STDOUT_FILENO)
+		    dup2(pfd[1], STDOUT_FILENO);
+		closeAllBut(STDOUT_FILENO);
+		traceQueue(job, "JOB CONTROL: %s %s", app[0], app[1]);
+		dup2(STDOUT_FILENO, STDERR_FILENO);
+		Sys::execv(app[0], (char * const*)app);
+		sleep(3);			// XXX give parent time to catch signal
+		traceQueue(job, "JOB CONTROL: failed to exec: %m");
+		_exit(255);
+		/*NOTREACHED*/
+	    default:			// parent, read from pipe and wait
+		Sys::close(pfd[1]);
+
+		job.startControl(pid, pfd[0]);
+	    }
+	}
+    } else {
+    	ctrlJobDone(job, 0);
+    }
+}
+
+/*
+ * Insert the job into the runq.  We have finished
+ * all the JobControl execution
+ */
+void
+faxQueueApp::ctrlJobDone(Job& job, int status)
+{
+    if (status) {
+	logError("JOB %s: bad exit status %#x from sub-fork",
+	    (const char*) job.jobid, status);
+    }
     job.state = FaxRequest::state_ready;
     traceJob(job, "READY");
     Trigger::post(Trigger::JOB_READY, job);
@@ -1618,6 +1669,7 @@ faxQueueApp::setReadyToRun(Job& job)
       (iter.job().pri == job.pri && iter.job().tts <= job.tts)); iter++)
 	;
     job.insert(iter.job());
+    pokeScheduler(0);
 }
 
 /*
@@ -2188,9 +2240,8 @@ faxQueueApp::unblockDestJobs(Job& job, DestInfo& di)
      * ready for processing.
      */
     Job* jb;
-    const DestControlInfo& dci = destCtrls[job.dest];
     u_int n = 1;
-    while (isOKToCall(di, dci, n) && (jb = di.nextBlocked())) {
+    while (isOKToCall(di, job.getJCI(), n) && (jb = di.nextBlocked())) {
 	setReadyToRun(*jb);
 	if (!di.supportsBatching()) n++;
 	FaxRequest* req = readRequest(*jb);
@@ -2291,13 +2342,12 @@ faxQueueApp::runScheduler()
 		 * Do per-destination processing and checking.
 		 */
 		DestInfo& di = destJobs[job.dest];
-		const DestControlInfo& dci = destCtrls[job.dest];
 		/*
 		 * Constrain the maximum number of times the phone
 		 * will be dialed and/or the number of attempts that
 		 * will be made (and reject jobs accordingly).
 		 */
-		u_short maxdials = fxmin((u_short) dci.getMaxDials(),req->maxdials);
+		u_short maxdials = fxmin((u_short) job.getJCI().getMaxDials(),req->maxdials);
 		if (req->totdials >= maxdials) {
 		    rejectJob(job, *req, fxStr::format(
 			"REJECT: Too many attempts to dial: %u, max %u",
@@ -2305,7 +2355,7 @@ faxQueueApp::runScheduler()
 		    deleteRequest(job, req, Job::rejected, true);
 		    continue;
 		}
-		u_short maxtries = fxmin((u_short) dci.getMaxTries(),req->maxtries);
+		u_short maxtries = fxmin((u_short) job.getJCI().getMaxTries(),req->maxtries);
 		if (req->tottries >= maxtries) {
 		    rejectJob(job, *req, fxStr::format(
 			"REJECT: Too many attempts to transmit: %u, max %u",
@@ -2314,7 +2364,7 @@ faxQueueApp::runScheduler()
 		    continue;
 		}
 		// NB: repeat this check so changes in max pages are applied
-		u_int maxpages = dci.getMaxSendPages();
+		u_int maxpages = job.getJCI().getMaxSendPages();
 		if (req->totpages > maxpages) {
 		    rejectJob(job, *req, fxStr::format(
 			"REJECT: Too many pages in submission: %u, max %u",
@@ -2322,18 +2372,18 @@ faxQueueApp::runScheduler()
 		    deleteRequest(job, req, Job::rejected, true);
 		    continue;
 		}
-		if (dci.getRejectNotice() != "") {
+		if (job.getJCI().getRejectNotice() != "") {
 		    /*
 		     * Calls to this destination are being rejected for
 		     * a specified reason that we return to the sender.
 		     */
-		    rejectJob(job, *req, "REJECT: " | dci.getRejectNotice());
+		    rejectJob(job, *req, "REJECT: " | job.getJCI().getRejectNotice());
 		    deleteRequest(job, req, Job::rejected, true);
 		    continue;
 		}
 		time_t now = Sys::now();
 		time_t tts;
-		if (!isOKToCall(di, dci, 1)) {
+		if (!isOKToCall(di, job.getJCI(), 1)) {
 		    /*
 		     * This job would exceed the max number of concurrent
 		     * calls that may be made to this destination.  Put it
@@ -2345,7 +2395,7 @@ faxQueueApp::runScheduler()
 		    job.remove();			// remove from run queue
 		    di.block(job);			// place at tail of di queue
 		    delete req;
-		} else if ((tts = dci.nextTimeToSend(now)) != now) {
+		} else if ((tts = job.getJCI().nextTimeToSend(now)) != now) {
 		    /*
 		     * This job may not be started now because of time-of-day
 		     * restrictions.  Reschedule it for the next possible time.
@@ -2353,7 +2403,7 @@ faxQueueApp::runScheduler()
 		    job.remove();			// remove from run queue
 		    delayJob(job, *req, "Delayed by time-of-day restrictions", tts);
 		    delete req;
-		} else if (assignModem(job, dci)) {
+		} else if (assignModem(job)) {
 		    job.remove();			// remove from run queue
 		    job.breq = req;
 		    /*
@@ -2456,7 +2506,7 @@ faxQueueApp::runScheduler()
 		    } else
 			job.bnext = NULL;
 		    di.call();			// mark as called to correctly block other jobs
-		    processJob(job, req, di, dci);
+		    processJob(job, req, di);
 		} else				// leave job on run queue
 		    delete req;
 	    }
@@ -2489,14 +2539,14 @@ faxQueueApp::runScheduler()
  * use from faxgetty processes.
  */
 bool
-faxQueueApp::assignModem(Job& job, const DestControlInfo& dci)
+faxQueueApp::assignModem(Job& job)
 {
     fxAssert(job.modem == NULL, "Assigning modem to job that already has one");
 
     bool retryModemLookup;
     do {
 	retryModemLookup = false;
-	Modem* modem = Modem::findModem(job, dci);
+	Modem* modem = Modem::findModem(job);
 	if (modem) {
 	    if (modem->assign(job)) {
 		Trigger::post(Trigger::MODEM_ASSIGN, *modem);
@@ -3003,6 +3053,7 @@ faxQueueApp::stringtag faxQueueApp::strings[] = {
 { "senduucpcmd",	&faxQueueApp::sendUUCPCmd,
    FAX_LIBEXEC "/uucpsend" },
 { "wedgedcmd",		&faxQueueApp::wedgedCmd,	FAX_WEDGEDCMD },
+{ "jobcontrolcmd",	&faxQueueApp::jobCtrlCmd,	FAX_JOBCTRLCMD },
 };
 faxQueueApp::numbertag faxQueueApp::numbers[] = {
 { "tracingmask",	&faxQueueApp::tracingMask,	// NB: must be first
@@ -3124,9 +3175,7 @@ faxQueueApp::setConfigItem(const char* tag, const char* value)
 	    break;
 	case 2: UUCPLock::setLockTimeout(uucpLockTimeout); break;
 	}
-    } else if (streq(tag, "destcontrols"))
-	destCtrls.setFilename(value);
-    else if (streq(tag, "dialstringrules"))
+    } else if (streq(tag, "dialstringrules"))
 	setDialRules(value);
     else if (streq(tag, "timeofday"))
 	tod.parse(value);

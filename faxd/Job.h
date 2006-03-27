@@ -31,6 +31,7 @@
 #include "IOHandler.h"
 #include "Dictionary.h"
 #include "QLink.h"
+#include "JobControl.h"
 #include "Str.h"
 
 typedef unsigned int JobStatus;
@@ -76,6 +77,23 @@ public:
     void childStatus(pid_t, int);
 };
 
+/*
+ * This does sligltly more than the other PID handlers.
+ * It also collects on a fd and stores it for JobControl.
+ */
+class JobCtrlHandler : public IOHandler {
+private:
+    Job& job;
+    fxStr buf;
+    int fd;
+public:
+    JobCtrlHandler(Job&);
+    ~JobCtrlHandler();
+    int inputReady (int fd);
+    void childStatus(pid_t, int);
+    friend class Job;
+};
+
 fxDECLARE_StrKeyDictionary(JobDict, Job*)
 
 /*
@@ -87,8 +105,10 @@ private:
     JobTTSHandler	ttsHandler;	// Dispatcher handler for tts timeout
     JobPrepareHandler	prepareHandler;	// Dispatcher handler for job prep work
     JobSendHandler	sendHandler;	// Dispatcher handler for job send work
+    JobCtrlHandler	ctrlHandler;	// Dispatcher handler for job control work
 
     static JobDict registry;
+    static JobControlInfo defJCI;
 public:
     enum {
 	no_status	= 0,
@@ -131,6 +151,7 @@ public:
     Job*	bprev;		// prev in batch
     Job*	bnext;		// next in batch
     FaxRequest*	breq;		// pointer to request used by batching support
+    JobControlInfo* jci;	// Job control information
 
     Job(const FaxRequest&);
     void update(const FaxRequest& req);
@@ -147,13 +168,23 @@ public:
     void startTTSTimer(long sec);
     void stopTTSTimer();
 
+    void startControl(pid_t pid, int fd);
     void startPrepare(pid_t pid);
     void startSend(pid_t pid);
 
     void encode(fxStackBuffer&) const;	// encode in JobExt format
 
     Job* bfirst();			// first job in batch
+
+    const JobControlInfo& getJCI (void) const;
 };
+
+inline const JobControlInfo& Job::getJCI (void) const
+{
+    if (jci)
+	return *jci;
+    return defJCI;
+}
 
 /*
  * Job iterator class for iterating over lists.
