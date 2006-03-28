@@ -60,7 +60,6 @@ private:
 
     friend class JobControl;
 public:
-    JobControlInfo(const char* regex);
     JobControlInfo();
     JobControlInfo(const fxStr& buffer);
     JobControlInfo(const JobControlInfo& other);

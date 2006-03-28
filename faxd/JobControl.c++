@@ -43,7 +43,6 @@
 #define	setDefined(b)		(defined |= b)
 
 JobControlInfo::JobControlInfo()		 	{ defined = 0; }
-JobControlInfo::JobControlInfo(const char* re) 	{ defined = 0; }
 JobControlInfo::JobControlInfo(const JobControlInfo& other)
     : rejectNotice(other.rejectNotice)
     , modem(other.modem)
@@ -65,7 +64,6 @@ JobControlInfo::JobControlInfo (const fxStr& buffer)
     u_int pos = 0;
     u_int last_pos = 0;
     int loop = 0;
-    u_int i;
     while ( (pos = buffer.next(last_pos, '\n')) < buffer.length() )
     {
     	// Quick safety-net
@@ -96,7 +94,7 @@ JobControlInfo::configError (const char* fmt, ...)
 }
 
 void
-JobControlInfo::configTrace (const char* fmt, ...)
+JobControlInfo::configTrace (const char*, ...)
 {
    // We don't trace JobControl parsing...
 }
