@@ -181,9 +181,7 @@ public:
 
 inline const JobControlInfo& Job::getJCI (void) const
 {
-    if (jci)
-	return *jci;
-    return defJCI;
+    return (jci ? *jci : defJCI);
 }
 
 /*
