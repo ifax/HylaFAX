@@ -1,81 +1,197 @@
 This software is more than 6 years old and is the product of many
 folks' work.  Robin Schaufler did the original scheme for delayed
 submission and worked on the client-server protocol.  More recently,
-the following people have helped either by testing or by contributing
-fixes and/or improvements:
+many additional people have helped either by testing or by contributing
+fixes and/or improvements (and surely others), since the project was
+moved to hylafax.org in 1998.  Also, a special thanks to Ed McCreight
+for his help in making a working Class 1 driver.
 
-  Matthias Apitz     Chris Beekhuis       Peter Bentley
-  Marc Boucher       Piete Brooks         Bill Campbell
-  Brent Chapman      Camden Clarke        Tom Corson
-  Alan Crosswell     Mark Diekhans        Greg Ferguson
-  Steve Fine         Andrew Ford          Nico Garcia
-  Wolfgang Henke     Viet Hoang           Bert Hooyman
-  Ken Hornstein      Dirk Husemann        Brian Katzung
-  Masao Kitano       Carsten Koch         John T Kohl
-  Scott Kramer       Rickard Linck        Rick Lyons
-  Tom Lislegaard     Rob MacKinnon        Kevin McManamon
-  Les Mikesell       Bill Morrow          Andy Moskoff
-  Chris Munonye      Rob Newberry         Dag Nygren
-  Jonas Olsson       Dave Packer          Damon Permezel
-  David Pike         Amir Plivatsky       Andy Rabagliati
-  Eric Rescorla      Matthew Rice         Tim Rice
-  Marshall Rose      Daniel Rosenblatt    Joel Rosi-Schwartz
-  Tim Rylance        Joseph E. Sacco      Thomas A. Szybist
-  Brent Townshend    Peter White          Steve Williams
-  Scott Woodard      David Vrona          Paul Vixie
+  a.pogoda@web.de
+  Simon <iahnl@iah.nl>
+  Alvaro Aguilera
+  Andre Albsmeier
+  Matthias Apitz
+  Ronald Appelfelder
+  Heinz-Ado Arnolds
+  Jay Ashworth
+  Abramo Bagnara
+  Chris Bainbridge
+  Charly Baker
+  Toki Barron
+  Stephan Bauer
+  Chris Beekhuis
+  George Bell
+  Dmitry Bely
+  Peter Bentley
+  Thomas Biege
+  David Birnbaum
+  Trevor Blackwell
+  Siegfried Bosch
+  Marc Boucher
+  Marc Boucher
+  Ross Boylan
+  Frank Brock
+  Piete Brooks
+  Glen Burkhardt
+  Bill Campbell
+  Yves Carlier
+  Ed Casas
+  Brent Chapman
+  Jonathon Chen
+  Camden Clarke
+  Robert Colquhoun
+  Ken Cornetet
+  Tom Corson
+  Alan Crosswell
+  Seth Cuaiklin
+  Albert DeKnuydt
+  Mark Diekhans
+  Reeby Dobalina
+  Paul Eggert
+  Greg Ferguson
+  Steve Fine
+  Juergen Fischer
+  Kevin Fleming
+  John Florian
+  Andrew Ford
+  Patrice Fournier
+  Vyacheslav Frolov
+  Andrea Gabellini
+  Nico Garcia
+  John Gilman
+  Kris Henderson
+  Wolfgang Henke
+  Sascha Herrmann
+  Viet Hoang
+  Carsten Hoeger
+  Bert Hooyman
+  Ken Hornstein
+  Lee Howard
+  Dirk Husemann
+  John Interrante
+  Sascha Ittner
+  Damiam Ivereigh
+  Bernard Jech
+  Nico Kadel-Garcia
+  Sean Kamath
+  Jonathan Kamens
+  Brian Katzung
+  Dimitry Ketov
+  Masao Kitano
+  Steffan Klipsch
+  Carsten Koch
+  John T Kohl
+  Hannu Koivisto
+  Arjen de Korte
+  Scott Kramer
+  Bernd Krumböck
+  Dmitry V. Kustov
+  Ken Lalonde
+  Ilguiz Latypov
+  Rob Leadbeater
+  Guillaume Legoupil
+  Rickard Linck
+  Todd Lipcon
+  Tom Lislegaard
+  Greg Luck
+  Rick Lyons
+  Rob MacKinnon
+  Andy MacNamara
+  Lionel Mamane
+  Pierluigi Mangani
+  Campbell McKilligan
+  Kevin McManamon
+  Bodo Meissner
+  Les Mikesell
+  John Miller
+  Aldo Mini
+  Boris Mironov
+  Bill Morrow
+  Seth Mos
+  Andy Moskoff
+  Chris Munonye
+  Rob Newberry
+  Darren Nickerson
+  Andrea Nicolini
+  Dag Nygren
+  Jonas Olsson
+  Giulio Orsero
+  Dave Packer
+  Davide Pagnin
+  Chris Parsons
+  Michael Pedersen
+  John Perkins
+  Damon Permezel
+  Simon Perry
+  Frank Peters
+  Diego Pettena
+  Vu Pham
+  David Pike
+  Amir Plivatsky
+  John Patrick Poet
+  Harald Pollack
+  Andreas Pretzsch
+  Bernd Proissl
+  Andy Rabagliati
+  Eric Rescorla
+  Matthew Rice
+  Tim Rice
+  Daniel Robbins
+  Marshall Rose
+  Daniel Rosenblatt
+  Joel Rosi-Schwartz
+  Tim Rylance
+  Giuseppe Sacco
+  Joseph E. Sacco
+  Michael Salzmann
+  Sven Schmidt
+  John Sellens
+  Vilmos Soti
+  Alan Sparks
+  Andy Sparrow
+  Marco Steinacher
+  Iain Stevenson
+  Marius Strobl
+  Thomas A. Szybist
+  Mikhail T.
+  Kazuhide Takahashi
+  Daryl Thachuk
+  Brent Townshend
+  Steve Tuckner
+  Aidan Van Dyk
+  Paul Vixie
+  David Vrona
+  Rich Walker
+  Norbert Warmuth
+  Phil Watkinson
+  James Werkowski
+  Peter White
+  Bruce Whittaker
+  Chas Williams
+  John Williams
+  Steve Williams
+  Steve Williams
+  John Wolfe
+  Scott Woodard
+  Bill Young
+  Bruce Young
   Christian Zahl
 
-(and surely others).  Also, a special thanks to Ed McCreight for
-his help in making a working Class 1 driver.
-
-We are indebted to the following people for their contributions to  
-HylaFAX since the project was moved to hylafax.org (November 1998):
-
-Alvaro Aguilera      Andre Albsmeier      a.pogoda@web.de
-Ronald Appelfelder   Heinz-Ado Arnolds    Jay Ashworth
-Abramo Bagnara       Chris Bainbridge     Charly Baker
-Toki Barron          Stephan Bauer        George Bell
-Dmitry Bely          Thomas Biege         David Birnbaum       
-Trevor Blackwell     Siegfried Bosch      Marc Boucher         
-Ross Boylan          Frank Brock          Glen Burkhardt       
-Yves Carlier         Ed Casas             Jonathon Chen        
-Robert Colquhoun     Ken Cornetet         Seth Cuaiklin        
-Albert DeKnuydt      Reeby Dobalina       Paul Eggert          
-Juergen Fischer      Kevin Fleming        John Florian         
-Patrice Fournier     Vyacheslav Frolov    Andrea Gabellini
-John Gilman          Kris Henderson       Sascha Herrmann      
-Carsten Hoeger       Lee Howard           John Interrante      
-Sascha Ittner        Damiam Ivereigh      Bernard Jech         
-Nico Kadel-Garcia    Sean Kamath          Jonathan Kamens      
-Dimitry Ketov        Steffan Klipsch      Hannu Koivisto       
-Arjen de Korte       Bernd Krumböck       Dmitry V. Kustov     
-Ken Lalonde          Ilguiz Latypov       Rob Leadbeater       
-Guillaume Legoupil   Todd Lipcon          Greg Luck            
-Andy MacNamara       Lionel Mamane        Pierluigi Mangani    
-Campbell McKilligan  Bodo Meissner        John Miller          
-Aldo Mini            Boris Mironov        Seth Mos             
-Darren Nickerson     Andrea Nicolini      Giulio Orsero        
-Davide Pagnin        Chris Parsons        Michael Pedersen     
-John Perkins         Simon Perry          Diego Pettena        
-Frank Peters         Vu Pham              John Patrick Poet    
-Harald Pollack       Andreas Pretzsch     Bernd Proissl        
-Matthew Rice         Tim Rice             Daniel Robbins       
-Giuseppe Sacco       Michael Salzmann     Sven Schmidt         
-John Sellens         Simon <iahnl@iah.nl> Vilmos Soti          
-Alan Sparks          Andy Sparrow         Marco Steinacher     
-Iain Stevenson       Marius Strobl        Mikhail T.           
-Kazuhide Takahashi   Daryl Thachuk        Steve Tuckner        
-Aidan Van Dyk        Rich Walker          Norbert Warmuth      
-Phil Watkinson       James Werkowski      Bruce Whittaker      
-Chas Williams        John Williams        Steve Williams       
-John Wolfe           Bill Young           Bruce Young
-
-We appreciate and recognize the upstreamed contributions from these 
+We appreciate and recognize the upstreamed contributions from these
 distributions:
 
-Debian Linux, FreeBSD, Gentoo Linux, Mandrake Linux, NetBSD, SuSE Linux
+  Debian Linux
+  FreeBSD
+  Gentoo Linux
+  Mandrake Linux
+  NetBSD
+  SuSE Linux
 
-For donated hardware, technical expertise, and other assistence we thank 
+For donated hardware, technical expertise, and other assistence we thank
 these manufacturers:
 
-Comtrol, Digi International, Eicon Networks, Mainpine Ltd., MultiTech Systems
+  Comtrol
+  Digi International
+  Eicon Networks
+  Mainpine Ltd.
+  MultiTech Systems
