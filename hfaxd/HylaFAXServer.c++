@@ -39,6 +39,7 @@
 #include <limits.h>
 #include <grp.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 const char* HylaFAXServer::version = HYLAFAX_VERSION;
 
