@@ -2695,6 +2695,7 @@ BuildPortDotH()
     CheckFuncDecl geteuid 'extern uid_t geteuid(void);' unistd.h
     CheckFuncDecl seteuid 'extern int seteuid(uid_t);' unistd.h
     CheckFuncDecl setegid 'extern int setegid(gid_t);' unistd.h
+    CheckFuncDecl setenv 'int setenv(const char *, const char *, int);' stdlib.h
     CheckFuncDecl ftruncate 'extern int ftruncate(int, off_t);' unistd.h
     CheckFuncDecl getdtablesize 'extern int getdtablesize(void);' unistd.h
     CheckFuncDecl chroot 'extern int chroot(const char *path);' unistd.h
@@ -3089,6 +3090,7 @@ FUNCS="
     setegid
     seteuid
     setvbuf
+    setenv
     snprintf
     strcasecmp
     strtod
