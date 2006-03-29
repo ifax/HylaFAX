@@ -71,5 +71,4 @@ install: default ${SRCDIR}/faxcover.ps
 #
 clobberconfig:
 	-${RM} -f edit-faxcover.sh
-	-${RM} -f Makefile ${MKDEPFILE} .*dependtime .*incdepend
 
