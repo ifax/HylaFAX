@@ -69,7 +69,7 @@ install: default ${SRCDIR}/faxcover.ps
 #
 # These targets are created during the configuration procedure.
 #
-clobber:
+clobberconfig:
 	-${RM} -f edit-faxcover.sh
 	-${RM} -f Makefile ${MKDEPFILE} .*dependtime .*incdepend
 
