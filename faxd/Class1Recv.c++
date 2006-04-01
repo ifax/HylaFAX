@@ -222,7 +222,7 @@ Class1Modem::recvIdentification(
 				// It's unclear if we are in "COMMAND REC" or "RESPONSE REC" mode,
 				// but since we are already detecting the carrier, wait the longer.
 				gotframe = recvFrame(frame, FCF_RCVR, conf.t2Timer, true);
-				lastResponse == AT_NOTHING;
+				lastResponse = AT_NOTHING;
 			    }
 			}
 		    }
