@@ -71,6 +71,7 @@ CONFIGFILES=class1 \
 	gvc-288 \
 	gvc-288-2 \
 	hayes \
+	iaxmodem \
 	intel-400e \
 	lucent \
 	lucent-isa \

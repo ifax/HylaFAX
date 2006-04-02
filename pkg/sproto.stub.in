@@ -169,6 +169,7 @@ f none @SPOOL@/config/exar=../@SRCDIR@/config/exar 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/gvc-288=../@SRCDIR@/config/gvc-288 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/gvc-288-2=../@SRCDIR@/config/gvc-288-2 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/hayes=../@SRCDIR@/config/hayes 0444 @SYSUID@ @SYSGID@
+f none @SPOOL@/config/iaxmodem=../@SRCDIR@/config/iaxmodem 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/intel-400e=../@SRCDIR@/config/intel-400e 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/lucent=../@SRCDIR@/config/lucent 0444 @SYSUID@ @SYSGID@
 f none @SPOOL@/config/lucent-isa=../@SRCDIR@/config/lucent-isa 0444 @SYSUID@ @SYSGID@

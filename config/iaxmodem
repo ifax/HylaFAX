@@ -1,0 +1,37 @@
+# $Id$
+
+#
+# prototype config for the IAXmodem softmodem which uses
+# the spandsp soft-DSP library
+#
+
+# CONFIG:CLASS1:spandsp:.*:.*: Manufacturer=spandsp Model=IAXmodem
+#
+# BEGIN-SERVER
+# END-SERVER
+
+#
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:		Class1		# use this to supply a hint
+
+#
+# The modem is taken off-hook during initialization, and then
+# placed back on-hook when done to prevent glare.
+#
+ModemResetCmds:		"ATH1\nAT+VCID=1"	# enables CallID display
+ModemReadyCmds:		ATH0
+
+Class1AdaptRecvCmd:	AT+FAR=1
+Class1TMConnectDelay:	400		# counteract quick CONNECT response
+Class1RMQueryCmd:	"!24,48,72,96"	# V.17 fast-train recv doesn't work well
+
+CallIDPattern:          "NMBR="
+CallIDPattern:          "NAME="
+CallIDPattern:		"ANID="
+CallIDPattern:          "NDID="
+# Uncomment these if you really want them, but you probably don't.
+#CallIDPattern:          "DATE="
+#CallIDPattern:          "TIME="

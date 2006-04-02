@@ -210,6 +210,7 @@ HYLAFAXSRC=\
 	config/gvc-288				\
 	config/gvc-288-2			\
 	config/hayes				\
+	config/iaxmodem				\
 	config/intel-400e			\
 	config/mt-1432				\
 	config/lucent				\
