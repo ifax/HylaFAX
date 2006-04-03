@@ -39,7 +39,7 @@ struct ModelData
 
 struct NSFData {
     const char* vendorId;
-    static const u_int   vendorIdSize; // Country & provider code (T.35)
+    u_int       vendorIdSize;	// Country & provider code (T.35)
     const char* vendorName;
     bool        inverseStationIdOrder;
     u_int         modelIdPos;
@@ -47,7 +47,21 @@ struct NSFData {
     const ModelData* knownModels;
 };
 
-const u_int NSFData::vendorIdSize = 3; // Country & provider code (T.35)
+/*
+ * Unless a manufacturer is able to provide detailed specifics
+ * of the construction of their NSF signals the only guaranteed
+ * accurate information that we get from NSF is the manufacturer
+ * (once the bitorder and construction of the first few bytes is
+ * confirmed).  At that point we would ideally be able to identify
+ * the model type, but doing that is often more guesswork than
+ * anything and is more likely to prove wrong than right, depending
+ * on how specific our ModelData typing is.  Any matches as to the
+ * model identification really should be taken with some degree
+ * of scepticism.
+ *
+ * As manufacturers often encode (in plain text) a station identification
+ * in the NSF string it is often useful to look for that.
+ */
 
 static const ModelData Canon[] =
 {{"\x80\x00\x80\x48\x00", "Faxphone B640"},
@@ -135,220 +149,255 @@ static const ModelData Muratec45[] =
 {{"\xF4\x91\xFF\xFF\xFF\x42\x2A\xBC\x01\x57", "M4700" },
  {NULL}};
 
-// Muratec uses unregistered Japan code "00 00 48" 
 static const ModelData Muratec48[] =
 {{"\x53\x53\x61", "M620" },
  {NULL}};
 
 /*
- * Country code first byte, then manufacturer is last two bytes. See T.35.  
- * Japan is x00, USA xB5, UK xB4, Canada x20.
+ * Country code first byte, then manufacturer is last two bytes. See T.35.
+ * Apparently Germany issued some manufacturer codes before the two-byte
+ * standard was accepted, and so some few German manufacturers are
+ * identified by a single manufacturer byte.
+ *
+ * T.30 5.3.6.2.7 (2003) states that the NSF FIF is transmitted
+ * in MSB2LSB order.  Revisions of T.30 prior to 2003 did not 
+ * contain explicit specification as to the transmit bit order.
+ * (Although it did otherwise state that all HDLC frame data should
+ * be in MSB order except as noted.)  Because CSI, TSI, and other
+ * prologue frames were in LSB order by way of an exception to the
+ * general rule (T.30 5.3.6.2.4-11) many manufacturers assumed that
+ * NSF should also be in LSB order.  Consequently there will be
+ * some country-code "masquerading" as a terminal may use the
+ * proper country-code, but with an inverted bit order.
+ *
+ * Thus, country code x61 (Korea) turns into x86 (Papua New Guinea),
+ * code xB5 (USA) turns into xAD (Tunisia), code x26 (China) turns
+ * into x64 (Lebanon), code x04 (Germany) turns into x20 (Canada), 
+ * and code x3D (France) turns into xBC (Vietnam).
+ *
+ * For the most part it should be safe to identify a manufacturer
+ * both with the MSB and LSB ordered bits, as the "masqueraded" country
+ * is likely to not be actively assigning T.38 manufacturer codes.
+ * However, some manufacturers (e.g. Microsoft) may use MSB for the
+ * country code and LSB for the rest of the NSF, and so basically this
+ * table must be verified and corrected against actual real-world
+ * results.
  */
-
 static const NSFData KnownNSF[] =
 {
-    {"\x00\x00\x00", "unknown - indeterminate", true },
-    {"\x00\x00\x01", "Anjitsu",  false },
-    {"\x00\x00\x02", "Nippon Telephone", false },
-    {"\x00\x00\x05", "Mitsuba Electric", false },
-    {"\x00\x00\x06", "Master Net", false },
-    {"\x00\x00\x09", "Xerox/Toshiba", true, 3, 10, Xerox },
-    {"\x00\x00\x0A", "Kokusai",   false },
-    {"\x00\x00\x0D", "Logic System International", false },
-    {"\x00\x00\x0E", "Panasonic", false, 3,10, Panasonic0E },
-    {"\x00\x00\x11", "Canon",     false, 3, 5, Canon },
-    {"\x00\x00\x15", "Toyotsushen Machinery", false },
-    {"\x00\x00\x16", "System House Mind", false },
-    {"\x00\x00\x19", "Xerox",     true  },
-    {"\x00\x00\x1D", "Hitachi Software", false },
-    {"\x00\x00\x21", "Oki Electric/Lanier", true },
-    {"\x00\x00\x25", "Ricoh",     true,  3,10, Ricoh },
-    {"\x00\x00\x26", "Konica",    false },
-    {"\x00\x00\x29", "Japan Wireless", false },
-    {"\x00\x00\x2D", "Sony",      false },
-    {"\x00\x00\x31", "Sharp/Olivetti", false, 3, 10, Sharp },
-    {"\x00\x00\x35", "Kogyu", false },
-    {"\x00\x00\x36", "Japan Telecom", false },
-    {"\x00\x00\x3D", "IBM Japan", false },
-    {"\x00\x00\x39", "Panasonic", false },
-    {"\x00\x00\x41", "Swasaki Communication", false },
-    {"\x00\x00\x45", "Muratec",   false, 3,10, Muratec45 },
-    {"\x00\x00\x46", "Pheonix",   false },
-    {"\x00\x00\x48", "Muratec",   false, 3,3, Muratec48 },
-    {"\x00\x00\x49", "Japan Electric", false },
-    {"\x00\x00\x4D", "Okura Electric", false },
-    {"\x00\x00\x51", "Sanyo",     false, 3,10, Sanyo },
-    {"\x00\x00\x55", "unknown - Japan 55", false },
-    {"\x00\x00\x56", "Brother",   false, 3, 6, Brother },
-    {"\x00\x00\x59", "Fujitsu",   false },
-    {"\x00\x00\x5D", "Kuoni",     false },
-    {"\x00\x00\x61", "Casio",     false },
-    {"\x00\x00\x65", "Tateishi Electric", false },
-    {"\x00\x00\x66", "Utax/Mita", true  },
-    {"\x00\x00\x69", "Hitachi Production",   false },
-    {"\x00\x00\x6D", "Hitachi Telecom", false },
-    {"\x00\x00\x71", "Tamura Electric Works", false },
-    {"\x00\x00\x75", "Tokyo Electric Corp.", false },
-    {"\x00\x00\x76", "Advance",   false },
-    {"\x00\x00\x79", "Panasonic", false, 3,10, Panasonic79 },
-    {"\x00\x00\x7D", "Seiko",     false },
-    {"\x00\x08\x00", "Daiko",     false },
-    {"\x00\x10\x00", "Funai Electric", false },
-    {"\x00\x20\x00", "Eagle System", false },
-    {"\x00\x30\x00", "Nippon Business Systems", false },
-    {"\x00\x40\x00", "Comtron",   false },
-    {"\x00\x48\x00", "Cosmo Consulting", false },
-    {"\x00\x50\x00", "Orion Electric", false },
-    {"\x00\x60\x00", "Nagano Nippon", false },
-    {"\x00\x70\x00", "Kyocera",   false },
-    {"\x00\x80\x00", "Kanda Networks", false },
-    {"\x00\x88\x00", "Soft Front", false },
-    {"\x00\x90\x00", "Arctic",    false },
-    {"\x00\xA0\x00", "Nakushima", false },
-    {"\x00\xB0\x00", "Minolta", false },
-    {"\x00\xC0\x00", "Tohoku Pioneer", false },
-    {"\x00\xD0\x00", "USC",       false },
-    {"\x00\xE0\x00", "Hiboshi",   false },
-    {"\x00\xF0\x00", "Sumitomo Electric", false },
-    {"\x59\x59\x01", NULL,        false },
-    {"\xB4\x00\xB0", "DCE",       false },
-    {"\xB4\x00\xB1", "Hasler",    false },
-    {"\xB4\x00\xB2", "Interquad", false },
-    {"\xB4\x00\xB3", "Comwave",   false },
-    {"\xB4\x00\xB4", "Iconographic", false },
-    {"\xB4\x00\xB5", "Wordcraft", false },
-    {"\xB4\x00\xB6", "Acorn",     false },
-    {"\xB5\x00\x01", "Picturetel", false },
-    {"\xB5\x00\x20", "Conexant",  false },
-    {"\xB5\x00\x22", "Comsat",    false },
-    {"\xB5\x00\x24", "Octel",     false },
-    {"\xB5\x00\x26", "ROLM",      false },
-    {"\xB5\x00\x28", "SOFNET",    false },
-    {"\xB5\x00\x29", "TIA TR-29 Committee", false },
-    {"\xB5\x00\x2A", "STF Tech",  false },
-    {"\xB5\x00\x2C", "HKB",       false },
-    {"\xB5\x00\x2E", "Delrina",   false },
-    {"\xB5\x00\x30", "Dialogic",  false },
-    {"\xB5\x00\x32", "Applied Synergy", false },
-    {"\xB5\x00\x34", "Syncro Development", false },
-    {"\xB5\x00\x36", "Genoa",     false },
-    {"\xB5\x00\x38", "Texas Instruments", false },
-    {"\xB5\x00\x3A", "IBM",       false },
-    {"\xB5\x00\x3C", "ViaSat",    false },
-    {"\xB5\x00\x3E", "Ericsson",  false },
-    {"\xB5\x00\x42", "Bogosian",  false },
-    {"\xB5\x00\x44", "Adobe",     false },
-    {"\xB5\x00\x46", "Fremont Communications", false },
-    {"\xB5\x00\x48", "Hayes",     false },
-    {"\xB5\x00\x4A", "Lucent",    false },
-    {"\xB5\x00\x4C", "Data Race", false },
-    {"\xB5\x00\x4E", "TRW",       false },
-    {"\xB5\x00\x52", "Audiofax",  false },
-    {"\xB5\x00\x54", "Computer Automation", false },
-    {"\xB5\x00\x56", "Serca",     false },
-    {"\xB5\x00\x58", "Octocom",   false },
-    {"\xB5\x00\x5C", "Power Solutions", false },
-    {"\xB5\x00\x5A", "Digital Sound", false },
-    {"\xB5\x00\x5E", "Pacific Data", false },
-    {"\xB5\x00\x60", "Commetrex", false },
-    {"\xB5\x00\x62", "BrookTrout", false },
-    {"\xB5\x00\x64", "Gammalink", false },
-    {"\xB5\x00\x66", "Castelle",  false },
-    {"\xB5\x00\x68", "Hybrid Fax", false },
-    {"\xB5\x00\x6A", "Omnifax",   false },
-    {"\xB5\x00\x6C", "HP",        false },
-    {"\xB5\x00\x6E", "Microsoft", false },
-    {"\xB5\x00\x72", "Speaking Devices", false },
-    {"\xB5\x00\x74", "Compaq",    false },
+    /* Japan */
+    {"\x00\x00\x00", 3, "unknown - indeterminate", true },
+    {"\x00\x00\x01", 3, "Anjitsu",  false },
+    {"\x00\x00\x02", 3, "Nippon Telephone", false },
+    {"\x00\x00\x05", 3, "Mitsuba Electric", false },
+    {"\x00\x00\x06", 3, "Master Net", false },
+    {"\x00\x00\x09", 3, "Xerox/Toshiba", true, 3, 10, Xerox },
+    {"\x00\x00\x0A", 3, "Kokusai",   false },
+    {"\x00\x00\x0D", 3, "Logic System International", false },
+    {"\x00\x00\x0E", 3, "Panasonic", false, 3,10, Panasonic0E },
+    {"\x00\x00\x11", 3, "Canon",     false, 3, 5, Canon },
+    {"\x00\x00\x15", 3, "Toyotsushen Machinery", false },
+    {"\x00\x00\x16", 3, "System House Mind", false },
+    {"\x00\x00\x19", 3, "Xerox",     true  },
+    {"\x00\x00\x1D", 3, "Hitachi Software", false },
+    {"\x00\x00\x21", 3, "Oki Electric/Lanier", true },
+    {"\x00\x00\x25", 3, "Ricoh",     true,  3,10, Ricoh },
+    {"\x00\x00\x26", 3, "Konica",    false },
+    {"\x00\x00\x29", 3, "Japan Wireless", false },
+    {"\x00\x00\x2D", 3, "Sony",      false },
+    {"\x00\x00\x31", 3, "Sharp/Olivetti", false, 3, 10, Sharp },
+    {"\x00\x00\x35", 3, "Kogyu", false },
+    {"\x00\x00\x36", 3, "Japan Telecom", false },
+    {"\x00\x00\x3D", 3, "IBM Japan", false },
+    {"\x00\x00\x39", 3, "Panasonic", false },
+    {"\x00\x00\x41", 3, "Swasaki Communication", false },
+    {"\x00\x00\x45", 3, "Muratec",   false, 3,10, Muratec45 },
+    {"\x00\x00\x46", 3, "Pheonix",   false },
+    {"\x00\x00\x48", 3, "Muratec",   false, 3,3, Muratec48 },	// not registered
+    {"\x00\x00\x49", 3, "Japan Electric", false },
+    {"\x00\x00\x4D", 3, "Okura Electric", false },
+    {"\x00\x00\x51", 3, "Sanyo",     false, 3,10, Sanyo },
+    {"\x00\x00\x55", 3, "unknown - Japan 55", false },
+    {"\x00\x00\x56", 3, "Brother",   false, 3, 6, Brother },
+    {"\x00\x00\x59", 3, "Fujitsu",   false },
+    {"\x00\x00\x5D", 3, "Kuoni",     false },
+    {"\x00\x00\x61", 3, "Casio",     false },
+    {"\x00\x00\x65", 3, "Tateishi Electric", false },
+    {"\x00\x00\x66", 3, "Utax/Mita", true  },
+    {"\x00\x00\x69", 3, "Hitachi Production",   false },
+    {"\x00\x00\x6D", 3, "Hitachi Telecom", false },
+    {"\x00\x00\x71", 3, "Tamura Electric Works", false },
+    {"\x00\x00\x75", 3, "Tokyo Electric Corp.", false },
+    {"\x00\x00\x76", 3, "Advance",   false },
+    {"\x00\x00\x79", 3, "Panasonic", false, 3,10, Panasonic79 },
+    {"\x00\x00\x7D", 3, "Seiko",     false },
+    {"\x00\x08\x00", 3, "Daiko",     false },
+    {"\x00\x10\x00", 3, "Funai Electric", false },
+    {"\x00\x20\x00", 3, "Eagle System", false },
+    {"\x00\x30\x00", 3, "Nippon Business Systems", false },
+    {"\x00\x40\x00", 3, "Comtron",   false },
+    {"\x00\x48\x00", 3, "Cosmo Consulting", false },
+    {"\x00\x50\x00", 3, "Orion Electric", false },
+    {"\x00\x60\x00", 3, "Nagano Nippon", false },
+    {"\x00\x70\x00", 3, "Kyocera",   false },
+    {"\x00\x80\x00", 3, "Kanda Networks", false },
+    {"\x00\x88\x00", 3, "Soft Front", false },
+    {"\x00\x90\x00", 3, "Arctic",    false },
+    {"\x00\xA0\x00", 3, "Nakushima", false },
+    {"\x00\xB0\x00", 3, "Minolta", false },
+    {"\x00\xC0\x00", 3, "Tohoku Pioneer", false },
+    {"\x00\xD0\x00", 3, "USC",       false },
+    {"\x00\xE0\x00", 3, "Hiboshi",   false },
+    {"\x00\xF0\x00", 3, "Sumitomo Electric", false },
+    /* Germany */
+    {"\x20\x09",     2, "ITK Institut für Telekommunikation GmbH & Co KG", false },
+    {"\x20\x11",     2, "Dr. Neuhaus Mikroelektronik", false },
+    {"\x20\x21",     2, "ITO Communication", false },
+    {"\x20\x31",     2, "mbp Kommunikationssysteme GmbH", false },
+    {"\x20\x41",     2, "Siemens", false },
+    {"\x20\x42",     2, "Deutsche Telekom AG", false },
+    {"\x20\x51",     2, "mps Software", false },
+    {"\x20\x61",     2, "Hauni Elektronik", false },
+    {"\x20\x71",     2, "Digitronic computersysteme gmbh", false },
+    {"\x20\x81\x00", 3, "Innovaphone GmbH", false },
+    {"\x20\x81\x40", 3, "TEDAS Gesellschaft für Telekommunikations-, Daten- und Audiosysteme mbH", false },
+    {"\x20\x81\x80", 3, "AVM Audiovisuelles Marketing und Computersysteme GmbH", false },
+    {"\x20\x81\xC0", 3, "EICON Technology Research GmbH", false },
+    {"\x20\xB1",     2, "Schneider Rundfunkwerke AG", false },
+    {"\x20\xC2",     2, "Deutsche Telekom AG", false },
+    {"\x20\xD1",     2, "Ferrari electronik GmbH", false },
+    {"\x20\xF1",     2, "DeTeWe - Deutsche Telephonwerke AG & Co", false },
+    {"\x20\xFF",     2, "Germany Regional Code", false },
+    /* China */
+    {"\x64\x00\x00", 3, "unknown - China 00 00", false },
+    {"\x64\x01\x00", 3, "unknown - China 01 00", false },
+    {"\x64\x01\x01", 3, "unknown - China 01 01", false },
+    {"\x64\x01\x02", 3, "unknown - China 01 02", false },
+    /* France */
+    {"\xBC\x53\x01", 3, "Minolta",   false },
+    /* Korea */
+    {"\x86\x00\x02", 3, "unknown - Korea 02", false },
+    {"\x86\x00\x06", 3, "unknown - Korea 06", false },
+    {"\x86\x00\x08", 3, "unknown - Korea 08", false },
+    {"\x86\x00\x0A", 3, "unknown - Korea 0A", false },
+    {"\x86\x00\x0E", 3, "unknown - Korea 0E", false },
+    {"\x86\x00\x10", 3, "Samsung",   false },
+    {"\x86\x00\x11", 3, "unknown - Korea 11" },
+    {"\x86\x00\x16", 3, "Samsung", false, 3, 4, Samsung16 },
+    {"\x86\x00\x1A", 3, "unknown - Korea 1A", false },
+    {"\x86\x00\x40", 3, "unknown - Korea 40", false },
+    {"\x86\x00\x48", 3, "unknown - Korea 48", false },
+    {"\x86\x00\x52", 3, "unknown - Korea 52", false },
+    {"\x86\x00\x5A", 3, "unknown - Korea 5A", false },
+    {"\x86\x00\x5E", 3, "unknown - Korea 5E", false },
+    {"\x86\x00\x66", 3, "unknown - Korea 66", false },
+    {"\x86\x00\x6E", 3, "unknown - Korea 6E", false },
+    {"\x86\x00\x82", 3, "unknown - Korea 82", false },
+    {"\x86\x00\x88", 3, "unknown - Korea 88", false },
+    {"\x86\x00\x8A", 3, "unknown - Korea 8A", false },
+    {"\x86\x00\x8C", 3, "Samsung", false, 3, 4, Samsung8C },
+    {"\x86\x00\x92", 3, "unknown - Korea 92", false },
+    {"\x86\x00\x98", 3, "Samsung",   false },
+    {"\x86\x00\xA2", 3, "Samsung", false, 3, 4, SamsungA2 },
+    {"\x86\x00\xA4", 3, "unknown - Korea A4", false },
+    {"\x86\x00\xC9", 3, "unknown - Korea C9", false },
+    {"\x86\x00\xCC", 3, "unknown - Korea CC", false },
+    {"\x86\x00\xD2", 3, "unknown - Korea D2", false },
+    {"\x86\x00\xDA", 3, "Xerox", false, 3, 4, XeroxDA },
+    {"\x86\x00\xE2", 3, "unknown - Korea E2", false },
+    {"\x86\x00\xEC", 3, "unknown - Korea EC", false },
+    {"\x86\x00\xEE", 3, "unknown - Korea EE", false },
+    /* United Kingdom */
+    {"\xB4\x00\xB0", 3, "DCE",       false },
+    {"\xB4\x00\xB1", 3, "Hasler",    false },
+    {"\xB4\x00\xB2", 3, "Interquad", false },
+    {"\xB4\x00\xB3", 3, "Comwave",   false },
+    {"\xB4\x00\xB4", 3, "Iconographic", false },
+    {"\xB4\x00\xB5", 3, "Wordcraft", false },
+    {"\xB4\x00\xB6", 3, "Acorn",     false },
+    /* United States */
+    {"\xAD\x00\x00", 3, "Pitney Bowes", false, 3, 6, PitneyBowes },
+    {"\xAD\x00\x0C", 3, "Dialogic",  false },
+    {"\xAD\x00\x15", 3, "Lexmark",   false, 3, 4, Lexmark },
+    {"\xAD\x00\x16", 3, "JetFax",    false, 3, 6, JetFax },
+    {"\xAD\x00\x24", 3, "Octel",     false },
+    {"\xAD\x00\x36", 3, "HP",        false, 3, 5, HP },
+    {"\xAD\x00\x42", 3, "FaxTalk",   false },
+    {"\xAD\x00\x44", 3, NULL,        true },
+    {"\xAD\x00\x46", 3, "BrookTrout", false },
+    {"\xAD\x00\x51", 3, "Telogy Networks", false },
+    {"\xAD\x00\x55", 3, "HylaFAX",   false },
+    {"\xAD\x00\x5C", 3, "IBM", false },
+    {"\xAD\x00\x98", 3, "unknown - USA 98", true },
+    {"\xB5\x00\x01", 3, "Picturetel", false },
+    {"\xB5\x00\x20", 3, "Conexant",  false },
+    {"\xB5\x00\x22", 3, "Comsat",    false },
+    {"\xB5\x00\x24", 3, "Octel",     false },
+    {"\xB5\x00\x26", 3, "ROLM",      false },
+    {"\xB5\x00\x28", 3, "SOFNET",    false },
+    {"\xB5\x00\x29", 3, "TIA TR-29 Committee", false },
+    {"\xB5\x00\x2A", 3, "STF Tech",  false },
+    {"\xB5\x00\x2C", 3, "HKB",       false },
+    {"\xB5\x00\x2E", 3, "Delrina",   false },
+    {"\xB5\x00\x30", 3, "Dialogic",  false },
+    {"\xB5\x00\x32", 3, "Applied Synergy", false },
+    {"\xB5\x00\x34", 3, "Syncro Development", false },
+    {"\xB5\x00\x36", 3, "Genoa",     false },
+    {"\xB5\x00\x38", 3, "Texas Instruments", false },
+    {"\xB5\x00\x3A", 3, "IBM",       false },
+    {"\xB5\x00\x3C", 3, "ViaSat",    false },
+    {"\xB5\x00\x3E", 3, "Ericsson",  false },
+    {"\xB5\x00\x42", 3, "Bogosian",  false },
+    {"\xB5\x00\x44", 3, "Adobe",     false },
+    {"\xB5\x00\x46", 3, "Fremont Communications", false },
+    {"\xB5\x00\x48", 3, "Hayes",     false },
+    {"\xB5\x00\x4A", 3, "Lucent",    false },
+    {"\xB5\x00\x4C", 3, "Data Race", false },
+    {"\xB5\x00\x4E", 3, "TRW",       false },
+    {"\xB5\x00\x52", 3, "Audiofax",  false },
+    {"\xB5\x00\x54", 3, "Computer Automation", false },
+    {"\xB5\x00\x56", 3, "Serca",     false },
+    {"\xB5\x00\x58", 3, "Octocom",   false },
+    {"\xB5\x00\x5C", 3, "Power Solutions", false },
+    {"\xB5\x00\x5A", 3, "Digital Sound", false },
+    {"\xB5\x00\x5E", 3, "Pacific Data", false },
+    {"\xB5\x00\x60", 3, "Commetrex", false },
+    {"\xB5\x00\x62", 3, "BrookTrout", false },
+    {"\xB5\x00\x64", 3, "Gammalink", false },
+    {"\xB5\x00\x66", 3, "Castelle",  false },
+    {"\xB5\x00\x68", 3, "Hybrid Fax", false },
+    {"\xB5\x00\x6A", 3, "Omnifax",   false },
+    {"\xB5\x00\x6C", 3, "HP",        false },
+    {"\xB5\x00\x6E", 3, "Microsoft", false },
+    {"\xB5\x00\x72", 3, "Speaking Devices", false },
+    {"\xB5\x00\x74", 3, "Compaq",    false },
 /*
-    {"\xB5\x00\x76", "Trust - Cryptek", false },	// collision with Microsoft
+    {"\xB5\x00\x76", 3, "Trust - Cryptek", false },	// collision with Microsoft
 */
-    {"\xB5\x00\x76", "Microsoft", false },		// uses LSB for country but MSB for manufacturer
-    {"\xB5\x00\x78", "Cylink",    false },
-    {"\xB5\x00\x7A", "Pitney Bowes", false },
-    {"\xB5\x00\x7C", "Digiboard", false },
-    {"\xB5\x00\x7E", "Codex",     false },
-    {"\xB5\x00\x82", "Wang Labs", false },
-    {"\xB5\x00\x84", "Netexpress Communications", false },
-    {"\xB5\x00\x86", "Cable-Sat", false },
-    {"\xB5\x00\x88", "MFPA",      false },
-    {"\xB5\x00\x8A", "Telogy Networks", false },
-    {"\xB5\x00\x8E", "Telecom Multimedia Systems", false },
-    {"\xB5\x00\x8C", "AT&T",      false },
-    {"\xB5\x00\x92", "Nuera",     false },
-    {"\xB5\x00\x94", "K56flex",   false },
-    {"\xB5\x00\x96", "MiBridge",  false },
-    {"\xB5\x00\x98", "Xerox",     false },
-    {"\xB5\x00\x9A", "Fujitsu",   false },
-    {"\xB5\x00\x9B", "Fujitsu",   false },
-    {"\xB5\x00\x9C", "Natural Microsystems",  false },
-    {"\xB5\x00\x9E", "CopyTele",  false },
-    {"\xB5\x00\xA2", "Murata",    false },
-    {"\xB5\x00\xA4", "Lanier",    false },
-    {"\xB5\x00\xA6", "Qualcomm",  false },
-    {"\xB5\x00\xAA", "HylaFAX",   false },
-    /*
-     * T.30 states that all HDLC frame data should be in MSB
-     * order except as noted.  T.30 5.3.6.2.7 does not explicitly
-     * make an exception for NSF, but 5.3.6.2.4-11 do make exceptions
-     * for TSI, etc., which should be in LSB order.  Therefore, it is
-     * widely accepted that NSF is in LSB order.  However, some
-     * manufacturers unfortunately use MSB for NSF.
-     *
-     * Thus, country code x61 (Korea) turns into x86 (Papua New Guinea),
-     * code xB5 (USA) turns into xAD (Tunisia), code x26 (China) turns
-     * into x64 (Lebanon), code x04 (Germany) turns into x20 (Canada), 
-     * and code x3D (France) turns into xBC (Vietnam).
-     * Therefore, we need to convert these to produce a legible station ID.
-     */
-    {"\x20\x41\x59", "Siemens", false },
-    {"\x20\xD1\xC0", "Ferrari Electronic", false },
-    {"\x64\x00\x00", "unknown - China 00 00", false },
-    {"\x64\x01\x00", "unknown - China 01 00", false },
-    {"\x64\x01\x01", "unknown - China 01 01", false },
-    {"\x64\x01\x02", "unknown - China 01 02", false },
-    {"\x86\x00\x02", "unknown - Korea 02", false },
-    {"\x86\x00\x06", "unknown - Korea 06", false },
-    {"\x86\x00\x08", "unknown - Korea 08", false },
-    {"\x86\x00\x0A", "unknown - Korea 0A", false },
-    {"\x86\x00\x0E", "unknown - Korea 0E", false },
-    {"\x86\x00\x10", "Samsung",   false },
-    {"\x86\x00\x11", "unknown - Korea 11" },
-    {"\x86\x00\x16", "Samsung", false, 3, 4, Samsung16 },
-    {"\x86\x00\x1A", "unknown - Korea 1A", false },
-    {"\x86\x00\x40", "unknown - Korea 40", false },
-    {"\x86\x00\x48", "unknown - Korea 48", false },
-    {"\x86\x00\x52", "unknown - Korea 52", false },
-    {"\x86\x00\x5A", "unknown - Korea 5A", false },
-    {"\x86\x00\x5E", "unknown - Korea 5E", false },
-    {"\x86\x00\x66", "unknown - Korea 66", false },
-    {"\x86\x00\x6E", "unknown - Korea 6E", false },
-    {"\x86\x00\x82", "unknown - Korea 82", false },
-    {"\x86\x00\x88", "unknown - Korea 88", false },
-    {"\x86\x00\x8A", "unknown - Korea 8A", false },
-    {"\x86\x00\x8C", "Samsung", false, 3, 4, Samsung8C },
-    {"\x86\x00\x92", "unknown - Korea 92", false },
-    {"\x86\x00\x98", "Samsung",   false },
-    {"\x86\x00\xA2", "Samsung", false, 3, 4, SamsungA2 },
-    {"\x86\x00\xA4", "unknown - Korea A4", false },
-    {"\x86\x00\xC9", "unknown - Korea C9", false },
-    {"\x86\x00\xCC", "unknown - Korea CC", false },
-    {"\x86\x00\xDA", "Xerox", false, 3, 4, XeroxDA },
-    {"\x86\x00\xE2", "unknown - Korea E2", false },
-    {"\x86\x00\xEE", "unknown - Korea EE", false },
-    {"\xAD\x00\x00", "Pitney Bowes", false, 3, 6, PitneyBowes },
-    {"\xAD\x00\x0C", "Dialogic",  false },
-    {"\xAD\x00\x15", "Lexmark",   false, 3, 4, Lexmark },
-    {"\xAD\x00\x16", "JetFax",    false, 3, 6, JetFax },
-    {"\xAD\x00\x24", "Octel",     false },
-    {"\xAD\x00\x36", "HP",        false, 3, 5, HP },
-    {"\xAD\x00\x42", "FaxTalk",   false },
-    {"\xAD\x00\x44", NULL,        true },
-    {"\xAD\x00\x46", "BrookTrout", false },
-    {"\xAD\x00\x51", "Telogy Networks", false },
-    {"\xAD\x00\x5C", "IBM", false },
-    {"\xAD\x00\x98", "unknown - USA 98", true },
-    {"\xBC\x53\x01", "Minolta",   false },
+    {"\xB5\x00\x76", 3, "Microsoft", false },		// uses LSB for country but MSB for manufacturer
+    {"\xB5\x00\x78", 3, "Cylink",    false },
+    {"\xB5\x00\x7A", 3, "Pitney Bowes", false },
+    {"\xB5\x00\x7C", 3, "Digiboard", false },
+    {"\xB5\x00\x7E", 3, "Codex",     false },
+    {"\xB5\x00\x82", 3, "Wang Labs", false },
+    {"\xB5\x00\x84", 3, "Netexpress Communications", false },
+    {"\xB5\x00\x86", 3, "Cable-Sat", false },
+    {"\xB5\x00\x88", 3, "MFPA",      false },
+    {"\xB5\x00\x8A", 3, "Telogy Networks", false },
+    {"\xB5\x00\x8E", 3, "Telecom Multimedia Systems", false },
+    {"\xB5\x00\x8C", 3, "AT&T",      false },
+    {"\xB5\x00\x92", 3, "Nuera",     false },
+    {"\xB5\x00\x94", 3, "K56flex",   false },
+    {"\xB5\x00\x96", 3, "MiBridge",  false },
+    {"\xB5\x00\x98", 3, "Xerox",     false },
+    {"\xB5\x00\x9A", 3, "Fujitsu",   false },
+    {"\xB5\x00\x9B", 3, "Fujitsu",   false },
+    {"\xB5\x00\x9C", 3, "Natural Microsystems",  false },
+    {"\xB5\x00\x9E", 3, "CopyTele",  false },
+    {"\xB5\x00\xA2", 3, "Murata",    false },
+    {"\xB5\x00\xA4", 3, "Lanier",    false },
+    {"\xB5\x00\xA6", 3, "Qualcomm",  false },
+    {"\xB5\x00\xAA", 3, "HylaFAX",   false },		// we did it backwards for a while
     {NULL}
 };
 
@@ -425,15 +474,15 @@ void NSF::decode()
                         memcmp( pp->modelId, &nsf[p->modelIdPos], p->modelIdSize )==0 )
                         model = pp->modelName;
             }
-            findStationId( p->inverseStationIdOrder );
+            findStationId( p->inverseStationIdOrder, p->vendorIdSize );
             vendorDecoded = true;
         }
     }
     if( !vendorFound() )
-	findStationId( 0 );
+	findStationId( 0, 3 );	// most vendorIDSize will be 3
 }
 
-void NSF::findStationId( bool reverseOrder )
+void NSF::findStationId( bool reverseOrder, u_int vendorIdSize )
 {
     const char* id = NULL;
     u_int       idSize = 0;
@@ -459,7 +508,7 @@ void NSF::findStationId( bool reverseOrder )
      * Trying to find the longest printable ASCII sequence
      */
     const char *p = (const char*) thisnsf, *end = p + thisnsf.length();
-    for (p += NSFData::vendorIdSize; p < end; p++) {
+    for (p += vendorIdSize; p < end; p++) {
         if( isprint(*p) ){
             if( !idSize++ ) 
                 id = p;
