@@ -212,6 +212,7 @@ HYLAFAXSRC=\
 	config/hayes				\
 	config/iaxmodem				\
 	config/intel-400e			\
+	config/linux-isdn-2			\
 	config/mt-1432				\
 	config/lucent				\
 	config/lucent-isa			\
