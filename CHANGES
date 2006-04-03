@@ -2,6 +2,7 @@
 
 Changelog
 
+* set minimum of 4800 for V.34 primary rate renegotiations (02 Apr 2006)
 * improve handling of V.34 control channel retrain (02 Apr 2006)
 * Add isdn4linux modem config prototype (02 Apr 2006)
 * Add IAXmodem config prototype (02 Apr 2006)

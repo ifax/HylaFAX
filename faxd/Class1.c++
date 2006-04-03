@@ -522,7 +522,8 @@ Class1Modem::renegotiatePrimary(bool constrain)
     buf[size++] = 0x6C;					// <DLE><pph>
     if (!putModemData(buf, size)) return (false);
     if (constrain)
-	protoTrace("Request primary rate renegotiation (limit %u bit/s).", primaryV34Rate > 2 ? (primaryV34Rate-2)*2400 : 2400);
+	protoTrace("Request primary rate renegotiation (limit %u bit/s).", 
+	    primaryV34Rate == 1 ? 2400 : primaryV34Rate > 3 ? (primaryV34Rate-2)*2400 : 4800);
     else
 	protoTrace("Request primary rate renegotiation.");
     return (true);
