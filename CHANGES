@@ -2,6 +2,7 @@
 
 Changelog
 
+* fix incorrect "Fax protocol error" in ECM mode (03 Apr 2006)
 * add German NSFs and correct HylaFAX NSF bit order (03 Apr 2006)
 * set Class1RMPersistence to 0 in digi config prototype (03 Apr 2006)
 * extend V.21 HDLC frame reception timeout to 10 sec (03 Apr 2006)

@@ -387,8 +387,8 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    }
 	}
 
+	u_int ppr;
 	do {
-	    u_int ppr;
 	    if (signalRcvd == 0) {
 		/*
 		 * Send post-page message and get response.
@@ -523,7 +523,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		protoTrace(emsg);
 		return (send_retry);
 	    }
-	} while (frame.getFCF() == FCF_CRP && ++ncrp < 3);
+	} while (ppr == FCF_CRP && ++ncrp < 3);
 	if (ncrp == 3) {
 	    emsg = "Fax protocol error (command repeated 3 times)";
 	    protoTrace(emsg);
