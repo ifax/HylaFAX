@@ -1,0 +1,39 @@
+# $Id$
+#
+# prototype config file for Linux ISDN (/dev/ttyIX) Modems
+#
+
+#
+# CONFIG: CLASS2:"isdn4linux"-*-*
+#
+# BEGIN-SERVER
+# END-SERVER
+#
+
+ModemType:		Class2
+
+ModemNoFlowCmd:		AT&K0
+ModemSoftFlowCmd:	AT&K4
+ModemHardFlowCmd:	AT&K3
+
+#
+# Put your MSN number in here...
+#
+ModemResetCmds:		"AT&E82781700"
+
+Class2BORCmd:		AT+FBOR=0	# bit order for phase B/C/D (direct)
+Class2RELCmd:		AT+FREL=1	# byte-align EOL codes on recv
+Class2CQCmd:		""		# commands to enable copy quality proc.
+Class2AbortCmd:		AT+FK		# abort session command
+Class2DCCQueryCmd:	AT+FDCC=?	# query for modem capabilities
+Class2TBCCmd:		AT+FTBC=0	# setup stream mode
+Class2CRCmd:		AT+FCR=1	# enable capability to receive
+Class2PHCTOCmd:		AT+FPHCTO=30	# set phase C timeout parameter
+Class2BUGCmd:		AT+FBUG=1	# enable HDLC frame tracing
+Class2LIDCmd:		AT+FLID		# set local identifier command
+Class2DCCCmd:		AT+FDCC		# set modem capabilities command
+Class2DISCmd:		AT+FDIS		# set session parameters command
+Class2DDISCmd:		""		# disable pre-dial DIS command hack
+Class2CIGCmd:		AT+FCIG		# set polling identifier command
+Class2PTSCmd:		AT+FPTS		# set post-page status command
+Class2SPLCmd:		AT+FSPL		# set polling indicator command
