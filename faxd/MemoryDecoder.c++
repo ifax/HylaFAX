@@ -296,8 +296,28 @@ u_char* MemoryDecoder::cutExtraEOFB()
 	    rows++;
         }
     }
-    if (seenRTC() && *(endOfData - 1) == 0x00)
-	endOfData--;	// step back over the first byte of EOFB, lastbyte must be non-zero!
+    /*
+     * The loop above will leave the endOfData pointer somewhere inside of EOFB.
+     * Make sure that endOfData points to the last byte containing real image data.
+     * So trim any whole bytes containing EOFB data.
+     */
+    if (seenRTC()) {
+	bool trimmed;
+	u_int searcharea;
+	u_short i;
+	do {
+	    searcharea =  (*(endOfData) << 16) | (*(endOfData - 1) << 8) | *(endOfData - 2);
+	    trimmed = false;
+	    for (i = 0; i < 13; i++) {
+		if (((searcharea >> i) & 0xFFF) == 0x800) {
+		    endOfData--;
+		    if (*endOfData == 0x00) endOfData--;
+		    trimmed = true;
+		    break;
+		}
+	    }
+	} while (trimmed);
+    }
     return endOfData;
 }
 
