@@ -2,6 +2,8 @@
 
 Changelog
 
+* set Class1RMPersistence to 0 in digi config prototype (03 Apr 2006)
+* extend V.21 HDLC frame reception timeout to 10 sec (03 Apr 2006)
 * ignore MESSAGE-WAITING response after dialing (02 Apr 2006)
 * Correctly remove EOFB at the end of MMR images (02 Apr 2006)
 * set minimum of 4800 for V.34 primary rate renegotiations (02 Apr 2006)

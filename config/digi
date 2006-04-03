@@ -21,3 +21,6 @@ ModemFlowControl:	rtscts		# seems to work better than xonxoff
 # ModemResetCmds:	"AT#CID=1"
 # CallIDPattern:	"NMBR="
 # CallIDPattern:	"NAME="
+
+# The modem does not report +FCERROR, so this helps us simulate it
+Class1RMPersistence:	0

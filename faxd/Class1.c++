@@ -693,9 +693,18 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
      * The spec says that a frame that takes between
      * 2.55 and 3.45 seconds to be received may be
      * discarded; we also add some time for DCE
-     * to detect and strip flags. 
+     * to detect and strip flags.
+     * We need to be generous here ... given that
+     * some frames can be long and some devices
+     * can add lots of flags to the signalling.
+     * The previous value of 5 seconds appears
+     * to have been too conservative; if the modem
+     * has said CONNECT, then it should be
+     * responsible enough to carry-through with
+     * things.  A timeout here is only needed to
+     * reign in modems that don't carry through.
      */
-    startTimeout(5000);
+    startTimeout(10000);
     /*
      * Strip HDLC frame flags. This is not needed,
      * (according to the standard DCE does the job),
