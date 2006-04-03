@@ -3053,7 +3053,7 @@ faxQueueApp::stringtag faxQueueApp::strings[] = {
 { "senduucpcmd",	&faxQueueApp::sendUUCPCmd,
    FAX_LIBEXEC "/uucpsend" },
 { "wedgedcmd",		&faxQueueApp::wedgedCmd,	FAX_WEDGEDCMD },
-{ "jobcontrolcmd",	&faxQueueApp::jobCtrlCmd,	FAX_JOBCTRLCMD },
+{ "jobcontrolcmd",	&faxQueueApp::jobCtrlCmd,	"" },
 };
 faxQueueApp::numbertag faxQueueApp::numbers[] = {
 { "tracingmask",	&faxQueueApp::tracingMask,	// NB: must be first
