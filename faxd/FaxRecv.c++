@@ -64,6 +64,9 @@ FaxServer::recvFax(const CallID& callid, fxStr& emsg)
     if (tif) {
 	recvPages = 0;			// total count of received pages
 	fileStart = pageStart = Sys::now();
+
+	modem->flushModemInput();
+
 	if (faxRecognized = modem->recvBegin(emsg)) {
 	    /*
 	     * If the system is busy then notifyRecvBegun may not return

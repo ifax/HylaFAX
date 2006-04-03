@@ -2,6 +2,7 @@
 
 Changelog
 
+* flush modem I/O on receptions before sending any data (03 Apr 2006)
 * fix incorrect "Fax protocol error" in ECM mode (03 Apr 2006)
 * add German NSFs and correct HylaFAX NSF bit order (03 Apr 2006)
 * set Class1RMPersistence to 0 in digi config prototype (03 Apr 2006)
