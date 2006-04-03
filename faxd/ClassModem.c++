@@ -153,6 +153,7 @@ ClassModem::isNoise(const char* s)
 	"RINGING",	// ZyXEL
 	"+FHR:",	// Intel 144e
 	"+F34:",	// Class 1.0 V.34 report
+	"MESSAGE-WAITING",	// voice-mail waiting, Conexant
     };
 #define	NNOISE	(sizeof (noiseMsgs) / sizeof (noiseMsgs[0]))
 
