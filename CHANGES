@@ -2,6 +2,7 @@
 
 Changelog
 
+* improve handling of V.34 control channel retrain (02 Apr 2006)
 * Add isdn4linux modem config prototype (02 Apr 2006)
 * Add IAXmodem config prototype (02 Apr 2006)
 * Update config.guess & config.sub (27 Mar 2006)

@@ -561,9 +561,9 @@ Class1Modem::waitForDCEChannel(bool awaitctrl)
 		    protoTrace("Control channel retrain");
 		    // wait for the control channel to reappear
 		    // should we reset the timeout setting?
-		    waitForDCEChannel(true);
+		    gotresponse = waitForDCEChannel(true);
 		    gotRTNC = true;
-		    return (false);
+		    return ((awaitctrl ? gotresponse : false));
 		    break;
 		case 0x6B:
 		    protoTrace("Primary channel selected");
