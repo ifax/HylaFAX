@@ -1,6 +1,6 @@
 #	$Id$	
 
-Changelog
+Changelog for HylaFAX 4.3.0beta1
 
 * flush modem I/O on receptions before sending any data (03 Apr 2006)
 * fix incorrect "Fax protocol error" in ECM mode (03 Apr 2006)
