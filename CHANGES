@@ -1,5 +1,10 @@
 #	$Id$	
 
+Changlog
+
+* Add JobControlWait to allow faxq to wait for JobControlCmd
+  to finish synchronously (4 Apr 2006)
+
 Changelog for HylaFAX 4.3.0beta1
 
 * flush modem I/O on receptions before sending any data (03 Apr 2006)

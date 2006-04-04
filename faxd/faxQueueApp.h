@@ -65,6 +65,11 @@ public:
 	u_int faxQueueApp::*p;
 	u_int		 def;
     };
+    struct booltag {
+	const char*	 name;
+	bool faxQueueApp::*p;
+	bool		 def;
+    };
 private:
     class SchedTimeout : public IOHandler {
     private:
@@ -117,9 +122,11 @@ private:
     fxStr	sendUUCPCmd;		// external command for UUCP calls
     fxStr	wedgedCmd;		// external command for wedged modems
     fxStr	jobCtrlCmd;		// external command for JobControl
+    bool	jobCtrlWait;		// Wait syncronously for JobControl to finish
 
     static stringtag strings[];
     static numbertag numbers[];
+    static booltag booleans[];
 // runtime state
     bool	timeout;		// timeout occurred
     bool	abortPrepare;		// job preparation should be aborted

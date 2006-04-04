@@ -1643,7 +1643,14 @@ faxQueueApp::setReadyToRun(Job& job)
 		Sys::close(pfd[1]);
 
 		job.startControl(pid, pfd[0]);
+
 	    }
+	}
+	if (jobCtrlWait)
+	{
+	    logError("WAITING FOR JobControl to finish");
+	    while (job.isEmpty() )
+		Dispatcher::instance().dispatch();
 	}
     } else {
     	ctrlJobDone(job, 0);
@@ -3071,6 +3078,10 @@ faxQueueApp::numbertag faxQueueApp::numbers[] = {
 { "polllockwait",	&faxQueueApp::pollLockWait,	30 },
 };
 
+faxQueueApp::booltag faxQueueApp::booleans[] = {
+{ "jobcontrolwait",	&faxQueueApp::jobCtrlWait,	true },
+};
+
 void
 faxQueueApp::setupConfig()
 {
@@ -3080,6 +3091,8 @@ faxQueueApp::setupConfig()
 	(*this).*strings[i].p = (strings[i].def ? strings[i].def : "");
     for (i = N(numbers)-1; i >= 0; i--)
 	(*this).*numbers[i].p = numbers[i].def;
+    for (i = N(booleans)-1; i >= 0; i--)
+	(*this).*booleans[i].p = booleans[i].def;
     tod.reset();			// any day, any time
     use2D = true;			// ok to use 2D data
     useUnlimitedLN = true;		// ok to use LN_INF
@@ -3175,6 +3188,8 @@ faxQueueApp::setConfigItem(const char* tag, const char* value)
 	    break;
 	case 2: UUCPLock::setLockTimeout(uucpLockTimeout); break;
 	}
+    } else if (findTag(tag, (const tags*) booleans, N(booleans), ix)) {
+	(*this).*booleans[ix].p = getBoolean(value);
     } else if (streq(tag, "dialstringrules"))
 	setDialRules(value);
     else if (streq(tag, "timeofday"))
