@@ -306,12 +306,12 @@ u_char* MemoryDecoder::cutExtraEOFB()
 	u_int searcharea;
 	u_short i;
 	do {
-	    searcharea =  (*(endOfData) << 16) | (*(endOfData - 1) << 8) | *(endOfData - 2);
+	    while (*(endOfData - 1) == 0x00) endOfData--;
+	    searcharea =  (*(endOfData - 1) << 16) | (*(endOfData - 2) << 8) | *(endOfData - 3);
 	    trimmed = false;
 	    for (i = 0; i < 13; i++) {
 		if (((searcharea >> i) & 0xFFF) == 0x800) {
 		    endOfData--;
-		    if (*endOfData == 0x00) endOfData--;
 		    trimmed = true;
 		    break;
 		}

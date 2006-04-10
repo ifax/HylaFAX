@@ -2,6 +2,7 @@
 
 Changlog
 
+* Fix MemoryDecoder EOFB as missed in Bug 750 (10 Apr 2006)
 * Add JobControlWait to allow faxq to wait for JobControlCmd
   to finish synchronously (4 Apr 2006)
 
