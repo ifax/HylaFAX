@@ -790,15 +790,15 @@ job. See
 .IR JobControl (${MANNUM1_8}).
 .TP
 .B JobControlWait\(S1
-Make faxq wait syncronously on invocation for JobControlCmd to finish
-before continuing on.  This mans JobControl behaviour the same as the
+Make faxq wait synchronously on invocation for JobControlCmd to finish
+before continuing on.  This makes JobControl behaviour the same as the
 previous DialRules, in that pulling jobs out of sleeping and blocked
 state will wait for JobControl to finish before proceeding, so they
 can be added to the batch immediately.  This does mean that if your
 JobControlCmd takes a long time, faxq could be spending time waiting
 for it to exit, instead of proceeding on with other tasks, waiting for
 JobControl to exit asynchronously.  If you aren't concerned about a batch
-missing a potential job because jobcontrol hasn't completed, and want
+missing a potential job because JobControl hasn't completed, and want
 maximum faxq performance, this should be disabled.
 .TP
 .B JobReqBusy
