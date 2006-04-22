@@ -286,23 +286,23 @@ sendFaxApp::usage()
 void
 sendFaxApp::addDestination(const char* cp)
 {
+     fxStr recipient;
+     const char* tp = strchr(cp, '@');
+     if (tp) {
+	recipient = fxStr(cp, tp-cp);
+	cp = tp+1;
+     } else {
+	recipient = "";
+     }
     fxStr subaddress;
     size_t sublen = 0;
     const char* ap = strchr(cp, '#');
-    if (ap && !strchr(cp, '@')) {
+    if (ap) {
 	ap = ap+1;
 	subaddress = fxStr(ap);
 	sublen = strlen(subaddress) + 1;
     } else {
 	subaddress = "";
-    }
-    fxStr recipient;
-    const char* tp = strchr(cp, '@');
-    if (tp) {
-        recipient = fxStr(cp, tp-cp);
-        cp = tp+1;
-    } else {
-        recipient = "";
     }
     fxStr dest(cp, strlen(cp) - sublen);
     if (db && dest.length() > 0) {

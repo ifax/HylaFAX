@@ -1,5 +1,11 @@
 #	$Id$	
 
+Changelog
+
+* Fix sendfax to accept both destination and user subaddresses
+  (Bug 762) (21 Apr 2006)
+* Repair broken MMR from some Multitech modems (BUG 763) (21 Apr 2006)
+
 Changelog for HylaFAX 4.3.0rc1
 
 * Add JobControlWait to allow faxq to wait for JobControlCmd
