@@ -187,6 +187,7 @@ if [ -f $FILE ]; then
 	    if [ -f log/c$COMMID ]; then
 		$SED -e '/-- data/d' \
 		 -e '/start.*timer/d' -e '/stop.*timer/d' \
+		 -e 's/=/=3D/g' \
 		 log/c$COMMID
 	    elif [ -n "$COMMID" ]; then
 		echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
@@ -228,6 +229,7 @@ if [ -f $FILE ]; then
 	    if [ -f log/c$COMMID ]; then
 		$SED -e '/-- data/d' \
 		     -e '/start.*timer/d' -e '/stop.*timer/d' \
+		     -e 's/=/=3D/g' \
 		     log/c$COMMID
 	    elif [ -n "$COMMID" ]; then
 		echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
@@ -271,7 +273,10 @@ else
     #
     # Generate notification mail for a failed attempt.
     #
-    (echo "To: $TOADDR"
+    (echo "Mime-Version: 1.0"
+     echo "Content-Type: text/plain; charset=$CHARSET"
+     echo "Content-Transfer-Encoding: quoted-printable"
+     echo "To: $TOADDR"
      echo "From: $DICTRECEIVEAGENT <$FROMADDR>"
      echo "Subject: $DICTNOTRECEIVED"
      echo ""
@@ -284,7 +289,8 @@ else
      if [ -f log/c$COMMID ]; then
 	$SED -e '/-- data/d' \
 	     -e '/start.*timer/d' -e '/stop.*timer/d' \
-	    log/c$COMMID
+	     -e 's/=/=3D/g' \
+	     log/c$COMMID
      elif [ -n "$COMMID" ]; then
 	echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
      else
