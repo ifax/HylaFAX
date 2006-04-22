@@ -585,7 +585,7 @@ returnToSender()
     if [ "$jobtype" = "facsimile" ] ; then
         printItem "%u ($DICTPAGESTRANSMITTED)" "$DICTPAGES" "$npages"
         printItem "%u ($DICTTOTALPAGES)" "$DICTTOTPAGES" "$totpages"
-        printItem "%u ($DICTATTEMPTSPAGE)" "$DICTATTEMPS" "$ntries"
+        printItem "%u ($DICTATTEMPTSPAGE)" "$DICTATTEMPTS" "$ntries"
         printItem "%u ($DICTDIRNEXTPAGE)" "$DICTDIRNUM" "$dirnum"
         if [ $nfiles -gt 0 -a "$RETURNTECHINFO" = "yes" ] ; then
             printBanner "$DICTDOCSSUBMITTED"
