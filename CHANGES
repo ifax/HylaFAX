@@ -2,7 +2,8 @@
 
 Changelog
 
-* Resolve Solaris bus error under native compiler (BUG 769) (22 Apr 2006)
+* Make sure hfaxd returns JBIG faxes in recvq list (BUG 731) (23 Apr 2006)
+* Resolve Solaris bus error under native compiler (BUG 769) (23 Apr 2006)
 * Fix quoted-printable MIME encoding in faxrcvd (BUG 760) (21 Apr 2006)
 * Fix sendfax to accept both destination and user subaddresses
   (BUG 762) (21 Apr 2006)
