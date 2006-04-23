@@ -2,6 +2,7 @@
 
 Changelog
 
+* Resolve Solaris bus error under native compiler (BUG 769) (22 Apr 2006)
 * Fix quoted-printable MIME encoding in faxrcvd (BUG 760) (21 Apr 2006)
 * Fix sendfax to accept both destination and user subaddresses
   (BUG 762) (21 Apr 2006)
