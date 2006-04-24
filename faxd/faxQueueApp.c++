@@ -1642,10 +1642,8 @@ faxQueueApp::setReadyToRun(Job& job)
 		_exit(255);
 		/*NOTREACHED*/
 	    default:			// parent, read from pipe and wait
+		job.startControl(pid, pfd[0]);	// First, get our child PID handled
 		Sys::close(pfd[1]);
-
-		job.startControl(pid, pfd[0]);
-
 	    }
 	}
 	if (jobCtrlWait)

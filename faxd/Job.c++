@@ -207,13 +207,21 @@ Job::startSend(pid_t p)
 void
 Job::startControl(pid_t p, int fd)
 {
-    if (jci) {
-	delete jci;
-	jci = NULL;
-    }
+    // Order is important here.
+    // 1) We need to guaranted that jci is NULL and not needed, incase
+    //  our SIGCHLD comes before we get to delete it.
+    // 2) We want our child pid noted as soon as possible (once we're sure
+    //    jci is taken care of)
+    // And then we can worry about deleting and linking fd...
+    JobControlInfo *tmp_jci = jci;
+    jci = NULL;
+    Dispatcher::instance().startChild(pid = p, &ctrlHandler);
+
+    if (tmp_jci)
+	delete tmp_jci;
+
     ctrlHandler.fd = fd;
     Dispatcher::instance().link(fd, Dispatcher::ReadMask, &ctrlHandler);
-    Dispatcher::instance().startChild(pid = p, &ctrlHandler);
 }
 
 fxStr
