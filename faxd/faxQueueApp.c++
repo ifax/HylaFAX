@@ -1646,12 +1646,6 @@ faxQueueApp::setReadyToRun(Job& job)
 		Sys::close(pfd[1]);
 	    }
 	}
-	if (jobCtrlWait)
-	{
-	    logError("WAITING FOR JobControl to finish");
-	    while (job.isEmpty() )
-		Dispatcher::instance().dispatch();
-	}
     } else {
     	ctrlJobDone(job, 0);
     }
@@ -2460,6 +2454,12 @@ faxQueueApp::runScheduler()
 			    sleepiter.job().state = FaxRequest::state_ready;
 			    sleepiter.job().remove();
 			    setReadyToRun(sleepiter.job());
+			    if (jobCtrlWait)
+			    {
+				logError("WAITING FOR JobControl to finish");
+				while (job.isEmpty() )
+				    Dispatcher::instance().dispatch();
+			    }
 			}
 
 			Job* bjob = &job;	// Last batched Job
