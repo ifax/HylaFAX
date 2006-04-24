@@ -451,9 +451,9 @@ faxQueueApp::prepareJobDone(Job& job, int status)
 		 * This destination was marked as called, but all jobs to this
 		 * destination failed preparation, so we must undo the call marking.
 		 */
+		removeDestInfoJob(job);		// release destination block
 		DestInfo& di = destJobs[job.dest];
-		di.hangup();
-		removeDestInfoJob(job);		// release any blocked jobs/release destination block
+		unblockDestJobs(job, di);	// release any blocked jobs
 	    }
 	}
     }
@@ -1411,6 +1411,8 @@ faxQueueApp::sendJobDone(Job& job, int status)
     Job* cjob;
     Job* njob;
     DestInfo& di = destJobs[job.dest];
+    di.hangup();				// do before unblockDestJobs
+    releaseModem(job);				// done with modem
     FaxRequest* req = readRequest(job);
     if (req && req->status == send_retry) {
 	// prevent turnaround-redialing, delay any blocked jobs
@@ -1425,9 +1427,6 @@ faxQueueApp::sendJobDone(Job& job, int status)
     } else {
 	unblockDestJobs(job, di);
     }
-    di.hangup();
-    releaseModem(job);				// done with modem
-
     traceQueue(job, "CMD DONE: exit status %#x", status);
     if (status&0xff)
 	logError("Send program terminated abnormally with exit status %#x", status);
@@ -2248,14 +2247,21 @@ faxQueueApp::unblockDestJobs(Job& job, DestInfo& di)
      */
     Job* jb;
     u_int n = 1;
-    while (isOKToCall(di, job.getJCI(), n) && (jb = di.nextBlocked())) {
-	setReadyToRun(*jb);
-	if (!di.supportsBatching()) n++;
-	FaxRequest* req = readRequest(*jb);
-	if (req) {
-	    req->notice = "";
-	    updateRequest(*req, *jb);
-	    delete req;
+    while ( (jb = di.nextBlocked()) ) {
+	if ( isOKToCall(di, job.getJCI(), n) )
+	{
+	    setReadyToRun(*jb);
+	    if (!di.supportsBatching()) n++;
+	    FaxRequest* req = readRequest(*jb);
+	    if (req) {
+		req->notice = "";
+		updateRequest(*req, *jb);
+		delete req;
+	    }
+	} else
+	{
+ 	    traceJob(job, "Continue BLOCK, current calls: %d, max concurrent calls: %d", 
+ 		di.getCalls(), job.getJCI().getMaxConcurrentCalls());
 	}
     }
 }
@@ -2266,9 +2272,7 @@ faxQueueApp::removeDestInfoJob(Job& job)
     DestInfo& di = destJobs[job.dest];
     di.done(job);			// remove from active destination list
     di.updateConfig();			// update file if something changed
-    if (!di.isEmpty()) {
-	unblockDestJobs(job, di);
-    } else {
+    if (di.isEmpty()) {
 	/*
 	 * This is the last job to the destination; purge
 	 * the entry from the destination jobs database.
