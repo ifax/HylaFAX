@@ -1626,6 +1626,9 @@ faxQueueApp::setReadyToRun(Job& job)
 	    case -1:			// error - continue with no JCI
 		jobError(job, "JOB CONTROL: fork: %m");
 		Sys::close(pfd[1]);
+                // When fork fails we need to run jobCtrlDone, since there
+                // will be no child signal to start it.
+                ctrlJobDone(job, -1);
 		break;
 	    case 0:				// child, exec command
 		if (pfd[1] != STDOUT_FILENO)
