@@ -1645,6 +1645,11 @@ faxQueueApp::setReadyToRun(Job& job)
 		job.startControl(pid, pfd[0]);	// First, get our child PID handled
 		Sys::close(pfd[1]);
 	    }
+	} else
+	{
+	    // If our pipe fails, we can't run the child, but we still
+	    // Need jobCtrlDone to be called to proceed this job
+	    ctrlJobDone(job, -1);
 	}
     } else {
     	ctrlJobDone(job, 0);
