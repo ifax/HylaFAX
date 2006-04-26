@@ -141,6 +141,7 @@ private:
     SchedTimeout schedTimeout;		// timeout for running scheduler
     DestInfoDict destJobs;		// jobs organized by destination
     fxStrDict	pendingDocs;		// documents waiting for removal
+    bool	inSchedule;
 
     static faxQueueApp* _instance;
 
@@ -232,6 +233,7 @@ private:
     void	removeDestInfoJob(Job& job);
     void        unblockDestJobs(Job& job, DestInfo& di);
 
+    bool	scheduling();
     void	runScheduler();
     void	pokeScheduler(u_short s = 0);
 // job control stuff

@@ -75,6 +75,10 @@ faxQueueApp::SchedTimeout::~SchedTimeout() {}
 void
 faxQueueApp::SchedTimeout::timerExpired(long, long)
 {
+    if (faxQueueApp::instance().scheduling() ) {
+    	start(0);
+	return;
+    }
     faxQueueApp::instance().runScheduler();
     started = false;
 }
@@ -89,10 +93,10 @@ faxQueueApp::SchedTimeout::start(u_short s)
      * once per second.
      */
     if (!started && Sys::now() > lastRun) {
-	Dispatcher::instance().startTimer(s, 1, this);
-	lastRun = Sys::now() + s;
 	started = true;
 	pending = false;
+	Dispatcher::instance().startTimer(s, 1, this);
+	lastRun = Sys::now() + s;
     } else {
 	if (!pending && lastRun <= Sys::now()) {
 	    /*
@@ -117,6 +121,7 @@ faxQueueApp::faxQueueApp()
     fifo = -1;
     quit = false;
     dialRules = NULL;
+    inSchedule = false;
     setupConfig();
 
     fxAssert(_instance == NULL, "Cannot create multiple faxQueueApp instances");
@@ -2256,7 +2261,6 @@ faxQueueApp::unblockDestJobs(Job& job, DestInfo& di)
     while ( (jb = di.nextBlocked()) ) {
 	if ( isOKToCall(di, job.getJCI(), n) )
 	{
-	    setReadyToRun(*jb, jobCtrlWait);
 	    if (!di.supportsBatching()) n++;
 	    FaxRequest* req = readRequest(*jb);
 	    if (req) {
@@ -2264,6 +2268,7 @@ faxQueueApp::unblockDestJobs(Job& job, DestInfo& di)
 		updateRequest(*req, *jb);
 		delete req;
 	    }
+	    setReadyToRun(*jb, jobCtrlWait);
 	} else
 	{
  	    traceJob(job, "Continue BLOCK, current calls: %d, max concurrent calls: %d", 
@@ -2312,6 +2317,9 @@ logError("faxQueueApp::runScheduler()");
 	close();
 	return;
     }
+
+fxAssert(inSchedule == false, "Scheduler running twice");
+inSchedule = true;
     /*
      * Reread the configuration file if it has been
      * changed.  We do this before each scheduler run
@@ -2545,6 +2553,13 @@ logError("faxQueueApp::runScheduler()");
      * that terminated without telling us.
      */
     HylaClient::purge();		// XXX maybe do this less often
+    inSchedule = false;
+}
+
+bool
+faxQueueApp::scheduling (void)
+{
+    return inSchedule;
 }
 
 /*

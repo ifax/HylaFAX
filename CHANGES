@@ -2,6 +2,7 @@
 
 Changelog
 
+* Fix runSchedule() concurrency problem (Bug 745) (26 Apr 2006)
 * Fix some of the error paths in the setReadyToRun jobcontrol 
   pipe, fork, and exec calls (BUG 745) (25 Apr 2006)
 * Fix unblocking job problem (BUG 733) (24 Apr 2006)
