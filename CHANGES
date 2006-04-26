@@ -2,6 +2,7 @@
 
 Changelog
 
+* Enhance Italian translation (26 Apr 2006)
 * Fix faxq sleepq concurrency problem (Bug 745) (26 Apr 2006)
 * Fix runSchedule() concurrency problem (Bug 745) (26 Apr 2006)
 * Fix some of the error paths in the setReadyToRun jobcontrol 
