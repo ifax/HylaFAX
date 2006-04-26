@@ -1674,6 +1674,7 @@ faxQueueApp::setReadyToRun(Job& job, bool wait)
 void
 faxQueueApp::ctrlJobDone(Job& job, int status)
 {
+    traceQueue(job, "CMD DONE: exit status %#x", status);
     if (status) {
 	logError("JOB %s: bad exit status %#x from sub-fork",
 	    (const char*) job.jobid, status);
