@@ -2467,13 +2467,17 @@ inSchedule = true;
 			 * where the queue file is updated.
 			 */
 			for (JobIter sleepiter(sleepq); sleepiter.notDone(); sleepiter++) {
-			    if (sleepiter.job().dest != job.dest || sleepiter.job().state != FaxRequest::state_sleeping)
+			    Job& j(sleepiter.job());
+			    if (j.state != FaxRequest::state_pending 
+			        || j.state != FaxRequest::state_sleeping)
+				break;
+			    if (j.dest != job.dest || j.state != FaxRequest::state_sleeping)
 				continue;
-			    sleepiter.job().stopTTSTimer();
-			    sleepiter.job().tts = now;
-			    sleepiter.job().state = FaxRequest::state_ready;
-			    sleepiter.job().remove();
-			    setReadyToRun(sleepiter.job(), jobCtrlWait);
+			    j.stopTTSTimer();
+			    j.tts = now;
+			    j.state = FaxRequest::state_ready;
+			    j.remove();
+			    setReadyToRun(j, jobCtrlWait);
 			}
 
 			Job* bjob = &job;	// Last batched Job
