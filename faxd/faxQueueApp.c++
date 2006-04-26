@@ -1580,7 +1580,7 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
 	    } else {
 		traceQueue(job, "SEND INCOMPLETE: retry immediately; " |
 		    req->notice); 
-		setReadyToRun(job);		// NB: job.tts will be <= now
+		setReadyToRun(job, jobCtrlWait);		// NB: job.tts will be <= now
 	    }
 	} else					// signal waiting co-thread
 	    job.suspendPending = false;
@@ -1611,7 +1611,7 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
  * JobControl is done running
  */
 void
-faxQueueApp::setReadyToRun(Job& job)
+faxQueueApp::setReadyToRun(Job& job, bool wait)
 {
     if (jobCtrlCmd.length()) {
 	const char *app[3];
@@ -1650,6 +1650,12 @@ faxQueueApp::setReadyToRun(Job& job)
 	    // If our pipe fails, we can't run the child, but we still
 	    // Need jobCtrlDone to be called to proceed this job
 	    ctrlJobDone(job, -1);
+	}
+	if (wait)
+	{
+	    logError("WAITING FOR JobControl to finish");
+	    while (job.isEmpty() )
+		Dispatcher::instance().dispatch();
 	}
     } else {
     	ctrlJobDone(job, 0);
@@ -1847,7 +1853,7 @@ faxQueueApp::submitJob(Job& job, FaxRequest& req, bool checkState)
 	setSleep(job, job.tts);
     } else {					// ready to go now
 	job.startKillTimer(req.killtime);
-	setReadyToRun(job);
+	setReadyToRun(job, false);		// We never wait on submit
     }
     updateRequest(req, job);
     return (true);
@@ -2217,7 +2223,7 @@ void
 faxQueueApp::runJob(Job& job)
 {
     job.remove();
-    setReadyToRun(job);
+    setReadyToRun(job, jobCtrlWait);
     /*
      * In order to deliberately batch jobs by using a common
      * time-to-send we need to give time for the other jobs'
@@ -2250,7 +2256,7 @@ faxQueueApp::unblockDestJobs(Job& job, DestInfo& di)
     while ( (jb = di.nextBlocked()) ) {
 	if ( isOKToCall(di, job.getJCI(), n) )
 	{
-	    setReadyToRun(*jb);
+	    setReadyToRun(*jb, jobCtrlWait);
 	    if (!di.supportsBatching()) n++;
 	    FaxRequest* req = readRequest(*jb);
 	    if (req) {
@@ -2293,6 +2299,7 @@ faxQueueApp::removeDestInfoJob(Job& job)
 void
 faxQueueApp::runScheduler()
 {
+logError("faxQueueApp::runScheduler()");
     /*
      * Terminate the server if there are no jobs currently
      * being processed.  We must be sure to wait for jobs
@@ -2458,13 +2465,7 @@ faxQueueApp::runScheduler()
 			    sleepiter.job().tts = now;
 			    sleepiter.job().state = FaxRequest::state_ready;
 			    sleepiter.job().remove();
-			    setReadyToRun(sleepiter.job());
-			    if (jobCtrlWait)
-			    {
-				logError("WAITING FOR JobControl to finish");
-				while (job.isEmpty() )
-				    Dispatcher::instance().dispatch();
-			    }
+			    setReadyToRun(sleepiter.job(), jobCtrlWait);
 			}
 
 			Job* bjob = &job;	// Last batched Job

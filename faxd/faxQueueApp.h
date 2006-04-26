@@ -215,7 +215,7 @@ private:
     bool	suspendJob(const fxStr& jobid, bool abortActive);
     void	rejectSubmission(Job&, FaxRequest&, const fxStr& reason);
 
-    void	setReadyToRun(Job& job);
+    void	setReadyToRun(Job& job, bool wait);
     void	setSleep(Job& job, time_t tts);
     void	setDead(Job& job);
     void	setActive(Job& job);
