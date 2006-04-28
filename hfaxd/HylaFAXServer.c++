@@ -80,15 +80,26 @@ HylaFAXServer::HylaFAXServer()
     discTime = 0;		// shutdown forced disconnect time
     denyTime = 0;		// shutdown service denial time
     /*
-     * Calculate the time differential between
-     * the local timezone and GMT for adjusting
-     * client-specified time values that are given
-     * in GMT.
+     * Calculate the time differential between the local timezone
+     * and GMT for adjusting client-specified time values that are
+     * given in GMT.
+     *
+     * We want the actual offset of the local now from UTC, 
+     * This means we have to "force" daylight savings off, otherwise
+     * the offset we get back is of the real timezone (the time
+     * functions automatically compensate if DST is set).
+     *
+     * Because we take the actual offset instead of a real timezone,
+     * we force the TZ a format CUT<offset> instead of an actual
+     * timezone like EST<offset>EDT, or PST<offset>PDT.  This means
+     * we no longer have to rely on the system being able to do the
+     * DST offset.
      */
+
     time_t now = Sys::now();
     struct tm gmt = *gmtime(&now);
     struct tm tm = *localtime(&now);
-    gmt.tm_isdst = tm.tm_isdst;
+    tm.tm_isdst = 0;
     gmtoff = mktime(&gmt) - mktime(&tm);
 #if HAS_TM_ZONE
     /*
@@ -99,10 +110,16 @@ HylaFAXServer::HylaFAXServer()
     tzname[1] = NULL;
 #endif
 
-    // Latest glibc will revert to UTC in the chroot if it can't
-    // find the zoneinfo file and no TZ is set in the environment.
-    fxStr tz = fxStr::format("%s%d:%02d%s", tzname[0], (gmtoff / 3600),
-		((gmtoff / 60) % 60), tzname[1]);
+    /*
+     * Some versions of  glibc (like RHEL4) will revert to UTC in
+     * the chroot if it can't find the zoneinfo file and no TZ is
+     * set in the environment.
+     * We'll set the TZ to our crafted TZ to make sure that we
+     * have the right offset even if no timezone DST info is
+     * available in the chroot.
+     */
+    fxStr tz = fxStr::format("CUT%d:%02d",
+    		(gmtoff / 3600), ((gmtoff / 60) % 60));
     setenv("TZ", tz, 0);
 
     cachedTIFF = NULL;
