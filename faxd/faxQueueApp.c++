@@ -1688,7 +1688,14 @@ faxQueueApp::ctrlJobDone(Job& job, int status)
       (iter.job().pri == job.pri && iter.job().tts <= job.tts)); iter++)
 	;
     job.insert(iter.job());
-    pokeScheduler(0);
+    /*
+     * In order to deliberately batch jobs by using a common
+     * time-to-send we need to give time for the other jobs'
+     * timers to expire and to enter the run queue before
+     * running the scheduler.  Thus the scheduler is poked
+     * with a delay.
+     */
+    pokeScheduler(1);
 }
 
 /*
@@ -2231,14 +2238,6 @@ faxQueueApp::runJob(Job& job)
 {
     job.remove();
     setReadyToRun(job, jobCtrlWait);
-    /*
-     * In order to deliberately batch jobs by using a common
-     * time-to-send we need to give time for the other jobs'
-     * timers to expire and to enter the run queue before
-     * running the scheduler.  Thus the scheduler is poked
-     * with a delay.
-     */
-    pokeScheduler(1);
 }
 
 /*
