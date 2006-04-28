@@ -1413,6 +1413,10 @@ faxQueueApp::sendJobStart(Job& job, FaxRequest* req)
 void
 faxQueueApp::sendJobDone(Job& job, int status)
 {
+    traceQueue(job, "CMD DONE: exit status %#x", status);
+    if (status&0xff)
+	logError("Send program terminated abnormally with exit status %#x", status);
+
     Job* cjob;
     Job* njob;
     DestInfo& di = destJobs[job.dest];
@@ -1432,9 +1436,6 @@ faxQueueApp::sendJobDone(Job& job, int status)
     } else {
 	unblockDestJobs(job, di);
     }
-    traceQueue(job, "CMD DONE: exit status %#x", status);
-    if (status&0xff)
-	logError("Send program terminated abnormally with exit status %#x", status);
 
     for (cjob = &job; cjob != NULL; cjob = njob) {
 	njob = cjob->bnext;
