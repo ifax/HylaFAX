@@ -215,6 +215,7 @@ private:
     bool	submitJob(const fxStr& jobid, bool checkState = false);
     bool	suspendJob(const fxStr& jobid, bool abortActive);
     void	rejectSubmission(Job&, FaxRequest&, const fxStr& reason);
+    bool	areBatchable(Job& job, Job& nextjob, FaxRequest& nextreq);
 
     void	setReadyToRun(Job& job, bool wait);
     void	setSleep(Job& job, time_t tts);

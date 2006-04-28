@@ -108,6 +108,7 @@ public:
     static Modem& getModemByID(const fxStr& id);
     static Modem* modemExists(const fxStr& id);
     static Modem* findModem(const Job& job);
+    bool isInGroup(const fxStr& mgroup);
 
     bool assign(Job&);		// assign modem
     void release();			// release modem

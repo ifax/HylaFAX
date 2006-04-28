@@ -131,6 +131,15 @@ Modem::isCapable(const Job& job) const
     return (true);
 }
 
+bool
+Modem::isInGroup(const fxStr& mgroup)
+{
+    RE* c = ModemGroup::find(mgroup);
+    if (c)
+	return (c->Find(mgroup));
+    return ((devID == mgroup));
+}
+
 /*
  * Find a modem that is capable of handling
  * work associated with the specified job.

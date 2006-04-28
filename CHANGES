@@ -2,6 +2,8 @@
 
 Changelog
 
+* Use Lee's areBatchable() to make sure batching doesn't ignore job
+  modems (28 Apr 2006)
 * Enhance Italian translation (26 Apr 2006)
 * Fix faxq sleepq concurrency problem (Bug 745) (26 Apr 2006)
 * Fix runSchedule() concurrency problem (Bug 745) (26 Apr 2006)

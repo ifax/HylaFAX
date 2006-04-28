@@ -2292,6 +2292,20 @@ faxQueueApp::removeDestInfoJob(Job& job)
 	destJobs.remove(job.dest);
     }
 }
+
+/*
+ * Compare two job requests to each other and to a selected
+ * job to see if they can be batched together.
+ */
+bool
+faxQueueApp::areBatchable(Job& job, Job& nextjob, FaxRequest& nextreq)
+{
+    // make sure the job's modem is in the requested ModemGroup 
+    if (!job.modem->isInGroup(nextreq.modem))
+	return(false);
+    return(true);
+}
+
 /*
  * Scan the list of jobs and process those that are ready
  * to go.  Note that the scheduler should only ever be
@@ -2482,8 +2496,7 @@ inSchedule = true;
 			}
 
 			Job* bjob = &job;	// Last batched Job
-			Job* cjob;		// current Job
-			FaxRequest* creq;	// current request
+			Job* cjob = &job;	// current Job
 
 			/*
 			 * Since job files are passed to the send program as command-line
@@ -2498,30 +2511,26 @@ inSchedule = true;
 				cjob = joblist;
 				if (job.jobid == cjob->jobid)
 				    continue;	// Skip the current job
-				fxAssert(cjob->tts <= Sys::now(), "Sleeping job on run queue");
-				fxAssert(cjob->modem == NULL, "Job on run queue holding modem");
 				if (job.dest != cjob->dest)
 				    continue;
+				fxAssert(cjob->tts <= Sys::now(), "Sleeping job on run queue");
+				fxAssert(cjob->modem == NULL, "Job on run queue holding modem");
 
-				/* Check priorities */
-				cjob->modem = job.modem;
+				FaxRequest* creq = readRequest(*cjob);
+ 				if (!areBatchable(job, *cjob, *creq)) {
+				    delete creq;
+				    continue;
+				}
 
-				creq = readRequest(*cjob);
-
-				/* XXX Should do some check here:
-				 * normal checks for a request (use a function?)
-				 * max total of pages in a batch,
-				 * We don't have to worry about compression format, resolution, 
-				 * and other negotiation parameters because we renegotiate settings
-				 * between jobs after EOM.
-				 * ... */
-
-				traceJob(job, "ADDING JOB " | cjob->jobid | " TO BATCH");
 				if (iter.notDone() && &iter.job() == bjob)
 				    iter++;
+
+				traceJob(job, "ADDING JOB " | cjob->jobid | " TO BATCH");
 				cjob->remove();
 				bjob->bnext = cjob;
 				cjob->bprev = bjob;
+				cjob->modem = job.modem;
+
 				bjob = cjob;
 				cjob->breq = creq;
 				if (creq->tts > now) {
