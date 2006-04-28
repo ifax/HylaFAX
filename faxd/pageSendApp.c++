@@ -418,7 +418,7 @@ pageSendApp::sendPage(FaxRequest& req, FaxMachineInfo& info, const fxStr& number
 	}
     }
     if (abortCall)
-	sendFailed(req, send_failed, "Job aborted by user");
+	sendFailed(req, send_retry, "Call aborted by user");
     else if (req.status == send_retry) {
 	if (req.totdials == req.maxdials) {
 	    notice = req.notice | "; too many attempts to dial";

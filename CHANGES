@@ -2,6 +2,7 @@
 
 Changelog
 
+* Don't let other users kill eachother's jobs (Bug 752) (28 Apr 2006)
 * Use Lee's areBatchable() to make sure batching doesn't ignore job
   modems (28 Apr 2006)
 * Enhance Italian translation (26 Apr 2006)

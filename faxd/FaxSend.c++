@@ -355,7 +355,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	}
     }
     if (abortCall)
-	sendFailed(fax, send_failed, "Job aborted by user");
+	sendFailed(fax, send_retry, "Call aborted by user");
     else if (fax.status == send_retry) {
 	if (fax.totdials == fax.maxdials) {
 	    notice = fax.notice | "; too many attempts to dial";
