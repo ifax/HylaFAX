@@ -2319,7 +2319,6 @@ faxQueueApp::areBatchable(Job& job, Job& nextjob, FaxRequest& nextreq)
 void
 faxQueueApp::runScheduler()
 {
-logError("faxQueueApp::runScheduler()");
     /*
      * Terminate the server if there are no jobs currently
      * being processed.  We must be sure to wait for jobs
@@ -2333,8 +2332,9 @@ logError("faxQueueApp::runScheduler()");
 	return;
     }
 
-fxAssert(inSchedule == false, "Scheduler running twice");
-inSchedule = true;
+    fxAssert(inSchedule == false, "Scheduler running twice");
+    inSchedule = true;
+
     /*
      * Reread the configuration file if it has been
      * changed.  We do this before each scheduler run
