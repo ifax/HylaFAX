@@ -1,13 +1,14 @@
 #	$Id$	
 
-Changelog
+Changelog for HylaFAX 4.3.0rc2
 
-* Don't let other users kill eachother's jobs (Bug 752) (28 Apr 2006)
-* Use Lee's areBatchable() to make sure batching doesn't ignore job
+* Re-work fix for hfaxd's time handling (BUG 723) (28 Apr 2006)
+* Don't let users kill each other's jobs (BUG 752) (28 Apr 2006)
+* Use areBatchable() to make sure batching doesn't ignore job
   modems (28 Apr 2006)
-* Enhance Italian translation (26 Apr 2006)
-* Fix faxq sleepq concurrency problem (Bug 745) (26 Apr 2006)
-* Fix runSchedule() concurrency problem (Bug 745) (26 Apr 2006)
+* Enhance Italian translation (BUG 758) (26 Apr 2006)
+* Fix faxq sleepq concurrency problem (BUG 745) (26 Apr 2006)
+* Fix runSchedule() concurrency problem (BUG 745) (26 Apr 2006)
 * Fix some of the error paths in the setReadyToRun jobcontrol 
   pipe, fork, and exec calls (BUG 745) (25 Apr 2006)
 * Fix unblocking job problem (BUG 733) (24 Apr 2006)
@@ -18,9 +19,6 @@ Changelog
 * Fix sendfax to accept both destination and user subaddresses
   (BUG 762) (21 Apr 2006)
 * Repair broken MMR from some Multitech modems (BUG 763) (21 Apr 2006)
-
-Changelog for HylaFAX 4.3.0rc1
-
 * Add JobControlWait to allow faxq to wait for JobControlCmd
   to finish synchronously (4 Apr 2006)
 * flush modem I/O on receptions before sending any data (03 Apr 2006)
