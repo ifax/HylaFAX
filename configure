@@ -3477,6 +3477,8 @@ if [ "$DSO" = auto ]; then
     esac
     if [ "$DSO" != no ]; then
 	JUNK="$JUNK t.${DSOSUF}"
+	#We need the new shared/DSO OPTS/FLAGS
+	makeDefs xdefs
 	if CheckCCDSO; then
 	    if CheckCXXDSO; then
 		Note "Looks like your system supports $DSO-style DSOs."
