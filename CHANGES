@@ -1,5 +1,8 @@
 #	$Id$	
 
+Changelog
+* More fixes to batching and jobcontrol interaction (3 May 2006)
+
 Changelog for HylaFAX 4.3.0rc2
 
 * Re-work fix for hfaxd's time handling (BUG 723) (28 Apr 2006)
