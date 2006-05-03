@@ -59,9 +59,8 @@ JobCtrlHandler::inputReady (int f)
     char data[1024];
     fxAssert(f == fd, "Reading from a FD which is not our own");
     int n;
-    while ((n = Sys::read(fd, data, sizeof(data)-1)) > 0)
+    while ((n = Sys::read(fd, data, sizeof(data))) > 0)
     {
-    	data[n] = '\0';
 	buf.append(data, n);
     }
     return 0;
@@ -220,6 +219,7 @@ Job::startControl(pid_t p, int fd)
     if (tmp_jci)
 	delete tmp_jci;
 
+    fcntl(fd, F_SETFL, fcntl(fd, F_GETFL, 0) | O_NONBLOCK);
     ctrlHandler.fd = fd;
     Dispatcher::instance().link(fd, Dispatcher::ReadMask, &ctrlHandler);
 }
