@@ -136,7 +136,7 @@ Modem::isInGroup(const fxStr& mgroup)
 {
     RE* c = ModemGroup::find(mgroup);
     if (c)
-	return (c->Find(mgroup));
+	return (c->Find(devID));
     return ((devID == mgroup));
 }
 
