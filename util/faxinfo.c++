@@ -156,7 +156,7 @@ main(int argc, char** argv)
 #endif
     char* cp;
 #ifdef TIFFTAG_FAXDCS
-    if (TIFFGetField(tif, TIFFTAG_FAXDCS, &cp)) {
+    if (TIFFGetField(tif, TIFFTAG_FAXDCS, &cp) && strncmp(cp, "00 00 00", 8) != 0) {
 	// cannot trust br from faxdcs as V.34-Fax does not provide it there
 	u_int brhold = params.br;
 	fxStr faxdcs(cp);

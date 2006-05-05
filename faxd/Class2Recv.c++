@@ -124,6 +124,7 @@ bool
 Class2Modem::recvDCS(const char* cp)
 {
     if (parseClass2Capabilities(skipStatus(cp), params)) {
+	params.update(false);
 	setDataTimeout(60, params.br);
 	FaxModem::recvDCS(params);	// announce session params
 	return (true);
