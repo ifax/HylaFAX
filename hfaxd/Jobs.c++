@@ -346,8 +346,7 @@ bool
 HylaFAXServer::checkParm(Job& job, Token t, u_int op)
 {
     if (!checkJobState(&job)) {			// insure consistent state
-	reply(500, "Cannot access job %s state; job deleted by another party.",
-	    (const char*) job.jobid);
+	reply(500, "Cannot access job state; job deleted by another party.");
 	return (false);
     } else if (!checkAccess(job, t, op)) {
 	reply(503, "Permission denied: no %s access to job parameter %s."
@@ -1115,9 +1114,13 @@ HylaFAXServer::findJob(const char* jobid, fxStr& emsg)
 	 * not deleted it) and if the on-disk state has
 	 * been updated, re-read the job description file.
 	 */
-	if (!checkJobState(job))
+	if (!checkJobState(job)) {
+            // We will re-check on disk in case a job was moved between queues
+            job = NULL;
 	    emsg = "job deleted by another party";
-    } else {
+        }
+    } 
+    if (!job) {
 	/*
 	 * We can only afford a certain amount of space,
 	 * unfortunately, there is no "bright" way to remove jobs
