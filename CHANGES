@@ -1,12 +1,10 @@
 #	$Id$	
 
-Changelog
+Changelog for HylaFAX 4.3.0rc3
+
 * Fix DCS tag handling in Class2 (BUG 771) (5 May 2006)
 * Fix hfaxd corruption on killed jobs (BUG 401) (5 May 2006)
 * More fixes to batching and jobcontrol interaction (3 May 2006)
-
-Changelog for HylaFAX 4.3.0rc2
-
 * Re-work fix for hfaxd's time handling (BUG 723) (28 Apr 2006)
 * Don't let users kill each other's jobs (BUG 752) (28 Apr 2006)
 * Use areBatchable() to make sure batching doesn't ignore job
