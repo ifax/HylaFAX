@@ -2,26 +2,29 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.2.5
-patch level release!  This fixes the problems users have been
-reporting in 4.2.4, which will be removed from the FTP and web
-sites. As always, our sincerest thanks go to all who
-participate and provide feedback.
+The HylaFAX development team is pleased to announce our 4.3.0 release!
+This release introduces several powerful new features to HylaFAX, and
+so we encourage you to check it out. No release would be complete
+without bugfixes of course, and this one has plenty. As always, our
+sincerest thanks go to all who participate in the development and
+testing process.
 
                                *   *   *
 
 This document is intended to describe the significant differences
-between hylafax-4.2.5 and older releases, point out any known
+between hylafax-4.3.0 and older releases, point out any known
 incompatibilites and issues, and provide the reader with directions to
 further resources regarding HylaFAX.
 
                           *   NEW FEATURES   *
 
-* Security fix - hfaxd vulnerability CVE-2005-3538
-* Security fix - script vulnerability CVE-2005-3539
-* PAM support on Solaris
-* Local/GMT timezone support in JOBFMT/RECVFMT formatters
-* numerous other enhancements and bugfixes (see CHANGES)
+* JobControl: Allows arbitrary control of outbound jobs, and can
+  provide send-side "virtualization" of devices
+* DynamicConfig: Improved to allow arbitrary control of inbound
+  jobs, and can provide receive-side "virtualization" of devices
+* Internationalization: Templating system for translating the
+  emails HylaFAX sends into other languages, with out-of-the-box
+  support for French, German, Italian, Polish, Portugese and Spanish.
 
                          *   KNOWN ISSUES   *
 
@@ -29,14 +32,12 @@ further resources regarding HylaFAX.
 
                        *   INCOMPATIBILITIES   *
 
+* QualifyCID is obsolete, having been replaced by DynamicConfig
+* DestControls is obsolete, having been replaced by JobControl
 * Some modem config files generated from earlier versions' config file
   prototypes may contain Class1TCFRecvHack.  This is no longer desireable
   for production use, and this feature should now only be used for
   debugging purposes.
-* The time value of %Z in jobfmt/recvfmt is now returned in GMT time
-  when GMT is requested, and in local time when local time is
-  requested. Previously, %Z was always returned in local time, even
-  if GMT had been requested.
 * If upgrading from any release older than 4.2.2, be advised
   that CIDName/CIDNumber are now part of a larger CallID framework. 
 * libtiff-3.6.1 is fatally flawed when dealing with Group 3 images.  
@@ -45,10 +46,14 @@ further resources regarding HylaFAX.
 
                       *   WHO SHOULD UPGRADE?   *
 
-* For security reasons, everyone should consider upgrading to this 4.2.5
-  release as soon as possible. Anyone who upgraded to 4.2.4 during its
-  short lifetime should also upgrade, otherwise faxrcvd and notify may
-  not function as expected.
+Several new features have been added in this release that may be of
+considerable value to many users. We have also made imporant fixes to
+client-server timezone handling, the batching of outbound jobs, the
+Class 1 fax protocol's handling of V.34, and PAM on Solaris. For these
+reasons, this is a recommended upgrade for all users. Anyone presently
+using DestControls should study the new JobControl feature carefully
+and test migration to the new framework before upgrading a production
+server.
 
                      *   HYLAFAX BINARY PACKAGES   *
 
