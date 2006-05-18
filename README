@@ -53,7 +53,8 @@ Class 1 fax protocol's handling of V.34, and PAM on Solaris. For these
 reasons, this is a recommended upgrade for all users. Anyone presently
 using DestControls should study the new JobControl feature carefully
 and test migration to the new framework before upgrading a production
-server.
+server. Likewise, those using QualifyCID to reject faxes from certain
+callers should become familar with DynamicConfig and RejectCall.
 
                      *   HYLAFAX BINARY PACKAGES   *
 
