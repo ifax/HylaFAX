@@ -227,6 +227,7 @@ public:
     fxStr	tagLineFmt;		// format string for tag lines
     fxStr	tagLineFontFile;	// font file for imaging tag lines
     u_int	recvDataFormat;		// received facsimile data format
+    bool	useJobTagLine;		// Use Job tagline or use conf taglineformat
 
     RTNHandling rtnHandling;            // RTN signal handling method
     JBIGSupport	class1JBIGSupport;	// monochrome JBIG support

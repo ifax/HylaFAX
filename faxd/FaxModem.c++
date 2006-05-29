@@ -68,10 +68,10 @@ FaxModem::sendSetup(FaxRequest& req, const Class2Params&, fxStr&)
     minsp = fxmax((u_int) req.minbr, fxmax((u_int) conf.minSpeed, modemParams.getMinSpeed()));
     pageNumber = 1;
     pageNumberOfJob = req.npages + 1;
-    if (req.desiredtl == 0)
-	setupTagLine(req, conf.tagLineFmt);
-    else
+    if (conf.useJobTagLine && req.desiredtl != 0)
 	setupTagLine(req, req.tagline);
+    else
+	setupTagLine(req, conf.tagLineFmt);
     curreq = &req;
     return (true);
 }

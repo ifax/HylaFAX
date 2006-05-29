@@ -210,6 +210,13 @@ static struct {
 { "class1tmconnectdelay",	&ModemConfig::class1TMConnectDelay,  0 },
 { "class1ecmframesize",		&ModemConfig::class1ECMFrameSize,    256 },
 };
+static struct {
+    const char*		 name;
+    bool ModemConfig::* p;
+    bool		 def;
+} booleans[] = {
+{ "usejobtagline",		&ModemConfig::useJobTagLine,         true },
+};
 
 void
 ModemConfig::setupConfig()
@@ -224,6 +231,8 @@ ModemConfig::setupConfig()
 	(*this).*fillorders[i].p = fillorders[i].def;
     for (i = N(numbers)-1; i >= 0; i--)
 	(*this).*numbers[i].p = numbers[i].def;
+    for (i = N(booleans)-1; i >= 0; i--)
+	(*this).*booleans[i].p = booleans[i].def;
 
     for (i=0; i < 5; ++i) {
     	distinctiveRings[i].type = ClassModem::CALLTYPE_UNKNOWN;
@@ -686,6 +695,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	(*this).*fillorders[ix].p = getFill(value);
     else if (findTag(tag, (const tags*)numbers, N(numbers), ix))
 	(*this).*numbers[ix].p = atoi(value);
+    else if (findTag(tag, (const tags*)booleans, N(booleans), ix))
+	(*this).*booleans[ix].p = atoi(value);
 
     else if (streq(tag, "modemsetvolumecmd"))
 	setVolumeCmds(value);

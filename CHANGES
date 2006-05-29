@@ -1,5 +1,9 @@
 #	$Id$	
 
+Changelog since HylaFAX 4.3.0
+
+* Add UseJobTagLine config option for faxsend  (4 Apr 2006)
+
 Changelog for HylaFAX 4.3.0
 
 * Fix DCS tag handling in Class2 (BUG 771) (5 May 2006)
