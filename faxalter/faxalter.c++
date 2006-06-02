@@ -41,9 +41,46 @@ public:
     ~faxAlterApp();
 
     void run(int argc, char** argv);
+    bool duplicate ();
 };
 faxAlterApp::faxAlterApp() { groups = false; }
 faxAlterApp::~faxAlterApp() {}
+
+bool faxAlterApp::duplicate ()
+{
+    /*
+     * Before we dup the job, we need to get the list of documents
+     * Documents are sent as continuations to the 213, like:
+     * -> JPARM document
+     * 213-PS docq/doc281.ps
+     * 213-PS docq/doc283.ps
+     * 213-PS docq/doc284.ps
+     * 213 End of documents.
+     */
+    command("JPARM document");
+    fxStr docs = getLastContinuation();
+
+    fxStr jid, gid, emsg;
+    if (! newJob(jid, gid, emsg) ) {
+	printError("%s", (const char*) emsg);
+	return false;
+    }
+
+    for ( int pos = 0, next; (next = docs.next(pos, '\n')) < docs.length(); )
+    {
+	/*
+	 * The document is in the form "<TYPE> <filename>"
+	 * - separate it and resubmit the document
+	 */
+	fxStr tmp = docs.extract(pos, next-pos);
+	int c = tmp.find(0, " ");
+	if (c)
+	    jobDocument(&tmp[c+1]);
+	pos = next+1;
+    }
+
+    return true;
+}
 
 void
 faxAlterApp::run(int argc, char** argv)
@@ -57,9 +94,10 @@ faxAlterApp::run(int argc, char** argv)
     struct tm tts = *localtime(&now);
     struct tm when;
     bool useadmin = false;
+    bool resubmit = false;
 
     int c;
-    while ((c = getopt(argc, argv, "a:d:h:k:m:n:P:t:ADQRgpv")) != -1)
+    while ((c = getopt(argc, argv, "a:d:h:k:m:n:P:t:ADQRgprv")) != -1)
 	switch (c) {
 	case 'A':			// connect with administrative privileges
 	    useadmin = true;
@@ -168,6 +206,9 @@ faxAlterApp::run(int argc, char** argv)
 	    script.append(optarg);
             script.append("\n");
 	    break;
+	case 'r':
+	    resubmit = true;
+	    break;
 	case 't':			// set max number of retries
 	    if (atoi(optarg) < 0)
 		fxFatal("Bad number of retries for -t option: %s", optarg);
@@ -184,14 +225,27 @@ faxAlterApp::run(int argc, char** argv)
 	}
     if (optind >= argc)
 	usage();
-    if (script == "")
+    if (script == "" && !resubmit)
 	fxFatal("No job parameters specified for alteration.");
     if (callServer(emsg)) {
 	if (login(NULL, emsg) &&
 	    (!useadmin || admin(NULL, emsg))) {
 	    for (; optind < argc; optind++) {
 		const char* jobid = argv[optind];
-		if (setCurrentJob(jobid) && jobSuspend(jobid)) {
+		if (setCurrentJob(jobid) ) {
+		    /*
+		     * We take the approach that if we can't do the work on a
+		     * job, we continue on to the next
+		     */
+		    if (resubmit) {
+			if (! duplicate())
+			    continue;
+			const char* old_job = jobid;
+			jobid = getCurrentJob();
+			printf("Job %s: duplicated as job %s.\n", old_job, jobid);
+		    } else if (! jobSuspend(jobid)) 
+			continue;
+		
 		    if (!runScript(script, script.length(), "<stdin>", emsg))
 			break;			// XXX???
 		    if (!jobSubmit(jobid)) {

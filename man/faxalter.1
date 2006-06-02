@@ -130,6 +130,13 @@ The default scheduling priority for a job is 127
 and priorities are recalculated after each attempt to
 process a job.
 .TP 10
+.BI \-r
+Resubmits a job.  This will duplicate any job that is in either
+the send queue or in the done queue.  When resubmitting jobs that
+are past their killtime the
+.B -k
+option should also be used to specify a new time to kill the job.
+.TP 10
 .BI \-t " tries"
 Set the maximum number of times the
 server should call the remote fax machine.
