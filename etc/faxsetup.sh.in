@@ -297,7 +297,7 @@ if [ -n "$ac_prev" ]; then
 fi
 
 # if nothing specified on command line, default client+server
-if [ $isClient = no -a $isServer = no ]; then
+if [ $isClient = no ] && [ $isServer = no ]; then
     isClient=yes
     isServer=yes
 fi
@@ -442,7 +442,7 @@ if onServer; then
     # NB: some systems override these function definitions through
     #     per-os faxsetup files
     #
-    if [ -f /bin/passmgmt -o -f /usr/sbin/passmgmt ]; then
+    if [ -f /bin/passmgmt ] || [ -f /usr/sbin/passmgmt ]; then
 	addPasswd()
 	{
 	    passmgmt -o -a -c 'Facsimile Agent' -h $4 -u $2 -g $3 $1
@@ -491,7 +491,7 @@ w
 q
 _EOF
 	}
-    elif [ -f /usr/sbin/useradd -o -f /etc/useradd ]; then
+    elif [ -f /usr/sbin/useradd ] || [ -f /etc/useradd ]; then
 	addPasswd()
 	{
 	    useradd -c 'Facsimile Agent' -d $4 -u $2 -o -g $3 $1
@@ -765,7 +765,7 @@ if onServer; then
 	REASON=`find $CONFIG_FILES -newer $DIR_SPOOL/etc/setup.cache -print 2>/dev/null`
 	test "$REASON" && REASON="$REASON has been updated"
     fi
-    if [ "$REASON" -a -f $DIR_SPOOL/etc/setup.cache ]; then
+    if [ "$REASON" ] && [ -f $DIR_SPOOL/etc/setup.cache ]; then
        Note "Flushing cached parameters because $REASON."
        Note ""
        rm -f $DIR_SPOOL/etc/setup.cache
@@ -826,7 +826,7 @@ RM="$RMCMD -f"				# remove file for use below
 #
 euid=`id|$SED -e 's/.*uid=[0-9]*(\([^)]*\)).*/\1/'`
 test -z "$euid" && euid=`(whoami) 2>/dev/null`
-test -z "$euid" -a -w /dev && euid=root
+test -z "$euid" && test -w /dev && euid=root
 if [ "$euid" != "root" ]; then
     bitch "Sorry, but you must run this script as the super-user!"
     boom
@@ -1666,7 +1666,7 @@ addFaxUser()
 isOK()
 {
     x="$1"
-    test -z "$x" -o "$x" = y -o "$x" = yes
+    test -z "$x" || test "$x" = y || test "$x" = yes
 }
 
 if onServer; then
@@ -1790,7 +1790,7 @@ EOF
             true
         fi
     fi
-    if [ -f $INETDCONF -a $HFAXD_SERVER = no ]; then
+    if [ -f $INETDCONF ] && [ $HFAXD_SERVER = no ]; then
 	E="hylafax	stream	tcp	nowait	root	$DIR_LIBEXEC/hfaxd	hfaxd -I"
 	editInetdConf()
 	{
@@ -1821,7 +1821,7 @@ EOF
 	}
 	eval `$GREP '^hylafax[ 	]*stream[ 	]*tcp' $INETDCONF | \
 	    $AWK -F'[ 	]+' '{ print "F=" $6 "; U=" $5 }' 2>/dev/null`
-	if [ -z "$F" -a -z "$U" ]; then
+	if [ -z "$F" ] && [ -z "$U" ]; then
 	    cat<<EOF
 
 
@@ -1835,7 +1835,7 @@ style init program.
 
 EOF
 	    prompt "Should an entry be added to $INETDCONF [no]?"; read x
-	    if [ "$x" = y -o "$x" = yes ]; then
+	    if [ "$x" = y ] || [ "$x" = yes ]; then
 		echo "$E" >>$INETDCONF;
 		signalINETD=yes
 	    fi
@@ -1869,7 +1869,7 @@ EOF
 		isOK "$x" && editInetdConf
 	    fi
 	fi
-    elif [ ! -f $INETDCONF -a $HFAXD_SERVER = no ]; then
+    elif [ ! -f $INETDCONF ] && [ $HFAXD_SERVER = no ]; then
 	cat<<EOF
 
 
@@ -1891,7 +1891,7 @@ fi
 #
 if onServer; then
     x=`(ypcat -k aliases) 2>/dev/null | $GREP -i '^faxmaster'` 2>/dev/null
-    if [ -z "$x" -a -f $ALIASES ]; then
+    if [ -z "$x" ] && [ -f $ALIASES ]; then
 	x=`$GREP -i '^faxmaster' $ALIASES`
     fi
     if [ -z "$x" ]; then
@@ -2140,7 +2140,7 @@ EOF
 isNotOK()
 {
     x="$1"
-    test "$x" != y -a "$x" != yes
+    test "$x" != y && test "$x" != yes
 }
 
 CONFIG=$DIR_SPOOL/etc/config		# faxq config file
@@ -2196,7 +2196,7 @@ EOF
 		. $PROMPTS
 	    fi
 	    checkForLocalFile $DialStringRules "dial string rules"
-	    if [ "$DestControls" != "" -a "$DestControls" != '""' ]; then
+	    if [ "$DestControls" != "" ] && [ "$DestControls" != '""' ]; then
 		checkForLocalFile $DestControls "destination controls";
 	    fi
 	    printSchedulerConfig; prompt "Are these ok [yes]?"; read ok
@@ -2329,7 +2329,7 @@ EOF
 	fi
     fi
 
-    if [ "$FAXQ" -o "$FAXD" ]; then
+    if [ "$FAXQ" ] || [ "$FAXD" ]; then
 	cat<<EOF
 
 FATAL ERROR: Old server processes still running!
@@ -2369,7 +2369,7 @@ EOF
     fi
 
     DEVS="`cd $DIR_SPOOL/etc; echo config.*`"
-    if [ -z "$DEVS" -o "$DEVS" = 'config.*' ]; then
+    if [ -z "$DEVS" ] || [ "$DEVS" = 'config.*' ]; then
 	cat<<EOF
 
 You do not appear to have any modems configured for use.  Modems are
@@ -2383,7 +2383,7 @@ EOF
 	DEVS="`cd $DIR_SPOOL/etc; echo config.*`"
     fi
 
-    if [ -n "$DEVS" -a "$DEVS" != 'config.*' ]; then
+    if [ -n "$DEVS" ] && [ "$DEVS" != 'config.*' ]; then
 	FAXGETTY="`findproc faxgetty`"
 	if [ "$FAXGETTY" ]; then
 	    cat<<EOF

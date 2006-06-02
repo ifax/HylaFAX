@@ -63,7 +63,7 @@ ttyDev()
 checkIRIXPort()
 {
     devID="`echo $1 | tr '/' '_'`"
-    if [ -f $CPATH.$devID -a -p $SPOOL/FIFO.$devID ]; then
+    if [ -f $CPATH.$devID ] && [ -p $SPOOL/FIFO.$devID ]; then
 	echo "There appears to be a modem already setup on $devID,"
 	prompt "is this to be replaced [yes]?"
 	read x;

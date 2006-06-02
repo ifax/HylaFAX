@@ -173,7 +173,7 @@ case $1 in
 		fi
 		$HFAXD ; printf "$HFAXMSG"
             fi
-	    if test $FAXQ_SERVER != yes -a $HFAXD_SERVER != yes ; then
+	    if test $FAXQ_SERVER != yes && test $HFAXD_SERVER != yes ; then
 		printf " not started (script disabled by configure)"
 	    fi
 	    $ECHO "."

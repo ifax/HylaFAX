@@ -184,16 +184,16 @@ do_chXXX()
 install()
 {
     src=$1 target=$2
-    if [ $RemoveFirst = yes -a -f $target ]; then
+    if [ $RemoveFirst = yes ] && [ -f $target ]; then
 	$VERBOSE "$RM $target"
 	$RM $target
     fi
-    if [ $SaveFirst = yes -a -f $target ]; then
+    if [ $SaveFirst = yes ] && [ -f $target ]; then
 	bf=`echo $src | @SED@ 's;.*/;;'`
 	$VERBOSE "$MV $target $ROOT/$DESTDIR/OLD$bf"
 	$MV $target $ROOT/$DESTDIR/OLD$bf
     fi
-    if [ -z "$SRC" -a $HasSource = yes ]; then
+    if [ -z "$SRC" ] && [ $HasSource = yes ]; then
 	$VERBOSE "$CMD $preopts $src $target $postopts"
 	$CMD $preopts $f $target $postopts
     elif [ $SaveFirst = no ] && objectExists $target; then
@@ -211,7 +211,7 @@ install()
 	fi
 	$VERBOSE "$CHMOD $target"
 	do_chXXX $CHMOD $target
-	if [ $STRIP != ":" -a -x $ROOT$DESTDIR$f ]; then
+	if [ $STRIP != ":" ] && [ -x $ROOT$DESTDIR$f ]; then
 	    $STRIP $target >/dev/null 2>&1 || true
 	    $VERBOSE "$STRIP $target"
 	fi
@@ -231,7 +231,7 @@ if [ $Suggested = yes ]; then
     for f in $TARGETS; do
 	t=$ROOT$DESTDIR$f
 	if [ -f $t ]; then
-	    if [ -z "$SRC" -a $HasSource = yes ]; then
+	    if [ -z "$SRC" ] && [ $HasSource = yes ]; then
 		$CMP -s $f $t || {
 		    $ECHO "*** Warning, target has local changes, installing $f as $t.N"
 		    install $f $t.N;
@@ -260,7 +260,7 @@ elif [ $Updated = yes ]; then
     for f in $TARGETS; do
 	t=$ROOT$DESTDIR$f
 	if [ -f $t ]; then
-	    if [ -z "$SRC" -a $HasSource = yes ]; then
+	    if [ -z "$SRC" ] && [ $HasSource = yes ]; then
 		$CMP -s $f $t || $MV $t $t.O
 	    else
 		$CMP -s $SRC $t || $MV $t $t.O

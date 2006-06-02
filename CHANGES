@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.0
 
+* Use ] && [ instead of -a for shell portability (2 Jun 2006)
 * Add continuation support to FaxClient in libfaxutil (31 May 2006)
 * Add UseJobTagLine config option for faxsend  (4 Apr 2006)
 

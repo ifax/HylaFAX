@@ -187,7 +187,7 @@ EOF
     # Disable faxgetty
     # NB: this is for an System V-style system.
     #
-    if [ -f /etc/inittab -a -n "$WEDGED_DISABLE_FAXGETTY" ]; then
+    if [ -f /etc/inittab ] && [ -n "$WEDGED_DISABLE_FAXGETTY" ]; then
 	ed - /etc/inittab<<EOF
 /^[^#].*:respawn:.*faxgetty .*$tty/s/respawn/off/
 w

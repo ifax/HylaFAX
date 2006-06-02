@@ -57,9 +57,9 @@ done
 
 # Test selected modem speed against a list of known standards
 
-if [ "$SPEED" != "" -a "$SPEED" != 38400 -a "$SPEED" != 19200 \
-   -a "$SPEED" != 9600 -a "$SPEED" != 4800 -a "$SPEED" != 2400 \
-   -a "$SPEED" != 1200 ]; then
+if [ "$SPEED" != "" ] && [ "$SPEED" != 38400 ] && [ "$SPEED" != 19200 ] \
+   && [ "$SPEED" != 9600 ] && [ "$SPEED" != 4800 ] && [ "$SPEED" != 2400 ] \
+   && [ "$SPEED" != 1200 ]; then
    cat<<EOF
 
 Warning, you have selected a DTE-DCE communication rate ($SPEED) that
@@ -94,7 +94,7 @@ EOF
 #
 euid=`id|$SED -e 's/.*uid=[0-9]*(\([^)]*\)).*/\1/'`
 test -z "$euid" && euid=`(whoami) 2>/dev/null`
-test -z "$euid" -a -w /dev && euid=root
+test -z "$euid" && test -w /dev && euid=root
 if [ "$euid" != "root" ]; then
     echo "Sorry, but you must run this script as the super-user!"
     exit 1
@@ -248,7 +248,7 @@ EOF
 faxGID=`$GREP "^$PROTOGID:" $GROUP | cut -d: -f3`
 if [ -z "$faxGID" ]; then faxGID=$defPROTOGID; fi
 
-while [ -z "$TTY" -o ! -c /dev/$TTY ]; do
+while [ -z "$TTY" ] || [ ! -c /dev/$TTY ]; do
     test "$TTY" != "" && echo "/dev/$TTY is not a terminal device."
     prompt "Serial port that modem is connected to [$TTY]?"; read TTY
 done
@@ -662,7 +662,7 @@ if [ -f $SCHEDCONFIG ]; then
     echo ""
     getServerParameters $SCHEDCONFIG
 fi
-if [ -f $CONFIG -o -z "$OLDCONFIG" ]; then
+if [ -f $CONFIG ] || [ -z "$OLDCONFIG" ]; then
     OLDCONFIG=$CONFIG
 fi
 if [ -f $OLDCONFIG ]; then
@@ -683,12 +683,12 @@ fi
 isOK()
 {
     x="$1"
-    test -z "$x" -o "$x" = y -o "$x" = yes
+    test -z "$x" || test "$x" = y || test "$x" = yes
 }
 isNotOK()
 {
     x="$1"
-    test -n "$x" -a "$x" != y -a "$x" != yes
+    test -n "$x" && test "$x" != y && test "$x" != yes
 }
 
 #
@@ -742,7 +742,7 @@ EOF
     checkOctalNumber $DeviceMode &&	DeviceMode=$param
     checkForLocalFile $DialStringRules "dial string rules"
     checkFaxNumber;
-    if [ "$TagLineFont" != "" -a "$TagLineFont" != '""' ]; then
+    if [ "$TagLineFont" != "" ] && [ "$TagLineFont" != '""' ]; then
 	checkForLocalFile $TagLineFont "tag line font";
     fi
     printServerConfig; prompt "Are these ok [yes]?"; read ok
@@ -1424,7 +1424,7 @@ checkFlowControlAgainstTTY()
 {
     case "$ModemFlowControl" in
     xonxoff|XONXOFF)
-	if [ "$TTY" = ttyf${PORT} -a -c /dev/ttym${PORT} ]; then
+	if [ "$TTY" = ttyf${PORT} ] && [ -c /dev/ttym${PORT} ]; then
 	    echo ""
 	    echo "Warning, the modem is setup to use software flow control,"
 	    echo "but the \"$TTY\" device is used with hardware flow control"
@@ -1438,7 +1438,7 @@ checkFlowControlAgainstTTY()
 	fi
 	;;
     rtscts|RTSCTS)
-	if [ "$TTY" = ttym${PORT} -a -c /dev/ttyf${PORT} ]; then
+	if [ "$TTY" = ttym${PORT} ] && [ -c /dev/ttyf${PORT} ]; then
 	    echo ""
 	    echo "Warning, the modem is setup to use hardware flow control,"
 	    echo "but the \"$TTY\" device does not honor the RTS/CTS signals."
@@ -1979,7 +1979,7 @@ EOF
 	. $PROMPTS
     fi
     checkForLocalFile $DialStringRules "dial string rules"
-    if [ "$DestControls" != "" -a "$DestControls" != '""' ]; then
+    if [ "$DestControls" != "" ] && [ "$DestControls" != '""' ]; then
 	checkForLocalFile $DestControls "destination controls";
     fi
     printSchedulerConfig; prompt "Are these ok [yes]?"; read ok

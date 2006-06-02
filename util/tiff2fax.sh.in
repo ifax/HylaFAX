@@ -140,7 +140,7 @@ OK)				# no conversion needed
 REFORMAT)			# only need format conversion (e.g. g4->g3)
     $TIFFCP -i -c $df -f lsb2msb -r 9999 $fil $out
     # libtiff 3.5.7 gives exit status 9 when there are unknown tags...
-    if [ $? != 0 -a $? != 9 ]; then {
+    if [ $? != 0 ] && [ $? != 9 ]; then {
 	$CAT<<EOF
 Unexpected failure converting TIFF document; the command
 

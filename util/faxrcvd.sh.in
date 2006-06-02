@@ -165,7 +165,7 @@ if [ -f $FILE ]; then
 	errors)		NOTIFY_FAXMASTER=no;;
 	*)		NOTIFY_FAXMASTER=yes;;
     esac
-    if [ "$TOADDR" != "$SENDTO" -a "$NOTIFY_FAXMASTER" != "no" ]; then
+    if [ "$TOADDR" != "$SENDTO" ] && [ "$NOTIFY_FAXMASTER" != "no" ]; then
 	(echo "Mime-Version: 1.0"
 	 echo "Content-Type: text/plain; charset=$CHARSET"
 	 echo "Content-Transfer-Encoding: quoted-printable"

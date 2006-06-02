@@ -32,7 +32,7 @@
 #
 # Return mail to the submitter of a job when notification is needed.
 #
-if [ $# != 3 -a $# != 4 ]; then
+if [ $# != 3 ] && [ $# != 4 ]; then
     echo "Usage: $0 qfile why jobtime [nextTry]"
     exit 1
 fi

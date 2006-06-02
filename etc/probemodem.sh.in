@@ -91,7 +91,7 @@ SVR4UULCKN=$LIBEXEC/lockname	# SVR4 UUCP lock name construction program
 ONDELAY=$LIBEXEC/ondelay	# prgm to open devices blocking on carrier
 CAT="$CAT -u"			# something to do unbuffered reads and writes
 
-while [ -z "$TTY" -o ! -c /dev/$TTY ]; do
+while [ -z "$TTY" ] || [ ! -c /dev/$TTY ]; do
     if [ "$TTY" != "" ]; then
 	echo "/dev/$TTY is not a terminal device."
     fi

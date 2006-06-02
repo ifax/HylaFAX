@@ -36,7 +36,7 @@
 #
 # Return mail to the submitter of a job when notification is needed.
 #
-if [ $# != 3 -a $# != 4 ]; then
+if [ $# != 3 ] && [ $# != 4 ]; then
     echo "Usage: $0 qfile why jobtime [nextTry]"
     exit 1
 fi
@@ -566,11 +566,11 @@ returnToSender()
     if [ -n "$commid" ] ; then
         printItem "%s" "$DICTCOMMID" "$commid"
     fi
-    if [ "$modem" != "any" -a "$RETURNTECHINFO" = "yes" ] ; then
+    if [ "$modem" != "any" ] && [ "$RETURNTECHINFO" = "yes" ] ; then
         printItem "%s" "$DICTMODEM" "$modem"
     fi
     printItem "%s" "$DICTSUBMITTEDFROM" "$client"
-    if [ "$jobtype" = "facsimile" -a "$RETURNTECHINFO" = "yes" ] ; then
+    if [ "$jobtype" = "facsimile" ] && [ "$RETURNTECHINFO" = "yes" ] ; then
         printItem "%u (mm)" "$DICTPAGEWIDTH" "$pagewidth"
         printItem "%.0f (mm)" "$DICTPAGELENGTH" "$pagelength"
         printItem "%.0f (lpi)" "$DICTRES" "$resolution"
@@ -587,7 +587,7 @@ returnToSender()
         printItem "%u ($DICTTOTALPAGES)" "$DICTTOTPAGES" "$totpages"
         printItem "%u ($DICTATTEMPTSPAGE)" "$DICTATTEMPTS" "$ntries"
         printItem "%u ($DICTDIRNEXTPAGE)" "$DICTDIRNUM" "$dirnum"
-        if [ $nfiles -gt 0 -a "$RETURNTECHINFO" = "yes" ] ; then
+        if [ $nfiles -gt 0 ] && [ "$RETURNTECHINFO" = "yes" ] ; then
             printBanner "$DICTDOCSSUBMITTED"
             eval echo "$DICTDOCSTEXT1"
             eval echo "$DICTDOCSTEXT2"
@@ -626,7 +626,7 @@ returnToSender()
                 printf "%15s\n" "$DICTPIN" $pin
             done
         fi
-        if [ $nfiles -ne 0 -a -s $files_0 ] ; then
+        if [ $nfiles -ne 0 ] && [ -s $files_0 ] ; then
             printBanner "$DICTMESSAGETEXT"
             cat $files_0
         fi
@@ -763,7 +763,7 @@ if [ "$WHY" = "done" ] ; then
         printItem "%s" "$DICTCOMMID" "c$commid"
         printf "\n$DICTPROCESSINGTIME %s.\n" "$JTIME"
     fi
-    if [ -n "$faxstatus" -a "$RETURNTRANSCRIPT" = "yes" ] ; then
+    if [ -n "$faxstatus" ] && [ "$RETURNTRANSCRIPT" = "yes" ] ; then
         # use -e in echo to interpret escape characters in faxstatus
 	echo "$DICTADDITIONALINFO"
 	printStatus "     $faxstatus"
