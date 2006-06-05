@@ -1349,19 +1349,42 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallID& callid)
 		for (u_int j = 0 ; j < conf.idConfig.length(); j++) {
 		    if (conf.idConfig[j].pattern == "SHIELDED_DTMF") {	// retrieve DID, e.g. via voice DTMF
 			ringstart = Sys::now();
+			bool marked = false, gotdigit = false;
 			do {
-			    int c = server.getModemChar(5000);
-			    if (c == 0x10) c = server.getModemChar(5000);
+			    int c = server.getModemChar(10000);
+			    if (c == 0x10) c = server.getModemChar(10000);
 			    if (c == 0x23 || c == 0x2A || (c >= 0x30 && c <= 0x39)) {
 				// a DTMF digit was received...
-				protoTrace("MODEM HEARD DTMF: %c", c);
-				callid[j].append(fxStr::format("%c", c));
+				if (!marked || (marked && !gotdigit)) {
+				    protoTrace("MODEM HEARD DTMF: %c", c);
+				    callid[j].append(fxStr::format("%c", c));
+				    gotdigit = true;
+				}
+			    } else if (c == 0x2F) {
+				// got IS-101 DTMF lead marker
+				marked = true;
+				gotdigit = false;
+			    } else if (c == 0x7E) {
+				// got IS-101 DTMF end marker
+				marked = false;
+				gotdigit = false;
+			    } else if (c == 0x73) {
+				// got silence, keep waiting
+				protoTrace("MODEM HEARD SILENCE");
+			    } else if (c == 0x62) {
+				// got busy tone, fail
+				protoTrace("MODEM HEARD BUSY");
+				return (false);
+			    } else if (c == 0x63) {
+				// got CNG tone, we're not going to get more DTMF, trigger answering
+				protoTrace("MODEM HEARD CNG");
+				break;
 			    }
 			} while (callid.length(j) < conf.idConfig[j].answerlength && (Sys::now()-ringstart < 10));
-			u_char buf[2];
-			buf[0] = DLE; buf[1] = ETX;
-			if (!putModem(buf, 2, 3000))
-			    return (false);
+			/*
+			 * If the sender doesn't send enough DTMF then we want to answer anyway.
+			 */
+			while (callid.length(j) < conf.idConfig[j].answerlength) callid[j].append(" ");
 		    }
 		}
 	    }

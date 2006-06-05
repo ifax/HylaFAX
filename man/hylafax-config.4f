@@ -551,6 +551,10 @@ until
 is reached.  Note that if the modem is in voice mode to hear these
 DTMF digits, then it must be returned to fax mode in the
 .B ModemAnswerCmd.
+In order to prevent this feature from losing incoming fax calls, if
+fax sender CNG is detected while waiting for DTMF or if ten seconds
+elapse without sufficient DTMF then the remaining expected digits
+will be populated by whitespace, triggering fax answering.
 
 For example, the following settings will cause HylaFAX to enter
 voice mode and go off-hook when a RING is detected.  It will then
