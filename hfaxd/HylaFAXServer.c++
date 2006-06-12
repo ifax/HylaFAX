@@ -631,6 +631,7 @@ HylaFAXServer::numbertag HylaFAXServer::numbers[] = {
 { "maxloginattempts",	&HylaFAXServer::maxLoginAttempts,	5 },
 { "maxadminattempts",	&HylaFAXServer::maxAdminAttempts,	5 },
 { "maxconsecutivebadcmds",&HylaFAXServer::maxConsecutiveBadCmds,10 },
+{ "jobprotection",	&HylaFAXServer::jobProtection,		0444 },
 };
 
 void

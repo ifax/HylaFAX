@@ -138,63 +138,63 @@ HylaFAXServer::mdtmCmd(const char* pathname)
  */
 SpoolDir HylaFAXServer::dirs[] = {
 { "/status/",	false, false, false, 0,
-  HylaFAXServer::isVisibletrue,
+  &HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listStatus,	&HylaFAXServer::listStatusFile,
   &HylaFAXServer::nlstStatus,	&HylaFAXServer::nlstUnixFile, },
 { "/sendq/",	false, false, false, 0,
-  HylaFAXServer::isVisibleSendQFile,
+  &HylaFAXServer::isVisibleSendQFile,
   &HylaFAXServer::listSendQ,	&HylaFAXServer::listSendQFile,
   &HylaFAXServer::nlstSendQ,	&HylaFAXServer::nlstSendQFile, },
 { "/doneq/",	false, false, false, 0,
-  HylaFAXServer::isVisibleSendQFile,
+  &HylaFAXServer::isVisibleSendQFile,
   &HylaFAXServer::listSendQ,	&HylaFAXServer::listSendQFile,
   &HylaFAXServer::nlstSendQ,	&HylaFAXServer::nlstSendQFile, },
 { "/docq/",	false,  true,  true, 0,
-  HylaFAXServer::isVisibleDocQFile,
+  &HylaFAXServer::isVisibleDocQFile,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
 { "/tmp/",	false,  true,  true, 0,
-  HylaFAXServer::isVisibletrue,
+  &HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
 { "/log/",	false, false, false, 0,
-  HylaFAXServer::isVisibletrue,
+  &HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
 { "/recvq/",	false, false,  true, 0,
-  HylaFAXServer::isVisibleRecvQFile,
+  &HylaFAXServer::isVisibleRecvQFile,
   &HylaFAXServer::listRecvQ,	&HylaFAXServer::listRecvQFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
 { "/archive/",	false, false, false, 0,
-  HylaFAXServer::isVisibletrue,
+  &HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
 { "/pollq/",	false,  true,  true, 0,
-  HylaFAXServer::isVisibleRecvQFile,
+  &HylaFAXServer::isVisibleRecvQFile,
   &HylaFAXServer::listRecvQ,	&HylaFAXServer::listRecvQFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
 { "/",		false, false, false, 0,
-  HylaFAXServer::isVisibleRootFile,
+  &HylaFAXServer::isVisibleRootFile,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
 { "/etc/",	 true, false, false, 0,
-  HylaFAXServer::isVisibletrue,
+  &HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
 { "/info/",	false, false, false, 0,
-  HylaFAXServer::isVisibletrue,
+  &HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
 { "/bin/",	 true, false, false, 0,
-  HylaFAXServer::isVisibletrue,
+  &HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
 { "/config/",	false, false, false, 0,
-  HylaFAXServer::isVisibletrue,
+  &HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
 { "/client/",	 true, false, false, 0,
-  HylaFAXServer::isVisibletrue,
+  &HylaFAXServer::isVisibletrue,
   &HylaFAXServer::listDirectory,	&HylaFAXServer::listUnixFile,
   &HylaFAXServer::nlstDirectory,	&HylaFAXServer::nlstUnixFile, },
 };
@@ -409,7 +409,7 @@ HylaFAXServer::setFileOwner(const char* file)
 bool
 HylaFAXServer::fileVisible(const SpoolDir& dir, const char* filename, const struct stat& sb)
 {
-    return (IS(PRIVILEGED) || (*dir.isVisibleFile)(filename, sb));
+    return (IS(PRIVILEGED) || (this->*dir.isVisibleFile)(filename, sb));
 }
 bool
 HylaFAXServer::isVisibletrue(const char*, const struct stat&)
@@ -495,7 +495,7 @@ HylaFAXServer::listDirectory(FILE* fd, const SpoolDir& sd, DIR* dir)
 	struct stat sb;
 	if (!FileCache::update(path | dp->d_name, sb))
 	    continue;
-	if ((*sd.isVisibleFile)(dp->d_name, sb)) {
+	if ((this->*sd.isVisibleFile)(dp->d_name, sb)) {
 	    (this->*sd.listFile)(fd, sd, dp->d_name, sb);
 	    fputs("\r\n", fd);
 	}
@@ -713,7 +713,7 @@ HylaFAXServer::nlstDirectory(FILE* fd, const SpoolDir& sd, DIR* dir)
 	struct stat sb;
 	if (!FileCache::update(path | dp->d_name, sb))
 	    continue;
-	if ((*sd.isVisibleFile)(dp->d_name, sb)) {
+	if ((this->*sd.isVisibleFile)(dp->d_name, sb)) {
 	    (this->*sd.nlstFile)(fd, sd, dp->d_name, sb);
 	    fputs("\r\n", fd);
 	}
