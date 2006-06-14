@@ -442,7 +442,8 @@ faxMailApp::formatMultipart(FILE* fd, MIMEState& mime, MsgFmt& msg)
 {
     discardPart(fd, mime);			// prologue
     if (!mime.isLastPart()) {
-	do {
+	bool last = false;
+	while (! last) {
 	    int c = getc(fd);
 	    if (c == EOF) {
 		error("Badly formatted MIME; premature EOF");
@@ -455,7 +456,8 @@ faxMailApp::formatMultipart(FILE* fd, MIMEState& mime, MsgFmt& msg)
 
 	    MIMEState bodyMime(mime);		// state for sub-part
 	    formatMIME(fd, bodyMime, bodyHdrs);
-	} while (!mime.isLastPart());
+	    last = bodyMime.isLastPart();
+	}
     }
 }
 

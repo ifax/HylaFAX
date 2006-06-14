@@ -71,7 +71,6 @@ MIMEState::MIMEState(MIMEState& other, const char* t, const char* st)
 MIMEState::~MIMEState()
 {
     if (parent) {
-	parent->lastPart = lastPart;
 	parent->lineno = lineno;
     }
 }
