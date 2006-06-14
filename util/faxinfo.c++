@@ -35,6 +35,7 @@
 #include "PageSize.h"
 #include "Class2Params.h"
 #include "CallID.h"
+#include "Sys.h"
 
 #include "port.h"
 
@@ -78,10 +79,53 @@ sanitize(fxStr& s)
     }
 }
 
-static const char* faxStart = "%s:\n";
+static void
+usage (const char* app)
+{
+    printf("usage: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt]\n\n", app);
+}
+
+static const char*
+escapedString (const char*src)
+{
+    char* res;
+    int len;
+    len = strlen(src);
+    res = (char*)malloc(len);
+    if (res)
+    {
+	char* dst = res;
+	for (int i = 0; i < len; i++)
+	{
+	    if (src[i] == '\\')
+	    {
+		switch (src[++i])
+		{
+		    case 'n':	*dst++ = '\n';	break;
+		    case 'r':	*dst++ = '\r';	break;
+		    case 't':	*dst++ = '\t';	break;
+		    default:
+			*dst++ = src[i];
+		}
+	    } else
+	    {
+		*dst++ = src[i];
+	    }
+	}
+    }
+    return res;
+}
+
+static const char* faxStart = "";
 static const char* fieldStart = "%10s: ";
 static const char* fieldEnd = "\n";
 static const char* faxEnd = "";
+
+static void 
+printStart (const char* filename)
+{
+    printf(faxStart, filename);
+}
 
 static void
 printField (const char* val_fmt, ...)
@@ -94,27 +138,47 @@ printField (const char* val_fmt, ...)
     va_end(ap);
 }
 
+static void
+printEnd (const char* filename)
+{
+    printf(faxEnd, filename);
+}
+
 int
 main(int argc, char** argv)
 {
-    bool showFilename = true;
     const char* appName = argv[0];
+    int c;
 
-    if (argc > 2 && streq(argv[1], "-n")) {
-	showFilename = false;
-	argc--, argv++;
-    }
-    if (argc != 2) {
-	fprintf(stderr, "usage: %s [-n] file.tif\n", appName);
-	return (-1);
-    }
+    while ((c = getopt(argc, argv, "nS:s:e:E:")) != -1)
+	switch (c) {
+	    case '?':
+	    	usage(appName);
+		return 0;
+	    case 'n':
+		faxStart = "%s:\n";
+		break;
+	    case 'S':
+		faxStart = escapedString(optarg);
+	    	break;
+	    case 's':
+		fieldStart = escapedString(optarg);
+	    	break;
+	    case 'e':
+		fieldEnd = escapedString(optarg);
+	    	break;
+	    case 'E':
+		faxEnd = escapedString(optarg);
+	    	break;
+	}
 
-    printf(faxStart, argv[1]);
+    printStart(argv[optind]);
     TIFFSetErrorHandler(NULL);
     TIFFSetWarningHandler(NULL);
-    TIFF* tif = TIFFOpen(argv[1], "r");
+    TIFF* tif = TIFFOpen(argv[optind], "r");
     if (tif == NULL) {
-	printf("Could not open %s; either not TIFF or corrupted.\n", argv[1]);
+	printf("Could not open %s; either not TIFF or corrupted.\n",
+		argv[optind]);
 	return (0);
     }
     bool ok = isFAXImage(tif);
@@ -276,6 +340,6 @@ main(int argc, char** argv)
 	// formatting will mess up if i gets bigger than one digit
 	printf("%9s%u: %s", "CallID", i+1, (const char*) callid.id(i));
     }
-    printf(faxEnd, argv[1]);
+    printEnd(argv[optind]);
     return (0);
 }
