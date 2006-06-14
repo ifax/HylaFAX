@@ -172,174 +172,177 @@ main(int argc, char** argv)
 	    	break;
 	}
 
-    printStart(argv[optind]);
-    TIFFSetErrorHandler(NULL);
-    TIFFSetWarningHandler(NULL);
-    TIFF* tif = TIFFOpen(argv[optind], "r");
-    if (tif == NULL) {
-	printf("Could not open %s; either not TIFF or corrupted.\n",
-		argv[optind]);
-	return (0);
-    }
-    bool ok = isFAXImage(tif);
-    if (!ok) {
-	printf("Does not look like a facsimile?\n");
-	return (0);
-    }
+    while (optind < argc) {
+	printStart(argv[optind]);
+	TIFFSetErrorHandler(NULL);
+	TIFFSetWarningHandler(NULL);
+	TIFF* tif = TIFFOpen(argv[optind], "r");
+	if (tif == NULL) {
+	    printf("Could not open %s; either not TIFF or corrupted.\n",
+		    argv[optind]);
+	    return (0);
+	}
+	bool ok = isFAXImage(tif);
+	if (!ok) {
+	    printf("Does not look like a facsimile?\n");
+	    return (0);
+	}
 
-    Class2Params params;
-    uint32 v;
-    float vres = 3.85;					// XXX default
-    float hres = 8.03;
+	Class2Params params;
+	uint32 v;
+	float vres = 3.85;					// XXX default
+	float hres = 8.03;
 #ifdef TIFFTAG_FAXRECVPARAMS
-    if (TIFFGetField(tif, TIFFTAG_FAXRECVPARAMS, &v)) {
-	params.decode((u_int) v);			// page transfer params
-	// inch & metric resolutions overlap and are distinguished by yres
-	TIFFGetField(tif, TIFFTAG_YRESOLUTION, &vres);
-	switch ((u_int) vres) {
-	    case 100:
-		params.vr = VR_200X100;
-		break;
-	    case 200:
-		params.vr = VR_200X200;
-		break;
-	    case 400:
-		params.vr = VR_200X400;
-		break;
-	    case 300:
-		params.vr = VR_300X300;
-		break;
-	}
-    } else {
+	if (TIFFGetField(tif, TIFFTAG_FAXRECVPARAMS, &v)) {
+	    params.decode((u_int) v);			// page transfer params
+	    // inch & metric resolutions overlap and are distinguished by yres
+	    TIFFGetField(tif, TIFFTAG_YRESOLUTION, &vres);
+	    switch ((u_int) vres) {
+		case 100:
+		    params.vr = VR_200X100;
+		    break;
+		case 200:
+		    params.vr = VR_200X200;
+		    break;
+		case 400:
+		    params.vr = VR_200X400;
+		    break;
+		case 300:
+		    params.vr = VR_300X300;
+		    break;
+	    }
+	} else {
 #endif
-    if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &vres)) {
-	uint16 resunit = RESUNIT_INCH;			// TIFF spec default
-	TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &resunit);
-	if (resunit == RESUNIT_INCH)
-	    vres /= 25.4;
-	if (resunit == RESUNIT_NONE)
-	    vres /= 720.0;				// postscript units ?
-	if (TIFFGetField(tif, TIFFTAG_XRESOLUTION, &hres)) {
+	if (TIFFGetField(tif, TIFFTAG_YRESOLUTION, &vres)) {
+	    uint16 resunit = RESUNIT_INCH;			// TIFF spec default
+	    TIFFGetField(tif, TIFFTAG_RESOLUTIONUNIT, &resunit);
 	    if (resunit == RESUNIT_INCH)
-		hres /= 25.4;
+		vres /= 25.4;
 	    if (resunit == RESUNIT_NONE)
-		hres /= 720.0;				// postscript units ?
-        }
-    }
-    params.setRes((u_int) hres, (u_int) vres);		// resolution
-    TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &v);
-    params.setPageWidthInPixels((u_int) v);		// page width
-    TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &v);
-    params.setPageLengthInMM((u_int)(v / vres));	// page length
-#ifdef TIFFTAG_FAXRECVPARAMS
-    }
-#endif
-    char* cp;
-#ifdef TIFFTAG_FAXDCS
-    if (TIFFGetField(tif, TIFFTAG_FAXDCS, &cp) && strncmp(cp, "00 00 00", 8) != 0) {
-	// cannot trust br from faxdcs as V.34-Fax does not provide it there
-	u_int brhold = params.br;
-	fxStr faxdcs(cp);
-	sanitize(faxdcs);
-	params.asciiDecode((const char*) faxdcs);	// params per Table 2/T.30
-	params.setFromDCS(params);
-	params.br = brhold;
-    }
-#endif
-    fxStr sender = "";
-    CallID callid;
-    if (TIFFGetField(tif, TIFFTAG_IMAGEDESCRIPTION, &cp)) {
-	while (cp[0] != '\0' && cp[0] != '\n') {	// sender
-	    sender.append(cp[0]);
-	    cp++;
+		vres /= 720.0;				// postscript units ?
+	    if (TIFFGetField(tif, TIFFTAG_XRESOLUTION, &hres)) {
+		if (resunit == RESUNIT_INCH)
+		    hres /= 25.4;
+		if (resunit == RESUNIT_NONE)
+		    hres /= 720.0;				// postscript units ?
+	    }
 	}
-	sanitize(sender);
-	u_int i = 0;
-	while (cp[0] == '\n') {
-	    cp++;
-	    callid.resize(i+1);
-	    while (cp[0] != '\0' && cp[0] != '\n') {
-		callid[i].append(cp[0]);
+	params.setRes((u_int) hres, (u_int) vres);		// resolution
+	TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &v);
+	params.setPageWidthInPixels((u_int) v);		// page width
+	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &v);
+	params.setPageLengthInMM((u_int)(v / vres));	// page length
+#ifdef TIFFTAG_FAXRECVPARAMS
+	}
+#endif
+	char* cp;
+#ifdef TIFFTAG_FAXDCS
+	if (TIFFGetField(tif, TIFFTAG_FAXDCS, &cp) && strncmp(cp, "00 00 00", 8) != 0) {
+	    // cannot trust br from faxdcs as V.34-Fax does not provide it there
+	    u_int brhold = params.br;
+	    fxStr faxdcs(cp);
+	    sanitize(faxdcs);
+	    params.asciiDecode((const char*) faxdcs);	// params per Table 2/T.30
+	    params.setFromDCS(params);
+	    params.br = brhold;
+	}
+#endif
+	fxStr sender = "";
+	CallID callid;
+	if (TIFFGetField(tif, TIFFTAG_IMAGEDESCRIPTION, &cp)) {
+	    while (cp[0] != '\0' && cp[0] != '\n') {	// sender
+		sender.append(cp[0]);
 		cp++;
 	    }
-	    sanitize(callid[i]);
-	    i++;
-	}
-    } else
-	sender = "<unknown>";
-    printField("%s", "Sender", (const char*) sender);
+	    sanitize(sender);
+	    u_int i = 0;
+	    while (cp[0] == '\n') {
+		cp++;
+		callid.resize(i+1);
+		while (cp[0] != '\0' && cp[0] != '\n') {
+		    callid[i].append(cp[0]);
+		    cp++;
+		}
+		sanitize(callid[i]);
+		i++;
+	    }
+	} else
+	    sender = "<unknown>";
+	printField("%s", "Sender", (const char*) sender);
 #ifdef TIFFTAG_FAXSUBADDRESS
-    if (TIFFGetField(tif, TIFFTAG_FAXSUBADDRESS, &cp)) {
-	fxStr subaddr(cp);
-	sanitize(subaddr);
-	printField("%s", "SubAddr", (const char*) subaddr);
-    }
+	if (TIFFGetField(tif, TIFFTAG_FAXSUBADDRESS, &cp)) {
+	    fxStr subaddr(cp);
+	    sanitize(subaddr);
+	    printField("%s", "SubAddr", (const char*) subaddr);
+	}
 #endif
-    fxStr date;
-    if (TIFFGetField(tif, TIFFTAG_DATETIME, &cp)) {	// time received
-	date = cp;
-	sanitize(date);
-    } else {
-	struct stat sb;
-	fstat(TIFFFileno(tif), &sb);
-	char buf[80];
-	strftime(buf, sizeof (buf),
-	    "%Y:%m:%d %H:%M:%S %Z", localtime(&sb.st_mtime));
-	date = buf;
-    }
-    TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &v);
-    float h = v / (params.vr == VR_NORMAL ? 3.85 : 
-	params.vr == VR_200X100 ? 3.94 : 
-	params.vr == VR_FINE ? 7.7 :
-	params.vr == VR_200X200 ? 7.87 : 
-	params.vr == VR_R8 ? 15.4 : 
-	params.vr == VR_200X400 ? 15.75 : 
-	params.vr == VR_300X300 ? 11.81 : 15.4);
-    TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &v);
-    float w = v / (params.vr == VR_NORMAL ? 8.0 : 
-	params.vr == VR_200X100 ? 8.00 : 
-	params.vr == VR_FINE ? 8.00 :
-	params.vr == VR_200X200 ? 8.00 : 
-	params.vr == VR_R8 ? 8.00 : 
-	params.vr == VR_200X400 ? 8.00 : 
-	params.vr == VR_300X300 ? 12.01 : 16.01);
-    time_t time = 0;
-    u_int npages = 0;					// page count
-    do {
-	npages++;
+	fxStr date;
+	if (TIFFGetField(tif, TIFFTAG_DATETIME, &cp)) {	// time received
+	    date = cp;
+	    sanitize(date);
+	} else {
+	    struct stat sb;
+	    fstat(TIFFFileno(tif), &sb);
+	    char buf[80];
+	    strftime(buf, sizeof (buf),
+		"%Y:%m:%d %H:%M:%S %Z", localtime(&sb.st_mtime));
+	    date = buf;
+	}
+	TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &v);
+	float h = v / (params.vr == VR_NORMAL ? 3.85 : 
+	    params.vr == VR_200X100 ? 3.94 : 
+	    params.vr == VR_FINE ? 7.7 :
+	    params.vr == VR_200X200 ? 7.87 : 
+	    params.vr == VR_R8 ? 15.4 : 
+	    params.vr == VR_200X400 ? 15.75 : 
+	    params.vr == VR_300X300 ? 11.81 : 15.4);
+	TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &v);
+	float w = v / (params.vr == VR_NORMAL ? 8.0 : 
+	    params.vr == VR_200X100 ? 8.00 : 
+	    params.vr == VR_FINE ? 8.00 :
+	    params.vr == VR_200X200 ? 8.00 : 
+	    params.vr == VR_R8 ? 8.00 : 
+	    params.vr == VR_200X400 ? 8.00 : 
+	    params.vr == VR_300X300 ? 12.01 : 16.01);
+	time_t time = 0;
+	u_int npages = 0;					// page count
+	do {
+	    npages++;
 #ifdef TIFFTAG_FAXRECVTIME
-	if (TIFFGetField(tif, TIFFTAG_FAXRECVTIME, &v))
-	    time += v;
+	    if (TIFFGetField(tif, TIFFTAG_FAXRECVTIME, &v))
+		time += v;
 #endif
-    } while (TIFFReadDirectory(tif));
-    TIFFClose(tif);
+	} while (TIFFReadDirectory(tif));
+	TIFFClose(tif);
 
-    printField("%u", "Pages", npages);
-    if (params.vr == VR_NORMAL)
-	printField("Normal", "Quality");
-    else if (params.vr == VR_FINE)
-	printField("Fine", "Quality");
-    else if (params.vr == VR_R8)
-	printField("Superfine", "Quality");
-    else if (params.vr == VR_R16)
-	printField("Hyperfine", "Quality");
-    else
-	printField("%u lines/inch", "Quality", params.verticalRes());
-    PageSizeInfo* info = PageSizeInfo::getPageSizeBySize(w, h);
-    if (info)
-	printField("%s", "Page", info->name());
-    else
-	printField("%u by %u", "Page", params.pageWidth(), (u_int) h);
-    delete info;
-    printField("%s", "Received", (const char*) date);
-    printField("%s", "TimeToRecv", time == 0 ? "<unknown>" : fmtTime(time));
-    printField("%s", "SignalRate", params.bitRateName());
-    printField("%s", "DataFormat", params.dataFormatName());
-    printField("%s", "ErrCorrect", params.ec == EC_DISABLE ? "No" : "Yes");
-    for (u_int i = 0; i < callid.size(); i++) {
-	// formatting will mess up if i gets bigger than one digit
-	printf("%9s%u: %s", "CallID", i+1, (const char*) callid.id(i));
+	printField("%u", "Pages", npages);
+	if (params.vr == VR_NORMAL)
+	    printField("Normal", "Quality");
+	else if (params.vr == VR_FINE)
+	    printField("Fine", "Quality");
+	else if (params.vr == VR_R8)
+	    printField("Superfine", "Quality");
+	else if (params.vr == VR_R16)
+	    printField("Hyperfine", "Quality");
+	else
+	    printField("%u lines/inch", "Quality", params.verticalRes());
+	PageSizeInfo* info = PageSizeInfo::getPageSizeBySize(w, h);
+	if (info)
+	    printField("%s", "Page", info->name());
+	else
+	    printField("%u by %u", "Page", params.pageWidth(), (u_int) h);
+	delete info;
+	printField("%s", "Received", (const char*) date);
+	printField("%s", "TimeToRecv", time == 0 ? "<unknown>" : fmtTime(time));
+	printField("%s", "SignalRate", params.bitRateName());
+	printField("%s", "DataFormat", params.dataFormatName());
+	printField("%s", "ErrCorrect", params.ec == EC_DISABLE ? "No" : "Yes");
+	for (u_int i = 0; i < callid.size(); i++) {
+	    // formatting will mess up if i gets bigger than one digit
+	    printf("%9s%u: %s", "CallID", i+1, (const char*) callid.id(i));
+	}
+	printEnd(argv[optind]);
+	optind++;
     }
-    printEnd(argv[optind]);
     return (0);
 }
