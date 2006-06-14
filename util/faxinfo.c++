@@ -78,6 +78,22 @@ sanitize(fxStr& s)
     }
 }
 
+static const char* faxStart = "%s:\n";
+static const char* fieldStart = "%10s: ";
+static const char* fieldEnd = "\n";
+static const char* faxEnd = "";
+
+static void
+printField (const char* val_fmt, ...)
+{
+    char fmt[256];
+    snprintf(fmt, sizeof(fmt), "%s%s%s", fieldStart, val_fmt, fieldEnd);
+    va_list ap;
+    va_start(ap,val_fmt);
+    vprintf(fmt, ap);
+    va_end(ap);
+}
+
 int
 main(int argc, char** argv)
 {
@@ -92,8 +108,8 @@ main(int argc, char** argv)
 	fprintf(stderr, "usage: %s [-n] file.tif\n", appName);
 	return (-1);
     }
-    if (showFilename)
-	printf("%s:\n", argv[1]);
+
+    printf(faxStart, argv[1]);
     TIFFSetErrorHandler(NULL);
     TIFFSetWarningHandler(NULL);
     TIFF* tif = TIFFOpen(argv[1], "r");
@@ -187,12 +203,12 @@ main(int argc, char** argv)
 	}
     } else
 	sender = "<unknown>";
-    printf("%11s %s\n", "Sender:", (const char*) sender);
+    printField("%s", "Sender", (const char*) sender);
 #ifdef TIFFTAG_FAXSUBADDRESS
     if (TIFFGetField(tif, TIFFTAG_FAXSUBADDRESS, &cp)) {
 	fxStr subaddr(cp);
 	sanitize(subaddr);
-	printf("%11s %s\n", "SubAddr:", (const char*) subaddr);
+	printField("%s", "SubAddr", (const char*) subaddr);
     }
 #endif
     fxStr date;
@@ -234,31 +250,32 @@ main(int argc, char** argv)
     } while (TIFFReadDirectory(tif));
     TIFFClose(tif);
 
-    printf("%11s %u\n", "Pages:", npages);
+    printField("%u", "Pages", npages);
     if (params.vr == VR_NORMAL)
-	printf("%11s Normal\n", "Quality:");
+	printField("Normal", "Quality");
     else if (params.vr == VR_FINE)
-	printf("%11s Fine\n", "Quality:");
+	printField("Fine", "Quality");
     else if (params.vr == VR_R8)
-	printf("%11s Superfine\n", "Quality:");
+	printField("Superfine", "Quality");
     else if (params.vr == VR_R16)
-	printf("%11s Hyperfine\n", "Quality:");
+	printField("Hyperfine", "Quality");
     else
-	printf("%11s %u lines/inch\n", "Quality:", params.verticalRes());
+	printField("%u lines/inch", "Quality", params.verticalRes());
     PageSizeInfo* info = PageSizeInfo::getPageSizeBySize(w, h);
     if (info)
-	printf("%11s %s\n", "Page:", info->name());
+	printField("%s", "Page", info->name());
     else
-	printf("%11s %u by %u\n", "Page:", params.pageWidth(), (u_int) h);
+	printField("%u by %u", "Page", params.pageWidth(), (u_int) h);
     delete info;
-    printf("%11s %s\n", "Received:", (const char*) date);
-    printf("%11s %s\n", "TimeToRecv:", time == 0 ? "<unknown>" : fmtTime(time));
-    printf("%11s %s\n", "SignalRate:", params.bitRateName());
-    printf("%11s %s\n", "DataFormat:", params.dataFormatName());
-    printf("%11s %s\n", "ErrCorrect:", params.ec == EC_DISABLE ? "No" : "Yes");
+    printField("%s", "Received", (const char*) date);
+    printField("%s", "TimeToRecv", time == 0 ? "<unknown>" : fmtTime(time));
+    printField("%s", "SignalRate", params.bitRateName());
+    printField("%s", "DataFormat", params.dataFormatName());
+    printField("%s", "ErrCorrect", params.ec == EC_DISABLE ? "No" : "Yes");
     for (u_int i = 0; i < callid.size(); i++) {
 	// formatting will mess up if i gets bigger than one digit
-	printf("%9s%u: %s\n", "CallID", i+1, (const char*) callid.id(i));
+	printf("%9s%u: %s", "CallID", i+1, (const char*) callid.id(i));
     }
+    printf(faxEnd, argv[1]);
     return (0);
 }
