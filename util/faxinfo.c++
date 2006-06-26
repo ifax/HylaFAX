@@ -128,14 +128,15 @@ printStart (const char* filename)
 }
 
 static void
-printField (const char* val_fmt, ...)
+printField (const char* val_fmt, const char* name, ...)
 {
     char fmt[256];
-    snprintf(fmt, sizeof(fmt), "%s%s%s", fieldStart, val_fmt, fieldEnd);
+    printf(fieldStart, name);
     va_list ap;
-    va_start(ap,val_fmt);
-    vprintf(fmt, ap);
+    va_start(ap,name);
+    vprintf(val_fmt, ap);
     va_end(ap);
+    printf(fieldEnd, name);
 }
 
 static void
