@@ -82,7 +82,7 @@ sanitize(fxStr& s)
 static void
 usage (const char* app)
 {
-    printf("usage: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt]\n\n", app);
+    printf("usage: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt] [-D]\n\n", app);
 }
 
 static const char*
@@ -91,27 +91,41 @@ escapedString (const char*src)
     char* res;
     int len;
     len = strlen(src);
-    res = (char*)malloc(len);
+    res = (char*)malloc(len+1);
     if (res)
     {
 	char* dst = res;
-	for (int i = 0; i < len; i++)
+	for (int i = 0; i <= len; i++)
 	{
-	    if (src[i] == '\\')
+	    switch (src[i])
 	    {
-		switch (src[++i])
-		{
-		    case 'n':	*dst++ = '\n';	break;
-		    case 'r':	*dst++ = '\r';	break;
-		    case 't':	*dst++ = '\t';	break;
-		    default:
-			*dst++ = src[i];
-		}
-	    } else
-	    {
-		*dst++ = src[i];
+	    	case '\\':
+		    switch (src[++i])
+		    {
+			case 'n':	*dst++ = '\n';	break;
+			case 'r':	*dst++ = '\r';	break;
+			case 't':	*dst++ = '\t';	break;
+			default:
+			    *dst++ = src[i];
+		    }
+		    break;
+		case '%':
+		    *dst++ = src[i];
+		    switch (src[++i])
+		    {
+			case 'n':	*dst++ = '%';	break;
+			default:
+			    *dst++ = src[i];
+		    }
+		    break;
+
+		default:
+		    *dst++ = src[i];
 	    }
 	}
+    } else
+    {
+    	exit(ENOMEM);
     }
     return res;
 }
@@ -149,15 +163,20 @@ int
 main(int argc, char** argv)
 {
     const char* appName = argv[0];
+    bool debug = false;
+    bool baseName = false;
     int c;
 
-    while ((c = getopt(argc, argv, "nS:s:e:E:")) != -1)
+    while ((c = getopt(argc, argv, "nbS:s:e:E:D")) != -1)
 	switch (c) {
 	    case '?':
 	    	usage(appName);
 		return 0;
 	    case 'n':
 		faxStart = "%s:\n";
+		break;
+	    case 'b':
+	    	baseName = true;
 		break;
 	    case 'S':
 		faxStart = escapedString(optarg);
@@ -171,10 +190,25 @@ main(int argc, char** argv)
 	    case 'E':
 		faxEnd = escapedString(optarg);
 	    	break;
+	    case 'D':
+	    	debug = true;
+		break;
 	}
 
+    if (debug)
+	fprintf(stderr, "faxStart='%s'\nfieldStart='%s'\nfieldEnd='%s'\nfaxEnd'%s'\n",
+		faxStart,fieldStart,fieldEnd,faxEnd);
+
     while (optind < argc) {
-	printStart(argv[optind]);
+	const char* name = argv[optind];
+
+	if (baseName) {
+	    const char* r = strrchr(name, '/');
+	    if (r)
+		name = r+1;
+	}
+
+	printStart(name);
 	TIFFSetErrorHandler(NULL);
 	TIFFSetWarningHandler(NULL);
 	TIFF* tif = TIFFOpen(argv[optind], "r");
@@ -343,7 +377,7 @@ main(int argc, char** argv)
 	    fxStr fmt(fxStr::format("CallID%u", i+1));
 	    printField("%s", (const char*)fmt, (const char*) callid.id(i));
 	}
-	printEnd(argv[optind]);
+	printEnd(name);
 	optind++;
     }
     return (0);
