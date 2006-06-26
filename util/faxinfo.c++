@@ -83,6 +83,16 @@ static void
 usage (const char* app)
 {
     printf("usage: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt] [-D]\n\n", app);
+    printf("\t-n\tPrint FAX filename\n");
+    printf("\t-C d\tQuoted CSV-style output with <d> as the deliminator\n");
+    printf("\t-c d\tCSV-style output with <d> as the deliminator\n");
+    printf("\t-r\traw format - values outputed with no names\n");
+
+    printf("  Raw format options:\n");
+    printf("\t-S fmt\tUse fmt for the fax start format\n");
+    printf("\t-s fmt\tUse fmt for the field start format\n");
+    printf("\t-e fmt\tUse fmt for the field end format\n");
+    printf("\t-E fmt\tUse fmt for the fax end format\n");
 }
 
 static const char*
@@ -167,11 +177,29 @@ main(int argc, char** argv)
     bool baseName = false;
     int c;
 
-    while ((c = getopt(argc, argv, "nbS:s:e:E:D")) != -1)
+    while ((c = getopt(argc, argv, "C:c:rnbS:s:e:E:D")) != -1)
 	switch (c) {
 	    case '?':
 	    	usage(appName);
 		return 0;
+	    case 'C':
+		faxStart = "\"%s\"";
+		fieldStart = escapedString(fxStr::format("%%0.0s%s\"", optarg));
+		fieldEnd = "\"";
+		faxEnd = "\n";
+		break;
+	    case 'c':
+		faxStart = "%s";
+		fieldStart = escapedString(fxStr::format("%%0.0s%s", optarg));
+		fieldEnd = "";
+		faxEnd = "\n";
+		break;
+	    case 'r':
+		faxStart = "";
+		fieldStart = "%0.0s";
+		fieldEnd = "\n";
+		faxEnd = "";
+		break;
 	    case 'n':
 		faxStart = "%s:\n";
 		break;
