@@ -340,7 +340,8 @@ main(int argc, char** argv)
 	printField("%s", "ErrCorrect", params.ec == EC_DISABLE ? "No" : "Yes");
 	for (u_int i = 0; i < callid.size(); i++) {
 	    // formatting will mess up if i gets bigger than one digit
-	    printf("%9s%u: %s", "CallID", i+1, (const char*) callid.id(i));
+	    fxStr fmt(fxStr::format("CallID%u", i+1));
+	    printField("%s", (const char*)fmt, (const char*) callid.id(i));
 	}
 	printEnd(argv[optind]);
 	optind++;
