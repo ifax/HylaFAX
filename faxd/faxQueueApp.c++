@@ -458,7 +458,7 @@ faxQueueApp::prepareJobDone(Job& job, int status)
 		 */
 		removeDestInfoJob(job);		// release destination block
 		DestInfo& di = destJobs[job.dest];
-		unblockDestJobs(job, di);	// release any blocked jobs
+		unblockDestJobs(di);		// release any blocked jobs
 	    }
 	}
     }
@@ -1434,7 +1434,7 @@ faxQueueApp::sendJobDone(Job& job, int status)
 	    }
 	}
     } else {
-	unblockDestJobs(job, di);
+	unblockDestJobs(di);
     }
 
     for (cjob = &job; cjob != NULL; cjob = njob) {
@@ -1619,6 +1619,15 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
 void
 faxQueueApp::setReadyToRun(Job& job, bool wait)
 {
+    if (job.state == FaxRequest::state_blocked) {
+	/*
+	 * If the job was "blocked", then jobcontrol previously ran
+	 * just prior to it becoming blocked.  Don't run it again right
+	 * now
+	 */
+	setReady(job);
+	return;
+    }
     if (jobCtrlCmd.length()) {
 	const char *app[3];
 	app[0] = jobCtrlCmd;
@@ -1663,9 +1672,8 @@ faxQueueApp::setReadyToRun(Job& job, bool wait)
 	    while (job.isEmpty() )
 		Dispatcher::instance().dispatch();
 	}
-    } else {
-    	ctrlJobDone(job, 0);
-    }
+    } else
+	setReady(job);
 }
 
 /*
@@ -1680,6 +1688,15 @@ faxQueueApp::ctrlJobDone(Job& job, int status)
 	logError("JOB %s: bad exit status %#x from sub-fork",
 	    (const char*) job.jobid, status);
     }
+    setReady(job);
+}
+
+/*
+ * set a job as really ready
+ */
+void
+faxQueueApp::setReady(Job& job)
+{
     job.state = FaxRequest::state_ready;
     traceJob(job, "READY");
     Trigger::post(Trigger::JOB_READY, job);
@@ -2249,7 +2266,7 @@ faxQueueApp::runJob(Job& job)
     (di.getCalls()+n <= dci.getMaxConcurrentCalls())
 
 void
-faxQueueApp::unblockDestJobs(Job& job, DestInfo& di)
+faxQueueApp::unblockDestJobs(DestInfo& di)
 {
     /*
      * Check if there are blocked jobs waiting to run
@@ -2260,20 +2277,24 @@ faxQueueApp::unblockDestJobs(Job& job, DestInfo& di)
     Job* jb;
     u_int n = 1;
     while ( (jb = di.nextBlocked()) ) {
-	if ( isOKToCall(di, job.getJCI(), n) )
+	if ( isOKToCall(di, jb->getJCI(), n) )
 	{
 	    if (!di.supportsBatching()) n++;
 	    FaxRequest* req = readRequest(*jb);
-	    if (req) {
-		req->notice = "";
-		updateRequest(*req, *jb);
-		delete req;
+	    if (! req) {
+		setDead(*jb);
+		continue;
 	    }
+	    req->notice = "";
+	    updateRequest(*req, *jb);
+	    delete req;
 	    setReadyToRun(*jb, jobCtrlWait);
 	} else
 	{
- 	    traceJob(job, "Continue BLOCK, current calls: %d, max concurrent calls: %d", 
- 		di.getCalls(), job.getJCI().getMaxConcurrentCalls());
+ 	    traceJob(*jb, "Continue BLOCK, current calls: %d, max concurrent calls: %d", 
+ 		di.getCalls(), jb->getJCI().getMaxConcurrentCalls());
+	    di.block(*jb);
+	    break;
 	}
     }
 }
@@ -2304,6 +2325,19 @@ faxQueueApp::areBatchable(Job& job, Job& nextjob, FaxRequest& nextreq)
     if (!job.modem->isInGroup(nextreq.modem))
 	return(false);
     return(true);
+}
+
+/*
+ * Add new job "cjob" to the batched job "bjob"
+ */
+void
+faxQueueApp::batchJob(Job* bjob, Job* cjob, FaxRequest* creq)
+{
+    cjob->remove();
+    cjob->modem = bjob->modem;
+    cjob->breq = creq;
+    cjob->bprev = bjob;
+    bjob->bnext = cjob;
 }
 
 /*
@@ -2358,6 +2392,7 @@ faxQueueApp::runScheduler()
 		     * The batching sub-loop below already allocated this job to a batch.
 		     * Thus, this loop's copy of the run queue is incorrect.
 		     */
+		    pokeScheduler();
 		    break;
 		}
 		fxAssert(job.tts <= Sys::now(), "Sleeping job on run queue");
@@ -2470,33 +2505,7 @@ faxQueueApp::runScheduler()
 			 * allowed on this modem which are not of a lesser priority than
 			 * jobs to other destinations.
 			 */
-			unblockDestJobs(job, di);
-			/*
-			 * Jobs that are on the sleep queue with state_sleeping
-			 * can be batched because the tts that the submitter requested
-			 * is known to have passed already.  So we pull these jobs out
-			 * of the sleep queue and place them into the run queue so that
-			 * the batching loop below can pick them up.  Note that we cannot
-			 * read the queue file (readRequest) at this point.  Any needed
-			 * alteration to the queue file must occur below within the loop
-			 * where the queue file is updated.
-			 */
-			for (JobIter sleepiter(sleepq); sleepiter.notDone(); sleepiter++) {
-			    Job& j(sleepiter.job());
-			    if (j.state != FaxRequest::state_pending 
-			        || j.state != FaxRequest::state_sleeping)
-				break;
-			    if (j.dest != job.dest || j.state != FaxRequest::state_sleeping)
-				continue;
-			    j.stopTTSTimer();
-			    j.tts = now;
-			    j.state = FaxRequest::state_ready;
-			    j.remove();
-			    setReadyToRun(j, jobCtrlWait);
-			}
-
-			Job* bjob = &job;	// Last batched Job
-			Job* cjob = &job;	// current Job
+			unblockDestJobs(di);
 
 			/*
 			 * Since job files are passed to the send program as command-line
@@ -2505,6 +2514,9 @@ faxQueueApp::runScheduler()
 			 */
 			if (maxBatchJobs > 64) maxBatchJobs = 64;
 			
+			Job* bjob = &job;	// Last batched Job
+			Job* cjob = &job;	// current Job
+
 			u_int batchedjobs = 1;
 			for (u_int j = 0; batchedjobs < maxBatchJobs && j < NQHASH; j++) {
 			    for (JobIter joblist(runqs[j]); batchedjobs < maxBatchJobs && joblist.notDone(); joblist++) {
@@ -2526,21 +2538,37 @@ faxQueueApp::runScheduler()
 				    iter++;
 
 				traceJob(job, "ADDING JOB " | cjob->jobid | " TO BATCH");
-				cjob->remove();
-				bjob->bnext = cjob;
-				cjob->bprev = bjob;
-				cjob->modem = job.modem;
-
+				batchJob(bjob, cjob, creq);
 				bjob = cjob;
-				cjob->breq = creq;
-				if (creq->tts > now) {
-				    // This job was batched from sleeping, things have
-				    // changed; Update the queue file for onlookers.
-				    creq->tts = now;
-				    updateRequest(*creq, *cjob);
-				}
 				batchedjobs++;
 			    }
+			}
+
+			/*
+			 * Jobs that are on the sleep queue with state_sleeping
+			 * can be batched because the tts that the submitter requested
+			 * is known to have passed already.  So we pull these jobs out
+			 * of the sleep queue and batch them directly.
+			 */
+			for (JobIter sleepiter(sleepq); batchedjobs < maxBatchJobs && sleepiter.notDone(); sleepiter++) {
+			    cjob = sleepiter;
+			    if (cjob->dest != job.dest || cjob->state != FaxRequest::state_sleeping)
+				continue;
+			    FaxRequest* creq = readRequest(*cjob); if (! (req && areBatchable(job, *cjob, *req) ) ) {
+				delete creq;
+				continue;
+			    }
+			    traceJob(job, "ADDING JOB " | cjob->jobid | " TO BATCH");
+			    cjob->stopTTSTimer();
+			    // This job was batched from sleeping, things have
+			    // changed; Update the queue file for onlookers.
+			    cjob->tts = now;
+			    cjob->state = FaxRequest::state_ready;
+			    creq->tts = now;
+			    updateRequest(*creq, *cjob);
+			    batchJob(bjob, cjob, creq);
+			    bjob = cjob;
+			    batchedjobs++;
 			}
 			bjob->bnext = NULL;
 		    } else

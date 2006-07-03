@@ -216,8 +216,10 @@ private:
     bool	suspendJob(const fxStr& jobid, bool abortActive);
     void	rejectSubmission(Job&, FaxRequest&, const fxStr& reason);
     bool	areBatchable(Job& job, Job& nextjob, FaxRequest& nextreq);
+    void	batchJob(Job* prevjob, Job* nextjob, FaxRequest* nextreq);
 
     void	setReadyToRun(Job& job, bool wait);
+    void	setReady(Job& job);
     void	setSleep(Job& job, time_t tts);
     void	setDead(Job& job);
     void	setActive(Job& job);
@@ -232,7 +234,7 @@ private:
     void	runJob(Job& job);
 
     void	removeDestInfoJob(Job& job);
-    void        unblockDestJobs(Job& job, DestInfo& di);
+    void        unblockDestJobs(DestInfo& di);
 
     bool	scheduling();
     void	runScheduler();
