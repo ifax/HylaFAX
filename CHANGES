@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.0
 
+* Enhance faxinfo with formating options (2 Jul 2006)
 * Enhance SHIELDED_DTMF (5 Jun 2006)
 * Add resubmit capability to faxalter (2 Jun 2006)
 * Use ] && [ instead of -a for shell portability (2 Jun 2006)
