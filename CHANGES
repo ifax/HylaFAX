@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.0
 
+* fix Class 2 data format parsing of +FIS response (4 Jul 2006)
 * Enhance faxinfo with formating options (2 Jul 2006)
 * Fix faxmail's handling of nested mime (14 Jun 2006)
 * Add JobProtection option to hfaxd (12 Jun 2006)

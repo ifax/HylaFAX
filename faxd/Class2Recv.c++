@@ -123,7 +123,7 @@ Class2Modem::recvEOMBegin(fxStr& emsg)
 bool
 Class2Modem::recvDCS(const char* cp)
 {
-    if (parseClass2Capabilities(skipStatus(cp), params)) {
+    if (parseClass2Capabilities(skipStatus(cp), params, false)) {
 	params.update(false);
 	setDataTimeout(60, params.br);
 	FaxModem::recvDCS(params);	// announce session params

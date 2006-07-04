@@ -127,7 +127,7 @@ protected:
     bool	class2Cmd(const fxStr& cmd, const Class2Params&,
 		    ATResponse =AT_OK, long ms = 30*1000);
 // parsing routines for capability&parameter strings
-    bool	parseClass2Capabilities(const char* cap, Class2Params&);
+    bool	parseClass2Capabilities(const char* cap, Class2Params&, bool isDIS);
     bool	parseRange(const char*, Class2Params&);
     const char* skipStatus(const char*);
 

@@ -385,7 +385,7 @@ Class2Modem::setupDCC()
  * return the values through the params parameter.
  */
 bool
-Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params)
+Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params, bool isDIS)
 {
     /*
      * Some modems report capabilities in hex values, others decimal.
@@ -411,6 +411,18 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params)
 	params.wd = fxmin(params.wd, (u_int) WD_A3);
 	params.ln = fxmin(params.ln, (u_int) LN_INF);
 	params.df = fxmin(params.df, (u_int) DF_2DMMR);
+	/*
+         * Table 21 T.32 does not match Table 2 T.30 very well in some aspects.
+	 * Data format is one of those things.  When dealing with DIS we use DF 
+	 * as a bitmap to suit T.30, but a T.32-following modem will only report 
+	 * one supported receiver format (and not all of them).  Thus when 
+	 * parsing T.32 DIS we must convert the modem response to a bitmap.  
+	 * However, due to the inconguency between T.30 and T.32 the bitmap will 
+	 * only contain the the reported format and the required format.
+	 */
+	if (isDIS) {
+	    params.df = BIT(params.df) | BIT(DF_1DMH);
+	}
 	if (params.ec > EC_ECLFULL)		// unknown, disable use
 	    params.ec = EC_DISABLE;
 	if (params.bf > BF_ENABLE)
