@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.0
 
+* Improve the handling of user aborts in Class 1 sending (4 Jul 2006)
 * Add missing From: headers to notify (4 Jul 2006)
 * correct CIELAB to be ITULAB (4 Jul 2006)
 * fix Class 2 data format parsing of +FIS response (4 Jul 2006)

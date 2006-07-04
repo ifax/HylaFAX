@@ -1101,24 +1101,21 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	    if (useV34) {
 		// we intentionally do not send the FCS bytes as the DCE regenerates them
 		// send fcount frames separated by <DLE><ETX>
-		buf[0] = DLE; buf[1] = ETX;
 		u_short v34frame;
 		for (v34frame = 0; v34frame < fcount; v34frame++) {
-		    if (!putModemDLEData(ecmStuffedBlock, frameSize + 4, bitrev, getDataTimeout()))
+		    if (!sendClass1Data(ecmStuffedBlock, frameSize + 4, bitrev, true, getDataTimeout()))
 			return (false);
-		    if (!putModemData(buf, 2)) return (false);
 		    ecmStuffedBlock += (frameSize + 6);
 		}
 		// send 3 RCP frames separated by <DLE><ETX>
 		for (v34frame = 0; v34frame < 3; v34frame++) {
-		    if (!putModemDLEData(ecmStuffedBlock, 3, bitrev, getDataTimeout()))
+		    if (!sendClass1Data(ecmStuffedBlock, 3, bitrev, true, getDataTimeout()))
 			return (false);
-		    if (!putModemData(buf, 2)) return (false);
 		    ecmStuffedBlock += 5;
 		}
 		ecmStuffedBlock -= ecmStuffedBlockPos;
 	    } else {
-		if (!putModemDLEData(ecmStuffedBlock, ecmStuffedBlockPos, bitrev, getDataTimeout()))
+		if (!sendClass1Data(ecmStuffedBlock, ecmStuffedBlockPos, bitrev, true, getDataTimeout()))
 		    return (false);
 	    }
 	    if (useV34) {
@@ -1132,9 +1129,6 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		    return (false);
 		}
 	    } else {
-		buf[0] = DLE; buf[1] = ETX;
-		if (!putModemData(buf, 2)) return (false);
-
 		// Wait for transmit buffer to empty.
 		ATResponse r;
 		while ((r = atResponse(rbuf, getDataTimeout())) == AT_OTHER);
@@ -1539,7 +1533,7 @@ Class1Modem::sendClass1ECMData(const u_char* data, u_int cc, const u_char* bitre
     /*
      * Buffer data into the block.  We buffer the entire block
      * before sending it to prevent any modem buffer underruns.
-     * Later we send it to putModemDLEData() which adds the 
+     * Later we send it to sendClass1Data() which adds the 
      * transparent DLE characters and transmits it.
      */
     for (u_int i = 0; i < cc; i++) {
@@ -1577,7 +1571,7 @@ Class1Modem::sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm
     if (ecm)
 	rc = sendClass1ECMData(data, cc, bitrev, false, 0, emsg);
     else {
-	rc = sendClass1Data(data, cc, bitrev, false);
+	rc = sendClass1Data(data, cc, bitrev, false, getDataTimeout());
 	protoTrace("SENT %u bytes of data", cc);
     }
     endTimedTransfer();
@@ -1641,13 +1635,13 @@ Class1Modem::sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, uint32 row
 	if (params.ec != EC_DISABLE)
 	    return sendClass1ECMData(RTC2D, 9, rtcRev, true, ppmcmd, emsg);
 	else
-	    return sendClass1Data(RTC2D, sizeof (RTC2D), rtcRev, true);
+	    return sendClass1Data(RTC2D, sizeof (RTC2D), rtcRev, true, getDataTimeout());
     } else {
 	protoTrace("SEND 1D RTC");
 	if (params.ec != EC_DISABLE)
 	    return sendClass1ECMData(RTC1D, 10, rtcRev, true, ppmcmd, emsg);
 	else
-	    return sendClass1Data(RTC1D, sizeof (RTC1D), rtcRev, true);
+	    return sendClass1Data(RTC1D, sizeof (RTC1D), rtcRev, true, getDataTimeout());
     }
 }
 

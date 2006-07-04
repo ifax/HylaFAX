@@ -176,8 +176,7 @@ protected:
     bool	sendFrame(u_char fcf, const fxStr&, bool lastFrame = true);
     bool	sendFrame(u_char fcf, const u_char* code, const fxStr&, bool lastFrame = true);
     bool	sendRawFrame(HDLCFrame& frame);
-    bool	sendClass1Data(const u_char* data, u_int cc,
-		    const u_char* bitrev, bool eod);
+    bool	sendClass1Data(const u_char* data, u_int cc, const u_char* bitrev, bool eod, long ms);
     bool	sendClass1ECMData(const u_char* data, u_int cc,
 		     const u_char* bitrev, bool eod, u_int ppmcmd, fxStr& emsg);
     bool	recvFrame(HDLCFrame& frame, u_char dir, long ms = 10*1000, bool readPending = false);
