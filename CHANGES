@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.0
 
+* Improve recovery after Class 1 TCF receipt times out (4 Jul 2006)
 * Improve the handling of user aborts in Class 1 sending (4 Jul 2006)
 * Add missing From: headers to notify (4 Jul 2006)
 * correct CIELAB to be ITULAB (4 Jul 2006)
