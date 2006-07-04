@@ -665,6 +665,7 @@ putHeaders()
 {
     putMimeSetup
     echo "To: $mailaddr"
+    echo "From: $FROMADDR"
     echo "Subject: $1"
     putMimeTextHeader
     THISJOBTYPE=`eval echo "$"DICT$jobtype`
@@ -876,6 +877,7 @@ if [ "$NOTIFY_FAXMASTER" = "yes" ]; then
 	    jobtag="$jobtype job $jobid"
 	fi
 	echo "To: $TOADDR"
+	echo "From: $FROMADDR"
 	echo "Subject: $jobtag to $number $WHY"
 	echo
 	returnTranscript
