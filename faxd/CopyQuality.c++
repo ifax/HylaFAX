@@ -389,7 +389,7 @@ FaxModem::recvSetupTIFF(TIFF* tif, long, int fillOrder, const fxStr& id)
     TIFFSetField(tif, TIFFTAG_IMAGEWIDTH,	(uint32) params.pageWidth());
     if (params.df == DF_JPEG_COLOR || params.df == DF_JPEG_GREY) {
 	TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE,	8);
-	TIFFSetField(tif, TIFFTAG_PHOTOMETRIC,		PHOTOMETRIC_CIELAB);
+	TIFFSetField(tif, TIFFTAG_PHOTOMETRIC,		PHOTOMETRIC_ITULAB);
 	TIFFSetField(tif, TIFFTAG_PLANARCONFIG,		PLANARCONFIG_CONTIG);
 	// libtiff requires IMAGELENGTH to be set before SAMPLESPERPIXEL, 
 	// or StripOffsets and StripByteCounts will have SAMPLESPERPIXEL values
