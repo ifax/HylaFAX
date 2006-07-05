@@ -983,7 +983,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 	// As the remote can request any frame of the block until
 	// MCF we must keep the full image block available.
 
-	bool blockgood = false, renegotiate = false, constrain = false;
+	bool blockgood = false, renegotiate = false, constrain = false, duplicate = false;
 	u_short pprcnt = 0;
 	char ppr[32];				// 256 bits
 	for (u_int i = 0; i < 32; i++) ppr[i] = 0xff;
@@ -1037,18 +1037,28 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		}
 	    }
 	    fcountuniq = fcount;
-	    if (fcount == 1 && pprcnt > 0) {
-		// Some receivers may have a hard time hearing the first frame
-		// so we repeat it.
-		HDLCFrame ecmframe(5);
-		fcount++;
-		for (u_int i = 0; i < (frameSize + 6); i++) {
-		    blockData(firstframe[i], false);
+	    if (fcount == 1 && pprcnt > 0 && firstframe[3] == 0) {
+		/*
+		 * Some receivers may have a hard time hearing the first frame,
+		 * However, some receivers do not like frame duplication within a
+		 * block.  So the first time we get here we merely send a single
+		 * frame, but we flag duplicate so that if we come back through
+		 * here we'll repeat it and hopefully catch those that have a
+		 * hard time hearing the first frame.
+		 */
+		if (duplicate) {
+		    HDLCFrame ecmframe(5);
+		    fcount++;
+		    for (u_int i = 0; i < (frameSize + 6); i++) {
+			blockData(firstframe[i], false);
+		    }
+		    ecmframe.put(firstframe, (frameSize + 6));
+		    traceHDLCFrame("<--", ecmframe, true);
+		    protoTrace("SEND send frame number %u", frameRev[firstframe[3]]);
+		    if (!useV34) blockData(0x7e, true);
+		} else {
+		    duplicate = true;
 		}
-		ecmframe.put(firstframe, (frameSize + 6));
-		traceHDLCFrame("<--", ecmframe, true);
-		protoTrace("SEND send frame number %u", frameRev[firstframe[3]]);
-		if (!useV34) blockData(0x7e, true);
 	    }
 	    free(firstframe);
 	    HDLCFrame rcpframe(5);
