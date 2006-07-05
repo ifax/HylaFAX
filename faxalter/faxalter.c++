@@ -103,16 +103,16 @@ faxAlterApp::run(int argc, char** argv)
 	    useadmin = true;
 	    break;
 	case 'D':			// set notification to when done
-        script.append(groups ? "JGPARM " : "JPARM ");
-        script.append("NOTIFY DONE\n");
+	    script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append("NOTIFY DONE\n");
 	    break;
 	case 'Q':			// no notification (quiet)
-        script.append(groups ? "JGPARM " : "JPARM ");
-        script.append("NOTIFY DONE\n");
+	    script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append("NOTIFY DONE\n");
 	    break;
 	case 'R':			// set notification to when requeued
-        script.append(groups ? "JGPARM " : "JPARM ");
-        script.append("NOTIFY DONE+REQUEUE\n");
+	    script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append("NOTIFY DONE+REQUEUE\n");
 	    break;
 	case 'a':			// send at specified time
 	    if (strcasecmp(optarg, "NOW")) {
@@ -122,24 +122,25 @@ faxAlterApp::run(int argc, char** argv)
 		}
 		now = mktime(&tts);
 		when = *gmtime(&now);	// NB: must be relative to GMT
-        script.append(groups ? "JGPARM " : "JPARM ");
+		script.append(groups ? "JGPARM " : "JPARM ");
 		script.append("SENDTIME ");
-            {
-                fxStr tmpbuf = fxStr::format(
-                    "%d%02d%02d%02d%02d"
-		            , when.tm_year+1900
-		            , when.tm_mon+1
-		            , when.tm_mday
-		            , when.tm_hour
-		            , when.tm_min
-		        );
-                script.append(tmpbuf);
-                script.append("\n");
-            }
+		/* Block here is for scope in the switch */
+		{
+		    fxStr tmpbuf = fxStr::format(
+			"%d%02d%02d%02d%02d"
+				, when.tm_year+1900
+				, when.tm_mon+1
+				, when.tm_mday
+				, when.tm_hour
+				, when.tm_min
+			    );
+		    script.append(tmpbuf);
+		    script.append("\n");
+		}
 	    } else {
-            script.append(groups ? "JGPARM " : "JPARM ");
-            script.append("SENDTIME NOW\n");
-        }
+		script.append(groups ? "JGPARM " : "JPARM ");
+		script.append("SENDTIME NOW\n");
+	    }
 	    break;
 	case 'd':			// destination number
             script.append(groups ? "JGPARM " : "JPARM ");
@@ -162,46 +163,47 @@ faxAlterApp::run(int argc, char** argv)
 		printError("%s", optarg, (const char*) emsg);
 		return;
 	    }
-	    { time_t tv = mktime(&when) - now;
-          script.append(groups ? "JGPARM " : "JPARM ");
-	      script.append("LASTTIME ");
-	      fxStr tmpbuf = fxStr::format(
-             "%02d%02d%02d"
+	    /* Block here is for scope in the switch */
+	    {
+	    	time_t tv = mktime(&when) - now;
+		script.append(groups ? "JGPARM " : "JPARM ");
+		script.append("LASTTIME ");
+		fxStr tmpbuf = fxStr::format("%02d%02d%02d"
 		     , tv/(24*60*60)
 		     , (tv/(60*60))%24
 		     , (tv/60)%60
-	      );
-          script.append(tmpbuf);
-          script.append("\n");
+		    );
+		script.append(tmpbuf);
+		script.append("\n");
 	    }
 	    break;
 	case 'm':			// modem
-        script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append(groups ? "JGPARM " : "JPARM ");
 	    script.append("MODEM ");
-        script.append(optarg);
-        script.append("\n");
+	    script.append(optarg);
+	    script.append("\n");
 	    break;
 	case 'n':			// set notification
-        script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append(groups ? "JGPARM " : "JPARM ");
 	    script.append("NOTIFY ");
-		if (strcasecmp(optarg, "done") == 0) {
-            script.append("DONE\n");
-        } else if (strcasecmp(optarg, "requeued") == 0) {
-            script.append("DONE+REQUEUE\n");
-        } else {
-            script.append(optarg);
-            script.append("\n");
-        }
+	    if (strcasecmp(optarg, "done") == 0) {
+		script.append("DONE\n");
+	    } else if (strcasecmp(optarg, "requeued") == 0) {
+		script.append("DONE+REQUEUE\n");
+	    } else {
+		script.append(optarg);
+		script.append("\n");
+	    }
 	    break;
 	case 'p':			// send now (push)
-        script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append(groups ? "JGPARM " : "JPARM ");
 	    script.append("SENDTIME NOW\n");
 	    break;
 	case 'P':			// scheduling priority
 	    if ((u_int) atoi(optarg) > 255)
 		fxFatal("Invalid job priority %s;"
 		    " values must be in the range [0,255]", optarg);
-        script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append(groups ? "JGPARM " : "JPARM ");
 	    script.append("SCHEDPRI ");
 	    script.append(optarg);
             script.append("\n");
@@ -212,7 +214,7 @@ faxAlterApp::run(int argc, char** argv)
 	case 't':			// set max number of retries
 	    if (atoi(optarg) < 0)
 		fxFatal("Bad number of retries for -t option: %s", optarg);
-        script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append(groups ? "JGPARM " : "JPARM ");
 	    script.append("MAXDIALS ");
 	    script.append(optarg);
             script.append("\n");
