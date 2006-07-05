@@ -276,6 +276,7 @@ static const NSFData KnownNSF[] =
     /* France */
     {"\xBC\x53\x01", 3, "Minolta",   false },
     /* Korea */
+    {"\x61\x00\x7A", 3, "Xerox", false },
     {"\x86\x00\x02", 3, "unknown - Korea 02", false },
     {"\x86\x00\x06", 3, "unknown - Korea 06", false },
     {"\x86\x00\x08", 3, "unknown - Korea 08", false },
@@ -289,7 +290,7 @@ static const NSFData KnownNSF[] =
     {"\x86\x00\x48", 3, "unknown - Korea 48", false },
     {"\x86\x00\x52", 3, "unknown - Korea 52", false },
     {"\x86\x00\x5A", 3, "unknown - Korea 5A", false },
-    {"\x86\x00\x5E", 3, "unknown - Korea 5E", false },
+    {"\x86\x00\x5E", 3, "Xerox", false },
     {"\x86\x00\x66", 3, "unknown - Korea 66", false },
     {"\x86\x00\x6E", 3, "unknown - Korea 6E", false },
     {"\x86\x00\x82", 3, "unknown - Korea 82", false },
