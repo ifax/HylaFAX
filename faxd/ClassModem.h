@@ -265,7 +265,7 @@ public:
     bool	putModemData(void* data, int n);
     bool	putModemDLEData(const u_char* data, u_int,
 		    const u_char* brev, long ms);
-    bool	putModemLine(const char* cp);
+    bool	putModemLine(const char* cp, long ms = 0);
     int		getModemBit(long ms = 0);
     int		getModemChar(long ms = 0);
     int		getModemDataChar();

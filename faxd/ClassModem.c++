@@ -491,12 +491,12 @@ bool ClassModem::putModemData(void* d, int n)
     { return server.putModem(d, n, dataTimeout); }
 
 bool
-ClassModem::putModemLine(const char* cp)
+ClassModem::putModemLine(const char* cp, long ms)
 {
     u_int cc = strlen(cp);
     server.traceStatus(FAXTRACE_MODEMCOM, "<-- [%u:%s\\r]", cc+1, cp);
     static const char CR = '\r';
-    return (server.putModem1(cp, cc) && server.putModem1(&CR, 1));
+    return (server.putModem1(cp, cc, ms) && server.putModem1(&CR, 1, ms));
 }
 
 void ClassModem::startTimeout(long ms) { server.startTimeout(ms); }
@@ -854,7 +854,7 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 		    pause(conf.atCmdDelay);
 		fxStr command = cmd.extract(pos, i-pos);
 		command.raiseatcmd();
-		if (!putModemLine(command))
+		if (!putModemLine(command, ms))
 		    return (false);
 		pos = ++i;			// next segment starts after line break
 		if (r != AT_NOTHING) {
@@ -886,7 +886,7 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 			 */
 			fxStr command = cmd.extract(pos, i-1-pos);
 			command.raiseatcmd();
-			if (!putModemLine(command))
+			if (!putModemLine(command, ms))
 			    return (false);
 			// setup for expected response
 			resp = (r != AT_NOTHING ? r : AT_OK);
@@ -968,7 +968,7 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 		pause(conf.atCmdDelay);
 	    fxStr command = cmd.extract(pos, i-pos);
 	    command.raiseatcmd();
-	    if (!putModemLine(command))
+	    if (!putModemLine(command, ms))
 		return (false);
 	    respPending = true;
 	}
