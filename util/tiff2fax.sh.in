@@ -60,6 +60,7 @@ CHECK=$SBIN/tiffcheck			# program to check acceptability
 PS2FAX=bin/ps2fax			# for hard conversions
 TIFFCP=$TIFFBIN/tiffcp			# part of the TIFF distribution
 TIFF2PS=$TIFFBIN/tiff2ps		# ditto
+TIFFINFO=$TIFFBIN/tiffinfo		# ditto
 
 out=foo.tif				# default output filename
 df=1d					# default output is 1D-encoded
@@ -138,13 +139,18 @@ OK)				# no conversion needed
     exit 254			# reject document
     ;;
 REFORMAT)			# only need format conversion (e.g. g4->g3)
-    $TIFFCP -i -c $df -f lsb2msb -r 9999 $fil $out
+    rowsperstrip="-r 9999"
+    if [ -n "`$TIFFINFO $fil | $GREP 'Compression Scheme: ISO JBIG'`" ]; then
+	rowsperstrip=""
+    fi
+    $TIFFCP -i -c $df -f lsb2msb $rowsperstrip $fil $out
+
     # libtiff 3.5.7 gives exit status 9 when there are unknown tags...
     if [ $? != 0 ] && [ $? != 9 ]; then {
 	$CAT<<EOF
 Unexpected failure converting TIFF document; the command
 
-    $TIFFCP -i -c $df -f lsb2msb -r 9999 $fil $out
+    $TIFFCP -i -c $df -f lsb2msb $rowsperstrip $fil $out
 
 failed with exit status $?.  This conversion was done because:
 

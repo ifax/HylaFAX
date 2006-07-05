@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.0
 
+* don't use tiffcp "-r" option on JBIG TIFFs (5 Jan 2006)
 * Avoid problems when resending single ECM Frame (5 Jul 2005)
 * Improve recovery after Class 1 TCF receipt times out (4 Jul 2006)
 * Improve the handling of user aborts in Class 1 sending (4 Jul 2006)
