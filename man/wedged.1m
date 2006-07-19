@@ -51,9 +51,9 @@ of minutes (emails will be sent no more than every WEDGED_EMAIL_INTERVAL
 minutes, until the wedged condition persists).
 If the variable WEDGED_DISABLE_FAXGETTY is set in
 .B etc/FaxDispatch
-then the script will attempt to disable any getty processes spawned by the
+then the script will attempt to disable any faxgetty processes spawned by the
 .IR init (${MANNUM1_8})
-process.
+process for the problematic modem.
 In addition the
 .IR faxq (${MANNUM1_8})
 process automatically disables use of the modem for servicing
