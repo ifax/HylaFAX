@@ -376,7 +376,7 @@ Class2PHCTOCmd	string	\s-1AT+FCT=30\s+1	Class 2.0: command to set Phase C timeou
 Class2PIECmd	string	\s-1AT+FIE=0\s+1	Class 2.0: command to set procedure interrupt handling
 Class2PWCmd     string	\s-1AT+FPW\s+1	Class 2.0: set password string
 Class2PTSCmd	string	\s-1AT+FPS\s+1	Class 2.0: command to set received page status
-Class2PTSQueryCmd	string	\s-1AT+FPTS?\s+1	Class 2.0: command to query received page status
+Class2PTSQueryCmd	string	\s-1AT+FPS?\s+1	Class 2.0: command to query received page status
 Class2RecvDataTrigger	string	\s-1``\e22''\s+1	Class 2.0: character to send to trigger recv
 Class2RELCmd	string	\-	Class 2.0: command to enable byte-aligned \s-1EOL\s+1 codes
 Class2RTFCC	boolean	\s-1No\s+1	Class 2.0: enable real-time fax compression conversion
