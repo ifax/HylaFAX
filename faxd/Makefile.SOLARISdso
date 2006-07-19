@@ -34,11 +34,11 @@ LDIRT	+= libfaxserver.a
 libfaxserver.${DSO}: ${SERVER_OBJS} ${MODEM_OBJS}
 	ld ${DSOOPTS} -o libfaxserver.${DSO}.${LIBVERSION} \
 	    ${SERVER_OBJS} ${MODEM_OBJS} ${LLDLIBS}
-	ln -s libfaxserver.${DSO}.${LIBVERSION} libfaxserver.${DSO}
+	ln -sf libfaxserver.${DSO}.${LIBVERSION} libfaxserver.${DSO}
 
 installDSO: libfaxserver.${DSO}
 	${PUTSERV} -F ${LIBDIR} -m 755 -O libfaxserver.${DSO}.${LIBVERSION}
-	(cd ${LIBDIR}; ln -s libfaxserver.${DSO}.${LIBVERSION} libfaxserver.${DSO})
+	(cd ${LIBDIR}; ln -sf libfaxserver.${DSO}.${LIBVERSION} libfaxserver.${DSO})
 
 cleanDSO::
 	-${RM} -f libfaxserver.${DSO}.${LIBVERSION} libfaxserver.${DSO}
