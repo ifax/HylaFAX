@@ -316,7 +316,7 @@ static const char rformat[] = {
     's',		// a (subaddr)
     'u',		// b (bitrate)
     'c',		// c
-    'd',		// d (data format)
+    's',		// d (data format)
     's',		// e (error a.k.a. reason)
     's',		// f (filename)
     'g',		// g

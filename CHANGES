@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.0
 
+* Fix RecvFmt string printing (Bug 805) (18 Jul 2006)
 * fix timeout on AT command sending to modem (5 Jul 2006)
 * don't use tiffcp "-r" option on JBIG TIFFs (5 Jan 2006)
 * Avoid problems when resending single ECM Frame (5 Jul 2005)
