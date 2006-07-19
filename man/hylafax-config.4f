@@ -855,7 +855,7 @@ the number has not been successfully dialed before.
 .TP
 .B JobRetryNoCarrier
 The number of times to redial a phone number after the
-dialing attempt failed because of NO ANSWER when
+dialing attempt failed because of NO CARRIER when
 the number has not been successfully dialed before.
 In normal operation the fax server will treat this result code
 to mean that a facsimile modem/machine did not answer the
