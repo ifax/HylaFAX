@@ -2,6 +2,8 @@
 
 Changelog since HylaFAX 4.3.0
 
+* don't skip initial NSF bytes in station ID search when no
+  known T.35 manufacturer ID was used (18 Jul 2006)
 * Documentation updates (18 Jul 2006)
 * Fix RecvFmt string printing (Bug 805) (18 Jul 2006)
 * fix timeout on AT command sending to modem (5 Jul 2006)
