@@ -121,8 +121,11 @@ Class1Modem::recvEOMBegin(fxStr& emsg)
      */
     if (!useV34) {
 	pause(conf.t2Timer);	// T.30 Fig 5.2B requires T2 to elapse
-	if (!(atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 0) == AT_CONNECT))
+	if (!(atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 0) == AT_CONNECT)) {
+	    emsg = "Failure to raise V.21 transmission carrier.";
+	    protoTrace(emsg);
 	    return (false);
+	}
     }
     return Class1Modem::recvBegin(emsg);
 }
