@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.0
 
+* fix faxaddmodem config parsing for Digicom Leonardo modems(19 Jul 2006)
 * don't skip initial NSF bytes in station ID search when no
   known T.35 manufacturer ID was used (18 Jul 2006)
 * Documentation updates (18 Jul 2006)
