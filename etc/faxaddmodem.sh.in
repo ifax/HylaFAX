@@ -1020,6 +1020,8 @@ configureClass2dot0Modem()
     fi
     #
     SendToModem "$ATSTR" "AT+FMI?"
+    # if we get an ERROR revert to ATI
+    if [ "$RESPONSE" = "ERROR" ]; then SendToModem "$ATSTR" "ATI"; fi
     Manufacturer=$RESPONSE
     echo "Modem manufacturer is \"$Manufacturer\"."
 
