@@ -2,6 +2,8 @@
 
 Changelog since HylaFAX 4.3.0
 
+* don't exit faxq with assertion failure when a job times out and is
+  interrupted during sending (21 Jul 2006)
 * faxaddmodem: Allow identification when no AT+FMM? or AT+FMI? (21 Jul 2006)
 * fix error of accepting too-short of DCS signal (20 Jul 2006)
 * fix faxgetty hang in ECM due to missing timeouts (20 Jul 2006)

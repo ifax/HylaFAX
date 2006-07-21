@@ -1501,14 +1501,13 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
 	req->notice = "Job interrupted by user";
 	req->status = send_retry;
     }
-    if (job.killtime == 0 && req->status == send_retry) {
+    if (job.killtime == 0 && !job.suspendPending && req->status == send_retry) {
 	/*
 	 * The job timed out during the send attempt.  We
 	 * couldn't do anything then, but now the job can
 	 * be cleaned up.  Not sure if the user should be
 	 * notified of the requeue as well as the timeout?
 	 */
-	fxAssert(!job.suspendPending, "Interrupted job timed out");
 	job.state = FaxRequest::state_failed;
 	deleteRequest(job, req, Job::timedout, true);
 	setDead(job);
