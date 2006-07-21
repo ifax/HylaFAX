@@ -345,7 +345,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
 	fxStr cmd(dynamicConfig | quote | getModemDevice() | enquote | callid_formatted);
 	traceServer("DynamicConfig: %s", (const char*)cmd);
 	fxStr localid = "";
-	int pipefd[2], idlength, status;
+	int pipefd[2], status;
 	char line[1024];
 	pipe(pipefd);
 	pid_t pid = fork();

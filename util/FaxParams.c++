@@ -224,8 +224,6 @@ void FaxParams::asciiDecode(const char* dcs)
 {
     u_int byte = 0;
     while (dcs[0] != '\0' && dcs[1] != '\0') {
-	u_char value = 0;
-	value = 2;
 	m_bits[byte] = ((dcs[0] - (dcs[0] > 64 ? 55 : 48)) << 4) + (dcs[1] - (dcs[1] > 64 ? 55 : 48));
 	setExtendBits(byte++);
 	dcs += 2;

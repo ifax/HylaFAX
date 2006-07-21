@@ -1148,7 +1148,6 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    gotEOT = true;
 				    recvdDCN = true;
 				    continue;
-				    break;
 				default:
 				    // The message is not ECM-specific: fall out of ECM receive, and let
 				    // the earlier message-handling routines try to cope with the signal.
@@ -1157,7 +1156,6 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    prevPage--;		// counteract the forthcoming increment
 				    // maybe we should save an unconfirmed page here?
 				    return (true);
-				    break;
 			    }
 			    if (!sendERR) {	// as long as we're not trying to send the ERR signal (set above)
 			        if (useV34) gotprimary = waitForDCEChannel(false);
@@ -1593,7 +1591,6 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			    prevPage--;		// counteract the forthcoming increment
 			    // maybe we should save an unconfirmed page here?
 			    return (true);
-			    break;
 		    }
 		} else {
 		    emsg = "T.30 T2 timeout, expected signal not received";

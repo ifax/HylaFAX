@@ -1284,7 +1284,6 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				emsg = "COMREC invalid response received to RR.";
 				protoTrace(emsg);
 				return (false);
-				break;
 			}
 		    } while (!gotppr);		
 		}
@@ -1508,7 +1507,6 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 						emsg = "COMREC invalid response received to RR.";
 						protoTrace(emsg);
 						return (false);
-						break;
 					}
 				    } while (!goterr);		
 				}

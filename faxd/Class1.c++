@@ -569,7 +569,6 @@ Class1Modem::waitForDCEChannel(bool awaitctrl)
 		    gotEOT = true;
 		    recvdDCN = true;
 		    return (false);
-		    break;
 		case 0x69:
 		    protoTrace("Control channel retrain");
 		    // wait for the control channel to reappear
@@ -577,17 +576,14 @@ Class1Modem::waitForDCEChannel(bool awaitctrl)
 		    gotresponse = waitForDCEChannel(true);
 		    gotRTNC = true;
 		    return ((awaitctrl ? gotresponse : false));
-		    break;
 		case 0x6B:
 		    protoTrace("Primary channel selected");
 		    gotCTRL = false;
 		    continue;
-		    break;
 		case 0x6D:
 		    protoTrace("Control channel selected");
 		    gotCTRL = true;
 		    continue;
-		    break;
 		case 0x6E:			// 1200 bit/s
 		case 0x6F:			// 2400 bit/s
 		    // control rate indication
@@ -597,7 +593,6 @@ Class1Modem::waitForDCEChannel(bool awaitctrl)
 		    }
 		    if (awaitctrl) gotresponse = true;
 		    continue;
-		    break;
 		case 0x70:			//  2400 bit/s
 		case 0x71:			//  4800 bit/s
 		case 0x72:			//  7200 bit/s
@@ -619,7 +614,6 @@ Class1Modem::waitForDCEChannel(bool awaitctrl)
 		    }
 		    if (!awaitctrl) gotresponse = true;
 		    continue;
-		    break;
 		default:
 		    // unexpected <DLE><command>, deem as garbage
 		    garbage.append(DLE);
@@ -738,7 +732,6 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 		    gotEOT = true;
 		    recvdDCN = true;
 		    return (false);
-		    break;
 		case 0x69:
 		    protoTrace("Control channel retrain");
 		    // wait for the control channel to reappear
@@ -746,7 +739,6 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 		    waitForDCEChannel(true);
 		    gotRTNC = true;
 		    return (false);
-		    break;
 		default:
 		    // unexpected <DLE><command>, deem as garbage
 		    garbage.append(DLE);
@@ -805,7 +797,6 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 			    gotEOT = true;
 			    recvdDCN = true;
 			    return (false);
-			    break;
 			case DLE:	// <DLE><DLE> => <DLE>
 			    break;
 			case SUB:	// <DLE><SUB> => <DLE><DLE>
