@@ -121,7 +121,7 @@ main(int argc, char** argv)
     } else {
         fatal("Argument is too large: %s", argv[optind]);
     }
-    for (cp = devid; cp = strchr(cp, '/'); *cp++ = '_')
+    for (cp = devid; (cp = strchr(cp, '/')); *cp++ = '_')
 	;
     if (chdir(spooldir) < 0)
 	fatal("%s: chdir: %s", spooldir, strerror(errno));

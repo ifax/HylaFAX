@@ -93,7 +93,7 @@ main(int argc, char** argv)
     } else {
         strcpy(fifoname, FAX_FIFO);
     }
-    for (cp = fifoname; cp = strchr(cp, '/'); *cp++ = '_')
+    for (cp = fifoname; (cp = strchr(cp, '/')); *cp++ = '_')
 	;
     if (chdir(spooldir) < 0)
 	fatal("%s: chdir: %s", spooldir, strerror(errno));

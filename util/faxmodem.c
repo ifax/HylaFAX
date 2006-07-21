@@ -217,7 +217,7 @@ parseCapabilities(const char* cp, u_int* caps)
 	     | ((ln&LN_ALL)<<19)
 	     | ((df&DF_ALL)<<22)
 	     | ((ec&EC_DISABLE)<<26)
-	     | ((ec&EC_ALL != 0 ? 1 : 0)<<27)
+	     | (((ec&EC_ALL) != 0 ? 1 : 0)<<27)
 	     | ((bf&BF_ALL)<<28)
 	     | ((st&ST_ALL)<<30)
 	     ;
@@ -301,7 +301,7 @@ main(int argc, char** argv)
             fatal("Argument is too long: %s", argv[optind]);
         }
     }
-    for (cp = devname; cp = strchr(cp, '/'); *cp++ = '_')
+    for (cp = devname; (cp = strchr(cp, '/')); *cp++ = '_')
 	;
     if (chdir(spooldir) < 0) {
         fatal("%s: chdir: %s", spooldir, strerror(errno));
