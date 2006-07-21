@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.0
 
+* fix indicator when 100% non-zero TCF data is received (20 Jul 2006)
 * do Class1SwitchingCmd before sending MCF after PPS-NULL (20 Jul 2006)
 * replace Class1SendMsgDelay with Class1SwitchingCmd (20 Jul 2006)
 * fix faxaddmodem config parsing for Digicom Leonardo modems(19 Jul 2006)

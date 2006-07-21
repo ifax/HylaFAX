@@ -357,15 +357,22 @@ Class1Modem::recvTraining()
 	 * Determine number of non-zero bytes and
 	 * the longest zero-fill run in the data.
 	 */
-	while (i < n) {
-	    u_int j;
-	    for (; i < n && buf[i] != 0; i++)
-		nonzero++;
-	    for (j = i; j < n && buf[j] == 0; j++)
-		;
-	    if (j-i > zerorun)
-		zerorun = j-i;
-	    i = j;
+	if (i < n) {
+	    while (i < n) {
+		u_int j;
+		for (; i < n && buf[i] != 0; i++)
+		    nonzero++;
+		for (j = i; j < n && buf[j] == 0; j++)
+		    ;
+		if (j-i > zerorun)
+		    zerorun = j-i;
+		i = j;
+	    }
+	} else {
+	    /*
+	     * There was no non-zero data.
+	     */
+	    nonzero = n;
 	}
 	/*
 	 * Our criteria for accepting is that there must be
