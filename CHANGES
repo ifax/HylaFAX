@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.0
 
+* fix error of accepting too-short of DCS signal (20 Jul 2006)
 * fix faxgetty hang in ECM due to missing timeouts (20 Jul 2006)
 * fix indicator when 100% non-zero TCF data is received (20 Jul 2006)
 * do Class1SwitchingCmd before sending MCF after PPS-NULL (20 Jul 2006)

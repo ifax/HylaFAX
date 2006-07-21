@@ -298,6 +298,7 @@ Class1Modem::recvDCSFrames(HDLCFrame& frame)
 	    recvTSI(decodeTSI(s, frame));
 	    break;
 	case FCF_DCS:
+	    if (frame.getFrameDataLength() < 4) return (false);	// minimum acceptable DCS frame size
 	    processDCSFrame(frame);
 	    break;
 	}
@@ -442,7 +443,6 @@ Class1Modem::recvTraining()
 void
 Class1Modem::processDCSFrame(const HDLCFrame& frame)
 {
-    if (frame.getFrameDataLength() < 4) return;	// minimum acceptable DCS frame size
     FaxParams dcs_caps = frame.getDIS();			// NB: really DCS
 
     if (dcs_caps.isBitEnabled(FaxParams::BITNUM_FRAMESIZE_DCS)) frameSize = 64;
