@@ -114,8 +114,7 @@ Class1Cmd:		AT+FCLASS=1.0	# command to enter class 1.0
 Class1PPMWaitCmd:	AT+FTS=7	# command to stop and wait before PPM
 Class1TCFWaitCmd:	AT+FTS=7	# command to stop and wait before TCF
 Class1EOPWaitCmd:	AT+FTS=9	# command to stop and wait before EOP
-Class1SendMsgDelay:	200		# 75ms delay after training
-Class1SwitchingDelay:	75		# 150ms delay in switching transmission direction
+Class1SwitchingCmd:	AT+FRS=7	# command to stop and listen for silence
 Class1TrainingRecovery:	1500		# 1.5sec delay after training failure
 Class1RecvAbortOK:	200		# wait 200ms for abort response
 Class1FrameOverhead:	4		# 4 byte overhead in recvd HDLC frames

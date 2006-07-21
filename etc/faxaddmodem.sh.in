@@ -1335,7 +1335,6 @@ Class1Parameters="
     Class1MsgRecvHackCmd
     Class1RecvAbortOK
     Class1RecvIdentTimer
-    Class1SendMsgDelay
     Class1SwitchingCmd
     Class1TCFMaxNonZero
     Class1TCFMinRun
@@ -1604,7 +1603,6 @@ AT	Class1EOPWaitCmd	\
 	Maximum time to wait for OK after aborting a receive (ms)
 #	Class1RecvIdentTimer	\
 	Maximum wait for initial identification frame (ms)
-#	Class1SendMsgDelay	Delay after completing training (ms)
 #	Class1SwitchingCmd	\
 	Command to ensure silence after receiving HDLC and before sending
 #	Class1TCFRecvTimeout	Timeout for receiving TCF (ms)

@@ -199,7 +199,6 @@ static struct {
 { "modemringsbeforeresponse",	&ModemConfig::ringsBeforeResponse,   0 },
 { "modemsoftresetcmddelay",	&ModemConfig::softResetCmdDelay,     3000 },
 { "class1tcfrecvtimeout",	&ModemConfig::class1TCFRecvTimeout,  4500 },
-{ "class1sendmsgdelay",		&ModemConfig::class1SendMsgDelay,    200 },
 { "class1trainingrecovery",	&ModemConfig::class1TrainingRecovery,1500 },
 { "class1recvabortok",		&ModemConfig::class1RecvAbortOK,     200 },
 { "class1rmpersistence",	&ModemConfig::class1RMPersistence,   2 },
