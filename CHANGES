@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.0
 
+* do Class1SwitchingCmd before sending MCF after PPS-NULL (16 Feb 2006)
 * replace Class1SendMsgDelay with Class1SwitchingCmd (20 Jul 2006)
 * fix faxaddmodem config parsing for Digicom Leonardo modems(19 Jul 2006)
 * don't skip initial NSF bytes in station ID search when no

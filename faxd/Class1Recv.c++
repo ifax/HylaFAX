@@ -1696,6 +1696,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 
 	if (!lastblock) {
 	    // confirm block received as good
+	    if (!useV34) atCmd(conf.class1SwitchingCmd, AT_OK);
 	    (void) transmitFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
 	    tracePPR("RECV send", sendERR ? FCF_ERR : FCF_MCF);
 	}
