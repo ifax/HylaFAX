@@ -177,7 +177,7 @@ detachFromTTY(void)
 static void
 usage(const char* appName)
 {
-    fatal("usage: %s [-o port] [-h port] [-l bindaddress] [-i port] [-u socket] [-q queue-directory]",
+    fatal("usage: %s [-d] [-o port] [-O] [-h port] [-H] [-l bindaddress] [-i port] [-I] [-s port] [-S] [-u socket] [-q queue-directory]",
 	appName);
 }
 

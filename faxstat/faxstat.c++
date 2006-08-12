@@ -95,7 +95,7 @@ faxStatApp::run(int argc, char** argv)
 	    setVerbose(true);
 	    break;
 	case '?':
-	    fxFatal("usage: faxstat [-h server-host] [-adfglrsv]");
+	    fxFatal("usage: faxstat [-h server-host] [-adfgilrsv]");
 	}
     fxStr emsg;
     if (callServer(emsg)) {

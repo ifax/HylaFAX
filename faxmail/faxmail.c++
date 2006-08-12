@@ -828,6 +828,7 @@ faxMailApp::usage()
 	" [-s pagesize]"
 	" [-W pagewidth]"
 	" [-M margins]"
-	" [-12crRv]"
+	" [-u user]"
+	" [-12cdnrRv]"
     );
 }

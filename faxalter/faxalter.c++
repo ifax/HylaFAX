@@ -277,8 +277,10 @@ faxAlterApp::usage()
       " [-P priority]"
       " [-t tries]"
       " [-A]"
-      " [-p]"
       " [-g]"
+      " [-p]"
+      " [-r]"
+      " [-v]"
       " [-DQR]"
       " jobID...");
 }

@@ -49,7 +49,7 @@ extern char* optarg;
 const char passwd_salts[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./";
 
 const char* usage = "faxadduser [-a admin-password] [-f hosts-file] \
-[ -p password] [-u uid] username";
+[-h host-name] [-p password] [-u uid] username";
 
 int
 main(int argc, char** argv)
