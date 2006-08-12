@@ -181,4 +181,25 @@ encode()
     fi
 }
 
+#
+# "Template" STDIN, by subsituting $... with the actual environment
+# variable $..., writing to STDOUT, using $AWK
+template ()
+{
+        cat - | $AWK '
+        function template_line (line,   ret,tmp,var)
+        {
+                while (match(line, /[$][A-Za-z0-9_]+/))
+                {
+                        tmp = substr(line, 0, RSTART-1);
+                        var = substr(line, RSTART+1, RLENGTH-1);
+                        printf "%s%s", tmp, ENVIRON[var];
+                        line = substr(line,RSTART+RLENGTH)
+                }
+                print line;
+        }
 
+        {
+                template_line($0);
+        }'
+}
