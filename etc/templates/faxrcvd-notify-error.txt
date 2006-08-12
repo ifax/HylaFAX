@@ -1,4 +1,4 @@
-From: FAX Agent <fax@ifax.com>
+From: FAX Agent <$FROMADDR>
 Subject: Fax received with errors from "$SENDER"
 
 $FILE (ftp://pepper:4559/$FILE):                                  
