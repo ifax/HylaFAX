@@ -1,0 +1,19 @@
+From: Servidor de Fax HylaFAX <$FROMADDR>
+Subject: Fax recibido de $SENDER
+
+$FILE (ftp://$HOSTNAME:$PORT/$FILE):
+           Sender: $SENDER
+            Pages: $PAGES
+          Quality: $QUALITY
+             Size: $PAGE
+         Received: $RECEIVED
+  Time to Receive: $TIMETORECV
+      Signal Rate: $SIGNALRATE
+      Data Format: $DATAFORMAT
+    Error Correct: $ERRCORRECT
+          CallID1: $CALLID1
+          CallID2: $CALLID2
+      Recibido De: $DEVICE
+            IDCom: $COMMID (ftp://$HOSTNAME:$PORT/log/$COMMID)
+
+El fax fue enviado automáticamente a: $SENDTO.

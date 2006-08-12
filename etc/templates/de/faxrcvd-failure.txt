@@ -1,0 +1,11 @@
+From: HylaFAX Empfang <$FROMADDR>
+Subject: Fax nicht empfangen
+
+Ein Versuch, ein Fax zu empfangen an $DEVICE schlug fehl da:
+
+   $MSG
+
+    ---- Ablauf der Uebertragung ----
+
+$SESSION_LOG
+

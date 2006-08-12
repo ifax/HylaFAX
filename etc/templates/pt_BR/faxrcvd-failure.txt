@@ -1,0 +1,11 @@
+From:  <$FROMADDR>
+Subject: 
+
+
+
+   $MSG
+
+
+
+$SESSION_LOG
+

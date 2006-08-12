@@ -1,0 +1,26 @@
+From: The HylaFAX Receive Agent <$FROMADDR>
+Subject: Facsimile reçu de $SENDER
+
+$FILE (ftp://$HOSTNAME:$PORT/$FILE):
+           Sender: $SENDER
+            Pages: $PAGES
+          Quality: $QUALITY
+             Size: $PAGE
+         Received: $RECEIVED
+  Time to Receive: $TIMETORECV
+      Signal Rate: $SIGNALRATE
+      Data Format: $DATAFORMAT
+    Error Correct: $ERRCORRECT
+          CallID1: $CALLID1
+          CallID2: $CALLID2
+      Received On: $DEVICE
+
+Le document entier n'a pas été reçu parce que :
+
+   $MSG
+
+    ---- La transcription de la session ----
+
+$SESSION_LOG
+
+Le facsimile a été automatiquement expédié à : $SENDTO.

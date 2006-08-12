@@ -1,0 +1,11 @@
+From: Server fax HylaFAX <$FROMADDR>
+Subject: fax non ricevuto
+
+Un tentativo di ricevere un fax su $DEVICE è fallito perché:
+
+   $MSG
+
+    ---- Segue trascrizione della sessione ----
+
+$SESSION_LOG
+

@@ -1,0 +1,18 @@
+From: HylaFAX Empfang <$FROMADDR>
+Subject: Fax empfangen von $SENDER
+
+$FILE (ftp://$HOSTNAME:$PORT/$FILE):
+           Sender: $SENDER
+            Pages: $PAGES
+          Quality: $QUALITY
+             Size: $PAGE
+         Received: $RECEIVED
+  Time to Receive: $TIMETORECV
+      Signal Rate: $SIGNALRATE
+      Data Format: $DATAFORMAT
+    Error Correct: $ERRCORRECT
+          CallID1: $CALLID1
+          CallID2: $CALLID2
+      EmpfangenAn: $DEVICE
+ KommunikationsID: $COMMID (ftp://$HOSTNAME:$PORT/log/$COMMID)
+

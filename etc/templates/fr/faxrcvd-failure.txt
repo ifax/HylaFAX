@@ -1,0 +1,11 @@
+From: The HylaFAX Receive Agent <$FROMADDR>
+Subject: facsimile non reçu
+
+An attempt to receive facsimile on $DEVICE failed because:
+
+   $MSG
+
+    ---- La transcription de la session ----
+
+$SESSION_LOG
+
