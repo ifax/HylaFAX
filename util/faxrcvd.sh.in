@@ -115,8 +115,19 @@ CIDNUMBER="$CALLID1"
 CIDNAME="$CALLID2"
 
 FILENAME=`echo $FILE | $SED -e 's/\.tif//' -e 's/recvq\///'`
-SENDER="`$INFO $FILE | $AWK -F: '/Sender/ { print $2 }' 2>$ERRORSTO | $SED 's/^.//'`"
-SUBADDR="`$INFO $FILE | $AWK -F: '/SubAddr/ { print $2 }' 2>$ERRORSTO | $SED 's/^.//'`"
+
+parseFaxInfo $FILE
+
+MIMEBOUNDARY="NextPart$$"
+
+if [ -n "$MSG" ]; then
+    SESSION_LOG=`cat log/c$COMMID`
+    export SESSION_LOG
+fi
+
+export COMMID
+export DEVICE
+export MSG
 
 #
 # Apply customizations.  All customizable variables should
@@ -126,14 +137,57 @@ if [ -f etc/FaxDispatch ]; then
     . etc/FaxDispatch		# NB: FaxDispatch sets SENDTO
 fi
 
-#
-# Fetch language settings (after FaxDispatch for customization of $LANG).
-#
-. bin/dictionary
-if [ -f etc/FaxDictionary ]; then
-    . etc/FaxDictionary
-fi
-setInfoSize
+##
+## CreateMailMessage <type> <attach_type>
+## Creates a MIME structured mail message, using
+##  $SPOOL/etc/templates/$TEMPLATE/faxrcvd-<type>.txt
+##  and attaching $FILE as <attach_type>, if given the
+## extra attache option as yes
+##
+CreateMailMessage ()
+{
+    $SED -e '/^$/Q' etc/templates/$TEMPLATE/faxrcvd-$1.txt | template
+    echo "Mime-Version: 1.0"
+    if [ -n "$2" ]; then
+	echo "Content-Type: Multipart/Mixed; Boundary=\"$MIMEBOUNDARY\""
+	echo ""
+	echo "--$MIMEBOUNDARY"
+    fi
+
+    echo "Content-Type: text/plain; charset=$CHARSET"
+    echo "Content-Transfer-Encoding: $TEXTENCODING"
+    echo ""
+    $SED -e '0,/^$/d' etc/templates/$TEMPLATE/faxrcvd-$1.txt | template
+
+    if [ -n "$2" ]; then
+	echo "--$MIMEBOUNDARY"
+	if [ "$2" = "tif" ]; then
+	    echo "Content-Type: image/tiff; name=\"$FILENAME.tif\""
+	    echo "Content-Description: FAX document"
+	    echo "Content-Transfer-Encoding: $ENCODING"
+	    echo "Content-Disposition: attachment; filename=\"$FILENAME.tif\""
+	    echo ""
+	    encode $FILE;
+	elif [ "$2" = "pdf" ]; then
+	    echo "Content-Type: application/pdf; name=\"$FILENAME.pdf\""
+	    echo "Content-Description: FAX document"
+	    echo "Content-Transfer-Encoding: $ENCODING"
+	    echo "Content-Disposition: attachment; filename=\"$FILENAME.pdf\""
+	    echo ""
+	    $TIFF2PDF -o $FILE.pdf $FILE
+	    encode $FILE.pdf
+	    $RM -f $FILE.pdf 2>$ERRORSTO
+	else #  default as Postscript
+	    echo "Content-Type: application/postscript; name=\"$FILENAME.ps\""
+	    echo "Content-Description: FAX document"
+	    echo "Content-Transfer-Encoding: 7bit"
+	    echo "Content-Disposition: attachment; filename=\"$FILENAME.ps\""
+	    echo ""
+	    $FAX2PS $FILE 2>$ERRORSTO
+	fi
+	echo "--$MIMEBOUNDARY--"
+    fi
+}
 
 if [ -f $FILE ]; then
     #
@@ -146,113 +200,25 @@ if [ -f $FILE ]; then
 	*)		NOTIFY_FAXMASTER=yes;;
     esac
     if [ "$TOADDR" != "$SENDTO" ] && [ "$NOTIFY_FAXMASTER" != "no" ]; then
-	(echo "Mime-Version: 1.0"
-	 echo "Content-Type: text/plain; charset=$CHARSET"
-	 echo "Content-Transfer-Encoding: quoted-printable"
-	 echo "To: $TOADDR"
-	 echo "From: $DICTRECEIVEAGENT <$FROMADDR>"
-	 eval echo "Subject: $DICTRECEIVEDFROM";
-	 echo ""
-	 echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):";
-	 faxInfo $FILE
-	 printf "%`echo $INFOSIZE`s: $DEVICE\n" "$DICTRECEIVEDON"
-	if [ "$MSG" ]; then
-	    echo ""
-	    echo "$DICTMSGINTRO"
-	    echo ""
-	    echo "    $MSG"
-	    echo ""
-	    echo "$DICTLOGFOLLOWS"
-	    echo ""
-	    if [ -f log/c$COMMID ]; then
-		$SED -e '/-- data/d' \
-		 -e '/start.*timer/d' -e '/stop.*timer/d' \
-		 -e 's/=/=3D/g' \
-		 log/c$COMMID
-	    elif [ -n "$COMMID" ]; then
-		echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
-	    else
-		echo "$DICTNOLOGAVAIL."
-	    fi
-	else
-	    printf "%`echo $INFOSIZE`s: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)\n" "$DICTCOMMID"
-	fi
-	if [ -n "$SENDTO" ]; then
-	    echo ""
-	    eval echo "$DICTDISPATCHEDTO"
-	fi
-	) 2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $TOADDR
+        if [ -z "$MSG" ]; then
+            CreateMailMessage notify-success 2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $TOADDR
+        else
+            CreateMailMessage notify-error 2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $TOADDR
+        fi
     fi
     if [ -n "$SENDTO" ]; then
-	(MIMEBOUNDARY="NextPart$$"
-	 echo "Mime-Version: 1.0"
-	 echo "Content-Type: Multipart/Mixed; Boundary=\"$MIMEBOUNDARY\""
-	 echo "Content-Transfer-Encoding: 7bit"
-	 echo "To: $SENDTO"
-	 echo "From: $DICTRECEIVEAGENT <$FROMADDR>"
-	 eval echo "Subject: $DICTRECEIVEDFROM";
-	 echo ""
-	 echo "--$MIMEBOUNDARY"
-	 echo "Content-Type: text/plain; charset=$CHARSET"
-	 echo "Content-Transfer-Encoding: quoted-printable"
-	 echo ""
-	 faxInfo $FILE
-	 printf "%`echo $INFOSIZE`s: $DEVICE\n" "$DICTRECEIVEDON"
-	 if [ "$MSG" ]; then
-	    echo ""
-	    echo "$DICTMSGINTRO"
-	    echo ""
-	    echo "    $MSG"
-	    echo ""
-	    echo "$DICTLOGFOLLOWS"
-	    echo ""
-	    if [ -f log/c$COMMID ]; then
-		$SED -e '/-- data/d' \
-		     -e '/start.*timer/d' -e '/stop.*timer/d' \
-		     -e 's/=/=3D/g' \
-		     log/c$COMMID
-	    elif [ -n "$COMMID" ]; then
-		echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
-	    else
-		echo "$DICTNOLOGAVAIL."
-	    fi
-	 else
-	    printf "%`echo $INFOSIZE`s: c$COMMID\n" "$DICTCOMMID"
-	 fi
-	 echo ""
-	 echo "--$MIMEBOUNDARY"
-	 if [ "$FILETYPE" = "tif" ]; then
-	     echo "Content-Type: image/tiff; name=\"$FILENAME.tif\""
-	     echo "Content-Description: FAX document"
-	     echo "Content-Transfer-Encoding: $ENCODING"
-	     echo "Content-Disposition: attachment; filename=\"$FILENAME.tif\""
-	     echo ""
-	     encode $FILE;
-	 elif [ "$FILETYPE" = "pdf" ]; then
-	     echo "Content-Type: application/pdf; name=\"$FILENAME.pdf\""
-	     echo "Content-Description: FAX document"
-	     echo "Content-Transfer-Encoding: $ENCODING"
-	     echo "Content-Disposition: attachment; filename=\"$FILENAME.pdf\""
-	     echo ""
-	     $TIFF2PDF -o $FILE.pdf $FILE
-	     encode $FILE.pdf
-	     $RM -f $FILE.pdf 2>$ERRORSTO
-	 else #  default as Postscript
-	     echo "Content-Type: application/postscript; name=\"$FILENAME.ps\""
-	     echo "Content-Description: FAX document"
-	     echo "Content-Transfer-Encoding: 7bit"
-	     echo "Content-Disposition: attachment; filename=\"$FILENAME.ps\""
-	     echo ""
-	     $FAX2PS $FILE 2>$ERRORSTO
-	 fi
-	 echo ""
-	 echo "--$MIMEBOUNDARY--"
-	) 2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $SENDTO
+        if [ -z "$MSG" ]; then
+            CreateMailMessage success $FILETYPE 2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi $TOADDR
+        else
+            CreateMailMessage error $FILETYPE 2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi $TOADDR
+	fi
     fi
 else
     #
     # Generate notification mail for a failed attempt.
     #
+    CreateMailMessage failure $FILETYPE 2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi $TOADDR
+
     (echo "Mime-Version: 1.0"
      echo "Content-Type: text/plain; charset=$CHARSET"
      echo "Content-Transfer-Encoding: quoted-printable"

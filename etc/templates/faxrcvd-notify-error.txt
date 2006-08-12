@@ -1,0 +1,21 @@
+From: FAX Agent <fax@ifax.com>
+Subject: Fax received with errors from "$SENDER"
+
+$FILE (ftp://pepper:4559/$FILE):                                  
+          Sender: $SENDER
+           Pages: $PAGES
+         Quality: $QUALITY
+            Size: $PAGE
+        Received: $RECEIVED
+ Time To Receive: $TIMETORECV
+     Signal Rate: $SIGNALRATE
+     Data Format: $DATAFORMAT
+   Error Correct: $ERRCORRECT
+         CallID1: $CALLID1
+         CallID2: $CALLID2
+     Received On: $DEVICE
+          CommID: $COMMID (ftp://pepper:4559/log/$COMMID)      
+
+
+Session log:
+$SESSION_LOG

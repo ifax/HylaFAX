@@ -1,0 +1,8 @@
+From: FAX Agent <fax@ifax.com>
+Subject: Fax received from "$SENDER"
+
+Fax not received.
+
+	$MSG
+
+Session log follows:
