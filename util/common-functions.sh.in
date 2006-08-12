@@ -147,4 +147,18 @@ parseQfile()
 
 }
 
+parseFaxInfo()
+{
+    # We use the same basic stuff as parseQfile(), but just to straight assignment
+    eval `$INFO -S '' -s '%s=!=!=!=!=!=!=!=!=' $1 | $AWK -F'=!=!=!=!=!=!=!=!=' '
+    function p(varname,val)
+    {
+        gsub(/\\047/, "\047\\\\\047\047", val);
+        gsub(/\n/, "\047\042\\\\n\042\047", val);
+        printf "%s=\\047%s\\047\n",varname,val
+        printf "export %s\n",varname
+    }
+    { p(toupper($1),$2); }
+    '`
+}
 
