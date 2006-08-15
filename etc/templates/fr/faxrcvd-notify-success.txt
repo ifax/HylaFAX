@@ -2,14 +2,14 @@ From: The HylaFAX Receive Agent <$FROMADDR>
 Subject: Facsimile reçu de $SENDER
 
 $FILE (ftp://$HOSTNAME:$PORT/$FILE):
-           Sender: $SENDER
+         Emetteur: $SENDER
             Pages: $PAGES
-          Quality: $QUALITY
-             Size: $PAGE
-         Received: $RECEIVED
-  Time to Receive: $TIMETORECV
+          Qualité: $QUALITY
+           Taille: $PAGE
+             Reçu: $RECEIVED
+Heure de réception: $TIMETORECV
       Signal Rate: $SIGNALRATE
-      Data Format: $DATAFORMAT
+   Format données: $DATAFORMAT
     Error Correct: $ERRCORRECT
           CallID1: $CALLID1
           CallID2: $CALLID2

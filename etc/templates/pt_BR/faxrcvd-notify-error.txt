@@ -1,26 +1,26 @@
-From:  <$FROMADDR>
-Subject: 
+From: Servidor de fax HylaFAX <$FROMADDR>
+Subject: Fax recebido de $SENDER
 
 $FILE (ftp://$HOSTNAME:$PORT/$FILE):
-           Sender: $SENDER
-            Pages: $PAGES
-          Quality: $QUALITY
-             Size: $PAGE
-         Received: $RECEIVED
-  Time to Receive: $TIMETORECV
-      Signal Rate: $SIGNALRATE
-      Data Format: $DATAFORMAT
-    Error Correct: $ERRCORRECT
-          CallID1: $CALLID1
-          CallID2: $CALLID2
-                 : $DEVICE
+        Remetente: $SENDER
+          Páginas: $PAGES
+        Qualidade: $QUALITY
+          Tamanho: $PAGE
+         Recebido: $RECEIVED
+Tempo Para Recepção: $TIMETORECV
+Velocidade de comunicação: $SIGNALRATE
+ Formato de Dados: $DATAFORMAT
+ Erros Corrigidos: $ERRCORRECT
+     ID Chamada 1: $CALLID1
+     ID Chamada 2: $CALLID2
+      Recebido De: $DEVICE
 
-
+O documento não foi recebido completamente, causa:
 
    $MSG
 
-
+    ---- Registo de sessão ----
 
 $SESSION_LOG
 
-
+O fax foi enviado automaticamente para: $SENDTO.

@@ -1,11 +1,11 @@
-From:  <$FROMADDR>
-Subject: 
+From: Servidor de fax HylaFAX <$FROMADDR>
+Subject: fax não recebido
 
-
+falha na recepção de fax no modem $DEVICE, causa:
 
    $MSG
 
-
+    ---- Registo de sessão ----
 
 $SESSION_LOG
 
