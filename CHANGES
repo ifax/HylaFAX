@@ -2,6 +2,8 @@
 
 Changelog since HylaFAX 4.3.0
 
+* Unify mime encoding between notify and faxrcvd
+* Add templates for use in faxrcvd translations (14 Aug 2006)
 * don't exit faxq with assertion failure when a job times out and is
   interrupted during sending (21 Jul 2006)
 * faxaddmodem: Allow identification when no AT+FMM? or AT+FMI? (21 Jul 2006)

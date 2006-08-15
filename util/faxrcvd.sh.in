@@ -170,7 +170,7 @@ CreateMailMessage ()
 	    echo "Content-Transfer-Encoding: $ENCODING"
 	    echo "Content-Disposition: attachment; filename=\"$FILENAME.tif\""
 	    echo ""
-	    encode $FILE;
+	    mimeEncode $FILE;
 	elif [ "$2" = "pdf" ]; then
 	    echo "Content-Type: application/pdf; name=\"$FILENAME.pdf\""
 	    echo "Content-Description: FAX document"
@@ -178,7 +178,7 @@ CreateMailMessage ()
 	    echo "Content-Disposition: attachment; filename=\"$FILENAME.pdf\""
 	    echo ""
 	    $TIFF2PDF -o $FILE.pdf $FILE
-	    encode $FILE.pdf
+	    mimeEncode $FILE.pdf
 	    $RM -f $FILE.pdf 2>$ERRORSTO
 	else #  default as Postscript
 	    echo "Content-Type: application/postscript; name=\"$FILENAME.ps\""
