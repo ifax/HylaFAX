@@ -1,19 +1,20 @@
 From: HylaFAX Empfang <$FROMADDR>
 Subject: Fax empfangen von $SENDER
+Content-type: text/plain; charset=UTF-8
 
 $FILE (ftp://$HOSTNAME:$PORT/$FILE):
-           Sender: $SENDER
-           Seiten: $PAGES
-         Qualität: $QUALITY
-           Grösse: $PAGE
-        Empfangen: $RECEIVED
-Verarbeitungszeit: $TIMETORECV
-Übertragungsgeschwindigkeit: $SIGNALRATE
-      Datenformat: $DATAFORMAT
-  FehlerKorrektur: $ERRCORRECT
-      Anrufe ID 1: $CALLID1
-      Anrufe ID 2: $CALLID2
-      EmpfangenAn: $DEVICE
- KommunikationsID: $COMMID (ftp://$HOSTNAME:$PORT/log/$COMMID)
+                     Sender: $SENDER
+                     Seiten: $PAGES
+                   QualitÃ¤t: $QUALITY
+                     GrÃ¶sse: $PAGE
+                  Empfangen: $RECEIVED
+          Verarbeitungszeit: $TIMETORECV
+Ãœbertragungsgeschwindigkeit: $SIGNALRATE
+                Datenformat: $DATAFORMAT
+            FehlerKorrektur: $ERRCORRECT
+                Anrufe ID 1: $CALLID1
+                Anrufe ID 2: $CALLID2
+                EmpfangenAn: $DEVICE
+           KommunikationsID: $COMMID (ftp://$HOSTNAME:$PORT/log/$COMMID)
 
 Das Fax wurde automatisch weitergeleitet an: $SENDTO.

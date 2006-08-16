@@ -1,5 +1,6 @@
 From: HylaFAX Empfang <$FROMADDR>
 Subject: Fax nicht empfangen
+Content-type: text/plain; charset=UTF-8
 
 Ein Versuch, ein Fax zu empfangen an $DEVICE schlug fehl da:
 
