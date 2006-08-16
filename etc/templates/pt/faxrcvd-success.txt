@@ -1,18 +1,19 @@
 From: Servidor de fax HylaFAX <$FROMADDR>
 Subject: Fax recepcionado de $SENDER
+Content-type: text/plain; charset=UTF-8
 
 $FILE (ftp://$HOSTNAME:$PORT/$FILE):
-        Remetente: $SENDER
-          Páginas: $PAGES
-        Qualidade: $QUALITY
-          Tamanho: $PAGE
-         Recebido: $RECEIVED
-Tempo Para Recepção: $TIMETORECV
-Velocidade de comunicação: $SIGNALRATE
- Formato De Dados: $DATAFORMAT
- Erros Corregidos: $ERRCORRECT
-     ID Chamada 1: $CALLID1
-     ID Chamada 2: $CALLID2
-      Recebido De: $DEVICE
-            IDCom: $COMMID (ftp://$HOSTNAME:$PORT/log/$COMMID)
+                Remetente: $SENDER
+                  PÃ¡ginas: $PAGES
+                Qualidade: $QUALITY
+                  Tamanho: $PAGE
+                 Recebido: $RECEIVED
+      Tempo Para RecepÃ§Ã£o: $TIMETORECV
+Velocidade de comunicaÃ§Ã£o: $SIGNALRATE
+         Formato De Dados: $DATAFORMAT
+         Erros Corregidos: $ERRCORRECT
+             ID Chamada 1: $CALLID1
+             ID Chamada 2: $CALLID2
+              Recebido De: $DEVICE
+                    IDCom: $COMMID (ftp://$HOSTNAME:$PORT/log/$COMMID)
 
