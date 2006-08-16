@@ -131,6 +131,7 @@ export MSG
 export FROMADDR
 export HOSTNAME
 export PORT
+export SENDTO
 
 #
 # Apply customizations.  All customizable variables should
@@ -140,58 +141,35 @@ if [ -f etc/FaxDispatch ]; then
     . etc/FaxDispatch		# NB: FaxDispatch sets SENDTO
 fi
 
+
+## MailWithFAX <type>
+## Email the <type> template,adding the attachments according
+## to $FILETYPE to $SENDTO
 ##
-## CreateMailMessage <type> <attach_type>
-## Creates a MIME structured mail message, using
-##  $SPOOL/etc/templates/$TEMPLATE/faxrcvd-<type>.txt
-##  and attaching $FILE as <attach_type>, if given the
-## extra attache option as yes
-##
-CreateMailMessage ()
+## We use the common CreateMailMessage <template> <f1> <t1> <n1> <d1>
+## function, creating the file to mail as we go.
+MailWithFAX ()
 {
-    $SED -e '/^$/Q' etc/templates/$TEMPLATE/faxrcvd-$1.txt | template
-    echo "Mime-Version: 1.0"
-    if [ -n "$2" ]; then
-	echo "Content-Type: Multipart/Mixed; Boundary=\"$MIMEBOUNDARY\""
-	echo ""
-	echo "--$MIMEBOUNDARY"
+    template="etc/templates/$TEMPLATE/faxrcvd-$1.txt"
+    if [ "$FILETYPE" = "tif" ]; then
+	CreateMailMessage $template 							\
+	    $FILE image/tiff "$FILENAME.tif" "FAX Document"				\
+	    2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $SENDTO
+    elif [ $FILETYPE = "pdf" ]; then
+	$TIFF2PDF -o tmp/$FILENAME.pdf $FILE 2>$ERRORSTO
+	CreateMailMessage $template 							\
+	    tmp/$FILENAME.pdf application/pdf "$FILENAME.pdf" "FAX Document"		\
+	    2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $SENDTO
+	rm -f tmp/$FILENAME.pdf
+    else
+	$FAX2PS $FILE > tmp/$FILENAME.ps 2>$ERRORSTO
+	CreateMailMessage $template 							\
+	    tmp/$FILENAME.ps application/postscript "$FILENAME.ps" "FAX Document"	\
+	    2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $SENDTO
+	rm -f tmp/$FILENAME.ps
     fi
 
-    echo "Content-Type: text/plain; charset=$CHARSET"
-    echo "Content-Transfer-Encoding: $TEXTENCODING"
-    echo ""
-    $SED -e '0,/^$/d' etc/templates/$TEMPLATE/faxrcvd-$1.txt | template
-
-    if [ -n "$2" ]; then
-	echo "--$MIMEBOUNDARY"
-	if [ "$2" = "tif" ]; then
-	    echo "Content-Type: image/tiff; name=\"$FILENAME.tif\""
-	    echo "Content-Description: FAX document"
-	    echo "Content-Transfer-Encoding: $ENCODING"
-	    echo "Content-Disposition: attachment; filename=\"$FILENAME.tif\""
-	    echo ""
-	    mimeEncode $FILE;
-	elif [ "$2" = "pdf" ]; then
-	    echo "Content-Type: application/pdf; name=\"$FILENAME.pdf\""
-	    echo "Content-Description: FAX document"
-	    echo "Content-Transfer-Encoding: $ENCODING"
-	    echo "Content-Disposition: attachment; filename=\"$FILENAME.pdf\""
-	    echo ""
-	    $TIFF2PDF -o $FILE.pdf $FILE
-	    mimeEncode $FILE.pdf
-	    $RM -f $FILE.pdf 2>$ERRORSTO
-	else #  default as Postscript
-	    echo "Content-Type: application/postscript; name=\"$FILENAME.ps\""
-	    echo "Content-Description: FAX document"
-	    echo "Content-Transfer-Encoding: 7bit"
-	    echo "Content-Disposition: attachment; filename=\"$FILENAME.ps\""
-	    echo ""
-	    $FAX2PS $FILE 2>$ERRORSTO
-	fi
-	echo "--$MIMEBOUNDARY--"
-    fi
 }
-
 if [ -f $FILE ]; then
     #
     # Don't send FaxMaster duplicates, and FaxMaster may not even
@@ -204,46 +182,27 @@ if [ -f $FILE ]; then
     esac
     if [ "$TOADDR" != "$SENDTO" ] && [ "$NOTIFY_FAXMASTER" != "no" ]; then
         if [ -z "$MSG" ]; then
-            CreateMailMessage notify-success 2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $TOADDR
+            CreateMailMessage etc/templates/$TEMPLATE/faxrcvd-notify-success.txt \
+	    		2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $TOADDR
         else
-            CreateMailMessage notify-error 2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $TOADDR
+            CreateMailMessage etc/templates/$TEMPLATE/faxrcvd-notify-error.txt \
+	    		2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $TOADDR
         fi
     fi
     if [ -n "$SENDTO" ]; then
+	# Create the document to attache
         if [ -z "$MSG" ]; then
-            CreateMailMessage success $FILETYPE 2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi $TOADDR
+	    MailWithFAX success
         else
-            CreateMailMessage error $FILETYPE 2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi $TOADDR
+	    MailWithFAX error
 	fi
+
     fi
 else
     #
     # Generate notification mail for a failed attempt.
+    # There is no file to send...
     #
-    CreateMailMessage failure $FILETYPE 2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi $TOADDR
-
-    (echo "Mime-Version: 1.0"
-     echo "Content-Type: text/plain; charset=$CHARSET"
-     echo "Content-Transfer-Encoding: quoted-printable"
-     echo "To: $TOADDR"
-     echo "From: $DICTRECEIVEAGENT <$FROMADDR>"
-     echo "Subject: $DICTNOTRECEIVED"
-     echo ""
-     eval echo "$DICTATTEMPTEDFAXFAILED"
-     echo ""
-     echo "    $MSG"
-     echo ""
-     echo "$DICTLOGFOLLOWS"
-     echo ""
-     if [ -f log/c$COMMID ]; then
-	$SED -e '/-- data/d' \
-	     -e '/start.*timer/d' -e '/stop.*timer/d' \
-	     -e 's/=/=3D/g' \
-	     log/c$COMMID
-     elif [ -n "$COMMID" ]; then
-	echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
-     else
-	echo "$DICTNOLOGAVAIL."
-     fi
-    ) 2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $TOADDR
+    CreateMailMessage etc/templates/$TEMPLATE/faxrcvd-failure.txt \
+    	2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi $TOADDR
 fi

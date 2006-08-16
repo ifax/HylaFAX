@@ -209,3 +209,62 @@ template ()
                 template_line($0);
         }'
 }
+
+#
+# CreateMailMessage <template> [<attach1> <type1> <name1> <desciption1> 
+#		[<attach2> <type2> <name2> <description2> 
+#			...] ]
+#
+# This creates a mail message based on <template>, and attaches
+# The given files as MIME attachments
+#
+# The "template" section takes it's Content-* lines right from the
+# template, so whoever is doing the templates can control the
+# content-type and encoding directly
+
+# The files are all attached with the following:
+#	Content-type: <type>; name=<name>
+#	Content-Description: <description>
+#	Content-Disposition: attachment; filename="<name>"
+#	Content-encoding: $ENCODING
+CreateMailMessage ()
+{
+    # First we take the top part of the e-mail for headers
+    # Excluding any "Content-" lines, which need to stay with
+    # the actual template content
+    $SED -e '/^$/Q' $1			\
+    	| $GREP -v ^Content		\
+	| template
+
+    # If there are attachments, we are a multipart/mixed
+    echo "Mime-Version: 1.0"
+    if [ -n "$2" ]; then
+	echo "Content-Type: Multipart/Mixed; Boundary=\"$MIMEBOUNDARY\""
+	echo ""
+	echo "--$MIMEBOUNDARY"
+    fi
+
+    # Now print the Content-* headers for the template
+    $SED -e '/^$/Q' $1			\
+    	| $GREP ^Content		\
+	| template
+
+    echo ""
+    $SED -e '0,/^$/d' $1 | template
+
+    if [ -n "$2" ]; then
+	shift
+	while [ -n "$1" ]
+	do
+	    echo "--$MIMEBOUNDARY"
+	    echo "Content-Type: $2; name=\"$3\""
+	    echo "Content-Description: $4"
+	    echo "Content-Disposition: attachment; filename=\"$3\""
+	    echo "Content-Transfer-Encoding: $ENCODING"
+	    echo ""
+	    mimeEncode $1
+	    shift; shift; shift; shift;
+	done
+	echo "--$MIMEBOUNDARY--"
+    fi
+}
