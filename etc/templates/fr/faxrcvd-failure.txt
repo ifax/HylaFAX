@@ -1,5 +1,6 @@
 From: The HylaFAX Receive Agent <$FROMADDR>
-Subject: facsimile non reçu
+Subject: facsimile non reÃ§u
+Content-type: text/plain; charset=UTF-8
 
 An attempt to receive facsimile on $DEVICE failed because:
 
