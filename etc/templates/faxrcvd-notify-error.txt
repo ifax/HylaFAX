@@ -1,5 +1,6 @@
 From: FAX Agent <$FROMADDR>
 Subject: Fax received with errors from "$SENDER"
+Content-type: text/plain; charset=us-ascii
 
 $FILE (ftp://pepper:4559/$FILE):                                  
           Sender: $SENDER
