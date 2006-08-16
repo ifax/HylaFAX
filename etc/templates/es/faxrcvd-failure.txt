@@ -1,11 +1,13 @@
+To: $SENDTO
 From: Servidor de Fax HylaFAX <$FROMADDR>
 Subject: fax no recibido
+Content-type: text/plain; charset=utf-8
 
 El intento de recibir el fax por $DEVICE ha fallado porque:
 
    $MSG
 
-    ---- Transcripción de la sesión ----
+    ---- TranscripciÃ³n de la sesiÃ³n ----
 
 $SESSION_LOG
 

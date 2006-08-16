@@ -1,26 +1,28 @@
+To: $TOADDR
 From: Servidor de Fax HylaFAX <$FROMADDR>
 Subject: Fax recibido de $SENDER
+Content-type: text/plain; charset=utf-8
 
 $FILE (ftp://$HOSTNAME:$PORT/$FILE):
-        Remitente: $SENDER
-          P·ginas: $PAGES
-          Calidad: $QUALITY
-           TamaÒo: $PAGE
-         Recibido: $RECEIVED
-Tiempo Para Recibir: $TIMETORECV
-Velocidad de la transmisiÛn: $SIGNALRATE
- Formato De Datos: $DATAFORMAT
-Errores Corregidos: $ERRCORRECT
-     ID Llamada 1: $CALLID1
-     ID Llamada 2: $CALLID2
-      Recibido De: $DEVICE
+                  Remitente: $SENDER
+                    P√°ginas: $PAGES
+                    Calidad: $QUALITY
+                     Tama√±o: $PAGE
+                   Recibido: $RECEIVED
+        Tiempo Para Recibir: $TIMETORECV
+Velocidad de la transmisi√≥n: $SIGNALRATE
+           Formato De Datos: $DATAFORMAT
+         Errores Corregidos: $ERRCORRECT
+               ID Llamada 1: $CALLID1
+               ID Llamada 2: $CALLID2
+                Recibido De: $DEVICE
 
-El documento no se recibiÛ en su totalidad porque:
+El documento no se recibi√≥ en su totalidad porque:
 
    $MSG
 
-    ---- TranscripciÛn de la sesiÛn ----
+    ---- Transcripci√≥n de la sesi√≥n ----
 
 $SESSION_LOG
 
-El fax fue enviado autom·ticamente a: $SENDTO.
+El fax fue enviado autom√°ticamente a: $SENDTO.
