@@ -81,6 +81,7 @@ parseQfile()
         gsub(/\\047/, "\047\\\\\047\047", val);
         gsub(/\n/, "\047\042\\\\n\042\047", val);
         printf "%s=\\047%s\\047\n",varname,val
+        printf "export %s\n",varname
     }
     BEGIN {
         nfiles = 0;
