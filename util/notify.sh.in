@@ -1,0 +1,215 @@
+#!/bin/bash
+#
+# notify qfile why jobtime [nextTry]
+#
+# Return mail to the submitter of a job when notification is needed.
+#
+# This is a rewrite of the notify.sh.
+# This version uses the "template" capabilityes to send the e-mails.
+# FaxQueuer only calls notify if the job requested notification,
+# So if we are called, we *will* send an email (barring any errors)
+#
+# etc/FaxNotify controls *what* we e-mail
+# - TEMPLATE=subdir
+# - RETURNFILETYPE=raw|PDF|PS|TIFF
+#
+# It send the e-mail to $mailaddr, which is the mailaddr of the job.
+# The e-mail template used is selectec from:
+#   - etc/templates/$TEMPLATE/notify-$WHY-page.txt (only for pager jobs)
+#   - etc/templates/$TEMPLATE/notify-$WHY.txt
+# If it is a pager job, and notify-$WHY-page.txt does *not* exist, it
+# will use the notify-$WHY.txt template.
+#
+# It honours the RETURNFILETYPE varialbe that can be set by FaxNotify.
+# If it is set, it will return *all* the submitted documents as attachments
+# with the e-mail, converted to the RETURNFILETYPE.
+
+if [ $# != 3 ] && [ $# != 4 ]; then
+    echo "Usage: $0 qfile why jobtime [nextTry]"
+    exit 1
+fi
+
+test -f etc/setup.cache || {
+    SPOOL=`pwd`
+    cat<<EOF
+
+FATAL ERROR: $SPOOL/etc/setup.cache is missing!
+
+The file $SPOOL/etc/setup.cache is not present.  This
+probably means the machine has not been setup using the faxsetup(@MANNUM1_8@)
+command.  Read the documentation on setting up HylaFAX before you
+startup a server system.
+
+EOF
+    exit 1
+}
+
+# need to parse out the command line here.  some may be needed
+# in the FaxNotify.
+QFILE=$1
+WHY=$2
+JTIME=$3
+NEXT=${4:-'??:??'}
+
+# These settings may not be present in setup.cache if user upgraded and
+# didn't re-run faxsetup; we set them before calling setup.cache for
+# backward compatibility.
+ENCODING=base64
+MIMENCODE=mimencode
+TIFF2PDF=bin/tiff2pdf
+TTYCMD=tty
+CHARSET=us-ascii
+
+. etc/setup.cache
+. bin/common-functions
+
+INFO=$SBIN/faxinfo
+TIFFINFO=tiffinfo
+FAX2PS=$TIFFBIN/fax2ps
+TIFF2PS=tiff2ps
+PS2PDF=ps2pdf
+PDF2PS=pdf2ps
+PS2FAX=bin/ps2fax
+PDF2FAX=bin/pdf2fax
+TOADDR=FaxMaster
+FROMADDR=fax
+NOTIFY_FAXMASTER=never
+RETURNFILETYPE=
+MIMEBOUNDARY="NextPart$$" RETURNTECHINFO=yes 
+# Redirect errors to a tty, if possible, rather than
+# dev-nulling them or allowing them to creep into
+# the mail.
+#
+if $TTYCMD >/dev/null 2>&1; then
+    ERRORSTO=`$TTYCMD`
+else
+    ERRORSTO=/dev/null
+fi
+
+##
+## BuildAttachArgs <returnfiletype>
+##
+## Build the list of arguments to be passed on to the 
+## Functions which do the actual mailing/attaching
+##
+## It will conver to the requested <returnfiletype>
+##
+## The result is formatted like:
+## "file1" "type1" "name1" "description1" \
+##  ["file2" "type2" "name2" "description2"  [...] ]
+BuildAttachArgs ()
+{
+    case $1 in
+	PostScript|Postscript|PS|ps)
+	    a_type="application/postscript"
+	    a_desc="FAX Document (PostScript)"
+	    ;;
+	PDF|pdf)
+	    a_type="application/PDF"
+	    a_desc="FAX Document (PDF)"
+	    ;;
+	TIFF|tiff|TIF|tif)
+	    a_type="image/tiff"
+	    a_desc="FAX Document (TIFF)"
+	    ;;
+    esac
+
+    for i in `LocalSequence 1 $nfiles`
+    do
+	eval filename="$"files_"$i"
+	TraceLog "FILE $i: $filename"
+	if [ -f "$filename" ]; then
+	    eval filetype="$"filetype_"$i"
+	    if [ "$1" = "raw" ]; then
+		a_file=$filename;
+		a_name=`basename $filename`;
+		a_desc="FAX Document"
+		case "$filetype" in
+		    PostScript)
+			TraceLog "Attaching $file in Postscript format"
+			a_type="application/postscript"
+			;;
+		    PDF)
+			TraceLog "Attaching $file in PDF format"
+			a_type="application/PDF"
+			;;
+		    TIFF)
+			TraceLog "Attaching $file in PDF format"
+			a_type="application/PDF"
+			;;
+		    *)
+		    TraceLog "Attaching $file in unknown[$filetype] format"
+			a_type="application/unknown"
+			;;
+		esac
+	    else
+		a_file=`ConvertFile "$filename" "$filetype" "$1"`
+		a_name=`basename $a_file`
+	    fi
+
+	fi
+	if [ -f "$a_file" ]
+	then
+	    ARGS="$ARGS"" \"$a_file\" \"$a_type\" \"$a_name\" \"$a_desc\""
+	fi
+    done
+    printf '%s' "$ARGS"
+}
+
+##########
+##  MAIN
+##########
+
+SetupPrivateTmp
+
+# we parse the q file fisrt in case any of the varialbe setting 
+# operations may want to know about the details of the fax
+parseQfile  
+
+# We need a few special things
+## - SESSION_LOG
+if [ -f "log/c$commid" ]; then
+	SESSION_LOG="`cat log/c$commid | grep -v '-- data'`"
+fi
+
+if [ "$doneop" = "default" ] ; then
+    doneop="remove"
+fi
+if [ "$jobtype" = "pager" ] ; then
+    number=$pagernum
+fi
+DESTINATION="$receiver"
+if [ -n "$DESTINATION" ]; then
+    DESTINATION="$DESTINATION ($number)"
+else
+    DESTINATION="$number"
+fi
+
+SENDTO=$mailaddr
+export SENDTO FROMADDR TOADDR SESSION_LOG DESTINATION
+
+#
+# Apply customizations.  All customizable variables should
+# be set to their non-customized defaults prior to this.
+#
+if [ -f etc/FaxNotify ]; then
+    # source notify preferecnes
+    . etc/FaxNotify
+fi
+
+
+
+if [ -n "$RETURNFILETYPE" ]; then
+    ATTACH_ARGS=`BuildAttachArgs $RETURNFILETYPE`
+fi
+
+template="etc/templates/$TEMPLATE/notify-$WHY.txt"
+if [ "$jobtype" != "facsimile" ] && [ -f etc/templates/$TEMPLATE/notify-$WHY-page.txt ]; then
+	template="etc/templates/$TEMPLATE/notify-$WHY-page.txt"
+fi
+
+
+eval CreateMailMessage "$template" $ATTACH_ARGS \
+	2>$ERRORSTO | $SENDMAIL -f$FROMADDR -oi $mailaddr
+
+CleanupPrivateTmp
