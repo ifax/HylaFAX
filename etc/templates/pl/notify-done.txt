@@ -1,0 +1,32 @@
+To: $SENDTO
+Subject: fax do $DESTINATION zakoñczone
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+Zadanie $THISJOBTYPE do $number  zakoñczone powodzeniem.
+                   Stron: $npages
+                Odbiorca: $csi
+                Jako¶æ: $resolution
+      Szeroko¶æ strony: $pagewidth (mm)
+       Wysoko¶æ strony: $pagelength
+                 Sygna³: $signalrate
+           Format danych: $dataformat
+      Zdalne urz±dzenie: $equipment
+          Zdalna maszyna: $station
+             Po³±czeñ: $tottries (wymiany ze zdalnym urz±dzeniem)
+Po³±czeñ telefonicznych: $totdials (£±cznie po³±czeñ telefonicznych)
+                   Modem: $modem
+            Nadano przez: $client
+              ID zadania: $jobid
+                ID grupy: $groupid
+          ID Komunikacji: c$commid
+
+Czas przetwarzania $JTIME.
+
+  Dodatkowe informacje:
+
+$faxstatus
+
+    ---- Transkrypcja sesji ----
+
+$SESSION_LOG

@@ -1,0 +1,9 @@
+To: $SENDTO
+Subject: Notice about facsimile
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+, une demande de 'polling',\nn'a pas pu être accomplie parce que 
+aucun document n'ést disponible pour la récupération.
+
+La durée de la transformation était $JTIME.

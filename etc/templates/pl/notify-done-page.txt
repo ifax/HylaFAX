@@ -1,0 +1,23 @@
+To: $SENDTO
+Subject: czysty tekst do $DESTINATION zakoñczone
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+ zakoñczone powodzeniem.
+             Po³±czeñ: $tottries (wymiany ze zdalnym urz±dzeniem)
+Po³±czeñ telefonicznych: $totdials (£±cznie po³±czeñ telefonicznych)
+                   Modem: $modem
+            Nadano przez: $client
+              ID zadania: $jobid
+                ID grupy: $groupid
+          ID Komunikacji: c$commid
+
+Czas przetwarzania $JTIME.
+
+  Dodatkowe informacje:
+
+$faxstatus
+
+    ---- Transkrypcja sesji ----
+
+$SESSION_LOG

@@ -1,0 +1,28 @@
+To: $SENDTO
+Subject: facsimile de $DESTINATION échoué
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+ 
+le script de conversion n'a pas été trouvé.
+------- Unsent job status -------
+        Destination: $number
+              JobID: $jobid
+            GroupID: $groupid
+           Emetteur: $sender
+       Adresse mail: $mailaddr
+             CommID: $commid
+              Modem: $modem
+         Envoyé à: $client
+    Largeur de page: $pagewidth  (mm)
+    Hauteur de page: $pagelength (mm)
+        Résolution: $resolution (lpi)
+             Status: $faxstatus
+          Dialogues: $tottries
+              Dials: $ndials
+             Appels: $totdials
+              Pages: $npages
+ Nombre total pages: $totpages
+         Tentatives: $ntries
+   Numéro annuaire: $dirnum
+        Destination: $number

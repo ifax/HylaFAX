@@ -1,0 +1,32 @@
+To: $SENDTO
+Subject: fax para $DESTINATION enviado
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+O seu fax $THISJOBTYPE para $number  enviado com sucesso.
+                  Páginas: $npages
+                  Receptor: $csi
+                 Qualidade: $resolution
+                   Largura: $pagewidth (mm)
+               Comprimento: $pagelength
+Velocidade de comunicação: $signalrate
+          Formato de Dados: $dataformat
+        Equipamento Remoto: $equipment
+   Nome Equipamento Remoto: $station
+                  Sessões: $tottries (comunicações com o equipamento remoto)
+                  Chamadas: $totdials (Nr. de chamadas totais)
+                     Modem: $modem
+                Enviado De: $client
+                   IDEnvio: $jobid
+                   IDGrupo: $groupid
+                     IDCom: c$commid
+
+Tempo gasto no processamento $JTIME.
+
+  Informação adicional:
+
+$faxstatus
+
+    ---- Registo de sessão ----
+
+$SESSION_LOG

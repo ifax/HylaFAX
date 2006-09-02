@@ -1,0 +1,23 @@
+To: $SENDTO
+Subject: pager de $DESTINATION complet
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+ a été effectué avec succès.
+          Dialogues: $tottries (Echanges avec l'équipement distant)
+             Appels: $totdials (les appels téléphoniques totaux ont placé)
+              Modem: $modem
+         Envoyé à: $client
+              JobID: $jobid
+            GroupID: $groupid
+             CommID: c$commid
+
+La durée de la transformation était $JTIME.
+
+  Informations complémentaire :
+
+$faxstatus
+
+    ---- La transcription de la session ----
+
+$SESSION_LOG

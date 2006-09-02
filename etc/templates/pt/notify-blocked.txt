@@ -1,0 +1,10 @@
+To: $SENDTO
+Subject: fax para $DESTINATION bloqueado
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+atraso no envio, causa:
+
+$faxstatus
+
+O fax será processado o mais rápidamente possível.

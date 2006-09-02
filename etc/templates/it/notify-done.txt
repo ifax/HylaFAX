@@ -1,0 +1,32 @@
+To: $SENDTO
+Subject: fax per $DESTINATION completato
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+Il $THISJOBTYPE per $number  è stato completato con successo.
+                   Pagine: $npages
+                Ricevente: $csi
+                 Qualità: $resolution
+         Larghezza pagina: $pagewidth (mm)
+           Altezza pagina: $pagelength
+Velocità di trasmissione: $signalrate
+             Formato dati: $dataformat
+       Dispositivo remoto: $equipment
+          Stazione remota: $station
+                 Dialoghi: $tottries (connessioni stabilite con il dispositivo remoto)
+                 Chiamate: $totdials (totale chiamate telefoniche effettuate)
+                    Modem: $modem
+               Inviato da: $client
+                    JobID: $jobid
+                  GroupID: $groupid
+                   CommID: c$commid
+
+Il tempo di elaborazione è stato $JTIME.
+
+  Informazioni addizionali:
+
+$faxstatus
+
+    ---- Segue trascrizione della sessione ----
+
+$SESSION_LOG

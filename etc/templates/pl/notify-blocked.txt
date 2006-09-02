@@ -1,0 +1,10 @@
+To: $SENDTO
+Subject: fax do $DESTINATION zablokowane
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+zosta³o zatrzymane w kolejce wysy³ania, poniewa¿:
+
+$faxstatus
+
+Zadanie zostanie wykonane tak szybko, jak to jest mo¿liwe.

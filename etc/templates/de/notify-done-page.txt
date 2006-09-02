@@ -1,0 +1,23 @@
+To: $SENDTO
+Subject: Pager an $DESTINATION abgeschlossen
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+ wurde erfolgreich abgeschlossen.
+                     Dialoge: $tottries (Kommunikationsversuchen mit Zielfaxgerät)
+                      Anrufe: $totdials (Anrufe insgesamt durchgeführt)
+                       Modem: $modem
+               Geschickt von: $client
+                       JobID: $jobid
+                   GruppenID: $groupid
+            KommunikationsID: c$commid
+
+Verarbeitungszeit $JTIME.
+
+  Zusätzliche Information:
+
+$faxstatus
+
+    ---- Ablauf der Uebertragung ----
+
+$SESSION_LOG

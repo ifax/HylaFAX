@@ -1,0 +1,30 @@
+To: $SENDTO
+Subject: Fax an $DESTINATION fehlgeschlagen
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+wurde verworfen weil:
+
+$faxstatus
+
+------- Unsent job status -------
+                        Ziel: $number
+                       JobID: $jobid
+                   GruppenID: $groupid
+                      Sender: $sender
+                Mailaddresse: $mailaddr
+            KommunikationsID: $commid
+                       Modem: $modem
+               Geschickt von: $client
+               Seiten Breite: $pagewidth  (mm)
+               Seiten Länge: $pagelength (mm)
+                  Auflösung: $resolution (lpi)
+                      Status: $faxstatus
+                     Dialoge: $tottries
+               Wählversuche: $ndials
+                      Anrufe: $totdials
+                      Seiten: $npages
+                    TotPages: $totpages
+                    Versuche: $ntries
+                      Dirnum: $dirnum
+                        Ziel: $number

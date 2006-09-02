@@ -1,0 +1,10 @@
+To: $SENDTO
+Subject: facsimile de $DESTINATION bloqué
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+est retardé dans les files d'attente d'établissement parce que :
+
+$faxstatus
+
+Le travail sera traité aussitôt que possible.

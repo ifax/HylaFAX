@@ -1,0 +1,32 @@
+To: $SENDTO
+Subject: fax do $DESTINATION nieudane
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+ nie zosta³o wys³ane, poniewa¿ konwersja dokumentu
+na fax zakoñczy³a siê niepowodzeniem. Komunikaty programu konwertuj±cego:
+
+$faxstatus
+
+Nale¿y sprawdziæ, czy w dokumentach PostScriptowych nie wystêpuj± niestandardowe czcionki lub nieprawid³owe konstrunkcje
+------- Unsent job status -------
+                 Adresat: $number
+              ID zadania: $jobid
+                ID grupy: $groupid
+                 Nadawca: $sender
+            Adres e-mail: $mailaddr
+          ID Komunikacji: $commid
+                   Modem: $modem
+            Nadano przez: $client
+      Szeroko¶æ strony: $pagewidth  (mm)
+       Wysoko¶æ strony: $pagelength (mm)
+         Rozdzielczo¶æ: $resolution (lpi)
+                  Status: $faxstatus
+             Po³±czeñ: $tottries
+                        : $ndials
+Po³±czeñ telefonicznych: $totdials
+                   Stron: $npages
+                   Stron: $totpages
+                   Prób: $ntries
+                 Katalog: $dirnum
+                 Adresat: $number

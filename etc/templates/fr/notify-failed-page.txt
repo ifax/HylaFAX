@@ -1,0 +1,35 @@
+To: $SENDTO
+Subject: pager de $DESTINATION échoué
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+à échoué pour la raison suivante : 
+
+$faxstatus
+
+
+    ---- La transcription de la session ----
+
+$SESSION_LOG
+
+------- Unsent job status -------
+        Destination: $number
+              JobID: $jobid
+            GroupID: $groupid
+           Emetteur: $sender
+       Adresse mail: $mailaddr
+             CommID: $commid
+              Modem: $modem
+         Envoyé à: $client
+    Largeur de page: $pagewidth  (mm)
+    Hauteur de page: $pagelength (mm)
+        Résolution: $resolution (lpi)
+             Status: $faxstatus
+          Dialogues: $tottries
+              Dials: $ndials
+             Appels: $totdials
+              Pages: $npages
+ Nombre total pages: $totpages
+         Tentatives: $ntries
+   Numéro annuaire: $dirnum
+        Destination: $number

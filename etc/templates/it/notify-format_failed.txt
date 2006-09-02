@@ -1,0 +1,32 @@
+To: $SENDTO
+Subject: fax per $DESTINATION fallito
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+ non è stato inviato perché la conversione del documento
+in fax è fallita.  L'output del convertitore è stato:
+
+$faxstatus
+
+Verificare i documenti Postscript per l'uso di font non standard e construtti non validi
+------- Unsent job status -------
+             Destinatario: $number
+                    JobID: $jobid
+                  GroupID: $groupid
+                 Mittente: $sender
+                   E-mail: $mailaddr
+                   CommID: $commid
+                    Modem: $modem
+               Inviato da: $client
+         Larghezza pagina: $pagewidth  (mm)
+           Altezza pagina: $pagelength (mm)
+              Risoluzione: $resolution (lpi)
+                    Stato: $faxstatus
+                 Dialoghi: $tottries
+         Chiamate fallite: $ndials
+                 Chiamate: $totdials
+                   Pagine: $npages
+              Pagine tot.: $totpages
+                Tentativi: $ntries
+                   Dirnum: $dirnum
+             Destinatario: $number

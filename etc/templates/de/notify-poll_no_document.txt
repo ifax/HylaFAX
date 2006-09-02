@@ -1,0 +1,9 @@
+To: $SENDTO
+Subject: Hinweis über Fax
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+, ein Faxabruf,\nkonnte nicht vollendet werden weil 
+kein Dokument war zum Empfang verfügbar.
+
+Verarbeitungszeit $JTIME.

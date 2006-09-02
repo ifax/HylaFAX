@@ -1,0 +1,27 @@
+To: $SENDTO
+Subject: fax a $DESTINATION falló
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+no ha sido enviado porque agoto el plazo designado.
+------- Unsent job status -------
+                     Destino: $number
+                   IDTrabajo: $jobid
+                     IDGrupo: $groupid
+                   Remitente: $sender
+                  Dirección: $mailaddr
+                       IDCom: $commid
+                      Módem: $modem
+                 Sometido De: $client
+                     Anchura: $pagewidth  (mm)
+                    Longitud: $pagelength (mm)
+                 Resolución: $resolution (lpi)
+                      Estado: $faxstatus
+                   Diálogos: $tottries
+                 Marcaciones: $ndials
+                    Llamadas: $totdials
+                    Páginas: $npages
+                PáginasPara: $totpages
+                  Tentativas: $ntries
+                      NumDir: $dirnum
+                     Destino: $number

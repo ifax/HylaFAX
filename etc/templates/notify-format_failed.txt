@@ -1,0 +1,32 @@
+To: $SENDTO
+Subject: facsimile to $DESTINATION failed
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+ was not sent because document conversion
+to facsimile failed.  The output from the converter program was:
+
+$faxstatus
+
+Check any PostScript documents for non-standard fonts and invalid constructs
+------- Unsent job status -------
+      Destination: $number
+            JobID: $jobid
+          GroupID: $groupid
+           Sender: $sender
+         Mailaddr: $mailaddr
+           CommID: $commid
+            Modem: $modem
+   Submitted From: $client
+       Page Width: $pagewidth  (mm)
+      Page Length: $pagelength (mm)
+       Resolution: $resolution (lpi)
+           Status: $faxstatus
+          Dialogs: $tottries
+            Dials: $ndials
+            Calls: $totdials
+            Pages: $npages
+         TotPages: $totpages
+         Attempts: $ntries
+           Dirnum: $dirnum
+      Destination: $number

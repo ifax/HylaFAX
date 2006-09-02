@@ -1,0 +1,35 @@
+To: $SENDTO
+Subject: pager per $DESTINATION fallito
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+è fallito perché:
+
+$faxstatus
+
+
+    ---- Segue trascrizione della sessione ----
+
+$SESSION_LOG
+
+------- Unsent job status -------
+             Destinatario: $number
+                    JobID: $jobid
+                  GroupID: $groupid
+                 Mittente: $sender
+                   E-mail: $mailaddr
+                   CommID: $commid
+                    Modem: $modem
+               Inviato da: $client
+         Larghezza pagina: $pagewidth  (mm)
+           Altezza pagina: $pagelength (mm)
+              Risoluzione: $resolution (lpi)
+                    Stato: $faxstatus
+                 Dialoghi: $tottries
+         Chiamate fallite: $ndials
+                 Chiamate: $totdials
+                   Pagine: $npages
+              Pagine tot.: $totpages
+                Tentativi: $ntries
+                   Dirnum: $dirnum
+             Destinatario: $number

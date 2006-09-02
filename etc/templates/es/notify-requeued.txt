@@ -1,0 +1,10 @@
+To: $SENDTO
+Subject: fax a $DESTINATION 
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+no fue enviado porque:
+
+$faxstatus
+
+El trabajo será enviado nuevamente en $NEXT

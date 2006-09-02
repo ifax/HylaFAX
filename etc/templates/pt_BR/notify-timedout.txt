@@ -1,0 +1,27 @@
+To: $SENDTO
+Subject: fax para $DESTINATION falhou
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+não pôde ser enviado dentro do tempo estabelecido.
+------- Unsent job status -------
+             Destinatário: $number
+                   IDEnvio: $jobid
+                   IDGrupo: $groupid
+                 Remetente: $sender
+                     Email: $mailaddr
+                     IDCom: $commid
+                     Modem: $modem
+                Enviado De: $client
+                   Largura: $pagewidth  (mm)
+               Comprimento: $pagelength (mm)
+               Resolução: $resolution (lpi)
+                    Estado: $faxstatus
+                  Sessões: $tottries
+               Marcações: $ndials
+                  Chamadas: $totdials
+                  Páginas: $npages
+             TotalPáginas: $totpages
+                Tentativas: $ntries
+                    NumDir: $dirnum
+             Destinatário: $number

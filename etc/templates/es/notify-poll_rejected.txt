@@ -1,0 +1,9 @@
+To: $SENDTO
+Subject: Aviso de fax
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+, el intento de poner el documento para envio, \nhs fallado porque 
+la estacion remota ha rechado su llamada.
+
+El tiempo de procesamiento fue de $JTIME.
