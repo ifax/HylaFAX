@@ -191,14 +191,35 @@ mimeEncode()
 template ()
 {
         cat - | $AWK '
-        function template_line (line,   ret,tmp,var)
+	function include_file (file)
+	{
+		while (getline bla<file )
+		{
+			template_line(bla);
+		}
+
+	}
+	function template_line (line,   tmp,var)
         {
+		if (match(line, /^[#]INCLUDE /))
+		{
+			include_file(substr(line,10));
+			return
+		}
                 while (match(line, /[$][A-Za-z0-9_]+/))
                 {
-                        tmp = substr(line, 0, RSTART-1);
-                        var = substr(line, RSTART+1, RLENGTH-1);
-                        printf "%s%s", tmp, ENVIRON[var];
-                        line = substr(line,RSTART+RLENGTH)
+			if (substr(line,RSTART-1,1) == "\\")
+			{
+				tmp = substr(line, 0, RSTART-2);
+				var = substr(line, RSTART+1, RLENGTH-1);
+				printf "%s$%s", tmp, var
+			} else
+			{
+				tmp = substr(line, 0, RSTART-1);
+				var = substr(line, RSTART+1, RLENGTH-1);
+				printf "%s%s", tmp, ENVIRON[var];
+			}
+			line = substr(line,RSTART+RLENGTH)
                 }
                 print line;
         }
