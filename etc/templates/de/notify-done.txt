@@ -5,11 +5,11 @@ Content-type: text/plain; charset=UTF-8
 
 Ihr $THISJOBTYPE Auftrag an $number  wurde erfolgreich abgeschlossen.
                       Seiten: $npages
-                  Empfänger: $csi
-                   Qualität: $resolution
+                   Empfänger: $csi
+                    Qualität: $resolution
                Seiten Breite: $pagewidth (mm)
-               Seiten Länge: $pagelength
-Übertragungsgeschwindigkeit: $signalrate
+                Seiten Länge: $pagelength
+ Übertragungsgeschwindigkeit: $signalrate
                  Datenformat: $dataformat
       Gegenstellen Equipment: $equipment
         Gegenstellen Station: $station

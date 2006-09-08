@@ -15,11 +15,11 @@ das Skript zur Dokumentenkonvertierung wurde nicht gefunden.
                        Modem: $modem
                Geschickt von: $client
                Seiten Breite: $pagewidth  (mm)
-               Seiten Länge: $pagelength (mm)
-                  Auflösung: $resolution (lpi)
+                Seiten Länge: $pagelength (mm)
+                   Auflösung: $resolution (lpi)
                       Status: $faxstatus
                      Dialoge: $tottries
-               Wählversuche: $ndials
+                Wählversuche: $ndials
                       Anrufe: $totdials
                       Seiten: $npages
                     TotPages: $totpages
