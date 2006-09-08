@@ -17,10 +17,10 @@ Contrôler les fichiers PostScript et vérifié les polices non-standard ou une 
        Adresse mail: $mailaddr
              CommID: $commid
               Modem: $modem
-         Envoyé à: $client
+           Envoyé à: $client
     Largeur de page: $pagewidth  (mm)
     Hauteur de page: $pagelength (mm)
-        Résolution: $resolution (lpi)
+         Résolution: $resolution (lpi)
              Status: $faxstatus
           Dialogues: $tottries
               Dials: $ndials
@@ -28,5 +28,5 @@ Contrôler les fichiers PostScript et vérifié les polices non-standard ou une 
               Pages: $npages
  Nombre total pages: $totpages
          Tentatives: $ntries
-   Numéro annuaire: $dirnum
+    Numéro annuaire: $dirnum
         Destination: $number

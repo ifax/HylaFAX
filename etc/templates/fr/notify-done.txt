@@ -5,18 +5,18 @@ Content-type: text/plain; charset=UTF-8
 
 Votre $THISJOBTYPE travail vers $number  a été effectué avec succès.
               Pages: $npages
-         Récepteur: $csi
-           Qualité: $resolution
+          Récepteur: $csi
+            Qualité: $resolution
     Largeur de page: $pagewidth (mm)
     Hauteur de page: $pagelength
         Signal Rate: $signalrate
-    Format données: $dataformat
+     Format données: dataformat
  Equipement distant: $equipment
    Station distante: $station
           Dialogues: $tottries (Echanges avec l'équipement distant)
              Appels: $totdials (les appels téléphoniques totaux ont placé)
               Modem: $modem
-         Envoyé à: $client
+           Envoyé à: $client
               JobID: $jobid
             GroupID: $groupid
              CommID: c$commid

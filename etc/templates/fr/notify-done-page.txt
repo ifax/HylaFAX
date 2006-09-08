@@ -7,7 +7,7 @@ Content-type: text/plain; charset=UTF-8
           Dialogues: $tottries (Echanges avec l'équipement distant)
              Appels: $totdials (les appels téléphoniques totaux ont placé)
               Modem: $modem
-         Envoyé à: $client
+           Envoyé à: $client
               JobID: $jobid
             GroupID: $groupid
              CommID: c$commid
