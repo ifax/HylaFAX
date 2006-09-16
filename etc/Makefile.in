@@ -54,6 +54,8 @@ DIALRULES=dialrules \
 	dialrules.europe
 TARGETS	= config.fax hosts.hfaxd xferfaxlog lockname ondelay
 
+TEMPLATES = . fr de
+
 default all::
 	@${MAKE} targets
 
@@ -94,7 +96,16 @@ install: default
 	${PUTSERVER} -F ${LIBEXEC} -m 755 -O lockname ondelay
 	${PUTSAMPLE} -F ${SPOOL}/etc -m 644 -idb nostrip \
 	    -src ${SRCDIR}/lutRS18.pcf -O lutRS18.pcf
-
+	${INSTALL} -u ${FAXUSER} -g ${FAXGROUP} -m ${DIRMODE} \
+	    -idb hylafax.sw.server -dir -F ${SPOOL}/etc templates
+	for d in ${TEMPLATES}; do \
+		${INSTALL} -u ${FAXUSER} -g ${FAXGROUP} -m ${DIRMODE} \
+		    -idb hylafax.sw.server -dir -F ${SPOOL}/etc/templates $$d; \
+		for f in templates/$$d/*.txt; do \
+			${PUTSAMPLE} -F ${SPOOL}/etc/templates/$$d -m 644 -src $$f `basename $$f`; \
+		done; \
+	done;
+	
 #
 # System V-specific init support.
 #
