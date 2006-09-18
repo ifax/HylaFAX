@@ -200,9 +200,9 @@ Class2Modem::dataTransfer()
     do {
 	atCmd("AT+FDT", AT_NOTHING, conf.pageStartTimeout);
 	do {
-	    r = FaxModem::atResponse(rbuf, conf.pageStartTimeout);
-	} while (r == AT_OTHER);
-    } while (r == AT_OK && tries++ < 3);
+	    r = atResponse(rbuf, conf.pageStartTimeout);
+	} while (r == AT_OTHER || r > AT_FHNG);	// ignore all Class 2-specific other than +FHNG
+    } while (!hadHangup && r == AT_OK && tries++ < 3);
     status = (r == AT_CONNECT);
     if (xmitWaitForXON) {
 	if (status) {
