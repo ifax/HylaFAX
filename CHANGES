@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.0
 
+* make cover pages visible in /docq/ through hfaxd (17 Sep 2006)
 * handle +FHNG/+FNG after AT+FDT in Class 2 (15 Sep 2006)
 * Unify mime encoding between notify and faxrcvd
 * Add templates for use in faxrcvd translations (14 Aug 2006)

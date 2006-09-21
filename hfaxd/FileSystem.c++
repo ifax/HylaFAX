@@ -416,7 +416,7 @@ HylaFAXServer::isVisibletrue(const char*, const struct stat&)
     { return (true); }
 bool
 HylaFAXServer::isVisibleDocQFile(const char* filename, const struct stat&)
-    { return (strncmp(filename, "doc", 3) == 0); }
+    { return (strncmp(filename, "doc", 3) == 0 || strncmp(filename, "cover", 5) == 0); }
 bool
 HylaFAXServer::isVisibleRootFile(const char*, const struct stat& sb)
     { return (S_ISREG(sb.st_mode) || S_ISDIR(sb.st_mode)); }
