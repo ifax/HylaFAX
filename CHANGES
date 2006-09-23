@@ -1,6 +1,6 @@
 #	$Id$	
 
-Changelog since HylaFAX 4.3.0
+Changelog for HylaFAX 4.3.1
 
 * make cover pages visible in /docq/ through hfaxd (17 Sep 2006)
 * handle +FHNG/+FNG after AT+FDT in Class 2 (15 Sep 2006)
