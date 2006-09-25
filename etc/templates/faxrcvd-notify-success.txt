@@ -2,7 +2,7 @@ From: FAX Agent <$FROMADDR>
 Subject: Fax received from "$SENDER"
 Content-type: text/plain; charset=us-ascii
 
-$FILE (ftp://pepper:4559/$FILE):
+$FILE (ftp://$HOSTNAME:$PORT/$FILE):
           Sender: $SENDER
            Pages: $PAGES
          Quality: $QUALITY
