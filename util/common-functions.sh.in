@@ -210,12 +210,12 @@ template ()
                 {
 			if (substr(line,RSTART-1,1) == "\\")
 			{
-				tmp = substr(line, 0, RSTART-2);
+				tmp = substr(line, 0, RSTART-1);
 				var = substr(line, RSTART+1, RLENGTH-1);
 				printf "%s$%s", tmp, var
 			} else
 			{
-				tmp = substr(line, 0, RSTART-1);
+				tmp = substr(line, 0, RSTART);
 				var = substr(line, RSTART+1, RLENGTH-1);
 				printf "%s%s", tmp, ENVIRON[var];
 			}
