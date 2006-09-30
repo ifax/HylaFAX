@@ -31,6 +31,7 @@
 #    Lifestyle 28.8		S209415900 -01 1/16/95    3:30 PM
 #
 # CONFIG:CLASS1:288:Motorola:.*: Manufacturer=Motorola Model=28.8
+# CONFIG:CLASS1:960:Motorola.*:.*: Manufacturer=Motorola Model=SM56
 #
 # BEGIN-SERVER
 # END-SERVER
