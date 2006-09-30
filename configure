@@ -1612,6 +1612,9 @@ EOF
     else
 	echo '#define STRUCT_PAM_MESSAGE struct pam_message'
     fi
+    case $TARGET in
+	*-hpux11*)	echo '#define PAM_MSG_VERSION';;
+    esac
 }
 
 HAVE_PAM="/*#define HAVE_PAM 1*/"
@@ -2569,6 +2572,7 @@ BuildPortDotH()
         case $TARGET in
 	    # XXX fill in for busted systems
         *-aix4*)	CONFIG_SOCKARGLENTYPE=size_t;;
+        *-hpux11.11*)	CONFIG_SOCKARGLENTYPE=size_t;;
         *-hpux11*)  # this is really broken, has a defined 
                     # socklen_t but does *not* use it
                 echo "#define CONFIG_HPUX_SOCKLEN_T_BRAINDAMAGE";;
