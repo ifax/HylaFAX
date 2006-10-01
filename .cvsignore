@@ -7,3 +7,4 @@ defs
 Makefile
 port.h
 rules
+.project
