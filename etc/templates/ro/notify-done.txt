@@ -1,0 +1,32 @@
+To: $SENDTO
+Subject: Fax către $DESTINATION finalizat
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+$THISJOBTYPE către $number a fost finalizar cu succes.
+Pagini:              $npages
+Destinatar:          $csi
+Calitate:            $resolution
+Lăţime pagină:       $pagewidth (mm)
+Lungime pagină:      $pagelength (mm)
+Rată de transfer:    $signalrate
+Format date:         $dataformat
+Echipament conectat: $equipment
+Staţie conectată:    $station
+Dialoguri:           $tottries (schimburi cu dispozitivul conectat)
+Apeluri:             $totdials (total phone calls placed)
+Modem:               $modem
+Expediat de:         $client
+JobID:               $jobid
+GroupID:             $groupid
+CommID:              c$commid
+
+Procesarea a durat $JTIME.
+
+Informaţii suplimentare:
+
+$faxstatus
+
+---- Urmează transcriptul sesiunii ----
+
+$SESSION_LOG

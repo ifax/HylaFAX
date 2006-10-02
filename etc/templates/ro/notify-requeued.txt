@@ -1,0 +1,10 @@
+To: $SENDTO
+Subject: Fax către $DESTINATION 
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+Nu a fost trimis din cauza:
+
+$faxstatus
+
+Se va face o nouă încercare la $NEXT

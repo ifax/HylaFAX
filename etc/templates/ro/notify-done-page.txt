@@ -1,0 +1,23 @@
+To: $SENDTO
+Subject: Pager către $DESTINATION finalizat
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+A fost finalizat cu succes.
+Dialoguri:   $tottries (schimburi cu dispozitivul conectat)
+Apeluri:     $totdials (total phone calls placed)
+Modem:       $modem
+Expediat de: $client
+JobID:       $jobid
+GroupID:     $groupid
+CommID:      c$commid
+
+Procesarea a durat $JTIME.
+
+Informaţii suplimentare:
+
+$faxstatus
+
+---- Urmează transcriptul sesiunii ----
+
+$SESSION_LOG

@@ -1,0 +1,18 @@
+From: FAX Agent <$FROMADDR>
+Subject: Fax primit de la "$SENDER"
+Content-type: text/plain; charset=UTF-8
+
+$FILE (ftp://$HOSTNAME:4559/$FILE):                                  
+Expeditor:        $SENDER
+Pagini:           $PAGES
+Calitate:         $QUALITY
+Mărime:           $PAGE
+Recepţionat:      $RECEIVED
+Durată recepţie:  $TIMETORECV
+Rată de transfer: $SIGNALRATE
+Format date:      $DATAFORMAT
+Eroare:           $ERRCORRECT
+CallID1:          $CALLID1
+CallID2:          $CALLID2
+Recepţionat pe:   $DEVICE
+CommID:           $COMMID (ftp://$HOSTNAME:4559/log/$COMMID)      

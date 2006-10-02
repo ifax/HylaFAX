@@ -1,0 +1,9 @@
+From: FAX Agent <$FROMADDR>
+Subject: Fax primit de la "$SENDER"
+Content-type: text/plain; charset=UTF-8
+
+Faxul nu a fost primit.
+
+$MSG
+
+Urmează transcriptul sesiunii:

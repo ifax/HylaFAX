@@ -1,0 +1,10 @@
+To: $SENDTO
+Subject: Fax către $DESTINATION este blocat
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+
+Este întârziat pentru că:
+
+$faxstatus
+
+Sesiunea va fi procesată cât de repede este posibil.

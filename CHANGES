@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.3.1
 
+* Add Romanian templates (29 Sep 2006)
 * faxsetup nolonger blindly removes $TMPDIR (29 Sep 2006)
 * Add Motorola SM56 USB (Apple) modem (27 Sep 2006)
 * Add HPUX 11.11 support to configure (27 Sep 2006)
