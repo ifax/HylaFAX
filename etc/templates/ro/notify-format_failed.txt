@@ -24,7 +24,7 @@ Expediat de:        $client
 Lăţime pagină:      $pagewidth (mm)
 Lungime pagină:     $pagelength (mm)
 Rezoluţie:          $resolution (lpi)
-Statut:             $faxstatus
+Stare:              $faxstatus
 Dialoguri:          $tottries
 Formare numere:     $ndials
 Apeluri:            $totdials

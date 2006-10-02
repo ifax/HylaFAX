@@ -2,11 +2,9 @@ To: $SENDTO
 Subject: Fax către $DESTINATION este blocat
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: Quoted-Printable
 
 Este întârziat pentru că:
 
 $faxstatus
 
 Sesiunea va fi procesată cât mai repede posibil.
-
