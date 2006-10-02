@@ -886,6 +886,14 @@ if onServer; then
     # XXX should check permission and ownership of sensitive dirs
     #
 
+    # Setup TMPDIR before anything can trap and rm it
+    TMPDIR=`(mktemp -d /tmp/.faxsetup.XXXXXX) 2>/dev/null`
+    if test x$TMPDIR = x; then
+	TMPDIR=/tmp/.faxsetup$$
+    fi
+    $RM -rf $TMPDIR
+    (umask 077 ; mkdir $TMPDIR) || exit 1
+
     JUNK="etc/setup.tmp"
     trap "$RM \$JUNK; $RM -r \$TMPDIR; exit 1" 1 2 15
 
@@ -2153,12 +2161,6 @@ if onServer; then
 	echo "No scheduler config file exists, creating one from scratch."
 	ok=prompt				# prompt for parameters
 
-	TMPDIR=`(mktemp -d /tmp/.faxsetup.XXXXXX) 2>/dev/null`
-	if test x$TMPDIR = x; then
-	    TMPDIR=/tmp/.faxsetup$$
-	fi
-	$RM -rf $TMPDIR
-	(umask 077 ; mkdir $TMPDIR) || exit 1
 	PROMPTS=$TMPDIR/faxpr$$
 	JUNK="$JUNK $PROMPTS"
 	$RM -rf $PROMPTS
