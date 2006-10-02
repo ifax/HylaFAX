@@ -2,5 +2,7 @@ To: $SENDTO
 Subject: Fax către $DESTINATION şters din coadă
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 Fax-ul a fost şters din coadă.
+

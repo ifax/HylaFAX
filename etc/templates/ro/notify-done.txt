@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: Fax către $DESTINATION finalizat
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 $THISJOBTYPE către $number a fost finalizar cu succes.
 Pagini:              $npages
@@ -30,3 +31,4 @@ $faxstatus
 ---- Urmează transcriptul sesiunii ----
 
 $SESSION_LOG
+

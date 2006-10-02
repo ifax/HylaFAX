@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: Fax către $DESTINATION eşuat
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 Eşuat datorită faptului că a eşuat conversiea
 documentului în fax. Convertorul a returnat:
@@ -12,7 +13,7 @@ $faxstatus
 Verificaţi dacă documentele PostScript nu conţin
 fonturi non-standard sau instrucţiuni invalide.
 
----- Statut sesiune netransmisă ----
+---- Starea sesiunii netransmise ----
 Destinaţie:         $number
 JobID:              $jobid
 GroupID:            $groupid
@@ -24,7 +25,7 @@ Expediat de:        $client
 Lăţime pagină:      $pagewidth (mm)
 Lungime pagină:     $pagelength (mm)
 Rezoluţie:          $resolution (lpi)
-Statut:             $faxstatus
+Stare:              $faxstatus
 Dialoguri:          $tottries
 Formare numere:     $ndials
 Apeluri:            $totdials
@@ -33,3 +34,5 @@ Număr total pagini: $totpages
 Încercări:          $ntries
 Număr director:     $dirnum
 Destinaţie:         $number
+
+

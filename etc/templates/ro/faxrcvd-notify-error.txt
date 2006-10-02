@@ -1,8 +1,9 @@
 From: FAX Agent <$FROMADDR>
 Subject: Fax primit cu erori de la "$SENDER"
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
-$FILE (ftp://pepper:4559/$FILE):                                  
+$FILE (ftp://$HOSTNAME:$PORT/$FILE):                                  
 Expeditor:        $SENDER
 Pagini:           $PAGES
 Caliate:          $QUALITY
@@ -15,8 +16,9 @@ Eroare:           $ERRCORRECT
 CallID1:          $CALLID1
 CallID2:          $CALLID2
 Recepţionat pe:   $DEVICE
-CommID:           $COMMID (ftp://pepper:4559/log/$COMMID)      
+CommID:           $COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)      
 
 
 Transcriptul sesiunii:
 $SESSION_LOG
+

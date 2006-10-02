@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: Pager către $DESTINATION finalizat
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 A fost finalizat cu succes.
 Dialoguri:   $tottries (schimburi cu dispozitivul conectat)
@@ -21,3 +22,4 @@ $faxstatus
 ---- Urmează transcriptul sesiunii ----
 
 $SESSION_LOG
+
