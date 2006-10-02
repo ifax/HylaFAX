@@ -2,7 +2,7 @@ From: FAX Agent <$FROMADDR>
 Subject: Fax primit de la "$SENDER"
 Content-type: text/plain; charset=UTF-8
 
-$FILE (ftp://pepper:4559/$FILE):
+$FILE (ftp://$HOSTNAME:$PORT/$FILE):
 Expeditor:        $SENDER
 Pagini:           $PAGES
 Caliate:          $QUALITY
