@@ -162,27 +162,58 @@ parseFaxInfo()
 
 #
 # Produce mailable encoding for binary files.
+# mimeEncode(filename, encoding)
+# If encoding is not set, will default to $ENCODING.
+#
 mimeEncode()
 {
     if [ ! -f "$1" ] ; then
         return # cannot do much more without a file
     fi
-    if [ -x "$MIMENCODE" ]; then
-	$MIMENCODE < $1 2>$ERRORSTO
-    elif [ -x "$UUENCODE" ]; then
-	if [ "$ENCODING" = "base64" ]; then
-	    $UUENCODE -m $1 $1 \
-	    	| $GREP -v "^begin" \
-		| $GREP -v "^====$" \
-		2>$ERRORSTO
-	else
-	    $UUENCODE $1 $1 | grep -E -v "^begin|^====$" 2>$ERRORSTO
-	fi
+    if [ -n "$2" ] ; then
+        encoding=$2;
     else
-	# Do not use "-x" for backward compatibility; even if it fails
-	# this is last chance to encode data, so there's nothing to lose.
-	$MIMENCODE < $1 2>$ERRORSTO
+        encoding=$ENCODING;
     fi
+    encoding=`echo $encoding | $SED -e 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/'`
+
+    # Configuration for which faxsetup was not rerun contains $MIMENCODE
+    # rather than separate $BASE64ENCODE and $QPENCODE
+    case "$encoding" in
+        base64)
+	    if [ -n "$BASE64ENCODE" ]; then
+		# $BASE64ENCODE may contain parameters
+		cmd=`echo $BASE64ENCODE | $SED -e "s/^ *//" -e "s/ .*$//"`
+		if [ -x "$cmd" ]; then
+		    $BASE64ENCODE < $1 2>$ERRORSTO
+		fi
+	    # For compatibility with earlier configurations:
+	    elif [ -x "$MIMENCODE" ]; then
+		$MIMENCODE < $1 2>$ERRORSTO
+	    elif [ -x "$UUENCODE" ]; then
+		$UUENCODE -m $1 $1 \
+		    | $GREP -v "^begin" \
+		    | $GREP -v "^====$" \
+		    2>$ERRORSTO
+	    fi;;
+        quoted-printable)
+	    if [ -n "$QPENCODE" ]; then
+		# $QPENCODE may contain parameters
+		cmd=`echo $QPENCODE | $SED -e "s/^ *//" -e "s/ .*$//"`
+		if [ -x "$cmd" ]; then
+		    $QPENCODE < $1 2>$ERRORSTO
+		fi
+            # For compatibility with earlier configurations:
+	    elif [ -x "$MIMENCODE" ]; then
+		# Take a chance that $MIMENCODE really contains mimencode
+		$MIMENCODE -q < $1 2>$ERRORSTO
+	    fi;;
+        *uue*)
+	    if [ -x "$UUENCODE" ]; then
+		$UUENCODE $1 $1 | grep -E -v "^begin|^====$" 2>$ERRORSTO
+	    fi;;
+        *) cat $1;; # 7bit, 8bit, binary
+    esac
 }
 
 #
@@ -210,12 +241,12 @@ template ()
                 {
 			if (substr(line,RSTART-1,1) == "\\")
 			{
-				tmp = substr(line, 0, RSTART-1);
+				tmp = substr(line, 0, RSTART-2);
 				var = substr(line, RSTART+1, RLENGTH-1);
 				printf "%s$%s", tmp, var
 			} else
 			{
-				tmp = substr(line, 0, RSTART);
+				tmp = substr(line, 0, RSTART-1);
 				var = substr(line, RSTART+1, RLENGTH-1);
 				printf "%s%s", tmp, ENVIRON[var];
 			}
@@ -269,7 +300,14 @@ CreateMailMessage ()
 	| template
 
     echo ""
-    $SED -e '0,/^$/d' $1 | template
+    body_encoding=`$SED -e '/^$/Q' $1		\
+    	| $GREP -i ^Content-Transfer-Encoding	\
+	| template				\
+    	| $SED -e 's/^[^ ]*: *//'`;
+    test "$body_encoding" || body_encoding=7bit;
+
+    $SED -e '0,/^$/d' $1 | template > $TMPDIR/body.txt
+    mimeEncode $TMPDIR/body.txt $body_encoding
 
     if [ -n "$2" ]; then
 	shift
