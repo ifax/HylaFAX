@@ -125,6 +125,7 @@ if [ -n "$MSG" ]; then
     export SESSION_LOG
 fi
 
+export FILE
 export COMMID
 export DEVICE
 export MSG
