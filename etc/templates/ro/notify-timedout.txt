@@ -2,7 +2,6 @@ To: $SENDTO
 Subject: Fax către $DESTINATION eşuat
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: Quoted-Printable
 
 Nu a putut fi finalizat înainte de termen.
 
@@ -19,7 +18,7 @@ Expediat de:        $client
 Lăţime pagină:      $pagewidth (mm)
 Lungime pagină:     $pagelength (mm)
 Rezoluţie:          $resolution (lpi)
-Stare:              $faxstatus
+Statut:             $faxstatus
 Dialoguri:          $tottries
 Formare numere:     $ndials
 Apeluri:            $totdials
@@ -28,4 +27,3 @@ Număr total pagini: $totpages
 Încercări:          $ntries
 Număr director:     $dirnum
 Destinaţie:         $number
-
