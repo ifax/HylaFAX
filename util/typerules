@@ -100,14 +100,14 @@
 #
 0	short		000732		tiff	%F/sgi2fax -%f -o %o -v %V\
 						  -s %s %i
-0	short		017436		error	packed data
-0	short		017635		error	compressed data
+0	short		017436		error	packed data support not configured
+0	short		017635		error	compressed data support not configured
 0	short		0x0506		ps	showcase -p -f %i
 0	short		0x5343		ps	showcase -p -f %i
 0	short		0xf702		ps	dvips -q -o %o %i
 0	string		GIF		tiff
 >3	string		87a		tiff	gif2tiff -%f -v %V %i %o
->3 	string		89a		error	GIF (version 89a)
+>3 	string		89a		error	GIF (version 89a) support not configured
 0	long		0x59a66a95	tiff	ras2tiff -%f -v %V %i %o
 #
 # HylaFAX now has server-side PDF conversion, so no need for pdf2ps.
@@ -123,27 +123,27 @@
 # Most of these entries use the "string" format so that they will work on
 # both big-endian and little-endian machines.
 #
-0	string		begin		error	uuencoded file
-0	string		xbtoa		error	btoa'd file
-0	string		P1		error	PBM file
-0	string		P2		error	PGM file
-0	string		P3		error	PPM file
-0	string		P4		error	PBM "rawbits" file
-0	string		P5		error	PGM "rawbits" file
-0	string		P6		error	PPM "rawbits" file
+0	string		begin		error	uuencoded file support not configured
+0	string		xbtoa		error	btoa'd file support not configured
+0	string		P1		error	PBM file support not configured
+0	string		P2		error	PGM file support not configured
+0	string		P3		error	PPM file support not configured
+0	string		P4		error	PBM "rawbits" file support not configured
+0	string		P5		error	PGM "rawbits" file support not configured
+0	string		P6		error	PPM "rawbits" file support not configured
 #
-0	string		WNGZWZSS	error	Wingz spreadsheet
-0       string          #Inventor V	error	IRIS Inventor file 
->15     string          binary		error	binary IRIS Inventor file
+0	string		WNGZWZSS	error	Wingz spreadsheet support not configured
+0       string          #Inventor V	error	IRIS Inventor file support not configured
+>15     string          binary		error	binary IRIS Inventor file support not configured
 >15     string          ascii		ps	%F/textfmt -B -f Courier-Bold\
 						-Ml=0.4in -p 11 -s %s >%o <%i
 #
-0	string		\x89PNG		error	PNG
-0	short		0xffd8		error	
->6	string		JFIF		error	JPEG
-0	short		0xd8ff		error	
->6	string		JFIF		error	JPEG
-0	string		#FIG		error	FIG
+0	string		\x89PNG		error	PNG support not configured
+0	short		0xffd8		error	filetype conversion support not configured
+>6	string		JFIF		error	JPEG support not configured
+0	short		0xd8ff		error	filetype conversion support not configured
+>6	string		JFIF		error	JPEG support not configured
+0	string		#FIG		error	FIG support not configured
 
 #
 # Japanization (should help other iso-2022 variants too)
