@@ -16,7 +16,7 @@ Heure de réception: $TIMETORECV
            CallID1: $CALLID1
            CallID2: $CALLID2
        Received On: $DEVICE
-            CommID: $COMMID (ftp://$HOSTNAME:$PORT/log/$COMMID)
+            CommID: $COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)
 
 Le facsimile a été automatiquement expédié à :
 	$SENDTO

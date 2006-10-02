@@ -15,6 +15,6 @@ Velocità di trasmissione: $SIGNALRATE
                  CallID1: $CALLID1
                  CallID2: $CALLID2
         Ricevuto tramite: $DEVICE
-                  CommID: $COMMID (ftp://$HOSTNAME:$PORT/log/$COMMID)
+                  CommID: $COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)
 
 Il fax è stato automaticamente inviato a: $SENDTO.

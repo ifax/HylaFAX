@@ -15,5 +15,5 @@ $FILE (ftp://$HOSTNAME:$PORT/$FILE):
                 Anrufe ID 1: $CALLID1
                 Anrufe ID 2: $CALLID2
                 EmpfangenAn: $DEVICE
- KommunikationsID: $COMMID (ftp://$HOSTNAME:$PORT/log/$COMMID)
+ KommunikationsID: $COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)
 

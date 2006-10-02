@@ -15,5 +15,5 @@ Velocidade de comunicação: $SIGNALRATE
              ID Chamada 1: $CALLID1
              ID Chamada 2: $CALLID2
               Recebido De: $DEVICE
-                    IDCom: $COMMID (ftp://$HOSTNAME:$PORT/log/$COMMID)
+                    IDCom: $COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)
 
