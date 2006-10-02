@@ -8,3 +8,4 @@ Makefile
 port.h
 rules
 .project
+.settings
