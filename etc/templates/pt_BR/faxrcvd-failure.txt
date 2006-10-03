@@ -1,6 +1,7 @@
 From: Servidor de fax HylaFAX <$FROMADDR>
 Subject: fax não recebido
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 falha na recepção de fax no modem $DEVICE, causa:
 

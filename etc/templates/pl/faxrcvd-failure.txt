@@ -1,5 +1,6 @@
 From: Serwer faxów HylaFAX <$FROMADDR>
 Subject: Nie odebrano faxu
+Content-Transfer-Encoding: Quoted-Printable
 
 Próba odebrania faksu na modemie $DEVICE zakoñczy³a siê niepowodzeniem z powodu:
 

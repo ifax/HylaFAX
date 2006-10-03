@@ -2,6 +2,7 @@ To: $SENDTO
 From: The HylaFAX Receive Agent <$FROMADDR>
 Subject: Facsimile reçu de $SENDER
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 $FILE (ftp://$HOSTNAME:$PORT/$FILE):
           Emetteur: $SENDER

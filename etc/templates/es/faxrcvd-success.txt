@@ -2,6 +2,7 @@ To: $SENDTO
 From: Servidor de Fax HylaFAX <$FROMADDR>
 Subject: Fax recibido de $SENDER
 Content-type: text/plain; charset=utf-8
+Content-Transfer-Encoding: Quoted-Printable
 
 $FILE (ftp://$HOSTNAME:$PORT/$FILE):
                   Remitente: $SENDER

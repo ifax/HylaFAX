@@ -1,5 +1,6 @@
 From: Serwer faxów HylaFAX <$FROMADDR>
 Subject: Odebrano fax od $SENDER
+Content-Transfer-Encoding: Quoted-Printable
 
 $FILE (ftp://$HOSTNAME:$PORT/$FILE):
           Nadawca: $SENDER

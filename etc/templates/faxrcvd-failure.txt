@@ -1,6 +1,7 @@
 From: FAX Agent <$FROMADDR>
 Subject: Fax received from "$SENDER"
 Content-type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: Quoted-Printable
 
 Fax not received.
 

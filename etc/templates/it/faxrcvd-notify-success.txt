@@ -1,6 +1,7 @@
 From: Server fax HylaFAX <$FROMADDR>
 Subject: Fax ricevuto da $SENDER
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 $FILE (ftp://$HOSTNAME:$PORT/$FILE):
                 Mittente: $SENDER
