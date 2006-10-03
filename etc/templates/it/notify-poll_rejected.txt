@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: Avviso a riguardo di fax
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 , una richiesta di scaricamento fax,\nnon può essere completata perché 
 il dispositivo remoto ha rifiutato la richiesta.

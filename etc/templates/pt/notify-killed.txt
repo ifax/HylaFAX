@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: fax para $DESTINATION removido da memória
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 foi removido.
 ------- Unsent job status -------

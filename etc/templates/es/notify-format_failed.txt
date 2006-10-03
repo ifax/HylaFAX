@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: fax a $DESTINATION falló
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
  no fue enviado porque la conversión del documento
 para fax ha fallado.  El mensaje del programa de conversión fué:

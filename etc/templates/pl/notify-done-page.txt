@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: czysty tekst do $DESTINATION zakoñczone
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
  zakoñczone powodzeniem.
              Po³±czeñ: $tottries (wymiany ze zdalnym urz±dzeniem)

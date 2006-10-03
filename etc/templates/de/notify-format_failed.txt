@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: Fax an $DESTINATION fehlgeschlagen
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
  wurde nicht gesendet, weil die Dokumentenkonvertierung
 zum Fax fehlgeschlagen ist.  Die Ausgabe des Konvertierungsprogrammes war:

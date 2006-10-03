@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: fax do $DESTINATION nieudane
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
  nie zosta³o wys³ane, poniewa¿ konwersja dokumentu
 na fax zakoñczy³a siê niepowodzeniem. Komunikaty programu konwertuj±cego:

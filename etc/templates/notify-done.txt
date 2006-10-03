@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: facsimile to $DESTINATION completed
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 Your $THISJOBTYPE job to $number  was completed successfully.
             Pages: $npages

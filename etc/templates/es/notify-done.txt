@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: fax a $DESTINATION se ha cumpletado
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 Su trabajo $THISJOBTYPE para $number  se ha cumpletado con éxito.
                     Páginas: $npages

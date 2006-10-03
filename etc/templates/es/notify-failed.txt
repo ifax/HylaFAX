@@ -1,6 +1,7 @@
 Subject: fax a $DESTINATION falló
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 ha fallado porque:
 

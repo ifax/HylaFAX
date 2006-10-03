@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: paginador para $DESTINATION enviado
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
  enviado com êxito.
                   Sessões: $tottries (comunicações com o equipamento remoto)

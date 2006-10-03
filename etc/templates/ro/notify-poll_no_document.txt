@@ -8,4 +8,3 @@ O încercare de aşezare în coadă nu poate fi finalizată
 pentru că nu a fost găsit nici un document pentru recuperare.
 
 Durata de procesare a fost $JTIME.
-

@@ -8,4 +8,3 @@ O incercare de aşezare în coadă nu poate fi finalizată
 deoarece cealaltă parte a refuzat solicitarea dumneavoastră.
 
 Durata de procesare a fost $JTIME.
-

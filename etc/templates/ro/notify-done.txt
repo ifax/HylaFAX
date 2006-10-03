@@ -31,4 +31,3 @@ $faxstatus
 ---- Urmează transcriptul sesiunii ----
 
 $SESSION_LOG
-

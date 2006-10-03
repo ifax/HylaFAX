@@ -2,5 +2,6 @@ To: $SENDTO
 Subject: facsimile de $DESTINATION Supprimé de la file d'attente
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 a été supprimé de la file d'attente.

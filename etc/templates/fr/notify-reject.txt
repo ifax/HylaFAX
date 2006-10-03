@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: facsimile de $DESTINATION échoué
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 a été rejeté pour la raison : 
 

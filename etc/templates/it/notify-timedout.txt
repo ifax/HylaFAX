@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: fax per $DESTINATION fallito
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 non è stato completato prima dell'orario prefissato.
 ------- Unsent job status -------

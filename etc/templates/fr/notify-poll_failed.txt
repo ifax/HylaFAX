@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: Notice about facsimile
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
 , une demande de 'polling',\nn'a pas pu être accomplie parce que 
 un problème non spécifié s'est produit.

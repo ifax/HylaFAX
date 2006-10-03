@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: pager de $DESTINATION complet
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
  a été effectué avec succès.
           Dialogues: $tottries (Echanges avec l'équipement distant)

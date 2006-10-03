@@ -110,6 +110,7 @@ ANSICXXPP
 AR
 AROPTS
 AWK
+BASE64ENCODE
 BIN		DIR_BIN
 CAT
 CGIDIR		DIR_CGI
@@ -229,6 +230,7 @@ PORTFUNCS
 PROTOTYPES
 PSPACKAGE	PS
 PWDCMD
+QPENCODE
 RANLIB
 REGEX
 REGEXINC
@@ -3585,8 +3587,6 @@ test "$GENDIST"	|| GENDIST=`findAppDef gendist $PATH gendist`
 test "$GREP"	|| GREP=`findAppDef grep $PATH grep`
 test "$LN"	|| LN=`findAppDef ln $PATH ln`
 test "$MAN"	|| MAN=`findAppDef man $PATH man`
-test "$MIMENCODE" || MIMENCODE=`findAppDef mimencode $PATH mimencode`
-test "$MIMENCODE" || MIMENCODE=`findAppDef base64-encode $PATH base64-encode`
 test "$MKDIR"	|| MKDIR=`findAppDef mkdir $PATH mkdir`
 test "$MV"	|| MV=`findAppDef mv $PATH mv`
 test "$PWDCMD"	|| PWDCMD=`findAppDef pwd $PATH pwd`
@@ -3595,7 +3595,6 @@ test "$SORT"	|| SORT=`findAppDef sort $PATH sort`
 test "$STRIP"	|| STRIP=`findAppDef strip $PATH strip`
 test "$TIFF2PDF" || TIFF2PDF=`findAppDef tiff2pdf $PATH bin/tiff2pdf`
 test "$TTYCMD"	|| TTYCMD=`findAppDef tty $PATH tty`
-test "$UUENCODE" || UUENCODE=`findAppDef uuencode $PATH uuencode`
 
 #
 # Test/verify we know how to create FIFO special files.
@@ -3640,20 +3639,49 @@ else
 fi
 
 #
-# Check if uuencode supports base64 encoding.
+# Check for email encoders.
 #
+test "$UUENCODE" || {
+    UUENCODE=`findAppDef uuencode $PATH uuencode`
+}
+test -x "$UUENCODE" && Note "Found uuencode encoder: $UUENCODE"
+
+if [ -z "$BASE64ENCODE" ]; then
+    # Use suggested $MIMENCODE for compatibility with earlier versions:
+    BASE64ENCODE=$MIMENCODE;
+fi
+test "$BASE64ENCODE" || {
+    BASE64ENCODE=`findAppDef mimencode $PATH mimencode`
+    test -x $BASE64ENCODE || {
+	BASE64ENCODE=`findAppDef base64-encode $PATH base64-encode`
+	if [ -x "$UUENCODE" ]; then
+	    if capture "$UUENCODE -m $PASSWD foo"; then
+		BASE64ENCODE="$UUENCODE -m"
+	    fi
+	fi
+    }
+}
+test -n "$BASE64ENCODE" && Note "Found base64 encoder: $BASE64ENCODE"
+
+test "$QPENCODE" || {
+    cmd=`findAppDef mimencode $PATH mimencode`
+    QPENCODE="$cmd -q"
+    test -x $cmd || {
+	QPENCODE=`findAppDef qp-encode $PATH qp-encode`
+    }
+}
+test -n "$QPENCODE" && Note "Found Quoted-Printable encoder: $QPENCODE"
+
+# Keeping $MIMENCODE up to date for older scripts...
+test "$MIMENCODE" || MIMENCODE=$BASE64ENCODE
+
 if [ -z "$ENCODING" ]; then
-    if [ -x "$MIMENCODE" ]; then
+    if [ -n "$BASE64ENCODE" ]; then
 	ENCODING=base64
 	Note "Looks like $MIMENCODE supports base64 encoding."
-    elif [ -x "$UUENCODE" ]; then
-	if capture "$UUENCODE -m port.h foo"; then
-	    ENCODING=base64
-	    Note "Looks like $UUENCODE supports base64 encoding."
-	else
-	    ENCODING=x-uuencode
-	    Note "Looks like $UUENCODE does not support base64 encoding."
-	fi
+    elif [ -n "$UUENCODE" ]; then
+	ENCODING=x-uuencode
+	Note "Looks like $UUENCODE does not support base64 encoding."
     fi
 fi
 

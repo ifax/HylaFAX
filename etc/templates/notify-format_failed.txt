@@ -2,6 +2,7 @@ To: $SENDTO
 Subject: facsimile to $DESTINATION failed
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
 
  was not sent because document conversion
 to facsimile failed.  The output from the converter program was:

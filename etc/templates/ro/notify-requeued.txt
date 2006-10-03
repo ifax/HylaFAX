@@ -9,4 +9,3 @@ Nu a fost trimis din cauza:
 $faxstatus
 
 Se va face o nouă încercare la $NEXT
-

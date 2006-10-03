@@ -49,6 +49,7 @@ test -d /usr/sbin && PATH=/usr/sbin:$PATH		# 4.4BSD-derived
 test -d /usr/local/bin && PATH=$PATH:/usr/local/bin	# for GNU tools
 
 AWK=@AWK@			# awk for use below
+BASE64ENCODE=@BASE64ENCODE@	# base64encode command to dump in setup.cache
 CAT=@CAT@			# cat command for use below
 CHARSET=@CHARSET@		# character set to use in e-mails
 CHGRP=@CHGRP@			# change file group for use below
@@ -64,6 +65,7 @@ LN_S=@LN_S@			# ln option for creating a symbolic link
 MIMENCODE=@MIMENCODE@		# mimencode command to dump in setup.cache
 MKFIFO=@MKFIFO@			# FIFO creation program for use below
 MV=@MV@				# move file for use below
+QPENCODE=@QPENCODE@		# qpencode command to dump in setup.cache
 RMCMD=@RM@			# remove file for use below
 SCRIPT_SH=@SCRIPT_SH@		# shell for use below
 SED=@SED@			# sed for use below
@@ -129,6 +131,7 @@ HFAXD_SNPP_SERVER=@HFAXD_SNPP_SERVER@
 VARS="SCRIPT_SH
 FONTPATH		PATH_AFM
 AWK
+BASE64ENCODE
 BIN		DIR_BIN
 CAT
 CHARSET
@@ -159,6 +162,7 @@ PATHGETTY	PATH_GETTY
 PATHVGETTY	PATH_VGETTY
 PATHEGETTY	PATH_EGETTY
 PSPACKAGE	PS
+QPENCODE
 RM		RMCMD
 SBIN		DIR_SBIN
 SED
@@ -172,7 +176,6 @@ TTYCMD
 UUENCODE
 UUCP_LOCKDIR	DIR_LOCKS
 UUCP_LOCKTYPE	LOCKS"
-
 dumpvals()
 {
     echo "$VARS" |
@@ -786,33 +789,54 @@ if [ ! -x "$TIFF2PDF" ] || [ "$TIFF2PDF" = "bin/tiff2pdf" ]; then
 	test -x "$TIFF2PDF" && Note "Found converter: $TIFF2PDF"
     fi
 fi
-test -x "$MIMENCODE" || {
-    MIMENCODE=`findAppDef mimencode $PATH mimencode`
-    test -x $MIMENCODE || {
-	MIMENCODE=`findAppDef base64-encode $PATH base64-encode`
-    }
-    test -x "$MIMENCODE" && Note "Found encoder: $MIMENCODE"
-}
+
 test -x "$UUENCODE" || {
     UUENCODE=`findAppDef uuencode $PATH uuencode`
-    test -x "$UUENCODE" && Note "Found encoder: $UUENCODE"
+    test -x "$UUENCODE" && Note "Found uuencode encoder: $UUENCODE"
 }
-if [ -x "$MIMENCODE" ]; then
+
+if [ -z "$BASE64ENCODE" ]; then
+    # Keep configured base64 encoder for upgrades from earlier versions:
+    BASE64ENCODE=$MIMENCODE;
+fi
+# $BASE64ENCODE may contain parameters
+cmd=`echo $BASE64ENCODE | $SED -e "s/^ *//" -e "s/ .*$//"`
+test -x "$cmd" || {
+    BASE64ENCODE=`findAppDef mimencode $PATH mimencode`
+    test -x $BASE64ENCODE || {
+	BASE64ENCODE=`findAppDef base64-encode $PATH base64-encode`
+	if [ -x "$UUENCODE" ]; then
+	    if capture "$UUENCODE -m $PASSWD foo"; then
+		BASE64ENCODE="$UUENCODE -m"
+	    fi
+	fi
+    }
+    test -n "$BASE64ENCODE" && Note "Found base64 encoder: $BASE64ENCODE"
+}
+
+# $QPENCODE may contain parameters
+cmd=`echo $QPENCODE | $SED -e "s/^ *//" -e "s/ .*$//"`
+test -x "$cmd" || {
+    cmd=`findAppDef mimencode $PATH mimencode`
+    QPENCODE="$cmd -q"
+    test -x $cmd || {
+	QPENCODE=`findAppDef qp-encode $PATH qp-encode`
+    }
+    test -n "$QPENCODE" && Note "Found Quoted-Printable encoder: $QPENCODE"
+}
+
+# Keeping $MIMENCODE up to date for older scripts...
+test -x "$MIMENCODE" || MIMENCODE=$BASE64ENCODE
+
+if [ -n "$BASE64ENCODE" ]; then
     if [ "$ENCODING" != "base64" ]; then
 	ENCODING=base64
-	Note "Looks like $MIMENCODE supports base64 encoding."
+	Note "Looks like $BASE64ENCODE supports base64 encoding."
     fi
 elif [ -x "$UUENCODE" ]; then
-    if capture "$UUENCODE -m $PASSWD foo"; then
-	if [ "$ENCODING" != "base64" ]; then
-	    ENCODING=base64
-	    Note "Looks like $UUENCODE supports base64 encoding."
-	fi
-    else
-	if [ "$ENCODING" != "x-uuencode" ]; then
-	    ENCODING=x-uuencode
-	    Note "Looks like $UUENCODE does not support base64 encoding."
-	fi
+    if [ "$ENCODING" != "x-uuencode" ]; then
+	ENCODING=x-uuencode
+	Note "Looks like $UUENCODE does not support base64 encoding."
     fi
 fi
 
