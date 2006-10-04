@@ -295,7 +295,7 @@ CreateMailMessage ()
     fi
 
     # Now print the Content-* headers for the template
-    $SED -e '/^$/Q' $1			\
+    $SED -n -e '/^$/q;p' $1			\
     	| $GREP "^Content"		\
 	| template
 
