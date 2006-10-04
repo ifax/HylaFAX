@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.3.1
 
+* fax faxqclean, don't remove cover documents still referenced (4 Oct 2006)
 * Add Romanian templates (29 Sep 2006)
 * faxsetup nolonger blindly removes $TMPDIR (29 Sep 2006)
 * Add Motorola SM56 USB (Apple) modem (27 Sep 2006)
