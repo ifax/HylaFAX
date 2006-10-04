@@ -283,7 +283,7 @@ CreateMailMessage ()
     # Excluding any "Content-" lines, which need to stay with
     # the actual template content
     $SED -n -e '/^$/q;p' $1			\
-    	| $GREP -v ^Content		\
+    	| $GREP -v "^Content"		\
 	| template
 
     # If there are attachments, we are a multipart/mixed
@@ -296,12 +296,12 @@ CreateMailMessage ()
 
     # Now print the Content-* headers for the template
     $SED -e '/^$/Q' $1			\
-    	| $GREP ^Content		\
+    	| $GREP "^Content"		\
 	| template
 
     echo ""
     body_encoding=`$SED -n -e '/^$/q;p' $1		\
-    	| $GREP -i ^Content-Transfer-Encoding	\
+    	| $GREP -i "^Content-Transfer-Encoding"	\
 	| template				\
     	| $SED -e 's/^[^ ]*: *//'`;
     test "$body_encoding" || body_encoding=7bit;
