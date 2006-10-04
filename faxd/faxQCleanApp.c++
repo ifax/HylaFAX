@@ -353,7 +353,7 @@ faxQCleanApp::expungeCruft(void)
 		 * at the front; look to see if the job still
 		 * exists in the sendq.
 		 */
-		u_int prefix = docDir.length()+1+3;
+		u_int prefix = docDir.length()+1+5;
 		fxStr qfile = qFilePrefix | file.extract(prefix, l-1-prefix);
 		if (Sys::stat(qfile, sb) == 0) {
 		    if (trace)
