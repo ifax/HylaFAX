@@ -282,7 +282,7 @@ CreateMailMessage ()
     # First we take the top part of the e-mail for headers
     # Excluding any "Content-" lines, which need to stay with
     # the actual template content
-    $SED -e '/^$/q' $1			\
+    $SED -e '/^$/Q' $1			\
     	| $GREP -v ^Content		\
 	| template
 
@@ -295,12 +295,12 @@ CreateMailMessage ()
     fi
 
     # Now print the Content-* headers for the template
-    $SED -e '/^$/q' $1			\
+    $SED -e '/^$/Q' $1			\
     	| $GREP ^Content		\
 	| template
 
     echo ""
-    body_encoding=`$SED -e '/^$/q' $1		\
+    body_encoding=`$SED -e '/^$/Q' $1		\
     	| $GREP -i ^Content-Transfer-Encoding	\
 	| template				\
     	| $SED -e 's/^[^ ]*: *//'`;
