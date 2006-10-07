@@ -116,6 +116,8 @@ CIDNAME="$CALLID2"
 
 FILENAME=`echo $FILE | $SED -e 's/\.tif//' -e 's/recvq\///'`
 
+SetupPrivateTmp
+
 parseFaxInfo $FILE
 
 MIMEBOUNDARY="NextPart$$"
@@ -207,3 +209,5 @@ else
     CreateMailMessage etc/templates/$TEMPLATE/faxrcvd-failure.txt \
     	2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi $TOADDR
 fi
+
+CleanupPrivateTmp

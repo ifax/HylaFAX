@@ -2,7 +2,10 @@
 
 Changelog for HylaFAX 4.3.1
 
+* Private tmpdir was not set by faxrcvd, but used for body encoding (6 Oct 2006)
 * fax faxqclean, don't remove cover documents still referenced (4 Oct 2006)
+* Encodes email body according to template setting (3 Oct 2006)
+* Add Quoted-Printable encoding option (3 Oct 2006)
 * Add Romanian templates (29 Sep 2006)
 * faxsetup nolonger blindly removes $TMPDIR (29 Sep 2006)
 * Add Motorola SM56 USB (Apple) modem (27 Sep 2006)
