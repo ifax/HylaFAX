@@ -2,6 +2,10 @@
 
 Changelog for HylaFAX 4.3.1
 
+* Base64 encoding with uuencode was broken on 3 Oct (6 Oct 2006)
+* uuencode STDERR was not redirected to $ERRORSTO (6 Oct 2006)
+* There was a small possibility of corruption a base64 output produced
+  by uuencode if an encoded line started with "begin" (6 Oct 2006)
 * Private tmpdir was not set by faxrcvd, but used for body encoding (6 Oct 2006)
 * fax faxqclean, don't remove cover documents still referenced (4 Oct 2006)
 * Encodes email body according to template setting (3 Oct 2006)
