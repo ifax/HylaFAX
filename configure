@@ -3655,7 +3655,7 @@ test "$BASE64ENCODE" || {
     test -x $BASE64ENCODE || {
 	BASE64ENCODE=`findAppDef base64-encode $PATH base64-encode`
 	if [ -x "$UUENCODE" ]; then
-	    if capture "$UUENCODE -m $PASSWD foo"; then
+	    if capture "$UUENCODE -m port.h foo"; then
 		BASE64ENCODE="$UUENCODE -m ===="
 	    fi
 	fi
