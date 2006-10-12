@@ -54,7 +54,7 @@ DIALRULES=dialrules \
 	dialrules.europe
 TARGETS	= config.fax hosts.hfaxd xferfaxlog lockname ondelay
 
-TEMPLATES = . fr de ro
+TEMPLATES = . fr de ro pt_BR pt es it pl
 
 default all::
 	@${MAKE} targets
