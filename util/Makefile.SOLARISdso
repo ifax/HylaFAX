@@ -31,7 +31,7 @@
 #
 
 libfaxutil.${DSO}: ${OBJECTS}
-	ld ${DSOOPTS} -o libfaxutil.${DSO}.${LIBVERSION} ${OBJECTS}
+	${C++} ${DSOOPTS} -o libfaxutil.${DSO}.${LIBVERSION} ${OBJECTS}
 	ln -fs libfaxutil.${DSO}.${LIBVERSION} libfaxutil.${DSO}
 
 ../util/libfaxutil.${DSO}: libfaxutil.${DSO}

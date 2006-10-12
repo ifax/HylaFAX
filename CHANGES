@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.3.1
 
+* Change how we compile shared objects for Solaris DSO support (12 Oct 2006)
 * Base64 encoding with uuencode was broken on 3 Oct (6 Oct 2006)
 * uuencode STDERR was not redirected to $ERRORSTO (6 Oct 2006)
 * There was a small possibility of corruption a base64 output produced

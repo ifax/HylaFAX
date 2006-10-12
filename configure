@@ -3446,12 +3446,13 @@ if [ "$DSO" = auto ]; then
 	FAXD='${DEPTH}/faxd'
 	LIBFAXSERVER='-L${FAXD} -lfaxserver'
 	# options here are passed directly to ld, not through g++ first
-	DSOOPTS='-G -h $@'
 	if [ ${ISGCC} = "yes" ] ; then
+	    DSOOPTS='-shared -wl,-G,-h,$@'
 	    LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lfaxutil -lstdc++'
 	    GCOPTS="${GCOPTS} -fpic"
 	    GCXXOPTS="${GCXXOPTS} -fpic"
 	else
+	    DSOOPTS='-G -h $@'
 	    LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lfaxutil -lCrun'
 	    GCOPTS="${GCOPTS} -Kpic"
 	    GCXXOPTS="${GCXXOPTS} -Kpic"
