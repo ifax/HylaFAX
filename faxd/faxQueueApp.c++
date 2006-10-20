@@ -1685,6 +1685,11 @@ faxQueueApp::ctrlJobDone(Job& job, int status)
 	    (const char*) job.jobid, status);
     }
     setReady(job);
+    FaxRequest* req = readRequest(job);
+    if (req) {
+    	updateRequest(*req, job);
+	delete req;
+    }
 }
 
 /*
@@ -2251,6 +2256,11 @@ faxQueueApp::runJob(Job& job)
 {
     job.remove();
     setReadyToRun(job, jobCtrlWait);
+    FaxRequest* req = readRequest(job);
+    if (req) {
+    	updateRequest(*req, job);
+    	delete req;
+    }
 }
 
 /*
