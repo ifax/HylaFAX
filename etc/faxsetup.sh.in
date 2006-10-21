@@ -554,7 +554,7 @@ EOF
     # Functions required by faxaddmodem.
     #
     case $TARGET in
-    *-sunos*|*-linux*|*-ultrix*|*-hpux*|*-freebsd*|*-netbsd*)
+    *-sunos*|*-linux*|*-ultrix*|*-hpux*|*-freebsd*|*-netbsd*|*-sysv5SCO_SV6*)
 	dumpTTYFuncs()
 	{
 	    cat<<'EOF'

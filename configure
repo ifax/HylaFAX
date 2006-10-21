@@ -3942,6 +3942,7 @@ if [ "$LOCKS" = auto ]; then
     *-sysv2*)	LOCKS=binary;;
     *-hpux*)	LOCKS=binary;;
     *-sysv4*)	LOCKS="+ascii";;
+    *-sysv5SCO_SV6*)	LOCKS="-ascii";;
     *-sysv5*)	LOCKS="+ascii";;
     *-solaris*)	LOCKS="+ascii";;
     *-freebsd*)	LOCKS=ascii;;
