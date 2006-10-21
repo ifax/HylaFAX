@@ -209,7 +209,7 @@ sman.files/status.4f::	${SRCDIR}/status.4f;	${MANCVT}
 sman.files/tsi.4f::	${SRCDIR}/tsi.4f;	${MANCVT}
 sman.files/xferfaxlog.4f::	${SRCDIR}/xferfaxlog.4f;	${MANCVT}
 
-LDIRT=	${MANCAPP} ${MANCFILE} ${MANSAPP} ${MANSFILE}
+LDIRT=	cman.apps cman.files sman.apps sman.files
 
 cman.apps/Makefile: ${DEPTH}/defs cman.apps ${MANCAPP}
 	${RM} -f cman.apps/Makefile
