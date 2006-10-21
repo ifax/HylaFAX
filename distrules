@@ -371,6 +371,7 @@ HYLAFAXSRC=\
 	util/mkcover.sh.in			\
 	util/notify.sh.in			\
 	util/notify-4.1.sh.in			\
+	util/notify-4.2.sh.in			\
 	util/pollrcvd.sh.in			\
 	util/pcl2fax.sh.in			\
 	util/ps2fax.dps.sh.in			\

@@ -206,7 +206,7 @@ install: installClient
 #
 clobberconfig:
 	-${RM} -f pagesizes xferfaxstats.sh recvstats.sh faxcron.sh dictionary.sh \
-		faxrcvd.sh mkcover.sh notify-4.1.sh notify.sh pcl2fax.sh pollrcvd.sh \
+		faxrcvd.sh mkcover.sh notify-4.1.sh notify-4.2.sh notify.sh pcl2fax.sh pollrcvd.sh \
 		ps2fax.dps.sh ps2fax.gs.sh ps2fax.imp.sh tiff2fax.sh \
 		tiff2pdf.sh wedged.sh archive.sh pdf2fax.gs.sh common-functions.sh
 
