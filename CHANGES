@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.3.1
 
+* Disable JPEG support when compiling with older libtiff (3 Nov 2006)
 * Use old style lock files for OpenServer 6 (20 Oct 2006)
 * Always update on-disk qfiles for jobs when state changes to running (19 Oct 2006)
 * Change how we compile shared objects for Solaris DSO support (12 Oct 2006)

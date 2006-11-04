@@ -388,8 +388,12 @@ FaxModem::recvSetupTIFF(TIFF* tif, long, int fillOrder, const fxStr& id)
     TIFFSetField(tif, TIFFTAG_SUBFILETYPE,	FILETYPE_PAGE);
     TIFFSetField(tif, TIFFTAG_IMAGEWIDTH,	(uint32) params.pageWidth());
     if (params.df == DF_JPEG_COLOR || params.df == DF_JPEG_GREY) {
-	TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE,	8);
+#ifdef PHOTOMETRIC_ITULAB
 	TIFFSetField(tif, TIFFTAG_PHOTOMETRIC,		PHOTOMETRIC_ITULAB);
+#else
+	printf("Attempt to save JPEG Grey/Colour data without PHOTOMETRIC_ITULAB support.  This should not happen.\n");
+#endif
+	TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE,	8);
 	TIFFSetField(tif, TIFFTAG_PLANARCONFIG,		PLANARCONFIG_CONTIG);
 	// libtiff requires IMAGELENGTH to be set before SAMPLESPERPIXEL, 
 	// or StripOffsets and StripByteCounts will have SAMPLESPERPIXEL values

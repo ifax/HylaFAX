@@ -27,6 +27,7 @@
 
 #include "t.30.h"
 #include "config.h"
+#include "tiffio.h"
 
 #include <ctype.h>
 
@@ -711,10 +712,12 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class2SendRTC = getBoolean(value);
     else if (streq(tag, "class1ecmsupport"))
 	class1ECMSupport = getBoolean(value);
+#ifdef PHOTOMETRIC_ITULAB
     else if (streq(tag, "class1greyjpegsupport"))
 	class1GreyJPEGSupport = getBoolean(value);
     else if (streq(tag, "class1colorjpegsupport"))
 	class1ColorJPEGSupport = getBoolean(value);
+#endif
     else if (streq(tag, "class1jbigsupport"))
         class1JBIGSupport = getJBIGSupport(value);
     else if (streq(tag, "class1persistentecm"))
