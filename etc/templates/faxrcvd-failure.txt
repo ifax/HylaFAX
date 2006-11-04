@@ -8,3 +8,4 @@ Fax not received.
 	$MSG
 
 Session log follows:
+$SESSION_LOG

@@ -8,3 +8,5 @@ Faxul nu a fost primit.
 $MSG
 
 Urmează transcriptul sesiunii:
+$SESSION_LOG
+
