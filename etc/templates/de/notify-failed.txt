@@ -32,4 +32,3 @@ $SESSION_LOG
                     TotPages: $totpages
                     Versuche: $ntries
                       Dirnum: $dirnum
-                        Ziel: $number

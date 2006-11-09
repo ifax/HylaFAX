@@ -26,4 +26,3 @@ das Skript zur Dokumentenkonvertierung wurde nicht gefunden.
                     TotPages: $totpages
                     Versuche: $ntries
                       Dirnum: $dirnum
-                        Ziel: $number

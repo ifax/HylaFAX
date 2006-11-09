@@ -25,4 +25,3 @@ wurde aus der Verarbeitungswarteschlange gelöscht.
                     TotPages: $totpages
                     Versuche: $ntries
                       Dirnum: $dirnum
-                        Ziel: $number

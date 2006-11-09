@@ -25,4 +25,3 @@ konnte nicht innerhalb der für den Auftrag verfügbaren Zeit vollendet werden.
                     TotPages: $totpages
                     Versuche: $ntries
                       Dirnum: $dirnum
-                        Ziel: $number
