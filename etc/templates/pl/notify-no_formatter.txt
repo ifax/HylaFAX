@@ -26,4 +26,3 @@ Po³±czeñ telefonicznych: $totdials
                    Stron: $totpages
                    Prób: $ntries
                  Katalog: $dirnum
-                 Adresat: $number
