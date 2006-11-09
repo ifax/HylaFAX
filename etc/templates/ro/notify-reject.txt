@@ -28,4 +28,4 @@ Pagini:             $npages
 Număr total pagini: $totpages
 Încercări:          $ntries
 Număr director:     $dirnum
-Destinaţie:         $number
+
