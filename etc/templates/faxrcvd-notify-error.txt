@@ -1,4 +1,5 @@
 From: FAX Agent <$FROMADDR>
+To: $TOADDR
 Subject: Fax received with errors from "$SENDER"
 Content-type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: Quoted-Printable
