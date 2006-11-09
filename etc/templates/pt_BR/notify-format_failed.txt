@@ -30,4 +30,3 @@ Verifique a validade do documento PostScript se há fontes não standart e forma
              TotalPáginas: $totpages
                 Tentativas: $ntries
                     NumDir: $dirnum
-             Destinatário: $number

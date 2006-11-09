@@ -25,4 +25,3 @@ não pôde ser enviado dentro do tempo estabelecido.
              TotalPáginas: $totpages
                 Tentativas: $ntries
                     NumDir: $dirnum
-             Destinatário: $number
