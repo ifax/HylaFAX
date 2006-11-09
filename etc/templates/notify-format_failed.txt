@@ -31,4 +31,3 @@ Check any PostScript documents for non-standard fonts and invalid constructs
          TotPages: $totpages
          Attempts: $ntries
            Dirnum: $dirnum
-      Destination: $number

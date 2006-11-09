@@ -26,4 +26,3 @@ You job to $number was deleted from the queue.
          TotPages: $totpages
          Attempts: $ntries
            Dirnum: $dirnum
-      Destination: $number

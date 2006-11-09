@@ -28,4 +28,3 @@ not found.
          TotPages: $totpages
          Attempts: $ntries
            Dirnum: $dirnum
-      Destination: $number
