@@ -4,7 +4,7 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
- was completed successfully.
+Your page to $number was completed successfully.
           Dialogs: $tottries (exchanges with remote device)
             Calls: $totdials (total phone calls placed)
             Modem: $modem

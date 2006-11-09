@@ -4,12 +4,13 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
- was not sent because document conversion
-to facsimile failed.  The output from the converter program was:
+Your job to $number was not sent because document conversion
+failed.  The output from the converter program was:
 
 $faxstatus
 
 Check any PostScript documents for non-standard fonts and invalid constructs
+
 ------- Unsent job status -------
       Destination: $number
             JobID: $jobid

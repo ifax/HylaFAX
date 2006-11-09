@@ -4,7 +4,8 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-was deleted from the queue.
+You job to $number was deleted from the queue.
+
 ------- Unsent job status -------
       Destination: $number
             JobID: $jobid
