@@ -26,4 +26,3 @@ el programa de conversión no fue encontrado.
                 PáginasPara: $totpages
                   Tentativas: $ntries
                       NumDir: $dirnum
-                     Destino: $number

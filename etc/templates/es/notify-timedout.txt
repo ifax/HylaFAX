@@ -25,4 +25,3 @@ no ha sido enviado porque agoto el plazo designado.
                 PáginasPara: $totpages
                   Tentativas: $ntries
                       NumDir: $dirnum
-                     Destino: $number

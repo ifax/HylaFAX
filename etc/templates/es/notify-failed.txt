@@ -32,4 +32,3 @@ $SESSION_LOG
                 PáginasPara: $totpages
                   Tentativas: $ntries
                       NumDir: $dirnum
-                     Destino: $number

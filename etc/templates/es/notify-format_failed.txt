@@ -30,4 +30,3 @@ Compruebe si él documento de PostScript para saber si hay fuentes no estándar 
                 PáginasPara: $totpages
                   Tentativas: $ntries
                       NumDir: $dirnum
-                     Destino: $number

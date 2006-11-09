@@ -25,4 +25,3 @@ fue eliminado del envio.
                 PáginasPara: $totpages
                   Tentativas: $ntries
                       NumDir: $dirnum
-                     Destino: $number
