@@ -26,4 +26,3 @@ lo script di conversione del documento non è stato trovato.
               Pagine tot.: $totpages
                 Tentativi: $ntries
                    Dirnum: $dirnum
-             Destinatario: $number

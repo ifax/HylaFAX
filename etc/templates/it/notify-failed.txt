@@ -32,4 +32,3 @@ $SESSION_LOG
               Pagine tot.: $totpages
                 Tentativi: $ntries
                    Dirnum: $dirnum
-             Destinatario: $number

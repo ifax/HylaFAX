@@ -25,4 +25,3 @@ non è stato completato prima dell'orario prefissato.
               Pagine tot.: $totpages
                 Tentativi: $ntries
                    Dirnum: $dirnum
-             Destinatario: $number

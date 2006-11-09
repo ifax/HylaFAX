@@ -25,4 +25,3 @@ Content-Transfer-Encoding: Quoted-Printable
               Pagine tot.: $totpages
                 Tentativi: $ntries
                    Dirnum: $dirnum
-             Destinatario: $number
