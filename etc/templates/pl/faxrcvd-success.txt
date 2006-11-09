@@ -1,4 +1,5 @@
 From: Serwer faxów HylaFAX <$FROMADDR>
+To: $SENDTO
 Subject: Odebrano fax od $SENDER
 Content-Transfer-Encoding: Quoted-Printable
 

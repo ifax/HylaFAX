@@ -1,4 +1,5 @@
 From: Serwer faxów HylaFAX <$FROMADDR>
+To: $TOADDR
 Subject: Nie odebrano faxu
 Content-Transfer-Encoding: Quoted-Printable
 
