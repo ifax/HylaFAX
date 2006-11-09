@@ -1,4 +1,4 @@
-To: $SENDTO
+To: $TOADDR
 From: Servidor de Fax HylaFAX <$FROMADDR>
 Subject: fax no recibido
 Content-type: text/plain; charset=utf-8
