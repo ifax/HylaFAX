@@ -1,4 +1,5 @@
 From: FAX Agent <$FROMADDR>
+To: $SENDTO
 Subject: Fax primit de la "$SENDER"
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
@@ -20,4 +21,4 @@ CommID:           $COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)
 
 Au fost recepţionate erori:
 $SESSION_LOG
-    
+

@@ -1,4 +1,5 @@
 From: FAX Agent <$FROMADDR>
+To: $TOADDR
 Subject: Fax primit cu erori de la "$SENDER"
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
@@ -21,3 +22,4 @@ CommID:           $COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)
 
 Transcriptul sesiunii:
 $SESSION_LOG
+

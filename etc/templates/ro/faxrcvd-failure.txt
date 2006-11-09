@@ -1,4 +1,5 @@
 From: FAX Agent <$FROMADDR>
+To: $TOADDR
 Subject: Fax primit de la "$SENDER"
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable

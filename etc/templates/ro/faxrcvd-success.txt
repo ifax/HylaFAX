@@ -1,4 +1,5 @@
 From: FAX Agent <$FROMADDR>
+To: $SENDTO
 Subject: Fax primit de la "$SENDER"
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
@@ -17,3 +18,4 @@ CallID1:          $CALLID1
 CallID2:          $CALLID2
 Recepţionat pe:   $DEVICE
 CommID:           $COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)      
+
