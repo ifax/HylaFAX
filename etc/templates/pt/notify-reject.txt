@@ -28,4 +28,3 @@ $faxstatus
              TotalPáginas: $totpages
                 Tentativas: $ntries
                     NumDir: $dirnum
-             Destinatário: $number
