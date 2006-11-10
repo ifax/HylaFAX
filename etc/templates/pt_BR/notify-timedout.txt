@@ -4,9 +4,9 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-não pôde ser enviado dentro do tempo estabelecido.
+O seu fax para $number não pôde ser enviado dentro do tempo estabelecido.
 ------- Unsent job status -------
-             Destinatário: $number
+              Destinatário: $number
                    IDEnvio: $jobid
                    IDGrupo: $groupid
                  Remetente: $sender
@@ -16,12 +16,12 @@ não pôde ser enviado dentro do tempo estabelecido.
                 Enviado De: $client
                    Largura: $pagewidth  (mm)
                Comprimento: $pagelength (mm)
-               Resolução: $resolution (lpi)
+                 Resolução: $resolution (lpi)
                     Estado: $faxstatus
-                  Sessões: $tottries
-               Marcações: $ndials
+                   Sessões: $tottries
+                 Marcações: $ndials
                   Chamadas: $totdials
-                  Páginas: $npages
-             TotalPáginas: $totpages
+                   Páginas: $npages
+              TotalPáginas: $totpages
                 Tentativas: $ntries
                     NumDir: $dirnum

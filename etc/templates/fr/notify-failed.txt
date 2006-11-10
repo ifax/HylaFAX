@@ -1,9 +1,10 @@
-Subject: facsimile de $DESTINATION échoué
+To: $SENDTO
+Subject: Télécopie à $DESTINATION a échoué
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-à échoué pour la raison suivante : 
+Votre télécopie à $number a échoué pour la raison suivante : 
 
 $faxstatus
 
@@ -12,24 +13,22 @@ $faxstatus
 
 $SESSION_LOG
 
-------- Unsent job status -------
+------- État de la tâche -------
         Destination: $number
-              JobID: $jobid
-            GroupID: $groupid
-           Emetteur: $sender
-       Adresse mail: $mailaddr
-             CommID: $commid
+        Nº de tâche: $jobid
+       Nº de groupe: $groupid
+         Expéditeur: $sender
+   Adresse Courriel: $mailaddr
+Nº de communication: c$commid
               Modem: $modem
-           Envoyé à: $client
+         Provenance: $client
     Largeur de page: $pagewidth  (mm)
     Hauteur de page: $pagelength (mm)
-         Résolution: $resolution (lpi)
-             Status: $faxstatus
+            Qualité: $resolution (lpi)
+               État: $faxstatus
           Dialogues: $tottries
-              Dials: $ndials
+       Compositions: $ndials
              Appels: $totdials
               Pages: $npages
  Nombre total pages: $totpages
          Tentatives: $ntries
-    Numéro annuaire: $dirnum
-        Destination: $number

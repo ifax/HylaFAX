@@ -1,9 +1,10 @@
+To: $SENDTO
 Subject: fax para $DESTINATION falhou
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-causa da falha:
+O seu fax para $number causa da falha:
 
 $faxstatus
 
@@ -13,7 +14,7 @@ $faxstatus
 $SESSION_LOG
 
 ------- Unsent job status -------
-             Destinatário: $number
+              Destinatário: $number
                    IDEnvio: $jobid
                    IDGrupo: $groupid
                  Remetente: $sender
@@ -23,12 +24,12 @@ $SESSION_LOG
                 Enviado De: $client
                    Largura: $pagewidth  (mm)
                Comprimento: $pagelength (mm)
-               Resolução: $resolution (lpi)
+                 Resolução: $resolution (lpi)
                     Estado: $faxstatus
-                  Sessões: $tottries
-               Marcações: $ndials
+                   Sessões: $tottries
+                 Marcações: $ndials
                   Chamadas: $totdials
-                  Páginas: $npages
-             TotalPáginas: $totpages
+                   Páginas: $npages
+              TotalPáginas: $totpages
                 Tentativas: $ntries
                     NumDir: $dirnum

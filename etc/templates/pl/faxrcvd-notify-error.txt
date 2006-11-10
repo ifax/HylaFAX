@@ -1,23 +1,24 @@
-From: Serwer faxÛw HylaFAX <$FROMADDR>
+From: Serwer fax√≥w HylaFAX <$FROMADDR>
 To: $TOADDR
 Subject: Odebrano fax od $SENDER
+Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 $FILE (ftp://$HOSTNAME:$PORT/$FILE):
-          Nadawca: $SENDER
-            Stron: $PAGES
-           Jako∂Ê: $QUALITY
-          Rozmiar: $PAGE
-        Otrzymano: $RECEIVED
-D≥ugo∂Ê transmisji: $TIMETORECV
-           Sygna≥: $SIGNALRATE
-    Format danych: $DATAFORMAT
-  Korekcja b≥ÍdÛw: $ERRCORRECT
-   Po≥±czenie ID1: $CALLID1
-   Po≥±czenie ID2: $CALLID2
-        Otrzymano: $DEVICE
+           Nadawca: $SENDER
+             Stron: $PAGES
+            Jako≈õƒá: $QUALITY
+           Rozmiar: $PAGE
+         Otrzymano: $RECEIVED
+D≈Çugo≈õƒá transmisji: $TIMETORECV
+            Sygna≈Ç: $SIGNALRATE
+     Format danych: $DATAFORMAT
+   Korekcja b≈Çƒôd√≥w: $ERRCORRECT
+    Po≈ÇƒÖczenie ID1: $CALLID1
+    Po≈ÇƒÖczenie ID2: $CALLID2
+         Otrzymano: $DEVICE
 
-Nie odebrano ca≥o∂ci dokumentu, poniewaø:
+Nie odebrano ca≈Ço≈õci dokumentu, poniewa≈º:
 
    $MSG
 
@@ -25,4 +26,4 @@ Nie odebrano ca≥o∂ci dokumentu, poniewaø:
 
 $SESSION_LOG
 
-Fax zosta≥ automatycznie przes≥any do: $SENDTO.
+Fax zosta≈Ç automatycznie przes≈Çany do: $SENDTO.

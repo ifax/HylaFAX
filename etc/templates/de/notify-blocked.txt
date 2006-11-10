@@ -4,7 +4,7 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-ist verzögert im Verarbeitungswarteschlange weil:
+Ihr Fax Auftrag an $number ist verzögert im Verarbeitungswarteschlange weil:
 
 $faxstatus
 

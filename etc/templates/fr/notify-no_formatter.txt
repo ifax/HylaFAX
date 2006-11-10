@@ -1,29 +1,27 @@
 To: $SENDTO
-Subject: facsimile de $DESTINATION échoué
+Subject: Télécopie à $DESTINATION a échoué
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
- 
-le script de conversion n'a pas été trouvé.
-------- Unsent job status -------
+Votre télécopie à $number a échoué parce que le script de conversion
+n'a pas été trouvé.
+------- État de la tâche -------
         Destination: $number
-              JobID: $jobid
-            GroupID: $groupid
-           Emetteur: $sender
-       Adresse mail: $mailaddr
-             CommID: $commid
+        Nº de tâche: $jobid
+       Nº de groupe: $groupid
+         Expéditeur: $sender
+   Adresse Courriel: $mailaddr
+Nº de communication: c$commid
               Modem: $modem
-           Envoyé à: $client
+         Provenance: $client
     Largeur de page: $pagewidth  (mm)
     Hauteur de page: $pagelength (mm)
-         Résolution: $resolution (lpi)
-             Status: $faxstatus
+            Qualité: $resolution (lpi)
+               État: $faxstatus
           Dialogues: $tottries
-              Dials: $ndials
+       Compositions: $ndials
              Appels: $totdials
               Pages: $npages
  Nombre total pages: $totpages
          Tentatives: $ntries
-    Numéro annuaire: $dirnum
-        Destination: $number

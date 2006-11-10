@@ -4,8 +4,8 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-zosta³o zatrzymane w kolejce wysy³ania, poniewa¿:
+Zadanie fax do $number zostało zatrzymane w kolejce wysyłania, ponieważ:
 
 $faxstatus
 
-Zadanie zostanie wykonane tak szybko, jak to jest mo¿liwe.
+Zadanie zostanie wykonane tak szybko, jak to jest możliwe.

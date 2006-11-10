@@ -4,7 +4,7 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-, une demande de 'polling',\nn'a pas pu être accomplie parce que 
-aucun document n'ést disponible pour la récupération.
+Votre demande de 'polling' à $number n'a pas pu être accomplie parce
+qu'aucun document n'est disponible pour la récupération.
 
-La durée de la transformation était $JTIME.
+Le temps de traitement a été de $JTIME.

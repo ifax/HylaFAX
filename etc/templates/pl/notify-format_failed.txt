@@ -4,12 +4,13 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
- nie zosta³o wys³ane, poniewa¿ konwersja dokumentu
-na fax zakoñczy³a siê niepowodzeniem. Komunikaty programu konwertuj±cego:
+Zadanie fax do $number nie zostało wysłane, ponieważ konwersja dokumentu
+na fax zakoączyła siŞ niepowodzeniem. Komunikaty programu konwertującego:
 
 $faxstatus
 
-Nale¿y sprawdziæ, czy w dokumentach PostScriptowych nie wystêpuj± niestandardowe czcionki lub nieprawid³owe konstrunkcje
+Należy sprawdziŚ, czy w dokumentach PostScriptowych nie wystŞpują
+niestandardowe czcionki lub nieprawidłowe konstrunkcje
 ------- Unsent job status -------
                  Adresat: $number
               ID zadania: $jobid
@@ -19,14 +20,14 @@ Nale¿y sprawdziæ, czy w dokumentach PostScriptowych nie wystêpuj± niestandar
           ID Komunikacji: $commid
                    Modem: $modem
             Nadano przez: $client
-      Szeroko¶æ strony: $pagewidth  (mm)
-       Wysoko¶æ strony: $pagelength (mm)
-         Rozdzielczo¶æ: $resolution (lpi)
+        SzerokośŚ strony: $pagewidth  (mm)
+         WysokośŚ strony: $pagelength (mm)
+           RozdzielczośŚ: $resolution (lpi)
                   Status: $faxstatus
-             Po³±czeñ: $tottries
+                Połączeą: $tottries
                         : $ndials
-Po³±czeñ telefonicznych: $totdials
+ Połączeą telefonicznych: $totdials
                    Stron: $npages
                    Stron: $totpages
-                   Prób: $ntries
+                    Prłb: $ntries
                  Katalog: $dirnum

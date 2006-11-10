@@ -1,33 +1,32 @@
 To: $SENDTO
-Subject: facsimile de $DESTINATION échoué
+Subject: Télécopie à $DESTINATION a échoué
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
- n'a pas été envoyé parce que conversion de document
-facsimile a échoué. La sortie du programme de convertission était :
+Votre télécopie à $number n'a pas été envoyée parce que la conversion de
+document a échouée. Le programme de conversion a retourné le message suivant :
 
 $faxstatus
 
-Contrôler les fichiers PostScript et vérifié les polices non-standard ou une structure invalide
-------- Unsent job status -------
+Assurez-vous que les fichiers PostScript ne contiennent pas de
+polices non-standard ni de structures invalide
+------- État de la tâche -------
         Destination: $number
-              JobID: $jobid
-            GroupID: $groupid
-           Emetteur: $sender
-       Adresse mail: $mailaddr
-             CommID: $commid
+        Nº de tâche: $jobid
+       Nº de groupe: $groupid
+         Expéditeur: $sender
+   Adresse Courriel: $mailaddr
+Nº de communication: c$commid
               Modem: $modem
-           Envoyé à: $client
+         Provenance: $client
     Largeur de page: $pagewidth  (mm)
     Hauteur de page: $pagelength (mm)
-         Résolution: $resolution (lpi)
-             Status: $faxstatus
+            Qualité: $resolution (lpi)
+               État: $faxstatus
           Dialogues: $tottries
-              Dials: $ndials
+       Compositions: $ndials
              Appels: $totdials
               Pages: $npages
  Nombre total pages: $totpages
          Tentatives: $ntries
-    Numéro annuaire: $dirnum
-        Destination: $number

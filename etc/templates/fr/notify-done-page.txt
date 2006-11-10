@@ -1,19 +1,19 @@
 To: $SENDTO
-Subject: pager de $DESTINATION complet
+Subject: Message à $DESTINATION complété
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
- a été effectué avec succès.
-          Dialogues: $tottries (Echanges avec l'équipement distant)
-             Appels: $totdials (les appels téléphoniques totaux ont placé)
+Votre message à $number a été envoyé avec succès.
+          Dialogues: $tottries (échanges avec l'équipement distant)
+             Appels: $totdials (nombre d'appels téléphoniques placés)
               Modem: $modem
-           Envoyé à: $client
-              JobID: $jobid
-            GroupID: $groupid
-             CommID: c$commid
+         Provenance: $client
+        Nº de tâche: $jobid
+       Nº de groupe: $groupid
+Nº de communication: c$commid
 
-La durée de la transformation était $JTIME.
+Le temps de traitement a été de $JTIME.
 
   Informations complémentaire :
 

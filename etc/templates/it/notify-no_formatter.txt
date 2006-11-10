@@ -4,8 +4,8 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
- 
-lo script di conversione del documento non è stato trovato.
+Il fax per $number lo script di conversione del documento non
+è stato trovato.
 ------- Unsent job status -------
              Destinatario: $number
                     JobID: $jobid

@@ -1,28 +1,28 @@
 To: $SENDTO
-Subject: facsimile de $DESTINATION complet
+Subject: Télécopie à $DESTINATION complétée
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-Votre $THISJOBTYPE travail vers $number  a été effectué avec succès.
-              Pages: $npages
-          Récepteur: $csi
-            Qualité: $resolution
-    Largeur de page: $pagewidth (mm)
-    Hauteur de page: $pagelength
-        Signal Rate: $signalrate
-     Format données: dataformat
- Equipement distant: $equipment
-   Station distante: $station
-          Dialogues: $tottries (Echanges avec l'équipement distant)
-             Appels: $totdials (les appels téléphoniques totaux ont placé)
-              Modem: $modem
-           Envoyé à: $client
-              JobID: $jobid
-            GroupID: $groupid
-             CommID: c$commid
+Votre télécopie à $number a été envoyée avec succès.
+                  Pages: $npages
+              Récepteur: $csi
+                Qualité: $resolution
+        Largeur de page: $pagewidth (mm)
+        Hauteur de page: $pagelength
+Vitesse de transmission: $signalrate
+         Format données: dataformat
+     Équipement distant: $equipment
+       Station distante: $station
+              Dialogues: $tottries (échanges avec l'équipement distant)
+                 Appels: $totdials (nombre d'appels téléphoniques placés)
+                  Modem: $modem
+             Provenance: $client
+            Nº de tâche: $jobid
+           Nº de groupe: $groupid
+    Nº de communication: c$commid
 
-La durée de la transformation était $JTIME.
+Le temps de traitement a été de $JTIME.
 
   Informations complémentaire :
 

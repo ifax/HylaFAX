@@ -4,19 +4,19 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-Su trabajo $THISJOBTYPE para $number  se ha cumpletado con éxito.
-                    Páginas: $npages
+Su trabajo fax para $number se ha cumpletado con éxito.
+                     Páginas: $npages
                     Receptor: $csi
                      Calidad: $resolution
                      Anchura: $pagewidth (mm)
                     Longitud: $pagelength
-Velocidad de la transmisión: $signalrate
+ Velocidad de la transmisión: $signalrate
             Formato De Datos: $dataformat
                Equipo Remoto: $equipment
     Nombre del Equipo Remoto: $station
-                   Diálogos: $tottries (conexiones con el dispositivo remoto)
+                    Diálogos: $tottries (conexiones con el dispositivo remoto)
                     Llamadas: $totdials (total de llamadas telefónicas echas)
-                      Módem: $modem
+                       Módem: $modem
                  Sometido De: $client
                    IDTrabajo: $jobid
                      IDGrupo: $groupid

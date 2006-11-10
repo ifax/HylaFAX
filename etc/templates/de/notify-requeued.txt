@@ -4,7 +4,7 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-wurde nicht gesendet weil:
+Ihr Fax Auftrag an $number wurde nicht gesendet weil:
 
 $faxstatus
 

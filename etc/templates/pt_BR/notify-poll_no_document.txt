@@ -4,7 +4,7 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-, a tentativa de colocar o documento para envio falhou porque 
-o documento não está disponível para ser recuperado.
+O seu fax para $number, a tentativa de colocar o documento para
+envio falhou porque o documento não está disponível para ser recuperado.
 
 Tempo gasto no processamento $JTIME.

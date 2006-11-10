@@ -5,7 +5,8 @@ Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
  
-das Skript zur Dokumentenkonvertierung wurde nicht gefunden.
+Ihr Fax Auftrag an $number das Skript zur Dokumentenkonvertierung
+wurde nicht gefunden.
 ------- Unsent job status -------
                         Ziel: $number
                        JobID: $jobid

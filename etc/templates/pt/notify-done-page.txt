@@ -4,8 +4,8 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
- enviado com êxito.
-                  Sessões: $tottries (comunicações com o equipamento remoto)
+O seu paginador para $number enviado com êxito.
+                   Sessões: $tottries (comunicações com o equipamento remoto)
                   Chamadas: $totdials (Nr. de chamadas totais)
                      Modem: $modem
                 Enviado De: $client

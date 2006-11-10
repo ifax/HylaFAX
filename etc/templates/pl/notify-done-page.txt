@@ -1,12 +1,12 @@
 To: $SENDTO
-Subject: czysty tekst do $DESTINATION zakoñczone
+Subject: czysty tekst do $DESTINATION zakoączone
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
- zakoñczone powodzeniem.
-             Po³±czeñ: $tottries (wymiany ze zdalnym urz±dzeniem)
-Po³±czeñ telefonicznych: $totdials (£±cznie po³±czeñ telefonicznych)
+Zadanie czysty tekst do $number zakoączone powodzeniem.
+                Połączeą: $tottries (wymiany ze zdalnym urządzeniem)
+ Połączeą telefonicznych: $totdials (Łącznie połączeą telefonicznych)
                    Modem: $modem
             Nadano przez: $client
               ID zadania: $jobid

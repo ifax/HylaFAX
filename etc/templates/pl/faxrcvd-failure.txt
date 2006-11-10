@@ -1,9 +1,10 @@
-From: Serwer faxów HylaFAX <$FROMADDR>
+From: Serwer faxÃ³w HylaFAX <$FROMADDR>
 To: $TOADDR
 Subject: Nie odebrano faxu
+Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-Próba odebrania faksu na modemie $DEVICE zakoñczy³a siê niepowodzeniem z powodu:
+PrÃ³ba odebrania faksu na modemie $DEVICE zakoÅ„czyÅ‚a siÄ™ niepowodzeniem z powodu:
 
    $MSG
 

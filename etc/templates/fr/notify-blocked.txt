@@ -1,11 +1,11 @@
 To: $SENDTO
-Subject: facsimile de $DESTINATION bloqué
+Subject: Télécopie à $DESTINATION bloquée
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-est retardé dans les files d'attente d'établissement parce que :
+Votre télécopie à $number est retardée dans les files d'attente parce que :
 
 $faxstatus
 
-Le travail sera traité aussitôt que possible.
+La tâche sera traitée aussitôt que possible.

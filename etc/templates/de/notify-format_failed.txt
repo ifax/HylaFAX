@@ -4,12 +4,14 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
- wurde nicht gesendet, weil die Dokumentenkonvertierung
-zum Fax fehlgeschlagen ist.  Die Ausgabe des Konvertierungsprogrammes war:
+Ihr Fax Auftrag an $number wurde nicht gesendet, weil die
+Dokumentenkonvertierung zum Fax fehlgeschlagen ist.
+Die Ausgabe des Konvertierungsprogrammes war:
 
 $faxstatus
 
-Überprüfen Sie jedes PostScript Dokument auf nicht standard konforme Fonts und invalide Konstruktionen
+Überprüfen Sie jedes PostScript Dokument auf nicht standard
+konforme Fonts und invalide Konstruktionen
 ------- Unsent job status -------
                         Ziel: $number
                        JobID: $jobid

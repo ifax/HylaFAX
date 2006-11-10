@@ -1,21 +1,22 @@
-From: The HylaFAX Receive Agent <$FROMADDR>
-Subject: Facsimile reçu de $SENDER
+From: HylaFAX <$FROMADDR>
+To: $SENDTO
+Subject: Télécopie reçue de "$SENDER"
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 $FILE (ftp://$HOSTNAME:$PORT/$FILE):
-          Emetteur: $SENDER
-             Pages: $PAGES
-           Qualité: $QUALITY
-            Taille: $PAGE
-              Reçu: $RECEIVED
-Heure de réception: $TIMETORECV
-       Signal Rate: $SIGNALRATE
-    Format données: $DATAFORMAT
-     Error Correct: $ERRCORRECT
-           CallID1: $CALLID1
-           CallID2: $CALLID2
-       Received On: $DEVICE
+             Expéditeur: $SENDER
+                  Pages: $PAGES
+                Qualité: $QUALITY
+                 Taille: $PAGE
+                Reçu le: $RECEIVED
+     Temps de réception: $TIMETORECV
+Vitesse de transmission: $SIGNALRATE
+     Format des données: $DATAFORMAT
+   Correction d'erreurs: $ERRCORRECT
+                CallID1: $CALLID1
+                CallID2: $CALLID2
+               Reçu sur: $DEVICE
 
 Le document entier n'a pas été reçu parce que :
 

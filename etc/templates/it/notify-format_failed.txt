@@ -4,12 +4,13 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
- non è stato inviato perché la conversione del documento
+Il fax per $number non è stato inviato perché la conversione del documento
 in fax è fallita.  L'output del convertitore è stato:
 
 $faxstatus
 
-Verificare i documenti Postscript per l'uso di font non standard e construtti non validi
+Verificare i documenti Postscript per l'uso di font non standard
+e construtti non validi
 ------- Unsent job status -------
              Destinatario: $number
                     JobID: $jobid

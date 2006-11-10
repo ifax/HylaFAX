@@ -4,24 +4,24 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-fue eliminado del envio.
+Su trabajo fax para $number fue eliminado del envio.
 ------- Unsent job status -------
                      Destino: $number
                    IDTrabajo: $jobid
                      IDGrupo: $groupid
                    Remitente: $sender
-                  Dirección: $mailaddr
+                   Dirección: $mailaddr
                        IDCom: $commid
-                      Módem: $modem
+                       Módem: $modem
                  Sometido De: $client
                      Anchura: $pagewidth  (mm)
                     Longitud: $pagelength (mm)
-                 Resolución: $resolution (lpi)
+                  Resolución: $resolution (lpi)
                       Estado: $faxstatus
-                   Diálogos: $tottries
+                    Diálogos: $tottries
                  Marcaciones: $ndials
                     Llamadas: $totdials
-                    Páginas: $npages
-                PáginasPara: $totpages
+                     Páginas: $npages
+                 PáginasPara: $totpages
                   Tentativas: $ntries
                       NumDir: $dirnum

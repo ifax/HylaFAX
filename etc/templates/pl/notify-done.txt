@@ -1,21 +1,21 @@
 To: $SENDTO
-Subject: fax do $DESTINATION zakoñczone
+Subject: fax do $DESTINATION zakoączone
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-Zadanie $THISJOBTYPE do $number  zakoñczone powodzeniem.
+Zadanie fax do $number zakoączone powodzeniem.
                    Stron: $npages
                 Odbiorca: $csi
-                Jako¶æ: $resolution
-      Szeroko¶æ strony: $pagewidth (mm)
-       Wysoko¶æ strony: $pagelength
-                 Sygna³: $signalrate
+                  JakośŚ: $resolution
+        SzerokośŚ strony: $pagewidth (mm)
+         WysokośŚ strony: $pagelength
+                  Sygnał: $signalrate
            Format danych: $dataformat
-      Zdalne urz±dzenie: $equipment
+       Zdalne urządzenie: $equipment
           Zdalna maszyna: $station
-             Po³±czeñ: $tottries (wymiany ze zdalnym urz±dzeniem)
-Po³±czeñ telefonicznych: $totdials (£±cznie po³±czeñ telefonicznych)
+                Połączeą: $tottries (wymiany ze zdalnym urządzeniem)
+ Połączeą telefonicznych: $totdials (Łącznie połączeą telefonicznych)
                    Modem: $modem
             Nadano przez: $client
               ID zadania: $jobid

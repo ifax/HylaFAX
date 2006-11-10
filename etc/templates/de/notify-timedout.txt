@@ -4,7 +4,8 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-konnte nicht innerhalb der für den Auftrag verfügbaren Zeit vollendet werden.
+Ihr Fax Auftrag an $number konnte nicht innerhalb der
+für den Auftrag verfügbaren Zeit vollendet werden.
 ------- Unsent job status -------
                         Ziel: $number
                        JobID: $jobid

@@ -4,10 +4,10 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
- se ha cumpletado con éxito.
-                   Diálogos: $tottries (conexiones con el dispositivo remoto)
+Su trabajo paginador para $number se ha cumpletado con éxito.
+                    Diálogos: $tottries (conexiones con el dispositivo remoto)
                     Llamadas: $totdials (total de llamadas telefónicas echas)
-                      Módem: $modem
+                       Módem: $modem
                  Sometido De: $client
                    IDTrabajo: $jobid
                      IDGrupo: $groupid

@@ -1,9 +1,10 @@
+To: $SENDTO
 Subject: Fax an $DESTINATION fehlgeschlagen
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-schlug fehl da:
+Ihr Fax Auftrag an $number schlug fehl da:
 
 $faxstatus
 

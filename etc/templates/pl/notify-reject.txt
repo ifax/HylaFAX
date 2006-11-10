@@ -4,7 +4,7 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-zosta³o odrzucone, poniewa¿:
+Zadanie fax do $number zostało odrzucone, ponieważ:
 
 $faxstatus
 
@@ -17,14 +17,14 @@ $faxstatus
           ID Komunikacji: $commid
                    Modem: $modem
             Nadano przez: $client
-      Szeroko¶æ strony: $pagewidth  (mm)
-       Wysoko¶æ strony: $pagelength (mm)
-         Rozdzielczo¶æ: $resolution (lpi)
+        SzerokośŚ strony: $pagewidth  (mm)
+         WysokośŚ strony: $pagelength (mm)
+           RozdzielczośŚ: $resolution (lpi)
                   Status: $faxstatus
-             Po³±czeñ: $tottries
+                Połączeą: $tottries
                         : $ndials
-Po³±czeñ telefonicznych: $totdials
+ Połączeą telefonicznych: $totdials
                    Stron: $npages
                    Stron: $totpages
-                   Prób: $ntries
+                    Prłb: $ntries
                  Katalog: $dirnum

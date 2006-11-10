@@ -4,4 +4,4 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-foi removido.
+O seu fax para $number foi removido.

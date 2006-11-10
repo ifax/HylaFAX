@@ -4,9 +4,9 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-foi removido.
+O seu fax para $number foi removido.
 ------- Unsent job status -------
-             Destinatário: $number
+              Destinatário: $number
                    IDEnvio: $jobid
                    IDGrupo: $groupid
                  Remetente: $sender
@@ -16,12 +16,12 @@ foi removido.
                 Enviado De: $client
                    Largura: $pagewidth  (mm)
                Comprimento: $pagelength (mm)
-               Resolução: $resolution (lpi)
+                 Resolução: $resolution (lpi)
                     Estado: $faxstatus
-                  Sessões: $tottries
-               Marcações: $ndials
+                   Sessões: $tottries
+                 Marcações: $ndials
                   Chamadas: $totdials
-                  Páginas: $npages
-             TotalPáginas: $totpages
+                   Páginas: $npages
+              TotalPáginas: $totpages
                 Tentativas: $ntries
                     NumDir: $dirnum

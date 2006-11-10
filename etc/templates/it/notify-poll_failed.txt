@@ -4,7 +4,8 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-, una richiesta di scaricamento fax,\nnon può essere completata perché 
-si è verificato un problema non identificato.
+Il fax per $number, una richiesta di scaricamento fax,
+non può essere completata perché si è verificato un problema
+non identificato.
 
 Il tempo di elaborazione è stato $JTIME.

@@ -1,5 +1,6 @@
-From: The HylaFAX Receive Agent <$FROMADDR>
-Subject: facsimile non reçu
+From: HylaFAX <$FROMADDR>
+To: $TOADDR
+Subject: Télécopie non reçue
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 

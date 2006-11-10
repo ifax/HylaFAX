@@ -1,11 +1,11 @@
 To: $SENDTO
-Subject: facsimile de $DESTINATION 
+Subject: Télécopie à $DESTINATION
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-n'a pas été envoyé pour la raison : 
+Votre télécopie à $number n'a pas été envoyée parce que : 
 
 $faxstatus
 
-Le travail sera relancé à $NEXT
+La tâche sera réessayée à $NEXT

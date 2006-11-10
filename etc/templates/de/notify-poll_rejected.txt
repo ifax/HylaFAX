@@ -4,7 +4,8 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-, ein Faxabruf,\nkonnte nicht vollendet werden weil 
+Ihr Fax Auftrag an $number, ein Faxabruf,
+konnte nicht vollendet werden weil 
 die Gegenstelle den Faxabruf abgewiesen hat.
 
 Verarbeitungszeit $JTIME.

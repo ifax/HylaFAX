@@ -4,7 +4,7 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-esta retrasado porque:
+Su trabajo fax para $number esta retrasado porque:
 
 $faxstatus
 

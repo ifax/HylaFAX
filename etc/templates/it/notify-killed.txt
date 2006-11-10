@@ -4,7 +4,7 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-è stato cancellato dalla coda.
+Il fax per $number è stato cancellato dalla coda.
 ------- Unsent job status -------
              Destinatario: $number
                     JobID: $jobid
