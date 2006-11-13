@@ -797,7 +797,8 @@ SendFaxClient::estimatePostScriptPages(const char* filename)
                     endbuf = cp+len;    // Will only change on the last pass.
 	            cp = line;
 	            while ((cp = (char *) memchr((const char*) cp, '/', endbuf-cp-slen))) {
-	                if (((memcmp(cp, "/Type /Page", slen-1) == 0) || (memcmp(cp, "/Type/Page", slen-2) == 0)) && (*(cp+slen-1) != 's'))
+	                if ((memcmp(cp, "/Type /Page", slen-1) == 0 && *(cp+slen-1) != 's') ||
+	                    (memcmp(cp, "/Type/Page",  slen-2) == 0 && *(cp+slen-2) != 's'))
 	                    npages++;
 			cp++;
 	            }
