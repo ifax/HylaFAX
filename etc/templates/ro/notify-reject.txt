@@ -4,7 +4,7 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-Fax eşuat pentru că:
+Faxul către $number a eşuat pentru că:
 
 $faxstatus
 

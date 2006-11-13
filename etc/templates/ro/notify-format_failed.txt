@@ -4,11 +4,10 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-Eşuat datorită faptului că a eşuat conversiea
-documentului în fax. Convertorul a returnat:
+Sesiunea către $number nu a fost trimisă datorită faptului
+că a eşuat conversia documentului în fax. Convertorul a returnat:
 
 $faxstatus
-
 
 Verificaţi dacă documentele PostScript nu conţin
 fonturi non-standard sau instrucţiuni invalide.
@@ -33,4 +32,3 @@ Pagini:             $npages
 Număr total pagini: $totpages
 Încercări:          $ntries
 Număr director:     $dirnum
-

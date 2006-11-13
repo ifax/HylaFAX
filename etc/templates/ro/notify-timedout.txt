@@ -4,7 +4,7 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-Nu a putut fi finalizat înainte de termen.
+Faxul către $number nu a putut fi finalizat înainte de termen.
 
 
 ---- Starea sesiunii netransmise ----

@@ -1,10 +1,11 @@
 To: $SENDTO
-Subject: Comentariu despre fax
+Subject: Notă despre fax
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-O încercare de aşezare în coadă nu poate fi finalizată
+O încercare de aşezare în coadă către $number nu poate fi finalizată
 pentru că nu a fost găsit nici un document pentru recuperare.
 
 Durata de procesare a fost $JTIME.
+

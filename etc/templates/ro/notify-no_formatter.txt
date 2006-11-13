@@ -5,7 +5,8 @@ Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
  
-Programul pentru conversia documentului nu a fost găsit.
+Sesiunea către $number a eşuat pentru că programul
+pentru conversia documentului nu a fost găsit.
 
 ---- Starea sesiunii netransmise ----
 Destinaţie:         $number
@@ -27,5 +28,3 @@ Pagini:             $npages
 Număr total pagini: $totpages
 Încercări:          $ntries
 Număr director:     $dirnum
-
-

@@ -6,7 +6,6 @@ Content-Transfer-Encoding: Quoted-Printable
 
 A fost şters din coadă.
 
-
 ---- Starea sesiunii netransmise ----
 Destinaţie:         $number
 JobID:              $jobid

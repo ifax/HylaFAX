@@ -4,4 +4,5 @@ From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-Fax-ul a fost şters din coadă.
+Fax-ul către $number a fost şters din coadă.
+
