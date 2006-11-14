@@ -233,11 +233,6 @@ template ()
 	}
 	function template_line (line,   tmp,var)
         {
-		if (match(line, /^[#]INCLUDE /))
-		{
-			include_file(substr(line,10));
-			return
-		}
                 while (match(line, /[$][A-Za-z0-9_]+/))
                 {
 			if (substr(line,RSTART-1,1) == "\\")
@@ -253,6 +248,11 @@ template ()
 			}
 			line = substr(line,RSTART+RLENGTH)
                 }
+		if (match(line, /^[#]INCLUDE /))
+		{
+			include_file(substr(line,10));
+			return
+		}
                 print line;
         }
 
