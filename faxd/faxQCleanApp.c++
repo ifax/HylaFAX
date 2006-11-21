@@ -330,81 +330,82 @@ faxQCleanApp::expungeCruft(void)
 	 * than the threshold (checked above).
 	 */
 	u_int l = file.nextR(file.length(), '.');
-	if (l != 0 && l < file.length()) {
-	    if (isdigit(file[l])) {
-		/*
-		 * Filename has a jobid suffix (or should);
-		 * look to see if the job still exists in
-		 * the sendq.
-		 */
-		fxStr qfile = qFilePrefix | file.tail(file.length()-l);
-		if (Sys::stat(qfile, sb) == 0) {
-		    if (trace)
-			printf("%s: file looks to be referenced by job\n",
-			    (const char*) file);
-		    continue;			// skip, in use
-		}
-		else if (trace)
-		    printf("%s: file has no matching %s\n", 
-			(const char*) file, (const char*)qfile);
-	    } else if (strcmp(&file[l], "cover") == 0) {
-		/*
-		 * Cover page document has a jobid suffix
-		 * at the front; look to see if the job still
-		 * exists in the sendq.
-		 */
-		u_int prefix = docDir.length()+1+5;
-		fxStr qfile = qFilePrefix | file.extract(prefix, l-1-prefix);
-		if (Sys::stat(qfile, sb) == 0) {
-		    if (trace)
-			printf("%s: file looks to be referenced by job\n",
-			    (const char*) file);
-		    continue;			// skip, in use
-		}
+	u_int k = file.nextR(file.length(), ';');
+	if (l != 0 && l < file.length() && isdigit(file[l])) {
+	    /*
+	     * Filename has a jobid suffix (or should);
+	     * look to see if the job still exists in
+	     * the sendq.
+	     */
+	    fxStr qfile = qFilePrefix | file.tail(file.length()-l);
+	    if (Sys::stat(qfile, sb) == 0) {
+		if (trace)
+		    printf("%s: file looks to be referenced by job\n",
+			(const char*) file);
+		continue;			// skip, in use
+	    } else if (trace)
+		printf("%s: file has no matching %s\n", 
+		    (const char*) file, (const char*)qfile);
+	} else if ((l != 0 && l < file.length() && strcmp(&file[l], "cover") == 0) ||
+                (k == 0 && strncmp(&file[docDir.length()+1], "cover", 5) == 0)) {
+	    /*
+	     * Cover page document has a jobid suffix
+	     * at the front; look to see if the job still
+	     * exists in the sendq.
+	     */
+	    u_int prefix = docDir.length()+1;
+	    if (strncmp(&file[prefix], "cover", 5) == 0)
+		prefix += 5;
+	    else
+		prefix += 3;			// older doc####.cover type
+	    u_int len = (l==0 ? file.length() : l-1);
+	    fxStr qfile = qFilePrefix | file.extract(prefix, len-prefix);
+	    if (Sys::stat(qfile, sb) == 0) {
+		if (trace)
+		    printf("%s: file looks to be referenced by job\n",
+			(const char*) file);
+		continue;			// skip, in use
 	    }
-	    else if(((l = file.nextR(file.length(), ';')) != 0) &&
-		    l < file.length()) {
-		// Check to make sure we don't delete a file with a ';'
-		// suffix, when the PS.jobid version of the file still
-		// exists.
-		char        *base;
-		int         sl=l-6;
-		l=l-6;
-		base=(char *)malloc(sl+1);
-		strncpy(base, &file[5], sl);
-		base[sl]=0;
+	}
+	else if(k != 0 && k < file.length()) {
+	    // Check to make sure we don't delete a file with a ';'
+	    // suffix, when the PS.jobid version of the file still
+	    // exists.
+	    char        *base;
+	    int         sl=k-docDir.length()-1-1;	// removing docDir,'/' and trailing ';'
+	    base=(char *)malloc(sl+1);
+	    strncpy(base, &file[docDir.length()+1], sl);
+	    base[sl]=0;
 
-		bool        got_match = false;
-		DIR        *dir1 = Sys::opendir(docDir);
+	    bool        got_match = false;
+	    DIR        *dir1 = Sys::opendir(docDir);
 
-		if(dir1 == 0) {
-		    printf("%s: Could not scan directory for base file.\n",
-			(const char *) docDir);
-			continue;
-		}
-		for(dirent *dp1 = readdir(dir1); dp1; dp1 = readdir(dir1)) {
-		    if(strlen(dp1->d_name) > l && dp1->d_name[l] == '.' &&
-		           ( strncmp(base, dp1->d_name, l) == 0)) {
-			// Found match
-			if(trace)
-			    printf("%s: found match to base '%s', skipping.\n",
-				(const char *)file, dp1->d_name);
-			got_match = true;
-			break;
-		    }
-		}
-		closedir(dir1);
-		if(got_match) {
-		    free(base);
+	    if(dir1 == 0) {
+		printf("%s: Could not scan directory for base file.\n",
+		    (const char *) docDir);
 		    continue;
-		}
-		if(trace)
-		    printf("%s: did not find base '%s' match.\n", 
-			(const char *) file, base);
-
-		free(base);
 	    }
+	    for(dirent *dp1 = readdir(dir1); dp1; dp1 = readdir(dir1)) {
+		if(strlen(dp1->d_name) > sl && dp1->d_name[sl] == '.' &&
+		        ( strncmp(base, dp1->d_name, sl) == 0)) {
+		    // Found match
+		    if(trace)
+			printf("%s: found match to base '%s', skipping.\n",
+			    (const char *)file, dp1->d_name);
+		    got_match = true;
+		    break;
+		}
+	    }
+	    closedir(dir1);
+	    if(got_match) {
+		free(base);
+		continue;
+	    }
+	    if(trace)
+		printf("%s: did not find base '%s' match.\n", 
+		    (const char *) file, base);
 
+	    free(base);
 	}
 
 	if (nowork || Sys::unlink(file) >= 0) {

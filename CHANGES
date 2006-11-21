@@ -2,6 +2,8 @@
 
 Changelog for HylaFAX 4.3.1
 
+* Fixed faxqclean to work correctly with cover documents using the new naming
+  scheme, yet still work with previously named documents (bug 831) (20 Nov 2006)
 * Fixed sendfax PDF page counting (bug 830) (13 Nov 2006)
 * Disable JPEG support when compiling with older libtiff (3 Nov 2006)
 * Use old style lock files for OpenServer 6 (20 Oct 2006)
