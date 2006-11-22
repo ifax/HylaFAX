@@ -74,7 +74,7 @@ parseQfile()
     #
     # print out variable name and value so we can eval it in the shell
     #
-    eval "`($AWK -F: ' 
+    AWK_OUTPUT=`$AWK -F: ' 
     function p(varname,val)
     {
         gsub(/\\047/, "\047\\\\\047\047", val);
@@ -142,14 +142,15 @@ parseQfile()
     /^page:/    { p("pins_"++npins, $4); }
     /^data:/    { p("files_"++nfiles, $4); }
     /^poll/        { p("poll", " -p"); }
-    END { p("nfiles", nfiles); p("npins", npins) } ' $QFILE )`"
+    END { p("nfiles", nfiles); p("npins", npins) } ' $QFILE `
+    eval "$AWK_OUTPUT"
 
 }
 
 parseFaxInfo()
 {
     # We use the same basic stuff as parseQfile(), but just to straight assignment
-    eval "`$INFO -S '' -s '%s=!=!=!=!=!=!=!=!=' $1 | $AWK -F'=!=!=!=!=!=!=!=!=' '
+    AWK_OUTPUT=`$INFO -S '' -s '%s=!=!=!=!=!=!=!=!=' $1 | $AWK -F'=!=!=!=!=!=!=!=!=' '
     function p(varname,val)
     {
         gsub(/\\047/, "\047\\\\\047\047", val);
@@ -157,7 +158,8 @@ parseFaxInfo()
         printf "export %s\n",varname
     }
     { p(toupper($1),$2); }
-    '`"
+    '`
+    eval "$AWK_OUTPUT"
 }
 
 #
