@@ -136,6 +136,7 @@ export FROMADDR
 export HOSTNAME
 export PORT
 export SENDTO
+export TOADDR
 
 #
 # Apply customizations.  All customizable variables should
