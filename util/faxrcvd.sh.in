@@ -159,18 +159,18 @@ MailWithFAX ()
     if [ "$FILETYPE" = "tif" ]; then
 	CreateMailMessage $template 							\
 	    $FILE image/tiff "$FILENAME.tif" "FAX Document"				\
-	    2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi $SENDTO
+	    2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
     elif [ $FILETYPE = "pdf" ]; then
 	$TIFF2PDF -o tmp/$FILENAME.pdf $FILE 2>$ERRORSTO
 	CreateMailMessage $template 							\
 	    tmp/$FILENAME.pdf application/pdf "$FILENAME.pdf" "FAX Document"		\
-	    2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi $SENDTO
+	    2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
 	rm -f tmp/$FILENAME.pdf
     else
 	$FAX2PS $FILE > tmp/$FILENAME.ps 2>$ERRORSTO
 	CreateMailMessage $template 							\
 	    tmp/$FILENAME.ps application/postscript "$FILENAME.ps" "FAX Document"	\
-	    2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi $SENDTO
+	    2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
 	rm -f tmp/$FILENAME.ps
     fi
 
@@ -188,10 +188,10 @@ if [ -f $FILE ]; then
     if [ "$TOADDR" != "$SENDTO" ] && [ "$NOTIFY_FAXMASTER" != "no" ]; then
         if [ -z "$MSG" ]; then
             CreateMailMessage etc/templates/$TEMPLATE/faxrcvd-notify-success.txt \
-	    		2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi $TOADDR
+	    		2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$TOADDR"
         else
             CreateMailMessage etc/templates/$TEMPLATE/faxrcvd-notify-error.txt \
-	    		2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi $TOADDR
+	    		2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$TOADDR"
         fi
     fi
     if [ -n "$SENDTO" ]; then
@@ -209,7 +209,7 @@ else
     # There is no file to send...
     #
     CreateMailMessage etc/templates/$TEMPLATE/faxrcvd-failure.txt \
-    	2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi $TOADDR
+    	2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$TOADDR"
 fi
 
 CleanupPrivateTmp
