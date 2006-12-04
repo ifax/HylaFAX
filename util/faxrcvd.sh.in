@@ -108,6 +108,7 @@ while [ $# -ge 1 ]; do
     # The eval has $1 set yet, and this forces a variable-to-variable
     # assignment, allowing us to not need to do escaping
     eval CALLID$COUNT='$1'
+    export CALLID$COUNT
     shift
     COUNT=`expr $COUNT + 1`
 done
