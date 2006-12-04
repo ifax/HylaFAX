@@ -2,6 +2,7 @@
 
 Changelog for HylaFAX 4.3.1
 
+* Added exit codes to faxalter (Bug 796) (4 Dec 2006)
 * Fixed faxqclean to work correctly with cover documents using the new naming
   scheme, yet still work with previously named documents (bug 831) (20 Nov 2006)
 * Fixed sendfax PDF page counting (bug 830) (13 Nov 2006)
