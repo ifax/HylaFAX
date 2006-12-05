@@ -2,29 +2,31 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.3.0 release!
-This release introduces several powerful new features to HylaFAX, and
-so we encourage you to check it out. No release would be complete
-without bugfixes of course, and this one has plenty. As always, our
-sincerest thanks go to all who participate in the development and
-testing process.
+The HylaFAX development team is pleased to announce our 4.3.1 release!
+This release introduces a powerful new email templating system that
+offers an unprecedented level of control over the branding of the
+email messages HylaFAX sends, and so we encourage you to check it
+out. No release would be complete without bugfixes of course, and this
+one has plenty. As always, our sincerest thanks go to all who
+participate in the development and testing process.
 
                                *   *   *
 
 This document is intended to describe the significant differences
-between hylafax-4.3.0 and older releases, point out any known
+between hylafax-4.3.1 and older releases, point out any known
 incompatibilites and issues, and provide the reader with directions to
 further resources regarding HylaFAX.
 
                           *   NEW FEATURES   *
 
-* JobControl: Allows arbitrary control of outbound jobs, and can
-  provide send-side "virtualization" of devices
-* DynamicConfig: Improved to allow arbitrary control of inbound
-  jobs, and can provide receive-side "virtualization" of devices
-* Internationalization: Templating system for translating the
-  emails HylaFAX sends into other languages, with out-of-the-box
-  support for French, German, Italian, Polish, Portugese and Spanish.
+* Email Templating: Server administrators can now have complete
+  control over the 'look and feel' of the email messages HylaFAX
+  sends. We have used this only for internationalization in this
+  release, but for an example of what can be done with a little
+  bit of HTML, check out the hylafax-html templates at:
+
+      http://people.ifax.com/~aidan/hylafax/templates/
+
 
                          *   KNOWN ISSUES   *
 
@@ -32,8 +34,13 @@ further resources regarding HylaFAX.
 
                        *   INCOMPATIBILITIES   *
 
-* QualifyCID is obsolete, having been replaced by DynamicConfig
-* DestControls is obsolete, having been replaced by JobControl
+* HylaFAX no longer uses the bin/dictionary script and etc/FaxDictionary
+  file to customize emails. Users requiring customized emails should
+  create etc/templates/some-directory/, copy the basic *.txt templates
+  into there, set the $TEMPLATE variable in etc/FaxDispatch and
+  etc/FaxNotify and start hacking. 
+* QualifyCID is obsolete, having been replaced by DynamicConfig in 4.3.0
+* DestControls is obsolete, having been replaced by JobControl in 4.3.0
 * Some modem config files generated from earlier versions' config file
   prototypes may contain Class1TCFRecvHack.  This is no longer desireable
   for production use, and this feature should now only be used for
@@ -46,15 +53,23 @@ further resources regarding HylaFAX.
 
                       *   WHO SHOULD UPGRADE?   *
 
-Several new features have been added in this release that may be of
-considerable value to many users. We have also made imporant fixes to
-client-server timezone handling, the batching of outbound jobs, the
-Class 1 fax protocol's handling of V.34, and PAM on Solaris. For these
-reasons, this is a recommended upgrade for all users. Anyone presently
-using DestControls should study the new JobControl feature carefully
-and test migration to the new framework before upgrading a production
-server. Likewise, those using QualifyCID to reject faxes from certain
-callers should become familar with DynamicConfig and RejectCall.
+This release rolls up several months of development by the HylaFAX
+community, and is a recommended release for all users. Notable changes
+include fixes to improve the robustness of the Class 1 fax protocol,
+the ability to resubmit failed faxes from the commandline, powerful
+email templating, a new language (Romanian), stability improvements
+for faxq, the ability to compile with shared libraries on Solaris, and
+a long list of other fixes and tweaks too numerous to mention. If you
+have done a lot of work with FaxDictionary to customize HylaFAX's
+emails, then you might want to delay upgrading to 4.3.1 until you have
+had a chance to study the new email templating system on a test server.
+
+Anyone presently running a version of HylaFAX older than 4.3.0 and
+using DestControls should study the JobControl feature we added in
+4.3.0 carefully and test migration to the new framework before
+upgrading a production server. Likewise, those using QualifyCID to
+reject faxes from certain callers should become familar with
+DynamicConfig and RejectCall.
 
                      *   HYLAFAX BINARY PACKAGES   *
 
@@ -87,7 +102,7 @@ invited to:
     - what system you're running on (if it is Linux please name the
       distribution)
     - if the problem is modem-related, identify it and the firmware rev
-    For example: "HylaFAX v4.0pl2 under RedHat Linux 4.2 with gcc 2.7.2;
+    For example: "HylaFAX 4.3.0 under CentOS 4.4 with gcc 3.4.6;
     ZyXEL 1496E with 6.11a firmware."
 
   * read the on-line documentation and resources
