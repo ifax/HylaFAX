@@ -186,7 +186,7 @@ else
 fi
 
 SENDTO=$mailaddr
-export SENDTO FROMADDR TOADDR SESSION_LOG DESTINATION JTIME
+export SENDTO FROMADDR TOADDR SESSION_LOG DESTINATION WHY JTIME NEXT
 
 #
 # Apply customizations.  All customizable variables should
