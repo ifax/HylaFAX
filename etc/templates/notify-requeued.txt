@@ -1,5 +1,5 @@
 To: $SENDTO
-Subject: facsimile to $DESTINATION 
+Subject: facsimile to $DESTINATION was requeued
 From: $FROMADDR
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
