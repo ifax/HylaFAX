@@ -1,6 +1,6 @@
 To: $SENDTO
 Subject: Fax către $DESTINATION finalizat
-From: $FROMADDR
+From: HylaFAX Agent <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
@@ -31,3 +31,4 @@ $faxstatus
 ---- Urmează transcriptul sesiunii ----
 
 $SESSION_LOG
+

@@ -1,6 +1,6 @@
 To: $SENDTO
 Subject: fax para $DESTINATION enviado
-From: $FROMADDR
+From: Servidor de fax HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 

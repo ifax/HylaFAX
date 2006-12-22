@@ -1,6 +1,6 @@
 To: $SENDTO
 Subject: Powiadomienie o fax
-From: $FROMADDR
+From: Serwer faxów HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
