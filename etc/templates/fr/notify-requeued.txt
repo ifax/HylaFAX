@@ -1,6 +1,6 @@
 To: $SENDTO
 Subject: Télécopie à $DESTINATION
-From: $FROMADDR
+From: HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
