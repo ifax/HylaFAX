@@ -456,3 +456,8 @@ CleanupPrivateTmp ()
 }
 
 
+# And some common variables for things using our functions
+if [ -z "$TEMPLATE" ]
+then
+	TEMPLATE=en
+fi
