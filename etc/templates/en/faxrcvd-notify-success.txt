@@ -1,4 +1,4 @@
-From: FAX Agent <$FROMADDR>
+From: HylaFAX Agent <$FROMADDR>
 To: $TOADDR
 Subject: Fax received from "$SENDER"
 Content-type: text/plain; charset=us-ascii
