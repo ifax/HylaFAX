@@ -1,0 +1,10 @@
+To: $SENDTO
+Subject: Notice about facsimile
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
+
+Your polling request to $number could not be completed because 
+no document was available for retrieval.
+
+Processing time was $JTIME.

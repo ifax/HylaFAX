@@ -1,0 +1,30 @@
+To: $SENDTO
+Subject: facsimile to $DESTINATION failed
+From: $FROMADDR
+Content-type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: Quoted-Printable
+
+ 
+Your job to $number failed because the document conversion script was
+not found.
+
+------- Unsent job status -------
+      Destination: $number
+            JobID: $jobid
+          GroupID: $groupid
+           Sender: $sender
+         Mailaddr: $mailaddr
+           CommID: $commid
+            Modem: $modem
+   Submitted From: $client
+       Page Width: $pagewidth  (mm)
+      Page Length: $pagelength (mm)
+       Resolution: $resolution (lpi)
+           Status: $faxstatus
+          Dialogs: $tottries
+            Dials: $ndials
+            Calls: $totdials
+            Pages: $npages
+         TotPages: $totpages
+         Attempts: $ntries
+           Dirnum: $dirnum
