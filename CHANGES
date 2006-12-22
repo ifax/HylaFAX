@@ -1,5 +1,9 @@
 #	$Id$	
 
+Chandlog since HylaFAX 4.3.1
+
+* Moved default templates to etc/tempates/en/ to clean up etc/templates/
+
 Changelog for HylaFAX 4.3.1
 
 * Added exit codes to faxalter (Bug 796) (4 Dec 2006)
