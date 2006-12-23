@@ -2,7 +2,8 @@
 
 Chandlog since HylaFAX 4.3.1
 
-* Moved default templates to etc/tempates/en/ to clean up etc/templates/
+* Updated pollrcvd to use templates (22 Dec 2006)
+* Moved default templates to etc/tempates/en/ to clean up etc/templates/ (22 Dec 2006)
 
 Changelog for HylaFAX 4.3.1
 
