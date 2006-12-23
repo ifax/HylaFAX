@@ -67,8 +67,9 @@ INFO=$SBIN/faxinfo
 FAX2PS=$TIFFBIN/fax2ps
 TIFF2PS=tiff2ps
 TOADDR=FaxMaster
-TIFFINFO=tiffinfo
 FROMADDR=fax
+TIFFINFO=tiffinfo
+NOTIFY_FAXMASTER=always
 
 # 
 # Redirect errors to a tty, if possible, rather than
@@ -83,7 +84,7 @@ fi
 
 #
 # Permit various types of attachment types: ps, tif, pdf
-# Note that non-ASCII filetypes require metamail.
+# Note that non-ASCII filetypes require an encoder.
 # pdf requires tiff2ps and tiff2pdf
 # 
 FILETYPE=ps
@@ -98,7 +99,7 @@ FILETYPE=ps
 HOSTNAME=`hostname`                     # XXX no good way to find FQDN
 PORT=4559                               # XXX no good way to lookup service
 
-MAILADDR="$1"
+SENDTO="$1"
 FILE="$2"
 DEVICE="$3"
 COMMID="$4"
@@ -106,164 +107,96 @@ MSG="$5"
 
 FILENAME=`echo $FILE | $SED -e 's/\.tif//' -e 's/recvq\///'`
 
-#
-# Produce mailable encoding for binary files.
-# 
-encode()
-{
-    if [ -x "$MIMENCODE" ]; then
-	$MIMENCODE < $1 2>$ERRORSTO
-    elif [ -x "$UUENCODE" ]; then
-	if [ "$ENCODING" = "base64" ]; then
-	    $UUENCODE -m $1 $1 | grep -E -v "^begin|^====$" 2>$ERRORSTO
-	else
-	    $UUENCODE $1 $1 | grep -E -v "^begin|^====$" 2>$ERRORSTO
-	fi
-    else
-	# Do not use "-x" for backward compatibility; even if it fails
-	# this is last chance to encode data, so there's nothing to lose.
-	$MIMENCODE < $1 2>$ERRORSTO
-    fi
-}
+SetupPrivateTmp
 
-if [ -f $FILE ]; then
-    SENDER="`$INFO $FILE | $AWK -F: '/Sender/ { print $2 }' 2>/dev/null`"
+parseFaxInfo $FILE
+
+MIMEBOUNDARY="NextPart$$"
+
+if [ -n "$MSG" ]; then
+    SESSION_LOG=`cat log/c$COMMID`
+    export SESSION_LOG
 fi
+
+export FILE
+export COMMID
+export DEVICE
+export MSG
+export FROMADDR
+export HOSTNAME
+export PORT
+export SENDTO
+export TOADDR
+
 if [ -f etc/PollDispatch ]; then
     . etc/PollDispatch       # NB: PollDispatch allows customization
 fi
-# 
-# Fetch language settings (after FaxDispatch for customization of $LANG).
-# 
-. bin/dictionary
-if [ -f etc/FaxDictionary ]; then
-    . etc/FaxDictionary
-fi
-setInfoSize
+
+## TemplateName <type>
+## Return the pollrcvd template name for <type>
+## Fallback to faxrcvd if pollrcvd template is unavailable
+TemplateName ()
+{
+    template="etc/templates/$TEMPLATE/pollrcvd-$1.txt"
+    if [ -f $template ]; then
+        echo $template
+    else
+        echo "etc/templates/$TEMPLATE/faxrcvd-$1.txt"
+    fi
+}
+
+## MailWithFAX <type>
+## Email the <type> template,adding the attachments according
+## to $FILETYPE to $SENDTO
+##
+## We use the common CreateMailMessage <template> <f1> <t1> <n1> <d1>
+## function, creating the file to mail as we go.
+MailWithFAX ()
+{
+    template=`TemplateName $1`
+    file_1=$FILE;
+    filetype_1=TIFF;
+    nfiles=1;
+    CreateMailMessage $template `BuildAttachArgs $FILETYPE` \
+	2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
+
+}
 
 if [ -f $FILE ]; then
-    if [ "$TOADDR" != "$MAILADDR" ]; then # don't send FaxMaster duplicate
-	(echo "To: $TOADDR"
-	 echo "From: $DICTRECEIVEAGENT <$FROMADDR>"
-	 eval echo "Subject: $DICTRETRIEVEDFROM";   
-	 echo ""
-	 echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):";
-	 faxInfo $FILE
-	 printf "%`echo $INFOSIZE`s: $DEVICE\n" "$DICTRECEIVEDON"
-	if [ "$MSG" ]; then
-	    echo ""
-	    echo "$DICTMSGINTRO"
-	    echo ""
-	    echo "    $MSG"
-	    echo ""
-	    echo "$DICTLOGFOLLOWS"
-	    echo ""
-	    if [ -f log/c$COMMID ]; then
-		$SED -e '/-- data/d' \
-		    -e '/start.*timer/d' -e '/stop.*timer/d' \
-		    log/c$COMMID
-	    elif [ -n "$COMMID" ]; then
-		echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
-	    else
-		echo "$DICTNOLOGAVAIL."
-	    fi
-	else
-	    echo "    $DICTCOMMID: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
-	fi
-	if [ -n "$MAILADDR" ]; then
-	    echo ""
-	    eval echo "$DICTPOLLDISPATCHTO"
-	fi
-	) 2>$ERRORSTO | $SENDMAIL -ffax -oi $TOADDR
+    #
+    # Don't send FaxMaster duplicates, and FaxMaster may not even
+    # want a message at all, depending on NOTIFY_FAXMASTER.
+    #
+    case $NOTIFY_FAXMASTER$MSG in
+	never*)		NOTIFY_FAXMASTER=no;;
+	errors)		NOTIFY_FAXMASTER=no;;
+	*)		NOTIFY_FAXMASTER=yes;;
+    esac
+    if [ "$TOADDR" != "$SENDTO" ] && [ "$NOTIFY_FAXMASTER" != "no" ]; then
+        if [ -z "$MSG" ]; then
+            CreateMailMessage `TemplateName notify-success` \
+	    		2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$TOADDR"
+        else
+            CreateMailMessage `TemplateName notify-error` \
+	    		2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$TOADDR"
+        fi
     fi
-    if [ -n "$MAILADDR" ]; then
-	(MIMEBOUNDARY="NextPart$$"
-	 echo "Mime-Version: 1.0"
-	 echo "Content-Type: Multipart/Mixed; Boundary=\"$MIMEBOUNDARY\""
-	 echo "Content-Transfer-Encoding: 7bit"
-	 echo "To: $MAILADDR"
-	 echo "From: $DICTRECEIVEAGENT <$FROMADDR>"
-	 eval echo "Subject: $DICTRETRIEVEDFROM";
-	 echo ""
-	 echo "--$MIMEBOUNDARY"
-	 echo "Content-Type: text/plain; charset=$CHARSET"
-	 echo "Content-Transfer-Encoding: quoted-printable"
-	 echo ""
-	 echo "$FILE (ftp://$HOSTNAME:$PORT/$FILE):";
-	 faxInfo $FILE
-	 printf "%`echo $INFOSIZE`s: $DEVICE\n" "$DICTRECEIVEDON"
-	if [ "$MSG" ]; then
-	    echo ""
-	    echo "$DICTMSGINTRO"
-	    echo ""
-	    echo "    $MSG"
-	    echo ""
-	    echo "$DICTLOGFOLLOWS"
-	    echo ""
-	    if [ -f log/c$COMMID ]; then
-		sed -e '/-- data/d' \
-		    -e '/start.*timer/d' -e '/stop.*timer/d' \
-		    log/c$COMMID
-	    elif [ -n "$COMMID" ]; then
-		echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
-	    else
-		echo "$DICTNOLOGAVAIL."
-	    fi
-	else
-	    echo "    $DICTCOMMID: c$COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)"
+    if [ -n "$SENDTO" ]; then
+	# Create the document to attach
+        if [ -z "$MSG" ]; then
+	    MailWithFAX success
+        else
+	    MailWithFAX error
 	fi
-	echo ""
-	echo "--$MIMEBOUNDARY"
-	if [ "$FILETYPE" = "tif" ]; then
-	    echo "Content-Type: image/tiff; name=\"$FILENAME.tif\""
-	    echo "Content-Description: FAX document"
-	    echo "Content-Transfer-Encoding: $ENCODING"
-	    echo "Content-Disposition: attachment; filename=\"$FILENAME.tif\""
-	    echo ""
-	    encode $FILE
-	elif [ "$FILETYPE" = "pdf" ]; then
-	    echo "Content-Type: application/pdf; name=\"c$COMMID.pdf\""
-	    echo "Content-Description: FAX document"
-	    echo "Content-Transfer-Encoding: $ENCODING"
-	    echo "Content-Disposition: attachment; filename=\"c$COMMID.pdf\""
-	    echo ""
-	    $TIFF2PDF -o $FILE.pdf $FILE
-	    encode $FILE.pdf
-	    $RM -f $FILE.pdf 2>$ERRORSTO   
-	elif [ "$FILETYPE" = "ps" ]; then
-	    echo "Content-Type: application/postscript; name=\"$FILENAME.ps\""
-	    echo "Content-Description: FAX document"
-	    echo "Content-Transfer-Encoding: 7bit"
-	    echo "Content-Disposition: attachment; filename=\"$FILENAME.ps\""
-	    echo ""
-	    $FAX2PS $FILE 2>$ERRORSTO
-	fi
-	 echo ""
-	 echo "--$MIMEBOUNDARY--"
-	) 2>$ERRORSTO | $SENDMAIL -ffax -oi $MAILADDR
+
     fi
 else
     #
     # Generate notification mail for a failed attempt.
+    # There is no file to send...
     #
-    (echo "To: $TOADDR"
-     echo "From: $DICTRECEIVEAGENT <$FROMADDR>"
-     echo "Subject: $DICTPOLLFAILED"
-     echo ""
-     eval echo "$DICTATTEMPTEDPOLLFAILED"
-     echo ""
-     echo "    $MSG"
-     echo ""
-     echo "$DICTLOGFOLLOWS"
-     echo ""
-     if [ -f log/c$COMMID ]; then
-	$SED -e '/-- data/d' \
-	    -e '/start.*timer/d' -e '/stop.*timer/d' \
-	    log/c$COMMID
-     elif [ -n "$COMMID" ]; then
-	echo "$DICTNOLOGAVAIL ($DICTCOMMID c$COMMID)."
-     else
-	echo "$DICTNOLOGAVAIL."
-     fi
-    ) 2>$ERRORSTO | $SENDMAIL -ffax -oi $TOADDR
+    CreateMailMessage `TemplateName failure` \
+    	2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$TOADDR"
 fi
+
+CleanupPrivateTmp

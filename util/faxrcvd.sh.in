@@ -156,25 +156,14 @@ fi
 MailWithFAX ()
 {
     template="etc/templates/$TEMPLATE/faxrcvd-$1.txt"
-    if [ "$FILETYPE" = "tif" ]; then
-	CreateMailMessage $template 							\
-	    $FILE image/tiff "$FILENAME.tif" "FAX Document"				\
-	    2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
-    elif [ $FILETYPE = "pdf" ]; then
-	$TIFF2PDF -o tmp/$FILENAME.pdf $FILE 2>$ERRORSTO
-	CreateMailMessage $template 							\
-	    tmp/$FILENAME.pdf application/pdf "$FILENAME.pdf" "FAX Document"		\
-	    2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
-	rm -f tmp/$FILENAME.pdf
-    else
-	$FAX2PS $FILE > tmp/$FILENAME.ps 2>$ERRORSTO
-	CreateMailMessage $template 							\
-	    tmp/$FILENAME.ps application/postscript "$FILENAME.ps" "FAX Document"	\
-	    2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
-	rm -f tmp/$FILENAME.ps
-    fi
+    file_1=$FILE;
+    filetype_1=TIFF;
+    nfiles=1;
+    CreateMailMessage $template `BuildAttachArgs $FILETYPE` \
+	2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
 
 }
+
 if [ -f $FILE ]; then
     #
     # Don't send FaxMaster duplicates, and FaxMaster may not even
