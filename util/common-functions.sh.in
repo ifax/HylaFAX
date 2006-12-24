@@ -446,7 +446,7 @@ ConvertFile ()
 	    	PostScript|Postscript|PS|ps)
 		    TraceLog "Using ps2pdf"
 		    name="`basename $1 .ps`"
-		    $PS2PDF $1 $TMPDIR/$name.pdf
+		    $PS2PDF $1 $TMPDIR/$name.pdf >/dev/null 2>&1
 		    echo "$TMPDIR/$name.pdf"
 		    ;;
 		PDF|pdf)

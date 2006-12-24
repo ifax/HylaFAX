@@ -2,6 +2,7 @@
 
 Chandlog since HylaFAX 4.3.1
 
+* Redirected unwanted output from pd2pdf while running notify (24 Dec 2006)
 * Use @SCRIPT_SH@ for bin/ scripts to allow configure selection (23 Dec 2006)
 * Updated pollrcvd to use templates (22 Dec 2006)
 * Moved default templates to etc/tempates/en/ to clean up etc/templates/ (22 Dec 2006)
