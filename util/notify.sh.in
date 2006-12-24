@@ -1,4 +1,4 @@
-#!/bin/bash
+#! @SCRIPT_SH@
 #
 # notify qfile why jobtime [nextTry]
 #

@@ -1,4 +1,4 @@
-#! /bin/sh
+#! @SCRIPT_SH@
 #    $Id$
 #
 # HylaFAX Facsimile Software

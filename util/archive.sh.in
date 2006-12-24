@@ -1,4 +1,4 @@
-#!/bin/sh
+#! @SCRIPT_SH@
 
 #
 # This script is called by faxqclean to archive the job
