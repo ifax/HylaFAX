@@ -99,7 +99,7 @@ parseQfile
 # We need a few special things
 ## - SESSION_LOG
 if [ -f "log/c$commid" ]; then
-	SESSION_LOG="`cat log/c$commid | grep -v '-- data'`"
+	SESSION_LOG="`cat log/c$commid | $GREP -v -e '-- data'`"
 fi
 
 if [ "$doneop" = "default" ] ; then
