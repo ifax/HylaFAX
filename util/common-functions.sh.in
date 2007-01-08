@@ -454,7 +454,9 @@ ConvertFile ()
 		    ;;
 		TIFF|tiff|TIF|tif)
 		    TraceLog "Using tiff2pdf"
-		    name="`basename $1 .tif`" $TIFF2PDF  -o $TMPDIR/$name.pdf $1 echo "$TMPDIR/$name.pdf"
+		    name="`basename $1 .tif`"
+		    $TIFF2PDF  -o $TMPDIR/$name.pdf $1
+		    echo "$TMPDIR/$name.pdf"
 	    esac
 	    ;;
 	TIFF|TIF|tif|tiff)
