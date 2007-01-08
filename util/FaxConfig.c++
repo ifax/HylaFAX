@@ -208,6 +208,15 @@ FaxConfig::readConfigItem(const char* b)
 	    ;
 	*cp = '\0';
     }
+
+    if (streq(tag, "include") ) {
+        u_int old_lineno = lineno;
+	configTrace("%s = %s (line %u)", tag, value, lineno);
+	lineno = 0;
+	readConfig(value);
+	lineno = old_lineno;
+	return (true);
+    }
     if (!setConfigItem(tag, value)) {
 	configTrace("Unknown configuration parameter \"%s\" ignored at line %u",
 	     tag, lineno);

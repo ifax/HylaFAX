@@ -141,6 +141,7 @@ DynamicConfig	string	\-	script for dynamic receive configuration
 FAXNumber	string	\-	facsimile modem phone number
 FaxRcvdCmd	string	\s-1bin/faxrcvd\s+1	notification script for received facsimile
 GettyArgs	string	\-	arguments passed to getty program
+Include\(S2	string	\-	include another file 
 InternationalPrefix\(S2	string	\-	dialing prefix for international calls
 JobControlCmd\(S1	string	\-	job control command
 JobControlWait\(S1	boolean	\s-1Yes\s+1	Wait for JobControlCmd to run synchronously
@@ -782,6 +783,9 @@ are used to generate the transmitted
 .SM CSI
 and
 .SM TSI.
+.TP
+.B Include\(S2
+Include the specified file and parse it as a config file
 .TP
 .B InternationalPrefix\(S2
 The string to use to place an international phone call.
