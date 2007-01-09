@@ -1,0 +1,153 @@
+#!/usr/bin/awk -f
+# Copyright 2006 Aidan Van Dyk
+# Copyright 2006 iFAX Solutions Inc.
+
+function asc(char, l_found)
+{
+    l_found = 0
+    for (i=0; i < 256; i++)
+    {
+	if (sprintf("%c", i) == char)
+	    l_found = i;
+    }
+    return l_found;
+}
+
+function private_and (a, b, l_res, l_i)
+{
+    l_res = 0;
+    for (l_i = 0; l_i < 8; l_i++)
+    {
+	if (a%2 == 1 && b%2 == 1)
+	    l_res = l_res/2 + 128;
+	else
+	    l_res /= 2;
+	a=int(a/2);
+	b=int(b/2);
+    }
+    return l_res;
+}
+
+function private_lshift(x, n)
+{
+    while (n > 0)
+    {
+	x *= 2;
+	n--;
+    }
+    return x;
+}
+
+function private_rshift(x,n)
+{
+    while (n > 0)
+    {
+	x =int(x/2);
+	n--;
+    };
+    return x;
+}
+
+
+function readbytes(n,   m, s, line, str, __RS) {
+#	RS = "\x00";
+
+	m = n;
+	while (m > 0) {
+		s = length(__readbuffer);
+		if (s == 0) {
+			getline __readbuffer;
+			if (RT != "")
+				__readbuffer = __readbuffer RT;
+
+			if ((s = length(__readbuffer)) == 0)
+				break;
+
+			}
+
+		if (s > 0) {
+			if (m > s) {
+				str = str __readbuffer;
+				m = m - s;
+				__readbuffer = "";
+				}
+			else {
+				str = str substr(__readbuffer, 1, m);
+				__readbuffer = substr(__readbuffer, m+1);
+				break;
+				}
+			}
+		}
+
+	return (str);
+}
+
+function base64_write(b1, b2, b3, n,	 r1,r2,r3,r4)
+{
+    r1 = private_rshift(b1,2)
+    r2 = private_lshift(private_and(b1,3),4) + private_rshift(b2,4);
+    printf "%c", substr(BASE64,r1+1,1);
+    printf "%c", substr(BASE64,r2+1,1);
+
+    if (n > 1)
+    {
+	r3 = private_lshift(private_and(b2,15),2) + private_rshift(b3,6);
+	printf "%c", substr(BASE64,r3+1,1);
+    } else
+    	printf "="
+    if (n > 2)
+    {
+	r4 = private_and(b3,63);
+	printf "%c", substr(BASE64,r4+1,1);
+    } else
+    	printf "="
+}
+
+function base64_encode(input)
+{
+    while (length(input) > 0)
+    {
+	if (length(input) == 1)
+	{
+	    byte1=asc(substr(input,1,1));
+	    byte2=0;
+	    byte3=0;
+	    base64_write(byte1,byte2,byte3, 1);
+	}
+	if (length(input) == 2)
+	{
+	    byte1=asc(substr(input,1,1));
+	    byte2=asc(substr(input,2,1));
+	    byte3=0;
+	    base64_write(byte1,byte2,byte3, 2);
+	}
+	if (length(input) >= 3)
+	{
+	    byte1=asc(substr(input,1,1));
+	    byte2=asc(substr(input,2,1));
+	    byte3=asc(substr(input,3,1));
+	    base64_write(byte1,byte2,byte3, 3);
+	}
+	input=substr(input,4);
+    }
+}
+
+function base64(   __RS, data)
+{
+	__RS = RS;
+	RS = "\xF1\xF2\x00";
+	data = readbytes(54);
+	while (length(data) > 0)
+	{
+		base64_encode(data);
+		printf "\n";
+		data = readbytes(54);
+	}
+	RS = __RS;
+}
+
+BEGIN {
+    BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    base64()
+    exit (0);
+}
