@@ -59,7 +59,6 @@ EOF
 # didn't re-run faxsetup; we set them before calling setup.cache for
 # backward compatibility.
 ENCODING=base64
-MIMENCODE=mimencode
 TTYCMD=tty
 
 . etc/setup.cache

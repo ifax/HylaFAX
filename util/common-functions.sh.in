@@ -162,6 +162,11 @@ parseFaxInfo()
     eval "$AWK_OUTPUT"
 }
 
+programOfCommand()
+{
+	echo "$*" | $SED -e -'s/^ *//' -e 's/ .*$//'
+}
+
 #
 # Produce mailable encoding for binary files.
 # mimeEncode(filename, encoding)
@@ -179,37 +184,28 @@ mimeEncode()
     fi
     encoding=`echo $encoding | $SED -e 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/'`
 
-    # Configuration for which faxsetup was not rerun contains $MIMENCODE
     # rather than separate $BASE64ENCODE and $QPENCODE
     case "$encoding" in
         base64)
 	    if [ -n "$BASE64ENCODE" ]; then
+
 		# $BASE64ENCODE may contain parameters
-		cmd=`echo $BASE64ENCODE | $SED -e "s/^ *//" -e "s/ .*$//"`
+		cmd=`programOfCommand $BASE64ENCODE`
 		if [ -x "$cmd" ]; then
-		    ($BASE64ENCODE < $1 \
-			| $GREP -v "====$") \
-			2>$ERRORSTO
+		    $BASE64ENCODE < $1 2>$ERRORSTO
 		fi
-	    # For compatibility with earlier configurations:
-	    elif [ -x "$MIMENCODE" ]; then
-		$MIMENCODE < $1 2>$ERRORSTO
-	    elif [ -x "$UUENCODE" ]; then
-		($UUENCODE -m ==== < $1 \
-		    | $GREP -v "====$") \
-		    2>$ERRORSTO
+	    else
+		$AWK -f bin/b64-encode.awk < $1 2>$ERRORSTO
 	    fi;;
         quoted-printable)
 	    if [ -n "$QPENCODE" ]; then
 		# $QPENCODE may contain parameters
-		cmd=`echo $QPENCODE | $SED -e "s/^ *//" -e "s/ .*$//"`
+		cmd=`programOfCommand $QPENCODE`
 		if [ -x "$cmd" ]; then
 		    $QPENCODE < $1 2>$ERRORSTO
 		fi
-            # For compatibility with earlier configurations:
-	    elif [ -x "$MIMENCODE" ]; then
-		# Take a chance that $MIMENCODE really contains mimencode
-		$MIMENCODE -q < $1 2>$ERRORSTO
+	    else
+		$AWK -f bin/qp-encode.awk < $1 2>$ERRORSTO
 	    fi;;
         *uue*)
 	    if [ -x "$UUENCODE" ]; then

@@ -54,7 +54,6 @@ EOF
 # didn't re-run faxsetup; we set them before calling setup.cache for
 # backward compatibility.
 ENCODING=base64
-MIMENCODE=mimencode
 TIFF2PDF=bin/tiff2pdf
 TTYCMD=tty
 CHARSET=us-ascii

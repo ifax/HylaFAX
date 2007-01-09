@@ -3642,49 +3642,10 @@ fi
 #
 # Check for email encoders.
 #
-test "$UUENCODE" || {
-    UUENCODE=`findAppDef uuencode $PATH uuencode`
-}
-test -x "$UUENCODE" && Note "Found uuencode encoder: $UUENCODE"
-
-if [ -z "$BASE64ENCODE" ]; then
-    # Use suggested $MIMENCODE for compatibility with earlier versions:
-    BASE64ENCODE=$MIMENCODE;
-fi
-test "$BASE64ENCODE" || {
-    BASE64ENCODE=`findAppDef mimencode $PATH mimencode`
-    test -x $BASE64ENCODE || {
-	BASE64ENCODE=`findAppDef base64-encode $PATH base64-encode`
-	if [ -x "$UUENCODE" ]; then
-	    if capture "$UUENCODE -m port.h foo"; then
-		BASE64ENCODE="$UUENCODE -m ===="
-	    fi
-	fi
-    }
-}
-test -n "$BASE64ENCODE" && Note "Found base64 encoder: $BASE64ENCODE"
-
-test "$QPENCODE" || {
-    cmd=`findAppDef mimencode $PATH mimencode`
-    QPENCODE="$cmd -q"
-    test -x $cmd || {
-	QPENCODE=`findAppDef qp-encode $PATH qp-encode`
-    }
-}
-test -n "$QPENCODE" && Note "Found Quoted-Printable encoder: $QPENCODE"
-
-# Keeping $MIMENCODE up to date for older scripts...
-test "$MIMENCODE" || MIMENCODE=$BASE64ENCODE
-
-if [ -z "$ENCODING" ]; then
-    if [ -n "$BASE64ENCODE" ]; then
-	ENCODING=base64
-	Note "Looks like $MIMENCODE supports base64 encoding."
-    elif [ -n "$UUENCODE" ]; then
-	ENCODING=x-uuencode
-	Note "Looks like $UUENCODE does not support base64 encoding."
-    fi
-fi
+test -n "$UUENCODE" && Note "Using uuencode encoder: $UUENCODE"
+test -n "$BASE64ENCODE" && Note "Using base64 encoder: $BASE64ENCODE"
+test -n "$QPENCODE" && Note "Using Quoted-Printable encoder: $QPENCODE"
+test -n "$MIMENCODE" && Note "Using mimencode for compatibility: $QPENCODE"
 
 #
 # Pick install mechanism.

@@ -49,7 +49,6 @@ test -d /usr/sbin && PATH=/usr/sbin:$PATH		# 4.4BSD-derived
 test -d /usr/local/bin && PATH=$PATH:/usr/local/bin	# for GNU tools
 
 AWK=@AWK@			# awk for use below
-BASE64ENCODE=@BASE64ENCODE@	# base64encode command to dump in setup.cache
 CAT=@CAT@			# cat command for use below
 CHARSET=@CHARSET@		# character set to use in e-mails
 CHGRP=@CHGRP@			# change file group for use below
@@ -62,16 +61,18 @@ FUSER=@FUSER@			# fuser command to dump in setup.cache
 GREP=@GREP@			# grep command for use below
 LN=@LN@				# ln command for use below
 LN_S=@LN_S@			# ln option for creating a symbolic link
-MIMENCODE=@MIMENCODE@		# mimencode command to dump in setup.cache
 MKFIFO=@MKFIFO@			# FIFO creation program for use below
 MV=@MV@				# move file for use below
-QPENCODE=@QPENCODE@		# qpencode command to dump in setup.cache
 RMCMD=@RM@			# remove file for use below
 SCRIPT_SH=@SCRIPT_SH@		# shell for use below
 SED=@SED@			# sed for use below
 TIFF2PDF=@TIFF2PDF@		# tiff-to-pdf conversion tool
 TTYCMD=@TTYCMD@			# tty for error output
-UUENCODE=@UUENCODE@		# uuencode command to dump in setup.cache
+
+BASE64ENCODE="@BASE64ENCODE@"	# base64encode command to dump in setup.cache
+MIMENCODE="@MIMENCODE@"		# mimeencode command to dump in setup.cache for old notifys
+QPENCODE="@QPENCODE@"		# qpencode command to dump in setup.cache
+UUENCODE="@UUENCODE@"		# uuencode command to dump in setup.cache
 
 FAX=@FAXUID@			# identity of the fax user
 SERVICES=/etc/services		# location of services database
@@ -795,12 +796,8 @@ test -x "$UUENCODE" || {
     test -x "$UUENCODE" && Note "Found uuencode encoder: $UUENCODE"
 }
 
-if [ -z "$BASE64ENCODE" ]; then
-    # Keep configured base64 encoder for upgrades from earlier versions:
-    BASE64ENCODE=$MIMENCODE;
-fi
 # $BASE64ENCODE may contain parameters
-cmd=`echo $BASE64ENCODE | $SED -e "s/^ *//" -e "s/ .*$//"`
+cmd=`echo "$BASE64ENCODE" | $SED -e "s/^ *//" -e "s/ .*$//"`
 test -x "$cmd" || {
     BASE64ENCODE=`findAppDef mimencode $PATH mimencode`
     test -x $BASE64ENCODE || {
@@ -808,13 +805,13 @@ test -x "$cmd" || {
 	test -x $BASE64ENCODE || {
 	    if [ -x "$UUENCODE" ]; then
 		if capture "$UUENCODE -m $PASSWD foo"; then
-			BASE64ENCODE="$UUENCODE -m ===="
+			BASE64ENCODE="$UUENCODE -m ==== | $GREP -v ===="
 		fi
 	    fi
 	}
     }
-    test -n "$BASE64ENCODE" && Note "Found base64 encoder: $BASE64ENCODE"
 }
+test -n "$BASE64ENCODE" && Note "Found base64 encoder: $BASE64ENCODE"
 
 # $QPENCODE may contain parameters
 cmd=`echo $QPENCODE | $SED -e "s/^ *//" -e "s/ .*$//"`
@@ -824,11 +821,8 @@ test -x "$cmd" || {
     test -x $cmd || {
 	QPENCODE=`findAppDef qp-encode $PATH qp-encode`
     }
-    test -n "$QPENCODE" && Note "Found Quoted-Printable encoder: $QPENCODE"
 }
-
-# Keeping $MIMENCODE up to date for older scripts...
-test -x "$MIMENCODE" || MIMENCODE=$BASE64ENCODE
+test -n "$QPENCODE" && Note "Found Quoted-Printable encoder: $QPENCODE"
 
 if [ -n "$BASE64ENCODE" ]; then
     if [ "$ENCODING" != "base64" ]; then
@@ -841,6 +835,14 @@ elif [ -x "$UUENCODE" ]; then
 	Note "Looks like $UUENCODE does not support base64 encoding."
     fi
 fi
+
+# $MIMENCODE may contain parameters
+cmd=`echo "$MIMENCODE" | $SED -e "s/^ *//" -e "s/ .*$//"`
+test -x "$cmd" || {
+    MIMENCODE=`findAppDef mimencode $PATH mimencode`
+}
+test -n "$MIMENCODE" && Note "Found mimencode for compatibilty: $MIMENCODE"
+
 
 RM="$RMCMD -f"				# remove file for use below
 
