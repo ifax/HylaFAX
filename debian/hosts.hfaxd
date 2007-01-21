@@ -1,0 +1,7 @@
+# hosts.hfaxd
+# This file contains permissions and password for every user in
+# the system.
+#
+# For more information on this biject, please see its man page
+# and the commands faxadduser and faxdeluser.
+localhost:21::

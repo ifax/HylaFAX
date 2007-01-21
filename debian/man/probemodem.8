@@ -1,0 +1,41 @@
+.TH PROBEMODEM 8
+.SH NAME
+probemodem \- check modem and report the result of certain commands
+.SH SYNOPSIS
+.B /usr/sbin/probemodem
+.I "[\-f] [\-c AT_COMMAND] [-s SPEED] [ttyname]"
+.SH "DESCRIPTION"
+The
+.B probemodem
+script checks a modem attached to a serial line and reports the results
+of certain commands.
+
+The
+.I ttyname
+argument is the name of the tty port that the modem is attached to.
+
+This manual page was written for the Debian GNU/Linux distribution
+(but may be used by others), because the original program does not
+have a manual page.
+.SH OPTIONS
+.TP
+.BI \-f
+Do not use the command fuser in order to check if other processes
+are using the tty
+.I ttyname
+and kill them
+.TP
+.BI \-c " AT_COMMAND"
+Specify a string to be sent to the modem instead of "AT\+FCLASS\=?"
+.TP
+.BI \-s " speed"
+Set the speed to use for the
+.I ttyname
+port
+
+.SH "SEE ALSO"
+.IR hylafax (5)
+.SH AUTHOR
+This manual page was written by Dermot Bradley <bradley@debian.org>,
+and modified by Giuseppe Sacco <eppesuig@debian.org>
+for the Debian GNU/Linux system.

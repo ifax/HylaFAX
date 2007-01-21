@@ -1,0 +1,25 @@
+#!/bin/sh
+ROOT=${1-/usr/share/doc/hylafax}
+CGI=${2-/cgi-bin/man}
+PATTERN="@[a-zA-Z][a-zA-Z]*@"
+
+patch()
+{
+chmod a+w $1
+ed - $1<<EOF
+g;@CGIPATH@/manpage;s;;$CGI/man2html;g
+g;@CGIPATH@;s;;$CGI;g
+g;@HTMLPATH@;s;;$ROOT;g
+w
+q
+EOF
+chmod a-w $1
+}
+
+FILES=`grep -l "$PATTERN" *.html */*.html`
+test "$FILES" && {
+for i in $FILES
+   do
+       echo $i; patch $i;
+   done
+}

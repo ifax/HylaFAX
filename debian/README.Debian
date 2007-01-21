@@ -1,0 +1,188 @@
+HylaFAX for Debian
+==================
+
+Welcome to Debian's HylaFAX distribution.
+
+This document contains some notes specific to Debian's HylaFAX packages.
+For general HylaFAX information, please see http://www.hylafax.org.
+
+HylaFAX on Debian is split into three packages:
+
+* hylafax-server:  the tools necessary to run a HylaFAX server that can send
+  and receive facsimiles.  Please note, that you will need hylafax-client as
+  well.
+
+* hylafax-client:  the tools necessary to operate a local or remote HylaFAX
+  server.  Install this package on networked clients.
+
+* hylafax-doc:     HTML documentation on HylaFAX.  Please note, that
+  hylafax-server and hylafax-client come with manpages for the programs they
+  contain, whereas this is a more extensive manual.
+
+
+1. Quick Start
+--------------
+
+The hylafax-server(5) manpage provides a nice overview of the various
+HylaFAX components and how they interact with each other.  For further
+guidance, please refer to the contents of the hylafax-doc package.
+
+To get started you need to run faxaddmodem in order to let hylafax know about
+the modem lines it have to use. Once faxaddmodem create a configuration file,
+you need to communicate hylafax to us it. This is done automatically when
+hylafax start or stop, using the command faxgetty (or the old faxmodem.)
+
+If you want to change any global parameter (not related to a single modem line),
+you need to run faxsetup. A first run is already done during hylafax install
+with default parameters, but you may wish to change the default page size or
+the protocol to use, or anything. After having change anything, please call
+/etc/init.d/hylafax restart.
+
+
+2. /etc/inittab & faxgetty
+--------------------------
+
+If you want your system to accept incoming fax calls via one or more modems,
+you will need to run faxgetty on their respective ports.
+
+In previous release of this package the suggested solution was to change
+/etc/inittab and tell init to spawn a getty process.
+
+Now a better approach has been implemented: a getty process is run
+from /etc/init.d/hylafax if USE_FAXGETTY=yes in /etc/default/hylafax.
+Please note that this is the default behaviour.
+
+You may of course switch to using init changing to false that
+variable and adding those lines to your /etc/inittab
+
+#-- hylafax begin
+# The following is example on how to use faxgetty for your modem lines.
+# Please leave the lines with "hylafax begin" "hylafax end" in this file. If
+# you decide to remove hylafax from this system then the parts between those
+# comments will be erased and your inittab cleaned up.
+
+#S0:23:respawn:/usr/sbin/faxgetty ttyS0
+#S1:23:respawn:/usr/sbin/faxgetty ttyS1
+#-- hylafax end
+
+It is fairly straightforward.  If you modify /etc/inittab, make sure you do
+"init q" in order to make init(8) reload it.
+
+3. defaults
+-----------
+
+Using /etc/default/hylafax you may change some hylafax behaviour:
+1. enabling or disabling it
+2. specify to run faxgetty or faxmodem or none
+3. specify on what addresses to listen to
+
+Please have a look at the file and at all comments included.
+
+USE_FAXGETTY is used to select how hylafax should connect to
+modem lines. Hylafax may use faxmodem or faxgetty in order to "talk"
+to serial lines. faxgetty is preferred over faxmodem for many reasons
+and it is required in a send and receive configuration.
+
+faxgetty or faxmodem can be runa when hylafax starts or when the
+system boot, via init. If you prefer to use init, then change inittab
+as specified on 2. and set USE_FAXGETTY="init". Otherwise set
+USE_FAXGETTY="yes" for an automatic start of faxgetty when hylafax starts.
+If you set USE_FAXGETTY="no" then hylafax will use faxmodem instead of
+faxgetty.
+
+
+4. Logging
+----------
+
+Default syslog facility:	local5	
+
+Please also note, that hylafax-server doesn't modify /etc/syslog.conf either
+now.  In order to create a separate log for HylaFAX messages add the
+following line to your /etc/syslog.conf:
+
+local5.*                       -/var/log/hylafax/hylafax.log
+
+and issue an "/etc/init.d/sysklogd reload" command to activate the changes.  If
+you are using syslog-ng please consult the appropriate documentation.
+
+5. Faxmaster
+------------
+
+Previous versions of hylafax-server used to create alias for faxmaster
+pointing to root.  Since sending email to root is insecure, modifying a file
+belonging to another package is a policy violation and having in mind that
+at least one popular MTA doesn't support /etc/aliases, that behaviour is
+changed and hylafax-server now creates a separate account for the faxmaster.
+By default, this user is disabled, i.e. nobody can login as faxmaster.
+Please create an appropriate alias manually if you want to have
+administrative messages sent to another user.  Alternatively, you can set
+that user's password and have the mail messages retrieved somehow.
+
+6. TagLine
+----------
+
+The tagline wasn't working until version 4.1.8-12. From that
+version you may specify a font and a format to be used while
+printing the tag line, using the faxaddmodem command or
+editing the /etc/hylafax/config.DEVICE file by hand.
+
+A font is already provided in the server package, so that
+you may use it for this purpose. The TagLineFont should be
+set to "etc/lutRS18.pcf".
+
+7. Other notes
+--------------
+
+Default allow users: localhost 
+
+hylafax can't use AdaptiveAnswer without these links:
+	/etc/hylafax/getty-link -> /sbin/mgetty 
+	/etc/hylafax/vgetty-link -> /usr/sbin/vgetty 
+	/etc/hylafax/egetty-link -> /sbin/mgetty 
+
+
+8. Feedback
+-----------
+
+Please use Debian's reportbug(1) utility to report problems.
+
+
+9. PAM support
+--------------
+
+This Debian version of hylafax will support PAM.  To enable such support,
+you need to install an appropriate file under /etc/pam.d/.  An example
+of such a file is in /usr/share/doc/hylfax-server/examples/.
+
+When /etc/pam.d/hylafax exists, it is automatically used, so you do not
+have to use faxadduser, faxdeluser to modify hosts.hfaxd. All account
+known to the system via PAM will be accepted as normal user.
+
+Please note that remote administration isn't managed via PAM, so you
+may still have to setup an ADMIN password with faxadduser.
+
+10. e-mail encoding
+-------------------
+
+Hylafax is able to send received faxes via email. These emails
+need to include base64 encoded attachments. Since this is not essential
+to hylafax to work, you need to do manually some further steps:
+you should install a package that provide encoders (like
+mime-codecs or sharutils) and run 'faxsetup -server' that will
+automatically check for those encoders and change its configuration.
+
+11. sending UTF-8 files using sendfax
+-------------------------------------
+
+sendfax tries to convert any input file into postscript (if its original
+format isn't TIFF or postscript) using a series of rules specified
+in /etc/hylafax/typerules.
+If you have to send text (non ASCII) files using this command then
+install paps package and this line at the very end of typerules
+
+0    byte    x       ps      paps --font-scale=10 %i >%o
+
+then restart hylafax.
+
+-- 
+Giuseppe Sacco <eppesuig@debian.org>

@@ -1,0 +1,11 @@
+#! /bin/sh -e
+
+#DEBHELPER#
+
+if [ -x /etc/init.d/hylafax -a -e /var/spool/hylafax/etc/setup.cache -a \
+	 $(ps --no-headers -Chfaxd,faxq,faxgetty | wc -l) -gt 0 ]
+then
+	invoke-rc.d hylafax stop
+fi
+
+exit 0

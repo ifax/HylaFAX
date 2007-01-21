@@ -1,0 +1,47 @@
+## This is an example /etc/hylafax/FaxDispatch which shows you some
+## of the features of the stock faxrcvd command. You should not
+## use this file as is. For details, read faxrcvd(8).
+ 
+## To route all incoming faxes in pdf to a single account.
+ 
+SENDTO=someguy@somedomain.com
+FILETYPE=pdf
+ 
+ 
+## To do sender-based routing [from faxrcvd(8)]
+ 
+case "$SENDER" in
+       *1*510*526*1212*) SENDTO=sam;;          # Sam's test rig in Berkeley
+       *1*415*390*1212*) SENDTO=raster@asd;;   # 7L Xerox room, used for scanning
+       *5107811212)      SENDTO=peebles@mti;;  # stuff from home
+esac
+ 
+case "$CIDNUMBER" in
+       435*)        SENDTO=lee; FILETYPE=pdf;; # all faxes from area code 435
+       5059627777)  SENDTO=amy; FILETYPE=tif;; # Amy wants faxes in TIFF
+esac
+ 
+case "$SUBADDR" in
+       53)          SENDTO=FaxMaster;;         # without double-notification
+       roger)       SENDTO=roger;;             # possible text subaddressing
+esac
+ 
+ 
+## To do device-based routing [from faxrcvd(8)]
+ 
+case "$DEVICE" in
+       ttyS1)            SENDTO=john;;         # all faxes received on ttyS1
+       ttyLT0)           SENDTO=mary@home;;    # all faxes received on ttyLT0
+esac
+ 
+ 
+## To make each received fax saved outside hylafax
+## ( Don't forget to chown uucp /some/place )
+ 
+/bin/cp $FILE /some/place
+ 
+ 
+## To avoid bothering the faxmaster for each received fax
+ 
+NOTIFY_FAXMASTER=errors
+

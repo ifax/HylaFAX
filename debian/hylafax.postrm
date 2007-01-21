@@ -1,0 +1,22 @@
+#! /bin/sh -e
+
+#DEBHELPER#
+
+if [ "$1" = purge ]; then
+    # 
+    # This will remove the directory that holds a copy of the real
+    # debian configuration in /etc/hylafax
+    [ -d /var/spool/hylafax/etc ] && rm -rf /var/spool/hylafax/etc
+    [ -L /var/spool/hylafax/bin ] && rm /var/spool/hylafax/bin
+
+    rm -rf /var/spool/hylafax/etc/
+    for i in /etc/hylafax/setup.cache /etc/hylafax/setup.modem \
+	/var/spool/hylafax/status/any.info /var/spool/hylafax/dev/null \
+	/var/spool/hylafax/FIFO /var/spool/hylafax/bin/ps2fax \
+	/var/spool/hylafax/bin/pdf2fax /var/spool/hylafax/bin/bin
+    do
+	[ -e "$i" -o -L "$i" ] && rm "$i"
+    done
+
+    [ -d /var/spool/hylafax/bin ] && rmdir /var/spool/hylafax/bin
+fi

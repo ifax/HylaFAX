@@ -1,0 +1,91 @@
+From: Brett Wuth <wuth@castrov.cuug.ab.ca>
+Date: Fri, 1 Jun 2001 04:18:27 -0600 (MDT)
+Subject: hylafax-server: need doc on how to configure with mgetty
+
+[...]
+
+In order to have faxgetty accept data calls it must be configured to
+work with another program (likely mgetty).  Unfortunately the
+documentation isn't explicit on what needs to be done for mgetty.  I
+had to get out the source code of mgetty to figure out these
+options.  The documentation should make note of the following options
+required:
+
+
+------- in /etc/hylafax/config.ttyS1:
+
+ModemSetupAACmd: AT+FAA=1
+AdaptiveAnswer:         yes
+
+#mgetty:
+#  -x 9 : full debugging to /var/log/mgetty/mg_ttyS1.log
+#  -r   : direct line -- don't initialize modem
+#  -b   : non-blocking -- don't wait for ^M before prompting
+#  -s %s: set speed
+#  %l   : set device
+GettyArgs:	"-r -b -s %s %l"
+
+------- in /etc/mgetty/mgetty.config:
+# modem controlled by faxgetty
+port ttyS1
+   # already accepted data call, do not reset
+   toggle-dtr n
+
+
+Perhaps this bug should be logged against mgetty, but it's faxgetty
+that requires these options to be set up.
+
+Perhaps more than just documenting the solution, the hylafax installation
+script should set up the configuration automatically.
+
+These options have been tested with the following modem:
+ati3
+U.S. Robotics 56K Voice INT V4.7.35
+OK      
+ati7                                                                           
+Configuration Profile...                                                       
+                                                                               
+Product type           US/Canada Internal                                      
+Product ID:            66174981                                                
+Options                V32bis,V.80,V.34+,x2, V.90                              
+Fax Options            Class 1/Class 2.0                                       
+Line Options           Caller ID, Distinctive Ring                             
+Voice Options          Speakerphone, TAD                                       
+Clock Freq             92.0Mhz                                                 
+EPROM                  256k                                                    
+RAM                    32k                                                     
+                                                                               
+FLASH date             4/22/98                                                 
+FLASH rev              4.7.35                                                  
+                                                                               
+DSP date               4/22/98                                                 
+DSP rev                4.7.35                                                  
+                                                                               
+OK                                                                             
+
+
+
+-- System Information
+Debian Release: 2.2
+Kernel Version: Linux castrov 2.2.18pre21 #1 Sat Nov 18 18:47:15 EST 2000 i486 unknown
+
+Versions of the packages hylafax-server depends on:
+hi  libtiff3g      3.4beta037-5.1 tiff runtime library [libc6]
+ii  gs             5.10-10.1      Postscript interpreter with X11 and svgalib 
+ii  libc6          2.1.3-18       GNU C Library: Shared libraries and Timezone
+ii  libjpeg62      6b-1.2         The Independent JPEG Group's JPEG runtime li
+ii  libstdc++2.9   2.91.61-1      The GNU stdc++ library (egcs version)
+ii  libtiff-tools  3.5.4-5        TIFF manipulation and conversion tools
+ii  zlib1g         1.1.3-5        compression library - runtime
+
+--- Begin /etc/hylafax/config (modified conffile)
+LogFacility:		local5
+CountryCode:		1
+AreaCode:		403
+LongDistancePrefix:	1
+InternationalPrefix:	011
+DialStringRules:	etc/dialrules
+ServerTracing:		1
+
+--- End /etc/hylafax/config
+

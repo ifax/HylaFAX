@@ -1,0 +1,19 @@
+#!/bin/sh
+
+test -f /usr/sbin/faxcron || exit 0
+test -f /usr/sbin/faxqclean || exit 0
+test -f /var/spool/hylafax/log/xferfaxlog || exit 0
+
+# Rotate the HylaFAX logfile
+
+savelog -c 5 /var/log/hylafax/hylafax.log >/dev/null
+
+# HylaFAX routine maintenance script
+
+savelog -c 5 /var/log/hylafax/faxcron.log >/dev/null
+faxcron -info 35 -log 35 -rcv 100 -tmp 15 -mode 664 >> /var/log/hylafax/faxcron.log 2>&1
+
+# HylaFAX queue cleaner process (3024000s = 35 day)
+
+savelog -c 5 /var/log/hylafax/faxqclean.log >/dev/null
+faxqclean -t -j 3024000 -a >> /var/log/hylafax/faxqclean.log 2>&1

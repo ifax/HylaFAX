@@ -1,0 +1,11 @@
+Document: hylafax
+Title: HylaFAX Documentation
+Author: HylaFAX
+Abstract:  HTML version of HylaFAX documentation and manpages.
+ HylaFAX supports the sending and receiving of facsimiles, the polled
+ retrieval of facsimiles and the send of alphanumeric pages.
+Section: Comm
+
+Format: HTML
+Index: /usr/share/doc/hylafax-doc/html/index.html
+Files: /usr/share/doc/hylafax-doc/html/*.html

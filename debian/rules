@@ -1,0 +1,280 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export SHELL=/bin/bash
+export DH_COMPAT=4
+
+CFLAGS = -g
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -O0
+else
+	CFLAGS += -O2
+endif
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+	INSTALL_PROGRAM += -s
+endif
+
+configure: configure-stamp
+configure-stamp: 
+	cp -p /usr/share/misc/config.* .
+	yes | /bin/bash ./configure \
+		--with-HTML=yes \
+		--with-UTMP=auto \
+		--with-DIR_LIBDATA=/usr/lib/fax \
+		--with-DIR_HTML=/var/www/htdocs/hylafax \
+		--with-DIR_BIN="/usr/bin" \
+		--with-DIR_LIBDATA="/etc/hylafax" \
+		--with-DIR_LIB="/usr/lib/hylafax" \
+		--with-DIR_LIBEXEC="/usr/sbin" \
+		--with-DIR_MAN="/usr/share/man" \
+		--with-DIR_SBIN="/usr/sbin" \
+		--with-DIR_LOCKS="/var/lock" \
+		--with-PATH_AFM="/usr/share/fonts/type1/gsfonts" \
+		--with-FONTMAP="/usr/share/gs-esp/8.15/lib:/usr/share/gs-esp/7.07/lib:/usr/share/gs/6.53" \
+		--with-DIR_HTML="/usr/share/doc/hylafax" \
+		--with-DIR_CGI="/usr/lib/cgi-bin" \
+		--with-HTMLPATH="/doc/hylafax" \
+		--with-SYSGID="root" \
+		--with-SYSUID="root" \
+		--with-MANSCHEME="bsd-source-gzip-strip" \
+		--with-INSTALL='${PORT}/../debian/install ${PORT}' \
+		--with-CONFIG_MAXGID="65534" \
+		--with-OPTIMIZER="$(CFLAGS)" \
+		--with-IMPRIP="/usr/bin/psrip"  \
+		--with-AWK="/usr/bin/awk"
+
+	cp -p etc/hylafax debian/hylafax.hylafax.init 
+	touch configure-stamp
+
+build: build-arch
+
+build-arch: build-arch-stamp
+build-arch-stamp: configure-stamp
+#	$(MAKE) all COPTIONS="$(CFLAGS)"
+	$(MAKE) all
+	touch build-arch-stamp
+
+clean: clean1
+clean1:
+	dh_testdir
+	dh_testroot
+	rm -f build-arch-stamp configure-stamp
+	[ ! -f Makefile ] || make distclean
+	[ ! -d man/cman.apps ] \
+	    || rmdir man/cman.apps man/cman.files man/sman.apps man/sman.files
+	 rm -f port/Makefile port/install.sh port/mkdepend
+	rm -f config.{guess,sub}
+	rm -f dummy xgnu.c dummy.c xmakeinc t dummy.o dummy.C confMakefile config.log a.out
+	dh_clean
+
+PWD		:= $(shell pwd)
+p_client	= hylafax
+p_server	= hylafax
+p_doc		= hylafax
+
+d_client	= debian/$(p_client)
+d_server	= debian/$(p_server)
+d_doc		= debian/$(p_doc)
+
+install:  build
+	dh_testdir
+	dh_testroot
+	dh_clean -k -p$(p_doc)
+	dh_installdirs -p$(p_doc) \
+		usr/share/doc/$(p_doc)
+	cp -a html $(d_doc)/usr/share/doc/$(p_doc)/.
+	rm -rf $(d_doc)/usr/share/doc/$(p_doc)/html/{.cvs*,Makefile*,tools}
+	: # fixes some relative paths
+	cd $(d_doc)/usr/share/doc/$(p_doc)/html && \
+	  sh $(PWD)/debian/html-patch /usr/share/doc/hylafax-doc /cgi-bin/man
+
+	: # install server package
+	dh_installdirs -p$(p_server) \
+		usr/sbin \
+		etc/hylafax \
+		var/log/hylafax \
+		var/spool/hylafax/{archive,client,config,dev,info,log,bin,etc} \
+		var/spool/hylafax/{recvq,status,sendq,doneq,docq,tmp,pollq} \
+		var/spool/hylafax/config/defaults \
+		usr/share/man/{man5,man8} \
+		usr/share/lintian/overrides 
+
+	cp -p debian/hosts.hfaxd util/cover.templ \
+		etc/dialrules etc/dialrules.sf-ba etc/dialrules.europe \
+		etc/lutRS18.pcf \
+	    $(d_server)/var/spool/hylafax/etc/
+
+	cp -p hfaxd/hfaxd.conf $(d_server)/etc/hylafax
+
+	cp debian/minimal.config $(d_server)/var/spool/hylafax/config/defaults/config
+	cp -p debian/minimal.config $(d_server)/var/spool/hylafax/etc/config
+	cp -pR etc/templates $(d_server)/var/spool/hylafax/etc
+
+	cp -p util/{faxmsg,faxconfig,faxmodem,faxstate,faxwatch} \
+		util/{faxinfo,tiffcheck,typetest,dialtest,faxadduser,faxdeluser} \
+		faxd/{faxq,faxqclean,faxgetty,faxsend} \
+		faxd/{pagesend,tsitest,tagtest,cqtest} \
+		faxd/choptest \
+		hfaxd/hfaxd \
+		etc/ondelay \
+		etc/lockname \
+		etc/faxsetup.linux \
+	    $(d_server)/usr/sbin/.
+	for i in \
+	  util/xferfaxstats.sh util/recvstats.sh util/faxcron.sh \
+	  etc/faxaddmodem.sh etc/faxsetup.sh etc/probemodem.sh; \
+	do \
+	  b=`basename $$i .sh`; \
+	  install -p $$i $(d_server)/usr/sbin/$$b; \
+	done
+	for i in \
+	  util/{ps2fax.gs.sh,pdf2fax.gs.sh,pcl2fax.sh,tiff2fax.sh,tiff2pdf.sh} \
+	  util/{archive.sh,notify.sh,notify-4.1.sh,faxrcvd.sh,pollrcvd.sh,mkcover.sh,wedged.sh} \
+	  util/{common-functions.sh,dictionary.sh}; \
+	do \
+	  b=`basename $$i .sh`; \
+	  install -p $$i $(d_server)/var/spool/hylafax/bin/$$b; \
+	done
+	install -p util/notify.awk $(d_server)/var/spool/hylafax/bin/
+
+	cp -p `env LC_COLLATE=C bash -c "/bin/echo config/[a-z]*"` $(d_server)/var/spool/hylafax/config/
+
+	ln -sf faxmsg $(d_server)/usr/sbin/faxanswer
+	ln -sf faxmsg $(d_server)/usr/sbin/faxabort
+	ln -sf faxmsg $(d_server)/usr/sbin/faxquit
+	ln -sf faxmsg $(d_server)/usr/sbin/faxlock
+#	ln -sf /etc/hylafax $(d_server)/var/spool/hylafax/etc
+#	ln -sf ps2fax.gs $(d_server)/var/spool/hylafax/bin/ps2fax
+#	ln -sf pdf2fax.gs $(d_server)/var/spool/hylafax/bin/pdf2fax
+
+	: # install server man pages
+	for i in man/sman.files/*.4f; do \
+	  b=`basename $$i .4f`; \
+	  cp -p $$i $(d_server)/usr/share/man/man5/$$b.5; \
+	done
+	for i in man/sman.apps/*.1m; do \
+	  b=`basename $$i .1m`; \
+	  cp -p $$i $(d_server)/usr/share/man/man8/$$b.8; \
+	done
+	for i in debian/man/*.8; do \
+	  b=`basename $$i .8`; \
+	  cp -p $$i $(d_server)/usr/share/man/man8/$$b.8; \
+	done
+
+	dh_installexamples -p$(p_server) debian/examples/*
+
+	dh_install
+
+	: # install client package
+	dh_installdirs -p$(p_client) \
+		usr/bin \
+		usr/lib \
+		usr/share/man/{man1,man5} \
+		usr/share/doc/$(d_client)/faxmail \
+		usr/share/lintian/overrides
+
+	cp -p debian/hyla.conf faxcover/faxcover.ps faxmail/faxmail.ps \
+		util/typerules \
+	    $(d_client)/etc/hylafax
+	cp -p util/pagesizes $(d_client)/etc/hylafax
+	install -p util/textfmt faxalter/faxalter faxcover/faxcover \
+		faxmail/faxmail faxrm/faxrm faxstat/faxstat \
+		sendfax/sendfax sendpage/sendpage \
+	$(d_client)/usr/bin/.
+
+	install -p faxmail/mailfax.sh-postfix faxmail/mailfax.sh-qmail \
+		faxmail/mailfax.sh-sendmail faxmail/mailfax.sh-smail \
+		faxmail/README \
+	$(d_client)/usr/share/doc/$(d_client)/faxmail/
+
+	for i in faxcover/edit-faxcover.sh; \
+        do \
+          b=`basename $$i .sh`; \
+          install -p $$i $(d_client)/usr/sbin/$$b; \
+        done
+
+	: # install client man pages
+	for i in man/cman.files/*.4f; do \
+	  b=`basename $$i .4f`; \
+	  cp -p $$i $(d_client)/usr/share/man/man5/$$b.5; \
+	done
+	for i in man/cman.apps/*.1; do \
+	  b=`basename $$i .1`; \
+	  [ $$b != sgi2fax ] && cp -p $$i $(d_client)/usr/share/man/man1/$$b.1; \
+	done
+
+	# needed by sendfax ...
+	mkdir -p $(d_client)/usr/sbin
+	ln -sf ../bin/textfmt $(d_client)/usr/sbin/textfmt
+	dh_install
+
+# Build architecture dependant packages using the common target.
+binary-arch: build-arch install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs -a CHANGES
+	dh_installdocs -a -A \
+		debian/README.mgetty debian/README.Debian \
+		TODO CONTRIBUTORS
+	dh_installexamples
+	dh_installinit -p$(p_server) --name=hylafax --no-start
+	dh_installcron -p$(p_server) --name=hylafax
+	dh_strip -a
+	dh_compress -a
+	dh_fixperms -a
+	chgrp uucp $(d_server)/var/spool/hylafax/etc
+	chown uucp:uucp \
+	    $(d_server)/var/spool/hylafax/{client,config,dev,info,log,recvq,status,archive,docq,doneq,pollq,sendq,tmp,.}
+	chmod 755 \
+	    $(d_server)/var/spool/hylafax/{archive,docq,doneq,pollq,sendq}
+	chmod 775 $(d_server)/var/spool/hylafax
+	chmod 4777 $(d_server)/var/spool/hylafax/tmp
+	chmod 755  $(d_server)/var/spool/hylafax/dev
+	chown uucp $(d_server)/var/spool/hylafax/etc/hosts.hfaxd
+	chmod 600  $(d_server)/var/spool/hylafax/etc/hosts.hfaxd
+
+	dh_makeshlibs -a
+	dh_installdeb -a
+	dh_shlibdeps -p$(p_client) \
+		debian/$(d_server)/usr/sbin/choptest \
+		debian/$(d_server)/usr/sbin/cqtest \
+		debian/$(d_server)/usr/sbin/dialtest \
+		debian/$(d_server)/usr/sbin/faxadduser \
+		debian/$(d_server)/usr/sbin/faxconfig \
+		debian/$(d_server)/usr/sbin/faxdeluser \
+		debian/$(d_server)/usr/sbin/faxgetty \
+		debian/$(d_server)/usr/sbin/faxinfo \
+		debian/$(d_server)/usr/sbin/faxmodem \
+		debian/$(d_server)/usr/sbin/faxmsg \
+		debian/$(d_server)/usr/sbin/faxq \
+		debian/$(d_server)/usr/sbin/faxqclean \
+		debian/$(d_server)/usr/sbin/faxsend \
+		debian/$(d_server)/usr/sbin/faxstate \
+		debian/$(d_server)/usr/sbin/faxwatch \
+		debian/$(d_server)/usr/sbin/hfaxd \
+		debian/$(d_server)/usr/sbin/lockname \
+		debian/$(d_server)/usr/sbin/ondelay \
+		debian/$(d_server)/usr/sbin/pagesend \
+		debian/$(d_server)/usr/sbin/tagtest \
+		debian/$(d_server)/usr/sbin/tiffcheck \
+		debian/$(d_server)/usr/sbin/tsitest \
+		debian/$(d_server)/usr/sbin/typetest \
+		debian/$(d_client)/usr/bin/faxalter \
+		debian/$(d_client)/usr/bin/faxcover \
+		debian/$(d_client)/usr/bin/faxmail \
+		debian/$(d_client)/usr/bin/faxrm \
+		debian/$(d_client)/usr/bin/faxstat \
+		debian/$(d_client)/usr/bin/sendfax \
+		debian/$(d_client)/usr/bin/sendpage \
+		debian/$(d_client)/usr/bin/textfmt
+
+	dh_gencontrol -a
+	dh_md5sums -a
+	dh_builddeb -a
+
+binary: binary-arch
+.PHONY: build clean clean1 binary-arch binary install configure

@@ -1,0 +1,108 @@
+hylafax (2:4.3.0-9) unstable; urgency=low
+
+This new version uses lsb functions to manage start/stop daemons output, and
+it also changes the FROM address of all emails that are now from "faxmaster".
+If you wish to change it, you may as usual, customize /etc/hylafax/FaxNotify
+and add FROMADDR="username@domain.tld".
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue, 19 Sep 2006 09:48:04 +0200
+
+hylafax (2:4.3.0-4) unstable; urgency=low
+
+This Debian version of hylafax will support PAM.  To enable such support,
+you need to install an appropriate file under /etc/pam.d/.  An example
+of such a file is in /usr/share/doc/hylafax-server/examples/.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Thu,  13 Jun 2006 12:34:14 +0200
+
+hylafax (2:4.3.0-1) unstable; urgency=low
+
+All versions of hylafax disabled PAM when installed.
+This new version ships a very simple configuration file
+in /usr/share/doc/hylafax-server/examples/pam-hylafax. To enable
+PAM support just copy this file in /etc/pam.d and name it hylafax.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Thu,  1 Jun 2006 11:49:11 +0200
+
+hylafax (1:4.2.1-1) unstable; urgency=high
+
+Many hylafax installations have insecure entries in hosts.hfaxd.  The
+problem is that if you enter "username" it will also match
+"otherusername"; "host" will also match "hostname".
+
+Unless you intend such behavior, you should modify your hosts.hfaxd to
+use start and end delimiters as in the following examples:
+
+  @192.168.0.[0-9]+$
+  ^username@:uid:pass:adminpass
+  ^user@host$
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Thu,  6 Jan 2005 13:05:32 +0100
+
+hylafax (1:4.2.0-16) unstable; urgency=medium
+
+A script for storing cover pages is now added in the
+/usr/share/doc/hylafax-server/examples directory. It should be
+called in place of the supplied faxsend. It will merge the
+cover page and the document and then call the real faxsend.
+
+This workaround is taken from hylafax bug #603
+(http://bugs.hylafax.org/bugzilla/show_bug.cgi?id=603)
+but it should be pointed that this is not really a bug, while a
+wish that my users hope to be accepted by hylafax authors.
+
+In order to use it, just copy it in any directory, like
+/usr/local/bin/retainfaxcover.sh and add the following line to
+/etc/hylafax/config:
+
+  SendFaxCmd /usr/local/bin/retainfaxcover.sh
+
+the restart hylafax calling '/etc/init.d/hylafax force-reload'
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue, 14 Dec 2004 16:53:10 +0100
+
+hylafax (1:4.2.0-8) unstable; urgency=low
+
+The new init script that starts and stop hylafax have been changed
+in order to better handle upgrade from previous versions of the sarge
+package. This means that after calling start-stop-daemon, the script
+will check if processes are still pending and will try to kill them.
+
+I believe that this might be a problem if you are running many hylafax
+servers in parallel (i.e., in different chroot environment). If you
+happen to fall in ths case then please use the old script or modify
+the new one.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue, 12 Oct 2004 13:45:23 +0200
+
+hylafax (1:4.2.0-7) unstable; urgency=low
+
+Two Directories
+----------------
+
+In Debian Sarge release of hylafax, the client and server packages
+have been completely reworked in order to fix many important bugs.
+
+The major refactoring completely separated the environment where
+the server run from the host machine. The server is run in a 
+chroot environment starting at /var/spool/hylafax.
+
+Since Debian policy requires that all configuration files must
+be put in /etc, the chroot environment can not access them.
+Hylafax used to be able to do so via links from 
+/var/spool/hylafax/etc.
+
+The two directories /var/spool/hylafax/etc and /etc/hylafax must
+always contain identical files. All programs that update these files,
+now update both copies at once.
+
+Every file is "resynced" when the server starts, but to be more
+safe in order to never overwrite a potencial "good" file, I decided
+to write a statement about files not in sync and
+ask for a bug report during the execution of /etc/init.d/hylafax.
+The master copy of the files is /etc/hylafax when the server starts
+via /etc/init.d/hylafax, but switch to /var/spool/hylafax/etc when
+the server is running.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Wed,  4 Sep 2004 07:54:00 +0200
+

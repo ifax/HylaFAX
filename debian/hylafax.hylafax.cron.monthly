@@ -1,0 +1,16 @@
+#!/bin/sh
+
+test -f /usr/sbin/xferfaxstats || exit 0
+
+# Generate HylaFAX's monthly fax statistics
+
+# Generate statistics for faxes during the past month. Two reports
+# are generated - one ordered by the destination fax number, the
+# other ordered by the sender.
+
+# No fax received in last month
+test -f /var/spool/hylafax/log/xferfaxlog || exit 0
+
+/usr/sbin/xferfaxstats -dest -since `date +%D -d'-1 month'` 2>&1 | mail -s "Monthly fax stats - by destination" faxmaster
+
+/usr/sbin/xferfaxstats -send -since `date +%D -d'-1 month'` 2>&1 | mail -s "Monthly fax stats - by sender" faxmaster

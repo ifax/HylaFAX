@@ -1,0 +1,16 @@
+/var/spool/hylafax/bin/archive
+/var/spool/hylafax/bin/faxrcvd
+/var/spool/hylafax/bin/mkcover
+/var/spool/hylafax/bin/notify
+/var/spool/hylafax/bin/notify-4.1
+/var/spool/hylafax/bin/notify.awk
+/var/spool/hylafax/bin/pcl2fax
+/var/spool/hylafax/bin/pdf2fax.gs
+/var/spool/hylafax/bin/pollrcvd
+/var/spool/hylafax/bin/ps2fax.gs
+/var/spool/hylafax/bin/tiff2fax
+/var/spool/hylafax/bin/tiff2pdf
+/var/spool/hylafax/bin/wedged
+/var/spool/hylafax/bin/common-functions
+/var/spool/hylafax/bin/dictionary
+/var/spool/hylafax/etc/config
