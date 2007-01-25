@@ -164,7 +164,7 @@ parseFaxInfo()
 
 programOfCommand()
 {
-	echo "$*" | $SED -e -'s/^ *//' -e 's/ .*$//'
+	echo "$*" | $SED -e 's/^ *//' -e 's/ .*$//'
 }
 
 #
