@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <fcntl.h>
+#include <grp.h>
 #include <pwd.h>
 #if HAS_CRYPT_H
 #include <crypt.h>
@@ -96,131 +97,21 @@ HylaFAXServer::userCmd(const char* name)
 	loginRefused("user denied");
 }
 
-#ifdef HAVE_PAM
-int
-pamconv(int num_msg, STRUCT_PAM_MESSAGE **msg, struct pam_response **resp, void *appdata)
-{
-	char *password =(char*) appdata;
-	struct pam_response* replies;
-
-	if (num_msg != 1 || msg[0]->msg_style != PAM_PROMPT_ECHO_OFF)
-	    return PAM_CONV_ERR;
-
-	if (password == NULL)
-	    /*
-	     * Solaris doesn't have PAM_CONV_AGAIN defined.
-	     */
-	    #ifdef PAM_CONV_AGAIN
-		return PAM_CONV_AGAIN;
-	    #else
-		return PAM_CONV_ERR;
-	    #endif
-
-	replies=(struct pam_response*)calloc(num_msg, sizeof(struct pam_response));
-
-	replies[0].resp = strdup(password);
-	replies[0].resp_retcode = 0;
-	*resp = replies;
-
-	return PAM_SUCCESS;
-}
-#endif //HAVE_PAM
-
 bool
-HylaFAXServer::pamIsAdmin(const char* user)
+HylaFAXServer::isAdminGroup(const char* user)
 {
 	bool retval = false;
-#ifdef HAVE_PAM
-	int i;
-	static struct group* grinfo = getgrnam(admingroup);
-	const char *curruser = (user == NULL ? the_user.c_str() : user);
-	if (grinfo != NULL) {
-		for (i=0; grinfo->gr_mem[i] != NULL; i++) {
-			if (strcmp(curruser, grinfo->gr_mem[i]) == 0) retval = true;
-		}
+	if (admingroup.length() > 0) {
+	    int i;
+	    static struct group* grinfo = getgrnam(admingroup);
+	    const char *curruser = (user == NULL ? the_user.c_str() : user);
+	    if (grinfo != NULL) {
+		    for (i=0; grinfo->gr_mem[i] != NULL; i++) {
+			    if (strcmp(curruser, grinfo->gr_mem[i]) == 0) retval = true;
+		    }
+	    }
 	}
-#endif //HAVE_PAM
 	return(retval);
-}
-
-bool
-HylaFAXServer::pamCheck(const char* user, const char* pass)
-{
-	bool retval = false;
-#ifdef HAVE_PAM
-	if (pamh == NULL)
-	    return false;
-
-	if (user == NULL) user = the_user;
-	if (pass == NULL) pass = passwd.c_str();
-
-	struct pam_conv conv = {
-		pamconv,
-		(void*)pass
-	};
-       
-
-	int pamret;
-
-	/*
-	 * Solaris has proprietary pam_[sg]et_item() extension.
-	 * Sun defines PAM_MSG_VERSION therefore is possible to use
-	 * it in order to recognize the extensions of Solaris
-	 */
-	#ifdef PAM_MSG_VERSION
-	    pamret = pam_set_item(pamh, PAM_CONV, (const void *)&conv);
-	#else
-	    pamret = pam_set_item(pamh, PAM_CONV, &conv);
-	#endif
-
-	if (pamret == PAM_SUCCESS)
-	    pamret = pam_authenticate(pamh, 0);
-
-	if (pamret == PAM_SUCCESS)
-	    pamret = pam_acct_mgmt(pamh, 0);
-
-	if (pamret == PAM_SUCCESS)
-		retval = true;
-
-	pamEnd(pamret);
-#endif
-	return retval;
-}
-
-void HylaFAXServer::pamEnd(int pamret)
-{
-#ifdef HAVE_PAM
-    if (pamret == PAM_SUCCESS)
-    {
-	if (pamIsAdmin())
-	    state |= S_PRIVILEGED;
-
-	char *newname=NULL;
-
-	/*
-	 * Solaris has proprietary pam_[sg]et_item() extension.
-	 * Sun defines PAM_MSG_VERSION therefore is possible to use
-	 * it in order to recognize the extensions of Solaris
-	 */
-	#ifdef PAM_MSG_VERSION
-	    pamret = pam_get_item(pamh, PAM_USER, (void **)&newname);
-	#else
-	    pamret = pam_get_item(pamh, PAM_USER, (const void **)&newname);
-	#endif
-
-	if (pamret == PAM_SUCCESS && newname != NULL)
-	    the_user = strdup(newname);
-
-	struct passwd* uinfo=getpwnam((const char *)the_user);
-	if (uinfo != NULL) {
-	    uid = uinfo->pw_uid;
-	}	
-
-    }
-    pamret = pam_end(pamh, pamret);
-    pamh = NULL;
-
-#endif //HAVE_PAM
 }
 
 void
@@ -246,7 +137,8 @@ HylaFAXServer::passCmd(const char* pass)
 	pass++;
     } else
 	state |= S_LREPLIES;
-    if (pass[0] == '\0' || !(strcmp(crypt(pass, passwd), passwd) == 0 || pamCheck(the_user, pass))) {
+
+    if (! checkPasswd(pass)) {
 	if (++loginAttempts >= maxLoginAttempts) {
 	    reply(530, "Login incorrect (closing connection).");
 	    logNotice("Repeated login failures for user %s from %s [%s]"
@@ -296,10 +188,6 @@ HylaFAXServer::login(int code)
 	return;
     }
 
-#ifdef HAVE_PAM
-    pam_chrooted = true;
-#endif
-
     (void) isShutdown(false);	// display any shutdown messages
     reply(code, "User %s logged in.", (const char*) the_user);
     if (TRACE(LOGIN))
@@ -314,7 +202,7 @@ HylaFAXServer::login(int code)
 
     initDefaultJob();		// setup connection-related state
     dirSetup();			// initialize directory handling
-	if (pamIsAdmin()) state |= S_PRIVILEGED;
+	if (isAdminGroup()) state |= S_PRIVILEGED;
 }
 
 void
@@ -322,7 +210,7 @@ HylaFAXServer::adminCmd(const char* pass)
 {
     fxAssert(IS(LOGGEDIN), "ADMIN command permitted when not logged in");
     // NB: null adminwd is permitted
-    if ((strcmp(crypt(pass, adminwd), adminwd) != 0) && !pamIsAdmin()) {
+    if ((strcmp(crypt(pass, adminwd), adminwd) != 0) && !isAdminGroup()) {
 	if (++adminAttempts >= maxAdminAttempts) {
 	    reply(530, "Password incorrect (closing connection).");
 	    logNotice("Repeated admin failures from %s [%s]"

@@ -40,13 +40,6 @@
 
 #include "config.h"
 
-#ifdef HAVE_PAM
-extern "C" {
-#include <security/pam_appl.h>
-#include <grp.h>
-}
-#endif // HAVE_PAM
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <dirent.h>
@@ -216,11 +209,6 @@ protected:
     /*
      * User authentication and login-related state.
      */
-#ifdef HAVE_PAM
-	pam_handle_t *pamh;		// handle to current pam session
-	bool	pam_chrooted;	// if already chrooted, PAM gets disabled
-#endif
-
     fxStr	passwd;			// encrypted user password
     fxStr	adminwd;		// encrypted passwd for admin privileges
     u_int	uid;			// client's ID
@@ -229,7 +217,7 @@ protected:
     u_int	adminAttempts;		// number of failed admin attempts
     u_int	maxAdminAttempts;	// admin failures before server exits
     fxStr	the_user;		// name of user
-	fxStr   admingroup;			// name of local user group that is allowed
+    fxStr	admingroup;			// name of local user group that is allowed
 								// to administer the fax server
     IDCache*	idcache;		// fax UID -> name mapping table
     /*
@@ -349,12 +337,18 @@ protected:
     void setFileOwner(const char* filename);
 
     void loginRefused(const char* why);
-	bool pamCheck(const char* user=NULL, const char* pass=NULL);
-	bool pamIsAdmin(const char* user=NULL);
-	void pamEnd(int pamret);
+
     bool checkUser(const char*);
-    bool checkuser(FILE*, const char *name);
-    bool checkuser(const char *name);
+    bool checkPasswd(const char*);
+
+    bool checkuserHosts(FILE*, const char *name);
+    bool checkuserPAM(const char *name);
+
+    bool checkpasswdHosts(const char* passwd);
+    bool checkpasswdPAM(const char* passwd);
+
+    bool isAdminGroup(const char* user=NULL);
+
     void login(int code);
     void end_login(void);
     virtual void dologout(int status);

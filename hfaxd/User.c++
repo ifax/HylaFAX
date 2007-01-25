@@ -43,16 +43,12 @@
 #endif
 #endif /* CHAR_BIT */
 
+
 /*
  * User Access Control Support.
  */
 gid_t	HylaFAXServer::faxuid = 0;		// reserved fax uid
 #define	FAXUID_RESV	HylaFAXServer::faxuid	// reserved fax uid
-
-#ifdef HAVE_PAM
-extern int
-pamconv(int num_msg, STRUCT_PAM_MESSAGE **msg, struct pam_response **resp, void *appdata);
-#endif
 
 bool
 HylaFAXServer::checkUser(const char* name)
@@ -60,11 +56,15 @@ HylaFAXServer::checkUser(const char* name)
     bool check = false;
     FILE* db = fopen(fixPathname(userAccessFile), "r");
     if (db != NULL) {
-	check = checkuser(db, name) || checkuser(name);
+	check = checkuserHosts(db, name);
 	fclose(db);
     } else
 	logError("Unable to open the user access file %s: %s",
 	    (const char*) userAccessFile, strerror(errno));
+
+    if (! check)
+	check = checkuserPAM(name);
+
     /*
      * This causes the user to be prompted for a password
      * and then denied access.  We do this to guard against
@@ -72,6 +72,22 @@ HylaFAXServer::checkUser(const char* name)
      */
     return (true);
 }
+
+bool
+HylaFAXServer::checkPasswd (const char* pass)
+{
+    if (pass[0] == '\0')
+	return false;
+
+    if (checkpasswdHosts(pass))
+        return true;
+
+    if (checkpasswdPAM(pass))
+        return true;
+
+    return false;
+}
+
 
 static bool
 nextRecord(FILE* db, char line[], u_int size)
@@ -92,48 +108,13 @@ nextRecord(FILE* db, char line[], u_int size)
     return (false);
 }
 
-bool
-HylaFAXServer::checkuser(const char* name)
-{
-	bool retval=false;
-
-#ifdef HAVE_PAM
-	if (pam_chrooted) {
-	    logNotice("PAM authentication for %s can't be used for a re-issuance of USER command because of chroot jail\n", name);
-	    return false;
-	}
-
-	int pamret;
-	struct pam_conv conv = {pamconv, NULL};		
-
-	pamret = pam_start(FAX_SERVICE, name, &conv, &pamh);
-
-	if (pamret == PAM_SUCCESS)
-		pamret = pam_authenticate(pamh, 0);
-
-	if (pamret == PAM_SUCCESS)
-		pamret = pam_acct_mgmt(pamh, 0);
-
-	if (pamret == PAM_SUCCESS) {
-		passwd = "";
-		pamEnd(pamret);
-	} else {
-	    passwd = "*";
-	    adminwd = "*";
-	}
-	retval = true;
-
-#endif //HAVE_PAM
-	return(retval);
-}
-
 /*
  * Check the user name and host name/address against
  * the list of users and hosts that are permitted to
  * user the server and setup password handling.
  */
 bool
-HylaFAXServer::checkuser(FILE* db, const char* name)
+HylaFAXServer::checkuserHosts(FILE* db, const char* name)
 {
     struct stat sb;
     if (Sys::fstat(fileno(db), sb) < 0)
@@ -214,6 +195,15 @@ HylaFAXServer::checkuser(FILE* db, const char* name)
     }
     passwd = "*";
     return (false);
+}
+
+bool
+HylaFAXServer::checkpasswdHosts (const char* pass)
+{
+    if (strcmp(crypt(pass,passwd),passwd) == 0)
+        return true;
+
+    return false;
 }
 
 fxDECLARE_PtrKeyDictionary(IDCache, u_int, fxStr)
