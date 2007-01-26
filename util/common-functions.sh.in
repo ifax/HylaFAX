@@ -225,14 +225,36 @@ mimeEncode()
 template ()
 {
         cat - | $AWK '
-	function include_file (file)
+
+	function include_file (file, __local, i,buf,paths,p)
 	{
-		while (getline bla<file )
+	    split(TEMPLATE_PATH, paths, ":");
+
+	    p = file;
+	    i = getline buf < p;
+	    if (i < 0)
+	    {
+		for (d in paths)
 		{
-			template_line(bla);
+		    p = paths[d] "/" file;
+		    i = getline buf < p;
+		    if (i > 0) 
+			break;
 		}
+	    }
+	    
+	    if (i > 0)
+	    {
+		template_line(buf);
+		while (getline buf <p)
+		{
+		    template_line(buf);
+		}
+		close(file);
+	    }
 
 	}
+
 	function template_line (line,   tmp,var)
         {
                 while (match(line, /[$][A-Za-z0-9_]+/))
@@ -258,9 +280,10 @@ template ()
                 print line;
         }
 
+	BEGIN { TEMPLATE_PATH=""; }
         {
                 template_line($0);
-        }'
+        }' TEMPLATE_PATH="$1" 
 }
 
 #
@@ -285,9 +308,10 @@ CreateMailMessage ()
     # First we take the top part of the e-mail for headers
     # Excluding any "Content-" lines, which need to stay with
     # the actual template content
+    TEMPLATE_PATH=`dirname $1`
     $SED -n -e '/^$/q;p' $1			\
     	| $GREP -v "^Content"		\
-	| template
+	| template "$TEMPLATE_PATH"
 
     # If there are attachments, we are a multipart/mixed
     echo "Mime-Version: 1.0"
@@ -300,16 +324,16 @@ CreateMailMessage ()
     # Now print the Content-* headers for the template
     $SED -n -e '/^$/q;p' $1			\
     	| $GREP "^Content"		\
-	| template
+	| template "$TEMPLATE_PATH"
 
     echo ""
     body_encoding=`$SED -n -e '/^$/q;p' $1		\
-    	| $GREP -i "^Content-Transfer-Encoding"	\
-	| template				\
+    	| $GREP -i "^Content-Transfer-Encoding"		\
+	| template "$TEMPLATE_PATH" 			\
     	| $SED -e 's/^[^ ]*: *//'`;
     test "$body_encoding" || body_encoding=7bit;
 
-    $SED -n -e '1,/^$/d;p' $1 | template > $TMPDIR/body.txt
+    $SED -n -e '1,/^$/d;p' $1 | template "$TEMPLATE_PATH" > $TMPDIR/body.txt
     mimeEncode $TMPDIR/body.txt $body_encoding
 
     if [ -n "$2" ]; then
