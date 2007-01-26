@@ -1,0 +1,25 @@
+These templates are used for the default HylaFAX faxrcvd, pollrcvd, and
+notify mechanisms.
+
+These templates *will* be overridden by HylaFAX on any future updates
+to include new features and translations as they are made.
+
+If you are interested in customizing the templates, it's strongly
+recommended that you copy one of the stock template directories, and
+modify the templates within it.  This way any future changes HylaFAX
+makes to the templates won't interfere with your local customizations.
+
+HylaFAX defaults to the templates in the en/ subdirectory, as documented
+in the faxrcvd man page.
+
+The templates have access to all the fax/job information, like:
+	$SENDER
+
+Templates also have the ability to include other files, like:
+	#INCLUDE corporate-header
+This would include the file corporate-header (also including all normal
+$VARIABLE substitution) at the specified line.  The #INCLUDE *is* case
+sensitive, and must be at the very beginning of the line.
+
+For more information, see the Handbook in the Documentation section of
+www.hylafax.org.
