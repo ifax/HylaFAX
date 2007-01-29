@@ -1,7 +1,7 @@
 To: $TOADDR
 From: Servidor de Fax HylaFAX <$FROMADDR>
 Subject: fax no recibido
-Content-type: text/plain; charset=utf-8
+Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 El intento de recibir el fax por $DEVICE ha fallado porque:
