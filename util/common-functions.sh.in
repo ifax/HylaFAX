@@ -192,7 +192,7 @@ mimeEncode()
 		# $BASE64ENCODE may contain parameters
 		cmd=`programOfCommand $BASE64ENCODE`
 		if [ -x "$cmd" ]; then
-		    ($BASE64ENCODE) < $1 2>$ERRORSTO
+		    (eval $BASE64ENCODE) < $1 2>$ERRORSTO
 		else
 		    $AWK -f bin/b64-encode.awk < $1 2>$ERRORSTO
 		fi
@@ -204,7 +204,7 @@ mimeEncode()
 		# $QPENCODE may contain parameters
 		cmd=`programOfCommand $QPENCODE`
 		if [ -x "$cmd" ]; then
-		    ($QPENCODE) < $1 2>$ERRORSTO
+		    (eval $QPENCODE) < $1 2>$ERRORSTO
 		else
 		    $AWK -f bin/qp-encode.awk < $1 2>$ERRORSTO
 		fi
