@@ -153,10 +153,11 @@ TemplateName ()
 MailWithFAX ()
 {
     template=`TemplateName $1`
-    file_1=$FILE;
+    files_1=$FILE;
     filetype_1=TIFF;
     nfiles=1;
-    CreateMailMessage $template `BuildAttachArgs $FILETYPE` \
+    ATTACH_ARGS=`BuildAttachArgs $FILETYPE`
+    eval CreateMailMessage "$template" $ATTACH_ARGS \
 	2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
 
 }
