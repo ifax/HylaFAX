@@ -5,6 +5,7 @@ Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 O seu fax para $number enviado com êxito.
+
                    Páginas: $npages
                   Receptor: $csi
                  Qualidade: $resolution
@@ -23,11 +24,3 @@ O seu fax para $number enviado com êxito.
                      IDCom: c$commid
 
 Tempo gasto no processamento $JTIME.
-
-  Informação adicional:
-
-$faxstatus
-
-    ---- Registo de sessão ----
-
-$SESSION_LOG

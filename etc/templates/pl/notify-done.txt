@@ -5,6 +5,7 @@ Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 Zadanie fax do $number zakoączone powodzeniem.
+
                    Stron: $npages
                 Odbiorca: $csi
                   JakośŚ: $resolution
@@ -23,11 +24,3 @@ Zadanie fax do $number zakoączone powodzeniem.
           ID Komunikacji: c$commid
 
 Czas przetwarzania $JTIME.
-
-  Dodatkowe informacje:
-
-$faxstatus
-
-    ---- Transkrypcja sesji ----
-
-$SESSION_LOG

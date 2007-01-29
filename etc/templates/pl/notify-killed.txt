@@ -5,6 +5,7 @@ Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 Zadanie fax do $number zostało usuniŞte z kolejki
+
 ------- Unsent job status -------
                  Adresat: $number
               ID zadania: $jobid

@@ -6,6 +6,7 @@ Content-Transfer-Encoding: Quoted-Printable
 
 Su trabajo fax para $number no ha sido enviado porque agoto
 el plazo designado.
+
 ------- Unsent job status -------
                      Destino: $number
                    IDTrabajo: $jobid

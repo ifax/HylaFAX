@@ -5,6 +5,7 @@ Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 Ihr pager Auftrag an $number wurde erfolgreich abgeschlossen.
+
                      Dialoge: $tottries (Kommunikationsversuchen mit Zielfaxgerät)
                       Anrufe: $totdials (Anrufe insgesamt durchgeführt)
                        Modem: $modem
@@ -14,11 +15,3 @@ Ihr pager Auftrag an $number wurde erfolgreich abgeschlossen.
             KommunikationsID: c$commid
 
 Verarbeitungszeit $JTIME.
-
-  Zusätzliche Information:
-
-$faxstatus
-
-    ---- Ablauf der Uebertragung ----
-
-$SESSION_LOG

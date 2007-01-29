@@ -11,6 +11,7 @@ $faxstatus
 
 Należy sprawdziŚ, czy w dokumentach PostScriptowych nie wystŞpują
 niestandardowe czcionki lub nieprawidłowe konstrunkcje
+
 ------- Unsent job status -------
                  Adresat: $number
               ID zadania: $jobid

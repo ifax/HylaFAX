@@ -6,6 +6,7 @@ Content-Transfer-Encoding: Quoted-Printable
 
 Il fax per $number lo script di conversione del documento non
 è stato trovato.
+
 ------- Unsent job status -------
              Destinatario: $number
                     JobID: $jobid

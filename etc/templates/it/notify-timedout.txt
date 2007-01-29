@@ -5,6 +5,7 @@ Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 Il fax per $number non è stato completato prima dell'orario prefissato.
+
 ------- Unsent job status -------
              Destinatario: $number
                     JobID: $jobid

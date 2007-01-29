@@ -11,6 +11,7 @@ $faxstatus
 
 Verifique a validade do documento PostScript se há fontes não standart
 e formatações inválidas
+
 ------- Unsent job status -------
               Destinatário: $number
                    IDEnvio: $jobid

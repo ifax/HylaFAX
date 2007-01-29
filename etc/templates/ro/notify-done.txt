@@ -5,6 +5,7 @@ Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 $THISJOBTYPE către $number a fost finalizar cu succes.
+
 Pagini:              $npages
 Destinatar:          $csi
 Calitate:            $resolution
@@ -23,12 +24,3 @@ GroupID:             $groupid
 CommID:              c$commid
 
 Procesarea a durat $JTIME.
-
-Informaţii suplimentare:
-
-$faxstatus
-
----- Urmează transcriptul sesiunii ----
-
-$SESSION_LOG
-

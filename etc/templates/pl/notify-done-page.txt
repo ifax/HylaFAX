@@ -5,6 +5,7 @@ Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 Zadanie czysty tekst do $number zakoączone powodzeniem.
+
                 Połączeą: $tottries (wymiany ze zdalnym urządzeniem)
  Połączeą telefonicznych: $totdials (Łącznie połączeą telefonicznych)
                    Modem: $modem
@@ -14,11 +15,3 @@ Zadanie czysty tekst do $number zakoączone powodzeniem.
           ID Komunikacji: c$commid
 
 Czas przetwarzania $JTIME.
-
-  Dodatkowe informacje:
-
-$faxstatus
-
-    ---- Transkrypcja sesji ----
-
-$SESSION_LOG

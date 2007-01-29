@@ -14,11 +14,3 @@ Votre message à $number a été envoyé avec succès.
 Nº de communication: c$commid
 
 Le temps de traitement a été de $JTIME.
-
-  Informations complémentaire :
-
-$faxstatus
-
-    ---- La transcription de la session ----
-
-$SESSION_LOG

@@ -11,6 +11,7 @@ $faxstatus
 
 Assurez-vous que les fichiers PostScript ne contiennent pas de
 polices non-standard ni de structures invalide
+
 ------- État de la tâche -------
         Destination: $number
         Nº de tâche: $jobid

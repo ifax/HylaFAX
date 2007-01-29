@@ -6,6 +6,7 @@ Content-Transfer-Encoding: Quoted-Printable
 
 Votre télécopie à $number n'a pas pu être complétée avant la date limite
 désignée.
+
 ------- État de la tâche -------
         Destination: $number
         Nº de tâche: $jobid

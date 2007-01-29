@@ -6,6 +6,7 @@ Content-Transfer-Encoding: Quoted-Printable
 
 Votre télécopie à $number a échoué parce que le script de conversion
 n'a pas été trouvé.
+
 ------- État de la tâche -------
         Destination: $number
         Nº de tâche: $jobid

@@ -5,6 +5,7 @@ Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 Su trabajo fax para $number el programa de conversión no fue encontrado.
+
 ------- Unsent job status -------
                      Destino: $number
                    IDTrabajo: $jobid

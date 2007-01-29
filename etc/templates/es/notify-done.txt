@@ -5,6 +5,7 @@ Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 Su trabajo fax para $number se ha cumpletado con éxito.
+
                      Páginas: $npages
                     Receptor: $csi
                      Calidad: $resolution
@@ -23,11 +24,3 @@ Su trabajo fax para $number se ha cumpletado con éxito.
                        IDCom: c$commid
 
 El tiempo de procesamiento fue de $JTIME.
-
-  Información adicional:
-
-$faxstatus
-
-    ---- La transcripción de la sesión es la siguiente ----
-
-$SESSION_LOG

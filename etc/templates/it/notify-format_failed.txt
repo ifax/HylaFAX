@@ -11,6 +11,7 @@ $faxstatus
 
 Verificare i documenti Postscript per l'uso di font non standard
 e construtti non validi
+
 ------- Unsent job status -------
              Destinatario: $number
                     JobID: $jobid

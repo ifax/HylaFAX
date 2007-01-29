@@ -5,6 +5,7 @@ Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 O seu fax para $number não pôde ser enviado dentro do tempo estabelecido.
+
 ------- Unsent job status -------
               Destinatário: $number
                    IDEnvio: $jobid

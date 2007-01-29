@@ -5,6 +5,7 @@ Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 O seu fax para $number o programa de conversão não foi encontrado.
+
 ------- Unsent job status -------
               Destinatário: $number
                    IDEnvio: $jobid
