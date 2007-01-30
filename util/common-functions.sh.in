@@ -250,7 +250,7 @@ template ()
 		{
 		    template_line(buf);
 		}
-		close(file);
+		close(p);
 	    }
 
 	}
