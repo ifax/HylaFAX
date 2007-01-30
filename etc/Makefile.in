@@ -98,6 +98,8 @@ install: default
 	    -src ${SRCDIR}/lutRS18.pcf -O lutRS18.pcf
 	${INSTALL} -u ${FAXUSER} -g ${FAXGROUP} -m ${DIRMODE} \
 	    -idb hylafax.sw.server -dir -F ${SPOOL}/etc templates
+	${PUTSAMPLE} -F ${SPOOL}/etc/templates -m 644 \
+	    -src ${SRCDIR}/templates/README -O README
 	for d in ${TEMPLATES}; do \
 		${INSTALL} -u ${FAXUSER} -g ${FAXGROUP} -m ${DIRMODE} \
 		    -idb hylafax.sw.server -dir -F ${SPOOL}/etc/templates $$d; \
