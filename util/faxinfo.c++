@@ -243,12 +243,12 @@ main(int argc, char** argv)
 	if (tif == NULL) {
 	    printf("Could not open %s; either not TIFF or corrupted.\n",
 		    argv[optind]);
-	    return (0);
+	    return (1);
 	}
 	bool ok = isFAXImage(tif);
 	if (!ok) {
 	    printf("Does not look like a facsimile?\n");
-	    return (0);
+	    return (1);
 	}
 
 	Class2Params params;
