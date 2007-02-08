@@ -131,6 +131,12 @@ if [ -f etc/PollDispatch ]; then
     . etc/PollDispatch       # NB: PollDispatch allows customization
 fi
 
+if [ -f etc/templates/$TEMPLATE/hook.sh ]
+then
+    # Any hooks that the templates need
+    . etc/templates/$TEMPLATE/hook.sh
+fi
+
 ## TemplateName <type>
 ## Return the pollrcvd template name for <type>
 ## Fallback to faxrcvd if pollrcvd template is unavailable

@@ -145,6 +145,12 @@ if [ -f etc/FaxDispatch ]; then
     . etc/FaxDispatch		# NB: FaxDispatch sets SENDTO
 fi
 
+if [ -f etc/templates/$TEMPLATE/hook.sh ]
+then
+    # Any hooks that the templates need
+    . etc/templates/$TEMPLATE/hook.sh
+fi
+
 
 ## MailWithFAX <type>
 ## Email the <type> template,adding the attachments according

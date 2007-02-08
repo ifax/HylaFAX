@@ -126,6 +126,11 @@ if [ -f etc/FaxNotify ]; then
     . etc/FaxNotify
 fi
 
+if [ -f etc/templates/$TEMPLATE/hook.sh ]
+then
+    # Any hooks that the templates need
+    . etc/templates/$TEMPLATE/hook.sh
+fi
 
 
 if [ -n "$RETURNFILETYPE" ]; then
