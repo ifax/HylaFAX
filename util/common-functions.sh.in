@@ -7,6 +7,15 @@
 #
 
 #
+# tolower(string)
+# Convert string to lowercase.
+#
+tolower()
+{
+    echo "`echo $1 | $SED -e 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/'`"
+}
+
+#
 # For getting all of the "faxinfo" items to line up.
 #
 setInfoSize()
@@ -182,7 +191,7 @@ mimeEncode()
     else
         encoding=$ENCODING;
     fi
-    encoding=`echo $encoding | $SED -e 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/'`
+    encoding=`tolower $encoding`
 
     # rather than separate $BASE64ENCODE and $QPENCODE
     case "$encoding" in
@@ -217,6 +226,119 @@ mimeEncode()
 	    fi;;
         *) cat $1;; # 7bit, 8bit, binary
     esac
+}
+
+#
+# Check if $string matches the regular expression $regex
+# matchRegEx(string, regex)
+# Returns 1 on success, 0 otherwise.
+matchRegEx()
+{
+  string=$1
+  regex=$2
+
+  # Awk grep and sed ranges can't be trusted to gives the same result
+  # on all platforms and locale. :( (Even for digit ranges...
+  # fractions can be included in the 0-1 range.)
+  # Forcing LC_ALL to C should be enough to fix this.
+  echo $string | LC_ALL=C awk -F=!=!=!=!=!=!=!=!= '
+    '$regex' {print 1; exit;}
+    {print 0;}'
+
+}
+
+#
+# Produce mailable encoding for mail headers.
+# headerEncode(string, position)
+# position is one of "phrase", "comment" or "text".
+# Default position is "text".
+#
+headerEncode()
+{
+    if [ -n "$1" ] ; then
+        string=$1
+    else
+        # Nothing to encode
+        return
+    fi
+    if [ -n "$2" ] ; then
+        position=$2
+    else
+        position="text"
+    fi
+
+    must_encode=false
+    encoded=$string
+
+    case $position in 
+      phrase)
+        if [ `matchRegEx "$string" '/^[\0-\177]*$/'` = 1 ]; then
+          echo $string | LC_ALL=C $AWK -F=!=!=!=!=!=!=!=!= '
+          function simple_quote(text)
+          {
+              gsub(/[\0-\37\177\\\"]/, "\\\\&", text);
+              if (text ~ /[^A-Za-z0-9!#$%&'\''*+\/=?^_`{|}~ -]/)
+                  text = "\"" text "\"";
+              print text;
+          }
+          BEGIN {
+          }
+          simple_quote($0);
+          END {
+          }'
+          return
+        fi
+
+        if [ `matchRegEx "$string" '/[^\40\41\43-\133\135-\176]/'` = 1 ]; then
+          must_encode=true
+        fi
+        ;;
+      comment)
+        if [ `matchRegEx "$string" '/[^\40\41\43-\47\52-\176]/'` = 1 ]; then
+          must_encode=true
+        fi
+        ;;
+      text)
+        if [ `matchRegEx "$string" '/[^\40-\176]/'` = 1 ]; then
+          must_encode=true
+        fi
+        ;;
+    esac
+
+    if [ $must_encode == true ]; then
+      encoded=" =?UTF-8?B?`echo $string | $AWK -f bin/b64-encode.awk 2>$ERRORSTO`?="
+      echo $encoded
+    else
+      echo $string
+    fi
+}
+
+## headersEncode()
+## Check each header line and encode those which need it
+headersEncode()
+{
+    cat - | 
+        while read line;
+        do
+            type=`echo $line | $SED -e 's/:.*$//'`
+            content=`echo $line | $SED -e 's/[^:]*: *//'`
+            # Only encode subject, to and from for now.
+            case `tolower $type` in
+              subject)
+                encoded=`headerEncode "$content"`
+                line="$type: $encoded"
+                ;;
+              DISABLED_to|DISABLED_from)
+                if [ `matchRegEx "$content" '/<.*>/'` = 1 ]; then
+                  name=`echo $content | $SED -e 's/<[^<>]*>//'`
+                  address=`echo $content | $SED -e 's/.*\(<[^<>]*>\).*/\1/'`
+                  name=`headerEncode "$name" phrase`
+                  line="$type: $name $address"
+                fi
+                ;;
+            esac
+            echo $line
+        done
 }
 
 #
@@ -311,7 +433,8 @@ CreateMailMessage ()
     TEMPLATE_PATH=`dirname $1`
     $SED -n -e '/^$/q;p' $1			\
     	| $GREP -v "^Content"		\
-	| template "$TEMPLATE_PATH"
+	| template "$TEMPLATE_PATH" 	\
+	| headersEncode
 
     # If there are attachments, we are a multipart/mixed
     echo "Mime-Version: 1.0"
