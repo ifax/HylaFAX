@@ -1,0 +1,34 @@
+To: $SENDTO
+From: $FROMADDR
+Subject: Fax $jobid to $DESTINATION failed
+Content-type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+
+#INCLUDE header.inc
+
+#INCLUDE divider.inc
+
+Your fax <b>$jobid</b> to $DESTINATION has <i>failed</i>.
+
+
+#INCLUDE job-data.inc
+
+Processing time was $JTIME.
+
+#INCLUDE divider.inc
+
+    <div id=error>
+	The last attempt failed because:<br/>
+	<blockquote>
+	    $faxstatus
+	</blockquote>
+#INCLUDE session_log.inc
+    </div>
+
+#INCLUDE divider.inc
+
+#INCLUDE fax-attach.inc
+
+#INCLUDE footer.inc
+

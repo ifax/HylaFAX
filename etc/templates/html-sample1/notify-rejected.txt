@@ -1,0 +1,21 @@
+To: $SENDTO
+From: $FROMADDR
+Subject: Fax $jobid to $DESTINATION rejected
+Content-type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+#INCLUDE header.inc
+
+Your job to $DESTINATION was <i>rejected</i> because:
+<blockquote>
+    <pre>$faxstatus</pre>
+</blockquote>
+<br/>
+
+#INCLUDE divider.inc
+
+#INCLUDE job-data.inc
+
+#INCLUDE divider.inc
+
+#INCLUDE footer.inc

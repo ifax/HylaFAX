@@ -1,0 +1,23 @@
+To: $SENDTO
+Subject: Fax $jobid to $DESTINATION failed
+From: $FROMADDR
+Content-type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+#INCLUDE header.inc
+
+#INCLUDE divider.inc
+
+Your fax <b>$jobid</b> to $DESTINATION was <i>not sent</i> because document conversion
+failed.  The output from the converter program was:
+<blockquote>
+    <pre>$faxstatus</pre>
+</blockquote>
+<br/>
+Check any PostScript documents for non-standard fonts and invalid constructs
+
+#INCLUDE divider.inc
+
+#INCLUDE job-data.inc
+
+#INCLUDE footer.inc

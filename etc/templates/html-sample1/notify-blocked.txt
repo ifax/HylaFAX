@@ -1,0 +1,21 @@
+To: $SENDTO
+From: $FROMADDR
+Subject: Fax $jobid to $DESTINATION blocked
+Content-type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+
+#INCLUDE header.inc
+
+#INCLUDE divider.inc
+
+Your fax <b>$jobid</b> to $DESTINATION is <i>delayed</i> in
+the scheduling queue because:
+<blockquote>
+    $faxstatus
+</blockquote>
+<br/>
+The job will be processed as soon as possible.
+
+#INCLUDE footer.inc
+

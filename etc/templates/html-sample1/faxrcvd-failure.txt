@@ -1,0 +1,21 @@
+To: $TOADDR
+From: $FROMADDR
+Subject: FAX not received on $DEVICE
+Content-type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+
+#INCLUDE header.inc
+
+    <hr class="divider"/>
+
+    <div id=error>
+	An attempt to receive a fax failed because:<br/>
+	<blockquote>
+	    $MSG
+	</blockquote>
+#INCLUDE session_log.inc
+    </div>
+
+#INCLUDE footer.inc
+

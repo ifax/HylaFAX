@@ -1,0 +1,21 @@
+To: $SENDTO
+From: $FROMADDR
+Subject: Fax $jobid to $DESTINATION completed
+Content-type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+
+#INCLUDE header.inc
+
+#INCLUDE divider.inc
+
+Your fax <b>$jobid</b> to $DESTINATION was <i>completed successfully</i> in $JTIME.
+
+#INCLUDE job-data.inc
+
+#INCLUDE divider.inc
+
+#INCLUDE fax-attach.inc
+
+#INCLUDE footer.inc
+

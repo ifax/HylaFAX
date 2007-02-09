@@ -1,0 +1,29 @@
+To: $SENDTO
+From: $FROMADDR
+Subject: Partial FAX received from $SENDER
+Content-type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+
+#INCLUDE header.inc
+
+    <hr class="divider"/>
+
+#INCLUDE fax-data.inc
+
+    <hr class="divider"/>
+
+    <div id=error>
+	The full document was not received because:<br/>
+	<blockquote>
+	    $MSG
+	</blockquote>
+#INCLUDE session_log.inc
+    </div>
+
+    <hr class="divider"/>
+
+#INCLUDE fax-attach.inc
+
+#INCLUDE footer.inc
+

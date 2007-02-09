@@ -1,0 +1,30 @@
+To: $SENDTO
+From: $FROMADDR
+Subject: Fax $jobid to $DESTINATION requeued
+Content-type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+
+#INCLUDE header.inc
+
+#INCLUDE divider.inc
+
+Your fax <b>$jobid</b> to $DESTINATION has been <i>requeued</i>.
+<br/>
+The last attempt to send it was unsuccessful:
+<blockquote id=error>
+    <code>$faxstatus</code>
+</blockquote>
+
+#INCLUDE job-data.inc
+
+It will be retried again at $NEXT.
+
+#INCLUDE divider.inc
+    <div id=error>
+	The last attempt failed because:<br/>
+#INCLUDE session_log.inc
+    </div>
+
+#INCLUDE footer.inc
+

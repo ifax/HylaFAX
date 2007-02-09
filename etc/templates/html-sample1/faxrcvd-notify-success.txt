@@ -1,0 +1,19 @@
+To: $TOADDR
+From: $FROMADDR
+Subject: FAX received on $DEVICE from "$SENDER"
+Content-type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+
+#INCLUDE header.inc
+
+#INCLUDE divider.inc
+
+#INCLUDE fax-data.inc
+
+#INCLUDE divider.inc
+
+#INCLUDE fax-dispatched.inc
+
+#INCLUDE footer.inc
+

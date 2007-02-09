@@ -1,0 +1,19 @@
+To: $SENDTO
+From: $FROMADDR
+Subject: Fax $jobid to $DESTINATION timed out
+Content-type: text/html; charset=UTF-8
+Content-Transfer-Encoding: base64
+
+
+#INCLUDE header.inc
+
+#INCLUDE divider.inc
+
+Your fax <b>$jobid</b> to $DESTINATION has <i>timed out</i>
+and has been removed from the queue.
+
+#INCLUDE divider.inc
+
+#INCLUDE job-data.inc
+
+#INCLUDE footer.inc
