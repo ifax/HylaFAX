@@ -103,7 +103,7 @@ install: default
 	for d in ${TEMPLATES}; do \
 		${INSTALL} -u ${FAXUSER} -g ${FAXGROUP} -m ${DIRMODE} \
 		    -idb hylafax.sw.server -dir -F ${SPOOL}/etc/templates $$d; \
-		for f in templates/$$d/*.txt; do \
+		for f in templates/$$d/*; do \
 			${PUTSAMPLE} -F ${SPOOL}/etc/templates/$$d -m 644 -src $$f `basename $$f`; \
 		done; \
 	done;
