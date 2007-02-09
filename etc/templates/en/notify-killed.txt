@@ -1,5 +1,5 @@
 To: $SENDTO
-Subject: facsimile to $DESTINATION removed from queue
+Subject: facsimile job $jobid to $DESTINATION removed from queue
 From: HylaFAX Agent <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable

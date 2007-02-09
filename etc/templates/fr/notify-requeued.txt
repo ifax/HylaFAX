@@ -1,5 +1,5 @@
 To: $SENDTO
-Subject: Télécopie à $DESTINATION
+Subject: Télécopie travail $jobid à $DESTINATION remis en file d'attente
 From: HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable

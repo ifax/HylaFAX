@@ -1,5 +1,5 @@
 To: $SENDTO
-Subject: fax a $DESTINATION se ha cumpletado
+Subject: trabajo fax $jobid a $DESTINATION se ha cumpletado 
 From: Servidor de Fax HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable

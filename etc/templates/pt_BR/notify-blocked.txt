@@ -1,5 +1,5 @@
 To: $SENDTO
-Subject: fax para $DESTINATION bloqueado
+Subject: fax $jobid para $DESTINATION bloqueado
 From: Servidor de fax HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
