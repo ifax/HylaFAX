@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.1
 
+* Encode subject headers (using B encoding) when necessary (9 Feb 2007)
 * Added sample HTML templates to demonstrate templating features (9 Feb 2007)
 * Added error exit codes to faxinfo (7 Feb 2007)
 * PAM reworked to use complete sessions independantly (25 Jan 2007)
