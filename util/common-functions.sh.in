@@ -571,7 +571,7 @@ ConvertFile ()
 	    case $2 in
 		PostScript|Postscript|PS|ps)
 		    TraceLog "No conversion"
-		    echo $1
+		    echo "$1"
 		    ;;
 		PDF|pdf)
 		    TraceLog "pdf2ps necessary"
@@ -598,6 +598,7 @@ ConvertFile ()
 		    ;;
 		PDF|pdf)
 		    TraceLog "Nothing necessary"
+		    echo "$1"
 		    ;;
 		TIFF|tiff|TIF|tif)
 		    TraceLog "Using tiff2pdf"
@@ -623,6 +624,7 @@ ConvertFile ()
 		    ;;
 		TIFF|tiff|TIF|tif)
 		    TraceLog "Nothing neccessary"
+		    echo "$1"
 		    ;;
 	    esac
 	    ;;
