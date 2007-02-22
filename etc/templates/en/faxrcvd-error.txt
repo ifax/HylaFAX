@@ -4,7 +4,7 @@ Subject: Fax received from "$SENDER"
 Content-type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: Quoted-Printable
 
-$FILE (ftp://$HOSTNAME:$PORT/$FILE):                                  
+$FILE (ftp://$HOSTNAME:$PORT/$FILE):
           Sender: $SENDER
            Pages: $PAGES
          Quality: $QUALITY
@@ -17,7 +17,7 @@ $FILE (ftp://$HOSTNAME:$PORT/$FILE):
          CallID1: $CALLID1
          CallID2: $CALLID2
      Received On: $DEVICE
-          CommID: $COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)      
+          CommID: $COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)
 
 Errors were received:
 $SESSION_LOG

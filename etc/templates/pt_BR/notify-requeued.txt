@@ -1,5 +1,5 @@
 To: $SENDTO
-Subject: fax $JOBINFO para $DESTINATION colocado na memória 
+Subject: fax $JOBINFO para $DESTINATION colocado na memória
 From: Servidor de fax HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable

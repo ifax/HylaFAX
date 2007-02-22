@@ -5,7 +5,7 @@ Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
 Ihr Fax Auftrag an $number, ein Faxabruf,
-konnte nicht vollendet werden weil 
+konnte nicht vollendet werden weil
 kein Dokument war zum Empfang verfügbar.
 
 Verarbeitungszeit $JTIME.

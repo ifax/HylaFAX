@@ -1,4 +1,4 @@
-# We need HTMLizing certain fields 
+# We need HTMLizing certain fields
 
 html_sanitize()
 {

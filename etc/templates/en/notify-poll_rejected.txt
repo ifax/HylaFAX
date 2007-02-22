@@ -4,7 +4,7 @@ From: HylaFAX Agent <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-Your polling request to $number could not be completed because 
+Your polling request to $number could not be completed because
 the remote side rejected your request.
 
 Processing time was $JTIME.

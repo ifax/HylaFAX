@@ -17,5 +17,5 @@ Eroare:           $ERRCORRECT
 CallID1:          $CALLID1
 CallID2:          $CALLID2
 Recepţionat pe:   $DEVICE
-CommID:           $COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID) 
+CommID:           $COMMID (ftp://$HOSTNAME:$PORT/log/c$COMMID)
 

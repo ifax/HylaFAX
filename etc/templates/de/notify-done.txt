@@ -1,5 +1,5 @@
 To: $SENDTO
-Subject: Fax Auftrag $JOBINFO an $DESTINATION abgeschlossen 
+Subject: Fax Auftrag $JOBINFO an $DESTINATION abgeschlossen
 From: HylaFAX Empfang <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
