@@ -1,5 +1,5 @@
 To: $SENDTO
-Subject: Fax $jobid to $DESTINATION failed
+Subject: Fax $JOBINFO to $DESTINATION failed
 From: $FROMADDR
 Content-type: text/html; charset=UTF-8
 Content-Transfer-Encoding: base64

@@ -1,5 +1,5 @@
 To: $SENDTO
-Subject: fax zadanie $jobid do $DESTINATION nieudane
+Subject: fax zadanie $JOBINFO do $DESTINATION nieudane
 From: Serwer faxów HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable

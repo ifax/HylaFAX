@@ -107,15 +107,19 @@ fi
 if [ "$jobtype" = "pager" ] ; then
     number=$pagernum
 fi
-DESTINATION="$receiver"
-if [ -n "$DESTINATION" ]; then
-    DESTINATION="$DESTINATION ($number)"
+if [ -n "$receiver" ]; then
+    DESTINATION="$receiver ($number)"
 else
     DESTINATION="$number"
 fi
+if [ -n "$jobtag" ]; then
+    JOBINFO="$jobtag ($jobid)"
+else
+    JOBINFO="$jobid"
+fi
 
 SENDTO=$mailaddr
-export SENDTO FROMADDR TOADDR SESSION_LOG DESTINATION WHY JTIME NEXT
+export SENDTO FROMADDR TOADDR SESSION_LOG DESTINATION WHY JTIME NEXT JOBINFO
 
 #
 # Apply customizations.  All customizable variables should

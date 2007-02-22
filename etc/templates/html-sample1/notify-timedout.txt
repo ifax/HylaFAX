@@ -1,6 +1,6 @@
 To: $SENDTO
 From: $FROMADDR
-Subject: Fax $jobid to $DESTINATION timed out
+Subject: Fax $JOBINFO to $DESTINATION timed out
 Content-type: text/html; charset=UTF-8
 Content-Transfer-Encoding: base64
 

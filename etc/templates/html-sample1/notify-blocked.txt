@@ -1,6 +1,6 @@
 To: $SENDTO
 From: $FROMADDR
-Subject: Fax $jobid to $DESTINATION blocked
+Subject: Fax $JOBINFO to $DESTINATION blocked
 Content-type: text/html; charset=UTF-8
 Content-Transfer-Encoding: base64
 

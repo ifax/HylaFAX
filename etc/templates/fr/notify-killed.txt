@@ -1,5 +1,5 @@
 To: $SENDTO
-Subject: Télécopie travail $jobid à $DESTINATION Supprimée de la file d'attente
+Subject: Télécopie travail $JOBINFO à $DESTINATION Supprimée de la file d'attente
 From: HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable

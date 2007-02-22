@@ -1,5 +1,5 @@
 To: $SENDTO
-Subject: fax $jobid per $DESTINATION riaccodato
+Subject: fax $JOBINFO per $DESTINATION riaccodato
 From: Server fax HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable

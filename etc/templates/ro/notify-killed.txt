@@ -1,5 +1,5 @@
 To: $SENDTO
-Subject: Fax $jobid către $DESTINATION şters din coadă
+Subject: Fax $JOBINFO către $DESTINATION şters din coadă
 From: HylaFAX Agent <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
