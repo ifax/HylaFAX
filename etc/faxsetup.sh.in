@@ -50,7 +50,6 @@ test -d /usr/local/bin && PATH=$PATH:/usr/local/bin	# for GNU tools
 
 AWK=@AWK@			# awk for use below
 CAT=@CAT@			# cat command for use below
-CHARSET=@CHARSET@		# character set to use in e-mails
 CHGRP=@CHGRP@			# change file group for use below
 CHMOD=@CHMOD@			# change file mode for use below
 CHOWN=@CHOWN@			# change file owner for use below
@@ -135,7 +134,6 @@ AWK
 BASE64ENCODE
 BIN		DIR_BIN
 CAT
-CHARSET
 CHGRP
 CHMOD
 CHOWN

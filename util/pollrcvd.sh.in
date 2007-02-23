@@ -57,7 +57,6 @@ EOF
 ENCODING=base64
 TIFF2PDF=bin/tiff2pdf
 TTYCMD=tty
-CHARSET=us-ascii
 
 . etc/setup.cache
 . bin/common-functions

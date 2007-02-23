@@ -70,7 +70,11 @@ ENCODING=base64
 MIMENCODE=mimencode
 TIFF2PDF=bin/tiff2pdf
 TTYCMD=tty
-CHARSET=us-ascii
+
+# CHARSET is not in setup.cache anymore. It must be set in FaxNotify
+# if the default of UTF-8 is not wanted. The default of UTF-8 should
+# work with most languages in the dictionary file.
+CHARSET=UTF-8
 
 . etc/setup.cache
 . bin/common-functions
