@@ -804,7 +804,7 @@ HylaFAXServer::setJobParameter(Job& job, Token t, bool b)
 	}
 	parmBotch(t);
     }
-    return (true);
+    return (false);
 }
 
 /*
