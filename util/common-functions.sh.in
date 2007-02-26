@@ -305,7 +305,7 @@ headerEncode()
         ;;
     esac
 
-    if [ $must_encode == true ]; then
+    if [ $must_encode = true ]; then
       encoded=" =?UTF-8?B?`echo $string | $AWK -f bin/b64-encode.awk 2>$ERRORSTO`?="
       echo $encoded
     else
