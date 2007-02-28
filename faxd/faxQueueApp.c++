@@ -202,7 +202,8 @@ faxQueueApp::scanQueueDirectory()
 {
     DIR* dir = Sys::opendir(sendDir);
     if (dir == NULL) {
-	logError("Could not scan " | sendDir | " directory for outbound jobs");
+	logError("Could not scan %s directory for outbound jobs",
+		(const char*)sendDir);
 	return;
     }
     for (dirent* dp = readdir(dir); dp; dp = readdir(dir)) {
@@ -224,7 +225,8 @@ faxQueueApp::scanClientDirectory()
 {
     DIR* dir = Sys::opendir(clientDir);
     if (dir == NULL) {
-	logError("Could not scan " | clientDir | " directory for clients");
+	logError("Could not scan %s directory for clients",
+		(const char*) clientDir);
 	return;
     }
     for (dirent* dp = readdir(dir); dp; dp = readdir(dir)) {
@@ -1134,7 +1136,7 @@ faxQueueApp::runConverter(Job& job, const char* app, char* const* argv, fxStr& e
     fxStr cmdline(argv[0]);
     for (u_int i = 1; argv[i] != NULL; i++)
 	cmdline.append(fxStr::format(" %s", argv[i]));
-    traceQueue(job, "CONVERT DOCUMENT: " | cmdline);
+    traceQueue(job, "CONVERT DOCUMENT: %s", (const char*)cmdline);
     JobStatus status;
     int pfd[2];
     if (pipe(pfd) >= 0) {
@@ -1240,7 +1242,7 @@ faxQueueApp::makeCoverPage(Job& job, FaxRequest& req, const Class2Params& params
 	| " " | contCoverPageTemplate
 	| " " | fitem.item
     );
-    traceQueue(job, "COVER PAGE: " | cmd);
+    traceQueue(job, "COVER PAGE: %s", (const char*)cmd);
     if (runCmd(cmd, true)) {
 	fxStr emsg;
 	fxStr tmp = fitem.item | ";" | params.encodePage();
@@ -1388,11 +1390,11 @@ faxQueueApp::sendJobStart(Job& job, FaxRequest* req)
 	}
 	break;
     default:				// parent, setup handler to wait
-	traceQueue(job, "CMD START"
-	    | joinargs(cmd, dargs)
-	    | " -m " | job.modem->getDeviceID()
-	    | " "    | files
-	    | " (PID %lu)"
+	// joinargs puts a leading space so this looks funny here
+	traceQueue(job, "CMD START%s -m %s %s (PID %lu)"
+	    , (const char*) joinargs(cmd, dargs)
+	    , (const char*) job.modem->getDeviceID()
+	    , (const char*) files
 	    , pid
 	);
 	job.startSend(pid);
@@ -1462,7 +1464,8 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
 	req->notice = "Send program terminated abnormally; unable to exec " |
 	    pickCmd(*req);
 	req->status = send_failed;
-	logError("JOB " | job.jobid | ": " | req->notice);
+	logError("JOB %s: %s",
+		(const char*)job.jobid, (const char*)req->notice);
     }
     if (req->status == send_reformat) {
 	/*
@@ -1572,16 +1575,15 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
 	if (!job.suspendPending) {
 	    job.remove();			// remove from active list
 	    if (req->tts > now) {
-		traceQueue(job, "SEND INCOMPLETE: requeue for "
-		    | strTime(req->tts - now)
-		    | "; " | req->notice);
+		traceQueue(job, "SEND INCOMPLETE: requeue for %s; %s",
+		    (const char*)strTime(req->tts - now), (const char*)req->notice);
 		setSleep(job, req->tts);
 		Trigger::post(Trigger::SEND_REQUEUE, job);
 		if (req->isNotify(FaxRequest::when_requeued))
 		    notifySender(job, Job::requeued);
 	    } else {
-		traceQueue(job, "SEND INCOMPLETE: retry immediately; " |
-		    req->notice); 
+		traceQueue(job, "SEND INCOMPLETE: retry immediately; %s",
+		    (const char*)req->notice); 
 		setReadyToRun(job, jobCtrlWait);		// NB: job.tts will be <= now
 	    }
 	} else					// signal waiting co-thread
@@ -1596,7 +1598,7 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
 	    job.state = FaxRequest::state_done;
 	    deleteRequest(job, req, Job::done, false, fmtTime(duration));
 	}
-	traceQueue(job, "SEND DONE: " | strTime(duration));
+	traceQueue(job, "SEND DONE: %s", (const char*)strTime(duration));
 	Trigger::post(Trigger::SEND_DONE, job);
 	setDead(job);
     }
@@ -1723,7 +1725,7 @@ faxQueueApp::setReady(Job& job)
 void
 faxQueueApp::setSleep(Job& job, time_t tts)
 {
-    traceJob(job, "SLEEP FOR " | strTime(tts - Sys::now()));
+    traceJob(job, "SLEEP FOR %s", (const char*)strTime(tts - Sys::now()));
     Trigger::post(Trigger::JOB_SLEEP, job);
     JobIter iter(sleepq);
     for (; iter.notDone() && iter.job().tts <= tts; iter++)
@@ -1900,7 +1902,7 @@ faxQueueApp::rejectSubmission(Job& job, FaxRequest& req, const fxStr& reason)
     Trigger::post(Trigger::JOB_REJECT, job);
     req.status = send_failed;
     req.notice = reason;
-    traceServer("JOB " | job.jobid | ": " | reason);
+    traceServer("JOB %s: ", (const char*)job.jobid, (const char*)reason);
     deleteRequest(job, req, Job::rejected, true);
     setDead(job);				// dispose of job
 }
@@ -2031,7 +2033,8 @@ faxQueueApp::rejectJob(Job& job, FaxRequest& req, const fxStr& reason)
 {
     req.status = send_failed;
     req.notice = reason;
-    traceServer("JOB " | job.jobid | ": " | reason);
+    traceServer("JOB %s: %s",
+	    (const char*)job.jobid, (const char*)reason);
     job.state = FaxRequest::state_failed;
     Trigger::post(Trigger::JOB_REJECT, job);
     setDead(job);				// dispose of job
@@ -2046,7 +2049,7 @@ faxQueueApp::blockJob(Job& job, FaxRequest& req, const char* mesg)
     job.state = FaxRequest::state_blocked;
     req.notice = mesg;
     updateRequest(req, job);
-    traceQueue(job, mesg);
+    traceQueue(job, "%s", mesg);
     if (req.isNotify(FaxRequest::when_requeued))
 	notifySender(job, Job::blocked); 
     Trigger::post(Trigger::JOB_BLOCKED, job);
@@ -2068,7 +2071,8 @@ faxQueueApp::delayJob(Job& job, FaxRequest& req, const char* mesg, time_t tts)
     job.startKillTimer(req.killtime);
     req.notice = reason;
     updateRequest(req, job);
-    traceQueue(job, reason | ": requeue for " | strTime(delay));
+    traceQueue(job, "%s: requeue for %s",
+	    (const char*)mesg, (const char*)strTime(delay));
     if (req.isNotify(FaxRequest::when_requeued))
 	notifySender(job, Job::requeued); 
     Trigger::post(Trigger::JOB_DELAYED, job);
@@ -2228,7 +2232,7 @@ faxQueueApp::submitJob(const fxStr& jobid, bool checkState)
 		job.state = FaxRequest::state_failed;
 		req.status = send_failed;
 		req.notice = "Invalid or corrupted job description file";
-		traceServer("JOB " | jobid | ": %s", (const char*) req.notice);
+		traceServer("JOB %s : %s", (const char*)jobid, (const char*) req.notice);
 		// NB: this may not work, but we try...
 		deleteRequest(job, req, Job::rejected, true);
 	    } else if (req.state == FaxRequest::state_done ||
@@ -2236,7 +2240,8 @@ faxQueueApp::submitJob(const fxStr& jobid, bool checkState)
 		logError("JOB %s: Cannot resubmit a completed job",
 		    (const char*) jobid);
 	    } else
-		traceServer(filename | ": Unable to purge job, ignoring it");
+		traceServer("%s: Unable to purge job, ignoring it",
+			(const char*)filename);
 	} else
 	    logError("JOB %s: Could not lock job file; %m.",
 		(const char*) jobid);
@@ -2543,7 +2548,7 @@ faxQueueApp::runScheduler()
 				if (iter.notDone() && &iter.job() == bjob)
 				    iter++;
 
-				traceJob(job, "ADDING JOB " | cjob->jobid | " TO BATCH");
+				traceJob(job, "ADDING JOB %s TO BATCH", (const char*)cjob->jobid);
 				batchJob(bjob, cjob, creq);
 				bjob = cjob;
 				batchedjobs++;
@@ -2564,7 +2569,7 @@ faxQueueApp::runScheduler()
 				delete creq;
 				continue;
 			    }
-			    traceJob(job, "ADDING JOB " | cjob->jobid | " TO BATCH");
+			    traceJob(job, "ADDING JOB %s TO BATCH", (const char*)cjob->jobid);
 			    cjob->stopTTSTimer();
 			    // This job was batched from sleeping, things have
 			    // changed; Update the queue file for onlookers.
@@ -2959,7 +2964,7 @@ void
 faxQueueApp::notifyModemWedged(Modem& modem)
 {
     fxStr dev(idToDev(modem.getDeviceID()));
-    logError("MODEM " | dev | " appears to be wedged");
+    logError("MODEM %s appears to be wedged", (const char*)dev);
     fxStr cmd(wedgedCmd
 	| quote |  modem.getDeviceID() | enquote
 	| quote |                  dev | enquote
@@ -3032,7 +3037,8 @@ faxQueueApp::FIFOModemMessage(const fxStr& devid, const char* msg)
 	Trigger::post(Trigger::MODEM_VOICE_END, modem);
 	break;
     default:
-	traceServer("FIFO: Bad modem message \"%s\" for modem " | devid, msg);
+	traceServer("FIFO: Bad modem message \"%s\" for modem %s",
+		msg, (const char*)devid);
 	break;
     }
 }
@@ -3067,7 +3073,8 @@ faxQueueApp::FIFOJobMessage(const fxStr& jobid, const char* msg)
 	Trigger::post(Trigger::SEND_POLLDONE, *jp, msg+1);
 	break;
     default:
-	traceServer("FIFO: Unknown job message \"%s\" for job " | jobid, msg);
+	traceServer("FIFO: Unknown job message \"%s\" for job %s",
+		msg, (const char*)jobid);
 	break;
     }
 }
@@ -3093,7 +3100,8 @@ faxQueueApp::FIFORecvMessage(const fxStr& devid, const char* msg)
 	Trigger::post(Trigger::RECV_DOC, modem, msg+1);
 	break;
     default:
-	traceServer("FIFO: Unknown recv message \"%s\" for modem " | devid,msg);
+	traceServer("FIFO: Unknown recv message \"%s\" for modem %s",
+		msg, (const char*)devid);
 	break;
     }
 }
