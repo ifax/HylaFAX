@@ -43,7 +43,11 @@ is the command script invoked by the \*(Fx server whenever
 a facsimile is received as a result of a polling operation.
 The default script uses electronic mail to
 deliver the facsimile
-to the user that submitted the poll request.
+to the user that submitted the poll request, and can be controlled
+by editing the 
+.B etc/PollDispatch
+shell script in the spooling area that is sourced by pollrcvd when
+it runs.
 The arguments are:
 .TP 10
 .B mailaddr
