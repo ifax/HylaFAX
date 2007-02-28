@@ -20,9 +20,12 @@
 # If it is a pager job, and notify-$WHY-page.txt does *not* exist, it
 # will use the notify-$WHY.txt template.
 #
-# It honours the RETURNFILETYPE varialbe that can be set by FaxNotify.
+# It honours the RETURNFILETYPE variable that can be set by FaxNotify.
 # If it is set, it will return *all* the submitted documents as attachments
 # with the e-mail, converted to the RETURNFILETYPE.
+# Multiple file types may be specified by separating them with
+# whitespace; in that case a separate attachment for each filetype
+# will be created.
 
 if [ $# != 3 ] && [ $# != 4 ]; then
     echo "Usage: $0 qfile why jobtime [nextTry]"
@@ -125,7 +128,7 @@ export SENDTO FROMADDR TOADDR SESSION_LOG DESTINATION WHY JTIME NEXT JOBINFO
 # be set to their non-customized defaults prior to this.
 #
 if [ -f etc/FaxNotify ]; then
-    # source notify preferecnes
+    # source notify preferences
     . etc/FaxNotify
 fi
 
@@ -137,7 +140,10 @@ fi
 
 
 if [ -n "$RETURNFILETYPE" ]; then
-    ATTACH_ARGS=`BuildAttachArgs $RETURNFILETYPE`
+    for ft in $RETURNFILETYPE
+    do
+	ATTACH_ARGS="$ATTACH_ARGS "`BuildAttachArgs $ft`
+    done
 fi
 
 template="etc/templates/$TEMPLATE/notify-$WHY.txt"

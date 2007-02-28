@@ -83,6 +83,9 @@ fi
 # Permit various types of attachment types: ps, tif, pdf
 # Note that non-ASCII filetypes require an encoder.
 # pdf requires tiff2ps and tiff2pdf
+# Multiple file types may be specified by separating them with
+# whitespace; in that case a separate attachment for each filetype
+# will be created.
 #
 FILETYPE=ps
 SENDTO=
@@ -163,7 +166,10 @@ MailWithFAX ()
     files_1=$FILE;
     filetype_1=TIFF;
     nfiles=1;
-    ATTACH_ARGS=`BuildAttachArgs $FILETYPE`
+    for ft in $FILETYPE
+    do
+	ATTACH_ARGS="$ATTACH_ARGS "`BuildAttachArgs $ft`
+    done
     eval CreateMailMessage $template $ATTACH_ARGS \
 	2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
 
