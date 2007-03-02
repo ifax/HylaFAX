@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.2
 
+* Allow multiple FILETYPE (28 Feb 2007)
 * Fixed broken SNPP authentication (Bug 851) (28 Feb 2007)
 * Removed unused CHARSET setting (bug 843) (23 Feb 2007)
 * Include jobtag in Subject of notification emails (bug 850) (22 Feb 2007)
