@@ -2,27 +2,22 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.3.2 release!
-This release includes significant improvements to email templating,
-a system that offers server admins an unprecedented level of control
-over the branding of the email messages HylaFAX sends, and so we
-encourage you to check it out. As always, our sincerest thanks go
-to all who participate in the development and testing process.
+The HylaFAX development team is pleased to announce our 4.3.3 release!
+This is primarily a bugfix release, and as such is a recommended upgrade.
+Our sincerest thanks go to all who participate in the development and
+testing process.
 
                                *   *   *
 
 This document is intended to describe the significant differences
-between hylafax-4.3.2 and older releases, point out any known
+between hylafax-4.3.3 and older releases, point out any known
 incompatibilites and issues, and provide the reader with directions to
 further resources regarding HylaFAX.
 
                           *   NEW FEATURES   *
 
-* Sample HTML template demonstrating most templating features
-* Email templating now available for pollrcvd
-* Debian package can be built from debian/ directory
-* Config files support includes, via "Include" directive
-
+* emails can contain both pdf and tiff versions of each fax, instead of
+  only one of them.
 
 
                          *   KNOWN ISSUES   *
@@ -50,20 +45,8 @@ further resources regarding HylaFAX.
 
                       *   WHO SHOULD UPGRADE?   *
 
-This release rolls up several months of development by the HylaFAX
-community, and is a recommended release for all users. The most notable
-changes have been to email templating, where we have addressed several
-portability problems, improved the templates themselves, added an HTML
-sample and gone to considerable effort to encode non-ascii subject
-lines according to internet standards (most relevant for non-english
-users). Other changes include a complete refactoring of PAM code to
-make it more manageable, a useful "Include" option for anyone wanting
-to get fancy with their config files, and various bug-fixes.
-
-If you have done a lot of work with FaxDictionary to customize
-HylaFAX's emails, then you might want to delay upgrading to 4.3.2 until
-you have had a chance to study the new email templating system on a
-test server.
+This release contains important fixes to email templating and SNPP
+authentication. All users should upgrade.
 
 Anyone presently running a version of HylaFAX older than 4.3.0 and
 using DestControls should study the JobControl feature we added in

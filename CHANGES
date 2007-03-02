@@ -1,10 +1,11 @@
 #	$Id$	
 
-Changelog since HylaFAX 4.3.2
+Changelog for HylaFAX 4.3.3
 
 * Allow multiple FILETYPE (28 Feb 2007)
-* Fixed broken SNPP authentication (Bug 851) (28 Feb 2007)
-* Removed unused CHARSET setting (bug 843) (23 Feb 2007)
+* Fix faxq seqfault when syslogging strings containing %s, etc (28 Feb 2007)
+* Fix broken SNPP authentication (Bug 851) (28 Feb 2007)
+* Remove unused CHARSET setting (bug 843) (23 Feb 2007)
 * Include jobtag in Subject of notification emails (bug 850) (22 Feb 2007)
 * Correctly named notify "rejected" templates (bug 849) (20 Feb 2007)
 * Make ConverFile return filename even for noop on PDF files (20 Feb 2007)
