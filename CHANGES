@@ -1,5 +1,9 @@
 #	$Id$	
 
+Changelog since HylaFAX 4.3.3
+
+* Stop caching of DATE and VERSION by configure (Bug 854) (9 Mar 2007)
+
 Changelog for HylaFAX 4.3.3
 
 * Allow multiple FILETYPE (28 Feb 2007)
