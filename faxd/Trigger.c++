@@ -407,6 +407,7 @@ Trigger::post(TriggerEvent e, const Job& job, const char* info)
 	    msg.put(info);
 	post(e, job.triggers, any, msg);
     }
+    hook(e, job.jobid, info);
 }
 void
 Trigger::post(TriggerEvent e, const Modem& modem, const char* info)
@@ -421,4 +422,50 @@ Trigger::post(TriggerEvent e, const Modem& modem, const char* info)
 	    modem.encode(msg);
 	post(e, modem.triggers, any, msg);
     }
+    hook(e, modem.devID, info);
 }
+
+
+u_short Trigger::hookInterests[TRIGGER_MAXEVENT>>4];
+fxStr Trigger::hookCmd;
+
+void
+Trigger::hook (TriggerEvent e, const char* id, const char* info)
+{
+    static const char* classNames[4] = { "JOB", "SEND", "RECV", "MODEM" };
+    u_short mask = 1<<(e&15);
+    if (hookInterests[e>>4] & mask)
+    {
+	fxStr cmd = fxStr::format("%s %s 0x%04x \"%s\"",
+		(const char*)hookCmd, classNames[EventClass(e)], mask, id);
+	if (info)
+		cmd.append(fxStr::format(" \"%s\"", info));
+	logInfo("HOOK CMD %s", (const char*)cmd);
+	faxApp::runCmd(cmd);
+    }
+}
+
+
+bool
+Trigger::setTriggerHook (const char* prg, const char* spec)
+{
+    TriggerEvent hookTID = tidNextFree();
+
+    if (hookTID == TRIGGER_MAXTID) {
+	logError("TRIGGER: tid table overflow for EVENT");
+	return false;
+    }
+
+    Trigger* event = new Trigger(hookTID, "/dev/null");
+    if (!event->parse(spec))
+    {
+        logWarning("TRIGGER EVENT: Couldn't parse spec: %s", spec);
+    }
+
+    memcpy(hookInterests, event->interests, sizeof(hookInterests));
+    event->cancel();
+    delete event;
+    hookCmd = prg;
+}
+
+

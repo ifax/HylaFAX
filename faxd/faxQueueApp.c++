@@ -3310,7 +3310,24 @@ faxQueueApp::setConfigItem(const char* tag, const char* value)
 	    pageChop = FaxRequest::chop_last;
     } else if (streq(tag, "pagechopthreshold"))
 	pageChopThreshold = atof(value);
-    else
+    else if (streq(tag, "audithook") )
+    {
+        const char* cp;
+	for (cp = value; *cp && *cp != ':'; cp++)
+	    ;
+	if (*cp == ':') {
+	    fxStr cmd(value, cp-value);
+	    for (cp++; *cp && isspace(*cp); cp++)
+		;
+	    if (*cp != '\0') {
+	    	Trigger::setTriggerHook(cmd, cp);
+	    } else
+		configError("No trigger specification for audit hook");
+	} else
+	    configError("Missing ':' separator in audit hook specification");
+	
+    	
+    } else
 	return (false);
     return (true);
 }
