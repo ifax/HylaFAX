@@ -598,7 +598,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			 */
 			time_t nocarrierstart = Sys::now();
 			do {
-			    messageReceived = waitFor(AT_NOCARRIER, 2*1000);
+			    messageReceived = waitFor(AT_NOCARRIER, 5*1000);
 			} while (!messageReceived && Sys::now() < (nocarrierstart + 5));
 			if (messageReceived)
 			    prevPage++;
