@@ -66,7 +66,7 @@ bool faxAlterApp::duplicate ()
 	return false;
     }
 
-    for ( int pos = 0, next; (next = docs.next(pos, '\n')) < docs.length(); )
+    for ( u_int pos = 0, next; (next = docs.next(pos, '\n')) < docs.length(); )
     {
 	/*
 	 * The document is in the form "<TYPE> <filename>"
