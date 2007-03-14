@@ -125,6 +125,7 @@ protected:
     virtual bool setupFlowControl(FlowControl fc);
 // transmission support
     bool	sendPrologue(FaxParams& dcs_caps, const fxStr& tsi);
+    void	checkReceiverDIS(Class2Params&);
     bool	dropToNextBR(Class2Params&);
     bool	raiseToNextBR(Class2Params&);
     bool	sendTraining(Class2Params&, int, fxStr& emsg);
