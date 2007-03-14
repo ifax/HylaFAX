@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Unify and simply FCF tracing routines (12 Mar 2007)
 * Adds T.32 Addendum 1 Extended DF formats (12 Mar 2007)
 * Stop caching of DATE and VERSION by configure (Bug 854) (9 Mar 2007)
 

@@ -578,7 +578,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		    if (getframe) {
 			HDLCFrame frame(conf.class1FrameOverhead);
 			if (recvFrame(frame, FCF_RCVR, conf.t2Timer, true)) {
-			    tracePPM("RECV recv", frame.getFCF());
+			    traceFCF("RECV recv", frame.getFCF());
 			    signalRcvd = frame.getFCF();
 			    messageReceived = true;
 			}
@@ -703,7 +703,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		    if (params.ec != EC_DISABLE) return (false);
 		}
 		if (!pageGood) recvResetPage(tif);
-		if (signalRcvd == 0) tracePPM("RECV recv", lastPPM);
+		if (signalRcvd == 0) traceFCF("RECV recv", lastPPM);
 
 		/*
 		 * [Re]transmit post page response.
@@ -757,10 +757,10 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 					    do {
 						if (emsg != "") break;
 						(void) transmitFrame(params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP|FCF_RCVR);
-						tracePPR("RECV send", params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP);
+						traceFCF("RECV send", params.ec != EC_DISABLE ? FCF_RNR : FCF_CRP);
 						HDLCFrame rrframe(conf.class1FrameOverhead);
 						if (gotresponse = recvFrame(rrframe, FCF_RCVR, conf.t2Timer)) {
-						    tracePPM("RECV recv", rrframe.getFCF());
+						    traceFCF("RECV recv", rrframe.getFCF());
 						    if (rrframe.getFCF() == FCF_DCN) {
 							protoTrace("RECV recv DCN");
 							emsg = "COMREC received DCN";
@@ -806,7 +806,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			    } else {
 				(void) transmitFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
 			    }
-			    tracePPR("RECV send", sendERR ? FCF_ERR : FCF_MCF);
+			    traceFCF("RECV send", sendERR ? FCF_ERR : FCF_MCF);
 			}
 			/*
 			 * Reset state so that the next call looks
@@ -841,7 +841,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			return (false);
 		    }
 		    (void) transmitFrame(FCF_RTN|FCF_RCVR);
-		    tracePPR("RECV send", FCF_RTN);
+		    traceFCF("RECV send", FCF_RTN);
 		    /*
 		     * Reset the TIFF-related state so that subsequent
 		     * writes will overwrite the previous data.
@@ -1013,13 +1013,13 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			    gotrtncframe = recvFrame(rtncframe, FCF_RCVR, conf.t2Timer, true);
 			}
 			if (gotrtncframe) {
-			    tracePPM("RECV recv", rtncframe.getFCF());
+			    traceFCF("RECV recv", rtncframe.getFCF());
 			    switch (rtncframe.getFCF()) {
 				case FCF_PPS:
 				    if (rtncframe.getLength() > 5) {
 					u_int fc = frameRev[rtncframe[6]] + 1;
 					if ((fc == 256 || fc == 1) && !dataseen) fc = 0;	// distinguish 0 from 1 and 256
-					tracePPM("RECV recv", rtncframe.getFCF2());
+					traceFCF("RECV recv", rtncframe.getFCF2());
 					protoTrace("RECV received %u frames of block %u of page %u", \
 					    fc, frameRev[rtncframe[5]]+1, frameRev[rtncframe[4]]+1);
 					switch (rtncframe.getFCF2()) {
@@ -1042,10 +1042,10 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						}
 						if (frameRev[rtncframe[4]] > prevPage || (frameRev[rtncframe[4]] == prevPage && frameRev[rtncframe[5]] >= prevBlock)) {
 						    (void) transmitFrame(FCF_PPR, fxStr(ppr, 32));
-						    tracePPR("RECV send", FCF_PPR);
+						    traceFCF("RECV send", FCF_PPR);
 						} else {
 						    (void) transmitFrame(FCF_MCF|FCF_RCVR);
-						    tracePPR("RECV send", FCF_MCF);
+						    traceFCF("RECV send", FCF_MCF);
 						}
 						break;
 					}
@@ -1053,7 +1053,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    break;
 				case FCF_EOR:
 				    if (rtncframe.getLength() > 5) {
-					tracePPM("RECV recv", rtncframe.getFCF2());
+					traceFCF("RECV recv", rtncframe.getFCF2());
 					switch (rtncframe.getFCF2()) {
 					    case 0: 	// PPS-NULL
 					    case FCF_EOM:
@@ -1084,7 +1084,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 							return (false);
 						    }
 						    (void) transmitFrame(FCF_ERR|FCF_RCVR);
-						    tracePPR("RECV send", FCF_ERR);
+						    traceFCF("RECV send", FCF_ERR);
 						}
 						break;
 					}
@@ -1123,7 +1123,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    return (false);
 					}
 					(void) transmitFrame(FCF_CTR|FCF_RCVR);
-					tracePPR("RECV send", FCF_CTR);
+					traceFCF("RECV send", FCF_CTR);
 					dolongtrain = true;
 					pprcnt = 0;
 					break;
@@ -1141,7 +1141,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					return (false);
 				    }
 				    transmitFrame(signalSent);
-				    tracePPR("RECV send", (u_char) signalSent[2]);
+				    traceFCF("RECV send", (u_char) signalSent[2]);
 				    break;
 				case FCF_DCN:
 				    emsg = "COMREC received DCN";
@@ -1318,10 +1318,10 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		    gotpps = recvFrame(ppsframe, FCF_RCVR, conf.t1Timer);	// wait longer
 		} while (!gotpps && !wasTimeout() && lastResponse != AT_NOCARRIER && ++recvFrameCount < 5);
 		if (gotpps) {
-		    tracePPM("RECV recv", ppsframe.getFCF());
+		    traceFCF("RECV recv", ppsframe.getFCF());
 		    if (ppsframe.getFCF() == FCF_PPS) {
 			// sender may violate T.30-A.4.3 and send another signal (i.e. DCN)
-			tracePPM("RECV recv", ppsframe.getFCF2());
+			traceFCF("RECV recv", ppsframe.getFCF2());
 		    }
 		    switch (ppsframe.getFCF()) {
 			/*
@@ -1415,7 +1415,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				if (signalRcvd == 0) {
 				    // inform the remote that one or more frames were invalid
 				    transmitFrame(FCF_PPR, fxStr(ppr, 32));
-				    tracePPR("RECV send", FCF_PPR);
+				    traceFCF("RECV send", FCF_PPR);
 				    pprcnt++;
 				    if (pprcnt > 4) pprcnt = 4;		// could've been 4 before increment
 				}
@@ -1431,7 +1431,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    pprcnt = 0;
 				    if (signalRcvd != 0 || recvFrame(rtnframe, FCF_RCVR, conf.t2Timer)) {
 					bool gotrtnframe = true;
-					if (signalRcvd == 0) tracePPM("RECV recv", rtnframe.getFCF());
+					if (signalRcvd == 0) traceFCF("RECV recv", rtnframe.getFCF());
 					else signalRcvd = 0;		// reset it, we're in-sync now
 					recvFrameCount = 0;
 					lastResponse = AT_NOTHING;
@@ -1448,7 +1448,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						return (false);
 					    }
 					    transmitFrame(FCF_PPR, fxStr(ppr, 32));
-					    tracePPR("RECV send", FCF_PPR);
+					    traceFCF("RECV send", FCF_PPR);
 					    gotrtnframe = recvFrame(rtnframe, FCF_RCVR, conf.t2Timer);
 					    recvFrameCount++;
 					}
@@ -1481,11 +1481,11 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						    return (false);
 						}
 						(void) transmitFrame(FCF_CTR|FCF_RCVR);
-						tracePPR("RECV send", FCF_CTR);
+						traceFCF("RECV send", FCF_CTR);
 						dolongtrain = true;
 						break;
 					    case FCF_EOR:
-						tracePPM("RECV recv", rtnframe.getFCF2());
+						traceFCF("RECV recv", rtnframe.getFCF2());
 						/*
 						 * It may be wise to disconnect here if MMR is being
 						 * used because there will surely be image data loss.
@@ -1665,10 +1665,10 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				if (!useV34) atCmd(conf.class1SwitchingCmd, AT_OK);
 				if (emsg != "") break;
 				(void) transmitFrame(FCF_RNR|FCF_RCVR);
-				tracePPR("RECV send", FCF_RNR);
+				traceFCF("RECV send", FCF_RNR);
 				HDLCFrame rrframe(conf.class1FrameOverhead);
 				if (gotresponse = recvFrame(rrframe, FCF_RCVR, conf.t2Timer)) {
-				    tracePPM("RECV recv", rrframe.getFCF());
+				    traceFCF("RECV recv", rrframe.getFCF());
 				    if (rrframe.getFCF() == FCF_DCN) {
 					protoTrace("RECV recv DCN");
 					emsg = "COMREC received DCN";
@@ -1702,7 +1702,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 	    // confirm block received as good
 	    if (!useV34) atCmd(conf.class1SwitchingCmd, AT_OK);
 	    (void) transmitFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
-	    tracePPR("RECV send", sendERR ? FCF_ERR : FCF_MCF);
+	    traceFCF("RECV send", sendERR ? FCF_ERR : FCF_MCF);
 	}
 	prevBlock++;
     } while (! lastblock);
@@ -1771,14 +1771,14 @@ Class1Modem::recvEnd(fxStr&)
 	HDLCFrame frame(conf.class1FrameOverhead);
 	do {
 	    if (recvFrame(frame, FCF_RCVR, conf.t2Timer)) {
-		tracePPM("RECV recv", frame.getFCF());
+		traceFCF("RECV recv", frame.getFCF());
 		switch (frame.getFCF()) {
 		case FCF_PPS:
 		case FCF_EOP:
 		case FCF_CRP:
 		    if (!useV34) atCmd(conf.class1SwitchingCmd, AT_OK);
 		    (void) transmitFrame(FCF_MCF|FCF_RCVR);
-		    tracePPR("RECV send", FCF_MCF);
+		    traceFCF("RECV send", FCF_MCF);
 		    break;
 		case FCF_DCN:
 		    recvdDCN = true;

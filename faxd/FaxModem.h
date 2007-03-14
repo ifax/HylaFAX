@@ -119,8 +119,7 @@ protected:
     void	recvTrace(const char* fmt, ...);
     void	copyQualityTrace(const char* fmt, ...);
     void	traceModemParams();
-    void	tracePPR(const char* dir, u_int ppr);
-    void	tracePPM(const char* dir, u_int ppm);
+    void	traceFCF(const char* dir, u_int fcf);
 // server-related stuff
     bool	getHDLCTracing();
     bool	getECMTracing();

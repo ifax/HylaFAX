@@ -580,73 +580,93 @@ FaxModem::traceModemParams()
 }
 
 void
-FaxModem::tracePPM(const char* dir, u_int ppm)
+FaxModem::traceFCF(const char* dir, u_int fcf)
 {
-    if ((ppm & 0x7F) == FCF_DCS) {
-	protoTrace("%s DCS (command signal)", dir);
-	return;
+    char* fcfname;
+    switch (fcf & 0x7F) {
+	case 0x00:
+	    fcfname = "NULL (more blocks, same page)";
+	    break;
+	case FCF_DCS:
+	    fcfname = "DCS (command signal)";
+	    break;
+	case FCF_TSI:
+	    fcfname = "TSI (sender id)";
+	    break;
+	case FCF_CFR:
+	    fcfname = "CFR (confirmation to receive)";
+	    break;
+	case FCF_CRP:
+	    fcfname = "CRP (command repeat)";
+	    break;
+	case FCF_EOM:
+	    fcfname = "EOM (more documents)";
+	    break;
+	case FCF_MPS:
+	    fcfname = "MPS (more pages, same document)";
+	    break;
+	case FCF_EOR:
+	    fcfname = "EOR (end of retransmission)";
+	    break;
+	case FCF_EOP:
+	    fcfname = "EOP (no more pages or documents)";
+	    break;
+	case FCF_RR:
+	    fcfname = "RR (receive ready)";
+	    break;
+	case FCF_CTC:
+	    fcfname = "CTC (continue to correct)";
+	    break;
+	case FCF_PRI_EOM:
+	    fcfname = "PRI-EOM (more documents after interrupt)";
+	    break;
+	case FCF_PRI_MPS:
+	    fcfname = "PRI-MPS (more pages after interrupt)";
+	    break;
+	case FCF_PRI_EOP:
+	    fcfname = "PRI-EOP (no more pages after interrupt)";
+	    break;
+	case FCF_PPS:
+	    fcfname = "PPS (partial page signal)";
+	    break;
+	case FCF_DCN:
+	    fcfname = "DCN (disconnect)";
+	    break;
+	case FCF_CTR:
+	    fcfname = "CTR (confirm continue to correct)";
+	    break;
+	case FCF_NSF:
+	    fcfname = "NSF (non-standard facilities)";
+	    break;
+	case FCF_MCF:
+	    fcfname = "MCF (message confirmation)";
+	    break;
+	case FCF_RTN:
+	    fcfname = "RTN (retrain negative)";
+	    break;
+	case FCF_RTP:
+	    fcfname = "RTP (retrain positive)";
+	    break;
+	case FCF_PIN:
+	    fcfname = "PIN (procedural interrupt negative)";
+	    break;
+	case FCF_PIP:
+	    fcfname = "PIP (procedural interrupt positive)";
+	    break;
+	case FCF_RNR:
+	    fcfname = "RNR (receive not ready)";
+	    break;
+	case FCF_ERR:
+	    fcfname = "ERR (confirm end of retransmisison)";
+	    break;
+	case FCF_PPR:
+	    fcfname = "PPR (partial page request)";
+	    break;
+	default:
+	    protoTrace("unknown FCF 0x%X", fcf);
+	    return;
     }
-    if ((ppm & 0x7F) == FCF_TSI) {
-	protoTrace("%s TSI (sender id)", dir);
-	return;
-    }
-    if ((ppm & 0x7F) == FCF_CRP) {
-	protoTrace("%s CRP (command repeat)", dir);
-	return;
-    }
-    static const char* ppmNames[16] = {
-	"NULL (more blocks, same page)",		// PPS-NULL
-	"EOM (more documents)",				// FCF_EOM
-	"MPS (more pages, same document)",		// FCF_MPS
-	"EOR (end of retransmission)",			// FCF_EOR
-	"EOP (no more pages or documents)",		// FCF_EOP
-	"unknown PPM 0x05",
-	"RR (receive ready)",				// FCF_RR
-	"unknown PPM 0x07",
-	"CTC (continue to correct)",			// FCF_CTC
-	"PRI-EOM (more documents after interrupt)",	// FCF_PRI_EOM
-	"PRI-MPS (more pages after interrupt)",		// FCF_PRI_MPS
-	"unknown PPM 0x0B",
-	"PRI-EOP (no more pages after interrupt)",	// FCF_PRI_EOP
-	"PPS (partial page signal)",			// FCF_PPS
-	"unknown PPM 0x0E",
-	"DCN (disconnect)",				// FCF_DCN
-    };
-    protoTrace("%s %s", dir, ppmNames[ppm&0xf]);
-}
-
-void
-FaxModem::tracePPR(const char* dir, u_int ppr)
-{
-    if ((ppr & 0x7f) == 0x58)				// avoid CRP-ERR collision
-	protoTrace("%s %s", dir, "CRP (command repeat)");
-    else if ((ppr & 0x7f) == 0x23)			// avoid CTR-RTP collision
-	protoTrace("%s %s", dir, "CTR (confirm continue to correct)");
-    else if ((ppr & 0x7f) == FCF_CFR)			// avoid CFR-MPS collision
-	protoTrace("%s %s", dir, "CFR (confirmation to receive)");
-    else if ((ppr & 0x7f) == FCF_NSF)			// avoid NSF-PIN collision
-	protoTrace("%s %s", dir, "NSF (non-standard facilities)");
-    else {
-	static const char* pprNames[16] = {
-	    "unknown PPR 0x00",
-	    "MCF (message confirmation)",		// FCF_MCF/PPR_MCF
-	    "RTN (retrain negative)",			// FCF_RTN/PPR_RTN
-	    "RTP (retrain positive)",			// FCF_RTP/PPR_RTP
-	    "PIN (procedural interrupt negative)",	// FCF_PIN/PPR_PIN
-	    "PIP (procedural interrupt positive)",	// FCF_PIP/PPR_PIP
-	    "unknown PPR 0x06",
-	    "RNR (receive not ready)",			// FCF_RNR
-	    "ERR (confirm end of retransmission)",	// FCF_ERR
-	    "unknown PPR 0x09",
-	    "unknown PPR 0x0A",
-	    "unknown PPR 0x0B",
-	    "unknown PPR 0x0C",
-	    "PPR (partial page request)",		// FCF_PPR
-	    "unknown PPR 0x0E",
-	    "DCN (disconnect)",				// FCF_DCN
-	};
-        protoTrace("%s %s", dir, pprNames[ppr&0xf]);
-    }
+    protoTrace("%s %s", dir, (const char*) fcfname);
 }
 
 /*

@@ -835,7 +835,7 @@ Class2Modem::tracePPM(const char* dir, u_int ppm)
 	FCF_PRI_EOP,
 	0
     };
-    FaxModem::tracePPM(dir, ppm2fcf[ppm&7]);
+    FaxModem::traceFCF(dir, ppm2fcf[ppm&7]);
 }
 
 void
@@ -851,5 +851,5 @@ Class2Modem::tracePPR(const char* dir, u_int ppr)
 	0,
 	0
     };
-    FaxModem::tracePPR(dir, ppr2fcf[ppr&7]);
+    FaxModem::traceFCF(dir, ppr2fcf[ppr&7]);
 }

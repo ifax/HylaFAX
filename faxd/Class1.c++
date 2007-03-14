@@ -1331,7 +1331,7 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending)
     u_short crpcnt = 0;
     if (useV34) {
 	do {
-	    if (crpcnt) tracePPR(dir == FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
+	    if (crpcnt) traceFCF(dir == FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
 	    frame.reset();
 	    gotframe = recvRawFrame(frame);
 	} while (!gotframe && !gotRTNC && !gotEOT && crpcnt++ < 3 && !wasTimeout() && transmitFrame(dir|FCF_CRP));
@@ -1347,7 +1347,7 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending)
         }
 	do {
 	    if (crpcnt) {
-		tracePPR(dir == FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
+		traceFCF(dir == FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
 		startTimeout(ms);
 		if (!(atCmd(rhCmd, AT_NOTHING, 0) && waitFor(AT_CONNECT,0))) {
 		    stopTimeout("waiting for v.21 carrier");
