@@ -363,7 +363,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
 		Sys::close(pipefd[1]);
 		execl("/bin/sh", "sh", "-c", (const char*) cmd, (char*) NULL);
 		sleep(1);
-		exit(1);
+		_exit(1);
 	    default:
 		Sys::close(pipefd[1]);
 		{

@@ -75,7 +75,7 @@ FaxServer::recvFax(const CallID& callid, fxStr& emsg)
 		    // NB: partially fill in info for notification call
 		    notifyRecvBegun(info);
 		    sleep(1);		// XXX give parent time
-		    exit(0);
+		    _exit(0);
 		case -1:
 		    logError("Can not fork for non-priority processing.");
 		    notifyRecvBegun(info);
@@ -228,7 +228,7 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 		if (pid > 0) (void) Sys::waitpid(pid);
 		notifyDocumentRecvd(info);
 		sleep(1);		// XXX give parent time
-		exit(0);
+		_exit(0);
 	    case -1:
 		logError("Can not fork for non-priority logging.");
 		notifyDocumentRecvd(info);
@@ -293,7 +293,7 @@ FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
 		if (pid > 0) (void) Sys::waitpid(pid);
 		notifyPageRecvd(tif, info, ppm);
 		sleep(1);		// XXX give parent time
-		exit(0);
+		_exit(0);
 	    case -1:
 		logError("Can not fork for non-priority logging.");
 		notifyPageRecvd(tif, info, ppm);

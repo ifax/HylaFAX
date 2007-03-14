@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Bug 811: children should exit with _exit() (12 Mar 2007)
 * Handle instances where ECM is negotiated but the sender
   transmits non-ECM data and signalling (12 Mar 2007)
 * Handle MPS/EOP/EOM/CRP when expecting DCS, i.e. after RTN

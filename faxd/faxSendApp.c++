@@ -329,7 +329,7 @@ faxSendApp::notifyPageSent(FaxRequest& req, const char* filename)
 	case 0:
 	    sendJobStatus(req.jobid, "d%s", (const char*) si.encode());
 	    sleep(1);		// XXX give parent time
-	    exit(0);
+	    _exit(0);
 	case -1:
 	    logError("Can not fork for non-priority logging.");
 	    sendJobStatus(req.jobid, "d%s", (const char*) si.encode());
