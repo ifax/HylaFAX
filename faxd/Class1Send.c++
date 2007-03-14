@@ -2009,6 +2009,8 @@ Class1Modem::sendPPM(u_int ppm, HDLCFrame& mcf, fxStr& emsg)
 void
 Class1Modem::sendEnd()
 {
+    fxStr emsg;
+    (void) switchingPause(emsg);
     transmitFrame(FCF_DCN|FCF_SNDR);		// disconnect
     setInputBuffering(true);
 }
