@@ -297,6 +297,7 @@ Class1GreyJPEGSupport	boolean	\s-1No\s+1	Class 1/1.0: to enable grey JPEG fax su
 Class1JBIGSupport	string	\s-1\fIsee below\fP\s+1	Class 1/1.0: to enable monochrome JBIG fax support
 Class1NFLOCmd	string	\-	Class 1/1.0: command to set no flow control
 Class1PageLengthSupport	integer	\s-17\s+1	Class 1/1.0: coded value for modem page length support
+Class1PageWidthSupport	integer	\s-17\s+1	Class 1/1.0: coded value for modem page width support
 Class1RecvAbortOK	integer	\s-1200\s+1	Class 1/1.0: max wait (ms) for ``\s-1OK\s+1'' after recv abort
 Class1RecvIdentTimer	integer	\s-140000\s+1	Class 1/1.0: max wait (ms) for initial ident frame
 Class1RMPersistence	integer	\s-12\s+1	Class 1/1.0: times to attempt high-speed carrier recv
@@ -2356,6 +2357,11 @@ to switch the modem to Class 1 operation.
 The coded value for page lengths supported by the modem.  The only
 correct values and meanings are these: ``1'', A4 page length; ``3'', both 
 A4 and B4 page length; ``7'', unlimited page length.
+.TP
+.B Class1PageWidthSupport
+The coded value for page widths supported by the modem.  The only
+correct values and meanings are these: ``1'', A4 page width; ``3'', both 
+A4 and B4 page width; ``7'', all of A4, B4, and A3 page widths.
 .TP
 .B Class1PPMWaitCmd
 The command used to stop and wait before sending the post page message,

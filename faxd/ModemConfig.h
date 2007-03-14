@@ -162,6 +162,7 @@ public:
     u_int	class1TMConnectDelay;	// delay (ms) after +FTM CONNECT
     u_int	class1ECMFrameSize;	// ECM frame size for transmission
     u_int	class1PageLengthSupport;// page length support
+    u_int	class1PageWidthSupport;	// page width support
     bool	class1GreyJPEGSupport;	// Greyscale JPEG support
     bool	class1ColorJPEGSupport;	// Full-color JPEG support
     bool	class1ECMSupport;	// support T.30-A ECM

@@ -180,7 +180,7 @@ Class1Modem::setupModem(bool isSend)
 	    primaryV34Rate = atoi(conf.class1EnableV34Cmd.extract(pos, conf.class1EnableV34Cmd.next(pos, ',') - pos));
 	modemParams.br |= BIT(primaryV34Rate) - 1;
     }
-    modemParams.wd = BIT(WD_A4) | BIT(WD_B4) | BIT(WD_A3);
+    modemParams.wd = conf.class1PageWidthSupport;
     modemParams.ln = conf.class1PageLengthSupport;
     modemParams.df = BIT(DF_1DMH) | BIT(DF_2DMR);
     modemParams.bf = BF_DISABLE;

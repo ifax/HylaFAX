@@ -209,6 +209,7 @@ static struct {
 { "class1tmconnectdelay",	&ModemConfig::class1TMConnectDelay,  0 },
 { "class1ecmframesize",		&ModemConfig::class1ECMFrameSize,    256 },
 { "class1pagelengthsupport",	&ModemConfig::class1PageLengthSupport, LN_ALL },
+{ "class1pagewidthsupport",	&ModemConfig::class1PageWidthSupport, WD_ALL },
 };
 static struct {
     const char*		 name;
