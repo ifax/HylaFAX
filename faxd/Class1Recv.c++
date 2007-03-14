@@ -1301,7 +1301,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		     * high-speed data.  So we wait T1 instead.
 		     */
 		    gotpps = recvFrame(ppsframe, FCF_RCVR, conf.t1Timer);	// wait longer
-		} while (!gotpps && !wasTimeout() && lastResponse != AT_NOCARRIER && ++recvFrameCount < 5);
+		} while (!gotpps && !wasTimeout() && !gotEOT && ++recvFrameCount < 5);
 		if (gotpps) {
 		    traceFCF("RECV recv", ppsframe.getFCF());
 		    if (ppsframe.getFCF() == FCF_PPS) {
@@ -1414,7 +1414,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					else signalRcvd = 0;		// reset it, we're in-sync now
 					recvFrameCount = 0;
 					lastResponse = AT_NOTHING;
-					while (rtnframe.getFCF() == FCF_PPS && lastResponse != AT_NOCARRIER && recvFrameCount < 5 && gotrtnframe) {
+					while (rtnframe.getFCF() == FCF_PPS && !gotEOT && recvFrameCount < 5 && gotrtnframe) {
 					    // we sent PPR, but got PPS again...
 					    if (!useV34 && !switchingPause(emsg)) {
 						abortPageECMRecv(tif, params, block, fcount, seq, pagedataseen);
