@@ -1278,7 +1278,7 @@ ClassModem::parseRange(const char* cp, u_int& a0)
 void
 ClassModem::setSpeakerVolume(SpeakerVolume l)
 {
-    atCmd(conf.setVolumeCmd[l]);
+    atCmd(conf.setVolumeCmd[l], AT_OK, 5000);
 }
 
 void
