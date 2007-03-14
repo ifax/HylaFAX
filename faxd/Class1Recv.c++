@@ -1410,12 +1410,14 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				 * 3) The sender sent only one frame but for some reason we did not see
 				 * any data, and so the frame-count in the PPS signal ended up getting
 				 * interpreted as a zero.  Only in the case that the frame happens to be
-				 * the last frame in a block we will send MCF (to accomodate #1), and so
-				 * this frame will then be lost.  This should be rare and have little
-				 * impact on actual image data loss when it does occur.
+				 * the last frame in a block and we're dealing with MH, MR, or MMR data 
+				 * we will send MCF (to accomodate #1), and so this frame will then be 
+				 * lost.  This should be rare and have little impact on actual image data
+				 * loss when it does occur.  This approach cannot be followed with JPEG
+				 * and JBIG data formats.
 				 */
 				if (fcount) {
-				    for (u_int i = 0; i <= (fcount - (fc ? 1 : 2)); i++) {
+				    for (u_int i = 0; i <= (fcount - ((fc || params.df > DF_2DMMR) ? 1 : 2)); i++) {
 					u_int pprpos, pprval;
 					for (pprpos = 0, pprval = i; pprval >= 8; pprval -= 8) pprpos++;
 					if (ppr[pprpos] & frameRev[1 << pprval]) blockgood = false;

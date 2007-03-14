@@ -2,6 +2,8 @@
 
 Changelog since HylaFAX 4.3.3
 
+* when dealing with JBIG/JPEG send PPR if we detect no frames
+  received but we're still missing the last frame (12 Mar 2007)
 * Bug 811: children should exit with _exit() (12 Mar 2007)
 * Handle instances where ECM is negotiated but the sender
   transmits non-ECM data and signalling (12 Mar 2007)
