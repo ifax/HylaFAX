@@ -717,7 +717,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			    trainok = recvTraining();
 			    messageReceived = (!trainok && lastResponse == AT_FRH3);
 			}
-		    } while (!trainok && traincount++ < 3 && recvFrame(frame, FCF_RCVR, timer));
+		    } while (!trainok && traincount++ < 3 && lastResponse != AT_FRH3 && recvFrame(frame, FCF_RCVR, timer));
 		    if (messageReceived && lastResponse == AT_FRH3 && waitFor(AT_CONNECT,0)) {
 			messageReceived = false;
 			if (recvFrame(frame, FCF_RCVR, conf.t2Timer, true)) {
