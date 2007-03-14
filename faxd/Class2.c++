@@ -532,19 +532,22 @@ Class2Modem::stripQuotes(const char* cp)
  * Construct the Calling Station Identifier (CSI) string
  * for the modem.  We permit any ASCII printable characters
  * in the string though the spec says otherwise.  The max
- * length is 20 characters (per the spec).
+ * length is 20 characters (per the spec), and we pad the
+ * string to that length to avoid buggy modems from putting
+ * garbage in the void.
  */
 void
 Class2Modem::setLID(const fxStr& number)
 {
     lid.resize(0);
-    for (u_int i = 0, n = number.length(); i < n; i++) {
-	char c = number[i];
-	if (isprint(c) || c == ' ')
-	    lid.append(c);
+    for (u_int i = 0, n = number.length(); i < 20; i++) {
+	if (i < n) {
+	    char c = number[i];
+	    if (isprint(c) || c == ' ')
+		lid.append(c);
+	} else
+	    lid.append(' ');
     }
-    if (lid.length() > 20)
-	lid.resize(20);
     class2Cmd(lidCmd, lid);	// for DynamicConfig
 }
 
