@@ -111,6 +111,7 @@ protected:
 // V.34 indicators
     bool	useV34;		// whether or not V.8 handhaking was used
     bool	gotEOT;		// V.34-fax heard EOT signal
+    bool	gotCONNECT;	// whether or not CONNECT was seen
     bool	gotCTRL;	// current channel indicator
     bool	gotRTNC;	// retrain control channel
     u_short	primaryV34Rate;	// rate indication for primary channel

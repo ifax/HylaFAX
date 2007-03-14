@@ -511,6 +511,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
     time_t t2end = 0;
     signalRcvd = 0;
     sendERR = false;
+    gotCONNECT = true;
 
     do {
 	u_int timer = conf.t2Timer;
@@ -607,7 +608,6 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			    messageReceived = true;
 			}
 		    }
-		    if (wasTimeout()) abortReceive();
 		}
 	    }
 	    if (signalRcvd != 0) {
@@ -909,7 +909,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		t2end = Sys::now() + howmany(conf.t2Timer, 1000);
 	    }
 	}
-    } while (!wasTimeout() && lastResponse != AT_EMPTYLINE);
+    } while (gotCONNECT && !wasTimeout() && lastResponse != AT_EMPTYLINE);
     emsg = "T.30 T2 timeout, expected page not received";
     if (prevPage && conf.saveUnconfirmedPages && getRecvEOLCount()) {
 	TIFFWriteDirectory(tif);
@@ -1306,7 +1306,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		     */
 		    long wait = (80*1024*8) / ((useV34 ? primaryV34Rate : curcap->br+1)*2400) * 1000;
 		    gotpps = recvFrame(ppsframe, FCF_RCVR, wait);	// wait longer
-		} while (!gotpps && !wasTimeout() && !gotEOT && ++recvFrameCount < 5);
+		} while (!gotpps && gotCONNECT && !wasTimeout() && !gotEOT && ++recvFrameCount < 5);
 		if (gotpps) {
 		    traceFCF("RECV recv", ppsframe.getFCF());
 		    if (ppsframe.getFCF() == FCF_PPS) {
