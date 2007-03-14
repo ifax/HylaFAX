@@ -1346,7 +1346,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				blockgood = true;
 				signalRcvd = FCF_MCF;
 			    }
-			    if (!useV34 && curcap->mod == V17 && badframes == frameNumber) {
+			    if (!useV34 && curcap->mod == V17 && badframes == frameNumber && FaxModem::getPageNumberOfCall() == 1) {
 				// looks like a V.17 modulator incompatibility that managed to pass TCF
 				// we set hasV17Trouble to help future calls to this destination
 				protoTrace("The destination appears to have trouble with V.17.");
