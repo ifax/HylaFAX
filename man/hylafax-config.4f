@@ -120,6 +120,7 @@ AdminGroup	string	\s-1faxadmin\s+1	System user group for administration (if PAM 
 AnswerRotary	string	\s-1Any\s+1	alternatives for answering calls
 AnswerBias	integer	\-	bias to apply to successful rotary answer 
 AreaCode\(S2	string	\-	local area code
+BadPageHandlingMethod	string	\s-1RTN-SAVE\s+1	bad page received handling method	
 BatchLogs\(S1	boolean	\s-1Yes\s+1	keep all session logs of a batch in a single log
 CallIDAnswerLength	integer	\-	answer call when CallIDPattern received
 CallIDPattern	strint	\-	call identification pattern string
@@ -509,6 +510,44 @@ used, for example,
 to formulate canonical phone numbers for dialing (see
 .B DialStringRules
 below.)
+.TP
+.B BadPageHandlingMethod
+(Class 1/1.0 only) Specifies how to react to a bad page received from the remote sender:
+one of ``\s-1RTN\s+1'', ``\s-1DCN\s+1'', or ``\s-1RTN-SAVE\s+1''.
+
+If a page is received in non-ECM mode with unacceptable quality 
+according to
+.BR PercentGoodLines
+or
+.BR MaxConseutiveBadLines
+then it can be somewhat difficult to inform the sender of the problem.
+Historically, \*(Fx has assumed that signalling RTN to the sender will
+accomplish this.  However, some senders are incapable of retransmitting
+pages, and to reduce burden they treat an RTN signal as a receipt 
+confirmation and proceed to the next page without notifying the sending
+user of the potential problem in readability on the receive-end.  (The
+assumption there being that the receiving user will notify the sending
+user if there actually is a redability problem.)
+
+A setting of ``\s-1RTN\s+1'' is the historic behavior and assumes that 
+an RTN signal will be enough to get the sender to retransmit or be
+otherwise informed of a potential readability problem on the receive-end.
+The previously-received page data is marked to be overwritten by the next page
+data received from the sender.
+
+A setting of ``\s-1DCN\s+1'' tells \*(Fx to transmit a DCN signal in 
+response to the post-page message and should trigger a call abortion by
+the sender.  This should clearly indicate a problem in page readability
+to the sender, although the receipt of any following pages in a later
+call cannot be guaranteed.
+
+A setting of ``\s-1RTN-SAVE\s+1'' more closely approximates the behavior
+of other fax receivers (especially fax machines).  It causes \*(Fx to
+send the RTN signal but it saves the previously received page data and places
+the next transmitted page data in another page.  This is the default
+setting.  However, this could result in multiple copies of the same page
+image being saved in the same file - if the sender does indeed retransmit
+the unacceptable pages during the same call.
 .TP
 .B BatchLogs\(S1
 When sending or recieving multiple documents (denoted by EOM), this

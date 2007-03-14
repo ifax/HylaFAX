@@ -44,6 +44,7 @@ class FaxServer;
 // NB: these would be enums in the FaxModem class
 //     if there were a portable way to refer to them!
 typedef unsigned int RTNHandling;       // RTN signal handling method 
+typedef unsigned int BadPageHandling;	// bad page (received) handling method 
 typedef unsigned int JBIGSupport;	// JBIG support available
 
 /*
@@ -173,6 +174,11 @@ public:
         RTN_GIVEUP     = 1,         // immediately abort
         RTN_IGNORE     = 2,         // ignore error and send next page
         RTN_RETRANSMITIGNORE = 3    // retransmit but ignore error instead of hanging up
+    };
+    enum {			// FaxModem::BadPageHandling
+	BADPAGE_RTN     = 0,	// send RTN, expect a retransmission
+	BADPAGE_DCN     = 1,	// send DCN, expect a disconnection
+	BADPAGE_RTNSAVE = 2	// send RTN, but save the page
     };
     enum {			// FaxModem::JBIGSupport
 	JBIG_NONE = 0,		    // no JBIG support

@@ -2,9 +2,9 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Add BadPageHandlingMethod feature defauting to RTN-SAVE (12 Mar 2007()
 * Stop using CRP in Phase D in Class 1 sending (12 Mar 2007)
-* Fix error of forgotton fxgetty child under flawed ECM (12 Mar 2007)
-* Fix premature disconnection in Class 2 reception (12 Mar 2007)
+* Fix error of forgotton fxgetty child under flawed ECM
 * Increase the wait time for AT+FCLASS=? response (12 Mar 2007)
 * Pad TCS/CSI string to avoid Class2 modem bugs (12 Mar 2007)
 * Unify and simply FCF tracing routines (12 Mar 2007)

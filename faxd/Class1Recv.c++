@@ -107,7 +107,7 @@ Class1Modem::recvBegin(fxStr& emsg)
 	FCF_NSF|FCF_RCVR, nsf,
 	FCF_CSI|FCF_RCVR, lid,
 	FCF_DIS|FCF_RCVR, dis,
-	conf.class1RecvIdentTimer, emsg);
+	conf.class1RecvIdentTimer, false, emsg);
 }
 
 /*
@@ -141,38 +141,40 @@ Class1Modem::recvIdentification(
     u_int f3, const fxStr& nsf,
     u_int f4, const fxStr& id,
     u_int f5, FaxParams& dics,
-    u_int timer, fxStr& emsg)
+    u_int timer, bool notransmit, fxStr& emsg)
 {
     u_int t1 = howmany(timer, 1000);		// in seconds
     u_int trecovery = howmany(conf.class1TrainingRecovery, 1000);
     time_t start = Sys::now();
     HDLCFrame frame(conf.class1FrameOverhead);
-    bool framesSent;
+    bool framesSent = false;
 
     emsg = "No answer (T.30 T1 timeout)";
-    /*
-     * Transmit (PWD) (SUB) (CSI) DIS frames when the receiving
-     * station or (PWD) (SEP) (CIG) DTC when initiating a poll.
-     */
-    if (f1) {
-	startTimeout(7550);
-	framesSent = sendFrame(f1, pwd, false);
-	stopTimeout("sending PWD frame");
-    } else if (f2) {
-	startTimeout(7550);
-	framesSent = sendFrame(f2, addr, false);
-	stopTimeout("sending SUB/SEP frame");
-    } else if (f3) {
-	startTimeout(7550);
-	framesSent = sendFrame(f3, (const u_char*)HYLAFAX_NSF, nsf, false);
-	stopTimeout("sending NSF frame");
-    } else {
-	startTimeout(7550);
-	framesSent = sendFrame(f4, id, false);
-	stopTimeout("sending CSI/CIG frame");
+    if (!notransmit) {
+	/*
+	 * Transmit (PWD) (SUB) (CSI) DIS frames when the receiving
+	 * station or (PWD) (SEP) (CIG) DTC when initiating a poll.
+	 */
+	if (f1) {
+	    startTimeout(7550);
+	    framesSent = sendFrame(f1, pwd, false);
+	    stopTimeout("sending PWD frame");
+	} else if (f2) {
+	    startTimeout(7550);
+	    framesSent = sendFrame(f2, addr, false);
+	    stopTimeout("sending SUB/SEP frame");
+	} else if (f3) {
+	    startTimeout(7550);
+	    framesSent = sendFrame(f3, (const u_char*)HYLAFAX_NSF, nsf, false);
+	    stopTimeout("sending NSF frame");
+	} else {
+	    startTimeout(7550);
+	    framesSent = sendFrame(f4, id, false);
+	    stopTimeout("sending CSI/CIG frame");
+	}
     }
     for (;;) {
-	if (framesSent) {
+	if (framesSent && !notransmit) {
 	    if (f1) {
 		startTimeout(7550);
 		framesSent = sendFrame(f2, addr, false);
@@ -194,7 +196,7 @@ Class1Modem::recvIdentification(
 		stopTimeout("sending DIS/DCS frame");
 	    }
 	}
-	if (framesSent) {
+	if (framesSent || notransmit) {
 	    /*
 	     * Wait for a response to be received.  We wait T2
 	     * rather than T4 due to empirical evidence for that need.
@@ -262,17 +264,19 @@ Class1Modem::recvIdentification(
 	 * be in the process of sending training.
 	 */
 	pause(conf.class1TrainingRecovery);
-	/*
-	 * Retransmit ident frames.
-	 */
-	if (f1)
-	    framesSent = transmitFrame(f1, pwd, false);
-	else if (f2)
-	    framesSent = transmitFrame(f2, addr, false);
-	else if (f3)
-	    framesSent = transmitFrame(f3, (const u_char*)HYLAFAX_NSF, nsf, false);
-	else
-	    framesSent = transmitFrame(f4, id, false);
+	if (!notransmit) {
+	    /*
+	     * Retransmit ident frames.
+	     */
+	    if (f1)
+		framesSent = transmitFrame(f1, pwd, false);
+	    else if (f2)
+		framesSent = transmitFrame(f2, addr, false);
+	    else if (f3)
+		framesSent = transmitFrame(f3, (const u_char*)HYLAFAX_NSF, nsf, false);
+	    else
+		framesSent = transmitFrame(f4, id, false);
+	}
     }
     return (false);
 }
@@ -474,15 +478,27 @@ const u_int Class1Modem::modemPPMCodes[8] = {
 bool
 Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 {
-    if (lastPPM == FCF_MPS && prevPage && pageGood) {
+    if (lastPPM == FCF_MPS && prevPage) {
 	/*
 	 * Resume sending HDLC frame (send data)
 	 * The carrier is already raised.  Thus we
 	 * use sendFrame() instead of transmitFrame().
 	 */
-	startTimeout(7550);
-	(void) sendFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
-	stopTimeout("sending HDLC frame");
+	if (pageGood) {
+	    startTimeout(7550);
+	    (void) sendFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
+	    stopTimeout("sending HDLC frame");
+	} else if (conf.badPageHandling == FaxModem::BADPAGE_RTNSAVE) {
+	    startTimeout(7550);
+	    (void) sendFrame(FCF_RTN|FCF_RCVR);
+	    stopTimeout("sending HDLC frame");
+	    FaxParams dis = modemDIS();
+	    if (!recvIdentification(0, fxStr::null, 0, fxStr::null, 
+		0, fxStr::null, 0, fxStr::null, 0, dis,
+		conf.class1RecvIdentTimer, true, emsg)) {
+		return (false);
+	    }
+	}
     }
 
     time_t t2end = 0;
@@ -702,13 +718,15 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		    pageGood = false;
 		    if (params.ec != EC_DISABLE) return (false);
 		}
-		if (!pageGood) recvResetPage(tif);
+		if (!pageGood && conf.badPageHandling == FaxModem::BADPAGE_RTN)
+		    recvResetPage(tif);
 		if (signalRcvd == 0) traceFCF("RECV recv", lastPPM);
 
 		/*
 		 * [Re]transmit post page response.
 		 */
-		if (pageGood) {
+		if (pageGood || conf.badPageHandling == FaxModem::BADPAGE_RTNSAVE) {
+		    if (!pageGood) lastPPM = FCF_MPS;	// FaxModem::BADPAGE_RTNSAVE
 		    /*
 		     * If post page message confirms the page
 		     * that we just received, write it to disk.
@@ -806,7 +824,10 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			    } else {
 				(void) transmitFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
 			    }
-			    traceFCF("RECV send", sendERR ? FCF_ERR : FCF_MCF);
+			    if (pageGood)
+				traceFCF("RECV send", sendERR ? FCF_ERR : FCF_MCF);
+			    else
+				traceFCF("RECV send", FCF_RTN);
 			}
 			/*
 			 * Reset state so that the next call looks
@@ -840,8 +861,9 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			emsg = "Failure to receive silence.";
 			return (false);
 		    }
-		    (void) transmitFrame(FCF_RTN|FCF_RCVR);
-		    traceFCF("RECV send", FCF_RTN);
+		    u_int rtnfcf = conf.badPageHandling == FaxModem::BADPAGE_DCN ? FCF_DCN : FCF_RTN;
+		    (void) transmitFrame(rtnfcf|FCF_RCVR);
+		    traceFCF("RECV send", rtnfcf);
 		    /*
 		     * Reset the TIFF-related state so that subsequent
 		     * writes will overwrite the previous data.

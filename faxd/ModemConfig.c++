@@ -275,6 +275,7 @@ ModemConfig::setupConfig()
     setVolumeCmds("ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1");
     recvDataFormat	= DF_ALL;		// default to no transcoding
     rtnHandling         = FaxModem::RTN_RETRANSMITIGNORE; // retransmit until MCF/MPS
+    badPageHandling	= FaxModem::BADPAGE_RTNSAVE; // send RTN but save the page
     saveUnconfirmedPages = true;		// keep unconfirmed pages
     softRTFCC		= true;			// real-time fax comp. conv. (software)
     noAnswerVoice	= false;		// answer voice calls
@@ -582,6 +583,20 @@ ModemConfig::getRTNHandling(const char* cp)
 }
 
 u_int
+ModemConfig::getBadPageHandling(const char* cp)
+{
+    BadPageHandling bph;
+    if (valeq(cp, "RTN")) {
+	bph = FaxModem::BADPAGE_RTN;
+    } else if (valeq(cp, "DCN")) {
+	bph = FaxModem::BADPAGE_DCN;
+    } else {
+	bph = FaxModem::BADPAGE_RTNSAVE;
+    }
+    return (bph);
+}
+
+u_int
 ModemConfig::getJBIGSupport(const char* cp)
 {
     JBIGSupport js;
@@ -736,6 +751,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	recvDataFormat = getDataFormat(value);
     else if (streq(tag, "rtnhandlingmethod"))
         rtnHandling = getRTNHandling(value);
+    else if (streq(tag, "badpagehandlingmethod"))
+        badPageHandling = getBadPageHandling(value);
     else if (streq(tag, "class2ecmtype"))
 	class2ECMType = getECMType(value);
     else if (streq(tag, "class2usehex"))

@@ -139,7 +139,7 @@ protected:
 		    u_int f3, const fxStr& nsf,
 		    u_int f4, const fxStr& id,
 		    u_int f5, FaxParams& dics,
-		    u_int timer, fxStr& emsg);
+		    u_int timer, bool notransmit, fxStr& emsg);
     bool	recvDCSFrames(HDLCFrame& frame);
     bool	recvTraining();
     bool	recvPPM(int& ppm, fxStr& emsg);

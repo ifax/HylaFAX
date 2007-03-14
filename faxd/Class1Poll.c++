@@ -66,5 +66,5 @@ Class1Modem::pollBegin(const fxStr& cig0,
 	    0, fxStr::null,
 	    FCF_CIG, cig,
 	    FCF_DTC, dtc,
-	    conf.t1Timer, emsg);
+	    conf.t1Timer, false, emsg);
 }

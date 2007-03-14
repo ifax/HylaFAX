@@ -57,6 +57,7 @@ private:
     u_int	getSpeed(const char* value);
     u_int	getDataFormat(const char* value);
     u_int       getRTNHandling(const char* cp);
+    u_int       getBadPageHandling(const char* cp);
     u_int       getJBIGSupport(const char* cp);
     ECMType	getECMType(const char* cp);
 
@@ -229,6 +230,7 @@ public:
     bool	useJobTagLine;		// Use Job tagline or use conf taglineformat
 
     RTNHandling rtnHandling;            // RTN signal handling method
+    BadPageHandling badPageHandling;	// bad page (received) handling method
     JBIGSupport	class1JBIGSupport;	// monochrome JBIG support
     bool	saveUnconfirmedPages;	// don't delete unconfirmed pages
     
