@@ -103,6 +103,7 @@ Class1Modem::Class1Modem(FaxServer& s, const ModemConfig& c)
     fxAssert(ecmStuffedBlock != NULL, "ECM procedure error (stuffed block).");
     gotCTRL = false;
     repeatPhaseB = false;
+    silenceHeard = false;
 }
 
 Class1Modem::~Class1Modem()
@@ -110,6 +111,13 @@ Class1Modem::~Class1Modem()
     free(ecmFrame);
     free(ecmBlock);
     free(ecmStuffedBlock);
+}
+
+bool
+Class1Modem::atCmd(const fxStr& cmd, ATResponse r, long ms)
+{
+    silenceHeard = false;
+    return (ClassModem::atCmd(cmd, r, ms));
 }
 
 /*
@@ -456,6 +464,35 @@ const fxStr&
 Class1Modem::decodePWD(fxStr& ascii, const HDLCFrame& binary)
 {
     return decodeTSI(ascii, binary);
+}
+
+bool
+Class1Modem::switchingPause(fxStr& emsg)
+{
+    if (!silenceHeard && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
+	emsg = "Failure to receive silence.";
+	protoTrace(emsg);
+	if (wasTimeout()) abortReceive();
+	return (false);
+    }
+    /*
+     * We necessarily use class1SwitchingCmd rather frequently... 
+     * sometimes this is programmed to be immediately before our signalling,
+     * and sometimes this is programmed to be immediately after the remote
+     * signalling.  That doesn't therefore give us very good control on 
+     * ensuring that class1SwitchingCmd is not issued in duplicate in some
+     * kinds of program flow.
+     *
+     * Ideally we'd be able to standardize on issuing class1SwitchingCmd
+     * only in one case or another (but not both), but that's not particularly
+     * an easy ideal to realize given the number of exceptions to that rule
+     * that would neccesarily be required.
+     *
+     * So for now we just set this flag here, and we unset it in atCmd, and 
+     * if the flag is set when we come back here, then we can avoid duplication.
+     */
+    silenceHeard = true;
+    return (true);
 }
 
 /*
@@ -1345,6 +1382,7 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, 
             abortReceive();
             return (false);
         }
+	fxStr emsg;
 	do {
 	    if (crpcnt) {
 		traceFCF(dir == FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
@@ -1359,7 +1397,7 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, 
 	    frame.reset();
             gotframe = recvRawFrame(frame);
 	} while (!gotframe && docrp && crpcnt++ < 3 && !wasTimeout() &&
-		atCmd(conf.class1SwitchingCmd, AT_OK) && transmitFrame(dir|FCF_CRP));
+		switchingPause(emsg) && transmitFrame(dir|FCF_CRP));
 	return (gotframe);
     } else if (lastResponse == AT_ERROR) gotEOT = true;		// on hook
     stopTimeout("waiting for v.21 carrier");

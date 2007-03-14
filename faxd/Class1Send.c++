@@ -323,8 +323,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	     * "before sending any signals using V.27 ter/V.29/V.33/V.17 
 	     * modulation system"
 	     */
-	    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
-		protoTrace("Failure to receive silence.");
+	    if (!switchingPause(emsg)) {
 		return (send_failed);
 	    }
 	}
@@ -421,7 +420,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		    pph.remove(0,2+5+1);// discard page-chop+handling info
 		else
 		    pph.remove(0,3);	// discard page-handling info
-		if (params.ec == EC_DISABLE) atCmd(conf.class1SwitchingCmd, AT_OK);
+		if (params.ec == EC_DISABLE) (void) switchingPause(emsg);
 		ntrys = 0;
 		if (morePages) {	// meaning, more pages in this file, but there may be other files
 		    if (!TIFFReadDirectory(tif)) {
@@ -515,9 +514,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		protoTrace(emsg);
 		return (send_failed);
 	    case FCF_CRP:
-		if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-		    emsg = "Failure to receive silence.";
-		    protoTrace(emsg);
+		if (!useV34 && !switchingPause(emsg)) {
 		    return (send_retry);
 		}
 		break;
@@ -573,8 +570,8 @@ Class1Modem::sendPrologue(FaxParams& dcs_caps, const fxStr& tsi)
     bool frameSent;
     if (useV34) frameSent = true;
     else {
-	if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
-	    protoTrace("Failure to receive silence.");
+	fxStr emsg;
+	if (!switchingPause(emsg)) {
 	    return (false);
 	}
 	frameSent = (atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 7550) == AT_CONNECT);
@@ -863,8 +860,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 		 * The best way to do that is to make sure that there is
 		 * silence on the line, and  we do that with Class1SwitchingCmd.
 		 */
-		if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
-		    emsg = "Failure to receive silence.";
+		if (!switchingPause(emsg)) {
 		    return (false);
 		}
 	    }
@@ -1093,8 +1089,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
 	    if (!useV34) {
 		// T.30 5.3.2.4 (03/93) gives this to be a 75ms minimum
-		if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
-		    protoTrace("Failure to receive silence.");
+		if (!switchingPause(emsg)) {
 		    return (false);
 		}
 		/*
@@ -1226,18 +1221,14 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			gotppr = false;
 			crpcnt++;
 			ppscnt = 0;
-			if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-			    emsg = "Failure to receive silence.";
-			    protoTrace(emsg);
+			if (!useV34 && !switchingPause(emsg)) {
 			    return (false);
 			}
 		    }
 		}
 	    } while (!gotppr && (++ppscnt < 3) && (crpcnt < 3) && !(useV34 && gotEOT));
 	    if (gotppr) {
-		if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-		    emsg = "Failure to receive silence.";
-		    protoTrace(emsg);
+		if (!useV34 && !switchingPause(emsg)) {
 		    return (false);
 		}
 		if (pprframe.getFCF() == FCF_RNR) {
@@ -1268,9 +1259,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				    gotmsg = false;
 				    crpcnt++;
 				    rrcnt = 0;
-				    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-					emsg = "Failure to receive silence.";
-					protoTrace(emsg);
+				    if (!useV34 && !switchingPause(emsg)) {
 					return (false);
 				    }
 				}
@@ -1287,9 +1276,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				gotppr = true;
 				break;
 			    case FCF_RNR:
-				if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-				    emsg = "Failure to receive silence.";
-				    protoTrace(emsg);
+				if (!useV34 && !switchingPause(emsg)) {
 				    return (false);
 				}
 				break;
@@ -1397,9 +1384,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 					    gotctr = false;
 					    crpcnt++;
 					    ctccnt = 0;
-					    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
-						emsg = "Failure to receive silence.";
-						protoTrace(emsg);
+					    if (!switchingPause(emsg)) {
 						return (false);
 					    }
 					}
@@ -1450,9 +1435,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 					    goterr = false;
 					    crpcnt++;
 					    eorcnt = 0;
-					    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-						emsg = "Failure to receive silence.";
-						protoTrace(emsg);
+					    if (!useV34 && !switchingPause(emsg)) {
 						return (false);
 					    }
 					}
@@ -1492,9 +1475,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 						    gotmsg = false;
 						    crpcnt++;
 						    rrcnt = 0;
-						    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-							emsg = "Failure to receive silence.";
-							protoTrace(emsg);
+						    if (!useV34 && !switchingPause(emsg)) {
 							return (false);
 						    }
 						}
@@ -1510,9 +1491,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 						goterr = true;
 						break;
 					    case FCF_RNR:
-						if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-						    emsg = "Failure to receive silence.";
-						    protoTrace(emsg);
+						if (!useV34 && !switchingPause(emsg)) {
 						    return (false);
 						}
 						break;

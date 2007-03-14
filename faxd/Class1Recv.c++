@@ -266,8 +266,7 @@ Class1Modem::recvIdentification(
 	     * The best way to do that is to make sure that there is
 	     * silence on the line, and  we do that with Class1SwitchingCmd.
 	     */
-	    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
-		emsg = "Failure to receive silence.";
+	    if (!switchingPause(emsg)) {
 		return (false);
 	    }
 	}
@@ -432,7 +431,8 @@ Class1Modem::recvTraining()
      * Send training response; we follow the spec
      * by delaying 75ms before switching carriers.
      */
-    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) return (false);
+    fxStr emsg;
+    if (!switchingPause(emsg)) return (false);
     if (ok) {
 	/*
 	 * Send CFR later so that we can cancel
@@ -739,9 +739,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		     * that we just received, write it to disk.
 		     */
 		    if (messageReceived) {
-			if (!useV34 && emsg == "" && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-			    emsg = "Failure to receive silence.";
-			}
+			if (!useV34 && emsg == "") (void) switchingPause(emsg);
 			/*
 			 * On servers where disk access may be bottlenecked or stressed,
 			 * the TIFFWriteDirectory call can lag.  The strategy, then, is
@@ -794,7 +792,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 						    } else if (params.ec != EC_DISABLE && rrframe.getFCF() != FCF_RR) {
 							protoTrace("Ignoring invalid response to RNR.");
 						    }
-						    if (!useV34) atCmd(conf.class1SwitchingCmd, AT_OK);
+						    if (!useV34) (void) switchingPause(emsg);
 						}
 					    } while (!gotEOT && !recvdDCN && !gotresponse && ++rnrcnt < 2 && Sys::now()-rrstart < 60);
 					    if (!gotresponse) emsg = "No response to RNR repeated 3 times.";
@@ -864,8 +862,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		     * to implement than using +FRH and more reliable than
 		     * using +FTS
 		     */
-		    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
-			emsg = "Failure to receive silence.";
+		    if (!switchingPause(emsg)) {
 			return (false);
 		    }
 		    u_int rtnfcf = conf.badPageHandling == FaxModem::BADPAGE_DCN ? FCF_DCN : FCF_RTN;
@@ -1067,8 +1064,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    case FCF_PRI_EOM:
 					    case FCF_PRI_MPS:
 					    case FCF_PRI_EOP:
-						if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-						    emsg = "Failure to receive silence.";
+						if (!useV34 && !switchingPause(emsg)) {
 						    abortPageECMRecv(tif, params, block, fcount, seq, pagedataseen);
 						    return (false);
 						}
@@ -1105,8 +1101,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						    if (signalRcvd) lastblock = true;
 						    sendERR = true;
 						} else {
-						    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-							emsg = "Failure to receive silence.";
+						    if (!useV34 && !switchingPause(emsg)) {
 							abortPageECMRecv(tif, params, block, fcount, seq, pagedataseen);
 							return (false);
 						    }
@@ -1134,8 +1129,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					dcs = rtncframe[3] | (rtncframe[4]<<8);
 					curcap = findSRCapability(dcs&DCS_SIGRATE, recvCaps);
 					// requisite pause before sending response (CTR)
-					if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
-					    emsg = "Failure to receive silence.";
+					if (!switchingPause(emsg)) {
 					    abortPageECMRecv(tif, params, block, fcount, seq, pagedataseen);
 					    return (false);
 					}
@@ -1147,8 +1141,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				    }
 				case FCF_CRP:
 				    // command repeat... just repeat whatever we last sent
-				    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-					emsg = "Failure to receive silence.";
+				    if (!useV34 && !switchingPause(emsg)) {
 					abortPageECMRecv(tif, params, block, fcount, seq, pagedataseen);
 					return (false);
 				    }
@@ -1384,8 +1377,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 				}
 
 				// requisite pause before sending response (PPR/MCF)
-				if (!blockgood && !useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-				    emsg = "Failure to receive silence.";
+				if (!blockgood && !useV34 && !switchingPause(emsg)) {
 				    abortPageECMRecv(tif, params, block, fcount, seq, pagedataseen);
 				    return (false);
 				}
@@ -1424,8 +1416,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					lastResponse = AT_NOTHING;
 					while (rtnframe.getFCF() == FCF_PPS && lastResponse != AT_NOCARRIER && recvFrameCount < 5 && gotrtnframe) {
 					    // we sent PPR, but got PPS again...
-					    if (!useV34 && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
-						emsg = "Failure to receive silence.";
+					    if (!useV34 && !switchingPause(emsg)) {
 						abortPageECMRecv(tif, params, block, fcount, seq, pagedataseen);
 						return (false);
 					    }
@@ -1447,8 +1438,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 						dcs = rtnframe[3] | (rtnframe[4]<<8);
 						curcap = findSRCapability(dcs&DCS_SIGRATE, recvCaps);
 						// requisite pause before sending response (CTR)
-						if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
-						    emsg = "Failure to receive silence.";
+						if (!switchingPause(emsg)) {
 						    abortPageECMRecv(tif, params, block, fcount, seq, pagedataseen);
 						    return (false);
 						}
@@ -1604,7 +1594,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			    bool gotresponse = true;
 			    u_short rnrcnt = 0;
 			    do {
-				if (!useV34) atCmd(conf.class1SwitchingCmd, AT_OK);
+				if (!useV34) (void) switchingPause(emsg);
 				if (emsg != "") break;
 				(void) transmitFrame(FCF_RNR|FCF_RCVR);
 				traceFCF("RECV send", FCF_RNR);
@@ -1642,7 +1632,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 
 	if (!lastblock) {
 	    // confirm block received as good
-	    if (!useV34) atCmd(conf.class1SwitchingCmd, AT_OK);
+	    if (!useV34) (void) switchingPause(emsg);
 	    (void) transmitFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
 	    traceFCF("RECV send", sendERR ? FCF_ERR : FCF_MCF);
 	}
@@ -1702,7 +1692,7 @@ Class1Modem::recvPageData(TIFF* tif, fxStr& emsg)
  * Complete a receive session.
  */
 bool
-Class1Modem::recvEnd(fxStr&)
+Class1Modem::recvEnd(fxStr& emsg)
 {
     if (!recvdDCN && !gotEOT) {
 	u_int t1 = howmany(conf.t1Timer, 1000);	// T1 timer in seconds
@@ -1718,7 +1708,7 @@ Class1Modem::recvEnd(fxStr&)
 		case FCF_PPS:
 		case FCF_EOP:
 		case FCF_CRP:
-		    if (!useV34) atCmd(conf.class1SwitchingCmd, AT_OK);
+		    if (!useV34) (void) switchingPause(emsg);
 		    (void) transmitFrame(FCF_MCF|FCF_RCVR);
 		    traceFCF("RECV send", FCF_MCF);
 		    break;
@@ -1726,7 +1716,7 @@ Class1Modem::recvEnd(fxStr&)
 		    recvdDCN = true;
 		    break;
 		default:
-		    if (!useV34) atCmd(conf.class1SwitchingCmd, AT_OK);
+		    if (!useV34) (void) switchingPause(emsg);
 		    transmitFrame(FCF_DCN|FCF_RCVR);
 		    recvdDCN = true;
 		    break;
