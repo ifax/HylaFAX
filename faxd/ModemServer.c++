@@ -476,13 +476,34 @@ ModemServer::setupModem(bool isSend)
 		| modem->getModel() | "/"
 		| modem->getRevision());
 	}
-    } else
+    } else {
 	/*
 	 * Reset the modem in case some other program
 	 * went in and messed with the configuration.
+	 *
+	 * Sometimes a modem may get interrupted while in a
+	 * "transmit" state such as AT+VTX (voice mode) or
+	 * AT+FTM=146 (fax mode) or similar.  Now, the modem
+	 * should be smart enough to return to command-mode
+	 * after a short period of inactivity, but it's
+	 * conceivable that some don't (and we've seen some
+	 * that are this way).  Furthermore, it is likely
+	 * possible to configure a modem in such a way so as
+	 * to never provide for that short period of inactivity.
+	 * Further complicating matters, some modems are not
+	 * sensitive to DTR.
+	 *
+	 * So if our first reset attempt fails we send DLE+ETX 
+	 * to the modem just in case we happen to have a modem 
+	 * in this kind of state, waiting for DLE+ETX before 
+	 * returning to command mode.  Then we retry the reset.
 	 */
-        if( !(modem->reset() || modem->reset()) )	// try twice
-            return (false);
+        if (!(modem->reset())) {
+	    sendDLEETX();
+	    if (!(modem->reset()))
+		return (false);
+	}
+    }
     /*
      * Most modem-related parameters are dealt with
      * in the modem driver.  The speaker volume is
@@ -1379,6 +1400,15 @@ ModemServer::stopTimeout(const char* whichdir)
     timer.stopTimeout();
     if (timeout = timer.wasTimeout())
 	traceModemOp("TIMEOUT: %s", whichdir);
+}
+
+void
+ModemServer::sendDLEETX()
+{
+    u_char buf[2];
+    buf[0] = DLE;
+    buf[1] = ETX;
+    (void) putModem(buf, 2);
 }
 
 int

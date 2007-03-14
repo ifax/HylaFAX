@@ -137,6 +137,7 @@ protected:
     virtual fxStr getModemCapabilities() const;
 // modem i/o support
     void	timerExpired(long, long);
+    void	sendDLEETX();
     int		getModemLine(char buf[], u_int bufSize, long ms = 0);
     int		getModemChar(long ms = 0);
     int		getModemBit(long ms = 0);
