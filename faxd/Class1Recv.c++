@@ -210,12 +210,23 @@ Class1Modem::recvIdentification(
 		    bool gotframe = true;
 		    while (gotframe) {
 			if (!recvDCSFrames(frame)) {
-			    if (frame.getFCF() == FCF_DCN) {
-				emsg = "RSPREC error/got DCN";
-				recvdDCN = true;
-				return (false);
-			    } else		// XXX DTC/DIS not handled
-				emsg = "RSPREC invalid response received";
+			    switch (frame.getFCF()) {
+				case FCF_DCN:
+				    emsg = "RSPREC error/got DCN";
+				    recvdDCN = true;
+				    return (false);
+				case FCF_CRP:
+				case FCF_MPS:
+				case FCF_EOP:
+				case FCF_EOM:
+				    if (!useV34 && !switchingPause(emsg)) return (false);
+				    transmitFrame(signalSent);
+				    traceFCF("RECV send", (u_char) signalSent[2]);
+				    break;
+				default:	// XXX DTC/DIS not handled
+				    emsg = "RSPREC invalid response received";
+				    break;
+			    }
 			    break;
 			}
 			gotframe = false;
