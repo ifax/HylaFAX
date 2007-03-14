@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Calculate PPM/PPS waiter instead of using T1
 * Improve response handling of AT+FRH=3 (12 Mar 2007)
 * Improve ECM HDLC frame decoder to recover more quickly from data corruption
   and possibly find frames where it couldn't before (12 Mar 2007)
