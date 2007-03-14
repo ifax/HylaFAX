@@ -989,7 +989,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 	    }
 	    if (useV34 || gotRTNC) {		// V.34 mode or if +FRH:3 in adaptive reception
 		if (!gotEOT) {
-		    bool gotprimary;
+		    bool gotprimary = false;
 		    if (useV34) gotprimary = waitForDCEChannel(false);
 		    while (!sendERR && !gotEOT && (gotRTNC || (ctrlFrameRcvd != fxStr::null))) {
 			/*

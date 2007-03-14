@@ -207,7 +207,7 @@ Getty::setupSession(int fd)
     struct stat sb;
     Sys::fstat(fd, sb);
 #if HAS_FCHOWN
-    fchown(fd, 0, sb.st_gid);
+    (void) fchown(fd, 0, sb.st_gid);
 #else
     Sys::chown(getLine(), 0, sb.st_gid);
 #endif

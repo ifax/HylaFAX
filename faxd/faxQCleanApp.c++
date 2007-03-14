@@ -372,7 +372,7 @@ faxQCleanApp::expungeCruft(void)
 	    // suffix, when the PS.jobid version of the file still
 	    // exists.
 	    char        *base;
-	    int         sl=k-docDir.length()-1-1;	// removing docDir,'/' and trailing ';'
+	    u_int         sl=k-docDir.length()-1-1;	// removing docDir,'/' and trailing ';'
 	    base=(char *)malloc(sl+1);
 	    strncpy(base, &file[docDir.length()+1], sl);
 	    base[sl]=0;

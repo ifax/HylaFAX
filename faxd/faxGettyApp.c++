@@ -238,7 +238,8 @@ faxGettyApp::listenForRing()
 	    /* DID modems may only signal a call with DID data - no RING */
 	    bool done = false;
 	    for (u_int i = 0; i < callid.size(); i++) {
-		if (idConfig[i].answerlength > 0 && callid[i].length() >= idConfig[i].answerlength) {
+		if ((u_int) idConfig[i].answerlength > 0 && 
+		    callid[i].length() >= (u_int) idConfig[i].answerlength) {
 		    done = true;
 		    break;
 		}

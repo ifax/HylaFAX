@@ -162,7 +162,7 @@ G3Encoder::find0span(const u_char* bp, int bs, int be)
 		bp++;
 	} else
 		span = 0;
-	if (bits >= 2*8*sizeof (long)) {
+	if ((uint32) bits >= 2*8*sizeof (long)) {
 		long* lp;
 		/*
 		 * Align to longword boundary and check longwords.
@@ -174,7 +174,7 @@ G3Encoder::find0span(const u_char* bp, int bs, int be)
 			bp++;
 		}
 		lp = (long*) bp;
-		while (bits >= 8*sizeof (long) && *lp == 0) {
+		while ((uint32) bits >= 8*sizeof (long) && *lp == 0) {
 			span += 8*sizeof (long), bits -= 8*sizeof (long);
 			lp++;
 		}
@@ -221,7 +221,7 @@ G3Encoder::find1span(const u_char* bp, int bs, int be)
 		bp++;
 	} else
 		span = 0;
-	if (bits >= 2*8*sizeof (long)) {
+	if ((uint32) bits >= 2*8*sizeof (long)) {
 		long* lp;
 		/*
 		 * Align to longword boundary and check longwords.
@@ -233,7 +233,7 @@ G3Encoder::find1span(const u_char* bp, int bs, int be)
 			bp++;
 		}
 		lp = (long*) bp;
-		while (bits >= 8*sizeof (long) && *lp == ~0) {
+		while ((uint32) bits >= 8*sizeof (long) && *lp == ~0) {
 			span += 8*sizeof (long), bits -= 8*sizeof (long);
 			lp++;
 		}
@@ -352,12 +352,12 @@ G3Encoder::encode(const void* vp, u_int w, u_int h, u_char* rp)
 		span = findspan(&bp, bs, w, zeroruns);		// white span
 		putspan(span, TIFFFaxWhiteCodes);
 		bs += span;
-		if (bs >= w)
+		if ((u_int) bs >= w)
 		    break;
 		span = findspan(&bp, bs, w, oneruns);		// black span
 		putspan(span, TIFFFaxBlackCodes);
 		bs += span;
-		if (bs >= w)
+		if ((u_int) bs >= w)
 		    break;
 	    }
 	}
@@ -408,7 +408,7 @@ G3Encoder::putBits(u_int bits, u_int length)
     static const u_int mask[9] =
 	{ 0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff };
 
-    while (length > bit) {
+    while (length > (u_short) bit) {
 	data |= bits >> (length - bit);
 	length -= bit;
 	flushBits();

@@ -140,8 +140,7 @@ int
 main(int argc, char* argv[])
 {
     bool verbose = true;
-    extern int optind, opterr;
-    extern char* optarg;
+    extern int optind;
     int c;
 
     appName = argv[0];

@@ -178,7 +178,7 @@ UUCPLock::create()
 	Sys::chmod(buff, mode);
 #endif
 #if HAS_FCHOWN
-	fchown(fd, UUCPuid, UUCPgid);
+	(void) fchown(fd, UUCPuid, UUCPgid);
 #else
 	Sys::chown(buff, UUCPuid, UUCPgid);
 #endif

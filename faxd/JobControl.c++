@@ -82,8 +82,6 @@ JobControlInfo::~JobControlInfo() {}
 // XXX can't sort
 int JobControlInfo::compare(const JobControlInfo*) const { return (0); }
 
-static int getNumber(const char* s) { return ((int) strtol(s, NULL, 0)); }
-
 void
 JobControlInfo::configError (const char* fmt, ...)
 {

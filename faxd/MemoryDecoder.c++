@@ -231,8 +231,6 @@ void MemoryDecoder::fixFirstEOL()
  */
 u_char* MemoryDecoder::cutExtraRTC()
 {
-    u_char* start = current();
-    
     /*
      * We expect RTC near the end of data and thus
      * do not check all image to save processing time.
@@ -340,7 +338,6 @@ u_char* MemoryDecoder::encodeTagLine(u_long* raster, u_int th, u_int slop)
     G3Encoder enc(result);
     enc.setupEncoder(fillorder, is2D, isG4);
 
-    u_char* start = current();
     decode(NULL, width, th);		// discard decoded data
     if (!isG4) {
 	/*
@@ -540,5 +537,8 @@ u_char* MemoryDecoder::convertDataFormat(const Class2Params& params)
 	printf("Attempt to convert Phase C data to JBIG without JBIG support.  This should not happen.\n");
 	return (NULL);
 #endif /* HAVE_JBIG */
+    } else {
+	printf("Attempt to convert Phase C data to an unsupported format.  This should not happen.\n");
+	return (NULL);
     }
 }

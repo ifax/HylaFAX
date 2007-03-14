@@ -225,6 +225,8 @@ ModemServer::changeState(ModemServerState s, long timeout)
 	case MODEMWAIT:
 	    setupAttempts = 0;
 	    break;
+	default:
+	    break;
 	}
     } else if (s == MODEMWAIT && ++setupAttempts >= maxSetupAttempts) {
 	traceStatus(FAXTRACE_SERVER,
@@ -430,7 +432,7 @@ ModemServer::setServerStatus(const char* fmt, ...)
     va_end(ap);
     fprintf(statusFile, "\n");
     fflush(statusFile);
-    ftruncate(fileno(statusFile), ftell(statusFile));
+    (void) ftruncate(fileno(statusFile), ftell(statusFile));
     flock(fileno(statusFile), LOCK_UN);
 }
 

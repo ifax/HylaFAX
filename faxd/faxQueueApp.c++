@@ -946,7 +946,7 @@ faxQueueApp::preparePageChop(const FaxRequest& req,
 	float threshold = req.chopthreshold;
 	if (threshold == -1)
 	    threshold = pageChopThreshold;
-	u_int minRows;
+	u_int minRows = 0;
 	switch(params.vr) {
 	    case VR_NORMAL:
 	    case VR_200X100:
@@ -1425,7 +1425,7 @@ faxQueueApp::sendJobDone(Job& job, int status)
     if (req && req->status == send_retry) {
 	// prevent turnaround-redialing, delay any blocked jobs
 	time_t newtts = req->tts;
-	while (cjob = di.nextBlocked()) {
+	while ((cjob = di.nextBlocked())) {
 	    FaxRequest* blockedreq = readRequest(*cjob);
 	    if (blockedreq) {
 		delayJob(*cjob, *blockedreq, "Delayed by prior call", newtts);

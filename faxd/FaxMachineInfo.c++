@@ -344,7 +344,7 @@ FaxMachineInfo::writeConfig()
 		Sys::close(fd);
 		return;
 	    }
-	    ftruncate(fd, cc);
+	    (void) ftruncate(fd, cc);
 	    Sys::close(fd);
 	} else
 	    error("open: %m");

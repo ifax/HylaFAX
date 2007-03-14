@@ -121,7 +121,7 @@ faxSendApp::send(const char** filenames, int num)
     u_int batched = BATCH_FIRST;
     FaxSendStatus status = send_done;
     fxStr batchcommid, notice;
-    time_t retrybatchtts;
+    time_t retrybatchtts = 0;
 
     for (int i = 0; i < num; i++)
     {

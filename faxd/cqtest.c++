@@ -503,7 +503,7 @@ int
 main(int argc, char* argv[])
 {
     const char* outFile = "cq.tif";
-    extern int optind, opterr;
+    extern int optind;
     extern char* optarg;
     int c;
 

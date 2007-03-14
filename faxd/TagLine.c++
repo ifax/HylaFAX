@@ -159,7 +159,7 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params,
      */
     u_int w = params.pageWidth();
     u_int h = (tagLineFont->fontHeight()*2)+MARGIN_TOP+MARGIN_BOT;	// max height - double VR_FINE
-    u_int th;								// actual tagline height
+    u_int th = 0;							// actual tagline height
     switch(params.vr) {
 	case VR_NORMAL:
 	case VR_200X100:
@@ -304,7 +304,7 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params,
 		u_int bpl = sizeof(u_long) * 8;		// bits per u_long
 		for (u_int nl = lpr/2 - 1; nl ; nl--) {
 		    // make 2 longs out of 1 (ABCD -> AABB CCDD)
-		    int pos;
+		    int pos = 0;
 		    for (u_int i = 0; i < (bpl/8); i++) {
 			if (i == 0 || i == bpl/8/2) {
 			    *l2 = (u_long) 0;

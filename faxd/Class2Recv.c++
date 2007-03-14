@@ -343,11 +343,11 @@ Class2Modem::recvPPM(TIFF* tif, int& ppr)
 bool
 Class2Modem::parseFPTS(TIFF* tif, const char* cp, int& ppr)
 {
-    uint32 lc = 0;
+    u_long lc = 0;
     int blc = 0;
     int cblc = 0;
     ppr = 0;
-    if (sscanf(cp, "%d,%d,%d,%d", &ppr, &lc, &blc, &cblc) > 0) {
+    if (sscanf(cp, "%d,%ld,%d,%d", &ppr, &lc, &blc, &cblc) > 0) {
 
 	/*
 	 * In practice we cannot trust the modem line count when we're 

@@ -524,7 +524,7 @@ FaxRequest::writeQFile()
     }
     lseek(fd, 0L, SEEK_SET);
     Sys::write(fd, sb, sb.getLength());
-    ftruncate(fd, sb.getLength());
+    (void) ftruncate(fd, sb.getLength());
     // XXX maybe should fsync, but not especially portable
 }
 

@@ -120,7 +120,7 @@ pageSendApp::send(const char** filenames, int num)
     u_int batched = BATCH_FIRST;
     FaxSendStatus status = send_done;
     fxStr batchcommid, notice;
-    time_t retrybatchtts;
+    time_t retrybatchtts = 0;
 
     for (int i = 0; i < num; i++) {
 	if (i+1 == num)
@@ -1174,7 +1174,7 @@ pageSendApp::sendUcpMsg(FaxRequest& req, FaxItem& preq, const fxStr& msg, fxStr&
     u_int unknown = 0;				// count of unknown responses
     time_t start = Sys::now();
     do {
-	u_int len = getResponse(resp, ixoXmitTimeout);
+	(void) getResponse(resp, ixoXmitTimeout);
 	const fxStr str = (const char*)resp;
 	//readUcpResponse(str);
 	fxStr tmp;

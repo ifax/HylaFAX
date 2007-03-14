@@ -291,17 +291,17 @@ static const char* StateNames[] = {
 #define	CLEANUP_RUNS() do {						\
     if (RunLength)							\
 	SETVAL(0);							\
-    if (a0 != lastx) {							\
-	badlength(a0, lastx);						\
-	while (a0 > lastx && pa > thisrun)				\
+    if ((tiff_runlen_t)a0 != lastx) {					\
+	badlength((tiff_runlen_t)a0, lastx);				\
+	while ((tiff_runlen_t)a0 > lastx && pa > thisrun)		\
 	    a0 -= *--pa;						\
-	if (a0 < lastx) {						\
+	if ((tiff_runlen_t)a0 < lastx) {				\
 	    if (a0 < 0)							\
 		a0 = 0;							\
 	    if ((pa-thisrun)&1)						\
 		SETVAL(0);						\
 	    SETVAL(lastx - a0);						\
-	} else if (a0 > lastx) {					\
+	} else if ((tiff_runlen_t)a0 > lastx) {				\
 	    SETVAL(lastx);						\
 	    SETVAL(0);							\
 	}								\
@@ -342,7 +342,7 @@ static const char* StateNames[] = {
 	    }								\
 	}								\
     doneWhite1d:							\
-	if (a0 >= lastx)						\
+	if ((tiff_runlen_t)a0 >= lastx)					\
 	    goto done1d;						\
 	for (;;) {							\
 	    LOOKUP16(13, TIFFFaxBlackTable, eof1d);			\
@@ -364,7 +364,7 @@ static const char* StateNames[] = {
 	    }								\
 	}								\
     doneBlack1d:							\
-	if (a0 >= lastx)						\
+	if ((tiff_runlen_t)a0 >= lastx)					\
 	    goto done1d;						\
         if( *(pa-1) == 0 && *(pa-2) == 0 )				\
             pa -= 2;                                                    \
@@ -382,7 +382,7 @@ done1d:									\
  * of runs for the reference line.
  */
 #define CHECK_b1 do {							\
-    if (pa != thisrun) while (b1 <= a0 && b1 < lastx) {			\
+    if (pa != thisrun) while (b1 <= a0 && (tiff_runlen_t)b1 < lastx) {	\
 	b1 += pb[0] + pb[1];						\
 	pb += 2;							\
     }									\
@@ -392,7 +392,7 @@ done1d:									\
  * Expand a row of 2D-encoded data.
  */
 #define EXPAND2D(eoflab) do {						\
-    while (a0 < lastx) {						\
+    while ((tiff_runlen_t)a0 < lastx) {					\
 	LOOKUP8(7, TIFFFaxMainTable, eof2d);				\
 	switch (TabEnt->State) {					\
 	case S_Pass:							\
@@ -516,7 +516,7 @@ done1d:									\
 	}								\
     }									\
     if (RunLength) {							\
-	if (RunLength + a0 < lastx) {					\
+	if ((tiff_runlen_t)(RunLength + a0) < lastx) {			\
 	    /* expect a final V0 */					\
 	    NeedBits8(1,eof2d);						\
 	    if (!GetBits(1))						\
