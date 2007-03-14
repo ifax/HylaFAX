@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Replace Class1TrainingRecovery with Class1SwitchingCmd
 * Fix error of sending a block twice, empty the 2nd time (12 Mar 2007)
 * Don't trigger hasV17Trouble for pages other than the first (12 Mar 2007)
 * Don't wait Class1TrainingRecovery when CRP was received (12 Mar 2007)

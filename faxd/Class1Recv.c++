@@ -144,7 +144,6 @@ Class1Modem::recvIdentification(
     u_int timer, bool notransmit, fxStr& emsg)
 {
     u_int t1 = howmany(timer, 1000);		// in seconds
-    u_int trecovery = howmany(conf.class1TrainingRecovery, 1000);
     time_t start = Sys::now();
     HDLCFrame frame(conf.class1FrameOverhead);
     bool framesSent = false;
@@ -255,16 +254,22 @@ Class1Modem::recvIdentification(
 	 * DCS from the other side.  First verify there is
 	 * time to make another attempt...
 	 */
-	if (Sys::now()+trecovery-start >= t1)
+	if ((u_int)(Sys::now()-start) >= t1)
 	    break;
 	if (frame.getFCF() != FCF_CRP) {
 	    /*
-	     * Delay long enough to miss any training that the
-	     * other side might have sent us.  Otherwise the
-	     * caller will miss our retransmission since it'll
-	     * be in the process of sending training.
+	     * Historically we waited "Class1TrainingRecovery" (1500 ms)
+	     * at this point to try to try to avoid retransmitting while
+	     * the sender is also transmitting.  Sometimes it proved to be
+	     * a faulty approach.  Really what we're trying to do is to
+	     * not be transmitting at the same time as the other end is.
+	     * The best way to do that is to make sure that there is
+	     * silence on the line, and  we do that with Class1SwitchingCmd.
 	     */
-	    pause(conf.class1TrainingRecovery);
+	    if (!atCmd(conf.class1SwitchingCmd, AT_OK)) {
+		emsg = "Failure to receive silence.";
+		return (false);
+	    }
 	}
 	if (!notransmit) {
 	    /*

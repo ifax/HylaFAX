@@ -314,7 +314,6 @@ Class1TCFRecvHack	boolean	\s-1No\s+1	Class 1/1.0: deliberately look for carrier 
 Class1TCFRecvTimeout	integer	\s-14500\s+1	Class 1/1.0: max wait (ms) for \s-1TCF\s+1
 Class1TMConnectDelay	integer	\s-10\s+1	Class 1/1.0: delay between +FTM CONNECT and data transmission
 Class1SwitchingCmd	string	\s-1AT+FRS=7\s+1	Class 1/1.0: command to ensure silence after HDLC reception
-Class1TrainingRecovery	integer	\s-11500\s+1	Class 1/1.0: delay after failed training
 Class1ValidateV21Frames	boolean	\s-1No\s+1	Class 1/1.0: check FCS against received frames
 .sp .5
 Class2Cmd	string	\s-1AT+FCLASS=2\s+1	Class 2: command to enter class 2/2.0
@@ -2513,12 +2512,6 @@ before the remote has successfully completed its own modulation training
 pattern then data, especially during TCF, could be lost.  Many modems do
 not follow T.31 in this regard, and thus the default is zero; however its
 use with such modems would likely have a negligible effect.
-.TP
-.B Class1TrainingRecovery
-The time, in milliseconds, to delay after a failed training session.
-This time is used when sending training and when waiting for
-.SM DCS
-and subsequent training during receive.
 .TP
 .B Class1ValidateV21Frames
 Whether or not to use the FCS bits of received V.21 HDLC frames to check
