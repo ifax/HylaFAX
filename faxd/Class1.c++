@@ -123,7 +123,7 @@ Class1Modem::setupModem(bool isSend)
 	return (false);
     // Query service support information
     fxStr s;
-    if (doQuery(conf.classQueryCmd, s, 500) && FaxModem::parseRange(s, modemServices))
+    if (doQuery(conf.classQueryCmd, s, 5000) && FaxModem::parseRange(s, modemServices))
 	traceBits(modemServices & SERVICE_ALL, serviceNames);
     if ((modemServices & serviceType) == 0)
 	return (false);

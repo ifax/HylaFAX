@@ -47,7 +47,7 @@ Class0Modem::setupModem(bool isSetup)
 	return (false);
     // Query service support information
     fxStr s;
-    if (doQuery(conf.classQueryCmd, s, 500) && parseRange(s, modemServices))
+    if (doQuery(conf.classQueryCmd, s, 5000) && parseRange(s, modemServices))
 	traceBits(modemServices & SERVICE_ALL, serviceNames);
     if ((modemServices & SERVICE_DATA) == 0)
 	return (false);
