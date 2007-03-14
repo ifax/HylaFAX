@@ -186,6 +186,7 @@ protected:
     bool        waitForDCEChannel(bool awaitctrl);
     bool        renegotiatePrimary(bool constrain);
     bool	syncECMFrame();
+    void	abortPageECMRecv(TIFF* tif, const Class2Params& params, u_char* block, u_int fcount, u_short seq, bool pagedataseen);
     bool	recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg);
     void	blockData(u_int byte, bool flag);
     bool	blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxStr& emsg);
