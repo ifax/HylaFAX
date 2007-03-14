@@ -155,6 +155,10 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
     if (batched & BATCH_FIRST)			// receive carrier raised
 	framerecvd = recvFrame(frame, FCF_SNDR, conf.t2Timer, true);
     else {					// receive carrier not raised
+	// We're not really switching directions of communication, but we don't want
+	// to start listening for prologue frames until we're sure that the receiver 
+	// has dropped the carrier used to signal MCF.
+	if (!useV34) (void) switchingPause(emsg);
 	// The receiver will allow T2 to elapse intentionally here.
 	// To keep recvFrame from timing out we double our wait.
 	framerecvd = recvFrame(frame, FCF_SNDR, conf.t2Timer * 2);
@@ -209,20 +213,11 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
 	    }
 	}
 	/*
-	 * This delay is only supposed to be done if the signal
-	 * is gone (see p.105 of Rec. T.30).  We just assume
-	 * it rather than send a command to the modem to check.
-	 * Getting NO CARRIER after EOM seems necessary, so we
-	 * usually do this at least twice before any HDLC frames
-	 * are received.  Using +FTS may be better than looping,
-	 * but many modems won't support that.
-	 */
-	if (!useV34) pause(200);
-	/*
 	 * Wait up to T1 for a valid DIS.
 	 */
 	if ((unsigned) Sys::now()-start >= t1)
 	    break;
+	if (!useV34) (void) switchingPause(emsg);
 	framerecvd = recvFrame(frame, FCF_SNDR, conf.t2Timer);
     }
     emsg = "No answer (T.30 T1 timeout)";

@@ -2,6 +2,8 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Prevent picking up again on the receiver's MCF signal when
+  re-entering Phase B in a batch (13 Mar 2007)
 * Force ECM when using V.8 (13 Mar 2007)
 * Recognize DTMF as caller id when waiting for rings (13 Mar 2007)
 * Use DLE+DTX to help reseting when stuck in transmit (13 Mar 2007)
