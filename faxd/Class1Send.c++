@@ -866,7 +866,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 		 * The best way to do that is to make sure that there is
 		 * silence on the line, and  we do that with Class1SwitchingCmd.
 		 */
-		if (!switchingPause(emsg)) {
+		if (useV34 || !switchingPause(emsg)) {
 		    return (false);
 		}
 	    }
@@ -1270,7 +1270,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			    stopTimeout("sending RR frame");
 			    traceFCF("SEND send", FCF_RR);
 			    // T.30 states that we must wait no more than T4 between unanswered RR signals.
-			    if (gotmsg = recvFrame(pprframe, FCF_SNDR, conf.t4Timer)) {
+			    if (gotmsg = recvFrame(pprframe, FCF_SNDR, conf.t4Timer, false, false)) {	// no CRP, stick to RR only
 				traceFCF("SEND recv", pprframe.getFCF());
 				if (pprframe.getFCF() == FCF_CRP) {
 				    gotmsg = false;
@@ -1281,7 +1281,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				    }
 				}
 			    }
-			} while (!gotmsg && (++rrcnt < 3) && (crpcnt < 3));
+			} while (!gotmsg && (++rrcnt < 3) && (crpcnt < 3) && (useV34 || switchingPause(emsg)));
 			if (!gotmsg) {
 			    emsg = "No response to RR repeated 3 times.";
 			    protoTrace(emsg);
@@ -1486,7 +1486,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 					    stopTimeout("sending RR frame");
 					    traceFCF("SEND send", FCF_RR);
 					    // T.30 states that we must wait no more than T4 between unanswered RR signals.
-					    if (gotmsg = recvFrame(errframe, FCF_SNDR, conf.t4Timer)) {
+					    if (gotmsg = recvFrame(errframe, FCF_SNDR, conf.t4Timer, false, false)) {	// no CRP, stick to RR only
 						traceFCF("SEND recv", errframe.getFCF());
 						if (errframe.getFCF() == FCF_CRP) {
 						    gotmsg = false;
@@ -1497,7 +1497,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 						    }
 						}
 					    }
-					} while (!gotmsg && (++rrcnt < 3) && (crpcnt < 3));
+					} while (!gotmsg && (++rrcnt < 3) && (crpcnt < 3) && (useV34 || switchingPause(emsg)));
 					if (!gotmsg) {
 					    emsg = "No response to RR repeated 3 times.";
 					    protoTrace(emsg);
@@ -2010,7 +2010,7 @@ void
 Class1Modem::sendEnd()
 {
     fxStr emsg;
-    (void) switchingPause(emsg);
+    if (!useV34) (void) switchingPause(emsg);
     transmitFrame(FCF_DCN|FCF_SNDR);		// disconnect
     setInputBuffering(true);
 }
