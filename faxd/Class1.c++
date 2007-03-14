@@ -1381,7 +1381,21 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, 
 	return (gotframe);
     }
     startTimeout(ms);
-    if (!readPending) readPending = atCmd(rhCmd, AT_NOTHING, 0) && waitFor(AT_CONNECT, 0);
+    if (!readPending) {
+	/*
+	 * Hopefully the modem is smart enough to *not* do +FCERROR after +FRH=3,
+	 * as it is only a stumbling-block for us and cannot be beneficial.  But,
+	 * in case it adheres blindly to the spec, we'll repeat ourselves here
+	 * until we timeout or we do get the V.21 carrier.  We do slow the looping
+	 * with a pause to prevent unwanted massive amounts of tracing.  The pause 
+	 * needs to be short enough, though, that the modem will still pick up
+	 * any V.21 signalling if it misses that much of the startup.
+	 */
+	do {
+	    readPending = atCmd(rhCmd, AT_NOTHING, 0) && waitFor(AT_CONNECT, 0);
+	    if (lastResponse == AT_FCERROR) pause(200);
+	} while (lastResponse == AT_FCERROR && !wasTimeout());
+    }
     if (readPending) {
         stopTimeout("waiting for HDLC flags");
         if (wasTimeout()){

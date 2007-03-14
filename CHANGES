@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Handle +FCERROR after most +FRH=3 commands (12 Mar 2007)
 * We can't rely on the timeout value to know if CONNECT has been seen (12 Mar 2007)
 * Calculate PPM/PPS waiter instead of using T1
 * Improve response handling of AT+FRH=3 (12 Mar 2007)
