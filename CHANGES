@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Improve Class 1 handling when prologue frames fail after EOM (13 Mar 2007)
 * Improve and extend JPEG parsing (13 Mar 2007)
 * Restrict the usage of sending EOR, even when using MH and MR (13 Mar 2007)
 * Fix send buffer when transmitting non-ECM data with a non-zero

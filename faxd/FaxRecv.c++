@@ -254,8 +254,12 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 	if (tif == NULL)
 	    return (false);
 	fileStart = pageStart = Sys::now();
-	if (!modem->recvEOMBegin(emsg))
+	if (!modem->recvEOMBegin(emsg)) {
+	    info.reason = emsg;
+	    docs[docs.length()-1] = info;
+	    TIFFClose(tif);
 	    return (false);
+	}
     }
     /*NOTREACHED*/
 }
