@@ -2,6 +2,8 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Fix send buffer when transmitting non-ECM data with a non-zero
+  scanline-time value (13 Mar 2007)
 * Flush modem input after NO CARRIER result in Class 1 Phase C send (13 Mar 2007)
 * Improve sender-side RNR/RR flow control interaction (13 Mar 2007)
 * Don't fallback to V.17 speeds on TCF retransmisions (13 Mar 2007)

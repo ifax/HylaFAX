@@ -768,7 +768,7 @@ FaxModem::correctPhaseCData(u_char* buf, u_long* pBufSize,
 	 */
 	MemoryDecoder dec2(buf, params.pageWidth(), *pBufSize, fillorder, params.is2D(), false);
 	endOfData = dec2.cutExtraRTC();
-	rows = dec2.getRows();
+	// we don't update rows because we don't decode the entire image
     }
     if( endOfData )
         *pBufSize = endOfData - buf;
