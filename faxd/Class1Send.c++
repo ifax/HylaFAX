@@ -1562,8 +1562,11 @@ Class1Modem::sendClass1ECMData(const u_char* data, u_int cc, const u_char* bitre
 	}
 	ecmFrame[ecmFramePos++] = frameRev[data[i]];
 	if (ecmFramePos == (frameSize + 4)) {
-	    if (!blockFrame(bitrev, ((i == (cc - 1)) && eod), ppmcmd, emsg))
+	    bool lastframe = ((i == (cc - 1)) && eod);
+	    if (!blockFrame(bitrev, lastframe, ppmcmd, emsg))
 		return (false);
+	    if (lastframe)
+		return (true);
 	}
     }
     if (eod) {
