@@ -761,7 +761,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		/*
 		 * [Re]transmit post page response.
 		 */
-		if (pageGood || conf.badPageHandling == FaxModem::BADPAGE_RTNSAVE) {
+		if (pageGood || (conf.badPageHandling == FaxModem::BADPAGE_RTNSAVE && getRecvEOLCount())) {
 		    if (!pageGood) lastPPM = FCF_MPS;	// FaxModem::BADPAGE_RTNSAVE
 		    /*
 		     * If post page message confirms the page
