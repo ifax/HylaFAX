@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Restrict the usage of sending EOR, even when using MH and MR (13 Mar 2007)
 * Fix send buffer when transmitting non-ECM data with a non-zero
   scanline-time value (13 Mar 2007)
 * Flush modem input after NO CARRIER result in Class 1 Phase C send (13 Mar 2007)

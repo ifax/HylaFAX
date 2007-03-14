@@ -1433,17 +1433,19 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			    } else {
 				/*
 				 * At this point data corruption is inevitable if all data
-				 * frames have not been received correctly.  This is tolerable
-				 * with MH and MR data, as the effect of the corruption
-				 * will be limited, but with MMR data all data following the
-				 * corrupt frame will be meaningless: the page image will be
-				 * truncated on the receiver's end.  So if this is the case
-				 * we disconnect, and hopefully we try again successfully.  If
-				 * this happens repeatedly to the same destination, then
-				 * disabling MMR to this destination would be advisable.
+				 * frames have not been received correctly.  With MH and MR 
+				 * data formats this may be tolerable if the bad frames are 
+				 * few and not in an unfortunate sequence.  With MMR data the
+				 * receiving decoder should truncate the image at the point
+				 * of the corruption.  The effect of corruption in JBIG or JPEG
+				 * data is quite unpredictable.  So if all frames have not been
+				 * received correctly and we're looking at an unacceptable
+				 * imaging situation on the receiver's end, then we disconnect,
+				 * and hopefully we try again successfully.
 				 */
-				if (blockgood == false && params.df == DF_2DMMR) {
-				    emsg = "Failure to transmit clean MMR image data.";
+				if (blockgood == false && (params.df >= DF_2DMMR ||
+				    (params.df <= DF_2DMR && badframes > frameNumber/2))) {
+				    emsg = "Failure to transmit clean ECM image data.";
 				    protoTrace(emsg);
 				    return (false);
 				}
