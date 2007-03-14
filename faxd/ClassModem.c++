@@ -940,7 +940,11 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 			resp = (u_char) cmd[++i];
 		        if (resp != AT_NOTHING) {
 			    // XXX check return?
-			    (void) waitFor(resp, ms);	// XXX ms
+			    // The timeout setting here (60*1000) used to be "ms" (which
+			    // defaults to 30 s), but we find that's too short, especially 
+			    // for long-running escape sequences.  It really needs to be
+			    // escape-configurable, but for now we just make it 60 s.
+			    (void) waitFor(resp, 60*1000);
 			    respPending = false;
 			}
 			break;
