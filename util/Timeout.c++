@@ -82,7 +82,7 @@ void
 Timeout::stopTimeout()
 {
 #ifdef ITIMER_REAL
-    static itimerval itv = { 0, 0, 0, 0 };
+    static itimerval itv = { { 0, 0 }, { 0, 0 } };
     (void) setitimer(ITIMER_REAL, &itv, (itimerval*) 0);
 #else
     (void) alarm(0);

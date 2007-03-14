@@ -67,20 +67,19 @@ size_t CallID::makeString(fxStr& output)
 
 const char* CallID::id (int i) const
 {
-    fxAssert(i<_id.length(), "Invalid CallID[] index");
+    fxAssert((u_int)i<_id.length(), "Invalid CallID[] index");
     return _id[i];
 }
 
 int CallID::length (int i) const
 {
-    fxAssert(i<_id.length(), "Invalid CallID[] index");
+    fxAssert((u_int)i<_id.length(), "Invalid CallID[] index");
     return _id[i].length();
 }
 
-
 fxStr& CallID::operator [](int i)
 {
-    fxAssert(i<_id.length(), "Invalid CallID[] index");
+    fxAssert((u_int)i<_id.length(), "Invalid CallID[] index");
     return _id[i];
 }
 
