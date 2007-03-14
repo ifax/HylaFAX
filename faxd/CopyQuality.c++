@@ -661,9 +661,9 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 			    sdnormcount = 0;
 			}
 			u_long clength = 256*256*256*buf[i+2]+256*256*buf[i+3]+256*buf[i+4]+buf[i+5];
-			if (clength > 256) clength = 256;		// keep it sane
+			if (clength >= cc - i - 5) clength = 0;		// bogus comment
 			fxStr comment = "";
-			for (u_long cpos = 0; i+6+cpos < cc && cpos < clength; cpos++) {
+			for (u_long cpos = 0; i+6+cpos < cc && cpos < clength && cpos < 256; cpos++) {
 			    if (!isprint(buf[i+6+cpos])) break;		// only printables
 			    comment.append(buf[i+6+cpos]);
 			}
@@ -730,20 +730,107 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 	    {
 		u_long framelength = 0;
 		u_long framewidth = 0;
+		u_long fsize = 0;
 		for (u_int i = 0; i < cc-2; i++) {
-		    if (buf[i] == 0xFF && buf[i+1] == 0xC0) {
+		    if (buf[i] == 0xFF && buf[i+1] >= 0xC0 && buf[i+1] <= 0xCF &&
+			buf[i+1] != 0xC4 && buf[i+1] != 0xC8 && buf[i+1] != 0xCC) {
+			u_short type = buf[i+1] - 0xC0;
+			fsize = 256*buf[i+2];
+			fsize += buf[i+3];
 			framelength = 256*buf[i+5];
 			framelength += buf[i+6];
 			framewidth = 256*buf[i+7];
 			framewidth += buf[i+8];
-			copyQualityTrace("Found Start of Frame (SOF) Marker, size: %lu x %lu", framewidth, framelength);
+			copyQualityTrace("Found Start of Frame (SOF%u) Marker, size: %lu x %lu", type, framewidth, framelength);
 			if (framelength < 65535 && framelength > recvEOLCount) recvEOLCount = framelength;
-		    }
-		    if (buf[i] == 0xFF && buf[i+1] == 0xDC) {
+			i += (fsize + 1);
+		    } else if (buf[i] == 0xFF && buf[i+1] == 0xC8) {
+			copyQualityTrace("Found JPEG Extensions (JPG) Marker");
+			i += 1;
+		    } else if (buf[i] == 0xFF && buf[i+1] == 0xC4) {
+			fsize = 256*buf[i+2];
+			fsize += buf[i+3];
+			copyQualityTrace("Found Define Huffman Tables (DHT) Marker");
+			i += (fsize + 1);
+		    } else if (buf[i] == 0xFF && buf[i+1] == 0xCC) {
+			fsize = 256*buf[i+2];
+			fsize += buf[i+3];
+			copyQualityTrace("Found Define Arithmatic Coding Conditionings (DAC) Marker");
+			i += (fsize + 1);
+		    } else if (buf[i] == 0xFF && buf[i+1] >= 0xD0 && buf[i+1] <= 0xD7) {
+			copyQualityTrace("Found Restart (RST) Marker");
+			i += 1;
+		    } else if (buf[i] == 0xFF && buf[i+1] == 0xD8) {
+			copyQualityTrace("Found Start of Image (SOI) Marker");
+			i += 1;
+		    } else if (buf[i] == 0xFF && buf[i+1] == 0xD9) {
+			copyQualityTrace("Found End of Image (EOI) Marker");
+			i += 1;
+		    } else if (buf[i] == 0xFF && buf[i+1] == 0xDA) {
+			fsize = 256*buf[i+2];
+			fsize += buf[i+3];
+			copyQualityTrace("Found Start of Scan (SOS) Marker");
+			i += (fsize + 1);
+		    } else if (buf[i] == 0xFF && buf[i+1] == 0xDB) {
+			fsize = 256*buf[i+2];
+			fsize += buf[i+3];
+			copyQualityTrace("Found Define Quantization Tables (DQT) Marker");
+			i += (fsize + 1);
+		    } else if (buf[i] == 0xFF && buf[i+1] == 0xDC) {
+			fsize = 256*buf[i+2];
+			fsize += buf[i+3];
 			framelength = 256*buf[i+4];
 			framelength += buf[i+5];
 			copyQualityTrace("Found Define Number of Lines (DNL) Marker, lines: %lu", framelength);
 			if (framelength < 65535) recvEOLCount = framelength;
+			i += (fsize + 1);
+		    } else if (buf[i] == 0xFF && buf[i+1] == 0xDD) {
+			fsize = 256*buf[i+2];
+			fsize += buf[i+3];
+			copyQualityTrace("Found Define Restart Interval (DRI) Marker");
+			i += (fsize + 1);
+		    } else if (buf[i] == 0xFF && buf[i+1] == 0xDE) {
+			copyQualityTrace("Found Define Hierarchial Progression (DHP) Marker");
+			i += 1;
+		    } else if (buf[i] == 0xFF && buf[i+1] == 0xDF) {
+			fsize = 256*buf[i+2];
+			fsize += buf[i+3];
+			copyQualityTrace("Found Expand Reference Components (EXP) Marker");
+			i += (fsize + 1);
+		    } else if (buf[i] == 0xFF && buf[i+1] >= 0xE0 && buf[i+1] <= 0xEF) {
+			u_short type = buf[i+1] - 0xE0;
+			fsize = 256*buf[i+2];
+			fsize += buf[i+3];
+			fxStr comment = "";
+			for (u_long cpos = 0; i+4+cpos < cc && cpos < fsize && cpos < 256; cpos++) {
+			    if (!isprint(buf[i+4+cpos])) break;		// only printables
+			    comment.append(buf[i+4+cpos]);
+			}
+			copyQualityTrace("Found Application Segment (APP%u) Marker \"%s\"", type, (const char*) comment);
+			i += (fsize + 1);
+		    } else if (buf[i] == 0xFF && buf[i+1] >= 0xF0 && buf[i+1] <= 0xFD) {
+			u_short type = buf[i+1] - 0xF0;
+			copyQualityTrace("Found JPEG Extension (JPG%u) Marker", type);
+			i += 1;
+		    } else if (buf[i] == 0xFF && buf[i+1] == 0xFE) {
+			fsize = 256*buf[i+2];
+			fsize += buf[i+3];
+			fxStr comment = "";
+			for (u_long cpos = 0; i+4+cpos < cc && cpos < fsize && cpos < 256; cpos++) {
+			    if (!isprint(buf[i+4+cpos])) break;		// only printables
+			    comment.append(buf[i+4+cpos]);
+			}
+			copyQualityTrace("Found Comment (COM) Marker \"%s\"", (const char*) comment);
+			i += (fsize + 1);
+		    } else if (buf[i] == 0xFF && buf[i+1] == 0x01) {
+			copyQualityTrace("Found Temporary Private Use (TEM) Marker");
+			i += 1;
+		    } else if (buf[i] == 0xFF && buf[i+1] >= 0x02 && buf[i+1] <= 0xBF) {
+			copyQualityTrace("Found Reserved (RES) Marker 0x%X", buf[i+1]);
+			i += 1;
+		    } else if (buf[i] == 0xFF && buf[i+1] != 0x00 && buf[i+1] != 0xFF) {
+			copyQualityTrace("Found Unknown Marker 0x%X", buf[i+1]);
+			i += 1;
 		    }
 		}
 	    }
