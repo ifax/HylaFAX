@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Extend "awaiting ECM synchronization" timeout (12 Mar 2007)
 * Add Class1PageWidthSupport modem config option (12 Mar 2007)
 * Add Class1PageLengthSupport config option (12 Mar 2007)
 * Simplify Class1SwitchingCmd code and prevent duplication of the
