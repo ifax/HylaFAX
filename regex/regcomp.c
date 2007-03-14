@@ -146,7 +146,7 @@ static char nuls[10];		/* place to point scanner in event of error */
 #define	NEXTn(n)	(p->next += (n))
 #define	GETNEXT()	(*p->next++)
 #define	SETERROR(e)	seterr(p, (e))
-#define	REQUIRE(co, e)	((co) || SETERROR(e))
+#define	REQUIRE(co, e)	(void) ((co) || SETERROR(e))
 #define	MUSTSEE(c, e)	(REQUIRE(MORE() && PEEK() == (c), e))
 #define	MUSTEAT(c, e)	(REQUIRE(MORE() && GETNEXT() == (c), e))
 #define	MUSTNOTSEE(c, e)	(REQUIRE(!MORE() || PEEK() != (c), e))
@@ -287,8 +287,8 @@ register struct parse *p;
 int stop;			/* character this ERE should end at */
 {
 	register char c;
-	register sopno prevback;
-	register sopno prevfwd;
+	register sopno prevback = HERE();
+	register sopno prevfwd = HERE();
 	register sopno conc;
 	register int first = 1;		/* is this the first alternative? */
 
@@ -1593,8 +1593,8 @@ struct parse *p;
 register struct re_guts *g;
 {
 	register sop *scan;
-	sop *start;
-	register sop *newstart;
+	sop *start = g->strip;
+	register sop *newstart = g->strip;
 	register sopno newlen;
 	register sop s;
 	register char *cp;
