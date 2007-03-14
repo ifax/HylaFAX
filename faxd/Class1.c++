@@ -1048,13 +1048,6 @@ Class1Modem::recvECMFrame(HDLCFrame& frame)
 		frame.put(byte);
 		bitpos = 8;
 		byte = 0;
-		/*
-		 * Ensure that a corrupt frame doesn't overflow the frame buffer.
-		 */
-		if (frame.getLength() > ((frameSize+6)*4)) {	//  4 times valid size
-		    protoTrace("HDLC frame length invalid.");
-		    return (false);
-		}
 	    }
 	}
 	if (bit == 0) ones = 0;
@@ -1070,11 +1063,22 @@ Class1Modem::recvECMFrame(HDLCFrame& frame)
 	    frame.put(0xff); frame.put(0xc0); frame.put(0x61); frame.put(0x96); frame.put(0xd3);
 	    rcpframe = true;
 	}
-    } while (ones != 6 && bit != EOF && !rcpframe);
-    bit = getModemBit(60000);			// trailing bit on flag
-    if (!rcpframe) {
-	if (frame.getLength() > 0)
-	    traceHDLCFrame("-->", frame, true);
+    } while (ones != 6 && bit != EOF && !rcpframe && frame.getLength() < frameSize+6);
+    if (ones == 6) bit = getModemBit(60000);			// trailing bit on flag
+    if (!rcpframe && frame.getLength() < frameSize+6) {
+	/*
+	 * The HDLC frame was terminated early by a flag.  T.30 A.3.5 states that
+	 * frame size cannot change during one page, and T.4 A.3.6.2 seems to provide
+	 * for padding in order to get that last frame on a block to always line up
+	 * on a byte and frame boundary.  However, the NOTE 2 there seemse to give
+	 * leniency to that requirement, and in fact many senders will send short
+	 * frames on the last frame of a block.  So we run a couple of additional
+	 * checks here (in addition to FCS checking) to limit the remote chance
+	 * of FCS actually checking out on corrupt data (although that may be very
+	 * remote indeed).  We don't do these "trailing flag" tests on normal-sized
+	 * frames because we deliberately don't look for a trailing flag when we
+	 * get enough data.
+	 */
 	if (bit) {				// should have been zero
 	    protoTrace("Bad HDLC terminating flag received.");
 	    return (false);
@@ -1084,6 +1088,7 @@ Class1Modem::recvECMFrame(HDLCFrame& frame)
 	    return (false);
 	}
     }
+    traceHDLCFrame("-->", frame, true);
     if (bit == EOF) {
 	protoTrace("EOF received.");
 	return (false);

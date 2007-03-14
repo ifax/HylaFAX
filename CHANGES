@@ -2,6 +2,8 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Improve ECM HDLC frame decoder to recover more quickly from data corruption
+  and possibly find frames where it couldn't before (12 Mar 2007)
 * Extend "awaiting ECM synchronization" timeout (12 Mar 2007)
 * Add Class1PageWidthSupport modem config option (12 Mar 2007)
 * Add Class1PageLengthSupport config option (12 Mar 2007)
