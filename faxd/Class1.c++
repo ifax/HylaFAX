@@ -1409,7 +1409,10 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, 
 		startTimeout(ms);
 		if (!(atCmd(rhCmd, AT_NOTHING, 0) && waitFor(AT_CONNECT,0))) {
 		    stopTimeout("waiting for v.21 carrier");
-		    if (wasTimeout()) abortReceive();
+		    if (wasTimeout()) {
+			abortReceive();
+			setTimeout(false);
+		    }
 		    return (false);
 		}
 		stopTimeout("waiting for v.21 carrier");
@@ -1424,7 +1427,10 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, 
 	if (lastResponse == AT_ERROR) gotEOT = true;		// on hook
     }
     stopTimeout("waiting for v.21 carrier");
-    if (wasTimeout()) abortReceive();
+    if (wasTimeout()) {
+	abortReceive();
+	setTimeout(false);
+    }
     return (false);
 }
 
