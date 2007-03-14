@@ -781,7 +781,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
 	};
 	emsg = fxStr::format("Modem does not support document page width"
 		", max page width %u pixels, image width %lu pixels",
-		widths[modem->getBestPageWidth()&7]*rf, w);
+		(uint32)(widths[modem->getBestPageWidth()&7]*rf), w);
 	return (send_reformat);
     }
     // NB: only common values
