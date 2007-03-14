@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Compensate for 1728 pixel data when they DCS signalled differently (13 Mar 2007)
 * Improve Class 1 handling when prologue frames fail after EOM (13 Mar 2007)
 * Improve and extend JPEG parsing (13 Mar 2007)
 * Restrict the usage of sending EOR, even when using MH and MR (13 Mar 2007)

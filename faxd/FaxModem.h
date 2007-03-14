@@ -72,6 +72,7 @@ private:
 // phase c data receive & copy quality checking
     u_int	cblc;		// current count of consecutive bad lines
     bool	lastRowBad;	// last decoded row was bad
+    u_long	linesWereA4Width;// count of lines measuring 1728 pel
 
     u_long	recvEOLCount;	// EOL count for received page
     u_long	recvBadLineCount;

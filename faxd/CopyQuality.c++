@@ -103,6 +103,7 @@ FaxModem::resetLineCounts()
     recvEOLCount = 0;				// count of EOL codes
     recvBadLineCount = 0;			// rows with a decoding error
     recvConsecutiveBadLineCount = 0;		// max consecutive bad rows
+    linesWereA4Width = 0;			// rows that measured 1728 pels
 }
 
 void
@@ -261,9 +262,22 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 			    }
 			}
 		    }
-		    recvBadLineCount++;
-		    cblc++;
-		    lastRowBad = true;
+		    /*
+		     * Some senders signal the wrong page width in DCS, such as A3,
+		     * and then proceed to deliver A4 page image data.  The copy
+		     * quality correction mechanism will allow the image data to get
+		     * through, with white space on the right, but it's better to
+		     * avoid sending RTN, as it will only cause more of the same or
+		     * will cause the sender to disconnect.  So if the we seem to
+		     * be getting A4 page data when something else was negotiated
+		     * we don't count those lines as bad.
+		     */
+		    linesWereA4Width += decodedPixels == 1728 ? 1 : 0;
+		    if (decodedPixels != 1728 || linesWereA4Width < ((recvEOLCount + 1) * 95 / 100)) {
+			recvBadLineCount++;
+			cblc++;
+			lastRowBad = true;
+		    }
 		}
 		if (decodedPixels) memcpy(curGood, recvRow, (size_t) rowSize);
 		/*
