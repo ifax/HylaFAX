@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Add more intelligence to the Class 1 receiver in sending RTN (12 Mar 2007)
 * Restart Class 1 TCF reception timer after zeros start
 * Handle +FCERROR after most +FRH=3 commands (12 Mar 2007)
 * We can't rely on the timeout value to know if CONNECT has been seen (12 Mar 2007)

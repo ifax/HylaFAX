@@ -93,6 +93,7 @@ Class1Modem::recvBegin(fxStr& emsg)
     recvdDCN = false;				// haven't seen DCN
     lastPPM = FCF_DCN;				// anything will do
     sendCFR = false;				// TCF was not received
+    lastMCF = 0;				// no MCF heard yet
 
     fxStr nsf;
     encodeNSF(nsf, HYLAFAX_VERSION);
@@ -495,6 +496,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	    startTimeout(7550);
 	    (void) sendFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
 	    stopTimeout("sending HDLC frame");
+	    lastMCF = Sys::now();
 	} else if (conf.badPageHandling == FaxModem::BADPAGE_RTNSAVE) {
 	    startTimeout(7550);
 	    (void) sendFrame(FCF_RTN|FCF_RCVR);
@@ -829,10 +831,12 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 				}
 			    } else {
 				(void) transmitFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
+				lastMCF = Sys::now();
 			    }
-			    if (pageGood)
+			    if (pageGood) {
 				traceFCF("RECV send", sendERR ? FCF_ERR : FCF_MCF);
-			    else
+				lastMCF = Sys::now();
+			    } else
 				traceFCF("RECV send", FCF_RTN);
 			}
 			/*
@@ -866,15 +870,28 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		    if (!switchingPause(emsg)) {
 			return (false);
 		    }
-		    u_int rtnfcf = conf.badPageHandling == FaxModem::BADPAGE_DCN ? FCF_DCN : FCF_RTN;
-		    (void) transmitFrame(rtnfcf|FCF_RCVR);
-		    traceFCF("RECV send", rtnfcf);
-		    /*
-		     * Reset the TIFF-related state so that subsequent
-		     * writes will overwrite the previous data.
-		     */
-		    messageReceived = true;	// expect DCS next
 		    signalRcvd = 0;
+		    if (params.ec == EC_DISABLE && !getRecvEOLCount() && (Sys::now() - lastMCF < 4)) {
+			/*
+			 * We last transmitted MCF a very, very short time ago, received no image data
+			 * since then, and now we're seeing a PPM again.  In non-ECM mode the chances of 
+			 * this meaning that we simply missed a very short page is extremely remote.  It
+			 * probably means that the sender did not properly hear our MCF and that we just
+			 * need to retransmit it. 
+			 */
+			(void) transmitFrame(FCF_MCF|FCF_RCVR);
+			traceFCF("RECV send", FCF_MCF);
+			messageReceived = false;	// expect Phase C
+		    } else {
+			u_int rtnfcf = conf.badPageHandling == FaxModem::BADPAGE_DCN ? FCF_DCN : FCF_RTN;
+			(void) transmitFrame(rtnfcf|FCF_RCVR);
+			traceFCF("RECV send", rtnfcf);
+			/*
+			 * Reset the TIFF-related state so that subsequent
+			 * writes will overwrite the previous data.
+			 */
+			messageReceived = true;	// expect DCS next
+		    }
 		}
 		break;
 	    case FCF_DCN:			// DCN

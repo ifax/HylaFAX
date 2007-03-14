@@ -78,6 +78,7 @@ protected:
     bool	messageReceived;	// expect/don't expect message carrier
     bool	repeatPhaseB;		// return to beginning of Phase B before next page
     bool	silenceHeard;		// indicates whether the last command was +FRS
+    time_t	lastMCF;		// indicates the time of the last MCF signal
     u_int	lastPPM;		// last PPM during receive
     bool	sendCFR;		// received TCF was not confirmed
     u_short	ecmBitPos;		// bit position to populate on ecmByte
