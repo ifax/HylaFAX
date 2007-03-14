@@ -1173,6 +1173,18 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		ATResponse r;
 		while ((r = atResponse(rbuf, getDataTimeout())) == AT_OTHER);
         	if (!(r == AT_OK)) {
+		    if (r == AT_NOCARRIER) {
+			/*
+			 * The NO CARRIER result here is not per-spec.  However,
+			 * some modems capable of detecting hangup conditions will
+			 * use this to indicate a disconnection.  Because we did
+			 * not check for modem responses during the entire data
+			 * transfer we flush the modem input so as to avoid reading
+			 * any modem responses related to misinterpreted Phase C
+			 * data that occurred after the hangup.
+			 */
+			flushModemInput();
+		    }
 		    return (false);
 		}
 	    }
@@ -1960,6 +1972,18 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	    while ((r = atResponse(rbuf, getDataTimeout())) == AT_OTHER)
 		;
 	    rc = (r == AT_OK);
+	    if (r == AT_NOCARRIER) {
+		/*
+		 * The NO CARRIER result here is not per-spec.  However,
+		 * some modems capable of detecting hangup conditions will
+		 * use this to indicate a disconnection.  Because we did
+		 * not check for modem responses during the entire data
+		 * transfer we flush the modem input so as to avoid reading
+		 * any modem responses related to misinterpreted Phase C
+		 * data that occurred after the hangup.
+		 */
+		flushModemInput();
+	    }
 	}
 	if (flowControl == FLOW_XONXOFF)
 	    setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
