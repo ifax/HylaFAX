@@ -1472,7 +1472,8 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    }
 					    transmitFrame(FCF_PPR, fxStr(ppr, 32));
 					    traceFCF("RECV send", FCF_PPR);
-					    gotrtnframe = recvFrame(rtnframe, FCF_RCVR, conf.t2Timer);
+					    if (gotrtnframe = recvFrame(rtnframe, FCF_RCVR, conf.t2Timer))
+						traceFCF("RECV recv", rtnframe.getFCF());
 					    recvFrameCount++;
 					}
 					u_int dcs;			// possible bits 1-16 of DCS in FIF

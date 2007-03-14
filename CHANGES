@@ -2,6 +2,8 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Logging instances where a sender transmits PPS again after our fourth PPR
+  signal (12 Mar 2007)
 * when dealing with JBIG/JPEG send PPR if we detect no frames
   received but we're still missing the last frame (12 Mar 2007)
 * Bug 811: children should exit with _exit() (12 Mar 2007)
