@@ -181,7 +181,7 @@ Class1Modem::setupModem(bool isSend)
 	modemParams.br |= BIT(primaryV34Rate) - 1;
     }
     modemParams.wd = BIT(WD_A4) | BIT(WD_B4) | BIT(WD_A3);
-    modemParams.ln = LN_ALL;
+    modemParams.ln = conf.class1PageLengthSupport;
     modemParams.df = BIT(DF_1DMH) | BIT(DF_2DMR);
     modemParams.bf = BF_DISABLE;
     modemParams.st = ST_ALL;

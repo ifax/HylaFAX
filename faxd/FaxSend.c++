@@ -795,7 +795,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
      * to take into account sloppy coding practice (e.g.
      * using 200 dpi for high-res facsimile.
      */
-    if (clientInfo.getMaxPageLengthInMM() != (u_short)-1) {
+    if (clientInfo.getMaxPageLengthInMM() != (u_short) -1 || !modem->supportsPageLength((u_int) -1)) {
 	u_long h = 0;
 	(void) TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
 	float len = h / yres;			// page length in mm
