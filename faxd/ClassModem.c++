@@ -773,6 +773,10 @@ ClassModem::atResponse(char* buf, long ms)
 	    if (strneq(buf, "CONNECT", 7))
 		lastResponse = AT_CONNECT;
 	    break;
+	case 'D':
+	    if (strneq(buf, "DTMF", 4))
+		lastResponse = AT_DTMF;
+	    break;
 	case 'E':
 	    if (strneq(buf, "ERROR", 5))
 		lastResponse = AT_ERROR;

@@ -177,7 +177,8 @@ public:
 	AT_DLEETX	= 13,	// dle/etx characters
 	AT_DLEEOT	= 14,	// dle+eot characters (end of transmission)
 	AT_XON		= 15,	// xon character
-	AT_OTHER	= 16	// unknown response (not one of above)
+	AT_DTMF		= 16,	// DTMF detection
+	AT_OTHER	= 17	// unknown response (not one of above)
     };
 private:
     ModemServer& server;	// server for getting to device
