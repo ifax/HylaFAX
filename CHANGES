@@ -2,6 +2,8 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Handle instances where ECM is negotiated but the sender
+  transmits non-ECM data and signalling (12 Mar 2007)
 * Handle MPS/EOP/EOM/CRP when expecting DCS, i.e. after RTN
 * Log correctly when a receiver DIS indicates no V.8 bit but
   V.8 was already known to have succeeded (12 Mar 2007)
