@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Don't fallback to V.17 speeds on TCF retransmisions (13 Mar 2007)
 * Prevent picking up again on the receiver's MCF signal when
   re-entering Phase B in a batch (13 Mar 2007)
 * Force ECM when using V.8 (13 Mar 2007)

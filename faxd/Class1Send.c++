@@ -656,6 +656,7 @@ Class1Modem::isCapable(u_int sr, FaxParams& dis)
 bool
 Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 {
+    bool again = false;
     u_short attempt = 0;
     if (tries == 0) {
 	emsg = "DIS/DTC received 3 times; DCS not recognized";
@@ -875,7 +876,18 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	 * the signalling rate to the next lower rate supported
 	 * by the local & remote sides and try again.
 	 */
-    } while (!useV34 && dropToNextBR(params));
+	if (!useV34) {
+	    do {
+		/*
+		 * We don't fallback to V.17 9600 or V.17 7200 because
+		 * after V.17 14400 and V.17 12000 fail they're not likely
+		 * to succeed, and some receivers will give up after three
+		 * failed TCFs.
+		 */
+		again = dropToNextBR(params);
+	    } while (again && (params.br == BR_9600 || params.br == BR_7200) && curcap->mod != V29);
+	}
+    } while (!useV34 && again);
 failed:
     emsg = "Failure to train remote modem at 2400 bps or minimum speed";
 done:
