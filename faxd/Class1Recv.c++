@@ -257,13 +257,15 @@ Class1Modem::recvIdentification(
 	 */
 	if (Sys::now()+trecovery-start >= t1)
 	    break;
-	/*
-	 * Delay long enough to miss any training that the
-	 * other side might have sent us.  Otherwise the
-	 * caller will miss our retransmission since it'll
-	 * be in the process of sending training.
-	 */
-	pause(conf.class1TrainingRecovery);
+	if (frame.getFCF() != FCF_CRP) {
+	    /*
+	     * Delay long enough to miss any training that the
+	     * other side might have sent us.  Otherwise the
+	     * caller will miss our retransmission since it'll
+	     * be in the process of sending training.
+	     */
+	    pause(conf.class1TrainingRecovery);
+	}
 	if (!notransmit) {
 	    /*
 	     * Retransmit ident frames.

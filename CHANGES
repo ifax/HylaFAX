@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Don't wait Class1TrainingRecovery when CRP was received (12 Mar 2007)
 * Add BadPageHandlingMethod feature defauting to RTN-SAVE (12 Mar 2007()
 * Stop using CRP in Phase D in Class 1 sending (12 Mar 2007)
 * Fix error of forgotton fxgetty child under flawed ECM
