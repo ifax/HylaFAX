@@ -381,8 +381,7 @@ Class2Modem::recvEnd(fxStr&)
 {
     if (!hadHangup) {
 	if (isNormalHangup()) {
-	    if (atCmd("AT+FDR", AT_NOTHING))	// wait for DCN
-		(void) atResponse(rbuf, conf.t1Timer);
+	    (void) atCmd("AT+FDR", AT_FHNG);	// wait for DCN
 	} else
 	    (void) atCmd(abortCmd);		// abort session
     }

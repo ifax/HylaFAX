@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Fix premature disconnection in Class 2 reception (12 Mar 2007)
 * Increase the wait time for AT+FCLASS=? response (12 Mar 2007)
 * Pad TCS/CSI string to avoid Class2 modem bugs (12 Mar 2007)
 * Unify and simply FCF tracing routines (12 Mar 2007)
