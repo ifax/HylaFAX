@@ -825,21 +825,21 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 		case FCF_DIS:		// new capabilities, maybe
 		    {
 			FaxParams newDIS = frame.getDIS();
-		      if (newDIS != dis_caps) {
-			/*
-			dis_caps = newDIS;
-			params.setFromDIS(dis_caps);
-			 *
-			 * The above code was commented because to
-			 * use the newDIS we need to do more work like
-			 *     sendClientCapabilitiesOK()
-			 *     sendSetupParams()
-			 * So we ignore newDIS.
-			 * It will work if old dis 'less' then newDIS.
-			 */
+			if (newDIS != dis_caps) {
+			    /*
+			       dis_caps = newDIS;
+			       params.setFromDIS(dis_caps);
+			     *
+			     * The above code was commented because to
+			     * use the newDIS we need to do more work like
+			     *     sendClientCapabilitiesOK()
+			     *     sendSetupParams()
+			     * So we ignore newDIS.
+			     * It will work if old dis 'less' then newDIS.
+			     */
 			    checkReceiverDIS(params);
-			curcap = NULL;
-		      }
+			    curcap = NULL;
+			}
 		    }
 		    return (sendTraining(params, --tries, emsg));
 		default:
