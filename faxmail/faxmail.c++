@@ -521,7 +521,7 @@ faxMailApp::formatApplication(FILE* fd, MIMEState& mime)
 	FILE* fout = getOutputFile();
 	fxStackBuffer buf;
 	while (mime.getLine(fd, buf))
-	    fwrite((const char*) buf, buf.getLength(), 1, fout);
+	    (void) fwrite((const char*) buf, buf.getLength(), 1, fout);
 	if (!withinFile) beginFile();
 	withinFile = true;
     } else if (mime.getSubType() == "x-faxmail-prolog") {
@@ -618,7 +618,7 @@ faxMailApp::copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile)
         fxStackBuffer buf;
         bool ok = true;
         while (mime.getLine(fd, buf) && ok) {
-	        ok = (Sys::write(ftmp, buf, buf.getLength()) == buf.getLength());
+	        ok = ((u_int) Sys::write(ftmp, buf, buf.getLength()) == buf.getLength());
         }
         if (ok) {
             Sys::close(ftmp);

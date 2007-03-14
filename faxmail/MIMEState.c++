@@ -440,24 +440,24 @@ copyBase64(fxStackBuffer& buf, const char line[], u_int cc)
     while (i < cc) {
 	int c1;
 	do {
-	    c1 = base64[line[i++]];
+	    c1 = base64[(u_int)line[i++]];
 	} while (c1 == -1 && i < cc);
 	if (c1 != -1) {
 	    int c2;
 	    do {
-		c2 = base64[line[i++]];
+		c2 = base64[(u_int)line[i++]];
 	    } while (c2 == -1 && i < cc);
 	    if (c2 != -1) {
 		buf.put((c1<<2) | ((c2&0x30)>>4));
 		int c3;
 		do {
-		    c3 = base64[line[i++]];
+		    c3 = base64[(u_int)line[i++]];
 		} while (c3 == -1 && i < cc);
 		if (c3 != -1) {
 		    buf.put(((c2&0x0f)<<4) | ((c3&0x3c)>>2));
 		    int c4;
 		    do {
-			c4 = base64[line[i++]];
+			c4 = base64[(u_int)line[i++]];
 		    } while (c4 == -1 && i < cc);
 		    if (c4 != -1)
 			buf.put((c3&0x3)<<6 | c4);
