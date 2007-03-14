@@ -1305,6 +1305,7 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallID& callid)
     time_t start = Sys::now();
     do {
 	switch (atResponse(rbuf, conf.ringTimeout)) {
+	case AT_DTMF:
 	case AT_OTHER:			// check distinctive ring
 	    if (streq(conf.ringData, rbuf))
 		type = CALLTYPE_DATA;
