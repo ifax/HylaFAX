@@ -1129,7 +1129,7 @@ OldProtocolServer::decodeLZW(FILE* fin, FILE* fout)
 	    do {
 		*--tp = codep->value;
 	    } while ((codep = codep->next));
-	    fwrite(tp, len, 1, fout);
+	    (void) fwrite(tp, len, 1, fout);
 	    total += len;
 	    if (tp != buf)
 		free(tp);

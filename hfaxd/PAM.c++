@@ -76,7 +76,6 @@ int do_pamauth(pam_handle_t * pamh)
 {
     int pamret;
 
-    u_int tries = 10;
     for (int i = 0; i < 10; i++)
     {
 	/*

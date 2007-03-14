@@ -480,6 +480,8 @@ HylaFAXServer::replyJobParamValue(Job& job, int code, Token t)
 	}
 	reply(code, "End of polling items.");
 	return;
+    default:
+	break;
     }
     for (i = 0, n = N(strvals); i < n; i++)
 	if (strvals[i].t == t) {
@@ -690,6 +692,8 @@ HylaFAXServer::setJobParameter(Job& job, Token t, const fxStr& value)
 		return (true);
 	    } else
 		return (false);
+	default:
+	    break;
 	}
 	for (u_int i = 0, n = N(strvals); i < n; i++)
 	    if (strvals[i].t == t) {
@@ -725,6 +729,8 @@ HylaFAXServer::setJobParameter(Job& job, Token t, u_short value)
 			break;
 		    case T_SCHEDPRI:
 			job.pri = job.usrpri;		// reload
+			break;
+		    default:
 			break;
 		    }
 		}
@@ -775,6 +781,8 @@ HylaFAXServer::setJobParameter(Job& job, Token t, time_t value)
 	case T_RETRYTIME:
 	    job.retrytime = value;
 	    return (true);
+	default:
+	    break;
 	}
 	parmBotch(t);
     }
@@ -801,6 +809,8 @@ HylaFAXServer::setJobParameter(Job& job, Token t, bool b)
 	case T_USE_CONTCOVER:
 	    job.useccover = b;
 	    return (true);
+	default:
+	    break;
 	}
 	parmBotch(t);
     }
@@ -821,6 +831,8 @@ HylaFAXServer::setJobParameter(Job& job, Token t, float value)
 		job.pagehandling = "";		// force recalculation
 	    }
 	    return (true);
+	default:
+	    break;
 	}
 	parmBotch(t);
     }

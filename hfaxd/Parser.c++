@@ -903,6 +903,8 @@ HylaFAXServer::cmd(Token t)
 	    return (true);
 	}
 	break;
+    default:
+	break;
     }
     return (false);
 }
@@ -981,6 +983,8 @@ HylaFAXServer::site_cmd(Token t)
 	    helpCmd(sitetab, s);
 	    return (true);
 	}
+	break;
+    default:
 	break;
     }
     return (false);
@@ -1199,6 +1203,8 @@ HylaFAXServer::param_cmd(Token t)
 	    helpCmd(parmtab, s);
 	    return (true);
 	}
+	break;
+    default:
 	break;
     }
     return (false);
@@ -1420,6 +1426,8 @@ HylaFAXServer::multi_STRING(fxStr& s)
 	case T_LEXERR:
 	    syntaxError("unmatched quote mark");
 	    return (false);
+	default:
+	    break;
 	}
     }
 }

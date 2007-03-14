@@ -683,6 +683,8 @@ SNPPServer::cmd(Token t)
 	    return (true);
 	}
 	break;
+    default:
+	break;
     }
     return (false);
 }
@@ -778,6 +780,8 @@ SNPPServer::site_cmd(Token t)
 	    jstatCmd(defJob);
 	    return (true);
 	}
+	break;
+    default:
 	break;
     }
     return (false);
