@@ -613,7 +613,8 @@ FaxServer::sendSetupParams1(TIFF* tif,
 	    bits >>= 1;
 	    if (bits) params.df++;
 	}
-	if (params.df == DF_JBIG && (!modem->supportsJBIG() || (params.ec == EC_DISABLE)))
+	// Class 2 RTFCC doesn't support JBIG
+	if (params.df == DF_JBIG && (!modem->supportsJBIG() || (params.ec == EC_DISABLE) || class2RTFCC))
 		params.df = DF_2DMMR;
 	// even if RTFCC supported uncompressed mode (and it doesn't)
 	// it's likely that the remote was incorrect in telling us it does

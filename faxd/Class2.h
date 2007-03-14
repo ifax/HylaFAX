@@ -66,6 +66,7 @@ protected:
     bool	xmitWaitForXON;		// if true, wait for XON when sending
     bool	hostDidCQ;		// if true, copy quality done on host
     bool	hasPolling;		// if true, modem does polled recv
+    bool	useExtendedDF;		// if true, modem has Agere data format extension
     char	recvDataTrigger;	// char to send to start recv'ing data
     char	hangupCode[4];		// hangup reason (from modem)
     bool	hadHangup;		// true if +FHNG:/+FHS: received
@@ -124,7 +125,7 @@ protected:
 		    ATResponse = AT_OK, long ms = 30*1000);
     bool	class2Cmd(const fxStr& cmd, const fxStr& a0,
 		    ATResponse = AT_OK, long ms = 30*1000);
-    bool	class2Cmd(const fxStr& cmd, const Class2Params&,
+    bool	class2Cmd(const fxStr& cmd, const Class2Params&, bool isDCC,
 		    ATResponse =AT_OK, long ms = 30*1000);
 // parsing routines for capability&parameter strings
     bool	parseClass2Capabilities(const char* cap, Class2Params&, bool isDIS);

@@ -79,7 +79,7 @@ public:
     int operator==(const Class2Params&) const;
     int operator!=(const Class2Params&) const;
 
-    fxStr cmd(bool class2UseHex, bool ecm20 = false) const;	// format AT+F cmd string
+    fxStr cmd(bool class2UseHex, bool ecm20 = false, bool doDFbitmap = false) const;	// format AT+F cmd string
     void setFromDIS(FaxParams& dis);
     void setFromDIS(u_int dis, u_int xinfo = 0);
     void setFromDCS(FaxParams& dcs);

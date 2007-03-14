@@ -395,7 +395,7 @@ FaxModem::getBestPageLength() const
 u_int
 FaxModem::getBestDataFormat() const
 {
-    return bestBit(modemParams.df, DF_2DMMR, DF_1DMH);
+    return bestBit(modemParams.df, DF_JBIG, DF_1DMH);
 }
 
 /*

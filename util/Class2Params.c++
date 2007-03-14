@@ -60,7 +60,7 @@ Class2Params::operator!=(const Class2Params& other) const
 }
 
 fxStr
-Class2Params::cmd(bool class2UseHex, bool ecm20) const
+Class2Params::cmd(bool class2UseHex, bool ecm20, bool doDFbitmap) const
 {
     u_int unset = (u_int) -1;
     fxStr comma(",");
@@ -78,7 +78,18 @@ Class2Params::cmd(bool class2UseHex, bool ecm20) const
     s.append(comma);
     if (ln != unset) s.append(fxStr::format(notation, ln));
     s.append(comma);
-    if (df != unset) s.append(fxStr::format(notation, df));
+    if (doDFbitmap) {
+	/*
+	 * We need to produce a MultiTech data format extension
+	 * bitmap rather than a point-value.
+	 */
+	u_int dfmap = 0;
+	if (df &  BIT(DF_2DMR)) dfmap |= 0x1;
+	if (df & BIT(DF_2DMMR)) dfmap |= 0x3;
+	if (df &  BIT(DF_JBIG)) dfmap |= 0xC;	// JBIG L0 (4) + JBIG (8)
+	if (df != unset) s.append(fxStr::format(notation, dfmap));
+    } else
+	if (df != unset) s.append(fxStr::format(notation, df != 4 ? df : 8));	// we don't do JBIG L0
     s.append(comma);
     if (ec != unset) s.append(fxStr::format(notation, ec - (ecm20 && ec ? 1 : 0)));
     s.append(comma);
