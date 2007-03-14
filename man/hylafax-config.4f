@@ -2510,7 +2510,8 @@ switching to the high-speed TCF carrier.  Use this if session logs
 consistently show +FCERROR prior to TCF reception.
 .TP
 .B Class1TCFRecvTimeout
-The maximum time to wait, in milliseconds, for the first byte of
+The maximum time to wait, in milliseconds, for the first byte and
+again for the entirety of
 the Training Check (\c
 .SM TCF\c
 ) message data that is received during the

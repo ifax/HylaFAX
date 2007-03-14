@@ -1468,12 +1468,19 @@ Class1Modem::recvTCF(int br, HDLCFrame& buf, const u_char* bitrev, long ms)
 	     * second TCF--perhaps if it is too long it
 	     * won't permit us to send the nak in time?
 	     *
-	     * It needs to be longer than 1.5 seconds, though
+	     * The initial timer needs to be longer than 1.5 seconds
 	     * to support senders that may not start the zeros
-	     * until a second or two after CONNECT.
+	     * until a second or two after CONNECT.  This is
+	     * also why we restart our timeout after the zeros
+	     * start.
 	     */
+	    bool zerosstarted = false;
 	    startTimeout(ms);
 	    do {
+		if (c == 0x00 && !zerosstarted) {
+		    zerosstarted = true;
+		    startTimeout(ms);
+		}
 		if (c == DLE) {
 		    c = getModemChar(0);
 		    if (c == ETX) {
@@ -1489,7 +1496,6 @@ Class1Modem::recvTCF(int br, HDLCFrame& buf, const u_char* bitrev, long ms)
 		    setTimeout(true);
 		    break;
 		}
-
 	    } while ((c = getModemChar(0)) != EOF);
 	}
     }
