@@ -62,7 +62,7 @@ faxStatApp::run(int argc, char** argv)
     dirs.append(FAX_STATUSDIR);		// server status
     bool checkInfo = false;
     int c;
-    while ((c = getopt(argc, argv, "h:adgfilrsv")) != -1)
+    while ((c = Sys::getopt(argc, argv, "h:adgfilrsv")) != -1)
 	switch (c) {
 	case 'a':			// display archived jobs
 	    dirs.append(FAX_ARCHDIR);

@@ -101,7 +101,7 @@ main(int argc, char* argv[])
 
     appName = argv[0];
     file = FAX_LIBDATA "/" FAX_TYPERULES;
-    while ((c = getopt(argc, argv, "f:")) != -1)
+    while ((c = Sys::getopt(argc, argv, "f:")) != -1)
 	switch (c) {
 	case 'f':
 	    file = optarg;

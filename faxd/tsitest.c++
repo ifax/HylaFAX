@@ -39,6 +39,7 @@
 #include "REArray.h"
 #include "BoolArray.h"
 #include "Str.h"
+#include "Sys.h"
 
 fxStr		qualifyTSI;
 REArray*	tsiPats = NULL;		// recv tsi patterns
@@ -144,7 +145,7 @@ main(int argc, char* argv[])
     int c;
 
     appName = argv[0];
-    while ((c = getopt(argc, argv, ":q")) != -1)
+    while ((c = Sys::getopt(argc, argv, ":q")) != -1)
 	switch (c) {
 	case 'q':
 	    verbose = false;

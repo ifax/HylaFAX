@@ -284,7 +284,7 @@ main(argc, argv)
     w = getPageWidth(info);
     h = getPageHeight(info);
     delPageSize(info);
-    while ((c = getopt(argc, argv, "o:r:g:b:h:s:v:w:12")) != -1)
+    while ((c = Sys::getopt(argc, argv, "o:r:g:b:h:s:v:w:12")) != -1)
 	switch (c) {
 	case '1':
 	    g3opts &= ~GROUP3OPT_2DENCODING;

@@ -413,7 +413,7 @@ main(int argc, char* argv[])
     setlocale(LC_TIME, "");			// for strftime calls
 #endif
     appName = argv[0];
-    while ((c = getopt(argc, argv, "f:m:o:")) != -1)
+    while ((c = Sys::getopt(argc, argv, "f:m:o:")) != -1)
 	switch (c) {
 	case 'f':
 	    tagLineFontFile = optarg;

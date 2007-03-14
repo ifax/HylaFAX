@@ -58,7 +58,7 @@ faxRmApp::run(int argc, char** argv)
     bool docs = false;
     bool useadmin = false;
 
-    while ((c = getopt(argc, argv, "ah:dv")) != -1)
+    while ((c = Sys::getopt(argc, argv, "ah:dv")) != -1)
 	switch (c) {
 	case 'a':
 	    useadmin = true;

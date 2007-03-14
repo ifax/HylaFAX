@@ -509,7 +509,7 @@ main(int argc, char* argv[])
 
     CQDecoder cq;
     appName = argv[0];
-    while ((c = getopt(argc, argv, "m:o:p:")) != -1)
+    while ((c = Sys::getopt(argc, argv, "m:o:p:")) != -1)
 	switch (c) {
 	case 'm':
 	    cq.maxConsecutiveBadLines = (u_int) strtoul(optarg, NULL, 0);

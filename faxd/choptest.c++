@@ -32,6 +32,7 @@
 #include "Class2.h"
 #include "MemoryDecoder.h"
 #include "tiffio.h"
+#include "Sys.h"
 
 const char* appName;
 
@@ -65,7 +66,7 @@ main(int argc, char* argv[])
     int c;
 
     appName = argv[0];
-    while ((c = getopt(argc, argv, "t:a")) != -1)
+    while ((c = Sys::getopt(argc, argv, "t:a")) != -1)
 	switch (c) {
 	case 'a':
 	    doAll = true;

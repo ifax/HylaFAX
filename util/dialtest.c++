@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "DialRules.h"
+#include "Sys.h"
 
 extern	void fxFatal(const char* va_alist ...);
 
@@ -71,7 +72,7 @@ main(int argc, char* argv[])
     int c;
 
     appName = argv[0];
-    while ((c = getopt(argc, argv, "a:c:i:l:v")) != -1)
+    while ((c = Sys::getopt(argc, argv, "a:c:i:l:v")) != -1)
 	switch (c) {
 	case 'a':
 	    areaCode = optarg;

@@ -99,7 +99,7 @@ faxAlterApp::run(int argc, char** argv)
     int rc;
 
     int c;
-    while ((c = getopt(argc, argv, "Ca:d:h:k:m:n:P:t:ADQRgprv")) != -1)
+    while ((c = Sys::getopt(argc, argv, "Ca:d:h:k:m:n:P:t:ADQRgprv")) != -1)
 	switch (c) {
 	case 'C':
 	    errorexit = false;
