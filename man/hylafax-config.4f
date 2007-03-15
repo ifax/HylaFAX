@@ -1516,8 +1516,14 @@ may be used as well as the following server-implemented codes:
 .ta \w'\fBEscape\fP    'u
 .nf
 \fBEscape\fP	\fBDescription\fP
+%%a	destination subaddress
+%%c	sender's company name
+%%C	destination company name
 %%d	destination phone number
+%%g	sender's geographic location
+%%G	destination geographic location
 %%i	job identifier
+%%I	group identifier
 %%j	user-specified job tag
 %%l	\fBLocalIdentifier\fP or canonicalized \fBFAXNumber\fP
 %%m	sender's electronic mail address
@@ -1526,8 +1532,11 @@ may be used as well as the following server-implemented codes:
 %%P	current page number of job
 %%r	receiver's name
 %%s	sender's name
+%%S	subject
 %%t	total pages in session
 %%T	total pages in job
+%%v	sender's voice number
+%%V	destination voice number
 %%%	``%''
 .fi
 .sp .5
