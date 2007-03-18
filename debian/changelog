@@ -1,5 +1,1172 @@
-hylafax (4.3.1~cvs-20070121) unstable; urgency=low
+hylafax (2:4.3.4~cvs) unstable; urgency=low
 
-  * Standard build from CVS
+  * Added standard debian packaging rules to upstream CVS
+  * Changed debian/rules in order to expand pathname according to C locale
 
- -- Giuseppe Sacco <eppesuig@debian.org>  Tue,  15 Jan 2007 18:24:46 +0100
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat, 17 Mar 2007 16:37:44 +0100
+
+hylafax (2:4.3.3-1) unstable; urgency=low
+
+  * New upstream release
+  * Removed from debian/rules the way notify-reject was renamed to notify-rejected
+    since new upstream version correctly named the files.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Fri,  9 Mar 2007 08:48:17 +0100
+
+hylafax (2:4.3.2-1) unstable; urgency=low
+
+  * New upstream release (Closes: #406395, #409417, #409532)
+  * Removed patch 673_configure_quote_commands (already included upstream)
+  * Removed patch 672_ps2pdf_output (already included upstream)
+  * Removed debian/ directory from upstream source
+  * Renamed wrongly named files as per http://bugs.hylafax.org/show_bug.cgi?id=849
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Wed, 21 Feb 2007 18:58:45 +0100
+
+hylafax (2:4.3.1-7) unstable; urgency=low
+
+  * Fixed the way setup.cache is updated (Closes: #405036)
+  * Removed an unnecessary restart during upgrade (Closes: #405145)
+  * Added missing faxlock (Closes: #405220)
+  * Added more conversion rules (Closes: #405237)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue,  2 Jan 2007 14:24:46 +0100
+
+hylafax (2:4.3.1-6) unstable; urgency=low
+
+  * Applied a fix from upstream for using variables that
+    contains complex command (BASE64ENCODE, UUENCODE, ...)
+  * Created a patch for redirecting to /dev/null some unwanted
+    output from ps2pdf.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sun, 24 Dec 2006 21:40:20 +0100
+
+hylafax (2:4.3.1-5) unstable; urgency=low
+
+  * Fixed a second problem in the notify invoke grep. (Closes: #404405)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sun, 24 Dec 2006 16:58:32 +0100
+
+hylafax (2:4.3.1-4) unstable; urgency=low
+
+  * Corrected a packaging problem with base64 encoding and switched
+    from uuencode to mimencode. Added dependency on metamail.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sun, 24 Dec 2006 10:15:19 +0100
+
+hylafax (2:4.3.1-3) unstable; urgency=low
+
+  * Added patch for DesiredDF (Closes: #402171)
+  * Added a text in README.Debian on how to send non ASCII text
+    files (Closes: #387748, #363464)
+  * Corrected patch for faxadduser (Closes: #402018)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sun, 10 Dec 2006 00:57:15 +0100
+
+hylafax (2:4.3.1-2) unstable; urgency=low
+
+  * Added templates directory that was erroneously removed
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Wed,  6 Dec 2006 11:22:28 +0100
+
+hylafax (2:4.3.1-1) unstable; urgency=low
+
+  * New upstream release (Closes: #369756)
+  * Check that package build correctly in unstable, testing/etch,
+    stable/sarge, oldstable/woody+backport.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue,  5 Dec 2006 08:38:41 +0100
+
+hylafax (2:4.3.1~rc3-2) experimental; urgency=low
+
+  * Update japanese translation (Closes: #400029)
+  * Added a check in postinst so that install does not fail if
+    hylafax isn't running
+  * Changed path for FontMap.GS and gsfonts afm file, according to new etch packages.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sun,  3 Dec 2006 20:40:44 +0100
+
+hylafax (2:4.3.1~rc3-1) experimental; urgency=low
+
+  * New upstream version (Closes: #370420)
+  * Removed all unnecessary patches
+  * Reworked debconf notes (Closes: #388907)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Thu, 23 Nov 2006 13:47:18 +0100
+
+hylafax (2:4.3.0-9) unstable; urgency=low
+
+  * Fixed awk command in notify-4.1 (Closes: #386036)
+  * Changed From addredd in e-mail from "fax" to "faxmaster" since
+    fax user does not always exists (Closes: #386071)
+  * Changed init script to be lsb compliant
+  * Added debtags
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue, 19 Sep 2006 09:48:04 +0200
+
+hylafax (2:4.3.0-8) unstable; urgency=low
+
+  * Added a FaxDispatch template in examples/ dir.
+  * Removed patch for awk detection since awk is specified in debian/rules and
+    we do not require a specific awk and wi do specify a generic path /usr/bin/awk
+    at configure time.
+  * make chown happy (Closes: #387404)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat, 16 Sep 2006 16:29:29 +0200
+
+hylafax (2:4.3.0-7) unstable; urgency=low
+
+  * Added mail-to-fax scripts and README.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Mon, 24 Jul 2006 21:56:36 +0200
+
+hylafax (2:4.3.0-6) unstable; urgency=low
+
+  * Correctly setup path for uuencode (Closes: #377914)
+  * Update Fontmap path in hyla.conf
+  * Added gsfonts as dependency for hylafax-client (Closes: #376269)
+  * Redirected stdin, stderr and stdout to /dev/null for faxgetty.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Wed, 12 Jul 2006 22:06:10 +0200
+
+hylafax (2:4.3.0-5) unstable; urgency=low
+
+  * Removed manpage for sgi2fax, that is not included in debian package.
+  * Add support for GIF89 and PNG convertion to fax (Closes: #373287)
+  * 4.3.0 is out (Closes: #369145)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sun, 18 Jun 2006 23:19:09 +0200
+
+hylafax (2:4.3.0-4) unstable; urgency=low
+
+  * Corrected permissions for hosts.hfaxd
+  * Added a small delay between stop and start when restarting (Closes: #372253)
+  * USE_FAXGETTY is now more documented (Closes: #372249)
+  * Better PAM support description (Closes: #372248)
+  * Removed obsolete QuickStart documentation; improved README.Debian
+  * Check for faxmodem as well as faxgetty in /etc/inittab
+  * Check and update owner/access rights when copying from /etc/hylafax to
+    $SPOOL/etc (Closes: #372254)
+  * Add patch for hylafax-server: scheduler died killing a job (Closes: #372827)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Fri, 16 Jun 2006 11:31:47 +0200
+
+hylafax (2:4.3.0-3) unstable; urgency=low
+
+  * Added i18n, as implemented in 4.3.0 (Closes: #370726)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue,  6 Jun 2006 20:28:27 +0200
+
+hylafax (2:4.3.0-2) unstable; urgency=low
+
+  * Translation update for fr and pt_BR (Closes: #359014, #361760)
+  * Removed patch 201_posix_configure since already included upstream
+  * Update to policy 3.7.2 without changes
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Fri,  2 Jun 2006 19:53:45 +0200
+
+hylafax (2:4.3.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Added configuration file for PAM support
+  * Run ./configure using bash since it does not work with other shells
+  * Moved private libraries from /usr/lib to /usr/lib/hylafax
+  * Fixed a lot of small complains by lintian
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Thu,  1 Jun 2006 12:54:10 +0200
+
+hylafax (2:4.2.5-3) unstable; urgency=low
+
+  * Removed dependency on mime-codecs that has been removed from Debian. Hylafax
+    now only uses uuencode even for base64 encoding.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat, 25 Mar 2006 13:24:20 +0100
+
+hylafax (2:4.2.5-2) unstable; urgency=low
+
+  * Complete installation even if something went wrong (Closes: #357437)
+  * Add a debconf error when faxsetup fails
+  * Added patch from hylafax CVS in order to work with libtiff 3.8 (Closes: #357762)
+  * Better check if faxsetup did not run correctly (Closes: #357435)
+  * Correctly handle USB ACM device names (Closes: #350965)
+  * Update translation for sv, nl, vi, ru, de, cs, it (Closes: #358005, #357943, #357968)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Wed, 22 Mar 2006 00:00:36 +0100
+
+hylafax (2:4.2.5-1) unstable; urgency=low
+
+  * New upstream release
+  * Correctly remove broken link "bin" in $SPOOL/etc/ (Closes: #338765)
+  * Pre-Depends on libpaper-utils. (Closes: #344921)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sun, 15 Jan 2006 15:06:05 +0100
+
+hylafax (2:4.2.4-2) unstable; urgency=high
+
+  * Corrected patch for CVE-2005-3539 (Closes: #346254)
+  * Urgency high because of the security fix
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat,  7 Jan 2006 11:53:08 +0100
+
+hylafax (2:4.2.4-1) unstable; urgency=high
+
+  * New upstream release
+  * HylaFAX hfaxd will allow any password when compiled with PAM support
+    disabled. [CVE-2005-3538]
+  * HylaFAX notify script passes unsanitised user-supplied data to eval,
+    allowing remote attackers to execute arbitrary commands [CVE-2005-3539]
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Wed,  4 Jan 2006 11:18:45 +0100
+
+hylafax (2:4.2.3-1) unstable; urgency=low
+
+  * New upstream release.
+  * Adde sv debconf translation (Closes: #342867)
+  * Rewritten patch 500 for handling twin directories as the previous
+    one did not apply anymore.
+  * Removed patch 700 since the bug hes now been fixed upstream.
+  * CAN-2005-3070 Unix domain socket ownership.
+  * CAN-2005-3069 symlink attack on temporary file.
+  * Updated bg translation (Closes: #330957)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Mon, 12 Dec 2005 10:36:11 +0100
+
+hylafax (2:4.2.2-1) unstable; urgency=low
+
+  * New upstream release
+  * Changed epoch because of trailing +rc1 in last version number
+  * Corrected watch file
+  * Updated de, nl and fr translations (Closes: #326741, #326798, #330518)
+  * Removed link to binaries on purge
+  * Removed broken link /var/spool/hylafax/bin/bin
+  * Added dependancy on debconf-2.0 to permit use of cdebconf
+  * Update to Standards-Version 3.6.2 (no diff required)
+  * Removed variable not used on linux from config.cache (Closes: #320496)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Wed, 28 Sep 2005 12:34:51 +0200
+
+hylafax (1:4.2.2+rc1) unstable; urgency=low
+
+  * New upstream prelease (Closes: #319348, #309683)
+  * Removed debian patches 655, 656, 700 since already in upstream version
+  * Adapted patch 654 to new source
+  * Compiled with gcc-4.0
+  * Added patches from Javier Fernández-Sanguino Peña to cron jobs in
+    order to redirect stderr, and to other scripts in order to fix
+    temporary directory usage. (See patch 702)
+  * Added new vi and cs translations (Closes: #311910, #314751)
+  * Corrected some problems with english sentences in debconf (Closes: #311911)
+  * Corrected hylafax-server postinst script in order to do not print current directory
+  * Uses invoke-rc.d instead of calling /etc/init.d/hylafax
+  * Changed init.d script in order to better check for daemon termination
+  * Correctly check for faxgetty ran via inittab (Closes: #323158)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat,  3 Sep 2005 01:49:56 +0200
+
+hylafax (1:4.2.1-7) unstable; urgency=low
+
+  * Added patch for hylafax bug 633 and debian bug #309683
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat,  4 Jun 2005 00:55:13 +0200
+
+hylafax (1:4.2.1-6) unstable; urgency=low
+
+  * Corrected purge script (Closes: #307830)
+  * Created a new patch for rejecting some image files (Closes: #303121)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Fri,  6 May 2005 08:12:43 +0200
+
+hylafax (1:4.2.1-5) unstable; urgency=low
+
+  * Patch for compiling on amd64 with gcc-4.0 (Closes: 286424)
+  * Corrected the Depends field removing the version
+    number since sarge and woody already have the minimum
+    required. Thanks to Fabio Tranchitella for pointing this out.
+  * Added ps2fax and pdf2fax links if missing and if we are upgrading.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Thu, 17 Mar 2005 22:16:10 +0100
+
+hylafax (1:4.2.1-4) unstable; urgency=low
+
+  * Changed faxrcvd in order to be posix compliant (Closes: #297134)
+  * All ghostscript implementations provide 'gs', so all dependency
+    were simplified. (Closes: #297131)
+  * Moved all "purge" actions from prerm to postrm (as it needs to be)
+  * Update probemodem manual page with new options.
+  * Corrected a message when copying back from $SPOOL/etc to /etc/hylafax
+  * Updated french translation (Closes: #296171)
+  * Removed the creation of ps2fax and pdf2fax links from debian/rules
+    since these are created by faxsetup.
+  * faxsetup was changed in order to not pre-depends on gs.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue,  8 Mar 2005 20:39:08 +0100
+
+hylafax (1:4.2.1-3) unstable; urgency=low
+
+  * Added fr translation
+  * Added a patch that better solve the AWK problems, so remove gawk
+    dependancy
+  * Used the correct version 4.2.1 in debian/rules for library names.
+  * Removed duplicate build depends on dpatch
+  * Removed creation of faxmaster alias since it already create a
+    faxmaster user (Closes: #296797)
+  * Changed depends in order to accept gs-gsp as gs (Closes: #296962)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat, 26 Feb 2005 16:47:22 +0100
+
+hylafax (1:4.2.1-2) unstable; urgency=medium
+
+  * Fixed the postinst script in order to be POSIX compliant
+  * Update translation for ja.
+  * Corrected a check that used configure_note in the wrong case
+  * Rephrased the first part of the NEWS file. Thanks to Ross Boylan.
+  * Automatically add ENCODING and MIMEMENCODE to setup.cache
+  * Added a note about how to add support for received fax via email
+  * Translated the new note in it, de, nl, ru, pt_BR
+  * Corrected the package building from native to "standard" package
+  * Urgency medium since it fixes a problem in upgrading from 4.2.0
+  * Added gawk as dependency since it is the only awk that correctly
+    understand bin/notify script.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat, 12 Feb 2005 11:41:56 +0100
+
+hylafax (1:4.2.1-1) unstable; urgency=high
+
+  * New upstream version.
+  * Security fix CAN-2004-1182.
+  * Lot of bug fixing included in the new upstream release.
+  * Corrected a check for faxmaster existance during faxsetup
+    that made an automatic and unwanted call for faxaddmodem.
+  * Corrected paths for /etc/aliases and /etc/inetd.conf since
+    the normal autodetect will fail if they aren't yet created.
+  * Fixed a problem where ENCODING was null on i386 platform.
+  * Reworked and updated all debconf questions.
+  * Update translations for it, nl, pt_BR, bg, ru, de, fr
+  * Rewrote the NEWS file in order to better explain how to use
+    the script for keeping cover pages in the archive.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Thu,  6 Jan 2005 15:34:23 +0100
+
+hylafax (1:4.2.0-16) unstable; urgency=medium
+
+  * Removed dependency on c++compiler since compiler is provided
+    by build-essential (Thanks to Francesco P. Lovergine)
+  * Added an example script for archiving cover pages, as described
+    in http://bugs.hylafax.org/bugzilla/show_bug.cgi?id=603
+  * Urgency medium in onder to enter sarge
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue, 14 Dec 2004 16:53:10 +0100
+
+hylafax (1:4.2.0-15) unstable; urgency=medium
+
+  * Shipped *.shlibs files.
+  * Configured some user configurable shell scripts as config files.
+  * Call ldconfig after installing new libraries.
+  * Correctly define DIR_LIB and avoid using rpath.
+  * Urgency medium in onder to enter sarge
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Mon, 29 Nov 2004 13:06:54 +0100
+
+hylafax (1:4.2.0-14) unstable; urgency=medium
+
+  * Correctly handle devfs device names as suggested in #283111
+  * Urgency medium in onder to enter sarge
+  * Added sed dependency as suggested in #283093
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Fri, 26 Nov 2004 18:16:26 +0100
+
+hylafax (1:4.2.0-13) unstable; urgency=medium
+
+  * Reworked the faxsetup call during installation
+  * Changed the build depends in order to let the use select
+    which gs to use
+  * Corrected a spell error in patch 600_setupclient
+  * Correctly invoke base64-encode when converting FAX to
+    email attachments.
+  * Fix broken the MIMENCODE in old setup.cache when upgrading.
+  * Added patch from #281737 for better integration with
+    capi4hylafax.
+  * changed link option from -fPIC to -fpic.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue, 16 Nov 2004 16:34:53 +0100
+
+hylafax (1:4.2.0-12) unstable; urgency=medium
+
+  * Changed the dependency on gs as a pre-depends in order to
+    fix #281024.
+  * Corrected a problem when faxaddmodem used ttyS0 as default.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Mon, 15 Nov 2004 19:19:37 +0100
+
+hylafax (1:4.2.0-11) unstable; urgency=medium
+
+  * Added some comments about user management in hosts.hfaxd.
+  * Removed /usr/share/doc/hylafax*/TODO.Debian that wasn't mean
+    for the end user
+  * Added httpd-cgi as suggested package for hylafax-doc since it
+    uses man2html
+  * Added a fix for handling links from /var/spool/hylafax/etc/ to
+    /etc/hylafax when this files are externally created.
+  * Added ${misc:Depends} to controlfile
+  * Correctly invokes dh_installshlibs in debian/rules
+  * Changed 'Depends' to the latest libtiff library.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue,  2 Nov 2004 08:45:39 +0100
+
+hylafax (1:4.2.0-10) unstable; urgency=medium
+
+  * Removed bashism from postinst script, as told in #277590.
+  * Corrected init script that was exiting with error if unable to
+    stop faxgetty started by init. See #276686
+  * Added patch from http://bugs.hylafax.org/bugzilla/show_bug.cgi?id=557
+    as requested in #276685.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Thu, 21 Oct 2004 16:54:23 +0200
+
+hylafax (1:4.2.0-9) unstable; urgency=medium
+
+  * Removed debugging information from the init script
+  * Remove old /etc/hylafax/bin directory and backup its content.
+  * When migrating from hosts to hosts.hfaxd, copy to both directories
+    /etc/hylafax and /var/spool/hylafax/etc
+  * Reworked the server postinst script since it incorrectly expected
+    an "install" argument.
+  * When upgrading from an old version that required /bin/awk to
+    exists, change the setup.cache file in order to use /usr/bin/awk
+  * Automatically run faxsetup if required.
+  * Corrected a problem when no /etc/hylafax/config.* file were present.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Wed, 13 Oct 2004 01:31:53 +0200
+
+hylafax (1:4.2.0-8) unstable; urgency=low
+
+  * Added conflicts to old capi4hylafax
+  * Reworked all prerm/preinst/postinst in order to beffer split
+    all actions between install time and configure time
+  * Changed the init script in order to better check if the
+    stop action work.
+  * Transform the bin directory from a link to a real one in $SPOOL
+  * Changed the init script in order to handle the config.faxCAPI device
+    name. Thanks to Johannes Zellner.
+  * Changed postinst script for client and server in order to cleanly
+    terminate even if faxmail.ps isn't found. Moreover better stop the
+    previously running hylafax server before starting it.
+  * Updated german translation, thanks to Jens Nachtigall.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue, 12 Oct 2004 13:45:23 +0200
+
+hylafax (1:4.2.0-7) unstable; urgency=high
+
+  * Added a check in the server pre removal script in order to stop
+    hylafax only if faxsetup was ran.
+  * Reworked the client post install in order to bettere handle a
+    transition from client+server 4.1.8 to client only 4.2.0
+  * Better recognize existing configuration files when installing the
+    server (See #269820).
+  * Reworked the NEWS file as suggested by Ross Boylan (Closes: #269682, #269676).
+  * Added a correct dependency for client and server of same version.
+    (Closes: #269686).
+  * Correctly changed the FAX user in faxaddmodem from "fax" to "uucp"
+    (Closes: #271306)
+  * Better checking for hylafax running before stopping the service when
+    removing the hylafax server package
+  * Updated patches/00template from latest dpatch
+  * Patched in order to look for status/lastrun instead of etc/lastrun and
+    log/xferstatlog instead of etc/xferstatlog. (Closes: #271983, #271741)
+  * Patched for use uucp as FAX_USER.
+  * Removed the /etc/hylafax/bin directory.
+  * Fixed a bug in faxaddmodem that would leave a child process running
+    forever. (Closes: #271930).
+  * Got utils/notify.sh from 4.2.1 since it fix a very simple and
+    really annoying problem.
+  * Restart hylafax when upgrading, if hylafax was previously running.
+    (Closes: #271172)
+  * Move all existing /var/spool/hylafax/dev/*FIFO* to /var/spool/hylafax
+    as this is the new preferred location (Closes: #271705).
+  * Made faxaddmodem more friendly (Closes: #269259)
+  * Added japanese debconf translation, thanks to Hideki Yamane (Closes: #271094).
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat, 18 Sep 2004 01:37:33 +0200
+
+hylafax (1:4.2.0-6) unstable; urgency=high
+
+  * Added a strong check before copying every file from /etc/hylafax
+    to /var/spool/hylafax/etc when upgrading the client and the server
+    together. The problem is that /etc/hylafax/faxmail.ps seems to
+    disappear on a specific and not reproducible case. Thanks to Hugh
+    Esco for pointing this out.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Thu, 26 Aug 2004 18:10:33 +0200
+
+hylafax (1:4.2.0-5) unstable; urgency=high
+
+  * Modified the postinst script for the client package in order to
+    correclty upgrade from the woody version when the server package
+    isn't installed. (Closes: #268019).
+  * Added a NEWS.Debian file explaining the two-twin-dirs and how to
+    upgrade from Woody
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Thu, 26 Aug 2004 00:02:17 +0200
+
+hylafax (1:4.2.0-4) unstable; urgency=high
+
+  * Corrected the patch to make hylafax work on hppa, alpha and ia64
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue, 24 Aug 2004 17:52:25 +0200
+
+hylafax (1:4.2.0-3) unstable; urgency=high
+
+  * Added patch in order to compile on alpha and hppa
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue, 24 Aug 2004 15:26:16 +0200
+
+hylafax (1:4.2.0-2) unstable; urgency=high
+
+  * Correctly copy all *client* configuration files from
+    /etc/hylafax to /var/spool/hylafax.
+  * Moved faxutils.so from server to client package.
+  * Better handled file already present from previous a installation
+  * Changed the hylafax restarting in seerver/postinst from restart
+    to start, since the stop is always called in preinst.
+  * Preconfigured hyla.conf using enscript or libgnomeprint-data AFM
+    files. Changed debian/control in order to depend on one of them.
+  * Stop hylafax server before removing the package.
+  * As in 4.1.8 the fax user is replaced with root. faxsetup has been
+    modified accordingly.
+  * Disabling the client configuration in faxsetup since it is already
+    done by the package.
+
+ -- Giuseppe Sacco <giuseppe@eppesuigoccas.homedns.org>  Tue, 24 Aug 2004 07:22:48 +0200
+
+hylafax (1:4.2.0-1) experimental; urgency=low
+
+  * New upstream version
+  * included dutch translation of templates by Luk Claes (Closes: #263724)
+  * updated brasilian portuguese translation by Andre Luis Lopes (Closes: #264205)
+  * Corrected the way hylafax is stopped during updates and removed NEWS.Debian
+  * Added psmisc as dependency for hylafax-server (Closes: #264951)
+  * Changed copyright based on the new hylafax release
+  * patched faxadduser and faxdeluser in order to update both
+    configuration files in /etc/hylafax/ and /var/spool/hylafax/etc/
+    (Closes: #264997)
+  * Replaced debian faxcover.ps with the original one from upstream
+  * Removed the config.site patch. Now use ./configure arguments.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Wed, 18 Aug 2004 15:28:10 +0200
+
+hylafax (1:4.1.8-16) unstable; urgency=low
+
+  * Correctly find the devices used in the init script (Closes: #263128)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue,  3 Aug 2004 06:16:12 +0200
+
+hylafax (1:4.1.8-15) unstable; urgency=medium
+
+  * Definitely fixed the way hylafax restart daemons during the upgrade.
+  * Added catalan translation by Aleix Badia i Bosch (Closes: #254868)
+  * Added file NEWS.Debian
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Mon,  2 Aug 2004 10:59:09 +0200
+
+hylafax (1:4.1.8-14) unstable; urgency=medium
+
+  * Added gs as build dependency.
+  * Added a better check about the config.* files to use (Closes: #261204).
+  * Added support for old style setup.cache where the values were 1 and 0
+    instead of yes and no. (Closes: #253067).
+  * Added a feedback when copying configuration files in faxaddmodem.
+  * Changed the copy procedure in the init script in order to leave
+    the backup files (ending in ~ or .bak) uncopied.
+  * Require libtiff4 in order to avoid a problem with libtiff3 (Closes: #254738).
+  * Added /usr/share/enscript/afm as source for the font used in
+    taglines (Closes: #261210).
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue,  26 Jun 2004 08:24:43 +0200
+
+hylafax (1:4.1.8-13) unstable; urgency=low
+
+  * Corrected a problem that made AWK point to unexistant /bin/awk
+  * Correctly change to uucp:uucp the owner/group of /var/spool/hylafax
+    (Closes: #109816).
+  * Add the ghostscript type1 font path to hyla.conf. (Closes: #154506).
+  * Add a check for defoma fonts and then for ghostscript fonts in
+    configure. (Closes: #99431, #151211).
+  * Correctly setup defaults and new build-depends to include gs and
+    gsfonts (Closes: #161192).
+ -- Giuseppe Sacco <eppesuig@debian.org>  Mon,  7 Jun 2004 23:30:41 +0200
+
+hylafax (1:4.1.8-12) unstable; urgency=low
+
+  * Added french localization for the debconf template. (Closes: #252630).
+  * Corrected a bug in faxaddmodem that would prevent the TagLineFont
+    tag to appear in the config file. Added a note about tag lines in
+    README.Debian (Closes: #181917).
+  * Added a comment in hyla.conf as suggested in #123374 (Closes: #123374).
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat,  5 Jun 2004 00:16:59 +0200
+
+hylafax (1:4.1.8-11) unstable; urgency=low
+
+  * Corrected an error in the init script. Thanks to Ilguiz Latypov (Closes: #250474).
+  * Added mailx dependency since it used by the cron jobs (Closes: #252115).
+  * Added support for archiving in the cron jobs (Closes: #252269).
+  * Backported patch from hylafax bug 409 in order to fix #240088 (Closes: #240088).
+  * Backported patch from hylafax bug 492 in order to fix a setgid problem (Closes: #227696).
+  * Moved the FIFO pipe from dev/FIFO to FIFO.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Thu,  3 Jun 2004 08:15:01 +0200
+
+hylafax (1:4.1.8-10) unstable; urgency=low
+
+  * Removed link from $SPOOL/etc to /etc and modified
+    the start/stop script in order to clone /etc to $SPOOL/etc
+    before starting the server.
+    There still the possibility that the server ran in the chroot
+    environment will write to the configuration files. If this
+    happen then the script will detect the problem, print a message
+    and exit with an error code.
+  * Added c++-compiler, dpatch and libpam-dev as build-depend.
+  * Added -Wno-switch-enum to limit the compiler output when calling g++
+  * [Martin Quinson]
+    - switch to gettext based debconf templates
+    - reword some templates to follow best current practices
+    - add debconf-updatepo to debian/rules[clean] to make sure that the
+      translator input is uptodate in source packages.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue, 11 May 2004 11:07:32 +0200
+
+hylafax (1:4.1.8-9) unstable; urgency=low
+
+  * New upload that replace the -8 that seems to be broken.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Mon, 10 May 2004 09:29:25 +0200
+
+hylafax (1:4.1.8-8) unstable; urgency=low
+
+  * Reverted back the start-stop-daemon as uucp user since this
+    would disable the chroot ability for clients (Closes: #248257).
+  * Corrected the patch that allow hylafax to bind to one
+    address, since it wasn't working if the bind wasn't asked for
+    (Closes: #248254).
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Mon, 10 May 2004 00:38:53 +0200
+
+hylafax (1:4.1.8-7) unstable; urgency=low
+
+  * Created a patch in order to bind hylafax to a specified
+    port (Closes: #246922).
+  * Removed debian/packages and debian/rules.old that were
+    used with yada.
+  * Changed debian/rules in order to correctly setup CFLAGS
+    and the optimizer (Closes: #248058).
+  * The servers for old protocol, new protocol and snpp are
+    now started only if selected in faxsetup. The start/stop
+    script now read the specified values from faxsetup but
+    leave to user the opportunity to change these values in
+    /etc/default/hylfax. The README.Debian file has been
+    changed in order to document this behaviour.
+  * Correctly startup the hylafax server as UUCP user and group
+    changing uid with start-stop-daemon.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat,  8 May 2004 23:47:48 +0200
+
+hylafax (1:4.1.8-6) unstable; urgency=low
+
+  * Applied patch from hylafax bug 439 (Closes: #65203).
+  * Corrected a spell error in the init script.
+  * Modified faxgetty man page in order to specify that it
+    is ran via /etc/init.d/hylafax program. This fix one
+    half of #225329.
+  * Corrected a problem in debian/rules that was copying
+    man page sources instead of correced man pages (Closes: #225329)
+  * Added a patch by Ross Boylan in order to allow hylafax
+    to still have faxgetty run by inittab (Closes: #214477).
+
+ -- Giuseppe Sacco <giuseppe@eppesuigoccas.homedns.org>  Tue,  4 May 2004 19:26:04 +0200
+
+hylafax (1:4.1.8-5) unstable; urgency=low
+
+  * Applied patch from http://bugs.hylafax.org/bugzilla/show_bug.cgi?id=412
+    in order to fix a problem with mawk (Closes: #240736).
+  * Changed the weekly cron in order to leave all log files readable
+    by everyone and changed the file owner in faxcron.sh from root to
+    uucp (Closes: #235149).
+  * Changed README.Debian in order to show that faxgetty is already started
+    during boot. There is also an explaination on how to switch to the
+    /etc/inittab way of spawning faxgetty. (Closes: #235113).
+  * Changed the /etc/init/hylafax script in order to check if
+    the processes are already running before (re)starting all
+    daemons. (Closes: #239730).
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue,  4 May 2004 16:49:06 +0200
+
+hylafax (1:4.1.8-4) unstable; urgency=low
+
+  * Correctly set up the maintainer field and reassign the package (closes: #230604).
+
+ -- Giuseppe Sacco <giuseppe@eppesuigoccas.homedns.org>  Sun,  2 May 2004 07:14:19 +0200
+
+hylafax (1:4.1.8-3) unstable; urgency=low
+
+  * New maintainer
+  * restart hylafax server and faxgetty during upgrade (closes: #144493).
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat,  1 May 2004 20:11:02 +0200
+
+hylafax (1:4.1.8-2) unstable; urgency=low
+
+  * Orphan the package.
+  * Add /etc/default hylafax, parameter RUN_HYLAFAX, to explicitely start
+    hylafax (closes: #205968, #225908).
+  * Provide textfmt in /usr/sbin as well (closes: #222203).
+
+ -- Matthias Klose <doko@debian.org>  Sat, 31 Jan 2004 13:44:17 +0100
+
+hylafax (1:4.1.8-1) unstable; urgency=medium
+
+  * New upstream version.
+  * Security release that fixes a remotely exploitable format string
+    vulnerability in hfaxd that could be present in certain non-default
+    configurations.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 12 Nov 2003 00:06:47 +0100
+
+hylafax (1:4.1.7-1) unstable; urgency=low
+
+  * New (I hope interim) maintainer.
+  * Use debhelper instead of yada for package building.
+  * Fix bashism in init script (closes: #217839).
+  * hylafax-server: Add recommends on metamail (closes: #218856).
+  * Make faxrcvd attachment filename consistent among file types.
+    Closes: #183595.
+  * Fix link to cgi program man2html (closes: #161127).
+  * Add alternate gs-esp dependency for hylafax-server (closes: #213760).
+  * Add /etc/default/hylafax, sourced by /etc/init.d/hylafax.
+  * Fix hylafax restart behaviour (closes: #217638).
+  * Fix scripts to call textfmt instead of /usr/sbin/textfmt.
+    Closes: #209258, #216011.
+  * Put the files from /var/spool/hylafax/bin to /etc/hylafax/bin.
+    Most of them are expected to be modified (closes: #24206, #210745).
+    No better solution yet ...
+  * Update support in hylafax-server's preinst to move spool directories
+    from /var/spool/fax/* to /var/spool/hylafax/. Closes: #156250, #192129.
+	
+ -- Matthias Klose <doko@debian.org>  Mon, 10 Nov 2003 20:41:03 +0100
+
+hylafax (1:4.1.7-0.4) unstable; urgency=medium
+
+  * A "I still don't like yada" NMU.
+  * Don't modify foreign conffiles (closes: #210937).
+  * Fix detection of modem names (closes: #207626, #208146, #208554).
+  * Use mime-codecs's base64-encode instead of metamail's mimencode.
+    Closes: #212345.
+  * cron.monthly: There may be no faxes received in the last month.
+    Closes: #203308.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 23 Sep 2003 21:41:31 +0200
+
+hylafax (1:4.1.7-0.3) unstable; urgency=low
+
+  * NMU
+  * Add a build dependency on python. The current yada 0.17 is broken
+    and needs this. And don't ask me why _I_ have python installed ...
+    Closes: #205348.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 14 Aug 2003 22:23:37 +0200
+
+hylafax (1:4.1.7-0.2) unstable; urgency=low
+
+  * NMU
+  * Add autotools-dev as build dependency (closes: #205324).
+
+ -- Matthias Klose <doko@debian.org>  Thu, 14 Aug 2003 07:53:29 +0200
+
+hylafax (1:4.1.7-0.1) unstable; urgency=low
+
+  * NMU
+  * New upstream version.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 11 Aug 2003 23:25:03 +0200
+
+hylafax (1:4.1.6~rc2-0.1) unstable; urgency=low
+
+  * NMU
+  * New upstream version (closes: #174627).
+    - Fix invalid preprocessor pasting (closes: #195196).
+  * Build-Depend on autotools-dev for recent copy of config.{guess,sub}
+  * defs.in: s/unsigned int/unsigned/ to workaround white space escapes.
+  * faxcover: recognize -z flag (closes: #186343).
+  * hylafax-client: Add dependency on libpaper-utils (closes: #184450).
+  * install hylafax-config manpage (closes: #173111).
+  * hylafax-server: Fix installation failure (closes: #187012).
+  * hylafax-server: Start faxgetty in init script (closes: #161391).
+  * don't hardcode awk (closes: #153488).
+  * hylafax-server: Fix init string for USR modems (closes: #161387).
+  * Install hylafax-client manpage (closes: #151209).
+
+ -- Matthias Klose <doko@debian.org>  Wed,  4 Jun 2003 19:00:30 +0200
+
+hylafax (1:4.1.2-2.2) unstable; urgency=low
+
+  * NMU so it will build on unstable and the buildds again. Closes: #157913
+  * configure: include <iostream> and use std::cout, std::eol so it will work
+    with currect c++ compiler
+  * configure: unset POSIXLY_CORRECT when doing sed stuff that is not at
+    all POSIX, such as /@SCRIPT_SH@/s;;/bin/bash;g
+  * debian/yada: pass MAKELEVEL=0 to sucky make-output parsing configure
+    script
+  * configure: insert a blank line after every line output by dumpvars,
+    as it otherwise sometimes does not put a newline after sed statements,
+    which confuses sed. Did not track this bug all the way down, this is a
+    workaround
+  * defs.in: turn on -Wno-deprecated to shut up all the deprecated header
+    warnings, for sanity's sake
+  * Force yada to use bash. Closes: #190775.
+
+ -- Joey Hess <joeyh@debian.org>  Mon, 28 Apr 2003 11:59:07 -0400
+
+hylafax (1:4.1.2-2.1) unstable; urgency=high
+
+  * Non-maintainer upload by security team
+  * Backported secrurity fixes from 4.1.3:
+    . Fixed hostname format string vulnerabilities in faxrm, faxstat,
+      faxalter, sendfax, sendpage, faxfetch and faxwatch
+    . Fixed a potential buffer overflow when copying TIF data
+    . Fixed TSI format string vulnerability in faxgetty
+  * Added a double cast so g++ will actually like the last backported fix
+    (Pavel, beware, you may reuse that construct for the next upstream
+    version).
+
+ -- Martin Schulze <joey@infodrom.org>  Fri,  9 Aug 2002 12:32:07 +0200
+
+hylafax (1:4.1.2-2) unstable; urgency=low
+
+  * Fixed path in cron.monthly (Closes: #145354, #145856)
+
+ -- Pavel Tcholakov <pavel@debian.org>  Thu,  9 May 2002 22:39:20 +0200
+
+hylafax (1:4.1.2-1) unstable; urgency=low
+
+  * New upstream release (Closes: #145354)
+  * Added dependency on metamail (Closes: #145428)
+  * Fixed typo in README.Debian (Closes: #145427)
+
+ -- Pavel Tcholakov <pavel@debian.org>  Wed,  1 May 2002 22:41:23 +0000
+
+hylafax (1:4.1.1-1) unstable; urgency=medium
+
+  * New upstream release (Closes: #123223)
+  * HylaFAX spool is now /var/spool/hylafax (upstream change)
+  * Fixed typerules to call textfmt instead of /usr/sbin/textfmt. Textfmt now
+    uses a default font (Closes: #142125)
+  * This is not a bug in HylaFAX (Closes: #139022)
+  * Fixed permissions on spool and config directories. Also fixed (upstream)
+    bug in faxsetup, which always created modem FIFO's with incorrect
+    permissions (Closes: #139830, #113849, #113849, #135173)
+  * Added Russian Debconf template (Closes: #137659)
+  * Extended README.debian, new QuickStart document, and packaged upstream
+    changelog and TODO.
+
+ -- Pavel Tcholakov <pavel@debian.org>  Sat, 13 Apr 2002 11:55:49 +0000
+
+hylafax (1:4.1-6) unstable; urgency=low
+
+  * The following bugs are (believed to be) fixed in unstable
+  (Closes: #110297, #118501, #118539, #118546)
+  * Package hylafax-server *depends* on hylafax-client (Closes: #118514)
+  * A properly configured hylafax-server package creates symlinks for
+  /var/spool/fax/bin/{pdf,ps}2fax.gs (Closes: #120500)
+  * /var/spool/fax is owned by uucp:uucp (Closes: #120495)
+  * Migrate existing hosts file to hosts.hfaxd, if one exists
+  (Closes: #120498)
+
+ -- Pavel Tcholakov <pavel@debian.org>  Mon, 10 Dec 2001 11:48:59 +0000
+
+hylafax (1:4.1-5) unstable; urgency=low
+
+  * Added missing build-dependency on ed (Closes: #116660)
+
+ -- Pavel Tcholakov <pavel@debian.org>  Thu, 25 Oct 2001 19:56:06 +0000
+
+hylafax (1:4.1-4) unstable; urgency=low
+
+  * Added pt_BG translation of debconf templates (Closes: #110188)
+  * Postrm script doesn't remove /var/spool/fax anymore (Closes: #113085)
+
+ -- Pavel Tcholakov <pavel@debian.org>  Wed, 26 Sep 2001 17:13:10 +0000
+
+hylafax (1:4.1-3) unstable; urgency=low
+
+  * Fixed dialtest/typetest installation (Closes: #106818)
+  * Script ps2fax.gs.sh is now installed under the name of ps2fax.gs
+    (Closes: #105730)
+
+ -- Pavel Tcholakov <pavel@debian.org>  Fri, 10 Aug 2001 11:16:13 +0000
+
+hylafax (1:4.1-2) unstable; urgency=low
+
+  * Fixed postinst debconf freeze, thanks to Zsolt Varga.
+  * Modified default hfaxd.conf JobFmt setting as per request by Kevin
+    Dalley in order to handle international format numbers in the US
+    (Closes: #105825)
+
+ -- Pavel Tcholakov <pavel@debian.org>  Fri, 20 Jul 2001 21:20:16 +0000
+
+hylafax (1:4.1-1) unstable; urgency=low
+
+  * New upstream release (Closes: #72474, #102661)
+  * Closed obsolete bugs (Closes: #84755)
+  * Won't fix (Closes: #37741, #53874, #59846)
+  * Fixed cron.monthly script to correctly generate the fax statistics,
+    thanks to Pal Loberg (Closes: #98128)
+  * pagesizes is no longer a conffile since it's actually automatically
+    generated at post-inst (Closes: #47621)
+
+ -- Pavel Tcholakov <pavel@debian.org>  Tue, 10 Jul 2001 12:20:04 +0000
+
+hylafax (4.1beta3-5) unstable; urgency=low
+
+  * Package hylafax-server had incorrect section of doc; fixed
+  * Added Brett Wuth's email about configuring mgetty as README.mgetty
+    (Closes: #99476)
+
+ -- Pavel Tcholakov <pavel@linux.zonebg.com>  Sat,  9 Jun 2001 10:56:20 +0200
+
+hylafax (4.1beta3-4) unstable; urgency=low
+
+  * Changed hylafax-doc Section to doc (Closes: #94843)
+  * Added Bulgarian and German translations of the Debconf templates
+    (Closes: #95131)
+  * Changed mode for /var/spool/fax/dev to root:uucp, 775 (Closes:
+    #94139, #96594)
+  * Symlink problem cannot be reproduced with latest version (Closes:
+    #90274)
+
+ -- Pavel Tcholakov <pavel@linux.zonebg.com>  Sat, 12 May 2001 17:01:55 +0200
+
+hylafax (4.1beta3-3) unstable; urgency=low
+
+  * Added gs-aladdin as an alternative to gs in the dependencies list
+    (Closes: #92123, #92528)
+  * Initial debconf-ization
+  * Previous versions of HylaFAX used to use /etc/hylafax/*getty-link
+    instead of the various getty flavours directly, but 4.1beta3-1 and -
+    2 broke this. The old behaviour is restored now (Closes: #92863)
+
+ -- Pavel Tcholakov <pavel@linux.zonebg.com>  Sat,  7 Apr 2001 16:55:38 +0200
+
+hylafax (4.1beta3-2) unstable; urgency=low
+
+  * Fixed Debian-specific file paths (Closes: #90726)
+  * Swithched back HylaFAX UID/GID to uucp:uucp (Closes: #90706)
+
+ -- Pavel Tcholakov <pavel@linux.zonebg.com>  Sat, 24 Mar 2001 16:02:25 +0200
+
+hylafax (4.1beta3-1) unstable; urgency=low
+
+  * New upstream release
+  * Changed runtime UID/GID to fax:fax instead of uucp:uucp (Closes:
+    #87870)
+
+ -- Pavel Tcholakov <pavel@linux.zonebg.com>  Wed, 21 Mar 2001 14:11:11 +0200
+
+hylafax (4.1beta2-2) unstable; urgency=low
+
+  * Took the package maintainership (closes: #81959, #81960, #81957)
+  * Removed debian/yada in source package and added Build-dependency on
+    yada (closes: #82403)
+  * Changed hylafax-server to depend on hylafax-client (closes: #78373)
+  * Moved man pages from hylafax-doc to hylafax-client and hylafax-server
+    respectively. Package hylafax-doc carries only the HTML
+    documentation now
+  * Documentation is now registered with doc-base
+  * Create separate account for faxmaster instead of just aliasing it to
+    root (closes: #67380)
+  * Hylafax-server no longer touches /etc/{inittab,aliases,syslog.conf}
+    (closes: #54654)
+  * Changed faxcron script to call find with "-type f" to avoid annoying
+    messages (closes: #25303, #70873)
+  * Added -dFIXEDMEDIA to the ps2fax.gs.sh script as suggested by Jose
+    Carlos Benfati <benfati@super11.net> (closes: #65210)
+  * Added spaces after y/n questions in the hylafax-server postinst
+    script (closes: #63208)
+  * In hylafax-doc: moved html-patch to the Install section of packages
+    to fix a problem with the MD5 sums of some of the documents
+  * Added a lintian override to suppress some warnings about hylafax-
+    server
+
+ -- Pavel Tcholakov <pavel@linux.zonebg.com>  Thu,  1 Mar 2001 21:26:43 +0200
+
+hylafax (4.1beta2-1) unstable; urgency=low
+
+  * New upstream release with pristine sources
+  * Orphaned the package
+
+ -- Christophe Le Bars <clebars@debian.org>  Wed, 10 Jan 2001 23:30:37 +0100
+
+hylafax (4.0.2-14) frozen unstable; urgency=low
+
+  * Applied patch to work with libtiff3.5 (closes: #50523)
+  * Fixed again DCONFIG_SOCKARGLENTYPE (closes: #51186)
+
+ -- Christophe Le Bars <clebars@debian.org>  Thu, 23 Mar 2000 23:18:07 +0100
+
+hylafax (4.0.2-13) unstable; urgency=low
+
+  * Fixed wrong chgrp on etc symlink (closes: #50931)
+  * Fixed perms on /etc/hylafax/hosts (closes: #52767)
+  * Fixed misleading prompt about configuration (closes: #51836)
+  * Moved manpages in hylafax-doc (closes: #51757)
+  * Warning : This upload is still incompatible with libtiff3.5
+
+ -- Christophe Le Bars <clebars@debian.org>  Tue, 15 Feb 2000 23:51:48 +0100
+
+hylafax (4.0.2-12) unstable; urgency=low
+
+  * Fixed manpages misusages of "public domain" (closes: #47589)
+  * Changed util/Socket.h (closes: #46341)
+  * Recompiled hylafax against libtiff3 (closes: #48962)
+  * Added new Debian faxcover.ps (closes: #35974)
+
+ -- Christophe Le Bars <clebars@debian.org>  Sat, 13 Nov 1999 17:08:37 +0100
+
+hylafax (4.0.2-11) unstable; urgency=low
+
+  * Switched /usr/doc/ -> /usr/share/doc/
+  * Fixed DCONFIG_SOCKARGLENTYPE (closes: #46341)
+  * Changed postinst to ask less questions on upgrade (closes: #46053)
+
+ -- Christophe Le Bars <clebars@debian.org>  Wed,  6 Oct 1999 02:10:57 +0200
+
+hylafax (4.0.2-10) unstable; urgency=medium
+
+  * Fixed removal of /var/spool/fax (closes: #43218)
+  * Converted package management to YADA
+  * Applied upstream leap-year patch
+  * Applied upstream security fix patch about faxsurvey
+
+ -- Christophe Le Bars <clebars@debian.org>  Wed,  1 Sep 1999 00:13:18 +0200
+
+hylafax (4.0.2-9) unstable; urgency=low
+
+  * Fixed debian/postinst bashisms (closes: #35020)
+  * Removed chown on ttyS? (closes: #34276)
+  * Changed cron.weekly to test xferlog (closes: #33697)
+  * Fixed configure to use CONFIG_MAXGID="65534" (closes: #31323)
+
+ -- Christophe Le Bars <clebars@debian.org>  Sat, 29 May 1999 14:03:39 +0200
+
+hylafax (4.0.2-8) frozen unstable; urgency=low
+
+  * Fixed debian/rules to generate hylafax-doc in binary-arch target (Fixes: Bug#25586)
+  * Removed xferlog from hylafax-server (Fixes: Bug#28795)
+  * Compiled hylafax-server against libstdc++2.9 (Fixes: Bug#29066)
+  * Compiled hylafax-client against libstdc++2.9 (Fixes: Bug#29065)
+  * Changed font metric information directory to /usr/share/enscript (Fixes: Bug#25700)
+
+ -- Christophe Le Bars <clebars@debian.org>  Sun, 20 Dec 1998 18:53:57 +0100
+
+hylafax (4.0.2-7) unstable stable; urgency=high
+
+  * Fixed faxcron, recvstats and xferstats /tmp bug (with tempfile)
+
+ -- Christophe Le Bars <clebars@debian.org>  Mon, 28 Sep 1998 11:59:13 +0200
+
+hylafax (4.0.2-6) unstable; urgency=low
+
+  * Changed a dependency for hylafax-doc : now only suggests man2html (Fixes: Bug#26107)
+  * Fixed wedged.sh (Fixes: Bug#23200)
+  * Added a new faxrcvd.sh using MIME (Behan Webster patch) (Fixes: Bug#20930)
+  * Fixed debian/install and debian/html-patch calls (Fixes: Bug#24506)
+  * Deleted debian/rules LDFLAGS Make variable (Fixes: Bug#25579)
+  * Added new options to faxcover
+
+ -- Christophe Le Bars <clebars@debian.org>  Sun,  6 Sep 1998 17:06:42 +0200
+
+hylafax (4.0.2-5) unstable stable; urgency=high
+
+  * Removed faxsurvey (security fix)
+
+ -- Christophe Le Bars <clebars@debian.org>  Wed,  5 Aug 1998 14:04:10 +0200
+
+hylafax (4.0.2-4) frozen unstable; urgency=low
+
+  * Added '>/dev/null' to savelog calls in /etc/cron.weekly
+  * Fixed /etc/init.d/hylafax to conform boot console policy (Fixes: Bug#21285)
+  * Added postinst in hylafax-client to determine default paper size
+    with paperconf (Fixes: Bug#21149)
+  * Fixed postinst in hylafax-server to purge syslog.conf entry (Fixes: Bug#21634)
+
+ -- Christophe Le Bars <clebars@debian.org>  Sat, 25 Apr 1998 16:21:01 +0200
+
+hylafax (4.0.2-3) frozen unstable; urgency=medium
+
+  * Fixed /etc/aliases handling in postinst (Fixes: Bug#20464)
+  * Added newaliases call in postinst
+  * Added getty symlinks handling in postinst (Fixes: Bug#20467)
+  * Fixed /etc/hylafax link (Fixes: Bug#21003)
+
+ -- Christophe Le Bars <clebars@debian.org>  Sat, 11 Apr 1998 02:07:55 +0200
+
+hylafax (4.0.2-2) frozen unstable; urgency=medium
+
+  * Fixed a dependency on enscript in hylafax-client (Fixes: Bug#19610)
+  * Fixed copyright path (Fixes: Bug#19329)
+  * Deleted special file (Fixes: Bug#19329)
+
+ -- Christophe Le Bars <clebars@debian.org>  Wed, 25 Mar 1998 00:50:23 +0100
+
+hylafax (4.0.2-1) unstable; urgency=low
+
+  * New upstream release with pristine sources
+  * Added a dependency on mgetty-viewfax in hylafax-client
+  * Patched hfaxd to use /etc/hylafax (#18178)
+  * User can now specify tagline (Bug#18179)
+  * Fixed test on /var/spool/fax/etc in faxsetup (Bug#18346)
+
+ -- Christophe Le Bars <clebars@debian.org>  Tue,  3 Mar 1998 20:07:11 +0100
+
+hylafax (4.0.1-5) unstable; urgency=low
+
+  * Added a dependency on libtiff-tools in hylafax-server (Bug#17818)
+  * Fixed textfmt path in faxsetup (Bug#17834)
+  * Removed a warning message in faxstat (Bug#17835)
+
+ -- Christophe Le Bars <clebars@debian.org>  Mon,  9 Feb 1998 19:49:20 +0000
+
+hylafax (4.0.1-4) unstable; urgency=low
+
+  * Fixed error with old init.d script (Bug#17678)
+  * Added hylafax suffix to man pages (Bug#17681)
+  * Added faxanswer faxabort and faxquit symbolic links (Bug#17727)
+  * Added hylafax-client man pages (Bug#17734)
+  * Moved textfmt to hylafax-client (Bug#17736)
+
+ -- Christophe Le Bars <clebars@debian.org>  Wed,  4 Feb 1998 00:11:25 +0100
+
+hylafax (4.0.1-3) unstable; urgency=low
+
+  * New maintainer
+  * Changed distribution
+  * Built with libc6
+  * Updated to Debian standards
+  * New debian/rules
+  * Fixed sendmail path (Bug#10451)
+  * Fixed FIFO permission problem (Bug#9292)
+  * Closed obsoletes bugs (Bug#9170) (Bug#9171) (Bug#9293)
+
+ -- Christophe Le Bars <clebars@debian.org>  Sun, 25 Jan 1998 16:00:56 +0100
+
+hylafax (4.0.1-2) experimental; urgency=low
+
+  * Incremented debian version number so as not to clash with Christoph
+    Lameter's hylafax package.
+
+ -- Dermot Bradley <bradley@debian.org>  Tue, 15 Apr 1997 12:14:10 +0100
+
+hylafax (4.0.1-1) experimental; urgency=low
+
+  * Initial Release. Some problems.
+  * Looking for someone else to give the finishing touches to the package.
+
+ -- Christoph Lameter <clameter@debian.org>  Fri, 21 Feb 1997 19:34:40 -0800

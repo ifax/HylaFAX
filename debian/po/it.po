@@ -1,0 +1,92 @@
+# Debconf template for hylafax debian package
+# (C) 2004 Giuseppe Sacco, <eppesuig@debian.org>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: hylafax 4.2.5-2\n"
+"Report-Msgid-Bugs-To: eppesuig@debian.org\n"
+"POT-Creation-Date: 2006-11-23 10:48+0100\n"
+"PO-Revision-Date: 2006-03-19 23:29+0100\n"
+"Last-Translator: Giuseppe Sacco <eppesuig@debian.org>\n"
+"Language-Team: debian-l10n-italian <debian-l10n-italian@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid "Start the HylaFAX daemon now?"
+msgstr "Eseguire il server HylaFAX adesso?"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid ""
+"Hylafax is already configured and may be started now. If you specify to "
+"start it later manually, remember to change the value of RUN_HYLAFAX in /etc/"
+"default/hylafax."
+msgstr ""
+"Hylafax è già configurato e può essere eseguito adesso. Se si preferisce "
+"farlo manualmente, ricordarsi di cambiare il valore di RUN_HYLAFAX in /etc/"
+"default/hylafax."
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid "Check base64 encoders"
+msgstr "Controllo dei codificatori base64"
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid ""
+"Hylafax is able to send received faxes via email. These emails need to "
+"include base64 encoded attachments. Since this is not essential to hylafax "
+"to work, you need to do manually some further steps: you should install a "
+"package that provide encoders (like mime-codecs or sharutils) and run "
+"'faxsetup -server' that will automatically check for those encoders and "
+"change its configuration."
+msgstr ""
+"Hylafax è capace di inviare i fax ricevuti via email. Questi messaggi "
+"dovranno contenere allegati codificati in base64. Poiché questo non è "
+"indispensabile per hylafax, si deve fare manualmente un passo ulteriore: va "
+"installato un pacchetto che fornisca il codificatore (come mime-codecs o "
+"sharutils) e poi si deve eseguire \"faxsetup -server\" il quale "
+"automaticamente controllerà i codificatori e cambierà la propria "
+"configurazione."
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:3001
+msgid "Hylafax setup failed"
+msgstr "Configurazione di Hylafax fallita"
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:3001
+msgid ""
+"While installing hylafax a script called 'faxsetup' failed. This can be "
+"caused by many reasons and cannot be fixed automatically so the hylafax-"
+"server package is now unconfigured. Please fix the problem, run 'faxsetup -"
+"server' as root and reconfigure hylafax-server manually."
+msgstr ""
+"Durante l'installazione di hylafax, uno script chiamato 'faxsetup' non ha "
+"funzionato. Questo può essere dovuto a parecchi motivi a non può essere "
+"corretto in maniera automatica, quindi il pacchetto hylafax-server non è "
+"stato configurato. Risolvere il problema, eseguire \"faxsetup -server\" come "
+"root e poi riconfigurare hylafax-server a mano."
+
+#~ msgid "Don't forget to setup a modem line"
+#~ msgstr "Non dimenticare di configurare l'utilizzo del modem"
+
+#~ msgid ""
+#~ "Hylafax is now installed as a server but you still have to configure at "
+#~ "least a modem in order to send or receive faxes. Please use faxaddmodem "
+#~ "in order to define a modem and then restart hylafax so that it will use "
+#~ "the new configuration."
+#~ msgstr ""
+#~ "Hylafax è installato come server, ma si deve ancora configurare almeno un "
+#~ "modem per poter mandare o ricevere fax. Usare faxaddmodem per definire "
+#~ "ogni modem e fare ripartire hylafax in modo tale da usare la nuova "
+#~ "configurazione."

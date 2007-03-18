@@ -1,0 +1,105 @@
+#
+#    Translators, if you are not familiar with the PO format, gettext
+#    documentation is worth reading, especially sections dedicated to
+#    this format, e.g. by running:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#
+#    Some information specific to po-debconf are available at
+#            /usr/share/doc/po-debconf/README-trans
+#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+#    Developers do not need to manually edit POT or PO files.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: hylafax 2:4.3.1~rc3-1\n"
+"Report-Msgid-Bugs-To: eppesuig@debian.org\n"
+"POT-Creation-Date: 2006-11-19 13:30+0900\n"
+"PO-Revision-Date: 2006-11-18 10:05+0200\n"
+"Last-Translator: Hideki Yamane (Debian-JP) <henrich@debian.or.jp>\n"
+"Language-Team: Japanese <debian-japanese@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: note
+#. Description
+#: ../hylafax-server.templates:1001
+msgid "Don't forget to setup a modem line"
+msgstr "モデムの線をつなぐのを忘れないようにしてください"
+
+#. Type: note
+#. Description
+#: ../hylafax-server.templates:1001
+msgid ""
+"Hylafax is now installed as a server but you still have to configure at "
+"least a modem in order to send or receive faxes. Please use faxaddmodem in "
+"order to define a modem and then restart hylafax so that it will use the new "
+"configuration."
+msgstr ""
+"hylafax はすでにサーバとしてインストールされていますが、FAX の送受信を行うに"
+"はモデムの設定も行う必要があります。モデムの認識には faxaddmodem コマンドを"
+"使ってください。hylafax を再起動すれば新しい設定が適用されます。"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:2001
+msgid "Start the HylaFAX daemon now?"
+msgstr "HylaFAX デーモンをすぐに起動しますか?"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:2001
+msgid ""
+"Hylafax is already configured and may be started now. If you specify to "
+"start it later manually, remember to change the value of RUN_HYLAFAX in /etc/"
+"default/hylafax."
+msgstr ""
+"hylafax の設定が完了しており、すぐに起動できます。後ほど手動で起動したい場合"
+"は /etc/default/hylafax の値を変更するのを忘れないでください。"
+
+#. Type: note
+#. Description
+#: ../hylafax-server.templates:3001
+msgid "Check base64 encoders"
+msgstr "base64 エンコーダの確認"
+
+#. Type: note
+#. Description
+#: ../hylafax-server.templates:3001
+msgid ""
+"Hylafax is able to send received faxes via email. These emails need to "
+"include base64 encoded attachments. Since this is not essential to hylafax "
+"to work, you need to do manually some further steps: you should install a "
+"package that provide encoders (like mime-codecs or sharutils) and run "
+"'faxsetup -server' that will automatically check for those encoders and "
+"change its configuration."
+msgstr ""
+"hylafax は受け取ったファックスをメール経由で送信できます。このメールには "
+"base64 エンコードの追加機能が必要です。これは hylafax の動作には必ずしも必要"
+"という訳ではないので、以下の作業を手動で行う必要があります: エンコーダを提供"
+"するパッケージ (mime-codecs や sharutils など) をインストールする必要がありま"
+"す。それから、'faxsetup -server' を実行し、自動的にエンコーダのチェックと設定"
+"ファイルを変更を行います。"
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:4001
+msgid "Hylafax setup failed"
+msgstr "hylafax の設定が失敗しました"
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:4001
+msgid ""
+"While installing hylafax a script called 'faxsetup' failed. This can be "
+"caused by many reasons and cannot be fixed automatically so the hylafax-"
+"server package is now unconfigured. Please fix the problem, run 'faxsetup -"
+"server' as root and reconfigure hylafax-server manually."
+msgstr ""
+"hylafax のインストール中に 'faxsetup' スクリプトが失敗しました。この失敗には"
+"いくつもの理由が考えられ、自動的には修復出来ません。そのため、hylafax-server "
+"パッケージはまだ設定が終わっていません。問題を修正の上、root ユーザで手動で "
+"'faxsetup -server' を実行して hylafax-server を再設定を行ってください。"

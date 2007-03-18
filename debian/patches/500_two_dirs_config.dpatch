@@ -1,0 +1,156 @@
+#!/bin/sh -e
+## 500_two_dirs_config by Giuseppe Sacco <eppesuig@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: this patch is meant to handle two different configuration directory
+## DP: The main directory is updated after changing the SPOOL/etc copy
+
+if [ $# -ne 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch}"
+
+case "$1" in
+    -patch)
+	patch $patch_opts -p1 < $0;;
+    -unpatch)
+	patch $patch_opts -p1 -R < $0;;
+    *)
+	echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+	exit 1;;
+esac
+
+exit 0
+
+#@DPATCH@
+#EOF
+diff -urNad hylafax-4.3.1~rc3~/etc/faxaddmodem.sh.in hylafax-4.3.1~rc3/etc/faxaddmodem.sh.in
+--- hylafax-4.3.1~rc3~/etc/faxaddmodem.sh.in	2006-07-21 19:46:10.000000000 +0200
++++ hylafax-4.3.1~rc3/etc/faxaddmodem.sh.in	2006-11-23 11:21:28.000000000 +0100
+@@ -2018,6 +2018,8 @@
+ echo "Don't forget to run faxmodem(@MANNUM1_8@) (if you have a send-only environment)"
+ echo "or configure init to run faxgetty on $TTY."
+ 
++/usr/lib/hylafax/bin/copy_configuration_from_spool
++
+ exec >/dev/null 2>&1
+ 
+ # cleanup
+diff -urNad hylafax-4.3.1~rc3~/etc/faxsetup.sh.in hylafax-4.3.1~rc3/etc/faxsetup.sh.in
+--- hylafax-4.3.1~rc3~/etc/faxsetup.sh.in	2006-10-21 04:30:15.000000000 +0200
++++ hylafax-4.3.1~rc3/etc/faxsetup.sh.in	2006-11-23 11:23:34.000000000 +0100
+@@ -176,6 +176,10 @@
+ UUENCODE
+ UUCP_LOCKDIR	DIR_LOCKS
+ UUCP_LOCKTYPE	LOCKS"
++
++[ ! -d /var/spool/hylafax/etc ] && mkdir /var/spool/hylafax/etc
++[ -d /var/spool/hylafax/etc ] && cp -a /etc/hylafax/* /var/spool/hylafax/etc/
++
+ dumpvals()
+ {
+     echo "$VARS" |
+@@ -2500,4 +2504,5 @@
+     $RM $JUNK
+     $RM -r $TMPDIR
+ fi
+-exit 0
++
++exec /usr/lib/hylafax/bin/copy_configuration_from_spool
+diff -urNad hylafax-4.3.1~rc3~/etc/probemodem.sh.in hylafax-4.3.1~rc3/etc/probemodem.sh.in
+--- hylafax-4.3.1~rc3~/etc/probemodem.sh.in	2006-06-02 19:27:30.000000000 +0200
++++ hylafax-4.3.1~rc3/etc/probemodem.sh.in	2006-11-23 11:21:28.000000000 +0100
+@@ -561,6 +561,8 @@
+     echo "This not a Class 1, 2, 2.0, 1.0, or 2.1 modem."
+ fi
+ 
++/usr/lib/hylafax/bin/copy_configuration_from_spool
++
+ # cleanup
+ @RM@ -f $JUNK; @RM@ -fr $TMPDIR
+ exit 0
+diff -urNad hylafax-4.3.1~rc3~/util/faxdeluser.c hylafax-4.3.1~rc3/util/faxdeluser.c
+--- hylafax-4.3.1~rc3~/util/faxdeluser.c	2005-01-11 04:28:54.000000000 +0100
++++ hylafax-4.3.1~rc3/util/faxdeluser.c	2006-11-23 11:21:28.000000000 +0100
+@@ -109,5 +109,29 @@
+         perror("Error writing hosts file");
+         return -1;
+     }
++
++	/* debian patch: update both copies of the permission file.
++	 * Giuseppe Sacco, 18 august 2004
++	 */
++	{
++	FILE *i, *o;
++	static const char *copyfile = "/etc/hylafax/hosts.hfaxd";
++
++		i = fopen(hostfile, "r");
++		if (i) {
++			o = fopen(copyfile, "w");
++			if (o) {
++				char buf[BUFSIZ];
++				int j;
++
++				while ( (j=fread(&buf[0], 1, sizeof(buf), i)) > 0)
++					fwrite(&buf[0], 1, j, o);
++				fclose(o);
++				pw && chown(copyfile, pw->pw_uid, pw->pw_uid);
++			}
++			fclose(i);
++		}
++	}
++
+     return 0;
+ }
+--- hylafax-4.3.1~rc3/util/faxadduser.c.orig	2006-08-12 22:51:30.000000000 +0200
++++ hylafax-4.3.1~rc3/util/faxadduser.c	2006-12-10 00:54:01.134561663 +0100
+@@ -31,6 +31,8 @@
+ #include <unistd.h>
+ #include <ctype.h>
+ #include <time.h>
++#include <sys/types.h>
++#include <pwd.h>
+ 
+ #include "config.h"
+ #include "port.h"
+@@ -119,6 +121,37 @@
+         }
+         fprintf(hf, "\n");
+     }
++
+     fclose(hf);
++
++	/* debian patch: update both copies of the permission file.
++	 * Giuseppe Sacco, 18 august 2004
++	 */
++	{
++	FILE *i, *o;
++	static const char* copyfile = "/etc/hylafax/hosts.hfaxd";
++
++		i = fopen(hostfile, "r");
++		if (i) {
++			o = fopen(copyfile, "w");
++			if (o) {
++				char buf[BUFSIZ];
++				int j;
++				struct passwd *pw;
++
++				while ( (j=fread(&buf[0], 1, sizeof(buf), i)) > 0)
++					fwrite(&buf[0], 1, j, o);
++				fclose(o);
++
++				pw = getpwnam(FAX_USER);
++				if (pw == NULL || chown(copyfile, pw->pw_uid, pw->pw_uid)) {
++					perror("Error writing hosts file");
++					return -1;
++				}
++			}
++			fclose(i);
++		}
++	}
++
+     return 0;
+ }

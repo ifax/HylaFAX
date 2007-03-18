@@ -1,0 +1,133 @@
+#!/bin/sh -e
+##  by Giuseppe Sacco <eppesuig@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description
+
+if [ $# -lt 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
+
+case "$1" in
+       -patch) patch $patch_opts -p1 < $0;;
+       -unpatch) patch $patch_opts -p1 -R < $0;;
+        *)
+                echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+                exit 1;;
+esac
+
+exit 0
+
+diff -urNad /usr/local/src/hylafax-4.2.0/man/faxcron.1m hylafax-4.2.0/man/faxcron.1m
+--- /usr/local/src/hylafax-4.2.0/man/faxcron.1m	2001-03-08 07:44:17.000000000 +0100
++++ hylafax-4.2.0/man/faxcron.1m	2004-09-17 21:33:20.000000000 +0200
+@@ -141,9 +141,9 @@
+ session log files are not publicly readable.)
+ .SH FILES
+ .nf
+-.ta \w'${SPOOL}/etc/xferfaxstats    'u
++.ta \w'${SPOOL}/log/xferfaxstats    'u
+ ${SPOOL}	spooling area
+-${SPOOL}/etc/lastrun	timestamp of last run
++${SPOOL}/status/lastrun	timestamp of last run
+ ${SBIN}/xferfaxstats	for generating transmit statistics
+ ${SBIN}/recvstats	for generating receive statistics
+ ${SPOOL}/tmp/faxcronXXXX	temporary file for truncating session logs
+diff -urNad /usr/local/src/hylafax-4.2.0/man/recvstats.1m hylafax-4.2.0/man/recvstats.1m
+--- /usr/local/src/hylafax-4.2.0/man/recvstats.1m	2004-06-18 06:10:28.000000000 +0200
++++ hylafax-4.2.0/man/recvstats.1m	2004-09-17 21:29:57.000000000 +0200
+@@ -46,7 +46,7 @@
+ the communication speed, or
+ the communication data format.
+ Statistics are read from the file
+-.B ${SPOOL}/etc/xferfaxlog
++.B ${SPOOL}/log/xferfaxlog
+ unless filenames are specified on the command line.
+ .PP
+ The following table is an example of the output from
+@@ -151,9 +151,9 @@
+ .B since.
+ .SH FILES
+ .nf
+-.ta \w'${SPOOL}/etc/xferfaxlog    'u
++.ta \w'${SPOOL}/log/xferfaxlog    'u
+ ${SPOOL}	spooling area
+-${SPOOL}/etc/xferfaxlog	default file from which to read statistics
++${SPOOL}/log/xferfaxlog	default file from which to read statistics
+ .fi
+ .SH "SEE ALSO"
+ .IR faxq (${MANNUM1_8}),
+diff -urNad /usr/local/src/hylafax-4.2.0/man/xferfaxstats.1m hylafax-4.2.0/man/xferfaxstats.1m
+--- /usr/local/src/hylafax-4.2.0/man/xferfaxstats.1m	2004-06-18 06:10:28.000000000 +0200
++++ hylafax-4.2.0/man/xferfaxstats.1m	2004-09-17 21:29:32.000000000 +0200
+@@ -50,7 +50,7 @@
+ the communication speed, and
+ the communication data format.
+ Statistics are read from the file
+-.B ${SPOOL}/etc/xferfaxlog
++.B ${SPOOL}/log/xferfaxlog
+ in the spooling area, unless filenames are
+ specified on the command line.
+ .PP
+@@ -198,7 +198,7 @@
+ .nf
+ .ta \w'${SPOOL}    'u
+ ${SPOOL}	spooling area
+-etc/xferfaxlog	default file from which to read statistics
++log/xferfaxlog	default file from which to read statistics
+ .fi
+ .SH "SEE ALSO"
+ .IR faxq (${MANNUM1_8}),
+diff -urNad /usr/local/src/hylafax-4.2.0/util/faxcron.sh.in hylafax-4.2.0/util/faxcron.sh.in
+--- /usr/local/src/hylafax-4.2.0/util/faxcron.sh.in	2004-09-17 21:28:59.000000000 +0200
++++ hylafax-4.2.0/util/faxcron.sh.in	2004-09-17 21:34:06.000000000 +0200
+@@ -43,8 +43,8 @@
+ AGETMP=1			# purge orphaned temp files after 1 day
+ FAXUSER=uucp			# owner of log files
+ LOGMODE=0644			# mode for log files
+-XFERLOG=etc/xferfaxlog		# HylaFAX xferfaxlog file location
+-LAST=etc/lastrun		# file where time+date of last run recorded
++XFERLOG=log/xferfaxlog		# HylaFAX xferfaxlog file location
++LAST=status/lastrun		# file where time+date of last run recorded
+ 
+ cd @SPOOL@			# NB: everything below assumes this
+ 
+diff -urNad /usr/local/src/hylafax-4.2.0/util/recvstats.sh.in hylafax-4.2.0/util/recvstats.sh.in
+--- /usr/local/src/hylafax-4.2.0/util/recvstats.sh.in	2004-06-18 06:10:29.000000000 +0200
++++ hylafax-4.2.0/util/recvstats.sh.in	2004-09-17 21:30:06.000000000 +0200
+@@ -72,7 +72,7 @@
+     shift
+ done
+ if [ -z "$FILES" ]; then
+-    FILES=$SPOOL/etc/xferfaxlog
++    FILES=$SPOOL/log/xferfaxlog
+ fi
+ 
+ #
+diff -urNad /usr/local/src/hylafax-4.2.0/util/xferfaxstats.sh.in hylafax-4.2.0/util/xferfaxstats.sh.in
+--- /usr/local/src/hylafax-4.2.0/util/xferfaxstats.sh.in	2004-06-18 06:10:29.000000000 +0200
++++ hylafax-4.2.0/util/xferfaxstats.sh.in	2004-09-17 21:29:24.000000000 +0200
+@@ -70,7 +70,7 @@
+     shift
+ done
+ if [ -z "$FILES" ]; then
+-    FILES=$SPOOL/etc/xferfaxlog
++    FILES=$SPOOL/log/xferfaxlog
+ fi
+ 
+ #
+--- /usr/local/src/hylafax-4.2.0/config.h.in.orig	2004-09-18 03:10:01.000000000 +0200
++++ hylafax-4.2.0/config.h.in	2004-09-18 03:10:26.000000000 +0200
+@@ -137,7 +137,7 @@
+  * file; currently in an ASCII format designed for processing
+  * by programs like awk and perl.
+  */
+-#define	FAX_XFERLOG	FAX_ETCDIR "/xferfaxlog"
++#define	FAX_XFERLOG	FAX_LOGDIR "/xferfaxlog"
+ 
+ /*
+  * Client access to services on the server machine is controlled

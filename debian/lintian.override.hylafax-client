@@ -1,0 +1,10 @@
+hylafax-client: binary-or-shlib-defines-rpath ./usr/bin/textfmt /usr/lib/hylafax
+hylafax-client: binary-or-shlib-defines-rpath ./usr/bin/faxalter /usr/lib/hylafax
+hylafax-client: binary-or-shlib-defines-rpath ./usr/bin/faxcover /usr/lib/hylafax
+hylafax-client: binary-or-shlib-defines-rpath ./usr/bin/faxmail /usr/lib/hylafax
+hylafax-client: binary-or-shlib-defines-rpath ./usr/bin/faxrm /usr/lib/hylafax
+hylafax-client: binary-or-shlib-defines-rpath ./usr/bin/faxstat /usr/lib/hylafax
+hylafax-client: binary-or-shlib-defines-rpath ./usr/bin/sendfax /usr/lib/hylafax
+hylafax-client: binary-or-shlib-defines-rpath ./usr/bin/sendpage /usr/lib/hylafax
+hylafax-client: manpage-has-errors-from-man usr/share/man/man1/faxmail.1.gz 521: warning [p 5, 9.5i]: can't break line
+hylafax-client: manpage-has-errors-from-man usr/share/man/man1/textfmt.1.gz 244: warning [p 3, 1.3i]: can't break line

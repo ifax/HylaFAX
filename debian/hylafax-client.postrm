@@ -1,0 +1,11 @@
+#! /bin/sh -e
+
+#DEBHELPER#
+
+if [ "$1" = "purge" ]; then
+    [ -d /etc/hylafax ] && rm -f /etc/hylafax/pagesizes
+    rmdir --ignore-fail-on-non-empty /etc/hylafax
+    if [ -x /usr/bin/ucf ]; then
+	/usr/bin/ucf --purge /etc/hylafax/pagesizes
+    fi
+fi

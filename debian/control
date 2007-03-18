@@ -3,16 +3,17 @@ Maintainer: Giuseppe Sacco <eppesuig@debian.org>
 Section: comm
 Priority: extra
 Standards-Version: 3.7.2
-Build-Depends: debhelper (>= 4.1.16), libtiff4-dev (>= 3.6.1-3), libtiff-tools (>= 3.6.1-3), zlib1g-dev (>= 0.95), ed, autotools-dev, dpatch, libpam-dev, gsfonts, gs-esp
+Build-Depends: debhelper (>= 4.1.16), libtiff4-dev (>= 3.6.1-3), libtiff-tools (>= 3.6.1-3), zlib1g-dev (>= 0.95), ed, autotools-dev, dpatch, libpam-dev, gsfonts, gs, bash
 
-Package: hylafax
+Package: hylafax-server
 Architecture: any
 Section: comm
-Depends: ${shlibs:Depends}, ${misc:Depends}, libtiff-tools (>= 3.6.1-3), mailx, psmisc, sed (>= 4.1.2), sharutils, adduser, lsb-base (>= 3.0-6), metamail, enscript | libgnomeprint-data, ucf, gsfonts, gs-esp
+Depends: ${shlibs:Depends}, ${misc:Depends}, libtiff-tools (>= 3.6.1-3), hylafax-client (= ${Source-Version}), mailx, psmisc, sed (>= 4.1.2), gs, sharutils, adduser, lsb-base (>= 3.0-6), metamail
 Recommends: metamail
-Suggests: mgetty
-Conflicts: mgetty-fax, capi4hylafax (<< 1:01.02.03-4), hylafax-server, hylafax-client, hylafax-doc
-Description: Flexible client/server fax software - standalone package
+Suggests: hylafax-doc, mgetty
+Conflicts: mgetty-fax, capi4hylafax (<< 1:01.02.03-4)
+Tag: works-with::fax, hardware::modem, interface::daemon, works-with::mail, network::server, implemented-in::c++, interface::commandline, use::transmission, role::program
+Description: Flexible client/server fax software - server daemons
  This package support the sending and receiving of facsimiles, the polled
  retrieval of facsimiles and the send of alphanumeric pages.
  .
@@ -20,8 +21,29 @@ Description: Flexible client/server fax software - standalone package
  Class 2.0 fax modem attached to one of its serial ports. End-user
  applications to manage the transmission of documents via facsimile are
  provided separately by the hylafax-client package.
- .
+
+Package: hylafax-client
+Architecture: any
+Section: comm
+Depends: ${shlibs:Depends}, enscript | libgnomeprint-data, ucf, gsfonts, gs-esp
+Pre-Depends: libpaper-utils
+Suggests: mgetty-viewfax
+Recommends: netpbm, transfig
+Conflicts: mgetty-fax
+Tag: works-with::fax, implemented-in::c++, network::client, interface::commandline, use::transmission, role::program, scope::application
+Description: Flexible client/server fax software - client utilities
  The HylaFAX client software communicates with a HylaFAX server via TCP/IP.
+ .
+ HylaFAX support the sending and receiving of facsimiles, the polled
+ retrieval of facsimiles and the send of alphanumeric pages.
+
+Package: hylafax-doc
+Architecture: all
+Section: doc
+Suggests: www-browser, man2html, httpd-cgi
+Tag: hardware::modem, interface::commandline, made-of::data:html, role::documentation, use::transmission, works-with::fax
+Description: Flexible client/server fax software - HTML Documentation
+ HTML version of HylaFAX documentation and manpages.
  .
  HylaFAX support the sending and receiving of facsimiles, the polled
  retrieval of facsimiles and the send of alphanumeric pages.

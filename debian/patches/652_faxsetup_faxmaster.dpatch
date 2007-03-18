@@ -1,0 +1,80 @@
+#!/bin/sh -e
+## 652_faxsetup_faxmaster by Giuseppe Sacco <eppesuig@debian.org>
+##
+## All lines beginning with \`## DP:' are a description of the patch.
+## DP: Patch that remove the faxmaster alias since we already have a 
+## DP: user FaxMaster.
+
+if [ $# -lt 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
+
+case "$1" in
+       -patch) patch $patch_opts -p1 < $0;;
+       -unpatch) patch $patch_opts -p1 -R < $0;;
+        *)
+                echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+                exit 1;;
+esac
+
+exit 0
+
+diff -urNad hylafax-4.3.1~/etc/faxsetup.sh.in hylafax-4.3.1/etc/faxsetup.sh.in
+--- hylafax-4.3.1~/etc/faxsetup.sh.in	2006-09-19 18:32:07.000000000 +0200
++++ hylafax-4.3.1/etc/faxsetup.sh.in	2006-09-19 18:34:11.000000000 +0200
+@@ -1892,50 +1892,7 @@
+     fi
+ fi
+ 
+-#
+-# Check for a FaxMaster entry for sending mail.
+-#
+-if onServer; then
+-    x=`(ypcat -k aliases) 2>/dev/null | $GREP -i '^faxmaster'` 2>/dev/null
+-    if [ -z "$x" ] && [ -f $ALIASES ]; then
+-	x=`$GREP -i '^faxmaster' $ALIASES`
+-    fi
+-    if [ -z "$x" ]; then
+-	cat<<-EOF
+-
+-
+-	There does not appear to be an entry for the FaxMaster either in
+-	the YP/NIS database or in the $ALIASES file.  The
+-	FaxMaster is the primary point of contact for HylaFAX problems. 
+-	The HylaFAX client-server protocol server identifies this alias as
+-	the place to register complaints and HylaFAX directs automatic mail
+-	messages to this user when problems are identified on a server
+-	machine or when the routine server maintainence scripts are run
+-	(e.g. faxcron).
+-
+-	EOF
+-	prompt "Should an entry be added for the FaxMaster to $ALIASES [yes]?"
+-	read x
+-	if isOK $x; then
+-	    promptForNonNullStringParameter "${USER:-root}" \
+-	       "Users to receive fax-related mail"
+-	    (echo "# alias for notification messages from HylaFAX servers";
+-	     echo "FaxMaster: $param") >>$ALIASES
+-	    if newaliases 2>/dev/null; then
+-		echo "Rebuilt $ALIASES database."
+-	    else
+-		# could be a SCO machine running mmdf
+-		if test -x /usr/mmdf/table/dbmbuild ; then
+-		    su mmdf -c "/usr/mmdf/table/dbmbuild"
+-		else
+-		    echo "Can not find newaliases to rebuild $ALIASES;"
+-		    echo "you will have to do it yourself."
+-		fi
+-	    fi
+-	fi
+-    fi
+-    FAXMASTER=$x
+-fi
++FAXMASTER=faxmaster
+ 
+ #
+ # Generate or update default values for status/any.info

@@ -1,0 +1,57 @@
+#! /bin/sh -e
+
+
+
+# generate /etc/hylafax/pagesizes
+
+newfile=`tempfile`
+chmod a+r "$newfile"
+cat /usr/share/hylafax/pagesizes | sed -e 's/^default/#default/' >> "$newfile"
+perl -e 'print "default\t\t\t" . `paperconf -N|tr -d "\n"` . "\t";
+	print int(`paperconf -mw` * 1200 / 25.4) . "\t";
+	print int(`paperconf -mh` * 1200 / 25.4) . "\t";
+	print int((`paperconf -mw` * 1200 / 25.4 - 300)*0.962) . "\t";
+	print int((`paperconf -mh` * 1200 / 25.4 - 100)*0.948) . "\t";
+	print "472\t345\n";' >> "$newfile"
+
+#
+# Copy the new configuration file in /var/spool/hylafax
+# or copy the old one in /etc/hylafax
+#
+
+if [ -f /var/spool/hylafax/etc/pagesizes ] && [ -f /etc/hylafax/pagesizes ];
+then
+	if [ /etc/hylafax/pagesizes -nt /var/spool/hylafax/etc/pagesizes ];
+	then
+		/usr/bin/ucf "$newfile" /etc/hylafax/pagesizes < /dev/tty
+		cp -p /etc/hylafax/pagesizes /var/spool/hylafax/etc/pagesizes
+	else
+		/usr/bin/ucf /var/spool/hylafax/etc/pagesizes /etc/hylafax/pagesizes < /dev/tty
+	fi
+else
+	/usr/bin/ucf "$newfile" /etc/hylafax/pagesizes < /dev/tty
+fi
+
+rm -f "$newfile"
+
+#
+# Copy all client configuration files from /etc/hylafax to /var/spool/hylafax
+# but only if the hylafax-server is installed, i.e., if /var/spool/hylafax/etc
+# exists.
+#
+
+if [ -d /var/spool/hylafax/etc ] && [ ! -h /var/spool/hylafax/etc ];
+then
+#
+# on a specific system there was a problem with faxmail.ps so I have to check
+# for the existence of every file before copying it.
+#
+	for f in /etc/hylafax/pagesizes /etc/hylafax/typerules \
+		/etc/hylafax/hyla.conf /etc/hylafax/faxcover.ps \
+		/etc/hylafax/faxmail.ps
+	do
+		[ -f "$f" ] && cp -p "$f" /var/spool/hylafax/etc/
+	done
+fi
+
+exit 0

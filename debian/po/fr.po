@@ -1,0 +1,125 @@
+#
+#    Translators, if you are not familiar with the PO format, gettext
+#    documentation is worth reading, especially sections dedicated to
+#    this format, e.g. by running:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#
+#    Some information specific to po-debconf are available at
+#            /usr/share/doc/po-debconf/README-trans
+#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+#    Developers do not need to manually edit POT or PO files.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: hylafax\n"
+"Report-Msgid-Bugs-To: eppesuig@debian.org\n"
+"POT-Creation-Date: 2006-11-23 10:48+0100\n"
+"PO-Revision-Date: 2006-03-23 11:19+0100\n"
+"Last-Translator: Eric Madesclair <eric-m@wanadoo.fr>\n"
+"Language-Team: French <debian-l10n-french@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid "Start the HylaFAX daemon now?"
+msgstr "Faut-il démarrer le démon hylafax maintenant ?"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid ""
+"Hylafax is already configured and may be started now. If you specify to "
+"start it later manually, remember to change the value of RUN_HYLAFAX in /etc/"
+"default/hylafax."
+msgstr ""
+"Hylafax est déjà configuré et peut être démarré maintenant. Si vous prévoyez "
+"de le lancer vous-même, vous devrez modifier la valeur RUN_HYLAFAX dans le "
+"fichier /etc/default/hylafax."
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid "Check base64 encoders"
+msgstr "Vérification de l'encodeur base64"
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid ""
+"Hylafax is able to send received faxes via email. These emails need to "
+"include base64 encoded attachments. Since this is not essential to hylafax "
+"to work, you need to do manually some further steps: you should install a "
+"package that provide encoders (like mime-codecs or sharutils) and run "
+"'faxsetup -server' that will automatically check for those encoders and "
+"change its configuration."
+msgstr ""
+"Hylafax peut envoyer les fax reçus par courriel. Le courriel contient le fax "
+"en pièce jointe avec un encodage en base64. Comme cette fonctionnalité n'est "
+"pas indispensable au fonctionnement d'hylafax, certaines opérations vont "
+"être nécessaires pour qu'elle soit opérationnelle : vous devez installer un "
+"paquet qui fournit un encodeur (comme MIME-codecs ou sharutils) et exécuter "
+"la commande « faxsetup -server » pour vérifier et configurer automatiquement "
+"l'encodeur."
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:3001
+msgid "Hylafax setup failed"
+msgstr "Échec de la configuration d'hylafax"
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:3001
+msgid ""
+"While installing hylafax a script called 'faxsetup' failed. This can be "
+"caused by many reasons and cannot be fixed automatically so the hylafax-"
+"server package is now unconfigured. Please fix the problem, run 'faxsetup -"
+"server' as root and reconfigure hylafax-server manually."
+msgstr ""
+"Lors de l'installation d'hylafax, le script « faxsetup » a échoué. Cela peut "
+"être causé par différentes raisons et ne peut pas être corrigé "
+"automatiquement ; c'est pourquoi le paquet hylafax-server est maintenant non "
+"configuré. Veuillez corriger le problème, exécuter « faxsetup-server » avec "
+"les privilèges du superutilisateur et reconfigurer vous-même hylafax-server."
+
+#~ msgid "Don't forget to setup a modem line"
+#~ msgstr "Configuration d'un modem indispensable"
+
+#~ msgid ""
+#~ "Hylafax is now installed as a server but you still have to configure at "
+#~ "least a modem in order to send or receive faxes. Please use faxaddmodem "
+#~ "in order to define a modem and then restart hylafax so that it will use "
+#~ "the new configuration."
+#~ msgstr ""
+#~ "Le serveur hylafax est maintenant installé, vous devez encore configurer "
+#~ "au moins un modem avant de pouvoir envoyer ou recevoir des fax. Veuillez "
+#~ "utiliser la commande « faxaddmodem » pour configurer votre modem, puis "
+#~ "relancez le serveur hylafax pour que la nouvelle configuration soit prise "
+#~ "en compte."
+
+#~ msgid "Don't forget to configure HylaFAX with /usr/sbin/faxsetup."
+#~ msgstr "Vous devez configurer hylaFAX avec le script /usr/sbin/faxsetup"
+
+#~ msgid ""
+#~ "Please run the faxsetup script which will ask you a few questions about "
+#~ "your setup and will let you add with a semi-automatical auto-detection "
+#~ "procedure one or more modems to the pool of devices available to HylaFAX."
+#~ msgstr ""
+#~ "Veuillez lancer le script faxsetup, qui vous posera quelques questions "
+#~ "sur votre configuration et vous assistera, avec une procédure de "
+#~ "détection semi-automatique, à ajouter un ou plusieurs modems parmi "
+#~ "l'ensemble des périphériques disponibles pour HylaFAX."
+
+#~ msgid ""
+#~ "Start the HylaFAX server process immediately. You should have configured "
+#~ "HylaFAX first (if you are upgrading from a previous version you most "
+#~ "likely already have a working configuration)."
+#~ msgstr ""
+#~ "Pour pouvoir démarrer le serveur HylaFax immédiatement, vous devez "
+#~ "l'avoir préalablement configuré. Si vous mettez à jour une version "
+#~ "précédente, votre configuration est probablement correcte."

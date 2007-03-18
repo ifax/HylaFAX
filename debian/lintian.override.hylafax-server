@@ -1,0 +1,121 @@
+hylafax-server: non-standard-dir-perm var/spool/hylafax/ 0775 != 0755
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/agere-mp-2
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/agere-mp-21
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/att-dataport
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/att-dataport-2
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/att-dataport-2.0
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/att-dpexpress-2
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/cirrus
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/class1
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/class1.0
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/class2
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/class2.0
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/class2.1
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/conexant-1.0
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/davicom-2
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/digi
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/digi-2
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/digi-20
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/dsi-scout+
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/eicon
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/eicon-2
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/elsa-microlink-56k-basic-2.0
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/e-tech
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/everex-2496d
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/exar
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/gvc-288
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/gvc-288-2
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/hayes
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/iaxmodem
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/intel-400e
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/linux-isdn-2
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/lucent
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/lucent-isa
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/lucent-mt-10
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/lucent-mt-2
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/lucent-mt-20
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/lucent-mt-21
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/Makefile
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/Makefile.in
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/moto-288
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/mt-1432
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/nuvo-voyager
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/ppi-pm14400fxmt
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/ppi-pm14400fxsa
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/prometheus
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/rc144ac
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/rc144ac-1
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/rc288dpi
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/rc288dpi-1
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/rc32acl
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/rc32acl-1
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/rockwell-k56
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/rockwell-rc
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/sierra
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/skel
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/t38modem
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/telebit-qblazer
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/telebit-t3000
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/telebit-wb
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/topic
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/tricom2842
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/uds-fastalk
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/umc92144
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/umc9624
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/usr-2.0
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/usr-rts
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/usr-xon
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/zyxel-1496e
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/zyxel-1496e-1
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/zyxel-1496e-2.0
+hylafax-server: file-in-unusual-dir var/spool/hylafax/config/zyxel-2864
+hylafax-server: file-in-unusual-dir var/spool/hylafax/bin/ps2fax.gs
+hylafax-server: file-in-unusual-dir var/spool/hylafax/bin/pdf2fax.gs
+hylafax-server: file-in-unusual-dir var/spool/hylafax/bin/pcl2fax
+hylafax-server: file-in-unusual-dir var/spool/hylafax/bin/tiff2fax
+hylafax-server: file-in-unusual-dir var/spool/hylafax/bin/tiff2pdf
+hylafax-server: file-in-unusual-dir var/spool/hylafax/bin/archive
+hylafax-server: file-in-unusual-dir var/spool/hylafax/bin/notify
+hylafax-server: file-in-unusual-dir var/spool/hylafax/bin/notify-4.1
+hylafax-server: file-in-unusual-dir var/spool/hylafax/bin/faxrcvd
+hylafax-server: file-in-unusual-dir var/spool/hylafax/bin/pollrcvd
+hylafax-server: file-in-unusual-dir var/spool/hylafax/bin/mkcover
+hylafax-server: file-in-unusual-dir var/spool/hylafax/bin/wedged
+hylafax-server: file-in-unusual-dir var/spool/hylafax/bin/notify.awk
+hylafax-server: non-standard-dir-perm var/spool/hylafax/tmp/ 4777 != 0755
+hylafax-server: shell-script-fails-syntax-check ./var/spool/hylafax/bin/notify.awk
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/faxmsg /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/faxconfig /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/faxmodem /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/faxstate /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/faxwatch /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/faxinfo /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/tiffcheck /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/typetest /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/dialtest /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/faxadduser /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/faxdeluser /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/faxq /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/faxqclean /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/faxgetty /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/faxsend /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/pagesend /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/tsitest /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/tagtest /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/cqtest /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/choptest /usr/lib/hylafax
+hylafax-server: binary-or-shlib-defines-rpath ./usr/sbin/hfaxd /usr/lib/hylafax
+hylafax-server: non-etc-file-marked-as-conffile /var/spool/hylafax/bin/archive
+hylafax-server: non-etc-file-marked-as-conffile /var/spool/hylafax/bin/faxrcvd
+hylafax-server: non-etc-file-marked-as-conffile /var/spool/hylafax/bin/mkcover
+hylafax-server: non-etc-file-marked-as-conffile /var/spool/hylafax/bin/notify
+hylafax-server: non-etc-file-marked-as-conffile /var/spool/hylafax/bin/notify-4.1
+hylafax-server: non-etc-file-marked-as-conffile /var/spool/hylafax/bin/notify.awk
+hylafax-server: non-etc-file-marked-as-conffile /var/spool/hylafax/bin/pcl2fax
+hylafax-server: non-etc-file-marked-as-conffile /var/spool/hylafax/bin/pdf2fax.gs
+hylafax-server: non-etc-file-marked-as-conffile /var/spool/hylafax/bin/pollrcvd
+hylafax-server: non-etc-file-marked-as-conffile /var/spool/hylafax/bin/ps2fax.gs
+hylafax-server: non-etc-file-marked-as-conffile /var/spool/hylafax/bin/tiff2fax
+hylafax-server: non-etc-file-marked-as-conffile /var/spool/hylafax/bin/tiff2pdf
+hylafax-server: non-etc-file-marked-as-conffile /var/spool/hylafax/bin/wedged
+hylafax-server: virtual-package-depends-without-real-package-depends depends: awk

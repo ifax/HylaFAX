@@ -1,0 +1,94 @@
+# Vietnamese Translation for hylafax.
+# Copyright © 2005 Free Software Foundation, Inc.
+# Clytie Siddall <clytie@riverland.net.au>, 2005.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: hylafax 4.2.5-2\n"
+"Report-Msgid-Bugs-To: eppesuig@debian.org\n"
+"POT-Creation-Date: 2006-11-23 10:48+0100\n"
+"PO-Revision-Date: 2006-03-20 11:31+1030\n"
+"Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
+"Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid "Start the HylaFAX daemon now?"
+msgstr "Khởi chạy trình nền (dæmon) HylaFAX ngay bao giờ không?"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid ""
+"Hylafax is already configured and may be started now. If you specify to "
+"start it later manually, remember to change the value of RUN_HYLAFAX in /etc/"
+"default/hylafax."
+msgstr ""
+"Trình hylafax đã được cấu hình thì có thể được khởi chạy ngay bây giờ. Nếu "
+"bạn chọn tự khởi chạy nó lần sau, hãy nhớ sửa đổi giá trị của « RUN_HYLAFAX "
+"» trong tập tin </etc/default/hylafax>."
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid "Check base64 encoders"
+msgstr "Kiểm tra bộ mã hóa base64 (cơ số 64)"
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid ""
+"Hylafax is able to send received faxes via email. These emails need to "
+"include base64 encoded attachments. Since this is not essential to hylafax "
+"to work, you need to do manually some further steps: you should install a "
+"package that provide encoders (like mime-codecs or sharutils) and run "
+"'faxsetup -server' that will automatically check for those encoders and "
+"change its configuration."
+msgstr ""
+"Trình hylafax có thể gửi qua thư điện tử điện thư đã nhận. Mọi thư kiểu này "
+"cần phải chứa đính kèm mã hóa bằng cơ số 64. Vì tính năng này không phải cần "
+"yếu cho những hành động thường của trình Hylafax, bạn cần phải tự theo một "
+"số bước thêm để sử dụng nó. Hãy cài đắt một gói cung cấp nhiều bộ mã hóa "
+"(như « mime-codecs » hay « sharutils ») rồi chạy « faxsetup -server » (điện "
+"thư thiết lập trình phục vụ) mà sẽ kiểm tra tự động có những bộ mã hóa đó "
+"chưa, và sửa đổi cấu hình nó."
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:3001
+msgid "Hylafax setup failed"
+msgstr "Việc thiết lập hylafax bị lỗi"
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:3001
+msgid ""
+"While installing hylafax a script called 'faxsetup' failed. This can be "
+"caused by many reasons and cannot be fixed automatically so the hylafax-"
+"server package is now unconfigured. Please fix the problem, run 'faxsetup -"
+"server' as root and reconfigure hylafax-server manually."
+msgstr ""
+"Trong khi cài đặt hylafax, một tập lệnh tên « faxsetup » (thiết lập điện "
+"thư) bị lỗi. Trường hợp có thể do nhiều lý do, và không có khả năng sửa tự "
+"động nên gói hylafax chưa cấu hình. Vui lòng sửa vấn đề này, chạy tiến trình "
+"« faxsetup-server » (trình phục vụ thiết lập điện thư) với tư cách người chủ "
+"(root) để tự cấu hình hylafax-server."
+
+#~ msgid "Don't forget to setup a modem line"
+#~ msgstr "Đừng quên thiết lập một dòng bộ điều giải."
+
+#~ msgid ""
+#~ "Hylafax is now installed as a server but you still have to configure at "
+#~ "least a modem in order to send or receive faxes. Please use faxaddmodem "
+#~ "in order to define a modem and then restart hylafax so that it will use "
+#~ "the new configuration."
+#~ msgstr ""
+#~ "Gói hylafax đã được cài đặt là trình phục vụ, nhưng bạn vẫn còn cần phải "
+#~ "cấu hình ít nhất một bộ điều giải (modem) để gửi hay nhận điện thư. Hãy "
+#~ "sử dụng « faxaddmodem » (điện thư thêm bộ điều giải) để định nghĩa một bộ "
+#~ "điều giải, rồi khởi chạy lại trình hylafax để sử dụng cấu hình mới này."

@@ -1,0 +1,43 @@
+#!/bin/sh -e
+##  by Giuseppe Sacco <eppesuig@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Change a sentence in faxaddmodem to warn the user to configure
+## DP: faxgetty after faxaddmodem.
+
+if [ $# -lt 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
+
+case "$1" in
+       -patch) patch $patch_opts -p1 < $0;;
+       -unpatch) patch $patch_opts -p1 -R < $0;;
+        *)
+                echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+                exit 1;;
+esac
+
+exit 0
+
+#@DPATCH@
+#EOF
+diff -urNad hylafax-4.3.0~/etc/faxaddmodem.sh.in hylafax-4.3.0/etc/faxaddmodem.sh.in
+--- hylafax-4.3.0~/etc/faxaddmodem.sh.in	2006-06-16 10:44:32.000000000 +0200
++++ hylafax-4.3.0/etc/faxaddmodem.sh.in	2006-06-16 10:48:02.000000000 +0200
+@@ -2017,8 +2017,10 @@
+ fi
+ 
+ echo ""
+-echo "Don't forget to run faxmodem(@MANNUM1_8@) (if you have a send-only environment)"
+-echo "or configure init to run faxgetty on $TTY."
++#echo "Don't forget to run faxmodem(@MANNUM1_8@) (if you have a send-only environment)"
++#echo "or configure init to run faxgetty on $TTY."
++echo "Don't forget to restart hylafax in order to run faxgetty on this new modem"
++echo "line."
+ 
+ /usr/lib/hylafax/bin/copy_configuration_from_spool
+ 

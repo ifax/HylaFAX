@@ -1,0 +1,41 @@
+#!/bin/sh -e
+##  by Giuseppe Sacco <eppesuig@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Fix a problem when using the old notify script. See #386036.
+## DP: patch by Paolo (from the bug report)
+
+if [ $# -lt 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
+
+case "$1" in
+       -patch) patch $patch_opts -p1 < $0;;
+       -unpatch) patch $patch_opts -p1 -R < $0;;
+        *)
+                echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+                exit 1;;
+esac
+
+exit 0
+
+diff -urNad hylafax-4.3.0~/util/notify.awk hylafax-4.3.0/util/notify.awk
+--- hylafax-4.3.0~/util/notify.awk	2004-08-16 14:58:22.000000000 +0200
++++ hylafax-4.3.0/util/notify.awk	2006-09-19 08:27:29.000000000 +0200
+@@ -99,9 +99,10 @@
+ 	    print ""
+ 	    printf "%-20s %8s %s\n", "Filename", "Size", "Type";
+ 	    for (i = 0; i < nfiles; i++) {
+-		"wc -c " files[i] | getline;
++		cmd="wc -c "files[i];
++		cmd | getline;
+ 		printf "%-20s %8d %s\n", files[i], $1, docType(files[i]);
+-		close("wc -c " files[i]);
++		close(cmd);
+ 	     }
+ 	}
+     } else if (jobType == "pager") {

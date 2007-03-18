@@ -1,0 +1,16 @@
+500_two_dirs_config.dpatch
+600_setupclient.dpatch
+602_xferstat.dpatch
+604_faxaddmodem_friendly.dpatch
+605_faxrecv_newarg7.dpatch
+650_faxsetup_paths.dpatch
+652_faxsetup_faxmaster.dpatch
+654_faxsetup_gs.dpatch
+655_faxaddmodem_message.dpatch
+657_typerules.dpatch
+658_oldnotify_awk
+659_notify_from_address
+670_patch_desireddf_bug402171.dpatch
+#671_grep_in_notify.dpatch
+#672_ps2pdf_output.dpatch
+#673_configure_quote_commands.dpatch

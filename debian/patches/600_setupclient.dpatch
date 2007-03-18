@@ -1,0 +1,41 @@
+#!/bin/sh -e
+## 500_setupclient by Giuseppe Sacco <eppesuig@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: The debian package already create the client configuration
+
+if [ $# -ne 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch}"
+
+case "$1" in
+    -patch)
+        patch $patch_opts -p1 < $0;;
+    -unpatch)
+        patch $patch_opts -p1 -R < $0;;
+    *)
+        echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+        exit 1;;
+esac
+
+exit 0
+
+diff -urNad hylafax-4.3.1~/etc/faxsetup.sh.in hylafax-4.3.1/etc/faxsetup.sh.in
+--- hylafax-4.3.1~/etc/faxsetup.sh.in	2006-09-19 17:59:52.000000000 +0200
++++ hylafax-4.3.1/etc/faxsetup.sh.in	2006-09-19 18:01:19.000000000 +0200
+@@ -301,7 +301,10 @@
+ 
+ # if nothing specified on command line, default client+server
+ if [ $isClient = no ] && [ $isServer = no ]; then
+-    isClient=yes
++    #
++    # on debian the client configuration file is already bundled with the package
++    #
++    isClient=no
+     isServer=yes
+ fi
+ 

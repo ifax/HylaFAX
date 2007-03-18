@@ -1,0 +1,38 @@
+#!/bin/sh -e
+## 650_faxsetup_paths by Giuseppe Sacco <eppesuig@debian.org>
+##
+## All lines beginning with \`## DP:' are a description of the patch.
+## DP: Fix some paths in faxsetup and check for faxmaster as real user
+
+if [ $# -lt 1 ]; then
+    echo >&2 "`basename \$0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
+
+case "$1" in
+       -patch) patch $patch_opts -p1 < $0;;
+       -unpatch) patch $patch_opts -p1 -R < $0;;
+        *)
+                echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+                exit 1;;
+esac
+
+exit 0
+
+diff -urNad hylafax-4.3.1~/etc/faxsetup.sh.in hylafax-4.3.1/etc/faxsetup.sh.in
+--- hylafax-4.3.1~/etc/faxsetup.sh.in	2006-09-19 18:06:16.000000000 +0200
++++ hylafax-4.3.1/etc/faxsetup.sh.in	2006-09-19 18:09:11.000000000 +0200
+@@ -73,8 +73,8 @@
+ 
+ FAX=@FAXUID@			# identity of the fax user
+ SERVICES=/etc/services		# location of services database
+-INETDCONF=/usr/etc/inetd.conf	# default location of inetd configuration file
+-ALIASES=/usr/lib/aliases	# default location of mail aliases database file
++INETDCONF=/etc/inetd.conf	# default location of inetd configuration file
++ALIASES=/etc/aliases	# default location of mail aliases database file
+ PASSWD=/etc/passwd		# where to go for password entries
+ PROTOUID=@FAXUID@		# user who's uid we use for FAX user
+ defPROTOUID=3			# use this uid if PROTOUID doesn't exist

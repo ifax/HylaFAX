@@ -1,0 +1,47 @@
+# default settings for hylafax server
+
+# try to check for the correct USE_FAXGETTY value
+if grep -E '^[^#]*:respawn:/usr/sbin/fax(getty|modem).*$' /etc/inittab >/dev/null 2>&1
+then
+	USE_FAXGETTY=init
+else
+	USE_FAXGETTY=yes
+fi
+
+# In a send only installation you may want to use faxgetty
+# or faxmodem on lines already configured with faxaddmodem.
+# faxgetty is the new default, faxmodem the old one.
+# For a better understanding of the difference between faxmodem
+# and faxgetty, see http://www.hylafax.org/archive/1999-09/msg00043.php
+#
+# In a send/receive installation you must use faxgetty.
+#
+# To use faxmodem change the following variable value to "no". 
+#
+# You may also prefer to run faxmodem/faxgetty via inittab instead of
+# running it here from a script. In this case set its value as
+# "init".
+# USE_FAXGETTY=yes 
+
+#
+# Uncomment this line once hylafax has been fully configured and/or
+# you want to enable the server.
+#
+# RUN_HYLAFAX=1
+
+#
+# If you need to bind hylafax to one address only, just uncomment
+# this variable and change the value using your preferred IP.
+#
+# BINDTO="-l 127.0.0.1"
+
+#
+# The following variables are automatically assigned by running
+# the faxsetup utility. If you leave them commented out then
+# faxsetup values are used. You may specify here the values to
+# use.
+# 
+# OLDPROT="-o 4557"
+# NEWPROT="-i 4559"
+# SNPP="-s 444"
+

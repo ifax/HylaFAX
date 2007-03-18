@@ -1,0 +1,105 @@
+# translation of hylafax_nl.po to Dutch
+#
+#    Translators, if you are not familiar with the PO format, gettext
+#    documentation is worth reading, especially sections dedicated to
+#    this format, e.g. by running:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#
+#    Some information specific to po-debconf are available at
+#            /usr/share/doc/po-debconf/README-trans
+#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+#    Developers do not need to manually edit POT or PO files.
+# Frans Pop <aragorn@tiscali.nl>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: hylafax_nl\n"
+"Report-Msgid-Bugs-To: eppesuig@debian.org\n"
+"POT-Creation-Date: 2006-11-23 10:48+0100\n"
+"PO-Revision-Date: 2006-03-21 00:44+0100\n"
+"Last-Translator: Frans Pop <aragorn@tiscali.nl>\n"
+"Language-Team: Dutch <debian-l10n-dutch@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.9.1\n"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid "Start the HylaFAX daemon now?"
+msgstr "De HylaFAX-achtergronddienst nu starten?"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid ""
+"Hylafax is already configured and may be started now. If you specify to "
+"start it later manually, remember to change the value of RUN_HYLAFAX in /etc/"
+"default/hylafax."
+msgstr ""
+"Hylafax is reeds geconfigureerd en kan nu gestart worden. Als u aangeeft het "
+"later handmatig te willen starten, vergeet dan niet de waarde van "
+"RUN_HYLAFAX in /etc/default/hylafax te wijzigen."
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid "Check base64 encoders"
+msgstr "Detecteren van base64-encoders"
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid ""
+"Hylafax is able to send received faxes via email. These emails need to "
+"include base64 encoded attachments. Since this is not essential to hylafax "
+"to work, you need to do manually some further steps: you should install a "
+"package that provide encoders (like mime-codecs or sharutils) and run "
+"'faxsetup -server' that will automatically check for those encoders and "
+"change its configuration."
+msgstr ""
+"Hylafax kan ontvangen faxen versturen via e-mail. Deze e-mails moeten base64-"
+"gecodeerde bijlagen bevatten. Omdat dit niet essentieel is voor de werking "
+"van hylafax, dient u enkele stappen handmatig uit te voeren: het installeren "
+"van een pakket dat encoders bevat (zoals mime-codecs of sharutils) en het "
+"uitvoerenvan 'faxsetup -server'. Dit zal deze encoders automatisch "
+"detecteren en zijn configuratie daarop aanpassen."
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:3001
+msgid "Hylafax setup failed"
+msgstr "Installatie van Hylafax is mislukt"
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:3001
+msgid ""
+"While installing hylafax a script called 'faxsetup' failed. This can be "
+"caused by many reasons and cannot be fixed automatically so the hylafax-"
+"server package is now unconfigured. Please fix the problem, run 'faxsetup -"
+"server' as root and reconfigure hylafax-server manually."
+msgstr ""
+"Tijdens de installatie van Hylafax, is het script 'faxsetup' fout gelopen. "
+"Dit kan verschillende oorzaken hebben en kan niet automatisch worden "
+"hersteld. Hierdoor blijft het pakket hylafax-server ongeconfigureerd. U "
+"dient, na de oorzaak van het probleem verholpen te hebben, als root het "
+"script 'faxsetup-server' uit te voeren en vervolgens hylafax-server "
+"handmatig te laten herconfigureren."
+
+#~ msgid "Don't forget to setup a modem line"
+#~ msgstr "Vergeet niet een modemlijn te installeren"
+
+#~ msgid ""
+#~ "Hylafax is now installed as a server but you still have to configure at "
+#~ "least a modem in order to send or receive faxes. Please use faxaddmodem "
+#~ "in order to define a modem and then restart hylafax so that it will use "
+#~ "the new configuration."
+#~ msgstr ""
+#~ "Hylafax is nu geïnstalleerd als server, maar u zult ten minste nog een "
+#~ "modem configureren om faxen te kunnen zenden en ontvangen. Gebruik "
+#~ "'faxaddmodem' om een modem te definiëren en herstart vervolgens hylafax "
+#~ "om het de nieuwe configuratie te laten gebruiken."

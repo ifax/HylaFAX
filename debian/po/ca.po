@@ -1,0 +1,87 @@
+# hylafax (debconf) translation to Catalan.
+# Copyright (C) 2004 Free Software Foundation, Inc.
+# Aleix Badia i Bosch <a.badia@callusdigital.org>, 2004
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: hylafax 1-3A4.1.8\n"
+"Report-Msgid-Bugs-To: eppesuig@debian.org\n"
+"POT-Creation-Date: 2006-11-23 10:48+0100\n"
+"PO-Revision-Date: 2004-10-12 13:56+0200\n"
+"Last-Translator: Aleix Badia i Bosch <a.badia@callusdigital.org>\n"
+"Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid "Start the HylaFAX daemon now?"
+msgstr "Voleu iniciar el dimoni de l'HylaFAX?"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid ""
+"Hylafax is already configured and may be started now. If you specify to "
+"start it later manually, remember to change the value of RUN_HYLAFAX in /etc/"
+"default/hylafax."
+msgstr ""
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid "Check base64 encoders"
+msgstr ""
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid ""
+"Hylafax is able to send received faxes via email. These emails need to "
+"include base64 encoded attachments. Since this is not essential to hylafax "
+"to work, you need to do manually some further steps: you should install a "
+"package that provide encoders (like mime-codecs or sharutils) and run "
+"'faxsetup -server' that will automatically check for those encoders and "
+"change its configuration."
+msgstr ""
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:3001
+msgid "Hylafax setup failed"
+msgstr ""
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:3001
+msgid ""
+"While installing hylafax a script called 'faxsetup' failed. This can be "
+"caused by many reasons and cannot be fixed automatically so the hylafax-"
+"server package is now unconfigured. Please fix the problem, run 'faxsetup -"
+"server' as root and reconfigure hylafax-server manually."
+msgstr ""
+
+#~ msgid "Don't forget to configure HylaFAX with /usr/sbin/faxsetup."
+#~ msgstr ""
+#~ "No oblideu configurar l'HylaFAX utilitzant l'eina /usr/sbin/faxsetup."
+
+#~ msgid ""
+#~ "Please run the faxsetup script which will ask you a few questions about "
+#~ "your setup and will let you add with a semi-automatical auto-detection "
+#~ "procedure one or more modems to the pool of devices available to HylaFAX."
+#~ msgstr ""
+#~ "Executeu la seqüència faxsetup que us preguntarà alguns qüestions sobre "
+#~ "la vostra configuració i permetrà, a través d'un mètode semiautomàtic de "
+#~ "detecció automàtica, afegir modems al conjunt de dispositius disponibles "
+#~ "per l'HylaFAX."
+
+#~ msgid ""
+#~ "Start the HylaFAX server process immediately. You should have configured "
+#~ "HylaFAX first (if you are upgrading from a previous version you most "
+#~ "likely already have a working configuration)."
+#~ msgstr ""
+#~ "Inicia el procés del servidor de l'HylaFAX. Abans hauríeu de tenir "
+#~ "configurat l'HylaFAX (si esteu actualitzant a partir d'una versió "
+#~ "anterior probablement disposareu d'una configuració funcional)."

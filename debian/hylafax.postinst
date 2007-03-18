@@ -1,8 +1,0 @@
-#!/bin/bash -e
-
-#DEBHELPER#
-
-# Source debconf library.
-
-chown uucp:uucp /var/spool/hylafax/{client,config,dev,info,log,recvq,status,archive,docq,doneq,pollq,sendq,tmp,.}
-exec /usr/sbin/faxsetup -server

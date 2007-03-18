@@ -1,0 +1,285 @@
+#!/bin/sh
+# vi:set ts=2 sw=2 sts=2 et:
+# Start or stop HylaFAX
+#
+# This script start and stop hylafax daemons.
+# It is driver by a configuration file sourced by this shell
+# and called /etc/default/hylafax.
+
+# 28-Dec-2003 Ross Boylan
+# Add "init" option to USE_FAXGETTY
+# This will cause this script to assume that faxgetty is already
+# running from the inittab file
+
+# 19-sep-2006 Giuseppe Sacco
+# Added support for lsb message handling
+
+. /lib/lsb/init-functions
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+HYLAFAX_HOME=/var/spool/hylafax
+FAXGETTY=/usr/sbin/faxgetty
+FAXMODEM=/usr/sbin/faxmodem
+
+OLDPROT=
+NEWPROT=
+SNPP=
+
+RUN_HYLAFAX=0
+
+if [ -f /etc/hylafax/setup.cache ];
+then
+  #
+  # Check if old protocol server should be started
+  grep -qE "^HFAXD_OLD_PROTOCOL='(1|yes)'" /etc/hylafax/setup.cache
+  if [ $? -eq 0 ];
+  then
+    OLDPROT="-o 4557"
+  fi
+
+  #
+  # Check if new protocol server should be started
+  grep -qE "^HFAXD_SERVER='(1|yes)'" /etc/hylafax/setup.cache
+  if [ $? -eq 0 ];
+  then
+    NEWPROT="-i 4559"
+  fi
+
+  #
+  # Check if SNPP server should be started
+  grep -qE "^HFAXD_SNPP_SERVER='(1|yes)" /etc/hylafax/setup.cache
+  if [ $? -eq 0 ];
+  then
+    SNPP="-s 444"
+  fi
+else
+  echo "ERROR: You must run faxsetup before starting hylafax." 1>&2
+  exit 1
+fi
+
+if [ -z "$OLDPROT$NEWPROT$SNPP" ]
+then
+  echo "You must specify at least one protocol OLD, NEW or SNPP in"
+  echo "/etc/hylafax/setup.cache using the command faxsetup,"
+  echo "otherwise you might only run hylafax via inetd."
+  exit 1
+fi
+
+if [ -r /etc/default/hylafax ]; then
+  . /etc/default/hylafax
+fi
+
+test -x /usr/sbin/faxq || exit 0
+test -x /usr/sbin/hfaxd || exit 0
+
+if [ "$RUN_HYLAFAX" -ne 1 ]; then
+  echo "Hylafax is disabled, see /etc/default/hylafax"
+  exit 1
+fi
+
+
+echo_fax_devices()
+{
+for device in config.*
+do
+	if [ "$device" != 'config.*' ]
+	then
+		dev=${device##config.}
+		# the next line is a patch included in #283111 for
+		# handling devfs file names.
+		dev=$(echo "$dev"|sed 's,_,/,g')
+		if [ \( -f "$device" -a -e /dev/$dev \) -o \
+			\( "$dev" = faxCAPI -a -e /dev/capi20 \) ]
+		then
+			echo "$dev"
+		fi
+	fi
+done
+}
+
+
+x()
+{
+	echo + "$@" 1>&2
+	eval "$@"
+}
+
+
+update_dir()
+{
+  # This function won't copy dot-files.
+  for src in "$1/"*
+  do
+    if [ "$src" != "${src%%\~}" ] || [ "$src" != "${src%%.bak}" ]
+    then
+      continue
+    fi
+    dst="$2/"$(basename $src)
+    if [ ! -e "$dst" ] ;
+    then
+      x /bin/cp -a "\"$src\"" "\"$dst\""
+    else
+      if [ -d "$dst" ];
+      then
+        update_dir "$src" "$dst"
+      else
+        if [ -L "$dst" -a \
+           '(' ! -L "$src" -o x$(readlink "$dst") != x$(readlink "$src") ')' ];
+        then
+          x /bin/rm -f "\"$dst\""
+          x /bin/cp -a "\"$src\"" "\"$dst\""
+        else
+          if [ "$src" -nt "$dst" ];
+          then
+            # The configuration file has been changed in $src
+            x /bin/cp -p "\"$src\"" "\"$dst\""
+          else
+            if [ "$dst" -nt "$src" ];
+            then
+              # The configuration file has been changed in $dst
+              echo "ERROR: $dst is newer than $src" 1>&2
+              echo "Please send a bug report on the hylafax-server package" 1>&2
+              exit 1
+	    else
+	      # in some cases, user change ownership/access right to files in /etc/hylafax.
+	      # this will copy these rights to files in /var/spool/hylafax/etc
+	      chmod --reference="$src" "$dst"
+	      chown --reference="$src" "$dst"
+            fi
+          fi
+        fi
+      fi
+    fi
+  done
+}
+
+
+# This function in called when starting the hylafax server. 
+# It clone the /etc directory into the chroot() directory
+copy_slash_etc()
+{
+  SPOOL=$(grep SPOOL= /etc/hylafax/setup.cache | awk -F= '{print $2}' | tr -d \'\")
+
+  if [ -z "$SPOOL" ];
+  then
+    echo "ERROR: You must run faxsetup before starting hylafax" 1>&2
+    echo "and be sure to check that the SPOOL variable is assigned." 1>&2
+    exit 1
+  fi
+
+  if [ -d "$SPOOL/etc" ];
+  then
+    update_dir "/etc/hylafax" "$SPOOL/etc"
+  else
+    echo "Can't create directory $SPOOL/etc" 1>&2
+    exit 1
+  fi
+
+}
+
+daemon_stop()
+{
+    log_daemon_msg "Stopping HylaFAX" faxq
+
+    p=$(ps --no-headers -C faxq -o pid)
+    if [ -n "$p" ]
+    then
+        start-stop-daemon --stop --exec /usr/sbin/faxq
+        sleep 1
+        p=$(ps --no-headers -C faxq -o pid)
+        [ -n "$p" ] && kill $p
+    fi
+
+    log_progress_msg "hfaxd"
+
+    p=$(ps --no-headers -C hfaxd -o pid)
+    if [ -n "$p" ]
+    then
+        start-stop-daemon --stop --exec /usr/sbin/hfaxd -- $BINDTO $NEWPROT $OLDPROT $SNPP
+ 	sleep 1
+ 	p=$(ps --no-headers -C hfaxd -o pid)
+ 	[ -n "$p" ] && kill $p
+    fi
+
+    if [ ${USE_FAXGETTY} = "yes" ]; then
+        log_progress_msg "faxgetty"
+        killall faxgetty 2> /dev/null || true
+    fi
+
+    # wait maximum three seconds for server processes to shutdown
+    try=0
+    while [ $try -lt 3 -a 0 -lt $(ps --no-headers -Chfaxd,faxq | wc -l) ]
+    do
+       sleep 1
+       try=$((try+1))
+    done
+
+    if [ 0 -eq "$(ps --no-headers -Chfaxd,faxq | wc -l)" ]
+    then
+        log_end_msg 0
+    else
+        log_end_msg 1
+    fi
+}
+
+daemon_start()
+{
+    if [ ${USE_FAXGETTY} = "yes" ]
+    then
+      count=$(ps --no-headers -Chfaxd,faxq,faxgetty | wc -l)
+    else
+      count=$(ps --no-headers -Chfaxd,faxq | wc -l)
+    fi
+
+    if [ $count -eq 0 ];
+    then
+      copy_slash_etc
+      log_daemon_msg "Starting HylaFAX" faxq
+      start-stop-daemon --start --exec /usr/sbin/faxq
+
+      log_progress_msg "hfaxd"
+      start-stop-daemon --start --exec /usr/sbin/hfaxd -- $BINDTO $NEWPROT $OLDPROT $SNPP
+
+      cd ${HYLAFAX_HOME}/etc
+      devices="`echo_fax_devices`"
+      if [ ${USE_FAXGETTY} = "yes" ]; then
+        log_progress_msg "faxgetty"
+        for device in $devices none; do
+          [ "$device" = none ] && continue
+          ${FAXGETTY} `echo $device | cut -d . -f 2` >/dev/null 2>&1 </dev/null &
+        done
+      elif [ ${USE_FAXGETTY} != "init" ]; then
+        log_progress_msg "faxmodem"
+        for device in $devices none; do
+          [ "$device" = none ] && continue
+          ${FAXMODEM} `echo $device | cut -d . -f 2` >/dev/null 2>&1 </dev/null &
+        done
+      fi
+      # do nothing for "init"
+    else
+      echo "Not starting HylaFAX daemons since they are already running." 1>&2
+      exit 1
+    fi  
+
+    log_end_msg 0
+}
+
+case "$1" in
+  start)
+	daemon_start
+    ;;
+  stop)
+	daemon_stop
+    ;;
+  restart|force-reload)
+	daemon_stop
+	sleep 1
+	daemon_start
+    ;;
+  *)
+    echo "Usage: /etc/init.d/hylafax {start|stop|restart|force-reload}"
+    exit 1
+    ;;
+esac
+
+exit 0

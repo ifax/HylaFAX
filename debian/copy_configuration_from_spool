@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# This script will copy back to /etc/hylafax any modification to configuration files
+# in /var/spool/hylafax/etc
+#
+# Giuseppe Sacco, 16 may 2004, eppesuig@debian.org
+
+if [ ! -d /etc/hylafax ];
+then
+	echo "The destination directory /etc/hylafax doesn't exists." 1>&2
+	exit 1
+fi
+
+if [ -f /etc/hylafax/setup.cache ];
+then
+	. /etc/hylafax/setup.cache
+else
+	SPOOL=/var/spool/hylafax
+fi
+
+if [ ! -d "$SPOOL" ];
+then
+	echo "The main hylafax directory $SPOOL doesn't exists." 1>&2
+	exit 1
+fi
+
+if [ ! -d "$SPOOL/etc" ];
+then
+	echo "The source hylafax directory $SPOOL/etc doesn't exists." 1>&2
+	exit 1
+fi
+
+cd $SPOOL/etc
+for i in *
+do
+	if [ $i != '*' ];
+	then
+		# check only files (leaving the bin directory apart)
+		if [ -f $i ];
+		then
+			dest=/etc/hylafax/$i
+			if [ -f $dest ];
+			then
+				if [ $i -nt $dest ];
+				then
+					echo "Updating $dest from $PWD/$i."
+					/bin/cp -p $i $dest
+				fi
+			else
+				echo "Creating $dest from $PWD/$i."
+				/bin/cp -p $i $dest
+			fi
+		fi
+	fi
+done
+cd -

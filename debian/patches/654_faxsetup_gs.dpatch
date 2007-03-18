@@ -1,0 +1,116 @@
+#!/bin/sh -e
+## 654_faxsetup_gs by Giuseppe Sacco <eppesuig@debian.org
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: This patch remove the check about gs. This is because in a new
+## DP: system installation we cannot know if the /usr/bin/gs link
+## DP: is already created. The other solution is the pre-depends on gs-*
+
+if [ $# -lt 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
+
+case "$1" in
+       -patch) patch $patch_opts -p1 < $0;;
+       -unpatch) patch $patch_opts -p1 -R < $0;;
+        *)
+                echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+                exit 1;;
+esac
+
+exit 0
+
+diff -urNad hylafax-4.3.1~/etc/faxsetup.sh.in hylafax-4.3.1/etc/faxsetup.sh.in
+--- hylafax-4.3.1~/etc/faxsetup.sh.in	2006-09-19 18:37:34.000000000 +0200
++++ hylafax-4.3.1/etc/faxsetup.sh.in	2006-09-19 18:40:01.000000000 +0200
+@@ -1282,86 +1282,6 @@
+ #
+ if onServer; then
+     cd $DIR_SPOOL
+-    case $PS in
+-    dps)	PATH_PSRIP=$PATH_DPSRIP;;
+-    imp)	PATH_PSRIP=$PATH_IMPRIP;;
+-    gs)		PATH_PSRIP=$PATH_GSRIP;;
+-    esac
+-    if [ -x "$PATH_PSRIP" ]; then
+-	if [ $PS = gs ]; then
+-	    # verify Ghostscript was linked with the tiffg3 device driver
+-	    $PATH_PSRIP -h 2>&1 | grep tiffg3 >/dev/null 2>&1 || {
+-		cat >&2 <<EOF
+-
+-FATAL ERROR: No tiffg3 driver in $PATH_PSRIP.
+-
+-HylaFAX has been configured to use Ghostscript as the PostScript
+-imaging program but the output of $PATH_PSRIP -h does not
+-list the tiffg3 driver as a configured driver (see below).
+-
+-----------------------------------------------------------
+-% $PATH_PSRIP -h
+-EOF
+-$PATH_PSRIP -h
+-----------------------------------------------------------
+-		cat >&2 <<EOF
+-
+-The tiffg3 driver is required for HylaFAX to operate correctly. 
+-Consult the documentation for information on building Ghostscript
+-with the necessary TIFF driver and then rerun faxsetup when a new
+-Ghostscript has been installed.
+-
+-EOF
+-		boom
+-	    }
+-	elif [ $PS = dps ]; then
+-	    JUNK="$JUNK ps.fax"
+-	    $CAT etc/dpsprinter.ps | $PATH_PSRIP >/dev/null 2>&1
+-	    if [ $? -eq 2 ]; then
+-		if expr $RELEASE \>= 6.2 >/dev/null; then
+-		    cat >&2 <<EOF
+-
+-FATAL ERROR: No DPS-based RIP available for IRIX $RELEASE!
+-
+-The DPS-based PostScript RIP is a COFF executable and cannot be used
+-under IRIX $RELEASE.  You must use a different RIP such as fw_gs.sw.gs
+-which is found on the SGI Freeware CD-ROM and which is based on the
+-freely distributed Ghostscript software package.  This package is
+-also included in the binary distribution of HylaFAX for SGI systems
+-found on ftp.sgi.com.
+-
+-Once you have installed the Ghostscript distribution rerun faxsetup
+-with the option -with-PS=gs to override the default setting.
+-
+-EOF
+-		    boom
+-		fi
+-	    fi
+-	fi
+-    elif [ $PS = dps ]; then
+-	if expr $RELEASE \>= 6.2 >/dev/null; then
+-	    cat >&2 <<EOF
+-
+-FATAL ERROR: No DPS-based RIP available for IRIX $RELEASE!
+-
+-This distribution has been configured to use the DPS-based PostScript
+-RIP that is only available as a COFF executable.  This program cannot
+-be used under IRIX $RELEASE.  You must use a different RIP such as the
+-Ghostscript-based RIP in the fw_gs.sw.gs installation image which is
+-found on the SGI Freeware CD-ROM.  The fw_gs package is also included
+-in the binary distribution of HylaFAX for SGI systems found on ftp.sgi.com.
+-
+-Once you have installed the Ghostscript distribution rerun faxsetup
+-with the option -with-PS=gs to override the default setting.
+-
+-EOF
+-	    boom
+-	else
+-	    appMisConfigured $PATH_PSRIP
+-	fi
+-    else
+-	appMisConfigured $PATH_PSRIP
+-    fi
+     #
+     # Force bin/ps2fax and bin/pdf2fax to point to the appropriate scripts.
+     #

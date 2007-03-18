@@ -1,0 +1,97 @@
+# 
+#    Translators, if you are not familiar with the PO format, gettext
+#    documentation is worth reading, especially sections dedicated to
+#    this format, e.g. by running:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+# 
+#    Some information specific to po-debconf are available at
+#            /usr/share/doc/po-debconf/README-trans
+#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
+# 
+#    Developers do not need to manually edit POT or PO files.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: hylafax 4.2.1-1\n"
+"Report-Msgid-Bugs-To: eppesuig@debian.org\n"
+"POT-Creation-Date: 2006-11-23 10:48+0100\n"
+"PO-Revision-Date: 2005-09-30 19:15+0300\n"
+"Last-Translator: Ognyan Kulev <ogi@fmi.uni-sofia.bg>\n"
+"Language-Team: Bulgarian <dict@fsa-bg.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CP1251\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid "Start the HylaFAX daemon now?"
+msgstr "Стартиране на HylaFAX демона още сега?"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid ""
+"Hylafax is already configured and may be started now. If you specify to "
+"start it later manually, remember to change the value of RUN_HYLAFAX in /etc/"
+"default/hylafax."
+msgstr ""
+"Hylafax вече е настроена и може да бъде стартирана. Ако по-късно я настроите "
+"да се стартира ръчно, не забравяйте да промените стойността на RUN_HYLAFAX "
+"в /etc/default/hylafax."
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid "Check base64 encoders"
+msgstr "Проверка за кодери на base64?"
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid ""
+"Hylafax is able to send received faxes via email. These emails need to "
+"include base64 encoded attachments. Since this is not essential to hylafax "
+"to work, you need to do manually some further steps: you should install a "
+"package that provide encoders (like mime-codecs or sharutils) and run "
+"'faxsetup -server' that will automatically check for those encoders and "
+"change its configuration."
+msgstr ""
+"Hylafax е способна да изпраща факсове, получени чрез ел.поща.  Тези ел.писма "
+"трябва да включват кодирани с base64 прикачени файлове. Тъй като тази "
+"способност не е необходима за работата на hylafax, нужно е ръчно да "
+"извършите няколко действия: трябва да инсталирате пакет, който доставя "
+"кодери (като mime-codecs или sharutils), и да стартирате \"faxsetup -server"
+"\", което автоматично ще разпознае тези кодери и ще промени настройките на "
+"hylafax."
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:3001
+msgid "Hylafax setup failed"
+msgstr ""
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:3001
+msgid ""
+"While installing hylafax a script called 'faxsetup' failed. This can be "
+"caused by many reasons and cannot be fixed automatically so the hylafax-"
+"server package is now unconfigured. Please fix the problem, run 'faxsetup -"
+"server' as root and reconfigure hylafax-server manually."
+msgstr ""
+
+#~ msgid "Don't forget to setup a modem line"
+#~ msgstr "Не забравяйте да настроите модемна линия"
+
+#~ msgid ""
+#~ "Hylafax is now installed as a server but you still have to configure at "
+#~ "least a modem in order to send or receive faxes. Please use faxaddmodem "
+#~ "in order to define a modem and then restart hylafax so that it will use "
+#~ "the new configuration."
+#~ msgstr ""
+#~ "Hylafax сега е инсталирана като сървър, но Вие все пак ще трябва да "
+#~ "настроите поне модем, за да изпращате и получавате факсове. Моля, "
+#~ "използвайте faxaddmodem, за да добавите модем, и рестартирайте hylafax, "
+#~ "за да се използва новата настройка."

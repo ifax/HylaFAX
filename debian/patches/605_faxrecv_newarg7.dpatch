@@ -1,0 +1,37 @@
+#!/bin/sh -e
+##  by Giuseppe Sacco <eppesuig@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: This patch was provided by Bodo Meissner <bodo@bodo-m.de>
+## DP: in order to better integrate hylafax and capi4hylafax
+## DP: See debian bug #281737
+
+if [ $# -lt 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
+
+case "$1" in
+       -patch) patch $patch_opts -p1 < $0;;
+       -unpatch) patch $patch_opts -p1 -R < $0;;
+        *)
+                echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+                exit 1;;
+esac
+
+exit 0
+
+diff -urNad hylafax.orig/util/faxrcvd.sh.in hylafax/util/faxrcvd.sh.in
+--- hylafax.orig/util/faxrcvd.sh.in	2004-11-15 22:26:49.000000000 +0100
++++ hylafax/util/faxrcvd.sh.in	2004-11-17 15:57:29.000000000 +0100
+@@ -109,6 +109,7 @@
+ done
+ CIDNUMBER="$CALLID1"
+ CIDNAME="$CALLID2"
++DESTINATION="$CALLID3"
+
+ FILENAME=`echo $FILE | $SED -e 's/\.tif//' -e 's/recvq\///'`
+ SENDER="`$INFO $FILE | $AWK -F: '/Sender/ { print $2 }' 2>$ERRORSTO | $SED 's/^.//'`"

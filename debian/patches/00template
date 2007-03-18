@@ -1,0 +1,42 @@
+#!/bin/sh
+# Sample debian/patches/00template script
+# era Thu May 15 23:24:07 2003
+
+# This simply creates the equivalent of the hard-coded template.
+# Adapt and hack to suit your needs.
+
+file="$1"
+shift
+description="$@"
+
+fullnameguess="$(getent passwd $(id -un) | cut -f5 -d: | cut -f1 -d,)"
+domainguess=$([ -f /etc/mailname ] && cat /etc/mailname || hostname -f)
+emailguess="${DEBEMAIL:-${EMAIL:-$(logname)@${domainguess}}}"
+
+cat <<EOF
+#!/bin/sh -e
+## ${file} by ${DEBFULLNAME:-$fullnameguess} <$emailguess>
+##
+## All lines beginning with \`## DP:' are a description of the patch.
+## DP: ${description:-No description}
+
+if [ \$# -lt 1 ]; then
+    echo >&2 "\`basename \$0\`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="\${patch_opts:--f --no-backup-if-mismatch} \${2:+-d \$2}"
+
+case "\$1" in
+       -patch) patch \$patch_opts -p1 < \$0;;
+       -unpatch) patch \$patch_opts -p1 -R < \$0;;
+        *)
+                echo >&2 "\`basename \$0\`: script expects -patch|-unpatch as argument"
+                exit 1;;
+esac
+
+exit 0
+
+#@DPATCH@
+#EOF

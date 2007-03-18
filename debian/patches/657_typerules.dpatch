@@ -1,0 +1,120 @@
+#!/bin/sh -e
+##  by Giuseppe Sacco <eppesuig@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Added support for gif89, png, ppm*, jfif, and xfig images.
+## DP: Thanks to Paolo <oopla@users.sf.net>. For more info see #373287
+## DP: and bug #405237.
+
+if [ $# -lt 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
+
+case "$1" in
+	-patch) patch $patch_opts -p1 < $0;;
+	-unpatch) patch $patch_opts -p1 -R < $0;;
+	*)
+		echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+		exit 1;;
+esac
+
+exit 0
+
+diff -urNad hylafax-4.3.1~/util/typerules hylafax-4.3.1/util/typerules
+--- hylafax-4.3.1~/util/typerules	2006-12-24 21:49:35.000000000 +0100
++++ hylafax-4.3.1/util/typerules	2007-01-02 14:20:26.000000000 +0100
+@@ -98,8 +98,7 @@
+ 0	short		0x4d4d		tiff
+ 0	short		0x4949		tiff
+ #
+-0	short		000732		tiff	%F/sgi2fax -%f -o %o -v %V\
+-						  -s %s %i
++0	short		000732		error	Cannot convert from SGI on Linux
+ 0	short		017436		error	packed data support not configured
+ 0	short		017635		error	compressed data support not configured
+ 0	short		0x0506		ps	showcase -p -f %i
+@@ -107,7 +106,10 @@
+ 0	short		0xf702		ps	dvips -q -o %o %i
+ 0	string		GIF		tiff
+ >3	string		87a		tiff	gif2tiff -%f -v %V %i %o
+->3 	string		89a		error	GIF (version 89a) support not configured
++>3 	string		89a		ps	gif2ps <%i >%o
++0	string		\x89PNG		ps	pngtopnm < %i| ppmtopgm | \
++						pnmscale -xysize %w %l | \
++						pnmtops -dpi %R -equalpixels >%o
+ 0	long		0x59a66a95	tiff	ras2tiff -%f -v %V %i %o
+ #
+ # HylaFAX now has server-side PDF conversion, so no need for pdf2ps.
+@@ -125,25 +127,41 @@
+ #
+ 0	string		begin		error	uuencoded file support not configured
+ 0	string		xbtoa		error	btoa'd file support not configured
+-0	string		P1		error	PBM file support not configured
+-0	string		P2		error	PGM file support not configured
+-0	string		P3		error	PPM file support not configured
+-0	string		P4		error	PBM "rawbits" file support not configured
+-0	string		P5		error	PGM "rawbits" file support not configured
+-0	string		P6		error	PPM "rawbits" file support not configured
++0	string		P1		ps	ppmtopgm < %i | \
++						pnmscale -xysize %w %l | \
++						pnmtops -dpi %R -equalpixels > %o
++0	string		P2		ps	ppmtopgm < %i | \
++						pnmscale -xysize %w %l | \
++						pnmtops -dpi %R -equalpixels > %o
++0	string		P3		ps	ppmtopgm < %i | \
++						pnmscale -xysize %w %l | \
++						pnmtops -dpi %R -equalpixels > %o
++0	string		P4		ps	ppmtopgm < %i | \
++						pnmscale -xysize %w %l | \
++						pnmtops -dpi %R -equalpixels > %o
++0	string		P5		ps	ppmtopgm < %i | \
++						pnmscale -xysize %w %l | \
++						pnmtops -dpi %R -equalpixels > %o
++0	string		P5		ps	ppmtopgm < %i | \
++						pnmscale -xysize %w %l | \
++						pnmtops -dpi %R -equalpixels > %o
++0	string		P6		ps	ppmtopgm < %i | \
++						pnmscale -xysize %w %l | \
++						pnmtops -dpi %R -equalpixels > %o
+ #
+ 0	string		WNGZWZSS	error	Wingz spreadsheet support not configured
+ 0       string          #Inventor V	error	IRIS Inventor file support not configured
+ >15     string          binary		error	binary IRIS Inventor file support not configured
+->15     string          ascii		ps	%F/textfmt -B -f Courier-Bold\
++>15     string          ascii		ps	textfmt -B -f Courier-Bold\
+ 						-Ml=0.4in -p 11 -s %s >%o <%i
+ #
+-0	string		\x89PNG		error	PNG support not configured
+ 0	short		0xffd8		error	filetype conversion support not configured
+->6	string		JFIF		error	JPEG support not configured
++>6	string		JFIF		ps	jpegtopnm < %i| ppmtopgm | \
++						pnmscale -xysize %w %l | \
++						pnmtops -dpi %R -equalpixels > %o
+ 0	short		0xd8ff		error	filetype conversion support not configured
+->6	string		JFIF		error	JPEG support not configured
+-0	string		#FIG		error	FIG support not configured
++0	string		#FIG		ps	fig2dev -L ps -p x -M -N -z %s < %i > %o
++
+ 
+ #
+ # Japanization (should help other iso-2022 variants too)
+@@ -155,7 +173,7 @@
+ #
+ # This causes anything else with ascii-only data to be treated as text.
+ #
+-0	ascii		x		ps	%F/textfmt -B -f Courier-Bold\
++0	ascii		x		ps	textfmt -B -f Courier-Bold\
+ 						-Ml=0.4in -p 11 -s %s >%o <%i
+ 
+ #
+@@ -174,5 +192,5 @@
+ 
+ #  Support 7-bit text which would otherwise be seen as binary.
+ #
+-#0	byte		x		ps	%F/textfmt -B -f Courier-Bold \
++#0	byte		x		ps	textfmt -B -f Courier-Bold \
+ #							  -p 11 -s %s >%o <%i

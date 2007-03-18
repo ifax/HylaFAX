@@ -1,0 +1,101 @@
+#
+#    Translators, if you are not familiar with the PO format, gettext
+#    documentation is worth reading, especially sections dedicated to
+#    this format, e.g. by running:
+#         info -n '(gettext)PO Files'
+#         info -n '(gettext)Header Entry'
+#
+#    Some information specific to po-debconf are available at
+#            /usr/share/doc/po-debconf/README-trans
+#         or http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+#    Developers do not need to manually edit POT or PO files.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: hylafax\n"
+"Report-Msgid-Bugs-To: eppesuig@debian.org\n"
+"POT-Creation-Date: 2006-11-23 10:48+0100\n"
+"PO-Revision-Date: 2006-03-19 23:53+0100\n"
+"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid "Start the HylaFAX daemon now?"
+msgstr "Starta HylaFAX-demonen nu?"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid ""
+"Hylafax is already configured and may be started now. If you specify to "
+"start it later manually, remember to change the value of RUN_HYLAFAX in /etc/"
+"default/hylafax."
+msgstr ""
+"Hylafax är redan konfigurerad och kan startas nu. Om du angivit att starta "
+"den manuellt senare, tänk på att ändra värdet för RUN_HYLAFAX i /etc/default/"
+"hylafax."
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid "Check base64 encoders"
+msgstr "Kontrollera base64-kodare"
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid ""
+"Hylafax is able to send received faxes via email. These emails need to "
+"include base64 encoded attachments. Since this is not essential to hylafax "
+"to work, you need to do manually some further steps: you should install a "
+"package that provide encoders (like mime-codecs or sharutils) and run "
+"'faxsetup -server' that will automatically check for those encoders and "
+"change its configuration."
+msgstr ""
+"Hylafax har möjligheten att skicka mottagna fax via e-post. Dessa e-"
+"postmeddelanden behöver inkludera base64-kodade bilagor. Eftersom detta inte "
+"är nödvändigt för att hylafax ska fungera behöver du göra några manuella "
+"steg: du bör installera ett paket som tillhandahåller kodare (såsom mime-"
+"codecs eller sharutils) och köra \"faxsetup -server\" så att en automatisk "
+"kontroll av dessa kodare görs och ändrar dess konfiguration."
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:3001
+msgid "Hylafax setup failed"
+msgstr "Konfiguration av hylafax misslyckades"
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:3001
+msgid ""
+"While installing hylafax a script called 'faxsetup' failed. This can be "
+"caused by many reasons and cannot be fixed automatically so the hylafax-"
+"server package is now unconfigured. Please fix the problem, run 'faxsetup -"
+"server' as root and reconfigure hylafax-server manually."
+msgstr ""
+"Under installationen av hylafax misslyckades ett skript kallat \"faxsetup\". "
+"Detta kan ha orsakats av flera anledningar och kan inte rättas till "
+"automatiskt så nu är hylafax-server-paketet ej konfigurerat. Rätta till "
+"problemet, kör \"faxsetup -server\" som root och konfigurera om hylafax-"
+"server manuellt."
+
+#~ msgid "Don't forget to setup a modem line"
+#~ msgstr "Glöm inte att konfigurera en modemlinje"
+
+#~ msgid ""
+#~ "Hylafax is now installed as a server but you still have to configure at "
+#~ "least a modem in order to send or receive faxes. Please use faxaddmodem "
+#~ "in order to define a modem and then restart hylafax so that it will use "
+#~ "the new configuration."
+#~ msgstr ""
+#~ "Hylafax installeras numera som en server men du måste fortfarande "
+#~ "konfigurera åtminstone ett modem för att skicka eller ta emot fax. "
+#~ "Vänligen använd faxaddmodem för att definiera ett modem och starta sedan "
+#~ "om hylafax så att den kan använda den nya konfigurationen."

@@ -3,6 +3,10 @@
 #DEBHELPER#
 
 if [ "$1" = purge ]; then
+    if getent passwd faxmaster >/dev/null 2>&1
+    then
+	userdel faxmaster
+    fi
     # 
     # This will remove the directory that holds a copy of the real
     # debian configuration in /etc/hylafax

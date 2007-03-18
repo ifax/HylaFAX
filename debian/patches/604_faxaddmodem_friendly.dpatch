@@ -1,0 +1,58 @@
+#!/bin/sh -e
+##  by Giuseppe Sacco <eppesuig@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Do not prompt for restarting the server if it is not configured
+## DP: Suggest a nema for the serial device in faxaddmodem.
+
+if [ $# -lt 1 ]; then
+    echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+    exit 1
+fi
+
+[ -f debian/patches/00patch-opts ] && . debian/patches/00patch-opts
+patch_opts="${patch_opts:--f --no-backup-if-mismatch} ${2:+-d $2}"
+
+case "$1" in
+       -patch) patch $patch_opts -p1 < $0;;
+       -unpatch) patch $patch_opts -p1 -R < $0;;
+        *)
+                echo >&2 "`basename $0`: script expects -patch|-unpatch as argument"
+                exit 1;;
+esac
+
+exit 0
+
+diff -urNad /usr/local/src/new/hylafax-4.2.0/etc/faxaddmodem.sh.in hylafax-4.2.0/etc/faxaddmodem.sh.in
+--- /usr/local/src/new/hylafax-4.2.0/etc/faxaddmodem.sh.in	2004-11-15 19:12:10.730613000 +0100
++++ hylafax-4.2.0/etc/faxaddmodem.sh.in	2004-11-15 19:17:30.111059960 +0100
+@@ -248,7 +248,9 @@
+ 
+ while [ -z "$TTY" -o ! -c /dev/$TTY ]; do
+     test "$TTY" != "" && echo "/dev/$TTY is not a terminal device."
++    [ -z "$TTY" ] && TTY=ttyS0
+     prompt "Serial port that modem is connected to [$TTY]?"; read TTY
++    [ -z "$TTY" ] && TTY=ttyS0
+ done
+ 
+ JUNK="$OUT"
+diff -urNad /usr/local/src/new/hylafax-4.2.0/etc/faxsetup.sh.in hylafax-4.2.0/etc/faxsetup.sh.in
+--- /usr/local/src/new/hylafax-4.2.0/etc/faxsetup.sh.in	2004-09-18 03:00:19.000000000 +0200
++++ hylafax-4.2.0/etc/faxsetup.sh.in	2004-09-18 03:05:51.000000000 +0200
+@@ -2339,6 +2339,8 @@
+ 	fi
+     fi
+ 
++if [ -e /etc/hylafax/setup.cache ]
++then
+     prompt "Should I restart the HylaFAX server processes [yes]?"; read x
+     if isOK "$x"; then
+ 	echo ""
+@@ -2349,6 +2351,7 @@
+ 	    echo $DIR_SBIN/faxq; $DIR_SBIN/faxq
+ 	fi
+     fi
++fi
+ 
+     DEVS="`cd $DIR_SPOOL/etc; echo config.*`"
+     if [ -z "$DEVS" -o "$DEVS" = 'config.*' ]; then

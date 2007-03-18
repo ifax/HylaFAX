@@ -2,6 +2,8 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Added the complete debian/ directory in order to create official
+  Debian packages (17 Mar 2007)
 * Compensate for 1728 pixel data when they DCS signalled differently (13 Mar 2007)
 * Improve Class 1 handling when prologue frames fail after EOM (13 Mar 2007)
 * Improve and extend JPEG parsing (13 Mar 2007)
