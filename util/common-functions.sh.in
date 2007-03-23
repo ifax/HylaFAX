@@ -516,7 +516,7 @@ BuildAttachArgs ()
 		a_desc="FAX Document"
 		case "$filetype" in
 		    PostScript)
-			TraceLog "Attaching $file in Postscript format"
+			TraceLog "Attaching $file in PostScript format"
 			a_type="application/postscript"
 			;;
 		    PDF)
@@ -524,8 +524,8 @@ BuildAttachArgs ()
 			a_type="application/PDF"
 			;;
 		    TIFF)
-			TraceLog "Attaching $file in PDF format"
-			a_type="application/PDF"
+			TraceLog "Attaching $file in TIFF format"
+			a_type="image/tiff"
 			;;
 		    *)
 		    TraceLog "Attaching $file in unknown[$filetype] format"
