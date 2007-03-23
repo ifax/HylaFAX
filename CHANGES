@@ -2,7 +2,8 @@
 
 Changelog since HylaFAX 4.3.3
 
-* Stop caching of DATE and VERSION by configure (Bug 854) (9 Mar 2007)
+* Accepts 'original' as equivalent to 'raw' for RETURNFILETYPE (23 Mar 2007)
+* Email raw TIFF files with the correct MIME type of image/tiff (23 Mar 2007)
 
 Changelog for HylaFAX 4.3.3
 
