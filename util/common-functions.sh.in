@@ -510,7 +510,7 @@ BuildAttachArgs ()
 	TraceLog "FILE $i: $filename"
 	if [ -f "$filename" ]; then
 	    eval filetype="$"filetype_"$i"
-	    if [ "$1" = "raw" ]; then
+	    if [ "$1" = "raw" ] || [ "$1" = "original" ]; then
 		a_file=$filename;
 		a_name=`basename $filename`;
 		a_desc="FAX Document"
