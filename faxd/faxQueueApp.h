@@ -138,6 +138,7 @@ private:
     QLink	activeq;		// jobs actively being processed
     QLink	deadq;			// jobs waiting to be reaped
     QLink	suspendq;		// jobs suspending from scheduling
+    QLink	jcontrolq;		// jobs actively running jobcontrol
     SchedTimeout schedTimeout;		// timeout for running scheduler
     DestInfoDict destJobs;		// jobs organized by destination
     fxStrDict	pendingDocs;		// documents waiting for removal

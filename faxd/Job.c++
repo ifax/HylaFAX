@@ -79,6 +79,7 @@ JobCtrlHandler::childStatus(pid_t, int status)
     job.jci = new JobControlInfo(buf);
     buf.resize(0);
     faxQueueApp::instance().ctrlJobDone(job, status);
+    job.pid = 0;
 }
 
 
