@@ -1632,6 +1632,8 @@ faxQueueApp::setReadyToRun(Job& job, bool wait)
 	app[1] = job.jobid;
 	app[2] = NULL;
 	traceJob(job, "CONTROL");
+	job.state = FaxRequest::state_active;
+	job.insert(*jcontrolq.next);
 	int pfd[2];
 	if (pipe(pfd) >= 0) {
 	    pid_t pid = fork();
@@ -1666,9 +1668,10 @@ faxQueueApp::setReadyToRun(Job& job, bool wait)
 	}
 	if (wait)
 	{
-	    logError("WAITING FOR JobControl to finish");
-	    while (job.isEmpty() )
+	    logInfo("WAITING FOR JobControl to finish");
+	    while (job.pid != 0)
 		Dispatcher::instance().dispatch();
+	    logInfo("JobControl finished");
 	}
     } else
 	setReady(job);
@@ -1686,6 +1689,11 @@ faxQueueApp::ctrlJobDone(Job& job, int status)
 	logError("JOB %s: bad exit status %#x from sub-fork",
 	    (const char*) job.jobid, status);
     }
+    if (job.suspendPending) {		// co-thread waiting
+	job.suspendPending = false;
+	return;
+    }
+    job.remove();
     setReady(job);
     FaxRequest* req = readRequest(job);
     if (req) {
