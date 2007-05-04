@@ -61,8 +61,6 @@ const fxStr faxQueueApp::clientDir	= FAX_CLIENTDIR;
 
 fxStr strTime(time_t t)	{ return fxStr(fmtTime(t)); }
 
-#define	JOBHASH(pri)	(((pri) >> 4) & (NQHASH-1))
-
 faxQueueApp::SchedTimeout::SchedTimeout()
 {
     started = false;
@@ -1468,8 +1466,11 @@ faxQueueApp::sendJobDone(Job& job, int status)
 	 * is intended to keep "normal" and "high" priority jobs
 	 * from conflicting.
 	 */
-	if (job.pri != 255 && job.pri > 190) job.pri++;
-	else if (JOBHASH(job.pri-1) == JOBHASH(req->usrpri))
+#define JOB_PRI_BUCKET(pri)	(pri >> 4)
+
+	if (job.pri != 255 && job.pri > 190)
+	    job.pri++;
+	else if (JOB_PRI_BUCKET(job.pri-1) == JOB_PRI_BUCKET(req->usrpri))
 	    job.pri--; 
 	job.state = (req->tts > now) ?
 	    FaxRequest::state_sleeping : FaxRequest::state_ready;
@@ -1614,7 +1615,7 @@ faxQueueApp::setReady(Job& job)
     job.state = FaxRequest::state_ready;
     traceJob(job, "READY");
     Trigger::post(Trigger::JOB_READY, job);
-    JobIter iter(runqs[JOBHASH(job.pri)]);
+    JobIter iter(runq);
     for (; iter.notDone(); iter++)
 	if (! iter.job().higherPriority(job))
 	    break;
@@ -2314,68 +2315,66 @@ faxQueueApp::runScheduler()
      * first.
      */
     if (! quit) {
-	for (u_int i = 0; i < NQHASH; i++) {
-	    for (JobIter iter(runqs[i]); iter.notDone(); iter++) {
-		Job& job = iter;
-		fxAssert(job.tts <= Sys::now(), "Sleeping job on run queue");
-		fxAssert(job.modem == NULL, "Job on run queue holding modem");
+	for (JobIter iter(runq); iter.notDone(); iter++) {
+	    Job& job = iter;
+	    fxAssert(job.tts <= Sys::now(), "Sleeping job on run queue");
+	    fxAssert(job.modem == NULL, "Job on run queue holding modem");
 
-		/*
-		 * Read the on-disk job state and process the job.
-		 * Doing all the processing below each time the job
-		 * is considered for processing could be avoided by
-		 * doing it only after assigning a modem but that
-		 * would potentially cause the order of dispatch
-		 * to be significantly different from the order
-		 * of submission; something some folks care about.
-		 */
-		traceJob(job, "PROCESS");
-		Trigger::post(Trigger::JOB_PROCESS, job);
-		FaxRequest* req = readRequest(job);
-		if (!req) {			// problem reading job state on-disk
-		    setDead(job);
-		    continue;
-		}
-
-		/*
-		 * Do job limits and checking
-		 */
-		if (! isJobSendOK(job, req) )
-		    continue;
-
-		/*
-		 * Do per-destination processing and checking.
-		 */
-		DestInfo& di = destJobs[job.dest];
-
-		if (!di.isActive(job) && !isOKToCall(di, job.getJCI(), 1)) {
-		    /*
-		     * This job would exceed the max number of concurrent
-		     * calls that may be made to this destination.  Put it
-		     * on a ``blocked queue'' for the destination; the job
-		     * will be made ready to run when one of the existing
-		     * jobs terminates.
-		     */
-		    blockJob(job, *req, "Blocked by concurrent calls");
-		    job.remove();			// remove from run queue
-		    di.block(job);			// place at tail of di queue
-		    delete req;
-		} else if (assignModem(job)) {
-		    job.remove();			// remove from run queue
-		    /*
-		     * We have a modem and have assigned it to the
-		     * job.  The job is not on any list; processJob
-		     * is responsible for requeing the job according
-		     * to the outcome of the work it does (which may
-		     * take place asynchronously in a sub-process).
-		     * Likewise the release of the assigned modem is
-		     * also assumed to take place asynchronously in
-		     * the context of the job's processing.
-		     */
-		    processJob(job, req, di);
-		} else				// leave job on run queue
-		    delete req;
+	    /*
+	     * Read the on-disk job state and process the job.
+	     * Doing all the processing below each time the job
+	     * is considered for processing could be avoided by
+	     * doing it only after assigning a modem but that
+	     * would potentially cause the order of dispatch
+	     * to be significantly different from the order
+	     * of submission; something some folks care about.
+	     */
+	    traceJob(job, "PROCESS");
+	    Trigger::post(Trigger::JOB_PROCESS, job);
+	    FaxRequest* req = readRequest(job);
+	    if (!req) {			// problem reading job state on-disk
+		setDead(job);
+		continue;
 	    }
+
+	    /*
+	     * Do job limits and checking
+	     */
+	    if (! isJobSendOK(job, req) )
+		continue;
+
+	    /*
+	     * Do per-destination processing and checking.
+	     */
+	    DestInfo& di = destJobs[job.dest];
+
+	    if (!di.isActive(job) && !isOKToCall(di, job.getJCI(), 1)) {
+		/*
+		 * This job would exceed the max number of concurrent
+		 * calls that may be made to this destination.  Put it
+		 * on a ``blocked queue'' for the destination; the job
+		 * will be made ready to run when one of the existing
+		 * jobs terminates.
+		 */
+		blockJob(job, *req, "Blocked by concurrent calls");
+		job.remove();			// remove from run queue
+		di.block(job);			// place at tail of di queue
+		delete req;
+	    } else if (assignModem(job)) {
+		job.remove();			// remove from run queue
+		/*
+		 * We have a modem and have assigned it to the
+		 * job.  The job is not on any list; processJob
+		 * is responsible for requeing the job according
+		 * to the outcome of the work it does (which may
+		 * take place asynchronously in a sub-process).
+		 * Likewise the release of the assigned modem is
+		 * also assumed to take place asynchronously in
+		 * the context of the job's processing.
+		 */
+		processJob(job, req, di);
+	    } else				// leave job on run queue
+		delete req;
 	}
     }
     /*
@@ -3350,14 +3349,11 @@ faxQueueApp::showDebugState(void)
     }
 
 
-    for (int i = 0; i < NQHASH; i++)
+    traceServer("DEBUG: runq(%p) next %p", &runq, runq.next);
+    for (JobIter iter(runq); iter.notDone(); iter++)
     {
-	traceServer("DEBUG: runqs[%d](%p) next %p", i, &runqs[i], runqs[i].next);
-	for (JobIter iter(runqs[i]); iter.notDone(); iter++)
-	{
-	    Job& job(iter);
-	    traceJob(job, "In run queue");
-	}
+	Job& job(iter);
+	traceJob(job, "In run queue");
     }
 
     traceServer("DEBUG: sleepq(%p) next %p", &sleepq, sleepq.next);

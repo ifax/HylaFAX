@@ -132,8 +132,7 @@ private:
     bool	abortPrepare;		// job preparation should be aborted
     bool	quit;			// terminate server
     int		fifo;			// fifo job queue interface
-#define	NQHASH		16
-    QLink	runqs[NQHASH];		// jobs ready to run
+    QLink	runq;			// jobs ready to run
     QLink	sleepq;			// jobs waiting for time-to-send
     QLink	activeq;		// jobs actively being processed
     QLink	deadq;			// jobs waiting to be reaped
