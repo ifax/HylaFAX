@@ -500,3 +500,19 @@ Modem::encode(fxStackBuffer& buf) const
     buf.put((const char*) &ec, sizeof (u_int));
     buf.put((const char*) &priority, sizeof (u_short));
 }
+
+
+void
+Modem::CLEANUP (void)
+{
+    ModemGroup::reset();
+    QLink* ql = list.next; 
+    while (ql != &list)
+    {
+	Modem* m = (Modem*)ql;
+	ql = ql->next;
+
+	delete m;
+    }
+
+}

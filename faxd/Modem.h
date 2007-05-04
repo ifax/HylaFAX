@@ -105,6 +105,8 @@ public:
     Modem(const fxStr& devid);
     virtual ~Modem();
 
+    static void CLEANUP (void);
+
     static Modem& getModemByID(const fxStr& id);
     static Modem* modemExists(const fxStr& id);
     static Modem* findModem(const Job& job);

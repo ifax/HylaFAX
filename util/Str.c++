@@ -407,6 +407,8 @@ void fxStr::operator=(const fxTempStr& s)
 
 void fxStr::operator=(const fxStr& s)
 {
+    if (data == s.data && slength == s.slength)
+	return;
     resizeInternal(s.slength-1);
     memcpy(data,s.data,s.slength);
     slength = s.slength;

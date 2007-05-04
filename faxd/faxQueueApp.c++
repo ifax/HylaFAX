@@ -3619,5 +3619,9 @@ main(int argc, char** argv)
     app->close();
     delete app;
 
+
+    Modem::CLEANUP();
+    delete &Dispatcher::instance();
+    
     return 0;
 }

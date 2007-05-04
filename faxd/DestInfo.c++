@@ -45,7 +45,11 @@ DestInfo::DestInfo(const DestInfo& other)
     running = other.running;
 }
 
-DestInfo::~DestInfo() {}
+DestInfo::~DestInfo() 
+{
+    if (isOnList())
+	remove();
+}
 
 FaxMachineInfo&
 DestInfo::getInfo(const fxStr& number)
