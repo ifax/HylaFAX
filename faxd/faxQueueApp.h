@@ -216,8 +216,6 @@ private:
     bool	submitJob(const fxStr& jobid, bool checkState = false);
     bool	suspendJob(const fxStr& jobid, bool abortActive);
     void	rejectSubmission(Job&, FaxRequest&, const fxStr& reason);
-    bool	areBatchable(Job& job, Job& nextjob, FaxRequest& nextreq);
-    void	batchJob(Job* prevjob, Job* nextjob, FaxRequest* nextreq);
 
     void	setReadyToRun(Job& job, bool wait);
     void	setReady(Job& job);
@@ -234,9 +232,6 @@ private:
     void	timeoutJob(Job& job, FaxRequest&);
     void	runJob(Job& job);
 
-    void	removeDestInfoJob(Job& job);
-    void        unblockDestJobs(DestInfo& di);
-
     bool	scheduling();
     void	runScheduler();
     void	pokeScheduler(u_short s = 0);
@@ -245,7 +240,7 @@ private:
 // job preparation stuff
     bool	prepareJobNeeded(Job&, FaxRequest&, JobStatus&);
     static void prepareCleanup(int s);
-    bool	prepareJobStart(Job&, FaxRequest*,
+    void	prepareJobStart(Job&, FaxRequest*,
 		    FaxMachineInfo&);
     void	prepareJobDone(Job&, int status);
     JobStatus	prepareJob(Job& job, FaxRequest& req,

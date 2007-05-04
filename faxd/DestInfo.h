@@ -51,7 +51,6 @@ class DestInfo : public QLink {
 private:
     u_short		activeCount;	// count of active jobs to destination
     u_short		blockedCount;	// count of blocked jobs
-    u_short		callCount;	// count of active calls to destination
     FaxMachineInfo	info;		// remote machine capabilities and such
     Job*		running;	// jobs to dest being processed
 public:
@@ -62,12 +61,8 @@ public:
     u_int getActive() const;		// return count of active jobs
     u_int getCount() const;		// return count of active+blocked jobs
     bool isEmpty() const;		// true if any jobs referenced
-    u_int getCalls() const;		// return count of active calls
-    void call();			// initiate call to destination
-    void hangup();			// terminate call to destination
 
     bool isActive(Job&) const;	// true if job is considered active
-    bool supportsBatching();		// if remote supports batch protocol
     void active(Job&);			// set job active to destination
     void done(Job&);			// remove job from active set
     void block(Job&);			// add job to blocked queue
@@ -82,9 +77,6 @@ inline u_int DestInfo::getActive() const	{ return activeCount; }
 inline u_int DestInfo::getCount() const
     { return activeCount + blockedCount; }
 inline bool DestInfo::isEmpty() const		{ return getCount() == 0; }
-inline u_int DestInfo::getCalls() const		{ return callCount; }
-inline void DestInfo::call()			{ callCount++; }
-inline void DestInfo::hangup()			{ callCount--; }
 
 fxDECLARE_StrKeyDictionary(DestInfoDict, DestInfo)
 #endif /* _DestInfo_ */

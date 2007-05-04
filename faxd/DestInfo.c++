@@ -30,7 +30,6 @@
 DestInfo::DestInfo()
 {
     activeCount = 0;
-    callCount = 0;
     blockedCount = 0;
     running = NULL;
 }
@@ -40,7 +39,6 @@ DestInfo::DestInfo(const DestInfo& other)
     , info(other.info)
 {
     activeCount = other.activeCount;
-    callCount = other.callCount;
     blockedCount = other.blockedCount;
     running = other.running;
 }
@@ -77,17 +75,6 @@ DestInfo::isActive(Job& job) const
 		return (true);
 	return (false);
     }
-}
-
-/*
- * Not all equipment out there supports our batching protocol using
- * EOM.  So SupportsBatching in the info file is flagged if we have
- * encountered specific batching trouble in the past.
- */
-bool
-DestInfo::supportsBatching()
-{
-    return info.getSupportsBatching();
 }
 
 void

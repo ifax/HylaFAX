@@ -105,9 +105,6 @@ Job::Job(const FaxRequest& req)
     jci = NULL;
     dnext = NULL;
     modem = NULL;
-    bprev = NULL;
-    bnext = NULL;
-    breq = NULL;
     suspendPending = false;
     registry[jobid] = this;
 }
@@ -141,22 +138,6 @@ Job::update(const FaxRequest& req)
     resolution = req.resolution;
     willpoll = (req.findItem(FaxRequest::send_poll) != fx_invalidArrayIndex);
     device = req.modem;
-}
-
-/*
- * Remove a job from a batch of jobs then let parent class do it's job.
- */
-void
-Job::remove(void)
-{
-    if (bnext != NULL)
-	bnext->bprev = bprev;
-    if (bprev != NULL)
-	bprev->bnext = bnext;
-    bnext = NULL;
-    bprev = NULL;
-    breq = NULL;
-    QLink::remove();
 }
 
 Job*
@@ -267,10 +248,3 @@ Job::encode(fxStackBuffer& buf) const
     buf.put(commid, commid.length()+1);
 }
 
-Job*
-Job::bfirst()
-{
-    Job* j = this;
-    for (; j->bprev != NULL; j = j->bprev);
-    return j;
-}

@@ -148,16 +148,11 @@ public:
     Modem*	modem;		// modem/server currently assigned to job
     QLink	triggers;	// waiting specifically on this job
 
-    Job*	bprev;		// prev in batch
-    Job*	bnext;		// next in batch
-    FaxRequest*	breq;		// pointer to request used by batching support
     JobControlInfo* jci;	// Job control information
 
     Job(const FaxRequest&);
     void update(const FaxRequest& req);
     ~Job();
-
-    void remove(void);
 
     static Job* getJobByID(const fxStr& jobid);
     static fxStr jobStatusName(const JobStatus);
@@ -173,8 +168,6 @@ public:
     void startSend(pid_t pid);
 
     void encode(fxStackBuffer&) const;	// encode in JobExt format
-
-    Job* bfirst();			// first job in batch
 
     const JobControlInfo& getJCI (void) const;
 };
