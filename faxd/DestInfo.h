@@ -47,36 +47,35 @@ class fxStr;
  * dictionary (e.g. explicit mechanisms for reading and updating
  * the external file). 
  */ 
-class DestInfo : public QLink {
+class DestInfo 
+  : public QLink
+{
 private:
     u_short		activeCount;	// count of active jobs to destination
-    u_short		blockedCount;	// count of blocked jobs
     FaxMachineInfo	info;		// remote machine capabilities and such
     Job*		running;	// jobs to dest being processed
 public:
+    QLink		readyQ;		// list of ready jobs
+    QLink		sleepQ;		// list of sleeping jobs
+
     DestInfo();
     DestInfo(const DestInfo& other);
     ~DestInfo();
 
-    u_int getActive() const;		// return count of active jobs
-    u_int getCount() const;		// return count of active+blocked jobs
+    u_int getActiveCount() const;		// return count of active jobs
+    u_int getSleepCount() const;		// return count of active jobs
+    u_int getReadyCount() const;		// return count of ready jobs
+
     bool isEmpty() const;		// true if any jobs referenced
 
     bool isActive(Job&) const;	// true if job is considered active
     void active(Job&);			// set job active to destination
     void done(Job&);			// remove job from active set
-    void block(Job&);			// add job to blocked queue
-    Job* nextBlocked();			// remove and return first blocked job
-    void unblock(const Job& job);	// remove blocked job by reference
 
     FaxMachineInfo& getInfo(const fxStr& number);
     void updateConfig();		// write info file if necessary
 };
 
-inline u_int DestInfo::getActive() const	{ return activeCount; }
-inline u_int DestInfo::getCount() const
-    { return activeCount + blockedCount; }
-inline bool DestInfo::isEmpty() const		{ return getCount() == 0; }
 
 fxDECLARE_StrKeyDictionary(DestInfoDict, DestInfo)
 #endif /* _DestInfo_ */

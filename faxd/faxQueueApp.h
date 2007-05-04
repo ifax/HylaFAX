@@ -132,8 +132,8 @@ private:
     bool	abortPrepare;		// job preparation should be aborted
     bool	quit;			// terminate server
     int		fifo;			// fifo job queue interface
-    QLink	runq;			// jobs ready to run
-    QLink	sleepq;			// jobs waiting for time-to-send
+    QLink	runq;			// list of DestInfo ready to run
+    QLink	destq;			// list of DestInfo with no ready jobs
     QLink	activeq;		// jobs actively being processed
     QLink	deadq;			// jobs waiting to be reaped
     QLink	suspendq;		// jobs suspending from scheduling
@@ -175,6 +175,7 @@ private:
     void	traceServer(const char* fmt ...);
     void	vtraceServer(const char* fmt, va_list ap);
     void	jobError(const Job& job, const char* fmt ...);
+    void	traceQueue(const DestInfo&, const char* fmt ...);
     void	traceQueue(const Job&, const char* fmt ...);
     void	traceJob(const Job&, const char* fmt ...);
     void	traceQueue(const char* fmt ...);

@@ -1606,6 +1606,8 @@ faxQueueApp::ctrlJobDone(Job& job, int status)
     }
 }
 
+
+
 /*
  * set a job as really ready
  */
@@ -1615,11 +1617,49 @@ faxQueueApp::setReady(Job& job)
     job.state = FaxRequest::state_ready;
     traceJob(job, "READY");
     Trigger::post(Trigger::JOB_READY, job);
-    JobIter iter(runq);
+
+    /*
+     * First we insert the job on the per-destination readyQ
+     */
+    DestInfo& di = destJobs[job.dest];
+
+    bool skipped = false;
+    JobIter iter(di.readyQ);
     for (; iter.notDone(); iter++)
+    {
 	if (! iter.job().higherPriority(job))
 	    break;
+	skipped = true;
+    }
+
     job.insert(iter.job());
+
+    /*
+     * If we skipped some jobs, then we *know* that we haven't
+     * affected the highest priority job for this DI.  Otherwise,
+     * we are either the 1st job to this dest, or the highest priority.  
+     * Either way - we must "priority insert" the DI now.
+     */
+
+    if (! skipped)
+    {
+	if (di.isOnList())
+	    di.remove();
+	QLink* ql = runq.next;
+	QLink* next = ql->next;
+	while (ql != &runq)
+	{
+	    DestInfo* dip = (DestInfo*)ql;
+	    Job& nj(*(Job*)(dip->readyQ.next));
+
+	    if (! nj.higherPriority(job) )
+		break;
+
+	    ql = next;
+	    next = ql->next;
+	}
+	di.insert(*ql);
+    }
     /*
      * In order to deliberately batch jobs by using a common
      * time-to-send we need to give time for the other jobs'
@@ -1639,7 +1679,8 @@ faxQueueApp::setSleep(Job& job, time_t tts)
 {
     traceJob(job, "SLEEP FOR %s", (const char*)strTime(tts - Sys::now()));
     Trigger::post(Trigger::JOB_SLEEP, job);
-    JobIter iter(sleepq);
+    DestInfo& di = destJobs[job.dest];
+    JobIter iter(di.sleepQ);
     for (; iter.notDone() && iter.job().tts <= tts; iter++)
 	;
     job.insert(iter.job());
@@ -1647,7 +1688,7 @@ faxQueueApp::setSleep(Job& job, time_t tts)
 }
 
 #define	isOKToCall(di, jci, n) \
-    (di.getActive()+n <= jci.getMaxConcurrentCalls())
+    ((di).getActiveCount()+(di).getSleepCount()+n <= jci.getMaxConcurrentCalls())
 
 /*
  * Process a job that's finished.  The corpse gets placed
@@ -1667,33 +1708,12 @@ faxQueueApp::setDead(Job& job)
     DestInfo& di = destJobs[job.dest];
     di.done(job);			// remove from active destination list
     di.updateConfig();			// update file if something changed
-    if (! di.isEmpty()) {
-	Job* jb;
-	u_int n = 1;
-	while ( (jb = di.nextBlocked()) ) {
-	    if ( isOKToCall(di, jb->getJCI(), n) )
-	    {
-		n++;
-		FaxRequest* req = readRequest(*jb);
-		if (req) {
-		    req->notice = "";
-		    updateRequest(*req, *jb);
-		    delete req;
-		}
-		setReadyToRun(*jb, jobCtrlWait);
-	    } else
-	    {
-		traceJob(*jb, "Continue BLOCK, current calls: %d, max concurrent calls: %d",
-		    di.getActive(), jb->getJCI().getMaxConcurrentCalls());
-		di.block(*jb);
-		break;
-	    }
-	}
-    } else {
+    if ( di.isEmpty()) {
 	/*
 	 * This is the last job to the destination; purge
 	 * the entry from the destination jobs database.
 	 */
+	traceQueue(di, "Now empty - removing from destJobs");
 	destJobs.remove(job.dest);
     }
 
@@ -1900,13 +1920,7 @@ faxQueueApp::suspendJob(Job& job, bool abortActive)
 	/* fall thru... */
     case FaxRequest::state_suspended:
     case FaxRequest::state_ready:
-	break;
     case FaxRequest::state_blocked:
-	/*
-	 * Decrement the count of job blocked to
-	 * to the same destination.
-	 */
-	destJobs[job.dest].unblock(job);
 	break;
     }
     job.remove();				// remove from old queue
@@ -2284,19 +2298,6 @@ faxQueueApp::isJobSendOK (Job& job, FaxRequest* req)
 void
 faxQueueApp::runScheduler()
 {
-    /*
-     * Terminate the server if there are no jobs currently
-     * being processed.  We must be sure to wait for jobs
-     * so that we can capture exit status from subprocesses
-     * and so that any locks held on behalf of outbound jobs
-     * do not appear to be stale (since they are held by this
-     * process).
-     */
-    if (quit && activeq.next == &activeq) {
-	close();
-	return;
-    }
-
     fxAssert(inSchedule == false, "Scheduler running twice");
     inSchedule = true;
 
@@ -2314,11 +2315,33 @@ faxQueueApp::runScheduler()
      * insures the highest priority job is always processed
      * first.
      */
-    if (! quit) {
-	for (JobIter iter(runq); iter.notDone(); iter++) {
-	    Job& job = iter;
+    if (! quit) 
+    {
+	for (QLink* ql = runq.next; ql != &runq; ql = ql->next)
+	{
+	    DestInfo* dp = (DestInfo*)ql;
+	    traceQueue(*dp, "Scheduling");
+
+	    if (dp->readyQ.isEmpty() )
+	    {
+		/*
+		 * Don't keep this di on the runq, otherwise we just uselessly
+		 * iterate it.  We need to be careful here so that
+		 * the ql = ql->next list is kept working when we
+		 * remove dip from the QLink list.
+		 */
+		QLink* tmp = ql->next;
+		dp->remove();
+		dp->insert(destq);
+		ql = tmp->prev;
+		continue;
+	    }
+
+	    Job& job = *(Job*)dp->readyQ.next;
+
 	    fxAssert(job.tts <= Sys::now(), "Sleeping job on run queue");
 	    fxAssert(job.modem == NULL, "Job on run queue holding modem");
+
 
 	    /*
 	     * Read the on-disk job state and process the job.
@@ -2346,21 +2369,20 @@ faxQueueApp::runScheduler()
 	    /*
 	     * Do per-destination processing and checking.
 	     */
-	    DestInfo& di = destJobs[job.dest];
 
-	    if (!di.isActive(job) && !isOKToCall(di, job.getJCI(), 1)) {
+	    if (!isOKToCall(*dp, job.getJCI(), 1))
+	    {
 		/*
 		 * This job would exceed the max number of concurrent
-		 * calls that may be made to this destination.  Put it
-		 * on a ``blocked queue'' for the destination; the job
-		 * will be made ready to run when one of the existing
+		 * calls that may be made to this destination.  Mark it
+		 * as ``blocked'' for the destination; the job will
+		 * be stay ready to run and go when one of the existing
 		 * jobs terminates.
 		 */
 		blockJob(job, *req, "Blocked by concurrent calls");
-		job.remove();			// remove from run queue
-		di.block(job);			// place at tail of di queue
 		delete req;
-	    } else if (assignModem(job)) {
+	    } else if (assignModem(job))
+	    {
 		job.remove();			// remove from run queue
 		/*
 		 * We have a modem and have assigned it to the
@@ -2372,7 +2394,7 @@ faxQueueApp::runScheduler()
 		 * also assumed to take place asynchronously in
 		 * the context of the job's processing.
 		 */
-		processJob(job, req, di);
+		processJob(job, req, *dp);
 	    } else				// leave job on run queue
 		delete req;
 	}
@@ -2393,6 +2415,45 @@ faxQueueApp::runScheduler()
      */
     HylaClient::purge();		// XXX maybe do this less often
     inSchedule = false;
+
+    /*
+     * Terminate the server if there are no jobs currently
+     * being processed.  We must be sure to wait for jobs
+     * so that we can capture exit status from subprocesses
+     * and so that any locks held on behalf of outbound jobs
+     * do not appear to be stale (since they are held by this
+     * process).
+     *
+     * To ensure we remain valgrind-squeaky clean, we have
+     * to go through and remove jobs from the DestInfo queue,
+     * and make sure that we've processed the deadq, so this
+     * goes at the end of the runSchedule() loop.
+     */
+    if (quit && activeq.next == &activeq) {
+	for (DestInfoDictIter diter(destJobs); diter.notDone(); diter++)
+	{
+	    DestInfo& di(diter.value());
+	    traceQueue(di, "Cleaning to be squeaky");
+	    for (JobIter iter(di.readyQ); iter.notDone(); iter++)
+	    {
+		Job* jb = iter;
+		traceJob(*jb, "Removing to be squeaky clean");
+		jb->remove();
+		delete jb;
+	    }
+	    for (JobIter iter(di.sleepQ); iter.notDone(); iter++)
+	    {
+		Job* jb = iter;
+		traceJob(*jb, "Removing to be squeaky clean");
+		jb->remove();
+		delete jb;
+	    }
+	    di.remove();
+	}
+	showDebugState();
+	close();
+	return;
+    }
 }
 
 bool
@@ -3283,6 +3344,28 @@ vtraceJob(const Job& job, const char* fmt, va_list ap)
 	| "): "
 	| fmt, ap);
 }
+static void
+vtraceDI(const DestInfo& di, const char* fmt, va_list ap)
+{
+    vlogInfo(
+	  "DEST (" | fxStr::format("%p", &di)
+	| ": " | fxStr::format("%d ready", di.getReadyCount())
+	| ", " | fxStr::format("%d batches", di.getActiveCount())
+	| ", " | fxStr::format("%d sleeping", di.getSleepCount())
+	| ":) "
+	| fmt, ap);
+}
+
+void
+faxQueueApp::traceQueue(const DestInfo& di, const char* fmt ...)
+{
+    if (tracingLevel & FAXTRACE_QUEUEMGMT) {
+	va_list ap;
+	va_start(ap, fmt);
+	vtraceDI(di, fmt, ap);
+	va_end(ap);
+    }
+}
 
 void
 faxQueueApp::traceQueue(const Job& job, const char* fmt ...)
@@ -3350,18 +3433,43 @@ faxQueueApp::showDebugState(void)
 
 
     traceServer("DEBUG: runq(%p) next %p", &runq, runq.next);
-    for (JobIter iter(runq); iter.notDone(); iter++)
+    for (QLink* ql = runq.next; ql != &runq; ql = ql->next)
     {
-	Job& job(iter);
-	traceJob(job, "In run queue");
+	DestInfo& di = *(DestInfo*)ql;
+	traceServer("DestInfo (%p) contains %d active, %d ready",
+		&di, di.getActiveCount(), di.getReadyCount());
+
+	for (JobIter iter(di.readyQ); iter.notDone(); iter++)
+	{
+	    Job& job(iter);
+	    traceJob(job, "In run queue");
+	}
+	for (JobIter iter(di.sleepQ); iter.notDone(); iter++)
+	{
+	    Job& job(iter);
+	    traceJob(job, "In sleep queue");
+	}
     }
 
-    traceServer("DEBUG: sleepq(%p) next %p", &sleepq, sleepq.next);
-    for (JobIter iter(sleepq); iter.notDone(); iter++)
+    traceServer("DEBUG: destq(%p) next %p", &destq, destq.next);
+    for (QLink* ql = destq.next; ql != &destq; ql = ql->next)
     {
-	Job& job(iter);
-	traceJob(job, "In sleep queue");
+	DestInfo& di = *(DestInfo*)ql;
+	traceServer("DestInfo (%p) contains %d active, %d ready",
+		&di, di.getActiveCount(), di.getReadyCount());
+
+	for (JobIter iter(di.readyQ); iter.notDone(); iter++)
+	{
+	    Job& job(iter);
+	    traceJob(job, "SHOULD NOT BE IN RUN QUEUE");
+	}
+	for (JobIter iter(di.sleepQ); iter.notDone(); iter++)
+	{
+	    Job& job(iter);
+	    traceJob(job, "In sleep queue");
+	}
     }
+
 
     traceServer("DEBUG: suspendq(%p) next %p", &suspendq, suspendq.next);
     for (JobIter iter(suspendq); iter.notDone(); iter++)

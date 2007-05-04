@@ -30,7 +30,6 @@
 DestInfo::DestInfo()
 {
     activeCount = 0;
-    blockedCount = 0;
     running = NULL;
 }
 
@@ -39,12 +38,14 @@ DestInfo::DestInfo(const DestInfo& other)
     , info(other.info)
 {
     activeCount = other.activeCount;
-    blockedCount = other.blockedCount;
     running = other.running;
 }
 
-DestInfo::~DestInfo() 
+DestInfo::~DestInfo()
 {
+    fxAssert(readyQ.isEmpty(), "DestInfo destructed with jobs on it's readyQ");
+    fxAssert(sleepQ.isEmpty(), "DestInfo destructed with jobs on it's sleepQ");
+    fxAssert(activeCount == 0, "DestInfo destructed with jobs active");
     if (isOnList())
 	remove();
 }
@@ -60,6 +61,47 @@ void
 DestInfo::updateConfig()
 {
     info.writeConfig();				// update as necessary
+}
+
+u_int
+DestInfo::getReadyCount() const
+{
+    u_int c = 0;
+
+    for (const QLink* ql = readyQ.next; ql != &readyQ; ql = ql->next)
+	c++;
+
+    return c;
+}
+
+u_int
+DestInfo::getSleepCount() const
+{
+    u_int c = 0;
+
+    for (const QLink* ql = sleepQ.next; ql != &sleepQ; ql = ql->next)
+	c++;
+
+    return c;
+}
+
+u_int
+DestInfo::getActiveCount() const
+{
+    return activeCount;
+}
+
+bool
+DestInfo::isEmpty() const
+{
+    if (! readyQ.isEmpty())
+	return false;
+    if (!sleepQ.isEmpty())
+	return false;
+    if (getActiveCount())
+	return false;
+
+    return true;
 }
 
 bool
@@ -117,48 +159,6 @@ DestInfo::done(Job& job)
 		break;
 	    }
     }
-}
-
-void
-DestInfo::block(Job& job)
-{
-    /*
-     * Insert job in blocked queue maintaining
-     * priority order so that when the job is
-     * removed and placed back on the ready-to-run
-     * queue the priority ordering will be preserved.
-     */
-    JobIter iter(*this);
-    while (iter.notDone() && iter.job().pri <= job.pri)
-	iter++;
-    job.insert(iter.job());
-    blockedCount++;
-}
-
-Job*
-DestInfo::nextBlocked()
-{
-    if (next != this) {
-	Job* job = (Job*) next;
-	job->remove();
-	blockedCount--;
-	return (job);
-    } else
-	return (NULL);
-}
-
-void
-DestInfo::unblock(const Job& job)
-{
-    // XXX this is for gcc which is too stupid to do it automatically
-    if (next != & *(const QLink*) &job) {
-	for (JobIter iter(*this); iter.notDone(); iter++)
-	    if (&iter.job() == &job) {
-		blockedCount--;
-		break;
-	    }
-    } else
-	blockedCount--;
 }
 
 fxIMPLEMENT_StrKeyObjValueDictionary(DestInfoDict, DestInfo)
