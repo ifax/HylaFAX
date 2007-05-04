@@ -65,6 +65,7 @@ void ModemLockWaitHandler::timerExpired(long, long)
     { faxQueueApp::instance().pollForModemLock(modem); }
 
 QLink Modem::list;			// master list of known modems
+int Modem::modemsReady = 0;		// number of modems ready at any time
 
 Modem::Modem(const fxStr& id)
     : fifoName(FAX_FIFO "." | id)
@@ -228,7 +229,7 @@ bool
 Modem::assign()
 {
     if (lock->lock()) {		// lock modem for use
-	state = BUSY;		// mark in use
+	setState(BUSY);
 	send("L", 2, false);
 	return (true);
     } else {
@@ -242,7 +243,7 @@ Modem::assign()
 	 * caller requests another modem we won't try
 	 * to re-assign it in findModem.
 	 */
-	state = BUSY;		// mark in use
+	setState(BUSY);
 	return (false);
     }
 }
@@ -262,7 +263,7 @@ Modem::release()
      * since sender apps are expected to stablize the modem
      * before starting work it shouldn't be too bad.
      */
-    state = READY;
+    setState(READY);
 }
 
 /*
@@ -319,7 +320,16 @@ Modem::setCapabilities(const char* s)
 
 void Modem::setNumber(const char* cp)		{ number = cp; }
 void Modem::setCommID(const char* cp)		{ commid = cp; }
-void Modem::setState(ModemState s)		{ state = s; }
+
+void Modem::setState(ModemState s)
+{
+    if (s == READY && state != READY)
+	modemsReady++;
+    else if (state == READY && s != READY)
+	modemsReady--;
+
+    state = s;
+}
 
 /*
  * Return whether or not the modem supports the

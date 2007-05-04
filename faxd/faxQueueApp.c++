@@ -2563,6 +2563,15 @@ faxQueueApp::runScheduler()
 	{
 	    DestInfo* dp = (DestInfo*)ql;
 	    traceQueue(*dp, "Picking next job");
+	    /*
+	     * If there are no modems ready, then no job will be
+	     * able to start
+	     */
+	    if (! Modem::anyReady() )
+	    {
+		traceQueue("No devices available");
+		break;
+	    }
 
 	    if (dp->readyQ.isEmpty() )
 	    {

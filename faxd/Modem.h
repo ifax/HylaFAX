@@ -93,6 +93,7 @@ private:
     ModemLockWaitHandler lockHandler;
 
     static QLink list;		// list of all modems
+    static int modemsReady;	// count of ready modems
 
     void setCapabilities(const char*);	// specify modem capabilities
     void setNumber(const char*);	// specify modem phone number
@@ -107,6 +108,7 @@ public:
 
     static void CLEANUP (void);
 
+    static bool anyReady (void);
     static Modem& getModemByID(const fxStr& id);
     static Modem* modemExists(const fxStr& id);
     static Modem* findModem(const Job& job);
@@ -151,6 +153,8 @@ inline ModemState Modem::getState() const	{ return state; }
 inline const Class2Params& Modem::getCapabilities() const { return caps; }
 inline u_int Modem::getPriority() const		{ return priority; }
 inline const fxStr& Modem::getCommID() const	{ return commid; }
+
+inline bool Modem::anyReady()			{ return modemsReady > 0; }
 
 /*
  * Modem iterator class; for iterating
