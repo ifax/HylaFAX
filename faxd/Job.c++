@@ -147,6 +147,16 @@ Job::getJobByID(const fxStr& id)
     return (jpp ? *jpp : (Job*) NULL);
 }
 
+bool
+Job::higherPriority (const Job& other) const
+{
+    if (pri < other.pri)
+	return true;
+    if (pri == other.pri && tts <= other.tts)
+	return true;
+    return false;
+}
+
 void
 Job::startKillTimer(long sec)
 {

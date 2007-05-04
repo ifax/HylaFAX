@@ -1615,9 +1615,9 @@ faxQueueApp::setReady(Job& job)
     traceJob(job, "READY");
     Trigger::post(Trigger::JOB_READY, job);
     JobIter iter(runqs[JOBHASH(job.pri)]);
-    for (; iter.notDone() && (iter.job().pri < job.pri || 
-      (iter.job().pri == job.pri && iter.job().tts <= job.tts)); iter++)
-	;
+    for (; iter.notDone(); iter++)
+	if (! iter.job().higherPriority(job))
+	    break;
     job.insert(iter.job());
     /*
      * In order to deliberately batch jobs by using a common

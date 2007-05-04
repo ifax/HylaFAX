@@ -157,6 +157,8 @@ public:
     static Job* getJobByID(const fxStr& jobid);
     static fxStr jobStatusName(const JobStatus);
 
+    bool higherPriority(const Job& other) const;
+
     void startKillTimer(long sec);
     void stopKillTimer();
 
