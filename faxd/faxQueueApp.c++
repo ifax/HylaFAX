@@ -1211,11 +1211,11 @@ faxQueueApp::makeCoverPage(Job& job, FaxRequest& req, const Class2Params& params
 }
 
 const fxStr&
-faxQueueApp::pickCmd(const FaxRequest& req)
+faxQueueApp::pickCmd(const fxStr& jobtype)
 {
-    if (req.jobtype == "pager")
+    if (jobtype == "pager")
 	return (sendPageCmd);
-    if (req.jobtype == "uucp")
+    if (jobtype == "uucp")
 	return (sendUUCPCmd);
     return (sendFaxCmd);			// XXX gotta return something
 }
@@ -1300,7 +1300,7 @@ faxQueueApp::sendJobStart(Job& job, FaxRequest* req)
 {
     job.start = Sys::now();			// start of transmission
     // XXX start deadman timeout on active jobs
-    const fxStr& cmd = pickCmd(*req);
+    const fxStr& cmd = pickCmd(req->jobtype);
     fxStr dargs(job.getJCI().getArgs());
     pid_t pid = fork();
     switch (pid) {
@@ -1361,7 +1361,7 @@ faxQueueApp::sendJobDone(Job& job, int status)
 	logError("JOB %s: %s", (const char*)job.jobid, (const char*) req->notice);
     } else if ((status >>= 8) == 127) {
 	req->notice = "Send program terminated abnormally; unable to exec " |
-	    pickCmd(*req);
+	    pickCmd(req->jobtype);
 	req->status = send_failed;
 	logError("JOB %s: %s",
 		(const char*)job.jobid, (const char*)req->notice);

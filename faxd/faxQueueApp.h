@@ -183,7 +183,7 @@ private:
 // miscellaneous stuff
     void	startTimeout(long ms);
     void	stopTimeout(const char* whichdir);
-    const fxStr& pickCmd(const FaxRequest& req);
+    const fxStr& pickCmd(const fxStr& jobtype);
 // FIFO-related stuff
     void	childStatus(pid_t, int);	// Dispatcher hook
     int		inputReady(int);		// Dispatcher hook
