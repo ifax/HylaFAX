@@ -267,8 +267,11 @@ public:
 
     static faxQueueApp& instance();
 
+
     void	initialize(int argc, char** argv);
     void	open();
+
+    void	showDebugState();
 
     // NB: public for use by Modem class
     UUCPLock*	getUUCPLock(const fxStr& deviceName);

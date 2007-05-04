@@ -2728,6 +2728,9 @@ faxQueueApp::FIFOMessage(char cmd, const fxStr& id, const char* args)
     case 'N':				// noop
 	status = true;
 	break;
+    case 'Z':
+	showDebugState();
+	break;
     default:
 	logError("Bad FIFO cmd '%c' from client %s", cmd, (const char*) id);
 	break;
@@ -3334,6 +3337,53 @@ faxQueueApp::jobError(const Job& job, const char* fmt ...)
     vlogError("JOB " | job.jobid | ": " | fmt, ap);
     va_end(ap);
 }
+
+void
+faxQueueApp::showDebugState(void)
+{
+    traceServer("DEBUG: Listing destJobs with %d items", destJobs.size());
+    for (DestInfoDictIter iter(destJobs); iter.notDone(); iter++)
+    {
+	const fxStr& dest(iter.key());
+	const DestInfo& di(iter.value());
+	traceServer("DestInfo (%p) to %s", &di, (const char*)dest);
+    }
+
+
+    for (int i = 0; i < NQHASH; i++)
+    {
+	traceServer("DEBUG: runqs[%d](%p) next %p", i, &runqs[i], runqs[i].next);
+	for (JobIter iter(runqs[i]); iter.notDone(); iter++)
+	{
+	    Job& job(iter);
+	    traceJob(job, "In run queue");
+	}
+    }
+
+    traceServer("DEBUG: sleepq(%p) next %p", &sleepq, sleepq.next);
+    for (JobIter iter(sleepq); iter.notDone(); iter++)
+    {
+	Job& job(iter);
+	traceJob(job, "In sleep queue");
+    }
+
+    traceServer("DEBUG: suspendq(%p) next %p", &suspendq, suspendq.next);
+    for (JobIter iter(suspendq); iter.notDone(); iter++)
+    {
+	Job& job(iter);
+	traceJob(job, "In suspend queue");
+    }
+
+    traceServer("DEBUG: activeq(%p) next %p", &activeq, activeq.next);
+    for (JobIter iter(activeq); iter.notDone(); iter++)
+    {
+	Job& job(iter);
+	traceJob(job, "In active queue");
+    }
+
+    traceServer("DEBUG: inSchedule: %s", inSchedule ? "YES" : "NO");
+}
+
 
 void faxQueueApp::childStatus(pid_t pid, int status)
 {
