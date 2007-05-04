@@ -65,7 +65,6 @@ public:
     JobControlInfo(const JobControlInfo& other);
     ~JobControlInfo();
 
-    int compare(const JobControlInfo*) const;
     void parseEntry(const char* tag, const char* value, bool quoted);
 
     u_int getMaxConcurrentCalls() const;

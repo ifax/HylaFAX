@@ -79,9 +79,6 @@ JobControlInfo::JobControlInfo (const fxStr& buffer)
 
 JobControlInfo::~JobControlInfo() {}
 
-// XXX can't sort
-int JobControlInfo::compare(const JobControlInfo*) const { return (0); }
-
 void
 JobControlInfo::configError (const char* fmt, ...)
 {
