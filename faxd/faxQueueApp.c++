@@ -2207,6 +2207,70 @@ faxQueueApp::runJob(Job& job)
 }
 
 /*
+ * Check if a job is runnable.  If it is, it will return true,
+ * and the job/req are left for the caller to deal with.  If the
+ * job is not runnable, it returns false, and the job and req will
+ * have been dealt with appropriately (put on another list, deleted,etc
+ */
+bool
+faxQueueApp::isJobSendOK (Job& job, FaxRequest* req)
+{
+    /*
+     * Constrain the maximum number of times the phone
+     * will be dialed and/or the number of attempts that
+     * will be made (and reject jobs accordingly).
+     */
+    u_short maxdials = fxmin((u_short) job.getJCI().getMaxDials(),req->maxdials);
+    if (req->totdials >= maxdials) {
+	rejectJob(job, *req, fxStr::format(
+	    "REJECT: Too many attempts to dial: %u, max %u",
+	    req->totdials, maxdials));
+	deleteRequest(job, req, Job::rejected, true);
+	return false;
+    }
+    u_short maxtries = fxmin((u_short) job.getJCI().getMaxTries(),req->maxtries);
+    if (req->tottries >= maxtries) {
+	rejectJob(job, *req, fxStr::format(
+	    "REJECT: Too many attempts to transmit: %u, max %u",
+	    req->tottries, maxtries));
+	deleteRequest(job, req, Job::rejected, true);
+	return false;
+    }
+    // NB: repeat this check so changes in max pages are applied
+    u_int maxpages = job.getJCI().getMaxSendPages();
+    if (req->totpages > maxpages) {
+	rejectJob(job, *req, fxStr::format(
+	    "REJECT: Too many pages in submission: %u, max %u",
+	    req->totpages, maxpages));
+	deleteRequest(job, req, Job::rejected, true);
+	return false;
+    }
+    if (job.getJCI().getRejectNotice() != "") {
+	/*
+	 * Calls to this destination are being rejected for
+	 * a specified reason that we return to the sender.
+	 */
+	rejectJob(job, *req, "REJECT: " | job.getJCI().getRejectNotice());
+	deleteRequest(job, req, Job::rejected, true);
+	return false;
+    }
+    time_t now = Sys::now();
+    time_t tts;
+    if ((tts = job.getJCI().nextTimeToSend(now)) != now) {
+	/*
+	 * This job may not be started now because of time-of-day
+	 * restrictions.  Reschedule it for the next possible time.
+	 */
+	job.remove();			// remove from run queue
+	delayJob(job, *req, "Delayed by time-of-day restrictions", tts);
+	delete req;
+	return false;
+    }
+
+    return true;
+}
+
+/*
  * Scan the list of jobs and process those that are ready
  * to go.  Note that the scheduler should only ever be
  * invoked from the dispatcher via a timeout.  This way we
@@ -2272,51 +2336,18 @@ faxQueueApp::runScheduler()
 		    setDead(job);
 		    continue;
 		}
+
+		/*
+		 * Do job limits and checking
+		 */
+		if (! isJobSendOK(job, req) )
+		    continue;
+
 		/*
 		 * Do per-destination processing and checking.
 		 */
 		DestInfo& di = destJobs[job.dest];
-		/*
-		 * Constrain the maximum number of times the phone
-		 * will be dialed and/or the number of attempts that
-		 * will be made (and reject jobs accordingly).
-		 */
-		u_short maxdials = fxmin((u_short) job.getJCI().getMaxDials(),req->maxdials);
-		if (req->totdials >= maxdials) {
-		    rejectJob(job, *req, fxStr::format(
-			"REJECT: Too many attempts to dial: %u, max %u",
-			req->totdials, maxdials));
-		    deleteRequest(job, req, Job::rejected, true);
-		    continue;
-		}
-		u_short maxtries = fxmin((u_short) job.getJCI().getMaxTries(),req->maxtries);
-		if (req->tottries >= maxtries) {
-		    rejectJob(job, *req, fxStr::format(
-			"REJECT: Too many attempts to transmit: %u, max %u",
-			req->tottries, maxtries));
-		    deleteRequest(job, req, Job::rejected, true);
-		    continue;
-		}
-		// NB: repeat this check so changes in max pages are applied
-		u_int maxpages = job.getJCI().getMaxSendPages();
-		if (req->totpages > maxpages) {
-		    rejectJob(job, *req, fxStr::format(
-			"REJECT: Too many pages in submission: %u, max %u",
-			req->totpages, maxpages));
-		    deleteRequest(job, req, Job::rejected, true);
-		    continue;
-		}
-		if (job.getJCI().getRejectNotice() != "") {
-		    /*
-		     * Calls to this destination are being rejected for
-		     * a specified reason that we return to the sender.
-		     */
-		    rejectJob(job, *req, "REJECT: " | job.getJCI().getRejectNotice());
-		    deleteRequest(job, req, Job::rejected, true);
-		    continue;
-		}
-		time_t now = Sys::now();
-		time_t tts;
+
 		if (!di.isActive(job) && !isOKToCall(di, job.getJCI(), 1)) {
 		    /*
 		     * This job would exceed the max number of concurrent
@@ -2328,14 +2359,6 @@ faxQueueApp::runScheduler()
 		    blockJob(job, *req, "Blocked by concurrent calls");
 		    job.remove();			// remove from run queue
 		    di.block(job);			// place at tail of di queue
-		    delete req;
-		} else if ((tts = job.getJCI().nextTimeToSend(now)) != now) {
-		    /*
-		     * This job may not be started now because of time-of-day
-		     * restrictions.  Reschedule it for the next possible time.
-		     */
-		    job.remove();			// remove from run queue
-		    delayJob(job, *req, "Delayed by time-of-day restrictions", tts);
 		    delete req;
 		} else if (assignModem(job)) {
 		    job.remove();			// remove from run queue

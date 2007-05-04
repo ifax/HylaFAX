@@ -205,6 +205,7 @@ private:
 		    bool force, const char* duration = "");
     void	notifySender(Job&, JobStatus, const char* = "");
 // job management interfaces
+    bool	isJobSendOK(Job& job, FaxRequest* req);
     void	processJob(Job& job);
     void	processJob(Job&, FaxRequest* req, DestInfo& di);
     void	sendJobStart(Job&, FaxRequest*);
