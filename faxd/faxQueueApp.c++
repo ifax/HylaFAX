@@ -238,6 +238,88 @@ faxQueueApp::scanClientDirectory()
     closedir(dir);
 }
 
+
+void
+faxQueueApp::startBatch(Modem* modem, Job& job, FaxRequest* req, DestInfo& di)
+{
+   traceJob(job, "BATCH");
+   Batch* b = new Batch(di, job.dest, req->jobtype);
+   b->insert(*batchq.next);
+   b->modem = job.modem;
+   di.active(*b);
+   processJob(*b, job, req);
+}
+
+
+/*
+ * canJobBatch()
+ * Check if the following job can actually go into a batch.
+ * This should check a bunch of things (like compatibility of JCI, etc.
+ * but for now, we only check the modem is OK.
+ */
+bool
+faxQueueApp::canJobBatch(Batch& batch, Job& job, FaxRequest* req)
+{
+    if (batch.jobs.isEmpty())
+	return true;
+
+    if (! batch.modem->isInGroup(req->modem))
+	return false;
+}
+
+
+/*
+ * Here, we look for new jobs to put into the batch.
+ */
+void
+faxQueueApp::fillBatch(Batch& batch)
+{
+    if (! (batch.jobCount() < maxBatchJobs) )
+    {
+	traceQueue(batch.di, "No more jobs allowed in batch: max %d reached",
+		maxBatchJobs);
+	sendStart(batch);
+	return;
+    }
+
+    for (JobIter iter(batch.di.readyQ); iter.notDone(); iter++)
+    {
+	Job& job(iter);
+
+	FaxRequest* req = readRequest(job);
+	if (! req)
+	{
+	    // NB: no way to notify the user (XXX)
+	    logError("JOB %s: qfile vanished while on the runq",
+		    (const char*)job.jobid);
+	    setDead(job);
+	    continue;
+	}
+
+	/*
+	 * Check if we can batch this job.  It might not be batchable
+	 * for some reason (like modem group compatiblity, etc)
+	 */
+	if (canJobBatch(batch, job, req) )
+	{
+	    traceJob(job, "Adding to batch");
+	    job.modem = batch.modem;
+	    job.remove();
+	    req->notice = "";
+	    processJob(batch, job, req);
+	    return;				// processJob() is async
+	}
+
+	delete req;
+    }
+
+    /*
+     * There are no other jobs that we *can* batch right now, because
+     * we reached the end of the di.jobs list of ready jobs
+     */
+    sendStart(batch);
+}
+
 /*
  * Process a job.  Prepare it for transmission and
  * pass it on to the thread that does the actual
@@ -248,23 +330,24 @@ faxQueueApp::scanClientDirectory()
  * can be located by filename if necessary.
  */
 void
-faxQueueApp::processJob(Job& job, FaxRequest* req, DestInfo& di)
+faxQueueApp::processJob(Batch& batch, Job& job, FaxRequest* req)
 {
     job.commid = "";			// set on return
-    di.active(job);
-    FaxMachineInfo& info = di.getInfo(job.dest);
     JobStatus status;
-    setActive(job);			// place job on active list
+    setActive(batch,job);
+    req->status = send_nobatch;
     updateRequest(*req, job);
     if (!prepareJobNeeded(job, *req, status)) {
 	if (status != Job::done) {
 	    job.state = FaxRequest::state_failed;
 	    deleteRequest(job, req, status, true);
 	    setDead(job);
-	} else
-	    sendJobStart(job, req);
+	} else {
+	    delete req;
+	    fillBatch(batch);
+	}
     } else
-	prepareJobStart(job, req, info);
+	prepareStart(batch, job, req);
 }
 
 /*
@@ -327,8 +410,7 @@ faxQueueApp::prepareCleanup(int s)
  * initiated.
  */
 void
-faxQueueApp::prepareJobStart(Job& job, FaxRequest* req,
-    FaxMachineInfo& info)
+faxQueueApp::prepareStart(Batch& batch, Job& job, FaxRequest* req)
 {
     traceQueue(job, "PREPARE START");
     abortPrepare = false;
@@ -349,16 +431,16 @@ faxQueueApp::prepareJobStart(Job& job, FaxRequest* req,
 	 */
 	signal(SIGTERM, fxSIGHANDLER(faxQueueApp::prepareCleanup));
 	signal(SIGINT, fxSIGHANDLER(faxQueueApp::prepareCleanup));
-	_exit(prepareJob(job, *req, info));
+	_exit(prepareJob(job, *req, batch));
 	/*NOTREACHED*/
     case -1:				// fork failed, sleep and retry
 	job.remove();			// Remove from active queue
 	delayJob(job, *req, "Could not fork to prepare job for transmission",
 	    Sys::now() + random() % requeueInterval);
 	delete req;
-	break;
+	fillBatch(batch);
     default:				// parent, setup handler to wait
-	job.startPrepare(pid);
+	batch.startPrepare(job, pid);
 	delete req;			// must reread after preparation
 	Trigger::post(Trigger::JOB_PREP_BEGIN, job);
 	break;
@@ -371,8 +453,10 @@ faxQueueApp::prepareJobStart(Job& job, FaxRequest* req,
  * return value from prepareJob if it was passed via _exit.
  */
 void
-faxQueueApp::prepareJobDone(Job& job, int status)
+faxQueueApp::prepareDone(Batch& batch, int status)
 {
+    Job& job = batch.lastJob();
+
     traceQueue(job, "PREPARE DONE");
     Trigger::post(Trigger::JOB_PREP_END, job);
     if (status&0xff) {
@@ -381,11 +465,16 @@ faxQueueApp::prepareJobDone(Job& job, int status)
 	status = Job::failed;
     } else
 	status >>= 8;
+
+fxAssert(! job.suspendPending, "AIDAN: Need to handle this");
+#if 0
     if (job.suspendPending) {		// co-thread waiting
 	job.suspendPending = false;
 	releaseModem(job);
 	return;
     }
+#endif
+
     FaxRequest* req = readRequest(job);
     if (!req) {
 	// NB: no way to notify the user (XXX)
@@ -400,7 +489,7 @@ faxQueueApp::prepareJobDone(Job& job, int status)
 		delete req;
 		break;
 	    case (Job::done):               // preparation completed successfully
-		sendJobStart(job, req);
+	        delete req;
 		break;
 	    default:
 		deleteRequest(job, req, status, true);
@@ -408,6 +497,7 @@ faxQueueApp::prepareJobDone(Job& job, int status)
 		break;
 	}
     }
+    fillBatch(batch);
 }
 
 /*
@@ -1294,77 +1384,194 @@ joinargs(const fxStr& cmd, const fxStr& dargs)
 }
 
 void
-faxQueueApp::sendJobStart(Job& job, FaxRequest* req)
+faxQueueApp::sendStart(Batch& batch)
 {
-    job.start = Sys::now();			// start of transmission
+    batch.start = Sys::now();
+
+    int nfiles = 0;
+    fxStr files;
+    for (JobIter iter(batch.jobs); iter.notDone(); iter++)
+    {
+	Job& job(iter);
+	traceJob(job, "SEND IN BATCH to %s", (const char*)batch.dest);
+	job.pid = 0;
+	job.start = 0;
+
+	Trigger::post(Trigger::SEND_BEGIN, job);
+
+	if (nfiles++ == 0)
+	    job.start = Sys::now();
+	else
+	    files.append(' ');
+
+	files.append(job.file);
+    }
+
+    /*
+     * There is a possiblity no jobs survived preparation
+     * successfully
+     */
+    if (nfiles == 0)
+    {
+	traceQueue(batch.di, "BATCH sent with no jobs prepared successfully");
+	sendDone(batch, send_failed);
+	return;
+    };
+
     // XXX start deadman timeout on active jobs
-    const fxStr& cmd = pickCmd(req->jobtype);
-    fxStr dargs(job.getJCI().getArgs());
+    const fxStr& cmd = pickCmd(batch.jobtype);
+    fxStr dargs(batch.firstJob().getJCI().getArgs());
     pid_t pid = fork();
     switch (pid) {
     case 0:				// child, startup command
 	closeAllBut(-1);		// NB: close 'em all
-	doexec(cmd, dargs, job.modem->getDeviceID(), job.file, 1);
+	doexec(cmd, dargs, batch.modem->getDeviceID(), files, nfiles);
 	sleep(10);			// XXX give parent time to catch signal
 	_exit(127);
 	/*NOTREACHED*/
-    case -1:				// fork failed, sleep and retry
-	/*
-	 * We were unable to start the command because the
-	 * system is out of processes.  Take the jobs off the
-	 * active list and requeue them for a future time. 
-	 * If it appears that the we're doing this a lot,
-	 * then lengthen the backoff.
-	 */
-	job.remove();
-	delayJob(job, *req, "Could not fork to start job transmission",
-		job.start + random() % requeueInterval);
-	break;
+    case -1:				// fork failed, forward to sendDone
+	sendDone(batch, send_retry);
+	return;
     default:				// parent, setup handler to wait
 	// joinargs puts a leading space so this looks funny here
-	traceQueue(job, "CMD START%s -m %s %s (PID %lu)"
+	traceQueue(batch.firstJob(), "CMD START%s -m %s %s (PID %lu)"
 	    , (const char*) joinargs(cmd, dargs)
-	    , (const char*) job.modem->getDeviceID()
-	    , (const char*) job.file
+	    , (const char*) batch.modem->getDeviceID()
+	    , (const char*) files
 	    , pid
 	);
-	job.startSend(pid);
-	Trigger::post(Trigger::SEND_BEGIN, job);
+	batch.startSend(pid);
+	batch.firstJob().pid = pid;
 	break;
     }
-    delete req;
 }
 
 void
-faxQueueApp::sendJobDone(Job& job, int status)
+faxQueueApp::sendDone(Batch& batch, int status)
+{
+    traceQueue("BATCH to %s CMD DONE: exit status %#x",
+	    (const char*)batch.dest, status);
+
+    releaseModem(*batch.modem);				// done with modem
+
+    u_int count = 0;
+    for (JobIter iter(batch.jobs); iter.notDone(); iter++)
+    {
+	Job& job(iter);
+	FaxRequest* req = readRequest(job);		// reread the qfile
+	if (! req)
+	{
+	    logError("JOB %s: SEND FINISHED: but job file vanished",
+		    (const char*) job.jobid);
+	    setDead(job);
+	    continue;
+	}
+
+	/*
+	 * The first job is handled specially, so that we can make sure
+	 * that the return status is used if it didn't set the req->status
+	 * If something went wrong (like a exec problem, segfault, etc), or if
+	 * it's a really old "faxsend immitator" it won't set req->status, and
+	 * we want to use the exit status for this first job.
+	 */
+	if (count++ == 0 && req->status == send_nobatch)
+	{
+	    traceJob(job, "Filling in status from %#x", status);
+	    if (status & 0xFF) {
+		req->notice = fxStr::format(
+		    "Send program terminated abnormally with exit status %#x", status);
+		req->status = send_failed;
+		logError("JOB %s: %s", (const char*)job.jobid, (const char*) req->notice);
+	    } else if ((status >>= 8) == 127) {
+		req->notice = "Send program terminated abnormally; unable to exec " |
+		    pickCmd(req->jobtype);
+		req->status = send_failed;
+		logError("JOB %s: %s",
+			(const char*)job.jobid, (const char*)req->notice);
+	    } else
+		req->status = (FaxSendStatus) status;
+	};
+	job.modem = NULL;
+
+	if (req->status == send_nobatch)
+	{
+	    traceJob(job, "Not tried - setting directly to ready");
+	    /*
+	     * This job wasn't even tried - just dump it off again
+	     * to be sent
+	     */
+	    job.remove();
+	    setReadyToRun(job, *req, false);
+	    delete req;
+	} else
+	{
+	    sendJobDone(job, req);
+	}
+    }
+
+    if (count > 1)
+	traceServer("BATCH to %s done after %d jobs",
+		(const char*)batch.dest, count);
+
+    // Take it off the batchq
+    batch.di.done(batch);			// remove from active destination list
+    batch.remove();
+
+    DestInfo& di(batch.di);
+    fxStr dest(batch.dest);
+
+    // We're done with the batch, we need to delete it
+    Batch* b = &batch;
+    delete b;
+
+    // And close up any DI now empty
+    if (di.isEmpty()) {
+	/*
+	 * This is the last job to the destination; purge
+	 * the entry from the destination jobs database.
+	 */
+	traceQueue(di, "now empty, removing from destJobs");
+	destJobs.remove(dest);
+    }
+
+}
+
+void
+faxQueueApp::doneJob(Job& job)
+{
+    job.modem = NULL;
+    job.pid = 0;
+
+    FaxRequest* req = readRequest(job);		// reread the qfile
+    if (! req)
+    {
+	logError("JOB %s: SEND FINISHED: but job file vanished",
+		(const char*) job.jobid);
+	setDead(job);
+	return;
+    }
+
+    /*
+     * If the sub process really didn't handle batching correctly, it
+     * will have left req->status be left alone.
+     * In this case, we'll leave it for the complete batch to finish and
+     * let the normal sendDone batch processing worry about it
+     */
+    if (req->status == send_nobatch)
+	return;
+
+    sendJobDone(job, req);
+}
+
+
+void
+faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
 {
     time_t now = Sys::now();
     time_t duration = now - job.start;
 
-    traceQueue(job, "CMD DONE: exit status %#x", status);
     Trigger::post(Trigger::SEND_END, job);
-    releaseModem(job);				// done with modem
-    FaxRequest* req = readRequest(job);		// reread the qfile
-    if (!req) {
-	logError("JOB %s: SEND FINISHED: %s; but job file vanished",
-	    (const char*) job.jobid, fmtTime(duration));
-	setDead(job);
-	return;
-    }
     job.commid = req->commid;			// passed from subprocess
-    if (status & 0xFF) {
-	req->notice = fxStr::format(
-	    "Send program terminated abnormally with exit status %#x", status);
-	req->status = send_failed;
-	logError("JOB %s: %s", (const char*)job.jobid, (const char*) req->notice);
-    } else if ((status >>= 8) == 127) {
-	req->notice = "Send program terminated abnormally; unable to exec " |
-	    pickCmd(req->jobtype);
-	req->status = send_failed;
-	logError("JOB %s: %s",
-		(const char*)job.jobid, (const char*)req->notice);
-    } else
-	req->status = (FaxSendStatus) status;
     if (req->status == send_reformat) {
 	/*
 	 * Job requires reformatting to deal with the discovery
@@ -1487,7 +1694,7 @@ faxQueueApp::sendJobDone(Job& job, int status)
 	    } else {
 		traceQueue(job, "SEND INCOMPLETE: retry immediately; %s",
 		    (const char*)req->notice); 
-		setReadyToRun(job, jobCtrlWait);		// NB: job.tts will be <= now
+		setReadyToRun(job, *req, jobCtrlWait);		// NB: job.tts will be <= now
 	    }
 	} else					// signal waiting co-thread
 	    job.suspendPending = false;
@@ -1518,7 +1725,7 @@ faxQueueApp::sendJobDone(Job& job, int status)
  * JobControl is done running
  */
 void
-faxQueueApp::setReadyToRun(Job& job, bool wait)
+faxQueueApp::setReadyToRun(Job& job, FaxRequest& req, bool wait)
 {
     if (job.state == FaxRequest::state_blocked) {
 	/*
@@ -1526,7 +1733,7 @@ faxQueueApp::setReadyToRun(Job& job, bool wait)
 	 * just prior to it becoming blocked.  Don't run it again right
 	 * now
 	 */
-	setReady(job);
+	setReady(job, req);
 	return;
     }
     if (jobCtrlCmd.length()) {
@@ -1577,7 +1784,7 @@ faxQueueApp::setReadyToRun(Job& job, bool wait)
 	    logInfo("JobControl finished");
 	}
     } else
-	setReady(job);
+	setReady(job, req);
 }
 
 /*
@@ -1598,8 +1805,8 @@ faxQueueApp::ctrlJobDone(Job& job, int status)
 	return;
     }
     job.remove();
-    setReady(job);
     FaxRequest* req = readRequest(job);
+    setReady(job, *req);
     if (req) {
     	updateRequest(*req, job);
 	delete req;
@@ -1612,7 +1819,7 @@ faxQueueApp::ctrlJobDone(Job& job, int status)
  * set a job as really ready
  */
 void
-faxQueueApp::setReady(Job& job)
+faxQueueApp::setReady(Job& job, FaxRequest& req)
 {
     job.state = FaxRequest::state_ready;
     traceJob(job, "READY");
@@ -1631,14 +1838,13 @@ faxQueueApp::setReady(Job& job)
 	    break;
 	skipped = true;
     }
-
     job.insert(iter.job());
 
     /*
      * If we skipped some jobs, then we *know* that we haven't
      * affected the highest priority job for this DI.  Otherwise,
-     * we are either the 1st job to this dest, or the highest priority.  
-     * Either way - we must "priority insert" the DI now.
+     * we are either the 1st job to this dest, or the highest priority,
+     * so we must "priority insert" the DI now.
      */
 
     if (! skipped)
@@ -1646,19 +1852,25 @@ faxQueueApp::setReady(Job& job)
 	if (di.isOnList())
 	    di.remove();
 	QLink* ql = runq.next;
-	QLink* next = ql->next;
 	while (ql != &runq)
 	{
 	    DestInfo* dip = (DestInfo*)ql;
-	    Job& nj(*(Job*)(dip->readyQ.next));
-
-	    if (! nj.higherPriority(job) )
-		break;
-
-	    ql = next;
-	    next = ql->next;
+	    if (! dip->readyQ.isEmpty() )
+	    {
+		Job& nj(*(Job*)(dip->readyQ.next));
+		if (! nj.higherPriority(job) )
+		    break;
+	    }
+	    ql = ql->next;
 	}
 	di.insert(*ql);
+	traceQueue(di, "SORT INSERT DONE");
+    } else
+    {
+	/*
+	 * Since we skipped we know the job is blocked for now...
+	 */
+	blockJob(job, req, "Blocked by concurrent calls");
     }
     /*
      * In order to deliberately batch jobs by using a common
@@ -1706,7 +1918,6 @@ faxQueueApp::setDead(Job& job)
     traceJob(job, "DEAD");
     Trigger::post(Trigger::JOB_DEAD, job);
     DestInfo& di = destJobs[job.dest];
-    di.done(job);			// remove from active destination list
     di.updateConfig();			// update file if something changed
     if ( di.isEmpty()) {
 	/*
@@ -1720,8 +1931,7 @@ faxQueueApp::setDead(Job& job)
     if (job.isOnList())			// lazy remove from active list
 	job.remove();
     job.insert(*deadq.next);		// setup job corpus for reaping
-    if (job.modem)			// called from many places
-	releaseModem(job);
+    fxAssert(job.modem == NULL, "Dead job with modem");
     pokeScheduler();
 }
 
@@ -1729,12 +1939,12 @@ faxQueueApp::setDead(Job& job)
  * Place a job on the list of jobs actively being processed.
  */
 void
-faxQueueApp::setActive(Job& job)
+faxQueueApp::setActive(Batch& batch, Job& job)
 {
     job.state = FaxRequest::state_active;
     traceJob(job, "ACTIVE");
     Trigger::post(Trigger::JOB_ACTIVE, job);
-    job.insert(*activeq.next);
+    job.insert(batch.jobs);
 }
 
 /*
@@ -1783,6 +1993,14 @@ faxQueueApp::submitJob(Job& job, FaxRequest& req, bool checkState)
     }
     time_t now = Sys::now();
     if (req.killtime <= now) {
+	/*
+	 * timeoutJob expects the job to be on the a QLink queue
+	 * submitJob is a special case, where often we're a new job (not
+	 * on any queue), but sometimes we're on the suspendq.
+	 */
+	QLink tmp;
+	if (! job.isOnList())
+	    job.insert(tmp);
 	timeoutJob(job, req);
 	return (false);
     }
@@ -1854,7 +2072,7 @@ faxQueueApp::submitJob(Job& job, FaxRequest& req, bool checkState)
 	setSleep(job, job.tts);
     } else {					// ready to go now
 	job.startKillTimer(req.killtime);
-	setReadyToRun(job, false);		// We never wait on submit
+	setReadyToRun(job, req, false);		// We never wait on submit
     }
     updateRequest(req, job);
     return (true);
@@ -1889,6 +2107,17 @@ faxQueueApp::suspendJob(Job& job, bool abortActive)
 	return (false);
     switch (job.state) {
     case FaxRequest::state_active:
+	/*
+	 * We can't suspend the job if it's active, but not the current
+	 * one.  If we did, users would be able to kill other users jobs.
+	 * Unfortunately, faxq doesn't have a way to communicate this to
+	 * hfaxd - we just have to hope they can see the logs.
+	 */
+	if (job.pid == 0)
+	{
+	    traceJob(job, "Cannot kill job that is batched but not active");
+	    return false;
+	}
 	/*
 	 * Job is being handled by a subprocess; optionally
 	 * signal the process and wait for it to terminate
@@ -2030,8 +2259,6 @@ faxQueueApp::delayJob(Job& job, FaxRequest& req, const char* mesg, time_t tts)
 	notifySender(job, Job::requeued); 
     Trigger::post(Trigger::JOB_DELAYED, job);
     setSleep(job, tts);
-    if (job.modem != NULL)
-	releaseModem(job);
 }
 
 void
@@ -2213,12 +2440,16 @@ void
 faxQueueApp::runJob(Job& job)
 {
     job.remove();
-    setReadyToRun(job, jobCtrlWait);
     FaxRequest* req = readRequest(job);
-    if (req) {
-    	updateRequest(*req, job);
-    	delete req;
+    if (! req) {
+	logError("JOB %s: qfile vanished while moving to runq",
+		(const char*)job.jobid);
+	setDead(job);
+	return;
     }
+    setReadyToRun(job, *req, jobCtrlWait);
+    updateRequest(*req, job);
+    delete req;
 }
 
 /*
@@ -2320,7 +2551,7 @@ faxQueueApp::runScheduler()
 	for (QLink* ql = runq.next; ql != &runq; ql = ql->next)
 	{
 	    DestInfo* dp = (DestInfo*)ql;
-	    traceQueue(*dp, "Scheduling");
+	    traceQueue(*dp, "Picking next job");
 
 	    if (dp->readyQ.isEmpty() )
 	    {
@@ -2330,6 +2561,7 @@ faxQueueApp::runScheduler()
 		 * the ql = ql->next list is kept working when we
 		 * remove dip from the QLink list.
 		 */
+		traceQueue(*dp, "Empty - removing");
 		QLink* tmp = ql->next;
 		dp->remove();
 		dp->insert(destq);
@@ -2394,7 +2626,7 @@ faxQueueApp::runScheduler()
 		 * also assumed to take place asynchronously in
 		 * the context of the job's processing.
 		 */
-		processJob(job, req, *dp);
+		startBatch(job.modem, job, req, *dp);
 	    } else				// leave job on run queue
 		delete req;
 	}
@@ -2429,7 +2661,7 @@ faxQueueApp::runScheduler()
      * and make sure that we've processed the deadq, so this
      * goes at the end of the runSchedule() loop.
      */
-    if (quit && activeq.next == &activeq) {
+    if (quit && batchq.next == &batchq) {
 	for (DestInfoDictIter diter(destJobs); diter.notDone(); diter++)
 	{
 	    DestInfo& di(diter.value());
@@ -2474,14 +2706,13 @@ faxQueueApp::scheduling (void)
 bool
 faxQueueApp::assignModem(Job& job)
 {
-    fxAssert(job.modem == NULL, "Assigning modem to job that already has one");
-
     bool retryModemLookup;
     do {
 	retryModemLookup = false;
 	Modem* modem = Modem::findModem(job);
 	if (modem) {
-	    if (modem->assign(job)) {
+	    if (modem->assign()) {
+		job.modem = modem;
 		Trigger::post(Trigger::MODEM_ASSIGN, *modem);
 		return (true);
 	    }
@@ -2511,11 +2742,10 @@ faxQueueApp::assignModem(Job& job)
  * else to be processed.
  */
 void
-faxQueueApp::releaseModem(Job& job)
+faxQueueApp::releaseModem(Modem& modem)
 {
-    Trigger::post(Trigger::MODEM_RELEASE, *job.modem);
-    job.modem->release();
-    job.modem = NULL;
+    Trigger::post(Trigger::MODEM_RELEASE, modem);
+    modem.release();
     pokeScheduler();
 }
 
@@ -2900,6 +3130,17 @@ faxQueueApp::FIFOJobMessage(const fxStr& jobid, const char* msg)
     }
     switch (msg[0]) {
     case 'c':			// call placed
+	if (jp->pid == 0)
+	{
+	    /*
+	     * We've now started a new job as part of a batch.
+	     * This means we can "finish" the prevous job.
+	     */
+	    Job* ojp = (Job*)jp->prev;
+	    jp->start = Sys::now();
+	    jp->pid = ojp->pid;
+	    doneJob(*ojp);
+	}
 	Trigger::post(Trigger::SEND_CALL, *jp);
 	break;
     case 'C':			// call connected with fax
@@ -3451,6 +3692,17 @@ faxQueueApp::showDebugState(void)
 	}
     }
 
+    traceServer("DEBUG: batchq(%p) next %p", &batchq, batchq.next);
+    for (QLink* ql = batchq.next; ql != &batchq; ql = ql->next)
+    {
+	Batch& batch = *(Batch*)ql;
+	for (JobIter iter(batch.jobs); iter.notDone(); iter++)
+	{
+	    Job& job(iter);
+	    traceJob(job, "In active batch");
+	}
+    }
+
     traceServer("DEBUG: destq(%p) next %p", &destq, destq.next);
     for (QLink* ql = destq.next; ql != &destq; ql = ql->next)
     {
@@ -3477,15 +3729,11 @@ faxQueueApp::showDebugState(void)
 	Job& job(iter);
 	traceJob(job, "In suspend queue");
     }
-
-    traceServer("DEBUG: activeq(%p) next %p", &activeq, activeq.next);
-    for (JobIter iter(activeq); iter.notDone(); iter++)
-    {
-	Job& job(iter);
-	traceJob(job, "In active queue");
-    }
-
     traceServer("DEBUG: inSchedule: %s", inSchedule ? "YES" : "NO");
+
+    // This is a hack to easlily *poke* it at any time we want to force
+    // a runSchedule() for debugging purposes
+    pokeScheduler();
 }
 
 

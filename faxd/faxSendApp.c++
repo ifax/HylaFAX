@@ -144,95 +144,76 @@ faxSendApp::send(const char** filenames, int num)
 		 */
 		bool reject;
 		if (req->readQFile(reject) && !reject) {
-		    if (status == send_done) {		// only if the previous job in batch succeeded
 
-			FaxMachineInfo info;
-			info.updateConfig(canonicalizePhoneNumber(req->number));
-			FaxAcctInfo ai;
+		    FaxMachineInfo info;
+		    info.updateConfig(canonicalizePhoneNumber(req->number));
+		    FaxAcctInfo ai;
 
-			ai.start = Sys::now();
+		    ai.start = Sys::now();
 
-			/*
-			 * Force any DesiredDF/BR/EC/ST options in the configuration
-			 * files (i.e. JobControls) to take precedence over
-			 * any user-specified settings.  This shouldn't cause
-			 * too many problems, hopefully, since their usage should
-			 * be fairly rare either by configuration settings or by
-			 * user-specification.
-			 */
+		    /*
+		     * Force any DesiredDF/BR/EC/ST options in the configuration
+		     * files (i.e. JobControls) to take precedence over
+		     * any user-specified settings.  This shouldn't cause
+		     * too many problems, hopefully, since their usage should
+		     * be fairly rare either by configuration settings or by
+		     * user-specification.
+		     */
 
-			if (desiredDF != (u_int) -1)
-			    req->desireddf = desiredDF;
-			if (desiredBR != (u_int) -1)
-			    req->desiredbr = desiredBR;
-			if (desiredEC != (u_int) -1)
-			    req->desiredec = desiredEC;
-			if (desiredST != (u_int) -1)
-			    req->desiredst = desiredST;
+		    if (desiredDF != (u_int) -1)
+			req->desireddf = desiredDF;
+		    if (desiredBR != (u_int) -1)
+			req->desiredbr = desiredBR;
+		    if (desiredEC != (u_int) -1)
+			req->desiredec = desiredEC;
+		    if (desiredST != (u_int) -1)
+			req->desiredst = desiredST;
 
-			req->commid = batchcommid;		// pass commid on...
+		    req->commid = batchcommid;		// pass commid on...
 
-			if (useJobTSI && req->tsi != "")
-			    FaxServer::setLocalIdentifier(req->tsi);
+		    if (useJobTSI && req->tsi != "")
+			FaxServer::setLocalIdentifier(req->tsi);
 
-			FaxServer::sendFax(*req, info, ai, batched);
+		    FaxServer::sendFax(*req, info, ai, batched);
 
-			batchcommid = req->commid;		// ... to all batched jobs
+		    batchcommid = req->commid;		// ... to all batched jobs
 
-			ai.duration = Sys::now() - ai.start;
-			ai.conntime = getConnectTime();
-			ai.commid = req->commid;
-			ai.device = getModemDeviceID();
-			ai.dest = req->external;
-			ai.jobid = req->jobid;
-			ai.jobtag = req->jobtag;
-			ai.user = req->mailaddr;
-			ai.csi = info.getCSI();
-			CallID empty_callid;
-			ai.callid = empty_callid;
-			ai.owner = req->owner;
-			if (req->status == send_done)
-			    ai.status = "";
-			else {
-			    notice = req->notice;
-			    ai.status = req->notice;
-			    retrybatchtts = req->tts;
-			}
-			if (!ai.record("SEND"))
-			    logError("Error writing SEND accounting record, dest=%s",
-				(const char*) ai.dest);
-
-			status = req->status;
-		    } else {
-			/*
-			 * This job cannot get sent right now due to an error in a previous
-			 * job in the batch.
-			 *
-			 * In the event that the previous error was not an in-job error (e.g.
-			 * a busy signal) then we treat that error as if it applies to all jobs.
-			 * We "keep the batch together" by synchronizing their tts.
-			 *
-			 * In the event that the previous error was an in-job error, then the
-			 * previous job processing is essentially blocking this job from 
-			 * processing, and so we set the notice accordingly and don't increase
-			 * the dial-count.  In case batching itself triggered the problem, we 
-			 * don't set the tts, allowing faxq to reschedule the job, expecting that
-			 * to disassemble and "shuffle" the entire batch.
-			 */
-			if (notice == "No carrier detected" || 
-			    notice == "Busy signal detected" || 
-			    notice == "No answer from remote") {
-			    req->notice = notice;
-			    req->status = send_retry;
-			    req->tts = retrybatchtts;
-			    req->totdials++;
-			} else {
-			    req->notice = "Blocked by another job";
-			    req->status = send_retry;
-			}
+		    ai.duration = Sys::now() - ai.start;
+		    ai.conntime = getConnectTime();
+		    ai.commid = req->commid;
+		    ai.device = getModemDeviceID();
+		    ai.dest = req->external;
+		    ai.jobid = req->jobid;
+		    ai.jobtag = req->jobtag;
+		    ai.user = req->mailaddr;
+		    ai.csi = info.getCSI();
+		    CallID empty_callid;
+		    ai.callid = empty_callid;
+		    ai.owner = req->owner;
+		    if (req->status == send_done)
+			ai.status = "";
+		    else {
+			notice = req->notice;
+			ai.status = req->notice;
+			retrybatchtts = req->tts;
 		    }
+		    if (!ai.record("SEND"))
+			logError("Error writing SEND accounting record, dest=%s",
+			    (const char*) ai.dest);
+
+		    status = req->status;
+
 		    req->writeQFile();		// update on-disk copy
 		    delete req;
+
+		    /*
+		     * If we weren't successfull sending a previous job in the
+		     * batch, there is not use touching anything else.  Leave
+		     * it all to faxq to reschedule according to it's
+		     * requirements.
+		     */
+		    if (status != send_done)
+			break;
 		} else {
 		    delete req;
 		    logError("Could not read request file");

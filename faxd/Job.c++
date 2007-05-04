@@ -40,16 +40,6 @@ JobTTSHandler::~JobTTSHandler() {}
 void JobTTSHandler::timerExpired(long, long)
     { faxQueueApp::instance().runJob(job); }
 
-JobPrepareHandler::JobPrepareHandler(Job& j) : job(j) {}
-JobPrepareHandler::~JobPrepareHandler() {}
-void JobPrepareHandler::childStatus(pid_t, int status)
-    { faxQueueApp::instance().prepareJobDone(job, status); }
-
-JobSendHandler::JobSendHandler(Job& j) : job(j) {}
-JobSendHandler::~JobSendHandler() {}
-void JobSendHandler::childStatus(pid_t, int status)
-    { faxQueueApp::instance().sendJobDone(job, status); }
-
 JobCtrlHandler::JobCtrlHandler(Job& j) : job(j) {}
 JobCtrlHandler::~JobCtrlHandler() {}
 
@@ -90,8 +80,6 @@ JobControlInfo Job::defJCI;
 Job::Job(const FaxRequest& req)
     : killHandler(*this)
     , ttsHandler(*this)
-    , prepareHandler(*this)
-    , sendHandler(*this)
     , ctrlHandler(*this)
     , file(req.qfile)
     , jobid(req.jobid)
@@ -103,7 +91,6 @@ Job::Job(const FaxRequest& req)
     state = req.state;
 
     jci = NULL;
-    dnext = NULL;
     modem = NULL;
     suspendPending = false;
     registry[jobid] = this;
@@ -140,13 +127,6 @@ Job::update(const FaxRequest& req)
     device = req.modem;
 }
 
-Job*
-Job::getJobByID(const fxStr& id)
-{
-    Job** jpp = (Job**) registry.find(id);
-    return (jpp ? *jpp : (Job*) NULL);
-}
-
 bool
 Job::higherPriority (const Job& other) const
 {
@@ -155,6 +135,13 @@ Job::higherPriority (const Job& other) const
     if (pri == other.pri && tts <= other.tts)
 	return true;
     return false;
+}
+
+Job*
+Job::getJobByID(const fxStr& id)
+{
+    Job** jpp = (Job**) registry.find(id);
+    return (jpp ? *jpp : (Job*) NULL);
 }
 
 void
@@ -181,18 +168,6 @@ void
 Job::stopTTSTimer()
 {
     Dispatcher::instance().stopTimer(&ttsHandler);
-}
-
-void
-Job::startPrepare(pid_t p)
-{
-    Dispatcher::instance().startChild(pid = p, &prepareHandler);
-}
-
-void
-Job::startSend(pid_t p)
-{
-    Dispatcher::instance().startChild(pid = p, &sendHandler);
 }
 
 void
@@ -257,4 +232,3 @@ Job::encode(fxStackBuffer& buf) const
     buf.put(device, device.length()+1);
     buf.put(commid, commid.length()+1);
 }
-

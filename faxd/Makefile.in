@@ -61,6 +61,7 @@ C++FILES=ClassModem.c++ \
 	Class2Send.c++ \
 	CopyQuality.c++ \
 	JobControl.c++ \
+	Batch.c++ \
 	DestInfo.c++ \
 	FaxAcctInfo.c++ \
 	FaxFont.c++ \
@@ -141,6 +142,7 @@ SERVER_OBJS=faxApp.o \
 	ServerConfig.o
 FAXQOBJS=JobControl.o \
 	DestInfo.o \
+	Batch.o \
 	Job.o \
 	HylaClient.o \
 	Modem.o \

@@ -225,11 +225,10 @@ Modem::findModem(const Job& job)
  * Assign a modem for use by a job.
  */
 bool
-Modem::assign(Job& job)
+Modem::assign()
 {
     if (lock->lock()) {		// lock modem for use
 	state = BUSY;		// mark in use
-	job.modem = this;	// assign modem to job
 	send("L", 2, false);
 	return (true);
     } else {

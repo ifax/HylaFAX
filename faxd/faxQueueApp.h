@@ -32,6 +32,7 @@
 #include "FaxConfig.h"
 #include "IOHandler.h"
 #include "Job.h"
+#include "Batch.h"
 #include "DestInfo.h"
 #include "JobControl.h"
 #include "StrDict.h"
@@ -134,7 +135,7 @@ private:
     int		fifo;			// fifo job queue interface
     QLink	runq;			// list of DestInfo ready to run
     QLink	destq;			// list of DestInfo with no ready jobs
-    QLink	activeq;		// jobs actively being processed
+    QLink	batchq;			// batches actively being processed
     QLink	deadq;			// jobs waiting to be reaped
     QLink	suspendq;		// jobs suspending from scheduling
     QLink	jcontrolq;		// jobs actively running jobcontrol
@@ -151,9 +152,8 @@ private:
 
     friend class JobTTSHandler;		// for access to runJob
     friend class JobKillHandler;	// for acccess to timeoutJob
-    friend class JobPrepareHandler;	// for acccess to prepareJobDone
-    friend class JobSendHandler;	// for acccess to sendJobDone
     friend class JobCtrlHandler;	// for acccess to ctrlJobDone
+    friend class Batch;			// for acccess to prepareDone and senddone
     friend class faxQueueApp::SchedTimeout;// for access to runScheduler
     friend class ModemLockWaitHandler;	// for access to pollForModemLock
 
@@ -168,7 +168,7 @@ private:
 // modem support
     void	scanForModems();
     bool	assignModem(Job& job);
-    void	releaseModem(Job& job);
+    void	releaseModem(Modem& modem);
     void	notifyModemWedged(Modem&);
     void	pollForModemLock(Modem& modem);
 // diagnostic and tracing interfaces
@@ -207,10 +207,9 @@ private:
 // job management interfaces
     bool	isJobSendOK(Job& job, FaxRequest* req);
     void	processJob(Job& job);
-    void	processJob(Job&, FaxRequest* req, DestInfo& di);
-    void	sendJobStart(Job&, FaxRequest*);
-    void	sendJobDone(Job& job, int status);
+    void	processJob(Batch&, Job&, FaxRequest* req);
     void	sendJobDone(Job& job, FaxRequest* req);
+    void	doneJob(Job& job);
     void	blockJob(Job&, FaxRequest&, const char*);
     void	delayJob(Job&, FaxRequest&, const char*, time_t);
     void	rejectJob(Job& job, FaxRequest& req, const fxStr& reason);
@@ -218,11 +217,18 @@ private:
     bool	suspendJob(const fxStr& jobid, bool abortActive);
     void	rejectSubmission(Job&, FaxRequest&, const fxStr& reason);
 
-    void	setReadyToRun(Job& job, bool wait);
-    void	setReady(Job& job);
+    void	startBatch(Modem*, Job&, FaxRequest*, DestInfo&);
+    void	fillBatch (Batch&);
+    bool	canJobBatch(Batch& batch, Job& job, FaxRequest* req);
+
+    void	sendStart(Batch&);
+    void	sendDone(Batch&, int status);
+
+    void	setReadyToRun(Job& job, FaxRequest& req, bool wait);
+    void	setReady(Job& job, FaxRequest& req);
     void	setSleep(Job& job, time_t tts);
     void	setDead(Job& job);
-    void	setActive(Job& job);
+    void	setActive(Batch& batch, Job& job);
     void	setSuspend(Job& job);
     bool	submitJob(FaxRequest&, bool checkState = false);
     bool	submitJob(Job& job, FaxRequest& req, bool checkState = false);
@@ -241,9 +247,8 @@ private:
 // job preparation stuff
     bool	prepareJobNeeded(Job&, FaxRequest&, JobStatus&);
     static void prepareCleanup(int s);
-    void	prepareJobStart(Job&, FaxRequest*,
-		    FaxMachineInfo&);
-    void	prepareJobDone(Job&, int status);
+    void	prepareStart(Batch&, Job&, FaxRequest*);
+    void	prepareDone(Batch&, int status);
     JobStatus	prepareJob(Job& job, FaxRequest& req,
 		    const FaxMachineInfo&);
     JobStatus	convertDocument(Job&,

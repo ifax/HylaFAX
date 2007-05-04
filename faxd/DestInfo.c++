@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE.
  */
 #include "DestInfo.h"
-#include "Job.h"
+#include "Batch.h"
 #include "Str.h"
 
 DestInfo::DestInfo()
@@ -45,7 +45,7 @@ DestInfo::~DestInfo()
 {
     fxAssert(readyQ.isEmpty(), "DestInfo destructed with jobs on it's readyQ");
     fxAssert(sleepQ.isEmpty(), "DestInfo destructed with jobs on it's sleepQ");
-    fxAssert(activeCount == 0, "DestInfo destructed with jobs active");
+    fxAssert(activeCount == 0, "DestInfo destructed with batches active");
     if (isOnList())
 	remove();
 }
@@ -105,56 +105,56 @@ DestInfo::isEmpty() const
 }
 
 bool
-DestInfo::isActive(Job& job) const
+DestInfo::isActive(Batch& batch) const
 {
     if (running == NULL)
 	return (false);
-    else if (running == &job)
+    else if (running == &batch)
 	return (true);
     else {
-	for (Job* jp = running->dnext; jp != NULL; jp = jp->dnext)
-	    if (jp == &job)
+	for (Batch* bp = running->dnext; bp != NULL; bp = bp->dnext)
+	    if (bp == &batch)
 		return (true);
 	return (false);
     }
 }
 
 void
-DestInfo::active(Job& job)
+DestInfo::active(Batch& batch)
 {
     if (running == NULL) {			// list empty
-	running = &job;
-	job.dnext = NULL;
+	running = &batch;
+	batch.dnext = NULL;
 	activeCount++;
-    } else if (running == &job) {		// job on list already
+    } else if (running == &batch) {		// batch on list already
 	return;
     } else {					// general case
-	Job* jp;
-	Job** jpp;
-	for (jpp = &running->dnext; (jp = *jpp) != NULL; jpp = &jp->dnext)
-	    if (jp == &job)
+	Batch* bp;
+	Batch** bpp;
+	for (bpp = &running->dnext; (bp = *bpp) != NULL; bpp = &bp->dnext)
+	    if (bp == &batch)
 		return;
-	*jpp = &job;
-	job.dnext = NULL;
+	*bpp = &batch;
+	batch.dnext = NULL;
 	activeCount++;
     }
 }
 
 void
-DestInfo::done(Job& job)
+DestInfo::done(Batch& batch)
 {
-    if (running == &job) {			// job at head of list
-	running = job.dnext;
-	job.dnext = NULL;
+    if (running == &batch) {			// batch at head of list
+	running = batch.dnext;
+	batch.dnext = NULL;
 	activeCount--;
     } else if (running == NULL) {		// list empty
 	return;
     } else {					// general case
-	Job* jp;
-	for (Job** jpp = &running->dnext; (jp = *jpp) != NULL; jpp = &jp->dnext)
-	    if (jp == &job) {
-		*jpp = job.dnext;
-		job.dnext = NULL;
+	Batch* bp;
+	for (Batch** bpp = &running->dnext; (bp = *bpp) != NULL; bpp = &bp->dnext)
+	    if (bp == &batch) {
+		*bpp = batch.dnext;
+		batch.dnext = NULL;
 		activeCount--;
 		break;
 	    }

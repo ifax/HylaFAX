@@ -32,7 +32,7 @@
 #include "FaxMachineInfo.h"
 #include "Dictionary.h"
 
-class Job;
+class Batch;
 class fxStr;
 
 /*
@@ -53,7 +53,7 @@ class DestInfo
 private:
     u_short		activeCount;	// count of active jobs to destination
     FaxMachineInfo	info;		// remote machine capabilities and such
-    Job*		running;	// jobs to dest being processed
+    Batch*		running;	// jobs to dest being processed
 public:
     QLink		readyQ;		// list of ready jobs
     QLink		sleepQ;		// list of sleeping jobs
@@ -68,9 +68,9 @@ public:
 
     bool isEmpty() const;		// true if any jobs referenced
 
-    bool isActive(Job&) const;	// true if job is considered active
-    void active(Job&);			// set job active to destination
-    void done(Job&);			// remove job from active set
+    bool isActive(Batch&) const;	// true if job is considered active
+    void active(Batch&);			// set job active to destination
+    void done(Batch&);			// remove job from active set
 
     FaxMachineInfo& getInfo(const fxStr& number);
     void updateConfig();		// write info file if necessary

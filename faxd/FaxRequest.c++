@@ -215,6 +215,15 @@ FaxRequest::readQFile(bool& rejectJob)
 	return (false);
     }
     /*
+     * We set status to send_nobatch, just incase whatever is
+     * writing the QFile hasn't.  This probaby only happens if
+     * and old faxsend copy is being used that doesn't understand
+     * the status field, but we'll try and handle that gracefully,
+     * in a way which will cause least trouble.
+     */
+    status = send_nobatch;
+
+    /*
      * Force \n-termination of the last line in the
      * file.  This simplifies the logic below by always
      * being able to look for \n-termination and not

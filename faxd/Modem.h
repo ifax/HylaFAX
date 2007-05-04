@@ -112,7 +112,7 @@ public:
     static Modem* findModem(const Job& job);
     bool isInGroup(const fxStr& mgroup);
 
-    bool assign(Job&);		// assign modem
+    bool assign();			// assign modem
     void release();			// release modem
 
     void startLockPolling(long sec);	// initiate polling thread

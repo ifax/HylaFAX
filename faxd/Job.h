@@ -35,6 +35,7 @@
 #include "Str.h"
 
 typedef unsigned int JobStatus;
+class Batch;
 class Modem;
 class Job;
 class FaxRequest;
@@ -60,22 +61,7 @@ public:
     ~JobTTSHandler();
     void timerExpired(long, long);
 };
-class JobPrepareHandler : public IOHandler {
-private:
-    Job& job;
-public:
-    JobPrepareHandler(Job&);
-    ~JobPrepareHandler();
-    void childStatus(pid_t, int);
-};
-class JobSendHandler : public IOHandler {
-private:
-    Job& job;
-public:
-    JobSendHandler(Job&);
-    ~JobSendHandler();
-    void childStatus(pid_t, int);
-};
+
 
 /*
  * This does sligltly more than the other PID handlers.
@@ -103,8 +89,6 @@ class Job : public QLink {
 private:
     JobKillHandler	killHandler;	// Dispatcher handler for kill timeout
     JobTTSHandler	ttsHandler;	// Dispatcher handler for tts timeout
-    JobPrepareHandler	prepareHandler;	// Dispatcher handler for job prep work
-    JobSendHandler	sendHandler;	// Dispatcher handler for job send work
     JobCtrlHandler	ctrlHandler;	// Dispatcher handler for job control work
 
     static JobDict registry;
@@ -144,7 +128,6 @@ public:
     fxStr	dest;		// canonical destination identity
     fxStr	device;		// modem to be used
     fxStr	commid;		// commid of last call
-    Job*	dnext;		// linked list by destination
     Modem*	modem;		// modem/server currently assigned to job
     QLink	triggers;	// waiting specifically on this job
 

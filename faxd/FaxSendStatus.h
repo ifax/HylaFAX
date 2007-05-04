@@ -35,7 +35,8 @@ enum FaxSendStatus {
     send_reformat,		// retry with reformatted documents
     send_v34fail,		// failed due to V.34-Fax trouble
     send_v17fail,		// failed due to V.17-Fax trouble
-    send_batchfail		// batch failure, retry
+    send_batchfail,		// batch failure, retry
+    send_nobatch,		// Nothing happend to this job in the batch
 };
 #define	send_ok	send_done
 #endif /* _FaxSendStatus_ */
