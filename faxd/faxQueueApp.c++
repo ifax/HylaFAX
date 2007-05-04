@@ -264,7 +264,18 @@ faxQueueApp::canJobBatch(Batch& batch, Job& job, FaxRequest* req)
 	return true;
 
     if (! batch.modem->isInGroup(req->modem))
+    {
+	traceJob(job, "Not added to BATCH because specified modem not compatible");
 	return false;
+    }
+
+    if (! batch.firstJob().getJCI().isCompatible(job.getJCI()))
+    {
+	traceJob(job, "Not added to BATCH because JobControlInfo not compatible");
+	return false;
+    }
+
+    return true;
 }
 
 

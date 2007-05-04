@@ -65,6 +65,9 @@ public:
     JobControlInfo(const JobControlInfo& other);
     ~JobControlInfo();
 
+
+    bool isCompatible (const JobControlInfo& other) const;
+
     void parseEntry(const char* tag, const char* value, bool quoted);
 
     u_int getMaxConcurrentCalls() const;
@@ -82,6 +85,5 @@ public:
     virtual void configError(const char*, ...);
     virtual void configTrace(const char*, ...);
 };
-inline const fxStr& JobControlInfo::getArgs() const	{ return args; }
 
 #endif /* _JobControl_ */

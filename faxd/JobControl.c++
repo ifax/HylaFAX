@@ -79,6 +79,15 @@ JobControlInfo::JobControlInfo (const fxStr& buffer)
 
 JobControlInfo::~JobControlInfo() {}
 
+bool
+JobControlInfo::isCompatible (const JobControlInfo& other) const
+{
+    if (args != other.args)
+	return false;
+
+    return true;
+}
+
 void
 JobControlInfo::configError (const char* fmt, ...)
 {
@@ -207,4 +216,9 @@ JobControlInfo::getVRes() const
 	return vres;
     else
 	return 0;
+}
+
+const fxStr& JobControlInfo::getArgs() const
+{
+    return args;
 }
