@@ -71,14 +71,17 @@ private:
     fxStr	mimeConverters;		// pathname to MIME converter scripts
     fxStr	mailProlog;		// site-specific prologue definitions
     fxStr	clientProlog;		// client-specific prologue info
-    fxStr   pageSize;       // record specified page size
+    fxStr  	pageSize;       // record specified page size
     fxStr	msgDivider;		// digest message divider
     fxStrArray	tmps;			// temp files
+    fxStr	tmpDir;			// directory for temp files
+
+    fxStr	mimeid;			// For identifing mime parts uniquely
 
     MySendFaxClient* client;		// for direct delivery
     SendFaxJob*	job;			// reference to outbound job
     fxStr	mailUser;		// user ID for contacting server
-    fxStr	notify;			// notificaton request
+    fxStr	notify;			// notification request
     bool	autoCoverPage;		// make cover page for direct delivery
     bool	formatEnvHeaders;	// format envelope headers
     bool	trimText;		// trim text parts
@@ -89,7 +92,7 @@ private:
     void formatMessage(FILE* fd, MIMEState& mime, MsgFmt& msg);
     void formatApplication(FILE* fd, MIMEState& mime);
     void formatDiscarded(MIMEState& mime);
-    bool formatWithExternal(FILE* fd, const fxStr& app, MIMEState& mime);
+    void formatAttachment (FILE* fd, MIMEState& mime);
 
     void emitClientPrologue(FILE*);
 
@@ -115,17 +118,23 @@ public:
 };
 
 faxMailApp::faxMailApp()
+  : tmpDir(_PATH_TMP "/faxmail.XXXXXX")
 {
     client = NULL;
 
     faxMailApp::setupConfig();		// NB: virtual
     setTitle("HylaFAX-Mail");
+
+    if (Sys::mkdtemp(&tmpDir[0]) == NULL)
+	fxFatal("Cannot create temp directory %s", (const char*) tmpDir);
 }
+
 faxMailApp::~faxMailApp()
 {
     delete client;
     for (u_int i = 0, n = tmps.length(); i < n; i++)
 	Sys::unlink(tmps[i]);
+    Sys::rmdir(tmpDir);
 }
 
 void
@@ -140,8 +149,7 @@ faxMailApp::run(int argc, char** argv)
     readConfig(FAX_LIBDATA "/faxmail.conf");
     readConfig(FAX_USERCONF);
 
-    bool deliver = false;
-    while ((c = Sys::getopt(argc, argv, "12b:cdf:H:i:M:nNp:rRs:t:Tu:vW:")) != -1)
+    while ((c = Sys::getopt(argc, argv, "12b:cf:H:i:M:nNp:rRs:t:Tu:vW:")) != -1)
 	switch (c) {
 	case '1': case '2':		// format in 1 or 2 columns
 	    setNumberOfColumns(c - '0');
@@ -151,9 +159,6 @@ faxMailApp::run(int argc, char** argv)
 	    break;
 	case 'c':			// truncate lines
 	    setLineWrapping(false);
-	    break;
-	case 'd':			// enable direct delivery
-	    deliver = true;
 	    break;
 	case 'f':			// default font for text body
 	    setTextFont(optarg);
@@ -214,48 +219,47 @@ faxMailApp::run(int argc, char** argv)
     else
 	setPageMargins("t=0.6in,b=0.25in");
 
-    if (deliver) {
-	/*
-	 * Direct delivery was specified on the command line.
-	 * Setup to submit the formatted facsimile directly
-	 * to a server.
-	 */
-	client = new MySendFaxClient;
-	client->setup(verbose);
 
-	/*
-	 * Setup the destination (dialstring and
-	 * optionally a receipient).  Dialing stuff
-	 * given on the command line is replaced by
-	 * information in the envelope so that strings
-	 * that contain characters that are invalid
-	 * email addresses can be specified.
-	 */
-	job = &client->addJob();
-	if (optind < argc) {			// specified on command line
-	    fxStr dest(argv[optind]);		// [person@]number
-	    u_int l = dest.next(0, '@');
-	    if (l != dest.length()) {
-		job->setCoverName(dest.head(l));
-		dest.cut(0, l+1);
-	    }
-	    job->setDialString(dest);
+    /*
+     * Setup to submit the formatted facsimile directly
+     * to a server.
+     */
+    client = new MySendFaxClient;
+    client->setup(verbose);
+
+    /*
+     * Setup the destination (dialstring and
+     * optionally a receipient).  Dialing stuff
+     * given on the command line is replaced by
+     * information in the envelope so that strings
+     * that contain characters that are invalid
+     * email addresses can be specified.
+     */
+    job = &client->addJob();
+    if (optind < argc) {			// specified on command line
+	fxStr dest(argv[optind]);		// [person@]number
+	u_int l = dest.next(0, '@');
+	if (l != dest.length()) {
+	    job->setCoverName(dest.head(l));
+	    dest.cut(0, l+1);
 	}
-	const fxStr* s;
-	if ((s = findHeader("x-fax-dialstring")))  // dialstring in envelope
-	    job->setDialString(*s);
-	if (job->getDialString() == "")
-	    fxFatal("No Destination/Dialstring specified");
+	job->setDialString(dest);
+    }
+    const fxStr* s;
+    if ((s = findHeader("x-fax-dialstring")))  // dialstring in envelope
+	job->setDialString(*s);
+    if (job->getDialString() == "")
+	fxFatal("No Destination/Dialstring specified");
 
-	/*
-	 * Establish the sender's identity.
-	 */
-	if (optind+1 < argc) {
-	    client->setFromIdentity(argv[optind+1]);
-	} else if ((s = findHeader("from"))) {
-	    client->setFromIdentity(*s);
-	} else {
-	    fxFatal("No From/Sender identity specified");
+    /*
+     * Establish the sender's identity.
+     */
+    if (optind+1 < argc) {
+	client->setFromIdentity(argv[optind+1]);
+    } else if ((s = findHeader("from"))) {
+	client->setFromIdentity(*s);
+    } else {
+	fxFatal("No From/Sender identity specified");
     }
 
     if (pageSize != "")
@@ -263,85 +267,82 @@ faxMailApp::run(int argc, char** argv)
     if (notify != "")
 	job->setNotification((const char*)notify);
 
-	/*
-	 * Scan envelope for any meta-headers that
-	 * control how job submission is to be done.
-	 */
-	job->setAutoCoverPage(autoCoverPage);
-	for (u_int i = 0, n = fields.length();  i < n; i++) {
-	    const fxStr& field = fields[i];
-	    if (strncasecmp(field, "x-fax-", 6) != 0)
-		continue;
-	    fxStr tag(field.tail(field.length() - 6));
-	    tag.lowercase();
-	    if (job->setConfigItem(tag, MsgFmt::headers[i]))
-		;
-	    else if (client->setConfigItem(tag, MsgFmt::headers[i]))
-		;
-	}
-
-	/*
-	 * If a cover page is desired fill in any info
-	 * from the envelope that might be useful.
-	 */
-	if (job->getAutoCoverPage()) {
-	    /*
-	     * If nothing has been specified for a
-	     * regarding field on the cover page and
-	     * a subject line exists, use that info.
-	     */
-	    if (job->getCoverRegarding() == "" && (s = findHeader("subject"))) {
-		fxStr subj(*s);
-		while (subj.length() > 3 && strncasecmp(subj, "Re:", 3) == 0)
-		    subj.remove(0, subj.skip(3, " \t"));
-		job->setCoverRegarding(subj);
-	    }
-	    /*
-	     * Likewise for the receipient name.
-	     */
-	    if (job->getCoverName() == "" && (s = findHeader("to"))) {
-		/*
-		 * Try to extract a user name from the to information.
-		 */
-		fxStr to(*s);
-		u_int l = to.next(0, '<');
-		u_int tl = to.length();
-		if (l == tl) {
-		    l = to.next(0, '(');
-		    if (l != tl)		// joe@foobar (Joe Schmo)
-			l++, to = to.token(l, ')');
-		    else {			// joe@foobar
-			l = to.next(0, '@');
-			if (l != tl)
-			    to = to.head(l);
-		    }
-		} else {			// Joe Schmo <joe@foobar>
-		    to = to.head(l);
-		}
-		// strip any leading&trailing white space
-		to.remove(0, to.skip(0, " \t"));
-		to.resize(to.skipR(to.length(), " \t"));
-		job->setCoverName(to);
-	    }
-	}
-
-	/*
-	 * Redirect formatted output to a temp
-	 * file and setup delivery of the file.
-	 */
-    const char* templ = _PATH_TMP "/faxmail.XXXXXX";
-    char* buff = new char[strlen(templ) + 1];
-    strcpy(buff, templ);
-    int fd = Sys::mkstemp(buff);
-	if (fd < 0) {
-        fxFatal("Cannot create temp file %s", (const char*) buff);
+    /*
+     * Scan envelope for any meta-headers that
+     * control how job submission is to be done.
+     */
+    job->setAutoCoverPage(autoCoverPage);
+    for (u_int i = 0, n = fields.length();  i < n; i++) {
+	const fxStr& field = fields[i];
+	if (strncasecmp(field, "x-fax-", 6) != 0)
+	    continue;
+	fxStr tag(field.tail(field.length() - 6));
+	tag.lowercase();
+	if (job->setConfigItem(tag, MsgFmt::headers[i]))
+	    ;
+	else if (client->setConfigItem(tag, MsgFmt::headers[i]))
+	    ;
     }
-	tmps.append(buff);
-	client->addFile(buff);
-    delete[] buff;
-	beginFormatting(fdopen(fd, "w"));
-    } else
-	beginFormatting(stdout);	// NB: sets up page info
+
+    /*
+     * If a cover page is desired fill in any info
+     * from the envelope that might be useful.
+     */
+    if (job->getAutoCoverPage()) {
+	/*
+	 * If nothing has been specified for a
+	 * regarding field on the cover page and
+	 * a subject line exists, use that info.
+	 */
+	if (job->getCoverRegarding() == "" && (s = findHeader("subject"))) {
+	    fxStr subj(*s);
+	    while (subj.length() > 3 && strncasecmp(subj, "Re:", 3) == 0)
+		subj.remove(0, subj.skip(3, " \t"));
+	    job->setCoverRegarding(subj);
+	}
+	/*
+	 * Likewise for the receipient name.
+	 */
+	if (job->getCoverName() == "" && (s = findHeader("to"))) {
+	    /*
+	     * Try to extract a user name from the to information.
+	     */
+	    fxStr to(*s);
+	    u_int l = to.next(0, '<');
+	    u_int tl = to.length();
+	    if (l == tl) {
+		l = to.next(0, '(');
+		if (l != tl)		// joe@foobar (Joe Schmo)
+		    l++, to = to.token(l, ')');
+		else {			// joe@foobar
+		    l = to.next(0, '@');
+		    if (l != tl)
+			to = to.head(l);
+		}
+	    } else {			// Joe Schmo <joe@foobar>
+		to = to.head(l);
+	    }
+	    // strip any leading&trailing white space
+	    to.remove(0, to.skip(0, " \t"));
+	    to.resize(to.skipR(to.length(), " \t"));
+	    job->setCoverName(to);
+	}
+    }
+
+    /*
+     * Redirect formatted output to a temp
+     * file and setup delivery of the file.
+     */
+    fxStr file = tmpDir | "/mail.ps";
+    int fd = Sys::open(file, O_RDWR | O_CREAT | O_EXCL, S_IWUSR | S_IRUSR);
+    if (fd < 0) {
+	fxFatal("Cannot create temp file %s", (const char*) file);
+    }
+    tmps.append(file);
+    client->addFile(file);
+    beginFormatting(fdopen(fd, "w"));
+
+    mimeid="part";
 
     const fxStr* version = findHeader("MIME-Version");
     if (version && *version == "1.0") {
@@ -377,7 +378,7 @@ faxMailApp::run(int argc, char** argv)
 	    client->hangupServer();
 	}
 	if (!status)
-	    fxFatal("%s", (const char*) emsg);
+	    fxFatal("unable to process message:\n\t%s", (const char*) emsg);
     }
 }
 
@@ -403,6 +404,7 @@ void
 faxMailApp::formatMIME(FILE* fd, MIMEState& mime, MsgFmt& msg)
 {
     fxStr emsg;
+
     if (mime.parse(msg, emsg)) {
 	if (verbose)
 	    mime.trace(stderr);
@@ -419,10 +421,7 @@ faxMailApp::formatMIME(FILE* fd, MIMEState& mime, MsgFmt& msg)
 	 * content types we expect to encounter.
 	 */
 	const fxStr& type = mime.getType();
-	fxStr app = mimeConverters | "/" | type | "/" | mime.getSubType();
-	if (Sys::access(app, X_OK) >= 0)
-	    formatWithExternal(fd, app, mime);
-	else if (type == "text")
+	if (type == "text")
 	    formatText(fd, mime);
 	else if (type == "application")
 	    formatApplication(fd, mime);
@@ -430,10 +429,8 @@ faxMailApp::formatMIME(FILE* fd, MIMEState& mime, MsgFmt& msg)
 	    formatMultipart(fd, mime, msg);
 	else if (type == "message")
 	    formatMessage(fd, mime, msg);
-	else {					// cannot handle, discard
-	    discardPart(fd, mime);
-	    formatDiscarded(mime);
-	}
+	else
+	    formatAttachment(fd, mime);
     } else
 	error("%s", (const char*) emsg);
 }
@@ -462,6 +459,8 @@ faxMailApp::formatText(FILE* fd, MIMEState& mime)
 void
 faxMailApp::formatMultipart(FILE* fd, MIMEState& mime, MsgFmt& msg)
 {
+    fxStr tmp(mimeid);
+    int count = 0;
     discardPart(fd, mime);			// prologue
     if (!mime.isLastPart()) {
 	bool last = false;
@@ -473,6 +472,8 @@ faxMailApp::formatMultipart(FILE* fd, MIMEState& mime, MsgFmt& msg)
 	    }
 	    ungetc(c, fd);			// push back read ahead
 
+	    count++;
+	    mimeid=fxStr::format("%s.%d", (const char*)tmp, count);
 	    MsgFmt bodyHdrs(msg);		// parse any headers
 	    bodyHdrs.parseHeaders(fd, mime.lineno);
 
@@ -481,6 +482,7 @@ faxMailApp::formatMultipart(FILE* fd, MIMEState& mime, MsgFmt& msg)
 	    last = bodyMime.isLastPart();
 	}
     }
+    mimeid=tmp;
 }
 
 /*
@@ -549,28 +551,8 @@ faxMailApp::formatApplication(FILE* fd, MIMEState& mime)
     } else if (mime.getSubType() == "x-faxmail-prolog") {
 	copyPart(fd, mime, clientProlog);	// save client PS prologue
     } else {
-	discardPart(fd, mime);
-	formatDiscarded(mime);
+	formatAttachment(fd, mime);
     }
-}
-
-/*
- * Format a MIME part using an external conversion
- * script to convert the decoded body to PostScript.
- */
-bool
-faxMailApp::formatWithExternal(FILE* fd, const fxStr& app, MIMEState& mime)
-{
-    bool ok = false;
-    if (verbose)
-	fprintf(stderr, "CONVERT: run %s\n", (const char*) app);
-    fxStr tmp;
-    if (copyPart(fd, mime, tmp)) {
-	flush();				// flush pending stuff
-	ok = runConverter(app, tmp, mime);
-	Sys::unlink(tmp);
-    }
-    return (ok);
 }
 
 /*
@@ -595,6 +577,20 @@ faxMailApp::formatDiscarded(MIMEState& mime)
 	    );
 	format((const char*)buf, buf.getLength());
     }
+}
+
+/*
+ * Format an unknown message part - we rely on
+ * typerules to do this for us
+ */
+void
+faxMailApp::formatAttachment(FILE* fd, MIMEState& mime)
+{
+    fxStr tmp = tmpDir | "/" | mimeid;
+    tmps.append(tmp);
+
+    if (copyPart(fd, mime, tmp))
+	client->addFile(tmp);
 }
 
 /*
@@ -628,7 +624,7 @@ faxMailApp::copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile)
         delete[] buff;
         tmps.append(tmpFile);
     } else {
-        ftmp = Sys::open(tmpFile, O_WRONLY|O_APPEND);
+        ftmp = Sys::open(tmpFile, O_WRONLY|O_CREAT|O_APPEND, S_IRUSR | S_IWUSR);
     }
     if (ftmp >= 0) {
         /*
@@ -661,6 +657,14 @@ faxMailApp::copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile)
 bool
 faxMailApp::runConverter(const fxStr& app, const fxStr& tmp, MIMEState& mime)
 {
+    fxStr output = tmpDir | "/" | mimeid | ".formated";
+    int fd = Sys::open(output, O_WRONLY | O_CREAT | O_EXCL, S_IWUSR | S_IRUSR);
+    if (fd < 0)
+	fxFatal("Couldn't open output file: %s", (const char*)output);
+
+    tmps.append(output);
+    client->addFile(output);
+
     const char* av[3];
     av[0] = strrchr(app, '/');
     if (av[0] == NULL)
@@ -671,6 +675,7 @@ faxMailApp::runConverter(const fxStr& app, const fxStr& tmp, MIMEState& mime)
     pid_t pid = fork();
     switch (pid) {
     case -1:				// error
+	close(fd);
 	error("Error converting %s/%s; could not fork subprocess: %s"
 	    , (const char*) mime.getType()
 	    , (const char*) mime.getSubType()
@@ -678,12 +683,14 @@ faxMailApp::runConverter(const fxStr& app, const fxStr& tmp, MIMEState& mime)
 	);
 	break;
     case 0:				// child, exec command
-	dup2(fileno(getOutputFile()), STDOUT_FILENO);
+	dup2(fd, STDOUT_FILENO);
+	close(fd);
 	Sys::execv(app, (char* const*) av);
 	_exit(-1);
 	/*NOTREACHED*/
     default:
 	int status;
+	close(fd);
 	if (Sys::waitpid(pid, status) == pid && status == 0)
 	    return (true);
 	error("Error converting %s/%s; command was \"%s %s\"; exit status %x"
