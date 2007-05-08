@@ -165,14 +165,6 @@ diff -urNad hylafax-4.3.1~/faxd/JobControl.h hylafax-4.3.1/faxd/JobControl.h
  
      // default returned on no match
      static const JobControlInfo defControlInfo;
-@@ -66,7 +67,6 @@
-     ~JobControlInfo();
- 
-     int compare(const JobControlInfo*) const;
--    void parseEntry(const char* tag, const char* value, bool quoted);
- 
-     u_int getMaxConcurrentCalls() const;
-     u_int getMaxSendPages() const;
 @@ -77,6 +77,7 @@
      time_t nextTimeToSend(time_t) const;
      int getUseXVRes() const;
@@ -196,27 +188,27 @@ diff -urNad hylafax-4.3.1~/faxd/faxQueueApp.c++ hylafax-4.3.1/faxd/faxQueueApp.c
 diff -urNad hylafax-4.3.1~/faxd/faxSendApp.c++ hylafax-4.3.1/faxd/faxSendApp.c++
 --- hylafax-4.3.1~/faxd/faxSendApp.c++	2006-03-28 01:00:54.000000000 +0200
 +++ hylafax-4.3.1/faxd/faxSendApp.c++	2006-12-09 18:50:16.000000000 +0100
-@@ -161,8 +161,11 @@
- 			 * user-specification.
- 			 */
+@@ -160,8 +160,11 @@ faxSendApp::send(const char** filenames, int num)
+ 		     * user-specification.
+ 		     */
  
--			if (desiredDF != (u_int) -1)
-+			bool usedf = false;			// to limit RTFCC application
-+			if (desiredDF != (u_int) -1) {
- 			    req->desireddf = desiredDF;
-+			    usedf = true;
-+			}
- 			if (desiredBR != (u_int) -1)
- 			    req->desiredbr = desiredBR;
- 			if (desiredEC != (u_int) -1)
-@@ -175,7 +178,7 @@
- 			if (useJobTSI && req->tsi != "")
- 			    FaxServer::setLocalIdentifier(req->tsi);
+-		    if (desiredDF != (u_int) -1)
++		    bool usedf = false;
++		    if (desiredDF != (u_int) -1) {
+ 			req->desireddf = desiredDF;
++			usedf = true;
++		    }
+ 		    if (desiredBR != (u_int) -1)
+ 			req->desiredbr = desiredBR;
+ 		    if (desiredEC != (u_int) -1)
+@@ -174,7 +177,7 @@ faxSendApp::send(const char** filenames, int num)
+ 		    if (useJobTSI && req->tsi != "")
+ 			FaxServer::setLocalIdentifier(req->tsi);
  
--			FaxServer::sendFax(*req, info, ai, batched);
-+			FaxServer::sendFax(*req, info, ai, batched, usedf);
+-		    FaxServer::sendFax(*req, info, ai, batched);
++		    FaxServer::sendFax(*req, info, ai, batched, usedf);
  
- 			batchcommid = req->commid;		// ... to all batched jobs
+ 		    batchcommid = req->commid;		// ... to all batched jobs
  
 diff -urNad hylafax-4.3.1~/man/jobcontrol.1m hylafax-4.3.1/man/jobcontrol.1m
 --- hylafax-4.3.1~/man/jobcontrol.1m	2006-03-28 01:00:57.000000000 +0200
