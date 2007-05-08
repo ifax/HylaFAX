@@ -78,6 +78,7 @@ private:
     MySendFaxClient* client;		// for direct delivery
     SendFaxJob*	job;			// reference to outbound job
     fxStr	mailUser;		// user ID for contacting server
+    fxStr	notify;			// notificaton request
     bool	autoCoverPage;		// make cover page for direct delivery
 
     void formatMIME(FILE* fd, MIMEState& mime, MsgFmt& msg);
@@ -138,7 +139,7 @@ faxMailApp::run(int argc, char** argv)
     readConfig(FAX_USERCONF);
 
     bool deliver = false;
-    while ((c = Sys::getopt(argc, argv, "12b:cdf:H:i:M:np:rRs:u:vW:")) != -1)
+    while ((c = Sys::getopt(argc, argv, "12b:cdf:H:i:M:np:rRs:t:u:vW:")) != -1)
 	switch (c) {
 	case '1': case '2':		// format in 1 or 2 columns
 	    setNumberOfColumns(c - '0');
@@ -179,6 +180,9 @@ faxMailApp::run(int argc, char** argv)
 	case 's':			// page size
         pageSize = optarg;
 	    setPageSize(pageSize);
+	    break;
+	case 't':
+	    notify = optarg;
 	    break;
 	case 'u':			// mail/login user
 	    mailUser = optarg;
@@ -246,9 +250,10 @@ faxMailApp::run(int argc, char** argv)
 	    fxFatal("No From/Sender identity specified");
     }
 
-    if (pageSize != "") {
+    if (pageSize != "")
         job->setPageSize(pageSize);
-    }
+    if (notify != "")
+	job->setNotification((const char*)notify);
 
 	/*
 	 * Scan envelope for any meta-headers that
@@ -706,6 +711,7 @@ faxMailApp::setupConfig()
     msgDivider = "";
     pageSize = "";
     mailUser = "";			// default to real uid
+    notify = "";
     autoCoverPage = true;		// a la sendfax
 
     setPageHeaders(false);		// disable normal page headers
@@ -828,6 +834,7 @@ faxMailApp::usage()
 	" [-s pagesize]"
 	" [-W pagewidth]"
 	" [-M margins]"
+	" [-t notify"
 	" [-u user]"
 	" [-12cdnrRv]"
     );
