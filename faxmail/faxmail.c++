@@ -80,6 +80,7 @@ private:
 
     MySendFaxClient* client;		// for direct delivery
     SendFaxJob*	job;			// reference to outbound job
+    fxStr	coverTempl;		// coverpage template file
     fxStr	mailUser;		// user ID for contacting server
     fxStr	notify;			// notification request
     bool	autoCoverPage;		// make cover page for direct delivery
@@ -149,7 +150,7 @@ faxMailApp::run(int argc, char** argv)
     readConfig(FAX_LIBDATA "/faxmail.conf");
     readConfig(FAX_USERCONF);
 
-    while ((c = Sys::getopt(argc, argv, "12b:cf:H:i:M:nNp:rRs:t:Tu:vW:")) != -1)
+    while ((c = Sys::getopt(argc, argv, "12b:cC:f:H:i:M:nNp:rRs:t:Tu:vW:")) != -1)
 	switch (c) {
 	case '1': case '2':		// format in 1 or 2 columns
 	    setNumberOfColumns(c - '0');
@@ -159,6 +160,9 @@ faxMailApp::run(int argc, char** argv)
 	    break;
 	case 'c':			// truncate lines
 	    setLineWrapping(false);
+	    break;
+	case 'C':			// truncate lines
+	    coverTempl = optarg;
 	    break;
 	case 'f':			// default font for text body
 	    setTextFont(optarg);
@@ -289,6 +293,8 @@ faxMailApp::run(int argc, char** argv)
      * from the envelope that might be useful.
      */
     if (job->getAutoCoverPage()) {
+	if (coverTempl.length())
+	    job->setCoverTemplate(coverTempl);
 	/*
 	 * If nothing has been specified for a
 	 * regarding field on the cover page and
@@ -736,6 +742,7 @@ faxMailApp::setupConfig()
     pageSize = "";
     mailUser = "";			// default to real uid
     notify = "";
+    coverTempl = "";
     autoCoverPage = true;		// a la sendfax
     formatEnvHeaders = true;		// format envelop headers by default
     trimText = false;			// don't trim leading CR from text parts by default
