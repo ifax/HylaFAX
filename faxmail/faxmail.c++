@@ -80,6 +80,7 @@ private:
     fxStr	mailUser;		// user ID for contacting server
     fxStr	notify;			// notificaton request
     bool	autoCoverPage;		// make cover page for direct delivery
+    bool	formatEnvHeaders;	// format envelope headers
 
     void formatMIME(FILE* fd, MIMEState& mime, MsgFmt& msg);
     void formatText(FILE* fd, MIMEState& mime);
@@ -139,7 +140,7 @@ faxMailApp::run(int argc, char** argv)
     readConfig(FAX_USERCONF);
 
     bool deliver = false;
-    while ((c = Sys::getopt(argc, argv, "12b:cdf:H:i:M:np:rRs:t:u:vW:")) != -1)
+    while ((c = Sys::getopt(argc, argv, "12b:cdf:H:i:M:nNp:rRs:t:u:vW:")) != -1)
 	switch (c) {
 	case '1': case '2':		// format in 1 or 2 columns
 	    setNumberOfColumns(c - '0');
@@ -167,6 +168,9 @@ faxMailApp::run(int argc, char** argv)
 	    break;
 	case 'n':			// suppress cover page
 	    autoCoverPage = false;
+	    break;
+	case 'N':
+	    formatEnvHeaders = false;
 	    break;
 	case 'p':			// point size
 	    setTextPointSize(TextFormat::inch(optarg));
@@ -339,14 +343,16 @@ faxMailApp::run(int argc, char** argv)
     if (version && *version == "1.0") {
         beginFile();
 	withinFile = true;
-        formatHeaders(*this);		// format top-level headers
+	if (formatEnvHeaders)
+	    formatHeaders(*this);	// format top-level headers
 	formatMIME(stdin, mime, *this);	// parse MIME format
         if (withinFile) endFile();
 	withinFile = false;
     } else {
         beginFile();
 	withinFile = true;
-        formatHeaders(*this);		// format top-level headers
+	if (formatEnvHeaders)
+	    formatHeaders(*this);	// format top-level headers
 	formatText(stdin, mime);	// treat body as text/plain
         if (withinFile) endFile();
 	withinFile = false;
@@ -713,6 +719,7 @@ faxMailApp::setupConfig()
     mailUser = "";			// default to real uid
     notify = "";
     autoCoverPage = true;		// a la sendfax
+    formatEnvHeaders = true;		// format envelop headers by default
 
     setPageHeaders(false);		// disable normal page headers
     setNumberOfColumns(1);		// 1 input page per output page
@@ -740,6 +747,8 @@ faxMailApp::setConfigItem(const char* tag, const char* value)
 	markDiscarded = getBoolean(value);
     else if (streq(tag, "autocoverpage"))
 	autoCoverPage = getBoolean(value);
+    else if (streq(tag, "formatenvheaders"))
+	formatEnvHeaders = getBoolean(value);
     else if (streq(tag, "mimeconverters"))
 	mimeConverters = value;
     else if (streq(tag, "prologfile"))
@@ -836,6 +845,6 @@ faxMailApp::usage()
 	" [-M margins]"
 	" [-t notify"
 	" [-u user]"
-	" [-12cdnrRv]"
+	" [-12cdnNrRv]"
     );
 }
