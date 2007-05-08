@@ -2,6 +2,8 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Faxmail overhaul - make handle documents independantly, just like
+  sendfax (9 May 2007)
 * Accepts 'original' as equivalent to 'raw' for RETURNFILETYPE (23 Mar 2007)
 * Email raw TIFF files with the correct MIME type of image/tiff (23 Mar 2007)
 * Added the complete debian/ directory in order to create official
