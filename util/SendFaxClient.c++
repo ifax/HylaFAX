@@ -676,7 +676,7 @@ SendFaxClient::prepareFile(FileInfo& info, fxStr& emsg)
 	    printf("CONVERT \"%s\"\n", (const char*) sysCmd);
 	if (system(sysCmd) != 0) {
 	    Sys::unlink(tmpFile);
-	    emsg = fxStr::format("Error converting data; command was \"%s\"",
+	    emsg = fxStr::format("Error converting document; command was \"%s\"",
 		(const char*) sysCmd);
 	    return (false);
 	}
