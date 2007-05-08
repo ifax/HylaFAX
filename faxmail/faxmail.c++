@@ -161,7 +161,7 @@ faxMailApp::run(int argc, char** argv)
 	case 'c':			// truncate lines
 	    setLineWrapping(false);
 	    break;
-	case 'C':			// truncate lines
+	case 'C':			// specify cover template to use
 	    coverTempl = optarg;
 	    break;
 	case 'd':			// kept for backwards compatiblity
@@ -874,7 +874,8 @@ faxMailApp::usage()
 	" [-s pagesize]"
 	" [-W pagewidth]"
 	" [-M margins]"
-	" [-t notify"
+	" [-C covertemplate]"
+	" [-t notify]"
 	" [-u user]"
 	" [-12cnNrRTv]"
     );
