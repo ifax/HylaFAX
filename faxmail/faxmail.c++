@@ -56,7 +56,7 @@ MySendFaxClient::setup(bool b)
     resetConfig();
     readConfig(FAX_SYSCONF);
     readConfig(FAX_LIBDATA "/sendfax.conf");
-    // XXX should we read faxmail.conf also??
+    readConfig(FAX_LIBDATA "/faxmail.conf");
     readConfig(FAX_USERCONF);
     setVerbose(b);
     FaxClient::setVerbose(b);
