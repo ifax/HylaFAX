@@ -436,6 +436,14 @@ faxQueueApp::prepareJobDone(Job& job, int status)
 		    targetjob = job.bnext;
 		    processnext = true;
 		}
+		/*
+		 * If there are other jobs in the batch, we have to be
+		 * careful to *not* release the modem, otherwise faxq will
+		 * schedule new jobs on this modem while the rest of the jobs
+		 * in the batch are still using it.
+		 */
+		if (startsendjob || processnext)
+			job.modem = NULL;
 		if (status == Job::requeued) {
 		    job.remove();
 		    delayJob(job, *req, "Cannot fork to prepare job for transmission",
