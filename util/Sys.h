@@ -78,6 +78,8 @@ public:
 	{ return  ::unlink(filename); }
     static int access(const char* path, int mode)
 	{ return ::access(path, mode); }
+    static int rmdir(const char* path)
+	{ return ::rmdir(path); }
 
     static int chmod(const char* file, mode_t m)
 	{ return ::chmod(file, m); }
@@ -133,6 +135,8 @@ public:
 #endif
         return fd;
     }
+
+    static char* mkdtemp(char* templ)	{ return ::mkdtemp(templ); }
 
     static FILE* tmpfile()	{ return ::tmpfile(); }
     static FILE* fopen(const char* filename, const char* mode)
