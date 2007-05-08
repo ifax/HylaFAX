@@ -81,6 +81,7 @@ private:
     fxStr	notify;			// notificaton request
     bool	autoCoverPage;		// make cover page for direct delivery
     bool	formatEnvHeaders;	// format envelope headers
+    bool	trimText;		// trim text parts
 
     void formatMIME(FILE* fd, MIMEState& mime, MsgFmt& msg);
     void formatText(FILE* fd, MIMEState& mime);
@@ -140,7 +141,7 @@ faxMailApp::run(int argc, char** argv)
     readConfig(FAX_USERCONF);
 
     bool deliver = false;
-    while ((c = Sys::getopt(argc, argv, "12b:cdf:H:i:M:nNp:rRs:t:u:vW:")) != -1)
+    while ((c = Sys::getopt(argc, argv, "12b:cdf:H:i:M:nNp:rRs:t:Tu:vW:")) != -1)
 	switch (c) {
 	case '1': case '2':		// format in 1 or 2 columns
 	    setNumberOfColumns(c - '0');
@@ -187,6 +188,9 @@ faxMailApp::run(int argc, char** argv)
 	    break;
 	case 't':
 	    notify = optarg;
+	    break;
+	case 'T':			// suppress formatting MIME text parts
+	    trimText = true;
 	    break;
 	case 'u':			// mail/login user
 	    mailUser = optarg;
@@ -441,8 +445,15 @@ void
 faxMailApp::formatText(FILE* fd, MIMEState& mime)
 {
     fxStackBuffer buf;
+    bool trim = trimText;
+
     while (mime.getLine(fd, buf))
-	format(buf, buf.getLength());		// NB: treat as text/plain
+    {
+	if (trim)
+	    trim = (buf.getLength() == 0 || buf[0] == 0xA);
+	if (! trim)
+	    format(buf, buf.getLength());	// NB: treat as text/plain
+    }
 }
 
 /*
@@ -720,6 +731,7 @@ faxMailApp::setupConfig()
     notify = "";
     autoCoverPage = true;		// a la sendfax
     formatEnvHeaders = true;		// format envelop headers by default
+    trimText = false;			// don't trim leading CR from text parts by default
 
     setPageHeaders(false);		// disable normal page headers
     setNumberOfColumns(1);		// 1 input page per output page
@@ -749,6 +761,8 @@ faxMailApp::setConfigItem(const char* tag, const char* value)
 	autoCoverPage = getBoolean(value);
     else if (streq(tag, "formatenvheaders"))
 	formatEnvHeaders = getBoolean(value);
+    else if (streq(tag, "trimtext"))
+	trimText = getBoolean(value);
     else if (streq(tag, "mimeconverters"))
 	mimeConverters = value;
     else if (streq(tag, "prologfile"))
@@ -845,6 +859,6 @@ faxMailApp::usage()
 	" [-M margins]"
 	" [-t notify"
 	" [-u user]"
-	" [-12cdnNrRv]"
+	" [-12cdnNrRTv]"
     );
 }
