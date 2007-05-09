@@ -43,11 +43,7 @@ faxmail \- \*(Fx mail-to-fax gateway application
 .SH DESCRIPTION
 .I faxmail
 takes an electronic mail message on standard input
-and converts it to \*(Ps\(rg in a form that is suitable
-for transmission as a facsimile.
-The converted document is either written to the standard
-output or, if direct delivery is enabled,
-it is submitted directly to a \*(Fx server for transmission.
+and submits it as a facsimile to a \*(Fx server for transmission.
 .PP
 .I faxmail
 is designed for use in constructing electronic mail to facsimile
@@ -57,22 +53,13 @@ transmit electronic mail; e.g.
 .PP
 .nf
 .ti +0.5i
-sam: "|${BIN}/faxmail -d sam@5551212"
+sam: "|${BIN}/faxmail sam@5551212"
 .fi
 or 
 .I faxmail
 may be used as a ``mail transport agent'', extracting the necessary
 delivery information directly from the envelope of the mail message.
 .PP
-If
-.I faxmail
-is invoked without enabling direct delivery then it
-just formats the mail message on the standard input and
-writes the result to the standard output.
-To enable direct delivery the
-.B \-d
-option must be specified on the command line; see below
-for more information.
 .SH FORMATTING
 .I faxmail
 formats a mail message according to the following rules:
@@ -168,15 +155,15 @@ parses
 .SM MIME
 mail messages and does some rudimentary work to:
 .IP \(bu 3
-strip out unprintable content such as audio, video, or binary data,
-.IP \(bu 3
 decode encoded parts,
+.IP \(bu 3
+formats the message and text parts into a Postscript document
 .IP \(bu 3
 insert ``digest dividers'' between multipart/digest subparts,
 .IP \(bu 3
 format message/rfc822 parts as described above for the top-level envelope, and
 .IP \(bu 3
-optionally convert graphical parts (e.g. images) for display.
+submit all other attached documents to be faxed.
 .PP
 .SM MIME
 processing is fairly simple and (currently) somewhat constrained.
@@ -184,30 +171,12 @@ processing is fairly simple and (currently) somewhat constrained.
 has builtin support for the following MIME parts:
 text/plain, multipart/mixed, multipart/digest, message/rfc822,
 application/postscript, and application/x-faxmail-prolog.
-Parts can also be processed through external processing scripts that
+All other parts will be saved as documents and submitted to \*(Fx.
 .I faxmail
-looks for in a ``\s-1MIME\s+1 converters'' directory hierarchy.
-External scripts may override builtin processing or supplement
-the builtin support.
-For each
-.SM MIME 
-body part with type
-.I T
-and subtype
-.I S
-.I faxmail
-checks first for an executable script named T/S in the
-converter hierarchy.
-If a script exists then it is run and the result is appended to
-the output PostScript document.
-Otherwise if the part has builtin support then it is processed
-directly.
-Any part that does not have external or builtin support is discarded
-and replaced by a message that indicates the part was removed.
-This discarded message can be suppressed with the
-.I MarkDiscarded
-configuration parameter (also settable with an X-FAX-MarkDiscarded
-line in the envelope).
+uses the
+.IR typerules (${MANNUM4_5}).
+mechanism to convert file formats into
+one of the format \*(Fx supports.
 .PP
 The builtin handling support is as follows:
 text/plain parts are formatted using the default \fItext font\fP
@@ -232,24 +201,10 @@ to permit customization of the formatted output.
 supports the following Content-Transfer-Encoding schemes:
 7bit, 8bit, binary, base64, quoted-printable, and x-uuencode.
 Any character set that is not us-ascii is treated as iso-8859-1.
-.PP
-In general it is recommended that senders either permit 
-.I faxmail
-to format message contents or completely bypass the formatting
-facilities and submit data that is to be processed by
-.IR sendfax .
-Trying to combine the two facilities by, for example, combining PostScript
-with text that is to be formatted is unlikely to work well because
-.I faxmail
-does not track the amount of space on the page that a non-text 
-.SM MIME
-part uses.
-.SH "DIRECT DELIVERY"
+.SH "SERVER DELIVERY"
 When
 .I faxmail
-is invoked with the
-.B \-d
-option it delivers the formatted document directly to a \*(Fx
+is invoked it delivers the formatted document directly to a \*(Fx
 server for transmission as facsimile.
 Command line arguments may be supplied to specify the 
 delivery destination and sender identity; typically from
@@ -278,9 +233,8 @@ will extract it from the ``From'' line in the envelope.
 will not submit a message for delivery if either the dialstring
 or sender identity is missing or null.
 .PP
-When direct delivery is enabled X-FAX- header lines may be
-included in the mail message envelope to control the submission
-and delivery process.
+X-FAX- header lines may be included in the mail message envelope to control
+the submission and delivery process.
 As above these lines are specified as ``X-FAX-\fIparameter\fP'' where
 .I parameter
 is the name of a configuration parameter for the
@@ -313,20 +267,6 @@ Clip long text lines instead of wrapping them at page margins.
 .BI \-C " cover"
 Use the cover page template file specified by
 .IR cover .
-.TP 10
-.B \-d
-Enable direct delivery of facsimile; the formatted document
-will be submitted directly to a \*(Fx server for transmission
-as facsimile.
-This option is similar to piping the output of
-.I faxmail
-to the input of
-.IR sendfax (${MANNUM1_8})
-except when direct delivery is enabled
-.I faxmail
-interprets ``x-fax-'' header lines in the envelope of the mail message to 
-look for control information to use in delivering the facsimile and,
-by default, no automatic cover page generation is done.
 .TP 10
 .BI \-f " font"
 Make
@@ -402,6 +342,13 @@ Comparisons are case-insensitive and any match of a
 substring of the full page-size name is sufficient; e.g. ``legal'' would
 match ``American Legal''.
 .TP 10
+.BI \-t " notify"
+Specify the notify value to use
+.TP 10
+.BI \-T 
+Trim leading blank lines from text parts.  If the text part is completely
+empty, it will effectively be skipped.
+.TP 10
 .BI \-u " user"
 Set the user name to use when logging in to do direct delivery.
 By default the user is specified by the
@@ -428,12 +375,19 @@ The default page width is taken from the default page size.
 .I faxmail
 reads configuration information from the files
 .BR ${LIBDATA}/hyla.conf ,
+.BR ${LIBDATA}/sendmail.conf ,
+.BR ${LIBDATA}/faxmail.conf ,
 and
 .BR ~/.hylarc ;
 in that order.
 Configuration files follow the conventions described in
 .IR hylafax-client (1).
-The following configuration parameters are recognized:
+In addition to the formatting configuration paramaters below, all of the
+paramaters listed in the 
+.IR sendfax (1)
+man page apply as well.
+.PP
+The following configuration parameters are recognized to support formatting:
 .sp .5
 .nf
 .ta \w'TextLineHeight    'u +\w'\fI\s-1see below\s+1\fP    'u +\w'\s-1Helvetica-Oblique\s+1    'u
