@@ -2,8 +2,12 @@ $Id$
 
                            *   ANNOUNCE   *
 
-The HylaFAX development team is pleased to announce our 4.3.3 release!
-This is primarily a bugfix release, and as such is a recommended upgrade.
+The HylaFAX development team is pleased to announce our 4.3.4 release!
+
+The 4.3 branch of HylaFAX has been in stable mode since 4.3.3.  Any
+release since then is strictly a bugfix release, and as such, is a
+recommended upgrade.
+
 Our sincerest thanks go to all who participate in the development and
 testing process.
 
@@ -13,16 +17,6 @@ This document is intended to describe the significant differences
 between hylafax-4.3.3 and older releases, point out any known
 incompatibilites and issues, and provide the reader with directions to
 further resources regarding HylaFAX.
-
-                          *   NEW FEATURES   *
-
-* emails can contain both pdf and tiff versions of each fax, instead of
-  only one of them.
-
-
-                         *   KNOWN ISSUES   *
-
-** Please refer to HylaFAX Bugzilla for a detailed list of issues.
 
                        *   INCOMPATIBILITIES   *
 
@@ -45,8 +39,8 @@ further resources regarding HylaFAX.
 
                       *   WHO SHOULD UPGRADE?   *
 
-This release contains important fixes to email templating and SNPP
-authentication. All users should upgrade.
+This release contains important fixes to the faxq job scheduler.
+All users should upgrade.
 
 Anyone presently running a version of HylaFAX older than 4.3.0 and
 using DestControls should study the JobControl feature we added in
