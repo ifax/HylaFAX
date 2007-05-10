@@ -120,6 +120,7 @@ AdminGroup	string	\s-1faxadmin\s+1	System user group for administration (if PAM 
 AnswerRotary	string	\s-1Any\s+1	alternatives for answering calls
 AnswerBias	integer	\-	bias to apply to successful rotary answer 
 AreaCode\(S2	string	\-	local area code
+AuditHook\(S1	string  \-      command to run for faxq event auditing
 BadPageHandlingMethod	string	\s-1RTN-SAVE\s+1	bad page received handling method	
 BatchLogs\(S1	boolean	\s-1Yes\s+1	keep all session logs of a batch in a single log
 CallIDAnswerLength	integer	\-	answer call when CallIDPattern received
@@ -511,6 +512,33 @@ used, for example,
 to formulate canonical phone numbers for dialing (see
 .B DialStringRules
 below.)
+.TP
+.B AuditHook\(S1
+Specifies a program command and an interest specification indicating which events as
+described in 
+.IR faxwatch (${MANNUM1_8})
+should trigger the execution of the program.  For example, this configuration:
+.nf
+
+    AuditHook: "bin/hook: J*S*M*R*"
+
+.fi
+would cause bin/hook to be executed upon every event.  The arguments passed to the 
+hook program are respectively
+.IR <class> ,
+.IR <mask> ,
+.IR <id> ,
+and optionally
+.IR [info]
+where...
+.nf
+
+    <class> = JOB | SEND | MODEM | RECV
+    <mask>  = the specific event
+    <id>    = id of the job/modem with which the event is associated
+    [info]  = additional information
+
+.fi
 .TP
 .B BadPageHandlingMethod
 (Class 1/1.0 only) Specifies how to react to a bad page received from the remote sender:
