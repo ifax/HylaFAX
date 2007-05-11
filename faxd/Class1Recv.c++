@@ -534,7 +534,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
     gotCONNECT = true;
 
     do {
-	u_int timer = conf.t2Timer;
+	long timer = conf.t2Timer;
 	if (!messageReceived) {
 	    if (sendCFR ) {
 		transmitFrame(FCF_CFR|FCF_RCVR);
@@ -606,7 +606,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			} while (!messageReceived && Sys::now() < (nocarrierstart + 5));
 			if (messageReceived)
 			    prevPage++;
-		        timer = (80*1024*8) / ((curcap->br+1)*2400) * 1000;	// wait longer for PPM (estimate 80KB)
+		        timer = BIT(curcap->br) & BR_ALL ? 273066 / (curcap->br+1) : conf.t2Timer;	// wait longer for PPM (estimate 80KB)
 		    }
 		} else {
 		    if (wasTimeout()) {
@@ -614,7 +614,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			setTimeout(false);
 		    }
 		    bool getframe = false;
-		    long wait = (80*1024*8) / ((curcap->br+1)*2400) * 1000;
+		    long wait = BIT(curcap->br) & BR_ALL ? 273066 / (curcap->br+1) : conf.t2Timer;
 		    if (rmResponse == AT_FRH3) getframe = waitFor(AT_CONNECT, 0);
 		    else if (rmResponse != AT_NOCARRIER && rmResponse != AT_ERROR) getframe = atCmd(rhCmd, AT_CONNECT, wait);	// wait longer
 		    if (getframe) {
@@ -1056,7 +1056,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 			abortReceive();		// return to command mode
 			setTimeout(false);
 		    }
-		    long wait = (80*1024*8) / ((curcap->br+1)*2400) * 1000;
+		    long wait = BIT(curcap->br) & BR_ALL ? 273066 / (curcap->br+1) : conf.t2Timer;
 		    if (lastResponse != AT_NOCARRIER && atCmd(rhCmd, AT_CONNECT, wait)) {	// wait longer
 			// sender is transmitting V.21 instead, we may have
 			// missed the first signal attempt, but should catch
@@ -1225,7 +1225,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					    abortReceive();	// return to command mode
 					    setTimeout(false);
 					}
-					long wait = (80*1024*8) / ((curcap->br+1)*2400) * 1000;
+					long wait = BIT(curcap->br) & BR_ALL ? 273066 / (curcap->br+1) : conf.t2Timer;
 					if (lastResponse != AT_NOCARRIER && atCmd(rhCmd, AT_CONNECT, wait)) {	// wait longer
 					    // simulate adaptive receive
 					    emsg = "";		// clear the failure
@@ -1351,7 +1351,8 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 		     * high-speed data.  So we calculate the wait for 80KB (the
 		     * ECM block plus some wriggle-room) at the current bitrate.
 		     */
-		    long wait = (80*1024*8) / ((useV34 ? primaryV34Rate : curcap->br+1)*2400) * 1000;
+		    u_int br = useV34 ? primaryV34Rate : curcap->br + 1;
+		    long wait = br >= 1 && br <= 15 ? 273066 / br : conf.t2Timer;
 		    gotpps = recvFrame(ppsframe, FCF_RCVR, wait);	// wait longer
 		} while (!gotpps && gotCONNECT && !wasTimeout() && !gotEOT && ++recvFrameCount < 5);
 		if (gotpps) {
