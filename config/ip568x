@@ -1,0 +1,13 @@
+# $Id$
+
+#
+# prototype config for Duxbury modem with IC Ace IP568x cipset.
+#
+
+# CONFIG:CLASS1:V.92/V.44:.*DUXBURY.*:.*: Manufacturer=Duxbury Model='56K V.92 PCI'
+#
+# BEGIN-SERVER
+# END-SERVER
+
+ModemType:		Class1		# use this to supply a hint
+ModemRate:		57600		# 19200 causes +FTM problems

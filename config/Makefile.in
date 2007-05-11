@@ -71,6 +71,7 @@ CONFIGFILES=class1 \
 	hayes \
 	iaxmodem \
 	intel-400e \
+	ip568x \
 	linux-isdn-2 \
 	lucent \
 	lucent-isa \
