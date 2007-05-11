@@ -243,7 +243,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
     int ntrys = 0;			// # retraining/command repeats
     u_int ppm, previousppm = 0;
 
-    setDataTimeout(60, next.br);	// 60 seconds for 1024 byte writes
+    setDataTimeout(180, next.br);	// 180 seconds for 1024 byte writes, increased for potential ECM delays
     hangupCode[0] = '\0';
 
     bool transferOK;
