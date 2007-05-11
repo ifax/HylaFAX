@@ -913,7 +913,15 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 			traceFCF("RECV send", FCF_MCF);
 			messageReceived = false;	// expect Phase C
 		    } else {
-			u_int rtnfcf = conf.badPageHandling == FaxModem::BADPAGE_DCN ? FCF_DCN : FCF_RTN;
+			u_int rtnfcf = FCF_RTN;
+			if (!getRecvEOLCount() || conf.badPageHandling == FaxModem::BADPAGE_DCN) {
+			    /*
+			     * Regardless of the BadPageHandling setting, if we get no page image data at
+			     * all, then sending RTN at all risks confirming the non-page to RTN-confused
+			     * senders, which risk is far worse than just simply hanging up.
+			     */
+			    rtnfcf = FCF_DCN;
+			}
 			(void) transmitFrame(rtnfcf|FCF_RCVR);
 			traceFCF("RECV send", rtnfcf);
 			/*
