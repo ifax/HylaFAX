@@ -441,7 +441,7 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params, bool
 	     * as a bitmap to suit T.30, but a T.32-following modem will only report 
 	     * one supported receiver format (and not all of them).  Thus when 
 	     * parsing T.32 DIS we must convert the modem response to a bitmap.  
-	     * However, due to the inconguency between T.30 and T.32 the bitmap will 
+	     * However, due to the incongruency between T.30 and T.32 the bitmap will
 	     * only contain the the reported format and the required format.
 	     */
 	    if (isDIS) {

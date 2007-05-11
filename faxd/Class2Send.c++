@@ -500,7 +500,8 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
         /*
          * correct broken Phase C (T.4/T.6) data if necessary
          */
-	lastByte = correctPhaseCData(dp, &totdata, fillorder, (conf.class2RTFCC ? params : newparams), rows);
+        if (params.df <= DF_2DMMR)
+	    lastByte = correctPhaseCData(dp, &totdata, fillorder, (conf.class2RTFCC ? params : newparams), rows);
 
 	params = newparams;		// revert back
 
