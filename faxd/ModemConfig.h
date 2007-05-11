@@ -166,6 +166,8 @@ public:
     bool	class1GreyJPEGSupport;	// Greyscale JPEG support
     bool	class1ColorJPEGSupport;	// Full-color JPEG support
     bool	class1ECMSupport;	// support T.30-A ECM
+    bool	class1MRSupport;	// support 2-D MR
+    bool	class1MMRSupport;	// support 2-D MMR
     bool	class1PersistentECM;	// continue to correct
     bool	class1TCFRecvHack;	// deliberately look for V.21 disconnect
     bool	class1ValidateV21Frames;// check received FCS values in V.21

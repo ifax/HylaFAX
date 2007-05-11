@@ -296,6 +296,8 @@ Class1HFLOCmd	string	\-	Class 1/1.0: command to set hardware flow control
 Class1FrameOverhead	integer	\s-14\s+1	Class 1/1.0: extra bytes in a received \s-1HDLC\s+1 frame
 Class1GreyJPEGSupport	boolean	\s-1No\s+1	Class 1/1.0: to enable grey JPEG fax support
 Class1JBIGSupport	string	\s-1\fIsee below\fP\s+1	Class 1/1.0: to enable monochrome JBIG fax support
+Class1MRSupport	boolean	\s-1Yes\s+1	Class 1/1.0: enable 2-D MR support
+Class1MMRSupport	boolean	\s-1Yes\s+1	Class 1/1.0: enable 2-D MMR support
 Class1NFLOCmd	string	\-	Class 1/1.0: command to set no flow control
 Class1PageLengthSupport	integer	\s-17\s+1	Class 1/1.0: coded value for modem page length support
 Class1PageWidthSupport	integer	\s-17\s+1	Class 1/1.0: coded value for modem page width support
@@ -2379,6 +2381,15 @@ when operating in Class 1.
 This command is issued immediately after sending the
 .B Class1Cmd
 to switch the modem to Class 1 operation.
+.TP
+.B Class1MRSupport
+Whether or not to enable support for two-dimensional Modified Read
+(MR) image data format compression.
+.TP
+.B Class1MMRSupport
+Whether or not to enable support for two-dimensional Modified Modified Read
+(MMR) image data format compression.  Note that MMR support requires also
+ECM support to be enabled.
 .TP
 .B Class1NFLOCmd
 The command to setup no flow control between

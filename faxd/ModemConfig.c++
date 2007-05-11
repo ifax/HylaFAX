@@ -254,6 +254,8 @@ ModemConfig::setupConfig()
     class2HexNSF	= true;			// most modems report NSF in hexadecimal
     class2UseLineCount	= false;		// don't trust firmware decoders
     class1ECMSupport	= true;			// support for ECM
+    class1MRSupport	= true;			// support for 2-D MR
+    class1MMRSupport	= true;			// support for 2-D MMR
     class1GreyJPEGSupport = false;		// support for greyscale JPEG
     class1ColorJPEGSupport = false;		// support for full color JPEG
 #ifdef HAVE_JBIG
@@ -728,6 +730,10 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class2SendRTC = getBoolean(value);
     else if (streq(tag, "class1ecmsupport"))
 	class1ECMSupport = getBoolean(value);
+    else if (streq(tag, "class1mrsupport"))
+	class1MRSupport = getBoolean(value);
+    else if (streq(tag, "class1mmrsupport"))
+	class1MMRSupport = getBoolean(value);
 #ifdef PHOTOMETRIC_ITULAB
     else if (streq(tag, "class1greyjpegsupport"))
 	class1GreyJPEGSupport = getBoolean(value);
