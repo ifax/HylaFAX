@@ -32,9 +32,14 @@
 
 #include <string.h>
 #include <stdlib.h>
+
+#ifdef _XOPEN_SOURCE_EXTENDED
+#include <arpa/inet.h>
+#else
 extern "C" {
 #include <netinet/in.h>
 }
+#endif
 
 #ifndef TRUE
 #define TRUE 1

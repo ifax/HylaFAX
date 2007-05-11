@@ -2,6 +2,7 @@
 
 Changelog since HylaFAX 4.3.3
 
+* Change socklen_t configure/detection for HP-UX 11 (11 May 2007)
 * Faxmail overhaul - make handle documents independantly, just like
   sendfax (9 May 2007)
 * faxq scheduler overhaul for efficiency and batching (May 4 2007)

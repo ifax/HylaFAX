@@ -833,6 +833,7 @@ checkCompiler()
     #
     if [ -z "${ENVOPTS:-}" ]; then
 	case $ISGCC-$TARGET in
+	no-*-hpux11*)	C_ANSI="-Aa -D_HPUX_SOURCE -Dhpux -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED";;
 	no-*-hp*)	C_ANSI="-Aa -D_HPUX_SOURCE -Dhpux";;
 	no-*-sco3.2v5.*)	C_ANSI="-Dsco -Dsco5 -b elf";;
 	yes-*-sco3.2v5.*)	C_ANSI="-Dsco -Dsco5 -m486";;
@@ -2562,14 +2563,21 @@ BuildPortDotH()
     # so Socket.h can include code that assumes the
     # default so folks don't have to rerun configure.
     #
+    # The HP-UX case is a bit peculiar.  There socklen_t
+    # is defined as size_t, but in order to use it...
+    # "To use UNIX95/98 style sockets in HP-UX, the libxnet
+    # library needs to be added to the link line. Also, the
+    # macro, _XOPEN_SOURCE, needs to be defined, and the
+    # macro, _XOPEN_SOURCE_EXTENDED, needs to be defined as 1.
+    # Refer to HP-UX manpage, xopen_networking(7) for further
+    # details."  Otherwise, we must define
+    # CONFIG_HPUX_SOCKLEN_T_BRAINDAMAGE.
+    #
     test "$CONFIG_SOCKARGLENTYPE" || {		# int vs unsigned long vs ...
         case $TARGET in
 	    # XXX fill in for busted systems
         *-aix4*)	CONFIG_SOCKARGLENTYPE=size_t;;
-        *-hpux11.11*)	CONFIG_SOCKARGLENTYPE=size_t;;
-        *-hpux11*)  # this is really broken, has a defined 
-                    # socklen_t but does *not* use it
-                echo "#define CONFIG_HPUX_SOCKLEN_T_BRAINDAMAGE";;
+        *-hpux11*)	CONFIG_SOCKARGLENTYPE=size_t;;
         *sysv4.2uw2*)	CONFIG_SOCKARGLENTYPE=size_t;;
         *-univel-*)	CONFIG_SOCKARGLENTYPE=size_t;;
         *-sysv5UnixWare*)	CONFIG_SOCKARGLENTYPE=size_t;;
