@@ -76,8 +76,8 @@ protected:
     virtual bool setupModem(bool isSend = true);
     virtual bool setupModel(fxStr& model);
     virtual bool setupRevision(fxStr& rev);
-    virtual bool setupDCC();
-    virtual bool setupClass2Parameters();
+    virtual bool setupDCC(bool enableV34 = true);
+    virtual bool setupClass2Parameters(bool enableV34 = true);
     virtual bool setupFlowControl(FlowControl fc);
 // transmission support
     bool	dataTransfer();
