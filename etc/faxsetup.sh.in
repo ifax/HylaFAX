@@ -796,18 +796,15 @@ test -x "$UUENCODE" || {
 
 # $BASE64ENCODE may contain parameters
 cmd=`echo "$BASE64ENCODE" | $SED -e "s/^ *//" -e "s/ .*$//"`
-test -x "$cmd" || {
-    BASE64ENCODE=`findAppDef mimencode $PATH mimencode`
-    test -x $BASE64ENCODE || {
-	BASE64ENCODE=`findAppDef base64-encode $PATH base64-encode`
-	test -x $BASE64ENCODE || {
-	    if [ -x "$UUENCODE" ]; then
-		if capture "$UUENCODE -m $PASSWD foo"; then
-			BASE64ENCODE="$UUENCODE -m ==== | $GREP -v ===="
-		fi
-	    fi
-	}
-    }
+test -x "$cmd" || BASE64ENCODE=`findAppDef mimencode $PATH mimencode`
+test -x $BASE64ENCODE || BASE64ENCODE=`findAppDef base64-encode $PATH base64-encode`
+test -x $BASE64ENCODE || BASE64ENCODE=`findAppDef base64 $PATH base64`
+test -x $BASE64ENCODE || {
+    if [ -x "$UUENCODE" ]; then
+        if capture "$UUENCODE -m $PASSWD foo"; then
+                BASE64ENCODE="$UUENCODE -m ==== | $GREP -v ===="
+        fi
+    fi
 }
 test -n "$BASE64ENCODE" && Note "Found base64 encoder: $BASE64ENCODE"
 
