@@ -86,6 +86,8 @@ private:
     int		decoderFd[2];	// file descriptors for the decoder pipe
     int		counterFd[2];	// file descriptors for the counter pipe
     pid_t	decoderPid;	// process id for the decoding process
+    u_char	parserBuf[16];	// buffer used for parsing JBIG and JPEG
+    u_long	parserCount[3];	// counters used in parsing JBIG and JPEG
 
     void	flushEncodedData(TIFF*, tstrip_t, const u_char*, u_int);
     void	flushRawData(TIFF*, tstrip_t, const u_char*, u_int);
@@ -122,6 +124,9 @@ protected:
     void	copyQualityTrace(const char* fmt, ...);
     void	traceModemParams();
     void	traceFCF(const char* dir, u_int fcf);
+    void	parseJBIGStream(u_char c);
+    void	parseJBIGBIH(u_char* buf);
+    void	clearSDNORMCount();
 // server-related stuff
     bool	getHDLCTracing();
     bool	getECMTracing();

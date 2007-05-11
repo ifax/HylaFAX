@@ -376,7 +376,6 @@ Class2Modem::setupDCC(bool enableV34, bool enableV17)
     params.wd = getBestPageWidth();
     params.ln = getBestPageLength();
     params.df = useExtendedDF ? modemParams.df : getBestDataFormat();
-    params.df &= ~BIT(DF_JBIG);		// let's not actually do JBIG yet
     params.ec = getBestECM();
     params.bf = BF_DISABLE;
     params.st = getBestScanlineTime();
@@ -668,9 +667,7 @@ Class2Modem::parseRange(const char* cp, Class2Params& p)
 	 * are not.
 	 */
 	useExtendedDF = true;
-	// No Class 2 modem is known to actually *work* with JBIG yet.
-	//p.df = BIT(DF_1DMH) | BIT(DF_2DMR) | BIT(DF_2DMMR) | BIT(DF_JBIG);
-	p.df = BIT(DF_1DMH) | BIT(DF_2DMR) | BIT(DF_2DMMR);
+	p.df = BIT(DF_1DMH) | BIT(DF_2DMR) | BIT(DF_2DMMR) | BIT(DF_JBIG);
     } else
 	p.df &= DF_ALL;
     p.ec &= EC_ALL;
