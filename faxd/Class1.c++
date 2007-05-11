@@ -1395,7 +1395,7 @@ bool
 Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, bool docrp)
 {
     bool gotframe;
-    u_short crpcnt = 0;
+    u_short crpcnt = 0, rhcnt = 0;
     gotCONNECT = true;
     if (useV34) {
 	do {
@@ -1429,8 +1429,12 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, 
         }
 	fxStr emsg;
 	do {
-	    if (crpcnt) {
-		traceFCF(dir == FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
+	    if (crpcnt || rhcnt) {
+		if (rhcnt) crpcnt = 0;
+		if (crpcnt) {
+		    rhcnt = 0;
+		    traceFCF(dir == FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
+		}
 		startTimeout(ms);
 		if (!(atCmd(rhCmd, AT_NOTHING, 0) && waitFor(AT_CONNECT,0))) {
 		    stopTimeout("waiting for v.21 carrier");
@@ -1444,8 +1448,16 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, 
 	    }
 	    frame.reset();
             gotframe = recvRawFrame(frame);
-	} while (!gotframe && docrp && crpcnt++ < 3 && !wasTimeout() &&
-		switchingPause(emsg, 3) && transmitFrame(dir|FCF_CRP));	/* triple switchingPause to avoid sending CRP during TCF */
+	    /*
+	     * Some modems aren't very particular about reporting CONNECT after AT+FRH=3.
+	     * So, for such modems CONNECT may come with V.17 modulated audio or any noise
+	     * whatsoever.  Those modems tend to report NO CARRIER after CONNECT, perhaps
+	     * after <DLE><ETX> or some other garbage possibly.  NO CARRIER is an invalid
+	     * modem response at that point, anyway.  So it is a good indicator for us.
+	     * So we simply repeat AT+FRH=3 in that case.
+	     */
+	} while (!gotframe && !wasTimeout() && ((conf.class1HasRHConnectBug && !frame.getLength() && lastResponse == AT_NOCARRIER && rhcnt++ < 30) ||
+	    (docrp && crpcnt++ < 3 && switchingPause(emsg, 3) && transmitFrame(dir|FCF_CRP))));	/* triple switchingPause to avoid sending CRP during TCF */
 	return (gotframe);
     } else {
 	gotCONNECT = false;

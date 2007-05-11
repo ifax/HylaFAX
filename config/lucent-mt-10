@@ -22,6 +22,7 @@ ModemRate:		57600		# must be at least as fast as the DCE-DCE communication
 ModemFlowControl:	rtscts		# many firmwares have broken software flow control
 Class1EnableV34Cmd:	AT+F34=14,1,2	# 33600-2400 primary, 2400-1200 control
 Class1TMConnectDelay:	400		# counteract quick CONNECT response
+Class1HasRHConnectBug:	yes		# cope with +FRH=3 CONNECT errors
 
 #
 # Older firmwares on MainPine cards may require this:

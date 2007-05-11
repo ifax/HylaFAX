@@ -292,6 +292,7 @@ Class1ECMSupport	boolean	\s-1Yes\s+1	Class 1/1.0: enable T.30-A ECM support
 Class1PersistentECM	boolean	\s-1Yes\s+1	Class 1/1.0: to continue to correct while in ECM
 Class1ECMFrameSize	integer	\s-1256\s+1	Class 1/1.0: image frame size in ECM protocol
 Class1ExtendedRes	boolean	\-	Class 1/1.0: enable extended resolution support
+Class1HasRHConnectBug	boolean	\s-1No\s+1	Class 1/1.0: modem can report CONNECT incorrectly
 Class1HFLOCmd	string	\-	Class 1/1.0: command to set hardware flow control
 Class1FrameOverhead	integer	\s-14\s+1	Class 1/1.0: extra bytes in a received \s-1HDLC\s+1 frame
 Class1GreyJPEGSupport	boolean	\s-1No\s+1	Class 1/1.0: to enable grey JPEG fax support
@@ -2371,6 +2372,14 @@ receiving.  If, during the build process a compatible JBIG library
 was found then send support is enabled by default.  If, during
 the build process the TIFF tools are found to support JBIG then
 receive support is enabled by default.
+.TP
+.B Class1HasRHConnectBug
+A Class 1 modem should only report CONNECT after AT+FRH=3 when
+V.21 HDLC data is detected.  However, some modems will incorrectly
+report CONNECT after AT+FRH=3 whenever any carrier is present. In
+such cases
+.B Class1HasRHConnectBug
+should be set to ``true''.
 .TP
 .B Class1HFLOCmd
 The command to setup hardware (\s-1RTS/CTS\s+1)

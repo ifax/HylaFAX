@@ -52,6 +52,7 @@
 ModemType:		Class1		# use this to supply a hint
 ModemFlowControl:	rtscts		# many firmwares have broken software flow control
 Class1TMConnectDelay:	400		# counteract quick CONNECT response
+Class1HasRHConnectBug:	yes		# cope with +FRH=3 CONNECT errors
 
 # If your line supports Caller-ID, you may want to uncomment this...
 # ModemResetCmds:	AT+VCID=1
