@@ -216,6 +216,8 @@ Class1Modem::recvIdentification(
 				    recvdDCN = true;
 				    return (false);
 				case FCF_CRP:
+				    /* do nothing here, just let us repeat NSF, CSI, DIS */
+				    break;
 				case FCF_MPS:
 				case FCF_EOP:
 				case FCF_EOM:
