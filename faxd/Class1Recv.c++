@@ -417,11 +417,12 @@ Class1Modem::recvTraining()
 	 * do is read the Eye Quality register (or similar)
 	 * and derive an indicator of the real S/N ratio.
 	 */
+	u_int fullrun = params.transferSize(TCF_DURATION);
 	u_int minrun = params.transferSize(conf.class1TCFMinRun);
 	nonzero = (100*nonzero) / (n == 0 ? 1 : n);
 	protoTrace("RECV: TCF %u bytes, %u%% non-zero, %u zero-run",
 	    n, nonzero, zerorun);
-	if (nonzero > conf.class1TCFMaxNonZero) {
+	if (zerorun < fullrun && nonzero > conf.class1TCFMaxNonZero) {
 	    protoTrace("RECV: reject TCF (too many non-zero, max %u%%)",
 		conf.class1TCFMaxNonZero);
 	    ok = false;
