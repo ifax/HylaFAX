@@ -7,7 +7,7 @@
 # support "Class 1.0" which means that they have "adaptive receive"
 # (AT+FAR=1), but not V.34.
 #
-#    Comtrol RocketModem II/III
+#    Comtrol RocketModem II/III/IV
 #    MultiTech MT5600ZDX
 #    Zoltrix FMVSP56i3
 #
@@ -24,6 +24,11 @@
 ModemType:		Class1.0	# use this to supply a hint
 ModemRate:		19200		# rate for DCE-DTE communication
 ModemFlowControl:	rtscts		# default
+#
+# With the RocketModem IV (and possibly III) you may need to use a much
+# higher ModemRate than 19200 because, apparently, it suffers from potential
+# buffer underrun problems.  Fortunately, it doesn't have buffer overflow
+# issues, and so using 115200 should work (both rtscts and xonxoff test good).
 #
 ModemNoFlowCmd:		AT&K0		# setup no flow control
 ModemHardFlowCmd:	AT&K3		# setup hardware flow control
