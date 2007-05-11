@@ -151,6 +151,7 @@ public:
     fxStr	class1EOPWaitCmd;	// cmd to stop and wait prior to EOP
     fxStr	class1SwitchingCmd;	// after recv HDLC and before sending
     fxStr	class1MsgRecvHackCmd;	// cmd to avoid +FCERROR before image
+    fxStr	class1TCFRecvHackCmd;	// cmd to avoid +FCERROR before TCF
     u_int	class1TCFRecvTimeout;	// timeout receiving TCF
     u_int	class1RecvAbortOK;	// if non-zero, OK sent after recv abort
     u_int	class1RMPersistence;	// how many times to persist through +FCERROR
@@ -169,7 +170,6 @@ public:
     bool	class1MRSupport;	// support 2-D MR
     bool	class1MMRSupport;	// support 2-D MMR
     bool	class1PersistentECM;	// continue to correct
-    bool	class1TCFRecvHack;	// deliberately look for V.21 disconnect
     bool	class1ValidateV21Frames;// check received FCS values in V.21
 					// for class 2 and 2.0:
     fxStr	class2Cmd;		// cmd for setting Class 2/2.0

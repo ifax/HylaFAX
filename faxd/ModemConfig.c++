@@ -120,6 +120,7 @@ static struct {
 { "class1tmquerycmd",		&ModemConfig::class1TMQueryCmd,	"AT+FTM=?" },
 { "class1eopwaitcmd",		&ModemConfig::class1EOPWaitCmd,	"AT+FTS=9" },
 { "class1msgrecvhackcmd",	&ModemConfig::class1MsgRecvHackCmd, "" },
+{ "class1tcfrecvhackcmd",	&ModemConfig::class1TCFRecvHackCmd, "" },
 { "class1switchingcmd",		&ModemConfig::class1SwitchingCmd, "AT+FRS=7" },
 { "class2cmd",			&ModemConfig::class2Cmd },
 { "class2borcmd",		&ModemConfig::class2BORCmd },
@@ -273,7 +274,6 @@ ModemConfig::setupConfig()
 #endif
     class1Resolutions	= VR_ALL;		// resolutions support
     class1PersistentECM	= true;			// continue to correct
-    class1TCFRecvHack	= false;		// historical behavior
     class1ValidateV21Frames = false;		// assume the modem does this
     setVolumeCmds("ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1");
     recvDataFormat	= DF_ALL;		// default to no transcoding
@@ -748,8 +748,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class1Resolutions = getBoolean(value) ? VR_ALL : (VR_NORMAL | VR_FINE);
     else if (streq(tag, "class1resolutions"))
 	class1Resolutions = getNumber(value);
-    else if (streq(tag, "class1tcfrecvhack"))
-	class1TCFRecvHack = getBoolean(value);
+    else if (streq(tag, "class1tcfrecvhack") && getBoolean(value))
+	class1TCFRecvHackCmd = "AT+FRS=1";	// backwards compatibility
     else if (streq(tag, "class1validatev21frames"))
 	class1ValidateV21Frames = getBoolean(value);
     else if (streq(tag, "modemminspeed"))

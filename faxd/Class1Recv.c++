@@ -347,26 +347,25 @@ Class1Modem::recvTraining()
     }
     /*
      * It is possible (and with some modems likely) that the sending
-     * system has not yet dropped its V.21 carrier.  So we follow the
-     * reasoning behind Class 1.0's adaptive reception control in T.32 
-     * 8.5.1 and the strategy documented in T.31 Appendix II.1: we issue
-     * another +FRH and wait for NO CARRIER before looking for the high
-     * speed carrier.  Even if the remote dropped its V.21 carrier at the
-     * same moment that we received the signal, the remote still has to
-     * wait 75 +/- 20 ms before sending us TCF as dictated by T.30
-     * Chapter 5, Note 3.  T.31 alerts us to the possibility of an ERROR 
-     * result instead of NO CARRIER due to line noise at carrier shut-off 
-     * and that we should ignore the ERROR.
+     * system has not yet dropped its V.21 carrier because the modem may
+     * simply signal OK when the HDLC frame is received completely and not
+     * not wait for the carrier drop to occur.  We don't follow the strategy
+     * documented in T.31 Appendix II.1 about issuing another +FRH and
+     * waiting for NO CARRIER because it's possible that the sender does not
+     * send enough V.21 HDLC after the last frame to make that work.
      *
-     * This approach poses less risk of failure than previous methods
-     * which simply ran through +FRM -> +FCERROR -> +FRM loops because
-     * with each iteration of said loop we ran the risk of losing our
-     * timing due to the DCE being deaf for a short period of time.  
-     * Unfortunately, this routine will cause some modems (i.e. Zyxel
-     * U336 and USR Courier 3367) to fail TCF reception.
+     * The remote has to wait 75 +/- 20 ms after DCS before sending us TCF
+     * as dictated by T.30 Chapter 5, Note 3.  If we have a modem that gives
+     * us an OK after DCS before the sender actually drops the carrier, then
+     * the best approach will be to simply look for silence with AT+FRS=1.
+     * Unfortunately, +FRS is not supported on all modems, and so when they
+     * need it, they will have to simply use a <delay:n> or possibly use
+     * a different command sequence.
+     *
      */
-    if (conf.class1TCFRecvHack)
-	atCmd(rhCmd, AT_NOCARRIER);
+    if (!atCmd(conf.class1TCFRecvHackCmd, AT_OK)) {
+	return (false);
+    }
 
     protoTrace("RECV training at %s %s",
 	modulationNames[curcap->mod],
@@ -554,10 +553,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 		 * Look for message carrier and receive Phase C data.
 		 */
 		/*
-		 * Same reasoning here as before receiving TCF.  In practice,
-		 * however, we can't follow Class1TCFRecvHack because it
-		 * apparently takes too much time to drop the V.21 carrier.  
-		 * So, our approach is much like Class1SwitchingCmd.
+		 * Same reasoning here as before receiving TCF.
 		 */
 		if (!atCmd(conf.class1MsgRecvHackCmd, AT_OK)) {
 		    emsg = "Failure to receive silence.";
