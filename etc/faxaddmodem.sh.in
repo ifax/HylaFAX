@@ -1133,7 +1133,7 @@ any problems encountered in Class 1/1.0 can be resolved by modifications
 to HylaFAX, but usually any problems encountered in Class 2/2.0/2.1 will
 require the modem manufacturer to resolve it.
 
-If you're unsure and your modem supports it, use Class 1.
+Use Class 1 unless you have a good reason not to.
 
 EOF
     # Here we build up a MODEMCLASSES string and follow
