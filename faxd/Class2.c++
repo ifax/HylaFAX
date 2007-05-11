@@ -442,7 +442,7 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params, bool
 		if (dfscan & 0x8) params.df |= BIT(DF_JBIG);
 	    } else {
 		params.df = DF_1DMH;
-		if (dfscan & 0x3) params.df = DF_2DMMR;
+		if (dfscan == 0x3) params.df = DF_2DMMR;
 		else if (dfscan & 0x1) params.df = DF_2DMR;
 		else if (dfscan & 0x4) params.df = DF_JBIG;	// JBIG L0 is JBIG to us
 		else if (dfscan & 0x8) params.df = DF_JBIG;
