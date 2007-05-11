@@ -171,6 +171,7 @@ public:
     bool	class1MMRSupport;	// support 2-D MMR
     bool	class1PersistentECM;	// continue to correct
     bool	class1ValidateV21Frames;// check received FCS values in V.21
+    bool	class1ModemHasDLEBug;;	// modem doesn't double-up DLEs in V.21
 					// for class 2 and 2.0:
     fxStr	class2Cmd;		// cmd for setting Class 2/2.0
     fxStr	class2DCCQueryCmd;	// cmd to query modem capabilities

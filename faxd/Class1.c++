@@ -863,6 +863,14 @@ Class1Modem::recvRawFrame(HDLCFrame& frame)
 			    c = 0x13;
 			    break;
 		    }
+		} else {
+		    /*
+		     * Some modems may not double-up the in-data DLEs like they should.
+		     */
+		    if (conf.class1ModemHasDLEBug) frame.put(frameRev[DLE]);
+		    else if (c != DLE) {
+			protoTrace("Odd.  Modem reported meaningless <DLE><0x%X>.  Possible DLE bug indication.", c);
+		    }
 		}
 	    }
 	    frame.put(frameRev[c]);

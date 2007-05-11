@@ -275,6 +275,7 @@ ModemConfig::setupConfig()
     class1Resolutions	= VR_ALL;		// resolutions support
     class1PersistentECM	= true;			// continue to correct
     class1ValidateV21Frames = false;		// assume the modem does this
+    class1ModemHasDLEBug = false;		// otherwise we'd have trouble
     setVolumeCmds("ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1");
     recvDataFormat	= DF_ALL;		// default to no transcoding
     rtnHandling         = FaxModem::RTN_RETRANSMITIGNORE; // retransmit until MCF/MPS
@@ -752,6 +753,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class1TCFRecvHackCmd = "AT+FRS=1";	// backwards compatibility
     else if (streq(tag, "class1validatev21frames"))
 	class1ValidateV21Frames = getBoolean(value);
+    else if (streq(tag, "class1modemhasdlebug"))
+	class1ModemHasDLEBug = getBoolean(value);
     else if (streq(tag, "modemminspeed"))
 	minSpeed = getSpeed(value);
     else if (streq(tag, "recvdataformat"))
