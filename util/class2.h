@@ -93,12 +93,10 @@ const u_short LN_LET	= 3;		// XXX US Letter size (used internally)
 
 const u_short DF_1DMH	= 0;		// 1-D Modified Huffman
 const u_short DF_2DMR	= 1;		// 2-D Modified Read
-const u_short DF_2DMRUNCOMP	= 2;		// 2-D Uncompressed Mode
+const u_short DF_2DMRUNCOMP	= 2;	// 2-D Uncompressed Mode
 const u_short DF_2DMMR	= 3;		// 2-D Modified Modified Read
 const u_short DF_JBIG	= 4;		// Single-progression sequential coding (Rec. T.85)
-const u_short DF_JPEG_GREY	= 5;	// Greyscale JPEG (T.4 Annex E and T.81)
-const u_short DF_JPEG_COLOR	= 6;	// Full-color JPEG (T.4 Annex E and T.81)
-const u_short DF_ALL	= BIT(DF_2DMMR+1)-1;
+const u_short DF_ALL	= BIT(DF_JBIG+1)-1 ^ BIT(DF_2DMRUNCOMP);	// no uncompressed
 
 /*
  * The EC definition varies between the Class 2 and Class 2.0 spec, so
@@ -130,6 +128,16 @@ const u_short ST_20MS	= 5;		// scan time/line: 20 ms/20 ms
 const u_short ST_40MS2	= 6;		// scan time/line: 40 ms/20 ms
 const u_short ST_40MS	= 7;		// scan time/line: 40 ms/40 ms
 const u_short ST_ALL	= BIT(ST_40MS+1)-1;
+
+const u_short JP_NONE	= 0;		// disable JPEG
+const u_short JP_GREY	= 1;		// Greyscale JPEG (T.4 Annex E and T.81)
+const u_short JP_COLOR	= 2;		// Full-color JPEG (T.4 Annex E and T.81)
+const u_short JP_HUFFMAN= 3;		// Enable preferred Huffman tables
+const u_short JP_12BIT	= 4;		// 12 bits/pel/component
+const u_short JP_NOSUB	= 5;		// no subsampling
+const u_short JP_ILLUM	= 6;		// custom illuminant
+const u_short JP_GAMUT	= 7;		// custom gamut range
+const u_short JP_ALL	= BIT(JP_GAMUT+1)-1;
 
 // post page message codes
 const u_short PPM_MPS	= 0;		// another page next, same document

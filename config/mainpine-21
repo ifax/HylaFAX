@@ -22,10 +22,6 @@ Class2BUGCmd:		AT+FBU=0	# early firmware is buggy
 Class2SendRTC:		yes
 Class2UseHex:		yes
 
-# unfortunately, HylaFAX can't currently send or receive in color
-ModemAnswerCmd:		AT+FCC=,,,,,,,,0;A
-ModemDialCmd:		AT+FCC=,,,,,,,,0;DT%s
-
 # You may want to do something like this to enable CTC in ECM
 # Class2Cmd:		AT+FCLASS=2.1;+FRY=4
 

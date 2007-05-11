@@ -33,6 +33,7 @@ Class2Modem::Class2Modem(FaxServer& s, const ModemConfig& c) : FaxModem(s,c)
     hangupCode[0] = '\0';
     serviceType = 0;			// must be set in derived class
     useExtendedDF = false;		// T.32 Amendment 1 extension for data format is detectable
+    useJP = false;			// JP +FCC option support is detectable
 }
 
 Class2Modem::~Class2Modem()
@@ -85,7 +86,7 @@ Class2Modem::setupModem(bool isSend)
 	return (false);
     }
     /*
-     * Syntax: (vr),(br),(wd),(ln),(df),(ec),(bf),(st)
+     * Syntax: (vr),(br),(wd),(ln),(df),(ec),(bf),(st)[,(jp)]
      * where,
      *	vr	vertical resolution
      *	br	bit rate
@@ -95,6 +96,7 @@ Class2Modem::setupModem(bool isSend)
      *	ec	error correction
      *	bf	binary file transfer
      *	st	scan time/line
+     *	jp	JPEG support (optional)
      */
     if (!parseRange(t30parms, modemParams)) {
 	serverTrace("Error parsing " | dccQueryCmd | " response: "
@@ -379,6 +381,7 @@ Class2Modem::setupDCC(bool enableV34, bool enableV17)
     params.ec = getBestECM();
     params.bf = BF_DISABLE;
     params.st = getBestScanlineTime();
+    params.jp = modemParams.jp;
     return class2Cmd(dccCmd, params, true);
 }
 
@@ -393,14 +396,25 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params, bool
      * Some modems report capabilities in hex values, others decimal.
      */
     fxStr notation;
-    if (conf.class2UseHex)
-	notation = "%X,%X,%X,%X,%X,%X,%X,%X";
-    else
-	notation = "%d,%d,%d,%d,%d,%d,%d,%d";
-    int n = sscanf(cap, notation,
-	&params.vr, &params.br, &params.wd, &params.ln,
-	&params.df, &params.ec, &params.bf, &params.st);
-    if (n == 8) {
+    if (conf.class2UseHex) {
+	if (useJP) notation = "%X,%X,%X,%X,%X,%X,%X,%X,%X";
+	else notation = "%X,%X,%X,%X,%X,%X,%X,%X";
+    } else {
+	if (useJP) notation = "%d,%d,%d,%d,%d,%d,%d,%d,%d";
+	else notation = "%d,%d,%d,%d,%d,%d,%d,%d";
+    }
+    int n = 0;
+    if (useJP) {
+	n = sscanf(cap, notation,
+	    &params.vr, &params.br, &params.wd, &params.ln,
+	    &params.df, &params.ec, &params.bf, &params.st, &params.jp);
+    } else {
+	n = sscanf(cap, notation,
+	    &params.vr, &params.br, &params.wd, &params.ln,
+	    &params.df, &params.ec, &params.bf, &params.st);
+	params.jp = 0;
+    }
+    if ((useJP && n == 9) || (!useJP && n == 8)) {
 	if (params.ec != EC_DISABLE && (conf.class2ECMType == ClassModem::ECMTYPE_CLASS20 ||
 	   (conf.class2ECMType == ClassModem::ECMTYPE_UNSET && serviceType != SERVICE_CLASS2)))
 	    params.ec += 1;		// simple adjustment, drops EC_ENABLE64
@@ -453,6 +467,15 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params, bool
 	if (params.bf > BF_ENABLE)
 	    params.bf = BF_DISABLE;
 	params.st = fxmin(params.st, (u_int) ST_40MS);
+	int jpscan = params.jp;
+	params.jp = 0;
+	if (isDIS) {
+	    if (jpscan & 0x1) params.jp |= BIT(JP_GREY);
+	    if (jpscan & 0x2) params.jp |= BIT(JP_COLOR);
+	} else {
+	    if (jpscan == 0x1) params.jp = JP_GREY;
+	    else if (jpscan & 0x2) params.jp = JP_COLOR;
+	}
 	return (true);
     } else {
 	protoTrace("MODEM protocol botch, can not parse \"%s\"", cap);
@@ -623,7 +646,7 @@ Class2Modem::class2Cmd(const fxStr& cmd, const Class2Params& p, bool isDCC, ATRe
     if (conf.class2ECMType == ClassModem::ECMTYPE_CLASS20 ||
        (conf.class2ECMType == ClassModem::ECMTYPE_UNSET && serviceType != SERVICE_CLASS2))
 	ecm20 = true;
-    return atCmd(cmd | "=" | p.cmd(conf.class2UseHex, ecm20, (isDCC && useExtendedDF)), r, ms);
+    return atCmd(cmd | "=" | p.cmd(conf.class2UseHex, ecm20, (isDCC && useExtendedDF), useJP), r, ms);
 }
 
 /*
@@ -645,7 +668,7 @@ Class2Modem::parseRange(const char* cp, Class2Params& p)
     /*
      * VR, BF, and JP are already reported as bitmap
      * values accoring to T.32 Table 21.
-     * In vparseRange(), VR:nargs=7, BF:nargs=1.  JP not handled.
+     * In vparseRange(), VR:nargs=7, BF:nargs=1.
      */
     int masked = (1 << 7) + (1 << 1);	// reversed, count-down style
     if (!vparseRange(cp, masked, 8, &p.vr,&p.br,&p.wd,&p.ln,&p.df,&p.ec,&p.bf,&p.st))
@@ -667,12 +690,26 @@ Class2Modem::parseRange(const char* cp, Class2Params& p)
 	 * are not.
 	 */
 	useExtendedDF = true;
-	p.df = BIT(DF_1DMH) | BIT(DF_2DMR) | BIT(DF_2DMMR) | BIT(DF_JBIG);
+	p.df &= DF_ALL;
+	p.df |= BIT(DF_JBIG);
     } else
 	p.df &= DF_ALL;
     p.ec &= EC_ALL;
     p.bf &= BF_ALL;
     p.st &= ST_ALL;
+
+    /*
+     * As JP is optional we do a second, non-fatal parse for it.
+     */
+    int n;
+    masked = 1;
+    if (vparseRange(cp, masked, 9, &n,&n,&n,&n,&n,&n,&n,&n,&p.jp)) {
+	useJP = true;
+	if (conf.class2JPEGSupport) p.jp &= JP_ALL;
+	else p.jp = 0;
+    } else
+	p.jp = 0;
+
     return true;
 }
 

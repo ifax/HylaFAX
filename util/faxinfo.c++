@@ -251,6 +251,7 @@ main(int argc, char** argv)
 	}
 
 	Class2Params params;
+	params.jp = 0;
 	uint32 v;
 	float vres = 3.85;					// XXX default
 	float hres = 8.03;

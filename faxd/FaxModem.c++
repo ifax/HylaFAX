@@ -571,7 +571,8 @@ FaxModem::traceModemParams()
     traceBits(modemParams.br, Class2Params::bitRateNames);
     traceBits(modemParams.wd, Class2Params::pageWidthNames);
     traceBits(modemParams.ln, Class2Params::pageLengthNames);
-    traceBits(modemParams.df, Class2Params::dataFormatNames);
+    u_int dataforms = modemParams.df + ((modemParams.jp & (BIT(JP_GREY) | BIT(JP_COLOR))) << 4);
+    traceBits(dataforms, Class2Params::dataFormatNames);
     if (supportsECM())
 	traceBits(modemParams.ec, Class2Params::ecmNames);
     if (modemParams.bf & BIT(BF_ENABLE))

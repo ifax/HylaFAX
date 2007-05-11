@@ -38,6 +38,7 @@ Class2Params::Class2Params()
     ec = (u_int) -1;
     bf = (u_int) -1;
     st = (u_int) -1;
+    jp = (u_int) -1;
 }
 
 int
@@ -50,7 +51,8 @@ Class2Params::operator==(const Class2Params& other) const
 	&& df == other.df
 	&& ec == other.ec
 	&& bf == other.bf
-	&& st == other.st;
+	&& st == other.st
+	&& jp == other.jp;
 }
 
 int
@@ -60,7 +62,7 @@ Class2Params::operator!=(const Class2Params& other) const
 }
 
 fxStr
-Class2Params::cmd(bool class2UseHex, bool ecm20, bool doDFbitmap) const
+Class2Params::cmd(bool class2UseHex, bool ecm20, bool doDFbitmap, bool useJP) const
 {
     u_int unset = (u_int) -1;
     fxStr comma(",");
@@ -80,8 +82,8 @@ Class2Params::cmd(bool class2UseHex, bool ecm20, bool doDFbitmap) const
     s.append(comma);
     if (doDFbitmap) {
 	/*
-	 * We need to produce a MultiTech data format extension
-	 * bitmap rather than a point-value.
+	 * We need to produce a T.32 Amendment 1 data format
+	 * extension bitmap rather than a point-value.
 	 */
 	u_int dfmap = 0;
 	if (df &  BIT(DF_2DMR)) dfmap |= 0x1;
@@ -96,6 +98,10 @@ Class2Params::cmd(bool class2UseHex, bool ecm20, bool doDFbitmap) const
     if (bf != unset) s.append(fxStr::format(notation, bf));
     s.append(comma);
     if (st != unset) s.append(fxStr::format(notation, st));
+    if (useJP) {
+	s.append(comma);
+	if (df != unset) s.append(fxStr::format(notation, jp));
+    }
     return s;
 }
 
@@ -205,11 +211,9 @@ Class2Params::setFromDIS(FaxParams& dis_caps)
 
     if (ec != EC_DISABLE) {
 	if (dis_caps.isBitEnabled(FaxParams::BITNUM_JBIG_BASIC)) df |= BIT(DF_JBIG);
-	if (dis_caps.isBitEnabled(FaxParams::BITNUM_JPEG)) df |= BIT(DF_JPEG_GREY);
-	//if (dis_caps.isBitEnabled(FaxParams::BITNUM_JBIG)) df |= BIT(DF_JBIG_GREY);
+	if (dis_caps.isBitEnabled(FaxParams::BITNUM_JPEG)) jp |= BIT(JP_GREY);
 	if (dis_caps.isBitEnabled(FaxParams::BITNUM_FULLCOLOR)) {
-	    if (df & BIT(DF_JPEG_GREY)) df |= BIT(DF_JPEG_COLOR);
-	    //if (df & BIT(DF_JBIG_GREY)) df |= BIT(DF_JBIG_COLOR);
+	    if (jp & BIT(JP_GREY)) jp |= BIT(JP_COLOR);
 	}
     }
 }
@@ -262,6 +266,7 @@ Class2Params::setFromDIS(u_int dis, u_int xinfo)
 	ec = EC_DISABLE;
     bf = BF_DISABLE;			// XXX from xinfo
     st = DISstTab[(dis & DIS_MINSCAN) >> 1];
+    jp = 0;
 }
 
 /*
@@ -293,14 +298,12 @@ Class2Params::setFromDCS(FaxParams& dcs_caps)
     }
     if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JBIG_BASIC)) df = DF_JBIG;
     if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JBIG_L0)) df = DF_JBIG;
-    if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JPEG)) df = DF_JPEG_GREY;
-    //if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JBIG)) df = DF_JBIG_GREY;
+    if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JPEG)) jp = JP_GREY;
     if (dcs_caps.isBitEnabled(FaxParams::BITNUM_FULLCOLOR)) {
-	if (df == DF_JPEG_GREY) df = DF_JPEG_COLOR;
-	//if (df == DF_JBIG_GREY) df = DF_JBIG_COLOR;
+	if (jp == JP_GREY) jp = JP_COLOR;
     }
     if (ec == EC_DISABLE &&
-	(df == DF_2DMMR || df == DF_JBIG || df == DF_JPEG_GREY || df == DF_JPEG_COLOR)) {
+	(df == DF_2DMMR || df == DF_JBIG || jp == JP_GREY || jp == JP_COLOR)) {
 	// MMR, JBIG, and JPEG require ECM... we've seen cases where fax
 	// senders screw up and don't signal ECM but do send ECM-framed
 	// image data in the signalled format, and an RTN will break protocol,
@@ -461,6 +464,12 @@ Class2Params::update(bool isDIS)
 	setBit(BITNUM_2DMMR, true);
     if (CHECKPARAM(df, DF_JBIG, isDIS) && (CHECKPARAM(ec, EC_ENABLE64, isDIS) || CHECKPARAM(ec, EC_ENABLE256, isDIS)))
 	setBit(BITNUM_JBIG_BASIC, true);
+    if (CHECKPARAM(jp, JP_GREY, isDIS) && (CHECKPARAM(ec, EC_ENABLE64, isDIS) || CHECKPARAM(ec, EC_ENABLE256, isDIS)))
+	setBit(BITNUM_JPEG, true);
+    if (CHECKPARAM(jp, JP_COLOR, isDIS) && (CHECKPARAM(ec, EC_ENABLE64, isDIS) || CHECKPARAM(ec, EC_ENABLE256, isDIS))) {
+	setBit(BITNUM_JPEG, true);
+	setBit(BITNUM_FULLCOLOR, true);
+    }
 
     /*
      * MINIMUM SCANLINE TIME
@@ -869,11 +878,11 @@ const char* Class2Params::dataFormatNames[7] = {
     "2-D Uncompressed Mode",	// DF_2DMRUNCOMP
     "2-D MMR",			// DF_2DMMR
     "JBIG",			// DF_JBIG
-    "JPEG Greyscale",		// DF_JPEG_GREY
-    "JPEG Full-Color"		// DF_JPEG_COLOR
+    "JPEG Greyscale",		// JP_GREY
+    "JPEG Full-Color"		// JP_COLOR
 };
 const char* Class2Params::dataFormatName() const
-     { return (dataFormatNames[df]); }
+     { return (dataFormatNames[df+(jp > 0 && jp < (u_int) -1 ? jp + 4 : 0)]); }
 
 fxStr
 Class2Params::dataFormatsName()
@@ -883,8 +892,8 @@ Class2Params::dataFormatsName()
     if (df & BIT(DF_2DMMR)) formats.append(", MMR");
     if (df & BIT(DF_JBIG)) formats.append(", JBIG");
     // since color requires greyscale, just say one or the other
-    if (df & BIT(DF_JPEG_COLOR)) formats.append(", JPEG Full-Color");
-    else if (df & BIT(DF_JPEG_GREY))  formats.append(", JPEG Greyscale");
+    if (jp & BIT(JP_COLOR)) formats.append(", JPEG Full-Color");
+    else if (jp & BIT(JP_GREY))  formats.append(", JPEG Greyscale");
     return (formats);
 }
 

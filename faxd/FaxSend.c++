@@ -597,6 +597,10 @@ FaxServer::sendSetupParams1(TIFF* tif,
     if (!TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts))
 	g3opts = 0;
     /*
+     * JPEG sending disabled for now
+     */
+    params.jp = 0;
+    /*
      * RTFCC lets us ignore our file data format, but our data
      * format may be based upon a requested data format, and without
      * re-reading the q file, we won't know if the data format was

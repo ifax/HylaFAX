@@ -255,6 +255,7 @@ ModemConfig::setupConfig()
     class2UseHex	= false;		// historical behavior
     class2HexNSF	= true;			// most modems report NSF in hexadecimal
     class2UseLineCount	= false;		// don't trust firmware decoders
+    class2JPEGSupport	= false;		// disable JPEG by default
     class1ECMSupport	= true;			// support for ECM
     class1MRSupport	= true;			// support for 2-D MR
     class1MMRSupport	= true;			// support for 2-D MMR
@@ -742,6 +743,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class1GreyJPEGSupport = getBoolean(value);
     else if (streq(tag, "class1colorjpegsupport"))
 	class1ColorJPEGSupport = getBoolean(value);
+    else if (streq(tag, "class2jpegsupport"))
+	class2JPEGSupport = getBoolean(value);
 #endif
     else if (streq(tag, "class1jbigsupport"))
         class1JBIGSupport = getJBIGSupport(value);

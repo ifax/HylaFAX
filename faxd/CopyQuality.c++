@@ -39,7 +39,7 @@
 
 #define	RCVBUFSIZ	(32*1024)		// XXX
 
-static	void setupCompression(TIFF*, u_int, uint32);
+static	void setupCompression(TIFF*, u_int, u_int, uint32);
 
 void
 FaxModem::setupStartPage(TIFF* tif, const Class2Params& params)
@@ -49,7 +49,7 @@ FaxModem::setupStartPage(TIFF* tif, const Class2Params& params)
      * Group3Options must reflect the negotiated session
      * parameters for the forthcoming page data.
      */
-    setupCompression(tif, params.df, group3opts);
+    setupCompression(tif, params.df, params.jp, group3opts);
     /*
      * Do magic at page start to collect the file offset
      * to the start of the page data--this is used in case
@@ -180,7 +180,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 	 */
 	u_int df = (conf.recvDataFormat == DF_ALL ?
 	    params.df : conf.recvDataFormat);
-	setupCompression(tif, df, 0);		// XXX maybe zero-fill EOLs?
+	setupCompression(tif, df, 0, 0);		// XXX maybe zero-fill EOLs?
 	/*
 	 * Do magic at page start to collect the file offset
 	 * to the start of the page data--this is used in case
@@ -344,26 +344,44 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 	 * NB: the image is written as a single strip of data.
 	 */
 	setupStartPage(tif, params);
-	if (params.df == DF_JBIG) {
+	if (params.df == DF_JBIG || params.jp == JP_GREY || params.jp == JP_COLOR) {
+	    if (params.df != DF_JBIG) {
+		/*
+		 * In the case of JPEG we have to buffer it all, alter SOF
+		 * after seeing DNL, and then write it to disk... because
+		 * most JPEG parsers won't know how to handle DNL as it's
+		 * rather fax-specific.
+		 */
+		recvEOLCount = 0;
+		recvRow = (u_char*) malloc(1024*1000);    // 1M should do it?
+		fxAssert(recvRow != NULL, "page buffering error (JPEG page).");
+		recvPageStart = recvRow;
+	    }
+	    parserCount[0] = 0;
+	    parserCount[1] = 0;
+	    parserCount[2] = 0;
+	    memset(parserBuf, 0, 16);
 	    int cc = 0, c;
 	    bool fin = false;
-	    for (; cc < 20; cc++) {
-		c = getModemChar(30000);
-		if (c == EOF || wasTimeout()) {
-		    fin = true;
-		    break;
-		}
-		if (c == DLE) {
+	    if (params.df == DF_JBIG) {
+		for (; cc < 20; cc++) {
 		    c = getModemChar(30000);
-		    if (c == EOF || c == ETX || wasTimeout()) {
+		    if (c == EOF || wasTimeout()) {
 			fin = true;
 			break;
 		    }
+		    if (c == DLE) {
+			c = getModemChar(30000);
+			if (c == EOF || c == ETX || wasTimeout()) {
+			    fin = true;
+			    break;
+			}
+		    }
+		    buf[cc] = c;
 		}
-		buf[cc] = c;
+		parseJBIGBIH(buf);
+		flushRawData(tif, 0, (const u_char*) buf, cc);
 	    }
-	    parseJBIGBIH(buf);
-	    flushRawData(tif, 0, (const u_char*) buf, cc);
 	    if (!fin) {
 		do {
 		    cc = 0;
@@ -380,12 +398,19 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 				break;
 			    }
 			}
-			parseJBIGStream(c);
+			if (params.df == DF_JBIG) parseJBIGStream(c);
+			else parseJPEGStream(c);
 			buf[cc++] = c;
 		    } while (cc < RCVBUFSIZ && !fin);
-		    flushRawData(tif, 0, (const u_char*) buf, cc);
+		    if (params.df == DF_JBIG) {
+			flushRawData(tif, 0, (const u_char*) buf, cc);
+		    } else {
+			memcpy(recvRow, (const char*) buf, cc);
+			recvRow += cc;
+		    }
 		} while (!fin);
-		clearSDNORMCount();
+		if (params.df == DF_JBIG) clearSDNORMCount();
+		else fixupJPEG(tif);
 	    }
 	    recvEndPage(tif, params);
 	    return (true);
@@ -447,7 +472,8 @@ FaxModem::recvSetupTIFF(TIFF* tif, long, int fillOrder, const fxStr& id)
 {
     TIFFSetField(tif, TIFFTAG_SUBFILETYPE,	FILETYPE_PAGE);
     TIFFSetField(tif, TIFFTAG_IMAGEWIDTH,	(uint32) params.pageWidth());
-    if (params.df == DF_JPEG_COLOR || params.df == DF_JPEG_GREY) {
+    if (params.jp == JP_COLOR || params.jp == JP_GREY) {
+	TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE,	8);
 #ifdef PHOTOMETRIC_ITULAB
 	TIFFSetField(tif, TIFFTAG_PHOTOMETRIC,		PHOTOMETRIC_ITULAB);
 #else
@@ -458,7 +484,7 @@ FaxModem::recvSetupTIFF(TIFF* tif, long, int fillOrder, const fxStr& id)
 	// libtiff requires IMAGELENGTH to be set before SAMPLESPERPIXEL, 
 	// or StripOffsets and StripByteCounts will have SAMPLESPERPIXEL values
 	TIFFSetField(tif, TIFFTAG_IMAGELENGTH,		2000);	// we adjust this later
-	TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL,	params.df == DF_JPEG_GREY ? 1 : 3);
+	TIFFSetField(tif, TIFFTAG_SAMPLESPERPIXEL,	params.jp == JP_GREY ? 1 : 3);
     } else {
 	TIFFSetField(tif, TIFFTAG_BITSPERSAMPLE,	1);
 	TIFFSetField(tif, TIFFTAG_PHOTOMETRIC,		PHOTOMETRIC_MINISWHITE);
@@ -486,33 +512,34 @@ FaxModem::recvSetupTIFF(TIFF* tif, long, int fillOrder, const fxStr& id)
  * Setup the compression scheme and related tags.
  */
 static void
-setupCompression(TIFF* tif, u_int df, uint32 opts)
+setupCompression(TIFF* tif, u_int df, u_int jp, uint32 opts)
 {
-    switch (df) {
-    case DF_JPEG_GREY:
-    case DF_JPEG_COLOR:
-	TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_JPEG);
-	break;
-    case DF_JBIG:
-	TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_JBIG);
-	break;
-    case DF_2DMMR:
-	TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_CCITTFAX4);
-	TIFFSetField(tif, TIFFTAG_GROUP4OPTIONS, opts);
-	break;
-    case DF_2DMRUNCOMP:
-	TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_CCITTFAX3);
-	TIFFSetField(tif, TIFFTAG_GROUP3OPTIONS,
-	    opts | GROUP3OPT_2DENCODING|GROUP3OPT_UNCOMPRESSED);
-	break;
-    case DF_2DMR:
-	TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_CCITTFAX3);
-	TIFFSetField(tif, TIFFTAG_GROUP3OPTIONS, opts | GROUP3OPT_2DENCODING);
-	break;
-    case DF_1DMH:
-	TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_CCITTFAX3);
-	TIFFSetField(tif, TIFFTAG_GROUP3OPTIONS, opts &~ GROUP3OPT_2DENCODING);
-	break;
+    u_int dataform = df + (jp ? jp + 4 : 0);
+    switch (dataform) {
+	case JP_GREY+4:
+	case JP_COLOR+4:
+	    TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_JPEG);
+	    break;
+	case DF_JBIG:
+	    TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_JBIG);
+	    break;
+	case DF_2DMMR:
+	    TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_CCITTFAX4);
+	    TIFFSetField(tif, TIFFTAG_GROUP4OPTIONS, opts);
+	    break;
+	case DF_2DMRUNCOMP:
+	    TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_CCITTFAX3);
+	    TIFFSetField(tif, TIFFTAG_GROUP3OPTIONS,
+		opts | GROUP3OPT_2DENCODING|GROUP3OPT_UNCOMPRESSED);
+	    break;
+	case DF_2DMR:
+	    TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_CCITTFAX3);
+	    TIFFSetField(tif, TIFFTAG_GROUP3OPTIONS, opts | GROUP3OPT_2DENCODING);
+	    break;
+	case DF_1DMH:
+	    TIFFSetField(tif, TIFFTAG_COMPRESSION, COMPRESSION_CCITTFAX3);
+	    TIFFSetField(tif, TIFFTAG_GROUP3OPTIONS, opts &~ GROUP3OPT_2DENCODING);
+	    break;
     }
 }
 
@@ -563,10 +590,9 @@ FaxModem::parseJBIGStream(u_char c)
 	parserCount[2]--;
 	return;
     }
-    u_long framelength = 0;
-
-    memcpy(parserBuf+1, parserBuf, 15);
+    for (u_short i = 15; i > 0; i--) parserBuf[i] = parserBuf[i-1];
     parserBuf[0] = c;
+    u_long framelength = 0;
 
     if (parserCount[0] >= 2 && parserBuf[1] == 0xFF && parserBuf[0] == 0x04) {
 	clearSDNORMCount();
@@ -617,12 +643,6 @@ FaxModem::parseJBIGStream(u_char c)
 	parserCount[0] = 0;
 	return;
     }
-    if (parserCount[0] >= 2 && parserBuf[1] == 0xFF && parserBuf[0] != 0x00) {	// not STUFF
-	clearSDNORMCount();
-	copyQualityTrace("Found Unknown Marker %#x Segment in BID", parserBuf[0]);
-	parserCount[0] == 0;
-	return;
-    }
 }
 
 void
@@ -660,6 +680,208 @@ FaxModem::parseJBIGBIH(u_char* buf)
 	(buf[19]&0x4)>>2, (buf[19]&0x2)>>1, buf[19]&0x1);
 }
 
+void
+FaxModem::parseJPEGStream(u_char c)
+{
+    /*
+     * parserCount[n]
+     *   n = 0, bytes since last marker
+     *   n = 1, framelength bypass countdown
+     */
+    parserCount[0]++;
+    if (parserCount[1]) {
+	// just skipping bytes
+	parserCount[1]--;
+	return;
+    }
+    for (u_short i = 15; i > 0; i--) parserBuf[i] = parserBuf[i-1];
+    parserBuf[0] = c;
+    u_long framelength = 0, framewidth = 0, fsize = 0;
+
+    if (parserCount[0] >= 9 && parserBuf[8] == 0xFF && parserBuf[7] >= 0xC0 && parserBuf[7] <= 0xCF
+	&& parserBuf[7] != 0xC4 && parserBuf[7] != 0xC8 && parserBuf[7] != 0xCC) {
+	u_short type = parserBuf[7] - 0xC0;
+	fsize = 256*parserBuf[6];
+	fsize += parserBuf[5];
+	framelength = 256*parserBuf[3];
+	framelength += parserBuf[2];
+	framewidth = 256*parserBuf[1];
+	framewidth += parserBuf[0];
+	copyQualityTrace("Found Start of Frame (SOF%u) Marker, size: %lu x %lu", type, framewidth, framelength);
+	if (framelength < 65535 && framelength > recvEOLCount) recvEOLCount = framelength;
+	parserCount[1] = fsize - 9;
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 2 && parserBuf[1] == 0xFF && parserBuf[0] == 0xC8) {
+	copyQualityTrace("Found JPEG Extensions (JPG) Marker");
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 4 && parserBuf[3] == 0xFF && parserBuf[2] == 0xC4) {
+	fsize = 256*parserBuf[1];
+	fsize += parserBuf[0];
+	copyQualityTrace("Found Define Huffman Tables (DHT) Marker");
+	parserCount[1] = fsize - 4;
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 4 && parserBuf[3] == 0xFF && parserBuf[2] == 0xCC) {
+	fsize = 256*parserBuf[1];
+	fsize += parserBuf[0];
+	copyQualityTrace("Found Define Arithmatic Coding Conditionings (DAC) Marker");
+	parserCount[1] = fsize - 4;
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 2 && parserBuf[1] == 0xFF && parserBuf[0] >= 0xD0 && parserBuf[0] <= 0xD7) {
+	copyQualityTrace("Found Restart (RST) Marker");
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 2 && parserBuf[1] == 0xFF && parserBuf[0] == 0xD8) {
+	copyQualityTrace("Found Start of Image (SOI) Marker");
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 2 && parserBuf[1] == 0xFF && parserBuf[0] == 0xD9) {
+	copyQualityTrace("Found End of Image (EOI) Marker");
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 4 && parserBuf[3] == 0xFF && parserBuf[2] == 0xDA) {
+	fsize = 256*parserBuf[1];
+	fsize += parserBuf[0];
+	copyQualityTrace("Found Start of Scan (SOS) Marker");
+	parserCount[1] = fsize - 4;
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 4 && parserBuf[3] == 0xFF && parserBuf[2] == 0xDB) {
+	fsize = 256*parserBuf[1];
+	fsize += parserBuf[0];
+	copyQualityTrace("Found Define Quantization Tables (DQT) Marker");
+	parserCount[1] = fsize - 4;
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 6 && parserBuf[5] == 0xFF && parserBuf[4] == 0xDC) {
+	fsize = 256*parserBuf[3];
+	fsize += parserBuf[2];
+	framelength = 256*parserBuf[1];
+	framelength += parserBuf[0];
+	copyQualityTrace("Found Define Number of Lines (DNL) Marker, lines: %lu", framelength);
+	if (framelength < 65535) recvEOLCount = framelength;
+	parserCount[1] = fsize - 6;
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 4 && parserBuf[3] == 0xFF && parserBuf[2] == 0xDD) {
+	fsize = 256*parserBuf[1];
+	fsize += parserBuf[0];
+	copyQualityTrace("Found Define Restart Interval (DRI) Marker");
+	parserCount[1] = fsize - 4;
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 2 && parserBuf[1] == 0xFF && parserBuf[0] == 0xDE) {
+	copyQualityTrace("Found Define Hierarchial Progression (DHP) Marker");
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 4 && parserBuf[3] == 0xFF && parserBuf[2] == 0xDF) {
+	fsize = 256*parserBuf[1];
+	fsize += parserBuf[0];
+	copyQualityTrace("Found Expand Reference Components (EXP) Marker");
+	parserCount[1] = fsize - 4;
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 4 && parserBuf[3] == 0xFF && parserBuf[2] >= 0xE0 && parserBuf[2] <= 0xEF) {
+	u_short type = parserBuf[2] - 0xE0;
+	fsize = 256*parserBuf[1];
+	fsize += parserBuf[0];
+	copyQualityTrace("Found Application Segment (APP%u) Marker", type);
+	parserCount[1] = fsize - 4;
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 2 && parserBuf[1] == 0xFF && parserBuf[0] >= 0xF0 && parserBuf[0] <= 0xFD) {
+	u_short type = parserBuf[0] - 0xF0;
+	copyQualityTrace("Found JPEG Extension (JPG%u) Marker", type);
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 4 && parserBuf[3] == 0xFF && parserBuf[2] == 0xFE) {
+	fsize = 256*parserBuf[1];
+	fsize += parserBuf[0];
+	copyQualityTrace("Found Comment (COM) Marker");
+	parserCount[1] = fsize - 4;
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 2 && parserBuf[1] == 0xFF && parserBuf[0] == 0x01) {
+	copyQualityTrace("Found Temporary Private Use (TEM) Marker");
+	parserCount[0] = 0;
+	return;
+    }
+    if (parserCount[0] >= 2 && parserBuf[1] == 0xFF && parserBuf[0] >= 0x02 && parserBuf[0] <= 0xBF) {
+	copyQualityTrace("Found Reserved (RES) Marker 0x%X", parserBuf[0]);
+	parserCount[0] = 0;
+	return;
+    }
+}
+
+void
+FaxModem::fixupJPEG(TIFF* tif)
+{
+    if (!recvEOLCount) {
+	/*
+	 * We didn't detect an image length marker (DNL/NEWLEN).  So
+	 * we use the session parameters to guess at one, and we hope that
+	 * the eventual viewing decoder can cope with things if the data
+	 * is short.
+	 *
+	 * This approach doesn't seem to work with JBIG, so for now we only do it with JPEG.
+	 */
+	u_int len, res;
+	switch (params.ln) {
+	    case LN_A4:	len = 297; break;
+	    default:	len = 364; break;	// LN_INF, LN_B4
+	}
+	switch (params.vr) {	// values in mm/100 to avoid floats
+	    case VR_NORMAL:	res = 385; break;
+	    case VR_FINE:	res = 770; break;
+	    case VR_200X100:	res = 394; break;
+	    case VR_200X200:	res = 787; break;
+	    case VR_200X400:	res = 1575; break;
+	    case VR_300X300:	res = 1181; break;
+	    default:		res = 1540; break;	// VR_R16, VR_R8
+	}
+	recvEOLCount = (u_long) ((len * res) / 100);
+	protoTrace("RECV: assumed image length of %lu lines", recvEOLCount);
+    }
+    /*
+     * DNL markers generally are not usable in TIFF files.  Furthermore,
+     * many TIFF viewers cannot use them, either.  So, we go back
+     * through the strip and replace any "zero" image length attributes
+     * of any SOF markers with recvEOLCount.  Perhaps we should strip
+     * out the DNL marker entirely, but leaving it in seems harmless.
+     */
+    u_long pagesize = recvRow - recvPageStart;
+    recvRow = recvPageStart;
+    for (uint32 i = 0; i < (pagesize - 6); i++) {
+	if (recvRow[i] == 0xFF && recvRow[i+1] == 0xC0 && recvRow[i+5] == 0x00 && recvRow[i+6] == 0x00) {
+	    recvRow[i+5] = recvEOLCount >> 8;
+	    recvRow[i+6] = recvEOLCount & 0xFF;
+	    protoTrace("RECV: fixing zero image frame length in SOF marker at byte %lu to %lu", i, recvEOLCount);
+	}
+    }
+    if (TIFFWriteRawStrip(tif, 0, (tdata_t) recvRow, pagesize) == -1)
+	serverTrace("RECV: %s: write error", TIFFFileName(tif));
+    free(recvRow);
+}
+
 /*
  * In ECM mode the ECM module provides the line-counter.
  */
@@ -674,9 +896,11 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
      * block.  In-between blocks merely dump data into the pipe.
      */
 
+    u_int dataform = params.df + (params.jp ? params.jp + 4 : 0);
+
     char cbuf[4];		// size of the page count signal
     if (seq & 1) {		// first block
-	switch (params.df) {
+	switch (dataform) {
 	    case DF_1DMH:
 	    case DF_2DMR:
 	    case DF_2DMMR:
@@ -742,20 +966,28 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 		{
 		    setupStartPage(tif, params);
 		    parseJBIGBIH(buf);
+		    parserCount[0] = 0;
+		    parserCount[1] = 0;
+		    parserCount[2] = 0;
+		    memset(parserBuf, 0, 16);
 		}
 		break;
 
-	    case DF_JPEG_GREY:
-	    case DF_JPEG_COLOR:
+	    case JP_GREY+4:
+	    case JP_COLOR+4:
 		recvEOLCount = 0;
 		recvRow = (u_char*) malloc(1024*1000);    // 1M should do it?
 		fxAssert(recvRow != NULL, "page buffering error (JPEG page).");
 		recvPageStart = recvRow;
 		setupStartPage(tif, params);
+		parserCount[0] = 0;
+		parserCount[1] = 0;
+		parserCount[2] = 0;
+		memset(parserBuf, 0, 16);
 		break;
 	}
     }
-    switch (params.df) {
+    switch (dataform) {
 	case DF_1DMH:
 	case DF_2DMR:
 	case DF_2DMMR:
@@ -782,184 +1014,28 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 	    break;
 
 	case DF_JBIG:
-	    // search for Marker Segments in JBIG Bi-Level Image Data
+	case JP_GREY+4:
+	case JP_COLOR+4:
+	    // search for Marker Segments in Image Data
 	    {
-		parserCount[0] = 0;
-		parserCount[1] = 0;
-		parserCount[2] = 0;
-		memset(parserBuf, 0, 16);
 		u_int i = 0;
-		if (seq & 1) i += 20;		// skip BIH
+		if ((dataform == DF_JBIG) && (seq & 1)) i += 20;		// skip BIH
 		for (; i < cc; i++) {
-		    parseJBIGStream(buf[i]);
+		    if (dataform == DF_JBIG) parseJBIGStream(buf[i]);
+		    else parseJPEGStream(buf[i]);
 		}
-		clearSDNORMCount();
-	    }
-	    break;
-
-	case DF_JPEG_GREY:
-	case DF_JPEG_COLOR:
-	    {
-		u_long framelength = 0;
-		u_long framewidth = 0;
-		u_long fsize = 0;
-		for (u_int i = 0; i < cc-2; i++) {
-		    if (buf[i] == 0xFF && buf[i+1] >= 0xC0 && buf[i+1] <= 0xCF &&
-			buf[i+1] != 0xC4 && buf[i+1] != 0xC8 && buf[i+1] != 0xCC) {
-			u_short type = buf[i+1] - 0xC0;
-			fsize = 256*buf[i+2];
-			fsize += buf[i+3];
-			framelength = 256*buf[i+5];
-			framelength += buf[i+6];
-			framewidth = 256*buf[i+7];
-			framewidth += buf[i+8];
-			copyQualityTrace("Found Start of Frame (SOF%u) Marker, size: %lu x %lu", type, framewidth, framelength);
-			if (framelength < 65535 && framelength > recvEOLCount) recvEOLCount = framelength;
-			i += (fsize + 1);
-		    } else if (buf[i] == 0xFF && buf[i+1] == 0xC8) {
-			copyQualityTrace("Found JPEG Extensions (JPG) Marker");
-			i += 1;
-		    } else if (buf[i] == 0xFF && buf[i+1] == 0xC4) {
-			fsize = 256*buf[i+2];
-			fsize += buf[i+3];
-			copyQualityTrace("Found Define Huffman Tables (DHT) Marker");
-			i += (fsize + 1);
-		    } else if (buf[i] == 0xFF && buf[i+1] == 0xCC) {
-			fsize = 256*buf[i+2];
-			fsize += buf[i+3];
-			copyQualityTrace("Found Define Arithmatic Coding Conditionings (DAC) Marker");
-			i += (fsize + 1);
-		    } else if (buf[i] == 0xFF && buf[i+1] >= 0xD0 && buf[i+1] <= 0xD7) {
-			copyQualityTrace("Found Restart (RST) Marker");
-			i += 1;
-		    } else if (buf[i] == 0xFF && buf[i+1] == 0xD8) {
-			copyQualityTrace("Found Start of Image (SOI) Marker");
-			i += 1;
-		    } else if (buf[i] == 0xFF && buf[i+1] == 0xD9) {
-			copyQualityTrace("Found End of Image (EOI) Marker");
-			i += 1;
-		    } else if (buf[i] == 0xFF && buf[i+1] == 0xDA) {
-			fsize = 256*buf[i+2];
-			fsize += buf[i+3];
-			copyQualityTrace("Found Start of Scan (SOS) Marker");
-			i += (fsize + 1);
-		    } else if (buf[i] == 0xFF && buf[i+1] == 0xDB) {
-			fsize = 256*buf[i+2];
-			fsize += buf[i+3];
-			copyQualityTrace("Found Define Quantization Tables (DQT) Marker");
-			i += (fsize + 1);
-		    } else if (buf[i] == 0xFF && buf[i+1] == 0xDC) {
-			fsize = 256*buf[i+2];
-			fsize += buf[i+3];
-			framelength = 256*buf[i+4];
-			framelength += buf[i+5];
-			copyQualityTrace("Found Define Number of Lines (DNL) Marker, lines: %lu", framelength);
-			if (framelength < 65535) recvEOLCount = framelength;
-			i += (fsize + 1);
-		    } else if (buf[i] == 0xFF && buf[i+1] == 0xDD) {
-			fsize = 256*buf[i+2];
-			fsize += buf[i+3];
-			copyQualityTrace("Found Define Restart Interval (DRI) Marker");
-			i += (fsize + 1);
-		    } else if (buf[i] == 0xFF && buf[i+1] == 0xDE) {
-			copyQualityTrace("Found Define Hierarchial Progression (DHP) Marker");
-			i += 1;
-		    } else if (buf[i] == 0xFF && buf[i+1] == 0xDF) {
-			fsize = 256*buf[i+2];
-			fsize += buf[i+3];
-			copyQualityTrace("Found Expand Reference Components (EXP) Marker");
-			i += (fsize + 1);
-		    } else if (buf[i] == 0xFF && buf[i+1] >= 0xE0 && buf[i+1] <= 0xEF) {
-			u_short type = buf[i+1] - 0xE0;
-			fsize = 256*buf[i+2];
-			fsize += buf[i+3];
-			fxStr comment = "";
-			for (u_long cpos = 0; i+4+cpos < cc && cpos < fsize && cpos < 256; cpos++) {
-			    if (!isprint(buf[i+4+cpos])) break;		// only printables
-			    comment.append(buf[i+4+cpos]);
-			}
-			copyQualityTrace("Found Application Segment (APP%u) Marker \"%s\"", type, (const char*) comment);
-			i += (fsize + 1);
-		    } else if (buf[i] == 0xFF && buf[i+1] >= 0xF0 && buf[i+1] <= 0xFD) {
-			u_short type = buf[i+1] - 0xF0;
-			copyQualityTrace("Found JPEG Extension (JPG%u) Marker", type);
-			i += 1;
-		    } else if (buf[i] == 0xFF && buf[i+1] == 0xFE) {
-			fsize = 256*buf[i+2];
-			fsize += buf[i+3];
-			fxStr comment = "";
-			for (u_long cpos = 0; i+4+cpos < cc && cpos < fsize && cpos < 256; cpos++) {
-			    if (!isprint(buf[i+4+cpos])) break;		// only printables
-			    comment.append(buf[i+4+cpos]);
-			}
-			copyQualityTrace("Found Comment (COM) Marker \"%s\"", (const char*) comment);
-			i += (fsize + 1);
-		    } else if (buf[i] == 0xFF && buf[i+1] == 0x01) {
-			copyQualityTrace("Found Temporary Private Use (TEM) Marker");
-			i += 1;
-		    } else if (buf[i] == 0xFF && buf[i+1] >= 0x02 && buf[i+1] <= 0xBF) {
-			copyQualityTrace("Found Reserved (RES) Marker 0x%X", buf[i+1]);
-			i += 1;
-		    } else if (buf[i] == 0xFF && buf[i+1] != 0x00 && buf[i+1] != 0xFF) {
-			copyQualityTrace("Found Unknown Marker 0x%X", buf[i+1]);
-			i += 1;
-		    }
-		}
+		if (dataform == DF_JBIG) clearSDNORMCount();
 	    }
 	    break;
     }
-    if (params.df != DF_JPEG_GREY && params.df != DF_JPEG_COLOR) {
+    if (params.jp != JP_GREY && params.jp != JP_COLOR) {
 	flushRawData(tif, 0, (const u_char*) buf, cc);
     } else {
 	memcpy(recvRow, (const char*) buf, cc);
 	recvRow += cc;
     }
-    if (seq & 2 && !recvEOLCount && (params.df ==  DF_JPEG_GREY || params.df == DF_JPEG_COLOR)) {
-	/*
-	 * We didn't detect an image length marker (DNL/NEWLEN).  So
-	 * we use the session parameters to guess at one, and we hope that
-	 * the eventual viewing decoder can cope with things if the data
-	 * is short.
-	 *
-	 * This approach doesn't seem to work with JBIG, so for now we only do it with JPEG.
-	 */
-	u_int len, res;
-	switch (params.ln) {
-	    case LN_A4:	len = 297; break;
-	    default:	len = 364; break;	// LN_INF, LN_B4
-	}
-	switch (params.vr) {	// values in mm/100 to avoid floats
-	    case VR_NORMAL:	res = 385; break;
-	    case VR_FINE:	res = 770;  break;
-	    case VR_200X100:	res = 394; break;
-	    case VR_200X200:	res = 787; break;
-	    case VR_200X400:    res = 1575; break;
-	    case VR_300X300:    res = 1181; break;
-	    default:		res = 1540; break;	// VR_R16, VR_R8
-	}
-	recvEOLCount = (u_long) ((len * res) / 100);
-	protoTrace("RECV: assumed image length of %lu lines", recvEOLCount);
-    }
-    if (seq & 2 && (params.df == DF_JPEG_GREY || params.df == DF_JPEG_COLOR)) {
-	/*
-	 * DNL markers generally are not usable in TIFF files.  Furthermore,
-	 * many TIFF viewers cannot use them, either.  So, we go back 
-	 * through the strip and replace any "zero" image length attributes
-	 * of any SOF markers with recvEOLCount.  Perhaps we should strip
-         * out the DNL marker entirely, but leaving it in seems harmless.
-	 */
-	u_long pagesize = recvRow - recvPageStart;
-	recvRow = recvPageStart;
-	for (uint32 i = 0; i < pagesize; i++) {
-	    if (recvRow[i] == 0xFF && recvRow[i+1] == 0xC0 && recvRow[i+5] == 0x00 && recvRow[i+6] == 0x00) {
-		recvRow[i+5] = recvEOLCount >> 8;
-		recvRow[i+6] = recvEOLCount & 0xFF;
-		protoTrace("RECV: fixing zero image frame length in SOF marker at byte %lu to %lu", i, recvEOLCount);
-	    }
-	}
-	if (TIFFWriteRawStrip(tif, 0, (tdata_t) recvRow, pagesize) == -1)
-	    serverTrace("RECV: %s: write error", TIFFFileName(tif));
-	free(recvRow);
+    if (seq & 2 && (params.jp == JP_GREY || params.jp == JP_COLOR)) {
+	fixupJPEG(tif);
     }
 }
 

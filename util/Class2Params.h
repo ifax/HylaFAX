@@ -54,6 +54,7 @@ public:
     u_int ec;		// error correction protocol (EC_*)
     u_int bf;		// binary file transfer protocol (BF_*)
     u_int st;		// minimum scanline time (ST_*)
+    u_int jp;		// JPEG support (JP_*)
 
 // tables for mapping Class 2 codes to T.30 DIS/DCS codes
     static u_int vrDISTab[2];		// vertical resolution
@@ -79,7 +80,7 @@ public:
     int operator==(const Class2Params&) const;
     int operator!=(const Class2Params&) const;
 
-    fxStr cmd(bool class2UseHex, bool ecm20 = false, bool doDFbitmap = false) const;	// format AT+F cmd string
+    fxStr cmd(bool class2UseHex, bool ecm20 = false, bool doDFbitmap = false, bool useJP = false) const;	// format AT+F cmd string
     void setFromDIS(FaxParams& dis);
     void setFromDIS(u_int dis, u_int xinfo = 0);
     void setFromDCS(FaxParams& dcs);

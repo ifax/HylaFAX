@@ -199,6 +199,7 @@ public:
     fxStr	class2HFLOCmd;		// cmd to setup hardware flow control
     fxStr	class2MINSPCmd;		// cmd to setup min transmit speed
     fxStr	class2RecvDataTrigger;	// send to start recv
+    bool	class2JPEGSupport;	// use JPEG support as reported by the modem
     bool	class2XmitWaitForXON;	// wait for XON before send
     bool	class2RTFCC;		// real-time fax compression conversion
     bool	class2SendRTC;		// append RTC to page data on transmit

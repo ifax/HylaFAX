@@ -124,6 +124,8 @@ protected:
     void	copyQualityTrace(const char* fmt, ...);
     void	traceModemParams();
     void	traceFCF(const char* dir, u_int fcf);
+    void	parseJPEGStream(u_char c);
+    void	fixupJPEG(TIFF* tif);
     void	parseJBIGStream(u_char c);
     void	parseJBIGBIH(u_char* buf);
     void	clearSDNORMCount();

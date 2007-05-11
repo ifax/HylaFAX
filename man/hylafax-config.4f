@@ -341,6 +341,7 @@ Class2DDISCmd	string	\-	Class 2: command to set session parameters before dialin
 Class2ECMType	string	\s-1``2''\s+1	Class 2: ECM specification type to follow
 Class2HexNSF	boolean	\s-1Yes\s+1	Class 2: parse NSF strings as hex values
 Class2HFLOCmd	string	\-	Class 2: command to set hardware flow control
+Class2JPEGSupport	boolean	\s-1No\s+1	Class 2: use modem JPEG support
 Class2LIDCmd	string	\s-1AT+FLID\s+1	Class 2: command to set local identifier string
 Class2MINSPCmd	string	\s-1AT+FMINSP\s+1	Class 2: command to set minimum transmit speed
 Class2NFLOCmd	string	\-	Class 2: command to set no flow control
@@ -376,6 +377,7 @@ Class2DISCmd	string	\s-1AT+FIS\s+1	Class 2.0: command to set session parameters
 Class2ECMType	string	\s-1``2.0''\s+1	Class 2.0: ECM specification type to follow
 Class2HexNSF	boolean	\s-1Yes\s+1	Class 2.0: parse NSF strings as hex values
 Class2HFLOCmd	string	\s-1AT+FLO=2\s+1	Class 2.0: command to set hardware flow control
+Class2JPEGSupport	boolean	\s-1No\s+1	Class 2.0: use modem JPEG support
 Class2LIDCmd	string	\s-1AT+FLI\s+1	Class 2.0: command to set local identifier string
 Class2MINSPCmd	string	\s-1AT+FMS\s+1	Class 2.0: command to set minimum transmit speed
 Class2NFLOCmd	string	\s-1AT+FLO=0\s+1	Class 2.0: command to set no flow control
@@ -2736,6 +2738,9 @@ This command is issued immediately after sending the
 .B Class2Cmd
 to switch the modem to Class 2/2.0 operation.
 For Class 2.0 operation the default is ``\s-1AT+FLO=2\s+1''.
+.TP
+.B Class2JPEGSupport
+Whether or not to enable and utilize the JPEG support found in the modem.
 .TP
 .B Class2LIDCmd
 The command used to set the local identifier string.

@@ -32,11 +32,6 @@ Class2CQCmd:		AT+FCQ=1,0
 # versions that respond to AT+FFC=? with non-zero data support RTFCC
 # Class2RTFCC:		yes
 
-# unfortunately, HylaFAX can't currently send or receive in color
-# Also, the modem's extended resolution support is buggy
-ModemAnswerCmd:		AT+FCC=1,,,,,,,,0;A
-ModemDialCmd:		AT+FCC=1,,,,,,,,0;DT%s
-
 # Some firmware revisions (i.e. 1.25) report MMR support but corrupt the data.
 # Some firmware revisions (i.e. 1.25 and 1.28) report extended resolution support but
 # have trouble with 300x300 and 400x400 resolutions and corrupt DIS for inch resolutions.

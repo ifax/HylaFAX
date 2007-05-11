@@ -66,7 +66,8 @@ protected:
     bool	xmitWaitForXON;		// if true, wait for XON when sending
     bool	hostDidCQ;		// if true, copy quality done on host
     bool	hasPolling;		// if true, modem does polled recv
-    bool	useExtendedDF;		// if true, modem has Agere data format extension
+    bool	useExtendedDF;		// if true, modem has T.32-A data format extension
+    bool	useJP;			// if true, modem has JP +FCC parameter option
     char	recvDataTrigger;	// char to send to start recv'ing data
     char	hangupCode[4];		// hangup reason (from modem)
     bool	hadHangup;		// true if +FHNG:/+FHS: received
