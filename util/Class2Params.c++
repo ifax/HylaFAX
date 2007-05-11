@@ -299,6 +299,15 @@ Class2Params::setFromDCS(FaxParams& dcs_caps)
 	if (df == DF_JPEG_GREY) df = DF_JPEG_COLOR;
 	//if (df == DF_JBIG_GREY) df = DF_JBIG_COLOR;
     }
+    if (ec == EC_DISABLE &&
+	(df == DF_2DMMR || df == DF_JBIG || df == DF_JPEG_GREY || df == DF_JPEG_COLOR)) {
+	// MMR, JBIG, and JPEG require ECM... we've seen cases where fax
+	// senders screw up and don't signal ECM but do send ECM-framed
+	// image data in the signalled format, and an RTN will break protocol,
+	// and thus a failure, so we correct the sender's mistake
+	// guessing at 256-byte ECM since 64-byte is so rarely used.
+	ec = EC_ENABLE256;
+    }
 }
 
 /*
