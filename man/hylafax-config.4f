@@ -335,6 +335,7 @@ Class2CQCmd	string	\-	Class 2: command to setup copy quality parameters
 Class2CQQueryCmd	string	\s-1AT+FCQ=?\s+1	Class 2: command to query modem copy quality capabilities
 Class2DCCCmd	string	\s-1AT+FDCC\s+1	Class 2: command to set modem capabilities
 Class2DCCQueryCmd	string	\s-1AT+FDCC=?\s+1	Class 2: command to query modem capabilities
+Class2DisableV17Cmd	string \-	Class 2: command to disable V.17 support
 Class2DISCmd	string	\s-1AT+FDIS\s+1	Class 2: command to set session parameters
 Class2DDISCmd	string	\-	Class 2: command to set session parameters before dialing
 Class2ECMType	string	\s-1``2''\s+1	Class 2: ECM specification type to follow
@@ -370,6 +371,7 @@ Class2CQCmd	string	\-	Class 2.0: command to setup copy quality parameters
 Class2CQQueryCmd	string	\s-1AT+FCQ=?\s+1	Class 2.0: command to query modem copy quality capabilities
 Class2DCCCmd	string	\s-1AT+FCC\s+1	Class 2.0: command to set modem capabilities
 Class2DCCQueryCmd	string	\s-1AT+FCC=?\s+1	Class 2.0: command to query modem capabilities
+Class2DisableV17Cmd	string \-	Class 2.0: command to disable V.17 support
 Class2DISCmd	string	\s-1AT+FIS\s+1	Class 2.0: command to set session parameters
 Class2ECMType	string	\s-1``2.0''\s+1	Class 2.0: ECM specification type to follow
 Class2HexNSF	boolean	\s-1Yes\s+1	Class 2.0: parse NSF strings as hex values

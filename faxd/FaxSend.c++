@@ -177,7 +177,8 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
      * requesting polling.
      */
     if ((batched & BATCH_FIRST) &&
-	!modem->faxService(!clientInfo.getHasV34Trouble() && clientParams.ec != EC_DISABLE && clientParams.br > BR_14400)) {
+	!modem->faxService(!clientInfo.getHasV34Trouble() && clientParams.ec != EC_DISABLE && clientParams.br > BR_14400,
+	    !clientInfo.getHasV17Trouble() && clientParams.br > BR_9600)) {
 	sendFailed(fax, send_failed, "Unable to configure modem for fax use");
 	return;
     }

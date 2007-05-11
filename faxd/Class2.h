@@ -76,8 +76,8 @@ protected:
     virtual bool setupModem(bool isSend = true);
     virtual bool setupModel(fxStr& model);
     virtual bool setupRevision(fxStr& rev);
-    virtual bool setupDCC(bool enableV34 = true);
-    virtual bool setupClass2Parameters(bool enableV34 = true);
+    virtual bool setupDCC(bool enableV34 = true, bool enableV17 = true);
+    virtual bool setupClass2Parameters(bool enableV34 = true, bool enableV17 = true);
     virtual bool setupFlowControl(FlowControl fc);
 // transmission support
     bool	dataTransfer();
@@ -159,7 +159,7 @@ public:
 		    fxStr& emsg);
 
 // miscellaneous
-    bool	faxService(bool enableV34);	// switch to fax mode (send)
+    bool	faxService(bool enableV34, bool enableV17);	// switch to fax mode (send)
     bool	reset(long ms);			// reset modem
     void	setLID(const fxStr& number);	// set local id string
     bool	supportsPolling() const;	// modem capability

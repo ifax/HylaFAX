@@ -322,7 +322,7 @@ Class1Modem::setupFlowControl(FlowControl fc)
  * for sending facsimile.
  */
 bool
-Class1Modem::faxService(bool enableV34)
+Class1Modem::faxService(bool enableV34, bool enableV17)
 {
     if (!atCmd(classCmd)) return (false);
     if (conf.class1EnableV34Cmd != "" && enableV34)

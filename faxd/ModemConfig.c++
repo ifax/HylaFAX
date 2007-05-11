@@ -124,6 +124,7 @@ static struct {
 { "class1switchingcmd",		&ModemConfig::class1SwitchingCmd, "AT+FRS=7" },
 { "class2cmd",			&ModemConfig::class2Cmd },
 { "class2borcmd",		&ModemConfig::class2BORCmd },
+{ "class2disablev17cmd",	&ModemConfig::class2DisableV17Cmd },
 { "class2relcmd",		&ModemConfig::class2RELCmd },
 { "class2cqcmd",		&ModemConfig::class2CQCmd },
 { "class2abortcmd",		&ModemConfig::class2AbortCmd },
