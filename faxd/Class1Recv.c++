@@ -324,7 +324,12 @@ Class1Modem::recvDCSFrames(HDLCFrame& frame)
 	    processDCSFrame(frame);
 	    break;
 	}
-    } while (frame.moreFrames() && recvFrame(frame, FCF_RCVR, conf.t2Timer));
+	traceFCF("RECV recv", frame.getFCF());
+	/*
+	 * Sometimes echo is bad enough that we hear ourselves.  So if we hear DIS, we're probably
+	 * hearing ourselves.  Just ignore it and listen again.
+	 */
+    } while ((frame.moreFrames() || frame.getFCF() == FCF_DIS) && recvFrame(frame, FCF_RCVR, conf.t2Timer));
     return (frame.isOK() && frame.getFCF() == FCF_DCS);
 }
 

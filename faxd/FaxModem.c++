@@ -587,8 +587,14 @@ FaxModem::traceFCF(const char* dir, u_int fcf)
 	case 0x00:
 	    fcfname = "NULL (more blocks, same page)";
 	    break;
+	case FCF_DIS:
+	    fcfname = "DIS (identification signal)";
+	    break;
 	case FCF_DCS:
 	    fcfname = "DCS (command signal)";
+	    break;
+	case FCF_CSI:
+	    fcfname = "CSI (called subscriber id)";
 	    break;
 	case FCF_TSI:
 	    fcfname = "TSI (sender id)";
