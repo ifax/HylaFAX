@@ -1692,6 +1692,9 @@ Class1Modem::modemDIS() const
     for (u_short i = 0; i < 4; i++) dis_caps.setBit(11+i, (discap & (0x08>>i)));
     if (useV34) dis_caps.setBit(FaxParams::BITNUM_V8_CAPABLE, true);
 
+    // preferred ECM frame size
+    if (conf.class1ECMFrameSize == 64) dis_caps.setBit(FaxParams::BITNUM_FRAMESIZE_DIS, true);
+
     // we set both units preferences to allow the sender to choose
     dis_caps.setBit(FaxParams::BITNUM_METRIC_RES, true);
     dis_caps.setBit(FaxParams::BITNUM_INCH_RES, true);
