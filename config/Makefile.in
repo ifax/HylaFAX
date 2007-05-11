@@ -49,8 +49,6 @@ CONFIGFILES=class1 \
 	class2.1 \
 	skel \
 	\
-	agere-mp-2 \
-	agere-mp-21 \
 	att-dataport-2 \
 	att-dataport-2.0 \
 	att-dataport \
@@ -80,6 +78,8 @@ CONFIGFILES=class1 \
 	lucent-mt-20 \
 	lucent-mt-21 \
 	lucent-mt-10 \
+	mainpine-2 \
+	mainpine-21 \
 	moto-288 \
 	mt-1432 \
 	nuvo-voyager \

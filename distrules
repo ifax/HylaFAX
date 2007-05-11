@@ -184,8 +184,6 @@ HYLAFAXSRC=\
     dist/newalpha				\
     dist/newversion				\
     config/Makefile.in				\
-	config/agere-mp-2			\
-	config/agere-mp-21			\
 	config/att-dataport			\
 	config/att-dataport-2			\
 	config/att-dataport-2.0			\
@@ -220,6 +218,8 @@ HYLAFAXSRC=\
 	config/lucent-mt-20			\
 	config/lucent-mt-21			\
 	config/lucent-mt-10			\
+	config/mainpine-2			\
+	config/mainpine-21			\
 	config/moto-288				\
 	config/nuvo-voyager			\
 	config/ppi-pm14400fxmt			\
