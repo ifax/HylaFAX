@@ -64,7 +64,7 @@ diff -urNad hylafax-4.3.1~/faxd/FaxSend.c++ hylafax-4.3.1/faxd/FaxSend.c++
 +	     * JobControls or something similar - that value is now 
 +	     * found in clientParams.df.
 +	     */
-+	    params.df ==  fxmin(clientParams.df, params.df);
++	    params.df =  fxmin(clientParams.df, params.df);
 +	} else {
 +	    params.df = 0;
 +	    u_int bits = clientCapabilities.df;
