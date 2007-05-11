@@ -1572,9 +1572,18 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg)
 					signalRcvd = ppsframe.getFCF2();
 					break;
 				    default:
-					emsg = "COMREC invalid post-page signal received";
-					abortPageECMRecv(tif, params, block, fcount, seq, pagedataseen);
-					return (false);
+					if (blockgood) {
+					    emsg = "COMREC invalid partial-page signal received";
+					    abortPageECMRecv(tif, params, block, fcount, seq, pagedataseen);
+					    return (false);
+					}
+					/*
+					 * If the sender signalled PPS-<??> (where the FCF2 is meaningless)
+					 * and if the block isn't good then we already signalled back PPR...
+					 * which is appropriate despite whatever the strange FCF2 was supposed
+					 * to mean, and hopefully it will not re-use it on the next go-around.
+					 */
+					break;
 				}
 			    }
 			    break;
