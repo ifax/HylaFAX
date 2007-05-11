@@ -467,9 +467,26 @@ Class1Modem::decodePWD(fxStr& ascii, const HDLCFrame& binary)
 }
 
 bool
-Class1Modem::switchingPause(fxStr& emsg)
+Class1Modem::switchingPause(fxStr& emsg, u_int times)
 {
-    if (!silenceHeard && !atCmd(conf.class1SwitchingCmd, AT_OK)) {
+    /*
+     * If class1SwitchingCmd is of the AT+FRS=n form we honor
+     * the caller's indicattion for a multiplication of the
+     * configured silence detection.  This is primarily used
+     * to avoid sending CRP as a receiver during a sender's TCF,
+     * but it could also be used in places where we find a
+     * longer wait often necessary.
+     */
+    fxStr scmd = fxStr(conf.class1SwitchingCmd);
+    if (times != 1) {
+	fxStr ncmd = fxStr(scmd);
+	ncmd.raiseatcmd();
+	if (ncmd.length() > 7 && ncmd.head(7) == "AT+FRS=") {
+	    int dur = atoi(ncmd.tail(ncmd.length()-7)) * times;
+	    scmd = scmd.head(7) | fxStr(dur, "%d");
+	}
+    }
+    if (!silenceHeard && !atCmd(scmd, AT_OK)) {
 	emsg = "Failure to receive silence.";
 	protoTrace(emsg);
 	if (wasTimeout()) abortReceive();
@@ -1420,7 +1437,7 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, 
 	    frame.reset();
             gotframe = recvRawFrame(frame);
 	} while (!gotframe && docrp && crpcnt++ < 3 && !wasTimeout() &&
-		switchingPause(emsg) && transmitFrame(dir|FCF_CRP));
+		switchingPause(emsg, 3) && transmitFrame(dir|FCF_CRP));	/* triple switchingPause to avoid sending CRP during TCF */
 	return (gotframe);
     } else {
 	gotCONNECT = false;
