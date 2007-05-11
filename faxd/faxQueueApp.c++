@@ -1627,6 +1627,9 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
 	 * be cleaned up.  Not sure if the user should be
 	 * notified of the requeue as well as the timeout?
 	 */
+	timeoutAccounting(job, *req);
+	req->notice = "Kill time expired";
+	updateRequest(*req, job);
 	job.state = FaxRequest::state_failed;
 	deleteRequest(job, req, Job::timedout, true);
 	setDead(job);
