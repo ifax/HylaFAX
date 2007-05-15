@@ -94,7 +94,7 @@ TypeRule::match(const void* data, size_t size, bool verbose) const
 	    typeNames[type],
 	    opNames[op]
 	);
-	if (type == STRING)
+	if (type == STRING || type == ISTRING)
 	    printf(" \"%s\"", value.s);
 	else if (type != ASCII && type != ASCIIESC) {
 	    if (op == ANY)
@@ -139,6 +139,10 @@ TypeRule::match(const void* data, size_t size, bool verbose) const
 	}
     case STRING:
 	ok = (strncmp((const char*)(cp+off), value.s,
+	    fxmin((u_int) strlen(value.s), (u_int)(size-off))) == 0);
+	goto done;
+    case ISTRING:
+	ok = (strncasecmp((const char*)(cp+off), value.s,
 	    fxmin((u_int) strlen(value.s), (u_int)(size-off))) == 0);
 	goto done;
     case ADDR:
@@ -351,6 +355,8 @@ TypeRules::read(const fxStr& file)
 	    rule.type = TypeRule::LONG;
 	else if (strncasecmp(tp, "string", cp-tp) == 0)
 	    rule.type = TypeRule::STRING;
+	else if (strncasecmp(tp, "istring", cp-tp) == 0)
+	    rule.type = TypeRule::ISTRING;
 	else if (strncasecmp(tp, "ascii", cp-tp) == 0)
 	    rule.type = TypeRule::ASCII;
 	else if (strncasecmp(tp, "asciiesc", cp-tp) == 0)
@@ -365,8 +371,8 @@ TypeRules::read(const fxStr& file)
 	    cp++;
 	rule.op = TypeRule::EQ;		// default is '='
 	const char* vp = cp;
-	if (rule.type != TypeRule::STRING && rule.type != TypeRule::ASCII
-	 && rule.type != TypeRule::ASCIIESC) {
+	if (rule.type != TypeRule::STRING && rule.type != TypeRule::ISTRING
+		&& rule.type != TypeRule::ASCII && rule.type != TypeRule::ASCIIESC) {
 	    // numeric value
 	    switch (*vp) {
 	    case '=':	rule.op = TypeRule::EQ;	cp++; break;

@@ -99,7 +99,9 @@ comparison purposes; one of:
 ``long''
 (32 bit unsigned number),
 ``string''
-(an array of bytes), or
+(an array of bytes),
+``istring''
+(a case-insensitive array of bytes), or
 ``ascii''
 (an array of \s-1ASCII\s+1-only bytes).
 .TP 10
@@ -114,7 +116,7 @@ following operators are supported (where
 .I data
 is the value extracted from the file and
 .I value
-is specified in the match field) except for types ``string'' and ``ascii'':
+is specified in the match field) except for types ``string'', ``istring'', and ``ascii'':
 .nf
 .sp .5
 .RS
@@ -130,7 +132,7 @@ is specified in the match field) except for types ``string'' and ``ascii'':
 If no operation is specified then ``='' is used.
 .PP
 
-For ``string'' and ``ascii'' no operator is allowed; the implicit
+For ``string'', ``istring'', and ``ascii'' no operator is allowed; the implicit
 operation is always ``=''.  In these cases, the field is terminated by
 a tab or end of line, not by ``#''.  Characters in the field have
 their literal value; there are no C-style character escapes.
