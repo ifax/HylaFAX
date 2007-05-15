@@ -80,19 +80,21 @@ const char* ClassModem::ATresponses[17] = {
     "<xon>",			// AT_XON
     "<Unknown response>"	// AT_OTHER
 };
-const char* ClassModem::callTypes[5] = {
+const char* ClassModem::callTypes[6] = {
     "unknown",
     "data",
     "fax",
     "voice",
-    "error"
+    "error",
+    "done"
 };
-const char* ClassModem::answerTypes[5] = {
+const char* ClassModem::answerTypes[6] = {
     "any",
-    "fax",
     "data",
+    "fax",
     "voice",
-    "dial"
+    "dial",
+    "external"
 };
 
 ClassModem::ClassModem(ModemServer& s, const ModemConfig& c)
@@ -229,7 +231,7 @@ ClassModem::answerResponse(fxStr& emsg)
     do {
 	r = atResponse(rbuf, conf.answerResponseTimeout);
 again:
-	if (r == AT_TIMEOUT || r == AT_DLEEOT)
+	if (r == AT_TIMEOUT || r == AT_DLEEOT || r == AT_NOCARRIER)
 	    break;
 	const AnswerMsg* am = findAnswer(rbuf);
 	if (am != NULL) {

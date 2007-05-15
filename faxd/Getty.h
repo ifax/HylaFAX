@@ -31,6 +31,7 @@
  * System V, BSD, etc. are derived from this. 
  */
 #include "Str.h"
+#include "CallID.h"
 
 const int GETTY_MAXARGS		= 64;	// max args passed to getty
 
@@ -55,7 +56,7 @@ protected:
 public:
     virtual ~Getty();
 					// setup arguments for getty process
-    void setupArgv(const char* args, const fxStr&, const fxStr&);
+    void setupArgv(const char* args, const CallID& callid);
 					// run getty process
     virtual void run(int fd, bool parentIsInit);
     virtual bool wait(int& status, bool block = false);

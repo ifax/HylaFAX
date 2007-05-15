@@ -76,12 +76,9 @@ sigHUP(int)
  * exec getty below.
  */
 void
-Getty::setupArgv(const char* args, const fxStr& name, const fxStr& number)
+Getty::setupArgv(const char* args, const CallID& callid)
 {
     argbuf = args;
-    nambuf = name;
-    numbuf = number;
-    bool insertName = false, insertNumber = false;
     u_int l;
     /*
      * Substitute escape sequences.
@@ -101,14 +98,17 @@ Getty::setupArgv(const char* args, const fxStr& name, const fxStr& number)
 	    argbuf.insert(speed, l);
 	    l += speed.length();	// avoid loops
 	    break;
-        case 'a':
-            argbuf.remove(l-1,3);
-            insertName = true;
-            break;
-        case 'u':
-            argbuf.remove(l-1,3);
-            insertNumber = true;
-            break;            
+	case '1': case '2': case '3': case '4': case '5':
+	case '6': case '7': case '8': case '9':
+	    {
+		u_int id = argbuf[l+1] - 0x31;
+		argbuf.remove(l,2);
+		if (id < callid.size()) {
+		    argbuf.insert(callid.id(id), l);
+		    l += callid.length(id);
+		}
+	    }
+	    break;
 	case '%':			// %% = %
 	    argbuf.remove(l,1);
 	    break;
@@ -129,10 +129,6 @@ Getty::setupArgv(const char* args, const fxStr& name, const fxStr& number)
 	    argv[nargs++] = &argbuf[token];
 	}
     }
-    if (nargs < GETTY_MAXARGS-1 && insertName && nambuf.length()) 
-        argv[nargs++] = &nambuf[0];
-    if (nargs < GETTY_MAXARGS-1 && insertNumber && numbuf.length()) 
-        argv[nargs++] = &numbuf[0];
     argv[nargs] = NULL;
 }
 

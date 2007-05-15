@@ -438,6 +438,8 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
 	    callResolved = answerCall(atype, ctype, emsg, callid, dialnumber);
 	}
     }
+    if (emsg.length())
+	traceProtocol((const char*) emsg);
     /*
      * Call resolved.  If we were able to recognize the call
      * type and setup a session, then reset the answer rotary
@@ -532,7 +534,7 @@ faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const Ca
 	    if (ctype == ClassModem::CALLTYPE_DONE)	// NB: call completed
 		return (true);
 	    if (ctype != ClassModem::CALLTYPE_ERROR)
-		modemAnswerCall(ctype, emsg, dialnumber);
+		modemAnswerCallCmd(ctype);
 	} else
 	    emsg = "External getty use is not permitted";
     } else
@@ -629,9 +631,9 @@ faxGettyApp::runGetty(
 	emsg = fxStr::format("%s: could not create", what);
 	return (ClassModem::CALLTYPE_ERROR);
     }
-    getty->setupArgv(args, 
-	callid.size() > CallID::NUMBER ? callid.id(CallID::NUMBER) : "",
-	callid.size() > CallID::NAME ?  callid.id(CallID::NAME) : "");
+
+    getty->setupArgv(args, callid);
+
     /*
      * The getty process should not inherit the lock file.
      * Remove it here before the fork so that our state is
