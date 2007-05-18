@@ -186,16 +186,16 @@ FaxClient::setupUserIdentity(fxStr& emsg)
 	pwd = getpwuid(getuid());
     if (!pwd) {
 	if (name)
-	    emsg = fxStr::format("Can not locate FAXUSER password entry "
-		"(account name %s, uid %lu): %s", name, (u_long) getuid(),
-		strerror(errno));
-	else
+	    userName = name;
+	else {
 	    emsg = fxStr::format("Can not locate your password entry "
 		"(uid %lu): %s", (u_long) getuid(), strerror(errno));
-	return (false);
+	    return (false);
+	}
     }
-    userName = pwd->pw_name;
-    if (pwd->pw_gecos && pwd->pw_gecos[0] != '\0') {
+    else
+	userName = pwd->pw_name;
+    if (pwd && pwd->pw_gecos && pwd->pw_gecos[0] != '\0') {
 	senderName = pwd->pw_gecos;
 	senderName.resize(senderName.next(0, '('));	// strip SysV junk
 	u_int l = senderName.next(0, '&');
@@ -379,6 +379,10 @@ FaxClient::login(const char* user, fxStr& emsg)
     if (user == NULL) {
 	setupUserIdentity(emsg);
 	user = userName;
+    }
+    if (*user == '\0') {
+	emsg = "Malformed (null) username";
+	return (false);
     }
     int n = command("USER %s", user);
     if (n == CONTINUE)
