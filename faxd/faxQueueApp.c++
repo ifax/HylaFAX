@@ -486,26 +486,27 @@ fxAssert(! job.suspendPending, "AIDAN: Need to handle this");
     }
 #endif
 
-    FaxRequest* req = readRequest(job);
-    if (!req) {
-	// NB: no way to notify the user (XXX)
-	logError("JOB %s: qfile vanished during preparation",
-	    (const char*) job.jobid);
-	setDead(job);
-    } else  {
-	switch (status) {
-	    case Job::requeued:             // couldn't fork RIP
-		delayJob(job, *req, "Cannot fork to prepare job for transmission",
-		Sys::now() + random() % requeueInterval);
-		delete req;
-		break;
-	    case (Job::done):               // preparation completed successfully
-	        delete req;
-		break;
-	    default:
-		deleteRequest(job, req, status, true);
-		setDead(job);
-		break;
+    if (status != Job::done)
+    {
+	/*
+	 * We need to clear the modem so the following delete/requeue/dead
+	 * doesn't come across it.  The modem's released by the batch
+	 * ending
+	 */
+	job.modem = NULL;
+	FaxRequest* req = readRequest(job);
+	if (!req) {
+	    // NB: no way to notify the user (XXX)
+	    logError("JOB %s: qfile vanished during preparation",
+		(const char*) job.jobid);
+	    setDead(job);
+	} else if (status == Job::requeued) {
+	    delayJob(job, *req, "Cannot fork to prepare job for transmission",
+	    Sys::now() + random() % requeueInterval);
+	    delete req;
+	} else {
+	    deleteRequest(job, req, status, true);
+	    setDead(job);
 	}
     }
     fillBatch(batch);
