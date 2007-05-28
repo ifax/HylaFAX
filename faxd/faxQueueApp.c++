@@ -452,6 +452,7 @@ faxQueueApp::prepareStart(Batch& batch, Job& job, FaxRequest* req)
 	fillBatch(batch);
     default:				// parent, setup handler to wait
 	batch.startPrepare(job, pid);
+	job.pid = pid;
 	delete req;			// must reread after preparation
 	Trigger::post(Trigger::JOB_PREP_BEGIN, job);
 	break;
@@ -477,17 +478,14 @@ faxQueueApp::prepareDone(Batch& batch, int status)
     } else
 	status >>= 8;
 
-fxAssert(! job.suspendPending, "AIDAN: Need to handle this");
-#if 0
-    if (job.suspendPending) {		// co-thread waiting
-	job.suspendPending = false;
-	releaseModem(job);
-	return;
-    }
-#endif
+    job.pid = 0;
 
-    if (status != Job::done)
-    {
+    if (job.suspendPending) {		// co-thread waiting
+	job.modem = NULL;
+	job.remove();			// remove from batch
+	job.insert(suspendq);		// co-thread expects it on a list
+	job.suspendPending = false;
+    } else if (status != Job::done) {
 	/*
 	 * We need to clear the modem so the following delete/requeue/dead
 	 * doesn't come across it.  The modem's released by the batch
