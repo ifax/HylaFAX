@@ -272,7 +272,7 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
      */
     if (!useUnlimitedLength) {
 	float len = h / (yres == 0 ? 1. : yres);		// page length in mm
-	if (pageLength != (uint32) -1 && len > pageLength+30) {
+	if (pageLength != (uint32) -1 && len > pageLength) {
 	    emsg.append(fxStr::format("Document requires resizing to adjust"
 		" page length (convert to %lu, document is %lu).\n",
 		(u_long) pageLength, (u_long) len));
