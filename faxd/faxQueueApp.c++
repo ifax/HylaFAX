@@ -316,7 +316,6 @@ faxQueueApp::fillBatch(Batch& batch)
 	    traceJob(job, "Adding to batch");
 	    job.modem = batch.modem;
 	    job.remove();
-	    req->notice = "";
 	    processJob(batch, job, req);
 	    return;				// processJob() is async
 	}
@@ -344,6 +343,7 @@ void
 faxQueueApp::processJob(Batch& batch, Job& job, FaxRequest* req)
 {
     job.commid = "";			// set on return
+    req->notice = "";			// Clear for new procssing
     JobStatus status;
     setActive(batch,job);
     req->status = send_nobatch;
