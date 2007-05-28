@@ -301,6 +301,7 @@ static const NSFData KnownNSF[] =
     {"\x86\x00\x98", 3, "Samsung",   false },
     {"\x86\x00\xA2", 3, "Samsung", false, 3, 4, SamsungA2 },
     {"\x86\x00\xA4", 3, "unknown - Korea A4", false },
+    {"\x86\x00\xC2", 3, "Samsung", false },
     {"\x86\x00\xC9", 3, "unknown - Korea C9", false },
     {"\x86\x00\xCC", 3, "unknown - Korea CC", false },
     {"\x86\x00\xD2", 3, "unknown - Korea D2", false },
