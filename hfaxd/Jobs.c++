@@ -115,6 +115,7 @@ static const struct {
     { T_DOCUMENT,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_DONEOP,		A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_EXTERNAL,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
+    { T_ERRORCODE,	A_RUSR|A_RADM|A_ROTH },			// compat STATUSCODE
     { T_FAXNUMBER,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_FROM_COMPANY,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_FROM_LOCATION,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
@@ -479,6 +480,9 @@ HylaFAXServer::replyJobParamValue(Job& job, int code, Token t)
 		    (const char*) fitem.item, (const char*) fitem.addr);
 	}
 	reply(code, "End of polling items.");
+	return;
+    case T_ERRORCODE:
+	reply(code, "E%03d", job.result.value());
 	return;
     case T_STATUSCODE:
 	reply(code, "%03d", job.result.value());

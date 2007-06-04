@@ -130,6 +130,7 @@ static const tab parmtab[] = {
 { "DOCUMENT",     T_DOCUMENT,	  false, true, "path-name" },
 { "DONEOP",       T_DONEOP,	  false, true, "[<string>]" },
 { "EXTERNAL",     T_EXTERNAL,	  false, true, "[<string>]" },
+{ "ERRORCODE",    T_ERRORCODE,	  false, true, "[<string>]" },	// For compatiblity
 { "FAXNUMBER",    T_FAXNUMBER,	  false, true, "[<string>]" },
 { "FROMCOMPANY",  T_FROM_COMPANY, false, true, "[<string>]" },
 { "FROMLOCATION", T_FROM_LOCATION,false, true, "[<string>]" },
@@ -1115,6 +1116,7 @@ HylaFAXServer::param_cmd(Token t)
     case T_STATE:
     case T_STATUS:
     case T_STATUSCODE:
+    case T_ERRORCODE:	// For compatibility
     case T_DONEOP:
     case T_COMMID:
     case T_REGARDING:
