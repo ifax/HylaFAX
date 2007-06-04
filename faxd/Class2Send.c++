@@ -33,7 +33,7 @@
  */
 
 bool
-Class2Modem::sendSetup(FaxRequest& req, const Class2Params& dis, fxStr& emsg)
+Class2Modem::sendSetup(FaxRequest& req, const Class2Params& dis, Status& eresult)
 {
     const char* cmdFailed = " (modem command failed)";
 
@@ -47,35 +47,35 @@ Class2Modem::sendSetup(FaxRequest& req, const Class2Params& dis, fxStr& emsg)
      * we'll send this stuff to the modem here (for now at least).
      */
     if (req.passwd != "" && pwCmd != "" && !class2Cmd(pwCmd, req.passwd)) {
-	emsg = fxStr::format("Unable to send password%s", cmdFailed);
+	eresult = Status(204, "Unable to send password%s", cmdFailed);
 	return (false);
     }
     if (req.subaddr != "" && saCmd != "" && !class2Cmd(saCmd, req.subaddr)) {
-	emsg = fxStr::format("Unable to send subaddress%s", cmdFailed);
+	eresult = Status(205, "Unable to send subaddress%s", cmdFailed);
 	return (false);
     }
     if (minsp != BR_2400 && !class2Cmd(minspCmd, minsp)) {
-	emsg = fxStr::format("Unable to restrict minimum transmit speed to %s",
+	eresult = Status(206, "Unable to restrict minimum transmit speed to %s%s",
 	    Class2Params::bitRateNames[req.minbr], cmdFailed);
 	return (false);
     }
     if (conf.class2DDISCmd != "") {
 	if (!class2Cmd(conf.class2DDISCmd, dis, false)) {
-	    emsg = fxStr::format("Unable to setup session parameters "
-		"prior to call%s", cmdFailed);
+	    eresult = Status(207, "Unable to setup session parameters "
+			 "prior to call%s", cmdFailed);
 	    return (false);
 	}
 	params = dis;
     }
     hadHangup = false;
-    return (FaxModem::sendSetup(req, dis, emsg));
+    return (FaxModem::sendSetup(req, dis, eresult));
 }
 
 /*
  * Process the response to a dial command.
  */
 CallStatus
-Class2Modem::dialResponse(fxStr& emsg)
+Class2Modem::dialResponse(Status& eresult)
 {
     ATResponse r;
 
@@ -91,7 +91,7 @@ Class2Modem::dialResponse(fxStr& emsg)
 	if (strncmp(rbuf, "BLACKLISTED", 11) == 0
 		|| strncmp(rbuf, "DELAYED", 7) == 0
 		|| strncmp(rbuf, "DIALING DISABLED", 16) == 0) {
-	    emsg = "Blacklisted by modem";
+	    eresult = Status(10, "Blacklisted by modem");
 	    return (NOCARRIER);
 	}
 
@@ -103,7 +103,7 @@ Class2Modem::dialResponse(fxStr& emsg)
 	case AT_NODIALTONE: return (NODIALTONE);// local phone connection hosed
 	case AT_NOANSWER:   return (NOANSWER);	// no answer or ring back
 	case AT_FHNG:				// Class 2 hangup code
-	    emsg = hangupCause(hangupCode);
+	    eresult = hangupStatus(hangupCode);;
 	    switch (atoi(hangupCode)) {
 	    case 1:	    return (NOANSWER);	// Ring detected w/o handshake
 	    case 3:	    return (NOANSWER);	// No loop current (???)
@@ -129,7 +129,7 @@ Class2Modem::dialResponse(fxStr& emsg)
  * sent to the caller on connecting to a fax machine.
  */
 FaxSendStatus
-Class2Modem::getPrologue(Class2Params& dis, bool& hasDoc, fxStr& emsg, u_int& batched)
+Class2Modem::getPrologue(Class2Params& dis, bool& hasDoc, Status& eresult, u_int& batched)
 {
     bool gotParams = false;
     hasDoc = false;
@@ -162,7 +162,7 @@ Class2Modem::getPrologue(Class2Params& dis, bool& hasDoc, fxStr& emsg, u_int& ba
 		processHangup("20");		// Unspecified Phase B error
 		/* fall thru... */
 	    case AT_FHNG:
-		emsg = hangupCause(hangupCode);
+		eresult = hangupStatus(hangupCode);
 		return (send_retry);
 	    }
 	}
@@ -238,7 +238,7 @@ pageInfoChanged(const Class2Params& a, const Class2Params& b)
  */
 FaxSendStatus
 Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
-    fxStr& pph, fxStr& emsg, u_int& batched)
+    fxStr& pph, Status& eresult, u_int& batched)
 {
     int ntrys = 0;			// # retraining/command repeats
     u_int ppm, previousppm = 0;
@@ -259,7 +259,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	 */
 	if (pageInfoChanged(params, next)) {
 	    if (!class2Cmd(disCmd, next, false)) {
-		emsg = "Unable to set session parameters";
+		eresult = Status(208, "Unable to set session parameters");
 		break;
 	    }
 	    params = next;
@@ -270,7 +270,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	     * remote station (XXX need to deal with PRI requests).).
 	     */
 	    morePages = !TIFFLastDirectory(tif);
-	    if (!decodePPM(pph, ppm, emsg))
+	    if (!decodePPM(pph, ppm, eresult))
 		goto failed;
 
 	    if (ppm == PPM_EOP && !(batched & BATCH_LAST)) {
@@ -297,11 +297,11 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		    ntrys = 0;
 		    if (morePages) {
 			if (ppr == PPR_PIP) {
-			    emsg = "Procedure interrupt (operator intervention)";
+			    eresult = Status(280, "Procedure interrupt (operator intervention)");
 			    goto failed;
 			}
 			if (!TIFFReadDirectory(tif)) {
-			    emsg = "Problem reading document directory";
+			    eresult = Status(302, "Problem reading document directory");
 			    goto failed;
 			}
 			if (ppr == PPR_MCF) {
@@ -326,19 +326,16 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
                     case RTN_IGNORE:
                         goto ignore; // ignore error and trying to send next page
                     case RTN_GIVEUP:
-                        emsg = "Unable to transmit page"
-                            " (giving up after RTN)";
+                        eresult = Status(281, "Unable to transmit page (giving up after RTN)");
                         goto failed; // "over and out"
                     }
                     // case RTN_RETRANSMIT
 		    if (++ntrys >= 3) {
-			emsg = "Unable to transmit page"
-			       " (giving up after 3 attempts)";
+			eresult = Status(282, "Unable to transmit page (giving up after 3 attempts)");
 			break;
 		    }
 		    if (params.br == BR_2400) {
-			emsg = "Unable to transmit page"
-				"(NAK at all possible signalling rates)";
+			eresult = Status(283, "Unable to transmit page (NAK at all possible signalling rates)");
 			break;
 		    }
 		    next.br--;
@@ -346,11 +343,10 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		    transferOK = true;
 		    break;
 		case PPR_PIN:		// page bad, interrupt requested
-		    emsg = "Unable to transmit page"
-		       " (NAK with operator intervention)";
+		    eresult = Status(284, "Unable to transmit page (NAK with operator intervention)");
 		    goto failed;
 		default:
-		    emsg = "Modem protocol error (unknown post-page response)";
+		    eresult = Status(285, "Modem protocol error (unknown post-page response)");
 		    break;
 		}
 	    } else {
@@ -358,7 +354,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		 * We received no PPR.
 		 */
 		if (ppm == PPM_EOM && (batched & BATCH_FIRST)) {
-		    emsg = "Batching protocol error";
+		    eresult = Status(286, "Batching protocol error");
 		    protoTrace("The destination appears to not support batching.");
 		    return (send_batchfail);
 		}
@@ -368,7 +364,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	     * We were unable to negotiate settings and transfer page image data.
 	     */
 	    if (previousppm == PPM_EOM) {
-		emsg = "Batching protocol error";
+		eresult = Status(286, "Batching protocol error");
 		protoTrace("The destination appears to not support batching.");
 		return (send_batchfail);
 	    }
@@ -376,11 +372,11 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	previousppm = ppm;
     } while (transferOK && morePages && !hadHangup);
     if (!transferOK) {
-	if (emsg == "") {
+	if (eresult.value() == 0) {
 	    if (hangupCode[0])
-		emsg = hangupCause(hangupCode);
+		eresult = hangupStatus(hangupCode);
 	    else
-		emsg = "Communication failure during Phase B/C";
+		eresult = Status(287, "Communication failure during Phase B/C");
 	}
 	sendAbort();			// terminate session
     } else if (hadHangup && morePages) {
@@ -391,7 +387,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	 * be retried.
 	 */
 	transferOK = false;
-	emsg = "Communication failure during Phase B/C (modem protocol botch)";
+	eresult = Status(288, "Communication failure during Phase B/C (modem protocol botch)");
     }
     return (transferOK ? send_ok : send_retry);
 failed:

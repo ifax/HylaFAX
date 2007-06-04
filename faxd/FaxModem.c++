@@ -63,7 +63,7 @@ u_int FaxModem::getTagLineSlop() const		{ return tagLineSlop; }
  * Do setup work prior to placing the call.
  */
 bool
-FaxModem::sendSetup(FaxRequest& req, const Class2Params&, fxStr&)
+FaxModem::sendSetup(FaxRequest& req, const Class2Params&, Status&)
 {
     minsp = fxmax((u_int) req.minbr, fxmax((u_int) conf.minSpeed, modemParams.getMinSpeed()));
     pageNumber = 1;
@@ -90,21 +90,21 @@ void FaxModem::sendSetupPhaseB(const fxStr&, const fxStr&){}
 void FaxModem::sendEnd()	{}
 
 bool
-FaxModem::recvBegin(fxStr&)
+FaxModem::recvBegin(Status&)
 {
     optFrames = 0;
     return (true);
 }
 
 bool
-FaxModem::recvEOMBegin(fxStr&)
+FaxModem::recvEOMBegin(Status&)
 {
     optFrames = 0;
     return (true);
 }
 
 bool
-FaxModem::pollBegin(const fxStr&, const fxStr&, const fxStr&, fxStr&)
+FaxModem::pollBegin(const fxStr&, const fxStr&, const fxStr&, Status&)
 {
     optFrames = 0;
     return (true);
@@ -272,7 +272,7 @@ FaxModem::decodePageChop(const fxStr& pph, const Class2Params& params)
  * construction of this string.
  */ 
 bool
-FaxModem::decodePPM(const fxStr& pph, u_int& ppm, fxStr& emsg)
+FaxModem::decodePPM(const fxStr& pph, u_int& ppm, Status& eresult)
 {
     const char* what;
     if (pph.length() >= 3 && (pph[2] != 'Z' || pph.length() >= 2+5+1)) {
@@ -284,7 +284,7 @@ FaxModem::decodePPM(const fxStr& pph, u_int& ppm, fxStr& emsg)
 	what = "unknown";
     } else
 	what = "bad";
-    emsg = fxStr::format( "Internal botch; %s post-page handling string \"%s\"",
+    eresult = Status(303, "Internal botch; %s post-page handling string \"%s\"",
 	what, (const char*) pph);
     return (false);
 }
@@ -692,9 +692,9 @@ bool FaxModem::getECMTracing()
 
 FaxSendStatus
 FaxModem::sendSetupParams(TIFF* tif, Class2Params& params,
-    FaxMachineInfo& info, fxStr& emsg)
+    FaxMachineInfo& info, Status& eresult)
 {
-    return server.sendSetupParams(tif, params, info, emsg);
+    return server.sendSetupParams(tif, params, info, eresult);
 }
 
 

@@ -670,7 +670,7 @@ ModemServer::beginSession(const fxStr& number)
     if (seqnum == (u_long)-1)
     {
 	logError("Couldn't get next seqnum for session log: %s",
-		 (const char*)emsg);
+		 (const char*) emsg);
 	return;
     }
     commid = fxStr::format(Sequence::format, seqnum);
@@ -792,8 +792,8 @@ bool ModemServer::serverBusy() const
 
 bool ModemServer::modemWaitForRings(u_short rings, CallType& type, CallID& callid)
     { return modem->waitForRings(rings, type, callid); }
-CallType ModemServer::modemAnswerCall(AnswerType atype, fxStr& emsg, const char* dialnumber)
-    { return modem->answerCall(atype, emsg, dialnumber); }
+CallType ModemServer::modemAnswerCall(AnswerType atype, Status& eresult, const char* dialnumber)
+    { return modem->answerCall(atype, eresult, dialnumber); }
 void ModemServer::modemAnswerCallCmd(CallType ctype)
     { modem->answerCallCmd(ctype); }
 void ModemServer::modemHangup()			{ modem->hangup(); }

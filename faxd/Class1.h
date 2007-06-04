@@ -128,13 +128,13 @@ protected:
     void	checkReceiverDIS(Class2Params&);
     bool	dropToNextBR(Class2Params&);
     bool	raiseToNextBR(Class2Params&);
-    bool	sendTraining(Class2Params&, int, fxStr& emsg);
+    bool	sendTraining(Class2Params&, int, Status& eresult);
     bool	sendTCF(const Class2Params&, u_int ms);
-    bool	sendPage(TIFF* tif, Class2Params&, u_int, u_int, fxStr& emsg);
-    bool	sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm, fxStr& emsg);
-    bool	sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, uint32 rowsperstrip, fxStr& emsg);
-    bool	sendPPM(u_int ppm, HDLCFrame& mcf, fxStr& emsg);
-    bool	decodePPM(const fxStr& pph, u_int& ppm, fxStr& emsg);
+    bool	sendPage(TIFF* tif, Class2Params&, u_int, u_int, Status& eresult);
+    bool	sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm, Status& eresult);
+    bool	sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, uint32 rowsperstrip, Status& eresult);
+    bool	sendPPM(u_int ppm, HDLCFrame& mcf, Status& eresult);
+    bool	decodePPM(const fxStr& pph, u_int& ppm, Status& eresult);
 // reception support
     const AnswerMsg* findAnswer(const char*);
     bool	recvIdentification(
@@ -143,12 +143,12 @@ protected:
 		    u_int f3, const fxStr& nsf,
 		    u_int f4, const fxStr& id,
 		    u_int f5, FaxParams& dics,
-		    u_int timer, bool notransmit, fxStr& emsg);
+		    u_int timer, bool notransmit, Status& eresult);
     bool	recvDCSFrames(HDLCFrame& frame);
     bool	recvTraining();
-    bool	recvPPM(int& ppm, fxStr& emsg);
-    bool	recvPageData(TIFF*, fxStr& emsg);
-    bool	raiseRecvCarrier(bool& dolongtrain, fxStr& emsg);
+    bool	recvPPM(int& ppm, Status& eresult);
+    bool	recvPageData(TIFF*, Status& eresult);
+    bool	raiseRecvCarrier(bool& dolongtrain, Status& eresult);
     void	recvData(TIFF*, u_char* buf, int n);
     void	processDCSFrame(const HDLCFrame& frame);
     void	abortPageRecv();
@@ -160,7 +160,7 @@ protected:
     virtual ATResponse atResponse(char* buf, long ms = 30*1000);
     virtual bool waitFor(ATResponse wanted, long ms = 30*1000);
     virtual bool atCmd(const fxStr& cmd, ATResponse = AT_OK, long ms = 30*1000);
-    bool	switchingPause(fxStr& emsg, u_int times = 1);
+    bool	switchingPause(Status& eresult, u_int times = 1);
     void	encodeTSI(fxStr& binary, const fxStr& ascii);
     void	encodeNSF(fxStr& binary, const fxStr& ascii);
     const fxStr& decodeTSI(fxStr& ascii, const HDLCFrame& binary);
@@ -184,7 +184,7 @@ protected:
     bool	sendRawFrame(HDLCFrame& frame);
     bool	sendClass1Data(const u_char* data, u_int cc, const u_char* bitrev, bool eod, long ms);
     bool	sendClass1ECMData(const u_char* data, u_int cc,
-		     const u_char* bitrev, bool eod, u_int ppmcmd, fxStr& emsg);
+		     const u_char* bitrev, bool eod, u_int ppmcmd, Status& eresult);
     bool	recvFrame(HDLCFrame& frame, u_char dir, long ms = 10*1000, bool readPending = false, bool docrp = true);
     bool	recvTCF(int br, HDLCFrame&, const u_char* bitrev, long ms);
     bool	recvRawFrame(HDLCFrame& frame);
@@ -193,9 +193,9 @@ protected:
     bool        renegotiatePrimary(bool constrain);
     bool	syncECMFrame();
     void	abortPageECMRecv(TIFF* tif, const Class2Params& params, u_char* block, u_int fcount, u_short seq, bool pagedataseen);
-    bool	recvPageECMData(TIFF* tif, const Class2Params& params, fxStr& emsg);
+    bool	recvPageECMData(TIFF* tif, const Class2Params& params, Status& eresult);
     void	blockData(u_int byte, bool flag);
-    bool	blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxStr& emsg);
+    bool	blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, Status& eresult);
     bool	endECMBlock();
     void	abortReceive();
     void	traceHDLCFrame(const char* direction, const HDLCFrame& frame, bool isecm = false);
@@ -208,31 +208,31 @@ public:
     void	hangup();
 
 // send support
-    bool	sendSetup(FaxRequest&, const Class2Params&, fxStr& emsg);
-    CallStatus	dialResponse(fxStr& emsg);
-    FaxSendStatus getPrologue(Class2Params&, bool&, fxStr&, u_int&);
+    bool	sendSetup(FaxRequest&, const Class2Params&, Status& eresult);
+    CallStatus	dialResponse(Status& eresult);
+    FaxSendStatus getPrologue(Class2Params&, bool&, Status& eresult, u_int&);
     void	sendBegin();
     void	sendSetupPhaseB(const fxStr& pwd, const fxStr& sub);
     FaxSendStatus sendPhaseB(TIFF* tif, Class2Params&, FaxMachineInfo&,
-		    fxStr& pph, fxStr& emsg, u_int& batched);
+		    fxStr& pph, Status& eresult, u_int& batched);
     void	sendEnd();
     void	sendAbort();
 
 // receive support
-    CallType	answerCall(AnswerType, fxStr& emsg, const char* number);
+    CallType	answerCall(AnswerType, Status& eresult, const char* number);
     FaxParams	modemDIS() const;
     bool	setupReceive();
-    bool	recvBegin(fxStr& emsg);
-    bool	recvEOMBegin(fxStr& emsg);
-    bool	recvPage(TIFF*, u_int& ppm, fxStr& emsg, const fxStr& id);
-    bool	recvEnd(fxStr& emsg);
+    bool	recvBegin(Status& eresult);
+    bool	recvEOMBegin(Status& eresult);
+    bool	recvPage(TIFF*, u_int& ppm, Status& eresult, const fxStr& id);
+    bool	recvEnd(Status& eresult);
     void	recvAbort();
     void	pokeConfig(bool isSend);
 
 // polling support
-    bool	requestToPoll(fxStr&);
+    bool	requestToPoll(Status& eresult);
     bool	pollBegin(const fxStr& cig, const fxStr& sep, const fxStr& pwd,
-		    fxStr& emsg);
+		    Status& eresult);
 
 // miscellaneous
     bool	faxService(bool enableV34, bool enableV17);	// switch to fax mode (send)

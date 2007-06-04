@@ -30,11 +30,10 @@
  * Request to poll remote documents.
  */
 bool
-Class2Modem::requestToPoll(fxStr& emsg)
+Class2Modem::requestToPoll(Status& eresult)
 {
     if (!class2Cmd(splCmd, 1)) {
-	emsg = "Unable to request polling operation"
-	    " (modem may not support polling)";
+	eresult = Status(200, "Unable to request polling operation (modem may not support polling)");
 	return (false);
     } else
 	return (true);
@@ -44,20 +43,20 @@ Class2Modem::requestToPoll(fxStr& emsg)
  * Startup a polled receive operation.
  */
 bool
-Class2Modem::pollBegin(const fxStr& cig, const fxStr& sep, const fxStr& pwd, fxStr& emsg)
+Class2Modem::pollBegin(const fxStr& cig, const fxStr& sep, const fxStr& pwd, Status& eresult)
 {
     const char* cmdFailed = "Unable to setup %s (modem command failed)";
 
     if (!class2Cmd(cigCmd, cig)) {		// set polling ID
-	emsg = fxStr::format(cmdFailed, "polling identifer");
+	eresult = Status(201, cmdFailed, "polling identifer");
 	return (false);
     }
     if (sep != "" && paCmd != "" && !class2Cmd(paCmd, sep)) {
-	emsg = fxStr::format(cmdFailed, "selective polling address");
+	eresult = Status(202, cmdFailed, "selective polling address");
 	return (false);
     }
     if (pwd != "" && pwCmd != "" && !class2Cmd(pwCmd, pwd)) {
-	emsg = fxStr::format(cmdFailed, "polling password");
+	eresult = Status(203, cmdFailed, "polling password");
 	return (false);
     }
     return (true);

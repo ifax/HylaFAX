@@ -472,7 +472,7 @@ Class1Modem::decodePWD(fxStr& ascii, const HDLCFrame& binary)
 }
 
 bool
-Class1Modem::switchingPause(fxStr& emsg, u_int times)
+Class1Modem::switchingPause(Status& eresult, u_int times)
 {
     /*
      * If class1SwitchingCmd is of the AT+FRS=n form we honor
@@ -492,8 +492,8 @@ Class1Modem::switchingPause(fxStr& emsg, u_int times)
 	}
     }
     if (!silenceHeard && !atCmd(scmd, AT_OK)) {
-	emsg = "Failure to receive silence.";
-	protoTrace(emsg);
+	eresult = Status(100, "Failure to receive silence (synchronization failure).");
+	protoTrace(eresult.string());
 	if (wasTimeout()) abortReceive();
 	return (false);
     }
@@ -1432,7 +1432,7 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, 
             abortReceive();
             return (false);
         }
-	fxStr emsg;
+	Status eresult;
 	do {
 	    if (crpcnt || rhcnt) {
 		if (rhcnt) crpcnt = 0;
@@ -1462,7 +1462,7 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, 
 	     * So we simply repeat AT+FRH=3 in that case.
 	     */
 	} while (!gotframe && !wasTimeout() && ((conf.class1HasRHConnectBug && !frame.getLength() && lastResponse == AT_NOCARRIER && rhcnt++ < 30) ||
-	    (docrp && crpcnt++ < 3 && switchingPause(emsg, 3) && transmitFrame(dir|FCF_CRP))));	/* triple switchingPause to avoid sending CRP during TCF */
+	    (docrp && crpcnt++ < 3 && switchingPause(eresult, 3) && transmitFrame(dir|FCF_CRP))));	/* triple switchingPause to avoid sending CRP during TCF */
 	return (gotframe);
     } else {
 	gotCONNECT = false;

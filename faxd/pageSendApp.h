@@ -87,18 +87,19 @@ private:
     void 	sendPage(FaxRequest&, FaxMachineInfo&, const fxStr&, 
 			const fxStr&, u_int&);	
 // IXO transmission support
-    void	sendIxoPage(FaxRequest&, FaxMachineInfo&, const fxStr&, fxStr&, u_int&);
-    bool	sendPagerMsg(FaxRequest&, FaxItem&, const fxStr&, fxStr&);
+    void	sendIxoPage(FaxRequest&, FaxMachineInfo&, const fxStr&, Status& result, u_int&);
+    bool	sendPagerMsg(FaxRequest&, FaxItem&, const fxStr&, Status& result);
     u_int	getResponse(fxStackBuffer& buf, long secs);
     bool	prepareMsg(FaxRequest&, FaxMachineInfo&, fxStr&);
-    bool	pagePrologue(FaxRequest&, const FaxMachineInfo&, fxStr&);
-    bool	pageGoAhead(FaxRequest&, const FaxMachineInfo&, fxStr&);
-    bool	pageEpilogue(FaxRequest&, const FaxMachineInfo&, fxStr&);
-    void	sendFailed(FaxRequest&, FaxSendStatus, const char*, u_int = 0);
+    bool	pagePrologue(FaxRequest&, const FaxMachineInfo&, Status& result);
+    bool	pageGoAhead(FaxRequest&, const FaxMachineInfo&, Status& result);
+    bool	pageEpilogue(FaxRequest&, const FaxMachineInfo&, Status& result);
+    void	sendFailed(FaxRequest&, FaxSendStatus, const Status&, u_int = 0);
     void	notifyPageSent(FaxRequest& req, u_int fi);
     time_t	getConnectTime() const;
 // UCP transmission support
-    void	sendUcpPage(FaxRequest&, FaxMachineInfo&, const fxStr&, fxStr&);    bool	sendUcpMsg(FaxRequest&, FaxItem&, const fxStr&, fxStr&,
+    void	sendUcpPage(FaxRequest&, FaxMachineInfo&, const fxStr&, Status& result);
+    bool	sendUcpMsg(FaxRequest&, FaxItem&, const fxStr&, Status& result,
 		    FaxMachineInfo&);
 // modem handling
     bool	canLockModem();

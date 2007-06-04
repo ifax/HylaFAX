@@ -31,6 +31,7 @@
 #include <stdarg.h>
 #include "Str.h"
 #include "CallID.h"
+#include "Status.h"
 
 class ModemServer;
 class ModemConfig;
@@ -202,7 +203,7 @@ protected:
     fxStr	revQueryCmd;	// product revision identification command
 
     static const char* serviceNames[9];	 // class 2 services
-    static const char* callStatus[10];	 // printable call status
+    static Status callStatus[10];	 // printable call status
     static const char* ATresponses[17];
 
     ClassModem(ModemServer&, const ModemConfig&);
@@ -217,8 +218,8 @@ protected:
     bool doQuery(const fxStr& queryCmd, fxStr& result, long ms = 30*1000);
 // dial/answer interactions with derived classes
     virtual const AnswerMsg* findAnswer(const char* s);
-    virtual CallType answerResponse(fxStr& emsg);
-    virtual CallStatus dialResponse(fxStr& emsg) = 0;
+    virtual CallType answerResponse(Status& eresult);
+    virtual CallStatus dialResponse(Status& eresult) = 0;
     virtual bool isNoise(const char*);
 // miscellaneous
     void	modemSupports(const char* fmt, ...);
@@ -299,19 +300,19 @@ public:
     /*
      * Send support:
      *
-     * if (dial(number, params, emsg) == OK) {
+     * if (dial(number, params, eresult) == OK) {
      *	  ...do stuff...
      * }
      * hangup();
      */
     virtual bool dataService();
-    virtual CallStatus dial(const char* number, fxStr& emsg);
+    virtual CallStatus dial(const char* number, Status& eresult);
 
     /*
      * Receive support:
      *
      * if (waitForRings(nrings, ctype, cid)) {	// wait before answering phone
-     *    case (answerCall(type, emsg)) {
+     *    case (answerCall(type, eresult)) {
      *    CALLTYPE_FAX:
      *	        ...do fax kinds of things...
      *      break;
@@ -328,7 +329,7 @@ public:
      * at any time in this procedure.
      */
     virtual bool waitForRings(u_short rings, CallType&, CallID&);
-    virtual CallType answerCall(AnswerType, fxStr& emsg, const char* dialnumber = NULL);
+    virtual CallType answerCall(AnswerType, Status& eresult, const char* dialnumber = NULL);
     virtual void answerCallCmd(CallType);
 };
 inline long ClassModem::getDataTimeout() const		{ return dataTimeout; }

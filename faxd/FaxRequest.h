@@ -33,7 +33,10 @@
 #include <time.h>
 #include <stdio.h>
 
+#include "Status.h"
+
 class Class2Params;
+
 
 /*
  * This structure is passed from the queue manager
@@ -142,7 +145,6 @@ public:
     fxStr	subaddr;	// transmit subaddress
     fxStr	passwd;		// transmit password
     fxStr	external;	// displayable phone number for fax machine
-    fxStr	notice;		// message to send for notification
     fxStr	modem;		// outgoing modem to use
     fxStr	faxnumber;	// Sender's number to advertise to phone company
     fxStr	tsi;		// TSI to use instead of LocalIdentifier
@@ -195,6 +197,14 @@ public:
     static fxStr mkbasedoc(const fxStr& file);
     void renameSaved(u_int fi);
     bool isUnreferenced(u_int fi);
+
+    Status result;
+
+#if 0
+private:
+    fxStr	notice;		// message to send for notification
+    fxStr	code;		// code relating to notice
+#endif
 };
 inline bool FaxRequest::isNotify(u_int what) const
     { return (notify & (u_short) what) != 0; }

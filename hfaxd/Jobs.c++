@@ -146,7 +146,8 @@ static const struct {
     { T_SCHEDPRI,	A_RUSR|A_MUSR|A_RADM|A_WADM|A_ROTH },
     { T_SENDTIME,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_STATE,		A_RUSR|A_RADM|A_ROTH },
-    { T_STATUS,		A_RUSR|A_RADM|A_WADM|A_ROTH },
+    { T_STATUS,		A_RUSR|A_RADM|A_ROTH },
+    { T_STATUSCODE,	A_RUSR|A_RADM|A_ROTH },
     { T_SUBADDR,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_TAGLINE,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_TOTDIALS,	A_RUSR|A_RADM|A_ROTH },
@@ -227,7 +228,6 @@ static struct {
     { T_JOBID,		&Job::jobid },
     { T_JOBINFO,	&Job::jobtag },
     { T_OWNER,		&Job::owner },
-    { T_STATUS,		&Job::notice },
     { T_DONEOP,		&Job::doneop },
     { T_COMMID,		&Job::commid },
     { T_REGARDING,	&Job::regarding },
@@ -480,6 +480,12 @@ HylaFAXServer::replyJobParamValue(Job& job, int code, Token t)
 	}
 	reply(code, "End of polling items.");
 	return;
+    case T_STATUSCODE:
+	reply(code, "%03d", job.result.value());
+	return;
+    case T_STATUS:
+	reply(code, "%s", job.result.string());
+	return;
     default:
 	break;
     }
@@ -558,6 +564,10 @@ HylaFAXServer::jstatCmd(const Job& job)
 	jstatLine(T_USE_XVRES,"%s", boolString(job.usexvres));
     if (checkAccess(job, T_USE_CONTCOVER, A_READ))
 	jstatLine(T_USE_CONTCOVER,"%s", boolString(job.useccover));
+    if (checkAccess(job, T_STATUSCODE, A_READ))
+	jstatLine(T_STATUSCODE,"%03d", job.result.value());
+    if (checkAccess(job, T_STATUS, A_READ))
+	jstatLine(T_STATUS, "%s", job.result.string());
     u_int i, n;
     for (i = 0, n = N(strvals); i < n; i++)
 	if (checkAccess(job, strvals[i].t, A_READ))
@@ -1911,7 +1921,7 @@ HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
 		fprintf(fd, fspec, job.resolution);
 		break;
 	    case 's':
-		fprintf(fd, fspec, (const char*) job.notice);
+		fprintf(fd, fspec, job.result.string());
 		break;
 	    case 't':
 		fprintf(fd, fspec, job.tottries);

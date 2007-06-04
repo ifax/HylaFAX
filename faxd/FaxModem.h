@@ -133,7 +133,7 @@ protected:
     bool	getHDLCTracing();
     bool	getECMTracing();
     FaxSendStatus sendSetupParams(TIFF*, Class2Params&,
-		    FaxMachineInfo&, fxStr&);
+		    FaxMachineInfo&, Status&);
     void	recvTSI(const fxStr&);
     void	recvPWD(const fxStr&);
     void	recvSUB(const fxStr&);
@@ -144,11 +144,11 @@ protected:
     void	recvStartPage(TIFF* tif);
     void	recvResetPage(TIFF* tif);
     u_int	decodePageChop(const fxStr& pph, const Class2Params&);
-    bool	decodePPM(const fxStr& pph, u_int& ppm, fxStr& emsg);
+    bool	decodePPM(const fxStr& pph, u_int& ppm, Status& eresult);
     void	notifyPageSent(TIFF*);
 // phase c data receive & copy quality checking
     bool	recvPageDLEData(TIFF* tif, bool checkQuality,
-		    const Class2Params& params, fxStr& emsg);
+		    const Class2Params& params, Status& eresult);
     void	setupStartPage(TIFF* tif, const Class2Params& params);
     void	recvEndPage(TIFF* tif, const Class2Params& params);
     void	writeECMData(TIFF*, u_char*, u_int, const Class2Params&, u_short);
@@ -248,13 +248,14 @@ public:
      * single T.30 document.
      */
     virtual bool faxService(bool enableV34, bool enableV17) = 0;
-    virtual bool sendSetup(FaxRequest&, const Class2Params& dis, fxStr& emsg);
+    virtual bool sendSetup(FaxRequest&, const Class2Params& dis, Status&
+		    eresult);
     virtual void sendBegin();
     virtual FaxSendStatus getPrologue(Class2Params&,
-	bool& hasDoc, fxStr& emsg, u_int& batched) = 0;
+	bool& hasDoc, Status& eresult, u_int& batched) = 0;
     virtual void sendSetupPhaseB(const fxStr& pwd, const fxStr& sub);
     virtual FaxSendStatus sendPhaseB(TIFF*, Class2Params&, FaxMachineInfo&,
-	fxStr& pph, fxStr& emsg, u_int& batched) = 0;
+	fxStr& pph, Status& eresult, u_int& batched) = 0;
     virtual void sendEnd();
     virtual void sendAbort() = 0;
     // query interfaces for optional state
@@ -290,10 +291,10 @@ public:
      * }
      */
     virtual bool setupReceive() = 0;
-    virtual bool recvBegin(fxStr& emsg);
-    virtual bool recvEOMBegin(fxStr& emsg);
-    virtual bool recvPage(TIFF*, u_int& ppm, fxStr& em, const fxStr& id) = 0;
-    virtual bool recvEnd(fxStr& emsg) = 0;
+    virtual bool recvBegin(Status& eresult);
+    virtual bool recvEOMBegin(Status& eresult);
+    virtual bool recvPage(TIFF*, u_int& ppm, Status& result, const fxStr& id) = 0;
+    virtual bool recvEnd(Status& eresult) = 0;
     virtual void recvAbort() = 0;
     virtual void recvSucceeded();
     virtual void pokeConfig(bool isSend) = 0;
@@ -318,9 +319,9 @@ public:
      *
      * (i.e. it's just like a receive operation.)
      */
-    virtual bool requestToPoll(fxStr& emsg) = 0;
+    virtual bool requestToPoll(Status& eresult) = 0;
     virtual bool pollBegin(
 	const fxStr& cig, const fxStr& sep, const fxStr& pwd,
-	fxStr& emsg);
+	Status& eresult);
 };
 #endif /* _FAXMODEM_ */

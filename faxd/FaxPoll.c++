@@ -37,7 +37,7 @@
  * Initiate a polling receive and invoke the receiving protocol.
  */
 bool
-FaxServer::pollFaxPhaseB(const fxStr& sep, const fxStr& pwd, FaxRecvInfoArray& docs, fxStr& emsg)
+FaxServer::pollFaxPhaseB(const fxStr& sep, const fxStr& pwd, FaxRecvInfoArray& docs, Status& result)
 {
     bool pollOK = false;
     changeState(RECEIVING);
@@ -50,20 +50,20 @@ FaxServer::pollFaxPhaseB(const fxStr& sep, const fxStr& pwd, FaxRecvInfoArray& d
      * be lost.)
      */
     FaxRecvInfo info;
-    TIFF* tif = setupForRecv(info, docs, emsg);
+    TIFF* tif = setupForRecv(info, docs, result);
     if (tif) {
 	recvPages = 0;			// count of received pages
 	fileStart = Sys::now();		// count initial negotiation on failure
-	if (modem->pollBegin(canonicalizePhoneNumber(FAXNumber), sep, pwd, emsg)) {
-	    pollOK = recvDocuments(tif, info, docs, emsg);
+	if (modem->pollBegin(canonicalizePhoneNumber(FAXNumber), sep, pwd, result)) {
+	    pollOK = recvDocuments(tif, info, docs, result);
 	    if (!pollOK)
-		traceProtocol("POLL FAX: %s", (const char*) emsg);
-	    if (!modem->recvEnd(emsg))
-		traceProtocol("POLL FAX: %s", (const char*) emsg);
+		traceProtocol("POLL FAX: %s", result.string());
+	    if (!modem->recvEnd(result))
+		traceProtocol("POLL FAX: %s", result.string());
 	} else
-	    traceProtocol("POLL FAX: %s", (const char*) emsg);
+	    traceProtocol("POLL FAX: %s", result.string());
     } else
-	traceProtocol("POLL FAX: %s", (const char*) emsg);
+	traceProtocol("POLL FAX: %s", result.string());
     traceProtocol("POLL FAX: end");
     return (pollOK);
 }

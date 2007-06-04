@@ -1,0 +1,266 @@
+000-049 : call failures
+===============================================================================
+000      : Call successful
+001      : Busy signal detected
+002      : No carrier detected
+003      : No answer from remote
+004      : No local dialtone
+005      : Invalid dialing command
+006      : Unknown problem
+007      : Carrier established, but Phase A failure
+008      : Data connection established (wanted fax)
+009      : Glare - RING detected
+010      : Blacklisted by modem
+011      : Ringback detected, no answer without CED
+012      : Ring detected without successful handshake
+
+050-099 : non Class-specific fax protocol failures
+===============================================================================
+050      : Missing EOL after 5 seconds
+051      : Procedure interrupt received, job terminated
+
+100-199 : Class 1-specific protocol failure
+===============================================================================
+100      : Failure to receive silence (synchronization failure).
+101      : Failure to raise V.21 transmission carrier.
+102      : No sender protocol (T.30 T1 timeout)
+103      : RSPREC error/got DCN (sender abort)
+104      : RSPREC invalid response received
+105      : Failure to train modems
+106      : RSPREC error/got EOT
+107      : Can not continue after DIS/DTC
+108      : COMREC received DCN (sender abort)
+109      : No response to RNR repeated 3 times.
+110      : COMREC invalid response received
+111      : T.30 T2 timeout, expected page not received
+112      : Failed to properly detect high-speed data carrier.
+113      : Received invalid CTC signal in V.34-Fax.
+114      : Failed to properly open V.34 primary channel.
+115      : Received premature V.34 termination.
+116      : Failed to properly open V.34 control channel.
+117      : COMREC invalid response to repeated PPR received
+118      : T.30 T2 timeout, expected signal not received
+119      : COMREC invalid partial-page signal received
+120      : Cannot synchronize ECM frame reception.
+121      : ECM page received containing no image data.
+122      : Remote has no T.4 receiver capability
+123      : DTC received when expecting DIS (not supported)
+124      : COMREC error in transmit Phase B/got DCN
+125      : COMREC invalid command received/no DIS or DTC
+126      : No receiver protocol (T.30 T1 timeout)
+127      : Stop and wait failure (modem on hook)
+128      : Remote fax disconnected prematurely
+129      : Procedure interrupt (operator intervention)
+130      : Unable to transmit page (giving up after RTN)
+131      : Unable to transmit page (giving up after 3 attempts)
+132      : Unable to transmit page (NAK at all possible signalling rates)
+133      : Unable to transmit page (NAK with operator intervention)
+134      : Fax protocol error (unknown frame received)
+135      : Fax protocol error (command repeated 3 times)
+136      : DIS/DTC received 3 times; DCS not recognized
+137      : Failure to train remote modem at 2400 bps or minimum speed
+138      : Receiver flow control exceeded timer.
+139      : No response to RR repeated 3 times.
+140      : COMREC invalid response received to RR.
+141      : No response to CTC repeated 3 times.
+142      : COMREC invalid response received to CTC.
+143      : Failure to transmit clean ECM image data.
+144      : No response to EOR repeated 3 times.
+145      : COMREC invalid response received to EOR.
+146      : COMREC invalid response received to PPS.
+147      : No response to PPS repeated 3 times.
+148      : Unable to establish message carrier
+149      : Unspecified Transmit Phase C error
+150      : No response to MPS repeated 3 tries
+151      : No response to EOP repeated 3 tries
+152      : No response to EOM repeated 3 tries
+153      : No response to PPM repeated 3 tries
+
+200-299 : Class 2-specific protocol failure
+===============================================================================
+200      : Unable to request polling operation (modem may not support polling)
+201      : Unable to setup polling identifer (modem command failed)
+202      : Unable to setup selective polling address (modem command failed)
+203      : Unable to setup polling password (modem command failed)
+204      : Unable to send password (modem command failed)
+205      : Unable to send subaddress (modem command failed)
+206      : Unable to restrict minimum transmit speed to %s (modem command failed)
+207      : Unable to setup session parameters prior to call (modem command failed)
+208      : Unable to set session parameters
+209      :
+210      : Unknown hangup code
+211      : Normal and proper end of connection
+212      : Ring detect without successful handshake
+213      : Call aborted,  from +FK or <CAN>
+214      : No loop current
+215      : Ringback detected, no answer (timeout)
+216      : Ringback detected, no answer without CED
+217      : Unspecified Phase A error
+218      : No answer (T.30 T1 timeout)
+219      : Unspecified Transmit Phase B error
+220      : Remote cannot be polled
+221      : COMREC error in transmit Phase B/got DCN
+222      : COMREC invalid command received/no DIS or DTC
+223      : RSPREC error/got DCN
+224      : DCS sent 3 times without response
+225      : DIS/DTC received 3 times; DCS not recognized
+226      : Failure to train at 2400 bps or +FMINSP value
+227      : RSPREC invalid response received
+228      : Unspecified Transmit Phase C error
+229      : Unspecified Image format error
+230      : Image conversion error
+231      : DTE to DCE data underflow
+232      : Unrecognized Transparent data command
+233      : Image error, line length wrong
+234      : Image error, page length wrong
+235      : Image error, wrong compression code
+236      : Unspecified Transmit Phase D error, including +FPHCTO timeout between data and +FET command
+237      : RSPREC error/got DCN
+238      : No response to MPS repeated 3 times
+239      : Invalid response to MPS
+240      : No response to EOP repeated 3 times
+241      : Invalid response to EOP
+242      : No response to EOM repeated 3 times
+243      : Invalid response to EOM
+244      : Unable to continue after PIN or PIP
+245      : Unspecified Receive Phase B error
+246      : RSPREC error/got DCN
+247      : COMREC error
+248      : T.30 T2 timeout, expected page not received
+249      : T.30 T1 timeout after EOM received
+250      : Unspecified Phase C error, including too much delay between TCF and +FDR command
+251      : Missing EOL after 5 seconds (section 3.2/T.4)
+252      : DCE to DTE buffer overflow
+253      : Bad CRC or frame (ECM or BFT modes)
+254      : Unspecified Phase D error
+255      : RSPREC invalid response received
+256      : COMREC invalid response received
+257      : Unable to continue after PIN or PIP, no PRI-Q
+258      : Command or signal 10 sec. timeout
+259      : Cannot send: +FMINSP > remote's +FDIS(BR) code
+260      : Cannot send: remote is V.29 only, local DCE constrained to 2400 or 4800 bps
+261      : Remote station cannot receive (DIS bit 10)
+262      : +FK aborted or <CAN> aborted
+263      : +Format conversion error in +FDT=DF,VR, WD,LN Incompatible and inconvertable data format
+264      : Remote cannot receive
+265      : After +FDR, DCE waited more than 30 seconds for XON from DTE after XOFF from DTE
+266      : In Polling Phase B, remote cannot be polled
+267-279 (currently unused)
+280      : Procedure interrupt (operator intervention)
+281      : Unable to transmit page (giving up after RTN)
+282      : Unable to transmit page (giving up after 3 attempts)
+283      : Unable to transmit page (NAK at all possible signalling rates)
+284      : Unable to transmit page (NAK with operator intervention)
+285      : Modem protocol error (unknown post-page response)
+286      : Batching protocol error
+287      : Communication failure during Phase B/C
+288      : Communication failure during Phase B/C (modem protocol botch)
+
+300-399 : Non-T.30 client or server failure
+===============================================================================
+301      : Receive aborted due to operator intervention
+302      : Problem reading document directory
+303      : Internal botch; %s post-page handling string "%s"
+304      : Maximum receive page count exceeded, call terminated
+305      : Could not fork for local ID.
+306      : Bad exit status %#o for '%s'
+307      : Could not open a pipe for local ID.
+308      : ANSWER: CALL REJECTED
+309      : ANSWER: Call deduced as %s, but told to answer as %s; call ignored
+310      : External getty use is not permitted {E310}
+311      : %s: could not create
+312      : "%s: can not fork: %s
+313      : ERROR: Unknown status
+314      : Can not open document file %s
+315      : Can not set directory %u in document file %s
+316      : Error reading directory %u in document file %s
+317      : Too many pages in submission; max %u
+318      : Unable to lock shared document file
+319      : Unable to open shared document file
+320      : Unable to create document file
+321      : Converted document is not valid TIFF
+322      : Could not reopen converted document to verify format
+323      : Job contains no documents
+324      : Modem does not support polling
+325      : Kill time expired
+326      : Invalid or corrupted job description file
+327      : REJECT: Unable to convert dial string to canonical format
+328      : REJECT: Requested modem %s is not registered
+329      : REJECT: No work found in job file
+330      : REJECT: Page width (%u) appears invalid
+331      : REJECT: Job expiration time (%u) appears invalid
+332      : REJECT: Time-to-send (%u) appears invalid
+333      : REJECT: Too many attempts to dial
+334      : REJECT: Too many attempts to transmit: %u, max %u
+335      : REJECT: Too many pages in submission: %u, max %u
+336      : REJECT: Modem is configured as exempt from accepting jobs
+337      : Blocked by concurrent calls
+338      : Delayed by time-of-day restrictions
+339      : Delayed by outbound call staggering
+340      : Could not fork to prepare job for transmission
+341      : Could not fork to start job transmission
+342      : Delayed by prior call
+343      : Send program terminated abnormally; unable to exec %s
+344      : Job interrupted by user
+345      : Call aborted by user
+346      : Can not lock modem device
+347      : %s  [document conversion failure output]
+348      : REJECT: %s [JobControl reject notice]
+350      : Permission denied (unnacceptable client TSI)
+351      : Permission denied (unnacceptable client PWD)
+
+400-499 : job/modem incompatibility
+===============================================================================
+400      : Modem does not support negotiated signalling rate
+401      : Modem does not support negotiated min scanline time
+402      : Document is not in a Group 3 or Group 4 compatible format (compression %u)
+403      : Document was encoded with 2DMMR, but client does not support this data format
+404      : Document was encoded with 2DMMR, but modem does not support this data format
+405      : Document was encoded with 2DMMR, but ECM is not being used.
+406      : Document was encoded with 2DMR, but client does not support this data format
+407      : Document was encoded with 2DMR, but modem does not support this data format
+408      : Hyperfine resolution document is not supported by client, image resolution %g x %g lines/mm
+409      : Hyperfine resolution document is not supported by modem, image resolution %g x %g lines/mm
+410      : Superfine resolution document is not supported by client, image resolution %g lines/mm
+411      : Superfine resolution document is not supported by modem, image resolution %g lines/mm
+412      : 300x300 resolution document is not supported by client, image resolution %g lines/mm
+413      : 300x300 resolution document is not supported by modem, image resolution %g lines/mm
+414      : High resolution document is not supported by client, image resolution %g lines/mm
+415      : High resolution document is not supported by modem, image resolution %g lines/mm
+416      : Client does not support document page width, max remote page width %g pixels, image width %lu pixels
+417      : Modem does not support document page width, max page width %g pixels, image width %lu pixels
+418      : Client does not support document page length, max remote page length %d mm, image length %lu rows (%.2f mm)
+419      : Modem does not support document page length, max page length %s mm, image length %lu rows (%.2f mm)
+420      : Unable to configure modem for fax use
+421      : Unable to configure modem for data use
+422      : Can not setup modem
+
+500-E599 : paging failures
+===============================================================================
+500      : No initial ID response from paging central
+501      : Login failed multiple times
+502      : Protocol failure: %s from paging central
+503      : Protocol failure: %s waiting for go-ahead message
+504      : Message block not acknowledged by paging central after multiple tries
+505      : Message block transmit failed paging central rejected it
+506      : Protocol failure: paging central responded to message block transmit with forced disconnect
+507      : Protocol failure: %s to message block transmit
+508      : Paging central rejected content; check PIN
+509      : Protocol failure: timeout waiting for transaction ACK/NAK from paging central
+510      : Paging central responded with forced disconnect
+511      : Job has no PIN to send to
+512      : No PIN specified
+
+600-699 : Polling failures
+===============================================================================
+601      : remote has no document to poll
+
+900-999  : HylaFAX errors
+===============================================================================
+901      : Unable to open TIFF file %s for writing
+902      : Unable to create temp file for received data: %s
+903      : Can not set directory in document file
+904      : Can not open document file
+905      : Internal error: unable to open text message file
+906      : Internal error: unable to read text message file
+907      : polling operation not done because of internal failure

@@ -162,7 +162,8 @@ static const tab parmtab[] = {
 { "SCHEDPRI",     T_SCHEDPRI,	  false, true, "[<number>]" },
 { "SENDTIME",     T_SENDTIME,	  false, true, "[NOW|YYYYMMDDHHSS]" },
 { "STATE",        T_STATE,	  false, true, "(job state)" },
-{ "STATUS",       T_STATUS,       false, true, "[<string>" },
+{ "STATUS",       T_STATUS,       false, true, "[string]" },
+{ "STATUSCODE",   T_STATUSCODE,   false, true, "[code]" },
 { "SUBADDR",      T_SUBADDR,	  false, true, "[<string>]" },
 { "TAGLINE",      T_TAGLINE,	  false, true, "[<string>]" },
 { "TOCOMPANY",    T_TO_COMPANY,	  false, true, "[<string>]" },
@@ -1113,6 +1114,7 @@ HylaFAXServer::param_cmd(Token t)
     case T_OWNER:
     case T_STATE:
     case T_STATUS:
+    case T_STATUSCODE:
     case T_DONEOP:
     case T_COMMID:
     case T_REGARDING:

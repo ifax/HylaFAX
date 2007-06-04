@@ -144,6 +144,7 @@ main()
     hash("csi");
     hash("nsf");
     hash("status");
+    hash("errorcode");
     hash("returned");
     hash("doneop");
     hash("commid");

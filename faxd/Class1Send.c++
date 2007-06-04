@@ -39,18 +39,18 @@
  * Force the tty into a known flow control state.
  */
 bool
-Class1Modem::sendSetup(FaxRequest& req, const Class2Params& dis, fxStr& emsg)
+Class1Modem::sendSetup(FaxRequest& req, const Class2Params& dis, Status& eresult)
 {
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_FLUSH);
-    return (FaxModem::sendSetup(req, dis, emsg));
+    return (FaxModem::sendSetup(req, dis, eresult));
 }
 
 /*
  * Wait-for and process a dial command response.
  */
 CallStatus
-Class1Modem::dialResponse(fxStr& emsg)
+Class1Modem::dialResponse(Status& eresult)
 {
     // This is as good a time as any, perhaps, to reset modemParams.br.
     // If the call does V.8 handshaking, then it will be altered.
@@ -63,7 +63,7 @@ Class1Modem::dialResponse(fxStr& emsg)
 	
 	/*
 	 * Blacklisting is handled internally just like a NOCARRIER.
-	 * emsg is customized to let the user know the problem lies in
+	 * eresult is customized to let the user know the problem lies in
 	 * the modem and not in line conditions, cables ...
 	 * The known blacklisting modem responses are:
 	 * 1. "BLACKLISTED"
@@ -78,7 +78,7 @@ Class1Modem::dialResponse(fxStr& emsg)
 	if (strncmp(rbuf, "BLACKLISTED", 11) == 0
 		|| strncmp(rbuf, "DELAYED", 7) == 0
 		|| strncmp(rbuf, "DIALING DISABLED", 16) == 0) {
-	    emsg = "Blacklisted by modem";
+	    eresult = Status(10, "Blacklisted by modem");
 	    return (NOCARRIER);
 	}
 
@@ -101,8 +101,8 @@ Class1Modem::dialResponse(fxStr& emsg)
 	     * several times (haven't yet encountered anyone that does).
 	     */
 	    if (++ntrys == 3) {
-		emsg = "Ringback detected, no answer without CED"; // XXX
-		protoTrace(emsg);
+		eresult = Status(11, "Ringback detected, no answer without CED"); // XXX
+		protoTrace(eresult.string());
 		return (NOFCON);
 	    }
 	    break;
@@ -142,7 +142,7 @@ Class1Modem::checkReceiverDIS(Class2Params& params)
  * Get the initial DIS command.
  */
 FaxSendStatus
-Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int& batched)
+Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, Status& eresult, u_int& batched)
 {
     u_int t1 = howmany(conf.t1Timer, 1000);		// T1 timer in seconds
     time_t start = Sys::now();
@@ -158,7 +158,7 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
 	// We're not really switching directions of communication, but we don't want
 	// to start listening for prologue frames until we're sure that the receiver 
 	// has dropped the carrier used to signal MCF.
-	if (!useV34) (void) switchingPause(emsg);
+	if (!useV34) (void) switchingPause(eresult);
 	// The receiver will allow T2 to elapse intentionally here.
 	// To keep recvFrame from timing out we double our wait.
 	framerecvd = recvFrame(frame, FCF_SNDR, conf.t2Timer * 2);
@@ -192,23 +192,23 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
 		case FCF_DIS:
 		    hasDoc = dis_caps.isBitEnabled(FaxParams::BITNUM_T4XMTR);// documents to poll?
 		    if (!dis_caps.isBitEnabled(FaxParams::BITNUM_T4RCVR)) {
-			emsg = "Remote has no T.4 receiver capability";
-			protoTrace(emsg);
+			eresult = Status(122, "Remote has no T.4 receiver capability");
+			protoTrace(eresult.string());
 		    	if (! hasDoc)	// don't die if we can poll
 			    return (send_failed);
 		    }
 		    return (send_ok);
 		case FCF_DTC:				// NB: don't handle DTC
-		    emsg = "DTC received when expecting DIS (not supported)";
+		    eresult = Status(123, "DTC received when expecting DIS (not supported)");
 		    break;
 		case FCF_DCN:
-		    emsg = "COMREC error in transmit Phase B/got DCN";
+		    eresult = Status(124, "COMREC error in transmit Phase B/got DCN");
 		    break;
 		default:
-		    emsg = "COMREC invalid command received/no DIS or DTC";
+		    eresult = Status(125, "COMREC invalid command received/no DIS or DTC");
 		    break;
 		}
-		protoTrace(emsg);
+		protoTrace(eresult.string());
 		return (send_retry);
 	    }
 	}
@@ -217,11 +217,11 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, fxStr& emsg, u_int&
 	 */
 	if ((unsigned) Sys::now()-start >= t1)
 	    break;
-	if (!useV34) (void) switchingPause(emsg);
+	if (!useV34) (void) switchingPause(eresult);
 	framerecvd = recvFrame(frame, FCF_SNDR, conf.t2Timer);
     }
-    emsg = "No answer (T.30 T1 timeout)";
-    protoTrace(emsg);
+    eresult = Status(126, "No receiver protocol (T.30 T1 timeout)");
+    protoTrace(eresult.string());
     return (send_retry);
 }
 
@@ -254,9 +254,9 @@ const u_int Class1Modem::modemPFMCodes[8] = {
 };
 
 bool
-Class1Modem::decodePPM(const fxStr& pph, u_int& ppm, fxStr& emsg)
+Class1Modem::decodePPM(const fxStr& pph, u_int& ppm, Status& eresult)
 {
-    if (FaxModem::decodePPM(pph, ppm, emsg)) {
+    if (FaxModem::decodePPM(pph, ppm, eresult)) {
 	ppm = modemPFMCodes[ppm];
 	return (true);
     } else
@@ -270,7 +270,7 @@ Class1Modem::decodePPM(const fxStr& pph, u_int& ppm, fxStr& emsg)
  */
 FaxSendStatus
 Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
-    fxStr& pph, fxStr& emsg, u_int& batched)
+    fxStr& pph, Status& eresult, u_int& batched)
 {
     int ntrys = 0;			// # retraining/command repeats
     bool morePages = true;		// more pages still to send
@@ -291,7 +291,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    params.br = (u_int) -1;		// force retraining
 	    batched = batched & ~BATCH_FIRST;	// must raise V.21 receive carrier
 	    bool hasDoc;
-	    FaxSendStatus status = getPrologue(params, hasDoc, emsg, batched);
+	    FaxSendStatus status = getPrologue(params, hasDoc, eresult, batched);
 	    if (status != send_ok) return (send_retry);
 	    repeatPhaseB = false;
 	}
@@ -305,7 +305,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	 * DIS frame.
 	 */
 	if (params != next) {
-	    if (!sendTraining(next, 3, emsg)) {
+	    if (!sendTraining(next, 3, eresult)) {
 		if (hadV34Trouble) {
 		    protoTrace("The destination appears to have trouble with V.34-Fax.");
 		    return (send_v34fail);
@@ -330,7 +330,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	     * "before sending any signals using V.27 ter/V.29/V.33/V.17 
 	     * modulation system"
 	     */
-	    if (!switchingPause(emsg)) {
+	    if (!switchingPause(eresult)) {
 		return (send_failed);
 	    }
 	}
@@ -340,7 +340,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	 */
 	morePages = !TIFFLastDirectory(tif);
 	u_int cmd;
-	if (!decodePPM(pph, cmd, emsg))
+	if (!decodePPM(pph, cmd, eresult))
 	    return (send_failed);
 	/*
 	 * If pph tells us that the PPM is going to be EOM it means that the
@@ -356,7 +356,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	/*
 	 * Transmit the facsimile message/Phase C.
 	 */
-	if (!sendPage(tif, params, decodePageChop(pph, params), cmd, emsg)) {
+	if (!sendPage(tif, params, decodePageChop(pph, params), cmd, eresult)) {
 	    if (hadV34Trouble) {
 		protoTrace("The destination appears to have trouble with V.34-Fax.");
 		return (send_v34fail);
@@ -390,8 +390,8 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	     * by a simple pause.  +FTS must be used.
 	     */
 	    if (!atCmd(cmd == FCF_MPS ? conf.class1PPMWaitCmd : conf.class1EOPWaitCmd, AT_OK)) {
-		emsg = "Stop and wait failure (modem on hook)";
-		protoTrace(emsg);
+		eresult = Status(127, "Stop and wait failure (modem on hook)");
+		protoTrace(eresult.string());
 		return (send_retry);
 	    }
 	}
@@ -402,7 +402,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		/*
 		 * Send post-page message and get response.
 		 */
-		if (!sendPPM(cmd, frame, emsg)) {
+		if (!sendPPM(cmd, frame, eresult)) {
 		    if (cmd == FCF_EOM && (batched & BATCH_FIRST)) {
 			protoTrace("The destination appears to not support batching.");
 			return (send_batchfail);
@@ -427,19 +427,19 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		    pph.remove(0,2+5+1);// discard page-chop+handling info
 		else
 		    pph.remove(0,3);	// discard page-handling info
-		if (params.ec == EC_DISABLE) (void) switchingPause(emsg);
+		if (params.ec == EC_DISABLE) (void) switchingPause(eresult);
 		ntrys = 0;
 		if (morePages) {	// meaning, more pages in this file, but there may be other files
 		    if (!TIFFReadDirectory(tif)) {
-			emsg = "Problem reading document directory";
-			protoTrace(emsg);
+			eresult = Status(302, "Problem reading document directory");
+			protoTrace(eresult.string());
 			return (send_failed);
 		    }
 		}
 		if (cmd != FCF_EOP) {
 		    if (ppr == FCF_PIP) {
-			emsg = "Procedure interrupt (operator intervention)";
-			protoTrace(emsg);
+			eresult = Status(129, "Procedure interrupt (operator intervention)");
+			protoTrace(eresult.string());
 			return (send_failed);
 		    }
 		    if (ppr == FCF_MCF && !repeatPhaseB) {
@@ -457,8 +457,8 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		}
 		break;
 	    case FCF_DCN:		// disconnect, abort
-		emsg = "Remote fax disconnected prematurely";
-		protoTrace(emsg);
+		eresult = Status(128, "Remote fax disconnected prematurely");
+		protoTrace(eresult.string());
 		return (send_retry);
 	    case FCF_RTN:		// nak, retry after retraining
                 switch( conf.rtnHandling ){
@@ -476,64 +476,60 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 			pph.remove(0,3);	// discard page-handling info
 		    ntrys = 0;
 		    if (ppr == FCF_PIP) {
-			emsg = "Procedure interrupt (operator intervention)";
-			protoTrace(emsg);
+			eresult = Status(129, "Procedure interrupt (operator intervention)");
+			protoTrace(eresult.string());
 			return (send_failed);
 		    }
 		    if (morePages) {
 			if (!TIFFReadDirectory(tif)) {
-			    emsg = "Problem reading document directory";
-			    protoTrace(emsg);
+			    eresult = Status(302, "Problem reading document directory");
+			    protoTrace(eresult.string());
 			    return (send_failed);
 			}
 			FaxSendStatus status =
-			    sendSetupParams(tif, next, info, emsg);
+			    sendSetupParams(tif, next, info, eresult);
 			if (status != send_ok)
 			    return (status);
 		    }
 		    continue;
                 case RTN_GIVEUP:
-                    emsg = "Unable to transmit page"
-                        " (giving up after RTN)";
-		    protoTrace(emsg);
+                    eresult = Status(130, "Unable to transmit page (giving up after RTN)");
+		    protoTrace(eresult.string());
                     return (send_failed); // "over and out"
                 }
                 // case RTN_RETRANSMIT
                 if (++ntrys >= 3) {
-                    emsg = "Unable to transmit page"
-                        " (giving up after 3 attempts)";
-		    protoTrace(emsg);
+                    eresult = Status(131, "Unable to transmit page (giving up after 3 attempts)");
+		    protoTrace(eresult.string());
                     return (send_retry);
 
                 }
 		params.br = (u_int) -1;	// force training
 		if (!dropToNextBR(next)) {
-                    emsg = "Unable to transmit page"
-                        " (NAK at all possible signalling rates)";
-		    protoTrace(emsg);
+                    eresult = Status(132, "Unable to transmit page (NAK at all possible signalling rates)");
+		    protoTrace(eresult.string());
                     return (send_retry);
 		}
                 morePages = true;	// retransmit page
 		break;
 	    case FCF_PIN:		// nak, retry w/ operator intervention
-		emsg = "Unable to transmit page"
-		       " (NAK with operator intervention)";
-		protoTrace(emsg);
+		eresult = Status(133, "Unable to transmit page (NAK with operator intervention)");
+		protoTrace(eresult.string());
 		return (send_failed);
 	    case FCF_CRP:
-		if (!useV34 && !switchingPause(emsg)) {
+		if (!useV34 && !switchingPause(eresult)) {
 		    return (send_retry);
 		}
 		break;
 	    default:			// unexpected abort
-		emsg = "Fax protocol error (unknown frame received)";
-		protoTrace(emsg);
+		eresult = Status(134, "Fax protocol error (unknown frame received)");
+		protoTrace(eresult.string());
 		return (send_retry);
 	    }
 	} while (ppr == FCF_CRP && ++ncrp < 3);
 	if (ncrp == 3) {
-	    emsg = "Fax protocol error (command repeated 3 times)";
-	    protoTrace(emsg);
+	    eresult = Status(135, "Fax protocol error (command repeated 3 times)");
+	    protoTrace(eresult.string());
 	    return (send_retry);
 	}
     } while (morePages);
@@ -577,8 +573,8 @@ Class1Modem::sendPrologue(FaxParams& dcs_caps, const fxStr& tsi)
     bool frameSent;
     if (useV34) frameSent = true;
     else {
-	fxStr emsg;
-	if (!switchingPause(emsg)) {
+	Status eresult;
+	if (!switchingPause(eresult)) {
 	    return (false);
 	}
 	frameSent = (atCmd(thCmd, AT_NOTHING) && atResponse(rbuf, 7550) == AT_CONNECT);
@@ -654,13 +650,13 @@ Class1Modem::isCapable(u_int sr, FaxParams& dis)
  * Send capabilities and do training.
  */
 bool
-Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
+Class1Modem::sendTraining(Class2Params& params, int tries, Status& eresult)
 {
     bool again = false;
     u_short attempt = 0;
     if (tries == 0) {
-	emsg = "DIS/DTC received 3 times; DCS not recognized";
-	protoTrace(emsg);
+	eresult = Status(136, "DIS/DTC received 3 times; DCS not recognized");
+	protoTrace(eresult.string());
 	if (useV34) hadV34Trouble = true;	// sadly, some receivers will do this with V.34
 	return (false);
     }
@@ -765,8 +761,8 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 		 * Class1PPMWaitCmd above.
 		 */
 		if (!atCmd(conf.class1TCFWaitCmd, AT_OK)) {
-		    emsg = "Stop and wait failure (modem on hook)";
-		    protoTrace(emsg);
+		    eresult = Status(127, "Stop and wait failure (modem on hook)");
+		    protoTrace(eresult.string());
 		    return (send_retry);
 		}
 
@@ -837,7 +833,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 			    curcap = NULL;
 			}
 		    }
-		    return (sendTraining(params, --tries, emsg));
+		    return (sendTraining(params, --tries, eresult));
 		default:
 		    if (frame.getFCF() == FCF_DCN) {
 			/*
@@ -851,9 +847,9 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 			 * through.
 			 */
 			if (curcap->mod == V17 && attempt == 1 && tries == 3) hadV17Trouble = true;
-			emsg = "RSRPEC error/got DCN";
+			eresult = Status(103, "RSPREC error/got DCN (sender abort)");
 		    } else
-			emsg = "RSPREC invalid response received";
+			eresult = Status(104, "RSPREC invalid response received");
 		    goto done;
 		}
 	    } else {
@@ -866,7 +862,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 		 * The best way to do that is to make sure that there is
 		 * silence on the line, and  we do that with Class1SwitchingCmd.
 		 */
-		if (useV34 || !switchingPause(emsg)) {
+		if (useV34 || !switchingPause(eresult)) {
 		    return (false);
 		}
 	    }
@@ -889,7 +885,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, fxStr& emsg)
 	}
     } while (!useV34 && again);
 failed:
-    emsg = "Failure to train remote modem at 2400 bps or minimum speed";
+    eresult = Status(137, "Failure to train remote modem at 2400 bps or minimum speed");
 done:
     if (!useV34) protoTrace("TRAINING failed");
     return (false);
@@ -994,7 +990,7 @@ Class1Modem::blockData(u_int byte, bool flag)
  * Perform T.30-A image block transmission protocol.
  */
 bool
-Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxStr& emsg)
+Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, Status& eresult)
 {
     // we have a full image frame
 
@@ -1106,7 +1102,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
 	    if (!useV34) {
 		// T.30 5.3.2.4 (03/93) gives this to be a 75ms minimum
-		if (!switchingPause(emsg)) {
+		if (!switchingPause(eresult)) {
 		    return (false);
 		}
 		/*
@@ -1164,8 +1160,8 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		if (!putModemData(buf, 2)) return (false);
 		// wait for the ready indicator, <DLE><ctrl><DLE><crate>
 		if (!waitForDCEChannel(true)) {
-		    emsg = "Failed to properly open control V.34 channel.";
-		    protoTrace(emsg);
+		    eresult = Status(116, "Failed to properly open control V.34 channel.");
+		    protoTrace(eresult.string());
 		    return (false);
 		}
 	    } else {
@@ -1193,8 +1189,8 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
 
 	    if (!useV34 && !atCmd(ppmcmd == FCF_MPS ? conf.class1PPMWaitCmd : conf.class1EOPWaitCmd, AT_OK)) {
-		emsg = "Stop and wait failure (modem on hook)";
-		protoTrace(emsg);
+		eresult = Status(127, "Stop and wait failure (modem on hook)");
+		protoTrace(eresult.string());
 		return (false);
 	    }
 	    /*
@@ -1239,14 +1235,14 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			gotppr = false;
 			crpcnt++;
 			ppscnt = 0;
-			if (!useV34 && !switchingPause(emsg)) {
+			if (!useV34 && !switchingPause(eresult)) {
 			    return (false);
 			}
 		    }
 		}
 	    } while (!gotppr && (++ppscnt < 3) && (crpcnt < 3) && !(useV34 && gotEOT));
 	    if (gotppr) {
-		if (!useV34 && !switchingPause(emsg)) {
+		if (!useV34 && !switchingPause(eresult)) {
 		    return (false);
 		}
 		if (pprframe.getFCF() == FCF_RNR) {
@@ -1256,9 +1252,9 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 		    do {
 			if ((unsigned) Sys::now()-start >= t1) {
 			    // we use T1 rather than T5 to "minimize transmission inefficiency" (T.30 A.5.4.1)
-			    emsg = "Receiver flow control exceeded timer.";
+			    eresult = Status(138, "Receiver flow control exceeded timer.");
 			    if (ppmcmd == FCF_EOM) batchingError = true;
-			    protoTrace(emsg);
+			    protoTrace(eresult.string());
 			    return (false);
 			}
 			u_short rrcnt = 0, crpcnt = 0;
@@ -1277,15 +1273,15 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				    gotmsg = false;
 				    crpcnt++;
 				    rrcnt = 0;
-				    if (!useV34 && !switchingPause(emsg)) {
+				    if (!useV34 && !switchingPause(eresult)) {
 					return (false);
 				    }
 				}
 			    }
-			} while (!gotmsg && (++rrcnt < 3) && (crpcnt < 3) && (useV34 || switchingPause(emsg)));
+			} while (!gotmsg && (++rrcnt < 3) && (crpcnt < 3) && (useV34 || switchingPause(eresult)));
 			if (!gotmsg) {
-			    emsg = "No response to RR repeated 3 times.";
-			    protoTrace(emsg);
+			    eresult = Status(139, "No response to RR repeated 3 times.");
+			    protoTrace(eresult.string());
 			    return (false);
 			}
 			switch (pprframe.getFCF()) {
@@ -1294,13 +1290,13 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				gotppr = true;
 				break;
 			    case FCF_RNR:
-				if (!useV34 && !switchingPause(emsg)) {
+				if (!useV34 && !switchingPause(eresult)) {
 				    return (false);
 				}
 				break;
 			    default:
-				emsg = "COMREC invalid response received to RR.";
-				protoTrace(emsg);
+				eresult = Status(140, "COMREC invalid response received to RR.");
+				protoTrace(eresult.string());
 				return (false);
 			}
 		    } while (!gotppr);		
@@ -1402,20 +1398,20 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 					    gotctr = false;
 					    crpcnt++;
 					    ctccnt = 0;
-					    if (!switchingPause(emsg)) {
+					    if (!switchingPause(eresult)) {
 						return (false);
 					    }
 					}
 				    }
 				} while (!gotctr && (++ctccnt < 3) && (crpcnt < 3));
 				if (!gotctr) {
-				    emsg = "No response to CTC repeated 3 times.";
-				    protoTrace(emsg);
+				    eresult = Status(141, "No response to CTC repeated 3 times.");
+				    protoTrace(eresult.string());
 				    return (false);
 				}
 				if (!ctrframe.getFCF() == FCF_CTR) {
-				    emsg = "COMREC invalid response received to CTC.";
-				    protoTrace(emsg);
+				    eresult = Status(142, "COMREC invalid response received to CTC.");
+				    protoTrace(eresult.string());
 				    return (false);
 				}
 				dolongtrain = true;	// T.30 states that we must use long-training next
@@ -1434,8 +1430,8 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				 */
 				if (blockgood == false && (params.df >= DF_2DMMR ||
 				    (params.df <= DF_2DMR && badframes > frameNumber/2))) {
-				    emsg = "Failure to transmit clean ECM image data.";
-				    protoTrace(emsg);
+				    eresult = Status(143, "Failure to transmit clean ECM image data.");
+				    protoTrace(eresult.string());
 				    return (false);
 				}
 				bool goterr = false;
@@ -1455,16 +1451,16 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 					    goterr = false;
 					    crpcnt++;
 					    eorcnt = 0;
-					    if (!useV34 && !switchingPause(emsg)) {
+					    if (!useV34 && !switchingPause(eresult)) {
 						return (false);
 					    }
 					}
 				    }
 				} while (!goterr && (++eorcnt < 3) && (crpcnt < 3));
 				if (!goterr) {
-				    emsg = "No response to EOR repeated 3 times.";
+				    eresult = Status(144, "No response to EOR repeated 3 times.");
 				    if (ppmcmd == FCF_EOM) batchingError = true;
-				    protoTrace(emsg);
+				    protoTrace(eresult.string());
 				    return (false);
 				}
 				if (errframe.getFCF() == FCF_RNR) {
@@ -1474,9 +1470,9 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 				    do {
 					if ((unsigned) Sys::now()-start >= t1) {
 					    // we use T1 rather than T5 to "minimize transmission inefficiency" (T.30 A.5.4.1)
-					    emsg = "Receiver flow control exceeded timer.";
+					    eresult = Status(138, "Receiver flow control exceeded timer.");
 					    if (ppmcmd == FCF_EOM) batchingError = true;
-					    protoTrace(emsg);
+					    protoTrace(eresult.string());
 					    return (false);
 					}
 					u_short rrcnt = 0, crpcnt = 0;
@@ -1495,15 +1491,15 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 						    gotmsg = false;
 						    crpcnt++;
 						    rrcnt = 0;
-						    if (!useV34 && !switchingPause(emsg)) {
+						    if (!useV34 && !switchingPause(eresult)) {
 							return (false);
 						    }
 						}
 					    }
-					} while (!gotmsg && (++rrcnt < 3) && (crpcnt < 3) && (useV34 || switchingPause(emsg)));
+					} while (!gotmsg && (++rrcnt < 3) && (crpcnt < 3) && (useV34 || switchingPause(eresult)));
 					if (!gotmsg) {
-					    emsg = "No response to RR repeated 3 times.";
-					    protoTrace(emsg);
+					    eresult = Status(139, "No response to RR repeated 3 times.");
+					    protoTrace(eresult.string());
 					    return (false);
 					}
 					switch (errframe.getFCF()) {
@@ -1511,20 +1507,20 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 						goterr = true;
 						break;
 					    case FCF_RNR:
-						if (!useV34 && !switchingPause(emsg)) {
+						if (!useV34 && !switchingPause(eresult)) {
 						    return (false);
 						}
 						break;
 					    default:
-						emsg = "COMREC invalid response received to RR.";
-						protoTrace(emsg);
+						eresult = Status(140, "COMREC invalid response received to RR.");
+						protoTrace(eresult.string());
 						return (false);
 					}
 				    } while (!goterr);		
 				}
 				if (!(errframe.getFCF() == FCF_ERR)) {
-				    emsg = "COMREC invalid response received to EOR.";
-				    protoTrace(emsg);
+				    eresult = Status(145, "COMREC invalid response received to EOR.");
+				    protoTrace(eresult.string());
 				    return (false);
 				}
 				blockgood = true;
@@ -1533,14 +1529,14 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
 			}
 			break;
 		    default:
-			emsg = "COMREC invalid response received to PPS.";
-			protoTrace(emsg);
+			eresult = Status(146, "COMREC invalid response received to PPS.");
+			protoTrace(eresult.string());
 			return(false);
 		}
 	    } else {
-		emsg = "No response to PPS repeated 3 times.";
+		eresult = Status(147, "No response to PPS repeated 3 times.");
 		if (ppmcmd == FCF_EOM) batchingError = true;
-		protoTrace(emsg);
+		protoTrace(eresult.string());
 		return (false);
 	    }
 	} while (!blockgood);
@@ -1555,7 +1551,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, fxSt
  * Send T.30-A framed image data.
  */
 bool
-Class1Modem::sendClass1ECMData(const u_char* data, u_int cc, const u_char* bitrev, bool eod, u_int ppmcmd, fxStr& emsg)
+Class1Modem::sendClass1ECMData(const u_char* data, u_int cc, const u_char* bitrev, bool eod, u_int ppmcmd, Status& eresult)
 {
     /*
      * Buffer data into the block.  We buffer the entire block
@@ -1573,7 +1569,7 @@ Class1Modem::sendClass1ECMData(const u_char* data, u_int cc, const u_char* bitre
 	ecmFrame[ecmFramePos++] = frameRev[data[i]];
 	if (ecmFramePos == (frameSize + 4)) {
 	    bool lastframe = ((i == (cc - 1)) && eod);
-	    if (!blockFrame(bitrev, lastframe, ppmcmd, emsg))
+	    if (!blockFrame(bitrev, lastframe, ppmcmd, eresult))
 		return (false);
 	    if (lastframe)
 		return (true);
@@ -1584,7 +1580,7 @@ Class1Modem::sendClass1ECMData(const u_char* data, u_int cc, const u_char* bitre
 	    // frame must be filled to end with zero-data
 	    while (ecmFramePos < (frameSize + 4)) ecmFrame[ecmFramePos++] = 0x00;
 	}
-	if (!blockFrame(bitrev, true, ppmcmd, emsg))
+	if (!blockFrame(bitrev, true, ppmcmd, eresult))
 	    return (false);
     }
     return (true);
@@ -1594,12 +1590,12 @@ Class1Modem::sendClass1ECMData(const u_char* data, u_int cc, const u_char* bitre
  * Send data for the current page.
  */
 bool
-Class1Modem::sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm, fxStr& emsg)
+Class1Modem::sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm, Status& eresult)
 {
     beginTimedTransfer();
     bool rc;
     if (ecm)
-	rc = sendClass1ECMData(data, cc, bitrev, false, 0, emsg);
+	rc = sendClass1ECMData(data, cc, bitrev, false, 0, eresult);
     else {
 	rc = sendClass1Data(data, cc, bitrev, false, getDataTimeout());
 	protoTrace("SENT %u bytes of data", cc);
@@ -1615,7 +1611,7 @@ Class1Modem::sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm
  * send all the data they are presented.
  */
 bool
-Class1Modem::sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, uint32 rows, fxStr& emsg)
+Class1Modem::sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, uint32 rows, Status& eresult)
 {
     if (params.df == DF_JBIG) {
 	/*
@@ -1625,8 +1621,8 @@ Class1Modem::sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, uint32 row
 	//u_char newlen[8] = { 0xFF, 0x05, 
 	//    (rows>>24)&0xFF, (rows>>16)&0xFF, (rows>>8)&0xFF, rows&0xFF,
 	//    0xFF, 0x02 };	// SDNORM is added per spec
-	//return sendClass1ECMData(newlen, 8, rtcRev, true, ppmcmd, emsg);
-	return sendClass1ECMData(NULL, 0, rtcRev, true, ppmcmd, emsg);
+	//return sendClass1ECMData(newlen, 8, rtcRev, true, ppmcmd, eresult);
+	return sendClass1ECMData(NULL, 0, rtcRev, true, ppmcmd, eresult);
     }
 
     // determine the number of trailing zeros on the last byte of data
@@ -1658,18 +1654,18 @@ Class1Modem::sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, uint32 row
 	EOFB[2] = 0x80 >> zeros;
     if (params.df == DF_2DMMR) {
 	protoTrace("SEND EOFB");
-	return sendClass1ECMData(EOFB, 3, rtcRev, true, ppmcmd, emsg);
+	return sendClass1ECMData(EOFB, 3, rtcRev, true, ppmcmd, eresult);
     }
     if (params.is2D()) {
 	protoTrace("SEND 2D RTC");
 	if (params.ec != EC_DISABLE)
-	    return sendClass1ECMData(RTC2D, 9, rtcRev, true, ppmcmd, emsg);
+	    return sendClass1ECMData(RTC2D, 9, rtcRev, true, ppmcmd, eresult);
 	else
 	    return sendClass1Data(RTC2D, sizeof (RTC2D), rtcRev, true, getDataTimeout());
     } else {
 	protoTrace("SEND 1D RTC");
 	if (params.ec != EC_DISABLE)
-	    return sendClass1ECMData(RTC1D, 10, rtcRev, true, ppmcmd, emsg);
+	    return sendClass1ECMData(RTC1D, 10, rtcRev, true, ppmcmd, eresult);
 	else
 	    return sendClass1Data(RTC1D, sizeof (RTC1D), rtcRev, true, getDataTimeout());
     }
@@ -1714,7 +1710,7 @@ EOLcode(u_long& w)
  * Send a page of data.
  */
 bool
-Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppmcmd, fxStr& emsg)
+Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppmcmd, Status& eresult)
 {
     int lastbyte = 0;
     if (params.ec == EC_DISABLE) {	// ECM does it later
@@ -1726,8 +1722,8 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	 */
 	fxStr tmCmd(curcap[HasShortTraining(curcap)].value, tmCmdFmt);
 	if (!atCmd(tmCmd, AT_CONNECT)) {
-	    emsg = "Unable to establish message carrier";
-	    protoTrace(emsg);
+	    eresult = Status(148, "Unable to establish message carrier");
+	    protoTrace(eresult.string());
 	    return (false);
 	}
 	// As with TCF, T.31 8.3.3 requires the DCE to report CONNECT at the beginning
@@ -1907,7 +1903,7 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 		     * the current data and reset the pointer into
 		     * the zero fill buffer.
 		     */
-		    rc = sendPageData(fill, fp-fill, bitrev, (params.ec != EC_DISABLE), emsg);
+		    rc = sendPageData(fill, fp-fill, bitrev, (params.ec != EC_DISABLE), eresult);
 		    fp = fill;
 		    if (!rc)			// error writing data
 			break;
@@ -1918,7 +1914,7 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 		     * scanline alone.  Flush this scanline
 		     * also.  lineLen is greater than minLen.
 		     */
-		    rc = sendPageData(bol, lineLen, bitrev, (params.ec != EC_DISABLE), emsg);
+		    rc = sendPageData(bol, lineLen, bitrev, (params.ec != EC_DISABLE), eresult);
 		    if (!rc)			// error writing
 			break;
 		} else {
@@ -1944,18 +1940,18 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	     * Flush anything that was not sent above.
 	     */
 	    if (fp > fill && rc)
-		rc = sendPageData(fill, fp-fill, bitrev, (params.ec != EC_DISABLE), emsg);
+		rc = sendPageData(fill, fp-fill, bitrev, (params.ec != EC_DISABLE), eresult);
 	    delete fill;
 	} else {
 	    /*
 	     * No EOL-padding needed, just jam the bytes.
 	     */
-	    rc = sendPageData(dp, (u_int) totdata, bitrev, (params.ec != EC_DISABLE), emsg);
+	    rc = sendPageData(dp, (u_int) totdata, bitrev, (params.ec != EC_DISABLE), eresult);
 	}
 	delete data;
     }
     if (rc || abortRequested())
-	rc = sendRTC(params, ppmcmd, lastbyte, rowsperstrip, emsg);
+	rc = sendRTC(params, ppmcmd, lastbyte, rowsperstrip, eresult);
     protoTrace("SEND end page");
     if (params.ec == EC_DISABLE) {
 	// these were already done by ECM protocol
@@ -1983,9 +1979,9 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	if (flowControl == FLOW_XONXOFF)
 	    setXONXOFF(FLOW_NONE, FLOW_NONE, ACT_DRAIN);
     }
-    if (!rc && (emsg == "")) {
-	emsg = "Unspecified Transmit Phase C error";	// XXX
-    	protoTrace(emsg);
+    if (!rc && (eresult.value() == 0)) {
+	eresult = Status(149, "Unspecified Transmit Phase C error");	// XXX
+	protoTrace(eresult.string());
     }
     return (rc);
 }
@@ -1994,7 +1990,7 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
  * Send the post-page-message and wait for a response.
  */
 bool
-Class1Modem::sendPPM(u_int ppm, HDLCFrame& mcf, fxStr& emsg)
+Class1Modem::sendPPM(u_int ppm, HDLCFrame& mcf, Status& eresult)
 {
     for (int t = 0; t < 3; t++) {
 	traceFCF("SEND send", ppm);
@@ -2006,19 +2002,19 @@ Class1Modem::sendPPM(u_int ppm, HDLCFrame& mcf, fxStr& emsg)
     }
     switch (ppm) {
 	case FCF_MPS:
-	    emsg = "No response to MPS repeated 3 tries";
+	    eresult = Status(150, "No response to MPS repeated 3 tries");
 	    break;
 	case FCF_EOP:
-	    emsg = "No response to EOP repeated 3 tries";
+	    eresult = Status(151, "No response to EOP repeated 3 tries");
 	    break;
 	case FCF_EOM:
-	    emsg = "No response to EOM repeated 3 tries";
+	    eresult = Status(152, "No response to EOM repeated 3 tries");
 	    break;
 	default:
-	    emsg = "No response to PPM repeated 3 tries";
+	    eresult = Status(153, "No response to PPM repeated 3 tries");
 	    break;
     }
-    protoTrace(emsg);
+    protoTrace(eresult.string());
     return (false);
 }
 
@@ -2028,8 +2024,8 @@ Class1Modem::sendPPM(u_int ppm, HDLCFrame& mcf, fxStr& emsg)
 void
 Class1Modem::sendEnd()
 {
-    fxStr emsg;
-    if (!useV34) (void) switchingPause(emsg);
+    Status eresult;
+    if (!useV34) (void) switchingPause(eresult);
     transmitFrame(FCF_DCN|FCF_SNDR);		// disconnect
     setInputBuffering(true);
 }

@@ -325,7 +325,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
      */
     bool callResolved;
     bool advanceRotary = true;
-    fxStr emsg;
+    Status eresult;
 
     fxStr callid_formatted = "";
 
@@ -352,8 +352,8 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
 	pid_t pid = fork();
 	switch (pid) {
 	    case -1:
-		emsg = "Could not fork for local ID.";
-		logError("%s", (const char*)emsg);
+		eresult = Status(305, "Could not fork for local ID");
+		logError("%s", eresult.string());
 		Sys::close(pipefd[0]);
 		Sys::close(pipefd[1]);
 		break;
@@ -375,8 +375,8 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
 		    Sys::waitpid(pid, status);
 		    if (status != 0)
 		    {
-			emsg = fxStr::format("Bad exit status %#o for \'%s\'", status, (const char*) cmd);
-			logError("%s", (const char*)emsg);
+			eresult = Status(306, "Bad exit status %#o for \'%s\'", status, (const char*) cmd);
+			logError("%s", eresult.string());
 		    }
 		    // modem settings may have changed...
 		    FaxModem* modem = (FaxModem*) ModemServer::getModem();
@@ -392,8 +392,8 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
 	/*
 	 * Call was rejected based on Caller ID information.
 	 */
-	emsg = "ANSWER: CALL REJECTED";
-	traceServer("%s", (const char*)emsg);
+	eresult = Status(308, "ANSWER: CALL REJECTED");
+	traceServer("%s", eresult.string());
 	callResolved = false;
 	advanceRotary = false;
     } else {
@@ -406,18 +406,18 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
 	     * deduced call type.
 	     */
 	    if (atype != ClassModem::ANSTYPE_ANY && ctype != atype) {
-	        emsg = fxStr::format("ANSWER: Call deduced as %s,"
-		     "but told to answer as %s; call ignored",
+	        eresult = Status(309, "ANSWER: Call deduced as %s,"
+		     " but told to answer as %s; call ignored",
 		     ClassModem::callTypes[ctype],
 		     ClassModem::answerTypes[atype]);
-		traceServer("%s", (const char*)emsg);
+		traceServer("%s", eresult.string());
 		callResolved = false;
 		advanceRotary = false;
 	    } else {
 		// NB: answer based on ctype, not atype
 		if (!(noAnswerVoice && ctype == ClassModem::CALLTYPE_VOICE)) 
-		    ctype = modemAnswerCall(ctype, emsg, dialnumber);
-		callResolved = processCall(ctype, emsg, callid);
+		    ctype = modemAnswerCall(ctype, eresult, dialnumber);
+		callResolved = processCall(ctype, eresult, callid);
 	    }
 	} else if (atype == ClassModem::ANSTYPE_ANY) {
 	    /*
@@ -426,7 +426,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
 	     */
 	    int r = answerRotor;
 	    do {
-		callResolved = answerCall(answerRotary[r], ctype, emsg, callid, dialnumber);
+		callResolved = answerCall(answerRotary[r], ctype, eresult, callid, dialnumber);
 		r = (r+1) % answerRotorSize;
 	    } while (!callResolved && adaptiveAnswer && r != answerRotor);
 	} else {
@@ -435,11 +435,11 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
 	     * any existing call type information such as
 	     * distinctive ring.
 	     */
-	    callResolved = answerCall(atype, ctype, emsg, callid, dialnumber);
+	    callResolved = answerCall(atype, ctype, eresult, callid, dialnumber);
 	}
     }
-    if (emsg.length())
-	traceProtocol((const char*) emsg);
+    if (eresult.value() != 0)
+	traceProtocol("%s", eresult.string());
     /*
      * Call resolved.  If we were able to recognize the call
      * type and setup a session, then reset the answer rotary
@@ -459,7 +459,7 @@ faxGettyApp::answerPhone(AnswerType atype, CallType ctype, const CallID& callid,
     sendModemStatus("I");
     endSession();
 
-    ai.status = emsg;
+    ai.status = eresult.string();
     ai.duration = Sys::now() - ai.start;
     ai.conntime = ai.duration;
     if (logCalls && !ai.record("CALL"))
@@ -517,7 +517,7 @@ faxGettyApp::answerCleanup()
  * the modem layer arrives at as the call type.
  */
 bool
-faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const CallID& callid, const char* dialnumber)
+faxGettyApp::answerCall(AnswerType atype, CallType& ctype, Status& eresult, const CallID& callid, const char* dialnumber)
 {
     bool callResolved;
     if (atype == ClassModem::ANSTYPE_EXTERN) {
@@ -530,16 +530,16 @@ faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const Ca
 	     * then we take action based on the returned call type.
 	     */
 	    ctype = runGetty("EXTERN GETTY", OSnewEGetty,
-		egettyArgs, emsg, lockExternCalls, callid, true);
+		egettyArgs, eresult, lockExternCalls, callid, true);
 	    if (ctype == ClassModem::CALLTYPE_DONE)	// NB: call completed
 		return (true);
 	    if (ctype != ClassModem::CALLTYPE_ERROR)
 		modemAnswerCallCmd(ctype);
 	} else
-	    emsg = "External getty use is not permitted";
+	    eresult = Status(310, "External getty use is not permitted");
     } else
-	ctype = modemAnswerCall(atype, emsg, dialnumber);
-    callResolved = processCall(ctype, emsg, callid);
+	ctype = modemAnswerCall(atype, eresult, dialnumber);
+    callResolved = processCall(ctype, eresult, callid);
     return (callResolved);
 }
 
@@ -557,7 +557,7 @@ faxGettyApp::answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const Ca
  * to recondition the modem for incoming calls (if configured).
  */
 bool
-faxGettyApp::processCall(CallType ctype, fxStr& emsg, const CallID& callid)
+faxGettyApp::processCall(CallType ctype, Status& eresult, const CallID& callid)
 {
     bool callHandled = false;
 
@@ -576,14 +576,14 @@ faxGettyApp::processCall(CallType ctype, fxStr& emsg, const CallID& callid)
 	);
 	changeState(RECEIVING);
 	sendRecvStatus(getModemDeviceID(), "B");
-	callHandled = recvFax(callid, emsg);
+	callHandled = recvFax(callid, eresult);
 	sendRecvStatus(getModemDeviceID(), "E");
 	break;
     case ClassModem::CALLTYPE_DATA:
 	traceServer("ANSWER: DATA CONNECTION");
 	if (gettyArgs != "") {
 	    sendModemStatus("d");
-	    runGetty("GETTY", OSnewGetty, gettyArgs, emsg, lockDataCalls, callid);
+	    runGetty("GETTY", OSnewGetty, gettyArgs, eresult, lockDataCalls, callid);
 	    sendModemStatus("e");
 	} else
 	    traceServer("ANSWER: Data connections are not permitted");
@@ -593,14 +593,14 @@ faxGettyApp::processCall(CallType ctype, fxStr& emsg, const CallID& callid)
 	traceServer("ANSWER: VOICE CONNECTION");
 	if (vgettyArgs != "") {
 	    sendModemStatus("v");
-	    runGetty("VGETTY", OSnewVGetty, vgettyArgs, emsg, lockVoiceCalls, callid);
+	    runGetty("VGETTY", OSnewVGetty, vgettyArgs, eresult, lockVoiceCalls, callid);
 	    sendModemStatus("w");
 	} else
 	    traceServer("ANSWER: Voice connections are not permitted");
 	callHandled = true;
 	break;
     case ClassModem::CALLTYPE_ERROR:
-	traceServer("ANSWER: %s", (const char*) emsg);
+	traceServer("ANSWER: %s", eresult.string());
 	break;
     }
     return (callHandled);
@@ -616,7 +616,7 @@ faxGettyApp::runGetty(
     const char* what,
     Getty* (*newgetty)(const fxStr&, const fxStr&),
     const char* args,
-    fxStr& emsg,
+    Status& eresult,
     bool keepLock,
     const CallID& callid,
     bool keepModem
@@ -628,7 +628,7 @@ faxGettyApp::runGetty(
 	dev.remove(0, prefix.length());
     Getty* getty = (*newgetty)(dev, fxStr::format("%u", getModemRate()));
     if (getty == NULL) {
-	emsg = fxStr::format("%s: could not create", what);
+	eresult = Status(311, "%s: could not create", what);
 	return (ClassModem::CALLTYPE_ERROR);
     }
 
@@ -650,7 +650,7 @@ faxGettyApp::runGetty(
     bool parentIsInit = (getppid() == 1);
     pid_t pid = fork();
     if (pid == -1) {
-	emsg = fxStr::format("%s: can not fork: %s", what, strerror(errno));
+	eresult = Status(312, "%s: can not fork: %s", what, strerror(errno));
 	delete getty;
 	return (ClassModem::CALLTYPE_ERROR);
     }
@@ -705,7 +705,7 @@ faxGettyApp::runGetty(
     getty->wait(status, true);		// wait for getty/login work to complete
     if ( status > 1280 ) { // codes returned larger than 1280 are undefined and must be an error    
         status = 1024;
-        emsg = "ERROR: Unknown status";
+        eresult = Status(313, "ERROR: Unknown status");
     }
     /*
      * Retake ownership of the modem.  Note that there's

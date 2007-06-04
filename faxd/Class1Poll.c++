@@ -30,14 +30,14 @@
 #include "config.h"
 
 bool
-Class1Modem::requestToPoll(fxStr&)
+Class1Modem::requestToPoll(Status&)
 {
     return true;
 }
 
 bool
 Class1Modem::pollBegin(const fxStr& cig0,
-    const fxStr& sep0, const fxStr& pwd0, fxStr& emsg)
+    const fxStr& sep0, const fxStr& pwd0, Status& eresult)
 {
     FaxParams dtc = modemDIS();
     u_int send = 0;
@@ -66,5 +66,5 @@ Class1Modem::pollBegin(const fxStr& cig0,
 	    0, fxStr::null,
 	    FCF_CIG, cig,
 	    FCF_DTC, dtc,
-	    conf.t1Timer, false, emsg);
+	    conf.t1Timer, false, eresult);
 }

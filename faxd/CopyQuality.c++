@@ -124,7 +124,7 @@ FaxModem::initializeDecoder(const Class2Params& params)
  */
 bool
 FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
-    const Class2Params& params, fxStr& emsg)
+    const Class2Params& params, Status& eresult)
 {
     initializeDecoder(params);
     u_int rowpixels = params.pageWidth();	// NB: assume rowpixels <= 4864
@@ -143,8 +143,8 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
     bytePending = 0;
     if (EOFraised()) {
 	abortPageRecv();
-	emsg = "Missing EOL after 5 seconds";
-	recvTrace("%s", (const char*) emsg);
+	eresult = Status(50, "Missing EOL after 5 seconds");
+	recvTrace("%s", eresult.string());
 	return (false);
     }
     if (checkQuality && params.ec == EC_DISABLE) {

@@ -82,6 +82,7 @@ C++FILES=Array.c++ \
 	ModemExt.c++ \
 	SendFaxJob.c++ \
 	SendFaxClient.c++ \
+	Status.c++ \
 	TypeRules.c++ \
 	Transport.c++ \
 	InetTransport.c++ \

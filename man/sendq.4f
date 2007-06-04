@@ -86,6 +86,7 @@ desiredec	integer	desired use of Error Correction Mode (\s-1ECM\s+1)
 desiredst	integer	desired minimum scanline time
 desiredtl	integer	whether or not to use \fBtagline\fP parameter
 doneop	string	operation to perform when job is reaped
+errorcode	string	job status error code
 external	string	external form of dialstring
 fax	string	document ready for transmission
 faxnumber	string	faxnumber to use sending
@@ -251,6 +252,10 @@ server machine).
 Consult 
 .I faxqclean
 more details on other information that may be included in this string.
+.TP 14
+.B errorcode
+The codified form of the status message intended for use by clients
+which provide customized status messages keyed from this standard index.
 .TP 14
 .B external
 The external form of the dialstring.

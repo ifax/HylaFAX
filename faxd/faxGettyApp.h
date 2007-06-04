@@ -106,10 +106,10 @@ private:
     bool	setupModem(bool isSend);
     void	discardModem(bool dropDTR);
 // inbound call handling
-    bool	processCall(CallType ctype, fxStr& emsg, const CallID& callid);
+    bool	processCall(CallType ctype, Status& eresult, const CallID& callid);
     CallType	runGetty(const char* what,
 		    Getty* (*newgetty)(const fxStr&, const fxStr&),
-		    const char* args, fxStr &emsg,
+		    const char* args, Status &eresult,
                     bool keepLock, const CallID& callid, 
 		    bool keepModem = false);
     void	setRingsBeforeAnswer(int rings);
@@ -118,7 +118,7 @@ private:
     void	answerPhoneCmd(AnswerType, const char* dialnumber = NULL);
     void	answerPhone(AnswerType, CallType, const CallID& callid, const char* dialnumber = NULL);
     void	answerCleanup();
-    bool	answerCall(AnswerType atype, CallType& ctype, fxStr& emsg, const CallID& callid, const char* dialnumber = NULL);
+    bool	answerCall(AnswerType atype, CallType& ctype, Status& eresult, const CallID& callid, const char* dialnumber = NULL);
 
     friend void AnswerTimeoutHandler::timerExpired(long, long);
 // miscellaneous stuff

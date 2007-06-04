@@ -33,6 +33,7 @@
 #include <ctype.h>
 #include <errno.h>
 
+
 /*
  * HylaFAX job request file handling.
  */
@@ -182,6 +183,8 @@ char* FaxRequest::chopVals[4] = {
 bool
 FaxRequest::readQFile(bool& rejectJob)
 {
+    fxStr notice;
+    u_int errorcode = 999;
     rejectJob = false;
     lineno = 0;
     lseek(fd, 0L, SEEK_SET);			// XXX should only for re-read
@@ -350,6 +353,7 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_PAGECHOP:	checkChopValue(tag); break;
 	case H_CHOPTHRESHOLD:	chopthreshold = atof(tag); break;
 	case H_NSF:		nsf = tag; break;
+	case H_ERRORCODE:	errorcode = atoi(tag); break;
 	case H_DONEOP:		doneop = tag; break;
 	case H_STATUS:
 	    /*
@@ -444,6 +448,15 @@ FaxRequest::readQFile(bool& rejectJob)
 			       "owner"
 	);
     }
+
+    /*
+     * We try to default it to something sane if it wasn't in
+     * the qfile already
+     */
+    if (errorcode == 999 && notice.length() == 0)
+	    errorcode = 0;
+
+    result = Status(errorcode, "%s", (const char*)notice);
     if (minbr > BR_33600)	minbr = BR_33600;
     if (desiredbr > BR_33600)	desiredbr = BR_33600;
     if (desiredst > ST_40MS)	desiredst = ST_40MS;
@@ -501,13 +514,14 @@ FaxRequest::writeQFile()
     sb.fput("tts:%u\n", tts);
     sb.fput("killtime:%u\n", killtime);
     sb.fput("retrytime:%u\n", retrytime);
+
     DUMP(fp, shortvals,	"%s:%d\n", (int));
     DUMP(fp, strvals,	"%s:%s\n", (const char*));
     /*
      * Escape unprotected \n's with \\.
      */
     sb.put("status:");
-    const char* cp = notice;
+    const char* cp = result.string();
     const char* sp = cp;
     while (*cp) {
 	if (*cp == '\n' && cp[-1] != '\\') {
@@ -518,6 +532,7 @@ FaxRequest::writeQFile()
 	cp++;
     }
     sb.put(sp, cp-sp); sb.put('\n');
+    sb.fput("errorcode:%d\n", result.value());
     sb.fput("returned:%d\n", status);
     sb.fput("notify:%s\n", notifyVals[notify&3]);
     sb.fput("pagechop:%s\n", chopVals[pagechop&3]);

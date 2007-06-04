@@ -89,16 +89,16 @@ Class0Modem::setupFlowControl(FlowControl fc)
 }
 
 CallStatus
-Class0Modem::dial(const char* number, fxStr& emsg)
+Class0Modem::dial(const char* number, Status& eresult)
 {
-    return (ClassModem::dial(number, emsg));
+    return (ClassModem::dial(number, eresult));
 }
 
 /*
  * Wait-for and process a dial command response.
  */
 CallStatus
-Class0Modem::dialResponse(fxStr&)
+Class0Modem::dialResponse(Status&)
 {
     ATResponse r;
     do {

@@ -161,7 +161,7 @@ protected:
     bool	modemStopOutput();
 // modem driver interfaces
     bool	modemWaitForRings(u_short rings, CallType&, CallID&);
-    CallType	modemAnswerCall(AnswerType, fxStr&, const char* dialnumber = NULL);
+    CallType	modemAnswerCall(AnswerType, Status& eresult, const char* dialnumber = NULL);
     void	modemAnswerCallCmd(CallType);
     void	modemFlushInput();
     void	modemHangup();

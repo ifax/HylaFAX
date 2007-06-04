@@ -45,6 +45,7 @@ class UUCPLock;
 class FaxItem;
 class Modem;
 class Trigger;
+class Status;
 
 /*
  * This class represents a thread of control that manages the
@@ -210,12 +211,12 @@ private:
     void	processJob(Batch&, Job&, FaxRequest* req);
     void	sendJobDone(Job& job, FaxRequest* req);
     void	doneJob(Job& job);
-    void	blockJob(Job&, FaxRequest&, const char*);
-    void	delayJob(Job&, FaxRequest&, const char*, time_t);
-    void	rejectJob(Job& job, FaxRequest& req, const fxStr& reason);
+    void	blockJob(Job&, FaxRequest&, const Status&);
+    void	delayJob(Job&, FaxRequest&, const Status&, time_t);
+    void	rejectJob(Job& job, FaxRequest& req, const Status&);
     bool	submitJob(const fxStr& jobid, bool checkState = false);
     bool	suspendJob(const fxStr& jobid, bool abortActive);
-    void	rejectSubmission(Job&, FaxRequest&, const fxStr& reason);
+    void	rejectSubmission(Job&, FaxRequest&, const Status&);
 
     void	startBatch(Modem*, Job&, FaxRequest*, DestInfo&);
     void	fillBatch (Batch&);
@@ -254,13 +255,13 @@ private:
     JobStatus	convertDocument(Job&,
 		    const FaxItem& input, const fxStr& outFile,
 		    const Class2Params& params,
-		    fxStr& emsg);
+		    Status&);
     JobStatus	runConverter(Job& job, const char* app, char* const* argv,
-		    fxStr& emsg);
+		    Status&);
     bool	runConverter1(Job& job, int fd, fxStr& output);
     void	makeCoverPage(Job&, FaxRequest&, const Class2Params&);
     bool	preparePageHandling(Job&, FaxRequest&,
-		    const FaxMachineInfo&, fxStr& emsg);
+		    const FaxMachineInfo&, Status&);
     void	preparePageChop(const FaxRequest&,
 		    TIFF*, const Class2Params&, fxStr&);
     void	setupParams(TIFF*, Class2Params&, const FaxMachineInfo&);

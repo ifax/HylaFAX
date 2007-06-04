@@ -57,7 +57,7 @@ Class2Modem::findAnswer(const char* s)
  * Begin a fax receive session.
  */
 bool
-Class2Modem::recvBegin(fxStr& emsg)
+Class2Modem::recvBegin(Status& eresult)
 {
     bool status = false;
     hangupCode[0] = '\0';
@@ -72,7 +72,7 @@ Class2Modem::recvBegin(fxStr& emsg)
 	case AT_TIMEOUT:
 	case AT_EMPTYLINE:
 	    processHangup("70");
-	    emsg = hangupCause(hangupCode);
+	    eresult = hangupStatus(hangupCode);
 	    return (false);
 	case AT_FNSS:
 	    // XXX parse and pass on to server
@@ -100,7 +100,7 @@ Class2Modem::recvBegin(fxStr& emsg)
 	}
     } while (r != AT_OK);
     if (!status)
-	emsg = hangupCause(hangupCode);
+	eresult = hangupStatus(hangupCode);
     return (status);
 }
 
@@ -108,7 +108,7 @@ Class2Modem::recvBegin(fxStr& emsg)
  * Begin a fax receive session after EOM.
  */
 bool
-Class2Modem::recvEOMBegin(fxStr& emsg)
+Class2Modem::recvEOMBegin(Status&)
 {
     /*
      * There's nothing to do because the modem
@@ -140,7 +140,7 @@ Class2Modem::recvDCS(const char* cp)
  * received post-page-message.
  */
 bool
-Class2Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
+Class2Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 {
     int ppr;
     bool prevPage = false;
@@ -199,7 +199,7 @@ Class2Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	 *     don't understand the FillOrder tag!
 	 */
 	recvSetupTIFF(tif, group3opts, FILLORDER_LSB2MSB, id);
-	if (!recvPageData(tif, emsg)) {
+	if (!recvPageData(tif, eresult)) {
 	    prevPage = false;
 	    goto bad;
 	}
@@ -229,7 +229,7 @@ Class2Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 	 */
 	if (abortRequested()) {
 	    // XXX no way to purge TIFF directory
-	    emsg = "Receive aborted due to operator intervention";
+	    eresult = Status(301, "Receive aborted due to operator intervention");
 	    return (false);
 	}
 	// XXX deal with PRI interrupts
@@ -259,7 +259,7 @@ Class2Modem::recvPage(TIFF* tif, u_int& ppm, fxStr& emsg, const fxStr& id)
 bad:
     if (hangupCode[0] == 0)
 	processHangup("90");			// "Unspecified Phase C error"
-    emsg = hangupCause(hangupCode);
+    eresult = hangupStatus(hangupCode);
     if (prevPage && conf.saveUnconfirmedPages) {
 	TIFFWriteDirectory(tif);
 	protoTrace("RECV keeping unconfirmed page");
@@ -279,7 +279,7 @@ Class2Modem::abortPageRecv()
  * Receive Phase C data using the Class 2 ``stream interface''.
  */
 bool
-Class2Modem::recvPageData(TIFF* tif, fxStr& emsg)
+Class2Modem::recvPageData(TIFF* tif, Status& eresult)
 {
     if (flowControl == FLOW_XONXOFF)
 	(void) setXONXOFF(FLOW_NONE, FLOW_XONXOFF, ACT_FLUSH);
@@ -300,7 +300,7 @@ Class2Modem::recvPageData(TIFF* tif, fxStr& emsg)
 	hostDidCQ = modemCQ == 0 && checkQuality();
     protoTrace("Copy quality checking performed by %s", hostDidCQ ? "host" : "modem");
 
-    bool pageRecvd = recvPageDLEData(tif, hostDidCQ, params, emsg);
+    bool pageRecvd = recvPageDLEData(tif, hostDidCQ, params, eresult);
 
     // be careful about flushing here -- otherwise we lose +FPTS codes
     if (flowControl == FLOW_XONXOFF)
@@ -382,7 +382,7 @@ Class2Modem::parseFPTS(TIFF* tif, const char* cp, int& ppr)
  * Complete a receive session.
  */
 bool
-Class2Modem::recvEnd(fxStr&)
+Class2Modem::recvEnd(Status&)
 {
     if (!hadHangup) {
 	if (isNormalHangup()) {

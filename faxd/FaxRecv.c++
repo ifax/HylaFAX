@@ -42,14 +42,14 @@
  */
 
 bool
-FaxServer::recvFax(const CallID& callid, fxStr& emsg)
+FaxServer::recvFax(const CallID& callid, Status& result)
 {
     traceProtocol("RECV FAX: begin");
 
     FaxRecvInfoArray docs;
     FaxRecvInfo info;
     bool faxRecognized = false;
-    emsg = "";
+    result.clear();
     abortCall = false;
     waitNotifyPid = 0;
 
@@ -60,11 +60,11 @@ FaxServer::recvFax(const CallID& callid, fxStr& emsg)
      * be lost.)
      */
     info.callid = callid;
-    TIFF* tif = setupForRecv(info, docs, emsg);
+    TIFF* tif = setupForRecv(info, docs, result);
     if (tif) {
 	recvPages = 0;			// total count of received pages
 	fileStart = pageStart = Sys::now();
-	if (faxRecognized = modem->recvBegin(emsg)) {
+	if (faxRecognized = modem->recvBegin(result)) {
 	    /*
 	     * If the system is busy then notifyRecvBegun may not return
 	     * quickly.  Thus we run it in a child process and move on.
@@ -84,18 +84,18 @@ FaxServer::recvFax(const CallID& callid, fxStr& emsg)
 		    Dispatcher::instance().startChild(waitNotifyPid, this);
 		    break;
 	    }
-	    if (!recvDocuments(tif, info, docs, emsg)) {
-		traceProtocol("RECV FAX: %s", (const char*) emsg);
+	    if (!recvDocuments(tif, info, docs, result)) {
+		traceProtocol("RECV FAX: %s", result.string());
 		modem->recvAbort();
 	    }
-	    if (!modem->recvEnd(emsg))
-		traceProtocol("RECV FAX: %s", (const char*) emsg);
+	    if (!modem->recvEnd(result))
+		traceProtocol("RECV FAX: %s", result.string());
 	} else {
-	    traceProtocol("RECV FAX: %s", (const char*) emsg);
+	    traceProtocol("RECV FAX: %s", result.string());
 	    TIFFClose(tif);
 	}
     } else
-	traceServer("RECV FAX: %s", (const char*) emsg);
+	traceServer("RECV FAX: %s", result.string());
 
     /*
      * Possibly issue a command upon successful reception.
@@ -127,7 +127,9 @@ FaxServer::getRecvFile(fxStr& qfile, fxStr& emsg)
     u_long seqnum = Sequence::getNext(FAX_RECVDIR "/" FAX_SEQF, emsg);
 
     if (seqnum == (u_long) -1)
+    {
 	return -1;
+    }
 
     qfile = fxStr::format(FAX_RECVDIR "/fax" | Sequence::format | ".tif", seqnum);
     int ftmp = Sys::open(qfile, O_RDWR|O_CREAT|O_EXCL, recvFileMode);
@@ -144,8 +146,9 @@ FaxServer::getRecvFile(fxStr& qfile, fxStr& emsg)
  * Create and lock a temp file for receiving data.
  */
 TIFF*
-FaxServer::setupForRecv(FaxRecvInfo& ri, FaxRecvInfoArray& docs, fxStr& emsg)
+FaxServer::setupForRecv(FaxRecvInfo& ri, FaxRecvInfoArray& docs, Status& result)
 {
+    fxStr emsg;
     int ftmp = getRecvFile(ri.qfile, emsg);
     if (ftmp >= 0) {
 	ri.commid = getCommID();	// should be set at this point
@@ -155,11 +158,12 @@ FaxServer::setupForRecv(FaxRecvInfo& ri, FaxRecvInfoArray& docs, fxStr& emsg)
 	if (tif != NULL)
 	    return (tif);
 	Sys::close(ftmp);
-	emsg = fxStr::format("Unable to open TIFF file %s for writing",
+	result = Status(901, "Unable to open TIFF file %s for writing",
 	    (const char*) ri.qfile);
-	ri.reason = emsg;		// for notifyRecvDone
+	ri.reason = result.string();		// for notifyRecvDone
     } else
-	emsg.insert("Unable to create temp file for received data: ");
+	result = Status(902, "Unable to create temp file for received data: %s",
+		(const char*)emsg);
     return (NULL);
 }
 
@@ -167,14 +171,14 @@ FaxServer::setupForRecv(FaxRecvInfo& ri, FaxRecvInfoArray& docs, fxStr& emsg)
  * Receive one or more documents.
  */
 bool
-FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, fxStr& emsg)
+FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, Status& result)
 {
     bool recvOK;
     u_int ppm = PPM_EOP;
     batchid = getCommID();
     for (;;) {
 	bool okToRecv = true;
-	fxStr reason;
+	Status reason;
 	modem->getRecvSUB(info.subaddr);		// optional subaddress
 	/*
 	 * Check a received TSI/PWD against the list of acceptable
@@ -190,7 +194,7 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 	    info.sender = "<UNSPECIFIED>";
 	if (qualifyTSI != "") {
 	    okToRecv = isTSIOk(info.sender);
-	    reason = "Permission denied (unnacceptable client TSI)";
+	    reason = Status(350, "Permission denied (unnacceptable client TSI)");
 	    traceServer("%s TSI \"%s\"", okToRecv ? "ACCEPT" : "REJECT",
 		(const char*) info.sender);
 	}
@@ -198,24 +202,24 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 	    info.passwd = "<UNSPECIFIED>";
 	if (qualifyPWD != "") {
 	    okToRecv = isPWDOk(info.passwd);
-	    reason = "Permission denied (unnacceptable client PWD)";
+	    reason = Status(351, "Permission denied (unnacceptable client PWD)");
 	    traceServer("%s PWD \"%s\"", okToRecv ? "ACCEPT" : "REJECT",
 		(const char*) info.passwd);
 	}
 	if (!okToRecv) {
-	    emsg = reason;
+	    result = reason;
 	    info.time = (u_int) getFileTransferTime();
-	    info.reason = emsg;
+	    info.reason = result.string();
 	    docs[docs.length()-1] = info;
 	    notifyDocumentRecvd(info);
 	    TIFFClose(tif);
 	    return (false);
 	}
 	setServerStatus("Receiving from \"%s\"", (const char*) info.sender);
-	recvOK = recvFaxPhaseD(tif, info, ppm, emsg);
+	recvOK = recvFaxPhaseD(tif, info, ppm, result);
 	TIFFClose(tif);
 	info.time = (u_int) getFileTransferTime();
-	info.reason = emsg;
+	info.reason = result.string();
 	docs[docs.length()-1] = info;
 	/*
 	 * If syslog is busy then notifyDocumentRecvd may not return
@@ -250,12 +254,12 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
 	    batchid.append(","|getCommID());
 	    traceServer("SESSION BATCH %s", (const char*)batchid);
 	}
-	tif = setupForRecv(info, docs, emsg);
+	tif = setupForRecv(info, docs, result);
 	if (tif == NULL)
 	    return (false);
 	fileStart = pageStart = Sys::now();
-	if (!modem->recvEOMBegin(emsg)) {
-	    info.reason = emsg;
+	if (!modem->recvEOMBegin(result)) {
+	    info.reason = result.string();
 	    docs[docs.length()-1] = info;
 	    TIFFClose(tif);
 	    return (false);
@@ -268,7 +272,7 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, f
  * Receive Phase B protocol processing.
  */
 bool
-FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
+FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, Status& result)
 {
     fxStr id = info.sender;
     for (u_int i = 0; i < info.callid.size(); i++) {
@@ -277,10 +281,10 @@ FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
     }
     do {
 	if (++recvPages > maxRecvPages) {
-	    emsg = "Maximum receive page count exceeded, job terminated";
+	    result = Status(304, "Maximum receive page count exceeded, call terminated");
 	    return (false);
 	}
-	if (!modem->recvPage(tif, ppm, emsg, id))
+	if (!modem->recvPage(tif, ppm, result, id))
 	    return (false);
 	info.npages++;
 	info.time = (u_int) getPageTransferTime();
@@ -306,9 +310,10 @@ FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, fxStr& emsg)
 		Dispatcher::instance().startChild(waitNotifyPid, this);
 		break;
 	}
-	if (emsg != "") return (false);		// got page with fatal error
+	if (result.value() != 0)
+		return (false);		// got page with fatal error
 	if (PPM_PRI_MPS <= ppm && ppm <= PPM_PRI_EOP) {
-	    emsg = "Procedure interrupt received, job terminated";
+	    result = Status(351, "Procedure interrupt received, job terminated");
 	    return (false);
 	}
     } while (ppm == PPM_MPS || ppm == PPM_PRI_MPS);

@@ -35,6 +35,7 @@
 #include <sys/file.h>
 #include <errno.h>
 
+
 const fxStr Sequence::format("%09u");
 
 u_long Sequence::getNext(const char* name, fxStr& emsg)

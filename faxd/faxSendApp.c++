@@ -120,7 +120,7 @@ faxSendApp::send(const char** filenames, int num)
 {
     u_int batched = BATCH_FIRST;
     FaxSendStatus status = send_done;
-    fxStr batchcommid, notice;
+    fxStr batchcommid, errorcode;
     time_t retrybatchtts = 0;
 
     for (int i = 0; i < num; i++)
@@ -193,8 +193,7 @@ faxSendApp::send(const char** filenames, int num)
 		    if (req->status == send_done)
 			ai.status = "";
 		    else {
-			notice = req->notice;
-			ai.status = req->notice;
+			ai.status = req->result.string();
 			retrybatchtts = req->tts;
 		    }
 		    if (!ai.record("SEND"))

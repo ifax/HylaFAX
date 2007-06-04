@@ -33,17 +33,17 @@
 /*
  * Call status description strings.
  */
-const char* ClassModem::callStatus[10] = {
-    "Call successful",				// OK
-    "Busy signal detected",			// BUSY
-    "No carrier detected",			// NOCARRIER
-    "No answer from remote",			// NOANSWER
-    "No local dialtone",			// NODIALTONE
-    "Invalid dialing command",			// ERROR
-    "Unknown problem",				// FAILURE
-    "Carrier established, but Phase A failure",	// NOFCON
-    "Data connection established (wanted fax)",	// DATACONN
-    "Glare - RING detected",			// RING
+Status ClassModem::callStatus[10] = {
+    Status(0, "Call successful"),				// OK
+    Status(1, "Busy signal detected"),			// BUSY
+    Status(2, "No carrier detected"),				// NOCARRIER
+    Status(3, "No answer from remote"),			// NOANSWER
+    Status(4, "No local dialtone"),				// NODIALTONE
+    Status(5, "Invalid dialing command"),			// ERROR
+    Status(6, "Unknown problem"),				// FAILURE
+    Status(7, "Carrier established, but Phase A failure"),	// NOFCON
+    Status(8, "Data connection established (wanted fax)"),	// DATACONN
+    Status(9, "Glare - RING detected"),			// RING
 };
 /*
  * Service class descriptions.  The first three
@@ -129,15 +129,15 @@ ClassModem::dataService()
 }
 
 CallStatus
-ClassModem::dial(const char* number, fxStr& emsg)
+ClassModem::dial(const char* number, Status& eresult)
 {
     dialedNumber = fxStr(number);
     protoTrace("DIAL %s", number);
     fxStr buf = fxStr::format((const char*) conf.dialCmd, number);
-    emsg = "";
-    CallStatus cs = (atCmd(buf, AT_NOTHING) ? dialResponse(emsg) : FAILURE);
-    if (cs != OK && emsg == "") {
-        emsg = callStatus[cs];
+    eresult.clear();
+    CallStatus cs = (atCmd(buf, AT_NOTHING) ? dialResponse(eresult) : FAILURE);
+    if (cs != OK && eresult.value() == 0) {
+        eresult = callStatus[cs];
     }
     return (cs);
 }
@@ -222,7 +222,7 @@ ClassModem::findAnswer(const char* s)
  * Deduce connection kind: fax, data, or voice.
  */
 CallType
-ClassModem::answerResponse(fxStr& emsg)
+ClassModem::answerResponse(Status& eresult)
 {
     CallStatus cs = FAILURE;
     ATResponse r;
@@ -259,16 +259,16 @@ again:
 	    break;
 	}
 	if (r == AT_EMPTYLINE) {
-	    emsg = callStatus[cs];
+	    eresult = callStatus[cs];
 	    return (CALLTYPE_ERROR);
 	}
     } while ((unsigned) Sys::now()-start < conf.answerResponseTimeout);
-    emsg = "Ring detected without successful handshake";
+    eresult = Status(12, "Ring detected without successful handshake");
     return (CALLTYPE_ERROR);
 }
 
 CallType
-ClassModem::answerCall(AnswerType atype, fxStr& emsg, const char* number)
+ClassModem::answerCall(AnswerType atype, Status& eresult, const char* number)
 {
     CallType ctype = CALLTYPE_ERROR;
     /*
@@ -283,13 +283,13 @@ ClassModem::answerCall(AnswerType atype, fxStr& emsg, const char* number)
     case ANSTYPE_VOICE:	answerCmd = conf.answerVoiceCmd; break;
     case ANSTYPE_DIAL:
 			answerCmd = conf.answerDialCmd;
-			dial(number, emsg);	// no error-checking
+			dial(number, eresult);	// no error-checking
 			break;
     }
     if (answerCmd == "")
 	answerCmd = conf.answerAnyCmd;
     if (atCmd(answerCmd, AT_NOTHING)) {
-	ctype = answerResponse(emsg);
+	ctype = answerResponse(eresult);
 	if (atype == ANSTYPE_DIAL) ctype = CALLTYPE_FAX;	// force as fax
 	if (ctype == CALLTYPE_UNKNOWN) {
 	    /*

@@ -106,8 +106,8 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai,
 	}
     } else {
 	if (state != LOCKWAIT)
-	    sendFailed(fax, send_retry,
-		"Can not lock modem device", 2*pollLockWait);
+	    sendFailed(fax, send_retry, Status(346,
+		"Can not lock modem device"), 2*pollLockWait);
 	if (state != SENDING && state != ANSWERING && state != RECEIVING)
 	    changeState(LOCKWAIT, pollLockWait);
     }
@@ -125,10 +125,10 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai,
 }
 
 void
-FaxServer::sendFailed(FaxRequest& fax, FaxSendStatus stat, const char* notice, u_int tts)
+FaxServer::sendFailed(FaxRequest& fax, FaxSendStatus stat, const Status& result, u_int tts)
 {
     fax.status = stat;
-    fax.notice = notice;
+    fax.result = result;
     /*
      * When requeued for the default interval (called with 3 args),
      * don't adjust the time-to-send field so that the spooler
@@ -137,10 +137,11 @@ FaxServer::sendFailed(FaxRequest& fax, FaxSendStatus stat, const char* notice, u
      */
     if (tts != 0)
 	fax.tts = Sys::now() + tts;
-    traceServer("SEND FAILED: JOB %s DEST %s ERR %s"
+    traceServer("SEND FAILED: JOB %s DEST %s ERR [%d] %s"
 	, (const char*) fax.jobid
 	, (const char*) fax.external
-	, (const char*) notice
+	, result.value()
+	, result.string()
     );
 
 }
@@ -153,7 +154,7 @@ void
 FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& number, u_int& batched)
 {
     connTime = 0;				// indicate no connection
-    fxStr notice;
+    Status result;
     /*
      * Calculate initial page-related session parameters so
      * that braindead Class 2 modems which ignore AT+FIS can constrain
@@ -179,7 +180,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
     if ((batched & BATCH_FIRST) &&
 	!modem->faxService(!clientInfo.getHasV34Trouble() && clientParams.ec != EC_DISABLE && clientParams.br > BR_14400,
 	    !clientInfo.getHasV17Trouble() && clientParams.br > BR_9600)) {
-	sendFailed(fax, send_failed, "Unable to configure modem for fax use");
+	sendFailed(fax, send_failed, Status(420,"Unable to configure modem for fax use"));
 	return;
     }
     /*
@@ -189,19 +190,19 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
      * not documents are available for retrieval.
      */
     if (fax.findItem(FaxRequest::send_poll) != fx_invalidArrayIndex &&
-	!modem->requestToPoll(notice)) {
-	sendFailed(fax, send_failed, notice);
+	!modem->requestToPoll(result)) {
+	sendFailed(fax, send_failed, result);
 	return;
     }
-    if (!modem->sendSetup(fax, clientParams, notice)) {
-	sendFailed(fax, send_failed, notice);
+    if (!modem->sendSetup(fax, clientParams, result)) {
+	sendFailed(fax, send_failed, result);
 	return;
     }
-    fax.notice = "";
+    fax.result.clear();
     notifyCallPlaced(fax);
     CallStatus callstat;
     if (batched & BATCH_FIRST)
-	callstat = modem->dial(number, notice);
+	callstat = modem->dial(number, result);
     else
 	callstat = ClassModem::OK;
     if (callstat == ClassModem::OK)
@@ -222,9 +223,9 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	bool remoteHasDoc = false;
 	notifyConnected(fax);
 	FaxSendStatus status = modem->getPrologue(
-	    clientCapabilities, remoteHasDoc, notice, batched);
+	    clientCapabilities, remoteHasDoc, result, batched);
 	if (status != send_ok) {
-	    sendFailed(fax, status, notice, requeueProto);
+	    sendFailed(fax, status, result, requeueProto);
 	} else {
 	    // CSI
 	    fxStr csi("<UNSPECIFIED>");
@@ -243,9 +244,9 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	    clientCapabilities.asciiEncode(clientdis);
 	    clientInfo.setDIS(clientdis);
 
-	    if (!sendClientCapabilitiesOK(fax, clientInfo, notice)) {
+	    if (!sendClientCapabilitiesOK(fax, clientInfo, result)) {
 		// NB: mark job completed 'cuz there's no way recover
-		sendFailed(fax, send_failed, notice);
+		sendFailed(fax, send_failed, result);
 	    } else {
 		modem->sendSetupPhaseB(fax.passwd, fax.subaddr);
 		/*
@@ -312,7 +313,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	    modem->sendEnd();
 	if (fax.status != send_done) {
 	    clientInfo.setSendFailures(clientInfo.getSendFailures()+1);
-	    clientInfo.setLastSendFailure(fax.notice);
+	    clientInfo.setLastSendFailure(fax.result.string());
 	} else
 	    clientInfo.setSendFailures(0);
     } else if (!abortCall) {
@@ -333,37 +334,39 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	case ClassModem::BUSY:		// busy signal
 	case ClassModem::NOANSWER:	// no answer or ring back
 	    if (!clientInfo.getCalledBefore() && fax.ndials > retryMAX[callstat])
-		sendFailed(fax, send_failed, notice);
+		sendFailed(fax, send_failed, result);
 	    else if (fax.retrytime != 0)
-		sendFailed(fax, send_retry, notice, fax.retrytime);
+		sendFailed(fax, send_retry, result, fax.retrytime);
 	    else
-		sendFailed(fax, send_retry, notice, requeueTTS[callstat]);
+		sendFailed(fax, send_retry, result, requeueTTS[callstat]);
 	    break;
 	case ClassModem::NODIALTONE:	// no local dialtone, possibly unplugged
 	case ClassModem::ERROR:		// modem might just need to be reset
 	case ClassModem::FAILURE:	// modem returned something unexpected
 	    if (!clientInfo.getCalledBefore() && fax.ndials > retryMAX[callstat])
-		sendFailed(fax, send_failed, notice);
+		sendFailed(fax, send_failed, result);
 	    else
-		sendFailed(fax, send_retry, notice, requeueTTS[callstat]);
+		sendFailed(fax, send_retry, result, requeueTTS[callstat]);
 	    break;
 	case ClassModem::OK:		// call was aborted by user
 	    break;
 	}
 	if (callstat != ClassModem::OK) {
 	    clientInfo.setDialFailures(clientInfo.getDialFailures()+1);
-	    clientInfo.setLastDialFailure(fax.notice);
+	    clientInfo.setLastDialFailure(fax.result.string());
 	}
     }
     if (abortCall)
-	sendFailed(fax, send_retry, "Call aborted by user");
+	sendFailed(fax, send_retry, Status(345, "Call aborted by user"));
     else if (fax.status == send_retry) {
 	if (fax.totdials == fax.maxdials) {
-	    notice = fax.notice | "; too many attempts to dial";
-	    sendFailed(fax, send_failed, notice);
+	    result = fax.result;
+	    result.append(333, "too many attempts to dial");
+	    sendFailed(fax, send_failed, result);
 	} else if (fax.tottries == fax.maxtries) {
-	    notice = fax.notice | "; too many attempts to send";
-	    sendFailed(fax, send_failed, notice);
+	    result = fax.result;
+	    result.append(334, "too many attempts to send");
+	    sendFailed(fax, send_failed, result);
 	}
     }
     if ((batched & BATCH_LAST) || (fax.status != send_done)) {
@@ -403,19 +406,19 @@ FaxServer::sendPoll(FaxRequest& fax, bool remoteHasDoc)
 {
     u_int ix = fax.findItem(FaxRequest::send_poll);
     if (ix == fx_invalidArrayIndex) {
-	fax.notice = "polling operation not done because of internal failure";
+	fax.result = Status(907, "polling operation not done because of internal failure");
 	traceServer("internal muckup, lost polling request");
 	// NB: job is marked done
     } else if (!remoteHasDoc) {
-	fax.notice = "remote has no document to poll";
-	traceServer("REJECT: " | fax.notice);
+	fax.result = Status(601, "remote has no document to poll");
+	traceServer("REJECT: %s", fax.result.string());
 	// override to force status about polling failure
 	if (fax.notify == FaxRequest::no_notice)
 	    fax.notify = FaxRequest::when_done;
     } else {
 	FaxItem& freq = fax.items[ix];
 	FaxRecvInfoArray docs;
-	fax.status = (pollFaxPhaseB(freq.addr, freq.item, docs, fax.notice) ?
+	fax.status = (pollFaxPhaseB(freq.addr, freq.item, docs, fax.result) ?
 	    send_done : send_retry);
 	for (u_int j = 0; j < docs.length(); j++) {
 	    FaxRecvInfo& ri = docs[j];
@@ -443,7 +446,7 @@ FaxServer::sendFaxPhaseB(FaxRequest& fax, FaxItem& freq, FaxMachineInfo& clientI
     if (tif && (freq.dirnum == 0 || TIFFSetDirectory(tif, freq.dirnum))) {
 	if (dosetup) {
 	    // set up DCS according to file characteristics
-	    fax.status = sendSetupParams(tif, clientParams, clientInfo, fax.notice);
+	    fax.status = sendSetupParams(tif, clientParams, clientInfo, fax.result);
 	}
 	if (fax.status == send_ok) {
 	    /*
@@ -456,8 +459,8 @@ FaxServer::sendFaxPhaseB(FaxRequest& fax, FaxItem& freq, FaxMachineInfo& clientI
 	     */
 	    u_int prevPages = fax.npages;
 	    fax.status = modem->sendPhaseB(tif, clientParams, clientInfo,
-		fax.pagehandling, fax.notice, batched);
-	    if (fax.status == send_v17fail && fax.notice == "") {
+		fax.pagehandling, fax.result, batched);
+	    if (fax.status == send_v17fail && fax.result.value() == 0) {
 		// non-fatal V.17 incompatibility
 		clientInfo.setHasV17Trouble(true);
 		fax.status = send_ok;
@@ -465,12 +468,11 @@ FaxServer::sendFaxPhaseB(FaxRequest& fax, FaxItem& freq, FaxMachineInfo& clientI
 	    if (fax.npages == prevPages) {
 		fax.ntries++;
 		if (fax.ntries > 2) {
-		    if (fax.notice != "")
-			fax.notice.append("; ");
-		    fax.notice.append(
-			"Giving up after 3 attempts to send same page");
+		    const char* msg =
+			"Giving up after 3 attempts to send same page";
+		    fax.result.append(999, msg);
 		    traceServer("SEND: %s \"%s\", dirnum %d",
-			(const char*) fax.notice, (const char*) freq.item, freq.dirnum);
+			msg, (const char*) freq.item, freq.dirnum);
 		    fax.status = send_failed;
 		}
 	    } else {
@@ -479,10 +481,10 @@ FaxServer::sendFaxPhaseB(FaxRequest& fax, FaxItem& freq, FaxMachineInfo& clientI
 	    }
 	}
     } else {
-	fax.notice = tif ? "Can not set directory in document file" :
-			   "Can not open document file";
+	fax.result = tif ? Status(903, "Can not set directory in document file") :
+			   Status(904, "Can not open document file");
 	traceServer("SEND: %s \"%s\", dirnum %d",
-	    (const char*) fax.notice, (const char*) freq.item, freq.dirnum);
+	    fax.result.string(), (const char*) freq.item, freq.dirnum);
     }
     if (tif)
 	TIFFClose(tif);
@@ -494,7 +496,7 @@ FaxServer::sendFaxPhaseB(FaxRequest& fax, FaxItem& freq, FaxMachineInfo& clientI
  * modem and select the parameters that are best for us.
  */
 bool
-FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo, fxStr& emsg)
+FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo, Status& result)
 {
     /*
      * Select signalling rate and minimum scanline time
@@ -506,7 +508,7 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
 	modem->selectSignallingRate(
 	    fxmin(clientInfo.getMaxSignallingRate(), fax.desiredbr));
     if (signallingRate == -1) {
-	emsg = "Modem does not support negotiated signalling rate";
+	result = Status(400, "Modem does not support negotiated signalling rate");
 	return (false);
     }
     clientParams.br = signallingRate;
@@ -517,7 +519,7 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
 	modem->selectScanlineTime(
 	    fxmax(clientInfo.getMinScanlineTime(), fax.desiredst));
     if (minScanlineTime == -1) {
-	emsg = "Modem does not support negotiated min scanline time";
+	result = Status(401, "Modem does not support negotiated min scanline time");
 	return (false);
     }
     clientParams.st = minScanlineTime;
@@ -582,13 +584,13 @@ FaxServer::sendClientCapabilitiesOK(FaxRequest& fax, FaxMachineInfo& clientInfo,
  */
 FaxSendStatus
 FaxServer::sendSetupParams1(TIFF* tif,
-    Class2Params& params, const FaxMachineInfo& clientInfo, fxStr& emsg)
+    Class2Params& params, const FaxMachineInfo& clientInfo, Status& result)
 {
     uint16 compression;
     (void) TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression);
     if (compression != COMPRESSION_CCITTFAX3 && compression != COMPRESSION_CCITTFAX4) {
-	emsg = fxStr::format("Document is not in a Group 3 or Group 4 compatible"
-	    " format (compression %u)", compression);
+	result = Status(402, "Document is not in a Group 3 or Group 4 compatible"
+			" format (compression %u)", compression);
 	return (send_failed);
     }
 
@@ -637,30 +639,25 @@ FaxServer::sendSetupParams1(TIFF* tif,
     } else {
 	if (compression == COMPRESSION_CCITTFAX4) {
 	    if (!clientInfo.getSupportsMMR()) {
-		emsg = "Document was encoded with 2DMMR,"
-		    " but client does not support this data format";
+		result = Status(403, "Document was encoded with 2DMMR, but client does not support this data format");
 		return (send_reformat);
 	    }
 	    if (!modem->supportsMMR()) {
-		emsg = "Document was encoded with 2DMMR,"
-		    " but modem does not support this data format";
+		result = Status(404, "Document was encoded with 2DMMR, but modem does not support this data format");
 		return (send_reformat);
 	    }
 	    if (params.ec == EC_DISABLE) {
-		emsg = "Document was encoded with 2DMMR,"
-		    " but ECM is not being used.";
+		result = Status(405, "Document was encoded with 2DMMR, but ECM is not being used.");
 		return (send_reformat);
 	    }
 	    params.df = DF_2DMMR;
 	} else if (g3opts & GROUP3OPT_2DENCODING) {
 	    if (!clientInfo.getSupports2DEncoding()) {
-		emsg = "Document was encoded with 2DMR,"
-		    " but client does not support this data format";
+		result = Status(406, "Document was encoded with 2DMR, but client does not support this data format");
 		return (send_reformat);
 	    }
 	    if (!modem->supports2D()) {
-		emsg = "Document was encoded with 2DMR,"
-		    " but modem does not support this data format";
+		result = Status(407, "Document was encoded with 2DMR, but modem does not support this data format");
 		return (send_reformat);
 	    }
 	    params.df = DF_2DMR;
@@ -712,25 +709,25 @@ FaxServer::sendSetupParams1(TIFF* tif,
     if (yres >= 15.) {
 	if (xres > 10) {
 	    if (!(clientInfo.getSupportsVRes() & VR_R16)) {
-		emsg = fxStr::format("Hyperfine resolution document is not supported"
-		    " by client, image resolution %g x %g lines/mm", xres, yres);
+		result = Status(408, "Hyperfine resolution document is not supported"
+			" by client, image resolution %g x %g lines/mm", xres, yres);
 		return (send_reformat);
 	    }
 	    if (!modem->supportsVRes(20)) {	// "20" is coded for R16
-		emsg = fxStr::format("Hyperfine resolution document is not supported"
-		    " by modem, image resolution %g x %g lines/mm", xres, yres);
+		result = Status(409, "Hyperfine resolution document is not supported"
+			" by modem, image resolution %g x %g lines/mm", xres, yres);
 		return (send_reformat);
 	    }
 	params.vr = VR_R16;
 	} else {
 	    if (!((clientInfo.getSupportsVRes() & VR_R8) || (clientInfo.getSupportsVRes() & VR_200X400))) {
-		emsg = fxStr::format("Superfine resolution document is not supported"
-		    " by client, image resolution %g lines/mm", yres);
+		result = Status(410, "Superfine resolution document is not supported"
+			" by client, image resolution %g lines/mm", yres);
 		return (send_reformat);
 	    }
 	    if (!modem->supportsVRes(yres)) {
-		emsg = fxStr::format("Superfine resolution document is not supported"
-		    " by modem, image resolution %g lines/mm", yres);
+		result = Status(411, "Superfine resolution document is not supported"
+			" by modem, image resolution %g lines/mm", yres);
 		return (send_reformat);
 	    }
 	if (clientInfo.getSupportsVRes() & VR_R8) params.vr = VR_R8;
@@ -738,25 +735,25 @@ FaxServer::sendSetupParams1(TIFF* tif,
 	}
     } else if (yres >= 10.) {
 	if (!(clientInfo.getSupportsVRes() & VR_300X300)) {
-	    emsg = fxStr::format("300x300 resolution document is not supported"
-		" by client, image resolution %g lines/mm", yres);
+	    result = Status(412, "300x300 resolution document is not supported"
+			" by client, image resolution %g lines/mm", yres);
 	    return (send_reformat);
 	}
 	if (!modem->supportsVRes(yres)) {
-	    emsg = fxStr::format("300x300 resolution document is not supported"
-		" by modem, image resolution %g lines/mm", yres);
+	    result = Status(413, "300x300 resolution document is not supported"
+			" by modem, image resolution %g lines/mm", yres);
 	    return (send_reformat);
 	}
 	params.vr = VR_300X300;
     } else if (yres >= 7.) {
 	if (!((clientInfo.getSupportsVRes() & VR_FINE) || (clientInfo.getSupportsVRes() & VR_200X200))) {
-	    emsg = fxStr::format("High resolution document is not supported"
-		" by client, image resolution %g lines/mm", yres);
+	    result = Status(414, "High resolution document is not supported"
+			" by client, image resolution %g lines/mm", yres);
 	    return (send_reformat);
 	}
 	if (!modem->supportsVRes(yres)) {
-	    emsg = fxStr::format("High resolution document is not supported"
-		" by modem, image resolution %g lines/mm", yres);
+	    result = Status(415, "High resolution document is not supported"
+			" by modem, image resolution %g lines/mm", yres);
 	    return (send_reformat);
 	}
 	if (clientInfo.getSupportsVRes() & VR_FINE) params.vr = VR_FINE;
@@ -773,7 +770,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
     (void) TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
     double rf = (params.vr == VR_R16 ? 2 : params.vr == VR_300X300 ? 1.5 : 1);
     if (w > (clientInfo.getMaxPageWidthInPixels()*rf)) {
-	emsg = fxStr::format("Client does not support document page width"
+	result = Status(416, "Client does not support document page width"
 		", max remote page width %u pixels, image width %lu pixels",
 		(uint32) (clientInfo.getMaxPageWidthInPixels()*rf), w);
 	return (send_reformat);
@@ -789,7 +786,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
 	    0,
 	    0,
 	};
-	emsg = fxStr::format("Modem does not support document page width"
+	result = Status(417, "Modem does not support document page width"
 		", max page width %u pixels, image width %lu pixels",
 		(uint32)(widths[modem->getBestPageWidth()&7]*rf), w);
 	return (send_reformat);
@@ -810,7 +807,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
 	(void) TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
 	float len = h / yres;			// page length in mm
 	if ((int) len > clientInfo.getMaxPageLengthInMM()) {
-	    emsg = fxStr::format("Client does not support document page length"
+	    result = Status(418, "Client does not support document page length"
 			  ", max remote page length %d mm"
 			  ", image length %lu rows (%.2f mm)",
 		clientInfo.getMaxPageLengthInMM(), h, len);
@@ -823,7 +820,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
 		"<unlimited>",	// unlimited
 		"<undefined>",	// US letter (used internally)
 	    };
-	    emsg = fxStr::format("Modem does not support document page length"
+	    result = Status(419, "Modem does not support document page length"
 			  ", max page length %s mm"
 			  ", image length %lu rows (%.2f mm)",
 		lengths[modem->getBestPageLength()&3], h, len);
@@ -855,9 +852,9 @@ FaxServer::sendSetupParams1(TIFF* tif,
 }
 
 FaxSendStatus
-FaxServer::sendSetupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo& clientInfo, fxStr& emsg)
+FaxServer::sendSetupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo& clientInfo, Status& result)
 {
-    FaxSendStatus status = sendSetupParams1(tif, params, clientInfo, emsg);
+    FaxSendStatus status = sendSetupParams1(tif, params, clientInfo, result);
     if (status == send_ok) {
 	traceProtocol("USE %s", params.pageWidthName());
 	traceProtocol("USE %s", params.pageLengthName());
@@ -865,9 +862,9 @@ FaxServer::sendSetupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo
 	traceProtocol("USE %s", params.dataFormatName());
 	traceProtocol("USE %s", params.scanlineTimeName());
     } else if (status == send_reformat) {
-	traceServer(emsg);
+	traceServer("%s", result.string());
     } else if (status == send_failed) {
-	traceServer("REJECT: " | emsg);
+	traceServer("REJECT: %s", result.string());
     }
     return (status);
 }

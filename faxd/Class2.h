@@ -69,7 +69,7 @@ protected:
     bool	useExtendedDF;		// if true, modem has T.32-A data format extension
     bool	useJP;			// if true, modem has JP +FCC parameter option
     char	recvDataTrigger;	// char to send to start recv'ing data
-    char	hangupCode[4];		// hangup reason (from modem)
+    char	hangupCode[5];		// hangup reason (from modem)
     bool	hadHangup;		// true if +FHNG:/+FHS: received
     fxStr	lid;			// prepared local identifier string
 
@@ -90,7 +90,7 @@ protected:
 // reception support
     const AnswerMsg* findAnswer(const char*);
     bool	recvDCS(const char*);
-    bool	recvPageData(TIFF*, fxStr& emsg);
+    bool	recvPageData(TIFF*, Status& eresult);
     bool	recvPPM(TIFF*, int& ppr);
     bool	parseFPTS(TIFF*, const char* cp, int& ppr);
     void	abortPageRecv();
@@ -119,6 +119,7 @@ protected:
     void	processHangup(const char*);
     bool	isNormalHangup();
     const char*	hangupCause(const char* code);
+    const Status&	hangupStatus(const char* code);
     void	tracePPR(const char* dir, u_int ppr);
     void	tracePPM(const char* dir, u_int ppm);
 // class 2 command support routines
@@ -138,26 +139,26 @@ public:
     virtual ~Class2Modem();
 
 // send support
-    bool	sendSetup(FaxRequest&, const Class2Params&, fxStr& emsg);
-    CallStatus	dialResponse(fxStr& emsg);
-    FaxSendStatus getPrologue(Class2Params&, bool&, fxStr&, u_int&);
+    bool	sendSetup(FaxRequest&, const Class2Params&, Status& eresult);
+    CallStatus	dialResponse(Status& eresult);
+    FaxSendStatus getPrologue(Class2Params&, bool&, Status& eresult, u_int&);
     FaxSendStatus sendPhaseB(TIFF* tif, Class2Params&, FaxMachineInfo&,
-		    fxStr& pph, fxStr& emsg, u_int& batched);
+		    fxStr& pph, Status& eresult, u_int& batched);
     void	sendAbort();
 
 // receive support
     bool	setupReceive();
-    bool	recvBegin(fxStr& emsg);
-    bool	recvEOMBegin(fxStr& emsg);
-    bool	recvPage(TIFF*, u_int& ppm, fxStr& emsg, const fxStr& id);
-    bool	recvEnd(fxStr& emsg);
+    bool	recvBegin(Status& eresult);
+    bool	recvEOMBegin(Status& eresult);
+    bool	recvPage(TIFF*, u_int& ppm, Status& eresult, const fxStr& id);
+    bool	recvEnd(Status& eresult);
     void	recvAbort();
     void	pokeConfig(bool isSend);
 
 // polling support
-    bool	requestToPoll(fxStr& emsg);
+    bool	requestToPoll(Status& eresult);
     bool	pollBegin(const fxStr& cig, const fxStr& sep, const fxStr& pwd,
-		    fxStr& emsg);
+		    Status& eresult);
 
 // miscellaneous
     bool	faxService(bool enableV34, bool enableV17);	// switch to fax mode (send)

@@ -31,6 +31,7 @@
 #include "ModemServer.h"
 #include "FaxRecvInfo.h"
 #include "Array.h"
+#include "FaxRequest.h"
 
 class FaxAcctInfo;
 
@@ -65,23 +66,22 @@ private:
 
 // FAX transmission protocol support
     void	sendFax(FaxRequest& fax, FaxMachineInfo&, const fxStr& number, u_int&);
-    bool	sendClientCapabilitiesOK(FaxRequest&, FaxMachineInfo&, fxStr&);
+    bool	sendClientCapabilitiesOK(FaxRequest&, FaxMachineInfo&, Status& result);
     bool	sendFaxPhaseB(FaxRequest&, FaxItem&, FaxMachineInfo&, u_int, bool);
     void	sendPoll(FaxRequest& fax, bool remoteHasDoc);
     FaxSendStatus sendSetupParams(TIFF*,
-		    Class2Params&, const FaxMachineInfo&, fxStr&);
+		    Class2Params&, const FaxMachineInfo&, Status& result);
     FaxSendStatus sendSetupParams1(TIFF*,
-		    Class2Params&, const FaxMachineInfo&, fxStr&);
+		    Class2Params&, const FaxMachineInfo&, Status& result);
     void	sendFailed(FaxRequest& fax,
-		    FaxSendStatus, const char* notice, u_int tts = 0);
+		    FaxSendStatus, const Status& result, u_int tts = 0);
 // FAX reception support
     int		getRecvFile(fxStr& qfile, fxStr& emsg);
-    TIFF*	setupForRecv(FaxRecvInfo&, FaxRecvInfoArray&, fxStr& emsg);
-    bool	recvDocuments(TIFF*, FaxRecvInfo&, FaxRecvInfoArray&,
-		    fxStr& emsg);
-    bool	recvFaxPhaseD(TIFF* tif, FaxRecvInfo&, u_int& ppm, fxStr& emsg);
+    TIFF*	setupForRecv(FaxRecvInfo&, FaxRecvInfoArray&, Status& eresult);
+    bool	recvDocuments(TIFF*, FaxRecvInfo&, FaxRecvInfoArray&, Status& eresult);
+    bool	recvFaxPhaseD(TIFF* tif, FaxRecvInfo&, u_int& ppm, Status& eresult);
     bool	pollFaxPhaseB(const fxStr& sep, const fxStr& pwd,
-		    FaxRecvInfoArray&, fxStr& emsg);
+		    FaxRecvInfoArray&, Status& eresult);
 protected:
     FaxServer(const fxStr& deviceName, const fxStr& devID);
 
@@ -94,7 +94,7 @@ protected:
     void	setLocalIdentifier(const fxStr& lid);
 
     void	sendFax(FaxRequest&, FaxMachineInfo&, FaxAcctInfo&, u_int&);
-    bool	recvFax(const CallID& callid, fxStr& emsg);
+    bool	recvFax(const CallID& callid, Status& eresult);
 
     time_t	getFileTransferTime() const;
     time_t	getPageTransferTime() const;

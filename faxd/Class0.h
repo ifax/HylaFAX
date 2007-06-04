@@ -37,8 +37,8 @@ public:
 
     bool setupModem(bool isSend = true);
     virtual bool setupFlowControl(FlowControl fc);
-    CallStatus	dial(const char* number, fxStr& emsg);
-    CallStatus dialResponse(fxStr& emsg);
+    CallStatus	dial(const char* number, Status& eresult);
+    CallStatus dialResponse(Status& eresult);
 
     bool isFaxModem() const;			// XXX safe to cast
 };
