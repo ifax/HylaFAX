@@ -32,6 +32,7 @@
 #include "FaxModem.h"
 
 #include "Array.h"
+#include "StrArray.h"
 
 class id_config
 {
@@ -241,6 +242,8 @@ public:
     JBIGSupport	class1JBIGSupport;	// monochrome JBIG support
     bool	saveUnconfirmedPages;	// don't delete unconfirmed pages
     
+    fxStrArray	playList;		// List of files for ESC_PLAY
+
     					// Distinctive ring data as sequences of DRON/DROF intervals
     struct {
     	int cadence[5];                 // the ring cadence as a five-dimensional vector

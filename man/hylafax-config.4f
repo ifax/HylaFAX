@@ -1788,7 +1788,7 @@ The following escape codes are interpreted:
 .sp .5
 .RS
 .nf
-.ta \w'<115200>    'u
+.ta \w'<play:filename>    'u
 \fBEscape\fP	\fBEffect\fP
 <none>	enable no flow control between \s-1DTE\s+1 and \s-1DCE\s+1
 <xon>	enable software flow control between \s-1DTE\s+1 and \s-1DCE\s+1
@@ -1804,6 +1804,7 @@ The following escape codes are interpreted:
 <delay:N>	delay N x 10 ms on the host (0 <= N <= 255)
 <flush>	flush any pending input data from the modem
 <waitfor:R>	wait for the response R from the modem (see below)
+<play:filename>	play the specified audio file (see below)
 .fi
 .RE
 .sp .5
@@ -1846,6 +1847,24 @@ with a leading ``\s-1CONNECT\s+1'' in it; and
 ``\s-1ATS99=2\er<delay:2><flush><waitfor:NOTHING>\s+1'' would send
 ``\s-1ATS99=2\er\s+1'' to the modem, delay 20 ms, flush any
 input from the modem, and then continue (not wait for any response).
+.PP
+The ``<play:filename>'' escape can be used to play a raw audio file with
+a voice modem.   This feature can be used, for example, to play a brief
+audio message after picking up the line but before answering.  A
+configuration example may be:
+.nf
+
+  ModemRingResponse:  "AT+FCLASS=8;H1\enAT+VSM=131\enAT+VLS=1\enAT+VTX\en<waitfor:CONNECT><play:/sounds/enter-extension.raw><waitfor:OK>AT+VTS=[933,,150]"
+  ModemAnswerCmd:     "<delay:100>AT+FCLASS=1;A"
+  CallIDPattern:      SHIELDED_DTMF
+  CallIDAnswerLength: 4
+
+.fi
+In this example using an IS-101 voice-compliant modem, a RING indication from
+the modem will cause the modem to be placed in voice mode, set ulaw audio
+compression, and via the connected phone line play back the etc/play1.raw
+audio file, which may say, "After the tone enter a four-digit extension, then
+start the fax."  Following the message a tone is played.
 .TP
 .B ModemAnswerCmd
 The command to answer the phone.

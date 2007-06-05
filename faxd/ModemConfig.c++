@@ -289,6 +289,8 @@ ModemConfig::setupConfig()
 
     idConfig.resize(0);
     callidIndex		= (u_int) -1;
+
+    playList.resize(0);
 }
 
 void
@@ -481,6 +483,17 @@ ModemConfig::parseATCmd(const char* cp)
 	    }
 	    ecode[0] = ESC_WAITFOR;
 	    ecode[1] = (u_char) resp;
+	} else if (esc.length() > 5 && strneq(esc, "play:", 5)) {
+	    if (playList.length() > 255) {
+		configError("Can only have 255 PLAY escapes configured");
+		pos = epos;
+		continue;
+	    }
+	    ecode[0] = ESC_PLAY;
+	    ecode[1] = (u_char) playList.length();
+configTrace("Storring \"%s\" to playList[%d]", (const
+    char*)esc.tail(esc.length()-5), playList.length());
+	    playList.append(esc.tail(esc.length()-5));
 	} else {
 	    configError("Unknown AT escape code \"%s\"", (const char*) esc);
 	    pos = epos;

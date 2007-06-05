@@ -69,6 +69,7 @@ typedef struct {
 #define	ESC_DELAY	(0x80|0x04)	// delay period of time
 #define	ESC_WAITFOR	(0x80|0x08)	// wait for modem response
 #define	ESC_FLUSH	(0x80|0x10)	// flush input queue
+#define	ESC_PLAY	(0x80|0x20)	// play (voice) file
 
 #ifdef OFF
 #undef OFF			// workaround for SCO
@@ -331,6 +332,11 @@ public:
     virtual bool waitForRings(u_short rings, CallType&, CallID&);
     virtual CallType answerCall(AnswerType, Status& eresult, const char* dialnumber = NULL);
     virtual void answerCallCmd(CallType);
+
+    /*
+     * Voice support
+     */
+    virtual void playFile (u_int id);
 };
 inline long ClassModem::getDataTimeout() const		{ return dataTimeout; }
 inline const fxStr& ClassModem::getModel() const	{ return modemModel; }

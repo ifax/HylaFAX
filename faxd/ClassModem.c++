@@ -762,6 +762,36 @@ ClassModem::sync(long ms)
     return waitFor(AT_OK, ms);
 }
 
+void
+ClassModem::playFile (u_int id)
+{
+    fxAssert (id < conf.playList.length(), "ESC_PLAY: internal playlist ID to large")
+
+    const fxStr& filename = conf.playList[id];
+    protoTrace("Playing file \"%s\".", (const char*) filename);
+
+    int fd = open((const char*) filename, O_RDONLY);
+    if (fd < 0) {
+	protoTrace("Unable to open file \"%s\" for reading.", (const char*) filename);
+	return;
+    }
+
+    u_char buf[1024];
+    int len;
+    u_int pos;
+    do {
+	pos = 0;
+	do {
+	    len = read(fd, &buf[pos], 1);
+	    if (buf[pos] == DLE)	// DLE escape the DLE
+		buf[++pos] = DLE;
+	    pos++;
+	} while (len > 0 &&  pos < sizeof(buf) - 1);
+	putModem(&buf[0], pos, getDataTimeout());
+    } while (len > 0);
+    close(fd);
+}
+
 ATResponse
 ClassModem::atResponse(char* buf, long ms)
 {
@@ -959,6 +989,14 @@ ClassModem::atCmd(const fxStr& cmd, ATResponse r, long ms)
 			break;
 		    case ESC_FLUSH:			// flush input
 			flushModemInput();
+			break;
+		    case ESC_PLAY:
+			{
+			    playFile(cmd[++i]);
+			    u_char buf[2];
+			    buf[0] = DLE; buf[1] = ETX;
+			    putModem(buf, 2, getDataTimeout());
+			}
 			break;
 		    }
 		} while (++i < cmdlen && isEscape(cmd[i]));
