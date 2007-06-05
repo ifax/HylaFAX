@@ -183,8 +183,8 @@ char* FaxRequest::chopVals[4] = {
 bool
 FaxRequest::readQFile(bool& rejectJob)
 {
-    fxStr notice;
-    u_int errorcode = 999;
+    fxStr statusstring;
+    u_int statuscode = 999;
     rejectJob = false;
     lineno = 0;
     lseek(fd, 0L, SEEK_SET);			// XXX should only for re-read
@@ -353,7 +353,7 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_PAGECHOP:	checkChopValue(tag); break;
 	case H_CHOPTHRESHOLD:	chopthreshold = atof(tag); break;
 	case H_NSF:		nsf = tag; break;
-	case H_ERRORCODE:	errorcode = atoi(tag); break;
+	case H_STATUSCODE:	statuscode = atoi(tag); break;
 	case H_DONEOP:		doneop = tag; break;
 	case H_STATUS:
 	    /*
@@ -368,7 +368,7 @@ FaxRequest::readQFile(bool& rejectJob)
 		} while (*bp == '\n' && bp > tag && bp[-1] == '\\');
 		*bp++ = '\0';
 	    }
-	    notice = tag;
+	    statusstring = tag;
 	    break;
 
 	case H_RETURNED:	status = (FaxSendStatus) atoi(tag); break;
@@ -453,10 +453,10 @@ FaxRequest::readQFile(bool& rejectJob)
      * We try to default it to something sane if it wasn't in
      * the qfile already
      */
-    if (errorcode == 999 && notice.length() == 0)
-	    errorcode = 0;
+    if (statuscode == 999 && statusstring.length() == 0)
+	    statuscode = 0;
 
-    result = Status(errorcode, "%s", (const char*)notice);
+    result = Status(statuscode, "%s", (const char*)statusstring);
     if (minbr > BR_33600)	minbr = BR_33600;
     if (desiredbr > BR_33600)	desiredbr = BR_33600;
     if (desiredst > ST_40MS)	desiredst = ST_40MS;
@@ -532,7 +532,7 @@ FaxRequest::writeQFile()
 	cp++;
     }
     sb.put(sp, cp-sp); sb.put('\n');
-    sb.fput("errorcode:%d\n", result.value());
+    sb.fput("statuscode:%d\n", result.value());
     sb.fput("returned:%d\n", status);
     sb.fput("notify:%s\n", notifyVals[notify&3]);
     sb.fput("pagechop:%s\n", chopVals[pagechop&3]);
