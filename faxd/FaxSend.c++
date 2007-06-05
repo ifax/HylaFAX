@@ -43,8 +43,9 @@
  * FAX Server Transmission Protocol.
  */
 void
-FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai, u_int& batched)
+FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai, u_int& batched, bool usedf)
 {
+    useDF = usedf;
     u_int prevPages = fax.npages;
     if (!(batched & BATCH_FIRST) || lockModem()) {
         if (batched & BATCH_FIRST)
@@ -164,7 +165,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
      */
     clientParams.decodePage(fax.pagehandling);
     /*
-     * So we want to restrict DF sellection to those masked in fax.desireddf
+     * So we want to restrict DF selection to those masked in fax.desireddf
      */
     clientParams.df = fxmin(modem->getBestDataFormat(), (u_int)fax.desireddf);
     clientParams.br = fxmin(modem->getBestSignallingRate(), (u_int) fax.desiredbr);
@@ -618,12 +619,21 @@ FaxServer::sendSetupParams1(TIFF* tif,
 	 * Ignore what faxq did and send with the "highest" (monochrome) 
 	 * compression that both the modem and the remote supports.
 	 */
-	params.df = 0;
-	u_int bits = clientCapabilities.df;
-	bits &= BIT(DF_JBIG+1)-1;		// cap at JBIG, only deal with monochrome
-	while (bits) {
-	    bits >>= 1;
-	    if (bits) params.df++;
+	if (useDF) {
+	    /*
+	     * The job has been restricted to a specific data format per
+	     * JobControls or something similar - that value is now
+	     * found in clientParams.df.
+	     */
+	    params.df =  fxmin(clientParams.df, params.df);
+	} else {
+	    params.df = 0;
+	    u_int bits = clientCapabilities.df;
+	    bits &= BIT(DF_JBIG+1)-1;		// cap at JBIG, only deal with monochrome
+	    while (bits) {			// puts params.df to the "best" support by the remote
+		bits >>= 1;
+		if (bits) params.df++;
+	    }
 	}
 	// Class 2 RTFCC doesn't support JBIG
 	if (params.df == DF_JBIG && (!modem->supportsJBIG() || (params.ec == EC_DISABLE) || class2RTFCC))
@@ -632,7 +642,7 @@ FaxServer::sendSetupParams1(TIFF* tif,
 	// it's likely that the remote was incorrect in telling us it does
 	if (params.df == DF_2DMRUNCOMP) params.df = DF_2DMR;
 	// don't let RTFCC cause problems with restricted modems...
-	if (params.df == DF_2DMMR && (!modem->supportsMMR() || (params.ec == EC_DISABLE)))
+	if (params.df == DF_2DMMR && (!modem->supportsMMR() || (params.ec == EC_DISABLE) || !(clientCapabilities.df & BIT(DF_2DMMR))))
 		params.df = DF_2DMR;
 	if (params.df == DF_2DMR && (!modem->supports2D() || !(clientCapabilities.df & BIT(DF_2DMR))))
 		params.df = DF_1DMH;

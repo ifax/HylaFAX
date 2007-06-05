@@ -709,6 +709,8 @@ faxQueueApp::prepareJob(Job& job, FaxRequest& req,
      * o the remote side is known to be capable of it, and
      * o the user hasn't specified a desire to send 1D data.
      */
+    int jcdf = job.getJCI().getDesiredDF();
+    if (jcdf != -1) req.desireddf = jcdf;
     if (req.desireddf == DF_2DMMR && (req.desiredec != EC_DISABLE) && 
 	use2D && job.modem->supportsMMR() &&
 	 (! info.getCalledBefore() || info.getSupportsMMR()) )

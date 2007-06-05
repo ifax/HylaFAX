@@ -54,6 +54,7 @@ private:
     int		usexvres;		// use extended resolution
     u_int	vres;			// use extended resolution
     fxStr	args;			// arguments for subprocesses
+    int		desireddf;		// if set, desireddf value
 
     // default returned on no match
     static const JobControlInfo defControlInfo;
@@ -79,6 +80,7 @@ public:
     time_t nextTimeToSend(time_t) const;
     int getUseXVRes() const;
     u_int getVRes() const;
+    int getDesiredDF() const;
     const fxStr& getArgs() const;
 
     virtual bool setConfigItem(const char*, const char*);

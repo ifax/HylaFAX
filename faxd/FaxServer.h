@@ -64,6 +64,8 @@ private:
 
     friend class FaxModem;
 
+    bool	useDF;			// limits application of RTFCC
+
 // FAX transmission protocol support
     void	sendFax(FaxRequest& fax, FaxMachineInfo&, const fxStr& number, u_int&);
     bool	sendClientCapabilitiesOK(FaxRequest&, FaxMachineInfo&, Status& result);
@@ -93,7 +95,7 @@ protected:
     void	readConfig(const fxStr& filename);
     void	setLocalIdentifier(const fxStr& lid);
 
-    void	sendFax(FaxRequest&, FaxMachineInfo&, FaxAcctInfo&, u_int&);
+    void	sendFax(FaxRequest&, FaxMachineInfo&, FaxAcctInfo&, u_int&, bool);
     bool	recvFax(const CallID& callid, Status& eresult);
 
     time_t	getFileTransferTime() const;

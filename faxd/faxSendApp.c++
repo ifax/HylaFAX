@@ -160,8 +160,11 @@ faxSendApp::send(const char** filenames, int num)
 		     * user-specification.
 		     */
 
-		    if (desiredDF != (u_int) -1)
+		    bool usedf = false;
+		    if (desiredDF != (u_int) -1) {
 			req->desireddf = desiredDF;
+			usedf = true;
+		    }
 		    if (desiredBR != (u_int) -1)
 			req->desiredbr = desiredBR;
 		    if (desiredEC != (u_int) -1)
@@ -174,7 +177,7 @@ faxSendApp::send(const char** filenames, int num)
 		    if (useJobTSI && req->tsi != "")
 			FaxServer::setLocalIdentifier(req->tsi);
 
-		    FaxServer::sendFax(*req, info, ai, batched);
+		    FaxServer::sendFax(*req, info, ai, batched, usedf);
 
 		    batchcommid = req->commid;		// ... to all batched jobs
 

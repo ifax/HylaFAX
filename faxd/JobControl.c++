@@ -38,6 +38,7 @@
 #define	DCI_MAXTRIES		0x0010
 #define	DCI_USEXVRES		0x0020
 #define	DCI_VRES		0x0040
+#define	DCI_DESIREDDF		0x0100
 
 #define	isDefined(b)		(defined & b)
 #define	setDefined(b)		(defined |= b)
@@ -56,6 +57,7 @@ JobControlInfo::JobControlInfo(const JobControlInfo& other)
     maxTries = other.maxTries;
     usexvres = other.usexvres;
     vres = other.vres;
+    desireddf = other.desireddf;
 }
 
 JobControlInfo::JobControlInfo (const fxStr& buffer)
@@ -135,10 +137,14 @@ JobControlInfo::setConfigItem (const char* tag, const char* value)
 	vres = getNumber(value);
 	setDefined(DCI_VRES);
     } else {
+	if (streq(tag, "desireddf")) {		// need to pass desireddf to faxsend, also
+	    desireddf = getNumber(value);
+	    setDefined(DCI_DESIREDDF);
+	}
 	if( args != "" )
 	    args.append('\0');
 	args.append(fxStr::format("-c%c%s:\"%s\"",
-	    '\0', tag, value));
+	    '\0', tag, (const char*) value));
     }
     return true;
 }
@@ -221,4 +227,13 @@ JobControlInfo::getVRes() const
 const fxStr& JobControlInfo::getArgs() const
 {
     return args;
+}
+
+int
+JobControlInfo::getDesiredDF() const
+{
+    if (isDefined(DCI_DESIREDDF))
+	return desireddf;
+    else
+	return -1;
 }
