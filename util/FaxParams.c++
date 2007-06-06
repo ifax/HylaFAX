@@ -195,12 +195,12 @@ u_char FaxParams::calculateMask(int bitNum)
     return mask;
 }
 
-bool FaxParams::hasNextByte(int byteNum)
+bool FaxParams::hasNextByte(int byteNum) const
 {
     return (byteNum <= 1 || (m_bits[byteNum] & 0x01));
 }
 
-u_char FaxParams::getByte(int byteNum)
+u_char FaxParams::getByte(int byteNum) const
 {
     return m_bits[byteNum];
 }
@@ -208,7 +208,7 @@ u_char FaxParams::getByte(int byteNum)
 /*
  * Convert FaxParams and return a formatted ASCII DCS/DIS equivalent.
  */
-void FaxParams::asciiEncode(fxStr& response)
+void FaxParams::asciiEncode(fxStr& response) const
 {
     u_int byte = 0;
     do {
@@ -231,7 +231,7 @@ void FaxParams::asciiDecode(const char* dcs)
     }
 }
 
-bool FaxParams::operator==(FaxParams& operand) const
+bool FaxParams::operator==(const FaxParams& operand) const
 {
     bool equals = true;
     u_short byte = 0;
@@ -244,7 +244,7 @@ bool FaxParams::operator==(FaxParams& operand) const
     return equals;
 }
 
-bool FaxParams::operator!=(FaxParams& operand) const
+bool FaxParams::operator!=(const FaxParams& operand) const
 {
     return !operator==(operand);
 }

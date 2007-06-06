@@ -55,13 +55,13 @@ class FaxParams
 	void setBit(int bitNum, bool val);
 	bool isBitEnabled(int bitNum);
 
-	u_char getByte(int byteNum);
-	bool hasNextByte(int byteNum);
-	void asciiEncode(fxStr&);
+	u_char getByte(int byteNum) const;
+	bool hasNextByte(int byteNum) const;
+	void asciiEncode(fxStr&) const;
 	void asciiDecode(const char*);
 
-	bool operator==(FaxParams& operand) const;
-	bool operator!=(FaxParams& operand) const;
+	bool operator==(const FaxParams& operand) const;
+	bool operator!=(const FaxParams& operand) const;
 	FaxParams& operator=(const FaxParams& operand);
 
     protected:
