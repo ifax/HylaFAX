@@ -1,82 +1,48 @@
-$Id$
 
-                           *   ANNOUNCE   *
+HylaFAX - The world's most advanced open source fax server
+========================================================================
 
-The HylaFAX development team is pleased to announce our 4.3.3 release!
-This is primarily a bugfix release, and as such is a recommended upgrade.
-Our sincerest thanks go to all who participate in the development and
-testing process.
+  HylaFAX(tm) is  a  system  for sending and receiving facsimile.  It
+  supports queued transmission and asyn‐ chronous reception of
+  facsimile.  Ancillary programs are invoked by the system for
+  flexibility and con‐ figurability.   HylaFAX  includes  client  and
+  server programs to support remote submission of jobs for transmission,
+  remote removal of queued jobs, and to remotely query the status of
+  jobs queued for trans‐ mission.
 
-                               *   *   *
+  The latest version of this software may be obtained at:
+    http://ftp.hylafax.org/source/
 
-This document is intended to describe the significant differences
-between hylafax-4.3.3 and older releases, point out any known
-incompatibilites and issues, and provide the reader with directions to
-further resources regarding HylaFAX.
+  For more information look at our web site located at:
+    http://www.hylafax.org/
 
-                          *   NEW FEATURES   *
+  Release notes for version 4.4 are available in:
+        doc/RELEASENOTES-4.4.txt
 
-* emails can contain both pdf and tiff versions of each fax, instead of
-  only one of them.
+HYLAFAX BINARY PACKAGES
+========================================================================
 
+  Binary packages for some operating systems and platforms are
+  available.  Please see:
 
-                         *   KNOWN ISSUES   *
+    ftp://ftp.hylafax.org/binary/
+    http://www.hylafax.org/content/Binary_Packages
+    http://www.hylafax.org/content/Handbook:Binary_Package_Install
 
-** Please refer to HylaFAX Bugzilla for a detailed list of issues.
-
-                       *   INCOMPATIBILITIES   *
-
-* HylaFAX no longer uses the bin/dictionary script and etc/FaxDictionary
-  file to customize emails. Users requiring customized emails should
-  create etc/templates/some-directory/, copy the basic *.txt templates
-  into there, set the $TEMPLATE variable in etc/FaxDispatch and
-  etc/FaxNotify and start hacking. 
-* QualifyCID is obsolete, having been replaced by DynamicConfig in 4.3.0
-* DestControls is obsolete, having been replaced by JobControl in 4.3.0
-* Some modem config files generated from earlier versions' config file
-  prototypes may contain Class1TCFRecvHack.  This is no longer desireable
-  for production use, and this feature should now only be used for
-  debugging purposes.
-* If upgrading from any release older than 4.2.2, be advised
-  that CIDName/CIDNumber are now part of a larger CallID framework. 
-* libtiff-3.6.1 is fatally flawed when dealing with Group 3 images.  
-  Don't use it as-is.  
-  See: http://bugs.hylafax.org/bugzilla/show_bug.cgi?id=500
-
-                      *   WHO SHOULD UPGRADE?   *
-
-This release contains important fixes to email templating and SNPP
-authentication. All users should upgrade.
-
-Anyone presently running a version of HylaFAX older than 4.3.0 and
-using DestControls should study the JobControl feature we added in
-4.3.0 carefully and test migration to the new framework before
-upgrading a production server. Likewise, those using QualifyCID to
-reject faxes from certain callers should become familar with
-DynamicConfig and RejectCall.
-
-                     *   HYLAFAX BINARY PACKAGES   *
-
-Binary packages for some operating systems and platforms are available.  
-Please see:
-
-   ftp://ftp.hylafax.org/binary/
-   http://www.hylafax.org/content/Binary_Packages
-   http://www.hylafax.org/content/Handbook:Binary_Package_Install
-
-If you are able and  willing to produce a binary package of HylaFAX for
-general distribution, and one is not already available for your platform/OS,
-then you are invited to add it to the Binary_Packages wiki page at
-www.hylafax.org.
+  If you are able and  willing to produce a binary package of HylaFAX
+  for general distribution, and one is not already available for your
+  platform/OS, then you are invited to add it to the Binary_Packages
+  wiki page at www.hylafax.org.
 
 
-                       *   SUPPORT   *
+SUPPORT
+========================================================================
 
-HylaFAX has numerous public support resources available.  The user is
-encouraged to utilize the manpage documentation before turning to
-other support arenas.  However, if other support is desired, or if you
-would like to actively take part in the HylaFAX community, you are
-invited to:
+  HylaFAX has numerous public support resources available.  The user is
+  encouraged to utilize the manpage documentation before turning to
+  other support arenas.  However, if other support is desired, or if you
+  would like to actively take part in the HylaFAX community, you are
+  invited to:
 
   * join and participate in a HylaFAX mailing list
     See: http://www.hylafax.org/content/Mailing_Lists
@@ -98,26 +64,22 @@ invited to:
   * report confirmed bugs, feature requests, and submit patches
     See: http://bugs.hylafax.org/
 
-
-
-Thanks,
-
-  The HylaFAX development team
-
--------------------------------------------------------------------
+========================================================================
 
 And now, a note from HylaFAX's original author ;-)
 
-Silicon Graphics has seen fit to allow me to give this work away.  It
-is free.  There is no support or guarantee of any sort as to its
-operations, correctness, or whatever.  If you do anything useful with
-all or parts of it you need to honor the copyright notices.   I would
-also be interested in knowing about it and, hopefully, be acknowledged.
+  Silicon Graphics has seen fit to allow me to give this work away.  It
+  is free.  There is no support or guarantee of any sort as to its
+  operations, correctness, or whatever.  If you do anything useful with
+  all or parts of it you need to honor the copyright notices.   I would
+  also be interested in knowing about it and, hopefully, be
+  acknowledged.
 
-Finally, note that this software is called ``HylaFAX'', not ``Hylafax'',
-``hylafax'', and certainly not ``FlexFAX'' (the old name which someone
-else has a copyright on).  If you want to refer to this software use
-``HylaFAX (tm)'' and be sure to honor the Silicon Graphics trademark.
+  Finally, note that this software is called ``HylaFAX'', not
+  ``Hylafax'', ``hylafax'', and certainly not ``FlexFAX'' (the old name
+  which someone else has a copyright on).  If you want to refer to this
+  software use ``HylaFAX (tm)'' and be sure to honor the Silicon
+  Graphics trademark.
 
 	Sam Leffler
 

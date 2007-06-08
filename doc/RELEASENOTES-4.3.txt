@@ -1,0 +1,189 @@
+HylaFAX 4.3.4
+
+OVERVIEW
+-----------------------------------------------------------------------------
+HylaFAX 4.3 introduces several new features for HylaFAX:
+
+* E-Mail templates for faxrcvd/pollrcvd/notify
+* JobControl for fine-grained job control (obsoletes DestControls)
+* Generic CallID framework allows for handling of any identifications your
+  line/modem combination can present (obsoletes CIDName/CIDNumber)
+
+
+Upgrading to 4.3 from Previous releases
+-----------------------------------------------------------------------------
+This release contains important fixes to the faxq job scheduler.
+All users should upgrade.
+
+Anyone presently running a version of HylaFAX older than 4.3.0 and
+using DestControls should study the JobControl feature we added in
+4.3.0 carefully and test migration to the new framework before
+upgrading a production server. Likewise, those using QualifyCID to
+reject faxes from certain callers should become familar with
+DynamicConfig and RejectCall.
+
+* HylaFAX no longer uses the bin/dictionary script and etc/FaxDictionary
+  file to customize emails. Users requiring customized emails should
+  create etc/templates/some-directory/, copy the basic *.txt templates
+  into there, set the $TEMPLATE variable in etc/FaxDispatch and
+  etc/FaxNotify and start hacking.
+* QualifyCID is obsolete, having been replaced by DynamicConfig in 4.3.0
+* DestControls is obsolete, having been replaced by JobControl in 4.3.0
+* Some modem config files generated from earlier versions' config file
+  prototypes may contain Class1TCFRecvHack.  This is no longer desireable
+  for production use, and this feature should now only be used for
+  debugging purposes.
+* If upgrading from any release older than 4.2.2, be advised
+  that CIDName/CIDNumber are now part of a larger CallID framework.
+* libtiff-3.6.1 is fatally flawed when dealing with Group 3 images.
+  Don't use it as-is.
+  See: http://bugs.hylafax.org/bugzilla/show_bug.cgi?id=500
+
+
+
+CHANGES for 4.3.0 - May 18. 2006
+-----------------------------------------------------------------------------
+* fix rare occassion where TCF fails following an unexpected
+  receipt of prologue frames (30 Jan 2006)
+* fix segfault on some compilers where the rare occassion
+  of receiving CTC instead of PPS occurs (30 Jan 2006)
+* fix configure in vsnprintf detection (30 Jan 2006)
+* use PDF in q-files when appropriate (30 Jan 2006)
+* add support for libtiff-3.8 (31 Jan 2006)
+* use To-Company and To-Name coverpage entries in the notification
+  message if they are available to use (21 Feb 2006)
+* add CHARSET config option for mailing scripts (21 Feb 2006)
+* add dictionary for notify, faxrcvd, and pollrcvd
+  internationalization support (21 Feb 2006)
+* fix buffer overrun in NSF parsing (21 Feb 2006)
+* remove QualifyCID in lieu of DynamicConfig RejectCall (15 Mar 2006)
+* expand Class1JBIGSupport to allow for differentiation
+  between full, none, send, and receive support (17 Mar 2006)
+* fix batching of page jobs (23 Mar 2006)
+* Fix locking of recvq tiff files (BUG 739) (23 Mar 2006)
+* Fix hfaxd timezone handling on new GLIBC (BUG 723) (24 Mar 2006)
+* Fix hfaxd SNPP login code to 250 (Bug 732) (27 Mar 2006)
+* Add JobControl (obsoletes DestControl) (27 Mar 2006)
+* Update config.guess & config.sub (27 Mar 2006)
+* Add IAXmodem config prototype (02 Apr 2006)
+* Add isdn4linux modem config prototype (02 Apr 2006)
+* improve handling of V.34 control channel retrain (02 Apr 2006)
+* set minimum of 4800 for V.34 primary rate renegotiations (02 Apr 2006)
+* Correctly remove EOFB at the end of MMR images (02,10 Apr 2006)
+* ignore MESSAGE-WAITING response after dialing (02 Apr 2006)
+* extend V.21 HDLC frame reception timeout to 10 sec (03 Apr 2006)
+* set Class1RMPersistence to 0 in digi config prototype (03 Apr 2006)
+* add German NSFs and correct HylaFAX NSF bit order (03 Apr 2006)
+* fix incorrect "Fax protocol error" in ECM mode (03 Apr 2006)
+* flush modem I/O on receptions before sending any data (03 Apr 2006)
+* Add JobControlWait to allow faxq to wait for JobControlCmd
+  to finish synchronously (4 Apr 2006)
+* Repair broken MMR from some Multitech modems (BUG 763) (21 Apr 2006)
+* Fix sendfax to accept both destination and user subaddresses
+  (BUG 762) (21 Apr 2006)
+* Fix quoted-printable MIME encoding in faxrcvd (BUG 760) (21 Apr 2006)
+* Resolve Solaris bus error under native compiler (BUG 769) (23 Apr 2006)
+* Make sure hfaxd returns JBIG faxes in recvq list (BUG 731) (23 Apr 2006)
+* back out flush modem I/O (BUG 756) (24 Apr 2006)
+* Fix unblocking job problem (BUG 733) (24 Apr 2006)
+* Fix some of the error paths in the setReadyToRun jobcontrol
+  pipe, fork, and exec calls (BUG 745) (25 Apr 2006)
+* Fix runSchedule() concurrency problem (BUG 745) (26 Apr 2006)
+* Fix faxq sleepq concurrency problem (BUG 745) (26 Apr 2006)
+* Enhance Italian translation (BUG 758) (26 Apr 2006)
+* Use areBatchable() to make sure batching doesn't ignore job
+  modems (28 Apr 2006)
+* Don't let users kill each other's jobs (BUG 752) (28 Apr 2006)
+* Re-work fix for hfaxd's time handling (BUG 723) (28 Apr 2006)
+* More fixes to batching and jobcontrol interaction (3 May 2006)
+* Fix hfaxd corruption on killed jobs (BUG 401) (5 May 2006)
+* Fix DCS tag handling in Class2 (BUG 771) (5 May 2006)
+
+CHANGES for 4.3.1 - December 5, 2006
+-----------------------------------------------------------------------------
+* Add UseJobTagLine config option for faxsend  (4 Apr 2006)
+* Add continuation support to FaxClient in libfaxutil (31 May 2006)
+* Use ] && [ instead of -a for shell portability (2 Jun 2006)
+* Add resubmit capability to faxalter (2 Jun 2006)
+* Enhance SHIELDED_DTMF (5 Jun 2006)
+* Add JobProtection option to hfaxd (12 Jun 2006)
+* Fix faxmail's handling of nested mime (14 Jun 2006)
+* Enhance faxinfo with formating options (2 Jul 2006)
+* fix Class 2 data format parsing of +FIS response (4 Jul 2006)
+* correct CIELAB to be ITULAB (4 Jul 2006)
+* Add missing From: headers to notify (4 Jul 2006)
+* Improve the handling of user aborts in Class 1 sending (4 Jul 2006)
+* Improve recovery after Class 1 TCF receipt times out (4 Jul 2006)
+* Avoid problems when resending single ECM Frame (5 Jul 2005)
+* don't use tiffcp "-r" option on JBIG TIFFs (5 Jan 2006)
+* fix timeout on AT command sending to modem (5 Jul 2006)
+* Fix RecvFmt string printing (Bug 805) (18 Jul 2006)
+* Documentation updates (18 Jul 2006)
+* don't skip initial NSF bytes in station ID search when no
+  known T.35 manufacturer ID was used (18 Jul 2006)
+* fix faxaddmodem config parsing for Digicom Leonardo modems(19 Jul 2006)
+* replace Class1SendMsgDelay with Class1SwitchingCmd (20 Jul 2006)
+* do Class1SwitchingCmd before sending MCF after PPS-NULL (20 Jul 2006)
+* fix indicator when 100% non-zero TCF data is received (20 Jul 2006)
+* fix faxgetty hang in ECM due to missing timeouts (20 Jul 2006)
+* fix error of accepting too-short of DCS signal (20 Jul 2006)
+* faxaddmodem: Allow identification when no AT+FMM? or AT+FMI? (21 Jul 2006)
+* don't exit faxq with assertion failure when a job times out and is
+  interrupted during sending (21 Jul 2006)
+* Add templates for use in faxrcvd translations (14 Aug 2006)
+* Unify mime encoding between notify and faxrcvd
+* handle +FHNG/+FNG after AT+FDT in Class 2 (15 Sep 2006)
+* make cover pages visible in /docq/ through hfaxd (17 Sep 2006)
+* Add HPUX 11.11 support to configure (27 Sep 2006)
+* Add Motorola SM56 USB (Apple) modem (27 Sep 2006)
+* faxsetup nolonger blindly removes $TMPDIR (29 Sep 2006)
+* Add Romanian templates (29 Sep 2006)
+* Add Quoted-Printable encoding option (3 Oct 2006)
+* Encodes email body according to template setting (3 Oct 2006)
+* fax faxqclean, don't remove cover documents still referenced (4 Oct 2006)
+* Private tmpdir was not set by faxrcvd, but used for body encoding (6 Oct 2006)
+* There was a small possibility of corruption a base64 output produced
+  by uuencode if an encoded line started with "begin" (6 Oct 2006)
+* uuencode STDERR was not redirected to $ERRORSTO (6 Oct 2006)
+* Base64 encoding with uuencode was broken on 3 Oct (6 Oct 2006)
+* Change how we compile shared objects for Solaris DSO support (12 Oct 2006)
+* Always update on-disk qfiles for jobs when state changes to running (19 Oct 2006)
+* Use old style lock files for OpenServer 6 (20 Oct 2006)
+* Disable JPEG support when compiling with older libtiff (3 Nov 2006)
+* Fixed sendfax PDF page counting (bug 830) (13 Nov 2006)
+* Fixed faxqclean to work correctly with cover documents using the new naming
+  scheme, yet still work with previously named documents (bug 831) (20 Nov 2006)
+* Added exit codes to faxalter (Bug 796) (4 Dec 2006)
+
+CHANGES for 4.3.2 - February 16, 2007
+-----------------------------------------------------------------------------
+* Moved default templates to etc/tempates/en/ to clean up etc/templates/ (22 Dec 2006)
+* Updated pollrcvd to use templates (22 Dec 2006)
+* Use @SCRIPT_SH@ for bin/ scripts to allow configure selection (23 Dec 2006)
+* Redirected unwanted output from pd2pdf while running notify (24 Dec 2006)
+* Add the Include: option for Config file options (8 Jan 2007)
+* Simplify/Unify mime encoder selection and use (9 Jan 2007/29 Jan 2007)
+* Added debian/ directory with rules to create a simple Debian package (21 Jan 2007)
+* PAM reworked to use complete sessions independantly (25 Jan 2007)
+* Added error exit codes to faxinfo (7 Feb 2007)
+* Added sample HTML templates to demonstrate templating features (9 Feb 2007)
+* Encode subject headers (using B encoding) when necessary (9 Feb 2007)
+
+CHANGES for 4.3.3 - March 2, 2007
+-----------------------------------------------------------------------------
+* Make ConverFile return filename even for noop on PDF files (20 Feb 2007)
+* Correctly named notify "rejected" templates (bug 849) (20 Feb 2007)
+* Include jobtag in Subject of notification emails (bug 850) (22 Feb 2007)
+* Remove unused CHARSET setting (bug 843) (23 Feb 2007)
+* Fix broken SNPP authentication (Bug 851) (28 Feb 2007)
+* Fix faxq seqfault when syslogging strings containing %s, etc (28 Feb 2007)
+* Allow multiple FILETYPE (28 Feb 2007)
+
+
+CHANGES for 4.3.4 - May 14, 2007
+-----------------------------------------------------------------------------
+* Email raw TIFF files with the correct MIME type of image/tiff (23 Mar 2007)
+* Accepts 'original' as equivalent to 'raw' for RETURNFILETYPE (23 Mar 2007)
+* Fix faxq trigger bugs which can cause faxq to crash (26 Mar 2007)
+* Fix faxq modem handling which can cause multiple concurrent faxsend
+  invocations on the same device (8 May 2007)

@@ -1,0 +1,87 @@
+HylaFAX 4.4-CVS
+
+Overview
+-----------------------------------------------------------------------------
+HylaFAX 4.4 introduces several new features for HylaFAX:
+
+* New scheduler core, optimized for batching and large queues
+* Improved faxmail, handling documents independaly using the same
+  flexible HylaFAX typerules framework used by sendfax
+* Improved JPEG/JBIG support for Class1 and Class2
+* faxq AuditHook for hooking into all faxq events
+* STATUSCODE job paramater to complement the STATE and STATUS paramaters
+  to allow clients to give customized descriptive messages about the
+  status of a job.
+
+
+Upgrade to 4.4 from Previous releases
+-----------------------------------------------------------------------------
+Things to watch:
+* rerun faxaddmodem - lots of protocol fixes and coresponding config
+  option changes
+* rerun faxsetup - changes to the encode selection and use for the
+  faxrcvd/notify/pollrcvd scripts
+
+
+CHANGES for 4.4.0
+-----------------------------------------------------------------------------
+* Stop caching of DATE and VERSION by configure (Bug 854) (9 Mar 2007)
+* Adds T.32 Addendum 1 Extended DF formats (12 Mar 2007)
+* Unify and simply FCF tracing routines (12 Mar 2007)
+* Pad TCS/CSI string to avoid Class2 modem bugs (12 Mar 2007)
+* Increase the wait time for AT+FCLASS=? response (12 Mar 2007)
+* Fix error of forgotton fxgetty child under flawed ECM
+* Stop using CRP in Phase D in Class 1 sending (12 Mar 2007)
+* Add BadPageHandlingMethod feature defauting to RTN-SAVE (12 Mar 2007)
+* Don't wait Class1TrainingRecovery when CRP was received (12 Mar 2007)
+* Don't trigger hasV17Trouble for pages other than the first (12 Mar 2007)
+* Fix error of sending a block twice, empty the 2nd time (12 Mar 2007)
+* Replace Class1TrainingRecovery with Class1SwitchingCmd
+* Simplify Class1SwitchingCmd code and prevent duplication of the
+  command in session (12 Mar 2007)
+* Add Class1PageLengthSupport config option (12 Mar 2007)
+* Add Class1PageWidthSupport modem config option (12 Mar 2007)
+* Extend "awaiting ECM synchronization" timeout (12 Mar 2007)
+* Improve ECM HDLC frame decoder to recover more quickly from data corruption
+  and possibly find frames where it couldn't before (12 Mar 2007)
+* Improve response handling of AT+FRH=3 (12 Mar 2007)
+* Calculate PPM/PPS waiter instead of using T1
+* We can't rely on the timeout value to know if CONNECT has been seen (12 Mar 2007)
+* Handle +FCERROR after most +FRH=3 commands (12 Mar 2007)
+* Restart Class 1 TCF reception timer after zeros start
+* Add more intelligence to the Class 1 receiver in sending RTN (12 Mar 2007)
+* Log correctly when a receiver DIS indicates no V.8 bit but
+  V.8 was already known to have succeeded (12 Mar 2007)
+* Handle MPS/EOP/EOM/CRP when expecting DCS, i.e. after RTN
+* Handle instances where ECM is negotiated but the sender
+  transmits non-ECM data and signalling (12 Mar 2007)
+* Bug 811: children should exit with _exit() (12 Mar 2007)
+* when dealing with JBIG/JPEG send PPR if we detect no frames
+  received but we're still missing the last frame (12 Mar 2007)
+* Logging instances where a sender transmits PPS again after our fourth PPR
+  signal (12 Mar 2007)
+* Add DTMF handling during call (12 Mar 2007)
+* Use DLE+DTX to help reseting when stuck in transmit (13 Mar 2007)
+* Recognize DTMF as caller id when waiting for rings (13 Mar 2007)
+* Force ECM when using V.8 (13 Mar 2007)
+* Prevent picking up again on the receiver's MCF signal when
+  re-entering Phase B in a batch (13 Mar 2007)
+* Don't fallback to V.17 speeds on TCF retransmisions (13 Mar 2007)
+* Improve sender-side RNR/RR flow control interaction (13 Mar 2007)
+* Flush modem input after NO CARRIER result in Class 1 Phase C send (13 Mar 2007)
+* Fix send buffer when transmitting non-ECM data with a non-zero
+  scanline-time value (13 Mar 2007)
+* Restrict the usage of sending EOR, even when using MH and MR (13 Mar 2007)
+* Improve and extend JPEG parsing (13 Mar 2007)
+* Improve Class 1 handling when prologue frames fail after EOM (13 Mar 2007)
+* Compensate for 1728 pixel data when they DCS signalled differently (13 Mar 2007)
+* Added the complete debian/ directory in order to create official
+  Debian packages (17 Mar 2007)
+* Email raw TIFF files with the correct MIME type of image/tiff (23 Mar 2007)
+* Accepts 'original' as equivalent to 'raw' for RETURNFILETYPE (23 Mar 2007)
+* faxq scheduler overhaul for efficiency and batching (May 4 2007)
+* Faxmail overhaul - make handle documents independantly, just like
+  sendfax (9 May 2007)
+* Change socklen_t configure/detection for HP-UX 11 (11 May 2007)
+* Add preliminary Class2 JBIG Support (11 May 2007)
+* Add JPEC (colour fax) to Class2 (12 May 2007)
