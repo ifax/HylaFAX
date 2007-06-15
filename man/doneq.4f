@@ -484,7 +484,8 @@ Recognized values are:
 4 (\fIblocked\fP, waiting for concurrent activity to the same destination to complete),
 5 (\fIready\fP, ready to be processed except for available resources),
 6 (\fIactive\fP, actively being processed by \*(Fx),
-7 (\fIdone\fP, processing completed).
+7 (\fIdone\fP, processing completed with success).
+8 (\fIfailed\fP, processing completed with a failure).
 .TP 14
 .B status
 Status information about the current state of the job.
