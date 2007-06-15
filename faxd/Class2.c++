@@ -441,6 +441,8 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params, bool
 		if (dfscan & 0x4) params.df |= BIT(DF_JBIG);	// JBIG L0 is JBIG to us
 		if (dfscan & 0x8) params.df |= BIT(DF_JBIG);
 	    } else {
+		// Dex 855 is known to indicate MMR in addition to JBIG when sending JBIG (0x7).
+		// Thus only interpret DF=MMR when 0x3.
 		params.df = DF_1DMH;
 		if (dfscan == 0x3) params.df = DF_2DMMR;
 		else if (dfscan & 0x1) params.df = DF_2DMR;

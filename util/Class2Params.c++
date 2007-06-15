@@ -296,6 +296,7 @@ Class2Params::setFromDCS(FaxParams& dcs_caps)
 	wd = WD_A4;
 	ln = LN_INF;
     }
+    // Dex 855 sets MMR when also indicating JBIG.  We deliberately let JBIG override.
     if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JBIG_BASIC)) df = DF_JBIG;
     if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JBIG_L0)) df = DF_JBIG;
     if (dcs_caps.isBitEnabled(FaxParams::BITNUM_JPEG)) jp = JP_GREY;
