@@ -22,7 +22,6 @@ configure: configure-stamp
 configure-stamp: patch-stamp
 	cp -p /usr/share/misc/config.* .
 	yes | /bin/bash ./configure \
-		--with-HTML=yes \
 		--with-UTMP=auto \
 		--with-DIR_BIN="/usr/bin" \
 		--with-DIR_LIBDATA="/etc/hylafax" \
@@ -33,9 +32,6 @@ configure-stamp: patch-stamp
 		--with-DIR_LOCKS="/var/lock" \
 		--with-PATH_AFM="/usr/share/fonts/type1/gsfonts" \
 		--with-FONTMAP="/usr/share/gs-esp/8.15/lib:/usr/share/gs-esp/7.07/lib:/usr/share/gs/6.53" \
-		--with-DIR_HTML="/usr/share/doc/hylafax" \
-		--with-DIR_CGI="/usr/lib/cgi-bin" \
-		--with-HTMLPATH="/doc/hylafax" \
 		--with-SYSGID="root" \
 		--with-SYSUID="root" \
 		--with-PATH_GETTY="/etc/hylafax/getty-link" \
@@ -108,11 +104,6 @@ install-doc:
 	dh_clean -k -p$(p_doc)
 	dh_installdirs -p$(p_doc) \
 		usr/share/doc/$(p_doc)
-	cp -a html $(d_doc)/usr/share/doc/$(p_doc)/.
-	rm -rf $(d_doc)/usr/share/doc/$(p_doc)/html/{.cvs*,Makefile*,tools}
-	: # fixes some relative paths
-	cd $(d_doc)/usr/share/doc/$(p_doc)/html && \
-	  sh $(PWD)/debian/html-patch /usr/share/doc/hylafax-doc /cgi-bin/man
 
 install-server:
 	dh_testdir
@@ -257,7 +248,7 @@ binary-indep: build-indep install-doc
 	dh_installdocs -i -A \
 		debian/README.mgetty debian/README.Debian \
 		TODO CONTRIBUTORS
-	dh_installchangelogs -i CHANGES
+	dh_installchangelogs -i doc/RELEASENOTES-4.4.txt
 	dh_installexamples -i
 	dh_compress -i
 	dh_fixperms -i
@@ -270,7 +261,7 @@ binary-indep: build-indep install-doc
 binary-arch: build-arch install-server install-client
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs -a CHANGES
+	dh_installchangelogs -a doc/RELEASENOTES-4.4.txt
 	dh_installdocs -a -A \
 		debian/README.mgetty debian/README.Debian \
 		TODO CONTRIBUTORS
