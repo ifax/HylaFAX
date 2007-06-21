@@ -43,11 +43,9 @@ DIR_LIBDATA=/usr/local/lib/fax
 DIR_LIB=/usr/local/lib
 DIR_LIBEXEC=$DIR_SBIN
 DIR_SPOOL=/var/spool/hylafax
-DIR_HTML=/var/httpd/htdocs/hylafax
 DIR_CGI=/var/httpd/cgi-bin
 PATH_DPSRIP=$DIR_LIBEXEC/ps2fax.exe
 PATH_IMPRIP=/usr/lib/print/psrip
-HTMLPATH=/hylafax
 CGIPATH=/cgi-bin
 DEFVRES=98
 PAGESIZE="North American Letter"
@@ -57,7 +55,6 @@ SYSUID=bin
 SYSGID=
 DSO=auto
 GETTY=auto
-HTML=no
 PS=auto
 SYSVINIT=auto
 FAXQ_SERVER=yes			# init script starts faxq
@@ -162,9 +159,6 @@ GSRIP 		PATH_GSRIP
 HFAXD_OLD_PROTOCOL
 HFAXD_SERVER
 HFAXD_SNPP_SERVER
-HTML
-HTMLDIR 	DIR_HTML
-HTMLPATH
 IMP
 IMPRIP		PATH_IMPRIP
 INSTALL
@@ -4429,7 +4423,6 @@ HylaFAX configuration parameters (part 1 of 2) are:
 [ 3] Directory for lib executables:     $DIR_LIBEXEC
 [ 4] Directory for system apps:  	$DIR_SBIN
 [ 5] Directory for manual pages:        $DIR_MAN
-[ 6] Directory for HTML documentation:  $DIR_HTML
 [ 7] Directory for spooling:            $DIR_SPOOL
 [ 8] Directory for uucp lock files:     $DIR_LOCKS
 [ 9] Uucp lock file scheme:             $LOCKS
@@ -4482,9 +4475,6 @@ promptForParameter()
 	;;
     5)	promptForNonNullStringParameter "$DIR_MAN" \
 	    "Directory to install manual pages";	DIR_MAN="$param"
-	;;
-    6)	promptForNonNullStringParameter "$DIR_HTML" \
-	    "Directory to install HTML documentation";	DIR_HTML="$param"
 	;;
     7)	promptForNonNullStringParameter "$DIR_SPOOL" \
 	    "Directory to setup server spooling area";	DIR_SPOOL="$param"
@@ -4875,23 +4865,6 @@ test $SGI2FAX = yes &&	   	   SedConfigFiles sgi2fax/Makefile
 test $PORT = yes &&		   SedConfigFiles port/Makefile
 test $REGEX = yes &&		   SedConfigFiles regex/Makefile
 test $DBLIB = yes &&		   SedConfigFiles dblib/Makefile
-if [ $HTML = yes ]; then
-    HTMLDIRS="
-	html
-	html/tools
-    "
-    for i in $HTMLDIRS; do
-	#
-	# NB: GNU sed/sh breaks when using the more conventional
-	#     attack, so we resort to this silliness...
-	#
-	SedConfigFiles `(cd $SRCDIR/$i; echo *.in) | \
-	    $SED -e 's;\.in;;g' \
-	    -e "s;Makefile;$i/&;g" \
-	    -e "s;[^ ]*\.html;$i/&;g" \
-	    -e "s;[^ ]*\.sh;$i/&;g"`
-    done
-fi
 test -f $SRCDIR/MLA/VERSION &&	   SedConfigFiles MLA/Makefile
 
 if [ "$MAKEDEPINCLUDE" != "sinclude" ]; then
@@ -4922,9 +4895,6 @@ if [ "$MAKEDEPINCLUDE" != "sinclude" ]; then
     test $PORT = yes	&& DEPEND="$DEPEND port"
     test $REGEX = yes	&& DEPEND="$DEPEND regex"
     test $DBLIB = yes	&& DEPEND="$DEPEND dblib"
-    if [ $HTML = yes ]; then
-	DEPEND="$DEPEND html html/tools"
-    fi
     test -f $SRCDIR/MLA/VERSION && DEPEND="$DEPEND MLA"
     test -d $SRCDIR/faxview && test -d faxview && DEPEND="$DEPEND faxview"
     for i in $DEPEND; do
