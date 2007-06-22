@@ -2650,6 +2650,7 @@ BuildPortDotH()
 
     CheckFuncDecl bzero 'extern void bzero(void *, int);' string.h
     CheckFuncDecl mkstemp 'extern int mkstemp(char *);' stdlib.h stdio.h unistd.h
+    CheckFuncDecl mkdtemp 'extern char* mkdtemp(char *);' stdlib.h stdio.h unistd.h
     CheckFuncDecl strerror 'extern char* strerror(int);' string.h
     CheckFuncDecl strncasecmp \
 	'extern int strncasecmp(const char*, const char*, size_t);' string.h
@@ -3085,6 +3086,7 @@ FUNCS="
     ftruncate
     getopt
     mkstemp
+    mkdtemp
     random
     srandom
     setegid
