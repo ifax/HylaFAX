@@ -5,11 +5,11 @@ Overview
 HylaFAX 4.4 introduces several new features for HylaFAX:
 
 * New scheduler core, optimized for batching and large queues
-* Improved faxmail, handling documents independaly using the same
+* Improved faxmail, handling documents independently using the same
   flexible HylaFAX typerules framework used by sendfax
 * Improved JPEG/JBIG support for Class1 and Class2
 * faxq AuditHook for hooking into all faxq events
-* STATUSCODE job paramater to complement the STATE and STATUS paramaters
+* STATUSCODE job paramater to complement the STATE and STATUS parameters
   to allow clients to give customized descriptive messages about the
   status of a job.
 
@@ -17,7 +17,7 @@ HylaFAX 4.4 introduces several new features for HylaFAX:
 Upgrade to 4.4 from Previous releases
 -----------------------------------------------------------------------------
 Things to watch:
-* rerun faxaddmodem - lots of protocol fixes and coresponding config
+* rerun faxaddmodem - lots of protocol fixes and corresponding config
   option changes
 * rerun faxsetup - changes to the encode selection and use for the
   faxrcvd/notify/pollrcvd scripts
