@@ -495,7 +495,7 @@ BuildAttachArgs ()
 	    a_desc="FAX Document (PostScript)"
 	    ;;
 	PDF|pdf)
-	    a_type="application/PDF"
+	    a_type="application/pdf"
 	    a_desc="FAX Document (PDF)"
 	    ;;
 	TIFF|tiff|TIF|tif)
@@ -521,7 +521,7 @@ BuildAttachArgs ()
 			;;
 		    PDF)
 			TraceLog "Attaching $file in PDF format"
-			a_type="application/PDF"
+			a_type="application/pdf"
 			;;
 		    TIFF)
 			TraceLog "Attaching $file in TIFF format"
