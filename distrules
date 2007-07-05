@@ -55,113 +55,9 @@ PORTFILES=\
     ${NULL}
 
 #
-# Files the comprise the html part of the distribution.
-#
-HTMLFILES=\
-    html/Makefile.in				\
-    \
-    html/HOWTO.html				\
-    html/binary.html				\
-    html/building.html				\
-    html/documentation.html			\
-    html/ghostscript.html			\
-    html/index.html				\
-    html/ixotap.html				\
-    html/mailing-lists.html			\
-    html/operation.html				\
-    html/overview.html				\
-    html/sam.html				\
-    html/matthias.html				\
-    html/setup.html				\
-    html/setup-advanced.html			\
-    html/setup-client.html			\
-    html/source.html				\
-    html/toc.html				\
-    html/troubleshooting.html			\
-    html/upgrade4.0.html			\
-    html/v2.3beta036.html			\
-    html/Majordomo/help.html			\
-    html/Modems/index.html			\
-    html/Modems/att-dataport.html		\
-    html/Modems/digicom-scout.html		\
-    html/Modems/everex-2496d.html		\
-    html/Modems/hayes-optima2400.html		\
-    html/Modems/multitech-1432.html		\
-    html/Modems/multitech-1932.html		\
-    html/Modems/nuvo-96424pfx.html		\
-    html/Modems/ppi-pm14400fxmt.html		\
-    html/Modems/supra-v32bis.html		\
-    html/Modems/telebit-t3000.html		\
-    html/Modems/twincom-144df.html		\
-    html/Modems/ucom-traveller96.html		\
-    html/Modems/usr-courier.html		\
-    html/Modems/usr-sportster.html		\
-    html/Modems/zyxel-1496.html			\
-    html/Modems/zyxel-elite.html		\
-    html/Modems/zyxel-omni.html			\
-    html/Modems/rockwell-56k.html		\
-    html/Modems/multitech-2834.html		\
-    html/Modems/hayes-accura288.html		\
-    html/Modems/Telebit/faxcmds.html		\
-    html/Modems/ZyXEL/autodetect.html		\
-    html/Modems/ZyXEL/codes.html		\
-    html/Modems/ZyXEL/commands.html		\
-    html/Modems/ZyXEL/compression.html		\
-    html/Modems/ZyXEL/examples.html		\
-    html/Modems/ZyXEL/voice.html		\
-    \
-    html/acknowledge.html			\
-    html/class1.html				\
-    html/class2.0.html				\
-    html/class2.html				\
-    html/contrib.html				\
-    html/copyright.html				\
-    html/faxgateway.html			\
-    html/hylafax3.0.html			\
-    html/hylafax4.0.html			\
-    html/install-source.html			\
-    html/modems.html				\
-    html/namechange.html			\
-    html/version.html				\
-    html/ftpmail-help.html			\
-    html/v2.3beta036special.html		\
-    html/v3.0beta096.html			\
-    html/v3.0beta100.html			\
-    html/v3.0beta108.html			\
-    html/v3.0beta110.html			\
-    html/v3.0beta111.html			\
-    html/v3.0beta112.html			\
-    html/v3.0beta113.html			\
-    html/v3.0beta114.html			\
-    html/v4.0beta005.html			\
-    html/v4.0beta006.html			\
-    html/v4.0beta007.html			\
-    html/v4.0beta008.html			\
-    html/v4.0beta009.html			\
-    html/v4.0beta010.html			\
-    html/v4.0beta011.html			\
-    html/v4.0beta012.html			\
-    html/v4.0beta013.html			\
-    html/v4.0beta014.html			\
-    html/v4.0beta015.html			\
-    html/v4.0beta018.html			\
-    html/v4.0beta020.html			\
-    html/v4.0beta021.html			\
-    html/v4.0beta022.html			\
-    html/v4.0beta023.html			\
-    html/Modems/Supra/class2.html		\
-    html/Modems/Supra/class1.html		\
-    html/Modems/Hayes/hayes.html		\
-    \
-    html/tools/Makefile.in			\
-    html/tools/man2html.c			\
-    html/tools/unquote.c			\
-    html/tools/manpage.sh.in			\
-    ${NULL}
-#
-# Files that are makeup the HylaFAX
-# source distribution, except for HTML
-# and manual pages.
+# Files that make up the HylaFAX
+# source distribution, except for
+# manual pages.
 #
 HYLAFAXSRC=\
     VERSION					\
@@ -679,27 +575,6 @@ MANPAGES=\
 	man/xferfaxstats.1m			\
     ${NULL}
 #
-# HTML-related files, including those not under RCS.
-#
-HTMLDIST=\
-    ${HTMLFILES}				\
-    html/sam.gif				\
-    html/matthias.gif				\
-    html/hylafax.gif				\
-    html/icons/contents.gif			\
-    html/icons/frog.gif				\
-    html/icons/next.gif				\
-    html/icons/button.excl.gif			\
-    html/icons/back.gif				\
-    html/icons/smiley.gif			\
-    html/icons/ball_blue_icon.gif		\
-    html/icons/warning_icon.gif			\
-    html/icons/at_work_icon.gif			\
-    html/icons/info_icon.gif			\
-    html/icons/new.gif				\
-    html/icons/improved.gif			\
-    ${NULL}
-#
 # These rules are used to create the source distribution images
 #
 COMPRESS= gzip
@@ -707,7 +582,6 @@ ZIPSUF	= gz
 CONFIG	= -with-CC=cc \
 	  -with-CXX=CC \
 	  -with-GCOPTS=" " \
-	  -with-HTML \
 	  -with-DPS \
 	  -with-IMP \
 	  -with-GSRIP=/usr/freeware/bin/gs \
@@ -718,7 +592,6 @@ CONFIG	= -with-CC=cc \
 rcsclean:
 	rcsclean ${HYLAFAXSRC} && co ${HYLAFAXSRC}
 	rcsclean ${MANPAGES} && co ${MANPAGES}
-	rcsclean ${HTMLFILES} && co ${HTMLFILES}
 
 alpha:
 	(cd ${SRCDIR}/dist; sh newversion)
@@ -748,10 +621,6 @@ alpha.stamp:
 	    REV=`rlog -h -d"$$NOW" $$i|fgrep 'head:'|awk '{print $$2}'`;\
 	    rcs "-N$$VERSION:$$REV" "-sExp:$$REV" $$i && co -sExp $$i;	\
 	done;								\
-	for i in ${HTMLFILES}; do					\
-	    REV=`rlog -h -d"$$NOW" $$i|fgrep 'head:'|awk '{print $$2}'`;\
-	    rcs "-N$$VERSION:$$REV" "-sExp:$$REV" $$i && co -sExp $$i;	\
-	done
 
 purge-old-alphas:
 	VERSIONS=`echo ${ALPHA} | awk '{for (i=1; i<=$$1; i++) printf " -nAlpha%03d",i}'`;\
@@ -764,10 +633,6 @@ purge-old-alphas:
 	    echo rcs $$VERSIONS $$i;					\
 	    rcs $$VERSIONS $$i && co $$i;				\
 	done;								\
-	for i in ${HTMLFILES}; do					\
-	    echo rcs $$VERSIONS $$i;					\
-	    rcs $$VERSIONS $$i && co $$i;				\
-	done
 
 alphadiff:
 	cd ${SRCDIR};							\
@@ -777,9 +642,6 @@ alphadiff:
 	-@for i in ${MANPAGES}; do					\
 	    rcsdiff -r${ALPHA} $$i;					\
 	done;								\
-	-@for i in ${HTMLFILES}; do					\
-	    rcsdiff -r${ALPHA} $$i;					\
-	done
 
 # create alpha distribution archive
 alpha.tar:
@@ -789,7 +651,7 @@ alpha.tar:
 	(for i in ${HYLAFAXSRC} dist/hylafax.alpha; do			\
 	   echo $$i;							\
 	done) | sed "s;.*;hylafax-$$VERSION/&;" >  $$VERSION;		\
-	(for i in ${MANPAGES} ${HTMLDIST}; do		\
+	(for i in ${MANPAGES}; do		\
 	   echo $$i;							\
 	done) | sed "s;.*;hylafax-$$VERSION/&;" >> $$VERSION;		\
 	gtar -cvf $$VERSION-tar --files-from $$VERSION;			\
@@ -818,10 +680,6 @@ release.stamp:
 	    REV=`rlog -h -d"$$NOW" $$i|fgrep 'head:'|awk '{print $$2}'`;\
 	    rcs "-N$$VERSION:$$REV" "-sRel:$$REV" $$i && co -sRel $$i;	\
 	done;								\
-	for i in ${HTMLFILES}; do					\
-	    REV=`rlog -h -d"$$NOW" $$i|fgrep 'head:'|awk '{print $$2}'`;\
-	    rcs "-N$$VERSION:$$REV" "-sRel:$$REV" $$i && co -sRel $$i;	\
-	done
 
 # create release distribution archive
 release.tar:
@@ -831,7 +689,7 @@ release.tar:
 	(for i in ${HYLAFAXSRC} dist/hylafax.alpha; do			\
 	   echo $$i;							\
 	done) | sed "s;.*;hylafax-$$VERSION/&;" >  $$VERSION;		\
-	(for i in ${MANPAGES} ${HTMLDIST}; do		\
+	(for i in ${MANPAGES}; do		\
 	   echo $$i;							\
 	done) | sed "s;.*;hylafax-$$VERSION/&;" >> $$VERSION;		\
 	gtar -cvf $$VERSION-tar --files-from $$VERSION;			\

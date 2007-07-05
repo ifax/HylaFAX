@@ -1,22 +1,11 @@
 # $Id$
 trap 'exit 3' 15
-# determine if man & html pages should be installed
+# determine if man pages should be installed
 ans=`ckyorn -d y \
         -p "Should the man pages included in this package be installed" ` || exit $?
 if [ "$ans" = y ]
 then
         CLASSES="$CLASSES man"
-fi
-
-if [ "@HTML@" = yes ]
-then
-# determine if html man pages should be installed
-	ans=`ckyorn -d y \
-        -p "Should the html pages included in this package be installed" ` || exit $?
-	if [ "$ans" = y ]
-	then
-        	CLASSES="$CLASSES html"
-	fi
 fi
 
 # make parameters available to installation service,

@@ -16,7 +16,6 @@ DIR_SBIN=@SBIN@
 DIR_SPOOL=@SPOOL@
 DIR_FONTS=@AFMDIR@
 DIR_CGI=@CGIDIR@
-DIR_HTML=@HTMLDIR@
 DIR_SYSVINIT=@SYSVINITDIR@
 DIR_SYSVINITSTART="@SYSVINITDIR@/@SYSVINITSTARTDIR@"
 DIR_SYSVINITSTOP="@SYSVINITDIR@/@SYSVINITSTOPDIR@"
@@ -30,11 +29,9 @@ LIST="${DIR_BIN} ${DIR_LIB} ${DIR_SLIB} ${DIR_MAN} ${DIR_SBIN}"
 
 case $1 in
 	client)	PROTOTYPE=cproto
-		DO_HTML="no"
 			;;
 	server)	PROTOTYPE=sproto
 		LIST="${LIST} ${DIR_SPOOL}"
-		DO_HTML="@HTML@"
 		[ -d ${TMP_DIR} ]  &&  {
 			rm -fr ${TMP_DIR}  ||  {
 				echo "rm -fr ${TMP_DIR} failed"
@@ -67,25 +64,6 @@ then
 	do
 		echo "d none ${DIR_FONTS} ? ? ?" >> ${TMP_LIST}
 		DIR_FONTS=`dirname ${DIR_FONTS}`
-	done
-fi
-
-if [ ${DO_HTML} = yes ]
-then
-# skip the first one, it's in prototype.stub
-	DIR_HTML=`dirname ${DIR_HTML}`
-	while [ ${DIR_HTML} != / ]
-	do
-		grep "d none ${DIR_HTML} ? ? ?" ${TMP_LIST} >/dev/null \
-		|| echo "d html ${DIR_HTML} ? ? ?" >> ${TMP_LIST}
-		DIR_HTML=`dirname ${DIR_HTML}`
-	done
-	DIR_CGI=`dirname ${DIR_CGI}`
-	while [ ${DIR_CGI} != / ]
-	do
-		grep "d html ${DIR_CGI} ? ? ?" ${TMP_LIST} >/dev/null \
-		|| echo "d html ${DIR_CGI} ? ? ?" >> ${TMP_LIST}
-		DIR_CGI=`dirname ${DIR_CGI}`
 	done
 fi
 
@@ -164,10 +142,4 @@ if [ "@AFM@" = yes ]
 then
 	grep " fonts " ${PROTOTYPE}.stub >> ${PROTOTYPE}
 fi
-
-if [ ${DO_HTML} = yes ]
-then
-	grep " html " ${PROTOTYPE}.stub >> ${PROTOTYPE}
-fi
-
 

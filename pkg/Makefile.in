@@ -69,10 +69,6 @@ package: cproto sproto all
 	for i in ${BINARIES} ; do			\
 		strip ${SRCDIR}/$$i ;			\
 	done ;						\
-	if [ "@HTML@" = yes ]; then			\
-		strip ${SRCDIR}/../html/tools/man2html;	\
-		strip ${SRCDIR}/../html/tools/unquote;	\
-	fi;						\
 	@RM@ -f pkginfo 2>/dev/null;			\
 	@RM@ -f request 2>/dev/null;			\
 	cp cpkginfo pkginfo ;				\

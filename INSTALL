@@ -9,12 +9,6 @@ The online documentation includes the full contents of the
 documentation as well as an HOWTO, FAQ, archives of the HylaFAX mailing 
 list, and associated modem-related documentation.
 
-You will find a subset of the online documentation in the html
-subdirectory.  Beware however that timely information is usually more
-up to date online than in the materials in the html directory.
-You can view the HTML documentation in place and/or configure it for
-local installation through the configure script.
-
 Installation Synopsis
 ---------------------
 Follow the directions in the online documentation.  The main material
@@ -42,17 +36,17 @@ The basic procedure is:
 If this does not work and the problem is not clear, then you will
 need to look at the documentation and/or the code.
 
-There is documentation!  There is GOBS of documentation.  The HTML
+There is documentation!  There is GOBS of documentation.  The online
 materials present information needed to build+setup the software; the
 manual pages act as a reference guide.  There are manual pages for all
 the programs and for all the files and directories that you may be
 curious about.  Of course there is also source code for everything, but
 this should (hopefully) not be needed.  A useful introduction to the
-client applications is given in the hylafax-client manpage.  If you want 
-to learn how the server and spooling system work, look first at the 
-hylafax-server manpage.  Remember however that the manual pages are for 
-reference; the HTML documentation is designed to be more introductory in 
-nature and should usually be consulted first when you're looking for 
+client applications is given in the hylafax-client manpage.  If you want
+to learn how the server and spooling system work, look first at the
+hylafax-server manpage.  Remember however that the manual pages are for
+reference; the online documentation is designed to be more introductory
+in nature and should usually be consulted first when you're looking for
 general guidance.
 
 See the README for details on where to turn if you've done all of this

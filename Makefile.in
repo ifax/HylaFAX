@@ -85,11 +85,6 @@ dirs::
 	else \
 	    true; \
 	fi
-	@if [ "@HTML@" = yes ]; then \
-	    ${ECHO} "= "html; cd html; ${MAKE}  ||  exit $?; \
-	else \
-	    true; \
-	fi
 	@if [ "@DPS@" = yes ]; then \
 	    ${ECHO} "= "dps; cd dps; ${MAKE}  ||  exit $?; \
 	else \
@@ -125,11 +120,6 @@ depend::
 	else \
 	    true; \
 	fi
-	@if [ "@HTML@" = yes ]; then \
-	    ${ECHO} "= "html; cd html; ${MAKE} depend; \
-	else \
-	    true; \
-	fi
 clean::
 	@if [ "@PORT@" = yes ]; then \
 	    ${ECHO} "= "port; cd port; ${MAKE} clean; \
@@ -153,11 +143,6 @@ clean::
 	    for i in ${DSODIRS}; do \
 		(${ECHO} "= "$$i; cd $$i; ${MAKE} cleanDSO); \
 	    done; \
-	else \
-	    true; \
-	fi
-	@if [ "@HTML@" = yes ]; then \
-	    ${ECHO} "= "html; cd html; ${MAKE} clean; \
 	else \
 	    true; \
 	fi
@@ -203,11 +188,6 @@ clobber::
 	done
 	@if [ "@SGI2FAX@" = yes ]; then \
 	    ${ECHO} "= "sgi2fax; cd sgi2fax; ${MAKE} clobber; \
-	else \
-	    true; \
-	fi
-	@if [ "@HTML@" = yes ]; then \
-	    ${ECHO} "= "html; cd html; ${MAKE} clobber; \
 	else \
 	    true; \
 	fi
@@ -276,11 +256,6 @@ install: makeDirs makeDevices
 	    true; \
 	fi
 	@${ECHO} "= "etc; cd etc; ${MAKE} installSysVInit;
-	@if [ "@HTML@" = yes ]; then \
-	    ${ECHO} "= "html; cd html; ${MAKE} install  ||  exit 1; \
-	else \
-	    true; \
-	fi
 	@if [ "@DPS@" = yes ]; then \
 	    ${ECHO} "= "dps; cd dps; ${MAKE} install  ||  exit 1; \
 	else \
@@ -344,7 +319,6 @@ dist.inst:
 	    dist/hylafax	\
 	    dist/hylafax.idb	\
 	    dist/hylafax.sw	\
-	    dist/hylafax.html	\
 	    dist/hylafax.man
 
 @MAKEINCLUDE@ @MAKELQUOTE@${SRCDIR}/distrules@MAKERQUOTE@

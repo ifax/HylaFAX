@@ -107,17 +107,4 @@ product hylafax
 	    replaces flexfax.man.* 0 oldvers
 	endsubsys
     endimage
-
-    image html
-	id "${FAX_NAME} World Wide Web Materials"
-	version	"${CUR_VERS}"
-	subsys docs
-	    id	"${FAX_NAME} Online Documentation"
-	    exp	"hylafax.html.docs"
-	endsubsys
-	subsys tools
-	    id	"${FAX_NAME} CGI Scripts & Tools"
-	    exp	"hylafax.html.cgi"
-	endsubsys
-    endimage
 endproduct
