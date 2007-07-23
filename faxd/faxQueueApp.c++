@@ -1767,9 +1767,9 @@ faxQueueApp::setReadyToRun(Job& job, FaxRequest& req)
 	    case -1:			// error - continue with no JCI
 		jobError(job, "JOB CONTROL: fork: %m");
 		Sys::close(pfd[1]);
-                // When fork fails we need to run jobCtrlDone, since there
+                // When fork fails we need to set it ready, because there
                 // will be no child signal to start it.
-                ctrlJobDone(job, -1);
+                setReady(job, req);
 		break;
 	    case 0:				// child, exec command
 		if (pfd[1] != STDOUT_FILENO)
@@ -1788,9 +1788,10 @@ faxQueueApp::setReadyToRun(Job& job, FaxRequest& req)
 	    }
 	} else
 	{
+	    jobError(job, "JOB CONTROL: pipe failed: %m");
 	    // If our pipe fails, we can't run the child, but we still
-	    // Need jobCtrlDone to be called to proceed this job
-	    ctrlJobDone(job, -1);
+	    // Need setReady to be called to proceed this job
+	    setReady(job, req);
 	}
     } else
 	setReady(job, req);
