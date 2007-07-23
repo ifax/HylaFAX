@@ -147,7 +147,6 @@ GettyArgs	string	\-	arguments passed to getty program
 Include\(S2	string	\-	include another file 
 InternationalPrefix\(S2	string	\-	dialing prefix for international calls
 JobControlCmd\(S1	string	\-	job control command
-JobControlWait\(S1	boolean	\s-1Yes\s+1	Wait for JobControlCmd to run synchronously
 JobReqBusy	integer	\s-1180\s+1	requeue interval for \s-1BUSY\s+1 dial result
 JobReqDataConn	integer	\s-1300\s+1	requeue interval for data connection dial result
 JobReqNoAnswer	integer	\s-1300\s+1	requeue interval for \s-1NO ANSWER\s+1 dial result
@@ -920,18 +919,6 @@ This string is passed to the dial string rules.
 The command to invoke to which provides Job Control information for a
 job. See
 .IR JobControl (${MANNUM1_8}).
-.TP
-.B JobControlWait\(S1
-Make faxq wait synchronously on invocation for JobControlCmd to finish
-before continuing on.  This makes JobControl behaviour the same as the
-previous DestControls, in that pulling jobs out of sleeping and blocked
-state will wait for JobControl to finish before proceeding, so they
-can be added to the batch immediately.  This does mean that if your
-JobControlCmd takes a long time, faxq could be spending time waiting
-for it to exit, instead of proceeding on with other tasks, waiting for
-JobControl to exit asynchronously.  If you aren't concerned about a batch
-missing a potential job because JobControl hasn't completed, and want
-maximum faxq performance, this should be disabled.
 .TP
 .B JobReqBusy
 The delay in seconds to wait before retrying a job whose

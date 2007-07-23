@@ -124,7 +124,6 @@ private:
     fxStr	sendUUCPCmd;		// external command for UUCP calls
     fxStr	wedgedCmd;		// external command for wedged modems
     fxStr	jobCtrlCmd;		// external command for JobControl
-    bool	jobCtrlWait;		// Wait syncronously for JobControl to finish
 
     static stringtag strings[];
     static numbertag numbers[];
@@ -225,7 +224,7 @@ private:
     void	sendStart(Batch&);
     void	sendDone(Batch&, int status);
 
-    void	setReadyToRun(Job& job, FaxRequest& req, bool wait);
+    void	setReadyToRun(Job& job, FaxRequest& req);
     void	setReady(Job& job, FaxRequest& req);
     void	setSleep(Job& job, time_t tts);
     void	setDead(Job& job);

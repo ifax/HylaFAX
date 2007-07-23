@@ -1514,7 +1514,7 @@ faxQueueApp::sendDone(Batch& batch, int status)
 	     * to be sent
 	     */
 	    job.remove();
-	    setReadyToRun(job, *req, false);
+	    setReadyToRun(job, *req);
 	    delete req;
 	} else
 	{
@@ -1710,7 +1710,7 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
 	    } else {
 		traceQueue(job, "SEND INCOMPLETE: retry immediately; %s",
 		    req->result.string());
-		setReadyToRun(job, *req, jobCtrlWait);		// NB: job.tts will be <= now
+		setReadyToRun(job, *req);		// NB: job.tts will be <= now
 	    }
 	} else					// signal waiting co-thread
 	    job.suspendPending = false;
@@ -1741,7 +1741,7 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
  * JobControl is done running
  */
 void
-faxQueueApp::setReadyToRun(Job& job, FaxRequest& req, bool wait)
+faxQueueApp::setReadyToRun(Job& job, FaxRequest& req)
 {
     if (job.state == FaxRequest::state_blocked) {
 	/*
@@ -1791,13 +1791,6 @@ faxQueueApp::setReadyToRun(Job& job, FaxRequest& req, bool wait)
 	    // If our pipe fails, we can't run the child, but we still
 	    // Need jobCtrlDone to be called to proceed this job
 	    ctrlJobDone(job, -1);
-	}
-	if (wait)
-	{
-	    logInfo("WAITING FOR JobControl to finish");
-	    while (job.pid != 0)
-		Dispatcher::instance().dispatch();
-	    logInfo("JobControl finished");
 	}
     } else
 	setReady(job, req);
@@ -2086,7 +2079,7 @@ faxQueueApp::submitJob(Job& job, FaxRequest& req, bool checkState)
 	setSleep(job, job.tts);
     } else {					// ready to go now
 	job.startKillTimer(req.killtime);
-	setReadyToRun(job, req, false);		// We never wait on submit
+	setReadyToRun(job, req);
     }
     updateRequest(req, job);
     return (true);
@@ -2460,7 +2453,7 @@ faxQueueApp::runJob(Job& job)
 	setDead(job);
 	return;
     }
-    setReadyToRun(job, *req, jobCtrlWait);
+    setReadyToRun(job, *req);
     updateRequest(*req, job);
     delete req;
 }
@@ -3268,7 +3261,6 @@ faxQueueApp::numbertag faxQueueApp::numbers[] = {
 };
 
 faxQueueApp::booltag faxQueueApp::booleans[] = {
-{ "jobcontrolwait",	&faxQueueApp::jobCtrlWait,	true },
 };
 
 void
