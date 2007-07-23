@@ -22,7 +22,6 @@ Things to watch:
 * rerun faxsetup - changes to the encode selection and use for the
   faxrcvd/notify/pollrcvd scripts
 
-
 CHANGES for 4.4.0
 -----------------------------------------------------------------------------
 * Stop caching of DATE and VERSION by configure (Bug 854) (9 Mar 2007)
@@ -85,3 +84,4 @@ CHANGES for 4.4.0
 * Change socklen_t configure/detection for HP-UX 11 (11 May 2007)
 * Add preliminary Class2 JBIG Support (11 May 2007)
 * Add JPEC (colour fax) to Class2 (12 May 2007)
+* Remove broken JobControlWait (23 July 2007)
