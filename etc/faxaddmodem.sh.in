@@ -46,10 +46,12 @@
 SPOOL=@SPOOL@
 
 SPEED=
+DOFUSER=no
 while [ x"$1" != x"" ] ; do
     case $1 in
     -s)	    SPEED=$2; shift;;
-    -*)	    echo "Usage: $0 [-s SPEED] [ttyname]"; exit 1;;
+    -f)     DOFUSER=yes;;
+    -*)	    echo "Usage: $0 [-s SPEED] [-f] [ttyname]"; exit 1;;
     *)	    TTY=$1;;
     esac
     shift
@@ -302,15 +304,17 @@ for x in $LOCKX; do
     echo "$LOCKSTR" > $x
 done
 
-# zap any gettys or other users
-if ! [ -f $FUSER ]; then
-    cat<<EOF
+if [ "$DOFUSER" = "yes" ]; then
+    # zap any gettys or other users
+    if ! [ -f $FUSER ]; then
+	cat<<EOF
 Hmm, there does not appear to be an fuser command on your machine.
 This means that I am unable to ensure that all processes using the
 modem have been killed.  I will keep going, but beware that you may
 have competition for the modem.
 EOF
-else $FUSER -k $DEVS >/dev/null 2>&1
+    else $FUSER -k $DEVS >/dev/null 2>&1
+    fi
 fi
 
 cat<<EOF
