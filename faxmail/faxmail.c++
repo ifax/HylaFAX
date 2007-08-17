@@ -68,6 +68,7 @@ class faxMailApp : public TextFormat, public MsgFmt {
 private:
     bool	markDiscarded;		// mark MIME parts not handled
     bool	withinFile;		// between beginFile() & endFile()
+    bool	empty;			// No acutall formated output
     fxStr	mimeConverters;		// pathname to MIME converter scripts
     fxStr	mailProlog;		// site-specific prologue definitions
     fxStr	clientProlog;		// client-specific prologue info
@@ -88,7 +89,7 @@ private:
     bool	trimText;		// trim text parts
 
     void formatMIME(FILE* fd, MIMEState& mime, MsgFmt& msg);
-    void formatText(FILE* fd, MIMEState& mime);
+    bool formatText(FILE* fd, MIMEState& mime);
     void formatMultipart(FILE* fd, MIMEState& mime, MsgFmt& msg);
     void formatMessage(FILE* fd, MIMEState& mime, MsgFmt& msg);
     void formatApplication(FILE* fd, MIMEState& mime);
@@ -351,28 +352,48 @@ faxMailApp::run(int argc, char** argv)
     client->addFile(file);
     beginFormatting(fdopen(fd, "w"));
 
+    /*
+     * empty tracks if we've actually put any real content
+     * into our self (MsgFmt/TextFormat), instead of just the boiler-plate
+     * PostScript.  If we're still empty at the end, we don't submit
+     * the file we've been making.
+     */
+    empty = true;
+
     mimeid="part";
 
     const fxStr* version = findHeader("MIME-Version");
     if (version && *version == "1.0") {
         beginFile();
 	withinFile = true;
-	if (formatEnvHeaders)
-	    formatHeaders(*this);	// format top-level headers
+	// We only format top-level headers if they are
+	// wanted
+	if (formatEnvHeaders && formatHeaders (*this) )
+	    empty = false;
 	formatMIME(stdin, mime, *this);	// parse MIME format
         if (withinFile) endFile();
 	withinFile = false;
     } else {
         beginFile();
 	withinFile = true;
-	if (formatEnvHeaders)
-	    formatHeaders(*this);	// format top-level headers
-	formatText(stdin, mime);	// treat body as text/plain
+	// We only format top-level headers if they are
+	// wanted
+	if (formatEnvHeaders && formatHeaders(*this) )
+	    empty = false;;
+	if (formatText(stdin, mime))	// treat body as text/plain
+	    empty = false;
         if (withinFile) endFile();
 	withinFile = false;
     }
 
     endFormatting();
+
+    /*
+     * If our "formatted" file is empty, remove it.
+     * We know it's the first file the client has.
+     */
+    if (empty)
+	client->removeFile(0);
 
     if (client) {			// complete direct delivery
 	bool status = false;
@@ -430,9 +451,10 @@ faxMailApp::formatMIME(FILE* fd, MIMEState& mime, MsgFmt& msg)
 	 * content types we expect to encounter.
 	 */
 	const fxStr& type = mime.getType();
-	if (type == "text")
-	    formatText(fd, mime);
-	else if (type == "application")
+	if (type == "text") {
+	    if ( formatText(fd, mime) )
+		empty = false;
+	} else if (type == "application")
 	    formatApplication(fd, mime);
 	else if (type == "multipart")
 	    formatMultipart(fd, mime, msg);
@@ -447,19 +469,24 @@ faxMailApp::formatMIME(FILE* fd, MIMEState& mime, MsgFmt& msg)
 /*
  * Format a text part.
  */
-void
+bool
 faxMailApp::formatText(FILE* fd, MIMEState& mime)
 {
     fxStackBuffer buf;
     bool trim = trimText;
+    u_int lines = 0;
 
     while (mime.getLine(fd, buf))
     {
 	if (trim)
 	    trim = (buf.getLength() == 0 || buf[0] == 0xA);
 	if (! trim)
+	{
 	    format(buf, buf.getLength());	// NB: treat as text/plain
+	    lines++;
+	}
     }
+    return lines > 0;
 }
 
 /*
@@ -531,8 +558,9 @@ faxMailApp::formatMessage(FILE* fd, MIMEState& mime, MsgFmt& msg)
 		fprintf(getOutputFile(), " %s ", divider);
 	    endLine();
 	}
-	if (nl > 0)
-	    bodyHdrs.formatHeaders(*this);	// emit formatted headers
+	if (nl > 0 )
+	    if (bodyHdrs.formatHeaders(*this) )	// emit formatted headers
+		empty = false;
 
 	MIMEState subMime(mime);
 	formatMIME(fd, subMime, bodyHdrs);	// format message body
@@ -585,6 +613,7 @@ faxMailApp::formatDiscarded(MIMEState& mime)
 		, (const char*) mime.getSubType()
 	    );
 	format((const char*)buf, buf.getLength());
+	empty = false;
     }
 }
 

@@ -56,7 +56,7 @@ struct MsgFmt {
     u_int headerCount(void);
     fxStr mapHeader(const fxStr& name);
     void parseHeaders(FILE* fd, u_int& lineno);
-    void formatHeaders(TextFormat& fmt);
+    bool formatHeaders(TextFormat& fmt);
     void showItalic(TextFormat& fmt, const char* cp);
 };
 #endif /* _MsgFmt_ */
