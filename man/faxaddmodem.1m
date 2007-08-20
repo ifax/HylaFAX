@@ -36,6 +36,8 @@ faxaddmodem \- configure a modem for use with \*(Fx
 .B \-s
 .I speed
 ] [
+.B \-f
+] [
 .I tty
 ]
 .SH DESCRIPTION
@@ -116,7 +118,13 @@ Because
 .I faxaddmodem
 needs to read and write the modem that is to be installed
 it will not proceed with an installation if the modem is
-locked for use by another process.
+locked for use by another process.  If the modem is not locked
+and the
+.B \-f
+option is used, then the system's
+.IR fuser (1)
+command will be invoked to ensure that faxaddmodem is the only
+process using the modem.
 .PP
 Finally, note that an installation can be safely aborted at any
 time by hitting the interrupt key.
@@ -131,6 +139,11 @@ Communicate with the modem at a fixed
 this may be any value recognized by the
 .IR stty (1)
 command.
+.TP 10
+.B \-f
+Use the
+.IR fuser (1)
+command for exclusive access to the device.
 .SH "PROTOTYPE CONFIGURATION FILES"
 .I faxaddmodem
 uses prototype configuration files that have been
