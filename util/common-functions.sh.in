@@ -123,7 +123,7 @@ parseQfile()
     /^jobtag/    { jobtag = $0; sub("jobtag:", "", jobtag); p("jobtag", jobtag)}
     /^jobtype/    { p("jobtype", $2); }
     # status needs to be used in the shell as faxstatus since status is reserved word
-    /^status/    { status = $0; sub("status:", "", status);
+    /^status:/    { status = $0; sub("status:", "", status);
               while ($0 ~ /\\\\$/ && getline > 0) {
                   sub(/\\\\$/, "\\n", status);
                   status = status $0;
