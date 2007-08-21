@@ -99,6 +99,21 @@ MsgFmt::parseHeaders(FILE* fd, u_int& lineno)
 	 */ 
 	fxStr line(&buf[0], buf.getLength());
 	u_int len = line.length();
+	// trim any RFC 822 comment strings
+	u_int colon = line.next(0, ':');
+	if (colon < len) {
+	    u_int paren = line.next(colon, '(');
+	    while (paren < len) {
+		u_int csize = line.next(paren, ')') - paren + 1;
+		line.remove(paren, csize);
+		len -= csize;
+		paren = line.next(colon, '(');
+	    }
+	}
+	while (len > 0 && isspace(line[line.length()-1])) {
+	    line.remove(line.length()-1, 1);    // trim trailing whitespace
+	    len--;
+	}
 	if (len > 0 && !isspace(line[0])) { 
 	    u_int l = 0;
 	    field = line.token(l, ':');
@@ -209,7 +224,7 @@ MsgFmt::headerCount(void)
 #endif
 #define	roundup(x, y)	((((x)+((y)-1))/(y))*(y))
 
-bool
+void
 MsgFmt::formatHeaders(TextFormat& fmt)
 {
     /*
@@ -259,9 +274,7 @@ MsgFmt::formatHeaders(TextFormat& fmt)
 	fmt.beginLine();
 	    fputc(' ', fmt.getOutputFile());	// XXX whitespace needed
 	fmt.endLine();
-	return true;
     }
-    return false;
 }
 
 /*
