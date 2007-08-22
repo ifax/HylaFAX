@@ -1,5 +1,14 @@
 #	$Id$	
 
+Changelog for HylaFAX 4.3.5
+
+* Fix configure GCC version detection for Gentoo (22 Aug 2007)
+* Fix faxmail handling of RFC 822 comments in headers  (21 Aug 2007)
+* Fix faxq handling of large formatter output (21 Aug 2007)
+* faxaddmodem doesn't fuser -k by default, allowing iaxmodem to be
+  detected by faxaddmodem (17 Aug 2007)
+* Fix faxrcvd/notify application/PDF mimetype (5 Aug 2007)
+
 Changelog for HylaFAX 4.3.4
 
 * Fix faxq modem handling which can cause multiple concurrent faxsend
