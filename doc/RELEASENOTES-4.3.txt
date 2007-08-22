@@ -171,7 +171,7 @@ CHANGES for 4.3.2 - February 16, 2007
 
 CHANGES for 4.3.3 - March 2, 2007
 -----------------------------------------------------------------------------
-* Make ConverFile return filename even for noop on PDF files (20 Feb 2007)
+* Make ConvertFile return filename even for noop on PDF files (20 Feb 2007)
 * Correctly named notify "rejected" templates (bug 849) (20 Feb 2007)
 * Include jobtag in Subject of notification emails (bug 850) (22 Feb 2007)
 * Remove unused CHARSET setting (bug 843) (23 Feb 2007)
