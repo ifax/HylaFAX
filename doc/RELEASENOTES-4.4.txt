@@ -21,6 +21,9 @@ Things to watch:
   option changes
 * rerun faxsetup - changes to the encode selection and use for the
   faxrcvd/notify/pollrcvd scripts
+* faxmail is now a direct-delivery HylaFAX client.  It no longer formats
+  the entire e-mail into a single postscript document, but hands the
+  documents to HylaFAX directly.
 
 CHANGES for 4.4.0
 -----------------------------------------------------------------------------
@@ -85,3 +88,16 @@ CHANGES for 4.4.0
 * Add preliminary Class2 JBIG Support (11 May 2007)
 * Add JPEC (colour fax) to Class2 (12 May 2007)
 * Remove broken JobControlWait (23 July 2007)
+
+
+CHANGES for 4.4.1
+-----------------------------------------------------------------------------
+* faxmail: don't submit an empty postscript file if not formatting was
+  done (17 Aug 2007)
+* faxaddmodem doesn't fuser -k by default, allowing iaxmodem to be
+  detected by faxaddmodem (17 Aug 2007)
+* fix status/statuscode parsing of the job qfile which showed artifacts
+  in the notify emails (20 Aug 2007)
+* Fix faxmail handling of RFC 822 comments in headers  (21 Aug 2007)
+* Fix faxq handling of large formatter output (21 Aug 2007)
+* Fix configure GCC version detection for Gentoo (22 Aug 2007)
