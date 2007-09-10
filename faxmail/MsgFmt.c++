@@ -224,7 +224,7 @@ MsgFmt::headerCount(void)
 #endif
 #define	roundup(x, y)	((((x)+((y)-1))/(y))*(y))
 
-void
+bool
 MsgFmt::formatHeaders(TextFormat& fmt)
 {
     /*
@@ -274,7 +274,9 @@ MsgFmt::formatHeaders(TextFormat& fmt)
 	fmt.beginLine();
 	    fputc(' ', fmt.getOutputFile());	// XXX whitespace needed
 	fmt.endLine();
+	return true;
     }
+    return false;
 }
 
 /*
