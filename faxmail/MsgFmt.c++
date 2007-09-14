@@ -83,6 +83,52 @@ MsgFmt::getLine(FILE* fd, fxStackBuffer& buf)
     return (true);
 }
 
+/*
+ * This function replaces comments with a single white space.
+ * Unclosed comments are automatically closed at end of string.
+ * Stray closing parentheses are left untouched, as are other invalid chars.
+ * Headers which can contain quoted strings should not go through this
+ * revision of this function as is doesn't honnor them and could end up doing
+ * the wrong thing.
+ */
+fxStr
+MsgFmt::stripComments(const fxStr& s)
+{
+    fxStr q;
+    u_int depth = 0;
+    bool wasSpace = true;
+    for (u_int i = 0; i < s.length(); i++) {
+        switch (s[i]) {
+            case '(':
+                depth++;
+                break;
+            case ')':
+                if (depth > 0)
+                    depth--;
+                break;
+            case '\\':
+                if (depth == 0) {
+                    q.append(s[i++]);     // Don't decode them at this time
+                    q.append(s[i]);
+                    wasSpace = false;
+                } else
+                  i++;
+                break;
+            default:
+                if (depth == 0) {
+                    if (!isspace(s[i]) || !wasSpace) {       // Trim consecutive spaces
+                        q.append(s[i]);
+                        wasSpace = isspace(s[i]);
+                    }
+                }
+                break;
+        }
+    }
+    while (q.length() > 0 && isspace(q[q.length()-1]))
+      q.remove(q.length()-1, 1);      // Trim trailing white space
+    return q;
+}
+
 void
 MsgFmt::parseHeaders(FILE* fd, u_int& lineno)
 {
@@ -99,17 +145,6 @@ MsgFmt::parseHeaders(FILE* fd, u_int& lineno)
 	 */ 
 	fxStr line(&buf[0], buf.getLength());
 	u_int len = line.length();
-	// trim any RFC 822 comment strings
-	u_int colon = line.next(0, ':');
-	if (colon < len) {
-	    u_int paren = line.next(colon, '(');
-	    while (paren < len) {
-		u_int csize = line.next(paren, ')') - paren + 1;
-		line.remove(paren, csize);
-		len -= csize;
-		paren = line.next(colon, '(');
-	    }
-	}
 	while (len > 0 && isspace(line[line.length()-1])) {
 	    line.remove(line.length()-1, 1);    // trim trailing whitespace
 	    len--;

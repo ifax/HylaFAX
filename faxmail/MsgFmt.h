@@ -51,6 +51,7 @@ struct MsgFmt {
     virtual bool setConfigItem(const char* tag, const char* value);
 
     static bool getLine(FILE* fd, fxStackBuffer& buf);
+    static fxStr stripComments(const fxStr& s);
 
     const fxStr* findHeader(const fxStr& name) const;
     u_int headerCount(void);
