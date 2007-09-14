@@ -101,3 +101,4 @@ CHANGES for 4.4.1
 * Fix faxmail handling of RFC 822 comments in headers  (21 Aug 2007)
 * Fix faxq handling of large formatter output (21 Aug 2007)
 * Fix configure GCC version detection for Gentoo (22 Aug 2007)
+* Fix faxq trigger handling (14 Sep 2007)
