@@ -363,8 +363,11 @@ faxMailApp::run(int argc, char** argv)
     mimeid="part";
 
     const fxStr* version = findHeader("MIME-Version");
-    if (version && *version == "1.0") {
-        beginFile();
+
+    if (version && stripComments(*version) == "1.0") {
+	if (verbose)
+	    fprintf(stderr, "faxmail: This is a MIME message\n");
+	beginFile();
 	withinFile = true;
 	// We only format top-level headers if they are
 	// wanted
@@ -374,7 +377,9 @@ faxMailApp::run(int argc, char** argv)
         if (withinFile) endFile();
 	withinFile = false;
     } else {
-        beginFile();
+	if (verbose)
+	    fprintf(stderr, "faxmail: This is not a MIME message\n");
+	beginFile();
 	withinFile = true;
 	// We only format top-level headers if they are
 	// wanted
