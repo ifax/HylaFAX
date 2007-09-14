@@ -74,7 +74,9 @@ Trigger::~Trigger()
     triggers[tid] = NULL;
     // NB: we mimic the logic below to avoid byte-order issues
     u_int i = tid / TRIGGER_BPW;
-    ((u_char*) &tidFree[i])[i>>3] &= ~(1<<(i&7));
+    u_int b = tid % TRIGGER_BPW;
+
+    ((u_char*) &tidFree[i])[b>>3] &= ~(1<<(b&7));
     client->dec();
 }
 
