@@ -1532,12 +1532,12 @@ HylaFAXServer::checkAddDocument(Job& job, Token type,
 {
     if (checkParm(job, type, A_WRITE)) {
 	struct stat sb;
-	if (!fileAccess(docname, R_OK, sb))
-	    perror_reply(550, docname, errno);
-	else if (!docType(docname, op))
-	    reply(550, "%s: Document type not recognized.", docname);
-	else
-	    return (true);
+	if (fileAccess(docname, R_OK, sb)) {
+	    if (!docType(docname, op))
+		reply(550, "%s: Document type not recognized.", docname);
+	    else
+		return (true);
+	}
     }
     return (false);
 }
