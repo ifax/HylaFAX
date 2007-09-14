@@ -331,15 +331,20 @@ faxMailApp::run(int argc, char** argv)
 	beginFormatting(stdout);	// NB: sets up page info
 
     const fxStr* version = findHeader("MIME-Version");
-    if (version && *version == "1.0") {
-        beginFile();
+
+    if (version && stripComments(*version) == "1.0") {
+	if (verbose)
+	    fprintf(stderr, "faxmail: This is a MIME message\n");
+	beginFile();
 	withinFile = true;
         formatHeaders(*this);		// format top-level headers
 	formatMIME(stdin, mime, *this);	// parse MIME format
         if (withinFile) endFile();
 	withinFile = false;
     } else {
-        beginFile();
+	if (verbose)
+	    fprintf(stderr, "faxmail: This is not a MIME message\n");
+	beginFile();
 	withinFile = true;
         formatHeaders(*this);		// format top-level headers
 	formatText(stdin, mime);	// treat body as text/plain
