@@ -2555,8 +2555,6 @@ faxQueueApp::runScheduler()
     {
 	for (QLink* ql = runq.next; ql != &runq; ql = ql->next)
 	{
-	    DestInfo* dp = (DestInfo*)ql;
-	    traceQueue(*dp, "Picking next job");
 	    /*
 	     * If there are no modems ready, then no job will be
 	     * able to start
@@ -2567,6 +2565,8 @@ faxQueueApp::runScheduler()
 		break;
 	    }
 
+	    DestInfo* dp = (DestInfo*)ql;
+	    traceQueue(*dp, "Picking next job");
 	    if (dp->readyQ.isEmpty() )
 	    {
 		/*
