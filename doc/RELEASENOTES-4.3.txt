@@ -1,4 +1,4 @@
-HylaFAX 4.3.4
+HylaFAX 4.3.5
 
 OVERVIEW
 -----------------------------------------------------------------------------
@@ -171,7 +171,7 @@ CHANGES for 4.3.2 - February 16, 2007
 
 CHANGES for 4.3.3 - March 2, 2007
 -----------------------------------------------------------------------------
-* Make ConverFile return filename even for noop on PDF files (20 Feb 2007)
+* Make ConvertFile return filename even for noop on PDF files (20 Feb 2007)
 * Correctly named notify "rejected" templates (bug 849) (20 Feb 2007)
 * Include jobtag in Subject of notification emails (bug 850) (22 Feb 2007)
 * Remove unused CHARSET setting (bug 843) (23 Feb 2007)
@@ -187,3 +187,12 @@ CHANGES for 4.3.4 - May 14, 2007
 * Fix faxq trigger bugs which can cause faxq to crash (26 Mar 2007)
 * Fix faxq modem handling which can cause multiple concurrent faxsend
   invocations on the same device (8 May 2007)
+
+CHANGES for 4.3.5 - August 22, 2007
+-----------------------------------------------------------------------------
+* Fix faxrcvd/notify application/PDF mimetype (5 Aug 2007)
+* faxaddmodem doesn't fuser -k by default, allowing iaxmodem to be
+  detected by faxaddmodem (17 Aug 2007)
+* Fix faxmail handling of RFC 822 comments in headers  (21 Aug 2007)
+* Fix faxq handling of large formatter output (21 Aug 2007)
+* Fix configure GCC version detection for Gentoo (22 Aug 2007)
