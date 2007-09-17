@@ -139,7 +139,7 @@ Alphabetic characters are automatically mapped to their numeric
 key equivalents: ``abcABC'' to ``2'', ``defDEF'' to ``3'', etc.
 Dialing prefixes, such as ``1'' and ``011''
 (for long distance calling in the United States) need
-not be included if an unambigous number is specified.
+not be included if an unambiguous number is specified.
 Examples of unambiguous phone numbers are:
 .nf
 .sp .5
@@ -308,7 +308,7 @@ a facsimile machine at the indicated
 If the
 .I destination
 is of the form ``\fIuser\fP@\fIphone-number\fP#\fIsubaddress\fP'' then any
-cover page will show \fIuser\fP as the intended receipient, and the 
+cover page will show \fIuser\fP as the intended recipient, and the
 remote system will be supplied the subaddress value (i.e. for routing) 
 provided that the sending modem and the receiving system support it.
 .TP 12
@@ -317,7 +317,7 @@ Disable use of the Error Correction Mode (\s-1ECM\s+1)
 when transmitting page data. Setting \s-1ECM\s+1 to false
 will limit the maximum speed to 14400 bps.
 By default \*(Fx will attempt to use \s-1ECM\s+1 when both
-the trasmitting modem and receiving device support it.
+the transmitting modem and receiving device support it.
 Note that international calls are sometimes faster when
 \s-1ECM\s+1 is disabled.
 Beware also that some modems and/or facsimile devices do not
@@ -363,7 +363,7 @@ number) in the imaged taglines.\fP
 .B \-G
 Enable usage of any extended resolutions supported by the receiver.
 .B \-G
-supercedes the usage of any
+supersedes the usage of any
 .B \-l
 or
 .B \-m
@@ -416,7 +416,7 @@ Kill the job if it does not complete in the indicated
 .IR time .
 The
 .I time
-is specifed using notation identical to the
+is specified using notation identical to the
 .B \-a
 option.
 Note that the
@@ -684,7 +684,7 @@ reads configuration information from the files
 .BR ${LIBDATA}/sendfax.conf ,
 and
 .BR ~/.hylarc ;
-in that order, with later-read settings superceding any 
+in that order, with later-read settings superseding any
 that may have been previously read.
 Configuration files follow the conventions described in
 .IR hylafax-client (1).
@@ -920,7 +920,7 @@ Set the transmitted page width in millimeters.
 .TP 16
 .B Port
 The network port to contact for service.
-(Eqvuialent to the
+(Equivalent to the
 .B \-h
 option.)
 .TP 16
@@ -979,7 +979,7 @@ encountered on the local machine.
 .B "Could not call server."
 The facsimile server on the remote machine did not respond.
 .PP
-.B "No input data; tranmission aborted."
+.B "No input data; transmission aborted."
 No data was supplied (typically on the standard input).
 No facsimile will be sent.
 .PP

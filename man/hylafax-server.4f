@@ -187,7 +187,7 @@ Each \*(Fx server machine must run the
 .IR faxsetup (${MANNUM1_8})
 command prior to starting up \*(Fx server processes.
 .I faxsetup
-verifys that the \*(Fx software has been installed correctly
+verifies that the \*(Fx software has been installed correctly
 and that any parameters that were specified at the time the software
 was built are appropriate for the system.
 .SH SENDING
@@ -222,7 +222,7 @@ subdirectory.
 If a machine has not been called before,
 \*(Fx assumes the remote machine has the requested capabilities.
 If a capabilities mismatch is detected while sending a facsimile
-\*(Fx will disconnect and reconvert the submitted documents according
+\*(Fx will disconnect and re-convert the submitted documents according
 to the newly discovered capabilities.
 Users may also restrict the session parameters used to format
 documents on a per-job basis.
@@ -583,7 +583,7 @@ program.  If multiple modems share the same priority value,
 then
 .IR faxq (${MANNUM1_8})
 will allocate jobs to them in a round-robin 
-fashon.
+fashion.
 .SH "JOB MANAGEMENT"
 Outbound jobs are considered to be in one of several states
 that reflect their treatment by the central scheduling process.
