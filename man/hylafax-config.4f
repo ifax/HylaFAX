@@ -186,13 +186,13 @@ PageChop\(S1	string	\s-1last\s+1	control automatic truncation of trailing whites
 PageChopThreshold\(S1	float	\s-13.0\s+1	whitespace truncation threshold (inches)
 PCL2FaxCmd\(S1	string	\s-1bin/pcl2fax\s+1	PCL \s-1RIP\s+1 command script
 PercentGoodLines	integer	\s-195\s+1	percentage of good rows for \s-1OK\s+1 page quality
-PollLockWait\(S2	integer	\s-130\s+1	polling interval for lockfile presense/removal (secs)
+PollLockWait\(S2	integer	\s-130\s+1	polling interval for lockfile presence/removal (secs)
 PollModemWait	integer	\s-130\s+1	polling interval when in ``modem wait'' state (secs)
 PollRcvdCmd	string	\s-1bin/pollrcvd\s+1	delivery script for facsimile received by polling
 PostScriptTimeout\(S1	integer	\s-1300\s+1	timeout on \*(Ps interpreter runs (secs)
 PriorityScheduling	boolean	\s-1\fIsee below\fP\s+1	use available priority job scheduling mechanism
 PS2FaxCmd\(S1	string	\s-1bin/ps2fax\s+1	\*(Ps \s-1RIP\s+1 command script
-QualifyCID	obselete	\-	See \s-1DynamicConfig\s+1 and \s-1RejectCall\s+1 for rejecting calls
+QualifyCID	obsolete	\-	See \s-1DynamicConfig\s+1 and \s-1RejectCall\s+1 for rejecting calls
 QualifyPWD	string	\-	file of \s-1PWD\s+1 patterns for qualifying senders
 QualifyTSI	string	\-	file of \s-1TSI\s+1 patterns for qualifying senders
 RecvDataFormat	string	\s-1adaptive\s+1	format for received facsimile data
@@ -285,7 +285,7 @@ Class0Cmd	string	\s-1AT+FCLASS=0\s+1	Class 0: command to enter class 0
 .sp .5
 Class1Cmd	string	\s-1AT+FCLASS=1\s+1	Class 1: command to enter class 1
 Class1Cmd	string	\s-1AT+FCLASS=1.0\s+1	Class 1.0: command to enter class 1
-Class1AdaptRecvCmd	string	\-	Class 1/1.0: comman for adaptive reception support
+Class1AdaptRecvCmd	string	\-	Class 1/1.0: command for adaptive reception support
 Class1ColorJPEGSupport	boolean	\s-1No\s+1	Class 1/1.0: to enable color JPEG fax support
 Class1EnableV34Cmd	string	\-	Class 1/1.0: command to enable V.34-fax support
 Class1ECMSupport	boolean	\s-1Yes\s+1	Class 1/1.0: enable T.30-A ECM support
@@ -475,7 +475,7 @@ extern	use the \fIvgetty\fP application to answer a call
 any	answer a call of any/unknown type
 .fi
 .sp .5
-When a call is not answered succesfully, the server
+When a call is not answered successfully, the server
 advances the rotary to the next specified answering
 technique.
 If
@@ -564,7 +564,7 @@ pages, and to reduce burden they treat an RTN signal as a receipt
 confirmation and proceed to the next page without notifying the sending
 user of the potential problem in readability on the receive-end.  (The
 assumption there being that the receiving user will notify the sending
-user if there actually is a redability problem.)
+user if there actually is a readability problem.)
 
 A setting of ``\s-1RTN\s+1'' is the historic behavior and assumes that 
 an RTN signal will be enough to get the sender to retransmit or be
@@ -587,7 +587,7 @@ image being saved in the same file - if the sender does indeed retransmit
 the unacceptable pages during the same call.
 .TP
 .B BatchLogs\(S1
-When sending or recieving multiple documents (denoted by EOM), this
+When sending or receiving multiple documents (denoted by EOM), this
 value determines if the session logs span the entire batch or, if set
 to no, only contain a single document.
 .TP
@@ -832,7 +832,7 @@ This is commonly used to dynamically alter the local identification
 of systems which use DID/DNIS, but it can also be used to allow different
 modem configurations for different senders.  This program can also set the
 .BR RejectCall
-options to cause the current call to be rejected instaead of answered.
+options to cause the current call to be rejected instead of answered.
 Note that this file must be marked as executable by the faxgetty process.
 .TP
 .B EGettyArgs
@@ -1100,7 +1100,7 @@ Unless all of your fax destinations have multiple fax lines
 using the same fax number per destination then 
 .B MaxConcurrentCalls 
 is probably best left as the default of 1 and exceptions should 
-be accomodated by the
+be accommodated by the
 .B JobControl 
 mechanism.
 .TP
@@ -1362,7 +1362,7 @@ If this is set to true, the current call will not be answered, and will
 be rejected.  This option has no effect if set in the configuration file,
 but when set by the
 .BR DynamicConfig
-program, controls the current call.  This options superseeds the obsolete
+program, controls the current call.  This options supersedes the obsolete
 .BR QualifyCID
 option.
 .TP
@@ -1416,7 +1416,7 @@ Specifies how to react to an RTN signal received from the remote:
 one of ``\s-1Retransmit\s+1'', ``\s-1Giveup\s+1'',``\s-1Ignore\s+1'',
 or ``\s-1Retransmit-Ignore\s+1''.
 
-``\s-1Retransmit\s+1'' assumes that the page is not received succesfully.
+``\s-1Retransmit\s+1'' assumes that the page is not received successfully.
 HylaFAX will make up to two additional attempts to send the page,
 decreasing signalling rate and retraining.  If RTN continues,
 up to 2 additional calls will be placed.  The downside is that if the remote
@@ -1488,7 +1488,7 @@ form the value for this tag.
 1 (0x00001)	Server Operation	queue management and general operation
 2 (0x00002)	\s-1FAX\s+1/\s-1IXO\s+1 Protocol	\s-1T.30\s+1 facsimile protocol or \s-1IXO/TAP\s+1 protocol
 4 (0x00004)	Modem Operations	modem hardware manipulation
-8 (0x00008)	Modem Communications	comands passed between host and modem
+8 (0x00008)	Modem Communications	commands passed between host and modem
 16 (0x00010)	Timeouts	timer operations
 32 (0x00020)	Modem Capabilities	modem capabilities
 64 (0x00040)	\s-1HDLC\s+1 Frames	binary \s-1T.30 HDLC\s+1 frames
@@ -3073,7 +3073,7 @@ program that is used to configure a modem for use with
 retrieved from the modem and comments embedded in the prototype files.
 For Class 1 modems the product ID code returned by the command
 ``\s-1ATI0\s+1''
-and the response from the comannd
+and the response from the command
 ``\s-1ATI3\s+1''
 are used to select a prototype configuration file, while for Class 2
 modems the manufacturer and model as returned by

@@ -172,7 +172,7 @@ and the following ``%'' escape codes are substituted for:
 %l	page length in pixels
 %L	page length in mm
 %s	page size by name
-%F	the directry where \*(Fx filter programs reside
+%F	the directory where \*(Fx filter programs reside
 %<x>	the <x> character (e.g. ``%%'' results in ``%''
 .RE
 .sp .5
