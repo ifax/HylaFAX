@@ -64,7 +64,7 @@ The following messages may appear when server operation tracing
 \fBMODEM: Unknown type "%s" ignored\fP.
 The
 .B ModemType
-configuration paremeter was not recognized.
+configuration parameter was not recognized.
 .PP
 \fBMODEM %s %s/%s\fP.
 This message is generated each time the modem is reset and made ready
@@ -87,7 +87,7 @@ is presented; c.f.
 on the special device file blocked and was timed out.
 This typically is because the system does not support a non-blocking
 mechanism for opening the device and the presented interface requires
-that carrier be present before the open can succeeed.
+that carrier be present before the open can succeed.
 .PP
 \fB%s: setuid root failed (%m)\fP.
 The server process was unable to establish root privileges.
@@ -809,7 +809,7 @@ There are currently eight states:
 .nf
 .ta \w'\s-1MODEMWAIT\s+1    'u
 \fBState\fP	\fBDescription\fP
-\s-1BASE\s+1 	uring startup and initialization
+\s-1BASE\s+1 	during startup and initialization
 \s-1RUNNING\s+1	normal operation
 \s-1MODEMWAIT\s+1	waiting for the modem to come ready after a reset
 \s-1LOCKWAIT\s+1	waiting for a \s-1UUCP\s+1 lockfile to be removed

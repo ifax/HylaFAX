@@ -110,7 +110,7 @@ The Caller Subscriber Identification string of the remote machine
 The local phone number on which the data was received.
 .TP 14
 .B params
-The negotiatated facsimile session parameters
+The negotiated facsimile session parameters
 used for transferring data encoded as described below.
 .TP 14
 .B #pages
@@ -128,7 +128,7 @@ The time spent on the phone; in the format
 This should be the time used by the PTT to calculate usage charges.
 .TP 14
 .B reason
-A string that indicates if any problem occured during the session.
+A string that indicates if any problem occurred during the session.
 .TP 14
 .B CIDName
 The received CIDName value for the session.

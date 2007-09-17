@@ -342,11 +342,11 @@ The number of pages in the facsimile, including
 the cover page, that have been successfully transmitted.
 .TP 14
 .B ntries
-The number of unsucessful attempts that have been made to transmit
+The number of unsuccessful attempts that have been made to transmit
 the current page.
 .TP 14
 .B ndials
-The number of consecutive unsucessful
+The number of consecutive unsuccessful
 attempts to establish carrier with the
 the remote device.
 .TP 14
