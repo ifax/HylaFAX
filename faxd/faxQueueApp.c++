@@ -2236,11 +2236,12 @@ faxQueueApp::rejectJob(Job& job, FaxRequest& req, const Status& r)
 void
 faxQueueApp::blockJob(Job& job, FaxRequest& req, const Status& r)
 {
+    int old_state = job.state;
     job.state = FaxRequest::state_blocked;
     req.result = r;
     updateRequest(req, job);
     traceQueue(job, "%s", r.string());
-    if (req.isNotify(FaxRequest::when_requeued))
+    if (req.isNotify(FaxRequest::when_requeued) && old_state != FaxRequest::state_blocked)
 	notifySender(job, Job::blocked); 
     Trigger::post(Trigger::JOB_BLOCKED, job);
 }
