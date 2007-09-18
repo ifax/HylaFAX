@@ -1,0 +1,28 @@
+HylaFAX CVS
+
+Overview
+-----------------------------------------------------------------------------
+  HylaFAX CVS doesn't introduce any significant changes from 4.4 at
+  this time.
+
+Upgrade to CVS from previous 4.4 releases
+-----------------------------------------------------------------------------
+  There are no particular differences to note yet.
+
+Changes since 4.4 branched off
+-----------------------------------------------------------------------------
+* faxmail: don't submit an empty postscript file if not formatting was
+  done (17 Aug 2007)
+* faxmail: fix suppression of empty postcript formatting file (18 Aug 2007)
+* fix status/statuscode parsing of the job qfile which showed artifacts
+  in the notify emails (20 Aug 2007)
+* faxaddmodem doesn't fuser -k by default, allowing iaxmodem to be
+  detected by faxaddmodem (20 Aug 2007)
+* Fix faxq handling of large formatter output (21 Aug 2007)
+* faxmail: Fixed RFC 822 comment handling (14 Sep 2007, 21 Aug 2007)
+* Fix configure GCC version detection for Gentoo (22 Aug 2007)
+* hfaxd: fix double 550 error code on access permisions (14 Sep 2007)
+* faxq: Fixed multiple trigger issues (14 Sep 2007)
+* faxq: Suppress blocked notifies if job is already blocked (7 Sep 2007)
+* faxq: redoce copius scheduler logging (7 Sep 2007)
+* man pages: fix mulitple typos (17 Sep 2007)
