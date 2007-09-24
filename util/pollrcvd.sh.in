@@ -114,11 +114,6 @@ parseFaxInfo $FILE
 
 MIMEBOUNDARY="NextPart$$"
 
-if [ -n "$MSG" ]; then
-    SESSION_LOG=`cat log/c$COMMID`
-    export SESSION_LOG
-fi
-
 export FILE
 export COMMID
 export DEVICE

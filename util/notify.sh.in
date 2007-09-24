@@ -97,12 +97,6 @@ SetupPrivateTmp
 # operations may want to know about the details of the fax
 parseQfile  
 
-# We need a few special things
-## - SESSION_LOG
-if [ -f "log/c$commid" ]; then
-	SESSION_LOG="`cat log/c$commid | $GREP -v -e '-- data'`"
-fi
-
 if [ "$doneop" = "default" ] ; then
     doneop="remove"
 fi
@@ -120,8 +114,9 @@ else
     JOBINFO="$jobid"
 fi
 
+COMMID=$commid
 SENDTO=$mailaddr
-export SENDTO FROMADDR TOADDR SESSION_LOG DESTINATION WHY JTIME NEXT JOBINFO
+export COMMID SENDTO FROMADDR TOADDR DESTINATION WHY JTIME NEXT JOBINFO
 
 #
 # Apply customizations.  All customizable variables should
