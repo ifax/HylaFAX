@@ -377,7 +377,7 @@ template ()
 
 	}
 
-	function template_line (line,   tmp,var)
+	function template_line (line,   tmp,var,p)
         {
                 while (match(line, /[$][A-Za-z0-9_]+/))
                 {
@@ -390,7 +390,18 @@ template ()
 			{
 				tmp = substr(line, 1, RSTART-1);
 				var = substr(line, RSTART+1, RLENGTH-1);
-				printf "%s%s", tmp, ENVIRON[var];
+                                if (var == "SESSION_LOG")
+                                {
+                                        p = "log/c" ENVIRON["COMMID"];
+                                        while ((getline buf < p) > 0)
+                                        {
+                                                print buf;
+                                        }
+                                        close(p);
+                                } else
+                                {
+                                        printf "%s%s", tmp, ENVIRON[var];
+                                }
 			}
 			line = substr(line,RSTART+RLENGTH)
                 }
