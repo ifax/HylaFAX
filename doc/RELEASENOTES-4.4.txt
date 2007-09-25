@@ -107,9 +107,10 @@ CHANGES since 4.4.1
 -----------------------------------------------------------------------------
 * Fix configure GCC for broken Gentoo fix (23 Aug)
 * faxq: Suppress blocked notifies if job is already blocked (7 Sep 2007)
-* faxq: redoce copius scheduler logging (7 Sep 2007)
+* faxq: reduce copius scheduler logging (7 Sep 2007)
 * faxmail: fix suppression of empty postcript formatting file (10 Sep 2007)
 * faxmail: Fixed RFC 822 comment segfaults (14 Sep 2007)
 * faxq: Fixed multiple trigger issues (14 Sep 2007)
 * hfaxd: fix double 550 error code on access permisions (14 Sep 2007)
 * man pages: fix mulitple typos (17 Sep 2007)
+* Fix large SESSION_LOG variable causing bash problems (24 Sep 2007)
