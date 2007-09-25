@@ -1,6 +1,7 @@
 #	$Id$	
 
 Changes since HylaFAX 4.3.5
+* Fix large SESSION_LOG variable causing bash problems (24 Sep 2007):w
 * Fix man page typos (17 Sep 2007)
 * Fix hfaxd extra 550 Error message (14 Sep 2007)
 * Fix RFC822 comments MIME-Versio header for faxmail (14 Sep 2007)
