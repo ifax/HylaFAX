@@ -29,3 +29,4 @@ Changes since 4.4 branched off
 * Disable MMR ond Digis (18 Sep 2007)
 * Class2: Fix EOFB bit order when usen LSB2MSB (18 Sep 2007)
 * Add prototype for ZyXEL Omni 56K Plus
+* Class1: Imporve handling of DCN in Phase B (18 Sep 2007)
