@@ -901,7 +901,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 			return (false);
 		    }
 		    signalRcvd = 0;
-		    if (params.ec == EC_DISABLE && !getRecvEOLCount() && (Sys::now() - lastMCF < 4)) {
+		    if (params.ec == EC_DISABLE && !getRecvEOLCount() && (Sys::now() - lastMCF < 9)) {
 			/*
 			 * We last transmitted MCF a very, very short time ago, received no image data
 			 * since then, and now we're seeing a PPM again.  In non-ECM mode the chances of 
