@@ -263,7 +263,7 @@ again:
 	    eresult = callStatus[cs];
 	    return (CALLTYPE_ERROR);
 	}
-    } while ((unsigned) Sys::now()-start < conf.answerResponseTimeout);
+    } while ((unsigned) ((Sys::now()-start)*1000) < conf.answerResponseTimeout);
     eresult = Status(12, "Ring detected without successful handshake");
     return (CALLTYPE_ERROR);
 }
