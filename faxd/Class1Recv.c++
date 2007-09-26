@@ -713,7 +713,17 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 	    for (u_int i = 0; i < frameRcvd.length(); i++) frame.put(frameRcvd[i]);
 	    frame.setOK(true);
 	} else {
-	    ppmrcvd = recvFrame(frame, FCF_RCVR, timer);
+	    gotCONNECT = false;
+	    u_short recvFrameCount = 0;
+	    do {
+		/*
+		 * Some modems will report CONNECT erroniously on high-speed Phase C data.
+		 * Then they will time-out on HDLC data presentation instead of dumping
+		 * garbage or quickly resulting ERROR.  So we give instances where CONNECT
+		 * occurs a bit more tolerance here...
+		 */
+		ppmrcvd = recvFrame(frame, FCF_RCVR, timer);
+	    } while (!ppmrcvd && gotCONNECT && wasTimeout() && !gotEOT && ++recvFrameCount < 3);
 	    if (ppmrcvd) lastPPM = frame.getFCF();
 	}
 	/*
