@@ -155,7 +155,7 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, Status& eresult, u_
 
     bool framerecvd = false;
     if (batched & BATCH_FIRST)			// receive carrier raised
-	framerecvd = recvFrame(frame, FCF_SNDR, conf.t2Timer, true);
+	framerecvd = recvFrame(frame, FCF_SNDR, conf.t1Timer, true);	// T1 is used here
     else {					// receive carrier not raised
 	// We're not really switching directions of communication, but we don't want
 	// to start listening for prologue frames until we're sure that the receiver 
@@ -220,7 +220,7 @@ Class1Modem::getPrologue(Class2Params& params, bool& hasDoc, Status& eresult, u_
 	if ((unsigned) Sys::now()-start >= t1)
 	    break;
 	if (!useV34) (void) switchingPause(eresult);
-	framerecvd = recvFrame(frame, FCF_SNDR, conf.t2Timer);
+	framerecvd = recvFrame(frame, FCF_SNDR, (Sys::now()-start)*1000);	// timer here is T1
     }
     eresult = Status(126, "No receiver protocol (T.30 T1 timeout)");
     protoTrace(eresult.string());
