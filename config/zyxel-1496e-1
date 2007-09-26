@@ -37,6 +37,8 @@
 # CONFIG:CLASS1:1496:.*:.*: Manufacturer=ZyXEL Model=U1496
 # CONFIG:CLASS1:33603:.*:.*: Manufacturer=ZyXEL Model=U336S
 # CONFIG:CLASS1:1503:.*:.*: Manufacturer=ZyXEL Model=U90E
+# CONFIG:CLASS1:1500:.*:.*: Manufacturer=ZyXEL Model="Omni56K Plus"
+# CONFIG:CLASS1:.*:ZyXEL.*:.*: Manufacturer=ZyXEL Model=Unspecified
 #
 # BEGIN-SERVER
 # END-SERVER

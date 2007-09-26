@@ -28,3 +28,4 @@ Changes since 4.4 branched off
 * man pages: fix mulitple typos (17 Sep 2007)
 * Disable MMR ond Digis (18 Sep 2007)
 * Class2: Fix EOFB bit order when usen LSB2MSB (18 Sep 2007)
+* Add prototype for ZyXEL Omni 56K Plus
