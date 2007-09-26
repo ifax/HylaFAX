@@ -1385,7 +1385,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, Status& eres
 		    bool gotnocarrier = false;
 		    do {
 			gotnocarrier = waitFor(AT_NOCARRIER, 2*1000);
-		    } while (!gotnocarrier && Sys::now() < (nocarrierstart + 5));
+		    } while (!gotnocarrier && lastResponse != AT_EMPTYLINE && Sys::now() < (nocarrierstart + 5));
 		}
 		bool gotpps = false;
 		HDLCFrame ppsframe(conf.class1FrameOverhead);
