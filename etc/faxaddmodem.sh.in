@@ -860,6 +860,7 @@ if [ -z "$SPEED" ]; then
 	echo "Unable to deduce DTE-DCE speed; check that you are using the"
 	echo "correct device and/or that your modem is setup properly.  If"
 	echo "all else fails, try the -s option to lock the speed."
+	@RM@ -f $JUNK; @RM@ -fr $TMPDIR
 	exit 1
     fi
     echo " OK."
