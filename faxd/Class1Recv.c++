@@ -1251,6 +1251,7 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, Status& eres
 				    continue;
 				case FCF_MCF:
 				case FCF_CFR:
+				case FCF_CTR:
 				    if ((rtncframe[2] & 0x80) == FCF_RCVR) {
 					/*
 					 * Echo on the channel may be so lagged that we're hearing
