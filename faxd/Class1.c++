@@ -1145,9 +1145,11 @@ Class1Modem::endECMBlock()
 
     int c = getLastByte();		// some erroniously re-use bits	
     time_t start = Sys::now();
+    setTimeout(false);
     do {
 	if ((unsigned) Sys::now()-start >= 60) {	// 60 seconds of garbage after RCP is too much
 	    protoTrace("Timeout waiting for DLE+ETX");
+	    setTimeout(true);
 	    return false;
 	}
 	if (c == DLE) {

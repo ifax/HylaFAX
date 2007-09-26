@@ -1401,7 +1401,15 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, Status& eres
 			return (false);
 		    }
 		} else {
-		    endECMBlock();				// wait for <DLE><ETX>
+		    if (!endECMBlock()) {				// wait for <DLE><ETX>
+			if (wasTimeout()) {
+			    abortReceive();
+			    eresult = Status(154, "Timeout waiting for Phase C carrier drop");
+			    protoTrace("%s", eresult.string());
+			    abortPageECMRecv(tif, params, block, fcount, seq, pagedataseen);
+			    return (false);
+			}
+		    }
 		}
 		if (!useV34) {
 		    // wait for message carrier to drop

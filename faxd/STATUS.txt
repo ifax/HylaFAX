@@ -75,6 +75,7 @@
 151      : No response to EOP repeated 3 tries
 152      : No response to EOM repeated 3 tries
 153      : No response to PPM repeated 3 tries
+154      : Timeout waiting for Phase C carrier drop
 
 200-299 : Class 2-specific protocol failure
 ===============================================================================
