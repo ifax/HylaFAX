@@ -219,7 +219,7 @@ protected:
     bool doQuery(const fxStr& queryCmd, fxStr& result, long ms = 30*1000);
 // dial/answer interactions with derived classes
     virtual const AnswerMsg* findAnswer(const char* s);
-    virtual CallType answerResponse(Status& eresult);
+    virtual CallType answerResponse(const fxStr&, Status& eresult);
     virtual CallStatus dialResponse(Status& eresult) = 0;
     virtual bool isNoise(const char*);
 // miscellaneous

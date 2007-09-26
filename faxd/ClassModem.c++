@@ -223,17 +223,28 @@ ClassModem::findAnswer(const char* s)
  * Deduce connection kind: fax, data, or voice.
  */
 CallType
-ClassModem::answerResponse(Status& eresult)
+ClassModem::answerResponse(const fxStr& answerCmd, Status& eresult)
 {
     CallStatus cs = FAILURE;
     ATResponse r;
     time_t start = Sys::now();
+    u_short morerings = 0;
 
     do {
 	r = atResponse(rbuf, conf.answerResponseTimeout);
 again:
 	if (r == AT_TIMEOUT || r == AT_DLEEOT || r == AT_NOCARRIER)
 	    break;
+	if (r == AT_RING && ++morerings > 1) {
+	    /*
+	     * We answered already.  If we see RING once it could
+	     * be glare.  If we see it yet again, then the modem
+	     * apparently did not see or respond to our first
+	     * answerCmd and we've got to try it again.
+	     */
+	    atCmd(answerCmd, AT_NOTHING);
+	    morerings = 0;
+	}
 	const AnswerMsg* am = findAnswer(rbuf);
 	if (am != NULL) {
 	    if (am->expect != AT_NOTHING && conf.waitForConnect) {
@@ -290,7 +301,7 @@ ClassModem::answerCall(AnswerType atype, Status& eresult, const char* number)
     if (answerCmd == "")
 	answerCmd = conf.answerAnyCmd;
     if (atCmd(answerCmd, AT_NOTHING)) {
-	ctype = answerResponse(eresult);
+	ctype = answerResponse(answerCmd, eresult);
 	if (atype == ANSTYPE_DIAL) ctype = CALLTYPE_FAX;	// force as fax
 	if (ctype == CALLTYPE_UNKNOWN) {
 	    /*
