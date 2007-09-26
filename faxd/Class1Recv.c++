@@ -226,6 +226,9 @@ Class1Modem::recvIdentification(
 				    transmitFrame(signalSent);
 				    traceFCF("RECV send", (u_char) signalSent[2]);
 				    break;
+				case FCF_FTT:
+				    /* probably just our own echo */
+				    break;
 				default:	// XXX DTC/DIS not handled
 				    eresult = Status(104, "RSPREC invalid response received");
 				    break;
@@ -962,6 +965,11 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 		if (!useV34 && !switchingPause(eresult)) return (false);
 		transmitFrame(signalSent);
 		traceFCF("RECV send", (u_char) signalSent[2]);
+		break;
+	    case FCF_CFR:
+		/* It's probably just our own echo. */
+		messageReceived = false;
+		signalRcvd = 0;
 		break;
 	    case FCF_DCN:			// DCN
 		protoTrace("RECV recv DCN");

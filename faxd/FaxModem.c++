@@ -603,6 +603,9 @@ FaxModem::traceFCF(const char* dir, u_int fcf)
 	case FCF_CFR:
 	    fcfname = "CFR (confirmation to receive)";
 	    break;
+	case FCF_FTT:
+	    fcfname = "FTT (failure to train)";
+	    break;
 	case FCF_CRP:
 	    fcfname = "CRP (command repeat)";
 	    break;
