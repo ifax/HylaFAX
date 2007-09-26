@@ -934,6 +934,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 			 */
 			(void) transmitFrame(FCF_MCF|FCF_RCVR);
 			traceFCF("RECV send", FCF_MCF);
+			lastMCF = Sys::now();
 			messageReceived = (lastPPM != FCF_MPS);	// expect Phase C if MPS
 		    } else {
 			u_int rtnfcf = FCF_RTN;
