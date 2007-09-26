@@ -155,6 +155,7 @@ ClassModem::isNoise(const char* s)
 	"RINGING",	// ZyXEL
 	"+FHR:",	// Intel 144e
 	"+F34:",	// Class 1.0 V.34 report
+	"+FDB:",	// DCE debugging
 	"MESSAGE-WAITING",	// voice-mail waiting, Conexant
     };
 #define	NNOISE	(sizeof (noiseMsgs) / sizeof (noiseMsgs[0]))
@@ -461,14 +462,14 @@ ClassModem::getModemLine(char buf[], u_int bufSize, long ms)
     return (n);
 }
 int ClassModem::getModemBit(long ms)  { return server.getModemBit(ms); }
-int ClassModem::getModemChar(long ms) { return server.getModemChar(ms); }
+int ClassModem::getModemChar(long ms, bool doquery) { return server.getModemChar(ms, doquery); }
 int ClassModem::getModemDataChar()    { return server.getModemChar(dataTimeout); }
 int ClassModem::getLastByte()         { return server.getLastByte(); }
 bool ClassModem::didBlockEnd()        { return server.didBlockEnd(); }
 void ClassModem::resetBlock()         { server.resetBlock(); }
 
 bool
-ClassModem::putModemDLEData(const u_char* data, u_int cc, const u_char* bitrev, long ms)
+ClassModem::putModemDLEData(const u_char* data, u_int cc, const u_char* bitrev, long ms, bool doquery)
 {
     u_char dlebuf[2*1024];
     while (cc > 0) {
@@ -488,6 +489,32 @@ ClassModem::putModemDLEData(const u_char* data, u_int cc, const u_char* bitrev, 
 	    return (false);
 	data += n;
 	cc -= n;
+	/*
+	 * Fax is half-duplex.  Thus, we shouldn't typically need to read
+	 * data from the modem while we are transmitting.  However, Phase C
+	 * can be long, and things can go wrong, and it will be nice to
+	 * see the timing of any messages that will come from the modem,
+	 * instead of letting them buffer.  Furthermore, advanced Class 2
+	 * debugging will send us messages during Phase C.  So in those
+	 * cases when it will be useful, we query the modem during transmits.
+	 *
+	 * In the cases where things do go wrong, we'll need to begin
+	 * building-in the intelligence to handle that here.  But we have
+	 * to wait and see what turns up in order to do that.
+	 */
+	if (doquery) {
+	    int c;
+	    fxStr dbdata;
+	    do {
+	        c = getModemChar(0, true);
+		if (c != EOF && c != '\0' && c != '\r' && c != '\n')
+		    dbdata.append(c);
+		else if (dbdata.length()) {
+		    protoTrace("DCE DEBUG: %s", (const char*) dbdata);
+		    dbdata = "";
+		}
+	    } while (c != EOF);
+	}
     }
     return (true);
 }

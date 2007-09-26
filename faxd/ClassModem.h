@@ -267,10 +267,10 @@ public:
     bool	putModem(void* data, int n, long ms = 0);
     bool	putModemData(void* data, int n);
     bool	putModemDLEData(const u_char* data, u_int,
-		    const u_char* brev, long ms);
+		    const u_char* brev, long ms, bool doquery = false);
     bool	putModemLine(const char* cp, long ms = 0);
     int		getModemBit(long ms = 0);
-    int		getModemChar(long ms = 0);
+    int		getModemChar(long ms = 0, bool doquery = false);
     int		getModemDataChar();
     int		getLastByte();
     bool	didBlockEnd();

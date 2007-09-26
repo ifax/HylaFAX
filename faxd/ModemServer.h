@@ -139,7 +139,7 @@ protected:
     void	timerExpired(long, long);
     void	sendDLEETX();
     int		getModemLine(char buf[], u_int bufSize, long ms = 0);
-    int		getModemChar(long ms = 0);
+    int		getModemChar(long ms = 0, bool isquery = false);
     int		getModemBit(long ms = 0);
     int		getLastByte();
     bool	didBlockEnd();

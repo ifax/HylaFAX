@@ -236,6 +236,7 @@ public:
     fxStr	tagLineFontFile;	// font file for imaging tag lines
     u_int	recvDataFormat;		// received facsimile data format
     bool	useJobTagLine;		// Use Job tagline or use conf taglineformat
+    bool	doPhaseCDebug;		// Query modem during Phase C for debugging info.
 
     RTNHandling rtnHandling;            // RTN signal handling method
     BadPageHandling badPageHandling;	// bad page (received) handling method

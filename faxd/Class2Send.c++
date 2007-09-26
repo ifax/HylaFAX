@@ -503,7 +503,7 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	}
 
 	beginTimedTransfer();
-	rc = putModemDLEData(dp, (u_int) totdata, bitrev, getDataTimeout());
+	rc = putModemDLEData(dp, (u_int) totdata, bitrev, getDataTimeout(), conf.doPhaseCDebug);
 	endTimedTransfer();
 	protoTrace("SENT %u bytes of data", totdata);
     }

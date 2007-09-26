@@ -273,6 +273,27 @@ Class20Modem::nextByte()
     }
     if (b == DLE) {
 	switch (b = getModemDataChar()) {
+	    case 0x01:			// +FDB=1 support
+		{
+		    fxStr dbdata;
+		    bool notdone = true;
+		    do {
+			b = getModemDataChar();
+			if (b == DLE) {
+			    b = getModemDataChar();
+			    if (b == 0x04) {
+				notdone = false;
+				protoTrace("DCE DEBUG: %s", (const char*) dbdata);
+			    } else {
+				dbdata.append(DLE);
+			    }
+			}
+			if (b != '\0' && b != '\r' && b != '\n')
+			    dbdata.append(b);
+		    } while (notdone);
+		    b = nextByte();
+		}
+	    break;
 	case EOF: raiseEOF();
 	case ETX: raiseRTC();		// RTC
 	case DLE: break;		// <DLE><DLE> -> <DLE>

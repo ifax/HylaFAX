@@ -241,6 +241,7 @@ ModemClassQueryCmd	string	\s-1AT+FCLASS=?\s+1	command for querying modem service
 ModemCommaPauseTimeCmd	string	\s-1ATS8=2\s+1	command for setting time to pause for ``,'' in dialing string
 ModemDialCmd	string	\s-1ATDT%s\s+1	command for dialing (%s for number to dial)
 ModemDialResponseTimeout	integer	\s-1180000\s+1	dialing command timeout (ms)
+ModemDoPhaseCDebug	boolean	\s-1No\s+1	query modem responses during Phase C transmit
 ModemDTRDropDelay	integer	\s-175\s+1	delay (ms) between DTR OFF and DTR ON
 ModemEchoOffCmd	string	\s-1ATE0\s+1	command for disabling command echo
 ModemFlowControl	string	\s-1XONXOFF\s+1	\s-1DTE-DCE\s+1 flow control scheme
@@ -2005,6 +2006,14 @@ modem through the
 parameter.
 This additional server-based timeout is provided to guard against
 modems that can ``lock up'' when dialing the telephone.
+.TP
+.B ModemDoPhaseCDebug
+Whether or not to query the modem for responses during image data
+transmission.  Normally the modem should not produce any responses
+during Phase C data transmission.  However, in some debugging
+scenarios (i.e. some Class 2.1 modems may show debugging information)
+it may be appropriate to query the modem for responses during
+the data transmission.
 .TP
 .B ModemDTRDropDelay
 The time, in milliseconds, to pause between placing

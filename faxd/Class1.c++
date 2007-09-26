@@ -530,7 +530,7 @@ bool
 Class1Modem::sendClass1Data(const u_char* data, u_int cc,
     const u_char* bitrev, bool eod, long ms)
 {
-    bool ok = putModemDLEData(data, cc, bitrev, ms);
+    bool ok = putModemDLEData(data, cc, bitrev, ms, conf.doPhaseCDebug);
     if (eod || abortRequested()) {
 	u_char buf[2];
 	buf[0] = DLE;
