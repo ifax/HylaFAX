@@ -750,6 +750,11 @@ ClassModem::reset(long ms)
     if ( true != atCmd(conf.noAutoAnswerCmd, AT_OK, ms) ) {
         return false;
     }
+    if (conf.noAutoAnswerCmdDelay) {
+	/* Some modems do funny things after ATS0=0. */
+	pause(conf.noAutoAnswerCmdDelay);
+	flushModemInput();
+    }
     if ( true != atCmd(conf.echoOffCmd, AT_OK, ms) ) {
         return false;
     }

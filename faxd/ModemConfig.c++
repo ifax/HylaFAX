@@ -201,6 +201,7 @@ static struct {
 { "modempagedonetimeout",	&ModemConfig::pageDoneTimeout,	     3*60*1000},
 { "modemringsbeforeresponse",	&ModemConfig::ringsBeforeResponse,   0 },
 { "modemsoftresetcmddelay",	&ModemConfig::softResetCmdDelay,     3000 },
+{ "modemnoautoanswercmddelay",	&ModemConfig::noAutoAnswerCmdDelay,  0 },
 { "class1tcfrecvtimeout",	&ModemConfig::class1TCFRecvTimeout,  4500 },
 { "class1recvabortok",		&ModemConfig::class1RecvAbortOK,     200 },
 { "class1rmpersistence",	&ModemConfig::class1RMPersistence,   2 },

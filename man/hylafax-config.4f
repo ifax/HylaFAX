@@ -251,6 +251,7 @@ ModemMinSpeed	string	\s-12400\s+1	minimum acceptable transmit speed
 ModemMfrQueryCmd	string	\-	command for querying modem manufacturer
 ModemModelQueryCmd	string	\-	command for querying modem model
 ModemNoAutoAnswerCmd	string	\s-1ATS0=0\s+1	command for disabling auto-answer
+ModemNoAutoAnswerCmdDelay	integer	\s-10\s+1	time, in ms, to pause after a disabling auto-answer
 ModemNoFlowCmd	string	\-	command for disabling hardware flow control between \s-1DTE\s+1 and \s-1DCE\s+1
 ModemOnHookCmd	string	\s-1ATH0\s+1	command for placing phone ``on hook''
 ModemPageDoneTimeout	integer	\s-1180000\s+1	page send/receive timeout (ms)
@@ -2120,6 +2121,12 @@ is issued to the modem.
 .B ModemNoAutoAnswerCmd
 The command to stop the modem from automatically
 answering when the phone rings.
+.TP
+.B ModemNoAutoAnswerCmdDelay
+The time, in milliseconds, to pause after receiving the OK following
+.B ModemNoAutoAnswerCmd
+before any further commands are sent to the modem.  All input from
+the modem is flushed after pausing.
 .TP
 .B ModemNoFlowCmd
 The command to disable flow control between
