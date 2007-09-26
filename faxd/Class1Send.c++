@@ -849,7 +849,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, Status& eresult)
 			 * through.
 			 */
 			if (curcap->mod == V17 && attempt == 1 && tries == 3) hadV17Trouble = true;
-			eresult = Status(103, "RSPREC error/got DCN (sender abort)");
+			eresult = Status(103, "RSPREC error/got DCN (receiver abort)");
 		    } else
 			eresult = Status(104, "RSPREC invalid response received");
 		    goto done;
