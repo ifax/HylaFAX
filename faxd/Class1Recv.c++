@@ -860,6 +860,12 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 			    TIFFWriteDirectory(tif);
 			}
 			if (eresult.value() == 0) {	// confirm only if there was no error
+			    if (pageGood) {
+				traceFCF("RECV send", sendERR ? FCF_ERR : FCF_MCF);
+				lastMCF = Sys::now();
+			    } else
+				traceFCF("RECV send", FCF_RTN);
+
 			    if (lastPPM == FCF_MPS) {
 				/*
 				 * Raise the HDLC transmission carrier but do not
@@ -874,12 +880,14 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 			    } else {
 				(void) transmitFrame((sendERR ? FCF_ERR : FCF_MCF)|FCF_RCVR);
 				lastMCF = Sys::now();
+				if (lastPPM == FCF_EOP) {
+				    /*
+				     * Because there are a couple of notifications that occur after this
+				     * things can hang and we can miss hearing DCN.  So we do it now.
+				     */
+				    recvdDCN = recvEnd(eresult);
+				}
 			    }
-			    if (pageGood) {
-				traceFCF("RECV send", sendERR ? FCF_ERR : FCF_MCF);
-				lastMCF = Sys::now();
-			    } else
-				traceFCF("RECV send", FCF_RTN);
 			}
 			/*
 			 * Reset state so that the next call looks
