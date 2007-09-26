@@ -727,7 +727,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 			    messageReceived = true;
 			    signalRcvd = FCF_DCN;
 			    lastResponse = AT_NOTHING;
-			    break;
+			    return (false);
 			}
 			if (!messageReceived) {
 			    trainok = recvTraining();
