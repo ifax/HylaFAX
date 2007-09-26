@@ -21,3 +21,9 @@ ModemResetCmds:         AT#CID=14
 # controller and bypasses the "channel pool" approach.
 #
 #ModemResetCmds:         AT#CID=14+iQ=a1
+
+#
+# These should match the modem responses for DID and Caller*ID.
+#
+CallIDPattern:		"DAD: "
+CallIDPattern:		"CID: "
