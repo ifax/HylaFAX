@@ -1887,6 +1887,10 @@ Class1Modem::recvEnd(Status& eresult)
 void
 Class1Modem::recvAbort()
 {
-    if (!recvdDCN && !gotEOT) transmitFrame(FCF_DCN|FCF_RCVR);
+    if (!recvdDCN && !gotEOT) {
+	Status eresult;
+	switchingPause(eresult);
+	transmitFrame(FCF_DCN|FCF_RCVR);
+    }
     recvdDCN = true;				// don't hang around in recvEnd
 }
