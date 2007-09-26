@@ -1832,8 +1832,8 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 		    break;
 	    }
 	    dp = convertPhaseCData(dp, totdata, fillorder, params, newparams, rowsperstrip);
+	    params = newparams;		// revert back
 	}
-	params = newparams;		// revert back
 
         /*
          * correct broken Phase C (T.4/T.6) data if neccessary 
