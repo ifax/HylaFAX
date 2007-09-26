@@ -957,6 +957,12 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 		    }
 		}
 		break;
+	    case FCF_CRP:
+		// command repeat... just repeat whatever we last sent
+		if (!useV34 && !switchingPause(eresult)) return (false);
+		transmitFrame(signalSent);
+		traceFCF("RECV send", (u_char) signalSent[2]);
+		break;
 	    case FCF_DCN:			// DCN
 		protoTrace("RECV recv DCN");
 		eresult = Status(108, "COMREC received DCN (sender abort)");
