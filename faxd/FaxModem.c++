@@ -645,6 +645,9 @@ FaxModem::traceFCF(const char* dir, u_int fcf)
 	case FCF_NSF:
 	    fcfname = "NSF (non-standard facilities)";
 	    break;
+	case FCF_NSS:
+	    fcfname = "NSS (non-standard setup)";
+	    break;
 	case FCF_MCF:
 	    fcfname = "MCF (message confirmation)";
 	    break;
@@ -668,6 +671,12 @@ FaxModem::traceFCF(const char* dir, u_int fcf)
 	    break;
 	case FCF_PPR:
 	    fcfname = "PPR (partial page request)";
+	    break;
+	case FCF_SUB:
+	    fcfname = "SUB (subaddress)";
+	    break;
+	case FCF_PWD:
+	    fcfname = "PWD (password)";
 	    break;
 	default:
 	    protoTrace("unknown FCF 0x%X", fcf);
