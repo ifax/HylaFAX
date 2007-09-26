@@ -534,6 +534,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
     gotCONNECT = true;
 
     do {
+	ATResponse rmResponse = AT_NOTHING;
 	long timer = conf.t2Timer;
 	if (!messageReceived) {
 	    if (sendCFR ) {
@@ -543,7 +544,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 	    pageGood = pageStarted = false;
 	    resetLineCounts();		// in case we don't make it to initializeDecoder
 	    recvSetupTIFF(tif, group3opts, FILLORDER_LSB2MSB, id);
-	    ATResponse rmResponse = AT_NOTHING;
+	    rmResponse = AT_NOTHING;
 	    if (params.ec != EC_DISABLE || useV34) {
 		pageGood = recvPageData(tif, eresult);
 		messageReceived = true;
@@ -901,7 +902,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 			return (false);
 		    }
 		    signalRcvd = 0;
-		    if (params.ec == EC_DISABLE && !getRecvEOLCount() && (Sys::now() - lastMCF < 9)) {
+		    if (params.ec == EC_DISABLE && rmResponse != AT_CONNECT && !getRecvEOLCount() && (Sys::now() - lastMCF < 9)) {
 			/*
 			 * We last transmitted MCF a very, very short time ago, received no image data
 			 * since then, and now we're seeing a PPM again.  In non-ECM mode the chances of 
@@ -911,7 +912,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 			 */
 			(void) transmitFrame(FCF_MCF|FCF_RCVR);
 			traceFCF("RECV send", FCF_MCF);
-			messageReceived = false;	// expect Phase C
+			messageReceived = (lastPPM != FCF_MPS);	// expect Phase C if MPS
 		    } else {
 			u_int rtnfcf = FCF_RTN;
 			if (!getRecvEOLCount() || conf.badPageHandling == FaxModem::BADPAGE_DCN) {
