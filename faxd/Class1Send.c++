@@ -100,11 +100,13 @@ Class1Modem::dialResponse(Status& eresult)
 	     * accept three of these in case the modem switches carriers
 	     * several times (haven't yet encountered anyone that does).
 	     */
+	case AT_DLEETX:				// silly modem
 	    if (++ntrys == 3) {
 		eresult = Status(11, "Ringback detected, no answer without CED"); // XXX
 		protoTrace(eresult.string());
 		return (NOFCON);
 	    }
+	    r = AT_OTHER;
 	    break;
 	}
     } while (r == AT_OTHER && isNoise(rbuf));

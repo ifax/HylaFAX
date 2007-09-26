@@ -157,6 +157,7 @@ ClassModem::isNoise(const char* s)
 	"+F34:",	// Class 1.0 V.34 report
 	"+FDB:",	// DCE debugging
 	"MESSAGE-WAITING",	// voice-mail waiting, Conexant
+	"\020\003",	// DLE+ETX ???
     };
 #define	NNOISE	(sizeof (noiseMsgs) / sizeof (noiseMsgs[0]))
 
