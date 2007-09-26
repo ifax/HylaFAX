@@ -940,6 +940,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 			     * all, then sending RTN at all risks confirming the non-page to RTN-confused
 			     * senders, which risk is far worse than just simply hanging up.
 			     */
+			    eresult = Status(999, "PPM received with no image data.  To continue risks receipt confirmation.");
 			    rtnfcf = FCF_DCN;
 			}
 			(void) transmitFrame(rtnfcf|FCF_RCVR);
