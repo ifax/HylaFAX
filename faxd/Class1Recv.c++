@@ -1664,7 +1664,15 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, Status& eres
 		    return (false);
 		}
 	    } else {
-		if (wasTimeout()) abortReceive();
+		if (wasTimeout()) {
+		    abortReceive();
+		    if (!useV34) {
+			// must now await V.21 signalling
+			long wait = BIT(curcap->br) & BR_ALL ? 273066 / (curcap->br+1) : conf.t2Timer;
+			gotRTNC = atCmd(rhCmd, AT_CONNECT, wait);
+			if (!gotRTNC) syncattempts = 21;
+		    }
+		}
 		if (syncattempts++ > 20) {
 		    eresult = Status(120, "Cannot synchronize ECM frame reception.");
 		    abortPageECMRecv(tif, params, block, fcount, seq, true);
