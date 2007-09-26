@@ -32,5 +32,5 @@ Class2CQCmd:		AT+FCQ=2,2
 # CallIDPattern:	"NMBR="
 # CallIDPattern:	"NAME="
 
-# unfortunately, HylaFAX can't currently receive in MMR
-ModemAnswerCmd:		AT+FCC=,,,,1;A
+# MMR is problematic for the Digis.
+Class2DCCQueryCmd: "!(0-1),(0-5),(0-2),(0-2),(0-1),(0-1),0,(0-7)"
