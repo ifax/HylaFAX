@@ -18,6 +18,18 @@ ModemNoFlowCmd:		AT&K0
 ModemSoftFlowCmd:	AT&K4
 ModemHardFlowCmd:	AT&K3
 
+#
+# Make sure the modem gives us Caller*ID in a legible way.
+#
+ModemResetCmds:         AT#CID=14
+
+#
+# Eicon recommends initializing with AT+iQ=a1 where "1" is
+# the controller number.  This command binds the tty to that
+# controller and bypasses the "channel pool" approach.
+#
+#ModemResetCmds:         AT#CID=14+iQ=a1
+
 Class2APQueryCmd:	none
 Class2SPLCmd:		none
 Class2TBCCmd:		none
