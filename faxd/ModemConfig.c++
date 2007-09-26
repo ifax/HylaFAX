@@ -204,6 +204,7 @@ static struct {
 { "class1tcfrecvtimeout",	&ModemConfig::class1TCFRecvTimeout,  4500 },
 { "class1recvabortok",		&ModemConfig::class1RecvAbortOK,     200 },
 { "class1rmpersistence",	&ModemConfig::class1RMPersistence,   2 },
+{ "class1hooksensitivity",	&ModemConfig::class1HookSensitivity, 0 },
 { "class1frameoverhead",	&ModemConfig::class1FrameOverhead,   4 },
 { "class1recvidenttimer",	&ModemConfig::class1RecvIdentTimer,  TIMER_T1 },
 { "class1tcfmaxnonzero",	&ModemConfig::class1TCFMaxNonZero,   10 },

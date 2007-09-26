@@ -1397,10 +1397,11 @@ Class1Modem::transmitData(int br, u_char* data, u_int cc,
  * retransmit the frame. 
  */
 bool
-Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, bool docrp)
+Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, bool docrp, bool usehooksensitivity)
 {
     bool gotframe;
     u_short crpcnt = 0, rhcnt = 0;
+    u_int onhooks = 0;
     gotCONNECT = true;
     if (useV34) {
 	do {
@@ -1424,7 +1425,18 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, 
 	do {
 	    readPending = atCmd(rhCmd, AT_NOTHING, 0) && waitFor(AT_CONNECT, 0);
 	    if (lastResponse == AT_FCERROR) pause(200);
-	} while (lastResponse == AT_FCERROR && !wasTimeout());
+	    if (lastResponse == AT_ERROR && !wasTimeout() && ++onhooks <= conf.class1HookSensitivity) {
+		if (!usehooksensitivity) {
+		    /*
+		     * Class1HookSensitivity is used by the calling function, not us.
+		     */
+		    break;
+		} else {
+		    stopTimeout("");
+		    startTimeout(ms);
+		}
+	    }
+	} while ((lastResponse == AT_FCERROR || (lastResponse == AT_ERROR && onhooks <= conf.class1HookSensitivity)) && !wasTimeout());
     }
     if (readPending) {
         stopTimeout("waiting for HDLC flags");

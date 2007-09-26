@@ -185,7 +185,7 @@ protected:
     bool	sendClass1Data(const u_char* data, u_int cc, const u_char* bitrev, bool eod, long ms);
     bool	sendClass1ECMData(const u_char* data, u_int cc,
 		     const u_char* bitrev, bool eod, u_int ppmcmd, Status& eresult);
-    bool	recvFrame(HDLCFrame& frame, u_char dir, long ms = 10*1000, bool readPending = false, bool docrp = true);
+    bool	recvFrame(HDLCFrame& frame, u_char dir, long ms = 10*1000, bool readPending = false, bool docrp = true, bool usehooksensitivity = true);
     bool	recvTCF(int br, HDLCFrame&, const u_char* bitrev, long ms);
     bool	recvRawFrame(HDLCFrame& frame);
     bool	recvECMFrame(HDLCFrame& frame);

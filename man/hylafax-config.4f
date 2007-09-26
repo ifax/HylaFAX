@@ -297,6 +297,7 @@ Class1HasRHConnectBug	boolean	\s-1No\s+1	Class 1/1.0: modem can report CONNECT i
 Class1HFLOCmd	string	\-	Class 1/1.0: command to set hardware flow control
 Class1FrameOverhead	integer	\s-14\s+1	Class 1/1.0: extra bytes in a received \s-1HDLC\s+1 frame
 Class1GreyJPEGSupport	boolean	\s-1No\s+1	Class 1/1.0: to enable grey JPEG fax support
+Class1HookSensitivity	integer	\s-10\s+1	Class 1/1.0: times to ignore on-hook detection
 Class1JBIGSupport	string	\s-1\fIsee below\fP\s+1	Class 1/1.0: to enable monochrome JBIG fax support
 Class1MRSupport	boolean	\s-1Yes\s+1	Class 1/1.0: enable 2-D MR support
 Class1MMRSupport	boolean	\s-1Yes\s+1	Class 1/1.0: enable 2-D MMR support
@@ -2437,6 +2438,10 @@ Whether or not to enable support for T.30-E greyscale facsimile
 with JPEG compression.  This is always enabled if
 .B Class1ColorJPEGSupport
 is enabled.
+.TP
+.B Class1HookSensitivity
+The number of times to ignore on-hook detections and merely treat them
+as command or modem errors.
 .TP
 .B Class1JBIGSupport
 Whether or not to enable support for T.85 monochrome facsimile

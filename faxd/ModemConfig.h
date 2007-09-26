@@ -156,6 +156,7 @@ public:
     u_int	class1TCFRecvTimeout;	// timeout receiving TCF
     u_int	class1RecvAbortOK;	// if non-zero, OK sent after recv abort
     u_int	class1RMPersistence;	// how many times to persist through +FCERROR
+    u_int	class1HookSensitivity;	// how many times to persist through on-hook detections
     u_int	class1Resolutions;	// resolutions support
     u_int	class1FrameOverhead;	// overhead bytes in received frames
     u_int	class1RecvIdentTimer;	// timeout receiving initial identity
