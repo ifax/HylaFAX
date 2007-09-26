@@ -935,6 +935,10 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 			}
 			(void) transmitFrame(rtnfcf|FCF_RCVR);
 			traceFCF("RECV send", rtnfcf);
+			if (rtnfcf == FCF_DCN) {
+			    recvdDCN = true;
+			    return (false);
+			}
 			/*
 			 * Reset the TIFF-related state so that subsequent
 			 * writes will overwrite the previous data.
