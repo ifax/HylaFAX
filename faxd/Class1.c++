@@ -1373,7 +1373,8 @@ Class1Modem::transmitData(int br, u_char* data, u_int cc,
 	if (ok && eod) {
 	    ok = false;
 	    u_short attempts = 0;
-	    while (!ok && attempts++ < 3) {
+	    lastResponse = AT_NOTHING;
+	    while (!ok && lastResponse != AT_NOCARRIER && attempts++ < 3) {
 		ok = waitFor(AT_OK, 60*1000);	// wait up to 60 seconds for "OK"
 	    }
 	}
