@@ -933,9 +933,9 @@ Class1Modem::syncECMFrame()
     // look for the first sync flag
 
     time_t start = Sys::now();
-    startTimeout(30000);	// despite indications by T.4 A.3.1
+    startTimeout(60000);	// despite indications by T.4 A.3.1
     do {
-	if ((unsigned) Sys::now()-start >= 30) {
+	if ((unsigned) Sys::now()-start >= 60) {
 	    protoTrace("Timeout awaiting synchronization sequence");
 	    setTimeout(true);
 	    return (false);
@@ -943,7 +943,7 @@ Class1Modem::syncECMFrame()
 	bit = getModemBit(0);
     } while (bit != 0 && !didBlockEnd());
     do {
-	if ((unsigned) Sys::now()-start >= 30) {
+	if ((unsigned) Sys::now()-start >= 60) {
 	    protoTrace("Timeout awaiting synchronization sequence");
 	    setTimeout(true);
 	    return (false);
