@@ -1107,6 +1107,7 @@ ClassModem::waitFor(ATResponse wanted, long ms)
 	case AT_NOCARRIER:
 	case AT_NODIALTONE:
 	case AT_NOANSWER:
+	case AT_BUSY:
 	case AT_OFFHOOK:
 	case AT_RING:
 	case AT_FHNG:
