@@ -163,6 +163,7 @@ public:
     u_int	class1RecvIdentTimer;	// timeout receiving initial identity
     u_int	class1TCFMaxNonZero;	// non-zero threshold for TCF check
     u_int	class1TCFMinRun;	// min length of zero run for TCF check
+    u_int	class1TCFMinRunECMMod;	// modify min length in ECM by this factor
     u_int	class1TMConnectDelay;	// delay (ms) after +FTM CONNECT
     u_int	class1ECMFrameSize;	// ECM frame size for transmission
     u_int	class1PageLengthSupport;// page length support

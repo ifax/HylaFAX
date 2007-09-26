@@ -322,6 +322,7 @@ Class1MsgRecvHackCmd	string	\s-1""\s+1	Class 1/1.0: command to avoid +FCERROR be
 Class1TCFRecvHackCmd	string	\s-1""\s+1	Class 1/1.0: command to avoid +FCERROR before TCF
 Class1TCFMaxNonZero	integer	\s-110\s+1	Class 1/1.0: max% of non-zero data in good \s-1TCF\s+1
 Class1TCFMinRun	integer	\s-11000\s+1	Class 1/1.0: minimum zero run in good \s-1TCF\s+1
+Class1TCFMinRunECMMod	integer	\s-12\s+1	Class 1/1.0: modify minimum zero run in ECM by this factor
 Class1TCFRecvTimeout	integer	\s-14500\s+1	Class 1/1.0: max wait (ms) for \s-1TCF\s+1
 Class1TMConnectDelay	integer	\s-10\s+1	Class 1/1.0: delay between +FTM CONNECT and data transmission
 Class1SwitchingCmd	string	\s-1AT+FRS=7\s+1	Class 1/1.0: command to ensure silence after HDLC reception
@@ -2662,7 +2663,18 @@ an acceptable received
 This value should be specified according to a 1.5 second
 transmission of zero data (i.e. it should be between 0 and 1500).
 See also
-.BR Class1TCFMaxNonZero .
+.B Class1TCFMaxNonZero
+and
+.BR Class1TCFMinRunECMMod .
+.TP
+.B Class1TCFMinRunECMMod
+The factor by which
+.B Class1TCFMinRun
+should be modified in the case of an ECM session.  As ECM protocol
+allows retransmissions it is commonly faster to accept a lesser-quality
+data stream and the subsequent retransmisisons than it is to allow
+the communication speed to slow down (where the demodulation may still
+not produce an ideal data stream, anyway).
 .TP
 .B Class1TCFRecvHackCmd
 If receive failures occur due to +FCERROR just prior to TCF data

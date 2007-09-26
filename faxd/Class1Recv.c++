@@ -426,6 +426,20 @@ Class1Modem::recvTraining()
 	 */
 	u_int fullrun = params.transferSize(TCF_DURATION);
 	u_int minrun = params.transferSize(conf.class1TCFMinRun);
+	if (params.ec != EC_DISABLE && conf.class1TCFMinRunECMMod > 0) {
+	    /*
+	     * When using ECM it may not be wise to fail TCF so easily
+	     * as retransmissions can compensate for data corruption.
+	     * For example, if there is a regular disturbance in the
+	     * audio every second that will cause TCFs to fail, but where
+	     * the majority of the TCF data is "clean", then it will
+	     * likely be better to pass TCF more easily at the faster
+	     * rate rather than letting things slow down where the
+	     * disturbance will only cause slower retransmissions (and
+	     * more of them, too).
+	     */
+	    minrun /= conf.class1TCFMinRunECMMod;
+	}
 	nonzero = (100*nonzero) / (n == 0 ? 1 : n);
 	protoTrace("RECV: TCF %u bytes, %u%% non-zero, %u zero-run",
 	    n, nonzero, zerorun);

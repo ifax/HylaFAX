@@ -211,6 +211,7 @@ static struct {
 { "class1recvidenttimer",	&ModemConfig::class1RecvIdentTimer,  TIMER_T1 },
 { "class1tcfmaxnonzero",	&ModemConfig::class1TCFMaxNonZero,   10 },
 { "class1tcfminrun",		&ModemConfig::class1TCFMinRun,       (2*TCF_DURATION)/3 },
+{ "class1tcfminrunecmmod",	&ModemConfig::class1TCFMinRunECMMod, 2 },
 { "class1tmconnectdelay",	&ModemConfig::class1TMConnectDelay,  0 },
 { "class1ecmframesize",		&ModemConfig::class1ECMFrameSize,    256 },
 { "class1pagelengthsupport",	&ModemConfig::class1PageLengthSupport, LN_ALL },
