@@ -1075,7 +1075,11 @@ FaxModem::isQualityOK(const Class2Params& params)
 	    return (false);
 	}
     }
-    if (recvEOLCount == 0) return (false);	// don't label null data as "good"
+    if (recvEOLCount == 0 || recvEOLCount < conf.minAcceptedLineCount) {
+	serverTrace("RECV: REJECT page quality, too few scanlines: %u",
+	    recvEOLCount);
+	return (false);
+    }
     return (true);
 }
 

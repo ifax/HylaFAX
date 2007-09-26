@@ -231,6 +231,7 @@ public:
     u_int	atCmdDelay;		// delay (ms) between each AT cmd
     u_int	percentGoodLines;	// required % of good lines in page
     u_int	maxConsecutiveBadLines;	// max consecutive bad lines in page
+    u_int	minAcceptedLineCount;	// min accepted number of lines in page
     u_int	minSpeed;		// minimum speed for fax transmits
     bool	softRTFCC;		// real-time fax compression conversion (software)
     bool	waitForConnect;		// modem sends multiple answer responses

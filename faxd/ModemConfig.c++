@@ -188,6 +188,7 @@ static struct {
 { "ringtimeout",		&ModemConfig::ringTimeout,	     6000 },
 { "percentgoodlines",		&ModemConfig::percentGoodLines,	     95 },
 { "maxconsecutivebadlines",	&ModemConfig::maxConsecutiveBadLines,5 },
+{ "minacceptedlinecount",	&ModemConfig::minAcceptedLineCount,  10 },
 { "modemresetdelay",		&ModemConfig::resetDelay,	     2600 },
 { "modemdtrdropdelay",		&ModemConfig::dtrDropDelay,	     75 },
 { "modembaudratedelay",		&ModemConfig::baudRateDelay,	     10 },
