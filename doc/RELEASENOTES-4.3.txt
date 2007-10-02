@@ -1,4 +1,4 @@
-HylaFAX 4.3.5
+HylaFAX 4.3.6
 
 OVERVIEW
 -----------------------------------------------------------------------------
@@ -197,7 +197,7 @@ CHANGES for 4.3.5 - August 22, 2007
 * Fix faxq handling of large formatter output (21 Aug 2007)
 * Fix configure GCC version detection for Gentoo (22 Aug 2007)
 
-CHANGES since 4.3.5
+CHANGES for 4.3.6 - October 2, 2007
 -----------------------------------------------------------------------------
 * Fix configure handling for broken Gentoo fix (23 Aug 2007)
 * Fix RFC822 comments MIME-Versio header for faxmail (14 Sep 2007)
