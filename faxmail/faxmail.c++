@@ -69,6 +69,7 @@ private:
     bool	markDiscarded;		// mark MIME parts not handled
     bool	withinFile;		// between beginFile() & endFile()
     bool	empty;			// No acutall formated output
+    bool	debugLeaveTmp;		// Leave tmp files alone for debuging
     fxStr	mimeConverters;		// pathname to MIME converter scripts
     fxStr	mailProlog;		// site-specific prologue definitions
     fxStr	clientProlog;		// client-specific prologue info
@@ -134,9 +135,12 @@ faxMailApp::faxMailApp()
 faxMailApp::~faxMailApp()
 {
     delete client;
-    for (u_int i = 0, n = tmps.length(); i < n; i++)
-	Sys::unlink(tmps[i]);
-    Sys::rmdir(tmpDir);
+    if (debugLeaveTmp)
+    {
+	for (u_int i = 0, n = tmps.length(); i < n; i++)
+	    Sys::unlink(tmps[i]);
+	Sys::rmdir(tmpDir);
+    }
 }
 
 void
@@ -775,6 +779,7 @@ faxMailApp::setupConfig()
     markDiscarded = true;
     mimeConverters = FAX_LIBEXEC "/faxmail";
     mailProlog = FAX_LIBDATA "/faxmail.ps";
+    debugLeaveTmp = false;
     msgDivider = "";
     pageSize = "";
     mailUser = "";			// default to real uid
@@ -822,6 +827,8 @@ faxMailApp::setConfigItem(const char* tag, const char* value)
 	msgDivider = value;
     else if (streq(tag, "mailuser"))
 	mailUser = value;
+    else if (streq(tag, "debugleavetmp"))
+	debugLeaveTmp = getBoolean(value);
     else if (MsgFmt::setConfigItem(tag, value))
 	;
     else if (TextFormat::setConfigItem(tag, value))
