@@ -135,7 +135,7 @@ faxMailApp::faxMailApp()
 faxMailApp::~faxMailApp()
 {
     delete client;
-    if (debugLeaveTmp)
+    if (! debugLeaveTmp)
     {
 	for (u_int i = 0, n = tmps.length(); i < n; i++)
 	    Sys::unlink(tmps[i]);
