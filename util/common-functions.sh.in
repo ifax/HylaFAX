@@ -120,6 +120,7 @@ parseQfile()
     /^sender/    { p("sender", $2); }
     /^mailaddr/    { p("mailaddr", $2); }
     /^owner/    { p("owner", $2); }
+    /^regarding/    { regarding = $0; sub("regarding:", "", regarding); p("regarding", regarding)}
     /^jobtag/    { jobtag = $0; sub("jobtag:", "", jobtag); p("jobtag", jobtag)}
     /^jobtype/    { p("jobtype", $2); }
     # status needs to be used in the shell as faxstatus since status is reserved word
@@ -143,6 +144,8 @@ parseQfile()
     /^modem/    { p("modem", $2); }
     /^totdials/    { p("totdials", $2); }
     /^tottries/    { p("tottries", $2); }
+    /^maxtries/    { p("maxtries", $2); }
+    /^maxdials/    { p("maxdials", $2); }
     /^client/    { p("client", $2); }
     /^[!]*post/    { p("files_"++nfiles, $4); p("filetype_"nfiles, "PostScript"); }
     /^[!]*tiff/    { p("files_"++nfiles, $4); p("filetype_"nfiles, "TIFF"); }
