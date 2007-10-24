@@ -2263,10 +2263,10 @@ faxQueueApp::delayJob(Job& job, FaxRequest& req, const Status& r, time_t tts)
     updateRequest(req, job);
     traceQueue(job, "%s: requeue for %s",
 	    r.string(), (const char*)strTime(delay));
+    setSleep(job, tts);
     if (req.isNotify(FaxRequest::when_requeued))
 	notifySender(job, Job::requeued); 
     Trigger::post(Trigger::JOB_DELAYED, job);
-    setSleep(job, tts);
 }
 
 void
