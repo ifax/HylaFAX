@@ -171,6 +171,21 @@ processing is fairly simple and (currently) somewhat constrained.
 has builtin support for the following MIME parts:
 text/plain, multipart/mixed, multipart/digest, message/rfc822,
 application/postscript, and application/x-faxmail-prolog.
+Parts can also be processed through external processing scripts that
+.I faxmail
+looks for in a ``\s-1MIME\s+1 converters'' directory hierachy.
+External scripts may override builtin processing or suppliment the builtin support.
+For each
+.SM MIME
+body part with type
+.I T
+and subtype
+.I S
+.I faxmail
+checks first for an exceutable script named T/S in the converter heirarchy.
+If a script exists then it is run and the resulting output is saved as a
+document submitted to \*(Fx.  If the output is empty, the part is
+suppressed, and will not be submitted.
 All other parts will be saved as documents and submitted to \*(Fx.
 .I faxmail
 uses the

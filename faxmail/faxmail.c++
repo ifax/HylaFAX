@@ -68,7 +68,7 @@ class faxMailApp : public TextFormat, public MsgFmt {
 private:
     bool	markDiscarded;		// mark MIME parts not handled
     bool	withinFile;		// between beginFile() & endFile()
-    bool	empty;			// No acutall formated output
+    bool	empty;			// No acutall formatted output
     bool	debugLeaveTmp;		// Leave tmp files alone for debuging
     fxStr	mimeConverters;		// pathname to MIME converter scripts
     fxStr	mailProlog;		// site-specific prologue definitions
@@ -96,12 +96,14 @@ private:
     void formatApplication(FILE* fd, MIMEState& mime);
     void formatDiscarded(MIMEState& mime);
     void formatAttachment (FILE* fd, MIMEState& mime);
+    bool formatWithExternal(FILE* fd, const fxStr& app, MIMEState& mime);
 
     void emitClientPrologue(FILE*);
 
     void discardPart(FILE* fd, MIMEState& mime);
     bool copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile);
-    bool runConverter(const fxStr& app, const fxStr& tmp, MIMEState& mime);
+    bool runConverter(const fxStr& app, const fxStr& input, const fxStr& output,
+		MIMEState& mime);
     void copyFile(FILE* fd, const char* filename);
 
     void resetConfig();
@@ -452,7 +454,7 @@ faxMailApp::formatMIME(FILE* fd, MIMEState& mime, MsgFmt& msg)
 
 	/*
 	 * Check first for any external script/command to
-	 * use in converting the body part to PostScript.
+	 * use in converting the body part.
 	 * If something is present, then we just decode the
 	 * body part into a temporary file and hand it to
 	 * the script.  Otherwise we fallback on some builtin
@@ -460,7 +462,11 @@ faxMailApp::formatMIME(FILE* fd, MIMEState& mime, MsgFmt& msg)
 	 * content types we expect to encounter.
 	 */
 	const fxStr& type = mime.getType();
-	if (type == "text") {
+	fxStr app = mimeConverters | "/" | type | "/" | mime.getSubType();
+
+	if (Sys::access(app, X_OK) >= 0)
+		formatWithExternal(fd, app, mime);
+	else if (type == "text" && mime.getSubType() == "plain") {
 	    if ( formatText(fd, mime) )
 		empty = false;
 	} else if (type == "application")
@@ -602,6 +608,34 @@ faxMailApp::formatApplication(FILE* fd, MIMEState& mime)
 }
 
 /*
+ * Format a MIME part using an external conversion script.
+ * The output of this script is submitted as a document
+ */
+bool
+faxMailApp::formatWithExternal (FILE* fd, const fxStr& app, MIMEState& mime)
+{
+    if (verbose)
+	fprintf(stderr, "CONVERT: run %s\n", (const char*) app);
+
+    fxStr tmp = tmpDir | "/" | mimeid;
+    tmps.append(tmp);
+
+    if (copyPart(fd, mime, tmp)) {
+	fxStr output = tmp | ".formatted";
+	tmps.append(output);
+
+	if (runConverter(app, tmp, output, mime) ) {
+	    struct stat sb;
+	    Sys::stat(output, sb);
+	    if (sb.st_size > 0)
+		client->addFile(output);
+	}
+    }
+
+    return false;
+}
+
+/*
  * Mark a discarded part if configured.
  */
 void
@@ -639,6 +673,7 @@ faxMailApp::formatAttachment(FILE* fd, MIMEState& mime)
     if (copyPart(fd, mime, tmp))
 	client->addFile(tmp);
 }
+
 
 /*
  * Discard input data up to the next boundary marker.
@@ -702,22 +737,19 @@ faxMailApp::copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile)
  * Run an external converter program.
  */
 bool
-faxMailApp::runConverter(const fxStr& app, const fxStr& tmp, MIMEState& mime)
+faxMailApp::runConverter(const fxStr& app, const fxStr& input, const fxStr& output,
+	    MIMEState& mime)
 {
-    fxStr output = tmpDir | "/" | mimeid | ".formated";
     int fd = Sys::open(output, O_WRONLY | O_CREAT | O_EXCL, S_IWUSR | S_IRUSR);
     if (fd < 0)
 	fxFatal("Couldn't open output file: %s", (const char*)output);
-
-    tmps.append(output);
-    client->addFile(output);
 
     const char* av[3];
     av[0] = strrchr(app, '/');
     if (av[0] == NULL)
 	av[0] = app;
     // XXX should probably pass in MIME state like charset
-    av[1] = tmp;
+    av[1] = input;
     av[2] = NULL;
     pid_t pid = fork();
     switch (pid) {
@@ -744,7 +776,7 @@ faxMailApp::runConverter(const fxStr& app, const fxStr& tmp, MIMEState& mime)
 	    , (const char*) mime.getType()
 	    , (const char*) mime.getSubType()
 	    , (const char*) app
-	    , (const char*) tmp
+	    , (const char*) input
 	    , status
 	);
 	break;
