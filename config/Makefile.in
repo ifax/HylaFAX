@@ -79,7 +79,9 @@ CONFIGFILES=class1 \
 	lucent-mt-20 \
 	lucent-mt-21 \
 	lucent-mt-10 \
+	mainpine-10 \
 	mainpine-2 \
+	mainpine-20 \
 	mainpine-21 \
 	moto-288 \
 	mt-1432 \

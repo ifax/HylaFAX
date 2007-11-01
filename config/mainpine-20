@@ -1,31 +1,31 @@
 # $Id$
 #
-# prototype config file for Mainpine Ltd. RockForce and IQ series
+# prototype config file for Mainpine Ltd. IQ series
 #
 
 #
-# CONFIG: CLASS2.1:"Agere Systems"-"Mainpine Venus V.92"*-*
-# CONFIG: CLASS2.1:"Mainpine"-"Mainpine CFAX34"*-*
+# CONFIG: CLASS2.0:"Agere Systems"-"Mainpine Venus V.92"*-*
+# CONFIG: CLASS2.0:"Mainpine"-"Mainpine CFAX34"*-*
 #
 # BEGIN-SERVER
 # END-SERVER
 #
 
-ModemType:		Class2.1
-ModemRate:		57600		# for V.34 faxing
+ModemType:		Class2.0
+ModemRate:		19200
 ModemFlowControl:	rtscts
 ModemNoFlowCmd:		AT&K0
 ModemSoftFlowCmd:	AT&K4
 ModemHardFlowCmd:	AT&K3
 ModemRecvFillOrder:	MSB2LSB
+ModemSetupDTRCmd:	AT&D3		# hang up and reset on DTR drop
 
 Class2APCmd:		AT+FAP=1,1,1
-Class2BUGCmd:		AT+FBU=0	# early firmware is buggy
 Class2SendRTC:		yes
 Class2UseHex:		yes
 
 # You may want to do something like this to enable CTC in ECM
-# Class2Cmd:		AT+FCLASS=2.1;+FRY=4
+# Class2Cmd:		AT+FCLASS=2.0;+FRY=4
 
 # If your line supports Caller-ID, you may want to uncomment this...
 # ModemResetCmds:	AT+VCID=1

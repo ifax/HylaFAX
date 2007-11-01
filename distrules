@@ -115,7 +115,9 @@ HYLAFAXSRC=\
 	config/lucent-mt-20			\
 	config/lucent-mt-21			\
 	config/lucent-mt-10			\
+	config/mainpine-10			\
 	config/mainpine-2			\
+	config/mainpine-20			\
 	config/mainpine-21			\
 	config/moto-288				\
 	config/nuvo-voyager			\
