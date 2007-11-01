@@ -284,7 +284,7 @@ Class1Modem::recvIdentification(
 	     * The best way to do that is to make sure that there is
 	     * silence on the line, and  we do that with Class1SwitchingCmd.
 	     */
-	    if (!switchingPause(eresult)) {
+	    if (!useV34 && ! switchingPause(eresult)) {
 		return (false);
 	    }
 	}
