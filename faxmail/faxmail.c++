@@ -208,11 +208,11 @@ faxMailApp::run(int argc, char** argv)
 	case 'u':			// mail/login user
 	    mailUser = optarg;
 	    break;
-	case 'W':			// page width
-	    setPageWidth(atof(optarg));
-	    break;
 	case 'v':			// trace work
 	    setVerbose(true);
+	    break;
+	case 'W':			// page width
+	    setPageWidth(atof(optarg));
 	    break;
 	case '?':
 	    usage();
