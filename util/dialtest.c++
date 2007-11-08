@@ -55,24 +55,25 @@ usage()
 static int
 prompt()
 {
-    printf("ready> "); fflush(stdout);
+    if (! quiet)
+	    printf("ready> "); fflush(stdout);
     return (1);
 }
 
 int
 main(int argc, char* argv[])
 {
-    char* areaCode = "415";
-    char* countryCode = "1";
-    char* internationalPrefix = "011";
-    char* longDistancePrefix = "1";
+    const char* areaCode = "415";
+    const char* countryCode = "1";
+    const char* internationalPrefix = "011";
+    const char* longDistancePrefix = "1";
     bool verbose = false;
     extern int optind;
     extern char* optarg;
     int c;
 
     appName = argv[0];
-    while ((c = Sys::getopt(argc, argv, "a:c:i:l:v")) != -1)
+    while ((c = Sys::getopt(argc, argv, "a:c:i:l:qv")) != -1)
 	switch (c) {
 	case 'a':
 	    areaCode = optarg;
