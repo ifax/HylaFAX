@@ -37,6 +37,7 @@
 extern	void fxFatal(const char* va_alist ...);
 
 static	const char* appName;
+static	bool quiet = false;
 
 static void
 usage()
@@ -87,6 +88,9 @@ main(int argc, char* argv[])
 	case 'l':
 	    longDistancePrefix = optarg;
 	    break;
+	case 'q':
+	    quiet = true;
+	    break;
 	case 'v':
 	    verbose = true;
 	    break;
@@ -97,7 +101,7 @@ main(int argc, char* argv[])
     if (argc - optind != 1)
 	usage();
     DialStringRules rules(argv[optind]);
-    rules.setVerbose(true);
+    rules.setVerbose(!quiet);
     rules.def("AreaCode", areaCode);
     rules.def("CountryCode", countryCode);
     rules.def("InternationalPrefix", internationalPrefix);
@@ -117,7 +121,10 @@ main(int argc, char* argv[])
 		*ep = '\0';
 	    fxStr set(line, cp-line);
 	    fxStr result = rules.applyRules(set, cp+1);
-	    printf("%s(%s) = \"%s\"\n", (const char*) set, cp+1, (const char*) result);
+	    if (quiet)
+		    printf("%s\n", (const char*) result);
+	    else
+		    printf("%s(%s) = \"%s\"\n", (const char*) set, cp+1, (const char*) result);
 	} else {
 	    fxStr c = rules.canonicalNumber(line);
 	    fxStr d = rules.dialString(line);
