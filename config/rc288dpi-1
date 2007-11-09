@@ -40,7 +40,7 @@
 # CONFIG:CLASS1:28800:.*:.*: Manufacturer=ROCKWELL Model=RC288DPi
 # CONFIG:CLASS1:33600:.*:.*: Manufacturer=Rockwell Model=33600
 # CONFIG:CLASS1:56000:.*:.*: Manufacturer=Rockwell/Conexant Model=AC/K56
-# CONFIG:CLASS1:MT5600ZDX:.*.*: Manufacturer=MultiTech Model=MT5600ZDX
+# CONFIG:CLASS1:MT5600ZDX:.*:.*: Manufacturer=MultiTech Model=MT5600ZDX
 #
 # BEGIN-SERVER
 # END-SERVER
