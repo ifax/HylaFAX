@@ -436,6 +436,7 @@ usage(const char* appName)
 int
 main(int argc, char** argv)
 {
+    setupNLS();
     faxApp::setupLogging("FaxQCleaner");
 
     fxStr appName = argv[0];

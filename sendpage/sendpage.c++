@@ -257,6 +257,7 @@ main(int argc, char** argv)
 #ifdef LC_TIME
     setlocale(LC_TIME, "");			// for strftime calls
 #endif
+    setupNLS();
     signal(SIGHUP, fxSIGHANDLER(sigDone));
     signal(SIGINT, fxSIGHANDLER(sigDone));
     signal(SIGTERM, fxSIGHANDLER(sigDone));

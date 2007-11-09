@@ -43,10 +43,12 @@ DIR_LIBDATA=/usr/local/lib/fax
 DIR_LIB=/usr/local/lib
 DIR_LIBEXEC=$DIR_SBIN
 DIR_SPOOL=/var/spool/hylafax
+DIR_LOCALE=/usr/local/share/locale
 DIR_CGI=/var/httpd/cgi-bin
 PATH_DPSRIP=$DIR_LIBEXEC/ps2fax.exe
 PATH_IMPRIP=/usr/lib/print/psrip
 CGIPATH=/cgi-bin
+LOCALE_DOMAIN=hylafax
 DEFVRES=98
 PAGESIZE="North American Letter"
 FAXUID=uucp
@@ -139,6 +141,7 @@ DSOSUF
 DSODELAY
 DSOOPTS
 ECHO
+ENABLE_NLS
 ENCODING
 ENVOPTS
 FAXD
@@ -175,6 +178,8 @@ LIBDB
 LLDOPTS
 LN
 LN_S
+LOCALEDIR	DIR_LOCALE
+LOCALE_DOMAIN
 HAVE_PAM
 PAMLIBS
 HAVE_JBIG
@@ -330,6 +335,7 @@ Options: [defaults in brackets after descriptions]
   --version               print the version of autoconf that created configure
   --target=TARGET         configure for TARGET [TARGET=HOST]
   --srcdir=DIR            find the sources in DIR [configure dir or ..]
+  --disable-nls           disable NLS support
   --disable-pam           disable all PAM support
   --with-PARAM[=ARG]      set configuration PARAM [ARG=yes]
 EOF
@@ -375,6 +381,8 @@ do
 	eval "${ac_with}='$ac_optarg'"
 	WITHARGS=yes
 	;;
+    -enable-nls|--enable-nls)	CHECK_NLS=yes;;
+    -disable-nls|--disable-nls)	CHECK_NLS=no;;
     -quiet|--quiet)		QUIET=yes;;
     -nointeractive|--nointeractive)	INTERACTIVE=no;;
     -verbose|--verbose)		QUIET=no;;
@@ -1639,6 +1647,24 @@ if [ "$DISABLE_JBIG" != "yes" ]; then
 	fi
 else
 	Note "Disabling JBIG support"
+fi
+ENABLE_NLS="/* #define ENABLE_NLS 1 */"
+if [ "$CHECK_NLS" != "no" ]; then
+	Note "Checking for NLS (gettext) library support"
+	CheckForIncludeFile locale.h && 
+	    CheckForIncludeFile libintl.h && {
+		ENABLE_NLS="#define ENABLE_NLS 1"
+		CheckForLibrary gettext -lc || {
+		    CheckForLibrary gettext -lintl && {
+			Note "Looks like -lintl is needed for gettext support."
+			MACHDEPLIBS="$MACHDEPLIBS -lintl"
+                    }
+                }
+		Note "... found. Enabling NLS support"
+	} ||
+		Note "... not found. Disabling NLS support"
+else
+	Note "Disabling NLS (gettext) support"
 fi
 CheckForLibrary crypt -lc || {
     #

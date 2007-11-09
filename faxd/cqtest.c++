@@ -507,6 +507,7 @@ main(int argc, char* argv[])
     extern char* optarg;
     int c;
 
+    setupNLS();
     CQDecoder cq;
     appName = argv[0];
     while ((c = Sys::getopt(argc, argv, "m:o:p:")) != -1)

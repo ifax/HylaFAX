@@ -143,6 +143,7 @@ main(int argc, char* argv[])
     extern int optind;
     int c;
 
+    setupNLS();
     appName = argv[0];
     while ((c = Sys::getopt(argc, argv, ":q")) != -1)
 	switch (c) {

@@ -159,6 +159,7 @@ bad:
 int
 main(int argc, char** argv)
 {
+    setupNLS();
     faxStatApp app;
     app.run(argc, argv);
     return 0;

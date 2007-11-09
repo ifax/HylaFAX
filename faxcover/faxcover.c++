@@ -474,6 +474,7 @@ faxCoverApp::printError(const char* va_alist ...)
 int
 main(int argc, char** argv)
 {
+    setupNLS();
     faxCoverApp app;
     app.initialize(argc, argv);
     app.open();

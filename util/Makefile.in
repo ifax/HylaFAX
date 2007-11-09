@@ -58,6 +58,7 @@ C++FILES=Array.c++ \
 	\
 	Dispatcher.c++ \
 	IOHandler.c++ \
+	NLS.c++ \
 	Sys.c++ \
 	SystemLog.c++ \
 	Timeout.c++ \

@@ -412,6 +412,7 @@ main(int argc, char* argv[])
 #ifdef LC_TIME
     setlocale(LC_TIME, "");			// for strftime calls
 #endif
+    setupNLS();
     appName = argv[0];
     while ((c = Sys::getopt(argc, argv, "f:m:o:")) != -1)
 	switch (c) {

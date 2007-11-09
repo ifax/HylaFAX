@@ -65,6 +65,7 @@ main(int argc, char* argv[])
     bool doAll = false;
     int c;
 
+    setupNLS();
     appName = argv[0];
     while ((c = Sys::getopt(argc, argv, "t:a")) != -1)
 	switch (c) {

@@ -896,6 +896,7 @@ main(int argc, char** argv)
 #ifdef LC_CTYPE
     setlocale(LC_CTYPE, "");			// for <ctype.h> calls
 #endif
+    setupNLS();
 
     app = new faxMailApp;
 

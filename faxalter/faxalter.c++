@@ -327,6 +327,7 @@ faxAlterApp::usage()
 int
 main(int argc, char** argv)
 {
+    setupNLS();
     faxAlterApp app;
     return (app.run(argc, argv));
 }
