@@ -1,4 +1,5 @@
 .c++dependtime
+edit-faxcover.sh
 faxcover
 Makefile
 Makedepend

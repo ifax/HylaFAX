@@ -1,10 +1,11 @@
 .cdependtime
 .c++dependtime
 archive.sh
+common-functions.sh
 dialtest
+dictionary.sh
 faxadduser
 faxconfig
-faxcron.sh
 faxcron.sh
 faxdeluser
 faxinfo
@@ -17,6 +18,8 @@ Makedepend
 Makefile
 mkcover.sh
 notify.sh
+notify-4.1.sh
+notify-4.2.sh
 pagesizes
 pcl2fax.sh
 pdf2fax.gs.sh
@@ -28,6 +31,7 @@ recvstats.sh
 *.so.*.*.*
 textfmt
 tiff2fax.sh
+tiff2pdf.sh
 tiffcheck
 typetest
 wedged.sh
