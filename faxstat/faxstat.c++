@@ -95,7 +95,7 @@ faxStatApp::run(int argc, char** argv)
 	    setVerbose(true);
 	    break;
 	case '?':
-	    fxFatal("usage: faxstat [-h server-host] [-adfgilrsv]");
+	    fxFatal(_("usage: faxstat [-h server-host] [-adfgilrsv]"));
 	}
     fxStr emsg;
     if (callServer(emsg)) {
@@ -142,7 +142,7 @@ faxStatApp::listWithHeader(const fxStr& dir, fxStr& emsg)
 	    return (getReply(false) == COMPLETE);
 	}
 	if (cc < 0) {
-	    emsg = fxStr::format("Data Connection: %s", strerror(errno));
+	    emsg = fxStr::format(_("Data Connection: %s"), strerror(errno));
 	    (void) getReply(false);
 	    break;
 	}

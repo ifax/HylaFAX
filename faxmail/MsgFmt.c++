@@ -159,7 +159,7 @@ MsgFmt::parseHeaders(FILE* fd, u_int& lineno)
 		    ;
 		headers.append(line.tail(len-l));
 		if (verbose)
-		    fprintf(stderr, "HEADER %s: %s\n"
+		    fprintf(stderr, _("HEADER %s: %s\n")
 			, (const char*) fields[fields.length()-1]
 			, (const char*) headers[headers.length()-1]
 		    );
@@ -167,7 +167,7 @@ MsgFmt::parseHeaders(FILE* fd, u_int& lineno)
 	} else if (field != "")  {		// append continuation
 	    headers[headers.length()-1].append("\n" | line);
 	    if (verbose)
-		fprintf(stderr, "+HEADER %s: %s\n"
+		fprintf(stderr, _("+HEADER %s: %s\n")
 		    , (const char*) field
 		    , (const char*) line
 		);

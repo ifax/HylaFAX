@@ -93,7 +93,7 @@ DialStringRules::parse(bool shouldExist)
 	ok = parseRules();
 	fclose(fp);
     } else if (shouldExist)
-	parseError("Cannot open file \"%s\" for reading",
+	parseError(_("Cannot open file \"%s\" for reading"),
 		(const char*) filename);
     return (ok);
 }
@@ -102,7 +102,7 @@ void
 DialStringRules::def(const fxStr& var, const fxStr& value)
 {
     if (verbose)
-	traceParse("Define %s = \"%s\"",
+	traceParse(_("Define %s = \"%s\""),
 	    (const char*) var, (const char*) value);
     (*vars)[var] = value;
 }
@@ -111,7 +111,7 @@ void
 DialStringRules::undef(const fxStr& var)
 {
     if (verbose)
-	traceParse("Undefine %s", (const char*) var);
+	traceParse(_("Undefine %s"), (const char*) var);
     vars->remove(var);
 }
 
@@ -123,7 +123,7 @@ DialStringRules::parseRules()
     while ((cp = nextLine(line, sizeof (line)))) {
 	// collect token
 	if (!isalpha(*cp)) {
-	    parseError("Syntax error, expecting identifier");
+	    parseError(_("Syntax error, expecting identifier"));
 	    return (false);
 	}
 	const char* tp = cp;
@@ -135,7 +135,7 @@ DialStringRules::parseRules()
 	if (*cp == ':' && cp[1] == '=') {	// rule set definition
 	    for (cp += 2; *cp != '['; cp++)
 		if (*cp == '\0') {
-		    parseError("Missing '[' while parsing rule set");
+		    parseError(_("Missing '[' while parsing rule set"));
 		    return (false);
 		}
 	    if (verbose)
@@ -154,17 +154,17 @@ DialStringRules::parseRules()
 		return (false);
 	    def(var, value);
 	} else {				// an error
-	    parseError("Missing '=' or ':=' after \"%s\"", (const char*) var);
+	    parseError(_("Missing '=' or ':=' after \"%s\""), (const char*) var);
 	    return (false);
 	}
     }
     if (verbose) {
 	RuleArray* ra = (*rules)["CanonicalNumber"];
 	if (ra == 0)
-	    traceParse("Warning, no \"CanonicalNumber\" rules.");
+	    traceParse(_("Warning, no \"CanonicalNumber\" rules."));
 	ra = (*rules)["DialString"];
 	if (ra == 0)
-	    traceParse("Warning, no \"DialString\" rules.");
+	    traceParse(_("Warning, no \"DialString\" rules."));
     }
     return (true);
 }
@@ -212,11 +212,11 @@ DialStringRules::parseToken(const char* cp, fxStr& v)
 	tp = ++cp;
 	for (;;) {
 	    if (*cp == '\0') {
-		parseError("String with unmatched '\"'");
+		parseError(_("String with unmatched '\"'"));
 		return (NULL);
 	    }
 	    if (*cp == '\\' && cp[1] == '\0') {
-		parseError("Bad '\\' escape sequence");
+		parseError(_("Bad '\\' escape sequence"));
 		return (NULL);
 	    }
 	    if (*cp == '"' && (cp == tp || cp[-1] != '\\'))
@@ -228,7 +228,7 @@ DialStringRules::parseToken(const char* cp, fxStr& v)
     } else {				// token terminated by white space
 	for (tp = cp; *cp != '\0'; cp++) {
 	    if (*cp == '\\' && cp[1] == '\0') {
-		parseError("Bad '\\' escape sequence");
+		parseError(_("Bad '\\' escape sequence"));
 		return (NULL);
 	    }
 	    if (isspace(*cp) && (cp == tp || cp[-1] != '\\'))
@@ -243,7 +243,7 @@ DialStringRules::parseToken(const char* cp, fxStr& v)
 	     */
 	    u_int l = v.next(i, '}');
 	    if (l >= v.length()) {
-		parseError("Missing '}' for variable reference");
+		parseError(_("Missing '}' for variable reference"));
 		return (NULL);
 	    }
 	    fxStr var = v.cut(i+2,l-(i+2));// variable name
@@ -290,7 +290,7 @@ DialStringRules::parseRuleSet(RuleArray& rules)
 	char line[1024];
 	const char* cp = nextLine(line, sizeof (line));
 	if (!cp) {
-	    parseError("Missing ']' while parsing rule set");
+	    parseError(_("Missing ']' while parsing rule set"));
 	    return (false);
 	}
 	if (*cp == ']')
@@ -302,7 +302,7 @@ DialStringRules::parseRuleSet(RuleArray& rules)
 	while (isspace(*cp))
 	    cp++;
 	if (*cp != '=') {
-	    parseError("Rule pattern without '='");
+	    parseError(_("Rule pattern without '='"));
 	    return (false);
 	}
 	DialRule r;
@@ -338,7 +338,7 @@ fxStr
 DialStringRules::applyRules(const fxStr& name, const fxStr& s)
 {
     if (verbose)
-	traceRules("Apply %s rules to \"%s\"",
+	traceRules(_("Apply %s rules to \"%s\""),
 	    (const char*) name, (const char*) s);
     fxStr result(s);
     RuleArray* ra = (*rules)[name];
@@ -376,13 +376,13 @@ DialStringRules::applyRules(const fxStr& name, const fxStr& s)
 		result.insert(replace, ix);
 		off = ix + replace.length();	// skip replace when searching
 		if (verbose)
-		    traceRules("--> match rule \"%s\", result now \"%s\"",
+		    traceRules(_("--> match rule \"%s\", result now \"%s\""),
 			rule.pat->pattern(), (const char*) result);
 	    }
 	}
     }
     if (verbose)
-	traceRules("--> return result \"%s\"", (const char*) result);
+	traceRules(_("--> return result \"%s\""), (const char*) result);
     return result;
 }
 
@@ -393,7 +393,7 @@ DialStringRules::parseError(const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    fprintf(stderr, "%s: line %u: ", (const char*) filename, lineno); 
+    fprintf(stderr, _("%s: line %u: "), (const char*) filename, lineno);
     vfprintf(stderr, fmt, ap);
     va_end(ap);
     putc('\n', stderr);
@@ -404,7 +404,7 @@ DialStringRules::traceParse(const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    fprintf(stdout, "%s: line %u: ", (const char*) filename, lineno); 
+    fprintf(stdout, _("%s: line %u: "), (const char*) filename, lineno);
     vfprintf(stdout, fmt, ap);
     va_end(ap);
     putc('\n', stdout);

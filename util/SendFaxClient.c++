@@ -98,7 +98,7 @@ SendFaxClient::prepareForJobSubmissions(fxStr& emsg)
     if (typeRules == NULL) {
 	typeRules = TypeRules::read(typeRulesFile);
 	if (!typeRules) {
-	    emsg = "Unable to setup file typing and conversion rules";
+	    emsg = _("Unable to setup file typing and conversion rules");
 	    return (false);
 	}
     }
@@ -124,7 +124,7 @@ SendFaxClient::prepareForJobSubmissions(fxStr& emsg)
 	if (job.getPageWidth() != 0 && job.getPageLength() != 0)
 	    continue;
 	if (!job.setPageSize(job.getPageSize())) {
-	    emsg = "Unknown page size " | job.getPageSize();
+	    emsg = _("Unknown page size ") | job.getPageSize();
 	    return (false);
 	}
     }
@@ -233,8 +233,8 @@ SendFaxClient::makeCoverPage(const SendFaxJob& job, fxStr& file, fxStr& emsg)
 	    pid_t pid = fork();
 	    switch (pid) {
 	    case -1:			// error
-		emsg = fxStr::format("Error creating cover sheet; "
-		    "could not fork subprocess: %s", strerror(errno));
+		emsg = fxStr::format(_("Error creating cover sheet; "
+		    "could not fork subprocess: %s"), strerror(errno));
 		Sys::close(pfd[1]);
 		break;
 	    case 0:			// child, exec command
@@ -259,8 +259,8 @@ SendFaxClient::makeCoverPage(const SendFaxJob& job, fxStr& file, fxStr& emsg)
 		    file = tmpFile;
 		    return (true);
 		}
-		emsg = fxStr::format("Error creating cover sheet; "
-		    "command was \"%s\"; exit status %x"
+		emsg = fxStr::format(_("Error creating cover sheet; "
+		    "command was \"%s\"; exit status %x")
 		    , (const char*) joinargs(coverCmd, av)
 		    , status
 		);
@@ -268,12 +268,12 @@ SendFaxClient::makeCoverPage(const SendFaxJob& job, fxStr& file, fxStr& emsg)
 	    }
 	    Sys::close(pfd[0]);
 	} else {
-	    emsg = fxStr::format("Error creating cover sheet; "
-		"unable to create pipe to subprocess: %s", strerror(errno));
+	    emsg = fxStr::format(_("Error creating cover sheet; "
+		"unable to create pipe to subprocess: %s"), strerror(errno));
 	}
 #undef MAXARGS
     } else
-	emsg = fxStr::format("%s: Can not create temporary file for cover page",
+	emsg = fxStr::format(_("%s: Can not create temporary file for cover page"),
 	    (const char*) tmpFile);
     Sys::unlink(tmpFile);
     return (false);
@@ -416,11 +416,11 @@ bool
 SendFaxClient::submitJobs(fxStr& emsg)
 {
     if (!setup) {
-	emsg = "Documents not prepared";
+	emsg = _("Documents not prepared");
 	return (false);
     }
     if (!isLoggedIn()) {
-	emsg = "Not logged in to server";
+	emsg = _("Not logged in to server");
 	return (false);
     }
     /*
@@ -456,7 +456,7 @@ SendFaxClient::sendDocuments(fxStr& emsg)
 	FileInfo& info = (*files)[i];
 	int fd = Sys::open(info.temp, O_RDONLY);
 	if (fd < 0) {
-	    emsg = fxStr::format(info.temp | ": Can not open: %s",
+	    emsg = fxStr::format(info.temp | _(": Can not open: %s"),
 		strerror(errno));
 	    return (false);			// XXX
 	}
@@ -477,7 +477,7 @@ SendFaxClient::sendDocuments(fxStr& emsg)
 	Sys::close(fd);
 	if (!fileSent) {
 	    if (emsg == "")
-		emsg = "Document transfer failed: " | getLastResponse();
+		emsg = _("Document transfer failed: ") | getLastResponse();
 	    return (false);
 	}
     }
@@ -491,12 +491,12 @@ void
 SendFaxClient::notifyNewJob(const SendFaxJob& job)
 {
     int nfiles = files->length();
-    printf("request id is %s (group id %s) for host %s (%u %s)\n"
+    printf(ngettext("request id is %s (group id %s) for host %s (%u file)\n",
+	    "request id is %s (group id %s) for host %s (%u files)\n", nfiles)
 	, (const char*) job.getJobID()
 	, (const char*) job.getGroupID()
 	, (const char*) getHost()
 	, nfiles
-	, nfiles > 1 ? "files" : "file"
     );
 }
 
@@ -603,7 +603,7 @@ SendFaxClient::setupSenderIdentity(const fxStr& from, fxStr& emsg)
     }
     fxStr mbox;
     if (senderName == "" || !getNonBlankMailbox(mbox)) {
-	emsg = "Malformed (null) sender name or mail address";
+	emsg = _("Malformed (null) sender name or mail address");
 	return (false);
     } else
 	return (true);
@@ -676,7 +676,7 @@ SendFaxClient::prepareFile(FileInfo& info, fxStr& emsg)
 	    printf("CONVERT \"%s\"\n", (const char*) sysCmd);
 	if (system(sysCmd) != 0) {
 	    Sys::unlink(tmpFile);
-	    emsg = fxStr::format("Error converting document; command was \"%s\"",
+	    emsg = fxStr::format(_("Error converting document; command was \"%s\""),
 		(const char*) sysCmd);
 	    return (false);
 	}
@@ -704,16 +704,16 @@ SendFaxClient::fileType(const char* filename, fxStr& emsg)
     struct stat sb;
     int fd = Sys::open(filename, O_RDONLY);
     if (fd < 0) {
-	emsg = fxStr::format("%s: Can not open file", filename);
+	emsg = fxStr::format(_("%s: Can not open file"), filename);
 	return (NULL);
     }
     if (Sys::fstat(fd, sb) < 0) {
-	emsg = fxStr::format("%s: Can not stat file", filename);
+	emsg = fxStr::format(_("%s: Can not stat file"), filename);
 	Sys::close(fd);
 	return (NULL);
     }
     if ((sb.st_mode & S_IFMT) != S_IFREG) {
-	emsg = fxStr::format("%s: Not a regular file", filename);
+	emsg = fxStr::format(_("%s: Not a regular file"), filename);
 	Sys::close(fd);
 	return (NULL);
     }
@@ -721,12 +721,12 @@ SendFaxClient::fileType(const char* filename, fxStr& emsg)
     int cc = Sys::read(fd, buf, sizeof (buf));
     Sys::close(fd);
     if (cc == 0) {
-	emsg = fxStr::format("%s: Empty file", filename);
+	emsg = fxStr::format(_("%s: Empty file"), filename);
 	return (NULL);
     }
     const TypeRule* tr = typeRules->match(buf, cc);
     if (!tr) {
-	emsg = fxStr::format("%s: Can not determine file type", filename);
+	emsg = fxStr::format(_("%s: Can not determine file type"), filename);
 	return (NULL);
     }
     if (tr->getResult() == TypeRule::ERROR) {

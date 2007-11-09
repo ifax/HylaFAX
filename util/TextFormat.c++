@@ -92,7 +92,7 @@ TextFormat::~TextFormat()
 void
 TextFormat::warning(const char* fmt ...) const
 {
-    fputs("Warning, ", stderr);
+    fputs(_("Warning, "), stderr);
     va_list ap;
     va_start(ap, fmt);
     vfprintf(stderr, fmt, ap);
@@ -129,7 +129,7 @@ TextFormat::addFont(const char* name, const char* family)
     if (workStarted) {
 	fxStr emsg;
 	if (!f->readMetrics(pointSize, useISO8859, emsg))
-	    error("Font %s: %s", f->getFamily(), (const char*) emsg);
+	    error(_("Font %s: %s"), f->getFamily(), (const char*) emsg);
     }
     return (f);
 }
@@ -248,7 +248,7 @@ TextFormat::beginFormatting(FILE* o)
      */
     tf = Sys::tmpfile();
     if (tf == NULL)
-	fatal("Cannot open temporary file: %s", strerror(errno));
+	fatal(_("Cannot open temporary file: %s"), strerror(errno));
 
     numcol = fxmax(1,numcol);
     if (pointSize == -1)
@@ -256,13 +256,13 @@ TextFormat::beginFormatting(FILE* o)
     else
 	pointSize = fxmax(inch("3bp"), pointSize);
     if (pointSize > inch("18bp"))
-	warning("point size is unusually large (>18pt)");
+	warning(_("point size is unusually large (>18pt)"));
     // read font metrics
     for (FontDictIter iter(*fonts); iter.notDone(); iter++) {
 	fxStr emsg;
 	TextFont* f = iter.value();
 	if (!f->readMetrics(pointSize, useISO8859, emsg))
-	    error("Font %s: %s", f->getFamily(), (const char*) emsg);
+	    error(_("Font %s: %s"), f->getFamily(), (const char*) emsg);
     }
     outline = fxmax(0L,outline);
     curFont = (*fonts)["Roman"];
@@ -274,10 +274,10 @@ TextFormat::beginFormatting(FILE* o)
 	pageHeight = t;
     }
     if (lm+rm >= pageWidth)
-	fatal("Margin values too large for page; lm %lu rm %lu page width %lu",
+	fatal(_("Margin values too large for page; lm %lu rm %lu page width %lu"),
 	    lm, rm, pageWidth);
     if (tm+bm >= pageHeight)
-	fatal("Margin values too large for page; tm %lu bm %lu page height %lu",
+	fatal(_("Margin values too large for page; tm %lu bm %lu page height %lu"),
 	    tm, bm, pageHeight);
 
     col_width = (pageWidth - (lm + rm))/numcol;
@@ -318,7 +318,7 @@ TextFormat::endFormatting(void)
 	Copy_Block(0L, last-1);
     }
     if (fclose(tf))
-	fatal("Close failure on temporary file: %s", strerror(errno));
+	fatal(_("Close failure on temporary file: %s"), strerror(errno));
     tf = NULL;
     emitTrailer();
     fflush(output);
@@ -334,9 +334,9 @@ TextFormat::Copy_Block(off_t b1, off_t b2)
 	size_t cc = (size_t) fxmin(sizeof (buf), (size_t) (b2-k+1));
 	fseek(tf, (long) k, SEEK_SET);		// position to desired block
 	if (fread(buf, 1, (size_t) cc, tf) != cc)
-	    fatal("Read error during reverse collation: %s", strerror(errno));
+	    fatal(_("Read error during reverse collation: %s"), strerror(errno));
 	if (fwrite(buf, 1, (size_t) cc, output) != cc)
-	    fatal("Output write error: %s", strerror(errno));
+	    fatal(_("Output write error: %s"), strerror(errno));
     }
 }
 
@@ -716,7 +716,7 @@ TextFormat::formatFile(const char* name)
 	formatFile(fp);
 	fclose(fp);
     } else
-	error("%s: Cannot open file: %s", name, strerror(errno));
+	error(_("%s: Cannot open file: %s"), name, strerror(errno));
 }
 
 void
@@ -1001,7 +1001,7 @@ TextFormat::flush(void)
 {
     fflush(tf);
     if (ferror(tf) && errno == ENOSPC)
-	fatal("Output write error: %s", strerror(errno));
+	fatal(_("Output write error: %s"), strerror(errno));
 }
 
 /*
@@ -1173,7 +1173,7 @@ TextFont::decodeFontName(const char* name, fxStr& filename, fxStr& emsg)
                 size_t len = strcspn(buf, "%\n");
                 if (len == strlen(buf)) {
 	            emsg = fxStr::format(
-	                "Warning:%s - line too long.", (const char*)fontMapFile);
+	                _("Warning: %s - line too long."), (const char*)fontMapFile);
 	                break;
                 }
 	        if (len == 0) continue;
@@ -1191,7 +1191,7 @@ TextFont::decodeFontName(const char* name, fxStr& filename, fxStr& emsg)
                         *(buf + len) = '\0';
                         if (len == strlen(buf)) {
 	                    emsg = fxStr::format(
-		                "Warning: %s - line too long.", (const char*) fontMapFile);
+		                _("Warning: %s - line too long."), (const char*) fontMapFile);
 	                    break;
                         }
 			if (len == 0) continue;
@@ -1231,7 +1231,7 @@ TextFont::decodeFontName(const char* name, fxStr& filename, fxStr& emsg)
 			bool result = stat(filename, &junk) ? false : true;
 			if (!result)
 	                    emsg = fxStr::format(
-			        "Warning: %s invalid Fontmap entry - no filename present", (const char*)val);
+			        _("Warning: %s invalid Fontmap entry - no filename present"), (const char*)val);
                         return result;
                     }
                 }
@@ -1371,7 +1371,7 @@ TextFont::readMetrics(TextCoord ps, bool useISO8859, fxStr& emsg)
     FILE *fp = openAFMFile(file);
     if (fp == NULL) {
 	emsg = fxStr::format(
-	    "%s: Can not open font metrics file; using fixed widths",
+	    _("%s: Can not open font metrics file; using fixed widths"),
 	    (const char*) file);
 	loadFixedMetrics(625*ps/1000L);		// NB: use fixed width metrics
 	return (false);
@@ -1388,7 +1388,7 @@ TextFont::readMetrics(TextCoord ps, bool useISO8859, fxStr& emsg)
     do {
 	if (!getAFMLine(fp, buf, sizeof (buf))) {
 	    emsg = fxStr::format(
-		"%s: No glyph metric table located; using fixed widths",
+		_("%s: No glyph metric table located; using fixed widths"),
 		(const char*) file);
 	    fclose(fp);
 	    /*
@@ -1407,7 +1407,7 @@ TextFont::readMetrics(TextCoord ps, bool useISO8859, fxStr& emsg)
 	int ix, w;
 	/* read the glyph position and width */
 	if (sscanf(buf, "C %d ; WX %d ;", &ix, &w) != 2) {
-	    emsg = fxStr::format("%s, line %u: format error",
+	    emsg = fxStr::format(_("%s, line %u: format error"),
 		(const char*) file, lineno);
 	    fclose(fp);
 	    return (false);

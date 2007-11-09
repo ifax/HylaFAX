@@ -122,12 +122,12 @@ void
 faxQCleanApp::scanDirectory(void)
 {
     if (trace)
-	printf("Scan %s directory for jobs to remove+archive.\n",
+	printf(_("Scan %s directory for jobs to remove+archive.\n"),
 	    (const char*) doneDir);
 
     DIR* dir = Sys::opendir(doneDir);
     if (dir == NULL) {
-	printf("%s: Could not scan directory for jobs.\n",
+	printf(_("%s: Could not scan directory for jobs.\n"),
 	    (const char*) doneDir);
 	return;
     }
@@ -140,7 +140,7 @@ faxQCleanApp::scanDirectory(void)
 	struct stat sb;
 	if (Sys::stat(filename, sb) < 0 || !S_ISREG(sb.st_mode)) {
 	    if (trace)
-		printf("%s: ignored (cannot stat or not a regular file)\n",
+		printf(_("%s: ignored (cannot stat or not a regular file)\n"),
 		    (const char*) filename);
 	    continue;
 	}
@@ -157,7 +157,7 @@ faxQCleanApp::scanDirectory(void)
 			 * and forget it until later.
 			 */
 			if (trace)
-			    printf("%s: job too new, ignored (for now).\n",
+			    printf(_("%s: job too new, ignored (for now).\n"),
 				(const char*) filename);
 			collectRefs(*req);
 		    } else if (forceArchiving || archiving &&
@@ -167,19 +167,19 @@ faxQCleanApp::scanDirectory(void)
 			 * value to the archive script for archiving.
 			 */
 			if (verbose)
-			    printf("JOB %s: archive (%s)%s.\n"
+			    printf(_("JOB %s: archive (%s)%s.\n")
 				, (const char*) req->jobid
 				, (const char*) req->doneop
-				, nowork ? " (not done)" : ""
+				, nowork ? _(" (not done)") : ""
 			    );
 			if (!nowork)
 			    archiveJob(*req);
 		    } else {
 			if (verbose)
-			    printf("JOB %s: remove (%s) %s.\n"
+			    printf(_("JOB %s: remove (%s) %s.\n")
 				, (const char*) req->jobid
 				, (const char*) req->doneop
-				, nowork ? " (not done)" : ""
+				, nowork ? _(" (not done)") : ""
 			    );
 			if (!nowork)
 			    Sys::unlink(req->qfile);
@@ -193,7 +193,7 @@ faxQCleanApp::scanDirectory(void)
 		     * so therefore can be removed.
 		     */
 		    if (verbose)
-			printf("%s: malformed queue file: remove\n",
+			printf(_("%s: malformed queue file: remove\n"),
 			    (const char*) filename);
 		    if (!nowork)
 			Sys::unlink(filename);
@@ -209,7 +209,7 @@ faxQCleanApp::scanDirectory(void)
 	    printf("%s: open: %s\n", (const char*) filename, strerror(errno));
     }
     if (trace)
-	printf("Done scanning %s directory\n", (const char*) doneDir);
+	printf(_("Done scanning %s directory\n"), (const char*) doneDir);
     closedir(dir);
 }
 
@@ -231,7 +231,7 @@ faxQCleanApp::collectRefs(const FaxRequest& req)
 	case FaxRequest::send_pcl:
 	case FaxRequest::send_pcl_saved:
 	    if (trace)
-		printf("JOB %s: reference %s\n",
+		printf(_("JOB %s: reference %s\n"),
 		    (const char*) req.jobid,
 		    (const char*) fitem.item);
 	    docrefs[fitem.item]++;
@@ -263,12 +263,12 @@ void
 faxQCleanApp::expungeCruft(void)
 {
     if (trace)
-	printf("Scan %s directory and remove unreferenced documents.\n",
+	printf(_("Scan %s directory and remove unreferenced documents.\n"),
 	    (const char*) docDir);
 
     DIR* dir = Sys::opendir(docDir);
     if (dir == NULL) {
-	printf("%s: Could not scan directory for unreferenced documents.\n",
+	printf(_("%s: Could not scan directory for unreferenced documents.\n"),
 	    (const char*) docDir);
 	return;
     }
@@ -290,7 +290,7 @@ faxQCleanApp::expungeCruft(void)
 	struct stat sb;
 	if (Sys::stat(file, sb) < 0 || !S_ISREG(sb.st_mode)) {
 	    if (trace)
-		printf("%s: ignored, cannot stat or not a regular file\n",
+		printf(_("%s: ignored, cannot stat or not a regular file\n"),
 		    (const char*) file);
 	    continue;
 	}
@@ -305,19 +305,19 @@ faxQCleanApp::expungeCruft(void)
 	 */
 	if (sb.st_nlink > 1) {			// can't be orphaned yet
 	    if (trace)
-		printf("%s: ignored, file has %u links\n",
+		printf(_("%s: ignored, file has %u links\n"),
 		    (const char*) file, sb.st_nlink);
 	    continue;
 	}
 	if (docrefs.find(file)) {		// referenced from doneq
 	    if (trace)
-		printf("%s: ignored, file has %u references\n",
+		printf(_("%s: ignored, file has %u references\n"),
 		    (const char*) file, docrefs[file]);
 	    continue;
 	}
 	if (now - sb.st_mtime < minDocAge) {	// not old enough
 	    if (trace)
-		printf("%s: ignored, file is too new to remove\n",
+		printf(_("%s: ignored, file is too new to remove\n"),
 		    (const char*) file);
 	    continue;
 	}
@@ -340,11 +340,11 @@ faxQCleanApp::expungeCruft(void)
 	    fxStr qfile = qFilePrefix | file.tail(file.length()-l);
 	    if (Sys::stat(qfile, sb) == 0) {
 		if (trace)
-		    printf("%s: file looks to be referenced by job\n",
+		    printf(_("%s: file looks to be referenced by job\n"),
 			(const char*) file);
 		continue;			// skip, in use
 	    } else if (trace)
-		printf("%s: file has no matching %s\n", 
+		printf(_("%s: file has no matching %s\n"), 
 		    (const char*) file, (const char*)qfile);
 	} else if ((l != 0 && l < file.length() && strcmp(&file[l], "cover") == 0) ||
                 (k == 0 && strncmp(&file[docDir.length()+1], "cover", 5) == 0)) {
@@ -362,7 +362,7 @@ faxQCleanApp::expungeCruft(void)
 	    fxStr qfile = qFilePrefix | file.extract(prefix, len-prefix);
 	    if (Sys::stat(qfile, sb) == 0) {
 		if (trace)
-		    printf("%s: file looks to be referenced by job\n",
+		    printf(_("%s: file looks to be referenced by job\n"),
 			(const char*) file);
 		continue;			// skip, in use
 	    }
@@ -381,7 +381,7 @@ faxQCleanApp::expungeCruft(void)
 	    DIR        *dir1 = Sys::opendir(docDir);
 
 	    if(dir1 == 0) {
-		printf("%s: Could not scan directory for base file.\n",
+		printf(_("%s: Could not scan directory for base file.\n"),
 		    (const char *) docDir);
 		    continue;
 	    }
@@ -390,7 +390,7 @@ faxQCleanApp::expungeCruft(void)
 		        ( strncmp(base, dp1->d_name, sl) == 0)) {
 		    // Found match
 		    if(trace)
-			printf("%s: found match to base '%s', skipping.\n",
+			printf(_("%s: found match to base '%s', skipping.\n"),
 			    (const char *)file, dp1->d_name);
 		    got_match = true;
 		    break;
@@ -402,7 +402,7 @@ faxQCleanApp::expungeCruft(void)
 		continue;
 	    }
 	    if(trace)
-		printf("%s: did not find base '%s' match.\n", 
+		printf(_("%s: did not find base '%s' match.\n"), 
 		    (const char *) file, base);
 
 	    free(base);
@@ -410,18 +410,18 @@ faxQCleanApp::expungeCruft(void)
 
 	if (nowork || Sys::unlink(file) >= 0) {
 	    if (verbose)
-		printf("DOC %s: unreferenced document removed%s.\n"
+		printf(_("DOC %s: unreferenced document removed%s.\n")
 		    , (const char*) file
-		    , nowork ? " (not done)" : ""
+		    , nowork ? _(" (not done)") : ""
 		);
 	} else {
 	    if (verbose)
-		printf("%s: error removing unreferenced document: %s.\n",
+		printf(_("%s: error removing unreferenced document: %s.\n"),
 		    (const char*) file, strerror(errno));
 	}
     }
     if (trace)
-	printf("Done scanning %s directory\n", (const char*) docDir);
+	printf(_("Done scanning %s directory\n"), (const char*) docDir);
     closedir(dir);
 }
 
@@ -429,7 +429,7 @@ static void
 usage(const char* appName)
 {
     fprintf(stderr,
-	"usage: %s [-a] [-j time] [-d time] [-q queue-directory]\n",
+	_("usage: %s [-a] [-j time] [-d time] [-q queue-directory]\n"),
 	appName);
 }
 
@@ -461,7 +461,7 @@ main(int argc, char** argv)
 	case '?': usage(appName);
 	}
     if (Sys::chdir(queueDir) < 0) {
-	fprintf(stderr, "%s: Can not change directory: %s.\n",
+	fprintf(stderr, _("%s: Can not change directory: %s.\n"),
 	    (const char*) queueDir, strerror(errno));
 	exit(-1);
     }

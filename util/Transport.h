@@ -37,7 +37,7 @@ protected:
 
     Transport(FaxClient&);
 
-    void notConfigured(const char* what, fxStr& emsg);
+    virtual void notConfigured(fxStr& emsg);
 public:
     virtual ~Transport();
 

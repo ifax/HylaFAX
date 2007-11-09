@@ -530,7 +530,7 @@ SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
     if (coverFile != "") {
 	int fd = Sys::open(coverFile, O_RDONLY);
 	if (fd < 0) {
-	    emsg = fxStr::format("%s: Can not open: %s",
+	    emsg = fxStr::format(_("%s: Can not open: %s"),
 		(const char*) coverFile, strerror(errno));
 	    return (false);			// XXX
 	}
@@ -542,7 +542,7 @@ SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
 	Sys::close(fd);
 	if (!fileSent) {
 	    if (emsg == "")
-		emsg = "Document transfer failed: " | client.getLastResponse();
+		emsg = _("Document transfer failed: ") | client.getLastResponse();
 	    return (false);
 	}
 	CHECK(client.jobCover(coverDoc))

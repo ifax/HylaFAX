@@ -232,7 +232,7 @@ faxAlterApp::run(int argc, char** argv)
     if (optind >= argc)
 	usage();
     if (script == "" && !resubmit)
-	fxFatal("No job parameters specified for alteration.");
+	fxFatal(_("No job parameters specified for alteration."));
     if (callServer(emsg)) {
 	if (login(NULL, emsg) &&
 	    (!useadmin || admin(NULL, emsg))) {
@@ -253,7 +253,7 @@ faxAlterApp::run(int argc, char** argv)
 			}
 			const char* old_job = jobid;
 			jobid = getCurrentJob();
-			printf("Job %s: duplicated as job %s.\n", old_job, jobid);
+			printf(_("Job %s: duplicated as job %s.\n"), old_job, jobid);
 		    } else if (! jobSuspend(jobid)) {
 			emsg = getLastResponse();
 			printError("%s", (const char*) emsg);
@@ -280,7 +280,7 @@ faxAlterApp::run(int argc, char** argv)
 			else
 			    continue;
 		    }
-		    printf("Job %s: done.\n", jobid);
+		    printf(_("Job %s: done.\n"), jobid);
 		} else {
 		    emsg = getLastResponse();
 		    printError("%s", (const char*) emsg);
@@ -306,7 +306,7 @@ faxAlterApp::run(int argc, char** argv)
 void
 faxAlterApp::usage()
 {
-    fxFatal("usage: faxalter [-C]"
+    fxFatal(_("usage: faxalter [-C]"
       " [-h server-host]"
       " [-a time]"
       " [-d number]"
@@ -321,7 +321,7 @@ faxAlterApp::usage()
       " [-r]"
       " [-v]"
       " [-DQR]"
-      " jobID...");
+      " jobID..."));
 }
 
 int

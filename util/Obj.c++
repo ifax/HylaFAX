@@ -35,7 +35,7 @@ const char* fxObj::className() const { return "fxObj"; }
 
 void fxObj::subClassMustDefine(const char* method) const
 {
-    fprintf(stderr, "%s: Sub class must define method \"%s\".\n",
+    fprintf(stderr, _("%s: Sub class must define method \"%s\".\n"),
 	className(), method);
     abort();
 }

@@ -801,14 +801,14 @@ Class2Params::decodeCaps(u_int v)
  * Routines for printing some Class 2 capabilities.
  */
 const char* Class2Params::verticalResNames[65] = {
-    "3.85 line/mm",
-    "7.7 line/mm",
-    "15.4 line/mm", "",
-    "R16 x 15.4 line/mm", "", "", "",
-    "200 x 100 dpi", "", "", "", "", "", "", "",
-    "200 x 200 dpi", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-    "200 x 400 dpi", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-    "300 x 300 dpi"
+    N_("3.85 line/mm"),
+    N_("7.7 line/mm"),
+    N_("15.4 line/mm"), "",
+    N_("R16 x 15.4 line/mm"), "", "", "",
+    N_("200 x 100 dpi"), "", "", "", "", "", "", "",
+    N_("200 x 200 dpi"), "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+    N_("200 x 400 dpi"), "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
+    N_("300 x 300 dpi")
 };
 
 const char* Class2Params::verticalResName() const
@@ -833,22 +833,22 @@ const char* Class2Params::bestVerticalResName() const
 
 
 const char* Class2Params::bitRateNames[16] = {
-    "2400 bit/s",		// BR_2400
-    "4800 bit/s",		// BR_4800
-    "7200 bit/s",		// BR_7200
-    "9600 bit/s",		// BR_9600
-    "12000 bit/s",		// BR_12000
-    "14400 bit/s",		// BR_14400
-    "16800 bit/s",		// BR_16800
-    "19200 bit/s",		// BR_19200
-    "21600 bit/s",		// BR_21600
-    "24000 bit/s",		// BR_24000
-    "26400 bit/s",		// BR_26400
-    "28800 bit/s",		// BR_28800
-    "31200 bit/s",		// BR_31200
-    "33600 bit/s",		// BR_33600
-    "0 bit/s",			// 14 ???
-    "0 bit/s",			// 15 ???
+    N_("2400 bit/s"),		// BR_2400
+    N_("4800 bit/s"),		// BR_4800
+    N_("7200 bit/s"),		// BR_7200
+    N_("9600 bit/s"),		// BR_9600
+    N_("12000 bit/s"),		// BR_12000
+    N_("14400 bit/s"),		// BR_14400
+    N_("16800 bit/s"),		// BR_16800
+    N_("19200 bit/s"),		// BR_19200
+    N_("21600 bit/s"),		// BR_21600
+    N_("24000 bit/s"),		// BR_24000
+    N_("26400 bit/s"),		// BR_26400
+    N_("28800 bit/s"),		// BR_28800
+    N_("31200 bit/s"),		// BR_31200
+    N_("33600 bit/s"),		// BR_33600
+    N_("0 bit/s"),		// 14 ???
+    N_("0 bit/s"),		// 15 ???
 };
 const char* Class2Params::bitRateName() const
     { return (bitRateNames[br&15]); }
@@ -877,13 +877,13 @@ Class2Params::bitRate() const
 }
 
 const char* Class2Params::dataFormatNames[7] = {
-    "1-D MH",			// DF_1DMH
-    "2-D MR",			// DF_2DMR
-    "2-D Uncompressed Mode",	// DF_2DMRUNCOMP
-    "2-D MMR",			// DF_2DMMR
-    "JBIG",			// DF_JBIG
-    "JPEG Greyscale",		// JP_GREY
-    "JPEG Full-Color"		// JP_COLOR
+    N_("1-D MH"),			// DF_1DMH
+    N_("2-D MR"),			// DF_2DMR
+    N_("2-D Uncompressed Mode"),	// DF_2DMRUNCOMP
+    N_("2-D MMR"),			// DF_2DMMR
+    N_("JBIG"),				// DF_JBIG
+    N_("JPEG Greyscale"),		// JP_GREY
+    N_("JPEG Full-Color")		// JP_COLOR
 };
 const char* Class2Params::dataFormatName() const
      { return (dataFormatNames[df+(jp > 0 && jp < (u_int) -1 ? jp + 4 : 0)]); }
@@ -891,59 +891,59 @@ const char* Class2Params::dataFormatName() const
 fxStr
 Class2Params::dataFormatsName()
 {
-    fxStr formats = "MH";
-    if (df & BIT(DF_2DMR)) formats.append(", MR");
-    if (df & BIT(DF_2DMMR)) formats.append(", MMR");
-    if (df & BIT(DF_JBIG)) formats.append(", JBIG");
+    fxStr formats = N_("MH");
+    if (df & BIT(DF_2DMR)) formats.append(N_(", MR"));
+    if (df & BIT(DF_2DMMR)) formats.append(N_(", MMR"));
+    if (df & BIT(DF_JBIG)) formats.append(N_(", JBIG"));
     // since color requires greyscale, just say one or the other
-    if (jp & BIT(JP_COLOR)) formats.append(", JPEG Full-Color");
-    else if (jp & BIT(JP_GREY))  formats.append(", JPEG Greyscale");
+    if (jp & BIT(JP_COLOR)) formats.append(N_(", JPEG Full-Color"));
+    else if (jp & BIT(JP_GREY))  formats.append(N_(", JPEG Greyscale"));
     return (formats);
 }
 
 const char* Class2Params::pageWidthNames[8] = {
-    "A4 page width (215 mm)",
-    "B4 page width (255 mm)",
-    "A3 page width (303 mm)",
-    "page width 151 mm",
-    "page width 107 mm",
-    "undefined page width (wd=5)",
-    "undefined page width (wd=6)",
-    "undefined page width (wd=7)",
+    N_("A4 page width (215 mm)"),
+    N_("B4 page width (255 mm)"),
+    N_("A3 page width (303 mm)"),
+    N_("page width 151 mm"),
+    N_("page width 107 mm"),
+    N_("undefined page width (wd=5)"),
+    N_("undefined page width (wd=6)"),
+    N_("undefined page width (wd=7)"),
 };
 const char* Class2Params::pageWidthName() const
     { return (pageWidthNames[wd&7]); }
 
 const char* Class2Params::pageLengthNames[4] = {
-    "A4 page length (297 mm)",
-    "B4 page length (364 mm)",
-    "unlimited page length",
-    "invalid page length (ln=3)",
+    N_("A4 page length (297 mm)"),
+    N_("B4 page length (364 mm)"),
+    N_("unlimited page length"),
+    N_("invalid page length (ln=3)"),
 };
 const char* Class2Params::pageLengthName() const
     { return (pageLengthNames[ln&3]); }
 
 const char* Class2Params::scanlineTimeNames[8] = {
-    "0 ms/scanline",
-    "5 ms/scanline",
-    "10 ms, 5 ms/scanline",
-    "10 ms/scanline",
-    "20 ms, 10 ms/scanline",
-    "20 ms/scanline",
-    "40 ms, 20 ms/scanline",
-    "40 ms/scanline",
+    N_("0 ms/scanline"),
+    N_("5 ms/scanline"),
+    N_("10 ms, 5 ms/scanline"),
+    N_("10 ms/scanline"),
+    N_("20 ms, 10 ms/scanline"),
+    N_("20 ms/scanline"),
+    N_("40 ms, 20 ms/scanline"),
+    N_("40 ms/scanline"),
 };
 const char* Class2Params::scanlineTimeName() const
     { return (scanlineTimeNames[st&7]); }
 const char* Class2Params::ecmNames[8] = {
-    "no ECM",
-    "T.30 Annex A, 64-byte ECM",
-    "T.30 Annex A, 256-byte ECM",
-    "T.30 Annex C, half duplex ECM",
-    "T.30 Annex C, full duplex ECM",
-    "undefined ECM",
-    "undefined ECM",
-    "undefined ECM"
+    N_("no ECM"),
+    N_("T.30 Annex A, 64-byte ECM"),
+    N_("T.30 Annex A, 256-byte ECM"),
+    N_("T.30 Annex C, half duplex ECM"),
+    N_("T.30 Annex C, full duplex ECM"),
+    N_("undefined ECM"),
+    N_("undefined ECM"),
+    N_("undefined ECM")
 };
 const char* Class2Params::ecmName() const
     { return (ecmNames[ec&7]); }

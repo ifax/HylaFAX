@@ -236,12 +236,12 @@ sendFaxApp::run(int argc, char** argv)
         }
     }
     if (getNumberOfJobs() == 0) {
-        fprintf(stderr, "%s: No destination specified.\n",
+        fprintf(stderr, _("%s: No destination specified.\n"),
             (const char*) appName);
         usage();
     }
     if (!optionsUsed) {
-	fprintf(stderr, "%s: Unused options after last destination.\n",
+	fprintf(stderr, _("%s: Unused options after last destination.\n"),
 	    (const char*) appName);
 	usage();
     }
@@ -261,8 +261,8 @@ sendFaxApp::run(int argc, char** argv)
             && submitJobs(emsg);
         if (status && waitForJob) {
             if (getNumberOfJobs() > 1) {
-                printWarning("can only wait for one job (right now),"
-                    " waiting for job %s.", (const char*) getCurrentJob());
+                printWarning(_("can only wait for one job (right now),"
+                    " waiting for job %s."), (const char*) getCurrentJob());
             }
             jobWait(getCurrentJob());
         }
@@ -275,8 +275,8 @@ sendFaxApp::run(int argc, char** argv)
 void
 sendFaxApp::usage()
 {
-    fxFatal("usage: %s [options] [files]\n"
-        "(Read the manual page; it's too complicated)", (const char*) appName);
+    fxFatal(_("usage: %s [options] [files]\n"
+        "(Read the manual page; it's too complicated)"), (const char*) appName);
 }
 
 /*
@@ -315,14 +315,14 @@ sendFaxApp::addDestination(const char* cp)
         }
     }
     if (dest.length() == 0) {
-        fatal("Null destination for \"%s\"", cp);
+        fatal(_("Null destination for \"%s\""), cp);
     }
     SendFaxJob& job = addJob();
     job.setDialString(dest);
     job.setCoverName(recipient);
     job.setSubAddress(subaddress);
     if(job.getDesiredSpeed() > BR_14400 && job.getDesiredEC() == false) {
-        printWarning("ECM disabled, limiting job to 14400 bps.");
+        printWarning(_("ECM disabled, limiting job to 14400 bps."));
         job.setDesiredSpeed(BR_14400);
     }
 }
@@ -345,7 +345,7 @@ sendFaxApp::addDestinationsFromFile(const char* filename)
 		addDestination(dest);
 	}
     } else {
-	fatal("%s: no such file", filename);
+	fatal(_("%s: no such file"), filename);
     }
 }
 
@@ -361,14 +361,14 @@ sendFaxApp::copyToTemporary(int fin, fxStr& tmpl)
     tmpl = buff;
     delete [] buff;
     if (fd < 0) {
-        fatal("%s: Can not create temporary file", (const char*) tmpl);
+        fatal(_("%s: Can not create temporary file"), (const char*) tmpl);
     }
     int cc, total = 0;
     char buf[16*1024];
     while ((cc = Sys::read(fin, buf, sizeof (buf))) > 0) {
         if (Sys::write(fd, buf, cc) != cc) {
             Sys::unlink(tmpl);
-            fatal("%s: write error", (const char*) tmpl);
+            fatal(_("%s: write error"), (const char*) tmpl);
         }
         total += cc;
     }
@@ -376,7 +376,7 @@ sendFaxApp::copyToTemporary(int fin, fxStr& tmpl)
     if (total == 0) {
         Sys::unlink(tmpl);
         tmpl = "";
-        fatal("No input data; tranmission aborted");
+        fatal(_("No input data; transmission aborted"));
     }
 }
 

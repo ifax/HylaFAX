@@ -82,17 +82,17 @@ sanitize(fxStr& s)
 static void
 usage (const char* app)
 {
-    printf("usage: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt] [-D]\n\n", app);
-    printf("\t-n\tPrint FAX filename\n");
-    printf("\t-C d\tQuoted CSV-style output with <d> as the deliminator\n");
-    printf("\t-c d\tCSV-style output with <d> as the deliminator\n");
-    printf("\t-r\traw format - values outputed with no names\n");
+    printf(_("usage: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt] [-D]\n\n"), app);
+    printf(_("\t-n\tPrint FAX filename\n"));
+    printf(_("\t-C d\tQuoted CSV-style output with <d> as the deliminator\n"));
+    printf(_("\t-c d\tCSV-style output with <d> as the deliminator\n"));
+    printf(_("\t-r\traw format - values outputed with no names\n"));
 
-    printf("  Raw format options:\n");
-    printf("\t-S fmt\tUse fmt for the fax start format\n");
-    printf("\t-s fmt\tUse fmt for the field start format\n");
-    printf("\t-e fmt\tUse fmt for the field end format\n");
-    printf("\t-E fmt\tUse fmt for the fax end format\n");
+    printf(_("  Raw format options:\n"));
+    printf(_("\t-S fmt\tUse fmt for the fax start format\n"));
+    printf(_("\t-s fmt\tUse fmt for the field start format\n"));
+    printf(_("\t-e fmt\tUse fmt for the field end format\n"));
+    printf(_("\t-E fmt\tUse fmt for the fax end format\n"));
 }
 
 static const char*
@@ -240,13 +240,13 @@ main(int argc, char** argv)
 	TIFFSetWarningHandler(NULL);
 	TIFF* tif = TIFFOpen(argv[optind], "r");
 	if (tif == NULL) {
-	    printf("Could not open %s; either not TIFF or corrupted.\n",
+	    printf(_("Could not open %s; either not TIFF or corrupted.\n"),
 		    argv[optind]);
 	    return (1);
 	}
 	bool ok = isFAXImage(tif);
 	if (!ok) {
-	    printf("Does not look like a facsimile?\n");
+	    printf(_("Does not look like a facsimile?\n"));
 	    return (1);
 	}
 
@@ -330,13 +330,13 @@ main(int argc, char** argv)
 		i++;
 	    }
 	} else
-	    sender = "<unknown>";
-	printField("%s", "Sender", (const char*) sender);
+	    sender = _("<unknown>");
+	printField("%s", _("Sender"), (const char*) sender);
 #ifdef TIFFTAG_FAXSUBADDRESS
 	if (TIFFGetField(tif, TIFFTAG_FAXSUBADDRESS, &cp)) {
 	    fxStr subaddr(cp);
 	    sanitize(subaddr);
-	    printField("%s", "SubAddr", (const char*) subaddr);
+	    printField("%s", _("SubAddr"), (const char*) subaddr);
 	}
 #endif
 	fxStr date;
@@ -378,31 +378,31 @@ main(int argc, char** argv)
 	} while (TIFFReadDirectory(tif));
 	TIFFClose(tif);
 
-	printField("%u", "Pages", npages);
+	printField("%u", _("Pages"), npages);
 	if (params.vr == VR_NORMAL)
-	    printField("Normal", "Quality");
+	    printField(_("Normal"), _("Quality"));
 	else if (params.vr == VR_FINE)
-	    printField("Fine", "Quality");
+	    printField(_("Fine"), _("Quality"));
 	else if (params.vr == VR_R8)
-	    printField("Superfine", "Quality");
+	    printField(_("Superfine"), _("Quality"));
 	else if (params.vr == VR_R16)
-	    printField("Hyperfine", "Quality");
+	    printField(_("Hyperfine"), _("Quality"));
 	else
-	    printField("%u lines/inch", "Quality", params.verticalRes());
+	    printField(_("%u lines/inch"), _("Quality"), params.verticalRes());
 	PageSizeInfo* info = PageSizeInfo::getPageSizeBySize(w, h);
 	if (info)
-	    printField("%s", "Page", info->name());
+	    printField("%s", _("Page"), info->name());
 	else
-	    printField("%u by %u", "Page", params.pageWidth(), (u_int) h);
+	    printField(_("%u by %u"), _("Page"), params.pageWidth(), (u_int) h);
 	delete info;
-	printField("%s", "Received", (const char*) date);
-	printField("%s", "TimeToRecv", time == 0 ? "<unknown>" : fmtTime(time));
-	printField("%s", "SignalRate", params.bitRateName());
-	printField("%s", "DataFormat", params.dataFormatName());
-	printField("%s", "ErrCorrect", params.ec == EC_DISABLE ? "No" : "Yes");
+	printField("%s", _("Received"), (const char*) date);
+	printField("%s", _("TimeToRecv"), time == 0 ? _("<unknown>") : fmtTime(time));
+	printField("%s", _("SignalRate"), params.bitRateName());
+	printField("%s", _("DataFormat"), params.dataFormatName());
+	printField("%s", _("ErrCorrect"), params.ec == EC_DISABLE ? _("No") : _("Yes"));
 	for (u_int i = 0; i < callid.size(); i++) {
 	    // formatting will mess up if i gets bigger than one digit
-	    fxStr fmt(fxStr::format("CallID%u", i+1));
+	    fxStr fmt(fxStr::format(_("CallID%u"), i+1));
 	    printField("%s", (const char*)fmt, (const char*) callid.id(i));
 	}
 	printEnd(name);

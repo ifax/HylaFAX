@@ -60,7 +60,7 @@ u_long Sequence::getNext(const char* name, fxStr& emsg)
         fd = -1;
     }
     if (fd < 0) {
-        emsg = fxStr::format("Unable to open sequence number file %s; %s.",
+        emsg = fxStr::format(_("Unable to open sequence number file %s; %s."),
             name, strerror(errno));
         logError("%s: open: %s", name, strerror(errno));
         return ((u_long) -1);
@@ -74,7 +74,7 @@ u_long Sequence::getNext(const char* name, fxStr& emsg)
         seqnum = atol(line);
     }
     if (seqnum < 1 || seqnum >= MAXSEQNUM) {
-        logWarning("%s: Invalid sequence number \"%s\", resetting to 1",
+        logWarning(_("%s: Invalid sequence number \"%s\", resetting to 1"),
             name, line);
         seqnum = 1;
     }
@@ -84,7 +84,7 @@ u_long Sequence::getNext(const char* name, fxStr& emsg)
     if (Sys::write(fd, (const char*)line2, len) != len ||
             ftruncate(fd, len)) {
         emsg = fxStr::format(
-            "Unable update sequence number file %s; write failed.", name);
+            _("Unable update sequence number file %s; write failed."), name);
         logError("%s: Problem updating sequence number file", name);
         return ((u_long) -1);
     }

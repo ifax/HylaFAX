@@ -33,12 +33,12 @@ extern void fxFatal(const char* fmt, ...);
 static void
 usage(void)
 {
-    fxFatal("usage: %s"
+    fxFatal(_("usage: %s"
 	" [-r vertical-res]"
 	" [-l page-length]"
 	" [-w page-width]"
 	" [-1] [-2] [-3]"
-	" input.tif"
+	" input.tif")
 	, appName
 	);
 }
@@ -112,9 +112,9 @@ main(int argc, char* argv[])
     } else {
 	struct stat sb;
 	if (Sys::stat(argv[optind], sb) < 0)
-	    emsg = "Document file is unreadable or does not exist";
+	    emsg = _("Document file is unreadable or does not exist");
 	else
-	    emsg = "Document is not valid TIFF (unspecified format error)";
+	    emsg = _("Document is not valid TIFF (unspecified format error)");
 	status = REJECT;
     }
     if (status != OK) {
@@ -149,32 +149,32 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
     TIFFGetFieldDefaulted(tif, TIFFTAG_BITSPERSAMPLE, &bps);
     if (bps != 1) {
 	emsg.append(fxStr::format(
-	    "Document is not a bilevel image (bits/sample %u).\n", bps));
+	    _("Document is not a bilevel image (bits/sample %u).\n"), bps));
 	status |= REIMAGE;
     }
     uint16 spp;
     TIFFGetFieldDefaulted(tif, TIFFTAG_SAMPLESPERPIXEL, &spp);
     if (spp != 1) {
 	emsg.append(fxStr::format(
-	    "Document is a multi-sample image (samples/pixel %u).\n", spp));
+	    _("Document is a multi-sample image (samples/pixel %u).\n"), spp));
 	status |= REIMAGE;
     }
     uint16 compression = 0;
     (void) TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression);
     if (useMMR) {
 	if (compression != COMPRESSION_CCITTFAX4) {
-	    emsg.append("Document requires reformatting, not in Group 4 format.\n");
+	    emsg.append(_("Document requires reformatting, not in Group 4 format.\n"));
 	    status |= REFORMAT;
 	}
     } else {
 	if (compression != COMPRESSION_CCITTFAX3) {
-	    emsg.append("Document requires reformatting, not in Group 3 format.\n");
+	    emsg.append(_("Document requires reformatting, not in Group 3 format.\n"));
 	    status |= REFORMAT;
 	}
 	uint32 g3opts = 0;
 	(void) TIFFGetField(tif, TIFFTAG_GROUP3OPTIONS, &g3opts);
 	if ((g3opts ^ dataFormat) & GROUP3OPT_2DENCODING) {
-	    emsg.append("Document requires reformatting, not in 2DMR format.\n");
+	    emsg.append(_("Document requires reformatting, not in 2DMR format.\n"));
 	    status |= REFORMAT;
 	}
     }
@@ -183,7 +183,7 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
      * but not if the strips are not in sequential order.
      */
     if (TIFFNumberOfStrips(tif) != 1) {
-	emsg.append("Document should be reformatted as a single strip.\n");
+	emsg.append(_("Document should be reformatted as a single strip.\n"));
 	status |= REFORMAT;
     }
 #ifdef notdef
@@ -193,8 +193,8 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
     uint16 fill;
     (void) TIFFGetFieldDefaulted(tif, TIFFTAG_FILLORDER, &fill);
     if (fill != FILLORDER_LSB2MSB) {
-	emsg.append("Document should be reformatted with "
-	    "LSB-to-MSB bit order.\n");
+	emsg.append(_("Document should be reformatted with "
+	    "LSB-to-MSB bit order.\n"));
 	status |= REFORMAT;
     }
 #endif
@@ -232,8 +232,8 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
     }
     // vres is in inches, compare inches to inches, allow 15 lpi variation
     if ((u_long) yresinch > vres ? (u_long) yresinch - vres > 15 : vres - (u_long) yresinch > 15) {
-	emsg.append(fxStr::format("Document requires reformatting to adjust"
-	    " vertical resolution (convert to %lu, document is %lu).\n",
+	emsg.append(fxStr::format(_("Document requires reformatting to adjust"
+	    " vertical resolution (convert to %lu, document is %lu).\n"),
 	    vres, (u_long) yresinch));
 	status |= REVRES;
     }
@@ -244,12 +244,12 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
      */
     uint32 w;
     if (!TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w)) {
-	emsg = "Document is not valid TIFF (missing ImageWidth tag).\n";
+	emsg = _("Document is not valid TIFF (missing ImageWidth tag).\n");
 	return (REJECT);
     }
     if (w != pageWidth) {
-	emsg.append(fxStr::format("Document requires resizing to adjust"
-	    " page width (convert to %lu, document is %lu).\n",
+	emsg.append(fxStr::format(_("Document requires resizing to adjust"
+	    " page width (convert to %lu, document is %lu).\n"),
 	    (u_long) pageWidth, (u_long) w));
 	status |= RESIZE;
     }
@@ -264,7 +264,7 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
      */
     uint32 h = 0;
     if (!TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h)) {
-	emsg = "Document is not valid TIFF (missing ImageLength tag).\n";
+	emsg = _("Document is not valid TIFF (missing ImageLength tag).\n");
 	return (REJECT);
     }
     /*
@@ -273,8 +273,8 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
     if (!useUnlimitedLength) {
 	float len = h / (yres == 0 ? 1. : yres);		// page length in mm
 	if (pageLength != (uint32) -1 && len > pageLength) {
-	    emsg.append(fxStr::format("Document requires resizing to adjust"
-		" page length (convert to %lu, document is %lu).\n",
+	    emsg.append(fxStr::format(_("Document requires resizing to adjust"
+		" page length (convert to %lu, document is %lu).\n"),
 		(u_long) pageLength, (u_long) len));
 	    status |= RESIZE;
 	}

@@ -89,7 +89,7 @@ faxFetchApp::run(int argc, char** argv)
 	    mode = MODE_Z;
 	    break;
 	case '?':
-	    fxFatal("usage: faxfetch [-h server-host] [-v] file");
+	    fxFatal(_("usage: faxfetch [-h server-host] [-v] file"));
 	}
     if (optind < argc) {
 	fxStr emsg;

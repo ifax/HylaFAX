@@ -39,7 +39,7 @@ const char* appName;
 void
 usage()
 {
-    fprintf(stderr, "usage: %s [-a] [-t threshold] input.tif\n", appName);
+    fprintf(stderr, _("usage: %s [-a] [-t threshold] input.tif\n"), appName);
     exit(-1);
 }
 
@@ -82,11 +82,11 @@ main(int argc, char* argv[])
 	usage();
     TIFF* tif = TIFFOpen(argv[optind], "r");
     if (!tif)
-	fatal("%s: Cannot open, or not a TIFF file", argv[optind]);
+	fatal(_("%s: Cannot open, or not a TIFF file"), argv[optind]);
     uint16 comp;
     TIFFGetField(tif, TIFFTAG_COMPRESSION, &comp);
     if (comp != COMPRESSION_CCITTFAX3 && comp != COMPRESSION_CCITTFAX4)
-	fatal("%s: Not a Group 3 or Group 4-encoded TIFF file", argv[optind]);
+	fatal(_("%s: Not a Group 3 or Group 4-encoded TIFF file"), argv[optind]);
 
     Class2Params params;
     params.vr = VR_NORMAL;
@@ -94,8 +94,9 @@ main(int argc, char* argv[])
     params.ln = LN_INF;
     params.df = DF_1DMH;
 
-    printf("Chop %s >=%.2g\" of white space at the bottom.\n"
-	, doAll ? "all pages with" : "last page if"
+    printf((doAll 
+	? _("Chop all pages with >=%.2g\" of white space at the bottom.\n")
+	: _("Chop last page if >=%.2g\" of white space at the bottom.\n"))
 	, minChop
     );
 
@@ -128,13 +129,13 @@ main(int argc, char* argv[])
 		    dec.scanPageForBlanks(fillorder, params);
 		    if (dec.getLastBlanks() > minRows) {
 			printf(
-			    "Chop %u rows, strip was %lu bytes, need only %lu\n"
+			    _("Chop %u rows, strip was %lu bytes, need only %lu\n")
 			    , dec.getLastBlanks()
 			    , (u_long) totbytes
 			    , (u_long) (dec.getEndOfPage() - data)
 			);
 		    } else {
-			printf("Don't chop, found %u rows, need %u rows\n"
+			printf(_("Don't chop, found %u rows, need %u rows\n")
 			    , dec.getLastBlanks()
 			    , minRows
 			);

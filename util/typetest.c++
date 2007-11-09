@@ -49,16 +49,16 @@ fileType(const char* filename)
     struct stat sb;
     int fd = open(filename, O_RDONLY);
     if (fd < 0) {
-	fprintf(stderr, "%s: Can not open file\n", filename);
+	fprintf(stderr, _("%s: Can not open file\n"), filename);
 	return (NULL);
     }
     if (fstat(fd, &sb) < 0) {
-	fprintf(stderr, "%s: Can not stat file\n", filename);
+	fprintf(stderr, _("%s: Can not stat file\n"), filename);
 	close(fd);
 	return (NULL);
     }
     if ((sb.st_mode & S_IFMT) != S_IFREG) {
-	fprintf(stderr, "%s: Not a regular file\n", filename);
+	fprintf(stderr, _("%s: Not a regular file\n"), filename);
 	close(fd);
 	return (NULL);
     }
@@ -66,12 +66,12 @@ fileType(const char* filename)
     int cc = read(fd, buf, sizeof (buf));
     close(fd);
     if (cc == 0) {
-	fprintf(stderr, "%s: Empty file\n", filename);
+	fprintf(stderr, _("%s: Empty file\n"), filename);
 	return (NULL);
     }
     const TypeRule* tr = typeRules->match(buf, cc);
     if (!tr) {
-	fprintf(stderr, "%s: Can not determine file type\n", filename);
+	fprintf(stderr, _("%s: Can not determine file type\n"), filename);
 	return (NULL);
     }
     if (tr->getResult() == TypeRule::ERROR) {
@@ -87,7 +87,7 @@ char*	appName;
 void
 usage()
 {
-    fprintf(stderr, "usage: %s [-f rulesfile] files\n", appName);
+    fprintf(stderr, _("usage: %s [-f rulesfile] files\n"), appName);
     exit(-1);
 }
 
@@ -114,7 +114,7 @@ main(int argc, char* argv[])
 	usage();
     typeRules = TypeRules::read(file);
     if (!typeRules) {
-	fprintf(stderr, "Unable to setup file typing and conversion rules\n");
+	fprintf(stderr, _("Unable to setup file typing and conversion rules\n"));
 	return (-1);
     }
     typeRules->setVerbose(true);

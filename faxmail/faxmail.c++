@@ -131,7 +131,7 @@ faxMailApp::faxMailApp()
     setTitle("HylaFAX-Mail");
 
     if (Sys::mkdtemp(&tmpDir[0]) == NULL)
-	fxFatal("Cannot create temp directory %s", (const char*) tmpDir);
+	fxFatal(_("Cannot create temp directory %s"), (const char*) tmpDir);
 }
 
 faxMailApp::~faxMailApp()
@@ -263,7 +263,7 @@ faxMailApp::run(int argc, char** argv)
     if ((s = findHeader("x-fax-dialstring")))  // dialstring in envelope
 	job->setDialString(*s);
     if (job->getDialString() == "")
-	fxFatal("No Destination/Dialstring specified");
+	fxFatal(_("No Destination/Dialstring specified"));
 
     /*
      * Establish the sender's identity.
@@ -273,7 +273,7 @@ faxMailApp::run(int argc, char** argv)
     } else if ((s = findHeader("from"))) {
 	client->setFromIdentity(*s);
     } else {
-	fxFatal("No From/Sender identity specified");
+	fxFatal(_("No From/Sender identity specified"));
     }
 
     if (pageSize != "")
@@ -372,7 +372,7 @@ faxMailApp::run(int argc, char** argv)
 
     if (version && stripComments(*version) == "1.0") {
 	if (verbose)
-	    fprintf(stderr, "faxmail: This is a MIME message\n");
+	    fprintf(stderr, _("faxmail: This is a MIME message\n"));
 	beginFile();
 	withinFile = true;
 	// We only format top-level headers if they are
@@ -384,7 +384,7 @@ faxMailApp::run(int argc, char** argv)
 	withinFile = false;
     } else {
 	if (verbose)
-	    fprintf(stderr, "faxmail: This is not a MIME message\n");
+	    fprintf(stderr, _("faxmail: This is not a MIME message\n"));
 	beginFile();
 	withinFile = true;
 	// We only format top-level headers if they are
@@ -419,7 +419,7 @@ faxMailApp::run(int argc, char** argv)
 	    client->hangupServer();
 	}
 	if (!status)
-	    fxFatal("unable to process message:\n\t%s", (const char*) emsg);
+	    fxFatal(_("unable to process message:\n\t%s"), (const char*) emsg);
     }
 }
 
@@ -518,7 +518,7 @@ faxMailApp::formatMultipart(FILE* fd, MIMEState& mime, MsgFmt& msg)
 	while (! last) {
 	    int c = getc(fd);
 	    if (c == EOF) {
-		error("Badly formatted MIME; premature EOF");
+		error(_("Badly formatted MIME; premature EOF"));
 		break;
 	    }
 	    ungetc(c, fd);			// push back read ahead
@@ -615,7 +615,7 @@ bool
 faxMailApp::formatWithExternal (FILE* fd, const fxStr& app, MIMEState& mime)
 {
     if (verbose)
-	fprintf(stderr, "CONVERT: run %s\n", (const char*) app);
+	fprintf(stderr, _("CONVERT: run %s\n"), (const char*) app);
 
     fxStr tmp = tmpDir | "/" | mimeid;
     tmps.append(tmp);
@@ -645,13 +645,13 @@ faxMailApp::formatDiscarded(MIMEState& mime)
 	fxStackBuffer buf;
 	buf.put("-----------------------------\n");
 	if (mime.getDescription() != "")
-	    buf.fput("DISCARDED %s (%s/%s) GOES HERE\n"
+	    buf.fput(_("DISCARDED %s (%s/%s) GOES HERE\n")
 		, (const char*) mime.getDescription()
 		, (const char*) mime.getType()
 		, (const char*) mime.getSubType()
 	    );
 	else
-	    buf.fput("DISCARDED %s/%s GOES HERE\n"
+	    buf.fput(_("DISCARDED %s/%s GOES HERE\n")
 		, (const char*) mime.getType()
 		, (const char*) mime.getSubType()
 	    );
@@ -711,7 +711,7 @@ faxMailApp::copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile)
     if (ftmp >= 0) {
         /*
         if (!Sys::isRegularFile(tmpFile)) {
-            error("%s: is not a regular file", (const char*) tmpFile);
+            error(_("%s: is not a regular file"), (const char*) tmpFile);
             return(false);
         }
         */
@@ -724,10 +724,10 @@ faxMailApp::copyPart(FILE* fd, MIMEState& mime, fxStr& tmpFile)
             Sys::close(ftmp);
             return (true);
         }
-        error("%s: write error: %s", (const char*) tmpFile, strerror(errno));
+        error(_("%s: write error: %s"), (const char*) tmpFile, strerror(errno));
         Sys::close(ftmp);
     } else {
-	    error("%s: Can not create temporary file", (const char*) tmpFile);
+	    error(_("%s: Can not create temporary file"), (const char*) tmpFile);
     }
     discardPart(fd, mime);
     return (false);
@@ -742,7 +742,7 @@ faxMailApp::runConverter(const fxStr& app, const fxStr& input, const fxStr& outp
 {
     int fd = Sys::open(output, O_WRONLY | O_CREAT | O_EXCL, S_IWUSR | S_IRUSR);
     if (fd < 0)
-	fxFatal("Couldn't open output file: %s", (const char*)output);
+	fxFatal(_("Couldn't open output file: %s"), (const char*)output);
 
     const char* av[3];
     av[0] = strrchr(app, '/');
@@ -755,7 +755,7 @@ faxMailApp::runConverter(const fxStr& app, const fxStr& input, const fxStr& outp
     switch (pid) {
     case -1:				// error
 	close(fd);
-	error("Error converting %s/%s; could not fork subprocess: %s"
+	error(_("Error converting %s/%s; could not fork subprocess: %s")
 	    , (const char*) mime.getType()
 	    , (const char*) mime.getSubType()
 	    , strerror(errno)
@@ -772,7 +772,7 @@ faxMailApp::runConverter(const fxStr& app, const fxStr& input, const fxStr& outp
 	close(fd);
 	if (Sys::waitpid(pid, status) == pid && status == 0)
 	    return (true);
-	error("Error converting %s/%s; command was \"%s %s\"; exit status %x"
+	error(_("Error converting %s/%s; command was \"%s %s\"; exit status %x")
 	    , (const char*) mime.getType()
 	    , (const char*) mime.getSubType()
 	    , (const char*) app
@@ -938,7 +938,7 @@ fxFatal(const char* fmt ...)
 void
 faxMailApp::usage()
 {
-    fxFatal("usage: faxmail"
+    fxFatal(_("usage: faxmail"
 	" [-b boldfont]"
 	" [-H pageheight]"
 	" [-i italicfont]"
@@ -950,6 +950,6 @@ faxMailApp::usage()
 	" [-C covertemplate]"
 	" [-t notify]"
 	" [-u user]"
-	" [-12cnNrRTv]"
+	" [-12cnNrRTv]")
     );
 }

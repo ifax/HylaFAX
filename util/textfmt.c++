@@ -42,7 +42,7 @@ static	const char* prog;
 static void
 usage()
 {
-    fprintf(stderr, "Usage: %s"
+    fprintf(stderr, _("Usage: %s"
 	" [-1]"
 	" [-2]"
 	" [-B]"
@@ -57,13 +57,13 @@ usage()
 	" [-U]"
 	" [-Ml=#,r=#,t=#,b=#]"
 	" [-V #]"
-	" files... >out.ps\n", prog);
-    fprintf(stderr,"Default options:"
+	" files... >out.ps\n"), prog);
+    fprintf(stderr, _("Default options:"
 	" -f Courier"
 	" -1"
 	" -p 11bp"
 	" -o 0"
-	"\n");
+	"\n"));
     exit(1);
 }
 
@@ -106,7 +106,7 @@ main(int argc, char* argv[])
 	case 'f':		// body font
 	    if (!fmt.setTextFont(optarg)) {
 		fprintf(stderr,
-		    "%s: No font metric information found for \"%s\".\n",
+		    _("%s: No font metric information found for \"%s\".\n"),
 		    prog, optarg);
 		usage();
 	    }
@@ -122,7 +122,7 @@ main(int argc, char* argv[])
 	    break;
 	case 'M':		// margin(s)
 	    if (!fmt.setPageMargins(optarg)) {
-		fprintf(stderr, "Bad margin syntax.\n");
+		fprintf(stderr, _("Bad margin syntax.\n"));
 		usage();
 	    }
 	    break;
@@ -140,7 +140,7 @@ main(int argc, char* argv[])
 	    break;
 	case 's':		// page size
 	    if (!fmt.setPageSize(optarg)) {
-		fprintf(stderr, "Unknown page size %s.\n", optarg);
+		fprintf(stderr, _("Unknown page size %s.\n"), optarg);
 		usage();
 	    }
 	    break;
@@ -151,7 +151,7 @@ main(int argc, char* argv[])
 	    fmt.setTextLineHeight(TextFormat::inch(optarg));
 	    break;
 	default:
-	    fprintf(stderr,"Unrecognized option \"%c\".\n", c);
+	    fprintf(stderr, _("Unrecognized option \"%c\".\n"), c);
 	    usage();
 	}
 #ifdef notdef

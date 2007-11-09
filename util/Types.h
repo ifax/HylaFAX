@@ -31,6 +31,7 @@
 #include "stdio.h"
 #include "sys/types.h"
 #include "port.h"
+#include "config.h"
 
 // Needed for the placement new operator
 #ifdef HAS_OLD_NEW_H

@@ -91,7 +91,7 @@ readTSIPatterns(FILE* fd, REArray*& pats, fxBoolArray*& accept)
 	if (re->getErrorCode() > REG_NOMATCH) {
 	    fxStr emsg;
 	    re->getError(emsg);
-	    printf("Bad TSI pattern: %s: " | emsg | ".\n", re->pattern());
+	    printf(_("Bad TSI pattern: %s: ") | emsg | ".\n", re->pattern());
 	}
     }
 }
@@ -126,13 +126,13 @@ static	const char* appName;
 static void
 usage()
 {
-    fxFatal("usage: %s [-q] tsifile", appName);
+    fxFatal(_("usage: %s [-q] tsifile"), appName);
 }
 
 static int
 prompt()
 {
-    printf("ready> "); fflush(stdout);
+    printf(_("ready> ")); fflush(stdout);
     return (1);
 }
 
@@ -163,26 +163,27 @@ main(int argc, char* argv[])
 	if (cp)
 	    *cp = '\0';
 	if (verbose)
-	    printf("input = \"%s\"\n", line);
+	    printf(_("input = \"%s\"\n"), line);
 	updateTSIPatterns();
 	if (tsiPats != NULL) {
 	    u_int i;
 	    for (i = 0; i < tsiPats->length(); i++) {
 		RE* pat = (*tsiPats)[i];
 		if (verbose)
-		    printf("[check %s]\n", pat->pattern());
+		    printf(_("[check %s]\n"), pat->pattern());
 		fxStr tsi(line);
 		if (pat->Find(tsi)) {
-		    printf("%s (matched by %s)\n",
-			(*acceptTSI)[i] ? "accept" : "reject",
+		    printf(((*acceptTSI)[i] ?
+			    _("accept (matched by %s)\n") :
+			    _("reject (matched by %s)\n")),
 			pat->pattern());
 		    break;
 		}
 	    }
 	    if (i == tsiPats->length())
-		printf("reject (no pattern match)\n");
+		printf(_("reject (no pattern match)\n"));
 	} else
-	    printf("reject (no patterns)\n");
+	    printf(_("reject (no patterns)\n"));
     }
     return (0);
 }

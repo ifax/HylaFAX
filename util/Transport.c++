@@ -84,9 +84,3 @@ Transport::abortCmd(fxStr& emsg)
     }
     return (true);
 }
-
-void
-Transport::notConfigured(const char* what, fxStr& emsg)
-{
-    emsg = fxStr::format("Sorry, no %s communication support was configured.", what);
-}

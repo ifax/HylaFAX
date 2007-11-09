@@ -178,7 +178,7 @@ faxCoverApp::setupPageSize(const char* name)
 {
     PageSizeInfo* info = PageSizeInfo::getPageSizeByName(name);
     if (!info)
-	fxFatal("Unknown page size \"%s\"", name);
+	fxFatal(_("Unknown page size \"%s\""), name);
     pageWidth = info->width();
     pageLength = info->height();
     delete info;
@@ -195,7 +195,7 @@ faxCoverApp::open()
 void
 faxCoverApp::usage()
 {
-    fxFatal("usage: %s"
+    fxFatal(_("usage: %s"
 	" [-t to]"
 	" [-c comments]"
 	" [-p #pages]"
@@ -213,7 +213,7 @@ faxCoverApp::usage()
 	" [-X from-company]"
 	" [-s pagesize]"
 	" -f from"
-	" -n fax-number"
+	" -n fax-number")
 	, (const char*) appName);
 }
 
@@ -318,7 +318,7 @@ faxCoverApp::makeCoverSheet()
     } else
 	fd = Sys::open(cover, O_RDONLY);
     if (fd < 0) {
-	printError( "Could not locate prototype cover sheet \"%s\"",
+	printError(_("Could not locate prototype cover sheet \"%s\""),
 	    (const char*) cover);
 	return;
     }
@@ -450,7 +450,7 @@ faxCoverApp::tildeExpand(const fxStr& filename)
         path.remove(0);
         struct passwd* pwd = getpwuid(getuid());
         if (!pwd) {
-            fxFatal("Can not figure out who you are.");
+            fxFatal(_("Can not figure out who you are."));
         }
         char* cp = pwd->pw_dir;
 	    path.insert(cp);

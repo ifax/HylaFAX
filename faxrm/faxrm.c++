@@ -93,7 +93,7 @@ faxRmApp::run(int argc, char** argv)
 			emsg = getLastResponse();
 			break;
 		    }
-		    printf("%s removed.\n", id);
+		    printf(_("%s removed.\n"), id);
 		}
 	    }
 	}
@@ -107,12 +107,12 @@ bool
 faxRmApp::removeJob(const char* id, fxStr& emsg)
 {
     if (jobKill(id)) {
-	printf("Job %s removed.\n", id);
+	printf(_("Job %s removed.\n"), id);
 	return (true);
     }
     emsg = getLastResponse();
     if (getLastCode() == 504 && jobDelete(id)) {
-	printf("Job %s removed (from doneq).\n", id);
+	printf(_("Job %s removed (from doneq).\n"), id);
 	emsg = "";
 	return (true);
     }
@@ -132,7 +132,7 @@ faxRmApp::deleteDoc(const char* id)
 void
 faxRmApp::usage()
 {
-    fxFatal("usage: faxrm [-h server-host] [-adv] id...");
+    fxFatal(_("usage: faxrm [-h server-host] [-adv] id..."));
 }
 
 int

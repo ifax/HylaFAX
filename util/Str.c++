@@ -307,7 +307,7 @@ fxStr fxStr::copy() const
 
 void fxStr::remove(u_int start, u_int chars)
 {
-    fxAssert(start+chars<slength,"Str::remove: Invalid range");
+    fxAssert(start+chars<slength, "Str::remove: Invalid range");
     long move = slength-start-chars;		// we always move at least 1
     assert(move > 0);
     if (slength - chars <= 1) {
@@ -321,7 +321,7 @@ void fxStr::remove(u_int start, u_int chars)
 
 fxStr fxStr::cut(u_int start, u_int chars)
 {
-    fxAssert(start+chars<slength,"Str::cut: Invalid range");
+    fxAssert(start+chars<slength, "Str::cut: Invalid range");
     fxStr a(data+start, chars);
     remove(start, chars);
     return a;

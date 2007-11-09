@@ -70,7 +70,7 @@ InetTransport::callServer(fxStr& emsg)
     const char* cproto = proto;			// XXX for busted include files
     struct protoent* pp = getprotobyname(cproto);
     if (!pp) {
-	client.printWarning("%s: No protocol definition, using default.",
+	client.printWarning(_("%s: No protocol definition, using default."),
 	    cproto);
 	protocol = 0;
     } else
@@ -78,13 +78,13 @@ InetTransport::callServer(fxStr& emsg)
 
     struct hostent* hp = Socket::gethostbyname(client.getHost());
     if (!hp) {
-	emsg = client.getHost() | ": Unknown host";
+	emsg = client.getHost() | _(": Unknown host");
 	return (false);
     }
     
     int fd = socket(hp->h_addrtype, SOCK_STREAM, protocol);
     if (fd < 0) {
-	emsg = "Can not create socket to connect to server.";
+	emsg = _("Can not create socket to connect to server.");
 	return (false);
     }
     struct sockaddr_in sin;
@@ -95,7 +95,7 @@ InetTransport::callServer(fxStr& emsg)
 	if (!sp) {
 	    if (!isdigit(cproto[0])) {
 		client.printWarning(
-		    "No \"%s\" service definition, using default %u/%s.",
+		    _("No \"%s\" service definition, using default %u/%s."),
 		    FAX_SERVICE, FAX_DEFPORT, cproto);
 		sin.sin_port = htons(FAX_DEFPORT);
 	    } else
@@ -107,23 +107,23 @@ InetTransport::callServer(fxStr& emsg)
     for (char** cpp = hp->h_addr_list; *cpp; cpp++) {
 	memcpy(&sin.sin_addr, *cpp, hp->h_length);
 	if (client.getVerbose())
-	    client.traceServer("Trying %s (%s) at port %u...",
+	    client.traceServer(_("Trying %s (%s) at port %u..."),
 		(const char*) client.getHost(),
 		inet_ntoa(sin.sin_addr),
 		ntohs(sin.sin_port));
 	if (Socket::connect(fd, &sin, sizeof (sin)) >= 0) {
 	    if (client.getVerbose())
-		client.traceServer("Connected to %s.", hp->h_name);
+		client.traceServer(_("Connected to %s."), hp->h_name);
 #if defined(IP_TOS) && defined(IPTOS_LOWDELAY)
 	    int tos = IPTOS_LOWDELAY;
 	    if (Socket::setsockopt(fd, IPPROTO_IP, IP_TOS, &tos, sizeof (tos)) < 0)
-		client.printWarning("setsockopt(TOS): %s (ignored)",
+		client.printWarning(_("setsockopt(TOS): %s (ignored)"),
 		    strerror(errno));
 #endif
 #ifdef SO_OOBINLINE
 	    int on = 1;
 	    if (Socket::setsockopt(fd, SOL_SOCKET, SO_OOBINLINE, &on, sizeof (on)) < 0)
-		client.printWarning("setsockopt(OOBLINE): %s (ignored)",
+		client.printWarning(_("setsockopt(OOBLINE): %s (ignored)"),
 		    strerror(errno));
 #endif
 	    /*
@@ -136,7 +136,7 @@ InetTransport::callServer(fxStr& emsg)
 	    return (true);
 	}
     }
-    emsg = fxStr::format("Can not reach server at host \"%s\", port %u.",
+    emsg = fxStr::format(_("Can not reach server at host \"%s\", port %u."),
 	(const char*) client.getHost(), ntohs(sin.sin_port));
     Sys::close(fd), fd = -1;
     return (false);
@@ -230,12 +230,18 @@ InetTransport::abortCmd(fxStr& emsg)
     return (true);
 }
 #else
+void
+Transport::notConfigured(fxStr& emsg)
+{
+    emsg = _("Sorry, no TCP/IP communication support was configured.");
+}
+
 bool InetTransport::callServer(fxStr& emsg)
-    { notConfigured("TCP/IP", emsg); return (false); }
+    { notConfigured(emsg); return (false); }
 bool InetTransport::initDataConn(fxStr& emsg)
-    { notConfigured("TCP/IP", emsg); return (false); }
+    { notConfigured(emsg); return (false); }
 bool InetTransport::openDataConn(fxStr& emsg)
-    { notConfigured("TCP/IP", emsg); return (false); }
+    { notConfigured(emsg); return (false); }
 bool InetTransport::abortDataConn(fxStr& emsg)
-    { notConfigured("TCP/IP", emsg); return (false); }
+    { notConfigured(emsg); return (false); }
 #endif

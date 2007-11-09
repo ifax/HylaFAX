@@ -164,7 +164,7 @@ CQDecoder::recvPageDLEData(TIFF* tif, bool checkQuality,
     recvStrip = 0;				// TIFF strip number
     if (EOFraised()) {
 	abortPageRecv();
-	emsg = "Missing EOL after 5 seconds";
+	emsg = _("Missing EOL after 5 seconds");
 	recvTrace("%s", (const char*) emsg);
 	return (false);
     }
@@ -255,7 +255,7 @@ CQDecoder::recvPageDLEData(TIFF* tif, bool checkQuality,
 	     * Adjust everything to reflect the location
 	     * at which RTC was found in the data stream.
 	     */
-	    copyQualityTrace("Adjusting for RTC found at row %u", getRTCRow());
+	    copyQualityTrace(_("Adjusting for RTC found at row %u"), getRTCRow());
 						// # EOL's in recognized RTC
 	    u_int n = (u_int) (recvEOLCount - getRTCRow());
 	    if ((recvRow -= n*rowSize) < buf)
@@ -269,13 +269,13 @@ CQDecoder::recvPageDLEData(TIFF* tif, bool checkQuality,
 	     * readable and/or is followed by line noise or random
 	     * junk from the sender.
 	     */
-	    copyQualityTrace("adjusting for trailing noise (%lu run)", cblc);
+	    copyQualityTrace(_("adjusting for trailing noise (%lu run)"), cblc);
 	    recvEOLCount -= cblc;
 	    recvBadLineCount -= cblc;
 	    if ((recvRow -= cblc*rowSize) < buf)
 		recvRow = buf;
 	}
-	recvTrace("%lu total lines, %lu bad lines, %lu consecutive bad lines"
+	recvTrace(_("%lu total lines, %lu bad lines, %lu consecutive bad lines")
 	    , recvEOLCount
 	    , recvBadLineCount
 	    , recvConsecutiveBadLineCount
@@ -346,7 +346,7 @@ CQDecoder::recvPageDLEData(TIFF* tif, bool checkQuality,
 	     * Adjust the received line count to reflect the
 	     * location at which RTC was found in the data stream.
 	     */
-	    copyQualityTrace("Adjusting for RTC found at row %u", getRTCRow());
+	    copyQualityTrace(_("Adjusting for RTC found at row %u"), getRTCRow());
 	    recvEOLCount = getRTCRow();
 	}
     }
@@ -358,7 +358,7 @@ CQDecoder::flushEncodedData(TIFF* tif, tstrip_t strip, u_char* buf, u_int cc)
 {
     TIFFSetField(tif, TIFFTAG_IMAGELENGTH, recvEOLCount);
     if (TIFFWriteEncodedStrip(tif, strip, buf, cc) == -1)
-	serverTrace("RECV: %s: write error", TIFFFileName(tif));
+	serverTrace(_("RECV: %s: write error"), TIFFFileName(tif));
 }
 
 /*
@@ -369,7 +369,7 @@ CQDecoder::flushRawData(TIFF* tif, tstrip_t strip, u_char* buf, u_int cc)
 {
     recvTrace("%u bytes of data, %lu total lines", cc, recvEOLCount);
     if (TIFFWriteRawStrip(tif, strip, buf, cc) == -1)
-	serverTrace("RECV: %s: write error", TIFFFileName(tif));
+	serverTrace(_("RECV: %s: write error"), TIFFFileName(tif));
 }
 
 /*
@@ -393,7 +393,7 @@ CQDecoder::isQualityOK(const Class2Params& params)
     if (percentGoodLines != 0 && recvEOLCount != 0) {
 	u_long percent = 100 * (recvEOLCount - recvBadLineCount) / recvEOLCount;
 	if (percent < percentGoodLines) {
-	    serverTrace("RECV: REJECT page quality, %u%% good lines (%u%% required)",
+	    serverTrace(_("RECV: REJECT page quality, %u%% good lines (%u%% required)"),
 		percent, percentGoodLines);
 	    return (false);
 	}
@@ -403,7 +403,7 @@ CQDecoder::isQualityOK(const Class2Params& params)
 	if (params.vr == VR_FINE)
 	    cblc *= 2;
 	if (recvConsecutiveBadLineCount > cblc) {
-	    serverTrace("RECV: REJECT page quality, %u-line run (max %u)",
+	    serverTrace(_("RECV: REJECT page quality, %u-line run (max %u)"),
 		recvConsecutiveBadLineCount, cblc);
 	    return (false);
 	}
@@ -431,7 +431,7 @@ CQDecoder::recvTrace(const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    static const fxStr recv("RECV: ");
+    static const fxStr recv(_("RECV: "));
     vtraceStatus(FAXTRACE_PROTOCOL, recv | fmt, ap);
     va_end(ap);
 }
@@ -455,7 +455,7 @@ void
 CQDecoder::invalidCode(const char* type, int x)
 {
     if (!seenRTC())
-	copyQualityTrace("Invalid %s code word, row %u, x %d",
+	copyQualityTrace(_("Invalid %s code word, row %u, x %d"),
 	    type, getReferenceRow(), x);
 }
 
@@ -466,14 +466,14 @@ void
 CQDecoder::badPixelCount(const char* type, int got, int expected)
 {
     if (!seenRTC())
-	copyQualityTrace("Bad %s pixel count, row %u, got %d, expected %d",
+	copyQualityTrace(_("Bad %s pixel count, row %u, got %d, expected %d"),
 	    type, getReferenceRow(), got, expected);
 }
 
 void
 CQDecoder::badDecodingState(const char* type, int x)
 {
-    copyQualityTrace("Panic, bad %s decoding state, row %u, x %d",
+    copyQualityTrace(_("Panic, bad %s decoding state, row %u, x %d"),
 	type, getReferenceRow(), x);
 }
 
@@ -485,7 +485,7 @@ CQDecoder::copyQualityTrace(const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    static const fxStr cq("RECV/CQ: ");
+    static const fxStr cq(_("RECV/CQ: "));
     vtraceStatus(FAXTRACE_COPYQUALITY, cq | fmt, ap);
     va_end(ap);
 }
@@ -495,7 +495,7 @@ const char* appName;
 void
 usage()
 {
-    fprintf(stderr, "usage: %s [-m maxbad] [-p %%good] [-o output.tif] input.tif\n", appName);
+    fprintf(stderr, _("usage: %s [-m maxbad] [-p %%good] [-o output.tif] input.tif\n"), appName);
     _exit(-1);
 }
 
@@ -528,12 +528,12 @@ main(int argc, char* argv[])
 	usage();
     TIFF* tif = TIFFOpen(argv[optind], "r");
     if (!tif) {
-	fprintf(stderr, "%s: Cannot open, or not a TIFF file\n", argv[optind]);
+	fprintf(stderr, _("%s: Cannot open, or not a TIFF file\n"), argv[optind]);
 	return (-1);
     }
     TIFF* tifout = TIFFOpen(outFile, "w");
     if (!tifout) {
-	fprintf(stderr, "%s: Cannot create TIFF file\n", outFile);
+	fprintf(stderr, _("%s: Cannot create TIFF file\n"), outFile);
 	return (-1);
     }
     Class2Params params;
@@ -576,7 +576,7 @@ main(int argc, char* argv[])
 		    (void) cq.recvPageDLEData(tifout,
 			cq.checkQuality(), params, emsg);
 		} else
-		    printf("Read error on strip %u\n", strip);
+		    printf(_("Read error on strip %u\n"), strip);
 		delete data;
 	    }
 	}

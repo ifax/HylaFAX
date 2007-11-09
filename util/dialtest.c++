@@ -42,13 +42,13 @@ static	bool quiet = false;
 static void
 usage()
 {
-    fxFatal("usage: %s"
+    fxFatal(_("usage: %s"
 	" [-v]"
 	" [-a area-code]"
 	" [-c country-code]"
 	" [-i international-prefix]"
 	" [-l long-distance-prefix]"
-	" dialrules"
+	" dialrules")
 	, appName
 	);
 }
@@ -57,7 +57,7 @@ static int
 prompt()
 {
     if (! quiet)
-	    printf("ready> "); fflush(stdout);
+	    printf(_("ready> ")); fflush(stdout);
     return (1);
 }
 
@@ -107,14 +107,14 @@ main(int argc, char* argv[])
     rules.def("InternationalPrefix", internationalPrefix);
     rules.def("LongDistancePrefix", longDistancePrefix);
     if (!rules.parse())
-	fxFatal("%s: Problem parsing rules in %s", appName, argv[optind]);
+	fxFatal(_("%s: Problem parsing rules in %s"), appName, argv[optind]);
     char line[1024];
     while (prompt() && fgets(line, sizeof (line), stdin)) {
 	char* cp = strchr(line, '\n');
 	if (cp)
 	    *cp = '\0';
 	if (verbose)
-	    printf("input = \"%s\"\n", line);
+	    printf(_("input = \"%s\"\n"), line);
 	if ((cp = strchr(line, '('))) {
 	    char* ep = strrchr(cp, ')');
 	    if (ep)
@@ -129,9 +129,9 @@ main(int argc, char* argv[])
 	    fxStr c = rules.canonicalNumber(line);
 	    fxStr d = rules.dialString(line);
 	    fxStr n = rules.displayNumber(line);
-	    printf("canonical = \"%s\"\n", (const char*) c);
-	    printf("dial-string = \"%s\"\n", (const char*) d);
-	    printf("display = \"%s\"\n", (const char *) n);
+	    printf(_("canonical = \"%s\"\n"), (const char*) c);
+	    printf(_("dial-string = \"%s\"\n"), (const char*) d);
+	    printf(_("display = \"%s\"\n"), (const char *) n);
 	}
     }
     return (0);

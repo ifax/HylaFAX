@@ -86,7 +86,7 @@ sendPageApp::run(int argc, char** argv)
 	switch (c) {
 	case 'a':			// time at which to transmit page
 	    if (!proto.setHoldTime(optarg, emsg)) {
-		printError("Invalid hold time \"%s\": %s",
+		printError(_("Invalid hold time \"%s\": %s"),
 		    optarg, (const char*) emsg);
 		exit(-1);
 	    }
@@ -140,7 +140,7 @@ sendPageApp::run(int argc, char** argv)
 	}
 
     if (getNumberOfJobs() == 0) {
-	fprintf(stderr, "%s: No pager identification number (PIN) specified.\n",
+	fprintf(stderr, _("%s: No pager identification number (PIN) specified.\n"),
 	    (const char*) appName);
 	usage();
     }
@@ -173,7 +173,7 @@ sendPageApp::run(int argc, char** argv)
 void
 sendPageApp::usage()
 {
-    fxFatal("usage: %s"
+    fxFatal(_("usage: %s"
 	" -p PIN [-p PIN ...]\n"
 	" [-a time-to-send]"
 	" [-l service-level]"
@@ -186,7 +186,7 @@ sendPageApp::usage()
 	" [-t max-tries]"
 	" [-T max-dials]"
 	" [-nqvDNR]"
-	" [msgs ...]",
+	" [msgs ...]"),
 	(const char*) appName);
 }
 
@@ -212,7 +212,7 @@ sendPageApp::copyToTemporary(int fin, fxStr& tmpl)
     }
 	Sys::close(fd);
     } else
-	fatal("%s: Can not create temporary file", (const char*) tmpl);
+	fatal(_("%s: Can not create temporary file"), (const char*) tmpl);
 }
 
 void

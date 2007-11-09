@@ -296,4 +296,13 @@
 @HAVE_JBIG@
 @HAVE_JBIGTIFF@
 
+/*
+ * i18n support
+ */
+#define _(String) (String)
+#define N_(String) String
+#define textdomain(Domain) do {} while(0)
+#define bindtextdomain(Package, Directory) do {} while(0)
+#define ngettext(s1, s2, n) (n==1?s1:s2)
+
 #endif

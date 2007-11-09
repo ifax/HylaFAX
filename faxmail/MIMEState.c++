@@ -142,7 +142,7 @@ MIMEState::parse(const MsgFmt& msg, fxStr& emsg)
 	    type.lowercase();
 	    subtype.lowercase();
 	} else {
-	    emsg = "Syntax error parsing MIME Content-Type: " | *s;
+	    emsg = _("Syntax error parsing MIME Content-Type: ") | *s;
 	    type = "text";		// reset on parsing error
 	    return (false);
 	}
@@ -357,7 +357,7 @@ MIMEState::getLine(FILE* fd, fxStackBuffer& buf)
     case ENC_BASE64:	return getBase64Line(fd, buf);
     case ENC_UUENCODE:	return getUUDecodeLine(fd, buf);
     }
-    fxFatal("Internal error, unsupported Content-Transfer-Encoding %u", encode);
+    fxFatal(_("Internal error, unsupported Content-Transfer-Encoding %u"), encode);
     /*NOTREACHED*/
     return (false);
 }

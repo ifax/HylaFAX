@@ -52,7 +52,7 @@ static bool
 writeData(int arg, const char* buf, int cc, fxStr& emsg)
 {
     if (Sys::write((intptr_t) arg, buf, cc) != cc) {
-	emsg = fxStr::format("write error: %s", strerror(errno));
+	emsg = fxStr::format(_("write error: %s"), strerror(errno));
 	return (false);
     } else
 	return (true);
@@ -98,7 +98,7 @@ watchApp::run(int argc, char** argv)
     if (callServer(emsg)) {
 	if (login(NULL, emsg) && setType(TYPE_A)) {
 	    if (getTimeZone() == TZ_GMT)
-		printWarning("time values reported in GMT");
+		printWarning(_("time values reported in GMT"));
 	    (void) recvData(writeData, STDOUT_FILENO, emsg, 0,
 		"SITE TRIGGER %s", argv[optind]);
 	}
@@ -111,7 +111,7 @@ watchApp::run(int argc, char** argv)
 void
 watchApp::usage()
 {
-    fxFatal("usage: %s [-h host] [-g] [-l] [-v] trigger-specification",
+    fxFatal(_("usage: %s [-h host] [-g] [-l] [-v] trigger-specification"),
 	(const char*) appName);
 }
 

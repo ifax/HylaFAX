@@ -381,7 +381,7 @@ void
 usage()
 {
     fprintf(stderr,
-	"usage: %s [-m format] [-o t.tif] [-f font.pcf] input.tif\n",
+	_("usage: %s [-m format] [-o t.tif] [-f font.pcf] input.tif\n"),
 	appName);
     exit(-1);
 }
@@ -432,18 +432,18 @@ main(int argc, char* argv[])
 	usage();
     TIFF* tif = TIFFOpen(argv[optind], "r");
     if (!tif)
-	fatal("%s: Cannot open, or not a TIFF file", argv[optind]);
+	fatal(_("%s: Cannot open, or not a TIFF file"), argv[optind]);
     uint16 comp;
     TIFFGetField(tif, TIFFTAG_COMPRESSION, &comp);
     if (comp != COMPRESSION_CCITTFAX3 && comp != COMPRESSION_CCITTFAX4)
-	fatal("%s: Not a Group 3 or Group 4-encoded TIFF file", argv[optind]);
+	fatal(_("%s: Not a Group 3 or Group 4-encoded TIFF file"), argv[optind]);
     setupTagLine();
     if (!tagLineFont->isReady())
-	fatal("%s: Problem reading font", (const char*) tagLineFontFile);
+	fatal(_("%s: Problem reading font"), (const char*) tagLineFontFile);
 
     TIFF* otif = TIFFOpen(output, "w");
     if (!otif)
-	fatal("%s: Cannot create output file", output);
+	fatal(_("%s: Cannot create output file"), output);
     for (totalPages = 1; TIFFReadDirectory(tif); totalPages++)
 	;
     TIFFSetDirectory(tif, 0);
@@ -547,7 +547,7 @@ main(int argc, char* argv[])
 		    if (fillorder != FILLORDER_LSB2MSB)
 			TIFFReverseBits(dp, totbytes);
 		    if (TIFFWriteRawStrip(otif, strip, dp, totbytes) == -1)
-			fatal("%s: Write error at strip %u, writing %lu bytes", 
+			fatal(_("%s: Write error at strip %u, writing %lu bytes"), 
 			    output, strip, (u_long) totbytes);
 		}
 		delete data;

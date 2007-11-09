@@ -113,7 +113,7 @@ FaxClient::printWarning(const char* fmt ...)
 void
 FaxClient::vprintWarning(const char* fmt, va_list ap)
 {
-    fprintf(stderr, "Warning, ");
+    fprintf(stderr, _("Warning, "));
     vfprintf(stderr, fmt, ap);
     fputs("\n", stderr);
 }
@@ -188,8 +188,8 @@ FaxClient::setupUserIdentity(fxStr& emsg)
 	if (name)
 	    userName = name;
 	else {
-	    emsg = fxStr::format("Can not locate your password entry "
-		"(uid %lu): %s", (u_long) getuid(), strerror(errno));
+	    emsg = fxStr::format(_("Can not locate your password entry "
+		"(uid %lu): %s"), (u_long) getuid(), strerror(errno));
 	    return (false);
 	}
     }
@@ -214,8 +214,8 @@ FaxClient::setupUserIdentity(fxStr& emsg)
     } else
 	senderName = userName;
     if (senderName.length() == 0) {
-	emsg = "Bad (null) user name; your password file entry"
-	    " probably has bogus GECOS field information.";
+	emsg = _("Bad (null) user name; your password file entry"
+	    " probably has bogus GECOS field information.");
 	return (false);
     } else
 	return (true);
@@ -381,7 +381,7 @@ FaxClient::login(const char* user, fxStr& emsg)
 	user = userName;
     }
     if (*user == '\0') {
-	emsg = "Malformed (null) username";
+	emsg = _("Malformed (null) username");
 	return (false);
     }
     int n = command("USER %s", user);
@@ -402,7 +402,7 @@ FaxClient::login(const char* user, fxStr& emsg)
 	}
 	return (true);
     } else {
-	emsg = "Login failed: " | lastResponse;
+	emsg = _("Login failed: ") | lastResponse;
 	return (false);
     }
 }
@@ -423,7 +423,7 @@ bool
 FaxClient::admin(const char* pass, fxStr& emsg)
 {
     if (command("ADMIN %s", pass ? pass : getpass("Password:")) != COMPLETE) {
-	emsg = "Admin failed: " | lastResponse;
+	emsg = _("Admin failed: ") | lastResponse;
 	return (false);
     } else
 	return (true);
@@ -439,7 +439,7 @@ FaxClient::setCommon(FaxParam& parm, u_int v)
 		return (false);
 	    }
 	} else {
-	    printError("Bad %s parameter value %u.", parm.cmd, v);
+	    printError(_("Bad %s parameter value %u."), parm.cmd, v);
 	    return (false);
 	}
 	this->*parm.pv = v;
@@ -479,7 +479,7 @@ FaxClient::setTimeZone(u_int v)
             if (v == TZ_GMT) state &= ~FS_TZPEND;
             else state |= FS_TZPEND;
         } else {
-            printError("Bad time zone parameter value %u.", v);
+            printError(_("Bad time zone parameter value %u."), v);
             return (false);
         }
         return (true);
@@ -518,7 +518,7 @@ FaxClient::initDataConn(fxStr& emsg)
     if (transport) {
         if (!transport->initDataConn(emsg)) {
             if (emsg == "") {
-                emsg = "Unable to initialize data connection to server";
+                emsg = _("Unable to initialize data connection to server");
             }
             return (false);
         }
@@ -532,7 +532,7 @@ FaxClient::openDataConn(fxStr& emsg)
     if (transport) {
         if (!transport->openDataConn(emsg)) {
             if (emsg == "") {
-            	emsg = "Unable to open data connection to server";
+            	emsg = _("Unable to open data connection to server");
             }
 	        return (false);
         }
@@ -556,7 +556,7 @@ FaxClient::abortDataConn(fxStr& emsg)
         fflush(fdOut);
         if (!transport->abortCmd(emsg)) {
             if (emsg == "") {
-            	emsg = "Unable to abort data connection to server";
+            	emsg = _("Unable to abort data connection to server");
             }
 	        return (false);
         }
@@ -586,14 +586,14 @@ FaxClient::abortDataConn(fxStr& emsg)
 void
 FaxClient::lostServer(void)
 {
-    printError("Service not available, remote server closed connection");
+    printError(_("Service not available, remote server closed connection"));
     hangupServer();
 }
 
 void
 FaxClient::unexpectedResponse(fxStr& emsg)
 {
-    emsg = "Unexpected server response: " | lastResponse;
+    emsg = _("Unexpected server response: ") | lastResponse;
 }
 
 void
@@ -601,7 +601,7 @@ FaxClient::protocolBotch(fxStr& emsg, const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    emsg = "Protocol botch" | fxStr::vformat(fmt, ap);
+    emsg = _("Protocol botch") | fxStr::vformat(fmt, ap);
     va_end(ap);
 }
 
@@ -636,7 +636,7 @@ FaxClient::vcommand(const char* fmt, va_list ap)
         } else {
 	    line = (char *)malloc(100);
 	    if (line == NULL)
-		printError("Memory allocation failed");
+		printError(_("Memory allocation failed"));
 	    else {
 		vsnprintf(line, 100, fmt, ap);
 		traceServer("-> %s", line);
@@ -644,7 +644,7 @@ FaxClient::vcommand(const char* fmt, va_list ap)
         }
     }
     if (fdOut == NULL) {
-        printError("No control connection for command");
+        printError(_("No control connection for command"));
         code = -1;
         return (0);
     }
@@ -779,14 +779,14 @@ FaxClient::extract(u_int& pos, const char* pattern, fxStr& result,
         l = lastResponse.find(pos, pat);
     }
     if (l == lastResponse.length()) {
-        protocolBotch(emsg, ": No \"%s\" in %s response: %s",
+        protocolBotch(emsg, _(": No \"%s\" in %s response: %s"),
             pattern, cmd, (const char*) lastResponse);
         return false;
     }
     l = lastResponse.skip(l+pat.length(), ' ');// skip white space
     result = lastResponse.extract(l, lastResponse.next(l, ' ')-l);
     if (result == "") {
-        protocolBotch(emsg, ": Null %s in %s response: %s",
+        protocolBotch(emsg, _(": Null %s in %s response: %s"),
             pattern, cmd, (const char*) lastResponse);
         return false;
     }
@@ -950,7 +950,7 @@ FaxClient::runScript(const char* filename, fxStr& emsg)
 	ok = runScript(fd, filename, emsg);
 	fclose(fd);
     } else
-	emsg = fxStr::format("Unable to open script file \"%s\".", filename);
+	emsg = fxStr::format(_("Unable to open script file \"%s\"."), filename);
     return (ok);
 }
 
@@ -969,7 +969,7 @@ FaxClient::runScript(FILE* fp, const char* filename, fxStr& emsg)
 	if (Sys::read(fileno(fp), addr, (u_int) sb.st_size) == sb.st_size)
 	    ok = runScript(addr, sb.st_size, filename, emsg);
 	else
-	    emsg = fxStr::format("%s: Read error: %s",
+	    emsg = fxStr::format(_("%s: Read error: %s"),
 		filename, strerror(errno));
 	delete [] addr;
 #if HAS_MMAP
@@ -994,7 +994,7 @@ FaxClient::runScript(const char* script, u_long scriptLen,
 	u_int cmdLen = ep-script;
 	if (cmdLen > 1) {
 	    if (command("%.*s", cmdLen, script) != COMPLETE) {
-		emsg = fxStr::format("%s: line %u: %s",
+		emsg = fxStr::format(_("%s: line %u: %s"),
 		    filename, lineno, (const char*) lastResponse);
 		return (false);
 	    }
@@ -1084,14 +1084,14 @@ FaxClient::sendRawData(void* buf, int cc, fxStr& emsg)
     for (int cnt, sent = 0; cc; sent += cnt, cc -= cnt) 
 	if ((cnt = write(fdData, bp + sent, cc)) <= 0) {
 	    protocolBotch(emsg, errno == EPIPE ?
-		" (server closed connection)" : " (server write error: %s).",
+		_(" (server closed connection)") : _(" (server write error: %s)."),
 		strerror(errno));
 	    return (false);
 	}
 #else
     if (write(fdData, buf, cc) != cc) {
 	protocolBotch(emsg, errno == EPIPE ?
-	    " (server closed connection)" : " (server write error: %s).",
+	    _(" (server closed connection)") : _(" (server write error: %s)."),
 	    strerror(errno));
 	return (false);
     }
@@ -1113,7 +1113,7 @@ FaxClient::sendData(int fd,
     size_t cc;
     (void) Sys::fstat(fd, sb);
     if (getVerbose())
-	traceServer("SEND data, %lu bytes", (u_long) sb.st_size);
+	traceServer(_("SEND data, %lu bytes"), (u_long) sb.st_size);
     if (!initDataConn(emsg))
 	goto bad;
     if (!setMode(MODE_S))
@@ -1131,7 +1131,7 @@ FaxClient::sendData(int fd,
 	    char buf[32*1024];			// XXX better if page-aligned
 	    size_t n = fxmin(cc, sizeof (buf));
 	    if (read(fd, buf, n) != (ssize_t)n) {
-		protocolBotch(emsg, " (data read: %s).", strerror(errno));
+		protocolBotch(emsg, _(" (data read: %s)."), strerror(errno));
 		goto bad;
 	    }
 	    if (!sendRawData(buf, n, emsg))
@@ -1182,7 +1182,7 @@ FaxClient::sendZData(int fd,
 	size_t cc;
 	Sys::fstat(fd, sb);
 	if (getVerbose())
-	    traceServer("SEND compressed data, %lu bytes", (u_long) sb.st_size);
+	    traceServer(_("SEND compressed data, %lu bytes"), (u_long) sb.st_size);
 	if (!initDataConn(emsg))
 	    goto bad;
 	if (!setMode(MODE_Z))
@@ -1200,14 +1200,14 @@ FaxClient::sendZData(int fd,
 		char buf[32*1024];
 		int n = fxmin((size_t) cc, sizeof (buf));
 		if (read(fd, buf, n) != n) {
-		    protocolBotch(emsg, " (data read: %s)", strerror(errno));
+		    protocolBotch(emsg, _(" (data read: %s)"), strerror(errno));
 		    goto bad;
 		}
 		zstream.next_in = (Bytef*) buf;
 		zstream.avail_in = n;
 		do {
 		    if (deflate(&zstream, Z_NO_FLUSH) != Z_OK) {
-			emsg = fxStr::format("zlib compressor error: %s",
+			emsg = fxStr::format(_("zlib compressor error: %s"),
 			    zstream.msg);
 			goto bad;
 		    }
@@ -1227,7 +1227,7 @@ FaxClient::sendZData(int fd,
 	    zstream.avail_in = (u_int) sb.st_size;
 	    do {
 		if (deflate(&zstream, Z_NO_FLUSH) != Z_OK) {
-		    emsg = fxStr::format("zlib compressor error: %s",
+		    emsg = fxStr::format(_("zlib compressor error: %s"),
 			zstream.msg);
 		    goto bad;
 		}
@@ -1253,13 +1253,13 @@ FaxClient::sendZData(int fd,
 		}
 		break;
 	    default:
-		emsg = fxStr::format("zlib compressor error: %s",
+		emsg = fxStr::format(_("zlib compressor error: %s"),
 		    zstream.msg);
 		goto bad;
 	    }
 	} while (dstate != Z_STREAM_END);
 	if (getVerbose())
-	    traceServer("SEND %lu bytes transmitted (%.1fx compression)",
+	    traceServer(_("SEND %lu bytes transmitted (%.1fx compression)"),
 #define	NZ(x)	((x)?(x):1)
 		zstream.total_out, float(sb.st_size) / NZ(zstream.total_out));
 	closeDataConn();
@@ -1280,7 +1280,7 @@ bad:
 #endif
 	deflateEnd(&zstream);
     } else
-	emsg = fxStr::format("Can not initialize compression library: %s",
+	emsg = fxStr::format(_("Can not initialize compression library: %s"),
 	    zstream.msg);
     return (false);
 }
@@ -1322,7 +1322,7 @@ FaxClient::recvData(bool (*f)(int, const char*, int, fxStr&),
 	    return (getReply(false) == COMPLETE);
 	}
 	if (cc < 0) {
-	    emsg = fxStr::format("Data Connection: %s", strerror(errno));
+	    emsg = fxStr::format(_("Data Connection: %s"), strerror(errno));
 	    (void) getReply(false);
 	    break;
 	}
@@ -1385,7 +1385,7 @@ FaxClient::recvZData(bool (*f)(void*, const char*, int, fxStr&),
 		return (getReply(false) == COMPLETE);
 	    }
 	    if (cc < 0) {
-		emsg = fxStr::format("Data Connection: %s", strerror(errno));
+		emsg = fxStr::format(_("Data Connection: %s"), strerror(errno));
 		(void) getReply(false);
 		goto bad;
 	    }
@@ -1396,7 +1396,7 @@ FaxClient::recvZData(bool (*f)(void*, const char*, int, fxStr&),
 		if (dstate == Z_STREAM_END)
 		    break;
 		if (dstate != Z_OK) {
-		    emsg = fxStr::format("Decoding error: %s", zstream.msg);
+		    emsg = fxStr::format(_("Decoding error: %s"), zstream.msg);
 		    goto bad;
 		}
 		size_t occ = sizeof (obuf) - zstream.avail_out;
@@ -1410,7 +1410,7 @@ bad:
 	closeDataConn();
 	inflateEnd(&zstream);
     } else
-	emsg = fxStr::format("Can not initialize decoder: %s", zstream.msg);
+	emsg = fxStr::format(_("Can not initialize decoder: %s"), zstream.msg);
     return (false);
 }
 
@@ -1589,9 +1589,9 @@ FaxClient::makeHeader(const char* fmt, const FaxFmtHeader fmts[], fxStr& header)
 		if (fspec[1] == '-')	// left justify
 		    width = -width;
 		if (width == 0 && prec == 0)
-		    header.append(hp->title);
+		    header.append(_(hp->title));
 		else
-		    header.append(fxStr::format("%*.*s", width, prec, hp->title));
+		    header.append(fxStr::format("%*.*s", width, prec, _(hp->title)));
 	    } else {
 		*fp++ = c;
 		header.append(fxStr(fspec, fp-fspec));
@@ -1606,59 +1606,59 @@ FaxClient::makeHeader(const char* fmt, const FaxFmtHeader fmts[], fxStr& header)
  * queue status listings returned by the server.
  */
 const FaxClient::FaxFmtHeader FaxClient::jobFormats[] = {
-    { 'A',	"SUB" },	// A (subaddr)
-    { 'B',	"PWD" },	// B (passwd)
-    { 'C',	"Company" },	// C (company)
-    { 'D',	"Dials" },	// D (totdials & maxdials)
-    { 'E',	"BR" },		// E (desiredbr)
-    { 'F',	"Tagline" },	// F (tagline)
-    { 'G',	"ST" },		// G (desiredst)
-    { 'H',	"DF" },		// H (desireddf)
-    { 'I',	"UsrPri" },	// I (usrpri)
-    { 'J',	"JobTag" },	// J (jobtag)
-    { 'K',	"EC" },		// K (desiredec as symbol)
-    { 'L',	"Location" },	// L (location)
-    { 'M',	"MailAddr" },	// M (mailaddr)
-    { 'N',	"DT" },		// N (desiredtl as symbol)
-    { 'O',	"CC" },		// O (useccover as symbol)
-    { 'P',	"Pages" },	// P (npages & totpages)
-    { 'Q',	"MinSP" },	// Q (minsp)
-    { 'R',	"Receiver" },	// R (receiver)
-    { 'S',	"Sender" },	// S (sender)
-    { 'T',	"Tries" },	// T (tottries & maxtries)
-    { 'U',	"ChopThreshold" },// U (chopthreshold)
-    { 'V',	"DoneOp" },	// V (doneop)
-    { 'W',	"CommID" },	// W (commid)
-    { 'X',	"JobType" },	// X (jobtype)
-    { 'Y',	"Date       Time" },	// Y (date & time)
-    { 'Z',	"UNIX Time" },	// Z (seconds since the UNIX epoch)
-    { 'a',	"State" },	// a (job state as symbol)
-    { 'b',	"NTries" },	// b (ntries)
-    { 'c',	"Client" },	// c (client)
-    { 'd',	"TotDials" },	// d (totdials)
-    { 'e',	"Number" },	// e (external)
-    { 'f',	"NDials" },	// f (ndials)
-    { 'g',	"GID" },	// g (groupid)
-    { 'h',	"Chop" },	// h (pagechop as symbol)
-    { 'i',	"Priority" },	// i (pri)
-    { 'j',	"JID" },	// j (jobid)
-    { 'k',	"LastTime" },	// k (killtime)
-    { 'l',	"PageLength" },	// l (pagelength)
-    { 'm',	"Modem" },	// m (modem)
-    { 'n',	"Notify" },	// n (notify as symbol)
-    { 'o',	"Owner" },	// o (owner)
-    { 'p',	"Pages" },	// p (npages)
-    { 'q',	"RetryTime" },	// q (retrytime as MM:SS)
-    { 'r',	"Resolution" },	// r (resolution)
-    { 's',	"Status" },	// s (notice a.k.a. status)
-    { 't',	"TotTries" },	// t (tottries)
-    { 'u',	"MaxTries" },	// u (maxtries)
-    { 'v',	"DialString" },	// v (number a.ka. dialstring)
-    { 'w',	"PageWidth" },	// w (pagewidth)
-    { 'x',	"MaxDials" },	// x (maxdials)
-    { 'y',	"TotPages" },	// y (totpages)
-    { 'z',	"TTS" },	// z (tts)
-    { '0',	"UseXVres" },	// 0 (usexvres as symbol)
+    { 'A',	N_("SUB") },		// A (subaddr)
+    { 'B',	N_("PWD") },		// B (passwd)
+    { 'C',	N_("Company") },	// C (company)
+    { 'D',	N_("Dials") },		// D (totdials & maxdials)
+    { 'E',	N_("BR") },		// E (desiredbr)
+    { 'F',	N_("Tagline") },	// F (tagline)
+    { 'G',	N_("ST") },		// G (desiredst)
+    { 'H',	N_("DF") },		// H (desireddf)
+    { 'I',	N_("UsrPri") },		// I (usrpri)
+    { 'J',	N_("JobTag") },		// J (jobtag)
+    { 'K',	N_("EC") },		// K (desiredec as symbol)
+    { 'L',	N_("Location") },	// L (location)
+    { 'M',	N_("MailAddr") },	// M (mailaddr)
+    { 'N',	N_("DT") },		// N (desiredtl as symbol)
+    { 'O',	N_("CC") },		// O (useccover as symbol)
+    { 'P',	N_("Pages") },		// P (npages & totpages)
+    { 'Q',	N_("MinSP") },		// Q (minsp)
+    { 'R',	N_("Receiver") },	// R (receiver)
+    { 'S',	N_("Sender") },		// S (sender)
+    { 'T',	N_("Tries") },		// T (tottries & maxtries)
+    { 'U',	N_("ChopThreshold") },	// U (chopthreshold)
+    { 'V',	N_("DoneOp") },		// V (doneop)
+    { 'W',	N_("CommID") },		// W (commid)
+    { 'X',	N_("JobType") },	// X (jobtype)
+    { 'Y',	N_("Date       Time") },// Y (date & time)
+    { 'Z',	N_("UNIX Time") },	// Z (seconds since the UNIX epoch)
+    { 'a',	N_("State") },		// a (job state as symbol)
+    { 'b',	N_("NTries") },		// b (ntries)
+    { 'c',	N_("Client") },		// c (client)
+    { 'd',	N_("TotDials") },	// d (totdials)
+    { 'e',	N_("Number") },		// e (external)
+    { 'f',	N_("NDials") },		// f (ndials)
+    { 'g',	N_("GID") },		// g (groupid)
+    { 'h',	N_("Chop") },		// h (pagechop as symbol)
+    { 'i',	N_("Priority") },	// i (pri)
+    { 'j',	N_("JID") },		// j (jobid)
+    { 'k',	N_("LastTime") },	// k (killtime)
+    { 'l',	N_("PageLength") },	// l (pagelength)
+    { 'm',	N_("Modem") },		// m (modem)
+    { 'n',	N_("Notify") },		// n (notify as symbol)
+    { 'o',	N_("Owner") },		// o (owner)
+    { 'p',	N_("Pages") },		// p (npages)
+    { 'q',	N_("RetryTime") },	// q (retrytime as MM:SS)
+    { 'r',	N_("Resolution") },	// r (resolution)
+    { 's',	N_("Status") },		// s (notice a.k.a. status)
+    { 't',	N_("TotTries") },	// t (tottries)
+    { 'u',	N_("MaxTries") },	// u (maxtries)
+    { 'v',	N_("DialString") },	// v (number a.ka. dialstring)
+    { 'w',	N_("PageWidth") },	// w (pagewidth)
+    { 'x',	N_("MaxDials") },	// x (maxdials)
+    { 'y',	N_("TotPages") },	// y (totpages)
+    { 'z',	N_("TTS") },		// z (tts)
+    { '0',	N_("UseXVres") },	// 0 (usexvres as symbol)
     { '\0' },
 };
 void FaxClient::getJobStatusHeader(fxStr& header)
@@ -1669,26 +1669,26 @@ void FaxClient::getJobStatusHeader(fxStr& header)
  * queue status listings returned by the server.
  */
 const FaxClient::FaxFmtHeader FaxClient::recvFormats[] = {
-    { 'Y',	"Date       Time" },	// Y (date & time)
-    { 'a',	"SUB" },	// a (subaddress)
-    { 'b',	"BR" },		// b (bitrate)
-    { 'd',	"DF" },		// d (data format)
-    { 'e',	"Error" },	// e (error description)
-    { 'f',	"Filename" },	// f (filename)
-    { 'h',	"Time" },	// h (time spent receiving)
-    { 'i',	"CIDName" },	// i (caller id name)
-    { 'j',	"CIDNumber" },	// j (caller id number)
-    { 'l',	"Length" },	// l (pagelength)
-    { 'm',	"Protect" },	// m (fax-style protection mode, no group bits)
-    { 'n',	"Size" },	// n (file size)
-    { 'o',	"Owner" },	// o (owner)
-    { 'p',	"Pages" },	// p (npages)
-    { 'q',	"Protect" },	// m (UNIX-style protection mode)
-    { 'r',	"Resolution" },	// r (resolution)
-    { 's',	"Sender/TSI" },	// s (sender TSI)
-    { 't',	"Recvd@" },	// t (time received)
-    { 'w',	"Width" },	// w (pagewidth)
-    { 'z',	" " },		// z (``*'' if being received)
+    { 'Y',	N_("Date       Time") },// Y (date & time)
+    { 'a',	N_("SUB") },		// a (subaddress)
+    { 'b',	N_("BR") },		// b (bitrate)
+    { 'd',	N_("DF") },		// d (data format)
+    { 'e',	N_("Error") },		// e (error description)
+    { 'f',	N_("Filename") },	// f (filename)
+    { 'h',	N_("Time") },		// h (time spent receiving)
+    { 'i',	N_("CIDName") },	// i (caller id name)
+    { 'j',	N_("CIDNumber") },	// j (caller id number)
+    { 'l',	N_("Length") },		// l (pagelength)
+    { 'm',	N_("Protect") },	// m (fax-style protection mode, no group bits)
+    { 'n',	N_("Size") },		// n (file size)
+    { 'o',	N_("Owner") },		// o (owner)
+    { 'p',	N_("Pages") },		// p (npages)
+    { 'q',	N_("Protect") },	// m (UNIX-style protection mode)
+    { 'r',	N_("Resolution") },	// r (resolution)
+    { 's',	N_("Sender/TSI") },	// s (sender TSI)
+    { 't',	N_("Recvd@") },		// t (time received)
+    { 'w',	N_("Width") },		// w (pagewidth)
+    { 'z',	" " },			// z (``*'' if being received)
     { '\0' },
 };
 void FaxClient::getRecvStatusHeader(fxStr& header)
@@ -1699,15 +1699,15 @@ void FaxClient::getRecvStatusHeader(fxStr& header)
  * status listings returned by the server.
  */
 const FaxClient::FaxFmtHeader FaxClient::modemFormats[] = {
-    { 'h',	"Host" },	// h (hostname)
-    { 'l',	"LocalID" },	// l (local identifier)
-    { 'm',	"Modem" },	// m (canonical modem name)
-    { 'n',	"Number" },	// n (fax phone number)
-    { 'r',	"MaxRecv" },	// r (max recv pages)
-    { 's',	"Status" },	// s (status information)
-    { 't',	"Tracing" },	// t (server:session tracing level)
-    { 'v',	"Speaker" },	// v (speaker volume as symbol)
-    { 'z',	" " },		// z (``*'' if faxgetty is running)
+    { 'h',	N_("Host") },		// h (hostname)
+    { 'l',	N_("LocalID") },	// l (local identifier)
+    { 'm',	N_("Modem") },		// m (canonical modem name)
+    { 'n',	N_("Number") },		// n (fax phone number)
+    { 'r',	N_("MaxRecv") },	// r (max recv pages)
+    { 's',	N_("Status") },		// s (status information)
+    { 't',	N_("Tracing") },	// t (server:session tracing level)
+    { 'v',	N_("Speaker") },	// v (speaker volume as symbol)
+    { 'z',	" " },			// z (``*'' if faxgetty is running)
     { '\0' },
 };
 void FaxClient::getModemStatusHeader(fxStr& header)
@@ -1718,19 +1718,19 @@ void FaxClient::getModemStatusHeader(fxStr& header)
  * status listings returned by the server.
  */
 const FaxClient::FaxFmtHeader FaxClient::fileFormats[] = {
-    { 'a',	"LastAcc" },	// a (last access time)
-    { 'c',	"Created" },	// c (create time)
-    { 'd',	"Device" },	// d (device)
-    { 'f',	"Filename" },	// f (filename)
-    { 'g',	"GID" },	// g (GID of file)
-    { 'l',	"Links" },	// l (link count)
-    { 'm',	"LastMod" },	// m (last modification time)
-    { 'o',	"Owner" },	// o (owner based on file GID)
-    { 'p',	"Protect" },	// p (fax-style protection flags, no group bits)
-    { 'q',	"Protect" },	// q (UNIX-style protection flags)
-    { 'r',	"RootDev" },	// r (root device)
-    { 's',	"Size" },	// s (file size in bytes)
-    { 'u',	"UID" },	// u (UID of file)
+    { 'a',	N_("LastAcc") },	// a (last access time)
+    { 'c',	N_("Created") },	// c (create time)
+    { 'd',	N_("Device") },		// d (device)
+    { 'f',	N_("Filename") },	// f (filename)
+    { 'g',	N_("GID") },		// g (GID of file)
+    { 'l',	N_("Links") },		// l (link count)
+    { 'm',	N_("LastMod") },	// m (last modification time)
+    { 'o',	N_("Owner") },		// o (owner based on file GID)
+    { 'p',	N_("Protect") },	// p (fax-style protection flags, no group bits)
+    { 'q',	N_("Protect") },	// q (UNIX-style protection flags)
+    { 'r',	N_("RootDev") },	// r (root device)
+    { 's',	N_("Size") },		// s (file size in bytes)
+    { 'u',	N_("UID") },		// u (UID of file)
     { '\0' },
 };
 void FaxClient::getFileStatusHeader(fxStr& header)

@@ -49,7 +49,7 @@ UnixTransport::callServer(fxStr& emsg)
 {
     int fd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (fd < 0) {
-	emsg = "Can not create socket to connect to server.";
+	emsg = _("Can not create socket to connect to server.");
 	return (false);
     }
     struct sockaddr_un Sun;
@@ -57,13 +57,13 @@ UnixTransport::callServer(fxStr& emsg)
     Sun.sun_family = AF_UNIX;
     strncpy(Sun.sun_path, client.getHost(), sizeof (Sun.sun_path));
     if (client.getVerbose())
-	client.traceServer("connect to server at %s",
+	client.traceServer(_("connect to server at %s"),
 	    (const char*) client.getHost());
     if (Socket::connect(fd, &Sun, sizeof (Sun)) >= 0) {
 	client.setCtrlFds(fd, dup(fd));
 	return (true);
     } else {
-	emsg = fxStr::format("Can not reach server at Unix domain socket \"%s\".",
+	emsg = fxStr::format(_("Can not reach server at Unix domain socket \"%s\"."),
 	    (const char*) client.getHost());
 	Sys::close(fd), fd = -1;
 	return (false);
@@ -132,10 +132,16 @@ UnixTransport::openDataConn(fxStr&)
 #endif
 }
 #else
+void
+Transport::notConfigured(fxStr& emsg)
+{
+    emsg = _("Sorry, no Unix domain communication support was configured.");
+}
+
 bool UnixTransport::callServer(fxStr& emsg)
-    { notConfigured("Unix domain", emsg); return (false); }
+    { notConfigured(emsg); return (false); }
 bool UnixTransport::initDataConn(fxStr& emsg)
-    { notConfigured("Unix domain", emsg); return (false); }
+    { notConfigured(emsg); return (false); }
 bool UnixTransport::openDataConn(fxStr& emsg)
-    { notConfigured("Unix domain", emsg); return (false); }
+    { notConfigured(emsg); return (false); }
 #endif
