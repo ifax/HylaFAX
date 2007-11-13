@@ -583,7 +583,7 @@ FaxModem::traceModemParams()
 void
 FaxModem::traceFCF(const char* dir, u_int fcf)
 {
-    char* fcfname;
+    const char* fcfname;
     switch (fcf & 0x7F) {
 	case 0x00:
 	    fcfname = "NULL (more blocks, same page)";

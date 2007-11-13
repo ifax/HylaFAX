@@ -86,7 +86,7 @@ FaxConfig::tildeExpand(const fxStr& filename)
     fxStr path(filename);
     if (filename.length() > 1 && filename[0] == '~') {
 	path.remove(0);
-	char* cp = getenv("HOME");
+	const char* cp = getenv("HOME");
 	if (!cp || *cp == '\0') {
 	    struct passwd* pwd = getpwuid(getuid());
 	    if (!pwd) {

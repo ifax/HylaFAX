@@ -146,7 +146,7 @@ FaxRequest::shortval FaxRequest::shortvals[] = {
     { "useccover",	&FaxRequest::useccover },
     { "usexvres",	&FaxRequest::usexvres },
 };
-char* FaxRequest::opNames[18] = {
+const char* FaxRequest::opNames[18] = {
     "fax",
     "tiff",
     "!tiff",
@@ -164,13 +164,13 @@ char* FaxRequest::opNames[18] = {
     "uucp",
     "15", "16", "17"
 };
-char* FaxRequest::notifyVals[4] = {
+const char* FaxRequest::notifyVals[4] = {
     "none",			// no_notice
     "when done",		// when_done
     "when requeued",		// when_requeued
     "when done+requeued"	// when_done|when_requeued
 };
-char* FaxRequest::chopVals[4] = {
+const char* FaxRequest::chopVals[4] = {
     "default",			// chop_default
     "none",			// chop_none
     "all",			// chop_all
