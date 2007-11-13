@@ -215,6 +215,10 @@ bitch()
 boom()
 {
     $RM $JUNK
+    # boom can be called before TMPDIR is set
+    if test x$TMPDIR != x; then
+	$RM -r $TMPDIR
+    fi
     exit 1
 }
 
@@ -2195,7 +2199,7 @@ if onServer; then
 	    if [ "$ok" != skip ]; then
 		test -f $PROMPTS || (
 		${NOCLOBBER_ON}
-		> $PROMPTS || exit 1
+		> $PROMPTS || boom
 		${NOCLOBBER_OFF}
 		compilePrompts>$PROMPTS<<EOF
 #	CountryCode		Country code
