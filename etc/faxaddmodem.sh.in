@@ -45,6 +45,11 @@
 #
 SPOOL=@SPOOL@
 
+die()
+{
+    kill -1 $$			# use kill so trap handler is called
+}
+
 SPEED=
 DOFUSER=no
 while [ x"$1" != x"" ] ; do
@@ -267,7 +272,7 @@ can use this script to setup a modem for use.  Rerun the faxsetup
 command to correct this problem.
 
 EOF
-    exit 1
+    die
 fi
 
 PORT=`ttyPort $TTY`			# shortened tty port name
@@ -283,7 +288,7 @@ CONFIG=$CPATH.$DEVID			# HylaFAX configuration filename
 for x in $LOCKX; do
     if [ -f $x ]; then
 	echo "Sorry, the device is currently in use by another program."
-	exit 1
+	die
     fi
 done
 
@@ -860,7 +865,7 @@ if [ -z "$SPEED" ]; then
 	echo "Unable to deduce DTE-DCE speed; check that you are using the"
 	echo "correct device and/or that your modem is setup properly.  If"
 	echo "all else fails, try the -s option to lock the speed."
-	exit 1
+	die
     fi
     echo " OK."
 else
@@ -1111,7 +1116,7 @@ software does not support it and you will need to write a driver that
 supports it.
 
 EOF
-    exit 1
+    die
 }
 
 echo ""
@@ -1205,7 +1210,7 @@ if [ ! -f $proto ]; then
     if [ "$ProtoType" != "skel" ]; then
         prompt "Do you want to continue using the skeletal configuration file [yes]?"
         read x
-	isOK $x || exit 1
+	isOK $x || die
 	ProtoType=skel;
 	proto=$MODEMCONFIG/$ProtoType;
 	if [ ! -f $proto ]; then
@@ -1215,11 +1220,11 @@ Sigh, the skeletal configuration file is not available either.  There
 is nothing that I can do without some kind of prototype config file;
 I'm bailing out...
 EOF
-	    exit 1
+	    die
 	fi
     else
 	echo "There is nothing more that I can do; I'm bailing out..."
-	exit 1
+	die
     fi
 fi
 
@@ -1731,7 +1736,7 @@ else
     echo "*** The original config file is unchanged; I'm terminating before"
     echo "***    I do something stupid."
     echo ""
-    exit 1
+    die
 fi
 
 #
@@ -1747,7 +1752,7 @@ test -p $FIFO || {
     else
 	echo ""
 	echo "*** Unable to create fifo \"$FIFO\"; terminating."
-	exit 1
+	die
     fi
 }
 $CHOWN $FAX $FIFO; $CHGRP $faxGID $FIFO; $CHMOD 600 $FIFO
@@ -2012,7 +2017,7 @@ if [ $updateConfig = yes ]; then
 	echo "*** Sorry, something went wrong building $SCHEDCONFIG.new."
 	echo "*** The original config file is unchanged; check your disk space?"
 	echo ""
-	exit 1
+	die
     fi
 fi
 
