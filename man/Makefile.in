@@ -143,71 +143,10 @@ cman.files: ${_FORCE}; test -d $@ || ${MKDIR} $@
 sman.apps: ${_FORCE}; test -d $@ || ${MKDIR} $@
 sman.files: ${_FORCE}; test -d $@ || ${MKDIR} $@
 
-cman.apps/hylafax-client.1::	${SRCDIR}/hylafax-client.1;	${MANCVT}
-cman.apps/edit-faxcover.1::	${SRCDIR}/edit-faxcover.1;	${MANCVT}
-cman.apps/faxalter.1::	${SRCDIR}/faxalter.1;	${MANCVT}
-cman.apps/faxcover.1::	${SRCDIR}/faxcover.1;	${MANCVT}
-cman.apps/faxmail.1::	${SRCDIR}/faxmail.1;	${MANCVT}
-cman.apps/faxrm.1::	${SRCDIR}/faxrm.1;	${MANCVT}
-cman.apps/faxstat.1::	${SRCDIR}/faxstat.1;	${MANCVT}
-cman.apps/sendfax.1::	${SRCDIR}/sendfax.1;	${MANCVT}
-cman.apps/sendpage.1::	${SRCDIR}/sendpage.1;	${MANCVT}
-cman.apps/sgi2fax.1::	${SRCDIR}/sgi2fax.1;	${MANCVT}
-cman.apps/textfmt.1::	${SRCDIR}/textfmt.1;	${MANCVT}
-cman.files/pagesizes.4f:: ${SRCDIR}/pagesizes.4f; ${MANCVT}
-cman.files/typerules.4f:: ${SRCDIR}/typerules.4f; ${MANCVT}
-sman.apps/cqtest.1m::	${SRCDIR}/cqtest.1m;	${MANCVT}
-sman.apps/choptest.1m::	${SRCDIR}/choptest.1m;	${MANCVT}
-sman.apps/dialtest.1m::	${SRCDIR}/dialtest.1m;	${MANCVT}
-sman.apps/faxabort.1m::	${SRCDIR}/faxabort.1m;	${MANCVT}
-sman.apps/faxaddmodem.1m:: ${SRCDIR}/faxaddmodem.1m; ${MANCVT}
-sman.apps/faxadduser.1m::${SRCDIR}/faxadduser.1m;	${MANCVT}
-sman.apps/faxanswer.1m::${SRCDIR}/faxanswer.1m;	${MANCVT}
-sman.apps/faxconfig.1m::${SRCDIR}/faxconfig.1m;	${MANCVT}
-sman.apps/faxcron.1m::	${SRCDIR}/faxcron.1m;	${MANCVT}
-sman.apps/faxdeluser.1m::${SRCDIR}/faxdeluser.1m;	${MANCVT}
-sman.apps/hfaxd.1m:: ${SRCDIR}/hfaxd.1m;	${MANCVT}
-sman.apps/faxgetty.1m::	${SRCDIR}/faxgetty.1m;	${MANCVT}
-sman.apps/faxinfo.1m::	${SRCDIR}/faxinfo.1m;	${MANCVT}
-sman.apps/faxmodem.1m::	${SRCDIR}/faxmodem.1m;	${MANCVT}
-sman.apps/faxq.1m::	${SRCDIR}/faxq.1m;	${MANCVT}
-sman.apps/faxqclean.1m::${SRCDIR}/faxqclean.1m;	${MANCVT}
-sman.apps/faxquit.1m::	${SRCDIR}/faxquit.1m;	${MANCVT}
-sman.apps/faxlock.1m::	${SRCDIR}/faxlock.1m;	${MANCVT}
-sman.apps/faxrcvd.1m::	${SRCDIR}/faxrcvd.1m;	${MANCVT}
-sman.apps/faxsend.1m::	${SRCDIR}/faxsend.1m;	${MANCVT}
-sman.apps/faxsetup.1m::	${SRCDIR}/faxsetup.1m;	${MANCVT}
-sman.apps/faxstate.1m::${SRCDIR}/faxstate.1m;	${MANCVT}
-sman.apps/faxwatch.1m::${SRCDIR}/faxwatch.1m;	${MANCVT}
-sman.apps/jobcontrol.1m::	${SRCDIR}/jobcontrol.1m;	${MANCVT}
-sman.apps/mkcover.1m::	${SRCDIR}/mkcover.1m;	${MANCVT}
-sman.apps/notify.1m::	${SRCDIR}/notify.1m;	${MANCVT}
-sman.apps/pagesend.1m::	${SRCDIR}/pagesend.1m;	${MANCVT}
-sman.apps/pollrcvd.1m::	${SRCDIR}/pollrcvd.1m;	${MANCVT}
-sman.apps/ps2fax.1m::	${SRCDIR}/ps2fax.1m;	${MANCVT}
-sman.apps/pdf2fax.1m::	${SRCDIR}/pdf2fax.1m;	${MANCVT}
-sman.apps/recvstats.1m:: ${SRCDIR}/recvstats.1m; ${MANCVT}
-sman.apps/tagtest.1m::	${SRCDIR}/tagtest.1m;	${MANCVT}
-sman.apps/tiff2fax.1m::	${SRCDIR}/tiff2fax.1m;	${MANCVT}
-sman.apps/tiffcheck.1m::${SRCDIR}/tiffcheck.1m;	${MANCVT}
-sman.apps/tsitest.1m::	${SRCDIR}/tsitest.1m;	${MANCVT}
-sman.apps/wedged.1m::	${SRCDIR}/wedged.1m;	${MANCVT}
-sman.apps/xferfaxstats.1m:: ${SRCDIR}/xferfaxstats.1m; ${MANCVT}
-sman.files/hylafax-server.4f::	${SRCDIR}/hylafax-server.4f;	${MANCVT}
-sman.files/hylafax-config.4f::	${SRCDIR}/hylafax-config.4f;	${MANCVT}
-sman.files/destctrls.4f:: ${SRCDIR}/destctrls.4f; ${MANCVT}
-sman.files/doneq.4f::	${SRCDIR}/doneq.4f;	${MANCVT}
-sman.files/dialrules.4f:: ${SRCDIR}/dialrules.4f; ${MANCVT}
-sman.files/hosts.hfaxd.4f::	${SRCDIR}/hosts.hfaxd.4f;	${MANCVT}
-sman.files/hylafax-info.4f::	${SRCDIR}/hylafax-info.4f;	${MANCVT}
-sman.files/hylafax-log.4f::	${SRCDIR}/hylafax-log.4f;	${MANCVT}
-sman.files/pagermap.4f::${SRCDIR}/pagermap.4f;	${MANCVT}
-sman.files/recvq.4f::	${SRCDIR}/recvq.4f;	${MANCVT}
-sman.files/sendq.4f::	${SRCDIR}/sendq.4f;	${MANCVT}
-sman.files/hylafax-shutdown.4f::${SRCDIR}/hylafax-shutdown.4f;	${MANCVT}
-sman.files/status.4f::	${SRCDIR}/status.4f;	${MANCVT}
-sman.files/tsi.4f::	${SRCDIR}/tsi.4f;	${MANCVT}
-sman.files/xferfaxlog.4f::	${SRCDIR}/xferfaxlog.4f;	${MANCVT}
+cman.apps/%:: ${SRCDIR}/% cman.apps; ${MANCVT}
+cman.files/%:: ${SRCDIR}/% cman.files; ${MANCVT}
+sman.apps/%:: ${SRCDIR}/% sman.apps; ${MANCVT}
+sman.files/%:: ${SRCDIR}/% sman.files; ${MANCVT}
 
 LDIRT=	cman.apps cman.files sman.apps sman.files
 
