@@ -109,7 +109,6 @@ bool do_pamcheck(const char* user, const char* passwd, const char* remoteaddr)
      * The effective uid must be privileged enough to
      * handle whatever the PAM module may require.
      */
-logWarning("PAM checking user \"%s\" pass \"%s\" from \"%s\"", user, passwd, remoteaddr);
     bool retval = false;
     uid_t ouid = geteuid();
     (void) seteuid(0);
