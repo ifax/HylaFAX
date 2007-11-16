@@ -456,7 +456,7 @@ faxMailApp::formatMIME(FILE* fd, MIMEState& mime, MsgFmt& msg)
 	 * content types we expect to encounter.
 	 */
 	const fxStr& type = mime.getType();
-	if (type == "text") {
+	if (type == "text" && mime.getSubType() == "plain") {
 	    if ( formatText(fd, mime) )
 		empty = false;
 	} else if (type == "application")
