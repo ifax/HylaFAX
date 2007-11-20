@@ -1,5 +1,12 @@
 #	$Id$	
 
+Changelog for HylaFAX 4.3.7
+* fix TypeRules verbose logging names (15 Nov 2007)
+* hfaxd: Remove PAM debug logging including passwords (15 Nov 2007)
+* Bug 875: faxsetup and faxaddmodem temporty files (13 Nov 2007)
+* Fix typo in MT5600ZDX prototype (9 Nov 2007)
+* Pass correct time to notify (23 October, 2007)
+
 Changelog for HylaFAX 4.3.6
 * Fix large SESSION_LOG variable causing bash problems (24 Sep 2007)
 * Fix man page typos (17 Sep 2007)
