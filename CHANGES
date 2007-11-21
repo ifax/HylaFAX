@@ -1,6 +1,7 @@
 #	$Id$	
 
 Changelog for HylaFAX 4.3.7
+* Add support for libtiff 3.9 (21 Nov 2007)
 * fix TypeRules verbose logging names (15 Nov 2007)
 * hfaxd: Remove PAM debug logging including passwords (15 Nov 2007)
 * Bug 875: faxsetup and faxaddmodem temporty files (13 Nov 2007)

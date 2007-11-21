@@ -2424,7 +2424,7 @@ EOF
 	if [ ${header_ver} -ge 19960307 ]; then
 	    case ${lib_ver} in
 		3.4)		tiff_runlen_t="uint16" ;;
-		3.[5678])	tiff_runlen_t="uint32" ;;
+		3.[56789])	tiff_runlen_t="uint32" ;;
 	    esac
 	fi
     else
@@ -2461,7 +2461,7 @@ EOF
 Incompatible TIFF Library.
 
 HylaFAX ${VERSION} requires TIFF software distribution versions 3.4 through
-3.8.  If you do not have up to date TIFF software on your system
+3.9.  If you do not have up to date TIFF software on your system
 then you can retrieve it from the location where you obtained this software.
 The Home Page for version 3.5 and later is http://www.libtiff.org
 EOF
