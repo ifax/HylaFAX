@@ -129,3 +129,4 @@ CHANGES since 4.4.2
 * faxmail: Don't pass non-plain text through the internal plain text
   formatter (11 Nov 2007)
 * xferfaxlog: Update man pages (20 Nov 2007)
+* Add support for libtiff 3.9 (21 Nov 2007)
