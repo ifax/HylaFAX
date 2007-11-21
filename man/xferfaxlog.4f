@@ -37,20 +37,30 @@ contains information about inbound and outbound activities.
 The file contains one line per inbound or outbound call
 (except for facsimile documents retrieved by polling in which
 case multiple entries may be present for a single call).
+If the modem config setting
+.I LogCalls
+is set to true, then the file also contains one line per received call.
 Lines are fixed-format,
 .I tab-separated
 .SM ASCII
 strings.
+.PP
 Each record of a facsimile transmission is of the form:
 .sp .5
 .ti +0.5i
-date \s-1SEND\s+1 commid modem jobid jobtag sender ``dest-number'' ``\s-1CSI\s+1'' params #pages jobtime conntime ``reason'' \fI<null>\fP \fI<null>\fP ``owner''
+date \s-1SEND\s+1 commid modem jobid jobtag sender ``dest-number'' ``\s-1CSI\s+1'' params #pages jobtime conntime ``reason'' \fI<null>\fP \fI<null>\fP \fI<null>\fP ``owner'' ``dcs''
 .sp .5
 .PP
 A facsimile reception record is of the form:
 .sp .5
 .ti +0.5i
-date \s-1RECV\s+1 commid modem \fI<null>\fP \fI<null>\fP fax ``local-number'' ``\s-1TSI\s+1'' params #pages jobtime conntime ``reason'' ``CIDName'' ``CIDNumber'' \fI<null>\fP
+date \s-1RECV\s+1 commid modem \fI<null>\fP \fI<null>\fP fax ``local-number'' ``\s-1TSI\s+1'' params #pages jobtime conntime ``reason'' ``CallID1'' ``CallID2'' ``CallID3...CallIDn'' \fI<null>\fP ``dcs''
+.sp .5
+.PP
+Each inbound call record is of the form:
+.sp .5
+.ti +0.5i
+date \s-1CALL\s+1 commid modem \fI<null>\fP \fI<null>\fP fax ``local-number'' \f1<null>\fP 0 0 jobtime conntime ``reason'' ``CallID1'' ``CallID2'' ``CallID3..CallIDn'' \fI<null>\fP ``dcs''
 .sp .5
 .PP
 Each facsimile document retrieved by polling has a record of the form:
@@ -58,6 +68,7 @@ Each facsimile document retrieved by polling has a record of the form:
 .ti +0.5i
 date \s-1POLL\s+1 commid modem jobid jobtag sender ``dest-number'' ``\s-1TSI\s+1'' params #pages jobtime conntime ``reason'' \fI<null>\fP \fI<null>\fP \fI<null>\fP
 .sp .5
+.PP
 An alphanumeric pager request has a record of the form:
 .sp .5
 .ti +0.5i
@@ -138,6 +149,9 @@ The received CIDNumber value for the session.
 .TP 14
 .B owner
 The login name of the job owner.
+.TP 14
+.B dcs
+The T.30 DCS string that was used in the facsimile communication.
 .PP
 Note that fields may have embedded blanks.
 Session parameters are encoded as a decimal number that contains
