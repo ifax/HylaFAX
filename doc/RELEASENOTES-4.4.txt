@@ -114,3 +114,18 @@ CHANGES for 4.4.2
 * hfaxd: fix double 550 error code on access permisions (14 Sep 2007)
 * man pages: fix mulitple typos (17 Sep 2007)
 * Fix large SESSION_LOG variable causing bash problems (24 Sep 2007)
+
+
+CHANGES since 4.4.2
+-----------------------------------------------------------------------------
+* setSleep must be called before sending the notification if we want the
+  right time to be passed to notify. (24 Oct 2007)
+* faxmail: Update man page/options to match again (6 Nov 2007)
+* prototype configs: typo in MT5600ZDX (9 Nov 2007)
+* Bug 875: faxsetup and faxaddmodem may forget locks and temporary files
+  when exiting (13 Nov 2007)
+* hfaxd: Remove PAM debug logging (15 Nov 2007)
+* TypeRules: fix istring addition (15 Nov 2007)
+* faxmail: Don't pass non-plain text through the internal plain text
+  formatter (11 Nov 2007)
+* xferfaxlog: Update man pages (20 Nov 2007)
