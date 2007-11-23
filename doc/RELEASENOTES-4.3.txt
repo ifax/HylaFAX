@@ -1,4 +1,4 @@
-HylaFAX 4.3.6
+HylaFAX 4.3.7
 
 OVERVIEW
 -----------------------------------------------------------------------------
@@ -206,7 +206,7 @@ CHANGES for 4.3.6 - October 2, 2007
 * Fix large SESSION_LOG variable causing bash problems (24 Sep 2007)
 
 
-CHANGES since 4.3.6
+CHANGES for 4.3.7 - November 23, 2007
 -----------------------------------------------------------------------------
 * Pass correct time to notify (23 October, 2007)
 * Fix typo in MT5600ZDX prototype (9 Nov 2007)

@@ -1,4 +1,4 @@
-HylaFAX 4.4.2
+HylaFAX 4.4.3
 
 Overview
 -----------------------------------------------------------------------------
@@ -116,7 +116,7 @@ CHANGES for 4.4.2
 * Fix large SESSION_LOG variable causing bash problems (24 Sep 2007)
 
 
-CHANGES since 4.4.2
+CHANGES for 4.4.3
 -----------------------------------------------------------------------------
 * setSleep must be called before sending the notification if we want the
   right time to be passed to notify. (24 Oct 2007)
