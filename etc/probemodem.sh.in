@@ -48,12 +48,12 @@ SPOOL=@SPOOL@
 SBIN=@SBIN@
 
 ATCMD=
-DOFUSER=no
+NOFUSER=
 SPEED=
 while [ x"$1" != x"" ] ; do
     case $1 in
     -c)     ATCMD=$2; shift;;
-    -f)     DOFUSER=yes;;
+    -f)     NOFUSER=yes;;
     -os)    OS=$2; shift;;
     -s)	    SPEED=$2; shift;;
     -*)	    echo "Usage: $0 [-f] [-c AT_COMMAND] [-os OS] [-s SPEED] [ttyname]"; exit 1;;
@@ -142,7 +142,7 @@ for x in $LOCKX; do
 done
 
 # zap any gettys or other users
-if [ x"$DOFUSER" != x"no" ]; then
+if [ x"$NOFUSER" != x"yes" ]; then
     if ! [ -f $FUSER ]; then
 	cat<<EOF
 Hmm, there does not appear to be an fuser command on your machine.
