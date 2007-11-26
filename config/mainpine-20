@@ -20,6 +20,7 @@ ModemHardFlowCmd:	AT&K3
 ModemRecvFillOrder:	MSB2LSB
 ModemSetupDTRCmd:	AT&D3		# hang up and reset on DTR drop
 
+Class2DisableV17Cmd:	ATS29=1
 Class2APCmd:		AT+FAP=1,1,1
 Class2SendRTC:		yes
 Class2UseHex:		yes
