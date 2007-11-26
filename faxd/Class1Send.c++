@@ -885,7 +885,7 @@ Class1Modem::sendTraining(Class2Params& params, int tries, Status& eresult)
 		again = dropToNextBR(params);
 	    } while (again && (params.br == BR_9600 || params.br == BR_7200) && curcap->mod != V29);
 	}
-    } while (!useV34 && again);
+    } while (!useV34 && (again || attempt < 3));
 failed:
     eresult = Status(137, "Failure to train remote modem at 2400 bps or minimum speed");
 done:
