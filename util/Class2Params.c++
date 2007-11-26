@@ -886,7 +886,10 @@ const char* Class2Params::dataFormatNames[7] = {
     N_("JPEG Full-Color")		// JP_COLOR
 };
 const char* Class2Params::dataFormatName() const
-     { return (dataFormatNames[df+(jp > 0 && jp < (u_int) -1 ? jp + 4 : 0)]); }
+{
+    u_int dfid = df+(jp > 0 && jp < (u_int) -1 ? jp + 4 : 0);
+    return (dataFormatNames[dfid > 6 ? 0 : dfid]);
+}
 
 fxStr
 Class2Params::dataFormatsName()
