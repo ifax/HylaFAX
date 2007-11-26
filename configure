@@ -3060,6 +3060,7 @@ BuildPortDotH()
     CheckForDefine _POSIX_PRIORITY_SCHEDULING unistd.h sched.h && {
 	case $TARGET in
 	*darwin8*)	Note "... ignoring POSIX realtime process control interface as invalid";;
+	*darwin9*)	Note "... ignoring POSIX realtime process control interface as invalid";;
 	*)
 			Note "... configure use of POSIX realtime process control interface"
 			echo '#define HAS_POSIXSCHED 1'
