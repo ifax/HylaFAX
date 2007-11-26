@@ -563,7 +563,7 @@ Class1Modem::abortReceive()
 	flushModemInput();
 	(void) atCmd("AT", AT_OK, 100);
     } else
-	(void) waitFor(AT_OK, conf.class1RecvAbortOK);
+	while (!waitFor(AT_OK, conf.class1RecvAbortOK) && lastResponse == AT_OTHER && !wasTimeout());
     setTimeout(b);			// XXX putModem clobbers timeout state
 }
 
