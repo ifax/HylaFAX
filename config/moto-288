@@ -43,27 +43,25 @@ ModemType:		Class1		# use class 1 interface
 ModemRate:		19200		# locked for fax sending&receiving
 ModemFlowControl:	rtscts		# default
 #
-ModemNoFlowCmd:		AT\Q		# disable flow control cmd
-ModemSoftFlowCmd:	AT&R1\Q1	# software flow control cmd
-ModemHardFlowCmd:	AT&R\Q3		# hardware flow control cmd
+#ModemNoFlowCmd:	AT\Q		# disable flow control cmd
+#ModemSoftFlowCmd:	AT&R1\Q1	# software flow control cmd
+#ModemHardFlowCmd:	AT&R\Q3		# hardware flow control cmd
 ModemSetupDTRCmd:	AT&D3		# DTR off causes modem to reset
 ModemSetupDCDCmd:	AT&C1		# DCD follows carrier
-ModemSetupAACmd:	AT+FAA=1
+#ModemSetupAACmd:	AT+FAA=1
 #
-ModemAnswerCmd:		"AT*FR\nATA"	# enable autobaud before answering
-ModemWaitForConnect:	yes		# modem sends FAX/DATA first
+#ModemAnswerCmd:	"AT*FR\nATA"	# enable autobaud before answering
+#ModemWaitForConnect:	yes		# modem sends FAX/DATA first
 #
 # Apparently Rev 2 of the firmware requires that you send ATO
 # to initiate a data connection when adaptive answer is set; the
 # following will send ATO and then wait for the CONNECT response.
 #
-ModemAnswerDataBeginCmd:"ATO\n<waitfor\072CONNECT>"
+#ModemAnswerDataBeginCmd:"ATO\n<waitfor\072CONNECT>"
 #
-ModemMfrQueryCmd:	!Motorola
-ModemModelQueryCmd:	!28.8
-ModemRevQueryCmd:	AT%V		# model and firmware rev
-#
-ModemDialCmd:		ATDT%s		# T for tone dialing
+#ModemMfrQueryCmd:	!Motorola
+#ModemModelQueryCmd:	!28.8
+#ModemRevQueryCmd:	AT%V		# model and firmware rev
 #
 # Caller ID configuration setup; add AT*ID1 to ModemResetCmds
 # to enable functionality (when supported by the local Telco).
