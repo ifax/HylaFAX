@@ -195,6 +195,7 @@ Class20Modem::pageDone(u_int ppm, u_int& ppr)
         for (;;) {
 	    switch (atResponse(rbuf, conf.pageDoneTimeout)) {
             case AT_FHNG:
+		waitFor(AT_OK);
                 if (!isNormalHangup()) {
                     return (false);
                 }

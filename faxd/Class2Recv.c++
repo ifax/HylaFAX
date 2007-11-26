@@ -189,7 +189,9 @@ Class2Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 	    case AT_NOCARRIER:
 	    case AT_NODIALTONE:
 	    case AT_NOANSWER:
+		goto bad;
 	    case AT_FHNG:			// remote hangup
+		waitFor(AT_OK);
 		goto bad;
 	    }
 	} while (r != AT_CONNECT && r != AT_OK);
@@ -387,7 +389,8 @@ Class2Modem::recvEnd(Status&)
 {
     if (!hadHangup) {
 	if (isNormalHangup()) {
-	    (void) atCmd("AT+FDR", AT_FHNG);	// wait for DCN
+	    if (atCmd("AT+FDR", AT_FHNG))	// wait for DCN
+		waitFor(AT_OK);
 	} else
 	    (void) atCmd(abortCmd);		// abort session
     }

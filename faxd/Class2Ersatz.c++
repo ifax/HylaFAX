@@ -145,6 +145,7 @@ Class2ErsatzModem::pageDone(u_int ppm, u_int& ppr)
 	    case AT_ERROR:			// possible if page retransmit
 		return (true);
 	    case AT_FHNG:
+		waitFor(AT_OK);
 		/*
 		 * Certain modems respond +FHNG:0 on the final page
 		 * w/o providing post-page status when sending to

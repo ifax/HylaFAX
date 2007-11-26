@@ -134,8 +134,10 @@ Class2Modem::getPrologue(Class2Params& dis, bool& hasDoc, Status& eresult, u_int
     bool gotParams = false;
     hasDoc = false;
     if (batched & BATCH_FIRST) {		// only for the first document
+	ATResponse r;
 	for (;;) {
-	    switch (atResponse(rbuf, conf.t1Timer)) {
+	    r  = atResponse(rbuf, conf.t1Timer);
+	    switch (r) {
 	    case AT_FPOLL:
 		hasDoc = true;
 		protoTrace("REMOTE has document to POLL");
@@ -162,6 +164,8 @@ Class2Modem::getPrologue(Class2Params& dis, bool& hasDoc, Status& eresult, u_int
 		processHangup("20");		// Unspecified Phase B error
 		/* fall thru... */
 	    case AT_FHNG:
+		if (r == AT_FHNG)
+		    waitFor(AT_OK);
 		eresult = hangupStatus(hangupCode);
 		return (send_retry);
 	    }
