@@ -690,6 +690,14 @@ else
     ok="prompt"				# prompt for parameters
 fi
 
+CHECK="`$GREP "AreaCode:" $SPOOL/etc/config | sed 's/.*:[	 ]*//g'`"
+if [ -n "$CHECK" ]; then
+    AreaCode="$CHECK"
+fi
+CHECK="`$GREP "CountryCode:" $SPOOL/etc/config | sed 's/.*:[	 ]*//g'`"
+if [ -n "$CHECK" ]; then
+    CountryCode="$CHECK"
+fi
 if [ -z "$FAXNumber" ]; then
     FAXNumber="+$CountryCode $AreaCode 555-1212"
 fi
