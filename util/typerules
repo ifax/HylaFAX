@@ -116,6 +116,10 @@
 0	string		%PDF		pdf
 #0	string		%PDF		ps	pdf2ps %i %o
 #
+# pdftk has the ability to auto-rotate pages to all make them portrait...
+#
+#0	string		%PDF		pdf	pdftk %i cat 1-endN output %o
+#
 # NB: psdit is the Adobe Transcript program for converting ditroff output
 0	string		x T psc		ps	psdit <%i >%o
 #
