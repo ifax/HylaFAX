@@ -571,11 +571,13 @@ EOF
 	    }
 	    ttyAliases()
 	    {
-		echo /dev/$1
+		if [ -z "`echo $1 | grep "^/"`" ]; then printf "/dev/"; fi
+		echo $1
 	    }
 	    ttyDev()
 	    {
-		echo /dev/$1
+		if [ -z "`echo $1 | grep "^/"`" ]; then printf "/dev/"; fi
+		echo $1
 	    }
 	    checkPort()
 	    {
@@ -606,11 +608,13 @@ EOF
 	    }
 	    ttyAliases()
 	    {
-		echo /dev/$1
+		if [ -z "`echo $1 | grep "^/"`" ]; then printf "/dev/"; fi
+		echo $1
 	    }
 	    ttyDev()
 	    {
-		echo /dev/$1
+		if [ -z "`echo $1 | grep "^/"`" ]; then printf "/dev/"; fi
+		echo $1
 	    }
 	    checkPort()
 	    {
@@ -635,11 +639,13 @@ EOF
 	    }
 	    ttyAliases()
 	    {
-		echo /dev/$1
+		if [ -z "`echo $1 | grep "^/"`" ]; then printf "/dev/"; fi
+		echo $1
 	    }
 	    ttyDev()
 	    {
-		echo /dev/$1
+		if [ -z "`echo $1 | grep "^/"`" ]; then printf "/dev/"; fi
+		echo $1
 	    }
 	    checkPort()
 	    {

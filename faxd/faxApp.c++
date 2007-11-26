@@ -317,6 +317,7 @@ faxApp::idToDev(const fxStr& id)
     u_int l;
     while ((l = dev.next(0, '_')) < dev.length())
 	dev[l] = '/';
+    if (dev[0] == '/') return (dev);	// path + device
     return (_PATH_DEV | dev);
 }
 

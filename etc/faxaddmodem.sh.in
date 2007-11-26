@@ -255,8 +255,13 @@ EOF
 faxGID=`$GREP "^$PROTOGID:" $GROUP | cut -d: -f3`
 if [ -z "$faxGID" ]; then faxGID=$defPROTOGID; fi
 
-while [ -z "$TTY" ] || [ ! -c /dev/$TTY ]; do
-    test "$TTY" != "" && echo "/dev/$TTY is not a terminal device."
+DEVPATH="/dev/"
+if [ -n "`echo $TTY | grep "^/"`" ]; then
+    DEVPATH=""
+fi
+
+while [ -z "$TTY" ] || [ ! -c $DEVPATH$TTY ]; do
+    test "$TTY" != "" && echo "$DEVPATH$TTY is not a terminal device."
     prompt "Serial port that modem is connected to [$TTY]?"; read TTY
 done
 
@@ -1433,7 +1438,7 @@ checkFlowControlAgainstTTY()
 {
     case "$ModemFlowControl" in
     xonxoff|XONXOFF)
-	if [ "$TTY" = ttyf${PORT} ] && [ -c /dev/ttym${PORT} ]; then
+	if [ "$TTY" = ttyf${PORT} ] && [ -c $DEVPATH\ttym${PORT} ]; then
 	    echo ""
 	    echo "Warning, the modem is setup to use software flow control,"
 	    echo "but the \"$TTY\" device is used with hardware flow control"
@@ -1447,7 +1452,7 @@ checkFlowControlAgainstTTY()
 	fi
 	;;
     rtscts|RTSCTS)
-	if [ "$TTY" = ttym${PORT} ] && [ -c /dev/ttyf${PORT} ]; then
+	if [ "$TTY" = ttym${PORT} ] && [ -c $DEVPATH\ttyf${PORT} ]; then
 	    echo ""
 	    echo "Warning, the modem is setup to use hardware flow control,"
 	    echo "but the \"$TTY\" device does not honor the RTS/CTS signals."

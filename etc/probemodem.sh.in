@@ -48,12 +48,12 @@ SPOOL=@SPOOL@
 SBIN=@SBIN@
 
 ATCMD=
-NOFUSER=
+DOFUSER=no
 SPEED=
 while [ x"$1" != x"" ] ; do
     case $1 in
     -c)     ATCMD=$2; shift;;
-    -f)     NOFUSER=yes;;
+    -f)     DOFUSER=yes;;
     -os)    OS=$2; shift;;
     -s)	    SPEED=$2; shift;;
     -*)	    echo "Usage: $0 [-f] [-c AT_COMMAND] [-os OS] [-s SPEED] [ttyname]"; exit 1;;
@@ -91,9 +91,14 @@ SVR4UULCKN=$LIBEXEC/lockname	# SVR4 UUCP lock name construction program
 ONDELAY=$LIBEXEC/ondelay	# prgm to open devices blocking on carrier
 CAT="$CAT -u"			# something to do unbuffered reads and writes
 
-while [ -z "$TTY" ] || [ ! -c /dev/$TTY ]; do
+DEVPATH="/dev/"
+if [ -n "`echo $TTY | grep "^/"`" ]; then
+    DEVPATH=""
+fi
+
+while [ -z "$TTY" ] || [ ! -c $DEVPATH$TTY ]; do
     if [ "$TTY" != "" ]; then
-	echo "/dev/$TTY is not a terminal device."
+	echo "$DEVPATH$TTY is not a terminal device."
     fi
     prompt "Serial port that modem is connected to [$TTY]?"; read TTY
 done
@@ -137,7 +142,7 @@ for x in $LOCKX; do
 done
 
 # zap any gettys or other users
-if [ x"$NOFUSER" != x"yes" ]; then
+if [ x"$DOFUSER" != x"no" ]; then
     if ! [ -f $FUSER ]; then
 	cat<<EOF
 Hmm, there does not appear to be an fuser command on your machine.
