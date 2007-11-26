@@ -80,3 +80,8 @@ ModemAnswerFaxCmd:	AT+FCLASS=1A	# fax answer
 #GettyArgs:		"-h %l dx_%s"	# NB: enable this for dialins (SGI)
 #GettyArgs:		"std.%s -"	# NB: enable this for dialins (SunOS)
 #GettyArgs:	"-g -h -t 60 -l ff_%s"	# NB: enable this for dialins (SVR4.2)
+
+Class1PPMWaitCmd:       "<delay\0727>"  # \072 == :  to avoid awk problem
+Class1TCFWaitCmd:       "<delay\0727>"
+Class1EOPWaitCmd:       "<delay\0729>"
+Class1SwitchingCmd:     "<delay\0727>"
