@@ -1518,6 +1518,8 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, Status& eres
 					for (pprpos = 0, pprval = i; pprval >= 8; pprval -= 8) pprpos++;
 					if (ppr[pprpos] & frameRev[1 << pprval]) blockgood = false;
 				    }
+				    if (frameRev[ppsframe[4]] < prevPage || (frameRev[ppsframe[4]] == prevPage && frameRev[ppsframe[5]] < prevBlock))
+					blockgood = false;	// we already confirmed this block receipt... (see below)
 				} else {
 				    blockgood = false;	// MCF only if we have data
 				}
@@ -1538,11 +1540,22 @@ Class1Modem::recvPageECMData(TIFF* tif, const Class2Params& params, Status& eres
 				    pprcnt = 4;
 				}
 				if (signalRcvd == 0) {
-				    // inform the remote that one or more frames were invalid
-				    transmitFrame(FCF_PPR, fxStr(ppr, 32));
-				    traceFCF("RECV send", FCF_PPR);
-				    pprcnt++;
-				    if (pprcnt > 4) pprcnt = 4;		// could've been 4 before increment
+				    if (frameRev[ppsframe[4]] > prevPage || (frameRev[ppsframe[4]] == prevPage && frameRev[ppsframe[5]] >= prevBlock)) {
+					// inform the remote that one or more frames were invalid
+					transmitFrame(FCF_PPR, fxStr(ppr, 32));
+					traceFCF("RECV send", FCF_PPR);
+					pprcnt++;
+					if (pprcnt > 4) pprcnt = 4;		// could've been 4 before increment
+				    } else {
+					/*
+					 * The silly sender already sent us this block and we already confirmed it.
+					 * Just confirm it again, but let's behave as if we sent a full PPR without
+					 * incrementing pprcnt.
+					 */
+					(void) transmitFrame(FCF_MCF|FCF_RCVR);
+					traceFCF("RECV send", FCF_MCF);
+					for (u_int i = 0; i < 32; i++) ppr[i] = 0xff;	// ppr defaults to all 1's, T.4 A.4.4
+				    }
 				}
 				if (pprcnt == 4 && (!useV34 || !conf.class1PersistentECM)) {
 				    HDLCFrame rtnframe(conf.class1FrameOverhead);
