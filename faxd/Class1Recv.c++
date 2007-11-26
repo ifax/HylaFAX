@@ -1923,7 +1923,7 @@ Class1Modem::recvAbort()
 {
     if (!recvdDCN && !gotEOT) {
 	Status eresult;
-	switchingPause(eresult);
+	if (!useV34) switchingPause(eresult);
 	transmitFrame(FCF_DCN|FCF_RCVR);
     }
     recvdDCN = true;				// don't hang around in recvEnd

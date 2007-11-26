@@ -280,10 +280,7 @@ FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, Status& resul
 	id.append(info.callid[i]);
     }
     do {
-	if (++recvPages > maxRecvPages) {
-	    result = Status(304, "Maximum receive page count exceeded, call terminated");
-	    return (false);
-	}
+	++recvPages;
 	if (!modem->recvPage(tif, ppm, result, id))
 	    return (false);
 	info.npages++;
@@ -314,6 +311,10 @@ FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, Status& resul
 		return (false);		// got page with fatal error
 	if (PPM_PRI_MPS <= ppm && ppm <= PPM_PRI_EOP) {
 	    result = Status(351, "Procedure interrupt received, job terminated");
+	    return (false);
+	}
+	if (recvPages > maxRecvPages) {
+	    result = Status(304, "Maximum receive page count exceeded, call terminated");
 	    return (false);
 	}
     } while (ppm == PPM_MPS || ppm == PPM_PRI_MPS);
