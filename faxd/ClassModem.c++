@@ -154,6 +154,7 @@ ClassModem::isNoise(const char* s)
 	"RRING",	// Telebit
 	"RINGING",	// ZyXEL
 	"+FHR:",	// Intel 144e
+	"+A8",		// Class 1.0 V.8 report
 	"+F34:",	// Class 1.0 V.34 report
 	"+FDB:",	// DCE debugging
 	"MESSAGE-WAITING",	// voice-mail waiting, Conexant
