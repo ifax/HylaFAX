@@ -61,7 +61,7 @@ const char* ClassModem::serviceNames[9] = {
     "",				// 7
     "\"Voice\"",		// SERVICE_VOICE
 };
-const char* ClassModem::ATresponses[17] = {
+const char* ClassModem::ATresponses[19] = {
     "Nothing",			// AT_NOTHING
     "OK",			// AT_OK
     "Connection established",	// AT_CONNECT
@@ -78,6 +78,8 @@ const char* ClassModem::ATresponses[17] = {
     "<dle+etx>",		// AT_DLEETX
     "End of transmission",	// AT_DLEEOT
     "<xon>",			// AT_XON
+    "DTMF detection",		// AT_DTMF
+    "Voice connection",		// AT_VCON
     "<Unknown response>"	// AT_OTHER
 };
 const char* ClassModem::callTypes[6] = {
@@ -885,6 +887,10 @@ ClassModem::atResponse(char* buf, long ms)
 	    if (streq(buf, "RING"))		// NB: avoid match of RINGING
 		lastResponse = AT_RING;
 	    break;
+	case 'V':
+	    if (streq(buf, "VCON"))
+		lastResponse = AT_VCON;
+	    break;
 	case '\020':
 	    if (streq(buf, "\020\003"))		// DLE/ETX
 		lastResponse = AT_DLEETX;
@@ -1434,7 +1440,7 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallID& callid)
 		atCmd(conf.ringResponse, AT_NOTHING);
 		ATResponse r;
 		time_t ringstart = Sys::now();
-		bool callidwasempty = true;
+		bool callidwasempty = true, cmddone = false;
 		for (u_int i = 0; callidwasempty && i < callid.size(); i++)
 		    if (callid.length(i) )
 			callidwasempty = false;
@@ -1447,7 +1453,9 @@ ClassModem::waitForRings(u_short rings, CallType& type, CallID& callid)
 			 */
 			conf.parseCallID(rbuf, callid);
 		    }
-		} while (r != AT_OK && (Sys::now()-ringstart < 3));
+		    if (r == AT_OK) cmddone = true;
+		    else if (r == AT_VCON) cmddone = true;		// VCON for modems that require ATA
+		} while (!cmddone && (Sys::now()-ringstart < 3));
 		for (u_int j = 0 ; j < conf.idConfig.length(); j++) {
 		    if (conf.idConfig[j].pattern == "SHIELDED_DTMF") {	// retrieve DID, e.g. via voice DTMF
 			ringstart = Sys::now();

@@ -649,6 +649,16 @@ pause for 100 ms before returning to fax mode and answering the call.
   ModemAnswerCmd:        <delay:100>AT+FCLASS=1;A
 
 .fi
+For modems that do not support AT+FCLASS=8 (such as some USR modems) this
+may be an appropriate equivalent:
+.nf
+
+  ModemRingResponse:      "AT#CLS=8\\nAT#VLS=4\\nATA"
+  CallIDPattern:          SHIELDED_DTMF
+  CallIDAnswerLength:     4
+  ModemAnswerCmd:         "<delay:100>AT+FCLASS=1\\nATA"
+
+.fi
 Multiple entries of
 .B CallIDPattern
 are used together in one modem configuration file in order to capture multiple

@@ -180,7 +180,8 @@ public:
 	AT_DLEEOT	= 14,	// dle+eot characters (end of transmission)
 	AT_XON		= 15,	// xon character
 	AT_DTMF		= 16,	// DTMF detection
-	AT_OTHER	= 17	// unknown response (not one of above)
+	AT_VCON		= 17,	// voice connection
+	AT_OTHER	= 18	// unknown response (not one of above)
     };
 private:
     ModemServer& server;	// server for getting to device
@@ -205,7 +206,7 @@ protected:
 
     static const char* serviceNames[9];	 // class 2 services
     static Status callStatus[10];	 // printable call status
-    static const char* ATresponses[17];
+    static const char* ATresponses[19];
 
     ClassModem(ModemServer&, const ModemConfig&);
 
