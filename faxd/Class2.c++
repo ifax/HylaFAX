@@ -414,7 +414,14 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params, bool
 	    &params.df, &params.ec, &params.bf, &params.st);
 	params.jp = 0;
     }
-    if ((useJP && n == 9) || (!useJP && n == 8)) {
+    if ((useJP && n == 9) || (n == 8)) {
+	if (useJP && (n == 8)) {
+	    /*
+	     * The modem was previously determined to support JP; however,
+	     * this response does not include it.  So we just set it to zero.
+	     */
+	    params.jp = 0;
+	}
 	if (params.ec != EC_DISABLE && (conf.class2ECMType == ClassModem::ECMTYPE_CLASS20 ||
 	   (conf.class2ECMType == ClassModem::ECMTYPE_UNSET && serviceType != SERVICE_CLASS2)))
 	    params.ec += 1;		// simple adjustment, drops EC_ENABLE64
