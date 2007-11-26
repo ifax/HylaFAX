@@ -726,6 +726,7 @@ PageChop	string	\s-1default\s+1	control page chop handling
 PageLength	float	\-	page length in millimeters
 PageSize	string	\s-1default\s+1	page size by name
 PageWidth	float	\-	page width in millimeters
+PassiveMode	boolean	\s-1false\s+1	whether or not to use passive mode
 Port	integer	\s-14559\s+1	port to use in contacting server
 Priority	string	\s-1default\s+1	job scheduling priority
 Protocol	string	\s-1tcp\s+1	protocol to use in contacting server
@@ -917,6 +918,9 @@ option.)
 .TP 16
 .B PageWidth
 Set the transmitted page width in millimeters.
+.TP 16
+.B PassiveMode
+Whether or not to use passive mode in communication with the server.
 .TP 16
 .B Port
 The network port to contact for service.

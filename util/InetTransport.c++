@@ -147,37 +147,65 @@ InetTransport::initDataConn(fxStr& emsg)
 {
     struct sockaddr_in data_addr;
     socklen_t dlen = sizeof (data_addr);
-    if (Socket::getsockname(fileno(client.getCtrlFd()), &data_addr, &dlen) < 0) {
-	emsg = fxStr::format("getsockname(ctrl): %s", strerror(errno));
-	return (false);
+    if (client.isPassive()) {
+	if (client.command("PASV") != FaxClient::COMPLETE)
+	    return (false);
+	const char *cp = strchr(client.getLastResponse(), '(');
+	if (!cp) return (false);
+	cp++;
+	unsigned int v[6];
+	int n = sscanf(cp, "%u,%u,%u,%u,%u,%u", &v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
+	if (n != 6) return (false);
+	if (!inet_aton(fxStr::format("%u.%u.%u.%u", v[2],v[3],v[4],v[5]), &data_addr.sin_addr)) {
+	    return (false);
+	}
+	data_addr.sin_port = htons((v[0]<<8)+v[1]);
+	data_addr.sin_family = AF_INET;
+    } else {
+	if (Socket::getsockname(fileno(client.getCtrlFd()), &data_addr, &dlen) < 0) {
+	    emsg = fxStr::format("getsockname(ctrl): %s", strerror(errno));
+	    return (false);
+	}
+	data_addr.sin_port = 0;		// let system allocate port
     }
-    data_addr.sin_port = 0;		// let system allocate port
     int fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd < 0) {
 	emsg = fxStr::format("socket: %s", strerror(errno));
 	return (false);
     }
-    if (Socket::bind(fd, &data_addr, sizeof (data_addr)) < 0) {
-	emsg = fxStr::format("bind: %s", strerror(errno));
-	goto bad;
-    }
-    dlen = sizeof (data_addr);
-    if (Socket::getsockname(fd, &data_addr, &dlen) < 0) {
-	emsg = fxStr::format("getsockname: %s", strerror(errno));
-	goto bad;
-    }
-    if (listen(fd, 1) < 0) {
-	emsg = fxStr::format("listen: %s", strerror(errno));
-	goto bad;
-    }
-    const char* a; a = (const char*) &data_addr.sin_addr;	// XXX for __GNUC__
-    const char* p; p = (const char*) &data_addr.sin_port;	// XXX for __GNUC__
+    if (client.isPassive()) {
+	if (Socket::connect(fd, &data_addr, sizeof (data_addr)) >= 0) {
+	    if (client.getVerbose())
+		client.traceServer("Connected to %s at port %u.",
+		inet_ntoa(data_addr.sin_addr), ntohs(data_addr.sin_port));
+	} else {
+	    emsg = fxStr::format("Can not reach server at %s at port %u (%s).",
+		inet_ntoa(data_addr.sin_addr), ntohs(data_addr.sin_port), strerror(errno));
+	    goto bad;
+	}
+    } else {
+	if (Socket::bind(fd, &data_addr, sizeof (data_addr)) < 0) {
+	    emsg = fxStr::format("bind: %s", strerror(errno));
+	    goto bad;
+	}
+	dlen = sizeof (data_addr);
+	if (Socket::getsockname(fd, &data_addr, &dlen) < 0) {
+	    emsg = fxStr::format("getsockname: %s", strerror(errno));
+	    goto bad;
+	}
+	if (listen(fd, 1) < 0) {
+	    emsg = fxStr::format("listen: %s", strerror(errno));
+	    goto bad;
+	}
+	const char* a; a = (const char*) &data_addr.sin_addr;	// XXX for __GNUC__
+	const char* p; p = (const char*) &data_addr.sin_port;	// XXX for __GNUC__
 #define UC(b) (((int) b) & 0xff)
-    if (client.command("PORT %u,%u,%u,%u,%u,%u",
-	UC(a[0]), UC(a[1]), UC(a[2]), UC(a[3]),
-	UC(p[0]), UC(p[1])) != FaxClient::COMPLETE)
-	return (false);
+	if (client.command("PORT %u,%u,%u,%u,%u,%u",
+	    UC(a[0]), UC(a[1]), UC(a[2]), UC(a[3]),
+	    UC(p[0]), UC(p[1])) != FaxClient::COMPLETE)
+	    return (false);
 #undef UC
+    }
     client.setDataFd(fd);
     return (true);
 bad:
@@ -188,6 +216,9 @@ bad:
 bool
 InetTransport::openDataConn(fxStr& emsg)
 {
+    if (client.isPassive()) {
+	return (client.getDataFd() > 0);
+    }
     int s = Socket::accept(client.getDataFd(), NULL, NULL);
     if (s >= 0) {
 	client.setDataFd(s);

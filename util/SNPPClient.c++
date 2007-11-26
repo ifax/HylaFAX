@@ -58,6 +58,7 @@ SNPPClient::init()
     fdOut = NULL;
     state = 0;
     msg = NULL;
+    pasv = false;
 
     setupConfig();
 }
@@ -394,6 +395,8 @@ SNPPClient::setConfigItem(const char* tag, const char* value)
 	jproto.setServiceLevel(getNumber(value));
     } else if (streq(tag, "mailaddr")) {
 	jproto.setMailbox(value);
+    } else if (streq(tag, "passivemode")) {
+	pasv = getBoolean(value);
     } else
 	return (false);
     return (true);

@@ -188,6 +188,7 @@ FileFmt	string	\s-1\fIsee below\fP\s+1	format string for file status results
 Host	string	\s-1localhost\s+1	host to contact for service
 JobFmt	string	\s-1\fIsee below\fP\s+1	format string for job status results
 ModemFmt	string	\s-1\fIsee below\fP\s+1	format string for modem status results
+PassiveMode	boolean	\s-1false\s+1	whether or not to use passive mode
 Port	integer	\s-14559\s+1	port to use in contacting server
 Protocol	string	\s-1tcp\s+1	protocol to use in contacting server
 RcvFmt	string	\s-1\fIsee below\fP\s+1	format string for received facsimile status results
@@ -400,6 +401,9 @@ t	Server and session tracing levels (xxxxx:yyyyy)
 v	Modem speaker volume as one-character symbol
 z	A ``*'' if a \fIfaxgetty\fP\|(${MANNUM1_8}) process is running; otherwise `` '' (space)
 .fi
+.TP 10
+.B PassiveMode
+Whether or not to use passive mode in communication with the server.
 .TP 14
 .B Port
 The network port to contact for service.

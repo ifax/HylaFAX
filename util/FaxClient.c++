@@ -64,6 +64,7 @@ FaxClient::init()
     fdOut = NULL;
     fdData = -1;
     state = 0;
+    pasv = false;
 
     setupConfig();
 }
@@ -295,6 +296,8 @@ FaxClient::setConfigItem(const char* tag, const char* value)
 	setModemStatusFormat(value);
     } else if (streq(tag, "filefmt")) {
 	setFileStatusFormat(value);
+    } else if (streq(tag, "passivemode")) {
+	pasv = getBoolean(value);
     } else
 	return (false);
     return (true);

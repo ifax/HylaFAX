@@ -180,6 +180,7 @@ The following configuration parameters are recognized:
 .ta \w'AutoCoverPage    'u +\w'boolean    'u +\w'\s-1\fIsee below\fP\s+1    'u
 \fBTag	Type	Default	Description\fP
 Host	string	\s-1localhost\s+1	host to contact for service
+PassiveMode	boolean	\s-1false\s+1	whether or not to use passive mode
 Port	integer	\s-14559\s+1	port to use in contacting server
 Protocol	string	\s-1tcp\s+1	protocol to use in contacting server
 Verbose	boolean	\s-1No\s+1	whether or not to enable protocol tracing
@@ -192,6 +193,9 @@ The host to contact for service.
 (Equivalent to the
 .B \-h
 option.)
+.TP 10
+.B PassiveMode
+Whether or not to use passive mode in communication with the server.
 .TP 10
 .B Port
 The network port to contact for service.

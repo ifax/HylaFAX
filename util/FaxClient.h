@@ -111,6 +111,7 @@ private:
     int		fdData;		// data transfer connection
     char	buf[1024];	// input buffer
     int		code;		// code from last server repsonse
+    bool	pasv;		// use of passive mode
     fxStr	proto;		// protocol to use for service query
     fxStr	lastResponse;	// text message from last server response
     fxStr	lastContinuation; // continuation message from last server response
@@ -189,6 +190,7 @@ public:
     virtual bool callServer(fxStr& emsg);
     virtual bool hangupServer(void);
     bool isConnected(void) const;
+    bool isPassive(void) const;
     bool login(const char* user, fxStr& emsg);
     bool admin(const char* pass, fxStr& emsg);
     virtual const char* getPasswd(const char* prompt);
@@ -328,6 +330,7 @@ inline int FaxClient::getLastCode(void) const		{ return code; }
 inline bool FaxClient::isLoggedIn(void) const
     { return (state&FS_LOGGEDIN) != 0; }
 inline bool FaxClient::isConnected(void) const	{ return fdIn != NULL; }
+inline bool FaxClient::isPassive(void) const	{ return pasv; }
 inline u_int FaxClient::getType(void) const		{ return type; }
 inline u_int FaxClient::getStruct(void) const		{ return stru; }
 inline u_int FaxClient::getMode(void) const		{ return mode; }
