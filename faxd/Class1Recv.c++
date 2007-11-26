@@ -1030,7 +1030,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 	    }
 	}
     } while (gotCONNECT && !wasTimeout() && lastResponse != AT_EMPTYLINE);
-    eresult = Status(111, "T.30 T2 timeout, expected page not received");
+    eresult = Status(111, "V.21 signal reception timeout; expected page possibly not received in full");
     if (prevPage && conf.saveUnconfirmedPages && getRecvEOLCount()) {
 	TIFFWriteDirectory(tif);
 	protoTrace("RECV keeping unconfirmed page");
