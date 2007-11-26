@@ -169,7 +169,7 @@ protected:
 /*
  * Correct if neccessary Phase C (T.4/T.6) data (remove extra RTC/EOFB etc.)
  */
-    int		correctPhaseCData(u_char* buf, u_long* pBufSize,
+    void	correctPhaseCData(u_char* buf, u_long& pBufSize,
                                   u_int fillorder, const Class2Params& params, uint32& rows);
 /*
  * Convert Phase C data...

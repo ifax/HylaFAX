@@ -495,11 +495,13 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	}
 
         /*
-         * correct broken Phase C (T.4/T.6) data if necessary
+         * correct broken Phase C (T.4) data if necessary
          */
-        if (params.df <= DF_2DMMR) {
-	    lastByte = correctPhaseCData(dp, &totdata, fillorder, params, rows);
-	    lastByte = bitrev[lastByte];
+        if (params.df < DF_2DMMR) {
+	    correctPhaseCData(dp, totdata, fillorder, params, rows);
+	} else if (params.df == DF_JBIG) {
+	    // JBIG needs the data bit-reversed as we get it backwards from the library
+	    TIFFReverseBits(dp, totdata);
 	}
 
 	beginTimedTransfer();
@@ -516,35 +518,19 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 bool
 Class2Modem::sendRTC(Class2Params params)
 {
-    if (params.df == DF_JBIG) return (true);	// nothing to do
+    if (params.df > DF_2DMR) return (true);	// nothing to do
 
-    // determine the number of trailing zeros on the last byte of data
-    u_short zeros = 0;
-    for (short i = 7; i >= 0; i--) {
-	if (lastByte & (1<<i)) break;
-	else zeros++;
-    }
     // these are intentionally reverse-encoded in order to keep
     // rtcRev and bitrev in sendPage() in agreement
     static const u_char RTC1D[9] =
 	{ 0x00,0x08,0x80,0x00,0x08,0x80,0x00,0x08,0x80 };
     static const u_char RTC2D[10] =
 	{ 0x00,0x18,0x00,0x03,0x60,0x00,0x0C,0x80,0x01,0x30 };
-    // T.6 does not allow zero-fill until after EOFB and not before.
-    u_char EOFB[3];
-	EOFB[0] = (0x0800 >> zeros) & 0xFF;
-	EOFB[1] = (0x8008 >> zeros) & 0xFF;
-	EOFB[2] = 0x80 >> zeros;
-    if (params.df == DF_2DMMR) {
-	protoTrace("SEND EOFB");
-        return putModemDLEData(EOFB, sizeof (EOFB), rtcRev, getDataTimeout());
-    } else {
-	protoTrace("SEND %s RTC", params.is2D() ? "2D" : "1D");
-	if (params.is2D())
-	    return putModemDLEData(RTC2D, sizeof (RTC2D), rtcRev, getDataTimeout());
-	else
-	    return putModemDLEData(RTC1D, sizeof (RTC1D), rtcRev, getDataTimeout());
-    }
+    protoTrace("SEND %s RTC", params.is2D() ? "2D" : "1D");
+    if (params.is2D())
+	return putModemDLEData(RTC2D, sizeof (RTC2D), rtcRev, getDataTimeout());
+    else
+	return putModemDLEData(RTC1D, sizeof (RTC1D), rtcRev, getDataTimeout());
 }
 
 /*

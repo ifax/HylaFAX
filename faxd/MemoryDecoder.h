@@ -59,7 +59,6 @@ public:
     u_char* cutExtraEOFB();
     u_char* encodeTagLine (u_long* raster, u_int th, u_int slop);
     u_char* convertDataFormat(const Class2Params& params);
-    int		getLastByte();
 
     void scanPageForBlanks(u_int fillorder, const Class2Params& params);
     const u_char* getEndOfPage()			{ return endOfData; }

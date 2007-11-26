@@ -132,7 +132,7 @@ protected:
     bool	sendTCF(const Class2Params&, u_int ms);
     bool	sendPage(TIFF* tif, Class2Params&, u_int, u_int, Status& eresult);
     bool	sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm, Status& eresult);
-    bool	sendRTC(Class2Params params, u_int ppmcmd, int lastbyte, uint32 rowsperstrip, Status& eresult);
+    bool	sendRTC(Class2Params params, u_int ppmcmd, uint32 rowsperstrip, Status& eresult);
     bool	sendPPM(u_int ppm, HDLCFrame& mcf, Status& eresult);
     bool	decodePPM(const fxStr& pph, u_int& ppm, Status& eresult);
 // reception support

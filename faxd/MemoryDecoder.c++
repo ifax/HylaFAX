@@ -79,12 +79,6 @@ MemoryDecoder::decodeNextByte()
     return (*bp++);
 }
 
-int
-MemoryDecoder::getLastByte()
-{
-    return (*(endOfData - 1));
-}
-
 void
 MemoryDecoder::invalidCode(const char* type, int x)
 {
