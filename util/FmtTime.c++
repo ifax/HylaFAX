@@ -41,19 +41,17 @@ fmtTime(time_t t)
     long v;
 
     if (t < 0)
-	return ("0:00");
+	return ("0:00:00");
     if (t > 99*60*60)
 	return ("??:??:??");
-    if ((v = t/3600) > 0) {
-	if (v >= 10)
-	    *cp++ = digits[v / 10];
-	*cp++ = digits[v % 10];
-	*cp++ = ':';
-	t -= v*3600;
-    }
-    v = t/60;
-    if (v >= 10 || cp > tbuf)
+    v = t/3600;
+    if (v >= 10)
 	*cp++ = digits[v / 10];
+    *cp++ = digits[v % 10];
+    *cp++ = ':';
+    t -= v*3600;
+    v = t/60;
+    *cp++ = digits[v / 10];
     *cp++ = digits[v % 10];
     t -= v*60;
     *cp++ = ':';
