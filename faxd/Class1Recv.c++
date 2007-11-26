@@ -991,6 +991,7 @@ Class1Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 		transmitFrame(signalSent);
 		traceFCF("RECV send", (u_char) signalSent[2]);
 		break;
+	    case FCF_MCF:
 	    case FCF_CFR:
 		/* It's probably just our own echo. */
 		messageReceived = false;
