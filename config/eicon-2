@@ -39,4 +39,16 @@ CallIDPattern:		"CID: "
 Class2APQueryCmd:	none
 Class2SPLCmd:		none
 Class2TBCCmd:		none
-Class2ECMType:		2.0	# follows Class 2.0 spec, not Class 2
+Class2PHCTOCmd:         none
+
+#
+# As Eicon's "Class 2" is a cross-breed and abomination between
+# Class 2.0, 2.1, and old-style 2 it may require some testing
+# to see if ECM type 2.0 or 2 is used and whether or not hexadecimal
+# is presented in the +FDCC response.
+#
+#Class2ECMType:		2.0	# follows Class 2.0 spec, not Class 2
+Class2ECMType:          2
+#
+Class2UseHex:           true
+#Class2UseHex:           false
