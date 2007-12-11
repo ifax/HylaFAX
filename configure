@@ -4650,11 +4650,11 @@ sysv-*-strip)	MANNUM4_5=4  MANNUM1_8=1;;
 sysv-*)		MANNUM4_5=4F MANNUM1_8=1M;;
 esac
 case $MANSCHEME in
-*-source-*)	MANCVT='${MANSED} $< >$@';;
-*-nroff-gzip-*)	MANCVT='${MANSED} $< | nroff -man | gzip > $@';;
-*-nroff-pack-*)	MANCVT='${MANSED} $< | nroff -man | pack > $@';;
-*-nroff-com*-*)	MANCVT='${MANSED} $< | nroff -man | compress > $@';;
-*-nroff-cat-*)	MANCVT='${MANSED} $< | nroff -man > $@';;
+*-source-*)	MANCVT='${MANSED} $? >$@';;
+*-nroff-gzip-*)	MANCVT='${MANSED} $? | nroff -man | gzip > $@';;
+*-nroff-pack-*)	MANCVT='${MANSED} $? | nroff -man | pack > $@';;
+*-nroff-com*-*)	MANCVT='${MANSED} $? | nroff -man | compress > $@';;
+*-nroff-cat-*)	MANCVT='${MANSED} $? | nroff -man > $@';;
 esac
 case $MANSCHEME in
 *-0|*-0.gz|*-0.Z|*-gz|*-Z|*-z)
