@@ -139,6 +139,7 @@ private:
     QLink	deadq;			// jobs waiting to be reaped
     QLink	suspendq;		// jobs suspending from scheduling
     QLink	jcontrolq;		// jobs actively running jobcontrol
+    QLink	pendq;			// jobs pending future tts
     SchedTimeout schedTimeout;		// timeout for running scheduler
     DestInfoDict destJobs;		// jobs organized by destination
     fxStrDict	pendingDocs;		// documents waiting for removal
@@ -229,6 +230,7 @@ private:
     void	setSleep(Job& job, time_t tts);
     void	setDead(Job& job);
     void	setActive(Batch& batch, Job& job);
+    void	setPending(Job& job);
     void	setSuspend(Job& job);
     bool	submitJob(FaxRequest&, bool checkState = false);
     bool	submitJob(Job& job, FaxRequest& req, bool checkState = false);
