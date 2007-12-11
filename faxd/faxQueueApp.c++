@@ -1893,6 +1893,28 @@ faxQueueApp::setReady(Job& job, FaxRequest& req)
 }
 
 /*
+ * Place a job on the queue of jobs pending future tts
+ * and start the associated timer.
+ *
+ * Pending jobs are kept separate from "sleeping" jobs to
+ * make sure we can account for sleeping jobs (sleeping because they have
+ * already been active) separately from jobs sleeping because their original
+ * TTS has not arrived yet.
+ */
+
+void
+faxQueueApp::setPending(Job& job)
+{
+    traceJob(job, "PENDING FOR %s", (const char*)strTime(job.tts - Sys::now()));
+    Trigger::post(Trigger::JOB_SLEEP, job);
+    JobIter iter(pendq);
+    for (; iter.notDone() && iter.job().tts <= job.tts; iter++)
+	;
+    job.insert(iter.job());
+    job.startTTSTimer(job.tts);
+}
+
+/*
  * Place a job on the queue of jobs waiting to run
  * and start the associated timer.
  */
@@ -2077,7 +2099,7 @@ faxQueueApp::submitJob(Job& job, FaxRequest& req, bool checkState)
 	}
 	job.startKillTimer(req.killtime);
 	job.state = FaxRequest::state_pending;
-	setSleep(job, job.tts);
+	setPending(job);
     } else {					// ready to go now
 	job.startKillTimer(req.killtime);
 	setReadyToRun(job, req);
@@ -3736,6 +3758,12 @@ faxQueueApp::showDebugState(void)
 	}
     }
 
+    traceServer("DEBUG: pendq(%p) next %p", &pendq, pendq.next);
+    for (JobIter iter(pendq); iter.notDone(); iter++)
+    {
+	Job& job(iter);
+	traceJob(job, "In pending queue");
+    }
 
     traceServer("DEBUG: suspendq(%p) next %p", &suspendq, suspendq.next);
     for (JobIter iter(suspendq); iter.notDone(); iter++)
