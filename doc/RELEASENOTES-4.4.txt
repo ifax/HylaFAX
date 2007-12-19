@@ -130,3 +130,8 @@ CHANGES for 4.4.3
   formatter (11 Nov 2007)
 * xferfaxlog: Update man pages (20 Nov 2007)
 * Add support for libtiff 3.9 (21 Nov 2007)
+
+CHANGES since 4.4.3
+-----------------------------------------------------------------------------
+* faxq: Don't allow pending jobs with future TTS to block current jobs
+  (11 Dec 2007, 19 Dec 2007)
