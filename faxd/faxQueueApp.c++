@@ -2274,8 +2274,8 @@ faxQueueApp::blockJob(Job& job, FaxRequest& req, const Status& r)
 void
 faxQueueApp::delayJob(Job& job, FaxRequest& req, const Status& r, time_t tts)
 {
-    job.state = FaxRequest::state_sleeping;
-    req.tts = tts;
+    job.state = FaxRequest::state_pending;
+    job.tts = req.tts = tts;
     time_t delay = tts - Sys::now();
     // adjust kill time so job isn't removed before it runs
     job.stopKillTimer();
@@ -2285,7 +2285,7 @@ faxQueueApp::delayJob(Job& job, FaxRequest& req, const Status& r, time_t tts)
     updateRequest(req, job);
     traceQueue(job, "%s: requeue for %s",
 	    r.string(), (const char*)strTime(delay));
-    setSleep(job, tts);
+    setPending(job);
     if (req.isNotify(FaxRequest::when_requeued))
 	notifySender(job, Job::requeued); 
     Trigger::post(Trigger::JOB_DELAYED, job);
