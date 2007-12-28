@@ -1654,8 +1654,8 @@ if [ "$CHECK_NLS" != "no" ]; then
 	CheckForIncludeFile locale.h && 
 	    CheckForIncludeFile libintl.h && {
 		ENABLE_NLS="#define ENABLE_NLS 1"
-		CheckForLibrary gettext -lc || {
-		    CheckForLibrary gettext -lintl && {
+		CheckForLibraryWithArgs gettext '""' -lc || {
+		    CheckForLibraryWithArgs gettext '""' -lintl && {
 			Note "Looks like -lintl is needed for gettext support."
 			MACHDEPLIBS="$MACHDEPLIBS -lintl"
                     }
