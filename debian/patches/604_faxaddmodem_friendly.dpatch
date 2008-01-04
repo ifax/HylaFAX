@@ -28,8 +28,8 @@ diff -urNad /usr/local/src/new/hylafax-4.2.0/etc/faxaddmodem.sh.in hylafax-4.2.0
 +++ hylafax-4.2.0/etc/faxaddmodem.sh.in	2004-11-15 19:17:30.111059960 +0100
 @@ -248,7 +248,9 @@
  
- while [ -z "$TTY" -o ! -c /dev/$TTY ]; do
-     test "$TTY" != "" && echo "/dev/$TTY is not a terminal device."
+ while [ -z "$TTY" -o ! -c $DEVPATH$TTY ]; do
+     test "$TTY" != "" && echo "$DEVPATH$TTY is not a terminal device."
 +    [ -z "$TTY" ] && TTY=ttyS0
      prompt "Serial port that modem is connected to [$TTY]?"; read TTY
 +    [ -z "$TTY" ] && TTY=ttyS0
