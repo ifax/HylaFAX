@@ -1,1 +1,1 @@
-util/libhylafax.so*	usr/lib/hylafax
+libhylafax/libhylafax-*.so*	usr/lib/hylafax

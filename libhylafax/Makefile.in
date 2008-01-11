@@ -58,7 +58,7 @@ C++FILES=Array.c++ \
 
 CFILES= cvtfacility.c fxassert.c
 
-TARGETS=libhylafax.${DSO}
+TARGETS=libhylafax-${ABI_VERSION}.${DSO}
 
 default all::
 	@${MAKE} incdepend
@@ -68,13 +68,13 @@ targets: $(TARGETS)
 
 @MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
 
-libhylafax.a: ${OBJECTS}
+libhylafax-${ABI_VERSION}.a: ${OBJECTS}
 	@rm -f $@;
 	@echo "${AR} ${AROPTS} $@ ${OBJECTS}"; \
 	    ${AR} ${AROPTS} $@ ${OBJECTS} ${C++FILT}
 	${RANLIB} $@
 
-../libhylafax/libhylafax.a: libhylafax.a
+../libhylafax/libhylafax-${ABI_VERSION}.a: libhylafax-${ABI_VERSION}.a
 
 PUTCLIENT	= ${INSTALL} -idb ${PRODUCT}.sw.client
 

@@ -17,6 +17,6 @@ libz.so \
 libhylafax.so \
 		:st = .text 0x5ff60000, 0x00070000:\
 		:st = .data 0x5ffd0000, 0x00010000:
-libfaxserver.so \
+libhylafaxserver.so \
 		:st = .text 0x5ff00000, 0x00050000:\
 		:st = .data 0x5ff50000, 0x00010000:

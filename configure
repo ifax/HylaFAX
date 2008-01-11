@@ -83,8 +83,6 @@ REGEXINC='${DEPTH}/${TOPSRCDIR}/regex'
 DBLIB=no
 LIBDB="-L/usr/local/lib -ldb"
 DBLIBINC=/usr/local/include
-LIBFAXSERVER='libfaxserver.${DSO}'
-LIBUTIL='${UTIL}/libhylafax.${DSO}'
 CONFIG_OSFCNH=auto
 MANNUM4_5=4F
 MANNUM1_8=1M
@@ -105,6 +103,8 @@ RM="rm -f"
 #
 VAR1="ANSICPP
 ANSICXXPP
+ABI_VERSION
+ABI_PATCH
 AR
 AROPTS
 AWK
@@ -143,7 +143,6 @@ ECHO
 ENABLE_NLS
 ENCODING
 ENVOPTS
-FAXD
 FAXGID
 FAXUID
 FAXQ_SERVER
@@ -167,11 +166,9 @@ INSTALL
 LIBDATA		DIR_LIBDATA
 LIBDIR		DIR_LIB
 LIBEXEC		DIR_LIBEXEC
-LIBFAXSERVER
 LIBPORT
 LIBREGEX
 LIBTIFF
-LIBUTIL
 LIBZ
 LIBDB
 LLDOPTS
@@ -463,11 +460,18 @@ exec 5>./config.log			# compiler messages and the like
 
 DATE=`date`
 
-eval `cat $SRCDIR/VERSION | sed 's/\([0-9][0-9]*\)\.\([0-9][0-9]*\)\(.*\)/DIST_MAJOR=\1; DIST_MINOR=\2; DIST_TYPE=\3/'`
+eval `cat $SRCDIR/VERSION | sed 's/\([0-9][0-9]*\)\.\([0-9][0-9]*\)[.-]\([0-9]*\)\(.*\)/DIST_MAJOR=\1; DIST_MINOR=\2; DIST_PATCH=\3; DIST_TYPE=\4/'`
 DIST_ALPHA=`awk '{print $3}' $SRCDIR/dist/hylafax.alpha`
-VERSION="${DIST_MAJOR}.${DIST_MINOR}${DIST_TYPE}"
+VERSION="${DIST_MAJOR}.${DIST_MINOR}.${DIST_PATCH}${DIST_TYPE}"
 if [ "$DIST_TYPE" = beta ]; then
     VERSION="${VERSION}${DIST_ALPHA}"
+fi
+ABI_VERSION="${DIST_MAJOR}.${DIST_MINOR}"
+if [ -n "$DIST_PATCH" ]
+then
+        ABI_PATCH="${DIST_PATCH}"
+else
+        ABI_PATCH="0"
 fi
 
 Note()
@@ -3431,10 +3435,8 @@ if [ "$DSO" = auto ]; then
 	    USE_RPATH=''
 	fi
 	DSOSUF=so
-	LIBUTIL=''
-	LIBFAXSERVER='-lfaxserver'
 	DSOOPTS='-shared -fpic -Wl,-soname,$@'
-	LLDOPTS='-L${UTIL} -L${FAXD} -lhylafax'$USE_RPATH
+	LLDOPTS=$USE_RPATH
 	GCOPTS="${GCOPTS} -fpic"
 	GCXXOPTS="${GCXXOPTS} -fpic"
 	DSO=LINUX
@@ -3464,21 +3466,18 @@ if [ "$DSO" = auto ]; then
 	    USE_RPATH=''
 	fi
 	DSOSUF=so
-	LIBUTIL=''
-	LIBFAXSERVER='-L${FAXD} -lfaxserver'
 	# options here are passed directly to ld, not through g++ first
 	if [ ${ISGCC} = "yes" ] ; then
 	    DSOOPTS='-shared -Wl,-G,-h,$@'
-	    LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lhylafax -lstdc++'
+	    LLDOPTS="$USE_RPATH -lstdc++"
 	    GCOPTS="${GCOPTS} -fpic"
 	    GCXXOPTS="${GCXXOPTS} -fpic"
 	else
 	    DSOOPTS='-G -h $@'
-	    LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lhylafax -lCrun'
+	    LLDOPTS='-L${UTIL} -R${LIBDIR} -lhylafax-${ABI_VERSION} -lCrun'
 	    GCOPTS="${GCOPTS} -Kpic"
 	    GCXXOPTS="${GCXXOPTS} -Kpic"
 	fi
-	#LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lhylafax'
 	DSO=SOLARIS
 	CheckCCDSO()
 	{

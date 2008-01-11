@@ -30,15 +30,15 @@
 # DSO-specific rules for the util directory.
 #
 
-libhylafax.${DSO}: ${OBJECTS}
-	${C++} ${DSOOPTS} -o libhylafax.${DSO}.${LIBVERSION} ${OBJECTS}
-	ln -fs libhylafax.${DSO}.${LIBVERSION} libhylafax.${DSO}
+libhylafaxutil.${DSO}: ${OBJECTS}
+	${C++} ${DSOOPTS} -o libhylafaxutil.${DSO}.${LIBVERSION} ${OBJECTS}
+	ln -fs libhylafaxutil.${DSO}.${LIBVERSION} libhylafaxutil.${DSO}
 
-../util/libhylafax.${DSO}: libhylafax.${DSO}
+../util/libhylafaxutil.${DSO}: libhylafaxutil.${DSO}
 
-installDSO: libhylafax.${DSO}
-	${PUTCLIENT} -F ${LIBDIR} -m 755 -O libhylafax.${DSO}.${LIBVERSION}
-	(cd ${LIBDIR}; ln -fs libhylafax.${DSO}.${LIBVERSION} libhylafax.${DSO})
+installDSO: libhylafaxutil.${DSO}
+	${PUTCLIENT} -F ${LIBDIR} -m 755 -O libhylafaxutil.${DSO}.${LIBVERSION}
+	(cd ${LIBDIR}; ln -fs libhylafaxutil.${DSO}.${LIBVERSION} libhylafaxutil.${DSO})
 
 cleanDSO::
 	-${RM} -f libhylafax.${DSO}.${LIBVERSION} libhylafax.${DSO}

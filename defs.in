@@ -38,6 +38,10 @@
 @SETMAKE@
 MAKEFILE	= Makefile
 SHELL		= @SCRIPT_SH@
+VERSION         = @VERSION@
+
+ABI_VERSION      = @ABI_VERSION@
+ABI_PATCH        = @ABI_PATCH@
 #
 # Directory locations setup at configuration time.
 # Note that changing these parameters here is likely
@@ -133,8 +137,8 @@ CVERSION	= @ENVOPTS@
 C++FILE		= @CXXFILE@
 
 # default definitions for programs--overide them as desired
-LIBS		= ${LIBUTIL}
-LLDLIBS		= ${LIBS} @PAMLIBS@ @LIBJBIG@ ${LIBTIFF} ${LIBZ} ${LIBREGEX} ${LIBPORT} ${MACHDEPLIBS}
+LIBS		= ${UTIL}/libhylafax-${ABI_VERSION}.${DSO}
+LLDLIBS		= -L${UTIL} -lhylafax-${ABI_VERSION} @PAMLIBS@ @LIBJBIG@ ${LIBTIFF} ${LIBZ} ${LIBREGEX} ${LIBPORT} ${MACHDEPLIBS}
 #
 # Override this definition to eliminate shared library use.
 #
@@ -191,8 +195,6 @@ LIBREGEX	= @LIBREGEX@
 # random utility functions and classes
 UTIL		= ${DEPTH}/libhylafax
 FAXD		= ${DEPTH}/faxd
-LIBFAXSERVER	= @LIBFAXSERVER@
-LIBUTIL		= @LIBUTIL@
 LIBPORT		= @LIBPORT@
 
 #
