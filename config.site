@@ -56,7 +56,7 @@
 # Directory parameters.
 #
 #DIR_BIN="/usr/local/bin"		# directory for client apps
-#DIR_LIB="/usr/local/lib"		# directory for libfaxserver, libfaxutil
+#DIR_LIB="/usr/local/lib"		# directory for libhylafax, libfaxserver
 #DIR_LIBDATA="/usr/lib/fax"		# directory for client data
 #DIR_LIBEXEC="/usr/lib/fax"		# directory for libraries&hidden apps
 #DIR_MAN="/usr/local/man"		# directory for manual pages

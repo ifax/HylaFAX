@@ -100,10 +100,11 @@ install: default
 	    -idb hylafax.sw.server -dir -F ${SPOOL}/etc templates
 	${PUTSAMPLE} -F ${SPOOL}/etc/templates -m 644 \
 	    -src ${SRCDIR}/templates/README -O README
-	for d in ${TEMPLATES}; do \
+	@for d in ${TEMPLATES}; do \
+		${ECHO} "Installing templates/$$d"; \
 		${INSTALL} -u ${FAXUSER} -g ${FAXGROUP} -m ${DIRMODE} \
 		    -idb hylafax.sw.server -dir -F ${SPOOL}/etc/templates $$d; \
-		for f in templates/$$d/*; do \
+		for f in ${SRCDIR}/templates/$$d/*; do \
 			${PUTSAMPLE} -F ${SPOOL}/etc/templates/$$d -m 644 -src $$f `basename $$f`; \
 		done; \
 	done;

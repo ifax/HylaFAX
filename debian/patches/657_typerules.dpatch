@@ -24,9 +24,9 @@ esac
 
 exit 0
 
-diff -urNad hylafax-4.3.1~/util/typerules hylafax-4.3.1/util/typerules
---- hylafax-4.3.1~/util/typerules	2006-12-24 21:49:35.000000000 +0100
-+++ hylafax-4.3.1/util/typerules	2007-01-02 14:20:26.000000000 +0100
+diff -urNad hylafax-4.3.1~/libhylafax/typerules hylafax-4.3.1/libhylafax/typerules
+--- hylafax-4.3.1~/libhylafax/typerules	2006-12-24 21:49:35.000000000 +0100
++++ hylafax-4.3.1/libhylafax/typerules	2007-01-02 14:20:26.000000000 +0100
 @@ -98,8 +98,7 @@
  0	short		0x4d4d		tiff
  0	short		0x4949		tiff

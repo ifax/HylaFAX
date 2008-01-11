@@ -20,7 +20,6 @@ mkcover.sh
 notify.sh
 notify-4.1.sh
 notify-4.2.sh
-pagesizes
 pcl2fax.sh
 pdf2fax.gs.sh
 pollrcvd.sh
@@ -28,7 +27,6 @@ ps2fax.dps.sh
 ps2fax.gs.sh
 ps2fax.imp.sh
 recvstats.sh
-*.so.*.*.*
 textfmt
 tiff2fax.sh
 tiff2pdf.sh

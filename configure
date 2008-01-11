@@ -83,9 +83,8 @@ REGEXINC='${DEPTH}/${TOPSRCDIR}/regex'
 DBLIB=no
 LIBDB="-L/usr/local/lib -ldb"
 DBLIBINC=/usr/local/include
-FAXD=
 LIBFAXSERVER='libfaxserver.${DSO}'
-LIBUTIL='${UTIL}/libfaxutil.${DSO}'
+LIBUTIL='${UTIL}/libhylafax.${DSO}'
 CONFIG_OSFCNH=auto
 MANNUM4_5=4F
 MANNUM1_8=1M
@@ -3434,9 +3433,8 @@ if [ "$DSO" = auto ]; then
 	DSOSUF=so
 	LIBUTIL=''
 	LIBFAXSERVER='-lfaxserver'
-	FAXD='${DEPTH}/faxd'
 	DSOOPTS='-shared -fpic -Wl,-soname,$@'
-	LLDOPTS='-L${UTIL} -L${FAXD} -lfaxutil'$USE_RPATH
+	LLDOPTS='-L${UTIL} -L${FAXD} -lhylafax'$USE_RPATH
 	GCOPTS="${GCOPTS} -fpic"
 	GCXXOPTS="${GCXXOPTS} -fpic"
 	DSO=LINUX
@@ -3467,21 +3465,20 @@ if [ "$DSO" = auto ]; then
 	fi
 	DSOSUF=so
 	LIBUTIL=''
-	FAXD='${DEPTH}/faxd'
 	LIBFAXSERVER='-L${FAXD} -lfaxserver'
 	# options here are passed directly to ld, not through g++ first
 	if [ ${ISGCC} = "yes" ] ; then
 	    DSOOPTS='-shared -Wl,-G,-h,$@'
-	    LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lfaxutil -lstdc++'
+	    LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lhylafax -lstdc++'
 	    GCOPTS="${GCOPTS} -fpic"
 	    GCXXOPTS="${GCXXOPTS} -fpic"
 	else
 	    DSOOPTS='-G -h $@'
-	    LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lfaxutil -lCrun'
+	    LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lhylafax -lCrun'
 	    GCOPTS="${GCOPTS} -Kpic"
 	    GCXXOPTS="${GCXXOPTS} -Kpic"
 	fi
-	#LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lfaxutil'
+	#LLDOPTS='-L${UTIL} -L${FAXD} -R${LIBDIR} -lhylafax'
 	DSO=SOLARIS
 	CheckCCDSO()
 	{
@@ -4522,7 +4519,7 @@ promptForParameter()
 	esac
 	;;
     12)	promptForManPageScheme;;
-    13)	promptForPageSize $SRCDIR/util/pagesizes.in;;
+    13)	promptForPageSize $SRCDIR/libhylafax/pagesizes.in;;
     14)	promptForVRes;;
     15)	promptForNonNullStringParameter "$PATH_GETTY" \
 	    "Location of getty program";		PATH_GETTY="$param"
@@ -4723,7 +4720,7 @@ fi
 # Convert default page size name to an entry that goes
 # in the pagesizes database file.
 #
-F=$SRCDIR/util/pagesizes
+F=$SRCDIR/libhylafax/pagesizes
 test -f $F.in || {
     bitch "$F.in is missing; this should be part of the distribution."
     boom
@@ -4813,7 +4810,7 @@ EOF
 # util/xferfaxstats.sh	script for transmit statistics accounting
 # util/recvstats.sh	script for receive statistics accounting
 # util/faxcron.sh	script for cleaning up the spooling area (run from cron)
-# util/pagesizes	client page dimensions database (has default page size)
+# libhylafax/pagesizes	client page dimensions database (has default page size)
 # pkg/cpkginfo		SVR4 package stuff (client package info)
 # pkg/cproto.stub	SVR4 package stuff (client prototype stub)
 # pkg/crequest		SVR4 package stuff
@@ -4840,12 +4837,15 @@ CONF_FILES="
     faxrm/Makefile
     faxstat/Makefile
     hfaxd/Makefile
+    libhylafax/Makefile
     man/Makefile
     sendfax/Makefile
     sendpage/Makefile
     util/Makefile
 
     port/install.sh
+
+    libhylafax/pagesizes
 
     etc/faxsetup.sh
     etc/faxaddmodem.sh
@@ -4855,7 +4855,6 @@ CONF_FILES="
     util/xferfaxstats.sh
     util/recvstats.sh
     util/faxcron.sh
-    util/pagesizes
     util/archive.sh
     util/dictionary.sh
     util/common-functions.sh

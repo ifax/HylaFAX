@@ -43,7 +43,8 @@ DEPTH	= .
 
 SRCDIR	= ${TOPSRCDIR}/${DEPTH}
 
-DIRS=	util \
+DIRS=	libhylafax \
+	util \
 	faxalter \
 	faxcover \
 	faxd \
@@ -57,7 +58,7 @@ DIRS=	util \
 	config \
 	etc \
 	man
-DSODIRS	= util faxd
+DSODIRS	= faxd libhylafax
 
 TARGETS=hylafax
 

@@ -43,57 +43,7 @@ LIBVERSION	= @VERSION@
 SRCDIR	= ${DEPTH}/${TOPSRCDIR}/util
 VPATH	= ../@SRCDIR@/util
 
-C++FILES=Array.c++ \
-	BoolArray.c++ \
-	Dictionary.c++ \
-	Obj.c++ \
-	PageSize.c++ \
-	RE.c++ \
-	REArray.c++ \
-	REDict.c++ \
-	StackBuffer.c++ \
-	Str.c++ \
-	StrArray.c++ \
-	StrDict.c++ \
-	\
-	Dispatcher.c++ \
-	IOHandler.c++ \
-	NLS.c++ \
-	Sys.c++ \
-	SystemLog.c++ \
-	Timeout.c++ \
-	Fatal.c++ \
-	\
-	AtSyntax.c++ \
-	DialRules.c++ \
-	FmtTime.c++ \
-	Sequence.c++ \
-	TimeOfDay.c++ \
-	FaxDB.c++ \
-	TextFormat.c++ \
-	\
-	Class2Params.c++ \
-	FaxParams.c++ \
-	FaxClient.c++ \
-	FaxConfig.c++ \
-	FaxRecvInfo.c++ \
-	FaxSendInfo.c++ \
-	JobExt.c++ \
-	CallID.c++ \
-	ModemExt.c++ \
-	SendFaxJob.c++ \
-	SendFaxClient.c++ \
-	Status.c++ \
-	TypeRules.c++ \
-	Transport.c++ \
-	InetTransport.c++ \
-	UnixTransport.c++ \
-	\
-	SNPPClient.c++ \
-	SNPPJob.c++
-
-CFILES= cvtfacility.c fxassert.c
-TARGETS=libfaxutil.${DSO} faxmsg faxmodem faxadduser faxconfig faxdeluser \
+TARGETS=faxmsg faxmodem faxadduser faxconfig faxdeluser \
     faxstate faxinfo faxwatch textfmt dialtest typetest tiffcheck
 
 LC++INCS=${ZLIBINC}			# for FaxClient.c++
@@ -105,13 +55,6 @@ default all::
 targets: $(TARGETS)
 
 @MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
-
-libfaxutil.a: ${OBJECTS}
-	@rm -f $@;
-	@echo "${AR} ${AROPTS} $@ ${OBJECTS}"; \
-	    ${AR} ${AROPTS} $@ ${OBJECTS} ${C++FILT}
-	${RANLIB} $@
-../util/libfaxutil.a: libfaxutil.a
 
 faxmsg: ${SRCDIR}/faxmsg.c ${LIBS}
 	${CCF} -o $@ ${SRCDIR}/faxmsg.c ${LDFLAGS}
@@ -152,7 +95,7 @@ faxwatch: faxwatch.o ${LIBS}
 faxfetch: faxfetch.o ${LIBS}
 	${C++F} -o $@ faxfetch.o ${LDFLAGS}
 
-LDIRT=	checkat
+LDIRT=	checkat libfaxutil*
 checkat.o: ${SRCDIR}/checkat.c++
 	${C++F} -c ${C++FILE} ${SRCDIR}/checkat.c++@MAKECXXOVERRIDE@
 checkat: checkat.o ${LIBS}
@@ -166,8 +109,7 @@ PUTSBIN		= ${PUTSERVER} -F ${SBIN}
 
 installClient: default
 	${PUTCLIENT} -F ${LIBEXEC} -m 755 -O textfmt
-	${PUTCLIENT} -F ${LIBDATA} -m 444 -O pagesizes
-	${PUTCLIENT} -F ${LIBDATA} -m 444 -src ${SRCDIR}/typerules -O typerules
+	${PUTCLIENT} -F ${LIBEXEC} -m 755 -O typetest
 
 install: installClient
 	${PUTSBIN} -m 755 -O faxmsg faxadduser faxconfig faxdeluser faxmodem \
@@ -202,8 +144,6 @@ install: installClient
 	    -src ${SRCDIR}/dpsprinter.ps -O dpsprinter.ps
 	${PUTSERVER} -F ${SPOOL}/etc -idb "config(suggest)" \
 	    -m 444 -src ${SRCDIR}/cover.templ -O cover.templ
-
-@MAKEDSOINCLUDE@ @MAKELQUOTE@${SRCDIR}/Makefile.@DSO@dso@MAKERQUOTE@
 
 #
 # These targets are created during the configuration procedure.

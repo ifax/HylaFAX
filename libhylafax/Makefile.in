@@ -1,0 +1,86 @@
+DEPTH=..
+@MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
+
+LIBVERSION	= @VERSION@
+SRCDIR	= ${DEPTH}/${TOPSRCDIR}/libhylafax
+VPATH	= ../@SRCDIR@/libhylafax
+
+LDIRT = libhylafax*
+
+C++FILES=Array.c++ \
+	BoolArray.c++ \
+	Dictionary.c++ \
+	Obj.c++ \
+	PageSize.c++ \
+	RE.c++ \
+	REArray.c++ \
+	REDict.c++ \
+	StackBuffer.c++ \
+	Str.c++ \
+	StrArray.c++ \
+	StrDict.c++ \
+	\
+	Dispatcher.c++ \
+	IOHandler.c++ \
+	NLS.c++ \
+	Sys.c++ \
+	SystemLog.c++ \
+	Timeout.c++ \
+	Fatal.c++ \
+	\
+	AtSyntax.c++ \
+	DialRules.c++ \
+	FmtTime.c++ \
+	Sequence.c++ \
+	TimeOfDay.c++ \
+	FaxDB.c++ \
+	TextFormat.c++ \
+	\
+	Class2Params.c++ \
+	FaxParams.c++ \
+	FaxClient.c++ \
+	FaxConfig.c++ \
+	FaxRecvInfo.c++ \
+	FaxSendInfo.c++ \
+	JobExt.c++ \
+	CallID.c++ \
+	ModemExt.c++ \
+	SendFaxJob.c++ \
+	SendFaxClient.c++ \
+	Status.c++ \
+	TypeRules.c++ \
+	Transport.c++ \
+	InetTransport.c++ \
+	UnixTransport.c++ \
+	\
+	SNPPClient.c++ \
+	SNPPJob.c++
+
+CFILES= cvtfacility.c fxassert.c
+
+TARGETS=libhylafax.${DSO}
+
+default all::
+	@${MAKE} incdepend
+	@${MAKE} targets
+
+targets: $(TARGETS)
+
+@MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
+
+libhylafax.a: ${OBJECTS}
+	@rm -f $@;
+	@echo "${AR} ${AROPTS} $@ ${OBJECTS}"; \
+	    ${AR} ${AROPTS} $@ ${OBJECTS} ${C++FILT}
+	${RANLIB} $@
+
+../libhylafax/libhylafax.a: libhylafax.a
+
+PUTCLIENT	= ${INSTALL} -idb ${PRODUCT}.sw.client
+
+install: default
+	${PUTCLIENT} -F ${LIBDATA} -m 444 -O pagesizes
+	${PUTCLIENT} -F ${LIBDATA} -m 444 -src ${SRCDIR}/typerules -O typerules
+
+
+@MAKEDSOINCLUDE@ @MAKELQUOTE@${SRCDIR}/Makefile.@DSO@dso@MAKERQUOTE@

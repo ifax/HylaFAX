@@ -202,10 +202,10 @@ install-client:
 		usr/share/lintian/overrides
 
 	cp -p debian/hyla.conf faxcover/faxcover.ps faxmail/faxmail.ps \
-		util/typerules \
+		libhylafax/typerules \
 	    $(d_client)/etc/hylafax/.
 	touch $(d_client)/etc/hylafax/faxcover.ps
-	cp -p util/pagesizes $(d_client)/usr/share/hylafax/.
+	cp -p libhylafax/pagesizes $(d_client)/usr/share/hylafax/.
 	install -p util/textfmt faxalter/faxalter faxcover/faxcover \
 		faxmail/faxmail faxrm/faxrm faxstat/faxstat \
 		sendfax/sendfax sendpage/sendpage \
