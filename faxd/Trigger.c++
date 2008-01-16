@@ -420,10 +420,9 @@ Trigger::post(TriggerEvent e, const Modem& modem, const char* info)
     if (!modem.triggers.isEmpty() || !any.isEmpty()) {
 	fxStackBuffer msg;
 	msg.put((const char*) &hdr, sizeof (hdr));
+	modem.encode(msg);
 	if (info)
 	    msg.put(info);
-	else
-	    modem.encode(msg);
 	post(e, modem.triggers, any, msg);
     }
     hook(e, modem.devID, info);
