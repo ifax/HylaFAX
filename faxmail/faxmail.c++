@@ -341,6 +341,25 @@ faxMailApp::run(int argc, char** argv)
 	    // strip any leading&trailing white space
 	    to.remove(0, to.skip(0, " \t"));
 	    to.resize(to.skipR(to.length(), " \t"));
+
+	    //remove matched quoting characters, recursively
+	    //If they don't match, we'll assume they are part of
+	    //the larger string, and not "quoting" marks
+	    for (;;)
+	    {
+		int i;
+		const char* remove[] = { "\"\"", "''","()" };
+		for (i = 0; i < 3; i++)
+		    if (to[0] == remove[i][0] &&
+			    to[to.length()-1] == remove[i][1])
+		    {
+			    to.remove(0,1);
+			    to.resize(to.length()-1);
+			    break;
+		    }
+		if (i == 3)		// Nothing found, don't repeat
+			break;
+	    }
 	    job->setCoverName(to);
 	}
     }
