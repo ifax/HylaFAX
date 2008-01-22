@@ -319,7 +319,8 @@ faxMailApp::run(int argc, char** argv)
 	/*
 	 * Likewise for the receipient name.
 	 */
-	if (job->getCoverName() == "" && (s = findHeader("to"))) {
+	if (job->getCoverName() == "" &&
+		((s = findHeader("x-fax-to")) || (s = findHeader("to")))) {
 	    /*
 	     * Try to extract a user name from the to information.
 	     */
