@@ -1660,10 +1660,17 @@ if [ "$CHECK_NLS" != "no" ]; then
 		CheckForLibraryWithArgs gettext '""' -lc || {
 		    CheckForLibraryWithArgs gettext '""' -lintl && {
 			Note "Looks like -lintl is needed for gettext support."
-			MACHDEPLIBS="$MACHDEPLIBS -lintl"
+			NLS_LIB="-lintl"
                     }
                 }
 		Note "... found. Enabling NLS support"
+		CheckForLibraryWithArgs ngettext '"", "", 1' ${NLS_LIB:=-lc} || {
+			Note "Need ngettext support"
+			CONFIG_NEEDNGETTEXT=yes
+		}
+		if [ -z "NLS_LIB" ]; then
+		    MACHDEPLIBS="$MACHDEPLIBS $NLS_LIB"
+		fi
 	} ||
 		Note "... not found. Disabling NLS support"
 else
@@ -1735,6 +1742,13 @@ EOF
 	boom
     fi
 }
+
+CheckForLibrary inet_aton -lc || {
+    CheckForLibrary inet_aton -lresolv && {
+	MACHDEPLIBS="$MACHDEPLIBS -lresolv"
+    }
+}
+
 if CheckForLibrary logwtmp -lutil; then
     Note "Looks like -lutil is needed for wtmp file logging."
     MACHDEPLIBS="$MACHDEPLIBS -lutil"
@@ -2085,6 +2099,10 @@ EmitConfigurationDefinitions()
 	else
 	    Note "... max client ID too large ($CONFIG_MAXGID); using default"
 	fi
+    fi
+    if [ "$CONFIG_NEEDNGETTEXT" ]; then
+	Note "... need ngettext"
+	echo "#define NEED_NGETTEXT"
     fi
 }
 

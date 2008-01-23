@@ -39,6 +39,10 @@ extern void setupNLS();
 #include <locale.h>
 #include <libintl.h>
 
+#ifdef NEED_NGETTEXT
+#define ngettext(s1,s2,n) (n ==1 ? gettext(s1) : gettext(s2))
+#endif
+
 #else /* ENABLE_NLS */
 
 #define gettext(String) (String)
