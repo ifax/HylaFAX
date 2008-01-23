@@ -3285,6 +3285,8 @@ faxQueueApp::numbertag faxQueueApp::numbers[] = {
 };
 
 faxQueueApp::booltag faxQueueApp::booleans[] = {
+{ "use2d",		&faxQueueApp::use2D,		true },
+{ "useunlimitedln",	&faxQueueApp::useUnlimitedLN,	true },
 };
 
 void
@@ -3299,8 +3301,6 @@ faxQueueApp::setupConfig()
     for (i = N(booleans)-1; i >= 0; i--)
 	(*this).*booleans[i].p = booleans[i].def;
     tod.reset();			// any day, any time
-    use2D = true;			// ok to use 2D data
-    useUnlimitedLN = true;		// ok to use LN_INF
     uucpLockMode = UUCP_LOCKMODE;
     delete dialRules, dialRules = NULL;
     ModemGroup::reset();		// clear+add ``any modem'' class
@@ -3399,8 +3399,6 @@ faxQueueApp::setConfigItem(const char* tag, const char* value)
 	setDialRules(value);
     else if (streq(tag, "timeofday"))
 	tod.parse(value);
-    else if (streq(tag, "use2d"))
-	use2D = getBoolean(value);
     else if (streq(tag, "uucplockmode"))
 	uucpLockMode = (mode_t) strtol(value, 0, 8);
     else if (streq(tag, "modemgroup")) {
