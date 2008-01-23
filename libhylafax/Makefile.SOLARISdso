@@ -30,15 +30,27 @@
 # DSO-specific rules for the util directory.
 #
 
-libhylafaxutil.${DSO}: ${OBJECTS}
-	${C++} ${DSOOPTS} -o libhylafaxutil.${DSO}.${LIBVERSION} ${OBJECTS}
-	ln -fs libhylafaxutil.${DSO}.${LIBVERSION} libhylafaxutil.${DSO}
+libhylafax-${ABI_VERSION}.${DSO}: libhylafax-${ABI_VERSION}.${DSO}.${ABI_PATCH}
+	ln -sf $< $@
 
-../util/libhylafaxutil.${DSO}: libhylafaxutil.${DSO}
+libhylafax-${ABI_VERSION}.${DSO}.${ABI_PATCH}: ${OBJECTS}
+	${C++} ${DSOOPTS} -o $@ ${OBJECTS}
 
-installDSO: libhylafaxutil.${DSO}
-	${PUTCLIENT} -F ${LIBDIR} -m 755 -O libhylafaxutil.${DSO}.${LIBVERSION}
+#../util/libhylafax-${ABI_VERSION}.${DSO}: libhylafax-${ABI_VERSION}.${DSO}
+
+installDSO: libhylafax-${ABI_VERSION}.${DSO}.${ABI_PATCH}
+	${PUTCLIENT} -F ${LIBDIR} -m 755 -O libhylafax-${ABI_VERSION}.${DSO}.${ABI_PATCH}
 	(cd ${LIBDIR}; ln -fs libhylafaxutil.${DSO}.${LIBVERSION} libhylafaxutil.${DSO})
 
 cleanDSO::
 	-${RM} -f libhylafax.${DSO}.${LIBVERSION} libhylafax.${DSO}
+	-${RM} -f libhylafax-${ABI_VERSION}.${DSO}.${ABI_PATCH}
+
+
+## LINUX
+
+
+LINUXlibhylafax-${ABI_VERSION}.${DSO}.${ABI_PATCH}:	${OBJECTS}
+	${C++} ${DSOOPTS} -o $@ ${OBJECTS} \
+	    ${DSODELAY} ${LIBTIFF} ${DSODELAY} ${LIBZ} ${DSODELAY} ${LIBREGEX} \
+	    ${MACHDEPLIBS}
