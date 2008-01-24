@@ -155,7 +155,7 @@ protected:
 // miscellaneous
     enum {			// Class 1-specific AT responses
 	AT_FCERROR	= 100, 	// "+FCERROR"
-	AT_FRH3		= 101,	// "+FRH:3"
+	AT_FRH3		= 101	// "+FRH:3"
     };
     virtual ATResponse atResponse(char* buf, long ms = 30*1000);
     virtual bool waitFor(ATResponse wanted, long ms = 30*1000);
