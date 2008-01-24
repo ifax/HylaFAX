@@ -165,7 +165,7 @@ MsgFmt::parseHeaders(FILE* fd, u_int& lineno)
 		    );
 	    }
 	} else if (field != "")  {		// append continuation
-	    headers[headers.length()-1].append("\n" | line);
+	    headers[headers.length()-1].append(line);
 	    if (verbose)
 		fprintf(stderr, _("+HEADER %s: %s\n")
 		    , (const char*) field
