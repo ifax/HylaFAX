@@ -8,11 +8,6 @@ then
         CLASSES="$CLASSES man"
 fi
 
-if [ "@AFM@" = yes ]
-then
-        CLASSES="$CLASSES fonts"
-fi
-
 # make parameters available to installation service,
 # and so to any other packaging scripts
 cat >$1 <<!
