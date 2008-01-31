@@ -10,8 +10,8 @@ d none @LIBDATA@ ? ? ?
 f none @LIBDATA@/faxcover.ps.dist=../@SRCDIR@/faxcover/faxcover.ps 0644 @SYSUID@ @SYSGID@
 f none @LIBDATA@/faxcover_example_sgi.ps=../@SRCDIR@/faxcover/faxcover_example_sgi.ps 0644 @SYSUID@ @SYSGID@
 f none @LIBDATA@/faxmail.ps=../@SRCDIR@/faxmail/faxmail.ps 0444 @SYSUID@ @SYSGID@
-f none @LIBDATA@/pagesizes=../util/pagesizes 0444 @SYSUID@ @SYSGID@
-f none @LIBDATA@/typerules=../@SRCDIR@/util/typerules 0444 @SYSUID@ @SYSGID@
+f none @LIBDATA@/pagesizes=../libhylafax/pagesizes 0444 @SYSUID@ @SYSGID@
+f none @LIBDATA@/typerules=../@SRCDIR@/libhylafax/typerules 0444 @SYSUID@ @SYSGID@
 d none @LIBEXEC@ ? ? ?
 f none @LIBEXEC@/textfmt=../util/textfmt 0755 @SYSUID@ @SYSGID@
 d none @SBIN@ ? ? ?
