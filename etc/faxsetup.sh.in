@@ -718,7 +718,6 @@ EOF
     defaultServerTracing=1
     defaultContCoverPage=
     defaultContCoverCmd=\"bin/mkcover\"
-    defaultDestControls=
     defaultMaxConcurrentCalls=1
     defaultMaxDials=12
     defaultMaxSendPages=0xffffffff
@@ -2087,7 +2086,6 @@ RequiredSchedulerParameters="
 OptionalSchedulerParameters="
     ContCoverPage
     ContCoverCmd
-    DestControls
     MaxConcurrentCalls
     MaxDials
     MaxSendPages
@@ -2220,8 +2218,6 @@ C#	MaxConcurrentCalls	\
 	Maximum number of concurrent jobs to a destination
 S	ModemGroup		Define a group of modems
 S	TimeOfDay		Time of day restrictions for outbound jobs
-S	DestControls		\
-	Pathname of destination controls file (relative to $DIR_SPOOL)
 C#	UUCPLockTimeout		\
 	Timeout before purging a stale UUCP lock file (secs)
 C#	MaxSendPages		Max number of pages to permit in an outbound job
@@ -2231,9 +2227,6 @@ EOF
 		. $PROMPTS
 	    fi
 	    checkForLocalFile $DialStringRules "dial string rules"
-	    if [ "$DestControls" != "" ] && [ "$DestControls" != '""' ]; then
-		checkForLocalFile $DestControls "destination controls";
-	    fi
 	    printSchedulerConfig; prompt "Are these ok [yes]?"; read ok
 	    isOK "$ok" && break
 	done

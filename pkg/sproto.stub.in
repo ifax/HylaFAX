@@ -74,7 +74,6 @@ d man @MANDIR@/man4 ? ? ?
 f man @MANDIR@/man4/pagesizes.@MANNUM4_5@=../man/cman.files/pagesizes.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/typerules.@MANNUM4_5@=../man/cman.files/typerules.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/hylafax-config.@MANNUM4_5@=../man/sman.files/hylafax-config.4f 0444 @SYSUID@ @SYSGID@
-f man @MANDIR@/man4/destctrls.@MANNUM4_5@=../man/sman.files/destctrls.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/dialrules.@MANNUM4_5@=../man/sman.files/dialrules.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/doneq.@MANNUM4_5@=../man/sman.files/doneq.4f 0444 @SYSUID@ @SYSGID@
 f man @MANDIR@/man4/hosts.hfaxd.@MANNUM4_5@=../man/sman.files/hosts.hfaxd.4f 0444 @SYSUID@ @SYSGID@

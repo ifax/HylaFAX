@@ -511,7 +511,6 @@ HYLAFAXSRC=\
 MANPAGES=\
     man/Makefile.in				\
 	man/hylafax-config.4f			\
-	man/destctrls.4f			\
 	man/dialrules.4f			\
 	man/cqtest.1m				\
 	man/choptest.1m				\

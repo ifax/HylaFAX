@@ -267,22 +267,6 @@ is to be permitted.
 For more information consult
 .IR hosts.hfaxd (${MANNUM4_5}).
 .PP
-There are a number of controls on outbound calls that can be
-specified using the
-.B etc/destcontrols
-file (or whatever file is specified in a
-.B DestControls
-configuration parameter in the
-.I faxq
-configuration file).
-This file, described in
-.IR destctrls (${MANNUM4_5}),
-allows an administrator to restrict calls by phone number
-and to control the time of day that calls may be placed.
-In addition, operational parameters such as the maximum number
-of pages in a facsimile transmission can be constrained
-on a per-destination basis.
-.PP
 If an error is encountered during transmission and a subsequent
 retransmission would not include the original cover page, then
 \*(Fx can be configured to generate a
