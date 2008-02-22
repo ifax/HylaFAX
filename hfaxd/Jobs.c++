@@ -338,8 +338,8 @@ HylaFAXServer::checkJobState(Job* job)
 	return (false);
     }
     if (job->lastmod < sb.st_mtime) {
-	(void) updateJobFromDisk(*job);
-	job->lastmod = sb.st_mtime;
+	if (updateJobFromDisk(*job))
+		job->lastmod = sb.st_mtime;
     }
     return (true);
 }
