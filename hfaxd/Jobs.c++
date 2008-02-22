@@ -29,6 +29,7 @@
 #include "Sys.h"
 #include "HylaFAXServer.h"
 #include "Dispatcher.h"
+#include "Timeout.h"
 #include "class2.h"
 
 #include <sys/file.h>
@@ -1020,7 +1021,7 @@ HylaFAXServer::updateJobOnDisk(Job& job, fxStr& emsg)
 	}
     }
 
-    if (lockJob(job, LOCK_EX|LOCK_NB, emsg)) {
+    if (lockJob(job, LOCK_EX, emsg)) {
 	// XXX don't update in place, use temp file and rename
 	job.writeQFile();
 	unlockJob(job);
@@ -1094,7 +1095,7 @@ bool
 HylaFAXServer::updateJobFromDisk(Job& job)
 {
     bool status = false;
-    if (lockJob(job, LOCK_SH|LOCK_NB)) {
+    if (lockJob(job, LOCK_SH)) {
 	bool reject;
 	status = (job.reReadQFile(reject) && !reject);
 	unlockJob(job);
@@ -1118,13 +1119,30 @@ HylaFAXServer::lockJob(Job& job, int how, fxStr& emsg)
 	    return (false);
 	}
     }
-    if (flock(job.fd, how) < 0) {
-	emsg = fxStr::format("Job file lock failed: %s", strerror(errno));
-	Sys::close(job.fd), job.fd = -1;
-	return (false);
-    } else
-	return (true);
+    if (flock(job.fd, how | LOCK_NB) >= 0)
+	return true;
+
+    if (errno == EWOULDBLOCK && lockTimeout > 0)
+    {
+	int r;
+	Timeout timer;
+
+	timer.startTimeout(lockTimeout*1000);
+	r = flock(job.fd, how);
+	timer.stopTimeout();
+
+	if (timer.wasTimeout())
+	    logDebug("LOCKWAIT timeout: %ds", lockTimeout)
+
+	return (r >= 0);
+    }
+
+    emsg = fxStr::format("Job file lock failed: %s", strerror(errno));
+    Sys::close(job.fd);
+    job.fd = -1;
+    return (false);
 }
+
 
 /*
  * Like above, but no error message is returned.
@@ -1133,9 +1151,30 @@ bool
 HylaFAXServer::lockJob(Job& job, int how)
 {
     if (job.fd < 0)
-       job.fd = Sys::open("/" | job.qfile, O_RDWR, 0600);
+    {
+	job.fd = Sys::open("/" | job.qfile, O_RDWR, 0600);
+	if (job.fd < 0)
+	    return false;
+    }
+    if (flock(job.fd, how | LOCK_NB) >= 0)
+	return true;
 
-    return (job.fd >= 0 && flock(job.fd, how) >= 0);
+    if (errno == EWOULDBLOCK && lockTimeout > 0)
+    {
+	int r;
+	Timeout timer;
+
+	timer.startTimeout(lockTimeout * 1000);
+	r = flock(job.fd, how);
+	timer.stopTimeout();
+
+	if (timer.wasTimeout())
+	    logDebug("LOCKWAIT timeout: %ds", lockTimeout)
+
+	return (r >= 0);
+    }
+
+    return (false);
 }
 
 /*
@@ -1326,7 +1365,7 @@ HylaFAXServer::deleteJob(const char* jobid)
 	    reply(504, "Job %s not deleted; use JSUSP first.", jobid);
 	    return;
 	}
-	if (!lockJob(*job, LOCK_EX|LOCK_NB, emsg)) {
+	if (!lockJob(*job, LOCK_EX, emsg)) {
 	    reply(504, "Cannot delete job: %s.", (const char*) emsg);
 	    return;
 	}

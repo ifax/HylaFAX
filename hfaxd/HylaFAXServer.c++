@@ -623,6 +623,8 @@ HylaFAXServer::numbertag HylaFAXServer::numbers[] = {
 { "servertracing",	&HylaFAXServer::tracingLevel,		TRACE_SERVER },
 { "idletimeout",	&HylaFAXServer::idleTimeout,		900 },
 { "maxidletimeout",	&HylaFAXServer::maxIdleTimeout,		7200 },
+{ "locktimeout",	&HylaFAXServer::lockTimeout,		0 },
+{ "maxlocktimeout",	&HylaFAXServer::maxLockTimeout,		60 },
 { "maxloginattempts",	&HylaFAXServer::maxLoginAttempts,	5 },
 { "maxadminattempts",	&HylaFAXServer::maxAdminAttempts,	5 },
 { "maxconsecutivebadcmds",&HylaFAXServer::maxConsecutiveBadCmds,10 },
