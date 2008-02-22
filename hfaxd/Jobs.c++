@@ -1132,7 +1132,7 @@ HylaFAXServer::lockJob(Job& job, int how, fxStr& emsg)
 	timer.stopTimeout();
 
 	if (timer.wasTimeout())
-	    logDebug("LOCKWAIT timeout: %ds", lockTimeout)
+	    logDebug("LOCKWAIT timeout: %ds", lockTimeout);
 
 	return (r >= 0);
     }
@@ -1169,7 +1169,7 @@ HylaFAXServer::lockJob(Job& job, int how)
 	timer.stopTimeout();
 
 	if (timer.wasTimeout())
-	    logDebug("LOCKWAIT timeout: %ds", lockTimeout)
+	    logDebug("LOCKWAIT timeout: %ds", lockTimeout);
 
 	return (r >= 0);
     }
