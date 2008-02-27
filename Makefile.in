@@ -58,6 +58,7 @@ DIRS=	libhylafax \
 	config \
 	etc \
 	man
+
 DSODIRS	= libhylafax
 
 TARGETS=hylafax

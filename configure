@@ -1668,7 +1668,7 @@ if [ "$CHECK_NLS" != "no" ]; then
 			Note "Need ngettext support"
 			CONFIG_NEEDNGETTEXT=yes
 		}
-		if [ -z "NLS_LIB" ]; then
+		if [ -n "NLS_LIB" ]; then
 		    MACHDEPLIBS="$MACHDEPLIBS $NLS_LIB"
 		fi
 	} ||
@@ -4928,6 +4928,7 @@ if [ "$MAKEDEPINCLUDE" != "sinclude" ]; then
 	faxrm
 	faxstat
 	hfaxd
+	libhylafax
 	sendfax
 	sendpage
 	util
