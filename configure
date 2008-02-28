@@ -78,6 +78,8 @@ TIFFINC=/usr/local/include
 TIFFBIN=
 LIBZ=
 ZLIBINC=
+LIBINTL=
+INTLINC=
 REGEX=yes
 LIBREGEX='-L${DEPTH}/regex -lregex'
 REGEXINC='${DEPTH}/${TOPSRCDIR}/regex'
@@ -167,6 +169,7 @@ INSTALL
 LIBDATA		DIR_LIBDATA
 LIBDIR		DIR_LIB
 LIBEXEC		DIR_LIBEXEC
+LIBINTL
 LIBPORT
 LIBREGEX
 LIBTIFF
@@ -572,6 +575,7 @@ if [ -f config.cache ]; then
     OZLIBINC="$ZLIBINC"; OLIBZ="$LIBZ"
     OREGEXINC="$REGEXINC"; OLIBREGEX="$LIBREGEX"
     ODBLIBINC="$DBLIBINC"; OLIBDB="$LIBDB"
+    OINTLINC="$INTLINC"; OLIBINTL="$LIBINTL"
     . ./config.cache
     capture . ./config.cache
     # NB: these are calculated each time from scratch
@@ -582,6 +586,7 @@ if [ -f config.cache ]; then
     ZLIBINC="$OZLIBINC"; LIBZ="$OLIBZ"
     REGEXINC="$OREGEXINC"; LIBREGEX="$OLIBREGEX"
     DBLIBINC="$ODBLIBINC"; LIBDB="$OLIBDB"
+    INTLINC="$OINTLINC"; LIBINTL="$ILIBINTL"
 fi
 
 identifyTarget()
@@ -1660,25 +1665,50 @@ if [ "$CHECK_NLS" != "no" ]; then
 	    CheckForIncludeFile libintl.h && {
 		ENABLE_NLS="#define ENABLE_NLS 1"
                 NLS='yes'
-		CheckForLibraryWithArgs gettext '""' -lc || {
-		    CheckForLibraryWithArgs gettext '""' -lintl && {
-			Note "Looks like -lintl is needed for gettext support."
-			NLS_LIB="-lintl"
+		CheckForLibraryWithArgs gettext '""' $LIBINTL || {
+		    CheckForLibraryWithArgs gettext '""' -lintl || {
+			Note "Couldn't find anything to link for gettext"
+			cat 1>&2 <<EOF
+Missing INTL Library.
+
+Compilation of the following test program failed:
+
+----------------------------------------------------------
+EOF
+        cat t.c 1>&2
+        cat 1>&2 <<EOF
+----------------------------------------------------------
+
+LIBINTL=${LIBINTL}
+
+Verify that you have the LIBINTL configuration parameters
+set correctly for your system (see above) and that any environment
+variables are setup that are needed to locate a libtiff DSO at runtime
+(e.g. LD_LIBRARY_PATH). Also be sure that any relative pathnames are
+made relative to the top of the build area.
+
+If you don't want NLS support, you can disable it with --disable-nls
+EOF
+			boom
+			return 1
                     }
+		    Note "Looks like -lintl is needed for gettext support."
+		    LIBINTL="-lintl"
                 }
 		Note "... found. Enabling NLS support"
-		CheckForLibraryWithArgs ngettext '"", "", 1' ${NLS_LIB:=-lc} || {
+		CheckForLibraryWithArgs ngettext '"", "", 1' ${LIBINTL} || {
 			Note "Need ngettext support"
 			CONFIG_NEEDNGETTEXT=yes
 		}
-		if [ -n "$NLS_LIB" ]; then
-		    MACHDEPLIBS="$MACHDEPLIBS $NLS_LIB"
+		if [ -n "$LIBINTL" ]; then
+		    MACHDEPLIBS="$MACHDEPLIBS $LIBINTL"
 		fi
 	} ||
 		Note "... not found. Disabling NLS support"
 else
 	Note "Disabling NLS (gettext) support"
 fi
+
 CheckForLibrary crypt -lc || {
     #
     # FreeBSD-2.1 in particular needs -lcrypt.
@@ -4750,6 +4780,7 @@ x="`relativize ${LIBTIFF}`"; LIBTIFF="$x"
 x="`relativize ${LIBZ}`"; LIBZ="$x"
 x="`relativize ${LIBREGEX}`"; LIBREGEX="$x"
 x="`relativize ${LIBDB}`"; LIBDB="$x"
+x="`relativize ${LIBINTL}`"; LIBINTL="$x"
 
 # NB: these should be sorted alphabetically
 $RM confsed1; dumpvars "$VAR1" | sort > confsed1
