@@ -9,3 +9,4 @@ port.h
 rules
 .project
 .settings
+messages.po

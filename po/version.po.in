@@ -1,0 +1,10 @@
+# HylaFAX PO TEMPLATE
+# This file is distrubuted under the same license as the HylaFAX package.
+#, fuzy
+msgid ""
+msgstr ""
+"Project-Id-Version: HylaFAX @VERSION@\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: @DATE@\n"

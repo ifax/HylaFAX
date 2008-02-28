@@ -191,6 +191,9 @@ _cincdepend: .cincdepend
 #
 RAWDEPFILTER= sed -e 's:^:${VPATH}/:'
 
+#include NLS stuff
+@MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/${TOPSRCDIR}/nls-rules.mk@MAKERQUOTE@
+
 #
 # Include the make dependency file if it exists.
 #

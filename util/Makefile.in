@@ -53,6 +53,22 @@ default all::
 
 targets: $(TARGETS)
 
+CFILES = faxadduser.c \
+         faxconfig.c \
+         faxdeluser.c \
+         faxmodem.c \
+         faxmsg.c \
+         faxstate.c
+
+C++FILES=checkat.c++ \
+         dialtest.c++ \
+         faxfetch.c++ \
+         faxinfo.c++ \
+         faxwatch.c++ \
+         textfmt.c++ \
+         tiffcheck.c++ \
+         typetest.c++
+
 @MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
 
 faxmsg: ${SRCDIR}/faxmsg.c ${LIBS}

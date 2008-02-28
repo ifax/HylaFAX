@@ -1,0 +1,34 @@
+
+#
+# VERSION:	@VERSION@
+# DATE:		@DATE@
+# TARGET:	@TARGET@
+# CCOMPILER:	@CCOMPILER@
+# CXXCOMPILER:	@CXXCOMPILER@
+#
+DEPTH=..
+@MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
+
+LIBVERSION	= @VERSION@
+SRCDIR	= ${DEPTH}/${TOPSRCDIR}/po
+VPATH	= ../@SRCDIR@/po
+
+TARGETS=all-mo
+
+default all::
+	@${MAKE} targets
+
+targets: $(TARGETS)
+
+@MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
+
+
+CLIENTS	= faxalter faxrm faxstat sendfax sendpage
+
+SERVERS = util
+installClient:
+
+install:
+
+
+@MAKEINCLUDE@ @MAKELQUOTE@${SRCDIR}/nls.mk@MAKERQUOTE@

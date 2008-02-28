@@ -43,7 +43,9 @@ DEPTH	= .
 
 SRCDIR	= ${TOPSRCDIR}/${DEPTH}
 
-DIRS=	libhylafax \
+DSODIRS	= libhylafax
+
+SRCDIRS = ${DSODIRS} \
 	util \
 	faxalter \
 	faxcover \
@@ -53,13 +55,12 @@ DIRS=	libhylafax \
 	faxstat \
 	hfaxd \
 	sendfax \
-	sendpage \
-	\
+	sendpage
+
+DIRS=	${SRCDIRS} \
 	config \
 	etc \
 	man
-
-DSODIRS	= libhylafax
 
 TARGETS=hylafax
 
@@ -99,6 +100,11 @@ dirs::
 	fi
 	@if [ "@GS@" = yes ]; then \
 	    ${ECHO} "= "gs; cd gs; ${MAKE}  ||  exit $?; \
+	else \
+	    true; \
+	fi
+	@if [ "@NLS@" = yes ]; then \
+	    ${ECHO} "= "po; cd po; ${MAKE}  ||  exit $?; \
 	else \
 	    true; \
 	fi
@@ -213,6 +219,15 @@ distclean: clobber
 	(cd pkg; ${MAKE} distclean)
 	-${RM} -f defs rules Makefile
 
+update-po::
+	@if [ "@NLS@" != yes ]; then \
+		echo "NLS Not enabled"; false; \
+	fi
+	@for i in ${SRCDIRS}; do \
+	    (${ECHO} "= "$$i; cd $$i; ${MAKE} messages.po); \
+	done
+	(cd po; ${MAKE} hylafax.pot)
+
 makeClientDirs::
 	-${INSTALL} -u ${SYSUSER} -g ${SYSGROUP} -m ${DIRMODE} \
 	    -idb hylafax.sw.client -dir \
@@ -273,6 +288,11 @@ install: makeDirs makeDevices
 	else \
 	    true; \
 	fi
+	@if [ "@NLS@" = yes ]; then \
+	    ${ECHO} "= po"; cd po; ${MAKE} install  ||  exit 1; \
+	else \
+	    true; \
+	fi
 
 CLIENTDIRS=\
 	faxalter \
@@ -299,6 +319,11 @@ installClient: makeClientDirs
 	    for i in util; do \
 		(${ECHO} "= "$$i; cd $$i; ${MAKE} installDSO)  ||  exit 1; \
 	    done; \
+	else \
+	    true; \
+	fi
+	@if [ "@NLS@" = yes ]; then \
+	    (${ECHO} "= po"; cd po; ${MAKE} installClient  ||  exit 1; \
 	else \
 	    true; \
 	fi

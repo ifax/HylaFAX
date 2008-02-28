@@ -355,3 +355,16 @@ MANCAPPNAME	= @MANCAPPNAME@
 MANCFILENAME	= @MANCFILENAME@
 MANSAPPNAME	= @MANSAPPNAME@
 MANSFILENAME	= @MANSFILENAME@
+#
+# NLS Support
+#
+# All translations listed here must have a translated po/${LANG}.po file
+#
+LOCALEDIR       = @LOCALEDIR@
+
+LANGUAGES       =
+
+XGETTEXT	= xgettext --foreign-user -ctranslator --no-wrap --sort-by-file --omit-header --strict --indent --force-po
+MSGMERGE	= msgmerge --no-wrap --sort-by-file --no-wrap
+MSGFMT		= msgfmt
+MSGCAT		= msgcat

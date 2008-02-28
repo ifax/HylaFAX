@@ -71,6 +71,7 @@ DPS=no
 GS=no
 IMP=no
 UTMP=auto
+NLS=auto
 OPTIMIZER="-O"
 LIBTIFF="-L/usr/local/lib -ltiff"
 TIFFINC=/usr/local/include
@@ -174,7 +175,7 @@ LIBDB
 LLDOPTS
 LN
 LN_S
-LOCALEDIR	DIR_LOCALE
+LOCALEDIR       DIR_LOCALE
 LOCALE_DOMAIN
 HAVE_PAM
 PAMLIBS
@@ -209,6 +210,7 @@ MKDIR
 MKFIFO
 MV
 MV_F
+NLS
 NOCLOBBER_OFF
 NOCLOBBER_ON
 OPTIMIZER
@@ -1657,6 +1659,7 @@ if [ "$CHECK_NLS" != "no" ]; then
 	CheckForIncludeFile locale.h && 
 	    CheckForIncludeFile libintl.h && {
 		ENABLE_NLS="#define ENABLE_NLS 1"
+                NLS='yes'
 		CheckForLibraryWithArgs gettext '""' -lc || {
 		    CheckForLibraryWithArgs gettext '""' -lintl && {
 			Note "Looks like -lintl is needed for gettext support."
@@ -4766,7 +4769,7 @@ SedConfigFiles()
 	    $MKDIR $dir
 	fi
 	suffix=`echo $F | $SED 's/.*\.//'`
-	if [ "$suffix" = h ]; then
+	if [ "$suffix" = h ] || [ "$suffix" = po ]; then
 	    #
 	    # Compare old and new versions so that include files
 	    # are only updated when something has changed--this
@@ -4859,6 +4862,9 @@ CONF_FILES="
     sendfax/Makefile
     sendpage/Makefile
     util/Makefile
+    po/Makefile
+
+    po/version.po
 
     port/install.sh
 
@@ -4910,6 +4916,7 @@ test $SGI2FAX = yes &&	   	   SedConfigFiles sgi2fax/Makefile
 test $PORT = yes &&		   SedConfigFiles port/Makefile
 test $REGEX = yes &&		   SedConfigFiles regex/Makefile
 test $DBLIB = yes &&		   SedConfigFiles dblib/Makefile
+test $NLS = yes &&		   SedConfigFiles po/Makefile
 test -f $SRCDIR/MLA/VERSION &&	   SedConfigFiles MLA/Makefile
 
 if [ "$MAKEDEPINCLUDE" != "sinclude" ]; then
@@ -4941,6 +4948,7 @@ if [ "$MAKEDEPINCLUDE" != "sinclude" ]; then
     test $PORT = yes	&& DEPEND="$DEPEND port"
     test $REGEX = yes	&& DEPEND="$DEPEND regex"
     test $DBLIB = yes	&& DEPEND="$DEPEND dblib"
+    test $NLS = yes	&& DEPEND="$DEPEND po"
     test -f $SRCDIR/MLA/VERSION && DEPEND="$DEPEND MLA"
     test -d $SRCDIR/faxview && test -d faxview && DEPEND="$DEPEND faxview"
     for i in $DEPEND; do

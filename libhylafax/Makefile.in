@@ -60,6 +60,8 @@ CFILES= cvtfacility.c fxassert.c
 
 TARGETS=libhylafax-${ABI_VERSION}.${DSO}
 
+GETTEXT_TRIGGERS = TEXT
+
 default all::
 	@${MAKE} incdepend
 	@${MAKE} targets
