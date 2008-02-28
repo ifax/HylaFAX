@@ -22,13 +22,16 @@ targets: $(TARGETS)
 
 @MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
 
+PUTCLIENT	= ${INSTALL} -idb ${PRODUCT}.sw.client
+PUTSERVER	= ${INSTALL} -idb ${PRODUCT}.sw.server
 
 CLIENTS	= faxalter faxrm faxstat sendfax sendpage
 
 SERVERS = util
-installClient:
 
-install:
+installClient: install-mo
+
+install: install-mo
 
 
 @MAKEINCLUDE@ @MAKELQUOTE@${SRCDIR}/nls.mk@MAKERQUOTE@

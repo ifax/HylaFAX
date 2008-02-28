@@ -53,3 +53,25 @@ all-mo:
 		${MAKE} LANGUAGE=$$l CATALOG=$$c lang-mo || exit $?;	\
 	    done;							\
 	done
+
+makeDirs:
+	for l in ${LANGUAGES}; do					\
+	    ${INSTALL} -u ${SYSUSER} -g ${SYSGROUP} -m ${DIRMODE}	\
+		-F ${LOCALEDIR} -dir $$l;				\
+	    ${INSTALL} -u ${SYSUSER} -g ${SYSGROUP} -m ${DIRMODE}	\
+		-F ${LOCALEDIR}/$$l -dir LC_MESSAGES;			\
+	done
+
+installClient-mo: makeDirs
+	for l in ${LANGUAGES}; do					\
+	    ${PUTCLIENT} -F ${LOCALEDIR}/$$l/LC_MESSAGES -m 444		\
+		-src hylafax-client/$$l.mo -O hylafax-client.mo;	\
+	    ${PUTCLIENT} -F ${LOCALEDIR}/$$l/LC_MESSAGES -m 444		\
+		-src libhylafax/$$l.mo -O libhylafax.mo;		\
+	done
+
+install-mo: installClient-mo
+	for l in ${LANGUAGES}; do					\
+	    ${PUTSERVER} -F ${LOCALEDIR}/$$l/LC_MESSAGES -m 444		\
+		-src hylafax-server/$$l.mo -O hylafax-server.mo;	\
+	done

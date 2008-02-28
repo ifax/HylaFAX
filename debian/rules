@@ -248,7 +248,7 @@ binary-indep: build-indep install-doc
 	dh_installdocs -i -A \
 		debian/README.mgetty debian/README.Debian \
 		TODO CONTRIBUTORS
-	dh_installchangelogs -i doc/RELEASENOTES-4.4.txt
+	dh_installchangelogs -i doc/RELEASENOTES-CVS.txt
 	dh_installexamples -i
 	dh_compress -i
 	dh_fixperms -i
@@ -261,7 +261,7 @@ binary-indep: build-indep install-doc
 binary-arch: build-arch install-server install-client
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs -a doc/RELEASENOTES-4.4.txt
+	dh_installchangelogs -a doc/RELEASENOTES-CVS.txt
 	dh_installdocs -a -A \
 		debian/README.mgetty debian/README.Debian \
 		TODO CONTRIBUTORS
