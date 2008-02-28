@@ -1,0 +1,913 @@
+# File: AtSyntax.c++, line: 106
+#, c-format
+msgid "Illegal minutes value %u"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 112
+msgid "expecting HH:MM"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 119
+#, c-format
+msgid "%u:%02u is not an AM value"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 127
+#, c-format
+msgid "%u:%02u is not a PM value"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 148
+#, c-format
+msgid "unrecognized symbolic time \"%s\""
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 153
+msgid "Illegal time value; out of range"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 177
+msgid "expecting \"+\" after time"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 193
+msgid "Invalid date/time; time must be in the future"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 319
+msgid "missing or invalid day of month"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 328
+msgid "missing year"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 332
+#, c-format
+msgid "Sorry, cannot handle dates before %u"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 355
+#, c-format
+msgid "Invalid day of month, %s has only %u days"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 371
+msgid "expecting number after \"+\""
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 379
+#, c-format
+msgid "\"+%u\" without unit"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 398
+#, c-format
+msgid "Unknown increment unit \"%s\""
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 452
+msgid "Syntax error, "
+msgstr ""
+
+#
+# File: DialRules.c++, line: 98
+#, c-format
+msgid "Cannot open file \"%s\" for reading"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 107
+#, c-format
+msgid "Define %s = \"%s\""
+msgstr ""
+
+#
+# File: DialRules.c++, line: 116
+#, c-format
+msgid "Undefine %s"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 128
+msgid "Syntax error, expecting identifier"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 140
+msgid "Missing '[' while parsing rule set"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 159
+#, c-format
+msgid "Missing '=' or ':=' after \"%s\""
+msgstr ""
+
+#
+# File: DialRules.c++, line: 166
+msgid "Warning, no \"CanonicalNumber\" rules."
+msgstr ""
+
+#
+# File: DialRules.c++, line: 169
+msgid "Warning, no \"DialString\" rules."
+msgstr ""
+
+#
+# File: DialRules.c++, line: 217
+msgid "String with unmatched '\"'"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 221
+# File: DialRules.c++, line: 233
+msgid "Bad '\\' escape sequence"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 248
+msgid "Missing '}' for variable reference"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 295
+msgid "Missing ']' while parsing rule set"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 307
+msgid "Rule pattern without '='"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 343
+#, c-format
+msgid "Apply %s rules to \"%s\""
+msgstr ""
+
+#
+# File: DialRules.c++, line: 381
+#, c-format
+msgid "--> match rule \"%s\", result now \"%s\""
+msgstr ""
+
+#
+# File: DialRules.c++, line: 387
+#, c-format
+msgid "--> return result \"%s\""
+msgstr ""
+
+#
+# File: DialRules.c++, line: 398
+# File: DialRules.c++, line: 409
+# File: PageSize.c++, line: 52
+# File: TypeRules.c++, line: 311
+#, c-format
+msgid "%s: line %u: "
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 119
+# File: SNPPClient.c++, line: 106
+# File: TextFormat.c++, line: 97
+msgid "Warning, "
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 194
+#, c-format
+msgid "Can not locate your password entry (uid %lu): %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 220
+# File: SNPPClient.c++, line: 281
+msgid ""
+"Bad (null) user name; your password file entry probably has bogus GECOS "
+"field information."
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 389
+msgid "Malformed (null) username"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 410
+# File: SNPPClient.c++, line: 578
+msgid "Login failed: "
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 431
+msgid "Admin failed: "
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 447
+#, c-format
+msgid "Bad %s parameter value %u."
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 487
+#, c-format
+msgid "Bad time zone parameter value %u."
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 526
+msgid "Unable to initialize data connection to server"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 540
+msgid "Unable to open data connection to server"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 564
+msgid "Unable to abort data connection to server"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 594
+# File: SNPPClient.c++, line: 595
+msgid "Service not available, remote server closed connection"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 601
+# File: SNPPClient.c++, line: 602
+msgid "Unexpected server response: "
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 609
+# File: SNPPClient.c++, line: 610
+msgid "Protocol botch"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 644
+msgid "Memory allocation failed"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 652
+# File: SNPPClient.c++, line: 645
+msgid "No control connection for command"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 787
+#, c-format
+msgid ": No \"%s\" in %s response: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 794
+#, c-format
+msgid ": Null %s in %s response: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 977
+#, c-format
+msgid "Unable to open script file \"%s\"."
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 996
+#, c-format
+msgid "%s: Read error: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1021
+#, c-format
+msgid "%s: line %u: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1111
+# File: FaxClient.c++, line: 1118
+# File: SNPPClient.c++, line: 915
+# File: SNPPClient.c++, line: 922
+msgid " (server closed connection)"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1111
+# File: FaxClient.c++, line: 1118
+# File: SNPPClient.c++, line: 915
+# File: SNPPClient.c++, line: 922
+#, c-format
+msgid " (server write error: %s)."
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1140
+#, c-format
+msgid "SEND data, %lu bytes"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1158
+# File: SNPPClient.c++, line: 943
+#, c-format
+msgid " (data read: %s)."
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1209
+#, c-format
+msgid "SEND compressed data, %lu bytes"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1227
+#, c-format
+msgid " (data read: %s)"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1234
+# File: FaxClient.c++, line: 1254
+# File: FaxClient.c++, line: 1280
+#, c-format
+msgid "zlib compressor error: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1286
+#, c-format
+msgid "SEND %lu bytes transmitted (%.1fx compression)"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1307
+#, c-format
+msgid "Can not initialize compression library: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1349
+# File: FaxClient.c++, line: 1412
+#, c-format
+msgid "Data Connection: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1423
+#, c-format
+msgid "Decoding error: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1437
+#, c-format
+msgid "Can not initialize decoder: %s"
+msgstr ""
+
+#
+# File: FaxConfig.c++, line: 57
+#, c-format
+msgid "Read config file %s"
+msgstr ""
+
+#
+# File: FaxConfig.c++, line: 95
+#, c-format
+msgid "No passwd file entry for uid %u, cannot expand ~ in \"%s\""
+msgstr ""
+
+#
+# File: FaxConfig.c++, line: 168
+#, c-format
+msgid "Syntax error at line %u, missing ':' in \"%s\""
+msgstr ""
+
+#
+# File: FaxConfig.c++, line: 183
+#, c-format
+msgid "Syntax error at line %u, missing quote mark in \"%s\""
+msgstr ""
+
+#
+# File: FaxConfig.c++, line: 216
+# File: FaxConfig.c++, line: 227
+#, c-format
+msgid "%s = %s (line %u)"
+msgstr ""
+
+#
+# File: FaxConfig.c++, line: 223
+#, c-format
+msgid "Unknown configuration parameter \"%s\" ignored at line %u"
+msgstr ""
+
+#
+# File: FaxDB.c++, line: 124
+#, c-format
+msgid "%s: line %d: Unmatched \"]\".\n"
+msgstr ""
+
+#
+# File: FaxDB.c++, line: 136
+#, c-format
+msgid "%s: line %d: Missing \":\" separator.\n"
+msgstr ""
+
+#
+# File: FaxDB.c++, line: 184
+#, c-format
+msgid "%s: Premature EOF.\n"
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 75
+# File: SNPPClient.c++, line: 466
+#, c-format
+msgid "%s: No protocol definition, using default."
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 83
+# File: SNPPClient.c++, line: 459
+msgid ": Unknown host"
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 89
+# File: SNPPClient.c++, line: 472
+# File: UnixTransport.c++, line: 54
+msgid "Can not create socket to connect to server."
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 100
+# File: SNPPClient.c++, line: 483
+#, c-format
+msgid "No \"%s\" service definition, using default %u/%s."
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 112
+# File: SNPPClient.c++, line: 495
+#, c-format
+msgid "Trying %s (%s) at port %u..."
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 118
+# File: SNPPClient.c++, line: 501
+#, c-format
+msgid "Connected to %s."
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 122
+# File: SNPPClient.c++, line: 505
+#, c-format
+msgid "setsockopt(TOS): %s (ignored)"
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 128
+# File: SNPPClient.c++, line: 511
+#, c-format
+msgid "setsockopt(OOBLINE): %s (ignored)"
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 141
+# File: SNPPClient.c++, line: 518
+#, c-format
+msgid "Can not reach server at host \"%s\", port %u."
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 269
+# File: SNPPClient.c++, line: 527
+msgid "Sorry, no TCP/IP communication support was configured."
+msgstr ""
+
+#
+# File: Obj.c++, line: 39
+#, c-format
+msgid "%s: Sub class must define method \"%s\".\n"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 67
+#, c-format
+msgid "Unexpected end of line after \"%s\".\n"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 100
+msgid "page size name"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 105
+msgid "page size abbreviation"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 108
+msgid "page width"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 111
+msgid "page height"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 114
+msgid "guaranteed page width"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 117
+msgid "guaranteed page height"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 120
+msgid "top margin"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 130
+#, c-format
+msgid "Warning, no page size database file \"%s\", using builtin default.\n"
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 211
+# File: SendFaxClient.c++, line: 608
+msgid "Malformed (null) sender name or mail address"
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 257
+#, c-format
+msgid "Can not locate your password entry (uid %lu): %s."
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 388
+#, c-format
+msgid "Invalid hold time \"%s\": %s"
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 860
+# File: SendFaxClient.c++, line: 425
+msgid "Not logged in to server"
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 892
+#, c-format
+msgid "destination pin %s: request id is %s for host %s\n"
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 936
+#, c-format
+msgid "SEND message data, %lu bytes"
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 966
+#, c-format
+msgid "Unable to open message file \"%s\"."
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 985
+# File: SNPPClient.c++, line: 995
+#, c-format
+msgid "no SITE %s support; ignoring set request."
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 103
+msgid "Unable to setup file typing and conversion rules"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 129
+msgid "Unknown page size "
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 238
+#, c-format
+msgid "Error creating cover sheet; could not fork subprocess: %s"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 264
+#, c-format
+msgid "Error creating cover sheet; command was \"%s\"; exit status %x"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 273
+#, c-format
+msgid "Error creating cover sheet; unable to create pipe to subprocess: %s"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 278
+#, c-format
+msgid "%s: Can not create temporary file for cover page"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 421
+msgid "Documents not prepared"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 461
+#, c-format
+msgid ": Can not open: %s"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 482
+# File: SendFaxJob.c++, line: 547
+msgid "Document transfer failed: "
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 496
+#, c-format
+msgid "request id is %s (group id %s) for host %s (%u file)\n"
+msgid_plural "request id is %s (group id %s) for host %s (%u files)\n"
+msgstr[0] ""
+msgstr[1] ""
+
+#
+# File: SendFaxClient.c++, line: 681
+#, c-format
+msgid "Error converting document; command was \"%s\""
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 709
+#, c-format
+msgid "%s: Can not open file"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 713
+#, c-format
+msgid "%s: Can not stat file"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 718
+#, c-format
+msgid "%s: Not a regular file"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 726
+#, c-format
+msgid "%s: Empty file"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 731
+#, c-format
+msgid "%s: Can not determine file type"
+msgstr ""
+
+#
+# File: SendFaxJob.c++, line: 535
+#, c-format
+msgid "%s: Can not open: %s"
+msgstr ""
+
+#
+# File: Sequence.c++, line: 65
+#, c-format
+msgid "Unable to open sequence number file %s; %s."
+msgstr ""
+
+#
+# File: Sequence.c++, line: 79
+#, c-format
+msgid "%s: Invalid sequence number \"%s\", resetting to 1"
+msgstr ""
+
+#
+# File: Sequence.c++, line: 89
+#, c-format
+msgid "Unable update sequence number file %s; write failed."
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 134
+# File: TextFormat.c++, line: 267
+#, c-format
+msgid "Font %s: %s"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 253
+#, c-format
+msgid "Cannot open temporary file: %s"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 261
+msgid "point size is unusually large (>18pt)"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 279
+#, c-format
+msgid "Margin values too large for page; lm %lu rm %lu page width %lu"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 282
+#, c-format
+msgid "Margin values too large for page; tm %lu bm %lu page height %lu"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 323
+#, c-format
+msgid "Close failure on temporary file: %s"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 339
+#, c-format
+msgid "Read error during reverse collation: %s"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 341
+# File: TextFormat.c++, line: 1006
+#, c-format
+msgid "Output write error: %s"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 721
+#, c-format
+msgid "%s: Cannot open file: %s"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 1178
+# File: TextFormat.c++, line: 1196
+#, c-format
+msgid "Warning: %s - line too long."
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 1236
+#, c-format
+msgid "Warning: %s invalid Fontmap entry - no filename present"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 1376
+#, c-format
+msgid "%s: Can not open font metrics file; using fixed widths"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 1393
+#, c-format
+msgid "%s: No glyph metric table located; using fixed widths"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 1412
+#, c-format
+msgid "%s, line %u: format error"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 93
+#, c-format
+msgid "rule: %soffset %#lx %s %s"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 103
+msgid " <any value>"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 111
+msgid "failed (offset past data)\n"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 124
+# File: TypeRules.c++, line: 136
+#, c-format
+msgid "failed (unprintable char %#x)\n"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 164
+# File: TypeRules.c++, line: 173
+msgid "failed (insufficient data)\n"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 194
+#, c-format
+msgid "success (result %s, rule \"%s\")\n"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 197
+msgid "failed (comparison)\n"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 323
+#, c-format
+msgid "%s: Can not open type rules file.\n"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 344
+msgid "Missing file offset"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 369
+#, c-format
+msgid "Unknown datatype \"%.*s\""
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 410
+msgid "Missing match value"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 438
+#, c-format
+msgid "Unknown result \"%.*s\""
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 488
+#, c-format
+msgid "match against (..., %u)\n"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 495
+msgid "no match\n"
+msgstr ""
+
+#
+# File: UnixTransport.c++, line: 62
+#, c-format
+msgid "connect to server at %s"
+msgstr ""
+
+#
+# File: UnixTransport.c++, line: 68
+#, c-format
+msgid "Can not reach server at Unix domain socket \"%s\"."
+msgstr ""
+
+#
+# File: UnixTransport.c++, line: 140
+msgid "Sorry, no Unix domain communication support was configured."
+msgstr ""

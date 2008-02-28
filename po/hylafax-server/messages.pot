@@ -1,0 +1,334 @@
+#
+# File: typetest.c++, line: 117
+#, c-format
+msgid   "Unable to setup file typing and conversion rules\n"
+msgstr  ""
+#
+# File: typetest.c++, line: 90
+#, c-format
+msgid   "usage: %s [-f rulesfile] files\n"
+msgstr  ""
+#
+# File: typetest.c++, line: 74
+#, c-format
+msgid   "%s: Can not determine file type\n"
+msgstr  ""
+#
+# File: typetest.c++, line: 69
+#, c-format
+msgid   "%s: Empty file\n"
+msgstr  ""
+#
+# File: typetest.c++, line: 61
+#, c-format
+msgid   "%s: Not a regular file\n"
+msgstr  ""
+#
+# File: typetest.c++, line: 56
+#, c-format
+msgid   "%s: Can not stat file\n"
+msgstr  ""
+#
+# File: typetest.c++, line: 52
+#, c-format
+msgid   "%s: Can not open file\n"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 276
+#, c-format
+msgid   "Document requires resizing to adjust page length (convert to %lu, document is %lu).\n"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 267
+msgid   "Document is not valid TIFF (missing ImageLength tag).\n"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 251
+#, c-format
+msgid   "Document requires resizing to adjust page width (convert to %lu, document is %lu).\n"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 247
+msgid   "Document is not valid TIFF (missing ImageWidth tag).\n"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 235
+#, c-format
+msgid   "Document requires reformatting to adjust vertical resolution (convert to %lu, document is %lu).\n"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 196
+msgid   "Document should be reformatted with LSB-to-MSB bit order.\n"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 186
+msgid   "Document should be reformatted as a single strip.\n"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 177
+msgid   "Document requires reformatting, not in 2DMR format.\n"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 171
+msgid   "Document requires reformatting, not in Group 3 format.\n"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 166
+msgid   "Document requires reformatting, not in Group 4 format.\n"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 159
+#, c-format
+msgid   "Document is a multi-sample image (samples/pixel %u).\n"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 152
+#, c-format
+msgid   "Document is not a bilevel image (bits/sample %u).\n"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 117
+msgid   "Document is not valid TIFF (unspecified format error)"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 115
+msgid   "Document file is unreadable or does not exist"
+msgstr  ""
+#
+# File: tiffcheck.c++, line: 36
+#, c-format
+msgid   "usage: %s [-r vertical-res] [-l page-length] [-w page-width] [-1] [-2] [-3] input.tif"
+msgstr  ""
+#
+# File: textfmt.c++, line: 154
+#, c-format
+msgid   "Unrecognized option \"%c\".\n"
+msgstr  ""
+#
+# File: textfmt.c++, line: 143
+#, c-format
+msgid   "Unknown page size %s.\n"
+msgstr  ""
+#
+# File: textfmt.c++, line: 125
+#, c-format
+msgid   "Bad margin syntax.\n"
+msgstr  ""
+#
+# File: textfmt.c++, line: 109
+#, c-format
+msgid   "%s: No font metric information found for \"%s\".\n"
+msgstr  ""
+#
+# File: textfmt.c++, line: 61
+#, c-format
+msgid   "Default options: -f Courier -1 -p 11bp -o 0\n"
+msgstr  ""
+#
+# File: textfmt.c++, line: 45
+#, c-format
+msgid   "Usage: %s [-1] [-2] [-B] [-c] [-D] [-f fontname] [-F fontdir(s)] [-m N] [-o #] [-p #] [-r] [-U] [-Ml=#,r=#,t=#,b=#] [-V #] files... >out.ps\n"
+msgstr  ""
+#
+# File: faxwatch.c++, line: 114
+#, c-format
+msgid   "usage: %s [-h host] [-g] [-l] [-v] trigger-specification"
+msgstr  ""
+#
+# File: faxwatch.c++, line: 101
+msgid   "time values reported in GMT"
+msgstr  ""
+#
+# File: faxwatch.c++, line: 55
+#, c-format
+msgid   "write error: %s"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 419
+#, c-format
+msgid   "CallID%u"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 416
+msgid   "Yes"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 416
+msgid   "No"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 416
+msgid   "ErrCorrect"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 415
+msgid   "DataFormat"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 414
+msgid   "SignalRate"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 413
+msgid   "TimeToRecv"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 412
+msgid   "Received"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 410
+#, c-format
+msgid   "%u by %u"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 408
+# File: faxinfo.c++, line: 410
+msgid   "Page"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 405
+#, c-format
+msgid   "%u lines/inch"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 403
+msgid   "Hyperfine"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 401
+msgid   "Superfine"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 399
+msgid   "Fine"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 397
+# File: faxinfo.c++, line: 399
+# File: faxinfo.c++, line: 401
+# File: faxinfo.c++, line: 403
+# File: faxinfo.c++, line: 405
+msgid   "Quality"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 397
+msgid   "Normal"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 395
+msgid   "Pages"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 353
+msgid   "SubAddr"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 348
+msgid   "Sender"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 347
+# File: faxinfo.c++, line: 413
+msgid   "<unknown>"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 249
+#, c-format
+msgid   "Does not look like a facsimile?\n"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 243
+#, c-format
+msgid   "Could not open %s; either not TIFF or corrupted.\n"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 95
+#, c-format
+msgid   "\t-E fmt\tUse fmt for the fax end format\n"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 94
+#, c-format
+msgid   "\t-e fmt\tUse fmt for the field end format\n"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 93
+#, c-format
+msgid   "\t-s fmt\tUse fmt for the field start format\n"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 92
+#, c-format
+msgid   "\t-S fmt\tUse fmt for the fax start format\n"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 91
+#, c-format
+msgid   "  Raw format options:\n"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 89
+#, c-format
+msgid   "\t-r\traw format - values outputed with no names\n"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 88
+#, c-format
+msgid   "\t-c d\tCSV-style output with <d> as the deliminator\n"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 87
+#, c-format
+msgid   "\t-C d\tQuoted CSV-style output with <d> as the deliminator\n"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 86
+#, c-format
+msgid   "\t-n\tPrint FAX filename\n"
+msgstr  ""
+#
+# File: faxinfo.c++, line: 85
+#, c-format
+msgid   "usage: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt] [-D]\n"
+        "\n"
+msgstr  ""
+#
+# File: faxfetch.c++, line: 92
+msgid   "usage: faxfetch [-h server-host] [-v] file"
+msgstr  ""
+#
+# File: dialtest.c++, line: 134
+#, c-format
+msgid   "display = \"%s\"\n"
+msgstr  ""
+#
+# File: dialtest.c++, line: 133
+#, c-format
+msgid   "dial-string = \"%s\"\n"
+msgstr  ""
+#
+# File: dialtest.c++, line: 132
+#, c-format
+msgid   "canonical = \"%s\"\n"
+msgstr  ""
+#
+# File: dialtest.c++, line: 117
+#, c-format
+msgid   "input = \"%s\"\n"
+msgstr  ""
+#
+# File: dialtest.c++, line: 110
+#, c-format
+msgid   "%s: Problem parsing rules in %s"
+msgstr  ""
+#
+# File: dialtest.c++, line: 60
+#, c-format
+msgid   "ready> "
+msgstr  ""
+#
+# File: dialtest.c++, line: 45
+#, c-format
+msgid   "usage: %s [-v] [-a area-code] [-c country-code] [-i international-prefix] [-l long-distance-prefix] dialrules"
+msgstr  ""

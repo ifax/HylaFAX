@@ -1,0 +1,118 @@
+#
+# File: sendpage.c++, line: 177
+#, c-format
+msgid   "usage: %s -p PIN [-p PIN ...]\n"
+        " [-a time-to-send] [-l service-level] [-s message-subject]\n"
+        "     [-h host[:modem]] [-f from]\n"
+        "     [-I retry-time] [-t max-tries] [-T max-dials] [-nqvDNR] [msgs ...]"
+msgstr  ""
+#
+# File: sendpage.c++, line: 144
+#, c-format
+msgid   "%s: No pager identification number (PIN) specified.\n"
+msgstr  ""
+#
+# File: sendpage.c++, line: 90
+#, c-format
+msgid   "Invalid hold time \"%s\": %s"
+msgstr  ""
+#
+# File: sendfax.c++, line: 380
+msgid   "No input data; transmission aborted"
+msgstr  ""
+#
+# File: sendfax.c++, line: 372
+#, c-format
+msgid   "%s: write error"
+msgstr  ""
+#
+# #-#-#-#-#  messages.po  #-#-#-#-#
+#
+# File: sendfax.c++, line: 365
+# #-#-#-#-#  messages.po  #-#-#-#-#
+#
+# File: sendpage.c++, line: 216
+#, c-format
+msgid   "%s: Can not create temporary file"
+msgstr  ""
+#
+# File: sendfax.c++, line: 349
+#, c-format
+msgid   "%s: no such file"
+msgstr  ""
+#
+# File: sendfax.c++, line: 326
+msgid   "ECM disabled, limiting job to 14400 bps."
+msgstr  ""
+#
+# File: sendfax.c++, line: 319
+#, c-format
+msgid   "Null destination for \"%s\""
+msgstr  ""
+#
+# File: sendfax.c++, line: 279
+#, c-format
+msgid   "usage: %s [options] [files]\n"
+        "(Read the manual page; it's too complicated)"
+msgstr  ""
+#
+# File: sendfax.c++, line: 265
+#, c-format
+msgid   "can only wait for one job (right now), waiting for job %s."
+msgstr  ""
+#
+# File: sendfax.c++, line: 245
+#, c-format
+msgid   "%s: Unused options after last destination.\n"
+msgstr  ""
+#
+# File: sendfax.c++, line: 240
+#, c-format
+msgid   "%s: No destination specified.\n"
+msgstr  ""
+#
+# File: faxstat.c++, line: 146
+#, c-format
+msgid   "Data Connection: %s"
+msgstr  ""
+#
+# File: faxstat.c++, line: 99
+msgid   "usage: faxstat [-h server-host] [-adfgilrsv]"
+msgstr  ""
+#
+# File: faxrm.c++, line: 136
+msgid   "usage: faxrm [-h server-host] [-adv] id..."
+msgstr  ""
+#
+# File: faxrm.c++, line: 116
+#, c-format
+msgid   "Job %s removed (from doneq).\n"
+msgstr  ""
+#
+# File: faxrm.c++, line: 111
+#, c-format
+msgid   "Job %s removed.\n"
+msgstr  ""
+#
+# File: faxrm.c++, line: 97
+#, c-format
+msgid   "%s removed.\n"
+msgstr  ""
+#
+# File: faxalter.c++, line: 310
+msgid   "usage: faxalter [-C] [-h server-host] [-a time] [-d number] [-k time] [-m modem] [-n notify] [-P priority] [-t tries] [-A] [-g] [-p] [-r] [-v] [-DQR] jobID..."
+msgstr  ""
+#
+# File: faxalter.c++, line: 284
+#, c-format
+msgid   "Job %s: done.\n"
+msgstr  ""
+#
+# File: faxalter.c++, line: 257
+#, c-format
+msgid   "Job %s: duplicated as job %s.\n"
+msgstr  ""
+#
+# File: faxalter.c++, line: 236
+msgid   "No job parameters specified for alteration."
+msgstr  ""
