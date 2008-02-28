@@ -362,7 +362,7 @@ MANSFILENAME	= @MANSFILENAME@
 #
 LOCALEDIR       = @LOCALEDIR@
 
-LANGUAGES       =
+LANGUAGES       = nl es
 
 XGETTEXT	= xgettext --foreign-user -ctranslator --no-wrap --sort-by-file --omit-header --strict --indent --force-po
 MSGMERGE	= msgmerge --no-wrap --sort-by-file --no-wrap

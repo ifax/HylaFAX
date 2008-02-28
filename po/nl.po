@@ -1,0 +1,2153 @@
+# translation of hylafax-4.5.0pre2.po to Dutch
+# Copyright © 2007 iFAX Solutions Inc.
+# This file is distributed under the same license as the hylafax package.
+#
+# Hendrik Maryns <hendrik.maryns@uni-tuebingen.de>, 2007.
+msgid ""
+msgstr ""
+"Project-Id-Version: hylafax-4.5.0pre2\n"
+"Report-Msgid-Bugs-To: http://bugs.hylafax.org\n"
+"POT-Creation-Date: 2007-10-27 22:29-0400\n"
+"PO-Revision-Date: 2007-12-26 11:57+0100\n"
+"Last-Translator: Hendrik Maryns <hendrik.maryns@uni-tuebingen.de>\n"
+"Language-Team: Dutch <vertaling@vrijschrift.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#: faxalter/faxalter.c++:235
+msgid "No job parameters specified for alteration."
+msgstr "Geen taakparameters voor wijziging opgegeven."
+
+#: faxalter/faxalter.c++:256
+#, c-format
+msgid "Job %s: duplicated as job %s.\n"
+msgstr "Taak %s: gedupliceerd als taak %s.\n"
+
+#: faxalter/faxalter.c++:283
+#, c-format
+msgid "Job %s: done.\n"
+msgstr "Taak %s: klaar.\n"
+
+#: faxalter/faxalter.c++:309
+msgid "usage: faxalter [-C] [-h server-host] [-a time] [-d number] [-k time] [-m modem] [-n notify] [-P priority] [-t tries] [-A] [-g] [-p] [-r] [-v] [-DQR] jobID..."
+msgstr ""
+"Gebruik: faxalter [-C] [-h server-host] [-a tijd] [-d getal] [-k tijd]\n"
+"                  [-m modem] [-n waarschuwen] [-P prioriteit]\n"
+"                  [-t pogingen] [-A] [-g] [-p] [-r] [-v] [-DQR]\n"
+"                  taakID..."
+
+#: faxcover/faxcover.c++:181
+#, c-format
+msgid "Unknown page size \"%s\""
+msgstr "Onbekende paginagrootte “%s”"
+
+#: faxcover/faxcover.c++:198
+#, c-format
+msgid "usage: %s [-t to] [-c comments] [-p #pages] [-l to-location] [-m maxcomments] [-z maxlencomments] [-r regarding] [-v to-voice-number] [-x to-company] [-C template-file] [-D date-format] [-L from-location] [-N from-fax-number] [-V from-voice-number] [-X from-company] [-s pagesize] -f from -n fax-number"
+msgstr ""
+"Gebruik: %s [-t aan] [-c commentaren] [-p aantal-pagina’s]\n"
+"            [-l doellocatie] [-m max-aantal-commentaren]\n"
+"            [-z max-commentaarlengte] [-r betreft] [-v doel-stemnummer]\n"
+"            [-x doelfirma] [-C sjabloonbestand] [-D datumformaat]\n"
+"            [-L van-locatie] [-N van-faxnummer] [-V van-stemnummer]\n"
+"            [-X van-firma] [-s paginagrootte] -f van -n faxnummer"
+
+#: faxcover/faxcover.c++:321
+#, c-format
+msgid "Could not locate prototype cover sheet \"%s\""
+msgstr "Kan dekbladprototype “%s” niet vinden"
+
+#: faxcover/faxcover.c++:453
+msgid "Can not figure out who you are."
+msgstr "Kan niet ontdekken wie u bent."
+
+#: faxmail/faxmail.c++:132
+#, c-format
+msgid "Cannot create temp directory %s"
+msgstr "Kan geen temp-map aanmaken %s"
+
+#: faxmail/faxmail.c++:264
+msgid "No Destination/Dialstring specified"
+msgstr "Geen Bestemming/Kiesstring opgegeven"
+
+#: faxmail/faxmail.c++:274
+msgid "No From/Sender identity specified"
+msgstr "Geen Van/Afzender-identiteit opgegeven"
+
+#: faxmail/faxmail.c++:373
+#, c-format
+msgid "faxmail: This is a MIME message\n"
+msgstr "faxmail: Dit is een MIME-bericht\n"
+
+#: faxmail/faxmail.c++:385
+#, c-format
+msgid "faxmail: This is not a MIME message\n"
+msgstr "faxmail: Dit is geen MIME-bericht\n"
+
+#: faxmail/faxmail.c++:420
+#, c-format
+msgid ""
+"unable to process message:\n"
+"\t%s"
+msgstr ""
+"kan bericht niet verwerken:\n"
+"\t%s"
+
+#: faxmail/faxmail.c++:515
+msgid "Badly formatted MIME; premature EOF"
+msgstr "Verkeerd geformatteerde MIME; voortijdig bestandseinde"
+
+#: faxmail/faxmail.c++:614
+#, c-format
+msgid "DISCARDED %s (%s/%s) GOES HERE\n"
+msgstr "VERWORPEN %s (%s/%s) KOMT HIER\n"
+
+#: faxmail/faxmail.c++:620
+#, c-format
+msgid "DISCARDED %s/%s GOES HERE\n"
+msgstr "VERWORPEN %s/%s KOMT HIER\n"
+
+#: faxmail/faxmail.c++:692
+#, c-format
+msgid "%s: write error: %s"
+msgstr "%s: schrijffout: %s"
+
+#: faxmail/faxmail.c++:695 sendfax/sendfax.c++:364 sendpage/sendpage.c++:215
+#, c-format
+msgid "%s: Can not create temporary file"
+msgstr "%s: Kan geen tijdelijk bestand aanmaken"
+
+#: faxmail/faxmail.c++:710
+#, c-format
+msgid "Couldn't open output file: %s"
+msgstr "Kan uitvoerbestand niet openen: %s"
+
+#: faxmail/faxmail.c++:726
+#, c-format
+msgid "Error converting %s/%s; could not fork subprocess: %s"
+msgstr "Fout bij converteren van %s/%s; kan geen nieuw subproces beginnen: %s"
+
+#: faxmail/faxmail.c++:743
+#, c-format
+msgid "Error converting %s/%s; command was \"%s %s\"; exit status %x"
+msgstr "Fout bij converteren van %s/%s; commando was “%s %s”; afsluitwaarde %x"
+
+#: faxmail/faxmail.c++:909
+msgid "usage: faxmail [-b boldfont] [-H pageheight] [-i italicfont] [-f textfont] [-p pointsize] [-s pagesize] [-W pagewidth] [-M margins] [-C covertemplate] [-t notify] [-u user] [-12cnNrRTv]"
+msgstr ""
+"Gebruik: faxmail [-b vetlettertype] [-H paginahoogte]\n"
+"                 [-i cursieflettertype] [-f tekstlettertype]\n"
+"                 [-p puntgrootte] [-s paginagrootte] \n"
+"                 [-W paginabreedte] [-M marges] [-C titelbladsjabloon]\n"
+"                 [-t waarschuwen] [-u gebruiker] [-12cnNrRTv]"
+
+#: faxmail/MIMEState.c++:145
+msgid "Syntax error parsing MIME Content-Type: "
+msgstr "Syntaxisfout bij ontleden MIME-inhoudstype (MIME Content-Type): "
+
+#: faxmail/MIMEState.c++:360
+#, c-format
+msgid "Internal error, unsupported Content-Transfer-Encoding %u"
+msgstr "Interne fout, niet-ondersteund inhoudstransfertype (Content-Transfer-Encoding) %u"
+
+#: faxmail/MsgFmt.c++:162
+#, c-format
+msgid "HEADER %s: %s\n"
+msgstr "KOPTEKST %s: %s\n"
+
+#: faxmail/MsgFmt.c++:170
+#, c-format
+msgid "+HEADER %s: %s\n"
+msgstr "+KOPTEKST %s: %s\n"
+
+#: faxrm/faxrm.c++:96
+#, c-format
+msgid "%s removed.\n"
+msgstr "%s is verwijderd.\n"
+
+#: faxrm/faxrm.c++:110
+#, c-format
+msgid "Job %s removed.\n"
+msgstr "Taak %s is verwijderd.\n"
+
+#: faxrm/faxrm.c++:115
+#, c-format
+msgid "Job %s removed (from doneq).\n"
+msgstr "Taak %s is verwijderd (van klaarrij).\n"
+
+#: faxrm/faxrm.c++:135
+msgid "usage: faxrm [-h server-host] [-adv] id..."
+msgstr "Gebruik: faxrm [-h server-host] [-adv] id..."
+
+#: faxstat/faxstat.c++:98
+msgid "usage: faxstat [-h server-host] [-adfgilrsv]"
+msgstr "Gebruik: faxstat [-h server-host] [-adfgilrsv]"
+
+#: faxstat/faxstat.c++:145 util/FaxClient.c++:1325 util/FaxClient.c++:1388
+#, c-format
+msgid "Data Connection: %s"
+msgstr "Gegevensverbinding: %s"
+
+#: sendfax/sendfax.c++:239
+#, c-format
+msgid "%s: No destination specified.\n"
+msgstr "%s: Geen bestemming opgegeven.\n"
+
+#: sendfax/sendfax.c++:244
+#, c-format
+msgid "%s: Unused options after last destination.\n"
+msgstr "%s: Ongebruikte opties na laatste bestemming.\n"
+
+#: sendfax/sendfax.c++:264
+#, c-format
+msgid "can only wait for one job (right now), waiting for job %s."
+msgstr "kan slechts op één taak wachten (op dit moment), aan het wachten op taak %s."
+
+#: sendfax/sendfax.c++:278
+#, c-format
+msgid ""
+"usage: %s [options] [files]\n"
+"(Read the manual page; it's too complicated)"
+msgstr ""
+"Gebruik: %s [opties] [bestanden]\n"
+"(Lees de handleiding; het is te ingewikkeld)"
+
+#: sendfax/sendfax.c++:318
+#, c-format
+msgid "Null destination for \"%s\""
+msgstr "Null-bestemming voor “%s”"
+
+#: sendfax/sendfax.c++:325
+msgid "ECM disabled, limiting job to 14400 bps."
+msgstr "ECM is uitgeschakeld, taak wordt beperkt tot 14400 bps."
+
+#: sendfax/sendfax.c++:348
+#, c-format
+msgid "%s: no such file"
+msgstr "%s: bestand bestaat niet"
+
+#: sendfax/sendfax.c++:371
+#, c-format
+msgid "%s: write error"
+msgstr "%s: schrijffout"
+
+#: sendfax/sendfax.c++:379
+msgid "No input data; tranmission aborted"
+msgstr "Geen invoergegevens; overdracht afgebroken"
+
+#: sendpage/sendpage.c++:89 util/SNPPClient.c++:385
+#, c-format
+msgid "Invalid hold time \"%s\": %s"
+msgstr "Ongeldige wachttijd “%s”: %s"
+
+#: sendpage/sendpage.c++:143
+#, c-format
+msgid "%s: No pager identification number (PIN) specified.\n"
+msgstr "%s: Geen pageridentificatienummer (PIN) opgegeven.\n"
+
+#: sendpage/sendpage.c++:176
+#, c-format
+msgid ""
+"usage: %s -p PIN [-p PIN ...]\n"
+" [-a time-to-send] [-l service-level] [-s message-subject]\n"
+"     [-h host[:modem]] [-f from]\n"
+"     [-I retry-time] [-t max-tries] [-T max-dials] [-nqvDNR] [msgs ...]"
+msgstr ""
+"Gebruik: %s -p PIN [-p PIN ...] [-a verzendtijd] [-l serviceniveau]\n"
+"                 [-s berichtonderwerp] [-h host[:modem]] [-f van]\n"
+"                 [-I herprobeertijd] [-t max-pogingen]\n"
+"                 [-T max-aantal-kiesbeurten] [-nqvDNR] [berichten ...]"
+
+#: util/AtSyntax.c++:104
+#, c-format
+msgid "Illegal minutes value %u"
+msgstr "Ongeldige minutenwaarde %u"
+
+#: util/AtSyntax.c++:110
+msgid "expecting HH:MM"
+msgstr "HH:MM verwacht"
+
+#: util/AtSyntax.c++:117
+#, c-format
+msgid "%u:%02u is not an AM value"
+msgstr "%u:%02u is geen AM-waarde"
+
+#: util/AtSyntax.c++:125
+#, c-format
+msgid "%u:%02u is not a PM value"
+msgstr "%u:%02u is geen PM-waarde"
+
+#: util/AtSyntax.c++:146
+#, c-format
+msgid "unrecognized symbolic time \"%s\""
+msgstr "symbolische tijd “%s” niet herkend"
+
+#: util/AtSyntax.c++:151
+msgid "Illegal time value; out of range"
+msgstr "Ongeldige tijdwaarde; buiten bereik"
+
+#: util/AtSyntax.c++:175
+msgid "expecting \"+\" after time"
+msgstr "na tijd wordt een “+” verwacht"
+
+#: util/AtSyntax.c++:191
+msgid "Invalid date/time; time must be in the future"
+msgstr "Ongeldige datum/tijd; tijd moet in de toekomst liggen"
+
+#: util/AtSyntax.c++:317
+msgid "missing or invalid day of month"
+msgstr "ontbrekende of ongeldige dag van de maand"
+
+#: util/AtSyntax.c++:326
+msgid "missing year"
+msgstr "ontbrekend jaartal"
+
+#: util/AtSyntax.c++:330
+#, c-format
+msgid "Sorry, cannot handle dates before %u"
+msgstr "Het spijt me, kan geen data voor %u verwerken"
+
+#: util/AtSyntax.c++:353
+#, c-format
+msgid "Invalid day of month, %s has only %u days"
+msgstr "Ongeldige dag van de maand, %s heeft slechts %u dagen"
+
+#: util/AtSyntax.c++:369
+msgid "expecting number after \"+\""
+msgstr "nummer verwacht na “+”"
+
+#: util/AtSyntax.c++:377
+#, c-format
+msgid "\"+%u\" without unit"
+msgstr "“+%u” zonder eenheid"
+
+#: util/AtSyntax.c++:396
+#, c-format
+msgid "Unknown increment unit \"%s\""
+msgstr "Onbekende vermeerderingseenheid “%s”"
+
+#: util/AtSyntax.c++:450
+msgid "Syntax error, "
+msgstr "Syntaxisfout, "
+
+#: util/Class2Params.c++:804
+msgid "3.85 line/mm"
+msgstr "3,85 lijnen/mm"
+
+#: util/Class2Params.c++:805
+msgid "7.7 line/mm"
+msgstr "7,7 lijnen/mm"
+
+#: util/Class2Params.c++:806
+msgid "15.4 line/mm"
+msgstr "15,4 lijnen/mm"
+
+#: util/Class2Params.c++:807
+msgid "R16 x 15.4 line/mm"
+msgstr "R16 x 15,4 lijnen/mm"
+
+#: util/Class2Params.c++:808
+msgid "200 x 100 dpi"
+msgstr "200 x 100 dpi"
+
+#: util/Class2Params.c++:809
+msgid "200 x 200 dpi"
+msgstr "200 x 200 dpi"
+
+#: util/Class2Params.c++:810
+msgid "200 x 400 dpi"
+msgstr "200 x 400 dpi"
+
+#: util/Class2Params.c++:811
+msgid "300 x 300 dpi"
+msgstr "300 x 300 dpi"
+
+#: util/Class2Params.c++:836
+msgid "2400 bit/s"
+msgstr "2400 bit/s"
+
+#: util/Class2Params.c++:837
+msgid "4800 bit/s"
+msgstr "4800 bit/s"
+
+#: util/Class2Params.c++:838
+msgid "7200 bit/s"
+msgstr "7200 bit/s"
+
+#: util/Class2Params.c++:839
+msgid "9600 bit/s"
+msgstr "9600 bit/s"
+
+#: util/Class2Params.c++:840
+msgid "12000 bit/s"
+msgstr "12000 bit/s"
+
+#: util/Class2Params.c++:841
+msgid "14400 bit/s"
+msgstr "14400 bit/s"
+
+#: util/Class2Params.c++:842
+msgid "16800 bit/s"
+msgstr "16800 bit/s"
+
+#: util/Class2Params.c++:843
+msgid "19200 bit/s"
+msgstr "19200 bit/s"
+
+#: util/Class2Params.c++:844
+msgid "21600 bit/s"
+msgstr "21600 bit/s"
+
+#: util/Class2Params.c++:845
+msgid "24000 bit/s"
+msgstr "24000 bit/s"
+
+#: util/Class2Params.c++:846
+msgid "26400 bit/s"
+msgstr "26400 bit/s"
+
+#: util/Class2Params.c++:847
+msgid "28800 bit/s"
+msgstr "28800 bit/s"
+
+#: util/Class2Params.c++:848
+msgid "31200 bit/s"
+msgstr "31200 bit/s"
+
+#: util/Class2Params.c++:849
+msgid "33600 bit/s"
+msgstr "33600 bit/s"
+
+#: util/Class2Params.c++:850 util/Class2Params.c++:851
+msgid "0 bit/s"
+msgstr "0 bit/s"
+
+#: util/Class2Params.c++:880
+msgid "1-D MH"
+msgstr "1-D MH"
+
+#: util/Class2Params.c++:881
+msgid "2-D MR"
+msgstr "2-D MR"
+
+#: util/Class2Params.c++:882
+msgid "2-D Uncompressed Mode"
+msgstr "2-D Niet-gecomprimeerde modus"
+
+#: util/Class2Params.c++:883
+msgid "2-D MMR"
+msgstr "2-D MMR"
+
+#: util/Class2Params.c++:884
+msgid "JBIG"
+msgstr "JBIG"
+
+#: util/Class2Params.c++:885
+msgid "JPEG Greyscale"
+msgstr "JPEG Grijswaarden"
+
+#: util/Class2Params.c++:886
+msgid "JPEG Full-Color"
+msgstr "JPEG Alle kleuren"
+
+#: util/Class2Params.c++:894
+msgid "MH"
+msgstr "MH"
+
+#: util/Class2Params.c++:895
+msgid ", MR"
+msgstr ", MR"
+
+#: util/Class2Params.c++:896
+msgid ", MMR"
+msgstr ", MMR"
+
+#: util/Class2Params.c++:897
+msgid ", JBIG"
+msgstr ", JBIG"
+
+#: util/Class2Params.c++:899
+msgid ", JPEG Full-Color"
+msgstr ", JPEG Alle kleuren"
+
+#: util/Class2Params.c++:900
+msgid ", JPEG Greyscale"
+msgstr ", JPEG Grijswaarden"
+
+#: util/Class2Params.c++:905
+msgid "A4 page width (215 mm)"
+msgstr "A4-paginabreedte (215 mm)"
+
+#: util/Class2Params.c++:906
+msgid "B4 page width (255 mm)"
+msgstr "B4-paginabreedte (255 mm)"
+
+#: util/Class2Params.c++:907
+msgid "A3 page width (303 mm)"
+msgstr "A3-paginabreedte (303 mm)"
+
+#: util/Class2Params.c++:908
+msgid "page width 151 mm"
+msgstr "paginabreedte 151 mm"
+
+#: util/Class2Params.c++:909
+msgid "page width 107 mm"
+msgstr "paginabreedte 107 mm"
+
+#: util/Class2Params.c++:910
+msgid "undefined page width (wd=5)"
+msgstr "ongedefinieerde paginabreedte (pb=5)"
+
+#: util/Class2Params.c++:911
+msgid "undefined page width (wd=6)"
+msgstr "ongedefinieerde paginabreedte (pb=6)"
+
+#: util/Class2Params.c++:912
+msgid "undefined page width (wd=7)"
+msgstr "ongedefinieerde paginabreedte (pb=7)"
+
+#: util/Class2Params.c++:918
+msgid "A4 page length (297 mm)"
+msgstr "A4-paginalengte (297 mm)"
+
+#: util/Class2Params.c++:919
+msgid "B4 page length (364 mm)"
+msgstr "B4-paginalengte (364 mm)"
+
+#: util/Class2Params.c++:920
+msgid "unlimited page length"
+msgstr "onbeperkte paginalengte"
+
+#: util/Class2Params.c++:921
+msgid "invalid page length (ln=3)"
+msgstr "ongeldige paginalengte (ln=3)"
+
+#: util/Class2Params.c++:927
+msgid "0 ms/scanline"
+msgstr "0 ms/scanlijn"
+
+#: util/Class2Params.c++:928
+msgid "5 ms/scanline"
+msgstr "5 ms/scanlijn"
+
+#: util/Class2Params.c++:929
+msgid "10 ms, 5 ms/scanline"
+msgstr "10 ms, 5 ms/scanlijn"
+
+#: util/Class2Params.c++:930
+msgid "10 ms/scanline"
+msgstr "10 ms/scanlijn"
+
+#: util/Class2Params.c++:931
+msgid "20 ms, 10 ms/scanline"
+msgstr "20 ms, 10 ms/scanlijn"
+
+#: util/Class2Params.c++:932
+msgid "20 ms/scanline"
+msgstr "20 ms/scanlijn"
+
+#: util/Class2Params.c++:933
+msgid "40 ms, 20 ms/scanline"
+msgstr "40 ms, 20 ms/scanlijn"
+
+#: util/Class2Params.c++:934
+msgid "40 ms/scanline"
+msgstr "40 ms/scanlijn"
+
+#: util/Class2Params.c++:939
+msgid "no ECM"
+msgstr "geen ECM"
+
+#: util/Class2Params.c++:940
+msgid "T.30 Annex A, 64-byte ECM"
+msgstr "T.30 Annex A, 64-byte ECM"
+
+#: util/Class2Params.c++:941
+msgid "T.30 Annex A, 256-byte ECM"
+msgstr "T.30 Annex A, 256-byte ECM"
+
+#: util/Class2Params.c++:942
+msgid "T.30 Annex C, half duplex ECM"
+msgstr "T.30 Annex C, halve duplex ECM"
+
+#: util/Class2Params.c++:943
+msgid "T.30 Annex C, full duplex ECM"
+msgstr "T.30 Annex C, volledige duplex ECM"
+
+#: util/Class2Params.c++:944 util/Class2Params.c++:945
+#: util/Class2Params.c++:946
+msgid "undefined ECM"
+msgstr "ongedefinieerde ECM"
+
+#: util/DialRules.c++:96
+#, c-format
+msgid "Cannot open file \"%s\" for reading"
+msgstr "Kan bestand “%s” niet openen om te lezen"
+
+#: util/DialRules.c++:105
+#, c-format
+msgid "Define %s = \"%s\""
+msgstr "Definieer %s = “%s”"
+
+#: util/DialRules.c++:114
+#, c-format
+msgid "Undefine %s"
+msgstr "Ontdefinieer %s"
+
+#: util/DialRules.c++:126
+msgid "Syntax error, expecting identifier"
+msgstr "Syntaxisfout, naam verwacht"
+
+#: util/DialRules.c++:138
+msgid "Missing '[' while parsing rule set"
+msgstr "Ontbrekende ‘[’ bij ontleden van regelverzameling"
+
+#: util/DialRules.c++:157
+#, c-format
+msgid "Missing '=' or ':=' after \"%s\""
+msgstr "Ontbrekende ‘=’ of ‘:=’ na “%s”"
+
+#: util/DialRules.c++:164
+msgid "Warning, no \"CanonicalNumber\" rules."
+msgstr "Waarschuwing, geen “CanonicalNumber”-regels."
+
+#: util/DialRules.c++:167
+msgid "Warning, no \"DialString\" rules."
+msgstr "Waarschuwing, geen “DialString”-regels."
+
+#: util/DialRules.c++:215
+msgid "String with unmatched '\"'"
+msgstr "‘\"’ komt niet overeen in tekenreeks"
+
+#: util/DialRules.c++:219 util/DialRules.c++:231
+msgid "Bad '\\' escape sequence"
+msgstr "Verkeerde ‘\\’-stuurcode"
+
+#: util/DialRules.c++:246
+msgid "Missing '}' for variable reference"
+msgstr "Ontbrekende ‘}’ voor variabelenverwijzing"
+
+#: util/DialRules.c++:293
+msgid "Missing ']' while parsing rule set"
+msgstr "Ontbrekende ‘]’ bij ontleden van regelverzameling"
+
+#: util/DialRules.c++:305
+msgid "Rule pattern without '='"
+msgstr "Regelpatroon zonder ‘=’"
+
+#: util/DialRules.c++:341
+#, c-format
+msgid "Apply %s rules to \"%s\""
+msgstr "%s regels op “%s” toepassen"
+
+#: util/DialRules.c++:379
+#, c-format
+msgid "--> match rule \"%s\", result now \"%s\""
+msgstr "--> regel “%s” past, resultaat nu “%s”"
+
+#: util/DialRules.c++:385
+#, c-format
+msgid "--> return result \"%s\""
+msgstr "--> resultaat “%s” teruggeven"
+
+#: util/DialRules.c++:396 util/DialRules.c++:407 util/PageSize.c++:50
+#: util/TypeRules.c++:309
+#, c-format
+msgid "%s: line %u: "
+msgstr "%s: regel %u: "
+
+#: util/dialtest.c++:44
+#, c-format
+msgid "usage: %s [-v] [-a area-code] [-c country-code] [-i international-prefix] [-l long-distance-prefix] dialrules"
+msgstr ""
+"Gebruik: %s [-v] [-a gebiedcode] [-c landcode]\n"
+"                 [-i internationale-prefix] [-l lange-afstandsprefix]\n"
+"                 kiesregels"
+
+#: util/dialtest.c++:58 faxd/tsitest.c++:135
+#, c-format
+msgid "ready> "
+msgstr "klaar> "
+
+#: util/dialtest.c++:105
+#, c-format
+msgid "%s: Problem parsing rules in %s"
+msgstr "%s: Probleem bij ontleden van regels in %s"
+
+#: util/dialtest.c++:112 faxd/tsitest.c++:166
+#, c-format
+msgid "input = \"%s\"\n"
+msgstr "invoer = “%s”\n"
+
+#: util/dialtest.c++:124
+#, c-format
+msgid "canonical = \"%s\"\n"
+msgstr "gebruikelijk = “%s”\n"
+
+#: util/dialtest.c++:125
+#, c-format
+msgid "dial-string = \"%s\"\n"
+msgstr "kiesinvoer = “%s”\n"
+
+#: util/dialtest.c++:126
+#, c-format
+msgid "display = \"%s\"\n"
+msgstr "scherm = “%s”\n"
+
+#: util/FaxClient.c++:116 util/SNPPClient.c++:103 util/TextFormat.c++:95
+#, c-format
+msgid "Warning, "
+msgstr "Waarschuwing, "
+
+#: util/FaxClient.c++:191
+#, c-format
+msgid "Can not locate your password entry (uid %lu): %s"
+msgstr "Kon uw wachtwoordingang niet vinden (uid %lu): %s"
+
+#: util/FaxClient.c++:217 util/SNPPClient.c++:278
+msgid "Bad (null) user name; your password file entry probably has bogus GECOS field information."
+msgstr "Verkeerde gebruikersnaam (null); uw wachtwoordbestandsingang heeft waarschijnlijk nonsens-GECOS-veldinformatie."
+
+#: util/FaxClient.c++:384
+msgid "Malformed (null) username"
+msgstr "Ongeldige gebruikersnaam (null)"
+
+#: util/FaxClient.c++:405 util/SNPPClient.c++:573
+msgid "Login failed: "
+msgstr "Login is mislukt: "
+
+#: util/FaxClient.c++:426
+msgid "Admin failed: "
+msgstr "Admin is mislukt: "
+
+#: util/FaxClient.c++:442
+#, c-format
+msgid "Bad %s parameter value %u."
+msgstr "Ongeldige waarde %2$u van parameter %1$s."
+
+#: util/FaxClient.c++:482
+#, c-format
+msgid "Bad time zone parameter value %u."
+msgstr "Verkeerde tijdzoneparameterwaarde %u."
+
+#: util/FaxClient.c++:521
+msgid "Unable to initialize data connection to server"
+msgstr "Kan gegevensverbinding met server niet initialiseren"
+
+#: util/FaxClient.c++:535
+msgid "Unable to open data connection to server"
+msgstr "Kan gegevensverbinding met server niet openen"
+
+#: util/FaxClient.c++:559
+msgid "Unable to abort data connection to server"
+msgstr "Kan gegevensverbinding met server niet afbreken"
+
+#: util/FaxClient.c++:589 util/SNPPClient.c++:590
+msgid "Service not available, remote server closed connection"
+msgstr "Dienst niet beschikbaar, server op afstand heeft verbinding afgesloten"
+
+#: util/FaxClient.c++:596 util/SNPPClient.c++:597
+msgid "Unexpected server response: "
+msgstr "Onverwacht serverantwoord: "
+
+#: util/FaxClient.c++:604 util/SNPPClient.c++:605
+msgid "Protocol botch"
+msgstr "Protocol verknoeid"
+
+#: util/FaxClient.c++:639
+msgid "Memory allocation failed"
+msgstr "Onvoldoende geheugen beschikbaar"
+
+#: util/FaxClient.c++:647 util/SNPPClient.c++:640
+msgid "No control connection for command"
+msgstr "Geen controleverbinding voor commando"
+
+#: util/FaxClient.c++:782
+#, c-format
+msgid ": No \"%s\" in %s response: %s"
+msgstr ": Geen “%s” in %s antwoord: %s"
+
+#: util/FaxClient.c++:789
+#, c-format
+msgid ": Null %s in %s response: %s"
+msgstr ": Null %s in %s antwoord: %s"
+
+#: util/FaxClient.c++:953
+#, c-format
+msgid "Unable to open script file \"%s\"."
+msgstr "Kon scriptbestand “%s” niet openen."
+
+#: util/FaxClient.c++:972
+#, c-format
+msgid "%s: Read error: %s"
+msgstr "%s: Leesfout: %s"
+
+#: util/FaxClient.c++:997
+#, c-format
+msgid "%s: line %u: %s"
+msgstr "%s: regel %u: %s"
+
+#: util/FaxClient.c++:1087 util/FaxClient.c++:1094 util/SNPPClient.c++:910
+#: util/SNPPClient.c++:917
+msgid " (server closed connection)"
+msgstr " (server heeft verbinding gesloten)"
+
+#: util/FaxClient.c++:1087 util/FaxClient.c++:1094 util/SNPPClient.c++:910
+#: util/SNPPClient.c++:917
+#, c-format
+msgid " (server write error: %s)."
+msgstr " (schrijffout op server: %s)."
+
+#: util/FaxClient.c++:1116
+#, c-format
+msgid "SEND data, %lu bytes"
+msgstr "ZEND gegevens, %lu bytes"
+
+#: util/FaxClient.c++:1134 util/SNPPClient.c++:938
+#, c-format
+msgid " (data read: %s)."
+msgstr " (gegevens gelezen: %s)."
+
+#: util/FaxClient.c++:1185
+#, c-format
+msgid "SEND compressed data, %lu bytes"
+msgstr "ZEND gecomprimeerde gegevens, %lu bytes"
+
+#: util/FaxClient.c++:1203
+#, c-format
+msgid " (data read: %s)"
+msgstr " (gegevens gelezen: %s)"
+
+#: util/FaxClient.c++:1210 util/FaxClient.c++:1230 util/FaxClient.c++:1256
+#, c-format
+msgid "zlib compressor error: %s"
+msgstr "zlib-comprimeerfout: %s"
+
+#: util/FaxClient.c++:1262
+#, c-format
+msgid "SEND %lu bytes transmitted (%.1fx compression)"
+msgstr "ZEND %lu bytes overdragen (%.1fx-compressie)"
+
+#: util/FaxClient.c++:1283
+#, c-format
+msgid "Can not initialize compression library: %s"
+msgstr "Kon compressiebibliotheek niet initialiseren: %s"
+
+#: util/FaxClient.c++:1399
+#, c-format
+msgid "Decoding error: %s"
+msgstr "Decodeerfout: %s"
+
+#: util/FaxClient.c++:1413
+#, c-format
+msgid "Can not initialize decoder: %s"
+msgstr "Kon decodeerder niet initialiseren: %s"
+
+#: util/FaxClient.c++:1609 util/FaxClient.c++:1673
+msgid "SUB"
+msgstr "SUB"
+
+#: util/FaxClient.c++:1610
+msgid "PWD"
+msgstr "WWD"
+
+#: util/FaxClient.c++:1611
+msgid "Company"
+msgstr "Bedrijf"
+
+#: util/FaxClient.c++:1612
+msgid "Dials"
+msgstr "Kiesbeurten"
+
+#: util/FaxClient.c++:1613 util/FaxClient.c++:1674
+msgid "BR"
+msgstr "BR"
+
+#: util/FaxClient.c++:1614
+msgid "Tagline"
+msgstr "Taglijn"
+
+#: util/FaxClient.c++:1615
+msgid "ST"
+msgstr "ST"
+
+#: util/FaxClient.c++:1616 util/FaxClient.c++:1675
+msgid "DF"
+msgstr "DF"
+
+#: util/FaxClient.c++:1617
+msgid "UsrPri"
+msgstr "GebrPri"
+
+#: util/FaxClient.c++:1618
+msgid "JobTag"
+msgstr "JobTag"
+
+#: util/FaxClient.c++:1619
+msgid "EC"
+msgstr "EC"
+
+#: util/FaxClient.c++:1620
+msgid "Location"
+msgstr "Locatie"
+
+#: util/FaxClient.c++:1621
+msgid "MailAddr"
+msgstr "PostAdr"
+
+#: util/FaxClient.c++:1622
+msgid "DT"
+msgstr "DT"
+
+#: util/FaxClient.c++:1623
+msgid "CC"
+msgstr "CC"
+
+#: util/FaxClient.c++:1624 util/FaxClient.c++:1650 util/FaxClient.c++:1685
+#: util/faxinfo.c++:381
+msgid "Pages"
+msgstr "Pagina’s"
+
+#: util/FaxClient.c++:1625
+msgid "MinSP"
+msgstr "MinSP"
+
+#: util/FaxClient.c++:1626
+msgid "Receiver"
+msgstr "Ontvanger"
+
+#: util/FaxClient.c++:1627 util/faxinfo.c++:334
+msgid "Sender"
+msgstr "Zender"
+
+#: util/FaxClient.c++:1628
+msgid "Tries"
+msgstr "Pogingen"
+
+#: util/FaxClient.c++:1629
+msgid "ChopThreshold"
+msgstr "AfkapDrempel"
+
+#: util/FaxClient.c++:1630
+msgid "DoneOp"
+msgstr "OpGedaan"
+
+#: util/FaxClient.c++:1631
+msgid "CommID"
+msgstr "CommID"
+
+#: util/FaxClient.c++:1632
+msgid "JobType"
+msgstr "JobType"
+
+#: util/FaxClient.c++:1633 util/FaxClient.c++:1672
+msgid "Date       Time"
+msgstr "Datum       Tijd"
+
+#: util/FaxClient.c++:1634
+msgid "UNIX Time"
+msgstr "UNIX Tijd"
+
+#: util/FaxClient.c++:1635
+msgid "State"
+msgstr "Status"
+
+#: util/FaxClient.c++:1636
+msgid "NTries"
+msgstr "NPogingen"
+
+#: util/FaxClient.c++:1637
+msgid "Client"
+msgstr "Client"
+
+#: util/FaxClient.c++:1638
+msgid "TotDials"
+msgstr "TotKiesbeurten"
+
+#: util/FaxClient.c++:1639 util/FaxClient.c++:1705
+msgid "Number"
+msgstr "Nummer"
+
+#: util/FaxClient.c++:1640
+msgid "NDials"
+msgstr "NKiesbeurten"
+
+#: util/FaxClient.c++:1641 util/FaxClient.c++:1725
+msgid "GID"
+msgstr "GID"
+
+#: util/FaxClient.c++:1642
+msgid "Chop"
+msgstr "Afkappen"
+
+#: util/FaxClient.c++:1643
+msgid "Priority"
+msgstr "Prioriteit"
+
+#: util/FaxClient.c++:1644
+msgid "JID"
+msgstr "JID"
+
+#: util/FaxClient.c++:1645
+msgid "LastTime"
+msgstr "LaatsteKeer"
+
+#: util/FaxClient.c++:1646
+msgid "PageLength"
+msgstr "PaginaLengte"
+
+#: util/FaxClient.c++:1647 util/FaxClient.c++:1704
+msgid "Modem"
+msgstr "Modem"
+
+#: util/FaxClient.c++:1648
+msgid "Notify"
+msgstr "Waarschuwen"
+
+#: util/FaxClient.c++:1649 util/FaxClient.c++:1684 util/FaxClient.c++:1728
+msgid "Owner"
+msgstr "Eigenaar"
+
+#: util/FaxClient.c++:1651
+msgid "RetryTime"
+msgstr "HerprobeerTijd"
+
+#: util/FaxClient.c++:1652 util/FaxClient.c++:1687
+msgid "Resolution"
+msgstr "Resolutie"
+
+#: util/FaxClient.c++:1653 util/FaxClient.c++:1707
+msgid "Status"
+msgstr "Status"
+
+#: util/FaxClient.c++:1654
+msgid "TotTries"
+msgstr "TotPogingen"
+
+#: util/FaxClient.c++:1655
+msgid "MaxTries"
+msgstr "MaxPogingen"
+
+#: util/FaxClient.c++:1656
+msgid "DialString"
+msgstr "KiesString"
+
+#: util/FaxClient.c++:1657
+msgid "PageWidth"
+msgstr "PaginaBreedte"
+
+#: util/FaxClient.c++:1658
+msgid "MaxDials"
+msgstr "MaxKiesbeurten"
+
+#: util/FaxClient.c++:1659
+msgid "TotPages"
+msgstr "TotPagina’s"
+
+#: util/FaxClient.c++:1660
+msgid "TTS"
+msgstr "TTS"
+
+#: util/FaxClient.c++:1661
+msgid "UseXVres"
+msgstr "GebruikXVres"
+
+#: util/FaxClient.c++:1676
+msgid "Error"
+msgstr "Fout"
+
+#: util/FaxClient.c++:1677 util/FaxClient.c++:1724
+msgid "Filename"
+msgstr "Bestandsnaam"
+
+#: util/FaxClient.c++:1678
+msgid "Time"
+msgstr "Tijd"
+
+#: util/FaxClient.c++:1679
+msgid "CIDName"
+msgstr "CIDNaam"
+
+#: util/FaxClient.c++:1680
+msgid "CIDNumber"
+msgstr "CIDNummer"
+
+#: util/FaxClient.c++:1681
+msgid "Length"
+msgstr "Lengte"
+
+#: util/FaxClient.c++:1682 util/FaxClient.c++:1686 util/FaxClient.c++:1729
+#: util/FaxClient.c++:1730
+msgid "Protect"
+msgstr "Beschermen"
+
+#: util/FaxClient.c++:1683 util/FaxClient.c++:1732
+msgid "Size"
+msgstr "Grootte"
+
+#: util/FaxClient.c++:1688
+msgid "Sender/TSI"
+msgstr "Zender/TSI"
+
+#: util/FaxClient.c++:1689
+msgid "Recvd@"
+msgstr "Ontvangen@"
+
+#: util/FaxClient.c++:1690
+msgid "Width"
+msgstr "Breedte"
+
+#: util/FaxClient.c++:1702
+msgid "Host"
+msgstr "Host"
+
+#: util/FaxClient.c++:1703
+msgid "LocalID"
+msgstr "LokaalID"
+
+#: util/FaxClient.c++:1706
+msgid "MaxRecv"
+msgstr "MaxOntv"
+
+#: util/FaxClient.c++:1708
+msgid "Tracing"
+msgstr "Tracing"
+
+#: util/FaxClient.c++:1709
+msgid "Speaker"
+msgstr "Boxen"
+
+#: util/FaxClient.c++:1721
+msgid "LastAcc"
+msgstr "LaatsteToeg"
+
+#: util/FaxClient.c++:1722
+msgid "Created"
+msgstr "Gemaakt"
+
+#: util/FaxClient.c++:1723
+msgid "Device"
+msgstr "Apparaat"
+
+#: util/FaxClient.c++:1726
+msgid "Links"
+msgstr "Koppelingen"
+
+#: util/FaxClient.c++:1727
+msgid "LastMod"
+msgstr "LaatsteWijz"
+
+#: util/FaxClient.c++:1731
+msgid "RootDev"
+msgstr "RootDev"
+
+#: util/FaxClient.c++:1733
+msgid "UID"
+msgstr "UID"
+
+#: util/FaxConfig.c++:55
+#, c-format
+msgid "Read config file %s"
+msgstr "Configuratiebestand %s lezen"
+
+#: util/FaxConfig.c++:93
+#, c-format
+msgid "No passwd file entry for uid %u, cannot expand ~ in \"%s\""
+msgstr "Geen wachtwoordingang voor uid %u, kan ~ niet expanderen in “%s”"
+
+#: util/FaxConfig.c++:166
+#, c-format
+msgid "Syntax error at line %u, missing ':' in \"%s\""
+msgstr "Syntaxisfout in regel %u, ontbrekende ‘:’ in “%s”"
+
+#: util/FaxConfig.c++:181
+#, c-format
+msgid "Syntax error at line %u, missing quote mark in \"%s\""
+msgstr "Syntaxisfout in regel %u, ontbrekend aanhalingsteken in “%s”"
+
+#: util/FaxConfig.c++:214 util/FaxConfig.c++:225
+#, c-format
+msgid "%s = %s (line %u)"
+msgstr "%s = %s (regel %u)"
+
+#: util/FaxConfig.c++:221
+#, c-format
+msgid "Unknown configuration parameter \"%s\" ignored at line %u"
+msgstr "Onbekende configuratieparameter “%s” genegeerd in regel %u"
+
+#: util/FaxDB.c++:122
+#, c-format
+msgid "%s: line %d: Unmatched \"]\".\n"
+msgstr "%s: regel %d: ongepaarde “]”.\n"
+
+#: util/FaxDB.c++:134
+#, c-format
+msgid "%s: line %d: Missing \":\" separator.\n"
+msgstr "%s: regel %d: Ontbrekende “:” als scheidingsteken.\n"
+
+#: util/FaxDB.c++:182
+#, c-format
+msgid "%s: Premature EOF.\n"
+msgstr "%s: Voortijdig bestandseinde.\n"
+
+#: util/faxfetch.c++:92
+msgid "usage: faxfetch [-h server-host] [-v] file"
+msgstr "Gebruik: faxfetch [-h server-host] [-v] bestand"
+
+#: util/faxinfo.c++:85
+#, c-format
+msgid ""
+"usage: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt] [-D]\n"
+"\n"
+msgstr ""
+"Gebruik: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt] [-D]\n"
+"\n"
+
+#: util/faxinfo.c++:86
+#, c-format
+msgid "\t-n\tPrint FAX filename\n"
+msgstr "\t-n\tPrint FAX bestandsnaam\n"
+
+#: util/faxinfo.c++:87
+#, c-format
+msgid "\t-C d\tQuoted CSV-style output with <d> as the deliminator\n"
+msgstr "\t-C d\tCSV-type uitvoer tussen aanhalingstekens met <d> als scheidingsteken\n"
+
+#: util/faxinfo.c++:88
+#, c-format
+msgid "\t-c d\tCSV-style output with <d> as the deliminator\n"
+msgstr "\t-C d\tCSV-type uitvoer met <d> als scheidingsteken\n"
+
+#: util/faxinfo.c++:89
+#, c-format
+msgid "\t-r\traw format - values outputed with no names\n"
+msgstr "\t-r\truw formaat – waarden zonder namen\n"
+
+#: util/faxinfo.c++:91
+#, c-format
+msgid "  Raw format options:\n"
+msgstr "  Opties ruw formaat:\n"
+
+#: util/faxinfo.c++:92
+#, c-format
+msgid "\t-S fmt\tUse fmt for the fax start format\n"
+msgstr "\t-S fmt\tGebruik fmt voor het faxbeginformaat\n"
+
+#: util/faxinfo.c++:93
+#, c-format
+msgid "\t-s fmt\tUse fmt for the field start format\n"
+msgstr "\t-s fmt\tGebruik fmt voor het veldbeginformaat\n"
+
+#: util/faxinfo.c++:94
+#, c-format
+msgid "\t-e fmt\tUse fmt for the field end format\n"
+msgstr "\t-e fmt\tGebruik fmt voor het veldeindeformaat\n"
+
+#: util/faxinfo.c++:95
+#, c-format
+msgid "\t-E fmt\tUse fmt for the fax end format\n"
+msgstr "\t-E fmt\tGebruik fmt voor het faxeindeformaat\n"
+
+#: util/faxinfo.c++:243
+#, c-format
+msgid "Could not open %s; either not TIFF or corrupted.\n"
+msgstr "Kan %s niet openen; geen TIFF of beschadigd.\n"
+
+#: util/faxinfo.c++:249
+#, c-format
+msgid "Does not look like a facsimile?\n"
+msgstr "Lijkt niet op een fax?\n"
+
+#: util/faxinfo.c++:333 util/faxinfo.c++:399
+msgid "<unknown>"
+msgstr "<onbekend>"
+
+#: util/faxinfo.c++:339
+msgid "SubAddr"
+msgstr "SubAdr"
+
+#: util/faxinfo.c++:383
+msgid "Normal"
+msgstr "Normaal"
+
+#: util/faxinfo.c++:383 util/faxinfo.c++:385 util/faxinfo.c++:387
+#: util/faxinfo.c++:389 util/faxinfo.c++:391
+msgid "Quality"
+msgstr "Kwaliteit"
+
+#: util/faxinfo.c++:385
+msgid "Fine"
+msgstr "Fijn"
+
+#: util/faxinfo.c++:387
+msgid "Superfine"
+msgstr "Superfijn"
+
+#: util/faxinfo.c++:389
+msgid "Hyperfine"
+msgstr "Hyperfijn"
+
+#: util/faxinfo.c++:391
+#, c-format
+msgid "%u lines/inch"
+msgstr "%u lijnen/duim"
+
+#: util/faxinfo.c++:394 util/faxinfo.c++:396
+msgid "Page"
+msgstr "Pagina"
+
+#: util/faxinfo.c++:396
+#, c-format
+msgid "%u by %u"
+msgstr "%u op %u"
+
+#: util/faxinfo.c++:398
+msgid "Received"
+msgstr "Ontvangen"
+
+#: util/faxinfo.c++:399
+msgid "TimeToRecv"
+msgstr "OntvDuur"
+
+#: util/faxinfo.c++:400
+msgid "SignalRate"
+msgstr "SignaalSnelh"
+
+#: util/faxinfo.c++:401
+msgid "DataFormat"
+msgstr "GegevFormaat"
+
+#: util/faxinfo.c++:402
+msgid "ErrCorrect"
+msgstr "FoutCorr"
+
+#: util/faxinfo.c++:402
+msgid "No"
+msgstr "Nee"
+
+#: util/faxinfo.c++:402
+msgid "Yes"
+msgstr "Ja"
+
+#: util/faxinfo.c++:405
+#, c-format
+msgid "CallID%u"
+msgstr "CallID%u"
+
+#: util/faxwatch.c++:55
+#, c-format
+msgid "write error: %s"
+msgstr "schrijffout: %s"
+
+#: util/faxwatch.c++:101
+msgid "time values reported in GMT"
+msgstr "tijdwaarden gemeld in GMT"
+
+#: util/faxwatch.c++:114
+#, c-format
+msgid "usage: %s [-h host] [-g] [-l] [-v] trigger-specification"
+msgstr "Gebruik: %s [-h host] [-g] [-l] [-v] trigger-specificatie"
+
+#: util/InetTransport.c++:73 util/SNPPClient.c++:461
+#, c-format
+msgid "%s: No protocol definition, using default."
+msgstr "%s: Geen protocoldefinitie, standaard gebruikt."
+
+#: util/InetTransport.c++:81 util/SNPPClient.c++:454
+msgid ": Unknown host"
+msgstr ": Onbekende host "
+
+#: util/InetTransport.c++:87 util/SNPPClient.c++:467 util/UnixTransport.c++:52
+msgid "Can not create socket to connect to server."
+msgstr "Kan geen socket aanmaken om met de server te verbinden."
+
+#: util/InetTransport.c++:98 util/SNPPClient.c++:478
+#, c-format
+msgid "No \"%s\" service definition, using default %u/%s."
+msgstr "Geen “%s” dienstdefinitie, standaard %u/%s gebruikt."
+
+#: util/InetTransport.c++:110 util/SNPPClient.c++:490
+#, c-format
+msgid "Trying %s (%s) at port %u..."
+msgstr "%s (%s) op poort %u aan het proberen…"
+
+#: util/InetTransport.c++:116 util/SNPPClient.c++:496
+#, c-format
+msgid "Connected to %s."
+msgstr "Verbonden met %s."
+
+#: util/InetTransport.c++:120 util/SNPPClient.c++:500
+#, c-format
+msgid "setsockopt(TOS): %s (ignored)"
+msgstr "setsockopt(TOS): %s (genegeerd)"
+
+#: util/InetTransport.c++:126 util/SNPPClient.c++:506
+#, c-format
+msgid "setsockopt(OOBLINE): %s (ignored)"
+msgstr "setsockopt(OOBLINE): %s (genegeerd)"
+
+#: util/InetTransport.c++:139 util/SNPPClient.c++:513
+#, c-format
+msgid "Can not reach server at host \"%s\", port %u."
+msgstr "Kan server niet bereiken op host “%s”, poort %u."
+
+#: util/InetTransport.c++:236 util/SNPPClient.c++:522
+msgid "Sorry, no TCP/IP communication support was configured."
+msgstr "Het spijt me, TCP/IP-communicatieondersteuning niet geconfigureerd."
+
+#: util/Obj.c++:38
+#, c-format
+msgid "%s: Sub class must define method \"%s\".\n"
+msgstr "%s: Subklasse moet methode “%s” definiëren.\n"
+
+#: util/PageSize.c++:65
+#, c-format
+msgid "Unexpected end of line after \"%s\".\n"
+msgstr "Onverwacht regeleinde na “%s”.\n"
+
+#: util/PageSize.c++:98
+msgid "page size name"
+msgstr "naam voor paginagrootte"
+
+#: util/PageSize.c++:103
+msgid "page size abbreviation"
+msgstr "afkorting voor paginagrootte"
+
+#: util/PageSize.c++:106
+msgid "page width"
+msgstr "paginabreedte"
+
+#: util/PageSize.c++:109
+msgid "page height"
+msgstr "paginahoogte"
+
+#: util/PageSize.c++:112
+msgid "guaranteed page width"
+msgstr "gegarandeerde paginabreedte"
+
+#: util/PageSize.c++:115
+msgid "guaranteed page height"
+msgstr "gegarandeerde paginahoogte"
+
+#: util/PageSize.c++:118
+msgid "top margin"
+msgstr "bovenmarge"
+
+#: util/PageSize.c++:128
+#, c-format
+msgid "Warning, no page size database file \"%s\", using builtin default.\n"
+msgstr "Waarschuwing, geen databasebestand voor paginagrootte “%s”, ingebouwde standaard gebruikt.\n"
+
+#: util/SendFaxClient.c++:101
+msgid "Unable to setup file typing and conversion rules"
+msgstr "Niet in staat bestandstype- en conversieregels in te stellen"
+
+#: util/SendFaxClient.c++:127
+msgid "Unknown page size "
+msgstr "Onbekende paginagrootte"
+
+#: util/SendFaxClient.c++:236
+#, c-format
+msgid "Error creating cover sheet; could not fork subprocess: %s"
+msgstr "Fout bij aanmaken van dekblad; kan geen subproces forken: %s"
+
+#: util/SendFaxClient.c++:262
+#, c-format
+msgid "Error creating cover sheet; command was \"%s\"; exit status %x"
+msgstr "Fout bij aanmaken van dekblad; commando was “%s”; beëindigingsstatus %x"
+
+#: util/SendFaxClient.c++:271
+#, c-format
+msgid "Error creating cover sheet; unable to create pipe to subprocess: %s"
+msgstr "Fout bij aanmaken van dekblad; niet in staat invoer door te sluizen naar subproces: %s"
+
+#: util/SendFaxClient.c++:276
+#, c-format
+msgid "%s: Can not create temporary file for cover page"
+msgstr "%s: Kan geen tijdelijk bestand aanmaken voor dekblad"
+
+#: util/SendFaxClient.c++:419
+msgid "Documents not prepared"
+msgstr "Documenten niet voorbereid"
+
+#: util/SendFaxClient.c++:423 util/SNPPClient.c++:855
+msgid "Not logged in to server"
+msgstr "Niet ingelogd bij server"
+
+#: util/SendFaxClient.c++:459
+#, c-format
+msgid ": Can not open: %s"
+msgstr ": Kan niet openen: %s"
+
+#: util/SendFaxClient.c++:480 util/SendFaxJob.c++:545
+msgid "Document transfer failed: "
+msgstr "Documenttransfer mislukt: "
+
+#: util/SendFaxClient.c++:494
+#, c-format
+msgid "request id is %s (group id %s) for host %s (%u file)\n"
+msgid_plural "request id is %s (group id %s) for host %s (%u files)\n"
+msgstr[0] "vraag-id is %s (groeps-id %s) voor host %s (%u bestand)\n"
+msgstr[1] "vraag-id is %s (groeps-id %s) voor host %s (%u bestanden)\n"
+
+#: util/SendFaxClient.c++:606 util/SNPPClient.c++:208
+msgid "Malformed (null) sender name or mail address"
+msgstr "Ongeldige (null) zendernaam of e-mailadres"
+
+#: util/SendFaxClient.c++:679
+#, c-format
+msgid "Error converting document; command was \"%s\""
+msgstr "Fout bij converteren van document; commando was “%s”"
+
+#: util/SendFaxClient.c++:707
+#, c-format
+msgid "%s: Can not open file"
+msgstr "%s: Kan bestand niet openen"
+
+#: util/SendFaxClient.c++:711
+#, c-format
+msgid "%s: Can not stat file"
+msgstr "%s: Kan de status van bestand niet opvragen"
+
+#: util/SendFaxClient.c++:716
+#, c-format
+msgid "%s: Not a regular file"
+msgstr "%s: Geen regulier bestand"
+
+#: util/SendFaxClient.c++:724
+#, c-format
+msgid "%s: Empty file"
+msgstr "%s: Leeg bestand"
+
+#: util/SendFaxClient.c++:729
+#, c-format
+msgid "%s: Can not determine file type"
+msgstr "%s: Kan bestandstype niet vaststellen"
+
+#: util/SendFaxJob.c++:533
+#, c-format
+msgid "%s: Can not open: %s"
+msgstr "%s: Kan niet openen: %s"
+
+#: util/Sequence.c++:63
+#, c-format
+msgid "Unable to open sequence number file %s; %s."
+msgstr "Niet in staat sequentienummerbestand %s te openen; %s."
+
+#: util/Sequence.c++:77
+#, c-format
+msgid "%s: Invalid sequence number \"%s\", resetting to 1"
+msgstr "%s: Ongeldig sequentienummer “%s”, teruggezet op 1"
+
+#: util/Sequence.c++:87
+#, c-format
+msgid "Unable update sequence number file %s; write failed."
+msgstr "Niet in staat sequentienummerbestand %s te openen, schrijven mislukt."
+
+#: util/SNPPClient.c++:254
+#, c-format
+msgid "Can not locate your password entry (uid %lu): %s."
+msgstr "Kan uw wachtwoordingang niet terugvinden (uid %lu): %s."
+
+#: util/SNPPClient.c++:887
+#, c-format
+msgid "destination pin %s: request id is %s for host %s\n"
+msgstr "doel-pin %s: vraag-id is %s voor host %s\n"
+
+#: util/SNPPClient.c++:931
+#, c-format
+msgid "SEND message data, %lu bytes"
+msgstr "ZEND berichtgegevens, %lu bytes"
+
+#: util/SNPPClient.c++:961
+#, c-format
+msgid "Unable to open message file \"%s\"."
+msgstr "Niet in staat berichtbestand “%s” te openen."
+
+#: util/SNPPClient.c++:980 util/SNPPClient.c++:990
+#, c-format
+msgid "no SITE %s support; ignoring set request."
+msgstr "geen ondersteuning voor SITE %s; zetverzoek genegeerd."
+
+#: util/textfmt.c++:45
+#, c-format
+msgid "Usage: %s [-1] [-2] [-B] [-c] [-D] [-f fontname] [-F fontdir(s)] [-m N] [-o #] [-p #] [-r] [-U] [-Ml=#,r=#,t=#,b=#] [-V #] files... >out.ps\n"
+msgstr ""
+"Gebruik: %s [-1] [-2] [-B] [-c] [-D] [-f lettertypenaam]\n"
+"            [-F lettertypemap(pen)] [-m N] [-o #] [-p #]\n"
+"            [-r] [-U] [-Ml=#,r=#,t=#,b=#] [-V #]\n"
+"            bestanden... >uit.ps\n"
+
+#: util/textfmt.c++:61
+#, c-format
+msgid "Default options: -f Courier -1 -p 11bp -o 0\n"
+msgstr "Standaardopties: -f Courier -1 -p 11bp -o 0\n"
+
+#: util/textfmt.c++:109
+#, c-format
+msgid "%s: No font metric information found for \"%s\".\n"
+msgstr "%s: Geen metrische informatie voor lettertype gevonden voor “%s”.\n"
+
+#: util/textfmt.c++:125
+#, c-format
+msgid "Bad margin syntax.\n"
+msgstr "Foute margesyntaxis.\n"
+
+#: util/textfmt.c++:143
+#, c-format
+msgid "Unknown page size %s.\n"
+msgstr "Onbekende paginagrootte %s.\n"
+
+#: util/textfmt.c++:154
+#, c-format
+msgid "Unrecognized option \"%c\".\n"
+msgstr "Onbekende optie “%c”.\n"
+
+#: util/TextFormat.c++:132 util/TextFormat.c++:265
+#, c-format
+msgid "Font %s: %s"
+msgstr "Lettertype %s: %s"
+
+#: util/TextFormat.c++:251
+#, c-format
+msgid "Cannot open temporary file: %s"
+msgstr "Kan tijdelijk bestand niet openen: %s"
+
+#: util/TextFormat.c++:259
+msgid "point size is unusually large (>18pt)"
+msgstr "puntgrootte is uitzonderlijk groot (>18pt)"
+
+#: util/TextFormat.c++:277
+#, c-format
+msgid "Margin values too large for page; lm %lu rm %lu page width %lu"
+msgstr "Margewaarden te groot voor pagina; lm %lu rm %lu paginabreedte %lu"
+
+#: util/TextFormat.c++:280
+#, c-format
+msgid "Margin values too large for page; tm %lu bm %lu page height %lu"
+msgstr "Margewaarden te groot voor pagina; bm %lu om %lu paginahoogte %lu"
+
+#: util/TextFormat.c++:321
+#, c-format
+msgid "Close failure on temporary file: %s"
+msgstr "Probleem bij sluiten tijdelijk bestand: %s"
+
+#: util/TextFormat.c++:337
+#, c-format
+msgid "Read error during reverse collation: %s"
+msgstr "Leesfout tijdens omgekeerd sorteren: %s"
+
+#: util/TextFormat.c++:339 util/TextFormat.c++:1004
+#, c-format
+msgid "Output write error: %s"
+msgstr "Schrijffout bij uitvoer: %s"
+
+#: util/TextFormat.c++:719
+#, c-format
+msgid "%s: Cannot open file: %s"
+msgstr "%s: Kan bestand niet openen: %s"
+
+#: util/TextFormat.c++:1176 util/TextFormat.c++:1194
+#, c-format
+msgid "Warning: %s - line too long."
+msgstr "Waarschuwing: %s – regel te lang."
+
+#: util/TextFormat.c++:1234
+#, c-format
+msgid "Warning: %s invalid Fontmap entry - no filename present"
+msgstr "Waarchuwing: %s ongeldig Fontmap-item – geen bestandsnaam opgegeven"
+
+#: util/TextFormat.c++:1374
+#, c-format
+msgid "%s: Can not open font metrics file; using fixed widths"
+msgstr "%s: Kan lettertypemetriekbestand niet openen; vaste breedte gebruikt"
+
+#: util/TextFormat.c++:1391
+#, c-format
+msgid "%s: No glyph metric table located; using fixed widths"
+msgstr "%s: Geen metrische tabel voor schrift gevonden; vaste breedte gebruikt"
+
+#: util/TextFormat.c++:1410
+#, c-format
+msgid "%s, line %u: format error"
+msgstr "%s, regel %u: formaatfout"
+
+#: util/tiffcheck.c++:36
+#, c-format
+msgid "usage: %s [-r vertical-res] [-l page-length] [-w page-width] [-1] [-2] [-3] input.tif"
+msgstr ""
+"Gebruik: %s [-r verticale-resolutie] [-l pagina-lengte]\n"
+"                [-w pagina-breedte] [-1] [-2] [-3] invoer.tif"
+
+#: util/tiffcheck.c++:115
+msgid "Document file is unreadable or does not exist"
+msgstr "Documentbestand is onleesbaar of bestaat niet"
+
+#: util/tiffcheck.c++:117
+msgid "Document is not valid TIFF (unspecified format error)"
+msgstr "Document is geen geldige TIFF (ongespecificeerde formaatfout)"
+
+#: util/tiffcheck.c++:152
+#, c-format
+msgid "Document is not a bilevel image (bits/sample %u).\n"
+msgstr "Document is geen tweeniveau-afbeelding (bits/sample %u).\n"
+
+#: util/tiffcheck.c++:159
+#, c-format
+msgid "Document is a multi-sample image (samples/pixel %u).\n"
+msgstr "Document is een meersampleafbeelding (samples/pixel %u).\n"
+
+#: util/tiffcheck.c++:166
+msgid "Document requires reformatting, not in Group 4 format.\n"
+msgstr "Document vereist herformattering, niet in Group 4-formaat.\n"
+
+#: util/tiffcheck.c++:171
+msgid "Document requires reformatting, not in Group 3 format.\n"
+msgstr "Document vereist herformattering, niet in Group 3-formaat.\n"
+
+#: util/tiffcheck.c++:177
+msgid "Document requires reformatting, not in 2DMR format.\n"
+msgstr "Document vereist herformattering, niet in 2DMR-formaat.\n"
+
+#: util/tiffcheck.c++:186
+msgid "Document should be reformatted as a single strip.\n"
+msgstr "Document moet geherformatteerd worden als een enkele band.\n"
+
+#: util/tiffcheck.c++:196
+msgid "Document should be reformatted with LSB-to-MSB bit order.\n"
+msgstr "Document moet geherformatteerd worden met bitvolgorde LSB-naar-MSB.\n"
+
+#: util/tiffcheck.c++:235
+#, c-format
+msgid "Document requires reformatting to adjust vertical resolution (convert to %lu, document is %lu).\n"
+msgstr "Document moet geherformatteerd worden om de verticale resolutie aan te passen (converteer naar %lu, document is %lu).\n"
+
+#: util/tiffcheck.c++:247
+msgid "Document is not valid TIFF (missing ImageWidth tag).\n"
+msgstr "Document is geen geldige TIFF (ontbrekende ImageWidth-tag).\n"
+
+#: util/tiffcheck.c++:251
+#, c-format
+msgid "Document requires resizing to adjust page width (convert to %lu, document is %lu).\n"
+msgstr "Document vereist grootteaanpassing om de paginabreedte te corrigeren (converteer naar %lu, document is %lu).\n"
+
+#: util/tiffcheck.c++:267
+msgid "Document is not valid TIFF (missing ImageLength tag).\n"
+msgstr "Document is geen geldige TIFF (ontbrekende ImageLength-tag).\n"
+
+#: util/tiffcheck.c++:276
+#, c-format
+msgid "Document requires resizing to adjust page length (convert to %lu, document is %lu).\n"
+msgstr "Document vereist grootteaanpassing om de paginalengte te corrigeren (converteer naar %lu, document is %lu).\n"
+
+#: util/TypeRules.c++:91
+#, c-format
+msgid "rule: %soffset %#lx %s %s"
+msgstr "regel: %splaats %#lx %s %s"
+
+#: util/TypeRules.c++:101
+#, c-format
+msgid " <any value>"
+msgstr " <willekeurige waarde>"
+
+#: util/TypeRules.c++:109
+#, c-format
+msgid "failed (offset past data)\n"
+msgstr "mislukt (plaats voorbij gegevens)\n"
+
+#: util/TypeRules.c++:122 util/TypeRules.c++:134
+#, c-format
+msgid "failed (unprintable char %#x)\n"
+msgstr "mislukt (niet-afdrukbaar karakter %#x)\n"
+
+#: util/TypeRules.c++:162 util/TypeRules.c++:171
+#, c-format
+msgid "failed (insufficient data)\n"
+msgstr "mislukt (onvoldoende gegevens)\n"
+
+#: util/TypeRules.c++:192
+#, c-format
+msgid "success (result %s, rule \"%s\")\n"
+msgstr "gelaagd (resultaat %s, regel “%s”)\n"
+
+#: util/TypeRules.c++:195
+#, c-format
+msgid "failed (comparison)\n"
+msgstr "mislukt (vergelijking)\n"
+
+#: util/TypeRules.c++:321
+#, c-format
+msgid "%s: Can not open type rules file.\n"
+msgstr "%s: Kan typeregelsbestand niet openen.\n"
+
+#: util/TypeRules.c++:342
+msgid "Missing file offset"
+msgstr "Ontbrekende bestandsplaats"
+
+#: util/TypeRules.c++:367
+#, c-format
+msgid "Unknown datatype \"%.*s\""
+msgstr "Onbekend gegevenstype “%.*s”"
+
+#: util/TypeRules.c++:408
+msgid "Missing match value"
+msgstr "Ontbrekende overeenkomstwaarde"
+
+#: util/TypeRules.c++:436
+#, c-format
+msgid "Unknown result \"%.*s\""
+msgstr "Onbekend resultaat “%.*s”"
+
+#: util/TypeRules.c++:486
+#, c-format
+msgid "match against (..., %u)\n"
+msgstr "vergelijken tegen (…, %u)\n"
+
+#: util/TypeRules.c++:493
+#, c-format
+msgid "no match\n"
+msgstr "geen overeenkomst\n"
+
+#: util/typetest.c++:52
+#, c-format
+msgid "%s: Can not open file\n"
+msgstr "%s: Kan bestand niet openen\n"
+
+#: util/typetest.c++:56
+#, c-format
+msgid "%s: Can not stat file\n"
+msgstr "%s: Kan status van bestand niet opvragen\n"
+
+#: util/typetest.c++:61
+#, c-format
+msgid "%s: Not a regular file\n"
+msgstr "%s: Geen regulier bestand\n"
+
+#: util/typetest.c++:69
+#, c-format
+msgid "%s: Empty file\n"
+msgstr "%s: Leeg bestand\n"
+
+#: util/typetest.c++:74
+#, c-format
+msgid "%s: Can not determine file type\n"
+msgstr "%s: Kan bestandstype niet vaststellen\n"
+
+#: util/typetest.c++:90
+#, c-format
+msgid "usage: %s [-f rulesfile] files\n"
+msgstr "Gebruik: %s [-f regelbestand] bestanden\n"
+
+#: util/typetest.c++:117
+#, c-format
+msgid "Unable to setup file typing and conversion rules\n"
+msgstr "Niet in staat bestandstype- en conversieregels in te stellen\n"
+
+#: util/UnixTransport.c++:60
+#, c-format
+msgid "connect to server at %s"
+msgstr "verbinden met server op %s"
+
+#: util/UnixTransport.c++:66
+#, c-format
+msgid "Can not reach server at Unix domain socket \"%s\"."
+msgstr "Kan server op Unix-domeinsocket “%s” niet bereiken."
+
+#: util/UnixTransport.c++:138
+msgid "Sorry, no Unix domain communication support was configured."
+msgstr "Het spijt me, geen Unix-domeincommunicatieondersteuning geconfigureerd."
+
+#: faxd/choptest.c++:42
+#, c-format
+msgid "usage: %s [-a] [-t threshold] input.tif\n"
+msgstr "Gebruik: %s [-a] [-t drempelwaarde] invoer.tif\n"
+
+#: faxd/choptest.c++:85 faxd/tagtest.c++:435
+#, c-format
+msgid "%s: Cannot open, or not a TIFF file"
+msgstr "%s: Kan niet openen, of geen TIFF-bestand"
+
+#: faxd/choptest.c++:89 faxd/tagtest.c++:439
+#, c-format
+msgid "%s: Not a Group 3 or Group 4-encoded TIFF file"
+msgstr "%s: Geen Group 3- of Group 4-gecodeerd TIFF-bestand"
+
+#: faxd/choptest.c++:98
+#, c-format
+msgid "Chop all pages with >=%.2g\" of white space at the bottom.\n"
+msgstr "Alle pagina’s met >=%.2g\" witruimte onderaan afkappen.\n"
+
+#: faxd/choptest.c++:99
+#, c-format
+msgid "Chop last page if >=%.2g\" of white space at the bottom.\n"
+msgstr "Laatste pagina afkappen als >=%.2g\" witruimte onderaan.\n"
+
+#: faxd/choptest.c++:132
+#, c-format
+msgid "Chop %u rows, strip was %lu bytes, need only %lu\n"
+msgstr "%u rijen afkappen, band was %lu bytes, slechts %lu nodig\n"
+
+#: faxd/choptest.c++:138
+#, c-format
+msgid "Don't chop, found %u rows, need %u rows\n"
+msgstr "Niet afkappen, %u rijen gevonden, %u rijen nodig\n"
+
+#: faxd/cqtest.c++:167
+msgid "Missing EOL after 5 seconds"
+msgstr "Ontbrekend einderegelteken na 5 seconden"
+
+#: faxd/cqtest.c++:258 faxd/cqtest.c++:349
+#, c-format
+msgid "Adjusting for RTC found at row %u"
+msgstr "Aanpassen voor RTC gevonden in rij %u"
+
+#: faxd/cqtest.c++:272
+#, c-format
+msgid "adjusting for trailing noise (%lu run)"
+msgstr "aanpassen voor overblijvende ruis (doorloop %lu)"
+
+#: faxd/cqtest.c++:278
+#, c-format
+msgid "%lu total lines, %lu bad lines, %lu consecutive bad lines"
+msgstr "%lu totaal aantal lijnen, %lu slechte lijnen, %lu opeenvolgende slechte lijnen"
+
+#: faxd/cqtest.c++:361 faxd/cqtest.c++:372
+#, c-format
+msgid "RECV: %s: write error"
+msgstr "ONTV: %s: schrijffout"
+
+#: faxd/cqtest.c++:396
+#, c-format
+msgid "RECV: REJECT page quality, %u%% good lines (%u%% required)"
+msgstr "ONTV: VERWERP paginakwaliteit, %u%% goede lijnen (%u%% nodig)"
+
+#: faxd/cqtest.c++:406
+#, c-format
+msgid "RECV: REJECT page quality, %u-line run (max %u)"
+msgstr "ONTV: VERWERP paginakwaliteit, %u-lijndoorloop (max %u)"
+
+#: faxd/cqtest.c++:434
+msgid "RECV: "
+msgstr "ONTV: "
+
+#: faxd/cqtest.c++:458
+#, c-format
+msgid "Invalid %s code word, row %u, x %d"
+msgstr "Ongeldig %s-codewoord, rij %u, x %d"
+
+#: faxd/cqtest.c++:469
+#, c-format
+msgid "Bad %s pixel count, row %u, got %d, expected %d"
+msgstr "Verkeerd pixelaantal in %s, rij %u, kreeg %d, verwachtte %d"
+
+#: faxd/cqtest.c++:476
+#, c-format
+msgid "Panic, bad %s decoding state, row %u, x %d"
+msgstr "Paniek, verkeerde decodeerstatus in %s, rij %u, x %d"
+
+#: faxd/cqtest.c++:488
+msgid "RECV/CQ: "
+msgstr "ONTV/CQ: "
+
+#: faxd/cqtest.c++:498
+#, c-format
+msgid "usage: %s [-m maxbad] [-p %%good] [-o output.tif] input.tif\n"
+msgstr "Gebruik: %s [-m maximum-slecht] [-p %%goed] [-o uitvoer.tif] invoer.tif\n"
+
+#: faxd/cqtest.c++:531
+#, c-format
+msgid "%s: Cannot open, or not a TIFF file\n"
+msgstr "%s: Kan niet openen, of geen TIFF-bestand\n"
+
+#: faxd/cqtest.c++:536
+#, c-format
+msgid "%s: Cannot create TIFF file\n"
+msgstr "%s: Kan TIFF-bestand niet aanmaken\n"
+
+#: faxd/cqtest.c++:579
+#, c-format
+msgid "Read error on strip %u\n"
+msgstr "Leesfout op band %u\n"
+
+#: faxd/faxQCleanApp.c++:125
+#, c-format
+msgid "Scan %s directory for jobs to remove+archive.\n"
+msgstr "Doorzoek map %s naar jobs om te verwijderen en archiveren.\n"
+
+#: faxd/faxQCleanApp.c++:130
+#, c-format
+msgid "%s: Could not scan directory for jobs.\n"
+msgstr "%s: Kan map niet doorzoeken naar jobs.\n"
+
+#: faxd/faxQCleanApp.c++:143
+#, c-format
+msgid "%s: ignored (cannot stat or not a regular file)\n"
+msgstr "%s: genegeerd (kan status bestand niet opvragen of geen regulier bestand)\n"
+
+#: faxd/faxQCleanApp.c++:160
+#, c-format
+msgid "%s: job too new, ignored (for now).\n"
+msgstr "%s: job te nieuw, genegeerd (voorlopig).\n"
+
+#: faxd/faxQCleanApp.c++:170
+#, c-format
+msgid "JOB %s: archive (%s)%s.\n"
+msgstr "JOB %s: archiveren (%s)%s.\n"
+
+#: faxd/faxQCleanApp.c++:173 faxd/faxQCleanApp.c++:182
+#: faxd/faxQCleanApp.c++:415
+msgid " (not done)"
+msgstr " (niet klaar)"
+
+#: faxd/faxQCleanApp.c++:179
+#, c-format
+msgid "JOB %s: remove (%s) %s.\n"
+msgstr "JOB %s: verwijderen (%s) %s.\n"
+
+#: faxd/faxQCleanApp.c++:196
+#, c-format
+msgid "%s: malformed queue file: remove\n"
+msgstr "%s: ongeldig rijbestand: verwijderen\n"
+
+#: faxd/faxQCleanApp.c++:212 faxd/faxQCleanApp.c++:424
+#, c-format
+msgid "Done scanning %s directory\n"
+msgstr "Klaar met doorzoeken van map %s\n"
+
+#: faxd/faxQCleanApp.c++:234
+#, c-format
+msgid "JOB %s: reference %s\n"
+msgstr "JOB %s: verwijzing %s\n"
+
+#: faxd/faxQCleanApp.c++:266
+#, c-format
+msgid "Scan %s directory and remove unreferenced documents.\n"
+msgstr "Map %s doorzoeken en documenten waarnaar niet verwezen wordt verwijderen.\n"
+
+#: faxd/faxQCleanApp.c++:271
+#, c-format
+msgid "%s: Could not scan directory for unreferenced documents.\n"
+msgstr "%s: Kon map niet doorzoeken om documenten waarnaar niet verwezen wordt te verwijderen.\n"
+
+#: faxd/faxQCleanApp.c++:293
+#, c-format
+msgid "%s: ignored, cannot stat or not a regular file\n"
+msgstr "%s: genegeerd, kan status bestand niet opvragen of geen regulier bestand\n"
+
+#: faxd/faxQCleanApp.c++:308
+#, c-format
+msgid "%s: ignored, file has %u links\n"
+msgstr "%s: genegeerd, bestand heeft %u koppelingen\n"
+
+#: faxd/faxQCleanApp.c++:314
+#, c-format
+msgid "%s: ignored, file has %u references\n"
+msgstr "%s: genegeerd, bestand heeft %u verwijzingen\n"
+
+#: faxd/faxQCleanApp.c++:320
+#, c-format
+msgid "%s: ignored, file is too new to remove\n"
+msgstr "%s: genegeerd, bestand te nieuw om te verwijderen\n"
+
+#: faxd/faxQCleanApp.c++:343 faxd/faxQCleanApp.c++:365
+#, c-format
+msgid "%s: file looks to be referenced by job\n"
+msgstr "%s: naar bestand lijkt te zijn verwezen vanuit job\n"
+
+#: faxd/faxQCleanApp.c++:347
+#, c-format
+msgid "%s: file has no matching %s\n"
+msgstr "%s: bestand heeft geen passende %s\n"
+
+#: faxd/faxQCleanApp.c++:384
+#, c-format
+msgid "%s: Could not scan directory for base file.\n"
+msgstr "%s: Kan map niet doorzoeken naar bronbestand.\n"
+
+#: faxd/faxQCleanApp.c++:393
+#, c-format
+msgid "%s: found match to base '%s', skipping.\n"
+msgstr "%s: overeenkomst met basis ‘%s’ gevonden, overgeslagen.\n"
+
+#: faxd/faxQCleanApp.c++:405
+#, c-format
+msgid "%s: did not find base '%s' match.\n"
+msgstr "%s: geen overeenkomst met basis ‘%s’ gevonden.\n"
+
+#: faxd/faxQCleanApp.c++:413
+#, c-format
+msgid "DOC %s: unreferenced document removed%s.\n"
+msgstr "DOC %s: bestand waarnaar niet verwezen werd verwijderd%s.\n"
+
+#: faxd/faxQCleanApp.c++:419
+#, c-format
+msgid "%s: error removing unreferenced document: %s.\n"
+msgstr "%s: fout bij verwijderen bestand waarnaar niet verwezen wordt: %s.\n"
+
+#: faxd/faxQCleanApp.c++:432
+#, c-format
+msgid "usage: %s [-a] [-j time] [-d time] [-q queue-directory]\n"
+msgstr "Gebruik: %s [-a] [-j tijd] [-d tijd] [-q rij-map]\n"
+
+#: faxd/faxQCleanApp.c++:464
+#, c-format
+msgid "%s: Can not change directory: %s.\n"
+msgstr "%s: Kan niet van map wisselen: %s.\n"
+
+#: faxd/tagtest.c++:384
+#, c-format
+msgid "usage: %s [-m format] [-o t.tif] [-f font.pcf] input.tif\n"
+msgstr "Gebruik: %s [-m formaat] [-o t.tif] [-f lettertype.pcf] invoer.tif\n"
+
+#: faxd/tagtest.c++:442
+#, c-format
+msgid "%s: Problem reading font"
+msgstr "%s: Probleem bij lezen lettertype"
+
+#: faxd/tagtest.c++:446
+#, c-format
+msgid "%s: Cannot create output file"
+msgstr "%s: Kan uitvoerbestand niet aanmaken"
+
+#: faxd/tagtest.c++:550
+#, c-format
+msgid "%s: Write error at strip %u, writing %lu bytes"
+msgstr "%s: Schriffout op band %u bij schrijven van %lu bytes"
+
+#: faxd/tsitest.c++:94
+#, c-format
+msgid "Bad TSI pattern: %s: "
+msgstr "Verkeerd TSI-patroon: %s "
+
+#: faxd/tsitest.c++:129
+#, c-format
+msgid "usage: %s [-q] tsifile"
+msgstr "Gebruik: %s [-q] tsibestand"
+
+#: faxd/tsitest.c++:173
+#, c-format
+msgid "[check %s]\n"
+msgstr "[controleer %s]\n"
+
+#: faxd/tsitest.c++:177
+#, c-format
+msgid "accept (matched by %s)\n"
+msgstr "aanvaard (overeenkomst met %s)\n"
+
+#: faxd/tsitest.c++:178
+#, c-format
+msgid "reject (matched by %s)\n"
+msgstr "verworpen (overeenkomst met %s)\n"
+
+#: faxd/tsitest.c++:184
+#, c-format
+msgid "reject (no pattern match)\n"
+msgstr "verworpen (geen patroon past)\n"
+
+#: faxd/tsitest.c++:186
+#, c-format
+msgid "reject (no patterns)\n"
+msgstr "verworpen (geen patronen)\n"
