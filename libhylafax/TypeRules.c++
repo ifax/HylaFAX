@@ -41,6 +41,8 @@ extern "C" {
 }
 #endif
 
+#include "NLS.h"
+
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -88,7 +90,7 @@ bool
 TypeRule::match(const void* data, size_t size, bool verbose) const
 {
     if (verbose) {
-	printf(_("rule: %soffset %#lx %s %s"),
+	printf(NLS::TEXT("rule: %soffset %#lx %s %s"),
 	    cont ? ">" : "",
 	    (u_long) off,
 	    typeNames[type],
@@ -98,7 +100,7 @@ TypeRule::match(const void* data, size_t size, bool verbose) const
 	    printf(" \"%s\"", value.s);
 	else if (type != ASCII && type != ASCIIESC) {
 	    if (op == ANY)
-		printf(_(" <any value>"));
+		printf(NLS::TEXT(" <any value>"));
 	    else
 		printf(" %#llx", (long long) value.v);
 	}
@@ -106,7 +108,7 @@ TypeRule::match(const void* data, size_t size, bool verbose) const
     }
     if (off > (off_t)size) {
 	if (verbose)
-	    printf(_("failed (offset past data)\n"));
+	    printf(NLS::TEXT("failed (offset past data)\n"));
 	return (false);
     }
     bool ok = false;
@@ -119,7 +121,7 @@ TypeRule::match(const void* data, size_t size, bool verbose) const
 	for (i = 0; i < size; i++)
 	    if (!isprint(cp[i]) && !isspace(cp[i])) {
 		if (verbose)
-		    printf(_("failed (unprintable char %#x)\n"), cp[i]);
+		    printf(NLS::TEXT("failed (unprintable char %#x)\n"), cp[i]);
 		return (false);
 	    }
 	ok = true;
@@ -131,7 +133,7 @@ TypeRule::match(const void* data, size_t size, bool verbose) const
 	for (i = 0; i < size; i++)
 	    if (!isprint(cp[i]) && !isspace(cp[i]) && cp[i] != '\033') {
 		if (verbose)
-		    printf(_("failed (unprintable char %#x)\n"), cp[i]);
+		    printf(NLS::TEXT("failed (unprintable char %#x)\n"), cp[i]);
 		return (FALSE);
 	    }
 	ok = TRUE;
@@ -159,7 +161,7 @@ TypeRule::match(const void* data, size_t size, bool verbose) const
 	    break;
 	}
 	if (verbose)
-	    printf(_("failed (insufficient data)\n"));
+	    printf(NLS::TEXT("failed (insufficient data)\n"));
 	return (false);
     case LONG:
 	if (off + 4 < (off_t)size) {
@@ -168,7 +170,7 @@ TypeRule::match(const void* data, size_t size, bool verbose) const
 	    break;
 	}
 	if (verbose)
-	    printf(_("failed (insufficient data)\n"));
+	    printf(NLS::TEXT("failed (insufficient data)\n"));
 	return (false);
     }
     /*
@@ -189,10 +191,10 @@ TypeRule::match(const void* data, size_t size, bool verbose) const
 done:
     if (verbose) {
 	if (ok)
-	    printf(_("success (result %s, rule \"%s\")\n"),
+	    printf(NLS::TEXT("success (result %s, rule \"%s\")\n"),
 		resultNames[result], (const char*) cmd);
 	else
-	    printf(_("failed (comparison)\n"));
+	    printf(NLS::TEXT("failed (comparison)\n"));
     }
     return (ok);
 }
@@ -306,7 +308,7 @@ parseError(const char* file, u_int lineno, const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    fprintf(stderr, _("%s: line %u: "), file, lineno);
+    fprintf(stderr, NLS::TEXT("%s: line %u: "), file, lineno);
     vfprintf(stderr, fmt, ap);
     va_end(ap);
 }
@@ -318,7 +320,7 @@ TypeRules::read(const fxStr& file)
 
     fp = fopen(file, "r");
     if (fp == NULL) {
-	fprintf(stderr, _("%s: Can not open type rules file.\n"),
+	fprintf(stderr, NLS::TEXT("%s: Can not open type rules file.\n"),
 	    (const char*) file);
 	return NULL;
     }
@@ -339,7 +341,7 @@ TypeRules::read(const fxStr& file)
 	const char *op = cp;
 	rule.off = strtoul(op, &cp, 0);	// file offset
 	if (cp == op) {
-	    parseError(file, lineno, _("Missing file offset"));
+	    parseError(file, lineno, NLS::TEXT("Missing file offset"));
 	    continue;
 	}
 	while (isspace(*cp))
@@ -364,7 +366,7 @@ TypeRules::read(const fxStr& file)
 	else if (strncasecmp(tp, "addr", cp-tp) == 0)
 	    rule.type = TypeRule::ADDR;
 	else {
-	    parseError(file, lineno, _("Unknown datatype \"%.*s\""), cp-tp, tp);
+	    parseError(file, lineno, NLS::TEXT("Unknown datatype \"%.*s\""), cp-tp, tp);
 	    continue;			// bad type
 	}
 	while (isspace(*cp))
@@ -405,7 +407,7 @@ TypeRules::read(const fxStr& file)
 		const char* vp = cp;
 		rule.value.v = strtol(vp, &cp, 0);
 		if (vp == cp) {
-		    parseError(file, lineno, _("Missing match value"));
+		    parseError(file, lineno, NLS::TEXT("Missing match value"));
 		    continue;
 		}
 	    }
@@ -433,7 +435,7 @@ TypeRules::read(const fxStr& file)
 	else if (strncasecmp(rp, "error", cp-rp) == 0)
 	    rule.result = TypeRule::ERROR;
 	else {
-	    parseError(file, lineno, _("Unknown result \"%.*s\""), cp-rp, rp);
+	    parseError(file, lineno, NLS::TEXT("Unknown result \"%.*s\""), cp-rp, rp);
 	    continue;
 	}
 	while (isspace(*cp))
@@ -483,13 +485,13 @@ const TypeRule*
 TypeRules::match(const void* data, u_int size) const
 {
     if (verbose)
-	printf(_("match against (..., %u)\n"), size);
+	printf(NLS::TEXT("match against (..., %u)\n"), size);
     for (u_int i = 0, n = (*rules).length(); i < n; i++) {
 	TypeRule& rule = (*rules)[i];
 	if (!rule.isContinuation() && rule.match(data, size, verbose))
 	    return (&(*rules)[i + match2(i, data, size, verbose)]);
     }
     if (verbose)
-	printf(_("no match\n"));
+	printf(NLS::TEXT("no match\n"));
     return (NULL);
 }

@@ -25,6 +25,7 @@
  */
 #include "FaxClient.h"
 #include "Sys.h"
+#include "NLS.h"
 #include "config.h"
 
 class faxRmApp : public FaxClient {
@@ -138,7 +139,7 @@ faxRmApp::usage()
 int
 main(int argc, char** argv)
 {
-    setupNLS();
+    NLS::Setup("hylafax-client");
     faxRmApp app;
     app.run(argc, argv);
     return 0;

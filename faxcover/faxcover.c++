@@ -29,6 +29,8 @@
 #include "PageSize.h"
 #include "Sys.h"
 
+#include "NLS.h"
+
 #include <stdarg.h>
 #include <ctype.h>
 #include <pwd.h>
@@ -474,7 +476,7 @@ faxCoverApp::printError(const char* va_alist ...)
 int
 main(int argc, char** argv)
 {
-    setupNLS();
+    NLS::Setup("hylafax-client");
     faxCoverApp app;
     app.initialize(argc, argv);
     app.open();

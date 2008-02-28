@@ -25,6 +25,8 @@
  */
 #include "FaxDB.h"
 #include "RE.h"
+#include "NLS.h"
+
 
 FaxDBRecord::FaxDBRecord()
 {
@@ -119,7 +121,7 @@ FaxDB::parseDatabase(FILE* fd, FaxDBRecord* parent)
     while (getToken(fd, key)) {
 	if (key == "]") {
 	    if (parent == 0)
-		fprintf(stderr, _("%s: line %d: Unmatched \"]\".\n"),
+		fprintf(stderr, NLS::TEXT("%s: line %d: Unmatched \"]\".\n"),
 		    (const char*) filename, lineno);
 	    break;
 	}
@@ -131,7 +133,7 @@ FaxDB::parseDatabase(FILE* fd, FaxDBRecord* parent)
 	if (!getToken(fd, value))
 	    break;
 	if (value != ":") {
-	    fprintf(stderr, _("%s: line %d: Missing \":\" separator.\n"),
+	    fprintf(stderr, NLS::TEXT("%s: line %d: Missing \":\" separator.\n"),
 		(const char*) filename, lineno);
 	    continue;
 	}
@@ -179,7 +181,7 @@ top:
 	    if (c == '\\') {
 		c = getc(fd);
 		if (c == EOF) {
-		    fprintf(stderr, _("%s: Premature EOF.\n"), (const char*) filename);
+		    fprintf(stderr, NLS::TEXT("%s: Premature EOF.\n"), (const char*) filename);
 		    return (false);
 		}
 		// XXX handle standard escapes

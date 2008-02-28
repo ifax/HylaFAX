@@ -28,6 +28,7 @@
 #include "SendFaxClient.h"
 #include "FaxDB.h"
 #include "Sys.h"
+#include "NLS.h"
 #include "config.h"
 #include <ctype.h>		// isspace()
 
@@ -408,7 +409,7 @@ main(int argc, char** argv)
 #ifdef LC_TIME
     setlocale(LC_TIME, "");			// for strftime calls
 #endif
-    setupNLS();
+    NLS::Setup("hylafax-client");
     signal(SIGHUP, fxSIGHANDLER(sigDone));
     signal(SIGINT, fxSIGHANDLER(sigDone));
     signal(SIGTERM, fxSIGHANDLER(sigDone));

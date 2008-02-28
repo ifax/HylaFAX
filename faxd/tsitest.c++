@@ -40,6 +40,7 @@
 #include "BoolArray.h"
 #include "Str.h"
 #include "Sys.h"
+#include "NLS.h"
 
 fxStr		qualifyTSI;
 REArray*	tsiPats = NULL;		// recv tsi patterns
@@ -143,7 +144,7 @@ main(int argc, char* argv[])
     extern int optind;
     int c;
 
-    setupNLS();
+    NLS::Setup("hylafax-server");
     appName = argv[0];
     while ((c = Sys::getopt(argc, argv, ":q")) != -1)
 	switch (c) {

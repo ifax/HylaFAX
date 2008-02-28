@@ -34,6 +34,8 @@
 #include <pwd.h>
 
 #include "Sys.h"
+#include "NLS.h"
+
 
 FaxConfig::FaxConfig()
 {
@@ -52,7 +54,7 @@ FaxConfig::readConfig(const fxStr& filename)
 {
     FILE* fd = Sys::fopen(tildeExpand(filename), "r");
     if (fd) {
-	configTrace(_("Read config file %s"), (const char*) filename);
+	configTrace(NLS::TEXT("Read config file %s"), (const char*) filename);
 	char line[1024];
 	while (fgets(line, sizeof (line)-1, fd)){
 	    line[strlen(line)-1]='\0';		// Nuke \r at end of line
@@ -90,7 +92,7 @@ FaxConfig::tildeExpand(const fxStr& filename)
 	if (!cp || *cp == '\0') {
 	    struct passwd* pwd = getpwuid(getuid());
 	    if (!pwd) {
-		configError(_("No passwd file entry for uid %u,"
+		configError(NLS::TEXT("No passwd file entry for uid %u,"
 		    " cannot expand ~ in \"%s\""),
 		    getuid(), (const char*) filename);
 		cp = "";		// NB: XXX maybe this should be fatal?
@@ -163,7 +165,7 @@ FaxConfig::readConfigItem(const char* b)
 	cp++;
     }
     if (*cp != ':') {
-	configError(_("Syntax error at line %u, missing ':' in \"%s\""),
+	configError(NLS::TEXT("Syntax error at line %u, missing ':' in \"%s\""),
 	    lineno, b);
 	return (false);
     }
@@ -178,7 +180,7 @@ FaxConfig::readConfigItem(const char* b)
 	char* dp = ++cp;
 	for (value = dp; (c = *cp) != '"'; cp++) {
 	    if (c == '\0') {			// unmatched quote mark
-		configError(_("Syntax error at line %u, missing quote mark in \"%s\""),
+		configError(NLS::TEXT("Syntax error at line %u, missing quote mark in \"%s\""),
 		    lineno, b);
 		return (false);
 	    }
@@ -211,18 +213,18 @@ FaxConfig::readConfigItem(const char* b)
 
     if (streq(tag, "include") ) {
         u_int old_lineno = lineno;
-	configTrace(_("%s = %s (line %u)"), tag, value, lineno);
+	configTrace(NLS::TEXT("%s = %s (line %u)"), tag, value, lineno);
 	lineno = 0;
 	readConfig(value);
 	lineno = old_lineno;
 	return (true);
     }
     if (!setConfigItem(tag, value)) {
-	configTrace(_("Unknown configuration parameter \"%s\" ignored at line %u"),
+	configTrace(NLS::TEXT("Unknown configuration parameter \"%s\" ignored at line %u"),
 	     tag, lineno);
 	return (false);
     } else {
-	configTrace(_("%s = %s (line %u)"), tag, value, lineno);
+	configTrace(NLS::TEXT("%s = %s (line %u)"), tag, value, lineno);
 	return (true);
     }
 }

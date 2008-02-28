@@ -35,6 +35,8 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+#include "NLS.h"
+
 fxDECLARE_StructArray(PageInfoArray, PageInfo)
 fxIMPLEMENT_StructArray(PageInfoArray, PageInfo)
 
@@ -47,7 +49,7 @@ parseError(const char* file, u_int lineno, const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    fprintf(stderr, _("%s: line %u: "), file, lineno);
+    fprintf(stderr, NLS::TEXT("%s: line %u: "), file, lineno);
     vfprintf(stderr, fmt, ap);
     va_end(ap);
 }
@@ -62,7 +64,7 @@ PageSizeInfo::skipws(char*& cp,
 	cp++;
     if (*cp == '\0') {
 	parseError(file, lineno,
-	    _("Unexpected end of line after \"%s\".\n"), item);
+	    NLS::TEXT("Unexpected end of line after \"%s\".\n"), item);
 	return (false);
     } else
 	return (true);
@@ -95,27 +97,27 @@ PageSizeInfo::readPageInfoFile()
 	    pi.name = cp;
 	    while (*cp != '\t')
 		cp++;
-	    if (!skipws(cp, file, _("page size name"), lineno))
+	    if (!skipws(cp, file, NLS::TEXT("page size name"), lineno))
 		continue;
 	    pi.abbr = cp;
 	    while (*cp != '\t')
 		cp++;
-	    if (!skipws(cp, file, _("page size abbreviation"), lineno))
+	    if (!skipws(cp, file, NLS::TEXT("page size abbreviation"), lineno))
 		continue;
 	    pi.w = (BMU) strtoul(cp, &cp, 10);
-	    if (!skipws(cp, file, _("page width"), lineno))
+	    if (!skipws(cp, file, NLS::TEXT("page width"), lineno))
 		continue;
 	    pi.h = (BMU) strtoul(cp, &cp, 10);
-	    if (!skipws(cp, file, _("page height"), lineno))
+	    if (!skipws(cp, file, NLS::TEXT("page height"), lineno))
 		continue;
 	    pi.grw = (BMU) strtoul(cp, &cp, 10);
-	    if (!skipws(cp, file, _("guaranteed page width"), lineno))
+	    if (!skipws(cp, file, NLS::TEXT("guaranteed page width"), lineno))
 		continue;
 	    pi.grh = (BMU) strtoul(cp, &cp, 10);
-	    if (!skipws(cp, file, _("guaranteed page height"), lineno))
+	    if (!skipws(cp, file, NLS::TEXT("guaranteed page height"), lineno))
 		continue;
 	    pi.top = (BMU) strtoul(cp, &cp, 10);
-	    if (!skipws(cp, file, _("top margin"), lineno))
+	    if (!skipws(cp, file, NLS::TEXT("top margin"), lineno))
 		continue;
 	    pi.left = (BMU) strtoul(cp, &cp, 10);
 	    pi.name = strdup(pi.name);
@@ -125,7 +127,7 @@ PageSizeInfo::readPageInfoFile()
 	fclose(fp);
     } else {
 	fprintf(stderr,
-    _("Warning, no page size database file \"%s\", using builtin default.\n"),
+    NLS::TEXT("Warning, no page size database file \"%s\", using builtin default.\n"),
 	    (const char*)file);
 	PageInfo pi;
 	pi.name = strdup("default");

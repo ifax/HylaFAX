@@ -28,6 +28,7 @@
 #include "faxApp.h"
 #include "Dictionary.h"
 #include "FaxRequest.h"
+#include "NLS.h"
 #include "config.h"
 
 #include <sys/file.h>
@@ -436,7 +437,7 @@ usage(const char* appName)
 int
 main(int argc, char** argv)
 {
-    setupNLS();
+    NLS::Setup("hylafax-server");
     faxApp::setupLogging("FaxQCleaner");
 
     fxStr appName = argv[0];

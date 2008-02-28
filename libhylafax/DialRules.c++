@@ -33,6 +33,8 @@
 
 #include <ctype.h>
 
+#include "NLS.h"
+
 /*
  * Interpolation points in replacement strings have
  * the META bit or'd together with their match identifier.
@@ -93,7 +95,7 @@ DialStringRules::parse(bool shouldExist)
 	ok = parseRules();
 	fclose(fp);
     } else if (shouldExist)
-	parseError(_("Cannot open file \"%s\" for reading"),
+	parseError(NLS::TEXT("Cannot open file \"%s\" for reading"),
 		(const char*) filename);
     return (ok);
 }
@@ -102,7 +104,7 @@ void
 DialStringRules::def(const fxStr& var, const fxStr& value)
 {
     if (verbose)
-	traceParse(_("Define %s = \"%s\""),
+	traceParse(NLS::TEXT("Define %s = \"%s\""),
 	    (const char*) var, (const char*) value);
     (*vars)[var] = value;
 }
@@ -111,7 +113,7 @@ void
 DialStringRules::undef(const fxStr& var)
 {
     if (verbose)
-	traceParse(_("Undefine %s"), (const char*) var);
+	traceParse(NLS::TEXT("Undefine %s"), (const char*) var);
     vars->remove(var);
 }
 
@@ -123,7 +125,7 @@ DialStringRules::parseRules()
     while ((cp = nextLine(line, sizeof (line)))) {
 	// collect token
 	if (!isalpha(*cp)) {
-	    parseError(_("Syntax error, expecting identifier"));
+	    parseError(NLS::TEXT("Syntax error, expecting identifier"));
 	    return (false);
 	}
 	const char* tp = cp;
@@ -135,7 +137,7 @@ DialStringRules::parseRules()
 	if (*cp == ':' && cp[1] == '=') {	// rule set definition
 	    for (cp += 2; *cp != '['; cp++)
 		if (*cp == '\0') {
-		    parseError(_("Missing '[' while parsing rule set"));
+		    parseError(NLS::TEXT("Missing '[' while parsing rule set"));
 		    return (false);
 		}
 	    if (verbose)
@@ -154,17 +156,17 @@ DialStringRules::parseRules()
 		return (false);
 	    def(var, value);
 	} else {				// an error
-	    parseError(_("Missing '=' or ':=' after \"%s\""), (const char*) var);
+	    parseError(NLS::TEXT("Missing '=' or ':=' after \"%s\""), (const char*) var);
 	    return (false);
 	}
     }
     if (verbose) {
 	RuleArray* ra = (*rules)["CanonicalNumber"];
 	if (ra == 0)
-	    traceParse(_("Warning, no \"CanonicalNumber\" rules."));
+	    traceParse(NLS::TEXT("Warning, no \"CanonicalNumber\" rules."));
 	ra = (*rules)["DialString"];
 	if (ra == 0)
-	    traceParse(_("Warning, no \"DialString\" rules."));
+	    traceParse(NLS::TEXT("Warning, no \"DialString\" rules."));
     }
     return (true);
 }
@@ -212,11 +214,11 @@ DialStringRules::parseToken(const char* cp, fxStr& v)
 	tp = ++cp;
 	for (;;) {
 	    if (*cp == '\0') {
-		parseError(_("String with unmatched '\"'"));
+		parseError(NLS::TEXT("String with unmatched '\"'"));
 		return (NULL);
 	    }
 	    if (*cp == '\\' && cp[1] == '\0') {
-		parseError(_("Bad '\\' escape sequence"));
+		parseError(NLS::TEXT("Bad '\\' escape sequence"));
 		return (NULL);
 	    }
 	    if (*cp == '"' && (cp == tp || cp[-1] != '\\'))
@@ -228,7 +230,7 @@ DialStringRules::parseToken(const char* cp, fxStr& v)
     } else {				// token terminated by white space
 	for (tp = cp; *cp != '\0'; cp++) {
 	    if (*cp == '\\' && cp[1] == '\0') {
-		parseError(_("Bad '\\' escape sequence"));
+		parseError(NLS::TEXT("Bad '\\' escape sequence"));
 		return (NULL);
 	    }
 	    if (isspace(*cp) && (cp == tp || cp[-1] != '\\'))
@@ -243,7 +245,7 @@ DialStringRules::parseToken(const char* cp, fxStr& v)
 	     */
 	    u_int l = v.next(i, '}');
 	    if (l >= v.length()) {
-		parseError(_("Missing '}' for variable reference"));
+		parseError(NLS::TEXT("Missing '}' for variable reference"));
 		return (NULL);
 	    }
 	    fxStr var = v.cut(i+2,l-(i+2));// variable name
@@ -290,7 +292,7 @@ DialStringRules::parseRuleSet(RuleArray& rules)
 	char line[1024];
 	const char* cp = nextLine(line, sizeof (line));
 	if (!cp) {
-	    parseError(_("Missing ']' while parsing rule set"));
+	    parseError(NLS::TEXT("Missing ']' while parsing rule set"));
 	    return (false);
 	}
 	if (*cp == ']')
@@ -302,7 +304,7 @@ DialStringRules::parseRuleSet(RuleArray& rules)
 	while (isspace(*cp))
 	    cp++;
 	if (*cp != '=') {
-	    parseError(_("Rule pattern without '='"));
+	    parseError(NLS::TEXT("Rule pattern without '='"));
 	    return (false);
 	}
 	DialRule r;
@@ -338,7 +340,7 @@ fxStr
 DialStringRules::applyRules(const fxStr& name, const fxStr& s)
 {
     if (verbose)
-	traceRules(_("Apply %s rules to \"%s\""),
+	traceRules(NLS::TEXT("Apply %s rules to \"%s\""),
 	    (const char*) name, (const char*) s);
     fxStr result(s);
     RuleArray* ra = (*rules)[name];
@@ -376,13 +378,13 @@ DialStringRules::applyRules(const fxStr& name, const fxStr& s)
 		result.insert(replace, ix);
 		off = ix + replace.length();	// skip replace when searching
 		if (verbose)
-		    traceRules(_("--> match rule \"%s\", result now \"%s\""),
+		    traceRules(NLS::TEXT("--> match rule \"%s\", result now \"%s\""),
 			rule.pat->pattern(), (const char*) result);
 	    }
 	}
     }
     if (verbose)
-	traceRules(_("--> return result \"%s\""), (const char*) result);
+	traceRules(NLS::TEXT("--> return result \"%s\""), (const char*) result);
     return result;
 }
 
@@ -393,7 +395,7 @@ DialStringRules::parseError(const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    fprintf(stderr, _("%s: line %u: "), (const char*) filename, lineno);
+    fprintf(stderr, NLS::TEXT("%s: line %u: "), (const char*) filename, lineno);
     vfprintf(stderr, fmt, ap);
     va_end(ap);
     putc('\n', stderr);
@@ -404,7 +406,7 @@ DialStringRules::traceParse(const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    fprintf(stdout, _("%s: line %u: "), (const char*) filename, lineno);
+    fprintf(stdout, NLS::TEXT("%s: line %u: "), (const char*) filename, lineno);
     vfprintf(stdout, fmt, ap);
     va_end(ap);
     putc('\n', stdout);

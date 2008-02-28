@@ -24,6 +24,7 @@
  * OF THIS SOFTWARE.
  */
 #include "Obj.h"
+#include "NLS.h"
 
 extern "C" void abort();
 
@@ -35,7 +36,7 @@ const char* fxObj::className() const { return "fxObj"; }
 
 void fxObj::subClassMustDefine(const char* method) const
 {
-    fprintf(stderr, _("%s: Sub class must define method \"%s\".\n"),
+    fprintf(stderr, NLS::TEXT("%s: Sub class must define method \"%s\".\n"),
 	className(), method);
     abort();
 }

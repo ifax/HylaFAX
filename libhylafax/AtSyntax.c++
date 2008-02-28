@@ -29,6 +29,8 @@
 #include <time.h>
 #include <ctype.h>
 
+#include "NLS.h"
+
 #define	TM_YEAR_BASE	1900		// tm times all start here...
 #define	EPOCH_YEAR	1970
 #define	EPOCH_WDAY	4		// January 1, 1970 was a Thursday
@@ -101,20 +103,20 @@ parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg)
 	    if (isdigit(cp[1]) && isdigit(cp[2])) {
 		int min = 10*(cp[1]-'0') + (cp[2]-'0');
 		if (min >= 60) {
-		    _atError(emsg, _("Illegal minutes value %u"), min);
+		    _atError(emsg, NLS::TEXT("Illegal minutes value %u"), min);
 		    return (false);
 		}
 		v += min;
 		cp += 3;
 	    } else {
-		_atSyntax(emsg, _("expecting HH:MM"));
+		_atSyntax(emsg, NLS::TEXT("expecting HH:MM"));
 		return (false);
 	    }
 	}
 	cp = whitespace(cp);
 	if (streq(cp, "am", 2)) {
 	    if (v >= HALFDAY+HOUR) {
-		_atError(emsg, _("%u:%02u is not an AM value"), v/HOUR, v%HOUR);
+		_atError(emsg, NLS::TEXT("%u:%02u is not an AM value"), v/HOUR, v%HOUR);
 		return (false);
 	    }
 	    if (HALFDAY <= v && v < HALFDAY+HOUR)
@@ -122,7 +124,7 @@ parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg)
 	    cp += 2;
 	} else if (streq(cp, "pm", 2)) {
 	    if (v >= HALFDAY+HOUR) {
-		_atError(emsg, _("%u:%02u is not a PM value"), v/HOUR, v%HOUR);
+		_atError(emsg, NLS::TEXT("%u:%02u is not a PM value"), v/HOUR, v%HOUR);
 		return (false);
 	    }
 	    if (v < HALFDAY)
@@ -143,12 +145,12 @@ parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg)
 	    v = at.tm_hour*HOUR + at.tm_min;
 	    cp += 4;
 	} else {
-	    _atSyntax(emsg, _("unrecognized symbolic time \"%s\""), cp);
+	    _atSyntax(emsg, NLS::TEXT("unrecognized symbolic time \"%s\""), cp);
 	    return (false);
 	}
     }
     if ((unsigned) v >= FULLDAY) {
-	_atError(emsg, _("Illegal time value; out of range"));
+	_atError(emsg, NLS::TEXT("Illegal time value; out of range"));
 	return (false);
     }
     at.tm_hour = v/HOUR;
@@ -172,7 +174,7 @@ parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg)
 	    at.tm_yday++;
 	    cp += 8;
 	} else if (cp[0] != '\0' && cp[0] != '+') {
-	    _atSyntax(emsg, _("expecting \"+\" after time"));
+	    _atSyntax(emsg, NLS::TEXT("expecting \"+\" after time"));
 	    return (false);
 	}
 	/*
@@ -188,7 +190,7 @@ parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg)
 	return (false);
     fixup(at);
     if (at < ref) {
-	_atError(emsg, _("Invalid date/time; time must be in the future"));
+	_atError(emsg, NLS::TEXT("Invalid date/time; time must be in the future"));
 	return (false);
     }
     at0 = at;
@@ -314,7 +316,7 @@ parseMonthAndYear(const char*& cp, const struct tm& ref, struct tm& at, fxStr& e
     char* tp;
     at.tm_mday = (u_int) strtoul(cp, &tp, 10);
     if (tp == cp) {
-	_atSyntax(emsg, _("missing or invalid day of month"));
+	_atSyntax(emsg, NLS::TEXT("missing or invalid day of month"));
 	return (false);
     }
     at.tm_mday--;			// tm_mday is [0..31]
@@ -323,11 +325,11 @@ parseMonthAndYear(const char*& cp, const struct tm& ref, struct tm& at, fxStr& e
 	char* xp;
 	u_int year = (u_int) strtoul(++tp, &xp, 10);
 	if (tp == xp) {
-	    _atSyntax(emsg, _("missing year"));
+	    _atSyntax(emsg, NLS::TEXT("missing year"));
 	    return (false);
 	}
 	if (year < TM_YEAR_BASE) {
-	    _atError(emsg, _("Sorry, cannot handle dates before %u"),
+	    _atError(emsg, NLS::TEXT("Sorry, cannot handle dates before %u"),
 		TM_YEAR_BASE);
 	    return (false);
 	}
@@ -350,7 +352,7 @@ parseMonthAndYear(const char*& cp, const struct tm& ref, struct tm& at, fxStr& e
     }
     const int* days = daysInMonth[isLeapYear(at)];
     if (at.tm_mday > days[at.tm_mon]) {
-	_atError(emsg, _("Invalid day of month, %s has only %u days"),
+	_atError(emsg, NLS::TEXT("Invalid day of month, %s has only %u days"),
 	    months[at.tm_mon], days[at.tm_mon]);
 	return (false);
     }
@@ -366,7 +368,7 @@ parseMultiplier(const char* cp, struct tm& at, fxStr& emsg)
 {
     cp = whitespace(cp);
     if (!isdigit(cp[0])) {
-	_atSyntax(emsg, _("expecting number after \"+\""));
+	_atSyntax(emsg, NLS::TEXT("expecting number after \"+\""));
 	return (false);
     }
     int v = 0;
@@ -374,7 +376,7 @@ parseMultiplier(const char* cp, struct tm& at, fxStr& emsg)
 	v = v*10 + (*cp - '0');
     cp = whitespace(cp);
     if (*cp == '\0') {
-	_atSyntax(emsg, _("\"+%u\" without unit"), v);
+	_atSyntax(emsg, NLS::TEXT("\"+%u\" without unit"), v);
 	return (false);
     }
     if (streq(cp, "minute", 6))
@@ -393,7 +395,7 @@ parseMultiplier(const char* cp, struct tm& at, fxStr& emsg)
     } else if (streq(cp, "year", 4))
 	at.tm_year += v;
     else {
-	_atError(emsg, _("Unknown increment unit \"%s\""), cp);
+	_atError(emsg, NLS::TEXT("Unknown increment unit \"%s\""), cp);
 	return (false);
     }
     return (true);
@@ -447,7 +449,7 @@ _atSyntax(fxStr& emsg, const char* fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    emsg = _("Syntax error, ") | fxStr::vformat(fmt, ap);
+    emsg = NLS::TEXT("Syntax error, ") | fxStr::vformat(fmt, ap);
     va_end(ap);
 }
 

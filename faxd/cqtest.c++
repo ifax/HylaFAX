@@ -36,6 +36,7 @@
 #include "Class2Params.h"
 #include "Str.h"
 #include "FaxTrace.h"
+#include "NLS.h"
 #include "tiffio.h"
 
 struct CQDecoder : public G3Decoder {
@@ -507,7 +508,7 @@ main(int argc, char* argv[])
     extern char* optarg;
     int c;
 
-    setupNLS();
+    NLS::Setup("hylafax-server");
     CQDecoder cq;
     appName = argv[0];
     while ((c = Sys::getopt(argc, argv, "m:o:p:")) != -1)

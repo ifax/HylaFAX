@@ -35,6 +35,8 @@
 #include <sys/file.h>
 #include <errno.h>
 
+#include "NLS.h"
+
 
 const fxStr Sequence::format("%09u");
 
@@ -60,7 +62,7 @@ u_long Sequence::getNext(const char* name, fxStr& emsg)
         fd = -1;
     }
     if (fd < 0) {
-        emsg = fxStr::format(_("Unable to open sequence number file %s; %s."),
+        emsg = fxStr::format(NLS::TEXT("Unable to open sequence number file %s; %s."),
             name, strerror(errno));
         logError("%s: open: %s", name, strerror(errno));
         return ((u_long) -1);
@@ -74,7 +76,7 @@ u_long Sequence::getNext(const char* name, fxStr& emsg)
         seqnum = atol(line);
     }
     if (seqnum < 1 || seqnum >= MAXSEQNUM) {
-        logWarning(_("%s: Invalid sequence number \"%s\", resetting to 1"),
+        logWarning(NLS::TEXT("%s: Invalid sequence number \"%s\", resetting to 1"),
             name, line);
         seqnum = 1;
     }
@@ -84,7 +86,7 @@ u_long Sequence::getNext(const char* name, fxStr& emsg)
     if (Sys::write(fd, (const char*)line2, len) != len ||
             ftruncate(fd, len)) {
         emsg = fxStr::format(
-            _("Unable update sequence number file %s; write failed."), name);
+            NLS::TEXT("Unable update sequence number file %s; write failed."), name);
         logError("%s: Problem updating sequence number file", name);
         return ((u_long) -1);
     }

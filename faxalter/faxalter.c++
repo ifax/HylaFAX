@@ -25,6 +25,7 @@
  */
 #include "FaxClient.h"
 #include "Sys.h"
+#include "NLS.h"
 #include "config.h"
 
 extern int
@@ -327,7 +328,7 @@ faxAlterApp::usage()
 int
 main(int argc, char** argv)
 {
-    setupNLS();
+    NLS::Setup("hylafax-clients");
     faxAlterApp app;
     return (app.run(argc, argv));
 }

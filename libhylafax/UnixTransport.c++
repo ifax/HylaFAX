@@ -28,6 +28,8 @@
 #include "UnixTransport.h"
 #include "Sys.h"
 
+#include "NLS.h"
+
 UnixTransport::UnixTransport(FaxClient& c) : Transport(c) {}
 UnixTransport::~UnixTransport() {}
 
@@ -49,7 +51,7 @@ UnixTransport::callServer(fxStr& emsg)
 {
     int fd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (fd < 0) {
-	emsg = _("Can not create socket to connect to server.");
+	emsg = NLS::TEXT("Can not create socket to connect to server.");
 	return (false);
     }
     struct sockaddr_un Sun;
@@ -57,13 +59,13 @@ UnixTransport::callServer(fxStr& emsg)
     Sun.sun_family = AF_UNIX;
     strncpy(Sun.sun_path, client.getHost(), sizeof (Sun.sun_path));
     if (client.getVerbose())
-	client.traceServer(_("connect to server at %s"),
+	client.traceServer(NLS::TEXT("connect to server at %s"),
 	    (const char*) client.getHost());
     if (Socket::connect(fd, &Sun, sizeof (Sun)) >= 0) {
 	client.setCtrlFds(fd, dup(fd));
 	return (true);
     } else {
-	emsg = fxStr::format(_("Can not reach server at Unix domain socket \"%s\"."),
+	emsg = fxStr::format(NLS::TEXT("Can not reach server at Unix domain socket \"%s\"."),
 	    (const char*) client.getHost());
 	Sys::close(fd), fd = -1;
 	return (false);
@@ -135,7 +137,7 @@ UnixTransport::openDataConn(fxStr&)
 void
 Transport::notConfigured(fxStr& emsg)
 {
-    emsg = _("Sorry, no Unix domain communication support was configured.");
+    emsg = NLS::TEXT("Sorry, no Unix domain communication support was configured.");
 }
 
 bool UnixTransport::callServer(fxStr& emsg)

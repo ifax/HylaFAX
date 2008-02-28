@@ -27,6 +27,8 @@
 #include "FaxClient.h"
 #include "InetTransport.h"
 #include "Sys.h"
+#include "NLS.h"
+
 
 InetTransport::InetTransport(FaxClient& c) : Transport(c) {}
 InetTransport::~InetTransport(){}
@@ -70,7 +72,7 @@ InetTransport::callServer(fxStr& emsg)
     const char* cproto = proto;			// XXX for busted include files
     struct protoent* pp = getprotobyname(cproto);
     if (!pp) {
-	client.printWarning(_("%s: No protocol definition, using default."),
+	client.printWarning(NLS::TEXT("%s: No protocol definition, using default."),
 	    cproto);
 	protocol = 0;
     } else
@@ -78,13 +80,13 @@ InetTransport::callServer(fxStr& emsg)
 
     struct hostent* hp = Socket::gethostbyname(client.getHost());
     if (!hp) {
-	emsg = client.getHost() | _(": Unknown host");
+	emsg = client.getHost() | NLS::TEXT(": Unknown host");
 	return (false);
     }
 
     int fd = socket(hp->h_addrtype, SOCK_STREAM, protocol);
     if (fd < 0) {
-	emsg = _("Can not create socket to connect to server.");
+	emsg = NLS::TEXT("Can not create socket to connect to server.");
 	return (false);
     }
     struct sockaddr_in sin;
@@ -95,7 +97,7 @@ InetTransport::callServer(fxStr& emsg)
 	if (!sp) {
 	    if (!isdigit(cproto[0])) {
 		client.printWarning(
-		    _("No \"%s\" service definition, using default %u/%s."),
+		    NLS::TEXT("No \"%s\" service definition, using default %u/%s."),
 		    FAX_SERVICE, FAX_DEFPORT, cproto);
 		sin.sin_port = htons(FAX_DEFPORT);
 	    } else
@@ -107,23 +109,23 @@ InetTransport::callServer(fxStr& emsg)
     for (char** cpp = hp->h_addr_list; *cpp; cpp++) {
 	memcpy(&sin.sin_addr, *cpp, hp->h_length);
 	if (client.getVerbose())
-	    client.traceServer(_("Trying %s (%s) at port %u..."),
+	    client.traceServer(NLS::TEXT("Trying %s (%s) at port %u..."),
 		(const char*) client.getHost(),
 		inet_ntoa(sin.sin_addr),
 		ntohs(sin.sin_port));
 	if (Socket::connect(fd, &sin, sizeof (sin)) >= 0) {
 	    if (client.getVerbose())
-		client.traceServer(_("Connected to %s."), hp->h_name);
+		client.traceServer(NLS::TEXT("Connected to %s."), hp->h_name);
 #if defined(IP_TOS) && defined(IPTOS_LOWDELAY)
 	    int tos = IPTOS_LOWDELAY;
 	    if (Socket::setsockopt(fd, IPPROTO_IP, IP_TOS, &tos, sizeof (tos)) < 0)
-		client.printWarning(_("setsockopt(TOS): %s (ignored)"),
+		client.printWarning(NLS::TEXT("setsockopt(TOS): %s (ignored)"),
 		    strerror(errno));
 #endif
 #ifdef SO_OOBINLINE
 	    int on = 1;
 	    if (Socket::setsockopt(fd, SOL_SOCKET, SO_OOBINLINE, &on, sizeof (on)) < 0)
-		client.printWarning(_("setsockopt(OOBLINE): %s (ignored)"),
+		client.printWarning(NLS::TEXT("setsockopt(OOBLINE): %s (ignored)"),
 		    strerror(errno));
 #endif
 	    /*
@@ -136,7 +138,7 @@ InetTransport::callServer(fxStr& emsg)
 	    return (true);
 	}
     }
-    emsg = fxStr::format(_("Can not reach server at host \"%s\", port %u."),
+    emsg = fxStr::format(NLS::TEXT("Can not reach server at host \"%s\", port %u."),
 	(const char*) client.getHost(), ntohs(sin.sin_port));
     Sys::close(fd), fd = -1;
     return (false);
@@ -264,7 +266,7 @@ InetTransport::abortCmd(fxStr& emsg)
 void
 Transport::notConfigured(fxStr& emsg)
 {
-    emsg = _("Sorry, no TCP/IP communication support was configured.");
+    emsg = NLS::TEXT("Sorry, no TCP/IP communication support was configured.");
 }
 
 bool InetTransport::callServer(fxStr& emsg)

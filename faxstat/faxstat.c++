@@ -26,6 +26,7 @@
 #include "FaxClient.h"
 #include "StrArray.h"
 #include "Sys.h"
+#include "NLS.h"
 #include "config.h"
 
 #include <errno.h>
@@ -159,7 +160,7 @@ bad:
 int
 main(int argc, char** argv)
 {
-    setupNLS();
+    NLS::Setup("hylafax-client");
     faxStatApp app;
     app.run(argc, argv);
     return 0;

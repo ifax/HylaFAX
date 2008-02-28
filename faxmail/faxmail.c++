@@ -29,6 +29,7 @@
 #include "StrArray.h"
 #include "Sys.h"
 #include "SendFaxClient.h"
+#include "NLS.h"
 #include "config.h"
 
 #include <ctype.h>
@@ -916,7 +917,7 @@ main(int argc, char** argv)
 #ifdef LC_CTYPE
     setlocale(LC_CTYPE, "");			// for <ctype.h> calls
 #endif
-    setupNLS();
+    NLS::Setup("hylafax-client");
 
     app = new faxMailApp;
 

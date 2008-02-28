@@ -24,14 +24,48 @@
  * OF THIS SOFTWARE.
  */
 #include "NLS.h"
+#include "Types.h"
+#include "Sys.h"
 
-void
-setupNLS()
+#include <errno.h>
+
+void do_bind (const char* domain, const char* ldir)
 {
-#ifdef ENABLE_NLS
+    /* bindtextdomain() doesn't preserver errno */
+    int save_errno = errno;
+
+    if (!ldir)
+	ldir = getenv("HFLOCALEDIR");
+    if (!ldir)
+	ldir = LOCALEDIR;
+    bindtextdomain(domain, ldir);
+    errno = save_errno;
+}
+
+const char* NLS::TEXT (const char* msgid)
+{
+    if (! bound)
+    {
+	bound = true;
+	do_bind(domain, NULL);
+    }
+    return dgettext(domain, msgid);
+}
+
+void NLS::Setup (const char* d, const char* ldir)
+{
     setlocale(LC_CTYPE, "");
     setlocale(LC_MESSAGES, "");
-    bindtextdomain(LOCALE_DOMAIN, LOCALEDIR);
-    textdomain(LOCALE_DOMAIN);
-#endif
+
+    /*
+     * We'll take the hit of setting up libhylafax NLS here
+     */
+    do_bind(domain, NULL);
+    bound = true;
+
+    do_bind(d, ldir);
+    textdomain(d);
 }
+
+const char* NLS::domain = "libhylafax";
+bool NLS::bound = false;

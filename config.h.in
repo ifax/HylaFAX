@@ -302,6 +302,5 @@
 @ENABLE_NLS@
 #define LOCALEDIR "@LOCALEDIR@"
 #define LOCALE_DOMAIN "@LOCALE_DOMAIN@"
-#include "NLS.h"
 
 #endif

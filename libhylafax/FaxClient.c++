@@ -37,6 +37,8 @@
 #include <sys/mman.h>
 #endif
 
+#include "NLS.h"
+
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
 FaxClient::FaxClient()
@@ -114,7 +116,7 @@ FaxClient::printWarning(const char* fmt ...)
 void
 FaxClient::vprintWarning(const char* fmt, va_list ap)
 {
-    fprintf(stderr, _("Warning, "));
+    fprintf(stderr, NLS::TEXT("Warning, "));
     vfprintf(stderr, fmt, ap);
     fputs("\n", stderr);
 }
@@ -189,7 +191,7 @@ FaxClient::setupUserIdentity(fxStr& emsg)
 	if (name)
 	    userName = name;
 	else {
-	    emsg = fxStr::format(_("Can not locate your password entry "
+	    emsg = fxStr::format(NLS::TEXT("Can not locate your password entry "
 		"(uid %lu): %s"), (u_long) getuid(), strerror(errno));
 	    return (false);
 	}
@@ -215,7 +217,7 @@ FaxClient::setupUserIdentity(fxStr& emsg)
     } else
 	senderName = userName;
     if (senderName.length() == 0) {
-	emsg = _("Bad (null) user name; your password file entry"
+	emsg = NLS::TEXT("Bad (null) user name; your password file entry"
 	    " probably has bogus GECOS field information.");
 	return (false);
     } else
@@ -384,7 +386,7 @@ FaxClient::login(const char* user, fxStr& emsg)
 	user = userName;
     }
     if (*user == '\0') {
-	emsg = _("Malformed (null) username");
+	emsg = NLS::TEXT("Malformed (null) username");
 	return (false);
     }
     int n = command("USER %s", user);
@@ -405,7 +407,7 @@ FaxClient::login(const char* user, fxStr& emsg)
 	}
 	return (true);
     } else {
-	emsg = _("Login failed: ") | lastResponse;
+	emsg = NLS::TEXT("Login failed: ") | lastResponse;
 	return (false);
     }
 }
@@ -426,7 +428,7 @@ bool
 FaxClient::admin(const char* pass, fxStr& emsg)
 {
     if (command("ADMIN %s", pass ? pass : getpass("Password:")) != COMPLETE) {
-	emsg = _("Admin failed: ") | lastResponse;
+	emsg = NLS::TEXT("Admin failed: ") | lastResponse;
 	return (false);
     } else
 	return (true);
@@ -442,7 +444,7 @@ FaxClient::setCommon(FaxParam& parm, u_int v)
 		return (false);
 	    }
 	} else {
-	    printError(_("Bad %s parameter value %u."), parm.cmd, v);
+	    printError(NLS::TEXT("Bad %s parameter value %u."), parm.cmd, v);
 	    return (false);
 	}
 	this->*parm.pv = v;
@@ -482,7 +484,7 @@ FaxClient::setTimeZone(u_int v)
             if (v == TZ_GMT) state &= ~FS_TZPEND;
             else state |= FS_TZPEND;
         } else {
-            printError(_("Bad time zone parameter value %u."), v);
+            printError(NLS::TEXT("Bad time zone parameter value %u."), v);
             return (false);
         }
         return (true);
@@ -521,7 +523,7 @@ FaxClient::initDataConn(fxStr& emsg)
     if (transport) {
         if (!transport->initDataConn(emsg)) {
             if (emsg == "") {
-                emsg = _("Unable to initialize data connection to server");
+                emsg = NLS::TEXT("Unable to initialize data connection to server");
             }
             return (false);
         }
@@ -535,7 +537,7 @@ FaxClient::openDataConn(fxStr& emsg)
     if (transport) {
         if (!transport->openDataConn(emsg)) {
             if (emsg == "") {
-		emsg = _("Unable to open data connection to server");
+		emsg = NLS::TEXT("Unable to open data connection to server");
             }
 	        return (false);
         }
@@ -559,7 +561,7 @@ FaxClient::abortDataConn(fxStr& emsg)
         fflush(fdOut);
         if (!transport->abortCmd(emsg)) {
             if (emsg == "") {
-		emsg = _("Unable to abort data connection to server");
+		emsg = NLS::TEXT("Unable to abort data connection to server");
             }
 	        return (false);
         }
@@ -589,14 +591,14 @@ FaxClient::abortDataConn(fxStr& emsg)
 void
 FaxClient::lostServer(void)
 {
-    printError(_("Service not available, remote server closed connection"));
+    printError(NLS::TEXT("Service not available, remote server closed connection"));
     hangupServer();
 }
 
 void
 FaxClient::unexpectedResponse(fxStr& emsg)
 {
-    emsg = _("Unexpected server response: ") | lastResponse;
+    emsg = NLS::TEXT("Unexpected server response: ") | lastResponse;
 }
 
 void
@@ -604,7 +606,7 @@ FaxClient::protocolBotch(fxStr& emsg, const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    emsg = _("Protocol botch") | fxStr::vformat(fmt, ap);
+    emsg = NLS::TEXT("Protocol botch") | fxStr::vformat(fmt, ap);
     va_end(ap);
 }
 
@@ -639,7 +641,7 @@ FaxClient::vcommand(const char* fmt, va_list ap)
         } else {
 	    line = (char *)malloc(100);
 	    if (line == NULL)
-		printError(_("Memory allocation failed"));
+		printError(NLS::TEXT("Memory allocation failed"));
 	    else {
 		vsnprintf(line, 100, fmt, ap);
 		traceServer("-> %s", line);
@@ -647,7 +649,7 @@ FaxClient::vcommand(const char* fmt, va_list ap)
         }
     }
     if (fdOut == NULL) {
-        printError(_("No control connection for command"));
+        printError(NLS::TEXT("No control connection for command"));
         code = -1;
         return (0);
     }
@@ -782,14 +784,14 @@ FaxClient::extract(u_int& pos, const char* pattern, fxStr& result,
         l = lastResponse.find(pos, pat);
     }
     if (l == lastResponse.length()) {
-        protocolBotch(emsg, _(": No \"%s\" in %s response: %s"),
+        protocolBotch(emsg, NLS::TEXT(": No \"%s\" in %s response: %s"),
             pattern, cmd, (const char*) lastResponse);
         return false;
     }
     l = lastResponse.skip(l+pat.length(), ' ');// skip white space
     result = lastResponse.extract(l, lastResponse.next(l, ' ')-l);
     if (result == "") {
-        protocolBotch(emsg, _(": Null %s in %s response: %s"),
+        protocolBotch(emsg, NLS::TEXT(": Null %s in %s response: %s"),
             pattern, cmd, (const char*) lastResponse);
         return false;
     }
@@ -972,7 +974,7 @@ FaxClient::runScript(const char* filename, fxStr& emsg)
 	ok = runScript(fd, filename, emsg);
 	fclose(fd);
     } else
-	emsg = fxStr::format(_("Unable to open script file \"%s\"."), filename);
+	emsg = fxStr::format(NLS::TEXT("Unable to open script file \"%s\"."), filename);
     return (ok);
 }
 
@@ -991,7 +993,7 @@ FaxClient::runScript(FILE* fp, const char* filename, fxStr& emsg)
 	if (Sys::read(fileno(fp), addr, (u_int) sb.st_size) == sb.st_size)
 	    ok = runScript(addr, sb.st_size, filename, emsg);
 	else
-	    emsg = fxStr::format(_("%s: Read error: %s"),
+	    emsg = fxStr::format(NLS::TEXT("%s: Read error: %s"),
 		filename, strerror(errno));
 	delete [] addr;
 #if HAS_MMAP
@@ -1016,7 +1018,7 @@ FaxClient::runScript(const char* script, u_long scriptLen,
 	u_int cmdLen = ep-script;
 	if (cmdLen > 1) {
 	    if (command("%.*s", cmdLen, script) != COMPLETE) {
-		emsg = fxStr::format(_("%s: line %u: %s"),
+		emsg = fxStr::format(NLS::TEXT("%s: line %u: %s"),
 		    filename, lineno, (const char*) lastResponse);
 		return (false);
 	    }
@@ -1106,14 +1108,14 @@ FaxClient::sendRawData(void* buf, int cc, fxStr& emsg)
     for (int cnt, sent = 0; cc; sent += cnt, cc -= cnt)
 	if ((cnt = write(fdData, bp + sent, cc)) <= 0) {
 	    protocolBotch(emsg, errno == EPIPE ?
-		_(" (server closed connection)") : _(" (server write error: %s)."),
+		NLS::TEXT(" (server closed connection)") : _(" (server write error: %s)."),
 		strerror(errno));
 	    return (false);
 	}
 #else
     if (write(fdData, buf, cc) != cc) {
 	protocolBotch(emsg, errno == EPIPE ?
-	    _(" (server closed connection)") : _(" (server write error: %s)."),
+	    NLS::TEXT(" (server closed connection)") : _(" (server write error: %s)."),
 	    strerror(errno));
 	return (false);
     }
@@ -1135,7 +1137,7 @@ FaxClient::sendData(int fd,
     size_t cc;
     (void) Sys::fstat(fd, sb);
     if (getVerbose())
-	traceServer(_("SEND data, %lu bytes"), (u_long) sb.st_size);
+	traceServer(NLS::TEXT("SEND data, %lu bytes"), (u_long) sb.st_size);
     if (!initDataConn(emsg))
 	goto bad;
     if (!setMode(MODE_S))
@@ -1153,7 +1155,7 @@ FaxClient::sendData(int fd,
 	    char buf[32*1024];			// XXX better if page-aligned
 	    size_t n = fxmin(cc, sizeof (buf));
 	    if (read(fd, buf, n) != (ssize_t)n) {
-		protocolBotch(emsg, _(" (data read: %s)."), strerror(errno));
+		protocolBotch(emsg, NLS::TEXT(" (data read: %s)."), strerror(errno));
 		goto bad;
 	    }
 	    if (!sendRawData(buf, n, emsg))
@@ -1204,7 +1206,7 @@ FaxClient::sendZData(int fd,
 	size_t cc;
 	Sys::fstat(fd, sb);
 	if (getVerbose())
-	    traceServer(_("SEND compressed data, %lu bytes"), (u_long) sb.st_size);
+	    traceServer(NLS::TEXT("SEND compressed data, %lu bytes"), (u_long) sb.st_size);
 	if (!initDataConn(emsg))
 	    goto bad;
 	if (!setMode(MODE_Z))
@@ -1222,14 +1224,14 @@ FaxClient::sendZData(int fd,
 		char buf[32*1024];
 		int n = fxmin((size_t) cc, sizeof (buf));
 		if (read(fd, buf, n) != n) {
-		    protocolBotch(emsg, _(" (data read: %s)"), strerror(errno));
+		    protocolBotch(emsg, NLS::TEXT(" (data read: %s)"), strerror(errno));
 		    goto bad;
 		}
 		zstream.next_in = (Bytef*) buf;
 		zstream.avail_in = n;
 		do {
 		    if (deflate(&zstream, Z_NO_FLUSH) != Z_OK) {
-			emsg = fxStr::format(_("zlib compressor error: %s"),
+			emsg = fxStr::format(NLS::TEXT("zlib compressor error: %s"),
 			    zstream.msg);
 			goto bad;
 		    }
@@ -1249,7 +1251,7 @@ FaxClient::sendZData(int fd,
 	    zstream.avail_in = (u_int) sb.st_size;
 	    do {
 		if (deflate(&zstream, Z_NO_FLUSH) != Z_OK) {
-		    emsg = fxStr::format(_("zlib compressor error: %s"),
+		    emsg = fxStr::format(NLS::TEXT("zlib compressor error: %s"),
 			zstream.msg);
 		    goto bad;
 		}
@@ -1275,13 +1277,13 @@ FaxClient::sendZData(int fd,
 		}
 		break;
 	    default:
-		emsg = fxStr::format(_("zlib compressor error: %s"),
+		emsg = fxStr::format(NLS::TEXT("zlib compressor error: %s"),
 		    zstream.msg);
 		goto bad;
 	    }
 	} while (dstate != Z_STREAM_END);
 	if (getVerbose())
-	    traceServer(_("SEND %lu bytes transmitted (%.1fx compression)"),
+	    traceServer(NLS::TEXT("SEND %lu bytes transmitted (%.1fx compression)"),
 #define	NZ(x)	((x)?(x):1)
 		zstream.total_out, float(sb.st_size) / NZ(zstream.total_out));
 	closeDataConn();
@@ -1302,7 +1304,7 @@ bad:
 #endif
 	deflateEnd(&zstream);
     } else
-	emsg = fxStr::format(_("Can not initialize compression library: %s"),
+	emsg = fxStr::format(NLS::TEXT("Can not initialize compression library: %s"),
 	    zstream.msg);
     return (false);
 }
@@ -1344,7 +1346,7 @@ FaxClient::recvData(bool (*f)(int, const char*, int, fxStr&),
 	    return (getReply(false) == COMPLETE);
 	}
 	if (cc < 0) {
-	    emsg = fxStr::format(_("Data Connection: %s"), strerror(errno));
+	    emsg = fxStr::format(NLS::TEXT("Data Connection: %s"), strerror(errno));
 	    (void) getReply(false);
 	    break;
 	}
@@ -1407,7 +1409,7 @@ FaxClient::recvZData(bool (*f)(void*, const char*, int, fxStr&),
 		return (getReply(false) == COMPLETE);
 	    }
 	    if (cc < 0) {
-		emsg = fxStr::format(_("Data Connection: %s"), strerror(errno));
+		emsg = fxStr::format(NLS::TEXT("Data Connection: %s"), strerror(errno));
 		(void) getReply(false);
 		goto bad;
 	    }
@@ -1418,7 +1420,7 @@ FaxClient::recvZData(bool (*f)(void*, const char*, int, fxStr&),
 		if (dstate == Z_STREAM_END)
 		    break;
 		if (dstate != Z_OK) {
-		    emsg = fxStr::format(_("Decoding error: %s"), zstream.msg);
+		    emsg = fxStr::format(NLS::TEXT("Decoding error: %s"), zstream.msg);
 		    goto bad;
 		}
 		size_t occ = sizeof (obuf) - zstream.avail_out;
@@ -1432,7 +1434,7 @@ bad:
 	closeDataConn();
 	inflateEnd(&zstream);
     } else
-	emsg = fxStr::format(_("Can not initialize decoder: %s"), zstream.msg);
+	emsg = fxStr::format(NLS::TEXT("Can not initialize decoder: %s"), zstream.msg);
     return (false);
 }
 
@@ -1611,9 +1613,9 @@ FaxClient::makeHeader(const char* fmt, const FaxFmtHeader fmts[], fxStr& header)
 		if (fspec[1] == '-')	// left justify
 		    width = -width;
 		if (width == 0 && prec == 0)
-		    header.append(_(hp->title));
+		    header.append(NLS::TEXT(hp->title));
 		else
-		    header.append(fxStr::format("%*.*s", width, prec, _(hp->title)));
+		    header.append(fxStr::format("%*.*s", width, prec, NLS::TEXT(hp->title)));
 	    } else {
 		*fp++ = c;
 		header.append(fxStr(fspec, fp-fspec));

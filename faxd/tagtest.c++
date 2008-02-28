@@ -29,7 +29,7 @@
  * Usage: tagtest [-f fontfile] [-m format] [-o output.tif] input.tif
  */
 #include "Sys.h"
-
+#include "NLS.h"
 #include "PCFFont.h"
 #include "StackBuffer.h"
 #include "FaxFont.h"
@@ -406,13 +406,15 @@ main(int argc, char* argv[])
     int c;
     const char* output = "t.tif";
 
+    NLS::Setup("hylafax-server");
+
 #ifdef LC_CTYPE
     setlocale(LC_CTYPE, "");			// for <ctype.h> calls
 #endif
 #ifdef LC_TIME
     setlocale(LC_TIME, "");			// for strftime calls
 #endif
-    setupNLS();
+
     appName = argv[0];
     while ((c = Sys::getopt(argc, argv, "f:m:o:")) != -1)
 	switch (c) {

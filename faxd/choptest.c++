@@ -33,6 +33,7 @@
 #include "MemoryDecoder.h"
 #include "tiffio.h"
 #include "Sys.h"
+#include "NLS.h"
 
 const char* appName;
 
@@ -65,7 +66,7 @@ main(int argc, char* argv[])
     bool doAll = false;
     int c;
 
-    setupNLS();
+    NLS::Setup("hylafax-server");
     appName = argv[0];
     while ((c = Sys::getopt(argc, argv, "t:a")) != -1)
 	switch (c) {

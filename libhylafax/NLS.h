@@ -26,30 +26,22 @@
 #ifndef _NLS_
 #define	_NLS_
 
+#include "Types.h"
+
 #include "config.h"
 
-extern void setupNLS();
+class NLS
+{
+    public:
+	static const char* TEXT (const char*);
 
-#define _(String) gettext(String)
-#define N_(String) gettext_noop(String)
-#define gettext_noop(String) String
+	static void Setup (const char* domain, const char* local_dir = NULL);
 
-#ifdef ENABLE_NLS
 
-#include <locale.h>
-#include <libintl.h>
+	static const char* domain;
 
-#ifdef NEED_NGETTEXT
-#define ngettext(s1,s2,n) (n ==1 ? gettext(s1) : gettext(s2))
-#endif
-
-#else /* ENABLE_NLS */
-
-#define gettext(String) (String)
-#define textdomain(Domain) do {} while()
-#define bindtextdomain(Package, Directory) do {} while()
-#define ngettext(s1, s2, n) (n==1?s1:s2)
-
-#endif /* ENABLE_NLS */
+    private:
+	static bool bound;
+};
 
 #endif /* _NLS_ */
