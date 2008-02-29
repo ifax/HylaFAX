@@ -84,7 +84,7 @@ C++FILES=ClassModem.c++ \
 	Job.c++ \
 	Modem.c++ \
 	ModemConfig.c++ \
-    NSF.c++ \
+	NSF.c++ \
 	PCFFont.c++ \
 	QLink.c++ \
 	ServerConfig.c++ \
@@ -94,9 +94,13 @@ C++FILES=ClassModem.c++ \
 	UUCPLock.c++ \
 	faxApp.c++ \
 	faxGettyApp.c++ \
+	faxQCleanApp.c++ \
 	faxQueueApp.c++ \
 	faxSendApp.c++ \
+	choptest.c++ \
+	cqtest.c++ \
 	tagtest.c++ \
+	trigtest.c++ \
 	tsitest.c++ \
 	pageSendApp.c++
 MODEM_OBJS=ClassModem.o \

@@ -25,9 +25,9 @@ targets: $(TARGETS)
 PUTCLIENT	= ${INSTALL} -idb ${PRODUCT}.sw.client
 PUTSERVER	= ${INSTALL} -idb ${PRODUCT}.sw.server
 
-CLIENTS	= faxalter faxrm faxstat sendfax sendpage
+CLIENTS	= faxalter faxcover faxmail faxrm faxstat sendfax sendpage
 
-SERVERS = util
+SERVERS = util faxd hfaxd
 
 installClient: install-mo
 

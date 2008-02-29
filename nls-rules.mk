@@ -17,4 +17,4 @@ nls-SHOUT:
 	@echo "FILES: ${SOURCES}"
 
 messages.po: ${SOURCES}
-	${XGETTEXT} -D ${SRCDIR} -n ${addprefix -k, _ ${GETTEXT_TRIGGERS}} ${SOURCES}
+	${XGETTEXT} -D ${SRCDIR} -n ${addprefix -k, _ N_ ${GETTEXT_TRIGGERS}} ${SOURCES}
