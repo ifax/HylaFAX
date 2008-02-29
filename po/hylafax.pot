@@ -8,6 +8,1390 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "PO-Revision-Date: Fri Feb 29 14:24:24 EST 2008\n"
+# File: AtSyntax.c++, line: 106
+#, c-format
+msgid "Illegal minutes value %u"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 112
+msgid "expecting HH:MM"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 119
+#, c-format
+msgid "%u:%02u is not an AM value"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 127
+#, c-format
+msgid "%u:%02u is not a PM value"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 148
+#, c-format
+msgid "unrecognized symbolic time \"%s\""
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 153
+msgid "Illegal time value; out of range"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 177
+msgid "expecting \"+\" after time"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 193
+msgid "Invalid date/time; time must be in the future"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 319
+msgid "missing or invalid day of month"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 328
+msgid "missing year"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 332
+#, c-format
+msgid "Sorry, cannot handle dates before %u"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 355
+#, c-format
+msgid "Invalid day of month, %s has only %u days"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 371
+msgid "expecting number after \"+\""
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 379
+#, c-format
+msgid "\"+%u\" without unit"
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 398
+#, c-format
+msgid "Unknown increment unit \"%s\""
+msgstr ""
+
+#
+# File: AtSyntax.c++, line: 452
+msgid "Syntax error, "
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 804
+msgid "3.85 line/mm"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 805
+msgid "7.7 line/mm"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 806
+msgid "15.4 line/mm"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 807
+msgid "R16 x 15.4 line/mm"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 808
+msgid "200 x 100 dpi"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 809
+msgid "200 x 200 dpi"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 810
+msgid "200 x 400 dpi"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 811
+msgid "300 x 300 dpi"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 836
+msgid "2400 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 837
+msgid "4800 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 838
+msgid "7200 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 839
+msgid "9600 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 840
+msgid "12000 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 841
+msgid "14400 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 842
+msgid "16800 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 843
+msgid "19200 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 844
+msgid "21600 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 845
+msgid "24000 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 846
+msgid "26400 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 847
+msgid "28800 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 848
+msgid "31200 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 849
+msgid "33600 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 850
+# File: Class2Params.c++, line: 851
+msgid "0 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 880
+msgid "1-D MH"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 881
+msgid "2-D MR"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 882
+msgid "2-D Uncompressed Mode"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 883
+msgid "2-D MMR"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 884
+msgid "JBIG"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 885
+msgid "JPEG Greyscale"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 886
+msgid "JPEG Full-Color"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 897
+msgid "MH"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 898
+msgid ", MR"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 899
+msgid ", MMR"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 900
+msgid ", JBIG"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 902
+msgid ", JPEG Full-Color"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 903
+msgid ", JPEG Greyscale"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 908
+msgid "A4 page width (215 mm)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 909
+msgid "B4 page width (255 mm)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 910
+msgid "A3 page width (303 mm)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 911
+msgid "page width 151 mm"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 912
+msgid "page width 107 mm"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 913
+msgid "undefined page width (wd=5)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 914
+msgid "undefined page width (wd=6)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 915
+msgid "undefined page width (wd=7)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 921
+msgid "A4 page length (297 mm)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 922
+msgid "B4 page length (364 mm)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 923
+msgid "unlimited page length"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 924
+msgid "invalid page length (ln=3)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 930
+msgid "0 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 931
+msgid "5 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 932
+msgid "10 ms, 5 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 933
+msgid "10 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 934
+msgid "20 ms, 10 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 935
+msgid "20 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 936
+msgid "40 ms, 20 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 937
+msgid "40 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 942
+msgid "no ECM"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 943
+msgid "T.30 Annex A, 64-byte ECM"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 944
+msgid "T.30 Annex A, 256-byte ECM"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 945
+msgid "T.30 Annex C, half duplex ECM"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 946
+msgid "T.30 Annex C, full duplex ECM"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 947
+# File: Class2Params.c++, line: 948
+# File: Class2Params.c++, line: 949
+msgid "undefined ECM"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 98
+#, c-format
+msgid "Cannot open file \"%s\" for reading"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 107
+#, c-format
+msgid "Define %s = \"%s\""
+msgstr ""
+
+#
+# File: DialRules.c++, line: 116
+#, c-format
+msgid "Undefine %s"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 128
+msgid "Syntax error, expecting identifier"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 140
+msgid "Missing '[' while parsing rule set"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 159
+#, c-format
+msgid "Missing '=' or ':=' after \"%s\""
+msgstr ""
+
+#
+# File: DialRules.c++, line: 166
+msgid "Warning, no \"CanonicalNumber\" rules."
+msgstr ""
+
+#
+# File: DialRules.c++, line: 169
+msgid "Warning, no \"DialString\" rules."
+msgstr ""
+
+#
+# File: DialRules.c++, line: 217
+msgid "String with unmatched '\"'"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 221
+# File: DialRules.c++, line: 233
+msgid "Bad '\\' escape sequence"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 248
+msgid "Missing '}' for variable reference"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 295
+msgid "Missing ']' while parsing rule set"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 307
+msgid "Rule pattern without '='"
+msgstr ""
+
+#
+# File: DialRules.c++, line: 343
+#, c-format
+msgid "Apply %s rules to \"%s\""
+msgstr ""
+
+#
+# File: DialRules.c++, line: 381
+#, c-format
+msgid "--> match rule \"%s\", result now \"%s\""
+msgstr ""
+
+#
+# File: DialRules.c++, line: 387
+#, c-format
+msgid "--> return result \"%s\""
+msgstr ""
+
+#
+# File: DialRules.c++, line: 398
+# File: DialRules.c++, line: 409
+# File: PageSize.c++, line: 52
+# File: TypeRules.c++, line: 311
+#, c-format
+msgid "%s: line %u: "
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 119
+# File: SNPPClient.c++, line: 106
+# File: TextFormat.c++, line: 97
+msgid "Warning, "
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 194
+#, c-format
+msgid "Can not locate your password entry (uid %lu): %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 220
+# File: SNPPClient.c++, line: 281
+msgid ""
+"Bad (null) user name; your password file entry probably has bogus GECOS "
+"field information."
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 389
+msgid "Malformed (null) username"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 410
+# File: SNPPClient.c++, line: 578
+msgid "Login failed: "
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 431
+msgid "Admin failed: "
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 447
+#, c-format
+msgid "Bad %s parameter value %u."
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 487
+#, c-format
+msgid "Bad time zone parameter value %u."
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 526
+msgid "Unable to initialize data connection to server"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 540
+msgid "Unable to open data connection to server"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 564
+msgid "Unable to abort data connection to server"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 594
+# File: SNPPClient.c++, line: 595
+msgid "Service not available, remote server closed connection"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 601
+# File: SNPPClient.c++, line: 602
+msgid "Unexpected server response: "
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 609
+# File: SNPPClient.c++, line: 610
+msgid "Protocol botch"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 644
+msgid "Memory allocation failed"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 652
+# File: SNPPClient.c++, line: 645
+msgid "No control connection for command"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 787
+#, c-format
+msgid ": No \"%s\" in %s response: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 794
+#, c-format
+msgid ": Null %s in %s response: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 977
+#, c-format
+msgid "Unable to open script file \"%s\"."
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 996
+#, c-format
+msgid "%s: Read error: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1021
+#, c-format
+msgid "%s: line %u: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1111
+# File: FaxClient.c++, line: 1118
+# File: SNPPClient.c++, line: 915
+# File: SNPPClient.c++, line: 922
+msgid " (server closed connection)"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1111
+# File: FaxClient.c++, line: 1118
+# File: SNPPClient.c++, line: 915
+# File: SNPPClient.c++, line: 922
+#, c-format
+msgid " (server write error: %s)."
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1140
+#, c-format
+msgid "SEND data, %lu bytes"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1158
+# File: SNPPClient.c++, line: 943
+#, c-format
+msgid " (data read: %s)."
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1209
+#, c-format
+msgid "SEND compressed data, %lu bytes"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1227
+#, c-format
+msgid " (data read: %s)"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1234
+# File: FaxClient.c++, line: 1254
+# File: FaxClient.c++, line: 1280
+#, c-format
+msgid "zlib compressor error: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1286
+#, c-format
+msgid "SEND %lu bytes transmitted (%.1fx compression)"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1307
+#, c-format
+msgid "Can not initialize compression library: %s"
+msgstr ""
+
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+#
+# File: FaxClient.c++, line: 1349
+# File: FaxClient.c++, line: 1412
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+#
+# File: faxstat.c++, line: 146
+#, c-format
+msgid "Data Connection: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1423
+#, c-format
+msgid "Decoding error: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1437
+#, c-format
+msgid "Can not initialize decoder: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1633
+# File: FaxClient.c++, line: 1697
+msgid "SUB"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1634
+msgid "PWD"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1635
+msgid "Company"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1636
+msgid "Dials"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1637
+# File: FaxClient.c++, line: 1698
+msgid "BR"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1638
+msgid "Tagline"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1639
+msgid "ST"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1640
+# File: FaxClient.c++, line: 1699
+msgid "DF"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1641
+msgid "UsrPri"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1642
+msgid "JobTag"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1643
+msgid "EC"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1644
+msgid "Location"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1645
+msgid "MailAddr"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1646
+msgid "DT"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1647
+msgid "CC"
+msgstr ""
+
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+#
+# File: FaxClient.c++, line: 1648
+# File: FaxClient.c++, line: 1674
+# File: FaxClient.c++, line: 1709
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+#
+# File: faxinfo.c++, line: 395
+msgid "Pages"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1649
+msgid "MinSP"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1650
+msgid "Receiver"
+msgstr ""
+
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+#
+# File: FaxClient.c++, line: 1651
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+#
+# File: faxinfo.c++, line: 348
+msgid "Sender"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1652
+msgid "Tries"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1653
+msgid "ChopThreshold"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1654
+msgid "DoneOp"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1655
+msgid "CommID"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1656
+msgid "JobType"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1657
+# File: FaxClient.c++, line: 1696
+msgid "Date       Time"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1658
+msgid "UNIX Time"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1659
+msgid "State"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1660
+msgid "NTries"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1661
+msgid "Client"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1662
+msgid "TotDials"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1663
+# File: FaxClient.c++, line: 1729
+msgid "Number"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1664
+msgid "NDials"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1665
+# File: FaxClient.c++, line: 1749
+msgid "GID"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1666
+msgid "Chop"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1667
+msgid "Priority"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1668
+msgid "JID"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1669
+msgid "LastTime"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1670
+msgid "PageLength"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1671
+# File: FaxClient.c++, line: 1728
+msgid "Modem"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1672
+msgid "Notify"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1673
+# File: FaxClient.c++, line: 1708
+# File: FaxClient.c++, line: 1752
+msgid "Owner"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1675
+msgid "RetryTime"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1676
+# File: FaxClient.c++, line: 1711
+msgid "Resolution"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1677
+# File: FaxClient.c++, line: 1731
+msgid "Status"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1678
+msgid "TotTries"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1679
+msgid "MaxTries"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1680
+msgid "DialString"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1681
+msgid "PageWidth"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1682
+msgid "MaxDials"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1683
+msgid "TotPages"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1684
+msgid "TTS"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1685
+msgid "UseXVres"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1700
+msgid "Error"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1701
+# File: FaxClient.c++, line: 1748
+msgid "Filename"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1702
+msgid "Time"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1703
+msgid "CIDName"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1704
+msgid "CIDNumber"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1705
+msgid "Length"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1706
+# File: FaxClient.c++, line: 1710
+# File: FaxClient.c++, line: 1753
+# File: FaxClient.c++, line: 1754
+msgid "Protect"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1707
+# File: FaxClient.c++, line: 1756
+msgid "Size"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1712
+msgid "Sender/TSI"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1713
+msgid "Recvd@"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1714
+msgid "Width"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1726
+msgid "Host"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1727
+msgid "LocalID"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1730
+msgid "MaxRecv"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1732
+msgid "Tracing"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1733
+msgid "Speaker"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1745
+msgid "LastAcc"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1746
+msgid "Created"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1747
+msgid "Device"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1750
+msgid "Links"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1751
+msgid "LastMod"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1755
+msgid "RootDev"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1757
+msgid "UID"
+msgstr ""
+
+#
+# File: FaxConfig.c++, line: 57
+#, c-format
+msgid "Read config file %s"
+msgstr ""
+
+#
+# File: FaxConfig.c++, line: 95
+#, c-format
+msgid "No passwd file entry for uid %u, cannot expand ~ in \"%s\""
+msgstr ""
+
+#
+# File: FaxConfig.c++, line: 168
+#, c-format
+msgid "Syntax error at line %u, missing ':' in \"%s\""
+msgstr ""
+
+#
+# File: FaxConfig.c++, line: 183
+#, c-format
+msgid "Syntax error at line %u, missing quote mark in \"%s\""
+msgstr ""
+
+#
+# File: FaxConfig.c++, line: 216
+# File: FaxConfig.c++, line: 227
+#, c-format
+msgid "%s = %s (line %u)"
+msgstr ""
+
+#
+# File: FaxConfig.c++, line: 223
+#, c-format
+msgid "Unknown configuration parameter \"%s\" ignored at line %u"
+msgstr ""
+
+#
+# File: FaxDB.c++, line: 124
+#, c-format
+msgid "%s: line %d: Unmatched \"]\".\n"
+msgstr ""
+
+#
+# File: FaxDB.c++, line: 136
+#, c-format
+msgid "%s: line %d: Missing \":\" separator.\n"
+msgstr ""
+
+#
+# File: FaxDB.c++, line: 184
+#, c-format
+msgid "%s: Premature EOF.\n"
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 75
+# File: SNPPClient.c++, line: 466
+#, c-format
+msgid "%s: No protocol definition, using default."
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 83
+# File: SNPPClient.c++, line: 459
+msgid ": Unknown host"
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 89
+# File: SNPPClient.c++, line: 472
+# File: UnixTransport.c++, line: 54
+msgid "Can not create socket to connect to server."
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 100
+# File: SNPPClient.c++, line: 483
+#, c-format
+msgid "No \"%s\" service definition, using default %u/%s."
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 112
+# File: SNPPClient.c++, line: 495
+#, c-format
+msgid "Trying %s (%s) at port %u..."
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 118
+# File: SNPPClient.c++, line: 501
+#, c-format
+msgid "Connected to %s."
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 122
+# File: SNPPClient.c++, line: 505
+#, c-format
+msgid "setsockopt(TOS): %s (ignored)"
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 128
+# File: SNPPClient.c++, line: 511
+#, c-format
+msgid "setsockopt(OOBLINE): %s (ignored)"
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 141
+# File: SNPPClient.c++, line: 518
+#, c-format
+msgid "Can not reach server at host \"%s\", port %u."
+msgstr ""
+
+#
+# File: InetTransport.c++, line: 269
+# File: SNPPClient.c++, line: 527
+msgid "Sorry, no TCP/IP communication support was configured."
+msgstr ""
+
+#
+# File: Obj.c++, line: 39
+#, c-format
+msgid "%s: Sub class must define method \"%s\".\n"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 67
+#, c-format
+msgid "Unexpected end of line after \"%s\".\n"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 100
+msgid "page size name"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 105
+msgid "page size abbreviation"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 108
+msgid "page width"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 111
+msgid "page height"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 114
+msgid "guaranteed page width"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 117
+msgid "guaranteed page height"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 120
+msgid "top margin"
+msgstr ""
+
+#
+# File: PageSize.c++, line: 130
+#, c-format
+msgid "Warning, no page size database file \"%s\", using builtin default.\n"
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 211
+# File: SendFaxClient.c++, line: 608
+msgid "Malformed (null) sender name or mail address"
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 257
+#, c-format
+msgid "Can not locate your password entry (uid %lu): %s."
+msgstr ""
+
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+#
+# File: SNPPClient.c++, line: 388
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+# File: sendpage.c++, line: 90
+#, c-format
+msgid "Invalid hold time \"%s\": %s"
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 860
+# File: SendFaxClient.c++, line: 425
+msgid "Not logged in to server"
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 892
+#, c-format
+msgid "destination pin %s: request id is %s for host %s\n"
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 936
+#, c-format
+msgid "SEND message data, %lu bytes"
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 966
+#, c-format
+msgid "Unable to open message file \"%s\"."
+msgstr ""
+
+#
+# File: SNPPClient.c++, line: 985
+# File: SNPPClient.c++, line: 995
+#, c-format
+msgid "no SITE %s support; ignoring set request."
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 103
+msgid "Unable to setup file typing and conversion rules"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 129
+msgid "Unknown page size "
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 238
+#, c-format
+msgid "Error creating cover sheet; could not fork subprocess: %s"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 264
+#, c-format
+msgid "Error creating cover sheet; command was \"%s\"; exit status %x"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 273
+#, c-format
+msgid "Error creating cover sheet; unable to create pipe to subprocess: %s"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 278
+#, c-format
+msgid "%s: Can not create temporary file for cover page"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 421
+msgid "Documents not prepared"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 461
+#, c-format
+msgid ": Can not open: %s"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 482
+# File: SendFaxJob.c++, line: 547
+msgid "Document transfer failed: "
+msgstr ""
 
 #
 # File: SendFaxClient.c++, line: 496
@@ -18,12 +1402,507 @@ msgstr[0] ""
 msgstr[1] ""
 
 #
-# File: FaxClient.c++, line: 1111
-# File: FaxClient.c++, line: 1118
-# File: SNPPClient.c++, line: 915
-# File: SNPPClient.c++, line: 922
+# File: SendFaxClient.c++, line: 681
 #, c-format
-msgid " (server write error: %s)."
+msgid "Error converting document; command was \"%s\""
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 709
+#, c-format
+msgid "%s: Can not open file"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 713
+#, c-format
+msgid "%s: Can not stat file"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 718
+#, c-format
+msgid "%s: Not a regular file"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 726
+#, c-format
+msgid "%s: Empty file"
+msgstr ""
+
+#
+# File: SendFaxClient.c++, line: 731
+#, c-format
+msgid "%s: Can not determine file type"
+msgstr ""
+
+#
+# File: SendFaxJob.c++, line: 535
+#, c-format
+msgid "%s: Can not open: %s"
+msgstr ""
+
+#
+# File: Sequence.c++, line: 65
+#, c-format
+msgid "Unable to open sequence number file %s; %s."
+msgstr ""
+
+#
+# File: Sequence.c++, line: 79
+#, c-format
+msgid "%s: Invalid sequence number \"%s\", resetting to 1"
+msgstr ""
+
+#
+# File: Sequence.c++, line: 89
+#, c-format
+msgid "Unable update sequence number file %s; write failed."
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 134
+# File: TextFormat.c++, line: 267
+#, c-format
+msgid "Font %s: %s"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 253
+#, c-format
+msgid "Cannot open temporary file: %s"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 261
+msgid "point size is unusually large (>18pt)"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 279
+#, c-format
+msgid "Margin values too large for page; lm %lu rm %lu page width %lu"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 282
+#, c-format
+msgid "Margin values too large for page; tm %lu bm %lu page height %lu"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 323
+#, c-format
+msgid "Close failure on temporary file: %s"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 339
+#, c-format
+msgid "Read error during reverse collation: %s"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 341
+# File: TextFormat.c++, line: 1006
+#, c-format
+msgid "Output write error: %s"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 721
+#, c-format
+msgid "%s: Cannot open file: %s"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 1178
+# File: TextFormat.c++, line: 1196
+#, c-format
+msgid "Warning: %s - line too long."
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 1236
+#, c-format
+msgid "Warning: %s invalid Fontmap entry - no filename present"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 1376
+#, c-format
+msgid "%s: Can not open font metrics file; using fixed widths"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 1393
+#, c-format
+msgid "%s: No glyph metric table located; using fixed widths"
+msgstr ""
+
+#
+# File: TextFormat.c++, line: 1412
+#, c-format
+msgid "%s, line %u: format error"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 93
+#, c-format
+msgid "rule: %soffset %#lx %s %s"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 103
+msgid " <any value>"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 111
+msgid "failed (offset past data)\n"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 124
+# File: TypeRules.c++, line: 136
+#, c-format
+msgid "failed (unprintable char %#x)\n"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 164
+# File: TypeRules.c++, line: 173
+msgid "failed (insufficient data)\n"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 194
+#, c-format
+msgid "success (result %s, rule \"%s\")\n"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 197
+msgid "failed (comparison)\n"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 323
+#, c-format
+msgid "%s: Can not open type rules file.\n"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 344
+msgid "Missing file offset"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 369
+#, c-format
+msgid "Unknown datatype \"%.*s\""
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 410
+msgid "Missing match value"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 438
+#, c-format
+msgid "Unknown result \"%.*s\""
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 488
+#, c-format
+msgid "match against (..., %u)\n"
+msgstr ""
+
+#
+# File: TypeRules.c++, line: 495
+msgid "no match\n"
+msgstr ""
+
+#
+# File: UnixTransport.c++, line: 62
+#, c-format
+msgid "connect to server at %s"
+msgstr ""
+
+#
+# File: UnixTransport.c++, line: 68
+#, c-format
+msgid "Can not reach server at Unix domain socket \"%s\"."
+msgstr ""
+
+#
+# File: UnixTransport.c++, line: 140
+msgid "Sorry, no Unix domain communication support was configured."
+msgstr ""
+
+# File: faxalter.c++, line: 236
+msgid "No job parameters specified for alteration."
+msgstr ""
+
+#
+# File: faxalter.c++, line: 257
+#, c-format
+msgid "Job %s: duplicated as job %s.\n"
+msgstr ""
+
+#
+# File: faxalter.c++, line: 284
+#, c-format
+msgid "Job %s: done.\n"
+msgstr ""
+
+#
+# File: faxalter.c++, line: 310
+msgid ""
+"usage: faxalter [-C] [-h server-host] [-a time] [-d number] [-k time] [-m "
+"modem] [-n notify] [-P priority] [-t tries] [-A] [-g] [-p] [-r] [-v] [-DQR] "
+"jobID..."
+msgstr ""
+
+# File: faxcover.c++, line: 183
+#, c-format
+msgid "Unknown page size \"%s\""
+msgstr ""
+
+#
+# File: faxcover.c++, line: 200
+#, c-format
+msgid ""
+"usage: %s [-t to] [-c comments] [-p #pages] [-l to-location] [-m "
+"maxcomments] [-z maxlencomments] [-r regarding] [-v to-voice-number] [-x to-"
+"company] [-C template-file] [-D date-format] [-L from-location] [-N from-fax-"
+"number] [-V from-voice-number] [-X from-company] [-s pagesize] -f from -n "
+"fax-number"
+msgstr ""
+
+#
+# File: faxcover.c++, line: 323
+#, c-format
+msgid "Could not locate prototype cover sheet \"%s\""
+msgstr ""
+
+#
+# File: faxcover.c++, line: 455
+msgid "Can not figure out who you are."
+msgstr ""
+
+# File: MIMEState.c++, line: 145
+msgid "Syntax error parsing MIME Content-Type: "
+msgstr ""
+
+#
+# File: MIMEState.c++, line: 360
+#, c-format
+msgid "Internal error, unsupported Content-Transfer-Encoding %u"
+msgstr ""
+
+#
+# File: MsgFmt.c++, line: 162
+#, c-format
+msgid "HEADER %s: %s\n"
+msgstr ""
+
+#
+# File: MsgFmt.c++, line: 170
+#, c-format
+msgid "+HEADER %s: %s\n"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 135
+#, c-format
+msgid "Cannot create temp directory %s"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 267
+msgid "No Destination/Dialstring specified"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 277
+msgid "No From/Sender identity specified"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 396
+#, c-format
+msgid "faxmail: This is a MIME message\n"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 408
+#, c-format
+msgid "faxmail: This is not a MIME message\n"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 443
+#, c-format
+msgid ""
+"unable to process message:\n"
+"\t%s"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 542
+msgid "Badly formatted MIME; premature EOF"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 639
+#, c-format
+msgid "CONVERT: run %s\n"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 669
+#, c-format
+msgid "DISCARDED %s (%s/%s) GOES HERE\n"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 675
+#, c-format
+msgid "DISCARDED %s/%s GOES HERE\n"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 748
+#, c-format
+msgid "%s: write error: %s"
+msgstr ""
+
+# #-#-#-#-#  messages.po  #-#-#-#-#
+#
+# File: faxmail.c++, line: 751
+# #-#-#-#-#  messages.po  #-#-#-#-#
+#
+# File: sendfax.c++, line: 365
+# #-#-#-#-#  messages.po  #-#-#-#-#
+#
+# File: sendpage.c++, line: 216
+#, c-format
+msgid "%s: Can not create temporary file"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 766
+#, c-format
+msgid "Couldn't open output file: %s"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 779
+#, c-format
+msgid "Error converting %s/%s; could not fork subprocess: %s"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 796
+#, c-format
+msgid "Error converting %s/%s; command was \"%s %s\"; exit status %x"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 963
+msgid ""
+"usage: faxmail [-b boldfont] [-H pageheight] [-i italicfont] [-f textfont] [-"
+"p pointsize] [-s pagesize] [-W pagewidth] [-M margins] [-C covertemplate] [-"
+"t notify] [-u user] [-12cnNrRTv]"
+msgstr ""
+
+# File: faxrm.c++, line: 97
+#, c-format
+msgid "%s removed.\n"
+msgstr ""
+
+#
+# File: faxrm.c++, line: 111
+#, c-format
+msgid "Job %s removed.\n"
+msgstr ""
+
+#
+# File: faxrm.c++, line: 116
+#, c-format
+msgid "Job %s removed (from doneq).\n"
+msgstr ""
+
+#
+# File: faxrm.c++, line: 136
+msgid "usage: faxrm [-h server-host] [-adv] id..."
+msgstr ""
+
+# File: faxstat.c++, line: 99
+msgid "usage: faxstat [-h server-host] [-adfgilrsv]"
+msgstr ""
+
+# File: sendfax.c++, line: 240
+#, c-format
+msgid "%s: No destination specified.\n"
+msgstr ""
+
+#
+# File: sendfax.c++, line: 245
+#, c-format
+msgid "%s: Unused options after last destination.\n"
+msgstr ""
+
+#
+# File: sendfax.c++, line: 265
+#, c-format
+msgid "can only wait for one job (right now), waiting for job %s."
+msgstr ""
+
+#
+# File: sendfax.c++, line: 279
+#, c-format
+msgid ""
+"usage: %s [options] [files]\n"
+"(Read the manual page; it's too complicated)"
+msgstr ""
+
+#
+# File: sendfax.c++, line: 319
+#, c-format
+msgid "Null destination for \"%s\""
+msgstr ""
+
+#
+# File: sendfax.c++, line: 326
+msgid "ECM disabled, limiting job to 14400 bps."
+msgstr ""
+
+#
+# File: sendfax.c++, line: 349
+#, c-format
+msgid "%s: no such file"
+msgstr ""
+
+#
+# File: sendfax.c++, line: 372
+#, c-format
+msgid "%s: write error"
+msgstr ""
+
+#
+# File: sendfax.c++, line: 380
+msgid "No input data; transmission aborted"
+msgstr ""
+
+#
+# File: sendpage.c++, line: 144
+#, c-format
+msgid "%s: No pager identification number (PIN) specified.\n"
 msgstr ""
 
 #
@@ -36,400 +1915,150 @@ msgid ""
 "     [-I retry-time] [-t max-tries] [-T max-dials] [-nqvDNR] [msgs ...]"
 msgstr ""
 
-#
-# File: sendpage.c++, line: 144
+# File: dialtest.c++, line: 45
 #, c-format
-msgid "%s: No pager identification number (PIN) specified.\n"
+msgid ""
+"usage: %s [-v] [-a area-code] [-c country-code] [-i international-prefix] [-"
+"l long-distance-prefix] dialrules"
 msgstr ""
 
-#
-# File: sendpage.c++, line: 90
-#, c-format
-msgid "Invalid hold time \"%s\": %s"
-msgstr ""
-
-#
-# File: sendfax.c++, line: 380
-msgid "No input data; transmission aborted"
-msgstr ""
-
-#
-# File: sendfax.c++, line: 372
-#, c-format
-msgid "%s: write error"
-msgstr ""
-
-#
 # #-#-#-#-#  messages.po  #-#-#-#-#
 #
-# File: sendfax.c++, line: 365
+# File: dialtest.c++, line: 60
 # #-#-#-#-#  messages.po  #-#-#-#-#
 #
-# File: sendpage.c++, line: 216
+# File: tsitest.c++, line: 136
 #, c-format
-msgid "%s: Can not create temporary file"
+msgid "ready> "
 msgstr ""
 
 #
-# File: sendfax.c++, line: 349
+# File: dialtest.c++, line: 110
 #, c-format
-msgid "%s: no such file"
+msgid "%s: Problem parsing rules in %s"
 msgstr ""
 
+# #-#-#-#-#  messages.po  #-#-#-#-#
 #
-# File: sendfax.c++, line: 326
-msgid "ECM disabled, limiting job to 14400 bps."
-msgstr ""
-
+# File: dialtest.c++, line: 117
+# #-#-#-#-#  messages.po  #-#-#-#-#
 #
-# File: sendfax.c++, line: 319
+# File: tsitest.c++, line: 168
 #, c-format
-msgid "Null destination for \"%s\""
+msgid "input = \"%s\"\n"
 msgstr ""
 
 #
-# File: sendfax.c++, line: 279
+# File: dialtest.c++, line: 132
 #, c-format
-msgid ""
-"usage: %s [options] [files]\n"
-"(Read the manual page; it's too complicated)"
+msgid "canonical = \"%s\"\n"
 msgstr ""
 
 #
-# File: sendfax.c++, line: 265
+# File: dialtest.c++, line: 133
 #, c-format
-msgid "can only wait for one job (right now), waiting for job %s."
+msgid "dial-string = \"%s\"\n"
 msgstr ""
 
 #
-# File: sendfax.c++, line: 245
+# File: dialtest.c++, line: 134
 #, c-format
-msgid "%s: Unused options after last destination.\n"
+msgid "display = \"%s\"\n"
 msgstr ""
 
 #
-# File: sendfax.c++, line: 240
-#, c-format
-msgid "%s: No destination specified.\n"
+# File: faxfetch.c++, line: 92
+msgid "usage: faxfetch [-h server-host] [-v] file"
 msgstr ""
 
 #
-# File: faxstat.c++, line: 146
-#, c-format
-msgid "Data Connection: %s"
-msgstr ""
-
-#
-# File: faxstat.c++, line: 99
-msgid "usage: faxstat [-h server-host] [-adfgilrsv]"
-msgstr ""
-
-#
-# File: faxrm.c++, line: 136
-msgid "usage: faxrm [-h server-host] [-adv] id..."
-msgstr ""
-
-#
-# File: faxrm.c++, line: 116
-#, c-format
-msgid "Job %s removed (from doneq).\n"
-msgstr ""
-
-#
-# File: faxrm.c++, line: 111
-#, c-format
-msgid "Job %s removed.\n"
-msgstr ""
-
-#
-# File: faxrm.c++, line: 97
-#, c-format
-msgid "%s removed.\n"
-msgstr ""
-
-#
-# File: faxalter.c++, line: 310
-msgid ""
-"usage: faxalter [-C] [-h server-host] [-a time] [-d number] [-k time] [-m "
-"modem] [-n notify] [-P priority] [-t tries] [-A] [-g] [-p] [-r] [-v] [-DQR] "
-"jobID..."
-msgstr ""
-
-#
-# File: faxalter.c++, line: 284
-#, c-format
-msgid "Job %s: done.\n"
-msgstr ""
-
-#
-# File: faxalter.c++, line: 257
-#, c-format
-msgid "Job %s: duplicated as job %s.\n"
-msgstr ""
-
-#
-# File: faxalter.c++, line: 236
-msgid "No job parameters specified for alteration."
-msgstr ""
-
-#
-# File: typetest.c++, line: 117
-#, c-format
-msgid "Unable to setup file typing and conversion rules\n"
-msgstr ""
-
-#
-# File: typetest.c++, line: 90
-#, c-format
-msgid "usage: %s [-f rulesfile] files\n"
-msgstr ""
-
-#
-# File: typetest.c++, line: 74
-#, c-format
-msgid "%s: Can not determine file type\n"
-msgstr ""
-
-#
-# File: typetest.c++, line: 69
-#, c-format
-msgid "%s: Empty file\n"
-msgstr ""
-
-#
-# File: typetest.c++, line: 61
-#, c-format
-msgid "%s: Not a regular file\n"
-msgstr ""
-
-#
-# File: typetest.c++, line: 56
-#, c-format
-msgid "%s: Can not stat file\n"
-msgstr ""
-
-#
-# File: typetest.c++, line: 52
-#, c-format
-msgid "%s: Can not open file\n"
-msgstr ""
-
-#
-# File: tiffcheck.c++, line: 276
+# File: faxinfo.c++, line: 85
 #, c-format
 msgid ""
-"Document requires resizing to adjust page length (convert to %lu, document "
-"is %lu).\n"
+"usage: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt] [-D]\n"
+"\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 267
-msgid "Document is not valid TIFF (missing ImageLength tag).\n"
-msgstr ""
-
-#
-# File: tiffcheck.c++, line: 251
+# File: faxinfo.c++, line: 86
 #, c-format
-msgid ""
-"Document requires resizing to adjust page width (convert to %lu, document is "
-"%lu).\n"
+msgid "\t-n\tPrint FAX filename\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 247
-msgid "Document is not valid TIFF (missing ImageWidth tag).\n"
-msgstr ""
-
-#
-# File: tiffcheck.c++, line: 235
+# File: faxinfo.c++, line: 87
 #, c-format
-msgid ""
-"Document requires reformatting to adjust vertical resolution (convert to %"
-"lu, document is %lu).\n"
+msgid "\t-C d\tQuoted CSV-style output with <d> as the deliminator\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 196
-msgid "Document should be reformatted with LSB-to-MSB bit order.\n"
-msgstr ""
-
-#
-# File: tiffcheck.c++, line: 186
-msgid "Document should be reformatted as a single strip.\n"
-msgstr ""
-
-#
-# File: tiffcheck.c++, line: 177
-msgid "Document requires reformatting, not in 2DMR format.\n"
-msgstr ""
-
-#
-# File: tiffcheck.c++, line: 171
-msgid "Document requires reformatting, not in Group 3 format.\n"
-msgstr ""
-
-#
-# File: tiffcheck.c++, line: 166
-msgid "Document requires reformatting, not in Group 4 format.\n"
-msgstr ""
-
-#
-# File: tiffcheck.c++, line: 159
+# File: faxinfo.c++, line: 88
 #, c-format
-msgid "Document is a multi-sample image (samples/pixel %u).\n"
+msgid "\t-c d\tCSV-style output with <d> as the deliminator\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 152
+# File: faxinfo.c++, line: 89
 #, c-format
-msgid "Document is not a bilevel image (bits/sample %u).\n"
+msgid "\t-r\traw format - values outputed with no names\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 117
-msgid "Document is not valid TIFF (unspecified format error)"
-msgstr ""
-
-#
-# File: tiffcheck.c++, line: 115
-msgid "Document file is unreadable or does not exist"
-msgstr ""
-
-#
-# File: tiffcheck.c++, line: 36
+# File: faxinfo.c++, line: 91
 #, c-format
-msgid ""
-"usage: %s [-r vertical-res] [-l page-length] [-w page-width] [-1] [-2] [-3] "
-"input.tif"
+msgid "  Raw format options:\n"
 msgstr ""
 
 #
-# File: textfmt.c++, line: 154
+# File: faxinfo.c++, line: 92
 #, c-format
-msgid "Unrecognized option \"%c\".\n"
+msgid "\t-S fmt\tUse fmt for the fax start format\n"
 msgstr ""
 
 #
-# File: textfmt.c++, line: 143
+# File: faxinfo.c++, line: 93
 #, c-format
-msgid "Unknown page size %s.\n"
+msgid "\t-s fmt\tUse fmt for the field start format\n"
 msgstr ""
 
 #
-# File: textfmt.c++, line: 125
+# File: faxinfo.c++, line: 94
 #, c-format
-msgid "Bad margin syntax.\n"
+msgid "\t-e fmt\tUse fmt for the field end format\n"
 msgstr ""
 
 #
-# File: textfmt.c++, line: 109
+# File: faxinfo.c++, line: 95
 #, c-format
-msgid "%s: No font metric information found for \"%s\".\n"
+msgid "\t-E fmt\tUse fmt for the fax end format\n"
 msgstr ""
 
 #
-# File: textfmt.c++, line: 61
+# File: faxinfo.c++, line: 243
 #, c-format
-msgid "Default options: -f Courier -1 -p 11bp -o 0\n"
+msgid "Could not open %s; either not TIFF or corrupted.\n"
 msgstr ""
 
 #
-# File: textfmt.c++, line: 45
+# File: faxinfo.c++, line: 249
 #, c-format
-msgid ""
-"Usage: %s [-1] [-2] [-B] [-c] [-D] [-f fontname] [-F fontdir(s)] [-m N] [-o "
-"#] [-p #] [-r] [-U] [-Ml=#,r=#,t=#,b=#] [-V #] files... >out.ps\n"
+msgid "Does not look like a facsimile?\n"
 msgstr ""
 
 #
-# File: faxwatch.c++, line: 114
-#, c-format
-msgid "usage: %s [-h host] [-g] [-l] [-v] trigger-specification"
-msgstr ""
-
-#
-# File: faxwatch.c++, line: 101
-msgid "time values reported in GMT"
-msgstr ""
-
-#
-# File: faxwatch.c++, line: 55
-#, c-format
-msgid "write error: %s"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 419
-#, c-format
-msgid "CallID%u"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 416
-msgid "Yes"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 416
-msgid "No"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 416
-msgid "ErrCorrect"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 415
-msgid "DataFormat"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 414
-msgid "SignalRate"
-msgstr ""
-
-#
+# File: faxinfo.c++, line: 347
 # File: faxinfo.c++, line: 413
-msgid "TimeToRecv"
+msgid "<unknown>"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 412
-msgid "Received"
+# File: faxinfo.c++, line: 353
+msgid "SubAddr"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 410
-#, c-format
-msgid "%u by %u"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 408
-# File: faxinfo.c++, line: 410
-msgid "Page"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 405
-#, c-format
-msgid "%u lines/inch"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 403
-msgid "Hyperfine"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 401
-msgid "Superfine"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 399
-msgid "Fine"
+# File: faxinfo.c++, line: 397
+msgid "Normal"
 msgstr ""
 
 #
@@ -442,150 +2071,618 @@ msgid "Quality"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 397
-msgid "Normal"
+# File: faxinfo.c++, line: 399
+msgid "Fine"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 395
-msgid "Pages"
+# File: faxinfo.c++, line: 401
+msgid "Superfine"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 353
-msgid "SubAddr"
+# File: faxinfo.c++, line: 403
+msgid "Hyperfine"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 348
-msgid "Sender"
+# File: faxinfo.c++, line: 405
+#, c-format
+msgid "%u lines/inch"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 347
+# File: faxinfo.c++, line: 408
+# File: faxinfo.c++, line: 410
+msgid "Page"
+msgstr ""
+
+#
+# File: faxinfo.c++, line: 410
+#, c-format
+msgid "%u by %u"
+msgstr ""
+
+#
+# File: faxinfo.c++, line: 412
+msgid "Received"
+msgstr ""
+
+#
 # File: faxinfo.c++, line: 413
-msgid "<unknown>"
+msgid "TimeToRecv"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 249
+# File: faxinfo.c++, line: 414
+msgid "SignalRate"
+msgstr ""
+
+#
+# File: faxinfo.c++, line: 415
+msgid "DataFormat"
+msgstr ""
+
+#
+# File: faxinfo.c++, line: 416
+msgid "ErrCorrect"
+msgstr ""
+
+#
+# File: faxinfo.c++, line: 416
+msgid "No"
+msgstr ""
+
+#
+# File: faxinfo.c++, line: 416
+msgid "Yes"
+msgstr ""
+
+#
+# File: faxinfo.c++, line: 419
 #, c-format
-msgid "Does not look like a facsimile?\n"
+msgid "CallID%u"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 243
+# File: faxwatch.c++, line: 55
 #, c-format
-msgid "Could not open %s; either not TIFF or corrupted.\n"
+msgid "write error: %s"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 95
+# File: faxwatch.c++, line: 101
+msgid "time values reported in GMT"
+msgstr ""
+
+#
+# File: faxwatch.c++, line: 114
 #, c-format
-msgid "\t-E fmt\tUse fmt for the fax end format\n"
+msgid "usage: %s [-h host] [-g] [-l] [-v] trigger-specification"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 94
-#, c-format
-msgid "\t-e fmt\tUse fmt for the field end format\n"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 93
-#, c-format
-msgid "\t-s fmt\tUse fmt for the field start format\n"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 92
-#, c-format
-msgid "\t-S fmt\tUse fmt for the fax start format\n"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 91
-#, c-format
-msgid "  Raw format options:\n"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 89
-#, c-format
-msgid "\t-r\traw format - values outputed with no names\n"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 88
-#, c-format
-msgid "\t-c d\tCSV-style output with <d> as the deliminator\n"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 87
-#, c-format
-msgid "\t-C d\tQuoted CSV-style output with <d> as the deliminator\n"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 86
-#, c-format
-msgid "\t-n\tPrint FAX filename\n"
-msgstr ""
-
-#
-# File: faxinfo.c++, line: 85
+# File: textfmt.c++, line: 45
 #, c-format
 msgid ""
-"usage: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt] [-D]\n"
-"\n"
+"Usage: %s [-1] [-2] [-B] [-c] [-D] [-f fontname] [-F fontdir(s)] [-m N] [-o "
+"#] [-p #] [-r] [-U] [-Ml=#,r=#,t=#,b=#] [-V #] files... >out.ps\n"
 msgstr ""
 
 #
-# File: faxfetch.c++, line: 92
-msgid "usage: faxfetch [-h server-host] [-v] file"
-msgstr ""
-
-#
-# File: dialtest.c++, line: 134
+# File: textfmt.c++, line: 61
 #, c-format
-msgid "display = \"%s\"\n"
+msgid "Default options: -f Courier -1 -p 11bp -o 0\n"
 msgstr ""
 
 #
-# File: dialtest.c++, line: 133
+# File: textfmt.c++, line: 109
 #, c-format
-msgid "dial-string = \"%s\"\n"
+msgid "%s: No font metric information found for \"%s\".\n"
 msgstr ""
 
 #
-# File: dialtest.c++, line: 132
+# File: textfmt.c++, line: 125
 #, c-format
-msgid "canonical = \"%s\"\n"
+msgid "Bad margin syntax.\n"
 msgstr ""
 
 #
-# File: dialtest.c++, line: 117
+# File: textfmt.c++, line: 143
 #, c-format
-msgid "input = \"%s\"\n"
+msgid "Unknown page size %s.\n"
 msgstr ""
 
 #
-# File: dialtest.c++, line: 110
+# File: textfmt.c++, line: 154
 #, c-format
-msgid "%s: Problem parsing rules in %s"
+msgid "Unrecognized option \"%c\".\n"
 msgstr ""
 
 #
-# File: dialtest.c++, line: 60
-#, c-format
-msgid "ready> "
-msgstr ""
-
-#
-# File: dialtest.c++, line: 45
+# File: tiffcheck.c++, line: 36
 #, c-format
 msgid ""
-"usage: %s [-v] [-a area-code] [-c country-code] [-i international-prefix] [-"
-"l long-distance-prefix] dialrules"
+"usage: %s [-r vertical-res] [-l page-length] [-w page-width] [-1] [-2] [-3] "
+"input.tif"
+msgstr ""
+
+#
+# File: tiffcheck.c++, line: 115
+msgid "Document file is unreadable or does not exist"
+msgstr ""
+
+#
+# File: tiffcheck.c++, line: 117
+msgid "Document is not valid TIFF (unspecified format error)"
+msgstr ""
+
+#
+# File: tiffcheck.c++, line: 152
+#, c-format
+msgid "Document is not a bilevel image (bits/sample %u).\n"
+msgstr ""
+
+#
+# File: tiffcheck.c++, line: 159
+#, c-format
+msgid "Document is a multi-sample image (samples/pixel %u).\n"
+msgstr ""
+
+#
+# File: tiffcheck.c++, line: 166
+msgid "Document requires reformatting, not in Group 4 format.\n"
+msgstr ""
+
+#
+# File: tiffcheck.c++, line: 171
+msgid "Document requires reformatting, not in Group 3 format.\n"
+msgstr ""
+
+#
+# File: tiffcheck.c++, line: 177
+msgid "Document requires reformatting, not in 2DMR format.\n"
+msgstr ""
+
+#
+# File: tiffcheck.c++, line: 186
+msgid "Document should be reformatted as a single strip.\n"
+msgstr ""
+
+#
+# File: tiffcheck.c++, line: 196
+msgid "Document should be reformatted with LSB-to-MSB bit order.\n"
+msgstr ""
+
+#
+# File: tiffcheck.c++, line: 235
+#, c-format
+msgid ""
+"Document requires reformatting to adjust vertical resolution (convert to %"
+"lu, document is %lu).\n"
+msgstr ""
+
+#
+# File: tiffcheck.c++, line: 247
+msgid "Document is not valid TIFF (missing ImageWidth tag).\n"
+msgstr ""
+
+#
+# File: tiffcheck.c++, line: 251
+#, c-format
+msgid ""
+"Document requires resizing to adjust page width (convert to %lu, document is "
+"%lu).\n"
+msgstr ""
+
+#
+# File: tiffcheck.c++, line: 267
+msgid "Document is not valid TIFF (missing ImageLength tag).\n"
+msgstr ""
+
+#
+# File: tiffcheck.c++, line: 276
+#, c-format
+msgid ""
+"Document requires resizing to adjust page length (convert to %lu, document "
+"is %lu).\n"
+msgstr ""
+
+#
+# File: typetest.c++, line: 52
+#, c-format
+msgid "%s: Can not open file\n"
+msgstr ""
+
+#
+# File: typetest.c++, line: 56
+#, c-format
+msgid "%s: Can not stat file\n"
+msgstr ""
+
+#
+# File: typetest.c++, line: 61
+#, c-format
+msgid "%s: Not a regular file\n"
+msgstr ""
+
+#
+# File: typetest.c++, line: 69
+#, c-format
+msgid "%s: Empty file\n"
+msgstr ""
+
+#
+# File: typetest.c++, line: 74
+#, c-format
+msgid "%s: Can not determine file type\n"
+msgstr ""
+
+#
+# File: typetest.c++, line: 90
+#, c-format
+msgid "usage: %s [-f rulesfile] files\n"
+msgstr ""
+
+#
+# File: typetest.c++, line: 117
+#, c-format
+msgid "Unable to setup file typing and conversion rules\n"
+msgstr ""
+
+# File: choptest.c++, line: 43
+#, c-format
+msgid "usage: %s [-a] [-t threshold] input.tif\n"
+msgstr ""
+
+#
+# File: choptest.c++, line: 87
+# File: tagtest.c++, line: 438
+#, c-format
+msgid "%s: Cannot open, or not a TIFF file"
+msgstr ""
+
+#
+# File: choptest.c++, line: 91
+# File: tagtest.c++, line: 442
+#, c-format
+msgid "%s: Not a Group 3 or Group 4-encoded TIFF file"
+msgstr ""
+
+#
+# File: choptest.c++, line: 100
+#, c-format
+msgid "Chop all pages with >=%.2g\" of white space at the bottom.\n"
+msgstr ""
+
+#
+# File: choptest.c++, line: 101
+#, c-format
+msgid "Chop last page if >=%.2g\" of white space at the bottom.\n"
+msgstr ""
+
+#
+# File: choptest.c++, line: 134
+#, c-format
+msgid "Chop %u rows, strip was %lu bytes, need only %lu\n"
+msgstr ""
+
+#
+# File: choptest.c++, line: 140
+#, c-format
+msgid "Don't chop, found %u rows, need %u rows\n"
+msgstr ""
+
+#
+# File: cqtest.c++, line: 168
+msgid "Missing EOL after 5 seconds"
+msgstr ""
+
+#
+# File: cqtest.c++, line: 259
+# File: cqtest.c++, line: 350
+#, c-format
+msgid "Adjusting for RTC found at row %u"
+msgstr ""
+
+#
+# File: cqtest.c++, line: 273
+#, c-format
+msgid "adjusting for trailing noise (%lu run)"
+msgstr ""
+
+#
+# File: cqtest.c++, line: 279
+#, c-format
+msgid "%lu total lines, %lu bad lines, %lu consecutive bad lines"
+msgstr ""
+
+#
+# File: cqtest.c++, line: 362
+# File: cqtest.c++, line: 373
+#, c-format
+msgid "RECV: %s: write error"
+msgstr ""
+
+#
+# File: cqtest.c++, line: 397
+#, c-format
+msgid "RECV: REJECT page quality, %u%% good lines (%u%% required)"
+msgstr ""
+
+#
+# File: cqtest.c++, line: 407
+#, c-format
+msgid "RECV: REJECT page quality, %u-line run (max %u)"
+msgstr ""
+
+#
+# File: cqtest.c++, line: 435
+msgid "RECV: "
+msgstr ""
+
+#
+# File: cqtest.c++, line: 459
+#, c-format
+msgid "Invalid %s code word, row %u, x %d"
+msgstr ""
+
+#
+# File: cqtest.c++, line: 470
+#, c-format
+msgid "Bad %s pixel count, row %u, got %d, expected %d"
+msgstr ""
+
+#
+# File: cqtest.c++, line: 477
+#, c-format
+msgid "Panic, bad %s decoding state, row %u, x %d"
+msgstr ""
+
+#
+# File: cqtest.c++, line: 489
+msgid "RECV/CQ: "
+msgstr ""
+
+#
+# File: cqtest.c++, line: 499
+#, c-format
+msgid "usage: %s [-m maxbad] [-p %%good] [-o output.tif] input.tif\n"
+msgstr ""
+
+#
+# File: cqtest.c++, line: 533
+#, c-format
+msgid "%s: Cannot open, or not a TIFF file\n"
+msgstr ""
+
+#
+# File: cqtest.c++, line: 538
+#, c-format
+msgid "%s: Cannot create TIFF file\n"
+msgstr ""
+
+#
+# File: cqtest.c++, line: 581
+#, c-format
+msgid "Read error on strip %u\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 126
+#, c-format
+msgid "Scan %s directory for jobs to remove+archive.\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 131
+#, c-format
+msgid "%s: Could not scan directory for jobs.\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 144
+#, c-format
+msgid "%s: ignored (cannot stat or not a regular file)\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 161
+#, c-format
+msgid "%s: job too new, ignored (for now).\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 171
+#, c-format
+msgid "JOB %s: archive (%s)%s.\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 174
+# File: faxQCleanApp.c++, line: 183
+# File: faxQCleanApp.c++, line: 416
+msgid " (not done)"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 180
+#, c-format
+msgid "JOB %s: remove (%s) %s.\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 197
+#, c-format
+msgid "%s: malformed queue file: remove\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 213
+# File: faxQCleanApp.c++, line: 425
+#, c-format
+msgid "Done scanning %s directory\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 235
+#, c-format
+msgid "JOB %s: reference %s\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 267
+#, c-format
+msgid "Scan %s directory and remove unreferenced documents.\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 272
+#, c-format
+msgid "%s: Could not scan directory for unreferenced documents.\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 294
+#, c-format
+msgid "%s: ignored, cannot stat or not a regular file\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 309
+#, c-format
+msgid "%s: ignored, file has %u links\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 315
+#, c-format
+msgid "%s: ignored, file has %u references\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 321
+#, c-format
+msgid "%s: ignored, file is too new to remove\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 344
+# File: faxQCleanApp.c++, line: 366
+#, c-format
+msgid "%s: file looks to be referenced by job\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 348
+#, c-format
+msgid "%s: file has no matching %s\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 385
+#, c-format
+msgid "%s: Could not scan directory for base file.\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 394
+#, c-format
+msgid "%s: found match to base '%s', skipping.\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 406
+#, c-format
+msgid "%s: did not find base '%s' match.\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 414
+#, c-format
+msgid "DOC %s: unreferenced document removed%s.\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 420
+#, c-format
+msgid "%s: error removing unreferenced document: %s.\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 433
+#, c-format
+msgid "usage: %s [-a] [-j time] [-d time] [-q queue-directory]\n"
+msgstr ""
+
+#
+# File: faxQCleanApp.c++, line: 466
+#, c-format
+msgid "%s: Can not change directory: %s.\n"
+msgstr ""
+
+#
+# File: tagtest.c++, line: 384
+#, c-format
+msgid "usage: %s [-m format] [-o t.tif] [-f font.pcf] input.tif\n"
+msgstr ""
+
+#
+# File: tagtest.c++, line: 445
+#, c-format
+msgid "%s: Problem reading font"
+msgstr ""
+
+#
+# File: tagtest.c++, line: 449
+#, c-format
+msgid "%s: Cannot create output file"
+msgstr ""
+
+#
+# File: tagtest.c++, line: 553
+#, c-format
+msgid "%s: Write error at strip %u, writing %lu bytes"
+msgstr ""
+
+#
+# File: tsitest.c++, line: 95
+#, c-format
+msgid "Bad TSI pattern: %s: "
+msgstr ""
+
+#
+# File: tsitest.c++, line: 130
+#, c-format
+msgid "usage: %s [-q] tsifile"
+msgstr ""
+
+#
+# File: tsitest.c++, line: 175
+#, c-format
+msgid "[check %s]\n"
+msgstr ""
+
+#
+# File: tsitest.c++, line: 179
+#, c-format
+msgid "accept (matched by %s)\n"
+msgstr ""
+
+#
+# File: tsitest.c++, line: 180
+#, c-format
+msgid "reject (matched by %s)\n"
+msgstr ""
+
+#
+# File: tsitest.c++, line: 186
+#, c-format
+msgid "reject (no pattern match)\n"
+msgstr ""
+
+#
+# File: tsitest.c++, line: 188
+#, c-format
+msgid "reject (no patterns)\n"
 msgstr ""

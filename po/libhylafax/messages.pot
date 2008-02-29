@@ -86,6 +86,319 @@ msgid "Syntax error, "
 msgstr ""
 
 #
+# File: Class2Params.c++, line: 804
+msgid "3.85 line/mm"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 805
+msgid "7.7 line/mm"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 806
+msgid "15.4 line/mm"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 807
+msgid "R16 x 15.4 line/mm"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 808
+msgid "200 x 100 dpi"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 809
+msgid "200 x 200 dpi"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 810
+msgid "200 x 400 dpi"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 811
+msgid "300 x 300 dpi"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 836
+msgid "2400 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 837
+msgid "4800 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 838
+msgid "7200 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 839
+msgid "9600 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 840
+msgid "12000 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 841
+msgid "14400 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 842
+msgid "16800 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 843
+msgid "19200 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 844
+msgid "21600 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 845
+msgid "24000 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 846
+msgid "26400 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 847
+msgid "28800 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 848
+msgid "31200 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 849
+msgid "33600 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 850
+# File: Class2Params.c++, line: 851
+msgid "0 bit/s"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 880
+msgid "1-D MH"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 881
+msgid "2-D MR"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 882
+msgid "2-D Uncompressed Mode"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 883
+msgid "2-D MMR"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 884
+msgid "JBIG"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 885
+msgid "JPEG Greyscale"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 886
+msgid "JPEG Full-Color"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 897
+msgid "MH"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 898
+msgid ", MR"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 899
+msgid ", MMR"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 900
+msgid ", JBIG"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 902
+msgid ", JPEG Full-Color"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 903
+msgid ", JPEG Greyscale"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 908
+msgid "A4 page width (215 mm)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 909
+msgid "B4 page width (255 mm)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 910
+msgid "A3 page width (303 mm)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 911
+msgid "page width 151 mm"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 912
+msgid "page width 107 mm"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 913
+msgid "undefined page width (wd=5)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 914
+msgid "undefined page width (wd=6)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 915
+msgid "undefined page width (wd=7)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 921
+msgid "A4 page length (297 mm)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 922
+msgid "B4 page length (364 mm)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 923
+msgid "unlimited page length"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 924
+msgid "invalid page length (ln=3)"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 930
+msgid "0 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 931
+msgid "5 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 932
+msgid "10 ms, 5 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 933
+msgid "10 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 934
+msgid "20 ms, 10 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 935
+msgid "20 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 936
+msgid "40 ms, 20 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 937
+msgid "40 ms/scanline"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 942
+msgid "no ECM"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 943
+msgid "T.30 Annex A, 64-byte ECM"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 944
+msgid "T.30 Annex A, 256-byte ECM"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 945
+msgid "T.30 Annex C, half duplex ECM"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 946
+msgid "T.30 Annex C, full duplex ECM"
+msgstr ""
+
+#
+# File: Class2Params.c++, line: 947
+# File: Class2Params.c++, line: 948
+# File: Class2Params.c++, line: 949
+msgid "undefined ECM"
+msgstr ""
+
+#
 # File: DialRules.c++, line: 98
 #, c-format
 msgid "Cannot open file \"%s\" for reading"
@@ -384,6 +697,399 @@ msgstr ""
 # File: FaxClient.c++, line: 1437
 #, c-format
 msgid "Can not initialize decoder: %s"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1633
+# File: FaxClient.c++, line: 1697
+msgid "SUB"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1634
+msgid "PWD"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1635
+msgid "Company"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1636
+msgid "Dials"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1637
+# File: FaxClient.c++, line: 1698
+msgid "BR"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1638
+msgid "Tagline"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1639
+msgid "ST"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1640
+# File: FaxClient.c++, line: 1699
+msgid "DF"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1641
+msgid "UsrPri"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1642
+msgid "JobTag"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1643
+msgid "EC"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1644
+msgid "Location"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1645
+msgid "MailAddr"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1646
+msgid "DT"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1647
+msgid "CC"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1648
+# File: FaxClient.c++, line: 1674
+# File: FaxClient.c++, line: 1709
+msgid "Pages"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1649
+msgid "MinSP"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1650
+msgid "Receiver"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1651
+msgid "Sender"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1652
+msgid "Tries"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1653
+msgid "ChopThreshold"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1654
+msgid "DoneOp"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1655
+msgid "CommID"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1656
+msgid "JobType"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1657
+# File: FaxClient.c++, line: 1696
+msgid "Date       Time"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1658
+msgid "UNIX Time"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1659
+msgid "State"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1660
+msgid "NTries"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1661
+msgid "Client"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1662
+msgid "TotDials"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1663
+# File: FaxClient.c++, line: 1729
+msgid "Number"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1664
+msgid "NDials"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1665
+# File: FaxClient.c++, line: 1749
+msgid "GID"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1666
+msgid "Chop"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1667
+msgid "Priority"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1668
+msgid "JID"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1669
+msgid "LastTime"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1670
+msgid "PageLength"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1671
+# File: FaxClient.c++, line: 1728
+msgid "Modem"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1672
+msgid "Notify"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1673
+# File: FaxClient.c++, line: 1708
+# File: FaxClient.c++, line: 1752
+msgid "Owner"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1675
+msgid "RetryTime"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1676
+# File: FaxClient.c++, line: 1711
+msgid "Resolution"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1677
+# File: FaxClient.c++, line: 1731
+msgid "Status"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1678
+msgid "TotTries"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1679
+msgid "MaxTries"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1680
+msgid "DialString"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1681
+msgid "PageWidth"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1682
+msgid "MaxDials"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1683
+msgid "TotPages"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1684
+msgid "TTS"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1685
+msgid "UseXVres"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1700
+msgid "Error"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1701
+# File: FaxClient.c++, line: 1748
+msgid "Filename"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1702
+msgid "Time"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1703
+msgid "CIDName"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1704
+msgid "CIDNumber"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1705
+msgid "Length"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1706
+# File: FaxClient.c++, line: 1710
+# File: FaxClient.c++, line: 1753
+# File: FaxClient.c++, line: 1754
+msgid "Protect"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1707
+# File: FaxClient.c++, line: 1756
+msgid "Size"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1712
+msgid "Sender/TSI"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1713
+msgid "Recvd@"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1714
+msgid "Width"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1726
+msgid "Host"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1727
+msgid "LocalID"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1730
+msgid "MaxRecv"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1732
+msgid "Tracing"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1733
+msgid "Speaker"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1745
+msgid "LastAcc"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1746
+msgid "Created"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1747
+msgid "Device"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1750
+msgid "Links"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1751
+msgid "LastMod"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1755
+msgid "RootDev"
+msgstr ""
+
+#
+# File: FaxClient.c++, line: 1757
+msgid "UID"
 msgstr ""
 
 #

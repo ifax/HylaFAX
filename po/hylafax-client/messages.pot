@@ -1,31 +1,144 @@
+# File: faxalter.c++, line: 236
+msgid "No job parameters specified for alteration."
+msgstr ""
+
 #
-# File: sendpage.c++, line: 177
+# File: faxalter.c++, line: 257
 #, c-format
-msgid   "usage: %s -p PIN [-p PIN ...]\n"
-        " [-a time-to-send] [-l service-level] [-s message-subject]\n"
-        "     [-h host[:modem]] [-f from]\n"
-        "     [-I retry-time] [-t max-tries] [-T max-dials] [-nqvDNR] [msgs ...]"
-msgstr  ""
+msgid "Job %s: duplicated as job %s.\n"
+msgstr ""
+
 #
-# File: sendpage.c++, line: 144
+# File: faxalter.c++, line: 284
 #, c-format
-msgid   "%s: No pager identification number (PIN) specified.\n"
-msgstr  ""
+msgid "Job %s: done.\n"
+msgstr ""
+
 #
-# File: sendpage.c++, line: 90
+# File: faxalter.c++, line: 310
+msgid ""
+"usage: faxalter [-C] [-h server-host] [-a time] [-d number] [-k time] [-m "
+"modem] [-n notify] [-P priority] [-t tries] [-A] [-g] [-p] [-r] [-v] [-DQR] "
+"jobID..."
+msgstr ""
+
+# File: faxcover.c++, line: 183
 #, c-format
-msgid   "Invalid hold time \"%s\": %s"
-msgstr  ""
+msgid "Unknown page size \"%s\""
+msgstr ""
+
 #
-# File: sendfax.c++, line: 380
-msgid   "No input data; transmission aborted"
-msgstr  ""
-#
-# File: sendfax.c++, line: 372
+# File: faxcover.c++, line: 200
 #, c-format
-msgid   "%s: write error"
-msgstr  ""
+msgid ""
+"usage: %s [-t to] [-c comments] [-p #pages] [-l to-location] [-m "
+"maxcomments] [-z maxlencomments] [-r regarding] [-v to-voice-number] [-x to-"
+"company] [-C template-file] [-D date-format] [-L from-location] [-N from-fax-"
+"number] [-V from-voice-number] [-X from-company] [-s pagesize] -f from -n "
+"fax-number"
+msgstr ""
+
 #
+# File: faxcover.c++, line: 323
+#, c-format
+msgid "Could not locate prototype cover sheet \"%s\""
+msgstr ""
+
+#
+# File: faxcover.c++, line: 455
+msgid "Can not figure out who you are."
+msgstr ""
+
+# File: MIMEState.c++, line: 145
+msgid "Syntax error parsing MIME Content-Type: "
+msgstr ""
+
+#
+# File: MIMEState.c++, line: 360
+#, c-format
+msgid "Internal error, unsupported Content-Transfer-Encoding %u"
+msgstr ""
+
+#
+# File: MsgFmt.c++, line: 162
+#, c-format
+msgid "HEADER %s: %s\n"
+msgstr ""
+
+#
+# File: MsgFmt.c++, line: 170
+#, c-format
+msgid "+HEADER %s: %s\n"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 135
+#, c-format
+msgid "Cannot create temp directory %s"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 267
+msgid "No Destination/Dialstring specified"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 277
+msgid "No From/Sender identity specified"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 396
+#, c-format
+msgid "faxmail: This is a MIME message\n"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 408
+#, c-format
+msgid "faxmail: This is not a MIME message\n"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 443
+#, c-format
+msgid ""
+"unable to process message:\n"
+"\t%s"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 542
+msgid "Badly formatted MIME; premature EOF"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 639
+#, c-format
+msgid "CONVERT: run %s\n"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 669
+#, c-format
+msgid "DISCARDED %s (%s/%s) GOES HERE\n"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 675
+#, c-format
+msgid "DISCARDED %s/%s GOES HERE\n"
+msgstr ""
+
+#
+# File: faxmail.c++, line: 748
+#, c-format
+msgid "%s: write error: %s"
+msgstr ""
+
+# #-#-#-#-#  messages.po  #-#-#-#-#
+#
+# File: faxmail.c++, line: 751
 # #-#-#-#-#  messages.po  #-#-#-#-#
 #
 # File: sendfax.c++, line: 365
@@ -33,86 +146,137 @@ msgstr  ""
 #
 # File: sendpage.c++, line: 216
 #, c-format
-msgid   "%s: Can not create temporary file"
-msgstr  ""
+msgid "%s: Can not create temporary file"
+msgstr ""
+
 #
-# File: sendfax.c++, line: 349
+# File: faxmail.c++, line: 766
 #, c-format
-msgid   "%s: no such file"
-msgstr  ""
+msgid "Couldn't open output file: %s"
+msgstr ""
+
 #
-# File: sendfax.c++, line: 326
-msgid   "ECM disabled, limiting job to 14400 bps."
-msgstr  ""
-#
-# File: sendfax.c++, line: 319
+# File: faxmail.c++, line: 779
 #, c-format
-msgid   "Null destination for \"%s\""
-msgstr  ""
+msgid "Error converting %s/%s; could not fork subprocess: %s"
+msgstr ""
+
 #
-# File: sendfax.c++, line: 279
+# File: faxmail.c++, line: 796
 #, c-format
-msgid   "usage: %s [options] [files]\n"
-        "(Read the manual page; it's too complicated)"
-msgstr  ""
+msgid "Error converting %s/%s; command was \"%s %s\"; exit status %x"
+msgstr ""
+
 #
-# File: sendfax.c++, line: 265
+# File: faxmail.c++, line: 963
+msgid ""
+"usage: faxmail [-b boldfont] [-H pageheight] [-i italicfont] [-f textfont] [-"
+"p pointsize] [-s pagesize] [-W pagewidth] [-M margins] [-C covertemplate] [-"
+"t notify] [-u user] [-12cnNrRTv]"
+msgstr ""
+
+# File: faxrm.c++, line: 97
 #, c-format
-msgid   "can only wait for one job (right now), waiting for job %s."
-msgstr  ""
-#
-# File: sendfax.c++, line: 245
-#, c-format
-msgid   "%s: Unused options after last destination.\n"
-msgstr  ""
-#
-# File: sendfax.c++, line: 240
-#, c-format
-msgid   "%s: No destination specified.\n"
-msgstr  ""
-#
-# File: faxstat.c++, line: 146
-#, c-format
-msgid   "Data Connection: %s"
-msgstr  ""
-#
-# File: faxstat.c++, line: 99
-msgid   "usage: faxstat [-h server-host] [-adfgilrsv]"
-msgstr  ""
-#
-# File: faxrm.c++, line: 136
-msgid   "usage: faxrm [-h server-host] [-adv] id..."
-msgstr  ""
-#
-# File: faxrm.c++, line: 116
-#, c-format
-msgid   "Job %s removed (from doneq).\n"
-msgstr  ""
+msgid "%s removed.\n"
+msgstr ""
+
 #
 # File: faxrm.c++, line: 111
 #, c-format
-msgid   "Job %s removed.\n"
-msgstr  ""
+msgid "Job %s removed.\n"
+msgstr ""
+
 #
-# File: faxrm.c++, line: 97
+# File: faxrm.c++, line: 116
 #, c-format
-msgid   "%s removed.\n"
-msgstr  ""
+msgid "Job %s removed (from doneq).\n"
+msgstr ""
+
 #
-# File: faxalter.c++, line: 310
-msgid   "usage: faxalter [-C] [-h server-host] [-a time] [-d number] [-k time] [-m modem] [-n notify] [-P priority] [-t tries] [-A] [-g] [-p] [-r] [-v] [-DQR] jobID..."
-msgstr  ""
+# File: faxrm.c++, line: 136
+msgid "usage: faxrm [-h server-host] [-adv] id..."
+msgstr ""
+
+# File: faxstat.c++, line: 99
+msgid "usage: faxstat [-h server-host] [-adfgilrsv]"
+msgstr ""
+
 #
-# File: faxalter.c++, line: 284
+# File: faxstat.c++, line: 146
 #, c-format
-msgid   "Job %s: done.\n"
-msgstr  ""
-#
-# File: faxalter.c++, line: 257
+msgid "Data Connection: %s"
+msgstr ""
+
+# File: sendfax.c++, line: 240
 #, c-format
-msgid   "Job %s: duplicated as job %s.\n"
-msgstr  ""
+msgid "%s: No destination specified.\n"
+msgstr ""
+
 #
-# File: faxalter.c++, line: 236
-msgid   "No job parameters specified for alteration."
-msgstr  ""
+# File: sendfax.c++, line: 245
+#, c-format
+msgid "%s: Unused options after last destination.\n"
+msgstr ""
+
+#
+# File: sendfax.c++, line: 265
+#, c-format
+msgid "can only wait for one job (right now), waiting for job %s."
+msgstr ""
+
+#
+# File: sendfax.c++, line: 279
+#, c-format
+msgid ""
+"usage: %s [options] [files]\n"
+"(Read the manual page; it's too complicated)"
+msgstr ""
+
+#
+# File: sendfax.c++, line: 319
+#, c-format
+msgid "Null destination for \"%s\""
+msgstr ""
+
+#
+# File: sendfax.c++, line: 326
+msgid "ECM disabled, limiting job to 14400 bps."
+msgstr ""
+
+#
+# File: sendfax.c++, line: 349
+#, c-format
+msgid "%s: no such file"
+msgstr ""
+
+#
+# File: sendfax.c++, line: 372
+#, c-format
+msgid "%s: write error"
+msgstr ""
+
+#
+# File: sendfax.c++, line: 380
+msgid "No input data; transmission aborted"
+msgstr ""
+
+# File: sendpage.c++, line: 90
+#, c-format
+msgid "Invalid hold time \"%s\": %s"
+msgstr ""
+
+#
+# File: sendpage.c++, line: 144
+#, c-format
+msgid "%s: No pager identification number (PIN) specified.\n"
+msgstr ""
+
+#
+# File: sendpage.c++, line: 177
+#, c-format
+msgid ""
+"usage: %s -p PIN [-p PIN ...]\n"
+" [-a time-to-send] [-l service-level] [-s message-subject]\n"
+"     [-h host[:modem]] [-f from]\n"
+"     [-I retry-time] [-t max-tries] [-T max-dials] [-nqvDNR] [msgs ...]"
+msgstr ""
