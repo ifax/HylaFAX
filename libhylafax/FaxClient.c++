@@ -1108,14 +1108,14 @@ FaxClient::sendRawData(void* buf, int cc, fxStr& emsg)
     for (int cnt, sent = 0; cc; sent += cnt, cc -= cnt)
 	if ((cnt = write(fdData, bp + sent, cc)) <= 0) {
 	    protocolBotch(emsg, errno == EPIPE ?
-		NLS::TEXT(" (server closed connection)") : _(" (server write error: %s)."),
+		NLS::TEXT(" (server closed connection)") : NLS::TEXT(" (server write error: %s)."),
 		strerror(errno));
 	    return (false);
 	}
 #else
     if (write(fdData, buf, cc) != cc) {
 	protocolBotch(emsg, errno == EPIPE ?
-	    NLS::TEXT(" (server closed connection)") : _(" (server write error: %s)."),
+	    NLS::TEXT(" (server closed connection)") : NLS::TEXT(" (server write error: %s)."),
 	    strerror(errno));
 	return (false);
     }
