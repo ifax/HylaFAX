@@ -5,3 +5,4 @@ Makedepend
 *.so.*
 *.so
 pagesizes
+messages.po
