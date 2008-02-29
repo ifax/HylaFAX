@@ -18,6 +18,8 @@ ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	INSTALL_PROGRAM += -s
 endif
 
+LANGUAGES=nl es
+
 configure: configure-stamp
 configure-stamp: patch-stamp
 	cp -p /usr/share/misc/config.* .
@@ -31,6 +33,7 @@ configure-stamp: patch-stamp
 		--with-DIR_SBIN="/usr/sbin" \
 		--with-DIR_LOCKS="/var/lock" \
 		--with-PATH_AFM="/usr/share/fonts/type1/gsfonts" \
+		--with-LOCALEDIR="/usr/share/locale" \
 		--with-FONTMAP="/usr/share/gs-esp/8.15/lib:/usr/share/gs-esp/7.07/lib:/usr/share/gs/6.53" \
 		--with-SYSGID="root" \
 		--with-SYSUID="root" \
@@ -119,6 +122,7 @@ install-server:
 		var/spool/hylafax/{archive,client,config,dev,info,log,bin,etc} \
 		var/spool/hylafax/{recvq,status,sendq,doneq,docq,tmp,pollq} \
 		usr/share/man/{man5,man8} \
+		usr/share/locale \
 		usr/share/lintian/overrides
 
 	cp -p debian/hosts.hfaxd hfaxd/hfaxd.conf util/cover.templ \
@@ -177,6 +181,13 @@ install-server:
 	  cp -p $$i $(d_server)/usr/share/man/man8/$$b.8; \
 	done
 
+	# i18n mo files
+	for l in $(LANGUAGES); do \
+		mkdir $(d_server)/usr/share/locale/$$l; \
+		mkdir $(d_server)/usr/share/locale/$$l/LC_MESSAGES; \
+		cp po/hylafax-server/$$l.mo $(d_server)/usr/share/locale/$$l/LC_MESSAGES/hylafax-server.mo; \
+	done
+
 	# override lintian warnings
 	cp -p debian/lintian.override.hylafax-server \
 		$(d_server)/usr/share/lintian/overrides/$(p_server)
@@ -199,6 +210,7 @@ install-client:
 		usr/share/man/{man1,man5} \
 		usr/share/hylafax \
 		usr/share/doc/hylafax-client/faxmail \
+		usr/share/locale \
 		usr/share/lintian/overrides
 
 	cp -p debian/hyla.conf faxcover/faxcover.ps faxmail/faxmail.ps \
@@ -210,6 +222,14 @@ install-client:
 		faxmail/faxmail faxrm/faxrm faxstat/faxstat \
 		sendfax/sendfax sendpage/sendpage \
 	$(d_client)/usr/bin/.
+
+	#i18n .mo files
+	for l in $(LANGUAGES); do \
+		mkdir $(d_client)/usr/share/locale/$$l; \
+		mkdir $(d_client)/usr/share/locale/$$l/LC_MESSAGES; \
+		cp po/libhylafax/$$l.mo $(d_client)/usr/share/locale/$$l/LC_MESSAGES/libhylafax.mo; \
+		cp po/hylafax-client/$$l.mo $(d_client)/usr/share/locale/$$l/LC_MESSAGES/hylafax-client.mo; \
+	done
 
 	install -p faxmail/mailfax.sh-postfix faxmail/mailfax.sh-qmail \
 		faxmail/mailfax.sh-sendmail faxmail/mailfax.sh-smail \
