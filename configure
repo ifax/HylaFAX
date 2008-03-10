@@ -4812,8 +4812,8 @@ SedConfigFiles()
 	    unset POSIXLY_CORRECT
 	    $RM $F.new; $SED -f confsed1 $SRCDIR/$F.in | $SED -f confsed2 > $F.new
 	    POSIXLY_CORRECT=1 ; export POSIXLY_CORRECT
-	    $RM confx; $SED '/DATE:/d' $F.new >confx
-	    $RM confy; $SED '/DATE:/d' $F >confy 2>/dev/null
+	    $RM confx; $SED '/D[aA][tT][eE]:/d' $F.new >confx
+	    $RM confy; $SED '/D[aA][tT][eE]:/d' $F >confy 2>/dev/null
 	    if cmp -s confx confy >/dev/null 2>&1; then
 		$RM $F.new
 	    else
