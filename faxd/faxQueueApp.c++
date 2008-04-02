@@ -2351,6 +2351,12 @@ faxQueueApp::areBatchable(Job& job, Job& nextjob, FaxRequest& nextreq)
     // make sure the job's modem is in the requested ModemGroup 
     if (!job.modem->isInGroup(nextreq.modem))
 	return(false);
+
+    // make sure nextJob's TimeOfDay is for now
+    time_t now = Sys::now();
+    if ((nextjob.getJCI().nextTimeToSend(now) != now) )
+	    return (false);
+
     return(true);
 }
 
