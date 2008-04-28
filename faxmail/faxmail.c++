@@ -680,12 +680,12 @@ faxMailApp::formatDiscarded(MIMEState& mime)
 	empty = false;
     }
     if (mime.getDescription() != "")
-	fprintf(stderr, "DISCARDED: %s (%s/%s)\n",
+	fprintf(stderr, _("DISCARDED: %s (%s/%s)\n"),
 	    (const char*) mime.getDescription(),
 	    (const char*) mime.getType(),
 	    (const char*) mime.getSubType());
     else
-	fprintf(stderr, "DISCARDED: %s/%s\n",
+	fprintf(stderr, _("DISCARDED: %s/%s\n"),
 	    (const char*) mime.getType(),
 	    (const char*) mime.getSubType());
 }
