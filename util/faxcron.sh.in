@@ -103,7 +103,7 @@ echo ""
 $SBIN/xferfaxstats -since "$LASTRUN" 
 echo ""
 
-echo "Facsimile transmitted since last week:"
+echo "Facsimile transmitted in the last seven days:"
 echo ""
 $SBIN/xferfaxstats -age 7
 echo ""
@@ -113,7 +113,7 @@ echo ""
 $SBIN/recvstats -since "$LASTRUN" 
 echo ""
 
-echo "Facsimile received since last week:"
+echo "Facsimile received in the last seven days:"
 echo ""
 $SBIN/recvstats -age 7
 echo ""
