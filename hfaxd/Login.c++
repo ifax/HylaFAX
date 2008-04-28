@@ -276,8 +276,16 @@ HylaFAXServer::dologout(int status)
         Sys::close(xferfaxlog);
     if (clientFd != -1)
 	Sys::close(clientFd);
-    if (clientFIFOName != "")
-	Sys::unlink(clientFIFOName);
+    if (clientFIFOName != "") {
+      /* we need to check for the FIFO since dologout() might be called
+       * before we are chroot()ed... *sigh*
+       */
+      if (Sys::isFIFOFile( "/" | clientFIFOName)) {
+          Sys::unlink("/" | clientFIFOName);
+      } else if (Sys::isFIFOFile( FAX_SPOOLDIR "/" | clientFIFOName)) {
+          Sys::unlink( FAX_SPOOLDIR "/" | clientFIFOName);
+      }
+    }
     for (JobDictIter iter(blankJobs); iter.notDone(); iter++) {
 	Job* job = iter.value();
 	fxStr file("/" | job->qfile);
