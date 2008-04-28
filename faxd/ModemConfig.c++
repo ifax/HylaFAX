@@ -372,6 +372,7 @@ ModemConfig::findATResponse(const char* cp, ATResponse& resp)
 	{    "OFFHOOK", ClassModem::AT_OFFHOOK },
 	{       "RING", ClassModem::AT_RING },
 	{      "ERROR", ClassModem::AT_ERROR },
+	{       "VCON", ClassModem::AT_VCON },
 	{      "OTHER", ClassModem::AT_OTHER },
     };
     for (u_int i = 0; i < N(responses); i++)

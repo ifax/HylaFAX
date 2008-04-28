@@ -1849,6 +1849,7 @@ The possible response codes are:
 \s-1OFFHOOK\s+1	``\s-1PHONE OFF-HOOK\s+1''
 \s-1RING\s+1	``\s-1RING...\s+1''
 \s-1ERROR\s+1	error status from modem
+\s-1VCON\s+1	voice connection indicator
 \s-1OTHER\s+1	any unrecognized modem response
 .fi
 .RE
