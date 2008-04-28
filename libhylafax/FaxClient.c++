@@ -631,7 +631,7 @@ FaxClient::command(const char* fmt ...)
 int
 FaxClient::vcommand(const char* fmt, va_list ap)
 {
-    char *line = NULL;
+    fxStr line = fxStr::vformat(fmt, ap);
 
     if (getVerbose()) {
         if (strncasecmp("PASS ", fmt, 5) == 0) {
@@ -639,13 +639,7 @@ FaxClient::vcommand(const char* fmt, va_list ap)
         } else if (strncasecmp("ADMIN ", fmt, 6) == 0) {
             traceServer("-> ADMIN XXXX");
         } else {
-	    line = (char *)malloc(100);
-	    if (line == NULL)
-		printError(NLS::TEXT("Memory allocation failed"));
-	    else {
-		vsnprintf(line, 100, fmt, ap);
-		traceServer("-> %s", line);
-	    }
+	    traceServer("-> %s", (const char*)line);
         }
     }
     if (fdOut == NULL) {
@@ -653,12 +647,7 @@ FaxClient::vcommand(const char* fmt, va_list ap)
         code = -1;
         return (0);
     }
-    if (line == NULL)
-	vfprintf(fdOut, fmt, ap);
-    else {
-	fputs(line, fdOut);
-	free(line);
-    }
+    fputs(line, fdOut);
     fputs("\r\n", fdOut);
     (void) fflush(fdOut);
     return (getReply(strncmp(fmt, "QUIT", 4) == 0));
