@@ -1618,6 +1618,7 @@ HylaFAXServer::checkAddDocument(Job& job, Token type,
     return (false);
 }
 
+
 /*
  * Add a cover document to the current job's
  * set of documents that are to be sent.

@@ -66,8 +66,8 @@
 #	  and embedded spaces, but not embedded tabs, are allowed.
 #	  These data are taken literally; no C-style character escapes
 #         are meaningful.
-# result: one of "PS", "TIFF", "PDF", or "error" (case insensitive).  The
-#	  first two results specifiy whether the rule generates a PostScript
+# result: one of "PS", "TIFF", "PDF", "PCL", or "error" (case insensitive).
+#	  The first two results specifiy whether the rule generates a PostScript
 #	  file or a bilevel TIFF image.  The "error" result indicates a
 #	  file is unsuitable for transmission and if supplied as an
 #	  argument to sendfax, the command should be aborted.
@@ -109,6 +109,14 @@
 >3	string		87a		tiff	gif2tiff -%f -v %V %i %o
 >3 	string		89a		error	GIF (version 89a) support not configured
 0	long		0x59a66a95	tiff	ras2tiff -%f -v %V %i %o
+0	short		0x1b45		pcl
+0	short		0x1b25		pcl
+0	short		0x1b26		pcl
+0	short		0x1b2a		pcl
+#
+# To do client-side PCL conversion to PostScript comment-out the above
+# and uncomment this:
+#0	short		0x1b25		ps	pcl6 -dNOPAUSE -sDEVICE=pswrite -sOutputFile=%o %i
 #
 # HylaFAX now has server-side PDF conversion, so no need for pdf2ps.
 # If you have trouble or if you prefer to use pdf2ps, comment this

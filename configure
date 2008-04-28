@@ -221,6 +221,7 @@ PAGESIZE
 PATHGETTY	PATH_GETTY
 PATHVGETTY	PATH_VGETTY
 PATHEGETTY	PATH_EGETTY
+PCL6CMD
 PKG_ARCH
 PKG_EMAIL
 PKG_VENDOR
@@ -3661,6 +3662,7 @@ test "$LN"	|| LN=`findAppDef ln $PATH ln`
 test "$MAN"	|| MAN=`findAppDef man $PATH man`
 test "$MKDIR"	|| MKDIR=`findAppDef mkdir $PATH mkdir`
 test "$MV"	|| MV=`findAppDef mv $PATH mv`
+test "$PCL6CMD"	|| PCL6CMD=`findAppDef pcl6 $PATH pcl6`
 test "$PWDCMD"	|| PWDCMD=`findAppDef pwd $PATH pwd`
 test "$RMCMD"	|| RMCMD=`findAppDef rm $PATH rm`
 test "$SORT"	|| SORT=`findAppDef sort $PATH sort`

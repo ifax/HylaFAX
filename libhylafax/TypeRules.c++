@@ -69,7 +69,7 @@ static const char* typeNames[] =
     { "ascii", "asciiesc", "string", "istring" "address", "byte", "short", "long" };
 static const char* opNames[] =
     { "<any>", "=", "!=", "<", "<=", ">", ">=", "&", "^", "!" };
-static const char* resultNames[] = { "tiff", "postscript", "pdf", "error" };
+static const char* resultNames[] = { "tiff", "postscript", "pdf", "pcl", "error" };
 
 fxStr
 quoted(const fxStr& s)
@@ -432,6 +432,8 @@ TypeRules::read(const fxStr& file)
 	    rule.result = TypeRule::POSTSCRIPT;
 	else if (strncasecmp(rp, "pdf", cp-rp) == 0)
 	    rule.result = TypeRule::PDF;
+	else if (strncasecmp(rp, "pcl", cp-rp) == 0)
+	    rule.result = TypeRule::PCL;
 	else if (strncasecmp(rp, "error", cp-rp) == 0)
 	    rule.result = TypeRule::ERROR;
 	else {

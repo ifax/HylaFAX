@@ -1281,7 +1281,7 @@ Note that this value is specified in inches.
 The command to invoke to convert a HP-PCL document submitted
 for transmission to
 .SM TIFF/F,
-suitable for transmission (for future use).
+suitable for transmission.
 .TP
 .B PercentGoodLines
 The minimum percentage of good rows of image data required 

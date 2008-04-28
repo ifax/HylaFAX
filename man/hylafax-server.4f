@@ -207,8 +207,8 @@ from the
 directory).
 \*(Fx accepts \*(Ps, PDF, \*(Pc, and
 .SM TIFF
-documents for transmission (though support for
-\*(Pc documents is not currently implemented).
+documents for transmission (support for \*(Pc documents
+requires an external application).
 Documents are automatically converted to 
 .SM TIFF/F
 documents prior to transmission according to the capabilities

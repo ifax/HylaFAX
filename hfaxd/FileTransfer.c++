@@ -47,26 +47,44 @@
 #endif
 #endif /* CHAR_BIT */
 
-#define	HAVE_PSLEVEL2	false
-#define	HAVE_PCL5	false
 
 static struct {
     const char*	name;		// protocol token name
     bool	supported;	// true if format is supported
     const char*	suffix;		// file suffix
     const char* help;		// help string for HELP FORM command
+    FaxSendOp	op;		// associated FaxSendOp value
 } formats[] = {
-{ "TIFF", true,		 "tif", "Tagged Image File Format, Class F only" },
-{ "PS",	  true,		 "ps",  "Adobe PostScript Level I" },
-{ "PS2",  HAVE_PSLEVEL2, "ps",  "Adobe PostScript Level II" },
-{ "PCL",  HAVE_PCL5,	 "pcl", "HP Printer Control Language (PCL), Version 5"},
-{ "PDF",  true,		 "pdf", "Adobe Portable Document Format" },
+{ "TIFF", true,	"tif", 	"Tagged Image File Format, Class F only",	FaxRequest::send_tiff },
+{ "PS",   true,	"ps",  	"Adobe PostScript Level I",			FaxRequest::send_postscript },
+{ "PCL",  true,	"pcl", 	"HP Printer Control Language (PCL)",		FaxRequest::send_pcl},
+{ "PDF",  true,	"pdf", 	"Adobe Portable Document Format",		FaxRequest::send_pdf}
 };
+
 static 	const char* typenames[] =  { "ASCII", "EBCDIC", "Image", "Local" };
 static 	const char* strunames[] =  { "File", "Record", "Page", "TIFF" };
 static 	const char* modenames[] =  { "Stream", "Block", "Compressed", "ZIP" };
 
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
+
+
+static bool
+isTIFF(const TIFFHeader& h)
+{
+    if (h.tiff_magic != TIFF_BIGENDIAN && h.tiff_magic != TIFF_LITTLEENDIAN)
+	return (false);
+    union {
+	int32	i;
+	char	c[4];
+    } u;
+    u.i = 1;
+    uint16 version = h.tiff_version;
+    // byte swap version stamp if opposite byte order
+    if ((u.c[0] == 0) ^ (h.tiff_magic == TIFF_BIGENDIAN))
+	TIFFSwabShort(&version);
+    return (version == TIFF_VERSION);
+}
+
 
 /*
  * Record a file transfer in the log file.
@@ -899,6 +917,72 @@ HylaFAXServer::formCmd(const char* name)
 	    return;
 	}
     reply(504, "Unknown format %s.", name);
+}
+
+/*
+ * This is used to identify a submitted document type when the client
+ * specified the default (Postscript, legacy) or did not make a specification.
+ * If the file extension is not unknown, or or is Postscript, we'll check
+ * it, otherwise we'll trust it.
+ */
+bool
+HylaFAXServer::docType(const char* docname, FaxSendOp& op)
+{
+    op = FaxRequest::send_unknown;
+
+    fxStr file(docname);
+    u_int d = file.nextR(file.length(), '.');
+    if (strcmp(docname+d, "ps") != 0) {
+	/*
+	 * Since it's not Postscript, let's look for it in ourlist of
+	 * supported formats.
+	 */
+	for (u_int i = 0, n = N(formats); i < n; i++) {
+	    if (strcmp(docname+d, formats[i].suffix) == 0 && formats[i].supported) {
+		op = formats[i].op;
+		return (true);
+	    }
+	}
+    }
+
+    /*
+     * The file extension is either Postscript (which is default on old
+     * clients, so no guarantee) or un-recognized, so let's take a peek
+     * and see if we can figure it out.
+     * XXX: Should we rename it if we find it successful?
+     */
+    int fd = Sys::open(docname, O_RDONLY);
+    if (fd >= 0) {
+	struct stat sb;
+	if (FileCache::lookup(docname, sb) && S_ISREG(sb.st_mode)) {
+	    union {
+		char buf[512];
+		TIFFHeader h;
+	    } b;
+	    ssize_t cc = Sys::read(fd, (char*) &b, sizeof (b));
+	    if (cc > 2 && b.buf[0] == '%' && b.buf[1] == '!')
+		op = FaxRequest::send_postscript;
+	    else if (cc > 2 && b.buf[0] == '%' && b.buf[1] == 'P') {
+		logDebug("What we have here is a PDF file");
+		op = FaxRequest::send_pdf;
+	    } else if (cc > 2 && b.buf[0] == 0x1b && (b.buf[1] == 'E' || b.buf[1] == '%' || b.buf[1] == '&' || b.buf[1] == '*')) {
+		logDebug("What we have here is a PCL file");
+		op = FaxRequest::send_pcl;
+	    } else if (cc > (ssize_t)sizeof (b.h) && isTIFF(b.h))
+		op = FaxRequest::send_tiff;
+	    else if (cc > 3 && b.buf[0] == '@' && b.buf[1] == 'P' && b.buf[2] == 'J' && b.buf[3] == 'L') {
+		logDebug("PJL is unsupported");
+		op = FaxRequest::send_unknown;
+	    }
+	    else
+		op = FaxRequest::send_data;
+	}
+	Sys::close(fd);
+    }
+    if (op == FaxRequest::send_unknown)
+	logError("Don't know what file");
+
+    return (op != FaxRequest::send_unknown);
 }
 #undef N
 
