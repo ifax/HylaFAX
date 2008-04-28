@@ -90,9 +90,8 @@
  */
 #define	FORM_TIFF	0	// Tagged Image File Format
 #define	FORM_PS		1	// PostScript Level I
-#define	FORM_PS2	2	// PostScript Level II
-#define	FORM_PCL	3	// HP-PCL5
-#define	FORM_PDF	4	// Portable Document Format
+#define	FORM_PCL	2	// HP-PCL5
+#define	FORM_PDF	3	// Portable Document Format
 
 /*
  * Definitions for the TELNET protocol (only those used).

@@ -56,7 +56,7 @@ static struct {
     FaxSendOp	op;		// associated FaxSendOp value
 } formats[] = {
 { "TIFF", true,	"tif", 	"Tagged Image File Format, Class F only",	FaxRequest::send_tiff },
-{ "PS",   true,	"ps",  	"Adobe PostScript Level I",			FaxRequest::send_postscript },
+{ "PS",   true,	"ps",  	"Adobe PostScript",				FaxRequest::send_postscript },
 { "PCL",  true,	"pcl", 	"HP Printer Control Language (PCL)",		FaxRequest::send_pcl},
 { "PDF",  true,	"pdf", 	"Adobe Portable Document Format",		FaxRequest::send_pdf}
 };
