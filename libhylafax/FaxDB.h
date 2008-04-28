@@ -73,6 +73,7 @@ public:
     static fxStr locationKey;
     static fxStr phoneKey;
     static fxStr companyKey;
+    static fxStr mailAddrKey;
 
     FaxDBRecord* find(const fxStr& pat, fxStr* name = 0);
     FaxDBRecord* operator[](const fxStr& name);

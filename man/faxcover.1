@@ -69,6 +69,7 @@ symbols are defined:
 \fIto-location\fP	destination geographic location	\fIfrom-location\fP	sender geographic location
 \fIto-voice-number\fP	person's voice phone number	\fIfrom-voice-number\fP	sender's voice phone number
 \fIto-fax-number\fP	destination fax phone number	\fIfrom-fax-number\fP	sender's fax phone number
+\fI\fP		\fIfrom-mail-address\fP	sender's e-mail address
 \fIcomments\fP	unbroken comment string	\fIcommentsX\fP	\fI\s-1X\s+1\fP'th line of comments
 \fIregarding\fP	Re: subject	\fICommentX\fP	similar to \fIcommentsX\fP
 \fIpageWidth\fP	page width in millimeters	\fIpage-count\fP	# pages other than cover page
@@ -223,6 +224,11 @@ for the geographic location of the sender's company.
 indicates the maximum number of
 .I commentsX
 lines to generate.
+.TP 12
+.BI \-M " address"
+Use
+.I address
+for the sender's e-mail address.
 .TP 12
 .BI \-n " number"
 Use

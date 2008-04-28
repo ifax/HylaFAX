@@ -85,6 +85,7 @@ fxStr FaxDB::numberKey("FAX-Number");
 fxStr FaxDB::companyKey("Company");
 fxStr FaxDB::locationKey("Location");
 fxStr FaxDB::phoneKey("Voice-Number");
+fxStr FaxDB::mailAddrKey("Mail-Address");
 
 FaxDBRecord*
 FaxDB::find(const fxStr& s, fxStr* name)

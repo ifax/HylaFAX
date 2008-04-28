@@ -211,6 +211,7 @@ SendFaxClient::makeCoverPage(const SendFaxJob& job, fxStr& file, fxStr& emsg)
 	addarg(av, ac, "-D", dateFormat);
 	addarg(av, ac, "-c", job.getCoverComments());
 	addarg(av, ac, "-f", senderName);
+	addarg(av, ac, "-M", job.getMailbox());
 	addarg(av, ac, "-l", job.getCoverLocation());
 	addarg(av, ac, "-n", job.getExternalNumber());
 	addarg(av, ac, "-r", job.getCoverRegarding());
