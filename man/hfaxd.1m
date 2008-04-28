@@ -62,7 +62,7 @@ hfaxd \- \*(Fx client-server protocol server
 is the \*(Fx program that implements the server
 portion of:
 .IP \(bu 3
-the (new) client-server protocol and
+the client-server protocol and
 .IP \(bu 3
 the Simple Network Paging Protocol (\s-1SNPP\s+1) used to submit
 message pager jobs to the IXO/TAP and UCP support.
@@ -89,7 +89,7 @@ If
 .I hfaxd
 is started with the
 .B \-i
-option it will service clients using the (new) \*(Fx client-server
+option it will service clients using the \*(Fx client-server
 protocol.
 This protocol is strongly related to the Internet File Transfer
 Protocol (\s-1FTP\s+1); so much so in fact that \s-1FTP\s+1
@@ -806,7 +806,7 @@ provided by xinetd.
 .BI \-i " port"
 Listen on the specified 
 .I port
-for service requests and respond with the (new) client-server protocol.
+for service requests and respond with the client-server protocol.
 The port may be specified either symbolically, e.g. ``hylafax''
 or numerically.
 This flag may be specified multiple times to request service on multiple
@@ -823,7 +823,7 @@ This flag may be specified multiple times to request service on multiple
 different ports.
 .TP 10
 .B \-I
-Service the (new) client-server protocol using the standard input and
+Service the client-server protocol using the standard input and
 output.
 This option is useful when
 .I hfaxd
