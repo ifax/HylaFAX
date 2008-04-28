@@ -1987,6 +1987,7 @@ Class1Modem::sendPPM(u_int ppm, HDLCFrame& mcf, Status& eresult)
 	    return (true);
 	if (abortRequested())
 	    return (false);
+	switchingPause(eresult);
     }
     switch (ppm) {
 	case FCF_MPS:
