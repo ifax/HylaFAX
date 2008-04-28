@@ -42,12 +42,16 @@ fmtTime(time_t t)
 
     if (t < 0)
 	return ("0:00:00");
-    if (t > 99*60*60)
+    if (t > 365*24*60*60)
 	return ("??:??:??");
     v = t/3600;
+    if (v >= 1000)
+	*cp++ = digits[v / 1000];
+    if (v >= 100)
+	*cp++ = digits[(v % 1000) / 100];
     if (v >= 10)
-	*cp++ = digits[v / 10];
-    *cp++ = digits[v % 10];
+	*cp++ = digits[((v % 1000) % 100) / 10];
+    *cp++ = digits[((v % 1000) % 100) % 10];
     *cp++ = ':';
     t -= v*3600;
     v = t/60;
