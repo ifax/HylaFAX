@@ -94,7 +94,6 @@
 #NAME_SYSVINITSTOP="K80fax"	# name of SysV-style stop script
 #FAXQ_SERVER=yes		# init script starts faxq
 #HFAXD_SERVER=yes		# init script starts hfaxd
-#HFAXD_OLD_PROTOCOL=no		# don't start old protocol
 #HFAXD_SNPP_SERVER=no		# don't start paging protocol
 
 # SVR4 packaging stuff

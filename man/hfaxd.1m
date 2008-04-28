@@ -62,11 +62,7 @@ hfaxd \- \*(Fx client-server protocol server
 is the \*(Fx program that implements the server
 portion of:
 .IP \(bu 3
-the (new) client-server protocol,
-.IP \(bu 3
-the old client-server protocol previously implemented by the
-.I faxd.recv
-program, and
+the (new) client-server protocol and
 .IP \(bu 3
 the Simple Network Paging Protocol (\s-1SNPP\s+1) used to submit
 message pager jobs to the IXO/TAP and UCP support.
@@ -211,23 +207,6 @@ signal and a Telnet "Synch" signal in the command Telnet stream,
 as described in Internet \s-1RFC\s+1 959.
 If a \s-1STAT\s+1 command is received during a data transfer,
 preceded by a Telnet IP and Synch, transfer status will be returned.
-.SH "OLD CLIENT-SERVER PROTOCOL SUPPORT"
-If 
-.I hfaxd
-is started with the
-.B \-o
-option it will service clients using the old \*(Fx client-server
-protocol that was used in distributions prior to the 4.0 release.
-Note however that this support is only available if
-.I hfaxd
-is compiled with the support enabled.
-.PP
-Emulation of the old protocol is important for supporting non-\s-1UNIX\s+1
-clients such as the WinFlex client for Windows systems and the
-MacFlex client for Macintosh systems.
-It is strongly recommended however that unless you need to support
-these old-style clients that you not enable support for the old
-protocol because of the inherent misdesign of this protocol.
 .SH "SIMPLE NETWORK PAGING PROTOCOL (SNPP) SUPPORT"
 If
 .I hfaxd
@@ -833,15 +812,6 @@ or numerically.
 This flag may be specified multiple times to request service on multiple
 different ports.
 .TP 10
-.BI \-o " port"
-Listen on the specified
-.I port
-for service requests and respond with the old client-server protocol.
-The port may be specified either symbolically, e.g. ``fax''
-or numerically.
-This flag may be specified multiple times to request service on multiple
-different ports.
-.TP 10
 .BI \-s " port"
 Listen on the specified
 .I port
@@ -854,14 +824,6 @@ different ports.
 .TP 10
 .B \-I
 Service the (new) client-server protocol using the standard input and
-output.
-This option is useful when
-.I hfaxd
-is started up by
-.IR inetd (${MANNUM1_8}).
-.TP 10
-.B \-O
-Service the old client-server protocol using the standard input and
 output.
 This option is useful when
 .I hfaxd

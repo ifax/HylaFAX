@@ -61,7 +61,6 @@ PS=auto
 SYSVINIT=auto
 FAXQ_SERVER=yes			# init script starts faxq
 HFAXD_SERVER=yes		# init script starts hfaxd
-HFAXD_OLD_PROTOCOL=no		# don't start old protocol
 HFAXD_SNPP_SERVER=no		# don't start paging protocol
 SGI2FAX=auto
 PORT=auto
@@ -160,7 +159,6 @@ GETTY
 GREP
 GS
 GSRIP 		PATH_GSRIP
-HFAXD_OLD_PROTOCOL
 HFAXD_SERVER
 HFAXD_SNPP_SERVER
 IMP
@@ -4530,8 +4528,7 @@ HylaFAX configuration parameters (part 2 of 2) are:
 [23] Name of SysV stop script:		$NAME_SYSVINITSTOP
 [24] Init script starts faxq:		$FAXQ_SERVER
 [25] Init script starts hfaxd		$HFAXD_SERVER
-[26] Start old protocol:		$HFAXD_OLD_PROTOCOL
-[27] Start paging protocol:		$HFAXD_SNPP_SERVER
+[26] Start paging protocol:		$HFAXD_SNPP_SERVER
 EOF
 }
   
@@ -4606,10 +4603,7 @@ promptForParameter()
     25) promptForNonNullStringParameter "$HFAXD_SERVER" \
 	    "Init script starts hfaxd";			HFAXD_SERVER="$param"
 	;;
-    26) promptForNonNullStringParameter "$HFAXD_OLD_PROTOCOL" \
-	    "Start old protocol";			HFAXD_OLD_PROTOCOL="$param"
-	;;
-    27) promptForNonNullStringParameter "$HFAXD_SNPP_SERVER" \
+    26) promptForNonNullStringParameter "$HFAXD_SNPP_SERVER" \
 	    "Start paging protocol";			HFAXD_SNPP_SERVER="$param"
 	;;
     esac

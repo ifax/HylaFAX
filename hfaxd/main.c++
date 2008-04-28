@@ -28,9 +28,6 @@
 #if CONFIG_UNIXTRANSPORT
 #include "UnixFaxServer.h"
 #endif
-#ifdef OLDPROTO_SUPPORT
-#include "OldProtocol.h"
-#endif
 #ifdef SNPP_SUPPORT
 #include "SNPPServer.h"
 #endif
@@ -256,19 +253,9 @@ main(int argc, char** argv, char** envp)
     opterr = 0;
     while ((c = Sys::getopt(argc, argv, opts)) != -1)
 	switch (c) {
-#ifdef OLDPROTO_SUPPORT
-	case 'o': handlers.append(new OldProtocolSuperServer(optarg)); break;
-	case 'O':
-	    { OldProtocolServer* server = new OldProtocolServer;
-	      server->open();
-	      handlers.append(server);
-	    }
-	    break;
-#else
 	case 'o': case 'O':
 	    fatal("No support for old protocol");
 	    /*NOTREACHED*/
-#endif
 #ifdef HTTP_SUPPORT
 	case 'h': handlers.append(new HTTPSuperServer(optarg)); break;
 	case 'H':

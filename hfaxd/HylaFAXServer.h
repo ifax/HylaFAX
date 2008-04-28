@@ -547,9 +547,6 @@ protected:
     bool lockJob(Job& job, int how, fxStr& emsg);
     bool lockJob(Job& job, int how);
     void unlockJob(Job& job);
-#ifdef OLDPROTO_SUPPORT
-    void readJobs(void);
-#endif
     void purgeJobs(void);
     void jstatCmd(const Job&);
     void jstatLine(Token t, const char* fmt ...);

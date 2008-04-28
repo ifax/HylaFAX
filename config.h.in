@@ -157,7 +157,6 @@
 
 #define	FAX_FIFO	"FIFO"		/* FIFO file for talking to daemon */
 #define	MODEM_ANY	"any"		/* any modem acceptable identifier */
-#define	FAX_PROTOVERS	2		/* old client-server protocol version */
 
 /* NB: all times are given in seconds */
 #define	FAX_REQBUSY	(3*60)		/* requeue interval on busy answer */

@@ -298,15 +298,9 @@ static const char rformat[] = {
     'U',		// U
     'V',		// V
     'W',		// W
-#ifdef OLDPROTO_SUPPORT
-    'u',		// X (beingReceived as 1 or 0)
-    's',		// Y (recvTime in strftime %Y:%m:%d %H:%M:%S format)
-    'u',		// Z (recvTime as decimal time_t)
-#else
     'X',		// X
     'Y',		// Y
     'Z',		// Z
-#endif
     '[',		// [
     '\\',		// \ (must have something after the backslash)
     ']',		// ]
@@ -466,21 +460,6 @@ HylaFAXServer::Rprintf(FILE* fd, const char* fmt,
 	    case 'z':
 		fprintf(fd, fspec, ri.beingReceived ? "*" : " ");
 		break;
-#if OLDPROTO_SUPPORT
-	    case 'X':
-		fprintf(fd, fspec, ri.beingReceived);
-		break;
-	    case 'Y':
-		{ char buf[30];					// XXX HP C++
-		  strftime(buf, sizeof (buf), "%Y:%m:%d %H:%M:%S",
-			IS(USEGMT) ? gmtime(&ri.recvTime) : localtime(&ri.recvTime));
-		  fprintf(fd, fspec, buf);
-		}
-		break;
-	    case 'Z':
-		fprintf(fd, fspec, (u_int) ri.recvTime);
-		break;
-#endif /* OLDPROTO_SUPPORT */
 	    }
 	} else
 	    putc(*cp, fd);

@@ -243,10 +243,7 @@ FaxRequest::readQFile(bool& rejectJob)
 	 * mkhash program).  Note that other strings might
 	 * hash to valid hash values; we don't care or check
 	 * for this because we know the client-server protocol
-	 * process only writes valid entries in the file
-	 * (unlike the old protocol that permitted clients
-	 * to write anything they wanted to the job decription
-	 * file).
+	 * process only writes valid entries in the file.
 	 */
 	const char* cmd = bp;
 	u_int hash = 0;

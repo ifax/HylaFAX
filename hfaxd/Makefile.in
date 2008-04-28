@@ -60,12 +60,11 @@ C++FILES=Admin.c++ \
 	\
 	SuperServer.c++ \
 	InetFaxServer.c++ \
-	OldProtocol.c++ \
 	SNPPServer.c++ \
 	UnixFaxServer.c++ \
 	\
 	main.c++
-LC++DEFS=-DOLDPROTO_SUPPORT=1 -DSNPP_SUPPORT=1
+LC++DEFS=-DSNPP_SUPPORT=1
 LC++INCS= -I${FAXDSRCDIR} ${ZLIBINC}
 TARGETS	= hfaxd
 

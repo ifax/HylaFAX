@@ -1231,34 +1231,6 @@ HylaFAXServer::findJob(const char* jobid, fxStr& emsg)
     return (job);
 }
 
-#ifdef OLDPROTO_SUPPORT
-/*
- * Read the state of all jobs into memory; it is
- * assumed that no jobs are presently in the cache.
- *
- * This interface is used by the old protocol to
- * support status query commands.
- */
-void
-HylaFAXServer::readJobs(void)
-{
-    // NB: we don't look in the doneq
-    DIR* dir = opendir("/" FAX_SENDDIR);
-    if (dir) {
-	for (dirent* dp = readdir(dir); dp; dp = readdir(dir)) {
-	    if (dp->d_name[0] != 'q')
-		continue;
-	    fxStr emsg;
-	    Job* job = findJobOnDisk(dp->d_name+1, emsg);
-	    if (job)
-		jobs[job->jobid] = job;
-	}
-	closedir(dir);
-    } else
-	logError("Cannot read job queue directory: %s", strerror(errno));
-}
-#endif /* OLDPROTO_SUPPORT */
-
 /*
  * Purge all in-memory job state.
  */
@@ -1747,13 +1719,8 @@ static const char jformat[] = {
     's',		// V (doneop)
     's',		// W (commid)
     'c',		// X (jobtype as symbol)
-#ifdef OLDPROTO_SUPPORT
     's',		// Y (tts in strftime %Y/%m/%d %H.%M.%S format)
     'u',		// Z (tts as decimal time_t)
-#else
-    'Y',		// Y
-    'Z',		// Z
-#endif
     '[',		// [
     '\\',		// \ (must have something after the backslash)
     ']',		// ]

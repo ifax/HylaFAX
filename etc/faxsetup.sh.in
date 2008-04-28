@@ -119,7 +119,6 @@ POSIXLY_CORRECT=1; export POSIXLY_CORRECT		# disable GNU extensions
 DIR_SYSVINIT=@SYSVINITDIR@
 FAXQ_SERVER=@FAXQ_SERVER@
 HFAXD_SERVER=@HFAXD_SERVER@
-HFAXD_OLD_PROTOCOL=@HFAXD_OLD_PROTOCOL@
 HFAXD_SNPP_SERVER=@HFAXD_SNPP_SERVER@
 
 #
@@ -147,7 +146,6 @@ FUSER
 GREP
 GSRIP		PATH_GSRIP
 HFAXD_SERVER
-HFAXD_OLD_PROTOCOL
 HFAXD_SNPP_SERVER
 IMPRIP		PATH_IMPRIP
 LIBDATA		DIR_LIBDATA
@@ -2008,8 +2006,7 @@ if onServer; then
 
 	[1] Init script starts faxq:		$FAXQ_SERVER
 	[2] Init script starts hfaxd		$HFAXD_SERVER
-	[3] Start old protocol:			$HFAXD_OLD_PROTOCOL
-	[4] Start paging protocol:		$HFAXD_SNPP_SERVER
+	[3] Start paging protocol:		$HFAXD_SNPP_SERVER
 EOF
     }
 
@@ -2022,10 +2019,7 @@ EOF
 	    2) promptForBooleanParameter "$HFAXD_SERVER" \
 		"Init script starts hfaxd";	HFAXD_SERVER="$param"
 	    ;;
-	    3) promptForBooleanParameter "$HFAXD_OLD_PROTOCOL" \
-		"Start old protocol";		HFAXD_OLD_PROTOCOL="$param"
-	    ;;
-	    4) promptForBooleanParameter "$HFAXD_SNPP_SERVER" \
+	    3) promptForBooleanParameter "$HFAXD_SNPP_SERVER" \
 		"Start paging protocol";	HFAXD_SNPP_SERVER="$param"
 	    ;;
 	esac

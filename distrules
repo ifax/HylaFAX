@@ -455,8 +455,6 @@ HYLAFAXSRC=\
 	hfaxd/InetFaxServer.h			\
 	hfaxd/Jobs.c++				\
 	hfaxd/Login.c++				\
-	hfaxd/OldProtocol.c++			\
-	hfaxd/OldProtocol.h			\
 	hfaxd/Parser.c++			\
 	hfaxd/RecvQueue.c++			\
 	hfaxd/Status.c++			\

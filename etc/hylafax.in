@@ -71,9 +71,6 @@ fi
 if [ -z "$FAXQ_SERVER" ]; then
     FAXQ_SERVER=@FAXQ_SERVER@
 fi
-if [ -z "$HFAXD_OLD_PROTOCOL" ]; then
-    HFAXD_OLD_PROTOCOL=@HFAXD_OLD_PROTOCOL@
-fi
 if [ -z "$HFAXD_SNPP_SERVER" ]; then
     HFAXD_SNPP_SERVER=@HFAXD_SNPP_SERVER@
 fi
@@ -159,17 +156,11 @@ case $1 in
             if test $HFAXD_SERVER = yes ; then
 	        HFAXD="$HFAXD -i $FAXPORT"
 		HFAXMSG=" hfaxd"
-		if [ $HFAXD_OLD_PROTOCOL = yes ]; then
-	    	    HFAXD="$HFAXD -o 4557"
-		    HFAXMSG="$HFAXMSG (with old protocol"
-		else
-		    HFAXMSG="$HFAXMSG (without old protocol"
-		fi
 		if [ $HFAXD_SNPP_SERVER = yes ]; then
 	    	    HFAXD="$HFAXD -s $SNPPPORT"
-		    HFAXMSG="$HFAXMSG & with SNPP support)"
+		    HFAXMSG="$HFAXMSG (with SNPP support)"
 		else
-		    HFAXMSG="$HFAXMSG & without SNPP support)"
+		    HFAXMSG="$HFAXMSG (without SNPP support)"
 		fi
 		$HFAXD ; printf "$HFAXMSG"
             fi
