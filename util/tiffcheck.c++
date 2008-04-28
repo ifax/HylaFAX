@@ -163,7 +163,7 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
     TIFFGetFieldDefaulted(tif, TIFFTAG_PHOTOMETRIC, &pmi);
     if (pmi != PHOTOMETRIC_MINISWHITE) {
 	emsg.append(fxStr::format(
-	    "Document is not black-on-white.\n"));
+	    _("Document is not black-on-white.\n")));
 	status |= REIMAGE;
     }
     uint16 compression = 0;
