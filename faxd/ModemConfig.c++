@@ -833,10 +833,12 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	if (idConfig.length() < CallID::NUMBER+1)
 	    idConfig.resize(CallID::NUMBER+1);
 	idConfig[CallID::NUMBER].pattern = value;
+	idConfig[CallID::NUMBER].answerlength = 0;
     } else if (streq(tag, "cidname")) {
 	if (idConfig.length() < CallID::NAME+1)
 	    idConfig.resize(CallID::NAME+1);
 	idConfig[CallID::NAME].pattern = value;
+	idConfig[CallID::NAME].answerlength = 0;
     } else if (streq(tag, "cidnumberanswerlength")) {
 	if (idConfig.length() < CallID::NUMBER+1)
 	    idConfig.resize(CallID::NUMBER+1);
