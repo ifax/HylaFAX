@@ -60,6 +60,7 @@ public:
         MODE_Z = 4		// zlib compressed
     };
     enum {			// data file FORMats
+        FORM_UNKNOWN = 0,	// unknown, initial setting
         FORM_PS   = 1,		// PostScript Level I
         FORM_PS2  = 2,		// PostScript Level II
         FORM_TIFF = 3,		// TIFF

@@ -77,7 +77,7 @@ FaxClient::initServerState(void)
     type = TYPE_A;
     mode = MODE_S;
     stru = STRU_F;
-    format = FORM_PS;
+    format = FORM_UNKNOWN;
     curjob = "DEFAULT";
     tzone = TZ_GMT;
     jobFmt = "";
