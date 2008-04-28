@@ -29,6 +29,7 @@
 
 #include <errno.h>
 
+#ifdef ENABLE_NLS
 void do_bind (const char* domain, const char* ldir)
 {
     /* bindtextdomain() doesn't preserver errno */
@@ -68,4 +69,12 @@ void NLS::Setup (const char* d, const char* ldir)
 }
 
 const char* NLS::domain = "libhylafax";
+
+#else
+
+void NLS::Setup (const char*, const char*)
+{
+}
+
+#endif
 bool NLS::bound = false;

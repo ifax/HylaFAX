@@ -44,4 +44,8 @@ class NLS
 	static bool bound;
 };
 
+#ifndef ENABLE_NLS
+inline const char* NLS::TEXT (const char* s) { return s; }
+#endif
+
 #endif /* _NLS_ */
