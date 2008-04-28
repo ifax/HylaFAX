@@ -1724,7 +1724,7 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
     }
 
     bool rc = true;
-    frameNumber = ecmBlockPos = ecmFramePos = ecmBitPos = ecmOnes = ecmByte = 0;
+    blockNumber = frameNumber = ecmBlockPos = ecmFramePos = ecmBitPos = ecmOnes = ecmByte = 0;
     protoTrace("SEND begin page");
 
     tstrip_t nstrips = TIFFNumberOfStrips(tif);
