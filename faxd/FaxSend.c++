@@ -888,42 +888,15 @@ FaxServer::notifyPageSent(FaxRequest& req, const char*)
 {
     time_t now = Sys::now();
     req.npages++;			// count transmitted page
-    /*
-     * If the system is busy then req.writeQFile may not return quickly.
-     * Thus we run it in a child process and move on.
-     */
-    pid_t pid = req.writeQFilePid;
-    req.writeQFilePid = fork();
-    switch (req.writeQFilePid) {
-	case 0:
-	    if (pid > 0) (void) Sys::waitpid(pid);	// the calls to writeQFile must be sequenced serially
-	    req.writeQFile();		// update q file for clients
-	    traceProtocol("SEND FAX (%s): FROM %s TO %s (page %u of %u sent in %s)"
-		, (const char*) req.commid
-		, (const char*) req.mailaddr
-		, (const char*) req.external
-		, req.npages
-		, req.totpages
-		, fmtTime(now - pageStart)
-	    );
-	    sleep(1);               // XXX give parent time
-	    exit(0);
-	case -1:
-	    logError("Can not fork for non-priority processing.");
-	    req.writeQFile();		// update q file for clients
-	    traceProtocol("SEND FAX (%s): FROM %s TO %s (page %u of %u sent in %s)"
-		, (const char*) req.commid
-		, (const char*) req.mailaddr
-		, (const char*) req.external
-		, req.npages
-		, req.totpages
-		, fmtTime(now - pageStart)
-	    );
-	    break;
-	default:
-	    Dispatcher::instance().startChild(req.writeQFilePid, this);
-	    break;
-    }
+    req.writeQFile();			// update q file for clients
+    traceProtocol("SEND FAX (%s): FROM %s TO %s (page %u of %u sent in %s)"
+	, (const char*) req.commid
+	, (const char*) req.mailaddr
+	, (const char*) req.external
+	, req.npages
+	, req.totpages
+	, fmtTime(now - pageStart)
+    );
     pageStart = now;			// for next page
 }
 
@@ -958,10 +931,6 @@ FaxServer::notifyDocumentSent(FaxRequest& req, u_int fi)
 	, (const char*) req.jobid
 	, fmtTime(getFileTransferTime())
     );
-
-    // we must ensure that the previous writeQFiles have completed
-    if (req.writeQFilePid > 0) (void) Sys::waitpid(req.writeQFilePid);
-
     if (freq.op == FaxRequest::send_fax)
 	req.renameSaved(fi);
     req.items.remove(fi);

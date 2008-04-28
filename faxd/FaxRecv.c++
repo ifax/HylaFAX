@@ -51,7 +51,6 @@ FaxServer::recvFax(const CallID& callid, Status& result)
     bool faxRecognized = false;
     result.clear();
     abortCall = false;
-    waitNotifyPid = 0;
 
     /*
      * Create the first file ahead of time to avoid timing
@@ -65,25 +64,8 @@ FaxServer::recvFax(const CallID& callid, Status& result)
 	recvPages = 0;			// total count of received pages
 	fileStart = pageStart = Sys::now();
 	if (faxRecognized = modem->recvBegin(result)) {
-	    /*
-	     * If the system is busy then notifyRecvBegun may not return
-	     * quickly.  Thus we run it in a child process and move on.
-	     */
-	    waitNotifyPid = fork();
-	    switch (waitNotifyPid) {
-		case 0:
-		    // NB: partially fill in info for notification call
-		    notifyRecvBegun(info);
-		    sleep(1);		// XXX give parent time
-		    _exit(0);
-		case -1:
-		    logError("Can not fork for non-priority processing.");
-		    notifyRecvBegun(info);
-		    break;
-		default:
-		    Dispatcher::instance().startChild(waitNotifyPid, this);
-		    break;
-	    }
+	    // NB: partially fill in info for notification call
+	    notifyRecvBegun(info);
 	    if (!recvDocuments(tif, info, docs, result)) {
 		traceProtocol("RECV FAX: %s", result.string());
 		modem->recvAbort();
@@ -221,26 +203,7 @@ FaxServer::recvDocuments(TIFF* tif, FaxRecvInfo& info, FaxRecvInfoArray& docs, S
 	info.time = (u_int) getFileTransferTime();
 	info.reason = result.string();
 	docs[docs.length()-1] = info;
-	/*
-	 * If syslog is busy then notifyDocumentRecvd may not return
-	 * quickly.  Thus we run it in a child process and move on.
-	 */
-	pid_t pid = waitNotifyPid;
-	waitNotifyPid = fork();
-	switch (waitNotifyPid) {
-	    case 0:
-		if (pid > 0) (void) Sys::waitpid(pid);
-		notifyDocumentRecvd(info);
-		sleep(1);		// XXX give parent time
-		_exit(0);
-	    case -1:
-		logError("Can not fork for non-priority logging.");
-		notifyDocumentRecvd(info);
-		break;
-	    default:
-		Dispatcher::instance().startChild(waitNotifyPid, this);
-		break;
-	}
+	notifyDocumentRecvd(info);
 	if (!recvOK || ppm == PPM_EOP)
 	    return (recvOK);
 	/*
@@ -286,29 +249,9 @@ FaxServer::recvFaxPhaseD(TIFF* tif, FaxRecvInfo& info, u_int& ppm, Status& resul
 	info.npages++;
 	info.time = (u_int) getPageTransferTime();
 	info.params = modem->getRecvParams();
-	/*
-	 * If syslog is busy then notifyPageRecvd may not return quickly.
-	 * Thus we run it in a child process and move on.  Timestamps
-	 * in syslog cannot be expected to have exact precision anyway.
-	 */
-	pid_t pid = waitNotifyPid;
-	waitNotifyPid = fork();
-	switch (waitNotifyPid) {
-	    case 0:
-		if (pid > 0) (void) Sys::waitpid(pid);
-		notifyPageRecvd(tif, info, ppm);
-		sleep(1);		// XXX give parent time
-		_exit(0);
-	    case -1:
-		logError("Can not fork for non-priority logging.");
-		notifyPageRecvd(tif, info, ppm);
-		break;
-	    default:
-		Dispatcher::instance().startChild(waitNotifyPid, this);
-		break;
-	}
+	notifyPageRecvd(tif, info, ppm);
 	if (result.value() != 0)
-		return (false);		// got page with fatal error
+	    return (false);         // got page with fatal error
 	if (PPM_PRI_MPS <= ppm && ppm <= PPM_PRI_EOP) {
 	    result = Status(351, "Procedure interrupt received, job terminated");
 	    return (false);

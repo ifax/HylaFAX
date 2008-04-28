@@ -76,7 +76,6 @@ FaxRequest::reset(void)
     nsf = fxStr::null;
     notify = no_notice;
     jobtype = "facsimile";		// for compatibility w/ old clients
-    writeQFilePid = 0;
 }
 
 FaxRequest::~FaxRequest()
