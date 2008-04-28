@@ -170,33 +170,35 @@ HylaFAXServer::triggerEvent(const TriggerMsgHeader& h, const char* cp)
 	    else
 		logSendEventMsg(h, job, cp);
 	}
-    } else if (evt == EventType(RECV_BASE)) {
-	FaxRecvInfo ri;
-	ri.decode(cp);
-	/*
-	 * Update/record receive queue status.
-	 */
-	RecvInfo* rip = recvq[ri.qfile];
-	if (!rip)
-	    recvq[ri.qfile] = rip = new RecvInfo(ri.qfile);
-	if (rip->recvTime == 0)
-	    rip->recvTime = h.tstamp;
-	if (h.event == Trigger::RECV_END) {
-	    rip->beingReceived = false;
-	    rip->reason = ri.reason;
-	} else
-	    rip->beingReceived = true;
-	rip->sender = ri.sender;
-	rip->subaddr = ri.subaddr;
-	rip->npages = ri.npages;
-	rip->time = h.tstamp - rip->recvTime;
-	rip->commid = ri.commid;
-	if (IS(LOGTRIG) && type == TYPE_A)
-	    logRecvEventMsg(h, ri, cp);
-    } else if (evt == EventType(MODEM_BASE)) {
+    } else if (evt == EventType(MODEM_BASE) || evt == EventType(RECV_BASE)) {
 	ModemExt modem;
 	cp = modem.decode(cp);
-	if (IS(LOGTRIG) && type == TYPE_A)
+
+	if (evt == EventType(RECV_BASE))
+	{
+	    FaxRecvInfo ri;
+	    ri.decode(cp);
+	    /*
+	     * Update/record receive queue status.
+	     */
+	    RecvInfo* rip = recvq[ri.qfile];
+	    if (!rip)
+		recvq[ri.qfile] = rip = new RecvInfo(ri.qfile);
+	    if (rip->recvTime == 0)
+		rip->recvTime = h.tstamp;
+	    if (h.event == Trigger::RECV_END) {
+		rip->beingReceived = false;
+		rip->reason = ri.reason;
+	    } else
+		rip->beingReceived = true;
+	    rip->sender = ri.sender;
+	    rip->subaddr = ri.subaddr;
+	    rip->npages = ri.npages;
+	    rip->time = h.tstamp - rip->recvTime;
+	    rip->commid = ri.commid;
+	    if (IS(LOGTRIG) && type == TYPE_A)
+		logRecvEventMsg(h, ri, cp);
+	} else if (IS(LOGTRIG) && type == TYPE_A)
 	    logModemEventMsg(h, modem, cp);
     } else {
 	logError("Unrecognized trigger event message %u.", h.event);
