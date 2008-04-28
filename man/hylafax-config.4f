@@ -182,7 +182,7 @@ ModemRingResponse	string	\-	command to respond after hearing RING
 ModemRingsBeforeResponse	integer	\s-10\s+1	the number of rings before ModemRingResponse
 NoAnswerVoice	boolean	\s-1false\s+1	disable the answering of voice-indicated calls
 NoCarrierRetrys	integer	\-	Deprecated - See JobRetryNoCarrier
-NotifyCmd\(S2	string	\s-1bin/notify\s+1	user notification command script
+NotifyCmd\(S1	string	\s-1bin/notify\s+1	user notification command script
 PageChop\(S1	string	\s-1last\s+1	control automatic truncation of trailing whitespace
 PageChopThreshold\(S1	float	\s-13.0\s+1	whitespace truncation threshold (inches)
 PCL2FaxCmd\(S1	string	\s-1bin/pcl2fax\s+1	PCL \s-1RIP\s+1 command script
