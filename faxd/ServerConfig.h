@@ -119,6 +119,7 @@ public:
     u_int	retryOther;		// number of retries after other problem
     u_int	pollModemWait;		// polling interval in modem wait state
     u_int	pollLockWait;		// polling interval in lock wait state
+    bool	pollLockPokeModem;	// poke modem after polling lock
     u_int	maxRecvPages;		// max pages to accept on receive
     u_int	maxConsecutiveBadCalls;	// max consecutive bad phone calls
     fxStr	localIdentifier;	// to use in place of FAXNumber

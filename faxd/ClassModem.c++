@@ -1395,6 +1395,12 @@ ClassModem::hangup()
 }
 
 bool
+ClassModem::poke()
+{
+    return atCmd("AT", AT_OK, 5000);
+}
+
+bool
 ClassModem::waitForRings(u_short rings, CallType& type, CallID& callid)
 {
     bool gotring = false;

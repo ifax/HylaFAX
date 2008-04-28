@@ -746,7 +746,20 @@ ModemServer::timerExpired(long, long)
 	 * If a lockfile exists, go to LOCKWAIT
 	 */
 	if (canLockModem()) {
-	    Dispatcher::instance().startTimer(pollLockWait, 0, this);
+	    bool ok = true;
+	    if (pollLockPokeModem) {
+		/*
+		 * Poke the modem to make sure it's still there.
+		 * If not, then mark it to be reset.
+		 */
+		lockModem();
+		ok = modem->poke();
+		unlockModem();
+	    }
+	    if (ok)
+		Dispatcher::instance().startTimer(pollLockWait, 0, this);
+	    else
+		changeState(MODEMWAIT, pollModemWait);
 	} else {
 	    changeState(LOCKWAIT, pollLockWait);
 	}

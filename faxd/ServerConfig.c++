@@ -79,6 +79,7 @@ ServerConfig::configTrace(const char* fmt, ...)
 
 ServerConfig::S_booltag ServerConfig::bools[] = {
 { "batchlogs",		&ServerConfig::batchLogs,	true },
+{ "polllockpokemodem",	&ServerConfig::pollLockPokeModem, false },
 };
 
 ServerConfig::S_stringtag ServerConfig::strings[] = {

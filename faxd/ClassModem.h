@@ -278,6 +278,7 @@ public:
     void	resetBlock();
     void	startTimeout(long ms);
     void	stopTimeout(const char* whichdir);
+    bool	poke();
 // host-modem protocol parsing support
     virtual ATResponse atResponse(char* buf, long ms = 30*1000);
     bool	waitFor(ATResponse wanted, long ms = 30*1000);
