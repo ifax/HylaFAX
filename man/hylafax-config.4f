@@ -1173,17 +1173,12 @@ mechanism.
 See also
 .BR MaxDials .
 .TP
-<<<<<<< HEAD:man/hylafax-config.4f
-.B ModemGroup\(S1
-=======
 .B MinAcceptedLineCount
 The minimum number of received scanlines allowed on an ``OK'' page.
 The use of this setting prevents confirmation from being sent for
 very short pages.
 .TP
-.B ModemGroup¹
->>>>>>> 4e1161d...
-:man/hylafax-config.4f
+.B ModemGroup\(S1
 Define a logical name for a set of modem devices.
 This parameter can be used to define a name that clients can use
 to refer to a collection of modems.
@@ -1224,7 +1219,7 @@ voice (e.g. by
 ).
 .TP
 .B NoCarrierRetrys
-This is mapped onto \s-1JobRetryNoCarrier\1+1
+This is mapped onto \s-1JobRetryNoCarrier\s+1
 .TP
 .B ModemReadyState
 Define the
