@@ -13,6 +13,7 @@
 #
 # CONFIG:CLASS1.0:56000:.*:.*: Manufacturer=Rockwell/Conexant Model=AC/K56
 # CONFIG:CLASS1.0:MT5600ZDX:.*:.*: Manufacturer=MultiTech Model=MT5600ZDX
+# CONFIG:CLASS1.0:MT5656ZDX:.*:.*: Manufacturer=MultiTech Model=MT5656ZDX
 # CONFIG:CLASS1.0:.*:.*LEONARDO.*:.*: Manufacturer=Digicom Model=Leonardo
 #
 # BEGIN-SERVER
