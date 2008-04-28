@@ -331,7 +331,7 @@ void FaxMachineInfo::setDialFailures(int v)
 void
 FaxMachineInfo::writeConfig()
 {
-    if (changed) {
+    if (changed && file != "") {
 	mode_t omask = umask(022);
 	int fd = Sys::open(file, O_WRONLY|O_CREAT, 0644);
 	(void) umask(omask);
