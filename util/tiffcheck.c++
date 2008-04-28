@@ -159,6 +159,13 @@ checkPageFormat(TIFF* tif, fxStr& emsg)
 	    _("Document is a multi-sample image (samples/pixel %u).\n"), spp));
 	status |= REIMAGE;
     }
+    uint16 pmi;
+    TIFFGetFieldDefaulted(tif, TIFFTAG_PHOTOMETRIC, &pmi);
+    if (pmi != PHOTOMETRIC_MINISWHITE) {
+	emsg.append(fxStr::format(
+	    "Document is not black-on-white.\n"));
+	status |= REIMAGE;
+    }
     uint16 compression = 0;
     (void) TIFFGetField(tif, TIFFTAG_COMPRESSION, &compression);
     if (useMMR) {
