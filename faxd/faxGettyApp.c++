@@ -826,7 +826,7 @@ faxGettyApp::notifyDocumentRecvd(FaxRecvInfo& ri)
     ai.npages = ri.npages;
     ai.params = ri.params.encode();
     ai.status = ri.reason;
-    ai.jobid = "";
+    ai.jobid = ri.qfile;
     ai.jobtag = "";
     ai.callid = ri.callid;
     ai.owner = "";

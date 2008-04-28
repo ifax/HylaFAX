@@ -54,7 +54,8 @@ date \s-1SEND\s+1 commid modem jobid jobtag sender ``dest-number'' ``\s-1CSI\s+1
 A facsimile reception record is of the form:
 .sp .5
 .ti +0.5i
-date \s-1RECV\s+1 commid modem \fI<null>\fP \fI<null>\fP fax ``local-number'' ``\s-1TSI\s+1'' params #pages jobtime conntime ``reason'' ``CallID1'' ``CallID2'' ``CallID3...CallIDn'' \fI<null>\fP ``dcs''
+<<<<<<< HEAD:man/xferfaxlog.4f
+date \s-1RECV\s+1 commid modem fax.tif \fI<null>\fP fax ``local-number'' ``\s-1TSI\s+1'' params #pages jobtime conntime ``reason'' ``CallID1'' ``CallID2'' ``CallID3...CallIDn'' \fI<null>\fP ``dcs''
 .sp .5
 .PP
 Each inbound call record is of the form:
@@ -101,6 +102,9 @@ The job number for outbound calls.
 .TP 14
 .B jobtag
 The client-specified job tag for outbound calls.
+.TP 14
+.B fax.tif
+The associated recvq fax TIFF file for the event.
 .TP 14
 .B sender
 The sender/receiver's electronic mailing address
