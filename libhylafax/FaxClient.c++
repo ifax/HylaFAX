@@ -1683,6 +1683,7 @@ void FaxClient::getJobStatusHeader(fxStr& header)
  */
 const FaxClient::FaxFmtHeader FaxClient::recvFormats[] = {
     { 'Y',	N_("Date       Time") },// Y (date & time)
+    { 'Z',	N_("UNIX Time") },	// Z (seconds since the UNIX epoch)
     { 'a',	N_("SUB") },		// a (subaddress)
     { 'b',	N_("BR") },		// b (bitrate)
     { 'd',	N_("DF") },		// d (data format)

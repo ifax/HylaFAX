@@ -299,8 +299,8 @@ static const char rformat[] = {
     'V',		// V
     'W',		// W
     'X',		// X
-    'Y',		// Y
-    'Z',		// Z
+    's',		// Y (tts in strftime %Y/%m/%d %H.%M.%S format)
+    'u',		// Z (tts as decimal time_t)
     '[',		// [
     '\\',		// \ (must have something after the backslash)
     ']',		// ]
@@ -459,6 +459,16 @@ HylaFAXServer::Rprintf(FILE* fd, const char* fmt,
 		break;
 	    case 'z':
 		fprintf(fd, fspec, ri.beingReceived ? "*" : " ");
+		break;
+	    case 'Y':
+		{ char tbuf[30];				// XXX HP C++
+		  strftime(tbuf, sizeof (tbuf), "%Y/%m/%d %H.%M.%S",
+			IS(USEGMT) ? gmtime(&ri.recvTime) : localtime(&ri.recvTime));
+		  fprintf(fd, fspec, tbuf);
+		}
+		break;
+	    case 'Z':
+		fprintf(fd, fspec, ri.recvTime);
 		break;
 	    }
 	} else
