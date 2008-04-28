@@ -1369,8 +1369,12 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, Stat
 			    // There is no CTC with V.34-fax (T.30 Annex F.3.4.5 Note 1).
 			    if (conf.class1PersistentECM && !useV34 && (blockgood == false) && 
 				!((curcap->br == 0) && (badframes >= badframesbefore))) {
-				// send ctc even at 2400 baud if we're getting somewhere
-				if (curcap->br != 0) {
+				/*
+				 * We send ctc even at 2400 baud if we're getting somewhere, and
+				 * often training down to a slower speed only makes matters worse.
+				 * So, if we seem to be making adequate progress we don't train down.
+				 */
+				if (curcap->br != 0 && (badframes >= badframesbefore/2)) {
 				    u_char oldmod = curcap->mod;
 				    do {
 					if (!dropToNextBR(params)) {
