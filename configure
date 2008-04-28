@@ -845,6 +845,7 @@ checkCompiler()
     if [ -z "${ENVOPTS:-}" ]; then
 	case $ISGCC-$TARGET in
 	no-*-hpux11*)	C_ANSI="-Aa -D_HPUX_SOURCE -Dhpux -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED";;
+	yes-*-hpux11*)  C_ANSI="-D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED";;
 	no-*-hp*)	C_ANSI="-Aa -D_HPUX_SOURCE -Dhpux";;
 	no-*-sco3.2v5.*)	C_ANSI="-Dsco -Dsco5 -b elf";;
 	yes-*-sco3.2v5.*)	C_ANSI="-Dsco -Dsco5 -m486";;
