@@ -1458,16 +1458,39 @@ Class1Modem::recvFrame(HDLCFrame& frame, u_char dir, long ms, bool readPending, 
 		    rhcnt = 0;
 		    traceFCF(dir == FCF_SNDR ? "SEND send" : "RECV send", FCF_CRP);
 		}
-		startTimeout(ms);
-		if (!(atCmd(rhCmd, AT_NOTHING, 0) && waitFor(AT_CONNECT,0))) {
-		    stopTimeout("waiting for v.21 carrier");
-		    if (wasTimeout()) {
-			abortReceive();
-			setTimeout(false);
+		do {
+		    lastResponse = AT_NOTHING;
+		    startTimeout(ms);
+		    if (!(atCmd(rhCmd, AT_NOTHING, 0) && waitFor(AT_CONNECT,0))) {
+			stopTimeout("waiting for v.21 carrier");
+			if (wasTimeout()) {
+			    abortReceive();
+			    setTimeout(false);
+			}
+			if (lastResponse != AT_NOCARRIER || rhcnt++ > 30) return (false);
 		    }
-		    return (false);
-		}
-		stopTimeout("waiting for v.21 carrier");
+		    stopTimeout("waiting for v.21 carrier");
+		    /*
+		     * The meaning of a direct NO CARRIER response/result to the AT+FRH=3
+		     * command can be interpreted two ways due to wording in ITU T.31.
+		     * The more traditional interpretation is that it is out-of-spec: that
+		     * a NO CARRIER response should only come after a CONNECT message.
+		     * However, T.31 gives sample sessions that illustrate precisely this
+		     * kind of out-of-spec sequence:
+		     *
+		     * <-- AT+FRH=3
+		     * --> NO CARRIER
+		     *
+		     * And the interpretation is clear to indicate that in this case the
+		     * modem detected a carrier, but it apparently was not V.21 HDLC, and
+		     * the NO CARRIER response indicates that the indeterminate carrier
+		     * has dropped.  This functionality is more cumbersome than it is
+		     * helpful (its value is not much different than that of an AT+FRS=1
+		     * command), and what it really means is that we just need to re-issue
+		     * the AT+FRH=3 command until we get something useful as this scenario
+		     * will most likely occur on incidence of Phase C premature carrier loss.
+		     */
+		} while (lastResponse == AT_NOCARRIER);
 	    }
 	    frame.reset();
             gotframe = recvRawFrame(frame);
