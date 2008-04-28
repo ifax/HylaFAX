@@ -2137,6 +2137,17 @@ EmitConfigurationDefinitions()
 	Note "... need ngettext"
 	echo "#define NEED_NGETTEXT"
     fi
+    test "$CONFIG_DARWIN_BROKEN_FD_ISSET" || {
+       case $TARGET in
+       *-darwin*)      CONFIG_DARWIN_BROKEN_FD_ISSET=yes;;
+       *)              ;;
+       esac
+    }
+    if [ "$CONFIG_DARWIN_BROKEN_FD_ISSET" ]; then
+       Note "... work around broken Darwin FD_ISSET"
+       echo "#include <sys/select.h>"
+       echo "#define __darwin_fd_isset(a,b) __darwin_fd_isset(a, (fd_set*)b)"
+    fi
 }
 
 #
