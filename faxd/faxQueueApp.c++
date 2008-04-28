@@ -307,6 +307,9 @@ faxQueueApp::fillBatch(Batch& batch)
 	    continue;
 	}
 
+	if (! isJobSendOK(job, req) )
+	    continue;
+
 	/*
 	 * Check if we can batch this job.  It might not be batchable
 	 * for some reason (like modem group compatiblity, etc)
