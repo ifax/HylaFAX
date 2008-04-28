@@ -140,8 +140,8 @@ killall()
 	test "$pid" && kill $1 $pid; return
 }
 
-case $1 in
-'start')
+do_start()
+{
 	if $IS_ON fax && test -x $FAXQ; then
 	    if test $FAXQ_SERVER = yes ; then
 		killall -15 faxq
@@ -169,11 +169,26 @@ case $1 in
 	    fi
 	    $ECHO "."
 	fi
+}
+
+do_stop ()
+{
+    $ECHO "Stopping HylaFAX Servers."
+    $FAXQUIT >/dev/null 2>&1
+    killall -15 hfaxd
+}
+
+case $1 in
+'start')
+	do_start
 	;;
 'stop')
-	$ECHO "Stopping HylaFAX Servers."
-	$FAXQUIT >/dev/null 2>&1
-	killall -15 hfaxd
+	do_stop
+	;;
+'restart')
+	do_stop
+	sleep 2 #wait some time...
+	do_start
 	;;
 'start_msg')
 	$ECHO "Starting HylaFAX Servers."
@@ -182,6 +197,6 @@ case $1 in
 	$ECHO "Stopping HylaFAX Servers."
 	;;
 *)
-	$ECHO "usage: hylafax {start|stop|start_msg|stop_msg}"
+	$ECHO "usage: hylafax {start|stop|restart|start_msg|stop_msg}"
 	;;
 esac
