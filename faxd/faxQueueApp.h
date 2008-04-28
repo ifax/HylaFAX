@@ -236,7 +236,6 @@ private:
     bool	submitJob(Job& job, FaxRequest& req, bool checkState = false);
     bool	suspendJob(Job& job, bool abortActive);
     bool	terminateJob(const fxStr& filename, JobStatus why);
-    void	timeoutAccounting(Job& job, FaxRequest&);
     void	timeoutJob(Job& job);
     void	timeoutJob(Job& job, FaxRequest&);
     void	runJob(Job& job);
