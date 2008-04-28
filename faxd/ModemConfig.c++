@@ -291,6 +291,7 @@ ModemConfig::setupConfig()
     softRTFCC		= true;			// real-time fax comp. conv. (software)
     doPhaseCDebug	= false;		// query modem for responses in Phase C transmit
     noAnswerVoice	= false;		// answer voice calls
+    saverawimage	= false;		// don't save raw image data by default
 
     idConfig.resize(0);
     callidIndex		= (u_int) -1;
@@ -801,6 +802,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	class2RTFCC = getBoolean(value);
     else if (streq(tag, "noanswervoice"))
 	noAnswerVoice = getBoolean(value);
+    else if (streq(tag, "saverawimage"))
+	saverawimage = getBoolean(value);
     else if (streq(tag, "modemsoftrtfcc"))
 	softRTFCC = getBoolean(value);
     else if (streq(tag, "modemdophasecdebug"))

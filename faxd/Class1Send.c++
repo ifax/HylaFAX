@@ -1598,6 +1598,7 @@ Class1Modem::sendClass1ECMData(const u_char* data, u_int cc, const u_char* bitre
 bool
 Class1Modem::sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm, Status& eresult)
 {
+    if (imagefd > 0) Sys::write(imagefd, (const char*) data, cc);
     beginTimedTransfer();
     bool rc;
     if (ecm)
@@ -1845,6 +1846,10 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	if (params.df <= DF_2DMMR && fillorder != FILLORDER_LSB2MSB) {
 	    TIFFReverseBits(dp, totdata);
 	}
+
+	/* For debugging purposes we may want to write the image-data to file. */
+	if (conf.saverawimage) imagefd = Sys::open("/tmp/out.fax", O_RDWR|O_CREAT|O_EXCL);
+
 	u_int minLen = params.minScanlineSize();
 	if (minLen > 0) {			// only in non-ECM
 	    /*
@@ -1927,8 +1932,9 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	    /*
 	     * Flush anything that was not sent above.
 	     */
-	    if (fp > fill && rc)
+	    if (fp > fill && rc) {
 		rc = sendPageData(fill, fp-fill, bitrev, (params.ec != EC_DISABLE), eresult);
+	    }
 	    delete fill;
 	} else {
 	    /*
@@ -1937,6 +1943,10 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	    rc = sendPageData(dp, (u_int) totdata, bitrev, (params.ec != EC_DISABLE), eresult);
 	}
 	delete data;
+	if (imagefd > 0) {
+	    Sys::close(imagefd);
+	    imagefd = 0;
+	}
     }
     if (rc || abortRequested())
 	rc = sendRTC(params, ppmcmd, rowsperstrip, eresult);

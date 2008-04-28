@@ -104,6 +104,7 @@ Class1Modem::Class1Modem(FaxServer& s, const ModemConfig& c)
     gotCTRL = false;
     repeatPhaseB = false;
     silenceHeard = false;
+    imagefd = 0;
 }
 
 Class1Modem::~Class1Modem()

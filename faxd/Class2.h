@@ -72,6 +72,7 @@ protected:
     char	hangupCode[5];		// hangup reason (from modem)
     bool	hadHangup;		// true if +FHNG:/+FHS: received
     fxStr	lid;			// prepared local identifier string
+    int		imagefd;		// file descriptor for raw image data
 
 // modem setup stuff
     virtual bool setupModem(bool isSend = true);

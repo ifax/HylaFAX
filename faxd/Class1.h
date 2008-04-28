@@ -92,6 +92,7 @@ protected:
     u_long	ecmStuffedBlockPos;	// fill pointer for ecmStuffedBlockPos
     u_int	frameNumber;		// frame sequence number of ecmFrame in ecmBlock
     u_short	blockNumber;		// block sequence number of ecmBlock in page
+    int		imagefd;		// file descriptor for raw image
 
     static const u_int modemPFMCodes[8];// map T.30 FCF to Class 2 PFM
     static const u_int modemPPMCodes[8];// map T.30 FCF to Class 2 PPM

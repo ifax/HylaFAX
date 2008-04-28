@@ -24,6 +24,7 @@
  * OF THIS SOFTWARE.
  */
 #include <stdio.h>
+#include "Sys.h"
 #include "Class2.h"
 #include "ModemConfig.h"
 #include "FaxRequest.h"
@@ -415,6 +416,9 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 {
     bool rc = true;
 
+    /* For debugging purposes we may want to write the image-data to file. */
+    if (conf.saverawimage) imagefd = Sys::open("/tmp/out.fax", O_RDWR|O_CREAT|O_EXCL);
+
     tstrip_t nstrips = TIFFNumberOfStrips(tif);
     if (nstrips > 0) {
 
@@ -508,10 +512,15 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	    TIFFReverseBits(dp, totdata);
 	}
 
+	if (imagefd > 0) Sys::write(imagefd, (const char*) dp, (u_int) totdata);
 	beginTimedTransfer();
 	rc = putModemDLEData(dp, (u_int) totdata, bitrev, getDataTimeout(), conf.doPhaseCDebug);
 	endTimedTransfer();
 	protoTrace("SENT %u bytes of data", totdata);
+    }
+    if (imagefd > 0) {
+	Sys::close(imagefd);
+	imagefd = 0;
     }
     return (rc);
 }

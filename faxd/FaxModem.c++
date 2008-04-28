@@ -41,6 +41,7 @@ FaxModem::FaxModem(FaxServer& s, const ModemConfig& c)
     minsp = BR_2400;
     curreq = NULL;
     group3opts = 0;
+    imagefd = 0;
     // fill order settings may be overwritten in derived class
     recvFillOrder = (conf.recvFillOrder != 0)? conf.recvFillOrder : FILLORDER_LSB2MSB;
     sendFillOrder = (conf.sendFillOrder != 0)? conf.sendFillOrder : FILLORDER_LSB2MSB;

@@ -34,6 +34,7 @@ Class2Modem::Class2Modem(FaxServer& s, const ModemConfig& c) : FaxModem(s,c)
     serviceType = 0;			// must be set in derived class
     useExtendedDF = false;		// T.32 Amendment 1 extension for data format is detectable
     useJP = false;			// JP +FCC option support is detectable
+    imagefd = 0;
 }
 
 Class2Modem::~Class2Modem()

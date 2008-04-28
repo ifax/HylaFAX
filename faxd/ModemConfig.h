@@ -128,6 +128,7 @@ public:
     fxStr	dringOn;		// pattern for distinctive ring silence interval
     fxStr	dringOff;		// pattern for distinctive ring ring interval
     bool	noAnswerVoice;		// leave voice calls unanswered
+    bool	saverawimage;		// debugging feature to save raw image data
 					// call identification
     IDConfArray	idConfig;		// pattern for ID info
 					// protocol timers
