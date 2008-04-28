@@ -2628,7 +2628,7 @@ reception is attempted.  Some modems are quick to (perhaps incorrectly)
 return +FCERROR, and for those modems a value of 2 or 3 should be used.
 For modems that are not quick to return +FCERROR, a value of 1 should be used.
 Proper tuning of this can provide a type of "adaptive reception control"
-for modems that accurately return +FCERROR without supporting 
+for modems that accurately return +FCERROR without supporting
 .B Class1AdaptRecvCmd.
 For those modems that support
 .B Class1AdaptRecvCmd,
@@ -2641,7 +2641,12 @@ control, then
 .B Class1RMPersistence
 should probably be set at 0, which causes the timeout looking for the high-speed
 data carrier to be shortened, thus increasing the likelihood of recovery from
-any dissynchronization.
+any dissynchronization. When
+.B Class1RMPersistence
+is other than 0 it is assumed that the +FCERROR reporting or
+.B Class1AdaptRecvCmd
+is functional and therefore the timeout looking for the high-speed data carrier
+is lengthened.
 .TP
 .B Class1SwitchingCmd
 The command used to ensure that the sending facsimile device has turned
