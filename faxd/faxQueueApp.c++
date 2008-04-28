@@ -1772,11 +1772,21 @@ faxQueueApp::setReadyToRun(Job& job, FaxRequest& req)
                 setReady(job, req);
 		break;
 	    case 0:				// child, exec command
+		/*
+		 * We set up our file handles carefully here because
+		 * we want to have STDIN/STDOUT/STDERR all appearing
+		 * normally.  We rely on knowing that faxq has a "good" STDIN
+		 * STDERR at all times.  We just need to set out STDOUT
+		 * to the pipe, and close everything else.
+		 */
 		if (pfd[1] != STDOUT_FILENO)
 		    dup2(pfd[1], STDOUT_FILENO);
-		closeAllBut(STDOUT_FILENO);
+
+		for (int fd = Sys::getOpenMax()-1; fd >= 0; fd--)
+		    if (fd != STDIN_FILENO && fd != STDOUT_FILENO && fd != STDERR_FILENO)
+			(void) Sys::close(fd);
+
 		traceQueue(job, "JOB CONTROL: %s %s", app[0], app[1]);
-		dup2(STDOUT_FILENO, STDERR_FILENO);
 		Sys::execv(app[0], (char * const*)app);
 		sleep(3);			// XXX give parent time to catch signal
 		traceQueue(job, "JOB CONTROL: failed to exec: %m");
