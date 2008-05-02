@@ -37,10 +37,8 @@
 # CXXCOMPILER:	@CXXCOMPILER@
 #
 DEPTH=..
+SUBDIR=faxcover
 @MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
-
-SRCDIR	= ${DEPTH}/${TOPSRCDIR}/faxcover
-VPATH	= ../@SRCDIR@/faxcover
 
 C++FILES= faxcover.c++
 TARGETS	= faxcover

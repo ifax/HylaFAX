@@ -37,10 +37,8 @@
 # CXXCOMPILER:	@CXXCOMPILER@
 #
 DEPTH=..
+SUBDIR=sgi2fax
 @MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
-
-SRCDIR	= ${DEPTH}/${TOPSRCDIR}/sgi2fax
-VPATH	= ../@SRCDIR@/sgi2fax
 
 CFILES	= imgtofax.c hipass.c izoom.c lut.c row.c rand.c
 TARGETS	= sgi2fax

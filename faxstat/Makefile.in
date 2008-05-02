@@ -37,10 +37,8 @@
 # CXXCOMPILER:	@CXXCOMPILER@
 #
 DEPTH=..
+SUBDIR=faxstat
 @MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
-
-SRCDIR	= ${DEPTH}/${TOPSRCDIR}/faxstat
-VPATH	= ../@SRCDIR@/faxstat
 
 C++FILES= faxstat.c++
 TARGETS	= faxstat

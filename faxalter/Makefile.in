@@ -37,10 +37,8 @@
 # CXXCOMPILER:	@CXXCOMPILER@
 #
 DEPTH=..
+SUBDIR=faxalter
 @MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
-
-SRCDIR	= ${DEPTH}/${TOPSRCDIR}/faxalter
-VPATH	= ../@SRCDIR@/faxalter
 
 C++FILES= faxalter.c++
 TARGETS	= faxalter

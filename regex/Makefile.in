@@ -37,10 +37,8 @@
 # CXXCOMPILER:	@CXXCOMPILER@
 #
 DEPTH=..
+SUBDIR=regex
 @MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
-
-SRCDIR	= ${DEPTH}/${TOPSRCDIR}/regex
-VPATH	= ../@SRCDIR@/regex
 
 CFILES= regexec.c regcomp.c regfree.c regerror.c
 TARGETS=libregex.a

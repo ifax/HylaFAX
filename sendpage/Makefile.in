@@ -37,10 +37,8 @@
 # CXXCOMPILER:	@CXXCOMPILER@
 #
 DEPTH=..
+SUBDIR=sendpage
 @MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
-
-SRCDIR	= ${DEPTH}/${TOPSRCDIR}/sendpage
-VPATH	= ../@SRCDIR@/sendpage
 
 C++FILES= sendpage.c++
 TARGETS	= sendpage

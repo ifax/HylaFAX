@@ -37,10 +37,8 @@
 # CXXCOMPILER:	@CXXCOMPILER@
 #
 DEPTH=..
+SUBDIR=util
 @MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
-
-SRCDIR	= ${DEPTH}/${TOPSRCDIR}/util
-VPATH	= ../@SRCDIR@/util
 
 TARGETS=faxmsg faxmodem faxadduser faxconfig faxdeluser \
     faxstate faxinfo faxwatch textfmt dialtest typetest tiffcheck

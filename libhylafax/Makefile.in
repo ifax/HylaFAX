@@ -1,9 +1,8 @@
 DEPTH=..
+SUBDIR=libhylafax
 @MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
 
 LIBVERSION	= @VERSION@
-SRCDIR	= ${DEPTH}/${TOPSRCDIR}/libhylafax
-VPATH	= ../@SRCDIR@/libhylafax
 
 LDIRT = libhylafax*
 

@@ -60,6 +60,8 @@ SENDMAIL	= @SENDMAIL@
 #
 TOPSRCDIR	= @SRCDIR@
 PORT		= ${DEPTH}/port
+SRCDIR          = ${DEPTH}/${TOPSRCDIR}/${SUBDIR}
+VPATH           = ${DEPTH}/${TOPSRCDIR}/${SUBDIR}
 #
 # PostScript imaging support to setup for the default
 # installation.  This should be one of "gs" or "dps"

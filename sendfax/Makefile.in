@@ -37,10 +37,8 @@
 # CXXCOMPILER:	@CXXCOMPILER@
 #
 DEPTH=..
+SUBDIR=sendfax
 @MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
-
-SRCDIR	= ${DEPTH}/${TOPSRCDIR}/sendfax
-VPATH	= ../@SRCDIR@/sendfax
 
 C++FILES= sendfax.c++
 TARGETS	= sendfax

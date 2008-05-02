@@ -37,10 +37,8 @@
 # CXXCOMPILER:	@CXXCOMPILER@
 #
 DEPTH=..
+SUBDIR=faxmail
 @MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
-
-SRCDIR	= ${DEPTH}/${TOPSRCDIR}/faxmail
-VPATH	= ../@SRCDIR@/faxmail
 
 C++FILES= faxmail.c++ MIMEState.c++ MsgFmt.c++
 TARGETS	= faxmail
