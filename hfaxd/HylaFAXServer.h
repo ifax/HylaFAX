@@ -36,6 +36,7 @@
 #include "FileCache.h"
 #include "Trace.h"
 #include "Trigger.h"
+#include "StackBuffer.h"
 #include "SystemLog.h"
 
 #include "config.h"
@@ -553,6 +554,7 @@ protected:
 
     const char* compactTime(time_t t);
     void Jprintf(FILE* fd, const char* fmt, const Job& job);
+    void Jprintf(fxStackBuffer& buf, const char* fmt, const Job& job);
 
     u_int getJobNumber(fxStr&);
     u_int getDocumentNumber(fxStr&);
@@ -561,9 +563,11 @@ protected:
     RecvInfo* getRecvInfo(const fxStr& qfile, const struct stat& sb);
     const char* compactRecvTime(time_t t);
     void Rprintf(FILE*, const char*, const RecvInfo&, const struct stat&);
+    void Rprintf(fxStackBuffer&, const char*, const RecvInfo&, const struct stat&);
 
     void getServerStatus(const char* fileName, fxStr& status);
     void Mprintf(FILE*, const char*, const ModemConfig&);
+    void Mprintf(fxStackBuffer&, const char*, const ModemConfig&);
 public:
     HylaFAXServer();
     virtual ~HylaFAXServer();

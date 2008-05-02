@@ -218,7 +218,7 @@ static const char mformat[] = {
  * in preferred formats.
  */
 void
-HylaFAXServer::Mprintf(FILE* fd, const char* fmt, const ModemConfig& config)
+HylaFAXServer::Mprintf(fxStackBuffer& buf, const char* fmt, const ModemConfig& config)
 {
     for (const char* cp = fmt; *cp; cp++) {
 	if (*cp == '%') {
@@ -241,25 +241,25 @@ HylaFAXServer::Mprintf(FILE* fd, const char* fmt, const ModemConfig& config)
 	    }
 	    if (!islower(c)) {
 		if (c == '%')		// %% -> %
-		    putc(c, fd);
+		    buf.put(c);
 		else
-		    fprintf(fd, "%.*s%c", fp-fspec, fspec, c);
+		    buf.fput("%.*s%c", fp-fspec, fspec, c);
 		continue;
 	    }
 	    fp[0] = mformat[c-'a'];	// printf format string
 	    fp[1] = '\0';
 	    switch (c) {
 	    case 'h':
-		fprintf(fd, fspec, (const char*) hostname);
+		buf.fput(fspec, (const char*) hostname);
 		break;
 	    case 'l':
-		fprintf(fd, fspec, (const char*) config.localIdentifier);
+		buf.fput(fspec, (const char*) config.localIdentifier);
 		break;
 	    case 'm':
-		fprintf(fd, fspec, (const char*) config.modemName);
+		buf.fput(fspec, (const char*) config.modemName);
 		break;
 	    case 'n':
-		fprintf(fd, fspec, (const char*) config.FAXNumber);
+		buf.fput(fspec, (const char*) config.FAXNumber);
 		break;
 	    case 'r':
         /* 
@@ -270,29 +270,38 @@ HylaFAXServer::Mprintf(FILE* fd, const char* fmt, const ModemConfig& config)
 		*    tmp = fxStr::format("%u", config.maxRecvPages);
         * }
         */
-		fprintf(fd, fspec, config.maxRecvPages);
+		buf.fput(fspec, config.maxRecvPages);
 		break;
 	    case 's':
-		fprintf(fd, fspec, (const char*) config.status);
+		buf.fput(fspec, (const char*) config.status);
 		break;
             case 't': {
 		            fxStr tmp = fxStr::format("%05x:%05x",
                         config.tracingLevel&0xfffff,
                         config.logTracingLevel&0xfffff);
-                    fprintf(fd, fspec, (const char*)tmp);
+                    buf.fput(fspec, (const char*)tmp);
                 }
 		        break;
 	    case 'v':
-		fprintf(fd, fspec, " QLMH"[config.speakerVolume]);
+		buf.fput(fspec, " QLMH"[config.speakerVolume]);
 		break;
 	    case 'z':
-		fprintf(fd, fspec, config.isGettyRunning ? '*' : ' ');
+		buf.fput(fspec, config.isGettyRunning ? '*' : ' ');
 		break;
 	    }
 	} else
-	    putc(*cp, fd);
+	    buf.put(*cp);
     }
 }
+
+void
+HylaFAXServer::Mprintf(FILE* fd, const char* fmt, const ModemConfig& config)
+{
+	fxStackBuffer buf;
+	Mprintf(buf, fmt, config);
+	fwrite((const char*)buf, buf.getLength(), 1, fd);
+}
+
 
 void
 HylaFAXServer::nlstStatus(FILE* fd, const SpoolDir& sd, DIR* dir)

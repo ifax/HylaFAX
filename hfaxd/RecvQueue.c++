@@ -369,7 +369,7 @@ HylaFAXServer::compactRecvTime(time_t t)
  * queue state listings in preferred formats.
  */
 void
-HylaFAXServer::Rprintf(FILE* fd, const char* fmt,
+HylaFAXServer::Rprintf(fxStackBuffer& buf, const char* fmt,
     const RecvInfo& ri, const struct stat& sb)
 {
     for (const char* cp = fmt; *cp; cp++) {
@@ -393,85 +393,94 @@ HylaFAXServer::Rprintf(FILE* fd, const char* fmt,
 	    }
 	    if (!isalpha(c)) {
 		if (c == '%')		// %% -> %
-		    putc(c, fd);
+		    buf.put(c);
 		else
-		    fprintf(fd, "%.*s%c", fp-fspec, fspec, c);
+		    buf.fput("%.*s%c", fp-fspec, fspec, c);
 		continue;
 	    }
 	    fp[0] = rformat[c-'A'];	// printf format string
 	    fp[1] = '\0';
 	    switch (c) {
 	    case 'a':
-		fprintf(fd, fspec, (const char*) ri.subaddr);
+		buf.fput(fspec, (const char*) ri.subaddr);
 		break;
 	    case 'b':
-		fprintf(fd, fspec, ri.params.bitRate());
+		buf.fput(fspec, ri.params.bitRate());
 		break;
 	    case 'd':
-		fprintf(fd, fspec, ri.params.dataFormatName());
+		buf.fput(fspec, ri.params.dataFormatName());
 		break;
 	    case 'e':
-		fprintf(fd, fspec, (const char*) ri.reason);
+		buf.fput(fspec, (const char*) ri.reason);
 		break;
 	    case 'f':
 		fp = (char *) strrchr(ri.qfile, '/');
-		fprintf(fd, fspec, fp ? fp+1 : (const char*) ri.qfile);
+		buf.fput(fspec, fp ? fp+1 : (const char*) ri.qfile);
 		break;
 	    case 'h':
-		fprintf(fd, fspec, fmtTime(ri.time));
+		buf.fput(fspec, fmtTime(ri.time));
 		break;
 	    case 'i':
-		fprintf(fd, fspec, ri.callid.size() > CallID::NAME ? (const char*) ri.callid.id(CallID::NAME) : "");
+		buf.fput(fspec, ri.callid.size() > CallID::NAME ? (const char*) ri.callid.id(CallID::NAME) : "");
 		break;
 	    case 'j':
-		fprintf(fd, fspec, ri.callid.size() > CallID::NUMBER ? (const char*) ri.callid.id(CallID::NUMBER) : "");
+		buf.fput(fspec, ri.callid.size() > CallID::NUMBER ? (const char*) ri.callid.id(CallID::NUMBER) : "");
 		break;
 	    case 'l':
-		fprintf(fd, fspec, ri.params.pageLength());
+		buf.fput(fspec, ri.params.pageLength());
 		break;
 	    case 'm':
 	    case 'q':
 		{ char prot[8];					// XXX HP C++
 		  makeProt(sb, c == 'q', prot);
-		  fprintf(fd, fspec, prot);
+		  buf.fput(fspec, prot);
 		}
 		break;
 	    case 'n':
-		fprintf(fd, fspec, (u_int) sb.st_size);		// XXX
+		buf.fput(fspec, (u_int) sb.st_size);		// XXX
 		break;
 	    case 'o':
-		fprintf(fd, fspec, userName((u_int) sb.st_gid));
+		buf.fput(fspec, userName((u_int) sb.st_gid));
 		break;
 	    case 'p':
-		fprintf(fd, fspec, ri.npages);
+		buf.fput(fspec, ri.npages);
 		break;
 	    case 'r':
-		fprintf(fd, fspec, ri.params.verticalRes());
+		buf.fput(fspec, ri.params.verticalRes());
 		break;
 	    case 's':
-		fprintf(fd, fspec, (const char*) ri.sender);
+		buf.fput(fspec, (const char*) ri.sender);
 		break;
 	    case 't':
-		fprintf(fd, fspec, compactRecvTime(ri.recvTime));
+		buf.fput(fspec, compactRecvTime(ri.recvTime));
 		break;
 	    case 'w':
-		fprintf(fd, fspec, ri.params.pageWidth());
+		buf.fput(fspec, ri.params.pageWidth());
 		break;
 	    case 'z':
-		fprintf(fd, fspec, ri.beingReceived ? "*" : " ");
+		buf.fput(fspec, ri.beingReceived ? "*" : " ");
 		break;
 	    case 'Y':
 		{ char tbuf[30];				// XXX HP C++
 		  strftime(tbuf, sizeof (tbuf), "%Y/%m/%d %H.%M.%S",
 			IS(USEGMT) ? gmtime(&ri.recvTime) : localtime(&ri.recvTime));
-		  fprintf(fd, fspec, tbuf);
+		  buf.fput(fspec, tbuf);
 		}
 		break;
 	    case 'Z':
-		fprintf(fd, fspec, ri.recvTime);
+		buf.fput(fspec, ri.recvTime);
 		break;
 	    }
 	} else
-	    putc(*cp, fd);
+	    buf.put(*cp);
     }
+}
+
+void
+HylaFAXServer::Rprintf(FILE* fd, const char* fmt,
+    const RecvInfo& ri, const struct stat& sb)
+{
+    fxStackBuffer buf;
+    Rprintf(buf, fmt, ri, sb);
+    fwrite((const char*)buf, buf.getLength(), 1, fd);
 }

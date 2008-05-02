@@ -1763,7 +1763,7 @@ static const char jformat[] = {
  * preferred formats.
  */
 void
-HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
+HylaFAXServer::Jprintf(fxStackBuffer& buf, const char* fmt, const Job& job)
 {
     /*
      * Check once to see if the client has access to
@@ -1797,182 +1797,189 @@ HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
 	    }
 	    if (!isalpha(c)) {
 		if (c == '%')		// %% -> %
-		    putc(c, fd);
+		    buf.put(c);
 		else
-		    fprintf(fd, "%.*s%c", fp-fspec, fspec, c);
+		    buf.fput("%.*s%c", fp-fspec, fspec, c);
 		continue;
 	    }
 	    fp[0] = jformat[c-'A'];	// printf format string
 	    fp[1] = '\0';
             switch (c) {
 	    case 'A':
-		fprintf(fd, fspec, (const char*) job.subaddr);
+		buf.fput(fspec, (const char*) job.subaddr);
 		break;
 	    case 'B':
-		fprintf(fd, fspec, haveAccess ? (const char*) job.passwd : "");
+		buf.fput(fspec, haveAccess ? (const char*) job.passwd : "");
 		break;
 	    case 'C':
-		fprintf(fd, fspec, (const char*) job.company);
+		buf.fput(fspec, (const char*) job.company);
 		break;
 	    case 'D':
-		fprintf(fd, fspec, (const char*)fxStr::format("%2u:%-2u", job.totdials, job.maxdials));
+		buf.fput(fspec, (const char*)fxStr::format("%2u:%-2u", job.totdials, job.maxdials));
 		break;
 	    case 'E':
-		fprintf(fd, fspec, job.desiredbr);
+		buf.fput(fspec, job.desiredbr);
 		break;
 	    case 'F':
-		fprintf(fd, fspec, (const char*) job.tagline);
+		buf.fput(fspec, (const char*) job.tagline);
 		break;
 	    case 'G':
-		fprintf(fd, fspec, job.desiredst);
+		buf.fput(fspec, job.desiredst);
 		break;
 	    case 'H':
-		fprintf(fd, fspec, job.desireddf);
+		buf.fput(fspec, job.desireddf);
 		break;
 	    case 'I':
-		fprintf(fd, fspec, job.usrpri);
+		buf.fput(fspec, job.usrpri);
 		break;
 	    case 'J':
-		fprintf(fd, fspec, (const char*) job.jobtag);
+		buf.fput(fspec, (const char*) job.jobtag);
 		break;
 	    case 'K':
-		fprintf(fd, fspec, "D HF"[job.desiredec]);
+		buf.fput(fspec, "D HF"[job.desiredec]);
 		break;
 	    case 'L':
-		fprintf(fd, fspec, (const char*) job.location);
+		buf.fput(fspec, (const char*) job.location);
 		break;
 	    case 'M':
-		fprintf(fd, fspec, (const char*) job.mailaddr);
+		buf.fput(fspec, (const char*) job.mailaddr);
 		break;
 	    case 'N':
-		fprintf(fd, fspec, " P"[job.desiredtl]);
+		buf.fput(fspec, " P"[job.desiredtl]);
 		break;
 	    case 'O':
-		fprintf(fd, fspec, "N "[job.useccover]);
+		buf.fput(fspec, "N "[job.useccover]);
 		break;
 	    case 'P':
-		fprintf(fd, fspec, (const char*)fxStr::format("%2u:%-2u", job.npages, job.totpages));
+		buf.fput(fspec, (const char*)fxStr::format("%2u:%-2u", job.npages, job.totpages));
 		break;
 	    case 'Q':
-		fprintf(fd, fspec, job.minbr);
+		buf.fput(fspec, job.minbr);
 		break;
 	    case 'R':
-		fprintf(fd, fspec, (const char*) job.receiver);
+		buf.fput(fspec, (const char*) job.receiver);
 		break;
 	    case 'S':
-		fprintf(fd, fspec, (const char*) job.sender);
+		buf.fput(fspec, (const char*) job.sender);
 		break;
 	    case 'T':
-		fprintf(fd, fspec, (const char*)fxStr::format("%2u:%-2u", job.tottries, job.maxtries));
+		buf.fput(fspec, (const char*)fxStr::format("%2u:%-2u", job.tottries, job.maxtries));
 		break;
 	    case 'U':
-		fprintf(fd, fspec, (const char*)fxStr::format("%.1f", job.chopthreshold));
+		buf.fput(fspec, (const char*)fxStr::format("%.1f", job.chopthreshold));
 		break;
 	    case 'V':
-		fprintf(fd, fspec, (const char*) job.doneop);
+		buf.fput(fspec, (const char*) job.doneop);
 		break;
 	    case 'W':
-		fprintf(fd, fspec, (const char*) job.commid);
+		buf.fput(fspec, (const char*) job.commid);
 		break;
 	    case 'X':
-		fprintf(fd, fspec, toupper(job.jobtype[0]));
+		buf.fput(fspec, toupper(job.jobtype[0]));
 		break;
 	    case 'Y':
-		{ char buf[30];				// XXX HP C++
-		  strftime(buf, sizeof (buf), "%Y/%m/%d %H.%M.%S",
+		{ char tbuf[30];				// XXX HP C++
+		  strftime(tbuf, sizeof (tbuf), "%Y/%m/%d %H.%M.%S",
 			IS(USEGMT) ? gmtime(&job.tts) : localtime(&job.tts));
-		  fprintf(fd, fspec, buf);
+		  buf.fput(fspec, tbuf);
 		}
 		break;
 	    case 'Z':
-		fprintf(fd, fspec, job.tts);
+		buf.fput(fspec, job.tts);
 		break;
 	    case 'a':
-		fprintf(fd, fspec, "?TPSBWRDF"[job.state]);
+		buf.fput(fspec, "?TPSBWRDF"[job.state]);
 		break;
 	    case 'b':
-		fprintf(fd, fspec, job.ntries);
+		buf.fput(fspec, job.ntries);
 		break;
 	    case 'c':
-		fprintf(fd, fspec, (const char*) job.client);
+		buf.fput(fspec, (const char*) job.client);
 		break;
 	    case 'd':
-		fprintf(fd, fspec, job.totdials);
+		buf.fput(fspec, job.totdials);
 		break;
 	    case 'e':
-		fprintf(fd, fspec, (const char*) job.external);
+		buf.fput(fspec, (const char*) job.external);
 		break;
 	    case 'f':
-		fprintf(fd, fspec, job.ndials);
+		buf.fput(fspec, job.ndials);
 		break;
 	    case 'g':
-		fprintf(fd, fspec, (const char*) job.groupid);
+		buf.fput(fspec, (const char*) job.groupid);
 		break;
 	    case 'h':
-		fprintf(fd, fspec, " DAL"[job.pagechop]);
+		buf.fput(fspec, " DAL"[job.pagechop]);
 		break;
 	    case 'i':
-		fprintf(fd, fspec, job.pri);
+		buf.fput(fspec, job.pri);
 		break;
 	    case 'j':
-		fprintf(fd, fspec, (const char*) job.jobid);
+		buf.fput(fspec, (const char*) job.jobid);
 		break;
 	    case 'k':
-		fprintf(fd, fspec, compactTime(job.killtime));
+		buf.fput(fspec, compactTime(job.killtime));
 		break;
 	    case 'l':
-		fprintf(fd, fspec, job.pagelength);
+		buf.fput(fspec, job.pagelength);
 		break;
 	    case 'm':
-		fprintf(fd, fspec, (const char*) job.modem);
+		buf.fput(fspec, (const char*) job.modem);
 		break;
 	    case 'n':
-		fprintf(fd, fspec, " DQA"[job.notify]);
+		buf.fput(fspec, " DQA"[job.notify]);
 		break;
 	    case 'o':
-		fprintf(fd, fspec, (const char*) job.owner);
+		buf.fput(fspec, (const char*) job.owner);
 		break;
 	    case 'p':
-		fprintf(fd, fspec, job.npages);
+		buf.fput(fspec, job.npages);
 		break;
 	    case 'q':
-		fprintf(fd, fspec,
+		buf.fput(fspec,
 		    job.retrytime == 0 ? "" : fmtTime(job.retrytime));
 		break;
 	    case 'r':
-		fprintf(fd, fspec, job.resolution);
+		buf.fput(fspec, job.resolution);
 		break;
 	    case 's':
-		fprintf(fd, fspec, job.result.string());
+		buf.fput(fspec, job.result.string());
 		break;
 	    case 't':
-		fprintf(fd, fspec, job.tottries);
+		buf.fput(fspec, job.tottries);
 		break;
 	    case 'u':
-		fprintf(fd, fspec, job.maxtries);
+		buf.fput(fspec, job.maxtries);
 		break;
 	    case 'v':
-		fprintf(fd, fspec, haveAccess ? (const char*) job.number : "");
+		buf.fput(fspec, haveAccess ? (const char*) job.number : "");
 		break;
 	    case 'w':
-		fprintf(fd, fspec, job.pagewidth);
+		buf.fput(fspec, job.pagewidth);
 		break;
 	    case 'x':
-		fprintf(fd, fspec, job.maxdials);
+		buf.fput(fspec, job.maxdials);
 		break;
 	    case 'y':
-		fprintf(fd, fspec, job.totpages);
+		buf.fput(fspec, job.totpages);
 		break;
 	    case 'z':
-		fprintf(fd, fspec, compactTime(job.tts));
+		buf.fput(fspec, compactTime(job.tts));
 		break;
 	    case '0':
-		fprintf(fd, fspec, "N "[job.usexvres]);
+		buf.fput(fspec, "N "[job.usexvres]);
 		break;
 	    }
 	} else
-	    putc(*cp, fd);
+	    buf.put(*cp);
     }
+}
+
+void
+HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
+{
+    fxStackBuffer buf;
+    fwrite((const char*)buf, buf.getLength(), 1, fd);
 }
 
 void
