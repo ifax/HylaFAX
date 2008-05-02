@@ -1,4 +1,4 @@
-# File: dialtest.c++, line: 45
+# File: util/dialtest.c++, line: 45
 #, c-format
 msgid ""
 "usage: %s [-v] [-a area-code] [-c country-code] [-i international-prefix] [-"
@@ -7,55 +7,55 @@ msgstr ""
 
 # #-#-#-#-#  messages.po  #-#-#-#-#
 #
-# File: dialtest.c++, line: 60
+# File: util/dialtest.c++, line: 60
 # #-#-#-#-#  messages.po  #-#-#-#-#
 #
-# File: tsitest.c++, line: 136
+# File: faxd/tsitest.c++, line: 136
 #, c-format
 msgid "ready> "
 msgstr ""
 
 #
-# File: dialtest.c++, line: 110
+# File: util/dialtest.c++, line: 110
 #, c-format
 msgid "%s: Problem parsing rules in %s"
 msgstr ""
 
 # #-#-#-#-#  messages.po  #-#-#-#-#
 #
-# File: dialtest.c++, line: 117
+# File: util/dialtest.c++, line: 117
 # #-#-#-#-#  messages.po  #-#-#-#-#
 #
-# File: tsitest.c++, line: 168
+# File: faxd/tsitest.c++, line: 168
 #, c-format
 msgid "input = \"%s\"\n"
 msgstr ""
 
 #
-# File: dialtest.c++, line: 132
+# File: util/dialtest.c++, line: 132
 #, c-format
 msgid "canonical = \"%s\"\n"
 msgstr ""
 
 #
-# File: dialtest.c++, line: 133
+# File: util/dialtest.c++, line: 133
 #, c-format
 msgid "dial-string = \"%s\"\n"
 msgstr ""
 
 #
-# File: dialtest.c++, line: 134
+# File: util/dialtest.c++, line: 134
 #, c-format
 msgid "display = \"%s\"\n"
 msgstr ""
 
 #
-# File: faxfetch.c++, line: 92
+# File: util/faxfetch.c++, line: 92
 msgid "usage: faxfetch [-h server-host] [-v] file"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 85
+# File: util/faxinfo.c++, line: 85
 #, c-format
 msgid ""
 "usage: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt] [-D]\n"
@@ -63,199 +63,199 @@ msgid ""
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 86
+# File: util/faxinfo.c++, line: 86
 #, c-format
 msgid "\t-n\tPrint FAX filename\n"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 87
+# File: util/faxinfo.c++, line: 87
 #, c-format
 msgid "\t-C d\tQuoted CSV-style output with <d> as the deliminator\n"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 88
+# File: util/faxinfo.c++, line: 88
 #, c-format
 msgid "\t-c d\tCSV-style output with <d> as the deliminator\n"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 89
+# File: util/faxinfo.c++, line: 89
 #, c-format
 msgid "\t-r\traw format - values outputed with no names\n"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 91
+# File: util/faxinfo.c++, line: 91
 #, c-format
 msgid "  Raw format options:\n"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 92
+# File: util/faxinfo.c++, line: 92
 #, c-format
 msgid "\t-S fmt\tUse fmt for the fax start format\n"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 93
+# File: util/faxinfo.c++, line: 93
 #, c-format
 msgid "\t-s fmt\tUse fmt for the field start format\n"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 94
+# File: util/faxinfo.c++, line: 94
 #, c-format
 msgid "\t-e fmt\tUse fmt for the field end format\n"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 95
+# File: util/faxinfo.c++, line: 95
 #, c-format
 msgid "\t-E fmt\tUse fmt for the fax end format\n"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 243
+# File: util/faxinfo.c++, line: 243
 #, c-format
 msgid "Could not open %s; either not TIFF or corrupted.\n"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 249
+# File: util/faxinfo.c++, line: 249
 #, c-format
 msgid "Does not look like a facsimile?\n"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 347
-# File: faxinfo.c++, line: 413
+# File: util/faxinfo.c++, line: 347
+# File: util/faxinfo.c++, line: 413
 msgid "<unknown>"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 348
+# File: util/faxinfo.c++, line: 348
 msgid "Sender"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 353
+# File: util/faxinfo.c++, line: 353
 msgid "SubAddr"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 395
+# File: util/faxinfo.c++, line: 395
 msgid "Pages"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 397
+# File: util/faxinfo.c++, line: 397
 msgid "Normal"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 397
-# File: faxinfo.c++, line: 399
-# File: faxinfo.c++, line: 401
-# File: faxinfo.c++, line: 403
-# File: faxinfo.c++, line: 405
+# File: util/faxinfo.c++, line: 397
+# File: util/faxinfo.c++, line: 399
+# File: util/faxinfo.c++, line: 401
+# File: util/faxinfo.c++, line: 403
+# File: util/faxinfo.c++, line: 405
 msgid "Quality"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 399
+# File: util/faxinfo.c++, line: 399
 msgid "Fine"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 401
+# File: util/faxinfo.c++, line: 401
 msgid "Superfine"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 403
+# File: util/faxinfo.c++, line: 403
 msgid "Hyperfine"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 405
+# File: util/faxinfo.c++, line: 405
 #, c-format
 msgid "%u lines/inch"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 408
-# File: faxinfo.c++, line: 410
+# File: util/faxinfo.c++, line: 408
+# File: util/faxinfo.c++, line: 410
 msgid "Page"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 410
+# File: util/faxinfo.c++, line: 410
 #, c-format
 msgid "%u by %u"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 412
+# File: util/faxinfo.c++, line: 412
 msgid "Received"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 413
+# File: util/faxinfo.c++, line: 413
 msgid "TimeToRecv"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 414
+# File: util/faxinfo.c++, line: 414
 msgid "SignalRate"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 415
+# File: util/faxinfo.c++, line: 415
 msgid "DataFormat"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 416
+# File: util/faxinfo.c++, line: 416
 msgid "ErrCorrect"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 416
+# File: util/faxinfo.c++, line: 416
 msgid "No"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 416
+# File: util/faxinfo.c++, line: 416
 msgid "Yes"
 msgstr ""
 
 #
-# File: faxinfo.c++, line: 419
+# File: util/faxinfo.c++, line: 419
 #, c-format
 msgid "CallID%u"
 msgstr ""
 
 #
-# File: faxwatch.c++, line: 55
+# File: util/faxwatch.c++, line: 55
 #, c-format
 msgid "write error: %s"
 msgstr ""
 
 #
-# File: faxwatch.c++, line: 101
+# File: util/faxwatch.c++, line: 101
 msgid "time values reported in GMT"
 msgstr ""
 
 #
-# File: faxwatch.c++, line: 114
+# File: util/faxwatch.c++, line: 114
 #, c-format
 msgid "usage: %s [-h host] [-g] [-l] [-v] trigger-specification"
 msgstr ""
 
 #
-# File: textfmt.c++, line: 45
+# File: util/textfmt.c++, line: 45
 #, c-format
 msgid ""
 "Usage: %s [-1] [-2] [-B] [-c] [-D] [-f fontname] [-F fontdir(s)] [-m N] [-o "
@@ -263,37 +263,37 @@ msgid ""
 msgstr ""
 
 #
-# File: textfmt.c++, line: 61
+# File: util/textfmt.c++, line: 61
 #, c-format
 msgid "Default options: -f Courier -1 -p 11bp -o 0\n"
 msgstr ""
 
 #
-# File: textfmt.c++, line: 109
+# File: util/textfmt.c++, line: 109
 #, c-format
 msgid "%s: No font metric information found for \"%s\".\n"
 msgstr ""
 
 #
-# File: textfmt.c++, line: 125
+# File: util/textfmt.c++, line: 125
 #, c-format
 msgid "Bad margin syntax.\n"
 msgstr ""
 
 #
-# File: textfmt.c++, line: 143
+# File: util/textfmt.c++, line: 143
 #, c-format
 msgid "Unknown page size %s.\n"
 msgstr ""
 
 #
-# File: textfmt.c++, line: 154
+# File: util/textfmt.c++, line: 154
 #, c-format
 msgid "Unrecognized option \"%c\".\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 36
+# File: util/tiffcheck.c++, line: 36
 #, c-format
 msgid ""
 "usage: %s [-r vertical-res] [-l page-length] [-w page-width] [-1] [-2] [-3] "
@@ -301,54 +301,59 @@ msgid ""
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 115
+# File: util/tiffcheck.c++, line: 115
 msgid "Document file is unreadable or does not exist"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 117
+# File: util/tiffcheck.c++, line: 117
 msgid "Document is not valid TIFF (unspecified format error)"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 152
+# File: util/tiffcheck.c++, line: 152
 #, c-format
 msgid "Document is not a bilevel image (bits/sample %u).\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 159
+# File: util/tiffcheck.c++, line: 159
 #, c-format
 msgid "Document is a multi-sample image (samples/pixel %u).\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 166
+# File: util/tiffcheck.c++, line: 166
+msgid "Document is not black-on-white.\n"
+msgstr ""
+
+#
+# File: util/tiffcheck.c++, line: 173
 msgid "Document requires reformatting, not in Group 4 format.\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 171
+# File: util/tiffcheck.c++, line: 178
 msgid "Document requires reformatting, not in Group 3 format.\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 177
+# File: util/tiffcheck.c++, line: 184
 msgid "Document requires reformatting, not in 2DMR format.\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 186
+# File: util/tiffcheck.c++, line: 193
 msgid "Document should be reformatted as a single strip.\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 196
+# File: util/tiffcheck.c++, line: 203
 msgid "Document should be reformatted with LSB-to-MSB bit order.\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 235
+# File: util/tiffcheck.c++, line: 242
 #, c-format
 msgid ""
 "Document requires reformatting to adjust vertical resolution (convert to %"
@@ -356,12 +361,12 @@ msgid ""
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 247
+# File: util/tiffcheck.c++, line: 254
 msgid "Document is not valid TIFF (missing ImageWidth tag).\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 251
+# File: util/tiffcheck.c++, line: 258
 #, c-format
 msgid ""
 "Document requires resizing to adjust page width (convert to %lu, document is "
@@ -369,12 +374,12 @@ msgid ""
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 267
+# File: util/tiffcheck.c++, line: 274
 msgid "Document is not valid TIFF (missing ImageLength tag).\n"
 msgstr ""
 
 #
-# File: tiffcheck.c++, line: 276
+# File: util/tiffcheck.c++, line: 283
 #, c-format
 msgid ""
 "Document requires resizing to adjust page length (convert to %lu, document "
@@ -382,400 +387,400 @@ msgid ""
 msgstr ""
 
 #
-# File: typetest.c++, line: 52
+# File: util/typetest.c++, line: 52
 #, c-format
 msgid "%s: Can not open file\n"
 msgstr ""
 
 #
-# File: typetest.c++, line: 56
+# File: util/typetest.c++, line: 56
 #, c-format
 msgid "%s: Can not stat file\n"
 msgstr ""
 
 #
-# File: typetest.c++, line: 61
+# File: util/typetest.c++, line: 61
 #, c-format
 msgid "%s: Not a regular file\n"
 msgstr ""
 
 #
-# File: typetest.c++, line: 69
+# File: util/typetest.c++, line: 69
 #, c-format
 msgid "%s: Empty file\n"
 msgstr ""
 
 #
-# File: typetest.c++, line: 74
+# File: util/typetest.c++, line: 74
 #, c-format
 msgid "%s: Can not determine file type\n"
 msgstr ""
 
 #
-# File: typetest.c++, line: 90
+# File: util/typetest.c++, line: 90
 #, c-format
 msgid "usage: %s [-f rulesfile] files\n"
 msgstr ""
 
 #
-# File: typetest.c++, line: 117
+# File: util/typetest.c++, line: 117
 #, c-format
 msgid "Unable to setup file typing and conversion rules\n"
 msgstr ""
 
-# File: choptest.c++, line: 43
+# File: faxd/choptest.c++, line: 43
 #, c-format
 msgid "usage: %s [-a] [-t threshold] input.tif\n"
 msgstr ""
 
 #
-# File: choptest.c++, line: 87
-# File: tagtest.c++, line: 438
+# File: faxd/choptest.c++, line: 87
+# File: faxd/tagtest.c++, line: 438
 #, c-format
 msgid "%s: Cannot open, or not a TIFF file"
 msgstr ""
 
 #
-# File: choptest.c++, line: 91
-# File: tagtest.c++, line: 442
+# File: faxd/choptest.c++, line: 91
+# File: faxd/tagtest.c++, line: 442
 #, c-format
 msgid "%s: Not a Group 3 or Group 4-encoded TIFF file"
 msgstr ""
 
 #
-# File: choptest.c++, line: 100
+# File: faxd/choptest.c++, line: 100
 #, c-format
 msgid "Chop all pages with >=%.2g\" of white space at the bottom.\n"
 msgstr ""
 
 #
-# File: choptest.c++, line: 101
+# File: faxd/choptest.c++, line: 101
 #, c-format
 msgid "Chop last page if >=%.2g\" of white space at the bottom.\n"
 msgstr ""
 
 #
-# File: choptest.c++, line: 134
+# File: faxd/choptest.c++, line: 134
 #, c-format
 msgid "Chop %u rows, strip was %lu bytes, need only %lu\n"
 msgstr ""
 
 #
-# File: choptest.c++, line: 140
+# File: faxd/choptest.c++, line: 140
 #, c-format
 msgid "Don't chop, found %u rows, need %u rows\n"
 msgstr ""
 
 #
-# File: cqtest.c++, line: 168
+# File: faxd/cqtest.c++, line: 168
 msgid "Missing EOL after 5 seconds"
 msgstr ""
 
 #
-# File: cqtest.c++, line: 259
-# File: cqtest.c++, line: 350
+# File: faxd/cqtest.c++, line: 259
+# File: faxd/cqtest.c++, line: 350
 #, c-format
 msgid "Adjusting for RTC found at row %u"
 msgstr ""
 
 #
-# File: cqtest.c++, line: 273
+# File: faxd/cqtest.c++, line: 273
 #, c-format
 msgid "adjusting for trailing noise (%lu run)"
 msgstr ""
 
 #
-# File: cqtest.c++, line: 279
+# File: faxd/cqtest.c++, line: 279
 #, c-format
 msgid "%lu total lines, %lu bad lines, %lu consecutive bad lines"
 msgstr ""
 
 #
-# File: cqtest.c++, line: 362
-# File: cqtest.c++, line: 373
+# File: faxd/cqtest.c++, line: 362
+# File: faxd/cqtest.c++, line: 373
 #, c-format
 msgid "RECV: %s: write error"
 msgstr ""
 
 #
-# File: cqtest.c++, line: 397
+# File: faxd/cqtest.c++, line: 397
 #, c-format
 msgid "RECV: REJECT page quality, %u%% good lines (%u%% required)"
 msgstr ""
 
 #
-# File: cqtest.c++, line: 407
+# File: faxd/cqtest.c++, line: 407
 #, c-format
 msgid "RECV: REJECT page quality, %u-line run (max %u)"
 msgstr ""
 
 #
-# File: cqtest.c++, line: 435
+# File: faxd/cqtest.c++, line: 435
 msgid "RECV: "
 msgstr ""
 
 #
-# File: cqtest.c++, line: 459
+# File: faxd/cqtest.c++, line: 459
 #, c-format
 msgid "Invalid %s code word, row %u, x %d"
 msgstr ""
 
 #
-# File: cqtest.c++, line: 470
+# File: faxd/cqtest.c++, line: 470
 #, c-format
 msgid "Bad %s pixel count, row %u, got %d, expected %d"
 msgstr ""
 
 #
-# File: cqtest.c++, line: 477
+# File: faxd/cqtest.c++, line: 477
 #, c-format
 msgid "Panic, bad %s decoding state, row %u, x %d"
 msgstr ""
 
 #
-# File: cqtest.c++, line: 489
+# File: faxd/cqtest.c++, line: 489
 msgid "RECV/CQ: "
 msgstr ""
 
 #
-# File: cqtest.c++, line: 499
+# File: faxd/cqtest.c++, line: 499
 #, c-format
 msgid "usage: %s [-m maxbad] [-p %%good] [-o output.tif] input.tif\n"
 msgstr ""
 
 #
-# File: cqtest.c++, line: 533
+# File: faxd/cqtest.c++, line: 533
 #, c-format
 msgid "%s: Cannot open, or not a TIFF file\n"
 msgstr ""
 
 #
-# File: cqtest.c++, line: 538
+# File: faxd/cqtest.c++, line: 538
 #, c-format
 msgid "%s: Cannot create TIFF file\n"
 msgstr ""
 
 #
-# File: cqtest.c++, line: 581
+# File: faxd/cqtest.c++, line: 581
 #, c-format
 msgid "Read error on strip %u\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 126
+# File: faxd/faxQCleanApp.c++, line: 126
 #, c-format
 msgid "Scan %s directory for jobs to remove+archive.\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 131
+# File: faxd/faxQCleanApp.c++, line: 131
 #, c-format
 msgid "%s: Could not scan directory for jobs.\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 144
+# File: faxd/faxQCleanApp.c++, line: 144
 #, c-format
 msgid "%s: ignored (cannot stat or not a regular file)\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 161
+# File: faxd/faxQCleanApp.c++, line: 161
 #, c-format
 msgid "%s: job too new, ignored (for now).\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 171
+# File: faxd/faxQCleanApp.c++, line: 171
 #, c-format
 msgid "JOB %s: archive (%s)%s.\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 174
-# File: faxQCleanApp.c++, line: 183
-# File: faxQCleanApp.c++, line: 416
+# File: faxd/faxQCleanApp.c++, line: 174
+# File: faxd/faxQCleanApp.c++, line: 183
+# File: faxd/faxQCleanApp.c++, line: 416
 msgid " (not done)"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 180
+# File: faxd/faxQCleanApp.c++, line: 180
 #, c-format
 msgid "JOB %s: remove (%s) %s.\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 197
+# File: faxd/faxQCleanApp.c++, line: 197
 #, c-format
 msgid "%s: malformed queue file: remove\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 213
-# File: faxQCleanApp.c++, line: 425
+# File: faxd/faxQCleanApp.c++, line: 213
+# File: faxd/faxQCleanApp.c++, line: 425
 #, c-format
 msgid "Done scanning %s directory\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 235
+# File: faxd/faxQCleanApp.c++, line: 235
 #, c-format
 msgid "JOB %s: reference %s\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 267
+# File: faxd/faxQCleanApp.c++, line: 267
 #, c-format
 msgid "Scan %s directory and remove unreferenced documents.\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 272
+# File: faxd/faxQCleanApp.c++, line: 272
 #, c-format
 msgid "%s: Could not scan directory for unreferenced documents.\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 294
+# File: faxd/faxQCleanApp.c++, line: 294
 #, c-format
 msgid "%s: ignored, cannot stat or not a regular file\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 309
+# File: faxd/faxQCleanApp.c++, line: 309
 #, c-format
 msgid "%s: ignored, file has %u links\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 315
+# File: faxd/faxQCleanApp.c++, line: 315
 #, c-format
 msgid "%s: ignored, file has %u references\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 321
+# File: faxd/faxQCleanApp.c++, line: 321
 #, c-format
 msgid "%s: ignored, file is too new to remove\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 344
-# File: faxQCleanApp.c++, line: 366
+# File: faxd/faxQCleanApp.c++, line: 344
+# File: faxd/faxQCleanApp.c++, line: 366
 #, c-format
 msgid "%s: file looks to be referenced by job\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 348
+# File: faxd/faxQCleanApp.c++, line: 348
 #, c-format
 msgid "%s: file has no matching %s\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 385
+# File: faxd/faxQCleanApp.c++, line: 385
 #, c-format
 msgid "%s: Could not scan directory for base file.\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 394
+# File: faxd/faxQCleanApp.c++, line: 394
 #, c-format
 msgid "%s: found match to base '%s', skipping.\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 406
+# File: faxd/faxQCleanApp.c++, line: 406
 #, c-format
 msgid "%s: did not find base '%s' match.\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 414
+# File: faxd/faxQCleanApp.c++, line: 414
 #, c-format
 msgid "DOC %s: unreferenced document removed%s.\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 420
+# File: faxd/faxQCleanApp.c++, line: 420
 #, c-format
 msgid "%s: error removing unreferenced document: %s.\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 433
+# File: faxd/faxQCleanApp.c++, line: 433
 #, c-format
 msgid "usage: %s [-a] [-j time] [-d time] [-q queue-directory]\n"
 msgstr ""
 
 #
-# File: faxQCleanApp.c++, line: 466
+# File: faxd/faxQCleanApp.c++, line: 466
 #, c-format
 msgid "%s: Can not change directory: %s.\n"
 msgstr ""
 
 #
-# File: tagtest.c++, line: 384
+# File: faxd/tagtest.c++, line: 384
 #, c-format
 msgid "usage: %s [-m format] [-o t.tif] [-f font.pcf] input.tif\n"
 msgstr ""
 
 #
-# File: tagtest.c++, line: 445
+# File: faxd/tagtest.c++, line: 445
 #, c-format
 msgid "%s: Problem reading font"
 msgstr ""
 
 #
-# File: tagtest.c++, line: 449
+# File: faxd/tagtest.c++, line: 449
 #, c-format
 msgid "%s: Cannot create output file"
 msgstr ""
 
 #
-# File: tagtest.c++, line: 553
+# File: faxd/tagtest.c++, line: 553
 #, c-format
 msgid "%s: Write error at strip %u, writing %lu bytes"
 msgstr ""
 
 #
-# File: tsitest.c++, line: 95
+# File: faxd/tsitest.c++, line: 95
 #, c-format
 msgid "Bad TSI pattern: %s: "
 msgstr ""
 
 #
-# File: tsitest.c++, line: 130
+# File: faxd/tsitest.c++, line: 130
 #, c-format
 msgid "usage: %s [-q] tsifile"
 msgstr ""
 
 #
-# File: tsitest.c++, line: 175
+# File: faxd/tsitest.c++, line: 175
 #, c-format
 msgid "[check %s]\n"
 msgstr ""
 
 #
-# File: tsitest.c++, line: 179
+# File: faxd/tsitest.c++, line: 179
 #, c-format
 msgid "accept (matched by %s)\n"
 msgstr ""
 
 #
-# File: tsitest.c++, line: 180
+# File: faxd/tsitest.c++, line: 180
 #, c-format
 msgid "reject (matched by %s)\n"
 msgstr ""
 
 #
-# File: tsitest.c++, line: 186
+# File: faxd/tsitest.c++, line: 186
 #, c-format
 msgid "reject (no pattern match)\n"
 msgstr ""
 
 #
-# File: tsitest.c++, line: 188
+# File: faxd/tsitest.c++, line: 188
 #, c-format
 msgid "reject (no patterns)\n"
 msgstr ""

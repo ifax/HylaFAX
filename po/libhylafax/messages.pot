@@ -1,1375 +1,1371 @@
-# File: AtSyntax.c++, line: 106
+# File: libhylafax/AtSyntax.c++, line: 106
 #, c-format
 msgid "Illegal minutes value %u"
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 112
+# File: libhylafax/AtSyntax.c++, line: 112
 msgid "expecting HH:MM"
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 119
+# File: libhylafax/AtSyntax.c++, line: 119
 #, c-format
 msgid "%u:%02u is not an AM value"
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 127
+# File: libhylafax/AtSyntax.c++, line: 127
 #, c-format
 msgid "%u:%02u is not a PM value"
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 148
+# File: libhylafax/AtSyntax.c++, line: 148
 #, c-format
 msgid "unrecognized symbolic time \"%s\""
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 153
+# File: libhylafax/AtSyntax.c++, line: 153
 msgid "Illegal time value; out of range"
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 177
+# File: libhylafax/AtSyntax.c++, line: 177
 msgid "expecting \"+\" after time"
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 193
+# File: libhylafax/AtSyntax.c++, line: 193
 msgid "Invalid date/time; time must be in the future"
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 319
+# File: libhylafax/AtSyntax.c++, line: 319
 msgid "missing or invalid day of month"
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 328
+# File: libhylafax/AtSyntax.c++, line: 328
 msgid "missing year"
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 332
+# File: libhylafax/AtSyntax.c++, line: 332
 #, c-format
 msgid "Sorry, cannot handle dates before %u"
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 355
+# File: libhylafax/AtSyntax.c++, line: 355
 #, c-format
 msgid "Invalid day of month, %s has only %u days"
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 371
+# File: libhylafax/AtSyntax.c++, line: 371
 msgid "expecting number after \"+\""
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 379
+# File: libhylafax/AtSyntax.c++, line: 379
 #, c-format
 msgid "\"+%u\" without unit"
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 398
+# File: libhylafax/AtSyntax.c++, line: 398
 #, c-format
 msgid "Unknown increment unit \"%s\""
 msgstr ""
 
 #
-# File: AtSyntax.c++, line: 452
+# File: libhylafax/AtSyntax.c++, line: 452
 msgid "Syntax error, "
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 804
+# File: libhylafax/Class2Params.c++, line: 804
 msgid "3.85 line/mm"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 805
+# File: libhylafax/Class2Params.c++, line: 805
 msgid "7.7 line/mm"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 806
+# File: libhylafax/Class2Params.c++, line: 806
 msgid "15.4 line/mm"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 807
+# File: libhylafax/Class2Params.c++, line: 807
 msgid "R16 x 15.4 line/mm"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 808
+# File: libhylafax/Class2Params.c++, line: 808
 msgid "200 x 100 dpi"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 809
+# File: libhylafax/Class2Params.c++, line: 809
 msgid "200 x 200 dpi"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 810
+# File: libhylafax/Class2Params.c++, line: 810
 msgid "200 x 400 dpi"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 811
+# File: libhylafax/Class2Params.c++, line: 811
 msgid "300 x 300 dpi"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 836
+# File: libhylafax/Class2Params.c++, line: 836
 msgid "2400 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 837
+# File: libhylafax/Class2Params.c++, line: 837
 msgid "4800 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 838
+# File: libhylafax/Class2Params.c++, line: 838
 msgid "7200 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 839
+# File: libhylafax/Class2Params.c++, line: 839
 msgid "9600 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 840
+# File: libhylafax/Class2Params.c++, line: 840
 msgid "12000 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 841
+# File: libhylafax/Class2Params.c++, line: 841
 msgid "14400 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 842
+# File: libhylafax/Class2Params.c++, line: 842
 msgid "16800 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 843
+# File: libhylafax/Class2Params.c++, line: 843
 msgid "19200 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 844
+# File: libhylafax/Class2Params.c++, line: 844
 msgid "21600 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 845
+# File: libhylafax/Class2Params.c++, line: 845
 msgid "24000 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 846
+# File: libhylafax/Class2Params.c++, line: 846
 msgid "26400 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 847
+# File: libhylafax/Class2Params.c++, line: 847
 msgid "28800 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 848
+# File: libhylafax/Class2Params.c++, line: 848
 msgid "31200 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 849
+# File: libhylafax/Class2Params.c++, line: 849
 msgid "33600 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 850
-# File: Class2Params.c++, line: 851
+# File: libhylafax/Class2Params.c++, line: 850
+# File: libhylafax/Class2Params.c++, line: 851
 msgid "0 bit/s"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 880
+# File: libhylafax/Class2Params.c++, line: 880
 msgid "1-D MH"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 881
+# File: libhylafax/Class2Params.c++, line: 881
 msgid "2-D MR"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 882
+# File: libhylafax/Class2Params.c++, line: 882
 msgid "2-D Uncompressed Mode"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 883
+# File: libhylafax/Class2Params.c++, line: 883
 msgid "2-D MMR"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 884
+# File: libhylafax/Class2Params.c++, line: 884
 msgid "JBIG"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 885
+# File: libhylafax/Class2Params.c++, line: 885
 msgid "JPEG Greyscale"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 886
+# File: libhylafax/Class2Params.c++, line: 886
 msgid "JPEG Full-Color"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 897
+# File: libhylafax/Class2Params.c++, line: 897
 msgid "MH"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 898
+# File: libhylafax/Class2Params.c++, line: 898
 msgid ", MR"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 899
+# File: libhylafax/Class2Params.c++, line: 899
 msgid ", MMR"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 900
+# File: libhylafax/Class2Params.c++, line: 900
 msgid ", JBIG"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 902
+# File: libhylafax/Class2Params.c++, line: 902
 msgid ", JPEG Full-Color"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 903
+# File: libhylafax/Class2Params.c++, line: 903
 msgid ", JPEG Greyscale"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 908
+# File: libhylafax/Class2Params.c++, line: 908
 msgid "A4 page width (215 mm)"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 909
+# File: libhylafax/Class2Params.c++, line: 909
 msgid "B4 page width (255 mm)"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 910
+# File: libhylafax/Class2Params.c++, line: 910
 msgid "A3 page width (303 mm)"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 911
+# File: libhylafax/Class2Params.c++, line: 911
 msgid "page width 151 mm"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 912
+# File: libhylafax/Class2Params.c++, line: 912
 msgid "page width 107 mm"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 913
+# File: libhylafax/Class2Params.c++, line: 913
 msgid "undefined page width (wd=5)"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 914
+# File: libhylafax/Class2Params.c++, line: 914
 msgid "undefined page width (wd=6)"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 915
+# File: libhylafax/Class2Params.c++, line: 915
 msgid "undefined page width (wd=7)"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 921
+# File: libhylafax/Class2Params.c++, line: 921
 msgid "A4 page length (297 mm)"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 922
+# File: libhylafax/Class2Params.c++, line: 922
 msgid "B4 page length (364 mm)"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 923
+# File: libhylafax/Class2Params.c++, line: 923
 msgid "unlimited page length"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 924
+# File: libhylafax/Class2Params.c++, line: 924
 msgid "invalid page length (ln=3)"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 930
+# File: libhylafax/Class2Params.c++, line: 930
 msgid "0 ms/scanline"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 931
+# File: libhylafax/Class2Params.c++, line: 931
 msgid "5 ms/scanline"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 932
+# File: libhylafax/Class2Params.c++, line: 932
 msgid "10 ms, 5 ms/scanline"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 933
+# File: libhylafax/Class2Params.c++, line: 933
 msgid "10 ms/scanline"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 934
+# File: libhylafax/Class2Params.c++, line: 934
 msgid "20 ms, 10 ms/scanline"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 935
+# File: libhylafax/Class2Params.c++, line: 935
 msgid "20 ms/scanline"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 936
+# File: libhylafax/Class2Params.c++, line: 936
 msgid "40 ms, 20 ms/scanline"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 937
+# File: libhylafax/Class2Params.c++, line: 937
 msgid "40 ms/scanline"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 942
+# File: libhylafax/Class2Params.c++, line: 942
 msgid "no ECM"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 943
+# File: libhylafax/Class2Params.c++, line: 943
 msgid "T.30 Annex A, 64-byte ECM"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 944
+# File: libhylafax/Class2Params.c++, line: 944
 msgid "T.30 Annex A, 256-byte ECM"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 945
+# File: libhylafax/Class2Params.c++, line: 945
 msgid "T.30 Annex C, half duplex ECM"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 946
+# File: libhylafax/Class2Params.c++, line: 946
 msgid "T.30 Annex C, full duplex ECM"
 msgstr ""
 
 #
-# File: Class2Params.c++, line: 947
-# File: Class2Params.c++, line: 948
-# File: Class2Params.c++, line: 949
+# File: libhylafax/Class2Params.c++, line: 947
+# File: libhylafax/Class2Params.c++, line: 948
+# File: libhylafax/Class2Params.c++, line: 949
 msgid "undefined ECM"
 msgstr ""
 
 #
-# File: DialRules.c++, line: 98
+# File: libhylafax/DialRules.c++, line: 98
 #, c-format
 msgid "Cannot open file \"%s\" for reading"
 msgstr ""
 
 #
-# File: DialRules.c++, line: 107
+# File: libhylafax/DialRules.c++, line: 107
 #, c-format
 msgid "Define %s = \"%s\""
 msgstr ""
 
 #
-# File: DialRules.c++, line: 116
+# File: libhylafax/DialRules.c++, line: 116
 #, c-format
 msgid "Undefine %s"
 msgstr ""
 
 #
-# File: DialRules.c++, line: 128
+# File: libhylafax/DialRules.c++, line: 128
 msgid "Syntax error, expecting identifier"
 msgstr ""
 
 #
-# File: DialRules.c++, line: 140
+# File: libhylafax/DialRules.c++, line: 140
 msgid "Missing '[' while parsing rule set"
 msgstr ""
 
 #
-# File: DialRules.c++, line: 159
+# File: libhylafax/DialRules.c++, line: 159
 #, c-format
 msgid "Missing '=' or ':=' after \"%s\""
 msgstr ""
 
 #
-# File: DialRules.c++, line: 166
+# File: libhylafax/DialRules.c++, line: 166
 msgid "Warning, no \"CanonicalNumber\" rules."
 msgstr ""
 
 #
-# File: DialRules.c++, line: 169
+# File: libhylafax/DialRules.c++, line: 169
 msgid "Warning, no \"DialString\" rules."
 msgstr ""
 
 #
-# File: DialRules.c++, line: 217
+# File: libhylafax/DialRules.c++, line: 217
 msgid "String with unmatched '\"'"
 msgstr ""
 
 #
-# File: DialRules.c++, line: 221
-# File: DialRules.c++, line: 233
+# File: libhylafax/DialRules.c++, line: 221
+# File: libhylafax/DialRules.c++, line: 233
 msgid "Bad '\\' escape sequence"
 msgstr ""
 
 #
-# File: DialRules.c++, line: 248
+# File: libhylafax/DialRules.c++, line: 248
 msgid "Missing '}' for variable reference"
 msgstr ""
 
 #
-# File: DialRules.c++, line: 295
+# File: libhylafax/DialRules.c++, line: 295
 msgid "Missing ']' while parsing rule set"
 msgstr ""
 
 #
-# File: DialRules.c++, line: 307
+# File: libhylafax/DialRules.c++, line: 307
 msgid "Rule pattern without '='"
 msgstr ""
 
 #
-# File: DialRules.c++, line: 343
+# File: libhylafax/DialRules.c++, line: 343
 #, c-format
 msgid "Apply %s rules to \"%s\""
 msgstr ""
 
 #
-# File: DialRules.c++, line: 381
+# File: libhylafax/DialRules.c++, line: 381
 #, c-format
 msgid "--> match rule \"%s\", result now \"%s\""
 msgstr ""
 
 #
-# File: DialRules.c++, line: 387
+# File: libhylafax/DialRules.c++, line: 387
 #, c-format
 msgid "--> return result \"%s\""
 msgstr ""
 
 #
-# File: DialRules.c++, line: 398
-# File: DialRules.c++, line: 409
-# File: PageSize.c++, line: 52
-# File: TypeRules.c++, line: 311
+# File: libhylafax/DialRules.c++, line: 398
+# File: libhylafax/DialRules.c++, line: 409
+# File: libhylafax/PageSize.c++, line: 52
+# File: libhylafax/TypeRules.c++, line: 311
 #, c-format
 msgid "%s: line %u: "
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 119
-# File: SNPPClient.c++, line: 106
-# File: TextFormat.c++, line: 97
+# File: libhylafax/FaxClient.c++, line: 119
+# File: libhylafax/SNPPClient.c++, line: 106
+# File: libhylafax/TextFormat.c++, line: 97
 msgid "Warning, "
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 194
+# File: libhylafax/FaxClient.c++, line: 194
 #, c-format
 msgid "Can not locate your password entry (uid %lu): %s"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 220
-# File: SNPPClient.c++, line: 281
+# File: libhylafax/FaxClient.c++, line: 220
+# File: libhylafax/SNPPClient.c++, line: 281
 msgid ""
 "Bad (null) user name; your password file entry probably has bogus GECOS "
 "field information."
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 389
+# File: libhylafax/FaxClient.c++, line: 389
 msgid "Malformed (null) username"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 410
-# File: SNPPClient.c++, line: 578
+# File: libhylafax/FaxClient.c++, line: 410
+# File: libhylafax/SNPPClient.c++, line: 578
 msgid "Login failed: "
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 431
+# File: libhylafax/FaxClient.c++, line: 431
 msgid "Admin failed: "
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 447
+# File: libhylafax/FaxClient.c++, line: 447
 #, c-format
 msgid "Bad %s parameter value %u."
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 487
+# File: libhylafax/FaxClient.c++, line: 487
 #, c-format
 msgid "Bad time zone parameter value %u."
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 526
+# File: libhylafax/FaxClient.c++, line: 526
 msgid "Unable to initialize data connection to server"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 540
+# File: libhylafax/FaxClient.c++, line: 540
 msgid "Unable to open data connection to server"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 564
+# File: libhylafax/FaxClient.c++, line: 564
 msgid "Unable to abort data connection to server"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 594
-# File: SNPPClient.c++, line: 595
+# File: libhylafax/FaxClient.c++, line: 594
+# File: libhylafax/SNPPClient.c++, line: 595
 msgid "Service not available, remote server closed connection"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 601
-# File: SNPPClient.c++, line: 602
+# File: libhylafax/FaxClient.c++, line: 601
+# File: libhylafax/SNPPClient.c++, line: 602
 msgid "Unexpected server response: "
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 609
-# File: SNPPClient.c++, line: 610
+# File: libhylafax/FaxClient.c++, line: 609
+# File: libhylafax/SNPPClient.c++, line: 610
 msgid "Protocol botch"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 644
-msgid "Memory allocation failed"
-msgstr ""
-
-#
-# File: FaxClient.c++, line: 652
-# File: SNPPClient.c++, line: 645
+# File: libhylafax/FaxClient.c++, line: 646
+# File: libhylafax/SNPPClient.c++, line: 645
 msgid "No control connection for command"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 787
+# File: libhylafax/FaxClient.c++, line: 776
 #, c-format
 msgid ": No \"%s\" in %s response: %s"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 794
+# File: libhylafax/FaxClient.c++, line: 783
 #, c-format
 msgid ": Null %s in %s response: %s"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 977
+# File: libhylafax/FaxClient.c++, line: 966
 #, c-format
 msgid "Unable to open script file \"%s\"."
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 996
+# File: libhylafax/FaxClient.c++, line: 985
 #, c-format
 msgid "%s: Read error: %s"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1021
+# File: libhylafax/FaxClient.c++, line: 1010
 #, c-format
 msgid "%s: line %u: %s"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1111
-# File: FaxClient.c++, line: 1118
-# File: SNPPClient.c++, line: 915
-# File: SNPPClient.c++, line: 922
+# File: libhylafax/FaxClient.c++, line: 1100
+# File: libhylafax/FaxClient.c++, line: 1107
+# File: libhylafax/SNPPClient.c++, line: 915
+# File: libhylafax/SNPPClient.c++, line: 922
 msgid " (server closed connection)"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1111
-# File: FaxClient.c++, line: 1118
-# File: SNPPClient.c++, line: 915
-# File: SNPPClient.c++, line: 922
+# File: libhylafax/FaxClient.c++, line: 1100
+# File: libhylafax/FaxClient.c++, line: 1107
+# File: libhylafax/SNPPClient.c++, line: 915
+# File: libhylafax/SNPPClient.c++, line: 922
 #, c-format
 msgid " (server write error: %s)."
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1140
+# File: libhylafax/FaxClient.c++, line: 1129
 #, c-format
 msgid "SEND data, %lu bytes"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1158
-# File: SNPPClient.c++, line: 943
+# File: libhylafax/FaxClient.c++, line: 1147
+# File: libhylafax/SNPPClient.c++, line: 943
 #, c-format
 msgid " (data read: %s)."
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1209
+# File: libhylafax/FaxClient.c++, line: 1198
 #, c-format
 msgid "SEND compressed data, %lu bytes"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1227
+# File: libhylafax/FaxClient.c++, line: 1216
 #, c-format
 msgid " (data read: %s)"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1234
-# File: FaxClient.c++, line: 1254
-# File: FaxClient.c++, line: 1280
+# File: libhylafax/FaxClient.c++, line: 1223
+# File: libhylafax/FaxClient.c++, line: 1243
+# File: libhylafax/FaxClient.c++, line: 1269
 #, c-format
 msgid "zlib compressor error: %s"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1286
+# File: libhylafax/FaxClient.c++, line: 1275
 #, c-format
 msgid "SEND %lu bytes transmitted (%.1fx compression)"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1307
+# File: libhylafax/FaxClient.c++, line: 1296
 #, c-format
 msgid "Can not initialize compression library: %s"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1349
-# File: FaxClient.c++, line: 1412
+# File: libhylafax/FaxClient.c++, line: 1338
+# File: libhylafax/FaxClient.c++, line: 1401
 #, c-format
 msgid "Data Connection: %s"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1423
+# File: libhylafax/FaxClient.c++, line: 1412
 #, c-format
 msgid "Decoding error: %s"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1437
+# File: libhylafax/FaxClient.c++, line: 1426
 #, c-format
 msgid "Can not initialize decoder: %s"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1633
-# File: FaxClient.c++, line: 1697
+# File: libhylafax/FaxClient.c++, line: 1622
+# File: libhylafax/FaxClient.c++, line: 1687
 msgid "SUB"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1634
+# File: libhylafax/FaxClient.c++, line: 1623
 msgid "PWD"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1635
+# File: libhylafax/FaxClient.c++, line: 1624
 msgid "Company"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1636
+# File: libhylafax/FaxClient.c++, line: 1625
 msgid "Dials"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1637
-# File: FaxClient.c++, line: 1698
+# File: libhylafax/FaxClient.c++, line: 1626
+# File: libhylafax/FaxClient.c++, line: 1688
 msgid "BR"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1638
+# File: libhylafax/FaxClient.c++, line: 1627
 msgid "Tagline"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1639
+# File: libhylafax/FaxClient.c++, line: 1628
 msgid "ST"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1640
-# File: FaxClient.c++, line: 1699
+# File: libhylafax/FaxClient.c++, line: 1629
+# File: libhylafax/FaxClient.c++, line: 1689
 msgid "DF"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1641
+# File: libhylafax/FaxClient.c++, line: 1630
 msgid "UsrPri"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1642
+# File: libhylafax/FaxClient.c++, line: 1631
 msgid "JobTag"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1643
+# File: libhylafax/FaxClient.c++, line: 1632
 msgid "EC"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1644
+# File: libhylafax/FaxClient.c++, line: 1633
 msgid "Location"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1645
+# File: libhylafax/FaxClient.c++, line: 1634
 msgid "MailAddr"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1646
+# File: libhylafax/FaxClient.c++, line: 1635
 msgid "DT"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1647
+# File: libhylafax/FaxClient.c++, line: 1636
 msgid "CC"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1648
-# File: FaxClient.c++, line: 1674
-# File: FaxClient.c++, line: 1709
+# File: libhylafax/FaxClient.c++, line: 1637
+# File: libhylafax/FaxClient.c++, line: 1663
+# File: libhylafax/FaxClient.c++, line: 1699
 msgid "Pages"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1649
+# File: libhylafax/FaxClient.c++, line: 1638
 msgid "MinSP"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1650
+# File: libhylafax/FaxClient.c++, line: 1639
 msgid "Receiver"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1651
+# File: libhylafax/FaxClient.c++, line: 1640
 msgid "Sender"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1652
+# File: libhylafax/FaxClient.c++, line: 1641
 msgid "Tries"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1653
+# File: libhylafax/FaxClient.c++, line: 1642
 msgid "ChopThreshold"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1654
+# File: libhylafax/FaxClient.c++, line: 1643
 msgid "DoneOp"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1655
+# File: libhylafax/FaxClient.c++, line: 1644
 msgid "CommID"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1656
+# File: libhylafax/FaxClient.c++, line: 1645
 msgid "JobType"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1657
-# File: FaxClient.c++, line: 1696
+# File: libhylafax/FaxClient.c++, line: 1646
+# File: libhylafax/FaxClient.c++, line: 1685
 msgid "Date       Time"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1658
+# File: libhylafax/FaxClient.c++, line: 1647
+# File: libhylafax/FaxClient.c++, line: 1686
 msgid "UNIX Time"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1659
+# File: libhylafax/FaxClient.c++, line: 1648
 msgid "State"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1660
+# File: libhylafax/FaxClient.c++, line: 1649
 msgid "NTries"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1661
+# File: libhylafax/FaxClient.c++, line: 1650
 msgid "Client"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1662
+# File: libhylafax/FaxClient.c++, line: 1651
 msgid "TotDials"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1663
-# File: FaxClient.c++, line: 1729
+# File: libhylafax/FaxClient.c++, line: 1652
+# File: libhylafax/FaxClient.c++, line: 1719
 msgid "Number"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1664
+# File: libhylafax/FaxClient.c++, line: 1653
 msgid "NDials"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1665
-# File: FaxClient.c++, line: 1749
+# File: libhylafax/FaxClient.c++, line: 1654
+# File: libhylafax/FaxClient.c++, line: 1739
 msgid "GID"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1666
+# File: libhylafax/FaxClient.c++, line: 1655
 msgid "Chop"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1667
+# File: libhylafax/FaxClient.c++, line: 1656
 msgid "Priority"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1668
+# File: libhylafax/FaxClient.c++, line: 1657
 msgid "JID"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1669
+# File: libhylafax/FaxClient.c++, line: 1658
 msgid "LastTime"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1670
+# File: libhylafax/FaxClient.c++, line: 1659
 msgid "PageLength"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1671
-# File: FaxClient.c++, line: 1728
+# File: libhylafax/FaxClient.c++, line: 1660
+# File: libhylafax/FaxClient.c++, line: 1718
 msgid "Modem"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1672
+# File: libhylafax/FaxClient.c++, line: 1661
 msgid "Notify"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1673
-# File: FaxClient.c++, line: 1708
-# File: FaxClient.c++, line: 1752
+# File: libhylafax/FaxClient.c++, line: 1662
+# File: libhylafax/FaxClient.c++, line: 1698
+# File: libhylafax/FaxClient.c++, line: 1742
 msgid "Owner"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1675
+# File: libhylafax/FaxClient.c++, line: 1664
 msgid "RetryTime"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1676
-# File: FaxClient.c++, line: 1711
+# File: libhylafax/FaxClient.c++, line: 1665
+# File: libhylafax/FaxClient.c++, line: 1701
 msgid "Resolution"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1677
-# File: FaxClient.c++, line: 1731
+# File: libhylafax/FaxClient.c++, line: 1666
+# File: libhylafax/FaxClient.c++, line: 1721
 msgid "Status"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1678
+# File: libhylafax/FaxClient.c++, line: 1667
 msgid "TotTries"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1679
+# File: libhylafax/FaxClient.c++, line: 1668
 msgid "MaxTries"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1680
+# File: libhylafax/FaxClient.c++, line: 1669
 msgid "DialString"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1681
+# File: libhylafax/FaxClient.c++, line: 1670
 msgid "PageWidth"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1682
+# File: libhylafax/FaxClient.c++, line: 1671
 msgid "MaxDials"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1683
+# File: libhylafax/FaxClient.c++, line: 1672
 msgid "TotPages"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1684
+# File: libhylafax/FaxClient.c++, line: 1673
 msgid "TTS"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1685
+# File: libhylafax/FaxClient.c++, line: 1674
 msgid "UseXVres"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1700
+# File: libhylafax/FaxClient.c++, line: 1690
 msgid "Error"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1701
-# File: FaxClient.c++, line: 1748
+# File: libhylafax/FaxClient.c++, line: 1691
+# File: libhylafax/FaxClient.c++, line: 1738
 msgid "Filename"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1702
+# File: libhylafax/FaxClient.c++, line: 1692
 msgid "Time"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1703
+# File: libhylafax/FaxClient.c++, line: 1693
 msgid "CIDName"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1704
+# File: libhylafax/FaxClient.c++, line: 1694
 msgid "CIDNumber"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1705
+# File: libhylafax/FaxClient.c++, line: 1695
 msgid "Length"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1706
-# File: FaxClient.c++, line: 1710
-# File: FaxClient.c++, line: 1753
-# File: FaxClient.c++, line: 1754
+# File: libhylafax/FaxClient.c++, line: 1696
+# File: libhylafax/FaxClient.c++, line: 1700
+# File: libhylafax/FaxClient.c++, line: 1743
+# File: libhylafax/FaxClient.c++, line: 1744
 msgid "Protect"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1707
-# File: FaxClient.c++, line: 1756
+# File: libhylafax/FaxClient.c++, line: 1697
+# File: libhylafax/FaxClient.c++, line: 1746
 msgid "Size"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1712
+# File: libhylafax/FaxClient.c++, line: 1702
 msgid "Sender/TSI"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1713
+# File: libhylafax/FaxClient.c++, line: 1703
 msgid "Recvd@"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1714
+# File: libhylafax/FaxClient.c++, line: 1704
 msgid "Width"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1726
+# File: libhylafax/FaxClient.c++, line: 1716
 msgid "Host"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1727
+# File: libhylafax/FaxClient.c++, line: 1717
 msgid "LocalID"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1730
+# File: libhylafax/FaxClient.c++, line: 1720
 msgid "MaxRecv"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1732
+# File: libhylafax/FaxClient.c++, line: 1722
 msgid "Tracing"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1733
+# File: libhylafax/FaxClient.c++, line: 1723
 msgid "Speaker"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1745
+# File: libhylafax/FaxClient.c++, line: 1735
 msgid "LastAcc"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1746
+# File: libhylafax/FaxClient.c++, line: 1736
 msgid "Created"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1747
+# File: libhylafax/FaxClient.c++, line: 1737
 msgid "Device"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1750
+# File: libhylafax/FaxClient.c++, line: 1740
 msgid "Links"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1751
+# File: libhylafax/FaxClient.c++, line: 1741
 msgid "LastMod"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1755
+# File: libhylafax/FaxClient.c++, line: 1745
 msgid "RootDev"
 msgstr ""
 
 #
-# File: FaxClient.c++, line: 1757
+# File: libhylafax/FaxClient.c++, line: 1747
 msgid "UID"
 msgstr ""
 
 #
-# File: FaxConfig.c++, line: 57
+# File: libhylafax/FaxConfig.c++, line: 57
 #, c-format
 msgid "Read config file %s"
 msgstr ""
 
 #
-# File: FaxConfig.c++, line: 95
+# File: libhylafax/FaxConfig.c++, line: 95
 #, c-format
 msgid "No passwd file entry for uid %u, cannot expand ~ in \"%s\""
 msgstr ""
 
 #
-# File: FaxConfig.c++, line: 168
+# File: libhylafax/FaxConfig.c++, line: 168
 #, c-format
 msgid "Syntax error at line %u, missing ':' in \"%s\""
 msgstr ""
 
 #
-# File: FaxConfig.c++, line: 183
+# File: libhylafax/FaxConfig.c++, line: 183
 #, c-format
 msgid "Syntax error at line %u, missing quote mark in \"%s\""
 msgstr ""
 
 #
-# File: FaxConfig.c++, line: 216
-# File: FaxConfig.c++, line: 227
+# File: libhylafax/FaxConfig.c++, line: 216
+# File: libhylafax/FaxConfig.c++, line: 227
 #, c-format
 msgid "%s = %s (line %u)"
 msgstr ""
 
 #
-# File: FaxConfig.c++, line: 223
+# File: libhylafax/FaxConfig.c++, line: 223
 #, c-format
 msgid "Unknown configuration parameter \"%s\" ignored at line %u"
 msgstr ""
 
 #
-# File: FaxDB.c++, line: 124
+# File: libhylafax/FaxDB.c++, line: 125
 #, c-format
 msgid "%s: line %d: Unmatched \"]\".\n"
 msgstr ""
 
 #
-# File: FaxDB.c++, line: 136
+# File: libhylafax/FaxDB.c++, line: 137
 #, c-format
 msgid "%s: line %d: Missing \":\" separator.\n"
 msgstr ""
 
 #
-# File: FaxDB.c++, line: 184
+# File: libhylafax/FaxDB.c++, line: 185
 #, c-format
 msgid "%s: Premature EOF.\n"
 msgstr ""
 
 #
-# File: InetTransport.c++, line: 75
-# File: SNPPClient.c++, line: 466
+# File: libhylafax/InetTransport.c++, line: 75
+# File: libhylafax/SNPPClient.c++, line: 466
 #, c-format
 msgid "%s: No protocol definition, using default."
 msgstr ""
 
 #
-# File: InetTransport.c++, line: 83
-# File: SNPPClient.c++, line: 459
+# File: libhylafax/InetTransport.c++, line: 83
+# File: libhylafax/SNPPClient.c++, line: 459
 msgid ": Unknown host"
 msgstr ""
 
 #
-# File: InetTransport.c++, line: 89
-# File: SNPPClient.c++, line: 472
-# File: UnixTransport.c++, line: 54
+# File: libhylafax/InetTransport.c++, line: 89
+# File: libhylafax/SNPPClient.c++, line: 472
+# File: libhylafax/UnixTransport.c++, line: 54
 msgid "Can not create socket to connect to server."
 msgstr ""
 
 #
-# File: InetTransport.c++, line: 100
-# File: SNPPClient.c++, line: 483
+# File: libhylafax/InetTransport.c++, line: 100
+# File: libhylafax/SNPPClient.c++, line: 483
 #, c-format
 msgid "No \"%s\" service definition, using default %u/%s."
 msgstr ""
 
 #
-# File: InetTransport.c++, line: 112
-# File: SNPPClient.c++, line: 495
+# File: libhylafax/InetTransport.c++, line: 112
+# File: libhylafax/SNPPClient.c++, line: 495
 #, c-format
 msgid "Trying %s (%s) at port %u..."
 msgstr ""
 
 #
-# File: InetTransport.c++, line: 118
-# File: SNPPClient.c++, line: 501
+# File: libhylafax/InetTransport.c++, line: 118
+# File: libhylafax/SNPPClient.c++, line: 501
 #, c-format
 msgid "Connected to %s."
 msgstr ""
 
 #
-# File: InetTransport.c++, line: 122
-# File: SNPPClient.c++, line: 505
+# File: libhylafax/InetTransport.c++, line: 122
+# File: libhylafax/SNPPClient.c++, line: 505
 #, c-format
 msgid "setsockopt(TOS): %s (ignored)"
 msgstr ""
 
 #
-# File: InetTransport.c++, line: 128
-# File: SNPPClient.c++, line: 511
+# File: libhylafax/InetTransport.c++, line: 128
+# File: libhylafax/SNPPClient.c++, line: 511
 #, c-format
 msgid "setsockopt(OOBLINE): %s (ignored)"
 msgstr ""
 
 #
-# File: InetTransport.c++, line: 141
-# File: SNPPClient.c++, line: 518
+# File: libhylafax/InetTransport.c++, line: 141
+# File: libhylafax/SNPPClient.c++, line: 518
 #, c-format
 msgid "Can not reach server at host \"%s\", port %u."
 msgstr ""
 
 #
-# File: InetTransport.c++, line: 269
-# File: SNPPClient.c++, line: 527
+# File: libhylafax/InetTransport.c++, line: 269
+# File: libhylafax/SNPPClient.c++, line: 527
 msgid "Sorry, no TCP/IP communication support was configured."
 msgstr ""
 
 #
-# File: Obj.c++, line: 39
+# File: libhylafax/Obj.c++, line: 39
 #, c-format
 msgid "%s: Sub class must define method \"%s\".\n"
 msgstr ""
 
 #
-# File: PageSize.c++, line: 67
+# File: libhylafax/PageSize.c++, line: 67
 #, c-format
 msgid "Unexpected end of line after \"%s\".\n"
 msgstr ""
 
 #
-# File: PageSize.c++, line: 100
+# File: libhylafax/PageSize.c++, line: 100
 msgid "page size name"
 msgstr ""
 
 #
-# File: PageSize.c++, line: 105
+# File: libhylafax/PageSize.c++, line: 105
 msgid "page size abbreviation"
 msgstr ""
 
 #
-# File: PageSize.c++, line: 108
+# File: libhylafax/PageSize.c++, line: 108
 msgid "page width"
 msgstr ""
 
 #
-# File: PageSize.c++, line: 111
+# File: libhylafax/PageSize.c++, line: 111
 msgid "page height"
 msgstr ""
 
 #
-# File: PageSize.c++, line: 114
+# File: libhylafax/PageSize.c++, line: 114
 msgid "guaranteed page width"
 msgstr ""
 
 #
-# File: PageSize.c++, line: 117
+# File: libhylafax/PageSize.c++, line: 117
 msgid "guaranteed page height"
 msgstr ""
 
 #
-# File: PageSize.c++, line: 120
+# File: libhylafax/PageSize.c++, line: 120
 msgid "top margin"
 msgstr ""
 
 #
-# File: PageSize.c++, line: 130
+# File: libhylafax/PageSize.c++, line: 130
 #, c-format
 msgid "Warning, no page size database file \"%s\", using builtin default.\n"
 msgstr ""
 
 #
-# File: SNPPClient.c++, line: 211
-# File: SendFaxClient.c++, line: 608
+# File: libhylafax/SNPPClient.c++, line: 211
+# File: libhylafax/SendFaxClient.c++, line: 613
 msgid "Malformed (null) sender name or mail address"
 msgstr ""
 
 #
-# File: SNPPClient.c++, line: 257
+# File: libhylafax/SNPPClient.c++, line: 257
 #, c-format
 msgid "Can not locate your password entry (uid %lu): %s."
 msgstr ""
 
 #
-# File: SNPPClient.c++, line: 388
+# File: libhylafax/SNPPClient.c++, line: 388
 #, c-format
 msgid "Invalid hold time \"%s\": %s"
 msgstr ""
 
 #
-# File: SNPPClient.c++, line: 860
-# File: SendFaxClient.c++, line: 425
+# File: libhylafax/SNPPClient.c++, line: 860
+# File: libhylafax/SendFaxClient.c++, line: 426
 msgid "Not logged in to server"
 msgstr ""
 
 #
-# File: SNPPClient.c++, line: 892
+# File: libhylafax/SNPPClient.c++, line: 892
 #, c-format
 msgid "destination pin %s: request id is %s for host %s\n"
 msgstr ""
 
 #
-# File: SNPPClient.c++, line: 936
+# File: libhylafax/SNPPClient.c++, line: 936
 #, c-format
 msgid "SEND message data, %lu bytes"
 msgstr ""
 
 #
-# File: SNPPClient.c++, line: 966
+# File: libhylafax/SNPPClient.c++, line: 966
 #, c-format
 msgid "Unable to open message file \"%s\"."
 msgstr ""
 
 #
-# File: SNPPClient.c++, line: 985
-# File: SNPPClient.c++, line: 995
+# File: libhylafax/SNPPClient.c++, line: 985
+# File: libhylafax/SNPPClient.c++, line: 995
 #, c-format
 msgid "no SITE %s support; ignoring set request."
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 103
+# File: libhylafax/SendFaxClient.c++, line: 103
 msgid "Unable to setup file typing and conversion rules"
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 129
+# File: libhylafax/SendFaxClient.c++, line: 129
 msgid "Unknown page size "
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 238
+# File: libhylafax/SendFaxClient.c++, line: 239
 #, c-format
 msgid "Error creating cover sheet; could not fork subprocess: %s"
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 264
+# File: libhylafax/SendFaxClient.c++, line: 265
 #, c-format
 msgid "Error creating cover sheet; command was \"%s\"; exit status %x"
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 273
+# File: libhylafax/SendFaxClient.c++, line: 274
 #, c-format
 msgid "Error creating cover sheet; unable to create pipe to subprocess: %s"
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 278
+# File: libhylafax/SendFaxClient.c++, line: 279
 #, c-format
 msgid "%s: Can not create temporary file for cover page"
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 421
+# File: libhylafax/SendFaxClient.c++, line: 422
 msgid "Documents not prepared"
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 461
+# File: libhylafax/SendFaxClient.c++, line: 462
 #, c-format
 msgid ": Can not open: %s"
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 482
-# File: SendFaxJob.c++, line: 547
+# File: libhylafax/SendFaxClient.c++, line: 487
+# File: libhylafax/SendFaxJob.c++, line: 547
 msgid "Document transfer failed: "
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 496
+# File: libhylafax/SendFaxClient.c++, line: 501
 #, c-format
 msgid "request id is %s (group id %s) for host %s (%u file)\n"
 msgid_plural "request id is %s (group id %s) for host %s (%u files)\n"
@@ -1377,243 +1373,243 @@ msgstr[0] ""
 msgstr[1] ""
 
 #
-# File: SendFaxClient.c++, line: 681
+# File: libhylafax/SendFaxClient.c++, line: 686
 #, c-format
 msgid "Error converting document; command was \"%s\""
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 709
+# File: libhylafax/SendFaxClient.c++, line: 717
 #, c-format
 msgid "%s: Can not open file"
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 713
+# File: libhylafax/SendFaxClient.c++, line: 721
 #, c-format
 msgid "%s: Can not stat file"
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 718
+# File: libhylafax/SendFaxClient.c++, line: 726
 #, c-format
 msgid "%s: Not a regular file"
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 726
+# File: libhylafax/SendFaxClient.c++, line: 734
 #, c-format
 msgid "%s: Empty file"
 msgstr ""
 
 #
-# File: SendFaxClient.c++, line: 731
+# File: libhylafax/SendFaxClient.c++, line: 739
 #, c-format
 msgid "%s: Can not determine file type"
 msgstr ""
 
 #
-# File: SendFaxJob.c++, line: 535
+# File: libhylafax/SendFaxJob.c++, line: 535
 #, c-format
 msgid "%s: Can not open: %s"
 msgstr ""
 
 #
-# File: Sequence.c++, line: 65
+# File: libhylafax/Sequence.c++, line: 65
 #, c-format
 msgid "Unable to open sequence number file %s; %s."
 msgstr ""
 
 #
-# File: Sequence.c++, line: 79
+# File: libhylafax/Sequence.c++, line: 79
 #, c-format
 msgid "%s: Invalid sequence number \"%s\", resetting to 1"
 msgstr ""
 
 #
-# File: Sequence.c++, line: 89
+# File: libhylafax/Sequence.c++, line: 89
 #, c-format
 msgid "Unable update sequence number file %s; write failed."
 msgstr ""
 
 #
-# File: TextFormat.c++, line: 134
-# File: TextFormat.c++, line: 267
+# File: libhylafax/TextFormat.c++, line: 134
+# File: libhylafax/TextFormat.c++, line: 267
 #, c-format
 msgid "Font %s: %s"
 msgstr ""
 
 #
-# File: TextFormat.c++, line: 253
+# File: libhylafax/TextFormat.c++, line: 253
 #, c-format
 msgid "Cannot open temporary file: %s"
 msgstr ""
 
 #
-# File: TextFormat.c++, line: 261
+# File: libhylafax/TextFormat.c++, line: 261
 msgid "point size is unusually large (>18pt)"
 msgstr ""
 
 #
-# File: TextFormat.c++, line: 279
+# File: libhylafax/TextFormat.c++, line: 279
 #, c-format
 msgid "Margin values too large for page; lm %lu rm %lu page width %lu"
 msgstr ""
 
 #
-# File: TextFormat.c++, line: 282
+# File: libhylafax/TextFormat.c++, line: 282
 #, c-format
 msgid "Margin values too large for page; tm %lu bm %lu page height %lu"
 msgstr ""
 
 #
-# File: TextFormat.c++, line: 323
+# File: libhylafax/TextFormat.c++, line: 323
 #, c-format
 msgid "Close failure on temporary file: %s"
 msgstr ""
 
 #
-# File: TextFormat.c++, line: 339
+# File: libhylafax/TextFormat.c++, line: 339
 #, c-format
 msgid "Read error during reverse collation: %s"
 msgstr ""
 
 #
-# File: TextFormat.c++, line: 341
-# File: TextFormat.c++, line: 1006
+# File: libhylafax/TextFormat.c++, line: 341
+# File: libhylafax/TextFormat.c++, line: 1006
 #, c-format
 msgid "Output write error: %s"
 msgstr ""
 
 #
-# File: TextFormat.c++, line: 721
+# File: libhylafax/TextFormat.c++, line: 721
 #, c-format
 msgid "%s: Cannot open file: %s"
 msgstr ""
 
 #
-# File: TextFormat.c++, line: 1178
-# File: TextFormat.c++, line: 1196
+# File: libhylafax/TextFormat.c++, line: 1178
+# File: libhylafax/TextFormat.c++, line: 1196
 #, c-format
 msgid "Warning: %s - line too long."
 msgstr ""
 
 #
-# File: TextFormat.c++, line: 1236
+# File: libhylafax/TextFormat.c++, line: 1236
 #, c-format
 msgid "Warning: %s invalid Fontmap entry - no filename present"
 msgstr ""
 
 #
-# File: TextFormat.c++, line: 1376
+# File: libhylafax/TextFormat.c++, line: 1376
 #, c-format
 msgid "%s: Can not open font metrics file; using fixed widths"
 msgstr ""
 
 #
-# File: TextFormat.c++, line: 1393
+# File: libhylafax/TextFormat.c++, line: 1393
 #, c-format
 msgid "%s: No glyph metric table located; using fixed widths"
 msgstr ""
 
 #
-# File: TextFormat.c++, line: 1412
+# File: libhylafax/TextFormat.c++, line: 1412
 #, c-format
 msgid "%s, line %u: format error"
 msgstr ""
 
 #
-# File: TypeRules.c++, line: 93
+# File: libhylafax/TypeRules.c++, line: 93
 #, c-format
 msgid "rule: %soffset %#lx %s %s"
 msgstr ""
 
 #
-# File: TypeRules.c++, line: 103
+# File: libhylafax/TypeRules.c++, line: 103
 msgid " <any value>"
 msgstr ""
 
 #
-# File: TypeRules.c++, line: 111
+# File: libhylafax/TypeRules.c++, line: 111
 msgid "failed (offset past data)\n"
 msgstr ""
 
 #
-# File: TypeRules.c++, line: 124
-# File: TypeRules.c++, line: 136
+# File: libhylafax/TypeRules.c++, line: 124
+# File: libhylafax/TypeRules.c++, line: 136
 #, c-format
 msgid "failed (unprintable char %#x)\n"
 msgstr ""
 
 #
-# File: TypeRules.c++, line: 164
-# File: TypeRules.c++, line: 173
+# File: libhylafax/TypeRules.c++, line: 164
+# File: libhylafax/TypeRules.c++, line: 173
 msgid "failed (insufficient data)\n"
 msgstr ""
 
 #
-# File: TypeRules.c++, line: 194
+# File: libhylafax/TypeRules.c++, line: 194
 #, c-format
 msgid "success (result %s, rule \"%s\")\n"
 msgstr ""
 
 #
-# File: TypeRules.c++, line: 197
+# File: libhylafax/TypeRules.c++, line: 197
 msgid "failed (comparison)\n"
 msgstr ""
 
 #
-# File: TypeRules.c++, line: 323
+# File: libhylafax/TypeRules.c++, line: 323
 #, c-format
 msgid "%s: Can not open type rules file.\n"
 msgstr ""
 
 #
-# File: TypeRules.c++, line: 344
+# File: libhylafax/TypeRules.c++, line: 344
 msgid "Missing file offset"
 msgstr ""
 
 #
-# File: TypeRules.c++, line: 369
+# File: libhylafax/TypeRules.c++, line: 369
 #, c-format
 msgid "Unknown datatype \"%.*s\""
 msgstr ""
 
 #
-# File: TypeRules.c++, line: 410
+# File: libhylafax/TypeRules.c++, line: 410
 msgid "Missing match value"
 msgstr ""
 
 #
-# File: TypeRules.c++, line: 438
+# File: libhylafax/TypeRules.c++, line: 440
 #, c-format
 msgid "Unknown result \"%.*s\""
 msgstr ""
 
 #
-# File: TypeRules.c++, line: 488
+# File: libhylafax/TypeRules.c++, line: 490
 #, c-format
 msgid "match against (..., %u)\n"
 msgstr ""
 
 #
-# File: TypeRules.c++, line: 495
+# File: libhylafax/TypeRules.c++, line: 497
 msgid "no match\n"
 msgstr ""
 
 #
-# File: UnixTransport.c++, line: 62
+# File: libhylafax/UnixTransport.c++, line: 62
 #, c-format
 msgid "connect to server at %s"
 msgstr ""
 
 #
-# File: UnixTransport.c++, line: 68
+# File: libhylafax/UnixTransport.c++, line: 68
 #, c-format
 msgid "Can not reach server at Unix domain socket \"%s\"."
 msgstr ""
 
 #
-# File: UnixTransport.c++, line: 140
+# File: libhylafax/UnixTransport.c++, line: 140
 msgid "Sorry, no Unix domain communication support was configured."
 msgstr ""

@@ -1,106 +1,106 @@
-# File: faxalter.c++, line: 236
+# File: faxalter/faxalter.c++, line: 236
 msgid "No job parameters specified for alteration."
 msgstr ""
 
 #
-# File: faxalter.c++, line: 257
+# File: faxalter/faxalter.c++, line: 257
 #, c-format
 msgid "Job %s: duplicated as job %s.\n"
 msgstr ""
 
 #
-# File: faxalter.c++, line: 284
+# File: faxalter/faxalter.c++, line: 284
 #, c-format
 msgid "Job %s: done.\n"
 msgstr ""
 
 #
-# File: faxalter.c++, line: 310
+# File: faxalter/faxalter.c++, line: 310
 msgid ""
 "usage: faxalter [-C] [-h server-host] [-a time] [-d number] [-k time] [-m "
 "modem] [-n notify] [-P priority] [-t tries] [-A] [-g] [-p] [-r] [-v] [-DQR] "
 "jobID..."
 msgstr ""
 
-# File: faxcover.c++, line: 183
+# File: faxcover/faxcover.c++, line: 187
 #, c-format
 msgid "Unknown page size \"%s\""
 msgstr ""
 
 #
-# File: faxcover.c++, line: 200
+# File: faxcover/faxcover.c++, line: 204
 #, c-format
 msgid ""
 "usage: %s [-t to] [-c comments] [-p #pages] [-l to-location] [-m "
 "maxcomments] [-z maxlencomments] [-r regarding] [-v to-voice-number] [-x to-"
-"company] [-C template-file] [-D date-format] [-L from-location] [-N from-fax-"
-"number] [-V from-voice-number] [-X from-company] [-s pagesize] -f from -n "
-"fax-number"
+"company] [-C template-file] [-D date-format] [-L from-location] [-M from-"
+"mail-address] [-N from-fax-number] [-V from-voice-number] [-X from-company] "
+"[-s pagesize] -f from -n fax-number"
 msgstr ""
 
 #
-# File: faxcover.c++, line: 323
+# File: faxcover/faxcover.c++, line: 328
 #, c-format
 msgid "Could not locate prototype cover sheet \"%s\""
 msgstr ""
 
 #
-# File: faxcover.c++, line: 455
+# File: faxcover/faxcover.c++, line: 462
 msgid "Can not figure out who you are."
 msgstr ""
 
-# File: MIMEState.c++, line: 145
+# File: faxmail/MIMEState.c++, line: 145
 msgid "Syntax error parsing MIME Content-Type: "
 msgstr ""
 
 #
-# File: MIMEState.c++, line: 360
+# File: faxmail/MIMEState.c++, line: 360
 #, c-format
 msgid "Internal error, unsupported Content-Transfer-Encoding %u"
 msgstr ""
 
 #
-# File: MsgFmt.c++, line: 162
+# File: faxmail/MsgFmt.c++, line: 162
 #, c-format
 msgid "HEADER %s: %s\n"
 msgstr ""
 
 #
-# File: MsgFmt.c++, line: 170
+# File: faxmail/MsgFmt.c++, line: 170
 #, c-format
 msgid "+HEADER %s: %s\n"
 msgstr ""
 
 #
-# File: faxmail.c++, line: 135
+# File: faxmail/faxmail.c++, line: 135
 #, c-format
 msgid "Cannot create temp directory %s"
 msgstr ""
 
 #
-# File: faxmail.c++, line: 267
+# File: faxmail/faxmail.c++, line: 267
 msgid "No Destination/Dialstring specified"
 msgstr ""
 
 #
-# File: faxmail.c++, line: 277
+# File: faxmail/faxmail.c++, line: 277
 msgid "No From/Sender identity specified"
 msgstr ""
 
 #
-# File: faxmail.c++, line: 396
+# File: faxmail/faxmail.c++, line: 396
 #, c-format
 msgid "faxmail: This is a MIME message\n"
 msgstr ""
 
 #
-# File: faxmail.c++, line: 408
+# File: faxmail/faxmail.c++, line: 408
 #, c-format
 msgid "faxmail: This is not a MIME message\n"
 msgstr ""
 
 #
-# File: faxmail.c++, line: 443
+# File: faxmail/faxmail.c++, line: 443
 #, c-format
 msgid ""
 "unable to process message:\n"
@@ -108,124 +108,136 @@ msgid ""
 msgstr ""
 
 #
-# File: faxmail.c++, line: 542
+# File: faxmail/faxmail.c++, line: 542
 msgid "Badly formatted MIME; premature EOF"
 msgstr ""
 
 #
-# File: faxmail.c++, line: 639
+# File: faxmail/faxmail.c++, line: 639
 #, c-format
 msgid "CONVERT: run %s\n"
 msgstr ""
 
 #
-# File: faxmail.c++, line: 669
+# File: faxmail/faxmail.c++, line: 669
 #, c-format
 msgid "DISCARDED %s (%s/%s) GOES HERE\n"
 msgstr ""
 
 #
-# File: faxmail.c++, line: 675
+# File: faxmail/faxmail.c++, line: 675
 #, c-format
 msgid "DISCARDED %s/%s GOES HERE\n"
 msgstr ""
 
 #
-# File: faxmail.c++, line: 748
+# File: faxmail/faxmail.c++, line: 683
+#, c-format
+msgid "DISCARDED: %s (%s/%s)\n"
+msgstr ""
+
+#
+# File: faxmail/faxmail.c++, line: 688
+#, c-format
+msgid "DISCARDED: %s/%s\n"
+msgstr ""
+
+#
+# File: faxmail/faxmail.c++, line: 757
 #, c-format
 msgid "%s: write error: %s"
 msgstr ""
 
 # #-#-#-#-#  messages.po  #-#-#-#-#
 #
-# File: faxmail.c++, line: 751
+# File: faxmail/faxmail.c++, line: 760
 # #-#-#-#-#  messages.po  #-#-#-#-#
 #
-# File: sendfax.c++, line: 365
+# File: sendfax/sendfax.c++, line: 365
 # #-#-#-#-#  messages.po  #-#-#-#-#
 #
-# File: sendpage.c++, line: 216
+# File: sendpage/sendpage.c++, line: 216
 #, c-format
 msgid "%s: Can not create temporary file"
 msgstr ""
 
 #
-# File: faxmail.c++, line: 766
+# File: faxmail/faxmail.c++, line: 775
 #, c-format
 msgid "Couldn't open output file: %s"
 msgstr ""
 
 #
-# File: faxmail.c++, line: 779
+# File: faxmail/faxmail.c++, line: 788
 #, c-format
 msgid "Error converting %s/%s; could not fork subprocess: %s"
 msgstr ""
 
 #
-# File: faxmail.c++, line: 796
+# File: faxmail/faxmail.c++, line: 805
 #, c-format
 msgid "Error converting %s/%s; command was \"%s %s\"; exit status %x"
 msgstr ""
 
 #
-# File: faxmail.c++, line: 963
+# File: faxmail/faxmail.c++, line: 972
 msgid ""
 "usage: faxmail [-b boldfont] [-H pageheight] [-i italicfont] [-f textfont] [-"
 "p pointsize] [-s pagesize] [-W pagewidth] [-M margins] [-C covertemplate] [-"
 "t notify] [-u user] [-12cnNrRTv]"
 msgstr ""
 
-# File: faxrm.c++, line: 97
+# File: faxrm/faxrm.c++, line: 97
 #, c-format
 msgid "%s removed.\n"
 msgstr ""
 
 #
-# File: faxrm.c++, line: 111
+# File: faxrm/faxrm.c++, line: 111
 #, c-format
 msgid "Job %s removed.\n"
 msgstr ""
 
 #
-# File: faxrm.c++, line: 116
+# File: faxrm/faxrm.c++, line: 116
 #, c-format
 msgid "Job %s removed (from doneq).\n"
 msgstr ""
 
 #
-# File: faxrm.c++, line: 136
+# File: faxrm/faxrm.c++, line: 136
 msgid "usage: faxrm [-h server-host] [-adv] id..."
 msgstr ""
 
-# File: faxstat.c++, line: 99
+# File: faxstat/faxstat.c++, line: 99
 msgid "usage: faxstat [-h server-host] [-adfgilrsv]"
 msgstr ""
 
 #
-# File: faxstat.c++, line: 146
+# File: faxstat/faxstat.c++, line: 146
 #, c-format
 msgid "Data Connection: %s"
 msgstr ""
 
-# File: sendfax.c++, line: 240
+# File: sendfax/sendfax.c++, line: 240
 #, c-format
 msgid "%s: No destination specified.\n"
 msgstr ""
 
 #
-# File: sendfax.c++, line: 245
+# File: sendfax/sendfax.c++, line: 245
 #, c-format
 msgid "%s: Unused options after last destination.\n"
 msgstr ""
 
 #
-# File: sendfax.c++, line: 265
+# File: sendfax/sendfax.c++, line: 265
 #, c-format
 msgid "can only wait for one job (right now), waiting for job %s."
 msgstr ""
 
 #
-# File: sendfax.c++, line: 279
+# File: sendfax/sendfax.c++, line: 279
 #, c-format
 msgid ""
 "usage: %s [options] [files]\n"
@@ -233,46 +245,46 @@ msgid ""
 msgstr ""
 
 #
-# File: sendfax.c++, line: 319
+# File: sendfax/sendfax.c++, line: 319
 #, c-format
 msgid "Null destination for \"%s\""
 msgstr ""
 
 #
-# File: sendfax.c++, line: 326
+# File: sendfax/sendfax.c++, line: 326
 msgid "ECM disabled, limiting job to 14400 bps."
 msgstr ""
 
 #
-# File: sendfax.c++, line: 349
+# File: sendfax/sendfax.c++, line: 349
 #, c-format
 msgid "%s: no such file"
 msgstr ""
 
 #
-# File: sendfax.c++, line: 372
+# File: sendfax/sendfax.c++, line: 372
 #, c-format
 msgid "%s: write error"
 msgstr ""
 
 #
-# File: sendfax.c++, line: 380
+# File: sendfax/sendfax.c++, line: 380
 msgid "No input data; transmission aborted"
 msgstr ""
 
-# File: sendpage.c++, line: 90
+# File: sendpage/sendpage.c++, line: 90
 #, c-format
 msgid "Invalid hold time \"%s\": %s"
 msgstr ""
 
 #
-# File: sendpage.c++, line: 144
+# File: sendpage/sendpage.c++, line: 144
 #, c-format
 msgid "%s: No pager identification number (PIN) specified.\n"
 msgstr ""
 
 #
-# File: sendpage.c++, line: 177
+# File: sendpage/sendpage.c++, line: 177
 #, c-format
 msgid ""
 "usage: %s -p PIN [-p PIN ...]\n"
