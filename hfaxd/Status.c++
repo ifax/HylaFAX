@@ -111,6 +111,7 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 void
 HylaFAXServer::listStatus(FILE* fd, const SpoolDir& sd, DIR* dir)
 {
+    KeyStringArray listing;
     /*
      * Check scheduler status.
      */
@@ -146,7 +147,25 @@ HylaFAXServer::listStatus(FILE* fd, const SpoolDir& sd, DIR* dir)
 	config.readConfig(configFile);			// read config file
 	config.checkGetty(fifoFile);			// check for faxgetty
 	getServerStatus(statusFile, config.status);	// XXX
-	Mprintf(fd, modemFormat, config);
+	if (modemSortFormat.length() == 0) {
+	    Mprintf(fd, modemFormat, config);
+	    fputs("\r\n", fd);
+	} else {
+	    fxStackBuffer buf;
+	    Mprintf(buf, modemFormat, config);
+	    fxStr content(buf, buf.getLength());
+	    buf.reset();
+	    Mprintf(buf, modemSortFormat, config);
+	    fxStr key(buf, buf.getLength());
+	    listing.append(KeyString(key, content));
+	}
+    }
+    if (listing.length() > 1)
+	listing.qsort();
+
+    for (int i = 0; i < listing.length(); i++)
+    {
+	fwrite(listing[i], listing[i].length(), 1, fd);
 	fputs("\r\n", fd);
     }
 }

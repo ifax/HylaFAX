@@ -243,6 +243,8 @@ HylaFAXServer::getRecvInfo(const fxStr& qfile, const struct stat& sb)
 void
 HylaFAXServer::listRecvQ(FILE* fd, const SpoolDir& sd, DIR* dir)
 {
+    KeyStringArray listing;
+
     /*
      * Use an absolute pathname when doing file
      * lookups to improve cache locality.
@@ -256,9 +258,28 @@ HylaFAXServer::listRecvQ(FILE* fd, const SpoolDir& sd, DIR* dir)
 	fxStr qfile(path | dp->d_name);
 	RecvInfo* rip;
 	if (FileCache::update(qfile, sb) && (rip = getRecvInfo(qfile, sb))) {
-	    Rprintf(fd, recvFormat, *rip, sb);
-	    fputs("\r\n", fd);
+	    if (recvSortFormat.length() == 0) {
+		Rprintf(fd, recvFormat, *rip, sb);
+		fputs("\r\n", fd);
+	    } else {
+		fxStackBuffer buf;
+		Rprintf(buf, recvFormat, *rip, sb);
+		fxStr content(buf, buf.getLength());
+		buf.reset();
+		Rprintf(buf, recvSortFormat, *rip, sb);
+		fxStr key(buf, buf.getLength());
+		listing.append(KeyString(key, content));
+	    }
 	}
+    }
+
+    if (listing.length() > 1)
+	listing.qsort();
+
+    for (int i = 0; i < listing.length(); i++)
+    {
+	fwrite(listing[i], listing[i].length(), 1, fd);
+	fputs("\r\n", fd);
     }
 }
 

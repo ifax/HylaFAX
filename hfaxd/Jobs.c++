@@ -1985,16 +1985,37 @@ HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
 void
 HylaFAXServer::listSendQ(FILE* fd, const SpoolDir&, DIR* dir)
 {
+    KeyStringArray listing;
     struct dirent* dp;
     while ((dp = readdir(dir)))
 	if (dp->d_name[0] == 'q') {
 	    fxStr emsg;
 	    Job* job = findJob(&dp->d_name[1], emsg);
 	    if (job) {
-		Jprintf(fd, jobFormat, *job);
-		fputs("\r\n", fd);
+		if (jobSortFormat.length() == 0) {
+		    Jprintf(fd, jobFormat, *job);
+		    fputs("\r\n", fd);
+		} else {
+		    fxStackBuffer buf;
+		    Jprintf(buf, jobFormat, *job);
+		    fxStr content(buf, buf.getLength());
+		    buf.reset();
+		    Jprintf(buf, jobSortFormat, *job);
+		    fxStr key(buf, buf.getLength());
+		    listing.append(KeyString(key, content));
+		}
 	    }
 	}
+
+    if (listing.length() > 1)
+	listing.qsort();
+
+    for (int i = 0; i < listing.length(); i++)
+    {
+	fwrite(listing[i], listing[i].length(), 1, fd);
+	fputs("\r\n", fd);
+    }
+
 }
 
 void

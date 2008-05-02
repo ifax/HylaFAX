@@ -57,6 +57,7 @@ static const tab cmdtab[] = {
 { "ENABLE",       T_ENABLE,	 true, true, "modem" },
 { "HELP",         T_HELP,	false, true, "[<string>]" },
 { "FILEFMT",      T_FILEFMT,	 true, true, "[format-string]" },
+{ "FILESORTFMT",  T_FILESFMT,	 true, true, "[format-string]" },
 { "FORM",         T_FORM,	 true, true, "format-type" },
 { "IDLE",         T_IDLE,	 true, true, "[max-idle-timeout]" },
 { "JDELE",        T_JDELE,	 true, true, "[job-id]" },
@@ -65,6 +66,7 @@ static const tab cmdtab[] = {
 { "JNEW",         T_JNEW,	 true, true, "" },
 { "JOB",          T_JOB,	 true, true, "[job-id]" },
 { "JOBFMT",       T_JOBFMT,	 true, true, "[format-string]" },
+{ "JOBSORTFMT",   T_JOBSFMT,	 true, true, "[format-string]" },
 { "JPARM",        T_JPARM,	 true, true, "[parm-name [parm-value]]" },
 { "JREST",        T_JREST,	 true, true, "(reset current job state)" },
 { "JSUBM",        T_JSUB,	 true, true, "[job-id]" },
@@ -84,6 +86,7 @@ static const tab cmdtab[] = {
 { "MDTM",         T_MDTM,	 true, true, "path-name" },
 { "MODE",         T_MODE,	false, true, "(specify transfer mode)" },
 { "MDMFMT",       T_MODEMFMT,	 true, true, "[format-string]" },
+{ "MDMSORTFMT",   T_MODEMSFMT,	 true, true, "[format-string]" },
 { "NLST",         T_NLST,	 true, true, "[path-name]" },
 { "NOOP",         T_NOOP,	false, true, "" },
 { "PASS",         T_PASS,	false, true, "password" },
@@ -92,6 +95,7 @@ static const tab cmdtab[] = {
 { "PWD",          T_PWD,	 true, true, "(print working directory)" },
 { "QUIT",         T_QUIT,	false, true, "(terminate service)", },
 { "RCVFMT",       T_RCVFMT,	 true, true, "[format-string]" },
+{ "RCVSORTFMT",   T_RCVSFMT,	 true, true, "[format-string]" },
 { "REIN",         T_REIN,	false, true, "(reinitialize server state)" },
 { "REST",         T_REST,	 true, true, "restart-marker" },
 { "RETP",         T_RETP,	 true, true, "file-name" },
@@ -778,6 +782,35 @@ HylaFAXServer::cmd(Token t)
 		modemFormat = s;
 	    else if (t == T_FILEFMT)
 		fileFormat = s;
+	    ack(200, cmdToken(t));
+	    return (true);
+	}
+	break;
+    case T_JOBSFMT:			// query/specify job format string
+    case T_RCVSFMT:			// query/specify recvq format string
+    case T_MODEMSFMT:			// query/specify modem format string
+    case T_FILESFMT:			// query/specify file format string
+	if (opt_CRLF()) {
+	    reply(200, "%s",
+		t == T_JOBSFMT ?   (const char*) jobSortFormat :
+		t == T_RCVSFMT ?   (const char*) recvSortFormat:
+		t == T_MODEMSFMT ? (const char*) modemSortFormat :
+		                   (const char*) fileSortFormat
+	    );
+	    return (true);
+	} else if (string_param(s, "format-string")) {
+	    if (! allowSorting) {
+		reply(530, "Local policy disables sorting.");
+		break;
+	    }
+	    if (t == T_JOBSFMT)
+		jobSortFormat = s;
+	    else if (t == T_RCVSFMT)
+		recvSortFormat = s;
+	    else if (t == T_MODEMSFMT)
+		modemSortFormat = s;
+	    else if (t == T_FILESFMT)
+		fileSortFormat = s;
 	    ack(200, cmdToken(t));
 	    return (true);
 	}

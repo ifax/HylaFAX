@@ -75,6 +75,24 @@ struct RecvInfo : public FaxRecvInfo {
 };
 fxDECLARE_StrKeyDictionary(RecvInfoDict, RecvInfo*)
 
+/*
+ * An array of content that can sort on a different key
+ */
+class KeyString
+ : public fxStr
+{
+    public:
+	KeyString ();
+	KeyString (const fxStr& key, const fxStr& data);
+
+	int compare (const KeyString* that) const;
+
+    private:
+	fxStr key;
+};
+fxDECLARE_ObjArray(KeyStringArray, KeyString);
+
+
 #ifdef T_USER
 #undef T_USER				// XXX FreeBSD defines this
 #endif
@@ -94,14 +112,14 @@ enum Token {
     T_ABOR,	 T_ACCT,	T_ADDMODEM,	T_ADDUSER,	T_ADMIN,
     T_ALLO,	 T_ANSWER,	T_APPE,		T_CHMOD,	T_CHOWN,
     T_CONFIG,	 T_CWD, 	T_CDUP,		T_DELE,		T_DELUSER,
-    T_DELMODEM,	 T_DISABLE,	T_ENABLE,	T_FILEFMT,	T_FORM,
+    T_DELMODEM,	 T_DISABLE,	T_ENABLE,	T_FILEFMT,	T_FILESFMT,	T_FORM,
     T_HELP,	 T_IDLE,	T_LOCKWAIT,	T_JDELE,	T_JGDELE,	T_JGINTR,
     T_JGKILL,	 T_JGNEW,	T_JGPARM,	T_JGREST,	T_JGRP,
     T_JGSUB,	 T_JGSUSP,	T_JGWAIT,	T_JINTR,	T_JKILL,
-    T_JNEW,	 T_JOB,		T_JOBFMT,	T_JPARM,	T_JREST,
+    T_JNEW,	 T_JOB,		T_JOBFMT,	T_JOBSFMT,	T_JPARM,	T_JREST,
     T_JSUB,	 T_JSUSP,	T_JWAIT,	T_LIST,	 	T_MDTM,
-    T_MODE,	 T_MODEMFMT,	T_NLST,		T_NOOP,		T_PASS,
-    T_PASV,	 T_PORT,	T_PWD,		T_QUIT,		T_RCVFMT,
+    T_MODE,	 T_MODEMFMT,	T_MODEMSFMT,	T_NLST,		T_NOOP,		T_PASS,
+    T_PASV,	 T_PORT,	T_PWD,		T_QUIT,		T_RCVFMT,	T_RCVSFMT,
     T_REIN,	 T_REST,	T_RETP,		T_RETR,		T_RNFR,
     T_RNTO,	 T_SHUT,	T_SITE,		T_SIZE,		T_STAT,
     T_STOR,	 T_STOT,	T_STOU,		T_STRU,		T_SYST,
@@ -166,6 +184,11 @@ public:
         u_int HylaFAXServer::*p;
         u_int		 def;
     };
+    struct booltag {
+        const char*	 name;
+        bool HylaFAXServer::*p;
+        bool		 def;
+    };
 protected:
     u_int	state;
 #define	S_LOGGEDIN	0x0001		// client is logged in
@@ -209,6 +232,7 @@ protected:
     time_t	discTime;		// time to disconnect service
     time_t	denyTime;		// time to deny service
     u_int	jobProtection;		// Protection to use on Jobs
+    bool	allowSorting;		// Allow client to make us sort
     /*
      * User authentication and login-related state.
      */
@@ -238,6 +262,7 @@ protected:
     SpoolDir*	cwd;			// current working directory
     fxStrArray	tempFiles;		// files created with STOT
     fxStr	fileFormat;		// format string for directory listings
+    fxStr	fileSortFormat;		// format string for directory listings
     TIFF*	cachedTIFF;		// cached open TIFF file
     /*
      * Parser-related state.
@@ -259,12 +284,14 @@ protected:
     JobDict	jobs;			// non-default jobs
     Job*	curJob;			// current job
     fxStr	jobFormat;		// job status format string
+    fxStr	jobSortFormat;		// job status format string
     JobDict	blankJobs;		// jobs created during this session but not submitted
     /*
      * Receive queue-related state.
      */
     RecvInfoDict recvq;			// cache of info about received fax
     fxStr	recvFormat;		// received fax status format string
+    fxStr	recvSortFormat;		// received fax status format sort key
     /*
      * Trigger-related state.
      */
@@ -274,6 +301,7 @@ protected:
      * Modem-related state.
      */
     fxStr	modemFormat;		// modem status format string
+    fxStr	modemSortFormat;		// modem status format string
 
     static gid_t faxuid;		// system gid of fax user = our uid
 #if HAS_TM_ZONE
@@ -371,6 +399,7 @@ protected:
      */
     static stringtag strings[];
     static numbertag numbers[];
+    static booltag booleans[];
 
     void resetConfig();
     void setupConfig();

@@ -127,6 +127,7 @@ DISABLE\(S1	disable outbound use of modem
 ENABLE\(S1	enable outbound use of modem
 HELP	give help information
 FILEFMT	specify/query format for returning file status
+FILESORTFMT	specify/query format for sorting file status listing
 FORM	specify data transfer \fIformat\fP
 IDLE	set idle-timer (in seconds)
 JDELE	delete done or suspended job
@@ -135,6 +136,7 @@ JKILL	kill job
 JNEW	create new job
 JOB	set/query current job
 JOBFMT	specify/query format for returning job status
+JOBSORTFMT	specify/query format for sorting job status listing
 JPARM	specify/query job state parameter
 JREST	reset current job state
 JSUBM	submit job to scheduler
@@ -154,6 +156,7 @@ LIST	list files in a directory
 MDTM	show last modification time of file
 MODE	specify data transfer \fImode\fP
 MDMFMT	specify/query format for returning modem status
+MDMSORTFMT	specify/query format for sorting modem status listing
 NLST	give name list of files in directory 
 NOOP	do nothing
 PASS	specify password
@@ -162,6 +165,7 @@ PORT	specify data connection port
 PWD	print the current working directory
 QUIT	terminate session
 RCVFMT	specify/query format for returning received facsimile status
+RCVSORTFMT	specify/query format for sorting received facsimile status listing
 REIN	reinitiate server state
 REST	restart incomplete transfer
 RETP	retrieve the next page in a file
@@ -380,10 +384,13 @@ The following configuration parameters are recognized; items marked
 .nf
 .ta \w'MaxConsecutiveBadCmds    'u +\w'integer    'u +\w'\s-1${SPOOL}/etc/clientlog\s+1    'u
 \fBTag	Type	Default	Description\fP
+AllowSortFormat	boolean	\s-1true\s+1	Allow client to request sorting formats
 FaxContact	string	\s-1\fIsee below\fP\s+1	contact address to show in help text
 FileFmt	string	\s-1\fIsee below\fP\s+1	format string for file status results
+FileSortFmt	string	\s-1-\s+1	format string for sorting file status listing
 IdleTimeout	integer	\s-1900\s+1	client idle timeout in seconds
 JobFmt	string	\s-1\fIsee below\fP\s+1	format string for job status results
+JobSortFmt	string	\s-1-\s+1	format string for sorting job status listing
 JobProtection	octal	\s-10444\s+1	permissions for client access to jobs
 KillTimeMap	string	\s-1\fIsee below\fP\s+1	mapping from service level to job kill time (\s-1SNPP\s+1)
 LogFacility	string	\s-1daemon\s+1	\fIsyslog\fP facility name for tracing messages
@@ -393,9 +400,11 @@ MaxIdleTimeout	integer	\s-17200\s+1	maximum client idle timeout permitted
 MaxLoginAttempts	integer	\s-15\s+1	maximum login attempts before disconnecting
 MaxMsgLength	integer	128	maximum pager message length (\s-1SNPP\s+1)
 ModemFmt	string	\s-1\fIsee below\fP\s+1	format string for modem status results
+ModemSortFmt	string	\s-1-\s+1	format string for sorting modem status listing
 PagerIDMapFile	string	\s-1${SPOOL}/etc/pagermap\s+1	name of file for mapping pager IDs (\s-1SNPP\s+1)
 PriorityMap	string	\s-1\fIsee below\fP\s+1	mapping from service level to job priority (\s-1SNPP\s+1)
 RcvFmt	string	\s-1\fIsee below\fP\s+1	format string for received facsimile status results
+RcvSortFmt	string	\s-1-\s+1	format string for sorting received facsimile status results listing
 RetryTimeMap	string	\s-1\fIsee below\fP\s+1	mapping from service level to job retry time (\s-1SNPP\s+1)
 ServerTracing	integer	\s-11\s+1	server tracing control vector
 ShutdownFile	string	\s-1${SPOOL}/etc/shutdown\s+1	name of shutdown control file
@@ -404,6 +413,10 @@ XferLogFile	string	\s-1${SPOOL}/etc/clientlog\s+1	name of file for logging clien
 .fi
 .PP
 The configuration parameters are explained below:
+.TP 10
+.B AllowSortFormat
+This controls whether the server accept the *SORTFMT commands which the client
+issues to change the server sort the listings.
 .TP 10
 .B FaxContact
 The e-mail address to display as a point of contact in the help text
@@ -449,6 +462,10 @@ It is recommended that all items include a field width so that client
 applications
 that construct headers from the format string can constrain the width of
 column title strings.
+.TP 10
+.B FileSortFmt
+The format string to use when sorting the listing for directories using the
+LIST command.  Follows the FileFmt formatting rules.
 .TP 10
 .B IdleTimeout
 The initial/default timeout to use in timing out idle clients.
@@ -539,6 +556,10 @@ applications, such as
 .IR faxstat (1)
 that construct headers from the format string can constrain the width of
 column title strings.
+.TP 10
+.B JobSortFmt
+The format string to use when sorting the listing for jobs in the
+sendq and doneq directories.  Follows the JobFmt formatting rules.
 .TP 10
 .B JobProtection
 The permissions setting for viewing jobs in the \*(Fx queues.  The
@@ -632,6 +653,10 @@ z	A ``*'' if a \fIfaxgetty\fP\|(${MANNUM1_8}) process is running; otherwise `` '
 .IP
 The default format string is ``Modem %m (%n): %s''.
 .TP 10
+.B ModemSortFmt
+The format string to use when sorting the listsin for  modem status information
+in the status directory.
+.TP 10
 .B PagerIDMapFile
 The absolute pathname of the file that contains directions for
 mapping pager identifiers to \s-1IXO/TAP\s+1 or \s-1UCP\s+1 service providers
@@ -694,6 +719,10 @@ applications, such as
 .IR faxstat (1)
 that construct headers from the format string can constrain the width of
 column title strings.
+.TP 10
+.B RcvSortFmt
+The format string to use when sorting the listing for received facsimile in the
+recvq directory.  Follows the RcvFmt formatting rules.
 .TP 10
 .B RetryTimeMap
 The mapping from \s-1SNPP\s+1 service level (0-11) to job retry time.

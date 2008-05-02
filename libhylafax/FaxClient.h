@@ -127,6 +127,10 @@ private:
     fxStr	recvFmt;	// recv queue status format string
     fxStr	modemFmt;	// modem status format string
     fxStr	fileFmt;	// file status format string
+    fxStr	jobSFmt;	// job status sort format string
+    fxStr	recvSFmt;	// recv queue status sort format string
+    fxStr	modemSFmt;	// modem status sort format string
+    fxStr	fileSFmt;	// file status sort format string
 
     static F_stringtag strings[];
     static F_numbertag numbers[];

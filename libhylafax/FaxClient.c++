@@ -232,6 +232,10 @@ FaxClient::F_stringtag FaxClient::strings[] = {
 { "protocol",			&FaxClient::proto,		FAX_PROTONAME },
 { "host",			&FaxClient::host,		NULL },
 { "modem",			&FaxClient::modem,		NULL },
+{ "jobsortfmt", 		&FaxClient::jobSFmt },
+{ "rcvsortfmt", 		&FaxClient::recvSFmt },
+{ "modemsortfmt", 		&FaxClient::modemSFmt },
+{ "filesortfmt", 		&FaxClient::fileSFmt },
 };
 FaxClient::F_numbertag FaxClient::numbers[] = {
 { "port",			&FaxClient::port,		(u_int) -1 },
@@ -1675,7 +1679,11 @@ const FaxClient::FaxFmtHeader FaxClient::jobFormats[] = {
     { '\0' },
 };
 void FaxClient::getJobStatusHeader(fxStr& header)
-    { makeHeader(getJobStatusFormat(), jobFormats, header); }
+{
+    makeHeader(getJobStatusFormat(), jobFormats, header);
+   if (jobSFmt.length())
+	command("JOBSORTFMT \"%s\"", (const char*)jobSFmt);
+}
 
 /*
  * Table of known format strings for the receive
@@ -1706,7 +1714,11 @@ const FaxClient::FaxFmtHeader FaxClient::recvFormats[] = {
     { '\0' },
 };
 void FaxClient::getRecvStatusHeader(fxStr& header)
-    { makeHeader(getRecvStatusFormat(), recvFormats, header); }
+{
+   makeHeader(getRecvStatusFormat(), recvFormats, header);
+   if (recvSFmt.length())
+	command("RCVSORTFMT \"%s\"", (const char*)recvSFmt);
+}
 
 /*
  * Table of known format strings for the modem
@@ -1725,7 +1737,12 @@ const FaxClient::FaxFmtHeader FaxClient::modemFormats[] = {
     { '\0' },
 };
 void FaxClient::getModemStatusHeader(fxStr& header)
-    { makeHeader(getModemStatusFormat(), modemFormats, header); }
+{
+    makeHeader(getModemStatusFormat(), modemFormats, header);
+    if (modemSFmt.length() )
+	command("MODEMSORTFMT \"%s\"", (const char*)modemSFmt);
+
+}
 
 /*
  * Table of known format strings for the file
@@ -1748,4 +1765,8 @@ const FaxClient::FaxFmtHeader FaxClient::fileFormats[] = {
     { '\0' },
 };
 void FaxClient::getFileStatusHeader(fxStr& header)
-    { makeHeader(getFileStatusFormat(), fileFormats, header); }
+{
+    makeHeader(getFileStatusFormat(), fileFormats, header);
+    if (fileSFmt.length() )
+	command("FILESORTFMT \"%s\"", (const char*)fileSFmt);
+}

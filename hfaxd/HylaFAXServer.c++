@@ -609,11 +609,15 @@ HylaFAXServer::stringtag HylaFAXServer::strings[] = {
 { "xferfaxlogfile",	&HylaFAXServer::xferfaxLogFile,	"/etc/clientlog" },
 { "jobfmt",		&HylaFAXServer::jobFormat,
   "%-4j %3i %1a %6.6o %-12.12e %5P %5D %7z %.25s" },
+{ "jobsortfmt",		&HylaFAXServer::jobSortFormat },
 { "rcvfmt",		&HylaFAXServer::recvFormat,
   "%-7m %4p%1z %-8.8o %14.14s %7t %f" },
+{ "rcvsortfmt",		&HylaFAXServer::recvSortFormat},
 { "modemfmt",		&HylaFAXServer::modemFormat,	"Modem %m (%n): %s" },
+{ "modemsortfmt",	&HylaFAXServer::modemSortFormat},
 { "filefmt",		&HylaFAXServer::fileFormat,
   "%-7p %3l %8o %8s %-12.12m %.48f" },
+{ "filesortfmt",	&HylaFAXServer::fileSortFormat},
 { "faxqfifoname",	&HylaFAXServer::faxqFIFOName,	"/" FAX_FIFO },
 { "systemtype",		&HylaFAXServer::systemType,
   "UNIX Type: L8 Version: SVR4" },
@@ -630,6 +634,9 @@ HylaFAXServer::numbertag HylaFAXServer::numbers[] = {
 { "maxconsecutivebadcmds",&HylaFAXServer::maxConsecutiveBadCmds,10 },
 { "jobprotection",	&HylaFAXServer::jobProtection,		0444 },
 };
+HylaFAXServer::booltag HylaFAXServer::booleans[] = {
+{ "allowsorting",	&HylaFAXServer::allowSorting,		true },
+};
 
 void
 HylaFAXServer::setupConfig()
@@ -640,6 +647,8 @@ HylaFAXServer::setupConfig()
 	(*this).*strings[i].p = (strings[i].def ? strings[i].def : "");
     for (i = N(numbers)-1; i >= 0; i--)
 	(*this).*numbers[i].p = numbers[i].def;
+    for (i = N(booleans)-1; i >= 0; i--)
+	(*this).*booleans[i].p = booleans[i].def;
     faxContact.append("@" | hostname);
 	admingroup = "faxadmin";
 }
@@ -675,8 +684,32 @@ HylaFAXServer::setConfigItem(const char* tag, const char* value)
 	}
     } else if (findTag(tag, (const tags*) numbers, N(numbers), ix)) {
 	(*this).*numbers[ix].p = getNumber(value);
+    } else if (findTag(tag, (const tags*) booleans, N(booleans), ix)) {
+	(*this).*booleans[ix].p = getBoolean(value);
     } else
 	return (false);
     return (true);
 }
 #undef N
+
+
+KeyString::KeyString (void)
+{
+}
+
+KeyString::KeyString (const fxStr& k, const fxStr& data)
+ : fxStr(data)
+ , key(k)
+{
+
+}
+
+int KeyString::compare (const KeyString* that) const
+{
+logDebug("Comparing [%s]\"%s\" TO [%s]\"%s\"",
+	(const char*)key, (const char*)*this,
+	(const char*)that->key, (const char*)*that);
+    return key.compare(&that->key);
+}
+
+fxIMPLEMENT_ObjArray(KeyStringArray, KeyString)
