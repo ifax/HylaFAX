@@ -3,12 +3,12 @@ HylaFAX - The world's most advanced open source fax server
 ========================================================================
 
   HylaFAX(tm) is  a  system  for sending and receiving facsimile.  It
-  supports queued transmission and asyn‐ chronous reception of
+  supports queued transmission and asynchronous reception of
   facsimile.  Ancillary programs are invoked by the system for
-  flexibility and con‐ figurability.   HylaFAX  includes  client  and
+  flexibility and configurability.   HylaFAX  includes  client  and
   server programs to support remote submission of jobs for transmission,
   remote removal of queued jobs, and to remotely query the status of
-  jobs queued for trans‐ mission.
+  jobs queued for transmission.
 
   The latest version of this software may be obtained at:
     http://ftp.hylafax.org/source/
