@@ -440,6 +440,7 @@ protected:
     void listUnixFile(FILE*, const SpoolDir&, const char*, const struct stat&);
     void makeProt(const struct stat& sb, bool withGrp, char prot[10]);
     void Fprintf(FILE*, const char* fmt, const char*, const struct stat&);
+    void Fprintf(fxStackBuffer&, const char* fmt, const char*, const struct stat&);
 
     void nlstDirectory(FILE* fd, const SpoolDir& sd, DIR* dir);
     void nlstUnixFile(FILE*, const SpoolDir&, const char*, const struct stat&);

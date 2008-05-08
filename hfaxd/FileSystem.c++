@@ -482,6 +482,7 @@ HylaFAXServer::listCmd(const char* pathname)
 void
 HylaFAXServer::listDirectory(FILE* fd, const SpoolDir& sd, DIR* dir)
 {
+    KeyStringArray listing;
     /*
      * Use an absolute pathname when doing file
      * lookups to improve cache locality.
@@ -496,10 +497,32 @@ HylaFAXServer::listDirectory(FILE* fd, const SpoolDir& sd, DIR* dir)
 	if (!FileCache::update(path | dp->d_name, sb))
 	    continue;
 	if ((this->*sd.isVisibleFile)(dp->d_name, sb)) {
-	    (this->*sd.listFile)(fd, sd, dp->d_name, sb);
-	    fputs("\r\n", fd);
+	    if (fileSortFormat.length() == 0) {
+		Fprintf(fd, fileFormat, dp->d_name, sb);
+		fputs("\r\n", fd);
+	    } else
+	    {
+		fxStackBuffer buf;
+		Fprintf(buf, fileFormat, dp->d_name, sb);
+		fxStr content(buf, buf.getLength());
+		buf.reset();
+		Fprintf(buf, fileSortFormat, dp->d_name, sb);
+		fxStr key(buf, buf.getLength());
+		listing.append(KeyString(key, content));
+	    }
 	}
     }
+
+    if (listing.length() > 1)
+	listing.qsort();
+
+    for (int i = 0; i < listing.length(); i++)
+    {
+	fwrite(listing[i], listing[i].length(), 1, fd);
+	fputs("\r\n", fd);
+    }
+
+
 }
 
 void
@@ -545,7 +568,7 @@ static const char fformat[] = {
  * in preferred formats.
  */
 void
-HylaFAXServer::Fprintf(FILE* fd, const char* fmt,
+HylaFAXServer::Fprintf(fxStackBuffer& buf, const char* fmt,
     const char* filename, const struct stat& sb)
 {
     for (const char* cp = fmt; *cp; cp++) {
@@ -569,61 +592,69 @@ HylaFAXServer::Fprintf(FILE* fd, const char* fmt,
 	    }
 	    if (!islower(c)) {
 		if (c == '%')		// %% -> %
-		    putc(c, fd);
+		    buf.put(c);
 		else
-		    fprintf(fd, "%.*s%c", fp-fspec, fspec, c);
+		    buf.fput("%.*s%c", fp-fspec, fspec, c);
 		continue;
 	    }
 	    fp[0] = fformat[c-'a'];	// printf format string
 	    fp[1] = '\0';
 	    switch (c) {
 	    case 'a':
-		fprintf(fd, fspec, asctime(cvtTime(sb.st_atime))+4);
+		buf.fput(fspec, asctime(cvtTime(sb.st_atime))+4);
 		break;
 	    case 'c':
-		fprintf(fd, fspec, asctime(cvtTime(sb.st_ctime))+4);
+		buf.fput(fspec, asctime(cvtTime(sb.st_ctime))+4);
 		break;
 	    case 'd':
-		fprintf(fd, fspec, (u_int) sb.st_dev);
+		buf.fput(fspec, (u_int) sb.st_dev);
 		break;
 	    case 'f':
-		fprintf(fd, fspec, filename);
+		buf.fput(fspec, filename);
 		break;
 	    case 'g':
-		fprintf(fd, fspec, (u_int) sb.st_gid);
+		buf.fput(fspec, (u_int) sb.st_gid);
 		break;
 	    case 'i':
-		fprintf(fd, fspec, (u_int) sb.st_ino);		// XXX
+		buf.fput(fspec, (u_int) sb.st_ino);		// XXX
 		break;
 	    case 'l':
-		fprintf(fd, fspec, (u_int) sb.st_nlink);
+		buf.fput(fspec, (u_int) sb.st_nlink);
 		break;
 	    case 'm':
-		fprintf(fd, fspec, asctime(cvtTime(sb.st_mtime))+4);
+		buf.fput(fspec, asctime(cvtTime(sb.st_mtime))+4);
 		break;
 	    case 'o':
-		fprintf(fd, fspec, userName((u_int) sb.st_gid));
+		buf.fput(fspec, userName((u_int) sb.st_gid));
 		break;
 	    case 'p':
 	    case 'q':
 		{ char prot[10];				// XXX HP C++
 		  makeProt(sb, c == 'q', prot);
-		  fprintf(fd, fspec, prot);
+		  buf.fput(fspec, prot);
 		}
 		break;
 	    case 'r':
-		fprintf(fd, fspec, (u_int) sb.st_rdev);
+		buf.fput(fspec, (u_int) sb.st_rdev);
 		break;
 	    case 's':
-		fprintf(fd, fspec, (u_int) sb.st_size);		// XXX
+		buf.fput(fspec, (u_int) sb.st_size);		// XXX
 		break;
 	    case 'u':
-		fprintf(fd, fspec, (u_int) sb.st_uid);
+		buf.fput(fspec, (u_int) sb.st_uid);
 		break;
 	    }
 	} else
-	    putc(*cp, fd);
+	    buf.put(*cp);
     }
+}
+void
+HylaFAXServer::Fprintf(FILE* fd, const char* fmt,
+    const char* filename, const struct stat& sb)
+{
+    fxStackBuffer buf;
+    Fprintf(buf, fmt, filename, sb);
+    fwrite((const char*)buf, buf.getLength(), 1, fd);
 }
 
 void

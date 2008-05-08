@@ -1979,6 +1979,7 @@ void
 HylaFAXServer::Jprintf(FILE* fd, const char* fmt, const Job& job)
 {
     fxStackBuffer buf;
+    Jprintf(buf, fmt, job);
     fwrite((const char*)buf, buf.getLength(), 1, fd);
 }
 
