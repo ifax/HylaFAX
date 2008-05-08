@@ -33,7 +33,7 @@ configure-stamp: patch-stamp
 		--with-DIR_SBIN="/usr/sbin" \
 		--with-DIR_LOCKS="/var/lock" \
 		--with-PATH_AFM="/usr/share/fonts/type1/gsfonts" \
-		--with-LOCALEDIR="/usr/share/locale" \
+		--with-DIR_LOCALE="/usr/share/locale" \
 		--with-FONTMAP="/usr/share/gs-esp/8.15/lib:/usr/share/gs-esp/7.07/lib:/usr/share/gs/6.53" \
 		--with-SYSGID="root" \
 		--with-SYSUID="root" \
