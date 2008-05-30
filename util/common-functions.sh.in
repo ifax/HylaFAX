@@ -225,7 +225,7 @@ mimeEncode()
 	    fi;;
         *uue*)
 	    if [ -x "$UUENCODE" ]; then
-		($UUENCODE ==== < $1 | grep -v "====$") 2>$ERRORSTO
+		($UUENCODE ==== < $1 | $GREP -v "====$") 2>$ERRORSTO
 	    fi;;
         *) cat $1;; # 7bit, 8bit, binary
     esac
@@ -244,7 +244,7 @@ matchRegEx()
   # on all platforms and locale. :( (Even for digit ranges...
   # fractions can be included in the 0-1 range.)
   # Forcing LC_ALL to C should be enough to fix this.
-  echo $string | LC_ALL=C awk -F=!=!=!=!=!=!=!=!= '
+  echo $string | LC_ALL=C $AWK -F=!=!=!=!=!=!=!=!= '
     '$regex' {print 1; exit;}
     {print 0;}'
 
