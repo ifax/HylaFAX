@@ -71,6 +71,11 @@ faxInfo()
 		-e "s/ Fine$/ $DICTFINE/g"
 }
 
+#
+# Export qfile content to environment
+# parseQfile(prefix, filename)
+# Both parameters can be omitted. Defaults to no prefix and $QFILE.
+#
 parseQfile()
 {
     # In shell scripts, there are no special characters in hard-quoted
@@ -78,84 +83,57 @@ parseQfile()
     # inside such strings and must be put outside of them. We thus replace
     # (') with ('\'') which terminates the current string, adds a single
     # quote and starts a new string.
-#
+    #
     # We no longer escape newlines, because we don't eval
     #
     # print out variable name and value so we can eval it in the shell
     #
-    AWK_OUTPUT=`$AWK -F: ' 
+    VAR_PREFIX="$1"
+    if [ -n "$2" ] ; then
+        FILENAME=$2;
+    else
+        FILENAME=$QFILE;
+    fi
+    if [ ! -f "$FILENAME" ] ; then
+        return # cannot do much more without a file
+    fi
+    $AWK -F: '
     function p(varname,val)
     {
-        gsub(/\\047/, "\047\\\\\047\047", val);
-        printf "%s=\\047%s\\047\n",varname,val
-        printf "export %s\n",varname
+        gsub(/\047/, "\047\\\047\047", val);
+        # mawk sees 047 as decimal 47 rather than octal, so we use the decimal
+        # value of the quote character: 39.
+        printf "%s%s=%c%s%c\n",var_prefix,varname,39,val,39
+        printf "export %s%s\n",var_prefix,varname
     }
     BEGIN {
+        var_prefix="'"$VAR_PREFIX"'";
         nfiles = 0;
         npins = 0;
-        pagewidth = 0;
-        pagelength = 0;
-        resolution = 0;
-        jobtype = "facsimile";
-        signalrate = "unknown";
-        dataformat = "unknown";
-        doneop = "default";
-        pagernum = "unknown";
-        commid = "";
-	csi = "";
-	equipment = "";
-	station = "";
     }
-    /^csi/	{ p("csi",$2); }
-    /^nsf/	{ p("equipment",$3); }
-    /^nsf/	{ p("station",$5); }
-    /^jobid/    { p("jobid",$2); }
-    /^groupid/    { p("groupid", $2); }
-    /^state/    { p("state", $2+0); }  
-    /^doneop/    { p("doneop", $2); }
-    /^number/    { p("number", $2); }
-    /^external/    { p("number", $2); }        # override unprocessed number
-    /^receiver/    { p("receiver", $2); }
-    /^company/    { p("company", $2); }
-    /^sender/    { p("sender", $2); }
-    /^mailaddr/    { p("mailaddr", $2); }
-    /^owner/    { p("owner", $2); }
-    /^regarding/    { regarding = $0; sub("regarding:", "", regarding); p("regarding", regarding)}
-    /^jobtag/    { jobtag = $0; sub("jobtag:", "", jobtag); p("jobtag", jobtag)}
-    /^jobtype/    { p("jobtype", $2); }
+    /^nsf/	{ p("equipment", $3); p("station", $5); next; }
+    /^external/    { p("number", $2); next; }      # override unprocessed number
+    /^regarding/    { regarding = $0; sub("regarding:", "", regarding); p("regarding", regarding); next; }
+    /^jobtag/    { jobtag = $0; sub("jobtag:", "", jobtag); p("jobtag", jobtag); next; }
     # status needs to be used in the shell as faxstatus since status is reserved word
     /^status:/    { status = $0; sub("status:", "", status);
               while ($0 ~ /\\\\$/ && getline > 0) {
                   sub(/\\\\$/, "\\n", status);
                   status = status $0;
               } p("faxstatus", status);
+              next;
             }
-    /^resolution/    { p("resolution", $2); }
-    /^npages/    { p("npages", $2); }
-    /^totpages/    { p("totpages", $2); }
-    /^dirnum/    { p("dirnum", $2); }
-    /^commid/    { p("commid", $2); }
-    /^ntries/    { p("ntries", $2); }
-    /^ndials/    { p("ndials", $2); }
-    /^pagewidth/    { p("pagewidth", $2); }
-    /^pagelength/    { p("pagelength", $2); }
-    /^signalrate/    { p("signalrate", $2); }
-    /^dataformat/    { p("dataformat", $2); }
-    /^modem/    { p("modem", $2); }
-    /^totdials/    { p("totdials", $2); }
-    /^tottries/    { p("tottries", $2); }
-    /^maxtries/    { p("maxtries", $2); }
-    /^maxdials/    { p("maxdials", $2); }
-    /^client/    { p("client", $2); }
-    /^[!]*post/    { p("files_"++nfiles, $4); p("filetype_"nfiles, "PostScript"); }
-    /^[!]*tiff/    { p("files_"++nfiles, $4); p("filetype_"nfiles, "TIFF"); }
-    /^[!]*pdf/    { p("files_"++nfiles, $4); p("filetype_"nfiles, "PDF"); }
-    /^[!]*pcl/    { p("files_"++nfiles, $4); p("filetype_"nfiles, "PCL"); }
-    /^page:/    { p("pins_"++npins, $4); }
-    /^data:/    { p("files_"++nfiles, $4); }
-    /^poll/        { p("poll", " -p"); }
-    END { p("nfiles", nfiles); p("npins", npins) } ' $QFILE `
-    eval "$AWK_OUTPUT"
+    /^[!]*post/    { p("files_"++nfiles, $4); p("filetype_"nfiles, "PostScript"); next; }
+    /^[!]*tiff/    { p("files_"++nfiles, $4); p("filetype_"nfiles, "TIFF"); next; }
+    /^[!]*pdf/    { p("files_"++nfiles, $4); p("filetype_"nfiles, "PDF"); next; }
+    /^[!]*pcl/    { p("files_"++nfiles, $4); p("filetype_"nfiles, "PCL"); next; }
+    /^page:/    { p("pins_"++npins, $4); next; }
+    /^data:/    { p("files_"++nfiles, $4); next; }
+    /^poll/        { p("poll", " -p"); next; }
+    /^[a-z]+:/     { p($1, $2); next; }       # Only parse remaining valid lines
+    {printf "# Invalid line> %s\n", $0;}
+    END { p("nfiles", nfiles); p("npins", npins) } ' $FILENAME > $TMPDIR/qfile-awk.sh
+    . $TMPDIR/qfile-awk.sh
 
 }
 
