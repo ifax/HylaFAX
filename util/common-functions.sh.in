@@ -662,6 +662,7 @@ SetupPrivateTmp()
     fi
     # We want any called programs to use our tmp dir.
     TMPDIR=$HYLAFAX_TMPDIR
+    export TMPDIR
 
     trap cleanupExit 0
     trap "hfExit 1" 1 2 15
