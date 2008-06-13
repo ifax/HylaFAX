@@ -642,14 +642,26 @@ LocalSequence ()
 
 SetupPrivateTmp()
 {
-    TMPDIR="/tmp/tmp-$$"
+    if [ -d "$HYLAFAX_TMPDIR" ]; then
+        # Private temp area already created.
+        return
+    fi
 
-    mkdir -m 0700 "$TMPDIR"
+    # Would have liked to use -t, but older mktemp don't support it.
+    if [ -z "$TMPDIR" ]; then
+        TMPDIR="/tmp"
+    fi
+    HYLAFAX_TMPDIR=`mktemp -d $TMPDIR/hylafaxtmp-XXXXXXXX 2>/dev/null` || {
+        HYLAFAX_TMPDIR="$TMPDIR/hylafaxtmp-$RANDOM-$RANDOM-$RANDOM-$$"
+        mkdir -m 0700 "$HYLAFAX_TMPDIR"
+    }
     if [ $? != 0 ]
     then
 	echo "Couldn't setup private temp area - exiting!" 1>&2
 	exit 1
     fi
+    # We want any called programs to use our tmp dir.
+    TMPDIR=$HYLAFAX_TMPDIR
 
     trap cleanupExit 0
     trap "hfExit 1" 1 2 15
@@ -657,16 +669,9 @@ SetupPrivateTmp()
 
 CleanupPrivateTmp ()
 {
-    if [ -d "$TMPDIR" ]
+    if [ -d "$HYLAFAX_TMPDIR" ]
     then
-	case "$TMPDIR" in
-	    "/tmp/tmp-$$")
-		rm -Rf "$TMPDIR"
-		;;
-	    *)
-		echo "Cleanup of temporary dir fail: Bad dir $TMPDIR" 1>&2
-		;;
-	esac
+	rm -Rf "$HYLAFAX_TMPDIR"
     fi
 }
 
