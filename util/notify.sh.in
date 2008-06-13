@@ -27,9 +27,11 @@
 # whitespace; in that case a separate attachment for each filetype
 # will be created.
 
+. bin/common-functions
+
 if [ $# != 3 ] && [ $# != 4 ]; then
     echo "Usage: $0 qfile why jobtime [nextTry]"
-    exit 1
+    hfExit 1
 fi
 
 test -f etc/setup.cache || {
@@ -44,7 +46,7 @@ command.  Read the documentation on setting up HylaFAX before you
 startup a server system.
 
 EOF
-    exit 1
+    hfExit 1
 }
 
 # need to parse out the command line here.  some may be needed
@@ -62,7 +64,6 @@ TIFF2PDF=bin/tiff2pdf
 TTYCMD=tty
 
 . etc/setup.cache
-. bin/common-functions
 
 INFO=$SBIN/faxinfo
 TIFFINFO=tiffinfo

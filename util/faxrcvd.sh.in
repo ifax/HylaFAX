@@ -27,12 +27,14 @@
 # OF THIS SOFTWARE.
 #
 
+. bin/common-functions
+
 #
 # faxrcvd file devID commID error-msg
 #
 if [ $# -lt 4 ]; then
     echo "Usage: $0 file devID commID error-msg [ callID-1 [ callID-2 [ ... [ callID-n ] ] ] ]"
-    exit 1
+    hfExit 1
 fi
 
 test -f etc/setup.cache || {
@@ -47,7 +49,7 @@ command.  Read the documentation on setting up HylaFAX before you
 startup a server system.
 
 EOF
-    exit 1
+    hfExit 1
 }
 
 # These settings may not be present in setup.cache if user upgraded and
@@ -58,7 +60,6 @@ TIFF2PDF=bin/tiff2pdf
 TTYCMD=tty
 
 . etc/setup.cache
-. bin/common-functions
 
 INFO=$SBIN/faxinfo
 FAX2PS=$TIFFBIN/fax2ps

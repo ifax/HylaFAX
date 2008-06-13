@@ -31,6 +31,7 @@
 # Print Statistics about Transmitted Facsimile.
 #
 SPOOL=@SPOOL@
+. $SPOOL/bin/common-functions
 
 test -f $SPOOL/etc/setup.cache || {
     cat<<EOF
@@ -43,7 +44,7 @@ command.  Read the documentation on setting up HylaFAX before you
 startup a server system.
 
 EOF
-    exit 1
+    hfExit 1
 }
 . $SPOOL/etc/setup.cache
 
@@ -64,7 +65,7 @@ while [ x"$1" != x"" ] ; do
     -age)   shift; AGE=$1;;
     -since) shift; SINCEDT=$1;;
     -end) shift; ENDDT=$1;;
-    -*)	    echo "Usage: $0 [-sortkey] [-age days] [-since date] [-end date] [-nomap] [files]"; exit 1;;
+    -*)	    echo "Usage: $0 [-sortkey] [-age days] [-since date] [-end date] [-nomap] [files]"; hfExit 1;;
     *)	    FILES="$FILES $1";;
     esac
     shift
@@ -183,14 +184,8 @@ esac
 #
 # Generate an awk program to process the statistics file.
 #
-TMPDIR=`(mktemp -d /tmp/.xferfaxstats.XXXXXX) 2>/dev/null`
-if test X$TMPDIR = X; then
-    TMPDIR=/tmp/.xferfaxstats$$
-fi
-@RM@ -fr $TMPDIR
-(umask 077 ; mkdir $TMPDIR) || exit 1
+SetupPrivateTmp
 tmpAwk=$TMPDIR/xferfax$$
-trap "@RM@ -fr $TMPDIR; exit 1" 1 2 15
 
 ($CAT<<'EOF'
 #
@@ -623,5 +618,4 @@ echo "$AWKRULES"
 $AWK -f $tmpAwk -v TODAY="$TODAY" -v AGE="$AGE" -v SINCEDT="$SINCEDT" -v ENDDT="$ENDDT" $FILES
 
 # cleanup
-@RM@ -fr $TMPDIR
-exit 0
+hfExit 0
