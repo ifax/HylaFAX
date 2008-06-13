@@ -650,6 +650,9 @@ SetupPrivateTmp()
 	echo "Couldn't setup private temp area - exiting!" 1>&2
 	exit 1
     fi
+
+    trap cleanupExit 0
+    trap "hfExit 1" 1 2 15
 }
 
 CleanupPrivateTmp ()
@@ -667,6 +670,17 @@ CleanupPrivateTmp ()
     fi
 }
 
+cleanupExit ()
+{
+    trap - 0 1 2 15
+    CleanupPrivateTmp
+}
+
+hfExit ()
+{
+    cleanupExit
+    exit $1
+}
 
 # And some common variables for things using our functions
 if [ -z "$TEMPLATE" ]
