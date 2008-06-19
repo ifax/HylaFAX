@@ -119,6 +119,37 @@ COMMID=$commid
 SENDTO=$mailaddr
 export COMMID SENDTO FROMADDR TOADDR DESTINATION WHY JTIME NEXT JOBINFO
 
+# This does the grunt work of building the notify email
+do_notify()
+{
+
+
+    if [ -f etc/templates/$TEMPLATE/hook.sh ]
+    then
+        # Any hooks that the templates need
+        . etc/templates/$TEMPLATE/hook.sh
+    fi
+
+
+    if [ -n "$RETURNFILETYPE" ]; then
+        for ft in $RETURNFILETYPE
+        do
+            ATTACH_ARGS="$ATTACH_ARGS "`BuildAttachArgs $ft`
+        done
+    fi
+
+    template="etc/templates/$TEMPLATE/notify-$WHY.txt"
+    if [ "$jobtype" != "facsimile" ] && [ -f etc/templates/$TEMPLATE/notify-$WHY-page.txt ]; then
+            template="etc/templates/$TEMPLATE/notify-$WHY-page.txt"
+    fi
+
+
+    eval CreateMailMessage "$template" $ATTACH_ARGS \
+            2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$mailaddr"
+
+}
+
+
 #
 # Apply customizations.  All customizable variables should
 # be set to their non-customized defaults prior to this.
@@ -128,27 +159,25 @@ if [ -f etc/FaxNotify ]; then
     . etc/FaxNotify
 fi
 
-if [ -f etc/templates/$TEMPLATE/hook.sh ]
-then
-    # Any hooks that the templates need
-    . etc/templates/$TEMPLATE/hook.sh
-fi
+case "$WHY:$notify" in
+    "requeued:when done+requeued")  do_notify;;     # Requeued
+    "requeued:when requeued")       do_notify;;     # Requeued
+    "requeued:when done")           ;;              # Do nothing;
+    "requeued:none")                ;;              # Do nothing;
 
+    "blocked:when done+requeued")   do_notify;;     # Requeued
+    "blocked:when requeued")        do_notify;;     # Requeued
+    "blocked:when done")            ;;              # Do nothing;
+    "blocked:none")                 ;;              # Do nothing;
 
-if [ -n "$RETURNFILETYPE" ]; then
-    for ft in $RETURNFILETYPE
-    do
-	ATTACH_ARGS="$ATTACH_ARGS "`BuildAttachArgs $ft`
-    done
-fi
+    "done:when done+requeued")      do_notify;;     # Done
+    "done:when requeued")           ;;              # Do nothing
+    "done:when done")               do_notify;;     # Done
+    "done:none")                    ;;              # Do nothing
 
-template="etc/templates/$TEMPLATE/notify-$WHY.txt"
-if [ "$jobtype" != "facsimile" ] && [ -f etc/templates/$TEMPLATE/notify-$WHY-page.txt ]; then
-	template="etc/templates/$TEMPLATE/notify-$WHY-page.txt"
-fi
+    # Anything else is a "failure", which always runs notification
+    *)                              do_notify;;
+esac
 
-
-eval CreateMailMessage "$template" $ATTACH_ARGS \
-	2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$mailaddr"
 
 CleanupPrivateTmp

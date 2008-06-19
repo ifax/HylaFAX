@@ -163,6 +163,9 @@ const char* FaxRequest::opNames[18] = {
     "uucp",
     "15", "16", "17"
 };
+/*
+ * These are also used in util/notify.sh.in
+ */
 const char* FaxRequest::notifyVals[4] = {
     "none",			// no_notice
     "when done",		// when_done

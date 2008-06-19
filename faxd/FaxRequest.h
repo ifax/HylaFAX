@@ -183,8 +183,6 @@ public:
     void writeQFile();
     u_int findItem(FaxSendOp, u_int start = 0) const;
 
-    bool isNotify(u_int what) const;
-
     static bool isStrCmd(const char* cmd, u_int& ix);
     static bool isShortCmd(const char* cmd, u_int& ix);
 
@@ -206,6 +204,5 @@ private:
     fxStr	code;		// code relating to notice
 #endif
 };
-inline bool FaxRequest::isNotify(u_int what) const
-    { return (notify & (u_short) what) != 0; }
+
 #endif /* _FaxRequest_ */

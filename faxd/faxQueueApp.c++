@@ -1716,8 +1716,7 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
 		    (const char*)strTime(req->tts - now), req->result.string());
 		setSleep(job, req->tts);
 		Trigger::post(Trigger::SEND_REQUEUE, job);
-		if (req->isNotify(FaxRequest::when_requeued))
-		    notifySender(job, Job::requeued);
+		notifySender(job, Job::requeued);
 	    } else {
 		traceQueue(job, "SEND INCOMPLETE: retry immediately; %s",
 		    req->result.string());
@@ -2284,8 +2283,8 @@ faxQueueApp::blockJob(Job& job, FaxRequest& req, const Status& r)
     req.result = r;
     updateRequest(req, job);
     traceQueue(job, "%s", r.string());
-    if (req.isNotify(FaxRequest::when_requeued) && old_state != FaxRequest::state_blocked)
-	notifySender(job, Job::blocked); 
+    if (old_state != FaxRequest::state_blocked)
+	notifySender(job, Job::blocked);
     Trigger::post(Trigger::JOB_BLOCKED, job);
 }
 
@@ -2307,8 +2306,7 @@ faxQueueApp::delayJob(Job& job, FaxRequest& req, const Status& r, time_t tts)
     traceQueue(job, "%s: requeue for %s",
 	    r.string(), (const char*)strTime(delay));
     setSleep(job, tts);
-    if (req.isNotify(FaxRequest::when_requeued))
-	notifySender(job, Job::requeued); 
+    notifySender(job, Job::requeued);
     Trigger::post(Trigger::JOB_DELAYED, job);
 }
 
@@ -2886,8 +2884,7 @@ faxQueueApp::deleteRequest(Job& job, FaxRequest& req, JobStatus why,
 	req.pri = job.pri;			// just in case someone cares
 	req.tts = Sys::now();			// mark job termination time
 	req.writeQFile();
-	if (force || req.isNotify(FaxRequest::notify_any))
-	    notifySender(job, why, duration);
+	notifySender(job, why, duration);
     } else {
 	/*
 	 * Move failed, probably because there's no
@@ -2898,10 +2895,8 @@ faxQueueApp::deleteRequest(Job& job, FaxRequest& req, JobStatus why,
 	 */
 	jobError(job, "rename to %s failed: %s",
 	    (const char*) dest, strerror(errno));
-	if (force || req.isNotify(FaxRequest::notify_any)) {
-	    req.writeQFile();
-	    notifySender(job, why, duration);
-	}
+	req.writeQFile();
+	notifySender(job, why, duration);
 	u_int n = req.items.length();
 	for (u_int i = 0; i < n; i++) {
 	    const FaxItem& fitem = req.items[i];
