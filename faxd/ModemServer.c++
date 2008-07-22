@@ -815,6 +815,15 @@ BaudRate ModemServer::getModemRate() const	{ return baudRates[curRate]; }
 void
 ModemServer::readConfig(const fxStr& filename)
 {
+    if (delayConfig)
+    {
+        /*
+        * We're recursivly in here, likely from an Include statement.
+        * We don't want to do any of our delayConfig smartstuff...
+        */
+       ServerConfig::readConfig(filename);
+       return;
+    }
     dialRulesFile = "";
     delayConfig = true;
     ServerConfig::readConfig(filename);
