@@ -1,4 +1,4 @@
-HylaFAX 4.3.6
+HylaFAX 4.3.7
 
 OVERVIEW
 -----------------------------------------------------------------------------
@@ -206,10 +206,22 @@ CHANGES for 4.3.6 - October 2, 2007
 * Fix large SESSION_LOG variable causing bash problems (24 Sep 2007)
 
 
-CHANGES since 4.3.6
+CHANGES for 4.3.7 - November 23, 2007
 -----------------------------------------------------------------------------
 * Pass correct time to notify (23 October, 2007)
 * Fix typo in MT5600ZDX prototype (9 Nov 2007)
 * Bug 875: faxsetup and faxaddmodem temporty files (13 Nov 2007)
 * hfaxd: Remove PAM debug logging including passwords (15 Nov 2007)
 * fix TypeRules verbose logging names (15 Nov 2007)
+* Add support for libtiff 3.9 (21 Nov 2007)
+
+CHANGES since 4.3.7
+-----------------------------------------------------------------------------
+* Fix faxq modem Triggers (16 Jan 2008)
+* hfaxd lockJob() - don't blindly O_CREAT job we're trying to lock
+  (22 Feb 2008)
+* hfaxd: Don't update job's last modified time unless it's actually
+  successfull (22 Feb 2008)
+* faxq: Check TimeOfDate before batching (2 Apr 2008)
+* hfaxd: Fix RECV_START, RECV_PAGE, RECV_DOC triggers (22 Jul 2008)
+* faxgetty/faxsend: Correct Include config file parsing (22 Jul 2008)
