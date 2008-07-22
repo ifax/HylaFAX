@@ -1,5 +1,13 @@
 #	$Id$	
 
+Chances since 4.3.7
+* faxgetty/faxsend: Correct Include config file parsing (22 Jul 2008)
+* hfaxd: Fix RECV_START, RECV_PAGE, RECV_DOC triggers (22 Jul 2008)
+* faxq: Check TimeOfDate before batching (2 Apr 2008)
+* hfaxd: Don't update job's last modified time unless it's actually successfull (22 Feb 2008)
+* hfaxd lockJob() - don't blindly O_CREAT job we're trying to lock (22 Feb 2008)
+* Fix faxq modem Triggers (16 Jan 2008)
+
 Changelog for HylaFAX 4.3.7
 * Add support for libtiff 3.9 (21 Nov 2007)
 * fix TypeRules verbose logging names (15 Nov 2007)
