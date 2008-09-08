@@ -42,6 +42,7 @@
 #include <stdlib.h>
 
 const char* HylaFAXServer::version = HYLAFAX_VERSION;
+int HylaFAXServer::_debugSleep = 0;
 
 /*
  * NB: The remainder of the instance state is
@@ -140,6 +141,12 @@ HylaFAXServer::~HylaFAXServer()
 void
 HylaFAXServer::initServer(void)
 {
+    if (_debugSleep)		// Allow a debuger time to attach
+    {
+	logDebug("Sleeping %d for debugger", _debugSleep);
+	sleep(_debugSleep);
+    }
+
     end_login();		// reset user-related state
 
     /*
@@ -706,9 +713,6 @@ KeyString::KeyString (const fxStr& k, const fxStr& data)
 
 int KeyString::compare (const KeyString* that) const
 {
-logDebug("Comparing [%s]\"%s\" TO [%s]\"%s\"",
-	(const char*)key, (const char*)*this,
-	(const char*)that->key, (const char*)*that);
     return key.compare(&that->key);
 }
 

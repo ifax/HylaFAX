@@ -206,7 +206,7 @@ main(int argc, char** argv, char** envp)
     optind = 1;
     opterr = 0;
     int c;
-    const char* opts = "dHh:Ii:Oo:q:Ss:u:l:";
+    const char* opts = "dD:Hh:Ii:Oo:q:Ss:u:l:";
     /*
      * Deduce the spooling directory and whether or not to
      * detach the process from the controlling tty.  The
@@ -233,6 +233,7 @@ main(int argc, char** argv, char** envp)
 		detach = false;
 	    break;
 	case 'd': detach = false; break;
+	case 'D': HylaFAXServer::_debugSleep = atoi(optarg); break;
 	case 'q': queueDir = optarg; break;
 	case '?': usage(appName);
 	}

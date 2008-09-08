@@ -189,6 +189,7 @@ public:
         bool HylaFAXServer::*p;
         bool		 def;
     };
+    static int _debugSleep;
 protected:
     u_int	state;
 #define	S_LOGGEDIN	0x0001		// client is logged in
