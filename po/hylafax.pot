@@ -4,10 +4,31 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: HylaFAX 4.5.CVS\n"
+"Report-Msgid-Bugs-To: http://bugs.hylafax.org\n"
+"POT-Creation-Date: Mon Sep 15 11:31:11 EDT 2008\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: Fri May  2 12:55:23 EDT 2008\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+# HylaFAX PO TEMPLATE
+# This file is distributed under the same license as the HylaFAX package.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: HylaFAX 4.5.CVS\n"
+"Report-Msgid-Bugs-To: http://bugs.hylafax.org\n"
+"POT-Creation-Date: Mon Sep 15 11:31:11 EDT 2008\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 # File: libhylafax/AtSyntax.c++, line: 106
 #, c-format
@@ -528,113 +549,113 @@ msgid ""
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 389
+# File: libhylafax/FaxClient.c++, line: 393
 msgid "Malformed (null) username"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 410
+# File: libhylafax/FaxClient.c++, line: 414
 # File: libhylafax/SNPPClient.c++, line: 578
 msgid "Login failed: "
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 431
+# File: libhylafax/FaxClient.c++, line: 435
 msgid "Admin failed: "
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 447
+# File: libhylafax/FaxClient.c++, line: 451
 #, c-format
 msgid "Bad %s parameter value %u."
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 487
+# File: libhylafax/FaxClient.c++, line: 491
 #, c-format
 msgid "Bad time zone parameter value %u."
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 526
+# File: libhylafax/FaxClient.c++, line: 530
 msgid "Unable to initialize data connection to server"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 540
+# File: libhylafax/FaxClient.c++, line: 544
 msgid "Unable to open data connection to server"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 564
+# File: libhylafax/FaxClient.c++, line: 568
 msgid "Unable to abort data connection to server"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 594
+# File: libhylafax/FaxClient.c++, line: 598
 # File: libhylafax/SNPPClient.c++, line: 595
 msgid "Service not available, remote server closed connection"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 601
+# File: libhylafax/FaxClient.c++, line: 605
 # File: libhylafax/SNPPClient.c++, line: 602
 msgid "Unexpected server response: "
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 609
+# File: libhylafax/FaxClient.c++, line: 613
 # File: libhylafax/SNPPClient.c++, line: 610
 msgid "Protocol botch"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 646
+# File: libhylafax/FaxClient.c++, line: 650
 # File: libhylafax/SNPPClient.c++, line: 645
 msgid "No control connection for command"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 776
+# File: libhylafax/FaxClient.c++, line: 780
 #, c-format
 msgid ": No \"%s\" in %s response: %s"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 783
+# File: libhylafax/FaxClient.c++, line: 787
 #, c-format
 msgid ": Null %s in %s response: %s"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 966
+# File: libhylafax/FaxClient.c++, line: 970
 #, c-format
 msgid "Unable to open script file \"%s\"."
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 985
+# File: libhylafax/FaxClient.c++, line: 989
 #, c-format
 msgid "%s: Read error: %s"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1010
+# File: libhylafax/FaxClient.c++, line: 1014
 #, c-format
 msgid "%s: line %u: %s"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1100
-# File: libhylafax/FaxClient.c++, line: 1107
+# File: libhylafax/FaxClient.c++, line: 1104
+# File: libhylafax/FaxClient.c++, line: 1111
 # File: libhylafax/SNPPClient.c++, line: 915
 # File: libhylafax/SNPPClient.c++, line: 922
 msgid " (server closed connection)"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1100
-# File: libhylafax/FaxClient.c++, line: 1107
+# File: libhylafax/FaxClient.c++, line: 1104
+# File: libhylafax/FaxClient.c++, line: 1111
 # File: libhylafax/SNPPClient.c++, line: 915
 # File: libhylafax/SNPPClient.c++, line: 922
 #, c-format
@@ -642,55 +663,55 @@ msgid " (server write error: %s)."
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1129
+# File: libhylafax/FaxClient.c++, line: 1133
 #, c-format
 msgid "SEND data, %lu bytes"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1147
+# File: libhylafax/FaxClient.c++, line: 1151
 # File: libhylafax/SNPPClient.c++, line: 943
 #, c-format
 msgid " (data read: %s)."
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1198
+# File: libhylafax/FaxClient.c++, line: 1202
 #, c-format
 msgid "SEND compressed data, %lu bytes"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1216
+# File: libhylafax/FaxClient.c++, line: 1220
 #, c-format
 msgid " (data read: %s)"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1223
-# File: libhylafax/FaxClient.c++, line: 1243
-# File: libhylafax/FaxClient.c++, line: 1269
+# File: libhylafax/FaxClient.c++, line: 1227
+# File: libhylafax/FaxClient.c++, line: 1247
+# File: libhylafax/FaxClient.c++, line: 1273
 #, c-format
 msgid "zlib compressor error: %s"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1275
+# File: libhylafax/FaxClient.c++, line: 1279
 #, c-format
 msgid "SEND %lu bytes transmitted (%.1fx compression)"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1296
+# File: libhylafax/FaxClient.c++, line: 1300
 #, c-format
 msgid "Can not initialize compression library: %s"
 msgstr ""
 
-# #-#-#-#-#  messages.pot  #-#-#-#-#
+# #-#-#-#-#  messages.pot (HylaFAX 4.5.CVS)  #-#-#-#-#
 #
-# File: libhylafax/FaxClient.c++, line: 1338
-# File: libhylafax/FaxClient.c++, line: 1401
-# #-#-#-#-#  messages.pot  #-#-#-#-#
+# File: libhylafax/FaxClient.c++, line: 1342
+# File: libhylafax/FaxClient.c++, line: 1405
+# #-#-#-#-#  messages.pot (HylaFAX 4.5.CVS)  #-#-#-#-#
 #
 # File: faxstat/faxstat.c++, line: 146
 #, c-format
@@ -698,416 +719,416 @@ msgid "Data Connection: %s"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1412
+# File: libhylafax/FaxClient.c++, line: 1416
 #, c-format
 msgid "Decoding error: %s"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1426
+# File: libhylafax/FaxClient.c++, line: 1430
 #, c-format
 msgid "Can not initialize decoder: %s"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1622
-# File: libhylafax/FaxClient.c++, line: 1687
+# File: libhylafax/FaxClient.c++, line: 1626
+# File: libhylafax/FaxClient.c++, line: 1695
 msgid "SUB"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1623
+# File: libhylafax/FaxClient.c++, line: 1627
 msgid "PWD"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1624
+# File: libhylafax/FaxClient.c++, line: 1628
 msgid "Company"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1625
+# File: libhylafax/FaxClient.c++, line: 1629
 msgid "Dials"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1626
-# File: libhylafax/FaxClient.c++, line: 1688
+# File: libhylafax/FaxClient.c++, line: 1630
+# File: libhylafax/FaxClient.c++, line: 1696
 msgid "BR"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1627
+# File: libhylafax/FaxClient.c++, line: 1631
 msgid "Tagline"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1628
+# File: libhylafax/FaxClient.c++, line: 1632
 msgid "ST"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1629
-# File: libhylafax/FaxClient.c++, line: 1689
+# File: libhylafax/FaxClient.c++, line: 1633
+# File: libhylafax/FaxClient.c++, line: 1697
 msgid "DF"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1630
+# File: libhylafax/FaxClient.c++, line: 1634
 msgid "UsrPri"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1631
+# File: libhylafax/FaxClient.c++, line: 1635
 msgid "JobTag"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1632
+# File: libhylafax/FaxClient.c++, line: 1636
 msgid "EC"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1633
+# File: libhylafax/FaxClient.c++, line: 1637
 msgid "Location"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1634
+# File: libhylafax/FaxClient.c++, line: 1638
 msgid "MailAddr"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1635
+# File: libhylafax/FaxClient.c++, line: 1639
 msgid "DT"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1636
+# File: libhylafax/FaxClient.c++, line: 1640
 msgid "CC"
 msgstr ""
 
-# #-#-#-#-#  messages.pot  #-#-#-#-#
+# #-#-#-#-#  messages.pot (HylaFAX 4.5.CVS)  #-#-#-#-#
 #
-# File: libhylafax/FaxClient.c++, line: 1637
-# File: libhylafax/FaxClient.c++, line: 1663
-# File: libhylafax/FaxClient.c++, line: 1699
-# #-#-#-#-#  messages.pot  #-#-#-#-#
+# File: libhylafax/FaxClient.c++, line: 1641
+# File: libhylafax/FaxClient.c++, line: 1667
+# File: libhylafax/FaxClient.c++, line: 1707
+# #-#-#-#-#  messages.pot (HylaFAX 4.5.CVS)  #-#-#-#-#
 #
 # File: util/faxinfo.c++, line: 395
 msgid "Pages"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1638
+# File: libhylafax/FaxClient.c++, line: 1642
 msgid "MinSP"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1639
+# File: libhylafax/FaxClient.c++, line: 1643
 msgid "Receiver"
 msgstr ""
 
-# #-#-#-#-#  messages.pot  #-#-#-#-#
+# #-#-#-#-#  messages.pot (HylaFAX 4.5.CVS)  #-#-#-#-#
 #
-# File: libhylafax/FaxClient.c++, line: 1640
-# #-#-#-#-#  messages.pot  #-#-#-#-#
+# File: libhylafax/FaxClient.c++, line: 1644
+# #-#-#-#-#  messages.pot (HylaFAX 4.5.CVS)  #-#-#-#-#
 #
 # File: util/faxinfo.c++, line: 348
 msgid "Sender"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1641
+# File: libhylafax/FaxClient.c++, line: 1645
 msgid "Tries"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1642
+# File: libhylafax/FaxClient.c++, line: 1646
 msgid "ChopThreshold"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1643
+# File: libhylafax/FaxClient.c++, line: 1647
 msgid "DoneOp"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1644
+# File: libhylafax/FaxClient.c++, line: 1648
 msgid "CommID"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1645
+# File: libhylafax/FaxClient.c++, line: 1649
 msgid "JobType"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1646
-# File: libhylafax/FaxClient.c++, line: 1685
+# File: libhylafax/FaxClient.c++, line: 1650
+# File: libhylafax/FaxClient.c++, line: 1693
 msgid "Date       Time"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1647
-# File: libhylafax/FaxClient.c++, line: 1686
+# File: libhylafax/FaxClient.c++, line: 1651
+# File: libhylafax/FaxClient.c++, line: 1694
 msgid "UNIX Time"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1648
+# File: libhylafax/FaxClient.c++, line: 1652
 msgid "State"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1649
+# File: libhylafax/FaxClient.c++, line: 1653
 msgid "NTries"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1650
+# File: libhylafax/FaxClient.c++, line: 1654
 msgid "Client"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1651
+# File: libhylafax/FaxClient.c++, line: 1655
 msgid "TotDials"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1652
-# File: libhylafax/FaxClient.c++, line: 1719
+# File: libhylafax/FaxClient.c++, line: 1656
+# File: libhylafax/FaxClient.c++, line: 1731
 msgid "Number"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1653
+# File: libhylafax/FaxClient.c++, line: 1657
 msgid "NDials"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1654
-# File: libhylafax/FaxClient.c++, line: 1739
+# File: libhylafax/FaxClient.c++, line: 1658
+# File: libhylafax/FaxClient.c++, line: 1756
 msgid "GID"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1655
+# File: libhylafax/FaxClient.c++, line: 1659
 msgid "Chop"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1656
+# File: libhylafax/FaxClient.c++, line: 1660
 msgid "Priority"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1657
+# File: libhylafax/FaxClient.c++, line: 1661
 msgid "JID"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1658
+# File: libhylafax/FaxClient.c++, line: 1662
 msgid "LastTime"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1659
+# File: libhylafax/FaxClient.c++, line: 1663
 msgid "PageLength"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1660
-# File: libhylafax/FaxClient.c++, line: 1718
+# File: libhylafax/FaxClient.c++, line: 1664
+# File: libhylafax/FaxClient.c++, line: 1730
 msgid "Modem"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1661
+# File: libhylafax/FaxClient.c++, line: 1665
 msgid "Notify"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1662
-# File: libhylafax/FaxClient.c++, line: 1698
-# File: libhylafax/FaxClient.c++, line: 1742
+# File: libhylafax/FaxClient.c++, line: 1666
+# File: libhylafax/FaxClient.c++, line: 1706
+# File: libhylafax/FaxClient.c++, line: 1759
 msgid "Owner"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1664
+# File: libhylafax/FaxClient.c++, line: 1668
 msgid "RetryTime"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1665
-# File: libhylafax/FaxClient.c++, line: 1701
+# File: libhylafax/FaxClient.c++, line: 1669
+# File: libhylafax/FaxClient.c++, line: 1709
 msgid "Resolution"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1666
-# File: libhylafax/FaxClient.c++, line: 1721
+# File: libhylafax/FaxClient.c++, line: 1670
+# File: libhylafax/FaxClient.c++, line: 1733
 msgid "Status"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1667
+# File: libhylafax/FaxClient.c++, line: 1671
 msgid "TotTries"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1668
+# File: libhylafax/FaxClient.c++, line: 1672
 msgid "MaxTries"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1669
+# File: libhylafax/FaxClient.c++, line: 1673
 msgid "DialString"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1670
+# File: libhylafax/FaxClient.c++, line: 1674
 msgid "PageWidth"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1671
+# File: libhylafax/FaxClient.c++, line: 1675
 msgid "MaxDials"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1672
+# File: libhylafax/FaxClient.c++, line: 1676
 msgid "TotPages"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1673
+# File: libhylafax/FaxClient.c++, line: 1677
 msgid "TTS"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1674
+# File: libhylafax/FaxClient.c++, line: 1678
 msgid "UseXVres"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1690
+# File: libhylafax/FaxClient.c++, line: 1698
 msgid "Error"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1691
-# File: libhylafax/FaxClient.c++, line: 1738
+# File: libhylafax/FaxClient.c++, line: 1699
+# File: libhylafax/FaxClient.c++, line: 1755
 msgid "Filename"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1692
+# File: libhylafax/FaxClient.c++, line: 1700
 msgid "Time"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1693
+# File: libhylafax/FaxClient.c++, line: 1701
 msgid "CIDName"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1694
+# File: libhylafax/FaxClient.c++, line: 1702
 msgid "CIDNumber"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1695
+# File: libhylafax/FaxClient.c++, line: 1703
 msgid "Length"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1696
-# File: libhylafax/FaxClient.c++, line: 1700
-# File: libhylafax/FaxClient.c++, line: 1743
-# File: libhylafax/FaxClient.c++, line: 1744
+# File: libhylafax/FaxClient.c++, line: 1704
+# File: libhylafax/FaxClient.c++, line: 1708
+# File: libhylafax/FaxClient.c++, line: 1760
+# File: libhylafax/FaxClient.c++, line: 1761
 msgid "Protect"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1697
-# File: libhylafax/FaxClient.c++, line: 1746
+# File: libhylafax/FaxClient.c++, line: 1705
+# File: libhylafax/FaxClient.c++, line: 1763
 msgid "Size"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1702
+# File: libhylafax/FaxClient.c++, line: 1710
 msgid "Sender/TSI"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1703
+# File: libhylafax/FaxClient.c++, line: 1711
 msgid "Recvd@"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1704
+# File: libhylafax/FaxClient.c++, line: 1712
 msgid "Width"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1716
+# File: libhylafax/FaxClient.c++, line: 1728
 msgid "Host"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1717
+# File: libhylafax/FaxClient.c++, line: 1729
 msgid "LocalID"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1720
+# File: libhylafax/FaxClient.c++, line: 1732
 msgid "MaxRecv"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1722
+# File: libhylafax/FaxClient.c++, line: 1734
 msgid "Tracing"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1723
+# File: libhylafax/FaxClient.c++, line: 1735
 msgid "Speaker"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1735
+# File: libhylafax/FaxClient.c++, line: 1752
 msgid "LastAcc"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1736
+# File: libhylafax/FaxClient.c++, line: 1753
 msgid "Created"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1737
+# File: libhylafax/FaxClient.c++, line: 1754
 msgid "Device"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1740
+# File: libhylafax/FaxClient.c++, line: 1757
 msgid "Links"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1741
+# File: libhylafax/FaxClient.c++, line: 1758
 msgid "LastMod"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1745
+# File: libhylafax/FaxClient.c++, line: 1762
 msgid "RootDev"
 msgstr ""
 
 #
-# File: libhylafax/FaxClient.c++, line: 1747
+# File: libhylafax/FaxClient.c++, line: 1764
 msgid "UID"
 msgstr ""
 
@@ -1299,10 +1320,10 @@ msgstr ""
 msgid "Can not locate your password entry (uid %lu): %s."
 msgstr ""
 
-# #-#-#-#-#  messages.pot  #-#-#-#-#
+# #-#-#-#-#  messages.pot (HylaFAX 4.5.CVS)  #-#-#-#-#
 #
 # File: libhylafax/SNPPClient.c++, line: 388
-# #-#-#-#-#  messages.pot  #-#-#-#-#
+# #-#-#-#-#  messages.pot (HylaFAX 4.5.CVS)  #-#-#-#-#
 # File: sendpage/sendpage.c++, line: 90
 #, c-format
 msgid "Invalid hold time \"%s\": %s"
