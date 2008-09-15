@@ -34,42 +34,44 @@
 #include <stdio.h>
 #include <string.h>
 
-int	bits[16];
-int	bound;
-int	collisions;
+#define HASH_DECLARE(h)		unsigned int h = 0;
+#define HASH_ITERATE(h,c)	do { unsigned char cc = (c); if (cc != '!') h = 33*h + cc;} while (0)
+#define HASH_FINISH(h)		do {} while (0);
+
+#define PRINT_HASH()						\
+	printf("%s\n%s\n%s\n", 					\
+	"#define HASH_DECLARE(h)	unsigned int h = 0 ",	\
+	"#define HASH_ITERATE(h,c)	do { unsigned char cc = (c); if (cc != '!') h = 33*h + cc;} while (0)", \
+	"#define HASH_FINISH(h)		do {} while (0);");
+
 
 void
 hash(const char* cp)
 {
     char name[80];
     char* xp = name;
-    unsigned int h = 0;
+
+    HASH_DECLARE(nh);
+
     while (*cp) {
-	if (*cp == '!')
+	char c = *cp++;
+	if (c == '!')
 	    *xp++ = '_';
 	else
-	    *xp++ = toupper(*cp);
-	h += h^*cp++;
+	    *xp++ = toupper(c);
+	HASH_ITERATE(nh, c);
     }
     *xp = '\0';
-    h %= bound;
-    printf("#define	H_%s	%u", name, h);
-    if (bits[h/32] & (1<<(h%32))) {
-	collisions++;
-	printf("	/* collision */");
-    }
-    putchar('\n');
-    bits[h/32] |= 1<<(h%32);
+    HASH_FINISH(nh);
+
+    printf("#define	H_%s	%uU\n", name, nh);
 }
 
 int
 main()
 {
-    bound = 226;
-    memset(bits, 0, sizeof (bits));
-    collisions = 0;
     printf("/* THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT */\n");
-    printf("#define	HASH(x)	((x) %% %u)\n", bound);
+    PRINT_HASH();
     hash("external");
     hash("number");
     hash("mailaddr");
@@ -148,6 +150,5 @@ main()
     hash("returned");
     hash("doneop");
     hash("commid");
-    printf("/* %u total collisions */\n", collisions);
     return (0);
 }

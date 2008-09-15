@@ -249,15 +249,19 @@ FaxRequest::readQFile(bool& rejectJob)
 	 * process only writes valid entries in the file.
 	 */
 	const char* cmd = bp;
-	u_int hash = 0;
+	HASH_DECLARE(hash);
 	for (; *bp != ':' && *bp != '\n'; bp++)
-	    hash += hash ^ *bp;
+	{
+	    HASH_ITERATE(hash, *bp);
+	}
 	if (*bp != ':') {			// invalid, skip line
 	    error("Syntax error, missing ':' on line %u", (u_int) lineno);
 	    while (*bp++ != '\n')
 		;
 	    continue;
 	}
+	HASH_FINISH(hash);
+
 	*bp++ = '\0';				// null-terminate cmd
 	/*
 	 * Collect the parameter value.
@@ -268,7 +272,8 @@ FaxRequest::readQFile(bool& rejectJob)
 	while (*bp != '\n')
 	    bp++;
 	*bp++ = '\0';				// null-terminate tag
-	switch (HASH(hash)) {
+	// logError("%s[%u]: %s", cmd, hash, tag);
+	switch (hash) {
 	case H_EXTERNAL:	external = tag; break;
 	case H_NUMBER:		number = tag; break;
 	case H_MAILADDR:	mailaddr = tag; break;
@@ -279,12 +284,8 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_PAGEHANDLING:	pagehandling = tag; break;
 	case H_MODEM:		modem = tag; break;
 	case H_FAXNUMBER:	faxnumber = tag; break;
-	case H_TSI:			// NB: tsi csi collide
-	    if (cmd[0] == 't')
-		tsi = tag;
-	    else
-		csi = tag;
-	    break;
+	case H_TSI:		tsi = tag; break;
+	case H_CSI:		csi = tag; break;
 	case H_RECEIVER:	receiver = tag; break;
 	case H_COMPANY:		company = tag; break;
 	case H_LOCATION:	location = tag; break;
@@ -299,33 +300,17 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_SIGNALRATE:	sigrate = tag; break;
 	case H_DATAFORMAT:	df = tag; break;
 	case H_JOBTYPE:		jobtype = tag; break;
-	case H_TAGLINE:			// NB: tottries collides
-	    if (cmd[1] == 'a')
-		tagline = tag;
-	    else
-		tottries = atoi(tag);
-	    break;
+	case H_TAGLINE:		tagline = tag; break;
+	case H_TOTTRIES:	tottries = atoi(tag); break;
 	case H_SUBADDR:		subaddr = tag; break;
 	case H_PASSWD:		passwd = tag; break;
-	case H_STATE:			// NB: comments collides
-	    if (cmd[0] == 's')
-		state = tag[0] - '0';
-	    else
-		comments = tag;
-	    break;
-	case H_NPAGES:
-	    if (cmd[0] == 'n')
-		npages = atoi(tag);
-	    else
-		fromcompany = tag;
-	    break;
+	case H_STATE:		state = tag[0] - '0'; break;
+	case H_COMMENTS:	comments = tag; break;
+	case H_NPAGES:		npages = atoi(tag); break;
+	case H_FROMCOMPANY:	fromcompany = tag; break;
 	case H_TOTPAGES:	totpages = atoi(tag); break;
-	case H_NTRIES:			// NB: maxtries collides
-	    if (cmd[0] == 'n')
-		ntries = atoi(tag);
-	    else
-		maxtries = atoi(tag);
-	    break;
+	case H_NTRIES:		ntries = atoi(tag); break;
+	case H_MAXTRIES:	maxtries = atoi(tag); break;
 	case H_NDIALS:		ndials = atoi(tag); break;
 	case H_TOTDIALS:	totdials = atoi(tag); break;
 	case H_MAXDIALS:	maxdials = atoi(tag); break;
@@ -341,11 +326,7 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_DESIREDTL:	desiredtl = tag[0] - '0'; break;
 	case H_USECCOVER:	useccover = tag[0] - '0'; break;
 	case H_USEXVRES:	usexvres = tag[0] - '0'; break;
-	case H_TTS:
-	    tts = atoi(tag);
-	    if (tts == 0)	// distinguish ``now'' from unset
-		tts = Sys::now();
-	    break;
+	case H_TTS:		tts = atoi(tag); break;
 	case H_KILLTIME:	killtime = atoi(tag); break;
 	case H_RETRYTIME:	retrytime = atoi(tag); break;
 	case H_NOTIFY:		checkNotifyValue(tag); break;
@@ -354,6 +335,9 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_NSF:		nsf = tag; break;
 	case H_STATUSCODE:	statuscode = atoi(tag); break;
 	case H_DONEOP:		doneop = tag; break;
+	case H_RETURNED:	status = (FaxSendStatus) atoi(tag); break;
+	case H_MINBR:		minbr = atoi(tag); break;
+
 	case H_STATUS:
 	    /*
 	     * Check for multi-line status strings.
@@ -370,12 +354,8 @@ FaxRequest::readQFile(bool& rejectJob)
 	    statusstring = tag;
 	    break;
 
-	case H_RETURNED:	status = (FaxSendStatus) atoi(tag); break;
-	case H_POLL:		// H_MINBR collides
-	    if (cmd[0] == 'm')
-		minbr = atoi(tag);
-	    else
-		addItem(send_poll, tag); break;
+
+	case H_POLL:		addItem(send_poll, tag); break;
 	case H_FAX:		addItem(send_fax, tag); break;
 	case H_PDF:
 	    if (cmd[0] == '!')
@@ -390,17 +370,10 @@ FaxRequest::readQFile(bool& rejectJob)
 		addItem(send_tiff, tag, rejectJob);
 	    break;
 	case H_POSTSCRIPT:
-	    // collides with H_PDF
 	    if (cmd[0] == '!')
-		if (cmd[2] == 'o')
-		    addItem(send_postscript_saved, tag);
-		else
-		    addItem(send_pdf_saved, tag);
+		addItem(send_postscript_saved, tag);
 	    else
-		if (cmd[1] == 'o')
-		    addItem(send_postscript, tag, rejectJob);
-		else
-		    addItem(send_pdf, tag, rejectJob);
+		addItem(send_postscript, tag, rejectJob);
 	    break;
 	case H_PCL:
 	    if (cmd[0] == '!')
@@ -420,10 +393,14 @@ FaxRequest::readQFile(bool& rejectJob)
 	    else
 		addItem(send_page, tag);
 	    break;
+	default:
+	    error("Unknown field %s[%u]: %s", cmd, hash, tag);
 	}
     } while (bp < ep);
     if (pri == (u_short) -1)
 	pri = usrpri;
+    if (tts == 0)	// distinguish ``now'' from unset
+	tts = Sys::now();
     /*
      * Validate certain items that are assumed to have
      * ``suitable values'' by higher-level code (i.e.
