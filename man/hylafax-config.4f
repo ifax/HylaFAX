@@ -258,6 +258,7 @@ ModemNoFlowCmd	string	\-	command for disabling hardware flow control between \s-
 ModemOnHookCmd	string	\s-1ATH0\s+1	command for placing phone ``on hook''
 ModemPageDoneTimeout	integer	\s-1180000\s+1	page send/receive timeout (ms)
 ModemPageStartTimeout	integer	\s-1180000\s+1	page send/receive timeout (ms)
+ModemRaiseATCommands	boolean	\s-1Yes\s+1	raise AT commands in configuration to upper-case
 ModemRate	integer	\s-119200\s+1	baud rate to use for \s-1DCE-DTE\s+1 communication
 ModemReadyCmds	string	\-	additional final commands when resetting modem
 ModemRecvFillOrder	string	\s-1\fIsee below\fP\s+1	bit order for received facsimile data
@@ -2179,6 +2180,14 @@ response from the modem when sending a page of facsimile data
 (e.g. the time to wait for a response to a Class 2/2.0
 .SM AT+FDR
 command).
+.TP
+.B ModemRaiseATCommands
+Indicates whether or not all configuration AT commands for the modem should
+be raised to upper-case automatically.  The standard is for all upper-case
+to be used in AT commands, and indeed, some rare modems have been known
+to malfunction with lower-case commands.  However, sometimes an administrator
+may want to use lower-case commands in a rare condition such as to work
+around modem blacklisting of dialed numbers.
 .TP
 .B ModemRate
 The baud rate to use for DCE-DTE communication.

@@ -241,6 +241,7 @@ public:
     fxStr	tagLineFontFile;	// font file for imaging tag lines
     u_int	recvDataFormat;		// received facsimile data format
     bool	useJobTagLine;		// Use Job tagline or use conf taglineformat
+    bool	raiseATCmd;		// whether or not to raise-case the AT commands
     bool	doPhaseCDebug;		// Query modem during Phase C for debugging info.
 
     RTNHandling rtnHandling;            // RTN signal handling method
