@@ -1883,6 +1883,7 @@ Class1Modem::recvEnd(Status& eresult)
 	 */
 	HDLCFrame frame(conf.class1FrameOverhead);
 	do {
+	    gotRTNC = false;
 	    if (recvFrame(frame, FCF_RCVR, conf.t2Timer)) {
 		traceFCF("RECV recv", frame.getFCF());
 		switch (frame.getFCF()) {
@@ -1902,6 +1903,9 @@ Class1Modem::recvEnd(Status& eresult)
 		    recvdDCN = true;
 		    break;
 		}
+	    } else if (gotRTNC) {
+		(void) transmitFrame(FCF_MCF|FCF_RCVR);
+		traceFCF("RECV send", FCF_MCF);
 	    } else if (!wasTimeout() && lastResponse != AT_FCERROR && lastResponse != AT_FRH3) {
 		/*
 		 * Beware of unexpected responses from the modem.  If
