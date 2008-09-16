@@ -738,7 +738,7 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
     else if (findTag(tag, (const tags*)numbers, N(numbers), ix))
 	(*this).*numbers[ix].p = atoi(value);
     else if (findTag(tag, (const tags*)booleans, N(booleans), ix))
-	(*this).*booleans[ix].p = atoi(value);
+	(*this).*booleans[ix].p = getBoolean(value);
 
     else if (streq(tag, "modemsetvolumecmd"))
 	setVolumeCmds(value);
