@@ -612,7 +612,7 @@ faxMailApp::formatMessage(FILE* fd, MIMEState& mime, MsgFmt& msg)
 void
 faxMailApp::formatApplication(FILE* fd, MIMEState& mime)
 {
-    if (mime.getSubType() == "postscript") {	// copy PS straight thru
+    if (mime.getSubType() == "x-faxmail-inline-postscript") {	// copy PS straight thru
 	if (withinFile) endFile();
 	withinFile = false;
 	FILE* fout = getOutputFile();
