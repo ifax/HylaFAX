@@ -35,10 +35,10 @@ hylafax-server/messages.pot: $(wildcard ${patsubst %, ${DEPTH}/%/messages.po, ${
 # legacy comiples like SCO, so be carefull!
 # Here again (like MANCVT) we can't use $<, because we're not an "inferred" rule
 # So techincally, this rule's depencies aren't *quite* complete, but on well
-${CATALOG}/${LANGUAGE}.po: ${CATALOG}/messages.pot
+${CATALOG}/${LANGUAGE}.po: ${CATALOG}/messages.pot version.po ${LANGUAGE}.po
 	test -d ${CATALOG} || mkdir ${CATALOG}
-	touch $@.tmp
-	${MSGMERGE} $@.tmp $? -o $@ --compendium=${SRCDIR}/${LANGUAGE}.po
+	cat version.po ${CATALOG}/messages.pot > $@.tmp
+	${MSGMERGE} ${SRCDIR}/${LANGUAGE}.po $@.tmp  -o $@
 	rm -f $@.tmp
 
 ${CATALOG}/${LANGUAGE}.mo: ${CATALOG}/${LANGUAGE}.po
