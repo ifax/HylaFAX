@@ -17,21 +17,18 @@ hylafax.pot: version.po libhylafax/messages.pot hylafax-client/messages.pot hyla
 # That's why we use the $(...${...})
 libhylafax/messages.pot: $(wildcard ${patsubst %, ${DEPTH}/%/messages.po, libhylafax})
 	test -d libhylafax || mkdir libhylafax
-	cat version.po > $@.tmp
-	${MSGCAT} $^ >> $@.tmp
+	${MSGCAT} $^ > $@.tmp
 	mv $@.tmp $@
 
 hylafax-client/messages.pot: $(wildcard ${patsubst %, ${DEPTH}/%/messages.po, ${CLIENTS}})
 	test -d hylafax-client || mkdir hylafax-client
-	cat version.po > $@.tmp
-	${MSGCAT} $^ >> $@.tmp
+	${MSGCAT} $^ > $@.tmp
 	mv $@.tmp $@
 
 
 hylafax-server/messages.pot: $(wildcard ${patsubst %, ${DEPTH}/%/messages.po, ${SERVERS}})
 	test -d hylafax-server || mkdir hylafax-server
-	cat version.po > $@.tmp
-	${MSGCAT} $^ >> $@.tmp
+	${MSGCAT} $^ > $@.tmp
 	mv $@.tmp $@
 
 # We can't use any normal Make pattern rules while we're stuck supporting
