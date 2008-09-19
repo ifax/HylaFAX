@@ -367,6 +367,6 @@ LOCALEDIR       = @LOCALEDIR@
 LANGUAGES       = nl es vi
 
 XGETTEXT	= xgettext --foreign-user -ctranslator --no-wrap --sort-by-file --omit-header --strict --indent --force-po
-MSGMERGE	= msgmerge --no-wrap --sort-by-file --no-wrap
+MSGMERGE	= msgmerge --no-wrap --sort-by-file
 MSGFMT		= msgfmt
 MSGCAT		= msgcat
