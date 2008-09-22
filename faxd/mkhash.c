@@ -104,6 +104,7 @@ main()
     hash("state");
     hash("npages");
     hash("totpages");
+    hash("skippages");
     hash("ntries");
     hash("ndials");
     hash("totdials");
@@ -150,5 +151,6 @@ main()
     hash("returned");
     hash("doneop");
     hash("commid");
+    hash("pagerange");
     return (0);
 }

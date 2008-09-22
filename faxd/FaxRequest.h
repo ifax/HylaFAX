@@ -112,6 +112,7 @@ public:
     u_short	lineno;		// line number when reading queue file
     FaxSendStatus status;	// request status indicator
     u_short	totpages;	// total cummulative pages in documents
+    u_short	skippages;	// skipped pages in documents
     u_short	npages;		// total pages sent/received
     u_short	ntries;		// # tries to send current page
     u_short	ndials;		// # consecutive failed tries to call dest
@@ -167,6 +168,7 @@ public:
     fxStr	doneop;		// operation to do when job completes
     fxStr	csi;		// CSI string from receiving equipment (ASCII representation)
     fxStr	nsf;		// NSF string from receiving equipment (ASCII representation)
+    fxStr	pagerange;	// Range of pages to send (if set)
     pid_t	writeQFilePid;	// pid of last writeQFile operation
     FaxItemArray items;	// set of requests
 

@@ -114,6 +114,7 @@ private:
     u_int	desireddf;		// data format to use
     FaxPageChop	pagechop;		// page chop handling
     float	chopthreshold;		// white space threshold for chopping
+    fxStr	pageRange;		// Page range to send
 
     static SFJ_stringtag strings[];
     static SFJ_numbertag numbers[];
@@ -268,6 +269,8 @@ public:
     u_int getChopHandling() const;
     void setChopThreshold(float);	// threshold (inches) for page chopping
     float getChopThreshold() const;
+
+    void setPageRange (const char*);	// page range
 };
 
 fxDECLARE_ObjArray(SendFaxJobArray, SendFaxJob)

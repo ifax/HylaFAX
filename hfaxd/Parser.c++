@@ -159,6 +159,7 @@ static const tab parmtab[] = {
 { "OWNER",        T_OWNER,	  false, true, "[<name>|<number>]" },
 { "PAGECHOP",     T_PAGECHOP,	  false, true, "[DEFAULT|NONE|ALL|LAST]" },
 { "PAGELENGTH",   T_PAGELENGTH,	  false, true, "[millimeters]" },
+{ "PAGERANGE",    T_PAGERANGE,	  false, true, "[<page range>]" },
 { "PAGEWIDTH",    T_PAGEWIDTH,	  false, true, "[millimeters]" },
 { "PASSWD",       T_PASSWD,	  false, true, "[<string>]" },
 { "POLL",         T_POLL,	  false, true, "selector [passwd]" },
@@ -1175,6 +1176,7 @@ HylaFAXServer::param_cmd(Token t)
     case T_COMMENTS:
     case T_FAXNUMBER:
     case T_TSI:
+    case T_PAGERANGE:
 	if (opt_CRLF()) {
 	    replyJobParamValue(*curJob, 213, t);
 	    return (true);

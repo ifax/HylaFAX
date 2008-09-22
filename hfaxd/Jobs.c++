@@ -140,6 +140,7 @@ static const struct {
     { T_NTRIES,		A_RUSR|A_RADM|A_ROTH },
     { T_PAGECHOP,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_PAGELENGTH,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
+    { T_PAGERANGE,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_PAGEWIDTH,	A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
     { T_PASSWD,		A_RUSR|A_WUSR|A_RADM|A_WADM },
     { T_POLL,		A_RUSR|A_WUSR|A_RADM|A_WADM|A_ROTH },
@@ -234,6 +235,7 @@ static struct {
     { T_COMMID,		&Job::commid },
     { T_REGARDING,	&Job::regarding },
     { T_COMMENTS,	&Job::comments },
+    { T_PAGERANGE,	&Job::pagerange },
 };
 static struct {
     Token	t;

@@ -70,6 +70,7 @@ SendFaxJob::SendFaxJob(const SendFaxJob& other)
     , sendTime(other.sendTime)
     , tagline(other.tagline)
     , pageSize(other.pageSize)
+    , pageRange(other.pageRange)
 {
     notify = other.notify;
     autoCover = other.autoCover;
@@ -91,6 +92,7 @@ SendFaxJob::SendFaxJob(const SendFaxJob& other)
     desireddf = other.desireddf;
     pagechop = other.pagechop;
     chopthreshold = other.chopthreshold;
+    pageRange = other.pageRange;
 }
 SendFaxJob::~SendFaxJob()
 {
@@ -121,6 +123,7 @@ SendFaxJob::SFJ_stringtag SendFaxJob::strings[] = {
 { "cover-from-fax",	&SendFaxJob::fromfax,		NULL },
 { "cover-from-voice",	&SendFaxJob::fromvoice,		NULL },
 { "cover-from-company",	&SendFaxJob::fromcompany,	NULL },
+{ "pagerange",		&SendFaxJob::pageRange,		NULL },
 };
 SendFaxJob::SFJ_numbertag SendFaxJob::numbers[] = {
 { "maxtries",		&SendFaxJob::maxRetries,	FAX_RETRIES },
@@ -426,6 +429,7 @@ SendFaxJob::setChopHandling(const char* v)
 }
 void SendFaxJob::setChopHandling(u_int v)		{ pagechop = v; }
 void SendFaxJob::setChopThreshold(float v)		{ chopthreshold = v; }
+void SendFaxJob::setPageRange (const char* v)		{ pageRange = v; }
 
 extern int
 parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg);
@@ -529,6 +533,7 @@ SendFaxJob::createJob(SendFaxClient& client, fxStr& emsg)
 	pagechop == chop_all	? "all" :
 				  "last")
     IFPARM("CHOPTHRESHOLD", chopthreshold, -1)
+    IFPARM("PAGERANGE", pageRange, "")
     if (coverFile != "") {
 	int fd = Sys::open(coverFile, O_RDONLY);
 	if (fd < 0) {

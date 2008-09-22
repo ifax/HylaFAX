@@ -58,7 +58,7 @@ FaxRequest::reset(void)
     pri = (u_short) -1;
     usrpri = FAX_DEFPRIORITY;
     pagewidth = pagelength = resolution = 0;
-    npages = totpages = 0;
+    npages = totpages = skippages = 0;
     ntries = ndials = 0;
     minbr = BR_2400;
     desiredbr = BR_33600;
@@ -120,11 +120,13 @@ FaxRequest::stringval FaxRequest::strvals[] = {
     { "commid",		&FaxRequest::commid },
     { "csi",		&FaxRequest::csi },
     { "nsf",		&FaxRequest::nsf },
+    { "pagerange",	&FaxRequest::pagerange },
 };
 FaxRequest::shortval FaxRequest::shortvals[] = {
     { "state",		&FaxRequest::state },
     { "npages",		&FaxRequest::npages },
     { "totpages",	&FaxRequest::totpages },
+    { "skippages",	&FaxRequest::skippages },
     { "ntries",		&FaxRequest::ntries },
     { "ndials",		&FaxRequest::ndials },
     { "totdials",	&FaxRequest::totdials },
@@ -319,6 +321,7 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_PAGELENGTH:	pagelength = atoi(tag); break;
 	case H_PRIORITY:	usrpri = atoi(tag); break;
 	case H_SCHEDPRI:	pri = atoi(tag); break;
+	case H_SKIPPAGES:	skippages = atoi(tag); break;
 	case H_DESIREDBR:	desiredbr = atoi(tag); break;
 	case H_DESIREDST:	desiredst = tag[0] - '0'; break;
 	case H_DESIREDEC:	desiredec = tag[0] - '0'; break;
@@ -332,6 +335,7 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_NOTIFY:		checkNotifyValue(tag); break;
 	case H_PAGECHOP:	checkChopValue(tag); break;
 	case H_CHOPTHRESHOLD:	chopthreshold = atof(tag); break;
+	case H_PAGERANGE:	pagerange = tag; break;
 	case H_NSF:		nsf = tag; break;
 	case H_STATUSCODE:	statuscode = atoi(tag); break;
 	case H_DONEOP:		doneop = tag; break;
