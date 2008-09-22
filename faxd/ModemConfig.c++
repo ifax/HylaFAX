@@ -222,8 +222,37 @@ static struct {
     bool ModemConfig::* p;
     bool		 def;
 } booleans[] = {
-{ "usejobtagline",		&ModemConfig::useJobTagLine,         true },
-{ "countskippedpages",		&ModemConfig::countSkippedPages,     true },
+{ "usejobtagline",		&ModemConfig::useJobTagLine,		true },
+{ "countskippedpages",		&ModemConfig::countSkippedPages,	true },
+{ "noanswervoice",		&ModemConfig::noAnswerVoice,		false	},
+{ "saverawimage",		&ModemConfig::saverawimage,		false	},
+{ "saveunconfirmedpages",	&ModemConfig::saveUnconfirmedPages,	true	},
+{ "modemwaitforconnect",	&ModemConfig::waitForConnect,		false	},
+{ "modemsoftrtfcc",		&ModemConfig::softRTFCC,		true	},
+{ "modemdophasecdebug",		&ModemConfig::doPhaseCDebug,		false	},
+{ "modemraiseatcommands",	&ModemConfig::raiseATCmd,		true	},
+
+{ "class1persistentecm",	&ModemConfig::class1PersistentECM,	true	},
+{ "class1validatev21frames",	&ModemConfig::class1ValidateV21Frames,	false	},
+{ "class1modemhasdlebug",	&ModemConfig::class1ModemHasDLEBug,	false	},
+{ "class1hasrhconnectbug",	&ModemConfig::class1HasRHConnectBug,	false	},
+{ "class1ecmsupport",		&ModemConfig::class1ECMSupport,		true	},
+{ "class1mrsupport",		&ModemConfig::class1MRSupport,		true	},
+{ "class1mmrsupport",		&ModemConfig::class1MMRSupport,		true	},
+#ifdef PHOTOMETRIC_ITULAB
+{ "class1greyjpegsupport",	&ModemConfig::class1GreyJPEGSupport,	false	},
+{ "class1colorjpegsupport",	&ModemConfig::class1ColorJPEGSupport,	false	},
+#endif
+
+{ "class2xmitwaitforxon",	&ModemConfig::class2XmitWaitForXON,	true	},
+{ "class2sendrtc",		&ModemConfig::class2SendRTC,		false	},
+{ "class2usehex",		&ModemConfig::class2UseHex,		false	},
+{ "class2hexnsf",		&ModemConfig::class2HexNSF,		true	},
+{ "class2uselinecount",		&ModemConfig::class2UseLineCount,	false	},
+{ "class2rtfcc",		&ModemConfig::class2RTFCC,		false	},
+#ifdef PHOTOMETRIC_ITULAB
+{ "class2jpegsupport",		&ModemConfig::class2JPEGSupport,	false	},
+#endif
 };
 
 void
@@ -252,21 +281,7 @@ ModemConfig::setupConfig()
     flowControl         = ClassModem::FLOW_XONXOFF;// software flow control
     maxRate		= ClassModem::BR19200;	// reasonable for most modems
     minSpeed		= BR_2400;		// minimum transmit speed
-    waitForConnect	= false;		// unique modem answer response
-    raiseATCmd		= true;			// raise all AT commands to upper case by default
     class2ECMType	= ClassModem::ECMTYPE_UNSET;// follow the service type default
-    class2XmitWaitForXON = true;		// default per Class 2 spec
-    class2SendRTC	= false;		// default per Class 2 spec
-    class2RTFCC		= false;		// real-time fax comp. conv.
-    class2UseHex	= false;		// historical behavior
-    class2HexNSF	= true;			// most modems report NSF in hexadecimal
-    class2UseLineCount	= false;		// don't trust firmware decoders
-    class2JPEGSupport	= false;		// disable JPEG by default
-    class1ECMSupport	= true;			// support for ECM
-    class1MRSupport	= true;			// support for 2-D MR
-    class1MMRSupport	= true;			// support for 2-D MMR
-    class1GreyJPEGSupport = false;		// support for greyscale JPEG
-    class1ColorJPEGSupport = false;		// support for full color JPEG
 #ifdef HAVE_JBIG
 #ifdef HAVE_JBIGTIFF
     class1JBIGSupport	= FaxModem::JBIG_FULL;	// full support for monochrome JBIG
@@ -280,20 +295,12 @@ ModemConfig::setupConfig()
     class1JBIGSupport	= FaxModem::JBIG_NONE;	// no support for monochrome JBIG
 #endif
 #endif
+
     class1Resolutions	= VR_ALL;		// resolutions support
-    class1PersistentECM	= true;			// continue to correct
-    class1ValidateV21Frames = false;		// assume the modem does this
-    class1ModemHasDLEBug = false;		// otherwise we'd have trouble
-    class1HasRHConnectBug = false;		// ideally we can trust the modem
     setVolumeCmds("ATM0 ATL0M1 ATL1M1 ATL2M1 ATL3M1");
     recvDataFormat	= DF_ALL;		// default to no transcoding
     rtnHandling         = FaxModem::RTN_RETRANSMITIGNORE; // retransmit until MCF/MPS
     badPageHandling	= FaxModem::BADPAGE_RTNSAVE; // send RTN but save the page
-    saveUnconfirmedPages = true;		// keep unconfirmed pages
-    softRTFCC		= true;			// real-time fax comp. conv. (software)
-    doPhaseCDebug	= false;		// query modem for responses in Phase C transmit
-    noAnswerVoice	= false;		// answer voice calls
-    saverawimage	= false;		// don't save raw image data by default
 
     idConfig.resize(0);
     callidIndex		= (u_int) -1;
@@ -748,42 +755,12 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	flowControl = getFlow(value);
     else if (streq(tag, "modemrate"))
 	maxRate = getRate(value);
-    else if (streq(tag, "modemwaitforconnect"))
-	waitForConnect = getBoolean(value);
-    else if (streq(tag, "class2xmitwaitforxon"))
-	class2XmitWaitForXON = getBoolean(value);
-    else if (streq(tag, "class2sendrtc"))
-	class2SendRTC = getBoolean(value);
-    else if (streq(tag, "class1ecmsupport"))
-	class1ECMSupport = getBoolean(value);
-    else if (streq(tag, "class1mrsupport"))
-	class1MRSupport = getBoolean(value);
-    else if (streq(tag, "class1mmrsupport"))
-	class1MMRSupport = getBoolean(value);
-#ifdef PHOTOMETRIC_ITULAB
-    else if (streq(tag, "class1greyjpegsupport"))
-	class1GreyJPEGSupport = getBoolean(value);
-    else if (streq(tag, "class1colorjpegsupport"))
-	class1ColorJPEGSupport = getBoolean(value);
-    else if (streq(tag, "class2jpegsupport"))
-	class2JPEGSupport = getBoolean(value);
-#endif
     else if (streq(tag, "class1jbigsupport"))
         class1JBIGSupport = getJBIGSupport(value);
-    else if (streq(tag, "class1persistentecm"))
-	class1PersistentECM = getBoolean(value);
-    else if (streq(tag, "class1extendedres"))
-	class1Resolutions = getBoolean(value) ? VR_ALL : (VR_NORMAL | VR_FINE);
     else if (streq(tag, "class1resolutions"))
 	class1Resolutions = getNumber(value);
     else if (streq(tag, "class1tcfrecvhack") && getBoolean(value))
 	class1TCFRecvHackCmd = "AT+FRS=1";	// backwards compatibility
-    else if (streq(tag, "class1validatev21frames"))
-	class1ValidateV21Frames = getBoolean(value);
-    else if (streq(tag, "class1modemhasdlebug"))
-	class1ModemHasDLEBug = getBoolean(value);
-    else if (streq(tag, "class1hasrhconnectbug"))
-	class1HasRHConnectBug = getBoolean(value);
     else if (streq(tag, "modemminspeed"))
 	minSpeed = getSpeed(value);
     else if (streq(tag, "recvdataformat"))
@@ -794,26 +771,6 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
         badPageHandling = getBadPageHandling(value);
     else if (streq(tag, "class2ecmtype"))
 	class2ECMType = getECMType(value);
-    else if (streq(tag, "class2usehex"))
-	class2UseHex = getBoolean(value);
-    else if (streq(tag, "class2hexnsf"))
-	class2HexNSF = getBoolean(value);
-    else if (streq(tag, "class2uselinecount"))
-	class2UseLineCount = getBoolean(value);
-    else if (streq(tag, "class2rtfcc"))
-	class2RTFCC = getBoolean(value);
-    else if (streq(tag, "noanswervoice"))
-	noAnswerVoice = getBoolean(value);
-    else if (streq(tag, "saverawimage"))
-	saverawimage = getBoolean(value);
-    else if (streq(tag, "modemsoftrtfcc"))
-	softRTFCC = getBoolean(value);
-    else if (streq(tag, "modemdophasecdebug"))
-	doPhaseCDebug = getBoolean(value);
-    else if (streq(tag, "saveunconfirmedpages"))
-	saveUnconfirmedPages = getBoolean(value);
-    else if (streq(tag, "modemraiseatcommands"))
-	raiseATCmd = getBoolean(value);
     else if (streq(tag, "distinctiverings"))
     	parseDR(value);
     else if (streq(tag, "callidpattern") || streq(tag, "callidanswerlength") ) {
