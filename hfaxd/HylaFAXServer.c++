@@ -651,6 +651,7 @@ HylaFAXServer::numbertag HylaFAXServer::numbers[] = {
 };
 HylaFAXServer::booltag HylaFAXServer::booleans[] = {
 { "allowsorting",	&HylaFAXServer::allowSorting,		true },
+{ "publicjobq",		&HylaFAXServer::publicJobQ,		false },
 };
 
 void

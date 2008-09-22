@@ -1076,7 +1076,11 @@ HylaFAXServer::findJobOnDisk(const char* jid, fxStr& emsg)
 	bool reject;
 	if (req->readQFile(reject) && !reject) {
 	    Sys::close(req->fd), req->fd = -1;
-	    if (checkAccess(*req, T_JOB, A_READ) )
+	    if (publicJobQ)
+		return (req);
+	    if (req->owner == the_user)
+		return (req);
+	    if (checkFileRights(A_READ, sb) )
 		return (req);
 	    emsg = "Permission denied";
 	    delete req;
@@ -1655,12 +1659,12 @@ HylaFAXServer::addPollOp(Job& job, const char* sep, const char* pwd)
  */
 
 bool
-HylaFAXServer::isVisibleSendQFile(const char* filename, const struct stat&)
+HylaFAXServer::isVisibleSendQFile(const char* filename, const struct stat& sb)
 {
     if (filename[0] == 'q') {
     	fxStr emsg;
     	Job* job = findJob(&filename[1], emsg);
-	if (job && checkAccess(*job, T_JOB, A_READ))
+	if (job && checkFileRights(R_OK, sb) )
 	    return true;
     }
     return false;
