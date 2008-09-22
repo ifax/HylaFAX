@@ -608,6 +608,10 @@ HylaFAXServer::resetConfig()
 
 #define	N(a)	(sizeof (a) / sizeof (a[0]))
 
+/*
+ * logFacility *must* be tie first entry - see it's handling
+ * below in setConfigItem()
+ */
 HylaFAXServer::stringtag HylaFAXServer::strings[] = {
 { "logfacility",	&HylaFAXServer::logFacility,	LOG_FAX },
 { "faxcontact",		&HylaFAXServer::faxContact,	"FaxMaster" },
@@ -630,7 +634,12 @@ HylaFAXServer::stringtag HylaFAXServer::strings[] = {
   "UNIX Type: L8 Version: SVR4" },
 { "admingroup",		&HylaFAXServer::admingroup },
 };
+
+/*
+ * jobprotection needs to be first as well, see setConfigItem() below
+ */
 HylaFAXServer::numbertag HylaFAXServer::numbers[] = {
+{ "jobprotection",	&HylaFAXServer::jobProtection,		0644 },
 { "servertracing",	&HylaFAXServer::tracingLevel,		TRACE_SERVER },
 { "idletimeout",	&HylaFAXServer::idleTimeout,		900 },
 { "maxidletimeout",	&HylaFAXServer::maxIdleTimeout,		7200 },
@@ -639,7 +648,6 @@ HylaFAXServer::numbertag HylaFAXServer::numbers[] = {
 { "maxloginattempts",	&HylaFAXServer::maxLoginAttempts,	5 },
 { "maxadminattempts",	&HylaFAXServer::maxAdminAttempts,	5 },
 { "maxconsecutivebadcmds",&HylaFAXServer::maxConsecutiveBadCmds,10 },
-{ "jobprotection",	&HylaFAXServer::jobProtection,		0444 },
 };
 HylaFAXServer::booltag HylaFAXServer::booleans[] = {
 { "allowsorting",	&HylaFAXServer::allowSorting,		true },
@@ -691,6 +699,13 @@ HylaFAXServer::setConfigItem(const char* tag, const char* value)
 	}
     } else if (findTag(tag, (const tags*) numbers, N(numbers), ix)) {
 	(*this).*numbers[ix].p = getNumber(value);
+	switch (ix) {
+	case 0: if ( (jobProtection & 0600) != 0600)
+	    {
+		logError("JobProtection value must include 0600, forcing");
+		jobProtection |= 0600;
+	    }
+	}
     } else if (findTag(tag, (const tags*) booleans, N(booleans), ix)) {
 	(*this).*booleans[ix].p = getBoolean(value);
     } else

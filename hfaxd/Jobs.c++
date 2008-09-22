@@ -923,7 +923,7 @@ HylaFAXServer::newJobCmd(void)
     if (newJob(emsg) && updateJobOnDisk(*curJob, emsg)) {
 	fxStr file("/" | curJob->qfile);
 	setFileOwner(file);			// force ownership
-	FileCache::chmod(file, 0660);		// sync cache
+	FileCache::chmod(file, jobProtection);	// sync cache
 	curJob->lastmod = Sys::now();		// noone else should update
 	reply(200, "New job created: jobid: %s groupid: %s.",
 	    (const char*) curJob->jobid, (const char*) curJob->groupid);
@@ -1015,7 +1015,7 @@ HylaFAXServer::updateJobOnDisk(Job& job, fxStr& emsg)
 {
     if (job.fd < 0)
     {
-	job.fd = Sys::open("/" | job.qfile, O_RDWR|O_CREAT, 0600);
+	job.fd = Sys::open("/" | job.qfile, O_RDWR|O_CREAT, jobProtection);
 	if (job.fd < 0)
 	{
 	    emsg = "Cannot open/create job description file /" | job.qfile;

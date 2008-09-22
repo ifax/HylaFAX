@@ -391,7 +391,7 @@ FileSortFmt	string	\s-1-\s+1	format string for sorting file status listing
 IdleTimeout	integer	\s-1900\s+1	client idle timeout in seconds
 JobFmt	string	\s-1\fIsee below\fP\s+1	format string for job status results
 JobSortFmt	string	\s-1-\s+1	format string for sorting job status listing
-JobProtection	octal	\s-10444\s+1	permissions for client access to jobs
+JobProtection	octal	\s-10444\s+1	permissions for job qfiles in sendq/docq
 KillTimeMap	string	\s-1\fIsee below\fP\s+1	mapping from service level to job kill time (\s-1SNPP\s+1)
 LogFacility	string	\s-1daemon\s+1	\fIsyslog\fP facility name for tracing messages
 MaxAdminAttempts	integer	\s-15\s+1	maximum admin attempts before disconnecting
@@ -562,14 +562,11 @@ The format string to use when sorting the listing for jobs in the
 sendq and doneq directories.  Follows the JobFmt formatting rules.
 .TP 10
 .B JobProtection
-The permissions setting for viewing jobs in the \*(Fx queues.  The
-default setting of ``0444'' allows all users to view all jobs in the send/done
-queues.  The permissions copy unix filesystem permission, with the 3 sets
-being owner, admin, and others, instead of owner/group/other.  The only
-permissions that are meaningful are read, because write permissions are
-controlled for the specific properties of the job.  If a user doesn't have
-read permissions on the job, the job will not be visible to them.  Useful
-settings are ``0444'' (for oao=r), ``0440'' (for oa=r), and ``0400'' (for o=r).
+The file mode setting for job qfiles in the \*(Fx queues (sendq and doneq).
+The default setting of ``0644'' allows all users to view all job paramaters in
+the send/done queues.   The mode determines the permissions of the clients to
+see the jobs, following the \*(Fx permission model of the group bits
+controlling uid permissions and the other bits controlling other permissions.
 .TP 10
 .B KillTimeMap
 The mapping from \s-1SNPP\s+1 service level (0-11) to job expiration time
