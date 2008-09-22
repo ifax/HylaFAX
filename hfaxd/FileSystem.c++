@@ -242,6 +242,30 @@ HylaFAXServer::dirLookup(ino_t ino)
 }
 
 /*
+ * Check file protection mode; we use the
+ * normal ``other'' bits for public access
+ * and the group bits for the ``fax uid''.
+ */
+bool
+HylaFAXServer::checkFileRights(int op, const struct stat& sb)
+{
+logDebug("checkFileRights:%s %o [%u:%u] %o",
+		IS(PRIVILEGED) ? " *ADMIN*" : "",
+		op, uid, sb.st_gid, sb.st_mode);
+
+    if (IS(PRIVILEGED))
+	return (true);
+
+    if (sb.st_mode & op)		// public access
+	return (true);
+
+    if ((sb.st_gid==uid) && ((sb.st_mode>>3)&op))	// owner access
+	return (true);
+    return false;
+
+}
+
+/*
  * Check if the client is permitted to do the
  * request operation on the specified file.
  * Operations are: X_OK (list/stat), R_OK (look
@@ -311,14 +335,7 @@ HylaFAXServer::fileAccess(const char* path, int op, struct stat& sb)
 		perror_reply(550, path, EPERM);		// cannot stor in dir.
 		return (NULL);
 	    }
-	    /*
-	     * Check file protection mode; we use the
-	     * normal ``other'' bits for public access
-	     * and the group bits for the ``fax uid''.
-	     */
-	    if ((sb.st_mode&op) == 0 &&			// !pubicly accessible
-	      (sb.st_gid != (gid_t) uid ||		// !owner
-	       ((sb.st_mode>>3)&op) == 0)) {		// !owner acessible
+	    if (!checkFileRights(op, sb)) {
 		perror_reply(550, path, EPERM);
 		return (NULL);
 	    }

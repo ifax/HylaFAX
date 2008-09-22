@@ -412,6 +412,8 @@ protected:
 
     static SpoolDir dirs[];
 
+    bool checkFileRights(int op, const struct stat&);
+
     void dirSetup(void);
     static SpoolDir* dirLookup(const char* path);
     static SpoolDir* dirLookup(ino_t ino);
