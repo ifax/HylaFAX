@@ -210,9 +210,9 @@ HylaFAXServer::getRecvDocStatus(RecvInfo& ri)
 }
 
 bool
-HylaFAXServer::isVisibleRecvQFile(const char* filename, const struct stat&)
+HylaFAXServer::isVisibleRecvQFile(const char* filename, const struct stat& sb)
 {
-    return (strncmp(filename, "fax", 3) == 0);
+    return (strncmp(filename, "fax", 3) == 0) && (publicRecvQ || checkFileRights(R_OK, sb) );
 }
 
 RecvInfo*
@@ -253,11 +253,14 @@ HylaFAXServer::listRecvQ(FILE* fd, const SpoolDir& sd, DIR* dir)
     struct dirent* dp;
     while ((dp = readdir(dir))) {
 	struct stat sb;
-	if (!isVisibleRecvQFile(dp->d_name, sb))
-	    continue;
 	fxStr qfile(path | dp->d_name);
 	RecvInfo* rip;
-	if (FileCache::update(qfile, sb) && (rip = getRecvInfo(qfile, sb))) {
+	if (!FileCache::update(qfile, sb))
+	    continue;
+	if (!isVisibleRecvQFile(dp->d_name, sb))
+	    continue;
+	rip = getRecvInfo(qfile, sb);
+	if (rip) {
 	    if (recvSortFormat.length() == 0) {
 		Rprintf(fd, recvFormat, *rip, sb);
 		fputs("\r\n", fd);

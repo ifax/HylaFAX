@@ -234,6 +234,7 @@ protected:
     time_t	denyTime;		// time to deny service
     u_int	jobProtection;		// Protection to use on Jobs
     bool	publicJobQ;		// Public/protection on recvq?
+    bool	publicRecvQ;		// Public/protection on recvq?
     bool	allowSorting;		// Allow client to make us sort
     /*
      * User authentication and login-related state.
