@@ -403,6 +403,8 @@ ModemFmt	string	\s-1\fIsee below\fP\s+1	format string for modem status results
 ModemSortFmt	string	\s-1-\s+1	format string for sorting modem status listing
 PagerIDMapFile	string	\s-1${SPOOL}/etc/pagermap\s+1	name of file for mapping pager IDs (\s-1SNPP\s+1)
 PriorityMap	string	\s-1\fIsee below\fP\s+1	mapping from service level to job priority (\s-1SNPP\s+1)
+PublicJobQ	boolean	\s-1true\s+1	Allow public listing access to the sendq/doneq
+PublicRecvQ	boolean	\s-1true\s+1	Allow public listing access to the recvq
 RcvFmt	string	\s-1\fIsee below\fP\s+1	format string for received facsimile status results
 RcvSortFmt	string	\s-1-\s+1	format string for sorting received facsimile status results listing
 RetryTimeMap	string	\s-1\fIsee below\fP\s+1	mapping from service level to job retry time (\s-1SNPP\s+1)
@@ -564,7 +566,9 @@ sendq and doneq directories.  Follows the JobFmt formatting rules.
 .B JobProtection
 The file mode setting for job qfiles in the \*(Fx queues (sendq and doneq).
 The default setting of ``0644'' allows all users to view all job paramaters in
-the send/done queues.   The mode determines the permissions of the clients to
+the send/done queues.  If
+.IR PublicJobQ
+is set to false, then this file mode determines the permissions of the clients to
 see the jobs, following the \*(Fx permission model of the group bits
 controlling uid permissions and the other bits controlling other permissions.
 .TP 10
@@ -672,6 +676,29 @@ The default mapping is ``63 127 127 127 127 127 127 127 127 127 127 127''
 which assigns
 a high priority to service level zero and normal (default) priority to
 all other service levels.
+.TP 10
+.B PublicJobQ
+By default, HylaFAX has always made the listings of the sendq/doneq include all
+jobs to any client connected to hfaxd.  By setting this to false, hfaxd will
+also enforce it's normal access restrictions on the listing of jobs in the
+sendq/doneq.  These access restrictions are base on the file mode (see
+.IR JobProtection
+) and the logged in uid (see
+.IR hosts.hfaxd
+)
+.TP 10
+.B PublicRecvQ
+By default, HylaFAX has always made the listings of the recvq include all
+faxes to any client connected to hfaxd.  By setting this to false, hfaxd will
+also enforce it's normal access restrictions on the listing of faxes in the
+recvq.  These access restrictions are base on the file mode
+.IR faxgetty
+(and it's related
+.IR FaxDispatch
+) set for the fax, and the logged in uid (see
+.IR hosts.hfaxd
+)
+.TP 10
 .TP 10
 .B RcvFmt
 The format string to use when returning status information for
