@@ -180,26 +180,31 @@ static const struct {
 bool
 HylaFAXServer::checkAccess(const Job& job, Token t, u_int op)
 {
-    u_int m = 0;
-    if (t == T_JOB) {
-    	m = jobProtection;
-    } else {
-	u_int n = N(params)-1;
-	u_int i = 0;
-	while (i < n && params[i].t != t)
-	    i++;
-	m = params[i].protect;
-    }
+    fxAssert(t != T_JOB, "checkAccess token should *not* be T_JOB");
+
+    u_int n = N(params)-1;
+    u_int i = 0;
+    while (i < n && params[i].t != t)
+	i++;
+    u_int m = params[i].protect;
     if (m&op)					// other/public access
 	return (true);
     if (IS(PRIVILEGED) && ((m>>3)&op))		// administrative access
 	return (true);
     if (job.owner == the_user && ((m>>6)&op))	// owner access
 	return (true);
-#if 0
-    if (checkOwnerUid && ((m>>6)&op)) 			// owner UID access
+
+    /*
+     * If file access writes give
+     * us write access to the job,
+     * we check job.protect as if
+     * we are the owner
+     */
+    struct stat sb;
+    if (FileCache::update(job.qfile, sb)
+		&& checkFileRights(W_OK, sb)
+		&& ((m>>6)&op) )
 	return (true);
-#endif
     return (false);
 }
 
@@ -1315,8 +1320,16 @@ HylaFAXServer::preJobCmd(const char* op, const char* jobid, fxStr& emsg)
 	    reply(504, "Cannot %s default job.", op);
 	    job = NULL;
 	} else if (!IS(PRIVILEGED) && job->owner != the_user) {
-	    reply(504, "Cannot %s job: %s.", op, strerror(EPERM));
-	    job = NULL;
+	    /*
+	     * If filesystem access gives us WRITE access
+	     * then we'll consider ourselves lucky, otherwise...
+	     */
+	    struct stat sb;
+	    if (FileCache::update(job->qfile, sb)
+			&& ! checkFileRights(W_OK, sb)) {
+		reply(504, "Cannot %s job: %s.", op, strerror(EPERM));
+		job = NULL;
+	}
 	}
     } else
 	reply(500, "Cannot %s job %s; %s.", op, jobid, (const char*) emsg);
