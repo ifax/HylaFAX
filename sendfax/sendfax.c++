@@ -93,7 +93,7 @@ sendFaxApp::run(int argc, char** argv)
     int verbose = 0;
     SendFaxJob& proto = getProtoJob();
     db = new FaxDB(tildeExpand(dbName));
-    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:o:P:r:s:S:t:T:U:V:W:x:X:y:Y:z:123lmnpvwADEGNR")) != -1) {
+    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:o:P:r:s:S:t:T:U:V:W:x:X:y:Y:z:Z:123lmnpvwADEGNR")) != -1) {
         if (c != 'h')
             optionsUsed = false;
         switch (c) {
@@ -231,6 +231,9 @@ sendFaxApp::run(int argc, char** argv)
             optionsUsed = true;
             addDestinationsFromFile(optarg);
             break;
+	case 'Z':
+	    proto.setPageRange(optarg);
+	    break;
         case '?':
             usage();
             /*NOTREACHED*/

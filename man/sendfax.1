@@ -676,6 +676,13 @@ and the
 .I hfaxd
 server process that does the submission work on the
 remote machine is also displayed.
+.TP 12
+.BI \-Z " range"
+Specify that only certain pages of the fax should actually
+be transmitted.  The range is in a comma-seperated list of ranges in the
+form of A[-B][,....].  The range is specified agains the resulting document to be
+faxed, so if you have more than one document, and cover pages, make sure to account
+for them in the range specification.
 .SH "CONFIGURATION PARAMETERS"
 .I sendfax
 reads configuration information from the files
