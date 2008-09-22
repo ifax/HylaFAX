@@ -227,6 +227,12 @@ faxAlterApp::run(int argc, char** argv)
 	case 'v':			// trace protocol
 	    setVerbose(true);
 	    break;
+	case 'Z':
+	    script.append(groups ? "JGPARM " : "JPARM ");
+	    script.append("PAGERANGE \"");
+	    script.append(optarg);
+	    script.append("\"\n");
+	    break;
 	case '?':
 	    usage();
 	}
