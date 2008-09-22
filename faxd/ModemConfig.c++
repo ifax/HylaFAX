@@ -223,6 +223,7 @@ static struct {
     bool		 def;
 } booleans[] = {
 { "usejobtagline",		&ModemConfig::useJobTagLine,         true },
+{ "countskippedpages",		&ModemConfig::countSkippedPages,     true },
 };
 
 void

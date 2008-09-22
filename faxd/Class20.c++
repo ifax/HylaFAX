@@ -187,6 +187,12 @@ Class20Modem::pageDone(u_int ppm, u_int& ppr)
     static char ppmCodes[3] = { 0x2C, 0x3B, 0x2E };
     char eop[2];
 
+    if (ppm == PPH_SKIP)
+    {
+	ppr = PPR_MCF;
+        return true;
+    }
+
     eop[0] = DLE;
     eop[1] = ppmCodes[ppm];
 

@@ -814,6 +814,9 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
     } else
 	pagechop = FaxRequest::chop_none;
     u_int maxPages = job.getJCI().getMaxSendPages();
+    Range range(1,maxPages);
+    if (req.pagerange.length())
+	range.parse(req.pagerange);
     /*
      * Scan the pages and figure out where session parameters
      * will need to be renegotiated.  Construct a string of
@@ -826,6 +829,8 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
     Class2Params next;			// parameters for ``next'' page
     TIFF* tif = NULL;			// current open TIFF image
     req.totpages = req.npages;		// count pages previously transmitted
+    req.skippages = 0;
+    bool firstpage = true;
     for (u_int i = 0;;) {
 	if (!tif || TIFFLastDirectory(tif)) {
 	    /*
@@ -834,12 +839,22 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
 	    if (tif)			// close previous file
 		TIFFClose(tif), tif = NULL;
 	    if (i >= req.items.length()) {
-		req.pagehandling.append('P');		// EOP
+		if (!range.contains(req.totpages)) {	// skip previous page
+		    req.skippages++;
+		    req.pagehandling.append('X');
+		    req.pagehandling.replace('#', 'P');
+		} else
+		    req.pagehandling.append('P');		// EOP
 		return (true);
 	    }
 	    i = req.findItem(FaxRequest::send_fax, i);
 	    if (i == fx_invalidArrayIndex) {
-		req.pagehandling.append('P');		// EOP
+		if (!range.contains(req.totpages)) {	// skip previous page
+		    req.skippages++;
+		    req.pagehandling.append('X');
+		    req.pagehandling.replace('#', 'P');
+		} else
+		    req.pagehandling.append('P');		// EOP
 		return (true);
 	    }
 	    const FaxItem& fitem = req.items[i];
@@ -883,15 +898,28 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
 	}
 	next = params;
 	setupParams(tif, next, info);
-	if (params.df != (u_int) -1) {
+	if (!firstpage) {
 	    /*
 	     * The pagehandling string has:
 	     * 'M' = EOM, for when parameters must be renegotiated
 	     * 'S' = MPS, for when next page uses the same parameters
 	     * 'P' = EOP, for the last page to be transmitted
+	     * 'X' for when the page is to be skipped
+	     *
+	     * '#' is used temporarily when the right flag is unknown
 	     */
-	    req.pagehandling.append(next == params ? 'S' : 'M');
-	}
+	    char c = next == params ? 'S' : 'M';
+	    if (!range.contains(req.totpages-1)) {	// skip previous page
+		req.skippages++;
+		req.pagehandling.append('X');
+		if (range.contains(req.totpages))
+		    req.pagehandling.replace('#', c);
+	    } else if (!range.contains(req.totpages))
+		req.pagehandling.append('#');
+	    else
+		req.pagehandling.append(c);
+	} else
+	    firstpage = false;
 	/*
 	 * Record the session parameters needed by each page
 	 * so that we can set the initial session parameters
@@ -3251,7 +3279,7 @@ faxQueueApp::numbertag faxQueueApp::numbers[] = {
 { "maxconcurrentjobs",	&faxQueueApp::maxConcurrentCalls, 1 },
 { "maxconcurrentcalls",	&faxQueueApp::maxConcurrentCalls, 1 },
 { "maxbatchjobs",	&faxQueueApp::maxBatchJobs,	(u_int) 64 },
-{ "maxsendpages",	&faxQueueApp::maxSendPages,	(u_int) -1 },
+{ "maxsendpages",	&faxQueueApp::maxSendPages,	(u_int) 4096 },
 { "maxtries",		&faxQueueApp::maxTries,		(u_int) FAX_RETRIES },
 { "maxdials",		&faxQueueApp::maxDials,		(u_int) FAX_REDIALS },
 { "jobreqother",	&faxQueueApp::requeueInterval,	FAX_REQUEUE },

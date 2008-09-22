@@ -36,6 +36,7 @@
 #include "DestInfo.h"
 #include "JobControl.h"
 #include "StrDict.h"
+#include "Range.h"
 
 typedef	struct tiff TIFF;
 

@@ -889,12 +889,16 @@ FaxServer::notifyPageSent(FaxRequest& req, const char*)
     time_t now = Sys::now();
     req.npages++;			// count transmitted page
     req.writeQFile();			// update q file for clients
+    u_short tpages = req.totpages;
+    if (! modem->isCountingSkippedPages() )
+	tpages -= req.skippages;
+
     traceProtocol("SEND FAX (%s): FROM %s TO %s (page %u of %u sent in %s)"
 	, (const char*) req.commid
 	, (const char*) req.mailaddr
 	, (const char*) req.external
 	, req.npages
-	, req.totpages
+	, tpages
 	, fmtTime(now - pageStart)
     );
     pageStart = now;			// for next page

@@ -11,6 +11,7 @@ C++FILES=Array.c++ \
 	Dictionary.c++ \
 	Obj.c++ \
 	PageSize.c++ \
+	Range.c++ \
 	RE.c++ \
 	REArray.c++ \
 	REDict.c++ \

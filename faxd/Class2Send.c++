@@ -247,6 +247,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 {
     int ntrys = 0;			// # retraining/command repeats
     u_int ppm, previousppm = 0;
+    bool skipHadHangup = false;
 
     setDataTimeout(180, next.br);	// 180 seconds for 1024 byte writes, increased for potential ECM delays
     hangupCode[0] = '\0';
@@ -269,32 +270,52 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    }
 	    params = next;
 	}
-	if (dataTransfer() && sendPage(tif, decodePageChop(pph, params))) {
+
+	/*
+	 * We need to decode the PPH here.  If the page is skipped,
+	 * we log it, but we need to go into the if code below to
+	 * handle the full pph stipping, tiff stuff correctly, but
+	 * we need to not send the page if it's skipped.
+	 */
+	if (!decodePPM(pph, ppm, eresult))
+	    goto failed;
+	if (ppm == PPH_SKIP)
+	    protoTrace("Skiping page %d", FaxModem::getPageNumberOfCall());
+	if (ppm == PPH_SKIP || (dataTransfer() && sendPage(tif, decodePageChop(pph, params)))) {
 	    /*
 	     * Page transferred, process post page response from
 	     * remote station (XXX need to deal with PRI requests).).
 	     */
 	    morePages = !TIFFLastDirectory(tif);
-	    if (!decodePPM(pph, ppm, eresult))
-		goto failed;
 
 	    if (ppm == PPM_EOP && !(batched & BATCH_LAST)) {
 		ppm = PPM_EOM;
 		// this should force us to resend disCmd, since some modems don't remember
-		params.vr = (u_int) -1;
-	    }
+		params.vr = (u_int) -1; }
 
 	    tracePPM("SEND send", ppm);
 	    u_int ppr;
+
+	    /*
+	     * pageDone() knows how to handle PPH_SKIP, and give us
+	     * a simulated ppr
+	     */
 	    if (pageDone(ppm, ppr)) {
+	        if (ppm == PPM_EOP && morePages && hadHangup)
+		{
+		    skipHadHangup = true;
+		    hadHangup = false;
+		    protoTrace("All done sending (normal hangup with skip), suppressing for now");
+		}
 		tracePPR("SEND recv", ppr);
 		switch (ppr) {
 		case PPR_MCF:		// page good
 		case PPR_PIP:		// page good, interrupt requested
 		case PPR_RTP:		// page good, retrain requested
                 ignore:
-		    countPage();	// bump page count
-		    notifyPageSent(tif);// update server
+		    countPage(ppm == PPH_SKIP);	// bump page count
+		    if (ppm != PPH_SKIP || conf.countSkippedPages)
+			notifyPageSent(tif);// update server
 		    if (pph[2] == 'Z')
 			pph.remove(0,2+5+1);	// discard page-chop+handling
 		    else

@@ -259,7 +259,8 @@ bool
 Class1Modem::decodePPM(const fxStr& pph, u_int& ppm, Status& eresult)
 {
     if (FaxModem::decodePPM(pph, ppm, eresult)) {
-	ppm = modemPFMCodes[ppm];
+	if (ppm < 8)			// Don't convert special PPH_XXX values
+	    ppm = modemPFMCodes[ppm];
 	return (true);
     } else
 	return (false);
@@ -298,106 +299,113 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    repeatPhaseB = false;
 	}
 	/*
-	 * Check the next page to see if the transfer
-	 * characteristics change.  If so, update the
-	 * T.30 session parameters and do training.
-	 * Note that since the initial parameters are
-	 * setup to be "undefined", training will be
-	 * sent for the first page after receiving the
-	 * DIS frame.
-	 */
-	if (params != next) {
-	    if (!sendTraining(next, 3, eresult)) {
-		if (hadV34Trouble) {
-		    protoTrace("The destination appears to have trouble with V.34-Fax.");
-		    return (send_v34fail);
-		}
-		if (hadV17Trouble) {
-		    protoTrace("The destination appears to have trouble with V.17.");
-		    return (send_v17fail);
-		}
-		if (!(batched & BATCH_FIRST)) {
-		    protoTrace("The destination appears to not support batching.");
-		    return (send_batchfail);
-		}
-		return (send_retry);
-	    }
-	    params = next;
-	}
-
-	if (params.ec == EC_DISABLE) {		// ECM does it later
-	    /*
-	     * According to T.30 5.3.2.4 we must pause at least 75 ms "after 
-	     * receipt of a signal using the T.30 binary coded modulation" and 
-	     * "before sending any signals using V.27 ter/V.29/V.33/V.17 
-	     * modulation system"
-	     */
-	    if (!switchingPause(eresult)) {
-		return (send_failed);
-	    }
-	}
-
-	/*
 	 * The ECM protocol needs to know PPM, so this must be done beforehand...
+         * Page skipping is also encoded in pph and must be handled here.
 	 */
 	morePages = !TIFFLastDirectory(tif);
 	u_int cmd;
 	if (!decodePPM(pph, cmd, eresult))
 	    return (send_failed);
-	/*
-	 * If pph tells us that the PPM is going to be EOM it means that the
-	 * next page is formatted differently from the current page.  To handle this
-	 * situation properly, EOM is used.  Following EOM we must repeat the
-	 * entire protocol of Phase B.  This triggers that.  Batching is handled
-	 * also with EOM, but not with the repeatPhaseB flag.
-	 */
-	repeatPhaseB = (cmd == FCF_EOM);
-	if (cmd == FCF_EOP && !(batched & BATCH_LAST))
-	    cmd = FCF_EOM;
+	if (cmd != PPH_SKIP)
+	{
+	    /*
+	     * If pph tells us that the PPM is going to be EOM it means that the
+	     * next page is formatted differently from the current page.  To handle this
+	     * situation properly, EOM is used.  Following EOM we must repeat the
+	     * entire protocol of Phase B.  This triggers that.  Batching is handled
+	     * also with EOM, but not with the repeatPhaseB flag.
+	     */
+	    repeatPhaseB = (cmd == FCF_EOM);
+	    if (cmd == FCF_EOP && !(batched & BATCH_LAST))
+		cmd = FCF_EOM;
 
-	/*
-	 * Transmit the facsimile message/Phase C.
-	 */
-	if (!sendPage(tif, params, decodePageChop(pph, params), cmd, eresult)) {
-	    if (hadV34Trouble) {
-		protoTrace("The destination appears to have trouble with V.34-Fax.");
-		return (send_v34fail);
+	    /*
+	     * Check the next page to see if the transfer
+	     * characteristics change.  If so, update the
+	     * T.30 session parameters and do training.
+	     * Note that since the initial parameters are
+	     * setup to be "undefined", training will be
+	     * sent for the first page after receiving the
+	     * DIS frame.
+	     */
+	    if (params != next) {
+		if (!sendTraining(next, 3, eresult)) {
+		    if (hadV34Trouble) {
+			protoTrace("The destination appears to have trouble with V.34-Fax.");
+			return (send_v34fail);
+		    }
+		    if (hadV17Trouble) {
+			protoTrace("The destination appears to have trouble with V.17.");
+			return (send_v17fail);
+		    }
+		    if (!(batched & BATCH_FIRST)) {
+			protoTrace("The destination appears to not support batching.");
+			return (send_batchfail);
+		    }
+		    return (send_retry);
+		}
+		params = next;
 	    }
-	    if (batchingError && (batched & BATCH_FIRST)) {
-		protoTrace("The destination appears to not support batching.");
-		return (send_batchfail);
+
+	    if (params.ec == EC_DISABLE) {		// ECM does it later
+		/*
+		 * According to T.30 5.3.2.4 we must pause at least 75 ms "after
+		 * receipt of a signal using the T.30 binary coded modulation" and
+		 * "before sending any signals using V.27 ter/V.29/V.33/V.17
+		 * modulation system"
+		 */
+		if (!switchingPause(eresult)) {
+		    return (send_failed);
+		}
 	    }
-	    return (send_retry);	// a problem, disconnect
+
+	    /*
+	     * Transmit the facsimile message/Phase C.
+	     */
+	    if (!sendPage(tif, params, decodePageChop(pph, params), cmd, eresult)) {
+		if (hadV34Trouble) {
+		    protoTrace("The destination appears to have trouble with V.34-Fax.");
+		    return (send_v34fail);
+		}
+		if (batchingError && (batched & BATCH_FIRST)) {
+		    protoTrace("The destination appears to not support batching.");
+		    return (send_batchfail);
+		}
+		return (send_retry);	// a problem, disconnect
+	    }
+
+	    if (params.ec == EC_DISABLE) {
+		/*
+		 * Delay before switching to the low speed carrier to
+		 * send the post-page-message frame according to
+		 * T.30 chapter 5 note 4.  We provide for a different
+		 * setting following EOP because, empirically, some
+		 * machines may need more time. Beware that, reportedly,
+		 * lengthening this delay too much can permit echo
+		 * suppressors to kick in with bad results.
+		 *
+		 * Historically this delay was done using a software pause
+		 * rather than +FTS because the time between +FTS and the
+		 * OK response is longer than expected, and this was blamed
+		 * for timing problems.  However, this "longer than expected"
+		 * delay is a result of the time required by the modem's
+		 * firmware to actually release the carrier.  T.30 requires
+		 * a delay (period of silence), and this cannot be guaranteed
+		 * by a simple pause.  +FTS must be used.
+		 */
+		if (!atCmd(cmd == FCF_MPS ? conf.class1PPMWaitCmd : conf.class1EOPWaitCmd, AT_OK)) {
+		    eresult = Status(127, "Stop and wait failure (modem on hook)");
+		    protoTrace(eresult.string());
+		    return (send_retry);
+		}
+	    }
+	} else
+	{
+		protoTrace("Skipping page %d", FaxModem::getPageNumberOfCall());
+		signalRcvd = FCF_MCF;
 	}
 
 	int ncrp = 0;
-
-	if (params.ec == EC_DISABLE) {
-	    /*
-	     * Delay before switching to the low speed carrier to
-	     * send the post-page-message frame according to 
-	     * T.30 chapter 5 note 4.  We provide for a different
-	     * setting following EOP because, empirically, some 
-	     * machines may need more time. Beware that, reportedly, 
-	     * lengthening this delay too much can permit echo 
-	     * suppressors to kick in with bad results.
-	     *
-	     * Historically this delay was done using a software pause
-	     * rather than +FTS because the time between +FTS and the 
-	     * OK response is longer than expected, and this was blamed
-	     * for timing problems.  However, this "longer than expected"
-	     * delay is a result of the time required by the modem's
-	     * firmware to actually release the carrier.  T.30 requires
-	     * a delay (period of silence), and this cannot be guaranteed
-	     * by a simple pause.  +FTS must be used.
-	     */
-	    if (!atCmd(cmd == FCF_MPS ? conf.class1PPMWaitCmd : conf.class1EOPWaitCmd, AT_OK)) {
-		eresult = Status(127, "Stop and wait failure (modem on hook)");
-		protoTrace(eresult.string());
-		return (send_retry);
-	    }
-	}
-
 	u_int ppr;
 	do {
 	    if (signalRcvd == 0) {
@@ -423,8 +431,9 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		/* fall thru... */
 	    case FCF_MCF:		// ack confirmation
 	    case FCF_PIP:		// ack, w/ operator intervention
-		countPage();		// bump page count
-		notifyPageSent(tif);	// update server
+		countPage(cmd == PPH_SKIP);	// bump page count
+	        if (cmd != PPH_SKIP || conf.countSkippedPages)
+		    notifyPageSent(tif);	// update server
 		if (pph[2] == 'Z')
 		    pph.remove(0,2+5+1);// discard page-chop+handling info
 		else
@@ -438,7 +447,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 			return (send_failed);
 		    }
 		}
-		if (cmd != FCF_EOP) {
+		if (cmd != FCF_EOP && cmd != PPH_SKIP) {
 		    if (ppr == FCF_PIP) {
 			eresult = Status(129, "Procedure interrupt (operator intervention)");
 			protoTrace(eresult.string());

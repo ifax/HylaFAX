@@ -133,6 +133,7 @@ ClocalAsRoot	boolean	\s-1No\s+1	set \s-1CLOCAL\s+1 using root \s-1UID\s+1
 ContCoverCmd\(S1	string	\s-1bin/mkcover\s+1	continuation cover page generation script
 ContCoverPage\(S1	string	\-	continuation cover page template filename
 CountryCode\(S2	string	\-	local country code
+CountSkippedPages	boolean	\s-1Yes\s+1	Count skipped pages in the page counts/totals when sending
 DestControls\(S1	obsolete	\-	Obsoleted by JobControl
 DeviceMode	octal	\s-10600\s+1	protection mode to use for modem device
 DialStringRules\(S2	string	\-	dial string rules file
@@ -755,6 +756,15 @@ As for
 this value is passed to the dial string rules for use in
 formulating canonical phone numbers for dialing (among
 other things.)
+.TP
+.B CountSkippedPages
+If a page range has been specified in the job, and pages are being skipped
+during the send, this controls if the pages skipped are counted in the pages
+counted and totaled.  If skipped pages are to be counted, it will appear as if
+the pages were instantly sent in 0:00 with no data.  The tagline counts will be
+incremented on skipped pages, and faxq will notify clients via triggers of them
+as well.  If the are not to be counted, then tagline page counts will act as if
+the pages never existed, and not faxq trigger notifications will be sent.
 .TP
 .B DeviceMode
 The file protection mode that the server should set for the

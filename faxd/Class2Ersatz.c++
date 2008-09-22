@@ -108,6 +108,14 @@ bool
 Class2ErsatzModem::pageDone(u_int ppm, u_int& ppr)
 {
     ppr = 0;			// something invalid
+    if (ppm == PPH_SKIP)
+    {
+        protoTrace("pageDone: PPH_SKIP");
+	ppr = PPR_MCF;
+        return true;
+    }
+
+
     if (class2Cmd("AT+FET", ppm, AT_NOTHING)) {
 	for (;;) {
 	    switch (atResponse(rbuf, conf.pageDoneTimeout)) {

@@ -269,8 +269,8 @@ FaxModem::decodePageChop(const fxStr& pph, const Class2Params& params)
  * where xx is a 2-digit hex encoding of the session
  * parameters required to send the page data and the M
  * the post-page message to use between this page and
- * the next page.  See FaxServer::sendPrepareFax for the
- * construction of this string.
+ * the next page.  See faxQueueApp::preparePageHandling
+ * for the construction of this string.
  */ 
 bool
 FaxModem::decodePPM(const fxStr& pph, u_int& ppm, Status& eresult)
@@ -281,6 +281,7 @@ FaxModem::decodePPM(const fxStr& pph, u_int& ppm, Status& eresult)
 	case 'P': ppm = PPM_EOP; return (true);
 	case 'M': ppm = PPM_EOM; return (true);
 	case 'S': ppm = PPM_MPS; return (true);
+	case 'X': ppm = PPH_SKIP; return (true);
 	}
 	what = "unknown";
     } else
@@ -747,11 +748,17 @@ FaxModem::recvResetPage(TIFF* tif)
 }
 
 void
-FaxModem::countPage()
+FaxModem::countPage(bool skipped)
 {
-    pageNumber++;
-    pageNumberOfJob++;
-    pageNumberOfCall++;
+    if (! skipped || conf.countSkippedPages)
+    {
+	pageNumber++;
+	pageNumberOfJob++;
+	pageNumberOfCall++;
+    }
+
+    if (skipped)
+	pageNumberSkipped++;
 }
 
 int
@@ -796,3 +803,10 @@ FaxModem::convertPhaseCData(u_char* buf, u_long& totdata, u_int fillorder,
     rows = dec.getRows();
     return (data);
 }
+
+bool FaxModem::isCountingSkippedPages () const
+{
+    return conf.countSkippedPages;
+}
+
+

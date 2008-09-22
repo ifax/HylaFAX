@@ -56,6 +56,9 @@ FaxModem::setupTagLine(const FaxRequest& req, const fxStr& tagLineFmt)
     strftime(line, sizeof (line)-1, tagLineFmt, tm);
     tagLine = line;
     u_int l = 0;
+    int tpages = req.totpages;
+    if (! conf.countSkippedPages)
+	tpages -= req.skippages;
     while (l < tagLine.length()) {
 	l = tagLine.next(l, '%');
 	if (l >= tagLine.length()-1)
@@ -82,9 +85,9 @@ FaxModem::setupTagLine(const FaxRequest& req, const fxStr& tagLineFmt)
 	case 's': insert(tagLine, l, req.sender); break;
 	case 'S': insert(tagLine, l, req.regarding); break;
 	case 't': insert(tagLine, l,
-			fxStr((int)(req.totpages-req.npages), "%u")); break;
+			fxStr((int)(tpages-req.npages), "%u")); break;
 	case 'T': insert(tagLine, l,
-			fxStr((int)(req.totpages), "%u")); break;
+			fxStr((int)(tpages), "%u")); break;
 	case 'v': insert(tagLine, l, req.voice); break;
 	case 'V': insert(tagLine, l, req.fromvoice); break;
 	case '%': tagLine.remove(l); break;

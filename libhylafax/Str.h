@@ -185,6 +185,8 @@ public:
     void insert(fxStr const& s, u_int posn=0)
 	{ insert((const char*)s, posn, s.slength-1); }
 
+    u_int replace(char a, char b);
+
     /////////////////////////////////////////////////////
     // Parsing
     u_int next(u_int posn, char delimiter) const;

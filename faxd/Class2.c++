@@ -903,7 +903,10 @@ Class2Modem::tracePPM(const char* dir, u_int ppm)
 	FCF_PRI_EOP,
 	0
     };
-    FaxModem::traceFCF(dir, ppm2fcf[ppm&7]);
+    if (ppm == PPH_SKIP)
+        protoTrace("%s %s", dir, "NOTHING (skipped page, simulating MCF)");
+    else
+	FaxModem::traceFCF(dir, ppm2fcf[ppm&7]);
 }
 
 void

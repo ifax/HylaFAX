@@ -248,6 +248,7 @@ public:
     BadPageHandling badPageHandling;	// bad page (received) handling method
     JBIGSupport	class1JBIGSupport;	// monochrome JBIG support
     bool	saveUnconfirmedPages;	// don't delete unconfirmed pages
+    bool	countSkippedPages;	// count (or nor) and notify skipped pages
     
     fxStrArray	playList;		// List of files for ESC_PLAY
 

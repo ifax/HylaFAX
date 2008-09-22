@@ -146,6 +146,9 @@ const u_short PPM_EOP	= 2;		// no more pages or documents
 const u_short PPM_PRI_MPS	= 4;		// another page, procedure interrupt
 const u_short PPM_PRI_EOM	= 5;		// another doc, procedure interrupt
 const u_short PPM_PRI_EOP	= 6;		// all done, procedure interrupt
+// Extra message codes for decodePPM() use.
+// Must not conflict with the related FCF_XXX / FCF_PRI_XXX flags from class2.h
+const u_short PPH_SKIP	= 251;		// page actually has to be skipped
 
 // post page response codes
 const u_short PPR_MCF	= 1;		// page good

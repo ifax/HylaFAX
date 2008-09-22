@@ -63,6 +63,7 @@ private:
     u_int	pageNumber;	// current transmit page number
     u_int	pageNumberOfJob;// current transmit page number of Job
     u_int	pageNumberOfCall;// current transmit page number of call
+    u_int	pageNumberSkipped;// current skipped page count
     FaxFont*	tagLineFont;	// font for imaging tag line
     u_int	tagLineSlop;	// extra space reserved for tag line re-encoding
     fxStr	tagLine;	// tag line formatted with transmit time
@@ -119,7 +120,7 @@ protected:
     FaxModem(FaxServer&, const ModemConfig&);
 
 // miscellaneous
-    void	countPage();
+    void	countPage(bool skipped = false);
     int		getPageNumberOfCall();
     void	recvTrace(const char* fmt, ...);
     void	copyQualityTrace(const char* fmt, ...);
@@ -199,6 +200,7 @@ public:
     virtual ~FaxModem();
 
     bool isFaxModem() const;
+    bool isCountingSkippedPages () const;
 
 // configuration controls
     virtual void setLID(const fxStr& number) = 0;

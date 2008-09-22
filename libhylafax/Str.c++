@@ -367,6 +367,21 @@ void fxStr::insert(char a, u_int posn)
     slength = nl;
 }
 
+u_int fxStr::replace(char a, char b)
+{
+    u_int count = 0;
+    char * buf = data;
+    u_int counter = slength-1;
+    while (counter--) {
+	if (*buf == a) {
+	    *buf = b;
+	    count++;
+	}
+	buf++;
+    }
+    return count;
+}
+
 void fxStr::resizeInternal(u_int chars)
 {
     if (slength > 1) {
