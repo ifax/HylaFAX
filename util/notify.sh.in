@@ -145,7 +145,7 @@ do_notify()
 
 
     eval CreateMailMessage "$template" $ATTACH_ARGS \
-            2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$mailaddr"
+            2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
 
 }
 
