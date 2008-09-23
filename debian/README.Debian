@@ -15,11 +15,6 @@ HylaFAX on Debian is split into three packages:
 * hylafax-client:  the tools necessary to operate a local or remote HylaFAX
   server.  Install this package on networked clients.
 
-* hylafax-doc:     HTML documentation on HylaFAX.  Please note, that
-  hylafax-server and hylafax-client come with manpages for the programs they
-  contain, whereas this is a more extensive manual.
-
-
 1. Quick Start
 --------------
 
@@ -150,7 +145,7 @@ Please use Debian's reportbug(1) utility to report problems.
 9. PAM support
 --------------
 
-This Debian version of hylafax will support PAM.  To enable such support,
+This Debian version of hylafax supports PAM.  To enable such support,
 you need to install an appropriate file under /etc/pam.d/.  An example
 of such a file is in /usr/share/doc/hylfax-server/examples/.
 
@@ -158,8 +153,14 @@ When /etc/pam.d/hylafax exists, it is automatically used, so you do not
 have to use faxadduser, faxdeluser to modify hosts.hfaxd. All account
 known to the system via PAM will be accepted as normal user.
 
-Please note that remote administration isn't managed via PAM, so you
-may still have to setup an ADMIN password with faxadduser.
+When PAM authentication is used, you may optionally create a unix group
+that will have admin rights on hylafax. If you setup such group than add
+it in /etc/hylafax/config with "AdminGroup: groupname".
+
+Please note that if you are storing your passwords in /etc/shadow, you
+have to add the uucp user to the shadow group, otherwise the hylafax
+daemon will not be able to check the passwords. If your PAM uses an
+LDAP as backend, then this is not required.
 
 10. e-mail encoding
 -------------------

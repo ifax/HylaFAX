@@ -6,16 +6,6 @@ _Description: Start the HylaFAX daemon now?
  start it later manually, remember to change the value of RUN_HYLAFAX
  in /etc/default/hylafax.
 
-Template: hylafax-server/attachment
-Type: error
-_Description: Check base64 encoders
- Hylafax is able to send received faxes via email. These emails
- need to include base64 encoded attachments. Since this is not essential
- to hylafax to work, you need to do manually some further steps:
- you should install a package that provide encoders (like
- mime-codecs or sharutils) and run 'faxsetup -server' that will
- automatically check for those encoders and change its configuration.
-
 Template: hylafax-server/setup_failed
 Type: error
 _Description: Hylafax setup failed

@@ -1,3 +1,9 @@
+hylafax (2:4.5~CVS) unstable; urgency=low
+
+  * Update debian packaging for 4.5-CVS
+
+ -- Aidan Van Dyk <aidan@highrise.ca>  Tue, 23 Sep 2008 08:33:05 -0400
+
 hylafax (2:4.3.4~cvs) unstable; urgency=low
 
   * Added standard debian packaging rules to upstream CVS

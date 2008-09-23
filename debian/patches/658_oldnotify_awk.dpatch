@@ -27,15 +27,15 @@ diff -urNad hylafax-4.3.0~/util/notify.awk hylafax-4.3.0/util/notify.awk
 --- hylafax-4.3.0~/util/notify.awk	2004-08-16 14:58:22.000000000 +0200
 +++ hylafax-4.3.0/util/notify.awk	2006-09-19 08:27:29.000000000 +0200
 @@ -99,9 +99,10 @@
- 	    print ""
- 	    printf "%-20s %8s %s\n", "Filename", "Size", "Type";
- 	    for (i = 0; i < nfiles; i++) {
+	    print ""
+	    printf "%-20s %8s %s\n", "Filename", "Size", "Type";
+	    for (i = 0; i < nfiles; i++) {
 -		"wc -c " files[i] | getline;
 +		cmd="wc -c "files[i];
 +		cmd | getline;
- 		printf "%-20s %8d %s\n", files[i], $1, docType(files[i]);
+		printf "%-20s %8d %s\n", files[i], $1, docType(files[i]);
 -		close("wc -c " files[i]);
 +		close(cmd);
- 	     }
- 	}
+	     }
+	}
      } else if (jobType == "pager") {

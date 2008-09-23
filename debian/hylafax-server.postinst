@@ -179,12 +179,8 @@ db_title HylaFAX Server
 
 	setupcache=/etc/hylafax/setup.cache
 	[ ! -e $setupcache ] && setupcache=/var/spool/hylafax/etc/setup.cache
-	sed -i -e 's@^\(DPSRIP\|IMPRIP\)=.*$@\1=@' $setupcache
+	sed -i -e 's@^DPSRIP=.*$@DPSRIP=@' $setupcache
 	sed -i -e "s@^AWK='/bin/awk'@AWK='/usr/bin/awk'@" $setupcache
-	sed -i -e "s@^MIMENCODE='base64-encode'@MIMENCODE='/usr/bin/mimencode'@" $setupcache
-	sed -i -e "s@^MIMENCODE='/usr/bin/base64-encode'@MIMENCODE='/usr/bin/mimencode'@" $setupcache
-	sed -i -e "s@^MIMENCODE='/usr/bin/uuencode'@MIMENCODE='/usr/bin/mimencode'@" $setupcache
-	sed -i -e "s@^BASE64ENCODE='/usr/bin/uuencode'@BASE64ENCODE='/usr/bin/mimencode'@" $setupcache
 	sed -i -e "s@^ENCODING=''@ENCODING='base64'@" $setupcache
 	sed -i -e "s@^MANDIR='/usr/local/man'@MANDIR='/usr/share/man'@" $setupcache
 	sed -i -e "s@^FONTPATH='/usr/local/lib/ghostscript/common:/usr/local/lib/ghostscript/7.07:/usr/local/lib/ghostscript/fonts:/usr/local/share/ghostscript/common:/usr/local/share/ghostscript/7.07:/usr/local/share/ghostscript/fonts:/var/lib/defoma/gs.d/dirs/fonts:/usr/share/ghostscript/common:/usr/share/gs/7.07'@FONTPATH='/usr/share/enscript/afm:/usr/share/fonts/afms/adobe:/usr/share/fonts/type1/gsfonts'@" $setupcache
@@ -203,15 +199,22 @@ db_title HylaFAX Server
 		fi
 	fi
 
-	[ -x /usr/bin/tty ] && grep -q '^TTYCMD=' $setupcache || echo "TTYCMD='/usr/bin/tty'" >> $setupcache
-
-	enc1=$(grep MIMENCODING $setupcache | sed "s/^MIMENCODE='\(.*\)'$/\1/")
-	enc2=$(grep UUENCODE $setupcache | sed "s/^UUENCODE='\(.*\)'$/\1/")
-	if [ ! -x "$enc1" -a ! -x "$enc2" ]
+	# bug #429614
+	# check for uuencode used for base64encoding. Change it to use mimencode
+	if [ -x /usr/bin/mimencode ]
 	then
-		db_input medium hylafax-server/attachment || true
-		db_go
+		sed -i -e "s@BASE64ENCODE='/usr/bin/uuencode'@BASE64ENCODE='/usr/bin/mimencode'@" $setupcache
+		sed -i -e "s@BASE64ENCODE='/usr/bin/uuencode -m ===='@BASE64ENCODE='/usr/bin/mimencode'@" $setupcache
 	fi
+
+	# bug #425191
+	# Update psrip path
+	if [ -x /usr/bin/psrip ]
+	then
+		sed -i -e "s@IMPRIP='/usr/lib/print/psrip'@IMPRIP='/usr/bin/psrip'@" $setupcache
+	fi
+
+	[ -x /usr/bin/tty ] && grep -q '^TTYCMD=' $setupcache || echo "TTYCMD='/usr/bin/tty'" >> $setupcache
 
 	if invoke-rc.d hylafax stop 
 	then
@@ -220,7 +223,29 @@ db_title HylaFAX Server
 		restart=false
 	fi
 	(echo; echo no; echo no) | /usr/sbin/faxsetup -server
-#	[ $restart == true ] && invoke-rc.d hylafax start
+#	[ $restart = true ] && invoke-rc.d hylafax start
+
+	# fix default values set by faxsetup without check on the real presence
+	# of the binary executable
+
+	uuenc=$(grep '^UUENCODE=' $setupcache | sed -e "s/^UUENCODE='\(.*\)'$/\1/" | (read a b; echo $a))
+	mmenc=$(grep '^MIMENCODE=' $setupcache | sed -e "s/^MIMENCODE='\(.*\)'$/\1/" | (read a b; echo $a))
+	baenc=$(grep '^BASE64ENCODE=' $setupcache | sed -e "s/^BASE64ENCODE='\(.*\)'$/\1/" | (read a b; echo $a))
+
+	if [ ! -x "$uuenc" ]
+	then
+		sed -i -e "s@UUENCODE='.*'@UUENCODE=''@" $setupcache
+	fi
+
+	if [ ! -x "$mmenc" ]
+	then
+		sed -i -e "s@MIMENCODE='.*'@MIMENCODE=''@" $setupcache
+	fi
+
+	if [ ! -x "$baenc" ]
+	then
+		sed -i -e "s@BASE64ENCODE='.*'@BASE64ENCODE=''@" $setupcache
+	fi
 
 	#
 	# Tell the user that he must use faxaddmodem in order to really use
@@ -251,7 +276,7 @@ db_title HylaFAX Server
 		# wrong and the server is not starting
 		# Closes: #357435
 		invoke-rc.d hylafax start || true
-	elif [ $restart == true ]; then
+	elif [ $restart = true ]; then
 		invoke-rc.d hylafax start
 	fi
 

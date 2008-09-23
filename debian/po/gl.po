@@ -1,0 +1,54 @@
+# Galician translation of hylafax's debconf templates
+# This file is distributed under the same license as the hylafax package.
+# Jacobo Tarrio <jtarrio@debian.org>, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: hylafax\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-04-10 04:31+0200\n"
+"PO-Revision-Date: 2008-05-18 12:07+0100\n"
+"Last-Translator: Jacobo Tarrio <jtarrio@debian.org>\n"
+"Language-Team: Galician <proxecto@trasno.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid "Start the HylaFAX daemon now?"
+msgstr "¿Iniciar agora o servizo HylaFAX?"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:1001
+msgid ""
+"Hylafax is already configured and may be started now. If you specify to "
+"start it later manually, remember to change the value of RUN_HYLAFAX in /etc/"
+"default/hylafax."
+msgstr ""
+"Hylafax xa está configurado e pódese iniciar agora. Se indica que quere "
+"inicialo manualmente máis tarde, lembre cambiar o valor de RUN_HYLAFAX en /"
+"etc/default/hylafax."
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid "Hylafax setup failed"
+msgstr "A configuración de hylafax fallou"
+
+#. Type: error
+#. Description
+#: ../hylafax-server.templates:2001
+msgid ""
+"While installing hylafax a script called 'faxsetup' failed. This can be "
+"caused by many reasons and cannot be fixed automatically so the hylafax-"
+"server package is now unconfigured. Please fix the problem, run 'faxsetup -"
+"server' as root and reconfigure hylafax-server manually."
+msgstr ""
+"Mentres se instalaba hylafax, un script chamado \"faxsetup\" fallou. Isto "
+"pode estar causado por varios motivos, e non se pode arranxar "
+"automaticamente, así que o paquete hylafax-server está sen configurar. "
+"Arranxe o problema, execute \"faxsetup -server\" coma administrador e "
+"reconfigure hylafax-server manualmente."

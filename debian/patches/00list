@@ -8,9 +8,5 @@
 654_faxsetup_gs.dpatch
 655_faxaddmodem_message.dpatch
 657_typerules.dpatch
-658_oldnotify_awk
-659_notify_from_address
-#670_patch_desireddf_bug402171.dpatch
-#671_grep_in_notify.dpatch
-#672_ps2pdf_output.dpatch
-#673_configure_quote_commands.dpatch
+658_oldnotify_awk.dpatch
+659_notify_from_address.dpatch

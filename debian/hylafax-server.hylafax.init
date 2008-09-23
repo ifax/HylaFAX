@@ -6,6 +6,20 @@
 # It is driver by a configuration file sourced by this shell
 # and called /etc/default/hylafax.
 
+### BEGIN INIT INFO
+# Provides:          hylafax
+# Required-Start:    $syslog
+# Required-Stop:     $syslog
+# Should-Start:      $local_fs $network
+# Should-Stop:       $local_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start and stop the hylafax server
+# Description:       Synchronize the /etc/hylafax directory with
+#                    /var/spool/hylafax/etc and then start hylafax
+#		     daemons. Otherwise stop all hylafax daemons.
+### END INIT INFO
+
 # 28-Dec-2003 Ross Boylan
 # Add "init" option to USE_FAXGETTY
 # This will cause this script to assume that faxgetty is already
@@ -20,6 +34,7 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 HYLAFAX_HOME=/var/spool/hylafax
 FAXGETTY=/usr/sbin/faxgetty
 FAXMODEM=/usr/sbin/faxmodem
+PIDFILE=/var/run/hfaxd.pid
 
 OLDPROT=
 NEWPROT=
@@ -57,12 +72,15 @@ else
   exit 1
 fi
 
-if [ -z "$OLDPROT$NEWPROT$SNPP" ]
+if [ -z "$OLDPROT$NEWPROT$SNPP" -a "$1" != stop ]
 then
+  if [ -z "$HFAXD_FROM_INET" -o "$HFAXD_FROM_INET" != true ]
+  then
   echo "You must specify at least one protocol OLD, NEW or SNPP in"
   echo "/etc/hylafax/setup.cache using the command faxsetup,"
   echo "otherwise you might only run hylafax via inetd."
   exit 1
+  fi
 fi
 
 if [ -r /etc/default/hylafax ]; then
@@ -195,7 +213,7 @@ daemon_stop()
     p=$(ps --no-headers -C hfaxd -o pid)
     if [ -n "$p" ]
     then
-        start-stop-daemon --stop --exec /usr/sbin/hfaxd -- $BINDTO $NEWPROT $OLDPROT $SNPP
+        start-stop-daemon --stop --exec /usr/sbin/hfaxd --pidfile $PIDFILE -- $BINDTO $NEWPROT $OLDPROT $SNPP
  	sleep 1
  	p=$(ps --no-headers -C hfaxd -o pid)
  	[ -n "$p" ] && kill $p
@@ -206,12 +224,12 @@ daemon_stop()
         killall faxgetty 2> /dev/null || true
     fi
 
-    # wait maximum three seconds for server processes to shutdown
+    # wait maximum sixty seconds for server processes to shutdown
     try=0
-    while [ $try -lt 3 -a 0 -lt $(ps --no-headers -Chfaxd,faxq | wc -l) ]
+    while [ $try -lt 60 ] && [ 0 -lt $(ps --no-headers -Chfaxd,faxq | wc -l) ]
     do
        sleep 1
-       try=$((try+1))
+       try=$(($try+1))
     done
 
     if [ 0 -eq "$(ps --no-headers -Chfaxd,faxq | wc -l)" ]
@@ -233,22 +251,26 @@ daemon_start()
 
     if [ $count -eq 0 ];
     then
+      log_daemon_msg "Starting HylaFAX" "syncing directories..."
       copy_slash_etc
-      log_daemon_msg "Starting HylaFAX" faxq
+      log_progress_msg "faxq"
       start-stop-daemon --start --exec /usr/sbin/faxq
 
+      if [ -z "$HFAXD_FROM_INET" -o "$HFAXD_FROM_INET" != true ]
+      then
       log_progress_msg "hfaxd"
-      start-stop-daemon --start --exec /usr/sbin/hfaxd -- $BINDTO $NEWPROT $OLDPROT $SNPP
+        start-stop-daemon --start --exec /usr/sbin/hfaxd --make-pidfile --pidfile $PIDFILE --background -- -d $BINDTO $NEWPROT $OLDPROT $SNPP
+      fi
 
       cd ${HYLAFAX_HOME}/etc
       devices="`echo_fax_devices`"
-      if [ ${USE_FAXGETTY} = "yes" ]; then
+      if [ ${USE_FAXGETTY} = "yes" ] && [ -n "$devices" ]; then
         log_progress_msg "faxgetty"
         for device in $devices none; do
           [ "$device" = none ] && continue
-          ${FAXGETTY} `echo $device | cut -d . -f 2` >/dev/null 2>&1 </dev/null &
+          ${FAXGETTY} $FAXGETTYARGS `echo $device | cut -d . -f 2` &
         done
-      elif [ ${USE_FAXGETTY} != "init" ]; then
+      elif [ ${USE_FAXGETTY} != "init" ] && [ -n "$devices" ]; then
         log_progress_msg "faxmodem"
         for device in $devices none; do
           [ "$device" = none ] && continue

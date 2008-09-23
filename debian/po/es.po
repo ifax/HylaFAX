@@ -1,0 +1,79 @@
+# hylafax po-debconf translation to Spanish
+# Copyright (C) 2005 Software in the Public Interest
+# This file is distributed under the same license as the hylafax package.
+#
+# Changes:
+#  - Initial translation
+#         César Gómez Martín <cesar.gomez@gmail.com>
+#
+# Revision:
+#
+#         Rudy Godoy Guillén <rudy@stone-head.org>, 2007
+#
+#   Traductores, si no conoce el formato PO, merece la pena leer la
+#   documentación de gettext, especialmente las secciones dedicadas a este
+#   formato, por ejemplo ejecutando:
+#          info -n '(gettext)PO Files'
+#          info -n '(gettext)Header Entry'
+# Equipo de traducción al español, por favor, lean antes de traducir
+# los siguientes documentos:
+#
+#  - El proyecto de traducción de Debian al español
+#    http://www.debian.org/intl/spanish/
+#    especialmente las notas de traducción en
+#    http://www.debian.org/intl/spanish/notas
+#
+#  - La guía de traducción de po's de debconf:
+#    /usr/share/doc/po-debconf/README-trans
+#    o http://www.debian.org/intl/l10n/po-debconf/README-trans
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: hylafax 2:4.2.2-1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-08-04 00:06+0200\n"
+"PO-Revision-Date: 2007-05-13 15:41-0500\n"
+"Last-Translator: César Gómez Martín <cesar.gomez@gmail.com>\n"
+"Language-Team: Debian l10n spanish <debian-l10n-spanish@lists.debian.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Spanish\n"
+"X-Poedit-Country: SPAIN\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#. Type: note
+#. Description
+#: ../hylafax-server.templates:3
+msgid "Don't forget to setup a modem line"
+msgstr "No olvide configurar una línea de módem"
+
+#. Type: note
+#. Description
+#: ../hylafax-server.templates:3
+msgid "Hylafax is now installed as a server but you still have to configure at least a modem in order to send or receive faxes. Please use faxaddmodem in order to define a modem and then restart hylafax so that it will use the new configuration."
+msgstr "Ahora hylafax está instalado como servidor, pero todavía tiene que configurar, como mínimo, un módem para enviar o recibir faxes. Por favor, utilice faxaddmodem para definir un módem y después reinicie hylafax para que use la nueva configuración."
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:12
+msgid "Start the HylaFAX daemon now?"
+msgstr "¿Desea iniciar el demonio HylaFAX ahora?"
+
+#. Type: boolean
+#. Description
+#: ../hylafax-server.templates:12
+msgid "Hylafax is already configured and may be started now. If you specify to start it later manually, remember to change the value of RUN_HYLAFAX in /etc/default/hylafax."
+msgstr "Hylafax ya está configurado y puede iniciarse ahora. Si prefiere iniciarlo manualmente con posterioridad, recuerde cambiar el valor de RUN_HYLAFAX en /etc/default/hylafax."
+
+#. Type: note
+#. Description
+#: ../hylafax-server.templates:19
+msgid "Check base64 encoders"
+msgstr "Comprobar los codificadores base64"
+
+#. Type: note
+#. Description
+#: ../hylafax-server.templates:19
+msgid "Hylafax is able to send received faxes via email. These emails need to include base64 encoded attachments. Since this is not essential to hylafax to work, you need to do manually some further steps: you should install a package that provide encoders (like mime-codecs or sharutils) and run 'faxsetup -server' that will automatically check for those encoders and change its configuration."
+msgstr "Hylafax puede enviar los faxes recibidos a través de correo electrónico. Estos correos necesitan incluir ficheros adjuntos codificados en base64. Puesto que esto no es esencial para que hylafax funcione, tiene que realizar manualmente algunos pasos: debería instalar un paquete que proporcione codificadores (como mime-codecs o sharutils) y ejecutar «faxsetup -server», que comprobará automáticamente los codificadores y cambiará su configuración."

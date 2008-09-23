@@ -8,6 +8,10 @@ else
 	USE_FAXGETTY=yes
 fi
 
+# Arguments for faxgetty command. At least -D should be specified
+# as explained in debian bug #462459.
+FAXGETTYARGS="-D"
+
 # In a send only installation you may want to use faxgetty
 # or faxmodem on lines already configured with faxaddmodem.
 # faxgetty is the new default, faxmodem the old one.
@@ -45,3 +49,8 @@ fi
 # NEWPROT="-i 4559"
 # SNPP="-s 444"
 
+#
+# hfaxd may be run from inetd while faxq should still be executed
+# by the init script. If you run hfax via inetd or xinetd then
+# uncomment the following line
+# HFAXD_FROM_INET=true

@@ -5,7 +5,6 @@
 #export DH_VERBOSE=1
 
 export SHELL=/bin/bash
-export DH_COMPAT=4
 
 CFLAGS = -g
 
@@ -24,6 +23,7 @@ configure: configure-stamp
 configure-stamp: patch-stamp
 	cp -p /usr/share/misc/config.* .
 	yes | /bin/bash ./configure \
+		--with-HTML=yes \
 		--with-UTMP=auto \
 		--with-DIR_BIN="/usr/bin" \
 		--with-DIR_LIBDATA="/etc/hylafax" \
@@ -35,6 +35,9 @@ configure-stamp: patch-stamp
 		--with-PATH_AFM="/usr/share/fonts/type1/gsfonts" \
 		--with-DIR_LOCALE="/usr/share/locale" \
 		--with-FONTMAP="/usr/share/gs-esp/8.15/lib:/usr/share/gs-esp/7.07/lib:/usr/share/gs/6.53" \
+		--with-DIR_HTML="/usr/share/doc/hylafax" \
+		--with-DIR_CGI="/usr/lib/cgi-bin" \
+		--with-HTMLPATH="/doc/hylafax" \
 		--with-SYSGID="root" \
 		--with-SYSUID="root" \
 		--with-PATH_GETTY="/etc/hylafax/getty-link" \
@@ -50,23 +53,23 @@ configure-stamp: patch-stamp
 		--with-LIBZ="-lz" \
 		--with-ZLIBINC="-I/usr/include" \
 		--with-CONFIG_MAXGID="65534" \
-		--with-AWK="/usr/bin/awk" \
 		--with-CMP="/usr/bin/cmp" \
 		--with-COL="/usr/bin/col" \
 		--with-MKFIFO="/usr/bin/mkfifo" \
 		--with-SORT="/usr/bin/sort" \
 		--with-OPTIMIZER="$(CFLAGS)" \
-		--with-FUSER="/bin/fuser" \
 		--with-MANDIR="/usr/share/man" \
-		--with-IMPRIP="/usr/bin/psrip" \
-		--with-BASE64ENCODE="/usr/bin/mimencode" \
-		--with-MIMENCODE="/usr/bin/mimencode" \
-		--with-UUENCODE="/usr/bin/uuencode" \
-		--with-QPENCODE="/usr/bin/mimencode -q"
+		--with-PATH_IMPRIP="/usr/bin/psrip"
+#		--with-FUSER="/bin/fuser" \
+#		--with-AWK="/usr/bin/awk" \
+#		--with-BASE64ENCODE="/usr/bin/mimencode" \
+#		--with-MIMENCODE="/usr/bin/mimencode" \
+#		--with-UUENCODE="/usr/bin/uuencode" \
+#		--with-QPENCODE="/usr/bin/mimencode -q"
 
 	touch configure-stamp
 
-build: build-arch build-indep
+build: build-arch
 
 build-arch: build-arch-stamp
 build-arch-stamp: configure-stamp
@@ -74,15 +77,11 @@ build-arch-stamp: configure-stamp
 	$(MAKE) all
 	touch build-arch-stamp
 
-build-indep: build-indep-stamp
-build-indep-stamp: configure-stamp
-	touch build-indep-stamp
-
 clean: clean1 unpatch
 clean1:
 	dh_testdir
 	dh_testroot
-	rm -f build-arch-stamp build-indep-stamp configure-stamp
+	rm -f build-arch-stamp configure-stamp
 	[ ! -f Makefile ] || make distclean
 	[ ! -d man/cman.apps ] \
 	    || rmdir man/cman.apps man/cman.files man/sman.apps man/sman.files
@@ -94,19 +93,11 @@ clean1:
 PWD		:= $(shell pwd)
 p_client	= hylafax-client
 p_server	= hylafax-server
-p_doc		= hylafax-doc
 
 d_client	= debian/$(p_client)
 d_server	= debian/$(p_server)
-d_doc		= debian/$(p_doc)
 
-install: install-server install-client install-doc
-install-doc:
-	dh_testdir
-	dh_testroot
-	dh_clean -k -p$(p_doc)
-	dh_installdirs -p$(p_doc) \
-		usr/share/doc/$(p_doc)
+install: install-client install-server
 
 install-server:
 	dh_testdir
@@ -131,6 +122,7 @@ install-server:
 	    $(d_server)/etc/hylafax/.
 	cp -p debian/hylafax.config $(d_server)/etc/hylafax/config
 	cp -pR etc/templates $(d_server)/etc/hylafax/
+	rm -r $(d_server)/etc/hylafax/templates/html-sample1
 
 	cp -p util/{faxmsg,faxconfig,faxmodem,faxstate,faxwatch} \
 		util/{faxinfo,tiffcheck,typetest,dialtest,faxadduser,faxdeluser} \
@@ -139,6 +131,7 @@ install-server:
 		faxd/choptest \
 		hfaxd/hfaxd \
 		etc/ondelay \
+		etc/lockname \
 	    $(d_server)/usr/sbin/.
 	for i in \
 	  util/xferfaxstats.sh util/recvstats.sh util/faxcron.sh \
@@ -150,14 +143,15 @@ install-server:
 	for i in \
 	  util/{ps2fax.gs.sh,pdf2fax.gs.sh,pcl2fax.sh,tiff2fax.sh,tiff2pdf.sh} \
 	  util/{archive.sh,notify.sh,notify-4.1.sh,faxrcvd.sh,pollrcvd.sh,mkcover.sh,wedged.sh} \
-	  util/{common-functions.sh,dictionary.sh}; \
+	  util/{common-functions.sh,dictionary.sh,qp-encode.awk,b64-encode.awk}; \
 	do \
 	  b=`basename $$i .sh`; \
 	  install -p $$i $(d_server)/var/spool/hylafax/bin/$$b; \
 	done
 	install -p util/notify.awk $(d_server)/var/spool/hylafax/bin/.
+	chmod a-x $(d_server)/var/spool/hylafax/bin/{dictionary,common-functions}
 
-	env LC_ALL=C LANG=C sh -c "cp -p config/[a-z]* $(d_server)/var/spool/hylafax/config/."
+	cp -p config/[a-z]* $(d_server)/var/spool/hylafax/config/.
 
 	ln -sf faxmsg $(d_server)/usr/sbin/faxanswer
 	ln -sf faxmsg $(d_server)/usr/sbin/faxabort
@@ -195,7 +189,7 @@ install-server:
 	dh_installexamples -p$(p_server) debian/examples/*
 
 	install --mode=a+rx -p debian/copy_configuration_from_spool $(d_server)/usr/lib/hylafax/bin/
-	dh_install
+	dh_install -p$(p_server) --list-missing
 
 install-client:
 	dh_testdir
@@ -259,26 +253,10 @@ install-client:
 	# needed by sendfax ...
 	mkdir -p $(d_client)/usr/sbin
 	ln -sf ../bin/textfmt $(d_client)/usr/sbin/textfmt
-	dh_install
-
-# Build architecture independant packages using the common target.
-binary-indep: build-indep install-doc
-	dh_testdir
-	dh_testroot
-	dh_installdocs -i -A \
-		debian/README.mgetty debian/README.Debian \
-		TODO CONTRIBUTORS
-	dh_installchangelogs -i doc/RELEASENOTES-CVS.txt
-	dh_installexamples -i
-	dh_compress -i
-	dh_fixperms -i
-	dh_installdeb -i
-	dh_gencontrol -i
-	dh_md5sums -i
-	dh_builddeb -i
+	dh_install -p$(p_client) --list-missing
 
 # Build architecture dependant packages using the common target.
-binary-arch: build-arch install-server install-client
+binary-arch: build-arch install-client install-server
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs -a doc/RELEASENOTES-CVS.txt
@@ -314,7 +292,7 @@ binary-arch: build-arch install-server install-client
 		debian/hylafax-client/usr/bin/sendfax \
 		debian/hylafax-client/usr/bin/sendpage \
 		debian/hylafax-client/usr/bin/textfmt
-	dh_shlibdeps -phylafax-server \
+	dh_shlibdeps -L libfaxutil -phylafax-server \
 		debian/hylafax-server/usr/sbin/choptest \
 		debian/hylafax-server/usr/sbin/cqtest \
 		debian/hylafax-server/usr/sbin/dialtest \
@@ -332,6 +310,7 @@ binary-arch: build-arch install-server install-client
 		debian/hylafax-server/usr/sbin/faxwatch \
 		debian/hylafax-server/usr/sbin/hfaxd \
 		debian/hylafax-server/usr/sbin/ondelay \
+		debian/hylafax-server/usr/sbin/lockname \
 		debian/hylafax-server/usr/sbin/pagesend \
 		debian/hylafax-server/usr/sbin/tagtest \
 		debian/hylafax-server/usr/sbin/tiffcheck \
@@ -343,5 +322,5 @@ binary-arch: build-arch install-server install-client
 
 include /usr/share/dpatch/dpatch.make
 
-binary: binary-arch binary-indep
-.PHONY: build clean clean1 binary-indep binary-arch binary install install-client install-server install-doc configure patch unpatch
+binary: binary-arch
+.PHONY: build clean clean1 binary-arch binary install install-client install-server configure patch unpatch
