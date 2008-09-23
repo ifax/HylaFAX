@@ -40,7 +40,7 @@ DEPTH=..
 SUBDIR=port
 @MAKEINCLUDE@ @MAKELQUOTE@${DEPTH}/defs@MAKERQUOTE@
 
-CFILES	= @PORTFUNCS@
+CFILES	= @PORTFUNCS@ version.c
 TARGETS	= libport.a
 
 default all::

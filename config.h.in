@@ -40,7 +40,7 @@
 /*
  * HylaFAX version number string
  */
-#define HYLAFAX_VERSION "HylaFAX (tm) Version @VERSION@"
+#define HYLAFAX_VERSION HYLAFAX_VERSION_STRING
 
 #define	FAX_SPOOLDIR	"@SPOOL@"	/* pathname to top of spooling area */
 #define FAX_CLIENTBIN	"@BIN@"		/* place for client apps */

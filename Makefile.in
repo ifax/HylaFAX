@@ -70,11 +70,7 @@ default all ${TARGETS}:
 @MAKEINCLUDE@ @MAKELQUOTE@rules@MAKERQUOTE@
 
 dirs::
-	@if [ "@PORT@" = yes ]; then \
-	    ${ECHO} "= "port; cd port; ${MAKE}  ||  exit $?; \
-	else \
-	    true; \
-	fi
+	${ECHO} "= "port; cd port; ${MAKE}  ||  exit $?;
 	@if [ "@REGEX@" = yes ]; then \
 	    ${ECHO} "= "regex; cd regex; ${MAKE}  ||  exit $?; \
 	else \
@@ -110,11 +106,7 @@ dirs::
 	fi
 	@${ECHO} "= "pkg; cd pkg; ${MAKE}  ||  exit $?
 depend::
-	@if [ "@PORT@" = yes ]; then \
-	    ${ECHO} "= "port; cd port; ${MAKE} depend; \
-	else \
-	    true; \
-	fi
+	${ECHO} "= "port; cd port; ${MAKE} depend;
 	@if [ "@REGEX@" = yes ]; then \
 	    ${ECHO} "= "regex; cd regex; ${MAKE} depend; \
 	else \
@@ -129,11 +121,7 @@ depend::
 	    true; \
 	fi
 clean::
-	@if [ "@PORT@" = yes ]; then \
-	    ${ECHO} "= "port; cd port; ${MAKE} clean; \
-	else \
-	    true; \
-	fi
+	${ECHO} "= "port; cd port; ${MAKE} clean;
 	@if [ "@REGEX@" = yes ]; then \
 	    ${ECHO} "= "regex; cd regex; ${MAKE} clean; \
 	else \
@@ -174,11 +162,7 @@ clobber::
 	(cd util; ${MAKE} clobberconfig)
 	(cd etc; ${MAKE} clobberconfig)
 	(cd faxcover; ${MAKE} clobberconfig)
-	@if [ "@PORT@" = yes ]; then \
-	    ${ECHO} "= "port; cd port; ${MAKE} clobberconfig; ${MAKE} clobber; \
-	else \
-	    ${RM} -f port/install.sh  port/mkdepend; \
-	fi
+	${ECHO} "= "port; cd port; ${MAKE} clobberconfig; ${MAKE} clobber;
 	@if [ "@REGEX@" = yes ]; then \
 	    ${ECHO} "= "regex; cd regex; ${MAKE} clobber; \
 	else \

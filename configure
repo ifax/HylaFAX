@@ -3155,6 +3155,10 @@ BuildPortDotH()
     if [ "x$PAMLIBS" != "x" ]; then
 	CheckPAMType
     fi
+
+    # Emit the version variable that port will always give us.
+    echo "extern const char* HYLAFAX_VERSION_STRING;"
+
     EmitCPlusPlusEpilogue
     )>xport.h
     mv xport.h port.h; chmod 444 port.h
@@ -3239,12 +3243,8 @@ else
     Note "... emulate syslog&co."
     PORTFUNCS="$PORTFUNCS syslog.c"
 fi
-if [ "$PORTFUNCS" ]; then
-    LIBPORT='${PORT}/libport.a'
-    PORT=yes
-else
-    PORT=no
-fi
+LIBPORT='${PORT}/libport.a'
+
 Note "Done checking system libraries."
 
 Note ""
@@ -4905,7 +4905,9 @@ CONF_FILES="
 
     po/version.po
 
+    port/Makefile
     port/install.sh
+    port/version.c
 
     libhylafax/pagesizes
 
@@ -4952,7 +4954,6 @@ test $GS = yes &&		   SedConfigFiles gs/Makefile
 test $IMP = yes &&		   SedConfigFiles imp/Makefile
 test "$MKDEPEND" != ":" &&	   SedConfigFiles port/mkdepend
 test $SGI2FAX = yes &&	   	   SedConfigFiles sgi2fax/Makefile
-test $PORT = yes &&		   SedConfigFiles port/Makefile
 test $REGEX = yes &&		   SedConfigFiles regex/Makefile
 test $DBLIB = yes &&		   SedConfigFiles dblib/Makefile
 test $NLS = yes &&		   SedConfigFiles po/Makefile
