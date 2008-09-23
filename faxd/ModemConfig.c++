@@ -757,6 +757,8 @@ ModemConfig::setConfigItem(const char* tag, const char* value)
 	maxRate = getRate(value);
     else if (streq(tag, "class1jbigsupport"))
         class1JBIGSupport = getJBIGSupport(value);
+    else if (streq(tag, "class1extendedres"))
+	class1Resolutions = getBoolean(value) ? VR_ALL : (VR_NORMAL | VR_FINE);
     else if (streq(tag, "class1resolutions"))
 	class1Resolutions = getNumber(value);
     else if (streq(tag, "class1tcfrecvhack") && getBoolean(value))
