@@ -102,6 +102,7 @@ main()
     hash("subaddr");
     hash("passwd");
     hash("state");
+    hash("coverpages");
     hash("npages");
     hash("totpages");
     hash("skippages");

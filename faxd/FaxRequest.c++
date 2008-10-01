@@ -58,7 +58,7 @@ FaxRequest::reset(void)
     pri = (u_short) -1;
     usrpri = FAX_DEFPRIORITY;
     pagewidth = pagelength = resolution = 0;
-    npages = totpages = skippages = 0;
+    npages = totpages = skippages = coverpages = 0;
     ntries = ndials = 0;
     minbr = BR_2400;
     desiredbr = BR_33600;
@@ -127,6 +127,7 @@ FaxRequest::shortval FaxRequest::shortvals[] = {
     { "npages",		&FaxRequest::npages },
     { "totpages",	&FaxRequest::totpages },
     { "skippages",	&FaxRequest::skippages },
+    { "coverpages",	&FaxRequest::coverpages },
     { "ntries",		&FaxRequest::ntries },
     { "ndials",		&FaxRequest::ndials },
     { "totdials",	&FaxRequest::totdials },
@@ -341,6 +342,7 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_DONEOP:		doneop = tag; break;
 	case H_RETURNED:	status = (FaxSendStatus) atoi(tag); break;
 	case H_MINBR:		minbr = atoi(tag); break;
+	case H_COVERPAGES:	coverpages = atoi(tag); break;
 
 	case H_STATUS:
 	    /*

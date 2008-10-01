@@ -832,6 +832,7 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
     req.skippages = 0;
     bool firstpage = true;
     bool skiplast = false;
+    bool coverdoc = false;
     for (u_int i = 0;;) {
 	if (!tif || TIFFLastDirectory(tif)) {
 	    /*
@@ -859,6 +860,12 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
 		return (true);
 	    }
 	    const FaxItem& fitem = req.items[i];
+
+	    if (fitem.item.find(0, "/cover") < fitem.item.length())
+		coverdoc = true;
+	    else
+		coverdoc = false;
+
 	    tif = TIFFOpen(fitem.item, "r");
 	    if (tif == NULL) {
 		result = Status(314, "Can not open document file %s", (const char*)fitem.item);
@@ -900,7 +907,10 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
 	next = params;
 	setupParams(tif, next, info);
 
-	u_int p = req.totpages;
+	if (coverdoc)
+	    req.coverpages++;
+
+	u_int p = req.totpages - req.coverpages;
 
 	if (!firstpage) {
 	    /*
@@ -916,7 +926,7 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
 	    if (skiplast) {	// skip previous page
 		req.skippages++;
 		req.pagehandling.append('X');
-		if (range.contains(p))
+		if (coverdoc || range.contains(p))
 		{
 		    req.pagehandling.replace('#', c);
 		    skiplast = false;
@@ -930,7 +940,7 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
 		req.pagehandling.append(c);
 	    }
 	} else {
-	    if (! range.contains(p))
+	    if (! (coverdoc || range.contains(p)) )
 		skiplast = true;
 	    firstpage = false;
 	}

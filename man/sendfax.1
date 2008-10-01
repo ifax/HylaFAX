@@ -678,11 +678,15 @@ server process that does the submission work on the
 remote machine is also displayed.
 .TP 12
 .BI \-Z " range"
-Specify that only certain pages of the fax should actually
-be transmitted.  The range is in a comma-seperated list of ranges in the
-form of A[-B][,....].  The range is specified agains the resulting document to be
-faxed, so if you have more than one document, and cover pages, make sure to account
-for them in the range specification.
+Specify that only certain pages of the fax should actually be transmitted.  The
+range is in a comma-seperated list of ranges in the form of A[-B][,....].  The
+range is specified agains the resulting document to be faxed, excluding any
+cover pages.  So if you have more than one document, make sure to account for
+them, and exclude the cover pages in the range specification.  Cover pages will
+always be faxed, so a fax with a coverpage and 2 5 page documents with a range
+specified of of 1,3,10 will fax the cover page, and pages 1, 3, and 10 of the
+combined documents (page 1 and 3 from the first document, and page 5 of the
+second document).
 .SH "CONFIGURATION PARAMETERS"
 .I sendfax
 reads configuration information from the files

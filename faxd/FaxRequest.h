@@ -114,6 +114,7 @@ public:
     u_short	totpages;	// total cummulative pages in documents
     u_short	skippages;	// skipped pages in documents
     u_short	npages;		// total pages sent/received
+    u_short	coverpages;	// number of cover pages 1st
     u_short	ntries;		// # tries to send current page
     u_short	ndials;		// # consecutive failed tries to call dest
     u_short	totdials;	// total # calls to dest
