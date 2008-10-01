@@ -223,8 +223,8 @@ static struct {
     bool ModemConfig::* p;
     bool		 def;
 } booleans[] = {
-{ "usejobtagline",		&ModemConfig::useJobTagLine,		true },
-{ "countskippedpages",		&ModemConfig::countSkippedPages,	true },
+{ "usejobtagline",		&ModemConfig::useJobTagLine,		true	},
+{ "countskippedpages",		&ModemConfig::countSkippedPages,	true	},
 { "noanswervoice",		&ModemConfig::noAnswerVoice,		false	},
 { "saverawimage",		&ModemConfig::saverawimage,		false	},
 { "saveunconfirmedpages",	&ModemConfig::saveUnconfirmedPages,	true	},
