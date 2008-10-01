@@ -102,10 +102,13 @@ main()
     hash("subaddr");
     hash("passwd");
     hash("state");
+    hash("ncover");
     hash("coverpages");
     hash("npages");
     hash("totpages");
+    hash("nskip");
     hash("skippages");
+    hash("coverpages");
     hash("ntries");
     hash("ndials");
     hash("totdials");

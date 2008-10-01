@@ -38,6 +38,7 @@ insert(fxStr& tag, u_int l, const fxStr& s)
     tag.insert(s, l);
 }
 
+extern void logDebug(const char* fmt, ...);
 /*
  * Read in the PCF font to use for imaging the tag line and
  * preformat as much of the tag line as possible.
@@ -56,9 +57,20 @@ FaxModem::setupTagLine(const FaxRequest& req, const fxStr& tagLineFmt)
     strftime(line, sizeof (line)-1, tagLineFmt, tm);
     tagLine = line;
     u_int l = 0;
+
     int tpages = req.totpages;
-    if (! conf.countSkippedPages)
+    int npages = req.npages;
+    if (! conf.countSkippedPages) {
 	tpages -= req.skippages;
+	npages -= req.nskip;
+    }
+
+    if (conf.tagLineCoverNumString.length())
+    {
+	tpages -= req.coverpages;
+	npages -= req.ncover;
+    }
+
     while (l < tagLine.length()) {
 	l = tagLine.next(l, '%');
 	if (l >= tagLine.length()-1)
@@ -85,7 +97,7 @@ FaxModem::setupTagLine(const FaxRequest& req, const fxStr& tagLineFmt)
 	case 's': insert(tagLine, l, req.sender); break;
 	case 'S': insert(tagLine, l, req.regarding); break;
 	case 't': insert(tagLine, l,
-			fxStr((int)(tpages-req.npages), "%u")); break;
+			fxStr((int)(tpages-npages), "%u")); break;
 	case 'T': insert(tagLine, l,
 			fxStr((int)(tpages), "%u")); break;
 	case 'v': insert(tagLine, l, req.voice); break;
@@ -143,12 +155,37 @@ FaxModem::setupTagLineSlop(const Class2Params& params)
  * setup the current page number.
  */
 u_char*
-FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params, u_long& totdata)
+FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params, u_long& totdata, PageType pt)
 {
     u_int l;
+    u_int pn = pageNumber;
+    u_int pnj = pageNumberOfJob;
+
+    if (! conf.countSkippedPages) {
+	pn -= pageNumberSkipped;
+	pnj -= pageNumberSkipped;
+    }
     /*
      * Fill in any per-page variables used in the tag line.
+     * If the TagLineCoverNumString is set, then coverpages
+     * are not counted, and that is used instead of pages numbers on
+     * the cover pages themselves.
      */
+    fxStr pns, pnjs;
+    if (pt == PAGE_COVER && conf.tagLineCoverNumString.length()) {
+	// Actually on the cover page, with it CoverNumString set
+	pns = conf.tagLineCoverNumString;
+	pnjs = conf.tagLineCoverNumString;
+    } else if (conf.tagLineCoverNumString.length() ) {
+	// regular page, with it CoverNumString set, adjust page numbers
+	pns = fxStr::format("%d", pn-pageNumberCovered);
+	pnjs = fxStr::format("%d", pnj-pageNumberCovered);
+    } else {
+	// CoverNumString not set, just do it
+	pns = fxStr::format("%d", pnj);
+	pnjs = fxStr::format("%d", pnj);
+    }
+
     fxStr tag = tagLine;
     l = 0;
     while (l < tag.length()) {
@@ -156,9 +193,9 @@ FaxModem::imageTagLine(u_char* buf, u_int fillorder, const Class2Params& params,
 	if (l >= tag.length()-1)
 	    break;
 	if (tag[l+1] == 'p')
-	    insert(tag, l, fxStr((int) pageNumber, "%d"));
+	    insert(tag, l, pns);
 	if (tag[l+1] == 'P')
-	    insert(tag, l, fxStr((int) pageNumberOfJob, "%d"));
+	    insert(tag, l, pnjs);
 	else
 	    l += 2;
     }

@@ -124,7 +124,7 @@ Class20Modem::abortDataTransfer()
  * Send a page of data using the ``stream interface''.
  */
 bool
-Class20Modem::sendPage(TIFF* tif, u_int pageChop)
+Class20Modem::sendPage(TIFF* tif, u_int pageChop, bool cover)
 {
     /*
      * Support MT5634ZBA-V92 real-time fax compression conversion:
@@ -162,7 +162,7 @@ Class20Modem::sendPage(TIFF* tif, u_int pageChop)
     protoTrace("SEND begin page");
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
-    bool rc = sendPageData(tif, pageChop);
+    bool rc = sendPageData(tif, pageChop, cover);
     if (!rc)
 	abortDataTransfer();
     else if( conf.class2SendRTC )

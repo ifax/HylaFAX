@@ -30,6 +30,7 @@
  * Send protocol.
  */
 #include "Sys.h"
+#include "SystemLog.h"
 #include "Class1.h"
 #include "ModemConfig.h"
 #include "HDLCFrame.h"
@@ -273,7 +274,7 @@ Class1Modem::decodePPM(const fxStr& pph, u_int& ppm, Status& eresult)
  */
 FaxSendStatus
 Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
-    fxStr& pph, Status& eresult, u_int& batched)
+    fxStr& pph, Status& eresult, u_int& batched, PageType pt)
 {
     int ntrys = 0;			// # retraining/command repeats
     bool morePages = true;		// more pages still to send
@@ -362,7 +363,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    /*
 	     * Transmit the facsimile message/Phase C.
 	     */
-	    if (!sendPage(tif, params, decodePageChop(pph, params), cmd, eresult)) {
+	    if (!sendPage(tif, params, decodePageChop(pph, params), cmd, eresult, pt == PAGE_COVER)) {
 		if (hadV34Trouble) {
 		    protoTrace("The destination appears to have trouble with V.34-Fax.");
 		    return (send_v34fail);
@@ -404,7 +405,8 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		protoTrace("Skipping page %d", FaxModem::getPageNumberOfCall());
 		signalRcvd = FCF_MCF;
 	}
-
+logDebug(" * * * PAGE SENT: %s", pt == PAGE_NORMAL ? "PAGE_NORMAL" :
+					(pt == PAGE_COVER ? "PAGE_COVER" : "PAGE_SKIP"));
 	int ncrp = 0;
 	u_int ppr;
 	do {
@@ -431,9 +433,8 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		/* fall thru... */
 	    case FCF_MCF:		// ack confirmation
 	    case FCF_PIP:		// ack, w/ operator intervention
-		countPage(cmd == PPH_SKIP);	// bump page count
-	        if (cmd != PPH_SKIP || conf.countSkippedPages)
-		    notifyPageSent(tif);	// update server
+		countPage(cmd == PPH_SKIP ? PAGE_SKIP : pt);// bump page count
+		notifyPageSent(tif, cmd == PPH_SKIP ? PAGE_SKIP : pt);		// update server
 		if (pph[2] == 'Z')
 		    pph.remove(0,2+5+1);// discard page-chop+handling info
 		else
@@ -479,8 +480,8 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 			// ignore error and try to send next page
 			// after retraining
 		    params.br = (u_int) -1;	// force retraining above
-		    countPage();		// bump page count
-		    notifyPageSent(tif);	// update server
+		    countPage(pt);		// bump page count
+		    notifyPageSent(tif, pt);	// update server
 		    if (pph[2] == 'Z')
 			pph.remove(0,2+5+1);// discard page-chop+handling info
 		    else
@@ -1710,7 +1711,7 @@ EOLcode(u_long& w)
  * Send a page of data.
  */
 bool
-Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppmcmd, Status& eresult)
+Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppmcmd, Status& eresult, bool cover)
 {
     if (params.ec == EC_DISABLE) {	// ECM does it later
 	/*
@@ -1801,7 +1802,7 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 	u_char* dp;
 	if (doTagLine) {
 	    u_long totbytes = totdata;
-	    dp = imageTagLine(data+ts, fillorder, params, totbytes);
+	    dp = imageTagLine(data+ts, fillorder, params, totbytes, cover);
 	    // Because the whole image is processed with MMR, 
 	    // totdata is then determined during encoding.
 	    totdata = (params.df == DF_2DMMR) ? totbytes : totdata+ts - (dp-data);

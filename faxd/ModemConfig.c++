@@ -160,6 +160,7 @@ static struct {
     const char*		 def;		// NULL is shorthand for ""
 } strcmds[] = {
 { "modemtype",			&ModemConfig::type,		"unknown" },
+{ "taglinecovernumstring",	&ModemConfig::tagLineCoverNumString },
 { "taglinefont",		&ModemConfig::tagLineFontFile },
 { "taglineformat",		&ModemConfig::tagLineFmt,
   "From %%n|%c|Page %%p of %%t" },

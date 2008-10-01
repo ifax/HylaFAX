@@ -33,7 +33,7 @@
 class Class2ErsatzModem : public Class2Modem {
 protected:
 // transmission support
-    bool	sendPage(TIFF* tif, u_int pageChop);
+    bool	sendPage(TIFF* tif, u_int pageChop, bool coverpage);
     bool	pageDone(u_int ppm, u_int& ppr);
 
     bool	sendEOT();

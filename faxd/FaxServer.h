@@ -106,7 +106,7 @@ protected:
 // notification interfaces overridden in derived class
     virtual void notifyCallPlaced(const FaxRequest&);
     virtual void notifyConnected(const FaxRequest&);
-    virtual void notifyPageSent(FaxRequest&, const char*);
+    virtual void notifyPageSent(FaxRequest&, const char*, PageType pt);
     virtual void notifyDocumentSent(FaxRequest&, u_int index);
     virtual void notifyPollRecvd(FaxRequest&, FaxRecvInfo&);
     virtual void notifyPollDone(FaxRequest&, u_int index);

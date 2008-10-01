@@ -205,12 +205,12 @@ Class2ErsatzModem::sendEOT()
  * Send a page of data using the ``stream interface''.
  */
 bool
-Class2ErsatzModem::sendPage(TIFF* tif, u_int pageChop)
+Class2ErsatzModem::sendPage(TIFF* tif, u_int pageChop, bool cover)
 {
     protoTrace("SEND begin page");
     if (flowControl == FLOW_XONXOFF)
 	setXONXOFF(FLOW_XONXOFF, FLOW_NONE, ACT_FLUSH);
-    bool rc = sendPageData(tif, pageChop);
+    bool rc = sendPageData(tif, pageChop, cover);
     if (rc && conf.class2SendRTC)
 	rc = sendRTC(params);
     if (rc)

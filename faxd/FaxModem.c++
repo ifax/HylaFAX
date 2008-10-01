@@ -32,6 +32,7 @@
 #include "FaxFont.h"
 #include "t.30.h"
 #include "Sys.h"
+#include "SystemLog.h"
 
 FaxModem::FaxModem(FaxServer& s, const ModemConfig& c)
     : ClassModem(s,c)
@@ -69,6 +70,11 @@ FaxModem::sendSetup(FaxRequest& req, const Class2Params&, Status&)
     minsp = fxmax((u_int) req.minbr, fxmax((u_int) conf.minSpeed, modemParams.getMinSpeed()));
     pageNumber = 1;
     pageNumberOfJob = req.npages + 1;
+    pageNumberCovered = pageNumberSkipped = 0;
+    if (conf.tagLineCoverNumString.length() )
+	    pageNumberOfJob -= req.ncover;
+    if (! conf.countSkippedPages)
+	    pageNumberOfJob -= req.nskip;
     if (conf.useJobTagLine && req.desiredtl != 0)
 	setupTagLine(req, req.tagline);
     else
@@ -748,16 +754,17 @@ FaxModem::recvResetPage(TIFF* tif)
 }
 
 void
-FaxModem::countPage(bool skipped)
+FaxModem::countPage(PageType pt)
 {
-    if (! skipped || conf.countSkippedPages)
-    {
-	pageNumber++;
-	pageNumberOfJob++;
-	pageNumberOfCall++;
-    }
+logDebug("FaxModem::countPage(%s)", pt == PAGE_NORMAL ? "PAGE_NORMAL" :
+				(pt == PAGE_COVER ? "PAGE_COVER" : "PAGE_SKIP") );
+    pageNumber++;
+    pageNumberOfJob++;
+    pageNumberOfCall++;
 
-    if (skipped)
+    if (pt == PAGE_COVER)
+	 pageNumberCovered++;
+    if (pt == PAGE_SKIP)
 	pageNumberSkipped++;
 }
 
@@ -768,10 +775,10 @@ FaxModem::getPageNumberOfCall()
 }
 
 void
-FaxModem::notifyPageSent(TIFF* tif)
+FaxModem::notifyPageSent(TIFF* tif, PageType pt)
 {
     if (curreq)
-	server.notifyPageSent(*curreq, TIFFFileName(tif));
+	server.notifyPageSent(*curreq, TIFFFileName(tif), pt);
 }
 
 #include "MemoryDecoder.h"

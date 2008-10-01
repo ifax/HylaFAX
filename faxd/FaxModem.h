@@ -46,6 +46,7 @@ class FaxServer;
 typedef unsigned int RTNHandling;       // RTN signal handling method 
 typedef unsigned int BadPageHandling;	// bad page (received) handling method 
 typedef unsigned int JBIGSupport;	// JBIG support available
+typedef unsigned int PageType;
 
 /*
  * This is an abstract class that defines the interface to
@@ -64,6 +65,7 @@ private:
     u_int	pageNumberOfJob;// current transmit page number of Job
     u_int	pageNumberOfCall;// current transmit page number of call
     u_int	pageNumberSkipped;// current skipped page count
+    u_int	pageNumberCovered;// current cover page count
     FaxFont*	tagLineFont;	// font for imaging tag line
     u_int	tagLineSlop;	// extra space reserved for tag line re-encoding
     fxStr	tagLine;	// tag line formatted with transmit time
@@ -120,7 +122,7 @@ protected:
     FaxModem(FaxServer&, const ModemConfig&);
 
 // miscellaneous
-    void	countPage(bool skipped = false);
+    void	countPage(PageType);
     int		getPageNumberOfCall();
     void	recvTrace(const char* fmt, ...);
     void	copyQualityTrace(const char* fmt, ...);
@@ -147,7 +149,7 @@ protected:
     void	recvResetPage(TIFF* tif);
     u_int	decodePageChop(const fxStr& pph, const Class2Params&);
     bool	decodePPM(const fxStr& pph, u_int& ppm, Status& eresult);
-    void	notifyPageSent(TIFF*);
+    void	notifyPageSent(TIFF*, PageType pt);
 // phase c data receive & copy quality checking
     bool	recvPageDLEData(TIFF* tif, bool checkQuality,
 		    const Class2Params& params, Status& eresult);
@@ -167,7 +169,7 @@ protected:
 // tag line support
     bool	setupTagLineSlop(const Class2Params&);
     u_int	getTagLineSlop() const;
-    u_char*	imageTagLine(u_char* buf, u_int fillorder, const Class2Params&, u_long& totdata);
+    u_char*	imageTagLine(u_char* buf, u_int fillorder, const Class2Params&, u_long& totdata, PageType p);
 /*
  * Correct if neccessary Phase C (T.4/T.6) data (remove extra RTC/EOFB etc.)
  */
@@ -196,6 +198,12 @@ public:
 	JBIG_SEND = 2,		    // send-only JBIG support
 	JBIG_FULL = 3		    // full JBIG support
     };
+    enum {
+	PAGE_NORMAL	= 0,
+	PAGE_COVER	= 1,
+	PAGE_SKIP	= 2
+    };
+
 
     virtual ~FaxModem();
 
@@ -258,7 +266,7 @@ public:
 	bool& hasDoc, Status& eresult, u_int& batched) = 0;
     virtual void sendSetupPhaseB(const fxStr& pwd, const fxStr& sub);
     virtual FaxSendStatus sendPhaseB(TIFF*, Class2Params&, FaxMachineInfo&,
-	fxStr& pph, Status& eresult, u_int& batched) = 0;
+	fxStr& pph, Status& eresult, u_int& batched, PageType = PAGE_NORMAL) = 0;
     virtual void sendEnd();
     virtual void sendAbort() = 0;
     // query interfaces for optional state

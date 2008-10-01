@@ -243,7 +243,7 @@ pageInfoChanged(const Class2Params& a, const Class2Params& b)
  */
 FaxSendStatus
 Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
-    fxStr& pph, Status& eresult, u_int& batched)
+    fxStr& pph, Status& eresult, u_int& batched, PageType pt)
 {
     int ntrys = 0;			// # retraining/command repeats
     u_int ppm, previousppm = 0;
@@ -281,7 +281,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    goto failed;
 	if (ppm == PPH_SKIP)
 	    protoTrace("Skiping page %d", FaxModem::getPageNumberOfCall());
-	if (ppm == PPH_SKIP || (dataTransfer() && sendPage(tif, decodePageChop(pph, params)))) {
+	if (ppm == PPH_SKIP || (dataTransfer() && sendPage(tif, decodePageChop(pph, params), pt == PAGE_COVER))) {
 	    /*
 	     * Page transferred, process post page response from
 	     * remote station (XXX need to deal with PRI requests).).
@@ -313,9 +313,8 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		case PPR_PIP:		// page good, interrupt requested
 		case PPR_RTP:		// page good, retrain requested
                 ignore:
-		    countPage(ppm == PPH_SKIP);	// bump page count
-		    if (ppm != PPH_SKIP || conf.countSkippedPages)
-			notifyPageSent(tif);// update server
+		    countPage(ppm == PPH_SKIP ? PAGE_SKIP : pt);	// bump page count
+		    notifyPageSent(tif, ppm == PPH_SKIP ? PAGE_SKIP : pt);// update server
 		    if (pph[2] == 'Z')
 			pph.remove(0,2+5+1);	// discard page-chop+handling
 		    else
@@ -433,7 +432,7 @@ failed:
  * is comprised of multiple strips.
  */
 bool
-Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
+Class2Modem::sendPageData(TIFF* tif, u_int pageChop, bool cover)
 {
     bool rc = true;
 
@@ -501,7 +500,7 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop)
 	u_char* dp;
 	if (doTagLine) {
 	    u_long totbytes = totdata;
-	    dp = imageTagLine(data+ts, fillorder, params, totbytes);
+	    dp = imageTagLine(data+ts, fillorder, params, totbytes, cover);
 	    totdata = (params.df == DF_2DMMR) ? totbytes : totdata+ts - (dp-data);
 	} else
 	    dp = data;

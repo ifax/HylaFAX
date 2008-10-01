@@ -58,7 +58,7 @@ FaxRequest::reset(void)
     pri = (u_short) -1;
     usrpri = FAX_DEFPRIORITY;
     pagewidth = pagelength = resolution = 0;
-    npages = totpages = skippages = coverpages = 0;
+    npages = totpages = nskip = skippages = ncover = coverpages= 0;
     ntries = ndials = 0;
     minbr = BR_2400;
     desiredbr = BR_33600;
@@ -126,7 +126,9 @@ FaxRequest::shortval FaxRequest::shortvals[] = {
     { "state",		&FaxRequest::state },
     { "npages",		&FaxRequest::npages },
     { "totpages",	&FaxRequest::totpages },
+    { "nskip",		&FaxRequest::nskip },
     { "skippages",	&FaxRequest::skippages },
+    { "ncover",		&FaxRequest::ncover },
     { "coverpages",	&FaxRequest::coverpages },
     { "ntries",		&FaxRequest::ntries },
     { "ndials",		&FaxRequest::ndials },
@@ -322,6 +324,7 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_PAGELENGTH:	pagelength = atoi(tag); break;
 	case H_PRIORITY:	usrpri = atoi(tag); break;
 	case H_SCHEDPRI:	pri = atoi(tag); break;
+	case H_NSKIP:		nskip = atoi(tag); break;
 	case H_SKIPPAGES:	skippages = atoi(tag); break;
 	case H_DESIREDBR:	desiredbr = atoi(tag); break;
 	case H_DESIREDST:	desiredst = tag[0] - '0'; break;
@@ -342,6 +345,7 @@ FaxRequest::readQFile(bool& rejectJob)
 	case H_DONEOP:		doneop = tag; break;
 	case H_RETURNED:	status = (FaxSendStatus) atoi(tag); break;
 	case H_MINBR:		minbr = atoi(tag); break;
+	case H_NCOVER:		ncover = atoi(tag); break;
 	case H_COVERPAGES:	coverpages = atoi(tag); break;
 
 	case H_STATUS:

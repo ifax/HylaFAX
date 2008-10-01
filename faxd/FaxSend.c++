@@ -445,6 +445,7 @@ FaxServer::sendFaxPhaseB(FaxRequest& fax, FaxItem& freq, FaxMachineInfo& clientI
 {
     TIFF* tif = TIFFOpen(freq.item, "r");
     if (tif && (freq.dirnum == 0 || TIFFSetDirectory(tif, freq.dirnum))) {
+	bool coverpage = freq.item.find(0, "/cover") < freq.item.length();
 	if (dosetup) {
 	    // set up DCS according to file characteristics
 	    fax.status = sendSetupParams(tif, clientParams, clientInfo, fax.result);
@@ -460,7 +461,7 @@ FaxServer::sendFaxPhaseB(FaxRequest& fax, FaxItem& freq, FaxMachineInfo& clientI
 	     */
 	    u_int prevPages = fax.npages;
 	    fax.status = modem->sendPhaseB(tif, clientParams, clientInfo,
-		fax.pagehandling, fax.result, batched);
+		fax.pagehandling, fax.result, batched, coverpage ? FaxModem::PAGE_COVER : FaxModem::PAGE_NORMAL);
 	    if (fax.status == send_v17fail && fax.result.value() == 0) {
 		// non-fatal V.17 incompatibility
 		clientInfo.setHasV17Trouble(true);
@@ -884,10 +885,16 @@ FaxServer::sendSetupParams(TIFF* tif, Class2Params& params, const FaxMachineInfo
  */
 
 void
-FaxServer::notifyPageSent(FaxRequest& req, const char*)
+FaxServer::notifyPageSent(FaxRequest& req, const char*, PageType pt)
 {
     time_t now = Sys::now();
     req.npages++;			// count transmitted page
+    switch (pt) {
+	case FaxModem::PAGE_SKIP:
+	    req.nskip++; break;
+	case FaxModem::PAGE_COVER:
+	    req.ncover++; break;
+    }
     req.writeQFile();			// update q file for clients
     u_short tpages = req.totpages;
     if (! modem->isCountingSkippedPages() )

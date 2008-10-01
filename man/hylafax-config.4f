@@ -215,6 +215,7 @@ SendUUCPCmd\(S1	string	\s-1bin/uucpsend\s+1	\s-1UUCP\s+1 transmit command script
 ServerTracing\(S2	integer	\s-11\s+1	non-session server tracing
 SessionTracing\(S2	integer	\s-11\s+1	send and receive session tracing
 SpeakerVolume	string	\s-1Quiet\s+1	volume level for modem speaker
+TagLineCoverNumString	string	\-	String substition when not counting cover pages
 TagLineFont	string	\-	tag line font filename
 TagLineFormat	string	\s-1\fIsee below\fP\s+1	tag line format string
 TIFF2FaxCmd\(S1	string	\s-1bin/tiff2fax\s+1	\s-1TIFF\s+1 converter command script
@@ -1603,6 +1604,13 @@ Note that the speaker is always turned off once carrier is established.
 Also beware that some modems support fewer volume settings;
 see
 .BR ModemSetVolumeCmd .
+.TP
+.B TagLineCoverNumString
+
+Setting TagLineCoverNumString instructs faxsend to not include the cover pages
+in the normal page numbering mechanism.  The page numbers used in the tagline
+generation will adjusted to not count the cover pages, and the TagLineCoverNumString value
+wil be used instead of a page number on the tagline of the cover page.
 .TP
 .B TagLineFont
 The filename of the font to use in imaging 

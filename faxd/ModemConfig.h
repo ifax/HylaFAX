@@ -239,6 +239,7 @@ public:
     bool	waitForConnect;		// modem sends multiple answer responses
     fxStr	tagLineFmt;		// format string for tag lines
     fxStr	tagLineFontFile;	// font file for imaging tag lines
+    fxStr	tagLineCoverNumString;	// format string for tagline cover page numbers
     u_int	recvDataFormat;		// received facsimile data format
     bool	useJobTagLine;		// Use Job tagline or use conf taglineformat
     bool	raiseATCmd;		// whether or not to raise-case the AT commands

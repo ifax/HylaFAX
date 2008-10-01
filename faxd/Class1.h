@@ -131,7 +131,7 @@ protected:
     bool	raiseToNextBR(Class2Params&);
     bool	sendTraining(Class2Params&, int, Status& eresult);
     bool	sendTCF(const Class2Params&, u_int ms);
-    bool	sendPage(TIFF* tif, Class2Params&, u_int, u_int, Status& eresult);
+    bool	sendPage(TIFF* tif, Class2Params&, u_int, u_int, Status& eresult, bool cover);
     bool	sendPageData(u_char* data, u_int cc, const u_char* bitrev, bool ecm, Status& eresult);
     bool	sendRTC(Class2Params params, u_int ppmcmd, uint32 rowsperstrip, Status& eresult);
     bool	sendPPM(u_int ppm, HDLCFrame& mcf, Status& eresult);
@@ -215,7 +215,7 @@ public:
     void	sendBegin();
     void	sendSetupPhaseB(const fxStr& pwd, const fxStr& sub);
     FaxSendStatus sendPhaseB(TIFF* tif, Class2Params&, FaxMachineInfo&,
-		    fxStr& pph, Status& eresult, u_int& batched);
+		    fxStr& pph, Status& eresult, u_int& batched, PageType pt);
     void	sendEnd();
     void	sendAbort();
 

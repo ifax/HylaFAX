@@ -33,7 +33,7 @@
 class Class20Modem : public Class2Modem {
 protected:
 // transmission support
-    bool	sendPage(TIFF* tif, u_int pageChop);
+    bool	sendPage(TIFF* tif, u_int pageChop, bool cover);
     bool	pageDone(u_int ppm, u_int& ppr);
 
     void	abortDataTransfer();

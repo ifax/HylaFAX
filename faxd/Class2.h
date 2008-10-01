@@ -84,9 +84,9 @@ protected:
 // transmission support
     bool	dataTransfer();
     bool	sendRTC(Class2Params params);
-    bool	sendPageData(TIFF* tif, u_int pageChop);
+    bool	sendPageData(TIFF* tif, u_int pageChop, bool cover);
 
-    virtual bool sendPage(TIFF* tif, u_int pageChop) = 0;
+    virtual bool sendPage(TIFF* tif, u_int pageChop, bool cover) = 0;
     virtual bool pageDone(u_int ppm, u_int& ppr) = 0;
 // reception support
     const AnswerMsg* findAnswer(const char*);
@@ -144,7 +144,7 @@ public:
     CallStatus	dialResponse(Status& eresult);
     FaxSendStatus getPrologue(Class2Params&, bool&, Status& eresult, u_int&);
     FaxSendStatus sendPhaseB(TIFF* tif, Class2Params&, FaxMachineInfo&,
-		    fxStr& pph, Status& eresult, u_int& batched);
+		    fxStr& pph, Status& eresult, u_int& batched, PageType pt);
     void	sendAbort();
 
 // receive support

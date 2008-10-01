@@ -829,7 +829,8 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
     Class2Params next;			// parameters for ``next'' page
     TIFF* tif = NULL;			// current open TIFF image
     req.totpages = req.npages;		// count pages previously transmitted
-    req.skippages = 0;
+    req.skippages = req.nskip;
+    req.coverpages = req.ncover;
     bool firstpage = true;
     bool skiplast = false;
     bool coverdoc = false;
@@ -861,6 +862,8 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
 	    }
 	    const FaxItem& fitem = req.items[i];
 
+	    logDebug("req.items[%d].item = \"%s\" (%s)", i,
+		    (const char*)fitem.item, (const char*)req.cover);
 	    if (fitem.item.find(0, "/cover") < fitem.item.length())
 		coverdoc = true;
 	    else
