@@ -831,6 +831,7 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
     req.totpages = req.npages;		// count pages previously transmitted
     req.skippages = 0;
     bool firstpage = true;
+    bool skiplast = false;
     for (u_int i = 0;;) {
 	if (!tif || TIFFLastDirectory(tif)) {
 	    /*
@@ -839,7 +840,7 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
 	    if (tif)			// close previous file
 		TIFFClose(tif), tif = NULL;
 	    if (i >= req.items.length()) {
-		if (!range.contains(req.totpages)) {	// skip previous page
+		if (skiplast) {					// skip previous page
 		    req.skippages++;
 		    req.pagehandling.append('X');
 		    req.pagehandling.replace('#', 'P');
@@ -849,7 +850,7 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
 	    }
 	    i = req.findItem(FaxRequest::send_fax, i);
 	    if (i == fx_invalidArrayIndex) {
-		if (!range.contains(req.totpages)) {	// skip previous page
+		if (skiplast) {				// skip previous page
 		    req.skippages++;
 		    req.pagehandling.append('X');
 		    req.pagehandling.replace('#', 'P');
@@ -898,6 +899,9 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
 	}
 	next = params;
 	setupParams(tif, next, info);
+
+	u_int p = req.totpages;
+
 	if (!firstpage) {
 	    /*
 	     * The pagehandling string has:
@@ -909,17 +913,27 @@ faxQueueApp::preparePageHandling(Job& job, FaxRequest& req,
 	     * '#' is used temporarily when the right flag is unknown
 	     */
 	    char c = next == params ? 'S' : 'M';
-	    if (!range.contains(req.totpages-1)) {	// skip previous page
+	    if (skiplast) {	// skip previous page
 		req.skippages++;
 		req.pagehandling.append('X');
-		if (range.contains(req.totpages))
+		if (range.contains(p))
+		{
 		    req.pagehandling.replace('#', c);
-	    } else if (!range.contains(req.totpages))
+		    skiplast = false;
+		}
+	    } else if (!range.contains(p))
+	    {
 		req.pagehandling.append('#');
-	    else
+		skiplast = true;
+	    } else
+	    {
 		req.pagehandling.append(c);
-	} else
+	    }
+	} else {
+	    if (! range.contains(p))
+		skiplast = true;
 	    firstpage = false;
+	}
 	/*
 	 * Record the session parameters needed by each page
 	 * so that we can set the initial session parameters
