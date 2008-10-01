@@ -47,6 +47,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai,
 {
     useDF = usedf;
     u_int prevPages = fax.npages;
+    u_int prevSkip = fax.nskip;
     if (!(batched & BATCH_FIRST) || lockModem()) {
         if (batched & BATCH_FIRST)
 	{
@@ -118,7 +119,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, FaxAcctInfo& ai,
      * As the encoded parameters is limited to 32 bits and DCS does
      * not contain V.34-Fax speeds we use both.
      */
-    ai.npages = fax.npages - prevPages;		// count of pages transmitted
+    ai.npages = (fax.npages) - prevPages - (fax.nskip - prevSkip);		// count of pages transmitted
     ai.params = clientParams.encode();		// encoded negotiated parameters
     clientParams.asciiEncode(ai.faxdcs);	// DCS signal
     fax.sigrate = clientParams.bitRateName();	// (last) signalling rate used
