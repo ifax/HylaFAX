@@ -208,6 +208,7 @@
 348      : REJECT: %s [JobControl reject notice]
 350      : Permission denied (unnacceptable client TSI)
 351      : Permission denied (unnacceptable client PWD)
+352      : Send aborted due to operator intervention
 
 400-499 : job/modem incompatibility
 ===============================================================================
@@ -264,3 +265,4 @@
 905      : Internal error: unable to open text message file
 906      : Internal error: unable to read text message file
 907      : polling operation not done because of internal failure
+908      : Write error to file %s

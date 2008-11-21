@@ -551,8 +551,10 @@ FaxModem::flushEncodedData(TIFF* tif, tstrip_t strip, const u_char* buf, u_int c
 {
     // NB: must update ImageLength for each new strip
     TIFFSetField(tif, TIFFTAG_IMAGELENGTH, recvEOLCount);
-    if (TIFFWriteEncodedStrip(tif, strip, (tdata_t)buf, cc) == -1)
+    if (TIFFWriteEncodedStrip(tif, strip, (tdata_t)buf, cc) == -1) {
 	serverTrace("RECV: %s: write error", TIFFFileName(tif));
+	server.abortSession(Status(908, "Write error to file %s", TIFFFileName(tif)));
+    }
 }
 
 /*
@@ -562,8 +564,10 @@ void
 FaxModem::flushRawData(TIFF* tif, tstrip_t strip, const u_char* buf, u_int cc)
 {
     recvTrace("%u bytes of data, %lu total lines", cc, recvEOLCount);
-    if (TIFFWriteRawStrip(tif, strip, (tdata_t)buf, cc) == -1)
+    if (TIFFWriteRawStrip(tif, strip, (tdata_t)buf, cc) == -1) {
 	serverTrace("RECV: %s: write error", TIFFFileName(tif));
+	server.abortSession(Status(908, "Write error to file %s", TIFFFileName(tif)));
+    }
 }
 
 void

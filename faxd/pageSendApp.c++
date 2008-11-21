@@ -103,7 +103,7 @@ pageSendApp::close()
 	     * logged and the appropriate exit status is
 	     * returned to the caller.
 	     */
-	    ModemServer::abortSession();
+	    ModemServer::abortSession(Status(352, "Send aborted due to operator intervention"));
 	} else {
 	    ModemServer::close();
 	    faxApp::close();
