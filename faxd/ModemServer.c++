@@ -80,6 +80,7 @@ ModemServer::ModemServer(const fxStr& devName, const fxStr& devID)
     state = BASE;
     statusFile = NULL;
     abortCall = false;
+    abortCallReason.clear();
     deduceComplain = true;		// first failure causes complaint
     changePriority = true;
     delayConfig = false;
@@ -721,13 +722,29 @@ ModemServer::abortRequested()
 }
 
 /*
+ * Return the reason a request has been made to abort
+ * the current session.
+ */
+Status
+ModemServer::abortReason()
+{
+    if (abortCall)
+	return (abortCallReason);
+    return Status();
+}
+
+/*
  * Request that a current session be aborted.
  */
 void
-ModemServer::abortSession()
+ModemServer::abortSession(Status reason)
 {
-    abortCall = true;
-    traceServer("ABORT: job abort requested");
+    if (!abortCall) {
+	// Don't overwrite the first reason to abort
+	abortCall = true;
+	abortCallReason = reason;
+    }
+    traceServer("ABORT: job abort requested: %s", reason.string());
 }
 
 /*

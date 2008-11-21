@@ -104,7 +104,7 @@ faxSendApp::close()
 	     * logged and the appropriate exit status is
 	     * returned to the caller.
 	     */
-	    FaxServer::abortSession();
+	    FaxServer::abortSession(Status(352, "Send aborted due to operator intervention"));
 	} else {
 	    FaxServer::close();
 	    faxApp::close();

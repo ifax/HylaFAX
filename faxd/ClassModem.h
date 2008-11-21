@@ -299,6 +299,7 @@ public:
     FlowControl	getOutputFlow();
 // server-related stuff
     bool	abortRequested();
+    Status	abortReason();
 
     /*
      * Send support:

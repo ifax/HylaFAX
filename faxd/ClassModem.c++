@@ -639,6 +639,8 @@ bool ClassModem::modemStopOutput()
 
 bool ClassModem::abortRequested()
     { return server.abortRequested(); }
+Status ClassModem::abortReason()
+    { return server.abortReason(); }
 
 void ClassModem::beginTimedTransfer()		{ server.timeout = false; }
 void ClassModem::endTimedTransfer()		{}

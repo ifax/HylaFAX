@@ -231,7 +231,7 @@ Class2Modem::recvPage(TIFF* tif, u_int& ppm, Status& eresult, const fxStr& id)
 	 */
 	if (abortRequested()) {
 	    // XXX no way to purge TIFF directory
-	    eresult = Status(301, "Receive aborted due to operator intervention");
+	    eresult = abortReason();
 	    return (false);
 	}
 	// XXX deal with PRI interrupts

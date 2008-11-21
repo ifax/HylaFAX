@@ -121,6 +121,7 @@ protected:
     };
     ModemServerState state;
     bool	abortCall;		// abort current send/receive
+    Status	abortCallReason;	// reason for abort
 // logging and tracing
     FaxMachineLog* log;			// current log device
 
@@ -192,8 +193,9 @@ protected:
     void	beginSession(const fxStr& number);
     void	endSession();
 // abort send/receive session
-    virtual void abortSession();
+    virtual void abortSession(Status reason);
     bool	abortRequested();
+    Status	abortReason();
 public:
     virtual ~ModemServer();
 

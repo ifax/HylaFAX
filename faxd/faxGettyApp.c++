@@ -966,7 +966,7 @@ faxGettyApp::FIFOMessage(const char* cp)
 	changeState(LOCKWAIT, pollLockWait);
 	break;
     case 'Z':				// abort send/receive
-	FaxServer::abortSession();
+	FaxServer::abortSession(Status(301, "Receive aborted due to operator intervention"));
 	break;
     default:
 	faxApp::FIFOMessage(cp);
