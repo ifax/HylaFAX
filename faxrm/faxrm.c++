@@ -94,6 +94,7 @@ faxRmApp::run(int argc, char** argv)
 			emsg = getLastResponse();
 			break;
 		    }
+		    // translator: File %s has been removed.
 		    printf(_("%s removed.\n"), id);
 		}
 	    }

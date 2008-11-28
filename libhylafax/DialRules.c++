@@ -104,6 +104,7 @@ void
 DialStringRules::def(const fxStr& var, const fxStr& value)
 {
     if (verbose)
+	// translator: Screen output about a variable %s being defined to "%s"
 	traceParse(NLS::TEXT("Define %s = \"%s\""),
 	    (const char*) var, (const char*) value);
     (*vars)[var] = value;
@@ -113,6 +114,7 @@ void
 DialStringRules::undef(const fxStr& var)
 {
     if (verbose)
+	// translator: Screen output about undefining variable %s
 	traceParse(NLS::TEXT("Undefine %s"), (const char*) var);
     vars->remove(var);
 }
@@ -163,9 +165,11 @@ DialStringRules::parseRules()
     if (verbose) {
 	RuleArray* ra = (*rules)["CanonicalNumber"];
 	if (ra == 0)
+	    // translator: "CanonicalNumber" is the name of a rule and must not be translated.
 	    traceParse(NLS::TEXT("Warning, no \"CanonicalNumber\" rules."));
 	ra = (*rules)["DialString"];
 	if (ra == 0)
+	    // translator: "DialString" is the name of a rule and must not be translated.
 	    traceParse(NLS::TEXT("Warning, no \"DialString\" rules."));
     }
     return (true);
@@ -395,6 +399,7 @@ DialStringRules::parseError(const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
+    // translator: "line" as in the line number %u of filename %s.
     fprintf(stderr, NLS::TEXT("%s: line %u: "), (const char*) filename, lineno);
     vfprintf(stderr, fmt, ap);
     va_end(ap);
@@ -406,6 +411,7 @@ DialStringRules::traceParse(const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
+    // translator: "line" as in the line number %u of filename %s.
     fprintf(stdout, NLS::TEXT("%s: line %u: "), (const char*) filename, lineno);
     vfprintf(stdout, fmt, ap);
     va_end(ap);

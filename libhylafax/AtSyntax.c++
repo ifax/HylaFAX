@@ -109,6 +109,7 @@ parseAtSyntax(const char* s, const struct tm& ref, struct tm& at0, fxStr& emsg)
 		v += min;
 		cp += 3;
 	    } else {
+		//translator: HH:MM represents (each two digits) hour:minutes
 		_atSyntax(emsg, NLS::TEXT("expecting HH:MM"));
 		return (false);
 	    }

@@ -1,21 +1,21 @@
-# File: faxalter/faxalter.c++, line: 236
+# File: faxalter/faxalter.c++, line: 242
 msgid "No job parameters specified for alteration."
 msgstr ""
 
 #
-# File: faxalter/faxalter.c++, line: 257
+# File: faxalter/faxalter.c++, line: 263
 #, c-format
 msgid "Job %s: duplicated as job %s.\n"
 msgstr ""
 
 #
-# File: faxalter/faxalter.c++, line: 284
+# File: faxalter/faxalter.c++, line: 290
 #, c-format
 msgid "Job %s: done.\n"
 msgstr ""
 
 #
-# File: faxalter/faxalter.c++, line: 310
+# File: faxalter/faxalter.c++, line: 316
 msgid ""
 "usage: faxalter [-C] [-h server-host] [-a time] [-d number] [-k time] [-m "
 "modem] [-n notify] [-P priority] [-t tries] [-A] [-g] [-p] [-r] [-v] [-DQR] "
@@ -153,7 +153,7 @@ msgstr ""
 # File: faxmail/faxmail.c++, line: 760
 # #-#-#-#-#  messages.po  #-#-#-#-#
 #
-# File: sendfax/sendfax.c++, line: 365
+# File: sendfax/sendfax.c++, line: 368
 # #-#-#-#-#  messages.po  #-#-#-#-#
 #
 # File: sendpage/sendpage.c++, line: 216
@@ -187,25 +187,26 @@ msgid ""
 "t notify] [-u user] [-12cnNrRTv]"
 msgstr ""
 
-# File: faxrm/faxrm.c++, line: 97
+# File: faxrm/faxrm.c++, line: 98
+#. translator: File %s has been removed.
 #, c-format
 msgid "%s removed.\n"
 msgstr ""
 
 #
-# File: faxrm/faxrm.c++, line: 111
+# File: faxrm/faxrm.c++, line: 112
 #, c-format
 msgid "Job %s removed.\n"
 msgstr ""
 
 #
-# File: faxrm/faxrm.c++, line: 116
+# File: faxrm/faxrm.c++, line: 117
 #, c-format
 msgid "Job %s removed (from doneq).\n"
 msgstr ""
 
 #
-# File: faxrm/faxrm.c++, line: 136
+# File: faxrm/faxrm.c++, line: 137
 msgid "usage: faxrm [-h server-host] [-adv] id..."
 msgstr ""
 
@@ -219,25 +220,25 @@ msgstr ""
 msgid "Data Connection: %s"
 msgstr ""
 
-# File: sendfax/sendfax.c++, line: 240
+# File: sendfax/sendfax.c++, line: 243
 #, c-format
 msgid "%s: No destination specified.\n"
 msgstr ""
 
 #
-# File: sendfax/sendfax.c++, line: 245
+# File: sendfax/sendfax.c++, line: 248
 #, c-format
 msgid "%s: Unused options after last destination.\n"
 msgstr ""
 
 #
-# File: sendfax/sendfax.c++, line: 265
+# File: sendfax/sendfax.c++, line: 268
 #, c-format
 msgid "can only wait for one job (right now), waiting for job %s."
 msgstr ""
 
 #
-# File: sendfax/sendfax.c++, line: 279
+# File: sendfax/sendfax.c++, line: 282
 #, c-format
 msgid ""
 "usage: %s [options] [files]\n"
@@ -245,30 +246,30 @@ msgid ""
 msgstr ""
 
 #
-# File: sendfax/sendfax.c++, line: 319
+# File: sendfax/sendfax.c++, line: 322
 #, c-format
 msgid "Null destination for \"%s\""
 msgstr ""
 
 #
-# File: sendfax/sendfax.c++, line: 326
+# File: sendfax/sendfax.c++, line: 329
 msgid "ECM disabled, limiting job to 14400 bps."
 msgstr ""
 
 #
-# File: sendfax/sendfax.c++, line: 349
+# File: sendfax/sendfax.c++, line: 352
 #, c-format
 msgid "%s: no such file"
 msgstr ""
 
 #
-# File: sendfax/sendfax.c++, line: 372
+# File: sendfax/sendfax.c++, line: 375
 #, c-format
 msgid "%s: write error"
 msgstr ""
 
 #
-# File: sendfax/sendfax.c++, line: 380
+# File: sendfax/sendfax.c++, line: 383
 msgid "No input data; transmission aborted"
 msgstr ""
 

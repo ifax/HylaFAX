@@ -1623,60 +1623,60 @@ FaxClient::makeHeader(const char* fmt, const FaxFmtHeader fmts[], fxStr& header)
  * queue status listings returned by the server.
  */
 const FaxClient::FaxFmtHeader FaxClient::jobFormats[] = {
-    { 'A',	N_("SUB") },		// A (subaddr)
-    { 'B',	N_("PWD") },		// B (passwd)
-    { 'C',	N_("Company") },	// C (company)
-    { 'D',	N_("Dials") },		// D (totdials & maxdials)
-    { 'E',	N_("BR") },		// E (desiredbr)
-    { 'F',	N_("Tagline") },	// F (tagline)
-    { 'G',	N_("ST") },		// G (desiredst)
-    { 'H',	N_("DF") },		// H (desireddf)
-    { 'I',	N_("UsrPri") },		// I (usrpri)
-    { 'J',	N_("JobTag") },		// J (jobtag)
-    { 'K',	N_("EC") },		// K (desiredec as symbol)
-    { 'L',	N_("Location") },	// L (location)
-    { 'M',	N_("MailAddr") },	// M (mailaddr)
-    { 'N',	N_("DT") },		// N (desiredtl as symbol)
-    { 'O',	N_("CC") },		// O (useccover as symbol)
-    { 'P',	N_("Pages") },		// P (npages & totpages)
-    { 'Q',	N_("MinSP") },		// Q (minsp)
-    { 'R',	N_("Receiver") },	// R (receiver)
-    { 'S',	N_("Sender") },		// S (sender)
-    { 'T',	N_("Tries") },		// T (tottries & maxtries)
-    { 'U',	N_("ChopThreshold") },	// U (chopthreshold)
-    { 'V',	N_("DoneOp") },		// V (doneop)
-    { 'W',	N_("CommID") },		// W (commid)
-    { 'X',	N_("JobType") },	// X (jobtype)
-    { 'Y',	N_("Date       Time") },// Y (date & time)
-    { 'Z',	N_("UNIX Time") },	// Z (seconds since the UNIX epoch)
-    { 'a',	N_("State") },		// a (job state as symbol)
-    { 'b',	N_("NTries") },		// b (ntries)
-    { 'c',	N_("Client") },		// c (client)
-    { 'd',	N_("TotDials") },	// d (totdials)
-    { 'e',	N_("Number") },		// e (external)
-    { 'f',	N_("NDials") },		// f (ndials)
-    { 'g',	N_("GID") },		// g (groupid)
-    { 'h',	N_("Chop") },		// h (pagechop as symbol)
-    { 'i',	N_("Priority") },	// i (pri)
-    { 'j',	N_("JID") },		// j (jobid)
-    { 'k',	N_("LastTime") },	// k (killtime)
-    { 'l',	N_("PageLength") },	// l (pagelength)
-    { 'm',	N_("Modem") },		// m (modem)
-    { 'n',	N_("Notify") },		// n (notify as symbol)
-    { 'o',	N_("Owner") },		// o (owner)
-    { 'p',	N_("Pages") },		// p (npages)
-    { 'q',	N_("RetryTime") },	// q (retrytime as MM:SS)
-    { 'r',	N_("Resolution") },	// r (resolution)
-    { 's',	N_("Status") },		// s (notice a.k.a. status)
-    { 't',	N_("TotTries") },	// t (tottries)
-    { 'u',	N_("MaxTries") },	// u (maxtries)
-    { 'v',	N_("DialString") },	// v (number a.ka. dialstring)
-    { 'w',	N_("PageWidth") },	// w (pagewidth)
-    { 'x',	N_("MaxDials") },	// x (maxdials)
-    { 'y',	N_("TotPages") },	// y (totpages)
-    { 'z',	N_("TTS") },		// z (tts)
-    { '0',	N_("UseXVres") },	// 0 (usexvres as symbol)
-    { '\0' },
+    /* translator: Column header for Recipient sub-address */				{ 'A',	N_("SUB") },
+    /* translator: Column header for Recipient password (of sub-address) */		{ 'B',	N_("PWD") },
+    /* translator: Column header for Recipient company name */				{ 'C',	N_("Company") },
+    /* translator: Column header for (total dials):(maximum dials) */			{ 'D',	N_("Dials") },
+    /* translator: Column header for signalling rate */					{ 'E',	N_("BR") },
+    /* translator: Column header for job tagline */					{ 'F',	N_("Tagline") },
+    /* translator: Column header for min-scanline-time */				{ 'G',	N_("ST") },
+    /* translator: Column header for data format */					{ 'H',	N_("DF") },
+    /* translator: Column header for user-requested scheduling priority */		{ 'I',	N_("UsrPri") },
+    /* translator: Column header for user specified job tag */				{ 'J',	N_("JobTag") },
+    /* translator: Column header for ECM (symbol) */					{ 'K',	N_("EC") },
+    /* translator: Column header for recipient location */				{ 'L',	N_("Location") },
+    /* translator: Column header for mail address */					{ 'M',	N_("MailAddr") },
+    /* translator: Column header for tagline handling (symbol) */			{ 'N',	N_("DT") },
+    /* translator: Column header for continuation cover page use (symbol) */		{ 'O',	N_("CC") },
+    /* translator: Column header for (number of pages):(total pages) */			{ 'P',	N_("Pages") },
+    /* translator: Column header for minimum speed */					{ 'Q',	N_("MinSP") },
+    /* translator: Column header for receiver name */					{ 'R',	N_("Receiver") },
+    /* translator: Column header for sender name */					{ 'S',	N_("Sender") },
+    /* translator: Column header for (total tries):(maximum tries) */			{ 'T',	N_("Tries") },
+    /* translator: Column header for minimum white space before chopping */		{ 'U',	N_("ChopThreshold") },
+    /* translator: Column header for operation to do when job completes */		{ 'V',	N_("DoneOp") },
+    /* translator: Column header for communication ID */				{ 'W',	N_("CommID") },
+    /* translator: Column header for job type */					{ 'X',	N_("JobType") },
+    /* translator: Column header for Date & Time */					{ 'Y',	N_("Date       Time") },
+    /* translator: Column header for seconds since the UNIX epoch */			{ 'Z',	N_("UNIX Time") },
+    /* translator: Column header for job state (symbol) */				{ 'a',	N_("State") },
+    /* translator: Column header for number of tries */					{ 'b',	N_("NTries") },
+    /* translator: Column header for identity of machine that submitted job */		{ 'c',	N_("Client") },
+    /* translator: Column header for total dials */					{ 'd',	N_("TotDials") },
+    /* translator: Column header for recipient fax number */				{ 'e',	N_("Number") },
+    /* translator: Column header for number of dials */					{ 'f',	N_("NDials") },
+    /* translator: Column header for group identifier */				{ 'g',	N_("GID") },
+    /* translator: Column header for page chopping (symbol) */				{ 'h',	N_("Chop") },
+    /* translator: Column header for current scheduling priority */			{ 'i',	N_("Priority") },
+    /* translator: Column header for job identifier */					{ 'j',	N_("JID") },
+    /* translator: Column header for time to kill job */				{ 'k',	N_("LastTime") },
+    /* translator: Column header for page length */					{ 'l',	N_("PageLength") },
+    /* translator: Column header for modem group */					{ 'm',	N_("Modem") },
+    /* translator: Column header for email notification (symbol) */			{ 'n',	N_("Notify") },
+    /* translator: Column header for owner name */					{ 'o',	N_("Owner") },
+    /* translator: Column header for number of pages */					{ 'p',	N_("Pages") },
+    /* translator: Column header for retry time */					{ 'q',	N_("RetryTime") },
+    /* translator: Column header for fax image vertical resolution */			{ 'r',	N_("Resolution") },
+    /* translator: Column header for request status indicator */			{ 's',	N_("Status") },
+    /* translator: Column header for total tries */					{ 't',	N_("TotTries") },
+    /* translator: Column header for maximum tries */					{ 'u',	N_("MaxTries") },
+    /* translator: Column header for dial string */					{ 'v',	N_("DialString") },
+    /* translator: Column header for page width */					{ 'w',	N_("PageWidth") },
+    /* translator: Column header for maximum dials */					{ 'x',	N_("MaxDials") },
+    /* translator: Column header for total of pages */					{ 'y',	N_("TotPages") },
+    /* translator: Column header for time to send */					{ 'z',	N_("TTS") },
+    /* translator: Column header for extended vertical resolution use (symbol) */	{ '0',	N_("UseXVres") },
+											{ '\0' },
 };
 void FaxClient::getJobStatusHeader(fxStr& header)
 {
@@ -1690,28 +1690,28 @@ void FaxClient::getJobStatusHeader(fxStr& header)
  * queue status listings returned by the server.
  */
 const FaxClient::FaxFmtHeader FaxClient::recvFormats[] = {
-    { 'Y',	N_("Date       Time") },// Y (date & time)
-    { 'Z',	N_("UNIX Time") },	// Z (seconds since the UNIX epoch)
-    { 'a',	N_("SUB") },		// a (subaddress)
-    { 'b',	N_("BR") },		// b (bitrate)
-    { 'd',	N_("DF") },		// d (data format)
-    { 'e',	N_("Error") },		// e (error description)
-    { 'f',	N_("Filename") },	// f (filename)
-    { 'h',	N_("Time") },		// h (time spent receiving)
-    { 'i',	N_("CIDName") },	// i (caller id name)
-    { 'j',	N_("CIDNumber") },	// j (caller id number)
-    { 'l',	N_("Length") },		// l (pagelength)
-    { 'm',	N_("Protect") },	// m (fax-style protection mode, no group bits)
-    { 'n',	N_("Size") },		// n (file size)
-    { 'o',	N_("Owner") },		// o (owner)
-    { 'p',	N_("Pages") },		// p (npages)
-    { 'q',	N_("Protect") },	// m (UNIX-style protection mode)
-    { 'r',	N_("Resolution") },	// r (resolution)
-    { 's',	N_("Sender/TSI") },	// s (sender TSI)
-    { 't',	N_("Recvd@") },		// t (time received)
-    { 'w',	N_("Width") },		// w (pagewidth)
-    { 'z',	" " },			// z (``*'' if being received)
-    { '\0' },
+    /* translator: Column header for Date & Time */					{ 'Y',	N_("Date       Time") },
+    /* translator: Column header for seconds since the UNIX epoch */			{ 'Z',	N_("UNIX Time") },
+    /* translator: Column header for Recipient sub-address */				{ 'a',	N_("SUB") },
+    /* translator: Column header for signalling rate */					{ 'b',	N_("BR") },
+    /* translator: Column header for data format */					{ 'd',	N_("DF") },
+    /* translator: Column header for error description */				{ 'e',	N_("Error") },
+    /* translator: Column header for file name */					{ 'f',	N_("Filename") },
+    /* translator: Column header for time spent receiving */				{ 'h',	N_("Time") },
+    /* translator: Column header for callerid name */					{ 'i',	N_("CIDName") },
+    /* translator: Column header for caller id number */				{ 'j',	N_("CIDNumber") },
+    /* translator: Column header for page length */					{ 'l',	N_("Length") },
+    /* translator: Column header for fax protection mode */				{ 'm',	N_("Protect") },
+    /* translator: Column header for file size */					{ 'n',	N_("Size") },
+    /* translator: Column header for job owner */					{ 'o',	N_("Owner") },
+    /* translator: Column header for number of pages */					{ 'p',	N_("Pages") },
+    /* translator: Column header for fax protection mode */				{ 'q',	N_("Protect") },
+    /* translator: Column header for fax image resolution */				{ 'r',	N_("Resolution") },
+    /* translator: Column header for sender TSI (Transmitting Station Information) */	{ 's',	N_("Sender/TSI") },
+    /* translator: Column header for time received */					{ 't',	N_("Recvd@") },
+    /* translator: Column header for page width */					{ 'w',	N_("Width") },
+    /* ``*'' if being received */							{ 'z',	" " },
+											{ '\0' },
 };
 void FaxClient::getRecvStatusHeader(fxStr& header)
 {
@@ -1725,16 +1725,16 @@ void FaxClient::getRecvStatusHeader(fxStr& header)
  * status listings returned by the server.
  */
 const FaxClient::FaxFmtHeader FaxClient::modemFormats[] = {
-    { 'h',	N_("Host") },		// h (hostname)
-    { 'l',	N_("LocalID") },	// l (local identifier)
-    { 'm',	N_("Modem") },		// m (canonical modem name)
-    { 'n',	N_("Number") },		// n (fax phone number)
-    { 'r',	N_("MaxRecv") },	// r (max recv pages)
-    { 's',	N_("Status") },		// s (status information)
-    { 't',	N_("Tracing") },	// t (server:session tracing level)
-    { 'v',	N_("Speaker") },	// v (speaker volume as symbol)
-    { 'z',	" " },			// z (``*'' if faxgetty is running)
-    { '\0' },
+    /* translator: Column header for machine hostname */		{ 'h',	N_("Host") },
+    /* translator: Column header for local identifier */		{ 'l',	N_("LocalID") },
+    /* translator: Column header for canonical modem name */		{ 'm',	N_("Modem") },
+    /* translator: Column header for fax phone number */		{ 'n',	N_("Number") },
+    /* translator: Column header for maximum received pages */		{ 'r',	N_("MaxRecv") },
+    /* translator: Column header for status information */		{ 's',	N_("Status") },
+    /* translator: Column header for server:session tracing level */	{ 't',	N_("Tracing") },
+    /* translator: Column header for speaker volume (symbol) */		{ 'v',	N_("Speaker") },
+    /* ``*'' if faxgetty is running */					{ 'z',	" " },
+									{ '\0' },
 };
 void FaxClient::getModemStatusHeader(fxStr& header)
 {
@@ -1749,20 +1749,20 @@ void FaxClient::getModemStatusHeader(fxStr& header)
  * status listings returned by the server.
  */
 const FaxClient::FaxFmtHeader FaxClient::fileFormats[] = {
-    { 'a',	N_("LastAcc") },	// a (last access time)
-    { 'c',	N_("Created") },	// c (create time)
-    { 'd',	N_("Device") },		// d (device)
-    { 'f',	N_("Filename") },	// f (filename)
-    { 'g',	N_("GID") },		// g (GID of file)
-    { 'l',	N_("Links") },		// l (link count)
-    { 'm',	N_("LastMod") },	// m (last modification time)
-    { 'o',	N_("Owner") },		// o (owner based on file GID)
-    { 'p',	N_("Protect") },	// p (fax-style protection flags, no group bits)
-    { 'q',	N_("Protect") },	// q (UNIX-style protection flags)
-    { 'r',	N_("RootDev") },	// r (root device)
-    { 's',	N_("Size") },		// s (file size in bytes)
-    { 'u',	N_("UID") },		// u (UID of file)
-    { '\0' },
+    /* translator: Column header for file last access time */		{ 'a',	N_("LastAcc") },
+    /* translator: Column header for file creation time */		{ 'c',	N_("Created") },
+    /* translator: Column header for ID of device containing file */	{ 'd',	N_("Device") },
+    /* translator: Column header for file name */			{ 'f',	N_("Filename") },
+    /* translator: Column header for file GID */			{ 'g',	N_("GID") },
+    /* translator: Column header for file link count */			{ 'l',	N_("Links") },
+    /* translator: Column header for file last modification time */	{ 'm',	N_("LastMod") },
+    /* translator: Column header for file owner */			{ 'o',	N_("Owner") },
+    /* translator: Column header for file protection flags */		{ 'p',	N_("Protect") },
+    /* translator: Column header for file protection flags */		{ 'q',	N_("Protect") },
+    /* translator: Column header for ID of device if special file */	{ 'r',	N_("RootDev") },
+    /* translator: Column header for file size */			{ 's',	N_("Size") },
+    /* translator: Column header for file UID */			{ 'u',	N_("UID") },
+									{ '\0' },
 };
 void FaxClient::getFileStatusHeader(fxStr& header)
 {

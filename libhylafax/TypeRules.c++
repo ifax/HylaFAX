@@ -90,6 +90,7 @@ bool
 TypeRule::match(const void* data, size_t size, bool verbose) const
 {
     if (verbose) {
+	// translator: This shows the rule to be processed (the last two %s) starting at offset %#lx.
 	printf(NLS::TEXT("rule: %soffset %#lx %s %s"),
 	    cont ? ">" : "",
 	    (u_long) off,
@@ -308,6 +309,7 @@ parseError(const char* file, u_int lineno, const char* fmt ...)
 {
     va_list ap;
     va_start(ap, fmt);
+    // translator: "line" as in the line number %u of filename %s.
     fprintf(stderr, NLS::TEXT("%s: line %u: "), file, lineno);
     vfprintf(stderr, fmt, ap);
     va_end(ap);
