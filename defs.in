@@ -364,7 +364,7 @@ MANSFILENAME	= @MANSFILENAME@
 #
 LOCALEDIR       = @LOCALEDIR@
 
-LANGUAGES       = nl es vi
+LANGUAGES       = nl es vi id
 
 XGETTEXT	= xgettext --foreign-user -ctranslator --no-wrap --sort-by-file --omit-header --strict --indent --force-po
 MSGMERGE	= msgmerge --no-wrap --sort-by-file
