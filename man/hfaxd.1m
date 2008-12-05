@@ -391,7 +391,7 @@ FileSortFmt	string	\s-1-\s+1	format string for sorting file status listing
 IdleTimeout	integer	\s-1900\s+1	client idle timeout in seconds
 JobFmt	string	\s-1\fIsee below\fP\s+1	format string for job status results
 JobSortFmt	string	\s-1-\s+1	format string for sorting job status listing
-JobProtection	octal	\s-10444\s+1	permissions for job qfiles in sendq/docq
+JobProtection	octal	\s-10444\s+1	permissions for job qfiles in sendq/doneq
 KillTimeMap	string	\s-1\fIsee below\fP\s+1	mapping from service level to job kill time (\s-1SNPP\s+1)
 LogFacility	string	\s-1daemon\s+1	\fIsyslog\fP facility name for tracing messages
 MaxAdminAttempts	integer	\s-15\s+1	maximum admin attempts before disconnecting
@@ -565,7 +565,7 @@ sendq and doneq directories.  Follows the JobFmt formatting rules.
 .TP 10
 .B JobProtection
 The file mode setting for job qfiles in the \*(Fx queues (sendq and doneq).
-The default setting of ``0644'' allows all users to view all job paramaters in
+The default setting of ``0644'' allows all users to view all job parameters in
 the send/done queues.  If
 .IR PublicJobQ
 is set to false, then this file mode determines the permissions of the clients to
@@ -681,7 +681,7 @@ all other service levels.
 By default, HylaFAX has always made the listings of the sendq/doneq include all
 jobs to any client connected to hfaxd.  By setting this to false, hfaxd will
 also enforce it's normal access restrictions on the listing of jobs in the
-sendq/doneq.  These access restrictions are base on the file mode (see
+sendq/doneq.  These access restrictions are based on the file mode (see
 .IR JobProtection
 ) and the logged in uid (see
 .IR hosts.hfaxd
@@ -691,7 +691,7 @@ sendq/doneq.  These access restrictions are base on the file mode (see
 By default, HylaFAX has always made the listings of the recvq include all
 faxes to any client connected to hfaxd.  By setting this to false, hfaxd will
 also enforce it's normal access restrictions on the listing of faxes in the
-recvq.  These access restrictions are base on the file mode
+recvq.  These access restrictions are based on the file mode
 .IR faxgetty
 (and it's related
 .IR FaxDispatch
