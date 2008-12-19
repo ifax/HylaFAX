@@ -35,22 +35,22 @@ hylafax-server/messages.pot: $(wildcard ${patsubst %, ${DEPTH}/%/messages.po, ${
 # legacy comiples like SCO, so be carefull!
 # Here again (like MANCVT) we can't use $<, because we're not an "inferred" rule
 # So techincally, this rule's depencies aren't *quite* complete, but on well
-${CATALOG}/${LANGUAGE}.po: ${CATALOG}/messages.pot version.po ${LANGUAGE}.po
+${CATALOG}/${BUILD_LANGUAGE}.po: ${CATALOG}/messages.pot version.po ${BUILD_LANGUAGE}.po
 	test -d ${CATALOG} || mkdir ${CATALOG}
 	cat version.po ${CATALOG}/messages.pot > $@.tmp
-	${MSGMERGE} ${SRCDIR}/${LANGUAGE}.po $@.tmp  -o $@
+	${MSGMERGE} ${SRCDIR}/${BUILD_LANGUAGE}.po $@.tmp  -o $@
 	rm -f $@.tmp
 
-${CATALOG}/${LANGUAGE}.mo: ${CATALOG}/${LANGUAGE}.po
+${CATALOG}/${BUILD_LANGUAGE}.mo: ${CATALOG}/${BUILD_LANGUAGE}.po
 	${MSGFMT} -o $@ $?
 
-lang-mo: ${CATALOG}/${LANGUAGE}.mo
+lang-mo: ${CATALOG}/${BUILD_LANGUAGE}.mo
 
 #and since we don't have pattern rules, we do this horrid loop
 all-mo:
 	@for l in ${LANGUAGES}; do					\
 	    for c in libhylafax hylafax-client hylafax-server; do	\
-		${MAKE} LANGUAGE=$$l CATALOG=$$c lang-mo || exit $?;	\
+		${MAKE} BUILD_LANGUAGE=$$l CATALOG=$$c lang-mo || exit $?;	\
 	    done;							\
 	done
 
