@@ -27,7 +27,7 @@
 /*
  * Regular expression support.
  */
-#include <RE.h>
+#include "RE.h"
 
 RE::RE(const char* pat, int len, int flags)
     : _pattern(pat, len == 0 ? strlen(pat) : len)
