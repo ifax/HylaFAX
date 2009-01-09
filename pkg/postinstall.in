@@ -4,34 +4,137 @@
 #
 #	postinstall
 #
-#cd /usr/local/HylaFAX-v4.0
+#cd /usr/local/HylaFAX-v4.5
 #sh make.links
+#
+CMP=@CMP@
+#
+bindir=@BIN@
+sbindir=@SBIN@
+libdatadir=@LIBDATA@
+mandir=@MANDIR@
+spooldir=@SPOOL@
+#
+FAX_U=@FAXUID@
+FAX_G=@FAXGID@
+#
+PKG_O=@SYSUID@
+PKG_G=@SYSGID@
 
-if test -f @LIBDATA@/faxcover.ps
+# update
+if [ -f ${sbindir}/faxcron ]
 then
-	mv @LIBDATA@/faxcover.ps.dist @LIBDATA@/faxcover.ps.N
-	installf HylaFAX @LIBDATA@/faxcover.ps.N f 0644 @SYSUID@ @SYSGID@
+	${CMP} -s ${sbindir}/faxcron ${sbindir}/faxcron.dist  ||  {
+		echo "Saving faxcron as faxcron.O"
+		mv ${sbindir}/faxcron ${sbindir}/faxcron.O
+		installf HylaFAX ${sbindir}/faxcron.O f 0755 ${PKG_O} ${PKG_G}
+		mv ${sbindir}/faxcron.dist ${sbindir}/faxcron
+	}
 else
-	mv @LIBDATA@/faxcover.ps.dist @LIBDATA@/faxcover.ps
-	installf HylaFAX @LIBDATA@/faxcover.ps f 0644 @SYSUID@ @SYSGID@
+	mv ${sbindir}/faxcron.dist ${sbindir}/faxcron
 fi
-removef HylaFAX @LIBDATA@/faxcover.ps.dist
+installf HylaFAX ${sbindir}/faxcron f 0755 ${PKG_O} ${PKG_G}
+rm ${sbindir}/faxcron.dist 2>/dev/null
+removef HylaFAX ${sbindir}/faxcron.dist
 
-if test -d @SPOOL@/recvq
+echo "Updating ${spooldir} files"
+for i in bin/ps2fax.gs bin/ps2fax.dps bin/ps2fax.imp bin/pdf2fax.gs \
+bin/pcl2fax bin/tiff2fax bin/notify bin/notify.awk bin/archive \
+bin/faxrcvd bin/pollrcvd bin/mkcover bin/wedged \
+etc/dpsprinter.ps etc/dialrules etc/dialrules.sf-ba etc/dialrules.europe
+do
+    if [ -f ${spooldir}/${i} ]
+    then
+	${CMP} -s ${spooldir}/${i} ${spooldir}/${i}.dist  ||  {
+		echo "Saving ${i} as ${i}.O"
+	mv ${spooldir}/${i} ${spooldir}/${i}.O
+	    case $i in
+		bin/*)
+			installf HylaFAX ${spooldir}/${i}.O f 0755 ${PKG_O} ${PKG_G}
+			;;
+		etc/*)
+			installf HylaFAX ${spooldir}/${i}.O f 0444 ${PKG_O} ${PKG_G}
+			;;
+	    esac
+		mv ${spooldir}/${i}.dist ${spooldir}/${i}
+	}
+    else
+		mv ${spooldir}/${i}.dist ${spooldir}/${i}
+    fi
+	case $i in
+	    bin/*)
+		installf HylaFAX ${spooldir}/${i} f 0755 ${PKG_O} ${PKG_G}
+		;;
+	    etc/*)
+		installf HylaFAX ${spooldir}/${i} f 0444 ${PKG_O} ${PKG_G}
+		;;
+	esac
+    rm ${spooldir}/${i}.dist 2>/dev/null
+    removef HylaFAX ${spooldir}/${i}.dist
+done
+
+# suggest
+if test -f ${libdatadir}/faxcover.ps
 then
-	echo "\n\nRun @SBIN@/faxsetup\n"
+	mv ${libdatadir}/faxcover.ps.dist ${libdatadir}/faxcover.ps.N
+	installf HylaFAX ${libdatadir}/faxcover.ps.N f 0644 ${PKG_O} ${PKG_G}
+else
+	mv ${libdatadir}/faxcover.ps.dist ${libdatadir}/faxcover.ps
+	installf HylaFAX ${libdatadir}/faxcover.ps f 0644 ${PKG_O} ${PKG_G}
+fi
+removef HylaFAX ${libdatadir}/faxcover.ps.dist
+if test -f ${spooldir}/etc/cover.templ
+then
+	mv ${spooldir}/etc/cover.templ.dist ${spooldir}/etc/cover.templ.N
+	installf HylaFAX ${spooldir}/etc/cover.templ.N f 0644 ${PKG_O} ${PKG_G}
+else
+	mv ${spooldir}/etc/cover.templ.dist ${spooldir}/etc/cover.templ
+	installf HylaFAX ${spooldir}/etc/cover.templ f 0644 ${PKG_O} ${PKG_G}
+fi
+removef HylaFAX ${spooldir}/etc/cover.templ.dist
+
+# no update
+test -f ${libdatadir}/hfaxd.conf  ||  {
+	mv ${libdatadir}/hfaxd.conf.dist ${libdatadir}/hfaxd.conf
+	installf HylaFAX ${libdatadir}/hfaxd.conf f 0644 ${PKG_O} ${PKG_G}
+}
+removef HylaFAX ${libdatadir}/hfaxd.conf.dist
+
+for i in etc/xferfaxlog etc/hosts.hfaxd etc/lutRS18.pcf
+do
+    test -f ${spooldir}/${i}  ||  {
+	mv ${spooldir}/${i}.dist ${spooldir}/${i}
+	case $i in
+	    etc/hosts.hfaxd)
+		installf HylaFAX ${spooldir}/${i} f 0600 ${FAX_U} ${FAX_G}
+		;;
+	    *)
+		installf HylaFAX ${spooldir}/${i} f 0644 ${FAX_U} ${FAX_G}
+		;;
+	esac
+    }
+    removef HylaFAX ${spooldir}/${i}.dist
+done
+
+# update software database
+installf -f HylaFAX
+removef -f HylaFAX
+
+if test -d ${spooldir}/recvq
+then
+	echo "\n\nRun ${sbindir}/faxsetup\n"
 	cat >/tmp/root.crontab <<EOF
 #	crontab(1)
 # (minutes) (hour) (day of the month) (month of the year) (day of the week)
 # faxqclean - HylaFAX queue cleaner process
-0   0    *    *    *   @SBIN@/faxqclean
+0   0    *    *    *   ${sbindir}/faxqclean
 EOF
 
 	cat >/tmp/uucp.crontab <<EOF
 #	crontab(1)
 # (minutes) (hour) (day of the month) (month of the year) (day of the week)
 # faxcron - HylaFAX routine maintenance script
-25   23    *    *    0   sh @SBIN@/faxcron -rcv 20 | mailx -s "Fax Reports" FaxMaster
+25   23    *    *    0   sh ${sbindir}/faxcron -rcv 20 | mailx -s "Fax Reports" FaxMaster
 EOF
 
 	echo "See sample crontab(1) entries for root and fax (uucp)"
@@ -39,11 +142,7 @@ EOF
 	echo "/tmp/uucp.crontab"
 
 else
-	echo "\n\nRun @SBIN@/faxsetup -client\n"
+	echo "\n\nRun ${sbindir}/faxsetup -client\n"
 fi
-
-# update software database
-installf -f HylaFAX
-removef -f HylaFAX
 
 exit 0

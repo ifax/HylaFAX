@@ -20,6 +20,7 @@ DIR_SYSVINITSTART="@SYSVINITDIR@/@SYSVINITSTARTDIR@"
 DIR_SYSVINITSTOP="@SYSVINITDIR@/@SYSVINITSTOPDIR@"
 MANNUM1_8=@MANNUM1_8@
 MANNUM4_5=@MANNUM4_5@
+MANSCHEME=@MANSCHEME@
 LMANNUM1_8=`echo ${MANNUM1_8} | tr '[A-Z]' '[a-z]'`
 LMANNUM4_5=`echo ${MANNUM4_5} | tr '[A-Z]' '[a-z]'`
 TMP_DIR=/tmp/.$$hylafax
@@ -116,6 +117,9 @@ i preremove
 i postremove
 EOF
 
+[ -s preinstall ]  &&  echo "i preinstall" >> ${PROTOTYPE}
+[ -s space ]  &&  echo "i space" >> ${PROTOTYPE}
+
 grep -v "^#" proto.local >> ${PROTOTYPE}
 
 sort -u ${TMP_LIST} >> ${PROTOTYPE}
@@ -123,6 +127,17 @@ sort -u ${TMP_LIST} >> ${PROTOTYPE}
 rm ${TMP_LIST}
 
 grep " none " ${PROTOTYPE}.stub >> ${PROTOTYPE}
-grep " man " ${PROTOTYPE}.stub | sed -e "s~\.${MANNUM1_8}=~.${LMANNUM1_8}=~" \
-	-e "s~\.${MANNUM4_5}=~.${LMANNUM4_5}=~" >> ${PROTOTYPE}
+
+case ${MANSCHEME} in
+# assume if it's compressed, it should end with .Z
+	*-compress-strip) grep " man " ${PROTOTYPE}.stub | sed \
+		-e "s~\.1=~.1.Z=~" \
+		-e "s~\.${MANNUM1_8}=~.1.Z=~" \
+		-e "s~\.${MANNUM4_5}=~.4.Z=~" >> ${PROTOTYPE}
+		;;
+	*) grep " man " ${PROTOTYPE}.stub | sed \
+		-e "s~\.${MANNUM1_8}=~.${LMANNUM1_8}=~" \
+		-e "s~\.${MANNUM4_5}=~.${LMANNUM4_5}=~" >> ${PROTOTYPE}
+		;;
+esac
 
