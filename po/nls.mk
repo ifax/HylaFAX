@@ -55,6 +55,8 @@ all-mo:
 	done
 
 makeDirs:
+	${INSTALL} -u ${SYSUSER} -g ${SYSGROUP} -m ${DIRMODE}	\
+	    -dir ${LOCALEDIR};
 	for l in ${LANGUAGES}; do					\
 	    ${INSTALL} -u ${SYSUSER} -g ${SYSGROUP} -m ${DIRMODE}	\
 		-F ${LOCALEDIR} -dir $$l;				\
