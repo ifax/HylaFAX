@@ -160,7 +160,7 @@ FaxClient::setupHostModem(const fxStr& s)
 	host.remove(0,1);
 	pos = host.next(0,']');
 	if (pos == host.length())
-	    printWarning(NLS::TEXT("Couldn't parse IPv6 ip address string: \"%s\")"), (const char*)s);
+	    printWarning(NLS::TEXT("Couldn't parse IPv6 ip address string: \"%s\""), (const char*)s);
 	else
 	host.remove(pos,1);
 	    pos = host.next(pos, ':');
