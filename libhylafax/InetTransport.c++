@@ -250,28 +250,56 @@ InetTransport::initDataConnV6(fxStr& emsg)
     Socket::Address data_addr;
     socklen_t dlen = sizeof(data_addr);
 
+
     if (client.isPassive()) {
-	if (client.command("EPSV") != FaxClient::COMPLETE)
-	    return (false);
-	const char *cp = strchr(client.getLastResponse(), '(');
-	if (!cp) return (false);
-	cp++;
-	unsigned int v[6];
-	int n = sscanf(cp, "%u,%u,%u,%u,%u,%u", &v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
-	if (n != 6) return (false);
-	if (!inet_aton(fxStr::format("%u.%u.%u.%u", v[2],v[3],v[4],v[5]), &data_addr.in.sin_addr)) {
+	if (Socket::getpeername(fileno(client.getCtrlFd()), &data_addr, &dlen) < 0) {
+	    emsg = fxStr::format("getsockname(ctrl): %s", strerror(errno));
 	    return (false);
 	}
-	data_addr.in.sin_port = htons((v[0]<<8)+v[1]);
-	data_addr.in.sin_family = AF_INET;
-	dlen = sizeof(data_addr.in);
+	int err = client.command("EPSV");
+	if (err == FaxClient::COMPLETE) {
+	    u_int s = client.getLastResponse().next(0, '(');
+	    u_int e = client.getLastResponse().next(s, ')');
+	    if (s++ < e && e < client.getLastResponse().length()) {
+		fxStr p = client.getLastResponse().extract(s, e-s);
+		char c = p[0];
+		if (p[0] == c && p[1] == c && p[2] == c && p[p.length()-1] == c)
+		    Socket::port(data_addr) = htons(p.extract(3, p.length()-4));
+		else {
+		    client.printWarning(NLS::TEXT("Couldn't parse last response \"%s\""), (const char*)client.getLastResponse());
+		    return(false);
+		}
+	    } else {
+		client.printWarning(NLS::TEXT("Couldn't parse last response \"%s\""), (const char*)client.getLastResponse());
+		return(false);
+	    }
+	} else if (err == FaxClient::ERROR && data_addr.family == AF_INET) {
+
+	    client.printWarning(NLS::TEXT("EPSV not supported, trying PASV since we're AF_INET\n"));
+	    if (client.command("PASV") != FaxClient::COMPLETE)
+		return false;
+	    const char *cp = strchr(client.getLastResponse(), '(');
+	    if (!cp) {
+		client.printWarning(NLS::TEXT("Couldn't parse last response \"%s\""), (const char*)client.getLastResponse());
+		return (false);
+	    }
+	    cp++;
+	    unsigned int v[6];
+	    int n = sscanf(cp, "%u,%u,%u,%u,%u,%u", &v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
+	    if (n != 6) return (false);
+	    if (!inet_aton(fxStr::format("%u.%u.%u.%u", v[2],v[3],v[4],v[5]), &data_addr.in.sin_addr)) {
+		return (false);
+	    }
+	    data_addr.in.sin_port = htons((v[0]<<8)+v[1]);
+	    data_addr.in.sin_family = AF_INET;
+	    dlen = sizeof(data_addr.in);
+	}
     } else {
 	if (Socket::getsockname(fileno(client.getCtrlFd()), &data_addr, &dlen) < 0) {
 	    emsg = fxStr::format("getsockname(ctrl): %s", strerror(errno));
 	    return (false);
 	}
-	data_addr.in.sin_port = 0;		// let system allocate port
-
+	Socket::port(data_addr) = 0;		// let system allocate port
     }
 
     int fd = socket(data_addr.family, SOCK_STREAM, IPPROTO_TCP);
