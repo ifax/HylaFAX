@@ -30,6 +30,7 @@
 
 extern "C" {
 #include <sys/socket.h>
+#include <sys/un.h>
 #if HAS_NETERRNO_H
 #include <net/errno.h>
 #endif
@@ -63,6 +64,22 @@ public:
     static int getsockname(int s, void* name, socklen_t* namelen);
     static int setsockopt(int s, int level, int oname, const void* oval, socklen_t olen);
     static struct hostent* gethostbyname(const char* name);
+
+    union Address
+    {
+	    sa_family_t family;
+	    struct sockaddr_in in;
+	    struct sockaddr_in6 in6;
+	    struct sockaddr_un un;
+	    operator struct sockaddr_in&() { return in; };
+	    operator struct sockaddr_in6&() { return in6; };
+	    operator struct sockaddr_un&() { return un; };
+    };
+
+    static socklen_t socklen(const Address& a);
+    static size_t addrlen(const Address& a);
+    static in_port_t& port(Address& a);
+    static void* addr (Address& a);
 };
 
 inline int Socket::accept(int s, void* addr, socklen_t* addrlen)
@@ -112,4 +129,54 @@ inline struct hostent* Socket::gethostbyname(const char* name)
     return ::gethostbyname(name);
 }
 
+inline socklen_t Socket::socklen (const Address& a)
+{
+    switch (a.family)
+    {
+	case AF_INET:
+		return sizeof(a.in);
+	case AF_INET6:
+		return sizeof(a.in6);
+	case AF_UNIX:
+		return sizeof(a.un);
+    }
+    return sizeof(a);
+}
+
+inline size_t Socket::addrlen (const Address& a)
+{
+    switch (a.family)
+    {
+	case AF_INET:
+		return sizeof(a.in.sin_addr);
+	case AF_INET6:
+		return sizeof(a.in6.sin6_addr);
+    }
+    fxAssert(true, "Socket::addrlen on invalid Address");
+}
+inline in_port_t& Socket::port (Address& a)
+{
+    switch (a.family)
+    {
+	case AF_INET:
+		return a.in.sin_port;
+	case AF_INET6:
+		return a.in6.sin6_port;
+    }
+    fxAssert(true, "Socket::port on invalid Address");
+}
+
+inline void* Socket::addr (Address& a)
+{
+    switch (a.family)
+    {
+	case AF_INET:
+	    return (void*) &a.in.sin_addr;
+	case AF_INET6:
+	    return (void*) &a.in6.sin6_addr;
+	case AF_UNIX:
+	    return (void*) &a.un.sun_path;
+    }
+    return NULL;
+}
 #endif /* _Socket_ */
