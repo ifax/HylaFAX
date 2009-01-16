@@ -112,6 +112,9 @@ faxStatApp::run(int argc, char** argv)
 		} else if (dirs[i] == FAX_RECVDIR) {
 		    getRecvStatusHeader(header);
 		    header.append('\n');
+		} else if (dirs[i] == FAX_STATUSDIR) {
+		    fxStr notused;
+		    getModemStatusHeader(notused);
 		}
 		if (!listWithHeader(dirs[i], emsg))
 		    break;

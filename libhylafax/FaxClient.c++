@@ -1752,7 +1752,7 @@ void FaxClient::getModemStatusHeader(fxStr& header)
 {
     makeHeader(getModemStatusFormat(), modemFormats, header);
     if (modemSFmt.length() )
-	command("MODEMSORTFMT \"%s\"", (const char*)modemSFmt);
+	command("MDMSORTFMT \"%s\"", (const char*)modemSFmt);
 
 }
 
