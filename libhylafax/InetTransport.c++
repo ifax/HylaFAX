@@ -54,68 +54,76 @@ extern "C" {
 #include <ctype.h>
 #include <errno.h>
 
+
+/*
+ *  References for IPv6:
+ *   http://people.redhat.com/drepper/userapi-ipv6.html
+ *   http://www.ietf.org/rfc/rfc2428.txt
+ */
+
 bool
 InetTransport::callServer(fxStr& emsg)
 {
-    int port = client.getPort();
+
+    fxStr service(FAX_SERVICE);
     fxStr proto(client.getProtoName());
-    char* cp;
-    if ((cp = getenv("FAXSERVICE")) && *cp != '\0') {
-	fxStr s(cp);
-	u_int l = s.next(0,'/');
-	port = (int) s.head(l);
-	if (l < s.length())
-	    proto = s.tail(s.length()-(l+1));
+
+    int protocol = 0;
+    struct addrinfo hints, *ai;
+
+    if (client.getPort() != -1)
+	service = fxStr::format("%d", client.getPort());
+    else {
+	char* cp;
+	if ((cp = getenv("FAXSERVICE")) && *cp != '\0') {
+	    fxStr s(cp);
+	    u_int l = s.next(0,'/');
+	    service = s.head(l);
+	    if (l < s.length())
+		proto = s.tail(s.length()-(l+1));
+	}
     }
 
-    int protocol;
     const char* cproto = proto;			// XXX for busted include files
     struct protoent* pp = getprotobyname(cproto);
     if (!pp) {
 	client.printWarning(NLS::TEXT("%s: No protocol definition, using default."),
 	    cproto);
-	protocol = 0;
     } else
 	protocol = pp->p_proto;
 
-    struct hostent* hp = Socket::gethostbyname(client.getHost());
-    if (!hp) {
-	emsg = client.getHost() | NLS::TEXT(": Unknown host");
-	return (false);
+    memset (&hints, '\0', sizeof (hints));
+    hints.ai_flags = AI_NUMERICHOST|AI_ADDRCONFIG|AI_CANONNAME;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_protocol = protocol;
+
+    int err = getaddrinfo (client.getHost(), service, &hints, &ai);
+    if (err == EAI_NONAME) {
+	hints.ai_flags &= ~AI_NUMERICHOST;
+	err = getaddrinfo (client.getHost(), service, &hints, &ai);
+    }
+    if (err != 0) {
+	client.printWarning(NLS::TEXT("getaddrinfo failed with %d: %s"), err, gai_strerror(err));
+	return false;
     }
 
-    int fd = socket(hp->h_addrtype, SOCK_STREAM, protocol);
-    if (fd < 0) {
-	emsg = NLS::TEXT("Can not create socket to connect to server.");
-	return (false);
-    }
-    struct sockaddr_in sin;
-    memset(&sin, 0, sizeof (sin));
-    sin.sin_family = hp->h_addrtype;
-    if (port == -1) {
-	struct servent* sp = getservbyname(FAX_SERVICE, cproto);
-	if (!sp) {
-	    if (!isdigit(cproto[0])) {
-		client.printWarning(
-		    NLS::TEXT("No \"%s\" service definition, using default %u/%s."),
-		    FAX_SERVICE, FAX_DEFPORT, cproto);
-		sin.sin_port = htons(FAX_DEFPORT);
-	    } else
-		sin.sin_port = atoi(cproto);
-	} else
-	    sin.sin_port = sp->s_port;
-    } else
-	sin.sin_port = htons(port);
-    for (char** cpp = hp->h_addr_list; *cpp; cpp++) {
-	memcpy(&sin.sin_addr, *cpp, hp->h_length);
+    for (struct addrinfo *aip = ai; aip != NULL; aip = aip->ai_next)
+    {
+	Socket::Address *addr = (Socket::Address*)aip->ai_addr;
+	char buf[256];				// For inet_ntop use
+	fxAssert(aip->ai_family == addr->family, "addrinfo ai_family doesn't match in_addr->ai_info");
 	if (client.getVerbose())
-	    client.traceServer(NLS::TEXT("Trying %s (%s) at port %u..."),
-		(const char*) client.getHost(),
-		inet_ntoa(sin.sin_addr),
-		ntohs(sin.sin_port));
-	if (Socket::connect(fd, &sin, sizeof (sin)) >= 0) {
+	    client.traceServer(NLS::TEXT("Trying %s [%d] (%s) at port %u..."),
+		    (const char*)client.getHost(), addr->family,
+		    inet_ntop(addr->family, Socket::addr(*addr), buf, sizeof(buf)),
+		    ntohs(Socket::port(*addr)));
+	int fd = socket (aip->ai_family, aip->ai_socktype, aip->ai_protocol);
+	if (fd != -1 && ( connect(fd, aip->ai_addr, aip->ai_addrlen) == 0))
+	{
 	    if (client.getVerbose())
-		client.traceServer(NLS::TEXT("Connected to %s."), hp->h_name);
+		client.traceServer(NLS::TEXT("Connected to %s."), aip->ai_canonname);
+	    /*  Free the addrinfo chain before we leave*/
+	    freeaddrinfo(ai);
 #if defined(IP_TOS) && defined(IPTOS_LOWDELAY)
 	    int tos = IPTOS_LOWDELAY;
 	    if (Socket::setsockopt(fd, IPPROTO_IP, IP_TOS, &tos, sizeof (tos)) < 0)
@@ -137,15 +145,31 @@ InetTransport::callServer(fxStr& emsg)
 	    client.setCtrlFds(fd, dup(fd));
 	    return (true);
 	}
+	Sys::close(fd), fd = -1;
     }
-    emsg = fxStr::format(NLS::TEXT("Can not reach server at host \"%s\", port %u."),
-	(const char*) client.getHost(), ntohs(sin.sin_port));
-    Sys::close(fd), fd = -1;
+
+    emsg = fxStr::format(NLS::TEXT("Can not reach service %s at host \"%s\"."),
+	(const char*)service, (const char*) client.getHost());
+    freeaddrinfo(ai);
     return (false);
 }
 
 bool
 InetTransport::initDataConn(fxStr& emsg)
+{
+    struct sockaddr data_addr;
+    socklen_t dlen = sizeof (data_addr);
+
+    if (Socket::getsockname(fileno(client.getCtrlFd()), &data_addr, &dlen) < 0) {
+	emsg = fxStr::format("getsockname(ctrl): %s", strerror(errno));
+	return (false);
+    }
+
+    return initDataConnV6(emsg);
+}
+
+bool
+InetTransport::initDataConnV4(fxStr& emsg)
 {
     struct sockaddr_in data_addr;
     socklen_t dlen = sizeof (data_addr);
@@ -214,6 +238,103 @@ bad:
     Sys::close(fd), fd = -1;
     return (false);
 }
+
+bool
+InetTransport::initDataConnV6(fxStr& emsg)
+{
+    /*
+     *  IPv6 extensions to FTP
+     *    http://www.ietf.org/rfc/rfc2428.txt
+     */
+    char buf[1024];
+    Socket::Address data_addr;
+    socklen_t dlen = sizeof(data_addr);
+
+    if (client.isPassive()) {
+	if (client.command("EPSV") != FaxClient::COMPLETE)
+	    return (false);
+	const char *cp = strchr(client.getLastResponse(), '(');
+	if (!cp) return (false);
+	cp++;
+	unsigned int v[6];
+	int n = sscanf(cp, "%u,%u,%u,%u,%u,%u", &v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
+	if (n != 6) return (false);
+	if (!inet_aton(fxStr::format("%u.%u.%u.%u", v[2],v[3],v[4],v[5]), &data_addr.in.sin_addr)) {
+	    return (false);
+	}
+	data_addr.in.sin_port = htons((v[0]<<8)+v[1]);
+	data_addr.in.sin_family = AF_INET;
+	dlen = sizeof(data_addr.in);
+    } else {
+	if (Socket::getsockname(fileno(client.getCtrlFd()), &data_addr, &dlen) < 0) {
+	    emsg = fxStr::format("getsockname(ctrl): %s", strerror(errno));
+	    return (false);
+	}
+	data_addr.in.sin_port = 0;		// let system allocate port
+
+    }
+
+    int fd = socket(data_addr.family, SOCK_STREAM, IPPROTO_TCP);
+    if (fd < 0) {
+	emsg = fxStr::format("socket: %s", strerror(errno));
+	return (false);
+    }
+    if (client.isPassive()) {
+	if (Socket::connect(fd, &data_addr.in, Socket::socklen(data_addr)) >= 0) {
+	    if (client.getVerbose())
+		client.traceServer("Connected to %s at port %u.",
+		inet_ntop(data_addr.family, Socket::addr(data_addr), buf, sizeof(buf)), ntohs(Socket::port(data_addr)));
+	} else {
+	    emsg = fxStr::format("Can not reach server at %s at port %u (%s).",
+		inet_ntop(data_addr.family, Socket::addr(data_addr), buf, sizeof(buf)), ntohs(Socket::port(data_addr)), strerror(errno));
+	    goto bad;
+	}
+    } else {
+	if (Socket::bind(fd, &data_addr, dlen) < 0) {
+	    emsg = fxStr::format("bind: %s", strerror(errno));
+	    goto bad;
+	}
+	dlen = sizeof (data_addr);
+	if (Socket::getsockname(fd, &data_addr, &dlen) < 0) {
+	    emsg = fxStr::format("getsockname: %s", strerror(errno));
+	    goto bad;
+	}
+	if (listen(fd, 1) < 0) {
+	    emsg = fxStr::format("listen: %s", strerror(errno));
+	    goto bad;
+	}
+
+	char hostbuf[128];
+	char portbuf[64];
+
+	getnameinfo((struct sockaddr*)&data_addr, dlen,
+			hostbuf, sizeof(hostbuf), portbuf, sizeof(portbuf),
+			NI_NUMERICHOST | NI_NUMERICSERV);
+	int err = client.command("EPRT |%d|%s|%s|",
+			(data_addr.family == AF_INET6 ? 2 : 1),
+			hostbuf, portbuf);
+	if (err == FaxClient::ERROR && data_addr.family == AF_INET)
+	{
+	    client.printWarning(NLS::TEXT("EPRT not supported, trying PORT"));
+	    const char* a; a = (const char*)&data_addr.in.sin_addr;	// XXX for __GNUC__
+	    const char* p; p = (const char*)&data_addr.in.sin_port;	// XXX for __GNUC__
+#define UC(b) (((int) b) & 0xff)
+	    err = client.command("PORT %u,%u,%u,%u,%u,%u",
+				UC(a[0]), UC(a[1]), UC(a[2]), UC(a[3]),
+				UC(p[0]), UC(p[1]));
+#undef UC
+	}
+	if (err != FaxClient::COMPLETE)
+	    return false;
+    }
+
+    client.setDataFd(fd);
+    return (true);
+bad:
+    Sys::close(fd), fd = -1;
+    return (false);
+}
+
 
 bool
 InetTransport::openDataConn(fxStr& emsg)

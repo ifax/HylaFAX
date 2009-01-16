@@ -143,6 +143,7 @@ FaxClient::vtraceServer(const char* fmt, va_list ap)
  *
  * e.g. ttyf2@flake.asd:9999.  Alternate forms
  * are: modem@, modem@host, host, host:port.
+ * IPv6 IP addresses (many :) are supported in [xx:xx::x]:port
  */
 void
 FaxClient::setupHostModem(const fxStr& s)
@@ -153,7 +154,18 @@ FaxClient::setupHostModem(const fxStr& s)
 	host = s.tail(s.length() - (pos+1));
     } else
 	host = s;
-    pos = host.next(0, ':');
+
+    if (host[0] == '[')
+    {
+	host.remove(0,1);
+	pos = host.next(0,']');
+	if (pos == host.length())
+	    printWarning(NLS::TEXT("Couldn't parse IPv6 ip address string: \"%s\")"), (const char*)s);
+	else
+	host.remove(pos,1);
+	    pos = host.next(pos, ':');
+    } else
+	pos = host.next(0, ':');
     if (pos != host.length()) {
 	port = atoi(host.tail(host.length() - (pos+1)));
 	host.resize(pos);

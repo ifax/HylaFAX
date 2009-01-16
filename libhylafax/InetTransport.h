@@ -42,5 +42,8 @@ public:
 
     bool initDataConn(fxStr& emsg);
     bool openDataConn(fxStr& emsg);
+
+    bool initDataConnV4(fxStr& emsg);
+    bool initDataConnV6(fxStr& emsg);
 };
 #endif /* _InetTransport_ */
