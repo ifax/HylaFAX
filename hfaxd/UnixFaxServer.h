@@ -41,7 +41,7 @@ private:
     void passiveCmd(void);
     void netStatus(FILE*);
     bool hostPort();
-    void portCmd(void);
+    void portCmd(Token);
 
     virtual void initServer(void);
 

@@ -64,7 +64,7 @@ protected:
     void netStatus(FILE*);
     void printaddr(FILE*, const char* leader, const struct sockaddr_in& sin);
     bool hostPort();
-    void portCmd(void);
+    void portCmd(Token);
 
     bool dataConnect(void);
     FILE* getDataSocket(const char* mode);

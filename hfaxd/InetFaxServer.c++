@@ -261,7 +261,7 @@ InetFaxServer::setupNetwork(int fd)
 #endif
     /* anchor socket to avoid multi-homing problems */
     data_source = ctrl_addr;
-    data_source.in.sin_port = htons(ntohs(ctrl_addr.in.sin_port)-1);
+    Socket::port(data_source) = htons(ntohs(Socket::port(ctrl_addr)-1));
 #ifdef  F_SETOWN
     if (fcntl(fd, F_SETOWN, getpid()) == -1)
         logError("fcntl (F_SETOWN): %m");
@@ -423,7 +423,7 @@ InetFaxServer::getDataSocket(const char* mode)
 {
     if (data >= 0)
         return (fdopen(data, mode));
-    int s = socket(AF_INET, SOCK_STREAM, 0);
+    int s = socket(data_dest.family, SOCK_STREAM, 0);
     if (s < 0)
         goto bad;
     { int on = 1;
@@ -432,7 +432,7 @@ InetFaxServer::getDataSocket(const char* mode)
     }
     { int ntry;						// XXX for __GNUC__
       for (ntry = 1;; ntry++) {
-        if (Socket::bind(s, &data_source, sizeof (data_source)) >= 0)
+        if (Socket::bind(s, &data_source, Socket::socklen(data_source)) >= 0)
             break;
         if (errno != EADDRINUSE || ntry > 10)
             goto bad;
@@ -454,7 +454,7 @@ bad:
 bool
 InetFaxServer::dataConnect(void)
 {
-    return Socket::connect(data, &data_dest,sizeof (data_dest)) >= 0;
+    return Socket::connect(data, &data_dest, Socket::socklen(data_dest)) >= 0;
 }
 
 /*
@@ -463,6 +463,9 @@ InetFaxServer::dataConnect(void)
 FILE*
 InetFaxServer::openDataConn(const char* mode, int& code)
 {
+logDebug("openDataConn(\"%s\", %p)", mode, &code);
+logDebug(" `-> pdata = %d", pdata);
+logDebug(" `-> data = %d", data);
     byte_count = 0;
     if (pdata >= 0) {			// passive mode, wait for connection
         struct sockaddr_in from;
@@ -518,6 +521,76 @@ InetFaxServer::openDataConn(const char* mode, int& code)
 bool
 InetFaxServer::hostPort()
 {
+    logDebug("Parsing hostPort(): \"%s\"", (const char*)tokenBody);
+
+    if (tokenBody[0] == 'E')
+    {
+	fxStr s;
+	if (! STRING(s))
+	{
+	    logDebug("Couldn't get string: \"%s\"", (const char*)tokenBody);
+	    syntaxError("EPRT |family|address|port|");
+	    return false;
+	}
+	logDebug("Parsing \"%s\"", (const char*)s);
+	/*
+	 * Minimual length for EPRT is: 9
+	 *       |X|X::|X|
+	 */
+	char c = s[0];
+	logDebug(" `-> s.length() = %d", s.length());
+	logDebug(" `-> s[0] = '%c'", s[0]);
+	logDebug(" `-> s[2] = '%c'", s[2]);
+	logDebug(" `-> s[%d] = '%c'", s.length()-1, s[s.length()-1]);
+	if (s.length() > 9
+		&& c == s[0] && (s[1] == '1' || s[1] == '2') && c == s[2]
+		&& c == s[s.length()-1]) {
+	    logDebug("Looks like extended syntax: \"%s\" [%X: %c]", (const char*)s, c&0xFF, c);
+
+	    u_int pos = 3;
+	    fxStr a = s.token(pos, c);
+	    logDebug("`-> Got a: %s[%u]", (const char*)a, pos);
+	    fxStr p = s.token(pos, c);
+	    logDebug("`-> Got a: %s[%u]", (const char*)p, pos);
+	    if (pos != s.length() )
+	    {
+		logDebug("Parsing EPRT style failed");
+		syntaxError("EPRT |family|address|port|");
+		return false;
+	    }
+
+	    logDebug("Parsed: Family %c Address %s Port %s", s[1], (const char*)a, (const char*)p);
+	    struct addrinfo hints, *ai;
+
+	    memset(&hints, 0, sizeof(hints));
+	    hints.ai_flags = AI_NUMERICHOST|AI_NUMERICSERV;
+	    hints.ai_socktype = SOCK_STREAM;
+	    switch (s[1])
+	    {
+		case '1':
+		    hints.ai_family = AF_INET;
+		    break;
+		case '2':
+		    hints.ai_family = AF_INET6;
+		    break;
+		default:
+		    reply(500, "EPRT: Invalid family \"%c\"", s[1]);
+	    }
+	    if (getaddrinfo(a, p, &hints, &ai) != 0) {
+		    reply(500, "EPRT couldn't parse family \"%c\" address \"%s\" port \"%s\"",
+				s[1], (const char*)a, (const char*)p);
+		    return false;
+	    }
+
+	    memcpy(&data_dest, ai->ai_addr, ai->ai_addrlen);
+	    freeaddrinfo(ai);
+	    return true;
+	}
+	logDebug("Couldn't parse \"%s\"", (const char*)s);
+	syntaxError("Couldn't parse extended port");
+	return false;
+    }
+
     long a0, a1, a2, a3;
     long p0, p1;
     bool syntaxOK = 
@@ -529,6 +602,7 @@ InetFaxServer::hostPort()
 	&& COMMA() && NUMBER(p1)
 	;
     if (syntaxOK) {
+	data_dest.in.sin_family = AF_INET;
 	u_char* a = (u_char*) &data_dest.in.sin_addr;
 	u_char* p = (u_char*) &data_dest.in.sin_port;
 	a[0] = UC(a0); a[1] = UC(a1); a[2] = UC(a2); a[3] = UC(a3);
@@ -540,12 +614,18 @@ InetFaxServer::hostPort()
 }
 
 void
-InetFaxServer::portCmd(void)
+InetFaxServer::portCmd(Token t)
 {
-    logcmd(T_PORT, "%s;%u", inet_ntoa(data_dest.in.sin_addr), data_dest.in.sin_port);
+    if (t == T_EPRT)
+	logcmd(T_EPRT, "|%d|%s|%u|", 1, inet_ntoa(data_dest.in.sin_addr), data_dest.in.sin_port);
+    else
+	logcmd(T_PORT, "%s;%u", inet_ntoa(data_dest.in.sin_addr), data_dest.in.sin_port);
     usedefault = false;
     if (pdata >= 0)
        (void) Sys::close(pdata), pdata = -1;
-    ack(200, cmdToken(T_PORT));
 
+    if (t == T_EPRT)
+	ack(200, cmdToken(T_EPRT));
+    else
+	ack(200, cmdToken(T_PORT));
 }

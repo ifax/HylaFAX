@@ -55,6 +55,7 @@ static const tab cmdtab[] = {
 { "DELE",         T_DELE,	 true, true, "file-name" },
 { "DISABLE",      T_DISABLE,	 true, true, "modem [reason]" },
 { "ENABLE",       T_ENABLE,	 true, true, "modem" },
+{ "EPRT",         T_EPRT,	 true, true, "|f|addr|port|" },
 { "HELP",         T_HELP,	false, true, "[<string>]" },
 { "FILEFMT",      T_FILEFMT,	 true, true, "[format-string]" },
 { "FILESORTFMT",  T_FILESFMT,	 true, true, "[format-string]" },
@@ -414,9 +415,10 @@ HylaFAXServer::cmd(Token t)
 	    return (true);
 	}
 	break;
+    case T_EPRT:			// extended port for data transfer
     case T_PORT:			// port for data transfer
 	if (SPACE() && hostPort() && CRLF()) {
-	    portCmd();
+	    portCmd(t);
 	    return (true);
 	}
 	break;
