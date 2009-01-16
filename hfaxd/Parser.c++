@@ -56,6 +56,7 @@ static const tab cmdtab[] = {
 { "DISABLE",      T_DISABLE,	 true, true, "modem [reason]" },
 { "ENABLE",       T_ENABLE,	 true, true, "modem" },
 { "EPRT",         T_EPRT,	 true, true, "|f|addr|port|" },
+{ "EPSV",         T_EPSV,	 true, true, "(set server in passive mode with extended result)" },
 { "HELP",         T_HELP,	false, true, "[<string>]" },
 { "FILEFMT",      T_FILEFMT,	 true, true, "[format-string]" },
 { "FILESORTFMT",  T_FILESFMT,	 true, true, "[format-string]" },
@@ -422,6 +423,7 @@ HylaFAXServer::cmd(Token t)
 	    return (true);
 	}
 	break;
+    case T_EPSV:			// extended passive mode
     case T_PASV:			// enable passive mode
 	if (CRLF()) {
 	    logcmd(t);

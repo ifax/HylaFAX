@@ -354,12 +354,12 @@ InetFaxServer::lostConnection(void)
 void InetFaxServer::sigPIPE(int) { InetFaxServer::instance().lostConnection(); }
 
 static bool
-setupPassiveDataSocket(int pdata, struct sockaddr_in& pasv_addr)
+setupPassiveDataSocket(int pdata, Socket::Address& pasv_addr)
 {
-    socklen_t len = sizeof (pasv_addr);
+    socklen_t len = Socket::socklen(pasv_addr);
     return (
-	Socket::bind(pdata, &pasv_addr, sizeof (pasv_addr)) >= 0 &&
-        Socket::getsockname(pdata, &pasv_addr, &len) >= 0 &&
+	Socket::bind(pdata, (struct sockaddr*)&pasv_addr, len) >= 0 &&
+        Socket::getsockname(pdata, (struct sockaddr*)&pasv_addr, &len) >= 0 &&
 	listen(pdata, 1) >= 0
     );
 }
@@ -375,6 +375,26 @@ setupPassiveDataSocket(int pdata, struct sockaddr_in& pasv_addr)
 void
 InetFaxServer::passiveCmd(void)
 {
+    if (tokenBody[0] == 'E') {
+	pasv_addr = ctrl_addr;
+	logDebug("Extended passive requested for family %d", pasv_addr.family);
+	pdata = socket(pasv_addr.family, SOCK_STREAM, 0);
+	if (pdata >= 0) {
+	    Socket::port(pasv_addr) = 0;
+	    if (!setupPassiveDataSocket(pdata, pasv_addr))
+		(void) Sys::close(pdata), pdata = -1;
+	}
+	if (pdata >= 0) {
+	    reply(229, "Entering Extended Passive Mode (|||%u|)",
+		    ntohs(Socket::port(pasv_addr)));
+	} else
+	    perror_reply(425, "Cannot setup extended passive connection", errno);
+	return;
+    }
+    if (ctrl_addr.family != AF_INET) {
+	reply(500, "Cannot use PASV with IPv6 connections");
+	return;
+    }
     if (pdata < 0) {
 	pdata = socket(AF_INET, SOCK_STREAM, 0);
 	if (pdata >= 0) {
