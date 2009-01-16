@@ -31,15 +31,17 @@ extern "C" {
 #include <netinet/in.h>
 }
 
+#include "Socket.h"
+
 struct hostent;
 
 class InetFaxServer : public HylaFAXServer {
 protected:
-    sockaddr_in	ctrl_addr;		// local address of control
-    sockaddr_in	peer_addr;		// remote address of control
-    sockaddr_in	data_source;		// source of data connection
-    sockaddr_in	data_dest;		// destination of data connection
-    sockaddr_in	pasv_addr;		// local end of passive connections
+    Socket::Address	ctrl_addr;		// local address of control
+    Socket::Address	peer_addr;		// remote address of control
+    Socket::Address	data_source;		// source of data connection
+    Socket::Address	data_dest;		// destination of data connection
+    Socket::Address	pasv_addr;		// local end of passive connections
     bool	usedefault;		// for data transfers
     /*
      * Timeout intervals for retrying connections
@@ -49,7 +51,7 @@ protected:
     int		swaitint;		// interval between retries
 
     bool isLocalDomain(const fxStr& h);
-    bool checkHostIdentity(hostent*& hp);
+    bool checkHostIdentity(const char* hostname);
     void setupNetwork(int fd);
     void handleUrgentData(void);
     void passiveCmd(void);

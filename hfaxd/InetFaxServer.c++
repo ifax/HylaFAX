@@ -58,36 +58,50 @@ InetSuperServer::setBindAddress(const char *bindaddr)
 bool
 InetSuperServer::startServer(void)
 {
-    int s = socket(AF_INET, SOCK_STREAM, 0);
+    Socket::Address addr;
+    struct addrinfo hints, *ai;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET6;
+    hints.ai_flags = AI_ADDRCONFIG;
+    hints.ai_socktype = SOCK_STREAM;
+
+    struct protoent* pp = getprotobyname(FAX_PROTONAME);
+    if (pp)
+	hints.ai_protocol = pp->p_proto;
+
+    if (getaddrinfo(bindaddress, port, &hints, &ai) == 0)  {
+	memcpy(&addr, ai->ai_addr, ai->ai_addrlen);
+	freeaddrinfo(ai);
+	/*
+	 * an empty bindaddr returns localhost, but we want to
+	 * listen on everything
+	 */
+	if (! bindaddress)
+	    memset(Socket::addr(addr), 0, Socket::addrlen(addr));
+    } else {
+	logDebug("Couldn't get address information for port \"%s\"",
+		(const char*) port);
+	/*
+	 * Somethings broken here, let's pick some conservative defaults
+	 */
+	memset(&addr, 0, sizeof(addr));
+	addr.family = AF_INET;
+	addr.in.sin_port = htons(FAX_DEFPORT);
+    }
+
+    int s = socket(addr.family, SOCK_STREAM, 0);
     if (s >= 0) {
-	struct sockaddr_in sin;
-	memset(&sin, 0, sizeof (sin));
-	sin.sin_family = AF_INET;
-	const char* cp = port;
-	struct servent* sp = getservbyname(cp, FAX_PROTONAME);
-	if (!sp) {
-	    if (isdigit(cp[0]))
-		sin.sin_port = htons(atoi(cp));
-	    else
-		sin.sin_port = htons(FAX_DEFPORT);
-	} else
-	    sin.sin_port = sp->s_port;
-
-	if (bindaddress)
-		sin.sin_addr.s_addr = inet_addr(bindaddress);
-
-	{ int on = 1;
-	    if (Socket::setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) >= 0) {
-		if (Socket::bind(s, &sin, sizeof (sin)) >= 0) {
-		    (void) listen(s, getBacklog());
-		    Dispatcher::instance().link(s, Dispatcher::ReadMask, this);
-		    return (true);				// success
-		}
+	int on = 1;
+	if (Socket::setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) >= 0) {
+	    if (Socket::bind(s, &addr, Socket::socklen(addr)) >= 0) {
+		(void) listen(s, getBacklog());
+		Dispatcher::instance().link(s, Dispatcher::ReadMask, this);
+		return (true);				// success
 	    }
 	}
 	Sys::close(s);
 	logError("HylaFAX %s: bind (port %u): %m",
-	    getKind(), ntohs(sin.sin_port));
+	    getKind(), ntohs(Socket::port(addr)));
     } else
 	logError("HylaFAX %s: socket: %m", getKind());
     return (false);
@@ -103,7 +117,7 @@ InetFaxServer::InetFaxServer()
     swaitint = 5;			// interval between retries
 
     memset(&data_dest, 0, sizeof (data_dest));
-    data_dest.sin_family = AF_INET;
+    data_dest.family = AF_INET6;	// We'll allow AF_INET6 by default.
 
     hostent* hp = Socket::gethostbyname(hostname);
 
@@ -175,7 +189,7 @@ InetFaxServer::isLocalDomain(const fxStr& h)
 }
 
 /*
- * Check host identity returned by gethostbyaddr to
+ * Check host identity returned by getnameinfo to
  * weed out clients trying to spoof us (this is mostly
  * a sanity check; if they have full control of DNS
  * they can still spoof)
@@ -183,25 +197,42 @@ InetFaxServer::isLocalDomain(const fxStr& h)
  * corresponds to the host name.
  */
 bool
-InetFaxServer::checkHostIdentity(hostent*& hp)
+InetFaxServer::checkHostIdentity(const char*name)
 {
-    fxStr name(hp->h_name);			// must copy static value
-    hp = Socket::gethostbyname(name);
-    if (hp) {
-	for (const char** cpp = (const char**) hp->h_addr_list; *cpp; cpp++)
-	    if (memcmp(*cpp, &peer_addr.sin_addr, hp->h_length) == 0)
-		return (true);
+logDebug("checkHostIdentity(\"%s\")", name);
+    struct addrinfo hints, *ai;
+
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_flags = AI_CANONNAME;
+    hints.ai_socktype = SOCK_STREAM;
+
+    if (getaddrinfo(name, NULL, &hints, &ai) == 0) {
+	for (struct addrinfo *aip = ai; aip != NULL; aip = aip->ai_next) {
+	    Socket::Address *addr = (Socket::Address*)aip->ai_addr;
+	    if (aip->ai_family != peer_addr.family)
+		continue;
+	    if ( (aip->ai_family == AF_INET6 &&
+		     memcmp(&addr->in6.sin6_addr, &peer_addr.in6.sin6_addr, sizeof(struct in6_addr)) ==0)
+		 ||(aip->ai_family == AF_INET &&
+		     memcmp(&addr->in.sin_addr, &peer_addr.in.sin_addr, sizeof(struct in_addr)) ==0)
+	       ) {
+		freeaddrinfo(ai);
+		return true;
+	    }
+	}
 	reply(130, "Warning, client address \"%s\" is not listed for host name \"%s\".",
-	    (const char*) remoteaddr, hp->h_name);
+	    (const char*) remoteaddr, name);
+	freeaddrinfo(ai);
     } else
 	reply(130, "Warning, no inverse address mapping for client host name \"%s\".",
 	    (const char*) name);
-    return (false);
+    return(false);
 }
 
 void
 InetFaxServer::setupNetwork(int fd)
 {
+    char buf[128];
     socklen_t addrlen;
 
     addrlen = sizeof (peer_addr);
@@ -230,7 +261,7 @@ InetFaxServer::setupNetwork(int fd)
 #endif
     /* anchor socket to avoid multi-homing problems */
     data_source = ctrl_addr;
-    data_source.sin_port = htons(ntohs(ctrl_addr.sin_port)-1);
+    data_source.in.sin_port = htons(ntohs(ctrl_addr.in.sin_port)-1);
 #ifdef  F_SETOWN
     if (fcntl(fd, F_SETOWN, getpid()) == -1)
         logError("fcntl (F_SETOWN): %m");
@@ -253,13 +284,17 @@ InetFaxServer::setupNetwork(int fd)
 #endif
     signal(SIGPIPE, fxSIGHANDLER(sigPIPE));
 
-    hostent* hp = gethostbyaddr((char*) &peer_addr.sin_addr,
-	sizeof (struct in_addr), AF_INET);
-    remoteaddr = inet_ntoa(peer_addr.sin_addr);
+    char hostbuf[128];
+
+    remoteaddr = inet_ntop(peer_addr.family, Socket::addr(peer_addr), hostbuf, sizeof(hostbuf));
+
+    getnameinfo((struct sockaddr*)&peer_addr, Socket::socklen(peer_addr),
+		    hostbuf, sizeof(hostbuf), NULL, NULL, 0);
+
     if (remoteaddr == "0.0.0.0")
         remotehost = "localhost";
-    else if (hp && checkHostIdentity(hp))
-	remotehost = hp->h_name;
+    else if (checkHostIdentity(hostbuf))
+	remotehost = hostbuf;
     else
 	remotehost =  remoteaddr;
     Dispatcher::instance().link(STDIN_FILENO, Dispatcher::ReadMask, this);
@@ -344,14 +379,14 @@ InetFaxServer::passiveCmd(void)
 	pdata = socket(AF_INET, SOCK_STREAM, 0);
 	if (pdata >= 0) {
 	    pasv_addr = ctrl_addr;
-	    pasv_addr.sin_port = 0;
+	    pasv_addr.in.sin_port = 0;
 	    if (!setupPassiveDataSocket(pdata, pasv_addr))
 		(void) Sys::close(pdata), pdata = -1;
 	}
     }
     if (pdata >= 0) {
-	const u_char* a = (const u_char*) &pasv_addr.sin_addr;
-	const u_char* p = (const u_char*) &pasv_addr.sin_port;
+	const u_char* a = (const u_char*) &pasv_addr.in.sin_addr;
+	const u_char* p = (const u_char*) &pasv_addr.in.sin_port;
 	reply(227, "Entering passive mode (%d,%d,%d,%d,%d,%d)", UC(a[0]),
 	      UC(a[1]), UC(a[2]), UC(a[3]), UC(p[0]), UC(p[1]));
     } else
@@ -462,8 +497,8 @@ InetFaxServer::openDataConn(const char* mode, int& code)
     FILE* file = getDataSocket(mode);
     if (file == NULL) {
         reply(425, "Cannot create data socket (%s,%d): %s.",
-              inet_ntoa(data_source.sin_addr),
-              ntohs(data_source.sin_port), strerror(errno));
+              inet_ntoa(data_source.in.sin_addr),
+              ntohs(data_source.in.sin_port), strerror(errno));
 	return (NULL);
     }
     data = fileno(file);
@@ -494,21 +529,23 @@ InetFaxServer::hostPort()
 	&& COMMA() && NUMBER(p1)
 	;
     if (syntaxOK) {
-	u_char* a = (u_char*) &data_dest.sin_addr;
-	u_char* p = (u_char*) &data_dest.sin_port;
+	u_char* a = (u_char*) &data_dest.in.sin_addr;
+	u_char* p = (u_char*) &data_dest.in.sin_port;
 	a[0] = UC(a0); a[1] = UC(a1); a[2] = UC(a2); a[3] = UC(a3);
 	p[0] = UC(p0); p[1] = UC(p1);
 	return (true);
-    } else
-	return (false);
+    }
+
+    return false;
 }
 
 void
 InetFaxServer::portCmd(void)
 {
-    logcmd(T_PORT, "%s;%u", inet_ntoa(data_dest.sin_addr), data_dest.sin_port);
+    logcmd(T_PORT, "%s;%u", inet_ntoa(data_dest.in.sin_addr), data_dest.in.sin_port);
     usedefault = false;
     if (pdata >= 0)
-	(void) Sys::close(pdata), pdata = -1;
+       (void) Sys::close(pdata), pdata = -1;
     ack(200, cmdToken(T_PORT));
+
 }

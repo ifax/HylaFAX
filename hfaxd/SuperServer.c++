@@ -58,12 +58,23 @@ SuperServer::timerExpired(long, long)
 int
 SuperServer::inputReady(int fd)
 {
-    int c = Socket::accept(fd, NULL, NULL);
+    Socket::Address addr;
+    socklen_t slen = sizeof(addr);
+    int c = Socket::accept(fd, &addr, &slen);
     if (c < 0) {
 	if (errno == EINTR || errno == ECONNABORTED)
 	    return (0);
 	logError("HylaFAX %s: accept: %m", (const char*) kind);
 	_exit(-1);
+    }
+    if (addr.family == AF_INET6) {
+	struct in6_addr& a = addr.in6.sin6_addr;
+	if ( (a.s6_addr32[0] == 0 && a.s6_addr32[1] == 0 && a.s6_addr32[2] == htonl(0xFFFF))  ||
+	     (a.s6_addr32[0] == 0 && a.s6_addr32[1] == 0 && a.s6_addr32[2] == 0 && ntohl(a.s6_addr32[3]) > 1) ) {
+	    logDebug("IPv4 address in AF_INET6, forcing AF_INET");
+	    int af = AF_INET;
+	    setsockopt(c, IPPROTO_IPV6, IPV6_ADDRFORM, &af, sizeof(af));
+	}
     }
     pid_t pid = fork();
     switch (pid) {
