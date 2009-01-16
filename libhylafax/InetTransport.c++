@@ -343,7 +343,8 @@ InetTransport::initDataConnV6(fxStr& emsg)
 			hostbuf, portbuf);
 	if (err == FaxClient::ERROR && data_addr.family == AF_INET)
 	{
-	    client.printWarning(NLS::TEXT("EPRT not supported, trying PORT"));
+	    if (client.getVerbose())
+		    client.printWarning(NLS::TEXT("EPRT not supported, trying PORT"));
 	    const char* a; a = (const char*)&data_addr.in.sin_addr;	// XXX for __GNUC__
 	    const char* p; p = (const char*)&data_addr.in.sin_port;	// XXX for __GNUC__
 #define UC(b) (((int) b) & 0xff)
