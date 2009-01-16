@@ -157,7 +157,10 @@ HylaFAXServer::checkuserHosts(FILE* db, const char* name)
 	char* cp;
 	bool userandhost = false;
 	for (cp = line; *cp && *cp != ':'; cp++)
-	    if (*cp == '@') userandhost = true;
+	    if (*cp == '\\' && *(cp+1)) // skip check of next char unless it's end of string
+		cp++;
+	    else if (*cp == '@')
+		userandhost = true;
 
 	const char* base = &line[line[0] == '!'];
 	fxStr pattern(base, cp-base);
