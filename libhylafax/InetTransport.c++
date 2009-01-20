@@ -93,15 +93,24 @@ InetTransport::callServer(fxStr& emsg)
 	protocol = pp->p_proto;
 
     memset (&hints, '\0', sizeof (hints));
-    hints.ai_flags = AI_NUMERICHOST|AI_ADDRCONFIG|AI_CANONNAME;
+    hints.ai_flags = AI_CANONNAME;
+#ifdef AI_NUMERICHOST
+    hints.ai_flags |= AI_NUMERICHOST;
+#endif
+#ifdef AI_ADDRCONFIG
+    hints.ai_flags |= AI_ADDRCONFIG;
+#endif
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = protocol;
 
     int err = getaddrinfo (client.getHost(), service, &hints, &ai);
+
+#ifdef AI_NUMERICHOST
     if (err == EAI_NONAME) {
 	hints.ai_flags &= ~AI_NUMERICHOST;
 	err = getaddrinfo (client.getHost(), service, &hints, &ai);
     }
+#endif
     if (err != 0) {
 	client.printWarning(NLS::TEXT("getaddrinfo failed with %d: %s"), err, gai_strerror(err));
 	return false;

@@ -62,7 +62,9 @@ InetSuperServer::startServer(void)
     struct addrinfo hints, *ai;
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET6;
+#ifdef AI_ADDRCONFIG
     hints.ai_flags = AI_ADDRCONFIG;
+#endif
     hints.ai_socktype = SOCK_STREAM;
 
     struct protoent* pp = getprotobyname(FAX_PROTONAME);
@@ -583,7 +585,12 @@ InetFaxServer::hostPort()
 	    struct addrinfo hints, *ai;
 
 	    memset(&hints, 0, sizeof(hints));
-	    hints.ai_flags = AI_NUMERICHOST|AI_NUMERICSERV;
+#ifdef AI_NUMERICHOST
+	    hints.ai_flags |= AI_NUMERICHOST;
+#endif
+#ifdef AI_NUMERICSERV
+	    hints.ai_flags |= AI_NUMERICSERV;
+#endif
 	    hints.ai_socktype = SOCK_STREAM;
 	    switch (s[1])
 	    {
