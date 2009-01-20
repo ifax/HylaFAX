@@ -1086,6 +1086,9 @@ if [ -z "$GCXXOPTS" ]; then
     CC-*-sco3.2v5.*)		# cfront-based or cfront-compatible
 	GCXXOPTS='+a1 +p'
 	;;
+    CC-*-sysv5*)                # CC here needs this, cc doesn't
+        GCXXOPTS='-Wf,--variadic_macro'
+        ;;
     *)
 	GCXXOPTS=
 	;;
