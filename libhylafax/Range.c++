@@ -32,7 +32,7 @@
 #ifdef DEBUGGING
 #define TRACE(fmt, args...) logDebug(fmt, ##args)
 #else
-#define TRACE(fmt...) do {} while (0)
+#define TRACE(...) do {} while (0)
 #endif
 
 Range::Range (unsigned int start, unsigned int end)
