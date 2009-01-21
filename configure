@@ -63,7 +63,6 @@ FAXQ_SERVER=yes			# init script starts faxq
 HFAXD_SERVER=yes		# init script starts hfaxd
 HFAXD_SNPP_SERVER=no		# don't start paging protocol
 SGI2FAX=auto
-PORT=auto
 LIBMALLOC=auto
 LOCKS=auto
 DPS=no
@@ -224,7 +223,6 @@ PCL6CMD
 PKG_ARCH
 PKG_EMAIL
 PKG_VENDOR
-PORT
 PORTFUNCS
 PROTOTYPES
 PSPACKAGE	PS
@@ -4989,10 +4987,10 @@ if [ "$MAKEDEPINCLUDE" != "sinclude" ]; then
 	man
 	etc
 	config
+	port
 	"
     test $GS = yes	&& DEPEND="$DEPEND gs"
     test $SGI2FAX = yes	&& DEPEND="$DEPEND sgi2fax"
-    test $PORT = yes	&& DEPEND="$DEPEND port"
     test $REGEX = yes	&& DEPEND="$DEPEND regex"
     test $DBLIB = yes	&& DEPEND="$DEPEND dblib"
     test $NLS = yes	&& DEPEND="$DEPEND po"
