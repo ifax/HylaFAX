@@ -4911,9 +4911,6 @@ CONF_FILES="
     sendfax/Makefile
     sendpage/Makefile
     util/Makefile
-    po/Makefile
-
-    po/version.po
 
     port/Makefile
     port/install.sh
@@ -4966,7 +4963,7 @@ test "$MKDEPEND" != ":" &&	   SedConfigFiles port/mkdepend
 test $SGI2FAX = yes &&	   	   SedConfigFiles sgi2fax/Makefile
 test $REGEX = yes &&		   SedConfigFiles regex/Makefile
 test $DBLIB = yes &&		   SedConfigFiles dblib/Makefile
-test $NLS = yes &&		   SedConfigFiles po/Makefile
+test $NLS = yes &&		   SedConfigFiles po/Makefile po/version.po
 test -f $SRCDIR/MLA/VERSION &&	   SedConfigFiles MLA/Makefile
 
 if [ "$MAKEDEPINCLUDE" != "sinclude" ]; then
