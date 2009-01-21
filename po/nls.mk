@@ -37,6 +37,7 @@ hylafax-server/messages.pot: $(wildcard ${patsubst %, ${DEPTH}/%/messages.po, ${
 # So techincally, this rule's depencies aren't *quite* complete, but on well
 ${CATALOG}/${BUILD_LANGUAGE}.po: ${CATALOG}/messages.pot version.po ${BUILD_LANGUAGE}.po
 	test -d ${CATALOG} || mkdir ${CATALOG}
+	test -f ${CATALOG}/messages.pot || cat ${SRCDIR}/${CATALOG}/messages.pot > ${CATALOG}/messages.pot
 	cat version.po ${CATALOG}/messages.pot > $@.tmp
 	${MSGMERGE} ${SRCDIR}/${BUILD_LANGUAGE}.po $@.tmp  -o $@
 	rm -f $@.tmp
