@@ -51,6 +51,7 @@
 #REGEX="yes"			# use distributed regular expression package
 #UTMP="utmpx"			# type of utmp+wtmp handling (auto|utmp|utmpx)
 #DBLIB="no"			# use distributed libdb distribution
+#NLS="auto"			# enable NLS support (auto|yes|no)
 
 #
 # Directory parameters.
@@ -179,6 +180,9 @@
 #
 #LIBDB=" "				# linkage convention for libdb package
 #DBLIBINC="/usr/include"		# place to find db.h
+
+# NLS (gettext) library support
+LIBINTL=""				# configure will try LIBINTL="-lintl"
 
 #
 # Parameters to control various workarounds for system bugs.

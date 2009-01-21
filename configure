@@ -382,8 +382,8 @@ do
 	eval "${ac_with}='$ac_optarg'"
 	WITHARGS=yes
 	;;
-    -enable-nls|--enable-nls)	CHECK_NLS=yes;;
-    -disable-nls|--disable-nls)	CHECK_NLS=no;;
+    -enable-nls|--enable-nls)	NLS=yes;;
+    -disable-nls|--disable-nls)	NLS=no;;
     -quiet|--quiet)		QUIET=yes;;
     -nointeractive|--nointeractive)	INTERACTIVE=no;;
     -verbose|--verbose)		QUIET=no;;
@@ -1663,7 +1663,7 @@ else
 	Note "Disabling JBIG support"
 fi
 ENABLE_NLS="/* #define ENABLE_NLS 1 */"
-if [ "$CHECK_NLS" != "no" ]; then
+if [ "$NLS" != "no" ]; then
 	Note "Checking for NLS (gettext) library support"
 	CheckForIncludeFile locale.h && 
 	    CheckForIncludeFile libintl.h && {
