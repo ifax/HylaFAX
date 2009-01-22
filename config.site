@@ -181,8 +181,17 @@
 #LIBDB=" "				# linkage convention for libdb package
 #DBLIBINC="/usr/include"		# place to find db.h
 
-# NLS (gettext) library support
-LIBINTL=""				# configure will try LIBINTL="-lintl"
+#
+# NLS (gettext) library support is used by default if it's found
+# xgettext is not required to build this software, but if you try
+# and rebuild the message template catalogs, you will need it.  Some
+# platforms may need extra options to link fir libintl as well.
+#
+#LIBINTL=""				# configure will try LIBINTL="-lintl"
+#XGETTEXT="xgettext --foreign-user -ctranslator --no-wrap --sort-by-file --omit-header --strict --indent --force-po"
+#MSGMERGE="msgmerge --no-wrap --sort-by-file"
+#MSGFMT=msgfmt
+#MSGCAT=msgcat
 
 #
 # Parameters to control various workarounds for system bugs.

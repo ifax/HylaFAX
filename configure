@@ -87,6 +87,10 @@ DBLIBINC=/usr/local/include
 CONFIG_OSFCNH=auto
 MANNUM4_5=4F
 MANNUM1_8=1M
+XGETTEXT="xgettext --foreign-user -ctranslator --no-wrap --sort-by-file --omit-header --strict --indent --force-po"
+MSGMERGE="msgmerge --no-wrap --sort-by-file"
+MSGFMT=msgfmt
+MSGCAT=msgcat
 
 # SVR4 packaging stuff
 PKG_ARCH=				# ARCH variable in pkginfo file
@@ -262,6 +266,10 @@ UUCP_LOCKTYPE	LOCKS
 UUENCODE
 VERSION
 WARNING
+MSGMERGE
+MSGFMT
+MSGCAT
+XGETTEXT
 ZLIBINC"
 
 dumpvars()
@@ -1664,7 +1672,8 @@ ENABLE_NLS="/* #define ENABLE_NLS 1 */"
 if [ "$NLS" != "no" ]; then
 	Note "Checking for NLS (gettext) library support"
 	CheckForIncludeFile locale.h && 
-	    CheckForIncludeFile libintl.h && {
+	    CheckForIncludeFile libintl.h &&
+            runMake t "t:; $MSGMERGE /dev/null /dev/null> /dev/null" && {
 		ENABLE_NLS="#define ENABLE_NLS 1"
                 NLS='yes'
 		CheckForLibraryWithArgs gettext '""' $LIBINTL || {
