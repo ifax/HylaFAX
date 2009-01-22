@@ -185,7 +185,7 @@
 # NLS (gettext) library support is used by default if it's found
 # xgettext is not required to build this software, but if you try
 # and rebuild the message template catalogs, you will need it.  Some
-# platforms may need extra options to link fir libintl as well.
+# platforms may need extra options to link for libintl as well.
 #
 #LIBINTL=""				# configure will try LIBINTL="-lintl"
 #XGETTEXT="xgettext --foreign-user -ctranslator --no-wrap --sort-by-file --omit-header --strict --indent --force-po"
