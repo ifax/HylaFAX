@@ -149,4 +149,4 @@ CHANGES since 4.4.4
 * README: Remove unused hyphenation (27 Man 2008)
 * hfaxd: Fix RECV_START, RECV_PAGE, RECV_DOC triggers (22 Jul 2008)
 * faxgetty/faxsend: Correct Include config file parsing (22 Jul 2008)
-
+* Abort receive session on error writing to file (2008-11-21)
