@@ -9,9 +9,16 @@ Overview
   * hfaxd Can sort list output arbitrarily for clients
   * I18n: HylaFAX client strings are now translated and available in
     different languages
+  * IPv6 support
+  * New permissions in hfaxd to allow for more admin control on who can
+    see/modify jobs/faxes (see PublicJobQ/JobProtection/PublicRecvQ)
+  * Powerful page range handling capabilities
+  * Better faxq/notify integration
+  * Nemerous fax modem/protocol fixes and enhancments
 
   In addition, the aging support for the unused "old protocol" has been
   remove.
+
 
 Upgrade to CVS from previous 4.4 releases
 -----------------------------------------------------------------------------
