@@ -225,3 +225,5 @@ CHANGES since 4.3.7
 * faxq: Check TimeOfDate before batching (2 Apr 2008)
 * hfaxd: Fix RECV_START, RECV_PAGE, RECV_DOC triggers (22 Jul 2008)
 * faxgetty/faxsend: Correct Include config file parsing (22 Jul 2008)
+* b64-encode.awk: Fix bug on old SCO awk (2009-01-30)
+
