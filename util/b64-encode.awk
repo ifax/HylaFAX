@@ -80,7 +80,11 @@ function readbytes(n,   m, s, line, str, __RS) {
 	while (m > 0) {
 		s = length(__readbuffer);
 		if (s == 0) {
-			getline __readbuffer;
+                        ## Some (SCO) awk fill __readbuffer with junk on reading EOF
+                        ## So we must check the return of getline and set __readbuffer
+			if (getline __readbuffer <= 0)
+                                __readbuffer = "";
+
 			if (RT != "")
 				__readbuffer = __readbuffer RT;
 

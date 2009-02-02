@@ -1,6 +1,7 @@
 #	$Id$	
 
 Chances since 4.3.7
+* b64-encode.awk: Fix bug on old SCO awk (30 Jan 2009)
 * faxgetty/faxsend: Correct Include config file parsing (22 Jul 2008)
 * hfaxd: Fix RECV_START, RECV_PAGE, RECV_DOC triggers (22 Jul 2008)
 * faxq: Check TimeOfDate before batching (2 Apr 2008)
