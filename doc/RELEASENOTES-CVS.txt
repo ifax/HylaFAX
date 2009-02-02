@@ -302,3 +302,5 @@ Changes since 4.4 branched off
 * getaddrinfo AI_* hints are not always available (2009-01-20)
 * configure: UnixWare use of variadic macros (2009-01-20)
 * configure: Add define for s6_addr32 if needed on SVR5 systems. (2009-01-21)
+* b64-encode.awk: Fix bug on old SCO awk (2009-01-30)
+* Bug 902: Fix non-void function without a return (2009-02-02)
