@@ -461,14 +461,11 @@ Trigger::setTriggerHook (const char* prg, const char* spec)
 
     Trigger* event = new Trigger(hookTID, "/dev/null");
     if (!event->parse(spec))
-    {
         logWarning("TRIGGER EVENT: Couldn't parse spec: %s", spec);
-    }
 
     memcpy(hookInterests, event->interests, sizeof(hookInterests));
     event->cancel();
     delete event;
     hookCmd = prg;
+    return true;
 }
-
-
