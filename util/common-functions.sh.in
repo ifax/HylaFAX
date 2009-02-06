@@ -185,10 +185,10 @@ mimeEncode()
 		if [ -x "$cmd" ]; then
 		    (eval $BASE64ENCODE) < $1 2>$ERRORSTO
 		else
-		    $AWK -f bin/b64-encode.awk < $1 2>$ERRORSTO
+		    c $AWK -f bin/b64-encode.awk < $1 2>$ERRORSTO
 		fi
 	    else
-		$AWK -f bin/b64-encode.awk < $1 2>$ERRORSTO
+		c $AWK -f bin/b64-encode.awk < $1 2>$ERRORSTO
 	    fi;;
         quoted-printable)
 	    if [ -n "$QPENCODE" ]; then
@@ -197,10 +197,10 @@ mimeEncode()
 		if [ -x "$cmd" ]; then
 		    (eval $QPENCODE) < $1 2>$ERRORSTO
 		else
-		    $AWK -f bin/qp-encode.awk < $1 2>$ERRORSTO
+		    c $AWK -f bin/qp-encode.awk < $1 2>$ERRORSTO
 		fi
 	    else
-		$AWK -f bin/qp-encode.awk < $1 2>$ERRORSTO
+		c $AWK -f bin/qp-encode.awk < $1 2>$ERRORSTO
 	    fi;;
         *uue*)
 	    if [ -x "$UUENCODE" ]; then
@@ -222,8 +222,8 @@ matchRegEx()
   # Awk grep and sed ranges can't be trusted to gives the same result
   # on all platforms and locale. :( (Even for digit ranges...
   # fractions can be included in the 0-1 range.)
-  # Forcing LC_ALL to C should be enough to fix this.
-  echo $string | LC_ALL=C $AWK -F=!=!=!=!=!=!=!=!= '
+  # Using C locale should be enough to fix this.
+  echo $string | c $AWK -F=!=!=!=!=!=!=!=!= '
     '$regex' {print 1; exit;}
     {print 0;}'
 
@@ -255,7 +255,7 @@ headerEncode()
     case $position in 
       phrase)
         if [ `matchRegEx "$string" '/^[\0-\177]*$/'` = 1 ]; then
-          echo $string | LC_ALL=C $AWK -F=!=!=!=!=!=!=!=!= '
+          echo $string | c $AWK -F=!=!=!=!=!=!=!=!= '
           function simple_quote(text)
           {
               gsub(/[\0-\37\177\\\"]/, "\\\\&", text);
@@ -288,8 +288,8 @@ headerEncode()
     esac
 
     if [ $must_encode = true ]; then
-      encoded=" =?UTF-8?B?`echo $string | $AWK -f bin/b64-encode.awk 2>$ERRORSTO`?="
-      echo $encoded
+      encoded=" =?UTF-8?B?`echo $string | c $AWK -f bin/b64-encode.awk 2>$ERRORSTO`?="
+      echo $encoded | $SED -e 's/ //g'
     else
       echo $string
     fi
@@ -687,6 +687,12 @@ hfExit ()
 {
     cleanupExit
     exit $1
+}
+
+# Basic function for running utilitis with C locale
+c ()
+{
+        LC_ALL=C "$@"
 }
 
 # And some common variables for things using our functions
