@@ -143,6 +143,14 @@ if [ -f etc/FaxDispatch ]; then
     . etc/FaxDispatch		# NB: FaxDispatch sets SENDTO
 fi
 
+#
+# Our man page says to set SENDTO1...x if they want additional
+# receipients. We reserve $SENDTO0 for our initial SENDTO
+if [ -z "$SENDTO0" ]
+then
+        SENDTO0="$SENDTO"
+fi
+
 if [ -f etc/templates/$TEMPLATE/hook.sh ]
 then
     # Any hooks that the templates need
@@ -152,7 +160,7 @@ fi
 
 ## MailWithFAX <type>
 ## Email the <type> template,adding the attachments according
-## to $FILETYPE to $SENDTO
+## to $FILETYPE to $SENDTO for each of $SENDTOx recipients
 ##
 ## We use the common CreateMailMessage <template> <f1> <t1> <n1> <d1>
 ## function, creating the file to mail as we go.
@@ -166,9 +174,17 @@ MailWithFAX ()
     do
 	ATTACH_ARGS="$ATTACH_ARGS "`BuildAttachArgs $ft`
     done
-    eval CreateMailMessage $template $ATTACH_ARGS \
-	2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
 
+    i=0
+    SENDTO="$SENDTO0"
+    while [ -n "$SENDTO" ]
+    do
+            eval CreateMailMessage $template $ATTACH_ARGS \
+                2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
+
+            i=`expr $i+1`
+            eval SENDTO='"$SENDTO'$i"'"
+    done
 }
 
 if [ -f $FILE ]; then
@@ -190,8 +206,8 @@ if [ -f $FILE ]; then
 	    		2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$TOADDR"
         fi
     fi
-    if [ -n "$SENDTO" ]; then
-	# Create the document to attache
+    if [ -n "$SENDTO0" ]; then
+	# Create the document to attach
         if [ -z "$MSG" ]; then
 	    MailWithFAX success
         else

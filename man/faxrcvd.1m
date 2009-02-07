@@ -152,8 +152,14 @@ reception errors.
 is the received TSI of the fax sender.
 .TP
 .I SENDTO
-controls the recipient of the received fax notification.  It is
-given as an e-mail address.
+controls the recipient of the received fax notification.  It is given as an
+e-mail address, and it's value will be passed directly to the MTA for delivery
+as well as being inserted into the email.  If you want to send to multiple
+receipients in seperate messages set the variable SENDTO1...SENDTOn in addition
+to SENDTO.  faxrcvd will process additional SENDTOn variables starting at 1,
+and stopping at the first empty SENDTOn variable it finds.  The templates
+should continue to reference $SENDTO, and faxrcvd will make sure it get's set
+correctly as the template is processed for each one.
 .TP
 .I SUBADDR
 the received subaddress value, communicated by the sender for 
