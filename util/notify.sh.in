@@ -116,13 +116,27 @@ else
 fi
 
 COMMID=$commid
-SENDTO=$mailaddr
+SENDTO=""
 export COMMID SENDTO FROMADDR TOADDR DESTINATION WHY JTIME NEXT JOBINFO
+
+# Faxmaster notify is just a simple notification, never with docs
+do_faxmaster()
+{
+    template="etc/templates/$TEMPLATE/notify-faxmaster.txt"
+    SENDTO="$TOADDR"
+
+    if [ -f etc/templates/$TEMPLATE/hook.sh ]
+    then
+        # Any hooks that the templates need
+        . etc/templates/$TEMPLATE/hook.sh
+
+    #We don't need eval here, because not attachment args here
+    CreateMailMessage "$template" 2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
+}
 
 # This does the grunt work of building the notify email
 do_notify()
 {
-
 
     if [ -f etc/templates/$TEMPLATE/hook.sh ]
     then
@@ -146,7 +160,6 @@ do_notify()
 
     eval CreateMailMessage "$template" $ATTACH_ARGS \
             2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
-
 }
 
 
@@ -158,6 +171,29 @@ if [ -f etc/FaxNotify ]; then
     # source notify preferences
     . etc/FaxNotify
 fi
+
+
+## We process the NOTIFY_FAXMASTER first, because we want
+## this to go without the attachemnts, if they are used
+## Faxmaster goes to $TOADDR, but templates always use SENDTO
+SENDTO="$TOADDR"
+case "$NOTIFY_FAXMASTER:$WHY" in
+    "always:*")                     do_faxmaster;;
+    "yes:*")                        do_faxmaster;;
+
+    "errors:success")               ;;              # Not errors
+    "errors:blocked")               ;;              # Not errors
+    "errors:*"                      do_faxmaster;;  # errors
+
+    *)                              ;;              # Do nothing;
+esac
+
+# We use SENDTO in the templates, but $mailaddr is the job
+# param.  We set this *after* FaxNotify is sourced, because
+# some admins seem to play with mailaddr expecting it to change
+# the destination of the nofify email
+SENDTO="$mailaddr"
+export SENDTO
 
 case "$WHY:$notify" in
     "requeued:when done+requeued")  do_notify;;     # Requeued
