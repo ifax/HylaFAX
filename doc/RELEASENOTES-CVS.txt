@@ -305,3 +305,4 @@ Changes since 4.4 branched off
 * b64-encode.awk: Fix bug on old SCO awk (2009-01-30)
 * Bug 902: Fix non-void function without a return (2009-02-02)
 * Bug 901: mimeencoding bug in templates handling (2009-02-06)
+* faxrcvd: Add multiple receipient/message capability (2009-02-07)
