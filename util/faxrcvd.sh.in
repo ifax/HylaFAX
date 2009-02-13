@@ -182,8 +182,8 @@ MailWithFAX ()
             eval CreateMailMessage $template $ATTACH_ARGS \
                 2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
 
-            i=`expr $i+1`
-            eval SENDTO='"$SENDTO'$i"'"
+            i=`expr $i + 1`
+            eval SENDTO='"$SENDTO'$i'"'
     done
 }
 
