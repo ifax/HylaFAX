@@ -191,7 +191,7 @@ faxq:	${FAXQOBJS} libfaxserver.a ${LIBS}
 faxsend: ${FAXSENDOBJS} libfaxserver.a ${LIBS}
 	${C++F} -o $@ ${FAXSENDOBJS} ${LIBFAXSERVER} ${LDFLAGS}
 faxgetty: ${FAXGETTYOBJS} libfaxserver.a ${LIBS}
-	${C++F} -o $@ ${FAXGETTYOBJS} ${LIBFAXSERVER} ${LDFLAGS}
+	${C++F} -o $@ ${FAXGETTYOBJS} ${LIBUTIL} ${LIBFAXSERVER} ${LDFLAGS}
 faxqclean: ${FAXQCLEANOBJS} libfaxserver.a ${LIBS}
 	${C++F} -o $@ ${FAXQCLEANOBJS} ${LIBFAXSERVER} ${LDFLAGS}
 

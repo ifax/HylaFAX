@@ -75,7 +75,7 @@ targets: $(TARGETS)
 @MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
 
 hfaxd: ${OBJECTS} FaxRequest.o FaxItem.o ${LIBS}
-	${C++F} -o $@ ${OBJECTS} FaxRequest.o FaxItem.o ${LDFLAGS}
+	${C++F} -o $@ ${OBJECTS} FaxRequest.o FaxItem.o ${LIBCRYPT} ${LIBPAM} ${LDFLAGS}
 
 #
 # Private versions are built so that we do not need

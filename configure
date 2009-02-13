@@ -71,9 +71,12 @@ IMP=no
 UTMP=auto
 NLS=auto
 OPTIMIZER="-O"
+LIBCRYPT=
+LIBPAM=
 LIBTIFF="-L/usr/local/lib -ltiff"
 TIFFINC=/usr/local/include
 TIFFBIN=
+LIBUTIL=
 LIBZ=
 ZLIBINC=
 LIBINTL=
@@ -170,10 +173,12 @@ INSTALL
 LIBDATA		DIR_LIBDATA
 LIBDIR		DIR_LIB
 LIBEXEC		DIR_LIBEXEC
+LIBCRYPT
 LIBINTL
 LIBPORT
 LIBREGEX
 LIBTIFF
+LIBUTIL
 LIBZ
 LIBDB
 LLDOPTS
@@ -182,7 +187,7 @@ LN_S
 LOCALEDIR       DIR_LOCALE
 LOCALE_DOMAIN
 HAVE_PAM
-PAMLIBS
+LIBPAM
 HAVE_JBIG
 HAVE_JBIGTIFF
 LIBJBIG"
@@ -1624,7 +1629,7 @@ main()
     struct pam_conv conv = { pamconv };
 }
 EOF
-    if runMake t "t:; \${C++F} $PAMLIBS \${C++FILE} t.c++${MAKECXXOVERRIDE}"; then
+    if runMake t "t:; \${C++F} $LIBPAM \${C++FILE} t.c++${MAKECXXOVERRIDE}"; then
 	echo '#define STRUCT_PAM_MESSAGE const struct pam_message'
     else
 	echo '#define STRUCT_PAM_MESSAGE struct pam_message'
@@ -1635,15 +1640,14 @@ EOF
 }
 
 HAVE_PAM="/*#define HAVE_PAM 1*/"
-PAMLIBS=""
 if [ "$DISABLE_PAM" != "yes" ]; then
 	Note "Checking for PAM (Pluggable Authentication Module) support"
 	CheckForLibrary pam_authenticate -lpam &&
 		CheckForIncludeFile security/pam_appl.h && {
 			HAVE_PAM="#define HAVE_PAM 1"
-			PAMLIBS="-lpam"
+			LIBPAM="-lpam"
 		}
-	if [ "x$PAMLIBS" = "x" ]; then
+	if [ "x$LIBPAM" = "x" ]; then
 		Note "... not found. Disabling PAM support"
 		else
 		Note "... found. Enabling PAM support"
@@ -1729,7 +1733,7 @@ CheckForLibrary crypt -lc || {
     for i in -lcrypt -lcrypt_d -lcrypt_i; do
 	if CheckForLibrary crypt $i; then
 	    Note "Looks like $i is needed for crypt."
-	    MACHDEPLIBS="$MACHDEPLIBS $i"
+	    LIBCRYPT="$i"
 	    break;
 	fi
     done
@@ -1795,7 +1799,7 @@ CheckForLibrary inet_aton -lc || {
 
 if CheckForLibrary logwtmp -lutil; then
     Note "Looks like -lutil is needed for wtmp file logging."
-    MACHDEPLIBS="$MACHDEPLIBS -lutil"
+    LIBUTIL="-lutil"
     HAS_LOGWTMP=yes
 else
     HAS_LOGWTMP=no
@@ -3163,7 +3167,7 @@ BuildPortDotH()
 	Note "... add declaration for tiff_runlen_t"
 	echo "#define tiff_runlen_t ${tiff_runlen_t}"
     fi
-    if [ "x$PAMLIBS" != "x" ]; then
+    if [ "x$LIBPAM" != "x" ]; then
 	CheckPAMType
     fi
 

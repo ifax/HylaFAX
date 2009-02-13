@@ -76,7 +76,7 @@ faxstate: ${SRCDIR}/faxstate.c ${LIBS}
 faxmodem: ${SRCDIR}/faxmodem.c ${LIBS}
 	${CCF} -o $@ ${SRCDIR}/faxmodem.c ${LDFLAGS}
 faxadduser: ${SRCDIR}/faxadduser.c ${LIBS}
-	${CCF} -o $@ ${SRCDIR}/faxadduser.c ${LDFLAGS}
+	${CCF} -o $@ ${SRCDIR}/faxadduser.c ${LIBCRYPT} ${LDFLAGS}
 faxconfig: ${SRCDIR}/faxconfig.c ${LIBS}
 	${CCF} -o $@ ${SRCDIR}/faxconfig.c ${LDFLAGS}
 faxdeluser: ${SRCDIR}/faxdeluser.c ${LIBS}
