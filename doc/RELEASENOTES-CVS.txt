@@ -2,9 +2,9 @@ HylaFAX CVS
 
 Overview
 -----------------------------------------------------------------------------
-  HylaFAX CVS introduces serveral new features for HylaFAX:
+  HylaFAX CVS introduces several new features for HylaFAX:
 
-  There are many additional features avaible:
+  There are many additional features available:
   * PCL Support
   * hfaxd Can sort list output arbitrarily for clients
   * I18n: HylaFAX client strings are now translated and available in
@@ -25,13 +25,13 @@ Upgrade to CVS from previous 4.4 releases
   There are no particular differences to note yet during the upgrade
   process, but if you have clients that still use the old protocol (not
   the common FTP style protocol), they will no longer work with a new
-  hfaxd deamon.
+  hfaxd daemon.
 
 Changes since 4.4 branched off
 -----------------------------------------------------------------------------
-* faxmail: don't submit an empty postscript file if not formatting was
+* faxmail: don't submit an empty postscript file if no formatting was
   done (17 Aug 2007)
-* faxmail: fix suppression of empty postcript formatting file (18 Aug 2007)
+* faxmail: fix suppression of empty postscript formatting file (18 Aug 2007)
 * fix status/statuscode parsing of the job qfile which showed artifacts
   in the notify emails (20 Aug 2007)
 * faxaddmodem doesn't fuser -k by default, allowing iaxmodem to be
@@ -42,7 +42,7 @@ Changes since 4.4 branched off
 * hfaxd: fix double 550 error code on access permisions (14 Sep 2007)
 * faxq: Fixed multiple trigger issues (14 Sep 2007)
 * faxq: Suppress blocked notifies if job is already blocked (7 Sep 2007)
-* faxq: redoce copius scheduler logging (7 Sep 2007)
+* faxq: reduce copius scheduler logging (7 Sep 2007)
 * man pages: fix mulitple typos (17 Sep 2007)
 * Bug 864: fix huge SESSION_LOG bash problems (24 Sep 2007)
 * Digis: Disable MMR (2007-09-26)
@@ -103,15 +103,13 @@ Changes since 4.4 branched off
 * Actual NLS support in client programs (2007-11-09)
 * Initial pot file and filelist for i18n (gettext) support. (2007-11-09)
 * prototype configs: typo in MT5600ZDX (2007-11-09)
-* Update VERSION (2007-11-12)
-* Complier warning cleanups (2007-11-13)
+* Compiler warning cleanups (2007-11-13)
 * Bug 875: faxsetup and faxaddmodem may forget locks and temporary files
   when exiting (2007-11-13)
 * man: Fix Makefile rules to allow parallel build (2007-11-14)
 * hfaxd: Remove PAM debug logging (2007-11-15)
 * TypeRules: fix istring addition (2007-11-15)
 * xferfaxlog: Update man pages (2007-11-21)
-* Update RELEASENOTES (2007-11-21)
 * Class1: reconfirm PPS on retransmitted block (2007-11-26)
 * Class1: Don't confirm a PPM with no image data (2007-11-26)
 * Class1: Improve ECM synchronization timeout handling: (2007-11-26)
@@ -127,8 +125,8 @@ Changes since 4.4 branched off
 * man/faxcron: Clarify files removed from recvq (2007-11-26)
 * Class2: Wait for OK folowing an +FHS (2007-11-26)
 * Try to handle Eicon Class2 better (2007-11-26)
-* Adjust config template for Motrola RC288DPi modems (2007-11-26)
-* Class2: Handle subparamaters whem modem supports JP but doesn't show
+* Adjust config template for Motorola RC288DPi modems (2007-11-26)
+* Class2: Handle subparameters when modem supports JP but doesn't show
   it (2007-11-26)
 * Class2Params: Fix array index causing faxinfo segfault: (2007-11-26)
 * faxinfo: Improve handling whe FAXDCS not present (2007-11-26)
@@ -142,7 +140,7 @@ Changes since 4.4 branched off
 * Add variant voice mode with DTMF dectection for some USR modems
   (2007-11-26)
 * Make fmtTime() always include hours (2007-11-26)
-* Error codes: E111 more accrurate (2007-11-26)
+* Error codes: E111 more accurate (2007-11-26)
 * Add another Samsung NSF (2007-11-26)
 * Cleanup CONTRIBUTORS (2007-11-26)
 * Revert the fuser "behaviour reversal" (2007-11-26)
@@ -164,7 +162,7 @@ Changes since 4.4 branched off
 * Solaris DSO: fixups after the DSO work (2008-01-23)
 * Solaris:  Needs some support for new code (2008-01-23)
 * Bug 883: faxmail error with newline in headers (2008-01-24)
-* Quiet compiler warnings like (2008-01-24)
+* Quiet compiler warnings (2008-01-24)
 * AFM fonts were removed a long time ago (2008-01-29)
 * Add missing modem config entries (2008-01-30)
 * man/callid.4f has been gone almost 2 years (2008-01-31)
@@ -173,7 +171,7 @@ Changes since 4.4 branched off
 * hfaxd lockJob() - don't blindly O_CREAT job we're trying to lock
   (2008-02-22)
 * hfaxd: Don't update job's last modified time unless it's actually
-  successfull (2008-02-22)
+  successful (2008-02-22)
 * Protocol: add SITE LOCKWAIT command (2008-02-22)
 * hfaxd: Compile fixup (2008-02-22)
 * SCO Fixups (2008-02-27)
@@ -212,10 +210,10 @@ Changes since 4.4 branched off
 * faxq: Don't take STDERR as STDOUT (2008-04-28)
 * fixup: faxq: STDERR/STDOUT - runConverter() (2008-04-28)
 * faxcover: Add from-mail-address feature (2008-04-28)
-* Class1: prevent infinte looping in recvFrame (2008-04-28)
+* Class1: prevent infinite looping in recvFrame (2008-04-28)
 * libhylafax: Don't tryncate commands at 100 characters at 100
   characters (2008-04-28)
-* faxq: Clieanup timeout accounting (2008-04-28)
+* faxq: Cleanup timeout accounting (2008-04-28)
 * faxgetty/faxsend: Remove extra forks (2008-04-28)
 * Don't write info file unless it has a name (2008-04-28)
 * man: Fix NotifyCmd reference (2008-04-28)
@@ -235,7 +233,7 @@ Changes since 4.4 branched off
 * configure: HP-UX fixes (2008-04-28)
 * Class1: Be more lenient on handling NO CARRIER response (2008-04-28)
 * Add "Restart" enhancement to init script (2008-04-28)
-* CallID: Initialize answerlength on depricated CIDName/CIDNumber config
+* CallID: Initialize answerlength on deprecated CIDName/CIDNumber config
   options (2008-04-28)
 * faxq: Be more careful in choosing jobs to batch (2008-04-28)
 * hfaxd: Cleanup FIFO removal (2008-04-28)
