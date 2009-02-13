@@ -129,6 +129,7 @@ do_faxmaster()
     then
         # Any hooks that the templates need
         . etc/templates/$TEMPLATE/hook.sh
+    fi
 
     #We don't need eval here, because not attachment args here
     CreateMailMessage "$template" 2>$ERRORSTO | $SENDMAIL -f"$FROMADDR" -oi "$SENDTO"
@@ -183,7 +184,7 @@ case "$NOTIFY_FAXMASTER:$WHY" in
 
     "errors:success")               ;;              # Not errors
     "errors:blocked")               ;;              # Not errors
-    "errors:*"                      do_faxmaster;;  # errors
+    "errors:*")                     do_faxmaster;;  # errors
 
     *)                              ;;              # Do nothing;
 esac
