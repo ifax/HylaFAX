@@ -1,4 +1,4 @@
-HylaFAX 4.3.7
+HylaFAX 4.3.8
 
 OVERVIEW
 -----------------------------------------------------------------------------
@@ -215,7 +215,7 @@ CHANGES for 4.3.7 - November 23, 2007
 * fix TypeRules verbose logging names (15 Nov 2007)
 * Add support for libtiff 3.9 (21 Nov 2007)
 
-CHANGES since 4.3.7
+CHANGES for 4.3.8
 -----------------------------------------------------------------------------
 * Fix faxq modem Triggers (16 Jan 2008)
 * hfaxd lockJob() - don't blindly O_CREAT job we're trying to lock

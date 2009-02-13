@@ -1,3 +1,7 @@
+hylafax (2:6.0.0-beta1) unstable; urgency=low
+
+  * Update debian packaging for 6.0.0
+
 hylafax (2:4.5~CVS) unstable; urgency=low
 
   * Update debian packaging for 4.5-CVS

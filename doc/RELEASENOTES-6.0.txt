@@ -1,8 +1,8 @@
-HylaFAX CVS
+HylaFAX 6.0.0
 
 Overview
 -----------------------------------------------------------------------------
-  HylaFAX CVS introduces several new features for HylaFAX:
+  HylaFAX 6.0 introduces several new features for HylaFAX:
 
   There are many additional features available:
   * PCL Support
@@ -27,7 +27,7 @@ Upgrade to CVS from previous 4.4 releases
   the common FTP style protocol), they will no longer work with a new
   hfaxd daemon.
 
-Changes since 4.4 branched off
+Changes for HylaFAX 6.0
 -----------------------------------------------------------------------------
 * faxmail: don't submit an empty postscript file if no formatting was
   done (17 Aug 2007)

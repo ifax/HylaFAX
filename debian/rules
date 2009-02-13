@@ -259,7 +259,7 @@ install-client:
 binary-arch: build-arch install-client install-server
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs -a doc/RELEASENOTES-CVS.txt
+	dh_installchangelogs -a doc/RELEASENOTES-6.0.txt
 	dh_installdocs -a -A \
 		debian/README.mgetty debian/README.Debian \
 		TODO CONTRIBUTORS
