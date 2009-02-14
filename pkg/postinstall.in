@@ -4,7 +4,7 @@
 #
 #	postinstall
 #
-#cd /usr/local/HylaFAX-v4.5
+#cd /opt/HylaFAX
 #sh make.links
 #
 CMP=@CMP@

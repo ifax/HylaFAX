@@ -4,7 +4,7 @@
 #
 #	preremove
 #
-#cd /usr/local/HylaFAX-v4.0
+#cd /opt/HylaFAX
 #sh remove.links
 
 exit 0

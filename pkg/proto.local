@@ -2,5 +2,5 @@
 # Add your local additions to the prototype file here.
 # All lines beginning with a # symbol are ignored.
 #
-#f none /usr/local/HylaFAX-v4.0/make.links=./make.links 0644 bin sys
-#l none /usr/local/HylaFAX-v4.0/remove.links=/usr/local/HylaFAX-v4.0/make.links
+#f none /opt/HylaFAX/make.links=./make.links 0644 bin sys
+#l none /opt/HylaFAX/remove.links=/opt/HylaFAX/make.links

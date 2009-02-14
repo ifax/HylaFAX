@@ -2,11 +2,11 @@
 # $Id$
 #	Tim Rice	Tue Oct 28 20:36:07 PST 1997
 #
-#	I like to keep all the HylaFAX files in /usr/local/HylaFAX-v4.1
+#	I like to keep all the HylaFAX files in /opt/HylaFAX
 #	so I created this script to
 #	Setup symbolic links to the user programs and man pages
 # 
-WHERE_ALL_THE_HYLAFAX_STUFF_IS=/usr/local/HylaFAX-v4.1
+WHERE_ALL_THE_HYLAFAX_STUFF_IS=/opt/HylaFAX
 #
 #
 #
@@ -14,17 +14,17 @@ cd ${WHERE_ALL_THE_HYLAFAX_STUFF_IS}
 #
 PROGS="faxalter faxcover faxmail faxrm faxstat sendfax sendpage"
 # 
-if test -d /usr/local/bin
+if test -d /opt/bin
 then	
-	BIN_DIR=/usr/local/bin
+	BIN_DIR=/opt/bin
 else
 	BIN_DIR=/usr/bin
 fi
 # 
 # now for the man pages
-if test -d /usr/local/man
+if test -d /opt/man
 then	
-	MAN_DIR=/usr/local/man
+	MAN_DIR=/opt/man
 else
 	MAN_DIR=/usr/share/man
 fi
