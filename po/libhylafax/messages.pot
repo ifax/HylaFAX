@@ -1247,64 +1247,64 @@ msgid "%s: No protocol definition, using default."
 msgstr ""
 
 #
-# File: libhylafax/InetTransport.c++, line: 106
+# File: libhylafax/InetTransport.c++, line: 115
 #, c-format
 msgid "getaddrinfo failed with %d: %s"
 msgstr ""
 
 #
-# File: libhylafax/InetTransport.c++, line: 116
+# File: libhylafax/InetTransport.c++, line: 125
 #, c-format
 msgid "Trying %s [%d] (%s) at port %u..."
 msgstr ""
 
 #
-# File: libhylafax/InetTransport.c++, line: 124
+# File: libhylafax/InetTransport.c++, line: 133
 # File: libhylafax/SNPPClient.c++, line: 501
 #, c-format
 msgid "Connected to %s."
 msgstr ""
 
 #
-# File: libhylafax/InetTransport.c++, line: 130
+# File: libhylafax/InetTransport.c++, line: 139
 # File: libhylafax/SNPPClient.c++, line: 505
 #, c-format
 msgid "setsockopt(TOS): %s (ignored)"
 msgstr ""
 
 #
-# File: libhylafax/InetTransport.c++, line: 136
+# File: libhylafax/InetTransport.c++, line: 145
 # File: libhylafax/SNPPClient.c++, line: 511
 #, c-format
 msgid "setsockopt(OOBLINE): %s (ignored)"
 msgstr ""
 
 #
-# File: libhylafax/InetTransport.c++, line: 151
+# File: libhylafax/InetTransport.c++, line: 160
 #, c-format
 msgid "Can not reach service %s at host \"%s\"."
 msgstr ""
 
 #
-# File: libhylafax/InetTransport.c++, line: 269
-# File: libhylafax/InetTransport.c++, line: 273
-# File: libhylafax/InetTransport.c++, line: 283
+# File: libhylafax/InetTransport.c++, line: 278
+# File: libhylafax/InetTransport.c++, line: 282
+# File: libhylafax/InetTransport.c++, line: 292
 #, c-format
 msgid "Couldn't parse last response \"%s\""
 msgstr ""
 
 #
-# File: libhylafax/InetTransport.c++, line: 278
+# File: libhylafax/InetTransport.c++, line: 287
 msgid "EPSV not supported, trying PASV since we're AF_INET\n"
 msgstr ""
 
 #
-# File: libhylafax/InetTransport.c++, line: 347
+# File: libhylafax/InetTransport.c++, line: 356
 msgid "EPRT not supported, trying PORT"
 msgstr ""
 
 #
-# File: libhylafax/InetTransport.c++, line: 419
+# File: libhylafax/InetTransport.c++, line: 428
 # File: libhylafax/SNPPClient.c++, line: 527
 msgid "Sorry, no TCP/IP communication support was configured."
 msgstr ""

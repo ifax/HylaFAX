@@ -215,7 +215,7 @@ msgid "usage: faxstat [-h server-host] [-adfgilrsv]"
 msgstr ""
 
 #
-# File: faxstat/faxstat.c++, line: 146
+# File: faxstat/faxstat.c++, line: 149
 #, c-format
 msgid "Data Connection: %s"
 msgstr ""
