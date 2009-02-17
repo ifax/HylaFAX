@@ -1091,13 +1091,13 @@ if [ -z "$GCXXOPTS" ]; then
     *CC-*-irix*)		# cfront-based or cfront-compatible
 	GCXXOPTS='+a1 +w +p'
 	;;
-    xlC-*-aix*)
+    *xlC-*-aix*)
 	GCXXOPTS='-qlanglvl=compat -I/usr/lpp/xlC/include -I/usr/include'
 	;;
-    CC-*-sco3.2v5.*)		# cfront-based or cfront-compatible
+    *CC-*-sco3.2v5.*)		# cfront-based or cfront-compatible
 	GCXXOPTS='+a1 +p'
 	;;
-    CC-*-sysv5*)                # CC here needs this, cc doesn't
+    *CC-*-sysv5*)                # CC here needs this, cc doesn't
         GCXXOPTS='-Wf,--variadic_macro'
         ;;
     *)
