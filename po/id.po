@@ -1,82 +1,1184 @@
 # Pesan bahasa indonesia untuk hylafax.
 # Copyright (C) 2008 iFAX Solutions Inc.
 # This file is distributed under the same license as the hylafax package.
-# Arif E. Nugroho <arif_endro@yahoo.com>, 2008.
+# Arif E. Nugroho <arif_endro@yahoo.com>, 2008, 2009.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: hylafax 4.5.0pre2\n"
+"Project-Id-Version: hylafax 6.0.0-beta1\n"
 "Report-Msgid-Bugs-To: http://bugs.hylafax.org\n"
-"POT-Creation-Date: 2007-10-27 22:29-0400\n"
-"PO-Revision-Date: 2008-12-04 17:00+0700\n"
+"POT-Creation-Date: Wed Nov 26 10:33:46 EST 2008\n"
+"PO-Revision-Date: 2009-02-14 17:00+0700\n"
 "Last-Translator: Arif E. Nugroho <arif_endro@yahoo.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: faxalter/faxalter.c++:235
+#, c-format
+msgid "Illegal minutes value %u"
+msgstr "Nilai menit %u tidak legal"
+
+#. translator: HH:MM represents (each two digits) hour:minutes
+msgid "expecting HH:MM"
+msgstr "diduga JJ:MM"
+
+#, c-format
+msgid "%u:%02u is not an AM value"
+msgstr "%u:%02u bukan sebuah nilai AM"
+
+#, c-format
+msgid "%u:%02u is not a PM value"
+msgstr "%u:%02u bukan sebuah nilai PM"
+
+#, c-format
+msgid "unrecognized symbolic time \"%s\""
+msgstr "waktu simbolik \"%s\" tidak diketahui"
+
+msgid "Illegal time value; out of range"
+msgstr "Nilai waktu tidak legal; diluar dari jangkauan"
+
+msgid "expecting \"+\" after time"
+msgstr "diduga \"+\" setelah waktu"
+
+msgid "Invalid date/time; time must be in the future"
+msgstr "Tidak valid tanggal/jam; jam pasti berada dimasa depan"
+
+msgid "missing or invalid day of month"
+msgstr "hilang atau tidak valid hari dari bulan"
+
+msgid "missing year"
+msgstr "hilang tahun"
+
+#, c-format
+msgid "Sorry, cannot handle dates before %u"
+msgstr "Maaf, tidak dapat menangani tanggal sebelum %u"
+
+#, c-format
+msgid "Invalid day of month, %s has only %u days"
+msgstr "Hari dari bulan tidak valid, %s hanya memiliki %u hari"
+
+msgid "expecting number after \"+\""
+msgstr "diduga nomor setelah \"+\""
+
+#, c-format
+msgid "\"+%u\" without unit"
+msgstr "\"+%u\" tanpa satuan"
+
+#, c-format
+msgid "Unknown increment unit \"%s\""
+msgstr "Tidak diketahui satuan peningkatan \"%s\""
+
+msgid "Syntax error, "
+msgstr "Sintaks error, "
+
+msgid "3.85 line/mm"
+msgstr "3.85 baris/mm"
+
+msgid "7.7 line/mm"
+msgstr "7.7 baris/mm"
+
+msgid "15.4 line/mm"
+msgstr "15.4 baris/mm"
+
+msgid "R16 x 15.4 line/mm"
+msgstr "R16 x 15.4 baris/mm"
+
+msgid "200 x 100 dpi"
+msgstr "200 x 100 dpi"
+
+msgid "200 x 200 dpi"
+msgstr "200 x 200 dpi"
+
+msgid "200 x 400 dpi"
+msgstr "200 x 400 dpi"
+
+msgid "300 x 300 dpi"
+msgstr "300 x 300 dpi"
+
+msgid "2400 bit/s"
+msgstr "2400 bit per detik"
+
+msgid "4800 bit/s"
+msgstr "4800 bit per detik"
+
+msgid "7200 bit/s"
+msgstr "7200 bit per detik"
+
+msgid "9600 bit/s"
+msgstr "9600 bit per detik"
+
+msgid "12000 bit/s"
+msgstr "1200 bit per detik"
+
+msgid "14400 bit/s"
+msgstr "14400 bit per detik"
+
+msgid "16800 bit/s"
+msgstr "16800 bit per detik"
+
+msgid "19200 bit/s"
+msgstr "19200 bit per detik"
+
+msgid "21600 bit/s"
+msgstr "21600 bit per detik"
+
+msgid "24000 bit/s"
+msgstr "24000 bit per detik"
+
+msgid "26400 bit/s"
+msgstr "26400 bit per detik"
+
+msgid "28800 bit/s"
+msgstr "28800 bit per detik"
+
+msgid "31200 bit/s"
+msgstr "31200 bit per detik"
+
+msgid "33600 bit/s"
+msgstr "33600 bit per detik"
+
+msgid "0 bit/s"
+msgstr "0 bit per detik"
+
+msgid "1-D MH"
+msgstr "1-D MH"
+
+msgid "2-D MR"
+msgstr "2-D MR"
+
+msgid "2-D Uncompressed Mode"
+msgstr "2-D Mode tidak terkompress"
+
+msgid "2-D MMR"
+msgstr "2-D MMR"
+
+msgid "JBIG"
+msgstr "JBIG"
+
+msgid "JPEG Greyscale"
+msgstr "JPEG Greyscale"
+
+msgid "JPEG Full-Color"
+msgstr "JPEG Warna-Lengkap"
+
+msgid "MH"
+msgstr "MH"
+
+msgid ", MR"
+msgstr ", MR"
+
+msgid ", MMR"
+msgstr ", MMR"
+
+msgid ", JBIG"
+msgstr ", JBIG"
+
+msgid ", JPEG Full-Color"
+msgstr ", JPEG Warna-Lengkap"
+
+msgid ", JPEG Greyscale"
+msgstr ", JPEG Greyscale"
+
+msgid "A4 page width (215 mm)"
+msgstr "lebar halaman A4 (215 mm)"
+
+msgid "B4 page width (255 mm)"
+msgstr "lebar halaman B4 (255 mm)"
+
+msgid "A3 page width (303 mm)"
+msgstr "lebar halaman A3 (303 mm)"
+
+msgid "page width 151 mm"
+msgstr "lebar halaman 151 mm"
+
+msgid "page width 107 mm"
+msgstr "lebar halaman 107 mm"
+
+msgid "undefined page width (wd=5)"
+msgstr "lebar halaman tidak terdefinisi (wd=5)"
+
+msgid "undefined page width (wd=6)"
+msgstr "lebar halaman tidak terdefinisi (wd=6)"
+
+msgid "undefined page width (wd=7)"
+msgstr "lebar halaman tidak terdefinisi (wd=7)"
+
+msgid "A4 page length (297 mm)"
+msgstr "panjang halaman A4 (297 mm)"
+
+msgid "B4 page length (364 mm)"
+msgstr "panjang halaman B4 (364 mm)"
+
+msgid "unlimited page length"
+msgstr "panjang halaman tidak terbatas"
+
+msgid "invalid page length (ln=3)"
+msgstr "panjang halaman tidak valid (ln=3)"
+
+msgid "0 ms/scanline"
+msgstr "0 ms/scanline"
+
+msgid "5 ms/scanline"
+msgstr "5 ms/scanline"
+
+msgid "10 ms, 5 ms/scanline"
+msgstr "10 ms, 5ms/scanline"
+
+msgid "10 ms/scanline"
+msgstr "10 ms/scanline"
+
+msgid "20 ms, 10 ms/scanline"
+msgstr "20 ms, 10 ms/scanline"
+
+msgid "20 ms/scanline"
+msgstr "20 ms/scanline"
+
+msgid "40 ms, 20 ms/scanline"
+msgstr "40 ms, 20 ms/scanline"
+
+msgid "40 ms/scanline"
+msgstr "40 ms/scanline"
+
+msgid "no ECM"
+msgstr "tidak ada ECM"
+
+msgid "T.30 Annex A, 64-byte ECM"
+msgstr "T.30 Annex A, 64 byte ECM"
+
+msgid "T.30 Annex A, 256-byte ECM"
+msgstr "T.30 Annex A, 256 byte ECM"
+
+msgid "T.30 Annex C, half duplex ECM"
+msgstr "T.30 Annex C, half duplex ECM"
+
+msgid "T.30 Annex C, full duplex ECM"
+msgstr "T.30 Annex C, full duplex ECM"
+
+msgid "undefined ECM"
+msgstr "tidak terdefinisi ECM"
+
+#, c-format
+msgid "Cannot open file \"%s\" for reading"
+msgstr "Tidak dapat membuka berkas \"%s\" untuk pembacaan"
+
+#. translator: Screen output about a variable %s being defined to "%s"
+#, c-format
+msgid "Define %s = \"%s\""
+msgstr "Definisi %s = \"%s\""
+
+#. translator: Screen output about undefining variable %s
+#, c-format
+msgid "Undefine %s"
+msgstr "Tidak terdefinisi %s"
+
+msgid "Syntax error, expecting identifier"
+msgstr "Sintaks error, pengidentifikasi tidak terduga"
+
+msgid "Missing '[' while parsing rule set"
+msgstr "Hilang '[' ketika parsing set aturan"
+
+#, c-format
+msgid "Missing '=' or ':=' after \"%s\""
+msgstr "Hilang '=' atau ':=' setelah \"%s\""
+
+#. translator: "CanonicalNumber" is the name of a rule and must not be translated.
+msgid "Warning, no \"CanonicalNumber\" rules."
+msgstr "Peringatan, tidak ada aturan \"CanonicalNumber\"."
+
+#. translator: "DialString" is the name of a rule and must not be translated.
+msgid "Warning, no \"DialString\" rules."
+msgstr "Peringatan, tidak ada aturan \"DialString\"."
+
+msgid "String with unmatched '\"'"
+msgstr "String dengan tidak cocok '\"'"
+
+msgid "Bad '\\' escape sequence"
+msgstr "urutan escape '\\' buruk"
+
+msgid "Missing '}' for variable reference"
+msgstr "Hilang '}' untuk referensi variabel"
+
+msgid "Missing ']' while parsing rule set"
+msgstr "Hilang ']' ketika parsing set aturan"
+
+msgid "Rule pattern without '='"
+msgstr "Pola aturan tanpa '='"
+
+#, c-format
+msgid "Apply %s rules to \"%s\""
+msgstr "Aplikasikan %s aturan ke \"%s\""
+
+#, c-format
+msgid "--> match rule \"%s\", result now \"%s\""
+msgstr "--> cocok aturan \"%s\", hasil sekarang \"%s\""
+
+#, c-format
+msgid "--> return result \"%s\""
+msgstr "--> hasil kembali \"%s\""
+
+#. translator: "line" as in the line number %u of filename %s.
+#, c-format
+msgid "%s: line %u: "
+msgstr "%s: baris %u: "
+
+msgid "Warning, "
+msgstr "Peringatan, "
+
+#
+# File: libhylafax/FaxClient.c++, line: 163
+#, c-format
+msgid "Couldn't parse IPv6 ip address string: \"%s\""
+msgstr "Tidak dapat memperoleh alamat ip IPv6: \"%s\""
+
+#, c-format
+msgid "Can not locate your password entry (uid %lu): %s"
+msgstr "Tidak dapat menentukan lokasi masukan kata kunci anda (uid %lu): %s"
+
+msgid "Bad (null) user name; your password file entry probably has bogus GECOS field information."
+msgstr "Nama pengguna (kosong) buruk; mungkin masukan berkas kata kunci anda memiliki daerah informasi GECOS palsu."
+
+msgid "Malformed (null) username"
+msgstr "Nama pengguna (kosong) salah bentuk"
+
+msgid "Login failed: "
+msgstr "Login gagal: "
+
+msgid "Admin failed: "
+msgstr "Admin gagal: "
+
+#, c-format
+msgid "Bad %s parameter value %u."
+msgstr "Buruk %s nilai parameter %u."
+
+#, c-format
+msgid "Bad time zone parameter value %u."
+msgstr "Nilai parameter %u daerah waktu buruk."
+
+msgid "Unable to initialize data connection to server"
+msgstr "Tidak dapat menginisialisasi koneksi data ke server"
+
+msgid "Unable to open data connection to server"
+msgstr "Tidak dapat membuka koneksi data ke server"
+
+msgid "Unable to abort data connection to server"
+msgstr "Tidak dapat membatalkan koneksi data ke server"
+
+msgid "Service not available, remote server closed connection"
+msgstr "Layanan tidak tersedia, remote server memutus koneksi"
+
+msgid "Unexpected server response: "
+msgstr "Balasan server tidak terduga: "
+
+msgid "Protocol botch"
+msgstr "Protokol botch"
+
+msgid "No control connection for command"
+msgstr "Tidak ada pengontrol koneksi untuk perintah"
+
+#, c-format
+msgid ": No \"%s\" in %s response: %s"
+msgstr ": Tidak ada \"%s\" dalam %s balasan: %s"
+
+#, c-format
+msgid ": Null %s in %s response: %s"
+msgstr ": Kosong %s dalam %s balasan: %s"
+
+#, c-format
+msgid "Unable to open script file \"%s\"."
+msgstr "Tidak dapat membuka berkas script \"%s\"."
+
+#, c-format
+msgid "%s: Read error: %s"
+msgstr "%s: Baca error: %s"
+
+#, c-format
+msgid "%s: line %u: %s"
+msgstr "%s: baris %u: %s"
+
+msgid " (server closed connection)"
+msgstr " (server menutup koneksi)"
+
+#, c-format
+msgid " (server write error: %s)."
+msgstr " (server tulis error: %s)."
+
+#, c-format
+msgid "SEND data, %lu bytes"
+msgstr "KIRIM data, %lu bytes"
+
+#, c-format
+msgid " (data read: %s)."
+msgstr " (baca data: %s)."
+
+#, c-format
+msgid "SEND compressed data, %lu bytes"
+msgstr "KIRIM data terkompres, %lu bytes"
+
+#, c-format
+msgid " (data read: %s)"
+msgstr " (baca data: %s)"
+
+#, c-format
+msgid "zlib compressor error: %s"
+msgstr "pengompres zlib error: %s"
+
+#, c-format
+msgid "SEND %lu bytes transmitted (%.1fx compression)"
+msgstr "KIRIM %lu bytes terkirim (%.1fx kompresi)"
+
+#, c-format
+msgid "Can not initialize compression library: %s"
+msgstr "Tidak dapat menginisialisasi perpustakaan kompresi: %s"
+
+#, c-format
+msgid "Data Connection: %s"
+msgstr "Koneksi Data: %s"
+
+#, c-format
+msgid "Decoding error: %s"
+msgstr "Dekoding error: %s"
+
+#, c-format
+msgid "Can not initialize decoder: %s"
+msgstr "Tidak dapat menginisialisasi pendekoder: %s"
+
+#. translator: Column header for Recipient sub-address
+msgid "SUB"
+msgstr "SUB"
+
+#. translator: Column header for Recipient password (of sub-address)
+msgid "PWD"
+msgstr "PWD"
+
+#. translator: Column header for Recipient company name
+msgid "Company"
+msgstr "Perusahaan"
+
+#. translator: Column header for (total dials):(maximum dials)
+msgid "Dials"
+msgstr "Panggil"
+
+#. translator: Column header for signalling rate
+msgid "BR"
+msgstr "BR"
+
+#. translator: Column header for job tagline
+msgid "Tagline"
+msgstr "Tagline"
+
+#. translator: Column header for min-scanline-time
+msgid "ST"
+msgstr "ST"
+
+#. translator: Column header for data format
+msgid "DF"
+msgstr "DF"
+
+#. translator: Column header for user-requested scheduling priority
+msgid "UsrPri"
+msgstr "UsrPri"
+
+#. translator: Column header for user specified job tag
+msgid "JobTag"
+msgstr "JobTag"
+
+#. translator: Column header for ECM (symbol)
+msgid "EC"
+msgstr "EC"
+
+#. translator: Column header for recipient location
+msgid "Location"
+msgstr "Lokasi"
+
+#. translator: Column header for mail address
+msgid "MailAddr"
+msgstr "AlamatMail"
+
+#. translator: Column header for tagline handling (symbol)
+msgid "DT"
+msgstr "DT"
+
+#. translator: Column header for continuation cover page use (symbol)
+msgid "CC"
+msgstr "CC"
+
+#. #-#-#-#-#  messages.pot  #-#-#-#-#
+#. translator: Column header for (number of pages):(total pages)
+#. translator: Column header for number of pages
+msgid "Pages"
+msgstr "Halaman"
+
+#. translator: Column header for minimum speed
+msgid "MinSP"
+msgstr "MinSP"
+
+#. translator: Column header for receiver name
+msgid "Receiver"
+msgstr "Penerima"
+
+#. #-#-#-#-#  messages.pot  #-#-#-#-#
+#. translator: Column header for sender name
+msgid "Sender"
+msgstr "Pengirim"
+
+#. translator: Column header for (total tries):(maximum tries)
+msgid "Tries"
+msgstr "Coba"
+
+#. translator: Column header for minimum white space before chopping
+msgid "ChopThreshold"
+msgstr "ChopThreshold"
+
+#. translator: Column header for operation to do when job completes
+msgid "DoneOp"
+msgstr "SelesaiOp"
+
+#. translator: Column header for communication ID
+msgid "CommID"
+msgstr "CommID"
+
+#. translator: Column header for job type
+msgid "JobType"
+msgstr "TipePekerjaan"
+
+#. translator: Column header for Date & Time
+msgid "Date       Time"
+msgstr "Tanggal    Waktu"
+
+#. translator: Column header for seconds since the UNIX epoch
+msgid "UNIX Time"
+msgstr "Waktu UNIX"
+
+#. translator: Column header for job state (symbol)
+msgid "State"
+msgstr "Keadaan"
+
+#. translator: Column header for number of tries
+msgid "NTries"
+msgstr "NCoba"
+
+#. translator: Column header for identity of machine that submitted job
+msgid "Client"
+msgstr "Klien"
+
+#. translator: Column header for total dials
+msgid "TotDials"
+msgstr "TotDials"
+
+#. translator: Column header for recipient fax number
+#. translator: Column header for fax phone number
+msgid "Number"
+msgstr "Jumlah"
+
+#. translator: Column header for number of dials
+msgid "NDials"
+msgstr "NDials"
+
+#. translator: Column header for group identifier
+#. translator: Column header for file GID
+msgid "GID"
+msgstr "GID"
+
+#. translator: Column header for page chopping (symbol)
+msgid "Chop"
+msgstr "Chop"
+
+#. translator: Column header for current scheduling priority
+msgid "Priority"
+msgstr "Prioritas"
+
+#. translator: Column header for job identifier
+msgid "JID"
+msgstr "JID"
+
+#. translator: Column header for time to kill job
+msgid "LastTime"
+msgstr "WaktuTerakhir"
+
+#. translator: Column header for page length
+msgid "PageLength"
+msgstr "PanjangHalaman"
+
+#. translator: Column header for modem group
+#. translator: Column header for canonical modem name
+msgid "Modem"
+msgstr "Modem"
+
+#. translator: Column header for email notification (symbol)
+msgid "Notify"
+msgstr "Notifikasi"
+
+#. translator: Column header for owner name
+#. translator: Column header for job owner
+#. translator: Column header for file owner
+msgid "Owner"
+msgstr "Pemilik"
+
+#. translator: Column header for retry time
+msgid "RetryTime"
+msgstr "WaktuMencoba"
+
+#. translator: Column header for fax image vertical resolution
+#. translator: Column header for fax image resolution
+msgid "Resolution"
+msgstr "Resolusi"
+
+#. translator: Column header for request status indicator
+#. translator: Column header for status information
+msgid "Status"
+msgstr "Kondisi"
+
+#. translator: Column header for total tries
+msgid "TotTries"
+msgstr "TotTries"
+
+#. translator: Column header for maximum tries
+msgid "MaxTries"
+msgstr "MaxTries"
+
+#. translator: Column header for dial string
+msgid "DialString"
+msgstr "DialString"
+
+#. translator: Column header for page width
+msgid "PageWidth"
+msgstr "LebarHalaman"
+
+#. translator: Column header for maximum dials
+msgid "MaxDials"
+msgstr "MaxDials"
+
+#. translator: Column header for total of pages
+msgid "TotPages"
+msgstr "TotHalaman"
+
+#. translator: Column header for time to send
+msgid "TTS"
+msgstr "TTS"
+
+#. translator: Column header for extended vertical resolution use (symbol)
+msgid "UseXVres"
+msgstr "UseXVres"
+
+#. translator: Column header for error description
+msgid "Error"
+msgstr "Error"
+
+#. translator: Column header for file name
+msgid "Filename"
+msgstr "Nama berkas"
+
+#. translator: Column header for time spent receiving
+msgid "Time"
+msgstr "Waktu"
+
+#. translator: Column header for callerid name
+msgid "CIDName"
+msgstr "CIDNama"
+
+#. translator: Column header for caller id number
+msgid "CIDNumber"
+msgstr "NomorCID"
+
+#. translator: Column header for page length
+msgid "Length"
+msgstr "Panjang"
+
+#. translator: Column header for fax protection mode
+#. translator: Column header for file protection flags
+msgid "Protect"
+msgstr "Proteksi"
+
+#. translator: Column header for file size
+msgid "Size"
+msgstr "Ukuran"
+
+#. translator: Column header for sender TSI (Transmitting Station Information)
+msgid "Sender/TSI"
+msgstr "Pengirim/TSI"
+
+#. translator: Column header for time received
+msgid "Recvd@"
+msgstr "Recvd@"
+
+#. translator: Column header for page width
+msgid "Width"
+msgstr "Lebar"
+
+#. translator: Column header for machine hostname
+msgid "Host"
+msgstr "Host"
+
+#. translator: Column header for local identifier
+msgid "LocalID"
+msgstr "IDLokal"
+
+#. translator: Column header for maximum received pages
+msgid "MaxRecv"
+msgstr "MaxRecv"
+
+#. translator: Column header for server:session tracing level
+msgid "Tracing"
+msgstr "Telusuri"
+
+#. translator: Column header for speaker volume (symbol)
+msgid "Speaker"
+msgstr "Speaker"
+
+#. translator: Column header for file last access time
+msgid "LastAcc"
+msgstr "LastAcc"
+
+#. translator: Column header for file creation time
+msgid "Created"
+msgstr "Dibuat"
+
+#. translator: Column header for ID of device containing file
+msgid "Device"
+msgstr "Perangkat"
+
+#. translator: Column header for file link count
+msgid "Links"
+msgstr "Links"
+
+#. translator: Column header for file last modification time
+msgid "LastMod"
+msgstr "LastMod"
+
+#. translator: Column header for ID of device if special file
+msgid "RootDev"
+msgstr "RootDev"
+
+#. translator: Column header for file UID
+msgid "UID"
+msgstr "UID"
+
+#, c-format
+msgid "Read config file %s"
+msgstr "Baca berkas konfigurasi %s"
+
+#, c-format
+msgid "No passwd file entry for uid %u, cannot expand ~ in \"%s\""
+msgstr "Tidak ada masukan berkas kata kunci untuk uid %u, tidak dapat mengekspan ~ dalam \"%s\""
+
+#, c-format
+msgid "Syntax error at line %u, missing ':' in \"%s\""
+msgstr "Sintaks error di baris %u, hilang ':' dalam \"%s\""
+
+#, c-format
+msgid "Syntax error at line %u, missing quote mark in \"%s\""
+msgstr "Sintaks error di baris %u, hilang tanda quote dalam \"%s\""
+
+#, c-format
+msgid "%s = %s (line %u)"
+msgstr "%s = %s (baris %u)"
+
+#, c-format
+msgid "Unknown configuration parameter \"%s\" ignored at line %u"
+msgstr "Parameter konfigurasi \"%s\" tidak diketahui diabaikan di baris %u"
+
+#, c-format
+msgid "%s: line %d: Unmatched \"]\".\n"
+msgstr "%s: baris %d: Tidak cocok \"]\".\n"
+
+#, c-format
+msgid "%s: line %d: Missing \":\" separator.\n"
+msgstr "%s: baris %d: Hilang pemisah \":\".\n"
+
+#, c-format
+msgid "%s: Premature EOF.\n"
+msgstr "%s: Prematur EOF.\n"
+
+#, c-format
+msgid "%s: No protocol definition, using default."
+msgstr "%s: Tidak ada definisi protokol, menggunakan baku."
+
+#
+# File: libhylafax/InetTransport.c++, line: 106
+#, c-format
+msgid "getaddrinfo failed with %d: %s"
+msgstr "getaddrinfo gagal dengan %d: %s"
+
+#, c-format
+msgid "Trying %s [%d] (%s) at port %u..."
+msgstr "Mencoba %s [%d] (%s) di port %u..."
+
+#, c-format
+msgid "Connected to %s."
+msgstr "Terhubung ke %s."
+
+#, c-format
+msgid "setsockopt(TOS): %s (ignored)"
+msgstr "setsockopt(TOS): %s (diabaikan)"
+
+#, c-format
+msgid "setsockopt(OOBLINE): %s (ignored)"
+msgstr "setsockopt(OOBLINE): %s (diabaikan)"
+
+#, c-format
+msgid "Can not reach service %s at host \"%s\"."
+msgstr "Tidak dapat mencapai layanan %s di host \"%s\"."
+
+#
+# File: libhylafax/InetTransport.c++, line: 269
+# File: libhylafax/InetTransport.c++, line: 273
+# File: libhylafax/InetTransport.c++, line: 283
+#, c-format
+msgid "Couldn't parse last response \"%s\""
+msgstr "Tidak dapat mendapatkan balasan terakhir \"%s\""
+
+#
+# File: libhylafax/InetTransport.c++, line: 278
+msgid "EPSV not supported, trying PASV since we're AF_INET\n"
+msgstr "EPSV tidak didukung, mencoba PASV karena kita AF_INET\n"
+
+#
+# File: libhylafax/InetTransport.c++, line: 347
+msgid "EPRT not supported, trying PORT"
+msgstr "EPRT tidak didukung mencoba PORT"
+
+msgid "Sorry, no TCP/IP communication support was configured."
+msgstr "Maaf, tidak ada dukungan komunikasi TCP/IP yang telah dikonfigurasikan."
+
+#, c-format
+msgid "%s: Sub class must define method \"%s\".\n"
+msgstr "%s: Sub kelas harus mendefinisikan metode \"%s\".\n"
+
+#, c-format
+msgid "Unexpected end of line after \"%s\".\n"
+msgstr "Tidak terduga akhir dari baris setelah \"%s\".\n"
+
+msgid "page size name"
+msgstr "nama ukuran halaman"
+
+msgid "page size abbreviation"
+msgstr "kependekan ukuran halaman"
+
+msgid "page width"
+msgstr "lebar halaman"
+
+msgid "page height"
+msgstr "tinggi halaman"
+
+msgid "guaranteed page width"
+msgstr "lebar halaman digaransi"
+
+msgid "guaranteed page height"
+msgstr "tinggi halaman digaransi"
+
+msgid "top margin"
+msgstr "margin atas"
+
+#, c-format
+msgid "Warning, no page size database file \"%s\", using builtin default.\n"
+msgstr "Peringatan, tidak ada ukuran halaman basis data berkas \"%s\", menggunakan bawaan baku.\n"
+
+msgid "Malformed (null) sender name or mail address"
+msgstr "Salah bentuk (kosong) nama pengirim atau alamat mail"
+
+#, c-format
+msgid "Can not locate your password entry (uid %lu): %s."
+msgstr "Tidak dapat melokasikan masukan kata kunci anda (uid %lu): %s."
+
+#, c-format
+msgid "Invalid hold time \"%s\": %s"
+msgstr "Waktu hold \"%s\": %s tidak valid"
+
+msgid ": Unknown host"
+msgstr ": Host tidak diketahui"
+
+msgid "Can not create socket to connect to server."
+msgstr "Tidak dapat membuat socket untuk menghubungi server."
+
+#, c-format
+msgid "No \"%s\" service definition, using default %u/%s."
+msgstr "Tidak ada \"%s\" definisi layanan, menggunakan baku %u/%s."
+
+#, c-format
+msgid "Trying %s (%s) at port %u..."
+msgstr "Mencoba %s (%s) di port %u..."
+
+#, c-format
+msgid "Can not reach server at host \"%s\", port %u."
+msgstr "Tidak dapat mencapai server di host \"%s\", port %u."
+
+msgid "Not logged in to server"
+msgstr "Tidak logged in ke server"
+
+#, c-format
+msgid "destination pin %s: request id is %s for host %s\n"
+msgstr "tujuan pin %s: permintaan id adalah %s untuk host %s\n"
+
+#, c-format
+msgid "SEND message data, %lu bytes"
+msgstr "KIRIM pesan data, %lu bytes"
+
+#, c-format
+msgid "Unable to open message file \"%s\"."
+msgstr "Tidak dapat membuka pesan berkas \"%s\"."
+
+#, c-format
+msgid "no SITE %s support; ignoring set request."
+msgstr "tidak ada SITE %s support; mengabaikan set permintaan."
+
+msgid "Unable to setup file typing and conversion rules"
+msgstr "Tidak dapat mengkonfigurasikan berkas mengetik dan mengkonversi aturan"
+
+msgid "Unknown page size "
+msgstr "Ukuran halaman tidak diketahui "
+
+#, c-format
+msgid "Error creating cover sheet; could not fork subprocess: %s"
+msgstr "Error membuat cover sheet; tidak dapat fork subproses: %s"
+
+#, c-format
+msgid "Error creating cover sheet; command was \"%s\"; exit status %x"
+msgstr "Error membuat cover sheet; perintah adalah \"%s\"; status keluar %x"
+
+#, c-format
+msgid "Error creating cover sheet; unable to create pipe to subprocess: %s"
+msgstr "Error membuat cover sheet; tidak dapat membuat pipe ke subprocess: %s"
+
+#, c-format
+msgid "%s: Can not create temporary file for cover page"
+msgstr "%s: Tidak dapat membuat berkas sementara untuk halaman muka"
+
+msgid "Documents not prepared"
+msgstr "Dokumen tidak disiapkan"
+
+#, c-format
+msgid ": Can not open: %s"
+msgstr ": Tidak dapat membuka: %s"
+
+msgid "Document transfer failed: "
+msgstr "Transfer dokumen gagal: "
+
+#, c-format
+msgid "request id is %s (group id %s) for host %s (%u file)\n"
+msgid_plural "request id is %s (group id %s) for host %s (%u files)\n"
+msgstr[0] "permintaan id adalah %s (grup id %s) untuk host %s (%u berkas)\n"
+msgstr[1] "permintaan id adalah %s (grup id %s) untuk host %s (%u berkas)\n"
+
+#, c-format
+msgid "Error converting document; command was \"%s\""
+msgstr "Error mengubah dokumen; perintah adalah \"%s\""
+
+#, c-format
+msgid "%s: Can not open file"
+msgstr "%s: Tidak dapat membuka berkas"
+
+#, c-format
+msgid "%s: Can not stat file"
+msgstr "%s: Tidak dapat mendapatkan statistik berkas"
+
+#, c-format
+msgid "%s: Not a regular file"
+msgstr "%s: Bukan sebuah berkas regular"
+
+#, c-format
+msgid "%s: Empty file"
+msgstr "%s: Berkas kosong"
+
+#, c-format
+msgid "%s: Can not determine file type"
+msgstr "%s: Tidak dapat menentukan tipe berkas"
+
+#, c-format
+msgid "%s: Can not open: %s"
+msgstr "%s: Tidak dapat membuka: %s"
+
+#, c-format
+msgid "Unable to open sequence number file %s; %s."
+msgstr "Tidak dapat membuka urutan nomor berkas %s; %s."
+
+#, c-format
+msgid "%s: Invalid sequence number \"%s\", resetting to 1"
+msgstr "%s: Urutan nomor tidak valid \"%s\", mereset ke 1"
+
+#, c-format
+msgid "Unable update sequence number file %s; write failed."
+msgstr "Tidak dapat mengupdate urutan nomor berkas %s; gagal menulis."
+
+#, c-format
+msgid "Font %s: %s"
+msgstr "Huruf %s: %s"
+
+#, c-format
+msgid "Cannot open temporary file: %s"
+msgstr "Tidak dapat membuka berkas sementara: %s"
+
+msgid "point size is unusually large (>18pt)"
+msgstr "ukuran titik besar tidak biasa (>18pt)"
+
+#, c-format
+msgid "Margin values too large for page; lm %lu rm %lu page width %lu"
+msgstr "Nilai margin terlalu besar untuk halaman; lm %lu rm %lu lebar halaman %lu"
+
+#, c-format
+msgid "Margin values too large for page; tm %lu bm %lu page height %lu"
+msgstr "Nilai margin terlalu besar untuk halaman; tm %lu bm %lu tinggi halaman %lu"
+
+#, c-format
+msgid "Close failure on temporary file: %s"
+msgstr "Gagal menutup di berkas sementara: %s"
+
+#, c-format
+msgid "Read error during reverse collation: %s"
+msgstr "Baca error selama kolasi terbalik: %s"
+
+#, c-format
+msgid "Output write error: %s"
+msgstr "Keluaran tulis error: %s"
+
+#, c-format
+msgid "%s: Cannot open file: %s"
+msgstr "%s: Tidak dapat membuka berkas: %s"
+
+#, c-format
+msgid "Warning: %s - line too long."
+msgstr "Peringatan: %s - baris terlalu panjang."
+
+#, c-format
+msgid "Warning: %s invalid Fontmap entry - no filename present"
+msgstr "Peringatan:  %s masukan Fotmap tidak valid - tidak ada nama berkas yang ada"
+
+#, c-format
+msgid "%s: Can not open font metrics file; using fixed widths"
+msgstr "%s: Tidak dapat membuka berkas metrik font; menggunakan fixed widths"
+
+#, c-format
+msgid "%s: No glyph metric table located; using fixed widths"
+msgstr "%s: Tidak ada table metrik gliph dilokasikan; menggunakan lebar tetap"
+
+#, c-format
+msgid "%s, line %u: format error"
+msgstr "%s, baris %u: format error"
+
+#. translator: This shows the rule to be processed (the last two %s) starting at offset %#lx.
+#, c-format
+msgid "rule: %soffset %#lx %s %s"
+msgstr "aturan: %soffset %#lx %s %s"
+
+msgid " <any value>"
+msgstr " <nilai apapun>"
+
+msgid "failed (offset past data)\n"
+msgstr "gagal (ofset melewati data)\n"
+
+#, c-format
+msgid "failed (unprintable char %#x)\n"
+msgstr "gagal (karakter tidak dapat dicetak %#x)\n"
+
+msgid "failed (insufficient data)\n"
+msgstr "gagal (tidak cukup data)\n"
+
+#, c-format
+msgid "success (result %s, rule \"%s\")\n"
+msgstr "sukses (hasil %s, aturan \"%s\")\n"
+
+msgid "failed (comparison)\n"
+msgstr "gagal (perbandingan)\n"
+
+#, c-format
+msgid "%s: Can not open type rules file.\n"
+msgstr "%s: Tidak dapat membuka tipe aturan berkas.\n"
+
+msgid "Missing file offset"
+msgstr "Hilang ofset berkas"
+
+#, c-format
+msgid "Unknown datatype \"%.*s\""
+msgstr "Tipe data \"%.*s\" tidak diketahui"
+
+msgid "Missing match value"
+msgstr "Hilang nilai cocok"
+
+#, c-format
+msgid "Unknown result \"%.*s\""
+msgstr "Hasil \"%.*s\" tidak diketahui"
+
+#, c-format
+msgid "match against (..., %u)\n"
+msgstr "cocok terhadap (..., %u)\n"
+
+msgid "no match\n"
+msgstr "tidak cocok\n"
+
+#, c-format
+msgid "connect to server at %s"
+msgstr "menghubungi ke server di %s"
+
+#, c-format
+msgid "Can not reach server at Unix domain socket \"%s\"."
+msgstr "Tidak dapat mencapai server di Unix domain socket \"%s\"."
+
+msgid "Sorry, no Unix domain communication support was configured."
+msgstr "Maaf, tidak ada dukungan komunikasi di domain Unix yang telah dikonfigurasikan."
+
 msgid "No job parameters specified for alteration."
 msgstr "Tidak ada parameter pekerjaan dispesifikasikan untuk pengubahan."
 
-#: faxalter/faxalter.c++:256
 #, c-format
 msgid "Job %s: duplicated as job %s.\n"
 msgstr "Pekerjaan %s: diduplikasikan sebagai pekerjaan %s.\n"
 
-#: faxalter/faxalter.c++:283
 #, c-format
 msgid "Job %s: done.\n"
 msgstr "Pekerjaan %s: selesai.\n"
 
-#: faxalter/faxalter.c++:309
 msgid "usage: faxalter [-C] [-h server-host] [-a time] [-d number] [-k time] [-m modem] [-n notify] [-P priority] [-t tries] [-A] [-g] [-p] [-r] [-v] [-DQR] jobID..."
 msgstr "penggunaan: faxalter [-C] [-h server-host] [-a waktu] [-d nomor] [-k waktu] [m modem] [-n notifikasi] [-P prioritas] [-t percobaan] [-A] [-g] [-p] [-r] [-v] [-DQR] ID pekerjaan..."
 
-#: faxcover/faxcover.c++:181
 #, c-format
 msgid "Unknown page size \"%s\""
 msgstr "Ukuran halaman \"%s\" tidak diketahui"
 
-#: faxcover/faxcover.c++:198
 #, c-format
-msgid "usage: %s [-t to] [-c comments] [-p #pages] [-l to-location] [-m maxcomments] [-z maxlencomments] [-r regarding] [-v to-voice-number] [-x to-company] [-C template-file] [-D date-format] [-L from-location] [-N from-fax-number] [-V from-voice-number] [-X from-company] [-s pagesize] -f from -n fax-number"
-msgstr "penggunaan: %s [-t ke] [-c komentar] [-p #halaman] [-l ke-lokasi] [-m maks komentar] [-z maks panjang komentar] [-r regarding] [-v kenomorsuara] [-x ke perusahaan] [-C berkas template] [-D format tanggal] [-L dari lokasi] [-N dari nomor fax] [-V dari nomor suara] [-X dari perusahaan] [-s ukuran halaman] -f dari -n nomor fax"
+msgid "usage: %s [-t to] [-c comments] [-p #pages] [-l to-location] [-m maxcomments] [-z maxlencomments] [-r regarding] [-v to-voice-number] [-x to-company] [-C template-file] [-D date-format] [-L from-location] [-M from-mail-address] [-N from-fax-number] [-V from-voice-number] [-X from-company] [-s pagesize] -f from -n fax-number"
+msgstr "penggunaan: %s [-t ke] [-c komentar] [-p #halaman] [-l ke-lokasi] [-m maks komentar] [-z maks panjang komentar] [-r regarding] [-v kenomorsuara] [-x ke perusahaan] [-C berkas template] [-D format tanggal] [-L dari lokasi] [-M dari alamat surat] [-N dari nomor fax] [-V dari nomor suara] [-X dari perusahaan] [-s ukuran halaman] -f dari -n nomor fax"
 
-#: faxcover/faxcover.c++:321
 #, c-format
 msgid "Could not locate prototype cover sheet \"%s\""
 msgstr "Tidak dapat melokasi prototipe lembar muka \"%s\""
 
-#: faxcover/faxcover.c++:453
 msgid "Can not figure out who you are."
 msgstr "Tidak dapat menentukan siapa anda."
 
-#: faxmail/faxmail.c++:132
+msgid "Syntax error parsing MIME Content-Type: "
+msgstr "Sitaks error parsing MIMET Content-Type: "
+
+#, c-format
+msgid "Internal error, unsupported Content-Transfer-Encoding %u"
+msgstr "Internal error, Content-Transfer-Encoding %u tidak didukung"
+
+#, c-format
+msgid "HEADER %s: %s\n"
+msgstr "HEADER %s: %s\n"
+
+#, c-format
+msgid "+HEADER %s: %s\n"
+msgstr "+HEADER %s: %s\n"
+
 #, c-format
 msgid "Cannot create temp directory %s"
 msgstr "Tidak dapat membuat direktori sementara %s"
 
-#: faxmail/faxmail.c++:264
 msgid "No Destination/Dialstring specified"
 msgstr "Tidak ada Tujuan/Dialstring yang dispesifikasikan"
 
-#: faxmail/faxmail.c++:274
 msgid "No From/Sender identity specified"
 msgstr "Tidak ada identitas Dari/Pengirim yang dispesifikasikan"
 
-#: faxmail/faxmail.c++:373
 #, c-format
 msgid "faxmail: This is a MIME message\n"
 msgstr "faxmail: Ini adalah sebuah pesan MIME\n"
 
-#: faxmail/faxmail.c++:385
 #, c-format
 msgid "faxmail: This is not a MIME message\n"
 msgstr "faxmail: Ini bukan sebuah pesan MIME\n"
 
-#: faxmail/faxmail.c++:420
 #, c-format
 msgid ""
 "unable to process message:\n"
@@ -85,112 +1187,85 @@ msgstr ""
 "tidak dapat memproses pesan:\n"
 "\t%s"
 
-#: faxmail/faxmail.c++:515
 msgid "Badly formatted MIME; premature EOF"
 msgstr "Terformat buruk MIME; prematur EOF"
 
-#: faxmail/faxmail.c++:614
+#
+# File: faxmail/faxmail.c++, line: 639
+#, c-format
+msgid "CONVERT: run %s\n"
+msgstr "CONVERT: menjalankan %s\n"
+
 #, c-format
 msgid "DISCARDED %s (%s/%s) GOES HERE\n"
 msgstr "DIABAIKAN %s (%s/%s) PERGI KESINI\n"
 
-#: faxmail/faxmail.c++:620
 #, c-format
 msgid "DISCARDED %s/%s GOES HERE\n"
 msgstr "DIABAIKAN %s/%s PERGI KESINI\n"
 
-#: faxmail/faxmail.c++:692
+#, c-format
+msgid "DISCARDED: %s (%s/%s)\n"
+msgstr "DIABAIKAN: %s (%s/%s)\n"
+
+#, c-format
+msgid "DISCARDED: %s/%s\n"
+msgstr "DIABAIKAN: %s/%s\n"
+
 #, c-format
 msgid "%s: write error: %s"
 msgstr "%s: error menulis: %s"
 
-#: faxmail/faxmail.c++:695 sendfax/sendfax.c++:364 sendpage/sendpage.c++:215
 #, c-format
 msgid "%s: Can not create temporary file"
 msgstr "%s: Tidak dapat membuat berkas sementara"
 
-#: faxmail/faxmail.c++:710
 #, c-format
 msgid "Couldn't open output file: %s"
 msgstr "Tidak dapat membuka berkas keluaran: %s"
 
-#: faxmail/faxmail.c++:726
 #, c-format
 msgid "Error converting %s/%s; could not fork subprocess: %s"
 msgstr "Error mengubah %s/%s; tidak dapat fork subproses: %s"
 
-#: faxmail/faxmail.c++:743
 #, c-format
 msgid "Error converting %s/%s; command was \"%s %s\"; exit status %x"
 msgstr "Error mengubah %s/%s; perintah adalah \"%s %s\"; status keluar %x"
 
-#: faxmail/faxmail.c++:909
 msgid "usage: faxmail [-b boldfont] [-H pageheight] [-i italicfont] [-f textfont] [-p pointsize] [-s pagesize] [-W pagewidth] [-M margins] [-C covertemplate] [-t notify] [-u user] [-12cnNrRTv]"
 msgstr "penggunaan: faxmail [-b huruf tebal] [-H tinggi halaman] [-i huruf miring] [-f bentuk huruf] [-p ukuran titik] [-s ukuran halaman] [-W lebar halaman] [-M margins] [-C covertemplate] [-t notifikasi] [-u pengguna] [-12cnNrRTv]"
 
-#: faxmail/MIMEState.c++:145
-msgid "Syntax error parsing MIME Content-Type: "
-msgstr "Sitaks error parsing MIMET Content-Type: "
-
-#: faxmail/MIMEState.c++:360
-#, c-format
-msgid "Internal error, unsupported Content-Transfer-Encoding %u"
-msgstr "Internal error, Content-Transfer-Encoding %u tidak didukung"
-
-#: faxmail/MsgFmt.c++:162
-#, c-format
-msgid "HEADER %s: %s\n"
-msgstr "HEADER %s: %s\n"
-
-#: faxmail/MsgFmt.c++:170
-#, c-format
-msgid "+HEADER %s: %s\n"
-msgstr "+HEADER %s: %s\n"
-
-#: faxrm/faxrm.c++:96
+#. translator: File %s has been removed.
 #, c-format
 msgid "%s removed.\n"
 msgstr "%s dihapus.\n"
 
-#: faxrm/faxrm.c++:110
 #, c-format
 msgid "Job %s removed.\n"
 msgstr "Pekerjaan %s dihapus.\n"
 
-#: faxrm/faxrm.c++:115
 #, c-format
 msgid "Job %s removed (from doneq).\n"
 msgstr "Pekerjaan %s dihapus (dari doneq).\n"
 
-#: faxrm/faxrm.c++:135
 msgid "usage: faxrm [-h server-host] [-adv] id..."
 msgstr "penggunaan: faxrm [-h host-server] [-adv] id..."
 
-#: faxstat/faxstat.c++:98
 msgid "usage: faxstat [-h server-host] [-adfgilrsv]"
 msgstr "penggunaan: faxstat [-h host-server] [-adfgilrsv]"
 
-#: faxstat/faxstat.c++:145 util/FaxClient.c++:1325 util/FaxClient.c++:1388
-#, c-format
-msgid "Data Connection: %s"
-msgstr "Koneksi Data: %s"
-
-#: sendfax/sendfax.c++:239
 #, c-format
 msgid "%s: No destination specified.\n"
 msgstr "%s: Tidak ada tujuan yang dispesifikasikan.\n"
 
-#: sendfax/sendfax.c++:244
 #, c-format
 msgid "%s: Unused options after last destination.\n"
 msgstr "%s: Opsi yang tidak digunakan setelah tujuan terakhir.\n"
 
-#: sendfax/sendfax.c++:264
 #, c-format
 msgid "can only wait for one job (right now), waiting for job %s."
 msgstr "hanya dapat menunggu untuk satu pekerjaan (saat ini), menunggu untuk pekerjaan %s."
 
-#: sendfax/sendfax.c++:278
 #, c-format
 msgid ""
 "usage: %s [options] [files]\n"
@@ -199,40 +1274,28 @@ msgstr ""
 "penggunaan: %s [opsi] [berkas]\n"
 "(Baca halaman manual; terlalu kompleks)"
 
-#: sendfax/sendfax.c++:318
 #, c-format
 msgid "Null destination for \"%s\""
 msgstr "Tujuan kosong untuk \"%s\""
 
-#: sendfax/sendfax.c++:325
 msgid "ECM disabled, limiting job to 14400 bps."
 msgstr "ECM tidak aktif, membatasi pekerjaan ke 14400 bps."
 
-#: sendfax/sendfax.c++:348
 #, c-format
 msgid "%s: no such file"
 msgstr "%s: tidak ada berkas seperti itu"
 
-#: sendfax/sendfax.c++:371
 #, c-format
 msgid "%s: write error"
 msgstr "%s: tulis error"
 
-#: sendfax/sendfax.c++:379
-msgid "No input data; tranmission aborted"
+msgid "No input data; transmission aborted"
 msgstr "Tidak ada data masukan; transmisi dibatalkan"
 
-#: sendpage/sendpage.c++:89 util/SNPPClient.c++:385
-#, c-format
-msgid "Invalid hold time \"%s\": %s"
-msgstr "Waktu hold \"%s\": %s tidak valid"
-
-#: sendpage/sendpage.c++:143
 #, c-format
 msgid "%s: No pager identification number (PIN) specified.\n"
 msgstr "%s: Tidak ada identifikasi nomor pager (PIN) dispesifikasikan.\n"
 
-#: sendpage/sendpage.c++:176
 #, c-format
 msgid ""
 "usage: %s -p PIN [-p PIN ...]\n"
@@ -245,940 +1308,37 @@ msgstr ""
 "     [-h host[:modem]] [-f dari]\n"
 "     [-I waktu-coba] [-t maks-coba] [-T maks-dials] [-nqvDNR] [pesan ...]"
 
-#: util/AtSyntax.c++:104
-#, c-format
-msgid "Illegal minutes value %u"
-msgstr "Nilai menit %u tidak legal"
-
-#: util/AtSyntax.c++:110
-msgid "expecting HH:MM"
-msgstr "diduga JJ:MM"
-
-#: util/AtSyntax.c++:117
-#, c-format
-msgid "%u:%02u is not an AM value"
-msgstr "%u:%02u bukan sebuah nilai AM"
-
-#: util/AtSyntax.c++:125
-#, c-format
-msgid "%u:%02u is not a PM value"
-msgstr "%u:%02u bukan sebuah nilai PM"
-
-#: util/AtSyntax.c++:146
-#, c-format
-msgid "unrecognized symbolic time \"%s\""
-msgstr "waktu simbolik \"%s\" tidak diketahui"
-
-#: util/AtSyntax.c++:151
-msgid "Illegal time value; out of range"
-msgstr "Nilai waktu tidak legal; diluar dari jangkauan"
-
-#: util/AtSyntax.c++:175
-msgid "expecting \"+\" after time"
-msgstr "diduga \"+\" setelah waktu"
-
-#: util/AtSyntax.c++:191
-msgid "Invalid date/time; time must be in the future"
-msgstr "Tidak valid tanggal/jam; jam pasti berada dimasa depan"
-
-#: util/AtSyntax.c++:317
-msgid "missing or invalid day of month"
-msgstr "hilang atau tidak valid hari dari bulan"
-
-#: util/AtSyntax.c++:326
-msgid "missing year"
-msgstr "hilang tahun"
-
-#: util/AtSyntax.c++:330
-#, c-format
-msgid "Sorry, cannot handle dates before %u"
-msgstr "Maaf, tidak dapat menangani tanggal sebelum %u"
-
-#: util/AtSyntax.c++:353
-#, c-format
-msgid "Invalid day of month, %s has only %u days"
-msgstr "Hari dari bulan tidak valid, %s hanya memiliki %u hari"
-
-#: util/AtSyntax.c++:369
-msgid "expecting number after \"+\""
-msgstr "diduga nomor setelah \"+\""
-
-#: util/AtSyntax.c++:377
-#, c-format
-msgid "\"+%u\" without unit"
-msgstr "\"+%u\" tanpa satuan"
-
-#: util/AtSyntax.c++:396
-#, c-format
-msgid "Unknown increment unit \"%s\""
-msgstr "Tidak diketahui satuan peningkatan \"%s\""
-
-#: util/AtSyntax.c++:450
-msgid "Syntax error, "
-msgstr "Sintaks error, "
-
-#: util/Class2Params.c++:804
-msgid "3.85 line/mm"
-msgstr "3.85 baris/mm"
-
-#: util/Class2Params.c++:805
-msgid "7.7 line/mm"
-msgstr "7.7 baris/mm"
-
-#: util/Class2Params.c++:806
-msgid "15.4 line/mm"
-msgstr "15.4 baris/mm"
-
-#: util/Class2Params.c++:807
-msgid "R16 x 15.4 line/mm"
-msgstr "R16 x 15.4 baris/mm"
-
-#: util/Class2Params.c++:808
-msgid "200 x 100 dpi"
-msgstr "200 x 100 dpi"
-
-#: util/Class2Params.c++:809
-msgid "200 x 200 dpi"
-msgstr "200 x 200 dpi"
-
-#: util/Class2Params.c++:810
-msgid "200 x 400 dpi"
-msgstr "200 x 400 dpi"
-
-#: util/Class2Params.c++:811
-msgid "300 x 300 dpi"
-msgstr "300 x 300 dpi"
-
-#: util/Class2Params.c++:836
-msgid "2400 bit/s"
-msgstr "2400 bit per detik"
-
-#: util/Class2Params.c++:837
-msgid "4800 bit/s"
-msgstr "4800 bit per detik"
-
-#: util/Class2Params.c++:838
-msgid "7200 bit/s"
-msgstr "7200 bit per detik"
-
-#: util/Class2Params.c++:839
-msgid "9600 bit/s"
-msgstr "9600 bit per detik"
-
-#: util/Class2Params.c++:840
-msgid "12000 bit/s"
-msgstr "1200 bit per detik"
-
-#: util/Class2Params.c++:841
-msgid "14400 bit/s"
-msgstr "14400 bit per detik"
-
-#: util/Class2Params.c++:842
-msgid "16800 bit/s"
-msgstr "16800 bit per detik"
-
-#: util/Class2Params.c++:843
-msgid "19200 bit/s"
-msgstr "19200 bit per detik"
-
-#: util/Class2Params.c++:844
-msgid "21600 bit/s"
-msgstr "21600 bit per detik"
-
-#: util/Class2Params.c++:845
-msgid "24000 bit/s"
-msgstr "24000 bit per detik"
-
-#: util/Class2Params.c++:846
-msgid "26400 bit/s"
-msgstr "26400 bit per detik"
-
-#: util/Class2Params.c++:847
-msgid "28800 bit/s"
-msgstr "28800 bit per detik"
-
-#: util/Class2Params.c++:848
-msgid "31200 bit/s"
-msgstr "31200 bit per detik"
-
-#: util/Class2Params.c++:849
-msgid "33600 bit/s"
-msgstr "33600 bit per detik"
-
-#: util/Class2Params.c++:850 util/Class2Params.c++:851
-msgid "0 bit/s"
-msgstr "0 bit per detik"
-
-#: util/Class2Params.c++:880
-msgid "1-D MH"
-msgstr "1-D MH"
-
-#: util/Class2Params.c++:881
-msgid "2-D MR"
-msgstr "2-D MR"
-
-#: util/Class2Params.c++:882
-msgid "2-D Uncompressed Mode"
-msgstr "2-D Mode tidak terkompress"
-
-#: util/Class2Params.c++:883
-msgid "2-D MMR"
-msgstr "2-D MMR"
-
-#: util/Class2Params.c++:884
-msgid "JBIG"
-msgstr "JBIG"
-
-#: util/Class2Params.c++:885
-msgid "JPEG Greyscale"
-msgstr "JPEG Greyscale"
-
-#: util/Class2Params.c++:886
-msgid "JPEG Full-Color"
-msgstr "JPEG Warna-Lengkap"
-
-#: util/Class2Params.c++:894
-msgid "MH"
-msgstr "MH"
-
-#: util/Class2Params.c++:895
-msgid ", MR"
-msgstr ", MR"
-
-#: util/Class2Params.c++:896
-msgid ", MMR"
-msgstr ", MMR"
-
-#: util/Class2Params.c++:897
-msgid ", JBIG"
-msgstr ", JBIG"
-
-#: util/Class2Params.c++:899
-msgid ", JPEG Full-Color"
-msgstr ", JPEG Warna-Lengkap"
-
-#: util/Class2Params.c++:900
-msgid ", JPEG Greyscale"
-msgstr ", JPEG Greyscale"
-
-#: util/Class2Params.c++:905
-msgid "A4 page width (215 mm)"
-msgstr "lebar halaman A4 (215 mm)"
-
-#: util/Class2Params.c++:906
-msgid "B4 page width (255 mm)"
-msgstr "lebar halaman B4 (255 mm)"
-
-#: util/Class2Params.c++:907
-msgid "A3 page width (303 mm)"
-msgstr "lebar halaman A3 (303 mm)"
-
-#: util/Class2Params.c++:908
-msgid "page width 151 mm"
-msgstr "lebar halaman 151 mm"
-
-#: util/Class2Params.c++:909
-msgid "page width 107 mm"
-msgstr "lebar halaman 107 mm"
-
-#: util/Class2Params.c++:910
-msgid "undefined page width (wd=5)"
-msgstr "lebar halaman tidak terdefinisi (wd=5)"
-
-#: util/Class2Params.c++:911
-msgid "undefined page width (wd=6)"
-msgstr "lebar halaman tidak terdefinisi (wd=6)"
-
-#: util/Class2Params.c++:912
-msgid "undefined page width (wd=7)"
-msgstr "lebar halaman tidak terdefinisi (wd=7)"
-
-#: util/Class2Params.c++:918
-msgid "A4 page length (297 mm)"
-msgstr "panjang halaman A4 (297 mm)"
-
-#: util/Class2Params.c++:919
-msgid "B4 page length (364 mm)"
-msgstr "panjang halaman B4 (364 mm)"
-
-#: util/Class2Params.c++:920
-msgid "unlimited page length"
-msgstr "panjang halaman tidak terbatas"
-
-#: util/Class2Params.c++:921
-msgid "invalid page length (ln=3)"
-msgstr "panjang halaman tidak valid (ln=3)"
-
-#: util/Class2Params.c++:927
-msgid "0 ms/scanline"
-msgstr "0 ms/scanline"
-
-#: util/Class2Params.c++:928
-msgid "5 ms/scanline"
-msgstr "5 ms/scanline"
-
-#: util/Class2Params.c++:929
-msgid "10 ms, 5 ms/scanline"
-msgstr "10 ms, 5ms/scanline"
-
-#: util/Class2Params.c++:930
-msgid "10 ms/scanline"
-msgstr "10 ms/scanline"
-
-#: util/Class2Params.c++:931
-msgid "20 ms, 10 ms/scanline"
-msgstr "20 ms, 10 ms/scanline"
-
-#: util/Class2Params.c++:932
-msgid "20 ms/scanline"
-msgstr "20 ms/scanline"
-
-#: util/Class2Params.c++:933
-msgid "40 ms, 20 ms/scanline"
-msgstr "40 ms, 20 ms/scanline"
-
-#: util/Class2Params.c++:934
-msgid "40 ms/scanline"
-msgstr "40 ms/scanline"
-
-#: util/Class2Params.c++:939
-msgid "no ECM"
-msgstr "tidak ada ECM"
-
-#: util/Class2Params.c++:940
-msgid "T.30 Annex A, 64-byte ECM"
-msgstr "T.30 Annex A, 64 byte ECM"
-
-#: util/Class2Params.c++:941
-msgid "T.30 Annex A, 256-byte ECM"
-msgstr "T.30 Annex A, 256 byte ECM"
-
-#: util/Class2Params.c++:942
-msgid "T.30 Annex C, half duplex ECM"
-msgstr "T.30 Annex C, half duplex ECM"
-
-#: util/Class2Params.c++:943
-msgid "T.30 Annex C, full duplex ECM"
-msgstr "T.30 Annex C, full duplex ECM"
-
-#: util/Class2Params.c++:944 util/Class2Params.c++:945
-#: util/Class2Params.c++:946
-msgid "undefined ECM"
-msgstr "tidak terdefinisi ECM"
-
-#: util/DialRules.c++:96
-#, c-format
-msgid "Cannot open file \"%s\" for reading"
-msgstr "Tidak dapat membuka berkas \"%s\" untuk pembacaan"
-
-#: util/DialRules.c++:105
-#, c-format
-msgid "Define %s = \"%s\""
-msgstr "Definisi %s = \"%s\""
-
-#: util/DialRules.c++:114
-#, c-format
-msgid "Undefine %s"
-msgstr "Tidak terdefinisi %s"
-
-#: util/DialRules.c++:126
-msgid "Syntax error, expecting identifier"
-msgstr "Sintaks error, pengidentifikasi tidak terduga"
-
-#: util/DialRules.c++:138
-msgid "Missing '[' while parsing rule set"
-msgstr "Hilang '[' ketika parsing set aturan"
-
-#: util/DialRules.c++:157
-#, c-format
-msgid "Missing '=' or ':=' after \"%s\""
-msgstr "Hilang '=' atau ':=' setelah \"%s\""
-
-#: util/DialRules.c++:164
-msgid "Warning, no \"CanonicalNumber\" rules."
-msgstr "Peringatan, tidak ada aturan \"CanonicalNumber\"."
-
-#: util/DialRules.c++:167
-msgid "Warning, no \"DialString\" rules."
-msgstr "Peringatan, tidak ada aturan \"DialString\"."
-
-#: util/DialRules.c++:215
-msgid "String with unmatched '\"'"
-msgstr "String dengan tidak cocok '\"'"
-
-#: util/DialRules.c++:219 util/DialRules.c++:231
-msgid "Bad '\\' escape sequence"
-msgstr "urutan escape '\\' buruk"
-
-#: util/DialRules.c++:246
-msgid "Missing '}' for variable reference"
-msgstr "Hilang '}' untuk referensi variabel"
-
-#: util/DialRules.c++:293
-msgid "Missing ']' while parsing rule set"
-msgstr "Hilang ']' ketika parsing set aturan"
-
-#: util/DialRules.c++:305
-msgid "Rule pattern without '='"
-msgstr "Pola aturan tanpa '='"
-
-#: util/DialRules.c++:341
-#, c-format
-msgid "Apply %s rules to \"%s\""
-msgstr "Aplikasikan %s aturan ke \"%s\""
-
-#: util/DialRules.c++:379
-#, c-format
-msgid "--> match rule \"%s\", result now \"%s\""
-msgstr "--> cocok aturan \"%s\", hasil sekarang \"%s\""
-
-#: util/DialRules.c++:385
-#, c-format
-msgid "--> return result \"%s\""
-msgstr "--> hasil kembali \"%s\""
-
-#: util/DialRules.c++:396 util/DialRules.c++:407 util/PageSize.c++:50
-#: util/TypeRules.c++:309
-#, c-format
-msgid "%s: line %u: "
-msgstr "%s: baris %u: "
-
-#: util/dialtest.c++:44
 #, c-format
 msgid "usage: %s [-v] [-a area-code] [-c country-code] [-i international-prefix] [-l long-distance-prefix] dialrules"
 msgstr "penggunaan: %s [-v] [-a kode-wilayah] [-c kode-negara] [-i awalan-internasional] [-l awalan-jarak-jauh] aturan pemanggilan"
 
-#: util/dialtest.c++:58 faxd/tsitest.c++:135
 #, c-format
 msgid "ready> "
 msgstr "siap> "
 
-#: util/dialtest.c++:105
 #, c-format
 msgid "%s: Problem parsing rules in %s"
 msgstr "%s: Masalah menerapkan aturan dalam %s"
 
-#: util/dialtest.c++:112 faxd/tsitest.c++:166
 #, c-format
 msgid "input = \"%s\"\n"
 msgstr "masukan = \"%s\"\n"
 
-#: util/dialtest.c++:124
 #, c-format
 msgid "canonical = \"%s\"\n"
 msgstr "kanonikal = \"%s\"\n"
 
-#: util/dialtest.c++:125
 #, c-format
 msgid "dial-string = \"%s\"\n"
 msgstr "dial-string = \"%s\"\n"
 
-#: util/dialtest.c++:126
 #, c-format
 msgid "display = \"%s\"\n"
 msgstr "tampilan = \"%s\"\n"
 
-#: util/FaxClient.c++:116 util/SNPPClient.c++:103 util/TextFormat.c++:95
-#, c-format
-msgid "Warning, "
-msgstr "Peringatan, "
-
-#: util/FaxClient.c++:191
-#, c-format
-msgid "Can not locate your password entry (uid %lu): %s"
-msgstr "Tidak dapat menentukan lokasi masukan kata kunci anda (uid %lu): %s"
-
-#: util/FaxClient.c++:217 util/SNPPClient.c++:278
-msgid "Bad (null) user name; your password file entry probably has bogus GECOS field information."
-msgstr "Nama pengguna (kosong) buruk; mungkin masukan berkas kata kunci anda memiliki daerah informasi GECOS palsu."
-
-#: util/FaxClient.c++:384
-msgid "Malformed (null) username"
-msgstr "Nama pengguna (kosong) salah bentuk"
-
-#: util/FaxClient.c++:405 util/SNPPClient.c++:573
-msgid "Login failed: "
-msgstr "Login gagal: "
-
-#: util/FaxClient.c++:426
-msgid "Admin failed: "
-msgstr "Admin gagal: "
-
-#: util/FaxClient.c++:442
-#, c-format
-msgid "Bad %s parameter value %u."
-msgstr "Buruk %s nilai parameter %u."
-
-#: util/FaxClient.c++:482
-#, c-format
-msgid "Bad time zone parameter value %u."
-msgstr "Nilai parameter %u daerah waktu buruk."
-
-#: util/FaxClient.c++:521
-msgid "Unable to initialize data connection to server"
-msgstr "Tidak dapat menginisialisasi koneksi data ke server"
-
-#: util/FaxClient.c++:535
-msgid "Unable to open data connection to server"
-msgstr "Tidak dapat membuka koneksi data ke server"
-
-#: util/FaxClient.c++:559
-msgid "Unable to abort data connection to server"
-msgstr "Tidak dapat membatalkan koneksi data ke server"
-
-#: util/FaxClient.c++:589 util/SNPPClient.c++:590
-msgid "Service not available, remote server closed connection"
-msgstr "Layanan tidak tersedia, remote server memutus koneksi"
-
-#: util/FaxClient.c++:596 util/SNPPClient.c++:597
-msgid "Unexpected server response: "
-msgstr "Balasan server tidak terduga: "
-
-#: util/FaxClient.c++:604 util/SNPPClient.c++:605
-msgid "Protocol botch"
-msgstr "Protokol botch"
-
-#: util/FaxClient.c++:639
-msgid "Memory allocation failed"
-msgstr "Alokasi memori gagal"
-
-#: util/FaxClient.c++:647 util/SNPPClient.c++:640
-msgid "No control connection for command"
-msgstr "Tidak ada pengontrol koneksi untuk perintah"
-
-#: util/FaxClient.c++:782
-#, c-format
-msgid ": No \"%s\" in %s response: %s"
-msgstr ": Tidak ada \"%s\" dalam %s balasan: %s"
-
-#: util/FaxClient.c++:789
-#, c-format
-msgid ": Null %s in %s response: %s"
-msgstr ": Kosong %s dalam %s balasan: %s"
-
-#: util/FaxClient.c++:953
-#, c-format
-msgid "Unable to open script file \"%s\"."
-msgstr "Tidak dapat membuka berkas script \"%s\"."
-
-#: util/FaxClient.c++:972
-#, c-format
-msgid "%s: Read error: %s"
-msgstr "%s: Baca error: %s"
-
-#: util/FaxClient.c++:997
-#, c-format
-msgid "%s: line %u: %s"
-msgstr "%s: baris %u: %s"
-
-#: util/FaxClient.c++:1087 util/FaxClient.c++:1094 util/SNPPClient.c++:910
-#: util/SNPPClient.c++:917
-msgid " (server closed connection)"
-msgstr " (server menutup koneksi)"
-
-#: util/FaxClient.c++:1087 util/FaxClient.c++:1094 util/SNPPClient.c++:910
-#: util/SNPPClient.c++:917
-#, c-format
-msgid " (server write error: %s)."
-msgstr " (server tulis error: %s)."
-
-#: util/FaxClient.c++:1116
-#, c-format
-msgid "SEND data, %lu bytes"
-msgstr "KIRIM data, %lu bytes"
-
-#: util/FaxClient.c++:1134 util/SNPPClient.c++:938
-#, c-format
-msgid " (data read: %s)."
-msgstr " (baca data: %s)."
-
-#: util/FaxClient.c++:1185
-#, c-format
-msgid "SEND compressed data, %lu bytes"
-msgstr "KIRIM data terkompres, %lu bytes"
-
-#: util/FaxClient.c++:1203
-#, c-format
-msgid " (data read: %s)"
-msgstr " (baca data: %s)"
-
-#: util/FaxClient.c++:1210 util/FaxClient.c++:1230 util/FaxClient.c++:1256
-#, c-format
-msgid "zlib compressor error: %s"
-msgstr "pengompres zlib error: %s"
-
-#: util/FaxClient.c++:1262
-#, c-format
-msgid "SEND %lu bytes transmitted (%.1fx compression)"
-msgstr "KIRIM %lu bytes terkirim (%.1fx kompresi)"
-
-#: util/FaxClient.c++:1283
-#, c-format
-msgid "Can not initialize compression library: %s"
-msgstr "Tidak dapat menginisialisasi perpustakaan kompresi: %s"
-
-#: util/FaxClient.c++:1399
-#, c-format
-msgid "Decoding error: %s"
-msgstr "Dekoding error: %s"
-
-#: util/FaxClient.c++:1413
-#, c-format
-msgid "Can not initialize decoder: %s"
-msgstr "Tidak dapat menginisialisasi pendekoder: %s"
-
-#: util/FaxClient.c++:1609 util/FaxClient.c++:1673
-msgid "SUB"
-msgstr "SUB"
-
-#: util/FaxClient.c++:1610
-msgid "PWD"
-msgstr "PWD"
-
-#: util/FaxClient.c++:1611
-msgid "Company"
-msgstr "Perusahaan"
-
-#: util/FaxClient.c++:1612
-msgid "Dials"
-msgstr "Panggil"
-
-#: util/FaxClient.c++:1613 util/FaxClient.c++:1674
-msgid "BR"
-msgstr "BR"
-
-#: util/FaxClient.c++:1614
-msgid "Tagline"
-msgstr "Tagline"
-
-#: util/FaxClient.c++:1615
-msgid "ST"
-msgstr "ST"
-
-#: util/FaxClient.c++:1616 util/FaxClient.c++:1675
-msgid "DF"
-msgstr "DF"
-
-#: util/FaxClient.c++:1617
-msgid "UsrPri"
-msgstr "UsrPri"
-
-#: util/FaxClient.c++:1618
-msgid "JobTag"
-msgstr "JobTag"
-
-#: util/FaxClient.c++:1619
-msgid "EC"
-msgstr "EC"
-
-#: util/FaxClient.c++:1620
-msgid "Location"
-msgstr "Lokasi"
-
-#: util/FaxClient.c++:1621
-msgid "MailAddr"
-msgstr "AlamatMail"
-
-#: util/FaxClient.c++:1622
-msgid "DT"
-msgstr "DT"
-
-#: util/FaxClient.c++:1623
-msgid "CC"
-msgstr "CC"
-
-#: util/FaxClient.c++:1624 util/FaxClient.c++:1650 util/FaxClient.c++:1685
-#: util/faxinfo.c++:381
-msgid "Pages"
-msgstr "Halaman"
-
-#: util/FaxClient.c++:1625
-msgid "MinSP"
-msgstr "MinSP"
-
-#: util/FaxClient.c++:1626
-msgid "Receiver"
-msgstr "Penerima"
-
-#: util/FaxClient.c++:1627 util/faxinfo.c++:334
-msgid "Sender"
-msgstr "Pengirim"
-
-#: util/FaxClient.c++:1628
-msgid "Tries"
-msgstr "Coba"
-
-#: util/FaxClient.c++:1629
-msgid "ChopThreshold"
-msgstr "ChopThreshold"
-
-#: util/FaxClient.c++:1630
-msgid "DoneOp"
-msgstr "SelesaiOp"
-
-#: util/FaxClient.c++:1631
-msgid "CommID"
-msgstr "CommID"
-
-#: util/FaxClient.c++:1632
-msgid "JobType"
-msgstr "TipePekerjaan"
-
-#: util/FaxClient.c++:1633 util/FaxClient.c++:1672
-msgid "Date       Time"
-msgstr "Tanggal    Waktu"
-
-#: util/FaxClient.c++:1634
-msgid "UNIX Time"
-msgstr "Waktu UNIX"
-
-#: util/FaxClient.c++:1635
-msgid "State"
-msgstr "Keadaan"
-
-#: util/FaxClient.c++:1636
-msgid "NTries"
-msgstr "NCoba"
-
-#: util/FaxClient.c++:1637
-msgid "Client"
-msgstr "Klien"
-
-#: util/FaxClient.c++:1638
-msgid "TotDials"
-msgstr "TotDials"
-
-#: util/FaxClient.c++:1639 util/FaxClient.c++:1705
-msgid "Number"
-msgstr "Jumlah"
-
-#: util/FaxClient.c++:1640
-msgid "NDials"
-msgstr "NDials"
-
-#: util/FaxClient.c++:1641 util/FaxClient.c++:1725
-msgid "GID"
-msgstr "GID"
-
-#: util/FaxClient.c++:1642
-msgid "Chop"
-msgstr "Chop"
-
-#: util/FaxClient.c++:1643
-msgid "Priority"
-msgstr "Prioritas"
-
-#: util/FaxClient.c++:1644
-msgid "JID"
-msgstr "JID"
-
-#: util/FaxClient.c++:1645
-msgid "LastTime"
-msgstr "WaktuTerakhir"
-
-#: util/FaxClient.c++:1646
-msgid "PageLength"
-msgstr "PanjangHalaman"
-
-#: util/FaxClient.c++:1647 util/FaxClient.c++:1704
-msgid "Modem"
-msgstr "Modem"
-
-#: util/FaxClient.c++:1648
-msgid "Notify"
-msgstr "Notifikasi"
-
-#: util/FaxClient.c++:1649 util/FaxClient.c++:1684 util/FaxClient.c++:1728
-msgid "Owner"
-msgstr "Pemilik"
-
-#: util/FaxClient.c++:1651
-msgid "RetryTime"
-msgstr "WaktuMencoba"
-
-#: util/FaxClient.c++:1652 util/FaxClient.c++:1687
-msgid "Resolution"
-msgstr "Resolusi"
-
-#: util/FaxClient.c++:1653 util/FaxClient.c++:1707
-msgid "Status"
-msgstr "Kondisi"
-
-#: util/FaxClient.c++:1654
-msgid "TotTries"
-msgstr "TotTries"
-
-#: util/FaxClient.c++:1655
-msgid "MaxTries"
-msgstr "MaxTries"
-
-#: util/FaxClient.c++:1656
-msgid "DialString"
-msgstr "DialString"
-
-#: util/FaxClient.c++:1657
-msgid "PageWidth"
-msgstr "LebarHalaman"
-
-#: util/FaxClient.c++:1658
-msgid "MaxDials"
-msgstr "MaxDials"
-
-#: util/FaxClient.c++:1659
-msgid "TotPages"
-msgstr "TotHalaman"
-
-#: util/FaxClient.c++:1660
-msgid "TTS"
-msgstr "TTS"
-
-#: util/FaxClient.c++:1661
-msgid "UseXVres"
-msgstr "UseXVres"
-
-#: util/FaxClient.c++:1676
-msgid "Error"
-msgstr "Error"
-
-#: util/FaxClient.c++:1677 util/FaxClient.c++:1724
-msgid "Filename"
-msgstr "Nama berkas"
-
-#: util/FaxClient.c++:1678
-msgid "Time"
-msgstr "Waktu"
-
-#: util/FaxClient.c++:1679
-msgid "CIDName"
-msgstr "CIDNama"
-
-#: util/FaxClient.c++:1680
-msgid "CIDNumber"
-msgstr "NomorCID"
-
-#: util/FaxClient.c++:1681
-msgid "Length"
-msgstr "Panjang"
-
-#: util/FaxClient.c++:1682 util/FaxClient.c++:1686 util/FaxClient.c++:1729
-#: util/FaxClient.c++:1730
-msgid "Protect"
-msgstr "Proteksi"
-
-#: util/FaxClient.c++:1683 util/FaxClient.c++:1732
-msgid "Size"
-msgstr "Ukuran"
-
-#: util/FaxClient.c++:1688
-msgid "Sender/TSI"
-msgstr "Pengirim/TSI"
-
-#: util/FaxClient.c++:1689
-msgid "Recvd@"
-msgstr "Recvd@"
-
-#: util/FaxClient.c++:1690
-msgid "Width"
-msgstr "Lebar"
-
-#: util/FaxClient.c++:1702
-msgid "Host"
-msgstr "Host"
-
-#: util/FaxClient.c++:1703
-msgid "LocalID"
-msgstr "IDLokal"
-
-#: util/FaxClient.c++:1706
-msgid "MaxRecv"
-msgstr "MaxRecv"
-
-#: util/FaxClient.c++:1708
-msgid "Tracing"
-msgstr "Telusuri"
-
-#: util/FaxClient.c++:1709
-msgid "Speaker"
-msgstr "Speaker"
-
-#: util/FaxClient.c++:1721
-msgid "LastAcc"
-msgstr "LastAcc"
-
-#: util/FaxClient.c++:1722
-msgid "Created"
-msgstr "Dibuat"
-
-#: util/FaxClient.c++:1723
-msgid "Device"
-msgstr "Perangkat"
-
-#: util/FaxClient.c++:1726
-msgid "Links"
-msgstr "Links"
-
-#: util/FaxClient.c++:1727
-msgid "LastMod"
-msgstr "LastMod"
-
-#: util/FaxClient.c++:1731
-msgid "RootDev"
-msgstr "RootDev"
-
-#: util/FaxClient.c++:1733
-msgid "UID"
-msgstr "UID"
-
-#: util/FaxConfig.c++:55
-#, c-format
-msgid "Read config file %s"
-msgstr "Baca berkas konfigurasi %s"
-
-#: util/FaxConfig.c++:93
-#, c-format
-msgid "No passwd file entry for uid %u, cannot expand ~ in \"%s\""
-msgstr "Tidak ada masukan berkas kata kunci untuk uid %u, tidak dapat mengekspan ~ dalam \"%s\""
-
-#: util/FaxConfig.c++:166
-#, c-format
-msgid "Syntax error at line %u, missing ':' in \"%s\""
-msgstr "Sintaks error di baris %u, hilang ':' dalam \"%s\""
-
-#: util/FaxConfig.c++:181
-#, c-format
-msgid "Syntax error at line %u, missing quote mark in \"%s\""
-msgstr "Sintaks error di baris %u, hilang tanda quote dalam \"%s\""
-
-#: util/FaxConfig.c++:214 util/FaxConfig.c++:225
-#, c-format
-msgid "%s = %s (line %u)"
-msgstr "%s = %s (baris %u)"
-
-#: util/FaxConfig.c++:221
-#, c-format
-msgid "Unknown configuration parameter \"%s\" ignored at line %u"
-msgstr "Parameter konfigurasi \"%s\" tidak diketahui diabaikan di baris %u"
-
-#: util/FaxDB.c++:122
-#, c-format
-msgid "%s: line %d: Unmatched \"]\".\n"
-msgstr "%s: baris %d: Tidak cocok \"]\".\n"
-
-#: util/FaxDB.c++:134
-#, c-format
-msgid "%s: line %d: Missing \":\" separator.\n"
-msgstr "%s: baris %d: Hilang pemisah \":\".\n"
-
-#: util/FaxDB.c++:182
-#, c-format
-msgid "%s: Premature EOF.\n"
-msgstr "%s: Prematur EOF.\n"
-
-#: util/faxfetch.c++:92
 msgid "usage: faxfetch [-h server-host] [-v] file"
 msgstr "penggunaan: faxfetch [-h server-host] [-v] berkas"
 
-#: util/faxinfo.c++:85
 #, c-format
 msgid ""
 "usage: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt] [-D]\n"
@@ -1187,942 +1347,457 @@ msgstr ""
 "penggunaan: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt] [-D]\n"
 "\n"
 
-#: util/faxinfo.c++:86
 #, c-format
 msgid "\t-n\tPrint FAX filename\n"
 msgstr "\t-n\tCetak nama berkas FAX\n"
 
-#: util/faxinfo.c++:87
 #, c-format
 msgid "\t-C d\tQuoted CSV-style output with <d> as the deliminator\n"
 msgstr "\t-C d\tQuoted gaya CSV keluaran dengan <d> sebagai pembatas\n"
 
-#: util/faxinfo.c++:88
 #, c-format
 msgid "\t-c d\tCSV-style output with <d> as the deliminator\n"
 msgstr "\t-c d\tgaya CSV keluaran dengan <d> sebagai pembagi\n"
 
-#: util/faxinfo.c++:89
 #, c-format
 msgid "\t-r\traw format - values outputed with no names\n"
 msgstr "\t-r\tformat mentah - nilai dikeluarkan dengan tidak ada nama\n"
 
-#: util/faxinfo.c++:91
 #, c-format
 msgid "  Raw format options:\n"
 msgstr "  Opsi format mentah:\n"
 
-#: util/faxinfo.c++:92
 #, c-format
 msgid "\t-S fmt\tUse fmt for the fax start format\n"
 msgstr "\t-S fmt\tGunakan fmt untuk fax berawal format\n"
 
-#: util/faxinfo.c++:93
 #, c-format
 msgid "\t-s fmt\tUse fmt for the field start format\n"
 msgstr "\t-s fmt\tGunakan fmt untuk field berawal format\n"
 
-#: util/faxinfo.c++:94
 #, c-format
 msgid "\t-e fmt\tUse fmt for the field end format\n"
 msgstr "\t-e fmt\tGunakan fmt untuk field akhir format\n"
 
-#: util/faxinfo.c++:95
 #, c-format
 msgid "\t-E fmt\tUse fmt for the fax end format\n"
 msgstr "\t-E fmt\tGunakan fmt untuk fax akhir format\n"
 
-#: util/faxinfo.c++:243
 #, c-format
 msgid "Could not open %s; either not TIFF or corrupted.\n"
 msgstr "Tidak dapat membuka %s; baik bukan TIFF atau terkorupsi.\n"
 
-#: util/faxinfo.c++:249
 #, c-format
 msgid "Does not look like a facsimile?\n"
 msgstr "Tidak tampak seperti sebuah faksimil?\n"
 
-#: util/faxinfo.c++:333 util/faxinfo.c++:399
 msgid "<unknown>"
 msgstr "<tidak diketahui>"
 
-#: util/faxinfo.c++:339
 msgid "SubAddr"
 msgstr "SubAddr"
 
-#: util/faxinfo.c++:383
 msgid "Normal"
 msgstr "Normal"
 
-#: util/faxinfo.c++:383 util/faxinfo.c++:385 util/faxinfo.c++:387
-#: util/faxinfo.c++:389 util/faxinfo.c++:391
 msgid "Quality"
 msgstr "Kualitas"
 
-#: util/faxinfo.c++:385
 msgid "Fine"
 msgstr "Baik"
 
-#: util/faxinfo.c++:387
 msgid "Superfine"
 msgstr "Sangat Baik"
 
-#: util/faxinfo.c++:389
 msgid "Hyperfine"
 msgstr "Amat Sangat Baik"
 
-#: util/faxinfo.c++:391
 #, c-format
 msgid "%u lines/inch"
 msgstr "%u baris/inch"
 
-#: util/faxinfo.c++:394 util/faxinfo.c++:396
 msgid "Page"
 msgstr "Halaman"
 
-#: util/faxinfo.c++:396
 #, c-format
 msgid "%u by %u"
 msgstr "%u oleh %u"
 
-#: util/faxinfo.c++:398
 msgid "Received"
 msgstr "Diterima"
 
-#: util/faxinfo.c++:399
 msgid "TimeToRecv"
 msgstr "WaktuSaatDiterima"
 
-#: util/faxinfo.c++:400
 msgid "SignalRate"
 msgstr "SinyalRate"
 
-#: util/faxinfo.c++:401
 msgid "DataFormat"
 msgstr "FormatData"
 
-#: util/faxinfo.c++:402
 msgid "ErrCorrect"
 msgstr "ErrCorrect"
 
-#: util/faxinfo.c++:402
 msgid "No"
 msgstr "Tidak"
 
-#: util/faxinfo.c++:402
 msgid "Yes"
 msgstr "Ya"
 
-#: util/faxinfo.c++:405
 #, c-format
 msgid "CallID%u"
 msgstr "IDPemanggil%u"
 
-#: util/faxwatch.c++:55
 #, c-format
 msgid "write error: %s"
 msgstr "tulis error: %s"
 
-#: util/faxwatch.c++:101
 msgid "time values reported in GMT"
 msgstr "nilai waktu dilaporkan dalam GMT"
 
-#: util/faxwatch.c++:114
 #, c-format
 msgid "usage: %s [-h host] [-g] [-l] [-v] trigger-specification"
 msgstr "penggunaan: %s [-h host] [-g] [-l] [-v] trigger-spesifikasi"
 
-#: util/InetTransport.c++:73 util/SNPPClient.c++:461
-#, c-format
-msgid "%s: No protocol definition, using default."
-msgstr "%s: Tidak ada definisi protokol, menggunakan baku."
-
-#: util/InetTransport.c++:81 util/SNPPClient.c++:454
-msgid ": Unknown host"
-msgstr ": Host tidak diketahui"
-
-#: util/InetTransport.c++:87 util/SNPPClient.c++:467 util/UnixTransport.c++:52
-msgid "Can not create socket to connect to server."
-msgstr "Tidak dapat membuat socket untuk menghubungi server."
-
-#: util/InetTransport.c++:98 util/SNPPClient.c++:478
-#, c-format
-msgid "No \"%s\" service definition, using default %u/%s."
-msgstr "Tidak ada \"%s\" definisi layanan, menggunakan baku %u/%s."
-
-#: util/InetTransport.c++:110 util/SNPPClient.c++:490
-#, c-format
-msgid "Trying %s (%s) at port %u..."
-msgstr "Mencoba %s (%s) di port %u..."
-
-#: util/InetTransport.c++:116 util/SNPPClient.c++:496
-#, c-format
-msgid "Connected to %s."
-msgstr "Terhubung ke %s."
-
-#: util/InetTransport.c++:120 util/SNPPClient.c++:500
-#, c-format
-msgid "setsockopt(TOS): %s (ignored)"
-msgstr "setsockopt(TOS): %s (diabaikan)"
-
-#: util/InetTransport.c++:126 util/SNPPClient.c++:506
-#, c-format
-msgid "setsockopt(OOBLINE): %s (ignored)"
-msgstr "setsockopt(OOBLINE): %s (diabaikan)"
-
-#: util/InetTransport.c++:139 util/SNPPClient.c++:513
-#, c-format
-msgid "Can not reach server at host \"%s\", port %u."
-msgstr "Tidak dapat mencapai server di host \"%s\", port %u."
-
-#: util/InetTransport.c++:236 util/SNPPClient.c++:522
-msgid "Sorry, no TCP/IP communication support was configured."
-msgstr "Maaf, tidak ada dukungan komunikasi TCP/IP yang telah dikonfigurasikan."
-
-#: util/Obj.c++:38
-#, c-format
-msgid "%s: Sub class must define method \"%s\".\n"
-msgstr "%s: Sub kelas harus mendefinisikan metode \"%s\".\n"
-
-#: util/PageSize.c++:65
-#, c-format
-msgid "Unexpected end of line after \"%s\".\n"
-msgstr "Tidak terduga akhir dari baris setelah \"%s\".\n"
-
-#: util/PageSize.c++:98
-msgid "page size name"
-msgstr "nama ukuran halaman"
-
-#: util/PageSize.c++:103
-msgid "page size abbreviation"
-msgstr "kependekan ukuran halaman"
-
-#: util/PageSize.c++:106
-msgid "page width"
-msgstr "lebar halaman"
-
-#: util/PageSize.c++:109
-msgid "page height"
-msgstr "tinggi halaman"
-
-#: util/PageSize.c++:112
-msgid "guaranteed page width"
-msgstr "lebar halaman digaransi"
-
-#: util/PageSize.c++:115
-msgid "guaranteed page height"
-msgstr "tinggi halaman digaransi"
-
-#: util/PageSize.c++:118
-msgid "top margin"
-msgstr "margin atas"
-
-#: util/PageSize.c++:128
-#, c-format
-msgid "Warning, no page size database file \"%s\", using builtin default.\n"
-msgstr "Peringatan, tidak ada ukuran halaman basis data berkas \"%s\", menggunakan bawaan baku.\n"
-
-#: util/SendFaxClient.c++:101
-msgid "Unable to setup file typing and conversion rules"
-msgstr "Tidak dapat mengkonfigurasikan berkas mengetik dan mengkonversi aturan"
-
-#: util/SendFaxClient.c++:127
-msgid "Unknown page size "
-msgstr "Ukuran halaman tidak diketahui "
-
-#: util/SendFaxClient.c++:236
-#, c-format
-msgid "Error creating cover sheet; could not fork subprocess: %s"
-msgstr "Error membuat cover sheet; tidak dapat fork subproses: %s"
-
-#: util/SendFaxClient.c++:262
-#, c-format
-msgid "Error creating cover sheet; command was \"%s\"; exit status %x"
-msgstr "Error membuat cover sheet; perintah adalah \"%s\"; status keluar %x"
-
-#: util/SendFaxClient.c++:271
-#, c-format
-msgid "Error creating cover sheet; unable to create pipe to subprocess: %s"
-msgstr "Error membuat cover sheet; tidak dapat membuat pipe ke subprocess: %s"
-
-#: util/SendFaxClient.c++:276
-#, c-format
-msgid "%s: Can not create temporary file for cover page"
-msgstr "%s: Tidak dapat membuat berkas sementara untuk halaman muka"
-
-#: util/SendFaxClient.c++:419
-msgid "Documents not prepared"
-msgstr "Dokumen tidak disiapkan"
-
-#: util/SendFaxClient.c++:423 util/SNPPClient.c++:855
-msgid "Not logged in to server"
-msgstr "Tidak logged in ke server"
-
-#: util/SendFaxClient.c++:459
-#, c-format
-msgid ": Can not open: %s"
-msgstr ": Tidak dapat membuka: %s"
-
-#: util/SendFaxClient.c++:480 util/SendFaxJob.c++:545
-msgid "Document transfer failed: "
-msgstr "Transfer dokumen gagal: "
-
-#: util/SendFaxClient.c++:494
-#, c-format
-msgid "request id is %s (group id %s) for host %s (%u file)\n"
-msgid_plural "request id is %s (group id %s) for host %s (%u files)\n"
-msgstr[0] "permintaan id adalah %s (grup id %s) untuk host %s (%u berkas)\n"
-msgstr[1] "permintaan id adalah %s (grup id %s) untuk host %s (%u berkas)\n"
-
-#: util/SendFaxClient.c++:606 util/SNPPClient.c++:208
-msgid "Malformed (null) sender name or mail address"
-msgstr "Salah bentuk (kosong) nama pengirim atau alamat mail"
-
-#: util/SendFaxClient.c++:679
-#, c-format
-msgid "Error converting document; command was \"%s\""
-msgstr "Error mengubah dokumen; perintah adalah \"%s\""
-
-#: util/SendFaxClient.c++:707
-#, c-format
-msgid "%s: Can not open file"
-msgstr "%s: Tidak dapat membuka berkas"
-
-#: util/SendFaxClient.c++:711
-#, c-format
-msgid "%s: Can not stat file"
-msgstr "%s: Tidak dapat mendapatkan statistik berkas"
-
-#: util/SendFaxClient.c++:716
-#, c-format
-msgid "%s: Not a regular file"
-msgstr "%s: Bukan sebuah berkas regular"
-
-#: util/SendFaxClient.c++:724
-#, c-format
-msgid "%s: Empty file"
-msgstr "%s: Berkas kosong"
-
-#: util/SendFaxClient.c++:729
-#, c-format
-msgid "%s: Can not determine file type"
-msgstr "%s: Tidak dapat menentukan tipe berkas"
-
-#: util/SendFaxJob.c++:533
-#, c-format
-msgid "%s: Can not open: %s"
-msgstr "%s: Tidak dapat membuka: %s"
-
-#: util/Sequence.c++:63
-#, c-format
-msgid "Unable to open sequence number file %s; %s."
-msgstr "Tidak dapat membuka urutan nomor berkas %s; %s."
-
-#: util/Sequence.c++:77
-#, c-format
-msgid "%s: Invalid sequence number \"%s\", resetting to 1"
-msgstr "%s: Urutan nomor tidak valid \"%s\", mereset ke 1"
-
-#: util/Sequence.c++:87
-#, c-format
-msgid "Unable update sequence number file %s; write failed."
-msgstr "Tidak dapat mengupdate urutan nomor berkas %s; gagal menulis."
-
-#: util/SNPPClient.c++:254
-#, c-format
-msgid "Can not locate your password entry (uid %lu): %s."
-msgstr "Tidak dapat melokasikan masukan kata kunci anda (uid %lu): %s."
-
-#: util/SNPPClient.c++:887
-#, c-format
-msgid "destination pin %s: request id is %s for host %s\n"
-msgstr "tujuan pin %s: permintaan id adalah %s untuk host %s\n"
-
-#: util/SNPPClient.c++:931
-#, c-format
-msgid "SEND message data, %lu bytes"
-msgstr "KIRIM pesan data, %lu bytes"
-
-#: util/SNPPClient.c++:961
-#, c-format
-msgid "Unable to open message file \"%s\"."
-msgstr "Tidak dapat membuka pesan berkas \"%s\"."
-
-#: util/SNPPClient.c++:980 util/SNPPClient.c++:990
-#, c-format
-msgid "no SITE %s support; ignoring set request."
-msgstr "tidak ada SITE %s support; mengabaikan set permintaan."
-
-#: util/textfmt.c++:45
 #, c-format
 msgid "Usage: %s [-1] [-2] [-B] [-c] [-D] [-f fontname] [-F fontdir(s)] [-m N] [-o #] [-p #] [-r] [-U] [-Ml=#,r=#,t=#,b=#] [-V #] files... >out.ps\n"
 msgstr "Penggunaan: %s [-1] [-2] [-B] [-c] [-D] [-f nama huruf] [-F fontdir(s)] [-m N] [-o #] [-p #] [-r] [-U] [-Ml=#,r=#,t=#,b=#] [-V #] files... >out.ps\n"
 
-#: util/textfmt.c++:61
 #, c-format
 msgid "Default options: -f Courier -1 -p 11bp -o 0\n"
 msgstr "Opsi baku: -f Courier -1 -p 11bp -o 0\n"
 
-#: util/textfmt.c++:109
 #, c-format
 msgid "%s: No font metric information found for \"%s\".\n"
 msgstr "%s: Tidak ada informasi metrik huruf ditemukan untuk \"%s\".\n"
 
-#: util/textfmt.c++:125
 #, c-format
 msgid "Bad margin syntax.\n"
 msgstr "Sintaks margin buruk.\n"
 
-#: util/textfmt.c++:143
 #, c-format
 msgid "Unknown page size %s.\n"
 msgstr "Ukuran besar halaman %s tidak diketahui.\n"
 
-#: util/textfmt.c++:154
 #, c-format
 msgid "Unrecognized option \"%c\".\n"
 msgstr "Opsi \"%c\" tidak diketahui.\n"
 
-#: util/TextFormat.c++:132 util/TextFormat.c++:265
-#, c-format
-msgid "Font %s: %s"
-msgstr "Huruf %s: %s"
-
-#: util/TextFormat.c++:251
-#, c-format
-msgid "Cannot open temporary file: %s"
-msgstr "Tidak dapat membuka berkas sementara: %s"
-
-#: util/TextFormat.c++:259
-msgid "point size is unusually large (>18pt)"
-msgstr "ukuran titik besar tidak biasa (>18pt)"
-
-#: util/TextFormat.c++:277
-#, c-format
-msgid "Margin values too large for page; lm %lu rm %lu page width %lu"
-msgstr "Nilai margin terlalu besar untuk halaman; lm %lu rm %lu lebar halaman %lu"
-
-#: util/TextFormat.c++:280
-#, c-format
-msgid "Margin values too large for page; tm %lu bm %lu page height %lu"
-msgstr "Nilai margin terlalu besar untuk halaman; tm %lu bm %lu tinggi halaman %lu"
-
-#: util/TextFormat.c++:321
-#, c-format
-msgid "Close failure on temporary file: %s"
-msgstr "Gagal menutup di berkas sementara: %s"
-
-#: util/TextFormat.c++:337
-#, c-format
-msgid "Read error during reverse collation: %s"
-msgstr "Baca error selama kolasi terbalik: %s"
-
-#: util/TextFormat.c++:339 util/TextFormat.c++:1004
-#, c-format
-msgid "Output write error: %s"
-msgstr "Keluaran tulis error: %s"
-
-#: util/TextFormat.c++:719
-#, c-format
-msgid "%s: Cannot open file: %s"
-msgstr "%s: Tidak dapat membuka berkas: %s"
-
-#: util/TextFormat.c++:1176 util/TextFormat.c++:1194
-#, c-format
-msgid "Warning: %s - line too long."
-msgstr "Peringatan: %s - baris terlalu panjang."
-
-#: util/TextFormat.c++:1234
-#, c-format
-msgid "Warning: %s invalid Fontmap entry - no filename present"
-msgstr "Peringatan:  %s masukan Fotmap tidak valid - tidak ada nama berkas yang ada"
-
-#: util/TextFormat.c++:1374
-#, c-format
-msgid "%s: Can not open font metrics file; using fixed widths"
-msgstr "%s: Tidak dapat membuka berkas metrik font; menggunakan fixed widths"
-
-#: util/TextFormat.c++:1391
-#, c-format
-msgid "%s: No glyph metric table located; using fixed widths"
-msgstr "%s: Tidak ada table metrik gliph dilokasikan; menggunakan lebar tetap"
-
-#: util/TextFormat.c++:1410
-#, c-format
-msgid "%s, line %u: format error"
-msgstr "%s, baris %u: format error"
-
-#: util/tiffcheck.c++:36
 #, c-format
 msgid "usage: %s [-r vertical-res] [-l page-length] [-w page-width] [-1] [-2] [-3] input.tif"
 msgstr "penggunaan: %s [-r vertikal-res] [-l panjang-hal] [-w lebar-halaman] [-1] [-2] [-3] input.tif"
 
-#: util/tiffcheck.c++:115
 msgid "Document file is unreadable or does not exist"
 msgstr "Berkas dokumen tidak dapat dibaca atau tidak ada"
 
-#: util/tiffcheck.c++:117
 msgid "Document is not valid TIFF (unspecified format error)"
 msgstr "Dokumen bukan TIFF valid (format tidak dispesifikasikan error)"
 
-#: util/tiffcheck.c++:152
 #, c-format
 msgid "Document is not a bilevel image (bits/sample %u).\n"
 msgstr "Dokumen bukan sebuah image bilevel (bits/sample %u).\n"
 
-#: util/tiffcheck.c++:159
 #, c-format
 msgid "Document is a multi-sample image (samples/pixel %u).\n"
 msgstr "Dokumen adalah sebuah image multi-sample (samples/pixel %u).\n"
 
-#: util/tiffcheck.c++:166
+#
+# File: util/tiffcheck.c++, line: 166
+msgid "Document is not black-on-white.\n"
+msgstr "Dokumen bukan hitam diatas putih.\n"
+
 msgid "Document requires reformatting, not in Group 4 format.\n"
 msgstr "Dokumen membutuhkan pemformatan ulang, tidak dalam format Grup 4.\n"
 
-#: util/tiffcheck.c++:171
 msgid "Document requires reformatting, not in Group 3 format.\n"
 msgstr "Dokumen membutuhkan pemformatan ulang, tidak dalam format Grup 3.\n"
 
-#: util/tiffcheck.c++:177
 msgid "Document requires reformatting, not in 2DMR format.\n"
 msgstr "Dokumen membutuhkan pemformatan ulang, tidak dalam format 2DMR.\n"
 
-#: util/tiffcheck.c++:186
 msgid "Document should be reformatted as a single strip.\n"
 msgstr "Dokumen seharusnya diformat ulang sebagai sebuah strip tunggal.\n"
 
-#: util/tiffcheck.c++:196
 msgid "Document should be reformatted with LSB-to-MSB bit order.\n"
 msgstr "Dokumen seharusnya diformat ulang dengan LSB-ke-MSB urutan bit.\n"
 
-#: util/tiffcheck.c++:235
 #, c-format
 msgid "Document requires reformatting to adjust vertical resolution (convert to %lu, document is %lu).\n"
 msgstr "Dokumen membutuhkan pemformatan ulang untuk menyesuaikan resolusi vertikal ubah ke %lu, dokumen adalah %lu).\n"
 
-#: util/tiffcheck.c++:247
 msgid "Document is not valid TIFF (missing ImageWidth tag).\n"
 msgstr "Dokumen bukan TIFF valid (hilang tag ImageWidth).\n"
 
-#: util/tiffcheck.c++:251
 #, c-format
 msgid "Document requires resizing to adjust page width (convert to %lu, document is %lu).\n"
 msgstr "Dokumen membutuhkan pengubahan ukuran untuk menyesuaikan lebar halaman (ubah ke %lu, %lu).\n"
 
-#: util/tiffcheck.c++:267
 msgid "Document is not valid TIFF (missing ImageLength tag).\n"
 msgstr "Dokumen bukan sebuah TIFF valid (hilang ImageLength tag).\n"
 
-#: util/tiffcheck.c++:276
 #, c-format
 msgid "Document requires resizing to adjust page length (convert to %lu, document is %lu).\n"
 msgstr "Dokumen membutuhkan pengubahan untuk menyesuaikan panjang halaman (ubah ke %lu,dokumen %lu).\n"
 
-#: util/TypeRules.c++:91
-#, c-format
-msgid "rule: %soffset %#lx %s %s"
-msgstr "aturan: %soffset %#lx %s %s"
-
-#: util/TypeRules.c++:101
-#, c-format
-msgid " <any value>"
-msgstr " <nilai apapun>"
-
-#: util/TypeRules.c++:109
-#, c-format
-msgid "failed (offset past data)\n"
-msgstr "gagal (ofset melewati data)\n"
-
-#: util/TypeRules.c++:122 util/TypeRules.c++:134
-#, c-format
-msgid "failed (unprintable char %#x)\n"
-msgstr "gagal (karakter tidak dapat dicetak %#x)\n"
-
-#: util/TypeRules.c++:162 util/TypeRules.c++:171
-#, c-format
-msgid "failed (insufficient data)\n"
-msgstr "gagal (tidak cukup data)\n"
-
-#: util/TypeRules.c++:192
-#, c-format
-msgid "success (result %s, rule \"%s\")\n"
-msgstr "sukses (hasil %s, aturan \"%s\")\n"
-
-#: util/TypeRules.c++:195
-#, c-format
-msgid "failed (comparison)\n"
-msgstr "gagal (perbandingan)\n"
-
-#: util/TypeRules.c++:321
-#, c-format
-msgid "%s: Can not open type rules file.\n"
-msgstr "%s: Tidak dapat membuka tipe aturan berkas.\n"
-
-#: util/TypeRules.c++:342
-msgid "Missing file offset"
-msgstr "Hilang ofset berkas"
-
-#: util/TypeRules.c++:367
-#, c-format
-msgid "Unknown datatype \"%.*s\""
-msgstr "Tipe data \"%.*s\" tidak diketahui"
-
-#: util/TypeRules.c++:408
-msgid "Missing match value"
-msgstr "Hilang nilai cocok"
-
-#: util/TypeRules.c++:436
-#, c-format
-msgid "Unknown result \"%.*s\""
-msgstr "Hasil \"%.*s\" tidak diketahui"
-
-#: util/TypeRules.c++:486
-#, c-format
-msgid "match against (..., %u)\n"
-msgstr "cocok terhadap (..., %u)\n"
-
-#: util/TypeRules.c++:493
-#, c-format
-msgid "no match\n"
-msgstr "tidak cocok\n"
-
-#: util/typetest.c++:52
 #, c-format
 msgid "%s: Can not open file\n"
 msgstr "%s: Tidak dapat membuka berkas\n"
 
-#: util/typetest.c++:56
 #, c-format
 msgid "%s: Can not stat file\n"
 msgstr "%s: Tidak dapat memperoleh statistik berkas\n"
 
-#: util/typetest.c++:61
 #, c-format
 msgid "%s: Not a regular file\n"
 msgstr "%s: Bukan sebuah berkas umum\n"
 
-#: util/typetest.c++:69
 #, c-format
 msgid "%s: Empty file\n"
 msgstr "%s: Berkas kosong\n"
 
-#: util/typetest.c++:74
 #, c-format
 msgid "%s: Can not determine file type\n"
 msgstr "%s: Tidak dapat menentukan tipe berkas\n"
 
-#: util/typetest.c++:90
 #, c-format
 msgid "usage: %s [-f rulesfile] files\n"
 msgstr "penggunaan: %s [-f berkas aturan] berkas\n"
 
-#: util/typetest.c++:117
 #, c-format
 msgid "Unable to setup file typing and conversion rules\n"
 msgstr "Tidak dapat mengkonfigurasikan berkas aturan pengetikan dan pengkonversian\n"
 
-#: util/UnixTransport.c++:60
-#, c-format
-msgid "connect to server at %s"
-msgstr "menghubungi ke server di %s"
-
-#: util/UnixTransport.c++:66
-#, c-format
-msgid "Can not reach server at Unix domain socket \"%s\"."
-msgstr "Tidak dapat mencapai server di Unix domain socket \"%s\"."
-
-#: util/UnixTransport.c++:138
-msgid "Sorry, no Unix domain communication support was configured."
-msgstr "Maaf, tidak ada dukungan komunikasi di domain Unix yang telah dikonfigurasikan."
-
-#: faxd/choptest.c++:42
 #, c-format
 msgid "usage: %s [-a] [-t threshold] input.tif\n"
 msgstr "penggunaan: %s [-a [-t threshold] masukan.tif\n"
 
-#: faxd/choptest.c++:85 faxd/tagtest.c++:435
 #, c-format
 msgid "%s: Cannot open, or not a TIFF file"
 msgstr "%s: Tidak dapat membuka, atau bukan sebuah berkas TIFF"
 
-#: faxd/choptest.c++:89 faxd/tagtest.c++:439
 #, c-format
 msgid "%s: Not a Group 3 or Group 4-encoded TIFF file"
 msgstr "%s: Bukan sebuah Grup 3 atau Grup 4 berkas terenkode TIFF"
 
-#: faxd/choptest.c++:98
 #, c-format
 msgid "Chop all pages with >=%.2g\" of white space at the bottom.\n"
 msgstr "Chop seluruh halaman dengan >=%.2g\" dari spasi di bawah.\n"
 
-#: faxd/choptest.c++:99
 #, c-format
 msgid "Chop last page if >=%.2g\" of white space at the bottom.\n"
 msgstr "Chop halaman terakhir jika >=%.2g\" dari spasi dibawah.\n"
 
-#: faxd/choptest.c++:132
 #, c-format
 msgid "Chop %u rows, strip was %lu bytes, need only %lu\n"
 msgstr "Chop %u baris, strip adalah %lu bytes, hanya butuk %lu\n"
 
-#: faxd/choptest.c++:138
 #, c-format
 msgid "Don't chop, found %u rows, need %u rows\n"
 msgstr "Jangan chop, ditemukan %u baris, membutuhkan %u baris\n"
 
-#: faxd/cqtest.c++:167
 msgid "Missing EOL after 5 seconds"
 msgstr "Hilang EOL setelah 5 detik"
 
-#: faxd/cqtest.c++:258 faxd/cqtest.c++:349
 #, c-format
 msgid "Adjusting for RTC found at row %u"
 msgstr "Menyesuaikan untuk RTC ditemukan di baris %u"
 
-#: faxd/cqtest.c++:272
 #, c-format
 msgid "adjusting for trailing noise (%lu run)"
 msgstr "menyesuaikan untuk trailing noise (%lu jalan)"
 
-#: faxd/cqtest.c++:278
 #, c-format
 msgid "%lu total lines, %lu bad lines, %lu consecutive bad lines"
 msgstr "%lu total baris, %lu baris buruk, %lu baris buruk berturut turut"
 
-#: faxd/cqtest.c++:361 faxd/cqtest.c++:372
 #, c-format
 msgid "RECV: %s: write error"
 msgstr "RECV: %s: tulis error"
 
-#: faxd/cqtest.c++:396
 #, c-format
 msgid "RECV: REJECT page quality, %u%% good lines (%u%% required)"
 msgstr "RECV: TOLAK kualitas halaman, %u%% baris baik (%u%% dibutuhkan)"
 
-#: faxd/cqtest.c++:406
 #, c-format
 msgid "RECV: REJECT page quality, %u-line run (max %u)"
 msgstr "RECV: TOLAK kualitas halaman, %u-baris jalan (maksimal %u)"
 
-#: faxd/cqtest.c++:434
 msgid "RECV: "
 msgstr "RECV: "
 
-#: faxd/cqtest.c++:458
 #, c-format
 msgid "Invalid %s code word, row %u, x %d"
 msgstr "Tidak valid %s kata kode, baris %u, x %d"
 
-#: faxd/cqtest.c++:469
 #, c-format
 msgid "Bad %s pixel count, row %u, got %d, expected %d"
 msgstr "Buruk %s jumlah piksel, baris %u, diperoleh %d, diduga %d"
 
-#: faxd/cqtest.c++:476
 #, c-format
 msgid "Panic, bad %s decoding state, row %u, x %d"
 msgstr "Panik, buruk %s status dekoding, baris %u, x %d"
 
-#: faxd/cqtest.c++:488
 msgid "RECV/CQ: "
 msgstr "RECV/CQ: "
 
-#: faxd/cqtest.c++:498
 #, c-format
 msgid "usage: %s [-m maxbad] [-p %%good] [-o output.tif] input.tif\n"
 msgstr "penggunaan: %s [-m maxbad] [-p %%good] [-o keluaran.tif] masukan.tif\n"
 
-#: faxd/cqtest.c++:531
 #, c-format
 msgid "%s: Cannot open, or not a TIFF file\n"
 msgstr "%s: Tidak dapat membuka, atau bukan sebuah berkas TIFF\n"
 
-#: faxd/cqtest.c++:536
 #, c-format
 msgid "%s: Cannot create TIFF file\n"
 msgstr "%s: Tidak dapat membuat berkas TIFF\n"
 
-#: faxd/cqtest.c++:579
 #, c-format
 msgid "Read error on strip %u\n"
 msgstr "Baca error di strip %u\n"
 
-#: faxd/faxQCleanApp.c++:125
 #, c-format
 msgid "Scan %s directory for jobs to remove+archive.\n"
 msgstr "Scan %s direktori untuk pekerjaan untuk menghapus+archive.\n"
 
-#: faxd/faxQCleanApp.c++:130
 #, c-format
 msgid "%s: Could not scan directory for jobs.\n"
 msgstr "%s: Tidak dapat scan direktori untuk pekerjaan.\n"
 
-#: faxd/faxQCleanApp.c++:143
 #, c-format
 msgid "%s: ignored (cannot stat or not a regular file)\n"
 msgstr "%s: diabaikan (tidak dapat stat atau bukan sebuah berkas reguler)\n"
 
-#: faxd/faxQCleanApp.c++:160
 #, c-format
 msgid "%s: job too new, ignored (for now).\n"
 msgstr "%s: pekerjaan terlalu baru, diabaikan (untuk sekarang).\n"
 
-#: faxd/faxQCleanApp.c++:170
 #, c-format
 msgid "JOB %s: archive (%s)%s.\n"
 msgstr "PEKERJAAN %s: archive (%s)%s.\n"
 
-#: faxd/faxQCleanApp.c++:173 faxd/faxQCleanApp.c++:182
-#: faxd/faxQCleanApp.c++:415
 msgid " (not done)"
 msgstr " (tidak selesai)"
 
-#: faxd/faxQCleanApp.c++:179
 #, c-format
 msgid "JOB %s: remove (%s) %s.\n"
 msgstr "PEKERJAAN %s: hapus (%s) %s.\n"
 
-#: faxd/faxQCleanApp.c++:196
 #, c-format
 msgid "%s: malformed queue file: remove\n"
 msgstr "%s: antrian berkas salah bentuk: menghapus\n"
 
-#: faxd/faxQCleanApp.c++:212 faxd/faxQCleanApp.c++:424
 #, c-format
 msgid "Done scanning %s directory\n"
 msgstr "Selesai scanning %s direktori\n"
 
-#: faxd/faxQCleanApp.c++:234
 #, c-format
 msgid "JOB %s: reference %s\n"
 msgstr "PEKERJAAN %s: referensi %s\n"
 
-#: faxd/faxQCleanApp.c++:266
 #, c-format
 msgid "Scan %s directory and remove unreferenced documents.\n"
 msgstr "Scan %s direktori dan hapus dokumen tidak tereferensi.\n"
 
-#: faxd/faxQCleanApp.c++:271
 #, c-format
 msgid "%s: Could not scan directory for unreferenced documents.\n"
 msgstr "%s: Tidak dapat menscan direktori untuk dokumen tidak tereferensi.\n"
 
-#: faxd/faxQCleanApp.c++:293
 #, c-format
 msgid "%s: ignored, cannot stat or not a regular file\n"
 msgstr "%s: diabaikan, tidak dapat memperoleh statistik atau bukan berkas regular\n"
 
-#: faxd/faxQCleanApp.c++:308
 #, c-format
 msgid "%s: ignored, file has %u links\n"
 msgstr "%s: diabaikan, berkas memiliki %u links\n"
 
-#: faxd/faxQCleanApp.c++:314
 #, c-format
 msgid "%s: ignored, file has %u references\n"
 msgstr "%s: diabaikan, berkas memiliki %u referensi\n"
 
-#: faxd/faxQCleanApp.c++:320
 #, c-format
 msgid "%s: ignored, file is too new to remove\n"
 msgstr "%s: diabaikan, berkas terlalu baru untuk dihapus\n"
 
-#: faxd/faxQCleanApp.c++:343 faxd/faxQCleanApp.c++:365
 #, c-format
 msgid "%s: file looks to be referenced by job\n"
 msgstr "%s: berkas tampak seperti direferensikan oleh pekerjaan\n"
 
-#: faxd/faxQCleanApp.c++:347
 #, c-format
 msgid "%s: file has no matching %s\n"
 msgstr "%s: berkas tidak memiliki cocok %s\n"
 
-#: faxd/faxQCleanApp.c++:384
 #, c-format
 msgid "%s: Could not scan directory for base file.\n"
 msgstr "%s: Tidak dapaat menscan direktori untuk berkas dasar.\n"
 
-#: faxd/faxQCleanApp.c++:393
 #, c-format
 msgid "%s: found match to base '%s', skipping.\n"
 msgstr "%s: ditemukan cocok ke dasar '%s', melewatkan.\n"
 
-#: faxd/faxQCleanApp.c++:405
 #, c-format
 msgid "%s: did not find base '%s' match.\n"
 msgstr "%s: tidak menemukan dasar '%s' yang cocok.\n"
 
-#: faxd/faxQCleanApp.c++:413
 #, c-format
 msgid "DOC %s: unreferenced document removed%s.\n"
 msgstr "DOC %s: dokumen tidak tereferensi dihapus %s.\n"
 
-#: faxd/faxQCleanApp.c++:419
 #, c-format
 msgid "%s: error removing unreferenced document: %s.\n"
 msgstr "%s: error menghapus dokumen tidak tereferensi: %s.\n"
 
-#: faxd/faxQCleanApp.c++:432
 #, c-format
 msgid "usage: %s [-a] [-j time] [-d time] [-q queue-directory]\n"
 msgstr "penggunaan: %s [-a [-j waktu] [-d waktu] [-q direktori-antrian]\n"
 
-#: faxd/faxQCleanApp.c++:464
 #, c-format
 msgid "%s: Can not change directory: %s.\n"
 msgstr "%s: Tidak dapat berpindah direktori: %s.\n"
 
-#: faxd/tagtest.c++:384
 #, c-format
 msgid "usage: %s [-m format] [-o t.tif] [-f font.pcf] input.tif\n"
 msgstr "penggunaan: %s [-m format] [-o t.tif] [-f font.pcf] masukan.tif\n"
 
-#: faxd/tagtest.c++:442
 #, c-format
 msgid "%s: Problem reading font"
 msgstr "%s: Masalah membaca bentuk huruf"
 
-#: faxd/tagtest.c++:446
 #, c-format
 msgid "%s: Cannot create output file"
 msgstr "%s: Tidak dapat membuat berkas keluaran"
 
-#: faxd/tagtest.c++:550
 #, c-format
 msgid "%s: Write error at strip %u, writing %lu bytes"
 msgstr "%s: Tulis error di strip %u, menulis %lu bytes"
 
-#: faxd/tsitest.c++:94
 #, c-format
 msgid "Bad TSI pattern: %s: "
 msgstr "Pola TSI buruk: %s: "
 
-#: faxd/tsitest.c++:129
 #, c-format
 msgid "usage: %s [-q] tsifile"
 msgstr "penggunaan: %s [-q] tsifile"
 
-#: faxd/tsitest.c++:173
 #, c-format
 msgid "[check %s]\n"
 msgstr "[periksa %s]\n"
 
-#: faxd/tsitest.c++:177
 #, c-format
 msgid "accept (matched by %s)\n"
 msgstr "terima (cocok oleh %s)\n"
 
-#: faxd/tsitest.c++:178
 #, c-format
 msgid "reject (matched by %s)\n"
 msgstr "tola (cocok oleh %s)\n"
 
-#: faxd/tsitest.c++:184
 #, c-format
 msgid "reject (no pattern match)\n"
 msgstr "tolak (tidak ada pola yang cocok)\n"
 
-#: faxd/tsitest.c++:186
 #, c-format
 msgid "reject (no patterns)\n"
 msgstr "tolak (tidak ada pola)\n"
+
+#~ msgid "Memory allocation failed"
+#~ msgstr "Alokasi memori gagal"
