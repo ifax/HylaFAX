@@ -234,7 +234,6 @@ logDebug("checkHostIdentity(\"%s\")", name);
 void
 InetFaxServer::setupNetwork(int fd)
 {
-    char buf[128];
     socklen_t addrlen;
 
     addrlen = sizeof (peer_addr);
@@ -291,7 +290,7 @@ InetFaxServer::setupNetwork(int fd)
     remoteaddr = inet_ntop(peer_addr.family, Socket::addr(peer_addr), hostbuf, sizeof(hostbuf));
 
     getnameinfo((struct sockaddr*)&peer_addr, Socket::socklen(peer_addr),
-		    hostbuf, sizeof(hostbuf), NULL, NULL, 0);
+		    hostbuf, sizeof(hostbuf), NULL, 0, 0);
 
     if (remoteaddr == "0.0.0.0")
         remotehost = "localhost";
