@@ -153,6 +153,7 @@ inline size_t Socket::addrlen (const Address& a)
 		return sizeof(a.in6.sin6_addr);
     }
     fxAssert(true, "Socket::addrlen on invalid Address");
+    return 0;		// DEAD CODE
 }
 inline in_port_t& Socket::port (Address& a)
 {
@@ -164,6 +165,7 @@ inline in_port_t& Socket::port (Address& a)
 		return a.in6.sin6_port;
     }
     fxAssert(true, "Socket::port on invalid Address");
+    return a.in.sin_port;		// DEAD CODE
 }
 
 inline void* Socket::addr (Address& a)
