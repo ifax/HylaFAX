@@ -157,7 +157,7 @@ FAXQOBJS=JobControl.o \
 FAXSENDOBJS=  faxSendApp.o
 FAXQCLEANOBJS=faxQCleanApp.o
 FAXGETTYOBJS= Getty.o Getty@GETTY@.o faxGettyApp.o
-TARGETS=libfaxserver.a \
+TARGETS=libfaxserver-${ABI_VERSION}.a \
 	faxq faxsend faxgetty pagesend faxqclean \
 	tsitest tagtest cqtest choptest
 
@@ -170,11 +170,11 @@ targets: $(TARGETS)
 @MAKEINCLUDE@ @MAKELQUOTE@${COMMONRULES}@MAKERQUOTE@
 
 
-LIBFAXSERVER=-L. -lfaxserver
+LIBFAXSERVER=-L. -lfaxserver-${ABI_VERSION}
 
-libfaxserver.a: ${SERVER_OBJS} ${MODEM_OBJS}
-	${AR} ${AROPTS} libfaxserver.a $?
-	${RANLIB} libfaxserver.a
+libfaxserver-${ABI_VERSION}.a: ${SERVER_OBJS} ${MODEM_OBJS}
+	${AR} ${AROPTS} libfaxserver-${ABI_VERSION}.a $?
+	${RANLIB} libfaxserver-${ABI_VERSION}.a
 
 LDIRT	= hash.h mkhash libfaxserver*
 
@@ -186,29 +186,29 @@ mkhash:	${SRCDIR}/mkhash.c
 faxQueueApp.o FaxRecv.o:
 incdepend: hash.h
 
-faxq:	${FAXQOBJS} libfaxserver.a ${LIBS}
+faxq:	${FAXQOBJS} libfaxserver-${ABI_VERSION}.a ${LIBS}
 	${C++F} -o $@ ${FAXQOBJS} ${LIBFAXSERVER} ${LDFLAGS}
-faxsend: ${FAXSENDOBJS} libfaxserver.a ${LIBS}
+faxsend: ${FAXSENDOBJS} libfaxserver-${ABI_VERSION}.a ${LIBS}
 	${C++F} -o $@ ${FAXSENDOBJS} ${LIBFAXSERVER} ${LDFLAGS}
-faxgetty: ${FAXGETTYOBJS} libfaxserver.a ${LIBS}
+faxgetty: ${FAXGETTYOBJS} libfaxserver-${ABI_VERSION}.a ${LIBS}
 	${C++F} -o $@ ${FAXGETTYOBJS} ${LIBUTIL} ${LIBFAXSERVER} ${LDFLAGS}
-faxqclean: ${FAXQCLEANOBJS} libfaxserver.a ${LIBS}
+faxqclean: ${FAXQCLEANOBJS} libfaxserver-${ABI_VERSION}.a ${LIBS}
 	${C++F} -o $@ ${FAXQCLEANOBJS} ${LIBFAXSERVER} ${LDFLAGS}
 
 PAGESENDOBJS=\
 	pageSendApp.o
-pagesend:${PAGESENDOBJS} libfaxserver.a ${LIBS}
+pagesend:${PAGESENDOBJS} libfaxserver-${ABI_VERSION}.a ${LIBS}
 	${C++F} -o $@ ${PAGESENDOBJS} ${LIBFAXSERVER} ${LDFLAGS}
 
-tagtest: tagtest.o libfaxserver.a ${LIBS}
+tagtest: tagtest.o libfaxserver-${ABI_VERSION}.a ${LIBS}
 	${C++F} -o $@ tagtest.o ${LIBFAXSERVER} ${LDFLAGS}
-cqtest:	cqtest.o libfaxserver.a ${LIBS}
+cqtest:	cqtest.o libfaxserver-${ABI_VERSION}.a ${LIBS}
 	${C++F} -o $@ cqtest.o ${LIBFAXSERVER} ${LDFLAGS}
-choptest: choptest.o libfaxserver.a ${LIBS}
+choptest: choptest.o libfaxserver-${ABI_VERSION}.a ${LIBS}
 	${C++F} -o $@ choptest.o ${LIBFAXSERVER} ${LDFLAGS}
-tsitest: tsitest.o libfaxserver.a ${LIBS}
+tsitest: tsitest.o libfaxserver-${ABI_VERSION}.a ${LIBS}
 	${C++F} -o $@ tsitest.o ${LIBFAXSERVER} ${LDFLAGS}
-trigtest: trigtest.o libfaxserver.a ${LIBS}
+trigtest: trigtest.o libfaxserver-${ABI_VERSION}.a ${LIBS}
 	${C++F} -o $@ trigtest.o ${LIBFAXSERVER} ${LDFLAGS}
 
 PUTSERV=${INSTALL} -idb ${PRODUCT}.sw.server
