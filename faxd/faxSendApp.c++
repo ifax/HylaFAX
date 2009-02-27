@@ -299,13 +299,13 @@ faxSendApp::notifyConnected(const FaxRequest& req)
 }
 
 void
-faxSendApp::notifyPageSent(FaxRequest& req, const char* filename, bool skipped)
+faxSendApp::notifyPageSent(FaxRequest& req, const char* filename, PageType pt)
 {
     FaxSendInfo si(filename, req.commid, req.npages+1,
 	getPageTransferTime(), getClientParams());
     sendJobStatus(req.jobid, "d%s", (const char*) si.encode());
 
-    FaxServer::notifyPageSent(req, filename, skipped);
+    FaxServer::notifyPageSent(req, filename, pt);
 }
 
 /*

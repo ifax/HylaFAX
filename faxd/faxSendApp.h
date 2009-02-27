@@ -80,7 +80,7 @@ private:
     void	notifyModemWedged();
     void	notifyCallPlaced(const FaxRequest&);
     void	notifyConnected(const FaxRequest&);
-    void	notifyPageSent(FaxRequest& req, const char* filename, bool skipped);
+    void	notifyPageSent(FaxRequest& req, const char* filename, PageType pt);
     void	notifyDocumentSent(FaxRequest&, u_int fileIndex);
     void	notifyPollRecvd(FaxRequest&, FaxRecvInfo&);
     void	notifyPollDone(FaxRequest&, u_int pollIndex);
