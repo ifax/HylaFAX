@@ -115,9 +115,6 @@ extern "C" void _fxassert(const char*, const char*, int);
 //
 // Support for NLS
 
-#define _(String) gettext(String)
-#define N_(String) gettext_noop(String)
-#define gettext_noop(String) String
 
 #ifdef ENABLE_NLS
 
@@ -125,15 +122,18 @@ extern "C" void _fxassert(const char*, const char*, int);
 #include <libintl.h>
 
 #ifdef NEED_NGETTEXT
-#define ngettext(s1,s2,n) (n ==1 ? gettext(s1) : gettext(s2))
+#define ngettext(s1,s2,n) (n == 1 ? gettext(s1) : gettext(s2))
 #endif
+
+#define _(String)  		gettext(String)
+#define P_(StringS, StringP, n) ngettext(StringS,StringP,n)
+#define N_(String)		(String)	/* gettext_noop */
 
 #else /* ENABLE_NLS */
 
-#define gettext(String) (String)
-#define textdomain(Domain) do {} while()
-#define bindtextdomain(Package, Directory) do {} while()
-#define ngettext(s1, s2, n) (n==1?s1:s2)
+#define _(String)		(String)
+#define P_(StringS, StringP, n)	(n==1 ? StringS : StringP)
+#define N_(String)		(String)
 
 #endif /* ENABLE_NLS */
 

@@ -498,7 +498,7 @@ void
 SendFaxClient::notifyNewJob(const SendFaxJob& job)
 {
     int nfiles = files->length();
-    printf(ngettext("request id is %s (group id %s) for host %s (%u file)\n",
+    printf(P_("request id is %s (group id %s) for host %s (%u file)\n",
 	    "request id is %s (group id %s) for host %s (%u files)\n", nfiles)
 	, (const char*) job.getJobID()
 	, (const char*) job.getGroupID()
