@@ -247,7 +247,6 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 {
     int ntrys = 0;			// # retraining/command repeats
     u_int ppm, previousppm = 0;
-    bool skipHadHangup = false;
 
     setDataTimeout(180, next.br);	// 180 seconds for 1024 byte writes, increased for potential ECM delays
     hangupCode[0] = '\0';
@@ -303,7 +302,6 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    if (pageDone(ppm, ppr)) {
 	        if (ppm == PPM_EOP && morePages && hadHangup)
 		{
-		    skipHadHangup = true;
 		    hadHangup = false;
 		    protoTrace("All done sending (normal hangup with skip), suppressing for now");
 		}
