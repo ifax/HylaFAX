@@ -2030,7 +2030,7 @@ HylaFAXServer::listSendQ(FILE* fd, const SpoolDir&, DIR* dir)
     if (listing.length() > 1)
 	listing.qsort();
 
-    for (int i = 0; i < listing.length(); i++)
+    for (u_int i = 0; i < listing.length(); i++)
     {
 	fwrite(listing[i], listing[i].length(), 1, fd);
 	fputs("\r\n", fd);
