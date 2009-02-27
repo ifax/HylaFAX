@@ -67,6 +67,7 @@ SuperServer::inputReady(int fd)
 	logError("HylaFAX %s: accept: %m", (const char*) kind);
 	_exit(-1);
     }
+#ifdef IPV6_ADDRFORM
     if (addr.family == AF_INET6) {
 	struct in6_addr& a = addr.in6.sin6_addr;
 	if ( (a.s6_addr32[0] == 0 && a.s6_addr32[1] == 0 && a.s6_addr32[2] == htonl(0xFFFF))  ||
@@ -76,6 +77,7 @@ SuperServer::inputReady(int fd)
 	    setsockopt(c, IPPROTO_IPV6, IPV6_ADDRFORM, &af, sizeof(af));
 	}
     }
+#endif
     pid_t pid = fork();
     switch (pid) {
     case 0:				// child

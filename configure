@@ -3174,6 +3174,7 @@ BuildPortDotH()
     CheckForDefine s6_addr32 net/if.h  ||  {
 	case $TARGET in
 		*-*-sysv5*)	AddDefine s6_addr32 's6_addr32	S6_un.S6_l' ;;
+		sparc-sun-*)	AddDefine s6_addr32 's6_addr32	S6_un.S6_l' ;;
 	esac
     }
 
