@@ -746,7 +746,7 @@ Class2Modem::skipStatus(const char* s)
  */
 static struct HangupCode {
     const char*	code[3];	// from 2388/89, 2388/90, 2388-A, 2388-B
-    const int status;		// HylaFAX code
+    int status;		// HylaFAX code
     const char*	message;	// what code means
 } hangupCodes[] = {
 // Call placement and termination
