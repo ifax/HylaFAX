@@ -121,7 +121,6 @@ faxSendApp::send(const char** filenames, int num)
     u_int batched = BATCH_FIRST;
     FaxSendStatus status = send_done;
     fxStr batchcommid, errorcode;
-    time_t retrybatchtts = 0;
 
     for (int i = 0; i < num; i++)
     {
@@ -197,7 +196,6 @@ faxSendApp::send(const char** filenames, int num)
 			ai.status = "";
 		    else {
 			ai.status = req->result.string();
-			retrybatchtts = req->tts;
 		    }
 		    if (!ai.record("SEND"))
 			logError("Error writing SEND accounting record, dest=%s",
