@@ -59,14 +59,14 @@ bool Range::parse (const char* parse_string)
 	TRACE("Zeroing done");
 
 	char* endptr;
-	long val;
-	int last;
+	u_long val;
+	u_int last = 0;
 
 	char op = ',';
 
 	do {
 		errno = 0;
-		val = strtol(parse_string, &endptr, 10);
+		val = strtoul(parse_string, &endptr, 10);
 		TRACE("---> start(%p): \"%s\"    end(%p): \"%s\" val: %ld	errno: %d\n",
 				parse_string, parse_string, endptr, endptr, val, errno);
 		if (errno)
@@ -82,7 +82,7 @@ bool Range::parse (const char* parse_string)
 			setMapBit(val - min);
 			break;
 		case '-':
-			for (int i = last; i <= val; i++)
+			for (u_int i = last; i <= val; i++)
 				setMapBit(i-min);
 			break;
 		default:
@@ -161,13 +161,13 @@ void Range::dump (FILE* fd)
 
 	buf.reset();
 	buf.fput("MAP: ");
-	for (int i = 0; i < ((size+9)/10); i++)
+	for (u_int i = 0; i < ((size+9)/10); i++)
 		buf.fput("/  %3d   \\", (i+1)*10);
 	PRINT_OR_SYSLOG(fd, buf);
 
 	buf.reset();
 	buf.fput("MAP: ");
-	for (int i = 0; i < size; i++)
+	for (u_int i = 0; i < size; i++)
 	{
 		int b = i/8;
 		int c = i%8;
@@ -177,7 +177,7 @@ void Range::dump (FILE* fd)
 
 	buf.reset();
 	buf.fput("MAP: ");
-	for (int i = 0; i < ((size+7)/8); i++)
+	for (u_int i = 0; i < ((size+7)/8); i++)
 	{
 		buf.fput("\\  %2.2X  /", i);
 	}

@@ -39,8 +39,8 @@ public:
 	void dump(FILE* fd);
 
 private:
-	int min;
-	int max;
+	u_int min;
+	u_int max;
 	unsigned char* map;
 	bool set;
 
