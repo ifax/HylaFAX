@@ -20,4 +20,4 @@ OLDmessages.po: ${SOURCES}
 	${XGETTEXT} -D ${DEPTH}/${SUBDIR} -D ${SRCDIR} -n ${addprefix -k, _ N_ ${GETTEXT_TRIGGERS}} ${SOURCES}
 
 messages.po: ${SOURCES}
-	${XGETTEXT} -D ${DEPTH} -D ${DEPTH}/${TOPSRCDIR} -n ${addprefix -k, _ N_ ${GETTEXT_TRIGGERS}} ${patsubst %, ${SUBDIR}/%, ${SOURCES}}
+	${XGETTEXT} -D ${DEPTH} -D ${DEPTH}/${TOPSRCDIR} -n ${addprefix -k, _ N_ P_:1,2 ${GETTEXT_TRIGGERS}} ${patsubst %, ${SUBDIR}/%, ${SOURCES}}
