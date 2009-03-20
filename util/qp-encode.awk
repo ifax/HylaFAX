@@ -27,9 +27,23 @@
 #
 
 
+function private_rshift(x,n)
+{
+    while (n > 0)
+    {
+	x =int(x/2);
+	n--;
+    };
+    return x;
+}
+
 function qp_lc(c)
 {
-  # Space (32) and tab (9) must be encoded at the end of line.
+  # No special last character handling in Q mode.
+  if (ENCODING == "Q")
+    return _qp[c];
+
+  # In QP mode, space (32) and tab (9) must be encoded at the end of line.
   if (c == " ")
     return "=20";
   else if (c == "\t")
@@ -45,14 +59,47 @@ function qp(c)
 
 BEGIN {
   FS = "\n";
+  if (ENCODING == "")
+    ENCODING = "QUOTED-PRINTABLE";
+  if (POSITION == "")
+    POSITION = "TEXT";
+  if (CHARSET == "")
+    CHARSET = "UTF-8";
+  if (WIDTH == 0)
+  {
+    if (ENCODING == "Q")
+      WIDTH = 75 - 7 - length(CHARSET);
+    else
+      WIDTH = 75;
+  }
 
-  # Space (32) and tab (9) are only encoded at the end of line.
+  if (ENCODING != "Q")
+    POSITION = "";
+  # In QP mode, space (32) and tab (9) are only encoded at the end of line.
   for (i = 0; i < 256; i++) {
     c = sprintf("%c", i);
-    if (i == 9 || (i >= 32 && i <= 60) || (i >= 62 && i <= 126))
+    if (POSITION == "phrase" && (i == 33 || i == 42 || i == 43 || i == 45 || (i >= 47 && i <= 57) || (i >= 65 && i <= 90) || i == 95 || (i >= 97 && i <= 122)))
+      _qp[c] = c;
+    else if (POSITION != "phrase" && (i == 9 || (i >= 32 && i <= 60) || (i >= 62 && i <= 126)))
       _qp[c] = c;
     else
       _qp[c] = sprintf("=%02X", i);
+  }
+
+  # Fixup the encoding for some of the Q encoding characters.
+  if (ENCODING == "Q")
+  {
+    _qp[" "] = "_";
+    _qp["\t"] = "=09";
+    _qp["?"] = "=3F";
+    _qp["_"] = "=5F";
+
+    if (POSITION == "comment")
+    {
+      _qp["("] = "=28";
+      _qp[")"] = "=29";
+      _qp["\""] = "=22";
+    } 
   }
 }
 
@@ -68,15 +115,26 @@ BEGIN {
 
     # Quoted-Printable lines must be no more than 76 characters
     # (including soft break)
-    while (length(out) > 75)
+    while (length(out) > WIDTH)
     {
-      end = 75;
+      end = WIDTH;
       while (substr(out, end, 1) == "=" || substr(out, end-1, 1) == "=")
         end--;
-      print substr(out, 1, end) "=";
+      if (ENCODING == "Q" && CHARSET == "UTF-8")
+        while (length(out) > 2 && substr(out, end-2, 1) == "=" && private_rshift(substr(out, end-1, 2), 6) == 2)
+          end -= 3;
+
+      if (ENCODING == "Q")
+        print "=?" CHARSET "?Q?" substr(out, 1, end) "?=";
+      else
+        print substr(out, 1, end) "=";
+
       out = substr(out, end+1);
     }
   }
-  print out;
+  if (ENCODING == "Q")
+    print "=?" CHARSET "?Q?" out "?=";
+  else
+    print out;
 }
 
