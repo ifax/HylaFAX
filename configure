@@ -2257,6 +2257,25 @@ CheckDefine()
     CheckForDefine "$def" "$@" || AddDefine "$def" "$decl"
 }
 
+#
+# Look for a #define with a positive value in system include files.
+# This is especially useful for POSIX defines which may be defined
+# to -1 or 0 when the functionnality is not supported.
+#
+CheckForPositiveDefine()
+{
+    def=$1; shift
+    (for i do
+	echo "#include \"$i\""
+     done
+     for i in "#if defined($def) && ($def > 0L)" "FOUND" "#endif"; do
+	echo "$i"
+     done
+    )>t.c
+    capture cat t.c
+    runMakeX t 't:; ${CCF} -E t.c' | grep FOUND >&5
+}
+
 CheckTermioFuncDecls()
 {
     CheckFuncDecl cfsetospeed \
@@ -3137,18 +3156,13 @@ BuildPortDotH()
 	Note "... configure use of HP-UX realtime process control interface"
 	echo '#define HAS_RTPRIO 1'
     }
-    CheckForDefine _POSIX_PRIORITY_SCHEDULING unistd.h sched.h && {
+    CheckForPositiveDefine _POSIX_PRIORITY_SCHEDULING unistd.h sched.h && {
+	Note "... configure use of POSIX realtime process control interface"
+	echo '#define HAS_POSIXSCHED 1'
 	case $TARGET in
-	*darwin8*)	Note "... ignoring POSIX realtime process control interface as invalid";;
-	*darwin9*)	Note "... ignoring POSIX realtime process control interface as invalid";;
-	*)
-			Note "... configure use of POSIX realtime process control interface"
-			echo '#define HAS_POSIXSCHED 1'
-			case $TARGET in
-			*-*-sco3.2v5.*)	echo '#define RT_PRIORITY 96';;
-			*-linux*)	echo '#define RT_PRIORITY 1';;
-			*)		echo '#define RT_PRIORITY 1';;
-			esac
+		*-*-sco3.2v5.*)	echo '#define RT_PRIORITY 96';;
+		*-linux*)	echo '#define RT_PRIORITY 1';;
+		*)		echo '#define RT_PRIORITY 1';;
 	esac
     }
     CheckForTXCD && {
