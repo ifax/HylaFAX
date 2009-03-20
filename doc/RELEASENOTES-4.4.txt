@@ -150,3 +150,4 @@ CHANGES for 4.4.5
 * Bug 902: Fix non-void function without a return (2009-02-02)
 * b64-encode.awk: Fix bug on old SCO awk (2009-01-30)
 * Bug 901: mimeencoding bug in templates handling (2009-02-06)
+* POSIX constants can be set to -1 if the functionnality is unavailable (2009-03-20)
