@@ -15,6 +15,11 @@ tolower()
     echo "`echo $1 | $SED -e 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/'`"
 }
 
+length()
+{
+    expr length "$1"
+}
+
 #
 # For getting all of the "faxinfo" items to line up.
 #
@@ -253,45 +258,49 @@ headerEncode()
     encoded=$string
 
     case $position in 
-      phrase)
-        if [ `matchRegEx "$string" '/^[\0-\177]*$/'` = 1 ]; then
-          echo $string | c $AWK -F=!=!=!=!=!=!=!=!= '
-          function simple_quote(text)
-          {
-              gsub(/[\0-\37\177\\\"]/, "\\\\&", text);
-              if (text ~ /[^A-Za-z0-9!#$%&'\''*+\/=?^_`{|}~ -]/)
-                  text = "\"" text "\"";
-              print text;
-          }
-          BEGIN {
-          }
-          simple_quote($0);
-          END {
-          }'
-          return
-        fi
+        phrase)
+            if [ `matchRegEx "$string" '/^[\0-\177]*$/'` = 1 ]; then
+                echo $string | c $AWK -F=!=!=!=!=!=!=!=!= '
+                function simple_quote(text)
+                {
+                    gsub(/[\0-\37\177\\\"]/, "\\\\&", text);
+                    if (text ~ /[^A-Za-z0-9!#$%&'\''*+\/=?^_`{|}~ -]/)
+                        text = "\"" text "\"";
+                    print text;
+                }
+                BEGIN {
+                }
+                simple_quote($0);
+                END {
+                }'
+                return
+            fi
 
-        if [ `matchRegEx "$string" '/[^\40\41\43-\133\135-\176]/'` = 1 ]; then
-          must_encode=true
-        fi
-        ;;
-      comment)
-        if [ `matchRegEx "$string" '/[^\40\41\43-\47\52-\176]/'` = 1 ]; then
-          must_encode=true
-        fi
-        ;;
-      text)
-        if [ `matchRegEx "$string" '/[^\40-\176]/'` = 1 ]; then
-          must_encode=true
-        fi
-        ;;
+            must_encode=true
+            ;;
+        comment)
+            if [ `matchRegEx "$string" '/[^\40\41\43-\47\52-\176]/'` = 1 ]; then
+                must_encode=true
+            fi
+            ;;
+        text)
+            if [ `matchRegEx "$string" '/[^\40-\176]/'` = 1 ]; then
+                must_encode=true
+            fi
+            ;;
     esac
 
     if [ $must_encode = true ]; then
-      encoded="`echo $string | c $AWK -v ENCODING=B -f bin/b64-encode.awk 2>$ERRORSTO`"
-      echo $encoded
+        # Use the shorter encoded string
+        q_encoded="`echo $string | c $AWK -v ENCODING=Q -v POSITION=$position -f bin/qp-encode.awk 2>$ERRORSTO`"
+        b_encoded="`echo $string | c $AWK -v ENCODING=B -f bin/b64-encode.awk 2>$ERRORSTO`"
+        if [ `length "$q_encoded"` -lt `length "$b_encoded"` ]; then
+            echo $q_encoded;
+        else
+            echo $b_encoded;
+        fi
     else
-      echo $string
+        echo $string
     fi
 }
 
