@@ -288,8 +288,8 @@ headerEncode()
     esac
 
     if [ $must_encode = true ]; then
-      encoded=" =?UTF-8?B?`echo $string | c $AWK -f bin/b64-encode.awk 2>$ERRORSTO`?="
-      echo $encoded | $SED -e 's/ //g'
+      encoded="`echo $string | c $AWK -v ENCODING=B -f bin/b64-encode.awk 2>$ERRORSTO`"
+      echo $encoded
     else
       echo $string
     fi

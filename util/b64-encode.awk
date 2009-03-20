@@ -73,12 +73,14 @@ function private_rshift(x,n)
 }
 
 
+# Using B encoding, the actual number of bytes may be less than n if the
+# last bytes are part of a multi-byte character according to CHARSET and
+# the whole character doesn't fit.
 function readbytes(n,   m, s, line, str, __RS) {
 #	RS = "\x00";
 
 	m = n;
-	while (m > 0) {
-		s = length(__readbuffer);
+	while ((s = length(__readbuffer)) == 0 || m > 0) {
 		if (s == 0) {
                         ## Some (SCO) awk fill __readbuffer with junk on reading EOF
                         ## So we must check the return of getline and set __readbuffer
@@ -102,10 +104,22 @@ function readbytes(n,   m, s, line, str, __RS) {
 			else {
 				str = str substr(__readbuffer, 1, m);
 				__readbuffer = substr(__readbuffer, m+1);
-				break;
+				m = 0;
 				}
 			}
 		}
+
+	# Only multi-byte charset currently supported is 'UTF-8'
+	if (ENCODING == "B" && CHARSET == "UTF-8")
+	{
+	    while (str != "" && private_rshift(asc(substr(__readbuffer,1,1)), 6) == 2)
+            {
+                l = length(str);
+                c = substr(str, l, 1);
+                str = substr(str, 1, l-1);
+                __readbuffer = c __readbuffer;
+            }
+	}
 
 	return (str);
 }
@@ -164,17 +178,35 @@ function base64(   __RS, data)
 {
 	__RS = RS;
 	RS = "\xF1\xF2\x00";
-	data = readbytes(54);
+	data = readbytes(WIDTH*3/4);
 	while (length(data) > 0)
 	{
+		if (ENCODING == "B")
+		    printf "=?" CHARSET "?B?";
 		base64_encode(data);
+		if (ENCODING == "B")
+		    printf "?=";
 		printf "\n";
-		data = readbytes(54);
+		data = readbytes(WIDTH*3/4);
 	}
 	RS = __RS;
 }
 
 BEGIN {
+    if (ENCODING == "")
+	ENCODING = "BASE64";
+    if (CHARSET == "")
+	CHARSET = "UTF-8";
+    if (WIDTH == 0)
+    {
+	if (ENCODING == "B")
+	    WIDTH = 75 - 7 - length(CHARSET);
+	else
+	    WIDTH = 72;
+    }
+
+    WIDTH -= (WIDTH % 4)
+
     BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     base64()
     exit (0);
