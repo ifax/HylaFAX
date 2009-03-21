@@ -226,3 +226,4 @@ CHANGES for 4.3.8
 * hfaxd: Fix RECV_START, RECV_PAGE, RECV_DOC triggers (22 Jul 2008)
 * faxgetty/faxsend: Correct Include config file parsing (22 Jul 2008)
 * b64-encode.awk: Fix bug on old SCO awk (2009-01-30)
+* POSIX constants can be set to -1 if the functionnality is unavailable (2009-03-20)
