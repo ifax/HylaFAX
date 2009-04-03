@@ -1421,8 +1421,8 @@ runMake()
 CheckForCXXRuntime()
 {
 cat>t.c++<<EOF
-#include "iostream.h"
-int main(){ cout << "Hello World!" << endl; return 0;}
+#include <iostream>
+int main(){ std::cout << "Hello World!" << std::endl; return 0;}
 EOF
     runMake t "t:; \${C++F} \${C++FILE} t.c++${MAKECXXOVERRIDE}"
 }
