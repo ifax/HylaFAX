@@ -197,15 +197,14 @@ SENDTO="$mailaddr"
 export SENDTO
 
 case "$WHY:$notify" in
+    *":always")                     do_notify;;     # They've asked for it
+
     "requeued:when done+requeued")  do_notify;;     # Requeued
     "requeued:when requeued")       do_notify;;     # Requeued
     "requeued:when done")           ;;              # Do nothing;
     "requeued:none")                ;;              # Do nothing;
 
-    "blocked:when done+requeued")   do_notify;;     # Requeued
-    "blocked:when requeued")        do_notify;;     # Requeued
-    "blocked:when done")            ;;              # Do nothing;
-    "blocked:none")                 ;;              # Do nothing;
+    "blocked:"*)                    ;;              # Blocked
 
     "done:when done+requeued")      do_notify;;     # Done
     "done:when requeued")           ;;              # Do nothing

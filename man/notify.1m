@@ -56,24 +56,29 @@ a string that specifies why the user is being notified; one of:
 .nf
 .ta  +\w'poll_no_document    'u +\w'Notes    'u
 \fBWhy\fP	\fBNotes\fP	\fBMeaning\fP
-\fIdone\fP		job was completed successfully
-\fIfailed\fP	 \(S1	job was not completed
-\fIrejected\fP		job was rejected for specified reasons
-\fIblocked\fP		job is blocked by concurrent jobs
-\fIrequeued\fP	\(S1	job was not completed, but was requeued for retry
-\fIremoved\fP		job was deleted from the queue
-\fIkilled\fP		job was deleted from the queue
-\fItimedout\fP		job could not be sent before kill time expired
-\fIformat_failed\fP		document conversion failed
-\fIno_formatter\fP		the document conversion program was not found
-\fIpoll_rejected\fP	\(S1	a polling request was rejected by the remote side
-\fIpoll_no_document\fP	\(S1	a polling request failed because nothing was available
-\fIpoll_failed\fP	\(S1	a polling request failed for an unknown reason
+\fIdone\fP	\(S1	job was completed successfully
+\fIfailed\fP	\(S1\(S2	job was not completed
+\fIrejected\fP	\(S1	job was rejected for specified reasons
+\fIrequeued\fP	\(S2	job was not completed, but was requeued for retry
+\fIremoved\fP	\(S1	job was deleted from the queue
+\fIkilled\fP	\(S1	job was deleted from the queue
+\fItimedout\fP	\(S1	job could not be sent before kill time expired
+\fIformat_failed\fP	\(S1	document conversion failed
+\fIno_formatter\fP	\(S1	the document conversion program was not found
+\fIpoll_rejected\fP	\(S1\(S2	a polling request was rejected by the remote side
+\fIpoll_no_document\fP	\(S1\(S2	a polling request failed because nothing was available
+\fIpoll_failed\fP	\(S1\(S2	a polling request failed for an unknown reason
+\fIblocked\fP	\(S3	job is blocked by concurrent jobs
 .sp .5
 .fi
 .br
-\(S1 A transcript of the failed communication is returned
+\(S1 A final job state
+.br
+\(S2 A transcript of the failed communication is returned
 to the sender.
+.br
+\(S3 No emails are sent for the block state, the job has been neither requeued nor done, but remains waiting
+in the queue for the ability to be sent.
 .TP
 .B jobtime
 the total transmission time of a successful job or the connect
@@ -132,6 +137,22 @@ any problems before those problems are reported by the users.
 Possible settings are ``yes'', ``always'', ``no'', ``never'', and ``errors''.
 If ``errors'' is used then the notification message is only sent to FaxMaster
 when the job experienced an error.  The default is ``no''.
+.P
+The settings of the user in
+.B $notify
+(read from the
+.B sendq
+job file) controls whether the user will get the notification email.  If you want to force
+notification emails, irregardless of the users selection, or force a blocked notification (which is
+not sent by default), you can set
+.sp
+.nf
+.ft C
+notify="always"
+.ft R
+.fi
+.sp
+which will force the notify script to send the email.
 .SH FILES
 .nf
 .ta \w'${SENDMAIL}    'u

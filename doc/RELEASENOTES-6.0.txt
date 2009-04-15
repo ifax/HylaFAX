@@ -22,10 +22,15 @@ Overview
 
 Upgrade to CVS from previous 4.4 releases
 -----------------------------------------------------------------------------
-  There are no particular differences to note yet during the upgrade
-  process, but if you have clients that still use the old protocol (not
-  the common FTP style protocol), they will no longer work with a new
-  hfaxd daemon.
+  There are only 2 differences to note yet during the upgrade
+  process, probably neither of which affect most people.
+
+  If you have clients that still use the old protocol (not the common
+  FTP style protocol), they will no longer work with a new hfaxd daemon.
+
+  The notification email machanism no longer sends "blocked" emails by
+  default, as the jobs re not being requeued, or done.  To continue
+  receiving them, you'll need to configure it in FaxNotify.
 
 Changes for HylaFAX 6.0
 -----------------------------------------------------------------------------
@@ -318,3 +323,4 @@ Changes for HylaFAX 6.0
   never separate UTF-8 characters in multiple encoded words (2009-03-20)
 * Adds Q encoding possibility (2009-03-20)
 * Select between Q and B encoding according to data to encode (2009-03-20)
+* notify: Don't send blocked notifications as "requeued" (2009-03-27)
