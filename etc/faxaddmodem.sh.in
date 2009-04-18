@@ -311,7 +311,7 @@ done
 
 if [ "$DOFUSER" = "yes" ]; then
     # zap any gettys or other users
-    if ! [ -f $FUSER ]; then
+    if [ ! -f $FUSER ]; then
 	cat<<EOF
 Hmm, there does not appear to be an fuser command on your machine.
 This means that I am unable to ensure that all processes using the
