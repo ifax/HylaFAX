@@ -134,7 +134,7 @@ EOF
 #	crontab(1)
 # (minutes) (hour) (day of the month) (month of the year) (day of the week)
 # faxcron - HylaFAX routine maintenance script
-25   23    *    *    0   sh ${sbindir}/faxcron -rcv 20 | mailx -s "Fax Reports" FaxMaster
+25   23    *    *    0   ${sbindir}/faxcron -rcv 20 | mailx -s "Fax Reports" FaxMaster
 EOF
 
 	echo "See sample crontab(1) entries for root and fax (uucp)"
