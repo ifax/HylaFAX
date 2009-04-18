@@ -86,3 +86,7 @@ install: default
 
 
 @MAKEDSOINCLUDE@ @MAKELQUOTE@${SRCDIR}/Makefile.@DSO@dso@MAKERQUOTE@
+
+clobberconfig::
+	-${RM} -f pagesizes
+

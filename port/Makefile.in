@@ -63,4 +63,4 @@ install: default
 # These targets are created during the configuration procedure.
 #
 clobberconfig::
-	-${RM} -f install.sh mkdepend
+	-${RM} -f install.sh mkdepend version.c

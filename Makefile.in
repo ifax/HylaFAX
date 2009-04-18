@@ -175,6 +175,9 @@ clobber::
 	else \
 	    true; \
 	fi
+	@for i in ${DSODIRS}; do \
+	    (${ECHO} "= "$$i; cd $$i; ${MAKE} clobberconfig); \
+	done
 	@for i in ${DIRS}; do \
 	    (${ECHO} "= "$$i; cd $$i; ${MAKE} clobber); \
 	done
