@@ -1454,9 +1454,21 @@ cat>t.c++<<EOF
 #include <iostream>
 int main(){ std::cout << "Hello World!" << std::endl; return 0;}
 EOF
-    runMake t "t:; \${C++F} \${C++FILE} t.c++${MAKECXXOVERRIDE}"
+    runMake t "t:; \${C++F} \${C++FILE} t.c++${MAKECXXOVERRIDE}" || return $?
+    Note "Looks like the system has a CXX runtime"
 }
-CheckForCXXRuntime || {
+CheckForDeprecatedCXXRuntime()
+{
+cat>t.c++<<EOF
+#include <iostream.h>
+int main(){ cout << "Hello World!" << endl; return 0;}
+EOF
+    runMake t "t:; \${C++F} \${C++FILE} t.c++${MAKECXXOVERRIDE}" || return $?
+    s=$?
+    Note "Looks like the system has a CXX runtime with deprecated headers"
+    HAS_DEPRECATED_CXX=yes
+}
+CheckForCXXRuntime || CheckForDeprecatedCXXRuntime || {
     cat 1>&2 <<EOF
 
 Missing C++ runtime support for $CXX ($CXXCOMPILER).
@@ -2666,14 +2678,6 @@ BuildPortDotH()
     fi
 
     #
-    # Check whether  compiler uses new C++ header style
-    #
-    CheckForIncludeFile new || {
-        Note "... configure use of new.h"
-            echo '#define HAS_OLD_NEW_H 1'
-    }
-
-    #
     # Some vendors have changed the socket API so that
     # call-by-reference parameters that give buffer
     # lengths are not int; this must be dealt with to
@@ -3191,6 +3195,11 @@ BuildPortDotH()
 		sparc-sun-*)	AddDefine s6_addr32 's6_addr32	S6_un.S6_l' ;;
 	esac
     }
+
+    if [ "x$HAS_DEPRECATED_CXX" != "x" ]; then
+	Note "... use deprecated CXX headers"
+        echo '#define HAS_DEPRECATED_CXX 1'
+    fi
 
     # Emit the version variable that port will always give us.
     echo "extern const char* HYLAFAX_VERSION_STRING;"
