@@ -33,7 +33,7 @@
 #include "port.h"
 
 // Needed for the placement new operator
-#ifdef HAS_OLD_NEW_H
+#ifdef HAS_DEPRECATED_CXX
 #include "new.h"
 #else
 #include "new"
