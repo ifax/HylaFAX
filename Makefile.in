@@ -181,6 +181,11 @@ clobber::
 	@for i in ${DIRS}; do \
 	    (${ECHO} "= "$$i; cd $$i; ${MAKE} clobber); \
 	done
+	@if [ "@NLS@" = yes ]; then \
+	    ${ECHO} "= "po; cd po; ${MAKE} clobber; \
+	else \
+	    true; \
+	fi
 	@if [ "@SGI2FAX@" = yes ]; then \
 	    ${ECHO} "= "sgi2fax; cd sgi2fax; ${MAKE} clobber; \
 	else \

@@ -14,6 +14,8 @@ LIBVERSION	= @VERSION@
 
 TARGETS=all-mo
 
+LDIRT	= version.po libhylafax/*.{po,mo} hylafax-client/*.{po,mo} hylafax-server/*.{po,mo}
+
 default all::
 	@${MAKE} targets
 
@@ -31,6 +33,5 @@ SERVERS = util faxd hfaxd
 installClient: install-mo
 
 install: install-mo
-
 
 @MAKEINCLUDE@ @MAKELQUOTE@${SRCDIR}/nls.mk@MAKERQUOTE@

@@ -83,7 +83,7 @@ CLEANOBJECTS= *.[ou]
 # What gets cleaned, apart from objects.
 #
 DIRT= ${GDIRT} ${VDIRT} ${LDIRT}
-GDIRT= a.out core ${_FORCE}
+GDIRT= a.out core messages.po ${_FORCE}
 
 #
 # An always-unsatisfied target.
