@@ -187,6 +187,7 @@
 # and rebuild the message template catalogs, you will need it.  Some
 # platforms may need extra options to link for libintl as well.
 #
+#INTLINC="-I/usr/local/include"
 #LIBINTL=""				# configure will try LIBINTL="-lintl"
 #XGETTEXT="xgettext --foreign-user -ctranslator --no-wrap --sort-by-file --omit-header --strict --indent --force-po"
 #MSGMERGE="msgmerge --no-wrap --sort-by-file"
