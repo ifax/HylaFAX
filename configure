@@ -77,7 +77,7 @@ LIBTIFF="-ltiff"
 TIFFINC=
 TIFFBIN=
 LIBUTIL=
-LIBZ=
+LIBZ=-lz
 ZLIBINC=
 LIBINTL=
 INTLINC=
@@ -3308,9 +3308,6 @@ main()
 }
 EOF
 capture cat t.c
-if [ -z "$LIBZ" ]; then
-    LIBZ="-lz"
-fi
 if runMake t "t:; \${CC} \${CVERSION} ${OZLIBINC} t.c ${LIBZ} ${MACHDEPLIBS}" && capture ./a.out; then
                 ZLIBINC="${OZLIBINC}"
     Note "Using ZLIB include files from $OZLIBINC"
