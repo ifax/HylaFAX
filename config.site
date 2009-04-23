@@ -160,8 +160,8 @@
 # that is included in this distribution is not to be used
 # then set REGEX=no and supply the following definitions.
 #
-#LIBREGEX=" "				# linkage convention for regex package
-#REGEXINC="/usr/include"		# place to find regex.h
+#LIBREGEX=""				# linkage convention for regex package
+#REGEXINC="-I/usr/include"		# place to find regex.h
 
 #
 # NLS (gettext) library support is used by default if it's found
