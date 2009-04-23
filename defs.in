@@ -184,16 +184,6 @@ TIFFBIN		= @TIFFBIN@
 ZLIBINC		= @ZLIBINC@
 LIBZ		= @LIBZ@
 #
-# libdb-related definitions.  The source for the libdb library
-# is not required to build this software, but you must have
-# the libdb library installed somewhere on your system to link
-# against.  If the default "-L /usr/local/lib -ldb" is
-# insufficient to locate the library you can setup a config.local
-# file that defines LIBDB and/or DBINC (used to find db.h)
-#
-DBLIBINC	= @DBLIBINC@
-LIBDB		= @LIBDB@
-#
 # regex-related definitions.  The source for the POSIX regular
 # expression package is not required to build this software,
 # but you must have the resulting library installed somewhere

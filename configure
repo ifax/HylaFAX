@@ -84,9 +84,6 @@ INTLINC=
 REGEX=yes
 LIBREGEX='-L${DEPTH}/regex -lregex'
 REGEXINC='${DEPTH}/${TOPSRCDIR}/regex'
-DBLIB=no
-LIBDB="-L/usr/local/lib -ldb"
-DBLIBINC=/usr/local/include
 CONFIG_OSFCNH=auto
 MANNUM4_5=4F
 MANNUM1_8=1M
@@ -133,8 +130,6 @@ CXX
 CXXCOMPILER
 CXXFILE
 DATE
-DBLIB
-DBLIBINC
 DEFPAGESIZE
 DEFVRES
 DIST_ALPHA
@@ -586,7 +581,6 @@ if [ -f config.cache ]; then
     OTIFFINC="$TIFFINC"; OLIBTIFF="$LIBTIFF"
     OZLIBINC="$ZLIBINC"; OLIBZ="$LIBZ"
     OREGEXINC="$REGEXINC"; OLIBREGEX="$LIBREGEX"
-    ODBLIBINC="$DBLIBINC"; OLIBDB="$LIBDB"
     OINTLINC="$INTLINC"; OLIBINTL="$LIBINTL"
     . ./config.cache
     capture . ./config.cache
@@ -597,7 +591,6 @@ if [ -f config.cache ]; then
     TIFFINC="$OTIFFINC"; LIBTIFF="$OLIBTIFF"
     ZLIBINC="$OZLIBINC"; LIBZ="$OLIBZ"
     REGEXINC="$OREGEXINC"; LIBREGEX="$OLIBREGEX"
-    DBLIBINC="$ODBLIBINC"; LIBDB="$OLIBDB"
     INTLINC="$OINTLINC"; LIBINTL="$ILIBINTL"
 fi
 
@@ -1422,7 +1415,6 @@ makeDefs()
 OTIFFINC="${TIFFINC}"; x="`relativize ${TIFFINC}`"; TIFFINC="$x"
 OZLIBINC="${ZLIBINC}"; x="`relativize ${ZLIBINC}`"; ZLIBINC="$x"
 OREGEXINC="${REGEXINC}"; x="`relativize ${REGEXINC}`"; REGEXINC="$x"
-ODBLIBINC="${DBLIBINC}"; x="`relativize ${DBLIBINC}`"; DBLIBINC="$x"
 makeDefs xdefs
 
 #
@@ -3411,97 +3403,6 @@ fi
 
 Note "Done checking TIFF support."
 
-# NB: only check if we have the MLA tools
-if [ -f $SRCDIR/MLA/VERSION ] && [ $DBLIB = no ]; then
-    Note ""
-    Note "Checking LIBDB support."
-    #
-    # Verify library is compatible.
-    #
-    cat>t.c<<EOF
-#include <sys/types.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
-#include "db.h"
-main()
-{
-    DBT key, data;
-    const char d[] = "some random string";
-    const char k[] = "mykey";
-    DB* db = dbopen("conf.db", O_RDWR|O_CREAT, 0644, DB_HASH, NULL);
-    if (db == NULL) {
-	printf("Cannot create hashed database file conf.db\n");
-	exit(-1);
-    }
-    key.data = (void*) k;
-    key.size = sizeof (k);
-    data.data = (void*) d;
-    data.size = sizeof (d);
-    if ((*db->put)(db, &key, &data, 0) != 0) {
-	printf("Error writing hashed db record\n");
-	exit(-1);
-    }
-    (void) (*db->close)(db);
-    db = dbopen("conf.db", O_RDONLY, 0644, DB_HASH, NULL);
-    if (db == NULL) {
-	printf("Cannot reopen hashed database file conf.db\n");
-	exit(-1);
-    }
-    data.data = (void*) NULL;
-    data.size = 0;
-    if ((*db->get)(db, &key, &data, 0) != 0) {
-	printf("Error reading hashed db record\n");
-	exit(-1);
-    }
-    if (data.size != sizeof (d) || memcmp(data.data, d, data.size) != 0) {
-	printf("Hashed db record mismatch: size %u data \"%s\"\n",
-	    data.size, data.data ? data.data : "(null)");
-	exit(-1);
-    }
-    (*db->close)(db);
-    exit(0);
-}
-EOF
-    capture cat t.c
-    if runMake t "t:; \${CC} \${CVERSION} -I${ODBLIBINC} t.c ${LIBDB} ${MACHDEPLIBS}" && capture ./a.out; then
-	Note "Using LIBDB include files from $ODBLIBINC"
-	Note "Using pre-built LIBDB library $LIBDB"
-    else
-	cat 1>&2 <<EOF
-
-Incompatible/missing LIBDB Library.
-
-Compilation or execution of the following test program failed:
-
-----------------------------------------------------------
-EOF
-	cat t.c 1>&2
-	cat 1>&2 <<EOF
-----------------------------------------------------------
-
-With:
-
-DBLIBINC=${ODBLIBINC}
-LIBDB=${LIBDB}
-
-The above program checks the operation of the LIBDB hashed database
-package to ensure it is suitable for use with HylaFAX.  HylaFAX ${VERSION}
-requires version 1.85 or newer of this package.  If you do not have
-up to date LIBDB software on your system then you can use the version
-that is included with HylaFAX.  Otherwise, if you have the right
-software, verify that you have the DBLIBINC and LIBDB configuration
-parameters set correctly for your system (see above) and that any
-environment variables are setup that are needed to locate a libz DSO at
-runtime (e.g.  LD_LIBRARY_PATH).  Also be sure that any relative
-pathnames are made relative to the top of the build area.
-
-EOF
-	boom
-    fi
-    Note "Done checking LIBDB support."
-fi
-
 if [ "$DSO" = auto ]; then
     Note ""
     Note "Checking for Dynamic Shared Object (DSO) support."
@@ -4998,7 +4899,6 @@ test $IMP = yes &&		   SedConfigFiles imp/Makefile
 test "$MKDEPEND" != ":" &&	   SedConfigFiles port/mkdepend
 test $SGI2FAX = yes &&	   	   SedConfigFiles sgi2fax/Makefile
 test $REGEX = yes &&		   SedConfigFiles regex/Makefile
-test $DBLIB = yes &&		   SedConfigFiles dblib/Makefile
 test $NLS = yes &&		   SedConfigFiles po/Makefile po/version.po
 test -f $SRCDIR/MLA/VERSION &&	   SedConfigFiles MLA/Makefile
 
@@ -5030,7 +4930,6 @@ if [ "$MAKEDEPINCLUDE" != "sinclude" ]; then
     test $GS = yes	&& DEPEND="$DEPEND gs"
     test $SGI2FAX = yes	&& DEPEND="$DEPEND sgi2fax"
     test $REGEX = yes	&& DEPEND="$DEPEND regex"
-    test $DBLIB = yes	&& DEPEND="$DEPEND dblib"
     test $NLS = yes	&& DEPEND="$DEPEND po"
     test -f $SRCDIR/MLA/VERSION && DEPEND="$DEPEND MLA"
     test -d $SRCDIR/faxview && test -d faxview && DEPEND="$DEPEND faxview"

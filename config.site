@@ -50,7 +50,6 @@
 #IMP="no"			# install SGI Impressario 2.1 support (yes|no)
 #REGEX="yes"			# use distributed regular expression package
 #UTMP="utmpx"			# type of utmp+wtmp handling (auto|utmp|utmpx)
-#DBLIB="no"			# use distributed libdb distribution
 #NLS="auto"			# enable NLS support (auto|yes|no)
 
 #
@@ -163,23 +162,6 @@
 #
 #LIBREGEX=" "				# linkage convention for regex package
 #REGEXINC="/usr/include"		# place to find regex.h
-
-#
-# The LIBDB hashed database package is (currently) used
-# only by the MLA tools that are not publicly available
-# but which are built from within this source tree.  In
-# the future the fax software may use the libdb software
-# for the remote client capabilities database (so these
-# hooks are included now).
-#
-# The source for the LIBDB hashed database package
-# is not required to build this software, but the package
-# is required to link against.  If the copy of the software
-# that is included in this distribution is not to be used
-# then set DBLIB=no and supply the following definitions.
-#
-#LIBDB=" "				# linkage convention for libdb package
-#DBLIBINC="/usr/include"		# place to find db.h
 
 #
 # NLS (gettext) library support is used by default if it's found
