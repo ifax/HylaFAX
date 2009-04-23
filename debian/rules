@@ -47,9 +47,6 @@ configure-stamp: patch-stamp
 		--with-PATH_GSRIP="/usr/bin/gs" \
 		--with-MANSCHEME="bsd-source-gzip-strip" \
 		--with-INSTALL='${PORT}/../debian/install ${PORT}' \
-		--with-LIBTIFF="-ltiff" \
-		--with-TIFFINC="/usr/include" \
-		--with-TIFFBIN="/usr/bin" \
 		--with-LIBZ="-lz" \
 		--with-ZLIBINC="-I/usr/include" \
 		--with-CONFIG_MAXGID="65534" \

@@ -73,8 +73,8 @@ NLS=auto
 OPTIMIZER="-O"
 LIBCRYPT=
 LIBPAM=
-LIBTIFF="-L/usr/local/lib -ltiff"
-TIFFINC=/usr/local/include
+LIBTIFF="-ltiff"
+TIFFINC=
 TIFFBIN=
 LIBUTIL=
 LIBZ=
@@ -2548,7 +2548,7 @@ main()
 }
 EOF
     capture cat t.c
-    if runMake t "t:; \${CC} \${CVERSION} -I${OTIFFINC} t.c ${LIBTIFF} ${MACHDEPLIBS}"; then
+    if runMake t "t:; \${CC} \${CVERSION} ${OTIFFINC} t.c ${LIBTIFF} ${MACHDEPLIBS}"; then
         header_ver=0
         lib_ver=""
 	eval `./a.out | \

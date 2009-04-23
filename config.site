@@ -142,7 +142,7 @@
 # non-standard location then setup LIBTIFF accordingly.
 #
 #LIBTIFF="-L/usr/local/lib -ltiff"	# linkage convention for libtiff
-#TIFFINC="/usr/local/include"		# place to find tiffio.h
+#TIFFINC="-I/usr/local/include"		# place to find tiffio.h
 #TIFFBIN="/usr/local/bin"		# where TIFF tools live
 
 #
