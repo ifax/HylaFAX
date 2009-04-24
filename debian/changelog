@@ -1,8 +1,8 @@
-hylafax (2:6.0.0-rc1) unstable; urgency=low
+hylafax (2:6.0.0) unstable; urgency=low
 
   * Update debian packaging for 6.0.0
 
- -- Aidan Van Dyk <aidan@ifax.com>  Fri, 20 Mar 2009 14:53:06 -0400
+ -- Aidan Van Dyk <aidan@ifax.com>  Fri, 24 Apr 2009 14:33:06 -0400
 
 hylafax (2:4.5~CVS) unstable; urgency=low
 
