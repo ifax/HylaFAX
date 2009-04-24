@@ -324,3 +324,4 @@ Changes for HylaFAX 6.0
 * Adds Q encoding possibility (2009-03-20)
 * Select between Q and B encoding according to data to encode (2009-03-20)
 * notify: Don't send blocked notifications as "requeued" (2009-03-27)
+* configure/build: Multiple cleanups for portablity and simplicity (2009-04-23)
