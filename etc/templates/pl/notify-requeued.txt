@@ -1,5 +1,5 @@
 To: $SENDTO
-Subject: fax zadanie $JOBINFO do $DESTINATION wiedereingefügt
+Subject: fax zadanie $JOBINFO do $DESTINATION nie zostało wysłane
 From: Serwer faxów HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
@@ -8,4 +8,4 @@ Zadanie fax do $number nie zostało wysłane, ponieważ:
 
 $faxstatus
 
-NastŞpna prłba o $NEXT
+Następna próba o $NEXT

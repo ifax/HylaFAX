@@ -4,7 +4,7 @@ From: Serwer faxów HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-Zadanie fax do $number prłba pobrania nie powiodła siŞ, ponieważ
+Zadanie fax do $number próba wysłania nie powiodła się, ponieważ
 zdalny fax odrzucił żądanie.
 
 Czas przetwarzania $JTIME.
