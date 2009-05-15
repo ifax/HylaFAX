@@ -1,13 +1,13 @@
 To: $SENDTO
-Subject: czysty tekst do $DESTINATION zakoączone
+Subject: czysty tekst do $DESTINATION zakończone
 From: Serwer faxów HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-Zadanie czysty tekst do $number zakoączone powodzeniem.
+Zadanie czysty tekst do $number zakończone powodzeniem.
 
-                Połączeą: $tottries (wymiany ze zdalnym urządzeniem)
- Połączeą telefonicznych: $totdials (Łącznie połączeą telefonicznych)
+                Połączeń: $tottries (wymiany ze zdalnym urządzeniem)
+ Połączeń telefonicznych: $totdials (Łącznie połączeń telefonicznych)
                    Modem: $modem
             Nadano przez: $client
               ID zadania: $jobid

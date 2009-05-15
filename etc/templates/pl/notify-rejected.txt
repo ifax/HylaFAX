@@ -17,14 +17,14 @@ $faxstatus
           ID Komunikacji: $commid
                    Modem: $modem
             Nadano przez: $client
-        SzerokośŚ strony: $pagewidth  (mm)
-         WysokośŚ strony: $pagelength (mm)
-           RozdzielczośŚ: $resolution (lpi)
+        Szerokość strony: $pagewidth  (mm)
+         Wysokość strony: $pagelength (mm)
+           Rozdzielczość: $resolution (lpi)
                   Status: $faxstatus
-                Połączeą: $tottries
+                Połączeń: $tottries
                         : $ndials
- Połączeą telefonicznych: $totdials
+ Połączeń telefonicznych: $totdials
                    Stron: $npages
                    Stron: $totpages
-                    Prłb: $ntries
+                    Prób: $ntries
                  Katalog: $dirnum

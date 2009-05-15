@@ -1,7 +1,7 @@
 To: $SENDTO
-Subject: fax zadanie $JOBINFO do $DESTINATION usuniŞty z kolejki
+Subject: fax zadanie $JOBINFO do $DESTINATION usunięto z kolejki
 From: Serwer faxów HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-Zadanie fax do $number zostało usuniŞte z kolejki
+Zadanie fax do $number zostało usunięte z kolejki
