@@ -1,10 +1,10 @@
 To: $SENDTO
-Subject: fax zadanie $JOBINFO do $DESTINATION usuniŞty z kolejki
+Subject: fax zadanie $JOBINFO do $DESTINATION usunięto z kolejki
 From: Serwer faxów HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-Zadanie fax do $number zostało usuniŞte z kolejki
+Zadanie fax do $number zostało usunięte z kolejki
 
 ------- Unsent job status -------
                  Adresat: $number
@@ -15,14 +15,14 @@ Zadanie fax do $number zostało usuniŞte z kolejki
           ID Komunikacji: $commid
                    Modem: $modem
             Nadano przez: $client
-        SzerokośŚ strony: $pagewidth  (mm)
-         WysokośŚ strony: $pagelength (mm)
-           RozdzielczośŚ: $resolution (lpi)
+        Szerokość strony: $pagewidth  (mm)
+         Wysokość strony: $pagelength (mm)
+           Rozdzielczość: $resolution (lpi)
                   Status: $faxstatus
-                Połączeą: $tottries
+                Połączeń: $tottries
                         : $ndials
- Połączeą telefonicznych: $totdials
+ Połączeń telefonicznych: $totdials
                    Stron: $npages
                    Stron: $totpages
-                    Prłb: $ntries
+                    Prób: $ntries
                  Katalog: $dirnum

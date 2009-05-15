@@ -1,22 +1,22 @@
 To: $SENDTO
-Subject: fax zadanie $JOBINFO do $DESTINATION zakoączone
+Subject: fax zadanie $JOBINFO do $DESTINATION zakończone
 From: Serwer faxów HylaFAX <$FROMADDR>
 Content-type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: Quoted-Printable
 
-Zadanie fax do $number zakoączone powodzeniem.
+Zadanie fax do $number zakończone powodzeniem.
 
                    Stron: $npages
                 Odbiorca: $csi
-                  JakośŚ: $resolution
-        SzerokośŚ strony: $pagewidth (mm)
-         WysokośŚ strony: $pagelength
+                  Jakość: $resolution
+        Szerokość strony: $pagewidth (mm)
+         Wysokość strony: $pagelength
                   Sygnał: $signalrate
            Format danych: $dataformat
        Zdalne urządzenie: $equipment
           Zdalna maszyna: $station
-                Połączeą: $tottries (wymiany ze zdalnym urządzeniem)
- Połączeą telefonicznych: $totdials (Łącznie połączeą telefonicznych)
+                Połączeń: $tottries (wymiany ze zdalnym urządzeniem)
+ Połączeń telefonicznych: $totdials (Łącznie połączeń telefonicznych)
                    Modem: $modem
             Nadano przez: $client
               ID zadania: $jobid
