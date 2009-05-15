@@ -329,7 +329,7 @@ product::
 	SRC=`${PWDCMD}` RAWIDB=`${PWDCMD}`/dist/rawidb ${MAKE} install
 	${RM} -f dist/idb
 	${SORT} -u +4 dist/rawidb > dist/idb
-	${GENDIST} -v -dist dist -idb dist/idb -sbase `pwd` -spec ${SRCDIR}/dist/hylafax.spec
+	${GENDIST} -v -dist dist -idb dist/idb -sbase `pwd` -spec ${SRCDIR}/dist/hylafax.dist
 
 dist.inst:
 	VERSION="v`cat ${SRCDIR}/VERSION``awk '{print $$3}' ${SRCDIR}/dist/hylafax.alpha`";	\

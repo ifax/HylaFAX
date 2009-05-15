@@ -4834,7 +4834,6 @@ CONF_FILES="
     etc/Makefile
     faxalter/Makefile
     faxcover/Makefile
-    faxcover/edit-faxcover.sh
     faxd/Makefile
     faxmail/Makefile
     faxrm/Makefile
@@ -4856,6 +4855,8 @@ CONF_FILES="
     etc/faxaddmodem.sh
     etc/probemodem.sh
     etc/hylafax
+
+    faxcover/edit-faxcover.sh
 
     util/xferfaxstats.sh
     util/recvstats.sh
