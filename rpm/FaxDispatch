@@ -1,0 +1,32 @@
+##	$Id$	
+##
+## Default FaxDispatch file - routes all inbound faxes to FaxMaster as PDF
+## 
+## Consult the faxrcvd(8C) man page for more information
+##
+
+SENDTO=FaxMaster;				# by default email to FaxMaster
+FILETYPE=pdf;					# in PDF format
+
+
+##
+## This excerpt from the man page gives you an idea of what's possible here
+##
+## You can route by sender's TSI
+#case "$SENDER" in
+#	*1*510*526*1212*) SENDTO=sam;;		# Sam's test rig in Berkeley
+#	*1*415*390*1212*) SENDTO=raster@asd;;	# 7L Xerox room, used for scanning
+#	*5107811212)      SENDTO=peebles@mti;;	# stuff from home
+#esac
+
+## and/or by device
+#case "$DEVICE" in
+#	ttyS1)            SENDTO=john;;		# all faxes received on ttyS1
+#	ttyLT0)           SENDTO=mary@home;;	# all faxes received on ttyLT0
+#esac
+
+## and/or by caller id
+#case "$CIDNUMBER" in
+#	435*)        SENDTO=lee; FILETYPE=pdf;;	# all faxes from area code 435
+#	5059627777)  SENDTO=amy; FILETYPE=tif;;	# Amy wants faxes in TIFF
+#esac

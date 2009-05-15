@@ -1,0 +1,17 @@
+## This is the HylaFAX init script configuration file.
+## Options specified in this file will be used when starting
+## and stopping HylaFAX.
+
+## What address should hfaxd listen to
+#HFAXD_LISTEN=127.0.0.1
+
+## HylaFAX Spool directory if different from the default of /var/spool/hylafax
+#SPOOL=/var/spool/hylafax
+
+## Accept connections to hfaxd using the old protocol
+#HFAXD_OLD_PROTOCOL=yes
+
+## Extra args to be passed to hfaxd
+HFAXD_EXTRA_ARGS=
+
+

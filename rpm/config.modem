@@ -1,0 +1,96 @@
+# $Id$
+#
+# HylaFAX Facsimile Software
+#
+# Copyright (c) 1990-1996 Sam Leffler
+# Copyright (c) 1991-1996 Silicon Graphics, Inc.
+# HylaFAX is a trademark of Silicon Graphics, Inc.
+# 
+# Permission to use, copy, modify, distribute, and sell this software and 
+# its documentation for any purpose is hereby granted without fee, provided
+# that (i) the above copyright notices and this permission notice appear in
+# all copies of the software and related documentation, and (ii) the names of
+# Sam Leffler and Silicon Graphics may not be used in any advertising or
+# publicity relating to the software without the specific, prior written
+# permission of Sam Leffler and Silicon Graphics.
+# 
+# THE SOFTWARE IS PROVIDED "AS-IS" AND WITHOUT WARRANTY OF ANY KIND, 
+# EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY 
+# WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  
+# 
+# IN NO EVENT SHALL SAM LEFFLER OR SILICON GRAPHICS BE LIABLE FOR
+# ANY SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+# WHETHER OR NOT ADVISED OF THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF 
+# LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE 
+# OF THIS SOFTWARE.
+#
+
+#
+# Configuration for a Rockwell-based modem not otherwise handled by
+# another prototype configuration file.  This file assumes the modem
+# is compatible with the Rc144AC, RC96AC or RC144DP.
+#
+# This configuration file sets up the modem to run at 38.4 with
+# RTS/CTS flow control used by default.  XON/XOFF is automatically
+# enabled for fax recv.  Beware of modems that also lock sending
+# to 19.2; add ModemSendBeginCmd: "<19200>" if this is required.
+# Also beware that the adaptive-answer facility, when supported,
+# is often unreliable.
+#
+#
+CountryCode:		1
+AreaCode:		999
+FAXNumber:		+1.999.555.1212
+LongDistancePrefix:	1
+InternationalPrefix:	011
+DialStringRules:	"etc/dialrules.sf-ba"
+ServerTracing:		1
+SessionTracing:		11
+RecvFileMode:		0600
+LogFileMode:		0600
+DeviceMode:		0600
+RingsBeforeAnswer:	1
+SpeakerVolume:		off
+GettyArgs:		"-h %l %s"
+LocalIdentifier:	"Silent Valley Sys"
+TagLineFont:		etc/lutRS18.pcf
+TagLineFormat:		"From %%l|%c|Page %%p of %%t"
+MaxRecvPages:		250
+#
+#
+# Modem-related stuff: should reflect modem command interface
+# and hardware connection/cabling (e.g. flow control).
+#
+ModemType:		Class2		# use class 2 interface
+ModemRate:		38400
+ModemFlowControl:	rtscts		# default
+#
+ModemResetCmds:		AT&F          		# what you want for a Supra
+ModemNoFlowCmd:		AT&K0		# disable flow control cmd
+ModemHardFlowCmd:	AT&K3		# hardware flow control cmd
+ModemSoftFlowCmd:	AT&K4		# software flow control cmd
+ModemSetupDTRCmd:	AT&D3		# DTR off causes modem to reset
+#ModemSetupDTRCmd:	AT&D2S25=1S38=0	# Dynalink 1414VE needs this
+ModemSetupDCDCmd:	AT&C1		# DCD follows carrier
+ModemSetupAACmd:	AT+FAA=1+FCLASS=0 # enable in current class
+#
+ModemSendFillOrder:	LSB2MSB		# as expected
+ModemRecvFillOrder:	MSB2LSB		# opposite of what makes sense
+#
+ModemAnswerFaxBeginCmd:	"<19200><rts>"	# modem switches on fax receive
+#
+# Caller ID configuration setup for Supra.
+#
+#QualifyCID:		etc/cid		# CID access control list file
+#CIDNumber:		"NMBR = "	# pattern string for phone number info
+#CIDName:		"NAME = "	# pattern string for identity info
+Class2RecvDataTrigger:  "\022"          # character sent to modem to start recv
+
+
+
+
+
+
+
+

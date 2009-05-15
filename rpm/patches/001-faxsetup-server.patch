@@ -1,0 +1,13 @@
+diff --git a/etc/faxsetup.sh.in b/etc/faxsetup.sh.in
+index c8859c6..51bb5b2 100644
+--- a/etc/faxsetup.sh.in
++++ b/etc/faxsetup.sh.in
+@@ -305,7 +305,7 @@ fi
+ # if nothing specified on command line, default client+server
+ if [ $isClient = no ] && [ $isServer = no ]; then
+     isClient=yes
+-    isServer=yes
++    rpm -q hylafas-server >/dev/null && isServer=yes
+ fi
+ 
+ #

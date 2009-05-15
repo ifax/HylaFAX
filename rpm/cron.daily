@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Run the daily report with conservative settings (delete as little as possible)
+# If you're short on disk space, you might want to tune this commandline.
+# Don't run faxcron if HylaFAX has not been setup using faxsetup.
+
+# 'man faxcron' for more info
+
+if [ -f /var/spool/hylafax/etc/setup.cache -o -f /var/spool/fax/etc/setup.cache ]; then
+    /usr/sbin/faxcron \
+        -info 60 \
+        -log 730 \
+        -rcv 3650 \
+        -tmp 7 | mail -s "HylaFAX Usage Report" faxmaster
+fi
+
+exit 0

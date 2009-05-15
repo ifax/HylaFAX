@@ -1,0 +1,215 @@
+#!/bin/sh
+#
+# chkconfig: 345 95 5
+# description: Starts and stops the HylaFAX server and queue manager \
+#              used to provide FAX services
+#
+
+### BEGIN INIT INFO
+# Provides: hylafax
+# Required-Start: $local_fs $network $syslog
+# Should-Start: hfaxd faxd
+# Required-Stop:
+# Default-Start: 3 4 5
+# Default-Stop: 0 1 2 6
+# Short-Description: Starts and stops the HylaFAX
+# Description: Starts and stops the HylaFAX server and queue manager \
+#              used to provide FAX services
+### END INIT INFO
+
+return_success=
+return_failure=
+
+# Source function library.
+if [ -f /etc/init.d/functions ] ; then
+  . /etc/init.d/functions
+  alias START_DAEMON=daemon
+  alias STATUS=status
+  alias ACTION=action
+elif [ -f /etc/rc.d/init.d/functions ] ; then
+  . /etc/rc.d/init.d/functions
+  alias START_DAEMON=daemon
+  alias STATUS=status
+  alias ACTION=action
+elif [ -f /lib/lsb/init-functions ]; then
+  . /lib/lsb/init-functions
+  alias START_DAEMON=start_daemon
+  alias STATUS=suse_status
+  alias ACTION=suse_action
+  return_success=$rc_done
+  return_failure=$rc_failed
+else
+  exit 0
+fi
+
+
+# HylaFAX spool directory
+if [ -d /var/spool/hylafax ]; then
+	SPOOL=/var/spool/hylafax
+else
+	SPOOL=/var/spool/fax
+fi
+
+HFAXD_ARGS=
+FAXQ_ARGS=
+
+# Source HylaFAX init script configuration
+if [ -f /etc/sysconfig/hylafax ] ; then
+  . /etc/sysconfig/hylafax
+fi
+
+# Put Extra args first as some may be needed before ports parameters
+if [ -n "$HFAXD_EXTRA_ARGS" ] ; then
+    HFAXD_ARGS=$HFAXD_EXTRA_ARGS
+fi
+
+# Bind to a specific address
+if [ -n "$HFAXD_LISTEN" ] ; then
+    HFAXD_ARGS="$HFAXD_ARGS -l $HFAXD_LISTEN"
+fi
+
+if [ "$HFAXD_OLD_PROTOCOL" = "yes" ] ; then
+    HFAXD_ARGS="$HFAXD_ARGS -o 4557"
+fi
+
+if [ -f "$SPOOL/etc/pagermap" ] ; then
+    HFAXD_ARGS="$HFAXD_ARGS -s snpp"
+fi
+
+HFAXD_ARGS="$HFAXD_ARGS -i hylafax"
+
+if [ "$SPOOL" != "/var/spool/hylafax" ] ; then
+    HFAXD_ARGS="$HFAXD_ARGS -q $SPOOL"
+    FAXQ_ARGS="$FAXQ_ARGS -q $SPOOL"
+fi
+
+start()	{
+	check_config || exit 1
+
+	echo -n "Starting HylaFAX queue manager (faxq): "
+	START_DAEMON /usr/sbin/faxq
+	RETVAL=$?
+	if [ $RETVAL -eq 0 ]; then
+		echo -e $return_success
+	else
+		echo -e $return_failure
+	fi
+
+	echo -n "Starting HylaFAX server (hfaxd): "
+	START_DAEMON /usr/sbin/hfaxd $HFAXD_ARGS
+	RETVAL2=$?
+	if [ $RETVAL2 -eq 0 ]; then
+		echo -e $return_success
+	else
+		echo -e $return_failure
+	fi
+	
+	reset_faxgetty
+	
+	[ $RETVAL -eq 0 -a $RETVAL2 -eq 0 ] && \
+		touch /var/lock/subsys/hylafax ||  RETVAL=1
+        return $RETVAL
+}
+
+stop() {
+	ACTION "Shutting down HylaFAX queue manager (faxq): " /usr/sbin/faxquit
+	RETVAL=$?
+	
+	echo -n "Shutting down HylaFAX server (hfaxd): "
+	killproc hfaxd
+	RETVAL2=$?
+	if [ $RETVAL2 -eq 0 ]; then
+		echo -e $return_success
+	else
+		echo -e $return_failure
+	fi
+	
+	[ $RETVAL -eq 0 -a $RETVAL2 -eq 0 ] && \
+		rm -f /var/lock/subsys/hylafax || RETVAL=1
+	return $RETVAL
+}
+
+restart() {
+	stop
+	start
+}
+
+suse_action() {
+	echo -n $1
+	$2
+	RETVAL=$?
+	if [ $RETVAL -eq 0 ]; then
+		echo -e $return_success
+	else
+		echo -e $return_failure
+	fi
+	return $RETVAL
+}
+
+suse_status() {
+	checkproc $1
+	rc_status -v
+}
+
+hfstatus() {
+	echo -n "HylaFAX client-server protocol server: "
+	STATUS hfaxd
+	echo -n "HylaFAX queue manager process: "
+	STATUS faxq
+}
+
+check_config()	{
+	test -f $SPOOL/etc/setup.cache || {
+		cat<<-EOF
+ 
+		HylaFAX FATAL ERROR: $SPOOL/etc/setup.cache is missing!
+ 
+		The file $SPOOL/etc/setup.cache is not present. 
+		This probably means the machine has not been setup using the 
+		faxsetup(8C) command.  Read the documentation on setting up
+		HylaFAX before you startup a server system.
+ 
+		EOF
+    		
+		exit 1	
+	}
+}
+
+reset_faxgetty () {
+	pids=`pidofproc faxgetty`
+	if [ -n "$pids" ] && ps h $pids >/dev/null 2>&1; then
+		echo -n "Restarting HylaFAX modem manager (faxgetty):"
+		# will be respawned from /etc/inittab
+		killproc faxgetty
+		if [ $? -eq 0 ]; then
+			echo -e $return_success
+		else
+			echo -e $return_failure
+		fi
+	fi	
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  status)
+	hfstatus
+	;;
+  restart|reload)
+	restart
+	;;
+  condrestart)
+	[ -f /var/lock/subsys/hylafax ] && restart
+	;;
+  *)
+	echo "Usage: $0 {start|stop|status|restart|reload|condrestart}"
+	exit 1
+	;;
+esac
+
+exit $?
+
