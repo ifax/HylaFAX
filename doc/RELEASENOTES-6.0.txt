@@ -1,4 +1,4 @@
-HylaFAX 6.0.0
+HylaFAX 6.0.1
 
 Overview
 -----------------------------------------------------------------------------
@@ -325,3 +325,9 @@ Changes for HylaFAX 6.0
 * Select between Q and B encoding according to data to encode (2009-03-20)
 * notify: Don't send blocked notifications as "requeued" (2009-03-27)
 * configure/build: Multiple cleanups for portablity and simplicity (2009-04-23)
+
+CHANGES for 6.0.1
+-----------------------------------------------------------------------------
+* Cleanup distrules (2009-05-15)
+* Adds RPM building right from tarball (2009-05-15)
+* templates: Update Polish translation (2009-05-15)
