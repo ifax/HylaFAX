@@ -35,6 +35,7 @@ extern "C" {
 #include <net/errno.h>
 #endif
 #include <netdb.h>
+#include <netinet/in.h>
 }
 
 /*
