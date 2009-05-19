@@ -1,6 +1,6 @@
 %define name        hylafax
 %define version     6.0.1
-%define pkg_release 1
+%define pkg_release 2
 
 #
 ## OS version detection
@@ -229,11 +229,6 @@ rm -f $RPM_BUILD_ROOT%{_mandir}/man1/sgi2fax.1
 rm -f $RPM_BUILD_ROOT%{faxspool}/etc/xferfaxlog 
 rm -f $RPM_BUILD_ROOT%{faxspool}/COPYRIGHT
 
-# And move some files that we should fix up in HylaFAX
-mv $RPM_BUILD_ROOT%{_sbindir}/faxwatch $RPM_BUILD_ROOT%{_bindir}
-mv $RPM_BUILD_ROOT%{_sbindir}/textfmt $RPM_BUILD_ROOT%{_bindir}
-mv $RPM_BUILD_ROOT%{_sbindir}/edit-faxcover $RPM_BUILD_ROOT%{_bindir}
-
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
@@ -432,8 +427,11 @@ fi
 %doc CONTRIBUTORS COPYRIGHT INSTALL README TODO VERSION README.rpm doc/*.txt
 %{_libdir}/*
 %{_bindir}/*
+%{_sbindir}/edit-faxcover
 %{_sbindir}/faxsetup
 %{_sbindir}/faxsetup.linux
+%{_sbindir}/faxwatch
+%{_sbindir}/textfmt
 %attr(644,root,root) %{_mandir}/man1/*
 %attr(644,root,root) %{_mandir}/man5/dialrules.5f.gz
 %attr(644,root,root) %{_mandir}/man5/pagesizes.5f.gz
@@ -451,6 +449,9 @@ fi
 %attr(644,root,root) %config(noreplace) %{_sysconfdir}/hylafax/typerules
 
 %changelog
+* Tue May 19 2009 Aidan Van Dyk <aidan@ifax.com> 6.0.1-2
+  - Don't move client sbin progs to bin
+
 * Fri May 15 2009 Patrice Fournier <patrice.fournier@ifax.com> 6.0.1-1
   - Update to official 6.0.0 release
 
