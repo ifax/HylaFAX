@@ -785,6 +785,7 @@ HYLAFAXSRC=\
 	rpm/init                                                              \
 	rpm/jobcontrol.sh                                                     \
 	rpm/logrotate.conf                                                    \
+	rpm/patches/001-faxsetup-server.patch                                 \
 	rpm/setup.cache                                                       \
 	rpm/setup.modem                                                       \
 	rpm/sysconfig                                                         \
