@@ -155,7 +155,7 @@ FaxClient::setupHostModem(const fxStr& s)
     } else
 	host = s;
 
-    if (host[0] == '[')
+    if (host.length() && host[0] == '[')
     {
 	host.remove(0,1);
 	pos = host.next(0,']');
