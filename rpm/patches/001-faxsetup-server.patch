@@ -7,7 +7,7 @@ index c8859c6..51bb5b2 100644
  if [ $isClient = no ] && [ $isServer = no ]; then
      isClient=yes
 -    isServer=yes
-+    rpm -q hylafas-server >/dev/null && isServer=yes
++    rpm -q hylafax-server >/dev/null && isServer=yes
  fi
  
  #
