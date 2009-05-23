@@ -87,11 +87,11 @@ InetSuperServer::startServer(void)
 	 * Somethings broken here, let's pick some conservative defaults
 	 */
 	memset(&addr, 0, sizeof(addr));
-	addr.family = AF_INET;
+	Socket::family(addr) = AF_INET;
 	addr.in.sin_port = htons(FAX_DEFPORT);
     }
 
-    int s = socket(addr.family, SOCK_STREAM, 0);
+    int s = socket(Socket::family(addr), SOCK_STREAM, 0);
     if (s >= 0) {
 	int on = 1;
 	if (Socket::setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) >= 0) {
@@ -119,7 +119,7 @@ InetFaxServer::InetFaxServer()
     swaitint = 5;			// interval between retries
 
     memset(&data_dest, 0, sizeof (data_dest));
-    data_dest.family = AF_INET6;	// We'll allow AF_INET6 by default.
+    Socket::family(data_dest) = AF_INET6;	// We'll allow AF_INET6 by default.
 
     hostent* hp = Socket::gethostbyname(hostname);
 
@@ -211,7 +211,7 @@ logDebug("checkHostIdentity(\"%s\")", name);
     if (getaddrinfo(name, NULL, &hints, &ai) == 0) {
 	for (struct addrinfo *aip = ai; aip != NULL; aip = aip->ai_next) {
 	    Socket::Address *addr = (Socket::Address*)aip->ai_addr;
-	    if (aip->ai_family != peer_addr.family)
+	    if (aip->ai_family != Socket::family(peer_addr))
 		continue;
 	    if ( (aip->ai_family == AF_INET6 &&
 		     memcmp(&addr->in6.sin6_addr, &peer_addr.in6.sin6_addr, sizeof(struct in6_addr)) ==0)
@@ -287,7 +287,7 @@ InetFaxServer::setupNetwork(int fd)
 
     char hostbuf[128];
 
-    remoteaddr = inet_ntop(peer_addr.family, Socket::addr(peer_addr), hostbuf, sizeof(hostbuf));
+    remoteaddr = inet_ntop(Socket::family(peer_addr), Socket::addr(peer_addr), hostbuf, sizeof(hostbuf));
 
     getnameinfo((struct sockaddr*)&peer_addr, Socket::socklen(peer_addr),
 		    hostbuf, sizeof(hostbuf), NULL, 0, 0);
@@ -378,8 +378,8 @@ InetFaxServer::passiveCmd(void)
 {
     if (tokenBody[0] == 'E') {
 	pasv_addr = ctrl_addr;
-	logDebug("Extended passive requested for family %d", pasv_addr.family);
-	pdata = socket(pasv_addr.family, SOCK_STREAM, 0);
+	logDebug("Extended passive requested for family %d", Socket::family(pasv_addr));
+	pdata = socket(Socket::family(pasv_addr), SOCK_STREAM, 0);
 	if (pdata >= 0) {
 	    Socket::port(pasv_addr) = 0;
 	    if (!setupPassiveDataSocket(pdata, pasv_addr))
@@ -392,7 +392,7 @@ InetFaxServer::passiveCmd(void)
 	    perror_reply(425, "Cannot setup extended passive connection", errno);
 	return;
     }
-    if (ctrl_addr.family != AF_INET) {
+    if (Socket::family(ctrl_addr) != AF_INET) {
 	reply(500, "Cannot use PASV with IPv6 connections");
 	return;
     }
@@ -444,7 +444,7 @@ InetFaxServer::getDataSocket(const char* mode)
 {
     if (data >= 0)
         return (fdopen(data, mode));
-    int s = socket(data_dest.family, SOCK_STREAM, 0);
+    int s = socket(Socket::family(data_dest), SOCK_STREAM, 0);
     if (s < 0)
         goto bad;
     { int on = 1;

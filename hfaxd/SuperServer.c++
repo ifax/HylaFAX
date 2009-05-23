@@ -68,7 +68,7 @@ SuperServer::inputReady(int fd)
 	_exit(-1);
     }
 #ifdef IPV6_ADDRFORM
-    if (addr.family == AF_INET6) {
+    if (Socket::family(addr) == AF_INET6) {
 	struct in6_addr& a = addr.in6.sin6_addr;
 	if ( (a.s6_addr32[0] == 0 && a.s6_addr32[1] == 0 && a.s6_addr32[2] == htonl(0xFFFF))  ||
 	     (a.s6_addr32[0] == 0 && a.s6_addr32[1] == 0 && a.s6_addr32[2] == 0 && ntohl(a.s6_addr32[3]) > 1) ) {
