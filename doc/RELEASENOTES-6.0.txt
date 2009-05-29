@@ -1,4 +1,4 @@
-HylaFAX 6.0.1
+HylaFAX 6.0.2
 
 Overview
 -----------------------------------------------------------------------------
@@ -331,3 +331,13 @@ CHANGES for 6.0.1
 * Cleanup distrules (2009-05-15)
 * Adds RPM building right from tarball (2009-05-15)
 * templates: Update Polish translation (2009-05-15)
+
+CHANGES for 6.0.2
+-----------------------------------------------------------------------------
+* distrules: Add rpm patches (2009-05-19)
+* RPM spec:  Don't try and force all client programs to $BIN (2009-05-19)
+* Socket.h:  OpenBSD portability (2009-05-19)
+* FaxClient: Apparently <modem>@ is used and common (2009-05-22)
+* Have RPM patched faxsetup check for the right -server package name to detect
+  server installation. (2009-05-22)
+* Socket fixes for BSD 4.4 sockets (2009-05-23)

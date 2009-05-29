@@ -1,6 +1,6 @@
 %define name        hylafax
-%define version     6.0.1
-%define pkg_release 3
+%define version     6.0.2
+%define pkg_release 1
 
 #
 ## OS version detection
@@ -449,6 +449,9 @@ fi
 %attr(644,root,root) %config(noreplace) %{_sysconfdir}/hylafax/typerules
 
 %changelog
+* Fri May 2 2009 Patrice Fournier <patrice.fournier@ifax.com> 6.0.2-1
+  - Update to official 6.0.2 release
+
 * Fri May 22 2009 Patrice Fournier <patrice.fournier@ifax.com> 6.0.1-3
   - Check for the right server package name in faxsetup (Simon Matter)
 
