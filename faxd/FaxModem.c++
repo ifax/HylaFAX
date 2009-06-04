@@ -756,8 +756,6 @@ FaxModem::recvResetPage(TIFF* tif)
 void
 FaxModem::countPage(PageType pt)
 {
-logDebug("FaxModem::countPage(%s)", pt == PAGE_NORMAL ? "PAGE_NORMAL" :
-				(pt == PAGE_COVER ? "PAGE_COVER" : "PAGE_SKIP") );
     pageNumber++;
     pageNumberOfJob++;
     pageNumberOfCall++;
