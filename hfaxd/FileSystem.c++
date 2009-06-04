@@ -249,10 +249,6 @@ HylaFAXServer::dirLookup(ino_t ino)
 bool
 HylaFAXServer::checkFileRights(int op, const struct stat& sb)
 {
-logDebug("checkFileRights:%s %o [%u:%u] %o",
-		IS(PRIVILEGED) ? " *ADMIN*" : "",
-		op, uid, sb.st_gid, sb.st_mode);
-
     if (IS(PRIVILEGED))
 	return (true);
 

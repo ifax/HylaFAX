@@ -405,8 +405,6 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 		protoTrace("Skipping page %d", FaxModem::getPageNumberOfCall());
 		signalRcvd = FCF_MCF;
 	}
-logDebug(" * * * PAGE SENT: %s", pt == PAGE_NORMAL ? "PAGE_NORMAL" :
-					(pt == PAGE_COVER ? "PAGE_COVER" : "PAGE_SKIP"));
 	int ncrp = 0;
 	u_int ppr;
 	do {
