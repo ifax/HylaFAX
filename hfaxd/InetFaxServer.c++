@@ -484,9 +484,6 @@ InetFaxServer::dataConnect(void)
 FILE*
 InetFaxServer::openDataConn(const char* mode, int& code)
 {
-logDebug("openDataConn(\"%s\", %p)", mode, &code);
-logDebug(" `-> pdata = %d", pdata);
-logDebug(" `-> data = %d", data);
     byte_count = 0;
     if (pdata >= 0) {			// passive mode, wait for connection
         struct sockaddr_in from;
