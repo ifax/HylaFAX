@@ -1324,8 +1324,8 @@ bad:
  * or other data connection-based transfer.
  */
 bool
-FaxClient::recvData(bool (*f)(int, const char*, int, fxStr&),
-    int arg, fxStr& emsg, u_long restart, const char* fmt, ...)
+FaxClient::recvData(bool (*f)(void*, const char*, int, fxStr&),
+    void* arg, fxStr& emsg, u_long restart, const char* fmt, ...)
 {
     if ((!setMode(MODE_S)) ||
 	(!initDataConn(emsg)) ||

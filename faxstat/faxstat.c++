@@ -46,7 +46,7 @@ faxStatApp::faxStatApp() {}
 faxStatApp::~faxStatApp() {}
 
 static bool
-writeStdout(int, const char* buf, int cc, fxStr&)
+writeStdout(void*, const char* buf, int cc, fxStr&)
 {
     (void) Sys::write(STDOUT_FILENO, buf, cc);
     return (true);
@@ -102,7 +102,7 @@ faxStatApp::run(int argc, char** argv)
     if (callServer(emsg)) {
 	if (login(NULL, emsg)) {
 	    if (checkInfo)
-		(void) recvData(writeStdout, 0, emsg, 0,
+		(void) recvData(writeStdout, NULL, emsg, 0,
 		    "RETR " FAX_STATUSDIR "/any." FAX_INFOSUF);
 	    for (u_int i = 0, n = dirs.length(); i < n; i++) {
 		header = (i > 0 ? "\n" : "");
