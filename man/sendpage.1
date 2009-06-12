@@ -35,6 +35,9 @@ sendpage \- submit a pager job for transmission
 .SH SYNOPSIS
 .B sendpage
 [
+.B \-O
+.I config
+] [
 .I options
 ] [
 .IR message ...
@@ -224,6 +227,16 @@ Do not notify the sender by electronic mail when the
 page has been delivered to the service provider (default).
 This option is meaningful only when communicating with a
 \*(Fx server.
+.TP 12
+.BI \-O " config"
+Treat
+.I config
+as a configuration parameter specification that is interpreted
+after reading the configuration file.
+For example, ``\-O Host:fax.example.com'' would set the
+.B Host
+configuration parameter to ``fax.example.com'', overriding any setting in
+the configuration file.
 .TP 12
 .BI \-p " PIN"
 The Pager Identification Number (\s-1PIN\s+1) for a terminal 

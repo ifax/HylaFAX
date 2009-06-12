@@ -64,10 +64,13 @@ faxFetchApp::run(int argc, char** argv)
     fxStr op = "RETR ";
     u_int mode = MODE_S;
     u_long page = 0;
-    while ((c = Sys::getopt(argc, argv, "h:o:p:svz")) != -1)
+    while ((c = Sys::getopt(argc, argv, "h:o:O:p:svz")) != -1)
 	switch (c) {
 	case 'h':			// server's host
 	    setHost(optarg);
+	    break;
+	case 'O':
+	    readConfigItem(optarg);
 	    break;
 	case 'p':			// retrieve page
 	    op = "RETP ";

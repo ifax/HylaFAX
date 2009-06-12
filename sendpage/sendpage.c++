@@ -83,7 +83,7 @@ sendPageApp::run(int argc, char** argv)
     fxStr emsg;
     bool noText = false;		// default is to assume message text
     SNPPJob& proto = getProtoJob();
-    while ((c = Sys::getopt(argc, argv, "a:De:f:h:i:I:l:nNp:qRs:t:T:v")) != -1)
+    while ((c = Sys::getopt(argc, argv, "a:De:f:h:i:I:l:nNO:p:qRs:t:T:v")) != -1)
 	switch (c) {
 	case 'a':			// time at which to transmit page
 	    if (!proto.setHoldTime(optarg, emsg)) {
@@ -115,6 +115,9 @@ sendPageApp::run(int argc, char** argv)
 	    break;
 	case 'N':			// no notification
 	    proto.setNotification("none");
+	    break;
+	case 'O':
+	    readConfigItem(optarg);
 	    break;
 	case 'p':			// PIN
 	    addJob().setPIN(optarg);

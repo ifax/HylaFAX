@@ -88,7 +88,7 @@ main(int argc, char* argv[])
     fmt.readConfig(FAX_USERCONF);
 
     prog = argv[0];
-    while ((c = Sys::getopt(argc, argv, "f:F:m:M:o:p:s:V:12BcDGrRU")) != -1)
+    while ((c = Sys::getopt(argc, argv, "f:F:m:M:o:O:p:s:V:12BcDGrRU")) != -1)
 	switch(c) {
 	case '1':		// 1-column output
 	case '2':		// 2-column output
@@ -128,6 +128,9 @@ main(int argc, char* argv[])
 	    break;
 	case 'o':		// outline columns
 	    fmt.setOutlineMargin(TextFormat::inch(optarg));
+	    break;
+	case 'O':
+	    fmt.readConfigItem(optarg);
 	    break;
 	case 'p':		// text point size
 	    fmt.setTextPointSize(TextFormat::inch(optarg));

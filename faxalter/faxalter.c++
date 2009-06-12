@@ -100,7 +100,7 @@ faxAlterApp::run(int argc, char** argv)
     int rc;
 
     int c;
-    while ((c = Sys::getopt(argc, argv, "Ca:d:h:k:m:n:P:t:ADQRgprv")) != -1)
+    while ((c = Sys::getopt(argc, argv, "Ca:d:h:k:m:n:O:P:t:ADQRgprv")) != -1)
 	switch (c) {
 	case 'C':
 	    errorexit = false;
@@ -199,6 +199,9 @@ faxAlterApp::run(int argc, char** argv)
 		script.append(optarg);
 		script.append("\n");
 	    }
+	    break;
+	case 'O':
+	    readConfigItem(optarg);
 	    break;
 	case 'p':			// send now (push)
 	    script.append(groups ? "JGPARM " : "JPARM ");

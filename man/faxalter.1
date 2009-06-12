@@ -33,6 +33,9 @@ faxalter \- alter parameters of a \*(Fx job queued for transmission
 .SH SYNOPSIS
 .B faxalter
 [
+.B \-O
+.I config
+] [
 .I options
 ]
 .IR id ...
@@ -115,6 +118,16 @@ Assign/reassign the jobs to the specified
 Specifying ``any'' for
 .I modem
 causes the jobs to be scheduled for any available modem.
+.TP 10
+.BI \-O " config"
+Treat
+.I config
+as a configuration parameter specification that is interpreted
+after reading the configuration file.
+For example, ``\-O Host:fax.example.com'' would set the
+.B Host
+configuration parameter to ``fax.example.com'', overriding any setting in
+the configuration file.
 .TP 10
 .B \-p
 The jobs should be

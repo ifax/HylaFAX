@@ -73,7 +73,7 @@ watchApp::run(int argc, char** argv)
     readConfig(FAX_SYSCONF);
     readConfig(FAX_USERCONF);
 
-    while ((c = Sys::getopt(argc, argv, "gh:lv")) != -1)
+    while ((c = Sys::getopt(argc, argv, "gh:lO:v")) != -1)
 	switch (c) {
 	case 'g':
 	    setTimeZone(TZ_GMT);
@@ -83,6 +83,9 @@ watchApp::run(int argc, char** argv)
 	    break;
 	case 'l':
 	    setTimeZone(TZ_LOCAL);
+	    break;
+	case 'O':
+	    readConfigItem(optarg);
 	    break;
 	case 'v':			// verbose mode
 	    setvbuf(stdout, NULL, _IOLBF, BUFSIZ);

@@ -63,7 +63,7 @@ faxStatApp::run(int argc, char** argv)
     dirs.append(FAX_STATUSDIR);		// server status
     bool checkInfo = false;
     int c;
-    while ((c = Sys::getopt(argc, argv, "h:adgfilrsv")) != -1)
+    while ((c = Sys::getopt(argc, argv, "h:adgfilO:rsv")) != -1)
 	switch (c) {
 	case 'a':			// display archived jobs
 	    dirs.append(FAX_ARCHDIR);
@@ -85,6 +85,9 @@ faxStatApp::run(int argc, char** argv)
 	    break;
 	case 'l':			// use local timezone for dates & times
 	    setTimeZone(TZ_LOCAL);
+	    break;
+	case 'O':
+	    readConfigItem(optarg);
 	    break;
 	case 'r':			// display receive queue
 	    dirs.append(FAX_RECVDIR);

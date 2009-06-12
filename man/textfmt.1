@@ -34,6 +34,9 @@ textfmt \- convert text to \*(Ps\(rg for facsimile transmission
 .SH SYNOPSIS
 .B ${LIBEXEC}/textfmt
 [
+.B \-O
+.I config
+] [
 .I options
 ] [
 .IR files ...
@@ -111,6 +114,16 @@ left and right .25 inch, top .85 inch, bottom .5 inch.
 .B \-o
 Draw an outline around each column of text; the specified number 
 defines the width of the line that is drawn.
+.TP
+.BI \-O " config"
+Treat
+.I config
+as a configuration parameter specification that is interpreted
+after reading the configuration file.
+For example, ``\-O Host:fax.example.com'' would set the
+.B Host
+configuration parameter to ``fax.example.com'', overriding any setting in
+the configuration file.
 .TP
 .BI \-p " pts"
 Set text using fonts with

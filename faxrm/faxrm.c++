@@ -59,7 +59,7 @@ faxRmApp::run(int argc, char** argv)
     bool docs = false;
     bool useadmin = false;
 
-    while ((c = Sys::getopt(argc, argv, "ah:dv")) != -1)
+    while ((c = Sys::getopt(argc, argv, "ah:dO:v")) != -1)
 	switch (c) {
 	case 'a':
 	    useadmin = true;
@@ -70,6 +70,9 @@ faxRmApp::run(int argc, char** argv)
 	    break;
 	case 'h':			// server's host
 	    setHost(optarg);
+	    break;
+	case 'O':
+	    readConfigItem(optarg);
 	    break;
 	case 'v':
 	    setVerbose(true);

@@ -93,7 +93,7 @@ sendFaxApp::run(int argc, char** argv)
     int verbose = 0;
     SendFaxJob& proto = getProtoJob();
     db = new FaxDB(tildeExpand(dbName));
-    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:o:P:r:s:S:t:T:U:V:W:x:X:y:Y:z:Z:123lmnpvwADEGNR")) != -1) {
+    while ((c = Sys::getopt(argc, argv, "a:b:B:c:C:d:f:F:h:i:I:k:M:o:O:P:r:s:S:t:T:U:V:W:x:X:y:Y:z:Z:123lmnpvwADEGNR")) != -1) {
         if (c != 'h')
             optionsUsed = false;
         switch (c) {
@@ -172,6 +172,9 @@ sendFaxApp::run(int argc, char** argv)
             break;
 	case 'o':			// specify owner
 	    owner = optarg;
+	    break;
+	case 'O':
+	    readConfigItem(optarg);
 	    break;
         case 'p':			// submit polling request
             addPollRequest();

@@ -34,6 +34,9 @@ sendfax \- submit a facsimile job for transmission
 .SH SYNOPSIS
 .B sendfax
 [
+.B \-O
+.I config
+] [
 .I options
 ] [
 .IR files ...
@@ -463,6 +466,16 @@ Specify the fax owner login name, replacing any
 environment variable that may be set for the same purpose.
 If neither is specified, the user's 
 current login name is used.
+.TP 12
+.BI \-O " config"
+Treat
+.I config
+as a configuration parameter specification that is interpreted
+after reading the configuration file.
+For example, ``\-O Host:fax.example.com'' would set the
+.B Host
+configuration parameter to ``fax.example.com'', overriding any setting in
+the configuration file.
 .TP 12
 .B \-p
 Poll each destination for any available documents.

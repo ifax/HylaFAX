@@ -33,6 +33,9 @@ faxstat \- display \*(Fx status
 .SH SYNOPSIS
 .B faxstat
 [
+.B \-O
+.I config
+] [
 .I options
 ]
 .SH DESCRIPTION
@@ -157,6 +160,16 @@ The
 .B RcvFmt
 string defines the content and format of information reported with
 this option (see below).
+.TP 10
+.BI \-O " config"
+Treat
+.I config
+as a configuration parameter specification that is interpreted
+after reading the configuration file.
+For example, ``\-O Host:fax.example.com'' would set the
+.B Host
+configuration parameter to ``fax.example.com'', overriding any setting in
+the configuration file.
 .TP 10
 .B \-s
 Display the status of jobs in the send queue on the server machine.

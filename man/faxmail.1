@@ -34,6 +34,9 @@ faxmail \- \*(Fx mail-to-fax gateway application
 .SH SYNOPSIS
 .B faxmail
 [
+.B \-O
+.I config
+] [
 .I options
 ] [
 .I destination
@@ -312,6 +315,16 @@ Suppress auto cover page generation.
 .TP 10
 .B \-N
 Suppress formatting of mail envelope headers.
+.TP 10
+.BI \-O " config"
+Treat
+.I config
+as a configuration parameter specification that is interpreted
+after reading the configuration file.
+For example, ``\-O Host:fax.example.com'' would set the
+.B Host
+configuration parameter to ``fax.example.com'', overriding any setting in
+the configuration file.
 .TP 10
 .BI \-p " size"
 Set all text using

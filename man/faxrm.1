@@ -37,6 +37,9 @@ faxrm \- remove a \*(Fx job or document from a server
 ] [
 .B \-d
 ] [
+.B \-O
+.I config
+] [
 .B \-v
 ] [
 .B \-h
@@ -113,6 +116,16 @@ per-user file and then in the system-wide file).
 If all of the above fails, then
 .I faxrm
 attempts to contact a server on the machine where it is run.
+.TP 10
+.BI \-O " config"
+Treat
+.I config
+as a configuration parameter specification that is interpreted
+after reading the configuration file.
+For example, ``\-O Host:fax.example.com'' would set the
+.B Host
+configuration parameter to ``fax.example.com'', overriding any setting in
+the configuration file.
 .TP
 .B \-v
 Trace the protocol messages to and from the server.

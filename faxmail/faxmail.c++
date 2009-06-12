@@ -158,7 +158,7 @@ faxMailApp::run(int argc, char** argv)
     readConfig(FAX_LIBDATA "/faxmail.conf");
     readConfig(FAX_USERCONF);
 
-    while ((c = Sys::getopt(argc, argv, "12b:cC:df:H:i:M:nNp:rRs:t:Tu:vW:")) != -1)
+    while ((c = Sys::getopt(argc, argv, "12b:cC:df:H:i:M:nNO:p:rRs:t:Tu:vW:")) != -1)
 	switch (c) {
 	case '1': case '2':		// format in 1 or 2 columns
 	    setNumberOfColumns(c - '0');
@@ -192,6 +192,9 @@ faxMailApp::run(int argc, char** argv)
 	    break;
 	case 'N':
 	    formatEnvHeaders = false;
+	    break;
+	case 'O':
+	    readConfigItem(optarg);
 	    break;
 	case 'p':			// point size
 	    setTextPointSize(TextFormat::inch(optarg));
