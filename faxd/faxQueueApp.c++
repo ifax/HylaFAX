@@ -140,6 +140,13 @@ faxQueueApp::initialize(int argc, char** argv)
     updateConfig(configFile);		// read config file
     faxApp::initialize(argc, argv);
 
+    for (GetoptIter iter(argc, argv, getOpts()); iter.notDone(); iter++)
+	switch (iter.option()) {
+	case 'c':			// set configuration parameter
+	    readConfigItem(iter.optArg());
+	    break;
+	}
+
     logInfo("%s", HYLAFAX_VERSION);
     logInfo("%s", "Copyright (c) 1990-1996 Sam Leffler");
     logInfo("%s", "Copyright (c) 1991-1996 Silicon Graphics, Inc.");
@@ -3838,7 +3845,7 @@ main(int argc, char** argv)
 
     faxApp::setupPermissions();
 
-    faxApp::setOpts("q:D");
+    faxApp::setOpts("q:Dc:");
 
     bool detach = true;
     fxStr queueDir(FAX_SPOOLDIR);

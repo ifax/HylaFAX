@@ -37,6 +37,9 @@ faxq \- \*(Fx queue manager process
 ] [
 .B \-q
 .I queue-dir
+] [
+.B \-c
+.I config
 ]
 .SH DESCRIPTION
 .I faxq
@@ -128,6 +131,16 @@ will
 .IR fork (2)
 and disassociate itself from the controlling tty.
 This option is useful for debugging.
+.TP 10
+.BI \-c " config"
+Treat
+.I config
+as a configuration parameter specification that is interpreted
+after reading the configuration file.
+For example, ``-c servertracing:0x4f'' would set the
+.B ServerTracing
+configuration parameter to ``0x4f'', overriding any setting in
+the configuration file.
 .SH FILES
 .ta \w'${SPOOL}/etc/config    'u
 .nf

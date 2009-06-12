@@ -43,6 +43,7 @@
 
 const char* HylaFAXServer::version = HYLAFAX_VERSION;
 int HylaFAXServer::_debugSleep = 0;
+fxStrArray HylaFAXServer::configOptions;
 
 /*
  * NB: The remainder of the instance state is
@@ -187,6 +188,8 @@ HylaFAXServer::initServer(void)
     resetConfig();
     readConfig(FAX_SYSCONF);
     readConfig(FAX_LIBDATA "/hfaxd.conf");
+    for (u_int i = 0; i < configOptions.length(); i++)
+	readConfigItem(configOptions[i]);
 }
 
 static void

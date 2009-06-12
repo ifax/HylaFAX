@@ -39,6 +39,9 @@ faxgetty \- \*(Fx front-door process
 ] [
 .B \-q
 .I queue-dir
+] [
+.B \-c
+.I config
 ]
 .I device
 .SH DESCRIPTION
@@ -131,6 +134,16 @@ The specified directory is treated as the spooling area.
 The default spooling area,
 .IR ${SPOOL} ,
 is defined at the time the software is built.
+.TP 10
+.BI \-c " config"
+Treat
+.I config
+as a configuration parameter specification that is interpreted
+after reading the per-device configuration file.
+For example, ``-c sessiontracing:0x4f'' would set the
+.B SessionTracing
+configuration parameter to ``0x4f'', overriding any setting in
+the configuration file.
 .SH FILES
 .ta \w'${SPOOL}/etc/config.\fIdevice\fP    'u
 .nf

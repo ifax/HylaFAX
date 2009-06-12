@@ -182,6 +182,7 @@ fxDECLARE_PtrArray(IOHandlerArray, IOHandler*)
 fxIMPLEMENT_PtrArray(IOHandlerArray, IOHandler*)
 static	IOHandlerArray handlers;
 
+
 static void
 newInetServer(void)
 {
@@ -206,7 +207,7 @@ main(int argc, char** argv, char** envp)
     optind = 1;
     opterr = 0;
     int c;
-    const char* opts = "dD:Hh:Ii:Oo:q:Ss:u:l:";
+    const char* opts = "c:dD:Hh:Ii:Oo:q:Ss:u:l:";
     /*
      * Deduce the spooling directory and whether or not to
      * detach the process from the controlling tty.  The
@@ -224,6 +225,10 @@ main(int argc, char** argv, char** envp)
     int detach = -1;			// unknown state
     while ((c = Sys::getopt(argc, argv, opts)) != -1)
 	switch (c) {
+	case 'c':
+	    HylaFAXServer::configOptions.append(optarg);
+	    break;
+
 	case 'h': case 'i': case 'o': case 's': case 'u':
 	    if (detach == -1)		// detach unless explicitly specified
 		detach = true;

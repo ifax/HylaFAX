@@ -190,6 +190,7 @@ public:
         bool		 def;
     };
     static int _debugSleep;
+    static fxStrArray	configOptions;		// Pased on the command line
 protected:
     u_int	state;
 #define	S_LOGGEDIN	0x0001		// client is logged in
