@@ -306,7 +306,14 @@ InetFaxServer::handleUrgentData(void)
     } else
 	pushCmdData(line, strlen(line));
 }
-void InetFaxServer::sigURG(int) { InetFaxServer::instance().handleUrgentData();}
+
+void
+InetFaxServer::sigURG(int)
+{
+    int old_errno = errno;
+    InetFaxServer::instance().handleUrgentData();
+    errno = old_errno;
+}
 
 void
 InetFaxServer::lostConnection(void)
@@ -316,7 +323,14 @@ InetFaxServer::lostConnection(void)
 	    (const char*) remotehost, (const char*) remoteaddr);
     dologout(-1);
 }
-void InetFaxServer::sigPIPE(int) { InetFaxServer::instance().lostConnection(); }
+
+void
+InetFaxServer::sigPIPE(int)
+{
+    int old_errno = errno;
+    InetFaxServer::instance().lostConnection();
+    errno = old_errno;
+}
 
 static bool
 setupPassiveDataSocket(int pdata, struct sockaddr_in& pasv_addr)

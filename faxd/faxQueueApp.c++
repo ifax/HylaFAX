@@ -409,9 +409,11 @@ faxQueueApp::prepareJobNeeded(Job& job, FaxRequest& req, JobStatus& status)
 void
 faxQueueApp::prepareCleanup(int s)
 {
+    int old_errno = errno;
     signal(s, fxSIGHANDLER(faxQueueApp::prepareCleanup));
     logError("CAUGHT SIGNAL %d, ABORT JOB PREPARATION", s);
     faxQueueApp::instance().abortPrepare = true;
+    errno = old_errno;
 }
 
 /*
