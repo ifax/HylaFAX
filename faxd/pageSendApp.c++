@@ -25,6 +25,7 @@
  */
 #include <sys/types.h>
 #include <unistd.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <sys/file.h>
@@ -1389,11 +1390,13 @@ usage(const char* appName)
 static void
 sigCleanup(int s)
 {
+    int old_errno = errno;
     signal(s, fxSIGHANDLER(sigCleanup));
     logError("CAUGHT SIGNAL %d", s);
     pageSendApp::instance().close();
     if (!pageSendApp::instance().isRunning())
 	_exit(send_failed);
+    errno = old_errno;
 }
 
 int
