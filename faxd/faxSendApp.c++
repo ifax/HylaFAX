@@ -451,11 +451,13 @@ usage(const char* appName)
 static void
 sigCleanup(int s)
 {
+    int old_errno = errno;
     signal(s, fxSIGHANDLER(sigCleanup));
     logError("CAUGHT SIGNAL %d", s);
     faxSendApp::instance().close();
     if (!faxSendApp::instance().isRunning())
 	_exit(send_failed);
+    errno = old_errno;
 }
 
 int
