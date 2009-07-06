@@ -1,4 +1,4 @@
-HylaFAX 6.0.2
+HylaFAX 6.0.3
 
 Overview
 -----------------------------------------------------------------------------
@@ -341,3 +341,9 @@ CHANGES for 6.0.2
 * Have RPM patched faxsetup check for the right -server package name to detect
   server installation. (2009-05-22)
 * Socket fixes for BSD 4.4 sockets (2009-05-23)
+
+CHANGES for 6.0.3
+-----------------------------------------------------------------------------
+* Remove debugging statements (2009-06-04)
+* More debug statements need to be removed (2009-06-04)
+* Signal handlers need to be careful with errno (2009-07-03)
