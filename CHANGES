@@ -1,7 +1,12 @@
 #	$Id$	
 
 Changelog for 4.3.8
-* POSIX constants can be set to -1 if the functionnality is unavailable (20 Jun 2009)
+* Signal handlers need to be careful with errno (03 Jul 2009)
+* configure: Work on deprecated CXX Headers (20 Apr 2009)
+* [pkg/postinstall.in] typo in cron example (17 Apr 2009)
+* [etc/faxaddmodem.sh.in etc/probemodem.sh.in] shell portability fix (17 Apr 2009)
+* configure:  Modern C++ compilers no-longer support the STL <file.h> syntax (3 Apr 2009)
+* POSIX constants can be set to -1 if the functionnality is unavailable (20 Mar 2009)
 * b64-encode.awk: Fix bug on old SCO awk (30 Jan 2009)
 * faxgetty/faxsend: Correct Include config file parsing (22 Jul 2008)
 * hfaxd: Fix RECV_START, RECV_PAGE, RECV_DOC triggers (22 Jul 2008)
