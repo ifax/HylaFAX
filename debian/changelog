@@ -1,3 +1,9 @@
+hylafax (2:6.0.3) unstable; urgency=low
+
+  * Update debian packaging for 6.0.3
+
+ -- Patrice Fournier <patrice.fournier@ifax.com>  Fri,  10 Jul 2009 11:46:01 -0400
+
 hylafax (2:6.0.2) unstable; urgency=low
 
   * Update debian packaging for 6.0.2

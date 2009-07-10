@@ -1,5 +1,5 @@
 %define name        hylafax
-%define version     6.0.2
+%define version     6.0.3
 %define pkg_release 1
 
 #
@@ -449,6 +449,9 @@ fi
 %attr(644,root,root) %config(noreplace) %{_sysconfdir}/hylafax/typerules
 
 %changelog
+* Fri Jul 10 2009 Patrice Fournier <patrice.fournier@ifax.com> 6.0.3-1
+  - Update to official 6.0.3 release
+
 * Fri May 29 2009 Patrice Fournier <patrice.fournier@ifax.com> 6.0.2-1
   - Update to official 6.0.2 release
 
