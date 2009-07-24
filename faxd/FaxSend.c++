@@ -898,17 +898,24 @@ FaxServer::notifyPageSent(FaxRequest& req, const char*, PageType pt)
     }
     req.writeQFile();			// update q file for clients
     u_short tpages = req.totpages;
-    if (! modem->isCountingSkippedPages() )
-	tpages -= req.skippages;
+    u_short npages = req.npages;
 
-    traceProtocol("SEND FAX (%s): FROM %s TO %s (page %u of %u sent in %s)"
-	, (const char*) req.commid
-	, (const char*) req.mailaddr
-	, (const char*) req.external
-	, req.npages
-	, tpages
-	, fmtTime(now - pageStart)
-    );
+    if (! modem->isCountingSkippedPages() )
+    {
+	tpages -= req.skippages;
+	npages -= req.nskip;
+    }
+
+    if (pt != FaxModem::PAGE_SKIP || modem->isCountingSkippedPages())
+	traceProtocol("SEND FAX (%s): FROM %s TO %s (page %u of %u[%u,%u,%u,%u]  sent in %s)"
+	    , (const char*) req.commid
+	    , (const char*) req.mailaddr
+	    , (const char*) req.external
+	    , npages
+	    , tpages
+	    , req.npages, req.totpages, req.nskip, req.skippages
+	    , fmtTime(now - pageStart)
+	);
     pageStart = now;			// for next page
 }
 
