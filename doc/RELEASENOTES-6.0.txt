@@ -1,4 +1,4 @@
-HylaFAX 6.0.0
+HylaFAX 6.0.3
 
 Overview
 -----------------------------------------------------------------------------
@@ -20,7 +20,7 @@ Overview
   removed.
 
 
-Upgrade to CVS from previous 4.4 releases
+Upgrade to 6.0 from previous 4.4 releases
 -----------------------------------------------------------------------------
   There are only 2 differences to note yet during the upgrade
   process, probably neither of which affect most people.
@@ -32,7 +32,7 @@ Upgrade to CVS from previous 4.4 releases
   default, as the jobs re not being requeued, or done.  To continue
   receiving them, you'll need to configure it in FaxNotify.
 
-Changes for HylaFAX 6.0
+Changes for HylaFAX 6.0.0
 -----------------------------------------------------------------------------
 * faxmail: don't submit an empty postscript file if no formatting was
   done (17 Aug 2007)
@@ -325,3 +325,25 @@ Changes for HylaFAX 6.0
 * Select between Q and B encoding according to data to encode (2009-03-20)
 * notify: Don't send blocked notifications as "requeued" (2009-03-27)
 * configure/build: Multiple cleanups for portablity and simplicity (2009-04-23)
+
+CHANGES for 6.0.1
+-----------------------------------------------------------------------------
+* Cleanup distrules (2009-05-15)
+* Adds RPM building right from tarball (2009-05-15)
+* templates: Update Polish translation (2009-05-15)
+
+CHANGES for 6.0.2
+-----------------------------------------------------------------------------
+* distrules: Add rpm patches (2009-05-19)
+* RPM spec:  Don't try and force all client programs to $BIN (2009-05-19)
+* Socket.h:  OpenBSD portability (2009-05-19)
+* FaxClient: Apparently <modem>@ is used and common (2009-05-22)
+* Have RPM patched faxsetup check for the right -server package name to detect
+  server installation. (2009-05-22)
+* Socket fixes for BSD 4.4 sockets (2009-05-23)
+
+CHANGES for 6.0.3
+-----------------------------------------------------------------------------
+* Remove debugging statements (2009-06-04)
+* More debug statements need to be removed (2009-06-04)
+* Signal handlers need to be careful with errno (2009-07-03)

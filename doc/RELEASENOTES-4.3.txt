@@ -227,3 +227,8 @@ CHANGES for 4.3.8
 * faxgetty/faxsend: Correct Include config file parsing (22 Jul 2008)
 * b64-encode.awk: Fix bug on old SCO awk (2009-01-30)
 * POSIX constants can be set to -1 if the functionnality is unavailable (2009-03-20)
+* configure:  Modern C++ compilers no-longer support the STL <file.h> syntax (2009-04-03)
+* [etc/faxaddmodem.sh.in etc/probemodem.sh.in] shell portability fix (2009-04-17)
+* [pkg/postinstall.in] typo in cron example (2009-04-17)
+* configure: Work on deprecated CXX Headers (2009-04-20)
+* Signal handlers need to be careful with errno (2009-07-03)

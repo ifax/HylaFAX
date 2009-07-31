@@ -1,0 +1,28 @@
+HylaFAX 6.1
+
+Overview
+-----------------------------------------------------------------------------
+  HylaFAX 6.1 is currently in development and no new features has been
+  commited yet.
+
+
+Upgrade to 6.1 from previous 6.0 releases
+-----------------------------------------------------------------------------
+  There are no special notes about upgrading from a 6.0 release.
+
+  For information about upgrading from a version prior to 6.0.0, see
+  the RELEASENOTES-6.0.txt documentation.
+
+
+Changes for HylaFAX 6.1.0
+-----------------------------------------------------------------------------
+* Cleanup distrules (2009-07-31)
+* Adds RPM building right from tarball (2009-07-31)
+* templates: Update Polish translation (2009-07-31)
+* Socket.h:  OpenBSD portability (2009-07-31)
+* FaxClient: Apparently <modem>@ is used and common (2009-07-31)
+* Socket fixes for BSD 4.4 sockets (2009-07-31)
+* Remove debugging statements (2009-07-31)
+* More debug statements need to be removed (2009-07-31)
+* Signal handlers need to be careful with errno (2009-07-31)
+* Page sent protocol trace fixes (2009-07-31)

@@ -227,7 +227,7 @@ HYLAFAXSRC=\
 	doc/RELEASENOTES-4.3.txt                                              \
 	doc/RELEASENOTES-4.4.txt                                              \
 	doc/RELEASENOTES-6.0.txt                                              \
-	doc/RELEASENOTES-CVS.txt                                              \
+	doc/RELEASENOTES-GIT.txt                                              \
 	etc/Makefile.in                                                       \
 	etc/copy.h                                                            \
 	etc/copy.m                                                            \
