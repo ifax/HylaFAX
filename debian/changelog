@@ -1,3 +1,9 @@
+hylafax (2:6.1~GIT) unstable; urgency=low
+
+  * Update debian packaging for 6.1-GIT
+
+ -- Patrice Fournier <pfournier@ifax.com>  Fri, 31 Jul 2009 10:38:54 -0400
+
 hylafax (2:6.0.0-rc1) unstable; urgency=low
 
   * Update debian packaging for 6.0.0
