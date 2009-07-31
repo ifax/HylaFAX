@@ -1,0 +1,60 @@
+
+Welcome to the README! Thanks for taking the time to find it ;-)
+
+First of all, thanks to my employer, iFAX Solutions for allowing me to
+maintain the Red Hat RPMS for HylaFAX on company time!
+
+For an introduction to the wonderful world of HylaFAX(tm), please see
+http://www.hylafax.org/. Beginners should head directly to the docs:
+
+	http://www.hylafax.org/content/Documentation
+
+
+If your company plans to deploy HylaFAX for something important, you
+should consider purchasing an annual support contract from hylafax.org's
+commercial sponsor (and my employer). For more details, see:
+
+	http://www.ifax.com/
+
+or send an email to the iFAX Sales Team <sales@ifax.com>. By doing so,
+you'll make sure you have knowledgable technicians to turn to in a
+crisis, and be supporting HylaFAX development at the same time.
+
+If you have a question which you think relates only to the RPM version
+of HylaFAX, please mail me directly, or post a bug on the HylaFAX bugzilla:
+
+        http://bugs.hylafax.org/
+
+If your question is a general one, please instead direct your query to
+the HylaFAX mailing list. For more info on the
+hylafax-users@hylafax.org mailing list see:
+
+	http://www.hylafax.org/content/Mailing_Lists
+
+One minor caution - HylaFAX creates several files during normal operation
+which are not "owned" by the RPM. As such, if you were to uninstall it,
+these files would have to be removed manually. They are:
+
+  /var/spool/hylafax/etc/config                  (faxsetup)
+  /var/spool/hylafax/etc/setup.cache             (faxsetup)
+  /var/spool/hylafax/etc/setup.modem             (faxsetup)
+  /var/spool/hylafax/etc/config.<device_name>    (faxaddmodem)
+  /var/spool/hylafax/FIFO.<device_name>          (faxaddmodem)
+  /var/spool/hylafax/dev/{null,socksys,tcp}      (hfaxd)
+  files in various subdirs of /var/spool/hylafax (normal usage: sent faxes,
+logs,..)
+
+You should also be aware of the following system modifications:
+  faxsetup adds the 'FaxMaster' alias in /etc/aliases.
+These 2 modifications are NOT undone when the RPM is uninstalled.
+ 
+If you think you have found a bug in the HylaFAX RPM, please report it at:
+
+	http://bugs.hylafax.org/bugzilla/enter_bug.cgi
+
+Choose the product HylaFAX Binary Packages, and then the RedHat Linux RPM.
+
+Enjoy!
+
+Darren Nickerson <darren.nickerson@ifax.com>
+

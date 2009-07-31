@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Run the fax queue cleaner with conservative settings (delete as little as possible)
+# If you're short on disk space, you might want to tune this commandline.
+
+# 'man faxqclean' for more info
+
+/usr/sbin/faxqclean -j 604800 -d 604800
+
+exit 0

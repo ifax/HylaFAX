@@ -774,6 +774,21 @@ HYLAFAXSRC=\
 	regex/regexec.c                                                       \
 	regex/regfree.c                                                       \
 	regex/utils.h                                                         \
+	rpm/FaxDispatch                                                       \
+	rpm/README.rpm                                                        \
+	rpm/config                                                            \
+	rpm/config.modem                                                      \
+	rpm/cron.daily                                                        \
+	rpm/cron.hourly                                                       \
+	rpm/hyla.conf                                                         \
+	rpm/hylafax.spec                                                      \
+	rpm/init                                                              \
+	rpm/jobcontrol.sh                                                     \
+	rpm/logrotate.conf                                                    \
+	rpm/patches/001-faxsetup-server.patch                                 \
+	rpm/setup.cache                                                       \
+	rpm/setup.modem                                                       \
+	rpm/sysconfig                                                         \
 	rules.in                                                              \
 	sendfax/Makefile.in                                                   \
 	sendfax/sendfax.c++                                                   \

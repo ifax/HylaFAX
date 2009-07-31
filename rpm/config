@@ -1,0 +1,7 @@
+LogFacility:		daemon
+CountryCode:		1
+AreaCode:		999
+LongDistancePrefix:	1
+InternationalPrefix:	011
+DialStringRules:	"etc/dialrules"
+ServerTracing:		1
