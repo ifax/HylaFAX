@@ -62,7 +62,7 @@ PORTFILES=\
 # source distribution, except for
 # manual pages.
 # This list is automatically built from:
-#	git ls-files -x 'man/*' -x 'port/*' -x .cvsignore
+#	git ls-files -x 'man/*' -x 'port/*' -x 'port/*/*' -x .cvsignore
 #
 HYLAFAXSRC=\
 	CONTRIBUTORS                                                          \
@@ -757,7 +757,6 @@ HYLAFAXSRC=\
 	po/nls.mk                                                             \
 	po/version.po.in                                                      \
 	po/vi.po                                                              \
-	port/irix/so_locations                                                \
 	regex/COPYRIGHT                                                       \
 	regex/Makefile.in                                                     \
 	regex/README                                                          \
@@ -1032,7 +1031,7 @@ release.tar:
 	VERSION=`cat ${SRCDIR}/VERSION`;				\
 	rm -f hylafax-$$VERSION $$VERSION $$VERSION.tar;		\
 	ln -s ${SRCDIR} hylafax-$$VERSION;				\
-	(for i in ${HYLAFAXSRC} dist/hylafax.alpha; do			\
+	(for i in ${HYLAFAXSRC}; do			\
 	   echo $$i;							\
 	done) | sed "s;.*;hylafax-$$VERSION/&;" >  $$VERSION;		\
 	(for i in ${MANPAGES}; do		\
