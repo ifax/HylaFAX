@@ -194,10 +194,10 @@ pageSendApp::send(const char** filenames, int num)
 				case 1:	// busy
 				case 2: // no carrier
 				case 3: // no answer
-					break;
 				    req->status = send_retry;
 				    req->tts = retrybatchtts;
 				    req->totdials++;
+				    break;
 				default:
 				    req->status = send_retry;
 				    req->result = Status(337, "Blocked by concurrent calls");
