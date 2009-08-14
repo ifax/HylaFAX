@@ -20,7 +20,7 @@ Overview
   removed.
 
 
-Upgrade to CVS from previous 4.4 releases
+Upgrade to 6.0 from previous 4.4 releases
 -----------------------------------------------------------------------------
   There are only 2 differences to note yet during the upgrade
   process, probably neither of which affect most people.
@@ -32,7 +32,7 @@ Upgrade to CVS from previous 4.4 releases
   default, as the jobs re not being requeued, or done.  To continue
   receiving them, you'll need to configure it in FaxNotify.
 
-Changes for HylaFAX 6.0
+Changes for HylaFAX 6.0.0
 -----------------------------------------------------------------------------
 * faxmail: don't submit an empty postscript file if no formatting was
   done (17 Aug 2007)

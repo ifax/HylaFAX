@@ -1,1 +1,0 @@
-Nothing has happend since 6.0, please refer to RELEASENOTES-6.0.txt
