@@ -48,7 +48,6 @@
  * User Access Control Support.
  */
 gid_t	HylaFAXServer::faxuid = 0;		// reserved fax uid
-#define	FAXUID_RESV	HylaFAXServer::faxuid	// reserved fax uid
 
 bool
 HylaFAXServer::checkUser(const char* name)
@@ -359,12 +358,13 @@ HylaFAXServer::findUser(FILE* db, const char* user, u_int& newuid)
 {
     rewind(db);
     char line[1024];
-    u_long allocated[howmany(FAXUID_MAX,NBPL)];
+    u_long allocated[howmany(FAXUID_MAX+1,NBPL)];
     memset(allocated, 0, sizeof (allocated));
     if (faxuid < FAXUID_MAX)
-	SetBit(FAXUID_RESV);			// reserved uid
+	SetBit(faxuid);			// reserved uid
     else
 	logError("Internal error, \"fax\" UID (%u) too large.", faxuid);
+    SetBit(0);					// 0 uid is reserved
     SetBit(FAXUID_ANON);			// anonymous uid is reserved
     while (nextRecord(db, line, sizeof (line))) {
 	if (line[0] == '!')
@@ -376,7 +376,10 @@ HylaFAXServer::findUser(FILE* db, const char* user, u_int& newuid)
 	    return (true);
 	if (*cp == ':' && isdigit(cp[1])) {	// mark uid as in-use
 	    u_int uid = (u_int) atoi(cp+1);
-	    SetBit(uid);
+	    if (uid < FAXUID_MAX)
+		SetBit(uid);
+	    else
+		logError("Error in %s:  UID (%u) too large.", (const char*)userAccessFile, uid);
 	}
     }
     // find unallocated uid
