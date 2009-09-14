@@ -1,0 +1,2824 @@
+# hylafax PO TEMPLATE
+# This file is distributed under the same license as the HylaFAX package.
+# Philipp Thomas <pth@suse.de>, 2009.
+msgid ""
+msgstr ""
+"Project-Id-Version: hylafax 6.0.3\n"
+"Report-Msgid-Bugs-To: http://bugs.hylafax.org\n"
+"POT-Creation-Date: Fri May 29 14:05:55 EDT 2009\n"
+"PO-Revision-Date: 2009-09-14 18:27+0200\n"
+"Last-Translator: Philipp Thomas <pth@suse.de>\n"
+"Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 1.0\n"
+
+# File: libhylafax/AtSyntax.c++, line: 106
+#, c-format
+msgid "Illegal minutes value %u"
+msgstr "%u ist ein unzulässiger Wert für Minuten"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 113
+#. translator: HH:MM represents (each two digits) hour:minutes
+msgid "expecting HH:MM"
+msgstr "SS:MM wird erwartet"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 120
+#, c-format
+msgid "%u:%02u is not an AM value"
+msgstr "%u:%02u ist kein zulässiger Wert für den Vormittag"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 128
+#, c-format
+msgid "%u:%02u is not a PM value"
+msgstr "%u:%02u ist kein zulässiger Wert für den Nachmittag"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 149
+#, c-format
+msgid "unrecognized symbolic time \"%s\""
+msgstr "die symbolische Zeit \"%s\" ist unbekannt"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 154
+msgid "Illegal time value; out of range"
+msgstr "unzulässige Zeitangabe: ausserhalb des Gültigkeitsbereiches"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 178
+msgid "expecting \"+\" after time"
+msgstr "nach der Zeit wird ein \"+\" erwartet"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 194
+msgid "Invalid date/time; time must be in the future"
+msgstr "Datum bzw. Zeit ist ungültig: die Zeit muss in der Zukunft liegen"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 320
+msgid "missing or invalid day of month"
+msgstr "fehlender oder ungültiger Tag des Monats"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 329
+msgid "missing year"
+msgstr "fehlendes Jahr"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 333
+#, c-format
+msgid "Sorry, cannot handle dates before %u"
+msgstr "Entschuldigung, aber ich kann mit Daten vor %u nicht umgehen"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 356
+#, c-format
+msgid "Invalid day of month, %s has only %u days"
+msgstr "Ungültiger Tag, der %s hat nur %u Tage"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 372
+msgid "expecting number after \"+\""
+msgstr "nach einem \"+\" wird eine Zahl erwartet"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 380
+#, c-format
+msgid "\"+%u\" without unit"
+msgstr "\"+%u\" ohne Einheit"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 399
+#, c-format
+msgid "Unknown increment unit \"%s\""
+msgstr "Erhöhungseinheit \"%s\" ist unbekannt"
+
+#
+# File: libhylafax/AtSyntax.c++, line: 453
+msgid "Syntax error, "
+msgstr "Syntaxfehler"
+
+#
+# File: libhylafax/Class2Params.c++, line: 804
+msgid "3.85 line/mm"
+msgstr "3,85 Zeilen/mm"
+
+#
+# File: libhylafax/Class2Params.c++, line: 805
+msgid "7.7 line/mm"
+msgstr "7,7 Zeilen/mm"
+
+#
+# File: libhylafax/Class2Params.c++, line: 806
+msgid "15.4 line/mm"
+msgstr "15,4 Zeilen/mm"
+
+#
+# File: libhylafax/Class2Params.c++, line: 807
+msgid "R16 x 15.4 line/mm"
+msgstr "R16 x 15.4 Zeilen/mm"
+
+#
+# File: libhylafax/Class2Params.c++, line: 808
+msgid "200 x 100 dpi"
+msgstr "200 x 100 DPI"
+
+#
+# File: libhylafax/Class2Params.c++, line: 809
+msgid "200 x 200 dpi"
+msgstr "200 x 200 DPI"
+
+#
+# File: libhylafax/Class2Params.c++, line: 810
+msgid "200 x 400 dpi"
+msgstr "200 x 400 DPI"
+
+#
+# File: libhylafax/Class2Params.c++, line: 811
+msgid "300 x 300 dpi"
+msgstr "300 x 300 DPI"
+
+#
+# File: libhylafax/Class2Params.c++, line: 836
+msgid "2400 bit/s"
+msgstr "2400 Bit/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 837
+msgid "4800 bit/s"
+msgstr "4800 Bit/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 838
+msgid "7200 bit/s"
+msgstr "7200 Bit/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 839
+msgid "9600 bit/s"
+msgstr "9600 Bit/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 840
+msgid "12000 bit/s"
+msgstr "12000 Bit/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 841
+msgid "14400 bit/s"
+msgstr "14400 Bit/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 842
+msgid "16800 bit/s"
+msgstr "16800 Bit/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 843
+msgid "19200 bit/s"
+msgstr "19200 Bit/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 844
+msgid "21600 bit/s"
+msgstr "21600 Bit/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 845
+msgid "24000 bit/s"
+msgstr "24000 Bit/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 846
+msgid "26400 bit/s"
+msgstr "26400 Bit/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 847
+msgid "28800 bit/s"
+msgstr "28800 Bit/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 848
+msgid "31200 bit/s"
+msgstr "31200 Bit/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 849
+msgid "33600 bit/s"
+msgstr "33600 Bit/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 850
+# File: libhylafax/Class2Params.c++, line: 851
+msgid "0 bit/s"
+msgstr "0 Bist/s"
+
+#
+# File: libhylafax/Class2Params.c++, line: 880
+msgid "1-D MH"
+msgstr "1-D MH"
+
+#
+# File: libhylafax/Class2Params.c++, line: 881
+msgid "2-D MR"
+msgstr "2-D MR"
+
+#
+# File: libhylafax/Class2Params.c++, line: 882
+msgid "2-D Uncompressed Mode"
+msgstr "2-D Unkomprimiert Modus"
+
+#
+# File: libhylafax/Class2Params.c++, line: 883
+msgid "2-D MMR"
+msgstr "2-D MMR"
+
+#
+# File: libhylafax/Class2Params.c++, line: 884
+msgid "JBIG"
+msgstr "JBIG"
+
+#
+# File: libhylafax/Class2Params.c++, line: 885
+msgid "JPEG Greyscale"
+msgstr "JPEG Graustufen"
+
+#
+# File: libhylafax/Class2Params.c++, line: 886
+msgid "JPEG Full-Color"
+msgstr "JPEG Vollfarbig"
+
+#
+# File: libhylafax/Class2Params.c++, line: 897
+msgid "MH"
+msgstr "MH"
+
+#
+# File: libhylafax/Class2Params.c++, line: 898
+msgid ", MR"
+msgstr ", MR"
+
+#
+# File: libhylafax/Class2Params.c++, line: 899
+msgid ", MMR"
+msgstr ", MMR"
+
+#
+# File: libhylafax/Class2Params.c++, line: 900
+msgid ", JBIG"
+msgstr ", JBIG"
+
+#
+# File: libhylafax/Class2Params.c++, line: 902
+msgid ", JPEG Full-Color"
+msgstr ", JPEG Farbe"
+
+#
+# File: libhylafax/Class2Params.c++, line: 903
+msgid ", JPEG Greyscale"
+msgstr ", JPEG Graustufen"
+
+#
+# File: libhylafax/Class2Params.c++, line: 908
+msgid "A4 page width (215 mm)"
+msgstr "A4 Seitenbreite (215 mm)"
+
+#
+# File: libhylafax/Class2Params.c++, line: 909
+msgid "B4 page width (255 mm)"
+msgstr "B4 Seitenbreite (255 mm)"
+
+#
+# File: libhylafax/Class2Params.c++, line: 910
+msgid "A3 page width (303 mm)"
+msgstr "A3 Seitenbreite (303 mm)"
+
+#
+# File: libhylafax/Class2Params.c++, line: 911
+msgid "page width 151 mm"
+msgstr "Seitenbreite 151 mm"
+
+#
+# File: libhylafax/Class2Params.c++, line: 912
+msgid "page width 107 mm"
+msgstr "Seitenbreite 107 mm"
+
+#
+# File: libhylafax/Class2Params.c++, line: 913
+msgid "undefined page width (wd=5)"
+msgstr "undefinierte Seitenbreite (wd=5)"
+
+#
+# File: libhylafax/Class2Params.c++, line: 914
+msgid "undefined page width (wd=6)"
+msgstr "undefinierte Seitenbreite (wd=6)"
+
+#
+# File: libhylafax/Class2Params.c++, line: 915
+msgid "undefined page width (wd=7)"
+msgstr "undefinierte Seitenbreite (wd=7)"
+
+#
+# File: libhylafax/Class2Params.c++, line: 921
+msgid "A4 page length (297 mm)"
+msgstr "A4 Seitenlänge (297 mm)"
+
+#
+# File: libhylafax/Class2Params.c++, line: 922
+msgid "B4 page length (364 mm)"
+msgstr "B4 Seitenlänge (364 mm)"
+
+#
+# File: libhylafax/Class2Params.c++, line: 923
+msgid "unlimited page length"
+msgstr "unbegrenzte Seitenlänge"
+
+#
+# File: libhylafax/Class2Params.c++, line: 924
+msgid "invalid page length (ln=3)"
+msgstr "unzulässige Seitenlänge (ln=3)"
+
+#
+# File: libhylafax/Class2Params.c++, line: 930
+msgid "0 ms/scanline"
+msgstr "0 ms/Abtastzeile"
+
+#
+# File: libhylafax/Class2Params.c++, line: 931
+msgid "5 ms/scanline"
+msgstr "5 ms/Abtastzeile"
+
+#
+# File: libhylafax/Class2Params.c++, line: 932
+msgid "10 ms, 5 ms/scanline"
+msgstr "10 ms, 5 ms/Abtastzeile"
+
+#
+# File: libhylafax/Class2Params.c++, line: 933
+msgid "10 ms/scanline"
+msgstr "10 ms/Abtastzeile"
+
+#
+# File: libhylafax/Class2Params.c++, line: 934
+msgid "20 ms, 10 ms/scanline"
+msgstr "20 ms, 10 ms/Abtastzeile"
+
+#
+# File: libhylafax/Class2Params.c++, line: 935
+msgid "20 ms/scanline"
+msgstr "20 ms/Abtastzeile"
+
+#
+# File: libhylafax/Class2Params.c++, line: 936
+msgid "40 ms, 20 ms/scanline"
+msgstr "40 ms, 20 ms/Abtastzeile"
+
+#
+# File: libhylafax/Class2Params.c++, line: 937
+msgid "40 ms/scanline"
+msgstr "40 ms/Abtastzeile"
+
+#
+# File: libhylafax/Class2Params.c++, line: 942
+msgid "no ECM"
+msgstr "kein ECM"
+
+#
+# File: libhylafax/Class2Params.c++, line: 943
+msgid "T.30 Annex A, 64-byte ECM"
+msgstr "T.30 Anhang A, 64-Byte ECM"
+
+#
+# File: libhylafax/Class2Params.c++, line: 944
+msgid "T.30 Annex A, 256-byte ECM"
+msgstr "T.30 Anhang A, 256-Byte ECM"
+
+#
+# File: libhylafax/Class2Params.c++, line: 945
+msgid "T.30 Annex C, half duplex ECM"
+msgstr "T.30 Anhang C, halbduplex ECM"
+
+#
+# File: libhylafax/Class2Params.c++, line: 946
+msgid "T.30 Annex C, full duplex ECM"
+msgstr "T.30 Anhang C, vollduplex ECM"
+
+#
+# File: libhylafax/Class2Params.c++, line: 947
+# File: libhylafax/Class2Params.c++, line: 948
+# File: libhylafax/Class2Params.c++, line: 949
+msgid "undefined ECM"
+msgstr "undefinierter ECM"
+
+#
+# File: libhylafax/DialRules.c++, line: 98
+#, c-format
+msgid "Cannot open file \"%s\" for reading"
+msgstr "Datei \"%s\" kann nicht lesend geöffnet werden"
+
+#
+# File: libhylafax/DialRules.c++, line: 108
+#. translator: Screen output about a variable %s being defined to "%s"
+#, c-format
+msgid "Define %s = \"%s\""
+msgstr "Definiert %s = \"%s\""
+
+#
+# File: libhylafax/DialRules.c++, line: 118
+#. translator: Screen output about undefining variable %s
+#, c-format
+msgid "Undefine %s"
+msgstr "Macht %s undefiniert"
+
+#
+# File: libhylafax/DialRules.c++, line: 130
+msgid "Syntax error, expecting identifier"
+msgstr "Syntaxfehler, ein Bezeichner wird erwartet"
+
+#
+# File: libhylafax/DialRules.c++, line: 142
+msgid "Missing '[' while parsing rule set"
+msgstr "In den Regeln fehlt ein '['"
+
+#
+# File: libhylafax/DialRules.c++, line: 161
+#, c-format
+msgid "Missing '=' or ':=' after \"%s\""
+msgstr "Nach \"%s\" folgt kein '='  oder ':='"
+
+#
+# File: libhylafax/DialRules.c++, line: 169
+#. translator: "CanonicalNumber" is the name of a rule and must not be translated.
+msgid "Warning, no \"CanonicalNumber\" rules."
+msgstr "Warnung, es ist keine \"CanonicalNumber\" Regel vorhanden."
+
+#
+# File: libhylafax/DialRules.c++, line: 173
+#. translator: "DialString" is the name of a rule and must not be translated.
+msgid "Warning, no \"DialString\" rules."
+msgstr "Warnung, es ist keine \"DialString\" Regel vorhanden."
+
+#
+# File: libhylafax/DialRules.c++, line: 221
+msgid "String with unmatched '\"'"
+msgstr "Zeichenkette mit unpaarigem '\"'"
+
+#
+# File: libhylafax/DialRules.c++, line: 225
+# File: libhylafax/DialRules.c++, line: 237
+msgid "Bad '\\' escape sequence"
+msgstr "Schlechte '\\' Fluchtsequenz"
+
+#
+# File: libhylafax/DialRules.c++, line: 252
+msgid "Missing '}' for variable reference"
+msgstr "In der Variablen-Referenz fehlt ein '}'"
+
+#
+# File: libhylafax/DialRules.c++, line: 299
+msgid "Missing ']' while parsing rule set"
+msgstr "Beim Lesen der Regeln ist eine fehlende '}' aufgefallen"
+
+#
+# File: libhylafax/DialRules.c++, line: 311
+msgid "Rule pattern without '='"
+msgstr "Regel ohne '='"
+
+#
+# File: libhylafax/DialRules.c++, line: 347
+#, c-format
+msgid "Apply %s rules to \"%s\""
+msgstr "Wende Regel \"%s\" auf \"%s\" an"
+
+#
+# File: libhylafax/DialRules.c++, line: 385
+#, c-format
+msgid "--> match rule \"%s\", result now \"%s\""
+msgstr "--> erfüllt Regel \"%s\", das Ergebnis ist nun \"%s\""
+
+#
+# File: libhylafax/DialRules.c++, line: 391
+#, c-format
+msgid "--> return result \"%s\""
+msgstr "--> liefert als Resultat \"%s\" zurück"
+
+#
+# File: libhylafax/DialRules.c++, line: 403
+# File: libhylafax/DialRules.c++, line: 415
+# File: libhylafax/PageSize.c++, line: 52
+# File: libhylafax/TypeRules.c++, line: 313
+#. translator: "line" as in the line number %u of filename %s.
+#, c-format
+msgid "%s: line %u: "
+msgstr "%s: Zeile %u:"
+
+#
+# File: libhylafax/FaxClient.c++, line: 119
+# File: libhylafax/SNPPClient.c++, line: 106
+# File: libhylafax/TextFormat.c++, line: 97
+msgid "Warning, "
+msgstr "Warnung,"
+
+#
+# File: libhylafax/FaxClient.c++, line: 163
+#, c-format
+msgid "Couldn't parse IPv6 ip address string: \"%s\""
+msgstr "Die IPv6 Adresse \"%s\" ist unverständlich"
+
+#
+# File: libhylafax/FaxClient.c++, line: 206
+#, c-format
+msgid "Can not locate your password entry (uid %lu): %s"
+msgstr "Ihr Passwort (uid %lu) wurde nicht gefunden: %s"
+
+#
+# File: libhylafax/FaxClient.c++, line: 232
+# File: libhylafax/SNPPClient.c++, line: 281
+msgid "Bad (null) user name; your password file entry probably has bogus GECOS field information."
+msgstr "Schlechter (Null) Benutzername; Ihre Passwort-Datei enthält wahrscheinlich falsche GECOS Feldinformationen"
+
+#
+# File: libhylafax/FaxClient.c++, line: 405
+msgid "Malformed (null) username"
+msgstr "Ungültiger (Null) Benutzername"
+
+#
+# File: libhylafax/FaxClient.c++, line: 426
+# File: libhylafax/SNPPClient.c++, line: 578
+msgid "Login failed: "
+msgstr "Anmeldung gescheitert: "
+
+#
+# File: libhylafax/FaxClient.c++, line: 447
+msgid "Admin failed: "
+msgstr "Admin gescheitert: "
+
+#
+# File: libhylafax/FaxClient.c++, line: 463
+#, c-format
+msgid "Bad %s parameter value %u."
+msgstr "Schlechter Wert %2$u als Parameter für %1$s"
+
+#
+# File: libhylafax/FaxClient.c++, line: 503
+#, c-format
+msgid "Bad time zone parameter value %u."
+msgstr "%u ist ein unzulässiger Wert für einen Zeitzonenparameter"
+
+#
+# File: libhylafax/FaxClient.c++, line: 542
+msgid "Unable to initialize data connection to server"
+msgstr "Das Starten der Datenverbindung zum Server ist nicht möglich"
+
+#
+# File: libhylafax/FaxClient.c++, line: 556
+msgid "Unable to open data connection to server"
+msgstr "Das Öffnen der Datenverbindung zum Server ist nicht möglich"
+
+#
+# File: libhylafax/FaxClient.c++, line: 580
+msgid "Unable to abort data connection to server"
+msgstr "Das Abbrechen der Datenverbindung zum Server ist nicht möglich"
+
+#
+# File: libhylafax/FaxClient.c++, line: 610
+# File: libhylafax/SNPPClient.c++, line: 595
+msgid "Service not available, remote server closed connection"
+msgstr "Der Dienst ist nicht verfügbar, der entfernte Server hat die Verbindung abgebrochen"
+
+#
+# File: libhylafax/FaxClient.c++, line: 617
+# File: libhylafax/SNPPClient.c++, line: 602
+msgid "Unexpected server response: "
+msgstr "Unerwartete Antwort des Servers: "
+
+#
+# File: libhylafax/FaxClient.c++, line: 625
+# File: libhylafax/SNPPClient.c++, line: 610
+msgid "Protocol botch"
+msgstr "Murks im Protokoll"
+
+#
+# File: libhylafax/FaxClient.c++, line: 662
+# File: libhylafax/SNPPClient.c++, line: 645
+msgid "No control connection for command"
+msgstr "Es besteht keine Kontrollverbindung für Befehle"
+
+#
+# File: libhylafax/FaxClient.c++, line: 792
+#, c-format
+msgid ": No \"%s\" in %s response: %s"
+msgstr "Kein \"%s\" in %s-Antwort: %s"
+
+#
+# File: libhylafax/FaxClient.c++, line: 799
+#, c-format
+msgid ": Null %s in %s response: %s"
+msgstr "Null %s in %s Antwort: %s"
+
+#
+# File: libhylafax/FaxClient.c++, line: 982
+#, c-format
+msgid "Unable to open script file \"%s\"."
+msgstr "Skriptdatei »%s« kann nicht geöffnet werden."
+
+#
+# File: libhylafax/FaxClient.c++, line: 1001
+#, c-format
+msgid "%s: Read error: %s"
+msgstr "%s: Lesefehler: %s"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1026
+#, c-format
+msgid "%s: line %u: %s"
+msgstr "%s: Zeile %u: %s"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1116
+# File: libhylafax/FaxClient.c++, line: 1123
+# File: libhylafax/SNPPClient.c++, line: 915
+# File: libhylafax/SNPPClient.c++, line: 922
+msgid " (server closed connection)"
+msgstr "(Server hat die Verbindung geschlossen)"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1116
+# File: libhylafax/FaxClient.c++, line: 1123
+# File: libhylafax/SNPPClient.c++, line: 915
+# File: libhylafax/SNPPClient.c++, line: 922
+#, c-format
+msgid " (server write error: %s)."
+msgstr "(Schreibfehler des Servers: %s)."
+
+#
+# File: libhylafax/FaxClient.c++, line: 1145
+#, c-format
+msgid "SEND data, %lu bytes"
+msgstr "SEND(e) Daten, %lu Bytes"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1163
+# File: libhylafax/SNPPClient.c++, line: 943
+#, c-format
+msgid " (data read: %s)."
+msgstr "(Lesen der Daten: %s)."
+
+#
+# File: libhylafax/FaxClient.c++, line: 1214
+#, c-format
+msgid "SEND compressed data, %lu bytes"
+msgstr "SEND(en) der komprimierten Daten, %lu Bytes"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1232
+#, c-format
+msgid " (data read: %s)"
+msgstr "(Lesen der Daten: %s)"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1239
+# File: libhylafax/FaxClient.c++, line: 1259
+# File: libhylafax/FaxClient.c++, line: 1285
+#, c-format
+msgid "zlib compressor error: %s"
+msgstr "zlib: Fehler im Kompressor: %s"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1291
+#, c-format
+msgid "SEND %lu bytes transmitted (%.1fx compression)"
+msgstr "SEND(e) %lu Bytes übermittelt (%.1fx Kompression)"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1312
+#, c-format
+msgid "Can not initialize compression library: %s"
+msgstr "Die Kompressionsbibliothek kann nicht initialisiert werden: %s"
+
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+#
+# File: libhylafax/FaxClient.c++, line: 1354
+# File: libhylafax/FaxClient.c++, line: 1417
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+#
+# File: faxstat/faxstat.c++, line: 149
+#, c-format
+msgid "Data Connection: %s"
+msgstr "Datenverbindung: %s"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1428
+#, c-format
+msgid "Decoding error: %s"
+msgstr "Fehler beim Dekodieren: %s"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1442
+#, c-format
+msgid "Can not initialize decoder: %s"
+msgstr "Der Decoder kann nicht initialisiert werden: %s"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1638
+# File: libhylafax/FaxClient.c++, line: 1707
+#. translator: Column header for Recipient sub-address
+msgid "SUB"
+msgstr "SUB"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1639
+#. translator: Column header for Recipient password (of sub-address)
+msgid "PWD"
+msgstr "PW"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1640
+#. translator: Column header for Recipient company name
+msgid "Company"
+msgstr "Firma"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1641
+#. translator: Column header for (total dials):(maximum dials)
+msgid "Dials"
+msgstr "Wählversuche"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1642
+# File: libhylafax/FaxClient.c++, line: 1708
+#. translator: Column header for signalling rate
+msgid "BR"
+msgstr "BR"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1643
+#. translator: Column header for job tagline
+msgid "Tagline"
+msgstr "Tagline"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1644
+#. translator: Column header for min-scanline-time
+msgid "ST"
+msgstr "ST"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1645
+# File: libhylafax/FaxClient.c++, line: 1709
+#. translator: Column header for data format
+msgid "DF"
+msgstr "DF"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1646
+#. translator: Column header for user-requested scheduling priority
+msgid "UsrPri"
+msgstr "UsrPri"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1647
+#. translator: Column header for user specified job tag
+msgid "JobTag"
+msgstr "JobTag"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1648
+#. translator: Column header for ECM (symbol)
+msgid "EC"
+msgstr "EC"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1649
+#. translator: Column header for recipient location
+msgid "Location"
+msgstr "Ort"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1650
+#. translator: Column header for mail address
+msgid "MailAddr"
+msgstr "PostAdr"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1651
+#. translator: Column header for tagline handling (symbol)
+msgid "DT"
+msgstr "DT"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1652
+#. translator: Column header for continuation cover page use (symbol)
+msgid "CC"
+msgstr "CC"
+
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+#
+# File: libhylafax/FaxClient.c++, line: 1653
+# File: libhylafax/FaxClient.c++, line: 1679
+# File: libhylafax/FaxClient.c++, line: 1719
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+#
+# File: util/faxinfo.c++, line: 395
+#. #-#-#-#-#  messages.pot  #-#-#-#-#
+#. translator: Column header for (number of pages):(total pages)
+#. translator: Column header for number of pages
+msgid "Pages"
+msgstr "Seiten"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1654
+#. translator: Column header for minimum speed
+msgid "MinSP"
+msgstr "MinSP"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1655
+#. translator: Column header for receiver name
+msgid "Receiver"
+msgstr "Empfänger"
+
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+#
+# File: libhylafax/FaxClient.c++, line: 1656
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+#
+# File: util/faxinfo.c++, line: 348
+#. #-#-#-#-#  messages.pot  #-#-#-#-#
+#. translator: Column header for sender name
+msgid "Sender"
+msgstr "Absender"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1657
+#. translator: Column header for (total tries):(maximum tries)
+msgid "Tries"
+msgstr "Versuche"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1658
+#. translator: Column header for minimum white space before chopping
+msgid "ChopThreshold"
+msgstr "TrennSchwellwert"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1659
+#. translator: Column header for operation to do when job completes
+msgid "DoneOp"
+msgstr "DoneOp"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1660
+#. translator: Column header for communication ID
+msgid "CommID"
+msgstr "CommID"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1661
+#. translator: Column header for job type
+msgid "JobType"
+msgstr "Job.Typ"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1662
+# File: libhylafax/FaxClient.c++, line: 1705
+#. translator: Column header for Date & Time
+msgid "Date       Time"
+msgstr "Datum      Zeit"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1663
+# File: libhylafax/FaxClient.c++, line: 1706
+#. translator: Column header for seconds since the UNIX epoch
+msgid "UNIX Time"
+msgstr "UNIX Zeit"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1664
+#. translator: Column header for job state (symbol)
+msgid "State"
+msgstr "Status"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1665
+#. translator: Column header for number of tries
+msgid "NTries"
+msgstr "NTries"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1666
+#. translator: Column header for identity of machine that submitted job
+msgid "Client"
+msgstr "Client"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1667
+#. translator: Column header for total dials
+msgid "TotDials"
+msgstr "TotDials"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1668
+# File: libhylafax/FaxClient.c++, line: 1743
+#. translator: Column header for recipient fax number
+#. translator: Column header for fax phone number
+msgid "Number"
+msgstr "Nummer"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1669
+#. translator: Column header for number of dials
+msgid "NDials"
+msgstr "NDials"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1670
+# File: libhylafax/FaxClient.c++, line: 1768
+#. translator: Column header for group identifier
+#. translator: Column header for file GID
+msgid "GID"
+msgstr "GID"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1671
+#. translator: Column header for page chopping (symbol)
+msgid "Chop"
+msgstr "Trenner"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1672
+#. translator: Column header for current scheduling priority
+msgid "Priority"
+msgstr "Priorität"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1673
+#. translator: Column header for job identifier
+msgid "JID"
+msgstr "JID"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1674
+#. translator: Column header for time to kill job
+msgid "LastTime"
+msgstr "LastTime"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1675
+#. translator: Column header for page length
+msgid "PageLength"
+msgstr "Seitenlänge"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1676
+# File: libhylafax/FaxClient.c++, line: 1742
+#. translator: Column header for modem group
+#. translator: Column header for canonical modem name
+msgid "Modem"
+msgstr "Modem"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1677
+#. translator: Column header for email notification (symbol)
+msgid "Notify"
+msgstr "Benachr."
+
+#
+# File: libhylafax/FaxClient.c++, line: 1678
+# File: libhylafax/FaxClient.c++, line: 1718
+# File: libhylafax/FaxClient.c++, line: 1771
+#. translator: Column header for owner name
+#. translator: Column header for job owner
+#. translator: Column header for file owner
+msgid "Owner"
+msgstr "Eigentümer"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1680
+#. translator: Column header for retry time
+msgid "RetryTime"
+msgstr "RetryTime"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1681
+# File: libhylafax/FaxClient.c++, line: 1721
+#. translator: Column header for fax image vertical resolution
+#. translator: Column header for fax image resolution
+msgid "Resolution"
+msgstr "Auflösung"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1682
+# File: libhylafax/FaxClient.c++, line: 1745
+#. translator: Column header for request status indicator
+#. translator: Column header for status information
+msgid "Status"
+msgstr "Status"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1683
+#. translator: Column header for total tries
+msgid "TotTries"
+msgstr "TotTries"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1684
+#. translator: Column header for maximum tries
+msgid "MaxTries"
+msgstr "MaxTries"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1685
+#. translator: Column header for dial string
+msgid "DialString"
+msgstr "DialString"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1686
+#. translator: Column header for page width
+msgid "PageWidth"
+msgstr "Seitenbreite"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1687
+#. translator: Column header for maximum dials
+msgid "MaxDials"
+msgstr "MaxDials"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1688
+#. translator: Column header for total of pages
+msgid "TotPages"
+msgstr "TotPages"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1689
+#. translator: Column header for time to send
+msgid "TTS"
+msgstr "TTS"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1690
+#. translator: Column header for extended vertical resolution use (symbol)
+msgid "UseXVres"
+msgstr "UseXVres"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1710
+#. translator: Column header for error description
+msgid "Error"
+msgstr "Fehler"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1711
+# File: libhylafax/FaxClient.c++, line: 1767
+#. translator: Column header for file name
+msgid "Filename"
+msgstr "Dateiname"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1712
+#. translator: Column header for time spent receiving
+msgid "Time"
+msgstr "Zeit"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1713
+#. translator: Column header for callerid name
+msgid "CIDName"
+msgstr "CIDName"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1714
+#. translator: Column header for caller id number
+msgid "CIDNumber"
+msgstr "CIDNumber"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1715
+#. translator: Column header for page length
+msgid "Length"
+msgstr "Länge"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1716
+# File: libhylafax/FaxClient.c++, line: 1720
+# File: libhylafax/FaxClient.c++, line: 1772
+# File: libhylafax/FaxClient.c++, line: 1773
+#. translator: Column header for fax protection mode
+#. translator: Column header for file protection flags
+msgid "Protect"
+msgstr "Schützen"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1717
+# File: libhylafax/FaxClient.c++, line: 1775
+#. translator: Column header for file size
+msgid "Size"
+msgstr "Grösse"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1722
+#. translator: Column header for sender TSI (Transmitting Station Information)
+msgid "Sender/TSI"
+msgstr "Absender/TSI"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1723
+#. translator: Column header for time received
+msgid "Recvd@"
+msgstr "Recvd@"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1724
+#. translator: Column header for page width
+msgid "Width"
+msgstr "Breite"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1740
+#. translator: Column header for machine hostname
+msgid "Host"
+msgstr "Host"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1741
+#. translator: Column header for local identifier
+msgid "LocalID"
+msgstr "LokaleID"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1744
+#. translator: Column header for maximum received pages
+msgid "MaxRecv"
+msgstr "MaxRecv"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1746
+#. translator: Column header for server:session tracing level
+msgid "Tracing"
+msgstr "Tracing"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1747
+#. translator: Column header for speaker volume (symbol)
+msgid "Speaker"
+msgstr "Speaker"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1764
+#. translator: Column header for file last access time
+msgid "LastAcc"
+msgstr "LastAcc"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1765
+#. translator: Column header for file creation time
+msgid "Created"
+msgstr "Erzeugt"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1766
+#. translator: Column header for ID of device containing file
+msgid "Device"
+msgstr "Gerät"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1769
+#. translator: Column header for file link count
+msgid "Links"
+msgstr "Verknüpfungen"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1770
+#. translator: Column header for file last modification time
+msgid "LastMod"
+msgstr "Zuletzt Mod."
+
+#
+# File: libhylafax/FaxClient.c++, line: 1774
+#. translator: Column header for ID of device if special file
+msgid "RootDev"
+msgstr "RootDev"
+
+#
+# File: libhylafax/FaxClient.c++, line: 1776
+#. translator: Column header for file UID
+msgid "UID"
+msgstr "UID"
+
+#
+# File: libhylafax/FaxConfig.c++, line: 57
+#, c-format
+msgid "Read config file %s"
+msgstr "Einlesen von Konfigurationsdatei %s "
+
+#
+# File: libhylafax/FaxConfig.c++, line: 95
+#, c-format
+msgid "No passwd file entry for uid %u, cannot expand ~ in \"%s\""
+msgstr "Für uid %u gibt es keinen Eintrag in der passwd Datei ~ in \"%s\""
+
+#
+# File: libhylafax/FaxConfig.c++, line: 168
+#, c-format
+msgid "Syntax error at line %u, missing ':' in \"%s\""
+msgstr "Syntaxfehler in Zeile %u. in \"%s\" fehlt ''"
+
+#
+# File: libhylafax/FaxConfig.c++, line: 183
+#, c-format
+msgid "Syntax error at line %u, missing quote mark in \"%s\""
+msgstr "Syntaxfehler in Zeile %u: in \"%s\" fehlt ein Anführungszeichen"
+
+#
+# File: libhylafax/FaxConfig.c++, line: 216
+# File: libhylafax/FaxConfig.c++, line: 227
+#, c-format
+msgid "%s = %s (line %u)"
+msgstr "%s = %s (Zeile %u)"
+
+#
+# File: libhylafax/FaxConfig.c++, line: 223
+#, c-format
+msgid "Unknown configuration parameter \"%s\" ignored at line %u"
+msgstr "Der unbekannte Konfigurationsparameter \"%s\" in Zeile %u wird ignoriert"
+
+#
+# File: libhylafax/FaxDB.c++, line: 125
+#, c-format
+msgid "%s: line %d: Unmatched \"]\".\n"
+msgstr "%s: Zeile %d: \"]\" ohne Gegenstück.\n"
+
+#
+# File: libhylafax/FaxDB.c++, line: 137
+#, c-format
+msgid "%s: line %d: Missing \":\" separator.\n"
+msgstr "%s: Zeile %d: Fehlendes Trennzeichen \":\".\n"
+
+#
+# File: libhylafax/FaxDB.c++, line: 185
+#, c-format
+msgid "%s: Premature EOF.\n"
+msgstr "%s: Vorzeitiges EOF.\n"
+
+#
+# File: libhylafax/InetTransport.c++, line: 90
+# File: libhylafax/SNPPClient.c++, line: 466
+#, c-format
+msgid "%s: No protocol definition, using default."
+msgstr "%s: Keine Definition des Protokolls, die Standarddefinition wird verwendet."
+
+#
+# File: libhylafax/InetTransport.c++, line: 115
+#, c-format
+msgid "getaddrinfo failed with %d: %s"
+msgstr "getaddrinfo scheiterte mit %d: %s"
+
+#
+# File: libhylafax/InetTransport.c++, line: 125
+#, c-format
+msgid "Trying %s [%d] (%s) at port %u..."
+msgstr "Versuche %s [%d] (%s) auf Port %u..."
+
+#
+# File: libhylafax/InetTransport.c++, line: 133
+# File: libhylafax/SNPPClient.c++, line: 501
+#, c-format
+msgid "Connected to %s."
+msgstr "Verbunden mit %s."
+
+#
+# File: libhylafax/InetTransport.c++, line: 139
+# File: libhylafax/SNPPClient.c++, line: 505
+#, c-format
+msgid "setsockopt(TOS): %s (ignored)"
+msgstr "setsockopt(TOS): %s (wird ignoriert)"
+
+#
+# File: libhylafax/InetTransport.c++, line: 145
+# File: libhylafax/SNPPClient.c++, line: 511
+#, c-format
+msgid "setsockopt(OOBLINE): %s (ignored)"
+msgstr "setsockopt(OOBLINE): %s (wird ignoriert)"
+
+#
+# File: libhylafax/InetTransport.c++, line: 160
+#, c-format
+msgid "Can not reach service %s at host \"%s\"."
+msgstr "Dienst %s auf Host \"%s\" ist nicht erreichbar."
+
+#
+# File: libhylafax/InetTransport.c++, line: 278
+# File: libhylafax/InetTransport.c++, line: 282
+# File: libhylafax/InetTransport.c++, line: 292
+#, c-format
+msgid "Couldn't parse last response \"%s\""
+msgstr "Die letzte Antwort \"%s\" konnte nicht geparst werden"
+
+#
+# File: libhylafax/InetTransport.c++, line: 287
+msgid "EPSV not supported, trying PASV since we're AF_INET\n"
+msgstr "EPSV wird nicht unterstützt, es wird PASV versucht, da es sich um AF_INET handelt\n"
+
+#
+# File: libhylafax/InetTransport.c++, line: 356
+msgid "EPRT not supported, trying PORT"
+msgstr "EPRT wird nicht unterstützt, versuche es mit PORT"
+
+#
+# File: libhylafax/InetTransport.c++, line: 428
+# File: libhylafax/SNPPClient.c++, line: 527
+msgid "Sorry, no TCP/IP communication support was configured."
+msgstr "Leider wurde keine Unterstützung für TCP/IP Kommunikation konfiguriert."
+
+#
+# File: libhylafax/Obj.c++, line: 39
+#, c-format
+msgid "%s: Sub class must define method \"%s\".\n"
+msgstr "%s: Die Subklasse muss die Methode \"%s\" definieren.\n"
+
+#
+# File: libhylafax/PageSize.c++, line: 67
+#, c-format
+msgid "Unexpected end of line after \"%s\".\n"
+msgstr "Unerwartetes Zeilenende nach \"%s\".\n"
+
+#
+# File: libhylafax/PageSize.c++, line: 100
+msgid "page size name"
+msgstr "Name der Papiergrösse"
+
+#
+# File: libhylafax/PageSize.c++, line: 105
+msgid "page size abbreviation"
+msgstr "Abkürzung für die Seitengrösse"
+
+#
+# File: libhylafax/PageSize.c++, line: 108
+msgid "page width"
+msgstr "Seitenbreite"
+
+#
+# File: libhylafax/PageSize.c++, line: 111
+msgid "page height"
+msgstr "Seitenlänge"
+
+#
+# File: libhylafax/PageSize.c++, line: 114
+msgid "guaranteed page width"
+msgstr "garantierte Seitenbreite"
+
+#
+# File: libhylafax/PageSize.c++, line: 117
+msgid "guaranteed page height"
+msgstr "garantierte Seitenlänge"
+
+#
+# File: libhylafax/PageSize.c++, line: 120
+msgid "top margin"
+msgstr "oberer Rand"
+
+#
+# File: libhylafax/PageSize.c++, line: 130
+#, c-format
+msgid "Warning, no page size database file \"%s\", using builtin default.\n"
+msgstr "Warnung, die Datanbankdatei \"%s\" enthält keine Papiergrösse, daher wird der eingebaute Standardwert verwendet.\n"
+
+#
+# File: libhylafax/SNPPClient.c++, line: 211
+# File: libhylafax/SendFaxClient.c++, line: 613
+msgid "Malformed (null) sender name or mail address"
+msgstr "Absendername oder Adresse sind inkorrekt (null)"
+
+#
+# File: libhylafax/SNPPClient.c++, line: 257
+#, c-format
+msgid "Can not locate your password entry (uid %lu): %s."
+msgstr "Ihr Passworteintrag (uid %lu) kann nicht gefunden werden: %s"
+
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+#
+# File: libhylafax/SNPPClient.c++, line: 388
+# #-#-#-#-#  messages.pot  #-#-#-#-#
+# File: sendpage/sendpage.c++, line: 90
+#, c-format
+msgid "Invalid hold time \"%s\": %s"
+msgstr "Ungültige Haltezeit \"%s\": %s"
+
+#
+# File: libhylafax/SNPPClient.c++, line: 459
+msgid ": Unknown host"
+msgstr "Unbekannter Host"
+
+#
+# File: libhylafax/SNPPClient.c++, line: 472
+# File: libhylafax/UnixTransport.c++, line: 54
+msgid "Can not create socket to connect to server."
+msgstr "Der zum Verbinden mit dem Server nötige Socket kann nicht erzeugt werden."
+
+#
+# File: libhylafax/SNPPClient.c++, line: 483
+#, c-format
+msgid "No \"%s\" service definition, using default %u/%s."
+msgstr "Keine Definition für Dienst \"%s\" vorhanden; die Standarddefinition %u%s wird verwendet."
+
+#
+# File: libhylafax/SNPPClient.c++, line: 495
+#, c-format
+msgid "Trying %s (%s) at port %u..."
+msgstr "Versuche %s (%s) auf Port %u..."
+
+#
+# File: libhylafax/SNPPClient.c++, line: 518
+#, c-format
+msgid "Can not reach server at host \"%s\", port %u."
+msgstr "Der Server auf Host \"%s\", Port %u ist unerreichbar."
+
+#
+# File: libhylafax/SNPPClient.c++, line: 860
+# File: libhylafax/SendFaxClient.c++, line: 426
+msgid "Not logged in to server"
+msgstr "Bei keinem Server angemeldet"
+
+#
+# File: libhylafax/SNPPClient.c++, line: 892
+#, c-format
+msgid "destination pin %s: request id is %s for host %s\n"
+msgstr "Zielpin %s: Anforderungs-ID ist %s für Host %s\n"
+
+#
+# File: libhylafax/SNPPClient.c++, line: 936
+#, c-format
+msgid "SEND message data, %lu bytes"
+msgstr "SENDEN der Nachrichtendaten, %lu Bytes"
+
+#
+# File: libhylafax/SNPPClient.c++, line: 966
+#, c-format
+msgid "Unable to open message file \"%s\"."
+msgstr "Nachrichtendatei \"%s\" kann nicht geöffnet werden."
+
+#
+# File: libhylafax/SNPPClient.c++, line: 985
+# File: libhylafax/SNPPClient.c++, line: 995
+#, c-format
+msgid "no SITE %s support; ignoring set request."
+msgstr "Keine Unterstützung für SITE %s; die Anforderung wird ignoriert. "
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 103
+msgid "Unable to setup file typing and conversion rules"
+msgstr "Die Regeln zur Bestimmung des Typs und zum Umwandeln von Dateien können nicht erstellt werden"
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 129
+msgid "Unknown page size "
+msgstr "Unbekanntes Seitenformat"
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 239
+#, c-format
+msgid "Error creating cover sheet; could not fork subprocess: %s"
+msgstr "Fehler beim Erzeugen des Deckblattes, es konnte kein Subprozess  gestartet werden: %s"
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 265
+#, c-format
+msgid "Error creating cover sheet; command was \"%s\"; exit status %x"
+msgstr "Fehler beim Erzeugen des Deckblattes, der Befehl war \"%s\", sein Rückgabewert %x"
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 274
+#, c-format
+msgid "Error creating cover sheet; unable to create pipe to subprocess: %s"
+msgstr "Fehler beim Erzeugen des Deckblattes, es konnte keine Verbindung mit dem Subprozess hergestellt werden: %s"
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 279
+#, c-format
+msgid "%s: Can not create temporary file for cover page"
+msgstr "%s: Die temporäre Datei für das Deckblatt kann nicht erzeugt werden"
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 422
+msgid "Documents not prepared"
+msgstr "Die Dokumente sind nicht vorbereitet"
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 462
+#, c-format
+msgid ": Can not open: %s"
+msgstr ": Kann nicht geöffnet werden: %s"
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 487
+# File: libhylafax/SendFaxJob.c++, line: 552
+msgid "Document transfer failed: "
+msgstr "Transfer des Dokumentes ist gescheitert: "
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 501
+#, c-format
+msgid "request id is %s (group id %s) for host %s (%u file)\n"
+msgid_plural "request id is %s (group id %s) for host %s (%u files)\n"
+msgstr[0] "ID der Anforderung ist %s (Gruppen-ID %s) für Host %s (%u Datei)\n"
+msgstr[1] "ID der Anforderung ist %s (Gruppen-ID %s) für Host %s (%u Dateien)\n"
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 686
+#, c-format
+msgid "Error converting document; command was \"%s\""
+msgstr "Fehler bei der Umwandlung des Dokumentes; der Befehl war \"%s\""
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 717
+#, c-format
+msgid "%s: Can not open file"
+msgstr "%s: Die Datei kann nicht geöffnet werden"
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 721
+#, c-format
+msgid "%s: Can not stat file"
+msgstr "%s: Der Status der Datei kann nikcht erfragt werden"
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 726
+#, c-format
+msgid "%s: Not a regular file"
+msgstr "%s: Keine reguläre Datei"
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 734
+#, c-format
+msgid "%s: Empty file"
+msgstr "%s: Die Datei ist leer"
+
+#
+# File: libhylafax/SendFaxClient.c++, line: 739
+#, c-format
+msgid "%s: Can not determine file type"
+msgstr "%s: Der Dateityp kann nicht bestimmt werden"
+
+#
+# File: libhylafax/SendFaxJob.c++, line: 540
+#, c-format
+msgid "%s: Can not open: %s"
+msgstr "%s: kann nicht geöffnet werden: %s"
+
+#
+# File: libhylafax/Sequence.c++, line: 65
+#, c-format
+msgid "Unable to open sequence number file %s; %s."
+msgstr "Die Datei %s für die fortlaufende Nummer kann nicht geöffnet werden: %s."
+
+#
+# File: libhylafax/Sequence.c++, line: 79
+#, c-format
+msgid "%s: Invalid sequence number \"%s\", resetting to 1"
+msgstr "%s: Fortlaufende Nummer \"%s\" ist ungültig und wird auf 1 zurück gesetzt."
+
+#
+# File: libhylafax/Sequence.c++, line: 89
+#, c-format
+msgid "Unable update sequence number file %s; write failed."
+msgstr "Die Datei %s für die fortlaufende Nummer kann nicht aktualisiert werden: Schreiben schlug fehl."
+
+#
+# File: libhylafax/TextFormat.c++, line: 134
+# File: libhylafax/TextFormat.c++, line: 267
+#, c-format
+msgid "Font %s: %s"
+msgstr "Zeichensatz %s: %s"
+
+#
+# File: libhylafax/TextFormat.c++, line: 253
+#, c-format
+msgid "Cannot open temporary file: %s"
+msgstr "Die temporäre Datei kann nicht geöffnet werden: %s"
+
+#
+# File: libhylafax/TextFormat.c++, line: 261
+msgid "point size is unusually large (>18pt)"
+msgstr "Die Schrift ist unüblich groß (>18pt)"
+
+#
+# File: libhylafax/TextFormat.c++, line: 279
+#, c-format
+msgid "Margin values too large for page; lm %lu rm %lu page width %lu"
+msgstr "Die Ränder sind zu breit für die Seite: linker Rand %lu rechter Rand %lu Seitenbreite %lu"
+
+#
+# File: libhylafax/TextFormat.c++, line: 282
+#, c-format
+msgid "Margin values too large for page; tm %lu bm %lu page height %lu"
+msgstr "Die Ränder sind zu groß für die Seite: oberer Rand %lu unterer Rand %lu Seitenlänge %lu"
+
+#
+# File: libhylafax/TextFormat.c++, line: 323
+#, c-format
+msgid "Close failure on temporary file: %s"
+msgstr "Die temporäre Datei kann nicht geschlossen werden: %s"
+
+#
+# File: libhylafax/TextFormat.c++, line: 339
+#, c-format
+msgid "Read error during reverse collation: %s"
+msgstr "Lesefehler bei der umgekehrten Zusammenfassung: %s"
+
+#
+# File: libhylafax/TextFormat.c++, line: 341
+# File: libhylafax/TextFormat.c++, line: 1006
+#, c-format
+msgid "Output write error: %s"
+msgstr "Schreibfehler bei der Ausgabe: %s"
+
+#
+# File: libhylafax/TextFormat.c++, line: 721
+#, c-format
+msgid "%s: Cannot open file: %s"
+msgstr "%s: Die Datei kann nicht geöffnet werden: %s"
+
+#
+# File: libhylafax/TextFormat.c++, line: 1178
+# File: libhylafax/TextFormat.c++, line: 1196
+#, c-format
+msgid "Warning: %s - line too long."
+msgstr "Warnung: %s - Die Zeile ist zu lang."
+
+#
+# File: libhylafax/TextFormat.c++, line: 1236
+#, c-format
+msgid "Warning: %s invalid Fontmap entry - no filename present"
+msgstr "Warnung: %s ist ein ungültiger Eintrag in der Zeichensatztabelle - der Dateiname fehlt"
+
+#
+# File: libhylafax/TextFormat.c++, line: 1376
+#, c-format
+msgid "%s: Can not open font metrics file; using fixed widths"
+msgstr "%s: Die Datei mit den Zeichensatz-Metriken kann nicht geöffnet werden; es werden feste Breiten verwendet"
+
+#
+# File: libhylafax/TextFormat.c++, line: 1393
+#, c-format
+msgid "%s: No glyph metric table located; using fixed widths"
+msgstr "%s: Es wurden keine Glyphenmetriktabellen gefunden; es werden feste Breiten verwendet"
+
+#
+# File: libhylafax/TextFormat.c++, line: 1412
+#, c-format
+msgid "%s, line %u: format error"
+msgstr "%s, Zeile %u: Formatfehler"
+
+#
+# File: libhylafax/TypeRules.c++, line: 94
+#. translator: This shows the rule to be processed (the last two %s) starting at offset %#lx.
+#, c-format
+msgid "rule: %soffset %#lx %s %s"
+msgstr "Regel: %soffset %#lx %s %s"
+
+#
+# File: libhylafax/TypeRules.c++, line: 104
+msgid " <any value>"
+msgstr "<beliebiger Wert>"
+
+#
+# File: libhylafax/TypeRules.c++, line: 112
+msgid "failed (offset past data)\n"
+msgstr "gescheitert (Offset hinter den Daten)\n"
+
+#
+# File: libhylafax/TypeRules.c++, line: 125
+# File: libhylafax/TypeRules.c++, line: 137
+#, c-format
+msgid "failed (unprintable char %#x)\n"
+msgstr "gescheitert (nicht druckbares Zeichen %#x)\n"
+
+#
+# File: libhylafax/TypeRules.c++, line: 165
+# File: libhylafax/TypeRules.c++, line: 174
+msgid "failed (insufficient data)\n"
+msgstr "gescheitert (unzureichende Daten)\n"
+
+#
+# File: libhylafax/TypeRules.c++, line: 195
+#, c-format
+msgid "success (result %s, rule \"%s\")\n"
+msgstr "erfolgreich (Resultat %s, Regel \"%s\")\n"
+
+#
+# File: libhylafax/TypeRules.c++, line: 198
+msgid "failed (comparison)\n"
+msgstr "gescheitert (Vergleich)\n"
+
+#
+# File: libhylafax/TypeRules.c++, line: 325
+#, c-format
+msgid "%s: Can not open type rules file.\n"
+msgstr "%s: Die Datei mit den Typisierungsregeln kann nicht geöffnet werden.\n"
+
+#
+# File: libhylafax/TypeRules.c++, line: 346
+msgid "Missing file offset"
+msgstr "Der Datei-Offset fehlt"
+
+#
+# File: libhylafax/TypeRules.c++, line: 371
+#, c-format
+msgid "Unknown datatype \"%.*s\""
+msgstr "Unbekannter Datentyp \"%.*s\""
+
+#
+# File: libhylafax/TypeRules.c++, line: 412
+msgid "Missing match value"
+msgstr "Fehlender Vergleichswert"
+
+#
+# File: libhylafax/TypeRules.c++, line: 442
+#, c-format
+msgid "Unknown result \"%.*s\""
+msgstr "Unbekanntes Ergebnis \"%.*s\""
+
+#
+# File: libhylafax/TypeRules.c++, line: 492
+#, c-format
+msgid "match against (..., %u)\n"
+msgstr "passt zu (..., %u)\n"
+
+#
+# File: libhylafax/TypeRules.c++, line: 499
+msgid "no match\n"
+msgstr "keine Übereinstimmung\n"
+
+#
+# File: libhylafax/UnixTransport.c++, line: 62
+#, c-format
+msgid "connect to server at %s"
+msgstr "mit Server auf %s verbinden"
+
+#
+# File: libhylafax/UnixTransport.c++, line: 68
+#, c-format
+msgid "Can not reach server at Unix domain socket \"%s\"."
+msgstr "Der Server ist auf Unix-Domain-Socket \"%s\" nicht erreichbar\"."
+
+#
+# File: libhylafax/UnixTransport.c++, line: 140
+msgid "Sorry, no Unix domain communication support was configured."
+msgstr "Leider die Kommunikation über Unix-Domian-Sockets nicht konfiguriert"
+
+# File: faxalter/faxalter.c++, line: 242
+msgid "No job parameters specified for alteration."
+msgstr "Es wurden keine zu variierenden Auftrags-Parameter angegeben."
+
+#
+# File: faxalter/faxalter.c++, line: 263
+#, c-format
+msgid "Job %s: duplicated as job %s.\n"
+msgstr "Auftrag %s: dupliziert als Auftrag %s.\n"
+
+#
+# File: faxalter/faxalter.c++, line: 290
+#, c-format
+msgid "Job %s: done.\n"
+msgstr "Auftrag %s: erledigt.\n"
+
+#
+# File: faxalter/faxalter.c++, line: 316
+msgid "usage: faxalter [-C] [-h server-host] [-a time] [-d number] [-k time] [-m modem] [-n notify] [-P priority] [-t tries] [-A] [-g] [-p] [-r] [-v] [-DQR] jobID..."
+msgstr "Aufruf: faxalter [-C] [-h Server-Host] [-a Uhrzeit] [-d Nummer] [-k Uhrzeit] [-m Modem] [-n Benachrichtigungsschema] [-P Priorität] [-t Versuche] [-A] [-g] [-p] [-r] [-v] [-DQR] Auftragskennung"
+
+# File: faxcover/faxcover.c++, line: 187
+#, c-format
+msgid "Unknown page size \"%s\""
+msgstr "Das Seitenformat \"%s\" ist unbekannt"
+
+#
+# File: faxcover/faxcover.c++, line: 204
+#, c-format
+msgid "usage: %s [-t to] [-c comments] [-p #pages] [-l to-location] [-m maxcomments] [-z maxlencomments] [-r regarding] [-v to-voice-number] [-x to-company] [-C template-file] [-D date-format] [-L from-location] [-M from-mail-address] [-N from-fax-number] [-V from-voice-number] [-X from-company] [-s pagesize] -f from -n fax-number"
+msgstr "Aufruf: %s [-t Empfänger] [-c Kommentar] [-p Anzahl der Seiten] [-l Ziel] [-m maximale Anzahl Kommentare] [-z maximale Länge der Kommentare] [-r Betrifft] [-v Ziel Sprach-Telefonnr] [-x an-Firma] [-C Schablonendatei] [-D Datumsformat] [-L Absendeort] [-M von-Email-Adresse] [-N Absender-Faxnummer] [V Absender-Telefonnr] [-X Absender-Firma] [-s Seitenformat] -f Absender -n Faxnummer"
+
+#
+# File: faxcover/faxcover.c++, line: 328
+#, c-format
+msgid "Could not locate prototype cover sheet \"%s\""
+msgstr "Deckblatt-Vorlage \"%s\" wurde nicht gefunden"
+
+#
+# File: faxcover/faxcover.c++, line: 462
+msgid "Can not figure out who you are."
+msgstr "Es kannte nicht festgestellt werden, wer Sie sind."
+
+# File: faxmail/MIMEState.c++, line: 145
+msgid "Syntax error parsing MIME Content-Type: "
+msgstr "Syntaxfehler beim Parsen des MIME-Inhaltstyps: "
+
+#
+# File: faxmail/MIMEState.c++, line: 360
+#, c-format
+msgid "Internal error, unsupported Content-Transfer-Encoding %u"
+msgstr "Interner Fehler, nicht unterstütztes Content-Transfer-Encoding %u"
+
+#
+# File: faxmail/MsgFmt.c++, line: 162
+#, c-format
+msgid "HEADER %s: %s\n"
+msgstr "HEADER %s: %s\n"
+
+#
+# File: faxmail/MsgFmt.c++, line: 170
+#, c-format
+msgid "+HEADER %s: %s\n"
+msgstr "+HEADER %s: %s\n"
+
+#
+# File: faxmail/faxmail.c++, line: 135
+#, c-format
+msgid "Cannot create temp directory %s"
+msgstr "Das temporäre Verzeichnis %s kann nicht angelegt werden"
+
+#
+# File: faxmail/faxmail.c++, line: 267
+msgid "No Destination/Dialstring specified"
+msgstr "Kein Ziel/Anwahl angegeben"
+
+#
+# File: faxmail/faxmail.c++, line: 277
+msgid "No From/Sender identity specified"
+msgstr "Es wurde keine Absender/Empfänger Identität angegeben"
+
+#
+# File: faxmail/faxmail.c++, line: 396
+#, c-format
+msgid "faxmail: This is a MIME message\n"
+msgstr "faxmail: Dies ist eine MIME Nachricht\n"
+
+#
+# File: faxmail/faxmail.c++, line: 408
+#, c-format
+msgid "faxmail: This is not a MIME message\n"
+msgstr "faxmail: Dies ist keine MIME Nachricht\n"
+
+#
+# File: faxmail/faxmail.c++, line: 443
+#, c-format
+msgid ""
+"unable to process message:\n"
+"\t%s"
+msgstr ""
+"Die Nachricht kann nicht verarbeitet werden:\n"
+"\t%s"
+
+#
+# File: faxmail/faxmail.c++, line: 542
+msgid "Badly formatted MIME; premature EOF"
+msgstr "Schlecht formatiertes MIME; vorzeitiges EOF"
+
+#
+# File: faxmail/faxmail.c++, line: 639
+#, c-format
+msgid "CONVERT: run %s\n"
+msgstr "KONVERTIEREN: Abschnitt %s\n"
+
+#
+# File: faxmail/faxmail.c++, line: 669
+#, c-format
+msgid "DISCARDED %s (%s/%s) GOES HERE\n"
+msgstr "VERWORFENES %s (%s/%s) LANDET HIER\n"
+
+#
+# File: faxmail/faxmail.c++, line: 675
+#, c-format
+msgid "DISCARDED %s/%s GOES HERE\n"
+msgstr "VERWORFENES %s/%s LANDET HIER\n"
+
+#
+# File: faxmail/faxmail.c++, line: 683
+#, c-format
+msgid "DISCARDED: %s (%s/%s)\n"
+msgstr "VERWORFEN: %s (%s/%s)\n"
+
+#
+# File: faxmail/faxmail.c++, line: 688
+#, c-format
+msgid "DISCARDED: %s/%s\n"
+msgstr "VERWORFEN: %s/%s\n"
+
+#
+# File: faxmail/faxmail.c++, line: 757
+#, c-format
+msgid "%s: write error: %s"
+msgstr "%s: Schreibfehler: %s"
+
+# #-#-#-#-#  messages.po  #-#-#-#-#
+#
+# File: faxmail/faxmail.c++, line: 760
+# #-#-#-#-#  messages.po  #-#-#-#-#
+#
+# File: sendfax/sendfax.c++, line: 368
+# #-#-#-#-#  messages.po  #-#-#-#-#
+#
+# File: sendpage/sendpage.c++, line: 216
+#, c-format
+msgid "%s: Can not create temporary file"
+msgstr "%s: Die temporäre Datei kann nicht angelegt werden"
+
+#
+# File: faxmail/faxmail.c++, line: 775
+#, c-format
+msgid "Couldn't open output file: %s"
+msgstr "Die Ausgabedatei konnte nicht geöffnet werden: %s"
+
+#
+# File: faxmail/faxmail.c++, line: 788
+#, c-format
+msgid "Error converting %s/%s; could not fork subprocess: %s"
+msgstr "Fehler beim Konvertieren von %s/%s; es konnte kein Kindprozess erzeugt werden: %s"
+
+#
+# File: faxmail/faxmail.c++, line: 805
+#, c-format
+msgid "Error converting %s/%s; command was \"%s %s\"; exit status %x"
+msgstr "Fehler beim Konvertieren von %s/%s; der Befehl war \"%s %s\"; Rückgabewert %x"
+
+#
+# File: faxmail/faxmail.c++, line: 972
+msgid "usage: faxmail [-b boldfont] [-H pageheight] [-i italicfont] [-f textfont] [-p pointsize] [-s pagesize] [-W pagewidth] [-M margins] [-C covertemplate] [-t notify] [-u user] [-12cnNrRTv]"
+msgstr "usage: faxmail [-b Fett-Zeichensatz] [-H Seitenlänge] [-i Kursiv-Zeichensatz] [-f Text-Zeichensatz] [-p Schriftgröße] [-s Seitenformat] [-W Seitenbreite] [-M Ränder] [-C Konvertierungs-Schablone] [-t Benachrichtigung] [-u Benutzer] [-12cnNrRTv]"
+
+# File: faxrm/faxrm.c++, line: 98
+#. translator: File %s has been removed.
+#, c-format
+msgid "%s removed.\n"
+msgstr "%s wurde entfernt.\n"
+
+#
+# File: faxrm/faxrm.c++, line: 112
+#, c-format
+msgid "Job %s removed.\n"
+msgstr "Auftrag %s wurde entfernt.\n"
+
+#
+# File: faxrm/faxrm.c++, line: 117
+#, c-format
+msgid "Job %s removed (from doneq).\n"
+msgstr "Auftrag %s wurde entfernt (von der Erledigt-Warteschlange).\n"
+
+#
+# File: faxrm/faxrm.c++, line: 137
+msgid "usage: faxrm [-h server-host] [-adv] id..."
+msgstr "Aufruf: faxrm [-h Server-Host] [-adv] Kennung..."
+
+# File: faxstat/faxstat.c++, line: 99
+msgid "usage: faxstat [-h server-host] [-adfgilrsv]"
+msgstr "Aufruf: faxstat [-h Server-Host] [-adfgilrsv]"
+
+# File: sendfax/sendfax.c++, line: 243
+#, c-format
+msgid "%s: No destination specified.\n"
+msgstr "%s: Es wurde kein Ziel angegeben.\n"
+
+#
+# File: sendfax/sendfax.c++, line: 248
+#, c-format
+msgid "%s: Unused options after last destination.\n"
+msgstr "%s: Dem letzten Ziel folgen ungenutzte Optionen.\n"
+
+#
+# File: sendfax/sendfax.c++, line: 268
+#, c-format
+msgid "can only wait for one job (right now), waiting for job %s."
+msgstr "es kann (derzeit) nur auf einen Auftrag gewartet werden,  es wird auf Auftrag %s gewartet."
+
+#
+# File: sendfax/sendfax.c++, line: 282
+#, c-format
+msgid ""
+"usage: %s [options] [files]\n"
+"(Read the manual page; it's too complicated)"
+msgstr ""
+"Aufruf: %s [Optionen] [Dateien]\n"
+"(Lesen Sie bitte die Handbuchseiten; das Thema ist zu komplex)"
+
+#
+# File: sendfax/sendfax.c++, line: 322
+#, c-format
+msgid "Null destination for \"%s\""
+msgstr "Leeres Ziel für \"%s\" angegeben"
+
+#
+# File: sendfax/sendfax.c++, line: 329
+msgid "ECM disabled, limiting job to 14400 bps."
+msgstr "ECM ist deaktiviert; der AUftrag wird auf 14400 BPS begrenzt."
+
+#
+# File: sendfax/sendfax.c++, line: 352
+#, c-format
+msgid "%s: no such file"
+msgstr "%s: eine solche Datei existiert nicht"
+
+#
+# File: sendfax/sendfax.c++, line: 375
+#, c-format
+msgid "%s: write error"
+msgstr "%s: Schreibfehler"
+
+#
+# File: sendfax/sendfax.c++, line: 383
+msgid "No input data; transmission aborted"
+msgstr "Keine Eingangsdaten; die Übertragung wird abgebrochen"
+
+#
+# File: sendpage/sendpage.c++, line: 144
+#, c-format
+msgid "%s: No pager identification number (PIN) specified.\n"
+msgstr "%s: Es wurde keine Pager-Identifikationsnummer (PIN) angegeben.\n"
+
+#
+# File: sendpage/sendpage.c++, line: 177
+#, c-format
+msgid ""
+"usage: %s -p PIN [-p PIN ...]\n"
+" [-a time-to-send] [-l service-level] [-s message-subject]\n"
+"     [-h host[:modem]] [-f from]\n"
+"     [-I retry-time] [-t max-tries] [-T max-dials] [-nqvDNR] [msgs ...]"
+msgstr ""
+"Aufruf: %s -p PIN [-p PIN ...]\n"
+" [-a Sende-Uhrzeit] [-l Dienstebene] [-s Nachrichten-Thema]\n"
+"     [-h Host[:Modem]] [-f Absender]\n"
+"     [-I Wiederholungsuhrzeit] [-t maximale-Versuche] [-T maximale-Wählversuche] [-nqvDNR] [Nachrichten ...]"
+
+# File: util/dialtest.c++, line: 45
+#, c-format
+msgid "usage: %s [-v] [-a area-code] [-c country-code] [-i international-prefix] [-l long-distance-prefix] dialrules"
+msgstr "Aufruf: %s [-v] [-a Vorwahl] [-c Ländervorwahl] [-i internationale-Vorwahl] [-l Ferngespächs-Vorwahl] Wählregeln"
+
+# #-#-#-#-#  messages.po  #-#-#-#-#
+#
+# File: util/dialtest.c++, line: 60
+# #-#-#-#-#  messages.po  #-#-#-#-#
+#
+# File: faxd/tsitest.c++, line: 136
+#, c-format
+msgid "ready> "
+msgstr "bereit> "
+
+#
+# File: util/dialtest.c++, line: 110
+#, c-format
+msgid "%s: Problem parsing rules in %s"
+msgstr "%s: Beim Einlesen der Regeln aus %s ist ein Problem aufgetreten"
+
+# #-#-#-#-#  messages.po  #-#-#-#-#
+#
+# File: util/dialtest.c++, line: 117
+# #-#-#-#-#  messages.po  #-#-#-#-#
+#
+# File: faxd/tsitest.c++, line: 168
+#, c-format
+msgid "input = \"%s\"\n"
+msgstr "Eingabe = \"%s\"\n"
+
+#
+# File: util/dialtest.c++, line: 132
+#, c-format
+msgid "canonical = \"%s\"\n"
+msgstr "Kanonisch = \"%s\"\n"
+
+#
+# File: util/dialtest.c++, line: 133
+#, c-format
+msgid "dial-string = \"%s\"\n"
+msgstr "Wähl-Zeichenkette = \"%s\"\n"
+
+#
+# File: util/dialtest.c++, line: 134
+#, c-format
+msgid "display = \"%s\"\n"
+msgstr "Anzeige = \"%s\"\n"
+
+#
+# File: util/faxfetch.c++, line: 92
+msgid "usage: faxfetch [-h server-host] [-v] file"
+msgstr "Aufruf: faxfetch [-h Server-Host] [-v] Datei"
+
+#
+# File: util/faxinfo.c++, line: 85
+#, c-format
+msgid ""
+"usage: %s [-n] [-S fmt] [-s fmt] [-e fmt] [-E fmt] [-D]\n"
+"\n"
+msgstr ""
+"Aufruf: %s [-n] [-S Format] [-s Format] [-e Format] [-E Format] [-D]\n"
+"\n"
+
+#
+# File: util/faxinfo.c++, line: 86
+#, c-format
+msgid "\t-n\tPrint FAX filename\n"
+msgstr "\t-n\tDrucke FAX Dateiname\n"
+
+#
+# File: util/faxinfo.c++, line: 87
+#, c-format
+msgid "\t-C d\tQuoted CSV-style output with <d> as the deliminator\n"
+msgstr "\t-C d\tAusgabe in CSV-Stil mit Anfḧrungszeichen mit <d> als Abgrenzungszeichen\n"
+
+#
+# File: util/faxinfo.c++, line: 88
+#, c-format
+msgid "\t-c d\tCSV-style output with <d> as the deliminator\n"
+msgstr "\t-C d\tAusgabe im CSV-Stil mit <d> als Abgrenzungszeichen\n"
+
+#
+# File: util/faxinfo.c++, line: 89
+#, c-format
+msgid "\t-r\traw format - values outputed with no names\n"
+msgstr "\t-r\tRohformat - Werte werden ohne Namen ausgegeben\n"
+
+#
+# File: util/faxinfo.c++, line: 91
+#, c-format
+msgid "  Raw format options:\n"
+msgstr "Optionen für das Rohformat:\n"
+
+#
+# File: util/faxinfo.c++, line: 92
+#, c-format
+msgid "\t-S fmt\tUse fmt for the fax start format\n"
+msgstr "\t-S fmt\tVerwenden Sie Format als Fax-Startformat\n"
+
+#
+# File: util/faxinfo.c++, line: 93
+#, c-format
+msgid "\t-s fmt\tUse fmt for the field start format\n"
+msgstr "\t-S fmt\tVerwenden Sie Format als Startformat für Felder\n"
+
+#
+# File: util/faxinfo.c++, line: 94
+#, c-format
+msgid "\t-e fmt\tUse fmt for the field end format\n"
+msgstr "\t-S fmt\tVerwenden Sie Format als Format für das Ende von Feldern\n"
+
+#
+# File: util/faxinfo.c++, line: 95
+#, c-format
+msgid "\t-E fmt\tUse fmt for the fax end format\n"
+msgstr "\t-S fmt\tVerwenden Sie Format als Format für das Ende des Fax\n"
+
+#
+# File: util/faxinfo.c++, line: 243
+#, c-format
+msgid "Could not open %s; either not TIFF or corrupted.\n"
+msgstr "%s konnte nicht geöffnet werden; entweder kein TIFF oder defekt.\n"
+
+#
+# File: util/faxinfo.c++, line: 249
+#, c-format
+msgid "Does not look like a facsimile?\n"
+msgstr "Sieht es nicht wie ein Fax aus?\n"
+
+#
+# File: util/faxinfo.c++, line: 347
+# File: util/faxinfo.c++, line: 413
+msgid "<unknown>"
+msgstr "<unbekannt>"
+
+#
+# File: util/faxinfo.c++, line: 353
+msgid "SubAddr"
+msgstr "SubAddr"
+
+#
+# File: util/faxinfo.c++, line: 397
+msgid "Normal"
+msgstr "Normal"
+
+#
+# File: util/faxinfo.c++, line: 397
+# File: util/faxinfo.c++, line: 399
+# File: util/faxinfo.c++, line: 401
+# File: util/faxinfo.c++, line: 403
+# File: util/faxinfo.c++, line: 405
+msgid "Quality"
+msgstr "Qualität"
+
+#
+# File: util/faxinfo.c++, line: 399
+msgid "Fine"
+msgstr "Fein"
+
+#
+# File: util/faxinfo.c++, line: 401
+msgid "Superfine"
+msgstr "Superfein"
+
+#
+# File: util/faxinfo.c++, line: 403
+msgid "Hyperfine"
+msgstr "Hyperfein"
+
+#
+# File: util/faxinfo.c++, line: 405
+#, c-format
+msgid "%u lines/inch"
+msgstr "%u Zeilen/Zoll"
+
+#
+# File: util/faxinfo.c++, line: 408
+# File: util/faxinfo.c++, line: 410
+msgid "Page"
+msgstr "Seite"
+
+#
+# File: util/faxinfo.c++, line: 410
+#, c-format
+msgid "%u by %u"
+msgstr "%u von %u"
+
+#
+# File: util/faxinfo.c++, line: 412
+msgid "Received"
+msgstr "Empfangen"
+
+#
+# File: util/faxinfo.c++, line: 413
+msgid "TimeToRecv"
+msgstr "Empfangszeit"
+
+#
+# File: util/faxinfo.c++, line: 414
+msgid "SignalRate"
+msgstr "Signalrate"
+
+#
+# File: util/faxinfo.c++, line: 415
+msgid "DataFormat"
+msgstr "Datenformat"
+
+#
+# File: util/faxinfo.c++, line: 416
+msgid "ErrCorrect"
+msgstr "ErrCorrect"
+
+#
+# File: util/faxinfo.c++, line: 416
+msgid "No"
+msgstr "Nein"
+
+#
+# File: util/faxinfo.c++, line: 416
+msgid "Yes"
+msgstr "Ja"
+
+#
+# File: util/faxinfo.c++, line: 419
+#, c-format
+msgid "CallID%u"
+msgstr "CallID%u"
+
+#
+# File: util/faxwatch.c++, line: 55
+#, c-format
+msgid "write error: %s"
+msgstr "Schreibfehler: %s"
+
+#
+# File: util/faxwatch.c++, line: 101
+msgid "time values reported in GMT"
+msgstr "Zeitangaben erfolgen in GMT"
+
+#
+# File: util/faxwatch.c++, line: 114
+#, c-format
+msgid "usage: %s [-h host] [-g] [-l] [-v] trigger-specification"
+msgstr "Aufruf: %s [-h Host] [-g] [-l] [-v] Trigger-Spezifikation"
+
+#
+# File: util/textfmt.c++, line: 45
+#, c-format
+msgid "Usage: %s [-1] [-2] [-B] [-c] [-D] [-f fontname] [-F fontdir(s)] [-m N] [-o #] [-p #] [-r] [-U] [-Ml=#,r=#,t=#,b=#] [-V #] files... >out.ps\n"
+msgstr "Aufruf: %s [-1] [-2] [-B] [-c] [-D] [-f Zeichensatzname] [-F Zeichensatzverzeichnis(se)] [-m N] [-o #] [-p #] [-r] [-U] [-Ml=#,r=#,t=#,b=#] [-V #] Dateien... >ausgabe.ps\n"
+
+#
+# File: util/textfmt.c++, line: 61
+#, c-format
+msgid "Default options: -f Courier -1 -p 11bp -o 0\n"
+msgstr "Standardoptionen: -f Courier -1 -p 11bp -o 0\n"
+
+#
+# File: util/textfmt.c++, line: 109
+#, c-format
+msgid "%s: No font metric information found for \"%s\".\n"
+msgstr "%s: Für \"%s\" wurden keine Informationen zur Zeichensatzmetrik gefunden.\n"
+
+#
+# File: util/textfmt.c++, line: 125
+#, c-format
+msgid "Bad margin syntax.\n"
+msgstr "Die Art der Angabe der Randbreiten ist ungültig.\n"
+
+#
+# File: util/textfmt.c++, line: 143
+#, c-format
+msgid "Unknown page size %s.\n"
+msgstr "Unbekanntes Seitenformat %s.\n"
+
+#
+# File: util/textfmt.c++, line: 154
+#, c-format
+msgid "Unrecognized option \"%c\".\n"
+msgstr "Unbekannte Option \"%c\".\n"
+
+#
+# File: util/tiffcheck.c++, line: 36
+#, c-format
+msgid "usage: %s [-r vertical-res] [-l page-length] [-w page-width] [-1] [-2] [-3] input.tif"
+msgstr "Aufruf: %s [-r Vertikale-Auflösung] [-l Seitenlänge] [-w Seitenbreite] [-1] [-2] [-3] Eingabe.tif"
+
+#
+# File: util/tiffcheck.c++, line: 115
+msgid "Document file is unreadable or does not exist"
+msgstr "Die Dokumentendatei ist unlesbar oder existiert nicht"
+
+#
+# File: util/tiffcheck.c++, line: 117
+msgid "Document is not valid TIFF (unspecified format error)"
+msgstr "Das Dokument ist kein gültiges TIFF (unspezifierter Formatfehler)"
+
+#
+# File: util/tiffcheck.c++, line: 152
+#, c-format
+msgid "Document is not a bilevel image (bits/sample %u).\n"
+msgstr "Das Dokument ist kein Bilevel-Bild (%u Bits/Wert).\n"
+
+#
+# File: util/tiffcheck.c++, line: 159
+#, c-format
+msgid "Document is a multi-sample image (samples/pixel %u).\n"
+msgstr "Das Dokument ist ein Multisample-Bild (%u Abtastungen/Pixel).\n"
+
+#
+# File: util/tiffcheck.c++, line: 166
+msgid "Document is not black-on-white.\n"
+msgstr "Das Dokument ist nicht Schwarz-auf-Weiss.\n"
+
+#
+# File: util/tiffcheck.c++, line: 173
+msgid "Document requires reformatting, not in Group 4 format.\n"
+msgstr "Das Dokument muss neu formatiert werden, da es nicht im Gruppe 4 Format vorliegt.\n"
+
+#
+# File: util/tiffcheck.c++, line: 178
+msgid "Document requires reformatting, not in Group 3 format.\n"
+msgstr "Das Dokument muss neu formatiert werden, da es nicht im Gruppe 3 Format vorliegt.\n"
+
+#
+# File: util/tiffcheck.c++, line: 184
+msgid "Document requires reformatting, not in 2DMR format.\n"
+msgstr "Das Dokument muss neu formatiert werden, da es nicht im 2DMR-Format vorliegt.\n"
+
+#
+# File: util/tiffcheck.c++, line: 193
+msgid "Document should be reformatted as a single strip.\n"
+msgstr "Das Dokument sollte als ein Abschnitt formatiert werden.\n"
+
+#
+# File: util/tiffcheck.c++, line: 203
+msgid "Document should be reformatted with LSB-to-MSB bit order.\n"
+msgstr "Das Dokument sollte mit LSB-zu-MSB Bitreihenfolge neu formatiert werden.\n"
+
+#
+# File: util/tiffcheck.c++, line: 242
+#, c-format
+msgid "Document requires reformatting to adjust vertical resolution (convert to %lu, document is %lu).\n"
+msgstr "Das Dokument erfordert eine Neuformatierung um die Vertikale Auflösung anzupassen (konvertieren zu %lu, Dokument ist %lu).\n"
+
+#
+# File: util/tiffcheck.c++, line: 254
+msgid "Document is not valid TIFF (missing ImageWidth tag).\n"
+msgstr "Das Dokument ist kein gültiges TIFF (ImageWidth Feld fehlt).\n"
+
+#
+# File: util/tiffcheck.c++, line: 258
+#, c-format
+msgid "Document requires resizing to adjust page width (convert to %lu, document is %lu).\n"
+msgstr "Das Dokument erfordert eine Grössenanpassung um die Seitenbreite anzupassen (konvertieren zu %lu, Dokument ist %lu).\n"
+
+#
+# File: util/tiffcheck.c++, line: 274
+msgid "Document is not valid TIFF (missing ImageLength tag).\n"
+msgstr "Das Dokument ist kein gültiges TIFF (ImageLength Feld fehlt).\n"
+
+#
+# File: util/tiffcheck.c++, line: 283
+#, c-format
+msgid "Document requires resizing to adjust page length (convert to %lu, document is %lu).\n"
+msgstr "Das Dokument erfordert eine Grössenanpassung um die Seitenlänge anzupassen (konvertieren zu %lu, Dokument ist %lu).\n"
+
+#
+# File: util/typetest.c++, line: 52
+#, c-format
+msgid "%s: Can not open file\n"
+msgstr "%s: Die Datei kann nicht geöffnet werden\n"
+
+#
+# File: util/typetest.c++, line: 56
+#, c-format
+msgid "%s: Can not stat file\n"
+msgstr "%s: Status der Datei kann nicht abgefragt werden\n"
+
+#
+# File: util/typetest.c++, line: 61
+#, c-format
+msgid "%s: Not a regular file\n"
+msgstr "%s: Keine normale Datei\n"
+
+#
+# File: util/typetest.c++, line: 69
+#, c-format
+msgid "%s: Empty file\n"
+msgstr "%s: Leere Datei\n"
+
+#
+# File: util/typetest.c++, line: 74
+#, c-format
+msgid "%s: Can not determine file type\n"
+msgstr "%s: Der Dateityp kann nicht bestimmt werden\n"
+
+#
+# File: util/typetest.c++, line: 90
+#, c-format
+msgid "usage: %s [-f rulesfile] files\n"
+msgstr "Aufruf: %s [-f Regeldatei] Dateien\n"
+
+#
+# File: util/typetest.c++, line: 117
+#, c-format
+msgid "Unable to setup file typing and conversion rules\n"
+msgstr "Das Einrichten der Regeln für Datei-Typisierung und Konvertierung ist nicht möglich\n"
+
+# File: faxd/choptest.c++, line: 43
+#, c-format
+msgid "usage: %s [-a] [-t threshold] input.tif\n"
+msgstr "Aufruf: %s [-a] [-t Schwellwert] eingabe.tif\n"
+
+#
+# File: faxd/choptest.c++, line: 87
+# File: faxd/tagtest.c++, line: 438
+#, c-format
+msgid "%s: Cannot open, or not a TIFF file"
+msgstr "%s: Kann nicht geöffnet werden oder ist keine TIFF-Datei"
+
+#
+# File: faxd/choptest.c++, line: 91
+# File: faxd/tagtest.c++, line: 442
+#, c-format
+msgid "%s: Not a Group 3 or Group 4-encoded TIFF file"
+msgstr "%s: Keine TIFF-Datei in Gruppe 3- oder Gruppe 4-Kodierung"
+
+#
+# File: faxd/choptest.c++, line: 100
+#, c-format
+msgid "Chop all pages with >=%.2g\" of white space at the bottom.\n"
+msgstr "Alle Seiten mit mehr als %.2g\" leeren Raumes am Seitenende abtrennen.\n"
+
+#
+# File: faxd/choptest.c++, line: 101
+#, c-format
+msgid "Chop last page if >=%.2g\" of white space at the bottom.\n"
+msgstr "Letzte Seite abtrennen, wenn diese am Ende mehr als %.2g\" leeren Raumes hat.\n"
+
+#
+# File: faxd/choptest.c++, line: 134
+#, c-format
+msgid "Chop %u rows, strip was %lu bytes, need only %lu\n"
+msgstr "%u Zeilen abtrennen, Abschnitt hatte %lu Bytes, nur %lu wurden benötigt\n"
+
+#
+# File: faxd/choptest.c++, line: 140
+#, c-format
+msgid "Don't chop, found %u rows, need %u rows\n"
+msgstr "Nicht abtrennen, %u Zeilen wurden gefunden, benötigt werden %u Zeilen\n"
+
+#
+# File: faxd/cqtest.c++, line: 168
+msgid "Missing EOL after 5 seconds"
+msgstr "Kein EOL nach 5 Sekunden"
+
+#
+# File: faxd/cqtest.c++, line: 259
+# File: faxd/cqtest.c++, line: 350
+#, c-format
+msgid "Adjusting for RTC found at row %u"
+msgstr "Anpassung für das in Zeile %u gefundene RTC wird vorgenommen"
+
+#
+# File: faxd/cqtest.c++, line: 273
+#, c-format
+msgid "adjusting for trailing noise (%lu run)"
+msgstr "Anpassung für nachfolgendes Rauschen wird vorgenommen (%lu Lauf)"
+
+#
+# File: faxd/cqtest.c++, line: 279
+#, c-format
+msgid "%lu total lines, %lu bad lines, %lu consecutive bad lines"
+msgstr "%lu Zeilen insgesamt, %lu fehlerhafte Zeilen, %lu aufeinander folgende Zeilen"
+
+#
+# File: faxd/cqtest.c++, line: 362
+# File: faxd/cqtest.c++, line: 373
+#, c-format
+msgid "RECV: %s: write error"
+msgstr "RECV: %s: Schreibfehler"
+
+#
+# File: faxd/cqtest.c++, line: 397
+#, c-format
+msgid "RECV: REJECT page quality, %u%% good lines (%u%% required)"
+msgstr "RECV: REJECT Seitenqualität, %u%% fehlerfreie Zeilen (%u%% sind erforderlich)"
+
+#
+# File: faxd/cqtest.c++, line: 407
+#, c-format
+msgid "RECV: REJECT page quality, %u-line run (max %u)"
+msgstr "RECV: REJECT Seitenqualität, %u-zeiliger Abschnitt (max. %u)"
+
+#
+# File: faxd/cqtest.c++, line: 435
+msgid "RECV: "
+msgstr "RECV: "
+
+#
+# File: faxd/cqtest.c++, line: 459
+#, c-format
+msgid "Invalid %s code word, row %u, x %d"
+msgstr "Ungültiges Schlüsselwort %s, Zeile %u, x %d"
+
+#
+# File: faxd/cqtest.c++, line: 470
+#, c-format
+msgid "Bad %s pixel count, row %u, got %d, expected %d"
+msgstr "Ungültige %s Pixelanzahl, Zeile %u, %d bekommen, %d wurde erwartet"
+
+#
+# File: faxd/cqtest.c++, line: 477
+#, c-format
+msgid "Panic, bad %s decoding state, row %u, x %d"
+msgstr "Panik, schlechter %s-Dekodierstatus, Zeile %u, x %d"
+
+#
+# File: faxd/cqtest.c++, line: 489
+msgid "RECV/CQ: "
+msgstr "RECV/CQ: "
+
+#
+# File: faxd/cqtest.c++, line: 499
+#, c-format
+msgid "usage: %s [-m maxbad] [-p %%good] [-o output.tif] input.tif\n"
+msgstr "Aufruf: %s [-m Maxungültig] [-p %%gut] [-o Ausgabe.tif] Eingabe.tif\n"
+
+#
+# File: faxd/cqtest.c++, line: 533
+#, c-format
+msgid "%s: Cannot open, or not a TIFF file\n"
+msgstr "%s: Kann nicht geöffnet werden oder ist keine TIFF Datei\n"
+
+#
+# File: faxd/cqtest.c++, line: 538
+#, c-format
+msgid "%s: Cannot create TIFF file\n"
+msgstr "%s: Die TIFF-Datei kann nicht angelegt werden\n"
+
+#
+# File: faxd/cqtest.c++, line: 581
+#, c-format
+msgid "Read error on strip %u\n"
+msgstr "Lesefehler bei Abschnitt %u\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 126
+#, c-format
+msgid "Scan %s directory for jobs to remove+archive.\n"
+msgstr "Durchsuchen des %s-Verzeichnisses nach Aufträgen, die entfernt und archiviert werden können.\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 131
+#, c-format
+msgid "%s: Could not scan directory for jobs.\n"
+msgstr "%s: Das Verzeichnis konnte nicht nach Aufträgen durchsucht werden.\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 144
+#, c-format
+msgid "%s: ignored (cannot stat or not a regular file)\n"
+msgstr "%s: wird ignoriert (Status nicht erfragbar oder keine reguäre Datei)\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 161
+#, c-format
+msgid "%s: job too new, ignored (for now).\n"
+msgstr "%s: Der Auftrag ist zu neu, wird (derzeit) ignoriert.\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 171
+#, c-format
+msgid "JOB %s: archive (%s)%s.\n"
+msgstr "JOB %s: archivieren (%s)%s.\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 174
+# File: faxd/faxQCleanApp.c++, line: 183
+# File: faxd/faxQCleanApp.c++, line: 416
+msgid " (not done)"
+msgstr " (nicht erledigt)"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 180
+#, c-format
+msgid "JOB %s: remove (%s) %s.\n"
+msgstr "JOB %s: entfernen (%s) %s.\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 197
+#, c-format
+msgid "%s: malformed queue file: remove\n"
+msgstr "%s: Defekte Warteschlangendatei: wird entfernt\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 213
+# File: faxd/faxQCleanApp.c++, line: 425
+#, c-format
+msgid "Done scanning %s directory\n"
+msgstr "Durchsuchen des %s-Verzeichnisses erledigt\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 235
+#, c-format
+msgid "JOB %s: reference %s\n"
+msgstr "JOB %s: Referenz %s\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 267
+#, c-format
+msgid "Scan %s directory and remove unreferenced documents.\n"
+msgstr "Durchsuchen des %s-Verzeichnisses und Entfernen nicht referenzierter Dokumente.\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 272
+#, c-format
+msgid "%s: Could not scan directory for unreferenced documents.\n"
+msgstr "%s: Das Verzeichnis konnte nicht nach unreferenzierten Dokumenten durchsucht werden.\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 294
+#, c-format
+msgid "%s: ignored, cannot stat or not a regular file\n"
+msgstr "%s: wird ignoriert da der Status nicht erfragbar ist oder es keine reguläre Datei ist\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 309
+#, c-format
+msgid "%s: ignored, file has %u links\n"
+msgstr "%s: wird ignoriert, Datei hat %u Verknüpfungen\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 315
+#, c-format
+msgid "%s: ignored, file has %u references\n"
+msgstr "%s: wird ignoriert, Datei hat %u Referenzen\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 321
+#, c-format
+msgid "%s: ignored, file is too new to remove\n"
+msgstr "%s: wird ignoriert, Datei ist zu neu als das sie gelöscht werden kann\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 344
+# File: faxd/faxQCleanApp.c++, line: 366
+#, c-format
+msgid "%s: file looks to be referenced by job\n"
+msgstr "%s: es scheint, dass die Datei von einem Auftrag benötigt wird\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 348
+#, c-format
+msgid "%s: file has no matching %s\n"
+msgstr "%s: Die Datei hat keine passende %s\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 385
+#, c-format
+msgid "%s: Could not scan directory for base file.\n"
+msgstr "%s: Das Verzeichnis konnte nicht nach der Basisdatei durchsucht werden.\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 394
+#, c-format
+msgid "%s: found match to base '%s', skipping.\n"
+msgstr "%s: eine Entsprechung für Basis »%s« wurde gefunden, es wird übersprungen.\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 406
+#, c-format
+msgid "%s: did not find base '%s' match.\n"
+msgstr "%s: nichts was zu Basis »%s« passt wurde gefunden.\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 414
+#, c-format
+msgid "DOC %s: unreferenced document removed%s.\n"
+msgstr "DOC %s: nicht referenziertes Dokument wurde entfernt%s.\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 420
+#, c-format
+msgid "%s: error removing unreferenced document: %s.\n"
+msgstr "%s: es ist ein Fehler beim Entfernen des nicht referenzierten Dokuments aufgetreten: %s\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 433
+#, c-format
+msgid "usage: %s [-a] [-j time] [-d time] [-q queue-directory]\n"
+msgstr "Aufruf: %s [-a] [-j Uhrzeit] [-d Uhrzeit] [-q Warteschlangen-Verzeichnis]\n"
+
+#
+# File: faxd/faxQCleanApp.c++, line: 466
+#, c-format
+msgid "%s: Can not change directory: %s.\n"
+msgstr "%s: das Verzeichnis kann nicht gewechselt werden: %s.\n"
+
+#
+# File: faxd/tagtest.c++, line: 384
+#, c-format
+msgid "usage: %s [-m format] [-o t.tif] [-f font.pcf] input.tif\n"
+msgstr "Aufruf: %s [-m Format] [-o t.tif] [-f Zeichensatz.pcf] Eingabe.tif\n"
+
+#
+# File: faxd/tagtest.c++, line: 445
+#, c-format
+msgid "%s: Problem reading font"
+msgstr "%s: Probleme beim Lesen der Schriftdatei"
+
+#
+# File: faxd/tagtest.c++, line: 449
+#, c-format
+msgid "%s: Cannot create output file"
+msgstr "%s: Die Ausgabedatei kann nicht angelegt werden"
+
+#
+# File: faxd/tagtest.c++, line: 553
+#, c-format
+msgid "%s: Write error at strip %u, writing %lu bytes"
+msgstr "%s: Schreibfehler bei Abschnitt %u, es werden %lu Bytes geschrieben"
+
+#
+# File: faxd/tsitest.c++, line: 95
+#, c-format
+msgid "Bad TSI pattern: %s: "
+msgstr "Ungültiges TSI Muster: %s:"
+
+#
+# File: faxd/tsitest.c++, line: 130
+#, c-format
+msgid "usage: %s [-q] tsifile"
+msgstr "Aufruf: %s [-q] tsidatei"
+
+#
+# File: faxd/tsitest.c++, line: 175
+#, c-format
+msgid "[check %s]\n"
+msgstr "[Prüfung von %s]\n"
+
+#
+# File: faxd/tsitest.c++, line: 179
+#, c-format
+msgid "accept (matched by %s)\n"
+msgstr "wird akzeptiert (passt auf %s)\n"
+
+#
+# File: faxd/tsitest.c++, line: 180
+#, c-format
+msgid "reject (matched by %s)\n"
+msgstr "wird zurück gewiesen (passt auf %s)\n"
+
+#
+# File: faxd/tsitest.c++, line: 186
+#, c-format
+msgid "reject (no pattern match)\n"
+msgstr "wird zurück gewiesen (kein passendes Muster)\n"
+
+#
+# File: faxd/tsitest.c++, line: 188
+#, c-format
+msgid "reject (no patterns)\n"
+msgstr "wird zurück gewiesen (keine Muster)\n"
