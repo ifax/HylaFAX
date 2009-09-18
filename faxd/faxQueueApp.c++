@@ -1075,8 +1075,10 @@ faxQueueApp::preparePageChop(const FaxRequest& req,
 		break;
 	}
 	if (dec.getLastBlanks() > minRows)
+	{
 	    pagehandling.append(fxStr::format("Z%04x",
-		stripSize - (dec.getEndOfPage() - data)));
+		fxmin((unsigned)0xFFFF, stripSize - (dec.getEndOfPage() - data))));
+	}
     }
     delete [] data;
 }
