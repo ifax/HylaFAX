@@ -3122,6 +3122,12 @@ faxQueueApp::notifyModemWedged(Modem& modem)
 void
 faxQueueApp::FIFOModemMessage(const fxStr& devid, const char* msg)
 {
+    if (! devid.length() > 0)
+    {
+	traceServer("Invalid modem FIFO message");
+	return;
+    }
+
     Modem& modem = Modem::getModemByID(devid);
     switch (msg[0]) {
     case 'R':			// modem ready, parse capabilities
@@ -3239,6 +3245,12 @@ faxQueueApp::FIFOJobMessage(const fxStr& jobid, const char* msg)
 void
 faxQueueApp::FIFORecvMessage(const fxStr& devid, const char* msg)
 {
+    if (! devid.length() > 0)
+    {
+	traceServer("Invalid modem FIFO message");
+	return;
+    }
+
     Modem& modem = Modem::getModemByID(devid);
     switch (msg[0]) {
     case 'B':			// inbound call started
