@@ -1,6 +1,6 @@
 %define name        hylafax
-%define version     6.0.3
-%define pkg_release 1
+%define version     6.0.4
+%define pkg_release 0.1.GIT
 
 #
 ## OS version detection
@@ -60,15 +60,10 @@ URL:       http://www.ifax.com/
 Source:    ftp://ftp.hylafax.org/source/%{name}-%{version}.tar.gz
 
 BuildPrereq: libjpeg-devel, libtiff-devel, zlib-devel, gettext
-Requires:    ghostscript >= 5.5
-Requires:    libtiff >= 3.5.5
 %if %{is_suse}
-Requires:    tiff >= 3.5.5
+BuildPrereq: gettext-tools
 %endif
-Requires:    gawk
-Requires:    rpm >= 3.0.5
-Requires:    sharutils
-Conflicts:   mgetty-sendfax
+BuildPrereq: rpm >= 3.0.5
 
 BuildRoot: %{_tmppath}/%{name}-root
 
@@ -87,7 +82,15 @@ Group:     Applications/Communications
 
 Provides:    hylafax = %{version}-%{pkg_release}%{ostag}
 Requires:    hylafax-client = %{version}-%{pkg_release}%{ostag}
+Requires:    ghostscript >= 5.5
+Requires:    libtiff >= 3.5.5
+%if %{is_suse}
+Requires:    tiff >= 3.5.5
+%endif
+Requires:    gawk
+Requires:    sharutils
 Obsoletes:   hylafax < 6.0.0 hylafax > 20000101:4.0.0
+Conflicts:   mgetty-sendfax
 
 %description server
 HylaFAX(tm) is a sophisticated enterprise-strength fax package for
@@ -102,7 +105,10 @@ Summary:   HylaFAX(tm) is a sophisticated enterprise strength fax package
 Release:   %{pkg_release}%{ostag}
 Group:     Applications/Communications
 
+Requires:    ghostscript >= 5.5
+Requires:    libtiff >= 3.5.5
 Obsoletes:   hylafax < 6.0.0 hylafax > 20000101:4.0.0
+Conflicts:   mgetty-sendfax
 
 %description client
 HylaFAX(tm) is a sophisticated enterprise-strength fax package for
@@ -449,6 +455,11 @@ fi
 %attr(644,root,root) %config(noreplace) %{_sysconfdir}/hylafax/typerules
 
 %changelog
+* Fri Sep 25 2009 Patrice Fournier <patrice.fournier@ifax.com> 6.0.4-0.1.GIT
+  - Update package to 6.0.4 GIT pre-release
+  - Move the require dependencies to the right binary packages
+  - Add gettext-tools build dependency on SUSE
+
 * Fri Jul 10 2009 Patrice Fournier <patrice.fournier@ifax.com> 6.0.3-1
   - Update to official 6.0.3 release
 
