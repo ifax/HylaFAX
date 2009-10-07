@@ -1,4 +1,4 @@
-HylaFAX 6.0.3
+HylaFAX 6.0.4
 
 Overview
 -----------------------------------------------------------------------------
@@ -347,3 +347,18 @@ CHANGES for 6.0.3
 * Remove debugging statements (2009-06-04)
 * More debug statements need to be removed (2009-06-04)
 * Signal handlers need to be careful with errno (2009-07-03)
+
+CHANGES for 6.0.4
+-----------------------------------------------------------------------------
+* Page sent protocol trace fixes (2009-07-24)
+* Don't duplicate any file in a release tarball (2009-08-07)
+* IPv6: Rework initial bind (2009-08-07)
+* Some CVS-GIT cleanups/release notes (2009-08-14)
+* pagesend: Fix broken switch statement (2009-08-14)
+* hfaxd:  Cleanup uid initizliaztion and theoretical overflow (2009-08-14)
+* nls: Add German translation (2009-09-14)
+* PageHandling:  Fix handling of large blank areas (2009-09-18)
+* Add support for libtiff 3.9 (2007-11-21)
+* faxq: Don't assert on bad FIFO messages (2009-09-21)
+* Updated RPM dependencies (2009-09-25)
+* Str::vformat()  Don't reuse va_args (2009-10-07)
