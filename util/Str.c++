@@ -188,7 +188,10 @@ fxStr::vformat(const char* fmt, va_list ap)
 	if (len)
 	    size *= 2;
 	tmp = (char*)realloc(tmp, size);
-	len = vsnprintf(tmp, size, fmt, ap);
+	va_list ac;
+	va_copy(ac, ap);
+	len = vsnprintf(tmp, size, fmt, ac);
+	va_end(ac);
 	fxAssert(len >= 0, "Str::vformat() error in vsnprintf");
     } while (len > size);
 
