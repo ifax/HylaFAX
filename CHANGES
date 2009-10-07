@@ -1,5 +1,11 @@
 #	$Id$	
 
+Changelog for 4.3.9
+* hfaxd:  Cleanup uid initizliaztion and theoretical overflow (2009-08-14)
+* PageHandling:  Fix handling of large blank areas (2009-09-18)
+* faxq: Don't assert on bad FIFO messages (2009-09-21)
+* Str::vformat()  Don't reuse va_args (2009-10-07)
+
 Changelog for 4.3.8
 * Signal handlers need to be careful with errno (03 Jul 2009)
 * configure: Work on deprecated CXX Headers (20 Apr 2009)
