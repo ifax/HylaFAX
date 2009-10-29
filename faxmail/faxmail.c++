@@ -347,12 +347,17 @@ faxMailApp::run(int argc, char** argv)
 	    to.remove(0, to.skip(0, " \t"));
 	    to.resize(to.skipR(to.length(), " \t"));
 
-	    //remove matched quoting characters, recursively
-	    //If they don't match, we'll assume they are part of
-	    //the larger string, and not "quoting" marks
-	    for (;;)
+	    /*
+	     * Remove matched quoting characters, recursively
+	     * If they don't match, we'll assume they are part of
+	     * the larger string, and not "quoting" marks
+	     * The string to must have at least 2 chars for us to
+	     * have anything to work on.
+	     */
+	    for (;to.length() > 1;)
 	    {
 		int i;
+		/* We have 3 sets of quoting chars to look for */
 		const char* remove[] = { "\"\"", "''","()" };
 		for (i = 0; i < 3; i++)
 		    if (to[0] == remove[i][0] &&
