@@ -279,7 +279,7 @@ Class2Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	if (!decodePPM(pph, ppm, eresult))
 	    goto failed;
 	if (ppm == PPH_SKIP)
-	    protoTrace("Skiping page %d", FaxModem::getPageNumberOfCall());
+	    protoTrace("Skiping page %d", FaxModem::getPageNumber());
 	if (ppm == PPH_SKIP || (dataTransfer() && sendPage(tif, decodePageChop(pph, params), pt == PAGE_COVER))) {
 	    /*
 	     * Page transferred, process post page response from

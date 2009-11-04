@@ -61,9 +61,8 @@ class FaxModem : public ClassModem, public G3Decoder {
 private:
     FaxServer&	server;		// server for getting to device
 // transmit tag line support
-    u_int	pageNumber;	// current transmit page number
-    u_int	pageNumberOfJob;// current transmit page number of Job
-    u_int	pageNumberOfCall;// current transmit page number of call
+    u_int	pageNumber;	// current session page number
+    u_int	pageNumberOfJob;// current session page number of Job
     u_int	pageNumberSkipped;// current skipped page count
     u_int	pageNumberCovered;// current cover page count
     FaxFont*	tagLineFont;	// font for imaging tag line
@@ -123,7 +122,7 @@ protected:
 
 // miscellaneous
     void	countPage(PageType);
-    int		getPageNumberOfCall();
+    int		getPageNumber();
     void	recvTrace(const char* fmt, ...);
     void	copyQualityTrace(const char* fmt, ...);
     void	traceModemParams();

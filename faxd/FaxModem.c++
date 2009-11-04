@@ -47,7 +47,6 @@ FaxModem::FaxModem(FaxServer& s, const ModemConfig& c)
     recvFillOrder = (conf.recvFillOrder != 0)? conf.recvFillOrder : FILLORDER_LSB2MSB;
     sendFillOrder = (conf.sendFillOrder != 0)? conf.sendFillOrder : FILLORDER_LSB2MSB;
     rtcRev        = TIFFGetBitRevTable(sendFillOrder != FILLORDER_LSB2MSB);
-    pageNumberOfCall = 1;
 }
 
 FaxModem::~FaxModem()
@@ -758,7 +757,6 @@ FaxModem::countPage(PageType pt)
 {
     pageNumber++;
     pageNumberOfJob++;
-    pageNumberOfCall++;
 
     if (pt == PAGE_COVER)
 	 pageNumberCovered++;
@@ -767,9 +765,9 @@ FaxModem::countPage(PageType pt)
 }
 
 int
-FaxModem::getPageNumberOfCall()
+FaxModem::getPageNumber()
 {
-    return pageNumberOfCall;
+    return pageNumber;
 }
 
 void

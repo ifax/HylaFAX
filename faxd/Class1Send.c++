@@ -56,6 +56,8 @@ Class1Modem::dialResponse(Status& eresult)
     // This is as good a time as any, perhaps, to reset modemParams.br.
     // If the call does V.8 handshaking, then it will be altered.
     modemParams.br = nonV34br;
+    // ecmPage counts from the call start too, not per job/session
+    ecmPage = 0;
 
     int ntrys = 0;
     ATResponse r;
@@ -402,7 +404,7 @@ Class1Modem::sendPhaseB(TIFF* tif, Class2Params& next, FaxMachineInfo& info,
 	    }
 	} else
 	{
-		protoTrace("Skipping page %d", FaxModem::getPageNumberOfCall());
+		protoTrace("Skipping page %d", FaxModem::getPageNumber());
 		signalRcvd = FCF_MCF;
 	}
 	int ncrp = 0;
@@ -1216,7 +1218,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, Stat
 		pps[0] = 0x00;
 	    else
 		pps[0] = ppmcmd | 0x80;
-	    pps[1] = frameRev[FaxModem::getPageNumberOfCall() - 1];
+	    pps[1] = frameRev[ecmPage-1];
 	    pps[2] = frameRev[blockNumber];
 	    pps[3] = frameRev[(fcountuniq == 0 ? 0 : (fcountuniq - 1))];
 	    u_short ppscnt = 0, crpcnt = 0;
@@ -1368,7 +1370,7 @@ Class1Modem::blockFrame(const u_char* bitrev, bool lastframe, u_int ppmcmd, Stat
 				blockgood = true;
 				signalRcvd = FCF_MCF;
 			    }
-			    if (!useV34 && curcap->mod == V17 && badframes == frameNumber && FaxModem::getPageNumberOfCall() == 1) {
+			    if (!useV34 && curcap->mod == V17 && badframes == frameNumber && ecmPage == 1) {
 				// looks like a V.17 modulator incompatibility that managed to pass TCF
 				// we set hasV17Trouble to help future calls to this destination
 				protoTrace("The destination appears to have trouble with V.17.");
@@ -1734,6 +1736,7 @@ Class1Modem::sendPage(TIFF* tif, Class2Params& params, u_int pageChop, u_int ppm
 
     bool rc = true;
     blockNumber = frameNumber = ecmBlockPos = ecmFramePos = ecmBitPos = ecmOnes = ecmByte = 0;
+    ecmPage += 1;
     protoTrace("SEND begin page");
 
     tstrip_t nstrips = TIFFNumberOfStrips(tif);
