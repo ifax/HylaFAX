@@ -81,6 +81,7 @@ protected:
     time_t	lastMCF;		// indicates the time of the last MCF signal
     u_int	lastPPM;		// last PPM during receive
     bool	sendCFR;		// received TCF was not confirmed
+    u_int	ecmPage;		// page number for ECM frame
     u_short	ecmBitPos;		// bit position to populate on ecmByte
     u_int	ecmByte;		// pending byte to add to ecmBlock
     u_short	ecmOnes;		// count of consecutive ones for adding zero bits
