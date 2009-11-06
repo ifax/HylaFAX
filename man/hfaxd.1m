@@ -863,7 +863,13 @@ for service requests and respond with the client-server protocol.
 The port may be specified either symbolically, e.g. ``hylafax''
 or numerically.
 This flag may be specified multiple times to request service on multiple
-different ports.
+different ports.  Each time this flag is specified, it will listen on the
+specified port, bound to the last
+.BI \-l " bindaddress"
+specified.  If no
+.BI \-l " bindaddress"
+was specified, it will bind to the system configured default wildcard
+address, which could be any of IPv6, or IPv4, or both.
 .TP 10
 .BI \-s " port"
 Listen on the specified
