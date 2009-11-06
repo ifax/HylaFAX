@@ -93,6 +93,17 @@ InetSuperServer::startServer(void)
 	    if (Socket::bind(s, &addr, Socket::socklen(addr)) >= 0) {
 		(void) listen(s, getBacklog());
 		Dispatcher::instance().link(s, Dispatcher::ReadMask, this);
+	        char hostbuf[128];
+	        const char* a = inet_ntop(Socket::family(addr), Socket::addr(addr), hostbuf, sizeof(hostbuf));
+		switch (Socket::family(addr))
+		{
+		    case AF_INET:
+			logInfo("Listening to %s:%d", a ? a : "", ntohs(Socket::port(addr)));
+			break;
+		    case AF_INET6:
+			logInfo("Listening to [%s]:%d", a ? a : "", ntohs(Socket::port(addr)));
+			break;
+		}
 		return (true);				// success
 	    }
 	}
