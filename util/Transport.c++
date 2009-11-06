@@ -52,7 +52,7 @@ Transport::getTransport(FaxClient& client, const char* address)
 	 * An unqualified destination; look for
 	 * the best available transport facility.
 	 */
-#if CONFIG_UNIXTRANPSORT
+#if CONFIG_UNIXTRANSPORT
 	if (UnixTransport::isA(FAX_DEFUNIX)) {
 	    client.setHost(FAX_DEFUNIX);
 	    return *new UnixTransport(client);
@@ -60,11 +60,11 @@ Transport::getTransport(FaxClient& client, const char* address)
 #endif
 	    client.setHost(FAX_DEFHOST);
 	    return *new InetTransport(client);
-#if CONFIG_UNIXTRANPSORT
+#if CONFIG_UNIXTRANSPORT
 	}
 #endif
     } else {
-#if CONFIG_UNIXTRANPSORT
+#if CONFIG_UNIXTRANSPORT
 	if (UnixTransport::isA(address))
 	    return *new UnixTransport(client);
 	else
