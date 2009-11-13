@@ -239,5 +239,5 @@ CHANGES for 4.3.9
 * PageHandling:  Fix handling of large blank areas (2009-09-18)
 * faxq: Don't assert on bad FIFO messages (2009-09-21)
 * Str::vformat()  Don't reuse va_args (2009-10-07)
-* HylaAX 4.3.9-rc1 (2009-10-07)
-
+* Class1: ECM page and block count should be sent as modulus. (2009-11-13)
+* Class1: Initialize blockNumber (2009-11-13)
