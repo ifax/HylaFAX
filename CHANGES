@@ -1,6 +1,8 @@
 #	$Id$	
 
 Changelog for 4.3.9
+* Class1: ECM page and block count should be sent as modulus. (2009-11-13)
+* Class1: Initialize blockNumber (2008-04-28)
 * hfaxd:  Cleanup uid initizliaztion and theoretical overflow (2009-08-14)
 * PageHandling:  Fix handling of large blank areas (2009-09-18)
 * faxq: Don't assert on bad FIFO messages (2009-09-21)
