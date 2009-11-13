@@ -362,3 +362,8 @@ CHANGES for 6.0.4
 * faxq: Don't assert on bad FIFO messages (2009-09-21)
 * Updated RPM dependencies (2009-09-25)
 * Str::vformat()  Don't reuse va_args (2009-10-07)
+* faxmail: Fix broken to address/name parsing (2009-10-29)
+* Update releasenotes and documentation re IPv6 support (2009-11-13)
+* hfaxd: log what address(es) we're listing on when starting (2009-11-13)
+* faxsend: Class1 1 ECM when skipping pages needs to be more careful (2009-11-13)
+* Class1: ECM page and block count should be sent as modulus. (2009-11-13)
