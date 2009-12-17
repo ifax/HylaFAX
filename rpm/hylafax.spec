@@ -1,6 +1,6 @@
 %define name        hylafax
 %define version     6.0.4
-%define pkg_release 0.1.GIT
+%define pkg_release 0.rc2
 
 #
 ## OS version detection
@@ -455,6 +455,9 @@ fi
 %attr(644,root,root) %config(noreplace) %{_sysconfdir}/hylafax/typerules
 
 %changelog
+* Fri Dec 18 2009 Patrice Fournier <patrice.fournier@ifax.com> 6.0.4-0.rc2
+  - Update package to 6.0.4-rc2 release-candidate
+
 * Fri Sep 25 2009 Patrice Fournier <patrice.fournier@ifax.com> 6.0.4-0.1.GIT
   - Update package to 6.0.4 GIT pre-release
   - Move the require dependencies to the right binary packages
