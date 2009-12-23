@@ -112,6 +112,7 @@ public:
     void operator=(const fxTempStr& s);
     void operator=(fxStr const& s);
     void operator=(char const *s);
+    void operator=(wchar_t const *s);
 
     /////////////////////////////////////////////////////
     // Comparison

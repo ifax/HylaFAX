@@ -452,6 +452,14 @@ void fxStr::operator=(const char *s)
     memcpy(data,s,slength);
 }
 
+void fxStr::operator=(const wchar_t *s)
+{
+    int nl = wcstombs(NULL, s, 0);
+    resizeInternal(nl);
+    slength = nl+1;
+    wcstombs(data, s, slength);
+}
+
 void fxStr::append(const char * s, u_int l)
 {
     if (!l) l = strlen(s);
