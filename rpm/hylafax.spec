@@ -1,6 +1,6 @@
 %define name        hylafax
 %define version     6.0.4
-%define pkg_release 0.rc2
+%define pkg_release 1
 
 #
 ## OS version detection
