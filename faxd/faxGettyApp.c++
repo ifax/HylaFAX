@@ -913,7 +913,7 @@ faxGettyApp::FIFOMessage(const char* cp)
     switch (cp[0]) {
     case 'A':				// answer the phone
 	traceServer("ANSWER %s", cp[1] != '\0' ? cp+1 : "any");
-	if (cp[1] != '\0') {
+	if (cp[1] != '\0' && !streq(cp+1, "any")) {
 	    if (streq(cp+1, "fax"))
 		answerPhoneCmd(ClassModem::ANSTYPE_FAX);
 	    else if (streq(cp+1, "data"))
