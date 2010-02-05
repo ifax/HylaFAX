@@ -1276,19 +1276,6 @@ if onClient; then
 		MATCH=$FDIR
 		break
 	fi
-    else
-	cat >&4 <<EOF
-
-
-Warning: $FDIR does not exist or is not a directory!
-
-The directory $FDIR does not exist or this file is not a directory.
-This is the directory where the HylaFAX client applications expect to
-locate font metric information to use in formatting ASCII text for
-submission as facsimile.  Without this information HylaFAX may generate
-illegible facsimile from ASCII text.
-
-EOF
     fi
     done
     if [ -z "$MATCH" ];then
