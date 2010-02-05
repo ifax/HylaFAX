@@ -1028,7 +1028,7 @@ FATAL ERROR: $TIFFBIN does not exist or is not a directory!
 The directory of tools from the TIFF software distribution is not
 where it is expected or this file is not a directory.  If you do not
 have the TIFF distribution installed on this machine then you must
-install it; the master FTP location is ftp://ftp.sgi.com/graphics/tiff.
+install it; the homepage for LibTIFF is http://www.remotesensing.org/libtiff/.
 Otherwise, if the software is installed in a directory other than
 where it is expected you can configure the HylaFAX software to use
 an alternate directory by supplying a -with-TIFFBIN option when running
@@ -1047,7 +1047,7 @@ The program $TIFFBIN/$file is not where it is expected or the file
 is not executable.  This program is part of the TIFF software
 distribution that is required for use with HylaFAX.  If you do not
 have the TIFF distribution installed on this machine then you must
-install it; the master FTP location is ftp://ftp.sgi.com/graphics/tiff.
+install it; the homepage for LibTIFF is http://www.remotesensing.org/libtiff/.
 Otherwise, if the software is installed in a directory other than
 where it is expected you can configure the HylaFAX software to use
 an alternate directory by supplying a -with-TIFFBIN option when running
