@@ -1190,13 +1190,13 @@ TextFont::decodeFontName(const char* name, fxStr& filename, fxStr& emsg)
                     fxStr val = tmp;
                     while (fgets(buf, sizeof(buf), fd) != NULL) {
                         len = strcspn(buf, "%\n");
-                        *(buf + len) = '\0';
                         if (len == strlen(buf)) {
 	                    emsg = fxStr::format(
 		                NLS::TEXT("Warning: %s - line too long."), (const char*) fontMapFile);
 	                    break;
                         }
 			if (len == 0) continue;
+			*(buf + len) = '\0';
 	                tmp = buf + strcspn(buf, ") \t");
 		        *tmp++ = '\0';
                         tmp += strspn(tmp, " \t");
