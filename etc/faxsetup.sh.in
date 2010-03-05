@@ -1311,7 +1311,7 @@ FontPath:	someplace_unexpected
 
 If you do not have the font metric information files loaded on your system
 system you can obtain them by public FTP from the place where you obtained
-the HylaFAX software or from the master FTP site at ftp.sgi.com.
+the HylaFAX software or from the master FTP site at ftp.hylafax.org.
 EOF
      fi
 fi
