@@ -90,6 +90,7 @@ DATE="@DATE@"			# data software was configured
 TARGET="@TARGET@"		# configured target
 
 PATH_AFM=@FONTPATH@		# directory for Adobe Font Metric files
+PATH_FONTMAP=@FONTMAP@		# directory for FontMap files
 DIR_BIN=@BIN@			# directory for client applications
 DIR_LIBDATA=@LIBDATA@		# directory for client data files
 DIR_LIBEXEC=@LIBEXEC@		# directory where servers are located
@@ -1244,41 +1245,183 @@ if onClient; then
 			}	
 		'
 	}
-	RUNTIME_PATH_AFM=`getGSFonts`
-	if [ -n "$RUNTIME_PATH_AFM" \
-				-a "$RUNTIME_PATH_AFM" != "$PATH_AFM" ]; then 
+	validateFont()
+	{
+	    FONTNAME=$1
+	    FONTMAP_PATH=$2
+	    FONT_PATH=$3
+
+	    # Note ""
+	    # Note "Searching for a font named $FONTNAME."
+	    # Note ""
+
+	    ALIAS=$FONTNAME
+	    while [ "$ALIAS" != "$LAST_ALIAS" ]; do
+		LAST_ALIAS=$ALIAS
+		for d in `echo $FONTMAP_PATH | $SED 's/:/ /g'`; do
+		    if [ -d "$d" ]; then
+			cd $d
+			for f in Fontmap Fontmap.GS; do
+			    if [ -f $f ]; then
+				OUTPUT=`$SED -n -e 's/^\/'$ALIAS'[ 	]*\((\([^)]*\))\|\/\([^ 	;]*\)\).*/\2\3/p' $f`
+				if [ -n "$OUTPUT" ]; then
+				    # Allow later files to overwrite previous definitions
+				    ALIAS=$OUTPUT
+				fi
+			    fi
+			done
+		    fi
+		done
+	    done
+	    FONTFILE=`echo $ALIAS | sed -e 's/\.[^./]*$//'`
+	    for d in `echo $FONT_PATH | $SED 's/:/ /g'`; do
+		if [ -f "$d/$FONTFILE.afm" ] || [ -f "$d/$FONTFILE" ]; then
+		    echo $FONTNAME
+		    return
+		fi
+	    done
+	}
+	getDefaultFont()
+	{
+	    FONTNAME=$1
+	    FONTMAP_PATH=$2
+	    FONT_PATH=$3
+
+	    FONTNAME=`validateFont $FONTNAME $FONTMAP_PATH $FONT_PATH`
+	    if [ -n "$FONTNAME" ]; then
+		echo $FONTNAME
+		return
+	    fi
+
+	    # Requested font not found, searching for Courier
+	    FONTNAME=`validateFont Courier $FONTMAP_PATH $FONT_PATH`
+	    if [ -n "$FONTNAME" ]; then
+		echo $FONTNAME
+		return
+	    fi
+
+	   Note ""
+	   Note "Searching for a default font."
+	   Note ""
+
+	    # Courier font not found, searching for any font, with a
+	    # preference for fixed, non-italic, non-bold font.
+	    MAX=-1
+	    for d in `echo $FONT_PATH | $SED 's/:/ /g'`; do
+		if [ -d "$d" ]; then
+		    cd $d
+		    for f in `ls | grep '\.afm'`; do
+			VAL=`$AWK -F '[ ]' '
+/^IsFixedPitch /  {count++; if (tolower($2) == "true") val += 100}
+/^ItalicAngle /   {count++; if ($2 == 0) val += 10}
+/^Weight /        {count++; if (tolower($2) == "regular") val += 5;
+			    if (tolower($2) == "normal")  val += 4;
+			    if (tolower($2) == "roman")   val += 3;
+			    if (tolower($2) == "medium")  val += 2;
+			    if (tolower($2) == "book")    val += 1}
+// {if (count >= 3) exit}
+BEGIN {val = count = 0}
+END {print val}
+' $f`
+			if [ $VAL -gt $MAX ]; then
+			    MAX=$VAL
+			    FONTNAME=`echo $f | sed -e 's/\.[^./]*$//'`
+			fi
+		    done
+		fi
+	    done
+	    echo $FONTNAME
+	    return
+	}
+
+	if [ -f $DIR_LIBDATA/hyla.conf ]; then
+	    CONFIGURED_PATH_AFM=`$SED -n -e 's/^FontPath:[ 	]*\(.*\)/\1/p' $DIR_LIBDATA/hyla.conf`
+	    CONFIGURED_PATH_FONTMAP=`$SED -n -e 's/^FontMap:[ 	]*\(.*\)/\1/p' $DIR_LIBDATA/hyla.conf`
+	    CONFIGURED_TEXTFONT=`$SED -n -e 's/^TextFont:[ 	]*\(.*\)/\1/p' $DIR_LIBDATA/hyla.conf`
+	fi
+
+	if [ -n "$CONFIGURED_TEXTFONT" ]; then
+	    FONTNAME=$CONFIGURED_TEXTFONT
+	else
+	    FONTNAME=Courier
+	fi
+	if [ -n "$CONFIGURED_PATH_FONTMAP" ]; then
+	    FONTMAP_PATH=$CONFIGURED_PATH_FONTMAP
+	else
+	    FONTMAP_PATH=$PATH_AFM
+	fi
+	if [ -n "$CONFIGURED_PATH_AFM" ]; then
+	    FONT_PATH=$CONFIGURED_PATH_AFM
+	else
+	    FONT_PATH=$PATH_AFM
+	fi
+	FOUND_FONTNAME=`getDefaultFont $FONTNAME $FONTMAP_PATH $FONT_PATH`
+	if [ "$FOUND_FONTNAME" != "$FONTNAME" ]; then
+		RUNTIME_PATH_AFM=`getGSFonts`
+		if [ -n "$RUNTIME_PATH_AFM" ] && \
+			( [ "$RUNTIME_PATH_AFM" != "$FONTMAP_PATH" ] || \
+			[ "$RUNTIME_PATH_AFM" != "$FONT_PATH" ] ); then
+
+		    FONTMAP_PATH=$RUNTIME_PATH_AFM
+		    FONT_PATH=$RUNTIME_PATH_AFM
+		    FOUND_FONTNAME=`getDefaultFont $FONTNAME $FONTMAP_PATH $FONT_PATH`
+		fi
+	fi
+
+	if [ -n "$FOUND_FONTNAME" ] && [ "$FOUND_FONTNAME" != "$FONTNAME" ]; then
+	    # Requested font not found
+	    # Setting default font to the best one found
+	    FONTNAME=$FOUND_FONTNAME
+	fi
+
+	if [ -n "$FONTNAME" ]; then
 	    Note ""
-	    Note "Setting Ghostscript font path in $DIR_LIBDATA/hyla.conf."
+	    Note "Found $FONTNAME to use as default font."
 	    Note ""
+	else
+	    Note ""
+	    Note "Found no font to use as default font. You will most probably"
+	    Note "have to specify a font on textfmt command line."
+	    Note ""
+	fi
+
+	if [ -n "$FONTMAP_PATH" ] && \
+		( [ "$CONFIGURED_PATH_FONTMAP" != "$FONTMAP_PATH" ] || \
+		[ "$CONFIGURED_PATH_AFM" != "$FONT_PATH" ] || \
+		[ "$CONFIGURED_TEXTFONT" != "$FONTNAME" ] ); then
 	    if [ -f $DIR_LIBDATA/hyla.conf ]; then
-		$AWK '!/^FontMap|^FontPath|\/FontPath added by/ { print }' \
+		$AWK '!/^FontMap|^FontPath|^TextFont|\/FontPath added by|^# Font configuration added by/ { print }' \
 			$DIR_LIBDATA/hyla.conf > $DIR_LIBDATA/hyla.conf.tmp
 	    fi
-	    echo "# FontMap/FontPath added by faxsetup (`date 2>/dev/null`)" \
+	    if [ -n "$FONTMAP_PATH" ] && \
+			( [ "$PATH_FONTMAP" != "$FONTMAP_PATH" ] || \
+			[ "$PATH_AFM" != "$FONT_PATH" ] || \
+			[ "Courier" != "$FONTNAME" ] ); then
+		Note ""
+		Note "Setting font configuration in $DIR_LIBDATA/hyla.conf."
+		Note ""
+		echo "# Font configuration added by faxsetup (`date 2>/dev/null`)" \
 	                                        >> $DIR_LIBDATA/hyla.conf.tmp
-	    echo "FontMap:   $RUNTIME_PATH_AFM" >> $DIR_LIBDATA/hyla.conf.tmp
-	    echo "FontPath:  $RUNTIME_PATH_AFM" >> $DIR_LIBDATA/hyla.conf.tmp
+	    fi
+
+	    if [ -n "$FONTMAP_PATH" ] && [ "$PATH_FONTMAP" != "$FONTMAP_PATH" ]; then
+		echo "FontMap:   $FONTMAP_PATH" >> $DIR_LIBDATA/hyla.conf.tmp
+		PATH_FONTMAP=$FONTMAP_PATH
+	    fi
+	    if [ -n "$FONT_PATH" ] && [ "$PATH_AFM" != "$FONT_PATH" ]; then
+		echo "FontPath:  $FONT_PATH" >> $DIR_LIBDATA/hyla.conf.tmp
+		PATH_AFM=$FONT_PATH
+	    fi
+	    if [ -n "$FONTNAME" ] && [ "Courier" != "$FONTNAME" ]; then
+		echo "TextFont:  $FONTNAME" >> $DIR_LIBDATA/hyla.conf.tmp
+	    fi
 	    $MV $DIR_LIBDATA/hyla.conf.tmp $DIR_LIBDATA/hyla.conf
-	    PATH_AFM=$RUNTIME_PATH_AFM
 	fi
-fi
 
 #
 # Installation of Adobe Font Metric files
 #
-if onClient; then
-    FDIRS=`echo $PATH_AFM | sed "s/:/ /g"`
-    MATCH=
-    for FDIR in $FDIRS; do
-    if [ -d $FDIR ]; then
-	cd $FDIR
-	if [ -n "`ls | grep '\.afm'`" ] || [ -f Courier ]; then
-		MATCH=$FDIR
-		break
-	fi
-    fi
-    done
-    if [ -z "$MATCH" ];then
+    if [ -z "$FONT_PATH" ];then
 	    cat >&4 <<EOF
 
 
