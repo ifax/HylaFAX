@@ -624,13 +624,13 @@ ConvertFile ()
 	    	PostScript|Postscript|PS|ps)
 		    TraceLog "Using ps2fax"
 		    name="`basename $1 .ps`"
-		    $PS2FAX -r $resolution $1 $TMPDIR/$name.tif
+		    $PS2FAX -r $resolution -o $TMPDIR/$name.tif $1
 		    echo "$TMPDIR/$name.tif"
 		    ;;
 	    	PDF|pdf)
 		    TraceLog "Using pdf2fax"
 		    name="`basename $1 .pdf`"
-		    $PDF2FAX -r $resolution $1 $TMPDIR/$name.tif
+		    $PDF2FAX -r $resolution -o $TMPDIR/$name.tif $1
 		    echo "$TMPDIR/$name.tif"
 		    ;;
 		TIFF|tiff|TIF|tif)
