@@ -165,6 +165,7 @@ esac
 # See the comments on AdjustWidth above.
 #
 FIXEDWIDTH="-dFIXEDMEDIA"
+STRIPSIZE="-dMaxStripSize=0"
 
 #
 # Apply customizations such as watermarking.   
@@ -179,6 +180,7 @@ $CAT $fil | $PS -q \
     -dSAFER=true \
     -sPAPERSIZE=$paper \
     $FIXEDWIDTH \
+    $STRIPSIZE \
     -r$hres\x$vres \
     "-sOutputFile=$out" \
     -
