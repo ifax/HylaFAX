@@ -287,6 +287,7 @@ install: makeDirs makeDevices
 	fi
 
 CLIENTDIRS=\
+	libhylafax \
 	faxalter \
 	faxcover \
 	faxmail  \
@@ -308,14 +309,14 @@ installClient: makeClientDirs
 	    (${ECHO} "= "$$i; cd $$i; ${MAKE} installClient)  ||  exit 1; \
 	done
 	@if [ "@DSO@" != no ]; then \
-	    for i in util; do \
+	    for i in libhylafax; do \
 		(${ECHO} "= "$$i; cd $$i; ${MAKE} installDSO)  ||  exit 1; \
 	    done; \
 	else \
 	    true; \
 	fi
 	@if [ "@NLS@" = yes ]; then \
-	    (${ECHO} "= po"; cd po; ${MAKE} installClient  ||  exit 1; \
+	    (${ECHO} "= po"; cd po; ${MAKE} installClient) ||  exit 1; \
 	else \
 	    true; \
 	fi
