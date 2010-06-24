@@ -1022,7 +1022,7 @@ faxQueueApp::preparePageChop(const FaxRequest& req,
 	if (dec.getLastBlanks() > minRows)
 	{
 	    pagehandling.append(fxStr::format("Z%04x",
-		fxmin((unsigned)0xFFFF, stripSize - (dec.getEndOfPage() - data))));
+		fxmin((u_int)0xFFFF, (u_int)(stripSize - (dec.getEndOfPage() - data)))));
 	}
     }
     delete [] data;
