@@ -1,5 +1,17 @@
 #	$Id$	
 
+Changelog for 4.3.10
+* Typo in CONFIG_UNIXTRANSPORT define checks (2009-11-06)
+* Allow "any" as answer method for FIFO messages (2010-01-22)
+* Updates LibTIFF homepage URLs (2010-02-05)
+* Updated ftp site address in setup error message (2010-03-05)
+* Correctly check for long lines when checking for the last match (2010-02-05)
+* Fix calls to pdf2fax/ps2fax in ConvertFile (2010-04-02)
+* manpages: Updates from debian (2010-05-05)
+* pdf2fax/ps2fax: Use -dMaxStripSize=0 (2010-05-05)
+* Fixes compilation on some platforms (2010-06-24)
+* faxq: better capturing of failed conversion output (2010-08-30)
+
 Changelog for 4.3.9
 * Class1: ECM page and block count should be sent as modulus. (2009-11-13)
 * Class1: Initialize blockNumber (2008-04-28)
