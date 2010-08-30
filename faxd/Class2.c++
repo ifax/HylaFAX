@@ -851,9 +851,10 @@ const Status& Class2Modem::hangupStatus (const char* code)
     for (u_int i = 0; i < NCODES; i++) {
 	const HangupCode& c = hangupCodes[i];
 	if ((c.code[1] != NULL && strcasecmp(code, c.code[1]) == 0) ||
-	    (c.code[2] != NULL && strcasecmp(code, c.code[2]) == 0))
+	    (c.code[2] != NULL && strcasecmp(code, c.code[2]) == 0)) {
 	    s = Status(c.status, c.message);
 	    return s;
+	}
     }
     s = Status(210, "Unknown hangup code");
     return s;
