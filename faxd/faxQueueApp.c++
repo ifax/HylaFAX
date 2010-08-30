@@ -1769,7 +1769,7 @@ faxQueueApp::sendJobDone(Job& job, FaxRequest* req)
 	 * is intended to keep "normal" and "high" priority jobs
 	 * from conflicting.
 	 */
-#define JOB_PRI_BUCKET(pri)	(pri >> 4)
+#define JOB_PRI_BUCKET(pri)	((pri) >> 4)
 
 	if (job.pri != 255 && job.pri > 190)
 	    job.pri++;
