@@ -1185,6 +1185,7 @@ faxQueueApp::runConverter(Job& job, const char* app, char* const* argv, fxStr& e
 		kill(pid, SIGTERM);
 		(void) Sys::waitpid(pid);
 		status = Job::format_failed;
+		result = Status(347, "%s", (const char*)output);
 	    }
 	    break;
 	}
@@ -1227,7 +1228,9 @@ faxQueueApp::runConverter1(Job& job, int fd, fxStr& output)
     timer.stopTimeout();
     if (timer.wasTimeout()) {
 	jobError(job, "CONVERT DOCUMENT: job time limit exceeded");
-	output.append("\n[Job time limit exceeded]\n");
+	if (output.length() > 0)
+	    output.append('\n');
+	output.append("[Job time limit exceeded]\n");
 	return (false);
     } else
 	return (true);
