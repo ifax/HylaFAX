@@ -377,3 +377,20 @@ CHANGES for 6.0.4
 * hfaxd: log what address(es) we're listing on when starting (2009-11-13)
 * faxsend: Class1 1 ECM when skipping pages needs to be more careful (2009-11-13)
 * Class1: ECM page and block count should be sent as modulus. (2009-11-13)
+
+CHANGES for 6.0.5
+-----------------------------------------------------------------------------
+* Typo in CONFIG_UNIXTRANSPORT define checks (2009-11-06)
+* Allow "any" as answer method for FIFO messages (2010-01-22)
+* Updates LibTIFF homepage URLs (2010-02-05)
+* Updated ftp site address in setup error message (2010-03-05)
+* Correctly check for long lines when checking for the last match (2010-02-05)
+* Fix calls to pdf2fax/ps2fax in ConvertFile (2010-04-02)
+* notify: FaxMaster notifications wildcard fixups (2010-05-05)
+* manpages: Updates from debian (2010-05-05)
+* pdf2fax/ps2fax: Use -dMaxStripSize=0 (2010-05-05)
+* Bug 928: issues with installClient target of Hylafax (2010-05-05)
+* Fixes compilation on some platforms (2010-06-24)
+* faxq: better capturing of failed conversion output (2010-08-10)
+* Class2: Fix hangup cause handling (2010-08-30)
+* Compiler warning cleanup (2010-08-30)
