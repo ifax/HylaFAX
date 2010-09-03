@@ -1185,7 +1185,6 @@ faxQueueApp::runConverter(Job& job, const char* app, char* const* argv, fxStr& e
 		kill(pid, SIGTERM);
 		(void) Sys::waitpid(pid);
 		status = Job::format_failed;
-		result = Status(347, "%s", (const char*)output);
 	    }
 	    break;
 	}
