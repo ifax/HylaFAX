@@ -290,7 +290,7 @@ ModemConfig::setupConfig()
     idConfig.resize(0);
     callidIndex		= (u_int) -1;
 
-    playList.resize(0);
+    playList.resize(1);
 }
 
 void
