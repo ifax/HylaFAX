@@ -1136,6 +1136,8 @@ TextFormat::setConfigItem(const char* tag, const char* value)
 fxStr TextFont::fontMap = _PATH_FONTMAP;
 fxStr TextFont::fontPath = _PATH_AFM;
 u_int TextFont::fontID = 0;
+bool  TextFont::fontMapsLoaded = false;
+fxStrDict TextFont::fontMapDict;
 
 TextFont::TextFont(const char* cp) : family(cp)
 {
@@ -1145,117 +1147,126 @@ TextFont::TextFont(const char* cp) : family(cp)
 }
 TextFont::~TextFont() {}
 
-bool
-TextFont::decodeFontName(const char* name, fxStr& filename, fxStr& emsg)
+void
+TextFont::error(const char* fmt ...)
 {
-    struct stat junk;
+    va_list ap;
+    va_start(ap, fmt);
+    vfprintf(stderr, fmt, ap);
+    va_end(ap);
+    fputs(".\n", stderr);
+}
+
+void
+TextFont::loadFontMap(const char* fontMapFile)
+{
+    FILE* fd = Sys::fopen(fontMapFile, "r");
+
+    if (fd != NULL && fontMapFile[0] == '/') {
+	char buf[1024];
+	while (fgets(buf, sizeof(buf), fd) != NULL) {
+	    size_t len = strcspn(buf, "%\n");
+	    if (len == strlen(buf)) {
+		error(NLS::TEXT("Warning: %s - line too long."), (const char*)fontMapFile);
+		break;
+	    }
+	    if (len == 0) continue;
+	    if (*buf != '/') continue;
+	    *(buf + len) = '\0';
+	    char* key = buf + 1;
+	    char* tmp = buf + strcspn(buf, ") \t");
+	    *tmp++ = '\0';
+	    tmp += strspn(tmp, " \t");
+	    *(tmp + strcspn(tmp, ") \t;")) = '\0';
+	    fxStr val = tmp;
+	    if (val[0] == '/') {
+		//alias
+		fontMapDict[key] = val;
+	    } else {
+		//real file
+		val.remove(0);
+		fontMapDict[key] = val;
+	    }
+	}
+	fclose(fd);
+    }
+}
+
+void
+TextFont::loadFontMaps(void)
+{
     fxStr path = fontMap;
     u_int index = path.next(0, ':');
     while (index > 0) {
 
-        /* Newer versions of Ghostscript use "Fontmap.GS"
-         * whereas older ones omit the ".GS" extension.
-         * If the Fontmap.GS file isn't available default
-         * to the older convention.
-         */
-        filename = path.head(index) | "/" | "Fontmap.GS";
-        if (stat(filename, &junk) != 0)
-            filename = path.head(index) | "/" | "Fontmap";
-        fxStr fontMapFile = filename;
+	/* Newer versions of Ghostscript use "Fontmap.GS"
+	 * whereas older ones omit the ".GS" extension.
+	 * If the Fontmap.GS file isn't available default
+	 * to the older convention. faxsetup may also generate 
+	 * a Fontmap.HylaFAX file if the Ghostscript files
+	 * are not found or incomplete at setup time.
+	 */
+	loadFontMap(path.head(index) | "/" | "Fontmap");
+	loadFontMap(path.head(index) | "/" | "Fontmap.GS");
+	loadFontMap(path.head(index) | "/" | "Fontmap.HylaFAX");
 
-        path.remove(0, index);
-        if (path.length() > 0) path.remove(0, 1);
-        FILE* fd = Sys::fopen(fontMapFile, "r");
-        if (fd != NULL && fontMapFile[0] == '/') {
-            fxStr key = name;
-            char buf[1024];
-	    int aliascount = maxaliases;
-            while (fgets(buf, sizeof(buf), fd) != NULL &&
-		aliascount > 0) {
-                size_t len = strcspn(buf, "%\n");
-                if (len == strlen(buf)) {
-	            emsg = fxStr::format(
-	                NLS::TEXT("Warning: %s - line too long."), (const char*)fontMapFile);
-	                break;
-                }
-	        if (len == 0) continue;
-                *(buf + len) = '\0';
-                char* tmp = buf + strcspn(buf, ") \t");
-                *tmp++ = '\0';
-                tmp += strspn(tmp, " \t");
-                if (strcmp(key, buf + 1) == 0) {
-                    //match - now ensure it is the last one in the file
-		    // for gs compatibility
-                    *(tmp + strcspn(tmp, ") \t;")) = '\0';
-                    fxStr val = tmp;
-                    while (fgets(buf, sizeof(buf), fd) != NULL) {
-                        len = strcspn(buf, "%\n");
-                        if (len == strlen(buf)) {
-	                    emsg = fxStr::format(
-		                NLS::TEXT("Warning: %s - line too long."), (const char*) fontMapFile);
-	                    break;
-                        }
-			if (len == 0) continue;
-			*(buf + len) = '\0';
-	                tmp = buf + strcspn(buf, ") \t");
-		        *tmp++ = '\0';
-                        tmp += strspn(tmp, " \t");
-                        if (strcmp(key, buf + 1) == 0) {
-                            *(tmp + strcspn(tmp, ") \t;")) = '\0';
-                            val = tmp;
-			}
-		    }
-                    if (val[0] == '/') {
-		        //alias
-	                aliascount--;
-			val.remove(0);
-		        key = val;
-			fseek(fd, 0L, SEEK_SET);
-                    } else {
-                        //real file
-                        fclose(fd);
-			val.remove(0);
-			int pos = val.next(0, '.');
-			val.remove(pos, val.length() - pos);
-			val.append(".afm");
-			//move through dirs looking for font
-			fxStr fpath = fontPath;
-                        int index2 = fpath.next(0, ':');
-                        filename = fpath.head(index2) | "/" | val;
-                        fpath.remove(0, index2);
-			if (fpath.length() > 0) fpath.remove(0, 1);
-			while (stat(filename, &junk) != 0 && index2 > 0) {
-                            index2 = fpath.next(0, ':');
-                            filename = fpath.head(index2) | "/" | val;
-                            fpath.remove(0, index2);
-			    if (fpath.length() > 0) fpath.remove(0, 1);
-			}
-			bool result = stat(filename, &junk) ? false : true;
-			if (!result)
-	                    emsg = fxStr::format(
-			        NLS::TEXT("Warning: %s invalid Fontmap entry - no filename present"), (const char*)val);
-                        return result;
-                    }
-                }
-            }
-            fclose(fd);
-        }
-        index = path.next(0, ':');
+	path.remove(0, index);
+	if (path.length() > 0) path.remove(0, 1);
+	index = path.next(0, ':');
     }
+    TextFont::fontMapsLoaded = true;
+}
+
+bool
+TextFont::findAFMFile(const char* name, fxStr& filename, fxStr& emsg, bool noExtension)
+{
+    struct stat junk;
+    fxStr val = name;
+    int pos = val.next(0, '.');
+    val.remove(pos, val.length() - pos);
+    val.append(".afm");
+    //move through dirs looking for font
+    fxStr fpath = fontPath;
+    u_int index = fpath.next(0, ':');
+    if (index == 0) {
+	emsg = NLS::TEXT("Empty FontPath, no possibility to find font file");
+	return false;
+    }
+    while (index > 0) {
+	filename = fpath.head(index) | "/" | val;
+	fpath.remove(0, index);
+	if (fpath.length() > 0) fpath.remove(0, 1);
+	if (stat(filename, &junk) == 0) return true;
+	if (noExtension) {
+	    filename.resize(filename.length()-4);	// strip ``.afm''
+	    if (stat(filename, &junk) == 0) return true;
+	}
+	index = fpath.next(0, ':');
+    }
+    emsg = fxStr::format(NLS::TEXT("Font metrics file not found: %s"), (const char *)val);
+    return false;
+}
+
+bool
+TextFont::decodeFontName(const char* name, fxStr& filename, fxStr& emsg)
+{
+    fxStr key = name;
+    int aliascount = maxaliases;
+
+    if (!TextFont::fontMapsLoaded);
+	loadFontMaps();
+    while (((const char*)fontMapDict[key])[0] == '/' && aliascount-- > 0) {
+	// Alias
+	key = fontMapDict[key];
+	key.remove(0);
+    }
+
+    if (aliascount >= 0 && fontMapDict.find(key))
+	return findAFMFile(fontMapDict[key], filename, emsg);
+
     //decoding using fontmap has failed
     //now try plain filename with/without afm extension
-    path = fontPath;
-    index = path.next(0, ':');
-    while (index > 0) {
-        filename = path.head(index) | "/" | name | ".afm";
-        path.remove(0, index);
-        if (path.length() > 0) path.remove(0, 1);
-        if (stat(filename, &junk) == 0) return true;
-	filename.resize(filename.length()-4);	// strip ``.afm''
-        if (stat(filename, &junk) == 0) return true;
-        index = path.next(0, ':');
-    }
-    return false;
+    return findAFMFile(name, filename, emsg, true);
 }
 
 bool
@@ -1361,7 +1372,7 @@ TextFont::openAFMFile(fxStr& fontpath)
     fxStr emsg;
     if (!decodeFontName(family, fontpath, emsg)) {
 	fprintf(stderr,emsg);
-        return NULL;
+	return NULL;
     }
     return Sys::fopen(fontpath, "r");
 }
