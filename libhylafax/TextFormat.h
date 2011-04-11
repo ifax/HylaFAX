@@ -29,6 +29,7 @@
  * Simple Text To PostScript Conversion Support.
  */
 #include "Str.h"
+#include "StrDict.h"
 #include "FaxConfig.h"
 
 typedef long TextCoord;		// local coordinates
@@ -41,16 +42,26 @@ private:
     fxStr	showproc;		// PostScript show procedure
     TextCoord	widths[256];		// width table
 
-    static fxStr fontMap;		// location of Fontmap file
-    static fxStr fontPath;		// path for afm files
-    static u_int fontID;		// font identifier number
+    static fxStr	fontMap;	// location of Fontmap file
+    static fxStr	fontPath;	// path for afm files
+    static u_int	fontID;		// font identifier number
+    static fxStrDict	fontMapDict;	// Font maps dictionary
+    static bool		fontMapsLoaded;	// Font maps have been loaded in memory
 
     friend class TextFormat;
 
     void loadFixedMetrics(TextCoord w);
     FILE* openAFMFile(fxStr& pathname);
     bool getAFMLine(FILE* fp, char* buf, int bsize);
+
+    static void error(const char* fmt ...);
+
+    static void loadFontMap(const char* fontMapFile);
+    static void loadFontMaps(void);
     static bool decodeFontName(const char*, fxStr&, fxStr&);
+    static bool findAFMFile(const char* name, fxStr& filename, fxStr& emsg,
+	bool noExtension = false);
+
 public:
     TextFont(const char*);
     ~TextFont();
