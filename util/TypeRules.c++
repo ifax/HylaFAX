@@ -59,7 +59,7 @@ TypeRule::TypeRule(const TypeRule& other)
 }
 
 static const char* typeNames[] =
-    { "ascii", "asciiesc", "string", "istring" "address", "byte", "short", "long" };
+    { "ascii", "asciiesc", "string", "istring", "address", "byte", "short", "long" };
 static const char* opNames[] =
     { "<any>", "=", "!=", "<", "<=", ">", ">=", "&", "^", "!" };
 static const char* resultNames[] = { "tiff", "postscript", "pdf", "error" };
