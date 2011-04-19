@@ -149,6 +149,7 @@ InternationalPrefix\(S2	string	\-	dialing prefix for international calls
 JobControlCmd\(S1	string	\-	job control command
 JobReqBusy	integer	\s-1180\s+1	requeue interval for \s-1BUSY\s+1 dial result
 JobReqDataConn	integer	\s-1300\s+1	requeue interval for data connection dial result
+JobReqError	integer	\s-1300\s+1	requeue interval for \s-1ERROR\s+1 dial result
 JobReqNoAnswer	integer	\s-1300\s+1	requeue interval for \s-1NO ANSWER\s+1 dial result
 JobReqNoCarrier	integer	\s-1300\s+1	requeue interval for \s-1NO CARRIER\s+1 dial result
 JobReqNoFCon	integer	\s-1300\s+1	requeue interval for carrier without \s-1+FCON\s+1 dial result
@@ -156,6 +157,7 @@ JobReqOther\(S2	integer	\s-1300\s+1	requeue interval for ``other'' problems
 JobReqProto	integer	\s-160\s+1	requeue interval after fax protocol error
 JobRetryBusy	integer	\-	number of retries for \s-1BUSY\s+1 dial result
 JobRetryDataConn	integer	\-	number of retries for data connection dial result
+JobRetryError	integer	\-	number of retries for \s-1ERROR\s+1 dial result
 JobRetryNoAnswer	integer	\-	number of retries for \s-1NO ANSWER\s+1 dial result
 JobRetryNoCarrier	integer	1	number of retries for \s-1NO CARRIER\s+1 dial result
 JobRetryOther	integer	\-	number of retries for ``other'' problems
@@ -928,6 +930,10 @@ dialing attempt failed with a ``\s-1BUSY\s+1'' status result.
 The delay in seconds to wait before retrying a facsimile job whose
 dialing attempt failed because a data modem answered the phone.
 .TP
+.B JobReqError
+The delay in seconds to wait before retrying a job whose
+dialing attempt failed with a ``\s-1ERROR\s+1'' status result.
+.TP
 .B JobReqNoAnswer
 The delay in seconds to wait before retrying a job whose
 dialing attempt failed with a ``\s-1NO ANSWER\s+1'' status result.
@@ -961,6 +967,11 @@ been successfully dialed before.
 The number of times to redial a phone number after the
 dialing attempt failed because a data modem answered the phone when
 the number has not been successfully dialed before.
+.TP
+.B JobRetryError
+The number of times to redial a phone number after receiving
+a ``\s-1ERROR\s+1'' result code when the number has not
+been successfully dialed before.
 .TP
 .B JobRetryNoAnswer
 The number of times to redial a phone number after the
