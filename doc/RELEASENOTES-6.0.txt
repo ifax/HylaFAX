@@ -1,4 +1,4 @@
-HylaFAX 6.0.4
+HylaFAX 6.0.5
 
 Overview
 -----------------------------------------------------------------------------
@@ -22,8 +22,18 @@ Overview
 
 Upgrade to 6.0 from previous 4.4 releases
 -----------------------------------------------------------------------------
-  There are only 2 differences to note yet during the upgrade
-  process, probably neither of which affect most people.
+
+  There are 3 differences to note during the upgrade process, probably
+  none of which affect most people.
+
+  HylaFAX now supports IPv6.  This means that the default bind for hfaxd
+  may change depending on what your system defaults are configured as.
+  Some systems (such as FreeBSD 6/7) come configured with IPv6 as the
+  system default, but set to not allow IPv4 connections.  On systems such
+  as these, you may need specify a bind address with -l if you want to
+  over-ride the system default:
+      hfaxd -l 0.0.0.0 -i hylafax
+      hfaxd -l 0.0.0.0 -i hylafax -l ::0 -i hylafax
 
   If you have clients that still use the old protocol (not the common
   FTP style protocol), they will no longer work with a new hfaxd daemon.
@@ -367,3 +377,20 @@ CHANGES for 6.0.4
 * hfaxd: log what address(es) we're listing on when starting (2009-11-13)
 * faxsend: Class1 1 ECM when skipping pages needs to be more careful (2009-11-13)
 * Class1: ECM page and block count should be sent as modulus. (2009-11-13)
+
+CHANGES for 6.0.5
+-----------------------------------------------------------------------------
+* Typo in CONFIG_UNIXTRANSPORT define checks (2009-11-06)
+* Allow "any" as answer method for FIFO messages (2010-01-22)
+* Updates LibTIFF homepage URLs (2010-02-05)
+* Updated ftp site address in setup error message (2010-03-05)
+* Correctly check for long lines when checking for the last match (2010-02-05)
+* Fix calls to pdf2fax/ps2fax in ConvertFile (2010-04-02)
+* notify: FaxMaster notifications wildcard fixups (2010-05-05)
+* manpages: Updates from debian (2010-05-05)
+* pdf2fax/ps2fax: Use -dMaxStripSize=0 (2010-05-05)
+* Bug 928: issues with installClient target of Hylafax (2010-05-05)
+* Fixes compilation on some platforms (2010-06-24)
+* faxq: better capturing of failed conversion output (2010-08-10)
+* Class2: Fix hangup cause handling (2010-08-30)
+* Compiler warning cleanup (2010-08-30)
