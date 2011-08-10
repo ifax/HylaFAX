@@ -207,7 +207,6 @@ InetFaxServer::isLocalDomain(const fxStr& h)
 bool
 InetFaxServer::checkHostIdentity(const char*name)
 {
-logDebug("checkHostIdentity(\"%s\")", name);
     struct addrinfo hints, *ai;
 
     memset(&hints, 0, sizeof(hints));
@@ -559,32 +558,22 @@ InetFaxServer::openDataConn(const char* mode, int& code)
 bool
 InetFaxServer::hostPort()
 {
-    logDebug("Parsing hostPort(): \"%s\"", (const char*)tokenBody);
-
     if (tokenBody[0] == 'E')
     {
 	fxStr s;
 	if (! STRING(s))
 	{
-	    logDebug("Couldn't get string: \"%s\"", (const char*)tokenBody);
 	    syntaxError("EPRT |family|address|port|");
 	    return false;
 	}
-	logDebug("Parsing \"%s\"", (const char*)s);
 	/*
 	 * Minimual length for EPRT is: 9
 	 *       |X|X::|X|
 	 */
 	char c = s[0];
-	logDebug(" `-> s.length() = %d", s.length());
-	logDebug(" `-> s[0] = '%c'", s[0]);
-	logDebug(" `-> s[2] = '%c'", s[2]);
-	logDebug(" `-> s[%d] = '%c'", s.length()-1, s[s.length()-1]);
 	if (s.length() > 9
 		&& c == s[0] && (s[1] == '1' || s[1] == '2') && c == s[2]
 		&& c == s[s.length()-1]) {
-	    logDebug("Looks like extended syntax: \"%s\" [%X: %c]", (const char*)s, c&0xFF, c);
-
 	    u_int pos = 3;
 	    fxStr a = s.token(pos, c);
 	    logDebug("`-> Got a: %s[%u]", (const char*)a, pos);
@@ -597,7 +586,6 @@ InetFaxServer::hostPort()
 		return false;
 	    }
 
-	    logDebug("Parsed: Family %c Address %s Port %s", s[1], (const char*)a, (const char*)p);
 	    struct addrinfo hints, *ai;
 
 	    memset(&hints, 0, sizeof(hints));
@@ -629,7 +617,6 @@ InetFaxServer::hostPort()
 	    freeaddrinfo(ai);
 	    return true;
 	}
-	logDebug("Couldn't parse \"%s\"", (const char*)s);
 	syntaxError("Couldn't parse extended port");
 	return false;
     }
