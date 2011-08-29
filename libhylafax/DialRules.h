@@ -77,7 +77,7 @@ public:
 
     bool parse(bool shouldExist = true);
 
-    fxStr applyRules(const fxStr& name, const fxStr& s);
+    fxStr applyRules(const fxStr& name, const fxStr& s, u_int level = 0);
     fxStr canonicalNumber(const fxStr&);
     fxStr dialString(const fxStr&);
     fxStr displayNumber(const fxStr&);
