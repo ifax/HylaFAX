@@ -277,9 +277,11 @@ DialStringRules::subRHS(fxStr& v)
      */
     for (u_int i = 0, n = v.length(); i < n; i++) {
 	if (v[i] == '\\') {		// process \<char> escapes
-	    v.remove(i), n--;
-	    if (isdigit(v[i]))
+	    if (isdigit(v[i+1])) {
+	        v.remove(i), n--;
 		v[i] = META | (v[i] - '0');
+	    } else
+		parseError(NLS::TEXT("Bad '\\' escape sequence"));
 	} else if (v[i] == '&')
 	    v[i] = META | 0;
     }
