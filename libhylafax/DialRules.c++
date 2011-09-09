@@ -373,7 +373,8 @@ DialStringRules::applyRules(const fxStr& name, const fxStr& s)
 			int ms = rule.pat->StartOfMatch(mn);
 			int mlen = rule.pat->EndOfMatch(mn) - ms;
 			replace.remove(ri);	// delete & or \n
-			replace.insert(result.extract(ms, mlen), ri);
+			if (mlen > 0)
+				replace.insert(result.extract(ms, mlen), ri);
 			rlen = replace.length();// adjust string length ...
 			ri += mlen - 1;		// ... and scan index
 		    }
