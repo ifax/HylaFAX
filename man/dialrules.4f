@@ -94,11 +94,13 @@ Line breaks are significant.
 The initial rule set definition line and the trailing ``]'' must be
 on separate lines; and each transformation rule must also be on a
 single line.
-Transformation rules are of the form:
+Transformation rules are of the 2 forms:
 .sp .5
 .nf
 .ti +.5i
 \fIregular-expression\fP \fB=\fP \fIreplacement\fP
+.ti +.5i
+\fIregular-expression\fP \fB=\fP \fB\e\fIRuleName\fB(\fPreplacement\fB)\fP
 .fi
 .sp .5
 where
@@ -125,6 +127,16 @@ matched substring; c.f.
 .IR re_format (7),
 .IR sed (1),
 etc.
+.PP
+If
+.I \eRuleName(replacement)
+is used, then the dial rule set 
+.I RuleName
+will be recursively applied
+to the expanded
+.I replacement
+and the result used as the replacement for the matched pattern before
+continuing to process the transformation rules.
 .PP
 To simplify and parameterize the construction of rule sets, dial string
 rules files may also include simple text-oriented variable definitions.
