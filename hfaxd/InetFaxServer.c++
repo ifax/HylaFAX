@@ -267,7 +267,7 @@ InetFaxServer::setupNetwork(int fd)
 #endif
     /* anchor socket to avoid multi-homing problems */
     data_source = ctrl_addr;
-    Socket::port(data_source) = htons(ntohs(Socket::port(ctrl_addr)-1));
+    Socket::port(data_source) = htons(ntohs(Socket::port(ctrl_addr))-1);
 #ifdef  F_SETOWN
     if (fcntl(fd, F_SETOWN, getpid()) == -1)
         logError("fcntl (F_SETOWN): %m");
