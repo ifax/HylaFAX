@@ -77,7 +77,6 @@ SuperServer::inputReady(int fd)
 	 * with servers started via inetd).
 	 */
 	HylaFAXServer* app; app = newChild();	// XXX for __GNUC__
-	Dispatcher::instance().unlink(fd);
 	HylaFAXServer::closeLogging();		// close any open syslog fd
 	HylaFAXServer::closeAllDispatched();
 	Sys::close(STDERR_FILENO);
