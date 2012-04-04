@@ -394,3 +394,20 @@ CHANGES for 6.0.5
 * faxq: better capturing of failed conversion output (2010-08-10)
 * Class2: Fix hangup cause handling (2010-08-30)
 * Compiler warning cleanup (2010-08-30)
+
+CHANGES for 6.0.6
+-----------------------------------------------------------------------------
+* Update RPM spec file to 6.0.5 release (2010-10-12)
+* Re-order library files in fchmod() configure check (2010-10-12)
+* faxalter: Wire up the page range -Z options (2010-12-14)
+* man: JobReqError/JobRetryError were missing in hylafax-config.4f (2011-04-19)
+* typerules: adding missing comma to typeNames array (2011-04-19)
+* Do not warn about one of the Fontpath directories not existing (2010-02-05)
+* Reworked how faxsetup looks for Fontmap (2010-03-05)
+* Use a private Fontmap.HylaFAX file of .pfb files (2010-03-05)
+* Combine all Fontmap files in memory, including new Fontmap.HylaFAX (2011-04-10)
+* Bug 934: We need to avoid a 0-index in playList (2010-09-16)
+* hfaxd: Eliminte extraneous debug logging (2011-08-10)
+* hfaxd: Make source port for active connections be ctrl port - 1 (2011-11-03)
+* hfaxd: Release old accept fd (2011-11-03)
+* Support libtiff 4.0 (2012-04-03)

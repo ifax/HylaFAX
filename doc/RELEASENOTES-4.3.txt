@@ -255,3 +255,9 @@ CHANGES for 4.3.10
 * Fixes compilation on some platforms (2010-06-24)
 * faxq: better capturing of failed conversion output (2010-08-30)
 
+CHANGES for 4.6.11
+-----------------------------------------------------------------------------
+* man: JobReqError/JobRetryError were missing in hylafax-config.4f (2011-04-19)
+* hfaxd: Release old accept fd (2011-11-03)
+* Re-order library files in fchmod() configure check (2010-10-12)
+* typerules: adding missing comma to typeNames array (2011-04-19)

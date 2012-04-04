@@ -182,3 +182,11 @@ CHANGES for 4.4.7
 * faxq: better capturing of failed conversion output (2010-08-10)
 * Class2: Fix hangup cause handling (2010-08-30)
 * Compiler warning cleanup (2010-08-30)
+
+CHANGES for 4.4.8
+-----------------------------------------------------------------------------
+* Re-order library files in fchmod() configure check (2010-10-12)
+* Bug 934: We need to avoid a 0-index in playList (2010-09-16)
+* man: JobReqError/JobRetryError were missing in hylafax-config.4f (2011-04-19)
+* typerules: adding missing comma to typeNames array (2011-04-19)
+* hfaxd: Release old accept fd (2011-11-03)
