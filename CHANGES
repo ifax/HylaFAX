@@ -1,5 +1,12 @@
 #	$Id$	
 
+
+Changelog for 4.3.11
+* typerules: adding missing comma to typeNames array (2011-04-19)
+* man: JobReqError/JobRetryError were missing in hylafax-config.4f (2011-04-19)
+* Re-order library files in fchmod() configure check (2010-10-12)
+* hfaxd: Release old accept fd (2011-11-03)
+
 Changelog for 4.3.10
 * Typo in CONFIG_UNIXTRANSPORT define checks (2009-11-06)
 * Allow "any" as answer method for FIFO messages (2010-01-22)
