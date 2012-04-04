@@ -1,0 +1,81 @@
+HylaFAX 6.1
+
+Overview
+-----------------------------------------------------------------------------
+  HylaFAX 6.1 introduces a new DialRules feature for HylaFAX:
+
+  * Recursive DialRule application
+
+  DialRules can now contain references to other DialRule sets, allowing you
+  to build much more complex dial rule manipulations with simple rule sets.
+
+
+Upgrade to 6.1 from previous 6.0 releases
+-----------------------------------------------------------------------------
+  There are no special notes about upgrading from a 6.0 release.
+
+  For information about upgrading from a version prior to 6.0.0, see
+  the RELEASENOTES-6.0.txt documentation.
+
+
+Changes for HylaFAX 6.1.0
+-----------------------------------------------------------------------------
+* Cleanup distrules (2009-07-31)
+* Adds RPM building right from tarball (2009-07-31)
+* templates: Update Polish translation (2009-07-31)
+* Socket.h:  OpenBSD portability (2009-07-31)
+* FaxClient: Apparently <modem>@ is used and common (2009-07-31)
+* Socket fixes for BSD 4.4 sockets (2009-07-31)
+* Remove debugging statements (2009-07-31)
+* More debug statements need to be removed (2009-07-31)
+* Signal handlers need to be careful with errno (2009-07-31)
+* Page sent protocol trace fixes (2009-07-31)
+* Don't duplicate any file in a release tarball (2009-08-07)
+* IPv6: Rework initial bind (2009-08-07)
+* Cleanup debian changelog (2009-08-14)
+* pagesend: Fix broken switch statement (2009-08-14)
+* Revert "Bug 608: fixes for compilation on AMD 64" (2009-06-09)
+* hfaxd:  Cleanup uid initizliaztion and theoretical overflow (2009-08-14)
+* hfaxd/faxq: Add -c <option> to hfaxd/faxq as done in faxsend/faxgetty (2009-06-12)
+* clients: Add -O option (2009-06-12)
+* nls: Add German translation (2009-09-14)
+* PageHandling:  Fix handling of large blank areas (2009-09-18)
+* Add support for libtiff 3.9 (2007-11-21)
+* faxq: Don't assert on bad FIFO messages (2009-09-21)
+* Updated RPM dependencies (2009-09-25)
+* Str::vformat()  Don't reuse va_args (2009-10-07)
+* faxmail: Fix broken to address/name parsing (2009-10-29)
+* Re-order library files in fchmod() configure check (2010-10-12)
+* hfaxd: log what address(es) we're listing on when starting (2009-11-06)
+* faxsend: Class1 1 ECM when skipping pages needs to be more careful (2009-11-04)
+* Class1: ECM page and block count should be sent as modulus. (2009-11-09)
+* Typo in CONFIG_UNIXTRANSPORT define checks (2009-11-06)
+* Allow "any" as answer method for FIFO messages (2010-01-22)
+* Updates LibTIFF homepage URLs (2010-02-05)
+* Updated ftp site address in setup error message (2010-03-05)
+* Correctly check for long lines when checking for the last match (2010-02-05)
+* Fix calls to pdf2fax/ps2fax in ConvertFile (2010-04-02)
+* notify: FaxMaster notifications wildcard fixups (2010-05-05)
+* manpages: Updates from debian (2010-05-05)
+* pdf2fax/ps2fax: Use -dMaxStripSize=0 (2010-05-05)
+* Bug 928: issues with installClient target of Hylafax (2010-05-05)
+* Fixes compilation on some platforms (2010-06-24)
+* faxq: better capturing of failed conversion output (2010-08-10)
+* Class2: Fix hangup cause handling (2010-08-30)
+* Compiler warning cleanup (2010-08-30)
+* faxalter: Wire up the page range -Z options (2010-12-14)
+* man: JobReqError/JobRetryError were missing in hylafax-config.4f (2011-04-19)
+* typerules: adding missing comma to typeNames array (2011-04-19)
+* Do not warn about one of the Fontpath directories not existing (2010-02-05)
+* Reworked how faxsetup looks for Fontmap (2010-03-05)
+* Use a private Fontmap.HylaFAX file of .pfb files (2010-03-05)
+* Combine all Fontmap files in memory, including new Fontmap.HylaFAX (2011-04-10)
+* Bug 934: We need to avoid a 0-index in playList (2010-09-16)
+* hfaxd: Eliminte extraneous debug logging (2011-08-10)
+* DialRules: Warn on invalid escape sequence (2011-08-30)
+* DialRules: Avoid abort on zero length matches (2011-09-09)
+* DialRules - recursively allow dialrules to reference others (2011-08-29)
+* man: Dialrules recursion (2011-09-12)
+* hfaxd: Make source port for active connections be ctrl port - 1 (2011-11-03)
+* hfaxd: Release old accept fd (2011-11-03)
+* Support libtiff 4.0 (2012-04-03)
