@@ -565,7 +565,7 @@ main(int argc, char* argv[])
 
 	cq.recvSetupTIFF(tifout, 0, cq.recvFillOrder, params);
 
-	uint32* stripbytecount;
+	tiff_bytecount_t* stripbytecount;
 	(void) TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &stripbytecount);
 	for (u_int strip = 0; strip < TIFFNumberOfStrips(tif); strip++) {
 	    u_int totbytes = (u_int) stripbytecount[strip];

@@ -120,7 +120,7 @@ main(int argc, char* argv[])
 
 	    uint16 fillorder;
 	    TIFFGetFieldDefaulted(tif, TIFFTAG_FILLORDER, &fillorder);
-	    uint32* stripbytecount;
+	    tiff_bytecount_t* stripbytecount;
 	    (void) TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &stripbytecount);
 
 	    u_int totbytes = (u_int) stripbytecount[0];

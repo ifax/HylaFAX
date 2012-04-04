@@ -48,6 +48,21 @@
 #endif /* CHAR_BIT */
 
 
+#ifdef NEED_TIFFDIRENTRY
+/*
+ * we don't pass these to libtiff anywhere, but HylaFAX uses it to keep track
+ * of the info it has read from the TIFFGetField functions when constructin
+ * and writing a single-directory TIFF FILE read from an existing TIFF fax.
+ */
+typedef struct {
+       uint16          tdir_tag;
+       uint16          tdir_type;      /* data type */
+       uint32          tdir_count;     /* number of items; length in spec */
+       uint32          tdir_offset;    /* byte offset to field data */
+} TIFFDirEntry;
+#endif
+
+
 static struct {
     const char*	name;		// protocol token name
     bool	supported;	// true if format is supported
@@ -226,7 +241,7 @@ HylaFAXServer::retrievePageCmd(const char* name)
 		 * amount of image data and then adding in
 		 * the expected data for the TIFF headers.
 		 */
-		uint32* sb;
+		tiff_bytecount_t* sb;
 		TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &sb);
 		file_size = sizeof (DirTemplate) +
 		    sizeof (TIFFHeader) + sizeof (uint16);
@@ -441,7 +456,7 @@ HylaFAXServer::sendTIFFHeader(TIFF* tif, int fdout)
 bool
 HylaFAXServer::sendITIFFData(TIFF* tif, int fdout)
 {
-    uint32* sb;
+    tiff_bytecount_t* sb;
     (void) TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &sb);
     tdata_t buf = _TIFFmalloc(sb[0]);
     tsize_t bsize = sb[0];

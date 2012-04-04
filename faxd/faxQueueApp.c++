@@ -1046,7 +1046,7 @@ faxQueueApp::preparePageChop(const FaxRequest& req,
     TIFF* tif, const Class2Params& params, fxStr& pagehandling)
 {
     tstrip_t s = TIFFNumberOfStrips(tif)-1;
-    uint32* stripbytecount;
+    tiff_bytecount_t* stripbytecount;
     (void) TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &stripbytecount);
     u_int stripSize = (u_int) stripbytecount[s];
     if (stripSize == 0)
