@@ -473,7 +473,7 @@ Class2Modem::sendPageData(TIFF* tif, u_int pageChop, bool cover)
 	 * Calculate total amount of space needed to read
 	 * the image into memory (in its encoded format).
 	 */
-	uint32* stripbytecount;
+	tiff_bytecount_t* stripbytecount;
 	(void) TIFFGetField(tif, TIFFTAG_STRIPBYTECOUNTS, &stripbytecount);
 	tstrip_t strip;
 	u_long totdata = 0;
