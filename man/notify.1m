@@ -134,6 +134,12 @@ defaults to ``yes'' and is used to indicate whether or not the session transcrip
 (log) should be returned with the notification message on the error conditions
 noted above.
 .TP
+.I TEMPLATE
+the template subdirectory to use when sending e-mails.  HylaFAX ships with
+a base set of templates, and some direct translations.  To use the German
+translated templates, set TEMPLATE=de in FaxNotify.  This is relative to the
+base template directory.
+.TP
 .I NOTIFY_FAXMASTER
 is used to deliver a notification message to
 .B TOADDR
