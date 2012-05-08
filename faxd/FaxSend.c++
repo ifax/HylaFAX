@@ -345,10 +345,10 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	case ClassModem::NODIALTONE:	// no local dialtone, possibly unplugged
 	case ClassModem::ERROR:		// modem might just need to be reset
 	case ClassModem::FAILURE:	// modem returned something unexpected
-	    if (!clientInfo.getCalledBefore() && fax.ndials > retryMAX[callstat])
+	    if (!clientInfo.getCalledBefore() && fax.ndials > retryOther)
 		sendFailed(fax, send_failed, result);
 	    else
-		sendFailed(fax, send_retry, result, requeueTTS[callstat]);
+		sendFailed(fax, send_retry, result, requeueOther);
 	    break;
 	case ClassModem::OK:		// call was aborted by user
 	    break;
