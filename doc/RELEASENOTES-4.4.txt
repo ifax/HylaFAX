@@ -1,4 +1,4 @@
-HylaFAX 4.4.7
+HylaFAX 4.4.8
 
 Overview
 -----------------------------------------------------------------------------
@@ -190,3 +190,4 @@ CHANGES for 4.4.8
 * man: JobReqError/JobRetryError were missing in hylafax-config.4f (2011-04-19)
 * typerules: adding missing comma to typeNames array (2011-04-19)
 * hfaxd: Release old accept fd (2011-11-03)
+* faxsend: JobRetryOther/JobRequeueOther weren't actually being used (2012-05-07)
