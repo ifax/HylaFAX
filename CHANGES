@@ -2,6 +2,7 @@
 
 
 Changelog for 4.3.11
+* faxsend: JobRetryOther/JobRequeueOther weren't actually being used (2012-05-07)
 * typerules: adding missing comma to typeNames array (2011-04-19)
 * man: JobReqError/JobRetryError were missing in hylafax-config.4f (2011-04-19)
 * Re-order library files in fchmod() configure check (2010-10-12)
