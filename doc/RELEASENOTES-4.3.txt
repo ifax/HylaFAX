@@ -1,4 +1,4 @@
-HylaFAX 4.3.10
+HylaFAX 4.3.11
 
 OVERVIEW
 -----------------------------------------------------------------------------
@@ -262,3 +262,4 @@ CHANGES for 4.3.11
 * hfaxd: Release old accept fd (2011-11-03)
 * Re-order library files in fchmod() configure check (2010-10-12)
 * typerules: adding missing comma to typeNames array (2011-04-19)
+* faxsend: JobRetryOther/JobRequeueOther weren't actually being used (2012-05-07)
