@@ -345,6 +345,7 @@ FaxServer::sendFax(FaxRequest& fax, FaxMachineInfo& clientInfo, const fxStr& num
 	case ClassModem::NODIALTONE:	// no local dialtone, possibly unplugged
 	case ClassModem::ERROR:		// modem might just need to be reset
 	case ClassModem::FAILURE:	// modem returned something unexpected
+	case ClassModem::RING:		// glare - ring detected after dial
 	    if (!clientInfo.getCalledBefore() && fax.ndials > retryOther)
 		sendFailed(fax, send_failed, result);
 	    else
