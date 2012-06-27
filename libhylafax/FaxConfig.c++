@@ -57,7 +57,10 @@ FaxConfig::readConfig(const fxStr& filename)
 	configTrace(NLS::TEXT("Read config file %s"), (const char*) filename);
 	char line[1024];
 	while (fgets(line, sizeof (line)-1, fd)){
-	    line[strlen(line)-1]='\0';		// Nuke \r at end of line
+	    size_t len = strlen(line);
+	    // The last line of a file may not be terminated by a '\n'.
+	    if (line[len-1] == '\n')
+		line[len-1] = '\0';		// Nuke \n at end of line
 	    (void) readConfigItem(line);
 	}
 	fclose(fd);
