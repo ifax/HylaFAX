@@ -105,6 +105,11 @@ main(int argc, char** argv)
 	switch (c) {
 	case 'h':
 	    arg = optarg;
+            if (strlen(arg) > sizeof(cmd)-2) {
+                /* The "how" value won't fit in cmd with the command tag
+                 * and terminating NUL character. */
+                fatal("How value too long: %s", arg);
+            }
 	    break;
 	case 'q':
 	    spooldir = optarg;
