@@ -757,6 +757,7 @@ Protocol	string	\s-1tcp\s+1	protocol to use in contacting server
 RetryTime	string	\-	delay between failed attempts to send
 SendTime	string	\-	time to send job
 TagLine	string	\-	tagline format string
+TSI	string	\-	sender identification to use
 TypeRules	string	\s-1\fIsee below\fP\s+1	file containing file typing rules
 VRes	float	\s-198.\s+1	vertical resolution
 Verbose	boolean	\s-1No\s+1	whether or not to enable protocol tracing
@@ -980,6 +981,12 @@ option.)
 The tagline format string to use when transmitting facsimile.
 (Equivalent to the
 .B \-F
+option.)
+.TP 16
+.B TSI
+The sender identification to use when transmitting facsimile.
+(Equivalent to the
+.B \-S
 option.)
 .TP 16
 .B TypeRules

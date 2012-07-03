@@ -107,6 +107,7 @@ SendFaxJob::~SendFaxJob()
 
 SendFaxJob::SFJ_stringtag SendFaxJob::strings[] = {
 { "tagline",		&SendFaxJob::tagline,		NULL },
+{ "tsi",		&SendFaxJob::tsi,		NULL },
 { "sendtime",		&SendFaxJob::sendTime,		NULL },
 { "killtime",		&SendFaxJob::killTime,		FAX_TIMEOUT },
 { "pagesize",		&SendFaxJob::pageSize,		"default" },
