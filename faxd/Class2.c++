@@ -485,6 +485,15 @@ Class2Modem::parseClass2Capabilities(const char* cap, Class2Params& params, bool
 	} else {
 	    if (jpscan == 0x1) params.jp = JP_GREY;
 	    else if (jpscan & 0x2) params.jp = JP_COLOR;
+	    /*
+	     * ITU T.30 does not specify that bits 16 (MR) or 31 (MMR) must be set to zero if color fax is used;
+	     * and ITU T.32 Table 21 provides a data field, "JP", for JPEG support separate from "DF" for data
+	     * format and does not specify that DF is meaningless in DCS when JP is used; but because T.4/T.6
+	     * (MH/MR/MMR), JBIG, and JPEG are distinct formats from each other, we must conclude that any
+	     * indication of JPEG in DCS must, therefore, invalidate any indication in DCS of MH/MR/MMR/JBIG.
+	     * Otherwise, having both df and jp be non-zero will be confusing and possibly cause problems.
+	     */
+	    if (params.jp != JP_NONE) params.df = 0;	// Yes, this is DF_1DMH, but there is no "DF_NONE".
 	}
 	return (true);
     } else {

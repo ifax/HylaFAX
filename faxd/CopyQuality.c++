@@ -38,6 +38,7 @@
 #include <ctype.h>
 
 #define	RCVBUFSIZ	(32*1024)		// XXX
+#define	COLORBUFSIZ	(2000*1024)		// 1MB is not big enough
 
 static	void setupCompression(TIFF*, u_int, u_int, uint32);
 
@@ -356,7 +357,7 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 		 * rather fax-specific.
 		 */
 		recvEOLCount = 0;
-		recvRow = (u_char*) malloc(1024*1000);    // 1M should do it?
+		recvRow = (u_char*) malloc(COLORBUFSIZ);
 		fxAssert(recvRow != NULL, "page buffering error (JPEG page).");
 		recvPageStart = recvRow;
 	    }
@@ -408,8 +409,12 @@ FaxModem::recvPageDLEData(TIFF* tif, bool checkQuality,
 		    if (params.df == DF_JBIG) {
 			flushRawData(tif, 0, (const u_char*) buf, cc);
 		    } else {
-			memcpy(recvRow, (const char*) buf, cc);
-			recvRow += cc;
+			/* We don't support reception of a JPEG page bigger than COLORBUFSIZ. */
+			if (recvRow + cc - recvPageStart > COLORBUFSIZ) cc = recvPageStart + COLORBUFSIZ - recvRow;
+			if (cc > 0) {
+			    memcpy(recvRow, (const char*) buf, cc);
+			    recvRow += cc;
+			}
 		    }
 		} while (!fin);
 		if (params.df == DF_JBIG) clearSDNORMCount();
@@ -987,7 +992,7 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 	    case JP_GREY+4:
 	    case JP_COLOR+4:
 		recvEOLCount = 0;
-		recvRow = (u_char*) malloc(1024*1000);    // 1M should do it?
+		recvRow = (u_char*) malloc(COLORBUFSIZ);
 		fxAssert(recvRow != NULL, "page buffering error (JPEG page).");
 		recvPageStart = recvRow;
 		setupStartPage(tif, params);
@@ -1039,14 +1044,20 @@ FaxModem::writeECMData(TIFF* tif, u_char* buf, u_int cc, const Class2Params& par
 	    }
 	    break;
     }
-    if (params.jp != JP_GREY && params.jp != JP_COLOR) {
-	flushRawData(tif, 0, (const u_char*) buf, cc);
-    } else {
-	memcpy(recvRow, (const char*) buf, cc);
-	recvRow += cc;
-    }
-    if (seq & 2 && (params.jp == JP_GREY || params.jp == JP_COLOR)) {
-	fixupJPEG(tif);
+    switch (dataform) {
+       case JP_GREY+4:
+       case JP_COLOR+4:
+           /* We don't support reception of a JPEG page bigger than COLORBUFSIZ. */
+           if (recvRow + cc - recvPageStart > COLORBUFSIZ) cc = recvPageStart + COLORBUFSIZ - recvRow;
+           if (cc > 0) {
+               memcpy(recvRow, (const char*) buf, cc);
+               recvRow += cc;
+           }
+           if (seq & 2) fixupJPEG(tif);
+           break;
+       default:
+           flushRawData(tif, 0, (const u_char*) buf, cc);
+           break;
     }
 }
 
