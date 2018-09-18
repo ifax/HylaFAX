@@ -412,3 +412,13 @@ CHANGES for 6.0.6
 * hfaxd: Release old accept fd (2011-11-03)
 * Support libtiff 4.0 (2012-04-03)
 * faxsend: JobRetryOther/JobRequeueOther weren't actually being used (2012-05-07)
+
+CHANGES for 6.0.7
+-----------------------------------------------------------------------------
+* Check faxanswer "how" parameter length (2012-06-26)
+* Allow last line of a configuration file to not be terminated with '\n' (2012-06-26)
+* Set fax status on glare errors (2012-06-26)
+* Allow configuration of JobRetryOther and JobRequeueOther (2012-06-26)
+* Fix memory corruption when using libtiff v4.0 or newer (2014-07-31)
+* Address CVE-2018-17141 and fixes a few vulnerabilities in code supporting JPEG (2018-09-17)
+

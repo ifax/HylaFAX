@@ -746,6 +746,7 @@ HYLAFAXSRC=\
 	pkg/srequest.in                                                       \
 	po/Makefile.in                                                        \
 	po/POTFILES.in                                                        \
+	po/de.po                                                              \
 	po/es.po                                                              \
 	po/hylafax-client/messages.pot                                        \
 	po/hylafax-server/messages.pot                                        \

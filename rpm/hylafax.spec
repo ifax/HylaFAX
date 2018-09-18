@@ -1,5 +1,5 @@
 %define name        hylafax
-%define version     6.0.5
+%define version     6.0.7
 %define pkg_release 1
 
 #
@@ -19,15 +19,12 @@
 %define rh_version 0
 %endif
 
-%if %{rh_version} > 0 && %{rh_version} < 7
-%define ostag rhel%{rh_version}
-%endif
-%if %{rh_version} >= 7
-%define ostag rh%{rh_version}
+%if %{rh_version} > 0
+%define ostag .el%{rh_version}
 %endif
 
 %if %{is_fc}
-%define ostag fc%(rpm -q --queryformat='%{VERSION}' fedora-release)
+%define ostag .fc%(rpm -q --queryformat='%{VERSION}' fedora-release)
 %endif
 
 
@@ -40,10 +37,10 @@
 %endif
 
 %if %{suse_version} > 0
-%define ostag suse%(echo %{suse_version} | sed - -e 's/\\([0-9]*\\)[0-9].*/\\1/')
+%define ostag .suse%(echo %{suse_version} | sed - -e 's/\\([0-9]*\\)[0-9].*/\\1/')
 %endif
 %if %{sles_version} > 0
-%define ostag sles%{sles_version}
+%define ostag .sles%{sles_version}
 %endif
 
 %define faxspool    %{_var}/spool/hylafax
@@ -59,11 +56,13 @@ URL:       http://www.ifax.com/
 
 Source:    ftp://ftp.hylafax.org/source/%{name}-%{version}.tar.gz
 
-BuildPrereq: libjpeg-devel, libtiff-devel, zlib-devel, gettext
+BuildRequires: make, gcc, gcc-c++, tar
+BuildRequires: pam-devel, libjpeg-devel, libtiff-devel, zlib-devel, gettext-devel
+BuildRequires: ghostscript
 %if %{is_suse}
-BuildPrereq: gettext-tools
+BuildRequires: gettext-tools
 %endif
-BuildPrereq: rpm >= 3.0.5
+BuildRequires: rpm >= 3.0.5
 
 BuildRoot: %{_tmppath}/%{name}-root
 
@@ -455,6 +454,14 @@ fi
 %attr(644,root,root) %config(noreplace) %{_sysconfdir}/hylafax/typerules
 
 %changelog
+* Tue Sep 18 2018 Patrice Fournier <patrice.fournier@ifax.com> 6.0.7-1
+  - Update to official 6.0.7 release
+  - Correctly tag RHEL7 builds
+  - Updated build dependencies
+
+* Tue Aug 28 2012 Patrice Fournier <patrice.fournier@ifax.com> 6.0.6-1
+  - Update to official 6.0.6 release
+
 * Mon Oct 11 2010 Patrice Fournier <patrice.fournier@ifax.com> 6.0.5-1
   - Update to official 6.0.5 release
 
