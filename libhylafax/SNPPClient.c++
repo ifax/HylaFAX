@@ -103,7 +103,7 @@ SNPPClient::printWarning(const char* fmt ...)
 void
 SNPPClient::vprintWarning(const char* fmt, va_list ap)
 {
-    fprintf(stderr, NLS::TEXT("Warning, "));
+    fprintf(stderr, "%s", NLS::TEXT("Warning, "));
     vfprintf(stderr, fmt, ap);
     fputs("\n", stderr);
 }

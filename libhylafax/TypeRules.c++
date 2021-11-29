@@ -101,7 +101,7 @@ TypeRule::match(const void* data, size_t size, bool verbose) const
 	    printf(" \"%s\"", value.s);
 	else if (type != ASCII && type != ASCIIESC) {
 	    if (op == ANY)
-		printf(NLS::TEXT(" <any value>"));
+		printf("%s", NLS::TEXT(" <any value>"));
 	    else
 		printf(" %#llx", (long long) value.v);
 	}
@@ -109,7 +109,7 @@ TypeRule::match(const void* data, size_t size, bool verbose) const
     }
     if (off > (off_t)size) {
 	if (verbose)
-	    printf(NLS::TEXT("failed (offset past data)\n"));
+	    printf("%s", NLS::TEXT("failed (offset past data)\n"));
 	return (false);
     }
     bool ok = false;
@@ -162,7 +162,7 @@ TypeRule::match(const void* data, size_t size, bool verbose) const
 	    break;
 	}
 	if (verbose)
-	    printf(NLS::TEXT("failed (insufficient data)\n"));
+	    printf("%s", NLS::TEXT("failed (insufficient data)\n"));
 	return (false);
     case LONG:
 	if (off + 4 < (off_t)size) {
@@ -171,7 +171,7 @@ TypeRule::match(const void* data, size_t size, bool verbose) const
 	    break;
 	}
 	if (verbose)
-	    printf(NLS::TEXT("failed (insufficient data)\n"));
+	    printf("%s", NLS::TEXT("failed (insufficient data)\n"));
 	return (false);
     }
     /*
@@ -195,7 +195,7 @@ done:
 	    printf(NLS::TEXT("success (result %s, rule \"%s\")\n"),
 		resultNames[result], (const char*) cmd);
 	else
-	    printf(NLS::TEXT("failed (comparison)\n"));
+	    printf("%s", NLS::TEXT("failed (comparison)\n"));
     }
     return (ok);
 }
@@ -496,6 +496,6 @@ TypeRules::match(const void* data, u_int size) const
 	    return (&(*rules)[i + match2(i, data, size, verbose)]);
     }
     if (verbose)
-	printf(NLS::TEXT("no match\n"));
+	printf("%s", NLS::TEXT("no match\n"));
     return (NULL);
 }

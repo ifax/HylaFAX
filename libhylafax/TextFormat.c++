@@ -1371,7 +1371,7 @@ TextFont::openAFMFile(fxStr& fontpath)
 {
     fxStr emsg;
     if (!decodeFontName(family, fontpath, emsg)) {
-	fprintf(stderr,emsg);
+	fprintf(stderr, "%s", emsg);
 	return NULL;
     }
     return Sys::fopen(fontpath, "r");
